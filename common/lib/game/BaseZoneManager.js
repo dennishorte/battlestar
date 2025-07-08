@@ -27,6 +27,10 @@ class BaseZoneManager {
   ////////////////////////////////////////////////////////////////////////////////
   // Getters
 
+  all() {
+    return Object.values(this._zones)
+  }
+
   byCard(card) {
     return card.zone
   }

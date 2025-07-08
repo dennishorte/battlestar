@@ -18,6 +18,14 @@ class BaseCardManager {
     return this._cards[id]
   }
 
+  byPlayer(player, zoneName) {
+    return this.game.zones.byPlayer(player, zoneName).cards()
+  }
+
+  byZone(zoneId) {
+    return this.game.zones.byId(zoneId).cards()
+  }
+
   reset() {
     this._cards = {}
   }

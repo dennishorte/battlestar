@@ -49,13 +49,15 @@ TestUtil.fixture = function(options) {
       const deck = game.getZoneByPlayer(player, 'deck')
       const hand = game.getZoneByPlayer(player, 'hand')
 
-      // Put 5 nobles into the player hand
+      // Return all cards in the player hand to their deck
       for (const card of hand.cards()) {
-        game.mMoveCardTo(card, deck)
+        card.moveTo(deck)
       }
+
+      // Put 5 nobles into the player hand
       while (hand.cards().length < 5) {
         const card = deck.cards().find(card => card.name === 'Noble')
-        game.mMoveCardTo(card, hand)
+        card.moveTo(hand)
       }
 
       // Put the remainder of the deck into a fixed order
@@ -115,8 +117,8 @@ TestUtil.gameFixture = function(options) {
             const zone = game.getZoneByPlayer(player, key)
 
             for (const card of zone.cards()) {
-              const deck = key === 'deck' ? game.getZoneById('devoured') : game.getZoneByHome(card)
-              game.mMoveCardTo(card, deck)
+              const deck = key === 'deck' ? game.zones.byId('devoured') : card.home
+              card.moveTo(deck)
             }
 
             for (const name of playerSetup[key]) {
@@ -125,20 +127,24 @@ TestUtil.gameFixture = function(options) {
                 args: { name },
               })
 
+              let card
               if (name === 'Priestess of Lolth') {
-                game.mMoveCardTo(game.getZoneById('priestess').cards()[0], zone)
+                card = game.zones.byId('priestess').peek()
               }
               else if (name === 'House Guard') {
+                card = game.zones.byId('guard').peek()
                 game.mMoveCardTo(game.getZoneById('guard').cards()[0], zone)
               }
               else if (name === 'Insane Outcast') {
-                game.mMoveCardTo(game.getZoneById('outcast').cards()[0], zone)
+                card = game.zones.byId('outcast').peek()
               }
               else {
-                const card = game.getZoneById('marketDeck').cards().find(card => card.name === name)
+                card = game.cards.byZone('marketDeck').find(card => card.name === name)
                 util.assert(!!card, `Card not found: ${name}`)
-                game.mMoveCardTo(card, zone)
               }
+
+              card.moveTo(zone)
+              card.owner = player
             }
 
             game.log.outdent()
@@ -176,16 +182,16 @@ TestUtil.gameFixture = function(options) {
     }
 
     for (const loc of game.getLocationAll()) {
-      if (options[loc.name]) {
-        game.log.add({ template: loc.name })
+      if (options[loc.name()]) {
+        game.log.add({ template: loc.name() })
         game.log.indent()
 
-        const data = options[loc.name]
+        const data = options[loc.name()]
         if (data.troops) {
           game.log.add({
             template: 'Setting troops at {name} to [{troops}]',
             args: {
-              name: loc.name,
+              name: loc.name(),
               troops: data.troops.join(', ')
             }
           })
@@ -196,7 +202,7 @@ TestUtil.gameFixture = function(options) {
           game.log.add({
             template: 'Setting troops at {name} to [{spies}]',
             args: {
-              name: loc.name,
+              name: loc.name(),
               spies: data.spies.join(', ')
             }
           })
@@ -247,20 +253,10 @@ TestUtil.gameFixture = function(options) {
     game.log.outdent()
   })
 
-  const request1 = game.run()
 
-  const request2 = game.respondToInputRequest({
-    actor: 'dennis',
-    title: 'Choose starting location',
-    selection: ['Ched Nasad'],
-  })
-
-  game.respondToInputRequest({
-    actor: 'micah',
-    title: 'Choose starting location',
-    selection: ['Eryndlyn'],
-  })
-
+  let request = game.run()
+  request = this.choose(game, request, 'Ched Nasad')
+  request = this.choose(game, request, 'Eryndlyn')
   return game
 }
 

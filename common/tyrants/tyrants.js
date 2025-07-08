@@ -3,13 +3,13 @@ const {
   GameFactory,
   GameOverEvent,
 } = require('./../lib/game.js')
-const MapZone = require('./MapZone.js')
-const Token = require('./Token.js')
-const Zone = require('./Zone.js')
 const res = require('./res/index.js')
 const util = require('../lib/util.js')
 
+const { BaseZone } = require('../lib/game/index.js')
 const { TyrantsLogManager } = require('./TyrantsLogManager.js')
+const { TyrantsMapZone } = require('./TyrantsMapZone.js')
+const { TyrantsToken } = require('./TyrantsToken.js')
 
 
 module.exports = {
@@ -80,12 +80,12 @@ Tyrants.prototype.initialize = function() {
 }
 
 Tyrants.prototype.initializeZones = function() {
-  this.state.zones = {}
   this.initializeMapZones()
   this.initializeMarketZones()
   this.initializePlayerZones()
   this.initializeTokenZones()
-  this.state.zones.devoured = new Zone(this, 'devoured', 'public')
+
+  this.zones.register(new BaseZone(this, 'devoured', 'devoured', 'public'))
 }
 
 Tyrants.prototype.initializePlayers = function() {
@@ -98,45 +98,42 @@ Tyrants.prototype.initializePlayers = function() {
 }
 
 Tyrants.prototype.initializeMapZones = function() {
-  this.state.zones.map = Object.fromEntries(
-    res
-      .maps[this.settings.map]
-      .map(data => [data.name, new MapZone(data)])
-  )
+  for (const data of res.maps[this.settings.map]) {
+    const zone = new TyrantsMapZone(this, data)
+    this.zones.register(zone)
+  }
 }
 
 Tyrants.prototype.initializeMarketZones = function() {
-  this.state.zones.market = new Zone(this, 'market', 'public')
-  this.state.zones.priestess = new Zone(this, 'priestess', 'public')
-  this.state.zones.guard = new Zone(this, 'guard', 'public')
-  this.state.zones.outcast = new Zone(this, 'outcast', 'public')
+  this.zones.register(new BaseZone(this, 'market', 'market', 'public'))
+  this.zones.register(new BaseZone(this, 'priestess', 'priestess', 'public'))
+  this.zones.register(new BaseZone(this, 'guard', 'guard', 'public'))
+  this.zones.register(new BaseZone(this, 'outcast', 'outcast', 'public'))
 }
 
 Tyrants.prototype.initializeTokenZones = function() {
-  this.state.zones.neutrals = new Zone(this, 'neutrals', 'tokens')
+  this.zones.register(new BaseZone(this, 'neutrals', 'neutrals', 'public'))
 }
 
 Tyrants.prototype.initializePlayerZones = function() {
-  this.state.zones.players = {}
+  const self = this
 
-  function _addPlayerZone(player, name, kind, root) {
-    root[name] = new Zone(this, `players.${player.name}.${name}`, kind)
-    root[name].owner = player.name
+  function _addPlayerZone(player, name, kind) {
+    const id = `players.${player.name}.${name}`
+    const zone = new BaseZone(self, id, id, kind, player)
+    self.zones.register(zone)
   }
 
   for (const player of this.players.all()) {
-    const root = {}
-    _addPlayerZone(player, 'deck', 'deck', root)
-    _addPlayerZone(player, 'played', 'public', root)
-    _addPlayerZone(player, 'discard', 'public', root)
-    _addPlayerZone(player, 'trophyHall', 'public', root)
-    _addPlayerZone(player, 'hand', 'private', root)
-    _addPlayerZone(player, 'innerCircle', 'public', root)
+    _addPlayerZone(player, 'deck', 'hidden')
+    _addPlayerZone(player, 'played', 'public')
+    _addPlayerZone(player, 'discard', 'public')
+    _addPlayerZone(player, 'trophyHall', 'public')
+    _addPlayerZone(player, 'hand', 'private')
+    _addPlayerZone(player, 'innerCircle', 'public')
 
-    _addPlayerZone(player, 'troops', 'tokens', root)
-    _addPlayerZone(player, 'spies', 'tokens', root)
-
-    this.state.zones.players[player.name] = root
+    _addPlayerZone(player, 'troops', 'public')
+    _addPlayerZone(player, 'spies', 'public')
   }
 }
 
@@ -146,18 +143,21 @@ Tyrants.prototype.initializeCards = function() {
   this.log.add({ template: 'Loading expansion: ' + expansions[0] })
   this.log.add({ template: 'Loading expansion: ' + expansions[1] })
 
-  this.state.zones.priestess.setCards(res.cards.byName['Priestess of Lolth'])
-  this.state.zones.guard.setCards(res.cards.byName['House Guard'])
-  this.state.zones.outcast.setCards(res.cards.byName['Insane Outcast'])
+  const cardData = res.cards.factory(this)
+
+  this.zones.byId('priestess').initializeCards(cardData.byName['Priestess of Lolth'])
+  this.zones.byId('guard').initializeCards(cardData.byName['House Guard'])
+  this.zones.byId('outcast').initializeCards(cardData.byName['Insane Outcast'])
 
   // Market deck
-  this.state.zones.marketDeck = new Zone(this, 'marketDeck', 'deck')
+  const marketZone = new BaseZone(this, 'marketDeck', 'marketDeck', 'private')
+  this.zones.register(marketZone)
+
   const marketCards = this
     .getExpansionList()
-    .flatMap(exp => res.cards.byExpansion[exp])
-
-  this.state.zones.marketDeck.setCards(marketCards)
-  this.mShuffle(this.getZoneById('marketDeck'))
+    .flatMap(exp => cardData.byExpansion[exp])
+  marketZone.initializeCards(marketCards)
+  marketZone.shuffle()
 
   // Market cards
   this.log.add({ template: 'Adding starting market cards' })
@@ -169,65 +169,61 @@ Tyrants.prototype.initializeCards = function() {
   let x = 0
   let y = 0
   for (const player of this.players.all()) {
-    const deck = this.getZoneByPlayer(player, 'deck')
+    const cards = []
+
     for (let i = 0; i < 7; i++) {
-      const card = res.cards.byName['Noble'][x]
-      deck.addCard(card)
+      const card = cardData.byName['Noble'][x]
+      cards.push(card)
       x += 1
     }
 
     for (let i = 0; i < 3; i++) {
-      const card = res.cards.byName['Soldier'][y]
-      deck.addCard(card)
+      const card = cardData.byName['Soldier'][y]
+      cards.push(card)
       y += 1
     }
 
-    this.mShuffle(deck)
+    const deck = this.zones.byPlayer(player, 'deck')
+    deck.initializeCards(cards)
+    deck.shuffle()
   }
 }
 
 Tyrants.prototype.initializeTokens = function() {
-  this.state.tokenLookup = {}
-
   for (const player of this.players.all()) {
-    const troopZone = this.getZoneByPlayer(player, 'troops')
+    const troops = []
     for (let i = 0; i < 40; i++) {
       const name = `troop-${player.name}`
-      const token = new Token(name + '-' + i, name)
+      const token = new TyrantsToken(this, name + '-' + i, name)
       token.isTroop = true
-      token.zone = troopZone.id
-      token.home = troopZone.id
       token.owner = player
-      troopZone.addCard(token)
-      this.state.tokenLookup[token.id] = token
+      troops.push(token)
     }
+    this.zones.byPlayer(player, 'troops').initializeCards(troops)
 
-    const spyZone = this.getZoneByPlayer(player, 'spies')
+    const spies = []
     for (let i = 0; i < 5; i++) {
       const name = `spy-${player.name}`
-      const token = new Token(name + '-' + i, name)
+      const token = new TyrantsToken(this, name + '-' + i, name)
       token.isSpy = true
-      token.zone = spyZone.id
-      token.home = spyZone.id
       token.owner = player
-      spyZone.addCard(token)
-      this.state.tokenLookup[token.id] = token
+      spies.push(token)
     }
+    this.zones.byPlayer(player, 'spies').initializeCards(spies)
   }
 
   // Neutrals
-  const neutralZone = this.getZoneById('neutrals')
+  const neutrals = []
   for (let i = 0; i < 80; i++) {
-    const name = 'neutral'
-    const token = new Token(name + '-' + i, name)
+    const token = new TyrantsToken(this, 'neutral-' + i, 'neutral')
     token.isTroop = true
-    token.zone = neutralZone.id
-    token.home = neutralZone.id
-    neutralZone.addCard(token)
-    this.state.tokenLookup[token.id] = token
+    neutrals.push(token)
   }
+  this.zones.byId('neutrals').initializeCards(neutrals)
+
 
   // Place neutrals on map
+  const neutralZone = this.zones.byId('neutrals')
   for (const loc of this.getLocationAll()) {
     for (let i = 0; i < loc.neutrals; i++) {
       this.mMoveByIndices(neutralZone, 0, loc, loc.cards().length)
@@ -235,7 +231,6 @@ Tyrants.prototype.initializeTokens = function() {
   }
 
   if (this.settings.menzoExtraNeutral) {
-    const neutralZone = this.getZoneById('neutrals')
     const menzo = this.getLocationByName('Menzoberranzan')
     this.mMoveByIndices(neutralZone, 0, menzo, menzo.cards().length)
   }
@@ -850,7 +845,7 @@ Tyrants.prototype.aChooseColor = function(player) {
 
 Tyrants.prototype.aChooseLocation = function(player, locations, opts={}) {
   const choices = locations
-    .map(loc => loc.name)
+    .map(loc => loc.name())
     .sort()
 
   if (!opts.title) {
@@ -859,7 +854,7 @@ Tyrants.prototype.aChooseLocation = function(player, locations, opts={}) {
 
   const selection = this.actions.choose(player, choices, opts)
   if (selection.length > 0) {
-    return locations.find(loc => loc.name === selection[0])
+    return locations.find(loc => loc.name() === selection[0])
   }
 }
 
@@ -1119,14 +1114,14 @@ Tyrants.prototype._collectTargets = function(player, opts={}) {
   const troops = baseLocations
     .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
     .filter(([, troop]) => troop.owner !== player)
-    .filter(([, troop]) => opts.whiteOnly ? troop.owner === undefined : true)
-    .filter(([, troop]) => opts.noWhite ? troop.owner !== undefined : true)
-    .map(([loc, troop]) => `${loc.name}, ${troop.getOwnerName()}`)
+    .filter(([, troop]) => opts.whiteOnly ? !troop.owner : true)
+    .filter(([, troop]) => opts.noWhite ? !troop.owner : true)
+    .map(([loc, troop]) => `${loc.name()}, ${troop.getOwnerName()}`)
 
   const spies = baseLocations
     .flatMap(loc => loc.getSpies().map(spy => [loc, spy]))
     .filter(([, spy]) => spy.owner !== player)
-    .map(([loc, spy]) => `${loc.name}, ${spy.getOwnerName()}`)
+    .map(([loc, spy]) => `${loc.name()}, ${spy.getOwnerName()}`)
 
   return {
     troops: opts.noTroops ? [] : util.array.distinct(troops).sort(),
@@ -1353,10 +1348,10 @@ Tyrants.prototype.aPlaceSpy = function(player, loc) {
 }
 
 Tyrants.prototype.aPlayCard = function(player, card) {
-  util.assert(card.zone.includes(player.name), 'Card is not owned by player')
-  util.assert(card.zone.endsWith('hand'), 'Card is not in player hand')
+  util.assert(card.owner === player, 'Card is not owned by player')
+  util.assert(card.zone.id.endsWith('hand'), 'Card is not in player hand')
 
-  this.mMoveCardTo(card, this.getZoneByPlayer(player, 'played'))
+  card.moveTo(this.zones.byPlayer(player, 'played'))
   this.log.add({
     template: '{player} plays {card}',
     args: { player, card }
@@ -1458,7 +1453,7 @@ Tyrants.prototype.aReduceDraw = function(player) {
 
 Tyrants.prototype.aReturnSpy = function(player, loc, owner) {
   const spy = loc.getSpies(owner, loc)[0]
-  util.assert(!!spy, `No spy belonging to ${owner.name} at ${loc.name}`)
+  util.assert(!!spy, `No spy belonging to ${owner.name} at ${loc.name()}`)
   this.mReturn(spy)
   this.log.add({
     template: `{player} returns {card} from {zone}`,
@@ -1512,7 +1507,7 @@ Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
 
 Tyrants.prototype.aReturnTroop = function(player, loc, owner) {
   const troop = loc.getTroops(owner, loc)[0]
-  util.assert(!!troop, `No troop belonging to ${owner.name} at ${loc.name}`)
+  util.assert(!!troop, `No troop belonging to ${owner.name} at ${loc.name()}`)
   this.log.add({
     template: `{player} returns {card} from {zone}`,
     args: {
@@ -1591,26 +1586,20 @@ Tyrants.prototype.getAssassinateChoices = function(player, opts={}) {
     .filter(loc => opts.loc ? loc === opts.loc : true)
     .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
     .filter(([, troop]) => troop.owner !== player)
-    .filter(([, troop]) => opts.whiteOnly ? troop.owner === undefined : true)
-    .map(([loc, troop]) => `${loc.name}, ${troop.getOwnerName()}`)
+    .filter(([, troop]) => opts.whiteOnly ? !troop.owner : true)
+    .map(([loc, troop]) => `${loc.name()}, ${troop.getOwnerName()}`)
   const choices = util.array.distinct(troops).sort()
   return choices
 }
 
 Tyrants.prototype.getCardById = function(cardId) {
-  if (cardId in res.cards.byId) {
-    return res.cards.byId[cardId]
-  }
-  else if (cardId in this.state.tokenLookup) {
-    return this.state.tokenLookup[cardId]
-  }
-  else {
-    throw new Error(`Unknown card: ${cardId}`)
-  }
+  // TODO: deprecate
+  return this.cards.byId(cardId)
 }
 
 Tyrants.prototype.getCardsByZone = function(player, name) {
-  return this.getZoneByPlayer(player, name).cards()
+  // TODO: deprecate
+  return this.cards.byPlayer(player, name)
 }
 
 Tyrants.prototype.getControlMarkers = function(player) {
@@ -1637,7 +1626,7 @@ Tyrants.prototype.getExpansionList = function() {
 }
 
 Tyrants.prototype.getLocationAll = function() {
-  return Object.values(this.state.zones.map)
+  return this.zones.all().filter(z => z.id.startsWith('map.'))
 }
 
 Tyrants.prototype.getLocationNeighbors = function(loc) {
@@ -1648,7 +1637,9 @@ Tyrants.prototype.getLocationNeighbors = function(loc) {
 }
 
 Tyrants.prototype.getLocationByName = function(name) {
-  return this.state.zones.map[name]
+  // TODO: deprecate
+  const id = `map.${name}`
+  return this.zones.byId(id)
 }
 
 Tyrants.prototype.getLocationsByPresence = function(player) {
@@ -1717,7 +1708,8 @@ Tyrants.prototype.getScoreBreakdown = function(player) {
 }
 
 Tyrants.prototype.getZoneByHome = function(card) {
-  return this.getZoneByCardHome(card)
+  // TODO: deprecate
+  return card.home
 }
 
 Tyrants.prototype.mAdjustCardVisibility = function(card) {
@@ -1728,20 +1720,20 @@ Tyrants.prototype.mAdjustCardVisibility = function(card) {
   const zone = this.getZoneByCard(card)
 
   // Forget everything about a card if it is returned.
-  if (zone.kind === 'deck') {
+  if (zone.kind() === 'deck') {
     card.visibility = []
   }
 
-  else if (zone.kind === 'public' || zone.kind === 'tokens' || zone.kind === 'location') {
+  else if (zone.kind() === 'public' || zone.kind() === 'tokens' || zone.kind() === 'location') {
     card.visibility = this.players.all().map(p => p.name)
   }
 
-  else if (zone.kind === 'private') {
+  else if (zone.kind() === 'private') {
     util.array.pushUnique(card.visibility, zone.owner)
   }
 
   else {
-    throw new Error(`Unknown zone kind ${zone.kind} for zone ${zone.id}`)
+    throw new Error(`Unknown zone kind ${zone.kind()} for zone ${zone.id}`)
   }
 }
 
@@ -1791,7 +1783,7 @@ Tyrants.prototype.mAdjustPresence = function(source, target, card) {
     const toUpdate = []
 
     for (const zone of [source, target]) {
-      if (zone.kind === 'location') {
+      if (zone.kind() === 'location') {
         toUpdate.push(zone)
         this.getLocationNeighbors(zone).forEach(loc => util.array.pushUnique(toUpdate, loc))
       }
@@ -1812,7 +1804,7 @@ Tyrants.prototype.mAssassinate = function(player, loc, owner) {
 }
 
 Tyrants.prototype.mCalculatePresence = function(location) {
-  util.assert(location.kind === 'location')
+  util.assert(location.kind() === 'location')
 
   const relevantTroops = [
     location,
@@ -1833,7 +1825,7 @@ Tyrants.prototype.mCalculatePresence = function(location) {
 }
 
 Tyrants.prototype.mCheckZoneLimits = function(zone) {
-  if (zone.kind === 'location') {
+  if (zone.kind() === 'location') {
     util.assert(zone.getTroops().length <= zone.size, `Too many troops in ${zone.id}`)
 
     const spies = zone.getSpies()
@@ -1873,7 +1865,7 @@ Tyrants.prototype.mMoveByIndices = function(source, sourceIndex, target, targetI
   const card = sourceCards[sourceIndex]
   sourceCards.splice(sourceIndex, 1)
   targetCards.splice(targetIndex, 0, card)
-  card.zone = target.id
+  card.zone = target
   this.mCheckZoneLimits(target)
   this.mAdjustCardVisibility(card)
   this.mAdjustPresence(source, target, card)

@@ -28,14 +28,14 @@ class TyrantsLogManager extends BaseLogManager {
       else if (key.startsWith('zone')) {
         const zone = entry.args[key]
         entry.args[key] = {
-          value: zone.name,
+          value: zone.name(),
           classes: ['zone-name']
         }
       }
       else if (key.startsWith('loc')) {
         const loc = entry.args[key]
         entry.args[key] = {
-          value: loc.name,
+          value: loc.name(),
           classes: ['location-name']
         }
       }
