@@ -22,7 +22,7 @@ class TyrantsCard extends BaseCard {
   }
 
   getOwnerName() {
-    return this.owner === undefined ? 'neutral' : this.owner.name
+    return !this.owner ? 'neutral' : this.owner.name
   }
 }
 

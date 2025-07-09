@@ -673,10 +673,11 @@ describe('Drow Expansion', () => {
         }
       })
 
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Chosen of Lolth')
-      const request3 = t.choose(game, request2, 'Play Card.House Guard')
-      const request4 = t.choose(game, request3, 'Pass')
+      let request = game.run()
+      request = t.choose(game, request, 'Play Card.Chosen of Lolth')
+      request = t.choose(game, request, 'troop.araum-ched, neutral')
+      request = t.choose(game, request, 'Play Card.House Guard')
+      request = t.choose(game, request, 'Pass')
 
       t.testBoard(game, {
         dennis: {

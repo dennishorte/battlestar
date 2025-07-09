@@ -411,7 +411,7 @@ Tyrants.prototype._generateActionChoices = function() {
   choices.push(this._generateBuyActions())
   choices.push(this._generatePowerActions())
   choices.push(this._generatePassAction())
-  return choices.filter(action => action !== undefined)
+  return choices.filter(action => Boolean(action))
 }
 
 Tyrants.prototype._generateCardActions = function() {
@@ -1150,7 +1150,9 @@ Tyrants.prototype.aChooseAndReturn = function(player, opts={}) {
     })
   }
 
-  const selection = this.actions.choose(player, choices, { title: 'Choose a token to return' })
+  const selection = this.actions.choose(player, choices, {
+    title: 'Choose a token to return',
+  })
 
   if (selection.length > 0) {
     const kind = selection[0].title
@@ -1348,7 +1350,9 @@ Tyrants.prototype.aPlaceSpy = function(player, loc) {
 }
 
 Tyrants.prototype.aPlayCard = function(player, card) {
-  util.assert(card.owner === player, 'Card is not owned by player')
+  // There are several cases where a card not owned by the player is played, such as
+  // Ulitharid and undead cascade.
+//  util.assert(card.owner === player, 'Card is not owned by player')
   util.assert(card.zone.id.endsWith('hand'), 'Card is not in player hand')
 
   card.moveTo(this.zones.byPlayer(player, 'played'))
@@ -1606,7 +1610,7 @@ Tyrants.prototype.getControlMarkers = function(player) {
   const markers = this
     .getLocationAll()
     .map(loc => loc.getControlMarker())
-    .filter(marker => marker !== undefined)
+    .filter(marker => Boolean(marker))
 
   if (player) {
     return markers.filter(marker => marker.ownerName === player.name)
@@ -1633,7 +1637,7 @@ Tyrants.prototype.getLocationNeighbors = function(loc) {
   return loc
     .neighborNames
     .map(name => this.getLocationByName(name))
-    .filter(neighbor => neighbor !== undefined)
+    .filter(neighbor => Boolean(neighbor))
 }
 
 Tyrants.prototype.getLocationByName = function(name) {
@@ -1720,12 +1724,12 @@ Tyrants.prototype.mAdjustCardVisibility = function(card) {
   const zone = this.getZoneByCard(card)
 
   // Forget everything about a card if it is returned.
-  if (zone.kind() === 'deck') {
+  if (zone.kind() === 'hidden') {
     card.visibility = []
   }
 
-  else if (zone.kind() === 'public' || zone.kind() === 'tokens' || zone.kind() === 'location') {
-    card.visibility = this.players.all().map(p => p.name)
+  else if (zone.kind() === 'public' || zone.kind() === 'location') {
+    card.visibility = this.players.all()
   }
 
   else if (zone.kind() === 'private') {
@@ -1814,12 +1818,12 @@ Tyrants.prototype.mCalculatePresence = function(location) {
   const playersByTroop = relevantTroops
     .flatMap(loc => loc.getTroops())
     .map(card => this.players.byOwner(card))
-    .filter(player => player !== undefined)
+    .filter(player => Boolean(player))
 
   const playersBySpy = location
     .getSpies()
     .map(card => this.players.byOwner(card))
-    .filter(player => player !== undefined)
+    .filter(player => Boolean(player))
 
   location.presence = util.array.distinct([...playersByTroop, ...playersBySpy])
 }

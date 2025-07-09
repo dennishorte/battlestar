@@ -14,11 +14,11 @@ class TyrantsToken extends BaseCard {
   }
 
   isNeutral() {
-    return this.owner === undefined
+    return !this.owner
   }
 
   isOtherPlayer(player) {
-    return this.owner !== undefined && this.owner !== player
+    return Boolean(this.owner) && this.owner !== player
   }
 }
 

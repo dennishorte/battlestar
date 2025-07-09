@@ -381,7 +381,7 @@ const cardData = [
     ],
     impl: (game, player) => {
       const troop = game.aChooseAndAssassinate(player)
-      if (troop && troop.owner !== undefined) {
+      if (troop && Boolean(troop.owner)) {
         game.aChooseAndDiscard(troop.owner, {
           requireThree: true,
           forced: true,

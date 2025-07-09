@@ -272,7 +272,7 @@ const cardData = [
         const players = loc
           .getTroops()
           .map(troop => game.players.byOwner(troop))
-          .filter(other => other !== undefined)
+          .filter(other => !!other)
           .filter(other => other !== player)
         if (players.length > 0) {
           player.incrementCounter('power', 1)
