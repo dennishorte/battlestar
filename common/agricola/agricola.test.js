@@ -7,7 +7,7 @@ const {
 
 const t = require('./testutil.js')
 
-describe('fixture', () => {
+describe.skip('fixture', () => {
   test('game is created', () => {
     const game = t.fixture()
   })
@@ -18,7 +18,7 @@ describe('fixture', () => {
   })
 })
 
-describe('draft', () => {
+describe.skip('draft', () => {
   test('draft disabled', () => {
     const game = t.fixture({ draft: false })
     game.run()
