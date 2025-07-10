@@ -1,5 +1,4 @@
-const Wrapper = require('./Wrapper.js')
-
+const { Serializer } = require('./Serializer.js')
 
 function _emptyZones() {
   return {
@@ -9,11 +8,15 @@ function _emptyZones() {
   }
 }
 
-class DeckWrapper extends Wrapper {
+class DeckWrapper {
   constructor(deck) {
-    super(deck)
+    this.serializer = new Serializer(this, deck)
     this._modified = false
     this._cardsByZone = undefined
+  }
+
+  toJSON() {
+    return this.serializer.serialize()
   }
 
   async initializeCardsAsync(juicer) {

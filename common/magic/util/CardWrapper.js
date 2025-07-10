@@ -1,4 +1,4 @@
-const Wrapper = require('./Wrapper.js')
+const { Serializer } = require('./Serializer.js')
 const CardFilter = require('./CardFilter.js')
 const cardUtil = require('./cardUtil.js')
 const util = require('../../lib/util.js')
@@ -29,9 +29,11 @@ class GameData {
 }
 
 
-class CardWrapper extends Wrapper {
+class CardWrapper {
   constructor(card) {
-    super(card)
+    this.serializer = new Serializer(this, card)
+    this.serializer.inject()
+
     this.g = new GameData()
 
     // Sadly, these three values are used by the base class of magic.js, game.js. Changing them would
@@ -80,6 +82,10 @@ class CardWrapper extends Wrapper {
         card_faces: [CardWrapper.blankFace()],
       }
     }
+  }
+
+  toJSON() {
+    return this.serializer.serialize()
   }
 
   id() {
