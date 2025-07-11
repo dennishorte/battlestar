@@ -1,4 +1,5 @@
 const CardBase = require(`../CardBase.js`)
+const util = require('../../../lib/util.js')
 
 function Card() {
   this.id = `Myth`  // Card names are unique in Innovation
@@ -17,15 +18,15 @@ function Card() {
   this.dogmaImpl = [
     (game, player) => {
       const hand = game.getCardsByZone(player, 'hand')
-      const cardsByColor = hand.reduce((map, card) => {
-        map[card.color] = (map[card.color] || 0) + 1
-        return map
-      }, {})
+      const cardsByColor = util.array.groupBy(hand, card => card.color)
 
-      const colorWithTwo = Object.keys(cardsByColor).find(color => cardsByColor[color] >= 2)
+      const colorsWithTwo = Object
+        .entries(cardsByColor)
+        .filter(([, cards]) => cards.length >= 2)
+        .map(([color,]) => color)
 
-      if (colorWithTwo) {
-        const tuckable = hand.filter(c => colorWithTwo.includes(c.color))
+      if (colorsWithTwo.length > 0) {
+        const tuckable = hand.filter(c => colorsWithTwo.includes(c.color))
         const tucked = game.aChooseAndTuck(player, tuckable, {
           title: 'Tuck two cards with the same color',
           count: 2,
