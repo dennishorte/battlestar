@@ -1,11 +1,12 @@
 <template>
-  <div @click="handleClick" class="scarrable-content" :class="isEmpty ? 'empty-text' : ''">
+  <div @click="handleClick" class="scarrable-content">
     <EditableContent
       v-if="isEditingValue"
       v-bind="editor"
       :class="{
         'full-width': showFullWidth,
         'multiline': editor.multiline,
+        'empty-text': isEmpty,
       }"
     />
 
