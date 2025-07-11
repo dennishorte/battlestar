@@ -37,7 +37,7 @@ const props = defineProps({
     required: true,
   },
   isEmpty: {
-    type: Boolean,
+    type: [Boolean, Object],
     required: true,
   },
   scarredParts: {
@@ -61,6 +61,7 @@ const props = defineProps({
 
 const showFullWidth = computed(() => unref(props.showFullWidth))
 const showingOriginalText = computed(() => unref(props.showingOriginalText))
+const isEmpty = computed(() => unref(props.isEmpty))
 const scarredParts = computed(() => unref(props.scarredParts))
 const isEditingValue = computed(() => props.editor.isEditing.value)
 </script>
