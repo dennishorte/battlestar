@@ -16,7 +16,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player, { leader }) => {
-      const value = game.aChooseAge(player)
+      const value = game.aChooseAge(leader)
       const cards = game
         .getCardsByZone(player, 'score')
         .filter(c => c.getAge() === value)
