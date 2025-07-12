@@ -12,6 +12,7 @@ const createTestFixture = (kind='public') => {
     id: 'card1',
     name: 'Card A',
     setHome: jest.fn(),
+    setZone: jest.fn(),
     hide: jest.fn(),
     reveal: jest.fn(),
     show: jest.fn(),
@@ -23,6 +24,7 @@ const createTestFixture = (kind='public') => {
     id: 'card2',
     name: 'Card B',
     setHome: jest.fn(),
+    setZone: jest.fn(),
     hide: jest.fn(),
     reveal: jest.fn(),
     show: jest.fn(),
@@ -34,6 +36,7 @@ const createTestFixture = (kind='public') => {
     id: 'card3',
     name: 'Card C',
     setHome: jest.fn(),
+    setZone: jest.fn(),
     hide: jest.fn(),
     reveal: jest.fn(),
     show: jest.fn(),
@@ -61,7 +64,7 @@ describe('BaseZone', () => {
     test('should initialize with correct properties', () => {
       const { zone } = createTestFixture()
 
-      expect(zone._id).toBe('test-zone')
+      expect(zone.id).toBe('test-zone')
       expect(zone._name).toBe('Test Zone')
       expect(zone._kind).toBe('public')
       expect(zone._owner).toBeNull()
@@ -81,7 +84,7 @@ describe('BaseZone', () => {
 
       const zone = new BaseZone(mockGame, 'my-zone', 'My Zone', 'private', mockOwner)
 
-      expect(zone._id).toBe('my-zone')
+      expect(zone.id).toBe('my-zone')
       expect(zone._name).toBe('My Zone')
       expect(zone._kind).toBe('private')
       expect(zone._owner).toBe(mockOwner)

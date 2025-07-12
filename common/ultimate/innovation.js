@@ -2753,7 +2753,7 @@ Innovation.prototype._attemptToCombineWithPreviousEntry = function(msg) {
 }
 
 Innovation.prototype.mRemove = function(card) {
-  return card.moveTo('junk')
+  return card.moveTo(this.zones.byId('junk'))
 }
 
 Innovation.prototype.mResetDogmaInfo = function() {

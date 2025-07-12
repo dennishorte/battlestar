@@ -1,3 +1,5 @@
+const util = require('../../../lib/util.js')
+
 module.exports = {
   name: `Myth`,
   color: `purple`,
