@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const numAchievements = game.getCardsByZone(player, 'achievements').length
+      const numAchievements = game.cards.byPlayer(player, 'achievements').length
       const choices = game
         .getAvailableAchievementsRaw(player)
         .filter(card => card.age === numAchievements + 1)
@@ -26,7 +26,7 @@ module.exports = {
     },
 
     (game, player) => {
-      const playerAchievements = game.getCardsByZone(player, 'achievements').length
+      const playerAchievements = game.cards.byPlayer(player, 'achievements').length
       const achievements = game
         .getAvailableAchievementsRaw(player)
         .filter(card => card.age === playerAchievements)
@@ -43,8 +43,8 @@ module.exports = {
       if (transfer) {
         game.aTransfer(player, lowestAchievement, game.zones.byPlayer(player, 'hand'))
 
-        const yellowCards = game.getCardsByZone(player, 'yellow')
-        const blueCards = game.getCardsByZone(player, 'blue')
+        const yellowCards = game.cards.byPlayer(player, 'yellow')
+        const blueCards = game.cards.byPlayer(player, 'blue')
         const cardsToReturn = [].concat(yellowCards, blueCards)
 
         game.aReturnMany(player, cardsToReturn, { ordered: true })

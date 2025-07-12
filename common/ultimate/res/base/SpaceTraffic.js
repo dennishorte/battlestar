@@ -13,7 +13,7 @@ module.exports = {
       const executeEffect = () => {
         const card = game.aDrawAndTuck(player, game.getEffectAge(self, 11))
         const color = card.color
-        const stack = game.getCardsByZone(player, color)
+        const stack = game.cards.byPlayer(player, color)
 
         if (stack.length === 1) {
           game.log.add({ template: 'no card above tucked card' })
@@ -30,7 +30,7 @@ module.exports = {
         }
 
         // Score all but top 5 cards of that color
-        const cards = game.getCardsByZone(player, color)
+        const cards = game.cards.byPlayer(player, color)
         if (cards.length > 5) {
           const toScore = cards.slice(5)
           game.aScoreMany(player, toScore, { ordered: true })

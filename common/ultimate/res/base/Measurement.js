@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const card = game.actions.chooseCard(player, game.getCardsByZone(player, 'hand'), {
+      const card = game.actions.chooseCard(player, game.cards.byPlayer(player, 'hand'), {
         min: 0,
         max: 1,
       })
@@ -18,7 +18,7 @@ module.exports = {
         game.mReveal(player, card)
         game.aReturn(player, card)
         game.aSplay(player, card.color, 'right')
-        game.aDraw(player, { age: game.getCardsByZone(player, card.color).length })
+        game.aDraw(player, { age: game.cards.byPlayer(player, card.color).length })
       }
       else {
         game.log.addDoNothing(player)

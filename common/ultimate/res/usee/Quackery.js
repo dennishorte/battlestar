@@ -15,7 +15,7 @@ module.exports = {
         'Draw a ' + game.getEffectAge(self, 4),
       ]
 
-      const hand = game.getCardsByZone(player, 'hand').map(c => c.name)
+      const hand = game.cards.byPlayer(player, 'hand').map(c => c.name)
       if (hand.length > 0) {
         choices.push({
           title: 'Score',
@@ -35,7 +35,7 @@ module.exports = {
       }
     },
     (game, player) => {
-      const hand = game.getCardsByZone(player, 'hand')
+      const hand = game.cards.byPlayer(player, 'hand')
 
       if (hand.length < 2) {
         game.log.addNoEffect()

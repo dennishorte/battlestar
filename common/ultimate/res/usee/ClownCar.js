@@ -12,7 +12,7 @@ module.exports = {
     (game, player, { leader }) => {
       let canRepeat = true
       while (canRepeat) {
-        const scoreCards = game.getCardsByZone(leader, 'score')
+        const scoreCards = game.cards.byPlayer(leader, 'score')
         const card = game.actions.chooseCards(leader, scoreCards, { hidden: true })[0]
         if (card) {
           game.aMeld(player, card)

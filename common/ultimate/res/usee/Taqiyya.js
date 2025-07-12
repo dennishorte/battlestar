@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const color = game.aChooseColor(player)[0]
-      const toTransfer = game.getCardsByZone(player, color)
+      const toTransfer = game.cards.byPlayer(player, color)
 
       game.aTransferMany(player, toTransfer, game.zones.byPlayer(player, 'hand'), { ordered: true })
     },
@@ -23,7 +23,7 @@ module.exports = {
         game.aScore(player, card)
 
         const sameColorInHand = game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(c => c.color === card.color)
 
         game.aChooseAndScore(player, sameColorInHand, { min: 0, max: sameColorInHand.length })

@@ -12,7 +12,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const hand = game.getCardsByZone(player, 'hand')
+      const hand = game.cards.byPlayer(player, 'hand')
       const cardsByColor = util.array.groupBy(hand, card => card.color)
 
       const colorsWithTwo = Object

@@ -403,7 +403,7 @@ const cardData = [
       "At end of turn, promote another card played this turn."
     ],
     impl: (game, player, { card }) => {
-      if (game.getCardsByZone(player, 'innerCircle').length >= 4) {
+      if (game.cards.byPlayer(player, 'innerCircle').length >= 4) {
         player.incrementCounter('influence', 3)
       }
       game.aDeferPromotion(player, card)
@@ -446,10 +446,10 @@ const cardData = [
         args: { player }
       })
       const discard = game.zones.byPlayer(player, 'discard')
-      for (const card of game.getCardsByZone(player, 'deck')) {
+      for (const card of game.cards.byPlayer(player, 'deck')) {
         game.mMoveCardTo(card, discard)
       }
-      game.aChooseAndPromote(player, game.getCardsByZone(player, 'discard'))
+      game.aChooseAndPromote(player, game.cards.byPlayer(player, 'discard'))
     }
   },
 ]

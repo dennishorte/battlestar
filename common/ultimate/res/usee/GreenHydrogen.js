@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const greenCards = game
-        .getCardsByZone(player, 'green')
+        .cards.byPlayer(player, 'green')
         .slice(1)
 
       const numScored = game.aScoreMany(player, greenCards).length

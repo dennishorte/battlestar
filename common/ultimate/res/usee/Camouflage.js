@@ -26,7 +26,7 @@ module.exports = {
       }()
 
       const scoreOptions = function() {
-        const secrets = game.getCardsByZone(player, 'safe')
+        const secrets = game.cards.byPlayer(player, 'safe')
         const validCards = []
 
         for (const card of secrets) {
@@ -74,7 +74,7 @@ module.exports = {
     },
     (game, player, { self }) => {
       const specialAchievements = game
-        .getCardsByZone(player, 'achievements')
+        .cards.byPlayer(player, 'achievements')
         .filter(a => a.isSpecialAchievement)
         .length
 

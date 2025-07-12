@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader, self }) => {
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => card.checkHasBiscuit('c'))
       if (choices.length === 0) {
         game.log.addNoEffect()
@@ -21,7 +21,7 @@ module.exports = {
       const target = game.zones.byPlayer(leader, 'score')
       while (true) {
         const choices = game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(card => card.checkHasBiscuit('c'))
         if (choices.length > 0) {
           const transferred = game.aChooseAndTransfer(player, choices, target)

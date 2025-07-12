@@ -17,7 +17,7 @@ module.exports = {
         game.aSplay(player, card.color, 'aslant')
 
         const cardsToScore = game
-          .getCardsByZone(player, card.color)
+          .cards.byPlayer(player, card.color)
           .filter(c => !c.checkHasBiscuit('l'))
 
         game.aScoreMany(player, cardsToScore)

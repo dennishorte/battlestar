@@ -15,7 +15,7 @@ module.exports = {
 
       const toTransfer = game
         .players.all()
-        .flatMap(p => game.getCardsByZone(p, 'score'))
+        .flatMap(p => game.cards.byPlayer(p, 'score'))
         .filter(card => card.getAge() === value)
 
       const transferred = game.aTransferMany(player, toTransfer, game.zones.byId('achievements'))

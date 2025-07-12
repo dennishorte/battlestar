@@ -180,7 +180,7 @@ TestUtil.testBoard = function(game, state) {
 
     for (const key of playerZones) {
       real[player.name][key] = game
-        .getCardsByZone(player, key)
+        .cards.byPlayer(player, key)
         .map(c => c.name().toLowerCase())
         .sort()
     }

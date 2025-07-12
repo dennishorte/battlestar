@@ -11,11 +11,11 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const achievementAges = game
-        .getCardsByZone(player, 'achievements')
+        .cards.byPlayer(player, 'achievements')
         .filter(c => !c.isSpecialAchievement && !c.isDecree)
         .map(c => c.getAge())
       const count = Math.max(...achievementAges)
-      game.aChooseAndReturn(player, game.getCardsByZone(player, 'score'), { count })
+      game.aChooseAndReturn(player, game.cards.byPlayer(player, 'score'), { count })
     }
   ],
 }

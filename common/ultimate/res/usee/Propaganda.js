@@ -17,7 +17,7 @@ module.exports = {
       })[0]
 
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => card.color === chosenColor)
 
       if (choices.length === 0) {
@@ -45,7 +45,7 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
+      game.aChooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
     }
   ],
 }

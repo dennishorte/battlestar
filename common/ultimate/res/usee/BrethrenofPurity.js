@@ -26,7 +26,7 @@ module.exports = {
         if (card) {
           game.state.dogmaInfo.brethrenLastMeldedAgePlusOne = card.getAge() + 1
 
-          const meldedOver = game.getCardsByZone(player, card.color)[1]
+          const meldedOver = game.cards.byPlayer(player, card.color)[1]
           if (meldedOver && meldedOver.checkHasBiscuit('s')) {
             continue
           }

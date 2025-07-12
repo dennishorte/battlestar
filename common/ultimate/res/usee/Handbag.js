@@ -25,13 +25,13 @@ module.exports = {
         game.aTransferMany(player, cards, game.zones.byPlayer(player, 'hand'))
       }
       else if (choice === choices[1]) {
-        const cards = game.getCardsByZone(player, 'score')
+        const cards = game.cards.byPlayer(player, 'score')
         game.aTuckMany(player, cards)
       }
       else if (choice === choices[2]) {
-        const values = game.getCardsByZone(player, 'hand').map(c => c.getAge())
+        const values = game.cards.byPlayer(player, 'hand').map(c => c.getAge())
         const value = game.aChooseAge(player, util.array.distinct(values).sort())
-        const toScore = game.getCardsByZone(player, 'hand').filter(c => c.getAge() === value)
+        const toScore = game.cards.byPlayer(player, 'hand').filter(c => c.getAge() === value)
         game.aScoreMany(player, toScore)
       }
       else {

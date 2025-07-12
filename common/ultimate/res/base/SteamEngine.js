@@ -13,7 +13,7 @@ module.exports = {
       game.aDrawAndTuck(player, game.getEffectAge(self, 4))
       game.aDrawAndTuck(player, game.getEffectAge(self, 4))
 
-      const cards = game.getCardsByZone(player, 'yellow')
+      const cards = game.cards.byPlayer(player, 'yellow')
       const card = cards[cards.length - 1]
       game.aScore(player, card)
 

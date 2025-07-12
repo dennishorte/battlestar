@@ -15,7 +15,7 @@ module.exports = {
       if (card) {
         game.aScore(player, card)
         const choices = game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(c => c.color === card.color)
 
         const scored = game.aChooseAndScore(player, choices)[0]

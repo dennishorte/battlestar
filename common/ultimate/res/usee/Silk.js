@@ -13,7 +13,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cards = game.getCardsByZone(player, 'hand')
+      const cards = game.cards.byPlayer(player, 'hand')
       game.aChooseAndMeld(player, cards)
     },
     (game, player) => {
@@ -22,7 +22,7 @@ module.exports = {
         .map(card => card.color)
 
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => boardColors.includes(card.color))
 
       while (true) {

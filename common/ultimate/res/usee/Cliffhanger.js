@@ -13,7 +13,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const choices = game
-        .getCardsByZone(player, 'safe')
+        .cards.byPlayer(player, 'safe')
         .filter(card => card.age === 4)
 
       if (choices.length === 0) {

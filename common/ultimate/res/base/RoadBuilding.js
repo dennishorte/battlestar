@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       // Meld one or two cards
-      const cards = game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'), { min: 1, max: 2 })
+      const cards = game.aChooseAndMeld(player, game.cards.byPlayer(player, 'hand'), { min: 1, max: 2 })
 
       // If melded two...
       if (cards && cards.length === 2) {

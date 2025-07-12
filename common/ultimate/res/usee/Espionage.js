@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       while (true) {
-        const hand = game.getCardsByZone(player, 'hand')
+        const hand = game.cards.byPlayer(player, 'hand')
 
         const revealed = game.aChooseAndReveal(player, hand, {
           title: 'Choose a card to reveal',
@@ -22,7 +22,7 @@ module.exports = {
           break
         }
 
-        const leaderHand = game.getCardsByZone(leader, 'hand')
+        const leaderHand = game.cards.byPlayer(leader, 'hand')
         game.log.add({
           template: '{player} reveals their hand',
           args: { player: leader }

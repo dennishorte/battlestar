@@ -18,10 +18,10 @@ module.exports = {
 
       if (selection === 'Draw and Score and Return') {
         game.aDrawAndScore(player, game.getEffectAge(self, 8))
-        game.aChooseAndReturn(player, game.getCardsByZone(player, 'score'))
+        game.aChooseAndReturn(player, game.cards.byPlayer(player, 'score'))
       }
       else {
-        const highest = game.utilHighestCards(game.getCardsByZone(player, 'score'))
+        const highest = game.utilHighestCards(game.cards.byPlayer(player, 'score'))
         if (highest.length > 0) {
           game.aDraw(player, { age: highest[0].getAge() + 1 })
         }

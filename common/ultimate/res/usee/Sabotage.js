@@ -12,7 +12,7 @@ module.exports = {
     (game, player, { leader, self }) => {
       game.aDraw(player, { age: game.getEffectAge(self, 6) })
 
-      const cards = game.getCardsByZone(player, 'hand')
+      const cards = game.cards.byPlayer(player, 'hand')
       game.aRevealMany(player, cards)
 
       const choices = cards.map(c => c.id)
@@ -30,7 +30,7 @@ module.exports = {
 
         // Tuck score pile cards of returned color
         const tuckScore = game
-          .getCardsByZone(player, 'score')
+          .cards.byPlayer(player, 'score')
           .filter(c => c.color === color)
         game.aTuckMany(player, tuckScore)
       }

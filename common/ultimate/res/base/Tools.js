@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const cards = game.getCardsByZone(player, 'hand')
+      const cards = game.cards.byPlayer(player, 'hand')
       if (cards.length >= 3) {
         const doIt = game.actions.chooseYesNo(player, 'Return three cards to draw and meld a {3}?')
         if (doIt) {
@@ -31,7 +31,7 @@ module.exports = {
 
     (game, player, { self }) => {
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => card.getAge() === 3)
       const returned = game.aChooseAndReturn(player, choices, { min: 0, max: 1 })
       if (returned && returned.length > 0) {

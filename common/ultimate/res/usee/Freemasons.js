@@ -13,7 +13,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const tucked = game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'), {
+      const tucked = game.aChooseAndTuck(player, game.cards.byPlayer(player, 'hand'), {
         title: 'Choose up to one card of each color',
         min: 0,
         max: 5,

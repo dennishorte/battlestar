@@ -14,7 +14,7 @@ module.exports = {
       const meldedBiscuits = game.utilEmptyBiscuits()
 
       while (true) {
-        const hand = game.getCardsByZone(player, 'hand')
+        const hand = game.cards.byPlayer(player, 'hand')
         const choices = hand.filter(c => ![...c.biscuits].some(b => b in meldedBiscuits && meldedBiscuits[b] > 0))
         const melded = game.aChooseAndMeld(player, choices, { count: 1 })
 

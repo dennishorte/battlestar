@@ -16,7 +16,7 @@ module.exports = {
     (game, player, { self }) => {
       const cards = game.aChooseAndTuck(
         player,
-        game.getCardsByZone(player, 'hand'),
+        game.cards.byPlayer(player, 'hand'),
         { min: 0, max: 3},
       )
       if (cards) {

@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       // Reveal opponent's hand
-      const hand = game.getCardsByZone(player, 'hand')
+      const hand = game.cards.byPlayer(player, 'hand')
       game.aRevealMany(player, hand)
       const toMeld = game.actions.chooseCard(leader, hand, {
         title: 'Choose a card for your opponent to meld',
@@ -22,7 +22,7 @@ module.exports = {
       }
 
       // Reveal opponent's score pile
-      const score = game.getCardsByZone(player, 'score')
+      const score = game.cards.byPlayer(player, 'score')
       game.aRevealMany(player, score)
 
       const choices = [...score, ...hand]

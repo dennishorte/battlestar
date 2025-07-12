@@ -18,7 +18,7 @@ module.exports = {
         game.aSafeguard(player, availableAchievement)
 
         const toReturn = game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(c => c.getAge() === handSize)
 
         game.aReturnMany(player, toReturn)

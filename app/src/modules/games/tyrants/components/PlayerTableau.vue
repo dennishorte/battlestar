@@ -64,13 +64,13 @@ export default {
 
   computed: {
     deckCount() {
-      return this.game.getCardsByZone(this.player, 'deck').length
+      return this.game.cards.byPlayer(this.player, 'deck').length
     },
 
     hand() {
       return this
         .game
-        .getCardsByZone(this.player, 'hand')
+        .cards.byPlayer(this.player, 'hand')
         .sort((l, r) => l.name.localeCompare(r.name))
     },
 
@@ -81,7 +81,7 @@ export default {
     playedCards() {
       return this
         .game
-        .getCardsByZone(this.player, 'played')
+        .cards.byPlayer(this.player, 'played')
         .sort((l, r) => l.name.localeCompare(r.name))
     },
 
@@ -90,20 +90,20 @@ export default {
     },
 
     spyCount() {
-      return this.game.getCardsByZone(this.player, 'spies').length
+      return this.game.cards.byPlayer(this.player, 'spies').length
     },
 
     totalCardCount() {
       return (
-        + this.game.getCardsByZone(this.player, 'deck').length
-        + this.game.getCardsByZone(this.player, 'hand').length
-        + this.game.getCardsByZone(this.player, 'played').length
-        + this.game.getCardsByZone(this.player, 'discard').length
+        + this.game.cards.byPlayer(this.player, 'deck').length
+        + this.game.cards.byPlayer(this.player, 'hand').length
+        + this.game.cards.byPlayer(this.player, 'played').length
+        + this.game.cards.byPlayer(this.player, 'discard').length
       )
     },
 
     troopCount() {
-      return this.game.getCardsByZone(this.player, 'troops').length
+      return this.game.cards.byPlayer(this.player, 'troops').length
     },
   },
 

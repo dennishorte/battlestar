@@ -20,11 +20,11 @@ module.exports = {
     },
     (game, player) => {
       const yellows = game
-        .getCardsByZone(player, 'yellow')
+        .cards.byPlayer(player, 'yellow')
         .slice(5)
 
       const purples = game
-        .getCardsByZone(player, 'purple')
+        .cards.byPlayer(player, 'purple')
         .slice(5)
 
       const toScore = [...yellows, ...purples]

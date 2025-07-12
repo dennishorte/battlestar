@@ -25,7 +25,7 @@ const cardData = [
         {
           title: 'Draw a card for each spy you have on the board',
           impl: (game, player) => {
-            const count = 5 - game.getCardsByZone(player, 'spies').length
+            const count = 5 - game.cards.byPlayer(player, 'spies').length
             for (let i = 0; i < count; i++) {
               game.aDraw(player)
             }
@@ -87,7 +87,7 @@ const cardData = [
     ],
     impl: (game, player) => {
       game.aChooseAndAssassinate(player)
-      const troops = game.getCardsByZone(player, 'trophyHall').length
+      const troops = game.cards.byPlayer(player, 'trophyHall').length
       const power = Math.floor(troops / 3)
       player.incrementCounter('power', power)
     }
@@ -259,7 +259,7 @@ const cardData = [
         })
       }
 
-      const choices = game.getCardsByZone(player, 'innerCircle')
+      const choices = game.cards.byPlayer(player, 'innerCircle')
       const toPlay = game.actions.chooseCard(player, choices)
       if (toPlay) {
         game.log.add({

@@ -15,7 +15,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const hasAge3 = game
-        .getCardsByZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .some(card => card.getAge() === 3)
 
       if (hasAge3) {
@@ -24,7 +24,7 @@ module.exports = {
     },
     (game, player, { self }) => {
       const hasAge7 = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .some(card => card.getAge() === 7)
 
       if (hasAge7) {
@@ -35,8 +35,8 @@ module.exports = {
       }
     },
     (game, player) => {
-      game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'), { count: 2 })
-      game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'), { count: 4 })
+      game.aChooseAndMeld(player, game.cards.byPlayer(player, 'hand'), { count: 2 })
+      game.aChooseAndScore(player, game.cards.byPlayer(player, 'hand'), { count: 4 })
       game.aSplay(player, 'blue', 'up')
     }
   ],

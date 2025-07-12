@@ -13,7 +13,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const handCards = game.getCardsByZone(player, 'hand')
+      const handCards = game.cards.byPlayer(player, 'hand')
       const firstCard = game.aChooseAndTuck(player, handCards)[0]
 
       if (firstCard) {
@@ -25,7 +25,7 @@ module.exports = {
           title: 'Choose a color to score',
         })[0]
 
-        const cardsToScore = game.getCardsByZone(player, colorToScore)
+        const cardsToScore = game.cards.byPlayer(player, colorToScore)
         game.aScoreMany(player, cardsToScore)
 
         const colorToSplay = colorToScore === firstCard.color ? secondCard.color : firstCard.color

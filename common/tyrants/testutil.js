@@ -166,7 +166,7 @@ TestUtil.gameFixture = function(options) {
         }
         if ('troops' in playerSetup) {
           // Need to keep an extra troop for initial location selection.
-          const troops = game.getCardsByZone(player, 'troops').slice(playerSetup.troops + 1)
+          const troops = game.cards.byPlayer(player, 'troops').slice(playerSetup.troops + 1)
           const exile = game.zones.byId('devoured')
           for (const troop of troops) {
             game.mMoveCardTo(troop, exile)
@@ -286,7 +286,7 @@ TestUtil.setTroops = function(game, locId, playerNames) {
       }
       else {
         const player = game.players.byName(playerName)
-        const tokens = game.getCardsByZone(player, 'troops')
+        const tokens = game.cards.byPlayer(player, 'troops')
         game.mMoveCardTo(tokens[0], zone)
       }
     }
@@ -316,7 +316,7 @@ TestUtil.setSpies = function(game, locId, playerNames) {
 
     for (const playerName of util.array.distinct(playerNames)) {
       const player = game.players.byName(playerName)
-      const tokens = game.getCardsByZone(player, 'spies')
+      const tokens = game.cards.byPlayer(player, 'spies')
       game.mMoveCardTo(tokens[0], zone)
     }
   })
@@ -421,7 +421,7 @@ TestUtil.testTableau = function(game, player, testState) {
   const expected = {}
 
   for (const zoneName of tableauZones) {
-    actual[zoneName] = game.getCardsByZone(player, zoneName).map(c => c.name).sort()
+    actual[zoneName] = game.cards.byPlayer(player, zoneName).map(c => c.name).sort()
 
     if (!testState[zoneName] || testState[zoneName] === 'default') {
       if (zoneName === 'hand') {

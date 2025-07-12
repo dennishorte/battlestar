@@ -16,7 +16,7 @@ module.exports = {
     const topCardMaxAge = Math.max(...topCardAges)
 
     const numStandardAchievements = game
-      .getCardsByZone(player, 'achievements')
+      .cards.byPlayer(player, 'achievements')
       .filter(card => card.checkIsStandardAchievement())
       .length
 

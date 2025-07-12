@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const age = game
-        .getCardsByZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .reduce((l, r) => Math.max(l, r.getAge()), 0)
       game.aDrawAndScore(player, age)
     }

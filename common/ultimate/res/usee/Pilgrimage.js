@@ -14,7 +14,7 @@ module.exports = {
       let value = 1
 
       while (true) {
-        const choices = game.getCardsByZone(player, 'hand').filter(c => c.age === value)
+        const choices = game.cards.byPlayer(player, 'hand').filter(c => c.age === value)
         const card = game.aChooseAndReturn(player, choices, { min: 0, max: 1 })[0]
 
         if (!card) {

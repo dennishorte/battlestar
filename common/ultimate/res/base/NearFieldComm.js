@@ -18,14 +18,14 @@ module.exports = {
       })
 
       const cardsToTransfer = game
-        .getCardsByZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .filter(card => card.getAge() === value)
 
       game.aTransferMany(player, cardsToTransfer, game.zones.byPlayer(leader, 'score'))
     },
 
     (game, player) => {
-      const scoreCards = game.getCardsByZone(player, 'score')
+      const scoreCards = game.cards.byPlayer(player, 'score')
       if (scoreCards.length === 0) {
         game.log.addNoEffect()
         return

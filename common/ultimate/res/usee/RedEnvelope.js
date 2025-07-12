@@ -14,8 +14,8 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const handAndScore = [
-        ...game.getCardsByZone(player, 'hand'),
-        ...game.getCardsByZone(player, 'score'),
+        ...game.cards.byPlayer(player, 'hand'),
+        ...game.cards.byPlayer(player, 'score'),
       ]
       const cardCounts = util.array.countBy(handAndScore, (card) => card.getAge())
 
@@ -35,7 +35,7 @@ module.exports = {
       game.aTransferMany(player, transferCards, game.zones.byPlayer(rightPlayer, 'score'))
     },
     (game, player) => {
-      const choices = game.getCardsByZone(player, 'hand')
+      const choices = game.cards.byPlayer(player, 'hand')
 
       if (choices.length < 2) {
         game.log.add({ template: 'not enough cards in hand' })

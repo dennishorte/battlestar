@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const secrets = game.getCardsByZone(player, 'safe')
+      const secrets = game.cards.byPlayer(player, 'safe')
       const transferred = game.aChooseAndTransfer(player, secrets, game.zones.byId('achievements'))[0]
 
       if (transferred) {

@@ -33,7 +33,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const leaderHandCards = game.getCardsByZone(leader, 'hand')
+      const leaderHandCards = game.cards.byPlayer(leader, 'hand')
 
       game.log.add({
         template: '{player} reveals their hand to show how many of which color they have',
@@ -51,7 +51,7 @@ module.exports = {
         game.log.add({ template: 'remaining to discard are ' + colorString })
 
         const validCards = game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(c => colorsToDiscard.indexOf(c.color) >= 0)
 
         const scored = game.aChooseAndScore(player, validCards)[0]

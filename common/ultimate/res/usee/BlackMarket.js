@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const safeguarded = game.aChooseAndSafeguard(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
+      const safeguarded = game.aChooseAndSafeguard(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1 })
 
       if (safeguarded && safeguarded.length > 0) {
         const availableAchievements = game.getAvailableStandardAchievements(player)

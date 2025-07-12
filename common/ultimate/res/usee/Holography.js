@@ -14,14 +14,14 @@ module.exports = {
         title: 'Choose a color to score and splay'
       })[0]
 
-      const cards = game.getCardsByZone(player, color)
+      const cards = game.cards.byPlayer(player, color)
       const toScore = cards.slice(2)
       const scored = game.aScoreMany(player, toScore)
 
       const splayed = game.aSplay(player, color, 'aslant')
 
       if (scored.length > 0 && scored.length === toScore.length && splayed) {
-        const lowestScoreCards = game.utilLowestCards(game.getCardsByZone(player, 'score'))
+        const lowestScoreCards = game.utilLowestCards(game.cards.byPlayer(player, 'score'))
 
         if (!lowestScoreCards) {
           game.log.addDoNothing()
@@ -31,7 +31,7 @@ module.exports = {
         const lowestScoreCardsValue = lowestScoreCards[0].getAge()
 
         const matchingAchievements = game
-          .getCardsByZone(player, 'achievements')
+          .cards.byPlayer(player, 'achievements')
           .filter(card => card.checkIsStandardAchievement())
           .filter(card => card.getAge() < lowestScoreCardsValue)
 

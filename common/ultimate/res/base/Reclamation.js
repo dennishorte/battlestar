@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const doEffect = (color) => {
-        const cards = game.getCardsByZone(player, color)
+        const cards = game.cards.byPlayer(player, color)
 
         // Get the bottom three cards
         const bottomThree = cards.slice(Math.max(0, cards.length - 3))

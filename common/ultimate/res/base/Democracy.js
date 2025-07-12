@@ -14,7 +14,7 @@ module.exports = {
         game.state.dogmaInfo.democracyMaxReturned = 0
         game.state.dogmaInfo.democracyLastPlayer = ''
       }
-      const hand = game.getCardsByZone(player, 'hand')
+      const hand = game.cards.byPlayer(player, 'hand')
       const cards = game.aChooseAndReturn(player, hand, { min: 0, max: hand.length })
 
       if (

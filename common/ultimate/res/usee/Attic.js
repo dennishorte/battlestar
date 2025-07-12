@@ -14,7 +14,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const choices = game.getCardsByZone(player, 'hand')
+      const choices = game.cards.byPlayer(player, 'hand')
       const card = game.actions.chooseCard(player, choices, {
         title: 'Choose a card to score or safeguard',
         min: 0,
@@ -33,12 +33,12 @@ module.exports = {
       }
     },
     (game, player) => {
-      const choices = game.getCardsByZone(player, 'score')
+      const choices = game.cards.byPlayer(player, 'score')
       game.aChooseAndReturn(player, choices)
     },
     (game, player) => {
       const values = game
-        .getCardsByZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .map(c => c.getAge())
       const choices = util.array.distinct(values).sort()
       const value = game.aChooseAge(player, choices) || 0

@@ -15,7 +15,7 @@ module.exports = {
 
       if (returned) {
         if (card.color === 'yellow' || card.color === 'purple') {
-          const handAges = game.getCardsByZone(player, 'hand').map(c => c.getAge())
+          const handAges = game.cards.byPlayer(player, 'hand').map(c => c.getAge())
           const maxAge = Math.max(...handAges)
           const achievement = game.getAvailableAchievementsByAge(player, maxAge)[0]
 
@@ -23,7 +23,7 @@ module.exports = {
             game.aSafeguard(player, achievement)
           }
 
-          game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
+          game.aReturnMany(player, game.cards.byPlayer(player, 'hand'))
         }
         else {
           game.aDraw(player, { age: game.getEffectAge(self, 1) })

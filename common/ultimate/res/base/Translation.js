@@ -11,14 +11,14 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cards = game.getCardsByZone(player, 'score')
+      const cards = game.cards.byPlayer(player, 'score')
       if (cards.length === 0) {
         game.log.addNoEffect()
       }
       else {
         const doIt = game.actions.chooseYesNo(player, 'Meld all cards in your score pile?')
         if (doIt) {
-          game.aMeldMany(player, game.getCardsByZone(player, 'score'))
+          game.aMeldMany(player, game.cards.byPlayer(player, 'score'))
         }
         else {
           game.log.addDoNothing(player)

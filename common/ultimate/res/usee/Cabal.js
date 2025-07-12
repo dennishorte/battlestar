@@ -12,11 +12,11 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader, self }) => {
       const leaderSecretAges = game
-        .getCardsByZone(leader, 'safe')
+        .cards.byPlayer(leader, 'safe')
         .map(card => card.getAge())
 
       const handCards = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => leaderSecretAges.includes(card.getAge()))
 
       game.aTransferMany(player, handCards, game.zones.byPlayer(leader, 'score'))

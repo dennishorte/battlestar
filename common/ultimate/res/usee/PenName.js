@@ -28,7 +28,7 @@ module.exports = {
         })
       }
 
-      const handCards = game.getCardsByZone(player, 'hand')
+      const handCards = game.cards.byPlayer(player, 'hand')
 
       if (handCards.length > 0) {
         choices.push({

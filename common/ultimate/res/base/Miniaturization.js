@@ -14,12 +14,12 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const cards = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), { min: 1, max: 1 })
+      const cards = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 1, max: 1 })
       if (cards && cards.length > 0) {
         const card = cards[0]
         if (card.getAge() === game.getEffectAge(self, 10)) {
           const allAges = game
-            .getCardsByZone(player, 'score')
+            .cards.byPlayer(player, 'score')
             .map(card => card.getAge())
           const distinctAges = util.array.distinct(allAges)
           for (let i = 0; i < distinctAges.length; i++) {

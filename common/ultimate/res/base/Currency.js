@@ -14,7 +14,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const hand = game.getCardsByZone(player, 'hand')
+      const hand = game.cards.byPlayer(player, 'hand')
       const cards = game.aChooseAndReturn(player, hand, { min: 0, max: hand.length })
 
       const toScore = util.array.distinct(cards.map(card => card.getAge())).length

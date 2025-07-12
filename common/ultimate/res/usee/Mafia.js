@@ -12,7 +12,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const opponentSecrets = game.getCardsByZone(player, 'safe')
+      const opponentSecrets = game.cards.byPlayer(player, 'safe')
       const lowestSecret = game.utilLowestCards(opponentSecrets)[0]
 
       if (!lowestSecret) {
@@ -26,7 +26,7 @@ module.exports = {
     (game, player) => {
       const players = game
         .players.all(player)
-        .filter(p => game.getCardsByZone(p, 'score').length > 0)
+        .filter(p => game.cards.byPlayer(p, 'score').length > 0)
         .map(p => p.name)
 
       const targetName = game.actions.choose(player, players, {
@@ -36,7 +36,7 @@ module.exports = {
       if (targetName) {
         const target = game.players.byName(targetName)
 
-        const card = game.actions.chooseCards(player, game.getCardsByZone(target, 'score'), {
+        const card = game.actions.chooseCards(player, game.cards.byPlayer(target, 'score'), {
           title: 'Choose a card to tuck',
           hidden: targetName !== player.name
         })[0]

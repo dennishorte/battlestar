@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const scoreCards = game.getCardsByZone(player, 'score')
+      const scoreCards = game.cards.byPlayer(player, 'score')
       if (scoreCards.some(card => card.age === game.getEffectAge(self, 2))) {
         game.aDraw(player, { age: game.getEffectAge(self, 6) })
       }
@@ -20,7 +20,7 @@ module.exports = {
       }
     },
     (game, player, { self }) => {
-      const scoreCards = game.getCardsByZone(player, 'score')
+      const scoreCards = game.cards.byPlayer(player, 'score')
       if (scoreCards.some(card => card.age === game.getEffectAge(self, 1))) {
         game.aDraw(player, { age: game.getEffectAge(self, 7) })
       }

@@ -11,13 +11,13 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader, self }) => {
       const target = game.zones.byPlayer(leader, 'hand')
-      const cards = game.getCardsByZone(player, 'hand')
+      const cards = game.cards.byPlayer(player, 'hand')
 
       const toTransfer = game.aChooseHighest(player, cards, 3)
       const transferred = game.aTransferMany(player, toTransfer, target)
 
       const transferredCondition = transferred.length > 0
-      const emptyHandCondition = game.getCardsByZone(player, 'hand').length === 0
+      const emptyHandCondition = game.cards.byPlayer(player, 'hand').length === 0
       if (transferredCondition && emptyHandCondition) {
         game.aDraw(player, { age: game.getEffectAge(self, 7) })
       }

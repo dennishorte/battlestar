@@ -12,7 +12,7 @@ module.exports = {
     (game, player, { self }) => {
       const card = game.aDrawAndMeld(player, game.getEffectAge(self, 11))
       if (card) {
-        const cards = game.getCardsByZone(player, card.color)
+        const cards = game.cards.byPlayer(player, card.color)
         const cardIndex = cards.indexOf(card)
         if (cardIndex === -1) {
           game.log.add({

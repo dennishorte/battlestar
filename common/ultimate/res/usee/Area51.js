@@ -34,7 +34,7 @@ module.exports = {
       }
     },
     (game, player) => {
-      const secrets = game.getCardsByZone(player, 'safe')
+      const secrets = game.cards.byPlayer(player, 'safe')
       const secret = game.actions.chooseCards(player, secrets, {
         title: 'Choose a secret to reveal and execute',
         hidden: true,

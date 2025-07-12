@@ -13,7 +13,7 @@ module.exports = {
     (game, player) => {
       const cards = game.aChooseAndReturn(
         player,
-        game.getCardsByZone(player, 'hand'),
+        game.cards.byPlayer(player, 'hand'),
         { min: 0, max: 3 }
       )
 

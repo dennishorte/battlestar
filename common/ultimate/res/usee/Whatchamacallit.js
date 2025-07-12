@@ -15,7 +15,7 @@ module.exports = {
         .map(c => c.age)
 
       const scoreCardValues = game
-        .getCardsByZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .map(c => c.age)
 
       for (const age of game.utilAges()) {

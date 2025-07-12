@@ -13,7 +13,7 @@ module.exports = {
     (game, player, { leader, self }) => {
       const cards = game.aChooseAndTransfer(
         player,
-        game.getCardsByZone(player, 'hand'),
+        game.cards.byPlayer(player, 'hand'),
         game.zones.byPlayer(leader, 'score')
       )
       if (cards && cards.length > 0) {

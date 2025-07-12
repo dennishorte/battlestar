@@ -21,7 +21,7 @@ module.exports = {
     },
     (game, player) => {
       const age = game.aChooseAge(player)
-      const cardsOfAge = game.getCardsByZone(player, 'hand').filter(c => c.getAge() === age)
+      const cardsOfAge = game.cards.byPlayer(player, 'hand').filter(c => c.getAge() === age)
       game.aScoreMany(player, cardsOfAge)
 
       const topPurple = game.getTopCard(player, 'purple')

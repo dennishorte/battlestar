@@ -12,7 +12,7 @@ module.exports = {
     (game, player, { leader }) => {
       const value = game.aChooseAge(leader)
       const cards = game
-        .getCardsByZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .filter(c => c.getAge() === value)
 
       const transferred = game.aTransferMany(player, cards, game.zones.byPlayer(leader, 'hand'))

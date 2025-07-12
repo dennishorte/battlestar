@@ -19,7 +19,7 @@ module.exports = {
 
       // Have player choose two colors
       const handColors = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .map(c => c.color)
       const uniqueColors = util.array.distinct(handColors).sort()
       const chosenColors = game.actions.choose(player, uniqueColors, { count: 2 })

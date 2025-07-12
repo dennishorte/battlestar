@@ -20,7 +20,7 @@ module.exports = {
         game.aDrawAndJunk(player, game.getEffectAge(self, 7))
       }
       else if (choice === 'Exchange') {
-        const scoreCards = game.getCardsByZone(player, 'score')
+        const scoreCards = game.cards.byPlayer(player, 'score')
         const valuedJunkCards = game
           .zones.byId('junk')
           .cards()

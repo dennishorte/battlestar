@@ -19,7 +19,7 @@ module.exports = {
 
       if (returned) {
         const scoreCards = game
-          .getCardsByZone(player, 'score')
+          .cards.byPlayer(player, 'score')
           .filter(card => card.age === returned.age)
 
         const scored = game.aReturnMany(player, scoreCards)

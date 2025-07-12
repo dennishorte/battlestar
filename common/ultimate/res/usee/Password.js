@@ -13,7 +13,7 @@ module.exports = {
       const drawnCard = game.aDrawAndReveal(player, game.getEffectAge(self, 2))
 
       const otherHandCards = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(c => c.name !== drawnCard.name)
       const sameColorCards = otherHandCards.filter(c => c.color === drawnCard.color)
 

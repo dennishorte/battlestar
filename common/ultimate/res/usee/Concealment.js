@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.aTuckMany(player, game.getCardsByZone(player, 'safe'))
+      game.aTuckMany(player, game.cards.byPlayer(player, 'safe'))
     },
     (game, player) => {
       const bottomPurpleCard = game

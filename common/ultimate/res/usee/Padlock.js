@@ -13,7 +13,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const secrets = game.getCardsByZone(player, 'safe')
+      const secrets = game.cards.byPlayer(player, 'safe')
 
       if (secrets.length === 0) {
         game.log.add({ template: 'no secrets to transfer' })
@@ -28,7 +28,7 @@ module.exports = {
     },
     (game, player) => {
       if (!game.state.dogmaInfo.padlockCardTransferred) {
-        game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'), {
+        game.aChooseAndScore(player, game.cards.byPlayer(player, 'hand'), {
           title: 'Choose up the three cards of different values',
           min: 0,
           max: 3,

@@ -449,7 +449,7 @@ Innovation.prototype.aAchieveAction = function(player, arg, opts={}) {
     const hiddenName = arg.substr(6)
     const { expansion, age } = this._parseHiddenCardName(hiddenName)
     const card = this
-      .getCardsByZone(player, 'safe')
+      .cards.byPlayer(player, 'safe')
       .find(c => c.expansion === expansion && c.getAge() === age)
     this.aClaimAchievement(player, { card })
   }
@@ -680,7 +680,7 @@ Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
   // Do all visible echo effects in this color.
   if (isTopCard) {
     const cards = this
-      .getCardsByZone(player, card.color)
+      .cards.byPlayer(player, card.color)
       .filter(other => other.id !== card.id)
       .reverse()
     for (const other of cards) {
@@ -1561,11 +1561,11 @@ Innovation.prototype._maybeDigArtifact = function(player, card) {
   }
 
   // Can only have one artifact on display at a time.
-  if (this.getCardsByZone(player, 'artifact').length > 0) {
+  if (this.cards.byPlayer(player, 'artifact').length > 0) {
     return
   }
 
-  const next = this.getCardsByZone(player, card.color)[1]
+  const next = this.cards.byPlayer(player, card.color)[1]
 
   // No card underneath, so no artifact dig possible.
   if (!next) {
@@ -1590,7 +1590,7 @@ Innovation.prototype._maybeDrawCity = function(player) {
     return
   }
 
-  if (this.getCardsByZone(player, 'hand').some(card => card.checkIsCity())) {
+  if (this.cards.byPlayer(player, 'hand').some(card => card.checkIsCity())) {
     return
   }
 
@@ -1607,7 +1607,7 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
     return
   }
 
-  const isFirstCard = this.getCardsByZone(player, card.color).length === 0
+  const isFirstCard = this.cards.byPlayer(player, card.color).length === 0
 
   this.mMeld(player, card, opts)
   this.log.indent()
@@ -1665,7 +1665,7 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
 
     // Promote a foreshadowed card
     const choices = this
-      .getCardsByZone(player, 'forecast')
+      .cards.byPlayer(player, 'forecast')
       .filter(other => other.getAge() <= card.getAge())
 
     if (choices.length > 0) {
@@ -2012,7 +2012,7 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
   // Flags
   this
     .utilColors()
-    .flatMap(color => this.getCardsByZone(player, color))
+    .flatMap(color => this.cards.byPlayer(player, color))
     .map(card => {
       const splay = this.getSplayByCard(card)
       const biscuits = card.getBiscuits(splay)
@@ -2039,7 +2039,7 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
   // Fountains
   this
     .utilColors()
-    .flatMap(color => this.getCardsByZone(player, color))
+    .flatMap(color => this.cards.byPlayer(player, color))
     .map(card => {
       const splay = this.getSplayByCard(card)
       const biscuits = card.getBiscuits(splay)
@@ -2122,7 +2122,7 @@ Innovation.prototype.getBonuses = function(player) {
 }
 
 Innovation.prototype.getAgesByZone = function(player, zoneName) {
-  const ages = this.getCardsByZone(player, zoneName).map(c => c.getAge())
+  const ages = this.cards.byPlayer(player, zoneName).map(c => c.getAge())
   return util.array.distinct(ages).sort()
 }
 
@@ -2136,13 +2136,9 @@ Innovation.prototype.getAvailableSpecialAchievements = function() {
 Innovation.prototype.getBottomCards = function(player) {
   return this
     .utilColors()
-    .map(color => this.getCardsByZone(player, color))
+    .map(color => this.cards.byPlayer(player, color))
     .map(cards => cards[cards.length - 1])
     .filter(card => card !== undefined)
-}
-
-Innovation.prototype.getCardsByZone = function(player, zoneName) {
-  return this.zones.byPlayer(player, zoneName).cards()
 }
 
 Innovation.prototype.getEffectAge = function(card, age) {
@@ -2263,7 +2259,7 @@ Innovation.prototype.getScoreDetails = function(player) {
     total: 0
   }
 
-  details.score = this.getCardsByZone(player, 'score').map(card => card.getAge()).sort()
+  details.score = this.cards.byPlayer(player, 'score').map(card => card.getAge()).sort()
   details.bonuses = this.getBonuses(player)
   details.karma = this
     .getInfoByKarmaTrigger(player, 'calculate-score')
@@ -2285,7 +2281,7 @@ Innovation.prototype.getSplayByCard = function(card) {
 
 Innovation.prototype.getBottomCard = function(player, color) {
   return this
-    .getCardsByZone(player, color)
+    .cards.byPlayer(player, color)
     .slice(-1)[0]
 }
 
@@ -2297,7 +2293,7 @@ Innovation.prototype.getSplayedZones = function(player) {
 }
 
 Innovation.prototype.getTopCard = function(player, color) {
-  return this.getCardsByZone(player, color)[0]
+  return this.cards.byPlayer(player, color)[0]
 }
 
 Innovation.prototype.getTopCards = function(player) {
@@ -2423,7 +2419,7 @@ Innovation.prototype.getVisibleEffectsByColor = function(player, color, kind) {
 
   else {
     return this
-      .getCardsByZone(player, color)
+      .cards.byPlayer(player, color)
       .reverse()
       .map(card => this.getVisibleEffects(card, kind))
       .filter(effect => effect !== undefined)
@@ -2442,7 +2438,7 @@ Innovation.prototype.getColorZonesByPlayer = function(player) {
 }
 
 Innovation.prototype.getSafeOpenings = function(player) {
-  return Math.max(0, this.getSafeLimit(player) - this.getCardsByZone(player, 'safe').length)
+  return Math.max(0, this.getSafeLimit(player) - this.cards.byPlayer(player, 'safe').length)
 }
 
 Innovation.prototype.getSafeLimit = function(player) {
@@ -3146,7 +3142,7 @@ Innovation.prototype.getEligibleAchievements = function(player, opts={}) {
   })
 
   const secrets = this
-    .getCardsByZone(player, 'safe')
+    .cards.byPlayer(player, 'safe')
     .filter(card => this.checkAchievementEligibility(player, card))
     .map(card => `safe: ${card.getHiddenName()}`)
     .sort()
@@ -3286,7 +3282,7 @@ Innovation.prototype._generateActionChoicesMeld = function() {
     .map(c => c.id)
 
   this
-    .getCardsByZone(player, 'artifact')
+    .cards.byPlayer(player, 'artifact')
     .forEach(card => cards.push(card.id))
 
   return {

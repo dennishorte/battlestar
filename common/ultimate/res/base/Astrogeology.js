@@ -20,7 +20,7 @@ module.exports = {
         const splayed = Boolean(game.aSplay(player, color, 'aslant'))
 
         if (splayed) {
-          const cards = game.getCardsByZone(player, color)
+          const cards = game.cards.byPlayer(player, color)
           if (cards.length > 4) {
             const toReturn = cards.slice(4)
             game.aTransferMany(player, toReturn, game.zones.byPlayer(player, 'hand'), { ordered: true })

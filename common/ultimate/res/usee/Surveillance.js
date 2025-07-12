@@ -13,10 +13,10 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader, self }) => {
-      const leaderHand = game.getCardsByZone(leader, 'hand')
+      const leaderHand = game.cards.byPlayer(leader, 'hand')
       const leaderColors = [...new Set(leaderHand.map(card => card.color))]
 
-      const playerHand = game.getCardsByZone(player, 'hand')
+      const playerHand = game.cards.byPlayer(player, 'hand')
       const playerColors = [...new Set(playerHand.map(card => card.color))]
 
       if (playerHand.length === 0) {

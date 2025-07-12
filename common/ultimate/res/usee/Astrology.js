@@ -13,11 +13,11 @@ module.exports = {
     (game, player) => {
       const cardsPerColor = game
         .utilColors()
-        .map(color => game.getCardsByZone(player, color).length)
+        .map(color => game.cards.byPlayer(player, color).length)
       const mostCount = Math.max(...cardsPerColor)
       const choices = game
         .utilColors()
-        .filter(color => game.getCardsByZone(player, color).length === mostCount)
+        .filter(color => game.cards.byPlayer(player, color).length === mostCount)
 
       game.aChooseAndSplay(player, choices, 'left', { min: 0, max: 1 })
     },

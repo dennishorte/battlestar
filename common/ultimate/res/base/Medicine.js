@@ -11,8 +11,8 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const highest = game.utilHighestCards(game.getCardsByZone(player, 'score'))
-      const lowest = game.utilLowestCards(game.getCardsByZone(leader, 'score'))
+      const highest = game.utilHighestCards(game.cards.byPlayer(player, 'score'))
+      const lowest = game.utilLowestCards(game.cards.byPlayer(leader, 'score'))
 
       const highestCards = game.actions.chooseCards(player, highest)
       const lowestCards = game.actions.chooseCards(player, lowest)

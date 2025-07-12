@@ -28,7 +28,7 @@ module.exports = {
           break
         }
 
-        const secrets = game.getCardsByZone(player, 'safe')
+        const secrets = game.cards.byPlayer(player, 'safe')
         const returned = game.aChooseAndReturn(player, secrets, {
           title: 'Return a secret',
         })

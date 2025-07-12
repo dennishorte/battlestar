@@ -13,7 +13,7 @@ module.exports = {
     (game, player) => {
       while (true) {
         const topCards = game.getTopCards(player)
-        const handCards = game.getCardsByZone(player, 'hand')
+        const handCards = game.cards.byPlayer(player, 'hand')
 
         const topCardChosen = game.actions.chooseCards(player, topCards, { min: 0, max: 1 })[0]
         if (topCardChosen) {
@@ -34,7 +34,7 @@ module.exports = {
     (game, player, { self }) => {
       const missingColors = game
         .utilColors()
-        .filter(color => game.getCardsByZone(player, color).length === 0)
+        .filter(color => game.cards.byPlayer(player, color).length === 0)
 
       missingColors.forEach(() => {
         game.aDraw(player, { age: game.getEffectAge(self, 11) })

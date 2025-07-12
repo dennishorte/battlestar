@@ -13,12 +13,12 @@ module.exports = {
     (game, player, { self }) => {
       const cards = game.aChooseAndReturn(
         player,
-        game.getCardsByZone(player, 'hand'),
+        game.cards.byPlayer(player, 'hand'),
         { min: 0, max: 1 }
       )
 
       if (cards && cards.length > 0) {
-        game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'))
+        game.aChooseAndScore(player, game.cards.byPlayer(player, 'hand'))
         game.aDraw(player, { age: game.getEffectAge(self, 10) })
         game.aDraw(player, { age: game.getEffectAge(self, 10) })
       }

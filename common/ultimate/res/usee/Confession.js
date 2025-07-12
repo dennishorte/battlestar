@@ -18,14 +18,14 @@ module.exports = {
       const returned = game.aReturnMany(player, topCastleCards)
 
       if (returned.length === 0) {
-        game.aChooseAndMeld(player, game.getCardsByZone(player, 'score'))
+        game.aChooseAndMeld(player, game.cards.byPlayer(player, 'score'))
         game.aDrawAndScore(player, game.getEffectAge(self, 4))
       }
     },
     (game, player, { self }) => {
       const age = game.getEffectAge(self, 4)
       const scorePile = game
-        .getCardsByZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .filter(c => c.getAge() === age)
         .length
 

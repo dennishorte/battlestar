@@ -349,7 +349,7 @@ Tyrants.prototype.doActions = function() {
 
     if (name === 'Play Card') {
       const card = this
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .find(c => c.name === arg)
       this.aPlayCard(player, card)
       continue
@@ -416,7 +416,7 @@ Tyrants.prototype._generateActionChoices = function() {
 
 Tyrants.prototype._generateCardActions = function() {
   const choices = []
-  for (const card of this.getCardsByZone(this.players.current(), 'hand')) {
+  for (const card of this.cards.byPlayer(this.players.current(), 'hand')) {
     choices.push(card.name)
   }
 
@@ -437,7 +437,7 @@ Tyrants.prototype._generateCardActions = function() {
 
 Tyrants.prototype._generateAutoCardAction = function() {
   const player = this.players.current()
-  const cards = this.getCardsByZone(player, 'hand')
+  const cards = this.cards.byPlayer(player, 'hand')
 
   if (cards.some(card => card.autoplay)) {
     return 'Auto-play Cards'
@@ -512,7 +512,7 @@ Tyrants.prototype._generatePowerActions = function() {
   const power = player.getCounter('power')
   if (
     power >= 1
-    && this.getCardsByZone(player, 'troops').length > 0
+    && this.cards.byPlayer(player, 'troops').length > 0
     && this.getDeployChoices(player).length > 0
   ) {
     choices.push('Deploy a Troop')
@@ -573,7 +573,7 @@ Tyrants.prototype._processEndOfTurnActions = function() {
         }
       })
       const choices = this
-        .getCardsByZone(action.player, 'played')
+        .cards.byPlayer(action.player, 'played')
         .filter(card => card.aspect === action.aspect)
         .sort(card => card.name)
       this.aChooseAndPromote(action.player, choices, { min: 1, max: 1 })
@@ -586,7 +586,7 @@ Tyrants.prototype._processEndOfTurnActions = function() {
           args: { player: action.player }
         })
         const choices = this
-          .getCardsByZone(action.player, 'played')
+          .cards.byPlayer(action.player, 'played')
           .filter(card => card.race === 'undead')
           .sort(card => card.name)
         this.aChooseAndPromote(action.player, choices, { min: 0, max: choices.length })
@@ -600,7 +600,7 @@ Tyrants.prototype._processEndOfTurnActions = function() {
   const promoChoices = []
   for (const promo of promos) {
     this
-      .getCardsByZone(promo.player, 'played')
+      .cards.byPlayer(promo.player, 'played')
       .filter(card => card !== promo.source)
       .forEach(card => util.array.pushUnique(promoChoices, card))
   }
@@ -657,7 +657,7 @@ Tyrants.prototype.endOfTurn = function() {
 
 Tyrants.prototype.cleanup = function() {
   const player = this.players.current()
-  const playedCards = this.getCardsByZone(player, 'played')
+  const playedCards = this.cards.byPlayer(player, 'played')
 
   this.log.add({
     template: '{player} moves {count} played cards to discard pile.',
@@ -671,7 +671,7 @@ Tyrants.prototype.cleanup = function() {
     this.mMoveCardTo(card, this.zones.byPlayer(player, 'discard'))
   }
 
-  const hand = this.getCardsByZone(player, 'hand')
+  const hand = this.cards.byPlayer(player, 'hand')
   if (hand.length > 0) {
     this.log.add({
       template: '{player} discards {count} remaining cards',
@@ -693,7 +693,7 @@ Tyrants.prototype.checkForEndGameTriggers = function() {
 
   // Any player has zero troops left
   for (const player of this.players.all()) {
-    if (this.getCardsByZone(player, 'troops').length === 0) {
+    if (this.cards.byPlayer(player, 'troops').length === 0) {
       this.log.add({
         template: '{player} has deployed all of their troops',
         args: { player }
@@ -871,7 +871,7 @@ Tyrants.prototype.aChooseAndAssassinate = function(player, opts={}) {
 
 Tyrants.prototype.aChooseAndDevour = function(player, opts={}) {
   const zoneName = opts.zone ? opts.zone : 'hand'
-  const chosen = this.actions.chooseCard(player, this.getCardsByZone(player, zoneName), {
+  const chosen = this.actions.chooseCard(player, this.cards.byPlayer(player, zoneName), {
     min: 0,
     max: 1,
     title: `Devour a card from your ${zoneName}?`,
@@ -911,7 +911,7 @@ Tyrants.prototype.aChooseAndDevourMarket = function(player, opts={}) {
 
 Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
   if (opts.requireThree) {
-    const cardsInHand = this.getCardsByZone(player, 'hand').length
+    const cardsInHand = this.cards.byPlayer(player, 'hand').length
     if (cardsInHand <= 3) {
       this.log.add({
         template: '{player} has only {count} cards in hand, so does not discard',
@@ -931,7 +931,7 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
     opts.title = 'Choose a card to discard'
   }
 
-  const chosen = this.actions.chooseCard(player, this.getCardsByZone(player, 'hand'), opts)
+  const chosen = this.actions.chooseCard(player, this.cards.byPlayer(player, 'hand'), opts)
   if (chosen) {
     // Some cards have triggers if an opponent causes you to discard.
     if (opts.forced) {
@@ -961,7 +961,7 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndSupplant = function(player, opts={}) {
-  const troops = this.getCardsByZone(player, 'troops')
+  const troops = this.cards.byPlayer(player, 'troops')
   if (troops.length === 0) {
     this.log.add({
       template: '{player} has no more troops',
@@ -992,7 +992,7 @@ Tyrants.prototype.aChooseAndDeploy = function(player, opts={}) {
   }
 
   // Ensure there are troops to be deployed
-  const troops = this.getCardsByZone(player, 'troops')
+  const troops = this.cards.byPlayer(player, 'troops')
   if (troops.length === 0 && !opts.troop) {
     this.log.add({
       template: '{player} has no more troops',
@@ -1049,7 +1049,7 @@ Tyrants.prototype.aChooseAndMoveTroop = function(player, opts={}) {
 
 Tyrants.prototype.aChooseAndPlaceSpy = function(player) {
   // Check that the player has spies remaining to place.
-  if (this.getCardsByZone(player, 'spies').length === 0) {
+  if (this.cards.byPlayer(player, 'spies').length === 0) {
     this.log.add({
       template: '{player} has deployed all their spies',
       args: { player }
@@ -1186,7 +1186,7 @@ Tyrants.prototype.aChooseOne = function(player, choices, opts={}) {
 Tyrants.prototype.aChooseToDiscard = function(player) {
   const opponents = this
     .players.opponentsOf(player)
-    .filter(p => this.getCardsByZone(p, 'hand').length > 3)
+    .filter(p => this.cards.byPlayer(p, 'hand').length > 3)
     .map(p => p.name)
 
   const choice = this.actions.choose(player, opponents, { title: 'Choose an opponent to discard' })
@@ -1247,7 +1247,7 @@ Tyrants.prototype.aDeferSpecial = function(player, source, fn) {
 
 Tyrants.prototype.aAutoPlayCards = function() {
   const player = this.players.current()
-  const cards = this.getCardsByZone(player, 'hand')
+  const cards = this.cards.byPlayer(player, 'hand')
   for (const card of cards) {
     if (card.autoplay) {
       this.aPlayCard(player, card)
@@ -1540,7 +1540,7 @@ Tyrants.prototype.aSupplant = function(player, loc, owner) {
 }
 
 Tyrants.prototype.aWithFocus = function(player, test, fn) {
-  const played = this.getCardsByZone(player, 'played')
+  const played = this.cards.byPlayer(player, 'played')
   const playedAspect = played
     .filter(card => test(card))
     .length > 1
@@ -1554,7 +1554,7 @@ Tyrants.prototype.aWithFocus = function(player, test, fn) {
     return
   }
 
-  const inHand = this.getCardsByZone(player, 'hand')
+  const inHand = this.cards.byPlayer(player, 'hand')
   const inHandAspect = inHand
     .filter(card => test(card))
     .length > 0
@@ -1599,11 +1599,6 @@ Tyrants.prototype.getAssassinateChoices = function(player, opts={}) {
 Tyrants.prototype.getCardById = function(cardId) {
   // TODO: deprecate
   return this.cards.byId(cardId)
-}
-
-Tyrants.prototype.getCardsByZone = function(player, name) {
-  // TODO: deprecate
-  return this.cards.byPlayer(player, name)
 }
 
 Tyrants.prototype.getControlMarkers = function(player) {
@@ -1671,19 +1666,19 @@ Tyrants.prototype.getScoreBreakdown = function(player) {
 
   const summary = {
     "deck": [
-      ...self.getCardsByZone(player, 'hand'),
-      ...self.getCardsByZone(player, 'discard'),
-      ...self.getCardsByZone(player, 'deck'),
-      ...self.getCardsByZone(player, 'played'),
+      ...self.cards.byPlayer(player, 'hand'),
+      ...self.cards.byPlayer(player, 'discard'),
+      ...self.cards.byPlayer(player, 'deck'),
+      ...self.cards.byPlayer(player, 'played'),
     ].map(card => card.points)
       .reduce((a, b) => a + b, 0),
 
     "inner circle": self
-      .getCardsByZone(player, 'innerCircle')
+      .cards.byPlayer(player, 'innerCircle')
       .map(card => card.innerPoints)
       .reduce((a, b) => a + b, 0),
 
-    "trophy hall": self.getCardsByZone(player, 'trophyHall').length,
+    "trophy hall": self.cards.byPlayer(player, 'trophyHall').length,
 
     "control": self
       .getLocationAll()
@@ -1839,7 +1834,7 @@ Tyrants.prototype.mCheckZoneLimits = function(zone) {
 }
 
 Tyrants.prototype.mDeploy = function(player, loc, opts={}) {
-  const troop = opts.troop || this.getCardsByZone(player, 'troops')[0]
+  const troop = opts.troop || this.cards.byPlayer(player, 'troops')[0]
   this.mMoveCardTo(troop, loc)
   return troop
 }
@@ -1878,7 +1873,7 @@ Tyrants.prototype.mMoveByIndices = function(source, sourceIndex, target, targetI
 }
 
 Tyrants.prototype.mPlaceSpy = function(player, loc) {
-  const spy = this.getCardsByZone(player, 'spies')[0]
+  const spy = this.cards.byPlayer(player, 'spies')[0]
   this.mMoveCardTo(spy, loc)
 }
 
@@ -1940,7 +1935,7 @@ Tyrants.prototype.mRefillHand = function(player) {
 
   const drawnAfterShuffle = Math.min(
     Math.max(0, numberToDraw - deck.cards().length),  // Number of cards left to draw after reshuffling
-    this.getCardsByZone(player, 'discard').length  // Number of cards in discard pile
+    this.cards.byPlayer(player, 'discard').length  // Number of cards in discard pile
   )
 
   if (deck.cards().length < numberToDraw) {

@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const choices = game
-        .getCardsByZone(player, 'achievements')
+        .cards.byPlayer(player, 'achievements')
         .filter(card => card.checkIsStandardAchievement())
 
       const card = game.actions.chooseCards(player, choices, {

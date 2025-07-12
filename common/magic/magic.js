@@ -373,7 +373,7 @@ Magic.prototype.aAttach = function(player, cardId, targetId) {
 }
 
 Magic.prototype.aCascade = function(player, x) {
-  const cards = this.getCardsByZone(player, 'library')
+  const cards = this.cards.byPlayer(player, 'library')
 
   this.log.add({
     template: '{player} cascades for {count}',
@@ -569,7 +569,7 @@ Magic.prototype.aDetach = function(player, cardId) {
 
 Magic.prototype.aDraw = function(player, opts={}) {
   player = player || this.players.current()
-  const libraryCards = this.getCardsByZone(player, 'library')
+  const libraryCards = this.cards.byPlayer(player, 'library')
 
   if (libraryCards.length === 0) {
     this.log.add({
@@ -784,7 +784,7 @@ Magic.prototype.aMulligan = function(player) {
   this.log.indent()
 
   const library = this.zones.byPlayer(player, 'library')
-  for (const card of this.getCardsByZone(player, 'hand')) {
+  for (const card of this.cards.byPlayer(player, 'hand')) {
     this.mMoveCardTo(card, library)
   }
 
@@ -881,9 +881,9 @@ Magic.prototype.aSelectPhase = function(player, phase) {
 
   if (phase === 'untap') {
     [
-      ...this.getCardsByZone(player, 'creatures'),
-      ...this.getCardsByZone(player, 'battlefield'),
-      ...this.getCardsByZone(player, 'land'),
+      ...this.cards.byPlayer(player, 'creatures'),
+      ...this.cards.byPlayer(player, 'battlefield'),
+      ...this.cards.byPlayer(player, 'land'),
     ].flat()
       .filter(card => !card.g.noUntap)
       .forEach(card => this.mUntap(card))
@@ -919,7 +919,7 @@ Magic.prototype.aSelectPhase = function(player, phase) {
       const creaturesZone = this.zones.byPlayer(player, 'creatures')
 
       for (const zoneName of ['attacking', 'blocking']) {
-        const cards = this.getCardsByZone(player, zoneName)
+        const cards = this.cards.byPlayer(player, zoneName)
         for (const card of cards) {
           this.mMoveCardTo(card, creaturesZone)
         }
@@ -1177,7 +1177,7 @@ Magic.prototype.mClearStack = function() {
   const toClear = []
 
   for (const player of this.players.all()) {
-    const cards = this.getCardsByZone(player, 'stack')
+    const cards = this.cards.byPlayer(player, 'stack')
     for (const card of cards) {
       toClear.push(card)
     }

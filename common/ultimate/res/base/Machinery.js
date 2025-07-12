@@ -46,7 +46,7 @@ module.exports = {
 
     (game, player) => {
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => card.checkHasBiscuit('k'))
       game.aChooseAndScore(player, choices)
     },

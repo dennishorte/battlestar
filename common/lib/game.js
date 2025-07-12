@@ -447,10 +447,6 @@ Game.prototype.checkSameTeam = function(p1, p2) {
   return p1.team === p2.team
 }
 
-Game.prototype.getCardsByZone = function(player, zoneName) {
-  return this.zones.byPlayer(player, zoneName).cards()
-}
-
 Game.prototype.getZoneByCard = function(card) {
   if (card.g && card.g.zone) {
     return this.zones.byId(card.g.zone)

@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cardsInHand = game.getCardsByZone(player, 'hand')
+      const cardsInHand = game.cards.byPlayer(player, 'hand')
       game.aReturnMany(player, cardsInHand)
     },
     (game, player, { self }) => {

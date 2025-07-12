@@ -29,7 +29,7 @@ module.exports = {
 
       if (color) {
         for (let i = 0; i < 2; i++) {
-          const toScore = game.getCardsByZone(player, color)[0]
+          const toScore = game.cards.byPlayer(player, color)[0]
           if (toScore) {
             game.aScore(player, toScore)
           }

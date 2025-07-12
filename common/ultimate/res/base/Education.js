@@ -12,11 +12,11 @@ module.exports = {
     (game, player) => {
       const returnCard = game.actions.chooseYesNo(player, 'Return the highest card from your score pile?')
       if (returnCard) {
-        const highestCards = game.utilHighestCards(game.getCardsByZone(player, 'score'))
+        const highestCards = game.utilHighestCards(game.cards.byPlayer(player, 'score'))
         const cards = game.aChooseAndReturn(player, highestCards)
 
         if (cards.length > 0) {
-          const newHighest = game.utilHighestCards(game.getCardsByZone(player, 'score'))
+          const newHighest = game.utilHighestCards(game.cards.byPlayer(player, 'score'))
           const age = newHighest.length > 0 ? newHighest[0].getAge() + 2 : 2
           game.aDraw(player, { age })
         }

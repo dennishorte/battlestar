@@ -115,7 +115,7 @@ const cardData = [
             .players.all()
             .flatMap(player => {
               const trophies = game
-                .getCardsByZone(player, 'trophyHall')
+                .cards.byPlayer(player, 'trophyHall')
                 .map(troop => troop.getOwnerName())
               return trophies.map(ownerName => `${player.name}: ${ownerName}`)
             })
@@ -131,7 +131,7 @@ const cardData = [
             const [trophyName, ownerName] = selection.split(': ')
             const trophyPlayer = game.players.byName(trophyName)
             const troop = game
-              .getCardsByZone(trophyPlayer, 'trophyHall')
+              .cards.byPlayer(trophyPlayer, 'trophyHall')
               .find(c => c.getOwnerName() === ownerName)
             game.aChooseAndDeploy(player, {
               troop,

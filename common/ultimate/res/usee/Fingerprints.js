@@ -22,7 +22,7 @@ module.exports = {
       game.aSafeguardAvailableAchievement(player, splayedColors)
 
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => card.age === splayedColors)
 
       if (choices.length > 0) {

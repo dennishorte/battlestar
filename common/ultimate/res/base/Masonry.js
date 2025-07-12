@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => card.checkHasBiscuit('k'))
       const cards = game.actions.chooseCards(player, choices, { min: 0, max: choices.length })
       if (cards) {
@@ -21,7 +21,7 @@ module.exports = {
     },
 
     (game, player) => {
-      const redCards = game.getCardsByZone(player, 'red')
+      const redCards = game.cards.byPlayer(player, 'red')
 
       if (redCards.length === 3 && game.checkAchievementAvailable('Monument')) {
         game.aClaimAchievement(player, { name: 'Monument' })

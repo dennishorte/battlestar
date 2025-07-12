@@ -24,7 +24,7 @@ module.exports = {
       })
       if (chosenValue) {
         const toMeld = game
-          .getCardsByZone(player, 'score')
+          .cards.byPlayer(player, 'score')
           .filter(c => c.getAge() === chosenValue)
         game.aMeldMany(player, toMeld)
       }

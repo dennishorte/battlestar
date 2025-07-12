@@ -12,7 +12,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader, self }) => {
-      const hand = game.getCardsByZone(player, 'hand')
+      const hand = game.cards.byPlayer(player, 'hand')
       game.aRevealMany(player, hand, { ordered: true })
 
       const card = game.actions.chooseCard(leader, hand)
@@ -22,7 +22,7 @@ module.exports = {
       }
     },
     (game, player) => {
-      const secrets = game.getCardsByZone(player, 'safe')
+      const secrets = game.cards.byPlayer(player, 'safe')
       game.aChooseAndScore(player, secrets)
     },
     (game, player) => {

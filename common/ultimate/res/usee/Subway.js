@@ -18,7 +18,7 @@ module.exports = {
         game.aDraw(player, { age: game.getEffectAge(self, 9) })
       }
       else {
-        game.aJunkMany(player, game.getCardsByZone(player, card.color), { ordered: true })
+        game.aJunkMany(player, game.cards.byPlayer(player, card.color), { ordered: true })
         game.aDraw(player, { age: game.getEffectAge(self, 8) })
       }
     },

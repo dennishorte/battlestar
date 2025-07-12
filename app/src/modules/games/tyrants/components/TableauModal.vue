@@ -87,10 +87,10 @@ export default {
   computed: {
     allCards() {
       return [
-        ...this.game.getCardsByZone(this.player, 'deck'),
-        ...this.game.getCardsByZone(this.player, 'hand'),
-        ...this.game.getCardsByZone(this.player, 'played'),
-        ...this.game.getCardsByZone(this.player, 'discard'),
+        ...this.game.cards.byPlayer(this.player, 'deck'),
+        ...this.game.cards.byPlayer(this.player, 'hand'),
+        ...this.game.cards.byPlayer(this.player, 'played'),
+        ...this.game.cards.byPlayer(this.player, 'discard'),
       ].sort((l, r) => l.name.localeCompare(r.name))
     },
 
@@ -107,13 +107,13 @@ export default {
       if (this.isOwner) {
         return this
           .game
-          .getCardsByZone(this.player, 'deck')
+          .cards.byPlayer(this.player, 'deck')
           .sort((l, r) => l.name.localeCompare(r.name))
       }
       else {
         return [
-          ...this.game.getCardsByZone(this.player, 'deck'),
-          ...this.game.getCardsByZone(this.player, 'hand'),
+          ...this.game.cards.byPlayer(this.player, 'deck'),
+          ...this.game.cards.byPlayer(this.player, 'hand'),
         ].sort((l, r) => l.name.localeCompare(r.name))
       }
     },
@@ -121,21 +121,21 @@ export default {
     discardCards() {
       return this
         .game
-        .getCardsByZone(this.player, 'discard')
+        .cards.byPlayer(this.player, 'discard')
         .sort((l, r) => l.name.localeCompare(r.name))
     },
 
     handCards() {
       if (this.isOwner) {
         return [
-          ...this.game.getCardsByZone(this.player, 'hand'),
-          ...this.game.getCardsByZone(this.player, 'played'),
+          ...this.game.cards.byPlayer(this.player, 'hand'),
+          ...this.game.cards.byPlayer(this.player, 'played'),
         ].sort((l, r) => l.name.localeCompare(r.name))
       }
       else {
         return this
           .game
-          .getCardsByZone(this.player, 'played')
+          .cards.byPlayer(this.player, 'played')
           .sort((l, r) => l.name.localeCompare(r.name))
       }
     },
@@ -143,7 +143,7 @@ export default {
     innerCircleCards() {
       return this
         .game
-        .getCardsByZone(this.player, 'innerCircle')
+        .cards.byPlayer(this.player, 'innerCircle')
         .sort((l, r) => l.name.localeCompare(r.name))
     },
 
@@ -164,7 +164,7 @@ export default {
     },
 
     trophyHall() {
-      return this.game.getCardsByZone(this.player, 'trophyHall')
+      return this.game.cards.byPlayer(this.player, 'trophyHall')
     },
   },
 }

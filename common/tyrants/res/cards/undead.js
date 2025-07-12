@@ -132,7 +132,7 @@ const cardData = [
       game.aChooseAndSupplant(player)
 
       const playerTroops = game
-        .getCardsByZone(player, 'trophyHall')
+        .cards.byPlayer(player, 'trophyHall')
         .filter(card => card.getOwnerName() !== 'neutral')
         .length
 
@@ -191,7 +191,7 @@ const cardData = [
           title: 'Return one of your spies > You may devour a card in your discard pile; if you do, gain the effects of the devoured card',
           impl: () => {
             game.aReturnASpyAnd(player, () => {
-              const discard = game.getCardsByZone(player, 'discard')
+              const discard = game.cards.byPlayer(player, 'discard')
               const card = game.actions.chooseCard(player, discard, {
                 title: 'Choose a card to devour',
                 min: 0,
@@ -378,13 +378,13 @@ const cardData = [
               const players = game
                 .players.all()
                 .filter(p => game
-                  .getCardsByZone(p, 'trophyHall')
+                  .cards.byPlayer(p, 'trophyHall')
                   .some(troop => troop.isNeutral())
                 )
               const targetPlayer = game.actions.choosePlayer(player, players)
               if (targetPlayer) {
                 const troop = game
-                  .getCardsByZone(targetPlayer, 'trophyHall')
+                  .cards.byPlayer(targetPlayer, 'trophyHall')
                   .find(troop => troop.isNeutral())
                 game.aChooseAndDeploy(player, {
                   anywhere: true,
@@ -429,19 +429,19 @@ const cardData = [
               max: 1,
             }]
 
-            if (game.getCardsByZone(player, 'hand').length > 0) {
+            if (game.cards.byPlayer(player, 'hand').length > 0) {
               choices.push({
                 title: 'hand',
-                choices: game.getCardsByZone(player, 'hand').map(c => c.name),
+                choices: game.cards.byPlayer(player, 'hand').map(c => c.name),
                 min: 0,
                 max: 1,
               })
             }
 
-            if (game.getCardsByZone(player, 'discard').length > 0) {
+            if (game.cards.byPlayer(player, 'discard').length > 0) {
               choices.push({
                 title: 'discard',
-                choices: game.getCardsByZone(player, 'discard').map(c => c.name),
+                choices: game.cards.byPlayer(player, 'discard').map(c => c.name),
                 min: 0,
                 max: 1,
               })
@@ -513,7 +513,7 @@ const cardData = [
       game.aChooseAndAssassinate(player)
       game.aChooseAndAssassinate(player)
 
-      if (game.getCardsByZone(player, 'trophyHall').length >= 8) {
+      if (game.cards.byPlayer(player, 'trophyHall').length >= 8) {
         game.aPromote(player, card)
       }
     },
@@ -587,8 +587,8 @@ const cardData = [
         {
           title: 'Promote a card from your discard pile, then gain 1 VP for every 3 cards in your inner circle',
           impl: () => {
-            game.aChooseAndPromote(player, game.getCardsByZone(player, 'discard'))
-            const innerCircle = game.getCardsByZone(player, 'innerCircle').length
+            game.aChooseAndPromote(player, game.cards.byPlayer(player, 'discard'))
+            const innerCircle = game.cards.byPlayer(player, 'innerCircle').length
             player.incrementCounter('points', Math.floor(innerCircle / 3))
           }
         },
@@ -620,7 +620,7 @@ const cardData = [
         {
           title: 'Devour a card in your hand > Supplant a troop',
           impl: () => {
-            const card = game.actions.chooseCard(player, game.getCardsByZone(player, 'hand'), {
+            const card = game.actions.chooseCard(player, game.cards.byPlayer(player, 'hand'), {
               title: 'Choose a card to feed to your wight',
               min: 0,
               max: 1,

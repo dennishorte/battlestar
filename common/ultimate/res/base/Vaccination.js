@@ -20,7 +20,7 @@ module.exports = {
 
       const chosenValue = game.aChooseAge(player, values)
       const toReturn = game
-        .getCardsByZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .filter(c => c.getAge() === chosenValue)
 
       const returned = game.aReturnMany(player, toReturn)

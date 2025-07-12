@@ -14,7 +14,7 @@ module.exports = {
 
     const targetNumSecrets = reduceCost ? 3 : 4
     const numSecrets = game
-      .getCardsByZone(player, 'safe')
+      .cards.byPlayer(player, 'safe')
       .length
 
     return topCardMaxAge >= targetAge && numSecrets >= targetNumSecrets

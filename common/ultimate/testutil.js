@@ -296,7 +296,7 @@ TestUtil.testBoard = function(game, state) {
     }
 
     for (const zone of ['artifact', 'hand', 'score', 'forecast', 'achievements', 'safe', 'museum']) {
-      realBoard[zone] = game.getCardsByZone(player, zone).map(c => c.name).sort()
+      realBoard[zone] = game.cards.byPlayer(player, zone).map(c => c.name).sort()
     }
 
     expected[player.name] = expectedBoard
@@ -349,7 +349,7 @@ TestUtil.dumpBoard = function(game) {
     }
 
     for (const zone of ['artifact', 'hand', 'score', 'forecast', 'achievements']) {
-      realBoard[zone] = game.getCardsByZone(player, zone).map(c => c.name).sort()
+      realBoard[zone] = game.cards.byPlayer(player, zone).map(c => c.name).sort()
     }
 
     real[player.name] = realBoard

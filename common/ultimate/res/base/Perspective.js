@@ -12,13 +12,13 @@ module.exports = {
     (game, player) => {
       const cards = game.aChooseAndReturn(
         player,
-        game.getCardsByZone(player, 'hand'),
+        game.cards.byPlayer(player, 'hand'),
         { min: 0, max: 1 }
       )
 
       if (cards && cards.length > 0) {
         const count = Math.floor(game.getBiscuitsByPlayer(player).s / 2)
-        game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'), { count })
+        game.aChooseAndScore(player, game.cards.byPlayer(player, 'hand'), { count })
       }
     }
   ],

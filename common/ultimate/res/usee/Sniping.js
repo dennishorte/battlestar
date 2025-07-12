@@ -13,7 +13,7 @@ module.exports = {
       const chosenColor = game.aChooseColor(leader, game.utilColors())
       game.aUnsplay(player, chosenColor)
 
-      const cards = game.getCardsByZone(player, chosenColor)
+      const cards = game.cards.byPlayer(player, chosenColor)
       if (cards.length > 0) {
         game.aMeld(player, game.getBottomCard(player, chosenColor))
 

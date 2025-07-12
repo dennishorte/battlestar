@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const scoreCount = game.getCardsByZone(player, 'score').length
+      const scoreCount = game.cards.byPlayer(player, 'score').length
       const achievement = game
         .getAvailableStandardAchievements(player)
         .filter(a => a.age === scoreCount)[0]
@@ -19,13 +19,13 @@ module.exports = {
       if (achievement) {
         game.aSafeguard(player, achievement)
         const cardsInHand = game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(c => c.age === achievement.age)
         game.aScoreMany(player, cardsInHand)
       }
     },
     (game, player, { self }) => {
-      const secretCount = game.getCardsByZone(player, 'safe').length
+      const secretCount = game.cards.byPlayer(player, 'safe').length
       for (let i = 0; i < secretCount; i++) {
         game.aDraw(player, { age: game.getEffectAge(self, 6) })
       }

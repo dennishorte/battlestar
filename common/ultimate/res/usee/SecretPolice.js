@@ -14,7 +14,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       while (true) {
-        const tucked = game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'), { count: 1 })[0]
+        const tucked = game.aChooseAndTuck(player, game.cards.byPlayer(player, 'hand'), { count: 1 })[0]
 
         if (tucked) {
           game.aReturn(player, game.getTopCard(player, tucked.color))
@@ -27,10 +27,10 @@ module.exports = {
       }
     },
     (game, player) => {
-      game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'), {
+      game.aChooseAndTuck(player, game.cards.byPlayer(player, 'hand'), {
         title: 'Tuck any number of cards of the same color',
         min: 0,
-        max: game.getCardsByZone(player, 'hand').length,
+        max: game.cards.byPlayer(player, 'hand').length,
         guard: (cards) => util.array.distinct(cards.map(c => c.color)).length === 1,
       })
     }

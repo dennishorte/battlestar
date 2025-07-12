@@ -15,7 +15,7 @@ module.exports = {
         .filter(card => card.checkHasBiscuit('i'))
       const cards = game.aChooseAndTransfer(player, choices, { toBoard: true, player: leader })
       if (cards && cards.length > 0) {
-        const remaining = game.getCardsByZone(player, cards[0].color)
+        const remaining = game.cards.byPlayer(player, cards[0].color)
         if (remaining.length > 0) {
           game.aScore(player, remaining[0])
         }

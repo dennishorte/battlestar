@@ -19,7 +19,7 @@ module.exports = {
       const splayed = game.aChooseAndSplay(player, choices, 'left')[0]
 
       if (splayed) {
-        const numCards = game.getCardsByZone(player, splayed).length
+        const numCards = game.cards.byPlayer(player, splayed).length
         game.aSafeguardAvailableAchievement(player, numCards)
       }
       else {

@@ -19,7 +19,7 @@ module.exports = {
         const zones = ['red', 'yellow', 'green', 'blue', 'purple', 'hand', 'score', 'forecast', 'museum', 'safe']
         const toRemove = game
           .players.all()
-          .flatMap(player => zones.flatMap(name => game.getCardsByZone(player, name)))
+          .flatMap(player => zones.flatMap(name => game.cards.byPlayer(player, name)))
         game.aRemoveMany(player, toRemove, { ordered: true })
         game.log.outdent()
 

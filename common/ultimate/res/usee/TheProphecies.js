@@ -14,7 +14,7 @@ module.exports = {
     (game, player, { self }) => {
       const drawAge = game.getEffectAge(self, 4)
       const secretAges = game
-        .getCardsByZone(player, 'safe')
+        .cards.byPlayer(player, 'safe')
         .map(c => c.getAge())
       const revealChoices = util.array.distinct(secretAges).sort().map(age => age + 1)
 
@@ -38,7 +38,7 @@ module.exports = {
         const revealed = game.aDrawAndReveal(player, revealAge)
 
         if (revealed.color === 'red' || revealed.color === 'purple') {
-          const melded = game.aChooseAndMeld(player, game.getCardsByZone(player, 'safe'))
+          const melded = game.aChooseAndMeld(player, game.cards.byPlayer(player, 'safe'))
           if (melded) {
             game.aSafeguard(player, revealed)
           }

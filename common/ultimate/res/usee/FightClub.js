@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const choices = game.getCardsByZone(player, 'safe')
+      const choices = game.cards.byPlayer(player, 'safe')
       const secret = game.actions.chooseCard(player, choices)
 
       if (secret) {

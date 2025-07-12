@@ -22,12 +22,12 @@ module.exports = {
         }
 
         const handCards = game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(c => c.id !== drawnCard.id)
           .filter(c => c.color === returnColor)
 
         const handCard = game.aChooseAndReturn(player, handCards)[0]
-        const scoreCard = game.aChooseAndReturn(player, game.getCardsByZone(player, 'score'))[0]
+        const scoreCard = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'score'))[0]
 
         const cardsReturned = [topCard, handCard, scoreCard].filter(c => c)
         const didReturn = cardsReturned.length === 3

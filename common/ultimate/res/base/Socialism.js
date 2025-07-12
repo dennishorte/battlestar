@@ -19,7 +19,7 @@ module.exports = {
 
       if (card) {
         game.aTuck(player, card)
-        game.aTuckMany(player, game.getCardsByZone(player, 'hand'))
+        game.aTuckMany(player, game.cards.byPlayer(player, 'hand'))
       }
     },
 
