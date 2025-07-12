@@ -442,19 +442,10 @@ Game.prototype.testSetBreakpoint = function(name, fn) {
 ////////////////////////////////////////////////////////////////////////////////
 // Standard game methods
 
-
 Game.prototype.checkSameTeam = function(p1, p2) {
   return p1.team === p2.team
 }
 
-Game.prototype.getZoneByCardHome = function(card) {
-  if (card.g && card.g.home) {
-    return this.zones.byId(card.g.home)
-  }
-  else {
-    return this.zones.byId(card.home)
-  }
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // State modifying functions
