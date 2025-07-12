@@ -921,7 +921,7 @@ describe('Illithids expansion', () => {
         },
       })
 
-      expect(game.getZoneById('market').cards().length).toBe(6)
+      expect(game.zones.byId('market').cards().length).toBe(6)
     })
   })
 

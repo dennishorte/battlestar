@@ -453,7 +453,7 @@ Game.prototype.getCardsByZone = function(player, zoneName) {
 
 Game.prototype.getZoneByCard = function(card) {
   if (card.g && card.g.zone) {
-    return this.getZoneById(card.g.zone)
+    return this.zones.byId(card.g.zone)
   }
   else {
     return card.zone
@@ -462,15 +462,11 @@ Game.prototype.getZoneByCard = function(card) {
 
 Game.prototype.getZoneByCardHome = function(card) {
   if (card.g && card.g.home) {
-    return this.getZoneById(card.g.home)
+    return this.zones.byId(card.g.home)
   }
   else {
-    return this.getZoneById(card.home)
+    return this.zones.byId(card.home)
   }
-}
-
-Game.prototype.getZoneById = function(id) {
-  return this.zones.byId(id)
 }
 
 Game.prototype.getZoneByPlayer = function(player, name) {

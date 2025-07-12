@@ -65,8 +65,8 @@ TestUtil.fixture = function(options) {
 
       // Put cards with multiple copies into the market. This makes sure that when we put cards
       // in player hands, we aren't grabbing them from the market.
-      const marketDeck = game.getZoneById('marketDeck')
-      const market = game.getZoneById('market')
+      const marketDeck = game.zones.byId('marketDeck')
+      const market = game.zones.byId('market')
       for (const card of market.cards()) {
         game.mMoveCardTo(card, marketDeck, { silent: true })
       }
@@ -79,7 +79,7 @@ TestUtil.fixture = function(options) {
         'Spellspinner',
       ]
       for (const name of cardNames) {
-        const card = game.getZoneById('marketDeck').cards().find(c => c.name === name)
+        const card = game.zones.byId('marketDeck').cards().find(c => c.name === name)
         game.mMoveCardTo(card, market, { silent: true })
       }
     }
@@ -133,7 +133,7 @@ TestUtil.gameFixture = function(options) {
               }
               else if (name === 'House Guard') {
                 card = game.zones.byId('guard').peek()
-                game.mMoveCardTo(game.getZoneById('guard').cards()[0], zone)
+                game.mMoveCardTo(game.zones.byId('guard').cards()[0], zone)
               }
               else if (name === 'Insane Outcast') {
                 card = game.zones.byId('outcast').peek()
@@ -167,7 +167,7 @@ TestUtil.gameFixture = function(options) {
         if ('troops' in playerSetup) {
           // Need to keep an extra troop for initial location selection.
           const troops = game.getCardsByZone(player, 'troops').slice(playerSetup.troops + 1)
-          const exile = game.getZoneById('devoured')
+          const exile = game.zones.byId('devoured')
           for (const troop of troops) {
             game.mMoveCardTo(troop, exile)
           }
@@ -214,8 +214,8 @@ TestUtil.gameFixture = function(options) {
     }
 
     if (options.devoured) {
-      const devoured = game.getZoneById('devoured')
-      const market = game.getZoneById('marketDeck')
+      const devoured = game.zones.byId('devoured')
+      const market = game.zones.byId('marketDeck')
       for (const name of options.devoured) {
         const card = market.cards().find(card => card.name === name)
         game.mMoveCardTo(card, devoured, { verbose: true })
@@ -226,7 +226,7 @@ TestUtil.gameFixture = function(options) {
       game.log.add({ template: 'setting up market' })
       game.log.indent()
 
-      const market = game.getZoneById('marketDeck')
+      const market = game.zones.byId('marketDeck')
       const cards = market.cards()
       const toMove = []
 
@@ -270,7 +270,7 @@ TestUtil.setTroops = function(game, locId, playerNames) {
       locId = 'map.' + locId
     }
 
-    const zone = game.getZoneById(locId)
+    const zone = game.zones.byId(locId)
 
     for (const card of zone.cards()) {
       if (card.isTroop) {
@@ -281,7 +281,7 @@ TestUtil.setTroops = function(game, locId, playerNames) {
 
     for (const playerName of playerNames) {
       if (playerName === 'neutral') {
-        const tokens = game.getZoneById('neutrals').cards()
+        const tokens = game.zones.byId('neutrals').cards()
         game.mMoveCardTo(tokens[0], zone)
       }
       else {
@@ -300,7 +300,7 @@ TestUtil.setSpies = function(game, locId, playerNames) {
       locId = 'map.' + locId
     }
 
-    const zone = game.getZoneById(locId)
+    const zone = game.zones.byId(locId)
 
     for (const card of zone.cards()) {
       if (card.isSpy) {
@@ -385,13 +385,13 @@ TestUtil.testBoard = function(game, expected) {
     }
 
     else if (key === 'devoured') {
-      const actual = game.getZoneById('devoured').cards().map(c => c.name).sort()
+      const actual = game.zones.byId('devoured').cards().map(c => c.name).sort()
       const expected = value.sort()
       expect(actual).toStrictEqual(expected)
     }
 
     else if (key === 'market') {
-      const actual = game.getZoneById('market').cards().map(c => c.name).sort()
+      const actual = game.zones.byId('market').cards().map(c => c.name).sort()
       const expected = value.sort()
       expect(actual).toStrictEqual(expected)
     }

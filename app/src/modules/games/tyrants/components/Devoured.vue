@@ -33,11 +33,11 @@ export default {
 
   computed: {
     cards() {
-      return this.game.getZoneById('devoured').cards()
+      return this.game.zones.byId('devoured').cards()
     },
 
     count() {
-      return this.game.getZoneById('devoured').cards().length
+      return this.game.zones.byId('devoured').cards().length
     },
   },
 

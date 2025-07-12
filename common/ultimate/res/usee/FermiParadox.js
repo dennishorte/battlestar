@@ -36,7 +36,7 @@ module.exports = {
       }
       else {
         const valuedJunkCards = game
-          .getZoneById('junk')
+          .zones.byId('junk')
           .cards()
           .filter(card => card.age !== undefined)
 

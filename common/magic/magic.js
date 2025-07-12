@@ -515,7 +515,7 @@ Magic.prototype.aChooseAction = function(player) {
 }
 
 Magic.prototype.aCreateToken = function(player, data, opts={}) {
-  const zone = this.getZoneById(data.zoneId)
+  const zone = this.zones.byId(data.zoneId)
   const owner = this.players.byZone(zone)
 
   const created = []
@@ -615,7 +615,7 @@ Magic.prototype.aDrawSeven = function(player, opts={}) {
 }
 
 Magic.prototype.aHideAll = function(player, zoneId) {
-  const zone = this.getZoneById(zoneId)
+  const zone = this.zones.byId(zoneId)
   zone.cards().forEach(card => this.mHide(card))
 
   this.log.add({
@@ -631,7 +631,7 @@ Magic.prototype.aImportCard = function(player, data) {
     card.g.token = data.isToken
     card.reveal()
 
-    const zone = this.getZoneById(data.zoneId)
+    const zone = this.zones.byId(data.zoneId)
     const owner = this.players.byZone(zone)
     zone.push(card)
 
@@ -671,7 +671,7 @@ Magic.prototype.aMorph = function(player, cardId) {
 }
 
 Magic.prototype.aMoveAll = function(player, sourceId, targetId) {
-  const source = this.getZoneById(sourceId)
+  const source = this.zones.byId(sourceId)
   const toMove = source.cards()
   for (const card of toMove) {
     this.aMoveCard(player, card.g.id, targetId)
@@ -683,7 +683,7 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
 
   const card = this.getCardById(cardId)
   const startingZone = this.getZoneByCard(card)
-  const dest = this.getZoneById(destId)
+  const dest = this.zones.byId(destId)
 
   const enforceOrdering = dest.name === 'graveyard'
   if (enforceOrdering) {
@@ -764,7 +764,7 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
 }
 
 Magic.prototype.aMoveRevealed = function(player, sourceId, targetId) {
-  const source = this.getZoneById(sourceId)
+  const source = this.zones.byId(sourceId)
   const numPlayers = this.players.all().length
 
   const toMove = util
@@ -821,7 +821,7 @@ Magic.prototype.aReveal = function(player, cardId) {
 }
 
 Magic.prototype.aRevealAll = function(player, zoneId) {
-  const zone = this.getZoneById(zoneId)
+  const zone = this.zones.byId(zoneId)
   zone.cards().forEach(card => this.mReveal(card))
 
   this.log.add({
@@ -831,7 +831,7 @@ Magic.prototype.aRevealAll = function(player, zoneId) {
 }
 
 Magic.prototype.aRevealNext = function(player, zoneId) {
-  const zone = this.getZoneById(zoneId)
+  const zone = this.zones.byId(zoneId)
   const cards = zone.cards()
   const nextIndex = cards.findIndex(card => card.visibility.length !== this.players.all().length)
 
@@ -947,12 +947,12 @@ Magic.prototype.aSetNoUntap = function(player, cardId, value) {
 }
 
 Magic.prototype.aShuffle = function(player, zoneId) {
-  const zone = this.getZoneById(zoneId)
+  const zone = this.zones.byId(zoneId)
   zone.shuffle()
 }
 
 Magic.prototype.aShuffleBottom = function(player, zoneId, count) {
-  const zone = this.getZoneById(zoneId)
+  const zone = this.zones.byId(zoneId)
   zone.shuffleBottom(count)
 }
 
@@ -980,7 +980,7 @@ Magic.prototype.aTap = function(player, cardId) {
 }
 
 Magic.prototype.aTapAll = function(player, zoneId) {
-  const cards = this.getZoneById(zoneId).cards()
+  const cards = this.zones.byId(zoneId).cards()
   for (const card of cards) {
     this.aTap(player, card.g.id)
   }
@@ -1018,7 +1018,7 @@ Magic.prototype.aUntap = function(player, cardId) {
 }
 
 Magic.prototype.aViewAll = function(player, zoneId) {
-  const zone = this.getZoneById(zoneId)
+  const zone = this.zones.byId(zoneId)
   zone.sortByName()
   zone.cards().forEach(card => card.show(player))
 
@@ -1050,7 +1050,7 @@ Magic.prototype.aViewNext = function(player, zoneId) {
 }
 
 Magic.prototype.aViewTop = function(player, zoneId, count) {
-  const zone = this.getZoneById(zoneId)
+  const zone = this.zones.byId(zoneId)
   const cards = zone.cards()
   count = Math.min(count, cards.length)
 

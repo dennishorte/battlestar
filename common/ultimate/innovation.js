@@ -873,7 +873,7 @@ Innovation.prototype.aClaimAchievement = function(player, opts={}) {
   }
   else if (opts.age) {
     card = this
-      .getZoneById('achievements')
+      .zones.byId('achievements')
       .cards()
       .filter(card => !card.isSpecialAchievement && !card.isDecree)
       .find(c => c.getAge() === opts.age && c.expansion === opts.expansion)
@@ -1931,7 +1931,7 @@ Innovation.prototype.aTuckMany = ManyFactory('aTuck')
 // Checkers
 
 Innovation.prototype.checkAchievementAvailable = function(name) {
-  return !!this.getZoneById('achievements').cards().find(ach => ach.name === name)
+  return !!this.zones.byId('achievements').cards().find(ach => ach.name === name)
 }
 
 Innovation.prototype.checkAchievementEligibility = function(player, card, opts={}) {
@@ -2128,7 +2128,7 @@ Innovation.prototype.getAgesByZone = function(player, zoneName) {
 
 Innovation.prototype.getAvailableSpecialAchievements = function() {
   return this
-    .getZoneById('achievements')
+    .zones.byId('achievements')
     .cards()
     .filter(c => c.isSpecialAchievement)
 }
@@ -2480,7 +2480,7 @@ Innovation.prototype.getZoneLimit = function(player) {
 // Setters
 
 Innovation.prototype.mAchievementCheck = function() {
-  const available = this.getZoneById('achievements').cards()
+  const available = this.zones.byId('achievements').cards()
   for (const player of this.players.startingWithCurrent()) {
     const reduceCost = this.getInfoByKarmaTrigger(
       player,
@@ -3100,7 +3100,7 @@ Innovation.prototype.getAvailableAchievementsByAge = function(player, age) {
 
 Innovation.prototype.getAvailableStandardAchievements = function(player) {
   const achievementsZone = this
-    .getZoneById('achievements')
+    .zones.byId('achievements')
     .cards()
     .filter(c => !c.isSpecialAchievement && !c.isDecree)
 

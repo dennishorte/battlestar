@@ -21,7 +21,7 @@ export default {
 
   computed: {
     zone() {
-      return this.game.getZoneById('achievements')
+      return this.game.zones.byId('achievements')
     },
   },
 

@@ -191,7 +191,7 @@ Agricola.prototype.initializeCards = function() {
   // Shuffle the action cards.
   const actionCards = util.array.shuffle([...res.cards.actions], this.random)
   actionCards.sort((l, r) => l.stage - r.stage)
-  this.getZoneById('roundDeck').setCards(actionCards)
+  this.zones.byId('roundDeck').setCards(actionCards)
 
   // Shuffle and deal the minor improvements and occupations
   const occupations = util.array.shuffle(this.getAllOccupations(), this.random)

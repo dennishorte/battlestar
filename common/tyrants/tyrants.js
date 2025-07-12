@@ -450,18 +450,18 @@ Tyrants.prototype._generateAutoCardAction = function() {
 Tyrants.prototype._generateBuyActions = function(maxCost=0, opts={}) {
   const choices = []
 
-  const priestess = this.getZoneById('priestess').cards()[0]
+  const priestess = this.zones.byId('priestess').cards()[0]
   if (priestess) {
     choices.push({ card: priestess })
   }
 
-  const guard = this.getZoneById('guard').cards()[0]
+  const guard = this.zones.byId('guard').cards()[0]
   if (guard) {
     choices.push({ card: guard })
   }
 
   const market = this
-    .getZoneById('market')
+    .zones.byId('market')
     .cards()
     .sort((l, r) => l.name.localeCompare(r.name))
     .sort((l, r) => l.cost - r.cost)
@@ -470,7 +470,7 @@ Tyrants.prototype._generateBuyActions = function(maxCost=0, opts={}) {
   }
 
   if (this.state.ghostFlag) {
-    const devoured = this.getZoneById('devoured').cards().slice(-1)[0]
+    const devoured = this.zones.byId('devoured').cards().slice(-1)[0]
     if (devoured) {
       choices.push({
         card: devoured,
@@ -703,7 +703,7 @@ Tyrants.prototype.checkForEndGameTriggers = function() {
   }
 
   // The market is depleted
-  if (this.getZoneById('marketDeck').cards().length === 0) {
+  if (this.zones.byId('marketDeck').cards().length === 0) {
     this.log.add({
       template: 'The market is depleted'
     })
@@ -771,7 +771,7 @@ Tyrants.prototype.aDeployWithPowerAt = function(player, locId=null) {
 // Core Functionality
 
 Tyrants.prototype.aCascade = function(player, opts) {
-  const marketZone = this.getZoneById('marketDeck')
+  const marketZone = this.zones.byId('marketDeck')
 
   const unused = []
   let found = null
@@ -891,7 +891,7 @@ Tyrants.prototype.aChooseAndDevour = function(player, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndDevourMarket = function(player, opts={}) {
-  const chosen = this.actions.chooseCards(player, this.getZoneById('market').cards(), {
+  const chosen = this.actions.chooseCards(player, this.zones.byId('market').cards(), {
     min: 0,
     max: opts.max || 1,
     title: 'Choose cards to devour from the market',
@@ -983,7 +983,7 @@ Tyrants.prototype.aChooseAndSupplant = function(player, opts={}) {
 Tyrants.prototype.aChooseAndDeploy = function(player, opts={}) {
   // If the player is deploying a white troop, fetch it from the bank.
   if (opts.white) {
-    const white = this.getZoneById('neutrals').cards()[0]
+    const white = this.zones.byId('neutrals').cards()[0]
     if (!white) {
       this.log.add({ template: 'There are no neutral troops left in the supply' })
       return
@@ -1366,7 +1366,7 @@ Tyrants.prototype.aPlayCard = function(player, card) {
 
 Tyrants.prototype.aPromote = function(player, card, opts={}) {
   if (card.name === 'Insane Outcast') {
-    this.mMoveCardTo(card, this.getZoneById('outcast'))
+    this.mMoveCardTo(card, this.zones.byId('outcast'))
   }
   else {
     this.mMoveCardTo(card, this.getZoneByPlayer(player, 'innerCircle'))
@@ -1411,16 +1411,16 @@ Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
   let card
 
   if (cardName.startsWith('devoured: ')) {
-    card = this.getZoneById('devoured').cards().slice(-1)[0]
+    card = this.zones.byId('devoured').cards().slice(-1)[0]
   }
   else if (cardName === 'Priestess of Lolth') {
-    card = this.getZoneById('priestess').cards()[0]
+    card = this.zones.byId('priestess').cards()[0]
   }
   else if (cardName === 'House Guard') {
-    card = this.getZoneById('guard').cards()[0]
+    card = this.zones.byId('guard').cards()[0]
   }
   else if (cardName === 'Insane Outcast') {
-    card = this.getZoneById('outcast').cards()[0]
+    card = this.zones.byId('outcast').cards()[0]
 
     if (!card) {
       this.log.indent()
@@ -1430,7 +1430,7 @@ Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
     }
   }
   else {
-    const market = this.getZoneById('market').cards()
+    const market = this.zones.byId('market').cards()
     card = market.find(c => c.name === cardName)
   }
 
@@ -1846,10 +1846,10 @@ Tyrants.prototype.mDeploy = function(player, loc, opts={}) {
 
 Tyrants.prototype.mDevour = function(card) {
   if (card.name === 'Insane Outcast') {
-    this.mMoveCardTo(card, this.getZoneById('outcast'))
+    this.mMoveCardTo(card, this.zones.byId('outcast'))
   }
   else {
-    this.mMoveCardTo(card, this.getZoneById('devoured'))
+    this.mMoveCardTo(card, this.zones.byId('devoured'))
   }
 }
 
@@ -1974,8 +1974,8 @@ Tyrants.prototype.mRefillHand = function(player) {
 }
 
 Tyrants.prototype.mRefillMarket = function(quiet=false) {
-  const deck = this.getZoneById('marketDeck')
-  const market = this.getZoneById('market')
+  const deck = this.zones.byId('marketDeck')
+  const market = this.zones.byId('market')
   const count = 6 - market.cards().length
 
   for (let i = 0; i < count; i++) {

@@ -40,10 +40,10 @@ const cardData = [
     impl: (game, player, { card }) => {
       player.incrementCounter('power', 3)
 
-      const marketCards = game.getZoneById('market').cards()
+      const marketCards = game.zones.byId('market').cards()
       const toDevour = game.actions.chooseCard(player, marketCards)
       game.aDevour(player, toDevour, { noRefill: true })
-      game.mMoveCardTo(card, game.getZoneById('market'), { destIndex: 0, verbose: true })
+      game.mMoveCardTo(card, game.zones.byId('market'), { destIndex: 0, verbose: true })
     },
   },
   {

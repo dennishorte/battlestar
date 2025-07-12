@@ -1692,7 +1692,7 @@ describe('Innovation', () => {
         })
 
         const timbuktu = game
-          .getZoneById('achievements')
+          .zones.byId('achievements')
           .cards()
           .find(card => card.name === 'Timbuktu')
         expect(!!timbuktu).toBe(true)
@@ -1725,7 +1725,7 @@ describe('Innovation', () => {
         })
 
         const timbuktu = game
-          .getZoneById('achievements')
+          .zones.byId('achievements')
           .cards()
           .find(card => card.name === 'Timbuktu')
         expect(!!timbuktu).toBe(true)

@@ -17,7 +17,7 @@
           <BiscuitsInfo />
           <DecksInfo />
           <AchievementsZone />
-          <CardPile :zone="game.getZoneById('junk')" />
+          <CardPile :zone="game.zones.byId('junk')" />
           <WaitingPanel />
         </div>
 

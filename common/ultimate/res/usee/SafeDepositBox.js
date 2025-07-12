@@ -22,7 +22,7 @@ module.exports = {
       else if (choice === 'Exchange') {
         const scoreCards = game.getCardsByZone(player, 'score')
         const valuedJunkCards = game
-          .getZoneById('junk')
+          .zones.byId('junk')
           .cards()
           .filter(card => card.age !== undefined)
 
@@ -31,7 +31,7 @@ module.exports = {
           scoreCards,
           valuedJunkCards,
           game.getZoneByPlayer(player, 'score'),
-          game.getZoneById('junk'),
+          game.zones.byId('junk'),
         )
 
         game.log.add({

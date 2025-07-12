@@ -28,7 +28,7 @@ module.exports = {
       }
       else if (choice === choices[2]) {
         const hand = game.getZoneByPlayer(player, 'hand').cards()
-        game.aTransferMany(player, hand, game.getZoneById('achievements'))
+        game.aTransferMany(player, hand, game.zones.byId('achievements'))
       }
     },
     (game, player) => {

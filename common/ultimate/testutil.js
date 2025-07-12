@@ -306,7 +306,7 @@ TestUtil.testBoard = function(game, state) {
   if (state.junk) {
     expected.junk = state.junk.sort()
     real.junk = game
-      .getZoneById('junk')
+      .zones.byId('junk')
       .cards()
       .filter(c => !(c.isSpecialAchievement && c.expansion === 'usee'))
       .map(c => c.name)
@@ -315,13 +315,13 @@ TestUtil.testBoard = function(game, state) {
 
   if (state.achievements) {
     expected.achievements = state.achievements.sort()
-    real.achievements = game.getZoneById('achievements').cards().map(c => c.name).sort()
+    real.achievements = game.zones.byId('achievements').cards().map(c => c.name).sort()
   }
 
   if (state.standardAchievements) {
     expected.standardAchievements = state.standardAchievements.sort()
     real.standardAchievements = game
-      .getZoneById('achievements')
+      .zones.byId('achievements')
       .cards()
       .filter(c => c.checkIsStandardAchievement())
       .map(c => c.name)
@@ -355,8 +355,8 @@ TestUtil.dumpBoard = function(game) {
     real[player.name] = realBoard
   }
 
-  real.junk = game.getZoneById('junk').cards().map(c => c.name).sort()
-  real.achievements = game.getZoneById('achievements').cards().map(c => c.name).sort()
+  real.junk = game.zones.byId('junk').cards().map(c => c.name).sort()
+  real.achievements = game.zones.byId('achievements').cards().map(c => c.name).sort()
 
   return real
 }
@@ -451,7 +451,7 @@ TestUtil.setAchievements = function(game, playerName, cardNames) {
 
 TestUtil.setAvailableAchievements = function(game, cardNames) {
   const cards = cardNames.map(name => game.cards.byId(name))
-  const zone = game.getZoneById('achievements')
+  const zone = game.zones.byId('achievements')
 
   for (const card of zone.cards()) {
     if (card.checkIsStandardAchievement()) {
@@ -466,7 +466,7 @@ TestUtil.setAvailableAchievements = function(game, cardNames) {
 
 TestUtil.setJunk = function(game, cardNames) {
   const cards = cardNames.map(name => game.cards.byId(name))
-  const zone = game.getZoneById('junk')
+  const zone = game.zones.byId('junk')
 
   for (const card of cards) {
     game.mMoveCardTo(card, zone)
