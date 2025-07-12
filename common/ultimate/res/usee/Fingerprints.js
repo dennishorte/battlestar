@@ -16,7 +16,7 @@ module.exports = {
     (game, player) => {
       const splayedColors = game
         .utilColors()
-        .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
+        .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
         .length
 
       game.aSafeguardAvailableAchievement(player, splayedColors)
@@ -32,7 +32,7 @@ module.exports = {
         const card = game.actions.chooseCard(player, choices, {
           title: 'Choose a card to transfer'
         })
-        game.aTransfer(player, card, game.getZoneByPlayer(transferTo, card.color))
+        game.aTransfer(player, card, game.zones.byPlayer(transferTo, card.color))
       }
       else {
         game.log.addNoEffect()

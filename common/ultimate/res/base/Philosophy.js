@@ -15,7 +15,7 @@ module.exports = {
     },
     (game, player) => {
       const choices = game
-        .getZoneByPlayer(player, 'hand')
+        .zones.byPlayer(player, 'hand')
         .cards()
         .map(c => c.name)
 

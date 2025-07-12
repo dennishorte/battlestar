@@ -16,7 +16,7 @@ module.exports = {
       for (const other of game.players.startingWith(player)) {
         const colors = game
           .utilColors()
-          .filter(color => game.getZoneByPlayer(other, color).splay !== 'none')
+          .filter(color => game.zones.byPlayer(other, color).splay !== 'none')
 
         if (colors.length > 0) {
           choices.push({

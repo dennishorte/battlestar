@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const hand = game.getZoneByPlayer(player, 'hand')
+      const hand = game.zones.byPlayer(player, 'hand')
       const card = game.actions.chooseCard(player, hand.cards())
 
       if (card) {

@@ -285,7 +285,7 @@ const cardData = [
         })
 
         if (targetPlayer) {
-          const troopZone = game.getZoneByPlayer(targetPlayer, 'trophyHall')
+          const troopZone = game.zones.byPlayer(targetPlayer, 'trophyHall')
           const choices = troopZone.cards().map(troop => troop.getOwnerName()).sort()
           const selections = game.actions.choose(player, choices, {
             title: 'Choose up to 2 troops to reanimate',
@@ -454,7 +454,7 @@ const cardData = [
             }
 
             else {
-              const zone = game.getZoneByPlayer(player, selection.title)
+              const zone = game.zones.byPlayer(player, selection.title)
               const card = zone.cards().find(c => c.name === selection.selection[0])
               game.aPromote(player, card)
             }

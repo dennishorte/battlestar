@@ -14,7 +14,7 @@ module.exports = {
       const choices = game
         .getCardsByZone(player, 'score')
         .filter(card => card.getAge() <= 4)
-      const target = game.getZoneByPlayer(leader, 'score')
+      const target = game.zones.byPlayer(leader, 'score')
       const transferred = game.aChooseAndTransfer(player, choices, target, { count: 2 })
       if (transferred && transferred.length > 0) {
         game.state.dogmaInfo.piratesLooted = true

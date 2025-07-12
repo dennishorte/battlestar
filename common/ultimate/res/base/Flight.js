@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const redSplay = game.getZoneByPlayer(player, 'red').splay
+      const redSplay = game.zones.byPlayer(player, 'red').splay
       if (redSplay === 'up') {
         game.aChooseAndSplay(player, null, 'up')
       }
@@ -20,7 +20,7 @@ module.exports = {
       }
     },
     (game, player) => {
-      const redSplay = game.getZoneByPlayer(player, 'red').splay
+      const redSplay = game.zones.byPlayer(player, 'red').splay
       if (redSplay === 'up') {
         game.log.add({ template: 'no effect' })
       }

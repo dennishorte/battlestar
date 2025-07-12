@@ -20,7 +20,7 @@ module.exports = {
       }
 
       const color = card.color
-      const zone = game.getZoneByPlayer(player, color)
+      const zone = game.zones.byPlayer(player, color)
 
       if (zone.splay !== 'aslant') {
         const cards = zone.cards()

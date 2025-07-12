@@ -15,12 +15,12 @@ module.exports = {
         .getCardsByZone(player, 'score')
         .filter(c => c.getAge() === value)
 
-      const transferred = game.aTransferMany(player, cards, game.getZoneByPlayer(leader, 'hand'))
+      const transferred = game.aTransferMany(player, cards, game.zones.byPlayer(leader, 'hand'))
       if (transferred && transferred.length > 0) {
         const choices = game
           .getTopCards(leader)
           .filter(card => !card.checkHasBiscuit('l'))
-        game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'hand'))
+        game.aChooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'))
       }
     }
   ],

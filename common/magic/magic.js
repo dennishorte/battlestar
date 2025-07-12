@@ -403,8 +403,8 @@ Magic.prototype.aCascade = function(player, x) {
     })
     this.log.indent()
 
-    this.mMoveCardTo(card, this.getZoneByPlayer(player, 'stack', { index: 0 }))
-    const library = this.getZoneByPlayer(player, 'library')
+    this.mMoveCardTo(card, this.zones.byPlayer(player, 'stack', { index: 0 }))
+    const library = this.zones.byPlayer(player, 'library')
     for (let j = 0; j < i; j++) {
       this.mMoveCardTo(cards[j], library, { verbose: true })
     }
@@ -580,7 +580,7 @@ Magic.prototype.aDraw = function(player, opts={}) {
   }
 
   const card = libraryCards[0]
-  this.mMoveCardTo(card, this.getZoneByPlayer(player, 'hand'))
+  this.mMoveCardTo(card, this.zones.byPlayer(player, 'hand'))
 
   if (!opts.silent) {
     this.log.add({
@@ -664,7 +664,7 @@ Magic.prototype.aSecret = function(player, cardId) {
 
 Magic.prototype.aMorph = function(player, cardId) {
   player = player || this.players.current()
-  const zone = this.getZoneByPlayer(player, 'stack')
+  const zone = this.zones.byPlayer(player, 'stack')
   const card = this.getCardById(cardId)
   card.g.morph = true
   this.aMoveCard(player, cardId, zone.id, 0)
@@ -783,7 +783,7 @@ Magic.prototype.aMulligan = function(player) {
   })
   this.log.indent()
 
-  const library = this.getZoneByPlayer(player, 'library')
+  const library = this.zones.byPlayer(player, 'library')
   for (const card of this.getCardsByZone(player, 'hand')) {
     this.mMoveCardTo(card, library)
   }
@@ -916,7 +916,7 @@ Magic.prototype.aSelectPhase = function(player, phase) {
   // Move all cards out of the attackers and blockers zones
   if (!this.utilCombatPhases().includes(phase)) {
     for (const player of this.players.all()) {
-      const creaturesZone = this.getZoneByPlayer(player, 'creatures')
+      const creaturesZone = this.zones.byPlayer(player, 'creatures')
 
       for (const zoneName of ['attacking', 'blocking']) {
         const cards = this.getCardsByZone(player, zoneName)
@@ -959,7 +959,7 @@ Magic.prototype.aShuffleBottom = function(player, zoneId, count) {
 Magic.prototype.aStackEffect = function(player, cardId) {
   const card = this.getCardById(cardId)
   const controller = this.players.byController(card)
-  const stack = this.getZoneByPlayer(controller, 'stack')
+  const stack = this.zones.byPlayer(controller, 'stack')
 
   const data = {
     zoneId: stack.id,
@@ -1189,7 +1189,7 @@ Magic.prototype.mClearStack = function() {
 
     for (const card of toClear) {
       const owner = this.players.byOwner(card)
-      const graveyard = this.getZoneByPlayer(owner, 'graveyard')
+      const graveyard = this.zones.byPlayer(owner, 'graveyard')
       this.mMoveCardTo(card, graveyard, { verbose: true })
     }
     this.log.outdent()

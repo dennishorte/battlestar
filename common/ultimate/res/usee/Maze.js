@@ -65,7 +65,7 @@ module.exports = {
       }
 
       if (colorsToDiscard.length > 0 && leaderHandCards.length > 0) {
-        game.aExchangeZones(player, game.getZoneByPlayer(player, 'hand'), game.getZoneByPlayer(leader, 'score'))
+        game.aExchangeZones(player, game.zones.byPlayer(player, 'hand'), game.zones.byPlayer(leader, 'score'))
       }
     },
   ],

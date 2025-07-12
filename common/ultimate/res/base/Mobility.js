@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader, self }) => {
       let transferred = false
-      const destination = game.getZoneByPlayer(leader, 'score')
+      const destination = game.zones.byPlayer(leader, 'score')
       const choices = game
         .getTopCards(player)
         .filter(card => card.color !== 'red')

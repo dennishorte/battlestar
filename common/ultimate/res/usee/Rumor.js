@@ -28,7 +28,7 @@ module.exports = {
 
       if (card) {
         const playerOnLeft = game.players.following(player)
-        game.aTransfer(player, card, game.getZoneByPlayer(playerOnLeft, 'hand'))
+        game.aTransfer(player, card, game.zones.byPlayer(playerOnLeft, 'hand'))
       }
     }
   ],

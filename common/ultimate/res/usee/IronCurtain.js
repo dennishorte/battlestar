@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const splays = ['yellow', 'red', 'purple', 'green', 'blue']
-        .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
+        .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
 
       const unsplayed = []
       for (const color of splays) {

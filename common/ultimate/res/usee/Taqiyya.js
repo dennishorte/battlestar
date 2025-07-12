@@ -14,7 +14,7 @@ module.exports = {
       const color = game.aChooseColor(player)[0]
       const toTransfer = game.getCardsByZone(player, color)
 
-      game.aTransferMany(player, toTransfer, game.getZoneByPlayer(player, 'hand'), { ordered: true })
+      game.aTransferMany(player, toTransfer, game.zones.byPlayer(player, 'hand'), { ordered: true })
     },
     (game, player, { self }) => {
       const card = game.aDrawAndMeld(player, game.getEffectAge(self, 3))

@@ -266,9 +266,9 @@ const cardData = [
           template: '{player} choose {card} to play from their innerCircle',
           args: { player, card: toPlay }
         })
-        game.mMoveCardTo(toPlay, game.getZoneByPlayer(player, 'hand'))
+        game.mMoveCardTo(toPlay, game.zones.byPlayer(player, 'hand'))
         game.aPlayCard(player, toPlay)
-        game.mMoveCardTo(toPlay, game.getZoneByPlayer(player, 'innerCircle'))
+        game.mMoveCardTo(toPlay, game.zones.byPlayer(player, 'innerCircle'))
         game.log.add({
           template: '{player} returns {card} to their inner circle',
           args: { player, card: toPlay }
@@ -557,7 +557,7 @@ const cardData = [
         .filter(card => card.cost <= 6)
       const card = game.actions.chooseCard(player, choices)
       if (card) {
-        game.mMoveCardTo(card, game.getZoneByPlayer(player, 'hand'))
+        game.mMoveCardTo(card, game.zones.byPlayer(player, 'hand'))
         game.aPlayCard(player, card)
         game.aDevour(player, card)
         game.mRefillMarket()

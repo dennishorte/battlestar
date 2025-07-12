@@ -17,7 +17,7 @@ module.exports = {
 
       const card = game.actions.chooseCard(player, leafChoices)
       if (card) {
-        game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+        game.aTransfer(player, card, game.zones.byPlayer(leader, card.color))
       }
 
       const nonLeafChoices = game

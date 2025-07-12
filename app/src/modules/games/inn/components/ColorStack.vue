@@ -72,7 +72,7 @@ export default {
     },
 
     zone() {
-      return this.game.getZoneByPlayer(this.player, this.color)
+      return this.game.zones.byPlayer(this.player, this.color)
     },
 
     biscuits() {

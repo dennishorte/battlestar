@@ -13,9 +13,9 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       // Transfer all cards from leader's hand to player's hand
-      const leaderHand = game.getZoneByPlayer(leader, 'hand')
+      const leaderHand = game.zones.byPlayer(leader, 'hand')
       const leaderCards = leaderHand.cards()
-      game.aTransferMany(leader, leaderCards, game.getZoneByPlayer(player, 'hand'), { ordered: true })
+      game.aTransferMany(leader, leaderCards, game.zones.byPlayer(player, 'hand'), { ordered: true })
 
       // Have player choose two colors
       const handColors = game
@@ -25,7 +25,7 @@ module.exports = {
       const chosenColors = game.actions.choose(player, uniqueColors, { count: 2 })
 
       // Transfer all cards of chosen colors from player's hand to leader's hand
-      const playerHand = game.getZoneByPlayer(player, 'hand')
+      const playerHand = game.zones.byPlayer(player, 'hand')
       const transferCards = playerHand.cards().filter(card => chosenColors.includes(card.color))
       game.aTransferMany(player, transferCards, leaderHand, { ordered: true })
     },

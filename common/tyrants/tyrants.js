@@ -668,7 +668,7 @@ Tyrants.prototype.cleanup = function() {
   })
 
   for (const card of playedCards) {
-    this.mMoveCardTo(card, this.getZoneByPlayer(player, 'discard'))
+    this.mMoveCardTo(card, this.zones.byPlayer(player, 'discard'))
   }
 
   const hand = this.getCardsByZone(player, 'hand')
@@ -678,7 +678,7 @@ Tyrants.prototype.cleanup = function() {
       args: { player, count: hand.length }
     })
     for (const card of hand) {
-      this.mMoveCardTo(card, this.getZoneByPlayer(player, 'discard'))
+      this.mMoveCardTo(card, this.zones.byPlayer(player, 'discard'))
     }
   }
 
@@ -799,7 +799,7 @@ Tyrants.prototype.aCascade = function(player, opts) {
       template: '{card} found',
       args: { card: found }
     })
-    this.mMoveCardTo(found, this.getZoneByPlayer(player, 'hand'))
+    this.mMoveCardTo(found, this.zones.byPlayer(player, 'hand'))
     this.aPlayCard(player, found)
 
     // If the player devoured the card as part of using it, they cannot acquire it.
@@ -816,7 +816,7 @@ Tyrants.prototype.aCascade = function(player, opts) {
         template: '{player} adds {card} to their deck',
         args: { player, card: found }
       })
-      this.mMoveCardTo(found, this.getZoneByPlayer(player, 'discard'))
+      this.mMoveCardTo(found, this.zones.byPlayer(player, 'discard'))
     }
     else {
       this.aDevour(player, found)
@@ -1307,7 +1307,7 @@ Tyrants.prototype.aDevourThisAnd = function(player, card, title, fn) {
 }
 
 Tyrants.prototype.aDiscard = function(player, card) {
-  this.mMoveCardTo(card, this.getZoneByPlayer(player, 'discard'))
+  this.mMoveCardTo(card, this.zones.byPlayer(player, 'discard'))
   this.log.add({
     template: '{player} discards {card}',
     args: { player, card }
@@ -1315,12 +1315,12 @@ Tyrants.prototype.aDiscard = function(player, card) {
 }
 
 Tyrants.prototype.aDraw = function(player, opts={}) {
-  const deck = this.getZoneByPlayer(player, 'deck')
-  const hand = this.getZoneByPlayer(player, 'hand')
+  const deck = this.zones.byPlayer(player, 'deck')
+  const hand = this.zones.byPlayer(player, 'hand')
 
   if (deck.cards().length === 0) {
     // See if we can reshuffle.
-    const discard = this.getZoneByPlayer(player, 'discard')
+    const discard = this.zones.byPlayer(player, 'discard')
     if (discard.cards().length > 0) {
       this.mReshuffleDiscard(player)
     }
@@ -1369,7 +1369,7 @@ Tyrants.prototype.aPromote = function(player, card, opts={}) {
     this.mMoveCardTo(card, this.zones.byId('outcast'))
   }
   else {
-    this.mMoveCardTo(card, this.getZoneByPlayer(player, 'innerCircle'))
+    this.mMoveCardTo(card, this.zones.byPlayer(player, 'innerCircle'))
   }
 
   if (!opts.silent) {
@@ -1382,11 +1382,11 @@ Tyrants.prototype.aPromote = function(player, card, opts={}) {
 }
 
 Tyrants.prototype.aPromoteTopCard = function(player) {
-  const deck = this.getZoneByPlayer(player, 'deck')
+  const deck = this.zones.byPlayer(player, 'deck')
 
   if (deck.cards().length === 0) {
     // See if we can reshuffle.
-    const discard = this.getZoneByPlayer(player, 'discard')
+    const discard = this.zones.byPlayer(player, 'discard')
     if (discard.cards().length > 0) {
       this.mReshuffleDiscard(player)
     }
@@ -1436,7 +1436,7 @@ Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
 
   util.assert(!!card, `Unable to find card to recruit: ${cardName}`)
 
-  this.mMoveCardTo(card, this.getZoneByPlayer(player, 'discard'))
+  this.mMoveCardTo(card, this.zones.byPlayer(player, 'discard'))
 
   if (!opts.noCost) {
     player.incrementCounter('influence', -card.cost)
@@ -1803,7 +1803,7 @@ Tyrants.prototype.mAssassinate = function(player, loc, owner) {
 
   util.assert(!!target, 'No valid target for owner at location')
 
-  this.mMoveCardTo(target, this.getZoneByPlayer(player, 'trophyHall'))
+  this.mMoveCardTo(target, this.zones.byPlayer(player, 'trophyHall'))
   return target
 }
 
@@ -1883,8 +1883,8 @@ Tyrants.prototype.mPlaceSpy = function(player, loc) {
 }
 
 Tyrants.prototype.mReshuffleDiscard = function(player) {
-  const discard = this.getZoneByPlayer(player, 'discard')
-  const deck = this.getZoneByPlayer(player, 'deck')
+  const discard = this.zones.byPlayer(player, 'discard')
+  const deck = this.zones.byPlayer(player, 'deck')
 
   util.assert(discard.cards().length > 0, 'Cannot reshuffle empty discard.')
   util.assert(deck.cards().length === 0, 'Cannot reshuffle discard when deck is not empty.')
@@ -1918,8 +1918,8 @@ Tyrants.prototype.mShuffle = function(zone) {
 }
 
 Tyrants.prototype.mRefillHand = function(player) {
-  const deck = this.getZoneByPlayer(player, 'deck')
-  const hand = this.getZoneByPlayer(player, 'hand')
+  const deck = this.zones.byPlayer(player, 'deck')
+  const hand = this.zones.byPlayer(player, 'hand')
 
   this.log.add({
     template: '{player} will refill their hand',

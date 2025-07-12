@@ -9,7 +9,7 @@ module.exports = {
     const numColors = reduceCost ? 4 : 5
     const splays = game
       .utilColors()
-      .map(c => game.getZoneByPlayer(player, c).splay)
+      .map(c => game.zones.byPlayer(player, c).splay)
 
     const directionMatch = splays
       .filter(splay => splay === 'right' || splay === 'up' || splay === 'aslant')

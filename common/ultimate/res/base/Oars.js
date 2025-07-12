@@ -18,7 +18,7 @@ module.exports = {
         game.log.addNoEffect()
       }
 
-      const target = game.getZoneByPlayer(leader, 'score')
+      const target = game.zones.byPlayer(leader, 'score')
       while (true) {
         const choices = game
           .getCardsByZone(player, 'hand')

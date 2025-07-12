@@ -18,8 +18,8 @@ module.exports = {
           template: '{player} exchanges the highest cards in their hand and score pile',
           args: { player }
         })
-        const hand = game.getZoneByPlayer(player, 'hand')
-        const score = game.getZoneByPlayer(player, 'score')
+        const hand = game.zones.byPlayer(player, 'hand')
+        const score = game.zones.byPlayer(player, 'score')
         const handHighest = game.utilHighestCards(hand.cards())
         const scoreHighest = game.utilHighestCards(score.cards())
 

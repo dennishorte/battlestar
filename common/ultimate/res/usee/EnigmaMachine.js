@@ -23,17 +23,17 @@ module.exports = {
         game.aSafeguardMany(player, achievements)
       }
       else if (choice === choices[1]) {
-        const secrets = game.getZoneByPlayer(player, 'safe').cards()
-        game.aTransferMany(player, secrets, game.getZoneByPlayer(player, 'hand'))
+        const secrets = game.zones.byPlayer(player, 'safe').cards()
+        game.aTransferMany(player, secrets, game.zones.byPlayer(player, 'hand'))
       }
       else if (choice === choices[2]) {
-        const hand = game.getZoneByPlayer(player, 'hand').cards()
+        const hand = game.zones.byPlayer(player, 'hand').cards()
         game.aTransferMany(player, hand, game.zones.byId('achievements'))
       }
     },
     (game, player) => {
       const colors = game.utilColors().filter(color => {
-        return game.getZoneByPlayer(player, color).splay === 'left'
+        return game.zones.byPlayer(player, color).splay === 'left'
       })
       game.aChooseAndSplay(player, colors, 'up', { count: 1 })
     }

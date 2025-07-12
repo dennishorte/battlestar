@@ -20,7 +20,7 @@ module.exports = {
           .players.opponentsOf(player)
 
         const targetPlayer = game.actions.choosePlayer(player, otherPlayers)
-        game.aTransfer(player, card, game.getZoneByPlayer(targetPlayer, card.color))
+        game.aTransfer(player, card, game.zones.byPlayer(targetPlayer, card.color))
 
         const topCastleCards = game
           .getTopCards(targetPlayer)

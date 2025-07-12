@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const hand = game.getZoneByPlayer(player, 'hand').cards()
+      const hand = game.zones.byPlayer(player, 'hand').cards()
       if (hand.length === 0) {
         game.log.addNoEffect()
         return

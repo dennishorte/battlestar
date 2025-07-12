@@ -29,10 +29,10 @@ module.exports = {
       else {
         const melded = game.aChooseAndMeld(player, choices)[0]
         if (melded) {
-          const pile = game.getZoneByPlayer(player, melded.color)
+          const pile = game.zones.byPlayer(player, melded.color)
           const cardBeneath = pile.cards()[1]
           if (cardBeneath) {
-            game.aTransfer(player, cardBeneath, game.getZoneByPlayer(leader, cardBeneath.color))
+            game.aTransfer(player, cardBeneath, game.zones.byPlayer(leader, cardBeneath.color))
           }
           else {
             game.log.add({

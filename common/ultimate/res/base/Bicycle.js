@@ -14,8 +14,8 @@ module.exports = {
       if (decision) {
         game.aExchangeZones(
           player,
-          game.getZoneByPlayer(player, 'hand'),
-          game.getZoneByPlayer(player, 'score'),
+          game.zones.byPlayer(player, 'hand'),
+          game.zones.byPlayer(player, 'score'),
         )
       }
       else {

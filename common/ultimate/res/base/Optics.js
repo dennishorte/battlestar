@@ -34,7 +34,7 @@ module.exports = {
             game.aChooseAndTransfer(
               player,
               game.getCardsByZone(player, 'score'),
-              game.getZoneByPlayer(targetPlayer, 'score')
+              game.zones.byPlayer(targetPlayer, 'score')
             )
           }
         }

@@ -11,15 +11,15 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const handCards = game.getZoneByPlayer(player, 'hand').cards()
-      const scoreCards = game.getZoneByPlayer(player, 'score').cards()
+      const handCards = game.zones.byPlayer(player, 'hand').cards()
+      const scoreCards = game.zones.byPlayer(player, 'score').cards()
       const rightPlayer = game.players.rightOf(player)
 
       const choices = [...handCards, ...scoreCards]
       const selectedCard = game.actions.chooseCard(player, choices)
 
       if (selectedCard) {
-        game.aTransfer(player, selectedCard, game.getZoneByPlayer(rightPlayer, selectedCard.color))
+        game.aTransfer(player, selectedCard, game.zones.byPlayer(rightPlayer, selectedCard.color))
       }
       else {
         game.aClaimAchievement(player, { name: 'Folklore' })

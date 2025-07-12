@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = game
-        .getZoneByPlayer(player, 'score')
+        .zones.byPlayer(player, 'score')
         .cards()
         .map(c => c.id)
       const card = game.actions.chooseCard(player, choices, { min: 0, max: 1 })
@@ -21,7 +21,7 @@ module.exports = {
         game.aReturn(player, card)
 
         const topPurple = game
-          .getZoneByPlayer(player, 'purple')
+          .zones.byPlayer(player, 'purple')
           .cards()[0]
         const drawAge = topPurple ? topPurple.getAge() + 2 : 2
         game.aDraw(player, { age: drawAge })

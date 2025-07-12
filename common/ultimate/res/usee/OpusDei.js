@@ -21,7 +21,7 @@ module.exports = {
       }
     },
     (game, player, { self }) => {
-      const splayColors = game.utilColors().filter(color => game.getZoneByPlayer(player, color).splay === 'up')
+      const splayColors = game.utilColors().filter(color => game.zones.byPlayer(player, color).splay === 'up')
 
       splayColors.forEach(() => {
         game.aDraw(player, { age: game.getEffectAge(self, 8) })

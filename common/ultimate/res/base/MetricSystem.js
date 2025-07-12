@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      if (game.getZoneByPlayer(player, 'green').splay === 'right') {
+      if (game.zones.byPlayer(player, 'green').splay === 'right') {
         game.aChooseAndSplay(player, null, 'right')
       }
       else {

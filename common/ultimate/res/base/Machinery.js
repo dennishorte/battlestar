@@ -12,8 +12,8 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const playerHand = game.getZoneByPlayer(player, 'hand')
-      const leaderHand = game.getZoneByPlayer(leader, 'hand')
+      const playerHand = game.zones.byPlayer(player, 'hand')
+      const leaderHand = game.zones.byPlayer(leader, 'hand')
 
       const yours = playerHand.cards()
       const mine = game.utilHighestCards(leaderHand.cards())

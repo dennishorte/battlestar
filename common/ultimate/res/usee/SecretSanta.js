@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const choices = game.getZoneByPlayer(leader, 'score').cards()
+      const choices = game.zones.byPlayer(leader, 'score').cards()
       const card = game.actions.chooseCards(player, choices, { hidden: true })[0]
       if (card) {
         game.aMeld(player, card)

@@ -13,7 +13,7 @@ module.exports = {
     (game, player, { leader }) => {
       const splayedColors = game
         .utilColors()
-        .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
+        .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
 
       const color = game.actions.choose(player, splayedColors)[0]
       if (color) {
@@ -21,7 +21,7 @@ module.exports = {
         if (unsplayed) {
           const topCard = game.getTopCard(player, color)
           if (topCard) {
-            game.aTransfer(player, topCard, game.getZoneByPlayer(leader, 'score'))
+            game.aTransfer(player, topCard, game.zones.byPlayer(leader, 'score'))
           }
         }
       }

@@ -46,8 +46,8 @@ TestUtil.fixture = function(options) {
 
   game.testSetBreakpoint('initialization-complete', (game) => {
     for (const player of game.players.all()) {
-      const deck = game.getZoneByPlayer(player, 'deck')
-      const hand = game.getZoneByPlayer(player, 'hand')
+      const deck = game.zones.byPlayer(player, 'deck')
+      const hand = game.zones.byPlayer(player, 'hand')
 
       // Return all cards in the player hand to their deck
       for (const card of hand.cards()) {
@@ -114,7 +114,7 @@ TestUtil.gameFixture = function(options) {
             })
             game.log.indent()
 
-            const zone = game.getZoneByPlayer(player, key)
+            const zone = game.zones.byPlayer(player, key)
 
             for (const card of zone.cards()) {
               const deck = key === 'deck' ? game.zones.byId('devoured') : card.home
@@ -152,7 +152,7 @@ TestUtil.gameFixture = function(options) {
         }
 
         if (playerSetup.trophyHall) {
-          TestUtil.setTroops(game, game.getZoneByPlayer(player, 'trophyHall').id, playerSetup.trophyHall)
+          TestUtil.setTroops(game, game.zones.byPlayer(player, 'trophyHall').id, playerSetup.trophyHall)
         }
 
         if ('power' in playerSetup) {

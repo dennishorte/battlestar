@@ -39,8 +39,8 @@ module.exports = {
           player,
           lowestScoreCards,
           matchingAchievements,
-          game.getZoneByPlayer(player, 'score'),
-          game.getZoneByPlayer(player, 'achievements'),
+          game.zones.byPlayer(player, 'score'),
+          game.zones.byPlayer(player, 'achievements'),
         )
       }
     },

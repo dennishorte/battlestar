@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader, self }) => {
-      const target = game.getZoneByPlayer(leader, 'hand')
+      const target = game.zones.byPlayer(leader, 'hand')
       const cards = game.getCardsByZone(player, 'hand')
 
       const toTransfer = game.aChooseHighest(player, cards, 3)

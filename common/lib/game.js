@@ -448,7 +448,7 @@ Game.prototype.checkSameTeam = function(p1, p2) {
 }
 
 Game.prototype.getCardsByZone = function(player, zoneName) {
-  return this.getZoneByPlayer(player, zoneName).cards()
+  return this.zones.byPlayer(player, zoneName).cards()
 }
 
 Game.prototype.getZoneByCard = function(card) {
@@ -467,11 +467,6 @@ Game.prototype.getZoneByCardHome = function(card) {
   else {
     return this.zones.byId(card.home)
   }
-}
-
-Game.prototype.getZoneByPlayer = function(player, name) {
-  // TODO: deprecate
-  return this.zones.byPlayer(player, name)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

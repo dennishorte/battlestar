@@ -12,11 +12,11 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader, self }) => {
       const choices = game
-        .getZoneByPlayer(player, 'score')
+        .zones.byPlayer(player, 'score')
         .cards()
         .filter(card => card.getAge() === game.getEffectAge(self, 1))
         .map(card => card.id)
-      const target = game.getZoneByPlayer(leader, 'score')
+      const target = game.zones.byPlayer(leader, 'score')
       const transferredCards = game.aChooseAndTransfer(player, choices, target)
 
       if (transferredCards.length > 0) {

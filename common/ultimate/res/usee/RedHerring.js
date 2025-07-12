@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const red = game.getZoneByPlayer(player, 'red')
+      const red = game.zones.byPlayer(player, 'red')
 
       if (red.cards().length < 2) {
         game.log.add({ template: 'Red cannot be splayed' })
@@ -28,8 +28,8 @@ module.exports = {
     (game, player, { self }) => {
       const card = game.aDrawAndTuck(player, game.getEffectAge(self, 6))
       if (card) {
-        const redSplay = game.getZoneByPlayer(player, 'red').splay
-        const cardSplay = game.getZoneByPlayer(player, card.color).splay
+        const redSplay = game.zones.byPlayer(player, 'red').splay
+        const cardSplay = game.zones.byPlayer(player, card.color).splay
         if (redSplay === cardSplay) {
           game.aSplay(player, card.color, 'up')
         }

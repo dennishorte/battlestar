@@ -11,11 +11,11 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const scoreCount = game
-        .getZoneByPlayer(player, 'score')
+        .zones.byPlayer(player, 'score')
         .cards()
         .length
       const handCount = game
-        .getZoneByPlayer(player, 'hand')
+        .zones.byPlayer(player, 'hand')
         .cards()
         .length
 

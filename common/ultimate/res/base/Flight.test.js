@@ -14,7 +14,7 @@ describe('Flight', () => {
     request = t.choose(game, request, 'Dogma.Flight')
     t.choose(game, request, 'red')
 
-    const red = game.getZoneByPlayer(t.dennis(game), 'red')
+    const red = game.zones.byPlayer(t.dennis(game), 'red')
     expect(red.splay).toBe('up')
   })
 
@@ -30,7 +30,7 @@ describe('Flight', () => {
     request = t.choose(game, request, 'Dogma.Flight')
     t.choose(game, request, 'blue')
 
-    const blue = game.getZoneByPlayer(t.dennis(game), 'blue')
+    const blue = game.zones.byPlayer(t.dennis(game), 'blue')
     expect(blue.splay).toBe('up')
   })
 })

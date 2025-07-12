@@ -18,14 +18,14 @@ module.exports = {
 
       let transferred = false
       for (const card of topDemands) {
-        const result = game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+        const result = game.aTransfer(player, card, game.zones.byPlayer(leader, card.color))
         if (result) {
           transferred = true
         }
       }
 
       if (transferred) {
-        game.aExchangeZones(player, game.getZoneByPlayer(player, 'score'), game.getZoneByPlayer(leader, 'score'))
+        game.aExchangeZones(player, game.zones.byPlayer(player, 'score'), game.zones.byPlayer(leader, 'score'))
       }
     }
   ],

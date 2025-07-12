@@ -13,7 +13,7 @@ module.exports = {
     (game, player, { self }) => {
       const splayedLeft = game
         .utilColors()
-        .filter(color => game.getZoneByPlayer(player, color).splay === 'left')
+        .filter(color => game.zones.byPlayer(player, color).splay === 'left')
       const colors = game.aChooseAndSplay(player, splayedLeft, 'right')
       if (colors && colors.length > 0) {
         game.aDrawAndScore(player, game.getEffectAge(self, 4))
@@ -23,7 +23,7 @@ module.exports = {
     (game, player) => {
       const splayCount = game
         .utilColors()
-        .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
+        .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
         .length
 
       const achievementAvailable = game.checkAchievementAvailable('Wonder')

@@ -14,7 +14,7 @@ module.exports = {
       game.aDraw(player, { age: game.getEffectAge(self, 1) })
       const highest = game.aChooseHighest(player, game.getCardsByZone(player, 'hand'), 1)
       if (highest.length > 0) {
-        game.aTransfer(player, highest[0], game.getZoneByPlayer(leader, 'hand'))
+        game.aTransfer(player, highest[0], game.zones.byPlayer(leader, 'hand'))
       }
     },
     (game, player) => {

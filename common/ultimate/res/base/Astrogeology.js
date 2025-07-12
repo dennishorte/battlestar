@@ -23,14 +23,14 @@ module.exports = {
           const cards = game.getCardsByZone(player, color)
           if (cards.length > 4) {
             const toReturn = cards.slice(4)
-            game.aTransferMany(player, toReturn, game.getZoneByPlayer(player, 'hand'), { ordered: true })
+            game.aTransferMany(player, toReturn, game.zones.byPlayer(player, 'hand'), { ordered: true })
           }
         }
       }
     },
 
     (game, player, { self }) => {
-      const handSize = game.getZoneByPlayer(player, 'hand').cards().length
+      const handSize = game.zones.byPlayer(player, 'hand').cards().length
       if (handSize >= 8) {
         throw new GameOverEvent({
           player,

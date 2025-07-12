@@ -28,7 +28,7 @@ module.exports = {
           const topRed = game.getTopCard(player, 'red')
 
           if (topRed) {
-            game.aTransfer(player, topRed, game.getZoneByPlayer(opp, 'red'))
+            game.aTransfer(player, topRed, game.zones.byPlayer(opp, 'red'))
 
             // After transferring, meld their top green card
             const topGreen = game.getTopCard(opp, 'green')

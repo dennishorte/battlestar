@@ -41,7 +41,7 @@ module.exports = {
       const transfer = game.actions.chooseYesNo(player, `Transfer an achievement of value ${lowestAchievement.getAge()} to your hand?`)
 
       if (transfer) {
-        game.aTransfer(player, lowestAchievement, game.getZoneByPlayer(player, 'hand'))
+        game.aTransfer(player, lowestAchievement, game.zones.byPlayer(player, 'hand'))
 
         const yellowCards = game.getCardsByZone(player, 'yellow')
         const blueCards = game.getCardsByZone(player, 'blue')

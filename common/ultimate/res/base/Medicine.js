@@ -18,11 +18,11 @@ module.exports = {
       const lowestCards = game.actions.chooseCards(player, lowest)
 
       if (highestCards && highestCards.length > 0) {
-        game.mMoveCardTo(highestCards[0], game.getZoneByPlayer(leader, 'score'), { player })
+        game.mMoveCardTo(highestCards[0], game.zones.byPlayer(leader, 'score'), { player })
       }
 
       if (lowestCards && lowestCards.length > 0) {
-        game.mMoveCardTo(lowestCards[0], game.getZoneByPlayer(player, 'score'), { player })
+        game.mMoveCardTo(lowestCards[0], game.zones.byPlayer(player, 'score'), { player })
       }
     },
 

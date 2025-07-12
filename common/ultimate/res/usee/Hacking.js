@@ -13,12 +13,12 @@ module.exports = {
       const secrets = game.aChooseHighest(player, game.getCardsByZone(player, 'safe'), 2, {
         title: 'Choose secrets to transfer',
       })
-      game.aTransferMany(player, secrets, game.getZoneByPlayer(leader, 'safe'))
+      game.aTransferMany(player, secrets, game.zones.byPlayer(leader, 'safe'))
 
       const score = game.aChooseHighest(player, game.getCardsByZone(player, 'score'), 2, {
         title: 'Choose score to transfer',
       })
-      game.aTransferMany(player, score, game.getZoneByPlayer(leader, 'score'))
+      game.aTransferMany(player, score, game.zones.byPlayer(leader, 'score'))
 
       const toMeld = game.aChooseLowest(player, game.getCardsByZone(player, 'score'), 2, {
         title: 'Choose score to meld',

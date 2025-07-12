@@ -11,10 +11,10 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const unsplayChoices = ['yellow', 'red', 'blue', 'green', 'purple']
-        .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
+        .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
 
       const splayChoices = ['yellow', 'red', 'blue', 'green', 'purple']
-        .filter(color => game.getZoneByPlayer(player, color).splay === 'none')
+        .filter(color => game.zones.byPlayer(player, color).splay === 'none')
 
       const choices = []
       if (unsplayChoices.length > 0) {

@@ -14,7 +14,7 @@ module.exports = {
       const choices = game
         .getTopCards(player)
         .filter(card => card.checkHasBiscuit('k'))
-      const cards = game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(leader, 'score'))
+      const cards = game.aChooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'score'))
       if (cards && cards.length > 0) {
         game.state.dogmaInfo.gunpowderCardWasTransferred = true
       }

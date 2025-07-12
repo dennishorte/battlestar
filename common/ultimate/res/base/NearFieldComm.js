@@ -21,7 +21,7 @@ module.exports = {
         .getCardsByZone(player, 'score')
         .filter(card => card.getAge() === value)
 
-      game.aTransferMany(player, cardsToTransfer, game.getZoneByPlayer(leader, 'score'))
+      game.aTransferMany(player, cardsToTransfer, game.zones.byPlayer(leader, 'score'))
     },
 
     (game, player) => {

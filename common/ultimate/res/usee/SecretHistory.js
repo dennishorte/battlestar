@@ -12,14 +12,14 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const choices = game.getCardsByZone(player, 'safe')
-      game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(leader, 'safe'), {
+      game.aChooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'safe'), {
         title: 'Transfer a secret',
       })
     },
 
     (game, player) => {
-      const redSplay = game.getZoneByPlayer(player, 'red').splay
-      const purpleSplay = game.getZoneByPlayer(player, 'purple').splay
+      const redSplay = game.zones.byPlayer(player, 'red').splay
+      const purpleSplay = game.zones.byPlayer(player, 'purple').splay
 
       if (redSplay === 'right' && purpleSplay === 'right') {
         game.aClaimAchievement(player, { name: 'Mystery' })

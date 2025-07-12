@@ -16,7 +16,7 @@ module.exports = {
           const choices = game
             .getCardsByZone(player, 'score')
             .filter(c => c.getAge() === topYellow.getAge())
-          game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(leader, 'score'), {
+          game.aChooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'score'), {
             title: 'Transfer a card for ' + target.name,
             count: 1,
           })

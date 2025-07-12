@@ -20,13 +20,13 @@ module.exports = {
       const chosen = game.actions.chooseCard(leader, [card1, card2])
       const other = chosen === card1 ? card2 : card1
 
-      game.aTransfer(player, chosen, game.getZoneByPlayer(leader, chosen.color))
+      game.aTransfer(player, chosen, game.zones.byPlayer(leader, chosen.color))
       game.aMeld(player, other)
     },
 
     (game, player) => {
       const greenCount = game
-        .getZoneByPlayer(player, 'green')
+        .zones.byPlayer(player, 'green')
         .cards()
         .length
 

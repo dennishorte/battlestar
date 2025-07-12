@@ -30,7 +30,7 @@ module.exports = {
           player,
           scoreCards,
           valuedJunkCards,
-          game.getZoneByPlayer(player, 'score'),
+          game.zones.byPlayer(player, 'score'),
           game.zones.byId('junk'),
         )
 

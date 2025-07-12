@@ -14,7 +14,7 @@ module.exports = {
       const cards = game.aChooseAndTransfer(
         player,
         game.getCardsByZone(player, 'hand'),
-        game.getZoneByPlayer(leader, 'score')
+        game.zones.byPlayer(leader, 'score')
       )
       if (cards && cards.length > 0) {
         game.aDraw(player, { age: game.getEffectAge(self, 6) })

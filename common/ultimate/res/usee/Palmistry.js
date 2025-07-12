@@ -14,7 +14,7 @@ module.exports = {
       game.aDrawAndMeld(player, game.getEffectAge(self, 1))
     },
     (game, player, { self }) => {
-      const hand = game.getZoneByPlayer(player, 'hand')
+      const hand = game.zones.byPlayer(player, 'hand')
       const returned = game.aChooseAndReturn(player, hand.cards(), { count: 2 })
 
       if (returned.length === 2) {

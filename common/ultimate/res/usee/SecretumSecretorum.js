@@ -11,8 +11,8 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = [
-        ...game.getZoneByPlayer(player, 'hand').cards(),
-        ...game.getZoneByPlayer(player, 'score').cards()
+        ...game.zones.byPlayer(player, 'hand').cards(),
+        ...game.zones.byPlayer(player, 'score').cards()
       ]
 
       const returned = game.aChooseAndReturn(player, choices, {

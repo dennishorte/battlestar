@@ -38,7 +38,7 @@ module.exports = {
       }
 
       const choices = game
-        .getZoneByPlayer(player, 'hand')
+        .zones.byPlayer(player, 'hand')
         .cards()
         .map(c => c.id)
       game.aChooseAndTuck(player, choices, { count })

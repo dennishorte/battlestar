@@ -15,7 +15,7 @@ module.exports = {
       game.aChooseAndTransfer(
         player,
         game.getCardsByZone(player, 'hand'),
-        game.getZoneByPlayer(leader, 'hand'),
+        game.zones.byPlayer(leader, 'hand'),
         { count: 2 }
       )
 

@@ -23,7 +23,7 @@ module.exports = {
 
         const topYellowCard = game.getTopCard(leader, 'yellow')
         if (topYellowCard && topYellowCard.name === 'Skyscrapers') {
-          game.aTransfer(player, topYellowCard, game.getZoneByPlayer(leader, 'hand'))
+          game.aTransfer(player, topYellowCard, game.zones.byPlayer(leader, 'hand'))
         }
       }
     }

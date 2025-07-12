@@ -16,7 +16,7 @@ module.exports = {
         .map(card => card.color)
 
       const choices = game
-        .getZoneByPlayer(player, 'hand')
+        .zones.byPlayer(player, 'hand')
         .cards()
         .filter(card => !usedColors.includes(card.color))
 

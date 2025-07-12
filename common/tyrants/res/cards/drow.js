@@ -445,7 +445,7 @@ const cardData = [
         template: '{player} moves their deck into their discard pile',
         args: { player }
       })
-      const discard = game.getZoneByPlayer(player, 'discard')
+      const discard = game.zones.byPlayer(player, 'discard')
       for (const card of game.getCardsByZone(player, 'deck')) {
         game.mMoveCardTo(card, discard)
       }

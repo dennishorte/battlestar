@@ -25,12 +25,12 @@ module.exports = {
           template: '{player} drew a red card. Returning all cards in hand.',
           args: { player }
         })
-        game.aReturnMany(player, game.getZoneByPlayer(player, 'hand').cards())
+        game.aReturnMany(player, game.zones.byPlayer(player, 'hand').cards())
       }
     },
     (game, player) => {
       const hand = () => game
-        .getZoneByPlayer(player, 'hand')
+        .zones.byPlayer(player, 'hand')
         .cards()
         .map(c => c.id)
       game.aChooseAndMeld(player, hand())

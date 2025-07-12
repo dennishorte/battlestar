@@ -13,7 +13,7 @@ module.exports = {
       const choices = game
         .getCardsByZone(player, 'score')
         .filter(card => card.getAge() === 2 || card.getAge() === 3)
-      game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(leader, 'score'))
+      game.aChooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'score'))
     }
   ],
 }
