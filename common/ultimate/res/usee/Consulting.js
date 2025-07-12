@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `hffc`,
   dogmaBiscuit: `f`,
   dogma: [
-    `Choose an opponent. Draw and meld two {10}. Super-execute the top card on your board of that player's choice.`
+    `Choose an opponent. Draw and meld two {0}. Super-execute the top card on your board of that player's choice.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
