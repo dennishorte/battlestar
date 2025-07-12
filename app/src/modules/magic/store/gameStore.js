@@ -105,7 +105,7 @@ export default {
       }
 
       if (getters.isMovingRevealed) {
-        dispatch('moveRevealed', state.game.getZoneByCard(card))
+        dispatch('moveRevealed', card.zone)
         return
       }
 

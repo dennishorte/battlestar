@@ -194,8 +194,7 @@ export default {
     },
 
     cardZoneIsPublic() {
-      const zone = this.game.getZoneByCard(this.card)
-      return zone.kind === 'public'
+      return this.card.zone.kind === 'public'
     },
 
     extraClasses() {

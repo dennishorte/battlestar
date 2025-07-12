@@ -803,7 +803,7 @@ Tyrants.prototype.aCascade = function(player, opts) {
     this.aPlayCard(player, found)
 
     // If the player devoured the card as part of using it, they cannot acquire it.
-    if (this.getZoneByCard(found).id === 'devoured') {
+    if (found.zone.id === 'devoured') {
       this.log.add({
         template: '{card} cannot be acquired because it was devoured',
         args: { card: found }
@@ -1277,12 +1277,11 @@ Tyrants.prototype.aDeploy = function(player, loc, opts={}) {
 }
 
 Tyrants.prototype.aDevour = function(player, card, opts={}) {
-  const zone = this.getZoneByCard(card)
-  this.mDevour(card)
   this.log.add({
     template: '{player} devours {card} from {zone}',
-    args: { player, card, zone },
+    args: { player, card, zone: card.zone },
   })
+  this.mDevour(card)
 
   if (!opts.noRefill) {
     this.mRefillMarket()
@@ -1716,7 +1715,7 @@ Tyrants.prototype.mAdjustCardVisibility = function(card) {
     return
   }
 
-  const zone = this.getZoneByCard(card)
+  const zone = card.zone
 
   // Forget everything about a card if it is returned.
   if (zone.kind() === 'hidden') {

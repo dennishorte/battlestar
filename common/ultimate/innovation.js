@@ -1721,11 +1721,9 @@ Innovation.prototype.aSafeguard = function(player, card) {
     return
   }
 
-  const zone = this.getZoneByCard(card)
-
   this.log.add({
     template: '{player} safeguards {card} from {zone}',
-    args: { player, card, zone },
+    args: { player, card, zone: card.zone },
   })
 
   card.moveTo(safeZone)
@@ -1949,7 +1947,7 @@ Innovation.prototype.checkAgeZeroInPlay = function() {
 Innovation.prototype.checkCardIsTop = function(card) {
   const re = /^players.[^.]*.(yellow|red|green|blue|purple)$/i
   const isOnBoard = card.zone.id.match(re) !== null
-  const isTop = this.getZoneByCard(card).cards()[0] === card
+  const isTop = card.zone.peek() === card
   return isOnBoard && isTop
 }
 
@@ -2142,8 +2140,7 @@ Innovation.prototype.getBottomCards = function(player) {
 }
 
 Innovation.prototype.getEffectAge = function(card, age) {
-  const cardZone = this.getZoneByCard(card)
-  const player = this.players.byZone(cardZone)
+  const player = this.players.byZone(card.zone)
 
   if (player) {
     const karmaInfos = this.getInfoByKarmaTrigger(player, 'effect-age')
@@ -2274,7 +2271,7 @@ Innovation.prototype.getScoreDetails = function(player) {
 }
 
 Innovation.prototype.getSplayByCard = function(card) {
-  const zone = this.getZoneByCard(card)
+  const zone = card.zone
   const cards = zone.cards()
   return card === cards[0] ? 'top' : zone.splay
 }
@@ -2484,7 +2481,7 @@ Innovation.prototype.mAchievementCheck = function() {
     ).length > 0
     for (const card of available) {
       if (
-        this.getZoneByCard(card).name() === 'achievements'
+        card.zone.name() === 'achievements'
         && card.checkPlayerIsEligible
         && card.checkPlayerIsEligible(this, player, reduceCost)
       ) {
@@ -2547,7 +2544,7 @@ Innovation.prototype.mAdjustCardVisibility = function(card) {
     return
   }
 
-  const zone = this.getZoneByCard(card)
+  const zone = card.zone
   const kind = zone.kind()
 
   if (kind === 'public') {
@@ -2639,7 +2636,7 @@ Innovation.prototype.mForeshadow = function(player, card) {
 }
 
 Innovation.prototype.mMeld = function(player, card) {
-  const source = this.getZoneByCard(card)
+  const source = card.zone
   const target = this.zones.byPlayer(player, card.color)
   const sourceIndex = source.cards().indexOf(card)
 
@@ -2675,7 +2672,7 @@ Innovation.prototype.mMoveByIndices = function(source, sourceIndex, target, targ
 }
 
 Innovation.prototype.mMoveCardTo = function(card, target, opts={}) {
-  const source = this.getZoneByCard(card)
+  const source = card.zone
   const sourceIndex = source.cards().findIndex(c => c === card)
   const targetIndex = opts.index === undefined ? target.cards().length : opts.index
 

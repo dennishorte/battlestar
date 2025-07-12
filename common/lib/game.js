@@ -447,15 +447,6 @@ Game.prototype.checkSameTeam = function(p1, p2) {
   return p1.team === p2.team
 }
 
-Game.prototype.getZoneByCard = function(card) {
-  if (card.g && card.g.zone) {
-    return this.zones.byId(card.g.zone)
-  }
-  else {
-    return card.zone
-  }
-}
-
 Game.prototype.getZoneByCardHome = function(card) {
   if (card.g && card.g.home) {
     return this.zones.byId(card.g.home)
@@ -487,7 +478,7 @@ Game.prototype.mMoveByIndices = function(source, sourceIndex, target, targetInde
 }
 
 Game.prototype.mMoveCardTo = function(card, zone, opts={}) {
-  const source = this.getZoneByCard(card)
+  const source = card.zone
   const index = source.cards().indexOf(card)
   const destIndex = opts.index !== undefined ? opts.index : zone.cards().length
   if (opts.verbose) {

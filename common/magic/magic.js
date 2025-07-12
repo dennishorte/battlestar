@@ -655,10 +655,9 @@ Magic.prototype.aSecret = function(player, cardId) {
   card.secret = true
   card.hide()
 
-  const zone = this.getZoneByCard(card)
   this.log.add({
     template: '{player} makes a card in {zone} secret',
-    args: { player, zone }
+    args: { player, zone: card.zone }
   })
 }
 
@@ -682,7 +681,7 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
   player = player || this.players.current()
 
   const card = this.getCardById(cardId)
-  const startingZone = this.getZoneByCard(card)
+  const startingZone = card.zone
   const dest = this.zones.byId(destId)
 
   const enforceOrdering = dest.name === 'graveyard'
@@ -717,7 +716,7 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
   // add counters to it if appropriate.
   if (card.zone) {  // Do this check because tokens actually disappear when they move sometimes.
 
-    const endingZone = this.getZoneByCard(card)
+    const endingZone = card.zone
     if (!this.checkIsBattlefieldZone(startingZone) && this.checkIsBattlefieldZone(endingZone)) {
 
       // Loyalty counters are a special case
@@ -813,10 +812,9 @@ Magic.prototype.aReveal = function(player, cardId) {
   const card = this.getCardById(cardId)
 
   this.mReveal(card)
-  const zone = this.getZoneByCard(card)
   this.log.add({
     template: '{player} reveals {card} from {zone}',
-    args: { player, card, zone },
+    args: { player, card, zone: card.zone },
   })
 }
 
@@ -1118,12 +1116,12 @@ Magic.prototype.getPlayerTurn = function() {
 }
 
 Magic.prototype.getZoneIndexByCard = function(card) {
-  const zoneCards = this.getZoneByCard(card).cards()
+  const zoneCards = card.zone.cards()
   return zoneCards.indexOf(card)
 }
 
 Magic.prototype.mAdjustCardVisibility = function(card) {
-  const zone = this.getZoneByCard(card)
+  const zone = card.zone
 
   if (card.secret) {
     card.hide()
@@ -1197,7 +1195,7 @@ Magic.prototype.mClearStack = function() {
 }
 
 Magic.prototype.mHide = function(card) {
-  const zone = this.getZoneByCard(card)
+  const zone = card.zone
   if (zone.kind() === 'public') {
     throw new Error(`Can't hide cards in public zone ${zone.id}`)
   }
@@ -1256,8 +1254,7 @@ Magic.prototype.mMaybeRemoveTokens = function(card) {
     }
     this.log.outdent()
 
-    const zone = this.getZoneByCard(card)
-    zone.remove(card)
+    card.zone.remove(card)
     card.g.owner = undefined
   }
 }
