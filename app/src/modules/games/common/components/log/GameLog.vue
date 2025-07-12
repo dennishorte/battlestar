@@ -224,7 +224,7 @@ export default {
     },
 
     deleteChat(line) {
-      this.game.deleteChatById(line.id)
+      this.game.log.deleteChat(line.id)
       this.$store.dispatch('game/save')
     },
 
