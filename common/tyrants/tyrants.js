@@ -6,10 +6,10 @@ const {
 const res = require('./res/index.js')
 const util = require('../lib/util.js')
 
-const { BaseZone } = require('../lib/game/index.js')
 const { TyrantsLogManager } = require('./TyrantsLogManager.js')
 const { TyrantsMapZone } = require('./TyrantsMapZone.js')
 const { TyrantsToken } = require('./TyrantsToken.js')
+const { TyrantsZone } = require('./TyrantsZone.js')
 
 
 module.exports = {
@@ -85,7 +85,7 @@ Tyrants.prototype.initializeZones = function() {
   this.initializePlayerZones()
   this.initializeTokenZones()
 
-  this.zones.register(new BaseZone(this, 'devoured', 'devoured', 'public'))
+  this.zones.register(new TyrantsZone(this, 'devoured', 'devoured', 'public'))
 }
 
 Tyrants.prototype.initializePlayers = function() {
@@ -105,14 +105,14 @@ Tyrants.prototype.initializeMapZones = function() {
 }
 
 Tyrants.prototype.initializeMarketZones = function() {
-  this.zones.register(new BaseZone(this, 'market', 'market', 'public'))
-  this.zones.register(new BaseZone(this, 'priestess', 'priestess', 'public'))
-  this.zones.register(new BaseZone(this, 'guard', 'guard', 'public'))
-  this.zones.register(new BaseZone(this, 'outcast', 'outcast', 'public'))
+  this.zones.register(new TyrantsZone(this, 'market', 'market', 'public'))
+  this.zones.register(new TyrantsZone(this, 'priestess', 'priestess', 'public'))
+  this.zones.register(new TyrantsZone(this, 'guard', 'guard', 'public'))
+  this.zones.register(new TyrantsZone(this, 'outcast', 'outcast', 'public'))
 }
 
 Tyrants.prototype.initializeTokenZones = function() {
-  this.zones.register(new BaseZone(this, 'neutrals', 'neutrals', 'public'))
+  this.zones.register(new TyrantsZone(this, 'neutrals', 'neutrals', 'public'))
 }
 
 Tyrants.prototype.initializePlayerZones = function() {
@@ -120,7 +120,7 @@ Tyrants.prototype.initializePlayerZones = function() {
 
   function _addPlayerZone(player, name, kind) {
     const id = `players.${player.name}.${name}`
-    const zone = new BaseZone(self, id, id, kind, player)
+    const zone = new TyrantsZone(self, id, id, kind, player)
     self.zones.register(zone)
   }
 
@@ -150,7 +150,7 @@ Tyrants.prototype.initializeCards = function() {
   this.zones.byId('outcast').initializeCards(cardData.byName['Insane Outcast'])
 
   // Market deck
-  const marketZone = new BaseZone(this, 'marketDeck', 'marketDeck', 'private')
+  const marketZone = new TyrantsZone(this, 'marketDeck', 'marketDeck', 'private')
   this.zones.register(marketZone)
 
   const marketCards = this
@@ -226,13 +226,13 @@ Tyrants.prototype.initializeTokens = function() {
   const neutralZone = this.zones.byId('neutrals')
   for (const loc of this.getLocationAll()) {
     for (let i = 0; i < loc.neutrals; i++) {
-      this.mMoveByIndices(neutralZone, 0, loc, loc.cards().length)
+      neutralZone.peek().moveTo(loc)
     }
   }
 
   if (this.settings.menzoExtraNeutral) {
     const menzo = this.getLocationByName('Menzoberranzan')
-    this.mMoveByIndices(neutralZone, 0, menzo, menzo.cards().length)
+    neutralZone.peek().moveTo(menzo)
   }
 }
 
@@ -450,12 +450,12 @@ Tyrants.prototype._generateAutoCardAction = function() {
 Tyrants.prototype._generateBuyActions = function(maxCost=0, opts={}) {
   const choices = []
 
-  const priestess = this.zones.byId('priestess').cards()[0]
+  const priestess = this.zones.byId('priestess').peek()
   if (priestess) {
     choices.push({ card: priestess })
   }
 
-  const guard = this.zones.byId('guard').cards()[0]
+  const guard = this.zones.byId('guard').peek()
   if (guard) {
     choices.push({ card: guard })
   }
@@ -668,7 +668,7 @@ Tyrants.prototype.cleanup = function() {
   })
 
   for (const card of playedCards) {
-    this.mMoveCardTo(card, this.zones.byPlayer(player, 'discard'))
+    card.moveTo(this.zones.byPlayer(player, 'discard'))
   }
 
   const hand = this.cards.byPlayer(player, 'hand')
@@ -678,7 +678,7 @@ Tyrants.prototype.cleanup = function() {
       args: { player, count: hand.length }
     })
     for (const card of hand) {
-      this.mMoveCardTo(card, this.zones.byPlayer(player, 'discard'))
+      card.moveTo(this.zones.byPlayer(player, 'discard'))
     }
   }
 
@@ -791,7 +791,7 @@ Tyrants.prototype.aCascade = function(player, opts) {
   }
 
   for (const card of unused) {
-    this.mMoveCardTo(card, marketZone)
+    card.moveTo(marketZone)
   }
 
   if (found) {
@@ -799,7 +799,7 @@ Tyrants.prototype.aCascade = function(player, opts) {
       template: '{card} found',
       args: { card: found }
     })
-    this.mMoveCardTo(found, this.zones.byPlayer(player, 'hand'))
+    found.moveTo(this.zones.byPlayer(player, 'hand'))
     this.aPlayCard(player, found)
 
     // If the player devoured the card as part of using it, they cannot acquire it.
@@ -816,7 +816,7 @@ Tyrants.prototype.aCascade = function(player, opts) {
         template: '{player} adds {card} to their deck',
         args: { player, card: found }
       })
-      this.mMoveCardTo(found, this.zones.byPlayer(player, 'discard'))
+      found.moveTo(this.zones.byPlayer(player, 'discard'))
     }
     else {
       this.aDevour(player, found)
@@ -983,7 +983,7 @@ Tyrants.prototype.aChooseAndSupplant = function(player, opts={}) {
 Tyrants.prototype.aChooseAndDeploy = function(player, opts={}) {
   // If the player is deploying a white troop, fetch it from the bank.
   if (opts.white) {
-    const white = this.zones.byId('neutrals').cards()[0]
+    const white = this.zones.byId('neutrals').peek()
     if (!white) {
       this.log.add({ template: 'There are no neutral troops left in the supply' })
       return
@@ -1034,7 +1034,7 @@ Tyrants.prototype.aChooseAndMoveTroop = function(player, opts={}) {
 
     util.assert(!!troop, `Invalid selection for moving a troop: ${toMove}`)
 
-    this.mMoveCardTo(troop, dest)
+    troop.moveTo(dest)
     this.log.add({
       template: '{player} moves a {player2} troop from {zone1} to {zone2}',
       args: {
@@ -1306,7 +1306,7 @@ Tyrants.prototype.aDevourThisAnd = function(player, card, title, fn) {
 }
 
 Tyrants.prototype.aDiscard = function(player, card) {
-  this.mMoveCardTo(card, this.zones.byPlayer(player, 'discard'))
+  card.moveTo(this.zones.byPlayer(player, 'discard'))
   this.log.add({
     template: '{player} discards {card}',
     args: { player, card }
@@ -1336,7 +1336,7 @@ Tyrants.prototype.aDraw = function(player, opts={}) {
       args: { player }
     })
   }
-  return this.mMoveByIndices(deck, 0, hand, hand.cards().length)
+  return deck.peek().moveTo(hand)
 }
 
 
@@ -1365,10 +1365,10 @@ Tyrants.prototype.aPlayCard = function(player, card) {
 
 Tyrants.prototype.aPromote = function(player, card, opts={}) {
   if (card.name === 'Insane Outcast') {
-    this.mMoveCardTo(card, this.zones.byId('outcast'))
+    card.moveTo(this.zones.byId('outcast'))
   }
   else {
-    this.mMoveCardTo(card, this.zones.byPlayer(player, 'innerCircle'))
+    card.moveTo(this.zones.byPlayer(player, 'innerCircle'))
   }
 
   if (!opts.silent) {
@@ -1402,7 +1402,7 @@ Tyrants.prototype.aPromoteTopCard = function(player) {
 
   this.log.add({ template: 'Promoting top card of deck' })
   this.log.indent()
-  this.aPromote(player, deck.cards()[0])
+  this.aPromote(player, deck.peek())
   this.log.outdent()
 }
 
@@ -1413,13 +1413,13 @@ Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
     card = this.zones.byId('devoured').cards().slice(-1)[0]
   }
   else if (cardName === 'Priestess of Lolth') {
-    card = this.zones.byId('priestess').cards()[0]
+    card = this.zones.byId('priestess').peek()
   }
   else if (cardName === 'House Guard') {
-    card = this.zones.byId('guard').cards()[0]
+    card = this.zones.byId('guard').peek()
   }
   else if (cardName === 'Insane Outcast') {
-    card = this.zones.byId('outcast').cards()[0]
+    card = this.zones.byId('outcast').peek()
 
     if (!card) {
       this.log.indent()
@@ -1435,7 +1435,7 @@ Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
 
   util.assert(!!card, `Unable to find card to recruit: ${cardName}`)
 
-  this.mMoveCardTo(card, this.zones.byPlayer(player, 'discard'))
+  card.moveTo(this.zones.byPlayer(player, 'discard'))
 
   if (!opts.noCost) {
     player.incrementCounter('influence', -card.cost)
@@ -1705,11 +1705,6 @@ Tyrants.prototype.getScoreBreakdown = function(player) {
   return summary
 }
 
-Tyrants.prototype.getZoneByHome = function(card) {
-  // TODO: deprecate
-  return card.home
-}
-
 Tyrants.prototype.mAdjustCardVisibility = function(card) {
   if (!this.state.initializationComplete) {
     return
@@ -1797,7 +1792,7 @@ Tyrants.prototype.mAssassinate = function(player, loc, owner) {
 
   util.assert(!!target, 'No valid target for owner at location')
 
-  this.mMoveCardTo(target, this.zones.byPlayer(player, 'trophyHall'))
+  target.moveTo(this.zones.byPlayer(player, 'trophyHall'))
   return target
 }
 
@@ -1834,16 +1829,16 @@ Tyrants.prototype.mCheckZoneLimits = function(zone) {
 
 Tyrants.prototype.mDeploy = function(player, loc, opts={}) {
   const troop = opts.troop || this.cards.byPlayer(player, 'troops')[0]
-  this.mMoveCardTo(troop, loc)
+  troop.moveTo(loc)
   return troop
 }
 
 Tyrants.prototype.mDevour = function(card) {
   if (card.name === 'Insane Outcast') {
-    this.mMoveCardTo(card, this.zones.byId('outcast'))
+    card.moveTo(this.zones.byId('outcast'))
   }
   else {
-    this.mMoveCardTo(card, this.zones.byId('devoured'))
+    card.moveTo(this.zones.byId('devoured'))
   }
 }
 
@@ -1853,27 +1848,9 @@ Tyrants.prototype.mExecuteCard = function(player, card) {
   this.log.outdent()
 }
 
-Tyrants.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
-  util.assert(sourceIndex >= 0 && sourceIndex <= source.cards().length - 1, `Invalid source index ${sourceIndex}`)
-
-  const preControlMarkers = this.getControlMarkers()
-
-  const sourceCards = source._cards
-  const targetCards = target._cards
-  const card = sourceCards[sourceIndex]
-  sourceCards.splice(sourceIndex, 1)
-  targetCards.splice(targetIndex, 0, card)
-  card.zone = target
-  this.mCheckZoneLimits(target)
-  this.mAdjustCardVisibility(card)
-  this.mAdjustPresence(source, target, card)
-  this.mAdjustControlMarkerOwnership(preControlMarkers)
-  return card
-}
-
 Tyrants.prototype.mPlaceSpy = function(player, loc) {
   const spy = this.cards.byPlayer(player, 'spies')[0]
-  this.mMoveCardTo(spy, loc)
+  spy.moveTo(loc)
 }
 
 Tyrants.prototype.mReshuffleDiscard = function(player) {
@@ -1897,14 +1874,14 @@ Tyrants.prototype.mReshuffleDiscard = function(player) {
   this.log.outdent()
 
   for (const card of discard.cards()) {
-    this.mMoveCardTo(card, deck)
+    card.moveTo(deck)
   }
 
   this.mShuffle(deck)
 }
 
 Tyrants.prototype.mReturn = function(item) {
-  this.mMoveCardTo(item, this.getZoneByHome(item))
+  item.moveTo(item.home)
 }
 
 Tyrants.prototype.mShuffle = function(zone) {
@@ -1973,7 +1950,7 @@ Tyrants.prototype.mRefillMarket = function(quiet=false) {
   const count = 6 - market.cards().length
 
   for (let i = 0; i < count; i++) {
-    const card = deck.cards()[0]
+    const card = deck.peek()
 
     if (!card) {
       this.log.add({ template: 'The market deck is empty' })
@@ -1987,7 +1964,7 @@ Tyrants.prototype.mRefillMarket = function(quiet=false) {
       })
     }
 
-    this.mMoveCardTo(card, market)
+    card.moveTo(market)
   }
 }
 

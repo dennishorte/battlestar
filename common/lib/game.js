@@ -448,41 +448,6 @@ Game.prototype.checkSameTeam = function(p1, p2) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// State modifying functions
-
-Game.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
-  util.assert(sourceIndex >= 0 && sourceIndex <= source.cards().length - 1, `Invalid source index ${sourceIndex}`)
-
-  const sourceCards = source._cards
-  const targetCards = target._cards
-  const card = sourceCards[sourceIndex]
-  sourceCards.splice(sourceIndex, 1)
-  targetCards.splice(targetIndex, 0, card)
-  card.zone = target
-
-  this._cardMovedCallback({
-    card,
-    sourceZone: source,
-    targetZone: target,
-  })
-  return card
-}
-
-Game.prototype.mMoveCardTo = function(card, zone, opts={}) {
-  const source = card.zone
-  const index = source.cards().indexOf(card)
-  const destIndex = opts.index !== undefined ? opts.index : zone.cards().length
-  if (opts.verbose) {
-    this.log.add({
-      template: 'Moving {card} to {zone} at index {index}',
-      args: { card, zone, index: destIndex }
-    })
-  }
-  this.mMoveByIndices(source, index, zone, destIndex)
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
 // Specialty functions
 
 Game.prototype.historicalView = function(index) {

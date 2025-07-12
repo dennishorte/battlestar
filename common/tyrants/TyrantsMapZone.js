@@ -1,7 +1,7 @@
-const { BaseZone } = require('../lib/game/index.js')
+const { TyrantsZone } = require('./TyrantsZone.js')
 const util = require('../lib/util.js')
 
-class TyrantsMapZone extends BaseZone {
+class TyrantsMapZone extends TyrantsZone {
   constructor(game, data) {
     super(game, `map.${data.name}`, data.name, 'location')
 

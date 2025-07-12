@@ -21,6 +21,9 @@ class BaseCard {
     this.zone = zone
   }
 
+  moveHome() {
+    this.moveTo(this.home)
+  }
 
   moveTo(zone, index=null) {
     // TODO: test if the card will actually move somewhere new

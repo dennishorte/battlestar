@@ -774,7 +774,7 @@ describe('Magic Actions', () => {
     // Verify the card is properly morphed
     const morphedCard = game.cards.byPlayer(t.dennis(game), 'stack')[0]
     expect(morphedCard.g.morph).toBe(true)
-    expect(morphedCard.visibility).toEqual([t.dennis(game)])
+    expect(morphedCard.visibility.map(p => p.name)).toEqual(['dennis'])
 
     const request4 = t.do(game, request3, {
       name: 'unmorph',

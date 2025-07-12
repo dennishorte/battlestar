@@ -1,16 +1,12 @@
-const { BaseCard } = require('../lib/game/BaseCard.js')
+const { TyrantsBaseCard } = require('./TyrantsBaseCard.js')
 
-class TyrantsToken extends BaseCard {
+class TyrantsToken extends TyrantsBaseCard {
   constructor(game, id, name) {
     super(game, { id })
 
     this.name = name
     this.isTroop = false
     this.isSpy = false
-  }
-
-  getOwnerName() {
-    return !this.owner ? 'neutral' : this.owner.name
   }
 
   isNeutral() {

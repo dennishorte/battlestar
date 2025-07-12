@@ -75,10 +75,11 @@ describe('Drow Expansion', () => {
       const game = t.gameFixture({
         dennis: {
           hand: ['Doppelganger'],
-        }
+        },
+        'ched-halls a': {
+          troops: ['micah']
+        },
       })
-
-      t.setTroops(game, 'ched-halls a', ['micah'])
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Doppelganger')
@@ -101,11 +102,15 @@ describe('Drow Expansion', () => {
       const game = t.gameFixture({
         dennis: {
           hand: ['Deathblade'],
-        }
+        },
+        'ched-halls a': {
+          troops: ['micah'],
+        },
+        'ched-llace a': {
+          troops: ['micah'],
+        },
       })
 
-      t.setTroops(game, 'ched-halls a', ['micah'])
-      t.setTroops(game, 'ched-llace a', ['micah'])
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Deathblade')
@@ -196,11 +201,14 @@ describe('Drow Expansion', () => {
       const game = t.gameFixture({
         dennis: {
           hand: ['Underdark Ranger'],
-        }
+        },
+        'ched-halls a': {
+          troops: ['neutral'],
+        },
+        'ched-llace a': {
+          troops: ['neutral'],
+        },
       })
-
-      t.setTroops(game, 'ched-halls a', ['neutral'])
-      t.setTroops(game, 'ched-llace a', ['neutral'])
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Underdark Ranger')
@@ -225,10 +233,11 @@ describe('Drow Expansion', () => {
       const game = t.gameFixture({
         dennis: {
           hand: ['Underdark Ranger'],
-        }
+        },
+        'ched-llace a': {
+          troops: ['dennis'],
+        },
       })
-
-      t.setTroops(game, 'ched-llace a', ['dennis'])
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Underdark Ranger')
@@ -361,10 +370,12 @@ describe('Drow Expansion', () => {
       const game = t.gameFixture({
         dennis: {
           hand: ['Spellspinner'],
-        }
+        },
+        'Menzoberranzan': {
+          spies: ['dennis'],
+        },
       })
 
-      t.setSpies(game, 'Menzoberranzan', ['dennis'])
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Spellspinner')
@@ -436,10 +447,12 @@ describe('Drow Expansion', () => {
       const game = t.gameFixture({
         dennis: {
           hand: ['Infiltrator'],
-        }
+        },
+        'Menzoberranzan': {
+          troops: ['neutral', 'neutral', 'micah'],
+        },
       })
 
-      t.setTroops(game, 'Menzoberranzan', ['neutral', 'neutral', 'micah'])
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Infiltrator')
@@ -488,10 +501,12 @@ describe('Drow Expansion', () => {
         dennis: {
           hand: ['Information Broker'],
           deck: ['House Guard', 'House Guard', 'House Guard'],
-        }
+        },
+        'Menzoberranzan': {
+          spies: ['dennis'],
+        },
       })
 
-      t.setSpies(game, 'Menzoberranzan', ['dennis'])
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Information Broker')
@@ -543,10 +558,12 @@ describe('Drow Expansion', () => {
       const game = t.gameFixture({
         dennis: {
           hand: ['Masters of Sorcere'],
-        }
+        },
+        'Menzoberranzan': {
+          spies: ['dennis'],
+        },
       })
 
-      t.setSpies(game, 'Menzoberranzan', ['dennis'])
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Masters of Sorcere')
@@ -612,11 +629,15 @@ describe('Drow Expansion', () => {
       const game = t.gameFixture({
         dennis: {
           hand: ['Chosen of Lolth', 'House Guard'],
-        }
+        },
+        'ched-llace a': {
+          troops: ['micah'],
+        },
+        'Ched Nasad': {
+          spies: ['micah'],
+        },
       })
 
-      t.setSpies(game, 'Ched Nasad', ['micah'])
-      t.setTroops(game, 'ched-llace a', ['micah'])
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Chosen of Lolth')
@@ -641,11 +662,15 @@ describe('Drow Expansion', () => {
       const game = t.gameFixture({
         dennis: {
           hand: ['Chosen of Lolth', 'House Guard'],
-        }
+        },
+        'Ched Nasad': {
+          spies: ['micah'],
+        },
+        'ched-llace a': {
+          troops: ['micah'],
+        },
       })
 
-      t.setSpies(game, 'Ched Nasad', ['micah'])
-      t.setTroops(game, 'ched-llace a', ['micah'])
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Chosen of Lolth')

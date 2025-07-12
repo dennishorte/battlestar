@@ -12,10 +12,10 @@ const wrappers = {
   deck: require('./util/DeckWrapper.js'),
 }
 
-const { BaseZone } = require('../lib/game/index.js')
 const { MagicCard } = require('./MagicCard.js')
 const { MagicLogManager } = require('./MagicLogManager.js')
 const { MagicPlayerManager } = require('./MagicPlayerManager.js')
+const { MagicZone } = require('./MagicZone.js')
 
 
 module.exports = {
@@ -194,7 +194,7 @@ Magic.prototype.initializeZones = function() {
   for (const player of this.players.all()) {
     for (const [name, kind] of zones) {
       const id = `players.${player.name}.${name}`
-      const zone = new BaseZone(this, id, name, kind, player)
+      const zone = new MagicZone(this, id, name, kind, player)
       this.zones.register(zone)
     }
   }
@@ -403,11 +403,15 @@ Magic.prototype.aCascade = function(player, x) {
     })
     this.log.indent()
 
-    this.mMoveCardTo(card, this.zones.byPlayer(player, 'stack', { index: 0 }))
+    card.moveTo(this.zones.byPlayer(player, 'stack'))
     const library = this.zones.byPlayer(player, 'library')
     for (let j = 0; j < i; j++) {
-      this.mMoveCardTo(cards[j], library, { verbose: true })
+      cards[j].moveTo(library)
     }
+    this.log.add({
+      template: '{player} moves {count} cards to the bottom of their library',
+      args: { player, count: i }
+    })
     library.shuffleBottom(i)
 
     this.log.outdent()
@@ -580,7 +584,7 @@ Magic.prototype.aDraw = function(player, opts={}) {
   }
 
   const card = libraryCards[0]
-  this.mMoveCardTo(card, this.zones.byPlayer(player, 'hand'))
+  card.moveTo(this.zones.byPlayer(player, 'hand'))
 
   if (!opts.silent) {
     this.log.add({
@@ -689,7 +693,7 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
     destIndex = 0
   }
 
-  this.mMoveCardTo(card, dest, { index: destIndex })
+  card.moveTo(dest, destIndex)
 
   if (dest.id.endsWith('stack')) {
     this.log.addStackPush(player, card)
@@ -784,7 +788,7 @@ Magic.prototype.aMulligan = function(player) {
 
   const library = this.zones.byPlayer(player, 'library')
   for (const card of this.cards.byPlayer(player, 'hand')) {
-    this.mMoveCardTo(card, library)
+    card.moveTo(library)
   }
 
   library.shuffle()
@@ -919,7 +923,7 @@ Magic.prototype.aSelectPhase = function(player, phase) {
       for (const zoneName of ['attacking', 'blocking']) {
         const cards = this.cards.byPlayer(player, zoneName)
         for (const card of cards) {
-          this.mMoveCardTo(card, creaturesZone)
+          card.moveTo(creaturesZone)
         }
       }
     }
@@ -1188,7 +1192,7 @@ Magic.prototype.mClearStack = function() {
     for (const card of toClear) {
       const owner = this.players.byOwner(card)
       const graveyard = this.zones.byPlayer(owner, 'graveyard')
-      this.mMoveCardTo(card, graveyard, { verbose: true })
+      card.moveTo(graveyard)
     }
     this.log.outdent()
   }

@@ -43,8 +43,12 @@ const cardData = [
       const marketCards = game.zones.byId('market').cards()
       const toDevour = game.actions.chooseCard(player, marketCards)
       game.aDevour(player, toDevour, { noRefill: true })
-      game.mMoveCardTo(card, game.zones.byId('market'), { destIndex: 0, verbose: true })
-    },
+      game.log.add({
+        template: '{player} returns Carrion Crawler to the market',
+        args: { player }
+      })
+      card.moveTo(game.zones.byId('market'), 0)
+    }
   },
   {
     "name": "Conjurer",

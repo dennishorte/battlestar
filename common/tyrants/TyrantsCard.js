@@ -1,6 +1,6 @@
-const { BaseCard } = require('../lib/game/BaseCard.js')
+const { TyrantsBaseCard } = require('./TyrantsBaseCard.js')
 
-class TyrantsCard extends BaseCard {
+class TyrantsCard extends TyrantsBaseCard {
   constructor(game, data) {
     super(game, data)
 
@@ -19,10 +19,6 @@ class TyrantsCard extends BaseCard {
       autoPlay: false,
       ...data,
     })
-  }
-
-  getOwnerName() {
-    return !this.owner ? 'neutral' : this.owner.name
   }
 }
 

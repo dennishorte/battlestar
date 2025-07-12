@@ -68,7 +68,7 @@ TestUtil.fixture = function(options) {
       const marketDeck = game.zones.byId('marketDeck')
       const market = game.zones.byId('market')
       for (const card of market.cards()) {
-        game.mMoveCardTo(card, marketDeck, { silent: true })
+        card.moveTo(marketDeck)
       }
       const cardNames = [
         'Advocate',
@@ -80,7 +80,7 @@ TestUtil.fixture = function(options) {
       ]
       for (const name of cardNames) {
         const card = game.zones.byId('marketDeck').cards().find(c => c.name === name)
-        game.mMoveCardTo(card, market, { silent: true })
+        card.moveTo(market)
       }
     }
   })
@@ -133,7 +133,7 @@ TestUtil.gameFixture = function(options) {
               }
               else if (name === 'House Guard') {
                 card = game.zones.byId('guard').peek()
-                game.mMoveCardTo(game.zones.byId('guard').cards()[0], zone)
+                game.zones.byId('guard').cards()[0].moveTo(zone)
               }
               else if (name === 'Insane Outcast') {
                 card = game.zones.byId('outcast').peek()
@@ -169,7 +169,7 @@ TestUtil.gameFixture = function(options) {
           const troops = game.cards.byPlayer(player, 'troops').slice(playerSetup.troops + 1)
           const exile = game.zones.byId('devoured')
           for (const troop of troops) {
-            game.mMoveCardTo(troop, exile)
+            troop.moveTo(exile)
           }
         }
       }
@@ -200,7 +200,7 @@ TestUtil.gameFixture = function(options) {
 
         if (data.spies) {
           game.log.add({
-            template: 'Setting troops at {name} to [{spies}]',
+            template: 'Setting spies at {name} to [{spies}]',
             args: {
               name: loc.name(),
               spies: data.spies.join(', ')
@@ -218,7 +218,11 @@ TestUtil.gameFixture = function(options) {
       const market = game.zones.byId('marketDeck')
       for (const name of options.devoured) {
         const card = market.cards().find(card => card.name === name)
-        game.mMoveCardTo(card, devoured, { verbose: true })
+        card.moveTo(devoured)
+        game.log.add({
+          template: '{card} added to the market',
+          args: { card }
+        })
       }
     }
 
@@ -241,7 +245,11 @@ TestUtil.gameFixture = function(options) {
 
       toMove.reverse()
       for (const card of toMove) {
-        game.mMoveCardTo(card, market, { index: 0, verbose: true })
+        game.log.add({
+          template: '{card} placed on top of the market deck',
+          args: { card }
+        })
+        card.moveTo(market, 0)
       }
 
       // const topOfMarket = market.cards().slice(0, 5).map(c => c.name).join(',')
@@ -264,62 +272,50 @@ TestUtil.gameFixture = function(options) {
    locName: Either a string matching the name of a location, or a Zone.
  */
 TestUtil.setTroops = function(game, locId, playerNames) {
-  game.testSetBreakpoint('initialization-complete', (game) => {
+  if (!locId.includes('.')) {
+    locId = 'map.' + locId
+  }
 
-    if (!locId.includes('.')) {
-      locId = 'map.' + locId
+  const zone = game.zones.byId(locId)
+
+  for (const card of zone.cards()) {
+    if (card.isTroop) {
+      card.moveHome()
     }
+  }
 
-    const zone = game.zones.byId(locId)
-
-    for (const card of zone.cards()) {
-      if (card.isTroop) {
-        const home = game.getZoneByHome(card)
-        game.mMoveCardTo(card, home)
-      }
+  for (const playerName of playerNames) {
+    if (playerName === 'neutral') {
+      game.zones.byId('neutrals').peek().moveTo(zone)
     }
-
-    for (const playerName of playerNames) {
-      if (playerName === 'neutral') {
-        const tokens = game.zones.byId('neutrals').cards()
-        game.mMoveCardTo(tokens[0], zone)
-      }
-      else {
-        const player = game.players.byName(playerName)
-        const tokens = game.cards.byPlayer(player, 'troops')
-        game.mMoveCardTo(tokens[0], zone)
-      }
+    else {
+      const player = game.players.byName(playerName)
+      game.zones.byPlayer(player, 'troops').peek().moveTo(zone)
     }
-  })
+  }
 }
 
 TestUtil.setSpies = function(game, locId, playerNames) {
-  game.testSetBreakpoint('initialization-complete', (game) => {
+  if (!locId.includes('.')) {
+    locId = 'map.' + locId
+  }
 
-    if (!locId.includes('.')) {
-      locId = 'map.' + locId
+  const zone = game.zones.byId(locId)
+
+  for (const card of zone.cards()) {
+    if (card.isSpy) {
+      card.moveHome()
     }
+  }
 
-    const zone = game.zones.byId(locId)
+  while (zone.getSpies().length > 0) {
+    zone.getSpies()[0].moveHome()
+  }
 
-    for (const card of zone.cards()) {
-      if (card.isSpy) {
-        const home = game.getZoneByHome(card)
-        game.mMoveCardTo(card, home)
-      }
-    }
-
-    while (zone.getSpies().length > 0) {
-      const spy = zone.getSpies()[0]
-      game.mMoveCardTo(spy, game.getZoneByHome(spy))
-    }
-
-    for (const playerName of util.array.distinct(playerNames)) {
-      const player = game.players.byName(playerName)
-      const tokens = game.cards.byPlayer(player, 'spies')
-      game.mMoveCardTo(tokens[0], zone)
-    }
-  })
+  for (const playerName of util.array.distinct(playerNames)) {
+    const player = game.players.byName(playerName)
+    game.zones.byPlayer(player, 'spies').peek().moveTo(zone)
+  }
 }
 
 

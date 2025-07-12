@@ -447,7 +447,7 @@ const cardData = [
       })
       const discard = game.zones.byPlayer(player, 'discard')
       for (const card of game.cards.byPlayer(player, 'deck')) {
-        game.mMoveCardTo(card, discard)
+        card.moveTo(discard)
       }
       game.aChooseAndPromote(player, game.cards.byPlayer(player, 'discard'))
     }
