@@ -7,14 +7,13 @@ const {
 const res = require('./data.js')
 const util = require('../lib/util.js')
 
-const { PlayerZone } = require('./Zone.js')
-
 const wrappers = {
-  card: require('./util/CardWrapper.js'),
   cube: require('./util/CubeWrapper.js'),
   deck: require('./util/DeckWrapper.js'),
 }
 
+const { BaseZone } = require('../lib/game/index.js')
+const { MagicCard } = require('./MagicCard.js')
 const { MagicLogManager } = require('./MagicLogManager.js')
 const { MagicPlayerManager } = require('./MagicPlayerManager.js')
 
@@ -23,6 +22,8 @@ module.exports = {
   GameOverEvent,
   Magic,
   MagicFactory,
+
+  MagicCard,
 
   constructor: Magic,
   factory: factoryFromLobby,
@@ -43,7 +44,7 @@ function Magic(serialized_data, viewerName) {
   this.log = new MagicLogManager(this, serialized_data.chat)
   this.players = new MagicPlayerManager(this, this.settings.players, this.settings.playerOptions || {})
 
-  this.setCardWrapper(wrappers.card)
+  this.setCardWrapper(MagicCard)
   this.cardsById = {}
 }
 
@@ -175,27 +176,26 @@ Magic.prototype.initializePlayers = function() {
 }
 
 Magic.prototype.initializeZones = function() {
-  this.state.zones = {}
-  this.state.zones.players = {}
+  const zones = [
+    ['hand', 'private'],
+    ['library', 'hidden'],
+    ['sideboard', 'private'],
+    ['battlefield', 'public'],
+    ['command', 'public'],
+    ['creatures', 'public'],
+    ['graveyard', 'public'],
+    ['exile', 'public'],
+    ['land', 'public'],
+    ['stack', 'public'],
+    ['attacking', 'public'],
+    ['blocking', 'public'],
+  ]
 
   for (const player of this.players.all()) {
-    this.state.zones.players[player.name] = {
-      // Private zones
-      hand: new PlayerZone(this, player, 'hand', 'private'),
-      library: new PlayerZone(this, player, 'library', 'hidden'),
-      sideboard: new PlayerZone(this, player, 'sideboard', 'private'),
-
-      // Public zones
-      battlefield: new PlayerZone(this, player, 'battlefield', 'public'),
-      command: new PlayerZone(this, player, 'command', 'public'),
-      creatures: new PlayerZone(this, player, 'creatures', 'public'),
-      graveyard: new PlayerZone(this, player, 'graveyard', 'public'),
-      exile: new PlayerZone(this, player, 'exile', 'public'),
-      land: new PlayerZone(this, player, 'land', 'public'),
-      stack: new PlayerZone(this, player, 'stack', 'public'),
-
-      attacking: new PlayerZone(this, player, 'attacking', 'public'),
-      blocking: new PlayerZone(this, player, 'blocking', 'public'),
+    for (const [name, kind] of zones) {
+      const id = `players.${player.name}.${name}`
+      const zone = new BaseZone(this, id, name, kind, player)
+      this.zones.register(zone)
     }
   }
 }
@@ -522,7 +522,7 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
 
   for (let i = 0; i < data.count; i++) {
     // Create fake card data
-    const cardData = wrappers.card.blankCard()
+    const cardData = MagicCard.blankCard()
     cardData.data.name = data.name
     cardData.data.type_line = 'Token'
 
@@ -537,13 +537,14 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
 
     if (data.morph) {
       card.g.morph = true
-      card.visibility = [player]
+      card.hide()
+      card.show(player)
     }
     else {
-      card.visibility = this.players.all()
+      card.reveal()
     }
 
-    zone.addCard(card)
+    zone.push(card)
     created.push(card)
 
     if (zone.id.endsWith('.stack')) {
@@ -628,11 +629,11 @@ Magic.prototype.aImportCard = function(player, data) {
     const card = this.mInitializeCard(data.card, player)
     card.g.annotation = data.annotation
     card.g.token = data.isToken
-    card.visibility = this.players.all()
+    card.reveal()
 
     const zone = this.getZoneById(data.zoneId)
     const owner = this.players.byZone(zone)
-    zone.addCard(card)
+    zone.push(card)
 
     // Card was moved to stack.
     if (zone.id.endsWith('.stack')) {
@@ -652,7 +653,7 @@ Magic.prototype.aSecret = function(player, cardId) {
   player = player || this.players.current()
   const card = this.getCardById(cardId)
   card.secret = true
-  card.visibility = []
+  card.hide()
 
   const zone = this.getZoneByCard(card)
   this.log.add({
@@ -1018,8 +1019,8 @@ Magic.prototype.aUntap = function(player, cardId) {
 
 Magic.prototype.aViewAll = function(player, zoneId) {
   const zone = this.getZoneById(zoneId)
-  zone.sortCardsByName()
-  zone.cards().forEach(card => util.array.pushUnique(card.visibility, player))
+  zone.sortByName()
+  zone.cards().forEach(card => card.show(player))
 
   this.log.add({
     template: `{player} views {zone}`,
@@ -1028,9 +1029,9 @@ Magic.prototype.aViewAll = function(player, zoneId) {
 }
 
 Magic.prototype.aViewNext = function(player, zoneId) {
-  const zone = this.getZoneById(zoneId)
+  const zone = this.zones.byId(zoneId)
   const cards = zone.cards()
-  const nextIndex = cards.findIndex(card => !card.visibility.includes(player))
+  const nextIndex = cards.findIndex(card => !card.visible(player))
 
   if (nextIndex === -1) {
     this.log.add({
@@ -1041,7 +1042,7 @@ Magic.prototype.aViewNext = function(player, zoneId) {
   }
 
   const card = cards[nextIndex]
-  card.visibility.push(player)
+  card.show(player)
   this.log.add({
     template: `{player} views the next card in {zone} (top+${nextIndex})`,
     args: { player, zone }
@@ -1064,7 +1065,8 @@ Magic.prototype.aViewTop = function(player, zoneId, count) {
 }
 
 Magic.prototype.checkCardIsVisible = function(player, card) {
-  return card.visibility.includes(player)
+  // TODO: deprecate
+  return card.visible(player)
 }
 
 Magic.prototype.checkIsBattlefieldZone = function(zone) {
@@ -1124,22 +1126,23 @@ Magic.prototype.mAdjustCardVisibility = function(card) {
   const zone = this.getZoneByCard(card)
 
   if (card.secret) {
-    card.visibility = []
+    card.hide()
   }
   else if (card.g.morph) {
-    card.visibility = [this.players.byController(card)]
+    card.hide()
+    card.show(this.players.byController(card))
   }
-  else if (zone.kind === 'public') {
-    card.visibility = this.players.all()
+  else if (zone.kind() === 'public') {
+    card.reveal()
   }
-  else if (zone.kind === 'private' && zone.owner) {
-    util.array.pushUnique(card.visibility, zone.owner)
+  else if (zone.kind() === 'private' && zone.owner()) {
+    card.show(zone.owner())
   }
-  else if (zone.kind === 'hidden') {
+  else if (zone.kind() === 'hidden') {
     // do nothing
   }
   else {
-    throw new Error(`Unhandled zone kind '${zone.kind}' for zone '${zone.id}'`)
+    throw new Error(`Unhandled zone kind '${zone.kind()}' for zone '${zone.id}'`)
   }
 }
 
@@ -1195,22 +1198,23 @@ Magic.prototype.mClearStack = function() {
 
 Magic.prototype.mHide = function(card) {
   const zone = this.getZoneByCard(card)
-  if (zone.kind === 'public') {
+  if (zone.kind() === 'public') {
     throw new Error(`Can't hide cards in public zone ${zone.id}`)
   }
-  else if (zone.kind === 'private') {
-    card.visibility = [zone.owner]
+  else if (zone.kind() === 'private') {
+    card.hide()
+    card.show(zone.owner())
   }
-  else if (zone.kind === 'hidden') {
-    card.visibility = []
+  else if (zone.kind() === 'hidden') {
+    card.hide()
   }
   else {
-    throw new Error(`Unhandled zone type ${zone.kind}`)
+    throw new Error(`Unhandled zone type ${zone.kind()}`)
   }
 }
 
 Magic.prototype.mInitializeCard = function(data, owner) {
-  const card = new this.cardWrapper(data)
+  const card = new this.cardWrapper(this, data)
   card.g.id = this.getNextLocalId()
   card.g.owner = owner
   card.g.activeFace = card.name(0)
@@ -1222,7 +1226,7 @@ Magic.prototype.mInitializeCard = function(data, owner) {
 Magic.prototype.mMaybeClearAnnotations = function(card) {
   const validZones = ['creatures', 'battlefield', 'land', 'attacking', 'blocking']
 
-  if (!validZones.some(id => card.zone.endsWith(id))) {
+  if (!validZones.some(id => card.zone.id.endsWith(id))) {
     card.g.annotation = ''
     card.g.annotationEOT = ''
   }
@@ -1231,7 +1235,7 @@ Magic.prototype.mMaybeClearAnnotations = function(card) {
 Magic.prototype.mMaybeClearCounters = function(card) {
   const validZones = ['creatures', 'battlefield', 'land', 'attacking', 'blocking']
 
-  if (!validZones.some(id => card.zone.endsWith(id))) {
+  if (!validZones.some(id => card.zone.id.endsWith(id))) {
     Object
       .keys(card.g.counters)
       .forEach(c => card.g.counters[c] = 0)
@@ -1241,7 +1245,7 @@ Magic.prototype.mMaybeClearCounters = function(card) {
 Magic.prototype.mMaybeRemoveTokens = function(card) {
   const validZones = ['creatures', 'battlefield', 'land', 'stack', 'attacking', 'blocking', 'command']
 
-  if (card.g.token && !validZones.some(id => card.zone.endsWith(id))) {
+  if (card.g.token && !validZones.some(id => card.zone.id.endsWith(id))) {
     this.log.indent()
 
     if (!card.name().startsWith('effect: ')) {
@@ -1253,13 +1257,14 @@ Magic.prototype.mMaybeRemoveTokens = function(card) {
     this.log.outdent()
 
     const zone = this.getZoneByCard(card)
-    zone.removeCard(card)
+    zone.remove(card)
     card.g.owner = undefined
   }
 }
 
 Magic.prototype.mReveal = function(card) {
-  card.visibility = this.players.all()
+  // TODO: deprecate
+  card.reveal()
 }
 
 Magic.prototype.mTap = function(card) {
@@ -1279,26 +1284,26 @@ Magic.prototype.setDeck = function(player, data) {
     args: { player },
   })
 
-  const library = this.getZoneByPlayer(player, 'library')
-  for (const raw of data.cards.main) {
-    const card = this.mInitializeCard(raw, player)
-    library.addCard(card)
-  }
-  library.shuffle()
+  const init = function(rawCards, zoneName) {
+    const cards = []
+    for (const raw of rawCards) {
+      const card = this.mInitializeCard(raw, player)
+      cards.push(card)
+    }
+    const zone = this.zones.byPlayer(player, zoneName)
+    zone.initializeCards(cards)
 
-  const sideboard = this.getZoneByPlayer(player, 'sideboard')
-  for (const raw of data.cards.side) {
-    const card = this.mInitializeCard(raw, player)
-    sideboard.addCard(card)
-    card.visibility.push(player)
-  }
+    if (zoneName === 'library') {
+      zone.shuffle()
+    }
+    else {
+      zone.sortByName()
+    }
+  }.bind(this)
 
-  const command = this.getZoneByPlayer(player, 'command')
-  for (const raw of data.cards.command) {
-    const card = this.mInitializeCard(raw, player)
-    command.addCard(card)
-    card.visibility.push(player)
-  }
+  init(data.cards.main, 'library')
+  init(data.cards.side, 'sideboard')
+  init(data.cards.command, 'command')
 }
 
 

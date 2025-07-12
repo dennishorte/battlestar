@@ -167,7 +167,7 @@ export default {
     },
 
     createCard() {
-      const data = magic.util.wrapper.card.blankCard()
+      const data = magic.MagicCard.blankCard()
       this.editorCard = new UICardWrapper(data)
       this.editorVisible = true
     },

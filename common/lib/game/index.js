@@ -7,7 +7,7 @@ const BasePlayer = require('./BasePlayer.js')
 const BasePlayerManager = require('./BasePlayerManager.js')
 const BaseZone = require('./BaseZone.js')
 const BaseZoneManager = require('./BaseZoneManager.js')
-const GameTestFixture = require('./testFixture.js')
+
 
 // Re-export all classes and functions
 module.exports = {
@@ -19,8 +19,4 @@ module.exports = {
   ...BasePlayerManager,
   ...BaseZone,
   ...BaseZoneManager,
-
-  test: {
-    ...GameTestFixture,
-  },
 }

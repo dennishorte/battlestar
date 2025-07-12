@@ -25,8 +25,8 @@ const props = defineProps({
 
 const emit = defineEmits(['value-updated'])
 
-const DASH = magic.util.wrapper.card.TYPELINE_DASH
-const DASH_REGEX = magic.util.wrapper.card.TYPELINE_SPLITTER_REGEX
+const DASH = magic.MagicCard.TYPELINE_DASH
+const DASH_REGEX = magic.MagicCard.TYPELINE_SPLITTER_REGEX
 
 const scarrable = useScarrableContent(toRef(props, 'card'), props.index, 'type_line', emit, {
   editable: props.isEditable,

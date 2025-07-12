@@ -15,7 +15,7 @@ Game.create = async function(lobby, linkedDraftId) {
       if (game.settings.game === 'Cube Draft') {
         const cube = await db.magic.cube.findById(game.settings.cubeId)
         const cards = await db.magic.card.findByIds(cube.cardlist)
-        const wrappedCards = cards.map(c => new magic.util.wrapper.card(c))
+        const wrappedCards = cards.map(c => new magic.MagicCard(c))
         game.settings.packs = magic.draft.pack.makeCubePacks(wrappedCards, {
           packSize: game.settings.packSize,
           numPacks: game.settings.numPacks,
@@ -36,7 +36,7 @@ Game.create = async function(lobby, linkedDraftId) {
       }
       else if (game.settings.game === 'Set Draft') {
         const cards = await db.magic.card.findBySetCode(game.settings.set.code)
-        const wrappedCards = cards.map(c => new magic.util.wrapper.card(c))
+        const wrappedCards = cards.map(c => new magic.MagicCards(c))
         game.settings.packs = magic.draft.pack.makeSetPacks(wrappedCards, {
           numPacks: game.settings.numPacks,
           numPlayers: game.settings.players.length,

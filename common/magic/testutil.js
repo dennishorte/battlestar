@@ -47,7 +47,7 @@ TestUtil.fixture = function(options) {
 function _juiceDeck(data) {
   for (const zone of ['main', 'side', 'command']) {
     data.cardIdsByZone[zone] = data.cardIdsByZone[zone].map(name => {
-      return TestCards.byName[name.toLowerCase()][0].id()
+      return TestCards.byName[name.toLowerCase()][0].id
     })
   }
   const deck = new DeckWrapper(data)

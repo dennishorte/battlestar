@@ -1,7 +1,7 @@
 import { magic } from 'battlestar-common'
 
 
-class UICardWrapper extends magic.util.wrapper.card {
+class UICardWrapper extends magic.MagicCard {
   constructor(card) {
     super(card)
     this.__memo = 'UICardWrapper'

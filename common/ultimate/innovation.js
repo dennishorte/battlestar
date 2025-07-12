@@ -925,7 +925,7 @@ Innovation.prototype.aDecree = function(player, name) {
     doImpl = true
   }
   else {
-    this.mMoveCardTo(card, this.getZoneById('achievements'))
+    card.moveTo('achievements')
     this.log.add({
       template: '{player} returns {card} to the achievements',
       args: { player, card }
@@ -1728,7 +1728,7 @@ Innovation.prototype.aSafeguard = function(player, card) {
     args: { player, card, zone },
   })
 
-  this.mMoveCardTo(card, safeZone)
+  card.moveTo(safeZone)
   this.mActed(player)
   return card
 }
@@ -2520,7 +2520,7 @@ Innovation.prototype.mAchieve = function(player, card) {
     template: '{player} achieves {card} from {zone}',
     args: { player, card, zone: source }
   })
-  this.mMoveCardTo(card, target)
+  card.moveTo(target)
   this.mActed(player)
   return card
 }
@@ -2632,11 +2632,11 @@ Innovation.prototype.mForeshadow = function(player, card) {
     return
   }
   else {
-    this.mMoveCardTo(card, target)
     this.log.add({
-      template: '{player} foreshadows {card}',
-      args: { player, card }
+      template: '{player} foreshadows {card} from {zone}',
+      args: { player, card, zone: card.zone }
     })
+    card.moveTo(target)
     this.mActed(player)
     return card
   }
@@ -2753,8 +2753,7 @@ Innovation.prototype._attemptToCombineWithPreviousEntry = function(msg) {
 }
 
 Innovation.prototype.mRemove = function(card) {
-  this.mMoveCardTo(card, this.getZoneById('junk'))
-  return card
+  return card.moveTo('junk')
 }
 
 Innovation.prototype.mResetDogmaInfo = function() {

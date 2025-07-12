@@ -1,5 +1,5 @@
 const CardFilter = require('./CardFilter.js')
-const CardWrapper = require('./CardWrapper.js')
+const { MagicCard } = require('../MagicCard.js')
 const fs = require('fs')
 const path = require('path')
 
@@ -14,7 +14,7 @@ describe('CardFilter', () => {
     cardFiles.forEach(file => {
       const cardData = JSON.parse(fs.readFileSync(path.join(testDataDir, file), 'utf8'))
       const cardName = file.replace('scryfall_', '').replace('.out.json', '')
-      testCards[cardName] = new CardWrapper(cardData)
+      testCards[cardName] = new MagicCard(null, cardData)
     })
   })
 

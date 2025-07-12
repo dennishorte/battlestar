@@ -11,6 +11,7 @@ function _emptyZones() {
 class DeckWrapper {
   constructor(deck) {
     this.serializer = new Serializer(this, deck)
+    this.serializer.inject()
     this._modified = false
     this._cardsByZone = undefined
   }
@@ -28,7 +29,7 @@ class DeckWrapper {
   }
 
   /**
-     A juicer takes an array of cardIds and returns an array of CardWrapper objects matching those ids.
+     A juicer takes an array of cardIds and returns an array of MagicCard objects matching those ids.
    */
   initializeCardsSync(juicer) {
     this._cardsByZone = _emptyZones()
@@ -121,12 +122,12 @@ class DeckWrapper {
     }
   }
 
-  static fromGameJSON(json, cardWrapper) {
+  static fromGameJSON(json, cardFactory) {
     const deck = new DeckWrapper(json.data)
     const cards = {
-      main: json.cards.main.map(card => new cardWrapper(card)),
-      side: json.cards.side.map(card => new cardWrapper(card)),
-      command: json.cards.command.map(card => new cardWrapper(card)),
+      main: json.cards.main.map(card => cardFactory(card)),
+      side: json.cards.side.map(card => cardFactory(card)),
+      command: json.cards.command.map(card => cardFactory(card)),
     }
     deck.setCardsByZone(cards)
     return deck

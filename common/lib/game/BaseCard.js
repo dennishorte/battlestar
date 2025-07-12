@@ -27,11 +27,13 @@ class BaseCard {
     // TODO: mark the player who did the moving as the actor, if appropriate
 
     // Remove from old zone
-    this.zone.remove(this)
+    const oldZone = this.game.getZoneById(this.zone)
+    oldZone.remove(this)
 
     // Add to new zone
     this.setZone(zone)
     this.zone.push(this, index)
+    return this
   }
 
   ////////////////////////////////////////////////////////////////////////////////

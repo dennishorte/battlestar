@@ -1,7 +1,8 @@
-const { Serializer } = require('./Serializer.js')
-const CardFilter = require('./CardFilter.js')
-const cardUtil = require('./cardUtil.js')
-const util = require('../../lib/util.js')
+const { BaseCard } = require('../lib/game/index.js')
+const { Serializer } = require('./util/Serializer.js')
+const CardFilter = require('./util/CardFilter.js')
+const cardUtil = require('./util/cardUtil.js')
+const util = require('../lib/util.js')
 
 class GameData {
   constructor() {
@@ -29,18 +30,17 @@ class GameData {
 }
 
 
-class CardWrapper {
-  constructor(card) {
+class MagicCard extends BaseCard {
+  constructor(game, card) {
+    super(game, card)
+
+    this.id = card._id
+
+    // Serializer injects all the fields from card directly into this object.
     this.serializer = new Serializer(this, card)
     this.serializer.inject()
 
     this.g = new GameData()
-
-    // Sadly, these three values are used by the base class of magic.js, game.js. Changing them would
-    // Cause problems with other games, so they will remain on the root.
-    this.zone = null
-    this.home = null
-    this.visibility = []
   }
 
   static TYPELINE_DASH = '—'
@@ -79,7 +79,7 @@ class CardWrapper {
         rarity: 'common',
         legal: [],
 
-        card_faces: [CardWrapper.blankFace()],
+        card_faces: [MagicCard.blankFace()],
       }
     }
   }
@@ -161,7 +161,7 @@ class CardWrapper {
     const supertypesString = this
       .typeLine(faceIndex)
       .toLowerCase()
-      .split(CardWrapper.TYPELINE_SPLITTER_REGEX)[0]
+      .split(MagicCard.TYPELINE_SPLITTER_REGEX)[0]
       ?.trim()
     return supertypesString ? supertypesString.split(/\s+/) : []
   }
@@ -169,7 +169,7 @@ class CardWrapper {
     const subtypesString = this
       .typeLine(faceIndex)
       .toLowerCase()
-      .split(CardWrapper.TYPELINE_SPLITTER_REGEX)[1]
+      .split(MagicCard.TYPELINE_SPLITTER_REGEX)[1]
       ?.trim()
     return subtypesString ? subtypesString.split(/\s+/) : []
   }
@@ -410,7 +410,7 @@ class CardWrapper {
   }
 
   clone() {
-    return new CardWrapper(this.toJSON())
+    return new MagicCard(this.toJSON())
   }
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -424,4 +424,6 @@ class CardWrapper {
   }
 }
 
-module.exports = CardWrapper
+module.exports = {
+  MagicCard,
+}
