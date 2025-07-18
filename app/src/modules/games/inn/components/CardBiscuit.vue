@@ -24,6 +24,7 @@ import biscuitBonus8 from '@/assets/img/old/biscuit-bonus-8.png'
 import biscuitBonus9 from '@/assets/img/old/biscuit-bonus-9.png'
 import biscuitBonus10 from '@/assets/img/old/biscuit-bonus-10.png'
 import biscuitBonus11 from '@/assets/img/old/biscuit-bonus-11.png'
+import biscuitBonus12 from '@/assets/img/old/biscuit-bonus-12.png'
 import biscuitBlackflag from '@/assets/img/old/biscuit-blackflag.png'
 import biscuitWhiteflag from '@/assets/img/old/biscuit-whiteflag.png'
 import biscuitPlus from '@/assets/img/old/biscuit-plus.png'
@@ -53,6 +54,7 @@ const imageMap = {
   '9': biscuitBonus9,
   'a': biscuitBonus10,
   'b': biscuitBonus11,
+  't': biscuitBonus12,
   ':': biscuitBlackflag,
   ';': biscuitWhiteflag,
   '+': biscuitPlus,
