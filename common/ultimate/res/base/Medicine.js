@@ -17,13 +17,13 @@ module.exports = {
       const highestCards = game.actions.chooseCards(player, highest)
       const lowestCards = game.actions.chooseCards(player, lowest)
 
-      if (highestCards && highestCards.length > 0) {
-        game.mMoveCardTo(highestCards[0], game.zones.byPlayer(leader, 'score'), { player })
-      }
-
-      if (lowestCards && lowestCards.length > 0) {
-        game.mMoveCardTo(lowestCards[0], game.zones.byPlayer(player, 'score'), { player })
-      }
+      game.aExchangeCards(
+        player,
+        highestCards,
+        lowestCards,
+        game.zones.byPlayer(player, 'score'),
+        game.zones.byPlayer(leader, 'score'),
+      )
     },
 
     (game, player) => {

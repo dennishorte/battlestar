@@ -15,6 +15,19 @@ class UltimateBaseCard extends BaseCard {
   getAge() {
     return this.age
   }
+
+  _afterMoveTo(newZone) {
+    // In Innovation, card ownership is determined entirely by where the card is located.
+    this.owner = newZone.owner()
+  }
+
+  _beforeMoveTo(newZone, newIndex, prevZone, prevIndex) {
+    if (prevZone === newZone && prevIndex === newIndex) {
+      return {
+        preventDefault: true,
+      }
+    }
+  }
 }
 
 module.exports = {

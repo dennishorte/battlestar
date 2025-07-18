@@ -5,16 +5,16 @@ class TyrantsBaseCard extends BaseCard {
     return !this.owner ? 'neutral' : this.owner.name
   }
 
-  moveTo(zone, index=null) {
-    const source = this.zone
-    const preControlMarkers = this.game.getControlMarkers()
+  _afterMoveTo(newZone, _newIndex, oldZone, _oldIndex, data) {
+    this.game.mCheckZoneLimits(newZone)
+    this.game.mAdjustPresence(oldZone, newZone, this)
+    this.game.mAdjustControlMarkerOwnership(data.controlMarkers)
+  }
 
-    super.moveTo(zone, index)
-
-    this.game.mCheckZoneLimits(zone)
-    this.game.mAdjustPresence(source, zone, this)
-    this.game.mAdjustControlMarkerOwnership(preControlMarkers)
-    return this
+  _beforeMoveTo() {
+    return {
+      controlMarkers: this.game.getControlMarkers(),
+    }
   }
 }
 

@@ -93,6 +93,7 @@ class UltimateActionManager extends BaseActionManager {
       if (cardNames[0].startsWith('*')) {
         // Card names were hidden. Convert back to arbitrary matching cards.
         output = []
+
         for (const name of cardNames) {
           const mapping = choiceMap.find(m => m.name === name && !output.includes(m.card))
           output.push(mapping.card)

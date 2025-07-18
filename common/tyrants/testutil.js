@@ -133,7 +133,6 @@ TestUtil.gameFixture = function(options) {
               }
               else if (name === 'House Guard') {
                 card = game.zones.byId('guard').peek()
-                game.zones.byId('guard').cards()[0].moveTo(zone)
               }
               else if (name === 'Insane Outcast') {
                 card = game.zones.byId('outcast').peek()

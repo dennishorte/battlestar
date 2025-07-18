@@ -1008,9 +1008,8 @@ Innovation.prototype._aDogmaHelper_logSharing = function(shareData) {
 
 Innovation.prototype._aDogmaHelper_executeEffects = function(player, card, shareData, opts) {
   // Store planned effects now, as changes to the stacks shouldn't affect them.
-  const cardOwner = this.players.byOwner(card)
   const effects = [
-    ...this.getVisibleEffectsByColor(cardOwner, card.color, 'echo'),
+    ...this.getVisibleEffectsByColor(card.owner, card.color, 'echo'),
     this.getVisibleEffects(card, 'dogma')
   ].filter(e => e !== undefined)
 
@@ -1260,14 +1259,10 @@ Innovation.prototype.aExchangeCards = function(player, cards1, cards2, zone1, zo
   let acted = false
 
   for (const card of cards1) {
-    if (this.mMoveCardTo(card, zone2)) {
-      acted = true
-    }
+    acted = Boolean(card.moveTo(zone2)) || acted
   }
   for (const card of cards2) {
-    if (this.mMoveCardTo(card, zone1)) {
-      acted = true
-    }
+    acted = Boolean(card.moveTo(zone1)) || acted
   }
 
   if (acted) {
@@ -1461,13 +1456,13 @@ Innovation.prototype.aDigArtifact = function(player, age) {
 
   const card = this.aDraw(player, { age, exp: 'arti' })
   if (card) {
-    this.mMoveCardTo(card, this.zones.byPlayer(player, 'artifact'), { player })
+    this.log.add({
+      template: '{player} digs {card}',
+      args: { player, card },
+    })
+    card.moveTo(this.zones.byPlayer(player, 'artifact'))
+    this.acted(player)
   }
-}
-
-Innovation.prototype._checkCanSeizeRelic = function(card) {
-  // A relic can be seized from the achievements pile or from another player's achievements.
-  return card.zone.includes('achievement')
 }
 
 Innovation.prototype.aJunk = function(player, card, opts={}) {
@@ -1523,35 +1518,6 @@ Innovation.prototype.aJunkDeck = function(player, age, opts={}) {
       template: '{player} chooses not to junk the {age} deck',
       args: { player, age }
     })
-  }
-}
-
-Innovation.prototype.aSeizeRelic = function(player, card) {
-  const relicSeizeOptions =
-    this.getExpansionList().includes(card.relicExpansion) ?
-      [
-        'to my achievements',
-        'to my hand',
-        'do not seize',
-      ] : [
-        'to my achievements',
-        'do not seize',
-      ]
-
-  const choice = this.actions.choose(player, relicSeizeOptions, {
-    title: `How would you like to seize ${card.name}`
-  })[0]
-
-  if (choice === 'to my achievements') {
-    this.mMoveCardTo(card, this.zones.byPlayer(player, 'achievements'), { player })
-    this.mActed(player)
-  }
-  else if (choice === 'to my hand') {
-    this.mMoveCardTo(card, this.zones.byPlayer(player, 'hand'), { player })
-    this.mActed(player)
-  }
-  else {
-    this.log.addDoNothing(player)
   }
 }
 
@@ -2402,7 +2368,6 @@ Innovation.prototype.getVisibleEffectsByColor = function(player, color, kind) {
   const karma = this
     .getInfoByKarmaTrigger(player, `list-${kind}-effects`)
 
-
   if (karma.length === 1) {
     this.state.karmaDepth += 1
     const result = karma.flatMap(info => info.impl.func(this, player, { color, kind }))
@@ -2683,25 +2648,20 @@ Innovation.prototype.mMoveCardTo = function(card, target, opts={}) {
 
   this.mMoveByIndices(source, sourceIndex, target, targetIndex)
 
-  if (opts.player) {
-    this.mActed(opts.player)
-
-    this.log.add({
-      template: '{player} moves {card} to {zone}',
-      args: {
-        player: opts.player,
-        card,
-        zone: target
-      }
-    })
-  }
-
   return card
 }
 
 Innovation.prototype.mMoveCardsTo = function(player, cards, target) {
   for (const card of cards) {
-    this.mMoveCardTo(card, target, { player })
+    this.log.add({
+      template: '{player} moves {card} to {zone}',
+      args: { player, card, zone: target }
+    })
+    card.moveTo(target)
+  }
+
+  if (cards.length > 0) {
+    this.mActed(player)
   }
 }
 
@@ -2803,7 +2763,7 @@ Innovation.prototype.mSetFirstBaseDraw = function(player) {
 
 Innovation.prototype.mScore = function(player, card) {
   const target = this.zones.byPlayer(player, 'score')
-  this.mMoveCardTo(card, target)
+  card.moveTo(target)
   this.log.add({
     template: '{player} scores {card}',
     args: { player, card }
@@ -2853,7 +2813,7 @@ Innovation.prototype.mSplayCheck = function() {
 
 Innovation.prototype.mTake = function(player, card) {
   const hand = this.zones.byPlayer(player, 'hand')
-  this.mMoveCardTo(card, hand)
+  card.moveTo(hand)
   this.log.add({
     template: '{player} takes {card} into hand',
     args: { player, card }
@@ -2863,7 +2823,7 @@ Innovation.prototype.mTake = function(player, card) {
 }
 
 Innovation.prototype.mTransfer = function(player, card, target) {
-  this.mMoveCardTo(card, target, { index: 0 })
+  card.moveTo(target, 0)
   this.log.add({
     template: '{player} transfers {card} to {zone}',
     args: { player, card, zone: target }
@@ -2874,7 +2834,7 @@ Innovation.prototype.mTransfer = function(player, card, target) {
 
 Innovation.prototype.mTuck = function(player, card) {
   const target = this.zones.byPlayer(player, card.color)
-  this.mMoveCardTo(card, target)
+  card.moveTo(target)
   this.log.add({
     template: '{player} tucks {card}',
     args: { player, card }

@@ -57,17 +57,11 @@ class BaseZone {
   /**
    * Negative indices push from the back of the cards array, the same as with array.splice.
    */
-  push(card, index=null) {
-    if (index !== null) {
-      if (index > this._cards.length) {
-        throw new Error('Index out of bounds: ' + index)
-      }
-      this._cards.splice(index, 0, card)
+  push(card, index) {
+    if (index > this._cards.length) {
+      throw new Error('Index out of bounds: ' + index)
     }
-    else {
-      this._cards.push(card)
-    }
-
+    this._cards.splice(index, 0, card)
     this._updateCardVisibility(card)
   }
 

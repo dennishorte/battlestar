@@ -419,7 +419,7 @@ TestUtil.clearHand = function(game, playerName) {
   const player = game.players.byName(playerName)
   const cards = game.zones.byPlayer(player, 'hand').cards()
   for (const card of cards) {
-    game.mMoveCardTo(card, card.home)
+    card.moveHome()
   }
 }
 
@@ -445,7 +445,7 @@ TestUtil.setAchievements = function(game, playerName, cardNames) {
     game.mReturn(player, card, { silent: true })
   }
   for (const card of cards) {
-    game.mMoveCardTo(card, zone)
+    card.moveTo(zone)
   }
 }
 
@@ -455,12 +455,12 @@ TestUtil.setAvailableAchievements = function(game, cardNames) {
 
   for (const card of zone.cards()) {
     if (card.checkIsStandardAchievement()) {
-      game.mMoveCardTo(card, card.home)
+      card.moveHome()
     }
   }
 
   for (const card of cards) {
-    game.mMoveCardTo(card, zone)
+    card.moveTo(zone)
   }
 }
 
@@ -469,7 +469,7 @@ TestUtil.setJunk = function(game, cardNames) {
   const zone = game.zones.byId('junk')
 
   for (const card of cards) {
-    game.mMoveCardTo(card, zone)
+    card.moveTo(zone)
   }
 }
 
@@ -481,7 +481,7 @@ TestUtil.setColor = function(game, playerName, colorName, cardNames) {
     game.mReturn(player, card, { silent: true })
   }
   for (const card of cards) {
-    game.mMoveCardTo(card, zone)
+    card.moveTo(zone)
   }
 }
 
@@ -500,7 +500,7 @@ TestUtil.setPlayerZone = function(game, playerName, zoneName, cardNames) {
   const zone = game.zones.byPlayer(player, zoneName)
   for (const name of cardNames) {
     const card = game.cards.byId(name)
-    game.mMoveCardTo(card, zone)
+    card.moveTo(zone)
   }
 }
 

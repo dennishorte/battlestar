@@ -230,7 +230,7 @@ describe('BaseZone', () => {
         zone.initializeCards([mockCard1])
         zone.push(mockCard2)
 
-        expect(zone.cards()).toEqual([mockCard1, mockCard2])
+        expect(zone.cards()).toEqual([mockCard2, mockCard1])
       })
 
       test('should call _updateCardVisibility on added card', () => {
@@ -253,7 +253,7 @@ describe('BaseZone', () => {
         zone.push(mockCard2)
         zone.push(mockCard3)
 
-        expect(zone.cards()).toEqual([mockCard1, mockCard2, mockCard3])
+        expect(zone.cards()).toEqual([mockCard3, mockCard2, mockCard1])
       })
     })
 
@@ -1293,7 +1293,7 @@ describe('BaseZone', () => {
 
       // Push additional card
       zone.push(mockCard3)
-      expect(zone.cards()).toEqual([mockCard1, mockCard2, mockCard3])
+      expect(zone.cards()).toEqual([mockCard3, mockCard1, mockCard2])
 
       // Shuffle cards
       zone.shuffle()

@@ -48,6 +48,12 @@ module.exports = {
         }
 
         const stop = tucked.color !== 'red' && tucked.color !== 'purple'
+        if (!stop) {
+          game.log.add({
+            template: '{card} is {color}; effect will repeat',
+            args: { card: tucked, color: tucked.color }
+          })
+        }
         return stop
       }
 

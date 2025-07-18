@@ -26,7 +26,7 @@ module.exports = {
           })
         }
         else {
-          game.mMoveCardTo(card, card.home, { index: 0 })
+          card.moveTo(card.home, 0)
           game.log.add({
             template: '{player} puts {card} back on top of its deck',
             args: { player, card }

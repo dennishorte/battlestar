@@ -44,7 +44,7 @@ module.exports = {
         })
         if (fromJunk) {
           junked = true
-          game.mMoveCardTo(fromJunk, game.zones.byId('achievements'))
+          fromJunk.moveTo(game.zones.byId('achievements'))
           game.log.add({
             template: '{player} moves {card} from the junk to the available achievements',
             args: { player, card: fromJunk },

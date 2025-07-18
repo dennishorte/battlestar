@@ -26,7 +26,20 @@ class BaseCard {
   }
 
   moveTo(zone, index=null) {
-    // TODO: test if the card will actually move somewhere new
+    const prevZone = this.zone
+    const prevIndex = this.zone.cards().indexOf(this)
+    const newIndex = index !== null
+      ? index
+      : (prevZone === zone
+        ? zone.cards().length - 1
+        : zone.cards().length)
+
+    const beforeCache = this._beforeMoveTo(zone, index, prevZone, prevIndex) || {}
+
+    if (beforeCache.preventDefault) {
+      return null
+    }
+
     // TODO: mark the player who did the moving as the actor, if appropriate
 
     // Remove from old zone
@@ -34,7 +47,10 @@ class BaseCard {
 
     // Add to new zone
     this.setZone(zone)
-    this.zone.push(this, index)
+    this.zone.push(this, newIndex)
+
+    this._afterMoveTo(zone, index, prevZone, prevIndex, beforeCache)
+
     return this
   }
 
@@ -59,6 +75,16 @@ class BaseCard {
 
   visible(player) {
     return this.visibility.includes(player)
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  _afterMoveTo(newZone, newIndex, oldZone, oldIndex) {
+    // To be overridden by child classes
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  _beforeMoveTo(newZone, newIndex, oldZone, oldIndex) {
+    // To be overridden by child classes
   }
 }
 

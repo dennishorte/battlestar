@@ -21,7 +21,7 @@ module.exports = {
             template: '{player} puts {card} on top of its deck',
             args: { player, card: topCardChosen }
           })
-          game.mMoveCardTo(topCardChosen, topCardChosen.home, 0)
+          topCardChosen.moveTo(topCardChosen.home, 0)
         }
 
         const handCardMelded = game.aChooseAndMeld(player, handCards, { min: 0, max: 1 })[0]
