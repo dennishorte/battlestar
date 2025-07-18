@@ -815,7 +815,7 @@ Magic.prototype.aReveal = function(player, cardId) {
   player = player || this.players.current()
   const card = this.getCardById(cardId)
 
-  this.mReveal(card)
+  card.reveal()
   this.log.add({
     template: '{player} reveals {card} from {zone}',
     args: { player, card, zone: card.zone },
@@ -824,7 +824,7 @@ Magic.prototype.aReveal = function(player, cardId) {
 
 Magic.prototype.aRevealAll = function(player, zoneId) {
   const zone = this.zones.byId(zoneId)
-  zone.cards().forEach(card => this.mReveal(card))
+  zone.cards().forEach(card => card.reveal())
 
   this.log.add({
     template: `{player} reveals {zone}`,
@@ -846,7 +846,7 @@ Magic.prototype.aRevealNext = function(player, zoneId) {
   }
 
   const card = cards[nextIndex]
-  this.mReveal(card)
+  card.reveal()
   this.log.add({
     template: `{player} reveals the next card in {zone} (top+${nextIndex}): {card}`,
     args: { player, zone, card }
@@ -992,7 +992,7 @@ Magic.prototype.aUnmorph = function(player, cardId) {
   player = player || this.players.current()
   const card = this.getCardById(cardId)
   card.g.morph = false
-  this.mReveal(card)
+  card.reveal()
   this.log.add({
     template: '{player} unmorphs {card}',
     args: { player, card },
@@ -1261,11 +1261,6 @@ Magic.prototype.mMaybeRemoveTokens = function(card) {
     card.zone.remove(card)
     card.g.owner = undefined
   }
-}
-
-Magic.prototype.mReveal = function(card) {
-  // TODO: deprecate
-  card.reveal()
 }
 
 Magic.prototype.mTap = function(card) {
