@@ -30,7 +30,7 @@ module.exports = {
         })
         if (toJunk) {
           junked = true
-          game.aRemove(player, toJunk)
+          game.actions.junk(player, toJunk)
         }
       }
       else {

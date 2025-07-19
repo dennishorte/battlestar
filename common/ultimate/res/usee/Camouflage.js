@@ -61,7 +61,7 @@ module.exports = {
           count: 2,
           guard: (cards) => cards.every(c => c.getAge() === cards[0].getAge())
         })
-        game.aJunkMany(player, cards)
+        game.actions.junkMany(player, cards)
         game.aSafeguardMany(player, cards)
       }
       else if (choice === 'Score secrets') {

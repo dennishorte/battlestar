@@ -805,7 +805,6 @@ function ChooseAndFactory(manyFuncName, numArgs) {
   }
 }
 
-Innovation.prototype.aChooseAndJunk = ChooseAndFactory('aJunkMany', 2)
 Innovation.prototype.aChooseAndMeld = ChooseAndFactory('aMeldMany', 2)
 Innovation.prototype.aChooseAndReturn = ChooseAndFactory('aReturnMany', 2)
 Innovation.prototype.aChooseAndSafeguard = ChooseAndFactory('aSafeguardMany', 2)
@@ -913,7 +912,7 @@ Innovation.prototype.aDecree = function(player, name) {
   })
   this.log.indent()
 
-  this.aRemoveMany(player, hand.cards(), { ordered: true })
+  this.actions.junkMany(player, hand.cards(), { ordered: true })
 
   let doImpl = false
   if (card.zone.id === 'achievements') {
@@ -1172,7 +1171,7 @@ Innovation.prototype.aDrawAndForeshadow = function(player, age, opts={}) {
 Innovation.prototype.aDrawAndJunk = function(player, age, opts={}) {
   const card = this.aDraw(player, {...opts, age })
   if (card) {
-    return this.aJunk(player, card, opts)
+    return this.actions.junk(player, card, opts)
   }
 }
 
@@ -1235,7 +1234,7 @@ Innovation.prototype.aEndorse = function(player, color, opts={}) {
     .filter(card => cities.some(city => card.getAge() <= city.getAge()))
     .map(card => card.id)
 
-  this.aChooseAndJunk(player, junkChoices, {
+  this.actions.chooseAndJunk(player, junkChoices, {
     title: 'Junk a card to endorse'
   })
 
@@ -1464,16 +1463,6 @@ Innovation.prototype.aDigArtifact = function(player, age) {
   }
 }
 
-Innovation.prototype.aJunk = function(player, card, opts={}) {
-  this.log.add({
-    template: '{player} junks {card}',
-    args: { player, card }
-  })
-
-  this.aRemove(player, card, opts)
-  this._checkCityJunkAchievements(player, card)
-}
-
 Innovation.prototype.aJunkAvailableAchievement = function(player, ages, opts={}) {
   const eligible = ages.flatMap(age => this.getAvailableAchievementsByAge(player, age))
 
@@ -1484,7 +1473,7 @@ Innovation.prototype.aJunkAvailableAchievement = function(player, ages, opts={})
   })[0]
 
   if (card) {
-    this.aJunk(player, card)
+    this.actions.junk(player, card)
   }
 }
 
@@ -1510,7 +1499,7 @@ Innovation.prototype.aJunkDeck = function(player, age, opts={}) {
     })
 
     const cards = this.getZoneByDeck('base', age).cards()
-    this.aRemoveMany(player, cards, { ordered: true })
+    this.actions.junkMany(player, cards, { ordered: true })
   }
   else {
     this.log.add({
@@ -1653,17 +1642,6 @@ Innovation.prototype.aMeld = function(player, card, opts={}) {
   return card
 }
 
-Innovation.prototype.aRemove = function(player, card, opts={}) {
-  const karmaKind = this.aKarma(player, 'remove', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    this.mActed(player)
-    return
-  }
-
-  this.mActed(player)
-  return this.mRemove(card)
-}
-
 Innovation.prototype.aReturn = function(player, card, opts={}) {
   const karmaKind = this.aKarma(player, 'return', { ...opts, card })
   if (karmaKind === 'would-instead') {
@@ -1766,22 +1744,6 @@ Innovation.prototype.aTransfer = function(player, card, target, opts={}) {
   return this.mTransfer(player, card, target, opts)
 }
 
-Innovation.prototype._checkCityJunkAchievements = function(player, card) {
-  if (
-    card.checkHasBiscuit(';')
-    && this.cards.byId('Glory').zone.id === 'achievements'
-  ) {
-    this.aClaimAchievement(player, { name: 'Glory' })
-  }
-
-  if (
-    card.checkHasBiscuit(':')
-    && this.cards.byId('Victory').zone.id === 'achievements'
-  ) {
-    this.aClaimAchievement(player, { name: 'Victory' })
-  }
-}
-
 Innovation.prototype.aTuck = function(player, card, opts={}) {
   const karmaKind = this.aKarma(player, 'tuck', { ...opts, card })
   if (karmaKind === 'would-instead') {
@@ -1879,9 +1841,7 @@ function ManyFactory(baseFuncName, extraArgCount=0) {
   }
 }
 
-Innovation.prototype.aJunkMany = ManyFactory('aJunk')
 Innovation.prototype.aMeldMany = ManyFactory('aMeld')
-Innovation.prototype.aRemoveMany = ManyFactory('aRemove')
 Innovation.prototype.aReturnMany = ManyFactory('aReturn')
 Innovation.prototype.aSafeguardMany = ManyFactory('aSafeguard')
 Innovation.prototype.aScoreMany = ManyFactory('aScore')

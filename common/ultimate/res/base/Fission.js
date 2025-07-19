@@ -20,7 +20,7 @@ module.exports = {
         const toRemove = game
           .players.all()
           .flatMap(player => zones.flatMap(name => game.cards.byPlayer(player, name)))
-        game.aRemoveMany(player, toRemove, { ordered: true })
+        game.actions.junkMany(player, toRemove, { ordered: true })
         game.log.outdent()
 
         game.state.dogmaInfo.earlyTerminate = true

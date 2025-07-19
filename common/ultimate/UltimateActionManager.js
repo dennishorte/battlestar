@@ -115,6 +115,37 @@ class UltimateActionManager extends BaseActionManager {
     return output
   }
 
+  junk(player, card, opts={}) {
+    const karmaKind = this.game.aKarma(player, 'junk', { ...opts, card })
+    if (karmaKind === 'would-instead') {
+      this.game.mActed(player)
+      return
+    }
+
+    this.log.add({
+      template: '{player} junks {card}',
+      args: { player, card }
+    })
+
+    card.moveTo(this.game.zones.byId('junk'))
+
+    // Check if any of the city junk achievements are triggered
+    if (
+      card.checkHasBiscuit(';')
+      && this.game.cards.byId('Glory').zone.id === 'achievements'
+    ) {
+      this.game.aClaimAchievement(player, { name: 'Glory' })
+    }
+
+    if (
+      card.checkHasBiscuit(':')
+      && this.game.cards.byId('Victory').zone.id === 'achievements'
+    ) {
+      this.game.aClaimAchievement(player, { name: 'Victory' })
+    }
+
+  }
+
   reveal(player, card) {
     card.reveal()
     this.log.add({
@@ -125,10 +156,15 @@ class UltimateActionManager extends BaseActionManager {
     return card
   }
 
+  junkMany = UltimateActionManager.createManyMethod('junk', 2)
   revealMany = UltimateActionManager.createManyMethod('reveal', 2)
 
+  chooseAndJunk = UltimateActionManager.createChooseAndMethod('junkMany', 2)
   chooseAndReveal = UltimateActionManager.createChooseAndMethod('revealMany', 2)
 
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Helper methods for creating common classes of action
 
   static createManyMethod(verb, numArgs) {
     return function(...args) { //player, cards, opts={}) {
@@ -198,6 +234,19 @@ class UltimateActionManager extends BaseActionManager {
       }
       else {
         return []
+      }
+    }
+  }
+
+  static createDrawAndMethod(verb, numArgs) {
+    return function(...args) {
+      const player = args[0]
+      const age = args[1]
+      const opts = args[numArgs] || {}
+
+      const card = this.draw(player, { ...opts, age })
+      if (card) {
+        return this[verb](player, card, opts)
       }
     }
   }

@@ -53,12 +53,6 @@ class UltimateAgeCard extends UltimateBaseCard {
       .some(text => text.toLowerCase().startsWith('i demand'))
   }
 
-  checkHasBiscuit(biscuit) {
-    return this
-      .getBiscuits('top')
-      .includes(biscuit)
-  }
-
   checkHasCompelExplicit() {
     return this
       .dogma
