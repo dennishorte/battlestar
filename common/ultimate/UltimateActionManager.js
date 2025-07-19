@@ -1,9 +1,56 @@
 const { BaseActionManager } = require('../lib/game/index.js')
+const { GameOverEvent } = require('../lib/game.js')
 
 
 class UltimateActionManager extends BaseActionManager {
   constructor(game) {
     super(game)
+  }
+
+  acted(player) {
+    const state = this.game.state
+
+    if (!state.initializationComplete || !state.firstPicksComplete) {
+      return
+    }
+
+    if (
+      !state.dogmaInfo.demanding
+      && state.dogmaInfo.acting === player
+      && !this.game.checkSameTeam(player, this.game.players.current())
+    ) {
+      state.shared = true
+    }
+
+    // Special handling for "The Big Bang"
+    state.dogmaInfo.theBigBangChange = true
+
+    ////////////////////////////////////////////////////////////
+    // Color zones that have only one or fewer cards become unsplayed
+
+    for (const player of this.game.players.all()) {
+      for (const color of this.game.utilColors()) {
+        const zone = this.game.zones.byPlayer(player, color)
+        if (zone.cards().length < 2) {
+          zone.splay = 'none'
+        }
+      }
+    }
+
+    ////////////////////////////////////////////////////////////
+    // Check if any player has won
+
+    // Some karmas create special handling for win conditions
+    if (!state.wouldWinKarma) {
+      for (const player of this.game.players.all()) {
+        if (this.game.getAchievementsByPlayer(player).total >= this.game.getNumAchievementsToWin()) {
+          throw new GameOverEvent({
+            player,
+            reason: 'achievements'
+          })
+        }
+      }
+    }
   }
 
   choose(player, choices, opts={}) {
@@ -118,7 +165,7 @@ class UltimateActionManager extends BaseActionManager {
   junk(player, card, opts={}) {
     const karmaKind = this.game.aKarma(player, 'junk', { ...opts, card })
     if (karmaKind === 'would-instead') {
-      this.game.mActed(player)
+      this.acted(player)
       return
     }
 
@@ -127,7 +174,12 @@ class UltimateActionManager extends BaseActionManager {
       args: { player, card }
     })
 
-    card.moveTo(this.game.zones.byId('junk'))
+    const junkedCard = card.moveTo(this.game.zones.byId('junk'))
+
+    // Only mark this player as having acted if something actually changed
+    if (junkedCard) {
+      this.acted(player)
+    }
 
     // Check if any of the city junk achievements are triggered
     if (
@@ -152,7 +204,7 @@ class UltimateActionManager extends BaseActionManager {
       template: '{player} reveals {card}',
       args: { player, card }
     })
-    this.game.mActed(player)
+    this.acted(player)
     return card
   }
 
