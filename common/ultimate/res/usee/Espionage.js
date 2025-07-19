@@ -13,7 +13,7 @@ module.exports = {
       while (true) {
         const hand = game.cards.byPlayer(player, 'hand')
 
-        const revealed = game.aChooseAndReveal(player, hand, {
+        const revealed = game.actions.chooseAndReveal(player, hand, {
           title: 'Choose a card to reveal',
           count: 1,
         })[0]
@@ -27,7 +27,7 @@ module.exports = {
           template: '{player} reveals their hand',
           args: { player: leader }
         })
-        game.aRevealMany(leader, leaderHand, { ordered: true })
+        game.actions.revealMany(leader, leaderHand, { ordered: true })
 
         if (!leaderHand.some(c => c.color === revealed.color)) {
           game.mTransfer(player, revealed, game.zones.byPlayer(leader, 'hand'))

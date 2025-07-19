@@ -51,7 +51,7 @@ module.exports = {
           template: '{player} reveals hand to show no matching cards',
           args: { player },
         })
-        game.aRevealMany(player, hand, { ordered: true })
+        game.actions.revealMany(player, hand, { ordered: true })
       }
     },
   ],

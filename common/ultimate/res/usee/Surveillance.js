@@ -24,8 +24,8 @@ module.exports = {
         return
       }
 
-      game.aRevealMany(player, playerHand, { ordered: true })
-      game.aRevealMany(player, leaderHand, { ordered: true })
+      game.actions.revealMany(player, playerHand, { ordered: true })
+      game.actions.revealMany(player, leaderHand, { ordered: true })
 
 
       if (leaderColors.every(color => playerColors.includes(color)) &&

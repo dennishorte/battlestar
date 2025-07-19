@@ -39,7 +39,7 @@ module.exports = {
         template: '{player} reveals their hand to show how many of which color they have',
         args: { player: leader }
       })
-      game.aRevealMany(leader, leaderHandCards, { ordered: true })
+      game.actions.revealMany(leader, leaderHandCards, { ordered: true })
 
       // By the principle of "do as much as you can, the player starts scoring cards.
       const colorsToDiscard = leaderHandCards

@@ -42,7 +42,7 @@ module.exports = {
         return
       }
 
-      const revealed = game.aChooseAndReveal(player, hand, { count: 2, ordered: true })
+      const revealed = game.actions.chooseAndReveal(player, hand, { count: 2, ordered: true })
       const returned = game.aReturnMany(player, revealed)
 
       if (returned.length === 2) {

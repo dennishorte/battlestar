@@ -18,7 +18,7 @@ module.exports = {
         game.getZoneByDeck('base', game.getEffectAge(self, 10)).cards()[0],
       ].filter(x => x)
 
-      cards.forEach(card => game.mReveal(player, card))
+      cards.forEach(card => game.actions.reveal(player, card))
 
       game.aChooseAndReturn(player, cards, {
         title: 'Choose a card to put on the bottom of its deck',

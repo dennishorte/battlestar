@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const hand = game.zones.byPlayer(player, 'hand').cards()
-      const card = game.aChooseAndReveal(player, hand)[0]
+      const card = game.actions.chooseAndReveal(player, hand)[0]
 
       if (card) {
         game.aSplay(player, card.color, 'right')

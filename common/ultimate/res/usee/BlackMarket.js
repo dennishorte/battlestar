@@ -20,7 +20,7 @@ module.exports = {
           count: 2,
         })
 
-        const revealed = game.aRevealMany(player, achievements, { ordered: true })
+        const revealed = game.actions.revealMany(player, achievements, { ordered: true })
 
         const meldableAchievements = achievements.filter(card => !card.checkHasBiscuit('i') && !card.checkHasBiscuit('p'))
 

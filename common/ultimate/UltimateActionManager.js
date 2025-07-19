@@ -114,6 +114,93 @@ class UltimateActionManager extends BaseActionManager {
 
     return output
   }
+
+  reveal(player, card) {
+    card.reveal()
+    this.log.add({
+      template: '{player} reveals {card}',
+      args: { player, card }
+    })
+    this.game.mActed(player)
+    return card
+  }
+
+  revealMany = UltimateActionManager.createManyMethod('reveal', 2)
+
+  chooseAndReveal = UltimateActionManager.createChooseAndMethod('revealMany', 2)
+
+
+  static createManyMethod(verb, numArgs) {
+    return function(...args) { //player, cards, opts={}) {
+      const player = args[0]
+      const cards = args[1]
+      const opts = args[numArgs] || {}
+
+      const results = []
+      let auto = opts.ordered || false
+      let remaining = [...cards]
+      const startZones = Object.fromEntries(remaining.map(c => [c.id, c.zone]))
+
+      while (remaining.length > 0) {
+        // Check if any cards in 'remaining' have been acted on by some other force (karma effect).
+        remaining = remaining.filter(c => c.zone === startZones[c.id])
+        if (remaining.length === 0) {
+          break
+        }
+
+        let next
+        if (auto || remaining.length === 1) {
+          next = remaining[0]
+        }
+        else {
+          next = this.chooseCard(
+            player,
+            remaining.concat(['auto']),
+            { title: `Choose a card to ${verb} next.` },
+          )
+        }
+
+        if (next === 'auto') {
+          auto = true
+          continue
+        }
+
+        remaining = remaining.filter(card => card !== next)
+        const singleArgs = [...args]
+        singleArgs[1] = next
+        const result = this[verb](...singleArgs)
+        if (result !== undefined) {
+          results.push(result)
+        }
+      }
+      return results
+    }
+  }
+
+  static createChooseAndMethod(manyFuncName, numArgs) {
+    return function(...args) {
+      const player = args[0]
+      const choices = args[1]
+      const opts = args[numArgs] || {}
+
+      const titleVerb = manyFuncName.slice(1, -4).toLowerCase()
+      opts.title = opts.title || `Choose card(s) to ${titleVerb}`
+
+      const cards = this.chooseCards(player, choices, opts)
+      if (cards) {
+        if (opts.reveal) {
+          this.revealMany(player, cards)
+        }
+
+        const actionArgs = [...args]
+        actionArgs[1] = cards
+        return this[manyFuncName](...actionArgs)
+      }
+      else {
+        return []
+      }
+    }
+  }
 }
 
 module.exports = {

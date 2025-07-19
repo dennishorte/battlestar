@@ -18,7 +18,7 @@ module.exports = {
 
       const card = game.actions.chooseCard(player, hand)
       if (card) {
-        game.mReveal(player, card)
+        game.actions.reveal(player, card)
         game.aJunk(player, card)
 
         const cardValue = card.getAge()

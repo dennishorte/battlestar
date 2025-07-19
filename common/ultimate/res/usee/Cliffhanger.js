@@ -35,7 +35,7 @@ module.exports = {
       }
 
       const card = util.array.select(choices)
-      game.mReveal(player, card)
+      game.actions.reveal(player, card)
 
       switch (card.color) {
         case 'green':

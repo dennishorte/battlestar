@@ -792,7 +792,7 @@ function ChooseAndFactory(manyFuncName, numArgs) {
     const cards = this.actions.chooseCards(player, choices, opts)
     if (cards) {
       if (opts.reveal) {
-        this.aRevealMany(player, cards)
+        this.actions.revealMany(player, cards)
       }
 
       const actionArgs = [...args]
@@ -808,7 +808,6 @@ function ChooseAndFactory(manyFuncName, numArgs) {
 Innovation.prototype.aChooseAndJunk = ChooseAndFactory('aJunkMany', 2)
 Innovation.prototype.aChooseAndMeld = ChooseAndFactory('aMeldMany', 2)
 Innovation.prototype.aChooseAndReturn = ChooseAndFactory('aReturnMany', 2)
-Innovation.prototype.aChooseAndReveal = ChooseAndFactory('aRevealMany', 2)
 Innovation.prototype.aChooseAndSafeguard = ChooseAndFactory('aSafeguardMany', 2)
 Innovation.prototype.aChooseAndScore = ChooseAndFactory('aScoreMany', 2)
 Innovation.prototype.aChooseAndTransfer = ChooseAndFactory('aTransferMany', 3)
@@ -956,7 +955,7 @@ Innovation.prototype.aDiscoverBiscuit = function(player, card) {
 
   for (let i = 0; i < numDraw; i++) {
     const card = this.mDraw(player, 'base', age)
-    this.mReveal(player, card)
+    this.actions.reveal(player, card)
     if (!card.checkHasBiscuit(biscuit)) {
       this.mReturn(player, card)
     }
@@ -1187,7 +1186,7 @@ Innovation.prototype.aDrawAndMeld = function(player, age, opts={}) {
 Innovation.prototype.aDrawAndReveal = function(player, age, opts={}) {
   const card = this.aDraw(player, {...opts, age })
   if (card) {
-    return this.mReveal(player, card, opts)
+    return this.actions.reveal(player, card)
   }
 }
 
@@ -1884,7 +1883,6 @@ Innovation.prototype.aJunkMany = ManyFactory('aJunk')
 Innovation.prototype.aMeldMany = ManyFactory('aMeld')
 Innovation.prototype.aRemoveMany = ManyFactory('aRemove')
 Innovation.prototype.aReturnMany = ManyFactory('aReturn')
-Innovation.prototype.aRevealMany = ManyFactory('mReveal')
 Innovation.prototype.aSafeguardMany = ManyFactory('aSafeguard')
 Innovation.prototype.aScoreMany = ManyFactory('aScore')
 Innovation.prototype.aTransferMany = ManyFactory('aTransfer', 1)
@@ -2743,16 +2741,6 @@ Innovation.prototype.mReturn = function(player, card, opts) {
 
   this.mMoveByIndices(source, sourceIndex, target, targetIndex)
 
-  this.mActed(player)
-  return card
-}
-
-Innovation.prototype.mReveal = function(player, card) {
-  card.visibility = this.players.all().map(p => p.name)
-  this.log.add({
-    template: '{player} reveals {card}',
-    args: { player, card }
-  })
   this.mActed(player)
   return card
 }

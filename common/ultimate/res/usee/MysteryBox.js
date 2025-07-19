@@ -18,7 +18,7 @@ module.exports = {
 
       if (achievement) {
         game.aClaimAchievement(player, achievement)
-        game.mReveal(player, achievement)
+        game.actions.reveal(player, achievement)
         game.aSelfExecute(player, achievement)
       }
     },

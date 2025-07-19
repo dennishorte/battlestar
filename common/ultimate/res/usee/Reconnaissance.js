@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const playerHand = game.cards.byPlayer(player, 'hand')
-      game.aRevealMany(player, playerHand)
+      game.actions.revealMany(player, playerHand)
     },
     (game, player, { self }) => {
       const drawnCards = []

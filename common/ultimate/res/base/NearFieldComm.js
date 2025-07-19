@@ -37,7 +37,7 @@ module.exports = {
 
       const card = game.actions.chooseCard(player, highestCards)
       if (card) {
-        game.mReveal(player, card)
+        game.actions.reveal(player, card)
         game.aSelfExecute(player, card)
       }
     }

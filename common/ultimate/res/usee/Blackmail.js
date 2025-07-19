@@ -12,7 +12,7 @@ module.exports = {
     (game, player, { leader }) => {
       // Reveal opponent's hand
       const hand = game.cards.byPlayer(player, 'hand')
-      game.aRevealMany(player, hand)
+      game.actions.revealMany(player, hand)
       const toMeld = game.actions.chooseCard(leader, hand, {
         title: 'Choose a card for your opponent to meld',
       })
@@ -23,7 +23,7 @@ module.exports = {
 
       // Reveal opponent's score pile
       const score = game.cards.byPlayer(player, 'score')
-      game.aRevealMany(player, score)
+      game.actions.revealMany(player, score)
 
       const choices = [...score, ...hand]
       const toExecute = game.actions.chooseCard(leader, choices, {

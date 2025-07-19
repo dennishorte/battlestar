@@ -38,7 +38,7 @@ module.exports = {
           return
         }
 
-        game.mReveal(player, card)
+        game.actions.reveal(player, card)
 
         for (let i = 0; i < card.dogma.length; i++) {
           if (checkHasDemand(card.dogma[i])) {

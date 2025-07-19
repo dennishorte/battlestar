@@ -15,7 +15,7 @@ module.exports = {
       const card = game.actions.chooseCard(player, hand.cards())
 
       if (card) {
-        game.mReveal(player, card)
+        game.actions.reveal(player, card)
 
         const stolen = game
           .players.opponentsOf(player)

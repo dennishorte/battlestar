@@ -41,7 +41,7 @@ module.exports = {
       })[0]
 
       if (secret) {
-        game.mReveal(player, secret)
+        game.actions.reveal(player, secret)
 
         if (game.players.current() === player) {
           game.aSuperExecute(player, secret)

@@ -13,7 +13,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader, self }) => {
       const hand = game.cards.byPlayer(player, 'hand')
-      game.aRevealMany(player, hand, { ordered: true })
+      game.actions.revealMany(player, hand, { ordered: true })
 
       const card = game.actions.chooseCard(leader, hand)
       if (card) {

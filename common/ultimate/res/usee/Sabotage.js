@@ -13,7 +13,7 @@ module.exports = {
       game.aDraw(player, { age: game.getEffectAge(self, 6) })
 
       const cards = game.cards.byPlayer(player, 'hand')
-      game.aRevealMany(player, cards)
+      game.actions.revealMany(player, cards)
 
       const choices = cards.map(c => c.id)
       const card = game.actions.chooseCard(leader, choices)
