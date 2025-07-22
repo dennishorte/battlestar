@@ -45,7 +45,7 @@ module.exports = {
           game.aMeld(player, card)
           break
         case 'red':
-          game.aClaimAchievement(player, card)
+          game.actions.claimAchievement(player, card)
           break
         case 'yellow':
           game.aScore(player, card)

@@ -24,7 +24,7 @@ module.exports = {
       const redCards = game.cards.byPlayer(player, 'red')
 
       if (redCards.length === 3 && game.checkAchievementAvailable('Monument')) {
-        game.aClaimAchievement(player, { name: 'Monument' })
+        game.actions.claimAchievement(player, { name: 'Monument' })
       }
       else {
         game.log.addNoEffect()

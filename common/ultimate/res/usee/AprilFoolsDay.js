@@ -22,7 +22,7 @@ module.exports = {
         game.aTransfer(player, selectedCard, game.zones.byPlayer(rightPlayer, selectedCard.color))
       }
       else {
-        game.aClaimAchievement(player, { name: 'Folklore' })
+        game.actions.claimAchievement(player, { name: 'Folklore' })
       }
     },
     (game, player) => {

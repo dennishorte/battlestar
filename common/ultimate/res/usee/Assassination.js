@@ -29,7 +29,7 @@ module.exports = {
         .filter(card => Boolean(card))
 
       if (topGreenCards.length === 0) {
-        game.aClaimAchievement(player, { name: 'Confidence' })
+        game.actions.claimAchievement(player, { name: 'Confidence' })
       }
     }
   ],

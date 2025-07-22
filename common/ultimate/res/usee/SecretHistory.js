@@ -22,7 +22,7 @@ module.exports = {
       const purpleSplay = game.zones.byPlayer(player, 'purple').splay
 
       if (redSplay === 'right' && purpleSplay === 'right') {
-        game.aClaimAchievement(player, { name: 'Mystery' })
+        game.actions.claimAchievement(player, { name: 'Mystery' })
       }
       else {
         game.aChooseAndSplay(player, ['red', 'purple'], 'right', { count: 1 })

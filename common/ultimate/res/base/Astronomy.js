@@ -34,7 +34,7 @@ module.exports = {
         .every(card => card.getAge() >= 6)
 
       if (conditionMet) {
-        game.aClaimAchievement(player, { name: 'Universe' })
+        game.actions.claimAchievement(player, { name: 'Universe' })
       }
       else {
         game.log.addNoEffect()

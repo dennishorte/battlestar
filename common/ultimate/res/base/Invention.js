@@ -29,7 +29,7 @@ module.exports = {
       const achievementAvailable = game.checkAchievementAvailable('Wonder')
 
       if (achievementAvailable && splayCount === 5) {
-        game.aClaimAchievement(player, { name: 'Wonder' })
+        game.actions.claimAchievement(player, { name: 'Wonder' })
       }
       else {
         game.log.addNoEffect()

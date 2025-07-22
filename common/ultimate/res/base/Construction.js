@@ -35,7 +35,7 @@ module.exports = {
         .length > 0
 
       if (achievementAvailable && playerHasFive && !othersHaveFive) {
-        return game.aClaimAchievement(player, { name: 'Empire' })
+        return game.actions.claimAchievement(player, { name: 'Empire' })
       }
       else {
         game.log.add({ template: 'no effect' })

@@ -451,16 +451,16 @@ Innovation.prototype.aAchieveAction = function(player, arg, opts={}) {
     const card = this
       .cards.byPlayer(player, 'safe')
       .find(c => c.expansion === expansion && c.getAge() === age)
-    this.aClaimAchievement(player, { card })
+    this.actions.claimAchievement(player, { card })
   }
   else if (arg.startsWith('*')) {
     const { expansion, age } = this._parseHiddenCardName(arg)
     const isStandard = opts.nonAction ? false : true
-    this.aClaimAchievement(player, { expansion, age, isStandard })
+    this.actions.claimAchievement(player, { expansion, age, isStandard })
   }
   else {
     const card = this.cards.byId(arg)
-    this.aClaimAchievement(player, { card })
+    this.actions.claimAchievement(player, { card })
   }
 }
 
@@ -638,7 +638,7 @@ Innovation.prototype.aTrackChainRule = function(player, card) {
     })
     const card = this.getZoneByDeck('base', 11).cards()[0]
     if (card) {
-      this.aClaimAchievement(player, card)
+      this.actions.claimAchievement(player, card)
     }
     else {
       this.log.add({ template: 'There are no cards left in the 11 deck to achieve.' })
@@ -861,47 +861,6 @@ Innovation.prototype.aChooseAndSplay = function(player, choices, direction, opts
   }
 }
 
-Innovation.prototype.aClaimAchievement = function(player, opts={}) {
-  let card
-  if (opts.card) {
-    card = opts.card
-  }
-  else if (opts.name) {
-    card = this.cards.byId(opts.name)
-  }
-  else if (opts.age) {
-    card = this
-      .zones.byId('achievements')
-      .cards()
-      .filter(card => !card.isSpecialAchievement && !card.isDecree)
-      .find(c => c.getAge() === opts.age && c.expansion === opts.expansion)
-  }
-
-  if (!card) {
-    throw new Error(`Unable to find achievement given opts: ${JSON.stringify(opts)}`)
-  }
-
-  const karmaKind = this.aKarma(player, 'achieve', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    this.actions.acted(player)
-    return
-  }
-
-  this.mAchieve(player, card)
-
-  if (opts.isStandard && this.getExpansionList().includes('figs')) {
-    const others = this
-      .players.startingWith(player)
-      .filter(other => !this.checkSameTeam(player, other))
-
-    for (const opp of others) {
-      this.aDraw(opp, { exp: 'figs' })
-    }
-  }
-
-  return card
-}
-
 Innovation.prototype.aDecree = function(player, name) {
   const card = this.cards.byId(name)
   const hand = this.zones.byPlayer(player, 'hand')
@@ -916,7 +875,7 @@ Innovation.prototype.aDecree = function(player, name) {
 
   let doImpl = false
   if (card.zone.id === 'achievements') {
-    this.aClaimAchievement(player, { card })
+    this.actions.claimAchievement(player, { card })
     doImpl = true
   }
   else if (card.zone.id === `players.${player.name}.achievements`) {
@@ -1424,7 +1383,7 @@ Innovation.prototype._checkCityMeldAchievements = function(player, card) {
     && this.zones.byPlayer(player, card.color).splay === 'left'
     && this.cards.byId('Tradition').zone.id === 'achievements'
   ) {
-    this.aClaimAchievement(player, { name: 'Tradition' })
+    this.actions.claimAchievement(player, { name: 'Tradition' })
   }
 
   if (
@@ -1432,7 +1391,7 @@ Innovation.prototype._checkCityMeldAchievements = function(player, card) {
     && this.zones.byPlayer(player, card.color).splay === 'right'
     && this.cards.byId('Repute').zone.id === 'achievements'
   ) {
-    this.aClaimAchievement(player, { name: 'Repute' })
+    this.actions.claimAchievement(player, { name: 'Repute' })
   }
 
   if (
@@ -1440,7 +1399,7 @@ Innovation.prototype._checkCityMeldAchievements = function(player, card) {
     && this.zones.byPlayer(player, card.color).splay === 'up'
     && this.cards.byId('Fame').zone.id === 'achievements'
   ) {
-    this.aClaimAchievement(player, { name: 'Fame' })
+    this.actions.claimAchievement(player, { name: 'Fame' })
   }
 }
 
@@ -2408,22 +2367,10 @@ Innovation.prototype.mAchievementCheck = function() {
         && card.checkPlayerIsEligible
         && card.checkPlayerIsEligible(this, player, reduceCost)
       ) {
-        this.aClaimAchievement(player, { card })
+        this.actions.claimAchievement(player, { card })
       }
     }
   }
-}
-
-Innovation.prototype.mAchieve = function(player, card) {
-  const target = this.zones.byPlayer(player, 'achievements')
-  const source = card.zone
-  this.log.add({
-    template: '{player} achieves {card} from {zone}',
-    args: { player, card, zone: source }
-  })
-  card.moveTo(target)
-  this.actions.acted(player)
-  return card
 }
 
 Innovation.prototype.mActed = function(player) {

@@ -24,7 +24,7 @@ module.exports = {
         game.aReturnMany(player, toReturn)
 
         if (handSize === game.getEffectAge(self, 4)) {
-          game.aClaimAchievement(player, game.cards.byId('Anonymity'))
+          game.actions.claimAchievement(player, game.cards.byId('Anonymity'))
         }
       }
     },

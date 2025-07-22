@@ -19,7 +19,7 @@ module.exports = {
       })[0]
 
       if (card) {
-        game.aClaimAchievement(player, { card })
+        game.actions.claimAchievement(player, { card })
       }
     },
 

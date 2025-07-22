@@ -71,7 +71,7 @@ module.exports = {
         })
 
         toAchieve.forEach(card => {
-          game.aClaimAchievement(player, card)
+          game.actions.claimAchievement(player, card)
         })
       }
     },

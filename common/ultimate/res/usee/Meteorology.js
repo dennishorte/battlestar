@@ -27,7 +27,7 @@ module.exports = {
     (game, player) => {
       const biscuits = game.getBiscuitsByPlayer(player)
       if (biscuits.k === 0) {
-        game.aClaimAchievement(player, { name: 'Zen' })
+        game.actions.claimAchievement(player, { name: 'Zen' })
       }
       else {
         game.log.addNoEffect()

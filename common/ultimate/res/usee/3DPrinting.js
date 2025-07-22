@@ -29,7 +29,7 @@ module.exports = {
           })[0]
 
           if (secret) {
-            game.aClaimAchievement(player, secret)
+            game.actions.claimAchievement(player, secret)
           }
 
           const standard = game.actions.chooseCards(player, game.getAvailableStandardAchievements(player), {

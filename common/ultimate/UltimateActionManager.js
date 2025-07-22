@@ -162,6 +162,69 @@ class UltimateActionManager extends BaseActionManager {
     return output
   }
 
+  claimAchievement(player, opts={}) {
+    // Identify the card to be achieved
+    const card = function() {
+      // ...Sometimes, a card is passed directly
+      if (opts.card) {
+        return opts.card
+      }
+
+      // ...Sometimes, we get a specific card, by name
+      else if (opts.name) {
+        return this.game.cards.byId(opts.name)
+      }
+
+      // ...Sometimes, the player is just getting a standard achievement, by age and expansion
+      else if (opts.age) {
+        return this
+          .game
+          .cards
+          .byZone('achievements')
+          .filter(card => !card.isSpecialAchievement && !card.isDecree)
+          .find(c => c.getAge() === opts.age && c.expansion === opts.expansion)
+      }
+
+      else {
+        return undefined
+      }
+    }.call(this)
+
+    if (!card) {
+      throw new Error(`Unable to find achievement given opts: ${JSON.stringify(opts)}`)
+    }
+
+    // Handle karma
+    const karmaKind = this.game.aKarma(player, 'achieve', { ...opts, card })
+    if (karmaKind === 'would-instead') {
+      this.acted(player)
+      return
+    }
+
+    // Do the actual achievement claiming
+    const source = card.zone
+    this.log.add({
+      template: '{player} achieves {card} from {zone}',
+      args: { player, card, zone: source }
+    })
+    card.moveTo(this.game.zones.byPlayer(player, 'achievements'))
+    this.acted(player)
+
+    // Draw figures if the player claimed a standard achievement
+    if (opts.isStandard && this.game.getExpansionList().includes('figs')) {
+      const others = this
+        .players
+        .startingWith(player)
+        .filter(other => !this.checkSameTeam(player, other))
+
+      for (const opp of others) {
+        this.aDraw(opp, { exp: 'figs' })
+      }
+    }
+
+    return card
+  }
+
   junk(player, card, opts={}) {
     const karmaKind = this.game.aKarma(player, 'junk', { ...opts, card })
     if (karmaKind === 'would-instead') {
@@ -186,14 +249,14 @@ class UltimateActionManager extends BaseActionManager {
       card.checkHasBiscuit(';')
       && this.game.cards.byId('Glory').zone.id === 'achievements'
     ) {
-      this.game.aClaimAchievement(player, { name: 'Glory' })
+      this.claimAchievement(player, { name: 'Glory' })
     }
 
     if (
       card.checkHasBiscuit(':')
       && this.game.cards.byId('Victory').zone.id === 'achievements'
     ) {
-      this.game.aClaimAchievement(player, { name: 'Victory' })
+      this.claimAchievement(player, { name: 'Victory' })
     }
 
   }
