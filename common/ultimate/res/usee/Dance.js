@@ -33,7 +33,7 @@ module.exports = {
         })
 
         if (meldCard) {
-          game.aMeld(player, meldCard)
+          game.actions.meld(player, meldCard)
         }
       }
     },

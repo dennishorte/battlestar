@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const scoreCards = game.cards.byPlayer(player, 'score')
-      const melded = game.aChooseAndMeld(player, scoreCards)[0]
+      const melded = game.actions.chooseAndMeld(player, scoreCards)[0]
 
       const lowestAchievement = game.utilLowestCards(game.getAvailableStandardAchievements(player))[0]
       let safeguarded

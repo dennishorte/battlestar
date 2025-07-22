@@ -26,7 +26,7 @@ module.exports = {
 
       const card2 = game.actions.chooseCard(player, nonLeafChoices)
       if (card2) {
-        game.aMeld(player, card2)
+        game.actions.meld(player, card2)
       }
     }
   ],

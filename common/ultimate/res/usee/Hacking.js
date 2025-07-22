@@ -23,7 +23,7 @@ module.exports = {
       const toMeld = game.aChooseLowest(player, game.cards.byPlayer(player, 'score'), 2, {
         title: 'Choose score to meld',
       })
-      game.aMeldMany(player, toMeld)
+      game.actions.meldMany(player, toMeld)
     },
   ],
 }

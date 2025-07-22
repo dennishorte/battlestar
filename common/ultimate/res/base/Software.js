@@ -14,8 +14,8 @@ module.exports = {
       game.aDrawAndScore(player, game.getEffectAge(self, 10))
     },
     (game, player, { self }) => {
-      game.aDrawAndMeld(player, game.getEffectAge(self, 9))
-      const card = game.aDrawAndMeld(player, game.getEffectAge(self, 9))
+      game.actions.drawAndMeld(player, game.getEffectAge(self, 9))
+      const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 9))
       game.log.add({
         template: '{player} will execute {card}',
         args: { player, card }

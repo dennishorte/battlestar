@@ -18,7 +18,7 @@ module.exports = {
       const returned = game.aReturnMany(player, topCastleCards)
 
       if (returned.length === 0) {
-        game.aChooseAndMeld(player, game.cards.byPlayer(player, 'score'))
+        game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'score'))
         game.aDrawAndScore(player, game.getEffectAge(self, 4))
       }
     },

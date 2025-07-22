@@ -1,5 +1,6 @@
 const { BaseActionManager } = require('../lib/game/index.js')
 const { GameOverEvent } = require('../lib/game.js')
+const { MeldAction } = require('./actions/Meld.js')
 
 
 class UltimateActionManager extends BaseActionManager {
@@ -258,8 +259,10 @@ class UltimateActionManager extends BaseActionManager {
     ) {
       this.claimAchievement(player, { name: 'Victory' })
     }
-
   }
+
+  // Meld is very complex, and so it separated into its own file to help manage all of its moving parts
+  meld = MeldAction
 
   reveal(player, card) {
     card.reveal()
@@ -272,12 +275,15 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   junkMany = UltimateActionManager.createManyMethod('junk', 2)
+  meldMany = UltimateActionManager.createManyMethod('meld', 2)
   revealMany = UltimateActionManager.createManyMethod('reveal', 2)
 
   chooseAndJunk = UltimateActionManager.createChooseAndMethod('junkMany', 2)
+  chooseAndMeld = UltimateActionManager.createChooseAndMethod('meldMany', 2)
   chooseAndReveal = UltimateActionManager.createChooseAndMethod('revealMany', 2)
 
   drawAndJunk = UltimateActionManager.createDrawAndMethod('junk', 2)
+  drawAndMeld = UltimateActionManager.createDrawAndMethod('meld', 2)
   drawAndReveal = UltimateActionManager.createDrawAndMethod('reveal', 2)
 
 

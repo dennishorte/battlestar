@@ -42,7 +42,7 @@ module.exports = {
           game.aTuck(player, card)
           break
         case 'purple':
-          game.aMeld(player, card)
+          game.actions.meld(player, card)
           break
         case 'red':
           game.actions.claimAchievement(player, card)

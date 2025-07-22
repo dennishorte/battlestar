@@ -14,7 +14,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const cards = game.cards.byPlayer(player, 'hand')
-      game.aChooseAndMeld(player, cards)
+      game.actions.chooseAndMeld(player, cards)
     },
     (game, player) => {
       const boardColors = game

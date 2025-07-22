@@ -16,7 +16,7 @@ module.exports = {
           game.aScore(player, tucked)
         }
         else {
-          const melded = game.aDrawAndMeld(player, game.getEffectAge(self, 8))
+          const melded = game.actions.drawAndMeld(player, game.getEffectAge(self, 8))
           if (melded.getAge() === 8) {
             game.log.add({ template: 'Repeating effect' })
             executeEffect()

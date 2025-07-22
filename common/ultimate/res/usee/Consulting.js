@@ -12,8 +12,8 @@ module.exports = {
     (game, player, { self }) => {
       const opponent = game.actions.choosePlayer(player, game.players.opponentsOf(player))
 
-      game.aDrawAndMeld(player, game.getEffectAge(self, 10))
-      game.aDrawAndMeld(player, game.getEffectAge(self, 10))
+      game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
+      game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
 
       const topCards = game.getTopCards(player)
       const card = game.actions.chooseCard(opponent, topCards)

@@ -21,7 +21,7 @@ module.exports = {
       const other = chosen === card1 ? card2 : card1
 
       game.aTransfer(player, chosen, game.zones.byPlayer(leader, chosen.color))
-      game.aMeld(player, other)
+      game.actions.meld(player, other)
     },
 
     (game, player) => {

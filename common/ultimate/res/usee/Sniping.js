@@ -15,7 +15,7 @@ module.exports = {
 
       const cards = game.cards.byPlayer(player, chosenColor)
       if (cards.length > 0) {
-        game.aMeld(player, game.getBottomCard(player, chosenColor))
+        game.actions.meld(player, game.getBottomCard(player, chosenColor))
 
         if (cards.length > 1) {
           const bottomCard = game.getBottomCard(player, chosenColor)

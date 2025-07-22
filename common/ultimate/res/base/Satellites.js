@@ -21,7 +21,7 @@ module.exports = {
       game.aChooseAndSplay(player, ['purple'], 'up')
     },
     (game, player) => {
-      const cards = game.aChooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
+      const cards = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
       if (cards && cards.length > 0) {
         game.aSelfExecute(player, cards[0])
       }

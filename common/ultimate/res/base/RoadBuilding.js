@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       // Meld one or two cards
-      const cards = game.aChooseAndMeld(player, game.cards.byPlayer(player, 'hand'), { min: 1, max: 2 })
+      const cards = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'), { min: 1, max: 2 })
 
       // If melded two...
       if (cards && cards.length === 2) {
@@ -33,7 +33,7 @@ module.exports = {
             // After transferring, meld their top green card
             const topGreen = game.getTopCard(opp, 'green')
             if (topGreen) {
-              game.aMeld(player, topGreen)
+              game.actions.meld(player, topGreen)
             }
           }
         }

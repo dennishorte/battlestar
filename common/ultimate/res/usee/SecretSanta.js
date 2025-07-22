@@ -14,7 +14,7 @@ module.exports = {
       const choices = game.zones.byPlayer(leader, 'score').cards()
       const card = game.actions.chooseCards(player, choices, { hidden: true })[0]
       if (card) {
-        game.aMeld(player, card)
+        game.actions.meld(player, card)
       }
     },
     (game, player, { self }) => {

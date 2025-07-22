@@ -19,7 +19,7 @@ module.exports = {
         .flatMap(opp => game.getTopCards(opp))
         .filter(card => card.color !== 'yellow' && card.checkHasBiscuit('i'))
 
-      const card = game.aChooseAndMeld(player, choices)[0]
+      const card = game.actions.chooseAndMeld(player, choices)[0]
 
       if (card) {
         game.aSelfExecute(player, card)

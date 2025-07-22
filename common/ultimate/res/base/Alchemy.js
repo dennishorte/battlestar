@@ -33,7 +33,7 @@ module.exports = {
         .zones.byPlayer(player, 'hand')
         .cards()
         .map(c => c.id)
-      game.aChooseAndMeld(player, hand())
+      game.actions.chooseAndMeld(player, hand())
       game.aChooseAndScore(player, hand())
     },
   ],

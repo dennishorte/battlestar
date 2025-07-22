@@ -18,7 +18,7 @@ module.exports = {
       else {
         const doIt = game.actions.chooseYesNo(player, 'Meld all cards in your score pile?')
         if (doIt) {
-          game.aMeldMany(player, game.cards.byPlayer(player, 'score'))
+          game.actions.meldMany(player, game.cards.byPlayer(player, 'score'))
         }
         else {
           game.log.addDoNothing(player)

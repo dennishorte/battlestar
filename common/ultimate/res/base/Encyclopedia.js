@@ -26,7 +26,7 @@ module.exports = {
         const toMeld = game
           .cards.byPlayer(player, 'score')
           .filter(c => c.getAge() === chosenValue)
-        game.aMeldMany(player, toMeld)
+        game.actions.meldMany(player, toMeld)
       }
     },
 

@@ -12,7 +12,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      game.aDrawAndMeld(player, game.getEffectAge(self, 8))
+      game.actions.drawAndMeld(player, game.getEffectAge(self, 8))
 
       const socialism = game
         .getTopCards(player)

@@ -15,7 +15,7 @@ module.exports = {
         const scoreCards = game.cards.byPlayer(leader, 'score')
         const card = game.actions.chooseCards(leader, scoreCards, { hidden: true })[0]
         if (card) {
-          game.aMeld(player, card)
+          game.actions.meld(player, card)
           canRepeat = !card.checkHasBiscuit('c')
         }
         else {

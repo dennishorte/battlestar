@@ -26,7 +26,7 @@ module.exports = {
 
       const ages = util.array.distinct(topGreenCards.map(card => card.getAge()))
       const age = game.aChooseAge(player, ages, { title: 'Choose age of card to draw and meld' })
-      game.aDrawAndMeld(player, age)
+      game.actions.drawAndMeld(player, age)
     },
 
     (game, player) => {
@@ -37,7 +37,7 @@ module.exports = {
       }
 
       const age = topYellowCard.getAge() + 1
-      game.aDrawAndMeld(player, age)
+      game.actions.drawAndMeld(player, age)
     },
 
     (game, player) => {

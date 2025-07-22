@@ -26,7 +26,7 @@ module.exports = {
           args: { total: totalValue, value: drawValue }
         })
 
-        const meldedCard = game.aDrawAndMeld(player, drawValue)
+        const meldedCard = game.actions.drawAndMeld(player, drawValue)
         return { meldedCard, returnedCount: returned.length }
       }
 

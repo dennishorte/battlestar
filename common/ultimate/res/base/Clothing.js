@@ -20,7 +20,7 @@ module.exports = {
         .cards()
         .filter(card => !usedColors.includes(card.color))
 
-      game.aChooseAndMeld(player, choices)
+      game.actions.chooseAndMeld(player, choices)
     },
 
     (game, player, { self }) => {

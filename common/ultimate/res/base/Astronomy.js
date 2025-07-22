@@ -15,7 +15,7 @@ module.exports = {
         const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
         if (card) {
           if (card.color === 'green' || card.color === 'blue') {
-            game.aMeld(player, card)
+            game.actions.meld(player, card)
             game.log.add({ template: 'dogma effect repeats' })
           }
           else {

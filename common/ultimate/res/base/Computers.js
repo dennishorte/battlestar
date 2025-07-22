@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => game.aChooseAndSplay(player, ['red', 'green'], 'up'),
     (game, player, { self }) => {
-      const card = game.aDrawAndMeld(player, game.getEffectAge(self, 10))
+      const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
       if (card) {
         game.aSelfExecute(player, card)
       }

@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const card = game.aDrawAndMeld(player, game.getEffectAge(self, 2))
+      const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 2))
 
       if (card) {
         const isBottom = game.getBottomCard(player, card.color).name === card.name

@@ -9,6 +9,6 @@ module.exports = {
     `Draw and meld a {5}.`
   ],
   dogmaImpl: [
-    (game, player, { self }) => game.aDrawAndMeld(player, game.getEffectAge(self, 5)),
+    (game, player, { self }) => game.actions.drawAndMeld(player, game.getEffectAge(self, 5)),
   ],
 }

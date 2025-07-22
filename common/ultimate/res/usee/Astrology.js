@@ -23,7 +23,7 @@ module.exports = {
     },
     (game, player) => {
       const numPurpleCards = game.getVisibleCardsByZone(player, 'purple')
-      const card = game.aDrawAndMeld(player, numPurpleCards)
+      const card = game.actions.drawAndMeld(player, numPurpleCards)
 
       if (card && !card.checkHasBiscuit('c')) {
         game.aTuck(player, card)

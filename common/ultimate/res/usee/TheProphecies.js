@@ -38,7 +38,7 @@ module.exports = {
         const revealed = game.actions.drawAndReveal(player, revealAge)
 
         if (revealed.color === 'red' || revealed.color === 'purple') {
-          const melded = game.aChooseAndMeld(player, game.cards.byPlayer(player, 'safe'))
+          const melded = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'safe'))
           if (melded) {
             game.aSafeguard(player, revealed)
           }

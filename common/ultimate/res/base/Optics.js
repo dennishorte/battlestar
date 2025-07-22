@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const card = game.aDrawAndMeld(player, game.getEffectAge(self, 3))
+      const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 3))
       if (card) {
         if (card.checkHasBiscuit('c')) {
           game.log.add({

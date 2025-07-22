@@ -20,8 +20,8 @@ module.exports = {
     },
 
     (game, player, { self }) => {
-      game.aDrawAndMeld(player, game.getEffectAge(self, 10))
-      game.aDrawAndMeld(player, game.getEffectAge(self, 10))
+      game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
+      game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
     },
   ],
 }

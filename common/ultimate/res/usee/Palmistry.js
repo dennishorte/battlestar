@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      game.aDrawAndMeld(player, game.getEffectAge(self, 1))
+      game.actions.drawAndMeld(player, game.getEffectAge(self, 1))
     },
     (game, player, { self }) => {
       const hand = game.zones.byPlayer(player, 'hand')

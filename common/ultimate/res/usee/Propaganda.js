@@ -27,7 +27,7 @@ module.exports = {
         })
       }
       else {
-        const melded = game.aChooseAndMeld(player, choices)[0]
+        const melded = game.actions.chooseAndMeld(player, choices)[0]
         if (melded) {
           const pile = game.zones.byPlayer(player, melded.color)
           const cardBeneath = pile.cards()[1]
@@ -45,7 +45,7 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
+      game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
     }
   ],
 }

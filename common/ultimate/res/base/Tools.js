@@ -17,7 +17,7 @@ module.exports = {
         if (doIt) {
           const returned = game.aChooseAndReturn(player, cards, { count: 3 })
           if (returned.length === 3) {
-            game.aDrawAndMeld(player, game.getEffectAge(self, 3))
+            game.actions.drawAndMeld(player, game.getEffectAge(self, 3))
           }
         }
         else {

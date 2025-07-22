@@ -25,7 +25,7 @@ module.exports = {
           .cards()
           .filter(card => card.color === revealed.color)
 
-        game.aMeldMany(player, cardsToMeld)
+        game.actions.meldMany(player, cardsToMeld)
       }
     }
   ],

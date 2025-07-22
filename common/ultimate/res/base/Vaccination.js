@@ -26,13 +26,13 @@ module.exports = {
       const returned = game.aReturnMany(player, toReturn)
 
       if (returned.length > 0) {
-        game.aDrawAndMeld(player, game.getEffectAge(self, 6))
+        game.actions.drawAndMeld(player, game.getEffectAge(self, 6))
         game.state.dogmaInfo.vaccinationCardWasReturned = true
       }
     },
     (game, player, { self }) => {
       if (game.state.dogmaInfo.vaccinationCardWasReturned) {
-        game.aDrawAndMeld(player, game.getEffectAge(self, 7))
+        game.actions.drawAndMeld(player, game.getEffectAge(self, 7))
       }
       else {
         game.log.addNoEffect()

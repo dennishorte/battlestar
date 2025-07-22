@@ -11,9 +11,9 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       // Draw and meld the three cards
-      const card3 = game.aDrawAndMeld(player, game.getEffectAge(self, 3))
-      const card2 = game.aDrawAndMeld(player, game.getEffectAge(self, 2))
-      const card1 = game.aDrawAndMeld(player, game.getEffectAge(self, 1))
+      const card3 = game.actions.drawAndMeld(player, game.getEffectAge(self, 3))
+      const card2 = game.actions.drawAndMeld(player, game.getEffectAge(self, 2))
+      const card1 = game.actions.drawAndMeld(player, game.getEffectAge(self, 1))
 
       const crownCount = [card3, card2, card1].filter(card => card.checkHasBiscuit('c')).length
 

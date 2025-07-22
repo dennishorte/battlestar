@@ -24,7 +24,7 @@ module.exports = {
           topCardChosen.moveTo(topCardChosen.home, 0)
         }
 
-        const handCardMelded = game.aChooseAndMeld(player, handCards, { min: 0, max: 1 })[0]
+        const handCardMelded = game.actions.chooseAndMeld(player, handCards, { min: 0, max: 1 })[0]
 
         if (!topCardChosen && !handCardMelded) {
           break

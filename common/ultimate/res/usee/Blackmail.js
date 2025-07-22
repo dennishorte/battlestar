@@ -18,7 +18,7 @@ module.exports = {
       })
 
       if (toMeld) {
-        game.aMeld(player, toMeld)
+        game.actions.meld(player, toMeld)
       }
 
       // Reveal opponent's score pile

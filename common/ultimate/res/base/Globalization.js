@@ -26,7 +26,7 @@ module.exports = {
     },
 
     (game, player, { self }) => {
-      game.aDrawAndMeld(player, game.getEffectAge(self, 11))
+      game.actions.drawAndMeld(player, game.getEffectAge(self, 11))
 
       game.log.add({ template: 'Checking win condition' })
 

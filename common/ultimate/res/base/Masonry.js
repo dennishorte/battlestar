@@ -16,7 +16,7 @@ module.exports = {
         .filter(card => card.checkHasBiscuit('k'))
       const cards = game.actions.chooseCards(player, choices, { min: 0, max: choices.length })
       if (cards) {
-        game.aMeldMany(player, cards)
+        game.actions.meldMany(player, cards)
       }
     },
 

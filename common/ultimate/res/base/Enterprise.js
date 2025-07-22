@@ -19,7 +19,7 @@ module.exports = {
       if (card) {
         const transferred = game.aTransfer(player, card, game.zones.byPlayer(leader, card.color))
         if (transferred) {
-          game.aDrawAndMeld(player, game.getEffectAge(self, 4))
+          game.actions.drawAndMeld(player, game.getEffectAge(self, 4))
         }
       }
     },

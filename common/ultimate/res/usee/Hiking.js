@@ -21,7 +21,7 @@ module.exports = {
           const secondCard = game.actions.drawAndReveal(player, game.getEffectAge(self, 7))
 
           if (secondCard && secondCard.checkHasBiscuit('l')) {
-            game.aMeld(player, secondCard)
+            game.actions.meld(player, secondCard)
             game.aDraw(player, { age: game.getEffectAge(self, 8) })
           }
         }

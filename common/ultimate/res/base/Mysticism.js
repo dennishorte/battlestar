@@ -16,7 +16,7 @@ module.exports = {
         .map(card => card.color)
 
       if (boardColors.includes(card.color)) {
-        game.aMeld(player, card)
+        game.actions.meld(player, card)
         game.aDraw(player, { age: game.getEffectAge(self, 1) })
       }
     }

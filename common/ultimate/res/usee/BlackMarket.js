@@ -27,7 +27,7 @@ module.exports = {
         const toMeld = game.actions.chooseCard(player, meldableAchievements, { min: 0, max: 1 })
 
         if (toMeld) {
-          game.aMeld(player, toMeld)
+          game.actions.meld(player, toMeld)
         }
 
         const toReturn = revealed.filter(card => !toMeld || card.id !== toMeld.id)

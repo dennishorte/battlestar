@@ -238,7 +238,7 @@ Innovation.prototype.firstPicks = function() {
     ])
     .sort((l, r) => l[1].name.localeCompare(r[1].name))
   for (const [player, card] of picks) {
-    this.mMeld(player, card)
+    this.actions.meld(player, card)
   }
 
   this.players.passToPlayer(picks[0][0])
@@ -373,7 +373,7 @@ Innovation.prototype.action = function(count) {
   }
   else if (name === 'Meld') {
     const card = this.cards.byId(arg)
-    this.aMeld(player, card, { asAction: true })
+    this.actions.meld(player, card, { asAction: true })
   }
   else {
     throw new Error(`Unhandled action type ${name}`)
@@ -805,7 +805,6 @@ function ChooseAndFactory(manyFuncName, numArgs) {
   }
 }
 
-Innovation.prototype.aChooseAndMeld = ChooseAndFactory('aMeldMany', 2)
 Innovation.prototype.aChooseAndReturn = ChooseAndFactory('aReturnMany', 2)
 Innovation.prototype.aChooseAndSafeguard = ChooseAndFactory('aSafeguardMany', 2)
 Innovation.prototype.aChooseAndScore = ChooseAndFactory('aScoreMany', 2)
@@ -903,21 +902,6 @@ Innovation.prototype.aDecree = function(player, name) {
   }
 
   this.log.outdent()
-}
-
-Innovation.prototype.aDiscoverBiscuit = function(player, card) {
-  const age = card.getAge()
-  const biscuit = card.biscuits[4]
-  const maxDraw = this.getZoneByDeck('base', age).cards().length
-  const numDraw = Math.min(maxDraw, age)
-
-  for (let i = 0; i < numDraw; i++) {
-    const card = this.mDraw(player, 'base', age)
-    this.actions.reveal(player, card)
-    if (!card.checkHasBiscuit(biscuit)) {
-      this.mReturn(player, card)
-    }
-  }
 }
 
 Innovation.prototype.getDogmaBiscuits = function(player, card, opts) {
@@ -1124,13 +1108,6 @@ Innovation.prototype.aDrawAndForeshadow = function(player, age, opts={}) {
   const card = this.aDraw(player, {...opts, age })
   if (card) {
     return this.aForeshadow(player, card, opts)
-  }
-}
-
-Innovation.prototype.aDrawAndMeld = function(player, age, opts={}) {
-  const card = this.aDraw(player, {...opts, age })
-  if (card) {
-    return this.aMeld(player, card, opts)
   }
 }
 
@@ -1349,46 +1326,6 @@ Innovation.prototype.aKarma = function(player, kind, opts={}) {
   return this._aKarmaHelper(player, infos, { ...opts, trigger: kind })
 }
 
-Innovation.prototype.aKarmaWhenMeld = function(player, card, opts={}) {
-  const infos = card
-    .getKarmaInfo('when-meld')
-    .filter(info => {
-      if (info.impl.matches) {
-        return info.impl.matches(this, player, opts)
-      }
-      else {
-        return true
-      }
-    })
-  return this._aKarmaHelper(player, infos, opts)
-}
-
-Innovation.prototype._checkCityMeldAchievements = function(player, card) {
-  if (
-    card.checkHasBiscuit('<')
-    && this.zones.byPlayer(player, card.color).splay === 'left'
-    && this.cards.byId('Tradition').zone.id === 'achievements'
-  ) {
-    this.actions.claimAchievement(player, { name: 'Tradition' })
-  }
-
-  if (
-    card.checkHasBiscuit('>')
-    && this.zones.byPlayer(player, card.color).splay === 'right'
-    && this.cards.byId('Repute').zone.id === 'achievements'
-  ) {
-    this.actions.claimAchievement(player, { name: 'Repute' })
-  }
-
-  if (
-    card.checkHasBiscuit('^')
-    && this.zones.byPlayer(player, card.color).splay === 'up'
-    && this.cards.byId('Fame').zone.id === 'achievements'
-  ) {
-    this.actions.claimAchievement(player, { name: 'Fame' })
-  }
-}
-
 Innovation.prototype.aDigArtifact = function(player, age) {
   if (age > 11 || this.getZoneByDeck('arti', age).cards().length === 0) {
     this.log.add({
@@ -1452,139 +1389,6 @@ Innovation.prototype.aJunkDeck = function(player, age, opts={}) {
       args: { player, age }
     })
   }
-}
-
-Innovation.prototype._maybeDigArtifact = function(player, card) {
-  if (!this.getExpansionList().includes('arti')) {
-    return
-  }
-
-  // Can only have one artifact on display at a time.
-  if (this.cards.byPlayer(player, 'artifact').length > 0) {
-    return
-  }
-
-  const next = this.cards.byPlayer(player, card.color)[1]
-
-  // No card underneath, so no artifact dig possible.
-  if (!next) {
-    return
-  }
-
-  // Dig up an artifact if player melded a card of lesser or equal age of the previous top card.
-  if (next.getAge() >= card.getAge()) {
-    this.aDigArtifact(player, next.getAge())
-    return
-  }
-
-  // Dig up an artifact if the melded card has its hex icon in the same position.
-  if (next.getHexIndex() === card.getHexIndex()) {
-    this.aDigArtifact(player, next.getAge())
-    return
-  }
-}
-
-Innovation.prototype._maybeDrawCity = function(player) {
-  if (!this.getExpansionList().includes('city')) {
-    return
-  }
-
-  if (this.cards.byPlayer(player, 'hand').some(card => card.checkIsCity())) {
-    return
-  }
-
-  this.aDraw(player, { exp: 'city' })
-}
-
-Innovation.prototype.aMeld = function(player, card, opts={}) {
-  // Used for Ching Shih to make sure she is melded from the hand.
-  opts.fromZone = card.zone
-
-  const karmaKind = this.aKarma(player, 'meld', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    this.actions.acted(player)
-    return
-  }
-
-  const isFirstCard = this.cards.byPlayer(player, card.color).length === 0
-
-  this.mMeld(player, card, opts)
-  this.log.indent()
-
-  this._checkCityMeldAchievements(player, card)
-
-  if (opts.asAction) {
-    // City biscuits
-    const biscuits = card.getBiscuits('top')
-
-    for (const biscuit of biscuits) {
-      switch (biscuit) {
-        case '+':
-          this.aDraw(player, { age: card.age + 1 })
-          break
-        case '<':
-          this.aSplay(player, card.color, 'left')
-          break
-        case '>':
-          this.aSplay(player, card.color, 'right')
-          break
-        case '^':
-          this.aSplay(player, card.color, 'up')
-          break
-        case '=':
-          for (const opp of this.players.opponentsOf(player)) {
-            this.aUnsplay(opp, card.color)
-          }
-          break
-        case '|':
-          this.aJunkDeck(player, card.getAge() + 1)
-          this.aDraw(player, { age: card.getAge() + 2 })
-          break
-        case 'x':
-          this.aJunkAvailableAchievement(player, [card.getAge()])
-          break
-        default:
-          // Most biscuits don't do anything special.
-          break
-      }
-    }
-
-    // Discover biscuit
-    if (card.checkHasDiscoverBiscuit()) {
-      this.aDiscoverBiscuit(player, card)
-    }
-
-    // Draw a city
-    if (isFirstCard) {
-      this._maybeDrawCity(player)
-    }
-
-    // Dig an artifact
-    this._maybeDigArtifact(player, card)
-
-    // Promote a foreshadowed card
-    const choices = this
-      .cards.byPlayer(player, 'forecast')
-      .filter(other => other.getAge() <= card.getAge())
-
-    if (choices.length > 0) {
-      this.log.add({
-        template: '{player} muse promote a card from forecast',
-        args: { player },
-      })
-      const cards = this.aChooseAndMeld(player, choices)
-      if (cards && cards.length > 0) {
-        const melded = cards[0]
-        this.aDogma(player, melded)
-      }
-    }
-  }
-
-  // When-meld karmas
-  this.aKarmaWhenMeld(player, card, opts)
-
-  this.log.outdent()
-  return card
 }
 
 Innovation.prototype.aReturn = function(player, card, opts={}) {
@@ -1669,11 +1473,25 @@ Innovation.prototype.aSplay = function(player, color, direction, opts={}) {
 
   const result = this.mSplay(player, color, direction, opts)
 
-  if (this.getExpansionList().includes('city') && newDirection) {
+  if (newDirection) {
     this._maybeDrawCity(owner)
   }
 
   return result
+}
+
+// Used in two cases:
+//  1. Player melds a card onto an empty color stack.
+//  2. Player splays a color in a new direction.
+Innovation.prototype._maybeDrawCity = function(player) {
+  if (!this.getExpansionList().includes('city')) {
+    return
+  }
+  if (this.cards.byPlayer(player, 'hand').some(card => card.checkIsCity())) {
+    return
+  }
+
+  this.aDraw(player, { exp: 'city' })
 }
 
 Innovation.prototype.aTransfer = function(player, card, target, opts={}) {
@@ -1786,7 +1604,6 @@ function ManyFactory(baseFuncName, extraArgCount=0) {
   }
 }
 
-Innovation.prototype.aMeldMany = ManyFactory('aMeld')
 Innovation.prototype.aReturnMany = ManyFactory('aReturn')
 Innovation.prototype.aSafeguardMany = ManyFactory('aSafeguard')
 Innovation.prototype.aScoreMany = ManyFactory('aScore')
@@ -2474,26 +2291,6 @@ Innovation.prototype.mForeshadow = function(player, card) {
     this.actions.acted(player)
     return card
   }
-}
-
-Innovation.prototype.mMeld = function(player, card) {
-  const source = card.zone
-  const target = this.zones.byPlayer(player, card.color)
-  const sourceIndex = source.cards().indexOf(card)
-
-  this.mMoveByIndices(source, sourceIndex, target, 0)
-  this.log.add({
-    template: '{player} melds {card}',
-    args: { player, card }
-  })
-
-  // Stats
-  this.statsCardWasMelded(card)
-  this.statsCardWasMeldedBy(player, card)
-  this.statsFirstToMeldOfAge(player, card)
-
-  this.actions.acted(player)
-  return card
 }
 
 Innovation.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
@@ -3188,26 +2985,6 @@ Innovation.prototype._walkZones = function(root, fn, path=[]) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Stats functions
-
-Innovation.prototype.statsCardWasMelded = function(card) {
-  util.array.pushUnique(this.stats.melded, card.name)
-}
-
-Innovation.prototype.statsCardWasMeldedBy = function(player, card) {
-  if (card.name in this.stats.meldedBy) {
-    return
-  }
-  else {
-    this.stats.meldedBy[card.name] = player.name
-  }
-}
-
-Innovation.prototype.statsFirstToMeldOfAge = function(player, card) {
-  if (card.age > this.stats.highestMelded) {
-    this.stats.firstToMeldOfAge.push([card.age, player.name])
-    this.stats.highestMelded = card.age
-  }
-}
 
 Innovation.prototype.statsRecordDogmaActions = function(player, card) {
   if (card.name in this.stats.dogmaActions) {
