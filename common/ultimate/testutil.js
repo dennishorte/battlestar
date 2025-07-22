@@ -61,7 +61,8 @@ TestUtil.fixture = function(options) {
         'Zen',
       ]
       for (const name of unseenAchievementNames) {
-        game.mRemove(game.cards.byId(name))
+        const card = game.cards.byId(name)
+        card.moveTo(game.zones.byId('junk'))
       }
     }
   })

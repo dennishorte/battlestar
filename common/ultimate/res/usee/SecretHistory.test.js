@@ -19,6 +19,7 @@ describe('Secret History', () => {
       micah: {
         safe: ['Metalworking'],
       },
+      achievements:['Mystery'],
     })
 
     let request
@@ -59,6 +60,7 @@ describe('Secret History', () => {
       micah: {
         safe: ['Metalworking'],
       },
+      achievements:['Mystery'],
     })
 
     let request

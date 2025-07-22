@@ -13,6 +13,7 @@ describe('Meteorology', () => {
           3: ['Cliffhanger'],
         },
       },
+      achievements: ['Zen'],
     })
 
     let request

@@ -197,6 +197,12 @@ class UltimateActionManager extends BaseActionManager {
       throw new Error(`Unable to find achievement given opts: ${JSON.stringify(opts)}`)
     }
 
+    // Special achievements can only be claimed from the achievements zone
+    if (card.isSpecialAchievement && card.zone.id !== 'achievements') {
+      console.log(card.name, card.zone.id)
+      return
+    }
+
     // Handle karma
     const karmaKind = this.game.aKarma(player, 'achieve', { ...opts, card })
     if (karmaKind === 'would-instead') {
@@ -276,17 +282,11 @@ class UltimateActionManager extends BaseActionManager {
     }
 
     // Check if any of the city junk achievements are triggered
-    if (
-      card.checkHasBiscuit(';')
-      && this.game.cards.byId('Glory').zone.id === 'achievements'
-    ) {
+    if (card.checkHasBiscuit(';')) {
       this.claimAchievement(player, { name: 'Glory' })
     }
 
-    if (
-      card.checkHasBiscuit(':')
-      && this.game.cards.byId('Victory').zone.id === 'achievements'
-    ) {
+    if (card.checkHasBiscuit(':')) {
       this.claimAchievement(player, { name: 'Victory' })
     }
   }
