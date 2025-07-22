@@ -2,6 +2,7 @@ const util = require('../../lib/util.js')
 
 
 function MeldAction(player, card, opts={}) {
+  // TODO: Figure out how to convert this to use UltimateActionManager.insteadKarmaWrapper
   const karmaKind = this.game.aKarma(player, 'meld', { ...opts, card })
   if (karmaKind === 'would-instead') {
     this.acted(player)

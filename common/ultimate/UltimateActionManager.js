@@ -234,13 +234,7 @@ class UltimateActionManager extends BaseActionManager {
     return card
   }
 
-  foreshadow(player, card, opts={}) {
-    const karmaKind = this.game.aKarma(player, 'foreshadow', { ...opts, card })
-    if (karmaKind === 'would-instead') {
-      this.acted(player)
-      return
-    }
-
+  foreshadow = UltimateActionManager.insteadKarmaWrapper('foreshadow', (player, card) => {
     const zoneLimit = this.game.getForecastLimit(player)
     const target = this.game.zones.byPlayer(player, 'forecast')
 
@@ -260,15 +254,9 @@ class UltimateActionManager extends BaseActionManager {
       this.acted(player)
       return card
     }
-  }
+  })
 
-  junk(player, card, opts={}) {
-    const karmaKind = this.game.aKarma(player, 'junk', { ...opts, card })
-    if (karmaKind === 'would-instead') {
-      this.acted(player)
-      return
-    }
-
+  junk = UltimateActionManager.insteadKarmaWrapper('junk', (player, card) => {
     this.log.add({
       template: '{player} junks {card}',
       args: { player, card }
@@ -289,12 +277,12 @@ class UltimateActionManager extends BaseActionManager {
     if (card.checkHasBiscuit(':')) {
       this.claimAchievement(player, { name: 'Victory' })
     }
-  }
+  })
 
   // Meld is very complex, and so it separated into its own file to help manage all of its moving parts
   meld = MeldAction
 
-  reveal(player, card) {
+  reveal = UltimateActionManager.insteadKarmaWrapper('reveal', (player, card) => {
     card.reveal()
     this.log.add({
       template: '{player} reveals {card}',
@@ -302,15 +290,9 @@ class UltimateActionManager extends BaseActionManager {
     })
     this.acted(player)
     return card
-  }
+  })
 
-  tuck(player, card, opts={}) {
-    const karmaKind = this.game.aKarma(player, 'tuck', { ...opts, card })
-    if (karmaKind === 'would-instead') {
-      this.acted(player)
-      return
-    }
-
+  tuck = UltimateActionManager.insteadKarmaWrapper('tuck', (player, card) => {
     const target = this.game.zones.byPlayer(player, card.color)
     card.moveTo(target)
     this.log.add({
@@ -323,7 +305,7 @@ class UltimateActionManager extends BaseActionManager {
     this.acted(player)
 
     return card
-  }
+  })
 
   junkMany = UltimateActionManager.createManyMethod('junk', 2)
   meldMany = UltimateActionManager.createManyMethod('meld', 2)
@@ -426,6 +408,18 @@ class UltimateActionManager extends BaseActionManager {
       if (card) {
         return this[verb](player, card, opts)
       }
+    }
+  }
+
+  static insteadKarmaWrapper(actionName, impl) {
+    return function(player, card, opts={}) {
+      const karmaKind = this.game.aKarma(player, actionName, { ...opts, card })
+      if (karmaKind === 'would-instead') {
+        this.acted(player)
+        return
+      }
+
+      return impl.call(this, player, card, opts)
     }
   }
 }
