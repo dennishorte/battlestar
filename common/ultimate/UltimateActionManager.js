@@ -228,6 +228,34 @@ class UltimateActionManager extends BaseActionManager {
     return card
   }
 
+  foreshadow(player, card, opts={}) {
+    const karmaKind = this.game.aKarma(player, 'foreshadow', { ...opts, card })
+    if (karmaKind === 'would-instead') {
+      this.acted(player)
+      return
+    }
+
+    const zoneLimit = this.game.getForecastLimit(player)
+    const target = this.game.zones.byPlayer(player, 'forecast')
+
+    if (target.cards().length >= zoneLimit) {
+      this.log.add({
+        template: '{player} has reached the limit for their forecast',
+        args: { player },
+      })
+      return
+    }
+    else {
+      this.log.add({
+        template: '{player} foreshadows {card} from {zone}',
+        args: { player, card, zone: card.zone }
+      })
+      card.moveTo(target)
+      this.acted(player)
+      return card
+    }
+  }
+
   junk(player, card, opts={}) {
     const karmaKind = this.game.aKarma(player, 'junk', { ...opts, card })
     if (karmaKind === 'would-instead') {

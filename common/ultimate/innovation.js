@@ -1103,13 +1103,6 @@ Innovation.prototype.aDraw = function(player, opts={}) {
   return this.mDraw(player, adjustedExp, adjustedAge, opts)
 }
 
-Innovation.prototype.aDrawAndForeshadow = function(player, age, opts={}) {
-  const card = this.aDraw(player, {...opts, age })
-  if (card) {
-    return this.aForeshadow(player, card, opts)
-  }
-}
-
 Innovation.prototype.aDrawAndSafeguard = function(player, age, opts={}) {
   const card = this.aDraw(player, {...opts, age })
   if (card) {
@@ -1194,16 +1187,6 @@ Innovation.prototype.aExchangeZones = function(player, zone1, zone2) {
   })
 
   this.actions.acted(player)
-}
-
-Innovation.prototype.aForeshadow = function(player, card, opts={}) {
-  const karmaKind = this.aKarma(player, 'foreshadow', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    this.actions.acted(player)
-    return
-  }
-
-  return this.mForeshadow(player, card, opts)
 }
 
 Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
@@ -2249,28 +2232,6 @@ Innovation.prototype.mDraw = function(player, exp, age, opts={}) {
 
   this.actions.acted(player)
   return card
-}
-
-Innovation.prototype.mForeshadow = function(player, card) {
-  const zoneLimit = this.getForecastLimit(player)
-  const target = this.zones.byPlayer(player, 'forecast')
-
-  if (target.cards().length >= zoneLimit) {
-    this.log.add({
-      template: '{player} has reached the limit for their forecast',
-      args: { player },
-    })
-    return
-  }
-  else {
-    this.log.add({
-      template: '{player} foreshadows {card} from {zone}',
-      args: { player, card, zone: card.zone }
-    })
-    card.moveTo(target)
-    this.actions.acted(player)
-    return card
-  }
 }
 
 Innovation.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
