@@ -35,7 +35,7 @@ module.exports = {
       }
       else {
         const revealAge = parseInt(selected.selection[0])
-        const revealed = game.aDrawAndReveal(player, revealAge)
+        const revealed = game.actions.drawAndReveal(player, revealAge)
 
         if (revealed.color === 'red' || revealed.color === 'purple') {
           const melded = game.aChooseAndMeld(player, game.cards.byPlayer(player, 'safe'))

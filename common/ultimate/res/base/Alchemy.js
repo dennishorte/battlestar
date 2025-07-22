@@ -16,7 +16,7 @@ module.exports = {
       let red = false
 
       for (let i = 0; i < count; i++) {
-        const card = game.aDrawAndReveal(player, game.getEffectAge(self, 4))
+        const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 4))
         red = red || card.color === 'red'
       }
 

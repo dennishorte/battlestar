@@ -14,8 +14,8 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader, self }) => {
-      const card1 = game.aDrawAndReveal(player, game.getEffectAge(self, 9) )
-      const card2 = game.aDrawAndReveal(player, game.getEffectAge(self, 9) )
+      const card1 = game.actions.drawAndReveal(player, game.getEffectAge(self, 9) )
+      const card2 = game.actions.drawAndReveal(player, game.getEffectAge(self, 9) )
 
       const chosen = game.actions.chooseCard(leader, [card1, card2])
       const other = chosen === card1 ? card2 : card1

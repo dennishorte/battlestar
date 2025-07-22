@@ -13,7 +13,7 @@ module.exports = {
       const effectAge = game.getEffectAge(self, 5)
 
       while (true) {
-        const drawnCard = game.aDrawAndReveal(player, effectAge)
+        const drawnCard = game.actions.drawAndReveal(player, effectAge)
         const returnColor = drawnCard.color
 
         const topCard = game.getTopCard(player, returnColor)

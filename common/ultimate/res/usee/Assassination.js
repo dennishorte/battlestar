@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader, self }) => {
-      const card = game.aDrawAndReveal(player, game.getEffectAge(self, 1))
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 1))
 
       if (card.checkHasBiscuit('k')) {
         game.aTransfer(player, card, game.zones.byPlayer(leader, 'score'))

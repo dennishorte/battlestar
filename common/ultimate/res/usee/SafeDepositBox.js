@@ -16,8 +16,8 @@ module.exports = {
       })[0]
 
       if (choice === 'Draw and junk') {
-        game.aDrawAndJunk(player, game.getEffectAge(self, 7))
-        game.aDrawAndJunk(player, game.getEffectAge(self, 7))
+        game.actions.drawAndJunk(player, game.getEffectAge(self, 7))
+        game.actions.drawAndJunk(player, game.getEffectAge(self, 7))
       }
       else if (choice === 'Exchange') {
         const scoreCards = game.cards.byPlayer(player, 'score')

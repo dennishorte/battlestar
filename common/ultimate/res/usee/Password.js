@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const drawnCard = game.aDrawAndReveal(player, game.getEffectAge(self, 2))
+      const drawnCard = game.actions.drawAndReveal(player, game.getEffectAge(self, 2))
 
       const otherHandCards = game
         .cards.byPlayer(player, 'hand')

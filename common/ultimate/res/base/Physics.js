@@ -10,9 +10,9 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const card1 = game.aDrawAndReveal(player, game.getEffectAge(self, 6))
-      const card2 = game.aDrawAndReveal(player, game.getEffectAge(self, 6))
-      const card3 = game.aDrawAndReveal(player, game.getEffectAge(self, 6))
+      const card1 = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
+      const card2 = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
+      const card3 = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
 
       if (card1.color === card2.color || card2.color === card3.color || card3.color === card1.color) {
         game.log.add({

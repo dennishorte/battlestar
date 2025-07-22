@@ -17,7 +17,7 @@ module.exports = {
     (game, player, { self }) => {
       const drawnCards = []
       for (let i = 0; i < 3; i++) {
-        const card = game.aDrawAndReveal(player, game.getEffectAge(self, 6))
+        const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
         drawnCards.push(card)
       }
 

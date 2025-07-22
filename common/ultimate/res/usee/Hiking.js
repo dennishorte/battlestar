@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const firstCard = game.aDrawAndReveal(player, game.getEffectAge(self, 6))
+      const firstCard = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
 
       if (firstCard) {
         const topCard = game.getTopCard(player, firstCard.color)
@@ -18,7 +18,7 @@ module.exports = {
         if (topCard && topCard.checkHasBiscuit('f')) {
           game.aTuck(player, firstCard)
 
-          const secondCard = game.aDrawAndReveal(player, game.getEffectAge(self, 7))
+          const secondCard = game.actions.drawAndReveal(player, game.getEffectAge(self, 7))
 
           if (secondCard && secondCard.checkHasBiscuit('l')) {
             game.aMeld(player, secondCard)

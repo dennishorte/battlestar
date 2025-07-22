@@ -1127,24 +1127,10 @@ Innovation.prototype.aDrawAndForeshadow = function(player, age, opts={}) {
   }
 }
 
-Innovation.prototype.aDrawAndJunk = function(player, age, opts={}) {
-  const card = this.aDraw(player, {...opts, age })
-  if (card) {
-    return this.actions.junk(player, card, opts)
-  }
-}
-
 Innovation.prototype.aDrawAndMeld = function(player, age, opts={}) {
   const card = this.aDraw(player, {...opts, age })
   if (card) {
     return this.aMeld(player, card, opts)
-  }
-}
-
-Innovation.prototype.aDrawAndReveal = function(player, age, opts={}) {
-  const card = this.aDraw(player, {...opts, age })
-  if (card) {
-    return this.actions.reveal(player, card)
   }
 }
 

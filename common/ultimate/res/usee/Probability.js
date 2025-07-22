@@ -15,8 +15,8 @@ module.exports = {
       game.aReturnMany(player, cardsInHand)
     },
     (game, player, { self }) => {
-      const card1 = game.aDrawAndReveal(player, game.getEffectAge(self, 6))
-      const card2 = game.aDrawAndReveal(player, game.getEffectAge(self, 6))
+      const card1 = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
+      const card2 = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
 
       game.aReturn(player, card1)
       game.aReturn(player, card2)

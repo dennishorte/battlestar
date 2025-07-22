@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const card = game.aDrawAndReveal(player, game.getEffectAge(self, 10))
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 10))
       if (card.color === 'red') {
         game.log.add({ template: 'The card was red. Nuclear War!' })
         game.log.indent()

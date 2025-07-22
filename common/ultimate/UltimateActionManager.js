@@ -218,7 +218,7 @@ class UltimateActionManager extends BaseActionManager {
         .filter(other => !this.checkSameTeam(player, other))
 
       for (const opp of others) {
-        this.aDraw(opp, { exp: 'figs' })
+        this.game.aDraw(opp, { exp: 'figs' })
       }
     }
 
@@ -276,6 +276,9 @@ class UltimateActionManager extends BaseActionManager {
 
   chooseAndJunk = UltimateActionManager.createChooseAndMethod('junkMany', 2)
   chooseAndReveal = UltimateActionManager.createChooseAndMethod('revealMany', 2)
+
+  drawAndJunk = UltimateActionManager.createDrawAndMethod('junk', 2)
+  drawAndReveal = UltimateActionManager.createDrawAndMethod('reveal', 2)
 
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -359,7 +362,7 @@ class UltimateActionManager extends BaseActionManager {
       const age = args[1]
       const opts = args[numArgs] || {}
 
-      const card = this.draw(player, { ...opts, age })
+      const card = this.game.aDraw(player, { ...opts, age })
       if (card) {
         return this[verb](player, card, opts)
       }

@@ -24,7 +24,7 @@ module.exports = {
         }
       })
 
-      const card = game.aDrawAndReveal(player, game.getEffectAge(self, 9))
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 9))
       if (colors.includes(card.color)) {
         game.aMeld(player, card)
         game.aSplay(player, card.color, 'up')

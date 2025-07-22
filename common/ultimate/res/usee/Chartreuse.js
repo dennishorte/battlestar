@@ -12,10 +12,10 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const cards = [
-        game.aDrawAndReveal(player, game.getEffectAge(self, 3)),
-        game.aDrawAndReveal(player, game.getEffectAge(self, 4)),
-        game.aDrawAndReveal(player, game.getEffectAge(self, 5)),
-        game.aDrawAndReveal(player, game.getEffectAge(self, 6)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 3)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 4)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 5)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 6)),
       ]
 
       const greenAndYellow = cards.filter(card => card.color === 'green' || card.color === 'yellow')

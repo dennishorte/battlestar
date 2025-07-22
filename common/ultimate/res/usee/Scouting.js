@@ -11,14 +11,14 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const cardsDrawn = [
-        game.aDrawAndReveal(player, game.getEffectAge(self, 9)),
-        game.aDrawAndReveal(player, game.getEffectAge(self, 9)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 9)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 9)),
       ].filter(x => x !== undefined)
 
       const returned = game.aChooseAndReturn(player, cardsDrawn, { min: 1, max: 2 })
 
       if (returned.length === 2) {
-        const card = game.aDrawAndReveal(player, game.getEffectAge(self, 10))
+        const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 10))
         if (cardsDrawn.find(c => c.color === card.color)) {
           game.log.add({
             template: '{player} keeps the card',

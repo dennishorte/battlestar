@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       while (true) {
-        const card = game.aDrawAndReveal(player, game.getEffectAge(self, 6))
+        const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
         if (card) {
           if (card.color === 'green' || card.color === 'blue') {
             game.aMeld(player, card)
