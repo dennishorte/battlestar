@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 1))
-      const returned = game.aReturn(player, card)
+      const returned = game.actions.return(player, card)
 
       if (returned) {
         if (card.color === 'yellow' || card.color === 'purple') {
@@ -23,7 +23,7 @@ module.exports = {
             game.aSafeguard(player, achievement)
           }
 
-          game.aReturnMany(player, game.cards.byPlayer(player, 'hand'))
+          game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
         }
         else {
           game.aDraw(player, { age: game.getEffectAge(self, 1) })

@@ -14,7 +14,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const cards = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 1, max: 1 })
+      const cards = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 1, max: 1 })
       if (cards && cards.length > 0) {
         const card = cards[0]
         if (card.getAge() === game.getEffectAge(self, 10)) {

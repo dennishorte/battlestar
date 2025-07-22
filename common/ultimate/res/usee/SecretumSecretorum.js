@@ -15,7 +15,7 @@ module.exports = {
         ...game.zones.byPlayer(player, 'score').cards()
       ]
 
-      const returned = game.aChooseAndReturn(player, choices, {
+      const returned = game.actions.chooseAndReturn(player, choices, {
         count: 5,
         title: 'Choose 5 cards to return'
       })

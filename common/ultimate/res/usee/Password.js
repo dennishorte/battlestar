@@ -27,7 +27,7 @@ module.exports = {
         game.aScore(player, drawnCard)
       }
       else {
-        game.aReturnMany(player, otherHandCards)
+        game.actions.returnMany(player, otherHandCards)
       }
     },
   ],

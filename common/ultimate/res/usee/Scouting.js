@@ -15,7 +15,7 @@ module.exports = {
         game.actions.drawAndReveal(player, game.getEffectAge(self, 9)),
       ].filter(x => x !== undefined)
 
-      const returned = game.aChooseAndReturn(player, cardsDrawn, { min: 1, max: 2 })
+      const returned = game.actions.chooseAndReturn(player, cardsDrawn, { min: 1, max: 2 })
 
       if (returned.length === 2) {
         const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 10))

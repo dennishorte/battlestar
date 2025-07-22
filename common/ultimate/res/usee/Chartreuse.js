@@ -22,7 +22,7 @@ module.exports = {
       const others = cards.filter(card => card.color !== 'green' && card.color !== 'yellow')
 
       game.actions.meldMany(player, greenAndYellow)
-      game.aReturnMany(player, others)
+      game.actions.returnMany(player, others)
     },
     (game, player) => {
       game.aChooseAndSplay(player, ['green', 'yellow'], 'right')

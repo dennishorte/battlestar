@@ -14,17 +14,17 @@ module.exports = {
       const hand = game.zones.byPlayer(player, 'hand')
       const handHighest = game.utilHighestCards(hand.cards())
       const handReturn = hand.cards().filter(c => !handHighest.includes(c))
-      game.aReturnMany(player, handReturn)
+      game.actions.returnMany(player, handReturn)
 
       const score = game.zones.byPlayer(player, 'score')
       const scoreHighest = game.utilHighestCards(score.cards())
       const scoreReturn = score.cards().filter(c => !scoreHighest.includes(c))
-      game.aReturnMany(player, scoreReturn)
+      game.actions.returnMany(player, scoreReturn)
     },
     (game, player) => {
       if (game.getTopCard(player, 'red').name === 'Spanish Inquisition') {
         const redCards = game.cards.byPlayer(player, 'red')
-        game.aReturnMany(player, redCards, { ordered: true })
+        game.actions.returnMany(player, redCards, { ordered: true })
       }
       else {
         game.log.addNoEffect()

@@ -294,13 +294,13 @@ Innovation.prototype.artifact = function() {
         const startingZone = artifact.zone
         this.aDogma(player, artifact, { artifact: true })
         if (startingZone === artifact.zone) {
-          this.aReturn(player, artifact)
+          this.actions.return(player, artifact)
         }
         this.fadeFiguresCheck()
         break
       }
       case 'return':
-        this.aReturn(player, artifact)
+        this.actions.return(player, artifact)
         break
       case 'skip':
         this.log.add({
@@ -805,7 +805,6 @@ function ChooseAndFactory(manyFuncName, numArgs) {
   }
 }
 
-Innovation.prototype.aChooseAndReturn = ChooseAndFactory('aReturnMany', 2)
 Innovation.prototype.aChooseAndSafeguard = ChooseAndFactory('aSafeguardMany', 2)
 Innovation.prototype.aChooseAndScore = ChooseAndFactory('aScoreMany', 2)
 Innovation.prototype.aChooseAndTransfer = ChooseAndFactory('aTransferMany', 3)
@@ -1366,16 +1365,6 @@ Innovation.prototype.aJunkDeck = function(player, age, opts={}) {
   }
 }
 
-Innovation.prototype.aReturn = function(player, card, opts={}) {
-  const karmaKind = this.aKarma(player, 'return', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    this.actions.acted(player)
-    return
-  }
-
-  return this.mReturn(player, card, opts)
-}
-
 Innovation.prototype.aSafeguard = function(player, card) {
   const safeLimit = this.getSafeLimit(player)
   const safeZone = this.zones.byPlayer(player, 'safe')
@@ -1568,7 +1557,6 @@ function ManyFactory(baseFuncName, extraArgCount=0) {
   }
 }
 
-Innovation.prototype.aReturnMany = ManyFactory('aReturn')
 Innovation.prototype.aSafeguardMany = ManyFactory('aSafeguard')
 Innovation.prototype.aScoreMany = ManyFactory('aScore')
 Innovation.prototype.aTransferMany = ManyFactory('aTransfer', 1)
@@ -2337,28 +2325,6 @@ Innovation.prototype.mResetDrawInfo = function() {
 }
 Innovation.prototype.mResetPeleCount = function() {
   this.state.tuckedGreenForPele = []
-}
-
-Innovation.prototype.mReturn = function(player, card, opts) {
-  opts = opts || {}
-  const source = card.zone
-  const target = card.home
-  const sourceIndex = source.cards().indexOf(card)
-  const targetIndex = target.cards().length
-
-  util.assert(sourceIndex !== -1, 'Did not find card in its supposed source.')
-
-  if (!opts.silent) {
-    this.log.add({
-      template: '{player} returns {card}',
-      args: { player, card }
-    })
-  }
-
-  this.mMoveByIndices(source, sourceIndex, target, targetIndex)
-
-  this.actions.acted(player)
-  return card
 }
 
 Innovation.prototype.mSetFirstBaseDraw = function(player) {

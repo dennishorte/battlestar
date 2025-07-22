@@ -15,14 +15,14 @@ module.exports = {
         .getTopCards(player)
         .filter(card => !card.checkHasBiscuit('l'))
 
-      const returned = game.aChooseAndReturn(player, choices, { count: 1 })[0]
+      const returned = game.actions.chooseAndReturn(player, choices, { count: 1 })[0]
 
       if (returned) {
         const scoreCards = game
           .cards.byPlayer(player, 'score')
           .filter(card => card.age === returned.age)
 
-        const scored = game.aReturnMany(player, scoreCards)
+        const scored = game.actions.returnMany(player, scoreCards)
 
         if (scored.length === 0) {
           game.state.dogmaInfo.exileReturnedOneCard = true
@@ -37,7 +37,7 @@ module.exports = {
 
         const exileCards = topCards.filter(card => card.name === 'Exile')
         if (exileCards.length > 0) {
-          game.aReturn(player, exileCards[0])
+          game.actions.return(player, exileCards[0])
           game.aDraw(player, { age: game.getEffectAge(self, 3) })
         }
       }

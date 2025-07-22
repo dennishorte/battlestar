@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = game.cards.byPlayer(player, 'score')
-      const returned = game.aChooseAndReturn(player, choices, {
+      const returned = game.actions.chooseAndReturn(player, choices, {
         title: 'Return a card from your score pile',
         count: 1,
       })[0]

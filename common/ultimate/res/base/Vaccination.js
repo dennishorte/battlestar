@@ -23,7 +23,7 @@ module.exports = {
         .cards.byPlayer(player, 'score')
         .filter(c => c.getAge() === chosenValue)
 
-      const returned = game.aReturnMany(player, toReturn)
+      const returned = game.actions.returnMany(player, toReturn)
 
       if (returned.length > 0) {
         game.actions.drawAndMeld(player, game.getEffectAge(self, 6))

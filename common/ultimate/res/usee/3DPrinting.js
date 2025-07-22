@@ -15,7 +15,7 @@ module.exports = {
         const bottomCards = game.getBottomCards(player)
         const choices = topCards.concat(bottomCards)
 
-        const returned = game.aChooseAndReturn(player, choices)[0]
+        const returned = game.actions.chooseAndReturn(player, choices)[0]
 
         if (returned) {
           const age = returned.age

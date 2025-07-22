@@ -10,13 +10,13 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cards = game.aChooseAndReturn(player, game.zones.byPlayer(player, 'score').cards())
+      const cards = game.actions.chooseAndReturn(player, game.zones.byPlayer(player, 'score').cards())
       if (cards.length > 0) {
         const returned = cards[0]
         const matchingTopCards = game
           .getTopCards(player)
           .filter(card => card.getAge() === returned.getAge())
-        game.aChooseAndReturn(player, matchingTopCards)
+        game.actions.chooseAndReturn(player, matchingTopCards)
       }
     }
   ],

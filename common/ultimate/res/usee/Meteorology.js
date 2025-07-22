@@ -16,7 +16,7 @@ module.exports = {
         game.aScore(player, card)
       }
       else if (card.checkHasBiscuit('c')) {
-        game.aReturn(player, card)
+        game.actions.return(player, card)
         game.aDraw(player, { age: game.getEffectAge(self, 3) })
         game.aDraw(player, { age: game.getEffectAge(self, 3) })
       }

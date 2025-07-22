@@ -18,7 +18,7 @@ module.exports = {
       const card = game.actions.chooseCard(player, choices, { min: 0, max: 1 })
 
       if (card) {
-        game.aReturn(player, card)
+        game.actions.return(player, card)
 
         const topPurple = game
           .zones.byPlayer(player, 'purple')

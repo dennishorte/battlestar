@@ -45,7 +45,7 @@ module.exports = {
         .getTopCards(player)
         .filter(x => x.getAge() === chosenValue)
 
-      const returned = game.aChooseAndReturn(player, cardsOfValue, { count: 2, ordered: true })
+      const returned = game.actions.chooseAndReturn(player, cardsOfValue, { count: 2, ordered: true })
 
       if (returned.length === 2) {
         // Return all cards of that value or less from hand and score
@@ -54,7 +54,7 @@ module.exports = {
           ...game.cards.byPlayer(player, 'score').filter(c => c.getAge() <= chosenValue)
         ]
 
-        game.aReturnMany(player, cardsToReturn, { ordered: true })
+        game.actions.returnMany(player, cardsToReturn, { ordered: true })
       }
     }
   ],

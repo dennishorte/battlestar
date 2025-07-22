@@ -19,7 +19,7 @@ module.exports = {
       if (playerWithMost && playerWithMost.name === player.name) {
         const card = game.getTopCard(player, 'red')
         if (card) {
-          game.aReturn(player, card)
+          game.actions.return(player, card)
         }
       }
     },

@@ -29,7 +29,7 @@ module.exports = {
         }
 
         const secrets = game.cards.byPlayer(player, 'safe')
-        const returned = game.aChooseAndReturn(player, secrets, {
+        const returned = game.actions.chooseAndReturn(player, secrets, {
           title: 'Return a secret',
         })
 

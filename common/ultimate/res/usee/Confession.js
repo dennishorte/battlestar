@@ -15,7 +15,7 @@ module.exports = {
         .getTopCards(player)
         .filter(c => c.checkHasBiscuit('k'))
 
-      const returned = game.aReturnMany(player, topCastleCards)
+      const returned = game.actions.returnMany(player, topCastleCards)
 
       if (returned.length === 0) {
         game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'score'))

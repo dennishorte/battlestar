@@ -15,7 +15,7 @@ module.exports = {
         .filter(c => !c.isSpecialAchievement && !c.isDecree)
         .map(c => c.getAge())
       const count = Math.max(...achievementAges)
-      game.aChooseAndReturn(player, game.cards.byPlayer(player, 'score'), { count })
+      game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'), { count })
     }
   ],
 }

@@ -34,7 +34,7 @@ module.exports = {
     },
     (game, player) => {
       const choices = game.cards.byPlayer(player, 'score')
-      game.aChooseAndReturn(player, choices)
+      game.actions.chooseAndReturn(player, choices)
     },
     (game, player) => {
       const values = game

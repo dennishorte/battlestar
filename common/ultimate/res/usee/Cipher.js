@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const returned = game.aReturnMany(player, game.cards.byPlayer(player, 'hand'))
+      const returned = game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
 
       if (returned.length >= 2) {
         const highestValue = Math.max(...returned.map(card => card.getAge()))

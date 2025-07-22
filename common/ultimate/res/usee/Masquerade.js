@@ -21,7 +21,7 @@ module.exports = {
           .cards.byPlayer(player, 'hand')
           .filter(c => c.getAge() === handSize)
 
-        game.aReturnMany(player, toReturn)
+        game.actions.returnMany(player, toReturn)
 
         if (handSize === game.getEffectAge(self, 4)) {
           game.actions.claimAchievement(player, game.cards.byId('Anonymity'))

@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cards = game.aChooseAndReturn(
+      const cards = game.actions.chooseAndReturn(
         player,
         game.cards.byPlayer(player, 'hand'),
         { min: 0, max: 1 }

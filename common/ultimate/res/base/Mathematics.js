@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cards = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1 })
+      const cards = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1 })
       if (cards && cards.length > 0) {
         const card = cards[0]
         game.actions.drawAndMeld(player, card.getAge() + 1)

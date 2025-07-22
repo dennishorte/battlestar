@@ -32,7 +32,7 @@ module.exports = {
         game.log.addNoEffect()
       }
       else {
-        game.aReturn(player, red[red.length - 1])
+        game.actions.return(player, red[red.length - 1])
       }
     }
   ],

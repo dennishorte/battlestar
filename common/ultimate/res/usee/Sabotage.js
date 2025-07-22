@@ -19,7 +19,7 @@ module.exports = {
       const card = game.actions.chooseCard(leader, choices)
 
       if (card) {
-        const returned = game.aReturn(player, card)
+        const returned = game.actions.return(player, card)
 
         // Tuck top card of returned color
         const color = returned.color

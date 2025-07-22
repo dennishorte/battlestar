@@ -21,7 +21,7 @@ module.exports = {
         drawnCards.push(card)
       }
 
-      const cardsToReturn = game.aChooseAndReturn(player, drawnCards, { count: 2 })
+      const cardsToReturn = game.actions.chooseAndReturn(player, drawnCards, { count: 2 })
       const keptCard = drawnCards.find(c => !cardsToReturn.includes(c))
 
       if (keptCard) {

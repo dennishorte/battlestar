@@ -282,6 +282,19 @@ class UltimateActionManager extends BaseActionManager {
   // Meld is very complex, and so it separated into its own file to help manage all of its moving parts
   meld = MeldAction
 
+  return = UltimateActionManager.insteadKarmaWrapper('return', (player, card, opts={}) => {
+    if (!opts.silent) {
+      this.log.add({
+        template: '{player} returns {card}',
+        args: { player, card }
+      })
+    }
+
+    card.moveHome()
+    this.acted(player)
+    return card
+  })
+
   reveal = UltimateActionManager.insteadKarmaWrapper('reveal', (player, card) => {
     card.reveal()
     this.log.add({
@@ -310,16 +323,19 @@ class UltimateActionManager extends BaseActionManager {
   junkMany = UltimateActionManager.createManyMethod('junk', 2)
   meldMany = UltimateActionManager.createManyMethod('meld', 2)
   revealMany = UltimateActionManager.createManyMethod('reveal', 2)
+  returnMany = UltimateActionManager.createManyMethod('return', 2)
   tuckMany = UltimateActionManager.createManyMethod('tuck', 2)
 
   chooseAndJunk = UltimateActionManager.createChooseAndMethod('junkMany', 2)
   chooseAndMeld = UltimateActionManager.createChooseAndMethod('meldMany', 2)
   chooseAndReveal = UltimateActionManager.createChooseAndMethod('revealMany', 2)
+  chooseAndReturn = UltimateActionManager.createChooseAndMethod('returnMany', 2)
   chooseAndTuck = UltimateActionManager.createChooseAndMethod('tuckMany', 2)
 
   drawAndJunk = UltimateActionManager.createDrawAndMethod('junk', 2)
   drawAndMeld = UltimateActionManager.createDrawAndMethod('meld', 2)
   drawAndReveal = UltimateActionManager.createDrawAndMethod('reveal', 2)
+  drawAndReturn = UltimateActionManager.createDrawAndMethod('return', 2)
   drawAndTuck = UltimateActionManager.createDrawAndMethod('tuck', 2)
 
 

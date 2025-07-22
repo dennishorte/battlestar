@@ -25,7 +25,7 @@ module.exports = {
           template: '{player} drew a red card. Returning all cards in hand.',
           args: { player }
         })
-        game.aReturnMany(player, game.zones.byPlayer(player, 'hand').cards())
+        game.actions.returnMany(player, game.zones.byPlayer(player, 'hand').cards())
       }
     },
     (game, player) => {

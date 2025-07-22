@@ -15,7 +15,7 @@ module.exports = {
 
       while (true) {
         const choices = game.cards.byPlayer(player, 'hand').filter(c => c.age === value)
-        const card = game.aChooseAndReturn(player, choices, { min: 0, max: 1 })[0]
+        const card = game.actions.chooseAndReturn(player, choices, { min: 0, max: 1 })[0]
 
         if (!card) {
           break

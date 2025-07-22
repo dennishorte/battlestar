@@ -124,7 +124,7 @@ function _maybeDiscoverBiscuit(player, card) {
       const card = this.game.mDraw(player, 'base', age)
       this.reveal(player, card)
       if (!card.checkHasBiscuit(biscuit)) {
-        this.game.mReturn(player, card)
+        this.return(player, card)
       }
     }
   }

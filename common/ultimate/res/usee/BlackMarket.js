@@ -31,7 +31,7 @@ module.exports = {
         }
 
         const toReturn = revealed.filter(card => !toMeld || card.id !== toMeld.id)
-        game.aReturnMany(player, toReturn)
+        game.actions.returnMany(player, toReturn)
       }
     },
   ],

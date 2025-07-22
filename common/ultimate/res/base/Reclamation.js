@@ -15,7 +15,7 @@ module.exports = {
 
         // Get the bottom three cards
         const bottomThree = cards.slice(Math.max(0, cards.length - 3))
-        const returned = game.aReturnMany(player, bottomThree, { ordered: true })
+        const returned = game.actions.returnMany(player, bottomThree, { ordered: true })
 
         // Calculate sum of values
         const totalValue = bottomThree.reduce((sum, card) => sum + card.getAge(), 0)

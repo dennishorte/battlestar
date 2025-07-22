@@ -19,7 +19,7 @@ module.exports = {
         .length
 
       const opp = game.actions.choosePlayer(player, game.players.opponentsOf(player))
-      game.aChooseAndReturn(player, game.cards.byPlayer(opp, 'score'), { count })
+      game.actions.chooseAndReturn(player, game.cards.byPlayer(opp, 'score'), { count })
     }
   ],
 }

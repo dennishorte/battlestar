@@ -21,7 +21,7 @@ module.exports = {
       const card = game.actions.chooseCard(player, choices)
 
       if (card) {
-        game.aReturn(player, card)
+        game.actions.return(player, card)
       }
     },
 

@@ -396,7 +396,7 @@ TestUtil.clearZone = function(game, playerName, zoneName) {
   const player = game.players.byName(playerName)
   const zone = game.zones.byPlayer(player, zoneName)
   for (const card of zone.cards()) {
-    game.mReturn(player, card, { silent: true })
+    game.actions.return(player, card, { silent: true })
   }
 }
 
@@ -405,7 +405,7 @@ TestUtil.clearBoard = function(game, playerName) {
   for (const color of game.utilColors()) {
     const zone = game.zones.byPlayer(player, color)
     for (const card of zone.cards()) {
-      game.mReturn(player, card, { silent: true })
+      game.actions.return(player, card, { silent: true })
     }
   }
 }
@@ -443,7 +443,7 @@ TestUtil.setAchievements = function(game, playerName, cardNames) {
   const zone = game.zones.byPlayer(player, 'achievements')
   const cards = cardNames.map(name => game.cards.byId(name))
   for (const card of zone.cards()) {
-    game.mReturn(player, card, { silent: true })
+    game.actions.return(player, card, { silent: true })
   }
   for (const card of cards) {
     card.moveTo(zone)
@@ -479,7 +479,7 @@ TestUtil.setColor = function(game, playerName, colorName, cardNames) {
   const zone = game.zones.byPlayer(player, colorName)
   const cards = cardNames.map(name => game.cards.byId(name))
   for (const card of zone.cards()) {
-    game.mReturn(player, card, { silent: true })
+    game.actions.return(player, card, { silent: true })
   }
   for (const card of cards) {
     card.moveTo(zone)

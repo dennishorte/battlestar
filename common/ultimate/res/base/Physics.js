@@ -18,7 +18,7 @@ module.exports = {
         game.log.add({
           template: 'Two or more of the cards had the same color'
         })
-        game.aReturnMany(player, game.cards.byPlayer(player, 'hand'))
+        game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
       }
     }
   ],

@@ -20,7 +20,7 @@ module.exports = {
 
       cards.forEach(card => game.actions.reveal(player, card))
 
-      game.aChooseAndReturn(player, cards, {
+      game.actions.chooseAndReturn(player, cards, {
         title: 'Choose a card to put on the bottom of its deck',
       })
     },

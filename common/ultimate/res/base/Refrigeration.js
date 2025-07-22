@@ -13,7 +13,7 @@ module.exports = {
     (game, player) => {
       const cards = game.cards.byPlayer(player, 'hand')
       const count = Math.max(cards.length - 1, 0)
-      game.aChooseAndReturn(player, cards, { count })
+      game.actions.chooseAndReturn(player, cards, { count })
     },
     (game, player) => {
       game.aChooseAndScore(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1 })

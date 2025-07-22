@@ -12,7 +12,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.aReturnMany(player, game.cards.byPlayer(player, 'hand'))
+      game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
     },
 
     (game, player, { self }) => {

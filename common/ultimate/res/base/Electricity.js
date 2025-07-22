@@ -13,7 +13,7 @@ module.exports = {
       const toReturn = game
         .getTopCards(player)
         .filter(card => !card.checkHasBiscuit('f'))
-      const returned = game.aReturnMany(player, toReturn)
+      const returned = game.actions.returnMany(player, toReturn)
       if (returned) {
         for (let i = 0; i < returned.length; i++) {
           game.aDraw(player, { age: game.getEffectAge(self, 8) })

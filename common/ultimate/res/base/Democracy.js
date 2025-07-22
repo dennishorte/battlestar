@@ -15,7 +15,7 @@ module.exports = {
         game.state.dogmaInfo.democracyLastPlayer = ''
       }
       const hand = game.cards.byPlayer(player, 'hand')
-      const cards = game.aChooseAndReturn(player, hand, { min: 0, max: hand.length })
+      const cards = game.actions.chooseAndReturn(player, hand, { min: 0, max: hand.length })
 
       if (
         game.state.dogmaInfo.democracyLastPlayer === player.name

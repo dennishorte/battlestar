@@ -12,14 +12,14 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const cardsInHand = game.cards.byPlayer(player, 'hand')
-      game.aReturnMany(player, cardsInHand)
+      game.actions.returnMany(player, cardsInHand)
     },
     (game, player, { self }) => {
       const card1 = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
       const card2 = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
 
-      game.aReturn(player, card1)
-      game.aReturn(player, card2)
+      game.actions.return(player, card1)
+      game.actions.return(player, card2)
 
       const drawnBiscuits = game.utilCombineBiscuits(
         game.utilParseBiscuits(card1.biscuits),

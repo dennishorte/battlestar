@@ -13,7 +13,7 @@ module.exports = {
       const returnCard = game.actions.chooseYesNo(player, 'Return the highest card from your score pile?')
       if (returnCard) {
         const highestCards = game.utilHighestCards(game.cards.byPlayer(player, 'score'))
-        const cards = game.aChooseAndReturn(player, highestCards)
+        const cards = game.actions.chooseAndReturn(player, highestCards)
 
         if (cards.length > 0) {
           const newHighest = game.utilHighestCards(game.cards.byPlayer(player, 'score'))

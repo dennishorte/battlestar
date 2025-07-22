@@ -11,11 +11,11 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const cardsInHand = game.cards.byPlayer(player, 'hand')
-      const returned = game.aChooseAndReturn(player, cardsInHand, { min: 0, max: 1 })
+      const returned = game.actions.chooseAndReturn(player, cardsInHand, { min: 0, max: 1 })
 
       if (returned.length > 0) {
         const card = returned[0]
-        game.aReturn(player, card)
+        game.actions.return(player, card)
         game.aDrawAndScore(player, card.getAge() + 1)
       }
     },

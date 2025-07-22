@@ -12,7 +12,7 @@ module.exports = {
     (game, player) => {
       const hand = game.zones.byPlayer(player, 'hand')
       if (hand.cards().length >= 3) {
-        const returned = game.aChooseAndReturn(player, hand.cards())[0]
+        const returned = game.actions.chooseAndReturn(player, hand.cards())[0]
         game.aSplay(player, returned.color, 'right')
         game.actions.chooseAndTuck(player, hand.cards())
         game.aChooseAndScore(player, hand.cards())

@@ -15,7 +15,7 @@ module.exports = {
       if (cards.length >= 3) {
         const doIt = game.actions.chooseYesNo(player, 'Return three cards to draw and meld a {3}?')
         if (doIt) {
-          const returned = game.aChooseAndReturn(player, cards, { count: 3 })
+          const returned = game.actions.chooseAndReturn(player, cards, { count: 3 })
           if (returned.length === 3) {
             game.actions.drawAndMeld(player, game.getEffectAge(self, 3))
           }
@@ -33,7 +33,7 @@ module.exports = {
       const choices = game
         .cards.byPlayer(player, 'hand')
         .filter(card => card.getAge() === 3)
-      const returned = game.aChooseAndReturn(player, choices, { min: 0, max: 1 })
+      const returned = game.actions.chooseAndReturn(player, choices, { min: 0, max: 1 })
       if (returned && returned.length > 0) {
         game.aDraw(player, { age: game.getEffectAge(self, 1) })
         game.aDraw(player, { age: game.getEffectAge(self, 1) })

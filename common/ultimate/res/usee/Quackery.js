@@ -43,7 +43,7 @@ module.exports = {
       }
 
       const revealed = game.actions.chooseAndReveal(player, hand, { count: 2, ordered: true })
-      const returned = game.aReturnMany(player, revealed)
+      const returned = game.actions.returnMany(player, revealed)
 
       if (returned.length === 2) {
         const leafCount = returned.map(c => c.getBiscuitCount('l')).reduce((x, acc) => x + acc, 0)

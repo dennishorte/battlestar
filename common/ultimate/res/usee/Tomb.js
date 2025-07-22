@@ -47,7 +47,7 @@ module.exports = {
         const blueCards = game.cards.byPlayer(player, 'blue')
         const cardsToReturn = [].concat(yellowCards, blueCards)
 
-        game.aReturnMany(player, cardsToReturn, { ordered: true })
+        game.actions.returnMany(player, cardsToReturn, { ordered: true })
       }
     }
   ],

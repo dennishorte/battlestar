@@ -26,21 +26,21 @@ module.exports = {
         .getTopCards(player)
         .filter(card => card.checkHasBiscuit(icon))
 
-      game.aChooseAndReturn(player, choices, { count: 2, ordered: true })
+      game.actions.chooseAndReturn(player, choices, { count: 2, ordered: true })
     },
 
     (game, player) => {
       const topCards = game.getTopCards(player)
       const card = game.actions.chooseCard(player, topCards)
       if (card) {
-        game.aReturn(player, card)
+        game.actions.return(player, card)
 
         const returnedValue = card.getAge()
         const scoreCardsToReturn = game
           .cards.byPlayer(player, 'score')
           .filter(c => c.getAge() >= returnedValue)
 
-        game.aReturnMany(player, scoreCardsToReturn, { ordered: true })
+        game.actions.returnMany(player, scoreCardsToReturn, { ordered: true })
       }
     }
   ],

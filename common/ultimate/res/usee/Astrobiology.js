@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const bottomCards = game.getBottomCards(player)
-      const card = game.aChooseAndReturn(player, bottomCards)[0]
+      const card = game.actions.chooseAndReturn(player, bottomCards)[0]
 
       if (card) {
         game.aSplay(player, card.color, 'aslant')

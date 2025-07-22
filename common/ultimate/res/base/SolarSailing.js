@@ -26,7 +26,7 @@ module.exports = {
         const cards = zone.cards()
         if (cards.length > 4) {
           const toReturn = cards.slice(4)
-          game.aReturnMany(player, toReturn, { ordered: true })
+          game.actions.returnMany(player, toReturn, { ordered: true })
         }
 
         game.aSplay(player, color, 'aslant')

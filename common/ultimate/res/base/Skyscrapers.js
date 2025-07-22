@@ -19,7 +19,7 @@ module.exports = {
         if (remaining.length > 0) {
           game.aScore(player, remaining[0])
         }
-        game.aReturnMany(player, remaining.slice(1), { ordered: true })
+        game.actions.returnMany(player, remaining.slice(1), { ordered: true })
 
         const topYellowCard = game.getTopCard(leader, 'yellow')
         if (topYellowCard && topYellowCard.name === 'Skyscrapers') {

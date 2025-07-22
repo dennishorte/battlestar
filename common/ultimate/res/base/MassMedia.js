@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cards = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1 })
+      const cards = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1 })
       if (cards && cards.length > 0) {
         const age = game.aChooseAge(player)
         game.log.add({
@@ -23,7 +23,7 @@ module.exports = {
           .players.all()
           .flatMap(player => game.cards.byPlayer(player, 'score'))
           .filter(card => card.getAge() === age)
-        game.aReturnMany(player, toReturn)
+        game.actions.returnMany(player, toReturn)
         game.log.outdent()
       }
     },

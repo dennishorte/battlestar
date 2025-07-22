@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const firstCard = game.aChooseAndReturn(player, game.getTopCards(player))[0]
+      const firstCard = game.actions.chooseAndReturn(player, game.getTopCards(player))[0]
 
       if (!firstCard) {
         return
@@ -20,7 +20,7 @@ module.exports = {
       const color = firstCard.color
 
       while (game.getTopCard(player, color)) {
-        const card = game.aChooseAndReturn(player, [game.getTopCard(player, color)], { min: 0, max: 1 })[0]
+        const card = game.actions.chooseAndReturn(player, [game.getTopCard(player, color)], { min: 0, max: 1 })[0]
 
         if (!card) {
           break
