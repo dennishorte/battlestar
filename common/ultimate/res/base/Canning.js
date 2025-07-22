@@ -13,7 +13,7 @@ module.exports = {
     (game, player, { self }) => {
       const decision = game.actions.chooseYesNo(player, 'Draw and tuck a {6}?')
       if (decision) {
-        game.aDrawAndTuck(player, game.getEffectAge(self, 6))
+        game.actions.drawAndTuck(player, game.getEffectAge(self, 6))
 
         const toReturn = game
           .getTopCards(player)

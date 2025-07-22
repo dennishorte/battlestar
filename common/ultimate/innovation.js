@@ -809,7 +809,6 @@ Innovation.prototype.aChooseAndReturn = ChooseAndFactory('aReturnMany', 2)
 Innovation.prototype.aChooseAndSafeguard = ChooseAndFactory('aSafeguardMany', 2)
 Innovation.prototype.aChooseAndScore = ChooseAndFactory('aScoreMany', 2)
 Innovation.prototype.aChooseAndTransfer = ChooseAndFactory('aTransferMany', 3)
-Innovation.prototype.aChooseAndTuck = ChooseAndFactory('aTuckMany', 2)
 
 Innovation.prototype.aChooseAndUnsplay = function(player, choices, opts={}) {
   const colors = this.actions.choose(player, choices, {
@@ -1122,13 +1121,6 @@ Innovation.prototype.aDrawAndScore = function(player, age, opts={}) {
   const card = this.aDraw(player, {...opts, age })
   if (card) {
     return this.aScore(player, card, opts)
-  }
-}
-
-Innovation.prototype.aDrawAndTuck = function(player, age, opts={}) {
-  const card = this.aDraw(player, {...opts, age })
-  if (card) {
-    return this.aTuck(player, card, opts)
   }
 }
 
@@ -1507,17 +1499,6 @@ Innovation.prototype.aTransfer = function(player, card, target, opts={}) {
   return this.mTransfer(player, card, target, opts)
 }
 
-Innovation.prototype.aTuck = function(player, card, opts={}) {
-  const karmaKind = this.aKarma(player, 'tuck', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    this.actions.acted(player)
-    return
-  }
-
-  const tucked = this.mTuck(player, card, opts)
-  return tucked
-}
-
 Innovation.prototype.aUnsplay = function(player, color) {
   const zone = this.zones.byPlayer(player, color)
 
@@ -1608,7 +1589,6 @@ Innovation.prototype.aReturnMany = ManyFactory('aReturn')
 Innovation.prototype.aSafeguardMany = ManyFactory('aSafeguard')
 Innovation.prototype.aScoreMany = ManyFactory('aScore')
 Innovation.prototype.aTransferMany = ManyFactory('aTransfer', 1)
-Innovation.prototype.aTuckMany = ManyFactory('aTuck')
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2480,20 +2460,6 @@ Innovation.prototype.mTransfer = function(player, card, target) {
     template: '{player} transfers {card} to {zone}',
     args: { player, card, zone: target }
   })
-  this.actions.acted(player)
-  return card
-}
-
-Innovation.prototype.mTuck = function(player, card) {
-  const target = this.zones.byPlayer(player, card.color)
-  card.moveTo(target)
-  this.log.add({
-    template: '{player} tucks {card}',
-    args: { player, card }
-  })
-  if (card.color === 'green') {
-    util.array.pushUnique(this.state.tuckedGreenForPele, player)
-  }
   this.actions.acted(player)
   return card
 }

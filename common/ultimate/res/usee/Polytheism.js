@@ -32,7 +32,7 @@ module.exports = {
       }
     },
     (game, player, { self }) => {
-      game.aDrawAndTuck(player, game.getEffectAge(self, 1))
+      game.actions.drawAndTuck(player, game.getEffectAge(self, 1))
     }
   ],
 }

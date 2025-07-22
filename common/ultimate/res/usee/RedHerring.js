@@ -26,7 +26,7 @@ module.exports = {
       game.aSplay(player, 'red', direction)
     },
     (game, player, { self }) => {
-      const card = game.aDrawAndTuck(player, game.getEffectAge(self, 6))
+      const card = game.actions.drawAndTuck(player, game.getEffectAge(self, 6))
       if (card) {
         const redSplay = game.zones.byPlayer(player, 'red').splay
         const cardSplay = game.zones.byPlayer(player, card.color).splay

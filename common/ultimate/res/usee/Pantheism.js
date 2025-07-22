@@ -14,11 +14,11 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const handCards = game.cards.byPlayer(player, 'hand')
-      const firstCard = game.aChooseAndTuck(player, handCards)[0]
+      const firstCard = game.actions.chooseAndTuck(player, handCards)[0]
 
       if (firstCard) {
         const secondCard = game.aDraw(player, { age: game.getEffectAge(self, 4) })
-        game.aTuck(player, secondCard)
+        game.actions.tuck(player, secondCard)
 
         const colorChoices = util.array.distinct([firstCard.color, secondCard.color])
         const colorToScore = game.actions.choose(player, colorChoices, {
@@ -33,7 +33,7 @@ module.exports = {
       }
     },
     (game, player, { self }) => {
-      game.aDrawAndTuck(player, game.getEffectAge(self, 4))
+      game.actions.drawAndTuck(player, game.getEffectAge(self, 4))
     }
   ],
 }

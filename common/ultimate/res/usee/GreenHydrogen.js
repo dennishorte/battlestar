@@ -17,7 +17,7 @@ module.exports = {
       const numScored = game.aScoreMany(player, greenCards).length
 
       for (let i = 0; i < numScored; i++) {
-        game.aDrawAndTuck(player, game.getEffectAge(self, 11))
+        game.actions.drawAndTuck(player, game.getEffectAge(self, 11))
       }
     },
   ],

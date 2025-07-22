@@ -39,7 +39,7 @@ module.exports = {
 
       switch (card.color) {
         case 'green':
-          game.aTuck(player, card)
+          game.actions.tuck(player, card)
           break
         case 'purple':
           game.actions.meld(player, card)

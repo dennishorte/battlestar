@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       while (true) {
-        const card = game.aDrawAndTuck(player, game.getEffectAge(self, 3))
+        const card = game.actions.drawAndTuck(player, game.getEffectAge(self, 3))
         if (card.biscuits.includes('c')) {
           game.log.add({ template: 'effect repeats' })
         }

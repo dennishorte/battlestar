@@ -15,7 +15,7 @@ module.exports = {
         .getTopCards(player)
         .filter(card => card.checkHasBiscuit('s'))
 
-      const tuckedCard = game.aChooseAndTuck(player, choices)[0]
+      const tuckedCard = game.actions.chooseAndTuck(player, choices)[0]
 
       if (tuckedCard) {
         const matchingCard = game.getTopCard(player, tuckedCard.color)

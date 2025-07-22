@@ -22,7 +22,7 @@ module.exports = {
 
       if (colorsWithTwo.length > 0) {
         const tuckable = hand.filter(c => colorsWithTwo.includes(c.color))
-        const tucked = game.aChooseAndTuck(player, tuckable, {
+        const tucked = game.actions.chooseAndTuck(player, tuckable, {
           title: 'Tuck two cards with the same color',
           count: 2,
           guard: (toTuck) => {

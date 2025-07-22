@@ -2,6 +2,8 @@ const { BaseActionManager } = require('../lib/game/index.js')
 const { GameOverEvent } = require('../lib/game.js')
 const { MeldAction } = require('./actions/Meld.js')
 
+const util = require('../lib/util.js')
+
 
 class UltimateActionManager extends BaseActionManager {
   constructor(game) {
@@ -274,17 +276,41 @@ class UltimateActionManager extends BaseActionManager {
     return card
   }
 
+  tuck(player, card, opts={}) {
+    const karmaKind = this.game.aKarma(player, 'tuck', { ...opts, card })
+    if (karmaKind === 'would-instead') {
+      this.acted(player)
+      return
+    }
+
+    const target = this.game.zones.byPlayer(player, card.color)
+    card.moveTo(target)
+    this.log.add({
+      template: '{player} tucks {card}',
+      args: { player, card }
+    })
+    if (card.color === 'green') {
+      util.array.pushUnique(this.game.state.tuckedGreenForPele, player)
+    }
+    this.acted(player)
+
+    return card
+  }
+
   junkMany = UltimateActionManager.createManyMethod('junk', 2)
   meldMany = UltimateActionManager.createManyMethod('meld', 2)
   revealMany = UltimateActionManager.createManyMethod('reveal', 2)
+  tuckMany = UltimateActionManager.createManyMethod('tuck', 2)
 
   chooseAndJunk = UltimateActionManager.createChooseAndMethod('junkMany', 2)
   chooseAndMeld = UltimateActionManager.createChooseAndMethod('meldMany', 2)
   chooseAndReveal = UltimateActionManager.createChooseAndMethod('revealMany', 2)
+  chooseAndTuck = UltimateActionManager.createChooseAndMethod('tuckMany', 2)
 
   drawAndJunk = UltimateActionManager.createDrawAndMethod('junk', 2)
   drawAndMeld = UltimateActionManager.createDrawAndMethod('meld', 2)
   drawAndReveal = UltimateActionManager.createDrawAndMethod('reveal', 2)
+  drawAndTuck = UltimateActionManager.createDrawAndMethod('tuck', 2)
 
 
   ////////////////////////////////////////////////////////////////////////////////

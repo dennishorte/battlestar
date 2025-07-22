@@ -23,7 +23,7 @@ module.exports = {
         game.aSafeguardAvailableAchievement(player, numCards)
       }
       else {
-        game.aDrawAndTuck(player, game.getEffectAge(self, 3))
+        game.actions.drawAndTuck(player, game.getEffectAge(self, 3))
       }
     },
   ],

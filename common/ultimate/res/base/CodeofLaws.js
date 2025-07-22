@@ -19,7 +19,7 @@ module.exports = {
         .cards()
         .filter(card => boardColors.includes(card.color))
 
-      const tucked = game.aChooseAndTuck(player, choices, { min: 0, max: 1 })
+      const tucked = game.actions.chooseAndTuck(player, choices, { min: 0, max: 1 })
 
       if (tucked && tucked.length > 0) {
         const color = tucked[0].color

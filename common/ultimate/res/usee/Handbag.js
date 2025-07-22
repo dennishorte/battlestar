@@ -26,7 +26,7 @@ module.exports = {
       }
       else if (choice === choices[1]) {
         const cards = game.cards.byPlayer(player, 'score')
-        game.aTuckMany(player, cards)
+        game.actions.tuckMany(player, cards)
       }
       else if (choice === choices[2]) {
         const values = game.cards.byPlayer(player, 'hand').map(c => c.getAge())

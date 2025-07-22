@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const executeEffect = () => {
-        const tucked = game.aDrawAndTuck(player, game.getEffectAge(self, 8))
+        const tucked = game.actions.drawAndTuck(player, game.getEffectAge(self, 8))
         if (tucked.checkHasBiscuit('f')) {
           game.aScore(player, tucked)
         }

@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       for (let i = 0; i < 3; i++) {
-        game.aDrawAndTuck(player, game.getEffectAge(self, 6))
+        game.actions.drawAndTuck(player, game.getEffectAge(self, 6))
       }
 
       const playerWithMost = game.getUniquePlayerWithMostBiscuits('i')

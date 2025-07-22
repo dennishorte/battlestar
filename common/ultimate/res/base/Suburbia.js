@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const cards = game.cards.byPlayer(player, 'hand')
-      const tucked = game.aChooseAndTuck(player, cards, { min: 0, max: cards.length })
+      const tucked = game.actions.chooseAndTuck(player, cards, { min: 0, max: cards.length })
       if (tucked) {
         for (let i = 0; i < tucked.length; i++) {
           game.aDrawAndScore(player, game.getEffectAge(self, 1))

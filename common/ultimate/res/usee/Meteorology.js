@@ -21,7 +21,7 @@ module.exports = {
         game.aDraw(player, { age: game.getEffectAge(self, 3) })
       }
       else {
-        game.aTuck(player, card)
+        game.actions.tuck(player, card)
       }
     },
     (game, player) => {

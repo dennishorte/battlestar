@@ -24,7 +24,7 @@ module.exports = {
           args: { player }
         })
 
-        const tucked = game.aDrawAndTuck(player, game.getEffectAge(self, 8))
+        const tucked = game.actions.drawAndTuck(player, game.getEffectAge(self, 8))
 
         if (tucked.checkHasBiscuit('s')) {
           switch (choice) {

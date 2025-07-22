@@ -41,7 +41,7 @@ module.exports = {
         .zones.byPlayer(player, 'hand')
         .cards()
         .map(c => c.id)
-      game.aChooseAndTuck(player, choices, { count })
+      game.actions.chooseAndTuck(player, choices, { count })
     }
   ],
 }

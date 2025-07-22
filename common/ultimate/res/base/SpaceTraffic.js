@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const executeEffect = () => {
-        const card = game.aDrawAndTuck(player, game.getEffectAge(self, 11))
+        const card = game.actions.drawAndTuck(player, game.getEffectAge(self, 11))
         const color = card.color
         const stack = game.cards.byPlayer(player, color)
 

@@ -12,7 +12,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      game.aDrawAndTuck(player, game.getEffectAge(self, 5))
+      game.actions.drawAndTuck(player, game.getEffectAge(self, 5))
     },
 
     (game, player) => {

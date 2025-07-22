@@ -14,7 +14,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const cards = game.aChooseAndTuck(
+      const cards = game.actions.chooseAndTuck(
         player,
         game.cards.byPlayer(player, 'hand'),
         { min: 0, max: 3},

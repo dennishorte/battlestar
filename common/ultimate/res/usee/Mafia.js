@@ -41,7 +41,7 @@ module.exports = {
           hidden: targetName !== player.name
         })[0]
 
-        game.aTuck(player, card)
+        game.actions.tuck(player, card)
       }
     },
 

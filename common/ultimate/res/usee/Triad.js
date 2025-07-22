@@ -14,7 +14,7 @@ module.exports = {
       if (hand.cards().length >= 3) {
         const returned = game.aChooseAndReturn(player, hand.cards())[0]
         game.aSplay(player, returned.color, 'right')
-        game.aChooseAndTuck(player, hand.cards())
+        game.actions.chooseAndTuck(player, hand.cards())
         game.aChooseAndScore(player, hand.cards())
       }
       else {

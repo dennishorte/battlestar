@@ -26,7 +26,7 @@ module.exports = {
       const card = game.actions.drawAndMeld(player, numPurpleCards)
 
       if (card && !card.checkHasBiscuit('c')) {
-        game.aTuck(player, card)
+        game.actions.tuck(player, card)
       }
     }
   ],

@@ -25,14 +25,15 @@ module.exports = {
         const color = returned.color
         const topCard = game.getTopCard(player, color)
         if (topCard) {
-          game.aTuck(player, topCard)
+          game.actions.tuck(player, topCard)
         }
 
         // Tuck score pile cards of returned color
         const tuckScore = game
-          .cards.byPlayer(player, 'score')
+          .cards
+          .byPlayer(player, 'score')
           .filter(c => c.color === color)
-        game.aTuckMany(player, tuckScore)
+        game.actions.tuckMany(player, tuckScore)
       }
     },
   ],
