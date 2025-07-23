@@ -32,7 +32,7 @@ module.exports = {
           const pile = game.zones.byPlayer(player, melded.color)
           const cardBeneath = pile.cards()[1]
           if (cardBeneath) {
-            game.aTransfer(player, cardBeneath, game.zones.byPlayer(leader, cardBeneath.color))
+            game.actions.transfer(player, cardBeneath, game.zones.byPlayer(leader, cardBeneath.color))
           }
           else {
             game.log.add({

@@ -19,13 +19,13 @@ module.exports = {
       const highest = game.utilHighestCards(choices)
 
       if (highest.length >= 2) {
-        const cards = game.aChooseAndTransfer(player, highest, destination, { count: 2 })
+        const cards = game.actions.chooseAndTransfer(player, highest, destination, { count: 2 })
         if (cards && cards.length > 0) {
           transferred = true
         }
       }
       else if (highest.length === 1) {
-        const card = game.aTransfer(player, highest[0], destination)
+        const card = game.actions.transfer(player, highest[0], destination)
         if (card) {
           transferred = true
         }
@@ -33,7 +33,7 @@ module.exports = {
         const remaining = choices
           .filter(other => !highest.includes(other))
         const highestRemaining = game.utilHighestCards(remaining)
-        const seconds = game.aChooseAndTransfer(player, highestRemaining, destination)
+        const seconds = game.actions.chooseAndTransfer(player, highestRemaining, destination)
         if (seconds && seconds.length > 0) {
           transferred = true
         }

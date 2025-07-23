@@ -14,7 +14,7 @@ module.exports = {
       const cards = game.cards.byPlayer(player, 'hand')
 
       const toTransfer = game.aChooseHighest(player, cards, 3)
-      const transferred = game.aTransferMany(player, toTransfer, target)
+      const transferred = game.actions.transferMany(player, toTransfer, target)
 
       const transferredCondition = transferred.length > 0
       const emptyHandCondition = game.cards.byPlayer(player, 'hand').length === 0

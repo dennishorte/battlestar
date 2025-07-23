@@ -19,7 +19,7 @@ module.exports = {
 
       const card = game.actions.chooseCard(player, choices)
       if (card) {
-        const transferred = game.aTransfer(player, card, game.zones.byPlayer(leader, card.color))
+        const transferred = game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
         if (transferred) {
           game.aUnsplay(player, card.color)
         }

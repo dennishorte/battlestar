@@ -14,10 +14,10 @@ module.exports = {
       const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 1))
 
       if (card.checkHasBiscuit('k')) {
-        game.aTransfer(player, card, game.zones.byPlayer(leader, 'score'))
+        game.actions.transfer(player, card, game.zones.byPlayer(leader, 'score'))
         const topCard = game.getTopCard(player, card.color)
         if (topCard) {
-          game.aTransfer(player, topCard, game.zones.byPlayer(leader, 'score'))
+          game.actions.transfer(player, topCard, game.zones.byPlayer(leader, 'score'))
         }
       }
     },

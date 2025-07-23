@@ -17,7 +17,7 @@ module.exports = {
         .filter(card => card.getAge() === game.getEffectAge(self, 1))
         .map(card => card.id)
       const target = game.zones.byPlayer(leader, 'score')
-      const transferredCards = game.aChooseAndTransfer(player, choices, target)
+      const transferredCards = game.actions.chooseAndTransfer(player, choices, target)
 
       if (transferredCards.length > 0) {
         game.state.dogmaInfo.transferred = true

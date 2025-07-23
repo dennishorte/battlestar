@@ -23,7 +23,7 @@ module.exports = {
 
       const choices = game.zones.byPlayer(player, 'score').cards()
       const target = game.zones.byPlayer(leader, 'score')
-      game.aChooseAndTransfer(player, choices, target, { count })
+      game.actions.chooseAndTransfer(player, choices, target, { count })
     },
 
     (game, player) => {

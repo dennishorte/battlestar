@@ -17,7 +17,7 @@ module.exports = {
         const cardInHand = game.actions.chooseCard(otherPlayer, game.zones.byPlayer(otherPlayer, 'hand').cards())
 
         if (cardInHand) {
-          game.aTransfer(otherPlayer, cardInHand, game.zones.byPlayer(player, cardInHand.color))
+          game.actions.transfer(otherPlayer, cardInHand, game.zones.byPlayer(player, cardInHand.color))
           game.log.add({
             template: 'Having the other player make the decisions is not implemented yet.'
           })

@@ -18,7 +18,7 @@ module.exports = {
 
       let transferred = false
       for (const card of topDemands) {
-        const result = game.aTransfer(player, card, game.zones.byPlayer(leader, card.color))
+        const result = game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
         if (result) {
           transferred = true
         }

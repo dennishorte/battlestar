@@ -15,7 +15,7 @@ module.exports = {
         .getTopCards(player)
         .filter(card => card.biscuits.includes('f'))
         .filter(card => card.color !== 'green')
-      const cards = game.aChooseAndTransfer(player, targets, game.zones.byPlayer(leader, 'score'))
+      const cards = game.actions.chooseAndTransfer(player, targets, game.zones.byPlayer(leader, 'score'))
       if (cards && cards.length > 0) {
         game.actions.drawAndMeld(player, game.getEffectAge(self, 8))
       }

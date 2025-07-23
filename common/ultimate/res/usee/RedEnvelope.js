@@ -32,7 +32,7 @@ module.exports = {
 
       const transferCards = handAndScore.filter(card => card.getAge() === age)
       const rightPlayer = game.players.rightOf(player)
-      game.aTransferMany(player, transferCards, game.zones.byPlayer(rightPlayer, 'score'))
+      game.actions.transferMany(player, transferCards, game.zones.byPlayer(rightPlayer, 'score'))
     },
     (game, player) => {
       const choices = game.cards.byPlayer(player, 'hand')

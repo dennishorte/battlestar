@@ -31,7 +31,7 @@ module.exports = {
 
           if (targets.length > 0) {
             const targetPlayer = game.actions.choosePlayer(player, targets)
-            game.aChooseAndTransfer(
+            game.actions.chooseAndTransfer(
               player,
               game.cards.byPlayer(player, 'score'),
               game.zones.byPlayer(targetPlayer, 'score')

@@ -32,7 +32,7 @@ module.exports = {
         const card = game.actions.chooseCard(player, choices, {
           title: 'Choose a card to transfer'
         })
-        game.aTransfer(player, card, game.zones.byPlayer(transferTo, card.color))
+        game.actions.transfer(player, card, game.zones.byPlayer(transferTo, card.color))
       }
       else {
         game.log.addNoEffect()

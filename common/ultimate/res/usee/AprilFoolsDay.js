@@ -19,7 +19,7 @@ module.exports = {
       const selectedCard = game.actions.chooseCard(player, choices)
 
       if (selectedCard) {
-        game.aTransfer(player, selectedCard, game.zones.byPlayer(rightPlayer, selectedCard.color))
+        game.actions.transfer(player, selectedCard, game.zones.byPlayer(rightPlayer, selectedCard.color))
       }
       else {
         game.actions.claimAchievement(player, { name: 'Folklore' })

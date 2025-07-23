@@ -14,7 +14,7 @@ module.exports = {
       const targets = game
         .getTopCards(player)
         .filter(card => card.checkHasBiscuit('k'))
-      game.aTransferMany(player, targets, game.zones.byPlayer(leader, 'score'))
+      game.actions.transferMany(player, targets, game.zones.byPlayer(leader, 'score'))
     },
 
     (game, player) => {

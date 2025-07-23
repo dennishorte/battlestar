@@ -20,7 +20,7 @@ module.exports = {
         return
       }
 
-      game.aTransfer(player, lowestSecret, game.zones.byPlayer(leader, 'safe'))
+      game.actions.transfer(player, lowestSecret, game.zones.byPlayer(leader, 'safe'))
     },
 
     (game, player) => {

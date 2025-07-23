@@ -19,7 +19,7 @@ module.exports = {
         .cards.byPlayer(player, 'hand')
         .filter(card => leaderSecretAges.includes(card.getAge()))
 
-      game.aTransferMany(player, handCards, game.zones.byPlayer(leader, 'score'))
+      game.actions.transferMany(player, handCards, game.zones.byPlayer(leader, 'score'))
 
       game.aDraw(player, { age: game.getEffectAge(self, 5) })
     },

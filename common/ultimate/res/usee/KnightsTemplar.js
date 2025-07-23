@@ -21,7 +21,7 @@ module.exports = {
         if (unsplayed) {
           const topCard = game.getTopCard(player, color)
           if (topCard) {
-            game.aTransfer(player, topCard, game.zones.byPlayer(leader, 'score'))
+            game.actions.transfer(player, topCard, game.zones.byPlayer(leader, 'score'))
           }
         }
       }

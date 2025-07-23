@@ -30,7 +30,7 @@ module.exports = {
         game.actions.revealMany(leader, leaderHand, { ordered: true })
 
         if (!leaderHand.some(c => c.color === revealed.color)) {
-          game.mTransfer(player, revealed, game.zones.byPlayer(leader, 'hand'))
+          game.actions.transfer(player, revealed, game.zones.byPlayer(leader, 'hand'))
           game.log.add({ template: 'Repeat this effect' })
         }
         else {

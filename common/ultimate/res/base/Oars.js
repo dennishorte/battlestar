@@ -24,7 +24,7 @@ module.exports = {
           .cards.byPlayer(player, 'hand')
           .filter(card => card.checkHasBiscuit('c'))
         if (choices.length > 0) {
-          const transferred = game.aChooseAndTransfer(player, choices, target)
+          const transferred = game.actions.chooseAndTransfer(player, choices, target)
           if (transferred && transferred.length > 0) {
             game.state.dogmaInfo.oarsCardTransferred = true
             game.aDraw(player, { age: game.getEffectAge(self, 1) })

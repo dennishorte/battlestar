@@ -17,7 +17,7 @@ module.exports = {
       const choices = game
         .getTopCards(player)
         .filter(card => !leaderColors.includes(card.color))
-      const transferred = game.aChooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'score'))
+      const transferred = game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'score'))
       if (transferred.length > 0) {
         game.actions.drawAndTuck(player, game.getEffectAge(self, 1))
       }

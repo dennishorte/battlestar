@@ -349,6 +349,27 @@ class UltimateActionManager extends BaseActionManager {
     return card
   })
 
+  transfer(player, card, target, opts={}) {
+    if (target.toBoard) {
+      target = this.game.zones.byPlayer(target.player, card.color)
+    }
+
+    // TODO: Figure out how to make insteadKarmaWrapper work with this
+    const karmaKind = this.game.aKarma(player, 'transfer', { ...opts, card, target })
+    if (karmaKind === 'would-instead') {
+      this.acted(player)
+      return
+    }
+
+    card.moveTo(target, 0)
+    this.log.add({
+      template: '{player} transfers {card} to {zone}',
+      args: { player, card, zone: target }
+    })
+    this.acted(player)
+    return card
+  }
+
   tuck = UltimateActionManager.insteadKarmaWrapper('tuck', (player, card) => {
     const target = this.game.zones.byPlayer(player, card.color)
     card.moveTo(target)
@@ -370,6 +391,7 @@ class UltimateActionManager extends BaseActionManager {
   returnMany = UltimateActionManager.createManyMethod('return', 2)
   safeguardMany = UltimateActionManager.createManyMethod('safeguard', 2)
   scoreMany = UltimateActionManager.createManyMethod('score', 2)
+  transferMany = UltimateActionManager.createManyMethod('transfer', 3)
   tuckMany = UltimateActionManager.createManyMethod('tuck', 2)
 
   chooseAndJunk = UltimateActionManager.createChooseAndMethod('junkMany', 2)
@@ -378,6 +400,7 @@ class UltimateActionManager extends BaseActionManager {
   chooseAndReturn = UltimateActionManager.createChooseAndMethod('returnMany', 2)
   chooseAndSafeguard = UltimateActionManager.createChooseAndMethod('safeguardMany', 2)
   chooseAndScore = UltimateActionManager.createChooseAndMethod('scoreMany', 2)
+  chooseAndTransfer = UltimateActionManager.createChooseAndMethod('transferMany', 3)
   chooseAndTuck = UltimateActionManager.createChooseAndMethod('tuckMany', 2)
 
   drawAndJunk = UltimateActionManager.createDrawAndMethod('junk', 2)

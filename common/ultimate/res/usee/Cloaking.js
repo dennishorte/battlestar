@@ -20,7 +20,7 @@ module.exports = {
       })[0]
 
       if (card) {
-        game.aTransfer(player, card, game.zones.byPlayer(leader, 'safe'))
+        game.actions.transfer(player, card, game.zones.byPlayer(leader, 'safe'))
       }
     },
   ],

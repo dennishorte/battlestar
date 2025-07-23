@@ -18,7 +18,7 @@ module.exports = {
         .flatMap(p => game.cards.byPlayer(p, 'score'))
         .filter(card => card.getAge() === value)
 
-      const transferred = game.aTransferMany(player, toTransfer, game.zones.byId('achievements'))
+      const transferred = game.actions.transferMany(player, toTransfer, game.zones.byId('achievements'))
 
       if (transferred.length >= 4) {
         game.actions.drawAndSafeguard(player, value)

@@ -40,7 +40,7 @@ module.exports = {
           .cards()
           .filter(card => card.age !== undefined)
 
-        game.aTransferMany(player, valuedJunkCards, game.zones.byPlayer(player, 'hand'), { ordered: true })
+        game.actions.transferMany(player, valuedJunkCards, game.zones.byPlayer(player, 'hand'), { ordered: true })
       }
     }
   ],

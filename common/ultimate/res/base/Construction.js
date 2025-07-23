@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader, self }) => {
       // Choose two cards
-      game.aChooseAndTransfer(
+      game.actions.chooseAndTransfer(
         player,
         game.cards.byPlayer(player, 'hand'),
         game.zones.byPlayer(leader, 'hand'),

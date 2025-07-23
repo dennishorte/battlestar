@@ -24,11 +24,11 @@ module.exports = {
       }
       else if (choice === choices[1]) {
         const secrets = game.zones.byPlayer(player, 'safe').cards()
-        game.aTransferMany(player, secrets, game.zones.byPlayer(player, 'hand'))
+        game.actions.transferMany(player, secrets, game.zones.byPlayer(player, 'hand'))
       }
       else if (choice === choices[2]) {
         const hand = game.zones.byPlayer(player, 'hand').cards()
-        game.aTransferMany(player, hand, game.zones.byId('achievements'))
+        game.actions.transferMany(player, hand, game.zones.byId('achievements'))
       }
     },
     (game, player) => {

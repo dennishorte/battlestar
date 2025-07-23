@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader, self }) => {
-      const cards = game.aChooseAndTransfer(
+      const cards = game.actions.chooseAndTransfer(
         player,
         game.cards.byPlayer(player, 'hand'),
         game.zones.byPlayer(leader, 'score')

@@ -780,33 +780,6 @@ Innovation.prototype.aChooseLowest = function(player, cards, count) {
   return this.aChooseByPredicate(player, cards, count, this.utilLowestCards)
 }
 
-function ChooseAndFactory(manyFuncName, numArgs) {
-  return function(...args) {
-    const player = args[0]
-    const choices = args[1]
-    const opts = args[numArgs] || {}
-
-    const titleVerb = manyFuncName.slice(1, -4).toLowerCase()
-    opts.title = opts.title || `Choose card(s) to ${titleVerb}`
-
-    const cards = this.actions.chooseCards(player, choices, opts)
-    if (cards) {
-      if (opts.reveal) {
-        this.actions.revealMany(player, cards)
-      }
-
-      const actionArgs = [...args]
-      actionArgs[1] = cards
-      return this[manyFuncName](...actionArgs)
-    }
-    else {
-      return []
-    }
-  }
-}
-
-Innovation.prototype.aChooseAndTransfer = ChooseAndFactory('aTransferMany', 3)
-
 Innovation.prototype.aChooseAndUnsplay = function(player, choices, opts={}) {
   const colors = this.actions.choose(player, choices, {
     title: 'Choose a color',
@@ -1396,19 +1369,6 @@ Innovation.prototype._maybeDrawCity = function(player) {
   this.aDraw(player, { exp: 'city' })
 }
 
-Innovation.prototype.aTransfer = function(player, card, target, opts={}) {
-  if (target.toBoard) {
-    target = this.zones.byPlayer(target.player, card.color)
-  }
-
-  const karmaKind = this.aKarma(player, 'transfer', { ...opts, card, target })
-  if (karmaKind === 'would-instead') {
-    this.actions.acted(player)
-    return
-  }
-  return this.mTransfer(player, card, target, opts)
-}
-
 Innovation.prototype.aUnsplay = function(player, color) {
   const zone = this.zones.byPlayer(player, color)
 
@@ -1445,58 +1405,6 @@ Innovation.prototype.aYouLose = function(player, card) {
   }
 
 }
-
-function ManyFactory(baseFuncName, extraArgCount=0) {
-  const verb = baseFuncName.slice(1).toLowerCase()
-
-  return function(...args) { //player, cards, opts={}) {
-    const player = args[0]
-    const cards = args[1]
-    const opts = args[2 + extraArgCount] || {}
-
-    const results = []
-    let auto = opts.ordered || false
-    let remaining = [...cards]
-    const startZones = Object.fromEntries(remaining.map(c => [c.id, c.zone]))
-
-    while (remaining.length > 0) {
-      // Check if any cards in 'remaining' have been acted on by some other force (karma effect).
-      remaining = remaining.filter(c => c.zone === startZones[c.id])
-      if (remaining.length === 0) {
-        break
-      }
-
-      let next
-      if (auto || remaining.length === 1) {
-        next = remaining[0]
-      }
-      else {
-        next = this.actions.chooseCard(
-          player,
-          remaining.concat(['auto']),
-          { title: `Choose a card to ${verb} next.` },
-        )
-      }
-
-      if (next === 'auto') {
-        auto = true
-        continue
-      }
-
-      remaining = remaining.filter(card => card !== next)
-      const singleArgs = [...args]
-      singleArgs[1] = next
-      const result = this[baseFuncName](...singleArgs)
-      if (result !== undefined) {
-        results.push(result)
-      }
-    }
-    return results
-  }
-}
-
-Innovation.prototype.aTransferMany = ManyFactory('aTransfer', 1)
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Checkers
@@ -2301,16 +2209,6 @@ Innovation.prototype.mTake = function(player, card) {
   this.log.add({
     template: '{player} takes {card} into hand',
     args: { player, card }
-  })
-  this.actions.acted(player)
-  return card
-}
-
-Innovation.prototype.mTransfer = function(player, card, target) {
-  card.moveTo(target, 0)
-  this.log.add({
-    template: '{player} transfers {card} to {zone}',
-    args: { player, card, zone: target }
   })
   this.actions.acted(player)
   return card

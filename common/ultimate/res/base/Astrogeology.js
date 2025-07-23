@@ -23,7 +23,7 @@ module.exports = {
           const cards = game.cards.byPlayer(player, color)
           if (cards.length > 4) {
             const toReturn = cards.slice(4)
-            game.aTransferMany(player, toReturn, game.zones.byPlayer(player, 'hand'), { ordered: true })
+            game.actions.transferMany(player, toReturn, game.zones.byPlayer(player, 'hand'), { ordered: true })
           }
         }
       }

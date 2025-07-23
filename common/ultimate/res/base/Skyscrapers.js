@@ -13,7 +13,7 @@ module.exports = {
       const choices = game
         .getTopCards(player)
         .filter(card => card.checkHasBiscuit('i'))
-      const cards = game.aChooseAndTransfer(player, choices, { toBoard: true, player: leader })
+      const cards = game.actions.chooseAndTransfer(player, choices, { toBoard: true, player: leader })
       if (cards && cards.length > 0) {
         const remaining = game.cards.byPlayer(player, cards[0].color)
         if (remaining.length > 0) {
@@ -23,7 +23,7 @@ module.exports = {
 
         const topYellowCard = game.getTopCard(leader, 'yellow')
         if (topYellowCard && topYellowCard.name === 'Skyscrapers') {
-          game.aTransfer(player, topYellowCard, game.zones.byPlayer(leader, 'hand'))
+          game.actions.transfer(player, topYellowCard, game.zones.byPlayer(leader, 'hand'))
         }
       }
     }

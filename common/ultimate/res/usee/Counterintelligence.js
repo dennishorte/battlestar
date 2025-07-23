@@ -21,7 +21,7 @@ module.exports = {
         const matchingCard = game.getTopCard(player, tuckedCard.color)
 
         if (matchingCard) {
-          game.aTransfer(player, matchingCard, game.zones.byPlayer(leader, matchingCard.color))
+          game.actions.transfer(player, matchingCard, game.zones.byPlayer(leader, matchingCard.color))
           game.aDraw(player, { age: game.getEffectAge(self, 7) })
         }
       }

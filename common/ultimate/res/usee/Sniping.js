@@ -19,7 +19,7 @@ module.exports = {
 
         if (cards.length > 1) {
           const bottomCard = game.getBottomCard(player, chosenColor)
-          game.aTransfer(player, bottomCard, game.zones.byPlayer(leader, chosenColor))
+          game.actions.transfer(player, bottomCard, game.zones.byPlayer(leader, chosenColor))
         }
       }
     },

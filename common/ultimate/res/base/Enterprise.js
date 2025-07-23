@@ -17,7 +17,7 @@ module.exports = {
         .filter(card => card.checkHasBiscuit('c'))
       const card = game.actions.chooseCard(player, choices)
       if (card) {
-        const transferred = game.aTransfer(player, card, game.zones.byPlayer(leader, card.color))
+        const transferred = game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
         if (transferred) {
           game.actions.drawAndMeld(player, game.getEffectAge(self, 4))
         }

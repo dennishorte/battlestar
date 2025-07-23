@@ -26,7 +26,7 @@ module.exports = {
         const cards = game
           .cards.byPlayer(player, 'score')
           .filter(card => card.getAge() === value)
-        game.aTransferMany(player, cards, game.zones.byPlayer(player, 'hand'), { ordered: true })
+        game.actions.transferMany(player, cards, game.zones.byPlayer(player, 'hand'), { ordered: true })
       }
     },
     (game, player) => {

@@ -15,7 +15,7 @@ module.exports = {
       const secret = game.actions.chooseCard(player, choices)
 
       if (secret) {
-        game.aTransfer(player, secret, game.zones.byPlayer(leader, 'achievements'))
+        game.actions.transfer(player, secret, game.zones.byPlayer(leader, 'achievements'))
       }
     },
     (game, player) => {

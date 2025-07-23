@@ -12,12 +12,12 @@ module.exports = {
     (game, player, { leader }) => {
       const cards = game.cards.byPlayer(player, 'hand')
       const count = cards.length - 1
-      game.aChooseAndTransfer(player, cards, game.zones.byPlayer(leader, 'hand'), { count })
+      game.actions.chooseAndTransfer(player, cards, game.zones.byPlayer(leader, 'hand'), { count })
 
       const highestScore = game.utilHighestCards(
         game.cards.byPlayer(player, 'score')
       )
-      game.aChooseAndTransfer(player, highestScore, game.zones.byPlayer(leader, 'score'))
+      game.actions.chooseAndTransfer(player, highestScore, game.zones.byPlayer(leader, 'score'))
     }
   ],
 }
