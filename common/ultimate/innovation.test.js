@@ -1100,7 +1100,7 @@ describe('Innovation', () => {
 
         game.run()
         const trigger = () => {
-          game.mDraw(game.players.byName('dennis'), 'base', 12)
+          game.actions.draw(game.players.byName('dennis'), { exp: 'base', age: 12 })
         }
         expect(trigger).toThrow(GameOverEvent)
       })

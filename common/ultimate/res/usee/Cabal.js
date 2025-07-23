@@ -21,7 +21,7 @@ module.exports = {
 
       game.actions.transferMany(player, handCards, game.zones.byPlayer(leader, 'score'))
 
-      game.aDraw(player, { age: game.getEffectAge(self, 5) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 5) })
     },
 
     (game, player) => {

@@ -19,8 +19,8 @@ module.exports = {
 
       if (cards && cards.length > 0) {
         game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'))
-        game.aDraw(player, { age: game.getEffectAge(self, 10) })
-        game.aDraw(player, { age: game.getEffectAge(self, 10) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 10) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 10) })
       }
     },
 

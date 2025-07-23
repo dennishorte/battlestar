@@ -23,10 +23,10 @@ module.exports = {
       else {
         const highest = game.utilHighestCards(game.cards.byPlayer(player, 'score'))
         if (highest.length > 0) {
-          game.aDraw(player, { age: highest[0].getAge() + 1 })
+          game.actions.draw(player, { age: highest[0].getAge() + 1 })
         }
         else {
-          game.aDraw(player, { age: 1 })
+          game.actions.draw(player, { age: 1 })
         }
       }
     }

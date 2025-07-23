@@ -35,10 +35,10 @@ module.exports = {
         game.actions.drawAndScore(player, game.getEffectAge(self, 6))
       }
       else if (numberOfBiscuits === 4) {
-        game.aDraw(player, {age: game.getEffectAge(self, 7)})
+        game.actions.draw(player, {age: game.getEffectAge(self, 7)})
       }
 
-      game.aDraw(player, {age: game.getEffectAge(self, 6)})
+      game.actions.draw(player, {age: game.getEffectAge(self, 6)})
     },
   ],
 }

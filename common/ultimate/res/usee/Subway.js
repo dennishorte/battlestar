@@ -15,11 +15,11 @@ module.exports = {
       const visibleCards = game.getVisibleCardsByZone(player, card.color)
 
       if (visibleCards >= 7) {
-        game.aDraw(player, { age: game.getEffectAge(self, 9) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 9) })
       }
       else {
         game.actions.junkMany(player, game.cards.byPlayer(player, card.color), { ordered: true })
-        game.aDraw(player, { age: game.getEffectAge(self, 8) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 8) })
       }
     },
   ],

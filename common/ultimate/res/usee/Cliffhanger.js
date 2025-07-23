@@ -51,7 +51,7 @@ module.exports = {
           game.actions.score(player, card)
           break
         case 'blue':
-          game.aDraw(player, { age: game.getEffectAge(self, 5) })
+          game.actions.draw(player, { age: game.getEffectAge(self, 5) })
           break
         default:
           break

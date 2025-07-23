@@ -18,7 +18,7 @@ module.exports = {
       })[0]
 
       if (returned) {
-        game.aDraw(player, { age: returned.age + 1 })
+        game.actions.draw(player, { age: returned.age + 1 })
       }
     },
 

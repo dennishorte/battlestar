@@ -22,12 +22,12 @@ module.exports = {
 
         if (matchingCard) {
           game.actions.transfer(player, matchingCard, game.zones.byPlayer(leader, matchingCard.color))
-          game.aDraw(player, { age: game.getEffectAge(self, 7) })
+          game.actions.draw(player, { age: game.getEffectAge(self, 7) })
         }
       }
     },
     (game, player, { self }) => {
-      game.aDraw(player, { age: game.getEffectAge(self, 8) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 8) })
     }
   ],
 }

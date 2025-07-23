@@ -22,7 +22,7 @@ module.exports = {
       const choice = game.actions.choose(player, choices)[0]
 
       if (choice === choices[0]) {
-        game.aDraw(player, { age: game.getEffectAge(self, 11) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 11) })
       }
       else {
         const available = game.getAvailableStandardAchievements(player)

@@ -20,7 +20,7 @@ module.exports = {
       )
 
       // Draw a 2
-      game.aDraw(player, { age: game.getEffectAge(self, 2) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 2) })
     },
     (game, player) => {
       const achievementAvailable = game.checkAchievementAvailable('Empire')

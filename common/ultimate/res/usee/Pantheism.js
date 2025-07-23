@@ -17,7 +17,7 @@ module.exports = {
       const firstCard = game.actions.chooseAndTuck(player, handCards)[0]
 
       if (firstCard) {
-        const secondCard = game.aDraw(player, { age: game.getEffectAge(self, 4) })
+        const secondCard = game.actions.draw(player, { age: game.getEffectAge(self, 4) })
         game.actions.tuck(player, secondCard)
 
         const colorChoices = util.array.distinct([firstCard.color, secondCard.color])

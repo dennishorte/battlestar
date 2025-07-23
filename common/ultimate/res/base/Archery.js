@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader, self }) => {
-      game.aDraw(player, { age: game.getEffectAge(self, 1) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 1) })
       const highest = game.aChooseHighest(player, game.cards.byPlayer(player, 'hand'), 1)
       if (highest.length > 0) {
         game.actions.transfer(player, highest[0], game.zones.byPlayer(leader, 'hand'))

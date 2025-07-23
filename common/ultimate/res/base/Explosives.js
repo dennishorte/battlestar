@@ -19,7 +19,7 @@ module.exports = {
       const transferredCondition = transferred.length > 0
       const emptyHandCondition = game.cards.byPlayer(player, 'hand').length === 0
       if (transferredCondition && emptyHandCondition) {
-        game.aDraw(player, { age: game.getEffectAge(self, 7) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 7) })
       }
     }
   ],

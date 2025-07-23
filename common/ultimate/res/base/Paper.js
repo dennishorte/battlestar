@@ -22,7 +22,7 @@ module.exports = {
         .length
 
       for (let i = 0; i < splayedLeftCount; i++) {
-        game.aDraw(player, { age: game.getEffectAge(self, 4) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 4) })
       }
     },
   ],

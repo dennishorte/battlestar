@@ -41,7 +41,7 @@ module.exports = {
       }
       else if (choice.title === 'Splay up and draw') {
         game.aSplay(player, choice.selection[0], 'up')
-        game.aDraw(player, { age: game.getEffectAge(self, 9) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 9) })
       }
       else {
         throw new Error('Invalid option: ' + choice)

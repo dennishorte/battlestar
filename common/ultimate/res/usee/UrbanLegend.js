@@ -18,7 +18,7 @@ module.exports = {
       colors.forEach(color => {
         const zone = game.zones.byPlayer(player, color)
         if (game.getBiscuitsByZone(zone).f > 0) {
-          game.aDraw(player, { age: game.getEffectAge(self, 9) })
+          game.actions.draw(player, { age: game.getEffectAge(self, 9) })
           drawnCards++
         }
       })

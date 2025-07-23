@@ -14,7 +14,7 @@ module.exports = {
       const transferred = game.actions.chooseAndTransfer(player, secrets, game.zones.byId('achievements'))[0]
 
       if (transferred) {
-        game.aDraw(player, { age: transferred.getAge() + 1 })
+        game.actions.draw(player, { age: transferred.getAge() + 1 })
       }
       else {
         const topRed = game.getTopCard(player, 'red')

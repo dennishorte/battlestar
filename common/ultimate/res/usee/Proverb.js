@@ -26,8 +26,8 @@ module.exports = {
           game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
         }
         else {
-          game.aDraw(player, { age: game.getEffectAge(self, 1) })
-          game.aDraw(player, { age: game.getEffectAge(self, 1) })
+          game.actions.draw(player, { age: game.getEffectAge(self, 1) })
+          game.actions.draw(player, { age: game.getEffectAge(self, 1) })
         }
       }
     },

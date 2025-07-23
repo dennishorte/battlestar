@@ -20,8 +20,8 @@ module.exports = {
       if (cards) {
         const numValues = util.array.distinct(cards.map(c => c.getAge())).length
         for (let i = 0; i < numValues; i++) {
-          game.aDraw(player, { age: game.getEffectAge(self, 8) })
-          game.aDraw(player, { age: game.getEffectAge(self, 8) })
+          game.actions.draw(player, { age: game.getEffectAge(self, 8) })
+          game.actions.draw(player, { age: game.getEffectAge(self, 8) })
         }
       }
     }

@@ -22,7 +22,7 @@ module.exports = {
 
           if (secondCard && secondCard.checkHasBiscuit('l')) {
             game.actions.meld(player, secondCard)
-            game.aDraw(player, { age: game.getEffectAge(self, 8) })
+            game.actions.draw(player, { age: game.getEffectAge(self, 8) })
           }
         }
       }

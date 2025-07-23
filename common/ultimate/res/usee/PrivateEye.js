@@ -18,7 +18,7 @@ module.exports = {
       const card = game.actions.chooseCard(leader, hand)
       if (card) {
         game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
-        game.aDraw(player, { age: game.getEffectAge(self, 7) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 7) })
       }
     },
     (game, player) => {

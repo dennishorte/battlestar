@@ -24,7 +24,7 @@ module.exports = {
           .zones.byPlayer(player, 'purple')
           .cards()[0]
         const drawAge = topPurple ? topPurple.getAge() + 2 : 2
-        game.aDraw(player, { age: drawAge })
+        game.actions.draw(player, { age: drawAge })
       }
     },
     (game, player) => {

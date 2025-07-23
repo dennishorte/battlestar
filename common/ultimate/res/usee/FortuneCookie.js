@@ -22,11 +22,11 @@ module.exports = {
 
       if (exactlyEightIcon) {
         game.aChooseAndSplay(player, ['green', 'purple'], 'right')
-        game.aDraw(player, { age: game.getEffectAge(self, 8) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 8) })
       }
 
       if (exactlyNineIcon) {
-        game.aDraw(player, { age: game.getEffectAge(self, 9) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 9) })
       }
 
       if (!exactlySevenIcon && !exactlyEightIcon && !exactlyNineIcon) {

@@ -15,11 +15,11 @@ module.exports = {
 
       if (returned.length >= 2) {
         const highestValue = Math.max(...returned.map(card => card.getAge()))
-        game.aDraw(player, { age: highestValue + 1 })
+        game.actions.draw(player, { age: highestValue + 1 })
       }
     },
     (game, player, { self }) => {
-      game.aDraw(player, { age: game.getEffectAge(self, 2) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 2) })
       game.aChooseAndSplay(player, ['blue'], 'left')
     }
   ],

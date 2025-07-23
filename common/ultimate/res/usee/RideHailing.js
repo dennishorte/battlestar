@@ -25,7 +25,7 @@ module.exports = {
         game.aSelfExecute(player, card)
       }
       else {
-        game.aDraw(player, { age: game.getEffectAge(self, 11) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 11) })
       }
     }
   ],

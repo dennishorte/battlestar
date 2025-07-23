@@ -23,7 +23,7 @@ module.exports = {
             .map(card => card.getAge())
           const distinctAges = util.array.distinct(allAges)
           for (let i = 0; i < distinctAges.length; i++) {
-            game.aDraw(player, { age: game.getEffectAge(self, 10) })
+            game.actions.draw(player, { age: game.getEffectAge(self, 10) })
           }
         }
         else if (card.getAge() === game.getEffectAge(self, 11)) {

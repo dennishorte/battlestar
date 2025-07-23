@@ -27,7 +27,7 @@ module.exports = {
     (game, player, { self }) => {
       const secretCount = game.cards.byPlayer(player, 'safe').length
       for (let i = 0; i < secretCount; i++) {
-        game.aDraw(player, { age: game.getEffectAge(self, 6) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 6) })
       }
     }
   ],

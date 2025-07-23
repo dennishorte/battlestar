@@ -16,7 +16,7 @@ module.exports = {
       const returned = game.actions.returnMany(player, toReturn)
       if (returned) {
         for (let i = 0; i < returned.length; i++) {
-          game.aDraw(player, { age: game.getEffectAge(self, 8) })
+          game.actions.draw(player, { age: game.getEffectAge(self, 8) })
         }
       }
     }

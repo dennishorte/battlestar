@@ -37,7 +37,7 @@ module.exports = {
         .filter(color => game.cards.byPlayer(player, color).length === 0)
 
       missingColors.forEach(() => {
-        game.aDraw(player, { age: game.getEffectAge(self, 11) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 11) })
       })
     }
   ],

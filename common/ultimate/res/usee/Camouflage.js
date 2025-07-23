@@ -79,7 +79,7 @@ module.exports = {
         .length
 
       for (let i = 0; i < specialAchievements; i++) {
-        game.aDraw(player, { age: game.getEffectAge(self, 7) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 7) })
       }
     },
   ],

@@ -30,7 +30,7 @@ module.exports = {
         .length
 
       for (let i = 0; i < scorePile; i++) {
-        game.aDraw(player, { age })
+        game.actions.draw(player, { age })
       }
     }
   ],

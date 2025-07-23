@@ -40,7 +40,7 @@ module.exports = {
       }
 
       if (transferred) {
-        game.aDraw(player, { age: game.getEffectAge(self, 8) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 8) })
       }
     }
   ],

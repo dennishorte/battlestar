@@ -18,7 +18,7 @@ module.exports = {
         if (cards.length > 0) {
           const newHighest = game.utilHighestCards(game.cards.byPlayer(player, 'score'))
           const age = newHighest.length > 0 ? newHighest[0].getAge() + 2 : 2
-          game.aDraw(player, { age })
+          game.actions.draw(player, { age })
         }
       }
       else {

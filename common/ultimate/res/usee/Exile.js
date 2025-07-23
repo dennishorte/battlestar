@@ -38,7 +38,7 @@ module.exports = {
         const exileCards = topCards.filter(card => card.name === 'Exile')
         if (exileCards.length > 0) {
           game.actions.return(player, exileCards[0])
-          game.aDraw(player, { age: game.getEffectAge(self, 3) })
+          game.actions.draw(player, { age: game.getEffectAge(self, 3) })
         }
       }
     }

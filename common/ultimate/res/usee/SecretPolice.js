@@ -21,7 +21,7 @@ module.exports = {
           continue
         }
         else {
-          game.aDraw(player, { age: game.getEffectAge(self, 3) })
+          game.actions.draw(player, { age: game.getEffectAge(self, 3) })
           break
         }
       }

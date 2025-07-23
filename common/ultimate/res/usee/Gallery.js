@@ -13,7 +13,7 @@ module.exports = {
     (game, player, { self }) => {
       const scoreCards = game.cards.byPlayer(player, 'score')
       if (scoreCards.some(card => card.age === game.getEffectAge(self, 2))) {
-        game.aDraw(player, { age: game.getEffectAge(self, 6) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 6) })
       }
       else {
         game.log.addNoEffect()
@@ -22,10 +22,10 @@ module.exports = {
     (game, player, { self }) => {
       const scoreCards = game.cards.byPlayer(player, 'score')
       if (scoreCards.some(card => card.age === game.getEffectAge(self, 1))) {
-        game.aDraw(player, { age: game.getEffectAge(self, 7) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 7) })
       }
       else {
-        game.aDraw(player, { age: game.getEffectAge(self, 5) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 5) })
       }
     }
   ],

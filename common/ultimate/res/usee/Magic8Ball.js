@@ -29,8 +29,8 @@ module.exports = {
         if (tucked.checkHasBiscuit('s')) {
           switch (choice) {
             case options[0]:
-              game.aDraw(player, { age: game.getEffectAge(self, 10) })
-              game.aDraw(player, { age: game.getEffectAge(self, 10) })
+              game.actions.draw(player, { age: game.getEffectAge(self, 10) })
+              game.actions.draw(player, { age: game.getEffectAge(self, 10) })
               break
             case options[1]:
               game.actions.drawAndScore(player, game.getEffectAge(self, 8))

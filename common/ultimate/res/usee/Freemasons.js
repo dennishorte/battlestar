@@ -24,8 +24,8 @@ module.exports = {
       const tuckedExpansion = tucked.some(c => c.expansion !== 'base')
 
       if (tuckedYellow || tuckedExpansion) {
-        game.aDraw(player, { age: game.getEffectAge(self, 3) })
-        game.aDraw(player, { age: game.getEffectAge(self, 3) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 3) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 3) })
       }
     },
     (game, player) => {

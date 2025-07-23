@@ -204,13 +204,13 @@ Innovation.prototype.initializeZonesPlayers = function() {
 
 Innovation.prototype.initializeStartingCards = function() {
   for (const player of this.players.all()) {
-    this.mDraw(player, 'base', 1, { silent: true })
+    this.actions.draw(player, { exp: 'base', age: 1 })
 
     if (this.getExpansionList().includes('echo')) {
-      this.mDraw(player, 'echo', 1, { silent: true })
+      this.actions.draw(player, { exp: 'echo', age: 1 })
     }
     else {
-      this.mDraw(player, 'base', 1, { silent: true })
+      this.actions.draw(player, { exp: 'base', age: 1 })
     }
   }
 }
@@ -366,7 +366,7 @@ Innovation.prototype.action = function(count) {
     this.aDogma(player, card)
   }
   else if (name === 'Draw') {
-    this.aDraw(player, { isAction: true })
+    this.actions.draw(player, { isAction: true })
   }
   else if (name === 'Endorse') {
     this.aEndorse(player, arg)
@@ -959,7 +959,7 @@ Innovation.prototype._aDogmaHelper_shareBonus = function(player, card) {
     })
     this.log.indent()
     const expansion = this.getExpansionList().includes('figs') ? 'figs' : ''
-    this.aDraw(player, {
+    this.actions.draw(player, {
       exp: expansion,
       share: true,
       featuredBiscuit: this.state.dogmaInfo.featuredBiscuit
@@ -1006,71 +1006,6 @@ Innovation.prototype.aDogma = function(player, card, opts={}) {
   this.aDogmaHelper(player, card, opts)
   this.log.outdent()
   this.mResetDogmaInfo()
-}
-
-Innovation.prototype._getAgeForDrawAction = function(player, isAction) {
-  const karmaInfos = this.getInfoByKarmaTrigger(player, 'top-card-value', { isAction })
-
-  if (karmaInfos.length > 1) {
-    throw new Error('Too many karma infos for top-card-value. I do not know what to do.')
-  }
-
-  const ageValues = this
-    .utilColors()
-    .map(color => {
-      const zone = this.zones.byPlayer(player, color)
-      if (zone.cards().length === 0) {
-        return 1
-      }
-
-      const actionType = isAction ? 'draw' : 'other'
-      const karmaMatches = (
-        !this.checkInKarma()
-        && karmaInfos.length === 1
-        && karmaInfos[0].impl.matches(this, player, { action: actionType, color, isAction })
-      )
-      if (karmaMatches) {
-        this._karmaIn()
-        const result = karmaInfos[0].impl.func(this, player, { color })
-        this._karmaOut()
-        return result
-      }
-      else {
-        return zone.cards()[0].getAge()
-      }
-    })
-
-  return Math.max(...ageValues)
-}
-
-Innovation.prototype.aDraw = function(player, opts={}) {
-  const { age, share, isAction } = opts
-
-  if (isAction) {
-    const karmaKind = this.aKarma(player, 'draw-action', opts)
-    if (karmaKind === 'would-instead') {
-      this.actions.acted(player)
-      return
-    }
-  }
-
-  // Expansion the user should draw from, before looking at empty decks.
-  const baseExp = opts.exp || this._determineBaseDrawExpansion(player, share)
-
-  // If age is not specified, draw based on player's current highest top card.
-  const highestTopAge = this._getAgeForDrawAction(player, isAction)
-  const baseAge = age !== undefined ? (age || 1) : (highestTopAge || 1)
-
-  // Adjust age based on empty decks.
-  const [ adjustedAge, adjustedExp ] = this._adjustedDrawDeck(baseAge, baseExp)
-
-  const karmaKind = this.aKarma(player, 'draw', { ...opts, age: adjustedAge })
-  if (karmaKind === 'would-instead') {
-    this.actions.acted(player)
-    return
-  }
-
-  return this.mDraw(player, adjustedExp, adjustedAge, opts)
 }
 
 Innovation.prototype.aEndorse = function(player, color, opts={}) {
@@ -1265,7 +1200,7 @@ Innovation.prototype.aDigArtifact = function(player, age) {
     return
   }
 
-  const card = this.aDraw(player, { age, exp: 'arti' })
+  const card = this.actions.draw(player, { age, exp: 'arti' })
   if (card) {
     this.log.add({
       template: '{player} digs {card}',
@@ -1366,7 +1301,7 @@ Innovation.prototype._maybeDrawCity = function(player) {
     return
   }
 
-  this.aDraw(player, { exp: 'city' })
+  this.actions.draw(player, { exp: 'city' })
 }
 
 Innovation.prototype.aUnsplay = function(player, color) {
@@ -2017,55 +1952,6 @@ Innovation.prototype.mAdjustCardVisibility = function(card) {
   }
 }
 
-Innovation.prototype.mDraw = function(player, exp, age, opts={}) {
-  if (age > 11) {
-    const scores = this
-      .players.all()
-      .map(player => ({
-        player,
-        score: this.getScore(player),
-        achs: this.getAchievementsByPlayer(player).total,
-      }))
-      .sort((l, r) => {
-        if (r.score !== l.score) {
-          r.reason = 'high draw'
-          l.reason = 'high draw'
-          return r.score - l.score
-        }
-        else if (r.achs !== l.achs) {
-          r.reason = 'high draw - tie breaker (achievements)'
-          l.reason = 'high draw - tie breaker (achievements)'
-          return r.achs - l.achs
-        }
-        else {
-          throw new GameOverEvent({
-            player,
-            reason: 'Tied for points and achievements; player who drew the big card wins!'
-          })
-        }
-      })
-
-    throw new GameOverEvent({
-      reason: scores[0].reason,
-      player: scores[0].player,
-    })
-  }
-
-  const source = this.getZoneByDeck(exp, age)
-  const hand = this.zones.byPlayer(player, 'hand')
-  const card = this.mMoveTopCard(source, hand)
-
-  if (!opts.silent) {
-    this.log.add({
-      template: '{player} draws {card}',
-      args: { player, card }
-    })
-  }
-
-  this.actions.acted(player)
-  return card
-}
-
 Innovation.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
   util.assert(sourceIndex >= 0 && sourceIndex <= source.cards().length - 1, `Invalid source index ${sourceIndex}`)
   const sourceCards = source._cards
@@ -2339,55 +2225,6 @@ Innovation.prototype.utilSerializeObject = function(obj) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Private functions
-
-Innovation.prototype._adjustedDrawDeck = function(age, exp) {
-  if (age > 11) {
-    return [12, 'base']
-  }
-
-  const baseDeck = this.getZoneByDeck('base', age)
-  if (baseDeck.cards().length === 0) {
-    return this._adjustedDrawDeck(age + 1, exp)
-  }
-
-  if (exp === 'base') {
-    return [age, 'base']
-  }
-
-  const expDeck = this.getZoneByDeck(exp, age)
-  if (expDeck.cards().length === 0) {
-    return [age, 'base']
-  }
-
-  return [age, exp]
-}
-
-// Determine which expansion to draw from.
-Innovation.prototype._determineBaseDrawExpansion = function(player) {
-  // Whether the player ends up drawing echoes, unseen, or base, this counts as their
-  // first base draw, and so following draws won't draw unseen cards.
-  const isFirstBaseDraw = this.checkIsFirstBaseDraw(player)
-  if (isFirstBaseDraw){
-    this.mSetFirstBaseDraw(player)
-  }
-  if (this.getExpansionList().includes('echo')) {
-    const topAges = this
-      .getTopCards(player)
-      .map(c => c.getAge())
-      .sort()
-      .reverse()
-
-    if (topAges.length === 1 || (topAges.length > 1 && topAges[0] != topAges[1])) {
-      return 'echo'
-    }
-  }
-  if (this.getExpansionList().includes('usee')) {
-    if (isFirstBaseDraw) {
-      return 'usee'
-    }
-  }
-  return 'base'
-}
 
 Innovation.prototype._generateActionChoices = function() {
   const choices = []

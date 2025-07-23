@@ -18,7 +18,7 @@ module.exports = {
         game.actions.reveal(player, card)
         game.actions.return(player, card)
         game.aSplay(player, card.color, 'right')
-        game.aDraw(player, { age: game.cards.byPlayer(player, card.color).length })
+        game.actions.draw(player, { age: game.cards.byPlayer(player, card.color).length })
       }
       else {
         game.log.addDoNothing(player)

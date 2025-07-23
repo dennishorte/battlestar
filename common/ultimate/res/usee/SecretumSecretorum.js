@@ -24,7 +24,7 @@ module.exports = {
       const drawnCards = []
 
       for (let i = 0; i < 2; i++) {
-        const card = game.aDraw(player, { age: numColors })
+        const card = game.actions.draw(player, { age: numColors })
         if (card) {
           drawnCards.push(card)
         }

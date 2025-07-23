@@ -17,7 +17,7 @@ module.exports = {
         .length
 
       for (let i = 0; i < count; i++) {
-        game.aDraw(player, { age: game.getEffectAge(self, 2) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 2) })
       }
     }
   ],

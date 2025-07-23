@@ -20,7 +20,7 @@ module.exports = {
         if (card) {
           const transferred = game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
           if (transferred) {
-            game.aDraw(player, { age: game.getEffectAge(self, 1) })
+            game.actions.draw(player, { age: game.getEffectAge(self, 1) })
           }
           else {
             game.log.add({ template: 'no card was transferred' })

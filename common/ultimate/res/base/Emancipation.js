@@ -17,7 +17,7 @@ module.exports = {
         game.zones.byPlayer(leader, 'score')
       )
       if (cards && cards.length > 0) {
-        game.aDraw(player, { age: game.getEffectAge(self, 6) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 6) })
       }
     },
 

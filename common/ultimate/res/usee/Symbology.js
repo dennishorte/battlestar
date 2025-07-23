@@ -30,13 +30,13 @@ module.exports = {
       game.log.add({ template: 'two biscuits: ' + biscuitCounts[2] })
 
       if (biscuitCounts[4] >= 4) {
-        game.aDraw(player, { age: game.getEffectAge(self, 4) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 4) })
       }
       else if (biscuitCounts[3] >= 3) {
-        game.aDraw(player, { age: game.getEffectAge(self, 3) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 3) })
       }
       else if (biscuitCounts[2] >= 2) {
-        game.aDraw(player, { age: game.getEffectAge(self, 2) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 2) })
       }
       else {
         game.log.addNoEffect()

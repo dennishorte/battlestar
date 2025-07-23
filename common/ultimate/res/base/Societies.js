@@ -24,7 +24,7 @@ module.exports = {
         })
       const cards = game.actions.chooseAndTransfer(player, choices, { toBoard: true, player: leader })
       if (cards && cards.length > 0) {
-        game.aDraw(player, { age: game.getEffectAge(self, 5) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 5) })
       }
     }
   ],

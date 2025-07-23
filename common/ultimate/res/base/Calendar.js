@@ -20,8 +20,8 @@ module.exports = {
         .length
 
       if (scoreCount > handCount) {
-        game.aDraw(player, { age: game.getEffectAge(self, 3) })
-        game.aDraw(player, { age: game.getEffectAge(self, 3) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 3) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 3) })
       }
       else {
         game.log.addNoEffect()

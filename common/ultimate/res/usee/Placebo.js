@@ -30,7 +30,7 @@ module.exports = {
       }
 
       returnedCards.forEach(() => {
-        game.aDraw(player, { age: game.getEffectAge(self, 7) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 7) })
       })
 
       const numSevensReturned = returnedCards
@@ -41,7 +41,7 @@ module.exports = {
           template: '{player} returned exactly one card of value 7',
           args: { player }
         })
-        game.aDraw(player, { age: game.getEffectAge(self, 8) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 8) })
       }
     },
   ],

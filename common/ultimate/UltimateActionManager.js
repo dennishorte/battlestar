@@ -1,5 +1,7 @@
 const { BaseActionManager } = require('../lib/game/index.js')
 const { GameOverEvent } = require('../lib/game.js')
+
+const { DrawAction } = require('./actions/Draw.js')
 const { MeldAction } = require('./actions/Meld.js')
 
 const util = require('../lib/util.js')
@@ -9,6 +11,10 @@ class UltimateActionManager extends BaseActionManager {
   constructor(game) {
     super(game)
   }
+
+  // Some actions are very complex, and so are separated into their own files
+  draw = DrawAction
+  meld = MeldAction
 
   acted(player) {
     const state = this.game.state
@@ -227,7 +233,7 @@ class UltimateActionManager extends BaseActionManager {
         .filter(other => !this.checkSameTeam(player, other))
 
       for (const opp of others) {
-        this.game.aDraw(opp, { exp: 'figs' })
+        this.game.actions.draw(opp, { exp: 'figs' })
       }
     }
 
@@ -278,9 +284,6 @@ class UltimateActionManager extends BaseActionManager {
       this.claimAchievement(player, { name: 'Victory' })
     }
   })
-
-  // Meld is very complex, and so it separated into its own file to help manage all of its moving parts
-  meld = MeldAction
 
   return = UltimateActionManager.insteadKarmaWrapper('return', (player, card, opts={}) => {
     if (!opts.silent) {
@@ -493,7 +496,7 @@ class UltimateActionManager extends BaseActionManager {
       const age = args[1]
       const opts = args[numArgs] || {}
 
-      const card = this.game.aDraw(player, { ...opts, age })
+      const card = this.game.actions.draw(player, { ...opts, age })
       if (card) {
         return this[verb](player, card, opts)
       }

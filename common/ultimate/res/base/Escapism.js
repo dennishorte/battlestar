@@ -33,7 +33,7 @@ module.exports = {
         game.actions.returnMany(player, toReturn, { ordered: true })
 
         for (let i = 0; i < 3; i++) {
-          game.aDraw(player, { age: cardValue })
+          game.actions.draw(player, { age: cardValue })
         }
 
         game.aSelfExecute(player, card)

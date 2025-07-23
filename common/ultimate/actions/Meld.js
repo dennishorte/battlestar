@@ -57,7 +57,7 @@ function _maybeCityBiscuits(player, card) {
   for (const biscuit of biscuits) {
     switch (biscuit) {
       case '+':
-        this.game.aDraw(player, { age: card.age + 1 })
+        this.game.actions.draw(player, { age: card.age + 1 })
         break
       case '<':
         this.game.aSplay(player, card.color, 'left')
@@ -75,7 +75,7 @@ function _maybeCityBiscuits(player, card) {
         break
       case '|':
         this.game.aJunkDeck(player, card.getAge() + 1)
-        this.game.aDraw(player, { age: card.getAge() + 2 })
+        this.game.actions.draw(player, { age: card.getAge() + 2 })
         break
       case 'x':
         this.game.aJunkAvailableAchievement(player, [card.getAge()])
@@ -121,7 +121,7 @@ function _maybeDiscoverBiscuit(player, card) {
     const numDraw = Math.min(maxDraw, age)
 
     for (let i = 0; i < numDraw; i++) {
-      const card = this.game.mDraw(player, 'base', age)
+      const card = this.game.actions.draw(player, { exp: 'base', age })
       this.reveal(player, card)
       if (!card.checkHasBiscuit(biscuit)) {
         this.return(player, card)

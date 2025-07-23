@@ -27,7 +27,7 @@ module.exports = {
       const selected = game.actions.choose(player, choices, { title: 'Choose an option:' })[0]
 
       if (selected === 'Draw a 4') {
-        game.aDraw(player, { age: game.getEffectAge(self, 4) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 4) })
       }
       else {
         const card = game.cards.byId(selected.selection[0])
@@ -50,7 +50,7 @@ module.exports = {
         const bulbCount = returned.map(c => c.getBiscuitCount('s')).reduce((x, acc) => x + acc, 0)
         const drawAge = leafCount + bulbCount
 
-        game.aDraw(player, { age: drawAge })
+        game.actions.draw(player, { age: drawAge })
       }
     }
   ],

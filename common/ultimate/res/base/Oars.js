@@ -27,7 +27,7 @@ module.exports = {
           const transferred = game.actions.chooseAndTransfer(player, choices, target)
           if (transferred && transferred.length > 0) {
             game.state.dogmaInfo.oarsCardTransferred = true
-            game.aDraw(player, { age: game.getEffectAge(self, 1) })
+            game.actions.draw(player, { age: game.getEffectAge(self, 1) })
             continue
           }
         }
@@ -38,7 +38,7 @@ module.exports = {
 
     (game, player, { self }) => {
       if (!game.state.dogmaInfo.oarsCardTransferred) {
-        game.aDraw(player, { age: game.getEffectAge(self, 1) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 1) })
       }
       else {
         game.log.addNoEffect()
