@@ -27,7 +27,7 @@ module.exports = {
 
     (game, player) => {
       const age = game.aChooseAge(player, [7, 8])
-      game.aJunkDeck(player, age)
+      game.actions.junkDeck(player, age)
     },
   ],
 }

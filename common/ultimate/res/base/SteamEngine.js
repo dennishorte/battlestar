@@ -18,7 +18,7 @@ module.exports = {
       game.actions.score(player, card)
 
       if (card.name === 'Steam Engine') {
-        game.aJunkDeck(player, 6)
+        game.actions.junkDeck(player, 6)
       }
     }
   ],

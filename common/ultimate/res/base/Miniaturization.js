@@ -27,7 +27,7 @@ module.exports = {
           }
         }
         else if (card.getAge() === game.getEffectAge(self, 11)) {
-          game.aJunkDeck(player, game.getEffectAge(self, 11))
+          game.actions.junkDeck(player, game.getEffectAge(self, 11))
         }
       }
     }

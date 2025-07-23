@@ -287,6 +287,52 @@ class UltimateActionManager extends BaseActionManager {
     }
   })
 
+  junkAvailableAchievement(player, ages, opts={}) {
+    const eligible = ages.flatMap(age => this.game.getAvailableAchievementsByAge(player, age))
+
+    const card = this.chooseCards(player, eligible, {
+      title: 'Choose an achievement to junk',
+      hidden: true,
+      ...opts
+    })[0]
+
+    if (card) {
+      this.junk(player, card)
+    }
+  }
+
+  junkDeck(player, age, opts={}) {
+    const cards = this.game.cards.byDeck('base', age)
+    if (cards.length === 0) {
+      this.log.add({
+        template: 'The {age} deck is already empty.',
+        args: { age },
+      })
+      return
+    }
+
+    let doJunk = true
+    if (opts.optional) {
+      doJunk = this.chooseYesNo(player, `Junk the ${age} deck?`)
+    }
+
+    if (doJunk) {
+      this.log.add({
+        template: '{player} moves all cards in {age} deck to the junk',
+        args: { player, age }
+      })
+
+      const cards = this.game.cards.byDeck('base', age)
+      this.junkMany(player, cards, { ordered: true })
+    }
+    else {
+      this.log.add({
+        template: '{player} chooses not to junk the {age} deck',
+        args: { player, age }
+      })
+    }
+  }
+
   return = UltimateActionManager.insteadKarmaWrapper('return', (player, card, opts={}) => {
     if (!opts.silent) {
       this.log.add({

@@ -74,11 +74,11 @@ function _maybeCityBiscuits(player, card) {
         }
         break
       case '|':
-        this.game.aJunkDeck(player, card.getAge() + 1)
+        this.game.actions.junkDeck(player, card.getAge() + 1)
         this.game.actions.draw(player, { age: card.getAge() + 2 })
         break
       case 'x':
-        this.game.aJunkAvailableAchievement(player, [card.getAge()])
+        this.game.actions.junkAvailableAchievement(player, [card.getAge()])
         break
       default:
         // Most biscuits don't do anything special.

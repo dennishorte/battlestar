@@ -1069,52 +1069,6 @@ Innovation.prototype.aDigArtifact = function(player, age) {
   }
 }
 
-Innovation.prototype.aJunkAvailableAchievement = function(player, ages, opts={}) {
-  const eligible = ages.flatMap(age => this.getAvailableAchievementsByAge(player, age))
-
-  const card = this.actions.chooseCards(player, eligible, {
-    title: 'Choose an achievement to junk',
-    hidden: true,
-    ...opts
-  })[0]
-
-  if (card) {
-    this.actions.junk(player, card)
-  }
-}
-
-Innovation.prototype.aJunkDeck = function(player, age, opts={}) {
-  const cards = this.getZoneByDeck('base', age).cards()
-  if (cards.length === 0) {
-    this.log.add({
-      template: 'The {age} deck is already empty.',
-      args: { age },
-    })
-    return
-  }
-
-  let doJunk = true
-  if (opts.optional) {
-    doJunk = this.actions.chooseYesNo(player, `Junk the ${age} deck?`)
-  }
-
-  if (doJunk) {
-    this.log.add({
-      template: '{player} moves all cards in {age} deck to the junk',
-      args: { player, age }
-    })
-
-    const cards = this.getZoneByDeck('base', age).cards()
-    this.actions.junkMany(player, cards, { ordered: true })
-  }
-  else {
-    this.log.add({
-      template: '{player} chooses not to junk the {age} deck',
-      args: { player, age }
-    })
-  }
-}
-
 Innovation.prototype.aSplay = function(player, color, direction, opts={}) {
   util.assert(direction, 'No direction specified for splay')
 

@@ -31,7 +31,7 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aJunkAvailableAchievement(player, [5, 6, 7], { min: 0 })
+      game.actions.junkAvailableAchievement(player, [5, 6, 7], { min: 0 })
     },
   ],
 }

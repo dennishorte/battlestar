@@ -34,7 +34,7 @@ module.exports = {
       }
     },
     (game, player) => {
-      game.aJunkDeck(player, 1, { optional: true })
+      game.actions.junkDeck(player, 1, { optional: true })
     }
   ],
 }

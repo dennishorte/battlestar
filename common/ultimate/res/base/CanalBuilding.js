@@ -26,7 +26,7 @@ module.exports = {
         game.aExchangeCards(player, handHighest, scoreHighest, hand, score)
       }
       else {
-        game.aJunkDeck(player, 3)
+        game.actions.junkDeck(player, 3)
       }
     }
   ],
