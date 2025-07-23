@@ -18,7 +18,7 @@ module.exports = {
 
       if (returned && returned.length == 2) {
         game.aDraw(player, { age: game.getEffectAge(self, 10) })
-        game.aDrawAndScore(player, game.getEffectAge(self, 10))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 10))
       }
     }
   ],

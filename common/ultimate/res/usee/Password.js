@@ -25,7 +25,7 @@ module.exports = {
       })[0]
 
       if (safeguarded) {
-        game.aScore(player, drawnCard)
+        game.actions.score(player, drawnCard)
       }
       else {
         game.actions.returnMany(player, otherHandCards)

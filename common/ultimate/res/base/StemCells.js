@@ -20,7 +20,7 @@ module.exports = {
       const scoreAll = game.actions.chooseYesNo(player, 'Score all cards from your hand?')
 
       if (scoreAll) {
-        game.aScoreMany(player, hand.cards())
+        game.actions.scoreMany(player, hand.cards())
       }
       else {
         game.log.addDoNothing(player)

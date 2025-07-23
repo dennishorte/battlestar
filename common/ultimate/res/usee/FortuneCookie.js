@@ -17,7 +17,7 @@ module.exports = {
       const exactlyNineIcon = Object.values(biscuits).find(count => count === 9)
 
       if (exactlySevenIcon) {
-        game.aDrawAndScore(player, game.getEffectAge(self, 7))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 7))
       }
 
       if (exactlyEightIcon) {

@@ -48,7 +48,7 @@ module.exports = {
           game.actions.claimAchievement(player, card)
           break
         case 'yellow':
-          game.aScore(player, card)
+          game.actions.score(player, card)
           break
         case 'blue':
           game.aDraw(player, { age: game.getEffectAge(self, 5) })

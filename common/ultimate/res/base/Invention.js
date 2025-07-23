@@ -16,7 +16,7 @@ module.exports = {
         .filter(color => game.zones.byPlayer(player, color).splay === 'left')
       const colors = game.aChooseAndSplay(player, splayedLeft, 'right')
       if (colors && colors.length > 0) {
-        game.aDrawAndScore(player, game.getEffectAge(self, 4))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 4))
       }
     },
 

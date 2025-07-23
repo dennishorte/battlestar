@@ -33,8 +33,8 @@ module.exports = {
               game.aDraw(player, { age: game.getEffectAge(self, 10) })
               break
             case options[1]:
-              game.aDrawAndScore(player, game.getEffectAge(self, 8))
-              game.aDrawAndScore(player, game.getEffectAge(self, 8))
+              game.actions.drawAndScore(player, game.getEffectAge(self, 8))
+              game.actions.drawAndScore(player, game.getEffectAge(self, 8))
               break
             case options[2]:
               game.actions.chooseAndSafeguard(player, game.getAvailableStandardAchievements(player), {

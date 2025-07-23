@@ -15,7 +15,7 @@ module.exports = {
           .getTopCards(player)
           .filter(card => card.getAge() === value)
 
-        return game.aChooseAndScore(player, choices)[0]
+        return game.actions.chooseAndScore(player, choices)[0]
       }
 
       let value = 11

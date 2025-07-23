@@ -35,7 +35,7 @@ module.exports = {
         })
 
         if (util.array.isDistinct(toScore.map(c => c.color))) {
-          game.aScoreMany(player, toScore)
+          game.actions.scoreMany(player, toScore)
           break
         }
         else {

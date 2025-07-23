@@ -31,7 +31,7 @@ module.exports = {
       }
       else {
         const card = game.cards.byId(selected.selection[0])
-        game.aScore(player, card)
+        game.actions.score(player, card)
       }
     },
     (game, player) => {

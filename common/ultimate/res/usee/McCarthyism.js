@@ -30,7 +30,7 @@ module.exports = {
     (game, player) => {
       const purple = game.getTopCard(player, 'purple')
       if (purple) {
-        game.aScore(player, purple)
+        game.actions.score(player, purple)
       }
       else {
         game.log.addNoEffect()

@@ -32,7 +32,7 @@ module.exports = {
         const values = game.cards.byPlayer(player, 'hand').map(c => c.getAge())
         const value = game.aChooseAge(player, util.array.distinct(values).sort())
         const toScore = game.cards.byPlayer(player, 'hand').filter(c => c.getAge() === value)
-        game.aScoreMany(player, toScore)
+        game.actions.scoreMany(player, toScore)
       }
       else {
         throw new Error('Invalid choice: ' + choice)

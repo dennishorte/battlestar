@@ -16,7 +16,7 @@ module.exports = {
 
     (game, player) => {
       const age = game.getHighestTopAge(player) + 1
-      game.aDrawAndScore(player, age)
+      game.actions.drawAndScore(player, age)
       game.actions.chooseAndReturn(player, game.zones.byPlayer(player, 'score').cards())
     }
   ],

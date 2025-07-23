@@ -15,7 +15,7 @@ module.exports = {
       if (card) {
         const isBottom = game.getBottomCard(player, card.color).name === card.name
         if (isBottom) {
-          game.aScore(player, card)
+          game.actions.score(player, card)
         }
       }
     },

@@ -14,7 +14,7 @@ module.exports = {
       while (true) {
         const agesInScore = game.cards.byPlayer(player, 'score').map(c => c.getAge())
         const canScore = game.getTopCards(player).filter(c => !agesInScore.includes(c.getAge()))
-        const scored = game.aChooseAndScore(player, canScore, { count: 1 })[0]
+        const scored = game.actions.chooseAndScore(player, canScore, { count: 1 })[0]
         if (scored) {
           continue
         }

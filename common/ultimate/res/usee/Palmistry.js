@@ -18,7 +18,7 @@ module.exports = {
       const returned = game.actions.chooseAndReturn(player, hand.cards(), { count: 2 })
 
       if (returned.length === 2) {
-        game.aDrawAndScore(player, game.getEffectAge(self, 2))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 2))
       }
     }
   ],

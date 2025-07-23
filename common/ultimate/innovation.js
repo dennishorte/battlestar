@@ -408,7 +408,7 @@ Innovation.prototype.fadeFiguresCheck = function() {
         }
 
         const toFade = this.actions.chooseCard(player, topFiguresFn())
-        this.aScore(player, toFade)
+        this.actions.score(player, toFade)
       }
 
       this.log.outdent()
@@ -805,7 +805,6 @@ function ChooseAndFactory(manyFuncName, numArgs) {
   }
 }
 
-Innovation.prototype.aChooseAndScore = ChooseAndFactory('aScoreMany', 2)
 Innovation.prototype.aChooseAndTransfer = ChooseAndFactory('aTransferMany', 3)
 
 Innovation.prototype.aChooseAndUnsplay = function(player, choices, opts={}) {
@@ -1101,13 +1100,6 @@ Innovation.prototype.aDraw = function(player, opts={}) {
   return this.mDraw(player, adjustedExp, adjustedAge, opts)
 }
 
-Innovation.prototype.aDrawAndScore = function(player, age, opts={}) {
-  const card = this.aDraw(player, {...opts, age })
-  if (card) {
-    return this.aScore(player, card, opts)
-  }
-}
-
 Innovation.prototype.aEndorse = function(player, color, opts={}) {
   this.log.add({
     template: '{player} endorses {color}',
@@ -1357,19 +1349,6 @@ Innovation.prototype.aJunkDeck = function(player, age, opts={}) {
   }
 }
 
-Innovation.prototype.aScore = function(player, card, opts={}) {
-  if (card === undefined) {
-    return
-  }
-  const karmaKind = this.aKarma(player, 'score', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    this.actions.acted(player)
-    return
-  }
-
-  return this.mScore(player, card, opts)
-}
-
 Innovation.prototype.aSplay = function(player, color, direction, opts={}) {
   util.assert(direction, 'No direction specified for splay')
 
@@ -1516,7 +1495,6 @@ function ManyFactory(baseFuncName, extraArgCount=0) {
   }
 }
 
-Innovation.prototype.aScoreMany = ManyFactory('aScore')
 Innovation.prototype.aTransferMany = ManyFactory('aTransfer', 1)
 
 
@@ -2287,17 +2265,6 @@ Innovation.prototype.mResetPeleCount = function() {
 
 Innovation.prototype.mSetFirstBaseDraw = function(player) {
   this.state.drawInfo[player.name].drewFirstBaseCard = true
-}
-
-Innovation.prototype.mScore = function(player, card) {
-  const target = this.zones.byPlayer(player, 'score')
-  card.moveTo(target)
-  this.log.add({
-    template: '{player} scores {card}',
-    args: { player, card }
-  })
-  this.actions.acted(player)
-  return card
 }
 
 Innovation.prototype.mSplay = function(player, color, direction, opts) {

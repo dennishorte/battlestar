@@ -20,7 +20,7 @@ module.exports = {
 
       for (const age of game.utilAges()) {
         if (!topCardValues.includes(age) && !scoreCardValues.includes(age)) {
-          game.aDrawAndScore(player, age)
+          game.actions.drawAndScore(player, age)
         }
       }
     },

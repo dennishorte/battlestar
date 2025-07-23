@@ -25,7 +25,7 @@ module.exports = {
           title: 'Choose an action'
         })[0]
         if (action === 'score') {
-          game.aScore(player, card)
+          game.actions.score(player, card)
         }
         else {
           game.actions.safeguard(player, card)
@@ -42,7 +42,7 @@ module.exports = {
         .map(c => c.getAge())
       const choices = util.array.distinct(values).sort()
       const value = game.aChooseAge(player, choices) || 0
-      game.aDrawAndScore(player, value)
+      game.actions.drawAndScore(player, value)
     }
   ],
 }

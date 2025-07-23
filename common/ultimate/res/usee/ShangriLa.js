@@ -13,7 +13,7 @@ module.exports = {
       const executeEffect = () => {
         const tucked = game.actions.drawAndTuck(player, game.getEffectAge(self, 8))
         if (tucked.checkHasBiscuit('f')) {
-          game.aScore(player, tucked)
+          game.actions.score(player, tucked)
         }
         else {
           const melded = game.actions.drawAndMeld(player, game.getEffectAge(self, 8))

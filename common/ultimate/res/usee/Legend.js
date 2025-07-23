@@ -20,7 +20,7 @@ module.exports = {
           return
         }
         game.aSelfExecute(player, card)
-        const scored = game.aScore(player, game.getTopCard(player, firstCard.color))
+        const scored = game.actions.score(player, game.getTopCard(player, firstCard.color))
         if (scored) {
           total += scored.getAge()
           keepGoing = total < 9

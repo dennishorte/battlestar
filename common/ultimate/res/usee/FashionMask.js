@@ -29,7 +29,7 @@ module.exports = {
 
       const toScore = [...yellows, ...purples]
 
-      game.aScoreMany(player, toScore)
+      game.actions.scoreMany(player, toScore)
 
       game.aSplay(player, 'yellow', 'aslant')
       game.aSplay(player, 'purple', 'aslant')

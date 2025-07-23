@@ -22,7 +22,7 @@ module.exports = {
       if (cards) {
         const ages = util.array.distinct(cards.map(card => card.getAge()))
         for (let i = 0; i < ages.length; i++) {
-          game.aDrawAndScore(player, game.getEffectAge(self, 7))
+          game.actions.drawAndScore(player, game.getEffectAge(self, 7))
         }
       }
     }

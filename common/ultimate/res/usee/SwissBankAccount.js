@@ -21,7 +21,7 @@ module.exports = {
         const cardsInHand = game
           .cards.byPlayer(player, 'hand')
           .filter(c => c.age === achievement.age)
-        game.aScoreMany(player, cardsInHand)
+        game.actions.scoreMany(player, cardsInHand)
       }
     },
     (game, player, { self }) => {

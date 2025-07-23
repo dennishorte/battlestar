@@ -23,7 +23,7 @@ module.exports = {
     },
     (game, player) => {
       const secrets = game.cards.byPlayer(player, 'safe')
-      game.aChooseAndScore(player, secrets)
+      game.actions.chooseAndScore(player, secrets)
     },
     (game, player) => {
       game.aChooseAndSplay(player, ['blue'], 'right')

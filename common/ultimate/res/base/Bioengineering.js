@@ -20,7 +20,7 @@ module.exports = {
         .filter(card => card !== undefined)
         .filter(card => card.biscuits.includes('l'))
 
-      game.aChooseAndScore(player, choices)
+      game.actions.chooseAndScore(player, choices)
     },
 
     (game) => {

@@ -15,7 +15,7 @@ module.exports = {
         const returned = game.actions.chooseAndReturn(player, hand.cards())[0]
         game.aSplay(player, returned.color, 'right')
         game.actions.chooseAndTuck(player, hand.cards())
-        game.aChooseAndScore(player, hand.cards())
+        game.actions.chooseAndScore(player, hand.cards())
       }
       else {
         game.log.addNoEffect()

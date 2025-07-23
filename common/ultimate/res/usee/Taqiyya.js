@@ -20,13 +20,13 @@ module.exports = {
       const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 3))
 
       if (game.getBottomCards(player).includes(card)) {
-        game.aScore(player, card)
+        game.actions.score(player, card)
 
         const sameColorInHand = game
           .cards.byPlayer(player, 'hand')
           .filter(c => c.color === card.color)
 
-        game.aChooseAndScore(player, sameColorInHand, { min: 0, max: sameColorInHand.length })
+        game.actions.chooseAndScore(player, sameColorInHand, { min: 0, max: sameColorInHand.length })
       }
     }
   ],

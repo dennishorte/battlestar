@@ -17,7 +17,7 @@ module.exports = {
             template: '{card} has a {c} biscuit',
             args: { card }
           })
-          game.aDrawAndScore(player, game.getEffectAge(self, 4))
+          game.actions.drawAndScore(player, game.getEffectAge(self, 4))
         }
         else {
           game.log.add({

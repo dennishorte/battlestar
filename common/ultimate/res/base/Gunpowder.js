@@ -22,7 +22,7 @@ module.exports = {
 
     (game, player, { self }) => {
       if (game.state.dogmaInfo.gunpowderCardWasTransferred) {
-        game.aDrawAndScore(player, game.getEffectAge(self, 2))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 2))
       }
       else {
         game.log.addNoEffect()

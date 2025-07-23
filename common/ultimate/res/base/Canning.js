@@ -19,7 +19,7 @@ module.exports = {
           .getTopCards(player)
           .filter(card => !card.biscuits.includes('f'))
 
-        game.aScoreMany(player, toReturn)
+        game.actions.scoreMany(player, toReturn)
       }
       else {
         game.log.addDoNothing(player)

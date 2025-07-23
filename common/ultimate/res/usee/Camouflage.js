@@ -69,7 +69,7 @@ module.exports = {
           count: 2,
           guard: (cards) => cards.every(c => c.getAge() === cards[0].getAge())
         })
-        game.aScoreMany(player, cards)
+        game.actions.scoreMany(player, cards)
       }
     },
     (game, player, { self }) => {

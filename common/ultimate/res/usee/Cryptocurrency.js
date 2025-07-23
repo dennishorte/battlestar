@@ -18,7 +18,7 @@ module.exports = {
 
       const uniqueAges = util.array.distinct(returned.map(card => card.getAge()))
       uniqueAges.forEach(() => {
-        game.aDrawAndScore(player, game.getEffectAge(self, 10))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 10))
       })
     },
     (game, player) => {

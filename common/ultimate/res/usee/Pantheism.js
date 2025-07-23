@@ -26,7 +26,7 @@ module.exports = {
         })[0]
 
         const cardsToScore = game.cards.byPlayer(player, colorToScore)
-        game.aScoreMany(player, cardsToScore)
+        game.actions.scoreMany(player, cardsToScore)
 
         const colorToSplay = colorToScore === firstCard.color ? secondCard.color : firstCard.color
         game.aSplay(player, colorToSplay, 'right')

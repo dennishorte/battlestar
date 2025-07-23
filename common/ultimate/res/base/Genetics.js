@@ -21,7 +21,7 @@ module.exports = {
           })
         }
         else {
-          game.aScoreMany(player, cards.slice(cardIndex + 1), { ordered: true })
+          game.actions.scoreMany(player, cards.slice(cardIndex + 1), { ordered: true })
         }
       }
     }

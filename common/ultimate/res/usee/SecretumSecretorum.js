@@ -34,7 +34,7 @@ module.exports = {
         const melded = game.actions.chooseAndMeld(player, drawnCards, { count: 1 })[0]
         const toScore = drawnCards.find(card => card !== melded)
         if (toScore) {
-          game.aScore(player, toScore)
+          game.actions.score(player, toScore)
         }
       }
     },

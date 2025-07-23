@@ -21,7 +21,7 @@ module.exports = {
         game.state.dogmaInfo.democracyLastPlayer === player.name
         || cards.length > game.state.dogmaInfo.democracyMaxReturned
       ) {
-        game.aDrawAndScore(player, game.getEffectAge(self, 8))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 8))
         if (cards.length > game.state.dogmaInfo.democracyMaxReturned) {
           game.state.dogmaInfo.democracyMaxReturned = cards.length
           game.state.dogmaInfo.democracyLastPlayer = player.name

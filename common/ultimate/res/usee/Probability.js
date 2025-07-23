@@ -31,8 +31,8 @@ module.exports = {
       game.log.add({ template: `The revealed cards had ${numberOfBiscuits} biscuit types total.` })
 
       if (numberOfBiscuits === 2) {
-        game.aDrawAndScore(player, game.getEffectAge(self, 6))
-        game.aDrawAndScore(player, game.getEffectAge(self, 6))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 6))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 6))
       }
       else if (numberOfBiscuits === 4) {
         game.aDraw(player, {age: game.getEffectAge(self, 7)})

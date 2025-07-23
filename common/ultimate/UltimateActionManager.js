@@ -338,6 +338,17 @@ class UltimateActionManager extends BaseActionManager {
     }
   }
 
+  score = UltimateActionManager.insteadKarmaWrapper('score', (player, card) => {
+    const target = this.game.zones.byPlayer(player, 'score')
+    card.moveTo(target)
+    this.log.add({
+      template: '{player} scores {card}',
+      args: { player, card }
+    })
+    this.acted(player)
+    return card
+  })
+
   tuck = UltimateActionManager.insteadKarmaWrapper('tuck', (player, card) => {
     const target = this.game.zones.byPlayer(player, card.color)
     card.moveTo(target)
@@ -358,6 +369,7 @@ class UltimateActionManager extends BaseActionManager {
   revealMany = UltimateActionManager.createManyMethod('reveal', 2)
   returnMany = UltimateActionManager.createManyMethod('return', 2)
   safeguardMany = UltimateActionManager.createManyMethod('safeguard', 2)
+  scoreMany = UltimateActionManager.createManyMethod('score', 2)
   tuckMany = UltimateActionManager.createManyMethod('tuck', 2)
 
   chooseAndJunk = UltimateActionManager.createChooseAndMethod('junkMany', 2)
@@ -365,6 +377,7 @@ class UltimateActionManager extends BaseActionManager {
   chooseAndReveal = UltimateActionManager.createChooseAndMethod('revealMany', 2)
   chooseAndReturn = UltimateActionManager.createChooseAndMethod('returnMany', 2)
   chooseAndSafeguard = UltimateActionManager.createChooseAndMethod('safeguardMany', 2)
+  chooseAndScore = UltimateActionManager.createChooseAndMethod('scoreMany', 2)
   chooseAndTuck = UltimateActionManager.createChooseAndMethod('tuckMany', 2)
 
   drawAndJunk = UltimateActionManager.createDrawAndMethod('junk', 2)
@@ -372,6 +385,7 @@ class UltimateActionManager extends BaseActionManager {
   drawAndReveal = UltimateActionManager.createDrawAndMethod('reveal', 2)
   drawAndReturn = UltimateActionManager.createDrawAndMethod('return', 2)
   drawAndSafeguard = UltimateActionManager.createDrawAndMethod('safeguard', 2)
+  drawAndScore = UltimateActionManager.createDrawAndMethod('score', 2)
   drawAndTuck = UltimateActionManager.createDrawAndMethod('tuck', 2)
 
 

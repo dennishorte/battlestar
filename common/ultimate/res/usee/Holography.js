@@ -16,7 +16,7 @@ module.exports = {
 
       const cards = game.cards.byPlayer(player, color)
       const toScore = cards.slice(2)
-      const scored = game.aScoreMany(player, toScore)
+      const scored = game.actions.scoreMany(player, toScore)
 
       const splayed = game.aSplay(player, color, 'aslant')
 

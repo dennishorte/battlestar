@@ -17,7 +17,7 @@ module.exports = {
       if (cards && cards.length > 0) {
         const remaining = game.cards.byPlayer(player, cards[0].color)
         if (remaining.length > 0) {
-          game.aScore(player, remaining[0])
+          game.actions.score(player, remaining[0])
         }
         game.actions.returnMany(player, remaining.slice(1), { ordered: true })
 

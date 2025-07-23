@@ -28,7 +28,7 @@ module.exports = {
           .filter(card => card.checkHasBiscuit('c'))
         const cards = game.aChooseLowest(player, choices, 1)
         if (cards && cards.length > 0) {
-          game.aScore(player, cards[0])
+          game.actions.score(player, cards[0])
         }
       }
       else {

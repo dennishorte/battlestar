@@ -19,7 +19,7 @@ module.exports = {
 
       const toScore = util.array.distinct(cards.map(card => card.getAge())).length
       for (let i = 0; i < toScore; i++) {
-        game.aDrawAndScore(player, game.getEffectAge(self, 2))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 2))
       }
     }
   ],

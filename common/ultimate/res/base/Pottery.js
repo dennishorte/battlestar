@@ -18,7 +18,7 @@ module.exports = {
       )
 
       if (cards && cards.length > 0) {
-        game.aDrawAndScore(player, cards.length)
+        game.actions.drawAndScore(player, cards.length)
       }
     },
 

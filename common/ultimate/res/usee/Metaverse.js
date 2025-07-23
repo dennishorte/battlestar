@@ -14,7 +14,7 @@ module.exports = {
         .getTopCards(player)
         .filter(c => game.checkColorIsSplayed(player, c.color))
 
-      const scored = game.aScoreMany(player, topSplayedCards)
+      const scored = game.actions.scoreMany(player, topSplayedCards)
 
       if (scored.length < 3) {
         game.log.add({

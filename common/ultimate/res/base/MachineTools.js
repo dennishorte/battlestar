@@ -13,7 +13,7 @@ module.exports = {
       const age = game
         .cards.byPlayer(player, 'score')
         .reduce((l, r) => Math.max(l, r.getAge()), 0)
-      game.aDrawAndScore(player, age)
+      game.actions.drawAndScore(player, age)
     }
   ],
 }

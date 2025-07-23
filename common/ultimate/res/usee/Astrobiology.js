@@ -20,7 +20,7 @@ module.exports = {
           .cards.byPlayer(player, card.color)
           .filter(c => !c.checkHasBiscuit('l'))
 
-        game.aScoreMany(player, cardsToScore)
+        game.actions.scoreMany(player, cardsToScore)
       }
     },
   ],

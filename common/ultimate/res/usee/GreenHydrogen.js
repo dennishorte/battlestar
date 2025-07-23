@@ -14,7 +14,7 @@ module.exports = {
         .cards.byPlayer(player, 'green')
         .slice(1)
 
-      const numScored = game.aScoreMany(player, greenCards).length
+      const numScored = game.actions.scoreMany(player, greenCards).length
 
       for (let i = 0; i < numScored; i++) {
         game.actions.drawAndTuck(player, game.getEffectAge(self, 11))

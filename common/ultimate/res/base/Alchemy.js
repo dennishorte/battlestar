@@ -34,7 +34,7 @@ module.exports = {
         .cards()
         .map(c => c.id)
       game.actions.chooseAndMeld(player, hand())
-      game.aChooseAndScore(player, hand())
+      game.actions.chooseAndScore(player, hand())
     },
   ],
 }

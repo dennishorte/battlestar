@@ -18,9 +18,9 @@ module.exports = {
       }
     },
     (game, player, { self }) => {
-      game.aDrawAndScore(player, game.getEffectAge(self, 10))
-      game.aDrawAndScore(player, game.getEffectAge(self, 10))
-      game.aDrawAndScore(player, game.getEffectAge(self, 10))
+      game.actions.drawAndScore(player, game.getEffectAge(self, 10))
+      game.actions.drawAndScore(player, game.getEffectAge(self, 10))
+      game.actions.drawAndScore(player, game.getEffectAge(self, 10))
     }
   ],
 }

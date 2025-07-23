@@ -19,7 +19,7 @@ module.exports = {
         .cards()
         .map(c => c.name)
 
-      game.aChooseAndScore(player, choices, { min: 0, max: 1 })
+      game.actions.chooseAndScore(player, choices, { min: 0, max: 1 })
     }
   ],
 }

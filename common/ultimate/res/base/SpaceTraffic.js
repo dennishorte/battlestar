@@ -33,7 +33,7 @@ module.exports = {
         const cards = game.cards.byPlayer(player, color)
         if (cards.length > 5) {
           const toScore = cards.slice(5)
-          game.aScoreMany(player, toScore, { ordered: true })
+          game.actions.scoreMany(player, toScore, { ordered: true })
         }
 
         // Splay that color aslant

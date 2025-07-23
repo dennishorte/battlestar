@@ -16,7 +16,7 @@ module.exports = {
       game.actions.chooseAndReturn(player, cards, { count })
     },
     (game, player) => {
-      game.aChooseAndScore(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1 })
+      game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1 })
     }
   ],
 }

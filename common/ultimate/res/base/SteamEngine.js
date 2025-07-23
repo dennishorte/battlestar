@@ -15,7 +15,7 @@ module.exports = {
 
       const cards = game.cards.byPlayer(player, 'yellow')
       const card = cards[cards.length - 1]
-      game.aScore(player, card)
+      game.actions.score(player, card)
 
       if (card.name === 'Steam Engine') {
         game.aJunkDeck(player, 6)

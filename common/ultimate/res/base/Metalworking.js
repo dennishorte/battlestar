@@ -13,7 +13,7 @@ module.exports = {
       while (true) {
         const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 1))
         if (card.checkHasBiscuit('k')) {
-          game.aScore(player, card)
+          game.actions.score(player, card)
         }
         else {
           break

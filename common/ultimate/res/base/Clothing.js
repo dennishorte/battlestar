@@ -40,7 +40,7 @@ module.exports = {
       }
       else {
         for (let i = 0; i < playerOnlyColors; i++) {
-          game.aDrawAndScore(player, game.getEffectAge(self, 1))
+          game.actions.drawAndScore(player, game.getEffectAge(self, 1))
         }
       }
     }

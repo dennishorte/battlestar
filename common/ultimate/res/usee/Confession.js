@@ -19,7 +19,7 @@ module.exports = {
 
       if (returned.length === 0) {
         game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'score'))
-        game.aDrawAndScore(player, game.getEffectAge(self, 4))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 4))
       }
     },
     (game, player, { self }) => {

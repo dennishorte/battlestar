@@ -42,7 +42,7 @@ module.exports = {
         return
       }
 
-      game.aChooseAndScore(player, choices, { min: 2, max: 3 })
+      game.actions.chooseAndScore(player, choices, { min: 2, max: 3 })
     }
   ],
 }

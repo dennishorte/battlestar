@@ -28,7 +28,7 @@ module.exports = {
     },
     (game, player) => {
       if (!game.state.dogmaInfo.padlockCardTransferred) {
-        game.aChooseAndScore(player, game.cards.byPlayer(player, 'hand'), {
+        game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), {
           title: 'Choose up the three cards of different values',
           min: 0,
           max: 3,

@@ -31,7 +31,7 @@ module.exports = {
       }
 
       if (numGreen >= 2) {
-        game.aScoreMany(player, drawnCards)
+        game.actions.scoreMany(player, drawnCards)
       }
       else {
         game.actions.returnMany(player, drawnCards)

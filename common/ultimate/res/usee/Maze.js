@@ -54,7 +54,7 @@ module.exports = {
           .cards.byPlayer(player, 'hand')
           .filter(c => colorsToDiscard.indexOf(c.color) >= 0)
 
-        const scored = game.aChooseAndScore(player, validCards)[0]
+        const scored = game.actions.chooseAndScore(player, validCards)[0]
 
         if (scored) {
           util.array.remove(colorsToDiscard, scored.color)

@@ -13,12 +13,12 @@ module.exports = {
     (game, player, { self }) => {
       const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 11))
       if (card) {
-        game.aScore(player, card)
+        game.actions.score(player, card)
         const choices = game
           .cards.byPlayer(player, 'hand')
           .filter(c => c.color === card.color)
 
-        const scored = game.aChooseAndScore(player, choices)[0]
+        const scored = game.actions.chooseAndScore(player, choices)[0]
         if (!scored) {
           game.aYouLose(player, self)
         }
@@ -30,7 +30,7 @@ module.exports = {
         .filter(c => c.color !== 'yellow')
         .filter(c => c.checkHasBiscuit('i'))
 
-      game.aScoreMany(player, toScore)
+      game.actions.scoreMany(player, toScore)
     }
   ],
 }

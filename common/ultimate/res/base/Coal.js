@@ -31,7 +31,7 @@ module.exports = {
         for (let i = 0; i < 2; i++) {
           const toScore = game.cards.byPlayer(player, color)[0]
           if (toScore) {
-            game.aScore(player, toScore)
+            game.actions.score(player, toScore)
           }
         }
       }

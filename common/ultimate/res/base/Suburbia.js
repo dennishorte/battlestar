@@ -15,7 +15,7 @@ module.exports = {
       const tucked = game.actions.chooseAndTuck(player, cards, { min: 0, max: cards.length })
       if (tucked) {
         for (let i = 0; i < tucked.length; i++) {
-          game.aDrawAndScore(player, game.getEffectAge(self, 1))
+          game.actions.drawAndScore(player, game.getEffectAge(self, 1))
         }
       }
     },

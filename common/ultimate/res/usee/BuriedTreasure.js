@@ -24,7 +24,7 @@ module.exports = {
         game.actions.drawAndSafeguard(player, value)
 
         const availableStandard = game.getAvailableStandardAchievements(player)
-        game.aChooseAndScore(player, availableStandard, { count: 3, hidden: true })
+        game.actions.chooseAndScore(player, availableStandard, { count: 3, hidden: true })
       }
     },
   ],

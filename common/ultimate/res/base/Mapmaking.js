@@ -26,7 +26,7 @@ module.exports = {
 
     (game, player, { self }) => {
       if (game.state.dogmaInfo.transferred) {
-        game.aDrawAndScore(player, game.getEffectAge(self, 1))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 1))
       }
       else {
         game.log.addNoEffect()

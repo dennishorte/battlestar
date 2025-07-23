@@ -16,7 +16,7 @@ module.exports = {
       if (returned.length > 0) {
         const card = returned[0]
         game.actions.return(player, card)
-        game.aDrawAndScore(player, card.getAge() + 1)
+        game.actions.drawAndScore(player, card.getAge() + 1)
       }
     },
   ],
