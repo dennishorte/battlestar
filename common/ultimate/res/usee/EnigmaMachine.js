@@ -20,7 +20,7 @@ module.exports = {
 
       if (choice === choices[0]) {
         const achievements = game.getAvailableStandardAchievements(player)
-        game.aSafeguardMany(player, achievements)
+        game.actions.safeguardMany(player, achievements)
       }
       else if (choice === choices[1]) {
         const secrets = game.zones.byPlayer(player, 'safe').cards()

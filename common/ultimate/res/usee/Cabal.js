@@ -33,7 +33,7 @@ module.exports = {
         .getAvailableAchievementsRaw(player)
         .filter(achievement => topCardAges.includes(achievement.getAge()))
 
-      game.aChooseAndSafeguard(player, availableAchievements, { hidden: true })
+      game.actions.chooseAndSafeguard(player, availableAchievements, { hidden: true })
     }
   ],
 }

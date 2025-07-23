@@ -22,7 +22,7 @@ module.exports = {
           const value = topRed.getAge()
           const achievement = game.getAvailableAchievementsByAge(player, value)[0]
           if (achievement) {
-            game.aSafeguard(player, achievement)
+            game.actions.safeguard(player, achievement)
           }
         }
       }

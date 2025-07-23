@@ -17,7 +17,7 @@ module.exports = {
         .filter(a => a.age === scoreCount)[0]
 
       if (achievement) {
-        game.aSafeguard(player, achievement)
+        game.actions.safeguard(player, achievement)
         const cardsInHand = game
           .cards.byPlayer(player, 'hand')
           .filter(c => c.age === achievement.age)

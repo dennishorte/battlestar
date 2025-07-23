@@ -23,7 +23,7 @@ module.exports = {
         .map(color => game.getTopCard(player, color))
 
       game.actions.returnMany(player, toReturn)
-      game.aChooseAndSafeguard(player, game.getAvailableStandardAchievements(player), {
+      game.actions.chooseAndSafeguard(player, game.getAvailableStandardAchievements(player), {
         count: toReturn.length,
         hidden: true
       })

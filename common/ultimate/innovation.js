@@ -805,7 +805,6 @@ function ChooseAndFactory(manyFuncName, numArgs) {
   }
 }
 
-Innovation.prototype.aChooseAndSafeguard = ChooseAndFactory('aSafeguardMany', 2)
 Innovation.prototype.aChooseAndScore = ChooseAndFactory('aScoreMany', 2)
 Innovation.prototype.aChooseAndTransfer = ChooseAndFactory('aTransferMany', 3)
 
@@ -1102,13 +1101,6 @@ Innovation.prototype.aDraw = function(player, opts={}) {
   return this.mDraw(player, adjustedExp, adjustedAge, opts)
 }
 
-Innovation.prototype.aDrawAndSafeguard = function(player, age, opts={}) {
-  const card = this.aDraw(player, {...opts, age })
-  if (card) {
-    return this.aSafeguard(player, card, opts)
-  }
-}
-
 Innovation.prototype.aDrawAndScore = function(player, age, opts={}) {
   const card = this.aDraw(player, {...opts, age })
   if (card) {
@@ -1365,39 +1357,6 @@ Innovation.prototype.aJunkDeck = function(player, age, opts={}) {
   }
 }
 
-Innovation.prototype.aSafeguard = function(player, card) {
-  const safeLimit = this.getSafeLimit(player)
-  const safeZone = this.zones.byPlayer(player, 'safe')
-
-  if (safeZone.cards().length >= safeLimit) {
-    this.log.add({
-      template: '{player} has reached their safe limit',
-      args: { player }
-    })
-    return
-  }
-
-  this.log.add({
-    template: '{player} safeguards {card} from {zone}',
-    args: { player, card, zone: card.zone },
-  })
-
-  card.moveTo(safeZone)
-  this.actions.acted(player)
-  return card
-}
-
-Innovation.prototype.aSafeguardAvailableAchievement = function(player, age) {
-  const availableAchievements = this.getAvailableAchievementsByAge(player, age)
-
-  if (availableAchievements.length === 0) {
-    this.log.add({ template: 'No available achievements of age ' + age })
-  }
-  else {
-    this.aSafeguard(player, availableAchievements[0])
-  }
-}
-
 Innovation.prototype.aScore = function(player, card, opts={}) {
   if (card === undefined) {
     return
@@ -1557,7 +1516,6 @@ function ManyFactory(baseFuncName, extraArgCount=0) {
   }
 }
 
-Innovation.prototype.aSafeguardMany = ManyFactory('aSafeguard')
 Innovation.prototype.aScoreMany = ManyFactory('aScore')
 Innovation.prototype.aTransferMany = ManyFactory('aTransfer', 1)
 

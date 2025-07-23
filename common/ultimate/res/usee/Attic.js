@@ -28,7 +28,7 @@ module.exports = {
           game.aScore(player, card)
         }
         else {
-          game.aSafeguard(player, card)
+          game.actions.safeguard(player, card)
         }
       }
     },

@@ -20,7 +20,7 @@ module.exports = {
           const achievement = game.getAvailableAchievementsByAge(player, maxAge)[0]
 
           if (achievement) {
-            game.aSafeguard(player, achievement)
+            game.actions.safeguard(player, achievement)
           }
 
           game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))

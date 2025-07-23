@@ -37,7 +37,7 @@ module.exports = {
               game.aDrawAndScore(player, game.getEffectAge(self, 8))
               break
             case options[2]:
-              game.aChooseAndSafeguard(player, game.getAvailableStandardAchievements(player), {
+              game.actions.chooseAndSafeguard(player, game.getAvailableStandardAchievements(player), {
                 count: 2,
                 hidden: true,
               })

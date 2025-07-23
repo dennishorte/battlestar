@@ -21,7 +21,7 @@ module.exports = {
       const transferred = game.aTransferMany(player, toTransfer, game.zones.byId('achievements'))
 
       if (transferred.length >= 4) {
-        game.aDrawAndSafeguard(player, value)
+        game.actions.drawAndSafeguard(player, value)
 
         const availableStandard = game.getAvailableStandardAchievements(player)
         game.aChooseAndScore(player, availableStandard, { count: 3, hidden: true })

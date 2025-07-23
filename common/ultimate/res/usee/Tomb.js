@@ -18,7 +18,7 @@ module.exports = {
         .filter(card => card.checkIsStandardAchievement())
 
       if (choices.length > 0) {
-        game.aSafeguard(player, choices[0])
+        game.actions.safeguard(player, choices[0])
       }
       else {
         game.log.addNoEffect()

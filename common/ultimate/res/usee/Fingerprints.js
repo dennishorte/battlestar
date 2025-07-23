@@ -19,7 +19,7 @@ module.exports = {
         .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
         .length
 
-      game.aSafeguardAvailableAchievement(player, splayedColors)
+      game.actions.safeguardAvailableAchievement(player, splayedColors)
 
       const choices = game
         .cards.byPlayer(player, 'hand')

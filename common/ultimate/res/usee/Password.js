@@ -13,11 +13,12 @@ module.exports = {
       const drawnCard = game.actions.drawAndReveal(player, game.getEffectAge(self, 2))
 
       const otherHandCards = game
-        .cards.byPlayer(player, 'hand')
+        .cards
+        .byPlayer(player, 'hand')
         .filter(c => c.name !== drawnCard.name)
       const sameColorCards = otherHandCards.filter(c => c.color === drawnCard.color)
 
-      const safeguarded = game.aChooseAndSafeguard(player, sameColorCards, {
+      const safeguarded = game.actions.chooseAndSafeguard(player, sameColorCards, {
         title: 'Choose a card to safeguard',
         min: 0,
         max: 1

@@ -19,7 +19,7 @@ module.exports = {
         .find(card => card.color === 'purple')
 
       if (bottomPurpleCard) {
-        game.aSafeguard(player, bottomPurpleCard)
+        game.actions.safeguard(player, bottomPurpleCard)
       }
       else {
         game.log.add({

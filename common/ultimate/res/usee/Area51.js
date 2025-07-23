@@ -29,7 +29,7 @@ module.exports = {
         const achievement = game.actions.chooseCards(player, available, { hidden: true })[0]
 
         if (achievement) {
-          game.aSafeguard(player, achievement)
+          game.actions.safeguard(player, achievement)
         }
       }
     },

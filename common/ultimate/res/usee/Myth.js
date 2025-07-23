@@ -43,7 +43,7 @@ module.exports = {
           const bottomCard = game.getBottomCard(player, tucked[0].color)
           const bottomValue = bottomCard ? bottomCard.age : 1
           const drawnCard = game.aDraw(player, { age: bottomValue })
-          game.aSafeguard(player, drawnCard)
+          game.actions.safeguard(player, drawnCard)
         }
       }
       else {

@@ -16,7 +16,7 @@ module.exports = {
         .filter(card => card.checkHasBiscuit('c') || card.checkHasBiscuit('f'))
 
       const tucked = game.actions.tuckMany(player, toTuck)
-      game.aChooseAndSafeguard(player, tucked, { min: 0 })
+      game.actions.chooseAndSafeguard(player, tucked, { min: 0 })
     },
     (game, player) => {
       const yellows = game

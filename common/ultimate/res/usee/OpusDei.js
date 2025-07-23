@@ -17,7 +17,7 @@ module.exports = {
 
       if (card) {
         game.aSplay(player, card.color, 'up')
-        game.aSafeguard(player, card)
+        game.actions.safeguard(player, card)
       }
     },
     (game, player, { self }) => {

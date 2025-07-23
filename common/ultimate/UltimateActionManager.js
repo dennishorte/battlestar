@@ -305,6 +305,39 @@ class UltimateActionManager extends BaseActionManager {
     return card
   })
 
+  safeguard = UltimateActionManager.insteadKarmaWrapper('safeguard', (player, card) => {
+    const safeLimit = this.game.getSafeLimit(player)
+    const safeZone = this.game.zones.byPlayer(player, 'safe')
+
+    if (safeZone.cards().length >= safeLimit) {
+      this.log.add({
+        template: '{player} has reached their safe limit',
+        args: { player }
+      })
+      return
+    }
+
+    this.log.add({
+      template: '{player} safeguards {card} from {zone}',
+      args: { player, card, zone: card.zone },
+    })
+
+    card.moveTo(safeZone)
+    this.acted(player)
+    return card
+  })
+
+  safeguardAvailableAchievement(player, age) {
+    const availableAchievements = this.game.getAvailableAchievementsByAge(player, age)
+
+    if (availableAchievements.length === 0) {
+      this.log.add({ template: 'No available achievements of age ' + age })
+    }
+    else {
+      this.safeguard(player, availableAchievements[0])
+    }
+  }
+
   tuck = UltimateActionManager.insteadKarmaWrapper('tuck', (player, card) => {
     const target = this.game.zones.byPlayer(player, card.color)
     card.moveTo(target)
@@ -324,18 +357,21 @@ class UltimateActionManager extends BaseActionManager {
   meldMany = UltimateActionManager.createManyMethod('meld', 2)
   revealMany = UltimateActionManager.createManyMethod('reveal', 2)
   returnMany = UltimateActionManager.createManyMethod('return', 2)
+  safeguardMany = UltimateActionManager.createManyMethod('safeguard', 2)
   tuckMany = UltimateActionManager.createManyMethod('tuck', 2)
 
   chooseAndJunk = UltimateActionManager.createChooseAndMethod('junkMany', 2)
   chooseAndMeld = UltimateActionManager.createChooseAndMethod('meldMany', 2)
   chooseAndReveal = UltimateActionManager.createChooseAndMethod('revealMany', 2)
   chooseAndReturn = UltimateActionManager.createChooseAndMethod('returnMany', 2)
+  chooseAndSafeguard = UltimateActionManager.createChooseAndMethod('safeguardMany', 2)
   chooseAndTuck = UltimateActionManager.createChooseAndMethod('tuckMany', 2)
 
   drawAndJunk = UltimateActionManager.createDrawAndMethod('junk', 2)
   drawAndMeld = UltimateActionManager.createDrawAndMethod('meld', 2)
   drawAndReveal = UltimateActionManager.createDrawAndMethod('reveal', 2)
   drawAndReturn = UltimateActionManager.createDrawAndMethod('return', 2)
+  drawAndSafeguard = UltimateActionManager.createDrawAndMethod('safeguard', 2)
   drawAndTuck = UltimateActionManager.createDrawAndMethod('tuck', 2)
 
 

@@ -26,7 +26,7 @@ module.exports = {
         const topCard = game.getZoneByDeck('base', 4).cards()[0]
 
         if (topCard) {
-          game.aSafeguard(player, topCard)
+          game.actions.safeguard(player, topCard)
         }
         else {
           game.log.add({ template: 'No cards in the 4 deck. (This is not a draw action.)' })

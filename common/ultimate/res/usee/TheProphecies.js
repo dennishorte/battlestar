@@ -31,7 +31,7 @@ module.exports = {
       const selected = game.actions.choose(player, choices)[0]
 
       if (selected === drawOption) {
-        game.aDrawAndSafeguard(player, drawAge)
+        game.actions.drawAndSafeguard(player, drawAge)
       }
       else {
         const revealAge = parseInt(selected.selection[0])
@@ -40,7 +40,7 @@ module.exports = {
         if (revealed.color === 'red' || revealed.color === 'purple') {
           const melded = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'safe'))
           if (melded) {
-            game.aSafeguard(player, revealed)
+            game.actions.safeguard(player, revealed)
           }
         }
       }

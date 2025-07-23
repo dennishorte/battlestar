@@ -17,7 +17,7 @@ module.exports = {
         game.aSplay(player, card.color, 'right')
 
         const topCard = game.getTopCard(player, card.color)
-        const safeGuarded = game.aSafeguard(player, topCard)
+        const safeGuarded = game.actions.safeguard(player, topCard)
 
         if (!safeGuarded) {
           return
@@ -27,7 +27,7 @@ module.exports = {
         const higherAchievement = availableAchievements.find(a => a.getAge() === safeGuarded.getAge() + 1)
 
         if (higherAchievement) {
-          game.aSafeguard(player, higherAchievement)
+          game.actions.safeguard(player, higherAchievement)
         }
         else {
           game.log.add({

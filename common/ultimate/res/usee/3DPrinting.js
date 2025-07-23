@@ -38,7 +38,7 @@ module.exports = {
           })[0]
 
           if (standard) {
-            game.aSafeguard(player, standard)
+            game.actions.safeguard(player, standard)
           }
 
           if (secret && standard) {

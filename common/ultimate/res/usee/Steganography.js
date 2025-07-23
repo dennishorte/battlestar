@@ -20,7 +20,7 @@ module.exports = {
 
       if (splayed) {
         const numCards = game.cards.byPlayer(player, splayed).length
-        game.aSafeguardAvailableAchievement(player, numCards)
+        game.actions.safeguardAvailableAchievement(player, numCards)
       }
       else {
         game.actions.drawAndTuck(player, game.getEffectAge(self, 3))

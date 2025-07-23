@@ -15,7 +15,7 @@ module.exports = {
       const availableAchievement = game.getAvailableAchievementsByAge(player, handSize)[0]
 
       if (availableAchievement) {
-        game.aSafeguard(player, availableAchievement)
+        game.actions.safeguard(player, availableAchievement)
 
         const toReturn = game
           .cards.byPlayer(player, 'hand')

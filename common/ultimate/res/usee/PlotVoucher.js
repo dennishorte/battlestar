@@ -16,7 +16,7 @@ module.exports = {
       const lowestAchievement = game.utilLowestCards(game.getAvailableStandardAchievements(player))[0]
       let safeguarded
       if (lowestAchievement) {
-        safeguarded = game.aSafeguard(player, lowestAchievement)
+        safeguarded = game.actions.safeguard(player, lowestAchievement)
       }
 
       if (safeguarded && melded) {

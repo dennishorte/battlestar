@@ -24,7 +24,7 @@ module.exports = {
         const availableAchievements = game.getAvailableAchievementsByAge(player, value)
 
         if (availableAchievements.length > 0) {
-          game.aSafeguard(player, availableAchievements[0])
+          game.actions.safeguard(player, availableAchievements[0])
         }
         else {
           game.log.addNoEffect()
