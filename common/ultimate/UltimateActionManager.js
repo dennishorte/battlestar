@@ -1,6 +1,7 @@
 const { BaseActionManager } = require('../lib/game/index.js')
 const { GameOverEvent } = require('../lib/game.js')
 
+const { DogmaAction } = require('./actions/Dogma.js')
 const { DrawAction } = require('./actions/Draw.js')
 const { MeldAction } = require('./actions/Meld.js')
 
@@ -13,6 +14,7 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   // Some actions are very complex, and so are separated into their own files
+  dogma = DogmaAction
   draw = DrawAction
   meld = MeldAction
 

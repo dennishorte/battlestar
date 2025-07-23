@@ -12,6 +12,12 @@ const { UltimateCardManager } = require('./UltimateCardManager.js')
 const { UltimateZone } = require('./UltimateZone.js')
 const { UltimateZoneManager } = require('./UltimateZoneManager.js')
 
+const {
+  DogmaHelper,
+  getDogmaShareInfo,
+} = require('./actions/Dogma.js')
+
+
 module.exports = {
   GameOverEvent,
   Innovation,
@@ -29,6 +35,10 @@ function Innovation(serialized_data, viewerName) {
   this.actions = new UltimateActionManager(this)
   this.cards = new UltimateCardManager(this)
   this.zones = new UltimateZoneManager(this)
+
+
+  // Used in the UI for showing who will share/demand with an action
+  this.getDogmaShareInfo = getDogmaShareInfo.bind(this.actions)
 }
 
 util.inherit(Game, Innovation)
@@ -292,7 +302,7 @@ Innovation.prototype.artifact = function() {
     switch (action) {
       case 'dogma': {
         const startingZone = artifact.zone
-        this.aDogma(player, artifact, { artifact: true })
+        this.actions.dogma(player, artifact, { artifact: true })
         if (startingZone === artifact.zone) {
           this.actions.return(player, artifact)
         }
@@ -363,7 +373,7 @@ Innovation.prototype.action = function(count) {
   }
   else if (name === 'Dogma') {
     const card = this.cards.byId(arg)
-    this.aDogma(player, card)
+    this.actions.dogma(player, card)
   }
   else if (name === 'Draw') {
     this.actions.draw(player, { isAction: true })
@@ -478,23 +488,6 @@ Innovation.prototype.aCardEffect = function(player, info, opts={}) {
   }
 
   return result
-}
-
-Innovation.prototype.aExecuteAsIf = function(player, card) {
-  const { featuredBiscuit, biscuits } = this.state.dogmaInfo
-  const { sharing, demanding } =
-    this.getSharingAndDemanding(player, featuredBiscuit, biscuits)
-
-  const effectOptions = {
-    sharing,
-    demanding,
-    noShare: true,
-  }
-
-  this.log.indent()
-  this.aCardEffects(player, card, 'echo', effectOptions)
-  this.aCardEffects(player, card, 'dogma', effectOptions)
-  this.log.outdent()
 }
 
 Innovation.prototype.aOneEffect = function(
@@ -873,141 +866,6 @@ Innovation.prototype.aDecree = function(player, name) {
   this.log.outdent()
 }
 
-Innovation.prototype.getDogmaBiscuits = function(player, card, opts) {
-  // Store the biscuits now because changes caused by the dogma action should
-  // not affect the number of biscuits used for evaluting the effect.
-  const biscuits = this.getBiscuits()
-  const artifactBiscuits = opts.artifact ? this.getBiscuitsByCard(card, 'top') : this.utilEmptyBiscuits()
-  biscuits[player.name] = this.utilCombineBiscuits(biscuits[player.name], artifactBiscuits)
-
-  return biscuits
-}
-
-Innovation.prototype.getDogmaShareInfo = function(player, card, opts={}) {
-  const biscuits = opts.biscuits || this.getDogmaBiscuits(player, card, opts)
-  const featuredBiscuit = opts.featuredBiscuit || card.dogmaBiscuit
-
-  const { sharing, demanding } = this.getSharingAndDemanding(player, featuredBiscuit, biscuits, opts)
-
-  return {
-    biscuits,
-    featuredBiscuit,
-    hasShare: card.checkHasShare(),
-    hasDemand: card.checkHasDemandExplicit(),
-    hasCompel: card.checkHasCompelExplicit(),
-    sharing,
-    demanding,
-  }
-}
-
-Innovation.prototype._aDogmaHelper_logSharing = function(shareData) {
-  if (shareData.sharing.length > 0) {
-    this.log.add({
-      template: 'Effects will share with {players}.',
-      args: { players: shareData.sharing },
-    })
-  }
-
-  if (shareData.demanding.length > 0) {
-    this.log.add({
-      template: 'Demands will be made of {players}.',
-      args: { players: shareData.demanding },
-    })
-  }
-}
-
-Innovation.prototype._aDogmaHelper_executeEffects = function(player, card, shareData, opts) {
-  // Store planned effects now, as changes to the stacks shouldn't affect them.
-  const effects = [
-    ...this.getVisibleEffectsByColor(card.owner, card.color, 'echo'),
-    this.getVisibleEffects(card, 'dogma')
-  ].filter(e => e !== undefined)
-
-  const effectOpts = {
-    sharing: shareData.sharing,
-    demanding: shareData.demanding,
-    endorsed: opts.endorsed,
-  }
-
-  this.statsRecordDogmaActions(player, card, effectOpts)
-
-  for (const e of effects) {
-    for (let i = 0; i < e.texts.length; i++) {
-      const result = this.aOneEffect(player, e.card, e.texts[i], e.impls[i], effectOpts)
-      if (this.state.dogmaInfo.earlyTerminate) {
-        return
-      }
-    }
-  }
-}
-
-Innovation.prototype._aDogmaHelper_initializeGlobalContext = function(biscuits, featuredBiscuit) {
-  this.state.shared = false
-  this.state.couldShare = false
-
-  this.state.dogmaInfo.biscuits = biscuits
-  this.state.dogmaInfo.featuredBiscuit = featuredBiscuit
-  this.state.dogmaInfo.earlyTerminate = false
-}
-
-Innovation.prototype._aDogmaHelper_shareBonus = function(player, card) {
-  // Share bonus
-  if (this.state.shared) {
-    this.log.add({
-      template: '{player} draws a sharing bonus',
-      args: { player }
-    })
-    this.log.indent()
-    const expansion = this.getExpansionList().includes('figs') ? 'figs' : ''
-    this.actions.draw(player, {
-      exp: expansion,
-      share: true,
-      featuredBiscuit: this.state.dogmaInfo.featuredBiscuit
-    })
-    this.log.outdent()
-  }
-
-  // Grace Hopper and Susan Blackmore have "if your opponent didn't share" karma effects
-  else if (this.state.couldShare) {
-    for (const other of this.players.opponentsOf(player)) {
-      this.aKarma(other, 'no-share', { card, leader: player })
-    }
-  }
-}
-
-Innovation.prototype.aDogmaHelper = function(player, card, opts) {
-  const karmaKind = this.aKarma(player, 'dogma', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    this.actions.acted(player)
-    return
-  }
-
-  const shareData = this.getDogmaShareInfo(player, card, opts)
-
-  this._aDogmaHelper_initializeGlobalContext(shareData.biscuits, shareData.featuredBiscuit)
-  this._aDogmaHelper_logSharing(shareData)
-  this._aDogmaHelper_executeEffects(player, card, shareData, opts)
-
-  if (this.state.dogmaInfo.earlyTerminate) {
-    return
-  }
-
-  this._aDogmaHelper_shareBonus(player, card)
-}
-
-Innovation.prototype.aDogma = function(player, card, opts={}) {
-  this.log.add({
-    template: '{player} activates the dogma effects of {card}',
-    classes: ['player-action'],
-    args: { player, card }
-  })
-
-  this.log.indent()
-  this.aDogmaHelper(player, card, opts)
-  this.log.outdent()
-  this.mResetDogmaInfo()
-}
-
 Innovation.prototype.aEndorse = function(player, color, opts={}) {
   this.log.add({
     template: '{player} endorses {color}',
@@ -1037,7 +895,7 @@ Innovation.prototype.aEndorse = function(player, color, opts={}) {
   })
 
   const card = this.getTopCard(player, color)
-  this.aDogmaHelper(player, card, { ...opts, endorsed: true })
+  DogmaHelper.call(this.actions, player, card, { ...opts, endorsed: true })
 
   this.log.outdent()
 }
@@ -2455,65 +2313,6 @@ Innovation.prototype._generateActionChoicesMeld = function() {
   }
 }
 
-Innovation.prototype.getSharingAndDemanding = function(player, featuredBiscuit, biscuits, opts={}) {
-  const biscuitComparator = this._getBiscuitComparator(player, featuredBiscuit, biscuits, opts)
-
-  const sharing = this
-    .players.all()
-    .filter(p => p !== player)
-    .filter(p => biscuitComparator(p))
-
-  const demanding = this
-    .players.all()
-    .filter(p => p !== player)
-    .filter(p => !biscuitComparator(p))
-
-  return { sharing, demanding }
-}
-
-Innovation.prototype._getBiscuitComparator = function(player, featuredBiscuit, biscuits, opts) {
-
-  // Some karmas affect how sharing is calculated by adjusting the featured biscuit.
-  const featuredBiscuitKarmas = this
-    .getInfoByKarmaTrigger(player, 'featured-biscuit')
-    .filter(info => info.impl.matches(this, player, { biscuit: featuredBiscuit }))
-
-  let adjustedBiscuit
-
-  if (opts.noBiscuitKarma || featuredBiscuitKarmas.length === 0) {
-    adjustedBiscuit = featuredBiscuit
-  }
-  else if (featuredBiscuitKarmas.length === 1) {
-    const info = featuredBiscuitKarmas[0]
-    this.log.add({
-      template: '{card} karma: {text}',
-      args: {
-        card: info.card,
-        text: info.text
-      }
-    })
-    adjustedBiscuit = this.aCardEffect(player, info, { baseBiscuit: featuredBiscuit })
-  }
-  else {
-    throw new Error('Multiple biscuit karmas are not supported')
-  }
-
-  return (other) => {
-    if (adjustedBiscuit === 'score') {
-      return this.getScore(other) >= this.getScore(player)
-    }
-    else if (this.state.dogmaInfo.soleMajority === other) {
-      return true
-    }
-    else if (this.state.dogmaInfo.soleMajority === player) {
-      return false
-    }
-    else {
-      return biscuits[other.name][adjustedBiscuit] >= biscuits[player.name][adjustedBiscuit]
-    }
-  }
-}
-
 Innovation.prototype._karmaIn = function() {
   this.state.karmaDepth += 1
 }
@@ -2532,18 +2331,5 @@ Innovation.prototype._walkZones = function(root, fn, path=[]) {
     else {
       this._walkZones(obj, fn, thisPath)
     }
-  }
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Stats functions
-
-Innovation.prototype.statsRecordDogmaActions = function(player, card) {
-  if (card.name in this.stats.dogmaActions) {
-    this.stats.dogmaActions[card.name] += 1
-  }
-  else {
-    this.stats.dogmaActions[card.name] = 1
   }
 }

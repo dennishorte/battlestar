@@ -175,7 +175,7 @@ function _maybePromote(player, card) {
     const cards = this.game.actions.chooseAndMeld(player, choices)
     if (cards && cards.length > 0) {
       const melded = cards[0]
-      this.game.aDogma(player, melded)
+      this.dogma(player, melded)
     }
   }
 }
