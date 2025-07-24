@@ -19,7 +19,7 @@ class UltimateCardManager extends BaseCardManager {
 
   byDeck(exp, age) {
     const id = `decks.${exp}.${age}`
-    return this.game.zones.byId(id).cards()
+    return this.game.zones.byId(id).cardlist()
   }
 
   byExp(exp) {

@@ -43,7 +43,7 @@ class DeckWrapper {
     this._cardsByZone = cards
   }
 
-  cards(zone) {
+  cardlist(zone) {
     if (!this.ready()) {
       throw new Error('cards not loaded')
     }

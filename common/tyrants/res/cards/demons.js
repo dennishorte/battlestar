@@ -166,7 +166,7 @@ const cardData = [
       // Get all opponents at the locations
       const opponents = util
         .array
-        .distinct(combined.flatMap(loc => loc.cards().map(troop => troop.getOwnerName())))
+        .distinct(combined.flatMap(loc => loc.cardlist().map(troop => troop.getOwnerName())))
         .filter(name => name !== 'neutral')
         .map(name => game.players.byName(name))
         .filter(p => p !== player)

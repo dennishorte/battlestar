@@ -13,8 +13,8 @@ module.exports = {
     (game, player, { leader }) => {
       const playerHand = game.zones.byPlayer(player, 'hand')
       const leaderHand = game.zones.byPlayer(leader, 'hand')
-      const highest = game.aChooseHighest(player, playerHand.cards(), 2)
-      const lowest = game.aChooseLowest(leader, leaderHand.cards(), 1)
+      const highest = game.aChooseHighest(player, playerHand.cardlist(), 2)
+      const lowest = game.aChooseLowest(leader, leaderHand.cardlist(), 1)
 
       game.aExchangeCards(
         player,

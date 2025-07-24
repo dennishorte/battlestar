@@ -12,11 +12,11 @@ module.exports = {
     (game, player, { self }) => {
       const scoreCount = game
         .zones.byPlayer(player, 'score')
-        .cards()
+        .cardlist()
         .length
       const handCount = game
         .zones.byPlayer(player, 'hand')
-        .cards()
+        .cardlist()
         .length
 
       if (scoreCount > handCount) {

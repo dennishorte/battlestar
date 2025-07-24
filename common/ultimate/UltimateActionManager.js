@@ -19,30 +19,28 @@ class UltimateActionManager extends BaseActionManager {
   meld = MeldAction
 
   acted(player) {
-    const state = this.game.state
-
-    if (!state.initializationComplete || !state.firstPicksComplete) {
+    if (!this.state.initializationComplete || !this.state.firstPicksComplete) {
       return
     }
 
     if (
-      !state.dogmaInfo.demanding
-      && state.dogmaInfo.acting === player
-      && !this.game.checkSameTeam(player, this.game.players.current())
+      !this.state.dogmaInfo.demanding
+      && this.state.dogmaInfo.acting === player
+      && !this.game.checkSameTeam(player, this.players.current())
     ) {
-      state.shared = true
+      this.state.shared = true
     }
 
     // Special handling for "The Big Bang"
-    state.dogmaInfo.theBigBangChange = true
+    this.state.dogmaInfo.theBigBangChange = true
 
     ////////////////////////////////////////////////////////////
     // Color zones that have only one or fewer cards become unsplayed
 
-    for (const player of this.game.players.all()) {
+    for (const player of this.players.all()) {
       for (const color of this.game.utilColors()) {
-        const zone = this.game.zones.byPlayer(player, color)
-        if (zone.cards().length < 2) {
+        const zone = this.zones.byPlayer(player, color)
+        if (zone.cardlist().length < 2) {
           zone.splay = 'none'
         }
       }
@@ -52,8 +50,8 @@ class UltimateActionManager extends BaseActionManager {
     // Check if any player has won
 
     // Some karmas create special handling for win conditions
-    if (!state.wouldWinKarma) {
-      for (const player of this.game.players.all()) {
+    if (!this.state.wouldWinKarma) {
+      for (const player of this.players.all()) {
         if (this.game.getAchievementsByPlayer(player).total >= this.game.getNumAchievementsToWin()) {
           throw new GameOverEvent({
             player,
@@ -65,7 +63,7 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   choose(player, choices, opts={}) {
-    if (this.game.state.dogmaInfo.mayIsMust) {
+    if (this.state.dogmaInfo.mayIsMust) {
       opts.min = Math.max(1, opts.min || 1)
     }
 
@@ -100,7 +98,7 @@ class UltimateActionManager extends BaseActionManager {
       return 'auto'
     }
     else {
-      return this.game.cards.byId(cardNames[0])
+      return this.cards.byId(cardNames[0])
     }
   }
 
@@ -116,7 +114,7 @@ class UltimateActionManager extends BaseActionManager {
 
     const choiceMap = cards.map(card => {
       if (!card.id) {
-        card = this.game.cards.byId(card)
+        card = this.cards.byId(card)
       }
 
       if (opts.hidden) {
@@ -158,7 +156,7 @@ class UltimateActionManager extends BaseActionManager {
         }
       }
       else {
-        output = cardNames.map(name => this.game.cards.byId(name))
+        output = cardNames.map(name => this.cards.byId(name))
       }
 
       if (opts.guard && !opts.guard(output)) {
@@ -183,7 +181,7 @@ class UltimateActionManager extends BaseActionManager {
 
       // ...Sometimes, we get a specific card, by name
       else if (opts.name) {
-        return this.game.cards.byId(opts.name)
+        return this.cards.byId(opts.name)
       }
 
       // ...Sometimes, the player is just getting a standard achievement, by age and expansion
@@ -224,7 +222,7 @@ class UltimateActionManager extends BaseActionManager {
       template: '{player} achieves {card} from {zone}',
       args: { player, card, zone: source }
     })
-    card.moveTo(this.game.zones.byPlayer(player, 'achievements'))
+    card.moveTo(this.zones.byPlayer(player, 'achievements'))
     this.acted(player)
 
     // Draw figures if the player claimed a standard achievement
@@ -235,7 +233,7 @@ class UltimateActionManager extends BaseActionManager {
         .filter(other => !this.checkSameTeam(player, other))
 
       for (const opp of others) {
-        this.game.actions.draw(opp, { exp: 'figs' })
+        this.draw(opp, { exp: 'figs' })
       }
     }
 
@@ -244,9 +242,9 @@ class UltimateActionManager extends BaseActionManager {
 
   foreshadow = UltimateActionManager.insteadKarmaWrapper('foreshadow', (player, card) => {
     const zoneLimit = this.game.getForecastLimit(player)
-    const target = this.game.zones.byPlayer(player, 'forecast')
+    const target = this.zones.byPlayer(player, 'forecast')
 
-    if (target.cards().length >= zoneLimit) {
+    if (target.cardlist().length >= zoneLimit) {
       this.log.add({
         template: '{player} has reached the limit for their forecast',
         args: { player },
@@ -270,7 +268,7 @@ class UltimateActionManager extends BaseActionManager {
       args: { player, card }
     })
 
-    const junkedCard = card.moveTo(this.game.zones.byId('junk'))
+    const junkedCard = card.moveTo(this.zones.byId('junk'))
 
     // Only mark this player as having acted if something actually changed
     if (junkedCard) {
@@ -302,7 +300,7 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   junkDeck(player, age, opts={}) {
-    const cards = this.game.cards.byDeck('base', age)
+    const cards = this.cards.byDeck('base', age)
     if (cards.length === 0) {
       this.log.add({
         template: 'The {age} deck is already empty.',
@@ -322,7 +320,7 @@ class UltimateActionManager extends BaseActionManager {
         args: { player, age }
       })
 
-      const cards = this.game.cards.byDeck('base', age)
+      const cards = this.cards.byDeck('base', age)
       this.junkMany(player, cards, { ordered: true })
     }
     else {
@@ -358,9 +356,9 @@ class UltimateActionManager extends BaseActionManager {
 
   safeguard = UltimateActionManager.insteadKarmaWrapper('safeguard', (player, card) => {
     const safeLimit = this.game.getSafeLimit(player)
-    const safeZone = this.game.zones.byPlayer(player, 'safe')
+    const safeZone = this.zones.byPlayer(player, 'safe')
 
-    if (safeZone.cards().length >= safeLimit) {
+    if (safeZone.cardlist().length >= safeLimit) {
       this.log.add({
         template: '{player} has reached their safe limit',
         args: { player }
@@ -390,7 +388,7 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   score = UltimateActionManager.insteadKarmaWrapper('score', (player, card) => {
-    const target = this.game.zones.byPlayer(player, 'score')
+    const target = this.zones.byPlayer(player, 'score')
     card.moveTo(target)
     this.log.add({
       template: '{player} scores {card}',
@@ -405,8 +403,8 @@ class UltimateActionManager extends BaseActionManager {
 
     const owner = opts.owner || player
 
-    const zone = this.game.zones.byPlayer(owner, color)
-    if (zone.cards().length < 2) {
+    const zone = this.zones.byPlayer(owner, color)
+    if (zone.cardlist().length < 2) {
       this.log.add({
         template: `Cannot splay ${color} ${direction}`
       })
@@ -459,7 +457,7 @@ class UltimateActionManager extends BaseActionManager {
 
   transfer(player, card, target, opts={}) {
     if (target.toBoard) {
-      target = this.game.zones.byPlayer(target.player, card.color)
+      target = this.zones.byPlayer(target.player, card.color)
     }
 
     // TODO: Figure out how to make insteadKarmaWrapper work with this
@@ -479,14 +477,14 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   tuck = UltimateActionManager.insteadKarmaWrapper('tuck', (player, card) => {
-    const target = this.game.zones.byPlayer(player, card.color)
+    const target = this.zones.byPlayer(player, card.color)
     card.moveTo(target)
     this.log.add({
       template: '{player} tucks {card}',
       args: { player, card }
     })
     if (card.color === 'green') {
-      util.array.pushUnique(this.game.state.tuckedGreenForPele, player)
+      util.array.pushUnique(this.state.tuckedGreenForPele, player)
     }
     this.acted(player)
 

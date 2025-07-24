@@ -45,7 +45,7 @@ describe('Philosophy', () => {
       request = t.choose(game, request, 'Dogma.Philosophy')
       t.choose(game, request, 'Industrialization')
 
-      const score = game.zones.byPlayer(t.dennis(game), 'score').cards().map(c => c.name)
+      const score = game.zones.byPlayer(t.dennis(game), 'score').cardlist().map(c => c.name)
       expect(score).toEqual(['Industrialization'])
     })
 
@@ -59,7 +59,7 @@ describe('Philosophy', () => {
       request = t.choose(game, request, 'Dogma.Philosophy')
       t.choose(game, request)
 
-      const score = game.zones.byPlayer(t.dennis(game), 'score').cards().map(c => c.name)
+      const score = game.zones.byPlayer(t.dennis(game), 'score').cardlist().map(c => c.name)
       expect(score).toEqual([])
     })
   })

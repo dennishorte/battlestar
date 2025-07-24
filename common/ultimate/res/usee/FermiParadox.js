@@ -14,8 +14,8 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const cards = [
-        game.getZoneByDeck('base', game.getEffectAge(self, 9)).cards()[0],
-        game.getZoneByDeck('base', game.getEffectAge(self, 10)).cards()[0],
+        game.getZoneByDeck('base', game.getEffectAge(self, 9)).cardlist()[0],
+        game.getZoneByDeck('base', game.getEffectAge(self, 10)).cardlist()[0],
       ].filter(x => x)
 
       cards.forEach(card => game.actions.reveal(player, card))
@@ -37,7 +37,7 @@ module.exports = {
       else {
         const valuedJunkCards = game
           .zones.byId('junk')
-          .cards()
+          .cardlist()
           .filter(card => card.age !== undefined)
 
         game.actions.transferMany(player, valuedJunkCards, game.zones.byPlayer(player, 'hand'), { ordered: true })

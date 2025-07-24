@@ -50,13 +50,13 @@ TestUtil.fixture = function(options) {
       const hand = game.zones.byPlayer(player, 'hand')
 
       // Return all cards in the player hand to their deck
-      for (const card of hand.cards()) {
+      for (const card of hand.cardlist()) {
         card.moveTo(deck)
       }
 
       // Put 5 nobles into the player hand
-      while (hand.cards().length < 5) {
-        const card = deck.cards().find(card => card.name === 'Noble')
+      while (hand.cardlist().length < 5) {
+        const card = deck.cardlist().find(card => card.name === 'Noble')
         card.moveTo(hand)
       }
 
@@ -67,7 +67,7 @@ TestUtil.fixture = function(options) {
       // in player hands, we aren't grabbing them from the market.
       const marketDeck = game.zones.byId('marketDeck')
       const market = game.zones.byId('market')
-      for (const card of market.cards()) {
+      for (const card of market.cardlist()) {
         card.moveTo(marketDeck)
       }
       const cardNames = [
@@ -79,7 +79,7 @@ TestUtil.fixture = function(options) {
         'Spellspinner',
       ]
       for (const name of cardNames) {
-        const card = game.zones.byId('marketDeck').cards().find(c => c.name === name)
+        const card = game.zones.byId('marketDeck').cardlist().find(c => c.name === name)
         card.moveTo(market)
       }
     }
@@ -116,7 +116,7 @@ TestUtil.gameFixture = function(options) {
 
             const zone = game.zones.byPlayer(player, key)
 
-            for (const card of zone.cards()) {
+            for (const card of zone.cardlist()) {
               const deck = key === 'deck' ? game.zones.byId('devoured') : card.home
               card.moveTo(deck)
             }
@@ -216,7 +216,7 @@ TestUtil.gameFixture = function(options) {
       const devoured = game.zones.byId('devoured')
       const market = game.zones.byId('marketDeck')
       for (const name of options.devoured) {
-        const card = market.cards().find(card => card.name === name)
+        const card = market.cardlist().find(card => card.name === name)
         card.moveTo(devoured)
         game.log.add({
           template: '{card} added to the market',
@@ -230,7 +230,7 @@ TestUtil.gameFixture = function(options) {
       game.log.indent()
 
       const market = game.zones.byId('marketDeck')
-      const cards = market.cards()
+      const cards = market.cardlist()
       const toMove = []
 
       for (const name of options.marketDeck) {
@@ -251,7 +251,7 @@ TestUtil.gameFixture = function(options) {
         card.moveTo(market, 0)
       }
 
-      // const topOfMarket = market.cards().slice(0, 5).map(c => c.name).join(',')
+      // const topOfMarket = market.cardlist().slice(0, 5).map(c => c.name).join(',')
       // game.log.add({ template: topOfMarket })
 
       game.log.outdent()
@@ -277,7 +277,7 @@ TestUtil.setTroops = function(game, locId, playerNames) {
 
   const zone = game.zones.byId(locId)
 
-  for (const card of zone.cards()) {
+  for (const card of zone.cardlist()) {
     if (card.isTroop) {
       card.moveHome()
     }
@@ -301,7 +301,7 @@ TestUtil.setSpies = function(game, locId, playerNames) {
 
   const zone = game.zones.byId(locId)
 
-  for (const card of zone.cards()) {
+  for (const card of zone.cardlist()) {
     if (card.isSpy) {
       card.moveHome()
     }
@@ -380,13 +380,13 @@ TestUtil.testBoard = function(game, expected) {
     }
 
     else if (key === 'devoured') {
-      const actual = game.zones.byId('devoured').cards().map(c => c.name).sort()
+      const actual = game.zones.byId('devoured').cardlist().map(c => c.name).sort()
       const expected = value.sort()
       expect(actual).toStrictEqual(expected)
     }
 
     else if (key === 'market') {
-      const actual = game.zones.byId('market').cards().map(c => c.name).sort()
+      const actual = game.zones.byId('market').cardlist().map(c => c.name).sort()
       const expected = value.sort()
       expect(actual).toStrictEqual(expected)
     }

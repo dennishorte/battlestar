@@ -11,11 +11,11 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const hand = game.zones.byPlayer(player, 'hand')
-      if (hand.cards().length >= 3) {
-        const returned = game.actions.chooseAndReturn(player, hand.cards())[0]
+      if (hand.cardlist().length >= 3) {
+        const returned = game.actions.chooseAndReturn(player, hand.cardlist())[0]
         game.actions.splay(player, returned.color, 'right')
-        game.actions.chooseAndTuck(player, hand.cards())
-        game.actions.chooseAndScore(player, hand.cards())
+        game.actions.chooseAndTuck(player, hand.cardlist())
+        game.actions.chooseAndScore(player, hand.cardlist())
       }
       else {
         game.log.addNoEffect()

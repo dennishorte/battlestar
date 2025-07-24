@@ -94,7 +94,7 @@ describe('BaseZone', () => {
       const { zone } = createTestFixture()
 
       expect(zone._cards).toEqual([])
-      expect(zone.cards()).toEqual([])
+      expect(zone.cardlist()).toEqual([])
     })
 
     test('should set owner to null by default', () => {
@@ -111,12 +111,12 @@ describe('BaseZone', () => {
   // BASIC GETTER TESTS
   // ============================================================================
 
-  describe('cards()', () => {
+  describe('cardlist()', () => {
     test('should return a copy of the cards array', () => {
       const { zone, mockCard1, mockCard2 } = createTestFixture()
 
       zone.initializeCards([mockCard1, mockCard2])
-      const cardsCopy = zone.cards()
+      const cardsCopy = zone.cardlist()
 
       expect(cardsCopy).toEqual([mockCard1, mockCard2])
       expect(cardsCopy).not.toBe(zone._cards) // Should be a different array reference
@@ -125,20 +125,20 @@ describe('BaseZone', () => {
     test('should return empty array when no cards', () => {
       const { zone } = createTestFixture()
 
-      expect(zone.cards()).toEqual([])
+      expect(zone.cardlist()).toEqual([])
     })
 
     test('should not allow modification of returned array to affect internal state', () => {
       const { zone, mockCard1, mockCard2 } = createTestFixture()
 
       zone.initializeCards([mockCard1, mockCard2])
-      const cardsCopy = zone.cards()
+      const cardsCopy = zone.cardlist()
 
       // Modify the returned array
       cardsCopy.push({ id: 'new-card', name: 'New Card' })
 
       // Internal state should remain unchanged
-      expect(zone.cards()).toEqual([mockCard1, mockCard2])
+      expect(zone.cardlist()).toEqual([mockCard1, mockCard2])
       expect(zone._cards).toEqual([mockCard1, mockCard2])
     })
   })
@@ -171,7 +171,7 @@ describe('BaseZone', () => {
       zone.initializeCards([mockCard1, mockCard2, mockCard3])
 
       expect(zone._cards).toEqual([mockCard1, mockCard2, mockCard3])
-      expect(zone.cards()).toEqual([mockCard1, mockCard2, mockCard3])
+      expect(zone.cardlist()).toEqual([mockCard1, mockCard2, mockCard3])
     })
 
     test('should call setHome on each card with zone reference', () => {
@@ -204,7 +204,7 @@ describe('BaseZone', () => {
       zone.initializeCards([])
 
       expect(zone._cards).toEqual([])
-      expect(zone.cards()).toEqual([])
+      expect(zone.cardlist()).toEqual([])
     })
 
     test('should throw error if called multiple times', () => {
@@ -230,7 +230,7 @@ describe('BaseZone', () => {
         zone.initializeCards([mockCard1])
         zone.push(mockCard2)
 
-        expect(zone.cards()).toEqual([mockCard2, mockCard1])
+        expect(zone.cardlist()).toEqual([mockCard2, mockCard1])
       })
 
       test('should call _updateCardVisibility on added card', () => {
@@ -253,7 +253,7 @@ describe('BaseZone', () => {
         zone.push(mockCard2)
         zone.push(mockCard3)
 
-        expect(zone.cards()).toEqual([mockCard3, mockCard2, mockCard1])
+        expect(zone.cardlist()).toEqual([mockCard3, mockCard2, mockCard1])
       })
     })
 
@@ -264,7 +264,7 @@ describe('BaseZone', () => {
         zone.initializeCards([mockCard1, mockCard3])
         zone.push(mockCard2, 1)
 
-        expect(zone.cards()).toEqual([mockCard1, mockCard2, mockCard3])
+        expect(zone.cardlist()).toEqual([mockCard1, mockCard2, mockCard3])
       })
 
       test('should insert at beginning when index is 0', () => {
@@ -273,7 +273,7 @@ describe('BaseZone', () => {
         zone.initializeCards([mockCard2])
         zone.push(mockCard1, 0)
 
-        expect(zone.cards()).toEqual([mockCard1, mockCard2])
+        expect(zone.cardlist()).toEqual([mockCard1, mockCard2])
       })
 
       test('should insert at end when index equals array length', () => {
@@ -282,7 +282,7 @@ describe('BaseZone', () => {
         zone.initializeCards([mockCard1, mockCard2])
         zone.push(mockCard3, 2)
 
-        expect(zone.cards()).toEqual([mockCard1, mockCard2, mockCard3])
+        expect(zone.cardlist()).toEqual([mockCard1, mockCard2, mockCard3])
       })
 
       test('should call _updateCardVisibility on added card', () => {
@@ -314,7 +314,7 @@ describe('BaseZone', () => {
         zone.initializeCards([mockCard1, mockCard3])
         zone.push(mockCard2, -1) // Insert before the last element
 
-        expect(zone.cards()).toEqual([mockCard1, mockCard2, mockCard3])
+        expect(zone.cardlist()).toEqual([mockCard1, mockCard2, mockCard3])
       })
     })
   })
@@ -371,7 +371,7 @@ describe('BaseZone', () => {
       zone.initializeCards([mockCard1, mockCard2, mockCard3])
       zone.remove(mockCard2)
 
-      expect(zone.cards()).toEqual([mockCard1, mockCard3])
+      expect(zone.cardlist()).toEqual([mockCard1, mockCard3])
     })
 
     test('should throw error when card not found', () => {
@@ -391,7 +391,7 @@ describe('BaseZone', () => {
       zone.initializeCards([mockCard1, mockCard2, mockCard3])
       zone.remove(mockCard2)
 
-      expect(zone.cards()).toEqual([mockCard1, mockCard3])
+      expect(zone.cardlist()).toEqual([mockCard1, mockCard3])
     })
 
     test('should handle removing first card', () => {
@@ -400,7 +400,7 @@ describe('BaseZone', () => {
       zone.initializeCards([mockCard1, mockCard2, mockCard3])
       zone.remove(mockCard1)
 
-      expect(zone.cards()).toEqual([mockCard2, mockCard3])
+      expect(zone.cardlist()).toEqual([mockCard2, mockCard3])
     })
 
     test('should handle removing last card', () => {
@@ -409,7 +409,7 @@ describe('BaseZone', () => {
       zone.initializeCards([mockCard1, mockCard2, mockCard3])
       zone.remove(mockCard3)
 
-      expect(zone.cards()).toEqual([mockCard1, mockCard2])
+      expect(zone.cardlist()).toEqual([mockCard1, mockCard2])
     })
 
     test('should handle removing middle card', () => {
@@ -418,7 +418,7 @@ describe('BaseZone', () => {
       zone.initializeCards([mockCard1, mockCard2, mockCard3])
       zone.remove(mockCard2)
 
-      expect(zone.cards()).toEqual([mockCard1, mockCard3])
+      expect(zone.cardlist()).toEqual([mockCard1, mockCard3])
     })
   })
 
@@ -459,8 +459,8 @@ describe('BaseZone', () => {
       zone.shuffle()
 
       // The cards should still be the same, but potentially in different order
-      expect(zone.cards()).toHaveLength(3)
-      expect(zone.cards()).toEqual(expect.arrayContaining([mockCard1, mockCard2, mockCard3]))
+      expect(zone.cardlist()).toHaveLength(3)
+      expect(zone.cardlist()).toEqual(expect.arrayContaining([mockCard1, mockCard2, mockCard3]))
     })
 
     test('should use game.random for shuffling', () => {
@@ -477,11 +477,11 @@ describe('BaseZone', () => {
       const { zone, mockCard1, mockCard2, mockCard3 } = createTestFixture()
 
       zone.initializeCards([mockCard1, mockCard2, mockCard3])
-      const originalLength = zone.cards().length
+      const originalLength = zone.cardlist().length
 
       zone.shuffle()
 
-      expect(zone.cards()).toHaveLength(originalLength)
+      expect(zone.cardlist()).toHaveLength(originalLength)
     })
 
     test('should handle single card', () => {
@@ -494,7 +494,7 @@ describe('BaseZone', () => {
         zone.shuffle()
       }).not.toThrow()
 
-      expect(zone.cards()).toEqual([mockCard1])
+      expect(zone.cardlist()).toEqual([mockCard1])
     })
 
     test('should handle empty zone', () => {
@@ -504,7 +504,7 @@ describe('BaseZone', () => {
         zone.shuffle()
       }).not.toThrow()
 
-      expect(zone.cards()).toEqual([])
+      expect(zone.cardlist()).toEqual([])
     })
   })
 
@@ -518,9 +518,9 @@ describe('BaseZone', () => {
       zone.shuffleTop(2)
 
       // Bottom card should remain in same position
-      expect(zone.cards()[2]).toBe(mockCard3)
+      expect(zone.cardlist()[2]).toBe(mockCard3)
       // Top 2 cards should still be present but potentially reordered
-      expect(zone.cards().slice(0, 2)).toEqual(expect.arrayContaining([mockCard1, mockCard2]))
+      expect(zone.cardlist().slice(0, 2)).toEqual(expect.arrayContaining([mockCard1, mockCard2]))
     })
 
     test('should maintain order of bottom cards', () => {
@@ -532,7 +532,7 @@ describe('BaseZone', () => {
       zone.shuffleTop(2)
 
       // The third card should remain in the same position
-      expect(zone.cards()[2]).toBe(mockCard3)
+      expect(zone.cardlist()[2]).toBe(mockCard3)
     })
 
     test('should use game.random for shuffling', () => {
@@ -588,8 +588,8 @@ describe('BaseZone', () => {
         zone.shuffleTop(2)
       }).not.toThrow()
 
-      expect(zone.cards()).toHaveLength(2)
-      expect(zone.cards()).toEqual(expect.arrayContaining([mockCard1, mockCard2]))
+      expect(zone.cardlist()).toHaveLength(2)
+      expect(zone.cardlist()).toEqual(expect.arrayContaining([mockCard1, mockCard2]))
     })
 
     test('should handle count of 1', () => {
@@ -603,9 +603,9 @@ describe('BaseZone', () => {
       }).not.toThrow()
 
       // Only the first card should be affected
-      expect(zone.cards()[0]).toBe(mockCard1) // Single card shuffle doesn't change order
-      expect(zone.cards()[1]).toBe(mockCard2)
-      expect(zone.cards()[2]).toBe(mockCard3)
+      expect(zone.cardlist()[0]).toBe(mockCard1) // Single card shuffle doesn't change order
+      expect(zone.cardlist()[1]).toBe(mockCard2)
+      expect(zone.cardlist()[2]).toBe(mockCard3)
     })
   })
 
@@ -619,9 +619,9 @@ describe('BaseZone', () => {
       zone.shuffleBottom(2)
 
       // Top card should remain in same position
-      expect(zone.cards()[0]).toBe(mockCard1)
+      expect(zone.cardlist()[0]).toBe(mockCard1)
       // Bottom 2 cards should still be present but potentially reordered
-      expect(zone.cards().slice(1, 3)).toEqual(expect.arrayContaining([mockCard2, mockCard3]))
+      expect(zone.cardlist().slice(1, 3)).toEqual(expect.arrayContaining([mockCard2, mockCard3]))
     })
 
     test('should maintain order of top cards', () => {
@@ -633,7 +633,7 @@ describe('BaseZone', () => {
       zone.shuffleBottom(2)
 
       // The first card should remain in the same position
-      expect(zone.cards()[0]).toBe(mockCard1)
+      expect(zone.cardlist()[0]).toBe(mockCard1)
     })
 
     test('should use game.random for shuffling', () => {
@@ -689,8 +689,8 @@ describe('BaseZone', () => {
         zone.shuffleBottom(2)
       }).not.toThrow()
 
-      expect(zone.cards()).toHaveLength(2)
-      expect(zone.cards()).toEqual(expect.arrayContaining([mockCard1, mockCard2]))
+      expect(zone.cardlist()).toHaveLength(2)
+      expect(zone.cardlist()).toEqual(expect.arrayContaining([mockCard1, mockCard2]))
     })
 
     test('should handle count of 1', () => {
@@ -704,9 +704,9 @@ describe('BaseZone', () => {
       }).not.toThrow()
 
       // Only the last card should be affected
-      expect(zone.cards()[0]).toBe(mockCard1)
-      expect(zone.cards()[1]).toBe(mockCard2)
-      expect(zone.cards()[2]).toBe(mockCard3) // Single card shuffle doesn't change order
+      expect(zone.cardlist()[0]).toBe(mockCard1)
+      expect(zone.cardlist()[1]).toBe(mockCard2)
+      expect(zone.cardlist()[2]).toBe(mockCard3) // Single card shuffle doesn't change order
     })
   })
 
@@ -733,7 +733,7 @@ describe('BaseZone', () => {
 
       zone.sort((a, b) => a.value - b.value)
 
-      expect(zone.cards()).toEqual([cardB, cardC, cardA])
+      expect(zone.cardlist()).toEqual([cardB, cardC, cardA])
     })
 
     test('should sort in ascending order with simple numeric comparison', () => {
@@ -747,7 +747,7 @@ describe('BaseZone', () => {
 
       zone.sort((a, b) => a.value - b.value)
 
-      expect(zone.cards().map(c => c.value)).toEqual([2, 5, 8])
+      expect(zone.cardlist().map(c => c.value)).toEqual([2, 5, 8])
     })
 
     test('should sort in descending order with reverse comparison', () => {
@@ -761,7 +761,7 @@ describe('BaseZone', () => {
 
       zone.sort((a, b) => b.value - a.value)
 
-      expect(zone.cards().map(c => c.value)).toEqual([8, 5, 2])
+      expect(zone.cardlist().map(c => c.value)).toEqual([8, 5, 2])
     })
 
     test('should handle empty array', () => {
@@ -771,7 +771,7 @@ describe('BaseZone', () => {
         zone.sort((a, b) => a.value - b.value)
       }).not.toThrow()
 
-      expect(zone.cards()).toEqual([])
+      expect(zone.cardlist()).toEqual([])
     })
 
     test('should handle single card', () => {
@@ -783,7 +783,7 @@ describe('BaseZone', () => {
         zone.sort((a, b) => a.name.localeCompare(b.name))
       }).not.toThrow()
 
-      expect(zone.cards()).toEqual([mockCard1])
+      expect(zone.cardlist()).toEqual([mockCard1])
     })
   })
 
@@ -799,7 +799,7 @@ describe('BaseZone', () => {
 
       zone.sortByName()
 
-      expect(zone.cards()).toEqual([cardB, cardC, cardA])
+      expect(zone.cardlist()).toEqual([cardB, cardC, cardA])
     })
 
     test('should handle case-sensitive sorting', () => {
@@ -813,7 +813,7 @@ describe('BaseZone', () => {
 
       zone.sortByName()
 
-      expect(zone.cards()).toEqual([cardA, cardC, cardB])
+      expect(zone.cardlist()).toEqual([cardA, cardC, cardB])
     })
 
     test('should handle empty array', () => {
@@ -823,7 +823,7 @@ describe('BaseZone', () => {
         zone.sortByName()
       }).not.toThrow()
 
-      expect(zone.cards()).toEqual([])
+      expect(zone.cardlist()).toEqual([])
     })
 
     test('should handle single card', () => {
@@ -835,7 +835,7 @@ describe('BaseZone', () => {
         zone.sortByName()
       }).not.toThrow()
 
-      expect(zone.cards()).toEqual([mockCard1])
+      expect(zone.cardlist()).toEqual([mockCard1])
     })
 
     test('should handle cards with same name', () => {
@@ -850,8 +850,8 @@ describe('BaseZone', () => {
       zone.sortByName()
 
       // Cards with same name should maintain relative order
-      expect(zone.cards()[0]).toBe(cardC) // 'Different' comes first
-      expect(zone.cards().slice(1)).toEqual(expect.arrayContaining([cardA, cardB]))
+      expect(zone.cardlist()[0]).toBe(cardC) // 'Different' comes first
+      expect(zone.cardlist().slice(1)).toEqual(expect.arrayContaining([cardA, cardB]))
     })
   })
 
@@ -1289,21 +1289,21 @@ describe('BaseZone', () => {
 
       // Initialize cards
       zone.initializeCards([mockCard1, mockCard2])
-      expect(zone.cards()).toEqual([mockCard1, mockCard2])
+      expect(zone.cardlist()).toEqual([mockCard1, mockCard2])
 
       // Push additional card
       zone.push(mockCard3)
-      expect(zone.cards()).toEqual([mockCard3, mockCard1, mockCard2])
+      expect(zone.cardlist()).toEqual([mockCard3, mockCard1, mockCard2])
 
       // Shuffle cards
       zone.shuffle()
-      expect(zone.cards()).toHaveLength(3)
+      expect(zone.cardlist()).toHaveLength(3)
       // Note: We can't reliably test the exact order after shuffle, just that all cards are present
 
       // Remove a card
       zone.remove(mockCard2)
-      expect(zone.cards()).toHaveLength(2)
-      expect(zone.cards()).not.toContain(mockCard2)
+      expect(zone.cardlist()).toHaveLength(2)
+      expect(zone.cardlist()).not.toContain(mockCard2)
     })
 
     test('should maintain visibility state through card operations', () => {
@@ -1360,29 +1360,29 @@ describe('BaseZone', () => {
 
       // Initialize with cards
       zone.initializeCards([mockCard1, mockCard2])
-      expect(zone.cards()).toEqual([mockCard1, mockCard2])
+      expect(zone.cardlist()).toEqual([mockCard1, mockCard2])
 
       // Push card at specific index
       zone.push(mockCard3, 1)
-      expect(zone.cards()).toEqual([mockCard1, mockCard3, mockCard2])
+      expect(zone.cardlist()).toEqual([mockCard1, mockCard3, mockCard2])
 
       // Shuffle top 2 cards
       zone.shuffleTop(2)
-      expect(zone.cards()).toHaveLength(3)
+      expect(zone.cardlist()).toHaveLength(3)
       // Note: We can't reliably test the exact order after shuffle, just that all cards are present
 
       // Sort by name
       zone.sortByName()
-      expect(zone.cards()).toHaveLength(3)
+      expect(zone.cardlist()).toHaveLength(3)
 
       // Remove middle card
-      const middleCard = zone.cards()[1]
+      const middleCard = zone.cardlist()[1]
       zone.remove(middleCard)
-      expect(zone.cards()).toHaveLength(2)
+      expect(zone.cardlist()).toHaveLength(2)
 
       // Peek at top card
       const topCard = zone.peek()
-      expect(topCard).toBe(zone.cards()[0])
+      expect(topCard).toBe(zone.cardlist()[0])
     })
   })
 })

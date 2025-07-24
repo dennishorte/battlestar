@@ -620,7 +620,7 @@ Magic.prototype.aDrawSeven = function(player, opts={}) {
 
 Magic.prototype.aHideAll = function(player, zoneId) {
   const zone = this.zones.byId(zoneId)
-  zone.cards().forEach(card => this.mHide(card))
+  zone.cardlist().forEach(card => this.mHide(card))
 
   this.log.add({
     template: `{player} hides {zone}`,
@@ -675,7 +675,7 @@ Magic.prototype.aMorph = function(player, cardId) {
 
 Magic.prototype.aMoveAll = function(player, sourceId, targetId) {
   const source = this.zones.byId(sourceId)
-  const toMove = source.cards()
+  const toMove = source.cardlist()
   for (const card of toMove) {
     this.aMoveCard(player, card.g.id, targetId)
   }
@@ -772,7 +772,7 @@ Magic.prototype.aMoveRevealed = function(player, sourceId, targetId) {
 
   const toMove = util
     .array
-    .takeWhile(source.cards(), card => card.visibility.length === numPlayers)
+    .takeWhile(source.cardlist(), card => card.visibility.length === numPlayers)
 
   for (const card of toMove) {
     this.aMoveCard(player, card.g.id, targetId)
@@ -824,7 +824,7 @@ Magic.prototype.aReveal = function(player, cardId) {
 
 Magic.prototype.aRevealAll = function(player, zoneId) {
   const zone = this.zones.byId(zoneId)
-  zone.cards().forEach(card => card.reveal())
+  zone.cardlist().forEach(card => card.reveal())
 
   this.log.add({
     template: `{player} reveals {zone}`,
@@ -834,7 +834,7 @@ Magic.prototype.aRevealAll = function(player, zoneId) {
 
 Magic.prototype.aRevealNext = function(player, zoneId) {
   const zone = this.zones.byId(zoneId)
-  const cards = zone.cards()
+  const cards = zone.cardlist()
   const nextIndex = cards.findIndex(card => card.visibility.length !== this.players.all().length)
 
   if (nextIndex === -1) {
@@ -982,7 +982,7 @@ Magic.prototype.aTap = function(player, cardId) {
 }
 
 Magic.prototype.aTapAll = function(player, zoneId) {
-  const cards = this.zones.byId(zoneId).cards()
+  const cards = this.zones.byId(zoneId).cardlist()
   for (const card of cards) {
     this.aTap(player, card.g.id)
   }
@@ -1022,7 +1022,7 @@ Magic.prototype.aUntap = function(player, cardId) {
 Magic.prototype.aViewAll = function(player, zoneId) {
   const zone = this.zones.byId(zoneId)
   zone.sortByName()
-  zone.cards().forEach(card => card.show(player))
+  zone.cardlist().forEach(card => card.show(player))
 
   this.log.add({
     template: `{player} views {zone}`,
@@ -1032,7 +1032,7 @@ Magic.prototype.aViewAll = function(player, zoneId) {
 
 Magic.prototype.aViewNext = function(player, zoneId) {
   const zone = this.zones.byId(zoneId)
-  const cards = zone.cards()
+  const cards = zone.cardlist()
   const nextIndex = cards.findIndex(card => !card.visible(player))
 
   if (nextIndex === -1) {
@@ -1053,7 +1053,7 @@ Magic.prototype.aViewNext = function(player, zoneId) {
 
 Magic.prototype.aViewTop = function(player, zoneId, count) {
   const zone = this.zones.byId(zoneId)
-  const cards = zone.cards()
+  const cards = zone.cardlist()
   count = Math.min(count, cards.length)
 
   for (let i = 0; i < count; i++) {
@@ -1120,7 +1120,7 @@ Magic.prototype.getPlayerTurn = function() {
 }
 
 Magic.prototype.getZoneIndexByCard = function(card) {
-  const zoneCards = card.zone.cards()
+  const zoneCards = card.zone.cardlist()
   return zoneCards.indexOf(card)
 }
 

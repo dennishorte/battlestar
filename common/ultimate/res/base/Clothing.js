@@ -17,7 +17,7 @@ module.exports = {
 
       const choices = game
         .zones.byPlayer(player, 'hand')
-        .cards()
+        .cardlist()
         .filter(card => !usedColors.includes(card.color))
 
       game.actions.chooseAndMeld(player, choices)

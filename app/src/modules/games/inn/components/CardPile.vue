@@ -79,7 +79,7 @@ export default {
     },
 
     cards() {
-      return this.zone.cards().sort((l, r) => {
+      return this.zone.cardlist().sort((l, r) => {
         if (l.age === r.age) {
           return orderedExpansions.indexOf(l.expansion) - orderedExpansions.indexOf(r.expansion)
         }
@@ -103,7 +103,7 @@ export default {
     openCardsViewerModal() {
       if (this.canView) {
         this.game.ui.modals.cardsViewer.title = this.zone.name
-        this.game.ui.modals.cardsViewer.cards = this.zone.cards()
+        this.game.ui.modals.cardsViewer.cards = this.zone.cardlist()
         this.$modal('cards-viewer-modal').show()
       }
     },

@@ -30,7 +30,7 @@ module.exports = {
         const melded = game.actions.chooseAndMeld(player, choices)[0]
         if (melded) {
           const pile = game.zones.byPlayer(player, melded.color)
-          const cardBeneath = pile.cards()[1]
+          const cardBeneath = pile.cardlist()[1]
           if (cardBeneath) {
             game.actions.transfer(player, cardBeneath, game.zones.byPlayer(leader, cardBeneath.color))
           }

@@ -18,7 +18,7 @@ module.exports = {
       const crownCount = [card3, card2, card1].filter(card => card.checkHasBiscuit('c')).length
 
       if (crownCount === 3) {
-        game.actions.scoreMany(player, game.getZoneByDeck('base', 5).cards(), { ordered: true })
+        game.actions.scoreMany(player, game.getZoneByDeck('base', 5).cardlist(), { ordered: true })
       }
 
       if (crownCount >= 2) {

@@ -61,7 +61,7 @@ const parsedUpdate = computed(() => {
   for (const item of items) {
     if (item.remove && props.collection) {
       // Try to find the item in the existing collection
-      const target = props.collection.cards().find(c => c.name().toLowerCase() === item.name)
+      const target = props.collection.cardlist().find(c => c.name().toLowerCase() === item.name)
       if (target) {
         item.card = target
       }

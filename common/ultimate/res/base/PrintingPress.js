@@ -13,7 +13,7 @@ module.exports = {
     (game, player) => {
       const choices = game
         .zones.byPlayer(player, 'score')
-        .cards()
+        .cardlist()
         .map(c => c.id)
       const card = game.actions.chooseCard(player, choices, { min: 0, max: 1 })
 
@@ -22,7 +22,7 @@ module.exports = {
 
         const topPurple = game
           .zones.byPlayer(player, 'purple')
-          .cards()[0]
+          .cardlist()[0]
         const drawAge = topPurple ? topPurple.getAge() + 2 : 2
         game.actions.draw(player, { age: drawAge })
       }

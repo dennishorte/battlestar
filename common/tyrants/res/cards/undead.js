@@ -40,7 +40,7 @@ const cardData = [
     impl: (game, player, { card }) => {
       player.incrementCounter('power', 3)
 
-      const marketCards = game.zones.byId('market').cards()
+      const marketCards = game.zones.byId('market').cardlist()
       const toDevour = game.actions.chooseCard(player, marketCards)
       game.aDevour(player, toDevour, { noRefill: true })
       game.log.add({
@@ -290,7 +290,7 @@ const cardData = [
 
         if (targetPlayer) {
           const troopZone = game.zones.byPlayer(targetPlayer, 'trophyHall')
-          const choices = troopZone.cards().map(troop => troop.getOwnerName()).sort()
+          const choices = troopZone.cardlist().map(troop => troop.getOwnerName()).sort()
           const selections = game.actions.choose(player, choices, {
             title: 'Choose up to 2 troops to reanimate',
             min: 0,
@@ -298,7 +298,7 @@ const cardData = [
           })
 
           for (const selection of selections) {
-            const troop = troopZone.cards().find(c => c.getOwnerName() === selection)
+            const troop = troopZone.cardlist().find(c => c.getOwnerName() === selection)
             game.aChooseAndDeploy(player, { troop })
           }
         }
@@ -459,7 +459,7 @@ const cardData = [
 
             else {
               const zone = game.zones.byPlayer(player, selection.title)
-              const card = zone.cards().find(c => c.name === selection.selection[0])
+              const card = zone.cardlist().find(c => c.name === selection.selection[0])
               game.aPromote(player, card)
             }
           }

@@ -1,7 +1,7 @@
-const util = require('../util.js')
-
 const { BasePlayer } = require('./BasePlayer.js')
+const { GameProxy } = require('./GameProxy.js')
 
+const util = require('../util.js')
 
 class PlayerList extends Array {
   constructor(...args) {
@@ -16,7 +16,7 @@ class PlayerList extends Array {
 
 class BasePlayerManager {
   constructor(game, users, opts={}) {
-    this._game = game
+    this.game = game
     this._users = [...users]
 
     this._players = []
@@ -30,22 +30,26 @@ class BasePlayerManager {
       playerClass: BasePlayer,
     }, opts)
 
-    this.reset()
+    const proxy = GameProxy.create(this)
+
+    this.reset.call(proxy)
+
+    return proxy
   }
 
   reset() {
-    this._players = this._users.map(user => new this._opts.playerClass(this._game, user))
+    this._players = this._users.map(user => new this._opts.playerClass(this.game, user))
 
     if (this._opts.shuffleSeats) {
-      util.array.shuffle(this._players, this._game.random)
-      this._game.log.add({ template: 'Players assigned to random seats' })
+      util.array.shuffle(this._players, this.game.random)
+      this.log.add({ template: 'Players assigned to random seats' })
     }
 
     if (this._opts.firstPlayerId) {
       while (this._players[0].id !== this._opts.firstPlayerId) {
         this._players.push(this._players.shift())
       }
-      this._game.log.add({
+      this.log.add({
         template: '{player} moved to first seat',
         args: { player: this._players[0] }
       })

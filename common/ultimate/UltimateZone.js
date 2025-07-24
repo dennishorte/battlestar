@@ -29,7 +29,7 @@ class UltimateZone extends BaseZone {
   }
 
   player() {
-    return this.game.players.byZone(this)
+    return this.players.byZone(this)
   }
 
   setCards(cards) {

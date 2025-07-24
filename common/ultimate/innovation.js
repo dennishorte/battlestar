@@ -237,7 +237,7 @@ Innovation.prototype.firstPicks = function() {
     .map(p => ({
       actor: this.utilSerializeObject(p),
       title: 'Choose First Card',
-      choices: this.zones.byPlayer(p, 'hand').cards().map(this.utilSerializeObject),
+      choices: this.zones.byPlayer(p, 'hand').cardlist().map(this.utilSerializeObject),
     }))
 
   const picks = this
@@ -286,7 +286,7 @@ Innovation.prototype.mainLoop = function() {
 
 Innovation.prototype.artifact = function() {
   const player = this.players.current()
-  const artifact = this.zones.byPlayer(player, 'artifact').cards()[0]
+  const artifact = this.zones.byPlayer(player, 'artifact').cardlist()[0]
   if (artifact) {
     this.log.add({
       template: 'Free Artifact Action',
@@ -629,7 +629,7 @@ Innovation.prototype.aTrackChainRule = function(player, card) {
       template: '{player} achieves a Chain Achievement',
       args: { player }
     })
-    const card = this.getZoneByDeck('base', 11).cards()[0]
+    const card = this.getZoneByDeck('base', 11).cardlist()[0]
     if (card) {
       this.actions.claimAchievement(player, card)
     }
@@ -792,7 +792,7 @@ Innovation.prototype.aChooseAndSplay = function(player, choices, direction, opts
 
   choices = choices
     .filter(color => this.zones.byPlayer(player, color).splay !== direction)
-    .filter(color => this.zones.byPlayer(player, color).cards().length > 1)
+    .filter(color => this.zones.byPlayer(player, color).cardlist().length > 1)
 
   if (choices.length === 0) {
     this.log.addNoEffect()
@@ -832,7 +832,7 @@ Innovation.prototype.aDecree = function(player, name) {
   })
   this.log.indent()
 
-  this.actions.junkMany(player, hand.cards(), { ordered: true })
+  this.actions.junkMany(player, hand.cardlist(), { ordered: true })
 
   let doImpl = false
   if (card.zone.id === 'achievements') {
@@ -878,7 +878,7 @@ Innovation.prototype.aEndorse = function(player, color, opts={}) {
   // Tuck a card
   const featuredBiscuit = this
     .zones.byPlayer(player, color)
-    .cards()[0]
+    .cardlist()[0]
     .dogmaBiscuit
   const cities = this
     .getTopCards(player)
@@ -886,7 +886,7 @@ Innovation.prototype.aEndorse = function(player, color, opts={}) {
     .filter(card => card.biscuits.includes(featuredBiscuit))
   const junkChoices = this
     .zones.byPlayer(player, 'hand')
-    .cards()
+    .cardlist()
     .filter(card => cities.some(city => card.getAge() <= city.getAge()))
     .map(card => card.id)
 
@@ -925,8 +925,8 @@ Innovation.prototype.aExchangeCards = function(player, cards1, cards2, zone1, zo
 }
 
 Innovation.prototype.aExchangeZones = function(player, zone1, zone2) {
-  const cards1 = zone1.cards()
-  const cards2 = zone2.cards()
+  const cards1 = zone1.cardlist()
+  const cards2 = zone2.cardlist()
 
   this.aExchangeCards(player, cards1, cards2, zone1, zone2)
 
@@ -1051,7 +1051,7 @@ Innovation.prototype.aKarma = function(player, kind, opts={}) {
 }
 
 Innovation.prototype.aDigArtifact = function(player, age) {
-  if (age > 11 || this.getZoneByDeck('arti', age).cards().length === 0) {
+  if (age > 11 || this.getZoneByDeck('arti', age).cardlist().length === 0) {
     this.log.add({
       template: `Artifacts deck for age ${age} is empty.`
     })
@@ -1124,7 +1124,7 @@ Innovation.prototype.aYouLose = function(player, card) {
 // Checkers
 
 Innovation.prototype.checkAchievementAvailable = function(name) {
-  return !!this.zones.byId('achievements').cards().find(ach => ach.name === name)
+  return !!this.zones.byId('achievements').cardlist().find(ach => ach.name === name)
 }
 
 Innovation.prototype.checkAchievementEligibility = function(player, card, opts={}) {
@@ -1185,7 +1185,7 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
     total: 0
   }
 
-  for (const card of this.zones.byPlayer(player, 'achievements').cards()) {
+  for (const card of this.zones.byPlayer(player, 'achievements').cardlist()) {
     if (card.isSpecialAchievement || card.isDecree) {
       ach.special.push(card)
     }
@@ -1287,7 +1287,7 @@ Innovation.prototype.getBiscuitsByColor = function(player) {
 
 Innovation.prototype.getBiscuitsByZone = function(zone) {
   return zone
-    .cards()
+    .cardlist()
     .map(card => this.getBiscuitsRaw(card, zone.splay))
     .map(biscuitString => this.utilParseBiscuits(biscuitString))
     .reduce((l, r) => this.utilCombineBiscuits(l, r), this.utilEmptyBiscuits())
@@ -1303,7 +1303,7 @@ Innovation.prototype.getBonuses = function(player) {
   const bonuses = this
     .utilColors()
     .flatMap(color => this.zones.byPlayer(player, color))
-    .flatMap(zone => zone.cards().flatMap(card => card.getBonuses(this.getSplayByCard(card))))
+    .flatMap(zone => zone.cardlist().flatMap(card => card.getBonuses(this.getSplayByCard(card))))
 
   const karmaBonuses = this
     .getInfoByKarmaTrigger(player, 'list-bonuses')
@@ -1322,7 +1322,7 @@ Innovation.prototype.getAgesByZone = function(player, zoneName) {
 Innovation.prototype.getAvailableSpecialAchievements = function() {
   return this
     .zones.byId('achievements')
-    .cards()
+    .cardlist()
     .filter(c => c.isSpecialAchievement)
 }
 
@@ -1424,7 +1424,7 @@ Innovation.prototype.getHighestTopCard = function(player) {
 Innovation.prototype.getNonEmptyAges = function() {
   return this
     .utilAges()
-    .filter(age => this.getZoneByDeck('base', age).cards().length > 0)
+    .filter(age => this.getZoneByDeck('base', age).cardlist().length > 0)
 }
 
 Innovation.prototype.getNumAchievementsToWin = function() {
@@ -1467,7 +1467,7 @@ Innovation.prototype.getScoreDetails = function(player) {
 
 Innovation.prototype.getSplayByCard = function(card) {
   const zone = card.zone
-  const cards = zone.cards()
+  const cards = zone.cardlist()
   return card === cards[0] ? 'top' : zone.splay
 }
 
@@ -1492,7 +1492,7 @@ Innovation.prototype.getTopCards = function(player) {
   return this
     .utilColors()
     .map(color => this.zones.byPlayer(player, color))
-    .map(zone => zone.cards()[0])
+    .map(zone => zone.cardlist()[0])
     .filter(card => card !== undefined)
 }
 
@@ -1525,7 +1525,7 @@ Innovation.prototype.getUniquePlayerWithMostBiscuits = function(biscuit) {
 
 Innovation.prototype.getVisibleCardsByZone = function(player, zoneName) {
   const zone = this.zones.byPlayer(player, zoneName)
-  const cards = zone.cards()
+  const cards = zone.cardlist()
   if (zone.splay === 'none') {
     return cards.length > 0 ? 1 : 0
   }
@@ -1667,7 +1667,7 @@ Innovation.prototype.getZoneLimit = function(player) {
 // Setters
 
 Innovation.prototype.mAchievementCheck = function() {
-  const available = this.zones.byId('achievements').cards()
+  const available = this.zones.byId('achievements').cardlist()
   for (const player of this.players.startingWithCurrent()) {
     const reduceCost = this.getInfoByKarmaTrigger(
       player,
@@ -1732,7 +1732,7 @@ Innovation.prototype.mAdjustCardVisibility = function(card) {
 }
 
 Innovation.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
-  util.assert(sourceIndex >= 0 && sourceIndex <= source.cards().length - 1, `Invalid source index ${sourceIndex}`)
+  util.assert(sourceIndex >= 0 && sourceIndex <= source.cardlist().length - 1, `Invalid source index ${sourceIndex}`)
   const sourceCards = source._cards
   const targetCards = target._cards
   const card = sourceCards[sourceIndex]
@@ -1749,8 +1749,8 @@ Innovation.prototype.mMoveByIndices = function(source, sourceIndex, target, targ
 
 Innovation.prototype.mMoveCardTo = function(card, target, opts={}) {
   const source = card.zone
-  const sourceIndex = source.cards().findIndex(c => c === card)
-  const targetIndex = opts.index === undefined ? target.cards().length : opts.index
+  const sourceIndex = source.cardlist().findIndex(c => c === card)
+  const targetIndex = opts.index === undefined ? target.cardlist().length : opts.index
 
   if (source === target && sourceIndex === targetIndex) {
     // Card is already in the target zone.
@@ -1777,7 +1777,7 @@ Innovation.prototype.mMoveCardsTo = function(player, cards, target) {
 }
 
 Innovation.prototype.mMoveTopCard = function(source, target) {
-  return this.mMoveByIndices(source, 0, target, target.cards().length)
+  return this.mMoveByIndices(source, 0, target, target.cardlist().length)
 }
 
 Innovation.prototype._attemptToCombineWithPreviousEntry = function(msg) {
@@ -1991,7 +1991,7 @@ Innovation.prototype._generateActionChoices = function() {
 Innovation.prototype.getScoreCost = function(player, card) {
   const sameAge = this
     .zones.byPlayer(player, 'achievements')
-    .cards()
+    .cardlist()
     .filter(c => c.getAge() === card.getAge())
 
   const karmaAdjustment = this
@@ -2010,7 +2010,7 @@ Innovation.prototype.getAvailableAchievementsByAge = function(player, age) {
 Innovation.prototype.getAvailableStandardAchievements = function(player) {
   const achievementsZone = this
     .zones.byId('achievements')
-    .cards()
+    .cardlist()
     .filter(c => !c.isSpecialAchievement && !c.isDecree)
 
   const fromKarma = this
@@ -2081,7 +2081,7 @@ Innovation.prototype._generateActionChoicesDecree = function() {
 
   const figuresInHand = this
     .zones.byPlayer(player, 'hand')
-    .cards()
+    .cardlist()
     .filter(c => c.checkIsFigure())
 
   const figuresByAge = this.utilSeparateByAge(figuresInHand)
@@ -2114,7 +2114,7 @@ Innovation.prototype.getDogmaTargets = function(player) {
     .utilColors()
     .map(color => this.zones.byPlayer(player, color))
     .filter(zone => this.checkZoneHasVisibleDogmaOrEcho(player, zone))
-    .map(zone => zone.cards()[0])
+    .map(zone => zone.cardlist()[0])
 }
 
 Innovation.prototype._generateActionChoicesDogma = function() {
@@ -2151,7 +2151,7 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
 
   const lowestHandAge = this
     .zones.byPlayer(player, 'hand')
-    .cards()
+    .cardlist()
     .map(card => card.getAge())
     .sort((l, r) => l - r)[0] || 99
 
@@ -2168,11 +2168,11 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
 
   if (!this.state.didEndorse) {
     for (const zone of stacksWithEndorsableEffects) {
-      if (zone.cards().length === 0) {
+      if (zone.cardlist().length === 0) {
         throw new Error('"Endorsable" stack has no cards: ' + zone.id)
       }
 
-      const dogmaBiscuit = zone.cards()[0].dogmaBiscuit
+      const dogmaBiscuit = zone.cardlist()[0].dogmaBiscuit
       const canEndorse = cities.some(city => city.biscuits.includes(dogmaBiscuit))
       if (canEndorse) {
         colors.push(zone.color)
@@ -2191,7 +2191,7 @@ Innovation.prototype._generateActionChoicesMeld = function() {
   const player = this.players.current()
   const cards = this
     .zones.byPlayer(player, 'hand')
-    .cards()
+    .cardlist()
     .map(c => c.id)
 
   this

@@ -14,7 +14,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const scorePile = game.zones.byPlayer(player, 'score')
-      const returned = game.actions.returnMany(player, scorePile.cards())
+      const returned = game.actions.returnMany(player, scorePile.cardlist())
 
       const uniqueAges = util.array.distinct(returned.map(card => card.getAge()))
       uniqueAges.forEach(() => {

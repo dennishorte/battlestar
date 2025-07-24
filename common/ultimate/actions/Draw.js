@@ -67,8 +67,8 @@ function _doDraw(player, exp, age, opts={}) {
     })
   }
 
-  const source = this.game.zones.byDeck(exp, age)
-  const hand = this.game.zones.byPlayer(player, 'hand')
+  const source = this.zones.byDeck(exp, age)
+  const hand = this.zones.byPlayer(player, 'hand')
   const card = source.peek()
   card.moveTo(hand)
 
@@ -88,8 +88,8 @@ function _adjustedDrawDeck(age, exp) {
     return [12, 'base']
   }
 
-  const baseDeck = this.game.zones.byDeck('base', age)
-  if (baseDeck.cards().length === 0) {
+  const baseDeck = this.zones.byDeck('base', age)
+  if (baseDeck.cardlist().length === 0) {
     return _adjustedDrawDeck.call(this, age + 1, exp)
   }
 
@@ -97,8 +97,8 @@ function _adjustedDrawDeck(age, exp) {
     return [age, 'base']
   }
 
-  const expDeck = this.game.zones.byDeck(exp, age)
-  if (expDeck.cards().length === 0) {
+  const expDeck = this.zones.byDeck(exp, age)
+  if (expDeck.cardlist().length === 0) {
     return [age, 'base']
   }
 
@@ -143,8 +143,8 @@ function _getAgeForDrawAction(player, isAction) {
     .game
     .utilColors()
     .map(color => {
-      const zone = this.game.zones.byPlayer(player, color)
-      if (zone.cards().length === 0) {
+      const zone = this.zones.byPlayer(player, color)
+      if (zone.cardlist().length === 0) {
         return 1
       }
 
@@ -161,7 +161,7 @@ function _getAgeForDrawAction(player, isAction) {
         return result
       }
       else {
-        return zone.cards()[0].getAge()
+        return zone.cardlist()[0].getAge()
       }
     })
 

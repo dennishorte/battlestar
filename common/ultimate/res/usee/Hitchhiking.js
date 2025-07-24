@@ -14,7 +14,7 @@ module.exports = {
       const otherPlayer = game.actions.choosePlayer(player, otherPlayers)
 
       if (otherPlayer) {
-        const cardInHand = game.actions.chooseCard(otherPlayer, game.zones.byPlayer(otherPlayer, 'hand').cards())
+        const cardInHand = game.actions.chooseCard(otherPlayer, game.zones.byPlayer(otherPlayer, 'hand').cardlist())
 
         if (cardInHand) {
           game.actions.transfer(otherPlayer, cardInHand, game.zones.byPlayer(player, cardInHand.color))

@@ -41,7 +41,7 @@ describe('Domestication', () => {
     request = t.choose(game, request, 'Dogma.Domestication')
 
     const dennis = game.players.byName('dennis')
-    const dennisHand = game.zones.byPlayer(dennis, 'hand').cards().map(c => c.age).sort()
+    const dennisHand = game.zones.byPlayer(dennis, 'hand').cardlist().map(c => c.age).sort()
     expect(dennisHand).toEqual([1])
   })
 })

@@ -30,7 +30,7 @@ describe('Padlock', () => {
       },
     })
 
-    expect(game.zones.byId('achievements').cards().map(c => c.name)).toContain('Domestication')
+    expect(game.zones.byId('achievements').cardlist().map(c => c.name)).toContain('Domestication')
   })
 
   test('dogma: no secrets', () => {
@@ -45,7 +45,7 @@ describe('Padlock', () => {
     let request
     request = game.run()
 
-    const numberOfAchievements = game.zones.byId('achievements').cards().length
+    const numberOfAchievements = game.zones.byId('achievements').cardlist().length
 
     request = t.choose(game, request, 'Dogma.Padlock')
     request = t.choose(game, request, 'Tools', 'Myth')  // Choose invalid items on purpose.
@@ -64,7 +64,7 @@ describe('Padlock', () => {
       },
     })
 
-    expect(game.zones.byId('achievements').cards().length).toBe(numberOfAchievements)
+    expect(game.zones.byId('achievements').cardlist().length).toBe(numberOfAchievements)
   })
 
 })

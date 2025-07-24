@@ -462,7 +462,7 @@ Tyrants.prototype._generateBuyActions = function(maxCost=0, opts={}) {
 
   const market = this
     .zones.byId('market')
-    .cards()
+    .cardlist()
     .sort((l, r) => l.name.localeCompare(r.name))
     .sort((l, r) => l.cost - r.cost)
   for (const card of market) {
@@ -470,7 +470,7 @@ Tyrants.prototype._generateBuyActions = function(maxCost=0, opts={}) {
   }
 
   if (this.state.ghostFlag) {
-    const devoured = this.zones.byId('devoured').cards().slice(-1)[0]
+    const devoured = this.zones.byId('devoured').cardlist().slice(-1)[0]
     if (devoured) {
       choices.push({
         card: devoured,
@@ -703,7 +703,7 @@ Tyrants.prototype.checkForEndGameTriggers = function() {
   }
 
   // The market is depleted
-  if (this.zones.byId('marketDeck').cards().length === 0) {
+  if (this.zones.byId('marketDeck').cardlist().length === 0) {
     this.log.add({
       template: 'The market is depleted'
     })
@@ -776,7 +776,7 @@ Tyrants.prototype.aCascade = function(player, opts) {
   const unused = []
   let found = null
 
-  for (const card of marketZone.cards()) {
+  for (const card of marketZone.cardlist()) {
     if (card[opts.key] === opts.value && card.cost <= opts.maxCost) {
       found = card
       break
@@ -891,7 +891,7 @@ Tyrants.prototype.aChooseAndDevour = function(player, opts={}) {
 }
 
 Tyrants.prototype.aChooseAndDevourMarket = function(player, opts={}) {
-  const chosen = this.actions.chooseCards(player, this.zones.byId('market').cards(), {
+  const chosen = this.actions.chooseCards(player, this.zones.byId('market').cardlist(), {
     min: 0,
     max: opts.max || 1,
     title: 'Choose cards to devour from the market',
@@ -1317,10 +1317,10 @@ Tyrants.prototype.aDraw = function(player, opts={}) {
   const deck = this.zones.byPlayer(player, 'deck')
   const hand = this.zones.byPlayer(player, 'hand')
 
-  if (deck.cards().length === 0) {
+  if (deck.cardlist().length === 0) {
     // See if we can reshuffle.
     const discard = this.zones.byPlayer(player, 'discard')
-    if (discard.cards().length > 0) {
+    if (discard.cardlist().length > 0) {
       this.mReshuffleDiscard(player)
     }
 
@@ -1383,10 +1383,10 @@ Tyrants.prototype.aPromote = function(player, card, opts={}) {
 Tyrants.prototype.aPromoteTopCard = function(player) {
   const deck = this.zones.byPlayer(player, 'deck')
 
-  if (deck.cards().length === 0) {
+  if (deck.cardlist().length === 0) {
     // See if we can reshuffle.
     const discard = this.zones.byPlayer(player, 'discard')
-    if (discard.cards().length > 0) {
+    if (discard.cardlist().length > 0) {
       this.mReshuffleDiscard(player)
     }
 
@@ -1410,7 +1410,7 @@ Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
   let card
 
   if (cardName.startsWith('devoured: ')) {
-    card = this.zones.byId('devoured').cards().slice(-1)[0]
+    card = this.zones.byId('devoured').cardlist().slice(-1)[0]
   }
   else if (cardName === 'Priestess of Lolth') {
     card = this.zones.byId('priestess').peek()
@@ -1429,7 +1429,7 @@ Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
     }
   }
   else {
-    const market = this.zones.byId('market').cards()
+    const market = this.zones.byId('market').cardlist()
     card = market.find(c => c.name === cardName)
   }
 
@@ -1857,8 +1857,8 @@ Tyrants.prototype.mReshuffleDiscard = function(player) {
   const discard = this.zones.byPlayer(player, 'discard')
   const deck = this.zones.byPlayer(player, 'deck')
 
-  util.assert(discard.cards().length > 0, 'Cannot reshuffle empty discard.')
-  util.assert(deck.cards().length === 0, 'Cannot reshuffle discard when deck is not empty.')
+  util.assert(discard.cardlist().length > 0, 'Cannot reshuffle empty discard.')
+  util.assert(deck.cardlist().length === 0, 'Cannot reshuffle discard when deck is not empty.')
 
   this.log.add({
     template: '{player} shuffles their discard into their deck',
@@ -1868,12 +1868,12 @@ Tyrants.prototype.mReshuffleDiscard = function(player) {
   this.log.add({
     template: '{count} cards reshuffled',
     args: {
-      count: discard.cards().length
+      count: discard.cardlist().length
     }
   })
   this.log.outdent()
 
-  for (const card of discard.cards()) {
+  for (const card of discard.cardlist()) {
     card.moveTo(deck)
   }
 
@@ -1910,21 +1910,21 @@ Tyrants.prototype.mRefillHand = function(player) {
   }
 
   const drawnAfterShuffle = Math.min(
-    Math.max(0, numberToDraw - deck.cards().length),  // Number of cards left to draw after reshuffling
+    Math.max(0, numberToDraw - deck.cardlist().length),  // Number of cards left to draw after reshuffling
     this.cards.byPlayer(player, 'discard').length  // Number of cards in discard pile
   )
 
-  if (deck.cards().length < numberToDraw) {
+  if (deck.cardlist().length < numberToDraw) {
     this.log.add({
       template: '{player} draws the remaining {count} cards from deck',
       args: {
         player,
-        count: deck.cards().length
+        count: deck.cardlist().length
       }
     })
   }
 
-  while (hand.cards().length < numberToDraw) {
+  while (hand.cardlist().length < numberToDraw) {
     const drawResult = this.aDraw(player, { silent: true })
     if (drawResult === 'no-more-cards') {
       break
@@ -1947,7 +1947,7 @@ Tyrants.prototype.mRefillHand = function(player) {
 Tyrants.prototype.mRefillMarket = function(quiet=false) {
   const deck = this.zones.byId('marketDeck')
   const market = this.zones.byId('market')
-  const count = 6 - market.cards().length
+  const count = 6 - market.cardlist().length
 
   for (let i = 0; i < count; i++) {
     const card = deck.peek()

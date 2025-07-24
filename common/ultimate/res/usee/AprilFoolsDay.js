@@ -11,8 +11,8 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const handCards = game.zones.byPlayer(player, 'hand').cards()
-      const scoreCards = game.zones.byPlayer(player, 'score').cards()
+      const handCards = game.zones.byPlayer(player, 'hand').cardlist()
+      const scoreCards = game.zones.byPlayer(player, 'score').cardlist()
       const rightPlayer = game.players.rightOf(player)
 
       const choices = [...handCards, ...scoreCards]

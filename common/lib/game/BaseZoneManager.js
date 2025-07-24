@@ -1,10 +1,13 @@
 const { BaseZone } = require('./BaseZone.js')
+const { GameProxy } = require('./GameProxy.js')
 
 class BaseZoneManager {
   constructor(game) {
     this._zoneConstructor = BaseZone
-    this._game = game
+    this.game = game
     this._zones = {}
+
+    return GameProxy.create(this)
   }
 
   create(...args) {

@@ -5,7 +5,7 @@
   >
     <div class="color-stack-header" :class="[color]">
       <div class="card-splay">
-        {{ zone.cards().length }}
+        {{ zone.cardlist().length }}
         {{ zone.splay }}
       </div>
 
@@ -68,7 +68,7 @@ export default {
 
   computed: {
     cards() {
-      return this.zone.cards()
+      return this.zone.cardlist()
     },
 
     zone() {

@@ -16,7 +16,7 @@ module.exports = {
     (game, player) => {
       const choices = game
         .zones.byPlayer(player, 'hand')
-        .cards()
+        .cardlist()
         .map(c => c.name)
 
       game.actions.chooseAndScore(player, choices, { min: 0, max: 1 })

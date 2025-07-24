@@ -16,7 +16,7 @@ module.exports = {
 
       const choices = game
         .zones.byPlayer(player, 'hand')
-        .cards()
+        .cardlist()
         .filter(card => boardColors.includes(card.color))
 
       const tucked = game.actions.chooseAndTuck(player, choices, { min: 0, max: 1 })

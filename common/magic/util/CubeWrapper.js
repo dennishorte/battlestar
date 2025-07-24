@@ -56,7 +56,7 @@ class CubeWrapper {
   }
 
   applyFilters(filters) {
-    return this.cards().filter(card => card.matchesFilters(filters))
+    return this.cardlist().filter(card => card.matchesFilters(filters))
   }
 
 

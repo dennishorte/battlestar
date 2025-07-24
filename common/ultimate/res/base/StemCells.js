@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const hand = game.zones.byPlayer(player, 'hand')
-      if (hand.cards().length === 0) {
+      if (hand.cardlist().length === 0) {
         game.log.addNoEffect()
         return
       }
@@ -20,7 +20,7 @@ module.exports = {
       const scoreAll = game.actions.chooseYesNo(player, 'Score all cards from your hand?')
 
       if (scoreAll) {
-        game.actions.scoreMany(player, hand.cards())
+        game.actions.scoreMany(player, hand.cardlist())
       }
       else {
         game.log.addDoNothing(player)

@@ -26,7 +26,7 @@ function DogmaHelper(player, card, opts={}) {
   _logSharing.call(this, shareData)
   _executeEffects.call(this, player, card, shareData, opts)
 
-  if (this.game.state.dogmaInfo.earlyTerminate) {
+  if (this.state.dogmaInfo.earlyTerminate) {
     return
   }
 
@@ -51,7 +51,7 @@ function _executeEffects(player, card, shareData, opts) {
   for (const e of effects) {
     for (let i = 0; i < e.texts.length; i++) {
       const result = this.game.aOneEffect(player, e.card, e.texts[i], e.impls[i], effectOpts)
-      if (this.game.state.dogmaInfo.earlyTerminate) {
+      if (this.state.dogmaInfo.earlyTerminate) {
         return
       }
     }
@@ -59,14 +59,12 @@ function _executeEffects(player, card, shareData, opts) {
 }
 
 function _initializeGlobalContext(biscuits, featuredBiscuit) {
-  const state = this.game.state
+  this.state.shared = false
+  this.state.couldShare = false
 
-  state.shared = false
-  state.couldShare = false
-
-  state.dogmaInfo.biscuits = biscuits
-  state.dogmaInfo.featuredBiscuit = featuredBiscuit
-  state.dogmaInfo.earlyTerminate = false
+  this.state.dogmaInfo.biscuits = biscuits
+  this.state.dogmaInfo.featuredBiscuit = featuredBiscuit
+  this.state.dogmaInfo.earlyTerminate = false
 }
 
 function _statsRecordDogmaActions(player, card) {
@@ -81,7 +79,7 @@ function _statsRecordDogmaActions(player, card) {
 
 function _shareBonus(player, card) {
   // Share bonus
-  if (this.game.state.shared) {
+  if (this.state.shared) {
     this.log.add({
       template: '{player} draws a sharing bonus',
       args: { player }
@@ -91,14 +89,14 @@ function _shareBonus(player, card) {
     this.draw(player, {
       exp: expansion,
       share: true,
-      featuredBiscuit: this.game.state.dogmaInfo.featuredBiscuit
+      featuredBiscuit: this.state.dogmaInfo.featuredBiscuit
     })
     this.log.outdent()
   }
 
   // Grace Hopper and Susan Blackmore have "if your opponent didn't share" karma effects
-  else if (this.game.state.couldShare) {
-    for (const other of this.game.players.opponentsOf(player)) {
+  else if (this.state.couldShare) {
+    for (const other of this.players.opponentsOf(player)) {
       this.game.aKarma(other, 'no-share', { card, leader: player })
     }
   }
@@ -136,10 +134,10 @@ function _getBiscuitComparator(player, featuredBiscuit, biscuits, opts) {
     if (adjustedBiscuit === 'score') {
       return this.game.getScore(other) >= this.game.getScore(player)
     }
-    else if (this.game.state.dogmaInfo.soleMajority === other) {
+    else if (this.state.dogmaInfo.soleMajority === other) {
       return true
     }
-    else if (this.game.state.dogmaInfo.soleMajority === player) {
+    else if (this.state.dogmaInfo.soleMajority === player) {
       return false
     }
     else {
@@ -178,7 +176,7 @@ function getDogmaShareInfo(player, card, opts={}) {
 
 function _getSharingAndDemanding(player, featuredBiscuit, biscuits, opts={}) {
   const biscuitComparator = _getBiscuitComparator.call(this, player, featuredBiscuit, biscuits, opts)
-  const otherPlayers = this.game.players.other(player)
+  const otherPlayers = this.players.other(player)
 
   const sharing = otherPlayers.filter(p => biscuitComparator(p))
   const demanding = otherPlayers.filter(p => !biscuitComparator(p))

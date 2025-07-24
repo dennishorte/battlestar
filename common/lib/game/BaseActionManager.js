@@ -1,9 +1,10 @@
+const { GameProxy } = require('./GameProxy.js')
 const selector = require('../selector.js')
 
 class BaseActionManager {
   constructor(game) {
     this.game = game
-    this.log = game.log
+    return GameProxy.create(this)
   }
 
   choose(player, choices, opts={}) {

@@ -51,7 +51,7 @@ describe('BasePlayerManager', () => {
       const { playerManager } = createPlayerManager()
 
       // Check default options
-      expect(playerManager._game).toBeDefined()
+      expect(playerManager.game).toBeDefined()
       expect(playerManager._users).toBeDefined()
 
       // Check players array was created

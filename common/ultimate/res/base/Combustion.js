@@ -21,13 +21,13 @@ module.exports = {
         return
       }
 
-      const choices = game.zones.byPlayer(player, 'score').cards()
+      const choices = game.zones.byPlayer(player, 'score').cardlist()
       const target = game.zones.byPlayer(leader, 'score')
       game.actions.chooseAndTransfer(player, choices, target, { count })
     },
 
     (game, player) => {
-      const red = game.zones.byPlayer(player, 'red').cards()
+      const red = game.zones.byPlayer(player, 'red').cardlist()
       if (red.length === 0) {
         game.log.addNoEffect()
       }

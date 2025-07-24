@@ -27,7 +27,7 @@ module.exports = {
     (game, player) => {
       const greenCount = game
         .zones.byPlayer(player, 'green')
-        .cards()
+        .cardlist()
         .length
 
       if (greenCount >= 10) {

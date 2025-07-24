@@ -553,7 +553,7 @@ const cardData = [
     impl: (game, player) => {
       const choices = game
         .zones.byId('market')
-        .cards()
+        .cardlist()
         .filter(card => card.cost <= 6)
       const card = game.actions.chooseCard(player, choices)
       if (card) {

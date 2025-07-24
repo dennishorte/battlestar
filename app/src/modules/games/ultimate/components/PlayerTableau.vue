@@ -76,7 +76,7 @@ export default {
   methods: {
     countHeader(player, zoneName) {
       return () => {
-        const count = this.game.zones.byPlayer(player, zoneName).cards().length
+        const count = this.game.zones.byPlayer(player, zoneName).cardlist().length
         return `${zoneName} ${count}`
       }
     },
@@ -91,7 +91,7 @@ export default {
 
     scoreHeader(player) {
       return () => {
-        const count = this.game.zones.byPlayer(player, 'score').cards().length
+        const count = this.game.zones.byPlayer(player, 'score').cardlist().length
         const total = this.game.getScore(player)
         return `score ${count} [${total}]`
       }

@@ -23,7 +23,7 @@ module.exports = {
       const zone = game.zones.byPlayer(player, color)
 
       if (zone.splay !== 'aslant') {
-        const cards = zone.cards()
+        const cards = zone.cardlist()
         if (cards.length > 4) {
           const toReturn = cards.slice(4)
           game.actions.returnMany(player, toReturn, { ordered: true })
@@ -33,7 +33,7 @@ module.exports = {
       }
 
       // Check for win condition
-      const colorCount = zone.cards().length
+      const colorCount = zone.cardlist().length
       if (colorCount >= 6) {
         throw new GameOverEvent({
           player,

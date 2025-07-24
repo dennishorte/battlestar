@@ -15,7 +15,7 @@ module.exports = {
     },
     (game, player, { self }) => {
       const hand = game.zones.byPlayer(player, 'hand')
-      const returned = game.actions.chooseAndReturn(player, hand.cards(), { count: 2 })
+      const returned = game.actions.chooseAndReturn(player, hand.cardlist(), { count: 2 })
 
       if (returned.length === 2) {
         game.actions.drawAndScore(player, game.getEffectAge(self, 2))

@@ -1,7 +1,11 @@
+const { GameProxy } = require('./GameProxy.js')
+
 class BaseCardManager {
   constructor(game) {
     this.game = game
     this.reset()
+
+    return GameProxy.create(this)
   }
 
   register(card) {
@@ -19,11 +23,11 @@ class BaseCardManager {
   }
 
   byPlayer(player, zoneName) {
-    return this.game.zones.byPlayer(player, zoneName).cards()
+    return this.zones.byPlayer(player, zoneName).cardlist()
   }
 
   byZone(zoneId) {
-    return this.game.zones.byId(zoneId).cards()
+    return this.zones.byId(zoneId).cardlist()
   }
 
   reset() {

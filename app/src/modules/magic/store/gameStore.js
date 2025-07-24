@@ -169,7 +169,7 @@ export default {
       }
 
       if (state.selectedCardId) {
-        const index = position === 'top' ? 0 : zone.cards().length
+        const index = position === 'top' ? 0 : zone.cardlist().length
 
         state.game.doFunc(null, {
           name: 'move card',

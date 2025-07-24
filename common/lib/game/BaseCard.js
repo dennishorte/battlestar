@@ -1,3 +1,4 @@
+const { GameProxy } = require('./GameProxy.js')
 const util = require('../util.js')
 
 class BaseCard {
@@ -11,6 +12,8 @@ class BaseCard {
     this.home = null  // Home location (where it returns to)
     this.zone = null  // Current location
     this.visibility = []
+
+    return GameProxy.create(this)
   }
 
   setHome(zone) {
@@ -27,12 +30,12 @@ class BaseCard {
 
   moveTo(zone, index=null) {
     const prevZone = this.zone
-    const prevIndex = this.zone.cards().indexOf(this)
+    const prevIndex = this.zone.cardlist().indexOf(this)
     const newIndex = index !== null
       ? index
       : (prevZone === zone
-        ? zone.cards().length - 1
-        : zone.cards().length)
+        ? zone.cardlist().length - 1
+        : zone.cardlist().length)
 
     const beforeCache = this._beforeMoveTo(zone, index, prevZone, prevIndex) || {}
 
@@ -62,11 +65,11 @@ class BaseCard {
   }
 
   reveal() {
-    this.visibility = this.game.players.all()
+    this.visibility = this.players.all()
   }
 
   revealed() {
-    return this.visibility.length === this.game.players.all().length
+    return this.visibility.length === this.players.all().length
   }
 
   show(player) {

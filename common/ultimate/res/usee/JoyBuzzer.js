@@ -14,8 +14,8 @@ module.exports = {
       const playerHand = game.zones.byPlayer(player, 'hand')
       const leaderHand = game.zones.byPlayer(leader, 'hand')
 
-      const playerCards = playerHand.cards()
-      const leaderLowest = game.utilLowestCards(leaderHand.cards())
+      const playerCards = playerHand.cardlist()
+      const leaderLowest = game.utilLowestCards(leaderHand.cardlist())
 
       game.aExchangeCards(player, playerCards, leaderLowest, playerHand, leaderHand)
     },

@@ -9,14 +9,14 @@ function MeldAction(player, card, opts={}) {
     return
   }
 
-  const isFirstCard = this.game.cards.byPlayer(player, card.color).length === 0
+  const isFirstCard = this.cards.byPlayer(player, card.color).length === 0
 
   this.log.add({
     template: '{player} melds {card}',
     args: { player, card }
   })
 
-  card.moveTo(this.game.zones.byPlayer(player, card.color), 0)
+  card.moveTo(this.zones.byPlayer(player, card.color), 0)
   this.acted(player)
 
   // Stats
@@ -69,7 +69,7 @@ function _maybeCityBiscuits(player, card) {
         this.splay(player, card.color, 'up')
         break
       case '=':
-        for (const opp of this.game.players.opponentsOf(player)) {
+        for (const opp of this.players.opponentsOf(player)) {
           this.game.aUnsplay(opp, card.color)
         }
         break
@@ -90,24 +90,24 @@ function _maybeCityBiscuits(player, card) {
 function _maybeCityMeldAchievements(player, card) {
   if (
     card.checkHasBiscuit('<')
-    && this.game.zones.byPlayer(player, card.color).splay === 'left'
-    && this.game.cards.byId('Tradition').zone.id === 'achievements'
+    && this.zones.byPlayer(player, card.color).splay === 'left'
+    && this.cards.byId('Tradition').zone.id === 'achievements'
   ) {
     this.claimAchievement(player, { name: 'Tradition' })
   }
 
   if (
     card.checkHasBiscuit('>')
-    && this.game.zones.byPlayer(player, card.color).splay === 'right'
-    && this.game.cards.byId('Repute').zone.id === 'achievements'
+    && this.zones.byPlayer(player, card.color).splay === 'right'
+    && this.cards.byId('Repute').zone.id === 'achievements'
   ) {
     this.claimAchievement(player, { name: 'Repute' })
   }
 
   if (
     card.checkHasBiscuit('^')
-    && this.game.zones.byPlayer(player, card.color).splay === 'up'
-    && this.game.cards.byId('Fame').zone.id === 'achievements'
+    && this.zones.byPlayer(player, card.color).splay === 'up'
+    && this.cards.byId('Fame').zone.id === 'achievements'
   ) {
     this.claimAchievement(player, { name: 'Fame' })
   }
@@ -117,7 +117,7 @@ function _maybeDiscoverBiscuit(player, card) {
   if (card.checkHasDiscoverBiscuit()) {
     const age = card.getAge()
     const biscuit = card.biscuits[4]
-    const maxDraw = this.game.cards.byDeck('base', age).length
+    const maxDraw = this.cards.byDeck('base', age).length
     const numDraw = Math.min(maxDraw, age)
 
     for (let i = 0; i < numDraw; i++) {
@@ -136,11 +136,11 @@ function _maybeDigArtifact(player, card) {
   }
 
   // Can only have one artifact on display at a time.
-  if (this.game.cards.byPlayer(player, 'artifact').length > 0) {
+  if (this.cards.byPlayer(player, 'artifact').length > 0) {
     return
   }
 
-  const next = this.game.cards.byPlayer(player, card.color)[1]
+  const next = this.cards.byPlayer(player, card.color)[1]
 
   // No card underneath, so no artifact dig possible.
   if (!next) {

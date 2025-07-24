@@ -30,7 +30,7 @@ module.exports = {
     },
 
     (game, player, { self }) => {
-      const handSize = game.zones.byPlayer(player, 'hand').cards().length
+      const handSize = game.zones.byPlayer(player, 'hand').cardlist().length
       if (handSize >= 8) {
         throw new GameOverEvent({
           player,

@@ -10,19 +10,19 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const revealed = game.actions.chooseAndReveal(player, game.zones.byPlayer(player, 'hand').cards())[0]
+      const revealed = game.actions.chooseAndReveal(player, game.zones.byPlayer(player, 'hand').cardlist())[0]
       if (revealed) {
         // Take cards into hand
         game
           .players.opponentsOf(player)
-          .flatMap(opp => game.zones.byPlayer(opp, 'hand').cards())
+          .flatMap(opp => game.zones.byPlayer(opp, 'hand').cardlist())
           .filter(card => card.color === revealed.color)
           .forEach(card => game.mTake(player, card))
 
         // Meld cards
         const cardsToMeld = game
           .zones.byPlayer(player, 'hand')
-          .cards()
+          .cardlist()
           .filter(card => card.color === revealed.color)
 
         game.actions.meldMany(player, cardsToMeld)

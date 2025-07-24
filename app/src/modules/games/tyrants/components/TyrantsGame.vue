@@ -137,7 +137,7 @@ export default {
 
   computed: {
     devouredCount() {
-      return this.game.zones.byId('devoured').cards().length
+      return this.game.zones.byId('devoured').cardlist().length
     },
 
     mapStyle() {

@@ -30,7 +30,7 @@ describe('Fermi Paradox', () => {
       },
     })
 
-    expect(game.getZoneByDeck('base', 10).cards()[0].name).toBe('Robotics')
+    expect(game.getZoneByDeck('base', 10).cardlist()[0].name).toBe('Robotics')
   })
 
   test('dogma: you win', () => {

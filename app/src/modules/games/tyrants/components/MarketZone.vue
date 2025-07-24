@@ -7,12 +7,12 @@
 
     <div v-if="Boolean(guard)" class="card-with-count">
       <GameCard :card="guard" :show-cost="true" class="card-by-count" />
-      <div class="card-count">{{ game.zones.byId('guard').cards().length }}</div>
+      <div class="card-count">{{ game.zones.byId('guard').cardlist().length }}</div>
     </div>
 
     <div v-if="Boolean(priestess)" class="card-with-count">
       <GameCard :card="priestess" :show-cost="true" class="card-by-count" />
-      <div class="card-count">{{ game.zones.byId('priestess').cards().length }}</div>
+      <div class="card-count">{{ game.zones.byId('priestess').cardlist().length }}</div>
     </div>
 
     <hr class="market-separator" />
@@ -41,21 +41,21 @@ export default {
       return this
         .game
         .zones.byId('market')
-        .cards()
+        .cardlist()
         .sort((l, r) => l.name.localeCompare(r.name))
         .sort((l, r) => l.cost - r.cost)
     },
 
     cardsRemaining() {
-      return this.game.zones.byId('marketDeck').cards().length
+      return this.game.zones.byId('marketDeck').cardlist().length
     },
 
     guard() {
-      return this.game.zones.byId('guard').cards()[0]
+      return this.game.zones.byId('guard').cardlist()[0]
     },
 
     priestess() {
-      return this.game.zones.byId('priestess').cards()[0]
+      return this.game.zones.byId('priestess').cardlist()[0]
     },
   },
 }

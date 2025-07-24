@@ -1,3 +1,4 @@
+const { GameProxy } = require('./GameProxy.js')
 const util = require('../util.js')
 
 const ZONE_KIND = {
@@ -16,10 +17,12 @@ class BaseZone {
     this._kind = kind
     this._owner = owner
 
-    this.reset()
+    const proxy = GameProxy.create(this)
+    this.reset.call(proxy)
+    return proxy
   }
 
-  cards() {
+  cardlist() {
     return [...this._cards]
   }
 

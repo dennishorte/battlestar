@@ -13,7 +13,7 @@ module.exports = {
     (game, player) => {
       const red = game.zones.byPlayer(player, 'red')
 
-      if (red.cards().length < 2) {
+      if (red.cardlist().length < 2) {
         game.log.add({ template: 'Red cannot be splayed' })
         return
       }

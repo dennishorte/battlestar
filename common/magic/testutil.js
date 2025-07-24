@@ -118,7 +118,7 @@ TestUtil.fixtureDecksSelected = function(options) {
   game.testSetBreakpoint('decks-selected', (game) => {
     const dennis = game.players.byName('dennis')
     const deck = game.zones.byPlayer(dennis, 'library')
-    const cards = deck.cards()
+    const cards = deck.cardlist()
     deck._cards = [
       cards.find(c => c.name() === 'White Knight'),
       cards.find(c => c.name() === 'Benalish Hero'),

@@ -23,7 +23,7 @@ module.exports = {
         const scoreCards = game.cards.byPlayer(player, 'score')
         const valuedJunkCards = game
           .zones.byId('junk')
-          .cards()
+          .cardlist()
           .filter(card => card.age !== undefined)
 
         game.aExchangeCards(

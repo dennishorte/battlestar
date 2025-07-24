@@ -19,7 +19,7 @@ module.exports = {
       const fromJunkOptions = game
         .zones
         .byId('junk')
-        .cards()
+        .cardlist()
         .filter(c => c.isSpecialAchievement)
 
       let junked = false

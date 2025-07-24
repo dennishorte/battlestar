@@ -13,7 +13,7 @@ module.exports = {
     (game, player, { leader, self }) => {
       const choices = game
         .zones.byPlayer(player, 'score')
-        .cards()
+        .cardlist()
         .filter(card => card.getAge() === game.getEffectAge(self, 1))
         .map(card => card.id)
       const target = game.zones.byPlayer(leader, 'score')

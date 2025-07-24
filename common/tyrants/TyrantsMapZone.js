@@ -28,7 +28,7 @@ class TyrantsMapZone extends TyrantsZone {
   }
 
   checkHasOpenTroopSpace() {
-    return this.cards().filter(card => card.isTroop).length < this.size
+    return this.cardlist().filter(card => card.isTroop).length < this.size
   }
 
   checkHasPresence(player) {
@@ -164,7 +164,7 @@ class TyrantsMapZone extends TyrantsZone {
 
   _filteredTokens(fn, player) {
     const troops = this
-      .cards()
+      .cardlist()
       .filter(token => fn(token))
 
     if (player === 'neutral') {
