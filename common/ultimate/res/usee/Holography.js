@@ -18,7 +18,7 @@ module.exports = {
       const toScore = cards.slice(2)
       const scored = game.actions.scoreMany(player, toScore)
 
-      const splayed = game.aSplay(player, color, 'aslant')
+      const splayed = game.actions.splay(player, color, 'aslant')
 
       if (scored.length > 0 && scored.length === toScore.length && splayed) {
         const lowestScoreCards = game.utilLowestCards(game.cards.byPlayer(player, 'score'))

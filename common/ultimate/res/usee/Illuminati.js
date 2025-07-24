@@ -14,7 +14,7 @@ module.exports = {
       const card = game.actions.chooseAndReveal(player, hand)[0]
 
       if (card) {
-        game.aSplay(player, card.color, 'right')
+        game.actions.splay(player, card.color, 'right')
 
         const topCard = game.getTopCard(player, card.color)
         const safeGuarded = game.actions.safeguard(player, topCard)

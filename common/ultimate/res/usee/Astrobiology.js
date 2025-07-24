@@ -14,7 +14,7 @@ module.exports = {
       const card = game.actions.chooseAndReturn(player, bottomCards)[0]
 
       if (card) {
-        game.aSplay(player, card.color, 'aslant')
+        game.actions.splay(player, card.color, 'aslant')
 
         const cardsToScore = game
           .cards.byPlayer(player, card.color)

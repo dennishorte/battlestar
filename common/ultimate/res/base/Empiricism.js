@@ -27,7 +27,7 @@ module.exports = {
       const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 9))
       if (colors.includes(card.color)) {
         game.actions.meld(player, card)
-        game.aSplay(player, card.color, 'up')
+        game.actions.splay(player, card.color, 'up')
       }
       else {
         game.aUnsplay(player, card.color)

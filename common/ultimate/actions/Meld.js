@@ -57,16 +57,16 @@ function _maybeCityBiscuits(player, card) {
   for (const biscuit of biscuits) {
     switch (biscuit) {
       case '+':
-        this.game.actions.draw(player, { age: card.age + 1 })
+        this.draw(player, { age: card.age + 1 })
         break
       case '<':
-        this.game.aSplay(player, card.color, 'left')
+        this.splay(player, card.color, 'left')
         break
       case '>':
-        this.game.aSplay(player, card.color, 'right')
+        this.splay(player, card.color, 'right')
         break
       case '^':
-        this.game.aSplay(player, card.color, 'up')
+        this.splay(player, card.color, 'up')
         break
       case '=':
         for (const opp of this.game.players.opponentsOf(player)) {
@@ -74,11 +74,11 @@ function _maybeCityBiscuits(player, card) {
         }
         break
       case '|':
-        this.game.actions.junkDeck(player, card.getAge() + 1)
-        this.game.actions.draw(player, { age: card.getAge() + 2 })
+        this.junkDeck(player, card.getAge() + 1)
+        this.draw(player, { age: card.getAge() + 2 })
         break
       case 'x':
-        this.game.actions.junkAvailableAchievement(player, [card.getAge()])
+        this.junkAvailableAchievement(player, [card.getAge()])
         break
       default:
         // Most biscuits don't do anything special.
@@ -121,7 +121,7 @@ function _maybeDiscoverBiscuit(player, card) {
     const numDraw = Math.min(maxDraw, age)
 
     for (let i = 0; i < numDraw; i++) {
-      const card = this.game.actions.draw(player, { exp: 'base', age })
+      const card = this.draw(player, { exp: 'base', age })
       this.reveal(player, card)
       if (!card.checkHasBiscuit(biscuit)) {
         this.return(player, card)
@@ -172,7 +172,7 @@ function _maybePromote(player, card) {
       template: '{player} muse promote a card from forecast',
       args: { player },
     })
-    const cards = this.game.actions.chooseAndMeld(player, choices)
+    const cards = this.chooseAndMeld(player, choices)
     if (cards && cards.length > 0) {
       const melded = cards[0]
       this.dogma(player, melded)

@@ -22,8 +22,8 @@ module.exports = {
       }
 
       if (crownCount >= 2) {
-        game.aSplay(player, 'green', 'right')
-        game.aSplay(player, 'blue', 'right')
+        game.actions.splay(player, 'green', 'right')
+        game.actions.splay(player, 'blue', 'right')
       }
     },
   ],

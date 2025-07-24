@@ -23,7 +23,7 @@ module.exports = {
       const direction = game.actions.choose(player, choices, {
         title: 'Choose a direction to splay red',
       })[0]
-      game.aSplay(player, 'red', direction)
+      game.actions.splay(player, 'red', direction)
     },
     (game, player, { self }) => {
       const card = game.actions.drawAndTuck(player, game.getEffectAge(self, 6))
@@ -31,7 +31,7 @@ module.exports = {
         const redSplay = game.zones.byPlayer(player, 'red').splay
         const cardSplay = game.zones.byPlayer(player, card.color).splay
         if (redSplay === cardSplay) {
-          game.aSplay(player, card.color, 'up')
+          game.actions.splay(player, card.color, 'up')
         }
         else {
           game.aUnsplay(player, card.color)

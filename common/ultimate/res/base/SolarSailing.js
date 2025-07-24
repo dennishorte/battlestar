@@ -29,7 +29,7 @@ module.exports = {
           game.actions.returnMany(player, toReturn, { ordered: true })
         }
 
-        game.aSplay(player, color, 'aslant')
+        game.actions.splay(player, color, 'aslant')
       }
 
       // Check for win condition

@@ -37,7 +37,7 @@ module.exports = {
         }
 
         // Splay that color aslant
-        game.aSplay(player, color, 'aslant')
+        game.actions.splay(player, color, 'aslant')
 
         // Check if player doesn't have highest score
         const playerScore = game.getScore(player)

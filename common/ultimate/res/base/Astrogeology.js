@@ -17,7 +17,7 @@ module.exports = {
       const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 11))
       if (card) {
         const color = card.color
-        const splayed = Boolean(game.aSplay(player, color, 'aslant'))
+        const splayed = Boolean(game.actions.splay(player, color, 'aslant'))
 
         if (splayed) {
           const cards = game.cards.byPlayer(player, color)

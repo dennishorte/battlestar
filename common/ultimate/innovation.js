@@ -816,7 +816,7 @@ Innovation.prototype.aChooseAndSplay = function(player, choices, direction, opts
   else {
     const splayed = []
     for (const color of colors) {
-      splayed.push(this.aSplay(player, color, direction))
+      splayed.push(this.actions.splay(player, color, direction))
     }
     return splayed
   }
@@ -1067,39 +1067,6 @@ Innovation.prototype.aDigArtifact = function(player, age) {
     card.moveTo(this.zones.byPlayer(player, 'artifact'))
     this.acted(player)
   }
-}
-
-Innovation.prototype.aSplay = function(player, color, direction, opts={}) {
-  util.assert(direction, 'No direction specified for splay')
-
-  const owner = opts.owner || player
-
-  const zone = this.zones.byPlayer(owner, color)
-  if (zone.cards().length < 2) {
-    this.log.add({
-      template: `Cannot splay ${color} ${direction}`
-    })
-    return
-  }
-
-  const newDirection = zone.splay !== direction
-
-  // Karmas don't trigger if someone else is splaying your cards.
-  if (owner === player) {
-    const karmaKind = this.aKarma(player, 'splay', { ...opts, color, direction })
-    if (karmaKind === 'would-instead') {
-      this.actions.acted(player)
-      return
-    }
-  }
-
-  const result = this.mSplay(player, color, direction, opts)
-
-  if (newDirection) {
-    this._maybeDrawCity(owner)
-  }
-
-  return result
 }
 
 // Used in two cases:
@@ -1871,34 +1838,6 @@ Innovation.prototype.mResetPeleCount = function() {
 
 Innovation.prototype.mSetFirstBaseDraw = function(player) {
   this.state.drawInfo[player.name].drewFirstBaseCard = true
-}
-
-Innovation.prototype.mSplay = function(player, color, direction, opts) {
-  util.assert(direction, 'No direction specified for splay')
-
-  const owner = opts.owner || player
-
-  const target = this.zones.byPlayer(owner, color)
-  if (target.splay !== direction) {
-    target.splay = direction
-
-    if (player === owner) {
-      this.log.add({
-        template: '{player} splays {color} {direction}',
-        args: { player, color, direction }
-      })
-    }
-
-    else {
-      this.log.add({
-        template: "{player} splays {player2}'s {color} {direction}",
-        args: { player, player2: owner, color, direction }
-      })
-    }
-
-    this.actions.acted(player)
-    return color
-  }
 }
 
 Innovation.prototype.mTake = function(player, card) {

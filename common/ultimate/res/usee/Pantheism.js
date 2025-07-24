@@ -29,7 +29,7 @@ module.exports = {
         game.actions.scoreMany(player, cardsToScore)
 
         const colorToSplay = colorToScore === firstCard.color ? secondCard.color : firstCard.color
-        game.aSplay(player, colorToSplay, 'right')
+        game.actions.splay(player, colorToSplay, 'right')
       }
     },
     (game, player, { self }) => {

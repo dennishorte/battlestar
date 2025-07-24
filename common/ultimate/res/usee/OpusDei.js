@@ -16,7 +16,7 @@ module.exports = {
       const card = game.actions.chooseAndReveal(player, highestScoreCards)[0]
 
       if (card) {
-        game.aSplay(player, card.color, 'up')
+        game.actions.splay(player, card.color, 'up')
         game.actions.safeguard(player, card)
       }
     },

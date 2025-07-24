@@ -31,8 +31,8 @@ module.exports = {
 
       game.actions.scoreMany(player, toScore)
 
-      game.aSplay(player, 'yellow', 'aslant')
-      game.aSplay(player, 'purple', 'aslant')
+      game.actions.splay(player, 'yellow', 'aslant')
+      game.actions.splay(player, 'purple', 'aslant')
     }
   ],
 }

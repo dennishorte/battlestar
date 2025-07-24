@@ -17,7 +17,7 @@ module.exports = {
       if (card) {
         game.actions.reveal(player, card)
         game.actions.return(player, card)
-        game.aSplay(player, card.color, 'right')
+        game.actions.splay(player, card.color, 'right')
         game.actions.draw(player, { age: game.cards.byPlayer(player, card.color).length })
       }
       else {

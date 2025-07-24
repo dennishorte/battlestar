@@ -31,11 +31,11 @@ module.exports = {
       })[0]
 
       if (selected === 'yellow') {
-        game.aSplay(player, 'yellow', 'right')
+        game.actions.splay(player, 'yellow', 'right')
         game.aUnsplay(player, 'purple')
       }
       else {
-        game.aSplay(player, 'purple', 'right')
+        game.actions.splay(player, 'purple', 'right')
         game.aUnsplay(player, 'yellow')
       }
     }

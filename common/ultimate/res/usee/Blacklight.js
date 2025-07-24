@@ -40,7 +40,7 @@ module.exports = {
         game.aUnsplay(player, choice.selection[0])
       }
       else if (choice.title === 'Splay up and draw') {
-        game.aSplay(player, choice.selection[0], 'up')
+        game.actions.splay(player, choice.selection[0], 'up')
         game.actions.draw(player, { age: game.getEffectAge(self, 9) })
       }
       else {

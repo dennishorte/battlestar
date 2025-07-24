@@ -43,7 +43,7 @@ module.exports = {
 
       if (selected.title === 'Splay left and self-execute') {
         const color = selected.selection[0]
-        game.aSplay(player, color, 'left')
+        game.actions.splay(player, color, 'left')
         const topCard = game.getTopCard(player, color)
         if (topCard) {
           game.aSelfExecute(player, topCard)
@@ -52,7 +52,7 @@ module.exports = {
       else if (selected.title === 'Meld and splay right') {
         const card = game.cards.byId(selected.selection[0])
         game.actions.meld(player, card)
-        game.aSplay(player, card.color, 'right')
+        game.actions.splay(player, card.color, 'right')
       }
     },
   ],

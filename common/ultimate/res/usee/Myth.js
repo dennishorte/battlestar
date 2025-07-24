@@ -39,7 +39,7 @@ module.exports = {
         })
 
         if (tucked.length == 2) {
-          game.aSplay(player, tucked[0].color, 'left')
+          game.actions.splay(player, tucked[0].color, 'left')
           const bottomCard = game.getBottomCard(player, tucked[0].color)
           const bottomValue = bottomCard ? bottomCard.age : 1
           const drawnCard = game.actions.draw(player, { age: bottomValue })

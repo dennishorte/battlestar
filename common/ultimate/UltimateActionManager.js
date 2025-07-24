@@ -400,6 +400,63 @@ class UltimateActionManager extends BaseActionManager {
     return card
   })
 
+  splay(player, color, direction, opts={}) {
+    util.assert(direction, 'No direction specified for splay')
+
+    const owner = opts.owner || player
+
+    const zone = this.game.zones.byPlayer(owner, color)
+    if (zone.cards().length < 2) {
+      this.log.add({
+        template: `Cannot splay ${color} ${direction}`
+      })
+      return
+    }
+
+    // A color cannot be replayed in the same direction it is already splayed
+    if (zone.splay === direction) {
+      this.log.add({
+        template: `{zone} is already splayed ${direction}`,
+        args: { zone }
+      })
+      return
+    }
+
+    // Karmas don't trigger if someone else is splaying your cards.
+    if (owner === player) {
+      const karmaKind = this.game.aKarma(player, 'splay', { ...opts, color, direction })
+      if (karmaKind === 'would-instead') {
+        this.acted(player)
+        return
+      }
+    }
+
+    // Perform the actual splay
+    if (zone.splay !== direction) {
+      zone.splay = direction
+
+      if (player === owner) {
+        this.log.add({
+          template: '{player} splays {color} {direction}',
+          args: { player, color, direction }
+        })
+      }
+
+      else {
+        this.log.add({
+          template: "{player} splays {player2}'s {color} {direction}",
+          args: { player, player2: owner, color, direction }
+        })
+      }
+
+      this.acted(player)
+    }
+
+    this.game._maybeDrawCity(owner)
+
+    return color
+  }
+
   transfer(player, card, target, opts={}) {
     if (target.toBoard) {
       target = this.game.zones.byPlayer(target.player, card.color)

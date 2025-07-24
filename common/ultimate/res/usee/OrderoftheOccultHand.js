@@ -37,7 +37,7 @@ module.exports = {
     (game, player) => {
       game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'), { count: 2 })
       game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), { count: 4 })
-      game.aSplay(player, 'blue', 'up')
+      game.actions.splay(player, 'blue', 'up')
     }
   ],
 }
