@@ -13,7 +13,7 @@ module.exports = {
       const choices = []
 
       const unsplayed = game
-        .utilColors()
+        .util.colors()
         .filter(c => c !== 'purple')
         .map(c => game.zones.byPlayer(player, c))
         .filter(z => z.splay === 'none')

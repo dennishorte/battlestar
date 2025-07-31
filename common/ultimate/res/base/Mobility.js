@@ -16,7 +16,7 @@ module.exports = {
         .getTopCards(player)
         .filter(card => card.color !== 'red')
         .filter(card => !card.checkHasBiscuit('f'))
-      const highest = game.utilHighestCards(choices)
+      const highest = game.util.highestCards(choices)
 
       if (highest.length >= 2) {
         const cards = game.actions.chooseAndTransfer(player, highest, destination, { count: 2 })
@@ -32,7 +32,7 @@ module.exports = {
 
         const remaining = choices
           .filter(other => !highest.includes(other))
-        const highestRemaining = game.utilHighestCards(remaining)
+        const highestRemaining = game.util.highestCards(remaining)
         const seconds = game.actions.chooseAndTransfer(player, highestRemaining, destination)
         if (seconds && seconds.length > 0) {
           transferred = true

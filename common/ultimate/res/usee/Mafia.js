@@ -13,7 +13,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const opponentSecrets = game.cards.byPlayer(player, 'safe')
-      const lowestSecret = game.utilLowestCards(opponentSecrets)[0]
+      const lowestSecret = game.util.lowestCards(opponentSecrets)[0]
 
       if (!lowestSecret) {
         game.log.addNoEffect()

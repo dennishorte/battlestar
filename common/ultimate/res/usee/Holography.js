@@ -21,7 +21,7 @@ module.exports = {
       const splayed = game.actions.splay(player, color, 'aslant')
 
       if (scored.length > 0 && scored.length === toScore.length && splayed) {
-        const lowestScoreCards = game.utilLowestCards(game.cards.byPlayer(player, 'score'))
+        const lowestScoreCards = game.util.lowestCards(game.cards.byPlayer(player, 'score'))
 
         if (!lowestScoreCards) {
           game.log.addDoNothing()

@@ -148,8 +148,8 @@ function _getBiscuitComparator(player, featuredBiscuit, biscuits, opts) {
 
 function _getDogmaBiscuits(player, card, opts) {
   const biscuits = this.game.getBiscuits()
-  const artifactBiscuits = opts.artifact ? this.game.getBiscuitsByCard(card, 'top') : this.game.utilEmptyBiscuits()
-  biscuits[player.name] = this.game.utilCombineBiscuits(biscuits[player.name], artifactBiscuits)
+  const artifactBiscuits = opts.artifact ? this.game.getBiscuitsByCard(card, 'top') : this.util.emptyBiscuits()
+  biscuits[player.name] = this.util.combineBiscuits(biscuits[player.name], artifactBiscuits)
 
   return biscuits
 }

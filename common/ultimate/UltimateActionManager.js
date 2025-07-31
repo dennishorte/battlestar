@@ -38,7 +38,7 @@ class UltimateActionManager extends BaseActionManager {
     // Color zones that have only one or fewer cards become unsplayed
 
     for (const player of this.players.all()) {
-      for (const color of this.game.utilColors()) {
+      for (const color of this.game.util.colors()) {
         const zone = this.zones.byPlayer(player, color)
         if (zone.cardlist().length < 2) {
           zone.splay = 'none'
@@ -73,7 +73,7 @@ class UltimateActionManager extends BaseActionManager {
 
   chooseAge(player, ages, opts={}) {
     if (!ages) {
-      ages = this.game.utilAges()
+      ages = this.game.util.ages()
     }
     else {
       ages = [...ages]

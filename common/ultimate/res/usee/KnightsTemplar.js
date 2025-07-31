@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const splayedColors = game
-        .utilColors()
+        .util.colors()
         .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
 
       const color = game.actions.choose(player, splayedColors)[0]

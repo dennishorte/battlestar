@@ -12,12 +12,12 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const hand = game.zones.byPlayer(player, 'hand')
-      const handHighest = game.utilHighestCards(hand.cardlist())
+      const handHighest = game.util.highestCards(hand.cardlist())
       const handReturn = hand.cardlist().filter(c => !handHighest.includes(c))
       game.actions.returnMany(player, handReturn)
 
       const score = game.zones.byPlayer(player, 'score')
-      const scoreHighest = game.utilHighestCards(score.cardlist())
+      const scoreHighest = game.util.highestCards(score.cardlist())
       const scoreReturn = score.cardlist().filter(c => !scoreHighest.includes(c))
       game.actions.returnMany(player, scoreReturn)
     },

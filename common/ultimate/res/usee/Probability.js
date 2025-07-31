@@ -21,9 +21,9 @@ module.exports = {
       game.actions.return(player, card1)
       game.actions.return(player, card2)
 
-      const drawnBiscuits = game.utilCombineBiscuits(
-        game.utilParseBiscuits(card1.biscuits),
-        game.utilParseBiscuits(card2.biscuits),
+      const drawnBiscuits = game.util.combineBiscuits(
+        game.util.parseBiscuits(card1.biscuits),
+        game.util.parseBiscuits(card2.biscuits),
       )
 
       const numberOfBiscuits = Object.values(drawnBiscuits).filter(x => x > 0).length

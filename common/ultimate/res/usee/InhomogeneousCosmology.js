@@ -33,7 +33,7 @@ module.exports = {
     },
     (game, player, { self }) => {
       const missingColors = game
-        .utilColors()
+        .util.colors()
         .filter(color => game.cards.byPlayer(player, color).length === 0)
 
       missingColors.forEach(() => {

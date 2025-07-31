@@ -26,7 +26,7 @@ module.exports = {
           .getTopCards(targetPlayer)
           .filter(card => !card.checkHasBiscuit('k'))
 
-        const meldChoices = game.utilLowestCards(topCastleCards)
+        const meldChoices = game.util.lowestCards(topCastleCards)
 
         const meldCard = game.actions.chooseCard(player, meldChoices, {
           title: 'Choose card to meld',

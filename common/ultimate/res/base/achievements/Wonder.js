@@ -8,7 +8,7 @@ module.exports = {
   checkPlayerIsEligible: function(game, player, reduceCost) {
     const numColors = reduceCost ? 4 : 5
     const splays = game
-      .utilColors()
+      .util.colors()
       .map(c => game.zones.byPlayer(player, c).splay)
 
     const directionMatch = splays

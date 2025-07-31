@@ -27,7 +27,7 @@ module.exports = {
 
     (game, player) => {
       const conditionMet = game
-        .utilColors()
+        .util.colors()
         .filter(color => color !== 'purple')
         .map(color => game.getTopCard(player, color))
         .filter(card => card !== undefined)

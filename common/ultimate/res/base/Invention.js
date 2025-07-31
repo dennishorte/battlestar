@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const splayedLeft = game
-        .utilColors()
+        .util.colors()
         .filter(color => game.zones.byPlayer(player, color).splay === 'left')
       const colors = game.aChooseAndSplay(player, splayedLeft, 'right')
       if (colors && colors.length > 0) {
@@ -22,7 +22,7 @@ module.exports = {
 
     (game, player) => {
       const splayCount = game
-        .utilColors()
+        .util.colors()
         .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
         .length
 

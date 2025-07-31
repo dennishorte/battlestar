@@ -14,7 +14,7 @@ module.exports = {
       const count = cards.length - 1
       game.actions.chooseAndTransfer(player, cards, game.zones.byPlayer(leader, 'hand'), { count })
 
-      const highestScore = game.utilHighestCards(
+      const highestScore = game.util.highestCards(
         game.cards.byPlayer(player, 'score')
       )
       game.actions.chooseAndTransfer(player, highestScore, game.zones.byPlayer(leader, 'score'))

@@ -12,10 +12,11 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const validIcons = game
-        .utilBiscuitNames()
+        .util
+        .biscuitNames()
         .filter(b => b !== 'leaf')
       const iconName = game.actions.choose(leader, validIcons, { title: 'Choose an icon' })[0]
-      const icon = game.utilBiscuitNameToIcon(iconName)
+      const icon = game.util.biscuitNameToIcon(iconName)
 
       game.log.add({
         template: '{leader} chooses {icon}',

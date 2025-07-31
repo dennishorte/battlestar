@@ -9,6 +9,7 @@ const util = require('../lib/util.js')
 const { UltimateLogManager } = require('./UltimateLogManager.js')
 const { UltimateActionManager } = require('./UltimateActionManager.js')
 const { UltimateCardManager } = require('./UltimateCardManager.js')
+const { UltimateUtils } = require('./UltimateUtils.js')
 const { UltimateZone } = require('./UltimateZone.js')
 const { UltimateZoneManager } = require('./UltimateZoneManager.js')
 
@@ -34,6 +35,7 @@ function Innovation(serialized_data, viewerName) {
   this.log = new UltimateLogManager(this, serialized_data.chat, viewerName)
   this.actions = new UltimateActionManager(this)
   this.cards = new UltimateCardManager(this)
+  this.util = new UltimateUtils(this)
   this.zones = new UltimateZoneManager(this)
 
 
@@ -204,7 +206,7 @@ Innovation.prototype.initializeZonesPlayers = function() {
     _addPlayerZone(player, 'museum', 'public')
     _addPlayerZone(player, 'safe', 'hidden')
 
-    for (const color of this.utilColors()) {
+    for (const color of this.util.colors()) {
       const zone = this.zones.byPlayer(player, color)
       zone.color = color
       zone.splay = 'none'
@@ -235,9 +237,9 @@ Innovation.prototype.firstPicks = function() {
   const requests = this
     .players.all()
     .map(p => ({
-      actor: this.utilSerializeObject(p),
+      actor: this.util.serializeObject(p),
       title: 'Choose First Card',
-      choices: this.zones.byPlayer(p, 'hand').cardlist().map(this.utilSerializeObject),
+      choices: this.zones.byPlayer(p, 'hand').cardlist().map(this.util.serializeObject),
     }))
 
   const picks = this
@@ -699,7 +701,7 @@ Innovation.prototype.aSuperExecute = function(player, card) {
 }
 
 Innovation.prototype.aChooseColor = function(player, opts={}) {
-  return this.actions.choose(player, this.utilColors(), {
+  return this.actions.choose(player, this.util.colors(), {
     title: 'Choose a color',
     ...opts
   })
@@ -752,11 +754,11 @@ Innovation.prototype.aChooseByPredicate = function(player, cards, count, pred, o
 }
 
 Innovation.prototype.aChooseHighest = function(player, cards, count) {
-  return this.aChooseByPredicate(player, cards, count, this.utilHighestCards)
+  return this.aChooseByPredicate(player, cards, count, this.util.highestCards)
 }
 
 Innovation.prototype.aChooseLowest = function(player, cards, count) {
-  return this.aChooseByPredicate(player, cards, count, this.utilLowestCards)
+  return this.aChooseByPredicate(player, cards, count, this.util.lowestCards)
 }
 
 Innovation.prototype.aChooseAndUnsplay = function(player, choices, opts={}) {
@@ -773,7 +775,7 @@ Innovation.prototype.aChooseAndSplay = function(player, choices, direction, opts
   util.assert(direction, 'No direction specified for splay')
 
   if (!choices) {
-    choices = this.utilColors()
+    choices = this.util.colors()
   }
 
   choices = choices
@@ -1191,7 +1193,7 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
 
   // Flags
   this
-    .utilColors()
+    .util.colors()
     .flatMap(color => this.cards.byPlayer(player, color))
     .map(card => {
       const splay = this.getSplayByCard(card)
@@ -1218,7 +1220,7 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
 
   // Fountains
   this
-    .utilColors()
+    .util.colors()
     .flatMap(color => this.cards.byPlayer(player, color))
     .map(card => {
       const splay = this.getSplayByCard(card)
@@ -1249,24 +1251,24 @@ Innovation.prototype.getBiscuits = function() {
 
 Innovation.prototype.getBiscuitsByPlayer = function(player) {
   const boardBiscuits = this
-    .utilColors()
+    .util.colors()
     .map(color => this.zones.byPlayer(player, color))
     .map(zone => this.getBiscuitsByZone(zone))
-    .reduce((l, r) => this.utilCombineBiscuits(l, r))
+    .reduce((l, r) => this.util.combineBiscuits(l, r))
 
   return this
     .getInfoByKarmaTrigger(player, 'calculate-biscuits')
     .map(info => this.aCardEffect(player, info, { biscuits: boardBiscuits }))
-    .reduce((l, r) => this.utilCombineBiscuits(l, r), boardBiscuits)
+    .reduce((l, r) => this.util.combineBiscuits(l, r), boardBiscuits)
 }
 
 Innovation.prototype.getBiscuitsByCard = function(card, splay) {
-  return this.utilParseBiscuits(card.getBiscuits(splay))
+  return this.util.parseBiscuits(card.getBiscuits(splay))
 }
 
 Innovation.prototype.getBiscuitsByColor = function(player) {
   const output = {}
-  for (const color of this.utilColors()) {
+  for (const color of this.util.colors()) {
     output[color] = this.getBiscuitsByZone(this.zones.byPlayer(player, color))
   }
   return output
@@ -1276,8 +1278,8 @@ Innovation.prototype.getBiscuitsByZone = function(zone) {
   return zone
     .cardlist()
     .map(card => this.getBiscuitsRaw(card, zone.splay))
-    .map(biscuitString => this.utilParseBiscuits(biscuitString))
-    .reduce((l, r) => this.utilCombineBiscuits(l, r), this.utilEmptyBiscuits())
+    .map(biscuitString => this.util.parseBiscuits(biscuitString))
+    .reduce((l, r) => this.util.combineBiscuits(l, r), this.util.emptyBiscuits())
 }
 
 Innovation.prototype.getBiscuitsRaw = function(card, splay) {
@@ -1288,7 +1290,7 @@ Innovation.prototype.getBiscuitsRaw = function(card, splay) {
 
 Innovation.prototype.getBonuses = function(player) {
   const bonuses = this
-    .utilColors()
+    .util.colors()
     .flatMap(color => this.zones.byPlayer(player, color))
     .flatMap(zone => zone.cardlist().flatMap(card => card.getBonuses(this.getSplayByCard(card))))
 
@@ -1315,7 +1317,7 @@ Innovation.prototype.getAvailableSpecialAchievements = function() {
 
 Innovation.prototype.getBottomCards = function(player) {
   return this
-    .utilColors()
+    .util.colors()
     .map(color => this.cards.byPlayer(player, color))
     .map(cards => cards[cards.length - 1])
     .filter(card => card !== undefined)
@@ -1405,12 +1407,12 @@ Innovation.prototype.getHighestTopAge = function(player, opts={}) {
 }
 
 Innovation.prototype.getHighestTopCard = function(player) {
-  return this.utilHighestCards(this.getTopCards(player), { visible: true })[0]
+  return this.util.highestCards(this.getTopCards(player), { visible: true })[0]
 }
 
 Innovation.prototype.getNonEmptyAges = function() {
   return this
-    .utilAges()
+    .util.ages()
     .filter(age => this.getZoneByDeck('base', age).cardlist().length > 0)
 }
 
@@ -1466,7 +1468,7 @@ Innovation.prototype.getBottomCard = function(player, color) {
 
 Innovation.prototype.getSplayedZones = function(player) {
   return this
-    .utilColors()
+    .util.colors()
     .map(color => this.zones.byPlayer(player, color))
     .filter(zone => zone.splay !== 'none')
 }
@@ -1477,7 +1479,7 @@ Innovation.prototype.getTopCard = function(player, color) {
 
 Innovation.prototype.getTopCards = function(player) {
   return this
-    .utilColors()
+    .util.colors()
     .map(color => this.zones.byPlayer(player, color))
     .map(zone => zone.cardlist()[0])
     .filter(card => card !== undefined)
@@ -1629,7 +1631,7 @@ Innovation.prototype.getForecastLimit = function(player) {
 
 Innovation.prototype.getZoneLimit = function(player) {
   const splays = this
-    .utilColors()
+    .util.colors()
     .map(color => this.zones.byPlayer(player, color).splay)
 
   if (splays.includes('aslant')) {
@@ -1840,128 +1842,6 @@ Innovation.prototype.mTake = function(player, card) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Utility Functions
-
-Innovation.prototype.utilAges = function() {
-  return [1,2,3,4,5,6,7,8,9,10,11]
-}
-
-Innovation.prototype.utilBiscuitNames = function() {
-  return [
-    'castle',
-    'clock',
-    'coin',
-    'factory',
-    'leaf',
-    'lightbulb',
-    'person',
-  ]
-}
-
-Innovation.prototype.utilBiscuitNameToIcon = function(name) {
-  switch (name) {
-    case 'castle': return 'k'
-    case 'clock': return 'i'
-    case 'coin': return 'c'
-    case 'factory': return 'f'
-    case 'leaf': return 'l'
-    case 'lightbulb': return 's'
-    case 'person': return 'p'
-  }
-
-  throw new Error('Unknown biscuit name: ' + name)
-}
-
-Innovation.prototype.utilColors = function() {
-  return [
-    'red',
-    'yellow',
-    'green',
-    'blue',
-    'purple',
-  ]
-}
-
-Innovation.prototype.utilColorToDecree = function(color) {
-  switch (color) {
-    case 'red': return 'War'
-    case 'yellow': return 'Expansion'
-    case 'green': return 'Trade'
-    case 'blue': return 'Advancement'
-    case 'purple': return 'Rivalry'
-    default:
-      throw new Error(`Unknown color ${color}`)
-  }
-}
-
-Innovation.prototype.utilCombineBiscuits = function(left, right) {
-  const combined = this.utilEmptyBiscuits()
-  for (const biscuit of Object.keys(combined)) {
-    combined[biscuit] += left[biscuit]
-    combined[biscuit] += right[biscuit]
-  }
-  return combined
-}
-
-Innovation.prototype.utilEmptyBiscuits = function() {
-  return {
-    c: 0,
-    f: 0,
-    i: 0,
-    k: 0,
-    l: 0,
-    s: 0,
-    p: 0,
-  }
-}
-
-Innovation.prototype.utilHighestCards = function(cards) {
-  const sorted = [...cards].sort((l, r) => r.getAge() - l.getAge())
-  return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
-}
-
-Innovation.prototype.utilLowestCards = function(cards) {
-  const sorted = [...cards].sort((l, r) => l.getAge() - r.getAge())
-  return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
-}
-
-Innovation.prototype.utilParseBiscuits = function(biscuitString) {
-  const counts = this.utilEmptyBiscuits()
-  for (const ch of biscuitString) {
-    if (Object.hasOwn(counts, ch)) {
-      counts[ch] += 1
-    }
-  }
-  return counts
-}
-
-Innovation.prototype.utilSeparateByAge = function(cards) {
-  const byAge = {}
-  for (const card of cards) {
-    if (Object.hasOwn(byAge, card.age)) {
-      byAge[card.age].push(card)
-    }
-    else {
-      byAge[card.age] = [card]
-    }
-  }
-  return byAge
-}
-
-Innovation.prototype.utilSerializeObject = function(obj) {
-  if (typeof obj === 'object') {
-    util.assert(obj.id !== undefined, 'Object has no id. Cannot serialize.')
-    return obj.id
-  }
-  else if (typeof obj === 'string') {
-    return obj
-  }
-  else {
-    throw new Error(`Cannot serialize element of type ${typeof obj}`)
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // Private functions
 
 Innovation.prototype._generateActionChoices = function() {
@@ -2071,14 +1951,14 @@ Innovation.prototype._generateActionChoicesDecree = function() {
     .cardlist()
     .filter(c => c.checkIsFigure())
 
-  const figuresByAge = this.utilSeparateByAge(figuresInHand)
+  const figuresByAge = this.util.separateByAge(figuresInHand)
 
   const availableDecrees = []
 
   if (Object.keys(figuresByAge).length >= 3) {
     figuresInHand
       .map(card => card.color)
-      .map(color => this.utilColorToDecree(color))
+      .map(color => this.util.colorToDecree(color))
       .forEach(decree => util.array.pushUnique(availableDecrees, decree))
   }
 
@@ -2098,7 +1978,7 @@ Innovation.prototype._generateActionChoicesDecree = function() {
 
 Innovation.prototype.getDogmaTargets = function(player) {
   return this
-    .utilColors()
+    .util.colors()
     .map(color => this.zones.byPlayer(player, color))
     .filter(zone => this.checkZoneHasVisibleDogmaOrEcho(player, zone))
     .map(zone => zone.cardlist()[0])

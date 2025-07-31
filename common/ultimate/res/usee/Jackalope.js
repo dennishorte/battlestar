@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const choices = game.utilHighestCards(
+      const choices = game.util.highestCards(
         game
           .getTopCards(player)
           .filter(card => !card.checkHasBiscuit('i'))
@@ -26,7 +26,7 @@ module.exports = {
       }
     },
     (game, player) => {
-      const colors = game.utilColors()
+      const colors = game.util.colors()
       const colorCounts = colors.map(color => ({
         color,
         count: game.getVisibleCardsByZone(player, color)

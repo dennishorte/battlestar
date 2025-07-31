@@ -14,7 +14,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const colors = game.actions.choose(player, game.utilColors(), { count: 2, title: 'Choose Two Colors' })
+      const colors = game.actions.choose(player, game.util.colors(), { count: 2, title: 'Choose Two Colors' })
       game.log.add({
         template: '{player} chooses {color1} and {color2}',
         args: {

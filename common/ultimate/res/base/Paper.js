@@ -16,7 +16,7 @@ module.exports = {
 
     (game, player, { self }) => {
       const splayedLeftCount = game
-        .utilColors()
+        .util.colors()
         .map(color => game.zones.byPlayer(player, color))
         .filter(zone => zone.splay === 'left')
         .length

@@ -141,7 +141,7 @@ function _getAgeForDrawAction(player, isAction) {
 
   const ageValues = this
     .game
-    .utilColors()
+    .util.colors()
     .map(color => {
       const zone = this.zones.byPlayer(player, color)
       if (zone.cardlist().length === 0) {

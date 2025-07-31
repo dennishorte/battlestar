@@ -20,8 +20,8 @@ module.exports = {
         })
         const hand = game.zones.byPlayer(player, 'hand')
         const score = game.zones.byPlayer(player, 'score')
-        const handHighest = game.utilHighestCards(hand.cardlist())
-        const scoreHighest = game.utilHighestCards(score.cardlist())
+        const handHighest = game.util.highestCards(hand.cardlist())
+        const scoreHighest = game.util.highestCards(score.cardlist())
 
         game.aExchangeCards(player, handHighest, scoreHighest, hand, score)
       }

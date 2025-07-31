@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const choices = game
-        .utilColors()
+        .util.colors()
         .map(color => game.zones.byPlayer(player, color))
         .filter(zone => game.getBiscuitsByZone(zone).s > 0)
         .map(zone => zone.color)

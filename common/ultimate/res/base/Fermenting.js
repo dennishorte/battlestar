@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const count = game
-        .utilColors()
+        .util.colors()
         .map(color => game.zones.byPlayer(player, color))
         .filter(zone => game.getBiscuitsByZone(zone).l > 0)
         .length

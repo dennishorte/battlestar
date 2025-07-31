@@ -21,7 +21,7 @@ module.exports = {
         game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'))
       }
       else {
-        const highest = game.utilHighestCards(game.cards.byPlayer(player, 'score'))
+        const highest = game.util.highestCards(game.cards.byPlayer(player, 'score'))
         if (highest.length > 0) {
           game.actions.draw(player, { age: highest[0].getAge() + 1 })
         }

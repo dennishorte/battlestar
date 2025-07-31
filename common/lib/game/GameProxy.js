@@ -4,6 +4,7 @@ const PROXY_ITEMS = [
   'cards',
   'players',
   'state',
+  'util',
   'zones',
 ]
 

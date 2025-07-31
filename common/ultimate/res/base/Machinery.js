@@ -16,7 +16,7 @@ module.exports = {
       const leaderHand = game.zones.byPlayer(leader, 'hand')
 
       const yours = playerHand.cardlist()
-      const mine = game.utilHighestCards(leaderHand.cardlist())
+      const mine = game.util.highestCards(leaderHand.cardlist())
 
       game.aExchangeCards(
         player,

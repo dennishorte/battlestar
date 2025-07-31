@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const meldedBiscuits = game.utilEmptyBiscuits()
+      const meldedBiscuits = game.util.emptyBiscuits()
 
       while (true) {
         const hand = game.cards.byPlayer(player, 'hand')

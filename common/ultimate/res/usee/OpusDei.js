@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const highestScoreCards = game.utilHighestCards(game.cards.byPlayer(player, 'score'))
+      const highestScoreCards = game.util.highestCards(game.cards.byPlayer(player, 'score'))
 
       const card = game.actions.chooseAndReveal(player, highestScoreCards)[0]
 
@@ -21,7 +21,7 @@ module.exports = {
       }
     },
     (game, player, { self }) => {
-      const splayColors = game.utilColors().filter(color => game.zones.byPlayer(player, color).splay === 'up')
+      const splayColors = game.util.colors().filter(color => game.zones.byPlayer(player, color).splay === 'up')
 
       splayColors.forEach(() => {
         game.actions.draw(player, { age: game.getEffectAge(self, 8) })

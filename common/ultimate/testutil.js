@@ -195,7 +195,7 @@ TestUtil.testNoFade = function(cardName) {
 
 TestUtil.testZone = function(game, zoneName, expectedCards, opts={}) {
   const zoneCards = TestUtil.cards(game, zoneName, opts.player)
-  if (opts.sort || !game.utilColors().includes(zoneName)) {
+  if (opts.sort || !game.util.colors().includes(zoneName)) {
     zoneCards.sort()
     expectedCards.sort()
   }
@@ -215,7 +215,7 @@ TestUtil.setBoard = function(game, state) {
     for (const name of ['dennis', 'micah', 'scott', 'eliya']) {
       const playerBoard = state[name]
       if (playerBoard) {
-        for (const color of game.utilColors()) {
+        for (const color of game.util.colors()) {
           if (playerBoard[color]) {
             const cards = playerBoard[color].cards || playerBoard[color]
             TestUtil.setColor(game, name, color, cards)
@@ -263,7 +263,7 @@ function _blankTableau() {
 function _buildPlayerBoard(game, opts) {
   const playerBoard = Object.assign(_blankTableau(), opts)
 
-  for (const color of game.utilColors()) {
+  for (const color of game.util.colors()) {
     if (Array.isArray(playerBoard[color])) {
       playerBoard[color] = {
         cards: playerBoard[color],
@@ -287,7 +287,7 @@ TestUtil.testBoard = function(game, state) {
     const expectedBoard = _buildPlayerBoard(game, state[player.name])
     const realBoard = _blankTableau()
 
-    for (const color of game.utilColors()) {
+    for (const color of game.util.colors()) {
       const zone = game.zones.byPlayer(player, color)
       const cards = zone.cardlist().map(card => card.name)
       realBoard[color] = {
@@ -340,7 +340,7 @@ TestUtil.dumpBoard = function(game) {
   for (const player of game.players.all()) {
     const realBoard = _blankTableau()
 
-    for (const color of game.utilColors()) {
+    for (const color of game.util.colors()) {
       const zone = game.zones.byPlayer(player, color)
       const cards = zone.cardlist().map(card => card.name)
       realBoard[color] = {
@@ -402,7 +402,7 @@ TestUtil.clearZone = function(game, playerName, zoneName) {
 
 TestUtil.clearBoard = function(game, playerName) {
   const player = game.players.byName(playerName)
-  for (const color of game.utilColors()) {
+  for (const color of game.util.colors()) {
     const zone = game.zones.byPlayer(player, color)
     for (const card of zone.cardlist()) {
       game.actions.return(player, card, { silent: true })

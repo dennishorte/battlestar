@@ -5,7 +5,7 @@
     </div>
 
     <ColorStack
-      v-for="color in game.utilColors()"
+      v-for="color in game.util.colors()"
       :key="color"
       :player="player"
       :color="color"

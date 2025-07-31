@@ -37,7 +37,7 @@ module.exports = {
         return
       }
 
-      const lowestAchievement = game.utilLowestCards(achievements)[0]
+      const lowestAchievement = game.util.lowestCards(achievements)[0]
       const transfer = game.actions.chooseYesNo(player, `Transfer an achievement of value ${lowestAchievement.getAge()} to your hand?`)
 
       if (transfer) {

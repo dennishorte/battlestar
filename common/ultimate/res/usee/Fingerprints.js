@@ -15,7 +15,7 @@ module.exports = {
     },
     (game, player) => {
       const splayedColors = game
-        .utilColors()
+        .util.colors()
         .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
         .length
 

@@ -12,11 +12,11 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const cardsPerColor = game
-        .utilColors()
+        .util.colors()
         .map(color => game.cards.byPlayer(player, color).length)
       const mostCount = Math.max(...cardsPerColor)
       const choices = game
-        .utilColors()
+        .util.colors()
         .filter(color => game.cards.byPlayer(player, color).length === mostCount)
 
       game.aChooseAndSplay(player, choices, 'left', { min: 0, max: 1 })
