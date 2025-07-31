@@ -108,10 +108,6 @@ class UltimateActionManager extends BaseActionManager {
       return []
     }
 
-    if (opts.lowest) {
-      cards = this.game.utilLowestCards(cards)
-    }
-
     const choiceMap = cards.map(card => {
       if (!card.id) {
         card = this.cards.byId(card)

@@ -10,7 +10,10 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'), { lowest: true })
+      const card = game.aChooseLowest(player, game.cards.byPlayer(player, 'hand'), 1)[0]
+      if (card) {
+        game.actions.meld(player, card)
+      }
       game.actions.draw(player, { age: game.getEffectAge(self, 1) })
     }
   ],

@@ -799,6 +799,7 @@ Innovation.prototype.aChooseAndSplay = function(player, choices, direction, opts
     return []
   }
 
+  // Splaying is almost always optional
   if (!opts.count && !opts.min && !opts.max) {
     opts.min = 0
     opts.max = 1
