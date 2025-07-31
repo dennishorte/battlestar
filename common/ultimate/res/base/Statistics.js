@@ -20,7 +20,7 @@ module.exports = {
         .map(card => card.getAge())
       const options = util.array.distinct(ages).sort()
 
-      const value = game.aChooseAge(leader, options, { title: 'Age to transfer from score to hand' })
+      const value = game.actions.chooseAge(leader, options, { title: 'Age to transfer from score to hand' })
 
       if (value) {
         const cards = game

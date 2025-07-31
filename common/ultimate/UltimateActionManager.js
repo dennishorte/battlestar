@@ -70,6 +70,21 @@ class UltimateActionManager extends BaseActionManager {
     return super.choose(player, choices, opts)
   }
 
+
+  chooseAge(player, ages, opts={}) {
+    if (!ages) {
+      ages = this.game.utilAges()
+    }
+    else {
+      ages = [...ages]
+    }
+
+    const selected = this.choose(player, ages, { ...opts, title: 'Choose Age' })
+    if (selected) {
+      return selected[0]
+    }
+  }
+
   chooseCard(player, cards, opts={}) {
     // TODO: convert this to just call chooseCards
 

@@ -20,7 +20,7 @@ module.exports = {
 
       while (true) {
         const choices = util.array.distinct([baseAge, game.state.dogmaInfo.brethrenLastMeldedAgePlusOne])
-        const age = game.aChooseAge(player, choices)
+        const age = game.actions.chooseAge(player, choices)
         const card = game.actions.drawAndMeld(player, age)
 
         if (card) {

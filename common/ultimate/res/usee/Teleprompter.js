@@ -21,7 +21,7 @@ module.exports = {
       while (true) {
         // Prompt player to choose an age (value) deck
         const exp = game.actions.choose(player, game.getExpansionList())[0]
-        const age = game.aChooseAge(player)
+        const age = game.actions.chooseAge(player)
 
         const key = `${exp}-${age}`
         if (used.includes(key)) {

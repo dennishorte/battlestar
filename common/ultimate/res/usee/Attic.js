@@ -41,7 +41,7 @@ module.exports = {
         .cards.byPlayer(player, 'score')
         .map(c => c.getAge())
       const choices = util.array.distinct(values).sort()
-      const value = game.aChooseAge(player, choices) || 0
+      const value = game.actions.chooseAge(player, choices) || 0
       game.actions.drawAndScore(player, value)
     }
   ],

@@ -28,7 +28,7 @@ module.exports = {
         return
       }
 
-      const age = game.aChooseAge(player, eligibleAges, { title: 'Choose age of cards to transfer' })
+      const age = game.actions.chooseAge(player, eligibleAges, { title: 'Choose age of cards to transfer' })
 
       const transferCards = handAndScore.filter(card => card.getAge() === age)
       const rightPlayer = game.players.rightOf(player)

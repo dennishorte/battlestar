@@ -18,7 +18,7 @@ module.exports = {
         return
       }
 
-      const chosenValue = game.aChooseAge(player, values)
+      const chosenValue = game.actions.chooseAge(player, values)
       const toReturn = game
         .cards.byPlayer(player, 'score')
         .filter(c => c.getAge() === chosenValue)

@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const value = game.aChooseAge(leader)
+      const value = game.actions.chooseAge(leader)
       game.log.add({
         template: '{leader} chooses value {value}',
         args: { leader, value }

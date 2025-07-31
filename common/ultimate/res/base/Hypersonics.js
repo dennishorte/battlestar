@@ -36,7 +36,7 @@ module.exports = {
       }
 
       // Let player choose a value
-      const chosenValue = game.aChooseAge(player, validValues, {
+      const chosenValue = game.actions.chooseAge(player, validValues, {
         title: 'Choose a value to return two cards of'
       })
 

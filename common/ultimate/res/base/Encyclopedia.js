@@ -18,7 +18,7 @@ module.exports = {
         return
       }
 
-      const chosenValue = game.aChooseAge(player, values, {
+      const chosenValue = game.actions.chooseAge(player, values, {
         title: 'Choose an age to merge from your score',
         min: 0,
       })

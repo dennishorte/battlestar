@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const value = game.aChooseAge(leader)
+      const value = game.actions.chooseAge(leader)
       const cards = game
         .cards.byPlayer(player, 'score')
         .filter(c => c.getAge() === value)

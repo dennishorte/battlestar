@@ -698,20 +698,6 @@ Innovation.prototype.aSuperExecute = function(player, card) {
   this.aSelfExecute(player, card, { superExecute: true })
 }
 
-Innovation.prototype.aChooseAge = function(player, ages, opts={}) {
-  if (!ages) {
-    ages = this.utilAges()
-  }
-  else {
-    ages = [...ages]
-  }
-
-  const selected = this.actions.choose(player, ages, { ...opts, title: 'Choose Age' })
-  if (selected) {
-    return selected[0]
-  }
-}
-
 Innovation.prototype.aChooseColor = function(player, opts={}) {
   return this.actions.choose(player, this.utilColors(), {
     title: 'Choose a color',

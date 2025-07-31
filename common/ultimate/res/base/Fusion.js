@@ -34,7 +34,7 @@ module.exports = {
           break
         }
 
-        value = game.aChooseAge(player, options, {
+        value = game.actions.chooseAge(player, options, {
           title: 'Choose next value to return',
         })
       }

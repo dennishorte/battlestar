@@ -13,7 +13,7 @@ module.exports = {
     (game, player) => {
       const cards = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1 })
       if (cards && cards.length > 0) {
-        const age = game.aChooseAge(player)
+        const age = game.actions.chooseAge(player)
         game.log.add({
           template: '{player} chooses age {age}',
           args: { player, age }

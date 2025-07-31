@@ -25,7 +25,7 @@ module.exports = {
       }
 
       const ages = util.array.distinct(topGreenCards.map(card => card.getAge()))
-      const age = game.aChooseAge(player, ages, { title: 'Choose age of card to draw and meld' })
+      const age = game.actions.chooseAge(player, ages, { title: 'Choose age of card to draw and meld' })
       game.actions.drawAndMeld(player, age)
     },
 

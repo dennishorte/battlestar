@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const oddValues = game.utilAges().filter(x => x % 2 === 1)
-      const value = game.aChooseAge(player, oddValues)
+      const value = game.actions.chooseAge(player, oddValues)
 
       const toTransfer = game
         .players.all()

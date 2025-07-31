@@ -30,7 +30,7 @@ module.exports = {
       }
       else if (choice === choices[2]) {
         const values = game.cards.byPlayer(player, 'hand').map(c => c.getAge())
-        const value = game.aChooseAge(player, util.array.distinct(values).sort())
+        const value = game.actions.chooseAge(player, util.array.distinct(values).sort())
         const toScore = game.cards.byPlayer(player, 'hand').filter(c => c.getAge() === value)
         game.actions.scoreMany(player, toScore)
       }
