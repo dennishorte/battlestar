@@ -697,13 +697,6 @@ Innovation.prototype.aSuperExecute = function(player, card) {
   this.aSelfExecute(player, card, { superExecute: true })
 }
 
-Innovation.prototype.aChooseColor = function(player, opts={}) {
-  return this.actions.choose(player, this.util.colors(), {
-    title: 'Choose a color',
-    ...opts
-  })
-}
-
 Innovation.prototype.aChooseAndAchieve = function(player, choices, opts={}) {
   if (choices.length === 0) {
     this.log.addNoEffect()

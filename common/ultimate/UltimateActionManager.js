@@ -159,6 +159,10 @@ class UltimateActionManager extends BaseActionManager {
     return output
   }
 
+  chooseColor(player) {
+    return this.choose(player, this.util.colors(), { title: 'Choose a color' })[0]
+  }
+
   claimAchievement(player, opts={}) {
     // Identify the card to be achieved
     const card = function() {
