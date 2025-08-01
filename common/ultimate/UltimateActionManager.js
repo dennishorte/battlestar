@@ -86,38 +86,6 @@ class UltimateActionManager extends BaseActionManager {
     }
   }
 
-  chooseCard(player, cards, opts={}) {
-    // TODO: convert this to just call chooseCards
-
-    if (cards.length === 0) {
-      this.log.addNoEffect()
-      return undefined
-    }
-
-    if (!opts.title) {
-      opts.title = 'Choose a Card'
-    }
-
-    const cardNames = this.choose(
-      player,
-      cards.map(c => c.name || c).sort(),
-      opts
-    )
-
-    if (cardNames.length === 0) {
-      this.log.addDoNothing(player)
-      return undefined
-    }
-    else if (cardNames[0] === 'auto') {
-      // TODO: Handle auto as an object that can be passed in and then return that special object.
-      //       This allows a more generalized system where non-card options can be passed in along with cards.
-      return 'auto'
-    }
-    else {
-      return this.cards.byId(cardNames[0])
-    }
-  }
-
   chooseCards(player, cards, opts={}) {
     if (cards.length === 0 || opts.count === 0 || opts.max === 0) {
       this.log.addNoEffect()
@@ -125,7 +93,12 @@ class UltimateActionManager extends BaseActionManager {
     }
 
     const choiceMap = cards.map(card => {
-      if (!card.id) {
+      if (card === 'auto') {
+        // 'auto' is a special keyword used createManyMethod that allows players
+        // to skip manually ordering the actions on many cards.
+        return { name: 'auto', card: 'auto' }
+      }
+      else if (!card.id) {
         card = this.cards.byId(card)
       }
 
@@ -158,7 +131,10 @@ class UltimateActionManager extends BaseActionManager {
         return []
       }
 
-      if (cardNames[0].startsWith('*')) {
+      if (cardNames.includes('auto')) {
+        return ['auto']
+      }
+      else if (cardNames[0].startsWith('*')) {
         // Card names were hidden. Convert back to arbitrary matching cards.
         output = []
 
