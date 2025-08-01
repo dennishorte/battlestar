@@ -33,6 +33,39 @@ function DogmaHelper(player, card, opts={}) {
   _shareBonus.call(this, player, card)
 }
 
+function EndorseAction(player, color) {
+  this.log.add({
+    template: '{player} endorses {color}',
+    args: { player, color }
+  })
+  this.log.indent()
+
+  this.state.didEndorse = true
+
+  const card = this.game.getTopCard(player, color)
+
+  // Junk a card
+  const featuredBiscuit = card.dogmaBiscuit
+  const cities = this
+    .game
+    .getTopCards(player)
+    .filter(card => card.checkIsCity())
+    .filter(card => card.biscuits.includes(featuredBiscuit))
+  const junkChoices = this
+    .cards
+    .byPlayer(player, 'hand')
+    .filter(card => cities.some(city => card.getAge() <= city.getAge()))
+    .map(card => card.id)
+
+  this.chooseAndJunk(player, junkChoices, {
+    title: 'Junk a card to endorse'
+  })
+
+  DogmaHelper.call(this, player, card, { endorsed: true })
+
+  this.log.outdent()
+}
+
 function _executeEffects(player, card, shareData, opts) {
   // Store planned effects now, as changes to the stacks shouldn't affect them.
   const effects = [
@@ -203,7 +236,7 @@ function _logSharing(shareData) {
 
 module.exports = {
   DogmaAction,
-  DogmaHelper, // used by endorse action
+  EndorseAction,
 
   getDogmaShareInfo, // used by UI in app
 }

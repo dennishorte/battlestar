@@ -13,10 +13,7 @@ const { UltimateUtils } = require('./UltimateUtils.js')
 const { UltimateZone } = require('./UltimateZone.js')
 const { UltimateZoneManager } = require('./UltimateZoneManager.js')
 
-const {
-  DogmaHelper,
-  getDogmaShareInfo,
-} = require('./actions/Dogma.js')
+const { getDogmaShareInfo } = require('./actions/Dogma.js')
 
 
 module.exports = {
@@ -381,7 +378,7 @@ Innovation.prototype.action = function(count) {
     this.actions.draw(player, { isAction: true })
   }
   else if (name === 'Endorse') {
-    this.aEndorse(player, arg)
+    this.actions.endorse(player, arg)
   }
   else if (name === 'Meld') {
     const card = this.cards.byId(arg)
@@ -851,40 +848,6 @@ Innovation.prototype.aDecree = function(player, name) {
     card.decreeImpl(this, player)
     this.log.outdent()
   }
-
-  this.log.outdent()
-}
-
-Innovation.prototype.aEndorse = function(player, color, opts={}) {
-  this.log.add({
-    template: '{player} endorses {color}',
-    args: { player, color }
-  })
-  this.log.indent()
-
-  this.state.didEndorse = true
-
-  // Tuck a card
-  const featuredBiscuit = this
-    .zones.byPlayer(player, color)
-    .cardlist()[0]
-    .dogmaBiscuit
-  const cities = this
-    .getTopCards(player)
-    .filter(card => card.checkIsCity())
-    .filter(card => card.biscuits.includes(featuredBiscuit))
-  const junkChoices = this
-    .zones.byPlayer(player, 'hand')
-    .cardlist()
-    .filter(card => cities.some(city => card.getAge() <= city.getAge()))
-    .map(card => card.id)
-
-  this.actions.chooseAndJunk(player, junkChoices, {
-    title: 'Junk a card to endorse'
-  })
-
-  const card = this.getTopCard(player, color)
-  DogmaHelper.call(this.actions, player, card, { ...opts, endorsed: true })
 
   this.log.outdent()
 }
