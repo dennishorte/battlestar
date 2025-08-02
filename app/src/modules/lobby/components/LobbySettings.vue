@@ -11,7 +11,6 @@
     </div>
 
     <div class="game-options mt-2">
-      <SettingsInnovation v-if="lobby.game === 'Innovation'" />
       <SettingsUltimate v-if="lobby.game === 'Innovation: Ultimate'" />
       <SettingsTyrants v-if="lobby.game === 'Tyrants of the Underdark'" />
 
@@ -25,7 +24,6 @@
 
 <script>
 import SettingsCubeDraft from './SettingsCubeDraft'
-import SettingsInnovation from './SettingsInnovation'
 import SettingsMagic from './SettingsMagic'
 import SettingsSetDraft from './SettingsSetDraft'
 import SettingsTyrants from './SettingsTyrants'
@@ -37,7 +35,6 @@ export default {
 
   components: {
     SettingsCubeDraft,
-    SettingsInnovation,
     SettingsMagic,
     SettingsSetDraft,
     SettingsTyrants,
@@ -50,7 +47,6 @@ export default {
     return {
       gameNames: [
         '',
-        'Innovation',
         'Innovation: Ultimate',
         'Tyrants of the Underdark',
 

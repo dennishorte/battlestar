@@ -4,7 +4,7 @@
       {{ expansion }}
     </div>
 
-    <div v-for="age in [1,2,3,4,5,6,7,8,9,10]" :key="age">
+    <div v-for="age in [1,2,3,4,5,6,7,8,9,10,11]" :key="age">
       <CardFull v-for="card in cards(age)" :key="card.name" :card="card" />
     </div>
 
@@ -13,9 +13,9 @@
 
 
 <script>
-import { inn } from 'battlestar-common'
+import { ultimate } from 'battlestar-common'
 
-import CardFull from '@/modules/games/inn/components/CardFull'
+import CardFull from '@/modules/games/ultimate/components/CardFull'
 
 export default {
   name: 'InnovationCardSet',
@@ -33,7 +33,7 @@ export default {
 
   methods: {
     cards(age) {
-      const res = inn.res.generate()
+      const res = ultimate.res.factory(null)
       return res[this.expansion].byAge[age].sort((l, r) => {
         if (l.age !== r.age) {
           return l.age - r.age

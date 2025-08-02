@@ -5,7 +5,6 @@
 
   <CubeDraft v-else-if="gameType === 'Cube Draft' || gameType === 'Set Draft'" />
   <MtgGame v-else-if="gameType === 'Magic'" />
-  <InnovationGame v-else-if="gameType === 'Innovation'" />
   <UltimateGame v-else-if="gameType === 'Innovation: Ultimate'" />
   <TyrantsGame v-else-if="gameType === 'Tyrants of the Underdark'" />
 
@@ -22,7 +21,6 @@ import { mapState } from 'vuex'
 import mitt from 'mitt'
 
 import CubeDraft from '@/modules/games/cube_draft/components/CubeDraft'
-import InnovationGame from '@/modules/games/inn/components/InnovationGame'
 import UltimateGame from '@/modules/games/ultimate/components/UltimateGame'
 import MtgGame from '@/modules/games/magic/components/MtgGame'
 import TyrantsGame from '@/modules/games/tyrants/components/TyrantsGame'
@@ -35,7 +33,6 @@ export default {
 
   components: {
     CubeDraft,
-    InnovationGame,
     MtgGame,
     TyrantsGame,
     UltimateGame,

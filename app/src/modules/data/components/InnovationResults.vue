@@ -67,7 +67,7 @@
 
 
 <script>
-import { inn } from 'battlestar-common'
+//import { ultimate } from 'battlestar-common'
 
 import GameHeader from '@/components/GameHeader'
 
@@ -89,14 +89,15 @@ export default {
   },
 
   methods: {
-    cardAge(cardName) {
-      if (inn.res.byName[cardName]) {
-        return inn.res.byName[cardName].age
-      }
-      else {
-        console.log(cardName, inn.res.byName[cardName])
-        return '?'
-      }
+    cardAge() {
+      /* if (inn.res.byName[cardName]) {
+       *   return inn.res.byName[cardName].age
+       * }
+       * else {
+       *   console.log(cardName, inn.res.byName[cardName])
+       *   return '?'
+       * } */
+      return '?'
     },
 
     sortBy(field) {
