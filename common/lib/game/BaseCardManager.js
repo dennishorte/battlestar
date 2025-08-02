@@ -30,6 +30,10 @@ class BaseCardManager {
     return this.zones.byId(zoneId).cardlist()
   }
 
+  hasId(id) {
+    return (id in this._cards)
+  }
+
   reset() {
     this._cards = {}
   }

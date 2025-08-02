@@ -94,7 +94,7 @@ export default {
         return this.header()
       }
       else {
-        return this.zone.name.split('.').slice(-1)[0]
+        return this.zone.id.split('.').slice(-1)[0]
       }
     },
   },

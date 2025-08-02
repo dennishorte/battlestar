@@ -28,7 +28,7 @@ export default {
 
   computed: {
     card() {
-      return this.game.getCardById(this.name)
+      return this.game.cards.byId(this.name)
     },
 
     classes() {
