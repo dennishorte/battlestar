@@ -144,6 +144,7 @@ Tyrants.prototype.initializeCards = function() {
   this.log.add({ template: 'Loading expansion: ' + expansions[1] })
 
   const cardData = res.cards.factory(this)
+  cardData.all.forEach(card => this.cards.register(card))
 
   this.zones.byId('priestess').initializeCards(cardData.byName['Priestess of Lolth'])
   this.zones.byId('guard').initializeCards(cardData.byName['House Guard'])
@@ -195,6 +196,7 @@ Tyrants.prototype.initializeTokens = function() {
     for (let i = 0; i < 40; i++) {
       const name = `troop-${player.name}`
       const token = new TyrantsToken(this, name + '-' + i, name)
+      this.cards.register(token)
       token.isTroop = true
       token.owner = player
       troops.push(token)
@@ -205,6 +207,7 @@ Tyrants.prototype.initializeTokens = function() {
     for (let i = 0; i < 5; i++) {
       const name = `spy-${player.name}`
       const token = new TyrantsToken(this, name + '-' + i, name)
+      this.cards.register(token)
       token.isSpy = true
       token.owner = player
       spies.push(token)
@@ -216,6 +219,7 @@ Tyrants.prototype.initializeTokens = function() {
   const neutrals = []
   for (let i = 0; i < 80; i++) {
     const token = new TyrantsToken(this, 'neutral-' + i, 'neutral')
+    this.cards.register(token)
     token.isTroop = true
     neutrals.push(token)
   }
