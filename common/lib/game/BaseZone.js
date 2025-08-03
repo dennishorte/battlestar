@@ -61,11 +61,17 @@ class BaseZone {
    * Negative indices push from the back of the cards array, the same as with array.splice.
    */
   push(card, index) {
+    if (card.zone) {
+      card.zone.remove(card)
+    }
+
     if (index > this._cards.length) {
       throw new Error('Index out of bounds: ' + index)
     }
     this._cards.splice(index, 0, card)
     this._updateCardVisibility(card)
+
+    card.setZone(this)
   }
 
   peek(index=0) {
@@ -128,7 +134,11 @@ class BaseZone {
   }
 
   sortByName() {
-    this.sort((l, r) => l.name.localeCompare(r.name))
+    this.sort((l, r) => {
+      const lName = typeof l.name === 'function' ? l.name() : l.name
+      const rName = typeof r.name === 'function' ? r.name() : r.name
+      return lName.localeCompare(rName)
+    })
   }
 
   ////////////////////////////////////////////////////////////////////////////////

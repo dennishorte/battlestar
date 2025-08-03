@@ -1,5 +1,21 @@
 const { BaseZone } = require('./BaseZone.js')
 
+// Mock card factory function
+const createMockCard = (id, name, additionalProps = {}) => {
+  return {
+    id,
+    name,
+    setHome: jest.fn(),
+    setZone: jest.fn(),
+    hide: jest.fn(),
+    reveal: jest.fn(),
+    show: jest.fn(),
+    revealed: jest.fn(),
+    visible: jest.fn(),
+    ...additionalProps
+  }
+}
+
 // Fixture function for creating fresh test data
 const createTestFixture = (kind='public') => {
   // Setup mock game object
@@ -7,42 +23,10 @@ const createTestFixture = (kind='public') => {
     random: jest.fn()
   }
 
-  // Setup mock cards
-  const mockCard1 = {
-    id: 'card1',
-    name: 'Card A',
-    setHome: jest.fn(),
-    setZone: jest.fn(),
-    hide: jest.fn(),
-    reveal: jest.fn(),
-    show: jest.fn(),
-    revealed: jest.fn(),
-    visible: jest.fn()
-  }
-
-  const mockCard2 = {
-    id: 'card2',
-    name: 'Card B',
-    setHome: jest.fn(),
-    setZone: jest.fn(),
-    hide: jest.fn(),
-    reveal: jest.fn(),
-    show: jest.fn(),
-    revealed: jest.fn(),
-    visible: jest.fn()
-  }
-
-  const mockCard3 = {
-    id: 'card3',
-    name: 'Card C',
-    setHome: jest.fn(),
-    setZone: jest.fn(),
-    hide: jest.fn(),
-    reveal: jest.fn(),
-    show: jest.fn(),
-    revealed: jest.fn(),
-    visible: jest.fn()
-  }
+  // Setup mock cards using factory
+  const mockCard1 = createMockCard('card1', 'Card A')
+  const mockCard2 = createMockCard('card2', 'Card B')
+  const mockCard3 = createMockCard('card3', 'Card C')
 
   const zone = new BaseZone(mockGame, 'test-zone', 'Test Zone', kind)
 
@@ -135,7 +119,7 @@ describe('BaseZone', () => {
       const cardsCopy = zone.cardlist()
 
       // Modify the returned array
-      cardsCopy.push({ id: 'new-card', name: 'New Card' })
+      cardsCopy.push(createMockCard('new-card', 'New Card'))
 
       // Internal state should remain unchanged
       expect(zone.cardlist()).toEqual([mockCard1, mockCard2])
@@ -376,7 +360,7 @@ describe('BaseZone', () => {
 
     test('should throw error when card not found', () => {
       const { zone, mockCard1 } = createTestFixture()
-      const nonExistentCard = { id: 'non-existent', name: 'Non Existent' }
+      const nonExistentCard = createMockCard('non-existent', 'Non Existent')
 
       zone.initializeCards([mockCard1])
 
@@ -722,12 +706,12 @@ describe('BaseZone', () => {
 
   describe('sort()', () => {
     test('should sort cards using provided comparison function', () => {
-      const { zone, mockCard1, mockCard2, mockCard3 } = createTestFixture()
+      const { zone } = createTestFixture()
 
       // Create cards with numeric values for sorting
-      const cardA = { ...mockCard1, value: 3 }
-      const cardB = { ...mockCard2, value: 1 }
-      const cardC = { ...mockCard3, value: 2 }
+      const cardA = createMockCard('card1', 'Card A', { value: 3 })
+      const cardB = createMockCard('card2', 'Card B', { value: 1 })
+      const cardC = createMockCard('card3', 'Card C', { value: 2 })
 
       zone.initializeCards([cardA, cardB, cardC])
 
@@ -737,11 +721,11 @@ describe('BaseZone', () => {
     })
 
     test('should sort in ascending order with simple numeric comparison', () => {
-      const { zone, mockCard1, mockCard2, mockCard3 } = createTestFixture()
+      const { zone } = createTestFixture()
 
-      const cardA = { ...mockCard1, value: 5 }
-      const cardB = { ...mockCard2, value: 2 }
-      const cardC = { ...mockCard3, value: 8 }
+      const cardA = createMockCard('card1', 'Card A', { value: 5 })
+      const cardB = createMockCard('card2', 'Card B', { value: 2 })
+      const cardC = createMockCard('card3', 'Card C', { value: 8 })
 
       zone.initializeCards([cardA, cardB, cardC])
 
@@ -751,11 +735,11 @@ describe('BaseZone', () => {
     })
 
     test('should sort in descending order with reverse comparison', () => {
-      const { zone, mockCard1, mockCard2, mockCard3 } = createTestFixture()
+      const { zone } = createTestFixture()
 
-      const cardA = { ...mockCard1, value: 5 }
-      const cardB = { ...mockCard2, value: 2 }
-      const cardC = { ...mockCard3, value: 8 }
+      const cardA = createMockCard('card1', 'Card A', { value: 5 })
+      const cardB = createMockCard('card2', 'Card B', { value: 2 })
+      const cardC = createMockCard('card3', 'Card C', { value: 8 })
 
       zone.initializeCards([cardA, cardB, cardC])
 
@@ -789,11 +773,11 @@ describe('BaseZone', () => {
 
   describe('sortByName()', () => {
     test('should sort cards alphabetically by name', () => {
-      const { zone, mockCard1, mockCard2, mockCard3 } = createTestFixture()
+      const { zone } = createTestFixture()
 
-      const cardA = { ...mockCard1, name: 'Zebra' }
-      const cardB = { ...mockCard2, name: 'Alpha' }
-      const cardC = { ...mockCard3, name: 'Beta' }
+      const cardA = createMockCard('card1', 'Zebra')
+      const cardB = createMockCard('card2', 'Alpha')
+      const cardC = createMockCard('card3', 'Beta')
 
       zone.initializeCards([cardA, cardB, cardC])
 
@@ -803,11 +787,11 @@ describe('BaseZone', () => {
     })
 
     test('should handle case-sensitive sorting', () => {
-      const { zone, mockCard1, mockCard2, mockCard3 } = createTestFixture()
+      const { zone } = createTestFixture()
 
-      const cardA = { ...mockCard1, name: 'alpha' }
-      const cardB = { ...mockCard3, name: 'BETA' }
-      const cardC = { ...mockCard2, name: 'Alpha' }
+      const cardA = createMockCard('card1', 'alpha')
+      const cardB = createMockCard('card3', 'BETA')
+      const cardC = createMockCard('card2', 'Alpha')
 
       zone.initializeCards([cardA, cardB, cardC])
 
@@ -839,11 +823,11 @@ describe('BaseZone', () => {
     })
 
     test('should handle cards with same name', () => {
-      const { zone, mockCard1, mockCard2, mockCard3 } = createTestFixture()
+      const { zone } = createTestFixture()
 
-      const cardA = { ...mockCard1, name: 'Same' }
-      const cardB = { ...mockCard2, name: 'Same' }
-      const cardC = { ...mockCard3, name: 'Different' }
+      const cardA = createMockCard('card1', 'Same')
+      const cardB = createMockCard('card2', 'Same')
+      const cardC = createMockCard('card3', 'Different')
 
       zone.initializeCards([cardA, cardB, cardC])
 
@@ -1320,16 +1304,7 @@ describe('BaseZone', () => {
       expect(mockCard2.hide).toHaveBeenCalled()
 
       // Push new card (should call reveal due to public zone)
-      const mockCard3 = {
-        id: 'card3',
-        name: 'Card C',
-        setHome: jest.fn(),
-        hide: jest.fn(),
-        reveal: jest.fn(),
-        show: jest.fn(),
-        revealed: jest.fn(),
-        visible: jest.fn()
-      }
+      const mockCard3 = createMockCard('card3', 'Card C')
       zone.push(mockCard3)
       expect(mockCard3.reveal).toHaveBeenCalled()
     })
