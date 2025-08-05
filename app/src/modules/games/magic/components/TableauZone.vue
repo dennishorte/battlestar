@@ -2,7 +2,7 @@
   <div class="tableau-zone" @click="zoneClicked('top')">
     <div class="zone-header">
       <div>
-        <span class="zone-name">{{ zone.name }}</span>&nbsp;<span class="zone-count">({{ zone.cardlist().length }})</span>
+        <span class="zone-name">{{ zone.name() }}</span>&nbsp;<span class="zone-count">({{ zone.cardlist().length }})</span>
       </div>
 
       <div class="zone-menu" v-if="!noMenu">

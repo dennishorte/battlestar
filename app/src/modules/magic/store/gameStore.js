@@ -100,12 +100,12 @@ export default {
       }
 
       if (getters.isMovingAll) {
-        dispatch('moveAll', card.zone)
+        dispatch('moveAll', card.zone.id)
         return
       }
 
       if (getters.isMovingRevealed) {
-        dispatch('moveRevealed', card.zone)
+        dispatch('moveRevealed', card.zone.id)
         return
       }
 
@@ -148,7 +148,7 @@ export default {
         state.game.doFunc(null, {
           name: 'move card',
           cardId: state.selectedCardId,
-          destId: card.zone,
+          destId: card.zone.id,
           destIndex: state.game.getZoneIndexByCard(card),
         })
         commit('setSelectedCard', null)

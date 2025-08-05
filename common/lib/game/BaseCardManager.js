@@ -12,7 +12,11 @@ class BaseCardManager {
     if (card.id in this._cards) {
       throw new Error('Duplicate card ids: ' + card.id)
     }
-    this._cards[card.id] = card
+    this._cards[this._getCardId(card)] = card
+  }
+
+  all() {
+    return [...this._cards]
   }
 
   byId(id) {
@@ -36,6 +40,10 @@ class BaseCardManager {
 
   reset() {
     this._cards = {}
+  }
+
+  _getCardId(card) {
+    return card.id
   }
 }
 

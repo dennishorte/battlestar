@@ -112,7 +112,7 @@ export default {
     },
 
     selectedCard() {
-      return this.game.getCardById(this.selectedCardId)
+      return this.game.cards.byId(this.selectedCardId)
     },
 
     trackers() {

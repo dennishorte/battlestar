@@ -185,7 +185,7 @@ export default {
     },
 
     cardIsViewed() {
-      const zoneTokens = this.card.zone.split('.')
+      const zoneTokens = this.card.zone.id.split('.')
       const inALibrary = zoneTokens.slice(-1)[0] === 'library'
       const inActorZone = zoneTokens.slice(-2, -1)[0] === this.actor.name
       const inActorLibrary = inActorZone && inALibrary

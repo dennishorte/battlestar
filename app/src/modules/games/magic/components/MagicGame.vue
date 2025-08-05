@@ -42,7 +42,7 @@
     </div>
   </div>
 
-  <CardCloseupModal />
+  <CardCloseupModal v-if="selectedCardId" />
   <CounterCloseupModal />
 
   <BModal v-model="matchStatsModalVis" title="Match Stats">
@@ -92,6 +92,7 @@ export default {
   computed: {
     ...mapState('magic/game', {
       linkedDraft: 'linkedDraft',
+      selectedCardId: 'selectedCardId',
     }),
 
     orderedPlayers() {

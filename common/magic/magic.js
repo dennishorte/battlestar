@@ -13,6 +13,7 @@ const wrappers = {
 }
 
 const { MagicCard } = require('./MagicCard.js')
+const { MagicCardManager } = require('./MagicCardManager.js')
 const { MagicLogManager } = require('./MagicLogManager.js')
 const { MagicPlayerManager } = require('./MagicPlayerManager.js')
 const { MagicZone } = require('./MagicZone.js')
@@ -42,10 +43,10 @@ function Magic(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
   this.log = new MagicLogManager(this, serialized_data.chat)
+  this.cards = new MagicCardManager(this)
   this.players = new MagicPlayerManager(this, this.settings.players, this.settings.playerOptions || {})
 
   this.setCardWrapper(MagicCard)
-  this.cardsById = {}
 }
 
 util.inherit(Game, Magic)
@@ -244,7 +245,7 @@ Magic.prototype.mainLoop = function() {
 
 Magic.prototype.aActiveFace = function(player, cardId, faceIndex) {
   player = player || this.players.current()
-  const card = this.getCardById(cardId)
+  const card = this.cards.byId(cardId)
   const prevFaceIndex = card.g.activeFaceIndex
   card.g.activeFaceIndex = faceIndex
 
@@ -259,7 +260,7 @@ Magic.prototype.aActiveFace = function(player, cardId, faceIndex) {
 
 Magic.prototype.aAddCounter = function(player, cardId, name, opts={}) {
   player = player || this.players.current()
-  const card = this.getCardById(cardId)
+  const card = this.cards.byId(cardId)
 
   if (!card.g.counters[name]) {
     card.g.counters[name] = 0
@@ -272,7 +273,7 @@ Magic.prototype.aAddCounter = function(player, cardId, name, opts={}) {
 
 Magic.prototype.aAddTracker = function(player, cardId, name, opts={}) {
   player = player || this.players.current()
-  const card = this.getCardById(cardId)
+  const card = this.cards.byId(cardId)
 
   if (!card.g.trackers[name]) {
     card.g.trackers[name] = 0
@@ -300,7 +301,7 @@ Magic.prototype.aAddCounterPlayer = function(player, targetName, counterName) {
 
 Magic.prototype.aAdjustCardCounter = function(player, cardId, name, amount) {
   player = player || this.players.current()
-  const card = this.getCardById(cardId)
+  const card = this.cards.byId(cardId)
   card.g.counters[name] += amount
 
   let msg
@@ -322,7 +323,7 @@ Magic.prototype.aAdjustCardCounter = function(player, cardId, name, amount) {
 
 Magic.prototype.aAdjustCardTracker = function(player, cardId, name, amount) {
   player = player || this.players.current()
-  const card = this.getCardById(cardId)
+  const card = this.cards.byId(cardId)
   card.g.trackers[name] += amount
 
   let msg
@@ -344,7 +345,7 @@ Magic.prototype.aAdjustCardTracker = function(player, cardId, name, amount) {
 
 Magic.prototype.aAnnotate = function(player, cardId, annotation) {
   player = player || this.players.current()
-  const card = this.getCardById(cardId)
+  const card = this.cards.byId(cardId)
   card.g.annotation = annotation
   this.log.add({
     template: '{player} sets annotation on {card} to {annotation}',
@@ -354,7 +355,7 @@ Magic.prototype.aAnnotate = function(player, cardId, annotation) {
 
 Magic.prototype.aAnnotateEOT = function(player, cardId, annotation) {
   player = player || this.players.current()
-  const card = this.getCardById(cardId)
+  const card = this.cards.byId(cardId)
   card.g.annotationEOT = annotation
   this.log.add({
     template: '{player} sets EOT annotation on {card} to {annotation}',
@@ -363,8 +364,8 @@ Magic.prototype.aAnnotateEOT = function(player, cardId, annotation) {
 }
 
 Magic.prototype.aAttach = function(player, cardId, targetId) {
-  const source = this.getCardById(cardId)
-  const target = this.getCardById(targetId)
+  const source = this.cards.byId(cardId)
+  const target = this.cards.byId(targetId)
 
   if (source.g.attachedTo) {
     this.mDetach(source)
@@ -567,7 +568,7 @@ Magic.prototype.aCreateToken = function(player, data, opts={}) {
 }
 
 Magic.prototype.aDetach = function(player, cardId) {
-  const card = this.getCardById(cardId)
+  const card = this.cards.byId(cardId)
   this.mDetach(card)
 }
 
@@ -655,7 +656,7 @@ Magic.prototype.aImportCard = function(player, data) {
 
 Magic.prototype.aSecret = function(player, cardId) {
   player = player || this.players.current()
-  const card = this.getCardById(cardId)
+  const card = this.cards.byId(cardId)
   card.secret = true
   card.hide()
 
@@ -668,7 +669,7 @@ Magic.prototype.aSecret = function(player, cardId) {
 Magic.prototype.aMorph = function(player, cardId) {
   player = player || this.players.current()
   const zone = this.zones.byPlayer(player, 'stack')
-  const card = this.getCardById(cardId)
+  const card = this.cards.byId(cardId)
   card.g.morph = true
   this.aMoveCard(player, cardId, zone.id, 0)
 }
@@ -684,7 +685,7 @@ Magic.prototype.aMoveAll = function(player, sourceId, targetId) {
 Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
   player = player || this.players.current()
 
-  const card = this.getCardById(cardId)
+  const card = this.cards.byId(cardId)
   const startingZone = card.zone
   const dest = this.zones.byId(destId)
 
@@ -813,7 +814,7 @@ Magic.prototype.aPassPriority = function(actor, targetName) {
 
 Magic.prototype.aReveal = function(player, cardId) {
   player = player || this.players.current()
-  const card = this.getCardById(cardId)
+  const card = cardId instanceof MagicCard ? cardId : this.cards.byId(cardId)
 
   card.reveal()
   this.log.add({
@@ -895,7 +896,7 @@ Magic.prototype.aSelectPhase = function(player, phase) {
   }
   else if (phase === 'end') {
     this.log.indent()
-    for (const card of this.getCardAll()) {
+    for (const card of this.cards.all()) {
       if (card.g.annotationEOT) {
         this.log.add({
           template: `{card} status ${card.g.annotationEOT} clears`,
@@ -931,7 +932,7 @@ Magic.prototype.aSelectPhase = function(player, phase) {
 }
 
 Magic.prototype.aSetNoUntap = function(player, cardId, value) {
-  const card = this.getCardById(cardId)
+  const card = this.cards.byId(cardId)
   card.g.noUntap = value
 
   if (value) {
@@ -959,7 +960,7 @@ Magic.prototype.aShuffleBottom = function(player, zoneId, count) {
 }
 
 Magic.prototype.aStackEffect = function(player, cardId) {
-  const card = this.getCardById(cardId)
+  const card = this.cards.byId(cardId)
   const controller = this.players.byController(card)
   const stack = this.zones.byPlayer(controller, 'stack')
 
@@ -973,7 +974,7 @@ Magic.prototype.aStackEffect = function(player, cardId) {
 }
 
 Magic.prototype.aTap = function(player, cardId) {
-  const card = this.getCardById(cardId)
+  const card = this.cards.byId(cardId)
   this.mTap(card)
   this.log.add({
     template: 'tap: {card}',
@@ -990,7 +991,7 @@ Magic.prototype.aTapAll = function(player, zoneId) {
 
 Magic.prototype.aUnmorph = function(player, cardId) {
   player = player || this.players.current()
-  const card = this.getCardById(cardId)
+  const card = this.cards.byId(cardId)
   card.g.morph = false
   card.reveal()
   this.log.add({
@@ -1001,7 +1002,7 @@ Magic.prototype.aUnmorph = function(player, cardId) {
 
 Magic.prototype.aUnsecret = function(player, cardId) {
   player = player || this.players.current()
-  const card = this.getCardById(cardId)
+  const card = this.cards.byId(cardId)
   card.secret = false
   this.mAdjustCardVisibility(card)
   this.log.add({
@@ -1011,7 +1012,7 @@ Magic.prototype.aUnsecret = function(player, cardId) {
 }
 
 Magic.prototype.aUntap = function(player, cardId) {
-  const card = this.getCardById(cardId)
+  const card = this.cards.byId(cardId)
   card.g.tapped = false
   this.log.add({
     template: 'untap: {card}',
@@ -1077,19 +1078,6 @@ Magic.prototype.checkIsBattlefieldZone = function(zone) {
     || zone.id.endsWith('creatures')
     || zone.id.endsWith('land')
   )
-}
-
-Magic.prototype.getCardById = function(id) {
-  if (typeof id === 'object') {
-    return id
-  }
-  else {
-    return this.cardsById[id]
-  }
-}
-
-Magic.prototype.getCardAll = function() {
-  return Object.values(this.cardsById)
 }
 
 Magic.prototype.getDeckByPlayer = function(player) {
@@ -1221,7 +1209,7 @@ Magic.prototype.mInitializeCard = function(data, owner) {
   card.g.owner = owner
   card.g.activeFace = card.name(0)
 
-  this.cardsById[card.g.id] = card
+  this.cards.register(card)
   return card
 }
 
