@@ -1,27 +1,8 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Cordoba`  // Card names are unique in Innovation
-  this.name = `Cordoba`
-  this.color = `blue`
-  this.age = 3
-  this.expansion = `city`
-  this.biscuits = `fffs<h`
-  this.dogmaBiscuit = `f`
-  this.echo = ``
-  this.karma = []
-  this.dogma = []
-
-  this.dogmaImpl = []
-  this.echoImpl = []
-  this.karmaImpl = []
+module.exports = {
+  name: `Cordoba`,
+  color: `blue`,
+  age: 3,
+  expansion: `city`,
+  biscuits: `fffs<h`,
+  dogmaBiscuit: `f`,
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

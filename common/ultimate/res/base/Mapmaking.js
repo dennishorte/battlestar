@@ -1,53 +1,36 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Mapmaking`  // Card names are unique in Innovation
-  this.name = `Mapmaking`
-  this.color = `green`
-  this.age = 2
-  this.expansion = `base`
-  this.biscuits = `hcck`
-  this.dogmaBiscuit = `c`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Mapmaking`,
+  color: `green`,
+  age: 2,
+  expansion: `base`,
+  biscuits: `hcck`,
+  dogmaBiscuit: `c`,
+  dogma: [
     `I demand you transfer a {1} from your score pile to my score pile.`,
     `If any card was transferred due to the demand, draw and score a {1}.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player, { leader }) => {
+  ],
+  dogmaImpl: [
+    (game, player, { leader, self }) => {
       const choices = game
-        .getZoneByPlayer(player, 'score')
-        .cards()
-        .filter(card => card.getAge() === game.getEffectAge(this, 1))
+        .zones.byPlayer(player, 'score')
+        .cardlist()
+        .filter(card => card.getAge() === game.getEffectAge(self, 1))
         .map(card => card.id)
-      const target = game.getZoneByPlayer(leader, 'score')
-      const transferredCards = game.aChooseAndTransfer(player, choices, target)
+      const target = game.zones.byPlayer(leader, 'score')
+      const transferredCards = game.actions.chooseAndTransfer(player, choices, target)
 
       if (transferredCards.length > 0) {
         game.state.dogmaInfo.transferred = true
       }
     },
 
-    (game, player) => {
+    (game, player, { self }) => {
       if (game.state.dogmaInfo.transferred) {
-        game.aDrawAndScore(player, game.getEffectAge(this, 1))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 1))
       }
       else {
         game.log.addNoEffect()
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

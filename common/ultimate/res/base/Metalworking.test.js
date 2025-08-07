@@ -15,8 +15,8 @@ describe('Metalworking', () => {
     t.choose(game, request, 'Dogma.Metalworking')
 
     const dennis = game.players.byName('dennis')
-    const score = game.getZoneByPlayer(dennis, 'score').cards().map(c => c.name).sort()
-    const hand = game.getZoneByPlayer(dennis, 'hand').cards().map(c => c.name).sort()
+    const score = game.zones.byPlayer(dennis, 'score').cardlist().map(c => c.name).sort()
+    const hand = game.zones.byPlayer(dennis, 'hand').cardlist().map(c => c.name).sort()
     expect(score).toEqual(['Masonry', 'Mysticism'])
     expect(hand).toEqual(['Clothing'])
   })

@@ -1,5 +1,4 @@
-const Wrapper = require('./Wrapper.js')
-
+const { Serializer } = require('./Serializer.js')
 
 function _emptyZones() {
   return {
@@ -9,11 +8,16 @@ function _emptyZones() {
   }
 }
 
-class DeckWrapper extends Wrapper {
+class DeckWrapper {
   constructor(deck) {
-    super(deck)
+    this.serializer = new Serializer(this, deck)
+    this.serializer.inject()
     this._modified = false
     this._cardsByZone = undefined
+  }
+
+  toJSON() {
+    return this.serializer.serialize()
   }
 
   async initializeCardsAsync(juicer) {
@@ -25,7 +29,7 @@ class DeckWrapper extends Wrapper {
   }
 
   /**
-     A juicer takes an array of cardIds and returns an array of CardWrapper objects matching those ids.
+     A juicer takes an array of cardIds and returns an array of MagicCard objects matching those ids.
    */
   initializeCardsSync(juicer) {
     this._cardsByZone = _emptyZones()
@@ -39,7 +43,7 @@ class DeckWrapper extends Wrapper {
     this._cardsByZone = cards
   }
 
-  cards(zone) {
+  cardlist(zone) {
     if (!this.ready()) {
       throw new Error('cards not loaded')
     }
@@ -118,12 +122,12 @@ class DeckWrapper extends Wrapper {
     }
   }
 
-  static fromGameJSON(json, cardWrapper) {
+  static fromGameJSON(json, cardFactory) {
     const deck = new DeckWrapper(json.data)
     const cards = {
-      main: json.cards.main.map(card => new cardWrapper(card)),
-      side: json.cards.side.map(card => new cardWrapper(card)),
-      command: json.cards.command.map(card => new cardWrapper(card)),
+      main: json.cards.main.map(card => cardFactory(card)),
+      side: json.cards.side.map(card => cardFactory(card)),
+      command: json.cards.command.map(card => cardFactory(card)),
     }
     deck.setCardsByZone(cards)
     return deck

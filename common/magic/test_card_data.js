@@ -1,4 +1,4 @@
-const CardWrapper = require('./util/CardWrapper.js')
+const { MagicCard } = require('./MagicCard.js')
 const lookup = require('./util/cardLookup.js')
 
 const whiteCards = [
@@ -496,6 +496,6 @@ const redCards = [
 const cards = [
   ...whiteCards,
   ...redCards,
-].map(data => new CardWrapper(data))
+].map(data => new MagicCard(null, data))
 
 module.exports = lookup.create(cards)

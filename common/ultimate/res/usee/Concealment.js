@@ -1,23 +1,17 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Concealment`  // Card names are unique in Innovation
-  this.name = `Concealment`
-  this.color = `red`
-  this.age = 8
-  this.expansion = `usee`
-  this.biscuits = `hffi`
-  this.dogmaBiscuit = `f`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Concealment`,
+  color: `red`,
+  age: 8,
+  expansion: `usee`,
+  biscuits: `hffi`,
+  dogmaBiscuit: `f`,
+  dogma: [
     `I demand you tuck all your secrets!`,
     `Safeguard your bottom purple card.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
-      game.aTuckMany(player, game.getCardsByZone(player, 'safe'))
+      game.actions.tuckMany(player, game.cards.byPlayer(player, 'safe'))
     },
     (game, player) => {
       const bottomPurpleCard = game
@@ -25,7 +19,7 @@ function Card() {
         .find(card => card.color === 'purple')
 
       if (bottomPurpleCard) {
-        game.aSafeguard(player, bottomPurpleCard)
+        game.actions.safeguard(player, bottomPurpleCard)
       }
       else {
         game.log.add({
@@ -34,16 +28,5 @@ function Card() {
         })
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

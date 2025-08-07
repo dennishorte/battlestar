@@ -1,30 +1,24 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Translation`  // Card names are unique in Innovation
-  this.name = `Translation`
-  this.color = `blue`
-  this.age = 3
-  this.expansion = `base`
-  this.biscuits = `hccc`
-  this.dogmaBiscuit = `c`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Translation`,
+  color: `blue`,
+  age: 3,
+  expansion: `base`,
+  biscuits: `hccc`,
+  dogmaBiscuit: `c`,
+  dogma: [
     `You may meld all the cards in your score pile. If you meld one, you must meld them all.`,
     `If each top card on your board has a {c}, claim the World achievement.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
-      const cards = game.getCardsByZone(player, 'score')
+      const cards = game.cards.byPlayer(player, 'score')
       if (cards.length === 0) {
         game.log.addNoEffect()
       }
       else {
-        const doIt = game.aYesNo(player, 'Meld all cards in your score pile?')
+        const doIt = game.actions.chooseYesNo(player, 'Meld all cards in your score pile?')
         if (doIt) {
-          game.aMeldMany(player, game.getCardsByZone(player, 'score'))
+          game.actions.meldMany(player, game.cards.byPlayer(player, 'score'))
         }
         else {
           game.log.addDoNothing(player)
@@ -36,19 +30,8 @@ function Card() {
       const topCards = game.getTopCards(player)
       const topCoins = topCards.filter(card => card.checkHasBiscuit('c'))
       if (topCards.length === topCoins.length) {
-        game.aClaimAchievement(player, { name: 'World' })
+        game.actions.claimAchievement(player, { name: 'World' })
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

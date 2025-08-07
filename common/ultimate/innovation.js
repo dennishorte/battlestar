@@ -5,9 +5,15 @@ const {
 } = require('../lib/game.js')
 const res = require('./res/index.js')
 const util = require('../lib/util.js')
-const { Zone } = require('../innovation/zone.js')
 
-const { InnovationLogManager } = require('../innovation/InnovationLogManager.js')
+const { UltimateLogManager } = require('./UltimateLogManager.js')
+const { UltimateActionManager } = require('./UltimateActionManager.js')
+const { UltimateCardManager } = require('./UltimateCardManager.js')
+const { UltimateUtils } = require('./UltimateUtils.js')
+const { UltimateZone } = require('./UltimateZone.js')
+const { UltimateZoneManager } = require('./UltimateZoneManager.js')
+
+const { getDogmaShareInfo } = require('./actions/Dogma.js')
 
 
 module.exports = {
@@ -23,7 +29,15 @@ module.exports = {
 function Innovation(serialized_data, viewerName) {
   Game.call(this, serialized_data, viewerName)
 
-  this.log = new InnovationLogManager(this, serialized_data.chat, viewerName)
+  this.log = new UltimateLogManager(this, serialized_data.chat, viewerName)
+  this.actions = new UltimateActionManager(this)
+  this.cards = new UltimateCardManager(this)
+  this.util = new UltimateUtils(this)
+  this.zones = new UltimateZoneManager(this)
+
+
+  // Used in the UI for showing who will share/demand with an action
+  this.getDogmaShareInfo = getDogmaShareInfo.bind(this.actions)
 }
 
 util.inherit(Game, Innovation)
@@ -64,8 +78,7 @@ Innovation.prototype.initialize = function() {
   this.log.add({ template: 'Initializing' })
   this.log.indent()
 
-  this.cardData = res.generate()
-
+  this.initializeCards()
   this.initializeTeams()
   this.initializeZones()
   this.initializeStartingCards()
@@ -75,6 +88,14 @@ Innovation.prototype.initialize = function() {
 
   this.state.initializationComplete = true
   this._breakpoint('initialization-complete')
+}
+
+Innovation.prototype.initializeCards = function() {
+  const cardData = res.factory(this)
+
+  for (const exp of res.ALL_EXPANSIONS) {
+    this.cards.registerExpansion(exp, cardData[exp])
+  }
 }
 
 Innovation.prototype.initializeTransientState = function() {
@@ -109,115 +130,96 @@ Innovation.prototype.initializeTeams = function() {
 }
 
 Innovation.prototype.initializeZones = function() {
-  this.state.zones = {}
   this.initializeZonesDecks()
-
-  // Set the home zone of all cards before moving them around.
-  this._walkZones(this.state.zones, (zone, path) => {
-    zone.id = path.join('.')
-    for (const card of zone.cards()) {
-      card.home = zone.id
-    }
-  })
-
   this.initializeZonesAchievements()
   this.initializeZonesPlayers()
-  this.state.zones.junk = new Zone(this, 'junk', 'hidden')
-
-  // Set an id that can be used to quickly fetch a zone.
-  this._walkZones(this.state.zones, (zone, path) => {
-    zone.id = path.join('.')
-    for (const card of zone.cards()) {
-      card.zone = zone.id
-      card.visibility = []
-    }
-  })
+  this.zones.register(new UltimateZone(this, 'junk', 'junk', 'hidden'))
 }
 
 Innovation.prototype.initializeZonesDecks = function() {
-  const zones = this.state.zones
-  zones.decks = {}
   for (const exp of SUPPORTED_EXPANSIONS) {
-    zones.decks[exp] = {}
-    for (const [age, cards] of Object.entries(this.cardData[exp].byAge)) {
+    for (const [age, cards] of Object.entries(this.cards.byExp(exp).byAge)) {
       if (!cards) {
         throw new Error(`Missing cards for ${exp}-${age}`)
       }
       else if (!Array.isArray(cards)) {
         throw new Error(`Cards for ${exp}-${age} is of type ${typeof cards}`)
       }
-      util.array.shuffle(cards, this.random)
-      zones.decks[exp][age] = new Zone(this, `decks.${exp}.${age}`, 'deck')
-      zones.decks[exp][age].setCards(cards)
+
+      const id = `decks.${exp}.${age}`
+      const zone = new UltimateZone(this, id, id, 'hidden')
+      zone.initializeCards(cards)
+      zone.shuffle()
+      this.zones.register(zone)
     }
   }
 }
 
 Innovation.prototype.initializeZonesAchievements = function() {
-  const zones = this.state.zones
-
-  zones.achievements = new Zone(this, 'achievements', 'achievements')
-
-  // Standard achievements
-  for (const age of [1,2,3,4,5,6,7,8,9,10]) {
-    const ageZone = this.getZoneByDeck('base', age)
-    const achZone = this.getZoneById('achievements')
-    this.mMoveTopCard(ageZone, achZone)
-  }
+  const achZone = new UltimateZone(this, 'achievements', 'achievements', 'hidden')
+  this.zones.register(achZone)
 
   // Special achievements
+  const specialAchievements = []
   for (const exp of SUPPORTED_EXPANSIONS) {
     if (this.getExpansionList().includes(exp)) {
-      for (const ach of this.cardData[exp].achievements) {
-        zones.achievements._cards.push(ach)
-        ach.home = 'achievements'
+      for (const ach of this.cards.byExp(exp).achievements) {
+        specialAchievements.push(ach)
       }
     }
+  }
+  achZone.initializeCards(specialAchievements)
+
+  // Standard achievements
+  // These are just moved to the achievements zone because their home will remain as their original
+  // decks. If, for some reason, they are 'returned', they will go back to their decks, not to the
+  // achievements.
+  for (const age of [1,2,3,4,5,6,7,8,9,10]) {
+    const ageZone = this.zones.byDeck('base', age)
+    ageZone.peek().moveTo(achZone)
   }
 }
 
 Innovation.prototype.initializeZonesPlayers = function() {
   const self = this
-  const zones = this.state.zones
-  zones.players = {}
 
-  function _addPlayerZone(player, name, kind, root) {
-    root[name] = new Zone(self, `players.${player.name}.${name}`, kind)
-    root[name].owner = player.name
+  const _addPlayerZone = function(player, name, kind) {
+    const id = `players.${player.name}.${name}`
+    const zone = new UltimateZone(self, id, id, kind, player)
+    self.zones.register(zone)
   }
 
   for (const player of this.players.all()) {
-    const root = {}
-    _addPlayerZone(player, 'hand', 'private', root)
-    _addPlayerZone(player, 'score', 'private', root)
-    _addPlayerZone(player, 'forecast', 'private', root)
-    _addPlayerZone(player, 'achievements', 'achievements', root)
-    _addPlayerZone(player, 'red', 'public', root)
-    _addPlayerZone(player, 'blue', 'public', root)
-    _addPlayerZone(player, 'green', 'public', root)
-    _addPlayerZone(player, 'yellow', 'public', root)
-    _addPlayerZone(player, 'purple', 'public', root)
-    _addPlayerZone(player, 'artifact', 'public', root)
-    _addPlayerZone(player, 'museum', 'public', root)
-    _addPlayerZone(player, 'safe', 'hidden', root)
-    zones.players[player.name] = root
+    _addPlayerZone(player, 'hand', 'private')
+    _addPlayerZone(player, 'score', 'private')
+    _addPlayerZone(player, 'forecast', 'private')
+    _addPlayerZone(player, 'achievements', 'hidden')
+    _addPlayerZone(player, 'red', 'public')
+    _addPlayerZone(player, 'blue', 'public')
+    _addPlayerZone(player, 'green', 'public')
+    _addPlayerZone(player, 'yellow', 'public')
+    _addPlayerZone(player, 'purple', 'public')
+    _addPlayerZone(player, 'artifact', 'public')
+    _addPlayerZone(player, 'museum', 'public')
+    _addPlayerZone(player, 'safe', 'hidden')
 
-    for (const color of this.utilColors()) {
-      root[color].color = color
-      root[color].splay = 'none'
+    for (const color of this.util.colors()) {
+      const zone = this.zones.byPlayer(player, color)
+      zone.color = color
+      zone.splay = 'none'
     }
   }
 }
 
 Innovation.prototype.initializeStartingCards = function() {
   for (const player of this.players.all()) {
-    this.mDraw(player, 'base', 1, { silent: true })
+    this.actions.draw(player, { exp: 'base', age: 1 })
 
     if (this.getExpansionList().includes('echo')) {
-      this.mDraw(player, 'echo', 1, { silent: true })
+      this.actions.draw(player, { exp: 'echo', age: 1 })
     }
     else {
-      this.mDraw(player, 'base', 1, { silent: true })
+      this.actions.draw(player, { exp: 'base', age: 1 })
     }
   }
 }
@@ -232,20 +234,20 @@ Innovation.prototype.firstPicks = function() {
   const requests = this
     .players.all()
     .map(p => ({
-      actor: this.utilSerializeObject(p),
+      actor: this.util.serializeObject(p),
       title: 'Choose First Card',
-      choices: this.getZoneByPlayer(p, 'hand').cards().map(this.utilSerializeObject),
+      choices: this.zones.byPlayer(p, 'hand').cardlist().map(this.util.serializeObject),
     }))
 
   const picks = this
     .requestInputMany(requests)
     .map(resp => [
       this.players.byName(resp.actor),
-      this.getCardByName(resp.selection[0])
+      this.cards.byId(resp.selection[0])
     ])
     .sort((l, r) => l[1].name.localeCompare(r[1].name))
   for (const [player, card] of picks) {
-    this.mMeld(player, card)
+    this.actions.meld(player, card)
   }
 
   this.players.passToPlayer(picks[0][0])
@@ -283,7 +285,7 @@ Innovation.prototype.mainLoop = function() {
 
 Innovation.prototype.artifact = function() {
   const player = this.players.current()
-  const artifact = this.getZoneByPlayer(player, 'artifact').cards()[0]
+  const artifact = this.zones.byPlayer(player, 'artifact').cardlist()[0]
   if (artifact) {
     this.log.add({
       template: 'Free Artifact Action',
@@ -299,15 +301,15 @@ Innovation.prototype.artifact = function() {
     switch (action) {
       case 'dogma': {
         const startingZone = artifact.zone
-        this.aDogma(player, artifact, { artifact: true })
+        this.actions.dogma(player, artifact, { artifact: true })
         if (startingZone === artifact.zone) {
-          this.aReturn(player, artifact)
+          this.actions.return(player, artifact)
         }
         this.fadeFiguresCheck()
         break
       }
       case 'return':
-        this.aReturn(player, artifact)
+        this.actions.return(player, artifact)
         break
       case 'skip':
         this.log.add({
@@ -369,18 +371,18 @@ Innovation.prototype.action = function(count) {
     this.aDecree(player, arg)
   }
   else if (name === 'Dogma') {
-    const card = this.getCardByName(arg)
-    this.aDogma(player, card)
+    const card = this.cards.byId(arg)
+    this.actions.dogma(player, card)
   }
   else if (name === 'Draw') {
-    this.aDraw(player, { isAction: true })
+    this.actions.draw(player, { isAction: true })
   }
   else if (name === 'Endorse') {
-    this.aEndorse(player, arg)
+    this.actions.endorse(player, arg)
   }
   else if (name === 'Meld') {
-    const card = this.getCardByName(arg)
-    this.aMeld(player, card, { asAction: true })
+    const card = this.cards.byId(arg)
+    this.actions.meld(player, card, { asAction: true })
   }
   else {
     throw new Error(`Unhandled action type ${name}`)
@@ -414,8 +416,8 @@ Innovation.prototype.fadeFiguresCheck = function() {
           break
         }
 
-        const toFade = this.aChooseCard(player, topFiguresFn())
-        this.aScore(player, toFade)
+        const toFade = this.actions.chooseCard(player, topFiguresFn())
+        this.actions.score(player, toFade)
       }
 
       this.log.outdent()
@@ -456,18 +458,18 @@ Innovation.prototype.aAchieveAction = function(player, arg, opts={}) {
     const hiddenName = arg.substr(6)
     const { expansion, age } = this._parseHiddenCardName(hiddenName)
     const card = this
-      .getCardsByZone(player, 'safe')
+      .cards.byPlayer(player, 'safe')
       .find(c => c.expansion === expansion && c.getAge() === age)
-    this.aClaimAchievement(player, { card })
+    this.actions.claimAchievement(player, { card })
   }
   else if (arg.startsWith('*')) {
     const { expansion, age } = this._parseHiddenCardName(arg)
     const isStandard = opts.nonAction ? false : true
-    this.aClaimAchievement(player, { expansion, age, isStandard })
+    this.actions.claimAchievement(player, { expansion, age, isStandard })
   }
   else {
-    const card = this.getCardByName(arg)
-    this.aClaimAchievement(player, { card })
+    const card = this.cards.byId(arg)
+    this.actions.claimAchievement(player, { card })
   }
 }
 
@@ -485,23 +487,6 @@ Innovation.prototype.aCardEffect = function(player, info, opts={}) {
   }
 
   return result
-}
-
-Innovation.prototype.aExecuteAsIf = function(player, card) {
-  const { featuredBiscuit, biscuits } = this.state.dogmaInfo
-  const { sharing, demanding } =
-    this.getSharingAndDemanding(player, featuredBiscuit, biscuits)
-
-  const effectOptions = {
-    sharing,
-    demanding,
-    noShare: true,
-  }
-
-  this.log.indent()
-  this.aCardEffects(player, card, 'echo', effectOptions)
-  this.aCardEffects(player, card, 'dogma', effectOptions)
-  this.log.outdent()
 }
 
 Innovation.prototype.aOneEffect = function(
@@ -571,7 +556,7 @@ Innovation.prototype.aOneEffect = function(
           })
           if (karmaKind === 'would-instead') {
             this.state.dogmaInfo.demanding = false
-            this.mActed(player)
+            this.actions.acted(player)
             this.log.outdent()
             continue
           }
@@ -643,9 +628,9 @@ Innovation.prototype.aTrackChainRule = function(player, card) {
       template: '{player} achieves a Chain Achievement',
       args: { player }
     })
-    const card = this.getZoneByDeck('base', 11).cards()[0]
+    const card = this.getZoneByDeck('base', 11).cardlist()[0]
     if (card) {
-      this.aClaimAchievement(player, card)
+      this.actions.claimAchievement(player, card)
     }
     else {
       this.log.add({ template: 'There are no cards left in the 11 deck to achieve.' })
@@ -687,7 +672,7 @@ Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
   // Do all visible echo effects in this color.
   if (isTopCard) {
     const cards = this
-      .getCardsByZone(player, card.color)
+      .cards.byPlayer(player, card.color)
       .filter(other => other.id !== card.id)
       .reverse()
     for (const other of cards) {
@@ -712,159 +697,6 @@ Innovation.prototype.aSuperExecute = function(player, card) {
   this.aSelfExecute(player, card, { superExecute: true })
 }
 
-Innovation.prototype.aChoose = function(player, choices, opts={}) {
-  if (this.state.dogmaInfo.mayIsMust) {
-    opts.min = Math.max(1, opts.min || 1)
-  }
-
-  return Game.prototype.aChoose.call(this, player, choices, opts)
-}
-
-Innovation.prototype.aChooseAge = function(player, ages, opts={}) {
-  if (!ages) {
-    ages = this.utilAges()
-  }
-  else {
-    ages = [...ages]
-  }
-
-  const selected = this.aChoose(player, ages, { ...opts, title: 'Choose Age' })
-  if (selected) {
-    return selected[0]
-  }
-}
-
-Innovation.prototype.aChooseCard = function(player, cards, opts={}) {
-  if (cards.length === 0) {
-    this.log.addNoEffect()
-    return undefined
-  }
-
-  if (!opts.title) {
-    opts.title = 'Choose a Card'
-  }
-
-  const cardNames = this.aChoose(
-    player,
-    cards.map(c => c.id || c).sort(),
-    opts
-  )
-
-  if (cardNames.length === 0) {
-    this.log.addDoNothing(player)
-    return undefined
-  }
-  else if (cardNames[0] === 'auto') {
-    return 'auto'
-  }
-  else {
-    return this.getCardByName(cardNames[0])
-  }
-}
-
-Innovation.prototype.aChooseCards = function(player, cards, opts={}) {
-  if (cards.length === 0) {
-    this.log.addNoEffect()
-    return []
-  }
-
-  if (opts.count === 0 || opts.max === 0) {
-    return []
-  }
-
-  if (opts.lowest) {
-    cards = this.utilLowestCards(cards)
-  }
-
-  const choiceMap = cards.map(card => {
-    if (!card.id) {
-      card = this.getCardByName(card)
-    }
-
-    if (opts.hidden) {
-      return { name: card.getHiddenName(this), card }
-    }
-    else {
-      return { name: card.id, card }
-    }
-  })
-
-  opts.title = opts.title || 'Choose Cards(s)'
-  const choices = choiceMap.map(x => x.name)
-
-  if (opts.hidden) {
-    choices.sort()
-  }
-
-  let output
-
-  while (true) {
-    const cardNames = this.aChoose(
-      player,
-      choices,
-      opts
-    )
-
-    if (cardNames.length === 0) {
-      this.log.addDoNothing(player)
-      return []
-    }
-
-    if (cardNames[0].startsWith('*')) {
-      // Card names were hidden. Convert back to arbitrary matching cards.
-      output = []
-      for (const name of cardNames) {
-        const mapping = choiceMap.find(m => m.name === name && !output.includes(m.card))
-        output.push(mapping.card)
-      }
-    }
-    else {
-      output = cardNames.map(name => this.getCardByName(name))
-    }
-
-    if (opts.guard && !opts.guard(output)) {
-      this.log.add({ template: 'invalid selection' })
-      continue
-    }
-    else {
-      break
-    }
-  }
-
-  return output
-}
-
-Innovation.prototype.aChooseColor = function(player, opts={}) {
-  return this.aChoose(player, this.utilColors(), {
-    title: 'Choose a color',
-    ...opts
-  })
-}
-
-Innovation.prototype.aChoosePlayer = function(player, choices, opts={}) {
-  if (choices.length === 0) {
-    this.log.addNoEffect()
-    return undefined
-  }
-
-  if (choices[0].name) {
-    choices = choices.map(player => player.name)
-  }
-
-  const playerNames = this.aChoose(
-    player,
-    choices,
-    { ...opts, title: 'Choose Player' }
-  )
-  if (playerNames.length === 0) {
-    this.log.addDoNothing(player)
-    return undefined
-  }
-  else {
-    return this.players.byName(playerNames[0])
-  }
-}
-
 Innovation.prototype.aChooseAndAchieve = function(player, choices, opts={}) {
   if (choices.length === 0) {
     this.log.addNoEffect()
@@ -874,7 +706,7 @@ Innovation.prototype.aChooseAndAchieve = function(player, choices, opts={}) {
     choices = this.formatAchievements(choices)
   }
 
-  const selected = this.aChoose(
+  const selected = this.actions.choose(
     player,
     choices,
     { ...opts, title: 'Choose Achievement' }
@@ -902,7 +734,7 @@ Innovation.prototype.aChooseByPredicate = function(player, cards, count, pred, o
       numRemaining -= choices.length
     }
     else {
-      const chosen = this.aChooseCards(player, choices, { count: numRemaining, ...opts })
+      const chosen = this.actions.chooseCards(player, choices, { count: numRemaining, ...opts })
       selected = selected.concat(chosen)
       numRemaining -= chosen.length
     }
@@ -912,49 +744,15 @@ Innovation.prototype.aChooseByPredicate = function(player, cards, count, pred, o
 }
 
 Innovation.prototype.aChooseHighest = function(player, cards, count) {
-  return this.aChooseByPredicate(player, cards, count, this.utilHighestCards)
+  return this.aChooseByPredicate(player, cards, count, this.util.highestCards)
 }
 
 Innovation.prototype.aChooseLowest = function(player, cards, count) {
-  return this.aChooseByPredicate(player, cards, count, this.utilLowestCards)
+  return this.aChooseByPredicate(player, cards, count, this.util.lowestCards)
 }
-
-function ChooseAndFactory(manyFuncName, numArgs) {
-  return function(...args) {
-    const player = args[0]
-    const choices = args[1]
-    const opts = args[numArgs] || {}
-
-    const titleVerb = manyFuncName.slice(1, -4).toLowerCase()
-    opts.title = opts.title || `Choose card(s) to ${titleVerb}`
-
-    const cards = this.aChooseCards(player, choices, opts)
-    if (cards) {
-      if (opts.reveal) {
-        this.aRevealMany(player, cards)
-      }
-
-      const actionArgs = [...args]
-      actionArgs[1] = cards
-      return this[manyFuncName](...actionArgs)
-    }
-    else {
-      return []
-    }
-  }
-}
-
-Innovation.prototype.aChooseAndJunk = ChooseAndFactory('aJunkMany', 2)
-Innovation.prototype.aChooseAndMeld = ChooseAndFactory('aMeldMany', 2)
-Innovation.prototype.aChooseAndReturn = ChooseAndFactory('aReturnMany', 2)
-Innovation.prototype.aChooseAndReveal = ChooseAndFactory('aRevealMany', 2)
-Innovation.prototype.aChooseAndSafeguard = ChooseAndFactory('aSafeguardMany', 2)
-Innovation.prototype.aChooseAndScore = ChooseAndFactory('aScoreMany', 2)
-Innovation.prototype.aChooseAndTransfer = ChooseAndFactory('aTransferMany', 3)
-Innovation.prototype.aChooseAndTuck = ChooseAndFactory('aTuckMany', 2)
 
 Innovation.prototype.aChooseAndUnsplay = function(player, choices, opts={}) {
-  const colors = this.aChoose(player, choices, {
+  const colors = this.actions.choose(player, choices, {
     title: 'Choose a color',
     ...opts
   })
@@ -967,24 +765,25 @@ Innovation.prototype.aChooseAndSplay = function(player, choices, direction, opts
   util.assert(direction, 'No direction specified for splay')
 
   if (!choices) {
-    choices = this.utilColors()
+    choices = this.util.colors()
   }
 
   choices = choices
-    .filter(color => this.getZoneByPlayer(player, color).splay !== direction)
-    .filter(color => this.getZoneByPlayer(player, color).cards().length > 1)
+    .filter(color => this.zones.byPlayer(player, color).splay !== direction)
+    .filter(color => this.zones.byPlayer(player, color).cardlist().length > 1)
 
   if (choices.length === 0) {
     this.log.addNoEffect()
     return []
   }
 
+  // Splaying is almost always optional
   if (!opts.count && !opts.min && !opts.max) {
     opts.min = 0
     opts.max = 1
   }
 
-  const colors = this.aChoose(
+  const colors = this.actions.choose(
     player,
     choices,
     { ...opts, title: `Choose a color to splay ${direction}` }
@@ -996,56 +795,15 @@ Innovation.prototype.aChooseAndSplay = function(player, choices, direction, opts
   else {
     const splayed = []
     for (const color of colors) {
-      splayed.push(this.aSplay(player, color, direction))
+      splayed.push(this.actions.splay(player, color, direction))
     }
     return splayed
   }
 }
 
-Innovation.prototype.aClaimAchievement = function(player, opts={}) {
-  let card
-  if (opts.card) {
-    card = opts.card
-  }
-  else if (opts.name) {
-    card = this.getCardByName(opts.name)
-  }
-  else if (opts.age) {
-    card = this
-      .getZoneById('achievements')
-      .cards()
-      .filter(card => !card.isSpecialAchievement && !card.isDecree)
-      .find(c => c.getAge() === opts.age && c.expansion === opts.expansion)
-  }
-
-  if (!card) {
-    throw new Error(`Unable to find achievement given opts: ${JSON.stringify(opts)}`)
-  }
-
-  const karmaKind = this.aKarma(player, 'achieve', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    this.mActed(player)
-    return
-  }
-
-  this.mAchieve(player, card)
-
-  if (opts.isStandard && this.getExpansionList().includes('figs')) {
-    const others = this
-      .players.startingWith(player)
-      .filter(other => !this.checkSameTeam(player, other))
-
-    for (const opp of others) {
-      this.aDraw(opp, { exp: 'figs' })
-    }
-  }
-
-  return card
-}
-
 Innovation.prototype.aDecree = function(player, name) {
-  const card = this.getCardByName(name)
-  const hand = this.getZoneByPlayer(player, 'hand')
+  const card = this.cards.byId(name)
+  const hand = this.zones.byPlayer(player, 'hand')
 
   this.log.add({
     template: '{player} declares a {card} decree',
@@ -1053,18 +811,18 @@ Innovation.prototype.aDecree = function(player, name) {
   })
   this.log.indent()
 
-  this.aRemoveMany(player, hand.cards(), { ordered: true })
+  this.actions.junkMany(player, hand.cardlist(), { ordered: true })
 
   let doImpl = false
-  if (card.zone === 'achievements') {
-    this.aClaimAchievement(player, { card })
+  if (card.zone.id === 'achievements') {
+    this.actions.claimAchievement(player, { card })
     doImpl = true
   }
-  else if (card.zone === `players.${player.name}.achievements`) {
+  else if (card.zone.id === `players.${player.name}.achievements`) {
     doImpl = true
   }
   else {
-    this.mMoveCardTo(card, this.getZoneById('achievements'))
+    card.moveTo('achievements')
     this.log.add({
       template: '{player} returns {card} to the achievements',
       args: { player, card }
@@ -1087,305 +845,6 @@ Innovation.prototype.aDecree = function(player, name) {
   this.log.outdent()
 }
 
-Innovation.prototype.aDiscoverBiscuit = function(player, card) {
-  const age = card.getAge()
-  const biscuit = card.biscuits[4]
-  const maxDraw = this.getZoneByDeck('base', age).cards().length
-  const numDraw = Math.min(maxDraw, age)
-
-  for (let i = 0; i < numDraw; i++) {
-    const card = this.mDraw(player, 'base', age)
-    this.mReveal(player, card)
-    if (!card.checkHasBiscuit(biscuit)) {
-      this.mReturn(player, card)
-    }
-  }
-}
-
-Innovation.prototype.getDogmaBiscuits = function(player, card, opts) {
-  // Store the biscuits now because changes caused by the dogma action should
-  // not affect the number of biscuits used for evaluting the effect.
-  const biscuits = this.getBiscuits()
-  const artifactBiscuits = opts.artifact ? this.getBiscuitsByCard(card, 'top') : this.utilEmptyBiscuits()
-  biscuits[player.name] = this.utilCombineBiscuits(biscuits[player.name], artifactBiscuits)
-
-  return biscuits
-}
-
-Innovation.prototype.getDogmaShareInfo = function(player, card, opts={}) {
-  const biscuits = opts.biscuits || this.getDogmaBiscuits(player, card, opts)
-  const featuredBiscuit = opts.featuredBiscuit || card.dogmaBiscuit
-
-  const { sharing, demanding } = this.getSharingAndDemanding(player, featuredBiscuit, biscuits, opts)
-
-  return {
-    biscuits,
-    featuredBiscuit,
-    hasShare: card.checkHasShare(),
-    hasDemand: card.checkHasDemandExplicit(),
-    hasCompel: card.checkHasCompelExplicit(),
-    sharing,
-    demanding,
-  }
-}
-
-Innovation.prototype._aDogmaHelper_logSharing = function(shareData) {
-  if (shareData.sharing.length > 0) {
-    this.log.add({
-      template: 'Effects will share with {players}.',
-      args: { players: shareData.sharing },
-    })
-  }
-
-  if (shareData.demanding.length > 0) {
-    this.log.add({
-      template: 'Demands will be made of {players}.',
-      args: { players: shareData.demanding },
-    })
-  }
-}
-
-Innovation.prototype._aDogmaHelper_executeEffects = function(player, card, shareData, opts) {
-  // Store planned effects now, as changes to the stacks shouldn't affect them.
-  const cardOwner = this.players.byOwner(card)
-  const effects = [
-    ...this.getVisibleEffectsByColor(cardOwner, card.color, 'echo'),
-    this.getVisibleEffects(card, 'dogma')
-  ].filter(e => e !== undefined)
-
-  const effectOpts = {
-    sharing: shareData.sharing,
-    demanding: shareData.demanding,
-    endorsed: opts.endorsed,
-  }
-
-  this.statsRecordDogmaActions(player, card, effectOpts)
-
-  for (const e of effects) {
-    for (let i = 0; i < e.texts.length; i++) {
-      const result = this.aOneEffect(player, e.card, e.texts[i], e.impls[i], effectOpts)
-      if (this.state.dogmaInfo.earlyTerminate) {
-        return
-      }
-    }
-  }
-}
-
-Innovation.prototype._aDogmaHelper_initializeGlobalContext = function(biscuits, featuredBiscuit) {
-  this.state.shared = false
-  this.state.couldShare = false
-
-  this.state.dogmaInfo.biscuits = biscuits
-  this.state.dogmaInfo.featuredBiscuit = featuredBiscuit
-  this.state.dogmaInfo.earlyTerminate = false
-}
-
-Innovation.prototype._aDogmaHelper_shareBonus = function(player, card) {
-  // Share bonus
-  if (this.state.shared) {
-    this.log.add({
-      template: '{player} draws a sharing bonus',
-      args: { player }
-    })
-    this.log.indent()
-    const expansion = this.getExpansionList().includes('figs') ? 'figs' : ''
-    this.aDraw(player, {
-      exp: expansion,
-      share: true,
-      featuredBiscuit: this.state.dogmaInfo.featuredBiscuit
-    })
-    this.log.outdent()
-  }
-
-  // Grace Hopper and Susan Blackmore have "if your opponent didn't share" karma effects
-  else if (this.state.couldShare) {
-    for (const other of this.players.opponentsOf(player)) {
-      this.aKarma(other, 'no-share', { card, leader: player })
-    }
-  }
-}
-
-Innovation.prototype.aDogmaHelper = function(player, card, opts) {
-  const karmaKind = this.aKarma(player, 'dogma', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    this.mActed(player)
-    return
-  }
-
-  const shareData = this.getDogmaShareInfo(player, card, opts)
-
-  this._aDogmaHelper_initializeGlobalContext(shareData.biscuits, shareData.featuredBiscuit)
-  this._aDogmaHelper_logSharing(shareData)
-  this._aDogmaHelper_executeEffects(player, card, shareData, opts)
-
-  if (this.state.dogmaInfo.earlyTerminate) {
-    return
-  }
-
-  this._aDogmaHelper_shareBonus(player, card)
-}
-
-Innovation.prototype.aDogma = function(player, card, opts={}) {
-  this.log.add({
-    template: '{player} activates the dogma effects of {card}',
-    classes: ['player-action'],
-    args: { player, card }
-  })
-
-  this.log.indent()
-  this.aDogmaHelper(player, card, opts)
-  this.log.outdent()
-  this.mResetDogmaInfo()
-}
-
-Innovation.prototype._getAgeForDrawAction = function(player, isAction) {
-  const karmaInfos = this.getInfoByKarmaTrigger(player, 'top-card-value', { isAction })
-
-  if (karmaInfos.length > 1) {
-    throw new Error('Too many karma infos for top-card-value. I do not know what to do.')
-  }
-
-  const ageValues = this
-    .utilColors()
-    .map(color => {
-      const zone = this.getZoneByPlayer(player, color)
-      if (zone.cards().length === 0) {
-        return 1
-      }
-
-      const actionType = isAction ? 'draw' : 'other'
-      const karmaMatches = (
-        !this.checkInKarma()
-        && karmaInfos.length === 1
-        && karmaInfos[0].impl.matches(this, player, { action: actionType, color, isAction })
-      )
-      if (karmaMatches) {
-        this._karmaIn()
-        const result = karmaInfos[0].impl.func(this, player, { color })
-        this._karmaOut()
-        return result
-      }
-      else {
-        return zone.cards()[0].getAge()
-      }
-    })
-
-  return Math.max(...ageValues)
-}
-
-Innovation.prototype.aDraw = function(player, opts={}) {
-  const { age, share, isAction } = opts
-
-  if (isAction) {
-    const karmaKind = this.aKarma(player, 'draw-action', opts)
-    if (karmaKind === 'would-instead') {
-      this.mActed(player)
-      return
-    }
-  }
-
-  // Expansion the user should draw from, before looking at empty decks.
-  const baseExp = opts.exp || this._determineBaseDrawExpansion(player, share)
-
-  // If age is not specified, draw based on player's current highest top card.
-  const highestTopAge = this._getAgeForDrawAction(player, isAction)
-  const baseAge = age !== undefined ? (age || 1) : (highestTopAge || 1)
-
-  // Adjust age based on empty decks.
-  const [ adjustedAge, adjustedExp ] = this._adjustedDrawDeck(baseAge, baseExp)
-
-  const karmaKind = this.aKarma(player, 'draw', { ...opts, age: adjustedAge })
-  if (karmaKind === 'would-instead') {
-    this.mActed(player)
-    return
-  }
-
-  return this.mDraw(player, adjustedExp, adjustedAge, opts)
-}
-
-Innovation.prototype.aDrawAndForeshadow = function(player, age, opts={}) {
-  const card = this.aDraw(player, {...opts, age })
-  if (card) {
-    return this.aForeshadow(player, card, opts)
-  }
-}
-
-Innovation.prototype.aDrawAndJunk = function(player, age, opts={}) {
-  const card = this.aDraw(player, {...opts, age })
-  if (card) {
-    return this.aJunk(player, card, opts)
-  }
-}
-
-Innovation.prototype.aDrawAndMeld = function(player, age, opts={}) {
-  const card = this.aDraw(player, {...opts, age })
-  if (card) {
-    return this.aMeld(player, card, opts)
-  }
-}
-
-Innovation.prototype.aDrawAndReveal = function(player, age, opts={}) {
-  const card = this.aDraw(player, {...opts, age })
-  if (card) {
-    return this.mReveal(player, card, opts)
-  }
-}
-
-Innovation.prototype.aDrawAndSafeguard = function(player, age, opts={}) {
-  const card = this.aDraw(player, {...opts, age })
-  if (card) {
-    return this.aSafeguard(player, card, opts)
-  }
-}
-
-Innovation.prototype.aDrawAndScore = function(player, age, opts={}) {
-  const card = this.aDraw(player, {...opts, age })
-  if (card) {
-    return this.aScore(player, card, opts)
-  }
-}
-
-Innovation.prototype.aDrawAndTuck = function(player, age, opts={}) {
-  const card = this.aDraw(player, {...opts, age })
-  if (card) {
-    return this.aTuck(player, card, opts)
-  }
-}
-
-Innovation.prototype.aEndorse = function(player, color, opts={}) {
-  this.log.add({
-    template: '{player} endorses {color}',
-    args: { player, color }
-  })
-  this.log.indent()
-
-  this.state.didEndorse = true
-
-  // Tuck a card
-  const featuredBiscuit = this
-    .getZoneByPlayer(player, color)
-    .cards()[0]
-    .dogmaBiscuit
-  const cities = this
-    .getTopCards(player)
-    .filter(card => card.checkIsCity())
-    .filter(card => card.biscuits.includes(featuredBiscuit))
-  const junkChoices = this
-    .getZoneByPlayer(player, 'hand')
-    .cards()
-    .filter(card => cities.some(city => card.getAge() <= city.getAge()))
-    .map(card => card.id)
-
-  this.aChooseAndJunk(player, junkChoices, {
-    title: 'Junk a card to endorse'
-  })
-
-  const card = this.getTopCard(player, color)
-  this.aDogmaHelper(player, card, { ...opts, endorsed: true })
-
-  this.log.outdent()
-}
-
 Innovation.prototype.aExchangeCards = function(player, cards1, cards2, zone1, zone2) {
   this.log.add({
     template: '{player} exchanges {count1} cards for {count2} cards',
@@ -1399,24 +858,20 @@ Innovation.prototype.aExchangeCards = function(player, cards1, cards2, zone1, zo
   let acted = false
 
   for (const card of cards1) {
-    if (this.mMoveCardTo(card, zone2)) {
-      acted = true
-    }
+    acted = Boolean(card.moveTo(zone2)) || acted
   }
   for (const card of cards2) {
-    if (this.mMoveCardTo(card, zone1)) {
-      acted = true
-    }
+    acted = Boolean(card.moveTo(zone1)) || acted
   }
 
   if (acted) {
-    this.mActed(player)
+    this.actions.acted(player)
   }
 }
 
 Innovation.prototype.aExchangeZones = function(player, zone1, zone2) {
-  const cards1 = zone1.cards()
-  const cards2 = zone2.cards()
+  const cards1 = zone1.cardlist()
+  const cards2 = zone2.cardlist()
 
   this.aExchangeCards(player, cards1, cards2, zone1, zone2)
 
@@ -1425,17 +880,7 @@ Innovation.prototype.aExchangeZones = function(player, zone1, zone2) {
     args: { player, zone1, zone2, count1: cards1.length, count2: cards2.length }
   })
 
-  this.mActed(player)
-}
-
-Innovation.prototype.aForeshadow = function(player, card, opts={}) {
-  const karmaKind = this.aKarma(player, 'foreshadow', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    this.mActed(player)
-    return
-  }
-
-  return this.mForeshadow(player, card, opts)
+  this.actions.acted(player)
 }
 
 Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
@@ -1452,7 +897,7 @@ Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
       })
 
       const infoChoices = infos.map(info => info.card)
-      const chosenCard = this.aChooseCard(
+      const chosenCard = this.actions.chooseCard(
         this.players.current(),
         infoChoices,
         { title: 'Choose a would karma to trigger' }
@@ -1550,455 +995,41 @@ Innovation.prototype.aKarma = function(player, kind, opts={}) {
   return this._aKarmaHelper(player, infos, { ...opts, trigger: kind })
 }
 
-Innovation.prototype.aKarmaWhenMeld = function(player, card, opts={}) {
-  const infos = card
-    .getKarmaInfo('when-meld')
-    .filter(info => {
-      if (info.impl.matches) {
-        return info.impl.matches(this, player, opts)
-      }
-      else {
-        return true
-      }
-    })
-  return this._aKarmaHelper(player, infos, opts)
-}
-
-Innovation.prototype._checkCityMeldAchievements = function(player, card) {
-  if (
-    card.checkHasBiscuit('<')
-    && this.getZoneByPlayer(player, card.color).splay === 'left'
-    && this.getCardByName('Tradition').zone === 'achievements'
-  ) {
-    this.aClaimAchievement(player, { name: 'Tradition' })
-  }
-
-  if (
-    card.checkHasBiscuit('>')
-    && this.getZoneByPlayer(player, card.color).splay === 'right'
-    && this.getCardByName('Repute').zone === 'achievements'
-  ) {
-    this.aClaimAchievement(player, { name: 'Repute' })
-  }
-
-  if (
-    card.checkHasBiscuit('^')
-    && this.getZoneByPlayer(player, card.color).splay === 'up'
-    && this.getCardByName('Fame').zone === 'achievements'
-  ) {
-    this.aClaimAchievement(player, { name: 'Fame' })
-  }
-}
-
 Innovation.prototype.aDigArtifact = function(player, age) {
-  if (age > 11 || this.getZoneByDeck('arti', age).cards().length === 0) {
+  if (age > 11 || this.getZoneByDeck('arti', age).cardlist().length === 0) {
     this.log.add({
       template: `Artifacts deck for age ${age} is empty.`
     })
     return
   }
 
-  const card = this.aDraw(player, { age, exp: 'arti' })
+  const card = this.actions.draw(player, { age, exp: 'arti' })
   if (card) {
-    this.mMoveCardTo(card, this.getZoneByPlayer(player, 'artifact'), { player })
-
-    for (const ach of this.cardData['arti'].achievements) {
-      if (ach.getAge() !== card.getAge()) {
-        continue
-      }
-
-      if (this._checkCanSeizeRelic(ach)) {
-        this.aSeizeRelic(player, ach)
-      }
-    }
-  }
-}
-
-Innovation.prototype.aFlipCoin = function(player) {
-  const value = this.random() < .5 ? 'heads' : 'tails'
-  const choice = this.aChoose(player, ['heads', 'tails'], {
-    title: 'Call it...'
-  })[0]
-
-  this.log.add({
-    template: '{player} calls {choice}',
-    args: { player, choice },
-  })
-
-  this.log.add({
-    template: '...and the flip comes up: ' + value
-  })
-
-  return value === choice
-}
-
-Innovation.prototype._checkCanSeizeRelic = function(card) {
-  // A relic can be seized from the achievements pile or from another player's achievements.
-  return card.zone.includes('achievement')
-}
-
-Innovation.prototype.aJunk = function(player, card, opts={}) {
-  this.log.add({
-    template: '{player} junks {card}',
-    args: { player, card }
-  })
-
-  this.aRemove(player, card, opts)
-  this._checkCityJunkAchievements(player, card)
-}
-
-Innovation.prototype.aJunkAvailableAchievement = function(player, ages, opts={}) {
-  const eligible = ages.flatMap(age => this.getAvailableAchievementsByAge(player, age))
-
-  const card = this.aChooseCards(player, eligible, {
-    title: 'Choose an achievement to junk',
-    hidden: true,
-    ...opts
-  })[0]
-
-  if (card) {
-    this.aJunk(player, card)
-  }
-}
-
-Innovation.prototype.aJunkDeck = function(player, age, opts={}) {
-  const cards = this.getZoneByDeck('base', age).cards()
-  if (cards.length === 0) {
     this.log.add({
-      template: 'The {age} deck is already empty.',
-      args: { age },
+      template: '{player} digs {card}',
+      args: { player, card },
     })
-    return
-  }
-
-  let doJunk = true
-  if (opts.optional) {
-    doJunk = this.aChooseYesNo(player, `Junk the ${age} deck?`)
-  }
-
-  if (doJunk) {
-    this.log.add({
-      template: '{player} moves all cards in {age} deck to the junk',
-      args: { player, age }
-    })
-
-    const cards = this.getZoneByDeck('base', age).cards()
-    this.aRemoveMany(player, cards, { ordered: true })
-  }
-  else {
-    this.log.add({
-      template: '{player} chooses not to junk the {age} deck',
-      args: { player, age }
-    })
+    card.moveTo(this.zones.byPlayer(player, 'artifact'))
+    this.acted(player)
   }
 }
 
-Innovation.prototype.aSeizeRelic = function(player, card) {
-  const relicSeizeOptions =
-    this.getExpansionList().includes(card.relicExpansion) ?
-      [
-        'to my achievements',
-        'to my hand',
-        'do not seize',
-      ] : [
-        'to my achievements',
-        'do not seize',
-      ]
-
-  const choice = this.aChoose(player, relicSeizeOptions, {
-    title: `How would you like to seize ${card.name}`
-  })[0]
-
-  if (choice === 'to my achievements') {
-    this.mMoveCardTo(card, this.getZoneByPlayer(player, 'achievements'), { player })
-    this.mActed(player)
-  }
-  else if (choice === 'to my hand') {
-    this.mMoveCardTo(card, this.getZoneByPlayer(player, 'hand'), { player })
-    this.mActed(player)
-  }
-  else {
-    this.log.addDoNothing(player)
-  }
-}
-
-Innovation.prototype._maybeDigArtifact = function(player, card) {
-  if (!this.getExpansionList().includes('arti')) {
-    return
-  }
-
-  // Can only have one artifact on display at a time.
-  if (this.getCardsByZone(player, 'artifact').length > 0) {
-    return
-  }
-
-  const next = this.getCardsByZone(player, card.color)[1]
-
-  // No card underneath, so no artifact dig possible.
-  if (!next) {
-    return
-  }
-
-  // Dig up an artifact if player melded a card of lesser or equal age of the previous top card.
-  if (next.getAge() >= card.getAge()) {
-    this.aDigArtifact(player, next.getAge())
-    return
-  }
-
-  // Dig up an artifact if the melded card has its hex icon in the same position.
-  if (next.getHexIndex() === card.getHexIndex()) {
-    this.aDigArtifact(player, next.getAge())
-    return
-  }
-}
-
+// Used in two cases:
+//  1. Player melds a card onto an empty color stack.
+//  2. Player splays a color in a new direction.
 Innovation.prototype._maybeDrawCity = function(player) {
   if (!this.getExpansionList().includes('city')) {
     return
   }
-
-  if (this.getCardsByZone(player, 'hand').some(card => card.checkIsCity())) {
+  if (this.cards.byPlayer(player, 'hand').some(card => card.checkIsCity())) {
     return
   }
 
-  this.aDraw(player, { exp: 'city' })
-}
-
-Innovation.prototype.aMeld = function(player, card, opts={}) {
-  // Used for Ching Shih to make sure she is melded from the hand.
-  opts.fromZone = card.zone
-
-  const karmaKind = this.aKarma(player, 'meld', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    this.mActed(player)
-    return
-  }
-
-  const isFirstCard = this.getCardsByZone(player, card.color).length === 0
-
-  this.mMeld(player, card, opts)
-  this.log.indent()
-
-  this._checkCityMeldAchievements(player, card)
-
-  if (opts.asAction) {
-    // City biscuits
-    const biscuits = card.getBiscuits('top')
-
-    for (const biscuit of biscuits) {
-      switch (biscuit) {
-        case '+':
-          this.aDraw(player, { age: card.age + 1 })
-          break
-        case '<':
-          this.aSplay(player, card.color, 'left')
-          break
-        case '>':
-          this.aSplay(player, card.color, 'right')
-          break
-        case '^':
-          this.aSplay(player, card.color, 'up')
-          break
-        case '=':
-          for (const opp of this.players.opponentsOf(player)) {
-            this.aUnsplay(opp, card.color)
-          }
-          break
-        case '|':
-          this.aJunkDeck(player, card.getAge() + 1)
-          this.aDraw(player, { age: card.getAge() + 2 })
-          break
-        case 'x':
-          this.aJunkAvailableAchievement(player, [card.getAge()])
-          break
-        default:
-          // Most biscuits don't do anything special.
-          break
-      }
-    }
-
-    // Discover biscuit
-    if (card.checkHasDiscoverBiscuit()) {
-      this.aDiscoverBiscuit(player, card)
-    }
-
-    // Draw a city
-    if (isFirstCard) {
-      this._maybeDrawCity(player)
-    }
-
-    // Dig an artifact
-    this._maybeDigArtifact(player, card)
-
-    // Promote a foreshadowed card
-    const choices = this
-      .getCardsByZone(player, 'forecast')
-      .filter(other => other.getAge() <= card.getAge())
-
-    if (choices.length > 0) {
-      this.log.add({
-        template: '{player} muse promote a card from forecast',
-        args: { player },
-      })
-      const cards = this.aChooseAndMeld(player, choices)
-      if (cards && cards.length > 0) {
-        const melded = cards[0]
-        this.aDogma(player, melded)
-      }
-    }
-  }
-
-  // When-meld karmas
-  this.aKarmaWhenMeld(player, card, opts)
-
-  this.log.outdent()
-  return card
-}
-
-Innovation.prototype.aRemove = function(player, card, opts={}) {
-  const karmaKind = this.aKarma(player, 'remove', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    this.mActed(player)
-    return
-  }
-
-  this.mActed(player)
-  return this.mRemove(card)
-}
-
-Innovation.prototype.aReturn = function(player, card, opts={}) {
-  const karmaKind = this.aKarma(player, 'return', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    this.mActed(player)
-    return
-  }
-
-  return this.mReturn(player, card, opts)
-}
-
-Innovation.prototype.aSafeguard = function(player, card) {
-  const safeLimit = this.getSafeLimit(player)
-  const safeZone = this.getZoneByPlayer(player, 'safe')
-
-  if (safeZone.cards().length >= safeLimit) {
-    this.log.add({
-      template: '{player} has reached their safe limit',
-      args: { player }
-    })
-    return
-  }
-
-  const zone = this.getZoneByCard(card)
-
-  this.log.add({
-    template: '{player} safeguards {card} from {zone}',
-    args: { player, card, zone },
-  })
-
-  this.mMoveCardTo(card, safeZone)
-  this.mActed(player)
-  return card
-}
-
-Innovation.prototype.aSafeguardAvailableAchievement = function(player, age) {
-  const availableAchievements = this.getAvailableAchievementsByAge(player, age)
-
-  if (availableAchievements.length === 0) {
-    this.log.add({ template: 'No available achievements of age ' + age })
-  }
-  else {
-    this.aSafeguard(player, availableAchievements[0])
-  }
-}
-
-Innovation.prototype.aScore = function(player, card, opts={}) {
-  if (card === undefined) {
-    return
-  }
-  const karmaKind = this.aKarma(player, 'score', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    this.mActed(player)
-    return
-  }
-
-  return this.mScore(player, card, opts)
-}
-
-Innovation.prototype.aSplay = function(player, color, direction, opts={}) {
-  util.assert(direction, 'No direction specified for splay')
-
-  const owner = opts.owner || player
-
-  const zone = this.getZoneByPlayer(owner, color)
-  if (zone.cards().length < 2) {
-    this.log.add({
-      template: `Cannot splay ${color} ${direction}`
-    })
-    return
-  }
-
-  const newDirection = zone.splay !== direction
-
-  // Karmas don't trigger if someone else is splaying your cards.
-  if (owner === player) {
-    const karmaKind = this.aKarma(player, 'splay', { ...opts, color, direction })
-    if (karmaKind === 'would-instead') {
-      this.mActed(player)
-      return
-    }
-  }
-
-  const result = this.mSplay(player, color, direction, opts)
-
-  if (this.getExpansionList().includes('city') && newDirection) {
-    this._maybeDrawCity(owner)
-  }
-
-  return result
-}
-
-Innovation.prototype.aTransfer = function(player, card, target, opts={}) {
-  if (target.toBoard) {
-    target = this.getZoneByPlayer(target.player, card.color)
-  }
-
-  const karmaKind = this.aKarma(player, 'transfer', { ...opts, card, target })
-  if (karmaKind === 'would-instead') {
-    this.mActed(player)
-    return
-  }
-  return this.mTransfer(player, card, target, opts)
-}
-
-Innovation.prototype._checkCityJunkAchievements = function(player, card) {
-  if (
-    card.checkHasBiscuit(';')
-    && this.getCardByName('Glory').zone === 'achievements'
-  ) {
-    this.aClaimAchievement(player, { name: 'Glory' })
-  }
-
-  if (
-    card.checkHasBiscuit(':')
-    && this.getCardByName('Victory').zone === 'achievements'
-  ) {
-    this.aClaimAchievement(player, { name: 'Victory' })
-  }
-}
-
-Innovation.prototype.aTuck = function(player, card, opts={}) {
-  const karmaKind = this.aKarma(player, 'tuck', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    this.mActed(player)
-    return
-  }
-
-  const tucked = this.mTuck(player, card, opts)
-  return tucked
+  this.actions.draw(player, { exp: 'city' })
 }
 
 Innovation.prototype.aUnsplay = function(player, color) {
-  const zone = this.getZoneByPlayer(player, color)
+  const zone = this.zones.byPlayer(player, color)
 
   if (zone.splay === 'none') {
     this.log.add({
@@ -2014,10 +1045,6 @@ Innovation.prototype.aUnsplay = function(player, color) {
     zone.splay = 'none'
     return color
   }
-}
-
-Innovation.prototype.aYesNo = function(player, title) {
-  return this.aChooseYesNo(player, title)
 }
 
 Innovation.prototype.aYouLose = function(player, card) {
@@ -2038,71 +1065,11 @@ Innovation.prototype.aYouLose = function(player, card) {
 
 }
 
-function ManyFactory(baseFuncName, extraArgCount=0) {
-  const verb = baseFuncName.slice(1).toLowerCase()
-
-  return function(...args) { //player, cards, opts={}) {
-    const player = args[0]
-    const cards = args[1]
-    const opts = args[2 + extraArgCount] || {}
-
-    const results = []
-    let auto = opts.ordered || false
-    let remaining = [...cards]
-    const startZones = Object.fromEntries(remaining.map(c => [c.id, c.zone]))
-
-    while (remaining.length > 0) {
-      // Check if any cards in 'remaining' have been acted on by some other force (karma effect).
-      remaining = remaining.filter(c => c.zone === startZones[c.id])
-      if (remaining.length === 0) {
-        break
-      }
-
-      let next
-      if (auto || remaining.length === 1) {
-        next = remaining[0]
-      }
-      else {
-        next = this.aChooseCard(
-          player,
-          remaining.concat(['auto']),
-          { title: `Choose a card to ${verb} next.` },
-        )
-      }
-
-      if (next === 'auto') {
-        auto = true
-        continue
-      }
-
-      remaining = remaining.filter(card => card !== next)
-      const singleArgs = [...args]
-      singleArgs[1] = next
-      const result = this[baseFuncName](...singleArgs)
-      if (result !== undefined) {
-        results.push(result)
-      }
-    }
-    return results
-  }
-}
-
-Innovation.prototype.aJunkMany = ManyFactory('aJunk')
-Innovation.prototype.aMeldMany = ManyFactory('aMeld')
-Innovation.prototype.aRemoveMany = ManyFactory('aRemove')
-Innovation.prototype.aReturnMany = ManyFactory('aReturn')
-Innovation.prototype.aRevealMany = ManyFactory('mReveal')
-Innovation.prototype.aSafeguardMany = ManyFactory('aSafeguard')
-Innovation.prototype.aScoreMany = ManyFactory('aScore')
-Innovation.prototype.aTransferMany = ManyFactory('aTransfer', 1)
-Innovation.prototype.aTuckMany = ManyFactory('aTuck')
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // Checkers
 
 Innovation.prototype.checkAchievementAvailable = function(name) {
-  return !!this.getZoneById('achievements').cards().find(ach => ach.name === name)
+  return !!this.zones.byId('achievements').cardlist().find(ach => ach.name === name)
 }
 
 Innovation.prototype.checkAchievementEligibility = function(player, card, opts={}) {
@@ -2119,13 +1086,13 @@ Innovation.prototype.checkAgeZeroInPlay = function() {
 
 Innovation.prototype.checkCardIsTop = function(card) {
   const re = /^players.[^.]*.(yellow|red|green|blue|purple)$/i
-  const isOnBoard = card.zone.match(re) !== null
-  const isTop = this.getZoneByCard(card).cards()[0] === card
+  const isOnBoard = card.zone.id.match(re) !== null
+  const isTop = card.zone.peek() === card
   return isOnBoard && isTop
 }
 
 Innovation.prototype.checkColorIsSplayed = function(player, color) {
-  return this.getZoneByPlayer(player, color).splay !== 'none'
+  return this.zones.byPlayer(player, color).splay !== 'none'
 }
 
 Innovation.prototype.checkEffectIsVisible = function(card) {
@@ -2163,7 +1130,7 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
     total: 0
   }
 
-  for (const card of this.getZoneByPlayer(player, 'achievements').cards()) {
+  for (const card of this.zones.byPlayer(player, 'achievements').cardlist()) {
     if (card.isSpecialAchievement || card.isDecree) {
       ach.special.push(card)
     }
@@ -2182,8 +1149,8 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
 
   // Flags
   this
-    .utilColors()
-    .flatMap(color => this.getCardsByZone(player, color))
+    .util.colors()
+    .flatMap(color => this.cards.byPlayer(player, color))
     .map(card => {
       const splay = this.getSplayByCard(card)
       const biscuits = card.getBiscuits(splay)
@@ -2209,8 +1176,8 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
 
   // Fountains
   this
-    .utilColors()
-    .flatMap(color => this.getCardsByZone(player, color))
+    .util.colors()
+    .flatMap(color => this.cards.byPlayer(player, color))
     .map(card => {
       const splay = this.getSplayByCard(card)
       const biscuits = card.getBiscuits(splay)
@@ -2240,35 +1207,35 @@ Innovation.prototype.getBiscuits = function() {
 
 Innovation.prototype.getBiscuitsByPlayer = function(player) {
   const boardBiscuits = this
-    .utilColors()
-    .map(color => this.getZoneByPlayer(player, color))
+    .util.colors()
+    .map(color => this.zones.byPlayer(player, color))
     .map(zone => this.getBiscuitsByZone(zone))
-    .reduce((l, r) => this.utilCombineBiscuits(l, r))
+    .reduce((l, r) => this.util.combineBiscuits(l, r))
 
   return this
     .getInfoByKarmaTrigger(player, 'calculate-biscuits')
     .map(info => this.aCardEffect(player, info, { biscuits: boardBiscuits }))
-    .reduce((l, r) => this.utilCombineBiscuits(l, r), boardBiscuits)
+    .reduce((l, r) => this.util.combineBiscuits(l, r), boardBiscuits)
 }
 
 Innovation.prototype.getBiscuitsByCard = function(card, splay) {
-  return this.utilParseBiscuits(card.getBiscuits(splay))
+  return this.util.parseBiscuits(card.getBiscuits(splay))
 }
 
 Innovation.prototype.getBiscuitsByColor = function(player) {
   const output = {}
-  for (const color of this.utilColors()) {
-    output[color] = this.getBiscuitsByZone(this.getZoneByPlayer(player, color))
+  for (const color of this.util.colors()) {
+    output[color] = this.getBiscuitsByZone(this.zones.byPlayer(player, color))
   }
   return output
 }
 
 Innovation.prototype.getBiscuitsByZone = function(zone) {
   return zone
-    .cards()
+    .cardlist()
     .map(card => this.getBiscuitsRaw(card, zone.splay))
-    .map(biscuitString => this.utilParseBiscuits(biscuitString))
-    .reduce((l, r) => this.utilCombineBiscuits(l, r), this.utilEmptyBiscuits())
+    .map(biscuitString => this.util.parseBiscuits(biscuitString))
+    .reduce((l, r) => this.util.combineBiscuits(l, r), this.util.emptyBiscuits())
 }
 
 Innovation.prototype.getBiscuitsRaw = function(card, splay) {
@@ -2279,9 +1246,9 @@ Innovation.prototype.getBiscuitsRaw = function(card, splay) {
 
 Innovation.prototype.getBonuses = function(player) {
   const bonuses = this
-    .utilColors()
-    .flatMap(color => this.getZoneByPlayer(player, color))
-    .flatMap(zone => zone.cards().flatMap(card => card.getBonuses(this.getSplayByCard(card))))
+    .util.colors()
+    .flatMap(color => this.zones.byPlayer(player, color))
+    .flatMap(zone => zone.cardlist().flatMap(card => card.getBonuses(this.getSplayByCard(card))))
 
   const karmaBonuses = this
     .getInfoByKarmaTrigger(player, 'list-bonuses')
@@ -2292,47 +1259,28 @@ Innovation.prototype.getBonuses = function(player) {
     .sort((l, r) => r - l)
 }
 
-Innovation.prototype.getCardByName = function(name, def) {
-  if (!Object.hasOwn(this.cardData.all.byName, name)) {
-    if (def !== undefined) {
-      return def
-    }
-    else {
-      throw new Error(`Unknown card: ${name}`)
-    }
-  }
-  else {
-    return this.cardData.all.byName[name]
-  }
-}
-
 Innovation.prototype.getAgesByZone = function(player, zoneName) {
-  const ages = this.getCardsByZone(player, zoneName).map(c => c.getAge())
+  const ages = this.cards.byPlayer(player, zoneName).map(c => c.getAge())
   return util.array.distinct(ages).sort()
 }
 
 Innovation.prototype.getAvailableSpecialAchievements = function() {
   return this
-    .getZoneById('achievements')
-    .cards()
+    .zones.byId('achievements')
+    .cardlist()
     .filter(c => c.isSpecialAchievement)
 }
 
 Innovation.prototype.getBottomCards = function(player) {
   return this
-    .utilColors()
-    .map(color => this.getCardsByZone(player, color))
+    .util.colors()
+    .map(color => this.cards.byPlayer(player, color))
     .map(cards => cards[cards.length - 1])
     .filter(card => card !== undefined)
 }
 
-Innovation.prototype.getCardsByZone = function(player, zoneName) {
-  return this.getZoneByPlayer(player, zoneName).cards()
-}
-
 Innovation.prototype.getEffectAge = function(card, age) {
-  const cardZone = this.getZoneByCard(card)
-  const player = this.players.byZone(cardZone)
+  const player = this.players.byZone(card.zone)
 
   if (player) {
     const karmaInfos = this.getInfoByKarmaTrigger(player, 'effect-age')
@@ -2415,13 +1363,13 @@ Innovation.prototype.getHighestTopAge = function(player, opts={}) {
 }
 
 Innovation.prototype.getHighestTopCard = function(player) {
-  return this.utilHighestCards(this.getTopCards(player), { visible: true })[0]
+  return this.util.highestCards(this.getTopCards(player), { visible: true })[0]
 }
 
 Innovation.prototype.getNonEmptyAges = function() {
   return this
-    .utilAges()
-    .filter(age => this.getZoneByDeck('base', age).cards().length > 0)
+    .util.ages()
+    .filter(age => this.getZoneByDeck('base', age).cardlist().length > 0)
 }
 
 Innovation.prototype.getNumAchievementsToWin = function() {
@@ -2430,10 +1378,6 @@ Innovation.prototype.getNumAchievementsToWin = function() {
   const numExpansionAdjustment = this.getExpansionList().length - 1
 
   return base + numPlayerAdjustment + numExpansionAdjustment
-}
-
-Innovation.prototype.getResources = function() {
-  return this.cardData
 }
 
 Innovation.prototype.getScore = function(player, opts={}) {
@@ -2452,7 +1396,7 @@ Innovation.prototype.getScoreDetails = function(player) {
     total: 0
   }
 
-  details.score = this.getCardsByZone(player, 'score').map(card => card.getAge()).sort()
+  details.score = this.cards.byPlayer(player, 'score').map(card => card.getAge()).sort()
   details.bonuses = this.getBonuses(player)
   details.karma = this
     .getInfoByKarmaTrigger(player, 'calculate-score')
@@ -2467,33 +1411,33 @@ Innovation.prototype.getScoreDetails = function(player) {
 }
 
 Innovation.prototype.getSplayByCard = function(card) {
-  const zone = this.getZoneByCard(card)
-  const cards = zone.cards()
+  const zone = card.zone
+  const cards = zone.cardlist()
   return card === cards[0] ? 'top' : zone.splay
 }
 
 Innovation.prototype.getBottomCard = function(player, color) {
   return this
-    .getCardsByZone(player, color)
+    .cards.byPlayer(player, color)
     .slice(-1)[0]
 }
 
 Innovation.prototype.getSplayedZones = function(player) {
   return this
-    .utilColors()
-    .map(color => this.getZoneByPlayer(player, color))
+    .util.colors()
+    .map(color => this.zones.byPlayer(player, color))
     .filter(zone => zone.splay !== 'none')
 }
 
 Innovation.prototype.getTopCard = function(player, color) {
-  return this.getCardsByZone(player, color)[0]
+  return this.cards.byPlayer(player, color)[0]
 }
 
 Innovation.prototype.getTopCards = function(player) {
   return this
-    .utilColors()
-    .map(color => this.getZoneByPlayer(player, color))
-    .map(zone => zone.cards()[0])
+    .util.colors()
+    .map(color => this.zones.byPlayer(player, color))
+    .map(zone => zone.cardlist()[0])
     .filter(card => card !== undefined)
 }
 
@@ -2525,8 +1469,8 @@ Innovation.prototype.getUniquePlayerWithMostBiscuits = function(biscuit) {
 }
 
 Innovation.prototype.getVisibleCardsByZone = function(player, zoneName) {
-  const zone = this.getZoneByPlayer(player, zoneName)
-  const cards = zone.cards()
+  const zone = this.zones.byPlayer(player, zoneName)
+  const cards = zone.cardlist()
   if (zone.splay === 'none') {
     return cards.length > 0 ? 1 : 0
   }
@@ -2537,7 +1481,7 @@ Innovation.prototype.getVisibleCardsByZone = function(player, zoneName) {
 
 Innovation.prototype.getVisibleEffects = function(card, kind, opts={}) {
   const player = opts.selfExecutor || this.players.byOwner(card)
-  const isTop = this.checkCardIsTop(card) || card.zone.endsWith('.artifact')
+  const isTop = this.checkCardIsTop(card) || card.zone.id.endsWith('.artifact')
   const splay = this.getSplayByCard(card)
 
   if (kind === 'dogma') {
@@ -2598,7 +1542,6 @@ Innovation.prototype.getVisibleEffectsByColor = function(player, color, kind) {
   const karma = this
     .getInfoByKarmaTrigger(player, `list-${kind}-effects`)
 
-
   if (karma.length === 1) {
     this.state.karmaDepth += 1
     const result = karma.flatMap(info => info.impl.func(this, player, { color, kind }))
@@ -2612,7 +1555,7 @@ Innovation.prototype.getVisibleEffectsByColor = function(player, color, kind) {
 
   else {
     return this
-      .getCardsByZone(player, color)
+      .cards.byPlayer(player, color)
       .reverse()
       .map(card => this.getVisibleEffects(card, kind))
       .filter(effect => effect !== undefined)
@@ -2620,17 +1563,18 @@ Innovation.prototype.getVisibleEffectsByColor = function(player, color, kind) {
 }
 
 Innovation.prototype.getZoneByDeck = function(exp, age) {
-  return this.state.zones.decks[exp][age]
+  // TODO: deprecate
+  return this.zones.byDeck(exp, age)
 }
 
 Innovation.prototype.getColorZonesByPlayer = function(player) {
   return this
     .utilColor()
-    .map(color => this.getZoneByPlayer(player, color))
+    .map(color => this.zones.byPlayer(player, color))
 }
 
 Innovation.prototype.getSafeOpenings = function(player) {
-  return Math.max(0, this.getSafeLimit(player) - this.getCardsByZone(player, 'safe').length)
+  return Math.max(0, this.getSafeLimit(player) - this.cards.byPlayer(player, 'safe').length)
 }
 
 Innovation.prototype.getSafeLimit = function(player) {
@@ -2643,8 +1587,8 @@ Innovation.prototype.getForecastLimit = function(player) {
 
 Innovation.prototype.getZoneLimit = function(player) {
   const splays = this
-    .utilColors()
-    .map(color => this.getZoneByPlayer(player, color).splay)
+    .util.colors()
+    .map(color => this.zones.byPlayer(player, color).splay)
 
   if (splays.includes('aslant')) {
     return 1
@@ -2668,7 +1612,7 @@ Innovation.prototype.getZoneLimit = function(player) {
 // Setters
 
 Innovation.prototype.mAchievementCheck = function() {
-  const available = this.getZoneById('achievements').cards()
+  const available = this.zones.byId('achievements').cardlist()
   for (const player of this.players.startingWithCurrent()) {
     const reduceCost = this.getInfoByKarmaTrigger(
       player,
@@ -2676,41 +1620,14 @@ Innovation.prototype.mAchievementCheck = function() {
     ).length > 0
     for (const card of available) {
       if (
-        this.getZoneByCard(card).name === 'achievements'
+        card.zone.name() === 'achievements'
         && card.checkPlayerIsEligible
         && card.checkPlayerIsEligible(this, player, reduceCost)
       ) {
-        this.aClaimAchievement(player, { card })
+        this.actions.claimAchievement(player, { card })
       }
     }
   }
-}
-
-Innovation.prototype.mAchievementVictoryCheck = function() {
-  if (this.state.wouldWinKarma) {
-    return
-  }
-
-  for (const player of this.players.all()) {
-    if (this.getAchievementsByPlayer(player).total >= this.getNumAchievementsToWin()) {
-      throw new GameOverEvent({
-        player,
-        reason: 'achievements'
-      })
-    }
-  }
-}
-
-Innovation.prototype.mAchieve = function(player, card) {
-  const target = this.getZoneByPlayer(player, 'achievements')
-  const source = this.getZoneById(card.zone)
-  this.log.add({
-    template: '{player} achieves {card} from {zone}',
-    args: { player, card, zone: source }
-  })
-  this.mMoveCardTo(card, target)
-  this.mActed(player)
-  return card
 }
 
 Innovation.prototype.mActed = function(player) {
@@ -2739,134 +1656,34 @@ Innovation.prototype.mAdjustCardVisibility = function(card) {
     return
   }
 
-  const zone = this.getZoneByCard(card)
+  const zone = card.zone
+  const kind = zone.kind()
 
-  // Achievements are always face down.
-  if (zone.kind === 'achievements') {
-    card.visibility = []
-  }
-
-  // Forget everything about a card if it is returned.
-  else if (zone.kind === 'deck') {
-    card.visibility = []
-  }
-
-  else if (zone.kind === 'public') {
+  if (kind === 'public') {
     card.visibility = this.players.all().map(p => p.name)
   }
 
-  else if (zone.kind === 'private') {
-    util.array.pushUnique(card.visibility, zone.owner)
+  else if (kind === 'private') {
+    util.array.pushUnique(card.visibility, zone.owner.name)
   }
 
-  else if (zone.kind === 'hidden') {
+  else if (kind === 'hidden') {
     card.visibility = []
   }
 
   else {
-    throw new Error(`Unknown zone kind ${zone.kind} for zone ${zone.id}`)
+    throw new Error(`Unknown zone kind ${kind} for zone ${zone.id}`)
   }
-}
-
-Innovation.prototype.mDraw = function(player, exp, age, opts={}) {
-  if (age > 11) {
-    const scores = this
-      .players.all()
-      .map(player => ({
-        player,
-        score: this.getScore(player),
-        achs: this.getAchievementsByPlayer(player).total,
-      }))
-      .sort((l, r) => {
-        if (r.score !== l.score) {
-          r.reason = 'high draw'
-          l.reason = 'high draw'
-          return r.score - l.score
-        }
-        else if (r.achs !== l.achs) {
-          r.reason = 'high draw - tie breaker (achievements)'
-          l.reason = 'high draw - tie breaker (achievements)'
-          return r.achs - l.achs
-        }
-        else {
-          throw new GameOverEvent({
-            player,
-            reason: 'Tied for points and achievements; player who drew the big card wins!'
-          })
-        }
-      })
-
-    throw new GameOverEvent({
-      reason: scores[0].reason,
-      player: scores[0].player,
-    })
-  }
-
-  const source = this.getZoneByDeck(exp, age)
-  const hand = this.getZoneByPlayer(player, 'hand')
-  const card = this.mMoveTopCard(source, hand)
-
-  if (!opts.silent) {
-    this.log.add({
-      template: '{player} draws {card}',
-      args: { player, card }
-    })
-  }
-
-  this.mActed(player)
-  return card
-}
-
-Innovation.prototype.mForeshadow = function(player, card) {
-  const zoneLimit = this.getForecastLimit(player)
-  const target = this.getZoneByPlayer(player, 'forecast')
-
-  if (target.cards().length >= zoneLimit) {
-    this.log.add({
-      template: '{player} has reached the limit for their forecast',
-      args: { player },
-    })
-    return
-  }
-  else {
-    this.mMoveCardTo(card, target)
-    this.log.add({
-      template: '{player} foreshadows {card}',
-      args: { player, card }
-    })
-    this.mActed(player)
-    return card
-  }
-}
-
-Innovation.prototype.mMeld = function(player, card) {
-  const source = this.getZoneByCard(card)
-  const target = this.getZoneByPlayer(player, card.color)
-  const sourceIndex = source.cards().indexOf(card)
-
-  this.mMoveByIndices(source, sourceIndex, target, 0)
-  this.log.add({
-    template: '{player} melds {card}',
-    args: { player, card }
-  })
-
-  // Stats
-  this.statsCardWasMelded(card)
-  this.statsCardWasMeldedBy(player, card)
-  this.statsFirstToMeldOfAge(player, card)
-
-  this.mActed(player)
-  return card
 }
 
 Innovation.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
-  util.assert(sourceIndex >= 0 && sourceIndex <= source.cards().length - 1, `Invalid source index ${sourceIndex}`)
+  util.assert(sourceIndex >= 0 && sourceIndex <= source.cardlist().length - 1, `Invalid source index ${sourceIndex}`)
   const sourceCards = source._cards
   const targetCards = target._cards
   const card = sourceCards[sourceIndex]
   sourceCards.splice(sourceIndex, 1)
   targetCards.splice(targetIndex, 0, card)
-  card.zone = target.id
+  card.zone = target
 
   const zoneOwner = this.players.byZone(target)
   card.owner = zoneOwner ? zoneOwner : null
@@ -2876,9 +1693,9 @@ Innovation.prototype.mMoveByIndices = function(source, sourceIndex, target, targ
 }
 
 Innovation.prototype.mMoveCardTo = function(card, target, opts={}) {
-  const source = this.getZoneByCard(card)
-  const sourceIndex = source.cards().findIndex(c => c === card)
-  const targetIndex = target.cards().length
+  const source = card.zone
+  const sourceIndex = source.cardlist().findIndex(c => c === card)
+  const targetIndex = opts.index === undefined ? target.cardlist().length : opts.index
 
   if (source === target && sourceIndex === targetIndex) {
     // Card is already in the target zone.
@@ -2887,47 +1704,25 @@ Innovation.prototype.mMoveCardTo = function(card, target, opts={}) {
 
   this.mMoveByIndices(source, sourceIndex, target, targetIndex)
 
-  if (opts.player) {
-    this.mActed(opts.player)
-
-    this.log.add({
-      template: '{player} moves {card} to {zone}',
-      args: {
-        player: opts.player,
-        card,
-        zone: target
-      }
-    })
-  }
-
   return card
 }
 
 Innovation.prototype.mMoveCardsTo = function(player, cards, target) {
   for (const card of cards) {
-    this.mMoveCardTo(card, target, { player })
-  }
-}
-
-Innovation.prototype.mMoveCardToTop = function(card, target, opts={}) {
-  const source = this.getZoneByCard(card)
-  const sourceIndex = source.cards().findIndex(c => c === card)
-
-  if (opts.player) {
     this.log.add({
-      template: '{player} moves {card} to the top of its deck',
-      args: {
-        player: opts.player,
-        card,
-      }
+      template: '{player} moves {card} to {zone}',
+      args: { player, card, zone: target }
     })
+    card.moveTo(target)
   }
 
-  return this.mMoveByIndices(source, sourceIndex, target, 0)
+  if (cards.length > 0) {
+    this.actions.acted(player)
+  }
 }
 
 Innovation.prototype.mMoveTopCard = function(source, target) {
-  return this.mMoveByIndices(source, 0, target, target.cards().length)
+  return this.mMoveByIndices(source, 0, target, target.cardlist().length)
 }
 
 Innovation.prototype._attemptToCombineWithPreviousEntry = function(msg) {
@@ -2967,8 +1762,7 @@ Innovation.prototype._attemptToCombineWithPreviousEntry = function(msg) {
 }
 
 Innovation.prototype.mRemove = function(card) {
-  this.mMoveCardTo(card, this.getZoneById('junk'))
-  return card
+  return card.moveTo(this.zones.byId('junk'))
 }
 
 Innovation.prototype.mResetDogmaInfo = function() {
@@ -2987,301 +1781,24 @@ Innovation.prototype.mResetPeleCount = function() {
   this.state.tuckedGreenForPele = []
 }
 
-Innovation.prototype.mReturn = function(player, card, opts) {
-  opts = opts || {}
-  const source = this.getZoneByCard(card)
-  const target = this.getZoneByCardHome(card)
-  const sourceIndex = source.cards().indexOf(card)
-  const targetIndex = target.cards().length
-
-  util.assert(sourceIndex !== -1, 'Did not find card in its supposed source.')
-
-  if (!opts.silent) {
-    this.log.add({
-      template: '{player} returns {card}',
-      args: { player, card }
-    })
-  }
-
-  this.mMoveByIndices(source, sourceIndex, target, targetIndex)
-
-  this.mActed(player)
-  return card
-}
-
-Innovation.prototype.mReveal = function(player, card) {
-  card.visibility = this.players.all().map(p => p.name)
-  this.log.add({
-    template: '{player} reveals {card}',
-    args: { player, card }
-  })
-  this.mActed(player)
-  return card
-}
-
 Innovation.prototype.mSetFirstBaseDraw = function(player) {
   this.state.drawInfo[player.name].drewFirstBaseCard = true
 }
 
-Innovation.prototype.mScore = function(player, card) {
-  const target = this.getZoneByPlayer(player, 'score')
-  this.mMoveCardTo(card, target)
-  this.log.add({
-    template: '{player} scores {card}',
-    args: { player, card }
-  })
-  this.mActed(player)
-  return card
-}
-
-Innovation.prototype.mSplay = function(player, color, direction, opts) {
-  util.assert(direction, 'No direction specified for splay')
-
-  const owner = opts.owner || player
-
-  const target = this.getZoneByPlayer(owner, color)
-  if (target.splay !== direction) {
-    target.splay = direction
-
-    if (player === owner) {
-      this.log.add({
-        template: '{player} splays {color} {direction}',
-        args: { player, color, direction }
-      })
-    }
-
-    else {
-      this.log.add({
-        template: "{player} splays {player2}'s {color} {direction}",
-        args: { player, player2: owner, color, direction }
-      })
-    }
-
-    this.mActed(player)
-    return color
-  }
-}
-
-Innovation.prototype.mSplayCheck = function() {
-  for (const player of this.players.all()) {
-    for (const color of this.utilColors()) {
-      const zone = this.getZoneByPlayer(player, color)
-      if (zone.cards().length < 2) {
-        zone.splay = 'none'
-      }
-    }
-  }
-}
-
 Innovation.prototype.mTake = function(player, card) {
-  const hand = this.getZoneByPlayer(player, 'hand')
-  this.mMoveCardTo(card, hand)
+  const hand = this.zones.byPlayer(player, 'hand')
+  card.moveTo(hand)
   this.log.add({
     template: '{player} takes {card} into hand',
     args: { player, card }
   })
-  this.mActed(player)
+  this.actions.acted(player)
   return card
 }
 
-Innovation.prototype.mTransfer = function(player, card, target) {
-  this.mMoveCardToTop(card, target)
-  this.log.add({
-    template: '{player} transfers {card} to {zone}',
-    args: { player, card, zone: target }
-  })
-  this.mActed(player)
-  return card
-}
-
-Innovation.prototype.mTuck = function(player, card) {
-  const target = this.getZoneByPlayer(player, card.color)
-  this.mMoveCardTo(card, target)
-  this.log.add({
-    template: '{player} tucks {card}',
-    args: { player, card }
-  })
-  if (card.color === 'green') {
-    util.array.pushUnique(this.state.tuckedGreenForPele, player)
-  }
-  this.mActed(player)
-  return card
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Utility Functions
-
-Innovation.prototype.utilAges = function() {
-  return [1,2,3,4,5,6,7,8,9,10,11]
-}
-
-Innovation.prototype.utilBiscuitNames = function() {
-  return [
-    'castle',
-    'clock',
-    'coin',
-    'factory',
-    'leaf',
-    'lightbulb',
-    'person',
-  ]
-}
-
-Innovation.prototype.utilBiscuitNameToIcon = function(name) {
-  switch (name) {
-    case 'castle': return 'k'
-    case 'clock': return 'i'
-    case 'coin': return 'c'
-    case 'factory': return 'f'
-    case 'leaf': return 'l'
-    case 'lightbulb': return 's'
-    case 'person': return 'p'
-  }
-
-  throw new Error('Unknown biscuit name: ' + name)
-}
-
-Innovation.prototype.utilColors = function() {
-  return [
-    'red',
-    'yellow',
-    'green',
-    'blue',
-    'purple',
-  ]
-}
-
-Innovation.prototype.utilColorToDecree = function(color) {
-  switch (color) {
-    case 'red': return 'War'
-    case 'yellow': return 'Expansion'
-    case 'green': return 'Trade'
-    case 'blue': return 'Advancement'
-    case 'purple': return 'Rivalry'
-    default:
-      throw new Error(`Unknown color ${color}`)
-  }
-}
-
-Innovation.prototype.utilCombineBiscuits = function(left, right) {
-  const combined = this.utilEmptyBiscuits()
-  for (const biscuit of Object.keys(combined)) {
-    combined[biscuit] += left[biscuit]
-    combined[biscuit] += right[biscuit]
-  }
-  return combined
-}
-
-Innovation.prototype.utilEmptyBiscuits = function() {
-  return {
-    c: 0,
-    f: 0,
-    i: 0,
-    k: 0,
-    l: 0,
-    s: 0,
-    p: 0,
-  }
-}
-
-Innovation.prototype.utilHighestCards = function(cards) {
-  const sorted = [...cards].sort((l, r) => r.getAge() - l.getAge())
-  return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
-}
-
-Innovation.prototype.utilLowestCards = function(cards) {
-  const sorted = [...cards].sort((l, r) => l.getAge() - r.getAge())
-  return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
-}
-
-Innovation.prototype.utilParseBiscuits = function(biscuitString) {
-  const counts = this.utilEmptyBiscuits()
-  for (const ch of biscuitString) {
-    if (Object.hasOwn(counts, ch)) {
-      counts[ch] += 1
-    }
-  }
-  return counts
-}
-
-Innovation.prototype.utilSeparateByAge = function(cards) {
-  const byAge = {}
-  for (const card of cards) {
-    if (Object.hasOwn(byAge, card.age)) {
-      byAge[card.age].push(card)
-    }
-    else {
-      byAge[card.age] = [card]
-    }
-  }
-  return byAge
-}
-
-Innovation.prototype.utilSerializeObject = function(obj) {
-  if (typeof obj === 'object') {
-    util.assert(obj.id !== undefined, 'Object has no id. Cannot serialize.')
-    return obj.id
-  }
-  else if (typeof obj === 'string') {
-    return obj
-  }
-  else {
-    throw new Error(`Cannot serialize element of type ${typeof obj}`)
-  }
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Private functions
-
-Innovation.prototype._adjustedDrawDeck = function(age, exp) {
-  if (age > 11) {
-    return [12, 'base']
-  }
-
-  const baseDeck = this.getZoneByDeck('base', age)
-  if (baseDeck.cards().length === 0) {
-    return this._adjustedDrawDeck(age + 1, exp)
-  }
-
-  if (exp === 'base') {
-    return [age, 'base']
-  }
-
-  const expDeck = this.getZoneByDeck(exp, age)
-  if (expDeck.cards().length === 0) {
-    return [age, 'base']
-  }
-
-  return [age, exp]
-}
-
-// Determine which expansion to draw from.
-Innovation.prototype._determineBaseDrawExpansion = function(player) {
-  // Whether the player ends up drawing echoes, unseen, or base, this counts as their
-  // first base draw, and so following draws won't draw unseen cards.
-  const isFirstBaseDraw = this.checkIsFirstBaseDraw(player)
-  if (isFirstBaseDraw){
-    this.mSetFirstBaseDraw(player)
-  }
-  if (this.getExpansionList().includes('echo')) {
-    const topAges = this
-      .getTopCards(player)
-      .map(c => c.getAge())
-      .sort()
-      .reverse()
-
-    if (topAges.length === 1 || (topAges.length > 1 && topAges[0] != topAges[1])) {
-      return 'echo'
-    }
-  }
-  if (this.getExpansionList().includes('usee')) {
-    if (isFirstBaseDraw) {
-      return 'usee'
-    }
-  }
-  return 'base'
-}
 
 Innovation.prototype._generateActionChoices = function() {
   const choices = []
@@ -3296,8 +1813,8 @@ Innovation.prototype._generateActionChoices = function() {
 
 Innovation.prototype.getScoreCost = function(player, card) {
   const sameAge = this
-    .getZoneByPlayer(player, 'achievements')
-    .cards()
+    .zones.byPlayer(player, 'achievements')
+    .cardlist()
     .filter(c => c.getAge() === card.getAge())
 
   const karmaAdjustment = this
@@ -3315,8 +1832,8 @@ Innovation.prototype.getAvailableAchievementsByAge = function(player, age) {
 
 Innovation.prototype.getAvailableStandardAchievements = function(player) {
   const achievementsZone = this
-    .getZoneById('achievements')
-    .cards()
+    .zones.byId('achievements')
+    .cardlist()
     .filter(c => !c.isSpecialAchievement && !c.isDecree)
 
   const fromKarma = this
@@ -3339,7 +1856,7 @@ Innovation.prototype.getEligibleAchievementsRaw = function(player, opts={}) {
 Innovation.prototype.formatAchievements = function(array) {
   return array
     .map(ach => {
-      if (ach.zone === 'achievements') {
+      if (ach.zone.id === 'achievements') {
         return ach.getHiddenName()
       }
       else {
@@ -3361,7 +1878,7 @@ Innovation.prototype.getEligibleAchievements = function(player, opts={}) {
   })
 
   const secrets = this
-    .getCardsByZone(player, 'safe')
+    .cards.byPlayer(player, 'safe')
     .filter(card => this.checkAchievementEligibility(player, card))
     .map(card => `safe: ${card.getHiddenName()}`)
     .sort()
@@ -3386,18 +1903,18 @@ Innovation.prototype._generateActionChoicesDecree = function() {
   const player = this.players.current()
 
   const figuresInHand = this
-    .getZoneByPlayer(player, 'hand')
-    .cards()
+    .zones.byPlayer(player, 'hand')
+    .cardlist()
     .filter(c => c.checkIsFigure())
 
-  const figuresByAge = this.utilSeparateByAge(figuresInHand)
+  const figuresByAge = this.util.separateByAge(figuresInHand)
 
   const availableDecrees = []
 
   if (Object.keys(figuresByAge).length >= 3) {
     figuresInHand
       .map(card => card.color)
-      .map(color => this.utilColorToDecree(color))
+      .map(color => this.util.colorToDecree(color))
       .forEach(decree => util.array.pushUnique(availableDecrees, decree))
   }
 
@@ -3417,10 +1934,10 @@ Innovation.prototype._generateActionChoicesDecree = function() {
 
 Innovation.prototype.getDogmaTargets = function(player) {
   return this
-    .utilColors()
-    .map(color => this.getZoneByPlayer(player, color))
+    .util.colors()
+    .map(color => this.zones.byPlayer(player, color))
     .filter(zone => this.checkZoneHasVisibleDogmaOrEcho(player, zone))
-    .map(zone => zone.cards()[0])
+    .map(zone => zone.cardlist()[0])
 }
 
 Innovation.prototype._generateActionChoicesDogma = function() {
@@ -3456,8 +1973,8 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
   const player = this.players.current()
 
   const lowestHandAge = this
-    .getZoneByPlayer(player, 'hand')
-    .cards()
+    .zones.byPlayer(player, 'hand')
+    .cardlist()
     .map(card => card.getAge())
     .sort((l, r) => l - r)[0] || 99
 
@@ -3468,17 +1985,17 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
 
   const stacksWithEndorsableEffects = this
     .getTopCards(player)
-    .map(card => this.getZoneByPlayer(player, card.color))
+    .map(card => this.zones.byPlayer(player, card.color))
 
   const colors = []
 
   if (!this.state.didEndorse) {
     for (const zone of stacksWithEndorsableEffects) {
-      if (zone.cards().length === 0) {
+      if (zone.cardlist().length === 0) {
         throw new Error('"Endorsable" stack has no cards: ' + zone.id)
       }
 
-      const dogmaBiscuit = zone.cards()[0].dogmaBiscuit
+      const dogmaBiscuit = zone.cardlist()[0].dogmaBiscuit
       const canEndorse = cities.some(city => city.biscuits.includes(dogmaBiscuit))
       if (canEndorse) {
         colors.push(zone.color)
@@ -3496,12 +2013,12 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
 Innovation.prototype._generateActionChoicesMeld = function() {
   const player = this.players.current()
   const cards = this
-    .getZoneByPlayer(player, 'hand')
-    .cards()
+    .zones.byPlayer(player, 'hand')
+    .cardlist()
     .map(c => c.id)
 
   this
-    .getCardsByZone(player, 'artifact')
+    .cards.byPlayer(player, 'artifact')
     .forEach(card => cards.push(card.id))
 
   return {
@@ -3509,65 +2026,6 @@ Innovation.prototype._generateActionChoicesMeld = function() {
     choices: cards,
     min: 0,
     max: 1,
-  }
-}
-
-Innovation.prototype.getSharingAndDemanding = function(player, featuredBiscuit, biscuits, opts={}) {
-  const biscuitComparator = this._getBiscuitComparator(player, featuredBiscuit, biscuits, opts)
-
-  const sharing = this
-    .players.all()
-    .filter(p => p !== player)
-    .filter(p => biscuitComparator(p))
-
-  const demanding = this
-    .players.all()
-    .filter(p => p !== player)
-    .filter(p => !biscuitComparator(p))
-
-  return { sharing, demanding }
-}
-
-Innovation.prototype._getBiscuitComparator = function(player, featuredBiscuit, biscuits, opts) {
-
-  // Some karmas affect how sharing is calculated by adjusting the featured biscuit.
-  const featuredBiscuitKarmas = this
-    .getInfoByKarmaTrigger(player, 'featured-biscuit')
-    .filter(info => info.impl.matches(this, player, { biscuit: featuredBiscuit }))
-
-  let adjustedBiscuit
-
-  if (opts.noBiscuitKarma || featuredBiscuitKarmas.length === 0) {
-    adjustedBiscuit = featuredBiscuit
-  }
-  else if (featuredBiscuitKarmas.length === 1) {
-    const info = featuredBiscuitKarmas[0]
-    this.log.add({
-      template: '{card} karma: {text}',
-      args: {
-        card: info.card,
-        text: info.text
-      }
-    })
-    adjustedBiscuit = this.aCardEffect(player, info, { baseBiscuit: featuredBiscuit })
-  }
-  else {
-    throw new Error('Multiple biscuit karmas are not supported')
-  }
-
-  return (other) => {
-    if (adjustedBiscuit === 'score') {
-      return this.getScore(other) >= this.getScore(player)
-    }
-    else if (this.state.dogmaInfo.soleMajority === other) {
-      return true
-    }
-    else if (this.state.dogmaInfo.soleMajority === player) {
-      return false
-    }
-    else {
-      return biscuits[other.name][adjustedBiscuit] >= biscuits[player.name][adjustedBiscuit]
-    }
   }
 }
 
@@ -3589,38 +2047,5 @@ Innovation.prototype._walkZones = function(root, fn, path=[]) {
     else {
       this._walkZones(obj, fn, thisPath)
     }
-  }
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Stats functions
-
-Innovation.prototype.statsCardWasMelded = function(card) {
-  util.array.pushUnique(this.stats.melded, card.name)
-}
-
-Innovation.prototype.statsCardWasMeldedBy = function(player, card) {
-  if (card.name in this.stats.meldedBy) {
-    return
-  }
-  else {
-    this.stats.meldedBy[card.name] = player.name
-  }
-}
-
-Innovation.prototype.statsFirstToMeldOfAge = function(player, card) {
-  if (card.age > this.stats.highestMelded) {
-    this.stats.firstToMeldOfAge.push([card.age, player.name])
-    this.stats.highestMelded = card.age
-  }
-}
-
-Innovation.prototype.statsRecordDogmaActions = function(player, card) {
-  if (card.name in this.stats.dogmaActions) {
-    this.stats.dogmaActions[card.name] += 1
-  }
-  else {
-    this.stats.dogmaActions[card.name] = 1
   }
 }

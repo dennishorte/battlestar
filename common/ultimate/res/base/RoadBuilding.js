@@ -1,23 +1,17 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Road Building`  // Card names are unique in Innovation
-  this.name = `Road Building`
-  this.color = `red`
-  this.age = 2
-  this.expansion = `base`
-  this.biscuits = `kkhk`
-  this.dogmaBiscuit = `k`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Road Building`,
+  color: `red`,
+  age: 2,
+  expansion: `base`,
+  biscuits: `kkhk`,
+  dogmaBiscuit: `k`,
+  dogma: [
     `Meld one or two cards from your hand. If you meld two, you may transfer your top red card to another player's board. If you do, meld that player's top green card.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       // Meld one or two cards
-      const cards = game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'), { min: 1, max: 2 })
+      const cards = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'), { min: 1, max: 2 })
 
       // If melded two...
       if (cards && cards.length === 2) {
@@ -27,19 +21,19 @@ function Card() {
           .players.all()
           .filter(other => other !== player)
         const title = 'Choose a player to transfer your top red card to'
-        const opp = game.aChoosePlayer(player, choices, { title, min: 0, max: 1 })
+        const opp = game.actions.choosePlayer(player, choices, { title, min: 0, max: 1 })
 
         // If you chose to swap, do it.
         if (opp) {
           const topRed = game.getTopCard(player, 'red')
 
           if (topRed) {
-            game.aTransfer(player, topRed, game.getZoneByPlayer(opp, 'red'))
+            game.actions.transfer(player, topRed, game.zones.byPlayer(opp, 'red'))
 
             // After transferring, meld their top green card
             const topGreen = game.getTopCard(opp, 'green')
             if (topGreen) {
-              game.aMeld(player, topGreen)
+              game.actions.meld(player, topGreen)
             }
           }
         }
@@ -51,16 +45,5 @@ function Card() {
         }
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

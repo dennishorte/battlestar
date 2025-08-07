@@ -1,7 +1,7 @@
-const Wrapper = require('./Wrapper.js')
+const { Serializer } = require('./Serializer.js')
 const util = require('../../lib/util.js')
 
-class CubeWrapper extends Wrapper {
+class CubeWrapper {
   static blankCube() {
     const creationDate = new Date()
     return {
@@ -22,10 +22,16 @@ class CubeWrapper extends Wrapper {
   }
 
   constructor(cube) {
-    super(cube)
+    this.serializer = new Serializer(this, cube)
+    this.serializer.inject()
+
     this.props = {
       cards: null,
     }
+  }
+
+  toJSON() {
+    return this.serializer.serialize()
   }
 
   addCard(card) {
@@ -50,7 +56,7 @@ class CubeWrapper extends Wrapper {
   }
 
   applyFilters(filters) {
-    return this.cards().filter(card => card.matchesFilters(filters))
+    return this.cardlist().filter(card => card.matchesFilters(filters))
   }
 
 

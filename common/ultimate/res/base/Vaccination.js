@@ -1,22 +1,16 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Vaccination`  // Card names are unique in Innovation
-  this.name = `Vaccination`
-  this.color = `yellow`
-  this.age = 6
-  this.expansion = `base`
-  this.biscuits = `lflh`
-  this.dogmaBiscuit = `l`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Vaccination`,
+  color: `yellow`,
+  age: 6,
+  expansion: `base`,
+  biscuits: `lflh`,
+  dogmaBiscuit: `l`,
+  dogma: [
     `I demand you choose a card in your score pile! Return all cards from your score pile of its value. If you do, draw and meld a {6}!`,
     `If any card was returned as a result of the demand, draw and meld a {7}.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       const values = game.getAgesByZone(player, 'score')
 
       if (values.length === 0) {
@@ -24,36 +18,25 @@ function Card() {
         return
       }
 
-      const chosenValue = game.aChooseAge(player, values)
+      const chosenValue = game.actions.chooseAge(player, values)
       const toReturn = game
-        .getCardsByZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .filter(c => c.getAge() === chosenValue)
 
-      const returned = game.aReturnMany(player, toReturn)
+      const returned = game.actions.returnMany(player, toReturn)
 
       if (returned.length > 0) {
-        game.aDrawAndMeld(player, game.getEffectAge(this, 6))
+        game.actions.drawAndMeld(player, game.getEffectAge(self, 6))
         game.state.dogmaInfo.vaccinationCardWasReturned = true
       }
     },
-    (game, player) => {
+    (game, player, { self }) => {
       if (game.state.dogmaInfo.vaccinationCardWasReturned) {
-        game.aDrawAndMeld(player, game.getEffectAge(this, 7))
+        game.actions.drawAndMeld(player, game.getEffectAge(self, 7))
       }
       else {
         game.log.addNoEffect()
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

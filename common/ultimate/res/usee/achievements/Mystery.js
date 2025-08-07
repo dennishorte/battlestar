@@ -1,14 +1,11 @@
-const CardBase = require(`../../CardBase.js`)
-
-function Card() {
-  this.id = 'Mystery'
-  this.name = 'Mystery'
-  this.shortName = 'myst'
-  this.expansion = 'usee'
-  this.text = 'Have a top card on your board of value 9 or higher and fewer than five colors on your board.'
-  this.alt = 'Secret History'
-  this.isSpecialAchievement = true
-  this.checkPlayerIsEligible = function(game, player, reduceCost) {
+module.exports = {
+  name: 'Mystery',
+  shortName: 'myst',
+  expansion: 'usee',
+  text: 'Have a top card on your board of value 9 or higher and fewer than five colors on your board.',
+  alt: 'Secret History',
+  isSpecialAchievement: true,
+  checkPlayerIsEligible: function(game, player, reduceCost) {
     const targetAge = reduceCost ? 8 : 9
     const topCardAges = game
       .getTopCards(player)
@@ -19,14 +16,5 @@ function Card() {
     const actualColors = game.getTopCards(player).map(c => c.color).length
 
     return topCardMaxAge >= targetAge && actualColors < targetColors
-  }
+  },
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

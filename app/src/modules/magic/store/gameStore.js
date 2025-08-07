@@ -100,12 +100,12 @@ export default {
       }
 
       if (getters.isMovingAll) {
-        dispatch('moveAll', card.zone)
+        dispatch('moveAll', card.zone.id)
         return
       }
 
       if (getters.isMovingRevealed) {
-        dispatch('moveRevealed', state.game.getZoneByCard(card))
+        dispatch('moveRevealed', card.zone.id)
         return
       }
 
@@ -148,7 +148,7 @@ export default {
         state.game.doFunc(null, {
           name: 'move card',
           cardId: state.selectedCardId,
-          destId: card.zone,
+          destId: card.zone.id,
           destIndex: state.game.getZoneIndexByCard(card),
         })
         commit('setSelectedCard', null)
@@ -169,7 +169,7 @@ export default {
       }
 
       if (state.selectedCardId) {
-        const index = position === 'top' ? 0 : zone.cards().length
+        const index = position === 'top' ? 0 : zone.cardlist().length
 
         state.game.doFunc(null, {
           name: 'move card',

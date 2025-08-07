@@ -29,7 +29,7 @@ export default {
 
   computed: {
     card() {
-      return this.game.getCardByName(this.name)
+      return this.game.cards.byId(this.name)
     },
   },
 
@@ -37,7 +37,7 @@ export default {
     closeup(event) {
       event.stopPropagation()
       this.game.ui.modals.cardsViewer.title = ''
-      this.game.ui.modals.cardsViewer.cards = [this.game.getCardByName(this.name)]
+      this.game.ui.modals.cardsViewer.cards = [this.game.cards.byId(this.name)]
       this.$modal('cards-viewer-modal').show()
     },
   },

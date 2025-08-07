@@ -1,30 +1,24 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Tomb`  // Card names are unique in Innovation
-  this.name = `Tomb`
-  this.color = `yellow`
-  this.age = 1
-  this.expansion = `usee`
-  this.biscuits = `chkk`
-  this.dogmaBiscuit = `k`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Tomb`,
+  color: `yellow`,
+  age: 1,
+  expansion: `usee`,
+  biscuits: `chkk`,
+  dogmaBiscuit: `k`,
+  dogma: [
     `Safeguard an available achievement of value 1 plus the number of achievements you have.`,
     `You may transfer the lowest available achievement to your hand. If you do, return all yellow cards and all blue cards on your board.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
-      const numAchievements = game.getCardsByZone(player, 'achievements').length
+      const numAchievements = game.cards.byPlayer(player, 'achievements').length
       const choices = game
         .getAvailableAchievementsRaw(player)
         .filter(card => card.age === numAchievements + 1)
         .filter(card => card.checkIsStandardAchievement())
 
       if (choices.length > 0) {
-        game.aSafeguard(player, choices[0])
+        game.actions.safeguard(player, choices[0])
       }
       else {
         game.log.addNoEffect()
@@ -32,7 +26,7 @@ function Card() {
     },
 
     (game, player) => {
-      const playerAchievements = game.getCardsByZone(player, 'achievements').length
+      const playerAchievements = game.cards.byPlayer(player, 'achievements').length
       const achievements = game
         .getAvailableAchievementsRaw(player)
         .filter(card => card.age === playerAchievements)
@@ -43,29 +37,18 @@ function Card() {
         return
       }
 
-      const lowestAchievement = game.utilLowestCards(achievements)[0]
-      const transfer = game.aYesNo(player, `Transfer an achievement of value ${lowestAchievement.getAge()} to your hand?`)
+      const lowestAchievement = game.util.lowestCards(achievements)[0]
+      const transfer = game.actions.chooseYesNo(player, `Transfer an achievement of value ${lowestAchievement.getAge()} to your hand?`)
 
       if (transfer) {
-        game.aTransfer(player, lowestAchievement, game.getZoneByPlayer(player, 'hand'))
+        game.actions.transfer(player, lowestAchievement, game.zones.byPlayer(player, 'hand'))
 
-        const yellowCards = game.getCardsByZone(player, 'yellow')
-        const blueCards = game.getCardsByZone(player, 'blue')
+        const yellowCards = game.cards.byPlayer(player, 'yellow')
+        const blueCards = game.cards.byPlayer(player, 'blue')
         const cardsToReturn = [].concat(yellowCards, blueCards)
 
-        game.aReturnMany(player, cardsToReturn, { ordered: true })
+        game.actions.returnMany(player, cardsToReturn, { ordered: true })
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

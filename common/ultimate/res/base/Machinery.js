@@ -1,28 +1,22 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Machinery`  // Card names are unique in Innovation
-  this.name = `Machinery`
-  this.color = `yellow`
-  this.age = 3
-  this.expansion = `base`
-  this.biscuits = `llhk`
-  this.dogmaBiscuit = `l`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Machinery`,
+  color: `yellow`,
+  age: 3,
+  expansion: `base`,
+  biscuits: `llhk`,
+  dogmaBiscuit: `l`,
+  dogma: [
     `I demand you exchange all the cards in your hand with all the highest cards in my hand!`,
     `Score a card from your hand with a {k}.`,
     `You may splay your red cards left.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { leader }) => {
-      const playerHand = game.getZoneByPlayer(player, 'hand')
-      const leaderHand = game.getZoneByPlayer(leader, 'hand')
+      const playerHand = game.zones.byPlayer(player, 'hand')
+      const leaderHand = game.zones.byPlayer(leader, 'hand')
 
-      const yours = playerHand.cards()
-      const mine = game.utilHighestCards(leaderHand.cards())
+      const yours = playerHand.cardlist()
+      const mine = game.util.highestCards(leaderHand.cardlist())
 
       game.aExchangeCards(
         player,
@@ -52,24 +46,13 @@ function Card() {
 
     (game, player) => {
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => card.checkHasBiscuit('k'))
-      game.aChooseAndScore(player, choices)
+      game.actions.chooseAndScore(player, choices)
     },
 
     (game, player) => {
       game.aChooseAndSplay(player, ['red'], 'left')
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

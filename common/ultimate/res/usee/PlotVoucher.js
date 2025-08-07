@@ -1,28 +1,22 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Plot Voucher`  // Card names are unique in Innovation
-  this.name = `Plot Voucher`
-  this.color = `green`
-  this.age = 7
-  this.expansion = `usee`
-  this.biscuits = `sslh`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Plot Voucher`,
+  color: `green`,
+  age: 7,
+  expansion: `usee`,
+  biscuits: `sslh`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `Meld a card from your score pile. Safeguard the lowest available standard achievement. If you do, super-execute the melded card if it is your turn, or if it is not your turn self-execute it.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
-      const scoreCards = game.getCardsByZone(player, 'score')
-      const melded = game.aChooseAndMeld(player, scoreCards)[0]
+      const scoreCards = game.cards.byPlayer(player, 'score')
+      const melded = game.actions.chooseAndMeld(player, scoreCards)[0]
 
-      const lowestAchievement = game.utilLowestCards(game.getAvailableStandardAchievements(player))[0]
+      const lowestAchievement = game.util.lowestCards(game.getAvailableStandardAchievements(player))[0]
       let safeguarded
       if (lowestAchievement) {
-        safeguarded = game.aSafeguard(player, lowestAchievement)
+        safeguarded = game.actions.safeguard(player, lowestAchievement)
       }
 
       if (safeguarded && melded) {
@@ -34,16 +28,5 @@ function Card() {
         }
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

@@ -26,7 +26,7 @@ export default {
     },
 
     loc() {
-      return this.game.getZoneById(this.name)
+      return this.game.zones.byId(this.name)
     },
   },
 }

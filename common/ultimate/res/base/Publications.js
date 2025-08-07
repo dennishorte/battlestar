@@ -1,21 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Publications`  // Card names are unique in Innovation
-  this.name = `Publications`
-  this.color = `blue`
-  this.age = 7
-  this.expansion = `base`
-  this.biscuits = `hsis`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Publications`,
+  color: `blue`,
+  age: 7,
+  expansion: `base`,
+  biscuits: `hsis`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `You may splay your yellow or blue cards up.`,
     `You may junk an available special achievement, or make a special achievement in the junk available.`,
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       game.aChooseAndSplay(player, ['yellow', 'blue'], 'up')
     },
@@ -23,19 +17,20 @@ function Card() {
     (game, player) => {
       const toJunkOptions = game.getAvailableSpecialAchievements()
       const fromJunkOptions = game
-        .getZoneById('junk')
-        .cards()
+        .zones
+        .byId('junk')
+        .cardlist()
         .filter(c => c.isSpecialAchievement)
 
       let junked = false
       if (toJunkOptions.length > 0) {
-        const toJunk = game.aChooseCard(player, toJunkOptions, {
+        const toJunk = game.actions.chooseCard(player, toJunkOptions, {
           title: 'Junk a special achievement?',
           min: 0,
         })
         if (toJunk) {
           junked = true
-          game.aRemove(player, toJunk)
+          game.actions.junk(player, toJunk)
         }
       }
       else {
@@ -43,29 +38,22 @@ function Card() {
       }
 
       if (!junked && fromJunkOptions) {
-        const fromJunk = game.aChooseCard(player, fromJunkOptions, {
+        const fromJunk = game.actions.chooseCard(player, fromJunkOptions, {
           title: 'Optional: Return a special achievement from junk?',
           min: 0,
         })
         if (fromJunk) {
           junked = true
-          game.mMoveCardTo(fromJunk, game.getZoneById('achievements'), { player })
+          fromJunk.moveTo(game.zones.byId('achievements'))
+          game.log.add({
+            template: '{player} moves {card} from the junk to the available achievements',
+            args: { player, card: fromJunk },
+          })
         }
       }
       else if (!junked) {
         game.log.add({ template: 'no special achievements in junk' })
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

@@ -1,20 +1,14 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Legend`  // Card names are unique in Innovation
-  this.name = `Legend`
-  this.color = `purple`
-  this.age = 4
-  this.expansion = `usee`
-  this.biscuits = `hlls`
-  this.dogmaBiscuit = `l`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Legend`,
+  color: `purple`,
+  age: 4,
+  expansion: `usee`,
+  biscuits: `hlls`,
+  dogmaBiscuit: `l`,
+  dogma: [
     `Choose a non-purple color. Self-execute your top card of that color. Score your top card of that color. If you do, repeat this effect with the same color if you have scored fewer than nine points due to Legend during this action.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       let keepGoing = true
       let total = 0
@@ -26,7 +20,7 @@ function Card() {
           return
         }
         game.aSelfExecute(player, card)
-        const scored = game.aScore(player, game.getTopCard(player, firstCard.color))
+        const scored = game.actions.score(player, game.getTopCard(player, firstCard.color))
         if (scored) {
           total += scored.getAge()
           keepGoing = total < 9
@@ -42,7 +36,7 @@ function Card() {
       }
 
       const topNonPurple = game.getTopCards(player).filter(c => c.color !== 'purple')
-      const firstCard = game.aChooseCard(player, topNonPurple)
+      const firstCard = game.actions.chooseCard(player, topNonPurple)
 
       doEffect(firstCard)
 
@@ -51,17 +45,5 @@ function Card() {
         doEffect(card)
       }
     },
-  ]
-
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

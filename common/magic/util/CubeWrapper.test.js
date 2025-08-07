@@ -59,7 +59,7 @@ describe('CubeWrapper', () => {
       expect(wrapper.cards().map(c => c.id).sort()).toEqual(['card1', 'card3'])
     })
 
-    test('removeCard on empty cardlist does not throw', () => {
+    test('removeCard on empty cards does not throw', () => {
       const wrapper = new CubeWrapper(CubeWrapper.blankCube())
       wrapper.setCards([])
       expect(() => wrapper.removeCard({ id: 'nonexistent' })).not.toThrow()

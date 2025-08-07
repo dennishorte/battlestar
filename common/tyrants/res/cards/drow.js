@@ -272,7 +272,7 @@ const cardData = [
         const players = loc
           .getTroops()
           .map(troop => game.players.byOwner(troop))
-          .filter(other => other !== undefined)
+          .filter(other => !!other)
           .filter(other => other !== player)
         if (players.length > 0) {
           player.incrementCounter('power', 1)
@@ -403,7 +403,7 @@ const cardData = [
       "At end of turn, promote another card played this turn."
     ],
     impl: (game, player, { card }) => {
-      if (game.getCardsByZone(player, 'innerCircle').length >= 4) {
+      if (game.cards.byPlayer(player, 'innerCircle').length >= 4) {
         player.incrementCounter('influence', 3)
       }
       game.aDeferPromotion(player, card)
@@ -445,11 +445,11 @@ const cardData = [
         template: '{player} moves their deck into their discard pile',
         args: { player }
       })
-      const discard = game.getZoneByPlayer(player, 'discard')
-      for (const card of game.getCardsByZone(player, 'deck')) {
-        game.mMoveCardTo(card, discard)
+      const discard = game.zones.byPlayer(player, 'discard')
+      for (const card of game.cards.byPlayer(player, 'deck')) {
+        card.moveTo(discard)
       }
-      game.aChooseAndPromote(player, game.getCardsByZone(player, 'discard'))
+      game.aChooseAndPromote(player, game.cards.byPlayer(player, 'discard'))
     }
   },
 ]

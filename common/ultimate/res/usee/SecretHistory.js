@@ -1,50 +1,32 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Secret History`  // Card names are unique in Innovation
-  this.name = `Secret History`
-  this.color = `green`
-  this.age = 5
-  this.expansion = `usee`
-  this.biscuits = `fcfh`
-  this.dogmaBiscuit = `f`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Secret History`,
+  color: `green`,
+  age: 5,
+  expansion: `usee`,
+  biscuits: `fcfh`,
+  dogmaBiscuit: `f`,
+  dogma: [
     `I demand you transfer one of your secrets to my safe!`,
     `If your red and purple cards are splayed right, claim the Mystery achievement. Otherwise, splay your red or purple cards right.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { leader }) => {
-      const choices = game.getCardsByZone(player, 'safe')
-      game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(leader, 'safe'), {
+      const choices = game.cards.byPlayer(player, 'safe')
+      game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'safe'), {
         title: 'Transfer a secret',
       })
     },
 
     (game, player) => {
-      const redSplay = game.getZoneByPlayer(player, 'red').splay
-      const purpleSplay = game.getZoneByPlayer(player, 'purple').splay
+      const redSplay = game.zones.byPlayer(player, 'red').splay
+      const purpleSplay = game.zones.byPlayer(player, 'purple').splay
 
       if (redSplay === 'right' && purpleSplay === 'right') {
-        game.aClaimAchievement(player, { name: 'Mystery' })
+        game.actions.claimAchievement(player, { name: 'Mystery' })
       }
       else {
         game.aChooseAndSplay(player, ['red', 'purple'], 'right', { count: 1 })
       }
     }
-  ]
-
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

@@ -1,29 +1,23 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Propaganda`
-  this.name = `Propaganda`
-  this.color = `purple`
-  this.age = 2
-  this.expansion = `usee`
-  this.biscuits = `chkk`
-  this.dogmaBiscuit = `k`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Propaganda`,
+  color: `purple`,
+  age: 2,
+  expansion: `usee`,
+  biscuits: `chkk`,
+  dogmaBiscuit: `k`,
+  dogma: [
     `I demand you meld a card of the color of my choice from your hand! If you do, transfer the card beneath it to my board!`,
     `Meld a card from your hand.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { leader }) => {
-      const chosenColor = game.aChoose(leader, game.utilColors(), {
+      const chosenColor = game.actions.choose(leader, game.util.colors(), {
         title: 'Choose a color',
         count: 1,
       })[0]
 
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => card.color === chosenColor)
 
       if (choices.length === 0) {
@@ -33,12 +27,12 @@ function Card() {
         })
       }
       else {
-        const melded = game.aChooseAndMeld(player, choices)[0]
+        const melded = game.actions.chooseAndMeld(player, choices)[0]
         if (melded) {
-          const pile = game.getZoneByPlayer(player, melded.color)
-          const cardBeneath = pile.cards()[1]
+          const pile = game.zones.byPlayer(player, melded.color)
+          const cardBeneath = pile.cardlist()[1]
           if (cardBeneath) {
-            game.aTransfer(player, cardBeneath, game.getZoneByPlayer(leader, cardBeneath.color))
+            game.actions.transfer(player, cardBeneath, game.zones.byPlayer(leader, cardBeneath.color))
           }
           else {
             game.log.add({
@@ -51,18 +45,7 @@ function Card() {
     },
 
     (game, player) => {
-      game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
+      game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

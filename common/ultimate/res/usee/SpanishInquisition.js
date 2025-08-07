@@ -1,51 +1,34 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Spanish Inquisition`  // Card names are unique in Innovation
-  this.name = `Spanish Inquisition`
-  this.color = `red`
-  this.age = 4
-  this.expansion = `usee`
-  this.biscuits = `shss`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Spanish Inquisition`,
+  color: `red`,
+  age: 4,
+  expansion: `usee`,
+  biscuits: `shss`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `I demand you return all but the highest cards from your hand and all but the highest cards from your score pile!`,
     `If Spanish Inquisition is a top card on your board, return all red cards from your board.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
-      const hand = game.getZoneByPlayer(player, 'hand')
-      const handHighest = game.utilHighestCards(hand.cards())
-      const handReturn = hand.cards().filter(c => !handHighest.includes(c))
-      game.aReturnMany(player, handReturn)
+      const hand = game.zones.byPlayer(player, 'hand')
+      const handHighest = game.util.highestCards(hand.cardlist())
+      const handReturn = hand.cardlist().filter(c => !handHighest.includes(c))
+      game.actions.returnMany(player, handReturn)
 
-      const score = game.getZoneByPlayer(player, 'score')
-      const scoreHighest = game.utilHighestCards(score.cards())
-      const scoreReturn = score.cards().filter(c => !scoreHighest.includes(c))
-      game.aReturnMany(player, scoreReturn)
+      const score = game.zones.byPlayer(player, 'score')
+      const scoreHighest = game.util.highestCards(score.cardlist())
+      const scoreReturn = score.cardlist().filter(c => !scoreHighest.includes(c))
+      game.actions.returnMany(player, scoreReturn)
     },
     (game, player) => {
       if (game.getTopCard(player, 'red').name === 'Spanish Inquisition') {
-        const redCards = game.getCardsByZone(player, 'red')
-        game.aReturnMany(player, redCards, { ordered: true })
+        const redCards = game.cards.byPlayer(player, 'red')
+        game.actions.returnMany(player, redCards, { ordered: true })
       }
       else {
         game.log.addNoEffect()
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

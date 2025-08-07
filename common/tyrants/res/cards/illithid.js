@@ -25,7 +25,7 @@ const cardData = [
         {
           title: 'Draw a card for each spy you have on the board',
           impl: (game, player) => {
-            const count = 5 - game.getCardsByZone(player, 'spies').length
+            const count = 5 - game.cards.byPlayer(player, 'spies').length
             for (let i = 0; i < count; i++) {
               game.aDraw(player)
             }
@@ -60,7 +60,7 @@ const cardData = [
             template: '{player} was forced to discard {card}, and may choose to promote it',
             args: { player, card }
           })
-          const promote = game.aChooseYesNo(player, 'Promote Ambassador instead of discarding?')
+          const promote = game.actions.chooseYesNo(player, 'Promote Ambassador instead of discarding?')
           if (promote) {
             game.aPromote(player, card)
             game.aDraw(player)
@@ -87,7 +87,7 @@ const cardData = [
     ],
     impl: (game, player) => {
       game.aChooseAndAssassinate(player)
-      const troops = game.getCardsByZone(player, 'trophyHall').length
+      const troops = game.cards.byPlayer(player, 'trophyHall').length
       const power = Math.floor(troops / 3)
       player.incrementCounter('power', power)
     }
@@ -220,7 +220,7 @@ const cardData = [
         .getTroops()
         .filter(troop => troop.owner !== player)
         .map(troop => troop.getOwnerName())
-      const targets = game.aChoose(player, troops, { min: 0, max: 3, title: 'Choose up to three troops to assassinate' })
+      const targets = game.actions.choose(player, troops, { min: 0, max: 3, title: 'Choose up to three troops to assassinate' })
 
       for (const target of targets) {
         const owner = target === 'neutral' ? 'neutral' : game.players.byName(target)
@@ -259,16 +259,16 @@ const cardData = [
         })
       }
 
-      const choices = game.getCardsByZone(player, 'innerCircle')
-      const toPlay = game.aChooseCard(player, choices)
+      const choices = game.cards.byPlayer(player, 'innerCircle')
+      const toPlay = game.actions.chooseCard(player, choices)
       if (toPlay) {
         game.log.add({
           template: '{player} choose {card} to play from their innerCircle',
           args: { player, card: toPlay }
         })
-        game.mMoveCardTo(toPlay, game.getZoneByPlayer(player, 'hand'))
+        toPlay.moveTo(game.zones.byPlayer(player, 'hand'))
         game.aPlayCard(player, toPlay)
-        game.mMoveCardTo(toPlay, game.getZoneByPlayer(player, 'innerCircle'))
+        toPlay.moveTo(game.zones.byPlayer(player, 'innerCircle'))
         game.log.add({
           template: '{player} returns {card} to their inner circle',
           args: { player, card: toPlay }
@@ -381,7 +381,7 @@ const cardData = [
     ],
     impl: (game, player) => {
       const troop = game.aChooseAndAssassinate(player)
-      if (troop && troop.owner !== undefined) {
+      if (troop && Boolean(troop.owner)) {
         game.aChooseAndDiscard(troop.owner, {
           requireThree: true,
           forced: true,
@@ -552,12 +552,12 @@ const cardData = [
     ],
     impl: (game, player) => {
       const choices = game
-        .getZoneById('market')
-        .cards()
+        .zones.byId('market')
+        .cardlist()
         .filter(card => card.cost <= 6)
-      const card = game.aChooseCard(player, choices)
+      const card = game.actions.chooseCard(player, choices)
       if (card) {
-        game.mMoveCardTo(card, game.getZoneByPlayer(player, 'hand'))
+        card.moveTo(game.zones.byPlayer(player, 'hand'))
         game.aPlayCard(player, card)
         game.aDevour(player, card)
         game.mRefillMarket()

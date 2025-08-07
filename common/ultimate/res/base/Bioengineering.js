@@ -1,22 +1,18 @@
-const CardBase = require(`../CardBase.js`)
 const { GameOverEvent } = require('../../../lib/game.js')
 
-function Card() {
-  this.id = `Bioengineering`  // Card names are unique in Innovation
-  this.name = `Bioengineering`
-  this.color = `blue`
-  this.age = 10
-  this.expansion = `base`
-  this.biscuits = `siih`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+
+module.exports = {
+  name: `Bioengineering`,
+  color: `blue`,
+  age: 10,
+  expansion: `base`,
+  biscuits: `siih`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `Score a top card with a {l} on any player's board.`,
     `If any player has fewer than two {l} on their board, the single player with the most {l} on their board wins.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const choices = game
         .players.all()
@@ -24,7 +20,7 @@ function Card() {
         .filter(card => card !== undefined)
         .filter(card => card.biscuits.includes('l'))
 
-      game.aChooseAndScore(player, choices)
+      game.actions.chooseAndScore(player, choices)
     },
 
     (game) => {
@@ -51,16 +47,5 @@ function Card() {
         game.log.addNoEffect()
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

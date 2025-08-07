@@ -1,23 +1,17 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Fission`  // Card names are unique in Innovation
-  this.name = `Fission`
-  this.color = `red`
-  this.age = 9
-  this.expansion = `base`
-  this.biscuits = `hiii`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Fission`,
+  color: `red`,
+  age: 9,
+  expansion: `base`,
+  biscuits: `hiii`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `I demand you draw and reveal a {0}! If it is red, junk all players' non-achievement cards, and the Dogma action is complete!`,
     `Return a top card other than Fission from any player's board. Draw a {0}.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
-      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 10))
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 10))
       if (card.color === 'red') {
         game.log.add({ template: 'The card was red. Nuclear War!' })
         game.log.indent()
@@ -25,8 +19,8 @@ function Card() {
         const zones = ['red', 'yellow', 'green', 'blue', 'purple', 'hand', 'score', 'forecast', 'museum', 'safe']
         const toRemove = game
           .players.all()
-          .flatMap(player => zones.flatMap(name => game.getCardsByZone(player, name)))
-        game.aRemoveMany(player, toRemove, { ordered: true })
+          .flatMap(player => zones.flatMap(name => game.cards.byPlayer(player, name)))
+        game.actions.junkMany(player, toRemove, { ordered: true })
         game.log.outdent()
 
         game.state.dogmaInfo.earlyTerminate = true
@@ -37,20 +31,9 @@ function Card() {
       }
     },
 
-    (game, player) => {
-      game.aChooseAndReturn(player, game.getTopCardsAll())
-      game.aDraw(player, { age: game.getEffectAge(this, 10) })
+    (game, player, { self }) => {
+      game.actions.chooseAndReturn(player, game.getTopCardsAll())
+      game.actions.draw(player, { age: game.getEffectAge(self, 10) })
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

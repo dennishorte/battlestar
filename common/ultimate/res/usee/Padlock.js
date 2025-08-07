@@ -1,39 +1,34 @@
-const CardBase = require(`../CardBase.js`)
 const util = require('../../../lib/util.js')
 
-function Card() {
-  this.id = `Padlock`  // Card names are unique in Innovation
-  this.name = `Padlock`
-  this.color = `red`
-  this.age = 2
-  this.expansion = `usee`
-  this.biscuits = `ckhk`
-  this.dogmaBiscuit = `k`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Padlock`,
+  color: `red`,
+  age: 2,
+  expansion: `usee`,
+  biscuits: `ckhk`,
+  dogmaBiscuit: `k`,
+  dogma: [
     `I demand you transfer one of your secrets to the available achievements!`,
     `If no card was transferred due to the demand, you may score up to three cards from your hand of different values.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
-      const secrets = game.getCardsByZone(player, 'safe')
+      const secrets = game.cards.byPlayer(player, 'safe')
 
       if (secrets.length === 0) {
         game.log.add({ template: 'no secrets to transfer' })
         return
       }
 
-      const secret = game.aChooseCards(player, secrets, { hidden: true })[0]
-      const transferred = game.aTransfer(player, secret, game.getZoneById('achievements'))
+      const secret = game.actions.chooseCards(player, secrets, { hidden: true })[0]
+      const transferred = game.actions.transfer(player, secret, game.zones.byId('achievements'))
       if (transferred) {
         game.state.dogmaInfo.padlockCardTransferred = true
       }
     },
     (game, player) => {
       if (!game.state.dogmaInfo.padlockCardTransferred) {
-        game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'), {
+        game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), {
           title: 'Choose up the three cards of different values',
           min: 0,
           max: 3,
@@ -44,16 +39,5 @@ function Card() {
         game.log.addNoEffect()
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

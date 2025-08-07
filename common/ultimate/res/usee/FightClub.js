@@ -1,42 +1,25 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Fight Club`  // Card names are unique in Innovation
-  this.name = `Fight Club`
-  this.color = `red`
-  this.age = 10
-  this.expansion = `usee`
-  this.biscuits = `hppl`
-  this.dogmaBiscuit = `p`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Fight Club`,
+  color: `red`,
+  age: 10,
+  expansion: `usee`,
+  biscuits: `hppl`,
+  dogmaBiscuit: `p`,
+  dogma: [
     `I demand you transfer one of your secrets to my achievements!`,
     `You may splay your yellow cards up.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { leader }) => {
-      const choices = game.getCardsByZone(player, 'safe')
-      const secret = game.aChooseCard(player, choices)
+      const choices = game.cards.byPlayer(player, 'safe')
+      const secret = game.actions.chooseCard(player, choices)
 
       if (secret) {
-        game.aTransfer(player, secret, game.getZoneByPlayer(leader, 'achievements'))
+        game.actions.transfer(player, secret, game.zones.byPlayer(leader, 'achievements'))
       }
     },
     (game, player) => {
       game.aChooseAndSplay(player, ['yellow'], 'up')
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

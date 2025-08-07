@@ -2,12 +2,10 @@ module.exports.GameOverEvent = require('./lib/game.js').GameOverEvent
 
 
 // Backwards compatibility
-module.exports.inn = require('./innovation/innovation.js')
 module.exports.mag = require('./magic/magic.js')
 module.exports.tyr = require('./tyrants/tyrants.js')
 
 // New games, use longer name
-module.exports.innovation = require('./innovation/innovation.js')
 module.exports.magic = require('./magic/magic.js')
 module.exports.tyrants = require('./tyrants/tyrants.js')
 module.exports.ultimate = require('./ultimate/innovation.js')
@@ -18,7 +16,6 @@ module.exports.util = require('./lib/util.js')
 
 
 const Games = {
-  'Innovation': module.exports.innovation,
   'Innovation: Ultimate': module.exports.ultimate,
   'Magic': module.exports.magic,
   'Tyrants of the Underdark': module.exports.tyrants,

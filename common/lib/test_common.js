@@ -85,7 +85,7 @@ function _dumpZonesRecursive(root, indent=0) {
 
   if (root.id) {
     output.push(root.id)
-    for (const card of root.cards()) {
+    for (const card of root.cardlist()) {
       output.push(`   ${card.id}`)
     }
   }

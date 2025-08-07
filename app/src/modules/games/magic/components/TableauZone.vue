@@ -2,7 +2,7 @@
   <div class="tableau-zone" @click="zoneClicked('top')">
     <div class="zone-header">
       <div>
-        <span class="zone-name">{{ zone.name }}</span>&nbsp;<span class="zone-count">({{ zone.cards().length }})</span>
+        <span class="zone-name">{{ zone.name() }}</span>&nbsp;<span class="zone-count">({{ zone.cardlist().length }})</span>
       </div>
 
       <div class="zone-menu" v-if="!noMenu">
@@ -30,7 +30,7 @@
 
     <template v-else>
       <TableauZoneCard
-        v-for="card in zone.cards()"
+        v-for="card in zone.cardlist()"
         :key="card.g.id"
         :card="card"
         :show-grave-powers="showGravePowers"
@@ -96,23 +96,23 @@ export default {
 
   computed: {
     bottomCards() {
-      const visible = util.array.takeRightWhile(this.zone.cards(), card => {
+      const visible = util.array.takeRightWhile(this.zone.cardlist(), card => {
         return Boolean(card.visibility.find(p => p.name === this.actor.name))
       })
 
-      if (visible.length === this.zone.cards().length) {
+      if (visible.length === this.zone.cardlist().length) {
         return []
       }
       else if (visible.length) {
         return visible
       }
       else {
-        return this.zone.cards().slice(-1)
+        return this.zone.cardlist().slice(-1)
       }
     },
 
     topCards() {
-      const visible = util.array.takeWhile(this.zone.cards(), card => {
+      const visible = util.array.takeWhile(this.zone.cardlist(), card => {
         return Boolean(card.visibility.find(p => p.name === this.actor.name))
       })
 
@@ -120,7 +120,7 @@ export default {
         return visible
       }
       else {
-        return this.zone.cards().slice(0, 1)
+        return this.zone.cardlist().slice(0, 1)
       }
     },
   },

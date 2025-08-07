@@ -1,24 +1,18 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `McCarthyism`  // Card names are unique in Innovation
-  this.name = `McCarthyism`
-  this.color = `red`
-  this.age = 9
-  this.expansion = `usee`
-  this.biscuits = `fiih`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `McCarthyism`,
+  color: `red`,
+  age: 9,
+  expansion: `usee`,
+  biscuits: `fiih`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `I demand you draw and meld an {8}! If Socialism is a top card on your board, you lose!`,
     `Score your top purple card.`,
     `You may splay your red or blue cards up.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { self }) => {
-      game.aDrawAndMeld(player, game.getEffectAge(this, 8))
+      game.actions.drawAndMeld(player, game.getEffectAge(self, 8))
 
       const socialism = game
         .getTopCards(player)
@@ -36,7 +30,7 @@ function Card() {
     (game, player) => {
       const purple = game.getTopCard(player, 'purple')
       if (purple) {
-        game.aScore(player, purple)
+        game.actions.score(player, purple)
       }
       else {
         game.log.addNoEffect()
@@ -46,17 +40,5 @@ function Card() {
     (game, player) => {
       game.aChooseAndSplay(player, ['red', 'blue'], 'up')
     }
-  ]
-
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

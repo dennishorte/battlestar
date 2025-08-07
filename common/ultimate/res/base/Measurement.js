@@ -1,45 +1,28 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Measurement`  // Card names are unique in Innovation
-  this.name = `Measurement`
-  this.color = `green`
-  this.age = 5
-  this.expansion = `base`
-  this.biscuits = `slsh`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Measurement`,
+  color: `green`,
+  age: 5,
+  expansion: `base`,
+  biscuits: `slsh`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `You may reveal and return a card from your hand. If you do, splay that color of your cards right, and draw a card of value equal to the number of cards of that color on your board.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
-      const card = game.aChooseCard(player, game.getCardsByZone(player, 'hand'), {
+      const card = game.actions.chooseCard(player, game.cards.byPlayer(player, 'hand'), {
         min: 0,
         max: 1,
       })
       if (card) {
-        game.mReveal(player, card)
-        game.aReturn(player, card)
-        game.aSplay(player, card.color, 'right')
-        game.aDraw(player, { age: game.getCardsByZone(player, card.color).length })
+        game.actions.reveal(player, card)
+        game.actions.return(player, card)
+        game.actions.splay(player, card.color, 'right')
+        game.actions.draw(player, { age: game.cards.byPlayer(player, card.color).length })
       }
       else {
         game.log.addDoNothing(player)
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

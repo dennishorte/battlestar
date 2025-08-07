@@ -1,30 +1,24 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Escape Room`  // Card names are unique in Innovation
-  this.name = `Escape Room`
-  this.color = `yellow`
-  this.age = 11
-  this.expansion = `usee`
-  this.biscuits = `icih`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Escape Room`,
+  color: `yellow`,
+  age: 11,
+  expansion: `usee`,
+  biscuits: `icih`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `I demand you draw, reveal, and score an {e}! Score a card from your hand of the same color as the drawn card! If you don't, you lose!`,
     `Score four top non-yellow cards each with {i} of different colors on your board.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { self }) => {
-      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 11))
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 11))
       if (card) {
-        game.aScore(player, card)
+        game.actions.score(player, card)
         const choices = game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(c => c.color === card.color)
 
-        const scored = game.aChooseAndScore(player, choices)[0]
+        const scored = game.actions.chooseAndScore(player, choices)[0]
         if (!scored) {
           game.aYouLose(player, self)
         }
@@ -36,18 +30,7 @@ function Card() {
         .filter(c => c.color !== 'yellow')
         .filter(c => c.checkHasBiscuit('i'))
 
-      game.aScoreMany(player, toScore)
+      game.actions.scoreMany(player, toScore)
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

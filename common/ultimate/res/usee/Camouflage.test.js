@@ -45,6 +45,7 @@ describe('Camouflage', () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Camouflage')
+    request = t.choose(game, request, 'Score secrets')
 
     t.testChoices(request, ['Archery', 'Tools', 'Masonry'])
 
@@ -74,6 +75,7 @@ describe('Camouflage', () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Camouflage')
+    request = t.choose(game, request, 'Junk and safeguard')
     request = t.choose(game, request, 'auto')
     request = t.choose(game, request, 'auto')
 

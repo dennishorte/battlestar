@@ -1,4 +1,4 @@
-const { BasePlayer } = require('../../lib/game/BasePlayer.js')
+const { BasePlayer } = require('../../lib/game/index.js')
 
 
 class CubeDraftPlayer extends BasePlayer {

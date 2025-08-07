@@ -5,43 +5,43 @@
     </div>
 
     <ColorStack
-      v-for="color in game.utilColors()"
+      v-for="color in game.util.colors()"
       :key="color"
       :player="player"
       :color="color"
     />
 
     <CardPile
-      :zone="game.getZoneByPlayer(player, 'artifact')"
+      :zone="game.zones.byPlayer(player, 'artifact')"
       :expanded="true"
     />
 
     <CardPile
-      :zone="game.getZoneByPlayer(player, 'achievements')"
+      :zone="game.zones.byPlayer(player, 'achievements')"
       :header="achievementsHeader(player)"
     >
       <AchievementExtras :player="player" />
     </CardPile>
 
     <CardPile
-      :zone="game.getZoneByPlayer(player, 'score')"
+      :zone="game.zones.byPlayer(player, 'score')"
       :header="scoreHeader(player)"
     >
       <ScoreExtras :player="player" />
     </CardPile>
 
     <CardPile
-      :zone="game.getZoneByPlayer(player, 'forecast')"
+      :zone="game.zones.byPlayer(player, 'forecast')"
       :header="countHeader(player, 'forecast')"
     />
 
     <CardPile
-      :zone="game.getZoneByPlayer(player, 'safe')"
+      :zone="game.zones.byPlayer(player, 'safe')"
       :header="countHeader(player, 'safe')"
     />
 
     <CardPile
-      :zone="game.getZoneByPlayer(player, 'hand')"
+      :zone="game.zones.byPlayer(player, 'hand')"
       :header="countHeader(player, 'hand')"
       :expanded="actor.name === player.name"
     />
@@ -76,7 +76,7 @@ export default {
   methods: {
     countHeader(player, zoneName) {
       return () => {
-        const count = this.game.getZoneByPlayer(player, zoneName).cards().length
+        const count = this.game.zones.byPlayer(player, zoneName).cardlist().length
         return `${zoneName} ${count}`
       }
     },
@@ -91,7 +91,7 @@ export default {
 
     scoreHeader(player) {
       return () => {
-        const count = this.game.getZoneByPlayer(player, 'score').cards().length
+        const count = this.game.zones.byPlayer(player, 'score').cardlist().length
         const total = this.game.getScore(player)
         return `score ${count} [${total}]`
       }

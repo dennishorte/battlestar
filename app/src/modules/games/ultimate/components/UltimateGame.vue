@@ -17,7 +17,7 @@
           <BiscuitsInfo />
           <DecksInfo />
           <AchievementsZone />
-          <CardPile :zone="game.getZoneById('junk')" />
+          <CardPile :zone="game.zones.byId('junk')" />
           <WaitingPanel />
         </div>
 
@@ -104,7 +104,7 @@ export default {
           const updated = []
           for (const option of selector.choices) {
             const cardName = option.title || option
-            const card = this.game.getCardByName(cardName)
+            const card = this.game.cards.byId(cardName)
             const shareInfo = this.game.getDogmaShareInfo(player, card, { noBiscuitKarma: true })
 
             const subtitles = []
@@ -135,7 +135,7 @@ export default {
 
         else if (selector.title === 'Free Artifact Action') {
           const player = this.game.players.current()
-          const card = this.game.getCardsByZone(player, 'artifact')[0]
+          const card = this.game.cards.byPlayer(player, 'artifact')[0]
           const effects = this.game.getVisibleEffectsByColor(player, card.color, 'echo')
           if (effects.length > 0) {
             selector.choices[0] = {
@@ -149,7 +149,7 @@ export default {
       const selectorOptionComponent = (option) => {
         const name = option.title ? option.title : option
 
-        if (self.game.getCardByName(name, '')) {
+        if (self.game.cards.hasId(name)) {
           return {
             component: CardNameFull,
             props: { name },

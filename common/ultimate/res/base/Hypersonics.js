@@ -1,20 +1,14 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Hypersonics`  // Card names are unique in Innovation
-  this.name = `Hypersonics`
-  this.color = `green`
-  this.age = 11
-  this.expansion = `base`
-  this.biscuits = `iilh`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Hypersonics`,
+  color: `green`,
+  age: 11,
+  expansion: `base`,
+  biscuits: `iilh`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `I demand you return exactly two top cards of different colors from your board of the same value! If you do, return all cards of that value or less in your hand and score pile!`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const valueMap = new Map()
 
@@ -42,7 +36,7 @@ function Card() {
       }
 
       // Let player choose a value
-      const chosenValue = game.aChooseAge(player, validValues, {
+      const chosenValue = game.actions.chooseAge(player, validValues, {
         title: 'Choose a value to return two cards of'
       })
 
@@ -51,28 +45,17 @@ function Card() {
         .getTopCards(player)
         .filter(x => x.getAge() === chosenValue)
 
-      const returned = game.aChooseAndReturn(player, cardsOfValue, { count: 2, ordered: true })
+      const returned = game.actions.chooseAndReturn(player, cardsOfValue, { count: 2, ordered: true })
 
       if (returned.length === 2) {
         // Return all cards of that value or less from hand and score
         const cardsToReturn = [
-          ...game.getCardsByZone(player, 'hand').filter(c => c.getAge() <= chosenValue),
-          ...game.getCardsByZone(player, 'score').filter(c => c.getAge() <= chosenValue)
+          ...game.cards.byPlayer(player, 'hand').filter(c => c.getAge() <= chosenValue),
+          ...game.cards.byPlayer(player, 'score').filter(c => c.getAge() <= chosenValue)
         ]
 
-        game.aReturnMany(player, cardsToReturn, { ordered: true })
+        game.actions.returnMany(player, cardsToReturn, { ordered: true })
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

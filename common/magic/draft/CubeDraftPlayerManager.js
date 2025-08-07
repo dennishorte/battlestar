@@ -1,4 +1,4 @@
-const { BasePlayerManager } = require('../../lib/game/BasePlayerManager.js')
+const { BasePlayerManager } = require('../../lib/game/index.js')
 const { CubeDraftPlayer } = require('./CubeDraftPlayer.js')
 
 

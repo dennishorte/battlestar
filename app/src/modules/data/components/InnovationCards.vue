@@ -19,7 +19,7 @@ export default {
 
   data() {
     return {
-      expansions: ['base', 'echo', 'figs', 'city', 'arti'],
+      expansions: ['base', 'city', 'usee'],
     }
   },
 }

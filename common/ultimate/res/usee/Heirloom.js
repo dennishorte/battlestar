@@ -1,26 +1,20 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Heirloom`  // Card names are unique in Innovation
-  this.name = `Heirloom`
-  this.color = `yellow`
-  this.age = 4
-  this.expansion = `usee`
-  this.biscuits = `fcfh`
-  this.dogmaBiscuit = `f`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Heirloom`,
+  color: `yellow`,
+  age: 4,
+  expansion: `usee`,
+  biscuits: `fcfh`,
+  dogmaBiscuit: `f`,
+  dogma: [
     `Transfer one of your secrets to the available achievements and draw a card of value one higher than the transferred card. If you don't, safeguard an available achievement of value equal to the value of your top red card.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
-      const secrets = game.getCardsByZone(player, 'safe')
-      const transferred = game.aChooseAndTransfer(player, secrets, game.getZoneById('achievements'))[0]
+      const secrets = game.cards.byPlayer(player, 'safe')
+      const transferred = game.actions.chooseAndTransfer(player, secrets, game.zones.byId('achievements'))[0]
 
       if (transferred) {
-        game.aDraw(player, { age: transferred.getAge() + 1 })
+        game.actions.draw(player, { age: transferred.getAge() + 1 })
       }
       else {
         const topRed = game.getTopCard(player, 'red')
@@ -28,21 +22,10 @@ function Card() {
           const value = topRed.getAge()
           const achievement = game.getAvailableAchievementsByAge(player, value)[0]
           if (achievement) {
-            game.aSafeguard(player, achievement)
+            game.actions.safeguard(player, achievement)
           }
         }
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

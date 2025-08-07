@@ -1,27 +1,21 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `The Pirate Code`  // Card names are unique in Innovation
-  this.name = `The Pirate Code`
-  this.color = `red`
-  this.age = 5
-  this.expansion = `base`
-  this.biscuits = `cfch`
-  this.dogmaBiscuit = `c`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `The Pirate Code`,
+  color: `red`,
+  age: 5,
+  expansion: `base`,
+  biscuits: `cfch`,
+  dogmaBiscuit: `c`,
+  dogma: [
     `I demand you transfer two cards of value {4} or less from your score pile to my score pile!`,
     `If any cards were transferred due to the demand, score the lowest top card with a {c} from your board.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { leader }) => {
       const choices = game
-        .getCardsByZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .filter(card => card.getAge() <= 4)
-      const target = game.getZoneByPlayer(leader, 'score')
-      const transferred = game.aChooseAndTransfer(player, choices, target, { count: 2 })
+      const target = game.zones.byPlayer(leader, 'score')
+      const transferred = game.actions.chooseAndTransfer(player, choices, target, { count: 2 })
       if (transferred && transferred.length > 0) {
         game.state.dogmaInfo.piratesLooted = true
       }
@@ -34,23 +28,12 @@ function Card() {
           .filter(card => card.checkHasBiscuit('c'))
         const cards = game.aChooseLowest(player, choices, 1)
         if (cards && cards.length > 0) {
-          game.aScore(player, cards[0])
+          game.actions.score(player, cards[0])
         }
       }
       else {
         game.log.addNoEffect()
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

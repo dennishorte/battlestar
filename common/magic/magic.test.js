@@ -138,7 +138,7 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
@@ -177,12 +177,12 @@ describe('Magic Actions', () => {
     const request1 = game.run()
     const request2 = t.do(game, request1, { name: 'reveal next', zoneId: 'players.dennis.library' })
 
-    const libraryCards = game.getCardsByZone(t.dennis(game), 'library')
+    const libraryCards = game.cards.byPlayer(t.dennis(game), 'library')
     t.testVisibility(libraryCards[0], 'dennis', 'micah')
     t.testVisibility(libraryCards[1])
 
     const request3 = t.do(game, request2, { name: 'reveal next', zoneId: 'players.dennis.library' })
-    const libraryCards2 = game.getCardsByZone(t.dennis(game), 'library')
+    const libraryCards2 = game.cards.byPlayer(t.dennis(game), 'library')
     t.testVisibility(libraryCards2[0], 'dennis', 'micah')
     t.testVisibility(libraryCards2[1], 'dennis', 'micah')
     t.testVisibility(libraryCards2[2])
@@ -194,12 +194,12 @@ describe('Magic Actions', () => {
     const request1 = game.run()
     const request2 = t.do(game, request1, { name: 'view next', zoneId: 'players.dennis.library' })
 
-    const libraryCards = game.getCardsByZone(t.dennis(game), 'library')
+    const libraryCards = game.cards.byPlayer(t.dennis(game), 'library')
     t.testVisibility(libraryCards[0], 'dennis')
     t.testVisibility(libraryCards[1])
 
     const request3 = t.do(game, request2, { name: 'view next', zoneId: 'players.dennis.library' })
-    const libraryCards2 = game.getCardsByZone(t.dennis(game), 'library')
+    const libraryCards2 = game.cards.byPlayer(t.dennis(game), 'library')
     t.testVisibility(libraryCards2[0], 'dennis')
     t.testVisibility(libraryCards2[1], 'dennis')
     t.testVisibility(libraryCards2[2])
@@ -215,7 +215,7 @@ describe('Magic Actions', () => {
       count: 2,
     })
 
-    const libraryCards = game.getCardsByZone(t.dennis(game), 'library')
+    const libraryCards = game.cards.byPlayer(t.dennis(game), 'library')
     t.testVisibility(libraryCards[0], 'dennis')
     t.testVisibility(libraryCards[1], 'dennis')
     t.testVisibility(libraryCards[2])
@@ -227,11 +227,11 @@ describe('Magic Actions', () => {
     const request1 = game.run()
     const request2 = t.do(game, request1, {
       name: 'active face',
-      cardId: game.getCardsByZone(t.dennis(game), 'library')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'library')[0].g.id,
       faceIndex: 1,
     })
 
-    const card = game.getCardsByZone(t.dennis(game), 'library')[0]
+    const card = game.cards.byPlayer(t.dennis(game), 'library')[0]
     expect(card.g.activeFaceIndex).toBe(1)
   })
 
@@ -242,17 +242,17 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'add counter',
-      cardId: game.getCardsByZone(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
       key: 'loyalty',
     })
 
-    const card = game.getCardsByZone(t.dennis(game), 'creatures')[0]
+    const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
     expect(card.g.counters.loyalty).toBe(1)
   })
 
@@ -284,23 +284,23 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'add counter',
-      cardId: game.getCardsByZone(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
       key: 'loyalty',
     })
     const request5 = t.do(game, request4, {
       name: 'adjust c-counter',
-      cardId: game.getCardsByZone(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
       key: 'loyalty',
       count: 2,
     })
 
-    const card = game.getCardsByZone(t.dennis(game), 'creatures')[0]
+    const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
     expect(card.g.counters.loyalty).toBe(3)
   })
 
@@ -311,17 +311,17 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'annotate',
-      cardId: game.getCardsByZone(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
       annotation: '+1/+1',
     })
 
-    const card = game.getCardsByZone(t.dennis(game), 'creatures')[0]
+    const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
     expect(card.g.annotation).toBe('+1/+1')
   })
 
@@ -332,17 +332,17 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'annotate eot',
-      cardId: game.getCardsByZone(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
       annotation: '+1/+1',
     })
 
-    const card = game.getCardsByZone(t.dennis(game), 'creatures')[0]
+    const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
     expect(card.g.annotationEOT).toBe('+1/+1')
   })
 
@@ -353,25 +353,25 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, { name: 'draw' })
     const request5 = t.do(game, request4, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 1,
     })
     const request6 = t.do(game, request5, {
       name: 'attach',
-      cardId: game.getCardsByZone(t.dennis(game), 'creatures')[1].g.id,
-      targetId: game.getCardsByZone(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[1].g.id,
+      targetId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
     })
 
-    const source = game.getCardsByZone(t.dennis(game), 'creatures')[1]
-    const target = game.getCardsByZone(t.dennis(game), 'creatures')[0]
+    const source = game.cards.byPlayer(t.dennis(game), 'creatures')[1]
+    const target = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
     expect(source.g.attachedTo).toBe(target)
     expect(target.g.attached).toEqual([source])
   })
@@ -399,29 +399,29 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, { name: 'draw' })
     const request5 = t.do(game, request4, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 1,
     })
     const request6 = t.do(game, request5, {
       name: 'attach',
-      cardId: game.getCardsByZone(t.dennis(game), 'creatures')[1].g.id,
-      targetId: game.getCardsByZone(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[1].g.id,
+      targetId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
     })
     const request7 = t.do(game, request6, {
       name: 'detach',
-      cardId: game.getCardsByZone(t.dennis(game), 'creatures')[1].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[1].g.id,
     })
 
-    const source = game.getCardsByZone(t.dennis(game), 'creatures')[1]
-    const target = game.getCardsByZone(t.dennis(game), 'creatures')[0]
+    const source = game.cards.byPlayer(t.dennis(game), 'creatures')[1]
+    const target = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
     expect(source.g.attachedTo).toBe(null)
     expect(target.g.attached).toEqual([])
   })
@@ -456,7 +456,7 @@ describe('Magic Actions', () => {
       zoneId: 'players.dennis.library',
     })
 
-    const cards = game.getCardsByZone(t.dennis(game), 'library')
+    const cards = game.cards.byPlayer(t.dennis(game), 'library')
     expect(cards[0].visibility).toEqual([])
     expect(cards[1].visibility).toEqual([])
   })
@@ -468,10 +468,10 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'morph',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
     })
 
-    const card = game.getCardsByZone(t.dennis(game), 'stack')[0]
+    const card = game.cards.byPlayer(t.dennis(game), 'stack')[0]
     expect(card.g.morph).toBe(true)
   })
 
@@ -482,14 +482,14 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, { name: 'draw' })
     const request5 = t.do(game, request4, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 1,
     })
@@ -539,24 +539,24 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'notap set',
-      cardId: game.getCardsByZone(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
     })
 
-    const card = game.getCardsByZone(t.dennis(game), 'creatures')[0]
+    const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
     expect(card.g.noUntap).toBe(true)
 
     const request5 = t.do(game, request4, {
       name: 'notap clear',
-      cardId: game.getCardsByZone(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
     })
 
-    const card2 = game.getCardsByZone(t.dennis(game), 'creatures')[0]
+    const card2 = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
     expect(card2.g.noUntap).toBe(false)
   })
 
@@ -579,10 +579,10 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'reveal',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
     })
 
-    const card = game.getCardsByZone(t.dennis(game), 'hand')[0]
+    const card = game.cards.byPlayer(t.dennis(game), 'hand')[0]
     expect(card.visibility).toEqual(game.players.all())
   })
 
@@ -597,7 +597,7 @@ describe('Magic Actions', () => {
       zoneId: 'players.dennis.hand',
     })
 
-    const cards = game.getCardsByZone(t.dennis(game), 'hand')
+    const cards = game.cards.byPlayer(t.dennis(game), 'hand')
     cards.forEach(card => {
       expect(card.visibility).toEqual(game.players.all())
     })
@@ -627,16 +627,16 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'secret',
-      cardId: game.getCardsByZone(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
     })
 
-    const card = game.getCardsByZone(t.dennis(game), 'creatures')[0]
+    const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
     expect(card.secret).toBe(true)
     expect(card.visibility).toEqual([])
   })
@@ -659,14 +659,14 @@ describe('Magic Actions', () => {
     const game = t.fixtureDecksSelected()
 
     const request1 = game.run()
-    const originalOrder = [...game.getCardsByZone(t.dennis(game), 'library')]
+    const originalOrder = [...game.cards.byPlayer(t.dennis(game), 'library')]
     const request2 = t.do(game, request1, {
       name: 'shuffle',
       zoneId: 'players.dennis.library',
     })
 
     // Can't test exact order since it's random, but we can verify the cards are still there
-    const cards = game.getCardsByZone(t.dennis(game), 'library')
+    const cards = game.cards.byPlayer(t.dennis(game), 'library')
     expect(cards.length).toBe(7)
 
     // Test that the order has changed (This will fail one in 2^7 = 128 times without the retry)
@@ -680,7 +680,7 @@ describe('Magic Actions', () => {
         zoneId: 'players.dennis.library',
       })
 
-      const cardsAfterSecondShuffle = game.getCardsByZone(t.dennis(game), 'library')
+      const cardsAfterSecondShuffle = game.cards.byPlayer(t.dennis(game), 'library')
       orderChanged = !util.array.elementsEqual(cardsAfterSecondShuffle, originalOrder)
 
       if (!orderChanged) {
@@ -689,7 +689,7 @@ describe('Magic Actions', () => {
           zoneId: 'players.dennis.library',
         })
 
-        const cardsAfterThirdShuffle = game.getCardsByZone(t.dennis(game), 'library')
+        const cardsAfterThirdShuffle = game.cards.byPlayer(t.dennis(game), 'library')
         orderChanged = !util.array.array.elementsEqual(cardsAfterThirdShuffle, originalOrder)
 
         if (!orderChanged) {
@@ -713,7 +713,7 @@ describe('Magic Actions', () => {
     })
 
     // Can't test exact order since it's random, but we can verify the cards are still there
-    const cards = game.getCardsByZone(t.dennis(game), 'library')
+    const cards = game.cards.byPlayer(t.dennis(game), 'library')
     expect(cards.length).toBe(7)
   })
 
@@ -724,13 +724,13 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'stack effect',
-      cardId: game.getCardsByZone(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
     })
 
     t.testBoard(game, {
@@ -748,16 +748,16 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'tap',
-      cardId: game.getCardsByZone(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
     })
 
-    const card = game.getCardsByZone(t.dennis(game), 'creatures')[0]
+    const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
     expect(card.g.tapped).toBe(true)
   })
 
@@ -768,20 +768,20 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'morph',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
     })
 
     // Verify the card is properly morphed
-    const morphedCard = game.getCardsByZone(t.dennis(game), 'stack')[0]
+    const morphedCard = game.cards.byPlayer(t.dennis(game), 'stack')[0]
     expect(morphedCard.g.morph).toBe(true)
-    expect(morphedCard.visibility).toEqual([t.dennis(game)])
+    expect(morphedCard.visibility.map(p => p.name)).toEqual(['dennis'])
 
     const request4 = t.do(game, request3, {
       name: 'unmorph',
-      cardId: game.getCardsByZone(t.dennis(game), 'stack')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'stack')[0].g.id,
     })
 
-    const card = game.getCardsByZone(t.dennis(game), 'stack')[0]
+    const card = game.cards.byPlayer(t.dennis(game), 'stack')[0]
     expect(card.g.morph).toBe(false)
     expect(card.visibility).toEqual(game.players.all())
   })
@@ -793,20 +793,20 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'secret',
-      cardId: game.getCardsByZone(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
     })
     const request5 = t.do(game, request4, {
       name: 'unsecret',
-      cardId: game.getCardsByZone(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
     })
 
-    const card = game.getCardsByZone(t.dennis(game), 'creatures')[0]
+    const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
     expect(card.secret).toBe(false)
     expect(card.visibility).toEqual(game.players.all())
   })
@@ -818,20 +818,20 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'tap',
-      cardId: game.getCardsByZone(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
     })
     const request5 = t.do(game, request4, {
       name: 'untap',
-      cardId: game.getCardsByZone(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
     })
 
-    const card = game.getCardsByZone(t.dennis(game), 'creatures')[0]
+    const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
     expect(card.g.tapped).toBe(false)
   })
 
@@ -842,7 +842,7 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.getCardsByZone(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
@@ -851,7 +851,7 @@ describe('Magic Actions', () => {
       zoneId: 'players.dennis.creatures',
     })
 
-    const card = game.getCardsByZone(t.dennis(game), 'creatures')[0]
+    const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
     expect(card.visibility).toContain(game.players.byName('dennis'))
   })
 })

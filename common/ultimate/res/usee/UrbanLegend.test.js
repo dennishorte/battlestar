@@ -12,7 +12,7 @@ describe('Urban Legend', () => {
       },
       decks: {
         base: {
-          9: ['Software'],
+          9: ['Computers'],
         },
         usee: {
           9: ['Consulting'],
@@ -34,7 +34,7 @@ describe('Urban Legend', () => {
         },
         blue: ['Tools'],
         red: ['Coal'],
-        hand: ['Software', 'Consulting'],
+        hand: ['Computers', 'Consulting'],
       },
     })
   })

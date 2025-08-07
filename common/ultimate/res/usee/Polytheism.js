@@ -1,28 +1,22 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Polytheism`  // Card names are unique in Innovation
-  this.name = `Polytheism`
-  this.color = `purple`
-  this.age = 1
-  this.expansion = `usee`
-  this.biscuits = `hssk`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Polytheism`,
+  color: `purple`,
+  age: 1,
+  expansion: `usee`,
+  biscuits: `hssk`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `Meld a card from your hand with no biscuit on a card already melded by you during this action due to Polytheism. If you do, repeat this effect.`,
     `Draw and tuck a {1}.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
-      const meldedBiscuits = game.utilEmptyBiscuits()
+      const meldedBiscuits = game.util.emptyBiscuits()
 
       while (true) {
-        const hand = game.getCardsByZone(player, 'hand')
+        const hand = game.cards.byPlayer(player, 'hand')
         const choices = hand.filter(c => ![...c.biscuits].some(b => b in meldedBiscuits && meldedBiscuits[b] > 0))
-        const melded = game.aChooseAndMeld(player, choices, { count: 1 })
+        const melded = game.actions.chooseAndMeld(player, choices, { count: 1 })
 
         if (melded.length > 0) {
           for (const b of melded[0].biscuits) {
@@ -37,19 +31,8 @@ function Card() {
         }
       }
     },
-    (game, player) => {
-      game.aDrawAndTuck(player, game.getEffectAge(this, 1))
+    (game, player, { self }) => {
+      game.actions.drawAndTuck(player, game.getEffectAge(self, 1))
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

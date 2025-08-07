@@ -1,24 +1,18 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Quantum Computers`  // Card names are unique in Innovation
-  this.name = `Quantum Computers`
-  this.color = `blue`
-  this.age = 11
-  this.expansion = `usee`
-  this.biscuits = `iihi`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Quantum Computers`,
+  color: `blue`,
+  age: 11,
+  expansion: `usee`,
+  biscuits: `iihi`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `I demand you flip a coin! If you lose the flip, you lose!`,
     // `Flip a coin. If you win the flip, this effect is complete. If you lose the flip, return one of your secrets. If you don't, you lose. Otherwise, repeat this effect.`
     `Flip a coin until you win the flip. Each time you lose a flip during this effect, return a secret or lose the game.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { self }) => {
-      const lose = !game.aFlipCoin(player)
+      const lose = !game.actions.flipCoin(player)
       if (lose) {
         game.aYouLose(player, self)
       }
@@ -26,7 +20,7 @@ function Card() {
 
     (game, player, { self }) => {
       while (true) {
-        if (game.aFlipCoin(player)) {
+        if (game.actions.flipCoin(player)) {
           game.log.add({
             template: '{player} wins the coin flip and the effect ends.',
             args: { player },
@@ -34,8 +28,8 @@ function Card() {
           break
         }
 
-        const secrets = game.getCardsByZone(player, 'safe')
-        const returned = game.aChooseAndReturn(player, secrets, {
+        const secrets = game.cards.byPlayer(player, 'safe')
+        const returned = game.actions.chooseAndReturn(player, secrets, {
           title: 'Return a secret',
         })
 
@@ -49,17 +43,5 @@ function Card() {
         }
       }
     }
-  ]
-
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

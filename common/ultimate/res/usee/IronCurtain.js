@@ -1,23 +1,17 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Iron Curtain`  // Card names are unique in Innovation
-  this.name = `Iron Curtain`
-  this.color = `red`
-  this.age = 9
-  this.expansion = `usee`
-  this.biscuits = `hlil`
-  this.dogmaBiscuit = `l`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Iron Curtain`,
+  color: `red`,
+  age: 9,
+  expansion: `usee`,
+  biscuits: `hlil`,
+  dogmaBiscuit: `l`,
+  dogma: [
     `Unsplay each splayed color on your board. For each color you unsplay, return your top card of that color and safeguard an available standard achievement.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const splays = ['yellow', 'red', 'purple', 'green', 'blue']
-        .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
+        .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
 
       const unsplayed = []
       for (const color of splays) {
@@ -28,22 +22,11 @@ function Card() {
         .filter(color => color)
         .map(color => game.getTopCard(player, color))
 
-      game.aReturnMany(player, toReturn)
-      game.aChooseAndSafeguard(player, game.getAvailableStandardAchievements(player), {
+      game.actions.returnMany(player, toReturn)
+      game.actions.chooseAndSafeguard(player, game.getAvailableStandardAchievements(player), {
         count: toReturn.length,
         hidden: true
       })
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

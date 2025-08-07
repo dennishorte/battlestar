@@ -1,22 +1,16 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Placebo`  // Card names are unique in Innovation
-  this.name = `Placebo`
-  this.color = `blue`
-  this.age = 6
-  this.expansion = `usee`
-  this.biscuits = `ssfh`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Placebo`,
+  color: `blue`,
+  age: 6,
+  expansion: `usee`,
+  biscuits: `ssfh`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `Return a top card on your board, then you may repeat as many times as you want with the same color. Draw a {7} for each card you return. If you return exactly one {7}, draw an {8}.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
-      const firstCard = game.aChooseAndReturn(player, game.getTopCards(player))[0]
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
+      const firstCard = game.actions.chooseAndReturn(player, game.getTopCards(player))[0]
 
       if (!firstCard) {
         return
@@ -26,7 +20,7 @@ function Card() {
       const color = firstCard.color
 
       while (game.getTopCard(player, color)) {
-        const card = game.aChooseAndReturn(player, [game.getTopCard(player, color)], { min: 0, max: 1 })[0]
+        const card = game.actions.chooseAndReturn(player, [game.getTopCard(player, color)], { min: 0, max: 1 })[0]
 
         if (!card) {
           break
@@ -36,7 +30,7 @@ function Card() {
       }
 
       returnedCards.forEach(() => {
-        game.aDraw(player, { age: game.getEffectAge(this, 7) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 7) })
       })
 
       const numSevensReturned = returnedCards
@@ -47,19 +41,8 @@ function Card() {
           template: '{player} returned exactly one card of value 7',
           args: { player }
         })
-        game.aDraw(player, { age: game.getEffectAge(this, 8) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 8) })
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

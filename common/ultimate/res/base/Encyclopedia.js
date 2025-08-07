@@ -1,21 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Encyclopedia`  // Card names are unique in Innovation
-  this.name = `Encyclopedia`
-  this.color = `blue`
-  this.age = 6
-  this.expansion = `base`
-  this.biscuits = `hccc`
-  this.dogmaBiscuit = `c`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Encyclopedia`,
+  color: `blue`,
+  age: 6,
+  expansion: `base`,
+  biscuits: `hccc`,
+  dogmaBiscuit: `c`,
+  dogma: [
     `Choose a value. You may meld all the cards of that value in your score pile.`,
     `You may junk an available achievement of value 5, 6, or 7.`,
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const values = game.getAgesByZone(player, 'score')
 
@@ -24,31 +18,20 @@ function Card() {
         return
       }
 
-      const chosenValue = game.aChooseAge(player, values, {
+      const chosenValue = game.actions.chooseAge(player, values, {
         title: 'Choose an age to merge from your score',
         min: 0,
       })
       if (chosenValue) {
         const toMeld = game
-          .getCardsByZone(player, 'score')
+          .cards.byPlayer(player, 'score')
           .filter(c => c.getAge() === chosenValue)
-        game.aMeldMany(player, toMeld)
+        game.actions.meldMany(player, toMeld)
       }
     },
 
     (game, player) => {
-      game.aJunkAvailableAchievement(player, [5, 6, 7], { min: 0 })
+      game.actions.junkAvailableAchievement(player, [5, 6, 7], { min: 0 })
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

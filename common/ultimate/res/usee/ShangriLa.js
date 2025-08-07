@@ -1,28 +1,22 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Shangri-La`  // Card names are unique in Innovation
-  this.name = `Shangri-La`
-  this.color = `yellow`
-  this.age = 8
-  this.expansion = `usee`
-  this.biscuits = `hcll`
-  this.dogmaBiscuit = `l`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Shangri-La`,
+  color: `yellow`,
+  age: 8,
+  expansion: `usee`,
+  biscuits: `hcll`,
+  dogmaBiscuit: `l`,
+  dogma: [
     `Draw and tuck an {8}. If it has {f}, score it. Otherwise, draw and meld an {8}. If it is an {8}, repeat this effect.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       const executeEffect = () => {
-        const tucked = game.aDrawAndTuck(player, game.getEffectAge(this, 8))
+        const tucked = game.actions.drawAndTuck(player, game.getEffectAge(self, 8))
         if (tucked.checkHasBiscuit('f')) {
-          game.aScore(player, tucked)
+          game.actions.score(player, tucked)
         }
         else {
-          const melded = game.aDrawAndMeld(player, game.getEffectAge(this, 8))
+          const melded = game.actions.drawAndMeld(player, game.getEffectAge(self, 8))
           if (melded.getAge() === 8) {
             game.log.add({ template: 'Repeating effect' })
             executeEffect()
@@ -32,16 +26,5 @@ function Card() {
 
       executeEffect()
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

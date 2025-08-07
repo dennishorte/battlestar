@@ -191,14 +191,14 @@ Agricola.prototype.initializeCards = function() {
   // Shuffle the action cards.
   const actionCards = util.array.shuffle([...res.cards.actions], this.random)
   actionCards.sort((l, r) => l.stage - r.stage)
-  this.getZoneById('roundDeck').setCards(actionCards)
+  this.zones.byId('roundDeck').setCards(actionCards)
 
   // Shuffle and deal the minor improvements and occupations
   const occupations = util.array.shuffle(this.getAllOccupations(), this.random)
   const minorImprovements = util.array.shuffle(this.getAllMinorImprovements(), this.random)
   for (const player of this.players.all()) {
-    const occupationZone = this.getZoneByPlayer(player, 'occupations')
-    const minorImprovementZone = this.getZoneByPlayer(player, 'minorImprovements')
+    const occupationZone = this.zones.byPlayer(player, 'occupations')
+    const minorImprovementZone = this.zones.byPlayer(player, 'minorImprovements')
     for (let i = 0; i < 7; i++) {
       occupationZone.addCard(occupations.pop())
       minorImprovementZone.addCard(minorImprovements.pop())

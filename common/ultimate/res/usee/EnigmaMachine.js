@@ -1,58 +1,41 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Enigma Machine`  // Card names are unique in Innovation
-  this.name = `Enigma Machine`
-  this.color = `red`
-  this.age = 8
-  this.expansion = `usee`
-  this.biscuits = `iihi`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Enigma Machine`,
+  color: `red`,
+  age: 8,
+  expansion: `usee`,
+  biscuits: `iihi`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `Choose to either safeguard all available standard achievements, transfer all your secrets to your hand, or transfer all cards in your hand to the available achievements.`,
     `Choose a color you have splayed left and splay it up.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const choices = [
         'Safeguard all available standard achievements',
         'Transfer all your secrets to your hand',
         'Transfer all cards in your hand to the available achievements'
       ]
-      const choice = game.aChoose(player, choices)[0]
+      const choice = game.actions.choose(player, choices)[0]
 
       if (choice === choices[0]) {
         const achievements = game.getAvailableStandardAchievements(player)
-        game.aSafeguardMany(player, achievements)
+        game.actions.safeguardMany(player, achievements)
       }
       else if (choice === choices[1]) {
-        const secrets = game.getZoneByPlayer(player, 'safe').cards()
-        game.aTransferMany(player, secrets, game.getZoneByPlayer(player, 'hand'))
+        const secrets = game.zones.byPlayer(player, 'safe').cardlist()
+        game.actions.transferMany(player, secrets, game.zones.byPlayer(player, 'hand'))
       }
       else if (choice === choices[2]) {
-        const hand = game.getZoneByPlayer(player, 'hand').cards()
-        game.aTransferMany(player, hand, game.getZoneById('achievements'))
+        const hand = game.zones.byPlayer(player, 'hand').cardlist()
+        game.actions.transferMany(player, hand, game.zones.byId('achievements'))
       }
     },
     (game, player) => {
-      const colors = game.utilColors().filter(color => {
-        return game.getZoneByPlayer(player, color).splay === 'left'
+      const colors = game.util.colors().filter(color => {
+        return game.zones.byPlayer(player, color).splay === 'left'
       })
       game.aChooseAndSplay(player, colors, 'up', { count: 1 })
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

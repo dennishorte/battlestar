@@ -32,11 +32,12 @@ export default {
 
   computed: {
     locations() {
+      console.log(this.styledDivs.map(d => d.name))
       return this
         .game
         .getLocationAll()
         .map(loc => {
-          loc.ui = this.styledDivs.find(div => div.name === loc.name)
+          loc.ui = this.styledDivs.find(div => div.name === loc.name())
           return loc
         })
     },

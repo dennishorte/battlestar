@@ -15,7 +15,7 @@ describe('Philosophy', () => {
       request = t.choose(game, request, 'Dogma.Philosophy')
       t.choose(game, request, 'red')
 
-      const red = game.getZoneByPlayer(t.dennis(game), 'red')
+      const red = game.zones.byPlayer(t.dennis(game), 'red')
       expect(red.splay).toBe('left')
     })
 
@@ -29,7 +29,7 @@ describe('Philosophy', () => {
       request = t.choose(game, request, 'Dogma.Philosophy')
       t.choose(game, request)
 
-      const red = game.getZoneByPlayer(t.dennis(game), 'red')
+      const red = game.zones.byPlayer(t.dennis(game), 'red')
       expect(red.splay).toBe('none')
     })
   })
@@ -45,7 +45,7 @@ describe('Philosophy', () => {
       request = t.choose(game, request, 'Dogma.Philosophy')
       t.choose(game, request, 'Industrialization')
 
-      const score = game.getZoneByPlayer(t.dennis(game), 'score').cards().map(c => c.name)
+      const score = game.zones.byPlayer(t.dennis(game), 'score').cardlist().map(c => c.name)
       expect(score).toEqual(['Industrialization'])
     })
 
@@ -59,7 +59,7 @@ describe('Philosophy', () => {
       request = t.choose(game, request, 'Dogma.Philosophy')
       t.choose(game, request)
 
-      const score = game.getZoneByPlayer(t.dennis(game), 'score').cards().map(c => c.name)
+      const score = game.zones.byPlayer(t.dennis(game), 'score').cardlist().map(c => c.name)
       expect(score).toEqual([])
     })
   })

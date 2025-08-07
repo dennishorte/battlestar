@@ -80,7 +80,7 @@ export default {
 
         commit('logInfo', 'Cards successfully loaded from local database')
 
-        return cards.flat().map(c => new UICardWrapper(c))
+        return cards.flat().map(c => new UICardWrapper(null, c))
       }
 
       try {

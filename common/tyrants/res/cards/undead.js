@@ -40,11 +40,15 @@ const cardData = [
     impl: (game, player, { card }) => {
       player.incrementCounter('power', 3)
 
-      const marketCards = game.getZoneById('market').cards()
-      const toDevour = game.aChooseCard(player, marketCards)
+      const marketCards = game.zones.byId('market').cardlist()
+      const toDevour = game.actions.chooseCard(player, marketCards)
       game.aDevour(player, toDevour, { noRefill: true })
-      game.mMoveCardTo(card, game.getZoneById('market'), { destIndex: 0, verbose: true })
-    },
+      game.log.add({
+        template: '{player} returns Carrion Crawler to the market',
+        args: { player }
+      })
+      card.moveTo(game.zones.byId('market'), 0)
+    }
   },
   {
     "name": "Conjurer",
@@ -132,7 +136,7 @@ const cardData = [
       game.aChooseAndSupplant(player)
 
       const playerTroops = game
-        .getCardsByZone(player, 'trophyHall')
+        .cards.byPlayer(player, 'trophyHall')
         .filter(card => card.getOwnerName() !== 'neutral')
         .length
 
@@ -191,8 +195,8 @@ const cardData = [
           title: 'Return one of your spies > You may devour a card in your discard pile; if you do, gain the effects of the devoured card',
           impl: () => {
             game.aReturnASpyAnd(player, () => {
-              const discard = game.getCardsByZone(player, 'discard')
-              const card = game.aChooseCard(player, discard, {
+              const discard = game.cards.byPlayer(player, 'discard')
+              const card = game.actions.chooseCard(player, discard, {
                 title: 'Choose a card to devour',
                 min: 0,
               })
@@ -280,21 +284,21 @@ const cardData = [
       const otherPlayersDistinct = util.array.distinct(otherPlayers)
 
       if (otherPlayersDistinct.length > 0) {
-        const targetPlayer = game.aChoosePlayer(player, otherPlayersDistinct, {
+        const targetPlayer = game.actions.choosePlayer(player, otherPlayersDistinct, {
           title: 'Choose a player whose dead you will raise'
         })
 
         if (targetPlayer) {
-          const troopZone = game.getZoneByPlayer(targetPlayer, 'trophyHall')
-          const choices = troopZone.cards().map(troop => troop.getOwnerName()).sort()
-          const selections = game.aChoose(player, choices, {
+          const troopZone = game.zones.byPlayer(targetPlayer, 'trophyHall')
+          const choices = troopZone.cardlist().map(troop => troop.getOwnerName()).sort()
+          const selections = game.actions.choose(player, choices, {
             title: 'Choose up to 2 troops to reanimate',
             min: 0,
             max: 2,
           })
 
           for (const selection of selections) {
-            const troop = troopZone.cards().find(c => c.getOwnerName() === selection)
+            const troop = troopZone.cardlist().find(c => c.getOwnerName() === selection)
             game.aChooseAndDeploy(player, { troop })
           }
         }
@@ -337,7 +341,7 @@ const cardData = [
             const loc = game.aChooseLocation(player, game.getPresence(player))
             if (loc) {
               const troops = loc.getTroops().filter(troop => troop.isNeutral())
-              const chosen = game.aChoose(player, troops.map(() => 'neutral'), {
+              const chosen = game.actions.choose(player, troops.map(() => 'neutral'), {
                 title: 'Choose which troops to deploy your Minotaur Skeleton against',
                 min: 0,
                 max: 3,
@@ -378,13 +382,13 @@ const cardData = [
               const players = game
                 .players.all()
                 .filter(p => game
-                  .getCardsByZone(p, 'trophyHall')
+                  .cards.byPlayer(p, 'trophyHall')
                   .some(troop => troop.isNeutral())
                 )
-              const targetPlayer = game.aChoosePlayer(player, players)
+              const targetPlayer = game.actions.choosePlayer(player, players)
               if (targetPlayer) {
                 const troop = game
-                  .getCardsByZone(targetPlayer, 'trophyHall')
+                  .cards.byPlayer(targetPlayer, 'trophyHall')
                   .find(troop => troop.isNeutral())
                 game.aChooseAndDeploy(player, {
                   anywhere: true,
@@ -429,33 +433,33 @@ const cardData = [
               max: 1,
             }]
 
-            if (game.getCardsByZone(player, 'hand').length > 0) {
+            if (game.cards.byPlayer(player, 'hand').length > 0) {
               choices.push({
                 title: 'hand',
-                choices: game.getCardsByZone(player, 'hand').map(c => c.name),
+                choices: game.cards.byPlayer(player, 'hand').map(c => c.name),
                 min: 0,
                 max: 1,
               })
             }
 
-            if (game.getCardsByZone(player, 'discard').length > 0) {
+            if (game.cards.byPlayer(player, 'discard').length > 0) {
               choices.push({
                 title: 'discard',
-                choices: game.getCardsByZone(player, 'discard').map(c => c.name),
+                choices: game.cards.byPlayer(player, 'discard').map(c => c.name),
                 min: 0,
                 max: 1,
               })
             }
 
-            const selection = game.aChoose(player, choices, { title: 'Choose a card to promote' })[0]
+            const selection = game.actions.choose(player, choices, { title: 'Choose a card to promote' })[0]
 
             if (selection.title === 'this card') {
               game.aPromote(player, card)
             }
 
             else {
-              const zone = game.getZoneByPlayer(player, selection.title)
-              const card = zone.cards().find(c => c.name === selection.selection[0])
+              const zone = game.zones.byPlayer(player, selection.title)
+              const card = zone.cardlist().find(c => c.name === selection.selection[0])
               game.aPromote(player, card)
             }
           }
@@ -513,7 +517,7 @@ const cardData = [
       game.aChooseAndAssassinate(player)
       game.aChooseAndAssassinate(player)
 
-      if (game.getCardsByZone(player, 'trophyHall').length >= 8) {
+      if (game.cards.byPlayer(player, 'trophyHall').length >= 8) {
         game.aPromote(player, card)
       }
     },
@@ -535,7 +539,7 @@ const cardData = [
       game.aChooseAndDeploy(player)
       game.aChooseAndDeploy(player)
 
-      const doDevour = game.aChooseYesNo(player, 'Devour Skeletal Horde to deploy 3 more troops?')
+      const doDevour = game.actions.chooseYesNo(player, 'Devour Skeletal Horde to deploy 3 more troops?')
       if (doDevour) {
         game.aDevour(player, card)
         game.aChooseAndDeploy(player)
@@ -587,8 +591,8 @@ const cardData = [
         {
           title: 'Promote a card from your discard pile, then gain 1 VP for every 3 cards in your inner circle',
           impl: () => {
-            game.aChooseAndPromote(player, game.getCardsByZone(player, 'discard'))
-            const innerCircle = game.getCardsByZone(player, 'innerCircle').length
+            game.aChooseAndPromote(player, game.cards.byPlayer(player, 'discard'))
+            const innerCircle = game.cards.byPlayer(player, 'innerCircle').length
             player.incrementCounter('points', Math.floor(innerCircle / 3))
           }
         },
@@ -620,7 +624,7 @@ const cardData = [
         {
           title: 'Devour a card in your hand > Supplant a troop',
           impl: () => {
-            const card = game.aChooseCard(player, game.getCardsByZone(player, 'hand'), {
+            const card = game.actions.chooseCard(player, game.cards.byPlayer(player, 'hand'), {
               title: 'Choose a card to feed to your wight',
               min: 0,
               max: 1,
@@ -651,7 +655,7 @@ const cardData = [
       const loc = game.aChooseAndPlaceSpy(player)
 
       if (loc) {
-        const doDevour = game.aChooseYesNo(player, `Devour this wraith to assassinate a troop at ${loc.name}`)
+        const doDevour = game.actions.chooseYesNo(player, `Devour this wraith to assassinate a troop at ${loc.name}`)
         if (doDevour) {
           game.aDevour(player, card)
           game.aChooseAndAssassinate(player, { loc })

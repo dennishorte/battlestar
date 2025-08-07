@@ -1,46 +1,29 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Hacking`  // Card names are unique in Innovation
-  this.name = `Hacking`
-  this.color = `blue`
-  this.age = 10
-  this.expansion = `usee`
-  this.biscuits = `hiis`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Hacking`,
+  color: `blue`,
+  age: 10,
+  expansion: `usee`,
+  biscuits: `hiis`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `I demand you transfer your two highest secrets to my safe! Transfer the two highest cards in your score pile to my score pile! Meld the two lowest cards from your score pile!`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { leader }) => {
-      const secrets = game.aChooseHighest(player, game.getCardsByZone(player, 'safe'), 2, {
+      const secrets = game.aChooseHighest(player, game.cards.byPlayer(player, 'safe'), 2, {
         title: 'Choose secrets to transfer',
       })
-      game.aTransferMany(player, secrets, game.getZoneByPlayer(leader, 'safe'))
+      game.actions.transferMany(player, secrets, game.zones.byPlayer(leader, 'safe'))
 
-      const score = game.aChooseHighest(player, game.getCardsByZone(player, 'score'), 2, {
+      const score = game.aChooseHighest(player, game.cards.byPlayer(player, 'score'), 2, {
         title: 'Choose score to transfer',
       })
-      game.aTransferMany(player, score, game.getZoneByPlayer(leader, 'score'))
+      game.actions.transferMany(player, score, game.zones.byPlayer(leader, 'score'))
 
-      const toMeld = game.aChooseLowest(player, game.getCardsByZone(player, 'score'), 2, {
+      const toMeld = game.aChooseLowest(player, game.cards.byPlayer(player, 'score'), 2, {
         title: 'Choose score to meld',
       })
-      game.aMeldMany(player, toMeld)
+      game.actions.meldMany(player, toMeld)
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

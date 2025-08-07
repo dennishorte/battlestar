@@ -49,7 +49,7 @@ const cardData = [
         max: 1,
       })
       if (discarded) {
-        game.mMoveCardTo(card, game.getZoneById('outcast'))
+        card.moveTo(game.zones.byId('outcast'))
       }
     }
   },

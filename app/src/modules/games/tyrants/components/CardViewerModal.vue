@@ -14,8 +14,6 @@
 
 
 <script>
-import { tyr } from 'battlestar-common'
-
 import GameCard from './GameCard'
 import ModalBase from '@/components/ModalBase'
 
@@ -27,12 +25,12 @@ export default {
     ModalBase,
   },
 
-  inject: ['ui'],
+  inject: ['game', 'ui'],
 
   computed: {
     card() {
       const cardId = this.ui.modals.cardViewer.cardId
-      return tyr.res.cards.byId[cardId]
+      return this.game.cards.byId[cardId]
     },
   }
 }

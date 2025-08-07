@@ -15,7 +15,8 @@ describe('Assassination', () => {
         usee: {
           1: ['Palmistry'],
         }
-      }
+      },
+      achievements: ['Confidence'],
     })
 
     let request

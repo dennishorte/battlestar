@@ -1,38 +1,32 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Blackmail`  // Card names are unique in Innovation
-  this.name = `Blackmail`
-  this.color = `green`
-  this.age = 4
-  this.expansion = `usee`
-  this.biscuits = `hffl`
-  this.dogmaBiscuit = `f`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Blackmail`,
+  color: `green`,
+  age: 4,
+  expansion: `usee`,
+  biscuits: `hffl`,
+  dogmaBiscuit: `f`,
+  dogma: [
     `I demand you reveal your hand! Meld a revealed card of my choice! Reveal your score pile! Self-execute a card revealed due to this effect of my choice, replacing 'may' with 'must'!`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { leader }) => {
       // Reveal opponent's hand
-      const hand = game.getCardsByZone(player, 'hand')
-      game.aRevealMany(player, hand)
-      const toMeld = game.aChooseCard(leader, hand, {
+      const hand = game.cards.byPlayer(player, 'hand')
+      game.actions.revealMany(player, hand)
+      const toMeld = game.actions.chooseCard(leader, hand, {
         title: 'Choose a card for your opponent to meld',
       })
 
       if (toMeld) {
-        game.aMeld(player, toMeld)
+        game.actions.meld(player, toMeld)
       }
 
       // Reveal opponent's score pile
-      const score = game.getCardsByZone(player, 'score')
-      game.aRevealMany(player, score)
+      const score = game.cards.byPlayer(player, 'score')
+      game.actions.revealMany(player, score)
 
       const choices = [...score, ...hand]
-      const toExecute = game.aChooseCard(leader, choices, {
+      const toExecute = game.actions.chooseCard(leader, choices, {
         title: 'Choose a card to force opponent to self-execute',
       })
       if (toExecute) {
@@ -42,16 +36,5 @@ function Card() {
         game.state.dogmaInfo.mayIsMust = false
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

@@ -1,29 +1,23 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Hitchhiking`  // Card names are unique in Innovation
-  this.name = `Hitchhiking`
-  this.color = `green`
-  this.age = 8
-  this.expansion = `usee`
-  this.biscuits = `fiih`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Hitchhiking`,
+  color: `green`,
+  age: 8,
+  expansion: `usee`,
+  biscuits: `fiih`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `Choose another player. They transfer a card from their hand to your board. If they do, self-execute the card, with that player making all decisions and allowed to look at any card that you can.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const otherPlayers = game.players.all().filter(other => other.name !== player.name)
-      const otherPlayer = game.aChoosePlayer(player, otherPlayers)
+      const otherPlayer = game.actions.choosePlayer(player, otherPlayers)
 
       if (otherPlayer) {
-        const cardInHand = game.aChooseCard(otherPlayer, game.getZoneByPlayer(otherPlayer, 'hand').cards())
+        const cardInHand = game.actions.chooseCard(otherPlayer, game.zones.byPlayer(otherPlayer, 'hand').cardlist())
 
         if (cardInHand) {
-          game.aTransfer(otherPlayer, cardInHand, game.getZoneByPlayer(player, cardInHand.color))
+          game.actions.transfer(otherPlayer, cardInHand, game.zones.byPlayer(player, cardInHand.color))
           game.log.add({
             template: 'Having the other player make the decisions is not implemented yet.'
           })
@@ -31,16 +25,5 @@ function Card() {
         }
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

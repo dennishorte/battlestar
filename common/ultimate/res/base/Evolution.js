@@ -1,51 +1,34 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Evolution`  // Card names are unique in Innovation
-  this.name = `Evolution`
-  this.color = `blue`
-  this.age = 7
-  this.expansion = `base`
-  this.biscuits = `sssh`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Evolution`,
+  color: `blue`,
+  age: 7,
+  expansion: `base`,
+  biscuits: `sssh`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `You may choose to either draw and score and {8} and then return a card from your score pile, or draw a card of value one higher than the highest card in your score pile.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
-      const selection = game.aChoose(player, ['Draw and Score and Return', 'Draw a Higher Card'])[0]
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
+      const selection = game.actions.choose(player, ['Draw and Score and Return', 'Draw a Higher Card'])[0]
       game.log.add({
         template: '{player} chooses {option}',
         args: { player, option: selection }
       })
 
       if (selection === 'Draw and Score and Return') {
-        game.aDrawAndScore(player, game.getEffectAge(this, 8))
-        game.aChooseAndReturn(player, game.getCardsByZone(player, 'score'))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 8))
+        game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'))
       }
       else {
-        const highest = game.utilHighestCards(game.getCardsByZone(player, 'score'))
+        const highest = game.util.highestCards(game.cards.byPlayer(player, 'score'))
         if (highest.length > 0) {
-          game.aDraw(player, { age: highest[0].getAge() + 1 })
+          game.actions.draw(player, { age: highest[0].getAge() + 1 })
         }
         else {
-          game.aDraw(player, { age: 1 })
+          game.actions.draw(player, { age: 1 })
         }
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

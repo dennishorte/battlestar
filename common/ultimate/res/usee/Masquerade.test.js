@@ -9,7 +9,7 @@ describe('Masquerade', () => {
         purple: ['Masquerade', 'Mysticism'],
         hand: ['Tools', 'Optics'],
       },
-      achievements: ['Domestication', 'Construction', 'Machinery']
+      achievements: ['Domestication', 'Construction', 'Machinery', 'Anonymity']
     })
 
     let request
@@ -37,7 +37,7 @@ describe('Masquerade', () => {
         purple: ['Masquerade', 'Mysticism'],
         hand: ['Tools', 'Optics', 'Reformation', 'Gunpowder'],
       },
-      achievements: ['Domestication', 'Construction', 'Machinery', 'Experimentation']
+      achievements: ['Domestication', 'Construction', 'Machinery', 'Experimentation', 'Anonymity']
     })
 
     let request

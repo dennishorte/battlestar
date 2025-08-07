@@ -1,50 +1,44 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `3D Printing`
-  this.name = `3D Printing`
-  this.color = `purple`
-  this.age = 10
-  this.expansion = `usee`
-  this.biscuits = `siih`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `3D Printing`,
+  color: `purple`,
+  age: 10,
+  expansion: `usee`,
+  biscuits: `siih`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `Return a top or bottom card on your board. Achieve one of your secrets of value equal to the returned card regardless of eligibility, then safeguard an available standard achievement. If you do, repeat this effect.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const repeatEffect = () => {
         const topCards = game.getTopCards(player)
         const bottomCards = game.getBottomCards(player)
         const choices = topCards.concat(bottomCards)
 
-        const returned = game.aChooseAndReturn(player, choices)[0]
+        const returned = game.actions.chooseAndReturn(player, choices)[0]
 
         if (returned) {
           const age = returned.age
           const secretOptions = game
-            .getCardsByZone(player, 'safe')
+            .cards.byPlayer(player, 'safe')
             .filter(c => c.getAge() === age)
 
-          const secret = game.aChooseCards(player, secretOptions, {
+          const secret = game.actions.chooseCards(player, secretOptions, {
             title: 'Choose a secret to achieve',
             hidden: true,
           })[0]
 
           if (secret) {
-            game.aClaimAchievement(player, secret)
+            game.actions.claimAchievement(player, secret)
           }
 
-          const standard = game.aChooseCards(player, game.getAvailableStandardAchievements(player), {
+          const standard = game.actions.chooseCards(player, game.getAvailableStandardAchievements(player), {
             title: 'Choose a standard achievement to safeguard',
             hidden: true
           })[0]
 
           if (standard) {
-            game.aSafeguard(player, standard)
+            game.actions.safeguard(player, standard)
           }
 
           if (secret && standard) {
@@ -55,16 +49,5 @@ function Card() {
 
       repeatEffect() // Start the repeating effect
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

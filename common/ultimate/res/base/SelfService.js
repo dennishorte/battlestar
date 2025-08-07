@@ -1,23 +1,19 @@
-const CardBase = require(`../CardBase.js`)
 const { GameOverEvent } = require('../../../lib/game.js')
 
-function Card() {
-  this.id = `Self Service`  // Card names are unique in Innovation
-  this.name = `Self Service`
-  this.color = `green`
-  this.age = 10
-  this.expansion = `base`
-  this.biscuits = `hcpc`
-  this.dogmaBiscuit = `c`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+
+module.exports = {
+  name: `Self Service`,
+  color: `green`,
+  age: 10,
+  expansion: `base`,
+  biscuits: `hcpc`,
+  dogmaBiscuit: `c`,
+  dogma: [
     `If you have at least twice as many achievements as any other opponent, you win.`,
     `Self-execute any top card other than Self Service on your board.`,
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       const mine = game.getAchievementsByPlayer(player).total
       const others = game
         .players.opponentsOf(player)
@@ -26,7 +22,7 @@ function Card() {
       if (mine > 0 && others.every(count => count <= mine)) {
         throw new GameOverEvent({
           player,
-          reason: this.name
+          reason: self.name
         })
       }
       else {
@@ -38,22 +34,11 @@ function Card() {
       const choices = game
         .getTopCards(player)
         .filter(card => card !== self)
-      const card = game.aChooseCard(player, choices)
+      const card = game.actions.chooseCard(player, choices)
       if (card) {
         game.aSelfExecute(player, card)
       }
     },
 
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

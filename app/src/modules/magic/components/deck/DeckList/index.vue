@@ -104,7 +104,7 @@ export default {
           }
         }
 
-        const mainCards = this.deck.cards('main')
+        const mainCards = this.deck.cardlist('main')
         for (const card of mainCards) {
           let matched = false
 
@@ -131,12 +131,12 @@ export default {
         output.push({
           id: this.deck.name + '|sideboard',
           name: 'sideboard',
-          cards: this.deck.cards('side'),
+          cards: this.deck.cardlist('side'),
         })
         output.push({
           id: this.deck.name + '|command',
           name: 'command zone',
-          cards: this.deck.cards('command'),
+          cards: this.deck.cardlist('command'),
         })
         return output.filter(x => x.cards.length > 0)
       }
@@ -146,7 +146,7 @@ export default {
           output.push({
             id: this.deck.name + '|' + zoneName,
             name: zoneName,
-            cards: this.deck.cards(zoneName),
+            cards: this.deck.cardlist(zoneName),
           })
         }
         return output

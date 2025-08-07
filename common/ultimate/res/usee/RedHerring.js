@@ -1,60 +1,42 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Red Herring`  // Card names are unique in Innovation
-  this.name = `Red Herring`
-  this.color = `red`
-  this.age = 6
-  this.expansion = `usee`
-  this.biscuits = `chcc`
-  this.dogmaBiscuit = `c`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Red Herring`,
+  color: `red`,
+  age: 6,
+  expansion: `usee`,
+  biscuits: `chcc`,
+  dogmaBiscuit: `c`,
+  dogma: [
     `Splay your red cards left, right, or up.`,
     `Draw and tuck a {6}. If the color on your board of the card you tuck is splayed in the same direction as your red cards, splay that color up. Otherwise, unsplay that color.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
-      const red = game.getZoneByPlayer(player, 'red')
+      const red = game.zones.byPlayer(player, 'red')
 
-      if (red.cards().length < 2) {
+      if (red.cardlist().length < 2) {
         game.log.add({ template: 'Red cannot be splayed' })
         return
       }
 
       const choices = ['left', 'right', 'up'].filter(x => x !== red.splay)
 
-      const direction = game.aChoose(player, choices, {
+      const direction = game.actions.choose(player, choices, {
         title: 'Choose a direction to splay red',
       })[0]
-      game.aSplay(player, 'red', direction)
+      game.actions.splay(player, 'red', direction)
     },
-    (game, player) => {
-      const card = game.aDrawAndTuck(player, game.getEffectAge(this, 6))
+    (game, player, { self }) => {
+      const card = game.actions.drawAndTuck(player, game.getEffectAge(self, 6))
       if (card) {
-        const redSplay = game.getZoneByPlayer(player, 'red').splay
-        const cardSplay = game.getZoneByPlayer(player, card.color).splay
+        const redSplay = game.zones.byPlayer(player, 'red').splay
+        const cardSplay = game.zones.byPlayer(player, card.color).splay
         if (redSplay === cardSplay) {
-          game.aSplay(player, card.color, 'up')
+          game.actions.splay(player, card.color, 'up')
         }
         else {
           game.aUnsplay(player, card.color)
         }
       }
     }
-  ]
-
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

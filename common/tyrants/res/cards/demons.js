@@ -115,13 +115,13 @@ const cardData = [
             .players.all()
             .flatMap(player => {
               const trophies = game
-                .getCardsByZone(player, 'trophyHall')
+                .cards.byPlayer(player, 'trophyHall')
                 .map(troop => troop.getOwnerName())
               return trophies.map(ownerName => `${player.name}: ${ownerName}`)
             })
             .sort()
 
-          const selected = game.aChoose(player, choices, {
+          const selected = game.actions.choose(player, choices, {
             title: `Choose up to two trophies to deploy`,
             min: 0,
             max: 2,
@@ -131,7 +131,7 @@ const cardData = [
             const [trophyName, ownerName] = selection.split(': ')
             const trophyPlayer = game.players.byName(trophyName)
             const troop = game
-              .getCardsByZone(trophyPlayer, 'trophyHall')
+              .cards.byPlayer(trophyPlayer, 'trophyHall')
               .find(c => c.getOwnerName() === ownerName)
             game.aChooseAndDeploy(player, {
               troop,
@@ -166,12 +166,12 @@ const cardData = [
       // Get all opponents at the locations
       const opponents = util
         .array
-        .distinct(combined.flatMap(loc => loc.cards().map(troop => troop.getOwnerName())))
+        .distinct(combined.flatMap(loc => loc.cardlist().map(troop => troop.getOwnerName())))
         .filter(name => name !== 'neutral')
         .map(name => game.players.byName(name))
         .filter(p => p !== player)
 
-      const opponent = game.aChoosePlayer(player, opponents)
+      const opponent = game.actions.choosePlayer(player, opponents)
       if (opponent) {
         game.aRecruit(opponent, 'Insane Outcast', { noCost: true })
       }
@@ -462,7 +462,7 @@ const cardData = [
     ],
     impl: (game, player) => {
       player.incrementCounter('influence', 2)
-      const opp = game.aChoosePlayer(player, game.players.opponentsOf(player))
+      const opp = game.actions.choosePlayer(player, game.players.opponentsOf(player))
       if (opp) {
         game.aRecruit(opp, 'Insane Outcast', { noCost: true })
       }
@@ -519,7 +519,7 @@ const cardData = [
       "At end of turn, promote another card played this turn."
     ],
     impl: (game, player, { card }) => {
-      const opp = game.aChoosePlayer(player, game.players.opponentsOf(player))
+      const opp = game.actions.choosePlayer(player, game.players.opponentsOf(player))
       if (opp) {
         game.aRecruit(opp, 'Insane Outcast', { noCost: true })
         game.aDeferPromotion(player, card)

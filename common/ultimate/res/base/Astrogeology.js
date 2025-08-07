@@ -1,60 +1,45 @@
-const CardBase = require(`../CardBase.js`)
 const { GameOverEvent } = require('../../../lib/game.js')
 
-function Card() {
-  this.id = `Astrogeology`  // Card names are unique in Innovation
-  this.name = `Astrogeology`
-  this.color = `red`
-  this.age = 11
-  this.expansion = `base`
-  this.biscuits = `chff`
-  this.dogmaBiscuit = `f`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+
+module.exports = {
+  name: `Astrogeology`,
+  color: `red`,
+  age: 11,
+  expansion: `base`,
+  biscuits: `chff`,
+  dogmaBiscuit: `f`,
+  dogma: [
     `Draw and reveal an {e}. Splay its color on your board aslant. If you do, transfer all but your top four cards of that color to your hand.`,
     `If you have at least eight cards in your hand, you win.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
-      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 11))
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 11))
       if (card) {
         const color = card.color
-        const splayed = Boolean(game.aSplay(player, color, 'aslant'))
+        const splayed = Boolean(game.actions.splay(player, color, 'aslant'))
 
         if (splayed) {
-          const cards = game.getCardsByZone(player, color)
+          const cards = game.cards.byPlayer(player, color)
           if (cards.length > 4) {
             const toReturn = cards.slice(4)
-            game.aTransferMany(player, toReturn, game.getZoneByPlayer(player, 'hand'), { ordered: true })
+            game.actions.transferMany(player, toReturn, game.zones.byPlayer(player, 'hand'), { ordered: true })
           }
         }
       }
     },
 
-    (game, player) => {
-      const handSize = game.getZoneByPlayer(player, 'hand').cards().length
+    (game, player, { self }) => {
+      const handSize = game.zones.byPlayer(player, 'hand').cardlist().length
       if (handSize >= 8) {
         throw new GameOverEvent({
           player,
-          reason: this.name
+          reason: self.name
         })
       }
       else {
         game.log.addNoEffect()
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

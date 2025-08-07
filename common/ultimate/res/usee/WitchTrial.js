@@ -1,39 +1,33 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Witch Trial`  // Card names are unique in Innovation
-  this.name = `Witch Trial`
-  this.color = `red`
-  this.age = 5
-  this.expansion = `usee`
-  this.biscuits = `fffh`
-  this.dogmaBiscuit = `f`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Witch Trial`,
+  color: `red`,
+  age: 5,
+  expansion: `usee`,
+  biscuits: `fffh`,
+  dogmaBiscuit: `f`,
+  dogma: [
     `I demand you draw and reveal a {5}! Return your top card of the color of the drawn card, another card of that color from your hand, and a card from your score pile! If you do, repeat this effect!`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
-      const effectAge = game.getEffectAge(this, 5)
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
+      const effectAge = game.getEffectAge(self, 5)
 
       while (true) {
-        const drawnCard = game.aDrawAndReveal(player, effectAge)
+        const drawnCard = game.actions.drawAndReveal(player, effectAge)
         const returnColor = drawnCard.color
 
         const topCard = game.getTopCard(player, returnColor)
         if (topCard) {
-          game.aReturn(player, topCard)
+          game.actions.return(player, topCard)
         }
 
         const handCards = game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(c => c.id !== drawnCard.id)
           .filter(c => c.color === returnColor)
 
-        const handCard = game.aChooseAndReturn(player, handCards)[0]
-        const scoreCard = game.aChooseAndReturn(player, game.getCardsByZone(player, 'score'))[0]
+        const handCard = game.actions.chooseAndReturn(player, handCards)[0]
+        const scoreCard = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'))[0]
 
         const cardsReturned = [topCard, handCard, scoreCard].filter(c => c)
         const didReturn = cardsReturned.length === 3
@@ -54,17 +48,5 @@ function Card() {
         }
       }
     },
-  ]
-
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

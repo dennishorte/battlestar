@@ -1,46 +1,28 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Whatchamacallit`  // Card names are unique in Innovation
-  this.name = `Whatchamacallit`
-  this.color = `yellow`
-  this.age = 10
-  this.expansion = `usee`
-  this.biscuits = `hlfl`
-  this.dogmaBiscuit = `l`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Whatchamacallit`,
+  color: `yellow`,
+  age: 10,
+  expansion: `usee`,
+  biscuits: `hlfl`,
+  dogmaBiscuit: `l`,
+  dogma: [
     `For each value, in ascending order, if that value is not a value of a top card on your board or a card in your score pile, draw and score a card of that value.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const topCardValues = game
         .getTopCards(player)
         .map(c => c.age)
 
       const scoreCardValues = game
-        .getCardsByZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .map(c => c.age)
 
-      for (const age of game.utilAges()) {
+      for (const age of game.util.ages()) {
         if (!topCardValues.includes(age) && !scoreCardValues.includes(age)) {
-          game.aDrawAndScore(player, age)
+          game.actions.drawAndScore(player, age)
         }
       }
     },
-  ]
-
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

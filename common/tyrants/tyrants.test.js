@@ -28,7 +28,7 @@ describe('Tyrants', () => {
 
       const presentAt = game
         .getPresence(t.dennis(game))
-        .map(loc => loc.name)
+        .map(loc => loc.name())
         .sort()
 
       const expected = ['Ched Nasad', 'ched-halls a', 'ched-llace a', 'araum-ched'].sort()
@@ -46,7 +46,7 @@ describe('Tyrants', () => {
 
       const presentAt = game
         .getPresence(t.dennis(game))
-        .map(loc => loc.name)
+        .map(loc => loc.name())
         .sort()
 
       const expected = ['Araumycos', 'Ched Nasad', 'ched-halls a', 'ched-llace a', 'araum-ched'].sort()
@@ -370,24 +370,24 @@ describe('score', () => {
   test.skip('victory points', () => {
 
   })
-})
 
-test('auto-play cards', () => {
-  const game = t.gameFixture({
-    dennis: {
-      hand: ['House Guard', 'Priestess of Lolth', 'Spellspinner'],
-    },
-  })
+  test('auto-play cards', () => {
+    const game = t.gameFixture({
+      dennis: {
+        hand: ['House Guard', 'Priestess of Lolth', 'Spellspinner'],
+      },
+    })
 
-  const request1 = game.run()
-  const request2 = t.choose(game, request1, 'Auto-play Cards')
+    const request1 = game.run()
+    const request2 = t.choose(game, request1, 'Auto-play Cards')
 
-  t.testBoard(game, {
-    dennis: {
-      hand: ['Spellspinner'],
-      played: ['House Guard', 'Priestess of Lolth'],
-      power: 2,
-      influence: 2,
-    },
+    t.testBoard(game, {
+      dennis: {
+        hand: ['Spellspinner'],
+        played: ['House Guard', 'Priestess of Lolth'],
+        power: 2,
+        influence: 2,
+      },
+    })
   })
 })

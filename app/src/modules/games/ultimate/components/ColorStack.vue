@@ -5,7 +5,7 @@
   >
     <div class="color-stack-header" :class="[color]">
       <div class="card-splay">
-        {{ zone.cards().length }}
+        {{ zone.cardlist().length }}
         {{ zone.splay }}
       </div>
 
@@ -71,11 +71,11 @@ export default {
 
   computed: {
     cards() {
-      return this.zone.cards()
+      return this.zone.cardlist()
     },
 
     zone() {
-      return this.game.getZoneByPlayer(this.player, this.color)
+      return this.game.zones.byPlayer(this.player, this.color)
     },
 
     biscuits() {
@@ -93,7 +93,7 @@ export default {
 
   methods: {
     openCardsViewerModal() {
-      const cards = this.game.getCardsByZone(this.player, this.color)
+      const cards = this.game.cards.byPlayer(this.player, this.color)
       this.game.ui.modals.cardsViewer.title = this.color
       this.game.ui.modals.cardsViewer.cards = cards
       this.$modal('cards-viewer-modal').show()

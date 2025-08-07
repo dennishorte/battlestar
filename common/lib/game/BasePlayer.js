@@ -1,3 +1,5 @@
+const { GameProxy } = require('./GameProxy.js')
+
 class BasePlayer {
   constructor(game, data) {
     this.game = game
@@ -13,6 +15,8 @@ class BasePlayer {
     this.eliminated = false
 
     this.counters = {}
+
+    return GameProxy.create(this)
   }
 
   addCounter(name, count=0) {
@@ -29,7 +33,7 @@ class BasePlayer {
 
   incrementCounter(name, count=1, opts={}) {
     if (!opts.silent) {
-      this.game.log.add({
+      this.log.add({
         template: "{player} '{counter}': {initial} {sign} {amount} = {final}",
         args: {
           player: this,
@@ -48,7 +52,7 @@ class BasePlayer {
 
   setCounter(name, value, opts={}) {
     if (!opts.silent) {
-      this.game.log.add({
+      this.log.add({
         template: "{player} '{counter}': set from {initial} to {final}",
         args: {
           player: this,

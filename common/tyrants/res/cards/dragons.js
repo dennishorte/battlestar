@@ -59,7 +59,7 @@ const cardData = [
       game.aChooseAndAssassinate(player)
 
       const playerTroops = game
-        .getCardsByZone(player, 'trophyHall')
+        .cards.byPlayer(player, 'trophyHall')
         .filter(troop => !troop.isNeutral())
         .length
 
@@ -220,7 +220,7 @@ const cardData = [
       game.aChooseAndSupplant(player, { whiteOnly: true, anywhere: true })
 
       const whiteTrophies = game
-        .getCardsByZone(player, 'trophyHall')
+        .cards.byPlayer(player, 'trophyHall')
         .filter(card => card.name === 'neutral')
         .length
       player.incrementCounter('points', Math.floor(whiteTrophies / 3))
@@ -298,7 +298,7 @@ const cardData = [
       if (loc) {
         const anotherPlayer = loc
           .getTroops()
-          .filter(troop => troop.owner !== undefined)
+          .filter(troop => Boolean(troop.owner))
           .filter(troop => game.players.byOwner(troop) !== player)
           .length > 0
         if (anotherPlayer) {
@@ -449,7 +449,7 @@ const cardData = [
       game.aDeferPromotion(player, card, { optional: true })
       game.aDeferPromotion(player, card, { optional: true })
       game.aDeferSpecial(player, card, (game, player) => {
-        const innerCircle = game.getCardsByZone(player, 'innerCircle').length
+        const innerCircle = game.cards.byPlayer(player, 'innerCircle').length
         player.incrementCounter('points', Math.floor(innerCircle / 3))
       })
     }

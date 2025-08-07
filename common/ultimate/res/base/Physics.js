@@ -1,42 +1,25 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Physics`  // Card names are unique in Innovation
-  this.name = `Physics`
-  this.color = `blue`
-  this.age = 5
-  this.expansion = `base`
-  this.biscuits = `fssh`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Physics`,
+  color: `blue`,
+  age: 5,
+  expansion: `base`,
+  biscuits: `fssh`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `Draw three {6} and reveal them. If two or more of the drawn cards are the same color, return all cards in your hand.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
-      const card1 = game.aDrawAndReveal(player, game.getEffectAge(this, 6))
-      const card2 = game.aDrawAndReveal(player, game.getEffectAge(this, 6))
-      const card3 = game.aDrawAndReveal(player, game.getEffectAge(this, 6))
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
+      const card1 = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
+      const card2 = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
+      const card3 = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
 
       if (card1.color === card2.color || card2.color === card3.color || card3.color === card1.color) {
         game.log.add({
           template: 'Two or more of the cards had the same color'
         })
-        game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
+        game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

@@ -61,7 +61,8 @@ TestUtil.fixture = function(options) {
         'Zen',
       ]
       for (const name of unseenAchievementNames) {
-        game.mRemove(game.getCardByName(name))
+        const card = game.cards.byId(name)
+        card.moveTo(game.zones.byId('junk'))
       }
     }
   })
@@ -121,7 +122,7 @@ TestUtil.fixtureTopCard = function(cardName, options) {
       .players.all()
       .forEach(player => TestUtil.clearBoard(game, player.name))
 
-    const card = game.getCardByName(cardName)
+    const card = game.cards.byId(cardName)
     TestUtil.setColor(game, game.players.current().name, card.color, [cardName])
   })
   return game
@@ -162,7 +163,7 @@ TestUtil.testIsSecondPlayer = function(game) {
 }
 
 TestUtil.testDeckIsJunked = function(game, age) {
-  const cardsInDeck = game.getZoneByDeck('base', age).cards()
+  const cardsInDeck = game.getZoneByDeck('base', age).cardlist()
   expect(cardsInDeck.length).toBe(0)
 }
 
@@ -182,7 +183,7 @@ TestUtil.testNoFade = function(cardName) {
     TestUtil.setColor(game, 'dennis', 'purple', ['Al-Kindi'])
     TestUtil.setColor(game, 'dennis', 'green', ['Adam Smith'])
 
-    const targetCard = game.getCardByName(cardName)
+    const targetCard = game.cards.byId(cardName)
     TestUtil.setColor(game, 'dennis', targetCard.color, [targetCard.id])
   })
 
@@ -194,7 +195,7 @@ TestUtil.testNoFade = function(cardName) {
 
 TestUtil.testZone = function(game, zoneName, expectedCards, opts={}) {
   const zoneCards = TestUtil.cards(game, zoneName, opts.player)
-  if (opts.sort || !game.utilColors().includes(zoneName)) {
+  if (opts.sort || !game.util.colors().includes(zoneName)) {
     zoneCards.sort()
     expectedCards.sort()
   }
@@ -214,7 +215,7 @@ TestUtil.setBoard = function(game, state) {
     for (const name of ['dennis', 'micah', 'scott', 'eliya']) {
       const playerBoard = state[name]
       if (playerBoard) {
-        for (const color of game.utilColors()) {
+        for (const color of game.util.colors()) {
           if (playerBoard[color]) {
             const cards = playerBoard[color].cards || playerBoard[color]
             TestUtil.setColor(game, name, color, cards)
@@ -262,7 +263,7 @@ function _blankTableau() {
 function _buildPlayerBoard(game, opts) {
   const playerBoard = Object.assign(_blankTableau(), opts)
 
-  for (const color of game.utilColors()) {
+  for (const color of game.util.colors()) {
     if (Array.isArray(playerBoard[color])) {
       playerBoard[color] = {
         cards: playerBoard[color],
@@ -286,9 +287,9 @@ TestUtil.testBoard = function(game, state) {
     const expectedBoard = _buildPlayerBoard(game, state[player.name])
     const realBoard = _blankTableau()
 
-    for (const color of game.utilColors()) {
-      const zone = game.getZoneByPlayer(player, color)
-      const cards = zone.cards().map(card => card.name)
+    for (const color of game.util.colors()) {
+      const zone = game.zones.byPlayer(player, color)
+      const cards = zone.cardlist().map(card => card.name)
       realBoard[color] = {
         cards,
         splay: zone.splay
@@ -296,7 +297,7 @@ TestUtil.testBoard = function(game, state) {
     }
 
     for (const zone of ['artifact', 'hand', 'score', 'forecast', 'achievements', 'safe', 'museum']) {
-      realBoard[zone] = game.getCardsByZone(player, zone).map(c => c.name).sort()
+      realBoard[zone] = game.cards.byPlayer(player, zone).map(c => c.name).sort()
     }
 
     expected[player.name] = expectedBoard
@@ -306,8 +307,8 @@ TestUtil.testBoard = function(game, state) {
   if (state.junk) {
     expected.junk = state.junk.sort()
     real.junk = game
-      .getZoneById('junk')
-      .cards()
+      .zones.byId('junk')
+      .cardlist()
       .filter(c => !(c.isSpecialAchievement && c.expansion === 'usee'))
       .map(c => c.name)
       .sort()
@@ -315,14 +316,14 @@ TestUtil.testBoard = function(game, state) {
 
   if (state.achievements) {
     expected.achievements = state.achievements.sort()
-    real.achievements = game.getZoneById('achievements').cards().map(c => c.name).sort()
+    real.achievements = game.zones.byId('achievements').cardlist().map(c => c.name).sort()
   }
 
   if (state.standardAchievements) {
     expected.standardAchievements = state.standardAchievements.sort()
     real.standardAchievements = game
-      .getZoneById('achievements')
-      .cards()
+      .zones.byId('achievements')
+      .cardlist()
       .filter(c => c.checkIsStandardAchievement())
       .map(c => c.name)
       .sort()
@@ -339,9 +340,9 @@ TestUtil.dumpBoard = function(game) {
   for (const player of game.players.all()) {
     const realBoard = _blankTableau()
 
-    for (const color of game.utilColors()) {
-      const zone = game.getZoneByPlayer(player, color)
-      const cards = zone.cards().map(card => card.name)
+    for (const color of game.util.colors()) {
+      const zone = game.zones.byPlayer(player, color)
+      const cards = zone.cardlist().map(card => card.name)
       realBoard[color] = {
         cards,
         splay: zone.splay
@@ -349,14 +350,14 @@ TestUtil.dumpBoard = function(game) {
     }
 
     for (const zone of ['artifact', 'hand', 'score', 'forecast', 'achievements']) {
-      realBoard[zone] = game.getCardsByZone(player, zone).map(c => c.name).sort()
+      realBoard[zone] = game.cards.byPlayer(player, zone).map(c => c.name).sort()
     }
 
     real[player.name] = realBoard
   }
 
-  real.junk = game.getZoneById('junk').cards().map(c => c.name).sort()
-  real.achievements = game.getZoneById('achievements').cards().map(c => c.name).sort()
+  real.junk = game.zones.byId('junk').cardlist().map(c => c.name).sort()
+  real.achievements = game.zones.byId('achievements').cardlist().map(c => c.name).sort()
 
   return real
 }
@@ -380,11 +381,11 @@ TestUtil.dennis = function(game) {
 }
 
 TestUtil.cards = function(game, zoneName, playerName='dennis') {
-  return TestUtil.zone(game, zoneName, playerName).cards().map(c => c.name)
+  return TestUtil.zone(game, zoneName, playerName).cardlist().map(c => c.name)
 }
 
 TestUtil.zone = function(game, zoneName, playerName='dennis') {
-  return game.getZoneByPlayer(game.players.byName(playerName), zoneName)
+  return game.zones.byPlayer(game.players.byName(playerName), zoneName)
 }
 
 
@@ -393,18 +394,18 @@ TestUtil.zone = function(game, zoneName, playerName='dennis') {
 
 TestUtil.clearZone = function(game, playerName, zoneName) {
   const player = game.players.byName(playerName)
-  const zone = game.getZoneByPlayer(player, zoneName)
-  for (const card of zone.cards()) {
-    game.mReturn(player, card, { silent: true })
+  const zone = game.zones.byPlayer(player, zoneName)
+  for (const card of zone.cardlist()) {
+    game.actions.return(player, card, { silent: true })
   }
 }
 
 TestUtil.clearBoard = function(game, playerName) {
   const player = game.players.byName(playerName)
-  for (const color of game.utilColors()) {
-    const zone = game.getZoneByPlayer(player, color)
-    for (const card of zone.cards()) {
-      game.mReturn(player, card, { silent: true })
+  for (const color of game.util.colors()) {
+    const zone = game.zones.byPlayer(player, color)
+    for (const card of zone.cardlist()) {
+      game.actions.return(player, card, { silent: true })
     }
   }
 }
@@ -417,9 +418,9 @@ TestUtil.clearBoards = function(game) {
 
 TestUtil.clearHand = function(game, playerName) {
   const player = game.players.byName(playerName)
-  const cards = game.getZoneByPlayer(player, 'hand').cards()
+  const cards = game.zones.byPlayer(player, 'hand').cardlist()
   for (const card of cards) {
-    game.mMoveCardTo(card, game.getZoneById(card.home))
+    card.moveHome()
   }
 }
 
@@ -439,69 +440,68 @@ TestUtil.getChoices = function(request, kind) {
 
 TestUtil.setAchievements = function(game, playerName, cardNames) {
   const player = game.players.byName(playerName)
-  const zone = game.getZoneByPlayer(player, 'achievements')
-  const cards = cardNames.map(name => game.getCardByName(name))
-  for (const card of zone.cards()) {
-    game.mReturn(player, card, { silent: true })
+  const zone = game.zones.byPlayer(player, 'achievements')
+  const cards = cardNames.map(name => game.cards.byId(name))
+  for (const card of zone.cardlist()) {
+    game.actions.return(player, card, { silent: true })
   }
   for (const card of cards) {
-    game.mMoveCardTo(card, zone)
+    card.moveTo(zone)
   }
 }
 
 TestUtil.setAvailableAchievements = function(game, cardNames) {
-  const cards = cardNames.map(name => game.getCardByName(name))
-  const zone = game.getZoneById('achievements')
+  const cards = cardNames.map(name => game.cards.byId(name))
+  const zone = game.zones.byId('achievements')
 
-  for (const card of zone.cards()) {
+  for (const card of zone.cardlist()) {
     if (card.checkIsStandardAchievement()) {
-      game.mMoveCardTo(card, game.getZoneById(card.home))
+      card.moveHome()
     }
   }
 
   for (const card of cards) {
-    game.mMoveCardTo(card, zone)
+    card.moveTo(zone)
   }
 }
 
 TestUtil.setJunk = function(game, cardNames) {
-  const cards = cardNames.map(name => game.getCardByName(name))
-  const zone = game.getZoneById('junk')
+  const cards = cardNames.map(name => game.cards.byId(name))
+  const zone = game.zones.byId('junk')
 
   for (const card of cards) {
-    game.mMoveCardTo(card, zone)
+    card.moveTo(zone)
   }
 }
 
 TestUtil.setColor = function(game, playerName, colorName, cardNames) {
   const player = game.players.byName(playerName)
-  const zone = game.getZoneByPlayer(player, colorName)
-  const cards = cardNames.map(name => game.getCardByName(name))
-  for (const card of zone.cards()) {
-    game.mReturn(player, card, { silent: true })
+  const zone = game.zones.byPlayer(player, colorName)
+  const cards = cardNames.map(name => game.cards.byId(name))
+  for (const card of zone.cardlist()) {
+    game.actions.return(player, card, { silent: true })
   }
   for (const card of cards) {
-    game.mMoveCardTo(card, zone)
+    card.moveTo(zone)
   }
 }
 
 TestUtil.setDeckTop = function(game, exp, age, cardNames) {
-  const deck = game.getZoneByDeck(exp, age)
   const cards = cardNames
-    .map(c => game.getCardByName(c))
+    .map(c => game.cards.byId(c))
     .reverse()
   for (const card of cards) {
-    game.mMoveCardToTop(card, deck)
+    card.moveTo(card.home, 0)
   }
 }
 
 TestUtil.setPlayerZone = function(game, playerName, zoneName, cardNames) {
   TestUtil.clearZone(game, playerName, zoneName)
   const player = game.players.byName(playerName)
-  const zone = game.getZoneByPlayer(player, zoneName)
+  const zone = game.zones.byPlayer(player, zoneName)
   for (const name of cardNames) {
-    const card = game.getCardByName(name)
-    game.mMoveCardTo(card, zone)
+    const card = game.cards.byId(name)
+    card.moveTo(zone)
   }
 }
 
@@ -515,7 +515,7 @@ TestUtil.setScore = function(game, playerName, cardNames) {
 
 TestUtil.setSplay = function(game, playerName, color, direction) {
   const player = game.players.byName(playerName)
-  const zone = game.getZoneByPlayer(player, color)
+  const zone = game.zones.byPlayer(player, color)
   zone.splay = direction
 }
 

@@ -281,7 +281,7 @@ export default {
     },
 
     getZone(name) {
-      return this.game.getZoneByPlayer(this.player, name)
+      return this.game.zones.byPlayer(this.player, name)
     },
 
     hideHand() {

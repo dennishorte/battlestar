@@ -2,9 +2,13 @@ const seedrandom = require('seedrandom')
 const selector = require('./selector.js')
 const util = require('./util.js')
 
-const { BaseLogManager } = require('./game/BaseLogManager.js')
-const { BasePlayerManager } = require('./game/BasePlayerManager.js')
-
+const {
+  BaseActionManager,
+  BaseCardManager,
+  BaseLogManager,
+  BasePlayerManager,
+  BaseZoneManager,
+} = require('./game/index.js')
 
 module.exports = {
   Game,
@@ -44,8 +48,12 @@ function Game(serialized_data, viewerName) {
 
   this.viewerName = viewerName
 
+  // Add log first so that when the later managers are loaded, they can initialize the log internally.
   this.log = new BaseLogManager(this, serialized_data.chat, viewerName)
+  this.actions = new BaseActionManager(this)
+  this.cards = new BaseCardManager(this)
   this.players = new BasePlayerManager(this, this.settings.players, this.settings.playerOptions || {})
+  this.zones = new BaseZoneManager(this)
 }
 
 function GameFactory(settings, viewerName=undefined) {
@@ -373,6 +381,8 @@ Game.prototype._reset = function() {
   this.state = this._blankState()
   this.log.reset()
   this.players.reset()
+  this.cards.reset()
+  this.zones.reset()
 }
 
 Game.prototype._tryToAutomaticallyRespond = function(selectors) {
@@ -432,127 +442,8 @@ Game.prototype.testSetBreakpoint = function(name, fn) {
 ////////////////////////////////////////////////////////////////////////////////
 // Standard game methods
 
-
-Game.prototype.aChoose = function(player, choices, opts={}) {
-  if (choices.length === 0) {
-    this.log.addNoEffect()
-    return []
-  }
-
-  let title = opts.title || 'Choose'
-  if (opts.min === 0) {
-    title = '(optional) ' + title
-  }
-
-  const chooseSelector = {
-    actor: player.name,
-    title,
-    choices: choices,
-    ...opts
-  }
-
-  const selected = this.requestInputSingle(chooseSelector)
-
-  // Validate counts
-  const { min, max } = selector.minMax(chooseSelector)
-
-  if (selected.length < min || selected.length > max) {
-    throw new Error('Invalid number of options selected')
-  }
-
-  if (selected.length === 0) {
-    this.log.addDoNothing(player)
-    return []
-  }
-  else {
-    return selected
-  }
-
-}
-
-Game.prototype.aChooseYesNo = function(player, title) {
-  const choice = this.aChoose(player, ['yes', 'no'], { title })
-  return choice[0] === 'yes'
-}
-
 Game.prototype.checkSameTeam = function(p1, p2) {
   return p1.team === p2.team
-}
-
-Game.prototype.getCardsByZone = function(player, zoneName) {
-  return this.getZoneByPlayer(player, zoneName).cards()
-}
-
-Game.prototype.getZoneByCard = function(card) {
-  if (card.g && card.g.zone) {
-    return this.getZoneById(card.g.zone)
-  }
-  else {
-    return this.getZoneById(card.zone)
-  }
-}
-
-Game.prototype.getZoneByCardHome = function(card) {
-  if (card.g && card.g.home) {
-    return this.getZoneById(card.g.home)
-  }
-  else {
-    return this.getZoneById(card.home)
-  }
-}
-
-Game.prototype.getZoneById = function(id) {
-  const tokens = id.split('.')
-  let curr = this.state.zones
-  for (const token of tokens) {
-    util.assert(Object.hasOwn(curr, token), `Invalid zone id ${id} at token ${token}`)
-    curr = curr[token]
-  }
-  return curr
-}
-
-Game.prototype.getZoneByPlayer = function(player, name) {
-  const zone = this.state.zones.players[player.name][name]
-
-  if (!zone) {
-    throw new Error('Invalid player zone name: ' + name)
-  }
-
-  return zone
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// State modifying functions
-
-Game.prototype.mMoveByIndices = function(source, sourceIndex, target, targetIndex) {
-  util.assert(sourceIndex >= 0 && sourceIndex <= source.cards().length - 1, `Invalid source index ${sourceIndex}`)
-
-  const sourceCards = source._cards
-  const targetCards = target._cards
-  const card = sourceCards[sourceIndex]
-  sourceCards.splice(sourceIndex, 1)
-  targetCards.splice(targetIndex, 0, card)
-  card.zone = target.id
-
-  this._cardMovedCallback({
-    card,
-    sourceZone: source,
-    targetZone: target,
-  })
-  return card
-}
-
-Game.prototype.mMoveCardTo = function(card, zone, opts={}) {
-  const source = this.getZoneByCard(card)
-  const index = source.cards().indexOf(card)
-  const destIndex = opts.index !== undefined ? opts.index : zone.cards().length
-  if (opts.verbose) {
-    this.log.add({
-      template: 'Moving {card} to {zone} at index {index}',
-      args: { card, zone, index: destIndex }
-    })
-  }
-  this.mMoveByIndices(source, index, zone, destIndex)
 }
 
 

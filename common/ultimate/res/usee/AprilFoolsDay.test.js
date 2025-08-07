@@ -8,6 +8,7 @@ describe(`April Fool's Day`, () => {
       dennis: {
         yellow: [`April Fool's Day`],
       },
+      achievements: ['Folklore'],
     })
 
     let request
@@ -35,6 +36,7 @@ describe(`April Fool's Day`, () => {
         },
         hand: ['Domestication'],
       },
+      achievements: ['Folklore'],
     })
 
     let request

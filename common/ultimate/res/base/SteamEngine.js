@@ -1,42 +1,25 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Steam Engine`  // Card names are unique in Innovation
-  this.name = `Steam Engine`
-  this.color = `yellow`
-  this.age = 5
-  this.expansion = `base`
-  this.biscuits = `hfcf`
-  this.dogmaBiscuit = `f`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Steam Engine`,
+  color: `yellow`,
+  age: 5,
+  expansion: `base`,
+  biscuits: `hfcf`,
+  dogmaBiscuit: `f`,
+  dogma: [
     `Draw and tuck two {4}, then score your bottom yellow card. If it is Steam Engine, junk all cards in the {6} deck.`
-  ]
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
+      game.actions.drawAndTuck(player, game.getEffectAge(self, 4))
+      game.actions.drawAndTuck(player, game.getEffectAge(self, 4))
 
-  this.dogmaImpl = [
-    (game, player) => {
-      game.aDrawAndTuck(player, game.getEffectAge(this, 4))
-      game.aDrawAndTuck(player, game.getEffectAge(this, 4))
-
-      const cards = game.getCardsByZone(player, 'yellow')
+      const cards = game.cards.byPlayer(player, 'yellow')
       const card = cards[cards.length - 1]
-      game.aScore(player, card)
+      game.actions.score(player, card)
 
       if (card.name === 'Steam Engine') {
-        game.aJunkDeck(player, 6)
+        game.actions.junkDeck(player, 6)
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

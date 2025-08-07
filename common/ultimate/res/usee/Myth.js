@@ -1,23 +1,18 @@
-const CardBase = require(`../CardBase.js`)
 const util = require('../../../lib/util.js')
 
-function Card() {
-  this.id = `Myth`  // Card names are unique in Innovation
-  this.name = `Myth`
-  this.color = `purple`
-  this.age = 1
-  this.expansion = `usee`
-  this.biscuits = `hkkk`
-  this.dogmaBiscuit = `k`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Myth`,
+  color: `purple`,
+  age: 1,
+  expansion: `usee`,
+  biscuits: `hkkk`,
+  dogmaBiscuit: `k`,
+  dogma: [
     `If you have two cards of the same color in your hand, tuck them both. If you do, splay left that color, and draw and safeguard a card of value equal to the value of your bottom card of that color.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
-      const hand = game.getCardsByZone(player, 'hand')
+      const hand = game.cards.byPlayer(player, 'hand')
       const cardsByColor = util.array.groupBy(hand, card => card.color)
 
       const colorsWithTwo = Object
@@ -27,7 +22,7 @@ function Card() {
 
       if (colorsWithTwo.length > 0) {
         const tuckable = hand.filter(c => colorsWithTwo.includes(c.color))
-        const tucked = game.aChooseAndTuck(player, tuckable, {
+        const tucked = game.actions.chooseAndTuck(player, tuckable, {
           title: 'Tuck two cards with the same color',
           count: 2,
           guard: (toTuck) => {
@@ -44,11 +39,11 @@ function Card() {
         })
 
         if (tucked.length == 2) {
-          game.aSplay(player, tucked[0].color, 'left')
+          game.actions.splay(player, tucked[0].color, 'left')
           const bottomCard = game.getBottomCard(player, tucked[0].color)
           const bottomValue = bottomCard ? bottomCard.age : 1
-          const drawnCard = game.aDraw(player, { age: bottomValue })
-          game.aSafeguard(player, drawnCard)
+          const drawnCard = game.actions.draw(player, { age: bottomValue })
+          game.actions.safeguard(player, drawnCard)
         }
       }
       else {
@@ -56,19 +51,8 @@ function Card() {
           template: '{player} reveals hand to show no matching cards',
           args: { player },
         })
-        game.aRevealMany(player, hand, { ordered: true })
+        game.actions.revealMany(player, hand, { ordered: true })
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

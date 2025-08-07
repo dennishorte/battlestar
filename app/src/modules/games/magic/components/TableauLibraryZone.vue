@@ -2,7 +2,7 @@
   <div class="tableau-zone" @click="zoneClicked">
     <div class="zone-header">
       <div>
-        <span class="zone-name">{{ zone.name }}</span>&nbsp;<span class="zone-count">({{ zone.cards().length }})</span>
+        <span class="zone-name">{{ zone.name() }}</span>&nbsp;<span class="zone-count">({{ zone.cardlist().length }})</span>
       </div>
 
       <div class="zone-menu" v-if="!noMenu">
@@ -43,7 +43,7 @@ export default {
 
   computed: {
     topCard() {
-      return this.zone.cards()[0]
+      return this.zone.cardlist()[0]
     },
   },
 

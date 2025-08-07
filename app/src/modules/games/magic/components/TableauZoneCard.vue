@@ -185,7 +185,7 @@ export default {
     },
 
     cardIsViewed() {
-      const zoneTokens = this.card.zone.split('.')
+      const zoneTokens = this.card.zone.id.split('.')
       const inALibrary = zoneTokens.slice(-1)[0] === 'library'
       const inActorZone = zoneTokens.slice(-2, -1)[0] === this.actor.name
       const inActorLibrary = inActorZone && inALibrary
@@ -194,8 +194,7 @@ export default {
     },
 
     cardZoneIsPublic() {
-      const zone = this.game.getZoneByCard(this.card)
-      return zone.kind === 'public'
+      return this.card.zone.kind === 'public'
     },
 
     extraClasses() {

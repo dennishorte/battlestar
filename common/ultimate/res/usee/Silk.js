@@ -1,25 +1,20 @@
-const CardBase = require(`../CardBase.js`)
 const util = require('../../../lib/util.js')
 
-function Card() {
-  this.id = `Silk`  // Card names are unique in Innovation
-  this.name = `Silk`
-  this.color = `green`
-  this.age = 1
-  this.expansion = `usee`
-  this.biscuits = `cclh`
-  this.dogmaBiscuit = `c`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Silk`,
+  color: `green`,
+  age: 1,
+  expansion: `usee`,
+  biscuits: `cclh`,
+  dogmaBiscuit: `c`,
+  dogma: [
     `Meld a card from your hand.`,
     `You may score a card from your hand of each color on your board.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
-      const cards = game.getCardsByZone(player, 'hand')
-      game.aChooseAndMeld(player, cards)
+      const cards = game.cards.byPlayer(player, 'hand')
+      game.actions.chooseAndMeld(player, cards)
     },
     (game, player) => {
       const boardColors = game
@@ -27,20 +22,20 @@ function Card() {
         .map(card => card.color)
 
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => boardColors.includes(card.color))
 
       while (true) {
         const choiceColors = util.array.distinct(choices.map(c => c.color))
 
-        const toScore = game.aChooseCards(player, choices, {
+        const toScore = game.actions.chooseCards(player, choices, {
           title: 'You may score a card from your hand of each color on your board.',
           min: 0,
           max: choiceColors.length,
         })
 
         if (util.array.isDistinct(toScore.map(c => c.color))) {
-          game.aScoreMany(player, toScore)
+          game.actions.scoreMany(player, toScore)
           break
         }
         else {
@@ -49,16 +44,5 @@ function Card() {
         }
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

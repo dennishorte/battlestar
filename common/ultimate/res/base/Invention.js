@@ -1,56 +1,39 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Invention`  // Card names are unique in Innovation
-  this.name = `Invention`
-  this.color = `green`
-  this.age = 4
-  this.expansion = `base`
-  this.biscuits = `hssf`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Invention`,
+  color: `green`,
+  age: 4,
+  expansion: `base`,
+  biscuits: `hssf`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `You may splay right any one color of your cards currently splayed left. If you do, draw and score a {4}.`,
     `If you have five colors splayed, each in any direction, claim the Wonder achievement.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       const splayedLeft = game
-        .utilColors()
-        .filter(color => game.getZoneByPlayer(player, color).splay === 'left')
+        .util.colors()
+        .filter(color => game.zones.byPlayer(player, color).splay === 'left')
       const colors = game.aChooseAndSplay(player, splayedLeft, 'right')
       if (colors && colors.length > 0) {
-        game.aDrawAndScore(player, game.getEffectAge(this, 4))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 4))
       }
     },
 
     (game, player) => {
       const splayCount = game
-        .utilColors()
-        .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
+        .util.colors()
+        .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
         .length
 
       const achievementAvailable = game.checkAchievementAvailable('Wonder')
 
       if (achievementAvailable && splayCount === 5) {
-        game.aClaimAchievement(player, { name: 'Wonder' })
+        game.actions.claimAchievement(player, { name: 'Wonder' })
       }
       else {
         game.log.addNoEffect()
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

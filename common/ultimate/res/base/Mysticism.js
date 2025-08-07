@@ -1,41 +1,24 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Mysticism`  // Card names are unique in Innovation
-  this.name = `Mysticism`
-  this.color = `purple`
-  this.age = 1
-  this.expansion = `base`
-  this.biscuits = `hkkk`
-  this.dogmaBiscuit = `k`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Mysticism`,
+  color: `purple`,
+  age: 1,
+  expansion: `base`,
+  biscuits: `hkkk`,
+  dogmaBiscuit: `k`,
+  dogma: [
     `Draw and reveal a {1}. If it is the same color as any card on your board, meld it and draw a {1}.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
-      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 1))
       const boardColors = game
         .getTopCards(player)
         .map(card => card.color)
 
       if (boardColors.includes(card.color)) {
-        game.aMeld(player, card)
-        game.aDraw(player, { age: game.getEffectAge(this, 1) })
+        game.actions.meld(player, card)
+        game.actions.draw(player, { age: game.getEffectAge(self, 1) })
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

@@ -47,7 +47,7 @@ TestUtil.fixture = function(options) {
 function _juiceDeck(data) {
   for (const zone of ['main', 'side', 'command']) {
     data.cardIdsByZone[zone] = data.cardIdsByZone[zone].map(name => {
-      return TestCards.byName[name.toLowerCase()][0].id()
+      return TestCards.byName[name.toLowerCase()][0].id
     })
   }
   const deck = new DeckWrapper(data)
@@ -117,8 +117,8 @@ TestUtil.fixtureDecksSelected = function(options) {
 
   game.testSetBreakpoint('decks-selected', (game) => {
     const dennis = game.players.byName('dennis')
-    const deck = game.getZoneByPlayer(dennis, 'library')
-    const cards = deck.cards()
+    const deck = game.zones.byPlayer(dennis, 'library')
+    const cards = deck.cardlist()
     deck._cards = [
       cards.find(c => c.name() === 'White Knight'),
       cards.find(c => c.name() === 'Benalish Hero'),
@@ -180,7 +180,7 @@ TestUtil.testBoard = function(game, state) {
 
     for (const key of playerZones) {
       real[player.name][key] = game
-        .getCardsByZone(player, key)
+        .cards.byPlayer(player, key)
         .map(c => c.name().toLowerCase())
         .sort()
     }

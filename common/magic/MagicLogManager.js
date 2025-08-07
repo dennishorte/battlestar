@@ -1,4 +1,4 @@
-const { BaseLogManager } = require('../lib/game/BaseLogManager.js')
+const { BaseLogManager } = require('../lib/game/index.js')
 
 
 class MagicLogManager extends BaseLogManager {
@@ -46,9 +46,9 @@ class MagicLogManager extends BaseLogManager {
       }
       else if (key.startsWith('zone')) {
         const zone = entry.args[key]
-        const owner = this._game.players.byZone(zone)
+        const owner = zone.owner()
 
-        const value = owner ? `${owner.name}'s ${zone.name}` : zone.name
+        const value = owner ? `${owner.name}'s ${zone.name()}` : zone.name()
 
         entry.args[key] = {
           value,
