@@ -8,7 +8,8 @@ class UltimateLogManager extends BaseLogManager {
       name = card.name
     }
     else {
-      name = card.visibility.includes(this._viewerName) ? card.name : card.getHiddenName(this._name)
+      const viewerCanSee = Boolean(card.visibility.find(player => player.name === this._viewerName))
+      name = viewerCanSee ? card.name : card.getHiddenName(this._name)
     }
 
     const classes = ['card']
