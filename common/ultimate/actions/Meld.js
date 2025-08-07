@@ -11,12 +11,13 @@ function MeldAction(player, card, opts={}) {
 
   const isFirstCard = this.cards.byPlayer(player, card.color).length === 0
 
+  card.moveTo(this.zones.byPlayer(player, card.color), 0)
+
   this.log.add({
     template: '{player} melds {card}',
     args: { player, card }
   })
 
-  card.moveTo(this.zones.byPlayer(player, card.color), 0)
   this.acted(player)
 
   // Stats

@@ -210,11 +210,13 @@ class UltimateActionManager extends BaseActionManager {
 
     // Do the actual achievement claiming
     const source = card.zone
+    card.moveTo(this.zones.byPlayer(player, 'achievements'))
+
     this.log.add({
       template: '{player} achieves {card} from {zone}',
       args: { player, card, zone: source }
     })
-    card.moveTo(this.zones.byPlayer(player, 'achievements'))
+
     this.acted(player)
 
     // Draw figures if the player claimed a standard achievement
@@ -244,11 +246,13 @@ class UltimateActionManager extends BaseActionManager {
       return
     }
     else {
+      card.moveTo(target)
+
       this.log.add({
         template: '{player} foreshadows {card} from {zone}',
         args: { player, card, zone: card.zone }
       })
-      card.moveTo(target)
+
       this.acted(player)
       return card
     }
@@ -358,12 +362,13 @@ class UltimateActionManager extends BaseActionManager {
       return
     }
 
+    card.moveTo(safeZone)
+
     this.log.add({
       template: '{player} safeguards {card} from {zone}',
       args: { player, card, zone: card.zone },
     })
 
-    card.moveTo(safeZone)
     this.acted(player)
     return card
   })
