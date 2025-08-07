@@ -32,12 +32,12 @@
 
     <CardPile
       :zone="game.zones.byPlayer(player, 'forecast')"
-      :header="countHeader(player, 'forecast')"
+      :header="countWithLimitHeader(player, 'forecast')"
     />
 
     <CardPile
       :zone="game.zones.byPlayer(player, 'safe')"
-      :header="countHeader(player, 'safe')"
+      :header="countWithLimitHeader(player, 'safe')"
     />
 
     <CardPile
@@ -81,11 +81,20 @@ export default {
       }
     },
 
+    countWithLimitHeader(player, zoneName) {
+      return () => {
+        const count = this.game.zones.byPlayer(player, zoneName).cardlist().length
+        const maximum = this.game.getZoneLimit(player)
+        return `${zoneName} ${count}/${maximum}`
+      }
+    },
+
     achievementsHeader(player) {
       return () => {
         const achievements = this.game.getAchievementsByPlayer(player)
         const count = achievements.total
-        return `achievements ${count}`
+        const target = this.game.getNumAchievementsToWin()
+        return `achievements ${count}/${target}`
       }
     },
 
