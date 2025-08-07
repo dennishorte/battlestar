@@ -1630,27 +1630,6 @@ Innovation.prototype.mAchievementCheck = function() {
   }
 }
 
-Innovation.prototype.mActed = function(player) {
-  if (!this.state.initializationComplete || !this.state.firstPicksComplete) {
-    return
-  }
-
-  if (
-    !this.state.dogmaInfo.demanding
-    && this.state.dogmaInfo.acting === player
-    && !this.checkSameTeam(player, this.players.current())
-  ) {
-    this.state.shared = true
-  }
-
-  // Special handling for "The Big Bang"
-  this.state.dogmaInfo.theBigBangChange = true
-
-  this.mSplayCheck()
-
-  this.mAchievementVictoryCheck()
-}
-
 Innovation.prototype.mAdjustCardVisibility = function(card) {
   if (!this.state.initializationComplete) {
     return
