@@ -5,7 +5,7 @@
     :style="loc.ui.renderStyle"
     @click="click"
   >
-    <div class="loc-name">{{ loc.name }}</div>
+    <div class="loc-name">{{ loc.name() }}</div>
 
     <div class="troop-spaces">
       <div
@@ -57,7 +57,7 @@ export default {
   computed: {
     dynamicClasses() {
       const classes = []
-      if (this.ui.selectable.includes(this.loc.name)) {
+      if (this.ui.selectable.includes(this.loc.name())) {
         classes.push('selected')
       }
 

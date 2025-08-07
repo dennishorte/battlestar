@@ -209,7 +209,7 @@ export default {
           title: '__ALT_ACTION__',
           selection: [{
             action: 'place-troop-with-power',
-            location: loc.name,
+            location: loc.name(),
           }]
         })
         this.$store.dispatch('game/save')
@@ -217,7 +217,7 @@ export default {
       else {
         this.bus.emit('user-select-option', {
           actor: this.actor,
-          optionName: loc.name,
+          optionName: loc.name(),
           opts: { prefix: true },
         })
       }

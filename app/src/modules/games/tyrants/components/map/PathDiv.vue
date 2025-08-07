@@ -35,7 +35,7 @@ export default {
   computed: {
     dynamicClasses() {
       const classes = []
-      if (this.ui.selectable.includes(this.loc.name)) {
+      if (this.ui.selectable.includes(this.loc.name())) {
         classes.push('selected')
       }
 
