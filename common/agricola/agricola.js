@@ -6,8 +6,9 @@ const {
 } = require('../lib/game.js')
 const res = require('./resources.js')
 const util = require('../lib/util.js')
-const Zone = require('../lib/gameZone.js')
 
+// temporary filler because old gameZone was deprecated; migrate to BaseZone
+class Zone {}
 
 module.exports = {
   GameOverEvent,
