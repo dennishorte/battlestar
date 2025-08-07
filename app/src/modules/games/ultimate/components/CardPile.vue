@@ -102,7 +102,7 @@ export default {
   methods: {
     openCardsViewerModal() {
       if (this.canView) {
-        this.game.ui.modals.cardsViewer.title = this.zone.name
+        this.game.ui.modals.cardsViewer.title = this.zone.name()
         this.game.ui.modals.cardsViewer.cards = this.zone.cardlist()
         this.$modal('cards-viewer-modal').show()
       }

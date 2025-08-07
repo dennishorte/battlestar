@@ -48,7 +48,7 @@ class MagicLogManager extends BaseLogManager {
         const zone = entry.args[key]
         const owner = zone.owner()
 
-        const value = owner ? `${owner.name}'s ${zone.name}` : zone.name
+        const value = owner ? `${owner.name}'s ${zone.name()}` : zone.name()
 
         entry.args[key] = {
           value,
