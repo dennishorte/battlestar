@@ -764,7 +764,7 @@ describe('BaseZone', () => {
       zone.initializeCards([mockCard1])
 
       expect(() => {
-        zone.sort((a, b) => a.name.localeCompare(b.name))
+        zone.sort((a, b) => a.name().localeCompare(b.name()))
       }).not.toThrow()
 
       expect(zone.cardlist()).toEqual([mockCard1])

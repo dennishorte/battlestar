@@ -545,7 +545,7 @@ describe('BaseLogManager', () => {
       // Create a LogEntry with a zone arg
       const entry = {
         args: {
-          zone: { name: 'Discard Pile' }
+          zone: { name: () => 'Discard Pile' }
         }
       }
 

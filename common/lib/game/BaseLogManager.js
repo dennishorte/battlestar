@@ -213,7 +213,7 @@ class BaseLogManager {
       else if (key.startsWith('zone')) {
         const zone = entry.args[key]
         entry.args[key] = {
-          value: zone.name,
+          value: zone.name(),
           classes: ['zone-name']
         }
       }
