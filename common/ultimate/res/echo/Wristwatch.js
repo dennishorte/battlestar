@@ -1,41 +1,26 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Wristwatch`  // Card names are unique in Innovation
-  this.name = `Wristwatch`
-  this.color = `yellow`
-  this.age = 9
-  this.expansion = `echo`
-  this.biscuits = `hfa&`
-  this.dogmaBiscuit = `f`
-  this.echo = `Take a non-yellow top card from your board and tuck it.`
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Wristwatch`,
+  color: `yellow`,
+  age: 9,
+  expansion: `echo`,
+  biscuits: `hfa&`,
+  dogmaBiscuit: `f`,
+  echo: `Take a non-yellow top card from your board and tuck it.`,
+  dogma: [
     `For each visible bonus on your board, draw and tuck a card of that value, in ascending order.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const bonuses = game.getBonuses(player).sort((l, r) => l - r)
       for (const bonus of bonuses) {
         game.aDrawAndTuck(player, bonus)
       }
     }
-  ]
-  this.echoImpl = (game, player) => {
+  ],
+  echoImpl: (game, player) => {
     const choices = game
       .getTopCards(player)
       .filter(card => card.color !== 'yellow')
     game.aChooseAndTuck(player, choices)
-  }
-  this.karmaImpl = []
+  },
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

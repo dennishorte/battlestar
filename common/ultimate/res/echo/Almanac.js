@@ -1,21 +1,16 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Almanac`  // Card names are unique in Innovation
-  this.name = `Almanac`
-  this.color = `blue`
-  this.age = 3
-  this.expansion = `echo`
-  this.biscuits = `hl4&`
-  this.dogmaBiscuit = `l`
-  this.echo = `Draw and foreshadow an Echoes {4}.`
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Almanac`,
+  color: `blue`,
+  age: 3,
+  expansion: `echo`,
+  biscuits: `hl4&`,
+  dogmaBiscuit: `l`,
+  echo: `Draw and foreshadow an Echoes {4}.`,
+  dogma: [
     `You may return a card from your forecast with a bonus. If you do, draw and score a card of value one higher than that bonus.`,
     `If Almanac was foreseen, foreshadow all cards in another player's forecast.`,
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const choices = game
         .getCardsByZone(player, 'forecast')
@@ -41,18 +36,8 @@ function Card() {
         game.mLogNoEffect()
       }
     },
-  ]
-  this.echoImpl = (game, player) => {
+  ],
+  echoImpl: (game, player) => {
     game.aDrawAndForeshadow(player, game.getEffectAge(this, 4), { exp: 'echo' })
-  }
-  this.karmaImpl = []
+  },
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

@@ -1,28 +1,23 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Kobukson`  // Card names are unique in Innovation
-  this.name = `Kobukson`
-  this.color = `red`
-  this.age = 4
-  this.expansion = `echo`
-  this.biscuits = `5fh&`
-  this.dogmaBiscuit = `f`
-  this.echo = `Splay left a color on any player's board.`
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Kobukson`,
+  color: `red`,
+  age: 4,
+  expansion: `echo`,
+  biscuits: `5fh&`,
+  dogmaBiscuit: `f`,
+  echo: `Splay left a color on any player's board.`,
+  dogma: [
     `I demand you return a top card with {k} of each color on your board! Draw and tuck a {4}!`,
     `Draw and tuck a {4}.`,
     `If Kobukson was foreseen, draw and meld a {5}.`,
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const toReturn = game
         .getTopCards(player)
         .filter(card => card.checkHasBiscuit('k'))
-      const returned = game.aReturnMany(player, toReturn)
 
+      game.aReturnMany(player, toReturn)
       game.aDrawAndTuck(player, game.getEffectAge(this, 4))
     },
 
@@ -36,8 +31,8 @@ function Card() {
         game.aDrawAndMeld(player, game.getEffectAge(this, 5))
       }
     }
-  ]
-  this.echoImpl = (game, player) => {
+  ],
+  echoImpl: (game, player) => {
     const choices = game
       .getPlayerAll()
       .flatMap(player => game.utilColors().map(color => ({ player, color })))
@@ -49,15 +44,5 @@ function Card() {
       const target = game.getPlayerByName(playerName)
       game.aSplay(player, color, 'left', { owner: target })
     }
-  }
-  this.karmaImpl = []
+  },
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

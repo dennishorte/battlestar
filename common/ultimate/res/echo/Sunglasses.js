@@ -1,21 +1,18 @@
-const CardBase = require(`../CardBase.js`)
+
 const util = require('../../../lib/util.js')
 
-function Card() {
-  this.id = `Sunglasses`  // Card names are unique in Innovation
-  this.name = `Sunglasses`
-  this.color = `purple`
-  this.age = 3
-  this.expansion = `echo`
-  this.biscuits = `h3&k`
-  this.dogmaBiscuit = `k`
-  this.echo = `Score a card from your hand of a color you have splayed.`
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Sunglasses`,
+  color: `purple`,
+  age: 3,
+  expansion: `echo`,
+  biscuits: `h3&k`,
+  dogmaBiscuit: `k`,
+  echo: `Score a card from your hand of a color you have splayed.`,
+  dogma: [
     `You may either splay your purple cards in the direction one of your other colors is splayed, or you may splay one of your other colors in the direction that your purple cars are splayed.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const purpleSplay = game.getZoneByPlayer(player, 'purple').splay
       const existingSplays = game
@@ -52,8 +49,8 @@ function Card() {
         game.aSplay(player, color, direction)
       }
     }
-  ]
-  this.echoImpl = (game, player) => {
+  ],
+  echoImpl: (game, player) => {
     const splayedColors = game
       .utilColors()
       .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
@@ -61,15 +58,5 @@ function Card() {
       .getCardsByZone(player, 'hand')
       .filter(card => splayedColors.includes(card.color))
     game.aChooseAndScore(player, choices)
-  }
-  this.karmaImpl = []
+  },
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

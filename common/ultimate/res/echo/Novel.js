@@ -1,22 +1,17 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Novel`  // Card names are unique in Innovation
-  this.name = `Novel`
-  this.color = `purple`
-  this.age = 3
-  this.expansion = `echo`
-  this.biscuits = `h3c&`
-  this.dogmaBiscuit = `c`
-  this.echo = `Return all cards from your forecast.`
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Novel`,
+  color: `purple`,
+  age: 3,
+  expansion: `echo`,
+  biscuits: `h3c&`,
+  dogmaBiscuit: `c`,
+  echo: `Return all cards from your forecast.`,
+  dogma: [
     `Draw a {3}.`,
     `You may splay your purple cards left.`,
     `If all your non-purple top cards share a common icon other than {c}, claim the Supremacy achievement.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       game.aDraw(player, { age: game.getEffectAge(this, 3) })
     },
@@ -54,18 +49,8 @@ function Card() {
 
       game.mLogNoEffect()
     }
-  ]
-  this.echoImpl = (game, player) => {
+  ],
+  echoImpl: (game, player) => {
     game.aReturnMany(player, game.getCardsByZone(player, 'forecast'))
-  }
-  this.karmaImpl = []
+  },
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

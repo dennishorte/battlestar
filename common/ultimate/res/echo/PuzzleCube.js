@@ -1,23 +1,20 @@
-const CardBase = require(`../CardBase.js`)
+
 const util = require('../../../lib/util.js')
 const { GameOverEvent } = require('../../../lib/game.js')
 
-function Card() {
-  this.id = `Puzzle Cube`  // Card names are unique in Innovation
-  this.name = `Puzzle Cube`
-  this.color = `purple`
-  this.age = 10
-  this.expansion = `echo`
-  this.biscuits = `sshs`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Puzzle Cube`,
+  color: `purple`,
+  age: 10,
+  expansion: `echo`,
+  biscuits: `sshs`,
+  dogmaBiscuit: `s`,
+  echo: ``,
+  dogma: [
     `You may score the bottom card or bottom two cards of one color from your board. If all the colors on your board contain the same number of visible cards (unsplayed = 1), you win.`,
     `Draw and meld a {0}.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const color = game.aChoose(player, game.utilColors(), {
         title: 'Choose a color for scoring bottom cards',
@@ -65,16 +62,6 @@ function Card() {
     (game, player) => {
       game.aDrawAndMeld(player, game.getEffectAge(this, 10))
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
+  echoImpl: [],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

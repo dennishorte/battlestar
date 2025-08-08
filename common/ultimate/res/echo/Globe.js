@@ -1,22 +1,16 @@
-const CardBase = require(`../CardBase.js`)
-const util = require('../../../lib/util.js')
-
-function Card() {
-  this.id = `Globe`  // Card names are unique in Innovation
-  this.name = `Globe`
-  this.color = `green`
-  this.age = 4
-  this.expansion = `echo`
-  this.biscuits = `f4fh`
-  this.dogmaBiscuit = `f`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Globe`,
+  color: `green`,
+  age: 4,
+  expansion: `echo`,
+  biscuits: `f4fh`,
+  dogmaBiscuit: `f`,
+  echo: [],
+  dogma: [
     `You may return all cards in your hand. If you return blue, green, and yellow cards, draw and foreshadow a {6}, {7}, and {8}, then splay any color on your board right.`,
     `If Globe was foreseen, foreshadow a top card from any board.`,
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const colorCheck = (cards) => {
         const tests = [
@@ -58,16 +52,6 @@ function Card() {
         game.aChooseAndForeshadow(player, cards, { count: 1 })
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
+  echoImpl: [],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

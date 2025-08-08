@@ -1,21 +1,16 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Stethoscope`  // Card names are unique in Innovation
-  this.name = `Stethoscope`
-  this.color = `blue`
-  this.age = 6
-  this.expansion = `echo`
-  this.biscuits = `s&sh`
-  this.dogmaBiscuit = `s`
-  this.echo = `Meld a blue or yellow card from your hand.`
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Stethoscope`,
+  color: `blue`,
+  age: 6,
+  expansion: `echo`,
+  biscuits: `s&sh`,
+  dogmaBiscuit: `s`,
+  echo: `Meld a blue or yellow card from your hand.`,
+  dogma: [
     `Draw a {7}. If you melded a blue card due to Stethoscope's echo effect, draw an {8}.`,
     `You may splay your yellow cards right.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       game.aDraw(player, { age: game.getEffectAge(this, 7) })
 
@@ -33,8 +28,8 @@ function Card() {
     (game, player) => {
       game.aChooseAndSplay(player, ['yellow'], 'right')
     }
-  ]
-  this.echoImpl = (game, player) => {
+  ],
+  echoImpl: (game, player) => {
     const choices = game
       .getCardsByZone(player, 'hand')
       .filter(card => card.color === 'yellow' || card.color === 'blue')
@@ -50,15 +45,5 @@ function Card() {
     melded.forEach(card => {
       game.state.dogmaInfo.stethoscope[player.name].push(card)
     })
-  }
-  this.karmaImpl = []
+  },
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

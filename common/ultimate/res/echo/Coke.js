@@ -1,20 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Coke`  // Card names are unique in Innovation
-  this.name = `Coke`
-  this.color = `red`
-  this.age = 5
-  this.expansion = `echo`
-  this.biscuits = `&ffh`
-  this.dogmaBiscuit = `f`
-  this.echo = `Draw and tuck a {4}.`
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Coke`,
+  color: `red`,
+  age: 5,
+  expansion: `echo`,
+  biscuits: `&ffh`,
+  dogmaBiscuit: `f`,
+  echo: [`Draw and tuck a {4}.`],
+  dogma: [
     `Draw and reveal a {6}. If it has a {f}, meld it and repeat this dogma effect. Otherwise, foreshadow it.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       while (true) {
         const card = game.aDrawAndReveal(player, game.getEffectAge(this, 6))
@@ -35,18 +30,11 @@ function Card() {
         }
       }
     }
-  ]
-  this.echoImpl = (game, player) => {
-    game.aDrawAndTuck(player, game.getEffectAge(this, 4))
-  }
-  this.karmaImpl = []
+  ],
+  echoImpl: [
+    (game, player) => {
+      game.aDrawAndTuck(player, game.getEffectAge(this, 4))
+    }
+  ],
 }
 
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

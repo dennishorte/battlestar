@@ -1,20 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Tuning Fork`  // Card names are unique in Innovation
-  this.name = `Tuning Fork`
-  this.color = `purple`
-  this.age = 5
-  this.expansion = `echo`
-  this.biscuits = `&ssh`
-  this.dogmaBiscuit = `s`
-  this.echo = `Look at the top card of any deck, then place it back on top.`
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Tuning Fork`,
+  color: `purple`,
+  age: 5,
+  expansion: `echo`,
+  biscuits: `&ssh`,
+  dogmaBiscuit: `s`,
+  echo: `Look at the top card of any deck, then place it back on top.`,
+  dogma: [
     `Return a card from your hand. If you do, draw and reveal a card of the same value, and meld it if it is of higher value than the top card of the same color on your board. Otherwise, return it. You may repeat this dogma effect.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       while (true) {
         const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'))[0]
@@ -47,8 +42,8 @@ function Card() {
         }
       }
     }
-  ]
-  this.echoImpl = (game, player) => {
+  ],
+  echoImpl: (game, player) => {
     const exp = game.aChoose(player, game.getExpansionList(), { title: 'Choose the type of deck' })[0]
     const ages = [1,2,3,4,5,6,7,8,9,10]
       .filter(age => game.getZoneByDeck(exp, age).cards().length > 0)
@@ -56,15 +51,5 @@ function Card() {
 
     const card = game.mDraw(player, exp, age)
     game.mMoveCardToTop(card, game.getZoneById(card.home), { player })
-  }
-  this.karmaImpl = []
+  },
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

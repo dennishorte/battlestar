@@ -1,21 +1,16 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Jet`  // Card names are unique in Innovation
-  this.name = `Jet`
-  this.color = `red`
-  this.age = 9
-  this.expansion = `echo`
-  this.biscuits = `h&ia`
-  this.dogmaBiscuit = `i`
-  this.echo = `Meld a card from your hand.`
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Jet`,
+  color: `red`,
+  age: 9,
+  expansion: `echo`,
+  biscuits: `h&ia`,
+  dogmaBiscuit: `i`,
+  echo: `Meld a card from your hand.`,
+  dogma: [
     `I demand you return your top card of the color I melded due to Jet's echo effect.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player, { leader }) => {
+  ],
+  dogmaImpl: [
+    (game, player) => {
       const melded = game.state.dogmaInfo.jet
       if (melded) {
         const toReturn = game.getTopCard(player, melded.color)
@@ -39,8 +34,8 @@ function Card() {
         })
       }
     }
-  ]
-  this.echoImpl = (game, player) => {
+  ],
+  echoImpl: (game, player) => {
     if (!game.state.dogmaInfo.jet) {
       game.state.dogmaInfo.jet = ''
     }
@@ -49,15 +44,5 @@ function Card() {
     if (player === game.getPlayerByCard(this) && cards && cards.length > 0) {
       game.state.dogmaInfo.jet = cards[0]
     }
-  }
-  this.karmaImpl = []
+  },
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

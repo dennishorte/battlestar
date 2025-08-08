@@ -1,20 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Pagoda`  // Card names are unique in Innovation
-  this.name = `Pagoda`
-  this.color = `purple`
-  this.age = 2
-  this.expansion = `echo`
-  this.biscuits = `k2hk`
-  this.dogmaBiscuit = `k`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Pagoda`,
+  color: `purple`,
+  age: 2,
+  expansion: `echo`,
+  biscuits: `k2hk`,
+  dogmaBiscuit: `k`,
+  echo: ``,
+  dogma: [
     `Draw and reveal a {3}. You may tuck another card of matching color from your hand. If you do, and Pagoda was foreseen, meld all cards of that color from all other boards.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { foreseen, self }) => {
       const hand = game.getCardsByZone(player, 'hand')
       const card = game.aDrawAndReveal(player, game.getEffectAge(this, 3))
@@ -32,16 +27,6 @@ function Card() {
         }
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
+  echoImpl: [],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

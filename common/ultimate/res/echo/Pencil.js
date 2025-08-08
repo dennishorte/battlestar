@@ -1,20 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Pencil`  // Card names are unique in Innovation
-  this.name = `Pencil`
-  this.color = `yellow`
-  this.age = 4
-  this.expansion = `echo`
-  this.biscuits = `h&s4`
-  this.dogmaBiscuit = `s`
-  this.echo = `Draw a {5}.`
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Pencil`,
+  color: `yellow`,
+  age: 4,
+  expansion: `echo`,
+  biscuits: `h&s4`,
+  dogmaBiscuit: `s`,
+  echo: `Draw a {5}.`,
+  dogma: [
     `You may return up to three cards from your hand. If you do, draw that many cards of value one higher than the highest card you returned. Return all but one of them, and foreshadow the remaining card.`,
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), {
         min: 0,
@@ -36,18 +31,8 @@ function Card() {
         game.aReturnMany(player, drawn.filter(other => other !== card))
       }
     }
-  ]
-  this.echoImpl = (game, player) => {
+  ],
+  echoImpl: (game, player) => {
     game.aDraw(player, { age: game.getEffectAge(this, 5) })
-  }
-  this.karmaImpl = []
+  },
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

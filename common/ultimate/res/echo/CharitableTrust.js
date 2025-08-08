@@ -1,20 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Charitable Trust`  // Card names are unique in Innovation
-  this.name = `Charitable Trust`
-  this.color = `green`
-  this.age = 3
-  this.expansion = `echo`
-  this.biscuits = `&hc3`
-  this.dogmaBiscuit = `c`
-  this.echo = `Draw a {3} or {4}.`
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Charitable Trust`,
+  color: `green`,
+  age: 3,
+  expansion: `echo`,
+  biscuits: `&hc3`,
+  dogmaBiscuit: `c`,
+  echo: `Draw a {3} or {4}.`,
+  dogma: [
     `You may meld a card from your hand that you drew due to Charitable Trust's echo effect. If you meld a {3}, achieve your top green card (if eligible). If you meld a {4}, return your top green card.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       if (!game.state.dogmaInfo.charitableTrust) {
         game.mLog({ template: "Charitable Trust's echo effect was not used." })
@@ -41,8 +36,8 @@ function Card() {
         }
       }
     }
-  ]
-  this.echoImpl = (game, player) => {
+  ],
+  echoImpl: (game, player) => {
     const age = game.aChooseAge(player, [game.getEffectAge(this, 3), game.getEffectAge(this, 4)])
     const card = game.aDraw(player, { age })
 
@@ -52,15 +47,5 @@ function Card() {
     }
 
     game.state.dogmaInfo.charitableTrust[player.name].push(card)
-  }
-  this.karmaImpl = []
+  },
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

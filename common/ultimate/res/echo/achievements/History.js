@@ -1,15 +1,11 @@
-const CardBase = require(`../../CardBase.js`)
-
-function Card() {
-  this.id = 'History'
-  this.name = 'History'
-  this.shortName = 'hist'
-  this.expansion = 'echo'
-  this.text = 'Have four echo effects visible in one color.'
-  this.alt = 'Photography'
-  this.isSpecialAchievement = true
-  this.checkPlayerIsEligible = function(game, player, reduceCost) {
-
+module.exports = {
+  name: 'History',
+  shortName: 'hist',
+  expansion: 'echo',
+  text: 'Have four echo effects visible in one color.',
+  alt: 'Photography',
+  isSpecialAchievement: true,
+  checkPlayerIsEligible: function(game, player, reduceCost) {
     const targetCount = reduceCost ? 3 : 4
 
     const infos = game.getInfoByKarmaTrigger(player, 'hex-effect')
@@ -18,11 +14,11 @@ function Card() {
     )
 
     return game
-    // Grab each stack
+      // Grab each stack
       .utilColors()
       .map(color => game.getZoneByPlayer(player, color))
 
-    // Convert each stack to a count of echo effects
+      // Convert each stack to a count of echo effects
       .map(zone => zone
         .cards()
         .flatMap(c =>
@@ -33,14 +29,5 @@ function Card() {
         .length
       )
       .some(count => count >= targetCount)
-  }
+  },
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

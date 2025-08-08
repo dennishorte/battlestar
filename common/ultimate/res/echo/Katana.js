@@ -1,20 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Katana`  // Card names are unique in Innovation
-  this.name = `Katana`
-  this.color = `red`
-  this.age = 3
-  this.expansion = `echo`
-  this.biscuits = `kkhk`
-  this.dogmaBiscuit = `k`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Katana`,
+  color: `red`,
+  age: 3,
+  expansion: `echo`,
+  biscuits: `kkhk`,
+  dogmaBiscuit: `k`,
+  echo: ``,
+  dogma: [
     `I demand you transfer two top cards with a {k} from your board to my score pile! If you transfered exactly one, and Katana was foreseen, junk all available standard achievements.`,
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { leader, foreseen, self }) => {
       const choices = game
         .getTopCards(player)
@@ -27,16 +22,6 @@ function Card() {
         game.aJunkMany(player, achievements, { ordered: true })
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
+  echoImpl: [],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

@@ -1,20 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Soap`  // Card names are unique in Innovation
-  this.name = `Soap`
-  this.color = `yellow`
-  this.age = 1
-  this.expansion = `echo`
-  this.biscuits = `l2hl`
-  this.dogmaBiscuit = `l`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Soap`,
+  color: `yellow`,
+  age: 1,
+  expansion: `echo`,
+  biscuits: `l2hl`,
+  dogmaBiscuit: `l`,
+  echo: [],
+  dogma: [
     `Choose a color. You may tuck any number of cards of that color from your hand. If you do, and your top card of that color is higher than each opponent's, you may achieve (if eligible) a card from your hand.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const color = game.aChoose(player, game.utilColors())[0]
       const choices = game
@@ -39,16 +34,6 @@ function Card() {
         }
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
+  echoImpl: [],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

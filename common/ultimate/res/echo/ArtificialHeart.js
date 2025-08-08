@@ -1,20 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Artificial Heart`  // Card names are unique in Innovation
-  this.name = `Artificial Heart`
-  this.color = `blue`
-  this.age = 10
-  this.expansion = `echo`
-  this.biscuits = `hllb`
-  this.dogmaBiscuit = `l`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Artificial Heart`,
+  color: `blue`,
+  age: 10,
+  expansion: `echo`,
+  biscuits: `hllb`,
+  dogmaBiscuit: `l`,
+  echo: [],
+  dogma: [
     `Claim a standard achievement, if eligible. Your current score is doubled for the purpose of checking eligibility.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const choices = game
         .getEligibleAchievementsRaw(player, { doubleScore: true })
@@ -22,16 +17,6 @@ function Card() {
 
       game.aChooseAndAchieve(player, choices)
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
+  echoImpl: [],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

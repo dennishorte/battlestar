@@ -1,21 +1,18 @@
-const CardBase = require(`../CardBase.js`)
+
 const util = require('../../../lib/util.js')
 
-function Card() {
-  this.id = `Lever`  // Card names are unique in Innovation
-  this.name = `Lever`
-  this.color = `blue`
-  this.age = 2
-  this.expansion = `echo`
-  this.biscuits = `sh&s`
-  this.dogmaBiscuit = `s`
-  this.echo = `Draw two {2}.`
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Lever`,
+  color: `blue`,
+  age: 2,
+  expansion: `echo`,
+  biscuits: `sh&s`,
+  dogmaBiscuit: `s`,
+  echo: [`Draw two {2}.`],
+  dogma: [
     `You may return any number of cards from your hand. For every two cards of matching value returned, draw a card of value one higher.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 999 })
 
@@ -38,19 +35,11 @@ function Card() {
         }
       }
     }
-  ]
-  this.echoImpl = (game, player) => {
-    game.aDraw(player, { age: game.getEffectAge(this, 2) })
-    game.aDraw(player, { age: game.getEffectAge(this, 2) })
-  }
-  this.karmaImpl = []
+  ],
+  echoImpl: [
+    (game, player) => {
+      game.aDraw(player, { age: game.getEffectAge(this, 2) })
+      game.aDraw(player, { age: game.getEffectAge(this, 2) })
+    }
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

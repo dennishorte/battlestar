@@ -1,21 +1,16 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Noodles`  // Card names are unique in Innovation
-  this.name = `Noodles`
-  this.color = `yellow`
-  this.age = 1
-  this.expansion = `echo`
-  this.biscuits = `khk1`
-  this.dogmaBiscuit = `k`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Noodles`,
+  color: `yellow`,
+  age: 1,
+  expansion: `echo`,
+  biscuits: `khk1`,
+  dogmaBiscuit: `k`,
+  echo: [],
+  dogma: [
     `If you have more {1} in your hand than every opponent, draw and score a {2}.`,
     `Draw and reveal a {1}. If it is yellow, score all {1} from your hand.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const mine = game
         .getCardsByZone(player, 'hand')
@@ -46,16 +41,6 @@ function Card() {
         game.aScoreMany(player, toScore, { ordered: true })
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
+  echoImpl: [],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

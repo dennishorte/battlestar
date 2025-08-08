@@ -1,20 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Liquid Fire`  // Card names are unique in Innovation
-  this.name = `Liquid Fire`
-  this.color = `red`
-  this.age = 3
-  this.expansion = `echo`
-  this.biscuits = `hsss`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Liquid Fire`,
+  color: `red`,
+  age: 3,
+  expansion: `echo`,
+  biscuits: `hsss`,
+  dogmaBiscuit: `s`,
+  echo: ``,
+  dogma: [
     `I demand you draw and reveal a card of value equal to the highest bonus on your board! Transfer it to my forecast! If it is red, transfer all cards from your hand to my score pile.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { leader }) => {
       const age = Math.max(...game.getBonuses(player))
       if (age && age > 0) {
@@ -34,16 +29,6 @@ function Card() {
         })
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
+  echoImpl: [],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

@@ -1,22 +1,19 @@
-const CardBase = require(`../CardBase.js`)
+
 const util = require('../../../lib/util.js')
 const { GameOverEvent } = require('../../../lib/game.js')
 
-function Card() {
-  this.id = `Sudoku`  // Card names are unique in Innovation
-  this.name = `Sudoku`
-  this.color = `purple`
-  this.age = 10
-  this.expansion = `echo`
-  this.biscuits = `shsb`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Sudoku`,
+  color: `purple`,
+  age: 10,
+  expansion: `echo`,
+  biscuits: `shsb`,
+  dogmaBiscuit: `s`,
+  echo: ``,
+  dogma: [
     `Draw and meld a card of any value. If you have at least nine different bonus values visible on your board, you win. Execute each of the melded card's non-demand dogma effects. Do not share them.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const age = game.aChooseAge(player)
       const card = game.aDrawAndMeld(player, age)
@@ -33,16 +30,6 @@ function Card() {
         game.aCardEffects(player, card, 'dogma')
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
+  echoImpl: [],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

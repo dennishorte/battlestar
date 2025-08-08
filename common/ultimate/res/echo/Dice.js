@@ -1,21 +1,16 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Dice`  // Card names are unique in Innovation
-  this.name = `Dice`
-  this.color = `blue`
-  this.age = 1
-  this.expansion = `echo`
-  this.biscuits = `h1cc`
-  this.dogmaBiscuit = `c`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Dice`,
+  color: `blue`,
+  age: 1,
+  expansion: `echo`,
+  biscuits: `h1cc`,
+  dogmaBiscuit: `c`,
+  echo: ``,
+  dogma: [
     `Draw and reveal an Echoes {1}. If the card has a bonus, draw and meld a card of value equal to its bonus.`,
     `If Dice was foreseen, draw a {4}, then transfer it to the hand of an opponent with more bonus points than you.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const card = game.aDraw(player, { age: game.getEffectAge(this, 1), exp: 'echo' })
       game.mReveal(player, card)
@@ -25,7 +20,7 @@ function Card() {
       }
     },
 
-    (game, player, { foreseen, card }) => {
+    (game, player, { foreseen }) => {
       if (foreseen) {
         const card = game.aDraw(player, { age: game.getEffectAge(this, 4) })
         const playerBonusPoints = game.getBonuses(player).reduce((l, r) => l + r, 0)
@@ -52,16 +47,6 @@ function Card() {
         game.mLogNoEffect()
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
+  echoImpl: [],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

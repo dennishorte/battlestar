@@ -1,21 +1,17 @@
-const CardBase = require(`../CardBase.js`)
 const { GameOverEvent } = require('../../../lib/game.js')
 
-function Card() {
-  this.id = `Radio Telescope`  // Card names are unique in Innovation
-  this.name = `Radio Telescope`
-  this.color = `blue`
-  this.age = 8
-  this.expansion = `echo`
-  this.biscuits = `hsss`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Radio Telescope`,
+  color: `blue`,
+  age: 8,
+  expansion: `echo`,
+  biscuits: `hsss`,
+  dogmaBiscuit: `s`,
+  echo: ``,
+  dogma: [
     `For every two {s} on your board, draw a {9}. Meld one of the cards drawn and return the rest. If you meld AI due to this dogma effect, you win.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const count = Math.floor(game.getBiscuitsByPlayer(player).s / 2)
       const drawn = []
@@ -38,16 +34,6 @@ function Card() {
       const toReturn = drawn.filter(card => card !== melded[0])
       game.aReturnMany(player, toReturn)
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
+  echoImpl: [],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

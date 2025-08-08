@@ -1,22 +1,18 @@
-const CardBase = require(`../CardBase.js`)
 const util = require('../../../lib/util.js')
 
-function Card() {
-  this.id = `Barometer`  // Card names are unique in Innovation
-  this.name = `Barometer`
-  this.color = `yellow`
-  this.age = 4
-  this.expansion = `echo`
-  this.biscuits = `l&lh`
-  this.dogmaBiscuit = `l`
-  this.echo = `Transfer a {5} from your forecast to your hand.`
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Barometer`,
+  color: `yellow`,
+  age: 4,
+  expansion: `echo`,
+  biscuits: `l&lh`,
+  dogmaBiscuit: `l`,
+  echo: `Transfer a {5} from your forecast to your hand.`,
+  dogma: [
     `Draw and foreshadow a card of value two higher than a bonus on any board, if there is one.`,
     `You may return all the cards in your forecast. If any were blue, claim the Destiny achievement.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const bonuses = game
         .getPlayerAll()
@@ -39,21 +35,11 @@ function Card() {
         }
       }
     },
-  ]
-  this.echoImpl = (game, player) => {
+  ],
+  echoImpl: (game, player) => {
     const choices = game
       .getCardsByZone(player, 'forecast')
       .filter(card => card.getAge() === 5)
     game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'hand'))
-  }
-  this.karmaImpl = []
+  },
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

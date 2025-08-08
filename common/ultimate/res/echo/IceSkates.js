@@ -1,21 +1,16 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Ice Skates`  // Card names are unique in Innovation
-  this.name = `Ice Skates`
-  this.color = `green`
-  this.age = 1
-  this.expansion = `echo`
-  this.biscuits = `kchc`
-  this.dogmaBiscuit = `c`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Ice Skates`,
+  color: `green`,
+  age: 1,
+  expansion: `echo`,
+  biscuits: `kchc`,
+  dogmaBiscuit: `c`,
+  echo: [],
+  dogma: [
     `If Ice Skates was foreseen, junk all cards in the 1 deck and 2 deck.`,
     `Return up to two cards from your hand. For each card returned, either draw and meld a {2}, or draw and foreshadow a {3}. Return your highest top card.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { foreseen, self }) => {
       if (foreseen) {
         game.mLogWasForeseen(self)
@@ -48,16 +43,6 @@ function Card() {
       const choices = game.utilHighestCards(game.getTopCards(player))
       game.aChooseAndReturn(player, choices)
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
+  echoImpl: [],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

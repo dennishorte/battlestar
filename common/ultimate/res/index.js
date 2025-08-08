@@ -7,7 +7,7 @@ const echoSet = require('./echo')
 const citySet = require('./city')
 const useeSet = require('./usee')
 
-const ALL_EXPANSIONS = ['base', 'city', 'usee']
+const ALL_EXPANSIONS = ['base', 'echo', 'city', 'usee']
 const ALL_AGES = [1,2,3,4,5,6,7,8,9,10,11]
 
 const sets = {

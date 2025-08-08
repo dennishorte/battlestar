@@ -1,21 +1,16 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Watermill`  // Card names are unique in Innovation
-  this.name = `Watermill`
-  this.color = `yellow`
-  this.age = 2
-  this.expansion = `echo`
-  this.biscuits = `lllh`
-  this.dogmaBiscuit = `l`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Watermill`,
+  color: `yellow`,
+  age: 2,
+  expansion: `echo`,
+  biscuits: `lllh`,
+  dogmaBiscuit: `l`,
+  echo: ``,
+  dogma: [
     `Tuck a card of value equal to a bonus on your board, if you have one.`,
     `Tuck a card from your hand. If Watermill was foreseen, tuck all cards from the deck of value equal to the tucked card.`,
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const bonuses = game.getBonuses(player)
       const choices = game
@@ -35,16 +30,6 @@ function Card() {
         game.aTuckMany(player, cards, { ordered: true })
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
+  echoImpl: [],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

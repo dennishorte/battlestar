@@ -1,21 +1,16 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Dentures`  // Card names are unique in Innovation
-  this.name = `Dentures`
-  this.color = `yellow`
-  this.age = 6
-  this.expansion = `echo`
-  this.biscuits = `&ffh`
-  this.dogmaBiscuit = `f`
-  this.echo = `Draw and tuck a {6}.`
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Dentures`,
+  color: `yellow`,
+  age: 6,
+  expansion: `echo`,
+  biscuits: `&ffh`,
+  dogmaBiscuit: `f`,
+  echo: [`Draw and tuck a {6}.`],
+  dogma: [
     `Score the top two non-bottom cards of the color of the last card you tucked due to Dentures. If there are none to score, draw and tuck a {6}, then repeat this dogma effect.`,
     `You may splay your blue cards right.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       if (!game.state.dogmaInfo.dentures) {
         game.mLog({
@@ -60,24 +55,16 @@ function Card() {
     (game, player) => {
       game.aChooseAndSplay(player, ['blue'], 'right')
     }
-  ]
-  this.echoImpl = (game, player) => {
-    const card = game.aDrawAndTuck(player, game.getEffectAge(this, 6))
+  ],
+  echoImpl: [
+    (game, player) => {
+      const card = game.aDrawAndTuck(player, game.getEffectAge(this, 6))
 
-    if (!game.state.dogmaInfo.dentures) {
-      game.state.dogmaInfo.dentures = {}
+      if (!game.state.dogmaInfo.dentures) {
+        game.state.dogmaInfo.dentures = {}
+      }
+
+      game.state.dogmaInfo.dentures[player.name] = card
     }
-
-    game.state.dogmaInfo.dentures[player.name] = card
-  }
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

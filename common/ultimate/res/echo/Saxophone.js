@@ -1,22 +1,18 @@
-const CardBase = require(`../CardBase.js`)
 const { GameOverEvent } = require('../../../lib/game.js')
 
-function Card() {
-  this.id = `Saxophone`  // Card names are unique in Innovation
-  this.name = `Saxophone`
-  this.color = `purple`
-  this.age = 7
-  this.expansion = `echo`
-  this.biscuits = `7cm7`
-  this.dogmaBiscuit = `c`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Saxophone`,
+  color: `purple`,
+  age: 7,
+  expansion: `echo`,
+  biscuits: `7cm7`,
+  dogmaBiscuit: `c`,
+  echo: ``,
+  dogma: [
     `You may splay your purple cards up.`,
     `If the {m} for Bell, Flute, Piano, and Saxophone are visible anywhere, you win. Otherwise, draw a {7} for each {m} that is visible.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       game.aChooseAndSplay(player, ['purple'], 'up')
     },
@@ -54,16 +50,6 @@ function Card() {
         }
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
+  echoImpl: [],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

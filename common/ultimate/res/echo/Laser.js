@@ -1,20 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Laser`  // Card names are unique in Innovation
-  this.name = `Laser`
-  this.color = `blue`
-  this.age = 9
-  this.expansion = `echo`
-  this.biscuits = `sshl`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Laser`,
+  color: `blue`,
+  age: 9,
+  expansion: `echo`,
+  biscuits: `sshl`,
+  dogmaBiscuit: `s`,
+  echo: ``,
+  dogma: [
     `Return all unclaimed standard achievements. Then, return half (rounded up) of the cards in your score pile. Draw and meld two {0}.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const toReturn = game
         .getZoneById('achievements')
@@ -29,16 +24,6 @@ function Card() {
       game.aDrawAndMeld(player, game.getEffectAge(this, 10))
       game.aDrawAndMeld(player, game.getEffectAge(this, 10))
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
+  echoImpl: [],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

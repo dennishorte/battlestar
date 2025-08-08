@@ -1,21 +1,16 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Nylon`  // Card names are unique in Innovation
-  this.name = `Nylon`
-  this.color = `green`
-  this.age = 8
-  this.expansion = `echo`
-  this.biscuits = `8ffh`
-  this.dogmaBiscuit = `f`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Nylon`,
+  color: `green`,
+  age: 8,
+  expansion: `echo`,
+  biscuits: `8ffh`,
+  dogmaBiscuit: `f`,
+  echo: [],
+  dogma: [
     `Draw and tuck an {8} for every three {f} on your board. If any of the tucked cards were green, repeat this dogma effect.`,
     `You may splay your red cards up.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       while (true) {
         const count = Math.floor(game.getBiscuitsByPlayer(player).f / 3)
@@ -43,16 +38,6 @@ function Card() {
     (game, player) => {
       game.aChooseAndSplay(player, ['red'], 'up')
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
+  echoImpl: [],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card
