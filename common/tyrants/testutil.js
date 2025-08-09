@@ -345,7 +345,7 @@ TestUtil.testChoices = function(request, expected, expectedMin, expectedMax) {
 TestUtil.testIsSecondPlayer = function(request) {
   const selector = request.selectors[0]
   expect(selector.actor).toBe('micah')
-  expect(selector.title).toBe('Choose First Action')
+  expect(selector.title).toBe('Choose Action')
 }
 
 TestUtil.testGameOver = function(request, playerName, reason) {

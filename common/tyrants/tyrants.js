@@ -1119,7 +1119,7 @@ Tyrants.prototype._collectTargets = function(player, opts={}) {
     .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
     .filter(([, troop]) => troop.owner !== player)
     .filter(([, troop]) => opts.whiteOnly ? !troop.owner : true)
-    .filter(([, troop]) => opts.noWhite ? !troop.owner : true)
+    .filter(([, troop]) => opts.noWhite ? !!troop.owner : true)
     .map(([loc, troop]) => `${loc.name()}, ${troop.getOwnerName()}`)
 
   const spies = baseLocations

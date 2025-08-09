@@ -977,6 +977,35 @@ describe('Dragons Expansion Cards', () => {
         },
       })
     })
+
+    test('Cannot return a neutral unit', () => {
+      const game = t.gameFixture({
+        dennis: {
+          hand: ['Blue Wyrmling'],
+        },
+        'ched-llace a': {
+          troops: ['neutral'],
+        },
+        'ched-halls a': {
+          troops: ['neutral'],
+        },
+      })
+
+      let request = game.run()
+      request = t.choose(game, request, 'Play Card.Blue Wyrmling')
+      request = t.choose(game, request, 'Recruit.House Guard')
+
+      t.testIsSecondPlayer(request)
+      t.testBoard(game, {
+        'ched-llace a': {
+          troops: ['neutral'],
+        },
+        'ched-halls a': {
+          troops: ['neutral'],
+        },
+      })
+
+    })
   })
 
   describe('Blue Dragon', () => {

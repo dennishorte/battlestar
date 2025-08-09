@@ -700,7 +700,6 @@ describe('Drow Expansion', () => {
 
       let request = game.run()
       request = t.choose(game, request, 'Play Card.Chosen of Lolth')
-      request = t.choose(game, request, 'troop.araum-ched, neutral')
       request = t.choose(game, request, 'Play Card.House Guard')
       request = t.choose(game, request, 'Pass')
 
