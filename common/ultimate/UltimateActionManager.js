@@ -571,7 +571,7 @@ class UltimateActionManager extends BaseActionManager {
       const choices = args[1]
       const opts = args[numArgs] || {}
 
-      const titleVerb = manyFuncName.slice(1, -4).toLowerCase()
+      const titleVerb = manyFuncName.slice(0, -4).toLowerCase()
       opts.title = opts.title || `Choose card(s) to ${titleVerb}`
 
       const cards = this.chooseCards(player, choices, opts)
