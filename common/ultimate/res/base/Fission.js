@@ -32,7 +32,7 @@ module.exports = {
     },
 
     (game, player, { self }) => {
-      game.actions.chooseAndReturn(player, game.getTopCardsAll())
+      game.actions.chooseAndReturn(player, game.cards.topsAll())
       game.actions.draw(player, { age: game.getEffectAge(self, 10) })
     }
   ],

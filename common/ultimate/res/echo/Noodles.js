@@ -13,19 +13,19 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const mine = game
-        .getCardsByZone(player, 'hand')
+        .cards.byZone(player, 'hand')
         .filter(card => card.getAge() === game.getEffectAge(this, 1))
         .length
       const theirs = game
         .getPlayerOpponents(player)
         .map(player => game
-          .getCardsByZone(player, 'hand')
+          .cards.byZone(player, 'hand')
           .filter(card => card.getAge() === game.getEffectAge(this, 1))
           .length
         )
 
       if (theirs.every(count => count < mine)) {
-        game.aDrawAndScore(player, game.getEffectAge(this, 2))
+        game.actions.drawAndScore(player, game.getEffectAge(this, 2))
       }
       else {
         game.mLogNoEffect()
@@ -33,10 +33,10 @@ module.exports = {
     },
 
     (game, player) => {
-      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(this, 1))
       if (card && card.color === 'yellow') {
         const toScore = game
-          .getCardsByZone(player, 'hand')
+          .cards.byZone(player, 'hand')
           .filter(card => card.getAge() === game.getEffectAge(this, 1))
         game.aScoreMany(player, toScore, { ordered: true })
       }

@@ -13,13 +13,13 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards.byZone(player, 'hand')
         .filter(card => card.checkIsExpansion())
       game.aChooseAndReturn(player, choices)
     },
 
     (game, player) => {
-      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1), { exp: 'echo' })
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(this, 1), { exp: 'echo' })
       if (card && card.checkHasBonus()) {
         game.aDraw(player, { age: game.getEffectAge(this, 1) })
       }

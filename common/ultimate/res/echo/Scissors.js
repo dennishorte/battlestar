@@ -13,11 +13,11 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       for (let i = 0; i < 2; i++) {
-        if (game.getCardsByZone(player, 'hand').length === 0) {
+        if (game.cards.byZone(player, 'hand').length === 0) {
           break
         }
 
-        const card = game.aChooseCard(player, game.getCardsByZone(player, 'hand'), {
+        const card = game.aChooseCard(player, game.cards.byZone(player, 'hand'), {
           title: `Choose a card to score or meld (${i + 1} of 2)`,
           min: 0,
           max: 1
@@ -44,7 +44,7 @@ module.exports = {
     (game, player) => {
       const paper = game
         .getPlayerAll()
-        .flatMap(player => game.getTopCards(player))
+        .flatMap(player => game.cards.tops(player))
         .filter(card => card.name === 'Paper')
 
       if (paper.length > 0) {

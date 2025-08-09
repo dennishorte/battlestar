@@ -14,17 +14,18 @@ module.exports = {
     (game, player) => {
       const bonuses = game.getBonuses(player)
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards
+        .byZone(player, 'hand')
         .filter(card => bonuses.includes(card.getAge()))
-      game.aChooseAndTuck(player, choices)
+      game.actions.chooseAndTuck(player, choices)
     },
 
     (game, player, { foreseen, self }) => {
-      const tucked = game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'))[0]
+      const tucked = game.actions.chooseAndTuck(player, game.cards.byZone(player, 'hand'))[0]
 
       if (tucked && foreseen) {
         game.mLogWasForeseen(self)
-        const cards = game.getZoneByDeck('base', tucked.getAge()).cards()
+        const cards = game.cards.byDeck('base', tucked.getAge())
 
         // The player can't look at the cards in the deck in advance, so they can't really pick an order.
         game.aTuckMany(player, cards, { ordered: true })

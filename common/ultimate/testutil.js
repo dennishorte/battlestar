@@ -163,7 +163,7 @@ TestUtil.testIsSecondPlayer = function(game) {
 }
 
 TestUtil.testDeckIsJunked = function(game, age) {
-  const cardsInDeck = game.getZoneByDeck('base', age).cardlist()
+  const cardsInDeck = game.zones.byDeck('base', age).cardlist()
   expect(cardsInDeck.length).toBe(0)
 }
 
@@ -495,9 +495,9 @@ TestUtil.setColor = function(game, playerName, colorName, cardNames) {
 
 // Other cards will be sent to the junk.
 TestUtil.setDeckExact = function(game, exp, age, cardNames) {
-  const deck = game.getZoneByDeck(exp, age)
-  for (const card of deck.cards()) {
-    game.mJunk(card)
+  const deck = game.zones.byDeck(exp, age)
+  for (const card of deck.cardlist()) {
+    game.mRemove(card)
   }
 
   const cards = cardNames

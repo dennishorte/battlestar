@@ -12,18 +12,18 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const card = game.aDrawAndTuck(player, game.getEffectAge(this, 5))
+      const card = game.actions.drawAndTuck(player, game.getEffectAge(this, 5))
       if (card) {
         game.aReturn(player, game.getTopCard(player, card.color))
       }
     },
 
     (game, player) => {
-      game.aDrawAndTuck(player, game.getEffectAge(this, 5))
-      game.aChooseAndReturn(player, game.getTopCards(player), { min: 0, max: 1 })
+      game.actions.drawAndTuck(player, game.getEffectAge(this, 5))
+      game.aChooseAndReturn(player, game.cards.tops(player), { min: 0, max: 1 })
     },
   ],
   echoImpl: (game, player) => {
-    game.aDrawAndTuck(player, game.getEffectAge(this, 5))
+    game.actions.drawAndTuck(player, game.getEffectAge(this, 5))
   },
 }

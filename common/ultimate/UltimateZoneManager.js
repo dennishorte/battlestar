@@ -5,6 +5,10 @@ class UltimateZoneManager extends BaseZoneManager {
     const id = `decks.${exp}.${age}`
     return this.byId(id)
   }
+
+  colorStacks(player) {
+    return this.game.util.colors().map(color => this.byPlayer(player, color))
+  }
 }
 
 module.exports = {

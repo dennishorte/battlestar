@@ -12,9 +12,9 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const drawn = [
-        game.aDrawAndReveal(player, game.getEffectAge(this, 10)),
-        game.aDrawAndReveal(player, game.getEffectAge(this, 10)),
-        game.aDrawAndReveal(player, game.getEffectAge(this, 10)),
+        game.actions.drawAndReveal(player, game.getEffectAge(this, 10)),
+        game.actions.drawAndReveal(player, game.getEffectAge(this, 10)),
+        game.actions.drawAndReveal(player, game.getEffectAge(this, 10)),
       ].filter(card => card !== undefined)
 
       const totalClocks = drawn
@@ -26,25 +26,25 @@ module.exports = {
       game.aReturnMany(player, drawn)
 
       const toTransfer = [
-        game.getCardsByZone(player, 'hand').filter(card => card.getAge() === totalClocks),
-        game.getCardsByZone(player, 'score').filter(card => card.getAge() === totalClocks),
+        game.cards.byZone(player, 'hand').filter(card => card.getAge() === totalClocks),
+        game.cards.byZone(player, 'score').filter(card => card.getAge() === totalClocks),
       ].flat()
 
-      game.aTransferMany(player, toTransfer, game.getZoneByPlayer(leader, 'score'))
+      game.aTransferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'))
     }
   ],
   echoImpl: [
     (game, player) => {
       const colorStacks = game
-        .utilColors()
-        .map(color => game.getZoneByPlayer(player, color))
+        .util.colors()
+        .map(color => game.zones.byPlayer(player, color))
 
       const mostCards = colorStacks
-        .map(zone => zone.cards().length)
+        .map(zone => zone.cardlist().length)
         .sort((l, r) => r - l)[0]
 
       const choices = colorStacks
-        .filter(zone => zone.cards().length === mostCards)
+        .filter(zone => zone.cardlist().length === mostCards)
         .map(zone => zone.color)
 
       game.aChooseAndSplay(player, choices, 'right')

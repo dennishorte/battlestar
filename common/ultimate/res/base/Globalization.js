@@ -15,7 +15,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(c => c.checkBiscuitIsVisible('l', 'top'))
         .map(c => c.id)
       const card = game.actions.chooseCard(player, choices)

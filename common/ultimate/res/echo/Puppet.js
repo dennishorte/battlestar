@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const ages = game
-        .getCardsByZone(player, 'score')
+        .cards.byZone(player, 'score')
         .map(c => c.getAge())
       game.aChooseAndJunkAchievement(player, ages)
     }

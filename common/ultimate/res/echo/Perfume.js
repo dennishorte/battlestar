@@ -12,16 +12,16 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const leaderAges = game
-        .getTopCards(leader)
+        .cards.tops(leader)
         .map(card => card.getAge())
       const choices = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => !leaderAges.includes(card.getAge()))
       const card = game.aChooseCard(player, choices, { title: 'Choose a card to transfer' })
       if (card) {
-        const transferred = game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+        const transferred = game.aTransfer(player, card, game.zones.byPlayer(leader, card.color))
         if (transferred) {
-          game.aDrawAndMeld(player, card.getAge())
+          game.actions.drawAndMeld(player, card.getAge())
         }
       }
     }
@@ -29,7 +29,7 @@ module.exports = {
   echoImpl: [
     (game, player) => {
       while (true) {
-        const card = game.aDrawAndTuck(player, game.getEffectAge(this, 1))
+        const card = game.actions.drawAndTuck(player, game.getEffectAge(this, 1))
         if (!card.checkHasBiscuit('k')) {
           break
         }

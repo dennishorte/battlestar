@@ -27,7 +27,7 @@ module.exports = {
       }
 
       const biscuits = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.color !== 'purple')
         .map(card => card.biscuits)
 
@@ -36,7 +36,7 @@ module.exports = {
         return
       }
 
-      for (const biscuit of Object.keys(game.utilEmptyBiscuits())) {
+      for (const biscuit of Object.keys(game.util.emptyBiscuits())) {
         if (biscuit === 'c') {
           continue
         }
@@ -51,6 +51,6 @@ module.exports = {
     }
   ],
   echoImpl: (game, player) => {
-    game.aReturnMany(player, game.getCardsByZone(player, 'forecast'))
+    game.aReturnMany(player, game.cards.byZone(player, 'forecast'))
   },
 }

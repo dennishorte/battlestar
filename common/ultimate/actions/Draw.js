@@ -115,7 +115,7 @@ function _determineBaseDrawExpansion(player) {
   }
   if (this.game.getExpansionList().includes('echo')) {
     const topAges = this
-      .getTopCards(player)
+      .cards.tops(player)
       .map(c => c.getAge())
       .sort()
       .reverse()

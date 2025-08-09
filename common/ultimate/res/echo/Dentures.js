@@ -23,7 +23,7 @@ module.exports = {
 
       while (true) {
         if (card) {
-          const cards = game.getCardsByZone(player, card.color)
+          const cards = game.cards.byZone(player, card.color)
           game.mLog({
             template: '{player} will try to score {color}',
             args: { player, color: card.color }
@@ -34,7 +34,7 @@ module.exports = {
               template: '{player} has no non-bottom {color} cards',
               args: { player, color: card.color }
             })
-            card = game.aDrawAndTuck(player, game.getEffectAge(this, 6))
+            card = game.actions.drawAndTuck(player, game.getEffectAge(this, 6))
             continue
           }
           if (cards.length > 1) {
@@ -58,7 +58,7 @@ module.exports = {
   ],
   echoImpl: [
     (game, player) => {
-      const card = game.aDrawAndTuck(player, game.getEffectAge(this, 6))
+      const card = game.actions.drawAndTuck(player, game.getEffectAge(this, 6))
 
       if (!game.state.dogmaInfo.dentures) {
         game.state.dogmaInfo.dentures = {}

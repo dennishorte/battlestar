@@ -40,7 +40,7 @@ module.exports = {
     const choice = game.aChoose(player, choices)[0]
 
     if (choice.includes('foreshadow')) {
-      game.aDrawAndForeshadow(player, game.getEffectAge(this, 4))
+      game.actions.drawAndForeshadow(player, game.getEffectAge(this, 4))
     }
     else {
       game.aDraw(player, { age: game.getEffectAge(this, 3) })

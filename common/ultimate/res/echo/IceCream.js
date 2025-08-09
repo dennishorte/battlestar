@@ -12,7 +12,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.aDrawAndMeld(player, game.getEffectAge(this, 1))
+      game.actions.drawAndMeld(player, game.getEffectAge(this, 1))
     },
 
     (game, player) => {
@@ -26,17 +26,17 @@ module.exports = {
           game.getEffectAge(this, 9),
         ].filter(age => age <= 10))
 
-        const cards = game.getZoneByDeck('base', age).cards()
+        const cards = game.zones.byDeck('base', age).cardlist()
         if (cards.length > 0) {
           const toTransfer = cards[cards.length - 1]
-          game.aTransfer(player, toTransfer, game.getZoneById('achievements'))
+          game.aTransfer(player, toTransfer, game.zones.byId('achievements'))
         }
       }
     }
   ],
   echoImpl: (game, player) => {
     const choices = game
-      .getTopCards(player)
+      .cards.tops(player)
       .filter(card => card.color !== 'purple')
       .filter(card => !card.checkHasBonus())
     game.aChooseAndScore(player, choices)

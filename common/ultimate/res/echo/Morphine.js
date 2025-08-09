@@ -14,7 +14,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const toReturn = game
-        .getCardsByZone(player, 'hand')
+        .cards.byZone(player, 'hand')
         .filter(card => card.getAge() % 2 === 1)
       const returned = game.aReturnMany(player, toReturn)
       game.aDraw(player, { age: game.getEffectAge(this, 6) })
@@ -45,7 +45,7 @@ module.exports = {
   ],
   echoImpl: (game, player) => {
     const choices = game
-      .getCardsByZone(player, 'hand')
+      .cards.byZone(player, 'hand')
       .filter(card => card.getAge() % 2 === 1)
     game.aChooseAndScore(player, choices)
   },

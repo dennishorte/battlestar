@@ -16,7 +16,7 @@ module.exports = {
 
       while (true) {
         const choices = game
-          .utilColors()
+          .util.colors()
           .map(color => game.getBottomCard(player, color))
           .filter(card => card !== undefined)
           .filter(card => card.color !== 'blue')

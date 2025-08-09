@@ -13,7 +13,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), {
+      const returned = game.aChooseAndReturn(player, game.cards.byZone(player, 'hand'), {
         min: 0,
         max: 999
       })
@@ -24,13 +24,13 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
+      game.aChooseAndMeld(player, game.cards.byZone(player, 'hand'))
     },
 
     (game, player, { foreseen, self }) => {
       if (foreseen) {
         game.mLogWasForeseen(self)
-        game.aForeshadowMany(player, game.getCardsByZone(player, 'hand'))
+        game.aForeshadowMany(player, game.cards.byZone(player, 'hand'))
       }
     },
   ],

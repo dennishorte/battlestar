@@ -13,14 +13,14 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = game
-        .getCardsByZone(player, 'forecast')
+        .cards.byZone(player, 'forecast')
         .filter(card => card.checkHasBonus())
 
       const cards = game.aChooseAndReturn(player, choices, { min: 0, max: 1 })
       if (cards && cards.length > 0) {
         const card = cards[0]
         const bonuses = card.getBonuses()
-        game.aDrawAndScore(player, bonuses[0] + 1)
+        game.actions.drawAndScore(player, bonuses[0] + 1)
       }
     },
 
@@ -30,7 +30,7 @@ module.exports = {
 
         const others = game.getPlayerAll().filter(o => o.name !== player.name)
         const other = game.aChoosePlayer(player, others)
-        game.aForeshadowMany(player, game.getCardsByZone(other, 'forecast'))
+        game.aForeshadowMany(player, game.cards.byZone(other, 'forecast'))
       }
       else {
         game.mLogNoEffect()
@@ -38,6 +38,6 @@ module.exports = {
     },
   ],
   echoImpl: (game, player) => {
-    game.aDrawAndForeshadow(player, game.getEffectAge(this, 4), { exp: 'echo' })
+    game.actions.drawAndForeshadow(player, game.getEffectAge(this, 4), { exp: 'echo' })
   },
 }

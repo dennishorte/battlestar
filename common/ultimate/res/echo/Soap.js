@@ -11,12 +11,12 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const color = game.aChoose(player, game.utilColors())[0]
+      const color = game.aChoose(player, game.util.colors())[0]
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards.byZone(player, 'hand')
         .filter(card => card.color === color)
 
-      const tucked = game.aChooseAndTuck(player, choices, { min: 0, max: 999 })
+      const tucked = game.actions.chooseAndTuck(player, choices, { min: 0, max: 999 })
 
       if (tucked.length > 0) {
         const topValue = game.getTopCard(player, color).getAge()
@@ -28,7 +28,7 @@ module.exports = {
 
         if (opponentValues.every(value => value < topValue)) {
           const eligible = game
-            .getCardsByZone(player, 'hand')
+            .cards.byZone(player, 'hand')
             .filter(card => game.checkAchievementEligibility(player, card))
           game.aChooseAndAchieve(player, eligible, { min: 0, max: 1 })
         }

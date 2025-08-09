@@ -7,6 +7,6 @@ module.exports = {
   isSpecialAchievement: true,
   checkPlayerIsEligible: function(game, player, reduceCost) {
     const targetCount = reduceCost ? 4 : 5
-    return game.getZoneByPlayer(player, 'forecast').cards().length >= targetCount
+    return game.cards.byPlayer(player, 'forecast').length >= targetCount
   },
 }

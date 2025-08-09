@@ -35,8 +35,8 @@ describe("Laser", () => {
     })
 
     const achievements = game
-      .getZoneById('achievements')
-      .cards()
+      .zones.byId('achievements')
+      .cardlist()
       .filter(ach => !ach.isSpecialAchievement)
       .length
     expect(achievements).toBe(0)

@@ -12,19 +12,19 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const choices = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => !card.checkHasBiscuit('k') && !card.checkHasBiscuit('f'))
       const card = game.aChooseCard(player, choices)
 
       if (card) {
-        const transferred = game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+        const transferred = game.aTransfer(player, card, game.zones.byPlayer(leader, card.color))
         if (transferred) {
-          game.aDrawAndMeld(player, game.getEffectAge(this, 2))
+          game.actions.drawAndMeld(player, game.getEffectAge(this, 2))
         }
       }
     }
   ],
   echoImpl: (game, player) => {
-    game.aDrawAndForeshadow(player, game.getEffectAge(this, 2))
+    game.actions.drawAndForeshadow(player, game.getEffectAge(this, 2))
   },
 }

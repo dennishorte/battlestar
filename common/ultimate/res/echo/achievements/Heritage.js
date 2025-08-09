@@ -9,12 +9,12 @@ module.exports = {
     const targetCount = reduceCost ? 7 : 8
     return game
       // Grab each stack
-      .utilColors()
-      .map(color => game.getZoneByPlayer(player, color))
+      .util.colors()
+      .map(color => game.zones.byPlayer(player, color))
 
       // Convert each stack to a count of hexes
       .map(zone => zone
-        .cards()
+        .cardlist()
         .map(c => (game.getBiscuitsRaw(c, zone.splay).match(/[hm]/g) || []).length )
         .reduce((prev, curr) => prev + curr, 0)
       )

@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.aDrawAndScore(player, game.getEffectAge(this, 7))
+      game.actions.drawAndScore(player, game.getEffectAge(this, 7))
       game.aDraw(player, { age: game.getEffectAge(this, 7) })
     }
   ],

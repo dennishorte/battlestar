@@ -14,28 +14,28 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const toReturn = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.checkHasBiscuit('k'))
 
       game.aReturnMany(player, toReturn)
-      game.aDrawAndTuck(player, game.getEffectAge(this, 4))
+      game.actions.drawAndTuck(player, game.getEffectAge(this, 4))
     },
 
     (game, player) => {
-      game.aDrawAndTuck(player, game.getEffectAge(this, 4))
+      game.actions.drawAndTuck(player, game.getEffectAge(this, 4))
     },
 
     (game, player, { foreseen, self }) => {
       if (foreseen) {
         game.mLogWasForeseen(self)
-        game.aDrawAndMeld(player, game.getEffectAge(this, 5))
+        game.actions.drawAndMeld(player, game.getEffectAge(this, 5))
       }
     }
   ],
   echoImpl: (game, player) => {
     const choices = game
       .getPlayerAll()
-      .flatMap(player => game.utilColors().map(color => ({ player, color })))
+      .flatMap(player => game.util.colors().map(color => ({ player, color })))
       .map(x => `${x.player.name} ${x.color}`)
 
     const toSplayLeft = game.aChoose(player, choices, { title: 'Choose a stack to splay left' })

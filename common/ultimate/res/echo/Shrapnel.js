@@ -11,17 +11,17 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const card = game.aDrawAndTuck(player, game.getEffectAge(this, 6))
+      const card = game.actions.drawAndTuck(player, game.getEffectAge(this, 6))
       if (card) {
         const toTransfer = game
-          .getCardsByZone(player, card.color)
+          .cards.byZone(player, card.color)
           .slice(0, 2)
-        game.aTransferMany(player, toTransfer, game.getZoneByPlayer(leader, 'score'), { ordered: true })
+        game.aTransferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'), { ordered: true })
 
         const moreTransfer = game
-          .getCardsByZone(leader, card.color)
+          .cards.byZone(leader, card.color)
           .slice(-1)
-        game.aTransferMany(player, moreTransfer, game.getZoneByPlayer(player, 'score'))
+        game.aTransferMany(player, moreTransfer, game.zones.byPlayer(player, 'score'))
       }
     }
   ],

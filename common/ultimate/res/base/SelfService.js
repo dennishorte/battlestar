@@ -32,7 +32,7 @@ module.exports = {
 
     (game, player, { self }) => {
       const choices = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card !== self)
       const card = game.actions.chooseCard(player, choices)
       if (card) {

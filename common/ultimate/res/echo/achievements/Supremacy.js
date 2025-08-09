@@ -9,9 +9,9 @@ module.exports = {
     const targetBiscuitCount = reduceCost ? 2 : 3
     const targetColorsCount = reduceCost ? 3 : 4
 
-    const colorCounts = game.utilEmptyBiscuits()
-    for (const color of game.utilColors()) {
-      const zone = game.getZoneByPlayer(player, color)
+    const colorCounts = game.util.emptyBiscuits()
+    for (const color of game.util.colors()) {
+      const zone = game.zones.byPlayer(player, color)
       const biscuits = game.getBiscuitsByZone(zone)
       for (const biscuit of Object.keys(colorCounts)) {
         if (biscuits[biscuit] >= targetBiscuitCount) {

@@ -15,19 +15,19 @@ module.exports = {
       const age = game.aChooseAge(player)
 
       const choices = game
-        .getCardsByZone(opponent, 'score')
+        .cards.byZone(opponent, 'score')
         .filter(card => card.getAge() === age)
       const transferred = game.aChooseCard(player, choices)
       if (transferred) {
-        game.aTransfer(player, transferred, game.getZoneByPlayer(opponent, transferred.color))
+        game.aTransfer(player, transferred, game.zones.byPlayer(opponent, transferred.color))
 
         const matchingAchievements = game
-          .getCardsByZone(opponent, 'achievements')
+          .cards.byZone(opponent, 'achievements')
           .filter(card => card.getAge() === transferred.getAge())
 
         if (matchingAchievements.length > 0) {
           const achieveChoices = game
-            .getCardsByZone(opponent, 'score')
+            .cards.byZone(opponent, 'score')
             .filter(card => card.getAge() === age)
             .filter(card => game.checkAchievementEligibility(player, card))
           game.aChooseAndAchieve(player, achieveChoices)
@@ -37,7 +37,7 @@ module.exports = {
   ],
   echoImpl: [
     (game, player) => {
-      game.aDrawAndMeld(player, game.getEffectAge(this, 8))
+      game.actions.drawAndMeld(player, game.getEffectAge(this, 8))
     }
   ],
 }

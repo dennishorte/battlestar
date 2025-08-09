@@ -13,15 +13,15 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const topCards = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.color !== 'green')
       const lowest = game.utilLowestCards(topCards)
 
       if (lowest.length === 0) {
-        game.aDrawAndForeshadow(player, 3)
+        game.actions.drawAndForeshadow(player, 3)
       }
       else {
-        game.aDrawAndForeshadow(player, lowest[0].getAge() + 3)
+        game.actions.drawAndForeshadow(player, lowest[0].getAge() + 3)
       }
     },
 
@@ -32,7 +32,7 @@ module.exports = {
   echoImpl: [
     (game, player) => {
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards.byZone(player, 'hand')
         .filter(card => card.checkIsExpansion())
       game.aChooseAndScore(player, choices)
     }

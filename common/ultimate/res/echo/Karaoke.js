@@ -24,11 +24,11 @@ module.exports = {
 
     (game, player) => {
       const cards = game
-        .utilColors()
+        .util.colors()
         .map(color => game.getBottomCard(player, color))
         .filter(card => card !== undefined)
 
-      game.aChooseAndTransfer(player, cards, game.getZoneByPlayer(player, 'hand'), { min: 0, max: 1 })
+      game.aChooseAndTransfer(player, cards, game.zones.byPlayer(player, 'hand'), { min: 0, max: 1 })
     }
   ],
   echoImpl: (game, player) => {
@@ -43,7 +43,7 @@ module.exports = {
     }
 
     const age = game.aChooseAge(player, ages)
-    const card = game.aDrawAndMeld(player, age)
+    const card = game.actions.drawAndMeld(player, age)
     if (card) {
       game.state.dogmaInfo.karaoke[player.name] = card
     }

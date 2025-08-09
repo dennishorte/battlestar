@@ -12,16 +12,16 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      game.aTransferMany(player, game.getCardsByZone(player, 'hand'), game.getZoneByPlayer(leader, 'hand'))
+      game.aTransferMany(player, game.cards.byZone(player, 'hand'), game.zones.byPlayer(leader, 'hand'))
       game.aDraw(player, { age: game.getEffectAge(this, 9) })
     },
 
     (game, player) => {
       const toMeld = game
-        .getCardsByZone(player, 'hand')
+        .cards.byZone(player, 'hand')
         .filter(card => card.getAge() === game.getEffectAge(this, 9))
       game.aMeldMany(player, toMeld)
-      game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
+      game.aReturnMany(player, game.cards.byZone(player, 'hand'))
       game.aDraw(player, { age: game.getEffectAge(this, 9) })
       game.aDraw(player, { age: game.getEffectAge(this, 9) })
       game.aDraw(player, { age: game.getEffectAge(this, 9) })

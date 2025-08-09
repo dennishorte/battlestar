@@ -22,7 +22,7 @@ module.exports = {
       }
     },
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 2 })
+      const returned = game.aChooseAndReturn(player, game.cards.byZone(player, 'hand'), { min: 0, max: 2 })
 
       if (returned) {
         for (let i = 0; i < returned.length; i++) {
@@ -32,15 +32,15 @@ module.exports = {
           ])[0]
 
           if (choice.includes('meld')) {
-            game.aDrawAndMeld(player, game.getEffectAge(this, 2))
+            game.actions.drawAndMeld(player, game.getEffectAge(this, 2))
           }
           else {
-            game.aDrawAndForeshadow(player, game.getEffectAge(this, 3))
+            game.actions.drawAndForeshadow(player, game.getEffectAge(this, 3))
           }
         }
       }
 
-      const choices = game.utilHighestCards(game.getTopCards(player))
+      const choices = game.utilHighestCards(game.cards.tops(player))
       game.aChooseAndReturn(player, choices)
     }
   ],

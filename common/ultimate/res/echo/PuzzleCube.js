@@ -16,7 +16,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const color = game.aChoose(player, game.utilColors(), {
+      const color = game.aChoose(player, game.util.colors(), {
         title: 'Choose a color for scoring bottom cards',
         min: 0,
         max: 1
@@ -37,10 +37,10 @@ module.exports = {
       }
 
       const visibleCounts = game
-        .utilColors()
+        .util.colors()
         .map(color => {
-          const zone = game.getZoneByPlayer(player, color)
-          const cards = zone.cards()
+          const zone = game.zones.byPlayer(player, color)
+          const cards = zone.cardlist()
           if (zone.splay === 'none') {
             return cards.length > 0 ? 1 : 0
           }
@@ -60,7 +60,7 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aDrawAndMeld(player, game.getEffectAge(this, 10))
+      game.actions.drawAndMeld(player, game.getEffectAge(this, 10))
     },
   ],
   echoImpl: [],

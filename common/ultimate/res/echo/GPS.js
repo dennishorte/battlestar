@@ -13,13 +13,13 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.aReturnMany(player, game.getCardsByZone(player, 'forecast'))
+      game.aReturnMany(player, game.cards.byZone(player, 'forecast'))
     },
 
     (game, player) => {
-      game.aDrawAndForeshadow(player, game.getEffectAge(this, 10))
-      game.aDrawAndForeshadow(player, game.getEffectAge(this, 10))
-      game.aDrawAndForeshadow(player, game.getEffectAge(this, 10))
+      game.actions.drawAndForeshadow(player, game.getEffectAge(this, 10))
+      game.actions.drawAndForeshadow(player, game.getEffectAge(this, 10))
+      game.actions.drawAndForeshadow(player, game.getEffectAge(this, 10))
     },
 
     (game, player) => {

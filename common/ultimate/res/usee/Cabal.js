@@ -26,7 +26,7 @@ module.exports = {
 
     (game, player) => {
       const topCardAges = game
-        .getTopCards(player)
+        .cards.tops(player)
         .map(card => card.getAge())
 
       const availableAchievements = game

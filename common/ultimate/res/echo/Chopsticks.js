@@ -14,13 +14,13 @@ module.exports = {
       const junked = game.aJunkDeck(player, 1, { optional: true })
       if (junked) {
         const choices = game
-          .utilHighestCards(game.getZoneById('junk').cards())
+          .utilHighestCards(game.zones.byId('junk').cardlist())
           .filter(card => game.checkAchievementEligibility(player, card))
         game.aChooseAndAchieve(player, choices, { count: 1 })
       }
     }
   ],
   echoImpl: (game, player) => {
-    game.aDrawAndForeshadow(player, game.getEffectAge(this, 1), { optional: true })
+    game.actions.drawAndForeshadow(player, game.getEffectAge(this, 1), { optional: true })
   },
 }

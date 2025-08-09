@@ -12,9 +12,9 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       while (true) {
-        const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'))[0]
+        const returned = game.aChooseAndReturn(player, game.cards.byZone(player, 'hand'))[0]
         if (returned) {
-          const revealed = game.aDrawAndReveal(player, returned.getAge())
+          const revealed = game.actions.drawAndReveal(player, returned.getAge())
           if (revealed) {
             const top = game.getTopCard(player, revealed.color)
             if (!top || revealed.getAge() > top.getAge()) {
@@ -29,7 +29,7 @@ module.exports = {
           break
         }
 
-        if (game.getCardsByZone(player, 'hand').length === 0) {
+        if (game.cards.byZone(player, 'hand').length === 0) {
           break
         }
 
@@ -46,10 +46,10 @@ module.exports = {
   echoImpl: (game, player) => {
     const exp = game.aChoose(player, game.getExpansionList(), { title: 'Choose the type of deck' })[0]
     const ages = [1,2,3,4,5,6,7,8,9,10]
-      .filter(age => game.getZoneByDeck(exp, age).cards().length > 0)
+      .filter(age => game.zones.byDeck(exp, age).cardlist().length > 0)
     const age = game.aChooseAge(player, ages)
 
     const card = game.mDraw(player, exp, age)
-    game.mMoveCardToTop(card, game.getZoneById(card.home), { player })
+    game.mMoveCardToTop(card, game.zones.byId(card.home), { player })
   },
 }

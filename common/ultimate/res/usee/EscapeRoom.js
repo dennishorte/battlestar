@@ -26,7 +26,7 @@ module.exports = {
     },
     (game, player) => {
       const toScore = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(c => c.color !== 'yellow')
         .filter(c => c.checkHasBiscuit('i'))
 

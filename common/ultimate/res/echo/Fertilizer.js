@@ -12,22 +12,22 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cards = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1} )
+      const cards = game.aChooseAndReturn(player, game.cards.byZone(player, 'hand'), { min: 0, max: 1} )
       if (cards && cards.length > 0) {
         const age = cards[0].getAge()
         const toTransfer = game
           .getPlayerAll()
           .flatMap(player => game
-            .getCardsByZone(player, 'score')
+            .cards.byZone(player, 'score')
             .filter(card => card.getAge() === age)
           )
-        game.aTransferMany(player, toTransfer, game.getZoneByPlayer(player, 'hand'))
+        game.aTransferMany(player, toTransfer, game.zones.byPlayer(player, 'hand'))
       }
     },
 
     (game, player) => {
       const age = game.aChooseAge(player)
-      game.aDrawAndForeshadow(player, age)
+      game.actions.drawAndForeshadow(player, age)
     }
   ],
   echoImpl: [],

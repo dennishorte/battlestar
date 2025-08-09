@@ -16,7 +16,7 @@ module.exports = {
         const count = Math.floor(game.getBiscuitsByPlayer(player).f / 3)
         const tucked = []
         for (let i = 0; i < count; i++) {
-          const card = game.aDrawAndTuck(player, game.getEffectAge(this, 8))
+          const card = game.actions.drawAndTuck(player, game.getEffectAge(this, 8))
           if (card) {
             tucked.push(card)
           }

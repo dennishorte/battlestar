@@ -15,7 +15,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = game
-        .getCardsByZone(player, 'score')
+        .cards.byZone(player, 'score')
         .map(card => card.getAge())
       const distinct = util.array.distinct(choices).sort()
       const age = game.aChooseAge(player, distinct)
@@ -36,21 +36,21 @@ module.exports = {
         let cards
         if (location === 'from scores') {
           cards = otherPlayers
-            .flatMap(player => game.getCardsByZone(player, 'score'))
+            .flatMap(player => game.cards.byZone(player, 'score'))
         }
         else {
           cards = otherPlayers
-            .flatMap(player => game.getCardsByZone(player, 'hand'))
+            .flatMap(player => game.cards.byZone(player, 'hand'))
         }
 
         cards = cards.filter(card => card.getAge() === age)
 
-        game.aTransferMany(player, cards, game.getZoneByPlayer(player, 'score'))
+        game.aTransferMany(player, cards, game.zones.byPlayer(player, 'score'))
       }
     }
   ],
   echoImpl: (game, player) => {
-    const green = game.getCardsByZone(player, 'green')
+    const green = game.cards.byZone(player, 'green')
     if (green.length === 0) {
       game.mLogNoEffect()
     }

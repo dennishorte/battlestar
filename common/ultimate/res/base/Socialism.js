@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const topCards = game.getTopCards(player)
+      const topCards = game.cards.tops(player)
       const card = game.actions.chooseCard(player, topCards, {
         title: 'Tuck a top card from your board?',
         min: 0,

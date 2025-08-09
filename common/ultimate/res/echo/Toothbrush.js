@@ -22,7 +22,7 @@ module.exports = {
       const deckAge = game.getEffectAge(this, 2)
       const junked = game.aJunkDeck(player, deckAge, { optional: true })
       if (junked) {
-        const junk = game.getZoneById('junk').cards()
+        const junk = game.zones.byId('junk').cardlist()
         const choices = game
           .utilHighestCards(junk)
           .filter(card => game.checkAchievementEligibility(player, card))
@@ -33,14 +33,14 @@ module.exports = {
   echoImpl: [
     (game, player) => {
       const ages = game
-        .getCardsByZone(player, 'hand')
+        .cards.byZone(player, 'hand')
         .map(card => card.getAge())
         .sort()
       const choices = util.array.distinct(ages)
       const age = game.aChooseAge(player, choices)
       if (age) {
         const toTuck = game
-          .getCardsByZone(player, 'hand')
+          .cards.byZone(player, 'hand')
           .filter(card => card.getAge() === age)
         game.aTuckMany(player, toTuck)
       }

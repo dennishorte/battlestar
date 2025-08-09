@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const usedColors = game
-        .getTopCards(player)
+        .cards.tops(player)
         .map(card => card.color)
 
       const choices = game
@@ -26,11 +26,11 @@ module.exports = {
     (game, player, { self }) => {
       const opponentColors = game
         .players.opponentsOf(player)
-        .flatMap(opp => game.getTopCards(opp))
+        .flatMap(opp => game.cards.tops(opp))
         .map(card => card.color)
 
       const playerOnlyColors = game
-        .getTopCards(player)
+        .cards.tops(player)
         .map(card => card.color)
         .filter(color => !opponentColors.includes(color))
         .length

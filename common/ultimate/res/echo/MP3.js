@@ -15,7 +15,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 999 })
+      const returned = game.aChooseAndReturn(player, game.cards.byZone(player, 'hand'), { min: 0, max: 999 })
 
       if (returned) {
         const toAchieve = returned.length * 2
@@ -36,7 +36,7 @@ module.exports = {
       const choices = util.array.distinct(game.getBonuses(player)).sort()
       const age = game.aChooseAge(player, choices, { title: 'Choose an age to draw and score' })
       if (age) {
-        game.aDrawAndScore(player, age)
+        game.actions.drawAndScore(player, age)
       }
     }
   ],

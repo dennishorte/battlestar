@@ -13,9 +13,9 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards.byZone(player, 'hand')
         .filter(card => card.checkIsExpansion())
-      game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(leader, 'score'))
+      game.aChooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'score'))
     },
 
     (game, player) => {
@@ -23,9 +23,9 @@ module.exports = {
         .getPlayerAll()
         .filter(other => other !== player)
       const other = game.aChoosePlayer(player, otherChoices)
-      const card = game.aChooseCard(player, game.getCardsByZone(player, 'hand'))
+      const card = game.aChooseCard(player, game.cards.byZone(player, 'hand'))
       if (card) {
-        game.aTransfer(player, card, game.getZoneByPlayer(other, card.color))
+        game.aTransfer(player, card, game.zones.byPlayer(other, card.color))
       }
     },
   ],

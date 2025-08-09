@@ -22,14 +22,14 @@ module.exports = {
       const distinct = util.array.distinct(bonuses)
       const age = game.aChooseAge(player, distinct)
       if (age) {
-        game.aDrawAndForeshadow(player, age)
+        game.actions.drawAndForeshadow(player, age)
       }
     },
 
     (game, player) => {
       const returnAll = game.aYesNo(player, 'Return all card from your forecast?')
       if (returnAll) {
-        const returned = game.aReturnMany(player, game.getCardsByZone(player, 'forecast'))
+        const returned = game.aReturnMany(player, game.cards.byZone(player, 'forecast'))
         if (returned && returned.some(card => card.color === 'blue')) {
           game.aClaimAchievement(player, { name: 'Destiny' })
         }
@@ -38,8 +38,8 @@ module.exports = {
   ],
   echoImpl: (game, player) => {
     const choices = game
-      .getCardsByZone(player, 'forecast')
+      .cards.byZone(player, 'forecast')
       .filter(card => card.getAge() === 5)
-    game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'hand'))
+    game.aChooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'))
   },
 }

@@ -13,10 +13,10 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const hasTopWithCastle = game
-        .getTopCards(player)
+        .cards.tops(player)
         .some(card => card.checkHasBiscuit('k'))
       if (hasTopWithCastle) {
-        game.aDrawAndMeld(player, game.getEffectAge(this, 3))
+        game.actions.drawAndMeld(player, game.getEffectAge(this, 3))
       }
       else {
         game.aDraw(player, { age: game.getEffectAge(this, 4) })
@@ -25,7 +25,7 @@ module.exports = {
 
     (game, player) => {
       const topCardsWithFactory = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.checkHasBiscuit('f'))
         .length
 
@@ -35,6 +35,6 @@ module.exports = {
     }
   ],
   echoImpl: (game, player) => {
-    game.aDrawAndMeld(player, game.getEffectAge(this, 3))
+    game.actions.drawAndMeld(player, game.getEffectAge(this, 3))
   },
 }

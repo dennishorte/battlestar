@@ -12,11 +12,11 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const tucked = game.aDrawAndTuck(player, game.getEffectAge(this, 4))
+      const tucked = game.actions.drawAndTuck(player, game.getEffectAge(this, 4))
       if (tucked) {
         const top = game.getTopCard(player, tucked.color)
         if (top.getAge() < game.getEffectAge(this, 4)) {
-          game.aDrawAndScore(player, game.getEffectAge(this, 4))
+          game.actions.drawAndScore(player, game.getEffectAge(this, 4))
         }
       }
     },
@@ -27,7 +27,7 @@ module.exports = {
   ],
   echoImpl: (game, player) => {
     const choices = game
-      .getTopCards(player)
+      .cards.tops(player)
       .filter(card => !card.checkHasBiscuit('f'))
     game.aChooseAndScore(player, choices)
   },

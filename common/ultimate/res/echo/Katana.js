@@ -12,9 +12,9 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader, foreseen, self }) => {
       const choices = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.checkHasBiscuit('k'))
-      const transferred = game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(leader, 'score'), { count: 2 })
+      const transferred = game.aChooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'score'), { count: 2 })
 
       if (transferred && transferred.length === 1 && foreseen) {
         game.mLogWasForeseen(self)

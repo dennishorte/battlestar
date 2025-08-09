@@ -11,13 +11,13 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { foreseen, self }) => {
-      const color = game.aChoose(player, game.utilColors(), { title: 'Choose a Color' })[0]
+      const color = game.aChoose(player, game.util.colors(), { title: 'Choose a Color' })[0]
       const cards = [
-        game.aDrawAndReveal(player, game.getEffectAge(this, 1)),
-        game.aDrawAndReveal(player, game.getEffectAge(this, 1)),
-        game.aDrawAndReveal(player, game.getEffectAge(this, 1)),
-        game.aDrawAndReveal(player, game.getEffectAge(this, 1)),
-        game.aDrawAndReveal(player, game.getEffectAge(this, 1)),
+        game.actions.drawAndReveal(player, game.getEffectAge(this, 1)),
+        game.actions.drawAndReveal(player, game.getEffectAge(this, 1)),
+        game.actions.drawAndReveal(player, game.getEffectAge(this, 1)),
+        game.actions.drawAndReveal(player, game.getEffectAge(this, 1)),
+        game.actions.drawAndReveal(player, game.getEffectAge(this, 1)),
       ].filter(card => card !== undefined)
 
       const others = cards.filter(card => card.color !== color)
@@ -28,7 +28,7 @@ module.exports = {
 
         const toReturn = game
           .getPlayerAll()
-          .flatMap(p => game.getCardsByZone(p, color))
+          .flatMap(p => game.cards.byZone(p, color))
 
         game.aReturnMany(player, toReturn)
       }

@@ -14,7 +14,7 @@ module.exports = {
       while (true) {
         const yellow = game.getTopCard(player, 'yellow')
         const age = yellow ? yellow.getAge() + 1 : 1
-        const melded = game.aDrawAndMeld(player, age)
+        const melded = game.actions.drawAndMeld(player, age)
         if (melded && melded.color === 'yellow') {
           game.mLog({
             template: 'Melded card was yellow. Repeating'
@@ -29,11 +29,11 @@ module.exports = {
   ],
   echoImpl: [
     (game, player) => {
-      const splay = game.getZoneByPlayer(player, 'green').splay
+      const splay = game.zones.byPlayer(player, 'green').splay
       const toMeld = game.getBottomCard(player, 'green')
       if (toMeld) {
         game.aMeld(player, toMeld)
-        game.getZoneByPlayer(player, 'green').splay = splay
+        game.zones.byPlayer(player, 'green').splay = splay
       }
     }
   ],

@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const repeatEffect = () => {
-        const topCards = game.getTopCards(player)
+        const topCards = game.cards.tops(player)
         const bottomCards = game.getBottomCards(player)
         const choices = topCards.concat(bottomCards)
 

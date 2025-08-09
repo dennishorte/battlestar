@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const topCardValues = game
-        .getTopCards(player)
+        .cards.tops(player)
         .map(c => c.age)
 
       const scoreCardValues = game

@@ -14,16 +14,16 @@ module.exports = {
       while (true) {
         const choices = game
           .getPlayerAll()
-          .flatMap(player => game.getTopCards(player))
+          .flatMap(player => game.cards.tops(player))
           .filter(c => c !== self)
         const card = game.aChooseCard(player, choices)
 
         if (card) {
           const owner = game.getPlayerByCard(card)
-          game.aTransfer(player, card, game.getZoneByPlayer(owner, 'score'))
+          game.aTransfer(player, card, game.zones.byPlayer(owner, 'score'))
 
           const returnChoices = game
-            .getCardsByZone(player, 'hand')
+            .cards.byZone(player, 'hand')
             .filter(c => card.checkSharesBiscuit(c))
 
           const toReturn = game.aChooseCard(player, returnChoices, { min: 0, max: 1 })

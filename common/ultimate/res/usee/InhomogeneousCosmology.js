@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       while (true) {
-        const topCards = game.getTopCards(player)
+        const topCards = game.cards.tops(player)
         const handCards = game.cards.byPlayer(player, 'hand')
 
         const topCardChosen = game.actions.chooseCards(player, topCards, { min: 0, max: 1 })[0]

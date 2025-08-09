@@ -13,10 +13,10 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const ages = game
-        .getCardsByZone(leader, 'hand')
+        .cards.byZone(leader, 'hand')
         .map(card => card.getAge())
       const choices = game
-        .getCardsByZone(player, 'score')
+        .cards.byZone(player, 'score')
         .filter(card => ages.includes(card.getAge()))
       game.aChooseAndReturn(player, choices, { count: 2 })
     },
@@ -24,7 +24,7 @@ module.exports = {
     (game, player, { foreseen, self }) => {
       if (foreseen) {
         game.mLogWasForeseen(self)
-        for (const color of game.utilColors()) {
+        for (const color of game.util.colors()) {
           game.aSplay(player, color, 'left')
         }
       }

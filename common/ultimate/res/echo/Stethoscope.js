@@ -31,7 +31,7 @@ module.exports = {
   ],
   echoImpl: (game, player) => {
     const choices = game
-      .getCardsByZone(player, 'hand')
+      .cards.byZone(player, 'hand')
       .filter(card => card.color === 'yellow' || card.color === 'blue')
     const melded = game.aChooseAndMeld(player, choices)
 

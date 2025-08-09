@@ -13,14 +13,14 @@ module.exports = {
     (game, player) => {
       const bonuses = game.getBonuses(player).sort((l, r) => l - r)
       for (const bonus of bonuses) {
-        game.aDrawAndTuck(player, bonus)
+        game.actions.drawAndTuck(player, bonus)
       }
     }
   ],
   echoImpl: (game, player) => {
     const choices = game
-      .getTopCards(player)
+      .cards.tops(player)
       .filter(card => card.color !== 'yellow')
-    game.aChooseAndTuck(player, choices)
+    game.actions.chooseAndTuck(player, choices)
   },
 }

@@ -17,17 +17,17 @@ module.exports = {
     },
 
     (game, player) => {
-      if (game.getCardsByZone(player, 'hand').length === 1) {
+      if (game.cards.byZone(player, 'hand').length === 1) {
         game.aDraw(player, { age: game.getEffectAge(this, 4) })
-        game.aDrawAndScore(player, game.getEffectAge(this, 4))
+        game.actions.drawAndScore(player, game.getEffectAge(this, 4))
       }
     },
 
     (game, player, { foreseen, self }) => {
       if (foreseen) {
         game.mLogWasForeseen(self)
-        const hand = game.getCardsByZone(player, 'hand')
-        game.aTransferMany(player, hand, game.getZoneById('achievements'), { ordered: true })
+        const hand = game.cards.byZone(player, 'hand')
+        game.aTransferMany(player, hand, game.zones.byId('achievements'), { ordered: true })
       }
     },
   ],

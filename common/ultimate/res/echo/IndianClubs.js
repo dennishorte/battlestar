@@ -15,15 +15,15 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.aChooseAndReturn(player, game.getCardsByZone(player, 'score'), { count: 2 })
+      game.aChooseAndReturn(player, game.cards.byZone(player, 'score'), { count: 2 })
     },
 
     (game, player) => {
       const values = game
-        .getCardsByZone(player, 'score')
+        .cards.byZone(player, 'score')
         .map(card => card.getAge())
       const cards = game
-        .getCardsByZone(player, 'hand')
+        .cards.byZone(player, 'hand')
         .filter(card => values.includes(card.getAge()))
 
       const choices = util.array.groupBy(cards, card => card.getAge())

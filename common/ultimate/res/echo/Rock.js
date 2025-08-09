@@ -16,7 +16,7 @@ module.exports = {
     (game, player, { leader }) => {
       const card = game.getTopCard(player, 'green')
       if (card) {
-        game.aTransfer(player, card, game.getZoneByPlayer(leader, 'hand'))
+        game.aTransfer(player, card, game.zones.byPlayer(leader, 'hand'))
 
         const next = game.getTopCard(player, 'green')
         if (next && next.name === 'Scissors') {
@@ -29,7 +29,7 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndScore(player, game.getTopCards(player), { min: 0, max: 1 })
+      game.aChooseAndScore(player, game.cards.tops(player), { min: 0, max: 1 })
 
       const card = game.getTopCard(player, 'green')
       if (card && card.name === 'Paper') {

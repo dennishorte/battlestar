@@ -10,7 +10,7 @@ module.exports = {
     const targetCount = reduceCost ? 4 : 5
 
     const matchCount = game
-      .getTopCards(player)
+      .cards.tops(player)
       .map(card => card.getAge())
       .filter(age => age >= targetAge)
       .length

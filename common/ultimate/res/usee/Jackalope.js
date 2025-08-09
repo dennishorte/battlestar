@@ -13,7 +13,7 @@ module.exports = {
     (game, player, { leader }) => {
       const choices = game.util.highestCards(
         game
-          .getTopCards(player)
+          .cards.tops(player)
           .filter(card => !card.checkHasBiscuit('i'))
       )
 

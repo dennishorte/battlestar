@@ -16,7 +16,7 @@ module.exports = {
     (game, player) => game.aJunkDeck(player, 1)
   ],
   echoImpl: (game, player) => {
-    const card = util.array.last(game.getCardsByZone(player, 'blue'))
+    const card = util.array.last(game.cards.byZone(player, 'blue'))
     if (card) {
       game.aScore(player, card)
     }

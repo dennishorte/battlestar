@@ -40,8 +40,8 @@ describe("Ice Cream", () => {
     })
 
     const achievements = game
-      .getZoneById('achievements')
-      .cards()
+      .zones.byId('achievements')
+      .cardlist()
       .filter(card => !card.isSpecialAchievement)
       .filter(card => card.getAge() === 7)
     expect(achievements.length).toBe(2)

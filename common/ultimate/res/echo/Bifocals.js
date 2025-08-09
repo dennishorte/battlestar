@@ -12,10 +12,10 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'forecast'), { min: 0, max: 1 })
+      const returned = game.aChooseAndReturn(player, game.cards.byZone(player, 'forecast'), { min: 0, max: 1 })
 
       if (returned && returned.length > 0) {
-        game.aDrawAndForeshadow(player, returned[0].getAge())
+        game.actions.drawAndForeshadow(player, returned[0].getAge())
       }
     },
 
@@ -25,6 +25,6 @@ module.exports = {
   ],
   echoImpl: (game, player) => {
     const age = game.aChooseAge(player)
-    game.aDrawAndForeshadow(player, age)
+    game.actions.drawAndForeshadow(player, age)
   },
 }

@@ -44,7 +44,7 @@ module.exports = {
         }
       }
 
-      const topNonPurple = game.getTopCards(player).filter(c => c.color !== 'purple')
+      const topNonPurple = game.cards.tops(player).filter(c => c.color !== 'purple')
       const firstCard = game.actions.chooseCard(player, topNonPurple)
 
       doEffect(firstCard)

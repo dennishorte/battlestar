@@ -15,7 +15,7 @@ module.exports = {
       game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
       game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
 
-      const topCards = game.getTopCards(player)
+      const topCards = game.cards.tops(player)
       const card = game.actions.chooseCard(opponent, topCards)
 
       game.log.add({

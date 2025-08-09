@@ -12,11 +12,11 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.aDrawAndForeshadow(player, game.getEffectAge(this, 9))
+      game.actions.drawAndForeshadow(player, game.getEffectAge(this, 9))
     },
     (game, player) => {
       const choices = game
-        .utilLowestCards(game.getTopCards(player))
+        .utilLowestCards(game.cards.tops(player))
         .filter(card => card.color !== 'green')
       const card = game.aChooseCard(player, choices)
       if (card) {
@@ -28,6 +28,6 @@ module.exports = {
     }
   ],
   echoImpl: (game, player) => {
-    game.aDrawAndForeshadow(player, game.getEffectAge(this, 10))
+    game.actions.drawAndForeshadow(player, game.getEffectAge(this, 10))
   },
 }

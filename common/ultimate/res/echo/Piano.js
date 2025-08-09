@@ -14,15 +14,15 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const topCards = game.getTopCards(player)
+      const topCards = game.cards.tops(player)
 
       if (topCards.length === 5) {
         const values = util.array.distinct(topCards.map(card => card.getAge())).sort()
 
         if (values.length === 5) {
-          game.aChooseAndReturn(player, game.getCardsByZone(player, 'score'), { count: 5 })
+          game.aChooseAndReturn(player, game.cards.byZone(player, 'score'), { count: 5 })
           for (const age of values) {
-            game.aDrawAndScore(player, age)
+            game.actions.drawAndScore(player, age)
           }
         }
 
@@ -45,7 +45,7 @@ module.exports = {
   echoImpl: (game, player) => {
     const ages = game
       .getPlayerAll()
-      .flatMap(player => game.getCardsByZone(player, 'hand'))
+      .flatMap(player => game.cards.byZone(player, 'hand'))
       .map(card => card.getAge())
       .sort()
     const choices = util.array.distinct(ages)

@@ -18,8 +18,8 @@ module.exports = {
       const choices = game
         .getPlayerAll()
         .filter(other => other !== player)
-        .flatMap(other => game.utilColors().map(color => ({ color, splay: game.getZoneByPlayer(other, color).splay })))
-        .filter(x => game.getZoneByPlayer(player, x.color) !== x.splay)
+        .flatMap(other => game.util.colors().map(color => ({ color, splay: game.zones.byPlayer(other, color).splay })))
+        .filter(x => game.zones.byPlayer(player, x.color) !== x.splay)
         .map(x => `${x.color} ${x.splay}`)
       const distinct = util.array.distinct(choices).sort()
 

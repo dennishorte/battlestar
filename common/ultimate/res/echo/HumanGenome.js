@@ -16,23 +16,23 @@ module.exports = {
       const drawAndScore = game.aYesNo(player, 'Draw and score a card of any value?')
       if (drawAndScore) {
         const age = game.aChooseAge(player)
-        game.aDrawAndScore(player, age)
+        game.actions.drawAndScore(player, age)
       }
 
       const choices = game
-        .utilColors()
+        .util.colors()
         .map(color => game.getBottomCard(player, color))
         .filter(card => card !== undefined)
-      game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'hand'), {
+      game.aChooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'), {
         title: 'Choose a bottom card to transfer to your hand',
       })
 
       const scoreValues = game
-        .getCardsByZone(player, 'score')
+        .cards.byZone(player, 'score')
         .map(card => card.getAge())
         .sort()
       const handValues = game
-        .getCardsByZone(player, 'hand')
+        .cards.byZone(player, 'hand')
         .map(card => card.getAge())
         .sort()
 

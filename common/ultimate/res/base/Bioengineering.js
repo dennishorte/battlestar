@@ -16,7 +16,7 @@ module.exports = {
     (game, player) => {
       const choices = game
         .players.all()
-        .flatMap(p => game.getTopCards(p))
+        .flatMap(p => game.cards.tops(p))
         .filter(card => card !== undefined)
         .filter(card => card.biscuits.includes('l'))
 

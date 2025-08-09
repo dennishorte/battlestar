@@ -12,8 +12,8 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const choices = game.utilHighestCards(game.getTopCards(player))
-      game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'hand'))
+      const choices = game.utilHighestCards(game.cards.tops(player))
+      game.aChooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'))
     },
 
     (game, player) => {
@@ -24,12 +24,12 @@ module.exports = {
       const targetCount = 3
       const matches = game
         // Grab each stack
-        .utilColors()
-        .map(color => game.getZoneByPlayer(player, color))
+        .util.colors()
+        .map(color => game.zones.byPlayer(player, color))
 
         // Convert each stack to a count of echo effects
         .map(zone => zone
-          .cards()
+          .cardlist()
           .map(c => (game.getBiscuitsRaw(c, zone.splay).match(/&/g) || []).length )
           .reduce((prev, curr) => prev + curr, 0)
         )
@@ -44,6 +44,6 @@ module.exports = {
     },
   ],
   echoImpl: (game, player) => {
-    game.aChooseAndMeld(player, game.getCardsByZone(player, 'forecast'))
+    game.aChooseAndMeld(player, game.cards.byZone(player, 'forecast'))
   },
 }

@@ -16,7 +16,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const topCoins = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.color !== 'yellow')
         .filter(card => !card.checkHasBiscuit('c'))
         .sort((l, r) => r.getAge() - l.getAge())
@@ -33,7 +33,7 @@ module.exports = {
 
       const card = game.aChooseCard(player, highest)
       if (card) {
-        game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+        game.aTransfer(player, card, game.zones.byPlayer(leader, card.color))
       }
     },
 
@@ -43,6 +43,6 @@ module.exports = {
   ],
   echoImpl: (game, player) => {
     const age = game.aChooseAge(player)
-    game.aDrawAndScore(player, age)
+    game.actions.drawAndScore(player, age)
   },
 }

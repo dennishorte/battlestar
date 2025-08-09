@@ -55,7 +55,7 @@ describe("Radio Telescope", () => {
 
     // Empty the nine deck so we can draw A.I., which is a 10.
     game.testSetBreakpoint('before-first-player', (game) => {
-      game.state.zones.decks.base['9'].cards().forEach(card => game.mMoveCardTo(card, game.getZoneById('junk')))
+      game.state.zones.decks.base['9'].cardlist().forEach(card => game.mMoveCardTo(card, game.zones.byId('junk')))
     })
 
     let request

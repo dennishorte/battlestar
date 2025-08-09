@@ -16,16 +16,16 @@ module.exports = {
       const count = Math.floor(leafs / 3)
 
       for (let i = 0; i < count; i++) {
-        const age = game.aChooseAge(player)
-        game.aDrawAndForeshadow(player, age)
+        const age = game.actions.chooseAge(player)
+        game.actions.drawAndForeshadow(player, age)
       }
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['yellow'], 'up')
+      game.actions.chooseAndSplay(player, ['yellow'], 'up')
     }
   ],
   echoImpl: (game, player) => {
-    game.aDrawAndTuck(player, game.getEffectAge(this, 8))
+    game.actions.drawAndTuck(player, game.getEffectAge(this, 8))
   },
 }

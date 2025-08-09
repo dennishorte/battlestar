@@ -12,7 +12,7 @@ module.exports = {
     (game, player, { self }) => {
       const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 1))
       const boardColors = game
-        .getTopCards(player)
+        .cards.tops(player)
         .map(card => card.color)
 
       if (boardColors.includes(card.color)) {

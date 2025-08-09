@@ -16,7 +16,7 @@ module.exports = {
       }
 
       const choices = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => !card.checkHasBiscuit('l'))
 
       const returned = game.actions.chooseAndReturn(player, choices, { count: 1 })[0]

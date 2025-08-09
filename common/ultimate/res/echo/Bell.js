@@ -12,13 +12,13 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.aDrawAndForeshadow(player, game.getEffectAge(this, 1))
-      game.aDrawAndForeshadow(player, game.getEffectAge(this, 2))
+      game.actions.drawAndForeshadow(player, game.getEffectAge(this, 1))
+      game.actions.drawAndForeshadow(player, game.getEffectAge(this, 2))
     },
 
     (game, player, { foreseen, self }) => {
       if (foreseen) {
-        const cards = game.getPlayerAll().flatMap(p => game.getCardsByZone(p, 'hand'))
+        const cards = game.getPlayerAll().flatMap(p => game.cards.byZone(p, 'hand'))
 
         game.mLog({ template: 'I do not have a good way to hide only the cards in other player hands, so the game just automatically returns them all.' })
         game.aReturnMany(player, cards, { ordered: true })
@@ -29,6 +29,6 @@ module.exports = {
     },
   ],
   echoImpl: (game, player) => {
-    game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
+    game.aChooseAndScore(player, game.cards.byZone(player, 'hand'), { min: 0, max: 1 })
   },
 }

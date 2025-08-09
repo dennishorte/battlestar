@@ -16,14 +16,14 @@ module.exports = {
         .getBonuses(leader)
         .sort((l, r) => r - l)[0]
       const toReturn = game
-        .getCardsByZone(player, 'score')
+        .cards.byZone(player, 'score')
         .filter(card => card.age === age)
 
       game.aReturnMany(player, toReturn)
     },
 
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'), {
+      const returned = game.aChooseAndReturn(player, game.cards.byZone(player, 'hand'), {
         title: 'Choose a card to cycle',
         min: 0,
         max: 1
@@ -34,6 +34,6 @@ module.exports = {
     }
   ],
   echoImpl: (game, player) => {
-    game.aDrawAndTuck(player, game.getEffectAge(this, 4))
+    game.actions.drawAndTuck(player, game.getEffectAge(this, 4))
   },
 }

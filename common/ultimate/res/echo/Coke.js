@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       while (true) {
-        const card = game.aDrawAndReveal(player, game.getEffectAge(this, 6))
+        const card = game.actions.drawAndReveal(player, game.getEffectAge(this, 6))
         if (card) {
           if (card.checkHasBiscuit('f')) {
             game.mLog({ template: 'Card has {f}.' })
@@ -33,8 +33,7 @@ module.exports = {
   ],
   echoImpl: [
     (game, player) => {
-      game.aDrawAndTuck(player, game.getEffectAge(this, 4))
+      game.actions.drawAndTuck(player, game.getEffectAge(this, 4))
     }
   ],
 }
-

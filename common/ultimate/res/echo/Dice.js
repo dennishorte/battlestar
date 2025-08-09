@@ -16,7 +16,7 @@ module.exports = {
       game.mReveal(player, card)
       if (card.checkHasBonus()) {
         const bonus = card.getBonuses()[0]
-        game.aDrawAndMeld(player, bonus)
+        game.actions.drawAndMeld(player, bonus)
       }
     },
 
@@ -40,7 +40,7 @@ module.exports = {
         })
 
         if (opp) {
-          game.aTransfer(player, card, game.getZoneByPlayer(opp, 'hand'))
+          game.aTransfer(player, card, game.zones.byPlayer(opp, 'hand'))
         }
       }
       else {

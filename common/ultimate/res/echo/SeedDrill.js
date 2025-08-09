@@ -13,18 +13,18 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.getAge() < 3)
       game.aChooseAndReturn(player, choices)
     },
 
     (game, player) => {
       const age = game.aChooseAge(player, [3, 4, 5])
-      const cards = game.getZoneByDeck('base', age).cards()
+      const cards = game.zones.byDeck('base', age).cardlist()
       if (cards.length > 0) {
         const transfer = game.aYesNo(player, `Transfer a {${age}} to the achievements?`)
         if (transfer) {
-          game.aTransfer(player, cards[cards.length - 1], game.getZoneById('achievements'))
+          game.aTransfer(player, cards[cards.length - 1], game.zones.byId('achievements'))
         }
       }
     },

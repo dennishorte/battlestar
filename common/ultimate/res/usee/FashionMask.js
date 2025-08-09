@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const toTuck = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.checkHasBiscuit('c') || card.checkHasBiscuit('f'))
 
       const tucked = game.actions.tuckMany(player, toTuck)

@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const choices = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.checkHasBiscuit('k'))
       const cards = game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'score'))
       if (cards && cards.length > 0) {

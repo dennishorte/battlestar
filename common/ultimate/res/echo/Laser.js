@@ -12,17 +12,17 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const toReturn = game
-        .getZoneById('achievements')
-        .cards()
+        .zones.byId('achievements')
+        .cardlist()
         .filter(card => !card.isSpecialAchievement)
       game.aReturnMany(player, toReturn, { ordered: true })
 
-      const score = game.getCardsByZone(player, 'score')
+      const score = game.cards.byZone(player, 'score')
       const returnCount = Math.ceil(score.length / 2)
       game.aChooseAndReturn(player, score, { count: returnCount })
 
-      game.aDrawAndMeld(player, game.getEffectAge(this, 10))
-      game.aDrawAndMeld(player, game.getEffectAge(this, 10))
+      game.actions.drawAndMeld(player, game.getEffectAge(this, 10))
+      game.actions.drawAndMeld(player, game.getEffectAge(this, 10))
     }
   ],
   echoImpl: [],

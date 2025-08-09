@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const count = game
-        .getTopCards(leader)
+        .cards.tops(leader)
         .filter(c => c.checkHasBiscuit('c'))
         .length
 

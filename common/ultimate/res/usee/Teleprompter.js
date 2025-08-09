@@ -32,7 +32,7 @@ module.exports = {
         used.push(key)
 
         // Reveal the top card of the chosen deck
-        const card = game.getZoneByDeck(exp, age).cardlist()[0]
+        const card = game.zones.byDeck(exp, age).cardlist()[0]
         if (!card) {
           game.log.addNoEffect()
           return

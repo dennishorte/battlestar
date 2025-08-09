@@ -16,7 +16,7 @@ module.exports = {
         game.actions.drawAndTuck(player, game.getEffectAge(self, 6))
 
         const toReturn = game
-          .getTopCards(player)
+          .cards.tops(player)
           .filter(card => !card.biscuits.includes('f'))
 
         game.actions.scoreMany(player, toReturn)

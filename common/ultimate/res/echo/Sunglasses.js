@@ -14,29 +14,29 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const purpleSplay = game.getZoneByPlayer(player, 'purple').splay
+      const purpleSplay = game.zones.byPlayer(player, 'purple').splay
       const existingSplays = game
-        .utilColors()
+        .util.colors()
         .filter(color => color !== 'purple')
-        .map(color => game.getZoneByPlayer(player, color).splay)
+        .map(color => game.zones.byPlayer(player, color).splay)
         .filter(splay => splay !== 'none')
         .filter(splay => splay !== purpleSplay)
       const purpleChoices = util.array.distinct(existingSplays)
 
       const choices = []
 
-      if (game.getCardsByZone(player, 'purple').length > 1) {
+      if (game.cards.byZone(player, 'purple').length > 1) {
         purpleChoices
           .map(splay => `purple ${splay}`)
           .forEach(choice => choices.push(choice))
       }
 
       if (purpleSplay !== 'none') {
-        for (const color of game.utilColors()) {
+        for (const color of game.util.colors()) {
           if (color === 'purple') {
             continue
           }
-          const splay = game.getZoneByPlayer(player, color).splay
+          const splay = game.zones.byPlayer(player, color).splay
           if (splay !== purpleSplay) {
             choices.push(`${color} ${purpleSplay}`)
           }
@@ -52,10 +52,10 @@ module.exports = {
   ],
   echoImpl: (game, player) => {
     const splayedColors = game
-      .utilColors()
-      .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
+      .util.colors()
+      .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
     const choices = game
-      .getCardsByZone(player, 'hand')
+      .cards.byZone(player, 'hand')
       .filter(card => splayedColors.includes(card.color))
     game.aChooseAndScore(player, choices)
   },

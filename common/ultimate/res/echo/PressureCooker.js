@@ -11,10 +11,10 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
+      game.aReturnMany(player, game.cards.byZone(player, 'hand'))
 
       const toDraw = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.checkHasBonus())
         .map(card => card.getBonuses()[0])
         .sort()

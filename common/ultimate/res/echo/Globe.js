@@ -23,7 +23,7 @@ module.exports = {
 
       const returnAll = game.aYesNo(player, 'Return all cards in your hand?')
       if (returnAll) {
-        const returned = game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
+        const returned = game.aReturnMany(player, game.cards.byZone(player, 'hand'))
         if (colorCheck(returned)) {
           // Prove that all three colors were returned.
           const toProve = returned.filter(x => x.color === 'yellow' || x.color === 'green' || x.color === 'blue')
@@ -34,11 +34,11 @@ module.exports = {
           })
           game.aRevealMany(player, toReveal, { ordered: true })
 
-          game.aDrawAndForeshadow(player, game.getEffectAge(this, 6))
-          game.aDrawAndForeshadow(player, game.getEffectAge(this, 7))
-          game.aDrawAndForeshadow(player, game.getEffectAge(this, 8))
+          game.actions.drawAndForeshadow(player, game.getEffectAge(this, 6))
+          game.actions.drawAndForeshadow(player, game.getEffectAge(this, 7))
+          game.actions.drawAndForeshadow(player, game.getEffectAge(this, 8))
 
-          game.aChooseAndSplay(player, game.utilColors(), 'right', { count: 1 })
+          game.aChooseAndSplay(player, game.util.colors(), 'right', { count: 1 })
         }
       }
     },
@@ -48,7 +48,7 @@ module.exports = {
         game.mLogWasForeseen(self)
         const cards = game
           .getPlayerAll()
-          .flatMap(p => game.getTopCards(p))
+          .flatMap(p => game.cards.tops(p))
         game.aChooseAndForeshadow(player, cards, { count: 1 })
       }
     },

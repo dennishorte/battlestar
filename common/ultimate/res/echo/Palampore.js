@@ -26,7 +26,7 @@ module.exports = {
         .sort()
       const age = game.aChooseAge(player, choices)
       if (age) {
-        game.aDrawAndScore(player, age)
+        game.actions.drawAndScore(player, age)
       }
     },
 

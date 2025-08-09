@@ -499,9 +499,9 @@ describe('Innovation', () => {
 
       // Leave only two cards in the 3 deck.
       game.testSetBreakpoint('before-first-player', (game) => {
-        const toExile = game.getZoneByDeck('base', 3).cardlist().slice(2)
+        const toExile = game.zones.byDeck('base', 3).cardlist().slice(2)
         for (const card of toExile) {
-          game.mJunk(card)
+          game.mRemove(card)
         }
       })
 

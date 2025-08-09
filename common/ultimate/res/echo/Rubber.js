@@ -13,7 +13,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => !card.checkHasBonus())
       game.aChooseAndScore(player, choices)
     },
@@ -23,7 +23,7 @@ module.exports = {
     }
   ],
   echoImpl: (game, player) => {
-    game.aDrawAndTuck(player, game.getEffectAge(this, 7))
-    game.aDrawAndTuck(player, game.getEffectAge(this, 7))
+    game.actions.drawAndTuck(player, game.getEffectAge(this, 7))
+    game.actions.drawAndTuck(player, game.getEffectAge(this, 7))
   },
 }

@@ -21,9 +21,9 @@ module.exports = {
       let count = 0
 
       for (const player of game.getPlayerAll()) {
-        for (const color of game.utilColors()) {
-          const zone = game.getZoneByPlayer(player, color)
-          const cards = zone.cards()
+        for (const color of game.util.colors()) {
+          const zone = game.zones.byPlayer(player, color)
+          const cards = zone.cardlist()
 
           // Top card
           if (cards[0] && cards[0].checkHasBiscuit('m')) {

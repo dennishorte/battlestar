@@ -19,13 +19,13 @@ module.exports = {
 
         // The ages of all achievements owned by `other`.
         const ages = game
-          .getCardsByZone(other, 'achievements')
+          .cards.byZone(other, 'achievements')
           .filter(card => !!card.getAge())
           .map(card => card.getAge())
 
         // Top cards owned by `other` that match an age in that player's achievements pile.
         game
-          .getTopCards(other)
+          .cards.tops(other)
           .filter(card => ages.includes(card.getAge()))
           .filter(card => game.checkAchievementEligibility(player, card))
           .forEach(card => candidates.push(card))
@@ -38,7 +38,7 @@ module.exports = {
 
         const cardToTransfer = game.getTopCard(player, 'green')
         if (cardToTransfer) {
-          game.aTransfer(player, cardToTransfer, game.getZoneByPlayer(owner, 'green'))
+          game.aTransfer(player, cardToTransfer, game.zones.byPlayer(owner, 'green'))
         }
         else {
           game.mLog({
@@ -48,11 +48,11 @@ module.exports = {
         }
       }
       else {
-        game.aDrawAndMeld(player, game.getEffectAge(this, 7))
+        game.actions.drawAndMeld(player, game.getEffectAge(this, 7))
       }
     }
   ],
   echoImpl: (game, player) => {
-    game.aDrawAndScore(player, game.getEffectAge(this, 7))
+    game.actions.drawAndScore(player, game.getEffectAge(this, 7))
   },
 }

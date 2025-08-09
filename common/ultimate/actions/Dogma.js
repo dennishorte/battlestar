@@ -48,7 +48,7 @@ function EndorseAction(player, color) {
   const featuredBiscuit = card.dogmaBiscuit
   const cities = this
     .game
-    .getTopCards(player)
+    .cards.tops(player)
     .filter(card => card.checkIsCity())
     .filter(card => card.biscuits.includes(featuredBiscuit))
   const junkChoices = this

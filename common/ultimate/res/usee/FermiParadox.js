@@ -14,8 +14,8 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const cards = [
-        game.getZoneByDeck('base', game.getEffectAge(self, 9)).cardlist()[0],
-        game.getZoneByDeck('base', game.getEffectAge(self, 10)).cardlist()[0],
+        game.zones.byDeck('base', game.getEffectAge(self, 9)).cardlist()[0],
+        game.zones.byDeck('base', game.getEffectAge(self, 10)).cardlist()[0],
       ].filter(x => x)
 
       cards.forEach(card => game.actions.reveal(player, card))
@@ -26,7 +26,7 @@ module.exports = {
     },
 
     (game, player, { self }) => {
-      const numBoardCards = game.getTopCards(player).length
+      const numBoardCards = game.cards.tops(player).length
 
       if (numBoardCards === 0) {
         throw new GameOverEvent({

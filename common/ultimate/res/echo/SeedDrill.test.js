@@ -67,8 +67,8 @@ describe("Seed Drill", () => {
     })
 
     const achievements = game
-      .getZoneById('achievements')
-      .cards()
+      .zones.byId('achievements')
+      .cardlist()
       .filter(card => !card.isSpecialAchievement)
     expect(achievements.length).toBe(2)
   })

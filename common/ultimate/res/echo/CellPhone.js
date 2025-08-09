@@ -25,13 +25,13 @@ module.exports = {
 
     (game, player) => {
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards.byZone(player, 'hand')
         .filter(card => card.checkHasBiscuit('i'))
-      const tucked = game.aChooseAndTuck(player, choices, { min: 0, max: choices.length, title: 'Choose any number of cards to tuck.' })
+      const tucked = game.actions.chooseAndTuck(player, choices, { min: 0, max: choices.length, title: 'Choose any number of cards to tuck.' })
 
       if (tucked) {
         for (const card of tucked) {
-          if (game.getZoneByPlayer(player, card.color).splay !== 'up') {
+          if (game.zones.byPlayer(player, card.color).splay !== 'up') {
             game.aSplay(player, card.color, 'up')
           }
         }

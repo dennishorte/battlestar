@@ -13,7 +13,7 @@ module.exports = {
       let transferred = false
       const destination = game.zones.byPlayer(leader, 'score')
       const choices = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.color !== 'red')
         .filter(card => !card.checkHasBiscuit('f'))
       const highest = game.util.highestCards(choices)

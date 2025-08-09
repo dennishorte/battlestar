@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const card = game.aDrawAndMeld(player, game.getEffectAge(this, 7))
+      const card = game.actions.drawAndMeld(player, game.getEffectAge(this, 7))
       if (card) {
         game.aChooseAndSplay(player, [card.color], 'right')
       }

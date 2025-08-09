@@ -62,7 +62,7 @@ describe('Scouting', () => {
       },
     })
 
-    expect(game.getZoneByDeck('base', 10).cardlist()[0].name).toBe('Robotics')
+    expect(game.zones.byDeck('base', 10).cardlist()[0].name).toBe('Robotics')
   })
 
   test('dogma, return two; match', () => {

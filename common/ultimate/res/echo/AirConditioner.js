@@ -12,15 +12,15 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const topValues = game
-        .getTopCards(player)
+        .cards.tops(player)
         .map(card => card.getAge())
       const toReturn = game
-        .getCardsByZone(player, 'score')
+        .cards.byZone(player, 'score')
         .filter(card => topValues.includes(card.getAge()))
       game.aReturnMany(player, toReturn)
     }
   ],
   echoImpl: (game, player) => {
-    game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
+    game.aChooseAndScore(player, game.cards.byZone(player, 'hand'), { min: 0, max: 1 })
   },
 }

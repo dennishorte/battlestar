@@ -15,12 +15,12 @@ module.exports = {
 
     return game
       // Grab each stack
-      .utilColors()
-      .map(color => game.getZoneByPlayer(player, color))
+      .util.colors()
+      .map(color => game.zones.byPlayer(player, color))
 
       // Convert each stack to a count of echo effects
       .map(zone => zone
-        .cards()
+        .cardlist()
         .flatMap(c =>
           game
             .getBiscuitsRaw(c, zone.splay)

@@ -11,14 +11,14 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 6))
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(this, 6))
       if (card) {
         if (card.color === 'blue' || card.color === 'yellow') {
-          game.aTransferMany(player, game.getCardsByZone(player, 'hand'), game.getZoneByPlayer(leader, 'hand'))
+          game.aTransferMany(player, game.cards.byZone(player, 'hand'), game.zones.byPlayer(leader, 'hand'))
         }
 
         else if (card.color === 'red' || card.color === 'green') {
-          game.aChooseAndTransfer(player, game.getCardsByZone(player, 'score'), game.getZoneByPlayer(leader, 'score'), { count: 2 })
+          game.aChooseAndTransfer(player, game.cards.byZone(player, 'score'), game.zones.byPlayer(leader, 'score'), { count: 2 })
         }
 
         else {

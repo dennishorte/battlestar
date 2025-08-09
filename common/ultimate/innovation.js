@@ -396,7 +396,7 @@ Innovation.prototype.action = function(count) {
 Innovation.prototype.fadeFiguresCheck = function() {
   for (const player of this.players.all()) {
     const topFiguresFn = () => this
-      .getTopCards(player)
+      .cards.tops(player)
       .filter(card => card.checkIsFigure())
 
     if (topFiguresFn().length > 1) {
@@ -630,7 +630,7 @@ Innovation.prototype.aTrackChainRule = function(player, card) {
       template: '{player} achieves a Chain Achievement',
       args: { player }
     })
-    const card = this.getZoneByDeck('base', 11).cardlist()[0]
+    const card = this.zones.byDeck('base', 11).cardlist()[0]
     if (card) {
       this.actions.claimAchievement(player, card)
     }
@@ -720,7 +720,7 @@ Innovation.prototype.aChooseAndAchieve = function(player, choices, opts={}) {
 }
 
 Innovation.prototype.aChooseAndJunkDeck = function(player, ages, opts={}) {
-  const age = this.aChooseAge(player, ages, {
+  const age = this.actions.chooseAge(player, ages, {
     title: 'Choose a deck to junk',
     ...opts
   })
@@ -1004,7 +1004,7 @@ Innovation.prototype.aKarma = function(player, kind, opts={}) {
 }
 
 Innovation.prototype.aDigArtifact = function(player, age) {
-  if (age > 11 || this.getZoneByDeck('arti', age).cardlist().length === 0) {
+  if (age > 11 || this.zones.byDeck('arti', age).cardlist().length === 0) {
     this.log.add({
       template: `Artifacts deck for age ${age} is empty.`
     })
@@ -1289,7 +1289,7 @@ Innovation.prototype.getBottomCards = function(player) {
 }
 
 Innovation.prototype.getEffectAge = function(card, age) {
-  const player = this.players.byZone(card.zone)
+  const player = this.players.byOwner(card)
 
   if (player) {
     const karmaInfos = this.getInfoByKarmaTrigger(player, 'effect-age')
@@ -1324,12 +1324,12 @@ Innovation.prototype.getInfoByKarmaTrigger = function(player, trigger) {
 
   const global = this
     .players.opponentsOf(player)
-    .flatMap(opp => this.getTopCards(opp))
+    .flatMap(opp => this.cards.tops(opp))
     .flatMap(card => card.getKarmaInfo(trigger))
     .filter(info => info.impl.triggerAll)
 
   const thisPlayer = this
-    .getTopCards(player)
+    .cards.tops(player)
     .flatMap(card => card.getKarmaInfo(trigger))
 
   const all = [...thisPlayer, ...global]
@@ -1372,13 +1372,13 @@ Innovation.prototype.getHighestTopAge = function(player, opts={}) {
 }
 
 Innovation.prototype.getHighestTopCard = function(player) {
-  return this.util.highestCards(this.getTopCards(player), { visible: true })[0]
+  return this.util.highestCards(this.cards.tops(player), { visible: true })[0]
 }
 
 Innovation.prototype.getNonEmptyAges = function() {
   return this
     .util.ages()
-    .filter(age => this.getZoneByDeck('base', age).cardlist().length > 0)
+    .filter(age => this.zones.byDeck('base', age).cardlist().length > 0)
 }
 
 Innovation.prototype.getNumAchievementsToWin = function() {
@@ -1442,18 +1442,10 @@ Innovation.prototype.getTopCard = function(player, color) {
   return this.cards.byPlayer(player, color)[0]
 }
 
-Innovation.prototype.getTopCards = function(player) {
-  return this
-    .util.colors()
-    .map(color => this.zones.byPlayer(player, color))
-    .map(zone => zone.cardlist()[0])
-    .filter(card => card !== undefined)
-}
-
 Innovation.prototype.getTopCardsAll = function() {
   return this
     .players.all()
-    .flatMap(player => this.getTopCards(player))
+    .flatMap(player => this.cards.tops(player))
 }
 
 Innovation.prototype.getUniquePlayerWithMostBiscuits = function(biscuit) {
@@ -1569,11 +1561,6 @@ Innovation.prototype.getVisibleEffectsByColor = function(player, color, kind) {
       .map(card => this.getVisibleEffects(card, kind))
       .filter(effect => effect !== undefined)
   }
-}
-
-Innovation.prototype.getZoneByDeck = function(exp, age) {
-  // TODO: deprecate
-  return this.zones.byDeck(exp, age)
 }
 
 Innovation.prototype.getColorZonesByPlayer = function(player) {
@@ -1931,7 +1918,7 @@ Innovation.prototype.getDogmaTargets = function(player) {
 Innovation.prototype._generateActionChoicesDogma = function() {
   const player = this.players.current()
 
-  const dogmaTargets = this.getTopCards(player)
+  const dogmaTargets = this.cards.tops(player)
 
   const extraEffects = this
     .getInfoByKarmaTrigger(player, 'list-effects')
@@ -1967,12 +1954,12 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
     .sort((l, r) => l - r)[0] || 99
 
   const cities = this
-    .getTopCards(player)
+    .cards.tops(player)
     .filter(card => card.checkIsCity())
     .filter(city => city.getAge() >= lowestHandAge)
 
   const stacksWithEndorsableEffects = this
-    .getTopCards(player)
+    .cards.tops(player)
     .map(card => this.zones.byPlayer(player, card.color))
 
   const colors = []

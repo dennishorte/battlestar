@@ -18,8 +18,8 @@ module.exports = {
         { title: 'Choose age to draw second' }
       )
       const cards = [
-        game.aDrawAndReveal(player, age1),
-        game.aDrawAndReveal(player, age2),
+        game.actions.drawAndReveal(player, age1),
+        game.actions.drawAndReveal(player, age2),
       ]
 
       const melded = game.aChooseAndMeld(player, cards)

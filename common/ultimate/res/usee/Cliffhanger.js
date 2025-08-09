@@ -23,7 +23,7 @@ module.exports = {
           args: { age }
         })
 
-        const topCard = game.getZoneByDeck('base', 4).cardlist()[0]
+        const topCard = game.zones.byDeck('base', 4).cardlist()[0]
 
         if (topCard) {
           game.actions.safeguard(player, topCard)

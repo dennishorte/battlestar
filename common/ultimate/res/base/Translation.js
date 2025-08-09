@@ -27,7 +27,7 @@ module.exports = {
     },
 
     (game, player) => {
-      const topCards = game.getTopCards(player)
+      const topCards = game.cards.tops(player)
       const topCoins = topCards.filter(card => card.checkHasBiscuit('c'))
       if (topCards.length === topCoins.length) {
         game.actions.claimAchievement(player, { name: 'World' })

@@ -18,9 +18,9 @@ module.exports = {
         title: 'Choose a biscuit',
       })[0][1]
       const toTransfer = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => !card.checkHasBiscuit(biscuit))
-      game.aTransferMany(player, toTransfer, game.getZoneByPlayer(leader, 'score'))
+      game.aTransferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'))
     },
 
     (game, player) => {

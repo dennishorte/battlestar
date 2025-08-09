@@ -17,11 +17,11 @@ module.exports = {
 
     (game, player) => {
       const splayedCount = game
-        .utilColors()
-        .map(color => game.getZoneByPlayer(player, color).splay)
+        .util.colors()
+        .map(color => game.zones.byPlayer(player, color).splay)
         .filter(splay => splay !== 'none')
         .length
-      const lowestCard = game.utilLowestCards(game.getTopCards(player))[0]
+      const lowestCard = game.utilLowestCards(game.cards.tops(player))[0]
       const lowestAge = lowestCard ? lowestCard.getAge() : 0
       const drawAge = lowestAge + splayedCount
       game.aDraw(player, { age: drawAge })

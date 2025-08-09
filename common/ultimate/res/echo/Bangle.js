@@ -15,7 +15,7 @@ module.exports = {
       const choices = ['Draw and foreshadow']
 
       const forecast = game
-        .getCardsByZone(player, 'forecast')
+        .cards.byZone(player, 'forecast')
         .filter(card => card.getAge() === game.getEffectAge(this, 2))
 
       if (forecast) {
@@ -29,7 +29,7 @@ module.exports = {
       const choice = game.aChoose(player, choices)[0]
 
       if (choice === choices[0]) {
-        game.aDrawAndForeshadow(player, game.getEffectAge(this, 2))
+        game.actions.drawAndForeshadow(player, game.getEffectAge(this, 2))
       }
       else {
         const card = game.getCardByName(choice.selection[0])
@@ -39,11 +39,11 @@ module.exports = {
 
     (game, player) => {
       const count = game
-        .getCardsByZone(player, 'forecast')
+        .cards.byZone(player, 'forecast')
         .length
 
       if (count === 0) {
-        game.aDrawAndForeshadow(player, game.getEffectAge(this, 3))
+        game.actions.drawAndForeshadow(player, game.getEffectAge(this, 3))
       }
       else {
         game.mLogNoEffect()
@@ -53,11 +53,11 @@ module.exports = {
   echoImpl: [
     (game, player) => {
       const cards = game
-        .getZoneByPlayer(player, 'hand')
-        .cards()
+        .zones.byPlayer(player, 'hand')
+        .cardlist()
         .filter(card => card.getAge() === game.getEffectAge(this, 1))
 
-      game.aChooseAndTuck(player, cards)
+      game.actions.chooseAndTuck(player, cards)
     }
   ],
 }

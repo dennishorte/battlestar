@@ -13,12 +13,12 @@ module.exports = {
     (game, player, { leader }) => {
       const age = Math.max(...game.getBonuses(player))
       if (age && age > 0) {
-        const card = game.aDrawAndReveal(player, age)
+        const card = game.actions.drawAndReveal(player, age)
         if (card) {
-          game.aTransfer(player, card, game.getZoneByPlayer(leader, 'forecast'))
+          game.aTransfer(player, card, game.zones.byPlayer(leader, 'forecast'))
 
           if (card.color === 'red') {
-            game.aTransferMany(player, game.getCardsByZone(player, 'hand'), game.getZoneByPlayer(leader, 'score'))
+            game.aTransferMany(player, game.cards.byZone(player, 'hand'), game.zones.byPlayer(leader, 'score'))
           }
         }
       }
