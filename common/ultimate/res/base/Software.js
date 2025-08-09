@@ -20,7 +20,7 @@ module.exports = {
         template: '{player} will execute {card}',
         args: { player, card }
       })
-      game.aCardEffects(player, card, 'dogma')
+      game.aSelfExecute(player, card)
     },
   ],
 }
