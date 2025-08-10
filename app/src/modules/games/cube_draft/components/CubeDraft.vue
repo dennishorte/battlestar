@@ -46,14 +46,16 @@
     <CardDraftModal :id="cardDraftModalId" :card="closeupDraftCard" @draft-card="chooseCard" />
     <DebugModal />
 
-    <BModal v-model="scarModalVis" title="Scar Applicator">
-      <BAlert :model-value="true" v-for="(scar, index) in availableScars" :key="scar.id">
-        {{ `scar ${index+1}: ${scar.text}` }}
-      </BAlert>
+    <CardEditorModal v-model="scarModalVis" :card="scarModalCard" title="Scar Applicator">
+      <template #before-card>
+        <BAlert :model-value="true" v-for="(scar, index) in availableScars" :key="scar.id">
+          {{ `scar ${index+1}: ${scar.text}` }}
+        </BAlert>
+      </template>
 
-      <CardEditor />
-
-      <BFormTextarea rows="4" placeholder="tell us about this scar..." v-model="scarComment" />
+      <template #after-card>
+        <BFormTextarea rows="4" placeholder="tell us about this scar..." v-model="scarComment" />
+      </template>
 
       <template #footer>
         <BButton variant="warning" @click="scarHelpModalVis = true">help!?</BButton>
@@ -77,7 +79,8 @@
           </ul>
         </BAlert>
       </BModal>
-    </BModal>
+    </CardEditorModal>
+
   </MagicWrapper>
 </template>
 
@@ -102,7 +105,7 @@ import DebugModal from '@/modules/games/common/components/DebugModal'
 import GameMenu from '@/modules/games/common/components/GameMenu'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 
-import CardEditor from '@/modules/magic/components/CardEditor'
+import CardEditorModal from '@/modules/magic/components/CardEditorModal'
 import CardListItem from '@/modules/magic/components/CardListItem'
 import DeckList from '@/modules/magic/components/deck/DeckList'
 import MagicWrapper from '@/modules/magic/components/MagicWrapper'
@@ -114,7 +117,7 @@ export default {
   components: {
     AdminOptions,
     CardDraftModal,
-    CardEditor,
+    CardEditorModal,
     CardTableau,
     DebugModal,
     DeckList,
@@ -144,6 +147,7 @@ export default {
 
       scarHelpModalVis: false,
       scarModalVis: false,
+      scarModalCard: null,
     }
   },
 
@@ -235,7 +239,7 @@ export default {
     cardClicked(card) {
       if (this.doingScars) {
         this.scarModalVis = true
-        this.bus.emit('card-editor:begin', card)
+        this.scarModalCard = card
       }
       else {
         this.showDraftModal(card)

@@ -1,5 +1,5 @@
 <template>
-  <BModal title="Card Editor" v-model="modalVisible">
+  <BModal :title="title" v-model="modalVisible">
     <slot name="before-card"/>
 
     <CardEditor v-model="cardInEdit" :editable="props.editable" />
@@ -45,6 +45,11 @@ const props = defineProps({
   modelValue: {
     type: Boolean,
     required: true
+  },
+
+  title: {
+    type: String,
+    default: 'Card Editor',
   },
 })
 
