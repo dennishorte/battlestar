@@ -36,7 +36,7 @@ Game.create = async function(lobby, linkedDraftId) {
       }
       else if (game.settings.game === 'Set Draft') {
         const cards = await db.magic.card.findBySetCode(game.settings.set.code)
-        const wrappedCards = cards.map(c => new magic.MagicCards(c))
+        const wrappedCards = cards.map(c => new magic.MagicCard(game, c))
         game.settings.packs = magic.draft.pack.makeSetPacks(wrappedCards, {
           numPacks: game.settings.numPacks,
           numPlayers: game.settings.players.length,

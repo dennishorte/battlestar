@@ -91,7 +91,7 @@ class UICardWrapper extends magic.MagicCard {
   }
 
   clone() {
-    return new UICardWrapper(this.toJSON())
+    return new UICardWrapper(this.game, this.toJSON())
   }
 }
 
