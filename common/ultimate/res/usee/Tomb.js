@@ -26,11 +26,7 @@ module.exports = {
     },
 
     (game, player) => {
-      const playerAchievements = game.cards.byPlayer(player, 'achievements').length
-      const achievements = game
-        .getAvailableAchievementsRaw(player)
-        .filter(card => card.age === playerAchievements)
-        .filter(card => card.checkIsStandardAchievement())
+      const achievements = game.getAvailableStandardAchievements(player)
 
       if (achievements.length === 0) {
         game.log.addNoEffect()
