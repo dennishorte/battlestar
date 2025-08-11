@@ -45,7 +45,7 @@ module.exports = {
 
     (game, player, { foreseen, self }) => {
       if (foreseen) {
-        game.mLogWasForeseen(self)
+        game.log.addForeseen(self)
         const cards = game
           .players.all()
           .flatMap(p => game.cards.tops(p))

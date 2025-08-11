@@ -29,7 +29,7 @@ module.exports = {
 
     (game, player, { foreseen, self }) => {
       if (foreseen) {
-        game.mLogWasForeseen(self)
+        game.log.addForeseen(self)
         game.actions.foreshadowMany(player, game.cards.byPlayer(player, 'hand'))
       }
     },

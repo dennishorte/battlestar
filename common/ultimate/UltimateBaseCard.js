@@ -18,6 +18,10 @@ class UltimateBaseCard extends BaseCard {
       .includes(biscuit)
   }
 
+  checkIsExpansion() {
+    return this.expansion !== 'base'
+  }
+
   checkIsStandardAchievement() {
     return !this.isSpecialAchievement && !this.isDecree
   }

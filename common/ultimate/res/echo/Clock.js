@@ -21,7 +21,7 @@ module.exports = {
         .map(card => card.biscuits.split('').filter(b => b === 'i').length)
         .reduce((agg, r) => agg + r, 0)
 
-      game.mLog({ template: `Total {i} is ${totalClocks}.` })
+      game.log.add({ template: `Total {i} is ${totalClocks}.` })
 
       game.actions.returnMany(player, drawn)
 

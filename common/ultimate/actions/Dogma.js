@@ -77,6 +77,7 @@ function _executeEffects(player, card, shareData, opts) {
     sharing: shareData.sharing,
     demanding: shareData.demanding,
     endorsed: opts.endorsed,
+    foreseen: opts.foreseen,
   }
 
   _statsRecordDogmaActions.call(this, player, card, effectOpts)

@@ -23,9 +23,8 @@ module.exports = {
       const others = cards.filter(card => card.color !== color)
       game.actions.returnMany(player, others)
 
-      console.log(0, foreseen)
       if (foreseen) {
-        game.mLogWasForeseen(self)
+        game.log.addForeseen(self)
 
         const toReturn = game
           .players

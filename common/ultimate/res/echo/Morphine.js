@@ -35,7 +35,7 @@ module.exports = {
         game.actions.draw(player, { age: game.state.dogmaInfo.morphine + 1 })
       }
       else {
-        game.mLog({ template: 'No cards were returned due to the demand.' })
+        game.log.add({ template: 'No cards were returned due to the demand.' })
       }
     },
 

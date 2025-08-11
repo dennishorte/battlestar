@@ -18,7 +18,7 @@ module.exports = {
           game.actions.return(player, toReturn)
         }
         else {
-          game.mLog({
+          game.log.add({
             template: '{player} has no {color} top card',
             args: {
               player,
@@ -29,7 +29,7 @@ module.exports = {
       }
 
       else {
-        game.mLog({
+        game.log.add({
           template: 'No card was melded due to the echo effect.'
         })
       }

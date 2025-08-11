@@ -26,7 +26,7 @@ module.exports = {
 
     (game, player, { foreseen, self }) => {
       if (foreseen) {
-        game.mLogWasForeseen(self)
+        game.log.addForeseen(self)
 
         const others = game.players.all().filter(o => o.name !== player.name)
         const other = game.actions.choosePlayer(player, others)

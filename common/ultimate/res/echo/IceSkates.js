@@ -13,7 +13,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { foreseen, self }) => {
       if (foreseen) {
-        game.mLogWasForeseen(self)
+        game.log.addForeseen(self)
         game.actions.junkDeck(player, 1)
         game.actions.junkDeck(player, 2)
       }

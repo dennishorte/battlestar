@@ -21,7 +21,7 @@ module.exports = {
         .map(card => card.getAge())
 
       if (util.array.distinct(ages).length <= 1) {
-        game.mLog({
+        game.log.add({
           template: '{player} has fewer than two different ages in score pile',
           args: { player }
         })

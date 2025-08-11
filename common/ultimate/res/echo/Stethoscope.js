@@ -21,7 +21,7 @@ module.exports = {
         }
       }
       else {
-        game.mLog({ template: 'No card melded due to echo effect' })
+        game.log.add({ template: 'No card melded due to echo effect' })
       }
     },
 

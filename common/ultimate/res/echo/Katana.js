@@ -17,7 +17,7 @@ module.exports = {
       const transferred = game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'score'), { count: 2 })
 
       if (transferred && transferred.length === 1 && foreseen) {
-        game.mLogWasForeseen(self)
+        game.log.addForeseen(self)
         const achievements = game.getAvailableStandardAchievements(player)
         game.aJunkMany(player, achievements, { ordered: true })
       }

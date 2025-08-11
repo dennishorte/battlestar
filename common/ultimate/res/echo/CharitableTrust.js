@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       if (!game.state.dogmaInfo.charitableTrust) {
-        game.mLog({ template: "Charitable Trust's echo effect was not used." })
+        game.log.add({ template: "Charitable Trust's echo effect was not used." })
         return
       }
 
@@ -24,7 +24,7 @@ module.exports = {
         const greenCard = game.getTopCard(player, 'green')
 
         if (!greenCard) {
-          game.mLog({ template: 'no top green card' })
+          game.log.add({ template: 'no top green card' })
         }
         else if (melded.getAge() === game.getEffectAge(this, 3)) {
           if (game.checkAchievementEligibility(player, greenCard)) {

@@ -23,7 +23,7 @@ module.exports = {
 
     (game, player, { foreseen, self }) => {
       if (foreseen) {
-        game.mLogWasForeseen(self)
+        game.log.addForeseen(self)
         for (const color of game.util.colors()) {
           game.aSplay(player, color, 'left')
         }

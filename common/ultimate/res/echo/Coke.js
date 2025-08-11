@@ -15,12 +15,12 @@ module.exports = {
         const card = game.actions.drawAndReveal(player, game.getEffectAge(this, 6))
         if (card) {
           if (card.checkHasBiscuit('f')) {
-            game.mLog({ template: 'Card has {f}.' })
+            game.log.add({ template: 'Card has {f}.' })
             game.aMeld(player, card)
             continue
           }
           else {
-            game.mLog({ template: 'Card did not have {f}.' })
+            game.log.add({ template: 'Card did not have {f}.' })
             game.actions.foreshadow(player, card)
             break
           }

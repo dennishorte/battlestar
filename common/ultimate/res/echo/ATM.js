@@ -23,7 +23,7 @@ module.exports = {
 
       // In case there are no valid options.
       if (topCoins.length === 0) {
-        game.mLog({ template: 'No valid cards' })
+        game.log.add({ template: 'No valid cards' })
         return
       }
 

@@ -23,7 +23,7 @@ module.exports = {
         game.actions.draw(player, { age })
 
         if (foreseen) {
-          game.mLogWasForeseen(self)
+          game.log.addForeseen(self)
           const achievements = game
             .getAvailableStandardAchievements(player)
             .filter(x => x.getAge() === age)

@@ -41,7 +41,7 @@ module.exports = {
           game.actions.transfer(player, cardToTransfer, game.zones.byPlayer(owner, 'green'))
         }
         else {
-          game.mLog({
+          game.log.add({
             template: '{player} has no top green card',
             args: { player }
           })

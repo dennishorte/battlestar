@@ -19,7 +19,7 @@ module.exports = {
 
     (game, player, { foreseen, self }) => {
       if (foreseen) {
-        game.mLogWasForeseen(self)
+        game.log.addForeseen(self)
         const count = game.cards.tops(player).length
         game.actions.drawAndForeshadow(player, count)
       }

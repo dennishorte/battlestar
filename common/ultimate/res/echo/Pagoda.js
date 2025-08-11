@@ -19,7 +19,7 @@ module.exports = {
         const tucked = game.actions.chooseAndTuck(player, matching, { min: 0, max: 1 })[0]
 
         if (tucked && foreseen) {
-          game.mLogWasForeseen(self)
+          game.log.addForeseen(self)
           const toMeld = game
             .getPlayersOther(player)
             .flatMap(p => game.cards.byPlayer(p, card.color))

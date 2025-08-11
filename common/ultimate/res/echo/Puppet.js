@@ -14,7 +14,7 @@ module.exports = {
       const ages = game
         .cards.byPlayer(player, 'score')
         .map(c => c.getAge())
-      game.actions.chooseAndJunkAchievement(player, ages)
+      game.actions.junkAvailableAchievement(player, ages)
     }
   ],
   echoImpl: [],

@@ -20,12 +20,12 @@ module.exports = {
       const distinct = util.array.distinct(choices).sort()
       const age = game.actions.chooseAge(player, distinct)
       if (age) {
-        game.mLog({
+        game.log.add({
           template: '{player} chooses {age}',
           args: { player, age }
         })
         const location = game.actions.choose(player, ['from scores', 'from hands'])[0]
-        game.mLog({
+        game.log.add({
           template: '{player} chooses {location}',
           args: { player, location }
         })

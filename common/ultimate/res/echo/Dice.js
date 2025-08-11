@@ -13,7 +13,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const card = game.actions.draw(player, { age: game.getEffectAge(this, 1), exp: 'echo' })
-      game.mReveal(player, card)
+      game.actions.reveal(player, card)
       if (card.checkHasBonus()) {
         const bonus = card.getBonuses()[0]
         game.actions.drawAndMeld(player, bonus)
