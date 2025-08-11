@@ -504,6 +504,7 @@ class UltimateActionManager extends BaseActionManager {
     return card
   })
 
+  foreshadowMany = UltimateActionManager.createManyMethod('foreshadow', 2)
   junkMany = UltimateActionManager.createManyMethod('junk', 2)
   meldMany = UltimateActionManager.createManyMethod('meld', 2)
   revealMany = UltimateActionManager.createManyMethod('reveal', 2)
@@ -513,6 +514,7 @@ class UltimateActionManager extends BaseActionManager {
   transferMany = UltimateActionManager.createManyMethod('transfer', 3)
   tuckMany = UltimateActionManager.createManyMethod('tuck', 2)
 
+  chooseAndForecast = UltimateActionManager.createChooseAndMethod('foreshadowMany', 2)
   chooseAndJunk = UltimateActionManager.createChooseAndMethod('junkMany', 2)
   chooseAndMeld = UltimateActionManager.createChooseAndMethod('meldMany', 2)
   chooseAndReveal = UltimateActionManager.createChooseAndMethod('revealMany', 2)
@@ -522,6 +524,7 @@ class UltimateActionManager extends BaseActionManager {
   chooseAndTransfer = UltimateActionManager.createChooseAndMethod('transferMany', 3)
   chooseAndTuck = UltimateActionManager.createChooseAndMethod('tuckMany', 2)
 
+  drawAndForeshadow = UltimateActionManager.createDrawAndMethod('foreshadow', 2)
   drawAndJunk = UltimateActionManager.createDrawAndMethod('junk', 2)
   drawAndMeld = UltimateActionManager.createDrawAndMethod('meld', 2)
   drawAndReveal = UltimateActionManager.createDrawAndMethod('reveal', 2)
