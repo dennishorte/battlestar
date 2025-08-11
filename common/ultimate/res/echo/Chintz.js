@@ -13,12 +13,12 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.aDraw(player, { age: game.getEffectAge(this, 4) })
+      game.actions.draw(player, { age: game.getEffectAge(this, 4) })
     },
 
     (game, player) => {
       if (game.cards.byPlayer(player, 'hand').length === 1) {
-        game.aDraw(player, { age: game.getEffectAge(this, 4) })
+        game.actions.draw(player, { age: game.getEffectAge(this, 4) })
         game.actions.drawAndScore(player, game.getEffectAge(this, 4))
       }
     },

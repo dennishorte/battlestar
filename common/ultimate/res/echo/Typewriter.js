@@ -14,12 +14,12 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const returned = game.aReturnMany(player, game.cards.byPlayer(player, 'hand'))
+      const returned = game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
       const firstAge = game.getEffectAge(this, 6)
-      game.aDraw(player, { age: firstAge })
+      game.actions.draw(player, { age: firstAge })
       const colors = util.array.distinct(returned.map(card => card.color))
       for (let i = 0; i < colors.length; i++) {
-        game.aDraw(player, { age: firstAge + 1 + i })
+        game.actions.draw(player, { age: firstAge + 1 + i })
       }
     }
   ],

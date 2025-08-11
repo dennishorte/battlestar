@@ -20,7 +20,7 @@ module.exports = {
     (game, player) => {
       let count = 0
 
-      for (const player of game.getPlayerAll()) {
+      for (const player of game.players.all()) {
         for (const color of game.util.colors()) {
           const zone = game.zones.byPlayer(player, color)
           const cards = zone.cardlist()
@@ -46,7 +46,7 @@ module.exports = {
       }
       else {
         for (let i = 0; i < count; i++) {
-          game.aDraw(player, { age: game.getEffectAge(this, 7) })
+          game.actions.draw(player, { age: game.getEffectAge(this, 7) })
         }
       }
     },

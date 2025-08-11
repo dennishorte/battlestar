@@ -18,7 +18,7 @@ module.exports = {
       const transferred = game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'))
 
       if (transferred && transferred.length > 0) {
-        game.aDraw(player, { age: game.getEffectAge(this, 7) })
+        game.actions.draw(player, { age: game.getEffectAge(this, 7) })
       }
     },
 
@@ -26,7 +26,7 @@ module.exports = {
       const toReturn = game
         .cards.tops(player)
         .filter(card => card.color !== 'red')
-      game.aReturnMany(player, toReturn)
+      game.actions.returnMany(player, toReturn)
     }
   ],
   echoImpl: [

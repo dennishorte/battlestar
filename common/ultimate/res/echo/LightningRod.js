@@ -14,7 +14,7 @@ module.exports = {
     (game, player) => {
       const card = game.actions.drawAndTuck(player, game.getEffectAge(this, 5))
       if (card) {
-        game.aReturn(player, game.getTopCard(player, card.color))
+        game.actions.return(player, game.getTopCard(player, card.color))
       }
     },
 

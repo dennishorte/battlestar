@@ -30,7 +30,7 @@ module.exports = {
 
         while (toDraw.length > 0) {
           const age = game.actions.chooseAge(player, toDraw)
-          game.aDraw(player, { age })
+          game.actions.draw(player, { age })
           toDraw.splice(toDraw.indexOf(age), 1)
         }
       }
@@ -38,8 +38,8 @@ module.exports = {
   ],
   echoImpl: [
     (game, player) => {
-      game.aDraw(player, { age: game.getEffectAge(this, 2) })
-      game.aDraw(player, { age: game.getEffectAge(this, 2) })
+      game.actions.draw(player, { age: game.getEffectAge(this, 2) })
+      game.actions.draw(player, { age: game.getEffectAge(this, 2) })
     }
   ],
 }

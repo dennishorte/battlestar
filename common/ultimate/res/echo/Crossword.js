@@ -18,7 +18,7 @@ module.exports = {
         const index = remaining.indexOf(next)
         remaining.splice(index, 1)
 
-        game.aDraw(player, { age: next })
+        game.actions.draw(player, { age: next })
       }
     }
   ],

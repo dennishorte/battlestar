@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const candidates = []
-      for (const other of game.getPlayerAll()) {
+      for (const other of game.players.all()) {
         if (other === player) {
           continue
         }

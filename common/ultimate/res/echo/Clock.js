@@ -23,7 +23,7 @@ module.exports = {
 
       game.mLog({ template: `Total {i} is ${totalClocks}.` })
 
-      game.aReturnMany(player, drawn)
+      game.actions.returnMany(player, drawn)
 
       const toTransfer = [
         game.cards.byPlayer(player, 'hand').filter(card => card.getAge() === totalClocks),

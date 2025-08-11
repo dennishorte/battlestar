@@ -21,16 +21,18 @@ module.exports = {
       ].filter(card => card !== undefined)
 
       const others = cards.filter(card => card.color !== color)
-      game.aReturnMany(player, others)
+      game.actions.returnMany(player, others)
 
+      console.log(0, foreseen)
       if (foreseen) {
         game.mLogWasForeseen(self)
 
         const toReturn = game
-          .getPlayerAll()
+          .players
+          .all()
           .flatMap(p => game.cards.byPlayer(p, color))
 
-        game.aReturnMany(player, toReturn)
+        game.actions.returnMany(player, toReturn)
       }
     }
   ],

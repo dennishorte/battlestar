@@ -15,7 +15,7 @@ module.exports = {
       if (melded) {
         const toReturn = game.getTopCard(player, melded.color)
         if (toReturn) {
-          game.aReturn(player, toReturn)
+          game.actions.return(player, toReturn)
         }
         else {
           game.mLog({

@@ -15,12 +15,12 @@ module.exports = {
   dogmaImpl: [
     (game, player, { foreseen, self }) => {
       const boardBonuses = game
-        .getPlayerAll()
+        .players.all()
         .flatMap(p => game.getBonuses(p))
       const bonuses = util.array.distinct(boardBonuses).sort()
       const age = game.actions.chooseAge(player, bonuses, { title: 'Choose an age to draw from' })
       if (age) {
-        game.aDraw(player, { age })
+        game.actions.draw(player, { age })
 
         if (foreseen) {
           game.mLogWasForeseen(self)
@@ -43,7 +43,7 @@ module.exports = {
       game.actions.drawAndForeshadow(player, game.getEffectAge(this, 4))
     }
     else {
-      game.aDraw(player, { age: game.getEffectAge(this, 3) })
+      game.actions.draw(player, { age: game.getEffectAge(this, 3) })
     }
   },
 }

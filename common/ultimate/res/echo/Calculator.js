@@ -28,7 +28,7 @@ module.exports = {
             break
           }
           else {
-            game.aDraw(player, { age: total })
+            game.actions.draw(player, { age: total })
             if (repeated) {
               break
             }

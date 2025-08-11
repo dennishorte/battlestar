@@ -19,7 +19,7 @@ module.exports = {
         game.actions.drawAndMeld(player, game.getEffectAge(this, 3))
       }
       else {
-        game.aDraw(player, { age: game.getEffectAge(this, 4) })
+        game.actions.draw(player, { age: game.getEffectAge(this, 4) })
       }
     },
 
@@ -30,7 +30,7 @@ module.exports = {
         .length
 
       if (topCardsWithFactory > 0) {
-        game.aJunkDeck(player, game.getEffectAge(this, 4))
+        game.actions.junkDeck(player, game.getEffectAge(this, 4))
       }
     }
   ],

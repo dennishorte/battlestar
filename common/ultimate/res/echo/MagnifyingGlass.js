@@ -35,7 +35,7 @@ module.exports = {
           .filter(card => card.getAge() === age)
         const returned = game.actions.chooseAndReturn(player, choices, { count: 3 })
         if (returned && returned.length === 3) {
-          game.aDraw(player, { age: age + 2 })
+          game.actions.draw(player, { age: age + 2 })
         }
       }
     },
@@ -46,7 +46,7 @@ module.exports = {
   ],
   echoImpl: [
     (game, player) => {
-      game.aDraw(player, { age: game.getEffectAge(this, 4) })
+      game.actions.draw(player, { age: game.getEffectAge(this, 4) })
       game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'))
     }
   ],

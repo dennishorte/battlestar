@@ -15,7 +15,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const bonuses = game
-        .getPlayerAll()
+        .players.all()
         .flatMap(player => game.getBonuses(player))
         .map(bonus => bonus + 2)
         .sort((l, r) => l - r)
@@ -29,7 +29,7 @@ module.exports = {
     (game, player) => {
       const returnAll = game.aYesNo(player, 'Return all card from your forecast?')
       if (returnAll) {
-        const returned = game.aReturnMany(player, game.cards.byPlayer(player, 'forecast'))
+        const returned = game.actions.returnMany(player, game.cards.byPlayer(player, 'forecast'))
         if (returned && returned.some(card => card.color === 'blue')) {
           game.aClaimAchievement(player, { name: 'Destiny' })
         }

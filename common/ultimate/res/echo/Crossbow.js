@@ -20,7 +20,7 @@ module.exports = {
 
     (game, player) => {
       const otherChoices = game
-        .getPlayerAll()
+        .players.all()
         .filter(other => other !== player)
       const other = game.actions.choosePlayer(player, otherChoices)
       const card = game.actions.chooseCard(player, game.cards.byPlayer(player, 'hand'))

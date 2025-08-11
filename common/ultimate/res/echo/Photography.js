@@ -12,7 +12,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const choices = game.utilHighestCards(game.cards.tops(player))
+      const choices = game.util.highestCards(game.cards.tops(player))
       game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'))
     },
 

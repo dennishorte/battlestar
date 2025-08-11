@@ -17,7 +17,7 @@ module.exports = {
         .cards.tops(player)
         .filter(card => card.checkHasBiscuit('k'))
 
-      game.aReturnMany(player, toReturn)
+      game.actions.returnMany(player, toReturn)
       game.actions.drawAndTuck(player, game.getEffectAge(this, 4))
     },
 
@@ -34,7 +34,7 @@ module.exports = {
   ],
   echoImpl: (game, player) => {
     const choices = game
-      .getPlayerAll()
+      .players.all()
       .flatMap(player => game.util.colors().map(color => ({ player, color })))
       .map(x => `${x.player.name} ${x.color}`)
 

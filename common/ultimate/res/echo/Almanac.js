@@ -28,7 +28,7 @@ module.exports = {
       if (foreseen) {
         game.mLogWasForeseen(self)
 
-        const others = game.getPlayerAll().filter(o => o.name !== player.name)
+        const others = game.players.all().filter(o => o.name !== player.name)
         const other = game.actions.choosePlayer(player, others)
         game.actions.foreshadowMany(player, game.cards.byPlayer(other, 'forecast'))
       }

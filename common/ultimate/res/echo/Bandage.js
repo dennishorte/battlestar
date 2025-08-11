@@ -17,7 +17,7 @@ module.exports = {
       const choices = game
         .cards.byPlayer(player, 'score')
         .filter(card => !handAges.includes(card.getAge()))
-      const highest = game.utilHighestCards(choices)
+      const highest = game.util.highestCards(choices)
       game.actions.chooseAndReturn(player, highest)
 
       const boardChoices = game

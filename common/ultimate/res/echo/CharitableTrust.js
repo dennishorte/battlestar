@@ -32,18 +32,18 @@ module.exports = {
           }
         }
         else if (melded.getAge() === game.getEffectAge(this, 4)) {
-          game.aReturn(player, greenCard)
+          game.actions.return(player, greenCard)
         }
       }
     }
   ],
   echoImpl: (game, player) => {
     const age = game.actions.chooseAge(player, [game.getEffectAge(this, 3), game.getEffectAge(this, 4)])
-    const card = game.aDraw(player, { age })
+    const card = game.actions.draw(player, { age })
 
     if (!game.state.dogmaInfo.charitableTrust) {
       game.state.dogmaInfo.charitableTrust = {}
-      game.getPlayerAll().forEach(p => game.state.dogmaInfo.charitableTrust[p.name] = [])
+      game.players.all().forEach(p => game.state.dogmaInfo.charitableTrust[p.name] = [])
     }
 
     game.state.dogmaInfo.charitableTrust[player.name].push(card)

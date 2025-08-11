@@ -17,10 +17,10 @@ module.exports = {
       })
 
       if (returned && returned.length > 0) {
-        const age = game.utilHighestCards(returned)[0].getAge()
+        const age = game.util.highestCards(returned)[0].getAge()
         const drawn = []
         for (let i = 0; i < returned.length; i++) {
-          const card = game.aDraw(player, { age: age + 1 })
+          const card = game.actions.draw(player, { age: age + 1 })
           if (card) {
             drawn.push(card)
           }
@@ -28,11 +28,11 @@ module.exports = {
 
         const card = game.actions.chooseCard(player, drawn, { title: 'Choose a card to foreshadow' })
         game.actions.foreshadow(player, card)
-        game.aReturnMany(player, drawn.filter(other => other !== card))
+        game.actions.returnMany(player, drawn.filter(other => other !== card))
       }
     }
   ],
   echoImpl: (game, player) => {
-    game.aDraw(player, { age: game.getEffectAge(this, 5) })
+    game.actions.draw(player, { age: game.getEffectAge(this, 5) })
   },
 }

@@ -14,8 +14,8 @@ module.exports = {
     (game, player, { foreseen, self }) => {
       if (foreseen) {
         game.mLogWasForeseen(self)
-        game.aJunkDeck(player, 1)
-        game.aJunkDeck(player, 2)
+        game.actions.junkDeck(player, 1)
+        game.actions.junkDeck(player, 2)
       }
       else {
         game.log.addNoEffect()
@@ -40,7 +40,7 @@ module.exports = {
         }
       }
 
-      const choices = game.utilHighestCards(game.cards.tops(player))
+      const choices = game.util.highestCards(game.cards.tops(player))
       game.actions.chooseAndReturn(player, choices)
     }
   ],

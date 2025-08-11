@@ -12,7 +12,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const card = game.aDraw(player, { age: game.getEffectAge(this, 1), exp: 'echo' })
+      const card = game.actions.draw(player, { age: game.getEffectAge(this, 1), exp: 'echo' })
       game.mReveal(player, card)
       if (card.checkHasBonus()) {
         const bonus = card.getBonuses()[0]
@@ -22,10 +22,10 @@ module.exports = {
 
     (game, player, { foreseen }) => {
       if (foreseen) {
-        const card = game.aDraw(player, { age: game.getEffectAge(this, 4) })
+        const card = game.actions.draw(player, { age: game.getEffectAge(this, 4) })
         const playerBonusPoints = game.getBonuses(player).reduce((l, r) => l + r, 0)
         const otherBonusPoints = game
-          .getPlayerOpponents(player)
+          .players.opponentsOf(player)
           .map(opp => {
             const points = game.getBonuses(opp).reduce((l, r) => l + r, 0)
             return { opp, points }

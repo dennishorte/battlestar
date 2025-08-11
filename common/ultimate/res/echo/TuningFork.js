@@ -21,7 +21,7 @@ module.exports = {
               game.aMeld(player, revealed)
             }
             else {
-              game.aReturn(player, revealed)
+              game.actions.return(player, revealed)
             }
           }
         }

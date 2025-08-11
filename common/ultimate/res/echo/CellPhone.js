@@ -15,7 +15,7 @@ module.exports = {
     (game, player) => {
       const count = Math.floor(game.getBiscuitsByPlayer(player).i / 2)
       for (let i = 0; i < count; i++) {
-        game.aDraw(player, { age: game.getEffectAge(this, 10) })
+        game.actions.draw(player, { age: game.getEffectAge(this, 10) })
       }
     },
 

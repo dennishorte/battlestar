@@ -21,7 +21,7 @@ module.exports = {
     (game, player) => {
       const card = game.actions.drawAndReveal(player, game.getEffectAge(this, 1), { exp: 'echo' })
       if (card && card.checkHasBonus()) {
-        game.aDraw(player, { age: game.getEffectAge(this, 1) })
+        game.actions.draw(player, { age: game.getEffectAge(this, 1) })
       }
     },
   ],

@@ -16,7 +16,7 @@ module.exports = {
       const count = Math.floor(game.getBiscuitsByPlayer(player).s / 2)
       const drawn = []
       for (let i = 0; i < count; i++) {
-        const card = game.aDraw(player, { age: game.getEffectAge(this, 9) })
+        const card = game.actions.draw(player, { age: game.getEffectAge(this, 9) })
         if (card) {
           drawn.push(card)
         }
@@ -32,7 +32,7 @@ module.exports = {
       }
 
       const toReturn = drawn.filter(card => card !== melded[0])
-      game.aReturnMany(player, toReturn)
+      game.actions.returnMany(player, toReturn)
     }
   ],
   echoImpl: [],

@@ -38,10 +38,10 @@ module.exports = {
             continue
           }
           if (cards.length > 1) {
-            game.aScore(player, cards[0])
+            game.actions.score(player, cards[0])
           }
           if (cards.length > 2) {
-            game.aScore(player, cards[1])
+            game.actions.score(player, cards[1])
           }
           break
         }

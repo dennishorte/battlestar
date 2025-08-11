@@ -12,12 +12,12 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.aDraw(player, { age: game.getEffectAge(this, 7) })
+      game.actions.draw(player, { age: game.getEffectAge(this, 7) })
 
       if (game.state.dogmaInfo.stethoscope) {
         const melded = game.state.dogmaInfo.stethoscope[player.name]
         if (melded && melded.some(card => card.color === 'blue')) {
-          game.aDraw(player, { age: game.getEffectAge(this, 8) })
+          game.actions.draw(player, { age: game.getEffectAge(this, 8) })
         }
       }
       else {

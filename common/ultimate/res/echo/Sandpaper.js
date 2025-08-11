@@ -19,7 +19,7 @@ module.exports = {
       })
 
       for (let i = 0; i < returned.length; i++) {
-        game.aDraw(player, { age: game.getEffectAge(this, 3) })
+        game.actions.draw(player, { age: game.getEffectAge(this, 3) })
       }
     },
 

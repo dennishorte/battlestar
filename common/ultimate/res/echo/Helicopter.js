@@ -13,7 +13,7 @@ module.exports = {
     (game, player, { self }) => {
       while (true) {
         const choices = game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game.cards.tops(player))
           .filter(c => c !== self)
         const card = game.actions.chooseCard(player, choices)
@@ -28,7 +28,7 @@ module.exports = {
 
           const toReturn = game.actions.chooseCard(player, returnChoices, { min: 0, max: 1 })
           if (toReturn) {
-            game.aReturn(player, toReturn)
+            game.actions.return(player, toReturn)
             continue
           }
         }

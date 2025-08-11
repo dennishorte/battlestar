@@ -18,10 +18,10 @@ module.exports = {
 
     (game, player, { foreseen, self }) => {
       if (foreseen) {
-        const cards = game.getPlayerAll().flatMap(p => game.cards.byPlayer(p, 'hand'))
+        const cards = game.players.all().flatMap(p => game.cards.byPlayer(p, 'hand'))
 
         game.mLog({ template: 'I do not have a good way to hide only the cards in other player hands, so the game just automatically returns them all.' })
-        game.aReturnMany(player, cards, { ordered: true })
+        game.actions.returnMany(player, cards, { ordered: true })
       }
       else {
         game.mLogWasForeseen(self)

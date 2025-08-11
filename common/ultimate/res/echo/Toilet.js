@@ -19,7 +19,7 @@ module.exports = {
         .cards.byPlayer(player, 'score')
         .filter(card => card.age === age)
 
-      game.aReturnMany(player, toReturn)
+      game.actions.returnMany(player, toReturn)
     },
 
     (game, player) => {
@@ -29,7 +29,7 @@ module.exports = {
         max: 1
       })
       if (returned.length > 0) {
-        game.aDraw(player, { age: returned[0].getAge() })
+        game.actions.draw(player, { age: returned[0].getAge() })
       }
     }
   ],

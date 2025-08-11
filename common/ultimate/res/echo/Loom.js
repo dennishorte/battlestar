@@ -36,7 +36,7 @@ module.exports = {
             .filter(card => card.getAge() !== card1.getAge())
           const card2 = game.actions.chooseCard(player, choices, { title: 'Choose a second card to return' })
 
-          const returned = game.aReturnMany(player, [card1, card2], { ordered: true })
+          const returned = game.actions.returnMany(player, [card1, card2], { ordered: true })
 
           if (returned && returned.length === 2) {
             game.actions.drawAndTuck(player, game.getEffectAge(this, 6))

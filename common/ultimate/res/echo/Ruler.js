@@ -12,8 +12,8 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const cards = [
-        game.aDraw(player, { age: game.getEffectAge(this, 1), exp: 'echo' }),
-        game.aDraw(player, { age: game.getEffectAge(this, 1), exp: 'echo' }),
+        game.actions.draw(player, { age: game.getEffectAge(this, 1), exp: 'echo' }),
+        game.actions.draw(player, { age: game.getEffectAge(this, 1), exp: 'echo' }),
       ]
 
       const foreshadowed = game.actions.chooseCard(player, cards, {
@@ -21,12 +21,12 @@ module.exports = {
       })
 
       game.actions.foreshadow(player, foreshadowed)
-      game.aReturn(player, cards.filter(x => x.id !== foreshadowed.id)[0])
+      game.actions.return(player, cards.filter(x => x.id !== foreshadowed.id)[0])
     }
   ],
   echoImpl: [
     (game, player) => {
-      game.aDraw(player, { age: game.getEffectAge(this, 2) })
+      game.actions.draw(player, { age: game.getEffectAge(this, 2) })
     }
   ],
 }

@@ -16,7 +16,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = game
-        .getPlayerAll()
+        .players.all()
         .filter(other => other !== player)
         .flatMap(other => game.util.colors().map(color => ({ color, splay: game.zones.byPlayer(other, color).splay })))
         .filter(x => game.zones.byPlayer(player, x.color) !== x.splay)

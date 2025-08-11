@@ -11,10 +11,11 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const junked = game.aJunkDeck(player, 1, { optional: true })
+      const junked = game.actions.junkDeck(player, 1, { optional: true })
       if (junked) {
         const choices = game
-          .utilHighestCards(game.zones.byId('junk').cardlist())
+          .util
+          .highestCards(game.zones.byId('junk').cardlist())
           .filter(card => game.checkAchievementEligibility(player, card))
         game.actions.chooseAndAchieve(player, choices, { count: 1 })
       }

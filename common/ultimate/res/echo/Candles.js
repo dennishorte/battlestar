@@ -21,20 +21,20 @@ module.exports = {
         game.zones.byPlayer(leader, 'hand')
       )
       if (transferred && transferred.length > 0) {
-        game.aDraw(player, { age: game.getEffectAge(this, 1) })
+        game.actions.draw(player, { age: game.getEffectAge(this, 1) })
       }
     }
   ],
   echoImpl: (game, player) => {
     const playerScore = game.getScore(player)
     const otherScores = game
-      .getPlayerAll()
+      .players.all()
       .filter(other => other !== player)
       .map(other => game.getScore(other))
 
     const isLowest = otherScores.every(score => score >= playerScore)
     if (isLowest) {
-      game.aDraw(player, { age: game.getEffectAge(this, 3) })
+      game.actions.draw(player, { age: game.getEffectAge(this, 3) })
     }
   },
 }

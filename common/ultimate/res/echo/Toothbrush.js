@@ -20,11 +20,12 @@ module.exports = {
 
     (game, player) => {
       const deckAge = game.getEffectAge(this, 2)
-      const junked = game.aJunkDeck(player, deckAge, { optional: true })
+      const junked = game.actions.junkDeck(player, deckAge, { optional: true })
       if (junked) {
         const junk = game.zones.byId('junk').cardlist()
         const choices = game
-          .utilHighestCards(junk)
+          .util
+          .highestCards(junk)
           .filter(card => game.checkAchievementEligibility(player, card))
         game.actions.chooseAndAchieve(player, choices, { hidden: true })
       }

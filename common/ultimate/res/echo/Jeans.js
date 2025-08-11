@@ -28,21 +28,21 @@ module.exports = {
       }
 
       if (cards.length > 0) {
-        game.aReturn(player, cards[0])
+        game.actions.return(player, cards[0])
       }
     }
   ],
   echoImpl: [
     (game, player) => {
       const cards = [
-        game.aDraw(player, { age: game.getEffectAge(this, 9) }),
-        game.aDraw(player, { age: game.getEffectAge(this, 9) }),
+        game.actions.draw(player, { age: game.getEffectAge(this, 9) }),
+        game.actions.draw(player, { age: game.getEffectAge(this, 9) }),
       ].filter(card => card !== undefined)
 
       const toReturn = game.actions.chooseCard(player, cards, { title: 'Choose a card to return' })
 
       if (toReturn) {
-        game.aReturn(player, toReturn)
+        game.actions.return(player, toReturn)
         cards.splice(cards.indexOf(toReturn), 1)
       }
 

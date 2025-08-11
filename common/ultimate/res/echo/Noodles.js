@@ -17,7 +17,7 @@ module.exports = {
         .filter(card => card.getAge() === game.getEffectAge(this, 1))
         .length
       const theirs = game
-        .getPlayerOpponents(player)
+        .players.opponentsOf(player)
         .map(player => game
           .cards.byPlayer(player, 'hand')
           .filter(card => card.getAge() === game.getEffectAge(this, 1))
@@ -38,7 +38,7 @@ module.exports = {
         const toScore = game
           .cards.byPlayer(player, 'hand')
           .filter(card => card.getAge() === game.getEffectAge(this, 1))
-        game.aScoreMany(player, toScore, { ordered: true })
+        game.actions.scoreMany(player, toScore, { ordered: true })
       }
     },
   ],

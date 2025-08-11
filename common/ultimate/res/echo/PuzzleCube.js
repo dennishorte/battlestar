@@ -32,7 +32,7 @@ module.exports = {
       for (let i = 0; i < count; i++) {
         const card = game.getBottomCard(player, color)
         if (card) {
-          game.aScore(player, card)
+          game.actions.score(player, card)
         }
       }
 

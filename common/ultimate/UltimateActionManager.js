@@ -105,7 +105,7 @@ class UltimateActionManager extends BaseActionManager {
     }
 
     if (typeof choices[0] === 'object') {
-      choices = this.formatAchievements(choices)
+      choices = this.game.formatAchievements(choices)
     }
 
     const selected = this.actions.choose(
@@ -114,8 +114,8 @@ class UltimateActionManager extends BaseActionManager {
       { ...opts, title: 'Choose Achievement' }
     )
 
-    for (const card of selected) {
-      this.claimAchievement(player, { card })
+    for (const name of selected) {
+      this.claimAchievement(player, { name })
     }
   }
 
@@ -425,7 +425,7 @@ class UltimateActionManager extends BaseActionManager {
         template: 'The {age} deck is already empty.',
         args: { age },
       })
-      return
+      return false
     }
 
     let doJunk = true
@@ -441,12 +441,14 @@ class UltimateActionManager extends BaseActionManager {
 
       const cards = this.cards.byDeck('base', age)
       this.junkMany(player, cards, { ordered: true })
+      return true
     }
     else {
       this.log.add({
         template: '{player} chooses not to junk the {age} deck',
         args: { player, age }
       })
+      return false
     }
   }
 
@@ -744,9 +746,16 @@ class UltimateActionManager extends BaseActionManager {
       const age = args[1]
       const opts = args[numArgs] || {}
 
-      const card = this.game.actions.draw(player, { ...opts, age })
-      if (card) {
-        return this[verb](player, card, opts)
+      let doAction = true
+      if (opts.optional) {
+        doAction = this.chooseYesNo(player, `Do you want to ${verb}?`)
+      }
+
+      if (doAction) {
+        const card = this.game.actions.draw(player, { ...opts, age })
+        if (card) {
+          return this[verb](player, card, opts)
+        }
       }
     }
   }

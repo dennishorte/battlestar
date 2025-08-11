@@ -31,7 +31,7 @@ module.exports = {
             game.aMeld(player, card)
           }
           else {
-            game.aScore(player, card)
+            game.actions.score(player, card)
           }
         }
         else {
@@ -43,12 +43,12 @@ module.exports = {
 
     (game, player) => {
       const paper = game
-        .getPlayerAll()
+        .players.all()
         .flatMap(player => game.cards.tops(player))
         .filter(card => card.name === 'Paper')
 
       if (paper.length > 0) {
-        game.aScore(player, paper[0])
+        game.actions.score(player, paper[0])
       }
     },
   ],
@@ -56,7 +56,7 @@ module.exports = {
     (game, player) => {
       const card = game.getBottomCard(player, 'yellow')
       if (card) {
-        game.aScore(player, card)
+        game.actions.score(player, card)
       }
     }
   ],

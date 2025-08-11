@@ -44,14 +44,14 @@ module.exports = {
   ],
   echoImpl: (game, player) => {
     const ages = game
-      .getPlayerAll()
+      .players.all()
       .flatMap(player => game.cards.byPlayer(player, 'hand'))
       .map(card => card.getAge())
       .sort()
     const choices = util.array.distinct(ages)
     const age = game.actions.chooseAge(player, choices, { title: 'Choose an age to draw from' })
     if (age) {
-      game.aDraw(player, { age })
+      game.actions.draw(player, { age })
     }
   },
 }

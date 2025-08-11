@@ -13,12 +13,12 @@ module.exports = {
     `Junk all cards in the 1 deck.`
   ],
   dogmaImpl: [
-    (game, player) => game.aJunkDeck(player, 1)
+    (game, player) => game.actions.junkDeck(player, 1)
   ],
   echoImpl: (game, player) => {
     const card = util.array.last(game.cards.byPlayer(player, 'blue'))
     if (card) {
-      game.aScore(player, card)
+      game.actions.score(player, card)
     }
     else {
       game.log.addNoEffect()

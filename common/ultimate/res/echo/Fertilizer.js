@@ -16,7 +16,7 @@ module.exports = {
       if (cards && cards.length > 0) {
         const age = cards[0].getAge()
         const toTransfer = game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game
             .cards.byPlayer(player, 'score')
             .filter(card => card.getAge() === age)

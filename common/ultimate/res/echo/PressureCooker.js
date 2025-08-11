@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.aReturnMany(player, game.cards.byPlayer(player, 'hand'))
+      game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
 
       const toDraw = game
         .cards.tops(player)
@@ -21,7 +21,7 @@ module.exports = {
 
       while (toDraw.length > 0) {
         const age = game.actions.chooseAge(player, toDraw)
-        game.aDraw(player, { age })
+        game.actions.draw(player, { age })
         toDraw.splice(toDraw.indexOf(age), 1)
       }
     }

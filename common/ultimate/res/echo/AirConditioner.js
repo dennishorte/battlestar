@@ -17,7 +17,7 @@ module.exports = {
       const toReturn = game
         .cards.byPlayer(player, 'score')
         .filter(card => topValues.includes(card.getAge()))
-      game.aReturnMany(player, toReturn)
+      game.actions.returnMany(player, toReturn)
     }
   ],
   echoImpl: (game, player) => {

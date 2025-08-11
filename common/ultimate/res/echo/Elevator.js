@@ -31,7 +31,7 @@ module.exports = {
         })
 
         const otherPlayers = game
-          .getPlayerAll()
+          .players.all()
           .filter(other => other !== player)
         let cards
         if (location === 'from scores') {
@@ -55,15 +55,15 @@ module.exports = {
       game.log.addNoEffect()
     }
     else if (green.length === 1) {
-      game.aScore(player, green[0])
+      game.actions.score(player, green[0])
     }
     else {
       const topOrBottom = game.actions.choose(player, ['score top green', 'score bottom green'])[0]
       if (topOrBottom === 'score top green') {
-        game.aScore(player, green[0])
+        game.actions.score(player, green[0])
       }
       else {
-        game.aScore(player, green[green.length - 1])
+        game.actions.score(player, green[green.length - 1])
       }
     }
   },

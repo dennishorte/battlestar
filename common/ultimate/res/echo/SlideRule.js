@@ -24,7 +24,7 @@ module.exports = {
       const lowestCard = game.utilLowestCards(game.cards.tops(player))[0]
       const lowestAge = lowestCard ? lowestCard.getAge() : 0
       const drawAge = lowestAge + splayedCount
-      game.aDraw(player, { age: drawAge })
+      game.actions.draw(player, { age: drawAge })
     }
   ],
   echoImpl: [],
