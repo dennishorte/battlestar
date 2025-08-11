@@ -40,13 +40,13 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['red'], 'right')
+      game.actions.chooseAndSplay(player, ['red'], 'right')
     },
   ],
   echoImpl: (game, player) => {
     const choices = game
       .cards.byPlayer(player, 'hand')
       .filter(card => card.getAge() % 2 === 1)
-    game.aChooseAndScore(player, choices)
+    game.actions.chooseAndScore(player, choices)
   },
 }

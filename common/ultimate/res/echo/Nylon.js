@@ -36,7 +36,7 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['red'], 'up')
+      game.actions.chooseAndSplay(player, ['red'], 'up')
     },
   ],
   echoImpl: [],

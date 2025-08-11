@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.aChooseAndSplay(player, ['green'], 'up')
+      game.actions.chooseAndSplay(player, ['green'], 'up')
     },
     (game, player, { self }) => {
       const choices = game

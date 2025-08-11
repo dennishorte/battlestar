@@ -20,7 +20,7 @@ module.exports = {
         const values = util.array.distinct(topCards.map(card => card.getAge())).sort()
 
         if (values.length === 5) {
-          game.aChooseAndReturn(player, game.cards.byPlayer(player, 'score'), { count: 5 })
+          game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'), { count: 5 })
           for (const age of values) {
             game.actions.drawAndScore(player, age)
           }
@@ -49,7 +49,7 @@ module.exports = {
       .map(card => card.getAge())
       .sort()
     const choices = util.array.distinct(ages)
-    const age = game.aChooseAge(player, choices, { title: 'Choose an age to draw from' })
+    const age = game.actions.chooseAge(player, choices, { title: 'Choose an age to draw from' })
     if (age) {
       game.aDraw(player, { age })
     }

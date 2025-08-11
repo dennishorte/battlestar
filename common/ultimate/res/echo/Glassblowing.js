@@ -26,7 +26,7 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndJunkDeck(player, [game.getEffectAge(this, 2), game.getEffectAge(this, 3)])
+      game.actions.chooseAndJunkDeck(player, [game.getEffectAge(this, 2), game.getEffectAge(this, 3)])
     },
   ],
   echoImpl: [
@@ -34,7 +34,7 @@ module.exports = {
       const choices = game
         .cards.byPlayer(player, 'hand')
         .filter(card => card.checkIsExpansion())
-      game.aChooseAndScore(player, choices)
+      game.actions.chooseAndScore(player, choices)
     }
   ],
 }

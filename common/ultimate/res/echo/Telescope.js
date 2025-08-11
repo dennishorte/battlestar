@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const toPlace = game.aChooseCard(player, game.cards.byPlayer(player, 'forecast'), {
+      const toPlace = game.actions.chooseCard(player, game.cards.byPlayer(player, 'forecast'), {
         title: 'Place a card from your forecast on top of its deck?',
         min: 0,
         max: 1
@@ -22,7 +22,7 @@ module.exports = {
         const canAchieve = game
           .cards.byPlayer(player, 'forecast')
           .filter(card => game.checkAchievementEligibility(player, card))
-        game.aChooseAndAchieve(player, canAchieve)
+        game.actions.chooseAndAchieve(player, canAchieve)
       }
     }
   ],

@@ -15,11 +15,11 @@ module.exports = {
       const choices = game
         .cards.tops(player)
         .filter(card => card.getAge() < 3)
-      game.aChooseAndReturn(player, choices)
+      game.actions.chooseAndReturn(player, choices)
     },
 
     (game, player) => {
-      const age = game.aChooseAge(player, [3, 4, 5])
+      const age = game.actions.chooseAge(player, [3, 4, 5])
       const cards = game.zones.byDeck('base', age).cardlist()
       if (cards.length > 0) {
         const transfer = game.aYesNo(player, `Transfer a {${age}} to the achievements?`)

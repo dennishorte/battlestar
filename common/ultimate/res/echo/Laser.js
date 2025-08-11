@@ -19,7 +19,7 @@ module.exports = {
 
       const score = game.cards.byPlayer(player, 'score')
       const returnCount = Math.ceil(score.length / 2)
-      game.aChooseAndReturn(player, score, { count: returnCount })
+      game.actions.chooseAndReturn(player, score, { count: returnCount })
 
       game.actions.drawAndMeld(player, game.getEffectAge(this, 10))
       game.actions.drawAndMeld(player, game.getEffectAge(this, 10))

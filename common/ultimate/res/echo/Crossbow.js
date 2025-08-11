@@ -15,15 +15,15 @@ module.exports = {
       const choices = game
         .cards.byPlayer(player, 'hand')
         .filter(card => card.checkIsExpansion())
-      game.aChooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'score'))
+      game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'score'))
     },
 
     (game, player) => {
       const otherChoices = game
         .getPlayerAll()
         .filter(other => other !== player)
-      const other = game.aChoosePlayer(player, otherChoices)
-      const card = game.aChooseCard(player, game.cards.byPlayer(player, 'hand'))
+      const other = game.actions.choosePlayer(player, otherChoices)
+      const card = game.actions.chooseCard(player, game.cards.byPlayer(player, 'hand'))
       if (card) {
         game.actions.transfer(player, card, game.zones.byPlayer(other, card.color))
       }

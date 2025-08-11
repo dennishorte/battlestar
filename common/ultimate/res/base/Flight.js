@@ -13,7 +13,7 @@ module.exports = {
     (game, player) => {
       const redSplay = game.zones.byPlayer(player, 'red').splay
       if (redSplay === 'up') {
-        game.aChooseAndSplay(player, null, 'up')
+        game.actions.chooseAndSplay(player, null, 'up')
       }
       else {
         game.log.add({ template: 'no effect' })
@@ -25,7 +25,7 @@ module.exports = {
         game.log.add({ template: 'no effect' })
       }
       else {
-        game.aChooseAndSplay(player, ['red'], 'up')
+        game.actions.chooseAndSplay(player, ['red'], 'up')
       }
     }
   ],

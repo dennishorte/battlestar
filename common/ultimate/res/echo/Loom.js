@@ -28,13 +28,13 @@ module.exports = {
       }
 
       else {
-        const card1 = game.aChooseCard(player, game.cards.byPlayer(player, 'score'), { title: 'Choose a first card to return', min: 0, max: 1 })
+        const card1 = game.actions.chooseCard(player, game.cards.byPlayer(player, 'score'), { title: 'Choose a first card to return', min: 0, max: 1 })
 
         if (card1) {
           const choices = game
             .cards.byPlayer(player, 'score')
             .filter(card => card.getAge() !== card1.getAge())
-          const card2 = game.aChooseCard(player, choices, { title: 'Choose a second card to return' })
+          const card2 = game.actions.chooseCard(player, choices, { title: 'Choose a second card to return' })
 
           const returned = game.aReturnMany(player, [card1, card2], { ordered: true })
 
@@ -67,6 +67,6 @@ module.exports = {
   ],
   echoImpl: (game, player) => {
     const choices = game.utilLowestCards(game.cards.tops(player))
-    game.aChooseAndScore(player, choices)
+    game.actions.chooseAndScore(player, choices)
   },
 }

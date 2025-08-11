@@ -13,7 +13,7 @@ module.exports = {
       const target = game.zones.byPlayer(leader, 'hand')
       const cards = game.cards.byPlayer(player, 'hand')
 
-      const toTransfer = game.aChooseHighest(player, cards, 3)
+      const toTransfer = game.actions.chooseHighest(player, cards, 3)
       const transferred = game.actions.transferMany(player, toTransfer, target)
 
       const transferredCondition = transferred.length > 0

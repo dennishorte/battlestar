@@ -15,7 +15,7 @@ module.exports = {
         .getEligibleAchievementsRaw(player, { doubleScore: true })
         .filter(card => card.zone === 'achievements')
 
-      game.aChooseAndAchieve(player, choices)
+      game.actions.chooseAndAchieve(player, choices)
     }
   ],
   echoImpl: [],

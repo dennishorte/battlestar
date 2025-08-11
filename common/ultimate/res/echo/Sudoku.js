@@ -15,7 +15,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const age = game.aChooseAge(player)
+      const age = game.actions.chooseAge(player)
       const card = game.actions.drawAndMeld(player, age)
 
       const bonuses = util.array.distinct(game.getBonuses(player))

@@ -11,8 +11,8 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const age1 = game.aChooseAge(player, [1,2,3,4,5,6], { title: 'Choose age to draw first' })
-      const age2 = game.aChooseAge(
+      const age1 = game.actions.chooseAge(player, [1,2,3,4,5,6], { title: 'Choose age to draw first' })
+      const age2 = game.actions.chooseAge(
         player,
         [1,2,3,4,5,6].filter(x => x !== age1),
         { title: 'Choose age to draw second' }
@@ -22,7 +22,7 @@ module.exports = {
         game.actions.drawAndReveal(player, age2),
       ]
 
-      const melded = game.aChooseAndMeld(player, cards)
+      const melded = game.actions.chooseAndMeld(player, cards)
       if (melded && melded.length > 0) {
         cards.splice(cards.indexOf(melded[0]), 1)
       }
@@ -39,7 +39,7 @@ module.exports = {
         game.aDraw(player, { age: game.getEffectAge(this, 9) }),
       ].filter(card => card !== undefined)
 
-      const toReturn = game.aChooseCard(player, cards, { title: 'Choose a card to return' })
+      const toReturn = game.actions.chooseCard(player, cards, { title: 'Choose a card to return' })
 
       if (toReturn) {
         game.aReturn(player, toReturn)

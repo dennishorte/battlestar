@@ -14,7 +14,7 @@ module.exports = {
       const remaining = game.getBonuses(player)
 
       while (remaining.length > 0) {
-        const next = game.aChoose(player, remaining, { title: 'Draw next...' })[0]
+        const next = game.actions.choose(player, remaining, { title: 'Draw next...' })[0]
         const index = remaining.indexOf(next)
         remaining.splice(index, 1)
 

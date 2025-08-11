@@ -40,7 +40,7 @@ module.exports = {
       game.state.dogmaInfo.jet = ''
     }
 
-    const cards = game.aChooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
+    const cards = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
     if (player === game.getPlayerByCard(this) && cards && cards.length > 0) {
       game.state.dogmaInfo.jet = cards[0]
     }

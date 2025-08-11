@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'score'))[0]
+      const returned = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'))[0]
       if (returned) {
         game.actions.drawAndScore(player, returned.getAge() - 1)
         game.actions.drawAndScore(player, returned.getAge() - 1)

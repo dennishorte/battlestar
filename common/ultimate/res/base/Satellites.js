@@ -18,7 +18,7 @@ module.exports = {
       game.actions.draw(player, { age: game.getEffectAge(self, 8) })
     },
     (game, player) => {
-      game.aChooseAndSplay(player, ['purple'], 'up')
+      game.actions.chooseAndSplay(player, ['purple'], 'up')
     },
     (game, player) => {
       const cards = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))

@@ -26,14 +26,14 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['yellow'], 'right')
+      game.actions.chooseAndSplay(player, ['yellow'], 'right')
     }
   ],
   echoImpl: (game, player) => {
     const choices = game
       .cards.byPlayer(player, 'hand')
       .filter(card => card.color === 'yellow' || card.color === 'blue')
-    const melded = game.aChooseAndMeld(player, choices)
+    const melded = game.actions.chooseAndMeld(player, choices)
 
     if (!game.state.dogmaInfo.stethoscope) {
       game.state.dogmaInfo.stethoscope = {}

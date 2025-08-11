@@ -37,7 +37,7 @@ module.exports = {
       const choice = game.actions.choose(player, choices)[0]
 
       if (choice.title === 'Unsplay') {
-        game.aUnsplay(player, choice.selection[0])
+        game.actions.unsplay(player, choice.selection[0])
       }
       else if (choice.title === 'Splay up and draw') {
         game.actions.splay(player, choice.selection[0], 'up')

@@ -14,7 +14,7 @@ module.exports = {
       const choices = game
         .cards.tops(player)
         .filter(card => card.checkHasBiscuit('k'))
-      const transferred = game.aChooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'score'), { count: 2 })
+      const transferred = game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'score'), { count: 2 })
 
       if (transferred && transferred.length === 1 && foreseen) {
         game.mLogWasForeseen(self)

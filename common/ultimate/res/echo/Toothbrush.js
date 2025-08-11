@@ -15,7 +15,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.aChooseAndSplay(player, null, 'left')
+      game.actions.chooseAndSplay(player, null, 'left')
     },
 
     (game, player) => {
@@ -26,7 +26,7 @@ module.exports = {
         const choices = game
           .utilHighestCards(junk)
           .filter(card => game.checkAchievementEligibility(player, card))
-        game.aChooseAndAchieve(player, choices, { hidden: true })
+        game.actions.chooseAndAchieve(player, choices, { hidden: true })
       }
     }
   ],
@@ -37,7 +37,7 @@ module.exports = {
         .map(card => card.getAge())
         .sort()
       const choices = util.array.distinct(ages)
-      const age = game.aChooseAge(player, choices)
+      const age = game.actions.chooseAge(player, choices)
       if (age) {
         const toTuck = game
           .cards.byPlayer(player, 'hand')

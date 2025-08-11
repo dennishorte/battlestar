@@ -15,7 +15,7 @@ module.exports = {
       const choices = game
         .cards.tops(player)
         .filter(card => card.color !== 'green')
-      const card = game.aChooseCard(player, choices, {
+      const card = game.actions.chooseCard(player, choices, {
         min: 0,
         max: 1,
         title: 'You may take a card into your hand.'
@@ -28,7 +28,7 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['green'], 'up')
+      game.actions.chooseAndSplay(player, ['green'], 'up')
     },
   ],
   echoImpl: (game, player) => {

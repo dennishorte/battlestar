@@ -13,7 +13,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = game.utilHighestCards(game.cards.tops(player))
-      game.aChooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'))
+      game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'))
     },
 
     (game, player) => {
@@ -44,6 +44,6 @@ module.exports = {
     },
   ],
   echoImpl: (game, player) => {
-    game.aChooseAndMeld(player, game.cards.byPlayer(player, 'forecast'))
+    game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'forecast'))
   },
 }

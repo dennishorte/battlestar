@@ -43,7 +43,7 @@ module.exports = {
         }
       }
 
-      const action = game.aChoose(player, choices, { title: 'Choose a color to splay', min: 0, max: 1 })[0]
+      const action = game.actions.choose(player, choices, { title: 'Choose a color to splay', min: 0, max: 1 })[0]
       if (action) {
         const [color, direction] = action.split(' ')
         game.aSplay(player, color, direction)
@@ -57,6 +57,6 @@ module.exports = {
     const choices = game
       .cards.byPlayer(player, 'hand')
       .filter(card => splayedColors.includes(card.color))
-    game.aChooseAndScore(player, choices)
+    game.actions.chooseAndScore(player, choices)
   },
 }

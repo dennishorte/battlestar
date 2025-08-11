@@ -12,7 +12,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cards = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1} )
+      const cards = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1} )
       if (cards && cards.length > 0) {
         const age = cards[0].getAge()
         const toTransfer = game
@@ -26,7 +26,7 @@ module.exports = {
     },
 
     (game, player) => {
-      const age = game.aChooseAge(player)
+      const age = game.actions.chooseAge(player)
       game.actions.drawAndForeshadow(player, age)
     }
   ],

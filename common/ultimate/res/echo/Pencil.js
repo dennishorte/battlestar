@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'hand'), {
+      const returned = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), {
         min: 0,
         max: 3
       })
@@ -26,7 +26,7 @@ module.exports = {
           }
         }
 
-        const card = game.aChooseCard(player, drawn, { title: 'Choose a card to foreshadow' })
+        const card = game.actions.chooseCard(player, drawn, { title: 'Choose a card to foreshadow' })
         game.actions.foreshadow(player, card)
         game.aReturnMany(player, drawn.filter(other => other !== card))
       }

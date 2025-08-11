@@ -13,7 +13,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'hand'), {
+      const returned = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), {
         min: 0,
         max: 999
       })
@@ -24,7 +24,7 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
+      game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
     },
 
     (game, player, { foreseen, self }) => {

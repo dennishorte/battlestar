@@ -12,13 +12,13 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.aChooseAndReturn(player, game.cards.byPlayer(player, 'score'), { count: 4 })
+      game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'), { count: 4 })
     },
 
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'score'))
+      const returned = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'))
       if (returned && returned.length > 0) {
-        game.aChooseAndSplay(player, null, 'up')
+        game.actions.chooseAndSplay(player, null, 'up')
       }
     },
   ],

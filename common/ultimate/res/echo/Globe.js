@@ -27,7 +27,7 @@ module.exports = {
         if (colorCheck(returned)) {
           // Prove that all three colors were returned.
           const toProve = returned.filter(x => x.color === 'yellow' || x.color === 'green' || x.color === 'blue')
-          const toReveal = game.aChooseCards(player, toProve, {
+          const toReveal = game.actions.chooseCards(player, toProve, {
             title: 'Choose a blue, green, and yellow card to reveal',
             count: 3,
             guard: (cards) => colorCheck(cards),
@@ -38,7 +38,7 @@ module.exports = {
           game.actions.drawAndForeshadow(player, game.getEffectAge(this, 7))
           game.actions.drawAndForeshadow(player, game.getEffectAge(this, 8))
 
-          game.aChooseAndSplay(player, game.util.colors(), 'right', { count: 1 })
+          game.actions.chooseAndSplay(player, game.util.colors(), 'right', { count: 1 })
         }
       }
     },
@@ -49,7 +49,7 @@ module.exports = {
         const cards = game
           .getPlayerAll()
           .flatMap(p => game.cards.tops(p))
-        game.aChooseAndForeshadow(player, cards, { count: 1 })
+        game.actions.chooseAndForeshadow(player, cards, { count: 1 })
       }
     },
   ],

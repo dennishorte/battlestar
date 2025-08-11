@@ -47,7 +47,7 @@ module.exports = {
         .filter(zone => zone.cardlist().length === mostCards)
         .map(zone => zone.color)
 
-      game.aChooseAndSplay(player, choices, 'right')
+      game.actions.chooseAndSplay(player, choices, 'right')
     }
   ],
 }

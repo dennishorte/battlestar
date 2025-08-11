@@ -26,7 +26,7 @@ module.exports = {
     (game, player) => {
       const colorChoices = ['green', 'purple']
       const splayDirection = 'left'
-      game.aChooseAndSplay(player, colorChoices, splayDirection)
+      game.actions.chooseAndSplay(player, colorChoices, splayDirection)
     }
   ],
 }

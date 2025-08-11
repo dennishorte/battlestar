@@ -15,14 +15,14 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 999 })
+      const returned = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 999 })
 
       if (returned) {
         const toAchieve = returned.length * 2
         for (let i = 0; i < toAchieve; i++) {
           const choices = game.getEligibleAchievementsRaw(player)
           if (choices) {
-            game.aChooseAndAchieve(player, choices)
+            game.actions.chooseAndAchieve(player, choices)
           }
           else {
             game.mLog({ template: 'No eligible achievements' })
@@ -34,7 +34,7 @@ module.exports = {
 
     (game, player) => {
       const choices = util.array.distinct(game.getBonuses(player)).sort()
-      const age = game.aChooseAge(player, choices, { title: 'Choose an age to draw and score' })
+      const age = game.actions.chooseAge(player, choices, { title: 'Choose an age to draw and score' })
       if (age) {
         game.actions.drawAndScore(player, age)
       }

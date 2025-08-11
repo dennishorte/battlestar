@@ -18,7 +18,7 @@ module.exports = {
         .getPlayerAll()
         .flatMap(p => game.getBonuses(p))
       const bonuses = util.array.distinct(boardBonuses).sort()
-      const age = game.aChooseAge(player, bonuses, { title: 'Choose an age to draw from' })
+      const age = game.actions.chooseAge(player, bonuses, { title: 'Choose an age to draw from' })
       if (age) {
         game.aDraw(player, { age })
 
@@ -37,7 +37,7 @@ module.exports = {
       `Draw a ${game.getEffectAge(this, 3)}`,
       `Draw and foreshadow a ${game.getEffectAge(this, 4)}`,
     ]
-    const choice = game.aChoose(player, choices)[0]
+    const choice = game.actions.choose(player, choices)[0]
 
     if (choice.includes('foreshadow')) {
       game.actions.drawAndForeshadow(player, game.getEffectAge(this, 4))

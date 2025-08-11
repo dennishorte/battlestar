@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const chosenColor = game.actions.chooseColor(leader)
-      game.aUnsplay(player, chosenColor)
+      game.actions.unsplay(player, chosenColor)
 
       const cards = game.cards.byPlayer(player, chosenColor)
       if (cards.length > 0) {

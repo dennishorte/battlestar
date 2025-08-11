@@ -31,18 +31,18 @@ module.exports = {
         .array
         .takeWhile(topCoins, card => card.getAge() === topCoins[0].getAge())
 
-      const card = game.aChooseCard(player, highest)
+      const card = game.actions.chooseCard(player, highest)
       if (card) {
         game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
       }
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['purple'], 'up')
+      game.actions.chooseAndSplay(player, ['purple'], 'up')
     }
   ],
   echoImpl: (game, player) => {
-    const age = game.aChooseAge(player)
+    const age = game.actions.chooseAge(player)
     game.actions.drawAndScore(player, age)
   },
 }

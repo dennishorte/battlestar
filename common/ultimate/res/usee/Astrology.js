@@ -19,7 +19,7 @@ module.exports = {
         .util.colors()
         .filter(color => game.cards.byPlayer(player, color).length === mostCount)
 
-      game.aChooseAndSplay(player, choices, 'left', { min: 0, max: 1 })
+      game.actions.chooseAndSplay(player, choices, 'left', { min: 0, max: 1 })
     },
     (game, player) => {
       const numPurpleCards = game.getVisibleCardsByZone(player, 'purple')

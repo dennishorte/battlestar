@@ -31,7 +31,7 @@ module.exports = {
           .forEach(card => candidates.push(card))
       }
 
-      const card = game.aChooseCard(player, candidates, { min: 0, max: 1 })
+      const card = game.actions.chooseCard(player, candidates, { min: 0, max: 1 })
       if (card) {
         const owner = game.getPlayerByCard(card)
         game.aClaimAchievement(player, { card })

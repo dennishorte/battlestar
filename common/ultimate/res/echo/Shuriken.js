@@ -17,12 +17,12 @@ module.exports = {
         .filter(card => card.color !== 'red')
         .filter(card => card.checkHasBiscuit('k') || card.checkHasBiscuit('p'))
 
-      let cards = game.aChooseCards(player, choices, { count: 2 })
+      let cards = game.actions.chooseCards(player, choices, { count: 2 })
 
       if (cards.length > 0) {
         const transferred = []
         while (cards.length > 0) {
-          const card = game.aChooseCard(player, cards)
+          const card = game.actions.chooseCard(player, cards)
           cards = cards.filter(other => other.id !== card.id)
 
           const trans = game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
@@ -39,7 +39,7 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['purple'], 'right')
+      game.actions.chooseAndSplay(player, ['purple'], 'right')
     }
   ],
   echoImpl: [],

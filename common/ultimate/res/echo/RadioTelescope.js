@@ -22,7 +22,7 @@ module.exports = {
         }
       }
 
-      const melded = game.aChooseAndMeld(player, drawn)
+      const melded = game.actions.chooseAndMeld(player, drawn)
 
       if (melded.length > 0 && melded[0].name === 'A.I.') {
         throw new GameOverEvent({

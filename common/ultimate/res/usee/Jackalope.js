@@ -21,7 +21,7 @@ module.exports = {
       if (card) {
         const transferred = game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
         if (transferred) {
-          game.aUnsplay(player, card.color)
+          game.actions.unsplay(player, card.color)
         }
       }
     },
@@ -34,7 +34,7 @@ module.exports = {
       const maxCount = Math.max(...colorCounts.map(c => c.count))
       const maxColors = colorCounts.filter(c => c.count === maxCount).map(c => c.color)
 
-      game.aChooseAndUnsplay(player, maxColors)
+      game.actions.chooseAndUnsplay(player, maxColors)
     }
   ],
 }

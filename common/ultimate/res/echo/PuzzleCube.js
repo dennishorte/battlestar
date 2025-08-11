@@ -16,7 +16,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const color = game.aChoose(player, game.util.colors(), {
+      const color = game.actions.choose(player, game.util.colors(), {
         title: 'Choose a color for scoring bottom cards',
         min: 0,
         max: 1
@@ -27,7 +27,7 @@ module.exports = {
         return
       }
 
-      const count = game.aChoose(player, [1, 2], { title: `Score your bottom 1 or 2 ${color} cards?` })
+      const count = game.actions.choose(player, [1, 2], { title: `Score your bottom 1 or 2 ${color} cards?` })
 
       for (let i = 0; i < count; i++) {
         const card = game.getBottomCard(player, color)

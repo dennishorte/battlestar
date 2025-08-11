@@ -13,7 +13,7 @@ module.exports = {
     (game, player) => {
       const card = game.actions.drawAndMeld(player, game.getEffectAge(this, 7))
       if (card) {
-        game.aChooseAndSplay(player, [card.color], 'right')
+        game.actions.chooseAndSplay(player, [card.color], 'right')
       }
     }
   ],

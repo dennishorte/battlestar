@@ -20,7 +20,7 @@ module.exports = {
         .sort()
 
       while (toDraw.length > 0) {
-        const age = game.aChooseAge(player, toDraw)
+        const age = game.actions.chooseAge(player, toDraw)
         game.aDraw(player, { age })
         toDraw.splice(toDraw.indexOf(age), 1)
       }

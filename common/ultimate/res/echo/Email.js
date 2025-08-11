@@ -18,7 +18,7 @@ module.exports = {
       const choices = game
         .utilLowestCards(game.cards.tops(player))
         .filter(card => card.color !== 'green')
-      const card = game.aChooseCard(player, choices)
+      const card = game.actions.chooseCard(player, choices)
       if (card) {
         game.aCardEffects(player, card, 'dogma')
       }

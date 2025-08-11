@@ -24,7 +24,7 @@ module.exports = {
         .map(([age,]) => parseInt(age))
         .sort()
 
-      const age = game.aChooseAge(player, choices, {
+      const age = game.actions.chooseAge(player, choices, {
         title: 'Choose a value to return three cards',
         min: 0,
         max: 1,
@@ -33,7 +33,7 @@ module.exports = {
       if (age) {
         const choices = hand
           .filter(card => card.getAge() === age)
-        const returned = game.aChooseAndReturn(player, choices, { count: 3 })
+        const returned = game.actions.chooseAndReturn(player, choices, { count: 3 })
         if (returned && returned.length === 3) {
           game.aDraw(player, { age: age + 2 })
         }
@@ -41,13 +41,13 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['yellow', 'blue'], 'left')
+      game.actions.chooseAndSplay(player, ['yellow', 'blue'], 'left')
     },
   ],
   echoImpl: [
     (game, player) => {
       game.aDraw(player, { age: game.getEffectAge(this, 4) })
-      game.aChooseAndReturn(player, game.cards.byPlayer(player, 'hand'))
+      game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'))
     }
   ],
 }

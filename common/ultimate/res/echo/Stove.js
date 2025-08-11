@@ -22,13 +22,13 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['green'], 'right')
+      game.actions.chooseAndSplay(player, ['green'], 'right')
     }
   ],
   echoImpl: (game, player) => {
     const choices = game
       .cards.tops(player)
       .filter(card => !card.checkHasBiscuit('f'))
-    game.aChooseAndScore(player, choices)
+    game.actions.chooseAndScore(player, choices)
   },
 }

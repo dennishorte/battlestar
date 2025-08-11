@@ -17,14 +17,14 @@ module.exports = {
           break
         }
 
-        const card = game.aChooseCard(player, game.cards.byPlayer(player, 'hand'), {
+        const card = game.actions.chooseCard(player, game.cards.byPlayer(player, 'hand'), {
           title: `Choose a card to score or meld (${i + 1} of 2)`,
           min: 0,
           max: 1
         })
 
         if (card) {
-          const meldOrScore = game.aChoose(player, ['meld', 'score'], {
+          const meldOrScore = game.actions.choose(player, ['meld', 'score'], {
             title: `Meld or score ${card.name}`
           })[0]
           if (meldOrScore === 'meld') {

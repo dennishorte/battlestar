@@ -15,7 +15,7 @@ module.exports = {
       const choices = game
         .cards.byPlayer(player, 'hand')
         .filter(card => card.checkIsExpansion())
-      game.aChooseAndReturn(player, choices)
+      game.actions.chooseAndReturn(player, choices)
     },
 
     (game, player) => {
@@ -26,6 +26,6 @@ module.exports = {
     },
   ],
   echoImpl: (game, player) => {
-    game.aChooseAndSplay(player, null, 'left')
+    game.actions.chooseAndSplay(player, null, 'left')
   },
 }

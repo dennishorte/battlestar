@@ -14,7 +14,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 999 })
+      const returned = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 999 })
 
       if (returned) {
         const toDraw = []
@@ -29,7 +29,7 @@ module.exports = {
         toDraw.sort()
 
         while (toDraw.length > 0) {
-          const age = game.aChooseAge(player, toDraw)
+          const age = game.actions.chooseAge(player, toDraw)
           game.aDraw(player, { age })
           toDraw.splice(toDraw.indexOf(age), 1)
         }

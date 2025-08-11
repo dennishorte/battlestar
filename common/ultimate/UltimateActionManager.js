@@ -99,6 +99,116 @@ class UltimateActionManager extends BaseActionManager {
     }
   }
 
+  chooseAndAchieve(player, choices, opts={}) {
+    if (choices.length === 0) {
+      this.log.addNoEffect()
+    }
+
+    if (typeof choices[0] === 'object') {
+      choices = this.formatAchievements(choices)
+    }
+
+    const selected = this.actions.choose(
+      player,
+      choices,
+      { ...opts, title: 'Choose Achievement' }
+    )
+
+    for (const card of selected) {
+      this.claimAchievement(player, { card })
+    }
+  }
+
+  chooseAndJunkDeck(player, ages, opts={}) {
+    const age = this.chooseAge(player, ages, {
+      title: 'Choose a deck to junk',
+      ...opts
+    })
+
+    this.actions.junkDeck(player, age)
+  }
+
+  chooseAndSplay(player, choices, direction, opts={}) {
+    util.assert(direction, 'No direction specified for splay')
+
+    if (!choices) {
+      choices = this.util.colors()
+    }
+
+    choices = choices
+      .filter(color => this.zones.byPlayer(player, color).splay !== direction)
+      .filter(color => this.zones.byPlayer(player, color).cardlist().length > 1)
+
+    if (choices.length === 0) {
+      this.log.addNoEffect()
+      return []
+    }
+
+    // Splaying is almost always optional
+    if (!opts.count && !opts.min && !opts.max) {
+      opts.min = 0
+      opts.max = 1
+    }
+
+    const colors = this.choose(
+      player,
+      choices,
+      { ...opts, title: `Choose a color to splay ${direction}` }
+    )
+    if (colors.length === 0) {
+      this.log.addDoNothing(player)
+      return []
+    }
+    else {
+      const splayed = []
+      for (const color of colors) {
+        splayed.push(this.actions.splay(player, color, direction))
+      }
+      return splayed
+    }
+  }
+
+  chooseAndUnsplay(player, choices, opts={}) {
+    const colors = this.choose(player, choices, {
+      title: 'Choose a color',
+      ...opts
+    })
+    for (const color of colors) {
+      this.unsplay(player, color)
+    }
+  }
+
+  chooseByPredicate(player, cards, count, pred, opts={}) {
+    let numRemaining = count
+    let cardsRemaining = [...cards]
+    let selected = []
+
+    while (numRemaining > 0 && cardsRemaining.length > 0) {
+      const choices = pred(cardsRemaining)
+      cardsRemaining = cardsRemaining.filter(card => !choices.includes(card))
+
+      if (choices.length <= numRemaining) {
+        selected = selected.concat(choices)
+        numRemaining -= choices.length
+      }
+      else {
+        const chosen = this.chooseCards(player, choices, { count: numRemaining, ...opts })
+        selected = selected.concat(chosen)
+        numRemaining -= chosen.length
+      }
+    }
+
+    return selected
+  }
+
+  chooseHighest(player, cards, count) {
+    return this.chooseByPredicate(player, cards, count, this.util.highestCards)
+  }
+
+  chooseLowest(player, cards, count) {
+    return this.chooseByPredicate(player, cards, count, this.util.lowestCards)
+  }
+
   chooseCards(player, cards, opts={}) {
     if (cards.length === 0 || opts.count === 0 || opts.max === 0) {
       this.log.addNoEffect()
@@ -503,6 +613,25 @@ class UltimateActionManager extends BaseActionManager {
 
     return card
   })
+
+  unsplay(player, color) {
+    const zone = this.zones.byPlayer(player, color)
+
+    if (zone.splay === 'none') {
+      this.log.add({
+        template: '{zone} is already unsplayed',
+        args: { zone }
+      })
+    }
+    else {
+      this.log.add({
+        template: '{player} unsplays {zone}',
+        args: { player, zone }
+      })
+      zone.splay = 'none'
+      return color
+    }
+  }
 
   foreshadowMany = UltimateActionManager.createManyMethod('foreshadow', 2)
   junkMany = UltimateActionManager.createManyMethod('junk', 2)

@@ -18,7 +18,7 @@ module.exports = {
 
       const cards = game.state.dogmaInfo.charitableTrust[player.name]
         .filter(card => card.zone.includes('hand'))
-      const melded = game.aChooseAndMeld(player, cards, { min: 0, max: 1 })[0]
+      const melded = game.actions.chooseAndMeld(player, cards, { min: 0, max: 1 })[0]
 
       if (melded) {
         const greenCard = game.getTopCard(player, 'green')
@@ -38,7 +38,7 @@ module.exports = {
     }
   ],
   echoImpl: (game, player) => {
-    const age = game.aChooseAge(player, [game.getEffectAge(this, 3), game.getEffectAge(this, 4)])
+    const age = game.actions.chooseAge(player, [game.getEffectAge(this, 3), game.getEffectAge(this, 4)])
     const card = game.aDraw(player, { age })
 
     if (!game.state.dogmaInfo.charitableTrust) {

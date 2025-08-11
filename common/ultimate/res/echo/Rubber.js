@@ -15,11 +15,11 @@ module.exports = {
       const choices = game
         .cards.tops(player)
         .filter(card => !card.checkHasBonus())
-      game.aChooseAndScore(player, choices)
+      game.actions.chooseAndScore(player, choices)
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['red'], 'up')
+      game.actions.chooseAndSplay(player, ['red'], 'up')
     }
   ],
   echoImpl: (game, player) => {

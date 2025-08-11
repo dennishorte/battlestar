@@ -16,7 +16,7 @@ module.exports = {
         game.aDraw(player, { age: game.getEffectAge(this, 1), exp: 'echo' }),
       ]
 
-      const foreshadowed = game.aChooseCard(player, cards, {
+      const foreshadowed = game.actions.chooseCard(player, cards, {
         title: 'Choose a card to foreshadow',
       })
 

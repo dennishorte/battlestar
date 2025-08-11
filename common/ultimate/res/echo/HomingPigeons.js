@@ -18,7 +18,7 @@ module.exports = {
       const choices = game
         .cards.byPlayer(player, 'score')
         .filter(card => ages.includes(card.getAge()))
-      game.aChooseAndReturn(player, choices, { count: 2 })
+      game.actions.chooseAndReturn(player, choices, { count: 2 })
     },
 
     (game, player, { foreseen, self }) => {
@@ -29,7 +29,7 @@ module.exports = {
         }
       }
       else {
-        game.aChooseAndSplay(player, ['green', 'red'], 'left')
+        game.actions.chooseAndSplay(player, ['green', 'red'], 'left')
       }
     }
   ],

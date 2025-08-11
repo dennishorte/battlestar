@@ -25,7 +25,7 @@ module.exports = {
       game.actions.returnMany(player, others)
     },
     (game, player) => {
-      game.aChooseAndSplay(player, ['green', 'yellow'], 'right')
+      game.actions.chooseAndSplay(player, ['green', 'yellow'], 'right')
     }
   ],
 }

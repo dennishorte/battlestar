@@ -27,7 +27,7 @@ module.exports = {
       }
 
       if (numGreen >= 1) {
-        game.aChooseAndSplay(player, ['green', 'purple'], 'right', { count: 1 })
+        game.actions.chooseAndSplay(player, ['green', 'purple'], 'right', { count: 1 })
       }
 
       if (numGreen >= 2) {

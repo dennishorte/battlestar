@@ -15,7 +15,7 @@ module.exports = {
         .cards.byPlayer(player, 'hand')
         .filter(card => card.checkHasBiscuit('k') || card.checkHasBiscuit('s'))
 
-      const transferred = game.aChooseAndTransfer(
+      const transferred = game.actions.chooseAndTransfer(
         player,
         valid,
         game.zones.byPlayer(leader, 'hand')

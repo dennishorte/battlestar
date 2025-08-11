@@ -12,7 +12,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const card = game.aChooseAndMeld(player, game.cards.byPlayer(player, 'hand'))[0]
+      const card = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))[0]
       const age = card ? card.getAge() : 0
       game.actions.drawAndForeshadow(player, age)
     },

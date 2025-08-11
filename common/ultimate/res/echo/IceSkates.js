@@ -22,11 +22,11 @@ module.exports = {
       }
     },
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 2 })
+      const returned = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 2 })
 
       if (returned) {
         for (let i = 0; i < returned.length; i++) {
-          const choice = game.aChoose(player, [
+          const choice = game.actions.choose(player, [
             'draw and meld a {2}',
             'draw and foreshadow a {3}',
           ])[0]
@@ -41,7 +41,7 @@ module.exports = {
       }
 
       const choices = game.utilHighestCards(game.cards.tops(player))
-      game.aChooseAndReturn(player, choices)
+      game.actions.chooseAndReturn(player, choices)
     }
   ],
   echoImpl: [],

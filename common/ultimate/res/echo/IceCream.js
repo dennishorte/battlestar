@@ -19,7 +19,7 @@ module.exports = {
       const addAchievement = game.aYesNo(player, 'Transfer a card to the available achievements?')
 
       if (addAchievement) {
-        const age = game.aChooseAge(player, [
+        const age = game.actions.chooseAge(player, [
           game.getEffectAge(this, 6),
           game.getEffectAge(this, 7),
           game.getEffectAge(this, 8),
@@ -39,6 +39,6 @@ module.exports = {
       .cards.tops(player)
       .filter(card => card.color !== 'purple')
       .filter(card => !card.checkHasBonus())
-    game.aChooseAndScore(player, choices)
+    game.actions.chooseAndScore(player, choices)
   },
 }

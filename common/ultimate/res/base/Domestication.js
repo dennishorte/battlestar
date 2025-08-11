@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const card = game.aChooseLowest(player, game.cards.byPlayer(player, 'hand'), 1)[0]
+      const card = game.actions.chooseLowest(player, game.cards.byPlayer(player, 'hand'), 1)[0]
       if (card) {
         game.actions.meld(player, card)
       }

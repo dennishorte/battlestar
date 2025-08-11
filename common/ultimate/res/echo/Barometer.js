@@ -20,7 +20,7 @@ module.exports = {
         .map(bonus => bonus + 2)
         .sort((l, r) => l - r)
       const distinct = util.array.distinct(bonuses)
-      const age = game.aChooseAge(player, distinct)
+      const age = game.actions.chooseAge(player, distinct)
       if (age) {
         game.actions.drawAndForeshadow(player, age)
       }
@@ -40,6 +40,6 @@ module.exports = {
     const choices = game
       .cards.byPlayer(player, 'forecast')
       .filter(card => card.getAge() === 5)
-    game.aChooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'))
+    game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'))
   },
 }

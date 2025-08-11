@@ -15,7 +15,7 @@ module.exports = {
     (game, player) => {
       const drawAndScore = game.aYesNo(player, 'Draw and score a card of any value?')
       if (drawAndScore) {
-        const age = game.aChooseAge(player)
+        const age = game.actions.chooseAge(player)
         game.actions.drawAndScore(player, age)
       }
 
@@ -23,7 +23,7 @@ module.exports = {
         .util.colors()
         .map(color => game.getBottomCard(player, color))
         .filter(card => card !== undefined)
-      game.aChooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'), {
+      game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'), {
         title: 'Choose a bottom card to transfer to your hand',
       })
 

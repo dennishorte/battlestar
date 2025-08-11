@@ -16,7 +16,7 @@ module.exports = {
         .cards.byPlayer(player, 'forecast')
         .filter(card => card.checkHasBonus())
 
-      const cards = game.aChooseAndReturn(player, choices, { min: 0, max: 1 })
+      const cards = game.actions.chooseAndReturn(player, choices, { min: 0, max: 1 })
       if (cards && cards.length > 0) {
         const card = cards[0]
         const bonuses = card.getBonuses()
@@ -29,7 +29,7 @@ module.exports = {
         game.mLogWasForeseen(self)
 
         const others = game.getPlayerAll().filter(o => o.name !== player.name)
-        const other = game.aChoosePlayer(player, others)
+        const other = game.actions.choosePlayer(player, others)
         game.actions.foreshadowMany(player, game.cards.byPlayer(other, 'forecast'))
       }
       else {

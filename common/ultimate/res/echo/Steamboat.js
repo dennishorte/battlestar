@@ -18,7 +18,7 @@ module.exports = {
         }
 
         else if (card.color === 'red' || card.color === 'green') {
-          game.aChooseAndTransfer(player, game.cards.byPlayer(player, 'score'), game.zones.byPlayer(leader, 'score'), { count: 2 })
+          game.actions.chooseAndTransfer(player, game.cards.byPlayer(player, 'score'), game.zones.byPlayer(leader, 'score'), { count: 2 })
         }
 
         else {

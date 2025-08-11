@@ -20,7 +20,7 @@ module.exports = {
 
     (game, player) => {
       game.actions.drawAndTuck(player, game.getEffectAge(this, 5))
-      game.aChooseAndReturn(player, game.cards.tops(player), { min: 0, max: 1 })
+      game.actions.chooseAndReturn(player, game.cards.tops(player), { min: 0, max: 1 })
     },
   ],
   echoImpl: (game, player) => {

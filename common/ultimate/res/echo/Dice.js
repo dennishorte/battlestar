@@ -35,7 +35,7 @@ module.exports = {
           .filter(x => x.points > playerBonusPoints)
           .map(x => x.opp)
 
-        const opp = game.aChoosePlayer(player, choices, {
+        const opp = game.actions.choosePlayer(player, choices, {
           title: 'Choose a player to transfer the drawn card to'
         })
 

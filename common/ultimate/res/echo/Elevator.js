@@ -18,13 +18,13 @@ module.exports = {
         .cards.byPlayer(player, 'score')
         .map(card => card.getAge())
       const distinct = util.array.distinct(choices).sort()
-      const age = game.aChooseAge(player, distinct)
+      const age = game.actions.chooseAge(player, distinct)
       if (age) {
         game.mLog({
           template: '{player} chooses {age}',
           args: { player, age }
         })
-        const location = game.aChoose(player, ['from scores', 'from hands'])[0]
+        const location = game.actions.choose(player, ['from scores', 'from hands'])[0]
         game.mLog({
           template: '{player} chooses {location}',
           args: { player, location }
@@ -58,7 +58,7 @@ module.exports = {
       game.aScore(player, green[0])
     }
     else {
-      const topOrBottom = game.aChoose(player, ['score top green', 'score bottom green'])[0]
+      const topOrBottom = game.actions.choose(player, ['score top green', 'score bottom green'])[0]
       if (topOrBottom === 'score top green') {
         game.aScore(player, green[0])
       }

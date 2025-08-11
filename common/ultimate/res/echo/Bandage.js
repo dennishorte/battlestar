@@ -18,12 +18,12 @@ module.exports = {
         .cards.byPlayer(player, 'score')
         .filter(card => !handAges.includes(card.getAge()))
       const highest = game.utilHighestCards(choices)
-      game.aChooseAndReturn(player, highest)
+      game.actions.chooseAndReturn(player, highest)
 
       const boardChoices = game
         .cards.tops(player)
         .filter(card => card.checkHasBiscuit('i'))
-      game.aChooseAndReturn(player, boardChoices)
+      game.actions.chooseAndReturn(player, boardChoices)
     }
   ],
   echoImpl: [
@@ -31,7 +31,7 @@ module.exports = {
       const choices = game
         .cards.byPlayer(player, 'hand')
         .filter(card => card.checkHasBiscuit('l'))
-      game.aChooseAndMeld(player, choices)
+      game.actions.chooseAndMeld(player, choices)
     }
   ],
 }

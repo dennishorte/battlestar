@@ -24,14 +24,14 @@ module.exports = {
         .filter(([, bonuses]) => bonuses.length >= 2)
         .map(([age,]) => parseInt(age))
         .sort()
-      const age = game.aChooseAge(player, choices)
+      const age = game.actions.chooseAge(player, choices)
       if (age) {
         game.actions.drawAndScore(player, age)
       }
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['purple'], 'right')
+      game.actions.chooseAndSplay(player, ['purple'], 'right')
     },
 
     (game, player) => {

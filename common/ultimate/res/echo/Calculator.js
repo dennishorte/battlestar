@@ -20,7 +20,7 @@ module.exports = {
           .map(color => game.getBottomCard(player, color))
           .filter(card => card !== undefined)
           .filter(card => card.color !== 'blue')
-        const scored = game.aChooseAndScore(player, choices, { count: 2 })
+        const scored = game.actions.chooseAndScore(player, choices, { count: 2 })
         if (scored && scored.length >= 2) {
           const total = scored[0].getAge() + scored[1].getAge()
           if (total >= 11) {
@@ -46,7 +46,7 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['blue'], 'up')
+      game.actions.chooseAndSplay(player, ['blue'], 'up')
     }
   ],
   echoImpl: [],

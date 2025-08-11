@@ -71,7 +71,7 @@ function _maybeCityBiscuits(player, card) {
         break
       case '=':
         for (const opp of this.players.opponentsOf(player)) {
-          this.game.aUnsplay(opp, card.color)
+          this.game.actions.unsplay(opp, card.color)
         }
         break
       case '|':

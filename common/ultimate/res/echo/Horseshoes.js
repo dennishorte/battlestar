@@ -14,7 +14,7 @@ module.exports = {
       const choices = game
         .cards.tops(player)
         .filter(card => !card.checkHasBiscuit('k') && !card.checkHasBiscuit('f'))
-      const card = game.aChooseCard(player, choices)
+      const card = game.actions.chooseCard(player, choices)
 
       if (card) {
         const transferred = game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))

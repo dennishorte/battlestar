@@ -30,6 +30,10 @@ class UltimateCardManager extends BaseCardManager {
     return this.zones.colorStacks(player).map(zone => zone.peek()).filter(x => Boolean(x))
   }
 
+  topsAll() {
+    return this.players.all().flatMap(player => this.tops(player))
+  }
+
   reset() {
     super.reset()
     this._expansions = {}

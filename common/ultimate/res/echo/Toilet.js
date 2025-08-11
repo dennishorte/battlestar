@@ -23,7 +23,7 @@ module.exports = {
     },
 
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'hand'), {
+      const returned = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), {
         title: 'Choose a card to cycle',
         min: 0,
         max: 1

@@ -21,7 +21,7 @@ module.exports = {
       }
 
       if (exactlyEightIcon) {
-        game.aChooseAndSplay(player, ['green', 'purple'], 'right')
+        game.actions.chooseAndSplay(player, ['green', 'purple'], 'right')
         game.actions.draw(player, { age: game.getEffectAge(self, 8) })
       }
 

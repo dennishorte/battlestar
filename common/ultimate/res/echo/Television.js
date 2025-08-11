@@ -11,14 +11,14 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const opponent = game.aChoosePlayer(player, game.getPlayerOpponents(player))
-      const age = game.aChooseAge(player)
+      const opponent = game.actions.choosePlayer(player, game.getPlayerOpponents(player))
+      const age = game.actions.chooseAge(player)
 
       const choices = game
         .cards
         .byPlayer(opponent, 'score')
         .filter(card => card.getAge() === age)
-      const transferred = game.aChooseCard(player, choices)
+      const transferred = game.actions.chooseCard(player, choices)
       if (transferred) {
         game.actions.transfer(player, transferred, game.zones.byPlayer(opponent, transferred.color))
 
@@ -33,7 +33,7 @@ module.exports = {
             .byPlayer(opponent, 'score')
             .filter(card => card.getAge() === age)
             .filter(card => game.checkAchievementEligibility(player, card))
-          game.aChooseAndAchieve(player, achieveChoices)
+          game.actions.chooseAndAchieve(player, achieveChoices)
         }
       }
     }
