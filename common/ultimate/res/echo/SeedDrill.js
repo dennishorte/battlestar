@@ -24,7 +24,7 @@ module.exports = {
       if (cards.length > 0) {
         const transfer = game.aYesNo(player, `Transfer a {${age}} to the achievements?`)
         if (transfer) {
-          game.aTransfer(player, cards[cards.length - 1], game.zones.byId('achievements'))
+          game.actions.transfer(player, cards[cards.length - 1], game.zones.byId('achievements'))
         }
       }
     },

@@ -13,11 +13,11 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       for (let i = 0; i < 2; i++) {
-        if (game.cards.byZone(player, 'hand').length === 0) {
+        if (game.cards.byPlayer(player, 'hand').length === 0) {
           break
         }
 
-        const card = game.aChooseCard(player, game.cards.byZone(player, 'hand'), {
+        const card = game.aChooseCard(player, game.cards.byPlayer(player, 'hand'), {
           title: `Choose a card to score or meld (${i + 1} of 2)`,
           min: 0,
           max: 1

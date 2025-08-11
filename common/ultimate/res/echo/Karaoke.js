@@ -13,7 +13,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       if (!game.state.dogmaInfo.karaoke) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
         return
       }
       const card = game.state.dogmaInfo.karaoke[player.name]

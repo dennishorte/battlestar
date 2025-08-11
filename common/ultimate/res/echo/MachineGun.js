@@ -15,7 +15,7 @@ module.exports = {
       const toTransfer = game
         .cards.tops(player)
         .filter(card => card.checkHasBonus())
-      const transferred = game.aTransferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'))
+      const transferred = game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'))
 
       if (transferred && transferred.length > 0) {
         game.aDraw(player, { age: game.getEffectAge(this, 7) })
@@ -36,7 +36,7 @@ module.exports = {
         game.actions.drawAndScore(player, game.getEffectAge(this, 7))
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     }
   ],

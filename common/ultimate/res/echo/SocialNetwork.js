@@ -18,9 +18,10 @@ module.exports = {
         title: 'Choose a biscuit',
       })[0][1]
       const toTransfer = game
-        .cards.tops(player)
+        .cards
+        .tops(player)
         .filter(card => !card.checkHasBiscuit(biscuit))
-      game.aTransferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'))
+      game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'))
     },
 
     (game, player) => {
@@ -32,7 +33,7 @@ module.exports = {
 
       for (const biscuits of theirs) {
         if (mine.f >= biscuits.f || mine.c >= biscuits.c || mine.k >= biscuits.k) {
-          game.mLogNoEffect()
+          game.log.addNoEffect()
           return
         }
       }

@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       while (true) {
-        const returned = game.aChooseAndReturn(player, game.cards.byZone(player, 'hand'))[0]
+        const returned = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'hand'))[0]
         if (returned) {
           const revealed = game.actions.drawAndReveal(player, returned.getAge())
           if (revealed) {
@@ -29,7 +29,7 @@ module.exports = {
           break
         }
 
-        if (game.cards.byZone(player, 'hand').length === 0) {
+        if (game.cards.byPlayer(player, 'hand').length === 0) {
           break
         }
 

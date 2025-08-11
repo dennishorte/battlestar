@@ -15,10 +15,10 @@ module.exports = {
       if (age && age > 0) {
         const card = game.actions.drawAndReveal(player, age)
         if (card) {
-          game.aTransfer(player, card, game.zones.byPlayer(leader, 'forecast'))
+          game.actions.transfer(player, card, game.zones.byPlayer(leader, 'forecast'))
 
           if (card.color === 'red') {
-            game.aTransferMany(player, game.cards.byZone(player, 'hand'), game.zones.byPlayer(leader, 'score'))
+            game.actions.transferMany(player, game.cards.byPlayer(player, 'hand'), game.zones.byPlayer(leader, 'score'))
           }
         }
       }

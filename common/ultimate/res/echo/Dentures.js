@@ -23,7 +23,7 @@ module.exports = {
 
       while (true) {
         if (card) {
-          const cards = game.cards.byZone(player, card.color)
+          const cards = game.cards.byPlayer(player, card.color)
           game.mLog({
             template: '{player} will try to score {color}',
             args: { player, color: card.color }
@@ -46,7 +46,7 @@ module.exports = {
           break
         }
         else {
-          game.mLogNoEffect()
+          game.log.addNoEffect()
           break
         }
       }

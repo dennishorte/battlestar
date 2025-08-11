@@ -21,7 +21,7 @@ module.exports = {
           }
           else {
             game.mLog({ template: 'Card did not have {f}.' })
-            game.aForeshadow(player, card)
+            game.actions.foreshadow(player, card)
             break
           }
         }

@@ -14,11 +14,11 @@ module.exports = {
       const card = game.actions.drawAndReveal(player, game.getEffectAge(this, 6))
       if (card) {
         if (card.color === 'blue' || card.color === 'yellow') {
-          game.aTransferMany(player, game.cards.byZone(player, 'hand'), game.zones.byPlayer(leader, 'hand'))
+          game.actions.transferMany(player, game.cards.byPlayer(player, 'hand'), game.zones.byPlayer(leader, 'hand'))
         }
 
         else if (card.color === 'red' || card.color === 'green') {
-          game.aChooseAndTransfer(player, game.cards.byZone(player, 'score'), game.zones.byPlayer(leader, 'score'), { count: 2 })
+          game.aChooseAndTransfer(player, game.cards.byPlayer(player, 'score'), game.zones.byPlayer(leader, 'score'), { count: 2 })
         }
 
         else {

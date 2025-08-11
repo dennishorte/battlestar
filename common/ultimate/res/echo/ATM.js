@@ -33,7 +33,7 @@ module.exports = {
 
       const card = game.aChooseCard(player, highest)
       if (card) {
-        game.aTransfer(player, card, game.zones.byPlayer(leader, card.color))
+        game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
       }
     },
 

@@ -22,7 +22,7 @@ module.exports = {
       })
 
       if (card) {
-        game.aTransfer(player, card, game.zones.byPlayer(player, 'hand'))
+        game.actions.transfer(player, card, game.zones.byPlayer(player, 'hand'))
         game.actions.drawAndScore(player, card.getAge())
       }
     },

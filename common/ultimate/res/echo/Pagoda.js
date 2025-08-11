@@ -22,7 +22,7 @@ module.exports = {
           game.mLogWasForeseen(self)
           const toMeld = game
             .getPlayersOther(player)
-            .flatMap(p => game.cards.byZone(p, card.color))
+            .flatMap(p => game.cards.byPlayer(p, card.color))
           game.aMeldMany(player, toMeld)
         }
       }

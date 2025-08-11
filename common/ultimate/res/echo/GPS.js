@@ -13,7 +13,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.aReturnMany(player, game.cards.byZone(player, 'forecast'))
+      game.aReturnMany(player, game.cards.byPlayer(player, 'forecast'))
     },
 
     (game, player) => {

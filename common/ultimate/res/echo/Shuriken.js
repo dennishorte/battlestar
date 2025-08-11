@@ -25,7 +25,7 @@ module.exports = {
           const card = game.aChooseCard(player, cards)
           cards = cards.filter(other => other.id !== card.id)
 
-          const trans = game.aTransfer(player, card, game.zones.byPlayer(leader, card.color))
+          const trans = game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
           if (trans) {
             transferred.push(trans)
           }
@@ -33,7 +33,7 @@ module.exports = {
 
         if (foreseen && transferred.length === 2) {
           game.mLogWasForeseen(self)
-          game.aTransferMany(player, transferred, game.zones.byPlayer(leader, 'achievements'), { ordered: true })
+          game.actions.transferMany(player, transferred, game.zones.byPlayer(leader, 'achievements'), { ordered: true })
         }
       }
     },

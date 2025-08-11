@@ -28,7 +28,7 @@ module.exports = {
 
         const toReturn = game
           .getPlayerAll()
-          .flatMap(p => game.cards.byZone(p, color))
+          .flatMap(p => game.cards.byPlayer(p, color))
 
         game.aReturnMany(player, toReturn)
       }

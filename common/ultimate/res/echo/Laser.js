@@ -17,7 +17,7 @@ module.exports = {
         .filter(card => !card.isSpecialAchievement)
       game.aReturnMany(player, toReturn, { ordered: true })
 
-      const score = game.cards.byZone(player, 'score')
+      const score = game.cards.byPlayer(player, 'score')
       const returnCount = Math.ceil(score.length / 2)
       game.aChooseAndReturn(player, score, { count: returnCount })
 

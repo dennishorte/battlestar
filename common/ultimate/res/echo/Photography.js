@@ -18,7 +18,7 @@ module.exports = {
 
     (game, player) => {
       if (!game.checkAchievementAvailable('History')) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
 
       const targetCount = 3
@@ -39,11 +39,11 @@ module.exports = {
         game.aClaimAchievement(player, { name: 'History' })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ],
   echoImpl: (game, player) => {
-    game.aChooseAndMeld(player, game.cards.byZone(player, 'forecast'))
+    game.aChooseAndMeld(player, game.cards.byPlayer(player, 'forecast'))
   },
 }

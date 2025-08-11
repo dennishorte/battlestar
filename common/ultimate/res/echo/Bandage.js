@@ -12,10 +12,10 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const handAges = game
-        .cards.byZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .map(card => card.getAge())
       const choices = game
-        .cards.byZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .filter(card => !handAges.includes(card.getAge()))
       const highest = game.utilHighestCards(choices)
       game.aChooseAndReturn(player, highest)
@@ -29,7 +29,7 @@ module.exports = {
   echoImpl: [
     (game, player) => {
       const choices = game
-        .cards.byZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => card.checkHasBiscuit('l'))
       game.aChooseAndMeld(player, choices)
     }

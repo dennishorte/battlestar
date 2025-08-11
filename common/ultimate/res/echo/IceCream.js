@@ -29,7 +29,7 @@ module.exports = {
         const cards = game.zones.byDeck('base', age).cardlist()
         if (cards.length > 0) {
           const toTransfer = cards[cards.length - 1]
-          game.aTransfer(player, toTransfer, game.zones.byId('achievements'))
+          game.actions.transfer(player, toTransfer, game.zones.byId('achievements'))
         }
       }
     }

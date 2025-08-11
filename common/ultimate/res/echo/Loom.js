@@ -17,7 +17,7 @@ module.exports = {
     (game, player) => {
       // Check if there are at least two values in score pile.
       const ages = game
-        .cards.byZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .map(card => card.getAge())
 
       if (util.array.distinct(ages).length <= 1) {
@@ -28,11 +28,11 @@ module.exports = {
       }
 
       else {
-        const card1 = game.aChooseCard(player, game.cards.byZone(player, 'score'), { title: 'Choose a first card to return', min: 0, max: 1 })
+        const card1 = game.aChooseCard(player, game.cards.byPlayer(player, 'score'), { title: 'Choose a first card to return', min: 0, max: 1 })
 
         if (card1) {
           const choices = game
-            .cards.byZone(player, 'score')
+            .cards.byPlayer(player, 'score')
             .filter(card => card.getAge() !== card1.getAge())
           const card2 = game.aChooseCard(player, choices, { title: 'Choose a second card to return' })
 

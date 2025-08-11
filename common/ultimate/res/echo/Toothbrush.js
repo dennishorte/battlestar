@@ -33,14 +33,14 @@ module.exports = {
   echoImpl: [
     (game, player) => {
       const ages = game
-        .cards.byZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .map(card => card.getAge())
         .sort()
       const choices = util.array.distinct(ages)
       const age = game.aChooseAge(player, choices)
       if (age) {
         const toTuck = game
-          .cards.byZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(card => card.getAge() === age)
         game.aTuckMany(player, toTuck)
       }

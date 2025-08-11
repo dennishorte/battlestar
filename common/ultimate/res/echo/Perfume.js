@@ -19,7 +19,7 @@ module.exports = {
         .filter(card => !leaderAges.includes(card.getAge()))
       const card = game.aChooseCard(player, choices, { title: 'Choose a card to transfer' })
       if (card) {
-        const transferred = game.aTransfer(player, card, game.zones.byPlayer(leader, card.color))
+        const transferred = game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
         if (transferred) {
           game.actions.drawAndMeld(player, card.getAge())
         }

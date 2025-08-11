@@ -18,7 +18,7 @@ module.exports = {
         .filter(card => card.checkHasBiscuit('l') || card.checkHasBiscuit('f'))
       const card = game.aChooseCard(player, choices, { title: 'Choose a card to transfer' })
       if (card) {
-        const transferred = game.aTransfer(player, card, game.zones.byPlayer(leader, card.color))
+        const transferred = game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
         if (transferred) {
           game.actions.drawAndForeshadow(player, game.getEffectAge(this, 6))
         }

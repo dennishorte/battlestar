@@ -12,16 +12,16 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cards = game.aChooseAndReturn(player, game.cards.byZone(player, 'hand'), { min: 0, max: 1} )
+      const cards = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1} )
       if (cards && cards.length > 0) {
         const age = cards[0].getAge()
         const toTransfer = game
           .getPlayerAll()
           .flatMap(player => game
-            .cards.byZone(player, 'score')
+            .cards.byPlayer(player, 'score')
             .filter(card => card.getAge() === age)
           )
-        game.aTransferMany(player, toTransfer, game.zones.byPlayer(player, 'hand'))
+        game.actions.transferMany(player, toTransfer, game.zones.byPlayer(player, 'hand'))
       }
     },
 

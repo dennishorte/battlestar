@@ -47,7 +47,7 @@ module.exports = {
       }
 
       if (cards.length > 0) {
-        game.aForeshadow(player, cards[0])
+        game.actions.foreshadow(player, cards[0])
       }
     }
   ],

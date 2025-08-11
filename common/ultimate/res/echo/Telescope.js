@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const toPlace = game.aChooseCard(player, game.cards.byZone(player, 'forecast'), {
+      const toPlace = game.aChooseCard(player, game.cards.byPlayer(player, 'forecast'), {
         title: 'Place a card from your forecast on top of its deck?',
         min: 0,
         max: 1
@@ -20,7 +20,7 @@ module.exports = {
         game.mMoveCardToTop(toPlace, game.zones.byId(toPlace.home), { player })
 
         const canAchieve = game
-          .cards.byZone(player, 'forecast')
+          .cards.byPlayer(player, 'forecast')
           .filter(card => game.checkAchievementEligibility(player, card))
         game.aChooseAndAchieve(player, canAchieve)
       }

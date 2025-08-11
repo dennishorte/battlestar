@@ -14,7 +14,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const returned = game.aReturnMany(player, game.cards.byZone(player, 'hand'))
+      const returned = game.aReturnMany(player, game.cards.byPlayer(player, 'hand'))
       const firstAge = game.getEffectAge(this, 6)
       game.aDraw(player, { age: firstAge })
       const colors = util.array.distinct(returned.map(card => card.color))

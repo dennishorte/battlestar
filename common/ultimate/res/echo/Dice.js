@@ -40,11 +40,11 @@ module.exports = {
         })
 
         if (opp) {
-          game.aTransfer(player, card, game.zones.byPlayer(opp, 'hand'))
+          game.actions.transfer(player, card, game.zones.byPlayer(opp, 'hand'))
         }
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ],

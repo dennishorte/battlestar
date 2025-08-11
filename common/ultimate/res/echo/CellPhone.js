@@ -25,7 +25,7 @@ module.exports = {
 
     (game, player) => {
       const choices = game
-        .cards.byZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => card.checkHasBiscuit('i'))
       const tucked = game.actions.chooseAndTuck(player, choices, { min: 0, max: choices.length, title: 'Choose any number of cards to tuck.' })
 

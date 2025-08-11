@@ -25,7 +25,7 @@ module.exports = {
 
       const choices = []
 
-      if (game.cards.byZone(player, 'purple').length > 1) {
+      if (game.cards.byPlayer(player, 'purple').length > 1) {
         purpleChoices
           .map(splay => `purple ${splay}`)
           .forEach(choice => choices.push(choice))
@@ -55,7 +55,7 @@ module.exports = {
       .util.colors()
       .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
     const choices = game
-      .cards.byZone(player, 'hand')
+      .cards.byPlayer(player, 'hand')
       .filter(card => splayedColors.includes(card.color))
     game.aChooseAndScore(player, choices)
   },

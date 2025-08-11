@@ -20,7 +20,7 @@ module.exports = {
         title: 'Choose a card to foreshadow',
       })
 
-      game.aForeshadow(player, foreshadowed)
+      game.actions.foreshadow(player, foreshadowed)
       game.aReturn(player, cards.filter(x => x.id !== foreshadowed.id)[0])
     }
   ],

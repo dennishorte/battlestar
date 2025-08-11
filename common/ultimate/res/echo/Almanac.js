@@ -13,7 +13,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = game
-        .cards.byZone(player, 'forecast')
+        .cards.byPlayer(player, 'forecast')
         .filter(card => card.checkHasBonus())
 
       const cards = game.aChooseAndReturn(player, choices, { min: 0, max: 1 })
@@ -30,10 +30,10 @@ module.exports = {
 
         const others = game.getPlayerAll().filter(o => o.name !== player.name)
         const other = game.aChoosePlayer(player, others)
-        game.aForeshadowMany(player, game.cards.byZone(other, 'forecast'))
+        game.actions.foreshadowMany(player, game.cards.byPlayer(other, 'forecast'))
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ],

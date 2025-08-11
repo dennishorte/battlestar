@@ -16,7 +16,7 @@ module.exports = {
     (game, player, { leader }) => {
       const card = game.getTopCard(player, 'green')
       if (card) {
-        game.aTransfer(player, card, game.zones.byPlayer(leader, 'hand'))
+        game.actions.transfer(player, card, game.zones.byPlayer(leader, 'hand'))
 
         const next = game.getTopCard(player, 'green')
         if (next && next.name === 'Scissors') {

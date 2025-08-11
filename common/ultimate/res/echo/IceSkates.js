@@ -18,11 +18,11 @@ module.exports = {
         game.aJunkDeck(player, 2)
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.cards.byZone(player, 'hand'), { min: 0, max: 2 })
+      const returned = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 2 })
 
       if (returned) {
         for (let i = 0; i < returned.length; i++) {

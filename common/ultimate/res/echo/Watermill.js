@@ -15,13 +15,13 @@ module.exports = {
       const bonuses = game.getBonuses(player)
       const choices = game
         .cards
-        .byZone(player, 'hand')
+        .byPlayer(player, 'hand')
         .filter(card => bonuses.includes(card.getAge()))
       game.actions.chooseAndTuck(player, choices)
     },
 
     (game, player, { foreseen, self }) => {
-      const tucked = game.actions.chooseAndTuck(player, game.cards.byZone(player, 'hand'))[0]
+      const tucked = game.actions.chooseAndTuck(player, game.cards.byPlayer(player, 'hand'))[0]
 
       if (tucked && foreseen) {
         game.mLogWasForeseen(self)

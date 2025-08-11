@@ -28,11 +28,11 @@ module.exports = {
       })
 
       const scoreValues = game
-        .cards.byZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .map(card => card.getAge())
         .sort()
       const handValues = game
-        .cards.byZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .map(card => card.getAge())
         .sort()
 

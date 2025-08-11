@@ -13,10 +13,10 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const ages = game
-        .cards.byZone(leader, 'hand')
+        .cards.byPlayer(leader, 'hand')
         .map(card => card.getAge())
       const choices = game
-        .cards.byZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .filter(card => ages.includes(card.getAge()))
       game.aChooseAndReturn(player, choices, { count: 2 })
     },

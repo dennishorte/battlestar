@@ -32,7 +32,7 @@ module.exports = {
   echoImpl: [
     (game, player) => {
       const choices = game
-        .cards.byZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => card.checkIsExpansion())
       game.aChooseAndScore(player, choices)
     }

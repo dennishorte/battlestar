@@ -12,7 +12,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.cards.byZone(player, 'forecast'), { min: 0, max: 1 })
+      const returned = game.aChooseAndReturn(player, game.cards.byPlayer(player, 'forecast'), { min: 0, max: 1 })
 
       if (returned && returned.length > 0) {
         game.actions.drawAndForeshadow(player, returned[0].getAge())

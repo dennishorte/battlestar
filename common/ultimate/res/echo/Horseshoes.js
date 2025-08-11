@@ -17,7 +17,7 @@ module.exports = {
       const card = game.aChooseCard(player, choices)
 
       if (card) {
-        const transferred = game.aTransfer(player, card, game.zones.byPlayer(leader, card.color))
+        const transferred = game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
         if (transferred) {
           game.actions.drawAndMeld(player, game.getEffectAge(this, 2))
         }

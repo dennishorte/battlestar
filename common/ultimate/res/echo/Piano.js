@@ -20,7 +20,7 @@ module.exports = {
         const values = util.array.distinct(topCards.map(card => card.getAge())).sort()
 
         if (values.length === 5) {
-          game.aChooseAndReturn(player, game.cards.byZone(player, 'score'), { count: 5 })
+          game.aChooseAndReturn(player, game.cards.byPlayer(player, 'score'), { count: 5 })
           for (const age of values) {
             game.actions.drawAndScore(player, age)
           }
@@ -45,7 +45,7 @@ module.exports = {
   echoImpl: (game, player) => {
     const ages = game
       .getPlayerAll()
-      .flatMap(player => game.cards.byZone(player, 'hand'))
+      .flatMap(player => game.cards.byPlayer(player, 'hand'))
       .map(card => card.getAge())
       .sort()
     const choices = util.array.distinct(ages)

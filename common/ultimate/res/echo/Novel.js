@@ -22,7 +22,7 @@ module.exports = {
 
     (game, player) => {
       if (!game.checkAchievementAvailable('Supremacy')) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
         return
       }
 
@@ -32,7 +32,7 @@ module.exports = {
         .map(card => card.biscuits)
 
       if (biscuits.length === 0) {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
         return
       }
 
@@ -47,10 +47,10 @@ module.exports = {
         }
       }
 
-      game.mLogNoEffect()
+      game.log.addNoEffect()
     }
   ],
   echoImpl: (game, player) => {
-    game.aReturnMany(player, game.cards.byZone(player, 'forecast'))
+    game.aReturnMany(player, game.cards.byPlayer(player, 'forecast'))
   },
 }

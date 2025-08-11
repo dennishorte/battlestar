@@ -23,7 +23,7 @@ module.exports = {
 
       const returnAll = game.aYesNo(player, 'Return all cards in your hand?')
       if (returnAll) {
-        const returned = game.aReturnMany(player, game.cards.byZone(player, 'hand'))
+        const returned = game.aReturnMany(player, game.cards.byPlayer(player, 'hand'))
         if (colorCheck(returned)) {
           // Prove that all three colors were returned.
           const toProve = returned.filter(x => x.color === 'yellow' || x.color === 'green' || x.color === 'blue')

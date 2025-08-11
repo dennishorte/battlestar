@@ -12,7 +12,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const card = game.aChooseAndMeld(player, game.cards.byZone(player, 'hand'))[0]
+      const card = game.aChooseAndMeld(player, game.cards.byPlayer(player, 'hand'))[0]
       const age = card ? card.getAge() : 0
       game.actions.drawAndForeshadow(player, age)
     },
@@ -24,7 +24,7 @@ module.exports = {
         game.actions.drawAndForeshadow(player, count)
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ],

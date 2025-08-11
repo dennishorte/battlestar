@@ -18,7 +18,7 @@ module.exports = {
 
     (game, player, { foreseen, self }) => {
       if (foreseen) {
-        const cards = game.getPlayerAll().flatMap(p => game.cards.byZone(p, 'hand'))
+        const cards = game.getPlayerAll().flatMap(p => game.cards.byPlayer(p, 'hand'))
 
         game.mLog({ template: 'I do not have a good way to hide only the cards in other player hands, so the game just automatically returns them all.' })
         game.aReturnMany(player, cards, { ordered: true })
@@ -29,6 +29,6 @@ module.exports = {
     },
   ],
   echoImpl: (game, player) => {
-    game.aChooseAndScore(player, game.cards.byZone(player, 'hand'), { min: 0, max: 1 })
+    game.aChooseAndScore(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1 })
   },
 }

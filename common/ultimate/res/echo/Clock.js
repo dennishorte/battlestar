@@ -26,11 +26,11 @@ module.exports = {
       game.aReturnMany(player, drawn)
 
       const toTransfer = [
-        game.cards.byZone(player, 'hand').filter(card => card.getAge() === totalClocks),
-        game.cards.byZone(player, 'score').filter(card => card.getAge() === totalClocks),
+        game.cards.byPlayer(player, 'hand').filter(card => card.getAge() === totalClocks),
+        game.cards.byPlayer(player, 'score').filter(card => card.getAge() === totalClocks),
       ].flat()
 
-      game.aTransferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'))
+      game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'))
     }
   ],
   echoImpl: [

@@ -14,14 +14,14 @@ module.exports = {
       const card = game.actions.drawAndTuck(player, game.getEffectAge(this, 6))
       if (card) {
         const toTransfer = game
-          .cards.byZone(player, card.color)
+          .cards.byPlayer(player, card.color)
           .slice(0, 2)
-        game.aTransferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'), { ordered: true })
+        game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'), { ordered: true })
 
         const moreTransfer = game
-          .cards.byZone(leader, card.color)
+          .cards.byPlayer(leader, card.color)
           .slice(-1)
-        game.aTransferMany(player, moreTransfer, game.zones.byPlayer(player, 'score'))
+        game.actions.transferMany(player, moreTransfer, game.zones.byPlayer(player, 'score'))
       }
     }
   ],

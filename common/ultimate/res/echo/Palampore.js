@@ -40,7 +40,7 @@ module.exports = {
         game.aClaimAchievement(player, { name: 'Wealth' })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ],

@@ -29,7 +29,7 @@ module.exports = {
     (game, player) => {
       const returnAll = game.aYesNo(player, 'Return all card from your forecast?')
       if (returnAll) {
-        const returned = game.aReturnMany(player, game.cards.byZone(player, 'forecast'))
+        const returned = game.aReturnMany(player, game.cards.byPlayer(player, 'forecast'))
         if (returned && returned.some(card => card.color === 'blue')) {
           game.aClaimAchievement(player, { name: 'Destiny' })
         }
@@ -38,7 +38,7 @@ module.exports = {
   ],
   echoImpl: (game, player) => {
     const choices = game
-      .cards.byZone(player, 'forecast')
+      .cards.byPlayer(player, 'forecast')
       .filter(card => card.getAge() === 5)
     game.aChooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'))
   },

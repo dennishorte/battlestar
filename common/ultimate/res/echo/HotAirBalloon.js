@@ -19,7 +19,7 @@ module.exports = {
 
         // The ages of all achievements owned by `other`.
         const ages = game
-          .cards.byZone(other, 'achievements')
+          .cards.byPlayer(other, 'achievements')
           .filter(card => !!card.getAge())
           .map(card => card.getAge())
 
@@ -38,7 +38,7 @@ module.exports = {
 
         const cardToTransfer = game.getTopCard(player, 'green')
         if (cardToTransfer) {
-          game.aTransfer(player, cardToTransfer, game.zones.byPlayer(owner, 'green'))
+          game.actions.transfer(player, cardToTransfer, game.zones.byPlayer(owner, 'green'))
         }
         else {
           game.mLog({

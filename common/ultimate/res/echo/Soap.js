@@ -13,7 +13,7 @@ module.exports = {
     (game, player) => {
       const color = game.aChoose(player, game.util.colors())[0]
       const choices = game
-        .cards.byZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => card.color === color)
 
       const tucked = game.actions.chooseAndTuck(player, choices, { min: 0, max: 999 })
@@ -28,7 +28,7 @@ module.exports = {
 
         if (opponentValues.every(value => value < topValue)) {
           const eligible = game
-            .cards.byZone(player, 'hand')
+            .cards.byPlayer(player, 'hand')
             .filter(card => game.checkAchievementEligibility(player, card))
           game.aChooseAndAchieve(player, eligible, { min: 0, max: 1 })
         }

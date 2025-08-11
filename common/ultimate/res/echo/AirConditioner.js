@@ -15,12 +15,12 @@ module.exports = {
         .cards.tops(player)
         .map(card => card.getAge())
       const toReturn = game
-        .cards.byZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .filter(card => topValues.includes(card.getAge()))
       game.aReturnMany(player, toReturn)
     }
   ],
   echoImpl: (game, player) => {
-    game.aChooseAndScore(player, game.cards.byZone(player, 'hand'), { min: 0, max: 1 })
+    game.aChooseAndScore(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1 })
   },
 }

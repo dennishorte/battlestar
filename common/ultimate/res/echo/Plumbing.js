@@ -16,12 +16,12 @@ module.exports = {
     (game, player) => game.aJunkDeck(player, 1)
   ],
   echoImpl: (game, player) => {
-    const card = util.array.last(game.cards.byZone(player, 'blue'))
+    const card = util.array.last(game.cards.byPlayer(player, 'blue'))
     if (card) {
       game.aScore(player, card)
     }
     else {
-      game.mLogNoEffect()
+      game.log.addNoEffect()
     }
   },
 }
