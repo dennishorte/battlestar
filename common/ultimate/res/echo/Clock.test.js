@@ -16,10 +16,7 @@ describe("Clock", () => {
       },
       decks: {
         base: {
-          10: ['Software', 'Stem Cells'],
-        },
-        echo: {
-          10: ['Social Network'],
+          10: ['Software', 'Stem Cells', 'Databases'],
         },
       },
     })
