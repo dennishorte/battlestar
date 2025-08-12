@@ -7,30 +7,32 @@ module.exports = {
   dogmaBiscuit: `s`,
   echo: [`You may splay your color with the most cards right.`],
   dogma: [
-    `I demand you draw and reveal three {0}, total the number of {i} on them, and then return them! Transfer all cards of that value from your hand and score pile to my score pile!`
+    `I demand you transfer all cards of value equal to the number of visible cards on my board of the color of my choice from your hand and score pile to my score pile. Junk an available achievement of that value.`
   ],
   dogmaImpl: [
     (game, player, { leader, self }) => {
-      const drawn = [
-        game.actions.drawAndReveal(player, game.getEffectAge(self, 10)),
-        game.actions.drawAndReveal(player, game.getEffectAge(self, 10)),
-        game.actions.drawAndReveal(player, game.getEffectAge(self, 10)),
-      ].filter(card => card !== undefined)
+      const choices = game.util.colors().map(color => {
+        const count = game.getVisibleCardsByZone(leader, color)
+        return `${color} (${count})`
+      })
 
-      const totalClocks = drawn
-        .map(card => card.biscuits.split('').filter(b => b === 'i').length)
-        .reduce((agg, r) => agg + r, 0)
+      const selected = game.actions.choose(leader, choices, { title: 'Choose a color' })
+      const color = selected[0].split(' ')[0]
+      const count = game.getVisibleCardsByZone(leader, color)
 
-      game.log.add({ template: `Total {i} is ${totalClocks}.` })
-
-      game.actions.returnMany(player, drawn)
+      game.log.add({
+        template: '{player} chooses {color} ({count})',
+        args: { player, color, count },
+      })
 
       const toTransfer = [
-        game.cards.byPlayer(player, 'hand').filter(card => card.getAge() === totalClocks),
-        game.cards.byPlayer(player, 'score').filter(card => card.getAge() === totalClocks),
-      ].flat()
+        ...game.cards.byPlayer(player, 'hand'),
+        ...game.cards.byPlayer(player, 'score'),
+      ].filter(card => card.getAge() === count)
 
       game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'))
+
+      game.actions.junkAvailableAchievement(player, [count])
     }
   ],
   echoImpl: [
