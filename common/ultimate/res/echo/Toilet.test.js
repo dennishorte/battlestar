@@ -17,10 +17,8 @@ describe("Toilet", () => {
         score: ['Sailing', 'Calendar', 'Translation'],
       },
       decks: {
-        base: {
-          3: ['Engineering'],
-        },
         echo: {
+          3: ['Liquid Fire'],
           4: ['Shuriken'],
         }
       }
@@ -37,7 +35,7 @@ describe("Toilet", () => {
         purple: ['Toilet'],
         red: ['Plumbing', 'Shuriken'],
         blue: ['Perfume'],
-        hand: ['Engineering'],
+        hand: ['Liquid Fire'],
       },
       micah: {
         score: ['Sailing', 'Translation'],
