@@ -9,6 +9,7 @@ describe("Slide Rule", () => {
     t.setBoard(game,  {
       dennis: {
         blue: ['Slide Rule'],
+        green: ['Invention'],
         yellow: ['Fermenting', 'Masonry'],
       },
       decks: {
@@ -27,6 +28,7 @@ describe("Slide Rule", () => {
     t.testBoard(game, {
       dennis: {
         blue: ['Slide Rule'],
+        green: ['Invention'],
         yellow: {
           cards: ['Fermenting', 'Masonry'],
           splay: 'right',
