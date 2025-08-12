@@ -24,7 +24,7 @@ module.exports = {
       game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'))
     },
 
-    (game, player) => {
+    (game, player, { self }) => {
       const mine = game.getBiscuitsByPlayer(player)
       const theirs = game
         .players.all()
@@ -40,7 +40,7 @@ module.exports = {
 
       throw new GameOverEvent({
         player,
-        reason: this.name
+        reason: self.name
       })
     }
   ],

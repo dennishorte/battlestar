@@ -10,7 +10,7 @@ module.exports = {
     `You may achieve (if eligible) a top card from any other player's board if they have an achievement of matching value. If you do, transfer your top green card to that player's board. Otherwise, draw and meld a {7}.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const candidates = []
       for (const other of game.players.all()) {
         if (other === player) {
@@ -48,11 +48,11 @@ module.exports = {
         }
       }
       else {
-        game.actions.drawAndMeld(player, game.getEffectAge(this, 7))
+        game.actions.drawAndMeld(player, game.getEffectAge(self, 7))
       }
     }
   ],
-  echoImpl: (game, player) => {
-    game.actions.drawAndScore(player, game.getEffectAge(this, 7))
+  echoImpl: (game, player, { self }) => {
+    game.actions.drawAndScore(player, game.getEffectAge(self, 7))
   },
 }

@@ -11,9 +11,9 @@ module.exports = {
     `If Bell was foreseen, return all cards from all hands.`
   ],
   dogmaImpl: [
-    (game, player) => {
-      game.actions.drawAndForeshadow(player, game.getEffectAge(this, 1))
-      game.actions.drawAndForeshadow(player, game.getEffectAge(this, 2))
+    (game, player, { self }) => {
+      game.actions.drawAndForeshadow(player, game.getEffectAge(self, 1))
+      game.actions.drawAndForeshadow(player, game.getEffectAge(self, 2))
     },
 
     (game, player, { foreseen, self }) => {

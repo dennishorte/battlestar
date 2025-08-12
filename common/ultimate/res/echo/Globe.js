@@ -11,7 +11,7 @@ module.exports = {
     `If Globe was foreseen, foreshadow a top card from any board.`,
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const colorCheck = (cards) => {
         const tests = [
           cards.some(c => c.color === 'blue'),
@@ -34,9 +34,9 @@ module.exports = {
           })
           game.actions.revealMany(player, toReveal, { ordered: true })
 
-          game.actions.drawAndForeshadow(player, game.getEffectAge(this, 6))
-          game.actions.drawAndForeshadow(player, game.getEffectAge(this, 7))
-          game.actions.drawAndForeshadow(player, game.getEffectAge(this, 8))
+          game.actions.drawAndForeshadow(player, game.getEffectAge(self, 6))
+          game.actions.drawAndForeshadow(player, game.getEffectAge(self, 7))
+          game.actions.drawAndForeshadow(player, game.getEffectAge(self, 8))
 
           game.actions.chooseAndSplay(player, game.util.colors(), 'right', { count: 1 })
         }

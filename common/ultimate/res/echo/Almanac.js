@@ -37,7 +37,7 @@ module.exports = {
       }
     },
   ],
-  echoImpl: (game, player) => {
-    game.actions.drawAndForeshadow(player, game.getEffectAge(this, 4), { exp: 'echo' })
+  echoImpl: (game, player, { self }) => {
+    game.actions.drawAndForeshadow(player, game.getEffectAge(self, 4), { exp: 'echo' })
   },
 }

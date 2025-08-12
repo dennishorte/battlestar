@@ -10,11 +10,11 @@ module.exports = {
     `I demand you draw and reveal three {0}, total the number of {i} on them, and then return them! Transfer all cards of that value from your hand and score pile to my score pile!`
   ],
   dogmaImpl: [
-    (game, player, { leader }) => {
+    (game, player, { leader, self }) => {
       const drawn = [
-        game.actions.drawAndReveal(player, game.getEffectAge(this, 10)),
-        game.actions.drawAndReveal(player, game.getEffectAge(this, 10)),
-        game.actions.drawAndReveal(player, game.getEffectAge(this, 10)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 10)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 10)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 10)),
       ].filter(card => card !== undefined)
 
       const totalClocks = drawn

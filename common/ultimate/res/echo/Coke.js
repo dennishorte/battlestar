@@ -10,9 +10,9 @@ module.exports = {
     `Draw and reveal a {6}. If it has a {f}, meld it and repeat this dogma effect. Otherwise, foreshadow it.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       while (true) {
-        const card = game.actions.drawAndReveal(player, game.getEffectAge(this, 6))
+        const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
         if (card) {
           if (card.checkHasBiscuit('f')) {
             game.log.add({ template: 'Card has {f}.' })
@@ -32,8 +32,8 @@ module.exports = {
     }
   ],
   echoImpl: [
-    (game, player) => {
-      game.actions.drawAndTuck(player, game.getEffectAge(this, 4))
+    (game, player, { self }) => {
+      game.actions.drawAndTuck(player, game.getEffectAge(self, 4))
     }
   ],
 }

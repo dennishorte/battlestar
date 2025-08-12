@@ -16,10 +16,10 @@ module.exports = {
       game.actions.returnMany(player, game.cards.byPlayer(player, 'forecast'))
     },
 
-    (game, player) => {
-      game.actions.drawAndForeshadow(player, game.getEffectAge(this, 10))
-      game.actions.drawAndForeshadow(player, game.getEffectAge(this, 10))
-      game.actions.drawAndForeshadow(player, game.getEffectAge(this, 10))
+    (game, player, { self }) => {
+      game.actions.drawAndForeshadow(player, game.getEffectAge(self, 10))
+      game.actions.drawAndForeshadow(player, game.getEffectAge(self, 10))
+      game.actions.drawAndForeshadow(player, game.getEffectAge(self, 10))
     },
 
     (game, player) => {

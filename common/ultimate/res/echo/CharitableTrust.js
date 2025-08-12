@@ -10,7 +10,7 @@ module.exports = {
     `You may meld a card from your hand that you drew due to Charitable Trust's echo effect. If you meld a {3}, achieve your top green card (if eligible). If you meld a {4}, return your top green card.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       if (!game.state.dogmaInfo.charitableTrust) {
         game.log.add({ template: "Charitable Trust's echo effect was not used." })
         return
@@ -29,19 +29,19 @@ module.exports = {
         if (!greenCard) {
           game.log.add({ template: 'no top green card' })
         }
-        else if (melded.getAge() === game.getEffectAge(this, 3)) {
+        else if (melded.getAge() === game.getEffectAge(self, 3)) {
           if (game.checkAchievementEligibility(player, greenCard)) {
             game.actions.claimAchievement(player, { card: greenCard })
           }
         }
-        else if (melded.getAge() === game.getEffectAge(this, 4)) {
+        else if (melded.getAge() === game.getEffectAge(self, 4)) {
           game.actions.return(player, greenCard)
         }
       }
     }
   ],
-  echoImpl: (game, player) => {
-    const age = game.actions.chooseAge(player, [game.getEffectAge(this, 3), game.getEffectAge(this, 4)])
+  echoImpl: (game, player, { self }) => {
+    const age = game.actions.chooseAge(player, [game.getEffectAge(self, 3), game.getEffectAge(self, 4)])
     const card = game.actions.draw(player, { age })
 
     if (!game.state.dogmaInfo.charitableTrust) {

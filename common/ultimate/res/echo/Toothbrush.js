@@ -17,8 +17,8 @@ module.exports = {
       game.actions.chooseAndSplay(player, null, 'left')
     },
 
-    (game, player) => {
-      const deckAge = game.getEffectAge(this, 2)
+    (game, player, { self }) => {
+      const deckAge = game.getEffectAge(self, 2)
       const junked = game.actions.junkDeck(player, deckAge, { optional: true })
       if (junked) {
         const junk = game.zones.byId('junk').cardlist()

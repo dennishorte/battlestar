@@ -11,14 +11,14 @@ module.exports = {
     `Return all your non-red top cards.`
   ],
   dogmaImpl: [
-    (game, player, { leader }) => {
+    (game, player, { leader, self }) => {
       const toTransfer = game
         .cards.tops(player)
         .filter(card => card.checkHasBonus())
       const transferred = game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'))
 
       if (transferred && transferred.length > 0) {
-        game.actions.draw(player, { age: game.getEffectAge(this, 7) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 7) })
       }
     },
 
@@ -30,10 +30,10 @@ module.exports = {
     }
   ],
   echoImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const topCards = game.cards.tops(player)
       if (topCards.length === 5) {
-        game.actions.drawAndScore(player, game.getEffectAge(this, 7))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 7))
       }
       else {
         game.log.addNoEffect()

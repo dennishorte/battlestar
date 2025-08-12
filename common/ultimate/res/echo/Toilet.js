@@ -33,7 +33,7 @@ module.exports = {
       }
     }
   ],
-  echoImpl: (game, player) => {
-    game.actions.drawAndTuck(player, game.getEffectAge(this, 4))
+  echoImpl: (game, player, { self }) => {
+    game.actions.drawAndTuck(player, game.getEffectAge(self, 4))
   },
 }

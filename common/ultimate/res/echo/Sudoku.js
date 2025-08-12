@@ -14,7 +14,7 @@ module.exports = {
     `Draw and meld a card of any value. If you have at least nine different bonus values visible on your board, you win. Execute each of the melded card's non-demand dogma effects. Do not share them.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const age = game.actions.chooseAge(player)
       const card = game.actions.drawAndMeld(player, age)
 
@@ -22,7 +22,7 @@ module.exports = {
       if (bonuses.length >= 9) {
         throw new GameOverEvent({
           player,
-          reason: this.name
+          reason: self.name
         })
       }
 

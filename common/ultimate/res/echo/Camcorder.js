@@ -11,20 +11,20 @@ module.exports = {
     `Meld all {9} from your hand. Return all other cards from your hand. Draw three {9}.`
   ],
   dogmaImpl: [
-    (game, player, { leader }) => {
+    (game, player, { leader, self }) => {
       game.actions.transferMany(player, game.cards.byPlayer(player, 'hand'), game.zones.byPlayer(leader, 'hand'))
-      game.actions.draw(player, { age: game.getEffectAge(this, 9) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 9) })
     },
 
-    (game, player) => {
+    (game, player, { self }) => {
       const toMeld = game
         .cards.byPlayer(player, 'hand')
-        .filter(card => card.getAge() === game.getEffectAge(this, 9))
+        .filter(card => card.getAge() === game.getEffectAge(self, 9))
       game.actions.meldMany(player, toMeld)
       game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
-      game.actions.draw(player, { age: game.getEffectAge(this, 9) })
-      game.actions.draw(player, { age: game.getEffectAge(this, 9) })
-      game.actions.draw(player, { age: game.getEffectAge(this, 9) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 9) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 9) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 9) })
     }
   ],
   echoImpl: [],

@@ -11,12 +11,12 @@ module.exports = {
     `You may splay your green cards right.`
   ],
   dogmaImpl: [
-    (game, player) => {
-      const tucked = game.actions.drawAndTuck(player, game.getEffectAge(this, 4))
+    (game, player, { self }) => {
+      const tucked = game.actions.drawAndTuck(player, game.getEffectAge(self, 4))
       if (tucked) {
         const top = game.getTopCard(player, tucked.color)
-        if (top.getAge() < game.getEffectAge(this, 4)) {
-          game.actions.drawAndScore(player, game.getEffectAge(this, 4))
+        if (top.getAge() < game.getEffectAge(self, 4)) {
+          game.actions.drawAndScore(player, game.getEffectAge(self, 4))
         }
       }
     },

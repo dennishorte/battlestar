@@ -11,12 +11,12 @@ module.exports = {
     `You may splay your red cards up.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       while (true) {
         const count = Math.floor(game.getBiscuitsByPlayer(player).f / 3)
         const tucked = []
         for (let i = 0; i < count; i++) {
-          const card = game.actions.drawAndTuck(player, game.getEffectAge(this, 8))
+          const card = game.actions.drawAndTuck(player, game.getEffectAge(self, 8))
           if (card) {
             tucked.push(card)
           }

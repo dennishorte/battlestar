@@ -36,9 +36,9 @@ module.exports = {
     }
   ],
   echoImpl: [
-    (game, player) => {
-      game.actions.draw(player, { age: game.getEffectAge(this, 2) })
-      game.actions.draw(player, { age: game.getEffectAge(this, 2) })
+    (game, player, { self }) => {
+      game.actions.draw(player, { age: game.getEffectAge(self, 2) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 2) })
     }
   ],
 }

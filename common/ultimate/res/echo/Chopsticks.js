@@ -21,7 +21,7 @@ module.exports = {
       }
     }
   ],
-  echoImpl: (game, player) => {
-    game.actions.drawAndForeshadow(player, game.getEffectAge(this, 1), { optional: true })
+  echoImpl: (game, player, { self }) => {
+    game.actions.drawAndForeshadow(player, game.getEffectAge(self, 1), { optional: true })
   },
 }

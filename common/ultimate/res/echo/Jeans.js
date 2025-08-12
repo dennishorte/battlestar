@@ -33,10 +33,10 @@ module.exports = {
     }
   ],
   echoImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const cards = [
-        game.actions.draw(player, { age: game.getEffectAge(this, 9) }),
-        game.actions.draw(player, { age: game.getEffectAge(this, 9) }),
+        game.actions.draw(player, { age: game.getEffectAge(self, 9) }),
+        game.actions.draw(player, { age: game.getEffectAge(self, 9) }),
       ].filter(card => card !== undefined)
 
       const toReturn = game.actions.chooseCard(player, cards, { title: 'Choose a card to return' })

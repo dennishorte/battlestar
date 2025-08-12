@@ -11,33 +11,33 @@ module.exports = {
     `Draw and reveal a {1}. If it is yellow, score all {1} from your hand.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const mine = game
         .cards.byPlayer(player, 'hand')
-        .filter(card => card.getAge() === game.getEffectAge(this, 1))
+        .filter(card => card.getAge() === game.getEffectAge(self, 1))
         .length
       const theirs = game
         .players.opponentsOf(player)
         .map(player => game
           .cards.byPlayer(player, 'hand')
-          .filter(card => card.getAge() === game.getEffectAge(this, 1))
+          .filter(card => card.getAge() === game.getEffectAge(self, 1))
           .length
         )
 
       if (theirs.every(count => count < mine)) {
-        game.actions.drawAndScore(player, game.getEffectAge(this, 2))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 2))
       }
       else {
         game.log.addNoEffect()
       }
     },
 
-    (game, player) => {
-      const card = game.actions.drawAndReveal(player, game.getEffectAge(this, 1))
+    (game, player, { self }) => {
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 1))
       if (card && card.color === 'yellow') {
         const toScore = game
           .cards.byPlayer(player, 'hand')
-          .filter(card => card.getAge() === game.getEffectAge(this, 1))
+          .filter(card => card.getAge() === game.getEffectAge(self, 1))
         game.actions.scoreMany(player, toScore, { ordered: true })
       }
     },

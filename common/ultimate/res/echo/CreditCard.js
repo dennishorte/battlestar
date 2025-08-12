@@ -31,7 +31,7 @@ module.exports = {
       game.actions.chooseAndSplay(player, ['green'], 'up')
     },
   ],
-  echoImpl: (game, player) => {
-    game.actions.drawAndForeshadow(player, game.getEffectAge(this, 9))
+  echoImpl: (game, player, { self }) => {
+    game.actions.drawAndForeshadow(player, game.getEffectAge(self, 9))
   },
 }

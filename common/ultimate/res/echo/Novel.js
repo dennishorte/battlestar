@@ -12,8 +12,8 @@ module.exports = {
     `If all your non-purple top cards share a common icon other than {c}, claim the Supremacy achievement.`
   ],
   dogmaImpl: [
-    (game, player) => {
-      game.actions.draw(player, { age: game.getEffectAge(this, 3) })
+    (game, player, { self }) => {
+      game.actions.draw(player, { age: game.getEffectAge(self, 3) })
     },
 
     (game, player) => {

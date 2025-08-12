@@ -45,8 +45,8 @@ module.exports = {
     },
   ],
   echoImpl: [
-    (game, player) => {
-      game.actions.draw(player, { age: game.getEffectAge(this, 4) })
+    (game, player, { self }) => {
+      game.actions.draw(player, { age: game.getEffectAge(self, 4) })
       game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'))
     }
   ],

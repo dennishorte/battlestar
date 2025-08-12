@@ -10,7 +10,7 @@ module.exports = {
     `Return all unclaimed standard achievements. Then, return half (rounded up) of the cards in your score pile. Draw and meld two {0}.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const toReturn = game
         .zones.byId('achievements')
         .cardlist()
@@ -21,8 +21,8 @@ module.exports = {
       const returnCount = Math.ceil(score.length / 2)
       game.actions.chooseAndReturn(player, score, { count: returnCount })
 
-      game.actions.drawAndMeld(player, game.getEffectAge(this, 10))
-      game.actions.drawAndMeld(player, game.getEffectAge(this, 10))
+      game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
+      game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
     }
   ],
   echoImpl: [],

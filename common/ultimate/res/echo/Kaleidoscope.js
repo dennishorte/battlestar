@@ -10,8 +10,8 @@ module.exports = {
     `Draw and meld a {7}. You may splay your cards of that color right.`
   ],
   dogmaImpl: [
-    (game, player) => {
-      const card = game.actions.drawAndMeld(player, game.getEffectAge(this, 7))
+    (game, player, { self }) => {
+      const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 7))
       if (card) {
         game.actions.chooseAndSplay(player, [card.color], 'right')
       }

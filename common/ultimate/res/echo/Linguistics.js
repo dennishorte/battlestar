@@ -32,18 +32,18 @@ module.exports = {
       }
     }
   ],
-  echoImpl: (game, player) => {
+  echoImpl: (game, player, { self }) => {
     const choices = [
-      `Draw a ${game.getEffectAge(this, 3)}`,
-      `Draw and foreshadow a ${game.getEffectAge(this, 4)}`,
+      `Draw a ${game.getEffectAge(self, 3)}`,
+      `Draw and foreshadow a ${game.getEffectAge(self, 4)}`,
     ]
     const choice = game.actions.choose(player, choices)[0]
 
     if (choice.includes('foreshadow')) {
-      game.actions.drawAndForeshadow(player, game.getEffectAge(this, 4))
+      game.actions.drawAndForeshadow(player, game.getEffectAge(self, 4))
     }
     else {
-      game.actions.draw(player, { age: game.getEffectAge(this, 3) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 3) })
     }
   },
 }

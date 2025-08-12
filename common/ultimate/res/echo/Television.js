@@ -39,8 +39,8 @@ module.exports = {
     }
   ],
   echoImpl: [
-    (game, player) => {
-      game.actions.drawAndMeld(player, game.getEffectAge(this, 8))
+    (game, player, { self }) => {
+      game.actions.drawAndMeld(player, game.getEffectAge(self, 8))
     }
   ],
 }

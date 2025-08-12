@@ -10,8 +10,8 @@ module.exports = {
     `I demand you draw and reveal a {6}! If it is blue or yellow, transfer it and all cards in your hand to my hand! If it is red or green, keep it and transfer two cards from your score pile to mine! If it is purple, keep it!`
   ],
   dogmaImpl: [
-    (game, player, { leader }) => {
-      const card = game.actions.drawAndReveal(player, game.getEffectAge(this, 6))
+    (game, player, { leader, self }) => {
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
       if (card) {
         if (card.color === 'blue' || card.color === 'yellow') {
           game.actions.transferMany(player, game.cards.byPlayer(player, 'hand'), game.zones.byPlayer(leader, 'hand'))

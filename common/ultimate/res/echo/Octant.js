@@ -11,7 +11,7 @@ module.exports = {
     `Draw and foreshadow a {6}.`
   ],
   dogmaImpl: [
-    (game, player, { leader }) => {
+    (game, player, { leader, self }) => {
       const choices = game
         .cards.tops(player)
         .filter(card => card.color !== 'red')
@@ -20,13 +20,13 @@ module.exports = {
       if (card) {
         const transferred = game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
         if (transferred) {
-          game.actions.drawAndForeshadow(player, game.getEffectAge(this, 6))
+          game.actions.drawAndForeshadow(player, game.getEffectAge(self, 6))
         }
       }
     },
 
-    (game, player) => {
-      game.actions.drawAndForeshadow(player, game.getEffectAge(this, 6))
+    (game, player, { self }) => {
+      game.actions.drawAndForeshadow(player, game.getEffectAge(self, 6))
     },
   ],
   echoImpl: [],

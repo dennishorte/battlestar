@@ -12,10 +12,10 @@ module.exports = {
     `You may tuck any number of cards with a {i} from your hand, splaying up each color you tucked into.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const count = Math.floor(game.getBiscuitsByPlayer(player).i / 2)
       for (let i = 0; i < count; i++) {
-        game.actions.draw(player, { age: game.getEffectAge(this, 10) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 10) })
       }
     },
 

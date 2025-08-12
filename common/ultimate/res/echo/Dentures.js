@@ -11,7 +11,7 @@ module.exports = {
     `You may splay your blue cards right.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       if (!game.state.dogmaInfo.dentures) {
         game.log.add({
           template: "No cards scored with Dentures's echo effect"
@@ -34,7 +34,7 @@ module.exports = {
               template: '{player} has no non-bottom {color} cards',
               args: { player, color: card.color }
             })
-            card = game.actions.drawAndTuck(player, game.getEffectAge(this, 6))
+            card = game.actions.drawAndTuck(player, game.getEffectAge(self, 6))
             continue
           }
           if (cards.length > 1) {
@@ -57,8 +57,8 @@ module.exports = {
     }
   ],
   echoImpl: [
-    (game, player) => {
-      const card = game.actions.drawAndTuck(player, game.getEffectAge(this, 6))
+    (game, player, { self }) => {
+      const card = game.actions.drawAndTuck(player, game.getEffectAge(self, 6))
 
       if (!game.state.dogmaInfo.dentures) {
         game.state.dogmaInfo.dentures = {}

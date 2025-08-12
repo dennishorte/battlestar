@@ -11,19 +11,19 @@ module.exports = {
     `Choose the {6}, {7}, {8}, or {9} deck. If there is at least one card in that deck, you may transfer its bottom card to the available achievements.`
   ],
   dogmaImpl: [
-    (game, player) => {
-      game.actions.drawAndMeld(player, game.getEffectAge(this, 1))
+    (game, player, { self }) => {
+      game.actions.drawAndMeld(player, game.getEffectAge(self, 1))
     },
 
-    (game, player) => {
+    (game, player, { self }) => {
       const addAchievement = game.actions.chooseYesNo(player, 'Transfer a card to the available achievements?')
 
       if (addAchievement) {
         const age = game.actions.chooseAge(player, [
-          game.getEffectAge(this, 6),
-          game.getEffectAge(this, 7),
-          game.getEffectAge(this, 8),
-          game.getEffectAge(this, 9),
+          game.getEffectAge(self, 6),
+          game.getEffectAge(self, 7),
+          game.getEffectAge(self, 8),
+          game.getEffectAge(self, 9),
         ].filter(age => age <= 10))
 
         const cards = game.zones.byDeck('base', age).cardlist()

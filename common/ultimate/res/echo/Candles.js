@@ -10,7 +10,7 @@ module.exports = {
     `I demand you transfer a card with {k} or {s} from your hand to my hand! If you do, draw a {1}!`
   ],
   dogmaImpl: [
-    (game, player, { leader }) => {
+    (game, player, { leader, self }) => {
       const valid = game
         .cards.byPlayer(player, 'hand')
         .filter(card => card.checkHasBiscuit('k') || card.checkHasBiscuit('s'))
@@ -21,11 +21,11 @@ module.exports = {
         game.zones.byPlayer(leader, 'hand')
       )
       if (transferred && transferred.length > 0) {
-        game.actions.draw(player, { age: game.getEffectAge(this, 1) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 1) })
       }
     }
   ],
-  echoImpl: (game, player) => {
+  echoImpl: (game, player, { self }) => {
     const playerScore = game.getScore(player)
     const otherScores = game
       .players.all()
@@ -34,7 +34,7 @@ module.exports = {
 
     const isLowest = otherScores.every(score => score >= playerScore)
     if (isLowest) {
-      game.actions.draw(player, { age: game.getEffectAge(this, 3) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 3) })
     }
   },
 }

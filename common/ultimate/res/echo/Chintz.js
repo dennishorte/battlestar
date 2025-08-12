@@ -12,14 +12,14 @@ module.exports = {
     `If Chintz was foreseen, transfer all cards from your hand to the available achievements.`,
   ],
   dogmaImpl: [
-    (game, player) => {
-      game.actions.draw(player, { age: game.getEffectAge(this, 4) })
+    (game, player, { self }) => {
+      game.actions.draw(player, { age: game.getEffectAge(self, 4) })
     },
 
-    (game, player) => {
+    (game, player, { self }) => {
       if (game.cards.byPlayer(player, 'hand').length === 1) {
-        game.actions.draw(player, { age: game.getEffectAge(this, 4) })
-        game.actions.drawAndScore(player, game.getEffectAge(this, 4))
+        game.actions.draw(player, { age: game.getEffectAge(self, 4) })
+        game.actions.drawAndScore(player, game.getEffectAge(self, 4))
       }
     },
 

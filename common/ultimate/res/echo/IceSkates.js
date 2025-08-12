@@ -21,7 +21,7 @@ module.exports = {
         game.log.addNoEffect()
       }
     },
-    (game, player) => {
+    (game, player, { self }) => {
       const returned = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 2 })
 
       if (returned) {
@@ -32,10 +32,10 @@ module.exports = {
           ])[0]
 
           if (choice.includes('meld')) {
-            game.actions.drawAndMeld(player, game.getEffectAge(this, 2))
+            game.actions.drawAndMeld(player, game.getEffectAge(self, 2))
           }
           else {
-            game.actions.drawAndForeshadow(player, game.getEffectAge(this, 3))
+            game.actions.drawAndForeshadow(player, game.getEffectAge(self, 3))
           }
         }
       }

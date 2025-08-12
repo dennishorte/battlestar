@@ -25,8 +25,8 @@ module.exports = {
       }
     },
 
-    (game, player) => {
-      game.actions.chooseAndJunkDeck(player, [game.getEffectAge(this, 2), game.getEffectAge(this, 3)])
+    (game, player, { self }) => {
+      game.actions.chooseAndJunkDeck(player, [game.getEffectAge(self, 2), game.getEffectAge(self, 3)])
     },
   ],
   echoImpl: [

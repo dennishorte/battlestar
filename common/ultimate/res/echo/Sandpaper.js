@@ -12,14 +12,14 @@ module.exports = {
     `If Sandpaper was foreseen, foreshadow all cards in your hand.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const returned = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), {
         min: 0,
         max: 999
       })
 
       for (let i = 0; i < returned.length; i++) {
-        game.actions.draw(player, { age: game.getEffectAge(this, 3) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 3) })
       }
     },
 

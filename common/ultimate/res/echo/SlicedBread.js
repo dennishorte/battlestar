@@ -18,9 +18,9 @@ module.exports = {
       }
     }
   ],
-  echoImpl: (game, player) => {
+  echoImpl: (game, player, { self }) => {
     game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
-    game.actions.draw(player, { age: game.getEffectAge(this, 8) })
-    game.actions.draw(player, { age: game.getEffectAge(this, 8) })
+    game.actions.draw(player, { age: game.getEffectAge(self, 8) })
+    game.actions.draw(player, { age: game.getEffectAge(self, 8) })
   },
 }

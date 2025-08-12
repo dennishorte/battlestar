@@ -31,12 +31,12 @@ module.exports = {
       game.actions.chooseAndTransfer(player, cards, game.zones.byPlayer(player, 'hand'), { min: 0, max: 1 })
     }
   ],
-  echoImpl: (game, player) => {
+  echoImpl: (game, player, { self }) => {
     if (!game.state.dogmaInfo.karaoke) {
       game.state.dogmaInfo.karaoke = {}
     }
 
-    const effectAge = game.getEffectAge(this, 9)
+    const effectAge = game.getEffectAge(self, 9)
     const ages = []
     for (let i = 1; i <= effectAge; i++) {
       ages.push(i)

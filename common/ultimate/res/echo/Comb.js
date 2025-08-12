@@ -13,11 +13,11 @@ module.exports = {
     (game, player, { foreseen, self }) => {
       const color = game.actions.choose(player, game.util.colors(), { title: 'Choose a Color' })[0]
       const cards = [
-        game.actions.drawAndReveal(player, game.getEffectAge(this, 1)),
-        game.actions.drawAndReveal(player, game.getEffectAge(this, 1)),
-        game.actions.drawAndReveal(player, game.getEffectAge(this, 1)),
-        game.actions.drawAndReveal(player, game.getEffectAge(this, 1)),
-        game.actions.drawAndReveal(player, game.getEffectAge(this, 1)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 1)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 1)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 1)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 1)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 1)),
       ].filter(card => card !== undefined)
 
       const others = cards.filter(card => card.color !== color)

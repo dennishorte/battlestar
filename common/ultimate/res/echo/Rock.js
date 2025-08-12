@@ -13,7 +13,7 @@ module.exports = {
     `You may score a top card from your board. If Paper is your top green card, you win.`
   ],
   dogmaImpl: [
-    (game, player, { leader }) => {
+    (game, player, { leader, self }) => {
       const card = game.getTopCard(player, 'green')
       if (card) {
         game.actions.transfer(player, card, game.zones.byPlayer(leader, 'hand'))
@@ -22,20 +22,20 @@ module.exports = {
         if (next && next.name === 'Scissors') {
           throw new GameOverEvent({
             player: leader,
-            reason: this.name
+            reason: self.name
           })
         }
       }
     },
 
-    (game, player) => {
+    (game, player, { self }) => {
       game.actions.chooseAndScore(player, game.cards.tops(player), { min: 0, max: 1 })
 
       const card = game.getTopCard(player, 'green')
       if (card && card.name === 'Paper') {
         throw new GameOverEvent({
           player,
-          reason: this.name
+          reason: self.name
         })
       }
     }

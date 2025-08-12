@@ -25,7 +25,7 @@ module.exports = {
       game.actions.chooseAndSplay(player, ['yellow'], 'up')
     }
   ],
-  echoImpl: (game, player) => {
-    game.actions.drawAndTuck(player, game.getEffectAge(this, 8))
+  echoImpl: (game, player, { self }) => {
+    game.actions.drawAndTuck(player, game.getEffectAge(self, 8))
   },
 }

@@ -11,13 +11,13 @@ module.exports = {
     `If you have no cards in your forecast, draw and foreshadow a {3}`,
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const choices = ['Draw and foreshadow']
 
       const forecast = game
         .cards
         .byPlayer(player, 'forecast')
-        .filter(card => card.getAge() === game.getEffectAge(this, 2))
+        .filter(card => card.getAge() === game.getEffectAge(self, 2))
 
       if (forecast) {
         choices.push({
@@ -30,7 +30,7 @@ module.exports = {
       const choice = game.actions.choose(player, choices)[0]
 
       if (choice === choices[0]) {
-        game.actions.drawAndForeshadow(player, game.getEffectAge(this, 2))
+        game.actions.drawAndForeshadow(player, game.getEffectAge(self, 2))
       }
       else {
         const card = game.cards.byId(choice.selection[0])
@@ -38,14 +38,14 @@ module.exports = {
       }
     },
 
-    (game, player) => {
+    (game, player, { self }) => {
       const count = game
         .cards
         .byPlayer(player, 'forecast')
         .length
 
       if (count === 0) {
-        game.actions.drawAndForeshadow(player, game.getEffectAge(this, 3))
+        game.actions.drawAndForeshadow(player, game.getEffectAge(self, 3))
       }
       else {
         game.log.addNoEffect()
@@ -53,12 +53,12 @@ module.exports = {
     },
   ],
   echoImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const cards = game
         .zones
         .byPlayer(player, 'hand')
         .cardlist()
-        .filter(card => card.getAge() === game.getEffectAge(this, 1))
+        .filter(card => card.getAge() === game.getEffectAge(self, 1))
 
       game.actions.chooseAndTuck(player, cards)
     }

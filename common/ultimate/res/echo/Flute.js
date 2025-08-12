@@ -19,10 +19,10 @@ module.exports = {
       game.actions.chooseAndReturn(player, choices)
     },
 
-    (game, player) => {
-      const card = game.actions.drawAndReveal(player, game.getEffectAge(this, 1), { exp: 'echo' })
+    (game, player, { self }) => {
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 1), { exp: 'echo' })
       if (card && card.checkHasBonus()) {
-        game.actions.draw(player, { age: game.getEffectAge(this, 1) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 1) })
       }
     },
   ],

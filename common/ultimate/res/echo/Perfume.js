@@ -27,9 +27,9 @@ module.exports = {
     }
   ],
   echoImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       while (true) {
-        const card = game.actions.drawAndTuck(player, game.getEffectAge(this, 1))
+        const card = game.actions.drawAndTuck(player, game.getEffectAge(self, 1))
         if (!card.checkHasBiscuit('k')) {
           break
         }

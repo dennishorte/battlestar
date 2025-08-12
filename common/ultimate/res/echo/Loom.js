@@ -14,7 +14,7 @@ module.exports = {
     `If you have five or more {h} visible on your board in one color, claim the Heritage achievement.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       // Check if there are at least two values in score pile.
       const ages = game
         .cards.byPlayer(player, 'score')
@@ -39,9 +39,9 @@ module.exports = {
           const returned = game.actions.returnMany(player, [card1, card2], { ordered: true })
 
           if (returned && returned.length === 2) {
-            game.actions.drawAndTuck(player, game.getEffectAge(this, 6))
-            game.actions.drawAndTuck(player, game.getEffectAge(this, 6))
-            game.actions.drawAndTuck(player, game.getEffectAge(this, 6))
+            game.actions.drawAndTuck(player, game.getEffectAge(self, 6))
+            game.actions.drawAndTuck(player, game.getEffectAge(self, 6))
+            game.actions.drawAndTuck(player, game.getEffectAge(self, 6))
           }
         }
       }

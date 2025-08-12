@@ -11,13 +11,13 @@ module.exports = {
     `You may splay your yellow cards right.`
   ],
   dogmaImpl: [
-    (game, player) => {
-      game.actions.draw(player, { age: game.getEffectAge(this, 7) })
+    (game, player, { self }) => {
+      game.actions.draw(player, { age: game.getEffectAge(self, 7) })
 
       if (game.state.dogmaInfo.stethoscope) {
         const melded = game.state.dogmaInfo.stethoscope[player.name]
         if (melded && melded.some(card => card.color === 'blue')) {
-          game.actions.draw(player, { age: game.getEffectAge(this, 8) })
+          game.actions.draw(player, { age: game.getEffectAge(self, 8) })
         }
       }
       else {

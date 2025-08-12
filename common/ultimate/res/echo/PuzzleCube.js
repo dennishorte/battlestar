@@ -15,7 +15,7 @@ module.exports = {
     `Draw and meld a {0}.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const color = game.actions.choose(player, game.util.colors(), {
         title: 'Choose a color for scoring bottom cards',
         min: 0,
@@ -54,13 +54,13 @@ module.exports = {
       if (distinctCounts === 1) {
         throw new GameOverEvent({
           player,
-          reason: this.name
+          reason: self.name
         })
       }
     },
 
-    (game, player) => {
-      game.actions.drawAndMeld(player, game.getEffectAge(this, 10))
+    (game, player, { self }) => {
+      game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
     },
   ],
   echoImpl: [],

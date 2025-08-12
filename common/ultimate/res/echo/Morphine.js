@@ -12,12 +12,12 @@ module.exports = {
     `You may splay your red cards right.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const toReturn = game
         .cards.byPlayer(player, 'hand')
         .filter(card => card.getAge() % 2 === 1)
       const returned = game.actions.returnMany(player, toReturn)
-      game.actions.draw(player, { age: game.getEffectAge(this, 6) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 6) })
 
       if (!game.state.dogmaInfo.morphine) {
         game.state.dogmaInfo.morphine = 0

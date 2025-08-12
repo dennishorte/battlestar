@@ -12,25 +12,25 @@ module.exports = {
     `If Kobukson was foreseen, draw and meld a {5}.`,
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const toReturn = game
         .cards.tops(player)
         .filter(card => card.checkHasBiscuit('k'))
 
       game.actions.returnMany(player, toReturn)
-      game.actions.drawAndTuck(player, game.getEffectAge(this, 4))
+      game.actions.drawAndTuck(player, game.getEffectAge(self, 4))
     },
 
-    (game, player) => {
-      game.actions.drawAndTuck(player, game.getEffectAge(this, 4))
+    (game, player, { self }) => {
+      game.actions.drawAndTuck(player, game.getEffectAge(self, 4))
     },
 
     (game, player, { foreseen, self }) => {
       if (foreseen) {
         game.log.addForeseen(self)
-        game.actions.drawAndMeld(player, game.getEffectAge(this, 5))
+        game.actions.drawAndMeld(player, game.getEffectAge(self, 5))
       }
-    }
+    },
   ],
   echoImpl: (game, player) => {
     const choices = game

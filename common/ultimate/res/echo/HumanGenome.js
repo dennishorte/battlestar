@@ -12,7 +12,7 @@ module.exports = {
     `You may draw and score a card of any value. Take a bottom card from your board into your hand. If the values of all the cards in your hand match the values of all the card in your score pile, exactly, you win.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const drawAndScore = game.actions.chooseYesNo(player, 'Draw and score a card of any value?')
       if (drawAndScore) {
         const age = game.actions.chooseAge(player)
@@ -39,7 +39,7 @@ module.exports = {
       if (scoreValues.join('') === handValues.join('')) {
         throw new GameOverEvent({
           player,
-          reason: this.name
+          reason: self.name
         })
       }
       else {

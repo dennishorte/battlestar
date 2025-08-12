@@ -11,8 +11,8 @@ module.exports = {
     `Execute all non-demand dogma effects on your lowest non-green top card. Do not share them.`
   ],
   dogmaImpl: [
-    (game, player) => {
-      game.actions.drawAndForeshadow(player, game.getEffectAge(this, 9))
+    (game, player, { self }) => {
+      game.actions.drawAndForeshadow(player, game.getEffectAge(self, 9))
     },
     (game, player) => {
       const choices = game
@@ -25,9 +25,9 @@ module.exports = {
       else {
         game.log.addNoEffect()
       }
-    }
+    },
   ],
-  echoImpl: (game, player) => {
-    game.actions.drawAndForeshadow(player, game.getEffectAge(this, 10))
+  echoImpl: (game, player, { self }) => {
+    game.actions.drawAndForeshadow(player, game.getEffectAge(self, 10))
   },
 }

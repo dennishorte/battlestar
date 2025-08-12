@@ -11,8 +11,8 @@ module.exports = {
     `If Dice was foreseen, draw a {4}, then transfer it to the hand of an opponent with more bonus points than you.`
   ],
   dogmaImpl: [
-    (game, player) => {
-      const card = game.actions.draw(player, { age: game.getEffectAge(this, 1), exp: 'echo' })
+    (game, player, { self }) => {
+      const card = game.actions.draw(player, { age: game.getEffectAge(self, 1), exp: 'echo' })
       game.actions.reveal(player, card)
       if (card.checkHasBonus()) {
         const bonus = card.getBonuses()[0]
@@ -20,9 +20,9 @@ module.exports = {
       }
     },
 
-    (game, player, { foreseen }) => {
+    (game, player, { foreseen, self }) => {
       if (foreseen) {
-        const card = game.actions.draw(player, { age: game.getEffectAge(this, 4) })
+        const card = game.actions.draw(player, { age: game.getEffectAge(self, 4) })
         const playerBonusPoints = game.getBonuses(player).reduce((l, r) => l + r, 0)
         const otherBonusPoints = game
           .players.opponentsOf(player)

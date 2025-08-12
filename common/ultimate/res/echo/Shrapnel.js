@@ -10,8 +10,8 @@ module.exports = {
     `I demand you draw and tuck a {6}! Transfer the top two cards of its color from your board to my score pile! Transfer the bottom card of its color from my board to your score pile!`
   ],
   dogmaImpl: [
-    (game, player, { leader }) => {
-      const card = game.actions.drawAndTuck(player, game.getEffectAge(this, 6))
+    (game, player, { leader, self }) => {
+      const card = game.actions.drawAndTuck(player, game.getEffectAge(self, 6))
       if (card) {
         const toTransfer = game
           .cards.byPlayer(player, card.color)

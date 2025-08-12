@@ -17,7 +17,7 @@ module.exports = {
       game.actions.chooseAndSplay(player, ['purple'], 'up')
     },
 
-    (game, player) => {
+    (game, player, { self }) => {
       let count = 0
 
       for (const player of game.players.all()) {
@@ -41,12 +41,12 @@ module.exports = {
       if (count === 4) {
         throw new GameOverEvent({
           player,
-          reason: this.name
+          reason: self.name
         })
       }
       else {
         for (let i = 0; i < count; i++) {
-          game.actions.draw(player, { age: game.getEffectAge(this, 7) })
+          game.actions.draw(player, { age: game.getEffectAge(self, 7) })
         }
       }
     },

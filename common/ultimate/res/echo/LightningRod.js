@@ -11,19 +11,19 @@ module.exports = {
     `Draw and tuck a {5}. You may return a top card from your board.`
   ],
   dogmaImpl: [
-    (game, player) => {
-      const card = game.actions.drawAndTuck(player, game.getEffectAge(this, 5))
+    (game, player, { self }) => {
+      const card = game.actions.drawAndTuck(player, game.getEffectAge(self, 5))
       if (card) {
         game.actions.return(player, game.getTopCard(player, card.color))
       }
     },
 
-    (game, player) => {
-      game.actions.drawAndTuck(player, game.getEffectAge(this, 5))
+    (game, player, { self }) => {
+      game.actions.drawAndTuck(player, game.getEffectAge(self, 5))
       game.actions.chooseAndReturn(player, game.cards.tops(player), { min: 0, max: 1 })
     },
   ],
-  echoImpl: (game, player) => {
-    game.actions.drawAndTuck(player, game.getEffectAge(this, 5))
+  echoImpl: (game, player, { self }) => {
+    game.actions.drawAndTuck(player, game.getEffectAge(self, 5))
   },
 }

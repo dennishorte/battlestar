@@ -13,9 +13,9 @@ module.exports = {
     `Return all cards from your hand. Draw a {6}. For each color of card returned, draw a card of the next higher value.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const returned = game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
-      const firstAge = game.getEffectAge(this, 6)
+      const firstAge = game.getEffectAge(self, 6)
       game.actions.draw(player, { age: firstAge })
       const colors = util.array.distinct(returned.map(card => card.color))
       for (let i = 0; i < colors.length; i++) {

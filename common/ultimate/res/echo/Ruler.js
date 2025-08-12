@@ -10,10 +10,10 @@ module.exports = {
     `Draw two Echoes {1}. Foreshadow one of the drawn cards and return the other.`,
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const cards = [
-        game.actions.draw(player, { age: game.getEffectAge(this, 1), exp: 'echo' }),
-        game.actions.draw(player, { age: game.getEffectAge(this, 1), exp: 'echo' }),
+        game.actions.draw(player, { age: game.getEffectAge(self, 1), exp: 'echo' }),
+        game.actions.draw(player, { age: game.getEffectAge(self, 1), exp: 'echo' }),
       ]
 
       const foreshadowed = game.actions.chooseCard(player, cards, {
@@ -25,8 +25,8 @@ module.exports = {
     }
   ],
   echoImpl: [
-    (game, player) => {
-      game.actions.draw(player, { age: game.getEffectAge(this, 2) })
+    (game, player, { self }) => {
+      game.actions.draw(player, { age: game.getEffectAge(self, 2) })
     }
   ],
 }

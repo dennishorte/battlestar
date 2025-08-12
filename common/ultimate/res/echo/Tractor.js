@@ -10,12 +10,12 @@ module.exports = {
     `Draw and score a {7}. Draw a {7}.`
   ],
   dogmaImpl: [
-    (game, player) => {
-      game.actions.drawAndScore(player, game.getEffectAge(this, 7))
-      game.actions.draw(player, { age: game.getEffectAge(this, 7) })
+    (game, player, { self }) => {
+      game.actions.drawAndScore(player, game.getEffectAge(self, 7))
+      game.actions.draw(player, { age: game.getEffectAge(self, 7) })
     }
   ],
-  echoImpl: (game, player) => {
-    game.actions.draw(player, { age: game.getEffectAge(this, 7) })
+  echoImpl: (game, player, { self }) => {
+    game.actions.draw(player, { age: game.getEffectAge(self, 7) })
   },
 }
