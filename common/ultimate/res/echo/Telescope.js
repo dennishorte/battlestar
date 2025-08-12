@@ -17,11 +17,17 @@ module.exports = {
         max: 1
       })
       if (toPlace) {
-        game.mMoveCardToTop(toPlace, game.zones.byId(toPlace.home), { player })
+        game.log.add({
+          template: '{player} returns {card} to the top of its deck',
+          args: { player, card: toPlace }
+        })
+        toPlace.moveToTop(toPlace.home)
+        game.actions.acted(player)
 
-        const canAchieve = game
-          .cards.byPlayer(player, 'forecast')
-          .filter(card => game.checkAchievementEligibility(player, card))
+
+          const canAchieve = game
+            .cards.byPlayer(player, 'forecast')
+            .filter(card => game.checkAchievementEligibility(player, card))
         game.actions.chooseAndAchieve(player, canAchieve)
       }
     }

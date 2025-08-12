@@ -13,8 +13,8 @@ describe("Telescope", () => {
         forecast: ['Sailing'],
       },
       decks: {
-        base: {
-          5: ['Metric System']
+        echo: {
+          5: ['Lightning Rod'],
         }
       }
     })
@@ -22,7 +22,7 @@ describe("Telescope", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Telescope')
-    request = t.choose(game, request, 'Metric System')
+    request = t.choose(game, request, 'Lightning Rod')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
