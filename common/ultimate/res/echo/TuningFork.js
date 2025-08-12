@@ -33,7 +33,7 @@ module.exports = {
           break
         }
 
-        const repeat = game.aYesNo(player, 'Repeat this dogma effect?')
+        const repeat = game.actions.chooseYesNo(player, 'Repeat this dogma effect?')
         if (repeat) {
           continue
         }

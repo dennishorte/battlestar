@@ -27,7 +27,7 @@ module.exports = {
     },
 
     (game, player) => {
-      const returnAll = game.aYesNo(player, 'Return all card from your forecast?')
+      const returnAll = game.actions.chooseYesNo(player, 'Return all card from your forecast?')
       if (returnAll) {
         const returned = game.actions.returnMany(player, game.cards.byPlayer(player, 'forecast'))
         if (returned && returned.some(card => card.color === 'blue')) {

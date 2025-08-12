@@ -41,7 +41,7 @@ module.exports = {
     const toSplayLeft = game.actions.choose(player, choices, { title: 'Choose a stack to splay left' })
     if (toSplayLeft && toSplayLeft.length > 0) {
       const [playerName, color] = toSplayLeft[0].split(' ')
-      const target = game.getPlayerByName(playerName)
+      const target = game.players.byName(playerName)
       game.actions.splay(player, color, 'left', { owner: target })
     }
   },

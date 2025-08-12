@@ -645,7 +645,7 @@ class UltimateActionManager extends BaseActionManager {
   transferMany = UltimateActionManager.createManyMethod('transfer', 3)
   tuckMany = UltimateActionManager.createManyMethod('tuck', 2)
 
-  chooseAndForecast = UltimateActionManager.createChooseAndMethod('foreshadowMany', 2)
+  chooseAndForeshadow = UltimateActionManager.createChooseAndMethod('foreshadowMany', 2)
   chooseAndJunk = UltimateActionManager.createChooseAndMethod('junkMany', 2)
   chooseAndMeld = UltimateActionManager.createChooseAndMethod('meldMany', 2)
   chooseAndReveal = UltimateActionManager.createChooseAndMethod('revealMany', 2)

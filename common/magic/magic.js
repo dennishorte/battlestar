@@ -342,7 +342,7 @@ Magic.prototype.aCascade = function(player, x) {
 
   let i
   for (i = 0; i < cards.length; i++) {
-    this.aReveal(player, cards[i])
+    this.actions.reveal(player, cards[i])
 
     if (cards[i].cmc() < x && !cards[i].isLand()) {
       break
@@ -450,9 +450,9 @@ Magic.prototype.aChooseAction = function(player) {
       case 'notap clear'         : return this.aSetNoUntap(actor, action.cardId, false)
       case 'notap set'           : return this.aSetNoUntap(actor, action.cardId, true)
       case 'pass priority'       : return this.aPassPriority(actor, action.target)
-      case 'reveal'              : return this.aReveal(actor, action.cardId)
-      case 'reveal all'          : return this.aRevealAll(actor, action.zoneId)
-      case 'reveal next'         : return this.aRevealNext(actor, action.zoneId)
+      case 'reveal'              : return this.actions.reveal(actor, action.cardId)
+      case 'reveal all'          : return this.actions.revealAll(actor, action.zoneId)
+      case 'reveal next'         : return this.actions.revealNext(actor, action.zoneId)
       case 'roll die'            : return this.actions.rollDie(actor, action.faces)
       case 'secret'              : return this.aSecret(actor, action.cardId)
       case 'select phase'        : return this.aSelectPhase(actor, action.phase)
@@ -767,7 +767,7 @@ Magic.prototype.aPassPriority = function(actor, targetName) {
   this.log.setIndent(indent)
 }
 
-Magic.prototype.aReveal = function(player, cardId) {
+Magic.prototype.actions.reveal = function(player, cardId) {
   player = player || this.players.current()
   const card = cardId instanceof MagicCard ? cardId : this.cards.byId(cardId)
 
@@ -778,7 +778,7 @@ Magic.prototype.aReveal = function(player, cardId) {
   })
 }
 
-Magic.prototype.aRevealAll = function(player, zoneId) {
+Magic.prototype.actions.revealAll = function(player, zoneId) {
   const zone = this.zones.byId(zoneId)
   zone.cardlist().forEach(card => card.reveal())
 
@@ -788,7 +788,7 @@ Magic.prototype.aRevealAll = function(player, zoneId) {
   })
 }
 
-Magic.prototype.aRevealNext = function(player, zoneId) {
+Magic.prototype.actions.revealNext = function(player, zoneId) {
   const zone = this.zones.byId(zoneId)
   const cards = zone.cardlist()
   const nextIndex = cards.findIndex(card => card.visibility.length !== this.players.all().length)

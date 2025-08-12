@@ -13,7 +13,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const drawAndScore = game.aYesNo(player, 'Draw and score a card of any value?')
+      const drawAndScore = game.actions.chooseYesNo(player, 'Draw and score a card of any value?')
       if (drawAndScore) {
         const age = game.actions.chooseAge(player)
         game.actions.drawAndScore(player, age)

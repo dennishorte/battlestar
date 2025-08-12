@@ -22,7 +22,7 @@ module.exports = {
       const age = game.actions.chooseAge(player, [3, 4, 5])
       const cards = game.zones.byDeck('base', age).cardlist()
       if (cards.length > 0) {
-        const transfer = game.aYesNo(player, `Transfer a {${age}} to the achievements?`)
+        const transfer = game.actions.chooseYesNo(player, `Transfer a {${age}} to the achievements?`)
         if (transfer) {
           game.actions.transfer(player, cards[cards.length - 1], game.zones.byId('achievements'))
         }

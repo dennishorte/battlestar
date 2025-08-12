@@ -21,7 +21,7 @@ module.exports = {
         return tests.every(x => x)
       }
 
-      const returnAll = game.aYesNo(player, 'Return all cards in your hand?')
+      const returnAll = game.actions.chooseYesNo(player, 'Return all cards in your hand?')
       if (returnAll) {
         const returned = game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
         if (colorCheck(returned)) {
@@ -32,7 +32,7 @@ module.exports = {
             count: 3,
             guard: (cards) => colorCheck(cards),
           })
-          game.aRevealMany(player, toReveal, { ordered: true })
+          game.actions.revealMany(player, toReveal, { ordered: true })
 
           game.actions.drawAndForeshadow(player, game.getEffectAge(this, 6))
           game.actions.drawAndForeshadow(player, game.getEffectAge(this, 7))
