@@ -14,7 +14,7 @@ describe("Toilet", () => {
         hand: ['Machinery'],
       },
       micah: {
-        score: ['Sailing', 'Calendar', 'Translation'],
+        score: ['Sailing', 'Masonry', 'Calendar', 'Translation'],
       },
       decks: {
         echo: {
@@ -27,6 +27,8 @@ describe("Toilet", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Toilet')
+    request = t.choose(game, request, 'Masonry')
+    request = t.choose(game, request, 'auto')
     request = t.choose(game, request, 'Machinery')
 
     t.testIsSecondPlayer(game)

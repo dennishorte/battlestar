@@ -1,3 +1,5 @@
+const util = require('../../../lib/util.js')
+
 module.exports = {
   name: `Toilet`,
   color: `purple`,
@@ -7,17 +9,25 @@ module.exports = {
   dogmaBiscuit: `l`,
   echo: `Draw and tuck a {4}.`,
   dogma: [
-    `I demand you return all cards from your score pile of value matching the highest bonus on my board!`,
+    `I demand you return a card from your score pile matching each different bonus on my board`,
     `You may return a card in your hand and draw a card of the same value.`
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const age = game
-        .getBonuses(leader)
-        .sort((l, r) => r - l)[0]
-      const toReturn = game
-        .cards.byPlayer(player, 'score')
-        .filter(card => card.age === age)
+      const ages = util.array.distinct(game.getBonuses(leader)).sort()
+
+      const scoreCards = game.cards.byPlayer(player, 'score')
+
+      const toReturn = []
+      for (const age of ages) {
+        const options = scoreCards.filter(card => card.getAge() === age)
+        const selected = game.actions.chooseCard(player, options, {
+          title: 'Choose a card of age ' + age,
+        })
+        if (selected) {
+          toReturn.push(selected)
+        }
+      }
 
       game.actions.returnMany(player, toReturn)
     },
