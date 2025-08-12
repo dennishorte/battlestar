@@ -14,18 +14,19 @@ describe("Horseshoes", () => {
       micah: {
         green: ['Navigation'],
         yellow: ['Canning'],
-        red: ['Archery'],
+        purple: ['Mysticism'],
       },
       decks: {
-        base: {
-          2: ['Fermenting', 'Construction']
-        }
+        usee: {
+          2: ['Watermill', 'Chaturanga'],
+        },
       }
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Horseshoes')
+    request = t.choose(game, request, 2)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -33,11 +34,11 @@ describe("Horseshoes", () => {
         red: ['Horseshoes'],
         green: ['Navigation'],
         yellow: ['Masonry'],
-        forecast: ['Fermenting'],
+        forecast: ['Watermill'],
       },
       micah: {
         yellow: ['Canning'],
-        red: ['Construction', 'Archery'],
+        purple: ['Chaturanga', 'Mysticism'],
       },
     })
   })
