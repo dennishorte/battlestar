@@ -16,8 +16,11 @@ module.exports = {
         return
       }
 
-      const cards = game.state.dogmaInfo.charitableTrust[player.name]
-        .filter(card => card.zone.includes('hand'))
+      const cards = game
+        .state
+        .dogmaInfo
+        .charitableTrust[player.name]
+        .filter(card => card.inHand(player))
       const melded = game.actions.chooseAndMeld(player, cards, { min: 0, max: 1 })[0]
 
       if (melded) {
@@ -28,7 +31,7 @@ module.exports = {
         }
         else if (melded.getAge() === game.getEffectAge(this, 3)) {
           if (game.checkAchievementEligibility(player, greenCard)) {
-            game.aClaimAchievement(player, { card: greenCard })
+            game.actions.claimAchievement(player, { card: greenCard })
           }
         }
         else if (melded.getAge() === game.getEffectAge(this, 4)) {

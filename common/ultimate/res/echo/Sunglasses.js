@@ -46,7 +46,7 @@ module.exports = {
       const action = game.actions.choose(player, choices, { title: 'Choose a color to splay', min: 0, max: 1 })[0]
       if (action) {
         const [color, direction] = action.split(' ')
-        game.aSplay(player, color, direction)
+        game.actions.splay(player, color, direction)
       }
     }
   ],

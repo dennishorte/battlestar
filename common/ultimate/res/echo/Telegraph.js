@@ -26,7 +26,7 @@ module.exports = {
       const choice = game.actions.choose(player, distinct, { min: 0, max: 1 })[0]
       if (choice) {
         const [color, direction] = choice.split(' ')
-        game.aSplay(player, color, direction)
+        game.actions.splay(player, color, direction)
       }
     },
 

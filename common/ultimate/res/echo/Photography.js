@@ -36,7 +36,7 @@ module.exports = {
         .some(count => count >= targetCount)
 
       if (matches) {
-        game.aClaimAchievement(player, { name: 'History' })
+        game.actions.claimAchievement(player, { name: 'History' })
       }
       else {
         game.log.addNoEffect()

@@ -9,7 +9,7 @@ describe("Magnifying Glass", () => {
     t.setBoard(game,  {
       dennis: {
         blue: ['Magnifying Glass'],
-        yellow: ['Fermenting', 'Agriculture'],
+        yellow: ['Machinery', 'Agriculture'],
         hand: ['Sailing', 'Enterprise', 'Gunpowder'],
       },
       decks: {
@@ -32,7 +32,7 @@ describe("Magnifying Glass", () => {
       dennis: {
         blue: ['Magnifying Glass'],
         yellow: {
-          cards: ['Fermenting', 'Agriculture'],
+          cards: ['Machinery', 'Agriculture'],
           splay: 'left'
         },
         hand: ['Canning']

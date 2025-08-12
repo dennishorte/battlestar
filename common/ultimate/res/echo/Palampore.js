@@ -37,7 +37,7 @@ module.exports = {
     (game, player) => {
       const bonuses = game.getBonuses(player)
       if (bonuses.length >= 6 && game.checkAchievementAvailable('Wealth')) {
-        game.aClaimAchievement(player, { name: 'Wealth' })
+        game.actions.claimAchievement(player, { name: 'Wealth' })
       }
       else {
         game.log.addNoEffect()

@@ -248,6 +248,10 @@ class UltimateAgeCard extends UltimateBaseCard {
       return this[`${kind}Impl`]
     }
   }
+
+  inHand(player) {
+    return this.owner === player && this.zone.id.endsWith('hand')
+  }
 }
 
 module.exports = {

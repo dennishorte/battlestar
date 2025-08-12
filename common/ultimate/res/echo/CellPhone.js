@@ -32,7 +32,7 @@ module.exports = {
       if (tucked) {
         for (const card of tucked) {
           if (game.zones.byPlayer(player, card.color).splay !== 'up') {
-            game.aSplay(player, card.color, 'up')
+            game.actions.splay(player, card.color, 'up')
           }
         }
       }

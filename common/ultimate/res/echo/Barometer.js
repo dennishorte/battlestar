@@ -31,7 +31,7 @@ module.exports = {
       if (returnAll) {
         const returned = game.actions.returnMany(player, game.cards.byPlayer(player, 'forecast'))
         if (returned && returned.some(card => card.color === 'blue')) {
-          game.aClaimAchievement(player, { name: 'Destiny' })
+          game.actions.claimAchievement(player, { name: 'Destiny' })
         }
       }
     },

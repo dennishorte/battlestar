@@ -42,7 +42,7 @@ module.exports = {
     if (toSplayLeft && toSplayLeft.length > 0) {
       const [playerName, color] = toSplayLeft[0].split(' ')
       const target = game.getPlayerByName(playerName)
-      game.aSplay(player, color, 'left', { owner: target })
+      game.actions.splay(player, color, 'left', { owner: target })
     }
   },
 }

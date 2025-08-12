@@ -61,7 +61,7 @@ module.exports = {
         )
 
       if (hexes.some(count => count >= 5) && game.checkAchievementAvailable('Heritage')) {
-        game.aClaimAchievement(player, { name: 'Heritage' })
+        game.actions.claimAchievement(player, { name: 'Heritage' })
       }
     }
   ],

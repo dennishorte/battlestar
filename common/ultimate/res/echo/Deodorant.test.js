@@ -98,7 +98,7 @@ describe("Deodorant", () => {
         "Enterprise",
         "Experimentation",
         "Gunpowder",
-        "Invention",
+        "Perspective",
         "Navigation",
         "Printing Press",
         "Reformation",

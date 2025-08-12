@@ -25,7 +25,7 @@ module.exports = {
       if (foreseen) {
         game.log.addForeseen(self)
         for (const color of game.util.colors()) {
-          game.aSplay(player, color, 'left')
+          game.actions.splay(player, color, 'left')
         }
       }
       else {

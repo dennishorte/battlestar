@@ -42,7 +42,7 @@ module.exports = {
         }
 
         if (biscuits.every(b => b.includes(biscuit))) {
-          game.aClaimAchievement(player, { name: 'Supremacy' })
+          game.actions.claimAchievement(player, { name: 'Supremacy' })
           return
         }
       }

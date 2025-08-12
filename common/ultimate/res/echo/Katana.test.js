@@ -81,7 +81,6 @@ describe("Katana", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Meld.Engineering')
-    t.dumpLog(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
