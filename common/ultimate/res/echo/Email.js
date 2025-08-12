@@ -16,7 +16,7 @@ module.exports = {
     },
     (game, player) => {
       const choices = game
-        .utilLowestCards(game.cards.tops(player))
+        .util.lowestCards(game.cards.tops(player))
         .filter(card => card.color !== 'green')
       const card = game.actions.chooseCard(player, choices)
       if (card) {

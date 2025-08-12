@@ -66,7 +66,7 @@ module.exports = {
     }
   ],
   echoImpl: (game, player) => {
-    const choices = game.utilLowestCards(game.cards.tops(player))
+    const choices = game.util.lowestCards(game.cards.tops(player))
     game.actions.chooseAndScore(player, choices)
   },
 }

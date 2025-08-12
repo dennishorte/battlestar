@@ -20,7 +20,7 @@ module.exports = {
       const toMeld = game
         .cards.byPlayer(player, 'hand')
         .filter(card => card.getAge() === game.getEffectAge(this, 9))
-      game.aMeldMany(player, toMeld)
+      game.actions.meldMany(player, toMeld)
       game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
       game.actions.draw(player, { age: game.getEffectAge(this, 9) })
       game.actions.draw(player, { age: game.getEffectAge(this, 9) })

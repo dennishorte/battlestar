@@ -27,7 +27,7 @@ module.exports = {
           const achievements = game
             .getAvailableStandardAchievements(player)
             .filter(x => x.getAge() === age)
-          game.aJunkMany(player, achievements, { ordered: true })
+          game.actions.junkMany(player, achievements, { ordered: true })
         }
       }
     }

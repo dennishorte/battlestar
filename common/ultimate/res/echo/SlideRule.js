@@ -21,7 +21,7 @@ module.exports = {
         .map(color => game.zones.byPlayer(player, color).splay)
         .filter(splay => splay !== 'none')
         .length
-      const lowestCard = game.utilLowestCards(game.cards.tops(player))[0]
+      const lowestCard = game.util.lowestCards(game.cards.tops(player))[0]
       const lowestAge = lowestCard ? lowestCard.getAge() : 0
       const drawAge = lowestAge + splayedCount
       game.actions.draw(player, { age: drawAge })

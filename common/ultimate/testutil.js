@@ -501,11 +501,11 @@ TestUtil.setDeckExact = function(game, exp, age, cardNames) {
   }
 
   const cards = cardNames
-    .map(c => game.getCardByName(c))
+    .map(c => game.cards.byId(c))
     .reverse()
 
   for (const card of cards) {
-    game.mMoveCardToTop(card, deck)
+    card.moveToTop(deck)
   }
 }
 

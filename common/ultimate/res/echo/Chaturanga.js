@@ -20,8 +20,8 @@ module.exports = {
     (game, player, { foreseen, self }) => {
       if (foreseen) {
         game.log.addForeseen(self)
-        const count = game.cards.tops(player).length
-        game.actions.drawAndForeshadow(player, count)
+        const numColors = game.cards.tops(player).length
+        game.actions.drawAndForeshadow(player, numColors)
       }
       else {
         game.log.addNoEffect()

@@ -67,8 +67,8 @@ describe("Chaturanga", () => {
       },
       decks: {
         base: {
-          1: ['Plumbing'],
-          2: ['Calendar'],
+          1: ['City States'],
+          2: ['Construction'],
         },
       },
     })
@@ -82,7 +82,7 @@ describe("Chaturanga", () => {
       dennis: {
         yellow: ['Fermenting'],
         purple: ['Chaturanga'],
-        forecast: ['Calendar', 'Plumbing'],
+        forecast: ['City States', 'Construction']
       },
     })
   })

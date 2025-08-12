@@ -108,14 +108,14 @@ class UltimateActionManager extends BaseActionManager {
       choices = this.game.formatAchievements(choices)
     }
 
-    const selected = this.actions.choose(
+    const selected = this.actions.chooseCards(
       player,
       choices,
       { ...opts, title: 'Choose Achievement' }
     )
 
-    for (const name of selected) {
-      this.claimAchievement(player, { name })
+    for (const card of selected) {
+      this.claimAchievement(player, { card })
     }
   }
 

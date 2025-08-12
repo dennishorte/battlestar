@@ -21,9 +21,10 @@ module.exports = {
         if (tucked && foreseen) {
           game.log.addForeseen(self)
           const toMeld = game
-            .getPlayersOther(player)
+            .players
+            .other(player)
             .flatMap(p => game.cards.byPlayer(p, card.color))
-          game.aMeldMany(player, toMeld)
+          game.actions.meldMany(player, toMeld)
         }
       }
     }

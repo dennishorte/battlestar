@@ -1,4 +1,3 @@
-
 const util = require('../../../lib/util.js')
 
 module.exports = {
@@ -43,7 +42,7 @@ module.exports = {
         const toTuck = game
           .cards.byPlayer(player, 'hand')
           .filter(card => card.getAge() === age)
-        game.aTuckMany(player, toTuck)
+        game.actions.tuckMany(player, toTuck)
       }
     }
   ],

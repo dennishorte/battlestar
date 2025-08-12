@@ -19,7 +19,7 @@ module.exports = {
       if (transferred && transferred.length === 1 && foreseen) {
         game.log.addForeseen(self)
         const achievements = game.getAvailableStandardAchievements(player)
-        game.aJunkMany(player, achievements, { ordered: true })
+        game.actions.junkMany(player, achievements, { ordered: true })
       }
     }
   ],

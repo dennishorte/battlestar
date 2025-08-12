@@ -28,7 +28,7 @@ module.exports = {
             title: `Meld or score ${card.name}`
           })[0]
           if (meldOrScore === 'meld') {
-            game.aMeld(player, card)
+            game.actions.meld(player, card)
           }
           else {
             game.actions.score(player, card)

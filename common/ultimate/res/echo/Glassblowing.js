@@ -15,7 +15,7 @@ module.exports = {
       const topCards = game
         .cards.tops(player)
         .filter(card => card.color !== 'green')
-      const lowest = game.utilLowestCards(topCards)
+      const lowest = game.util.lowestCards(topCards)
 
       if (lowest.length === 0) {
         game.actions.drawAndForeshadow(player, 3)

@@ -32,7 +32,7 @@ module.exports = {
       const splay = game.zones.byPlayer(player, 'green').splay
       const toMeld = game.getBottomCard(player, 'green')
       if (toMeld) {
-        game.aMeld(player, toMeld)
+        game.actions.meld(player, toMeld)
         game.zones.byPlayer(player, 'green').splay = splay
       }
     }

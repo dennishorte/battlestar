@@ -12,9 +12,9 @@ describe("Lever", () => {
         hand: ['Tools', 'Sailing', 'Domestication', 'Machinery', 'Novel'],
       },
       decks: {
-        base: {
-          2: ['Monotheism', 'Fermenting', 'Construction'],
-          3: ['Engineering'],
+        echo: {
+          2: ['Scissors', 'Pagoda', 'Chaturanga'],
+          4: ['Pencil'],
         },
       },
     })
@@ -22,7 +22,7 @@ describe("Lever", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Lever')
-    request = t.choose(game, request, 'Tools', 'Sailing', 'Domestication', 'Machinery', 'Monotheism', 'Fermenting')
+    request = t.choose(game, request, 'Tools', 'Sailing', 'Domestication', 'Machinery', 'Novel', 'Scissors')
     request = t.choose(game, request, 'auto')
     request = t.choose(game, request, 2)
 
@@ -30,7 +30,7 @@ describe("Lever", () => {
     t.testBoard(game, {
       dennis: {
         blue: ['Lever'],
-        hand: ['Novel', 'Construction', 'Engineering'],
+        hand: ['Pagoda', 'Chaturanga', 'Pencil'],
       },
     })
   })

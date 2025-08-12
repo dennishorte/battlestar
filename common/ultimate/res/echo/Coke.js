@@ -16,7 +16,7 @@ module.exports = {
         if (card) {
           if (card.checkHasBiscuit('f')) {
             game.log.add({ template: 'Card has {f}.' })
-            game.aMeld(player, card)
+            game.actions.meld(player, card)
             continue
           }
           else {

@@ -18,7 +18,7 @@ module.exports = {
           if (revealed) {
             const top = game.getTopCard(player, revealed.color)
             if (!top || revealed.getAge() > top.getAge()) {
-              game.aMeld(player, revealed)
+              game.actions.meld(player, revealed)
             }
             else {
               game.actions.return(player, revealed)
