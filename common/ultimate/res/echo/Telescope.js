@@ -5,7 +5,7 @@ module.exports = {
   expansion: `echo`,
   biscuits: `h4s&`,
   dogmaBiscuit: `s`,
-  echo: `Draw and foreshadow a {5}.`,
+  echo: `Draw and foreshadow an Echoes {5}.`,
   dogma: [
     `You may place a card from your forecast on top of its deck. If you do, achieve a card from your forecast if you meet the requirements to do so.`
   ],
@@ -33,6 +33,9 @@ module.exports = {
     }
   ],
   echoImpl: (game, player, { self }) => {
-    game.actions.drawAndForeshadow(player, game.getEffectAge(self, 5))
+    const card = game.actions.draw(player, { exp: 'echo', age: game.getEffectAge(self, 5) })
+    if (card) {
+      game.actions.foreshadow(player, card)
+    }
   },
 }

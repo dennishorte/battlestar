@@ -9,6 +9,7 @@ describe("Telescope", () => {
     t.setBoard(game,  {
       dennis: {
         blue: ['Telescope'],
+        yellow: ['Perspective'],
         score: ['Software'],
         forecast: ['Sailing'],
       },
@@ -28,6 +29,7 @@ describe("Telescope", () => {
     t.testBoard(game, {
       dennis: {
         blue: ['Telescope'],
+        yellow: ['Perspective'],
         score: ['Software'],
         achievements: ['Sailing'],
       },
