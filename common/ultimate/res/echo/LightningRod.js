@@ -8,7 +8,8 @@ module.exports = {
   echo: `Draw and tuck a {5}.`,
   dogma: [
     `I demand you draw and tuck a {5}! Return your top card of the tucked card's color.`,
-    `Draw and tuck a {5}. You may return a top card from your board.`
+    `Return a top card from your board.`,
+    `Junk all cards in the {6} deck.`,
   ],
   dogmaImpl: [
     (game, player, { self }) => {
@@ -18,9 +19,12 @@ module.exports = {
       }
     },
 
+    (game, player) => {
+      game.actions.chooseAndReturn(player, game.cards.tops(player))
+    },
+
     (game, player, { self }) => {
-      game.actions.drawAndTuck(player, game.getEffectAge(self, 5))
-      game.actions.chooseAndReturn(player, game.cards.tops(player), { min: 0, max: 1 })
+      game.actions.junkDeck(player, game.getEffectAge(self, 6))
     },
   ],
   echoImpl: (game, player, { self }) => {

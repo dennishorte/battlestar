@@ -9,14 +9,16 @@ describe("Lightning Rod", () => {
     t.setBoard(game,  {
       dennis: {
         blue: ['Lightning Rod'],
+        purple: ['Societies'],
         green: ['Sailing'],
       },
       micah: {
         purple: ['Enterprise', 'Code of Laws'],
+        yellow: ['Perspective'],
       },
       decks: {
         base: {
-          5: ['Coal', 'Astronomy', 'Measurement'],
+          5: ['Coal', 'Astronomy'],
         },
       },
     })
@@ -30,12 +32,14 @@ describe("Lightning Rod", () => {
     t.testBoard(game, {
       dennis: {
         blue: ['Lightning Rod'],
-        green: ['Measurement'],
         red: ['Coal'],
+        purple: ['Societies'],
       },
       micah: {
         purple: ['Code of Laws', 'Astronomy'],
+        yellow: ['Perspective'],
       },
     })
+    // TODO: test if the 6 deck is junked
   })
 })
