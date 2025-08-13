@@ -5,12 +5,12 @@ module.exports = {
   expansion: `echo`,
   biscuits: `h&5s`,
   dogmaBiscuit: `s`,
-  echo: [`Meld your bottom green card. Maintain its splay.`],
+  echo: [`Meld your bottom green card.`],
   dogma: [
-    `Draw and meld a card of value one higher than the value of your top yellow card. If the melded card is yellow, repeat this dogma effect.`
+    `Draw and meld a card of value one higher than the value of your top yellow card. If the melded card is yellow, or if Thermometer was foreseen and the melded card is red or purple, repeat this dogma effect.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { foreseen, self }) => {
       while (true) {
         const yellow = game.getTopCard(player, 'yellow')
         const age = yellow ? yellow.getAge() + 1 : 1
@@ -22,7 +22,16 @@ module.exports = {
           continue
         }
         else {
-          break
+          game.log.addForeseen(foreseen, self)
+          if (foreseen && ['red', 'purple'].includes(melded.color)) {
+            game.log.add({
+              template: 'Melded card was red or purple. Repeating'
+            })
+            continue
+          }
+          else {
+            break
+          }
         }
       }
     }
