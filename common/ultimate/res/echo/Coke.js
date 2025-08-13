@@ -7,7 +7,8 @@ module.exports = {
   dogmaBiscuit: `f`,
   echo: [`Draw and tuck a {4}.`],
   dogma: [
-    `Draw and reveal a {6}. If it has a {f}, meld it and repeat this dogma effect. Otherwise, foreshadow it.`
+    `Draw and reveal a {6}. If it has a {f}, meld it and repeat this dogma effect. Otherwise, foreshadow it.`,
+    `If Coke was foreseen, score your top card of each non-red color.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
@@ -29,7 +30,19 @@ module.exports = {
           break
         }
       }
-    }
+    },
+
+    (game, player, { foreseen, self }) => {
+      if (foreseen) {
+        game.log.addForeseen(self)
+
+        const cards = game.cards.tops(player).filter(card => card.color !== 'red')
+        game.actions.scoreMany(player, cards)
+      }
+      else {
+        game.log.addNoEffect()
+      }
+    },
   ],
   echoImpl: [
     (game, player, { self }) => {
