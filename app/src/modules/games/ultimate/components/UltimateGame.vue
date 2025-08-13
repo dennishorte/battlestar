@@ -92,7 +92,7 @@ export default {
 
   methods: {
     openRules() {
-      window.open("https://asmadigames.com/rules/Rulebook_Deluxe_spreads.pdf")
+      window.open("https://www.asmadigames.com/innovation/InnoUlt_Rulebook_v0_9.pdf")
     },
 
     uiFactory() {
