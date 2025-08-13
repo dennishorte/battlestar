@@ -7,8 +7,8 @@ module.exports = {
   dogmaBiscuit: `l`,
   echo: [],
   dogma: [
-    `I demand you return a top card from your board of value less than {3}!`,
-    `Choose the {3}, {4}, or {5} deck. If there is at least one card in that deck, you may transfer its bottom card to the available achievements.`
+    `I demand you return a top card from your board of value less than 3!`,
+    `Choose the {3}, {4}, or {5} deck. You may junk all cards in the chosen deck. If you do, achieve the highest card in the junk, if eligible.`
   ],
   dogmaImpl: [
     (game, player) => {
@@ -18,14 +18,26 @@ module.exports = {
       game.actions.chooseAndReturn(player, choices)
     },
 
-    (game, player) => {
-      const age = game.actions.chooseAge(player, [3, 4, 5])
-      const cards = game.zones.byDeck('base', age).cardlist()
-      if (cards.length > 0) {
-        const transfer = game.actions.chooseYesNo(player, `Transfer a {${age}} to the achievements?`)
-        if (transfer) {
-          game.actions.transfer(player, cards[cards.length - 1], game.zones.byId('achievements'))
-        }
+    (game, player, { self }) => {
+      const deckAges = [
+        game.getEffectAge(self, 3),
+        game.getEffectAge(self, 4),
+        game.getEffectAge(self, 5),
+      ]
+      const didJunk = game.actions.chooseAndJunkDeck(player, deckAges, { min: 0 })
+      if (didJunk) {
+        const achievable = game
+          .util
+          .highestCards(game.cards.byZone('junk'))
+          .filter(card => game.checkAchievementEligibility(player, card))
+
+        game.actions.chooseAndAchieve(player, achievable)
+      }
+      else {
+        game.log.add({
+          template: '{player} chooses not to junk a deck',
+          args: { player }
+        })
       }
     },
   ],

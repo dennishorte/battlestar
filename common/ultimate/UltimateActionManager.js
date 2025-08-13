@@ -101,13 +101,13 @@ class UltimateActionManager extends BaseActionManager {
 
   chooseAndAchieve(player, choices, opts={}) {
     if (choices.length === 0) {
-      this.log.addNoEffect()
+      this.log.add({
+        template: 'There are no valid achievements to claim'
+      })
     }
 
-    if (typeof choices[0] === 'object') {
-      choices = this.game.formatAchievements(choices)
-    }
-
+    // TODO: This doesn't properly hide the achievements in some cases, but it's complicated,
+    //       so I'm punting for now.
     const selected = this.actions.chooseCards(
       player,
       choices,
@@ -125,7 +125,12 @@ class UltimateActionManager extends BaseActionManager {
       ...opts
     })
 
-    this.actions.junkDeck(player, age)
+    if (age) {
+      return this.actions.junkDeck(player, age)
+    }
+    else {
+      return false
+    }
   }
 
   chooseAndSplay(player, choices, direction, opts={}) {
