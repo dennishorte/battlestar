@@ -9,6 +9,7 @@ describe("Stove", () => {
     t.setBoard(game,  {
       dennis: {
         yellow: ['Stove'],
+        purple: ['Astronomy'],
         green: ['Navigation'],
       },
       decks: {
@@ -21,12 +22,13 @@ describe("Stove", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Stove')
+    request = t.choose(game, request, 'Navigation')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Stove'],
-        purple: ['Enterprise'],
+        purple: ['Astronomy', 'Enterprise'],
         score: ['Navigation'],
       },
     })
@@ -38,6 +40,7 @@ describe("Stove", () => {
       dennis: {
         yellow: ['Stove'],
         purple: ['Code of Laws'],
+        blue: ['Chemistry'],
         green: ['Navigation'],
       },
       decks: {
@@ -56,6 +59,7 @@ describe("Stove", () => {
     t.testBoard(game, {
       dennis: {
         yellow: ['Stove'],
+        blue: ['Chemistry'],
         purple: ['Code of Laws', 'Enterprise'],
         score: ['Navigation', 'Gunpowder'],
       },
