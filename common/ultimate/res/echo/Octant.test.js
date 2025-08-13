@@ -9,6 +9,7 @@ describe("Octant", () => {
     t.setBoard(game,  {
       dennis: {
         red: ['Octant'],
+        blue: ['Chemistry'],
       },
       micah: {
         red: ['Coal'],
@@ -17,8 +18,8 @@ describe("Octant", () => {
         yellow: ['Canning'],
       },
       decks: {
-        base: {
-          6: ['Metric System', 'Atomic Theory'],
+        echo: {
+          6: ['Bifocals', 'Indian Clubs'],
         },
       },
     })
@@ -26,23 +27,60 @@ describe("Octant", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Octant')
-
-    t.testChoices(request, ['Canning', 'Pottery'])
-
-    request = t.choose(game, request, 'Pottery')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Octant'],
-        blue: ['Pottery'],
-        forecast: ['Atomic Theory'],
+        blue: ['Pottery', 'Chemistry'],
+        yellow: ['Canning'],
+        forecast: ['Indian Clubs'],
       },
       micah: {
         red: ['Coal'],
         green: ['The Wheel'],
+        forecast: ['Bifocals'],
+      },
+    })
+  })
+
+  test('dogma: was foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        forecast: ['Octant'],
+        hand: ['Chemistry'],
+      },
+      micah: {
+        red: ['Coal'],
+        blue: ['Pottery'],
+        green: ['The Wheel'],
         yellow: ['Canning'],
-        forecast: ['Metric System'],
+      },
+      decks: {
+        echo: {
+          6: ['Bifocals', 'Indian Clubs'],
+        },
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Chemistry')
+    request = t.choose(game, request, 'auto')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Octant'],
+        blue: ['Pottery', 'Chemistry'],
+        yellow: ['Canning'],
+        forecast: ['Bifocals'],
+      },
+      micah: {
+        red: ['Coal'],
+        green: ['The Wheel'],
       },
     })
   })

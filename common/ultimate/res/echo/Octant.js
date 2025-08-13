@@ -7,19 +7,23 @@ module.exports = {
   dogmaBiscuit: `c`,
   echo: ``,
   dogma: [
-    `I demand you transfer a top non-red card with a {l} or {f} from your board to my board! If you do, draw and foreshadow a {6}!`,
+    `I demand you transfer your top card with a {l} or {f} of each non-red color from your board to my board! If you do, and Octant wasn't foreseen, draw and foreshadow a {6}!`,
     `Draw and foreshadow a {6}.`
   ],
   dogmaImpl: [
-    (game, player, { leader, self }) => {
-      const choices = game
-        .cards.tops(player)
+    (game, player, { foreseen, leader, self }) => {
+      const toTransfer = game
+        .cards
+        .tops(player)
         .filter(card => card.color !== 'red')
         .filter(card => card.checkHasBiscuit('l') || card.checkHasBiscuit('f'))
-      const card = game.actions.chooseCard(player, choices, { title: 'Choose a card to transfer' })
-      if (card) {
-        const transferred = game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
-        if (transferred) {
+      const transferred = game.actions.transferMany(player, toTransfer, { player: leader, toBoard: true })
+
+      if (transferred.length > 0) {
+        if (foreseen) {
+          game.log.addForeseen(self)
+        }
+        else {
           game.actions.drawAndForeshadow(player, game.getEffectAge(self, 6))
         }
       }
