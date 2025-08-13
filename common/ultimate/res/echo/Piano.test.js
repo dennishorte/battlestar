@@ -9,6 +9,7 @@ describe("Piano", () => {
     t.setBoard(game,  {
       dennis: {
         purple: ['Piano'],
+        blue: ['Chemistry'],
         hand: ['Deodorant'],
       },
       micah: {
@@ -30,6 +31,7 @@ describe("Piano", () => {
     t.testBoard(game, {
       dennis: {
         purple: ['Piano'],
+        blue: ['Chemistry'],
         hand: ['Metric System', 'Deodorant'],
       },
       micah: {
@@ -43,6 +45,7 @@ describe("Piano", () => {
     t.setBoard(game,  {
       dennis: {
         purple: ['Piano'],
+        blue: ['Chemistry'],
       },
     })
 
@@ -54,6 +57,7 @@ describe("Piano", () => {
     t.testBoard(game, {
       dennis: {
         purple: ['Piano'],
+        blue: ['Chemistry'],
       },
     })
   })
@@ -70,12 +74,12 @@ describe("Piano", () => {
         score: ['Sailing', 'The Wheel', 'Mathematics', 'Fermenting', 'Machinery'],
       },
       decks: {
-        base: {
-          1: ['Code of Laws'],
-          2: ['Monotheism'],
-          4: ['Gunpowder'],
-          5: ['Coal'],
-          6: ['Metric System'],
+        echo: {
+          1: ['Bangle'],
+          2: ['Lever'],
+          4: ['Kobukson'],
+          5: ['Thermometer'],
+          6: ['Morphine'],
         },
       },
     })
@@ -93,7 +97,7 @@ describe("Piano", () => {
         green: ['Navigation'],
         yellow: ['Canning'],
         red: ['Construction'],
-        score: ['Code of Laws', 'Monotheism', 'Gunpowder', 'Coal', 'Metric System'],
+        score: ['Bangle', 'Lever', 'Kobukson', 'Thermometer', 'Morphine'],
       },
     })
   })
