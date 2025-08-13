@@ -1,4 +1,3 @@
-
 const util = require('../../../lib/util.js')
 
 module.exports = {
@@ -22,8 +21,8 @@ module.exports = {
       if (age) {
         game.actions.draw(player, { age })
 
+        game.log.addForeseen(foreseen, self)
         if (foreseen) {
-          game.log.addForeseen(self)
           const achievements = game
             .getAvailableStandardAchievements(player)
             .filter(x => x.getAge() === age)

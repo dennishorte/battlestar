@@ -26,8 +26,8 @@ module.exports = {
     },
 
     (game, player, { foreseen, self }) => {
+      game.log.addForeseen(foreseen, self)
       if (foreseen) {
-        game.log.addForeseen(self)
         game.actions.drawAndMeld(player, game.getEffectAge(self, 5))
       }
     },

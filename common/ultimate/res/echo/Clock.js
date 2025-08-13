@@ -10,7 +10,7 @@ module.exports = {
     `I demand you transfer all cards of value equal to the number of visible cards on my board of the color of my choice from your hand and score pile to my score pile. Junk an available achievement of that value.`
   ],
   dogmaImpl: [
-    (game, player, { leader, self }) => {
+    (game, player, { leader }) => {
       const choices = game.util.colors().map(color => {
         const count = game.getVisibleCardsByZone(leader, color)
         return `${color} (${count})`

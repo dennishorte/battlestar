@@ -20,10 +20,8 @@ module.exports = {
       const transferred = game.actions.transferMany(player, toTransfer, { player: leader, toBoard: true })
 
       if (transferred.length > 0) {
-        if (foreseen) {
-          game.log.addForeseen(self)
-        }
-        else {
+        game.log.addForeseen(foreseen, self)
+        if (!foreseen) {
           game.actions.drawAndForeshadow(player, game.getEffectAge(self, 6))
         }
       }

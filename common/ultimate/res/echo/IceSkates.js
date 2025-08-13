@@ -12,13 +12,10 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { foreseen, self }) => {
+      game.log.addForeseen(foreseen, self)
       if (foreseen) {
-        game.log.addForeseen(self)
         game.actions.junkDeck(player, 1)
         game.actions.junkDeck(player, 2)
-      }
-      else {
-        game.log.addNoEffect()
       }
     },
     (game, player, { self }) => {

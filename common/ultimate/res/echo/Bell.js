@@ -17,14 +17,13 @@ module.exports = {
     },
 
     (game, player, { foreseen, self }) => {
+      game.log.addForeseen(foreseen, self)
+
       if (foreseen) {
         const cards = game.players.all().flatMap(p => game.cards.byPlayer(p, 'hand'))
 
         game.log.add({ template: 'I do not have a good way to hide only the cards in other player hands, so the game just automatically returns them all.' })
         game.actions.returnMany(player, cards, { ordered: true })
-      }
-      else {
-        game.log.addForeseen(self)
       }
     },
   ],

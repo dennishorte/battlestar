@@ -18,13 +18,12 @@ module.exports = {
     },
 
     (game, player, { foreseen, self }) => {
+      game.log.addForeseen(foreseen, self)
+
       if (foreseen) {
         game.log.addForeseen(self)
         const numColors = game.cards.tops(player).length
         game.actions.drawAndForeshadow(player, numColors)
-      }
-      else {
-        game.log.addNoEffect()
       }
     },
   ],

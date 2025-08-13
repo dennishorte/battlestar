@@ -21,6 +21,7 @@ module.exports = {
     },
 
     (game, player, { foreseen, self }) => {
+      game.log.addForeseen(foreseen, self)
       if (foreseen) {
         const card = game.actions.draw(player, { age: game.getEffectAge(self, 4) })
         const playerBonusPoints = game.getBonuses(player).reduce((l, r) => l + r, 0)
@@ -42,9 +43,6 @@ module.exports = {
         if (opp) {
           game.actions.transfer(player, card, game.zones.byPlayer(opp, 'hand'))
         }
-      }
-      else {
-        game.log.addNoEffect()
       }
     },
   ],

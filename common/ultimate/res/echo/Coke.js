@@ -33,14 +33,10 @@ module.exports = {
     },
 
     (game, player, { foreseen, self }) => {
+      game.log.addForeseen(foreseen, self)
       if (foreseen) {
-        game.log.addForeseen(self)
-
         const cards = game.cards.tops(player).filter(card => card.color !== 'red')
         game.actions.scoreMany(player, cards)
-      }
-      else {
-        game.log.addNoEffect()
       }
     },
   ],

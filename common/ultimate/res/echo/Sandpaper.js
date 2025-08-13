@@ -28,8 +28,8 @@ module.exports = {
     },
 
     (game, player, { foreseen, self }) => {
+      game.log.addForeseen(foreseen, self)
       if (foreseen) {
-        game.log.addForeseen(self)
         game.actions.foreshadowMany(player, game.cards.byPlayer(player, 'hand'))
       }
     },

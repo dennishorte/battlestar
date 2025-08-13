@@ -25,15 +25,12 @@ module.exports = {
     },
 
     (game, player, { foreseen, self }) => {
-      if (foreseen) {
-        game.log.addForeseen(self)
+      game.log.addForeseen(foreseen, self)
 
+      if (foreseen) {
         const others = game.players.all().filter(o => o.name !== player.name)
         const other = game.actions.choosePlayer(player, others)
         game.actions.foreshadowMany(player, game.cards.byPlayer(other, 'forecast'))
-      }
-      else {
-        game.log.addNoEffect()
       }
     },
   ],

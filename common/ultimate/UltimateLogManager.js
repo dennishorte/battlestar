@@ -68,11 +68,19 @@ class UltimateLogManager extends BaseLogManager {
     return false
   }
 
-  addForeseen(card) {
-    this.add({
-      template: '{card} was foreseen',
-      args: { card }
-    })
+  addForeseen(wasForeseen, card) {
+    if (wasForeseen) {
+      this.add({
+        template: '{card} was foreseen',
+        args: { card }
+      })
+    }
+    else {
+      this.add({
+        template: '{card} was NOT foreseen',
+        args: { card }
+      })
+    }
   }
 }
 

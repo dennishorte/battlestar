@@ -24,8 +24,8 @@ module.exports = {
     },
 
     (game, player, { foreseen, self }) => {
+      game.log.addForeseen(foreseen, self)
       if (foreseen) {
-        game.log.addForeseen(self)
         const hand = game.cards.byPlayer(player, 'hand')
         game.actions.transferMany(player, hand, game.zones.byId('achievements'), { ordered: true })
       }
