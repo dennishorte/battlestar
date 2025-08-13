@@ -13,8 +13,8 @@ describe("Palampore", () => {
         purple: ['Clock', 'Mysticism'],
       },
       decks: {
-        base: {
-          5: ['Coal'],
+        echo: {
+          5: ['Lightning Rod'],
         },
       },
     })
@@ -33,7 +33,7 @@ describe("Palampore", () => {
           cards: ['Clock', 'Mysticism'],
           splay: 'right'
         },
-        score: ['Coal'],
+        score: ['Lightning Rod'],
       },
     })
   })
@@ -52,8 +52,8 @@ describe("Palampore", () => {
         },
       },
       decks: {
-        base: {
-          5: ['Coal'],
+        echo: {
+          5: ['Lightning Rod'],
         },
       },
     })
@@ -78,7 +78,7 @@ describe("Palampore", () => {
           cards: ['Soap', 'Noodles'],
           splay: 'left'
         },
-        score: ['Coal'],
+        score: ['Lightning Rod'],
         achievements: ['Wealth'],
       },
     })

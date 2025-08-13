@@ -1,4 +1,3 @@
-
 const util = require('../../../lib/util.js')
 
 module.exports = {
@@ -10,9 +9,9 @@ module.exports = {
   dogmaBiscuit: `f`,
   echo: ``,
   dogma: [
-    `Draw and score a card of value equal to a bonus that occurs more than once on your board, if you have such a bonus.`,
+    `Draw and score a card of value equal to a bonus that occurs more than once on your board, if there is one.`,
     `You may splay your purple cards right.`,
-    `If you have six or more bonuses on your board, claim the Wealth achievement.`
+    `If you have at least six bonuses on your board, claim the Wealth achievement.`
   ],
   dogmaImpl: [
     (game, player) => {
