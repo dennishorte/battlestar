@@ -47,15 +47,25 @@ class BaseActionManager {
   }
 
   chooseCards(player, choices, opts={}) {
-    const choiceNames = choices.map(c => c.name).sort()
-    const selection = this.choose(player, choiceNames, opts)
-    const used = []
+    while (true) {
+      const choiceNames = choices.map(c => c.name).sort()
+      const selection = this.choose(player, choiceNames, opts)
+      const used = []
 
-    return selection.map(s => {
-      const card = choices.find(c => c.name === s && !used.some(u => u.id === c.id))
-      used.push(card)
-      return card
-    })
+      const selectedCards = selection.map(s => {
+        const card = choices.find(c => c.name === s && !used.some(u => u.id === c.id))
+          used.push(card)
+        return card
+      })
+
+      if (opts.guard && !opts.guard(selectedCards)) {
+        this.log.add({ template: 'Invalid selection' })
+        continue
+      }
+      else {
+        return selectedCards
+      }
+    }
   }
 
   choosePlayer(player, choices, opts={}) {

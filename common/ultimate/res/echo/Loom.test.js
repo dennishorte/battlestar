@@ -78,8 +78,9 @@ describe("Loom", () => {
     t.setBoard(game,  {
       dennis: {
         red: ['Loom'],
+        green: ['Metric System'],
         blue: ['Translation'],
-        score: ['Sailing'],
+        score: ['Sailing', 'Construction'],
       },
       decks: {
         base: {
@@ -91,14 +92,15 @@ describe("Loom", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Loom')
-    request = t.choose(game, request, 'Sailing')
+    request = t.choose(game, request, 'Sailing', 'Construction')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Loom', 'Industrialization'],
         yellow: ['Canning'],
-        green: ['Classification'],
+        green: ['Metric System', 'Classification'],
+        score: ['Translation'],
       },
     })
   })
@@ -111,6 +113,7 @@ describe("Loom", () => {
           cards: ['Loom', 'Archery', 'Metalworking', 'Oars'],
           splay: 'up',
         },
+        green: ['Metric System'],
         blue: ['Translation'],
         score: ['Sailing'],
       },
@@ -124,7 +127,7 @@ describe("Loom", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Loom')
-    request = t.choose(game, request, 'Sailing')
+    request = t.choose(game, request, 'Sailing', 'Translation')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -134,7 +137,7 @@ describe("Loom", () => {
           splay: 'up',
         },
         yellow: ['Canning'],
-        green: ['Classification'],
+        green: ['Metric System', 'Classification'],
         achievements: ['Heritage'],
       },
     })

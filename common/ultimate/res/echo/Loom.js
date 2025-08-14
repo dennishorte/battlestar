@@ -1,4 +1,3 @@
-
 const util = require('../../../lib/util.js')
 
 module.exports = {
@@ -10,8 +9,8 @@ module.exports = {
   dogmaBiscuit: `f`,
   echo: `Score your lowest top card.`,
   dogma: [
-    `You may return two cards of different value from your score pile. If you do, draw and tuck three {6}.`,
-    `If you have five or more {h} visible on your board in one color, claim the Heritage achievement.`
+    `You may return exactly two cards of different value from your score pile. If you do, draw and tuck three {6}.`,
+    `If you have at least five {h} visible on your board in one color, claim the Heritage achievement.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
@@ -28,15 +27,25 @@ module.exports = {
       }
 
       else {
-        const card1 = game.actions.chooseCard(player, game.cards.byPlayer(player, 'score'), { title: 'Choose a first card to return', min: 0, max: 1 })
+        const scoreCards = game.cards.byPlayer(player, 'score')
+        const cards = game.actions.chooseCards(player, scoreCards, {
+          title: 'Choose two cards of different ages to return.',
+          min: 0,
+          guard: (cards) => {
+            // Action is optional
+            if (cards.length === 0) {
+              return true
+            }
+            const twoCardsCondition = cards.length === 2
+            const differentAgesCondition = cards[0].getAge() !== cards[1].getAge()
+            return twoCardsCondition && differentAgesCondition
+          },
+        })
 
-        if (card1) {
-          const choices = game
-            .cards.byPlayer(player, 'score')
-            .filter(card => card.getAge() !== card1.getAge())
-          const card2 = game.actions.chooseCard(player, choices, { title: 'Choose a second card to return' })
-
-          const returned = game.actions.returnMany(player, [card1, card2], { ordered: true })
+        if (cards.length === 2) {
+          const returned = game.actions.returnMany(player, cards, {
+            ordered: true,  // It never matters what order you return cards of different ages.
+          })
 
           if (returned && returned.length === 2) {
             game.actions.drawAndTuck(player, game.getEffectAge(self, 6))
@@ -50,7 +59,8 @@ module.exports = {
     (game, player) => {
       const hexes = game
         // Grab each stack
-        .util.colors()
+        .util
+        .colors()
         .map(color => game.zones.byPlayer(player, color))
 
         // Convert each stack to a count of hexes
