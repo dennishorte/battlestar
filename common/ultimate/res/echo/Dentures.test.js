@@ -9,6 +9,7 @@ describe("Dentures", () => {
     t.setBoard(game,  {
       dennis: {
         yellow: ['Dentures'],
+        green: ['Classification'],
         blue: ['Tools', 'Calendar'],
       },
       decks: {
@@ -28,6 +29,7 @@ describe("Dentures", () => {
       dennis: {
         yellow: ['Canning'],
         red: ['Industrialization'],
+        green: ['Classification'],
         blue: {
           cards: ['Tools', 'Calendar'],
           splay: 'right'
