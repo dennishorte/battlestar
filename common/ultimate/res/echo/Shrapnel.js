@@ -7,21 +7,23 @@ module.exports = {
   dogmaBiscuit: `f`,
   echo: [],
   dogma: [
-    `I demand you draw and tuck a {6}! Transfer the top two cards of its color from your board to my score pile! Transfer the bottom card of its color from my board to your score pile!`
+    `I demand you draw and tuck a {6}! Transfer the top two cards of its color from your board to my score pile! Score the bottom card of its color on my board.`
   ],
   dogmaImpl: [
     (game, player, { leader, self }) => {
       const card = game.actions.drawAndTuck(player, game.getEffectAge(self, 6))
       if (card) {
         const toTransfer = game
-          .cards.byPlayer(player, card.color)
+          .cards
+          .byPlayer(player, card.color)
           .slice(0, 2)
         game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'), { ordered: true })
 
-        const moreTransfer = game
-          .cards.byPlayer(leader, card.color)
+        const toScore = game
+          .cards
+          .byPlayer(leader, card.color)
           .slice(-1)
-        game.actions.transferMany(player, moreTransfer, game.zones.byPlayer(player, 'score'))
+        game.actions.scoreMany(player, toScore)
       }
     }
   ],

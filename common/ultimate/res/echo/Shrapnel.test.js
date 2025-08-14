@@ -10,9 +10,11 @@ describe("Shrapnel", () => {
       dennis: {
         red: ['Shrapnel'],
         yellow: ['Agriculture', 'Masonry'],
+        green: ['Measurement'],
       },
       micah: {
         yellow: ['Machinery', 'Fermenting',],
+        green: ['Paper'],
       },
       decks: {
         base: {
@@ -30,10 +32,12 @@ describe("Shrapnel", () => {
       dennis: {
         red: ['Shrapnel'],
         yellow: ['Agriculture'],
+        green: ['Measurement'],
         score: ['Machinery', 'Fermenting'],
       },
       micah: {
         yellow: ['Canning'],
+        green: ['Paper'],
         score: ['Masonry'],
       },
     })
