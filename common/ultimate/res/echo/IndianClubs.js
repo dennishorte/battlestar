@@ -1,4 +1,3 @@
-
 const util = require('../../../lib/util.js')
 
 module.exports = {
@@ -10,12 +9,18 @@ module.exports = {
   dogmaBiscuit: `l`,
   echo: [],
   dogma: [
-    `I demand you return two cards from your score pile!`,
-    `For every value of card you have in your score pile, score a card from your hand of that value.`
+    `I demand you return two cards from your score pile! If Indian Clubs was foreseen, return all cards from your score pile!`,
+    `For every value of card in your score pile, score a card from your hand of that value.`
   ],
   dogmaImpl: [
-    (game, player) => {
-      game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'), { count: 2 })
+    (game, player, { foreseen, self }) => {
+      game.log.addForeseen(foreseen, self)
+      if (foreseen) {
+        game.actions.returnMany(player, game.cards.byPlayer(player, 'score'))
+      }
+      else {
+        game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'), { count: 2 })
+      }
     },
 
     (game, player) => {

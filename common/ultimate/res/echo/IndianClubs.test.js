@@ -36,4 +36,36 @@ describe("Indian Clubs", () => {
       },
     })
   })
+
+  test('dogma: was foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        score: ['Masonry', 'Gunpowder'],
+        hand: ['Code of Laws', 'Engineering', 'Enterprise', 'Astronomy', 'Lighting'],
+        forecast: ['Indian Clubs'],
+      },
+      micah: {
+        score: ['Tools', 'Sailing', 'The Wheel'],
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Lighting')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'auto')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Indian Clubs', 'Lighting'],
+        score: ['Masonry', 'Gunpowder', 'Code of Laws', 'Enterprise'],
+        hand: ['Engineering', 'Astronomy'],
+      },
+      micah: {
+        score: [],
+      },
+    })
+  })
 })
