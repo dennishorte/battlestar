@@ -8,6 +8,7 @@ describe("Hot Air Balloon", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
+        red: ['Industrialization'],
         green: ['Hot Air Balloon'],
         purple: ['Philosophy'],
         score: ['Canning'],
@@ -33,6 +34,7 @@ describe("Hot Air Balloon", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        red: ['Industrialization'],
         purple: ['Philosophy'],
         score: ['Canning', 'Lighting'],
         achievements: ['Agriculture'],
@@ -49,6 +51,7 @@ describe("Hot Air Balloon", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
+        red: ['Industrialization'],
         green: ['Hot Air Balloon'],
         purple: ['Philosophy'],
         score: ['Canning'],
@@ -74,6 +77,7 @@ describe("Hot Air Balloon", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        red: ['Industrialization'],
         green: ['Hot Air Balloon'],
         purple: ['Railroad', 'Philosophy'],
         score: ['Canning', 'Lighting'],
@@ -91,6 +95,7 @@ describe("Hot Air Balloon", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
+        red: ['Industrialization'],
         green: ['Hot Air Balloon'],
         purple: ['Philosophy'],
       },
@@ -113,6 +118,7 @@ describe("Hot Air Balloon", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        red: ['Industrialization'],
         green: ['Hot Air Balloon'],
         purple: ['Railroad', 'Philosophy'],
         score: ['Lighting'],
@@ -129,18 +135,23 @@ describe("Hot Air Balloon", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
+        red: ['Industrialization'],
         green: ['Hot Air Balloon'],
         purple: ['Philosophy'],
         achievements: ['Construction'],
       },
       micah: {
+        red: ['Coal'],
         blue: ['Mathematics'],
         purple: ['Astronomy'],
         score: ['Databases'],
       },
       decks: {
         base: {
-          7: ['Lighting', 'Railroad', 'Sanitation', 'Combustion'],
+          7: ['Lighting', 'Railroad', 'Sanitation'],
+        },
+        echo: {
+          7: ['Rubber'],
         },
       }
     })
@@ -150,18 +161,18 @@ describe("Hot Air Balloon", () => {
     request = t.choose(game, request, 'Dogma.Hot Air Balloon')
     request = t.choose(game, request, 'Philosophy')
 
-    t.dumpLog(game)
-
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        red: ['Industrialization'],
         green: ['Hot Air Balloon'],
         yellow: ['Sanitation'],
-        hand: ['Combustion'],  // share bonus
+        hand: ['Rubber'],  // share bonus
         score: ['Railroad'],
         achievements: ['Construction'],
       },
       micah: {
+        red: ['Coal'],
         blue: ['Mathematics'],
         purple: ['Astronomy'],
         score: ['Lighting', 'Databases'],

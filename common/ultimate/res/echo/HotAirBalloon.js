@@ -33,7 +33,7 @@ module.exports = {
 
       const card = game.actions.chooseCard(player, candidates, { min: 0, max: 1 })
       if (card) {
-        const owner = game.getPlayerByCard(card)
+        const owner = game.players.byOwner(card)
         game.actions.claimAchievement(player, { card })
 
         const cardToTransfer = game.getTopCard(player, 'green')
