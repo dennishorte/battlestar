@@ -7,7 +7,7 @@ module.exports = {
   dogmaBiscuit: `c`,
   echo: ``,
   dogma: [
-    `I demand you draw and reveal a {6}! If it is blue or yellow, transfer it and all cards in your hand to my hand! If it is red or green, keep it and transfer two cards from your score pile to mine! If it is purple, keep it!`
+    `I demand you draw and reveal a {6}! If it is blue or yellow, transfer it and all cards in your hand to my hand! If it is red or green, keep it and transfer two cards from your score pile to mine!`
   ],
   dogmaImpl: [
     (game, player, { leader, self }) => {
