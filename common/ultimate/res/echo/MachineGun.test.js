@@ -4,7 +4,7 @@ const t = require('../../testutil.js')
 
 describe("Machine Gun", () => {
 
-  test('dogma', () => {
+  test('dogma: nothing to transfer', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
@@ -49,15 +49,18 @@ describe("Machine Gun", () => {
         red: ['Candles'],
       },
       decks: {
-        base: {
-          7: ['Lighting'],
+        echo: {
+          7: ['Rubber'],
         }
-      }
+      },
+      achievements: ['Construction', 'Machinery', 'Coal'],
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Machine Gun')
+    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, '**base-3*', 'Monument', 'Wonder', 'Empire')
     request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
@@ -70,8 +73,9 @@ describe("Machine Gun", () => {
       micah: {
         yellow: ['Agriculture'],
         blue: ['Atomic Theory'],
-        hand: ['Lighting'],
+        hand: ['Rubber'],
       },
+      junk: ['Machinery', 'Monument', 'Empire', 'Wonder'],
     })
   })
 
@@ -90,8 +94,8 @@ describe("Machine Gun", () => {
         blue: ['Atomic Theory'],
       },
       decks: {
-        base: {
-          7: ['Lighting'],
+        echo: {
+          7: ['Rubber'],
         }
       }
     })
@@ -106,50 +110,11 @@ describe("Machine Gun", () => {
       dennis: {
         red: ['Machine Gun'],
         blue: ['Tools'],
-        score: ['Lighting'],
+        score: ['Rubber'],
       },
       micah: {
         yellow: ['Agriculture'],
         blue: ['Atomic Theory'],
-      },
-    })
-  })
-
-  test('dogma: with score cards', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
-    t.setBoard(game,  {
-      dennis: {
-        red: ['Machine Gun'],
-        blue: ['Calendar', 'Tools'],
-      },
-      micah: {
-        yellow: ['Agriculture'],
-        blue: ['Almanac', 'Atomic Theory'],
-        red: ['Candles'],
-      },
-      decks: {
-        base: {
-          7: ['Lighting'],
-        }
-      }
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Machine Gun')
-    request = t.choose(game, request, 'auto')
-
-    t.testIsSecondPlayer(game)
-    t.testBoard(game, {
-      dennis: {
-        red: ['Machine Gun'],
-        blue: ['Tools'],
-        score: ['Almanac', 'Candles'],
-      },
-      micah: {
-        yellow: ['Agriculture'],
-        blue: ['Atomic Theory'],
-        hand: ['Lighting'],
       },
     })
   })

@@ -1144,13 +1144,6 @@ Innovation.prototype.getAgesByZone = function(player, zoneName) {
   return util.array.distinct(ages).sort()
 }
 
-Innovation.prototype.getAvailableSpecialAchievements = function() {
-  return this
-    .zones.byId('achievements')
-    .cardlist()
-    .filter(c => c.isSpecialAchievement)
-}
-
 Innovation.prototype.getBottomCards = function(player) {
   return this
     .util.colors()
@@ -1671,6 +1664,16 @@ Innovation.prototype.getScoreCost = function(player, card) {
   return card.getAge() * 5 * (sameAge.length + 1) - karmaAdjustment
 }
 
+/**
+   This one gets special achievements as well.
+ */
+Innovation.prototype.getAvailableAchievements = function(player) {
+  return [
+    ...this.getAvailableSpecialAchievements(player),
+    ...this.getAvailableStandardAchievements(player),
+  ]
+}
+
 Innovation.prototype.getAvailableAchievementsByAge = function(player, age) {
   age = parseInt(age)
   return this.getAvailableStandardAchievements(player).filter(c => c.getAge() === age)
@@ -1689,13 +1692,16 @@ Innovation.prototype.getAvailableStandardAchievements = function(player) {
   return [achievementsZone, fromKarma].flat()
 }
 
-Innovation.prototype.getAvailableAchievementsRaw = function(player) {
-  return this.getAvailableStandardAchievements(player)
+Innovation.prototype.getAvailableSpecialAchievements = function() {
+  return this
+    .cards
+    .byZone('achievements')
+    .filter(c => c.isSpecialAchievement)
 }
 
 Innovation.prototype.getEligibleAchievementsRaw = function(player, opts={}) {
   return this
-    .getAvailableAchievementsRaw(player, opts)
+    .getAvailableStandardAchievements(player, opts)
     .filter(card => this.checkAchievementEligibility(player, card, opts))
 }
 

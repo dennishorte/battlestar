@@ -13,7 +13,7 @@ module.exports = {
     (game, player) => {
       const numAchievements = game.cards.byPlayer(player, 'achievements').length
       const choices = game
-        .getAvailableAchievementsRaw(player)
+        .getAvailableStandardAchievements(player)
         .filter(card => card.age === numAchievements + 1)
         .filter(card => card.checkIsStandardAchievement())
 
