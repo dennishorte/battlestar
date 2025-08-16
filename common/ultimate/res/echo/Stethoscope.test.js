@@ -13,8 +13,8 @@ describe("Stethoscope", () => {
         hand: ['Canning'],
       },
       decks: {
-        base: {
-          7: ['Socialism'],
+        echo: {
+          7: ['Combustion'],
         },
       },
     })
@@ -32,7 +32,7 @@ describe("Stethoscope", () => {
           cards: ['Canning', 'Agriculture'],
           splay: 'right'
         },
-        hand: ['Socialism'],
+        hand: ['Combustion'],
       },
     })
   })
@@ -45,10 +45,8 @@ describe("Stethoscope", () => {
         hand: ['Atomic Theory'],
       },
       decks: {
-        base: {
-          7: ['Socialism'],
-        },
         echo: {
+          7: ['Rubber'],
           8: ['Nylon'],
         },
       },
@@ -62,7 +60,37 @@ describe("Stethoscope", () => {
     t.testBoard(game, {
       dennis: {
         blue: ['Atomic Theory', 'Stethoscope'],
-        hand: ['Socialism', 'Nylon'],
+        hand: ['Rubber', 'Nylon'],
+      },
+    })
+  })
+
+  test('dogma: was foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        hand: ['Atomic Theory', 'Lighting'],
+        forecast: ['Stethoscope'],
+      },
+      decks: {
+        echo: {
+          7: ['Rubber'],
+          8: ['Nylon'],
+          9: ['Email'],
+        },
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Lighting')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Atomic Theory', 'Stethoscope'],
+        purple: ['Lighting'],
+        hand: ['Rubber', 'Nylon', 'Email'],
       },
     })
   })

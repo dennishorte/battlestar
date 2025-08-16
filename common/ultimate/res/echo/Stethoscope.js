@@ -7,17 +7,22 @@ module.exports = {
   dogmaBiscuit: `s`,
   echo: `Meld a blue or yellow card from your hand.`,
   dogma: [
-    `Draw a {7}. If you melded a blue card due to Stethoscope's echo effect, draw an {8}.`,
+    `Draw a {7}. If you melded a blue card due to Stethoscope's echo effect, draw an {8} and, if Stethoscope was foreseen, also draw a {9}`,
     `You may splay your yellow cards right.`
   ],
   dogmaImpl: [
-    (game, player, { self }) => {
+    (game, player, { foreseen, self }) => {
       game.actions.draw(player, { age: game.getEffectAge(self, 7) })
 
       if (game.state.dogmaInfo.stethoscope) {
         const melded = game.state.dogmaInfo.stethoscope[player.name]
         if (melded && melded.some(card => card.color === 'blue')) {
           game.actions.draw(player, { age: game.getEffectAge(self, 8) })
+        }
+
+        game.log.addForeseen(foreseen, self)
+        if (foreseen) {
+          game.actions.draw(player, { age: game.getEffectAge(self, 9) })
         }
       }
       else {
