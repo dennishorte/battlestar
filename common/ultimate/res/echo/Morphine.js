@@ -8,13 +8,14 @@ module.exports = {
   echo: `Score an odd-valued card from your hand.`,
   dogma: [
     `I demand you return all odd-valued cards in your hand! Draw a {6}!`,
-    `Draw a card of value one higher than the highest card returned due to the demand, if any were returned.`,
+    `Draw a card of value one higher than the highest card returned due to the demand.`,
     `You may splay your red cards right.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
       const toReturn = game
-        .cards.byPlayer(player, 'hand')
+        .cards
+        .byPlayer(player, 'hand')
         .filter(card => card.getAge() % 2 === 1)
       const returned = game.actions.returnMany(player, toReturn)
       game.actions.draw(player, { age: game.getEffectAge(self, 6) })
@@ -45,7 +46,8 @@ module.exports = {
   ],
   echoImpl: (game, player) => {
     const choices = game
-      .cards.byPlayer(player, 'hand')
+      .cards
+      .byPlayer(player, 'hand')
       .filter(card => card.getAge() % 2 === 1)
     game.actions.chooseAndScore(player, choices)
   },

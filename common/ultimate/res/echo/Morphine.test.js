@@ -13,6 +13,7 @@ describe("Morphine", () => {
         hand: ['Sailing', 'Gunpowder'],
       },
       micah: {
+        green: ['Navigation'],
         hand: ['Tools', 'Astronomy', 'Enterprise'],
       },
       decks: {
@@ -40,6 +41,7 @@ describe("Morphine", () => {
         score: ['Sailing'],
       },
       micah: {
+        green: ['Navigation'],
         hand: ['Enterprise', 'Stethoscope'],
       },
     })
