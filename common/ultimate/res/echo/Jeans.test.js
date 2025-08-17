@@ -9,15 +9,12 @@ describe("Jeans", () => {
     t.setBoard(game,  {
       dennis: {
         green: ['Jeans'],
+        blue: ['Atomic Theory'],
       },
       decks: {
-        base: {
-          6: ['Canning'],
-          9: ['Computers'],
-        },
         echo: {
-          2: ['Lever'],
-          9: ['Karaoke'],
+          6: ['Loom', 'Stethoscope'],
+          8: ['Crossword', 'Tractor'],
         }
       },
     })
@@ -25,53 +22,54 @@ describe("Jeans", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Jeans')
-    request = t.choose(game, request, 'Karaoke')
-    request = t.choose(game, request, 6)
-    request = t.choose(game, request, 2)
-    request = t.choose(game, request, 'Lever')
+    request = t.choose(game, request, 'Tractor')
+    request = t.choose(game, request, 'Loom')
+    request = t.choose(game, request, 8)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        red: ['Loom'],
         green: ['Jeans'],
-        blue: ['Lever'],
-        forecast: ['Computers'],
+        blue: ['Atomic Theory'],
+        forecast: ['Crossword']
       },
     })
   })
 
-  test('dogma: return the other one', () => {
+  test('dogma: was foreseen', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
-        green: ['Jeans'],
+        blue: ['Atomic Theory'],
+        hand: ['Flight'],
+        forecast: ['Jeans'],
       },
+      junk: ['Morphine'],
       decks: {
-        base: {
-          6: ['Canning'],
-          9: ['Computers'],
-        },
         echo: {
-          2: ['Lever'],
-          9: ['Karaoke'],
+          6: ['Loom', 'Stethoscope'],
+          8: ['Crossword', 'Tractor'],
         }
       },
     })
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Jeans')
-    request = t.choose(game, request, 'Karaoke')
-    request = t.choose(game, request, 6)
-    request = t.choose(game, request, 2)
-    request = t.choose(game, request, 'Canning')
+    request = t.choose(game, request, 'Meld.Flight')
+    request = t.choose(game, request, 'Tractor')
+    request = t.choose(game, request, 'Loom')
+    request = t.choose(game, request, 8)
+    request = t.choose(game, request, '**echo-6*')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        red: ['Loom', 'Flight'],
         green: ['Jeans'],
-        yellow: ['Canning'],
-        forecast: ['Computers'],
+        blue: ['Atomic Theory'],
+        hand: ['Morphine'],
+        forecast: ['Crossword']
       },
     })
   })

@@ -5,38 +5,50 @@ module.exports = {
   expansion: `echo`,
   biscuits: `&lh8`,
   dogmaBiscuit: `l`,
-  echo: [`Draw two {9}. Return one, foreshadow the other.`],
+  echo: [`Draw two {8}. Return one, foreshadow the other.`],
   dogma: [
-    `Choose two different values less than {7}. Draw and reveal a card of each value. Meld one, and return the other.`
+    `Draw two cards of value equal to your top blue card. Meld one, and return the other.`,
+    `Choose the {7} or {8} deck. Junk all cards in that deck.`,
+    `If Jeans was foreseen, transfer a valued card in the junk to your hand.`,
   ],
   dogmaImpl: [
     (game, player) => {
-      const age1 = game.actions.chooseAge(player, [1,2,3,4,5,6], { title: 'Choose age to draw first' })
-      const age2 = game.actions.chooseAge(
-        player,
-        [1,2,3,4,5,6].filter(x => x !== age1),
-        { title: 'Choose age to draw second' }
-      )
+      const age = game.cards.top(player, 'blue').getAge()
       const cards = [
-        game.actions.drawAndReveal(player, age1),
-        game.actions.drawAndReveal(player, age2),
+        game.actions.draw(player, { age }),
+        game.actions.draw(player, { age }),
       ]
 
-      const melded = game.actions.chooseAndMeld(player, cards)
-      if (melded && melded.length > 0) {
-        cards.splice(cards.indexOf(melded[0]), 1)
-      }
+      const toMeld = game.actions.chooseCard(player, cards)
+      const other = cards.filter(card => card !== toMeld)[0]
 
-      if (cards.length > 0) {
-        game.actions.return(player, cards[0])
+      game.actions.meld(player, toMeld)
+      game.actions.return(player, other)
+    },
+
+    (game, player, { self }) => {
+      const ages = [
+        game.getEffectAge(self, 7),
+        game.getEffectAge(self, 8),
+      ]
+      game.actions.chooseAndJunkDeck(player, ages, { count: 1 })
+    },
+
+    (game, player, { foreseen, self }) => {
+      game.log.addForeseen(foreseen, self)
+      if (foreseen) {
+        const card = game.actions.chooseCard(player, game.cards.byZone('junk'))
+        if (card) {
+          game.actions.transfer(player, card, game.zones.byPlayer(player, 'hand'))
+        }
       }
-    }
+    },
   ],
   echoImpl: [
     (game, player, { self }) => {
       const cards = [
-        game.actions.draw(player, { age: game.getEffectAge(self, 9) }),
-        game.actions.draw(player, { age: game.getEffectAge(self, 9) }),
+        game.actions.draw(player, { age: game.getEffectAge(self, 8) }),
+        game.actions.draw(player, { age: game.getEffectAge(self, 8) }),
       ].filter(card => card !== undefined)
 
       const toReturn = game.actions.chooseCard(player, cards, { title: 'Choose a card to return' })
