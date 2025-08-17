@@ -27,7 +27,6 @@ describe("Fertilizer", () => {
     request = t.choose(game, request, 'Dogma.Fertilizer')
     request = t.choose(game, request, 'Construction')
     request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 2)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -56,7 +55,7 @@ describe("Fertilizer", () => {
       },
       decks: {
         echo: {
-          2: ['Lever']
+          1: ['Perfume'],
         }
       }
     })
@@ -65,7 +64,6 @@ describe("Fertilizer", () => {
     request = game.run()
     request = t.choose(game, request, 'Dogma.Fertilizer')
     request = t.choose(game, request)
-    request = t.choose(game, request, 2)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -73,7 +71,7 @@ describe("Fertilizer", () => {
         yellow: ['Fertilizer'],
         hand: ['Construction'],
         score: ['Monotheism', 'Canning'],
-        forecast: ['Lever'],
+        forecast: ['Perfume'],
       },
       micah: {
         score: ['Tools', 'Fermenting', 'Engineering'],

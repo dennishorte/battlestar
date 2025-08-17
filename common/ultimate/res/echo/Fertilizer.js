@@ -8,7 +8,7 @@ module.exports = {
   echo: [],
   dogma: [
     `You may return a card from your hand. If you do, transfer all cards from all score piles to your hand of value equal to the returned card.`,
-    `Draw and foreshadow a card of any value.`
+    `Draw and foreshadow a card of value equal to the number of cards in your hand.`
   ],
   dogmaImpl: [
     (game, player) => {
@@ -26,7 +26,7 @@ module.exports = {
     },
 
     (game, player) => {
-      const age = game.actions.chooseAge(player)
+      const age = game.cards.byPlayer(player, 'hand').length
       game.actions.drawAndForeshadow(player, age)
     }
   ],
