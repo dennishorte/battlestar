@@ -71,6 +71,18 @@ class UltimateActionManager extends BaseActionManager {
     return super.choose(player, choices, opts)
   }
 
+  chooseYesNo(player, title) {
+    if (this.game.state.dogmaInfo.mayIsMust) {
+      this.game.log.add({
+        template: '{player} is being blackmailed, so must choose yes',
+        args: { player }
+      })
+      return true
+    }
+    else {
+      return super.chooseYesNo(player, title)
+    }
+  }
 
   chooseAge(player, ages, opts={}) {
     if (!ages) {

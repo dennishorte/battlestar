@@ -68,7 +68,7 @@ class BaseActionManager {
   }
 
   chooseYesNo(player, title) {
-    const choice = this.choose(player, ['yes', 'no'], { title })
+    const choice = this.choose(player, ['yes', 'no'], { title, count: 1 })
     return choice[0] === 'yes'
   }
 
