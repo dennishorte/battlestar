@@ -15,6 +15,11 @@ describe("Elevator", () => {
         hand: ['Fermenting', 'Industrialization'],
         score: ['Sailing', 'Classification'],
       },
+      decks: {
+        echo: {
+          7: ['Bifocals'],
+        },
+      },
     })
 
     let request
@@ -28,6 +33,7 @@ describe("Elevator", () => {
       dennis: {
         yellow: ['Elevator'],
         score: ['Tools', 'Canning', 'Classification'],
+        forecast: ['Bifocals'],
       },
       micah: {
         hand: ['Fermenting', 'Industrialization'],
@@ -47,6 +53,11 @@ describe("Elevator", () => {
         hand: ['Fermenting', 'Industrialization'],
         score: ['Sailing', 'Classification'],
       },
+      decks: {
+        echo: {
+          7: ['Bifocals'],
+        },
+      },
     })
 
     let request
@@ -60,6 +71,7 @@ describe("Elevator", () => {
       dennis: {
         yellow: ['Elevator'],
         score: ['Tools', 'Canning', 'Industrialization'],
+        forecast: ['Bifocals'],
       },
       micah: {
         hand: ['Fermenting'],

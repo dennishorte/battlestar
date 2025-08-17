@@ -1,4 +1,3 @@
-
 const util = require('../../../lib/util.js')
 
 module.exports = {
@@ -10,16 +9,25 @@ module.exports = {
   dogmaBiscuit: `i`,
   echo: `Score your top or bottom green card.`,
   dogma: [
-    `Choose a value present in your score pile. Choose to transfer all cards of the chosen value from either all other players' hands or all their score piles to your score pile.`
+    `Choose a value present in your score pile. Choose to score all the cards of the chosen value in either all opponents' hands or all their score piles. Draw and foreshadow a card of the chosen value.`
   ],
   dogmaImpl: [
     (game, player) => {
       const choices = game
-        .cards.byPlayer(player, 'score')
+        .cards
+        .byPlayer(player, 'score')
         .map(card => card.getAge())
       const distinct = util.array.distinct(choices).sort()
       const age = game.actions.chooseAge(player, distinct)
-      if (age) {
+
+      if (!age) {
+        game.log.add({
+          template: '{player} has no cards in their score pile',
+          args: { player },
+        })
+      }
+
+      else {
         game.log.add({
           template: '{player} chooses {age}',
           args: { player, age }
@@ -30,22 +38,15 @@ module.exports = {
           args: { player, location }
         })
 
-        const otherPlayers = game
-          .players.all()
-          .filter(other => other !== player)
-        let cards
-        if (location === 'from scores') {
-          cards = otherPlayers
-            .flatMap(player => game.cards.byPlayer(player, 'score'))
-        }
-        else {
-          cards = otherPlayers
-            .flatMap(player => game.cards.byPlayer(player, 'hand'))
-        }
+        const zoneName = location === 'from scores' ? 'score' : 'hand'
+        const otherPlayers = game.players.other(player)
+        const cards = otherPlayers
+          .flatMap(other => game.cards.byPlayer(other, zoneName))
+          .filter(card => card.getAge() === age)
 
-        cards = cards.filter(card => card.getAge() === age)
+        game.actions.scoreMany(player, cards, game.zones.byPlayer(player, 'score'))
 
-        game.actions.transferMany(player, cards, game.zones.byPlayer(player, 'score'))
+        game.actions.drawAndForeshadow(player, age)
       }
     }
   ],
