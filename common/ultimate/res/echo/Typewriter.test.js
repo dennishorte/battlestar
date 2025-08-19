@@ -8,17 +8,16 @@ describe("Typewriter", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
+        red: ['Combustion'],
         blue: ['Typewriter'],
         hand: ['Sailing', 'Tools', 'Mathematics', 'Experimentation'],
       },
       decks: {
         base: {
           6: ['Canning'],
+          7: ['Sanitation'],
           8: ['Flight'],
         },
-        echo: {
-          7: ['Telegraph'],
-        }
       }
     })
 
@@ -30,8 +29,9 @@ describe("Typewriter", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        red: ['Combustion'],
         blue: ['Typewriter'],
-        hand: ['Canning', 'Telegraph', 'Flight'],
+        hand: ['Canning', 'Sanitation', 'Flight'],
       },
     })
   })
