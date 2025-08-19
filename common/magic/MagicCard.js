@@ -443,7 +443,7 @@ class MagicCard extends BaseCard {
     // Card was removed from stack.
     if (sourceKind === 'stack') {
       this.game.log.add({
-        template: '{this} resolves',
+        template: '{card} resolves',
         args: { card: this },
         classes: ['stack-pop'],
       })
