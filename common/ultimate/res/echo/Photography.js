@@ -1,3 +1,5 @@
+const { GameOverEvent } = require('../../../lib/game.js')
+
 module.exports = {
   name: `Photography`,
   color: `blue`,
@@ -7,8 +9,8 @@ module.exports = {
   dogmaBiscuit: `s`,
   echo: `Meld a card from your forecast.`,
   dogma: [
-    `I demand you take the highest top card from your board into your hand.`,
-    `If you have at least three echo effects visible in one color, claim the History achievement.`
+    `I demand you transfer your highest top card to your hand.`,
+    `If you have at least three echo effects visible in one color, claim the History achievement. If you do, and Photography was foreseen, you win.`
   ],
   dogmaImpl: [
     (game, player) => {
@@ -16,27 +18,41 @@ module.exports = {
       game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'))
     },
 
-    (game, player) => {
+    (game, player, { foreseen, self }) => {
       if (!game.checkAchievementAvailable('History')) {
-        game.log.addNoEffect()
+        game.log.add({ template: 'The History achievement is not available' })
+        return
       }
 
       const targetCount = 3
       const matches = game
         // Grab each stack
-        .util.colors()
+        .util
+        .colors()
         .map(color => game.zones.byPlayer(player, color))
 
         // Convert each stack to a count of echo effects
         .map(zone => zone
           .cardlist()
-          .map(c => (game.getBiscuitsRaw(c, zone.splay).match(/&/g) || []).length )
+          .map(card => {
+            const visibleBiscuits = game.getBiscuitsRaw(card, zone.splay)
+            const echoBiscuits = (visibleBiscuits.match(/&/g) || []).length
+            return echoBiscuits
+          })
           .reduce((prev, curr) => prev + curr, 0)
         )
         .some(count => count >= targetCount)
 
       if (matches) {
         game.actions.claimAchievement(player, { name: 'History' })
+
+        game.log.addForeseen(foreseen, self)
+        if (foreseen) {
+          throw new GameOverEvent({
+            reason: self.name,
+            player
+          })
+        }
       }
       else {
         game.log.addNoEffect()

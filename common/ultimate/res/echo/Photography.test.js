@@ -78,4 +78,31 @@ describe("Photography", () => {
       },
     })
   })
+
+  test('dogma: you win', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        blue: ['Mathematics'],
+        purple: ['Philosophy'],
+        red: {
+          cards: ['Plumbing', 'Bangle', 'Horseshoes'],
+          splay: 'up',
+        },
+        hand: ['Nylon'],
+        forecast: ['Photography'],
+      },
+      micah: {
+        green: ['Sailing'],
+        red: ['Construction'],
+        blue: ['Translation'],
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Nylon')
+
+    t.testGameOver(request, 'dennis', 'Photography')
+  })
 })
