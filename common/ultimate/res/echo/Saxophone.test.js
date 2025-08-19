@@ -14,11 +14,8 @@ describe("Saxophone", () => {
         purple: ['Bell']
       },
       decks: {
-        base: {
-          7: ['Lighting'],
-        },
         echo: {
-          7: ['Rubber'],
+          7: ['Rubber', 'Photography'],
         },
       },
     })
@@ -31,7 +28,7 @@ describe("Saxophone", () => {
     t.testBoard(game, {
       dennis: {
         purple: ['Saxophone'],
-        hand: ['Lighting', 'Rubber'],
+        hand: ['Photography', 'Rubber'],
       },
       micah: {
         purple: ['Bell'],
@@ -47,14 +44,6 @@ describe("Saxophone", () => {
       },
       micah: {
         purple: ['Bell']
-      },
-      decks: {
-        base: {
-          7: ['Lighting'],
-        },
-        echo: {
-          7: ['Rubber'],
-        },
       },
     })
 
