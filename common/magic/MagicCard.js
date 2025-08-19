@@ -422,6 +422,54 @@ class MagicCard extends BaseCard {
   removeFace(index) {
     this.faces().splice(index, 1)
   }
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Base Card Extensions
+
+  _afterMoveTo(zone, _unused1, prevZone) {
+    this.game.mAdjustCardVisibility(this)
+    this.game.mMaybeClearAnnotations(this)
+    this.game.mMaybeClearCounters(this)
+    this.game.mMaybeRemoveTokens(this)
+
+    const sourceKind = prevZone.id.split('.').slice(-1)[0]
+    const targetKind = zone.id.split('.').slice(-1)[0]
+
+    // Card was moved to stack.
+    if (targetKind === 'stack') {
+      this.game.log.indent()
+    }
+
+    // Card was removed from stack.
+    if (sourceKind === 'stack') {
+      this.game.log.add({
+        template: '{this} resolves',
+        args: { card: this },
+        classes: ['stack-pop'],
+      })
+      this.game.log.outdent()
+    }
+
+    // Card moved to a non-tap zone
+    if (!['creatures', 'battlefield', 'land', 'attacking', 'blocking'].includes(targetKind)) {
+      if (this.g.tapped) {
+        this.game.mUntap(this)
+      }
+
+      if (this.g.attachedTo) {
+        this.game.mDetach(this)
+      }
+
+      for (const attached of this.g.attached) {
+        this.game.mDetach(attached)
+      }
+    }
+
+    // Move card to the attacking zone, which usually taps them
+    if (targetKind === 'attacking') {
+      this.game.mTap(this)
+    }
+  }
 }
 
 module.exports = {

@@ -106,51 +106,6 @@ Magic.prototype._mainProgram = function() {
   this.mainLoop()
 }
 
-Magic.prototype._cardMovedCallback = function({ card, sourceZone, targetZone }) {
-  this.mAdjustCardVisibility(card)
-  this.mMaybeClearAnnotations(card)
-  this.mMaybeClearCounters(card)
-  this.mMaybeRemoveTokens(card)
-
-  const sourceKind = sourceZone.id.split('.').slice(-1)[0]
-  const targetKind = targetZone.id.split('.').slice(-1)[0]
-
-  // Card was moved to stack.
-  if (targetKind === 'stack') {
-    this.log.indent()
-  }
-
-  // Card was removed from stack.
-  if (sourceKind === 'stack') {
-    this.log.add({
-      template: '{card} resolves',
-      args: { card },
-      classes: ['stack-pop'],
-    })
-    this.log.outdent()
-  }
-
-  // Card moved to a non-tap zone
-  if (!['creatures', 'battlefield', 'land', 'attacking', 'blocking'].includes(targetKind)) {
-    if (card.g.tapped) {
-      this.mUntap(card)
-    }
-
-    if (card.g.attachedTo) {
-      this.mDetach(card)
-    }
-
-    for (const attached of card.g.attached) {
-      this.mDetach(attached)
-    }
-  }
-
-  // Move card to the attacking zone, which usually taps them
-  if (targetKind === 'attacking') {
-    this.mTap(card)
-  }
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
