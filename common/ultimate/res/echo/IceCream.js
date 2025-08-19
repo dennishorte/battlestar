@@ -8,7 +8,7 @@ module.exports = {
   echo: `Score a non-purple top card from your board without a bonus.`,
   dogma: [
     `I demand you draw and meld a {1}!`,
-    `Choose the {6}, {7}, {8}, or {9} deck. If there is at least one card in that deck, you may transfer its bottom card to the available achievements.`
+    `Choose the {6}, {7}, {8}, or {9} deck. You may junk all cards in the chosen deck. If you do, score the highest card in the junk, if eligible.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
@@ -16,21 +16,20 @@ module.exports = {
     },
 
     (game, player, { self }) => {
-      const addAchievement = game.actions.chooseYesNo(player, 'Transfer a card to the available achievements?')
+      const ages = [
+        game.getEffectAge(self, 6),
+        game.getEffectAge(self, 7),
+        game.getEffectAge(self, 8),
+        game.getEffectAge(self, 9),
+      ].filter(age => age <= 11)
 
-      if (addAchievement) {
-        const age = game.actions.chooseAge(player, [
-          game.getEffectAge(self, 6),
-          game.getEffectAge(self, 7),
-          game.getEffectAge(self, 8),
-          game.getEffectAge(self, 9),
-        ].filter(age => age <= 10))
-
-        const cards = game.zones.byDeck('base', age).cardlist()
-        if (cards.length > 0) {
-          const toTransfer = cards[cards.length - 1]
-          game.actions.transfer(player, toTransfer, game.zones.byId('achievements'))
-        }
+      const junked = game.actions.chooseAndJunkDeck(player, ages, { min: 0 })
+      if (junked) {
+        const options = game
+          .util
+          .highestCards(game.cards.byZone('junk'))
+          .filter(card => game.checkAchievementEligibility(player, card))
+        game.actions.chooseAndAchieve(player, options)
       }
     }
   ],
