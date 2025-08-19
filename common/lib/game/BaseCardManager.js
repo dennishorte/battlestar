@@ -16,7 +16,7 @@ class BaseCardManager {
   }
 
   all() {
-    return [...this._cards]
+    return Object.entries(this._cards)
   }
 
   byId(id) {
