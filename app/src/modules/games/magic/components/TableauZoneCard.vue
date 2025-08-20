@@ -194,7 +194,7 @@ export default {
     },
 
     cardZoneIsPublic() {
-      return this.card.zone.kind === 'public'
+      return this.card.zone.kind() === 'public'
     },
 
     extraClasses() {
