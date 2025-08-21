@@ -906,7 +906,12 @@ Magic.prototype.aSetNoUntap = function(player, cardId, value) {
 
 Magic.prototype.aShuffle = function(player, zoneId) {
   const zone = this.zones.byId(zoneId)
+  zone.cardlist().forEach(card => card.hide())
   zone.shuffle()
+  this.log.add({
+    template: '{player} shuffles {zone}',
+    args: { player, zone }
+  })
 }
 
 Magic.prototype.aShuffleBottom = function(player, zoneId, count) {
