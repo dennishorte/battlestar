@@ -916,7 +916,12 @@ Magic.prototype.aShuffle = function(player, zoneId) {
 
 Magic.prototype.aShuffleBottom = function(player, zoneId, count) {
   const zone = this.zones.byId(zoneId)
+  zone.cardlist().slice(-count).forEach(card => card.hide())
   zone.shuffleBottom(count)
+  this.log.add({
+    template: '{player} shuffles the bottom {count} cards of {zone}',
+    args: { player, count, zone }
+  })
 }
 
 Magic.prototype.aStackEffect = function(player, cardId) {
