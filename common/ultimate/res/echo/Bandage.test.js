@@ -11,6 +11,9 @@ describe("Bandage", () => {
         red: ['Bandage'],
         hand: ['The Wheel', 'Pottery'],
       },
+      micah: {
+        yellow: ['Agriculture'],
+      },
     })
 
     let request
@@ -24,10 +27,13 @@ describe("Bandage", () => {
         blue: ['Pottery'],
         hand: ['The Wheel'],
       },
+      micah: {
+        yellow: ['Agriculture'],
+      },
     })
   })
 
-  test('dogma', () => {
+  test('dogma: only return one', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
@@ -37,7 +43,7 @@ describe("Bandage", () => {
       micah: {
         purple: ['Lighting'],
         hand: ['Enterprise'],
-        score: ['Calendar', 'Gunpowder'],
+        score: ['Calendar', 'Gunpowder', 'Software'],
       },
     })
 
@@ -52,9 +58,49 @@ describe("Bandage", () => {
         yellow: ['Agriculture'],
       },
       micah: {
+        purple: ['Lighting'],
         hand: ['Enterprise'],
-        score: ['Gunpowder'],
+        score: ['Calendar', 'Gunpowder'],
       },
+      junk: ['Software'],
+    })
+  })
+
+  test('dogma: return both', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        red: ['Bandage'],
+        yellow: ['Agriculture'],
+      },
+      micah: {
+        purple: ['Lighting'],
+        hand: ['Enterprise', 'Databases'],
+        score: ['Calendar', 'Gunpowder', 'Software'],
+        achievements: ['Empire', 'World'],
+      },
+      achievements: ['Mathematics'],
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Bandage')
+    request = t.choose(game, request, '**base-2*', 'Monument')
+    request = t.choose(game, request, 'auto')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Bandage'],
+        yellow: ['Agriculture'],
+      },
+      micah: {
+        purple: ['Lighting'],
+        hand: ['Enterprise'],
+        score: ['Calendar', 'Gunpowder'],
+        achievements: ['Empire', 'World'],
+      },
+      junk: ['Software', 'Databases', 'Monument', 'Mathematics'],
     })
   })
 })

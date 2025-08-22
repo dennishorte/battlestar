@@ -407,6 +407,8 @@ class UltimateActionManager extends BaseActionManager {
     if (card.checkHasBiscuit(':')) {
       this.claimAchievement(player, { name: 'Victory' })
     }
+
+    return junkedCard
   })
 
   junkAvailableAchievement(player, ages, opts={}) {
