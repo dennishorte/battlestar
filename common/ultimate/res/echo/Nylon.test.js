@@ -8,13 +8,13 @@ describe("Nylon", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
-        green: ['Nylon'],
-        red: ['Coal'],
+        red: ['Mobility'],
         yellow: ['Canning'],
+        green: ['Nylon'],
       },
       decks: {
         base: {
-          8: ['Mass Media', 'Specialization', 'Flight', 'Rocketry', 'Empiricism'],
+          8: ['Mass Media', 'Flight', 'Rocketry', 'Empiricism', 'Socialism', 'Quantum Theory'],
         },
       },
     })
@@ -27,14 +27,14 @@ describe("Nylon", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        green: ['Nylon', 'Mass Media'],
         red: {
-          cards: ['Coal', 'Flight'],
+          cards: ['Mobility', 'Flight'],
           splay: 'up'
         },
         yellow: ['Canning'],
-        purple: ['Specialization', 'Empiricism'],
-        blue: ['Rocketry'],
+        green: ['Nylon', 'Mass Media'],
+        blue: ['Rocketry', 'Quantum Theory'],
+        purple: ['Empiricism', 'Socialism'],
       },
     })
   })
