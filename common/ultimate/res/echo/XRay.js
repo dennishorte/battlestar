@@ -7,18 +7,26 @@ module.exports = {
   dogmaBiscuit: `l`,
   echo: `Draw and tuck an {8}.`,
   dogma: [
-    `For every three {l} on your board, draw and foreshadow a card of any value.`,
-    `You may splay your yellow cards up.`
+    `Choose a value. For every color on your board with {l}, draw a card of that value. Foreshadow any number of them.`,
+    `Return all cards from your hand.`,
+    `You may splay your yellow cards up.`,
   ],
   dogmaImpl: [
     (game, player) => {
-      const leafs = game.getBiscuitsByPlayer(player).l
-      const count = Math.floor(leafs / 3)
+      const age = game.actions.chooseAge(player)
+      const count = game.zones.withBiscuit(player, 'l').length
 
+      const drawn = []
       for (let i = 0; i < count; i++) {
-        const age = game.actions.chooseAge(player)
-        game.actions.drawAndForeshadow(player, age)
+        const card = game.actions.draw(player, { age })
+        drawn.push(card)
       }
+
+      game.actions.chooseAndForeshadow(player, drawn, { min: 0, max: drawn.length })
+    },
+
+    (game, player) => {
+      game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
     },
 
     (game, player) => {
