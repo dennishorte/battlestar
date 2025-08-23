@@ -47,10 +47,6 @@ class UltimateAgeCard extends UltimateBaseCard {
     return this.checkBiscuitIsVisible('&', splay)
   }
 
-  checkHasBiscuit(biscuit) {
-    return this.biscuits.includes(biscuit)
-  }
-
   checkHasDemandExplicit() {
     return this
       .dogma

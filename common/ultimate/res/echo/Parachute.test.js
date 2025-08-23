@@ -18,17 +18,42 @@ describe("Parachute", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Parachute')
-    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Parachute'],
-        hand: ['Lighting', 'Computers'],
+        hand: ['Sailing'],
       },
       micah: {
-        hand: ['Sailing'],
+        hand: ['Lighting', 'Computers'],
       }
+    })
+  })
+
+  test('dogma: was foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        hand: ['Software'],
+        forecast: ['Parachute'],
+      },
+      micah: {
+        purple: ['Lighting', 'Code of Laws'],
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Software')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+      },
+      micah: {
+      },
+      junk: ['Software', 'Parachute', 'Lighting', 'Code of Laws'],
     })
   })
 })
