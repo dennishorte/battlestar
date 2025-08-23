@@ -12,11 +12,8 @@ describe("Radio Telescope", () => {
         yellow: ['Ecology'],
       },
       decks: {
-        base: {
-          9: ['Collaboration'],
-        },
         echo: {
-          9: ['Rock'],
+          9: ['Rock', 'Calculator'],
         },
       }
     })
@@ -24,14 +21,44 @@ describe("Radio Telescope", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Radio Telescope')
-    request = t.choose(game, request, 'Rock')
+    request = t.choose(game, request, 'Calculator')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        blue: ['Radio Telescope'],
         yellow: ['Ecology'],
-        purple: ['Rock'],
+        blue: ['Calculator', 'Radio Telescope'],
+      },
+    })
+  })
+
+  test('dogma: was foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        yellow: ['Ecology'],
+        hand: ['Software'],
+        forecast: ['Radio Telescope'],
+      },
+      decks: {
+        echo: {
+          9: ['Rock', 'Calculator'],
+          10: ['MP3', 'GPS'],
+        },
+      }
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Software')
+    request = t.choose(game, request, 'MP3')
+    request = t.choose(game, request, 'auto')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['MP3', 'Ecology'],
+        blue: ['Radio Telescope', 'Software'],
       },
     })
   })
@@ -40,27 +67,20 @@ describe("Radio Telescope", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
-        blue: ['Radio Telescope'],
-        yellow: ['Ecology'],
+        hand: ['Flight'],
+        forecast: ['Radio Telescope'],
       },
       decks: {
         base: {
+          9: ['Software'],
           10: ['A.I.'],
-        },
-        echo: {
-          10: ['Cell Phone'],
         },
       }
     })
 
-    // Empty the nine deck so we can draw A.I., which is a 10.
-    game.testSetBreakpoint('before-first-player', (game) => {
-      game.state.zones.decks.base['9'].cardlist().forEach(card => game.mMoveCardTo(card, game.zones.byId('junk')))
-    })
-
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Radio Telescope')
+    request = t.choose(game, request, 'Meld.Flight')
     request = t.choose(game, request, '*A.I.')
 
     t.testGameOver(request, 'dennis', 'Radio Telescope')

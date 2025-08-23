@@ -9,16 +9,31 @@ module.exports = {
   dogmaBiscuit: `s`,
   echo: ``,
   dogma: [
-    `For every two {s} on your board, draw a {9}. Meld one of the cards drawn and return the rest. If you meld AI due to this dogma effect, you win.`
+    `For every color on your board with {s}, draw a {9}. If Radio Telescope was foreseen, for every color also draw a {0}. Meld one of the cards drawn and return the rest. If you meld AI due to this effect, you win.`
   ],
   dogmaImpl: [
-    (game, player, { self }) => {
-      const count = Math.floor(game.getBiscuitsByPlayer(player).s / 2)
+    (game, player, { foreseen, self }) => {
+      const count = Object
+        .values(game.getBiscuitsByColor(player))
+        .map(biscuits => biscuits.s)
+        .filter(count => count > 0)
+        .length
+
       const drawn = []
       for (let i = 0; i < count; i++) {
         const card = game.actions.draw(player, { age: game.getEffectAge(self, 9) })
         if (card) {
           drawn.push(card)
+        }
+      }
+
+      game.log.addForeseen(foreseen, self)
+      if (foreseen) {
+        for (let i = 0; i < count; i++) {
+          const card = game.actions.draw(player, { age: game.getEffectAge(self, 10) })
+          if (card) {
+            drawn.push(card)
+          }
         }
       }
 
