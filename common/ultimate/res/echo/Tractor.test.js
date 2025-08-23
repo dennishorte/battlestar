@@ -8,6 +8,7 @@ describe("Tractor", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
+        red: ['Flight'],
         yellow: ['Tractor'],
         hand: ['Candles'],
       },
@@ -25,9 +26,59 @@ describe("Tractor", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        red: ['Flight'],
         yellow: ['Tractor'],
         hand: ['Candles', 'Lighting', 'Evolution'],
         score: ['Bicycle'],
+      },
+    })
+  })
+
+  test('dogma: was foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        hand: ['Flight'],
+        forecast: ['Tractor'],
+      },
+      decks: {
+        base: {
+          7: [
+            'Lighting',
+            'Bicycle',
+            'Evolution',
+            'Combustion',
+            'Electricity',
+            'Explosives',
+            'Publications',
+            'Railroad',
+            'Refrigeration',
+            'Sanitation',
+          ]
+        },
+      }
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Flight')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Flight'],
+        yellow: ['Tractor'],
+        hand: ['Lighting', 'Evolution'],
+        score: [
+          'Bicycle',
+          'Combustion',
+          'Electricity',
+          'Explosives',
+          'Publications',
+          'Railroad',
+          'Refrigeration',
+          'Sanitation',
+        ],
       },
     })
   })
