@@ -8,6 +8,7 @@ describe("Sliced Bread", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
+        red: ['Mobility'],
         green: ['Sliced Bread'],
         hand: ['Tools', 'Canning'],
         score: ['Enterprise'],
@@ -15,11 +16,8 @@ describe("Sliced Bread", () => {
       decks: {
         base: {
           3: ['Machinery', 'Engineering'],
-          8: ['Flight'],
+          8: ['Flight', 'Quantum Theory'],
         },
-        echo: {
-          8: ['Crossword'],
-        }
       }
     })
 
@@ -31,8 +29,9 @@ describe("Sliced Bread", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        red: ['Mobility'],
         green: ['Sliced Bread'],
-        hand: ['Flight', 'Crossword'],
+        hand: ['Flight', 'Quantum Theory'],
         score: ['Machinery', 'Engineering'],
       },
     })
