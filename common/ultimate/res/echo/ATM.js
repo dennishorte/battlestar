@@ -1,4 +1,3 @@
-
 const util = require('../../../lib/util.js')
 
 module.exports = {
@@ -10,28 +9,19 @@ module.exports = {
   dogmaBiscuit: `c`,
   echo: `Draw and score a card of any value.`,
   dogma: [
-    `I demand you transfer the highest top non-yellow card without a {c} from your board to my board!`,
-    `You may splay your purple cards up.`
+    `I demand you transfer the highest top non-yellow card without {c} to my board!`,
+    `You may splay your purple cards up.`,
+    `Junk all cards in the {0} deck.`,
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const topCoins = game
-        .cards.tops(player)
+      const topNonCoins = game
+        .cards
+        .tops(player)
         .filter(card => card.color !== 'yellow')
         .filter(card => !card.checkHasBiscuit('c'))
-        .sort((l, r) => r.getAge() - l.getAge())
 
-      // In case there are no valid options.
-      if (topCoins.length === 0) {
-        game.log.add({ template: 'No valid cards' })
-        return
-      }
-
-      const highest = util
-        .array
-        .takeWhile(topCoins, card => card.getAge() === topCoins[0].getAge())
-
-      const card = game.actions.chooseCard(player, highest)
+      const card = game.actions.chooseHighest(player, topNonCoins, 1)[0]
       if (card) {
         game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
       }
@@ -39,7 +29,11 @@ module.exports = {
 
     (game, player) => {
       game.actions.chooseAndSplay(player, ['purple'], 'up')
-    }
+    },
+
+    (game, player, { self }) => {
+      game.actions.junkDeck(player, game.getEffectAge(self, 10))
+    },
   ],
   echoImpl: (game, player) => {
     const age = game.actions.chooseAge(player)

@@ -23,8 +23,8 @@ describe("ATM", () => {
         red: ['Oars'],
       },
       decks: {
-        base: {
-          10: ['Software']
+        echo: {
+          10: ['Sudoku']
         }
       }
     })
@@ -49,7 +49,7 @@ describe("ATM", () => {
         },
         red: ['Optics'],
         blue: ['Tools'],
-        score: ['Software'],
+        score: ['Sudoku'],
       },
       micah: {
         yellow: ['Stem Cells'],
