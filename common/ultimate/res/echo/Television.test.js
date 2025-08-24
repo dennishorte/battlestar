@@ -14,8 +14,8 @@ describe("Television", () => {
         score: ['Sailing', 'Tools', 'Construction'],
       },
       decks: {
-        base: {
-          8: ['Flight'],
+        echo: {
+          8: ['Nylon'],
         }
       }
     })
@@ -29,8 +29,8 @@ describe("Television", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        green: ['Nylon'],
         purple: ['Television'],
-        red: ['Flight'],
       },
       micah: {
         green: ['Sailing'],
@@ -50,9 +50,9 @@ describe("Television", () => {
         achievements: ['Domestication'],
       },
       decks: {
-        base: {
-          8: ['Flight'],
-        }
+        echo: {
+          8: ['Nylon'],
+        },
       }
     })
 
@@ -65,8 +65,8 @@ describe("Television", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        green: ['Nylon'],
         purple: ['Television'],
-        red: ['Flight'],
         achievements: ['Tools'],
       },
       micah: {
