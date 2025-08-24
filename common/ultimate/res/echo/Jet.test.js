@@ -4,7 +4,7 @@ const t = require('../../testutil.js')
 
 describe("Jet", () => {
 
-  test('dogma', () => {
+  test('dogma: melded', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
@@ -14,6 +14,12 @@ describe("Jet", () => {
       micah: {
         purple: ['Enterprise'],
       },
+      decks: {
+        echo: {
+          10: ['Camcorder'],
+        },
+      },
+      achievements: ['Reformation', 'Railroad'],
     })
 
     let request
@@ -25,7 +31,9 @@ describe("Jet", () => {
       dennis: {
         red: ['Jet'],
         purple: ['Lighting'],
+        forecast: ['Camcorder'],
       },
+      junk: ['Reformation', 'Railroad'],
     })
   })
 
@@ -38,6 +46,11 @@ describe("Jet", () => {
       micah: {
         purple: ['Enterprise'],
       },
+      decks: {
+        echo: {
+          10: ['Camcorder'],
+        },
+      },
     })
 
     let request
@@ -48,6 +61,7 @@ describe("Jet", () => {
     t.testBoard(game, {
       dennis: {
         red: ['Jet'],
+        forecast: ['Camcorder'],
       },
       micah: {
         purple: ['Enterprise'],
