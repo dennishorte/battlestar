@@ -19,8 +19,7 @@ module.exports = {
         const card = game.actions.chooseCard(player, choices)
 
         if (card) {
-          const owner = game.getPlayerByCard(card)
-          game.actions.transfer(player, card, game.zones.byPlayer(owner, 'score'))
+          game.actions.transfer(player, card, game.zones.byPlayer(card.owner, 'score'))
 
           const returnChoices = game
             .cards.byPlayer(player, 'hand')
