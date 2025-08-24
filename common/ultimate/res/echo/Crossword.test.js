@@ -4,7 +4,7 @@ const t = require('../../testutil.js')
 
 describe("Crossword", () => {
 
-  test('dogma', () => {
+  test('dogma: even only', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
@@ -12,11 +12,9 @@ describe("Crossword", () => {
         red: ['Plumbing'],
       },
       decks: {
-        base: {
-          8: ['Flight'],
-        },
         echo: {
           2: ['Scissors'],
+          8: ['Nylon'],
         },
       },
     })
@@ -31,8 +29,73 @@ describe("Crossword", () => {
       dennis: {
         purple: ['Crossword'],
         red: ['Plumbing'],
-        hand: ['Flight', 'Scissors'],
+        hand: ['Nylon', 'Scissors'],
       },
+    })
+  })
+
+  test('dogma: even and odd', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        red: ['Plumbing'],
+        blue: ['Perfume'],
+        purple: ['Crossword'],
+      },
+      decks: {
+        echo: {
+          2: ['Scissors'],
+          8: ['Nylon'],
+        },
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Crossword')
+    request = t.choose(game, request, 8)
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Plumbing'],
+        blue: ['Perfume'],
+        purple: ['Crossword'],
+        hand: ['Nylon'],
+      },
+    })
+  })
+
+  test('dogma: was foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        red: ['Plumbing'],
+        hand: ['Laser'],
+        forecast: ['Crossword'],
+      },
+      decks: {
+        echo: {
+          2: ['Scissors'],
+          8: ['Nylon'],
+        },
+      },
+      achievements: [],
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Laser')
+    request = t.choose(game, request, 8)
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Plumbing'],
+        blue: ['Laser'],
+        purple: ['Crossword'],
+      },
+      standardAchievements: ['Nylon', 'Scissors'],
     })
   })
 })
