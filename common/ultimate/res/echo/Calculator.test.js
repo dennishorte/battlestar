@@ -13,11 +13,9 @@ describe("Calculator", () => {
         yellow: ['Agriculture', 'Canning'],
       },
       decks: {
-        base: {
-          7: ['Lighting'],
-        },
         echo: {
           4: ['Shuriken'],
+          7: ['Rubber'],
         }
       },
     })
@@ -38,12 +36,12 @@ describe("Calculator", () => {
         },
         green: ['Navigation'],
         score: ['Agriculture', 'Canning', 'Sailing', 'Paper'],
-        hand: ['Shuriken', 'Lighting'],
+        hand: ['Shuriken', 'Rubber'],
       },
     })
   })
 
-  test('dogma (11+)', () => {
+  test('dogma (12+)', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {

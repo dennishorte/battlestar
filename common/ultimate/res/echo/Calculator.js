@@ -7,7 +7,7 @@ module.exports = {
   dogmaBiscuit: `i`,
   echo: ``,
   dogma: [
-    `Score two bottom non-blue cards from your board. If you scored two cards and they have a total value less than 11, draw a card of that total value and repeat this dogma effect (only once).`,
+    `Score two bottom non-blue cards of different colors from your board. If you score two and they have a total value less than 12, draw a card of that total value and repeat this dogma effect (only once).`,
     `You may splay your blue cards up.`
   ],
   dogmaImpl: [
@@ -23,8 +23,8 @@ module.exports = {
         const scored = game.actions.chooseAndScore(player, choices, { count: 2 })
         if (scored && scored.length >= 2) {
           const total = scored[0].getAge() + scored[1].getAge()
-          if (total >= 11) {
-            game.log.add({ template: 'Total age was not less than 11' })
+          if (total >= 12) {
+            game.log.add({ template: 'Total age was not less than 12' })
             break
           }
           else {
