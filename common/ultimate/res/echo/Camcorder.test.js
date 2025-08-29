@@ -11,14 +11,14 @@ describe("Camcorder", () => {
         red: ['Camcorder'],
       },
       micah: {
-        hand: ['Sailing', 'Composites'],
+        hand: ['Sailing', 'Laser'],
       },
       decks: {
         base: {
-          9: ['Fission', 'Services', 'Satellites'],
+          9: ['Fission'],
         },
         echo: {
-          9: ['Calculator'],
+          9: ['Calculator', 'Rock', 'Helicopter'],
         }
       },
     })
@@ -31,8 +31,46 @@ describe("Camcorder", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        red: ['Composites', 'Camcorder'],
-        hand: ['Services', 'Satellites', 'Calculator'],
+        red: ['Camcorder'],
+        blue: ['Laser'],
+        hand: ['Calculator', 'Rock', 'Helicopter'],
+      },
+      micah: {
+        hand: ['Fission'],
+      },
+    })
+  })
+
+  test('dogma: foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        hand: ['Touchscreen'],
+        forecast: ['Camcorder'],
+      },
+      micah: {
+        hand: ['Sailing'],
+      },
+      decks: {
+        base: {
+          9: ['Fission'],
+        },
+        echo: {
+          9: ['Calculator', 'Rock', 'Helicopter'],
+        }
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Touchscreen')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Camcorder'],
+        blue: ['Touchscreen'],
+        hand: ['Sailing'],
       },
       micah: {
         hand: ['Fission'],
