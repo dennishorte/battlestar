@@ -104,6 +104,16 @@ const cardData = [
   require('./Camcorder.js'),
   require('./ArtificialHeart.js'),
   require('./SocialNetwork.js'),
+  require('./Drone.js'),
+  require('./Exoskeleton.js'),
+  require('./DigitalPet.js'),
+  require('./Esports.js'),
+  require('./Algocracy.js'),
+  require('./Robocar.js'),
+  require('./Streaming.js'),
+  require('./Touchscreen.js'),
+  require('./Deepfake.js'),
+  require('./Meritocracy.js'),
 ]
 
 const achievementData = [
