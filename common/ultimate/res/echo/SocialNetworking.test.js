@@ -2,13 +2,13 @@ Error.stackTraceLimit = 100
 
 const t = require('../../testutil.js')
 
-describe("Social Network", () => {
+describe("Social Networking", () => {
 
   test('dogma', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
-        red: ['Social Network'],
+        red: ['Social Networking'],
       },
       micah: {
         yellow: ['Canning'],
@@ -19,14 +19,14 @@ describe("Social Network", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Social Network')
+    request = t.choose(game, request, 'Dogma.Social Networking')
     request = t.choose(game, request, '{f}')
     request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        red: ['Social Network'],
+        red: ['Social Networking'],
         score: ['Navigation', 'Mysticism'],
       },
       micah: {
@@ -39,7 +39,7 @@ describe("Social Network", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
-        red: ['Social Network'],
+        red: ['Social Networking'],
       },
       micah: {
         yellow: ['Canning'],
@@ -50,10 +50,10 @@ describe("Social Network", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Social Network')
+    request = t.choose(game, request, 'Dogma.Social Networking')
     request = t.choose(game, request, '{f}')
     request = t.choose(game, request, 'auto')
 
-    t.testGameOver(request, 'dennis', 'Social Network')
+    t.testGameOver(request, 'dennis', 'Social Networking')
   })
 })

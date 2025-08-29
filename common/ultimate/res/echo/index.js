@@ -103,7 +103,7 @@ const cardData = [
   require('./PuzzleCube.js'),
   require('./Camcorder.js'),
   require('./ArtificialHeart.js'),
-  require('./SocialNetwork.js'),
+  require('./SocialNetworking.js'),
   require('./Drone.js'),
   require('./Exoskeleton.js'),
   require('./DigitalPet.js'),

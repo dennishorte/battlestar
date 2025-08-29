@@ -1,7 +1,7 @@
 const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
-  name: `Social Network`,
+  name: `Social Networking`,
   color: `red`,
   age: 10,
   expansion: `echo`,
@@ -9,8 +9,8 @@ module.exports = {
   dogmaBiscuit: `i`,
   echo: [],
   dogma: [
-    `I demand you choose an icon type! Transfer all top cards without that icon from your board to my score pile!`,
-    `If you have fewer {f}, fewer {c}, and fewer {k} than each other player, you win.`
+    `I demand you choose a standard biscuit type! Transfer all top cards without that biscuit from your board to my score pile!`,
+    `If you have fewer {f}, fewer {c}, and fewer {k} than each opponent, you win.`
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
@@ -27,8 +27,8 @@ module.exports = {
     (game, player, { self }) => {
       const mine = game.getBiscuitsByPlayer(player)
       const theirs = game
-        .players.all()
-        .filter(other => other !== player)
+        .players
+        .other(player)
         .map(other => game.getBiscuitsByPlayer(other))
 
       for (const biscuits of theirs) {
