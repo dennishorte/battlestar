@@ -7,22 +7,27 @@ module.exports = {
   dogmaBiscuit: `s`,
   echo: ``,
   dogma: [
-    `Return all unclaimed standard achievements. Then, return half (rounded up) of the cards in your score pile. Draw and meld two {0}.`
+    `Return 4 cards from your score pile. Return all available standard achievements.`,
+    `Draw and foreshadow and {b}. Draw and meld a {0}. If Laser was foreseen, draw and meld an {b}.`,
+
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const toReturn = game
-        .zones.byId('achievements')
-        .cardlist()
-        .filter(card => !card.isSpecialAchievement)
-      game.actions.returnMany(player, toReturn, { ordered: true })
+      const scoreCards = game.cards.byPlayer(player, 'score')
+      game.actions.chooseAndReturn(player, scoreCards, { count: 4 })
 
-      const score = game.cards.byPlayer(player, 'score')
-      const returnCount = Math.ceil(score.length / 2)
-      game.actions.chooseAndReturn(player, score, { count: returnCount })
+      const toReturn = game.getAvailableStandardAchievements(player)
+      game.actions.returnMany(player, toReturn)
+    },
 
+    (game, player, { foreseen, self }) => {
+      game.actions.drawAndForeshadow(player, game.getEffectAge(self, 11))
       game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
-      game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
+
+      game.log.addForeseen(foreseen, self)
+      if (foreseen) {
+        game.actions.drawAndMeld(player, game.getEffectAge(self, 11))
+      }
     }
   ],
   echoImpl: [],
