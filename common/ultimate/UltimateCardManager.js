@@ -26,6 +26,14 @@ class UltimateCardManager extends BaseCardManager {
     return this._expansions[exp]
   }
 
+  bottom(player, color) {
+    return this.byPlayer(player, color).slice(-1)[0]
+  }
+
+  bottoms(player) {
+    return this.util.colors().map(color => this.bottom(player, color)).filter(x => Boolean(x))
+  }
+
   top(player, color) {
     return this.byPlayer(player, color)[0]
   }

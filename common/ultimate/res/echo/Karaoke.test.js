@@ -8,11 +8,14 @@ describe("Karaoke", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
-        purple: ['Karaoke'],
+        red: ['Coal'],
+        purple: ['Karaoke', 'Code of Laws'],
+        hand: ['Canning', 'Mathematics'],
       },
+      achievements: ['Atomic Theory'],
       decks: {
-        base: {
-          1: ['Sailing', 'Tools'],
+        echo: {
+          6: ['Loom'],
         },
       },
     })
@@ -20,16 +23,15 @@ describe("Karaoke", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Karaoke')
-    request = t.choose(game, request, 1)
-    request = t.choose(game, request, 'Tools')
-
+    request = t.choose(game, request, 6)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        red: ['Loom'],
         purple: ['Karaoke'],
-        green: ['Sailing'],
-        hand: ['Tools'],
+        hand: ['Canning', 'Mathematics', 'Code of Laws', 'Coal'],
+        achievements: ['Atomic Theory'],
       },
     })
   })

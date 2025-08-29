@@ -5,47 +5,58 @@ module.exports = {
   expansion: `echo`,
   biscuits: `hl9&`,
   dogmaBiscuit: `l`,
-  echo: `Draw and meld a card of value less than {0}.`,
+  echo: `Draw and meld a card of value present in your hand.`,
   dogma: [
-    `Execute all of the non-demand dogma effects of the card you melded due to Karaoke's echo effect. Do not share them.`,
-    `You may take a bottom card from your board into your hand.`
+    `Transfer your bottom card of each color to your hand.`,
+    `Claim an available achievement of value equal to the card you last medled due to Karaoke's echo effect during this action, regardless of eligibility. If you do, self-execute the melded card.`,
   ],
   dogmaImpl: [
     (game, player) => {
-      if (!game.state.dogmaInfo.karaoke) {
-        game.log.addNoEffect()
-        return
-      }
-      const card = game.state.dogmaInfo.karaoke[player.name]
-      if (card) {
-        game.aCardEffects(player, card, 'dogma')
-      }
+      const toTransfer = game.cards.bottoms(player)
+      game.actions.transferMany(player, toTransfer, game.zones.byPlayer(player, 'hand'), { ordered: true })
     },
 
     (game, player) => {
-      const cards = game
-        .util.colors()
-        .map(color => game.getBottomCard(player, color))
-        .filter(card => card !== undefined)
+      if (!game.state.dogmaInfo.karaoke) {
+        game.log.add({
+          template: '{player} did not meld any cards during the echo effect',
+          args: { player }
+        })
+        return
+      }
 
-      game.actions.chooseAndTransfer(player, cards, game.zones.byPlayer(player, 'hand'), { min: 0, max: 1 })
-    }
+      const card = game.state.dogmaInfo.karaoke[player.name]
+      const options = game
+        .getAvailableStandardAchievements(player)
+        .filter(ach => ach.getAge() === card.getAge())
+
+      const achieved = game.actions.chooseAndAchieve(player, options)
+
+      if (achieved) {
+        game.aSelfExecute(player, card)
+      }
+    },
   ],
   echoImpl: (game, player, { self }) => {
     if (!game.state.dogmaInfo.karaoke) {
       game.state.dogmaInfo.karaoke = {}
     }
 
-    const effectAge = game.getEffectAge(self, 9)
-    const ages = []
-    for (let i = 1; i <= effectAge; i++) {
-      ages.push(i)
-    }
-
+    const handAges = game.cards.byPlayer(player, 'hand').map(card => card.getAge())
+    const ages = game.util.ages().filter(age => handAges.includes(age))
     const age = game.actions.chooseAge(player, ages)
-    const card = game.actions.drawAndMeld(player, age)
-    if (card) {
-      game.state.dogmaInfo.karaoke[player.name] = card
+
+    if (age) {
+      const card = game.actions.drawAndMeld(player, age)
+      if (card) {
+        game.state.dogmaInfo.karaoke[player.name] = card
+      }
+    }
+    else {
+      game.log.add({
+        template: '{player} has no cards in hand',
+        args: { player }
+      })
     }
   },
 }
