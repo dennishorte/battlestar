@@ -374,12 +374,12 @@ class UltimateActionManager extends BaseActionManager {
       return
     }
 
-    card.moveTo(safeZone)
-
     this.log.add({
       template: '{player} safeguards {card} from {zone}',
       args: { player, card, zone: card.zone },
     })
+
+    card.moveTo(safeZone)
 
     this.acted(player)
     return card
