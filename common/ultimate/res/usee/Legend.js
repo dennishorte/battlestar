@@ -10,8 +10,17 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
+      if (!game.state.dogmaInfo.legend) {
+        game.state.dogmaInfo.legend = {}
+      }
+
+      const totals = game.state.dogmaInfo.legend
+
+      if (!totals[player.name]) {
+        totals[player.name] = 0
+      }
+
       let keepGoing = true
-      let total = 0
 
       const doEffect = (card) => {
         if (!card) {
@@ -22,11 +31,11 @@ module.exports = {
         game.aSelfExecute(player, card)
         const scored = game.actions.score(player, game.getTopCard(player, firstCard.color))
         if (scored) {
-          total += scored.getAge()
-          keepGoing = total < 9
+          totals[player.name] += scored.getAge()
+          keepGoing = totals[player.name] < 9
 
           if (!keepGoing) {
-            game.log.add({ template: `Scored ${total} points due to Legend.` })
+            game.log.add({ template: `Scored ${totals[player.name]} points due to Legend.` })
           }
         }
         else {
