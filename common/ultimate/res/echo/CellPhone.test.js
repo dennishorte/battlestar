@@ -14,11 +14,9 @@ describe("Cell Phone", () => {
       },
       decks: {
         base: {
-          10: ['Software'],
+          10: ['Software', 'Robotics'],
+          11: ['Hypersonics'],
         },
-        echo: {
-          10: ['Artificial Heart'],
-        }
       },
     })
 
@@ -40,7 +38,8 @@ describe("Cell Phone", () => {
           cards: ['Tools', 'Software'],
           splay: 'up'
         },
-        hand: ['Artificial Heart'],
+        hand: ['Robotics'],
+        forecast: ['Hypersonics'],
       },
     })
   })

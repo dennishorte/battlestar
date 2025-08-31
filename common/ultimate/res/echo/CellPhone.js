@@ -3,13 +3,13 @@ module.exports = {
   color: `yellow`,
   age: 10,
   expansion: `echo`,
-  biscuits: `ihai`,
+  biscuits: `iha&`,
   dogmaBiscuit: `i`,
-  echo: `Draw and foreshadow and {b}`,
+  echo: [`Draw and foreshadow an {b}`],
   dogma: [
     `Draw a {0} for every color on your board with {i}.`,
     `You may splay your green cards up.`,
-    `You may tuck any number of cards with a {i} from your hand, splaying up each color you tucked into.`
+    `You may tuck any number of cards with a {i} from your hand, splaying up each color into which you tuck.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
@@ -38,5 +38,9 @@ module.exports = {
       }
     },
   ],
-  echoImpl: [],
+  echoImpl: [
+    (game, player, { self }) => {
+      game.actions.drawAndForeshadow(player, game.getEffectAge(self, 11))
+    },
+  ],
 }
