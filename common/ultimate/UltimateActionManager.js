@@ -26,7 +26,8 @@ class UltimateActionManager extends BaseActionManager {
 
     if (
       !this.state.dogmaInfo.demanding
-      && this.state.dogmaInfo.acting === player
+      && this.state.dogmaInfo.acting
+      && this.state.dogmaInfo.acting.name === player.name
       && !this.game.checkSameTeam(player, this.players.current())
     ) {
       this.state.shared = true
@@ -379,9 +380,12 @@ class UltimateActionManager extends BaseActionManager {
       args: { player, card, zone: card.zone },
     })
 
-    card.moveTo(safeZone)
+    const moved = card.moveTo(safeZone)
 
-    this.acted(player)
+    if (moved) {
+      this.acted(player)
+    }
+
     return card
   })
 
