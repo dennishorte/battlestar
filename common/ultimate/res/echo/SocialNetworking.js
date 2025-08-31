@@ -5,9 +5,9 @@ module.exports = {
   color: `red`,
   age: 10,
   expansion: `echo`,
-  biscuits: `haii`,
-  dogmaBiscuit: `i`,
-  echo: [],
+  biscuits: `hap&`,
+  dogmaBiscuit: `p`,
+  echo: [`Score a top non-red card from your board.`],
   dogma: [
     `I demand you choose a standard biscuit type! Transfer all top cards without that biscuit from your board to my score pile!`,
     `If you have fewer {f}, fewer {c}, and fewer {k} than each opponent, you win.`
@@ -42,6 +42,15 @@ module.exports = {
         player,
         reason: self.name
       })
+    }
+  ],
+  echoImpl: [
+    (game, player) => {
+      const options = game
+        .cards
+        .tops(player)
+        .filter(card => card.color !== 'red')
+      game.actions.chooseAndScore(player, options)
     }
   ],
 }

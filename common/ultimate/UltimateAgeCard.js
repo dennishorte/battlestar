@@ -38,6 +38,7 @@ class UltimateAgeCard extends UltimateBaseCard {
       case 'left': return biscuitIndex === 3 || biscuitIndex === 5
       case 'right': return biscuitIndex === 0 || biscuitIndex === 1
       case 'up': return biscuitIndex === 1 || biscuitIndex === 2 || biscuitIndex === 3
+      case 'aslant': return biscuitIndex === 0 || biscuitIndex === 1 || biscuitIndex === 2 || biscuitIndex === 3
       case 'top': return biscuitIndex !== -1
       default: return false
     }

@@ -5,9 +5,9 @@ module.exports = {
   expansion: `echo`,
   biscuits: `ihai`,
   dogmaBiscuit: `i`,
-  echo: ``,
+  echo: `Draw and foreshadow and {b}`,
   dogma: [
-    `Draw a {0} for every two {i} on your board.`,
+    `Draw a {0} for every color on your board with {i}.`,
     `You may splay your green cards up.`,
     `You may tuck any number of cards with a {i} from your hand, splaying up each color you tucked into.`
   ],

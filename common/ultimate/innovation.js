@@ -1420,7 +1420,8 @@ Innovation.prototype.getVisibleEffectsByColor = function(player, color, kind) {
 
   else {
     return this
-      .cards.byPlayer(player, color)
+      .cards
+      .byPlayer(player, color)
       .reverse()
       .map(card => this.getVisibleEffects(card, kind))
       .filter(effect => effect !== undefined)

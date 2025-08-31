@@ -9,6 +9,7 @@ describe("Social Networking", () => {
     t.setBoard(game,  {
       dennis: {
         red: ['Social Networking'],
+        blue: ['Tools'],
       },
       micah: {
         yellow: ['Canning'],
@@ -27,7 +28,7 @@ describe("Social Networking", () => {
     t.testBoard(game, {
       dennis: {
         red: ['Social Networking'],
-        score: ['Navigation', 'Mysticism'],
+        score: ['Navigation', 'Mysticism', 'Tools'],
       },
       micah: {
         yellow: ['Canning'],
