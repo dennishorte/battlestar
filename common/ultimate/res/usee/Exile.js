@@ -11,6 +11,10 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
+      if (!game.state.dogmaInfo.exileCount) {
+        game.state.dogmaInfo.exileCount = 0
+      }
+
       const choices = game
         .getTopCards(player)
         .filter(card => !card.checkHasBiscuit('l'))
@@ -18,21 +22,22 @@ module.exports = {
       const returned = game.actions.chooseAndReturn(player, choices, { count: 1 })[0]
 
       if (returned) {
+        game.state.dogmaInfo.exileCount += 1
+
         const scoreCards = game
-          .cards.byPlayer(player, 'score')
+          .cards
+          .byPlayer(player, 'score')
           .filter(card => card.age === returned.age)
 
         const scored = game.actions.returnMany(player, scoreCards)
-
-        if (scored.length === 0) {
-          game.state.dogmaInfo.exileReturnedOneCard = true
-        }
+        game.state.dogmaInfo.exileCount += scored.length
       }
     },
     (game, player, { self }) => {
-      if (game.state.dogmaInfo.exileReturnedOneCard) {
+      if (game.state.dogmaInfo.exileCount === 1) {
         const topCards = game
-          .players.all()
+          .players
+          .all()
           .flatMap(player => game.getTopCards(player))
 
         const exileCards = topCards.filter(card => card.name === 'Exile')
