@@ -8,22 +8,29 @@ module.exports = {
   echo: ``,
   dogma: [
     `I demand you return all cards from your forecast!`,
-    `Draw and foreshadow three {0}.`,
-    `You may splay your yellow cards up.`
+    `You may splay your yellow cards up.`,
+    `Draw three {b}. If GPS was foreseen, foreshadow them.`,
   ],
   dogmaImpl: [
     (game, player) => {
       game.actions.returnMany(player, game.cards.byPlayer(player, 'forecast'))
     },
 
-    (game, player, { self }) => {
-      game.actions.drawAndForeshadow(player, game.getEffectAge(self, 10))
-      game.actions.drawAndForeshadow(player, game.getEffectAge(self, 10))
-      game.actions.drawAndForeshadow(player, game.getEffectAge(self, 10))
-    },
-
     (game, player) => {
       game.actions.chooseAndSplay(player, ['yellow'], 'up')
+    },
+
+    (game, player, { foreseen, self }) => {
+      const drawn = [
+        game.actions.draw(player, { age: game.getEffectAge(self, 11) }),
+        game.actions.draw(player, { age: game.getEffectAge(self, 11) }),
+        game.actions.draw(player, { age: game.getEffectAge(self, 11) }),
+      ]
+
+      game.log.addForeseen(foreseen, self)
+      if (foreseen) {
+        game.actions.foreshadowMany(player, drawn)
+      }
     },
   ],
   echoImpl: [],
