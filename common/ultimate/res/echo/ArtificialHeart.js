@@ -7,15 +7,19 @@ module.exports = {
   dogmaBiscuit: `l`,
   echo: [],
   dogma: [
-    `Claim a standard achievement, if eligible. Your current score is doubled for the purpose of checking eligibility.`
+    `Claim one available standard achievement, if eligible, doubling your current score for the purposes of eligibility. If you do, and Artificial Heart was foreseen, repeat this effect.`,
   ],
   dogmaImpl: [
-    (game, player) => {
-      const choices = game
-        .getEligibleAchievementsRaw(player, { doubleScore: true })
-        .filter(card => card.zone === 'achievements')
+    (game, player, { foreseen, self }) => {
+      game.log.addForeseen(foreseen, self)
+      while (true) {
+        const choices = game.getEligibleAchievementsRaw(player, { doubleScore: true })
+        const achieved = game.actions.chooseAndAchieve(player, choices)
 
-      game.actions.chooseAndAchieve(player, choices)
+        if (!foreseen || achieved.length === 0) {
+          break
+        }
+      }
     }
   ],
   echoImpl: [],

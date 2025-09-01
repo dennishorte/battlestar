@@ -117,6 +117,8 @@ class UltimateActionManager extends BaseActionManager {
     for (const card of selected) {
       this.claimAchievement(player, { card })
     }
+
+    return selected
   }
 
   chooseAndJunkDeck(player, ages, opts={}) {
