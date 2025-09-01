@@ -98,7 +98,7 @@ const cardData = [
   require('./MP3.js'),
   require('./GPS.js'),
   require('./HumanGenome.js'),
-  require('./FlashDrive.js'),
+  require('./Barcode.js'),
   require('./CellPhone.js'),
   require('./PuzzleCube.js'),
   require('./Camcorder.js'),
