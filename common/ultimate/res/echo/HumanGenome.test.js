@@ -8,30 +8,31 @@ describe("Human Genome", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
-        blue: ['Human Genome'],
+        red: ['Coal', 'Construction'],
         yellow: ['Agriculture', 'Canning'],
+        blue: ['Human Genome'],
       },
       decks: {
-        base: {
-          4: ['Enterprise'],
-        }
+        echo: {
+          10: ['Barcode'],
+          11: ['Deepfake'],
+        },
       }
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Human Genome')
-    request = t.choose(game, request, 'yes')
-    request = t.choose(game, request, 4)
-    request = t.choose(game, request, 'Canning')
+    request = t.choose(game, request, 10)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        red: ['Coal'],
         blue: ['Human Genome'],
-        yellow: ['Agriculture'],
-        hand: ['Canning'],
-        score: ['Enterprise'],
+        yellow: ['Agriculture', 'Canning'],
+        hand: ['Construction', 'Deepfake'],
+        score: ['Barcode'],
       },
     })
   })
@@ -52,7 +53,6 @@ describe("Human Genome", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Human Genome')
-    request = t.choose(game, request, 'yes')
     request = t.choose(game, request, 10)
   })
 })

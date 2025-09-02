@@ -5,34 +5,32 @@ module.exports = {
   color: `blue`,
   age: 10,
   expansion: `echo`,
-  biscuits: `ssah`,
+  biscuits: `s&ah`,
   dogmaBiscuit: `s`,
-  echo: [],
+  echo: [`Draw an {b}`],
   dogma: [
-    `You may draw and score a card of any value. Take a bottom card from your board into your hand. If the values of all the cards in your hand match the values of all the card in your score pile, exactly, you win.`
+    `You may draw and score a card of any value. Transfer your bottom red card to your hand. If the values of all the cards in your hand match the values of all the card in your score pile, exactly, you win.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const drawAndScore = game.actions.chooseYesNo(player, 'Draw and score a card of any value?')
-      if (drawAndScore) {
-        const age = game.actions.chooseAge(player)
+      const age = game.actions.chooseAge(player, null, { min: 0 })
+      if (age !== undefined) {
         game.actions.drawAndScore(player, age)
       }
 
-      const choices = game
-        .util.colors()
-        .map(color => game.getBottomCard(player, color))
-        .filter(card => card !== undefined)
-      game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'), {
-        title: 'Choose a bottom card to transfer to your hand',
-      })
+      const bottomRed = game.cards.bottom(player, 'red')
+      if (bottomRed) {
+        game.actions.transfer(player, bottomRed, game.zones.byPlayer(player, 'hand'))
+      }
 
       const scoreValues = game
-        .cards.byPlayer(player, 'score')
+        .cards
+        .byPlayer(player, 'score')
         .map(card => card.getAge())
         .sort()
       const handValues = game
-        .cards.byPlayer(player, 'hand')
+        .cards
+        .byPlayer(player, 'hand')
         .map(card => card.getAge())
         .sort()
 
@@ -49,5 +47,9 @@ module.exports = {
       }
     }
   ],
-  echoImpl: [],
+  echoImpl: [
+    (game, player, { self }) => {
+      game.actions.draw(player, { age: game.getEffectAge(self, 11) })
+    },
+  ],
 }
