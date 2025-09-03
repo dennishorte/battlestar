@@ -1,4 +1,5 @@
 const log = require('./log.js')
+const util = require('./util.js')
 
 const TestCommon = {}
 
@@ -30,7 +31,15 @@ TestCommon.choose = function(game, request, ...selections) {
       return string.slice(1)
     }
 
-    const tokens = typeof string === 'string' ? string.split('.') : [string]
+    const tokens = (typeof string === 'string' ? string.split('.') : [string])
+      .map(token => {
+        if (util.isDigits(token)) {
+          return Number(token)
+        }
+        else {
+          return token
+        }
+      })
 
     if (tokens.length === 1) {
       return tokens[0]

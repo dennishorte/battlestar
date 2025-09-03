@@ -93,7 +93,7 @@ class UltimateActionManager extends BaseActionManager {
       ages = [...ages]
     }
 
-    const selected = this.choose(player, ages, { ...opts, title: 'Choose Age' })
+    const selected = this.choose(player, ages, { min: 1, max: 1, ...opts, title: 'Choose Age' })
     if (selected) {
       return selected[0]
     }

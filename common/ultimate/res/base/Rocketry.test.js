@@ -20,7 +20,7 @@ describe('Rocketry', () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Rocketry')
-    request = t.choose(game, request, 'Services', 'Canning')
+    request = t.choose(game, request, '**base-9* (micah)', '**base-6* (micah)')
     request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)

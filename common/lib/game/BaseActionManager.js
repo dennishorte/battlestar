@@ -1,5 +1,6 @@
 const { GameProxy } = require('./GameProxy.js')
 const selector = require('../selector.js')
+const util = require('../util.js')
 
 class BaseActionManager {
   constructor(game) {
@@ -26,12 +27,7 @@ class BaseActionManager {
 
     const selected = this.game.requestInputSingle(chooseSelector)
 
-    // Validate counts
-    const { min, max } = selector.minMax(chooseSelector)
-
-    if (selected.length < min || selected.length > max) {
-      throw new Error('Invalid number of options selected')
-    }
+    this._validateChooseResponse(selected, chooseSelector)
 
     if (selected.length === 0) {
       this.log.addDoNothing(player)
@@ -39,6 +35,45 @@ class BaseActionManager {
     }
     else {
       return selected
+    }
+  }
+
+  _validateChooseResponse(selected, chooseSelector) {
+    // Validate counts
+    const { min, max } = selector.minMax(chooseSelector)
+    if (selected.length < min || selected.length > max) {
+      throw new Error(`Invalid number of options selected: ${selected.length}. min=${min} max=${max}`)
+    }
+
+    // Validate the selected items were all in choices.
+    // Pop each item out of this copy of the choices to make sure duplicate options are handled properly.
+    const choicesCopy = [...chooseSelector.choices]
+    for (let selection of selected) {
+      const index = this._validateChooseResponse_getIndexOfSelection(selection, choicesCopy)
+      if (index === -1) {
+        const selected = JSON.stringify(selection)
+        const valid = JSON.stringify(chooseSelector.choices)
+        throw new Error(`Invalid option selected: ${selected}. Valid options were: ${valid}.`)
+      }
+      else {
+        util.array.remove(choicesCopy, selection)
+      }
+    }
+
+    return true
+  }
+
+  _validateChooseResponse_getIndexOfSelection(selection, choices) {
+    if (typeof selection === 'object') {
+      const index = choices.findIndex(ch => ch.title === selection.title)
+      const option = choices[index]
+      this._validateChooseResponse(selection.selection, option)
+
+      // If _validateChooseResponse doesn't throw an exception, it succeeded.
+      return index
+    }
+    else {
+      return choices.indexOf(selection)
     }
   }
 

@@ -38,7 +38,7 @@ module.exports = {
         const topCards = game
           .players
           .all()
-          .flatMap(player => game.getTopCards(player))
+          .flatMap(player => game.cards.tops(player))
 
         const exileCards = topCards.filter(card => card.name === 'Exile')
         if (exileCards.length > 0) {
