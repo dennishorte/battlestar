@@ -767,7 +767,7 @@ Magic.prototype.aPassPriority = function(actor, targetName) {
   this.log.setIndent(indent)
 }
 
-Magic.prototype.actions.reveal = function(player, cardId) {
+Magic.prototype.aReveal = function(player, cardId) {
   player = player || this.players.current()
   const card = cardId instanceof MagicCard ? cardId : this.cards.byId(cardId)
 
@@ -778,7 +778,7 @@ Magic.prototype.actions.reveal = function(player, cardId) {
   })
 }
 
-Magic.prototype.actions.revealAll = function(player, zoneId) {
+Magic.prototype.aRevealAll = function(player, zoneId) {
   const zone = this.zones.byId(zoneId)
   zone.cardlist().forEach(card => card.reveal())
 
@@ -788,7 +788,7 @@ Magic.prototype.actions.revealAll = function(player, zoneId) {
   })
 }
 
-Magic.prototype.actions.revealNext = function(player, zoneId) {
+Magic.prototype.aRevealNext = function(player, zoneId) {
   const zone = this.zones.byId(zoneId)
   const cards = zone.cardlist()
   const nextIndex = cards.findIndex(card => card.visibility.length !== this.players.all().length)
