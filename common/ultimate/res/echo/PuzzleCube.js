@@ -1,4 +1,3 @@
-
 const util = require('../../../lib/util.js')
 const { GameOverEvent } = require('../../../lib/game.js')
 
@@ -7,11 +6,11 @@ module.exports = {
   color: `purple`,
   age: 10,
   expansion: `echo`,
-  biscuits: `sshs`,
-  dogmaBiscuit: `s`,
-  echo: ``,
+  biscuits: `&chc`,
+  dogmaBiscuit: `c`,
+  echo: `Meld a card from your score pile.`,
   dogma: [
-    `You may score the bottom card or bottom two cards of one color from your board. If all the colors on your board contain the same number of visible cards (unsplayed = 1), you win.`,
+    `You may score the bottom card or two bottom cards of one color from your board. If all the colors on your board contain the same number of visible cards, you win.`,
     `Draw and meld a {0}.`
   ],
   dogmaImpl: [
@@ -63,5 +62,9 @@ module.exports = {
       game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
     },
   ],
-  echoImpl: [],
+  echoImpl: [
+    (game, player) => {
+      game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'score'))
+    }
+  ],
 }

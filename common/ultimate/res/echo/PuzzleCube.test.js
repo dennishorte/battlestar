@@ -15,9 +15,9 @@ describe("Puzzle Cube", () => {
         },
       },
       decks: {
-        base: {
-          10: ['Software'],
-        }
+        10: {
+          echo: ['Sudoku'],
+        },
       }
     })
 
@@ -29,12 +29,48 @@ describe("Puzzle Cube", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        purple: ['Sudoku', 'Puzzle Cube'],
+        red: {
+          cards: ['Archery', 'Construction'],
+          splay: 'left'
+        },
+      },
+    })
+  })
+
+  test('dogma: echo', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
         purple: ['Puzzle Cube'],
         red: {
           cards: ['Archery', 'Construction'],
           splay: 'left'
         },
-        blue: ['Software'],
+        score: ['Mathematics', 'Coal'],
+      },
+      decks: {
+        10: {
+          echo: ['Sudoku'],
+        },
+      }
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Puzzle Cube')
+    request = t.choose(game, request, 'Coal')
+    request = t.choose(game, request)
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Sudoku', 'Puzzle Cube'],
+        red: {
+          cards: ['Coal', 'Archery', 'Construction'],
+          splay: 'left'
+        },
+        score: ['Mathematics'],
       },
     })
   })
