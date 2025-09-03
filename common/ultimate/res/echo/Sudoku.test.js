@@ -8,6 +8,7 @@ describe("Sudoku", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
+        green: ['Barcode'],
         purple: ['Sudoku'],
       },
       decks: {
@@ -26,8 +27,9 @@ describe("Sudoku", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        purple: ['Sudoku'],
         red: ['Colonialism', 'Engineering'],
+        green: ['Barcode'],
+        purple: ['Sudoku'],
       },
     })
   })
@@ -44,10 +46,11 @@ describe("Sudoku", () => {
           cards: ['Crossbow', 'Bangle', 'Plumbing', 'Loom', 'Rubber'],
           splay: 'up'
         },
+        green: ['Barcode'],
       },
       decks: {
         base: {
-          4: ['Navigation'],
+          4: ['Experimentation'],
         },
       },
     })

@@ -1,4 +1,3 @@
-
 const util = require('../../../lib/util.js')
 const { GameOverEvent } = require('../../../lib/game.js')
 
@@ -9,9 +8,9 @@ module.exports = {
   expansion: `echo`,
   biscuits: `shsb`,
   dogmaBiscuit: `s`,
-  echo: ``,
+  echo: `You may tuck any number of cards from your hand.`,
   dogma: [
-    `Draw and meld a card of any value. If you have at least nine different bonus values visible on your board, you win. Execute each of the melded card's non-demand dogma effects. Do not share them.`
+    `Draw and meld a card of any value. If you have at least nine different bonus values on your board, you win. Otherwise, self-execute the medled card.`,
   ],
   dogmaImpl: [
     (game, player, { self }) => {
@@ -26,10 +25,14 @@ module.exports = {
         })
       }
 
-      if (card) {
-        game.aCardEffects(player, card, 'dogma')
+      else if (card) {
+        game.aSelfExecute(player, card)
       }
     }
   ],
-  echoImpl: [],
+  echoImpl: [
+    (game, player) => {
+      game.actions.chooseAndTuck(player, game.cards.byPlayer(player, 'hand'), { min: 0 })
+    }
+  ],
 }
