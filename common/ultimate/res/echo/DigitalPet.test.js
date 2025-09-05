@@ -8,28 +8,34 @@ describe("DigitalPet", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
-        green: ['Barcode'],
-        yellow: ['DigitalPet'],
+        yellow: ['Digital Pet'],
+      },
+      micah: {
+        red: ['Coal', 'Metalworking'],
+        yellow: ['Canning'],
+        score: ['Mathematics', 'Paper', 'Industrialization'],
       },
       decks: {
-        base: {
-          3: ['Engineering'],
-          4: ['Colonialism'],
+        echo: {
+          11: ['Drone'],
         },
       },
     })
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.DigitalPet')
-    request = t.choose(game, request, 4)
+    request = t.choose(game, request, 'Dogma.Digital Pet')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        red: ['Colonialism', 'Engineering'],
-        green: ['Barcode'],
-        yellow: ['DigitalPet'],
+        yellow: ['Digital Pet'],
+      },
+      micah: {
+        yellow: ['Canning'],
+        hand: ['Drone'],
+        score: ['Mathematics', 'Paper'],
       },
     })
   })
