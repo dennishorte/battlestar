@@ -34,6 +34,8 @@ class BaseLogManager {
     this._log = []
     this._indent = 0
     this._viewerName = viewerName
+    this._logArgHandlers = new Map()
+    this._registerDefaultHandlers()
   }
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -181,43 +183,68 @@ class BaseLogManager {
 
 
   ////////////////////////////////////////////////////////////////////////////////
-  // protected members
+  // Handler system
 
-  _enrichLogCardArg(card) {
-    return {
+  registerHandler(key, handler) {
+    this._logArgHandlers.set(key, handler)
+  }
+
+  unregisterHandler(key) {
+    this._logArgHandlers.delete(key)
+  }
+
+  _registerDefaultHandlers() {
+    // Handler for 'players' key
+    this.registerHandler('players', (players) => ({
+      value: players.map(p => p.name || p).join(', '),
+      classes: ['player-names'],
+    }))
+
+    // Handler for keys starting with 'player'
+    this.registerHandler('player*', (player) => ({
+      value: player.name || player,
+      classes: ['player-name']
+    }))
+
+    // Handler for keys starting with 'card'
+    this.registerHandler('card*', (card) => ({
       value: card.id,
       classes: ['card-id'],
-    }
+    }))
+
+    // Handler for keys starting with 'zone'
+    this.registerHandler('zone*', (zone) => ({
+      value: zone.name(),
+      classes: ['zone-name']
+    }))
   }
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // protected members
+
 
   _enrichLogArgs(entry) {
     for (const key of Object.keys(entry.args)) {
-      if (key === 'players') {
-        const players = entry.args[key]
-        entry.args[key] = {
-          value: players.map(p => p.name || p).join(', '),
-          classes: ['player-names'],
+      let handler = null
+      
+      // Check for exact key match first
+      if (this._logArgHandlers.has(key)) {
+        handler = this._logArgHandlers.get(key)
+      }
+      // Check for wildcard patterns (keys ending with '*')
+      else {
+        for (const [handlerKey, handlerFunc] of this._logArgHandlers) {
+          if (handlerKey.endsWith('*') && key.startsWith(handlerKey.slice(0, -1))) {
+            handler = handlerFunc
+            break
+          }
         }
       }
-      else if (key.startsWith('player')) {
-        const player = entry.args[key]
-        entry.args[key] = {
-          value: player.name || player,
-          classes: ['player-name']
-        }
+      
+      if (handler) {
+        entry.args[key] = handler(entry.args[key])
       }
-      else if (key.startsWith('card')) {
-        const card = entry.args[key]
-        entry.args[key] = this._enrichLogCardArg(card)
-      }
-      else if (key.startsWith('zone')) {
-        const zone = entry.args[key]
-        entry.args[key] = {
-          value: zone.name(),
-          classes: ['zone-name']
-        }
-      }
-      // Convert string args to a dict
+      // Convert string args to a dict if no handler found and it's not already an object
       else if (typeof entry.args[key] !== 'object') {
         entry.args[key] = {
           value: entry.args[key],
@@ -236,3 +263,4 @@ class BaseLogManager {
 module.exports = {
   BaseLogManager,
 }
+
