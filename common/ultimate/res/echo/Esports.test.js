@@ -8,13 +8,14 @@ describe("Esports", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
-        green: ['Barcode'],
+        red: ['Coal'],
         yellow: ['Esports'],
+        blue: ['Experimentation', 'Software'],
       },
       decks: {
-        base: {
-          3: ['Engineering'],
-          4: ['Colonialism'],
+        echo: {
+          4: ['Pencil'],
+          5: ['Piano'],
         },
       },
     })
@@ -22,15 +23,39 @@ describe("Esports", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Esports')
-    request = t.choose(game, request, 4)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        red: ['Colonialism', 'Engineering'],
-        green: ['Barcode'],
+        red: ['Coal'],
         yellow: ['Esports'],
+        blue: ['Experimentation', 'Software'],
+        score: ['Pencil', 'Piano'],
       },
     })
+  })
+
+  test('dogma: foreseen', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        red: ['Coal'],
+        blue: ['Experimentation', 'Software'],
+        hand: ['Reclamation'],
+        forecast: ['Esports'],
+      },
+      decks: {
+        echo: {
+          4: ['Pencil'],
+          5: ['Piano'],
+        },
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Reclamation')
+
+    t.testGameOver(request, 'dennis', 'Esports')
   })
 })
