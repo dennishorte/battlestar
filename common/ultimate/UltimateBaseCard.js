@@ -26,6 +26,20 @@ class UltimateBaseCard extends BaseCard {
     return this.age
   }
 
+  getHiddenName(game=null) {
+    if (this.isSpecialAchievement || this.isDecree) {
+      return this.name
+    }
+
+    const owner = game?.players.byOwner(this)
+    if (owner) {
+      return `*${this.expansion}-${this.age}* (${owner.name})`
+    }
+    else {
+      return `*${this.expansion}-${this.age}*`
+    }
+  }
+
   _afterMoveTo(newZone) {
     // In Innovation, card ownership is determined entirely by where the card is located.
     this.owner = newZone.owner()

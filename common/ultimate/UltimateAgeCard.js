@@ -212,16 +212,6 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
   }
 
-  getHiddenName(game=null) {
-    const owner = game?.players.byOwner(this)
-    if (owner) {
-      return `*${this.expansion}-${this.age}* (${owner.name})`
-    }
-    else {
-      return `*${this.expansion}-${this.age}*`
-    }
-  }
-
   getKarmaInfo(trigger) {
     const matches = []
     for (let i = 0; i < this.karma.length; i++) {

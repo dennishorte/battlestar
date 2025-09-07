@@ -38,7 +38,7 @@ describe('Camouflage', () => {
     t.setBoard(game, {
       dennis: {
         red: ['Camouflage'],
-        safe: ['Archery', 'Tools', 'Masonry', 'Construction'],
+        safe: ['Maze', 'Tools', 'Masonry', 'Construction'],
       },
     })
 
@@ -47,16 +47,16 @@ describe('Camouflage', () => {
     request = t.choose(game, request, 'Dogma.Camouflage')
     request = t.choose(game, request, 'Score secrets')
 
-    t.testChoices(request, ['Archery', 'Tools', 'Masonry'])
+    t.testChoices(request, ['*base-1* (dennis)', '*base-1* (dennis)', '*usee-1* (dennis)'])
 
-    request = t.choose(game, request, 'Tools', 'Masonry')
+    request = t.choose(game, request, '**base-1* (dennis)', '**base-1* (dennis)')
     request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         red: ['Camouflage'],
-        safe: ['Archery', 'Construction'],
+        safe: ['Maze', 'Construction'],
         score: ['Tools', 'Masonry'],
       },
     })

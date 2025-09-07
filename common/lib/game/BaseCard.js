@@ -69,7 +69,7 @@ class BaseCard {
   }
 
   visible(player) {
-    return this.visibility.includes(player)
+    return this.visibility.some(other => other.name === player.name)
   }
 
   // eslint-disable-next-line no-unused-vars

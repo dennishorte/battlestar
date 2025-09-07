@@ -115,7 +115,7 @@ class UltimateActionManager extends BaseActionManager {
         card = this.cards.byId(card)
       }
 
-      if (opts.hidden) {
+      if (opts.hidden || !card.visible(player)) {
         return { name: card.getHiddenName(this.game), card }
       }
       else {
