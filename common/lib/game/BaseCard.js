@@ -33,7 +33,7 @@ class BaseCard {
     const prevIndex = this.zone.cardlist().indexOf(this)
     const newIndex = index !== null
       ? index
-      : (prevZone === zone
+      : (prevZone.id === zone.id
         ? zone.cardlist().length - 1
         : zone.cardlist().length)
 
@@ -42,8 +42,6 @@ class BaseCard {
     if (beforeCache.preventDefault) {
       return null
     }
-
-    // TODO: mark the player who did the moving as the actor, if appropriate
 
     zone.push(this, newIndex)
     this._afterMoveTo(zone, index, prevZone, prevIndex, beforeCache)
