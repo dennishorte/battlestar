@@ -36,6 +36,21 @@ class UltimateLogManager extends BaseLogManager {
         card,
       }
     })
+
+    this.registerHandler('biscuit*', (biscuit) => {
+      if (biscuit.length === 1) {
+        return {
+          value: this._game.util.biscuitIconToName(biscuit),
+          classes: ['biscuit'],
+        }
+      }
+      else {
+        return {
+          value: biscuit,
+          classes: ['biscuit'],
+        }
+      }
+    })
   }
 
   _postEnrichArgs(entry) {

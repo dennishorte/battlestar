@@ -9,25 +9,33 @@ describe("Algocracy", () => {
     t.setBoard(game,  {
       dennis: {
         green: ['Algocracy'],
+        hand: ['Tools', 'Canning', 'The Wheel'],
+        score: ['Code of Laws', 'Domestication'],
       },
-      decks: {
-        base: {
-          3: ['Engineering'],
-          4: ['Colonialism'],
-        },
+      micah: {
+        red: ['Construction'],
+        hand: ['Mapmaking'],
+        score: ['City States']
       },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Algocracy')
-    request = t.choose(game, request, 4)
+    request = t.choose(game, request, 'castle')
+    request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        red: ['Colonialism', 'Engineering'],
         green: ['Algocracy'],
+        hand: ['Tools', 'Canning'],
+        score: ['Code of Laws'],
+      },
+      micah: {
+        red: ['Construction'],
+        score: ['City States'],
+        hand: ['Mapmaking', 'The Wheel', 'Domestication'],
       },
     })
   })

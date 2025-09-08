@@ -36,6 +36,20 @@ class UltimateUtils {
     throw new Error('Unknown biscuit name: ' + name)
   }
 
+  biscuitIconToName(icon) {
+    switch (icon) {
+      case 'k': return 'castle'
+      case 'i': return 'clock'
+      case 'c': return 'coin'
+      case 'f': return 'factory'
+      case 'l': return 'leaf'
+      case 's': return 'lightbulb'
+      case 'p': return 'person'
+    }
+
+    throw new Error('Unknown biscuit icon: ' + icon)
+  }
+
   colors() {
     return [
       'red',

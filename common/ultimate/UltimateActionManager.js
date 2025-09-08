@@ -216,6 +216,11 @@ class UltimateActionManager extends BaseActionManager {
     return this.chooseByPredicate(player, cards, count, this.util.lowestCards)
   }
 
+  chooseBiscuit(player) {
+    const biscuitName = this.actions.choose(player, this.util.biscuitNames())[0]
+    return this.util.biscuitNameToIcon(biscuitName)
+  }
+
   chooseCards(player, cards, opts={}) {
     if (cards.length === 0 || opts.count === 0 || opts.max === 0) {
       this.log.addNoEffect()

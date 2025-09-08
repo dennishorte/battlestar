@@ -1080,7 +1080,8 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
 
 Innovation.prototype.getBiscuits = function() {
   const biscuits = this
-    .players.all()
+    .players
+    .all()
     .map(player => [player.name, this.getBiscuitsByPlayer(player)])
   return Object.fromEntries(biscuits)
 }
