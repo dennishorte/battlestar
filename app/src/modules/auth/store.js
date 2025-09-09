@@ -73,9 +73,9 @@ export default {
       delete axios.defaults.headers.common['Authorization']
     },
 
-    start_impersonation(state, { impersonationToken, targetUser, adminUser }) {
+    start_impersonation(state, { impersonationToken, targetUser, originalUser }) {
       state.impersonation.isImpersonating = true
-      state.impersonation.originalUser = adminUser
+      state.impersonation.originalUser = originalUser
       state.impersonation.impersonatedUser = targetUser
       // Update the current user to the impersonated user
       state.user = {
@@ -83,7 +83,7 @@ export default {
         token: impersonationToken,
         _impersonation: {
           isImpersonated: true,
-          adminId: adminUser._id,
+          adminId: originalUser._id,
           impersonationToken: true
         }
       }
@@ -128,8 +128,11 @@ export default {
       })
     },
 
-    async startImpersonation({ commit }, targetUserId) {
+    async startImpersonation({ commit, state }, targetUserId) {
       try {
+        // Store the current user as the original user before starting impersonation
+        const originalUser = { ...state.user }
+
         const response = await axiosWrapper.post('/api/admin/impersonate', {
           targetUserId,
           appVersion: window.APP_VERSION || 1747165976913
@@ -138,7 +141,7 @@ export default {
         commit('start_impersonation', {
           impersonationToken: response.impersonationToken,
           targetUser: response.targetUser,
-          adminUser: response.adminUser
+          originalUser: originalUser
         })
 
         return response

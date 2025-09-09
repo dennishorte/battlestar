@@ -33,8 +33,7 @@ export default {
       if (confirm('Are you sure you want to stop impersonating?')) {
         try {
           await this.$store.dispatch('auth/stopImpersonation')
-          // Refresh the page to reload as the original user
-          window.location.reload()
+          // No need to reload - the store will handle reverting to the original user
         }
         catch (error) {
           alert(`Failed to stop impersonation: ${error.message}`)

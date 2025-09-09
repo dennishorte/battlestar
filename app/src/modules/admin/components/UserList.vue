@@ -92,8 +92,7 @@ export default {
       if (confirm(`Are you sure you want to impersonate ${user.name}?`)) {
         try {
           await this.$store.dispatch('auth/startImpersonation', user._id)
-          // Refresh the page to reload as the impersonated user
-          window.location.reload()
+          // No need to reload - the store will handle switching to the impersonated user
         }
         catch (error) {
           alert(`Failed to impersonate user: ${error.message}`)
