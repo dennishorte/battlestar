@@ -51,7 +51,34 @@ const user = {
     return { modifiedCount: 0 }
   }),
 
-  deactivate: vi.fn().mockResolvedValue({ modifiedCount: 1 })
+  deactivate: vi.fn().mockResolvedValue({ modifiedCount: 1 }),
+
+  // Impersonation methods
+  startImpersonation: vi.fn().mockResolvedValue({
+    impersonationToken: 'impersonation-token',
+    targetUser: {
+      _id: 'target-user-id',
+      name: 'target-user',
+      slack: 'target-slack'
+    },
+    adminUser: {
+      _id: 'admin-user-id',
+      name: 'dennis'
+    }
+  }),
+
+  stopImpersonation: vi.fn().mockResolvedValue({
+    message: 'Impersonation stopped successfully',
+    originalAdminId: 'admin-user-id'
+  }),
+
+  findByImpersonationToken: vi.fn().mockResolvedValue(null),
+
+  getImpersonationStatus: vi.fn().mockResolvedValue({
+    isImpersonated: false
+  }),
+
+  isAdmin: vi.fn().mockResolvedValue(false)
 }
 
 // Game model mock

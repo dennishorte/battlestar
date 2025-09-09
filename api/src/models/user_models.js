@@ -106,6 +106,123 @@ User.update = async function({ userId, name, slack }) {
   return await userCollection.updateOne(filter, updater)
 }
 
+// Impersonation methods
+User.startImpersonation = async function(adminId, targetUserId) {
+  const admin = await User.findById(adminId)
+  const targetUser = await User.findById(targetUserId)
+
+  if (!admin) {
+    throw new Error('Admin user not found')
+  }
+
+  if (!targetUser) {
+    throw new Error('Target user not found')
+  }
+
+  if (targetUser.deactivated) {
+    throw new Error('Cannot impersonate deactivated user')
+  }
+
+  // Check if admin is authorized (hardcoded check for now)
+  if (admin.name !== 'dennis') {
+    throw new Error('Only admin users can impersonate')
+  }
+
+  // Check if target user is already being impersonated
+  if (targetUser.impersonatedBy) {
+    throw new Error('User is already being impersonated')
+  }
+
+  // Generate impersonation token
+  const impersonationToken = User.util.generateImpersonationToken(adminId, targetUserId)
+
+  // Update target user with impersonation data
+  const filter = { _id: targetUserId }
+  const updater = {
+    $set: {
+      impersonatedBy: adminId,
+      impersonationToken: impersonationToken,
+      originalAdminId: adminId,
+      impersonationStartTime: new Date()
+    }
+  }
+
+  await userCollection.updateOne(filter, updater)
+
+  return {
+    impersonationToken,
+    targetUser: {
+      _id: targetUser._id,
+      name: targetUser.name,
+      slack: targetUser.slack
+    },
+    adminUser: {
+      _id: admin._id,
+      name: admin.name
+    }
+  }
+}
+
+User.stopImpersonation = async function(impersonationToken) {
+  // Find user by impersonation token
+  const user = await User.findByImpersonationToken(impersonationToken)
+
+  if (!user) {
+    throw new Error('Invalid impersonation token')
+  }
+
+  // Clear impersonation data
+  const filter = { _id: user._id }
+  const updater = {
+    $unset: {
+      impersonatedBy: 1,
+      impersonationToken: 1,
+      originalAdminId: 1,
+      impersonationStartTime: 1
+    }
+  }
+
+  await userCollection.updateOne(filter, updater)
+
+  return {
+    message: 'Impersonation stopped successfully',
+    originalAdminId: user.originalAdminId
+  }
+}
+
+User.findByImpersonationToken = async function(token) {
+  return await userCollection.findOne({ impersonationToken: token })
+}
+
+User.getImpersonationStatus = async function(userId) {
+  const user = await User.findById(userId)
+
+  if (!user) {
+    return null
+  }
+
+  if (user.impersonatedBy) {
+    const adminUser = await User.findById(user.impersonatedBy)
+    return {
+      isImpersonated: true,
+      impersonatedBy: {
+        _id: adminUser._id,
+        name: adminUser.name
+      },
+      impersonationStartTime: user.impersonationStartTime
+    }
+  }
+
+  return {
+    isImpersonated: false
+  }
+}
+
+User.isAdmin = async function(userId) {
+  const user = await User.findById(userId)
+  return user ? user.name === 'dennis' : false
+}
+
 
 ////////////////////////////////////////////////////////////
 // User.util
@@ -118,6 +235,22 @@ User.util.generateToken = function(id) {
   }
 
   return jwt.sign({ user_id: id }, process.env.SECRET_KEY)
+}
+
+User.util.generateImpersonationToken = function(adminId, targetUserId) {
+  if (typeof adminId === 'object') {
+    adminId = adminId.toString()
+  }
+  if (typeof targetUserId === 'object') {
+    targetUserId = targetUserId.toString()
+  }
+
+  return jwt.sign({
+    user_id: targetUserId,
+    impersonation: true,
+    admin_id: adminId,
+    exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour expiration
+  }, process.env.SECRET_KEY)
 }
 
 export default User

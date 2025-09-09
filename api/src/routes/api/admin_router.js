@@ -1,6 +1,8 @@
 import express from 'express'
 const router = express.Router()
 import { insert as insertGame } from '../../controllers/game_controller.js'
+import db from '../../models/db.js'
+import logger from '../../utils/logger.js'
 
 /**
  * Middleware to check user name
@@ -13,6 +15,12 @@ const checkUserName = (req, res, next) => {
 
   if (req.user && req.user.name === authorizedName) {
     next() // Allow request to proceed
+  }
+  else if (req.user && req.user._impersonation && req.user._impersonation.isImpersonated) {
+    // Allow if this is an impersonation token and the original admin is authorized
+    // We need to check if the original admin user is authorized
+    // For now, we'll allow any impersonation token since the admin who created it was already authorized
+    next()
   }
   else {
     res.status(403).send('Access denied')
@@ -50,5 +58,202 @@ router.use(checkUserName)
  *         description: Access denied (not authorized admin)
  */
 router.post('/insert_game', insertGame)
+
+/**
+ * @swagger
+ * /admin/impersonate:
+ *   post:
+ *     summary: Start impersonating a user
+ *     description: Allows an admin user to impersonate another user
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - targetUserId
+ *             properties:
+ *               targetUserId:
+ *                 type: string
+ *                 description: ID of the user to impersonate
+ *     responses:
+ *       200:
+ *         description: Impersonation started successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 impersonationToken:
+ *                   type: string
+ *                 targetUser:
+ *                   type: object
+ *                 adminUser:
+ *                   type: object
+ *       400:
+ *         description: Bad request
+ *       403:
+ *         description: Access denied
+ *       404:
+ *         description: Target user not found
+ */
+router.post('/impersonate', async (req, res) => {
+  try {
+    const { targetUserId } = req.body
+    const adminId = req.user._id
+
+    if (!targetUserId) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'targetUserId is required'
+      })
+    }
+
+    const result = await db.user.startImpersonation(adminId, targetUserId)
+
+    logger.info(`Admin ${req.user.name} started impersonating user ${result.targetUser.name}`)
+
+    res.status(200).json({
+      status: 'success',
+      ...result
+    })
+  }
+  catch (error) {
+    logger.error(`Impersonation error: ${error.message}`)
+    res.status(400).json({
+      status: 'error',
+      message: error.message
+    })
+  }
+})
+
+/**
+ * @swagger
+ * /admin/stop-impersonation:
+ *   post:
+ *     summary: Stop impersonating a user
+ *     description: Stops the current impersonation and returns to admin user
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - impersonationToken
+ *             properties:
+ *               impersonationToken:
+ *                 type: string
+ *                 description: The impersonation token to stop
+ *     responses:
+ *       200:
+ *         description: Impersonation stopped successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 originalAdminId:
+ *                   type: string
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Invalid impersonation token
+ */
+router.post('/stop-impersonation', async (req, res) => {
+  try {
+    const { impersonationToken } = req.body
+
+    if (!impersonationToken) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'impersonationToken is required'
+      })
+    }
+
+    const result = await db.user.stopImpersonation(impersonationToken)
+
+    logger.info(`Impersonation stopped for admin ${result.originalAdminId}`)
+
+    res.status(200).json({
+      status: 'success',
+      ...result
+    })
+  }
+  catch (error) {
+    logger.error(`Stop impersonation error: ${error.message}`)
+    res.status(400).json({
+      status: 'error',
+      message: error.message
+    })
+  }
+})
+
+/**
+ * @swagger
+ * /admin/impersonation-status:
+ *   get:
+ *     summary: Get current impersonation status
+ *     description: Returns the current impersonation status for the authenticated user
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Impersonation status retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 isImpersonated:
+ *                   type: boolean
+ *                 impersonatedBy:
+ *                   type: object
+ *                 impersonationStartTime:
+ *                   type: string
+ *       404:
+ *         description: User not found
+ */
+router.get('/impersonation-status', async (req, res) => {
+  try {
+    const userId = req.user._id
+    const status = await db.user.getImpersonationStatus(userId)
+
+    if (!status) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'User not found'
+      })
+    }
+
+    res.status(200).json({
+      status: 'success',
+      ...status
+    })
+  }
+  catch (error) {
+    logger.error(`Get impersonation status error: ${error.message}`)
+    res.status(500).json({
+      status: 'error',
+      message: 'Internal server error'
+    })
+  }
+})
 
 export default router

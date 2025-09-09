@@ -16,6 +16,23 @@ passport.use(new JwtStrategy(
     if (!user) {
       return cb(null, false)
     }
+
+    // Check if this is an impersonation token
+    if (tokenData.impersonation) {
+      // Verify the impersonation is still active
+      const impersonationStatus = await db.user.getImpersonationStatus(user._id)
+      if (!impersonationStatus || !impersonationStatus.isImpersonated) {
+        return cb(null, false)
+      }
+
+      // Add impersonation metadata to the user object
+      user._impersonation = {
+        isImpersonated: true,
+        adminId: tokenData.admin_id,
+        impersonationToken: true
+      }
+    }
+
     return cb(null, user)
   }
 ))
@@ -25,7 +42,11 @@ passport.use(new JwtStrategy(
    Routes that start with '/api/guest/' do not require authentication.
  */
 function authenticate(req, res, next) {
-  if (req.path.startsWith('/api/guest/') || req.method === 'GET') {
+  if (req.path.startsWith('/api/guest/')) {
+    next()
+  }
+  else if (req.method === 'GET' && !req.path.startsWith('/api/admin/')) {
+    // Skip authentication for non-admin GET requests
     next()
   }
   else {

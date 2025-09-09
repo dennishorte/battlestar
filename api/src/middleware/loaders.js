@@ -80,7 +80,7 @@ async function _loadItemWithLockById(itemType, req, res, next) {
   ////////////////////
   // Main Logic
 
-  const id = req.body[itemType + 'Id']
+  const id = req.body?.[itemType + 'Id']
   if (!id) {
     // No item of this type was specified, just continue
     return next()

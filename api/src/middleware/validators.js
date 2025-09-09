@@ -71,10 +71,11 @@ function coerceMongoIds(req, res, next) {
 }
 
 function ensureVersion(req, res, next) {
-  if (!req.body.appVersion || req.body.appVersion != latestVersion) {
+  const appVersion = req.body?.appVersion || req.query?.appVersion
+  if (!appVersion || appVersion != latestVersion) {
     res.status(409).json({
       code: 'version_mismatch',
-      currentVersion: req.body.appVersion,
+      currentVersion: appVersion,
       latestVersion,
     })
   }
