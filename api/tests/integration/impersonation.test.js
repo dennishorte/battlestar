@@ -209,7 +209,7 @@ describe('Impersonation API', () => {
     })
   })
 
-  describe('GET /api/admin/impersonation-status', () => {
+  describe('POST /api/admin/impersonation-status', () => {
     it('should return impersonation status successfully', async () => {
       db.user.getImpersonationStatus.mockResolvedValueOnce({
         isImpersonated: true,
@@ -221,9 +221,9 @@ describe('Impersonation API', () => {
       })
 
       const response = await request(app)
-        .get('/api/admin/impersonation-status')
+        .post('/api/admin/impersonation-status')
         .set('Authorization', `Bearer ${adminToken}`)
-        .query({ appVersion: 1747165976913 })
+        .send({ appVersion: 1747165976913 })
 
       expect(response.status).toBe(200)
       expect(response.body.status).toBe('success')
@@ -239,9 +239,9 @@ describe('Impersonation API', () => {
       })
 
       const response = await request(app)
-        .get('/api/admin/impersonation-status')
+        .post('/api/admin/impersonation-status')
         .set('Authorization', `Bearer ${adminToken}`)
-        .query({ appVersion: 1747165976913 })
+        .send({ appVersion: 1747165976913 })
 
       expect(response.status).toBe(200)
       expect(response.body.status).toBe('success')
@@ -252,9 +252,9 @@ describe('Impersonation API', () => {
       db.user.getImpersonationStatus.mockResolvedValueOnce(null)
 
       const response = await request(app)
-        .get('/api/admin/impersonation-status')
+        .post('/api/admin/impersonation-status')
         .set('Authorization', `Bearer ${adminToken}`)
-        .query({ appVersion: 1747165976913 })
+        .send({ appVersion: 1747165976913 })
 
       expect(response.status).toBe(404)
       expect(response.body.status).toBe('error')
@@ -265,9 +265,9 @@ describe('Impersonation API', () => {
       db.user.getImpersonationStatus.mockRejectedValueOnce(new Error('Database error'))
 
       const response = await request(app)
-        .get('/api/admin/impersonation-status')
+        .post('/api/admin/impersonation-status')
         .set('Authorization', `Bearer ${adminToken}`)
-        .query({ appVersion: 1747165976913 })
+        .send({ appVersion: 1747165976913 })
 
       expect(response.status).toBe(500)
       expect(response.body.status).toBe('error')
@@ -316,9 +316,9 @@ describe('Impersonation API', () => {
       })
 
       const response = await request(app)
-        .get('/api/admin/impersonation-status')
+        .post('/api/admin/impersonation-status')
         .set('Authorization', `Bearer ${impersonationToken}`)
-        .query({ appVersion: 1747165976913 })
+        .send({ appVersion: 1747165976913 })
 
       expect(response.status).toBe(200)
       expect(response.body.isImpersonated).toBe(true)
@@ -336,9 +336,9 @@ describe('Impersonation API', () => {
       )
 
       const response = await request(app)
-        .get('/api/admin/impersonation-status')
+        .post('/api/admin/impersonation-status')
         .set('Authorization', `Bearer ${expiredToken}`)
-        .query({ appVersion: 1747165976913 })
+        .send({ appVersion: 1747165976913 })
 
       expect(response.status).toBe(401)
     })

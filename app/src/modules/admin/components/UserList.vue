@@ -23,6 +23,9 @@
           <td>{{ user.slack }}</td>
           <td>
             <DropdownMenu :notitle="true">
+              <DropdownItem v-if="!isImpersonating && user.name !== currentUserName">
+                <button @click="impersonate(user)">impersonate</button>
+              </DropdownItem>
               <DropdownItem><button @click="deactivate(user._id)">deactivate</button></DropdownItem>
               <DropdownItem><button @click="edit(user)">edit</button></DropdownItem>
             </DropdownMenu>
@@ -66,6 +69,15 @@ export default {
     }
   },
 
+  computed: {
+    isImpersonating() {
+      return this.$store.getters['auth/isImpersonating']
+    },
+    currentUserName() {
+      return this.$store.getters['auth/user'].name
+    },
+  },
+
   methods: {
     async deactivate(id) {
       await this.$post('/api/user/deactivate', { id })
@@ -74,6 +86,19 @@ export default {
 
     edit(user) {
       alert(`Not implemented: Would edit user ${user.name}`)
+    },
+
+    async impersonate(user) {
+      if (confirm(`Are you sure you want to impersonate ${user.name}?`)) {
+        try {
+          await this.$store.dispatch('auth/startImpersonation', user._id)
+          // Refresh the page to reload as the impersonated user
+          window.location.reload()
+        }
+        catch (error) {
+          alert(`Failed to impersonate user: ${error.message}`)
+        }
+      }
     },
   },
 }

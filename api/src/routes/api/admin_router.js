@@ -230,7 +230,7 @@ router.post('/stop-impersonation', async (req, res) => {
  *       404:
  *         description: User not found
  */
-router.get('/impersonation-status', async (req, res) => {
+router.post('/impersonation-status', async (req, res) => {
   try {
     const userId = req.user._id
     const status = await db.user.getImpersonationStatus(userId)

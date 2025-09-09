@@ -3,6 +3,8 @@
     <GameHeader />
 
     <div class="container">
+      <ImpersonationStatus />
+
       <div class="row">
         <div class="col">
           <h2>Admin</h2>
@@ -37,6 +39,7 @@ import GameHeader from '../../../../src/components/GameHeader'
 import AdminActions from './AdminActions'
 import CreateUser from './CreateUser'
 import UserList from './UserList'
+import ImpersonationStatus from './ImpersonationStatus'
 
 export default {
   name: 'SiteAdmin',
@@ -46,6 +49,7 @@ export default {
     AdminActions,
     CreateUser,
     UserList,
+    ImpersonationStatus,
   },
   data() {
     return {
@@ -65,9 +69,17 @@ export default {
     },
   },
 
-  mounted() {
+  async mounted() {
     this.getAllLobbies()
     this.getAllUsers()
+
+    // Check if we're currently impersonating someone
+    try {
+      await this.$store.dispatch('auth/checkImpersonationStatus')
+    }
+    catch (error) {
+      console.error('Failed to check impersonation status:', error)
+    }
   },
 }
 </script>

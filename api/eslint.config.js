@@ -55,6 +55,7 @@ export default defineConfig([
         WebAssembly: "readonly",
         clearInterval: "readonly",
         clearTimeout: "readonly",
+        confirm: "readonly",
         console: "readonly",
         queueMicrotask: "readonly",
         setInterval: "readonly",

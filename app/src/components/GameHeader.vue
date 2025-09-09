@@ -21,6 +21,12 @@
             <h1>Game Center</h1>
           </a>
 
+          <div v-if="isImpersonating" class="impersonation-indicator">
+            <span class="badge bg-warning text-dark">
+              Impersonating: {{ impersonatedUser.name }}
+            </span>
+          </div>
+
         </div>
       </div>
     </div>
@@ -46,6 +52,12 @@ export default {
   computed: {
     actor() {
       return this.$store.getters['auth/user']
+    },
+    isImpersonating() {
+      return this.$store.getters['auth/isImpersonating']
+    },
+    impersonatedUser() {
+      return this.$store.getters['auth/impersonatedUser']
     },
   },
 
@@ -80,5 +92,9 @@ export default {
 #header-dropdown {
   float: right;
   margin: .5em;
+}
+
+.impersonation-indicator {
+  margin-top: 0.5rem;
 }
 </style>
