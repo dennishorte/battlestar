@@ -79,7 +79,7 @@ class BaseZone {
   }
 
   remove(card) {
-    const index = this._cards.indexOf(card)
+    const index = this._cards.findIndex(c => c.id === card.id)
     if (index === -1) {
       throw new Error(`Card (${card.id}) not found in zone (${this.id})`)
     }

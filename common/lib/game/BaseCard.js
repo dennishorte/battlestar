@@ -30,7 +30,7 @@ class BaseCard {
 
   moveTo(zone, index=null) {
     const prevZone = this.zone
-    const prevIndex = this.zone.cardlist().indexOf(this)
+    const prevIndex = this.zone.cardlist().findIndex(card => card.id === this.id)
     const newIndex = index !== null
       ? index
       : (prevZone.id === zone.id

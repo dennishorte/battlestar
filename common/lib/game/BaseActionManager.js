@@ -52,7 +52,7 @@ class BaseActionManager {
     const used = []
 
     return selection.map(s => {
-      const card = choices.find(c => c.name === s && !used.includes(c))
+      const card = choices.find(c => c.name === s && !used.some(u => u.id === c.id))
       used.push(card)
       return card
     })

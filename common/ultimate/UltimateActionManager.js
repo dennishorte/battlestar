@@ -434,7 +434,7 @@ class UltimateActionManager extends BaseActionManager {
     }
 
     // Karmas don't trigger if someone else is splaying your cards.
-    if (owner === player) {
+    if (owner.name === player.name) {
       const karmaKind = this.game.aKarma(player, 'splay', { ...opts, color, direction })
       if (karmaKind === 'would-instead') {
         this.acted(player)
@@ -446,7 +446,7 @@ class UltimateActionManager extends BaseActionManager {
     if (zone.splay !== direction) {
       zone.splay = direction
 
-      if (player === owner) {
+      if (player.name === owner.name) {
         this.log.add({
           template: '{player} splays {color} {direction}',
           args: { player, color, direction }
