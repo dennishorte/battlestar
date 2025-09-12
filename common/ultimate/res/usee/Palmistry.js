@@ -4,7 +4,7 @@ module.exports = {
   age: 1,
   expansion: `usee`,
   biscuits: `lkhk`,
-  dogmaBiscuit: `l`,
+  dogmaBiscuit: `k`,
   dogma: [
     `Draw and meld a {1}.`,
     `Return two cards from your hand. If you do, draw and score a {2}.`
