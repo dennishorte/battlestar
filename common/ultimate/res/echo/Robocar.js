@@ -10,7 +10,36 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      // Implementation would go here
+      while (true) {
+        const opp = game.actions.choosePlayer(player, game.players.opponentsOf(player))
+        const card = game.actions.chooseCard(opp, game.cards.byPlayer(player, 'hand'))
+        if (!card) {
+          game.log.add({
+            template: '{player} has no cards in hand',
+            args: { player },
+          })
+          break
+        }
+
+        game.log.add({
+          template: '{player} chooses {card}',
+          args: { player: opp, card }
+        })
+        const melded = game.actions.meld(player, card)
+        if (melded) {
+          if (player.id === game.players.current().id) {
+            game.aSelfExecute(player, melded)
+            continue
+          }
+          else {
+            game.log.add({
+              template: `It is not {player}'s turn`,
+              args: { player }
+            })
+            break
+          }
+        }
+      }
     }
   ],
 }

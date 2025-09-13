@@ -695,7 +695,7 @@ class UltimateActionManager extends BaseActionManager {
 
       while (remaining.length > 0) {
         // Check if any cards in 'remaining' have been acted on by some other force (karma effect).
-        remaining = remaining.filter(c => c.zone === startZones[c.id])
+        remaining = remaining.filter(c => c.zone.id === startZones[c.id].id)
         if (remaining.length === 0) {
           break
         }
