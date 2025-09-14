@@ -8,12 +8,19 @@ describe("Touchscreen", () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
-        blue: ['Touchscreen'],
-      },
-      decks: {
-        base: {
-          3: ['Engineering'],
-          4: ['Colonialism'],
+        red: {
+          cards: ['Coal', 'Coke', 'Industrialization', 'Archery', 'Construction', 'Engineering', 'Flight', 'Gunpowder'],
+          splay: 'up',
+        },
+        yellow: ['Agriculture', 'Masonry', 'Domestication', 'Machinery'],
+        green: {
+          cards: ['Classification', 'Databases', 'Paper', 'Sailing', 'Navigation', 'Mapmaking'],
+          splay: 'left',
+        },
+        blue: ['Touchscreen', 'Mathematics'],
+        purple: {
+          cards: ['Astronomy', 'Lighting'],
+          splay: 'aslant',
         },
       },
     })
@@ -21,12 +28,38 @@ describe("Touchscreen", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Touchscreen')
-    request = t.choose(game, request, 4)
+
+    t.testChoices(request, ['red left', 'yellow up', 'green right', 'blue aslant'])
+
+    request = t.choose(game, request, 'red left')
+    request = t.choose(game, request, 'yellow up')
+    request = t.choose(game, request, 'green right')
+
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        blue: ['Touchscreen'],
+        red: {
+          cards: ['Coal', 'Coke', 'Industrialization', 'Archery', 'Construction', 'Engineering', 'Flight', 'Gunpowder'],
+          splay: 'left',
+        },
+        yellow: {
+          cards: ['Agriculture', 'Masonry', 'Domestication', 'Machinery'],
+          splay: 'up',
+        },
+        green: {
+          cards: ['Classification', 'Databases', 'Paper', 'Sailing', 'Navigation', 'Mapmaking'],
+          splay: 'right',
+        },
+        blue: {
+          cards: ['Touchscreen', 'Mathematics'],
+          splay: 'aslant',
+        },
+        purple: {
+          cards: ['Astronomy', 'Lighting'],
+          splay: 'aslant',
+        },
+        achievements: ['Empire'],
       },
     })
   })
