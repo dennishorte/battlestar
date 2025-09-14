@@ -594,6 +594,13 @@ class UltimateActionManager extends BaseActionManager {
     return color
   }
 
+  /**
+     In addition to a zone, target can be a dict with the following format:
+     {
+       toBoard: true,
+       player: PlayerObject
+     }
+   */
   transfer(player, card, target, opts={}) {
     if (target.toBoard) {
       target = this.zones.byPlayer(target.player, card.color)

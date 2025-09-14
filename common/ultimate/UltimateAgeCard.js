@@ -25,6 +25,20 @@ class UltimateAgeCard extends UltimateBaseCard {
   }
 
   checkBiscuitIsVisible(biscuit, splay) {
+    if (!splay) {
+      if (this.owner) {
+        if (this.checkIsTopCard()) {
+          splay = 'top'
+        }
+        else {
+          splay = this.game.zones.byPlayer(this.owner, this.color).splay
+        }
+      }
+      else {
+        throw new Error('Cannot calculate the splay for a card with no owner: ' + this.name)
+      }
+    }
+
     if (biscuit === 'h') {
       // m also counts as an h
       const mIsVisible = this.checkBiscuitIsVisible('m', splay)
@@ -128,6 +142,14 @@ class UltimateAgeCard extends UltimateBaseCard {
       || biscuit === 'k'
       || biscuit === 'f'
     )
+  }
+
+  checkIsTopCard() {
+    if (!this.owner) {
+      return false
+    }
+
+    return this.game.cards.top(this.owner, this.color).id === this.id
   }
 
   checkSharesBiscuit(other) {
