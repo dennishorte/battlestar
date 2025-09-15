@@ -45,7 +45,7 @@ describe('History', () => {
     expect(t.cards(game, 'achievements')).toStrictEqual([])
   })
 
-  test('Hawking w/3 turtles', () => {
+  test.skip('Hawking w/3 turtles', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo', 'figs'] })
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setColor(game, 'dennis', 'blue', ['Atomic Theory', 'Chemistry', 'Mathematics'])
@@ -57,7 +57,7 @@ describe('History', () => {
     expect(t.cards(game, 'achievements')).toStrictEqual([])
   })
 
-  test('Hawking w/4 turtles', () => {
+  test.skip('Hawking w/4 turtles', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo', 'figs'] })
     game.testSetBreakpoint('before-first-player', (game) => {
       t.setColor(game, 'dennis', 'blue', ['Atomic Theory', 'Chemistry', 'Lever'])

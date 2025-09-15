@@ -9,14 +9,13 @@ describe("Pencil", () => {
     t.setBoard(game,  {
       dennis: {
         yellow: ['Pencil'],
+        green: ['Navigation'],
         hand: ['Sailing', 'Tools', 'Engineering'],
       },
       decks: {
         base: {
           4: ['Enterprise', 'Gunpowder', 'Experimentation'],
-        },
-        echo: {
-          5: ['Octant'],
+          5: ['Measurement'],
         },
       }
     })
@@ -33,8 +32,9 @@ describe("Pencil", () => {
     t.testBoard(game, {
       dennis: {
         yellow: ['Pencil'],
+        green: ['Navigation'],
         forecast: ['Experimentation'],
-        hand: ['Octant'],
+        hand: ['Measurement'],
       },
     })
   })

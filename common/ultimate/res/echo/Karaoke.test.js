@@ -28,9 +28,9 @@ describe("Karaoke", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        red: ['Loom'],
         purple: ['Karaoke'],
         hand: ['Canning', 'Mathematics', 'Code of Laws', 'Coal'],
+        score: ['Loom'],
         achievements: ['Atomic Theory'],
       },
     })

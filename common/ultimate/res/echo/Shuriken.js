@@ -32,7 +32,7 @@ module.exports = {
         }
 
         if (foreseen && transferred.length === 2) {
-          game.log.addForeseen(self)
+          game.log.addForeseen(foreseen, self)
           game.actions.transferMany(player, transferred, game.zones.byPlayer(leader, 'achievements'), { ordered: true })
         }
       }

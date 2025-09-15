@@ -21,7 +21,6 @@ module.exports = {
       game.log.addForeseen(foreseen, self)
 
       if (foreseen) {
-        game.log.addForeseen(self)
         const numColors = game.cards.tops(player).length
         game.actions.drawAndForeshadow(player, numColors)
       }

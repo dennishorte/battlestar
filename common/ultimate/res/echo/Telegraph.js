@@ -22,7 +22,7 @@ module.exports = {
         .map(other => {
           return {
             title: other.name,
-            options: game.util.colors().map(color => {
+            choices: game.util.colors().map(color => {
               const splay = game.zones.byPlayer(other, color).splay
               return `${color} ${splay}`
             }),

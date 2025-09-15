@@ -19,22 +19,17 @@ module.exports = {
         .byPlayer(player, 'forecast')
         .filter(card => card.getAge() === game.getEffectAge(self, 2))
 
-      if (forecast) {
-        choices.push({
-          title: 'Tuck from forecast',
-          options: forecast,
-          min: 0,
-        })
+      if (forecast.length > 0) {
+        choices.push('Tuck from forecast')
       }
 
       const choice = game.actions.choose(player, choices)[0]
 
-      if (choice === choices[0]) {
+      if (choice === 'Draw and foreshadow') {
         game.actions.drawAndForeshadow(player, game.getEffectAge(self, 2))
       }
       else {
-        const card = game.cards.byId(choice.selection[0])
-        game.actions.tuck(player, card)
+        game.actions.chooseAndTuck(player, forecast)
       }
     },
 

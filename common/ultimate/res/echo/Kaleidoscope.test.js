@@ -50,14 +50,14 @@ describe("Kaleidoscope", () => {
           7: ['Jeans'],
         }
       },
-      achievements: ['Masonry', 'Construction', 'Mathematics'],
+      achievements: ['Masonry', 'Construction', 'Lever'],
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Meld.Lighting')
     request = t.choose(game, request, 'green')
-    request = t.choose(game, request, 'Construction')
+    request = t.choose(game, request, '**base-2*')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

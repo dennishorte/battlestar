@@ -14,8 +14,8 @@ describe('Email', () => {
         }
       },
       decks: {
-        base: {
-          10: ['Software']
+        echo: {
+          10: ['Social Networking'],
         }
       }
     })
@@ -31,7 +31,7 @@ describe('Email', () => {
           cards: ['Babylon', 'Email'],
           splay: 'right'
         },
-        forecast: ['Software']
+        forecast: ['Social Networking'],
       },
     })
   })
@@ -40,6 +40,7 @@ describe('Email', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game, {
       dennis: {
+        red: ['Fission'],
         green: ['Email'],
         yellow: ['Agriculture'],
         hand: ['Bangle'],
@@ -61,6 +62,7 @@ describe('Email', () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
+        red: ['Fission'],
         green: ['Email'],
         yellow: ['Agriculture'],
         score: ['Calendar'],

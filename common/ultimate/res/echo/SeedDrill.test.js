@@ -78,13 +78,13 @@ describe("Seed Drill", () => {
         blue: ['Calendar'],
         yellow: ['Machinery'],
       },
+      junk: ['Gunpowder'],
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Seed Drill')
     request = t.choose(game, request, 3)
-    request = t.choose(game, request, 'Compass')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -92,7 +92,7 @@ describe("Seed Drill", () => {
         green: ['Seed Drill'],
         yellow: ['Agriculture'],
         score: ['Software', 'Databases'],
-        achievements: ['Compass'],
+        achievements: ['Gunpowder'],
       },
       micah: {
         yellow: ['Machinery'],

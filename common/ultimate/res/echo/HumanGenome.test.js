@@ -53,6 +53,6 @@ describe("Human Genome", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Human Genome')
-    request = t.choose(game, request, 10, 11)
+    request = t.choose(game, request, 10)
   })
 })

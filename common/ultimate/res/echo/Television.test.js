@@ -11,7 +11,7 @@ describe("Television", () => {
         purple: ['Television'],
       },
       micah: {
-        score: ['Sailing', 'Tools', 'Construction'],
+        score: ['Umbrella', 'Tools', 'Construction'],
       },
       decks: {
         echo: {
@@ -24,7 +24,7 @@ describe("Television", () => {
     request = game.run()
     request = t.choose(game, request, 'Dogma.Television')
     request = t.choose(game, request, 1)
-    request = t.choose(game, request, 'Sailing')
+    request = t.choose(game, request, '**echo-1* (micah)')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -33,7 +33,7 @@ describe("Television", () => {
         purple: ['Television'],
       },
       micah: {
-        green: ['Sailing'],
+        green: ['Umbrella'],
         score: ['Tools', 'Construction'],
       },
     })
@@ -46,7 +46,7 @@ describe("Television", () => {
         purple: ['Television'],
       },
       micah: {
-        score: ['Sailing', 'Tools', 'Construction'],
+        score: ['Umbrella', 'Tools', 'Construction'],
         achievements: ['Domestication'],
       },
       decks: {
@@ -60,7 +60,7 @@ describe("Television", () => {
     request = game.run()
     request = t.choose(game, request, 'Dogma.Television')
     request = t.choose(game, request, 1)
-    request = t.choose(game, request, 'Sailing')
+    request = t.choose(game, request, '**echo-1* (micah)')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -70,7 +70,7 @@ describe("Television", () => {
         achievements: ['Tools'],
       },
       micah: {
-        green: ['Sailing'],
+        green: ['Umbrella'],
         score: ['Construction'],
         achievements: ['Domestication'],
       },

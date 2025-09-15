@@ -51,9 +51,11 @@ describe("Toothbrush", () => {
     t.setBoard(game,  {
       dennis: {
         yellow: ['Toothbrush'],
+        green: ['Paper'],
         hand: ['Tools', 'Sailing', 'Machinery'],
-        score: ['Software'],
+        score: ['Software', 'Canning'],
       },
+      junk: ['Engineering'],
     })
 
     let request
@@ -65,7 +67,6 @@ describe("Toothbrush", () => {
     request = t.choose(game, request, 3)
     request = t.choose(game, request, 'yellow')
     request = t.choose(game, request, 'yes')
-    request = t.choose(game, request, '**base-2*')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -74,11 +75,13 @@ describe("Toothbrush", () => {
           cards: ['Toothbrush', 'Machinery'],
           splay: 'left'
         },
+        green: ['Paper'],
         hand: ['Tools', 'Sailing'],
-        score: ['Software'],
-        achievements: ['Calendar'],
+        score: ['Software', 'Canning'],
+        achievements: ['Engineering'],
       },
       junk: [
+        "Calendar",
         "Canal Building",
         "Construction",
         "Currency",

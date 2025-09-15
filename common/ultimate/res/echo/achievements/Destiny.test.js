@@ -7,7 +7,7 @@ describe('Destiny', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game, {
       dennis: {
-        purple: ['Pagoda'],
+        red: ['Bangle'],
         forecast: [
           'Magnifying Glass',
           'Sandpaper',
@@ -17,24 +17,24 @@ describe('Destiny', () => {
       },
       decks: {
         echo: {
-          3: ['Novel'],
+          2: ['Pagoda'],
         }
       }
     })
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Pagoda')
+    request = t.choose(game, request, 'Dogma.Bangle')
 
     t.testBoard(game, {
       dennis: {
-        purple: ['Pagoda'],
+        red: ['Bangle'],
         forecast: [
           'Magnifying Glass',
           'Sandpaper',
           'Chintz',
           'Globe',
-          'Novel',
+          'Pagoda',
         ],
         achievements: ['Destiny'],
       }
@@ -45,7 +45,7 @@ describe('Destiny', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game, {
       dennis: {
-        purple: ['Pagoda'],
+        red: ['Bangle'],
         forecast: [
           'Magnifying Glass',
           'Sandpaper',
@@ -54,23 +54,23 @@ describe('Destiny', () => {
       },
       decks: {
         echo: {
-          3: ['Novel'],
+          2: ['Pagoda'],
         }
       }
     })
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Pagoda')
+    request = t.choose(game, request, 'Dogma.Bangle')
 
     t.testBoard(game, {
       dennis: {
-        purple: ['Pagoda'],
+        red: ['Bangle'],
         forecast: [
           'Magnifying Glass',
           'Sandpaper',
           'Globe',
-          'Novel',
+          'Pagoda',
         ],
       }
     })

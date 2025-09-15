@@ -19,7 +19,7 @@ module.exports = {
         const tucked = game.actions.chooseAndTuck(player, matching, { min: 0, max: 1 })[0]
 
         if (tucked && foreseen) {
-          game.log.addForeseen(self)
+          game.log.addForeseen(foreseen, self)
           const toMeld = game
             .players
             .other(player)
