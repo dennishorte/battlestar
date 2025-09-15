@@ -30,7 +30,7 @@ module.exports = {
         title: 'Choose a card to transfer',
       })
       const originalOwner = cardToTransfer.owner
-      const transferredCard = game.actions.transfer(player, cardToTransfer, game.zones.byPlayer(player, cardToTransfer.color))
+      game.actions.transfer(player, cardToTransfer, game.zones.byPlayer(player, cardToTransfer.color))
 
       // Then super-execute a top card on your board other than Deepfake.
       const executeOptions = game

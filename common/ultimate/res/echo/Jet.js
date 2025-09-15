@@ -55,7 +55,7 @@ module.exports = {
       game.actions.drawAndForeshadow(player, game.getEffectAge(self, 10))
     }
   ],
-  echoImpl: (game, player, { self, leader }) => {
+  echoImpl: (game, player, { leader }) => {
     if (!game.state.dogmaInfo.jet) {
       game.state.dogmaInfo.jet = ''
     }

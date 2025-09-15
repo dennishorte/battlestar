@@ -1,5 +1,3 @@
-const util = require('../../../lib/util.js')
-
 module.exports = {
   name: `Telegraph`,
   color: `green`,

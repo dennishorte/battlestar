@@ -9,14 +9,14 @@ module.exports = {
     `I demand you choose the standard icon of which I have the most among my icon types! Transfer all cards with that visible icon from your board to mine, or if Meritocracy was foreseen to my achievements!`
   ],
   dogmaImpl: [
-    (game, player, { foreseen, leader, self }) => {
+    (game, player, { foreseen, leader }) => {
       // Biscuits that I have the most of on my board...
       const biscuits = Object
         .entries(game.getBiscuitsByPlayer(leader))
         .sort((l, r) => r[1] - l[1])
 
       const mostBiscuits = biscuits
-        .filter(([biscuit, count]) => count === biscuits[0][1])
+        .filter(([, count]) => count === biscuits[0][1])
         .map(([biscuit,]) => game.util.biscuitIconToName(biscuit))
 
       // There's a weird edge case if the player somehow executes this card, but has no biscuits on their board.

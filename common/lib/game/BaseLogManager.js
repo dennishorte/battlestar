@@ -226,7 +226,7 @@ class BaseLogManager {
   _enrichLogArgs(entry) {
     for (const key of Object.keys(entry.args)) {
       let handler = null
-      
+
       // Check for exact key match first
       if (this._logArgHandlers.has(key)) {
         handler = this._logArgHandlers.get(key)
@@ -240,7 +240,7 @@ class BaseLogManager {
           }
         }
       }
-      
+
       if (handler) {
         entry.args[key] = handler(entry.args[key])
       }

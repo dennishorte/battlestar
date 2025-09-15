@@ -37,7 +37,7 @@ module.exports = {
       }
     },
   ],
-  echoImpl: (game, player, { self }) => {
+  echoImpl: (game, player) => {
     if (!game.state.dogmaInfo.karaoke) {
       game.state.dogmaInfo.karaoke = {}
     }
