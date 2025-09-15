@@ -342,7 +342,7 @@ Magic.prototype.aCascade = function(player, x) {
 
   let i
   for (i = 0; i < cards.length; i++) {
-    this.actions.reveal(player, cards[i])
+    this.aReveal(player, cards[i])
 
     if (cards[i].cmc() < x && !cards[i].isLand()) {
       break
@@ -450,9 +450,9 @@ Magic.prototype.aChooseAction = function(player) {
       case 'notap clear'         : return this.aSetNoUntap(actor, action.cardId, false)
       case 'notap set'           : return this.aSetNoUntap(actor, action.cardId, true)
       case 'pass priority'       : return this.aPassPriority(actor, action.target)
-      case 'reveal'              : return this.actions.reveal(actor, action.cardId)
-      case 'reveal all'          : return this.actions.revealAll(actor, action.zoneId)
-      case 'reveal next'         : return this.actions.revealNext(actor, action.zoneId)
+      case 'reveal'              : return this.aReveal(actor, action.cardId)
+      case 'reveal all'          : return this.aRevealAll(actor, action.zoneId)
+      case 'reveal next'         : return this.aRevealNext(actor, action.zoneId)
       case 'roll die'            : return this.actions.rollDie(actor, action.faces)
       case 'secret'              : return this.aSecret(actor, action.cardId)
       case 'select phase'        : return this.aSelectPhase(actor, action.phase)
