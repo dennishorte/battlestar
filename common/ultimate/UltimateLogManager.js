@@ -2,32 +2,55 @@ const { BaseLogManager } = require('../lib/game/index.js')
 
 
 class UltimateLogManager extends BaseLogManager {
-  _enrichLogCardArg(card) {
-    let name
-    if (card.isSpecialAchievement || card.isDecree) {
-      name = card.name
-    }
-    else {
-      const viewerCanSee = Boolean(card.visibility.find(player => player.name === this._viewerName))
-      name = viewerCanSee ? card.name : card.getHiddenName(this._name)
-    }
+  constructor(game, chat, viewerName) {
+    super(game, chat, viewerName)
+    this._registerUltimateHandlers()
+  }
 
-    const classes = ['card']
-    if (!card.isSpecialAchievement && card.getAge()) {
-      classes.push(`card-age-${card.visibleAge || card.getAge()}`)
-    }
-    if (card.expansion) {
-      classes.push(`card-exp-${card.expansion}`)
-    }
-    if (name === 'hidden') {
-      classes.push('card-hidden')
-    }
+  _registerUltimateHandlers() {
+    // Override the default card handler with Ultimate-specific logic
+    this.registerHandler('card*', (card) => {
+      let name
+      if (card.isSpecialAchievement || card.isDecree) {
+        name = card.name
+      }
+      else {
+        const viewerCanSee = Boolean(card.visibility.find(player => player.name === this._viewerName))
+        name = viewerCanSee ? card.name : card.getHiddenName(this._name)
+      }
 
-    return {
-      value: name,
-      classes,
-      card,
-    }
+      const classes = ['card']
+      if (!card.isSpecialAchievement && card.getAge()) {
+        classes.push(`card-age-${card.visibleAge || card.getAge()}`)
+      }
+      if (card.expansion) {
+        classes.push(`card-exp-${card.expansion}`)
+      }
+      if (name === 'hidden') {
+        classes.push('card-hidden')
+      }
+
+      return {
+        value: name,
+        classes,
+        card,
+      }
+    })
+
+    this.registerHandler('biscuit*', (biscuit) => {
+      if (biscuit.length === 1) {
+        return {
+          value: this._game.util.biscuitIconToName(biscuit),
+          classes: ['biscuit'],
+        }
+      }
+      else {
+        return {
+          value: biscuit,
+          classes: ['biscuit'],
+        }
+      }
+    })
   }
 
   _postEnrichArgs(entry) {
@@ -66,6 +89,21 @@ class UltimateLogManager extends BaseLogManager {
     }
 
     return false
+  }
+
+  addForeseen(wasForeseen, card) {
+    if (wasForeseen) {
+      this.add({
+        template: '{card} was foreseen',
+        args: { card }
+      })
+    }
+    else {
+      this.add({
+        template: '{card} was NOT foreseen',
+        args: { card }
+      })
+    }
   }
 }
 

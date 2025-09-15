@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const topSplayedCards = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(c => game.checkColorIsSplayed(player, c.color))
 
       const scored = game.actions.scoreMany(player, topSplayedCards)

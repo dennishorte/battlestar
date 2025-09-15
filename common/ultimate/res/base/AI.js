@@ -19,7 +19,7 @@ module.exports = {
     (game) => {
       const conditionMet  = game
         .players.all()
-        .flatMap(player => game.getTopCards(player))
+        .flatMap(player => game.cards.tops(player))
         .filter(card => card.name === 'Robotics' || card.name === 'Software')
         .length === 2
 

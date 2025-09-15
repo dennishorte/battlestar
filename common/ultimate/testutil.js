@@ -163,7 +163,7 @@ TestUtil.testIsSecondPlayer = function(game) {
 }
 
 TestUtil.testDeckIsJunked = function(game, age) {
-  const cardsInDeck = game.getZoneByDeck('base', age).cardlist()
+  const cardsInDeck = game.zones.byDeck('base', age).cardlist()
   expect(cardsInDeck.length).toBe(0)
 }
 
@@ -238,6 +238,13 @@ TestUtil.setBoard = function(game, state) {
     for (const exp of Object.keys(decks)) {
       for (const [age, cards] of Object.entries(decks[exp])) {
         TestUtil.setDeckTop(game, exp, parseInt(age), cards)
+      }
+    }
+
+    const decksExact = state.decksExact || {}
+    for (const exp of Object.keys(decksExact)) {
+      for (const [age, cards] of Object.entries(decksExact[exp])) {
+        TestUtil.setDeckExact(game, exp, parseInt(age), cards)
       }
     }
   })
@@ -483,6 +490,22 @@ TestUtil.setColor = function(game, playerName, colorName, cardNames) {
   }
   for (const card of cards) {
     card.moveTo(zone)
+  }
+}
+
+// Other cards will be sent to the junk.
+TestUtil.setDeckExact = function(game, exp, age, cardNames) {
+  const deck = game.zones.byDeck(exp, age)
+  for (const card of deck.cardlist()) {
+    game.mRemove(card)
+  }
+
+  const cards = cardNames
+    .map(c => game.cards.byId(c))
+    .reverse()
+
+  for (const card of cards) {
+    card.moveToTop(deck)
   }
 }
 

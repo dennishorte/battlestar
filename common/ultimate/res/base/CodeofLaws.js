@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const boardColors = game
-        .getTopCards(player)
+        .cards.tops(player)
         .map(card => card.color)
 
       const choices = game
@@ -23,7 +23,7 @@ module.exports = {
 
       if (tucked && tucked.length > 0) {
         const color = tucked[0].color
-        game.aChooseAndSplay(player, [color], 'left')
+        game.actions.chooseAndSplay(player, [color], 'left')
       }
     }
   ],

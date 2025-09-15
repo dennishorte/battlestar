@@ -20,7 +20,7 @@ module.exports = {
     },
     (game, player, { self }) => {
       game.actions.draw(player, { age: game.getEffectAge(self, 2) })
-      game.aChooseAndSplay(player, ['blue'], 'left')
+      game.actions.chooseAndSplay(player, ['blue'], 'left')
     }
   ],
 }

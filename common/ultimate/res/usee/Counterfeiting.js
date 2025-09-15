@@ -13,7 +13,7 @@ module.exports = {
     (game, player) => {
       while (true) {
         const agesInScore = game.cards.byPlayer(player, 'score').map(c => c.getAge())
-        const canScore = game.getTopCards(player).filter(c => !agesInScore.includes(c.getAge()))
+        const canScore = game.cards.tops(player).filter(c => !agesInScore.includes(c.getAge()))
         const scored = game.actions.chooseAndScore(player, canScore, { count: 1 })[0]
         if (scored) {
           continue
@@ -26,7 +26,7 @@ module.exports = {
     (game, player) => {
       const colorChoices = ['green', 'purple']
       const splayDirection = 'left'
-      game.aChooseAndSplay(player, colorChoices, splayDirection)
+      game.actions.chooseAndSplay(player, colorChoices, splayDirection)
     }
   ],
 }

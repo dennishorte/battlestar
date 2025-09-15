@@ -15,7 +15,7 @@ module.exports = {
       game.actions.drawAndMeld(player, game.getEffectAge(self, 8))
 
       const socialism = game
-        .getTopCards(player)
+        .cards.tops(player)
         .find(card => card.name === 'Socialism')
 
       if (socialism) {
@@ -38,7 +38,7 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['red', 'blue'], 'up')
+      game.actions.chooseAndSplay(player, ['red', 'blue'], 'up')
     }
   ],
 }

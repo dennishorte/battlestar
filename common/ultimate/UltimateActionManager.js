@@ -93,10 +93,132 @@ class UltimateActionManager extends BaseActionManager {
       ages = [...ages]
     }
 
-    const selected = this.choose(player, ages, { ...opts, title: 'Choose Age' })
+    const selected = this.choose(player, ages, { min: 1, max: 1, ...opts, title: 'Choose Age' })
     if (selected) {
       return selected[0]
     }
+  }
+
+  chooseAndAchieve(player, choices, opts={}) {
+    if (choices.length === 0) {
+      this.log.add({
+        template: 'There are no valid achievements to claim'
+      })
+    }
+
+    // TODO: This doesn't properly hide the achievements in some cases, but it's complicated,
+    //       so I'm punting for now.
+    const selected = this.actions.chooseCards(
+      player,
+      choices,
+      { ...opts, title: 'Choose Achievement' }
+    )
+
+    for (const card of selected) {
+      this.claimAchievement(player, { card })
+    }
+
+    return selected
+  }
+
+  chooseAndJunkDeck(player, ages, opts={}) {
+    const age = this.chooseAge(player, ages, {
+      title: 'Choose a deck to junk',
+      ...opts
+    })
+
+    if (age) {
+      return this.actions.junkDeck(player, age)
+    }
+    else {
+      return false
+    }
+  }
+
+  chooseAndSplay(player, choices, direction, opts={}) {
+    util.assert(direction, 'No direction specified for splay')
+
+    if (!choices) {
+      choices = this.util.colors()
+    }
+
+    choices = choices
+      .filter(color => this.zones.byPlayer(player, color).splay !== direction)
+      .filter(color => this.zones.byPlayer(player, color).cardlist().length > 1)
+
+    if (choices.length === 0) {
+      this.log.addNoEffect()
+      return []
+    }
+
+    // Splaying is almost always optional
+    if (!opts.count && !opts.min && !opts.max) {
+      opts.min = 0
+      opts.max = 1
+    }
+
+    const colors = this.choose(
+      player,
+      choices,
+      { ...opts, title: `Choose a color to splay ${direction}` }
+    )
+    if (colors.length === 0) {
+      this.log.addDoNothing(player)
+      return []
+    }
+    else {
+      const splayed = []
+      for (const color of colors) {
+        splayed.push(this.actions.splay(player, color, direction))
+      }
+      return splayed
+    }
+  }
+
+  chooseAndUnsplay(player, choices, opts={}) {
+    const colors = this.choose(player, choices, {
+      title: 'Choose a color',
+      ...opts
+    })
+    for (const color of colors) {
+      this.unsplay(player, color)
+    }
+  }
+
+  chooseByPredicate(player, cards, count, pred, opts={}) {
+    let numRemaining = count
+    let cardsRemaining = [...cards]
+    let selected = []
+
+    while (numRemaining > 0 && cardsRemaining.length > 0) {
+      const choices = pred(cardsRemaining)
+      cardsRemaining = cardsRemaining.filter(card => !choices.includes(card))
+
+      if (choices.length <= numRemaining) {
+        selected = selected.concat(choices)
+        numRemaining -= choices.length
+      }
+      else {
+        const chosen = this.chooseCards(player, choices, { count: numRemaining, ...opts })
+        selected = selected.concat(chosen)
+        numRemaining -= chosen.length
+      }
+    }
+
+    return selected
+  }
+
+  chooseHighest(player, cards, count) {
+    return this.chooseByPredicate(player, cards, count, this.util.highestCards)
+  }
+
+  chooseLowest(player, cards, count) {
+    return this.chooseByPredicate(player, cards, count, this.util.lowestCards)
+  }
+
+  chooseBiscuit(player) {
+    const biscuitName = this.actions.choose(player, this.util.biscuitNames())[0]
+    return this.util.biscuitNameToIcon(biscuitName)
   }
 
   chooseCards(player, cards, opts={}) {
@@ -292,6 +414,8 @@ class UltimateActionManager extends BaseActionManager {
     if (card.checkHasBiscuit(':')) {
       this.claimAchievement(player, { name: 'Victory' })
     }
+
+    return junkedCard
   })
 
   junkAvailableAchievement(player, ages, opts={}) {
@@ -315,7 +439,7 @@ class UltimateActionManager extends BaseActionManager {
         template: 'The {age} deck is already empty.',
         args: { age },
       })
-      return
+      return false
     }
 
     let doJunk = true
@@ -331,12 +455,14 @@ class UltimateActionManager extends BaseActionManager {
 
       const cards = this.cards.byDeck('base', age)
       this.junkMany(player, cards, { ordered: true })
+      return true
     }
     else {
       this.log.add({
         template: '{player} chooses not to junk the {age} deck',
         args: { player, age }
       })
+      return false
     }
   }
 
@@ -468,6 +594,13 @@ class UltimateActionManager extends BaseActionManager {
     return color
   }
 
+  /**
+     In addition to a zone, target can be a dict with the following format:
+     {
+       toBoard: true,
+       player: PlayerObject
+     }
+   */
   transfer(player, card, target, opts={}) {
     if (target.toBoard) {
       target = this.zones.byPlayer(target.player, card.color)
@@ -504,6 +637,26 @@ class UltimateActionManager extends BaseActionManager {
     return card
   })
 
+  unsplay(player, color) {
+    const zone = this.zones.byPlayer(player, color)
+
+    if (zone.splay === 'none') {
+      this.log.add({
+        template: '{zone} is already unsplayed',
+        args: { zone }
+      })
+    }
+    else {
+      this.log.add({
+        template: '{player} unsplays {zone}',
+        args: { player, zone }
+      })
+      zone.splay = 'none'
+      return color
+    }
+  }
+
+  foreshadowMany = UltimateActionManager.createManyMethod('foreshadow', 2)
   junkMany = UltimateActionManager.createManyMethod('junk', 2)
   meldMany = UltimateActionManager.createManyMethod('meld', 2)
   revealMany = UltimateActionManager.createManyMethod('reveal', 2)
@@ -513,6 +666,7 @@ class UltimateActionManager extends BaseActionManager {
   transferMany = UltimateActionManager.createManyMethod('transfer', 3)
   tuckMany = UltimateActionManager.createManyMethod('tuck', 2)
 
+  chooseAndForeshadow = UltimateActionManager.createChooseAndMethod('foreshadowMany', 2)
   chooseAndJunk = UltimateActionManager.createChooseAndMethod('junkMany', 2)
   chooseAndMeld = UltimateActionManager.createChooseAndMethod('meldMany', 2)
   chooseAndReveal = UltimateActionManager.createChooseAndMethod('revealMany', 2)
@@ -522,6 +676,7 @@ class UltimateActionManager extends BaseActionManager {
   chooseAndTransfer = UltimateActionManager.createChooseAndMethod('transferMany', 3)
   chooseAndTuck = UltimateActionManager.createChooseAndMethod('tuckMany', 2)
 
+  drawAndForeshadow = UltimateActionManager.createDrawAndMethod('foreshadow', 2)
   drawAndJunk = UltimateActionManager.createDrawAndMethod('junk', 2)
   drawAndMeld = UltimateActionManager.createDrawAndMethod('meld', 2)
   drawAndReveal = UltimateActionManager.createDrawAndMethod('reveal', 2)
@@ -547,7 +702,7 @@ class UltimateActionManager extends BaseActionManager {
 
       while (remaining.length > 0) {
         // Check if any cards in 'remaining' have been acted on by some other force (karma effect).
-        remaining = remaining.filter(c => c.zone === startZones[c.id])
+        remaining = remaining.filter(c => c.zone.id === startZones[c.id].id)
         if (remaining.length === 0) {
           break
         }
@@ -612,9 +767,16 @@ class UltimateActionManager extends BaseActionManager {
       const age = args[1]
       const opts = args[numArgs] || {}
 
-      const card = this.game.actions.draw(player, { ...opts, age })
-      if (card) {
-        return this[verb](player, card, opts)
+      let doAction = true
+      if (opts.optional) {
+        doAction = this.chooseYesNo(player, `Do you want to ${verb}?`)
+      }
+
+      if (doAction) {
+        const card = this.game.actions.draw(player, { ...opts, age })
+        if (card) {
+          return this[verb](player, card, opts)
+        }
       }
     }
   }

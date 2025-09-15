@@ -16,7 +16,7 @@ module.exports = {
         .filter(zone => game.getBiscuitsByZone(zone).s > 0)
         .map(zone => zone.color)
 
-      const splayed = game.aChooseAndSplay(player, choices, 'left')[0]
+      const splayed = game.actions.chooseAndSplay(player, choices, 'left')[0]
 
       if (splayed) {
         const numCards = game.cards.byPlayer(player, splayed).length

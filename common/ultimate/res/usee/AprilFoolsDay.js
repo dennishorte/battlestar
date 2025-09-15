@@ -32,11 +32,11 @@ module.exports = {
 
       if (selected === 'yellow') {
         game.actions.splay(player, 'yellow', 'right')
-        game.aUnsplay(player, 'purple')
+        game.actions.unsplay(player, 'purple')
       }
       else {
         game.actions.splay(player, 'purple', 'right')
-        game.aUnsplay(player, 'yellow')
+        game.actions.unsplay(player, 'yellow')
       }
     }
   ],

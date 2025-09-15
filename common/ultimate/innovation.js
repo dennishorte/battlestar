@@ -15,6 +15,7 @@ const { UltimateZoneManager } = require('./UltimateZoneManager.js')
 
 const { getDogmaShareInfo } = require('./actions/Dogma.js')
 
+const SUPPORTED_EXPANSIONS = ['base', 'echo', 'city', 'usee']
 
 module.exports = {
   GameOverEvent,
@@ -24,6 +25,7 @@ module.exports = {
   constructor: Innovation,
   factory: factoryFromLobby,
   res,
+  SUPPORTED_EXPANSIONS,
 }
 
 function Innovation(serialized_data, viewerName) {
@@ -71,8 +73,6 @@ Innovation.prototype._gameOver = function(event) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
-
-const SUPPORTED_EXPANSIONS = ['base', 'city', 'usee']
 
 Innovation.prototype.initialize = function() {
   this.log.add({ template: 'Initializing' })
@@ -396,7 +396,7 @@ Innovation.prototype.action = function(count) {
 Innovation.prototype.fadeFiguresCheck = function() {
   for (const player of this.players.all()) {
     const topFiguresFn = () => this
-      .getTopCards(player)
+      .cards.tops(player)
       .filter(card => card.checkIsFigure())
 
     if (topFiguresFn().length > 1) {
@@ -503,6 +503,7 @@ Innovation.prototype.aOneEffect = function(
     demanding: [],
     leader: player,
     endorsed: false,
+    foreseen: false,
   }, opts)
 
   const repeatCount = opts.endorsed ? 2 : 1
@@ -565,6 +566,7 @@ Innovation.prototype.aOneEffect = function(
         const result = this.aCardEffect(actor, effectInfo, {
           leader: opts.leader,
           self: card,
+          foreseen: opts.foreseen,
         })
 
         if (demand || compel) {
@@ -628,7 +630,7 @@ Innovation.prototype.aTrackChainRule = function(player, card) {
       template: '{player} achieves a Chain Achievement',
       args: { player }
     })
-    const card = this.getZoneByDeck('base', 11).cardlist()[0]
+    const card = this.zones.byDeck('base', 11).cardlist()[0]
     if (card) {
       this.actions.claimAchievement(player, card)
     }
@@ -695,110 +697,6 @@ Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
 
 Innovation.prototype.aSuperExecute = function(player, card) {
   this.aSelfExecute(player, card, { superExecute: true })
-}
-
-Innovation.prototype.aChooseAndAchieve = function(player, choices, opts={}) {
-  if (choices.length === 0) {
-    this.log.addNoEffect()
-  }
-
-  if (typeof choices[0] === 'object') {
-    choices = this.formatAchievements(choices)
-  }
-
-  const selected = this.actions.choose(
-    player,
-    choices,
-    { ...opts, title: 'Choose Achievement' }
-  )
-
-  if (selected.length === 0) {
-    this.log.addDoNothing(player)
-  }
-  else {
-    this.aAchieveAction(player, selected[0], { ...opts, nonAction: true })
-  }
-}
-
-Innovation.prototype.aChooseByPredicate = function(player, cards, count, pred, opts={}) {
-  let numRemaining = count
-  let cardsRemaining = [...cards]
-  let selected = []
-
-  while (numRemaining > 0 && cardsRemaining.length > 0) {
-    const choices = pred(cardsRemaining)
-    cardsRemaining = cardsRemaining.filter(card => !choices.includes(card))
-
-    if (choices.length <= numRemaining) {
-      selected = selected.concat(choices)
-      numRemaining -= choices.length
-    }
-    else {
-      const chosen = this.actions.chooseCards(player, choices, { count: numRemaining, ...opts })
-      selected = selected.concat(chosen)
-      numRemaining -= chosen.length
-    }
-  }
-
-  return selected
-}
-
-Innovation.prototype.aChooseHighest = function(player, cards, count) {
-  return this.aChooseByPredicate(player, cards, count, this.util.highestCards)
-}
-
-Innovation.prototype.aChooseLowest = function(player, cards, count) {
-  return this.aChooseByPredicate(player, cards, count, this.util.lowestCards)
-}
-
-Innovation.prototype.aChooseAndUnsplay = function(player, choices, opts={}) {
-  const colors = this.actions.choose(player, choices, {
-    title: 'Choose a color',
-    ...opts
-  })
-  for (const color of colors) {
-    this.aUnsplay(player, color)
-  }
-}
-
-Innovation.prototype.aChooseAndSplay = function(player, choices, direction, opts={}) {
-  util.assert(direction, 'No direction specified for splay')
-
-  if (!choices) {
-    choices = this.util.colors()
-  }
-
-  choices = choices
-    .filter(color => this.zones.byPlayer(player, color).splay !== direction)
-    .filter(color => this.zones.byPlayer(player, color).cardlist().length > 1)
-
-  if (choices.length === 0) {
-    this.log.addNoEffect()
-    return []
-  }
-
-  // Splaying is almost always optional
-  if (!opts.count && !opts.min && !opts.max) {
-    opts.min = 0
-    opts.max = 1
-  }
-
-  const colors = this.actions.choose(
-    player,
-    choices,
-    { ...opts, title: `Choose a color to splay ${direction}` }
-  )
-  if (colors.length === 0) {
-    this.log.addDoNothing(player)
-    return []
-  }
-  else {
-    const splayed = []
-    for (const color of colors) {
-      splayed.push(this.actions.splay(player, color, direction))
-    }
-    return splayed
-  }
 }
 
 Innovation.prototype.aDecree = function(player, name) {
@@ -996,7 +894,7 @@ Innovation.prototype.aKarma = function(player, kind, opts={}) {
 }
 
 Innovation.prototype.aDigArtifact = function(player, age) {
-  if (age > 11 || this.getZoneByDeck('arti', age).cardlist().length === 0) {
+  if (age > 11 || this.zones.byDeck('arti', age).cardlist().length === 0) {
     this.log.add({
       template: `Artifacts deck for age ${age} is empty.`
     })
@@ -1028,25 +926,6 @@ Innovation.prototype._maybeDrawCity = function(player) {
   this.actions.draw(player, { exp: 'city' })
 }
 
-Innovation.prototype.aUnsplay = function(player, color) {
-  const zone = this.zones.byPlayer(player, color)
-
-  if (zone.splay === 'none') {
-    this.log.add({
-      template: '{zone} is already unsplayed',
-      args: { zone }
-    })
-  }
-  else {
-    this.log.add({
-      template: '{player} unsplays {zone}',
-      args: { player, zone }
-    })
-    zone.splay = 'none'
-    return color
-  }
-}
-
 Innovation.prototype.aYouLose = function(player, card) {
   this.log.add({
     template: '{player} loses the game due to {card}',
@@ -1064,6 +943,7 @@ Innovation.prototype.aYouLose = function(player, card) {
   }
 
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Checkers
@@ -1200,7 +1080,8 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
 
 Innovation.prototype.getBiscuits = function() {
   const biscuits = this
-    .players.all()
+    .players
+    .all()
     .map(player => [player.name, this.getBiscuitsByPlayer(player)])
   return Object.fromEntries(biscuits)
 }
@@ -1264,13 +1145,6 @@ Innovation.prototype.getAgesByZone = function(player, zoneName) {
   return util.array.distinct(ages).sort()
 }
 
-Innovation.prototype.getAvailableSpecialAchievements = function() {
-  return this
-    .zones.byId('achievements')
-    .cardlist()
-    .filter(c => c.isSpecialAchievement)
-}
-
 Innovation.prototype.getBottomCards = function(player) {
   return this
     .util.colors()
@@ -1280,7 +1154,7 @@ Innovation.prototype.getBottomCards = function(player) {
 }
 
 Innovation.prototype.getEffectAge = function(card, age) {
-  const player = this.players.byZone(card.zone)
+  const player = this.players.byOwner(card)
 
   if (player) {
     const karmaInfos = this.getInfoByKarmaTrigger(player, 'effect-age')
@@ -1315,12 +1189,12 @@ Innovation.prototype.getInfoByKarmaTrigger = function(player, trigger) {
 
   const global = this
     .players.opponentsOf(player)
-    .flatMap(opp => this.getTopCards(opp))
+    .flatMap(opp => this.cards.tops(opp))
     .flatMap(card => card.getKarmaInfo(trigger))
     .filter(info => info.impl.triggerAll)
 
   const thisPlayer = this
-    .getTopCards(player)
+    .cards.tops(player)
     .flatMap(card => card.getKarmaInfo(trigger))
 
   const all = [...thisPlayer, ...global]
@@ -1363,13 +1237,13 @@ Innovation.prototype.getHighestTopAge = function(player, opts={}) {
 }
 
 Innovation.prototype.getHighestTopCard = function(player) {
-  return this.util.highestCards(this.getTopCards(player), { visible: true })[0]
+  return this.util.highestCards(this.cards.tops(player), { visible: true })[0]
 }
 
 Innovation.prototype.getNonEmptyAges = function() {
   return this
     .util.ages()
-    .filter(age => this.getZoneByDeck('base', age).cardlist().length > 0)
+    .filter(age => this.zones.byDeck('base', age).cardlist().length > 0)
 }
 
 Innovation.prototype.getNumAchievementsToWin = function() {
@@ -1433,18 +1307,10 @@ Innovation.prototype.getTopCard = function(player, color) {
   return this.cards.byPlayer(player, color)[0]
 }
 
-Innovation.prototype.getTopCards = function(player) {
-  return this
-    .util.colors()
-    .map(color => this.zones.byPlayer(player, color))
-    .map(zone => zone.cardlist()[0])
-    .filter(card => card !== undefined)
-}
-
 Innovation.prototype.getTopCardsAll = function() {
   return this
     .players.all()
-    .flatMap(player => this.getTopCards(player))
+    .flatMap(player => this.cards.tops(player))
 }
 
 Innovation.prototype.getUniquePlayerWithMostBiscuits = function(biscuit) {
@@ -1555,16 +1421,12 @@ Innovation.prototype.getVisibleEffectsByColor = function(player, color, kind) {
 
   else {
     return this
-      .cards.byPlayer(player, color)
+      .cards
+      .byPlayer(player, color)
       .reverse()
       .map(card => this.getVisibleEffects(card, kind))
       .filter(effect => effect !== undefined)
   }
-}
-
-Innovation.prototype.getZoneByDeck = function(exp, age) {
-  // TODO: deprecate
-  return this.zones.byDeck(exp, age)
 }
 
 Innovation.prototype.getColorZonesByPlayer = function(player) {
@@ -1804,6 +1666,16 @@ Innovation.prototype.getScoreCost = function(player, card) {
   return card.getAge() * 5 * (sameAge.length + 1) - karmaAdjustment
 }
 
+/**
+   This one gets special achievements as well.
+ */
+Innovation.prototype.getAvailableAchievements = function(player) {
+  return [
+    ...this.getAvailableSpecialAchievements(player),
+    ...this.getAvailableStandardAchievements(player),
+  ]
+}
+
 Innovation.prototype.getAvailableAchievementsByAge = function(player, age) {
   age = parseInt(age)
   return this.getAvailableStandardAchievements(player).filter(c => c.getAge() === age)
@@ -1822,13 +1694,16 @@ Innovation.prototype.getAvailableStandardAchievements = function(player) {
   return [achievementsZone, fromKarma].flat()
 }
 
-Innovation.prototype.getAvailableAchievementsRaw = function(player) {
-  return this.getAvailableStandardAchievements(player)
+Innovation.prototype.getAvailableSpecialAchievements = function() {
+  return this
+    .cards
+    .byZone('achievements')
+    .filter(c => c.isSpecialAchievement)
 }
 
 Innovation.prototype.getEligibleAchievementsRaw = function(player, opts={}) {
   return this
-    .getAvailableAchievementsRaw(player, opts)
+    .getAvailableStandardAchievements(player, opts)
     .filter(card => this.checkAchievementEligibility(player, card, opts))
 }
 
@@ -1922,7 +1797,7 @@ Innovation.prototype.getDogmaTargets = function(player) {
 Innovation.prototype._generateActionChoicesDogma = function() {
   const player = this.players.current()
 
-  const dogmaTargets = this.getTopCards(player)
+  const dogmaTargets = this.cards.tops(player)
 
   const extraEffects = this
     .getInfoByKarmaTrigger(player, 'list-effects')
@@ -1958,12 +1833,12 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
     .sort((l, r) => l - r)[0] || 99
 
   const cities = this
-    .getTopCards(player)
+    .cards.tops(player)
     .filter(card => card.checkIsCity())
     .filter(city => city.getAge() >= lowestHandAge)
 
   const stacksWithEndorsableEffects = this
-    .getTopCards(player)
+    .cards.tops(player)
     .map(card => this.zones.byPlayer(player, card.color))
 
   const colors = []

@@ -12,7 +12,7 @@ module.exports = {
     (game, player) => {
       const executeEffect = (value) => {
         const choices = game
-          .getTopCards(player)
+          .cards.tops(player)
           .filter(card => card.getAge() === value)
 
         return game.actions.chooseAndScore(player, choices)[0]

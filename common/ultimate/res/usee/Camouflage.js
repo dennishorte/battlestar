@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const junkOptions = function() {
-        const topCards = game.getTopCards(player)
+        const topCards = game.cards.tops(player)
         const validCards = []
         for (const card of topCards) {
           for (const other of topCards) {

@@ -306,6 +306,13 @@ Game.prototype.undo = function() {
   return '__SUCCESS__'
 }
 
+Game.prototype.youWin = function(player, reason) {
+  throw new GameOverEvent({
+    player,
+    reason,
+  })
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Chat and Logging

@@ -49,6 +49,10 @@ class BaseCard {
     return this
   }
 
+  moveToTop(zone) {
+    this.moveTo(zone, 0)
+  }
+
   ////////////////////////////////////////////////////////////////////////////////
   // Visibility
 

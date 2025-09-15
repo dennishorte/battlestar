@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const leafChoices = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.color !== 'green')
         .filter(card => card.checkHasBiscuit('l'))
 
@@ -21,7 +21,7 @@ module.exports = {
       }
 
       const nonLeafChoices = game
-        .getTopCards(leader)
+        .cards.tops(leader)
         .filter(card => !card.checkHasBiscuit('l'))
 
       const card2 = game.actions.chooseCard(player, nonLeafChoices)

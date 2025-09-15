@@ -14,7 +14,7 @@ module.exports = {
       if (cards.length > 0) {
         const returned = cards[0]
         const matchingTopCards = game
-          .getTopCards(player)
+          .cards.tops(player)
           .filter(card => card.getAge() === returned.getAge())
         game.actions.chooseAndReturn(player, matchingTopCards)
       }

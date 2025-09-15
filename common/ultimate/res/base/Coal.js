@@ -16,11 +16,11 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['red'], 'right')
+      game.actions.chooseAndSplay(player, ['red'], 'right')
     },
 
     (game, player) => {
-      const validColors = game.getTopCards(player).map(c => c.color)
+      const validColors = game.cards.tops(player).map(c => c.color)
       const color = game.actions.choose(player, validColors, {
         title: 'Choose a color to score, twice',
         min: 0,

@@ -34,7 +34,7 @@ module.exports = {
           game.actions.splay(player, card.color, 'up')
         }
         else {
-          game.aUnsplay(player, card.color)
+          game.actions.unsplay(player, card.color)
         }
       }
     }

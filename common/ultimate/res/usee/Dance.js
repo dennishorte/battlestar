@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.checkHasBiscuit('k'))
 
       const card = game.actions.chooseCard(player, choices)
@@ -23,7 +23,7 @@ module.exports = {
         game.actions.transfer(player, card, game.zones.byPlayer(targetPlayer, card.color))
 
         const topCastleCards = game
-          .getTopCards(targetPlayer)
+          .cards.tops(targetPlayer)
           .filter(card => !card.checkHasBiscuit('k'))
 
         const meldChoices = game.util.lowestCards(topCastleCards)

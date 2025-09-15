@@ -15,7 +15,7 @@ module.exports = {
 
       const unsplayed = []
       for (const color of splays) {
-        unsplayed.push(game.aUnsplay(player, color))
+        unsplayed.push(game.actions.unsplay(player, color))
       }
 
       const toReturn = unsplayed

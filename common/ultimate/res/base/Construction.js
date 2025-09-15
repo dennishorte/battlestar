@@ -25,12 +25,12 @@ module.exports = {
     (game, player) => {
       const achievementAvailable = game.checkAchievementAvailable('Empire')
       const playerHasFive = game
-        .getTopCards(player)
+        .cards.tops(player)
         .length === 5
       const othersHaveFive = game
         .players.all()
         .filter(p => p !== player)
-        .map(p => game.getTopCards(p).length)
+        .map(p => game.cards.tops(p).length)
         .filter(count => count === 5)
         .length > 0
 

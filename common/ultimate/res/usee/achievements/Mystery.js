@@ -8,12 +8,12 @@ module.exports = {
   checkPlayerIsEligible: function(game, player, reduceCost) {
     const targetAge = reduceCost ? 8 : 9
     const topCardAges = game
-      .getTopCards(player)
+      .cards.tops(player)
       .map(card => card.getAge())
     const topCardMaxAge = Math.max(...topCardAges)
 
     const targetColors = reduceCost ? 4 : 5
-    const actualColors = game.getTopCards(player).map(c => c.color).length
+    const actualColors = game.cards.tops(player).map(c => c.color).length
 
     return topCardMaxAge >= targetAge && actualColors < targetColors
   },

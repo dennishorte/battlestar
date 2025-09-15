@@ -69,7 +69,7 @@ describe('Area 51', () => {
     request = game.run()
     request = t.choose(game, request, 'Dogma.Area 51')
     request = t.choose(game, request, 'green')
-    request = t.choose(game, request, 'Safeguard an available standard achievement')
+    request = t.choose(game, request, 'Safeguard a standard achievement')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

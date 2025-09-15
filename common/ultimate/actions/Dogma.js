@@ -48,7 +48,7 @@ function EndorseAction(player, color) {
   const featuredBiscuit = card.dogmaBiscuit
   const cities = this
     .game
-    .getTopCards(player)
+    .cards.tops(player)
     .filter(card => card.checkIsCity())
     .filter(card => card.biscuits.includes(featuredBiscuit))
   const junkChoices = this
@@ -77,6 +77,7 @@ function _executeEffects(player, card, shareData, opts) {
     sharing: shareData.sharing,
     demanding: shareData.demanding,
     endorsed: opts.endorsed,
+    foreseen: opts.foreseen,
   }
 
   _statsRecordDogmaActions.call(this, player, card, effectOpts)

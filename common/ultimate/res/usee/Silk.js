@@ -18,7 +18,7 @@ module.exports = {
     },
     (game, player) => {
       const boardColors = game
-        .getTopCards(player)
+        .cards.tops(player)
         .map(card => card.color)
 
       const choices = game

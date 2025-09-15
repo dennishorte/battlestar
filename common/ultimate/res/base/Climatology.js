@@ -24,14 +24,14 @@ module.exports = {
       })
 
       const choices = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.checkHasBiscuit(icon))
 
       game.actions.chooseAndReturn(player, choices, { count: 2, ordered: true })
     },
 
     (game, player) => {
-      const topCards = game.getTopCards(player)
+      const topCards = game.cards.tops(player)
       const card = game.actions.chooseCard(player, topCards)
       if (card) {
         game.actions.return(player, card)

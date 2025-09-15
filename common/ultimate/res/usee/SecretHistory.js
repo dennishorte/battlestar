@@ -25,7 +25,7 @@ module.exports = {
         game.actions.claimAchievement(player, { name: 'Mystery' })
       }
       else {
-        game.aChooseAndSplay(player, ['red', 'purple'], 'right', { count: 1 })
+        game.actions.chooseAndSplay(player, ['red', 'purple'], 'right', { count: 1 })
       }
     }
   ],

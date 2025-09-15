@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       if (game.zones.byPlayer(player, 'green').splay === 'right') {
-        game.aChooseAndSplay(player, null, 'right')
+        game.actions.chooseAndSplay(player, null, 'right')
       }
       else {
         game.log.addNoEffect()
@@ -20,7 +20,7 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['green'], 'right')
+      game.actions.chooseAndSplay(player, ['green'], 'right')
     }
   ],
 }

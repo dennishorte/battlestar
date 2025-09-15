@@ -25,7 +25,7 @@ module.exports = {
       const choices = game
         .util.colors()
         .filter(color => game.zones.byPlayer(player, color).splay === 'right')
-      game.aChooseAndSplay(player, choices, 'up')
+      game.actions.chooseAndSplay(player, choices, 'up')
     }
   ],
 }

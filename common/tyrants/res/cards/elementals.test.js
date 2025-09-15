@@ -535,7 +535,7 @@ describe('Elementals expansion', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Olhydra')
-      const request3 = t.choose(game, request2, 'Blingdenstone')
+      const request3 = t.choose(game, request2, 'Blingdenstone, neutral')
 
       t.testBoard(game, {
         dennis: {
@@ -560,7 +560,7 @@ describe('Elementals expansion', () => {
 
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Play Card.Olhydra')
-      const request3 = t.choose(game, request2, 'Blingdenstone')
+      const request3 = t.choose(game, request2, 'Blingdenstone, neutral')
       const request4 = t.choose(game, request3, 'Ched Nasad')
       const request5 = t.choose(game, request4, 'Ched Nasad')
 

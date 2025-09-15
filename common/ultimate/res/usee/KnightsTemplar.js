@@ -17,7 +17,7 @@ module.exports = {
 
       const color = game.actions.choose(player, splayedColors)[0]
       if (color) {
-        const unsplayed = game.aUnsplay(player, color)
+        const unsplayed = game.actions.unsplay(player, color)
         if (unsplayed) {
           const topCard = game.getTopCard(player, color)
           if (topCard) {
@@ -27,7 +27,7 @@ module.exports = {
       }
     },
     (game, player) => {
-      game.aChooseAndSplay(player, ['red', 'green'], 'left')
+      game.actions.chooseAndSplay(player, ['red', 'green'], 'left')
     },
   ],
 }

@@ -10,7 +10,7 @@ module.exports = {
     const numAchievements = reduceCost ? 1 : 0
 
     const topCardAges = game
-      .getTopCards(player)
+      .cards.tops(player)
       .map(card => card.getAge())
 
     const topCardMaxAge = Math.max(...topCardAges)

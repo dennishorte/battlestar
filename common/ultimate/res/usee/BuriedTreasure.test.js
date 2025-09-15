@@ -49,7 +49,7 @@ describe('Buried Treasure', () => {
       micah: {
         score: ['Astronomy', 'Metric System', 'Banking'],
       },
-      achievements: ['The Wheel', 'Agriculture', 'Software'],
+      achievements: ['The Wheel', 'Agriculture', 'Software', 'Canning'],
       decks: {
         usee: {
           5: ['Pen Name'],
@@ -62,14 +62,14 @@ describe('Buried Treasure', () => {
     request = t.choose(game, request, 'Dogma.Buried Treasure')
     request = t.choose(game, request, 5)
     request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'Banking', 'Software', 'Agriculture')
+    request = t.choose(game, request, '**base-6*', '**base-10*', '**base-1*')
     request = t.choose(game, request, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         green: ['Buried Treasure'],
-        score: ['The Wheel', 'Banking', 'Software', 'Agriculture'],
+        score: ['The Wheel', 'Canning', 'Software', 'Agriculture'],
         safe: ['Pen Name'],
       },
       micah: {

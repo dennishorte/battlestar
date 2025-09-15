@@ -11,12 +11,12 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.aChooseAndSplay(player, ['green'], 'up')
+      game.actions.chooseAndSplay(player, ['green'], 'up')
     },
     (game, player, { self }) => {
       const choices = game
         .players.other(player)
-        .flatMap(opp => game.getTopCards(opp))
+        .flatMap(opp => game.cards.tops(opp))
         .filter(card => card.color !== 'yellow' && card.checkHasBiscuit('i'))
 
       const card = game.actions.chooseAndMeld(player, choices)[0]

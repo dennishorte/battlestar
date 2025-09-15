@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const topDemands = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.dogma.some(effect => {
           return effect.toLowerCase().startsWith('i demand') || effect.toLowerCase().startsWith('i compel')
         }))

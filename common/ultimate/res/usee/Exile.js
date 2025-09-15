@@ -16,7 +16,7 @@ module.exports = {
       }
 
       const choices = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => !card.checkHasBiscuit('l'))
 
       const returned = game.actions.chooseAndReturn(player, choices, { count: 1 })[0]
@@ -38,7 +38,7 @@ module.exports = {
         const topCards = game
           .players
           .all()
-          .flatMap(player => game.getTopCards(player))
+          .flatMap(player => game.cards.tops(player))
 
         const exileCards = topCards.filter(card => card.name === 'Exile')
         if (exileCards.length > 0) {

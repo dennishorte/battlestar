@@ -36,7 +36,7 @@ module.exports = {
         const other = game.players.byName(otherName)
         const color = selected.selection[0]
 
-        game.aUnsplay(other, color)
+        game.actions.unsplay(other, color)
       }
     },
 

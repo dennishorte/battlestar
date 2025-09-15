@@ -17,7 +17,7 @@ describe('Hacking', () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Hacking')
-    request = t.choose(game, request, 'Canning')
+    request = t.choose(game, request, '**base-6* (micah)')
     request = t.choose(game, request, 'auto')
     request = t.choose(game, request, 'auto')
     request = t.choose(game, request, 'auto')

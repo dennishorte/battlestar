@@ -1,21 +1,38 @@
 <template>
   <div class="settings-ultimate">
-    <div class="form-check" v-for="expansion in expansions" :key="expansion.value">
-      <input
-        class="form-check-input"
-        type="checkbox"
-        :value="expansion.value"
-        v-model="models.expansions"
-        :disabled="expansion.disabled"
-        @change="optionsChanged"
-      />
-      <label class="form-check-label">{{ expansion.text }}</label>
+    <div class="row">
+      <div class="col">
+        <div class="form-check" v-for="expansion in expansions" :key="expansion.value">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            :value="models.randomizeExpansions ? false : expansion.value"
+            v-model="models.expansions"
+            :disabled="models.randomizeExpansions ? true : expansion.disabled"
+            @change="optionsChanged"
+          />
+          <label class="form-check-label">{{ expansion.text }}</label>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            v-model="models.randomizeExpansions"
+            @change="optionsChanged"
+          />
+          <label class="form-check-label">randomize expansions</label>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 
 <script>
+import { ultimate} from 'battlestar-common'
+
 export default {
   name: 'UltimateSettings',
 
@@ -32,7 +49,7 @@ export default {
         {
           text: 'Echoes of the Past',
           value: 'echo',
-          disabled: true,
+          disabled: false,
         },
         {
           text: 'Figures in the Sand',
@@ -58,6 +75,7 @@ export default {
 
       models: {
         expansions: ['base'],
+        randomizeExpansions: false,
       },
     }
   },
@@ -81,8 +99,26 @@ export default {
     },
 
     optionsChanged() {
+      const getExpansions = () => {
+        if (this.models.randomizeExpansions) {
+          const availableExpansions = ultimate.SUPPORTED_EXPANSIONS.filter(exp => exp !== 'base')
+          const expansionSelectionRate = .5
+          const expansions = ['base']
+          for (const exp of availableExpansions) {
+            if (Math.random() < expansionSelectionRate) {
+              expansions.push(exp)
+            }
+          }
+          return expansions
+        }
+        else {
+          return [...this.models.expansions]
+        }
+      }
+
       this.lobby.options = {
-        expansions: [...this.models.expansions],
+        expansions: getExpansions(),
+        randomizeExpansions: this.models.randomizeExpansions,
       }
       this.updateValid()
       this.save()
@@ -92,6 +128,7 @@ export default {
   created() {
     if (this.lobby.options) {
       this.models.expansions = [...this.lobby.options.expansions]
+      this.models.randomizeExpansions = Boolean(this.lobby.options.randomizeExpansions)
       this.updateValid()
     }
     else {

@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader, self }) => {
       const targets = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.biscuits.includes('f'))
         .filter(card => card.color !== 'green')
       const cards = game.actions.chooseAndTransfer(player, targets, game.zones.byPlayer(leader, 'score'))

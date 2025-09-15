@@ -18,7 +18,7 @@ module.exports = {
       const transferred = game.actions.transferMany(player, cards, game.zones.byPlayer(leader, 'hand'))
       if (transferred && transferred.length > 0) {
         const choices = game
-          .getTopCards(leader)
+          .cards.tops(leader)
           .filter(card => !card.checkHasBiscuit('l'))
         game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'))
       }

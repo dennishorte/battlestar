@@ -26,7 +26,7 @@ describe('Popular Science', () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Popular Science')
-    request = t.choose(game, request, '4')
+    request = t.choose(game, request, 4)
     request = t.choose(game, request, 'blue')
 
     t.testIsSecondPlayer(game)

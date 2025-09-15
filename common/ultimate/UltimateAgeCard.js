@@ -25,6 +25,20 @@ class UltimateAgeCard extends UltimateBaseCard {
   }
 
   checkBiscuitIsVisible(biscuit, splay) {
+    if (!splay) {
+      if (this.owner) {
+        if (this.checkIsTopCard()) {
+          splay = 'top'
+        }
+        else {
+          splay = this.game.zones.byPlayer(this.owner, this.color).splay
+        }
+      }
+      else {
+        throw new Error('Cannot calculate the splay for a card with no owner: ' + this.name)
+      }
+    }
+
     if (biscuit === 'h') {
       // m also counts as an h
       const mIsVisible = this.checkBiscuitIsVisible('m', splay)
@@ -38,6 +52,7 @@ class UltimateAgeCard extends UltimateBaseCard {
       case 'left': return biscuitIndex === 3 || biscuitIndex === 5
       case 'right': return biscuitIndex === 0 || biscuitIndex === 1
       case 'up': return biscuitIndex === 1 || biscuitIndex === 2 || biscuitIndex === 3
+      case 'aslant': return biscuitIndex === 0 || biscuitIndex === 1 || biscuitIndex === 2 || biscuitIndex === 3
       case 'top': return biscuitIndex !== -1
       default: return false
     }
@@ -127,6 +142,14 @@ class UltimateAgeCard extends UltimateBaseCard {
       || biscuit === 'k'
       || biscuit === 'f'
     )
+  }
+
+  checkIsTopCard() {
+    if (!this.owner) {
+      return false
+    }
+
+    return this.game.cards.top(this.owner, this.color).id === this.id
   }
 
   checkSharesBiscuit(other) {
@@ -247,6 +270,10 @@ class UltimateAgeCard extends UltimateBaseCard {
     else {
       return this[`${kind}Impl`]
     }
+  }
+
+  inHand(player) {
+    return this.owner === player && this.zone.id.endsWith('hand')
   }
 }
 

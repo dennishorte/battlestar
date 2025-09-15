@@ -7,7 +7,7 @@ module.exports = {
   isSpecialAchievement: true,
   checkPlayerIsEligible: function(game, player, reduceCost) {
     const topDemands = game
-      .getTopCards(player)
+      .cards.tops(player)
       .filter(c => c.checkHasDemand())
 
     const targetCount = reduceCost ? 3 : 4

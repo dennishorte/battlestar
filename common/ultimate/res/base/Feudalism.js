@@ -17,12 +17,12 @@ module.exports = {
       const cards = game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'hand'))
       if (cards && cards.length > 0) {
         const card = cards[0]
-        game.aUnsplay(player, card.color)
+        game.actions.unsplay(player, card.color)
       }
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['yellow', 'purple'], 'left')
+      game.actions.chooseAndSplay(player, ['yellow', 'purple'], 'left')
     }
   ],
 }

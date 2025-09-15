@@ -10,17 +10,17 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const secrets = game.aChooseHighest(player, game.cards.byPlayer(player, 'safe'), 2, {
+      const secrets = game.actions.chooseHighest(player, game.cards.byPlayer(player, 'safe'), 2, {
         title: 'Choose secrets to transfer',
       })
       game.actions.transferMany(player, secrets, game.zones.byPlayer(leader, 'safe'))
 
-      const score = game.aChooseHighest(player, game.cards.byPlayer(player, 'score'), 2, {
+      const score = game.actions.chooseHighest(player, game.cards.byPlayer(player, 'score'), 2, {
         title: 'Choose score to transfer',
       })
       game.actions.transferMany(player, score, game.zones.byPlayer(leader, 'score'))
 
-      const toMeld = game.aChooseLowest(player, game.cards.byPlayer(player, 'score'), 2, {
+      const toMeld = game.actions.chooseLowest(player, game.cards.byPlayer(player, 'score'), 2, {
         title: 'Choose score to meld',
       })
       game.actions.meldMany(player, toMeld)

@@ -22,7 +22,7 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, ['red', 'purple'], 'right')
+      game.actions.chooseAndSplay(player, ['red', 'purple'], 'right')
     },
   ],
 }

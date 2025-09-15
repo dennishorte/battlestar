@@ -71,7 +71,7 @@ function _maybeCityBiscuits(player, card) {
         break
       case '=':
         for (const opp of this.players.opponentsOf(player)) {
-          this.game.aUnsplay(opp, card.color)
+          this.game.actions.unsplay(opp, card.color)
         }
         break
       case '|':
@@ -176,7 +176,7 @@ function _maybePromote(player, card) {
     const cards = this.chooseAndMeld(player, choices)
     if (cards && cards.length > 0) {
       const melded = cards[0]
-      this.dogma(player, melded)
+      this.dogma(player, melded, { foreseen: true })
     }
   }
 }

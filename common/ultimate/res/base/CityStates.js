@@ -13,7 +13,7 @@ module.exports = {
       const biscuits = game.getBiscuits()
       if (biscuits[player.name].k >= 4) {
         const choices = game
-          .getTopCards(player)
+          .cards.tops(player)
           .filter(card => card.biscuits.includes('k'))
 
         const card = game.actions.chooseCard(player, choices)

@@ -9,7 +9,7 @@
         :key="exp"
         class="decks-box"
         :class="`text-${exp}`">
-        {{ game.getZoneByDeck(exp, age).cardlist().length }}
+        {{ game.zones.byDeck(exp, age).cardlist().length }}
       </div>
     </div>
   </div>

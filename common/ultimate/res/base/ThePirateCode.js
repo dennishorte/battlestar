@@ -24,9 +24,9 @@ module.exports = {
     (game, player) => {
       if (game.state.dogmaInfo.piratesLooted) {
         const choices = game
-          .getTopCards(player)
+          .cards.tops(player)
           .filter(card => card.checkHasBiscuit('c'))
-        const cards = game.aChooseLowest(player, choices, 1)
+        const cards = game.actions.chooseLowest(player, choices, 1)
         if (cards && cards.length > 0) {
           game.actions.score(player, cards[0])
         }

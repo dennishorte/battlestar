@@ -12,7 +12,7 @@ module.exports = {
     (game, player) => {
       const valueMap = new Map()
 
-      game.getTopCards(player).forEach(card => {
+      game.cards.tops(player).forEach(card => {
         const age = card.getAge()
         if (!valueMap.has(age)) {
           valueMap.set(age, [])
@@ -42,7 +42,7 @@ module.exports = {
 
       // Get cards of that value
       const cardsOfValue = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(x => x.getAge() === chosenValue)
 
       const returned = game.actions.chooseAndReturn(player, cardsOfValue, { count: 2, ordered: true })

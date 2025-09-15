@@ -25,7 +25,7 @@ module.exports = {
       const keptCard = drawnCards.find(c => !cardsToReturn.includes(c))
 
       if (keptCard) {
-        game.aChooseAndSplay(player, [keptCard.color], 'right')
+        game.actions.chooseAndSplay(player, [keptCard.color], 'right')
       }
     },
   ],
