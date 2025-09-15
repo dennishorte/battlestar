@@ -15,6 +15,7 @@ const { UltimateZoneManager } = require('./UltimateZoneManager.js')
 
 const { getDogmaShareInfo } = require('./actions/Dogma.js')
 
+const SUPPORTED_EXPANSIONS = ['base', 'echo', 'city', 'usee']
 
 module.exports = {
   GameOverEvent,
@@ -24,6 +25,7 @@ module.exports = {
   constructor: Innovation,
   factory: factoryFromLobby,
   res,
+  SUPPORTED_EXPANSIONS,
 }
 
 function Innovation(serialized_data, viewerName) {
@@ -71,8 +73,6 @@ Innovation.prototype._gameOver = function(event) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
-
-const SUPPORTED_EXPANSIONS = ['base', 'echo', 'city', 'usee']
 
 Innovation.prototype.initialize = function() {
   this.log.add({ template: 'Initializing' })
