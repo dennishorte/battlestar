@@ -14,7 +14,7 @@ module.exports = {
       if (card.color === 'red') {
         game.log.add({ template: 'Card is red' })
         const choices = game.getAvailableAchievementsRaw(player)
-        game.aChooseAndAchieve(player, choices)
+        game.actions.chooseAndAchieve(player, choices)
       }
       else {
         game.log.add({ template: 'Card is not red' })

@@ -15,7 +15,7 @@ module.exports = {
       const choices = game
         .getTopCards(player)
         .filter(card => card.expansion === 'arti')
-      const card = game.aChooseCard(player, choices)
+      const card = game.actions.chooseCard(player, choices)
       if (card) {
         game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
       }

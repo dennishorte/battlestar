@@ -19,7 +19,7 @@ module.exports = {
         .flatMap(p => game.getTopCards(p))
         .filter(card => card.biscuits.includes('k'))
 
-      game.aChooseAndTuck(player, topCardsWithCastles)
+      game.actions.chooseAndTuck(player, topCardsWithCastles)
     }
   ],
   karmaImpl: [

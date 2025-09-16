@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const age = game.aChooseAge(player)
+      const age = game.actions.chooseAge(player)
       game.log.add({
         template: '{player} choose age {age}',
         args: { player, age }
@@ -25,7 +25,7 @@ module.exports = {
       }
 
       const choices = game.getTopCards(player)
-      const toExecute = game.aChooseCard(player, choices)
+      const toExecute = game.actions.chooseCard(player, choices)
       if (toExecute) {
         game.log.add({
           template: '{player} executes {card}',

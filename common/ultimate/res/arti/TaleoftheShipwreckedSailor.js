@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const color = game.aChoose(player, game.utilColors(), { title: 'Choose a Color ' })[0]
+      const color = game.actions.choose(player, game.utilColors(), { title: 'Choose a Color ' })[0]
       game.log.add({
         template: '{player} chooses {color}',
         args: { player, color }
@@ -19,7 +19,7 @@ module.exports = {
       const choices = game
         .getCardsByZone(player, 'hand')
         .filter(card => card.color === color)
-      const melded = game.aChooseAndMeld(player, choices)
+      const melded = game.actions.chooseAndMeld(player, choices)
       if (melded && melded.length > 0) {
         game.aSplay(player, color, 'left')
       }

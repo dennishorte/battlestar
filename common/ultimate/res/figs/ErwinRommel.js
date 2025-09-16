@@ -18,7 +18,7 @@ module.exports = {
       .getPlayerAll()
       .filter(other => other !== player)
       .flatMap(player => game.getCardsByZone(player, 'score'))
-    game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'score'), { hidden: true })
+    game.actions.chooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'score'), { hidden: true })
   },
   karmaImpl: [
     {

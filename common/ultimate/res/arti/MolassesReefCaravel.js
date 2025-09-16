@@ -19,7 +19,7 @@ module.exports = {
         .getCardsByZone(player, 'hand')
         .filter(card => card.color === 'blue')
       if (blueCards.length > 0) {
-        game.aChooseAndMeld(player, blueCards)
+        game.actions.chooseAndMeld(player, blueCards)
       }
       else {
         game.log.add({
@@ -27,8 +27,8 @@ module.exports = {
           args: { player }
         })
       }
-      game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'))
-      game.aChooseAndReturn(player, game.getCardsByZone(player, 'score'))
+      game.actions.chooseAndScore(player, game.getCardsByZone(player, 'hand'))
+      game.actions.chooseAndReturn(player, game.getCardsByZone(player, 'score'))
     }
   ],
 }

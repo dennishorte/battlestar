@@ -23,7 +23,7 @@ module.exports = {
           .getEligibleAchievementsRaw(player, { ignoreAge: true })
           .filter(other => card.getAge() === other.getAge())
 
-        game.aChooseAndAchieve(player, eligible, { nonAction: true })
+        game.actions.chooseAndAchieve(player, eligible, { nonAction: true })
       }
     }
   ]

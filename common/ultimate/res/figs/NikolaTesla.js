@@ -28,7 +28,7 @@ module.exports = {
           .getPlayerOpponents(player)
           .flatMap(opp => game.getTopCards(opp))
           .filter(card => !card.checkHasBiscuit('s') && !card.checkHasBiscuit('i'))
-        game.aChooseAndScore(player, choices)
+        game.actions.chooseAndScore(player, choices)
       }
     }
   ]

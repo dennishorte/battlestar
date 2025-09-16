@@ -17,7 +17,7 @@ module.exports = {
       .getTopCardsAll()
       .filter(card => card.getAge() < 4)
       .filter(card => card.color === 'red')
-    game.aChooseAndScore(player, choices)
+    game.actions.chooseAndScore(player, choices)
   },
   karmaImpl: [
     {

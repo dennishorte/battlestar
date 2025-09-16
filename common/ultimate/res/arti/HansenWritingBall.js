@@ -19,7 +19,7 @@ module.exports = {
         .getCardsByZone(player, 'hand')
         .filter(card => card.color === 'blue')
 
-      game.aChooseAndMeld(player, choices)
+      game.actions.chooseAndMeld(player, choices)
 
       game.aTransferMany(
         player,

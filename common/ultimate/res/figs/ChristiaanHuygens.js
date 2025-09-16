@@ -13,7 +13,7 @@ module.exports = {
   dogma: [],
   dogmaImpl: [],
   echoImpl: (game, player) => {
-    const age = game.aChooseAge(player, [
+    const age = game.actions.chooseAge(player, [
       game.getEffectAge(this, 7),
       game.getEffectAge(this, 8),
       game.getEffectAge(this, 9),

@@ -13,7 +13,7 @@ module.exports = {
   dogma: [],
   dogmaImpl: [],
   echoImpl: (game, player) => {
-    game.aChooseAndSplay(player, null, 'right')
+    game.actions.chooseAndSplay(player, null, 'right')
   },
   karmaImpl: [
     {
@@ -22,7 +22,7 @@ module.exports = {
       matches: () => true,
       func: (game, player) => {
         const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
-        const targetPlayer = game.aChoosePlayer(player, game.getPlayerAll().map(p => p.name))
+        const targetPlayer = game.actions.choosePlayer(player, game.getPlayerAll().map(p => p.name))
         const target = game.getZoneByPlayer(targetPlayer, card.color)
         game.aTransfer(player, card, target)
       }

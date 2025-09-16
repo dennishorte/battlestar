@@ -20,7 +20,7 @@ module.exports = {
       matches: () => true,
       func: (game, player, { leader }) => {
         const highest = game.utilHighestCards(game.getCardsByZone(leader, 'score')).slice(0, 1)
-        game.aChooseAndTransfer(player, highest, game.getZoneByPlayer(player, 'score'))
+        game.actions.chooseAndTransfer(player, highest, game.getZoneByPlayer(player, 'score'))
       }
     }
   ]

@@ -18,7 +18,7 @@ module.exports = {
       .getPlayerAll()
       .map(player => game.getTopCard(player, 'purple'))
       .filter(card => card !== undefined)
-    game.aChooseAndMeld(player, purples)
+    game.actions.chooseAndMeld(player, purples)
   },
   karmaImpl: [
     {
@@ -37,7 +37,7 @@ module.exports = {
             .getPlayerAll()
             .flatMap(player => game.getTopCards(player))
             .filter(card => card.checkIsFigure())
-          game.aChooseAndReturn(player, topFigures)
+          game.actions.chooseAndReturn(player, topFigures)
         }
       }
     }

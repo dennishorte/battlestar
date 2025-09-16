@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const cards = game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'), { count: 2 })
+      const cards = game.actions.chooseAndMeld(player, game.getCardsByZone(player, 'hand'), { count: 2 })
 
       if (
         cards

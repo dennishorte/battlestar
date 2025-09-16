@@ -22,7 +22,7 @@ module.exports = {
         const choices = game
           .getAvailableAchievementsRaw(player)
           .filter(ach => ach.getAge() <= age)
-        game.aChooseAndAchieve(player, choices, { nonAction: true })
+        game.actions.chooseAndAchieve(player, choices, { nonAction: true })
       }
     }
   ]

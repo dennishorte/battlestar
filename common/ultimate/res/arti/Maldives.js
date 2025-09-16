@@ -13,17 +13,17 @@ module.exports = {
     (game, player) => {
       const hand = game.getCardsByZone(player, 'hand')
       const handCount = Math.max(0, hand.length - 2)
-      game.aChooseAndReturn(player, hand, { count: handCount })
+      game.actions.chooseAndReturn(player, hand, { count: handCount })
 
       const score = game.getCardsByZone(player, 'score')
       const scoreCount = Math.max(0, score.length - 2)
-      game.aChooseAndReturn(player, score, { count: scoreCount })
+      game.actions.chooseAndReturn(player, score, { count: scoreCount })
     },
 
     (game, player) => {
       const score = game.getCardsByZone(player, 'score')
       const scoreCount = Math.max(0, score.length - 4)
-      game.aChooseAndReturn(player, score, { count: scoreCount })
+      game.actions.chooseAndReturn(player, score, { count: scoreCount })
     },
   ],
 }

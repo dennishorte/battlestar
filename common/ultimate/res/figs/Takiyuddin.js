@@ -24,7 +24,7 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func: (game, player, { color }) => {
-        game.aChooseAndSplay(player, [color], 'right')
+        game.actions.chooseAndSplay(player, [color], 'right')
       }
     }
   ]

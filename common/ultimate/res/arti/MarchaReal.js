@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cards = game.aChooseCards(player, game.getCardsByZone(player, 'hand'), { count: 2 })
+      const cards = game.actions.chooseCards(player, game.getCardsByZone(player, 'hand'), { count: 2 })
 
       if (cards && cards.length > 0) {
         game.aRevealMany(player, cards, { ordered: true })
@@ -24,7 +24,7 @@ module.exports = {
 
         if (cards[0].color === cards[1].color) {
           const choices = game.getAvailableAchievementsRaw(player)
-          game.aChooseAndAchieve(player, choices)
+          game.actions.chooseAndAchieve(player, choices)
         }
       }
     }

@@ -14,7 +14,7 @@ module.exports = {
   dogma: [],
   dogmaImpl: [],
   echoImpl: (game, player) => {
-    game.aChooseAndSplay(player, null, 'up')
+    game.actions.chooseAndSplay(player, null, 'up')
   },
   karmaImpl: [
     {

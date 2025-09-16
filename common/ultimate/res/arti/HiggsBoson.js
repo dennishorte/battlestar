@@ -27,7 +27,7 @@ module.exports = {
             break
           }
           else {
-            const card = game.aChooseCard(player, choices)
+            const card = game.actions.chooseCard(player, choices)
             if (card) {
               game.aTransfer(player, card, scoreZone)
             }

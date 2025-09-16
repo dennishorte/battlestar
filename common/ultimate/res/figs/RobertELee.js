@@ -17,10 +17,10 @@ module.exports = {
     const cardChoices = game
       .getTopCardsAll()
       .filter(card => card.checkHasBiscuit('l'))
-    const card = game.aChooseCard(player, cardChoices)
+    const card = game.actions.chooseCard(player, cardChoices)
 
     if (card) {
-      const targetPlayer = game.aChoosePlayer(player, game.getPlayerAll())
+      const targetPlayer = game.actions.choosePlayer(player, game.getPlayerAll())
       const target = game.getZoneByPlayer(targetPlayer, card.color)
 
       game.aTransfer(player, card, target)

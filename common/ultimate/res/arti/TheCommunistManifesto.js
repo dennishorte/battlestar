@@ -17,7 +17,7 @@ module.exports = {
       let mine = null
       for (const target of players) {
         const title = `Choose a card to transfer to ${target.name}`
-        const card = game.aChooseCard(player, remaining, { title })
+        const card = game.actions.chooseCard(player, remaining, { title })
         remaining = remaining.filter(other => other !== card)
 
         const transferred = game.aTransfer(player, card, game.getZoneByPlayer(target, card.color))

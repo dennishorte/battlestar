@@ -23,7 +23,7 @@ module.exports = {
       },
       func(game, player) {
         const choices = game.getEligibleAchievements(player, { ignoreScore: true })
-        game.aChooseAndAchieve(player, choices)
+        game.actions.chooseAndAchieve(player, choices)
       }
     }
   ]

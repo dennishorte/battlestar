@@ -24,7 +24,7 @@ module.exports = {
       kind: 'would-first',
       matches: (game, player, { age }) => age === 3,
       func: (game, player) => {
-        game.aChooseAndTransfer(
+        game.actions.chooseAndTransfer(
           player,
           game.getCardsByZone(player, 'score'),
           game.getZoneByPlayer(player, 'forecast')

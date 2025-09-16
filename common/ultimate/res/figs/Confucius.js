@@ -18,7 +18,7 @@ module.exports = {
       .flatMap(opp => game.getTopCards(opp))
       .filter(card => card.checkIsFigure())
       .filter(card => card.getAge() === 1)
-    game.aChooseAndScore(player, choices)
+    game.actions.chooseAndScore(player, choices)
   },
   karmaImpl: [
     {

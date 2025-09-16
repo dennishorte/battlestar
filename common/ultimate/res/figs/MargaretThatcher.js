@@ -17,7 +17,7 @@ module.exports = {
       .getPlayerAll()
       .flatMap(player => game.getTopCards(player))
       .filter(card => card.biscuits.includes('f') || card.biscuits.includes('c'))
-    game.aChooseAndScore(player, choices)
+    game.actions.chooseAndScore(player, choices)
   },
   karmaImpl: [
     {
@@ -29,7 +29,7 @@ module.exports = {
           .getPlayerAll()
           .flatMap(player => game.getTopCards(player))
           .filter(card => card.biscuits.includes('f') || card.biscuits.includes('c'))
-        game.aChooseAndScore(player, choices)
+        game.actions.chooseAndScore(player, choices)
       }
     }
   ]

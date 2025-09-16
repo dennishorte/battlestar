@@ -11,8 +11,8 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
-      game.aChooseAndTransfer(player, game.getCardsByZone(player, 'score'), game.getZoneByPlayer(player, 'hand'), { min: 0, max: 1 })
+      game.actions.chooseAndScore(player, game.getCardsByZone(player, 'hand'), { min: 0, max: 1 })
+      game.actions.chooseAndTransfer(player, game.getCardsByZone(player, 'score'), game.getZoneByPlayer(player, 'hand'), { min: 0, max: 1 })
 
       if (game.getScore(player) === 25) {
         game.youWin(player, self.name)

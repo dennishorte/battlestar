@@ -16,7 +16,7 @@ module.exports = {
     const rightColors = game
       .utilColors()
       .filter(color => game.getZoneByPlayer(player, color).splay === 'right')
-    game.aChooseAndSplay(player, rightColors, 'up')
+    game.actions.chooseAndSplay(player, rightColors, 'up')
   },
   karmaImpl: [
     {

@@ -20,7 +20,7 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func: (game, player, { owner }) => {
-        const returned = game.aChooseAndReturn(
+        const returned = game.actions.chooseAndReturn(
           owner,
           game.getCardsByZone(owner, 'hand'),
           { min: 0, max: 1 }

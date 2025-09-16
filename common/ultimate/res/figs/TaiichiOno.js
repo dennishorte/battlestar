@@ -24,7 +24,7 @@ module.exports = {
         const choices = game
           .getCardsByZone(player, 'hand')
           .filter(other => other.dogmaBiscuit === card.dogmaBiscuit)
-        game.aChooseAndAchieve(player, choices)
+        game.actions.chooseAndAchieve(player, choices)
       }
     }
   ]

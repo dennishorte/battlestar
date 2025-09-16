@@ -15,7 +15,7 @@ module.exports = {
   dogmaImpl: [],
   echoImpl: [
     (game, player) => {
-      const age = game.aChooseAge(player, [game.getEffectAge(this, 2), game.getEffectAge(this, 3)])
+      const age = game.actions.chooseAge(player, [game.getEffectAge(this, 2), game.getEffectAge(this, 3)])
       game.aDrawAndForeshadow(player, age)
     }
   ],

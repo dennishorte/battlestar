@@ -18,9 +18,9 @@ module.exports = {
         game.aDraw(player, { age }),
       ]
 
-      const returned = game.aChooseAndReturn(player, cards) || []
+      const returned = game.actions.chooseAndReturn(player, cards) || []
       const remainining = cards.filter(card => !returned.includes(card))
-      game.aChooseAndScore(player, remainining)
+      game.actions.chooseAndScore(player, remainining)
     }
   ],
 }

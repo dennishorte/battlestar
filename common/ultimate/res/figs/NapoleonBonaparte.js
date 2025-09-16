@@ -18,7 +18,7 @@ module.exports = {
       .getTopCardsAll()
       .filter(card => card.checkIsFigure())
       .filter(card => card.getAge() === 5 || card.getAge() === 6)
-    game.aChooseAndScore(player, choices)
+    game.actions.chooseAndScore(player, choices)
   },
   karmaImpl: [
     {
@@ -35,7 +35,7 @@ module.exports = {
         const choices = game
           .getTopCardsAll()
           .filter(card => card.getAge() === 6)
-        game.aChooseAndScore(player, choices)
+        game.actions.chooseAndScore(player, choices)
       }
     }
   ]

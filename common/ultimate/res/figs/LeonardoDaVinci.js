@@ -19,7 +19,7 @@ module.exports = {
       .flatMap(player => game.getTopCards(player))
       .filter(card => card.checkIsFigure())
       .filter(card => card.checkHasBonus())
-    game.aChooseAndScore(player, choices)
+    game.actions.chooseAndScore(player, choices)
   },
   karmaImpl: [
     {

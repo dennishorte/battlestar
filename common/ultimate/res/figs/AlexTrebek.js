@@ -31,7 +31,7 @@ module.exports = {
           .figs
           .byAge[age]
           .sort((l, r) => l.name.localeCompare(r.name))
-        const card = game.aChooseCard(player, choices)
+        const card = game.actions.chooseCard(player, choices)
 
         game.log.add({
           template: '{player} says "Who is {name}?"',

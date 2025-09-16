@@ -14,7 +14,7 @@ module.exports = {
       const choices = game
         .getCardsByZone(player, 'hand')
         .filter(card => card.getAge() === game.getEffectAge(self, 8))
-      const cards = game.aChooseAndMeld(player, choices)
+      const cards = game.actions.chooseAndMeld(player, choices)
 
       if (cards && cards.length > 0) {
         const card = cards[0]

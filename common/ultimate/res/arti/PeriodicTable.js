@@ -29,7 +29,7 @@ module.exports = {
           .flatMap(cards => util.array.pairs(cards))
           .map(([x, y]) => `${x.name}, ${y.name}`)
 
-        const selections = game.aChoose(player, choices, { title: 'Choose two cards' })
+        const selections = game.actions.choose(player, choices, { title: 'Choose two cards' })
         if (selections && selections.length > 0) {
           const cards = selections[0]
             .split(', ')

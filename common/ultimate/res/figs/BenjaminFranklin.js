@@ -19,7 +19,7 @@ module.exports = {
       .flatMap(p => game.getTopCards(p))
       .filter(card => card.checkIsFigure())
 
-    const card = game.aChooseCard(player, choices)
+    const card = game.actions.chooseCard(player, choices)
     if (card) {
       game.log.add({
         template: '{player} takes {card} into their hand',

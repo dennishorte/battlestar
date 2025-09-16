@@ -26,7 +26,7 @@ module.exports = {
         game.log.add({ template: 'Player has 4 or more cards in hand' })
       }
 
-      game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
+      game.actions.chooseAndMeld(player, game.getCardsByZone(player, 'hand'))
     }
   ],
 }

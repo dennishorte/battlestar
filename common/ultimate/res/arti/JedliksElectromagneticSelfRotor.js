@@ -17,7 +17,7 @@ module.exports = {
         .getAvailableAchievementsRaw(player)
         .filter(ach => ach.age === 8)
 
-      game.aChooseAndAchieve(player, choices)
+      game.actions.chooseAndAchieve(player, choices)
     }
   ],
 }

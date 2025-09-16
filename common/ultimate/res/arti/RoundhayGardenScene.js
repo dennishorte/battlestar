@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = game.utilHighestCards(game.getCardsByZone(player, 'score'))
-      const cards = game.aChooseAndMeld(player, choices)
+      const cards = game.actions.chooseAndMeld(player, choices)
       if (cards && cards.length > 0) {
         const card = cards[0]
         game.aDrawAndScore(player, card.getAge())

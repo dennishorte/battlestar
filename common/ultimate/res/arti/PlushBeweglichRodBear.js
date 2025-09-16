@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const age = game.aChooseAge(player)
+      const age = game.actions.chooseAge(player)
 
       game
         .utilColors()

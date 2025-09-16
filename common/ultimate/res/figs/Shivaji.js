@@ -14,7 +14,7 @@ module.exports = {
   dogma: [],
   dogmaImpl: [],
   echoImpl: (game, player) => {
-    game.aChooseAndTransfer(player, game.getTopCards(player), game.getZoneById('achievements'))
+    game.actions.chooseAndTransfer(player, game.getTopCards(player), game.getZoneById('achievements'))
   },
   karmaImpl: [
     {

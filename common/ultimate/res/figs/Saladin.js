@@ -19,7 +19,7 @@ module.exports = {
       .getTopCardsAll()
       .filter(card => card.checkHasBiscuit('k'))
       .filter(card => card !== self)
-    game.aChooseAndScore(player, choices)
+    game.actions.chooseAndScore(player, choices)
   },
   karmaImpl: [
     {
@@ -32,7 +32,7 @@ module.exports = {
       matches: (game, player, { card }) => card.expansion !== 'figs',
       func: (game, player, { card }) => {
         game.aMeld(player, card)
-        game.aChooseAndSplay(player, [card.color], 'left')
+        game.actions.chooseAndSplay(player, [card.color], 'left')
       }
     }
   ]

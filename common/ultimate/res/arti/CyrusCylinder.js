@@ -17,7 +17,7 @@ module.exports = {
         .filter(card => card !== undefined)
         .filter(card => card.name !== self.name)
 
-      const card = game.aChooseCard(player, choices)
+      const card = game.actions.chooseCard(player, choices)
       if (card) {
         game.aCardEffects(player, card, 'dogma')
       }
@@ -29,7 +29,7 @@ module.exports = {
         .flatMap(player => game.utilColors().map(color => ({ player, color })))
         .map(x => `${x.player.name}-${x.color}`)
 
-      const selections = game.aChoose(player, splayChoices)
+      const selections = game.actions.choose(player, splayChoices)
       if (selections && selections.length > 0) {
         const [playerName, color] = selections[0].split('-')
         const other = game.getPlayerByName(playerName)

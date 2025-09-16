@@ -13,7 +13,7 @@ module.exports = {
       const choices = game
         .utilHighestCards(game.getTopCards(player))
         .map(card => card.color)
-      const colors = game.aChoose(player, choices, { title: 'Choose a color' })
+      const colors = game.actions.choose(player, choices, { title: 'Choose a color' })
       if (colors && colors.length > 0) {
         const color = colors[0]
         const cards = game.getCardsByZone(player, color)
@@ -21,7 +21,7 @@ module.exports = {
 
         if (cards.length > 1) {
           const achs = game.getAvailableAchievementsRaw(player)
-          game.aChooseAndAchieve(player, achs)
+          game.actions.chooseAndAchieve(player, achs)
         }
       }
     }

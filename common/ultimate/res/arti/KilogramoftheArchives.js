@@ -10,8 +10,8 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const hand = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'))
-      const top = game.aChooseAndReturn(player, game.getTopCards(player))
+      const hand = game.actions.chooseAndReturn(player, game.getCardsByZone(player, 'hand'))
+      const top = game.actions.chooseAndReturn(player, game.getTopCards(player))
 
       if (hand && top && hand.length > 0 && top.length > 0) {
         const sum = hand[0].getAge() + top[0].getAge()

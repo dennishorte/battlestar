@@ -10,14 +10,14 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const cards = game.aChooseAndReveal(
+      const cards = game.actions.chooseAndReveal(
         player,
         game.getCardsByZone(player, 'hand'),
         { count: 3 }
       )
 
       if (cards.length > 0) {
-        const toScore = game.aChooseCards(player, cards, { count: 2, title: 'Card to score' })
+        const toScore = game.actions.chooseCards(player, cards, { count: 2, title: 'Card to score' })
         const scored = game.aScoreMany(player, toScore)
 
         const remaining = cards.filter(card => !toScore.includes(card))

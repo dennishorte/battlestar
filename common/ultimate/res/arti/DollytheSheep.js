@@ -47,7 +47,7 @@ module.exports = {
 
       // Otherwise, meld the highest card in your hand and draw a 10.
       else {
-        const cards = game.aChooseHighest(player, game.getCardsByZone(player, 'hand'), 1)
+        const cards = game.actions.chooseHighest(player, game.getCardsByZone(player, 'hand'), 1)
         if (cards && cards.length > 0) {
           game.aMeld(player, cards[0])
         }

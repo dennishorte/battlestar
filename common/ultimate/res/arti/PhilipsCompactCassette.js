@@ -17,7 +17,7 @@ module.exports = {
     },
 
     (game, player) => {
-      game.aChooseAndSplay(player, null, 'up', { count: 2 })
+      game.actions.chooseAndSplay(player, null, 'up', { count: 2 })
     },
   ],
 }

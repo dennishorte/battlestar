@@ -14,7 +14,7 @@ module.exports = {
       const purples = game
         .getCardsByZone(player, 'hand')
         .filter(card => card.color === 'purple')
-      const returned = game.aChooseAndReturn(player, purples)
+      const returned = game.actions.chooseAndReturn(player, purples)
 
       if (returned && returned.length > 0) {
         const returnedCard = returned[0]

@@ -20,7 +20,7 @@ function Card() {
 
   this.dogmaImpl = [
     (game, player) => {
-      const returned = game.aChooseAndReturn(player, game.getCardsByZone(player, 'score'), { min: 0 })
+      const returned = game.actions.chooseAndReturn(player, game.getCardsByZone(player, 'score'), { min: 0 })
       if (returned && returned.length > 0) {
         const card = game.aDrawAndMeld(player, returned.length)
         if (card.checkHasBiscuit('i')) {

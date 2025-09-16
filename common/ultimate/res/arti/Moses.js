@@ -22,7 +22,7 @@ module.exports = {
         .getPlayerAll()
         .flatMap(player => game.getTopCards(player))
         .filter(card => card.checkHasBiscuit('c'))
-      game.aChooseAndScore(player, choices)
+      game.actions.chooseAndScore(player, choices)
     }
   ],
 }

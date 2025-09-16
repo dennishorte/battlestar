@@ -46,7 +46,7 @@ function Card() {
             return `${opp.name}, ${achString}`
           })
 
-        const toTransfer = game.aChoose(player, choices, { title: 'Choose an Achievement' })
+        const toTransfer = game.actions.choose(player, choices, { title: 'Choose an Achievement' })
         if (toTransfer && toTransfer.length > 0) {
           const tokens = toTransfer[0].split(', ')
           const playerName = tokens[0]
@@ -79,7 +79,7 @@ function Card() {
           .getPlayerOpponents(player)
           .filter(opp => game.getCardsByZone(opp, 'score').find(c => c.getAge() === card.getAge()))
 
-        const opp = game.aChoosePlayer(player, choices, { title: 'Choose a player to steal a score card from.' })
+        const opp = game.actions.choosePlayer(player, choices, { title: 'Choose a player to steal a score card from.' })
         if (opp) {
           const toTransfer = game
             .getCardsByZone(opp, 'score')

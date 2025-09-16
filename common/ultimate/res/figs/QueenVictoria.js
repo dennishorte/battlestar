@@ -19,7 +19,7 @@ module.exports = {
       .filter(other => other !== player)
       .flatMap(player => game.getCardsByZone(player, 'score'))
       .filter(card => card.checkIsFigure())
-    game.aChooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'score'))
+    game.actions.chooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'score'))
   },
   karmaImpl: [
     {
@@ -34,7 +34,7 @@ module.exports = {
         const ages = game
           .getNonEmptyAges()
           .filter(age => age < card.getAge())
-        const age = game.aChooseAge(player, ages)
+        const age = game.actions.chooseAge(player, ages)
         if (age) {
           const deckCards = game.getZoneByDeck('base', age).cards()
           const card = deckCards[deckCards.length - 1]

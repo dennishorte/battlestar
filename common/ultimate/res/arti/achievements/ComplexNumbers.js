@@ -29,12 +29,12 @@ function Card() {
           const sortedBiscuits = card.biscuits.split('').sort().join('')
           return topCardsSortedBiscuits.some(top => top === sortedBiscuits)
         })
-      const revealed = game.aChooseAndReveal(player, choices, { min: 0, max: 1 })
+      const revealed = game.actions.chooseAndReveal(player, choices, { min: 0, max: 1 })
       if (revealed && revealed.length > 0) {
         const achs = game
           .getAvailableAchievementsRaw(player)
           .filter(ach => ach.age === revealed[0].getAge())
-        game.aChooseAndAchieve(player, achs)
+        game.actions.chooseAndAchieve(player, achs)
       }
     }
   ]

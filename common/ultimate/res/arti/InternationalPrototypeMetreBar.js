@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const age = game.aChooseAge(player)
+      const age = game.actions.chooseAge(player)
       const card = game.aDrawAndMeld(player, age)
       game.aSplay(player, card.color, 'up')
 

@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cards = game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'))
+      const cards = game.actions.chooseAndTuck(player, game.getCardsByZone(player, 'hand'))
 
       if (cards && cards.length > 0) {
         const card = cards[0]
@@ -25,7 +25,7 @@ module.exports = {
           )
           .filter(zone => !zone.cards().includes(card))
           .map(zone => zone.cards()[0])
-        const choice = game.aChooseCard(player, choices)
+        const choice = game.actions.chooseCard(player, choices)
         if (choice) {
           game.aCardEffects(player, choice, 'dogma')
         }

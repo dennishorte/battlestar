@@ -22,7 +22,7 @@ module.exports = {
           continue
         }
 
-        const cards = game.aChooseAndReturn(player, choices)
+        const cards = game.actions.chooseAndReturn(player, choices)
         if (cards && cards.length > 0) {
           returned += 1
         }
@@ -41,7 +41,7 @@ module.exports = {
       else {
         const achievements = game
           .getAvailableAchievementsRaw(player)
-        game.aChooseAndAchieve(player, achievements)
+        game.actions.chooseAndAchieve(player, achievements)
       }
     }
   ],

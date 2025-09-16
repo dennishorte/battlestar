@@ -13,7 +13,7 @@ module.exports = {
       .getPlayerAll()
       .filter(p => p.name !== player.name)
       .map(p => p.name)
-    const other = game.aChoosePlayer(player, otherPlayers)
+    const other = game.actions.choosePlayer(player, otherPlayers)
 
     // Choose three cards
     const scoreCards = game

@@ -8,6 +8,6 @@ module.exports = {
   isSpecialAchievement: false,
   isDecree: true,
   decreeImpl: (game, player) => {
-    game.aChooseAndSplay(player, null, 'up', { count: 1 })
+    game.actions.chooseAndSplay(player, null, 'up', { count: 1 })
   }
 }

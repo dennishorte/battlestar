@@ -14,13 +14,13 @@ module.exports = {
       const choices = game
         .getTopCards(player)
         .filter(card => !card.checkHasBiscuit('k'))
-      game.aChooseAndReturn(player, choices)
+      game.actions.chooseAndReturn(player, choices)
     },
     (game, player) => {
       const choices = game
         .getCardsByZone(player, 'hand')
         .filter(card => !card.checkHasBiscuit('k'))
-      game.aChooseAndScore(player, choices)
+      game.actions.chooseAndScore(player, choices)
     }
   ],
 }

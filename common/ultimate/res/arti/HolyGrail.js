@@ -10,13 +10,13 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cards = game.aChooseAndReturn(player, game.getCardsByZone(player, 'hand'))
+      const cards = game.actions.chooseAndReturn(player, game.getCardsByZone(player, 'hand'))
       if (cards && cards.length > 0) {
         const card = cards[0]
         const choices = game
           .getAvailableAchievementsRaw(player)
           .filter(ach => ach.getAge() === card.age)
-        game.aChooseAndAchieve(player, choices)
+        game.actions.chooseAndAchieve(player, choices)
       }
     }
   ],

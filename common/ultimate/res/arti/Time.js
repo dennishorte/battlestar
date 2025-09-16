@@ -14,7 +14,7 @@ module.exports = {
         const choices = game
           .getTopCards(player)
           .filter(card => card.color !== 'yellow' && card.checkHasBiscuit('i'))
-        const card = game.aChooseCard(player, choices)
+        const card = game.actions.chooseCard(player, choices)
         if (card) {
           game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
           continue

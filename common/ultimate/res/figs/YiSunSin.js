@@ -16,7 +16,7 @@ module.exports = {
     const choices = game
       .getTopCardsAll()
       .filter(card => card.checkHasBiscuit('k'))
-    game.aChooseAndScore(player, choices)
+    game.actions.chooseAndScore(player, choices)
   },
   karmaImpl: [
     {

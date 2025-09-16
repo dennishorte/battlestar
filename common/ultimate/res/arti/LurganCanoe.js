@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       while (true) {
-        const melded = game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))
+        const melded = game.actions.chooseAndMeld(player, game.getCardsByZone(player, 'hand'))
         if (melded && melded.length > 0) {
           const card = melded[0]
           const toScore = game

@@ -15,7 +15,7 @@ module.exports = {
         .getTopCards(player)
         .filter(card => card.checkHasBiscuit('k'))
       const highest = game.utilHighestCards(topCastles)
-      game.aChooseAndTransfer(player, highest, game.getZoneByPlayer(leader, 'hand'))
+      game.actions.chooseAndTransfer(player, highest, game.getZoneByPlayer(leader, 'hand'))
     },
 
     (game, player, { self }) => {

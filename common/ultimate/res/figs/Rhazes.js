@@ -13,7 +13,7 @@ module.exports = {
   dogma: [],
   dogmaImpl: [],
   echoImpl: (game, player) => {
-    const age = game.aChooseAge(player, [
+    const age = game.actions.chooseAge(player, [
       game.getEffectAge(this, 3),
       game.getEffectAge(this, 4),
       game.getEffectAge(this, 5),
@@ -29,7 +29,7 @@ module.exports = {
         const choices = game
           .getCardsByZone(player, 'hand')
           .filter(other => other.getAge() === age)
-        game.aChooseAndTuck(player, choices)
+        game.actions.chooseAndTuck(player, choices)
       }
     }
   ]

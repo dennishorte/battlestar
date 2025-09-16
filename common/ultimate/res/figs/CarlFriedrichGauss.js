@@ -23,7 +23,7 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func(game, player, { card }) {
-        const age = game.aChooseAge(player)
+        const age = game.actions.chooseAge(player)
         const hand = game
           .getCardsByZone(player, 'hand')
           .filter(card => card.getAge() === age)

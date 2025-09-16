@@ -13,8 +13,8 @@ module.exports = {
       const lowestHandCards = game.utilLowestCards(game.getCardsByZone(player, 'hand'))
       const lowestBoardCards = game.utilLowestCards(game.getTopCards(player))
 
-      const cards1 = game.aChooseAndReturn(player, lowestHandCards) || []
-      const cards2 = game.aChooseAndReturn(player, lowestBoardCards) || []
+      const cards1 = game.actions.chooseAndReturn(player, lowestHandCards) || []
+      const cards2 = game.actions.chooseAndReturn(player, lowestBoardCards) || []
 
       const returnedSum = []
         .concat(cards1, cards2)

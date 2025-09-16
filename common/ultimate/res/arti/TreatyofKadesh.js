@@ -22,7 +22,7 @@ module.exports = {
         .getTopCards(player)
         .filter(card => card.checkHasDemand())
         .filter(card => card.color !== 'blue')
-      game.aChooseAndScore(player, choices)
+      game.actions.chooseAndScore(player, choices)
     },
   ],
 }

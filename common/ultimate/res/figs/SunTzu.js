@@ -27,7 +27,7 @@ module.exports = {
         const choices = game
           .getCardsByZone(player, 'hand')
           .filter(card => card.checkHasBiscuit(featuredBiscuit))
-        game.aChooseAndMeld(player, choices, { min: 0, max: choices.length })
+        game.actions.chooseAndMeld(player, choices, { min: 0, max: choices.length })
       }
     },
   ]

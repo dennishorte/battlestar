@@ -17,7 +17,7 @@ module.exports = {
           const mine = game.getZoneByPlayer(leader, color).numVisibleCards()
           return yours > mine
         })
-      const colors = game.aChoose(player, choices, { title: 'Choose a Color' })
+      const colors = game.actions.choose(player, choices, { title: 'Choose a Color' })
       if (colors && colors.length > 0) {
         const toTransfer = game.getCardsByZone(player, colors[0]).reverse()
         const dest = game.getZoneByPlayer(leader, colors[0])

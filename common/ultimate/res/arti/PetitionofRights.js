@@ -14,7 +14,7 @@ module.exports = {
         .getTopCards(player)
         .filter(card => card.checkHasBiscuit('k'))
         .length
-      game.aChooseAndTransfer(
+      game.actions.chooseAndTransfer(
         player,
         game.getCardsByZone(player, 'score'),
         game.getZoneByPlayer(leader, 'score'),
