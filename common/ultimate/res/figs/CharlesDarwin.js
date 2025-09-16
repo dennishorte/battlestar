@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   id: `Charles Darwin`,  // Card names are unique in Innovation
@@ -37,10 +36,7 @@ module.exports = {
         const exclusiveCondition = sorted[0].count > sorted[1].count
 
         if (mostCondition && exclusiveCondition) {
-          throw new GameOverEvent({
-            player,
-            reason: this.name
-          })
+          game.youWin(player, this.name)
         }
       }
     }

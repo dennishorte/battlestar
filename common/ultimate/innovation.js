@@ -937,10 +937,7 @@ Innovation.prototype.aYouLose = function(player, card) {
   const livingPlayers = this.players.all().filter(player => !player.dead)
 
   if (livingPlayers.length === 1) {
-    throw new GameOverEvent({
-      player: livingPlayers[0],
-      reason: card.name,
-    })
+    this.youWin(livingPlayers[0], card.name)
   }
 
 }

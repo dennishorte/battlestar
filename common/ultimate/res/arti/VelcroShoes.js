@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Velcro Shoes`,
@@ -31,10 +30,7 @@ module.exports = {
         return
       }
 
-      throw new GameOverEvent({
-        player: leader,
-        reason: self.name
-      })
+      game.youWin(leader, self.name)
     }
   ],
 }

@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Dolly the Sheep`,
@@ -43,10 +42,7 @@ module.exports = {
       // You win if your bottom yellow card is domestication.
       const newYellowCards = game.getCardsByZone(player, 'yellow')
       if (newYellowCards.length > 0 && newYellowCards[newYellowCards.length - 1].name === 'Domestication') {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
 
       // Otherwise, meld the highest card in your hand and draw a 10.

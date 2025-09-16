@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 
 module.exports = {
@@ -31,10 +30,7 @@ module.exports = {
         .length
 
       if (greenCount >= 10) {
-        throw new GameOverEvent({
-          player,
-          reason: 'Collaboration'
-        })
+        game.youWin(player, 'Collaboration')
       }
       else {
         game.log.addNoEffect()

@@ -1,5 +1,4 @@
 const util = require('../../../lib/util.js')
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Sudoku`,
@@ -19,10 +18,7 @@ module.exports = {
 
       const bonuses = util.array.distinct(game.getBonuses(player))
       if (bonuses.length >= 9) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
 
       else if (card) {

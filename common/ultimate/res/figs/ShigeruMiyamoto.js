@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   id: `Shigeru Miyamoto`,  // Card names are unique in Innovation
@@ -34,10 +33,7 @@ module.exports = {
       func: (game, player) => {
         const clocks = game.getBiscuitsByPlayer(player).i
         if (clocks === 1 || clocks === 3 || clocks === 6) {
-          throw new GameOverEvent({
-            player,
-            reason: this.name
-          })
+          game.youWin(player, this.name)
         }
         else {
           game.mLogNoEffect()

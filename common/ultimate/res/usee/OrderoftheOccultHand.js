@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Order of the Occult Hand`,
@@ -28,10 +27,7 @@ module.exports = {
         .some(card => card.getAge() === 7)
 
       if (hasAge7) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
     },
     (game, player) => {

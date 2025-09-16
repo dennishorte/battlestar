@@ -1,5 +1,4 @@
 const { BaseActionManager } = require('../lib/game/index.js')
-const { GameOverEvent } = require('../lib/game.js')
 
 const { DogmaAction, EndorseAction } = require('./actions/Dogma.js')
 const { DrawAction } = require('./actions/Draw.js')
@@ -55,10 +54,7 @@ class UltimateActionManager extends BaseActionManager {
     if (!this.state.wouldWinKarma) {
       for (const player of this.players.all()) {
         if (this.game.getAchievementsByPlayer(player).total >= this.game.getNumAchievementsToWin()) {
-          throw new GameOverEvent({
-            player,
-            reason: 'achievements'
-          })
+          this.game.youWin(player, 'achievements')
         }
       }
     }

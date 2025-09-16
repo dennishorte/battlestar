@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   id: `Caresse Crosby`,  // Card names are unique in Innovation
@@ -44,10 +43,7 @@ module.exports = {
         return toSplayLeftCondition && leftCondition && notLeftCondition
       },
       func(game, player) {
-        throw new GameOverEvent({
-          player,
-          reason: 'Caresse Crosby'
-        })
+        game.youWin(player, 'Caresse Crosby')
       }
     },
   ]

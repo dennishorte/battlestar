@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   id: `Emperor Meiji`,  // Card names are unique in Innovation
@@ -33,10 +32,7 @@ module.exports = {
         return cardCondition && nineCondition && eightCondition
       },
       func: (game, player) => {
-        throw new GameOverEvent({
-          player,
-          reason: 'Emperor Meiji'
-        })
+        game.youWin(player, 'Emperor Meiji')
       }
     },
 

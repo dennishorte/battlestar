@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   id: `Grace Hopper`,  // Card names are unique in Innovation
@@ -27,10 +26,7 @@ module.exports = {
         const card = game.aDraw(player, { age: game.getEffectAge(this, 10) })
         if (card && card.color === 'blue') {
           game.mReveal(player, card)
-          throw new GameOverEvent({
-            player,
-            reason: this.name
-          })
+          game.youWin(player, this.name)
         }
       }
     }

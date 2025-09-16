@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Rock`,
@@ -20,10 +19,7 @@ module.exports = {
 
         const next = game.getTopCard(player, 'green')
         if (next && next.name === 'Scissors') {
-          throw new GameOverEvent({
-            player: leader,
-            reason: self.name
-          })
+          game.youWin(leader, self.name)
         }
       }
     },
@@ -33,10 +29,7 @@ module.exports = {
 
       const card = game.getTopCard(player, 'green')
       if (card && card.name === 'Paper') {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
     }
   ],

@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Photography`,
@@ -48,10 +47,7 @@ module.exports = {
 
         game.log.addForeseen(foreseen, self)
         if (foreseen) {
-          throw new GameOverEvent({
-            reason: self.name,
-            player
-          })
+          game.youWin(player, self.name)
         }
       }
       else {

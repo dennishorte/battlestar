@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Maastricht Treaty`,
@@ -18,10 +17,7 @@ module.exports = {
         .map(player => game.getCardsByZone(player, 'score').length)
       const hasMost = otherCounts.every(count => count < playerCount)
       if (hasMost) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
       else {
         game.mLogNoEffect()

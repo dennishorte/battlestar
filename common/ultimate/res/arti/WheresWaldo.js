@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Where's Waldo`,
@@ -12,10 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      throw new GameOverEvent({
-        player,
-        reason: self.name
-      })
+      game.youWin(player, self.name)
     }
   ],
 }

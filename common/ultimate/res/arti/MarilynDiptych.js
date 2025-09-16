@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Marilyn Diptych`,
@@ -16,10 +15,7 @@ module.exports = {
       game.aChooseAndTransfer(player, game.getCardsByZone(player, 'score'), game.getZoneByPlayer(player, 'hand'), { min: 0, max: 1 })
 
       if (game.getScore(player) === 25) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
     }
   ],

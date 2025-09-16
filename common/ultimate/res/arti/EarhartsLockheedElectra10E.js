@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Earhart's Lockheed Electra 10E`,
@@ -37,10 +36,7 @@ module.exports = {
         args: { player, count: returned }
       })
       if (returned === 8) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
       else {
         const achievements = game

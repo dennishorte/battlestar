@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 
 module.exports = {
@@ -20,10 +19,7 @@ module.exports = {
         .map(player => game.getAchievementsByPlayer(player).total * 2)
 
       if (mine > 0 && others.every(count => count <= mine)) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
       else {
         game.log.addNoEffect()

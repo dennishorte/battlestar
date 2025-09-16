@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Garland's Ruby Slippers`,
@@ -25,10 +24,7 @@ module.exports = {
           && card.inspire.length === 0
           && card.karma.length === 0
         ) {
-          throw new GameOverEvent({
-            player,
-            reason: self.name
-          })
+          game.youWin(player, self.name)
         }
 
         else {

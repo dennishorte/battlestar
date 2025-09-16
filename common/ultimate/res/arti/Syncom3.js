@@ -1,5 +1,4 @@
 const util = require('../../../lib/util.js')
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Syncom 3`,
@@ -26,10 +25,7 @@ module.exports = {
       const colorCount = util.array.distinct(colors).length
       game.mLog({ template: `Player drew ${colorCount} colors`})
       if (colorCount === 5) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
     }
   ],

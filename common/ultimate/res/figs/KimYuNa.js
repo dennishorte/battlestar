@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   id: `Kim Yu-Na`,  // Card names are unique in Innovation
@@ -23,10 +22,7 @@ module.exports = {
       kind: 'would-instead',
       matches: (game, func, { card }) => card.biscuits.includes('k'),
       func: (game, player) => {
-        throw new GameOverEvent({
-          player,
-          reason: this.name
-        })
+        game.youWin(player, this.name)
       }
     }
   ]

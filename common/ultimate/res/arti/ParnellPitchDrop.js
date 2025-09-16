@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Parnell Pitch Drop`,
@@ -14,10 +13,7 @@ module.exports = {
     (game, player, { self }) => {
       const card = game.aDrawAndMeld(player, game.getHighestTopAge(player) + 1)
       if (card.biscuits.split('i').length - 1 === 3) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
     }
   ],

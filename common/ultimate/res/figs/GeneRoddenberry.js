@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   id: `Gene Roddenberry`,  // Card names are unique in Innovation
@@ -30,10 +29,7 @@ module.exports = {
       },
       func: (game, player, { card }) => {
         if (card.name === 'Enterprise') {
-          throw new GameOverEvent({
-            player,
-            reason: this.name,
-          })
+          game.youWin(player, this.name)
         }
         else {
           game.aTuck(player, card)

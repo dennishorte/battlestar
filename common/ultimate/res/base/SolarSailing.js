@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 
 module.exports = {
@@ -35,10 +34,7 @@ module.exports = {
       // Check for win condition
       const colorCount = zone.cardlist().length
       if (colorCount >= 6) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
     }
   ],

@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Seikan Tunnel`,
@@ -27,10 +26,7 @@ module.exports = {
         zones[0].count > zones[1].count
         && zones[0].player === player
       ) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
 
       else {

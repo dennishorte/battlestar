@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 
 module.exports = {
@@ -35,10 +34,7 @@ module.exports = {
       )
 
       if (conditionMet) {
-        throw new GameOverEvent({
-          player: game.players.byName(biscuits[0].player),
-          reason: 'Bioengineering',
-        })
+        game.youWin(game.players.byName(biscuits[0].player), 'Bioengineering')
       }
       else if (biscuits[0].leafs === biscuits[1].leafs) {
         game.log.add({ template: 'there is a tie for fewest leafs' })

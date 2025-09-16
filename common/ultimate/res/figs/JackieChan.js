@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   id: `Jackie Chan`,  // Card names are unique in Innovation
@@ -44,10 +43,7 @@ module.exports = {
             template: '{player} now has the most points',
             args: { player }
           })
-          throw new GameOverEvent({
-            player,
-            reason: this.name
-          })
+          game.youWin(player, this.name)
         }
         else {
           game.mLog({

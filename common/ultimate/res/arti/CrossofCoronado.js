@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 const util = require('../../../lib/util.js')
 
 module.exports = {
@@ -20,10 +19,7 @@ module.exports = {
 
       const colors = util.array.distinct(cards.map(card => card.color))
       if (cards.length === 5 && colors.length === 5) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
     }
   ],

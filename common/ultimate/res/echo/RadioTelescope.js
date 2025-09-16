@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Radio Telescope`,
@@ -40,10 +39,7 @@ module.exports = {
       const melded = game.actions.chooseAndMeld(player, drawn)
 
       if (melded.length > 0 && melded[0].name === 'A.I.') {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
 
       const toReturn = drawn.filter(card => card !== melded[0])

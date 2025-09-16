@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Magnavox Odyssey`,
@@ -16,10 +15,7 @@ module.exports = {
       const card2 = game.aDrawAndMeld(player, game.getEffectAge(self, 10))
 
       if (card1.color === card2.color) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
       else {
         game.mLog({ template: 'Colors do not match' })

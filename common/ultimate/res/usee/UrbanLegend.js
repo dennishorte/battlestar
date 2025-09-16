@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Urban Legend`,
@@ -24,10 +23,7 @@ module.exports = {
       })
 
       if (drawnCards === 5) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
     },
     (game, player) => {

@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 
 module.exports = {
@@ -42,10 +41,7 @@ module.exports = {
           .sort((l, r) => r.score - l.score)
 
         if (playersByScore[0].score > playersByScore[1].score) {
-          throw new GameOverEvent({
-            reason: 'Globalization',
-            player: playersByScore[0].player
-          })
+          game.youWin(playersByScore[0].player, 'Globalization')
         }
       }
       else {

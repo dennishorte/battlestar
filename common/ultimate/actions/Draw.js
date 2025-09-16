@@ -1,5 +1,3 @@
-const { GameOverEvent } = require('../../lib/game.js')
-
 function DrawAction(player, opts={}) {
   const { age, isAction } = opts
 
@@ -54,17 +52,11 @@ function _doDraw(player, exp, age, opts={}) {
           return r.achs - l.achs
         }
         else {
-          throw new GameOverEvent({
-            player,
-            reason: 'Tied for points and achievements; player who drew the big card wins!'
-          })
+          this.game.youWin(player, 'Tied for points and achievements; player who drew the big card wins!')
         }
       })
 
-    throw new GameOverEvent({
-      reason: scores[0].reason,
-      player: scores[0].player,
-    })
+    this.game.youWin(scores[0].player, scores[0].reason)
   }
 
   const source = this.zones.byDeck(exp, age)
