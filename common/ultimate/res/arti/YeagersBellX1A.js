@@ -16,11 +16,11 @@ module.exports = {
           game.aExecuteAsIf(player, card)
 
           if (card.checkHasBiscuit('i')) {
-            game.mLog({ template: 'Card had an {i}.' })
+            game.log.add({ template: 'Card had an {i}.' })
             continue
           }
           else {
-            game.mLog({ template: 'Card did not have an {i}.' })
+            game.log.add({ template: 'Card did not have an {i}.' })
             break
           }
         }

@@ -18,7 +18,7 @@ module.exports = {
     const card2 = game.aDrawAndReveal(player, game.getEffectAge(this, 9))
 
     if (card1.color === 'purple' || card2.color === 'purple') {
-      game.mLog({
+      game.log.add({
         template: '{player} drew a purple card',
         args: { player }
       })

@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       if (!game.isCardOnPlayerBoard(player, self)) {
-        game.mLog({
+        game.log.add({
           template: "{card} is not on {player}'s board.",
           args: { card: self, player }
         })

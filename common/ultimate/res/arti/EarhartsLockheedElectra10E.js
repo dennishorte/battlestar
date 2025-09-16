@@ -18,7 +18,7 @@ module.exports = {
           .filter(card => card.getAge() === i)
 
         if (!choices) {
-          game.mLog({ template: `no cards of value ${i}` })
+          game.log.add({ template: `no cards of value ${i}` })
           continue
         }
 
@@ -27,11 +27,11 @@ module.exports = {
           returned += 1
         }
         else {
-          game.mLog({ template: 'no card was returned' })
+          game.log.add({ template: 'no card was returned' })
         }
       }
 
-      game.mLog({
+      game.log.add({
         template: '{player} returned {count} cards',
         args: { player, count: returned }
       })

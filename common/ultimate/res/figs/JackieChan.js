@@ -39,14 +39,14 @@ module.exports = {
           .map(other => game.getScore(other))
         const mostPointsCondition = others.every(otherScore => otherScore < score)
         if (mostPointsCondition) {
-          game.mLog({
+          game.log.add({
             template: '{player} now has the most points',
             args: { player }
           })
           game.youWin(player, this.name)
         }
         else {
-          game.mLog({
+          game.log.add({
             template: '{player} still does not have the most points',
             args: { player }
           })

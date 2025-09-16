@@ -18,7 +18,7 @@ module.exports = {
         game.youWin(player, self.name)
       }
       else {
-        game.mLog({ template: 'Colors do not match' })
+        game.log.add({ template: 'Colors do not match' })
       }
     }
   ],

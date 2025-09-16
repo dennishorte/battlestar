@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       if (game.getCardsByZone(player, 'hand').length < 4) {
-        game.mLog({ template: 'Player has fewer than 4 cards in hand.' })
+        game.log.add({ template: 'Player has fewer than 4 cards in hand.' })
         const toReturn = game
           .getTopCards(player)
           .filter(card => card.color !== 'green')
@@ -23,7 +23,7 @@ module.exports = {
         }
       }
       else {
-        game.mLog({ template: 'Player has 4 or more cards in hand' })
+        game.log.add({ template: 'Player has 4 or more cards in hand' })
       }
 
       game.aChooseAndMeld(player, game.getCardsByZone(player, 'hand'))

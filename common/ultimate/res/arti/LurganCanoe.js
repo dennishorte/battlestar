@@ -19,16 +19,16 @@ module.exports = {
             .filter(other => other !== card)
           const scored = game.aScoreMany(player, toScore)
           if (scored && scored.length > 0) {
-            game.mLog({ template: 'Repeat this effect.' })
+            game.log.add({ template: 'Repeat this effect.' })
             continue
           }
           else {
-            game.mLog({ template: 'No cards were scored.' })
+            game.log.add({ template: 'No cards were scored.' })
             break
           }
         }
         else {
-          game.mLog({ template: 'No cards were scored.' })
+          game.log.add({ template: 'No cards were scored.' })
           break
         }
       }

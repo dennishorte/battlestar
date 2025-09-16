@@ -13,7 +13,7 @@ module.exports = {
       const cards = game.getCardsByZone(player, 'hand')
 
       if (cards.length === 0) {
-        game.mLog({
+        game.log.add({
           template: '{player} has no cards in hand',
           args: { player }
         })

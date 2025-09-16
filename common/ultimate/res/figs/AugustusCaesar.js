@@ -33,7 +33,7 @@ module.exports = {
           return 'would-instead'
         }
         else {
-          game.mLog({ template: 'no additional effect' })
+          game.log.add({ template: 'no additional effect' })
           return 'would-first'
         }
       },

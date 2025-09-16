@@ -36,7 +36,7 @@ module.exports = {
         const cards = util.array.distinct([...hand, ...score])
 
         if (cards.length === 0) {
-          game.mLogNoEffect()
+          game.log.addNoEffect()
         }
         else {
           game.aMeldMany(player, cards)

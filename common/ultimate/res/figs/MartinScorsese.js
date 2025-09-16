@@ -32,7 +32,7 @@ module.exports = {
           game.aAchieveAction(player, selected, { nonAction: true })
         }
         else {
-          game.mLog({ template: 'There are no available standard achievements', })
+          game.log.add({ template: 'There are no available standard achievements', })
         }
       }
     }

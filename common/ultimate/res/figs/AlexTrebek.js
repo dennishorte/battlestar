@@ -33,21 +33,21 @@ module.exports = {
           .sort((l, r) => l.name.localeCompare(r.name))
         const card = game.aChooseCard(player, choices)
 
-        game.mLog({
+        game.log.add({
           template: '{player} says "Who is {name}?"',
           args: { player, name: card.name }
         })
 
         if (card.zone === card.home) {
           game.mMoveCardTo(card, game.getZoneByPlayer(player, 'hand'))
-          game.mLog({
+          game.log.add({
             template: '{player} takes {card} into hand',
             args: { player, card }
           })
           game.mReveal(player, card)
         }
         else {
-          game.mLog({
+          game.log.add({
             template: '{player} does not find {card} in the deck',
             args: { player, card }
           })

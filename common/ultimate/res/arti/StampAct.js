@@ -28,7 +28,7 @@ module.exports = {
           }
         }
         else {
-          game.mLog({ template: 'No card was transferred' })
+          game.log.add({ template: 'No card was transferred' })
         }
       }
     }

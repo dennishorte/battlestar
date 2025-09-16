@@ -34,11 +34,11 @@ module.exports = {
         const card = game.aDrawAndReveal(player, game.getEffectAge(self, 7))
         if (card) {
           if (card.checkHasBiscuit('i')) {
-            game.mLog({ template: 'Card has a {i} biscuit' })
+            game.log.add({ template: 'Card has a {i} biscuit' })
             break
           }
           else {
-            game.mLog({ template: 'Card does not have a {i} biscuit' })
+            game.log.add({ template: 'Card does not have a {i} biscuit' })
             game.aTuck(player, card)
           }
         }

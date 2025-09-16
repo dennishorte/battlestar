@@ -21,7 +21,7 @@ module.exports = {
           .filter(card => !meldedColors.includes(card.color))
 
         if (choices.length === 0) {
-          game.mLog({ template: 'No more colors to meld' })
+          game.log.add({ template: 'No more colors to meld' })
           break
         }
 

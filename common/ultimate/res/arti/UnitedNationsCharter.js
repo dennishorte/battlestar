@@ -27,7 +27,7 @@ module.exports = {
         game.aDraw(player, { age: game.getEffectAge(self, 10) })
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     },
   ],

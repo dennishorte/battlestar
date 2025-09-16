@@ -19,7 +19,7 @@ module.exports = {
           game.aDrawAndScore(player, game.getEffectAge(self, 10))
         }
         else {
-          game.mLog({ template: 'Card values do not sum to 10' })
+          game.log.add({ template: 'Card values do not sum to 10' })
         }
       }
     }

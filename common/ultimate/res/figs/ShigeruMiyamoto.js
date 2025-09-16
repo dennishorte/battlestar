@@ -19,7 +19,7 @@ module.exports = {
       game.aScore(player, card)
     }
     else {
-      game.mLog({
+      game.log.add({
         template: '{card} has a clock biscuit; do not score',
         args: { card }
       })
@@ -36,7 +36,7 @@ module.exports = {
           game.youWin(player, this.name)
         }
         else {
-          game.mLogNoEffect()
+          game.log.addNoEffect()
         }
       }
     }

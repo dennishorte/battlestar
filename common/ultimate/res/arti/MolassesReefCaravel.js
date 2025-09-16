@@ -22,7 +22,7 @@ module.exports = {
         game.aChooseAndMeld(player, blueCards)
       }
       else {
-        game.mLog({
+        game.log.add({
           template: '{player} has no blue cards',
           args: { player }
         })

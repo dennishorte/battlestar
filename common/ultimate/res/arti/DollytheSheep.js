@@ -14,7 +14,7 @@ module.exports = {
       // You may score your bottom yellow card.
       const yellowCards = game.getCardsByZone(player, 'yellow')
       if (yellowCards.length === 0) {
-        game.mLog({
+        game.log.add({
           template: '{player} has no yellow cards',
           args: { player },
         })
@@ -25,7 +25,7 @@ module.exports = {
           game.aScore(player, yellowCards[yellowCards.length - 1])
         }
         else {
-          game.mLog({
+          game.log.add({
             template: '{player} chooses not to score their bottom yellow card.',
             args: { player }
           })

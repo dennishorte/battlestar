@@ -27,7 +27,7 @@ module.exports = {
         game.aTransfer(player, ark, game.getZoneByPlayer(player, 'hand'))
       }
       else {
-        game.mLog({
+        game.log.add({
           template: 'Ark of the Covenant is not a top card',
         })
       }

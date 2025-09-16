@@ -26,7 +26,7 @@ module.exports = {
         }
       }
       else {
-        game.mLogDoNothing(player)
+        game.log.addDoNothing(player)
       }
     }
   ],

@@ -30,7 +30,7 @@ module.exports = {
       }
 
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     }
   ],

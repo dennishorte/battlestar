@@ -20,7 +20,7 @@ module.exports = {
         game.youWin(player, self.name)
       }
       else {
-        game.mLogNoEffect()
+        game.log.addNoEffect()
       }
     }
   ],

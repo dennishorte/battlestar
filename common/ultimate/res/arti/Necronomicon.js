@@ -12,10 +12,10 @@ module.exports = {
     (game, player, { self }) => {
       const card = game.aDrawAndReveal(player, game.getEffectAge(self, 3))
       if (card) {
-        game.mLog({ template: `Card is ${card.color}` })
+        game.log.add({ template: `Card is ${card.color}` })
 
         if (card.color === 'yellow') {
-          game.mLog({
+          game.log.add({
             template: '{player} will return all cards from hand',
             args: { player }
           })
@@ -23,7 +23,7 @@ module.exports = {
         }
 
         else if (card.color === 'green') {
-          game.mLog({
+          game.log.add({
             template: '{player} will unsplay all stacks',
             args: { player }
           })
@@ -33,7 +33,7 @@ module.exports = {
         }
 
         else if (card.color === 'red') {
-          game.mLog({
+          game.log.add({
             template: '{player} will return all cards from score',
             args: { player }
           })
@@ -41,7 +41,7 @@ module.exports = {
         }
 
         else if (card.color === 'blue') {
-          game.mLog({
+          game.log.add({
             template: '{player} will draw a {9}',
             args: { player }
           })
@@ -49,7 +49,7 @@ module.exports = {
         }
 
         else {
-          game.mLogNoEffect()
+          game.log.addNoEffect()
         }
       }
     }

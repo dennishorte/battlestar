@@ -27,7 +27,7 @@ module.exports = {
 
         matchingCards.forEach(card => game.mReveal(player, card))
         game.state.dogmaInfo.globalAgeIncrease = matchingCards.length
-        game.mLog({
+        game.log.add({
           template: 'All {} values increased by {value} during this dogma action',
           args: {
             value: matchingCards.length

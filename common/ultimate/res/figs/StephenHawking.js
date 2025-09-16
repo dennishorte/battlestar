@@ -30,7 +30,7 @@ module.exports = {
           impl: (game, player) => {
             const cards = game.getZoneByPlayer(player, card.color).cards()
             if (cards.length === 0) {
-              game.mLogNoEffect()
+              game.log.addNoEffect()
             }
             else {
               game.aScore(player, cards[cards.length - 1])

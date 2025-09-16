@@ -24,7 +24,7 @@ module.exports = {
 
       game.aRemoveMany(player, toRemove)
 
-      game.mLog({
+      game.log.add({
         template: '{player} junks all of their cards',
         args: { player }
       })

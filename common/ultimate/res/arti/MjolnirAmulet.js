@@ -20,7 +20,7 @@ module.exports = {
         )
       }
       else {
-        game.mLog({
+        game.log.add({
           template: '{player} chooses nothing',
           args: { player }
         })
