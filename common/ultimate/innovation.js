@@ -15,7 +15,7 @@ const { UltimateZoneManager } = require('./UltimateZoneManager.js')
 
 const { getDogmaShareInfo } = require('./actions/Dogma.js')
 
-const SUPPORTED_EXPANSIONS = ['base', 'echo', 'city', 'usee']
+const SUPPORTED_EXPANSIONS = ['base', 'echo', 'figs', 'city', 'arti', 'usee']
 
 module.exports = {
   GameOverEvent,

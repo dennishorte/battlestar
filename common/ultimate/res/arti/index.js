@@ -106,13 +106,7 @@ const cardData = [
   require('./Twister.js')
 ]
 
-const achievementData = [
-  require('./achievements/Timbuktu.js'),
-  require('./achievements/ComplexNumbers.js'),
-  require('./achievements/NewtonWickinsTelescope.js'),
-  require('./achievements/ChingShih.js'),
-  require('./achievements/SafetyPin.js'),
-]
+const achievementData = []
 
 module.exports = {
   cardData,
