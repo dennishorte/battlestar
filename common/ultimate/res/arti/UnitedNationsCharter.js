@@ -12,14 +12,14 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const toTransfer = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.checkHasDemand())
       game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'))
     },
 
     (game, player, { self }) => {
       const matches = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.checkHasDemand())
         .length > 0
 

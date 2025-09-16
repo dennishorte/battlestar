@@ -22,11 +22,11 @@ module.exports = {
       matches: (game, player, { card }) => {
         const cardCondition = card.getAge() === 10
         const nineCondition = game
-          .getTopCards(player)
+          .cards.tops(player)
           .filter(card => card.getAge() === 9)
           .length > 0
         const eightCondition = game
-          .getTopCards(player)
+          .cards.tops(player)
           .filter(card => card.getAge() === 8)
           .length > 0
         return cardCondition && nineCondition && eightCondition

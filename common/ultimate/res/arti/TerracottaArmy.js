@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => !card.checkHasBiscuit('k'))
       game.actions.chooseAndReturn(player, choices)
     },

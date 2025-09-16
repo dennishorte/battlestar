@@ -12,12 +12,13 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const self = game.getCardByName('Dancing Girl')
+      const self = game.cards.byId('Dancing Girl')
       game.actions.transfer(player, self, game.zones.byPlayer(player, self.color))
 
       const age = game.getHighestTopAge(player)
       const toTransfer = game
-        .getTopCards(player)
+        .cards
+        .tops(player)
         .filter(card => card.getAge() == age)
 
       while (toTransfer.length > 0) {

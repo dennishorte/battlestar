@@ -14,7 +14,7 @@ module.exports = {
       let returned = 0
       for (let i = 8; i > 0; i--) {
         const choices = game
-          .getTopCards(player)
+          .cards.tops(player)
           .filter(card => card.getAge() === i)
 
         if (!choices) {

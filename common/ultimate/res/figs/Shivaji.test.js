@@ -24,7 +24,7 @@ describe('Shivaji', () => {
         red: ['Shivaji'],
       },
     })
-    expect(game.getCardByName('Navigation').zone).toBe('achievements')
+    expect(game.cards.byId('Navigation').zone).toBe('achievements')
   })
 
   test('karma: decree', () => {

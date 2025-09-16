@@ -16,7 +16,7 @@ module.exports = {
         game.mReveal(player, card)
 
         const matchingAges = game
-          .getTopCards(leader)
+          .cards.tops(leader)
           .filter(other => other.getAge() === card.age)
 
         if (matchingAges.length === 0) {

@@ -24,7 +24,7 @@ module.exports = {
       matches: (game, player, { card }) => {
         const cardCondition = card.checkIsFigure()
         const topCondition = game
-          .getTopCards(player)
+          .cards.tops(player)
           .filter(card => card.checkIsFigure())
           .length >= 4
         return cardCondition && topCondition

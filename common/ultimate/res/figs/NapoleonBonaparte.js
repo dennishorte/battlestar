@@ -15,7 +15,7 @@ module.exports = {
   dogmaImpl: [],
   echoImpl: (game, player) => {
     const choices = game
-      .getTopCardsAll()
+      .cards.topsAll()
       .filter(card => card.checkIsFigure())
       .filter(card => card.getAge() === 5 || card.getAge() === 6)
     game.actions.chooseAndScore(player, choices)
@@ -33,7 +33,7 @@ module.exports = {
         game.actions.tuck(player, card)
 
         const choices = game
-          .getTopCardsAll()
+          .cards.topsAll()
           .filter(card => card.getAge() === 6)
         game.actions.chooseAndScore(player, choices)
       }

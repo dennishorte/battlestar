@@ -22,7 +22,7 @@ module.exports = {
         game.actions.transferMany(player, toTransfer, game.zones.byPlayer(player, 'score'), { ordered: true })
       }
 
-      const ark = game.getCardByName('Ark of the Covenant')
+      const ark = game.cards.byId('Ark of the Covenant')
       if (game.checkCardIsTop(ark)) {
         game.actions.transfer(player, ark, game.zones.byPlayer(player, 'hand'))
       }

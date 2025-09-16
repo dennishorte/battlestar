@@ -15,7 +15,7 @@ module.exports = {
       if (transferred && transferred.length > 0) {
         const age = transferred[0].getAge()
         const choices = game
-          .getTopCards(player)
+          .cards.tops(player)
           .filter(card => card.getAge() === age)
         const card = game.actions.chooseCard(player, choices)
         if (card) {

@@ -14,7 +14,7 @@ module.exports = {
   dogmaImpl: [],
   echoImpl: (game, player) => {
     const choices = game
-      .getTopCardsAll()
+      .cards.topsAll()
       .filter(card => card.getAge() < 4)
       .filter(card => card.color === 'red')
     game.actions.chooseAndScore(player, choices)

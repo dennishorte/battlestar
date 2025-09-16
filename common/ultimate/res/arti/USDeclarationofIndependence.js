@@ -18,7 +18,7 @@ module.exports = {
 
       const cards = game.util.highestCards(
         game
-          .getTopCards(player)
+          .cards.tops(player)
           .filter(card => card.checkHasBiscuit('f'))
       )
       const card = game.actions.chooseCard(player, cards, { title: 'Choose a top card to transfer' })

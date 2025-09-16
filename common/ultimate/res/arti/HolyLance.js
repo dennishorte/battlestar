@@ -13,7 +13,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const choices = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.expansion === 'arti')
       const card = game.actions.chooseCard(player, choices)
       if (card) {
@@ -23,7 +23,7 @@ module.exports = {
 
     (game, player) => {
       const grailIsTop = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.name === 'Holy Grail')
         .length > 0
 

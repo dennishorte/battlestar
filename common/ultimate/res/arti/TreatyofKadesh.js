@@ -12,14 +12,14 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const toReturn = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.checkHasDemand())
       game.actions.returnMany(player, toReturn)
     },
 
     (game, player) => {
       const choices = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.checkHasDemand())
         .filter(card => card.color !== 'blue')
       game.actions.chooseAndScore(player, choices)

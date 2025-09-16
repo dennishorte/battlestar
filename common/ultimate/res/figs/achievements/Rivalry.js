@@ -29,12 +29,12 @@ module.exports = {
     })
 
     // Return chosen cards
-    const cards = cardNames.map(c => game.getCardByName(c))
+    const cards = cardNames.map(c => game.cards.byId(c))
     game.actions.returnMany(player, cards)
 
     // Return top figures
     const topFigures = game
-      .getTopCards(other)
+      .cards.tops(other)
       .filter(c => c.checkIsFigure())
     game.actions.returnMany(player, topFigures)
   }

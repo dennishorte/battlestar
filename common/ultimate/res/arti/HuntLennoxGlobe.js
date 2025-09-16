@@ -13,7 +13,7 @@ module.exports = {
       if (game.cards.byPlayer(player, 'hand').length < 4) {
         game.log.add({ template: 'Player has fewer than 4 cards in hand.' })
         const toReturn = game
-          .getTopCards(player)
+          .cards.tops(player)
           .filter(card => card.color !== 'green')
         const returned = game.actions.returnMany(player, toReturn)
         if (returned) {

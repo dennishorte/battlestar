@@ -12,7 +12,7 @@ module.exports = {
     (game, player, { leader }) => {
       while (true) {
         const choices = game
-          .getTopCards(player)
+          .cards.tops(player)
           .filter(card => card.color !== 'yellow' && card.checkHasBiscuit('i'))
         const card = game.actions.chooseCard(player, choices)
         if (card) {

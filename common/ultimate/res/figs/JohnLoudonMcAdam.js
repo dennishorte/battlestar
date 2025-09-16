@@ -23,7 +23,7 @@ module.exports = {
       trigger: 'list-achievements',
       func: (game, player) => {
         return game
-          .getTopCards(player)
+          .cards.tops(player)
           .filter(card => card.biscuits.includes('f'))
       }
     }

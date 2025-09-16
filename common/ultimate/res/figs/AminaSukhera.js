@@ -20,7 +20,7 @@ module.exports = {
       func(game, player) {
         for (const opp of game.getPlayerOpponents(player)) {
           const topFigures = game
-            .getTopCards(opp)
+            .cards.tops(opp)
             .filter(card => card.checkIsFigure())
             .filter(card => card.getAge() === 4)
           game.actions.scoreMany(player, topFigures)
@@ -31,7 +31,7 @@ module.exports = {
       trigger: 'list-achievements',
       func(game, player) {
         return game
-          .getTopCards(player)
+          .cards.tops(player)
           .filter(card => card.biscuits.includes('k'))
       }
     }

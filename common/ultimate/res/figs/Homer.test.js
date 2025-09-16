@@ -47,7 +47,7 @@ describe('Homer', () => {
 
     expect(t.cards(game, 'green')).toStrictEqual([])
     expect(t.cards(game, 'score')).toStrictEqual([])
-    const FuXi = game.getCardByName('Fu Xi')
+    const FuXi = game.cards.byId('Fu Xi')
     expect(FuXi.zone).toBe('decks.figs.1')
   })
 

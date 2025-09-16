@@ -33,7 +33,7 @@ module.exports = {
         if (selections && selections.length > 0) {
           const cards = selections[0]
             .split(', ')
-            .map(name => game.getCardByName(name))
+            .map(name => game.cards.byId(name))
 
           const melded = game.actions.drawAndMeld(player, cards[0].age + 1)
 

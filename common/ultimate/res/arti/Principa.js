@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const toReturn = game
-        .getTopCards(player)
+        .cards.tops(player)
         .filter(card => card.color !== 'blue')
 
       const returned = game
