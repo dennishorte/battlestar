@@ -34,7 +34,7 @@ module.exports = {
           .getPlayerAll()
           .flatMap(player => game.getTopCards(player))
           .filter(other => other.color === card.color)
-        game.aScoreMany(player, cards)
+        game.actions.scoreMany(player, cards)
       }
     }
   ]

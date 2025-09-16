@@ -14,15 +14,15 @@ module.exports = {
   dogma: [],
   dogmaImpl: [],
   echoImpl: (game, player) => {
-    const card1 = game.aDrawAndReveal(player, game.getEffectAge(this, 9))
-    const card2 = game.aDrawAndReveal(player, game.getEffectAge(this, 9))
+    const card1 = game.actions.drawAndReveal(player, game.getEffectAge(this, 9))
+    const card2 = game.actions.drawAndReveal(player, game.getEffectAge(this, 9))
 
     if (card1.color === 'purple' || card2.color === 'purple') {
       game.log.add({
         template: '{player} drew a purple card',
         args: { player }
       })
-      game.aReturnMany(player, [card1, card2])
+      game.actions.returnMany(player, [card1, card2])
     }
   },
   karmaImpl: [
@@ -33,7 +33,7 @@ module.exports = {
           .getPlayerOpponents(player)
           .flatMap(player => game.getTopCards(player))
           .filter(card => card.checkIsFigure())
-        game.aReturnMany(player, figures)
+        game.actions.returnMany(player, figures)
       }
     },
     {

@@ -28,7 +28,7 @@ module.exports = {
         else {
           const toReturn = game.getCardsByZone(player, card.color)
           toReturn.push(card)
-          game.aReturnMany(player, toReturn)
+          game.actions.returnMany(player, toReturn)
         }
       }
     }

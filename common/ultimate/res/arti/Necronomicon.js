@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const card = game.aDrawAndReveal(player, game.getEffectAge(self, 3))
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 3))
       if (card) {
         game.log.add({ template: `Card is ${card.color}` })
 
@@ -19,7 +19,7 @@ module.exports = {
             template: '{player} will return all cards from hand',
             args: { player }
           })
-          game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
+          game.actions.returnMany(player, game.getCardsByZone(player, 'hand'))
         }
 
         else if (card.color === 'green') {
@@ -37,7 +37,7 @@ module.exports = {
             template: '{player} will return all cards from score',
             args: { player }
           })
-          game.aReturnMany(player, game.getCardsByZone(player, 'score'))
+          game.actions.returnMany(player, game.getCardsByZone(player, 'score'))
         }
 
         else if (card.color === 'blue') {
@@ -45,7 +45,7 @@ module.exports = {
             template: '{player} will draw a {9}',
             args: { player }
           })
-          game.aDraw(player, { age: game.getEffectAge(self, 9) })
+          game.actions.draw(player, { age: game.getEffectAge(self, 9) })
         }
 
         else {

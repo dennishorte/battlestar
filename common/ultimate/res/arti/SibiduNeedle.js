@@ -11,11 +11,11 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       while (true) {
-        const card = game.aDrawAndReveal(player, game.getEffectAge(self, 1))
+        const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 1))
         if (card) {
           const top = game.getTopCard(player, card.color)
           if (top && top.getAge() === card.getAge()) {
-            game.aScore(player, card)
+            game.actions.score(player, card)
           }
           else {
             break

@@ -23,7 +23,7 @@ module.exports = {
           .flatMap(opp => game.getTopCards(opp))
           .filter(card => card.checkIsFigure())
           .filter(card => card.getAge() < 7)
-        game.aScoreMany(player, figs)
+        game.actions.scoreMany(player, figs)
       }
     },
     {

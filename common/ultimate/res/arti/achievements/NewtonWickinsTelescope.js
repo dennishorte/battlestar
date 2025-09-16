@@ -22,9 +22,9 @@ function Card() {
     (game, player) => {
       const returned = game.actions.chooseAndReturn(player, game.getCardsByZone(player, 'score'), { min: 0 })
       if (returned && returned.length > 0) {
-        const card = game.aDrawAndMeld(player, returned.length)
+        const card = game.actions.drawAndMeld(player, returned.length)
         if (card.checkHasBiscuit('i')) {
-          game.aReturn(player, card)
+          game.actions.return(player, card)
         }
       }
     }

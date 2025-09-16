@@ -20,7 +20,7 @@ module.exports = {
 
           if (game.state.dogmaInfo.theBigBangChange) {
             game.log.add({ template: 'The game state was changed due to the card effects.' })
-            const card = game.aDraw(player, { age: game.getEffectAge(self, 10) })
+            const card = game.actions.draw(player, { age: game.getEffectAge(self, 10) })
             game.aRemove(player, card)
             continue
           }

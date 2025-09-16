@@ -12,18 +12,18 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const age = game.actions.chooseAge(player)
-      const card = game.aDrawAndMeld(player, age)
+      const card = game.actions.drawAndMeld(player, age)
       game.aSplay(player, card.color, 'up')
 
       if (game.getCardsByZone(player, card.color).length === card.getAge()) {
-        game.aDrawAndScore(player, game.getEffectAge(self, 10))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 10))
         /* throw new GameOverEvent({
          *   player,
          *   reason: self.name
          * }) */
       }
       else {
-        game.aReturn(player, card)
+        game.actions.return(player, card)
       }
     }
   ],

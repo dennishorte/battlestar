@@ -14,7 +14,7 @@ module.exports = {
   dogma: [],
   dogmaImpl: [],
   echoImpl: (game, player) => {
-    game.aDrawAndForeshadow(player, game.getEffectAge(this, 4))
+    game.actions.drawAndForeshadow(player, game.getEffectAge(this, 4))
   },
   karmaImpl: [
     {

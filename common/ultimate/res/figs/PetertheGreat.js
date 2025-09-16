@@ -22,7 +22,7 @@ module.exports = {
           .getPlayerOpponents(player)
           .flatMap(player => game.getTopCards(player))
           .filter(card => card.checkIsFigure())
-        game.aReturnMany(player, figs)
+        game.actions.returnMany(player, figs)
       }
     },
     {
@@ -36,7 +36,7 @@ module.exports = {
             game.aClaimAchievement(player, card)
           }
           else {
-            game.aScore(player, card)
+            game.actions.score(player, card)
           }
         }
         else {

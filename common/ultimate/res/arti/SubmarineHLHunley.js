@@ -10,12 +10,12 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const card = game.aDrawAndMeld(player, game.getEffectAge(self, 7))
+      const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 7))
       if (card) {
         const bottom = game.getBottomCard(player, card.color)
         if (bottom.getAge() === 1) {
           game.log.add({ template: 'Bottom card is a {1}.' })
-          game.aReturnMany(player, game.getCardsByZone(player, card.color), { ordered: true })
+          game.actions.returnMany(player, game.getCardsByZone(player, card.color), { ordered: true })
         }
         else {
           game.log.add({ template: 'Bottom card is not a {1}.' })

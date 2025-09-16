@@ -13,14 +13,14 @@ module.exports = {
   dogma: [],
   dogmaImpl: [],
   echoImpl: (game, player) => {
-    const card = game.aDrawAndTuck(player, game.getEffectAge(this, 3))
+    const card = game.actions.drawAndTuck(player, game.getEffectAge(this, 3))
     if (card) {
       const zone = game.getZoneByPlayer(player, card.color)
       const toScore = zone
         .cards()
         .filter(c => c !== card)
 
-      game.aScoreMany(player, toScore, { ordered: true })
+      game.actions.scoreMany(player, toScore, { ordered: true })
     }
   },
   karmaImpl: [

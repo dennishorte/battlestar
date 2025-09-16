@@ -30,7 +30,7 @@ module.exports = {
         const toMeld = game
           .getCardsByZone(player, 'hand')
           .filter(card => card.color !== 'yellow' && card.color !== 'purple')
-        game.aMeldMany(player, toMeld)
+        game.actions.meldMany(player, toMeld)
       }
     },
     {
@@ -38,9 +38,9 @@ module.exports = {
       kind: 'would-first',
       matches: (game, player, { card }) => card.color === 'purple',
       func: (game, player) => {
-        game.aDraw(player, { age: game.getEffectAge(this, 4) })
-        game.aDraw(player, { age: game.getEffectAge(this, 4) })
-        game.aDraw(player, { age: game.getEffectAge(this, 4) })
+        game.actions.draw(player, { age: game.getEffectAge(this, 4) })
+        game.actions.draw(player, { age: game.getEffectAge(this, 4) })
+        game.actions.draw(player, { age: game.getEffectAge(this, 4) })
       }
     },
   ]

@@ -33,7 +33,7 @@ module.exports = {
               game.log.addNoEffect()
             }
             else {
-              game.aScore(player, cards[cards.length - 1])
+              game.actions.score(player, cards[cards.length - 1])
             }
           }
         }

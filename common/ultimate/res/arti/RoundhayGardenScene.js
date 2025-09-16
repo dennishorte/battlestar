@@ -14,8 +14,8 @@ module.exports = {
       const cards = game.actions.chooseAndMeld(player, choices)
       if (cards && cards.length > 0) {
         const card = cards[0]
-        game.aDrawAndScore(player, card.getAge())
-        game.aDrawAndScore(player, card.getAge())
+        game.actions.drawAndScore(player, card.getAge())
+        game.actions.drawAndScore(player, card.getAge())
         game.aExecuteAsIf(player, card)
       }
     }

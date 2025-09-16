@@ -23,9 +23,9 @@ module.exports = {
           .getCardsByZone(player, 'hand')
           .filter(other => other.color === card.color)
           .filter(other => other !== card)
-        const melded = game.aMeldMany(player, toMeld)
+        const melded = game.actions.meldMany(player, toMeld)
         for (let i = 0; i < melded.length; i++) {
-          const toAchieve = game.aDraw(player, { age: game.getEffectAge(this, 9) })
+          const toAchieve = game.actions.draw(player, { age: game.getEffectAge(this, 9) })
           game.aClaimAchievement(player, toAchieve)
         }
       }

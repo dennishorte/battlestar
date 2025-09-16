@@ -65,7 +65,7 @@ function Card() {
             card = game.getCardByName(cardToken)
           }
 
-          game.aTransfer(player, card, game.getZoneByPlayer(player, 'achievements'))
+          game.actions.transfer(player, card, game.getZoneByPlayer(player, 'achievements'))
         }
       }
     },
@@ -84,7 +84,7 @@ function Card() {
           const toTransfer = game
             .getCardsByZone(opp, 'score')
             .find(c => c.getAge() === card.getAge())
-          game.aTransfer(player, toTransfer, game.getZoneByPlayer(player, 'score'))
+          game.actions.transfer(player, toTransfer, game.getZoneByPlayer(player, 'score'))
         }
       }
     }

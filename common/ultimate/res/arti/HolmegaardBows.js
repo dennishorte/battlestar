@@ -19,7 +19,7 @@ module.exports = {
     },
 
     (game, player, { self }) => {
-      game.aDraw(player, { age: game.getEffectAge(self, 2) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 2) })
     }
   ],
 }

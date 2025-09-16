@@ -18,10 +18,10 @@ module.exports = {
 
       if (returned && returned.length > 0) {
         const returnedCard = returned[0]
-        const drawn = game.aDraw(player, { age: returnedCard.age + 2 })
+        const drawn = game.actions.draw(player, { age: returnedCard.age + 2 })
 
         if (drawn && drawn.color === 'purple') {
-          game.aMeld(player, drawn)
+          game.actions.meld(player, drawn)
           game.aCardEffects(player, drawn, 'dogma')
         }
       }

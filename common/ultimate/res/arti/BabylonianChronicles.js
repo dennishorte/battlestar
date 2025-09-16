@@ -18,12 +18,12 @@ module.exports = {
 
       const card = game.actions.chooseCard(player, choices)
       if (card) {
-        game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+        game.actions.transfer(player, card, game.getZoneByPlayer(leader, card.color))
       }
     },
 
     (game, player, { self }) => {
-      game.aDrawAndScore(player, game.getEffectAge(self, 3))
+      game.actions.drawAndScore(player, game.getEffectAge(self, 3))
     },
   ],
 }

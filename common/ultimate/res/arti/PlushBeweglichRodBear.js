@@ -23,7 +23,7 @@ module.exports = {
         .flatMap(player => game.getCardsByZone(player, 'score'))
         .filter(card => card.getAge() === age)
 
-      game.aReturnMany(player, toReturn)
+      game.actions.returnMany(player, toReturn)
     }
   ],
 }

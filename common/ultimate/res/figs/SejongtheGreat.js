@@ -14,7 +14,7 @@ module.exports = {
   dogma: [],
   dogmaImpl: [],
   echoImpl: (game, player) => {
-    game.aDrawAndMeld(player, game.getEffectAge(this, 4))
+    game.actions.drawAndMeld(player, game.getEffectAge(this, 4))
   },
   karmaImpl: [
     {
@@ -26,8 +26,8 @@ module.exports = {
       kind: 'would-instead',
       matches: (game, player, { card }) => card.color === 'blue' && card.getAge() > 3,
       func: (game, player, { card }) => {
-        game.aReturn(player, card)
-        game.aDrawAndMeld(player, card.getAge() + 1)
+        game.actions.return(player, card)
+        game.actions.drawAndMeld(player, card.getAge() + 1)
       }
     }
   ]

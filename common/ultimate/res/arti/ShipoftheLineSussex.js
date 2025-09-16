@@ -13,11 +13,11 @@ module.exports = {
       if (game.getCardsByZone(player, 'score').length === 0) {
         const colors = game.actions.choose(player, game.utilColors(), { title: 'Choose a Color' })
         const color = colors[0]
-        game.aScoreMany(player, game.getCardsByZone(player, color))
+        game.actions.scoreMany(player, game.getCardsByZone(player, color))
       }
 
       else {
-        game.aReturnMany(player, game.getCardsByZone(player, 'score'))
+        game.actions.returnMany(player, game.getCardsByZone(player, 'score'))
       }
     }
   ],

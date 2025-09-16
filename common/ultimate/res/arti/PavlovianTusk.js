@@ -13,9 +13,9 @@ module.exports = {
       const topGreen = game.getTopCard(player, 'green')
       const age = topGreen ? topGreen.age : 1
       const cards = [
-        game.aDraw(player, { age }),
-        game.aDraw(player, { age }),
-        game.aDraw(player, { age }),
+        game.actions.draw(player, { age }),
+        game.actions.draw(player, { age }),
+        game.actions.draw(player, { age }),
       ]
 
       const returned = game.actions.chooseAndReturn(player, cards) || []

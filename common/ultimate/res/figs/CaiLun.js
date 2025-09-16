@@ -24,7 +24,7 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func: (game, player) => {
-        game.aDrawAndForeshadow(player, game.getEffectAge(this, 3))
+        game.actions.drawAndForeshadow(player, game.getEffectAge(this, 3))
       }
     },
     {

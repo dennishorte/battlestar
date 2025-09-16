@@ -11,17 +11,17 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const colors = game.actions.choose(player, game.utilColors(), { count: 3 })
-      const card = game.aDrawAndReveal(player, game.getEffectAge(self, 8))
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 8))
 
       if (colors.includes(card.color)) {
-        game.aScore(player, card)
+        game.actions.score(player, card)
         game.aSplay(player, card.color, 'up')
       }
       else {
         const toReturn = game
           .getCardsByZone(player, 'score')
           .filter(other => other.color === card.color)
-        game.aReturnMany(player, toReturn)
+        game.actions.returnMany(player, toReturn)
         game.aUnsplay(player, card.color)
       }
     }

@@ -10,13 +10,13 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const card = game.aDrawAndReveal(player, game.getEffectAge(self, 4))
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 4))
       if (card) {
         const matchingTopCard = game.getTopCard(player, card.color)
         if (matchingTopCard && matchingTopCard.name < card.name) {
           const toReturn = game.getCardsByZone(player, 'score')
           toReturn.push(card)
-          game.aReturnMany(player, toReturn)
+          game.actions.returnMany(player, toReturn)
         }
       }
     }

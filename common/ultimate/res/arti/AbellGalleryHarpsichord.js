@@ -15,7 +15,7 @@ module.exports = {
       for (let i = 1; i <= 10; i++) {
         const matching = topCards.filter(card => card.getAge() === i).length
         if (matching === 1) {
-          game.aDrawAndScore(player, i)
+          game.actions.drawAndScore(player, i)
         }
       }
     }

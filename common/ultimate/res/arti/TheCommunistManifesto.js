@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const players = game.getPlayersStarting(player)
-      const cards = players.map(_ => game.aDrawAndReveal(player, game.getEffectAge(self, 7)))
+      const cards = players.map(_ => game.actions.drawAndReveal(player, game.getEffectAge(self, 7)))
 
       let remaining = cards
       let mine = null
@@ -20,7 +20,7 @@ module.exports = {
         const card = game.actions.chooseCard(player, remaining, { title })
         remaining = remaining.filter(other => other !== card)
 
-        const transferred = game.aTransfer(player, card, game.getZoneByPlayer(target, card.color))
+        const transferred = game.actions.transfer(player, card, game.getZoneByPlayer(target, card.color))
         if (transferred && target === player) {
           mine = card
         }

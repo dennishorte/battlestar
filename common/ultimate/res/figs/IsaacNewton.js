@@ -21,10 +21,10 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func: (game, player) => {
-        const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
+        const card = game.actions.drawAndReveal(player, game.getEffectAge(this, 1))
         const targetPlayer = game.actions.choosePlayer(player, game.getPlayerAll().map(p => p.name))
         const target = game.getZoneByPlayer(targetPlayer, card.color)
-        game.aTransfer(player, card, target)
+        game.actions.transfer(player, card, target)
       }
     }
   ]

@@ -31,7 +31,7 @@ module.exports = {
           .flatMap(player => game.getTopCards(player))
           .filter(card => card.checkIsFigure())
           .filter(card => card !== self)
-        game.aScoreMany(player, topFigures, { ordered: true })
+        game.actions.scoreMany(player, topFigures, { ordered: true })
 
         const score = game.getScore(player)
         const others = game

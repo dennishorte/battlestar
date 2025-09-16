@@ -13,7 +13,7 @@ module.exports = {
   dogma: [],
   dogmaImpl: [],
   echoImpl: (game, player) => {
-    game.aDrawAndMeld(player, game.getEffectAge(this, 10))
+    game.actions.drawAndMeld(player, game.getEffectAge(this, 10))
   },
   karmaImpl: [
     {
@@ -21,7 +21,7 @@ module.exports = {
       kind: 'would-instead',
       matches: (game, player, { card }) => card.checkIsFigure(),
       func: (game, player, { card }) => {
-        game.aTuck(player, card)
+        game.actions.tuck(player, card)
         const choices = game
           .getZoneById('achievements')
           .cards()

@@ -19,7 +19,7 @@ module.exports = {
       kind: 'would-instead',
       matches: (game, player, { card }) => card.color === 'yellow',
       func: (game, player, { card }) => {
-        game.aMeld(player, card)
+        game.actions.meld(player, card)
         game.aCardEffects(player, card, 'dogma')
 
         if (game.checkCardIsTop(card)) {

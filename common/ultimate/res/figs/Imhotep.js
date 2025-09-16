@@ -13,7 +13,7 @@ module.exports = {
   dogma: [],
   dogmaImpl: [],
   echoImpl: (game, player) => {
-    game.aDrawAndMeld(player, game.getEffectAge(this, 2))
+    game.actions.drawAndMeld(player, game.getEffectAge(this, 2))
   },
   karmaImpl: [
     {
@@ -25,7 +25,7 @@ module.exports = {
       },
       func: (game, player, { card }) => {
         game.aSplay(player, card.color, 'left')
-        game.aReturn(player, card)
+        game.actions.return(player, card)
       }
     }
   ]

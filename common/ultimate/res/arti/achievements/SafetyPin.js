@@ -23,13 +23,13 @@ function Card() {
       const toReturn = game
         .getCardsByZone(player, 'hand')
         .filter(card => card.getAge() > 6)
-      game.aReturnMany(player, toReturn)
-      game.aDraw(player, { age: game.getEffectAge(this, 6) })
+      game.actions.returnMany(player, toReturn)
+      game.actions.draw(player, { age: game.getEffectAge(this, 6) })
     }
   ]
   this.echoImpl = [
     (game, player) => {
-      game.aDrawAndScore(player, game.getEffectAge(this, 7))
+      game.actions.drawAndScore(player, game.getEffectAge(this, 7))
     }
   ]
   this.karmaImpl = []

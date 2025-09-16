@@ -20,7 +20,7 @@ module.exports = {
         .cards()
         .filter(card => card.biscuits.includes('s') || card.biscuits.includes('i'))
 
-      game.aMeldMany(player, cards)
+      game.actions.meldMany(player, cards)
     }
   ],
   karmaImpl: [

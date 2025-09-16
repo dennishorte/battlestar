@@ -10,6 +10,6 @@ module.exports = {
   decreeImpl: (game, player) => {
     const highestAge = game.getHighestTopAge(player)
     const decreeAge = highestAge + 2
-    game.aDraw(player, { age: decreeAge })
+    game.actions.draw(player, { age: decreeAge })
   }
 }

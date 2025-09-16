@@ -27,8 +27,8 @@ module.exports = {
         return zone.splay !== 'none'
       },
       func: (game, player, { card }) => {
-        game.aTuck(player, card)
-        game.aDraw(player, { age: game.getEffectAge(this, 3) })
+        game.actions.tuck(player, card)
+        game.actions.draw(player, { age: game.getEffectAge(this, 3) })
       }
     }
   ]

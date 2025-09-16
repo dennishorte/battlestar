@@ -14,7 +14,7 @@ module.exports = {
       const toTransfer = game
         .getTopCards(player)
         .filter(card => card.checkHasDemand())
-      game.aTransferMany(player, toTransfer, game.getZoneByPlayer(leader, 'score'))
+      game.actions.transferMany(player, toTransfer, game.getZoneByPlayer(leader, 'score'))
     },
 
     (game, player, { self }) => {
@@ -24,7 +24,7 @@ module.exports = {
         .length > 0
 
       if (matches) {
-        game.aDraw(player, { age: game.getEffectAge(self, 10) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 10) })
       }
       else {
         game.log.addNoEffect()

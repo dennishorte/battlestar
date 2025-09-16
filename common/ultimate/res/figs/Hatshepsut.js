@@ -27,9 +27,9 @@ module.exports = {
         return ageCondition && handCondition
       },
       func: (game, player, { age }) => {
-        game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
-        game.aDraw(player, { age })
-        game.aDraw(player, { age })
+        game.actions.returnMany(player, game.getCardsByZone(player, 'hand'))
+        game.actions.draw(player, { age })
+        game.actions.draw(player, { age })
       }
     }
   ]

@@ -10,11 +10,11 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const card = game.aDrawAndMeld(player, game.getEffectAge(self, 3))
+      const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 3))
       if (card) {
         const cards = game.getCardsByZone(player, card.color)
         const toMeld = cards[cards.length - 1]
-        const melded = game.aMeld(player, toMeld)
+        const melded = game.actions.meld(player, toMeld)
         if (melded) {
           game.aCardEffects(player, melded, 'dogma')
         }

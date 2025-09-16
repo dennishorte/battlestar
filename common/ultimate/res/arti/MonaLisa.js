@@ -18,11 +18,11 @@ module.exports = {
         args: { player, number, color }
       })
 
-      game.aDraw(player, { age: game.getEffectAge(self, 4) })
-      game.aDraw(player, { age: game.getEffectAge(self, 4) })
-      game.aDraw(player, { age: game.getEffectAge(self, 4) })
-      game.aDraw(player, { age: game.getEffectAge(self, 4) })
-      game.aDraw(player, { age: game.getEffectAge(self, 4) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 4) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 4) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 4) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 4) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 4) })
 
       const hand = game.getCardsByZone(player, 'hand')
 
@@ -43,7 +43,7 @@ module.exports = {
           template: '{player} guessed correctly',
           args: { player }
         })
-        game.aScoreMany(player, matches)
+        game.actions.scoreMany(player, matches)
         game.aSplay(player, color, 'right')
       }
       else {
@@ -51,7 +51,7 @@ module.exports = {
           template: '{player} did not guess correctly',
           args: { player }
         })
-        game.aReturnMany(player, hand)
+        game.actions.returnMany(player, hand)
       }
     }
   ],

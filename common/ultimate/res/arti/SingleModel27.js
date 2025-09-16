@@ -18,7 +18,7 @@ module.exports = {
         const toTuck = game
           .getCardsByZone(player, 'score')
           .filter(card => card.color === color)
-        game.aTuckMany(player, toTuck)
+        game.actions.tuckMany(player, toTuck)
       }
     }
   ],

@@ -17,7 +17,7 @@ module.exports = {
         const toReveal = game
           .getCardsByZone(plyr, 'hand')
           .filter(card => card.color === color)
-        const revealed = game.aRevealMany(plyr, toReveal, { ordered: true })
+        const revealed = game.actions.revealMany(plyr, toReveal, { ordered: true })
         if (revealed && revealed.length > 0) {
           revealedBy.push(plyr)
         }
@@ -27,7 +27,7 @@ module.exports = {
         const toReturn = game
           .getCardsByZone(player, 'hand')
           .filter(card => card.color === color)
-        const returned = game.aReturnMany(player, toReturn)
+        const returned = game.actions.returnMany(player, toReturn)
         const toClaim = toReturn.map(card => card.getAge())
         const available = game
           .getAvailableAchievementsRaw(player)

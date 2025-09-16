@@ -22,7 +22,7 @@ module.exports = {
       else {
         const doScoreYellow = game.aYesNo(player, 'Score your bottom yellow card?')
         if (doScoreYellow) {
-          game.aScore(player, yellowCards[yellowCards.length - 1])
+          game.actions.score(player, yellowCards[yellowCards.length - 1])
         }
         else {
           game.log.add({
@@ -36,7 +36,7 @@ module.exports = {
       const age = game.getEffectAge(self, 1)
       const doDrawAndTuck = game.aYesNo(player, `Draw and tuck a {${age}}?`)
       if (doDrawAndTuck) {
-        game.aDrawAndTuck(player, age)
+        game.actions.drawAndTuck(player, age)
       }
 
       // You win if your bottom yellow card is domestication.
@@ -49,10 +49,10 @@ module.exports = {
       else {
         const cards = game.actions.chooseHighest(player, game.getCardsByZone(player, 'hand'), 1)
         if (cards && cards.length > 0) {
-          game.aMeld(player, cards[0])
+          game.actions.meld(player, cards[0])
         }
 
-        game.aDraw(player, { age: game.getEffectAge(self, 10) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 10) })
       }
     }
   ],

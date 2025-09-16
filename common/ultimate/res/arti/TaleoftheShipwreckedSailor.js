@@ -15,7 +15,7 @@ module.exports = {
         template: '{player} chooses {color}',
         args: { player, color }
       })
-      game.aDraw(player, { age: game.getEffectAge(self, 1) })
+      game.actions.draw(player, { age: game.getEffectAge(self, 1) })
       const choices = game
         .getCardsByZone(player, 'hand')
         .filter(card => card.color === color)

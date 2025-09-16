@@ -13,7 +13,7 @@ module.exports = {
       const toScore = game
         .utilColors()
         .flatMap(color => game.getCardsByZone(player, color).slice(-1))
-      game.aScoreMany(player, toScore)
+      game.actions.scoreMany(player, toScore)
 
       const cards = game.actions.chooseAndMeld(player, game.getCardsByZone(player, 'score'))
       if (cards && cards.length > 0) {

@@ -26,11 +26,11 @@ module.exports = {
       func: (game, player, { card }) => {
         const toReturn = game.getCardsByZone(player, 'score')
         toReturn.push(card)
-        game.aReturnMany(player, toReturn)
-        game.aDrawAndScore(player, game.getEffectAge(this, 5))
-        game.aDrawAndScore(player, game.getEffectAge(this, 5))
-        game.aDrawAndScore(player, game.getEffectAge(this, 5))
-        game.aDrawAndScore(player, game.getEffectAge(this, 5))
+        game.actions.returnMany(player, toReturn)
+        game.actions.drawAndScore(player, game.getEffectAge(this, 5))
+        game.actions.drawAndScore(player, game.getEffectAge(this, 5))
+        game.actions.drawAndScore(player, game.getEffectAge(this, 5))
+        game.actions.drawAndScore(player, game.getEffectAge(this, 5))
       }
     }
   ]

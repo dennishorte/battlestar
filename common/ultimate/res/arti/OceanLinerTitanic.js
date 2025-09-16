@@ -18,7 +18,7 @@ module.exports = {
         }
       }
 
-      game.aScoreMany(player, toScore)
+      game.actions.scoreMany(player, toScore)
     }
   ],
 }

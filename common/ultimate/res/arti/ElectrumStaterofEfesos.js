@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       while (true) {
-        const card = game.aDrawAndReveal(player, game.getEffectAge(self, 3))
+        const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 3))
         if (game.getTopCard(player, card.color)) {
           game.log.add({
             template: '{player} already has a top card of matching color',
@@ -24,7 +24,7 @@ module.exports = {
             template: '{player} has no top cards of matching color',
             args: { player }
           })
-          game.aMeld(player, card)
+          game.actions.meld(player, card)
         }
       }
     }

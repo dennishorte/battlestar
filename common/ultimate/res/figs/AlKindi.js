@@ -20,8 +20,8 @@ module.exports = {
         return share
       },
       func(game, player, { age }) {
-        game.aDraw(player, { age })
-        game.aDraw(player, { age })
+        game.actions.draw(player, { age })
+        game.actions.draw(player, { age })
         return 'would-first'
       }
     }

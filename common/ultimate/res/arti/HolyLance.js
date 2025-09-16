@@ -17,7 +17,7 @@ module.exports = {
         .filter(card => card.expansion === 'arti')
       const card = game.actions.chooseCard(player, choices)
       if (card) {
-        game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+        game.actions.transfer(player, card, game.getZoneByPlayer(leader, card.color))
       }
     },
 
@@ -28,7 +28,7 @@ module.exports = {
         .length > 0
 
       if (grailIsTop) {
-        game.aDrawAndScore(player, 6)
+        game.actions.drawAndScore(player, 6)
       }
     }
   ],

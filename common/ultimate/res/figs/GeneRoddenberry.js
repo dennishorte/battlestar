@@ -32,7 +32,7 @@ module.exports = {
           game.youWin(player, this.name)
         }
         else {
-          game.aTuck(player, card)
+          game.actions.tuck(player, card)
           const topFigures = game
             .getPlayerAll()
             .flatMap(player => game.getTopCards(player))

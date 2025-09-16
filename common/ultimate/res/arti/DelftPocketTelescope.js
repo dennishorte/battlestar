@@ -18,15 +18,15 @@ module.exports = {
         }
 
         game.mReveal(player, card)
-        const returned = game.aReturn(player, card)
+        const returned = game.actions.return(player, card)
 
         if (!returned) {
           game.log.add({ template: 'Card was not returned' })
           break
         }
 
-        const five = game.aDraw(player, { age: game.getEffectAge(self, 5) })
-        const six = game.aDraw(player, { age: game.getEffectAge(self, 6) })
+        const five = game.actions.draw(player, { age: game.getEffectAge(self, 5) })
+        const six = game.actions.draw(player, { age: game.getEffectAge(self, 6) })
 
         const source = game.getBiscuitsByCard(card, 'top')
         const choices = []
@@ -47,8 +47,8 @@ module.exports = {
         }
         else {
           game.log.add({ template: 'Neither card has a biscuit matching the returned card' })
-          game.aReturn(player, five)
-          game.aReturn(player, six)
+          game.actions.return(player, five)
+          game.actions.return(player, six)
         }
       }
     }

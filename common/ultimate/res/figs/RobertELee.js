@@ -23,7 +23,7 @@ module.exports = {
       const targetPlayer = game.actions.choosePlayer(player, game.getPlayerAll())
       const target = game.getZoneByPlayer(targetPlayer, card.color)
 
-      game.aTransfer(player, card, target)
+      game.actions.transfer(player, card, target)
     }
   },
   karmaImpl: [

@@ -22,7 +22,7 @@ module.exports = {
         return card.checkIsFigure() && card.zone.match(regex)
       },
       func(game, player, { card }) {
-        return game.aTuck(player, card)
+        return game.actions.tuck(player, card)
       }
     }
   ]

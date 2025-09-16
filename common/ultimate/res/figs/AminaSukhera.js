@@ -23,7 +23,7 @@ module.exports = {
             .getTopCards(opp)
             .filter(card => card.checkIsFigure())
             .filter(card => card.getAge() === 4)
-          game.aScoreMany(player, topFigures)
+          game.actions.scoreMany(player, topFigures)
         }
       }
     },

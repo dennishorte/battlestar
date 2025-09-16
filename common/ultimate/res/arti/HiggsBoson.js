@@ -18,7 +18,7 @@ module.exports = {
           .utilColors()
           .flatMap(color => game.getCardsByZone(player, color))
 
-        game.aTransferMany(player, cards, scoreZone, { ordered: true })
+        game.actions.transferMany(player, cards, scoreZone, { ordered: true })
       }
       else {
         while (true) {
@@ -29,7 +29,7 @@ module.exports = {
           else {
             const card = game.actions.chooseCard(player, choices)
             if (card) {
-              game.aTransfer(player, card, scoreZone)
+              game.actions.transfer(player, card, scoreZone)
             }
             else {
               console.log({

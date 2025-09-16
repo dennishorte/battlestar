@@ -25,7 +25,7 @@ module.exports = {
         const toScore = game
           .getCardsByZone(player, 'forecast')
           .filter(other => other.getAge() === card.getAge())
-        game.aScoreMany(player, toScore)
+        game.actions.scoreMany(player, toScore)
       },
     }
   ]

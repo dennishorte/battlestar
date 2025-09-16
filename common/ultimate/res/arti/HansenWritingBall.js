@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader, self }) => {
       for (let i = 0; i < 4; i++) {
-        game.aDraw(player, { age: game.getEffectAge(self, 7) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 7) })
       }
 
       const choices = game
@@ -21,7 +21,7 @@ module.exports = {
 
       game.actions.chooseAndMeld(player, choices)
 
-      game.aTransferMany(
+      game.actions.transferMany(
         player,
         game.getCardsByZone(player, 'hand'),
         game.getZoneByPlayer(leader, 'hand'),
@@ -31,7 +31,7 @@ module.exports = {
 
     (game, player, { self }) => {
       while (true) {
-        const card = game.aDrawAndReveal(player, game.getEffectAge(self, 7))
+        const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 7))
         if (card) {
           if (card.checkHasBiscuit('i')) {
             game.log.add({ template: 'Card has a {i} biscuit' })
@@ -39,7 +39,7 @@ module.exports = {
           }
           else {
             game.log.add({ template: 'Card does not have a {i} biscuit' })
-            game.aTuck(player, card)
+            game.actions.tuck(player, card)
           }
         }
       }

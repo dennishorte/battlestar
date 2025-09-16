@@ -16,7 +16,7 @@ module.exports = {
 
         const card = returned[0]
         const top = game.getTopCard(player, card.color)
-        if (top && game.aReturn(player, top)) {
+        if (top && game.actions.return(player, top)) {
           totalReturned += 1
         }
 

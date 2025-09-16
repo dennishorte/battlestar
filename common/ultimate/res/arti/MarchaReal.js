@@ -13,13 +13,13 @@ module.exports = {
       const cards = game.actions.chooseCards(player, game.getCardsByZone(player, 'hand'), { count: 2 })
 
       if (cards && cards.length > 0) {
-        game.aRevealMany(player, cards, { ordered: true })
-        game.aReturnMany(player, cards)
+        game.actions.revealMany(player, cards, { ordered: true })
+        game.actions.returnMany(player, cards)
       }
 
       if (cards && cards.length === 2) {
         if (cards[0].getAge() === cards[1].getAge()) {
-          game.aDraw(player, { age: cards[0].getAge() + 1 })
+          game.actions.draw(player, { age: cards[0].getAge() + 1 })
         }
 
         if (cards[0].color === cards[1].color) {

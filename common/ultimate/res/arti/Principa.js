@@ -15,11 +15,11 @@ module.exports = {
         .filter(card => card.color !== 'blue')
 
       const returned = game
-        .aReturnMany(player, toReturn)
+        .actions.returnMany(player, toReturn)
         .sort((l, r) => l.getAge() - r.getAge())
 
       for (const card of returned) {
-        game.aDrawAndMeld(player, card.getAge() + 1)
+        game.actions.drawAndMeld(player, card.getAge() + 1)
       }
     }
   ],

@@ -16,7 +16,7 @@ module.exports = {
         .length
 
       for (let i = 0; i < matchingCards; i++) {
-        game.aDrawAndScore(player, game.getEffectAge(self, 9))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 9))
       }
     }
   ],

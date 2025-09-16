@@ -17,7 +17,7 @@ module.exports = {
           const toScore = game
             .getCardsByZone(player, card.color)
             .filter(other => other !== card)
-          const scored = game.aScoreMany(player, toScore)
+          const scored = game.actions.scoreMany(player, toScore)
           if (scored && scored.length > 0) {
             game.log.add({ template: 'Repeat this effect.' })
             continue

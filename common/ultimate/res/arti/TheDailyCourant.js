@@ -15,7 +15,7 @@ module.exports = {
         template: '{player} choose age {age}',
         args: { player, age }
       })
-      const card = game.aDraw(player, { age })
+      const card = game.actions.draw(player, { age })
       if (card) {
         game.mMoveCardToTop(card, game.getZoneByCardHome(card))
         game.log.add({

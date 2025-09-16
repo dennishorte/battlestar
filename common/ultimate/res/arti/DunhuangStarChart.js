@@ -10,10 +10,10 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const returned = game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
+      const returned = game.actions.returnMany(player, game.getCardsByZone(player, 'hand'))
 
       if (returned) {
-        game.aDraw(player, { age: returned.length })
+        game.actions.draw(player, { age: returned.length })
       }
     }
   ],

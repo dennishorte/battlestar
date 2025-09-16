@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const highestTopCard = game.getHighestTopCard(player)
-      game.aDraw(player, { age: highestTopCard.getAge(), exp: 'arti' })
+      game.actions.draw(player, { age: highestTopCard.getAge(), exp: 'arti' })
     }
   ],
 }

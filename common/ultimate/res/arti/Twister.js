@@ -27,7 +27,7 @@ module.exports = {
 
         const card = game.actions.chooseCard(player, choices, { title: 'Choose a card to meld' })
         meldedColors.push(card.color)
-        game.aMeld(player, card)
+        game.actions.meld(player, card)
       }
     }
   ],

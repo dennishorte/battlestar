@@ -17,7 +17,7 @@ module.exports = {
       game.getEffectAge(this, 5),
       game.getEffectAge(this, 6)
     ])
-    game.aDrawAndForeshadow(player, age)
+    game.actions.drawAndForeshadow(player, age)
   },
   karmaImpl: [
     {
@@ -29,7 +29,7 @@ module.exports = {
         return matchedAge === undefined
       },
       func: (game, player) => {
-        game.aTransferMany(
+        game.actions.transferMany(
           player,
           game.getCardsByZone(player, 'forecast'),
           game.getZoneByPlayer(player, 'hand')

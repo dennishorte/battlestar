@@ -31,6 +31,6 @@ module.exports = {
       }
     }
 
-    game.aReturnMany(player, cardsToReturn)
+    game.actions.returnMany(player, cardsToReturn)
   }
 }

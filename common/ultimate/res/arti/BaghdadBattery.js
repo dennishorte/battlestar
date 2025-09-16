@@ -19,7 +19,7 @@ module.exports = {
         && cards[0].expansion !== cards[1].expansion
       ) {
         for (let i = 0; i < 5; i++) {
-          game.aDrawAndScore(player, game.getEffectAge(self, 2))
+          game.actions.drawAndScore(player, game.getEffectAge(self, 2))
         }
       }
     },

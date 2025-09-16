@@ -13,7 +13,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const self = game.getCardByName('Dancing Girl')
-      game.aTransfer(player, self, game.getZoneByPlayer(player, self.color))
+      game.actions.transfer(player, self, game.getZoneByPlayer(player, self.color))
 
       const age = game.getHighestTopAge(player)
       const toTransfer = game
@@ -25,7 +25,7 @@ module.exports = {
           title: `Choose a card to transfer to ${leader.name}`,
         })
 
-        game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+        game.actions.transfer(player, card, game.getZoneByPlayer(leader, card.color))
         util.array.remove(toTransfer, card)
       }
     }

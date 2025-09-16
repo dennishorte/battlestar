@@ -30,7 +30,7 @@ module.exports = {
       kind: 'would-instead',
       matches: (game, player, { card }) => card.checkHasBiscuit('f'),
       func: (game, player, { card }) => {
-        game.aTuck(player, card)
+        game.actions.tuck(player, card)
 
         const choices = game
           .getTopCardsAll()

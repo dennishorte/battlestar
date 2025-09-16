@@ -26,7 +26,7 @@ module.exports = {
         args: { player, card }
       })
       game.mMoveCardTo(card, game.getZoneByPlayer(player, 'hand'))
-      game.aMeld(player, card)
+      game.actions.meld(player, card)
     }
   },
   karmaImpl: [
@@ -39,7 +39,7 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func(game, player, { card }) {
-        game.aDrawAndMeld(player, card.getAge() + 1)
+        game.actions.drawAndMeld(player, card.getAge() + 1)
       }
     }
   ]

@@ -31,7 +31,7 @@ module.exports = {
       kind: 'would-instead',
       matches: (game, player, { card }) => card.expansion !== 'figs',
       func: (game, player, { card }) => {
-        game.aMeld(player, card)
+        game.actions.meld(player, card)
         game.actions.chooseAndSplay(player, [card.color], 'left')
       }
     }

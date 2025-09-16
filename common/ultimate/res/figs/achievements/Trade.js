@@ -9,8 +9,8 @@ module.exports = {
   isDecree: true,
   decreeImpl: (game, player) => {
     const age = game.getHighestTopAge(player) + 1
-    game.aDrawAndForeshadow(player, age)
-    game.aDrawAndForeshadow(player, age)
-    game.aDrawAndForeshadow(player, age)
+    game.actions.drawAndForeshadow(player, age)
+    game.actions.drawAndForeshadow(player, age)
+    game.actions.drawAndForeshadow(player, age)
   }
 }

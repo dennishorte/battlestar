@@ -14,9 +14,9 @@ module.exports = {
   dogma: [],
   dogmaImpl: [],
   echoImpl: (game, player) => {
-    const card = game.aDrawAndReveal(player, game.getEffectAge(this, 10))
+    const card = game.actions.drawAndReveal(player, game.getEffectAge(this, 10))
     if (!card.checkHasBiscuit('i')) {
-      game.aScore(player, card)
+      game.actions.score(player, card)
     }
     else {
       game.log.add({

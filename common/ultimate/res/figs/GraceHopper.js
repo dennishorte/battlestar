@@ -23,7 +23,7 @@ module.exports = {
         return player === game.getPlayerByCard(this)
       },
       func: (game, player) => {
-        const card = game.aDraw(player, { age: game.getEffectAge(this, 10) })
+        const card = game.actions.draw(player, { age: game.getEffectAge(this, 10) })
         if (card && card.color === 'blue') {
           game.mReveal(player, card)
           game.youWin(player, this.name)

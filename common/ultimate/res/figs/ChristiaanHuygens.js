@@ -19,7 +19,7 @@ module.exports = {
       game.getEffectAge(this, 9),
       game.getEffectAge(this, 10),
     ])
-    game.aDrawAndForeshadow(player, age)
+    game.actions.drawAndForeshadow(player, age)
   },
   karmaImpl: [
     {
@@ -31,10 +31,10 @@ module.exports = {
         const ageCondition = card.getAge() <= game.getHighestTopAge(player) + 2
 
         if (biscuitCondition && ageCondition) {
-          game.aMeld(player, card)
+          game.actions.meld(player, card)
         }
         else {
-          game.aForeshadow(player, card)
+          game.actions.foreshadow(player, card)
         }
       }
     }

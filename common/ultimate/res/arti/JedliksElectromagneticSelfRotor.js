@@ -10,8 +10,8 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      game.aDrawAndScore(player, game.getEffectAge(self, 8))
-      game.aDrawAndMeld(player, game.getEffectAge(self, 8))
+      game.actions.drawAndScore(player, game.getEffectAge(self, 8))
+      game.actions.drawAndMeld(player, game.getEffectAge(self, 8))
 
       const choices = game
         .getAvailableAchievementsRaw(player)

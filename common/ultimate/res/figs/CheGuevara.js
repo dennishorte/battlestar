@@ -14,7 +14,7 @@ module.exports = {
   dogma: [],
   dogmaImpl: [],
   echoImpl: (game, player) => {
-    game.aDrawAndScore(player, game.getEffectAge(this, 9))
+    game.actions.drawAndScore(player, game.getEffectAge(this, 9))
   },
   karmaImpl: [
     {
@@ -24,7 +24,7 @@ module.exports = {
           .getPlayerOpponents(player)
           .flatMap(opp => game.getTopCards(opp))
           .filter(card => card.checkIsFigure())
-        game.aScoreMany(player, cards)
+        game.actions.scoreMany(player, cards)
       }
     },
 

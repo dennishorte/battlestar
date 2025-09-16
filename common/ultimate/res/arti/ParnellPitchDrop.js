@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const card = game.aDrawAndMeld(player, game.getHighestTopAge(player) + 1)
+      const card = game.actions.drawAndMeld(player, game.getHighestTopAge(player) + 1)
       if (card.biscuits.split('i').length - 1 === 3) {
         game.youWin(player, self.name)
       }

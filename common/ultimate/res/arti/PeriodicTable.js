@@ -35,7 +35,7 @@ module.exports = {
             .split(', ')
             .map(name => game.getCardByName(name))
 
-          const melded = game.aDrawAndMeld(player, cards[0].age + 1)
+          const melded = game.actions.drawAndMeld(player, cards[0].age + 1)
 
           if (melded && (melded.color === cards[0].color || melded.color === cards[1].color)) {
             continue

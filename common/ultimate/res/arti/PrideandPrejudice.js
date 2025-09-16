@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       while (true) {
-        const card = game.aDrawAndMeld(player, game.getEffectAge(self, 6))
+        const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 6))
 
         if (card) {
           const numCards = game
@@ -24,7 +24,7 @@ module.exports = {
             .every(count => count >= numCards)
 
           if (hasFewestCards) {
-            game.aScore(player, card)
+            game.actions.score(player, card)
             continue
           }
           else {

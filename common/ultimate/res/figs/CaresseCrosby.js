@@ -24,8 +24,8 @@ module.exports = {
       },
       func: (game, player, { card }) => {
         game.aSplay(player, card.color, 'left')
-        game.aDraw(player, { age: game.getEffectAge(this, 2) })
-        game.aDraw(player, { age: game.getEffectAge(this, 2) })
+        game.actions.draw(player, { age: game.getEffectAge(this, 2) })
+        game.actions.draw(player, { age: game.getEffectAge(this, 2) })
       },
     },
     {

@@ -11,8 +11,8 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const card1 = game.aDrawAndMeld(player, game.getEffectAge(self, 10))
-      const card2 = game.aDrawAndMeld(player, game.getEffectAge(self, 10))
+      const card1 = game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
+      const card2 = game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
 
       if (card1.color === card2.color) {
         game.youWin(player, self.name)

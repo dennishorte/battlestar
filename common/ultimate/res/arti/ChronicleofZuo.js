@@ -25,15 +25,15 @@ module.exports = {
         .sort((l, r) => l - r)
 
       if (biscuits[player.name].k < castles[0]) {
-        game.aDraw(player, { age: game.getEffectAge(self, 2) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 2) })
       }
 
       if (biscuits[player.name].c < coins[0]) {
-        game.aDraw(player, { age: game.getEffectAge(self, 3) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 3) })
       }
 
       if (biscuits[player.name].s < lights[0]) {
-        game.aDraw(player, { age: game.getEffectAge(self, 4) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 4) })
       }
     }
   ],

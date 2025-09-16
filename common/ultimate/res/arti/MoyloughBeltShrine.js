@@ -25,7 +25,7 @@ module.exports = {
       }
 
       const card = game.actions.chooseCard(leader, cards)
-      game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+      game.actions.transfer(player, card, game.getZoneByPlayer(leader, card.color))
     }
   ],
 }

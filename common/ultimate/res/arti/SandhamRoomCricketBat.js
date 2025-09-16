@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const card = game.aDrawAndReveal(player, game.getEffectAge(self, 6))
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
       if (card.color === 'red') {
         game.log.add({ template: 'Card is red' })
         const choices = game.getAvailableAchievementsRaw(player)

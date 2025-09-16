@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      game.aDrawAndScore(player, game.getEffectAge(self, 1))
+      game.actions.drawAndScore(player, game.getEffectAge(self, 1))
 
       const totalValue = game
         .getCardsByZone(player, 'score')
@@ -18,7 +18,7 @@ module.exports = {
         .reduce((agg, next) => agg + next, 0)
 
       const age = Math.ceil(totalValue / 5)
-      game.aDrawAndScore(player, age)
+      game.actions.drawAndScore(player, age)
     }
   ],
 }

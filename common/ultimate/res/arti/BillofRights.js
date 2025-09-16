@@ -21,7 +21,7 @@ module.exports = {
       if (colors && colors.length > 0) {
         const toTransfer = game.getCardsByZone(player, colors[0]).reverse()
         const dest = game.getZoneByPlayer(leader, colors[0])
-        game.aTransferMany(player, toTransfer, dest, { ordered: true })
+        game.actions.transferMany(player, toTransfer, dest, { ordered: true })
       }
     }
   ],

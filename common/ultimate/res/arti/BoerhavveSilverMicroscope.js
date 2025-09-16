@@ -21,7 +21,7 @@ module.exports = {
         .map(card => card.getAge())
         .reduce((agg, next) => agg + next, 0)
 
-      game.aDrawAndScore(player, returnedSum)
+      game.actions.drawAndScore(player, returnedSum)
     }
   ],
 }

@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const card = game.aDrawAndMeld(player, game.getEffectAge(self, 10), { exp: 'arti' })
+      const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 10), { exp: 'arti' })
       if (card) {
         game.aExecuteAsIf(player, card)
       }

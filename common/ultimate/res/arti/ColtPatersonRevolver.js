@@ -12,11 +12,11 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const preDrawHand = game.getCardsByZone(player, 'hand')
-      const card = game.aDrawAndReveal(player, game.getEffectAge(self, 7))
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 7))
 
       if (preDrawHand.some(other => other.color === card.color)) {
-        game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
-        game.aReturnMany(player, game.getCardsByZone(player, 'score'))
+        game.actions.returnMany(player, game.getCardsByZone(player, 'hand'))
+        game.actions.returnMany(player, game.getCardsByZone(player, 'score'))
       }
     }
   ],

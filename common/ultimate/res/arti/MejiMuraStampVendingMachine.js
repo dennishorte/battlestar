@@ -13,9 +13,9 @@ module.exports = {
       const cards = game.actions.chooseAndReturn(player, game.getCardsByZone(player, 'hand'))
       if (cards && cards.length > 0) {
         const age = cards[0].getAge()
-        game.aDrawAndScore(player, age)
-        game.aDrawAndScore(player, age)
-        game.aDrawAndScore(player, age)
+        game.actions.drawAndScore(player, age)
+        game.actions.drawAndScore(player, age)
+        game.actions.drawAndScore(player, age)
       }
     }
   ],

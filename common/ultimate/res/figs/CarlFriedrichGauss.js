@@ -15,7 +15,7 @@ module.exports = {
   dogma: [],
   dogmaImpl: [],
   echoImpl: (game, player) => {
-    game.aDraw(player, { age: game.getEffectAge(this, 7) })
+    game.actions.draw(player, { age: game.getEffectAge(this, 7) })
   },
   karmaImpl: [
     {
@@ -39,7 +39,7 @@ module.exports = {
           game.log.addNoEffect()
         }
         else {
-          game.aMeldMany(player, cards)
+          game.actions.meldMany(player, cards)
         }
       }
     }

@@ -18,7 +18,7 @@ module.exports = {
       game.getEffectAge(this, 4),
       game.getEffectAge(this, 5),
     ])
-    game.aDrawAndForeshadow(player, age)
+    game.actions.drawAndForeshadow(player, age)
   },
   karmaImpl: [
     {

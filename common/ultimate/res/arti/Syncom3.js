@@ -12,13 +12,13 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
+      game.actions.returnMany(player, game.getCardsByZone(player, 'hand'))
       const drawn = [
-        game.aDrawAndReveal(player, game.getEffectAge(self, 9)),
-        game.aDrawAndReveal(player, game.getEffectAge(self, 9)),
-        game.aDrawAndReveal(player, game.getEffectAge(self, 9)),
-        game.aDrawAndReveal(player, game.getEffectAge(self, 9)),
-        game.aDrawAndReveal(player, game.getEffectAge(self, 9)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 9)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 9)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 9)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 9)),
+        game.actions.drawAndReveal(player, game.getEffectAge(self, 9)),
       ].filter(card => card !== undefined)
 
       const colors = drawn.map(card => card.color)

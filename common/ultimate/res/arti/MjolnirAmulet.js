@@ -12,7 +12,7 @@ module.exports = {
     (game, player, { leader }) => {
       const card = game.actions.chooseCard(player, game.getTopCards(player))
       if (card) {
-        game.aTransferMany(
+        game.actions.transferMany(
           player,
           game.getCardsByZone(player, card.color),
           game.getZoneByPlayer(leader, 'score'),

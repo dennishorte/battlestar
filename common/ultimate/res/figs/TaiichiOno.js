@@ -13,7 +13,7 @@ module.exports = {
   dogma: [],
   dogmaImpl: [],
   echoImpl: (game, player) => {
-    game.aDraw(player, { age: game.getEffectAge(this, 10) })
+    game.actions.draw(player, { age: game.getEffectAge(this, 10) })
   },
   karmaImpl: [
     {

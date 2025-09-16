@@ -31,7 +31,7 @@ module.exports = {
       func: (game, player) => {
         const owner = game.getPlayerByCard(this)
         const kind = game.actions.choose(owner, game.getExpansionList())[0]
-        game.aDraw(owner, { exp: kind, age: game.getEffectAge(this, 6) })
+        game.actions.draw(owner, { exp: kind, age: game.getEffectAge(this, 6) })
       }
     }
   ]

@@ -23,7 +23,7 @@ module.exports = {
         }
       }
 
-      const returned = game.aReturnMany(player, toReturn.flat())
+      const returned = game.actions.returnMany(player, toReturn.flat())
 
       let count = 0
       for (const [player, cards] of Object.entries(playerCards)) {
@@ -33,7 +33,7 @@ module.exports = {
       }
 
       for (let i = 0; i < count; i++) {
-        game.aDrawAndScore(player, game.getEffectAge(self, 5))
+        game.actions.drawAndScore(player, game.getEffectAge(self, 5))
       }
     }
   ],

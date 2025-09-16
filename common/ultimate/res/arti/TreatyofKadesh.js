@@ -14,7 +14,7 @@ module.exports = {
       const toReturn = game
         .getTopCards(player)
         .filter(card => card.checkHasDemand())
-      game.aReturnMany(player, toReturn)
+      game.actions.returnMany(player, toReturn)
     },
 
     (game, player) => {

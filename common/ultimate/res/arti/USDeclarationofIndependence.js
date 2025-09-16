@@ -23,7 +23,7 @@ module.exports = {
       )
       const card = game.actions.chooseCard(player, cards, { title: 'Choose a top card to transfer' })
       if (card) {
-        game.aTransfer(player, card, game.getZoneByPlayer(leader, card.color))
+        game.actions.transfer(player, card, game.getZoneByPlayer(leader, card.color))
       }
     }
   ],

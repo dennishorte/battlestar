@@ -17,7 +17,7 @@ module.exports = {
       if (colors && colors.length > 0) {
         const color = colors[0]
         const cards = game.getCardsByZone(player, color)
-        game.aMeld(player, cards[cards.length - 1])
+        game.actions.meld(player, cards[cards.length - 1])
 
         if (cards.length > 1) {
           const achs = game.getAvailableAchievementsRaw(player)

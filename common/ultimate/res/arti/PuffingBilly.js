@@ -18,7 +18,7 @@ module.exports = {
           .entries(biscuits)
           .sort((l, r) => r[1] - l[1])
         const count = sorted[0][1]
-        game.aDraw(player, { age: count })
+        game.actions.draw(player, { age: count })
         game.aSplay(player, returned.color, 'right')
       }
     }

@@ -22,7 +22,7 @@ module.exports = {
         return cards.length > 0 && cards[0].getAge() === card.getAge()
       },
       func: (game, player, { card }) => {
-        game.aTuck(player, card)
+        game.actions.tuck(player, card)
       }
     }
   ]
