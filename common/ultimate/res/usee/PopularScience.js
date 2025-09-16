@@ -16,7 +16,7 @@ module.exports = {
     (game, player) => {
       const topGreenCards = game
         .players.all()
-        .map(player => game.getTopCard(player, 'green'))
+        .map(player => game.cards.top(player, 'green'))
         .filter(card => card !== undefined)
 
       if (topGreenCards.length === 0) {
@@ -30,7 +30,7 @@ module.exports = {
     },
 
     (game, player) => {
-      const topYellowCard = game.getTopCard(player, 'yellow')
+      const topYellowCard = game.cards.top(player, 'yellow')
       if (!topYellowCard) {
         game.log.addNoEffect()
         return

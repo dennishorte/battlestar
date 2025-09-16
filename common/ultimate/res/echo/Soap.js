@@ -19,10 +19,10 @@ module.exports = {
       const tucked = game.actions.chooseAndTuck(player, choices, { min: 0, max: 999 })
 
       if (tucked.length > 0) {
-        const topValue = game.getTopCard(player, color).getAge()
+        const topValue = game.cards.top(player, color).getAge()
         const opponentValues = game
           .players.opponentsOf(player)
-          .map(opp => game.getTopCard(opp, color))
+          .map(opp => game.cards.top(opp, color))
           .filter(card => card)
           .map(card => card.getAge())
 

@@ -42,7 +42,7 @@ function EndorseAction(player, color) {
 
   this.state.didEndorse = true
 
-  const card = this.game.getTopCard(player, color)
+  const card = this.game.cards.top(player, color)
 
   // Junk a card
   const featuredBiscuit = card.dogmaBiscuit

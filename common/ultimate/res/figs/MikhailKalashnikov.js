@@ -21,7 +21,7 @@ module.exports = {
       func: (game, player) => {
         const choices = game
           .getPlayerOpponents(player)
-          .map(opp => game.getTopCard(opp, 'red'))
+          .map(opp => game.cards.top(opp, 'red'))
           .filter(card => card !== undefined)
         const selected = game.actions.chooseCard(player, choices)
         game.log.add({

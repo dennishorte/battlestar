@@ -658,7 +658,7 @@ Innovation.prototype.aFinishChainEvent = function(player, card) {
 Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
   this.aTrackChainRule(player, card)
 
-  const topCard = this.getTopCard(player, card.color)
+  const topCard = this.cards.top(player, card.color)
   const isTopCard = topCard && topCard.name === card.name
 
   opts.selfExecutor = player
@@ -1299,16 +1299,6 @@ Innovation.prototype.getSplayedZones = function(player) {
     .util.colors()
     .map(color => this.zones.byPlayer(player, color))
     .filter(zone => zone.splay !== 'none')
-}
-
-Innovation.prototype.getTopCard = function(player, color) {
-  return this.cards.byPlayer(player, color)[0]
-}
-
-Innovation.prototype.getTopCardsAll = function() {
-  return this
-    .players.all()
-    .flatMap(player => this.cards.tops(player))
 }
 
 Innovation.prototype.getUniquePlayerWithMostBiscuits = function(biscuit) {

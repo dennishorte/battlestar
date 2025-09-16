@@ -13,7 +13,7 @@ module.exports = {
       const firstCard = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
 
       if (firstCard) {
-        const topCard = game.getTopCard(player, firstCard.color)
+        const topCard = game.cards.top(player, firstCard.color)
 
         if (topCard && topCard.checkHasBiscuit('f')) {
           game.actions.tuck(player, firstCard)

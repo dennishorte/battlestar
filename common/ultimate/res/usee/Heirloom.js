@@ -17,7 +17,7 @@ module.exports = {
         game.actions.draw(player, { age: transferred.getAge() + 1 })
       }
       else {
-        const topRed = game.getTopCard(player, 'red')
+        const topRed = game.cards.top(player, 'red')
         if (topRed) {
           const value = topRed.getAge()
           const achievement = game.getAvailableAchievementsByAge(player, value)[0]

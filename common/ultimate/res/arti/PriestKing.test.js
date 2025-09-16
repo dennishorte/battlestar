@@ -9,12 +9,17 @@ describe("Priest-King", () => {
     t.setBoard(game,  {
       dennis: {
         artifact: ["Priest-King"],
-        green: ['Sailing'],
-        hand: ['The Wheel'],
+        purple: ['City States'],
+        hand: ['Code of Laws'],
+      },
+      micah: {
+        red: ['Oars'],
+        green: ['The Wheel'],
+        hand: ['Archery'],
       },
       decks: {
         base: {
-          1: ['Masonry'],
+          1: ['Masonry', 'Domestication', 'Tools'],
         }
       }
     })
@@ -22,46 +27,21 @@ describe("Priest-King", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'The Wheel')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
-        yellow: ['Masonry'],
-        green: ['Sailing'],
-        score: ['The Wheel'],
-      }
-    })
-  })
-
-  test('dogma: achievement', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-    t.setBoard(game,  {
-      dennis: {
-        artifact: ["Priest-King"],
-        green: ['Sailing'],
-        hand: ['The Wheel'],
-        score: ['Canning'],
+        purple: ['City States'],
+        green: ['The Wheel'],
+        score: ['Code of Laws'],
+        hand: ['Tools'],
       },
-      decks: {
-        base: {
-          1: ['Masonry'],
-        }
+      micah: {
+        red: ['Oars'],
+        hand: ['Masonry', 'Domestication'],
+        score: ['Archery'],
       },
-      achievements: ['Pottery'],
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'dogma')
-
-    t.testIsFirstAction(request)
-    t.testBoard(game, {
-      dennis: {
-        yellow: ['Masonry'],
-        green: ['Sailing'],
-        score: ['The Wheel', 'Canning'],
-        achievements: ['Pottery'],
-      }
     })
   })
 })

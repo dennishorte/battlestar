@@ -6,24 +6,29 @@ module.exports = {
   biscuits: `khkk`,
   dogmaBiscuit: `k`,
   dogma: [
-    `Score a card from your hand. If you have a top card matching its color, execute each of the top card's non-demand dogma effects. Do not share them.`,
-    `Claim an achievement, if eligible.`
+    `Score a card from your hand. If you have a top card matching its color, super-execute that top card if it is your turn, otherwise self-execute it.`,
   ],
   dogmaImpl: [
     (game, player) => {
       const cards = game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'))
       if (cards && cards.length > 0) {
         const card = cards[0]
-        const top = game.getTopCard(player, card.color)
+        const top = game.cards.top(player, card.color)
         if (top) {
-          game.aCardEffects(player, top, 'dogma')
+          if (player.name === game.players.current().name) {
+            game.aSuperExecute(player, top)
+          }
+          else {
+            game.aSelfExecute(player, top)
+          }
+        }
+        else {
+          game.log.add({
+            template: '{player} has no {color} cards',
+            args: { player, color: card.color }
+          })
         }
       }
     },
-
-    (game, player) => {
-      const choices = game.getEligibleAchievementsRaw(player)
-      game.actions.chooseAndAchieve(player, choices)
-    }
   ],
 }

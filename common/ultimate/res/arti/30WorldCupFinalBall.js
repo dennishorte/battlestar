@@ -19,7 +19,7 @@ module.exports = {
         const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 8))
         const orderedPlayers = game
           .players.all()
-          .map(player => ({ player, card: game.getTopCard(player, card.color) }))
+          .map(player => ({ player, card: game.cards.top(player, card.color) }))
           .filter(x => x.card !== undefined)
           .map(({ player, card }) => ({ player, age: card.getAge() }))
           .sort((l, r) => r.age - l.age)

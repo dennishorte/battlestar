@@ -21,7 +21,7 @@ module.exports = {
       func: (game, player, { card }) => {
         game.actions.meld(player, card)
         game.aCardEffects(player, card, 'dogma')
-        const topCard = game.getTopCard(player, card.color)
+        const topCard = game.cards.top(player, card.color)
         if (topCard === card) {
           game.aRemove(player, card)
         }

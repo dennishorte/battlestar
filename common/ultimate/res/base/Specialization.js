@@ -19,7 +19,7 @@ module.exports = {
 
         const stolen = game
           .players.opponentsOf(player)
-          .map(opponent => game.getTopCard(opponent, card.color))
+          .map(opponent => game.cards.top(opponent, card.color))
           .filter(card => card !== undefined)
 
         game.actions.transferMany(player, stolen, hand)

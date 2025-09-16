@@ -13,7 +13,7 @@ module.exports = {
       while (true) {
         const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 1))
         if (card) {
-          const top = game.getTopCard(player, card.color)
+          const top = game.cards.top(player, card.color)
           if (top && top.getAge() === card.getAge()) {
             game.actions.score(player, card)
           }

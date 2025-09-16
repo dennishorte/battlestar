@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const topGreen = game.getTopCard(player, 'green')
+      const topGreen = game.cards.top(player, 'green')
       const age = topGreen ? topGreen.age : 1
       const cards = [
         game.actions.draw(player, { age }),

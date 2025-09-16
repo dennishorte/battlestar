@@ -13,7 +13,7 @@ module.exports = {
       while (true) {
         game.state.dogmaInfo.theBigBangChange = false
 
-        const card = game.getTopCard(player, 'blue')
+        const card = game.cards.top(player, 'blue')
         if (card) {
           game.aCardEffects(player, card, 'echo')
           game.aCardEffects(player, card, 'dogma')

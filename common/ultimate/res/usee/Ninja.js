@@ -16,7 +16,7 @@ module.exports = {
       const returnedCard = game.actions.chooseAndReturn(player, choices, { reveal: true })[0]
 
       if (returnedCard) {
-        const topCard = game.getTopCard(player, chosenColor)
+        const topCard = game.cards.top(player, chosenColor)
         if (topCard) {
           game.actions.transfer(player, topCard, game.zones.byPlayer(leader, topCard.color))
         }

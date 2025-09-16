@@ -13,7 +13,7 @@ module.exports = {
     (game, player, { self }) => {
       const choices = game
         .players.all()
-        .map(player => game.getTopCard(player, 'purple'))
+        .map(player => game.cards.top(player, 'purple'))
         .filter(card => card !== undefined)
         .filter(card => card.name !== self.name)
 

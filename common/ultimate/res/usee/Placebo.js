@@ -19,8 +19,8 @@ module.exports = {
       const returnedCards = [firstCard]
       const color = firstCard.color
 
-      while (game.getTopCard(player, color)) {
-        const card = game.actions.chooseAndReturn(player, [game.getTopCard(player, color)], { min: 0, max: 1 })[0]
+      while (game.cards.top(player, color)) {
+        const card = game.actions.chooseAndReturn(player, [game.cards.top(player, color)], { min: 0, max: 1 })[0]
 
         if (!card) {
           break

@@ -14,7 +14,7 @@ module.exports = {
         .cards.tops(player)
         .filter(card => card.checkHasBiscuit('s'))
         .filter(card => {
-          const leaderCard = game.getTopCard(leader, card.color)
+          const leaderCard = game.cards.top(leader, card.color)
           if (!leaderCard) {
             return true
           }

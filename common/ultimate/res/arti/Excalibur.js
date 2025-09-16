@@ -13,8 +13,8 @@ module.exports = {
       const choices = game
         .utilColors()
         .map(color => {
-          const playerTop = game.getTopCard(player, color)
-          const leaderTop = game.getTopCard(leader, color)
+          const playerTop = game.cards.top(player, color)
+          const leaderTop = game.cards.top(leader, color)
 
           if (!playerTop) {
             return undefined

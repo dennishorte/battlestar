@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const topYellow = game.getTopCard(player, 'yellow')
+      const topYellow = game.cards.top(player, 'yellow')
       if (topYellow) {
         const choices = game
           .cards.byPlayer(player, 'score')
@@ -19,7 +19,7 @@ module.exports = {
           game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'score'))
 
         if (transferred && transferred.length > 0) {
-          const topGreen = game.getTopCard(player, 'green')
+          const topGreen = game.cards.top(player, 'green')
           if (topGreen) {
             const greenChoices = game
               .cards.byPlayer(player, 'score')

@@ -30,7 +30,7 @@ module.exports = {
         return card.color === 'purple'
       },
       func(game, player) {
-        const card = game.getTopCard(player, 'purple')
+        const card = game.cards.top(player, 'purple')
         game.actions.transfer(player, card, game.zones.byPlayer(player, 'hand'))
       },
     }

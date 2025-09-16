@@ -16,7 +16,7 @@ module.exports = {
   echoImpl: (game, player) => {
     const purples = game
       .players.all()
-      .map(player => game.getTopCard(player, 'purple'))
+      .map(player => game.cards.top(player, 'purple'))
       .filter(card => card !== undefined)
     game.actions.chooseAndMeld(player, purples)
   },

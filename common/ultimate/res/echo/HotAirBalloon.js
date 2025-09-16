@@ -36,7 +36,7 @@ module.exports = {
         const owner = game.players.byOwner(card)
         game.actions.claimAchievement(player, { card })
 
-        const cardToTransfer = game.getTopCard(player, 'green')
+        const cardToTransfer = game.cards.top(player, 'green')
         if (cardToTransfer) {
           game.actions.transfer(player, cardToTransfer, game.zones.byPlayer(owner, 'green'))
         }

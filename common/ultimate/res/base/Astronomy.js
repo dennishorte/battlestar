@@ -29,7 +29,7 @@ module.exports = {
       const conditionMet = game
         .util.colors()
         .filter(color => color !== 'purple')
-        .map(color => game.getTopCard(player, color))
+        .map(color => game.cards.top(player, color))
         .filter(card => card !== undefined)
         .every(card => card.getAge() >= 6)
 

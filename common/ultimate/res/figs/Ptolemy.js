@@ -24,7 +24,7 @@ module.exports = {
       func(game, player) {
         return game
           .players.all()
-          .map(player => game.getTopCard(player, 'blue'))
+          .map(player => game.cards.top(player, 'blue'))
           .filter(card => card !== undefined)
       }
     }

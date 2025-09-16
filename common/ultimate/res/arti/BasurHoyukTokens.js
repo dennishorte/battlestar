@@ -12,7 +12,7 @@ module.exports = {
     (game, player, { self }) => {
       const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 4))
       if (card) {
-        const matchingTopCard = game.getTopCard(player, card.color)
+        const matchingTopCard = game.cards.top(player, card.color)
         if (matchingTopCard && matchingTopCard.name < card.name) {
           const toReturn = game.cards.byPlayer(player, 'score')
           toReturn.push(card)

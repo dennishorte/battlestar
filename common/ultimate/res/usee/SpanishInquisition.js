@@ -22,7 +22,7 @@ module.exports = {
       game.actions.returnMany(player, scoreReturn)
     },
     (game, player) => {
-      if (game.getTopCard(player, 'red').name === 'Spanish Inquisition') {
+      if (game.cards.top(player, 'red').name === 'Spanish Inquisition') {
         const redCards = game.cards.byPlayer(player, 'red')
         game.actions.returnMany(player, redCards, { ordered: true })
       }

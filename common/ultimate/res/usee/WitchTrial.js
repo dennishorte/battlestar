@@ -16,7 +16,7 @@ module.exports = {
         const drawnCard = game.actions.drawAndReveal(player, effectAge)
         const returnColor = drawnCard.color
 
-        const topCard = game.getTopCard(player, returnColor)
+        const topCard = game.cards.top(player, returnColor)
         if (topCard) {
           game.actions.return(player, topCard)
         }
