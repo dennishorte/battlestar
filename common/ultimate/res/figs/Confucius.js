@@ -15,7 +15,7 @@ module.exports = {
   echoImpl: (game, player) => {
     const choices = game
       .getPlayerOpponents(player)
-      .flatMap(opp => game.getTopCards(opp))
+      .flatMap(opp => game.cards.tops(opp))
       .filter(card => card.checkIsFigure())
       .filter(card => card.getAge() === 1)
     game.actions.chooseAndScore(player, choices)

@@ -13,14 +13,14 @@ module.exports = {
       const choices = game
         .utilColors()
         .filter(color => {
-          const yours = game.getZoneByPlayer(player, color).numVisibleCards()
-          const mine = game.getZoneByPlayer(leader, color).numVisibleCards()
+          const yours = game.zones.byPlayer(player, color).numVisibleCards()
+          const mine = game.zones.byPlayer(leader, color).numVisibleCards()
           return yours > mine
         })
       const colors = game.actions.choose(player, choices, { title: 'Choose a Color' })
       if (colors && colors.length > 0) {
         const toTransfer = game.getCardsByZone(player, colors[0]).reverse()
-        const dest = game.getZoneByPlayer(leader, colors[0])
+        const dest = game.zones.byPlayer(leader, colors[0])
         game.actions.transferMany(player, toTransfer, dest, { ordered: true })
       }
     }

@@ -28,7 +28,7 @@ module.exports = {
         return {
           text: 'Score the bottom card of this color.',
           impl: (game, player) => {
-            const cards = game.getZoneByPlayer(player, card.color).cards()
+            const cards = game.zones.byPlayer(player, card.color).cards()
             if (cards.length === 0) {
               game.log.addNoEffect()
             }

@@ -31,7 +31,7 @@ module.exports = {
       },
       func(game, player) {
         const card = game.getTopCard(player, 'purple')
-        game.actions.transfer(player, card, game.getZoneByPlayer(player, 'hand'))
+        game.actions.transfer(player, card, game.zones.byPlayer(player, 'hand'))
       },
     }
   ]

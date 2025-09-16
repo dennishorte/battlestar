@@ -16,7 +16,7 @@ module.exports = {
         const choices = game
           .getCardsByZone(player, 'achievements')
           .filter(ach => ach.age === card.age)
-        game.actions.chooseAndTransfer(player, choices, game.getZoneByPlayer(leader, 'achievements'))
+        game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'achievements'))
       }
     }
   ],

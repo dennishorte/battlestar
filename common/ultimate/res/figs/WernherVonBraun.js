@@ -18,8 +18,8 @@ module.exports = {
       trigger: 'list-score',
       func(game, player) {
         return [
-          ...game.getZoneByPlayer(player, 'score')._cards,
-          ...game.getZoneByPlayer(player, 'forecast')._cards,
+          ...game.zones.byPlayer(player, 'score')._cards,
+          ...game.zones.byPlayer(player, 'forecast')._cards,
         ]
       }
     }

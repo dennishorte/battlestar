@@ -15,16 +15,16 @@ module.exports = {
         const color = cards[0].color
 
         const toTransfer = game
-          .getPlayerAll()
-          .filter(player => game.getTopCards(player).every(card => !card.checkIsArtifact()))
+          .players.all()
+          .filter(player => game.cards.tops(player).every(card => !card.checkIsArtifact()))
           .flatMap(player => game.getCardsByZone(player, color))
 
-        game.actions.transferMany(player, toTransfer, game.getZoneByPlayer(player, 'score'), { ordered: true })
+        game.actions.transferMany(player, toTransfer, game.zones.byPlayer(player, 'score'), { ordered: true })
       }
 
       const ark = game.getCardByName('Ark of the Covenant')
       if (game.checkCardIsTop(ark)) {
-        game.actions.transfer(player, ark, game.getZoneByPlayer(player, 'hand'))
+        game.actions.transfer(player, ark, game.zones.byPlayer(player, 'hand'))
       }
       else {
         game.log.add({

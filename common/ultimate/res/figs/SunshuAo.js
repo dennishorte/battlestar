@@ -27,7 +27,7 @@ module.exports = {
             template: '{player} returns {card} to hand',
             args: { player, card }
           })
-          game.mMoveCardTo(card, game.getZoneByPlayer(player, 'hand'))
+          game.mMoveCardTo(card, game.zones.byPlayer(player, 'hand'))
         }
       },
     }

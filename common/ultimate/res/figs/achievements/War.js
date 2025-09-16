@@ -24,7 +24,7 @@ module.exports = {
 
     const cardsToReturn = []
     for (const opponent of game.getPlayerOpponents(player)) {
-      for (const card of game.getTopCards(opponent)) {
+      for (const card of game.cards.tops(opponent)) {
         if (card.getAge() === value) {
           cardsToReturn.push(card)
         }

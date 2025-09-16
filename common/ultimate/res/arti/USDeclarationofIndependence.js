@@ -10,20 +10,20 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const hand = game.utilHighestCards(game.getCardsByZone(player, 'hand'))
-      game.actions.chooseAndTransfer(player, hand, game.getZoneByPlayer(leader, 'hand'))
+      const hand = game.util.highestCards(game.getCardsByZone(player, 'hand'))
+      game.actions.chooseAndTransfer(player, hand, game.zones.byPlayer(leader, 'hand'))
 
-      const score = game.utilHighestCards(game.getCardsByZone(player, 'score'))
-      game.actions.chooseAndTransfer(player, score, game.getZoneByPlayer(leader, 'score'))
+      const score = game.util.highestCards(game.getCardsByZone(player, 'score'))
+      game.actions.chooseAndTransfer(player, score, game.zones.byPlayer(leader, 'score'))
 
-      const cards = game.utilHighestCards(
+      const cards = game.util.highestCards(
         game
           .getTopCards(player)
           .filter(card => card.checkHasBiscuit('f'))
       )
       const card = game.actions.chooseCard(player, cards, { title: 'Choose a top card to transfer' })
       if (card) {
-        game.actions.transfer(player, card, game.getZoneByPlayer(leader, card.color))
+        game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
       }
     }
   ],

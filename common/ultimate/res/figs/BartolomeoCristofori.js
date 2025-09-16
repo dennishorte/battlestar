@@ -18,7 +18,7 @@ module.exports = {
       trigger: 'meld',
       kind: 'would-first',
       matches(game, player, { card }) {
-        const zone = game.getZoneByPlayer(player, card.color)
+        const zone = game.zones.byPlayer(player, card.color)
         return zone.splay !== 'none' && zone.cards().length === 4
       },
       func(game, player) {

@@ -14,7 +14,7 @@ module.exports = {
       const toTransfer = game
         .getTopCards(player)
         .filter(card => card.checkHasDemand())
-      game.actions.transferMany(player, toTransfer, game.getZoneByPlayer(leader, 'score'))
+      game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'))
     },
 
     (game, player, { self }) => {

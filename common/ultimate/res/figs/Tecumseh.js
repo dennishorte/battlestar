@@ -22,9 +22,9 @@ module.exports = {
       matches: (game, player, { card }) => card.checkHasBiscuit('f'),
       func: (game, player) => {
         const choices = game
-          .getPlayerAll()
+          .players.all()
           .filter(other => other !== player)
-          .flatMap(player => game.getTopCards(player))
+          .flatMap(player => game.cards.tops(player))
           .filter(card => card.checkHasBiscuit('f'))
         game.actions.chooseAndReturn(player, choices)
       }

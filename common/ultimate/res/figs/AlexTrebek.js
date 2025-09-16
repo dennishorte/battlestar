@@ -18,7 +18,7 @@ module.exports = {
       trigger: 'draw',
       matches(game, player, { age }) {
         const cardsOfSameAge = game
-          .getZoneByPlayer(player, 'hand')
+          .zones.byPlayer(player, 'hand')
           .cards()
           .filter(card => card.getAge() === age)
           .filter(card => card.checkIsFigure())
@@ -39,7 +39,7 @@ module.exports = {
         })
 
         if (card.zone === card.home) {
-          game.mMoveCardTo(card, game.getZoneByPlayer(player, 'hand'))
+          game.mMoveCardTo(card, game.zones.byPlayer(player, 'hand'))
           game.log.add({
             template: '{player} takes {card} into hand',
             args: { player, card }

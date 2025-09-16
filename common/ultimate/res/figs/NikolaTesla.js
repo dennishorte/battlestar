@@ -26,7 +26,7 @@ module.exports = {
       func: (game, player) => {
         const choices = game
           .getPlayerOpponents(player)
-          .flatMap(opp => game.getTopCards(opp))
+          .flatMap(opp => game.cards.tops(opp))
           .filter(card => !card.checkHasBiscuit('s') && !card.checkHasBiscuit('i'))
         game.actions.chooseAndScore(player, choices)
       }

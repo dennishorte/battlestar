@@ -10,8 +10,8 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const highest = game.utilHighestCards(game.getCardsByZone(player, 'score'))
-      const transferred = game.actions.transferMany(player, highest, game.getZoneByPlayer(leader, 'score'))
+      const highest = game.util.highestCards(game.getCardsByZone(player, 'score'))
+      const transferred = game.actions.transferMany(player, highest, game.zones.byPlayer(leader, 'score'))
       if (transferred && transferred.length > 0) {
         const age = transferred[0].getAge()
         const choices = game
@@ -19,7 +19,7 @@ module.exports = {
           .filter(card => card.getAge() === age)
         const card = game.actions.chooseCard(player, choices)
         if (card) {
-          game.actions.transfer(player, card, game.getZoneByPlayer(leader, card.color))
+          game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
         }
       }
     }

@@ -16,7 +16,7 @@ module.exports = {
   echoImpl: [
     (game, player) => {
       const cards = game
-        .getZoneByPlayer(player, 'hand')
+        .zones.byPlayer(player, 'hand')
         .cards()
         .filter(card => card.biscuits.includes('s') || card.biscuits.includes('i'))
 

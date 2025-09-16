@@ -15,8 +15,8 @@ module.exports = {
   echoImpl: [
     (game, player) => {
       const topCardsWithCastles = game
-        .getPlayerAll()
-        .flatMap(p => game.getTopCards(p))
+        .players.all()
+        .flatMap(p => game.cards.tops(p))
         .filter(card => card.biscuits.includes('k'))
 
       game.actions.chooseAndTuck(player, topCardsWithCastles)
@@ -27,11 +27,11 @@ module.exports = {
       trigger: 'top-card-value',
       matches(game, player, { action, color }) {
         const actionCondition = action === 'draw' || action === 'inspire'
-        const splayCondition = game.getZoneByPlayer(player, color).splay !== 'none'
+        const splayCondition = game.zones.byPlayer(player, color).splay !== 'none'
         return actionCondition && splayCondition
       },
       func(game, player, { color }) {
-        const zone = game.getZoneByPlayer(player, color)
+        const zone = game.zones.byPlayer(player, color)
         const biscuits = game.getBiscuitsByZone(zone)
         return Math.max(biscuits.k, biscuits.s)
       }

@@ -27,7 +27,7 @@ module.exports = {
         game.actions.chooseAndTransfer(
           player,
           game.getCardsByZone(player, 'score'),
-          game.getZoneByPlayer(player, 'forecast')
+          game.zones.byPlayer(player, 'forecast')
         )
       }
     }

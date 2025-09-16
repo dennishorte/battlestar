@@ -19,7 +19,7 @@ module.exports = {
       func: (game, player) => {
         return game
           .utilColors()
-          .filter(color => game.getZoneByPlayer(player, color).splay !== 'none')
+          .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
           .length * 3
       }
     }

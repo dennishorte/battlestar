@@ -15,7 +15,7 @@ module.exports = {
   echoImpl: (game, player) => {
     const card = game.actions.drawAndTuck(player, game.getEffectAge(this, 3))
     if (card) {
-      const zone = game.getZoneByPlayer(player, card.color)
+      const zone = game.zones.byPlayer(player, card.color)
       const toScore = zone
         .cards()
         .filter(c => c !== card)

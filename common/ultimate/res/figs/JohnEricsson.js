@@ -20,7 +20,7 @@ module.exports = {
       func: (game, player) => {
         const figs = game
           .getPlayerOpponents(player)
-          .flatMap(opp => game.getTopCards(opp))
+          .flatMap(opp => game.cards.tops(opp))
           .filter(card => card.checkIsFigure())
           .filter(card => card.getAge() < 7)
         game.actions.scoreMany(player, figs)

@@ -16,7 +16,7 @@ module.exports = {
     (game, player) => {
       const choices = game
         .utilColors()
-        .filter(color => game.getZoneByPlayer(player, color).splay === 'left')
+        .filter(color => game.zones.byPlayer(player, color).splay === 'left')
       game.actions.chooseAndSplay(player, choices, 'right', { count: 1 })
     }
   ],
@@ -25,16 +25,16 @@ module.exports = {
       trigger: 'extra-achievements',
       func: (game, player) => {
         const othersSplayedColors = game
-          .getPlayerAll()
+          .players.all()
           .filter(other => other !== player)
           .flatMap(other => {
             return game
               .utilColors()
-              .filter(color => game.getZoneByPlayer(other, color).splay !== 'none')
+              .filter(color => game.zones.byPlayer(other, color).splay !== 'none')
           })
         return game
           .utilColors()
-          .filter(color => game.getZoneByPlayer(player, color).splay === 'right')
+          .filter(color => game.zones.byPlayer(player, color).splay === 'right')
           .filter(color => !othersSplayedColors.includes(color))
           .length
       }

@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const autoReturn = game.aYesNo(player, 'Auto return cards?')
-      const scoreZone = game.getZoneByPlayer(player, 'score')
+      const scoreZone = game.zones.byPlayer(player, 'score')
 
       if (autoReturn) {
         const cards = game
@@ -22,7 +22,7 @@ module.exports = {
       }
       else {
         while (true) {
-          const choices = game.getTopCards(player)
+          const choices = game.cards.tops(player)
           if (choices.length === 0) {
             break
           }

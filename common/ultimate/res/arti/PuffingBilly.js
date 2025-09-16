@@ -13,7 +13,7 @@ module.exports = {
       const cards = game.actions.chooseAndReturn(player, game.getCardsByZone(player, 'hand'))
       if (cards && cards.length > 0) {
         const returned = cards[0]
-        const biscuits = game.getBiscuitsByZone(game.getZoneByPlayer(player, returned.color))
+        const biscuits = game.getBiscuitsByZone(game.zones.byPlayer(player, returned.color))
         const sorted = Object
           .entries(biscuits)
           .sort((l, r) => r[1] - l[1])

@@ -14,7 +14,7 @@ module.exports = {
     (game, player) => {
       while (true) {
         const byAge = {}
-        for (const card of game.getTopCards(player)) {
+        for (const card of game.cards.tops(player)) {
           if (!Object.hasOwn(byAge, card.age)) {
             byAge[card.age] = [card]
           }

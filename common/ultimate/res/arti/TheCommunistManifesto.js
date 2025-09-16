@@ -20,7 +20,7 @@ module.exports = {
         const card = game.actions.chooseCard(player, remaining, { title })
         remaining = remaining.filter(other => other !== card)
 
-        const transferred = game.actions.transfer(player, card, game.getZoneByPlayer(target, card.color))
+        const transferred = game.actions.transfer(player, card, game.zones.byPlayer(target, card.color))
         if (transferred && target === player) {
           mine = card
         }

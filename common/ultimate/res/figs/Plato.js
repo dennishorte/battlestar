@@ -24,7 +24,7 @@ module.exports = {
       func(game, player) {
         const numSplayed = game
           .utilColors()
-          .map(color => game.getZoneByPlayer(player, color))
+          .map(color => game.zones.byPlayer(player, color))
           .filter(zone => zone.splay !== 'none')
           .length
 

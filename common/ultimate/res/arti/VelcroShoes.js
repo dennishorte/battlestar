@@ -14,7 +14,7 @@ module.exports = {
       const hand = game
         .getCardsByZone(player, 'hand')
         .filter(card => card.getAge() === 9)
-      const transferred = game.actions.chooseAndTransfer(player, hand, game.getZoneByPlayer(leader, 'hand'))
+      const transferred = game.actions.chooseAndTransfer(player, hand, game.zones.byPlayer(leader, 'hand'))
 
       if (transferred && transferred.length > 0) {
         game.log.add({ template: 'A card was transferred' })
@@ -24,7 +24,7 @@ module.exports = {
       const score = game
         .getCardsByZone(player, 'score')
         .filter(card => card.getAge() === 9)
-      const st = game.actions.chooseAndTransfer(player, score, game.getZoneByPlayer(leader, 'score'))
+      const st = game.actions.chooseAndTransfer(player, score, game.zones.byPlayer(leader, 'score'))
       if (st && st.length > 0) {
         game.log.add({ template: 'A card was transferred' })
         return

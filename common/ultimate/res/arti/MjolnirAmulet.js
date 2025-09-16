@@ -10,12 +10,12 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const card = game.actions.chooseCard(player, game.getTopCards(player))
+      const card = game.actions.chooseCard(player, game.cards.tops(player))
       if (card) {
         game.actions.transferMany(
           player,
           game.getCardsByZone(player, card.color),
-          game.getZoneByPlayer(leader, 'score'),
+          game.zones.byPlayer(leader, 'score'),
           { ordered: true },
         )
       }

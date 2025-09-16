@@ -26,7 +26,7 @@ function Card() {
     {
       trigger: 'when-meld',
       matches: (game, player, { fromZone }) => {
-        return fromZone === game.getZoneByPlayer(player, 'hand').id
+        return fromZone === game.zones.byPlayer(player, 'hand').id
       },
       func(game, player) {
         const choices = game
@@ -65,7 +65,7 @@ function Card() {
             card = game.getCardByName(cardToken)
           }
 
-          game.actions.transfer(player, card, game.getZoneByPlayer(player, 'achievements'))
+          game.actions.transfer(player, card, game.zones.byPlayer(player, 'achievements'))
         }
       }
     },
@@ -84,7 +84,7 @@ function Card() {
           const toTransfer = game
             .getCardsByZone(opp, 'score')
             .find(c => c.getAge() === card.getAge())
-          game.actions.transfer(player, toTransfer, game.getZoneByPlayer(player, 'score'))
+          game.actions.transfer(player, toTransfer, game.zones.byPlayer(player, 'score'))
         }
       }
     }

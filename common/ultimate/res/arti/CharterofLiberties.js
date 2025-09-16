@@ -17,10 +17,10 @@ module.exports = {
         game.aSplay(player, card.color, 'left')
 
         const choices = game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game
             .utilColors()
-            .map(color => game.getZoneByPlayer(player, color))
+            .map(color => game.zones.byPlayer(player, color))
             .filter(zone => zone.splay !== 'none')
           )
           .filter(zone => !zone.cards().includes(card))

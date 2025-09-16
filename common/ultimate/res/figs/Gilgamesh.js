@@ -18,7 +18,7 @@ module.exports = {
       trigger: 'calculate-biscuits',
       func: (game, player) => {
         const bonuses = game.getBonuses(player)
-        const topCards = game.getTopCards(player)
+        const topCards = game.cards.tops(player)
         const biscuits = game.utilEmptyBiscuits()
         biscuits.k = bonuses.length * topCards.length
         return biscuits

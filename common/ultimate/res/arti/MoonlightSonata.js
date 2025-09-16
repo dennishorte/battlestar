@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = game
-        .utilHighestCards(game.getTopCards(player))
+        .utilHighestCards(game.cards.tops(player))
         .map(card => card.color)
       const colors = game.actions.choose(player, choices, { title: 'Choose a color' })
       if (colors && colors.length > 0) {

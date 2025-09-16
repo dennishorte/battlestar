@@ -40,8 +40,8 @@ module.exports = {
       trigger: 'list-hand',
       func: (game, player) => {
         return [
-          ...game.getZoneByPlayer(player, 'hand')._cards,
-          ...game.getZoneByPlayer(player, 'forecast')._cards,
+          ...game.zones.byPlayer(player, 'hand')._cards,
+          ...game.zones.byPlayer(player, 'forecast')._cards,
         ]
       }
     }

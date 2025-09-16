@@ -20,7 +20,7 @@ module.exports = {
 
       const choices = game
         .getPlayerOther(player)
-        .flatMap(player => game.getTopCards(player))
+        .flatMap(player => game.cards.tops(player))
       const card = game.actions.chooseCard(player, choices)
       if (card) {
         game.aExecuteAsIf(player, card)

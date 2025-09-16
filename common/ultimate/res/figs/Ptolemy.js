@@ -23,7 +23,7 @@ module.exports = {
       trigger: 'list-effects',
       func(game, player) {
         return game
-          .getPlayerAll()
+          .players.all()
           .map(player => game.getTopCard(player, 'blue'))
           .filter(card => card !== undefined)
       }

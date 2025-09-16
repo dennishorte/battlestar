@@ -19,8 +19,8 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func: (game, player, { leader }) => {
-        const highest = game.utilHighestCards(game.getCardsByZone(leader, 'score')).slice(0, 1)
-        game.actions.chooseAndTransfer(player, highest, game.getZoneByPlayer(player, 'score'))
+        const highest = game.util.highestCards(game.getCardsByZone(leader, 'score')).slice(0, 1)
+        game.actions.chooseAndTransfer(player, highest, game.zones.byPlayer(player, 'score'))
       }
     }
   ]

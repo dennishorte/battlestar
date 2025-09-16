@@ -23,7 +23,7 @@ module.exports = {
       trigger: 'score',
       kind: 'would-instead',
       matches(game, player, { card }) {
-        const zone = game.getZoneByPlayer(player, card.color)
+        const zone = game.zones.byPlayer(player, card.color)
         return zone.splay !== 'none'
       },
       func: (game, player, { card }) => {

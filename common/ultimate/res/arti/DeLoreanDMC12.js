@@ -12,12 +12,12 @@ module.exports = {
     (game, player, { self }) => {
       if (game.checkCardIsTop(self) && !self.zone.endsWith('.artifact')) {
         const topCards = game
-          .getPlayerAll()
-          .flatMap(player => game.getTopCards(player))
+          .players.all()
+          .flatMap(player => game.cards.tops(player))
         game.aRemoveMany(player, topCards)
 
         const hands = game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game.getCardsByZone(player, 'hand'))
         game.aRemoveMany(player, hands, { ordered: true })
       }

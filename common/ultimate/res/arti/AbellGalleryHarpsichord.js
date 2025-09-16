@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const topCards = game.getTopCards(player)
+      const topCards = game.cards.tops(player)
 
       for (let i = 1; i <= 10; i++) {
         const matching = topCards.filter(card => card.getAge() === i).length

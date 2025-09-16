@@ -28,7 +28,7 @@ module.exports = {
       matches: () => true,
       func: (game, player) => {
         const sorted = game
-          .getPlayerAll()
+          .players.all()
           .map(player => ({ player, count: game.getAchievementsByPlayer(player).total }))
           .sort((l, r) => r.count - l.count)
 

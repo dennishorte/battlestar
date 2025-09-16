@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const choices = game
-        .getPlayerAll()
+        .players.all()
         .map(player => game.getTopCard(player, 'purple'))
         .filter(card => card !== undefined)
         .filter(card => card.name !== self.name)
@@ -25,7 +25,7 @@ module.exports = {
 
     (game, player) => {
       const splayChoices = game
-        .getPlayerAll()
+        .players.all()
         .flatMap(player => game.utilColors().map(color => ({ player, color })))
         .map(x => `${x.player.name}-${x.color}`)
 

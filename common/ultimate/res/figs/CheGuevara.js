@@ -22,7 +22,7 @@ module.exports = {
       func: (game, player) => {
         const cards = game
           .getPlayerOpponents(player)
-          .flatMap(opp => game.getTopCards(opp))
+          .flatMap(opp => game.cards.tops(opp))
           .filter(card => card.checkIsFigure())
         game.actions.scoreMany(player, cards)
       }
@@ -34,7 +34,7 @@ module.exports = {
       matches: (game, player, { card }) => card.color === 'green',
       func: (game, player, { card }) => {
         const cards = game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game.getCardsByZone(player, 'score'))
         cards.push(card)
         game.aRemoveMany(player, cards)

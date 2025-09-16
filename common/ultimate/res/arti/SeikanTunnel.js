@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const zones = game
-        .getPlayerAll()
+        .players.all()
         .flatMap(player => game.utilColors().map(color => {
           return {
             player,

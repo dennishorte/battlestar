@@ -20,8 +20,8 @@ module.exports = {
     const card = game.actions.chooseCard(player, cardChoices)
 
     if (card) {
-      const targetPlayer = game.actions.choosePlayer(player, game.getPlayerAll())
-      const target = game.getZoneByPlayer(targetPlayer, card.color)
+      const targetPlayer = game.actions.choosePlayer(player, game.players.all())
+      const target = game.zones.byPlayer(targetPlayer, card.color)
 
       game.actions.transfer(player, card, target)
     }

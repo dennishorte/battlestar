@@ -22,8 +22,8 @@ module.exports = {
       matches: () => true,
       func: (game, player) => {
         const card = game.actions.drawAndReveal(player, game.getEffectAge(this, 1))
-        const targetPlayer = game.actions.choosePlayer(player, game.getPlayerAll().map(p => p.name))
-        const target = game.getZoneByPlayer(targetPlayer, card.color)
+        const targetPlayer = game.actions.choosePlayer(player, game.players.all().map(p => p.name))
+        const target = game.zones.byPlayer(targetPlayer, card.color)
         game.actions.transfer(player, card, target)
       }
     }

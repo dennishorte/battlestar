@@ -15,8 +15,8 @@ module.exports = {
   dogmaImpl: [],
   echoImpl: (game, player) => {
     const choices = game
-      .getPlayerAll()
-      .flatMap(p => game.getTopCards(p))
+      .players.all()
+      .flatMap(p => game.cards.tops(p))
       .filter(card => card.checkIsFigure())
 
     const card = game.actions.chooseCard(player, choices)
@@ -25,7 +25,7 @@ module.exports = {
         template: '{player} takes {card} into their hand',
         args: { player, card }
       })
-      game.mMoveCardTo(card, game.getZoneByPlayer(player, 'hand'))
+      game.mMoveCardTo(card, game.zones.byPlayer(player, 'hand'))
       game.actions.meld(player, card)
     }
   },

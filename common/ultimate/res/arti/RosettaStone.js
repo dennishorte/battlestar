@@ -22,7 +22,7 @@ module.exports = {
       const otherCard = cards.filter(other => other !== card)[0]
       if (otherCard) {
         const opponent = game.actions.choosePlayer(player, game.getPlayerOpponents(player))
-        game.actions.transfer(player, otherCard, game.getZoneByPlayer(opponent, otherCard.color))
+        game.actions.transfer(player, otherCard, game.zones.byPlayer(opponent, otherCard.color))
       }
     }
   ],

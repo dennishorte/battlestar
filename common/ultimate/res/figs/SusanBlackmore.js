@@ -22,7 +22,7 @@ module.exports = {
         return player === game.getPlayerByCard(this)
       },
       func: (game, player, { card }) => {
-        game.actions.transfer(player, card, game.getZoneByPlayer(player, 'score'))
+        game.actions.transfer(player, card, game.zones.byPlayer(player, 'score'))
       }
     }
   ]

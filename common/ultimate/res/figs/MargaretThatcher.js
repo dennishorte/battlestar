@@ -14,8 +14,8 @@ module.exports = {
   dogmaImpl: [],
   echoImpl: (game, player) => {
     const choices = game
-      .getPlayerAll()
-      .flatMap(player => game.getTopCards(player))
+      .players.all()
+      .flatMap(player => game.cards.tops(player))
       .filter(card => card.biscuits.includes('f') || card.biscuits.includes('c'))
     game.actions.chooseAndScore(player, choices)
   },
@@ -26,8 +26,8 @@ module.exports = {
       matches: () => true,
       func: (game, player) => {
         const choices = game
-          .getPlayerAll()
-          .flatMap(player => game.getTopCards(player))
+          .players.all()
+          .flatMap(player => game.cards.tops(player))
           .filter(card => card.biscuits.includes('f') || card.biscuits.includes('c'))
         game.actions.chooseAndScore(player, choices)
       }

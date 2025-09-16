@@ -24,7 +24,7 @@ module.exports = {
       func: (game, player) => {
         let count = 0
         for (const color of game.utilColors()) {
-          const zone = game.getZoneByPlayer(player, color)
+          const zone = game.zones.byPlayer(player, color)
           const cards = zone.cards()
           for (const card of cards) {
             const splay = cards[0] === card ? 'top' : zone.splay

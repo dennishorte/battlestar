@@ -15,11 +15,11 @@ module.exports = {
   dogmaImpl: [],
   echoImpl: (game, player) => {
     const choices = game
-      .getPlayerAll()
+      .players.all()
       .filter(other => other !== player)
       .flatMap(player => game.getCardsByZone(player, 'score'))
       .filter(card => card.checkIsFigure())
-    game.actions.chooseAndTransfer(player, choices, game.getZoneByPlayer(player, 'score'))
+    game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(player, 'score'))
   },
   karmaImpl: [
     {

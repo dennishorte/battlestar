@@ -10,14 +10,15 @@ module.exports = {
   decreeImpl: (game, player) => {
     // Choose a player
     const otherPlayers = game
-      .getPlayerAll()
+      .players.all()
       .filter(p => p.name !== player.name)
       .map(p => p.name)
     const other = game.actions.choosePlayer(player, otherPlayers)
 
     // Choose three cards
     const scoreCards = game
-      .getZoneByPlayer(other, 'score')
+      .zones
+      .byPlayer(other, 'score')
       .cards()
       .map(c => c.id)
     const cardNames = game.requestInputSingle({

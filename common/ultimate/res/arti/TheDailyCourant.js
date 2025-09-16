@@ -24,7 +24,7 @@ module.exports = {
         })
       }
 
-      const choices = game.getTopCards(player)
+      const choices = game.cards.tops(player)
       const toExecute = game.actions.chooseCard(player, choices)
       if (toExecute) {
         game.log.add({

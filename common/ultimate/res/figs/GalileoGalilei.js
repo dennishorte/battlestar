@@ -32,7 +32,7 @@ module.exports = {
         game.actions.transferMany(
           player,
           game.getCardsByZone(player, 'forecast'),
-          game.getZoneByPlayer(player, 'hand')
+          game.zones.byPlayer(player, 'hand')
         )
       }
     }

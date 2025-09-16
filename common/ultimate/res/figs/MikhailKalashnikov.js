@@ -35,7 +35,7 @@ module.exports = {
         const action = game.actions.choose(player, ['transfer it', 'execute it'])[0]
 
         if (action === 'transfer it') {
-          game.actions.transfer(player, selected, game.getZoneByPlayer(player, 'score'))
+          game.actions.transfer(player, selected, game.zones.byPlayer(player, 'score'))
         }
         else {
           game.aCardEffects(player, selected, 'dogma')

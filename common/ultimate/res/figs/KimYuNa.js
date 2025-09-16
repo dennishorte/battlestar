@@ -14,7 +14,7 @@ module.exports = {
   dogma: [],
   dogmaImpl: [],
   echoImpl: (game, player) => {
-    game.actions.chooseAndScore(player, game.getTopCards(player))
+    game.actions.chooseAndScore(player, game.cards.tops(player))
   },
   karmaImpl: [
     {

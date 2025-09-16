@@ -27,8 +27,8 @@ module.exports = {
       func: (game, player, { owner, self }) => {
         player = owner
         const topFigures = game
-          .getPlayerAll()
-          .flatMap(player => game.getTopCards(player))
+          .players.all()
+          .flatMap(player => game.cards.tops(player))
           .filter(card => card.checkIsFigure())
           .filter(card => card !== self)
         game.actions.scoreMany(player, topFigures, { ordered: true })

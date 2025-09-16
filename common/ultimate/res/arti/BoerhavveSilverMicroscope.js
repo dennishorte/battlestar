@@ -10,8 +10,8 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const lowestHandCards = game.utilLowestCards(game.getCardsByZone(player, 'hand'))
-      const lowestBoardCards = game.utilLowestCards(game.getTopCards(player))
+      const lowestHandCards = game.util.lowestCards(game.getCardsByZone(player, 'hand'))
+      const lowestBoardCards = game.util.lowestCards(game.cards.tops(player))
 
       const cards1 = game.actions.chooseAndReturn(player, lowestHandCards) || []
       const cards2 = game.actions.chooseAndReturn(player, lowestBoardCards) || []

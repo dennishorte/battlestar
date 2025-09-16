@@ -24,7 +24,7 @@ module.exports = {
       game.actions.transferMany(
         player,
         game.getCardsByZone(player, 'hand'),
-        game.getZoneByPlayer(leader, 'hand'),
+        game.zones.byPlayer(leader, 'hand'),
         { ordered: true },
       )
     },

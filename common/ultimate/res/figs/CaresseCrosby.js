@@ -33,11 +33,11 @@ module.exports = {
       kind: 'would-instead',
       matches(game, player, { color, direction }) {
         const toSplayLeftCondition = direction === 'left'
-        const notLeftCondition = game.getZoneByPlayer(player, color).splay !== 'left'
+        const notLeftCondition = game.zones.byPlayer(player, color).splay !== 'left'
         const leftCondition = game
           .utilColors()
           .filter(other => other !== color)
-          .map(color => game.getZoneByPlayer(player, color).splay)
+          .map(color => game.zones.byPlayer(player, color).splay)
           .filter(splay => splay === 'left')
           .length === 4
         return toSplayLeftCondition && leftCondition && notLeftCondition

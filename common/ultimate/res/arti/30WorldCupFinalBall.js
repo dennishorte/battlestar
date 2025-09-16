@@ -18,7 +18,7 @@ module.exports = {
       while (true) {
         const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 8))
         const orderedPlayers = game
-          .getPlayerAll()
+          .players.all()
           .map(player => ({ player, card: game.getTopCard(player, card.color) }))
           .filter(x => x.card !== undefined)
           .map(({ player, card }) => ({ player, age: card.getAge() }))

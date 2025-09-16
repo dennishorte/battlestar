@@ -18,7 +18,7 @@ module.exports = {
       trigger: 'list-effects',
       func: (game, player) => {
         return game
-          .getPlayerAll()
+          .players.all()
           .flatMap(player => game.getDogmaTargets(player))
       }
     }

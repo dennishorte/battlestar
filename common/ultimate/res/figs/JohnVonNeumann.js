@@ -31,7 +31,7 @@ module.exports = {
       func: (game, player) => {
         const figures = game
           .getPlayerOpponents(player)
-          .flatMap(player => game.getTopCards(player))
+          .flatMap(player => game.cards.tops(player))
           .filter(card => card.checkIsFigure())
         game.actions.returnMany(player, figures)
       }

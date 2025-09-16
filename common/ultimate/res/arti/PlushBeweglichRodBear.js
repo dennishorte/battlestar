@@ -14,12 +14,12 @@ module.exports = {
 
       game
         .utilColors()
-        .map(color => game.getZoneByPlayer(player, color))
+        .map(color => game.zones.byPlayer(player, color))
         .filter(zone => zone.cards().length >= 2 && zone.cards()[0].getAge() === age)
         .forEach(zone => game.aSplay(player, zone.color, 'up'))
 
       const toReturn = game
-        .getPlayerAll()
+        .players.all()
         .flatMap(player => game.getCardsByZone(player, 'score'))
         .filter(card => card.getAge() === age)
 

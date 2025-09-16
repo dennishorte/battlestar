@@ -14,13 +14,13 @@ module.exports = {
       const cards = game
         .getTopCards(player)
         .filter(card => card.checkHasBiscuit('c'))
-      game.actions.transferMany(player, cards, game.getZoneByPlayer(leader, 'score'))
+      game.actions.transferMany(player, cards, game.zones.byPlayer(leader, 'score'))
     },
 
     (game, player) => {
       const choices = game
-        .getPlayerAll()
-        .flatMap(player => game.getTopCards(player))
+        .players.all()
+        .flatMap(player => game.cards.tops(player))
         .filter(card => card.checkHasBiscuit('c'))
       game.actions.chooseAndScore(player, choices)
     }

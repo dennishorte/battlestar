@@ -30,7 +30,7 @@ module.exports = {
         const thisIsMyCardCondition = florenceOwner === cardOwner
         const thisIsNotMyEffectCondition = florenceOwner !== game.state.dogmaInfo.effectLeader
         const cardIsInMyScoreCondition =
-          game.getZoneByCard(card) === game.getZoneByPlayer(cardOwner, 'score')
+          game.getZoneByCard(card) === game.zones.byPlayer(cardOwner, 'score')
 
         return thisIsMyCardCondition && thisIsNotMyEffectCondition && cardIsInMyScoreCondition
       },
