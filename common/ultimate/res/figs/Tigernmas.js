@@ -22,7 +22,7 @@ module.exports = {
     {
       trigger: 'calculate-score',
       func: (game, player) => {
-        return game.getCardsByZone(player, 'hand').length
+        return game.cards.byPlayer(player, 'hand').length
       }
     }
   ]

@@ -20,7 +20,7 @@ module.exports = {
 
       const toReturn = game
         .players.all()
-        .flatMap(player => game.getCardsByZone(player, 'score'))
+        .flatMap(player => game.cards.byPlayer(player, 'score'))
         .filter(card => card.getAge() === age)
 
       game.actions.returnMany(player, toReturn)

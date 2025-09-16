@@ -24,14 +24,14 @@ module.exports = {
       trigger: 'foreshadow',
       kind: 'would-first',
       matches: (game, player, { card }) => {
-        const forecastCards = game.getCardsByZone(player, 'forecast')
+        const forecastCards = game.cards.byPlayer(player, 'forecast')
         const matchedAge = forecastCards.find(c => c.getAge() === card.getAge())
         return matchedAge === undefined
       },
       func: (game, player) => {
         game.actions.transferMany(
           player,
-          game.getCardsByZone(player, 'forecast'),
+          game.cards.byPlayer(player, 'forecast'),
           game.zones.byPlayer(player, 'hand')
         )
       }

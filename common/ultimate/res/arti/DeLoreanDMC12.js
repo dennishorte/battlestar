@@ -18,7 +18,7 @@ module.exports = {
 
         const hands = game
           .players.all()
-          .flatMap(player => game.getCardsByZone(player, 'hand'))
+          .flatMap(player => game.cards.byPlayer(player, 'hand'))
         game.aRemoveMany(player, hands, { ordered: true })
       }
       else {

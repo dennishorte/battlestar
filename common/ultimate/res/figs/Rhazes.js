@@ -27,7 +27,7 @@ module.exports = {
       matches: () => true,
       func: (game, player, { age }) => {
         const choices = game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(other => other.getAge() === age)
         game.actions.chooseAndTuck(player, choices)
       }

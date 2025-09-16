@@ -12,7 +12,7 @@ module.exports = {
     (game, player, { self }) => {
       const cards = game.actions.chooseAndReveal(
         player,
-        game.getCardsByZone(player, 'hand'),
+        game.cards.byPlayer(player, 'hand'),
         { count: 3 }
       )
 

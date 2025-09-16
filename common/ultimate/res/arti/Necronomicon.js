@@ -19,7 +19,7 @@ module.exports = {
             template: '{player} will return all cards from hand',
             args: { player }
           })
-          game.actions.returnMany(player, game.getCardsByZone(player, 'hand'))
+          game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
         }
 
         else if (card.color === 'green') {
@@ -37,7 +37,7 @@ module.exports = {
             template: '{player} will return all cards from score',
             args: { player }
           })
-          game.actions.returnMany(player, game.getCardsByZone(player, 'score'))
+          game.actions.returnMany(player, game.cards.byPlayer(player, 'score'))
         }
 
         else if (card.color === 'blue') {

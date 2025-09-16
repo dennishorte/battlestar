@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      game.actions.chooseAndReturn(player, game.getCardsByZone(player, 'achievements'))
+      game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'achievements'))
     },
 
     (game, player, { self }) => {

@@ -29,7 +29,7 @@ module.exports = {
         if (biscuitRequirement && colorRequirement) {
           const target = game.zones.byPlayer(owner, card.color)
           game.mTransfer(owner, card, target)
-          game.actions.tuckMany(owner, game.getCardsByZone(owner, 'forecast'))
+          game.actions.tuckMany(owner, game.cards.byPlayer(owner, 'forecast'))
           return 'would-instead'
         }
         else {

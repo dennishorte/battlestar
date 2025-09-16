@@ -19,7 +19,7 @@ module.exports = {
         })
       const colors = game.actions.choose(player, choices, { title: 'Choose a Color' })
       if (colors && colors.length > 0) {
-        const toTransfer = game.getCardsByZone(player, colors[0]).reverse()
+        const toTransfer = game.cards.byPlayer(player, colors[0]).reverse()
         const dest = game.zones.byPlayer(leader, colors[0])
         game.actions.transferMany(player, toTransfer, dest, { ordered: true })
       }

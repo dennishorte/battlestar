@@ -15,7 +15,7 @@ module.exports = {
         const bottom = game.getBottomCard(player, card.color)
         if (bottom.getAge() === 1) {
           game.log.add({ template: 'Bottom card is a {1}.' })
-          game.actions.returnMany(player, game.getCardsByZone(player, card.color), { ordered: true })
+          game.actions.returnMany(player, game.cards.byPlayer(player, card.color), { ordered: true })
         }
         else {
           game.log.add({ template: 'Bottom card is not a {1}.' })

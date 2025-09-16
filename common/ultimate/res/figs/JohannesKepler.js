@@ -22,7 +22,7 @@ module.exports = {
       matches: () => true,
       func: (game, player, { card }) => {
         const matchingCards = game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(other => other.color === card.color)
 
         matchingCards.forEach(card => game.mReveal(player, card))

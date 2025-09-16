@@ -24,8 +24,8 @@ module.exports = {
     {
       trigger: 'calculate-biscuits',
       func(game, player) {
-        const scoreCount = game.getCardsByZone(player, 'score').length
-        const forecaseCount = game.getCardsByZone(player, 'forecast').length
+        const scoreCount = game.cards.byPlayer(player, 'score').length
+        const forecaseCount = game.cards.byPlayer(player, 'forecast').length
         const biscuits = game.utilEmptyBiscuits()
         biscuits.s = scoreCount + forecaseCount
         return biscuits

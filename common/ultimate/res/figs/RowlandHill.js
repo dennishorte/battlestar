@@ -19,9 +19,9 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func: (game, player) => {
-        const cards = game.actions.chooseAndReturn(player, game.getCardsByZone(player, 'hand'), { count: 3})
+        const cards = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { count: 3})
         if (cards && cards.length === 3) {
-          const remaining = game.getCardsByZone(player, 'hand')
+          const remaining = game.cards.byPlayer(player, 'hand')
           for (const card of remaining) {
             game.aClaimAchievement(player, { card })
           }

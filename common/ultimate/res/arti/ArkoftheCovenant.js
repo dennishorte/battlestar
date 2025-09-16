@@ -10,14 +10,14 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cards = game.actions.chooseAndReturn(player, game.getCardsByZone(player, 'hand'))
+      const cards = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'))
       if (cards && cards.length > 0) {
         const color = cards[0].color
 
         const toTransfer = game
           .players.all()
           .filter(player => game.cards.tops(player).every(card => !card.checkIsArtifact()))
-          .flatMap(player => game.getCardsByZone(player, color))
+          .flatMap(player => game.cards.byPlayer(player, color))
 
         game.actions.transferMany(player, toTransfer, game.zones.byPlayer(player, 'score'), { ordered: true })
       }

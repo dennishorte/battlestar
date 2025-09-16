@@ -11,11 +11,11 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       while (true) {
-        const melded = game.actions.chooseAndMeld(player, game.getCardsByZone(player, 'hand'))
+        const melded = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
         if (melded && melded.length > 0) {
           const card = melded[0]
           const toScore = game
-            .getCardsByZone(player, card.color)
+            .cards.byPlayer(player, card.color)
             .filter(other => other !== card)
           const scored = game.actions.scoreMany(player, toScore)
           if (scored && scored.length > 0) {

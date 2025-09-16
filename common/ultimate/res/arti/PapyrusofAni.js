@@ -6,13 +6,15 @@ module.exports = {
   biscuits: `lllh`,
   dogmaBiscuit: `l`,
   dogma: [
-    // `Return a purple card from your hand. If you do, draw and reveal a card of any type of value two higher. If the drawn card is purple, meld is and execute each of its non-demand dogma effects. Do not share them.`
-    `Return a purple card from your hand. If you do, draw and reveal a card of value two higher. If the drawn card is purple, meld is and execute each of its non-demand dogma effects. Do not share them.`
+    // Drawing cities turned out to be too powerful.
+    // `Return a purple card from your hand. If you do, draw and reveal a card of any type of value two higher. If the drawn card is purple, meld it and self-execute it.`
+
+    `Return a purple card from your hand. If you do, draw and reveal a card of value two higher. If the drawn card is purple, meld it and self-execute it.`
   ],
   dogmaImpl: [
     (game, player) => {
       const purples = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => card.color === 'purple')
       const returned = game.actions.chooseAndReturn(player, purples)
 

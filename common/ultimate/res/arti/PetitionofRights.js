@@ -16,7 +16,7 @@ module.exports = {
         .length
       game.actions.chooseAndTransfer(
         player,
-        game.getCardsByZone(player, 'score'),
+        game.cards.byPlayer(player, 'score'),
         game.zones.byPlayer(leader, 'score'),
         { count },
       )

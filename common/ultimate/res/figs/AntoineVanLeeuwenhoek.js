@@ -20,7 +20,7 @@ module.exports = {
       trigger: 'achievement-cost-discount',
       func(game, player, { card }) {
         return game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(other => other.getAge() === card.getAge())
           .length * 10
       }

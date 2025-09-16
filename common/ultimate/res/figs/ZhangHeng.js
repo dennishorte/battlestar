@@ -28,7 +28,8 @@ module.exports = {
       trigger: 'list-bonuses',
       func: (game, player) => {
         return game
-          .getCardsByZone(player, 'score')
+          .cards
+          .byPlayer(player, 'score')
           .map(card => card.getAge())
       }
     }

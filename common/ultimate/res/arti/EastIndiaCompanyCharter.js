@@ -15,7 +15,7 @@ module.exports = {
       const playerCards = {}
       for (const player of game.players.all()) {
         const cards = game
-          .getCardsByZone(player, 'score')
+          .cards.byPlayer(player, 'score')
           .filter(card => card.getAge() === age)
         if (cards.length > 0) {
           toReturn.push(cards)

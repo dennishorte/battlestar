@@ -10,13 +10,13 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const tucked = game.actions.chooseAndTuck(player, game.getCardsByZone(player, 'hand'))
+      const tucked = game.actions.chooseAndTuck(player, game.cards.byPlayer(player, 'hand'))
       if (tucked && tucked.length > 0) {
         const color = tucked[0].color
         game.aSplay(player, color, 'up')
 
         const toTuck = game
-          .getCardsByZone(player, 'score')
+          .cards.byPlayer(player, 'score')
           .filter(card => card.color === color)
         game.actions.tuckMany(player, toTuck)
       }

@@ -12,7 +12,7 @@ module.exports = {
     (game, player, { self }) => {
       const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 8))
       if (card) {
-        const toReturn = game.getCardsByZone(player, card.color)
+        const toReturn = game.cards.byPlayer(player, card.color)
         game.actions.returnMany(player, toReturn, { ordered: true })
       }
     }

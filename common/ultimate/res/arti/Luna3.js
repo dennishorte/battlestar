@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cards = game.actions.returnMany(player, game.getCardsByZone(player, 'score')) || []
+      const cards = game.actions.returnMany(player, game.cards.byPlayer(player, 'score')) || []
       game.actions.drawAndScore(player, cards.length)
     }
   ],

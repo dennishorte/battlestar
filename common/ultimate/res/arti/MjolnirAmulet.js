@@ -14,7 +14,7 @@ module.exports = {
       if (card) {
         game.actions.transferMany(
           player,
-          game.getCardsByZone(player, card.color),
+          game.cards.byPlayer(player, card.color),
           game.zones.byPlayer(leader, 'score'),
           { ordered: true },
         )

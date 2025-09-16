@@ -17,7 +17,7 @@ module.exports = {
     {
       trigger: 'calculate-biscuits',
       func: (game, player, { biscuits }) => {
-        const bonus = game.getCardsByZone(player, 'hand').length
+        const bonus = game.cards.byPlayer(player, 'hand').length
         const output = game.utilEmptyBiscuits()
         for (const biscuit of Object.keys(biscuits)) {
           if (biscuits[biscuit] > 0) {

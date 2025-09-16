@@ -15,12 +15,12 @@ module.exports = {
 
         if (card) {
           const numCards = game
-            .getCardsByZone(player, card.color)
+            .cards.byPlayer(player, card.color)
             .length
 
           const hasFewestCards = game
             .utilColors()
-            .map(color => game.getCardsByZone(player, color).length)
+            .map(color => game.cards.byPlayer(player, color).length)
             .every(count => count >= numCards)
 
           if (hasFewestCards) {

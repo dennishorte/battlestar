@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const card = game.actions.chooseCard(player, game.getCardsByZone(player, 'hand'))
+      const card = game.actions.chooseCard(player, game.cards.byPlayer(player, 'hand'))
 
       if (card) {
         game.mReveal(player, card)
@@ -26,7 +26,7 @@ module.exports = {
           })
         }
         else {
-          const toReturn = game.getCardsByZone(player, card.color)
+          const toReturn = game.cards.byPlayer(player, card.color)
           toReturn.push(card)
           game.actions.returnMany(player, toReturn)
         }

@@ -24,7 +24,7 @@ module.exports = {
       kind: 'would-instead',
       matches: (game, player, { card }) => card.biscuits.includes('s'),
       func: (game, player, { card }) => {
-        const toReturn = game.getCardsByZone(player, 'score')
+        const toReturn = game.cards.byPlayer(player, 'score')
         toReturn.push(card)
         game.actions.returnMany(player, toReturn)
         game.actions.drawAndScore(player, game.getEffectAge(this, 5))

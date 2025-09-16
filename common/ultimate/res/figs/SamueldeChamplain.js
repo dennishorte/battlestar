@@ -17,7 +17,7 @@ module.exports = {
     {
       trigger: 'draw',
       kind: 'would-first',
-      matches: (game, player) => game.getCardsByZone(player, 'hand').length === 4,
+      matches: (game, player) => game.cards.byPlayer(player, 'hand').length === 4,
       func: (game, player, { age }) => {
         const choices = game
           .getAvailableAchievementsRaw(player)

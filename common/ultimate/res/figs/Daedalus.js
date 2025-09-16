@@ -21,14 +21,14 @@ module.exports = {
       trigger: 'calculate-eligibility',
       reason: 'achieve',
       func(game, player) {
-        return game.getCardsByZone(player, 'forecast').length
+        return game.cards.byPlayer(player, 'forecast').length
       },
     },
     {
       trigger: 'calculate-score',
       func(game, player) {
         return game
-          .getCardsByZone(player, 'achievements')
+          .cards.byPlayer(player, 'achievements')
           .filter(card => card.getAge() !== undefined)
           .reduce((l, r) => l + r.getAge(), 0)
       }

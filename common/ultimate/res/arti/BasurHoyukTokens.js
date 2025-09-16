@@ -14,7 +14,7 @@ module.exports = {
       if (card) {
         const matchingTopCard = game.getTopCard(player, card.color)
         if (matchingTopCard && matchingTopCard.name < card.name) {
-          const toReturn = game.getCardsByZone(player, 'score')
+          const toReturn = game.cards.byPlayer(player, 'score')
           toReturn.push(card)
           game.actions.returnMany(player, toReturn)
         }

@@ -30,7 +30,7 @@ module.exports = {
     {
       trigger: 'list-achievements',
       func(game, player) {
-        return game.getCardsByZone(player, 'forecast')
+        return game.cards.byPlayer(player, 'forecast')
       }
     }
   ]

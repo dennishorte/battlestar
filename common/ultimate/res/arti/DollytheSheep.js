@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       // You may score your bottom yellow card.
-      const yellowCards = game.getCardsByZone(player, 'yellow')
+      const yellowCards = game.cards.byPlayer(player, 'yellow')
       if (yellowCards.length === 0) {
         game.log.add({
           template: '{player} has no yellow cards',
@@ -40,14 +40,14 @@ module.exports = {
       }
 
       // You win if your bottom yellow card is domestication.
-      const newYellowCards = game.getCardsByZone(player, 'yellow')
+      const newYellowCards = game.cards.byPlayer(player, 'yellow')
       if (newYellowCards.length > 0 && newYellowCards[newYellowCards.length - 1].name === 'Domestication') {
         game.youWin(player, self.name)
       }
 
       // Otherwise, meld the highest card in your hand and draw a 10.
       else {
-        const cards = game.actions.chooseHighest(player, game.getCardsByZone(player, 'hand'), 1)
+        const cards = game.actions.chooseHighest(player, game.cards.byPlayer(player, 'hand'), 1)
         if (cards && cards.length > 0) {
           game.actions.meld(player, cards[0])
         }

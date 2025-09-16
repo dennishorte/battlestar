@@ -12,10 +12,10 @@ module.exports = {
     (game, player) => {
       const toScore = game
         .utilColors()
-        .flatMap(color => game.getCardsByZone(player, color).slice(-1))
+        .flatMap(color => game.cards.byPlayer(player, color).slice(-1))
       game.actions.scoreMany(player, toScore)
 
-      const cards = game.actions.chooseAndMeld(player, game.getCardsByZone(player, 'score'))
+      const cards = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'score'))
       if (cards && cards.length > 0) {
         game.aSplay(player, cards[0].color, 'right')
       }

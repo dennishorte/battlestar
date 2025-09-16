@@ -16,7 +16,7 @@ module.exports = {
       const colors = game.actions.choose(player, choices, { title: 'Choose a color' })
       if (colors && colors.length > 0) {
         const color = colors[0]
-        const cards = game.getCardsByZone(player, color)
+        const cards = game.cards.byPlayer(player, color)
         game.actions.meld(player, cards[cards.length - 1])
 
         if (cards.length > 1) {

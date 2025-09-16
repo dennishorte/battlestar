@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader, self }) => {
       const hand = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => card.getAge() === 9)
       const transferred = game.actions.chooseAndTransfer(player, hand, game.zones.byPlayer(leader, 'hand'))
 
@@ -22,7 +22,7 @@ module.exports = {
       }
 
       const score = game
-        .getCardsByZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .filter(card => card.getAge() === 9)
       const st = game.actions.chooseAndTransfer(player, score, game.zones.byPlayer(leader, 'score'))
       if (st && st.length > 0) {

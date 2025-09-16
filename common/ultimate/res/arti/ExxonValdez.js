@@ -12,14 +12,14 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const toRemove = [
-        game.getCardsByZone(player, 'hand'),
-        game.getCardsByZone(player, 'score'),
-        game.getCardsByZone(player, 'red'),
-        game.getCardsByZone(player, 'yellow'),
-        game.getCardsByZone(player, 'green'),
-        game.getCardsByZone(player, 'blue'),
-        game.getCardsByZone(player, 'purple'),
-        game.getCardsByZone(player, 'achievements'),
+        game.cards.byPlayer(player, 'hand'),
+        game.cards.byPlayer(player, 'score'),
+        game.cards.byPlayer(player, 'red'),
+        game.cards.byPlayer(player, 'yellow'),
+        game.cards.byPlayer(player, 'green'),
+        game.cards.byPlayer(player, 'blue'),
+        game.cards.byPlayer(player, 'purple'),
+        game.cards.byPlayer(player, 'achievements'),
       ].flat()
 
       game.aRemoveMany(player, toRemove)

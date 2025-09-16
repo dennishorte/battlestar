@@ -18,12 +18,12 @@ module.exports = {
       trigger: 'foreshadow',
       kind: 'would-first',
       matches: (game, player, { card }) => {
-        const forecast = game.getCardsByZone(player, 'forecast')
+        const forecast = game.cards.byPlayer(player, 'forecast')
         return forecast.find(other => other.getAge() === card.getAge())
       },
       func(game, player, { card }) {
         const toScore = game
-          .getCardsByZone(player, 'forecast')
+          .cards.byPlayer(player, 'forecast')
           .filter(other => other.getAge() === card.getAge())
         game.actions.scoreMany(player, toScore)
       },

@@ -16,14 +16,14 @@ module.exports = {
       }
 
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => card.color === 'blue')
 
       game.actions.chooseAndMeld(player, choices)
 
       game.actions.transferMany(
         player,
-        game.getCardsByZone(player, 'hand'),
+        game.cards.byPlayer(player, 'hand'),
         game.zones.byPlayer(leader, 'hand'),
         { ordered: true },
       )

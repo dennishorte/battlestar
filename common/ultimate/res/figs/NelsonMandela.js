@@ -23,7 +23,7 @@ module.exports = {
       func: (game, player) => {
         const visibleInspires = game
           .utilColors()
-          .flatMap(color => game.getCardsByZone(player, color))
+          .flatMap(color => game.cards.byPlayer(player, color))
           .filter(card => game.checkInspireIsVisible(card))
           .length
         return Math.floor(visibleInspires / 2)

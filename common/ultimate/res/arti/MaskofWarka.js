@@ -15,7 +15,7 @@ module.exports = {
 
       for (const plyr of game.getPlayersStarting(player)) {
         const toReveal = game
-          .getCardsByZone(plyr, 'hand')
+          .cards.byPlayer(plyr, 'hand')
           .filter(card => card.color === color)
         const revealed = game.actions.revealMany(plyr, toReveal, { ordered: true })
         if (revealed && revealed.length > 0) {
@@ -25,7 +25,7 @@ module.exports = {
 
       if (revealedBy.length === 1 && revealedBy[0] === player) {
         const toReturn = game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(card => card.color === color)
         const returned = game.actions.returnMany(player, toReturn)
         const toClaim = toReturn.map(card => card.getAge())

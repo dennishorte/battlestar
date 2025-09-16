@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const returned = game.actions.chooseAndReturn(player, game.getCardsByZone(player, 'hand'))
+      const returned = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'))
       if (returned && returned.length > 0) {
         let totalReturned = 1
 
@@ -21,7 +21,7 @@ module.exports = {
         }
 
         const fromScore = game
-          .getCardsByZone(player, 'score')
+          .cards.byPlayer(player, 'score')
           .filter(c => c.color === card.color)
         const score = game.actions.chooseAndReturn(player, fromScore)
         if (score && score.length > 0) {

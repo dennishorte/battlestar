@@ -24,7 +24,7 @@ module.exports = {
       game.actions.draw(player, { age: game.getEffectAge(self, 4) })
       game.actions.draw(player, { age: game.getEffectAge(self, 4) })
 
-      const hand = game.getCardsByZone(player, 'hand')
+      const hand = game.cards.byPlayer(player, 'hand')
 
       for (const card of hand) {
         game.mReveal(player, card)

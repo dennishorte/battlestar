@@ -22,7 +22,7 @@ module.exports = {
         return player === game.getPlayerByCard(this)
       },
       func: (game, player) => {
-        game.actions.chooseAndReturn(player, game.getCardsByZone(player, 'hand'))
+        game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'))
       }
     }
   ]

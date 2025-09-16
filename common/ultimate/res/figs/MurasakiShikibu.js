@@ -25,7 +25,7 @@ module.exports = {
       matches: (game, player, { isStandard }) => isStandard,
       func: (game, player, { card }) => {
         const choices = game
-          .getCardsByZone(player, 'score')
+          .cards.byPlayer(player, 'score')
           .filter(other => other.getAge() === card.getAge())
         const selected = game.actions.chooseCard(player, choices)
         if (selected) {

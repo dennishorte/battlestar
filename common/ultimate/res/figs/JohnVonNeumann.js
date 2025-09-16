@@ -40,7 +40,7 @@ module.exports = {
       trigger: 'calculate-biscuits',
       func: (game, player) => {
         const output = game.utilEmptyBiscuits()
-        output.i = game.getCardsByZone(player, 'hand').length * 2
+        output.i = game.cards.byPlayer(player, 'hand').length * 2
         return output
       }
     }

@@ -10,11 +10,11 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const cards = game.actions.chooseAndReturn(player, game.getCardsByZone(player, 'score'))
+      const cards = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'))
       if (cards && cards.length > 0) {
         const card = cards[0]
         const choices = game
-          .getCardsByZone(player, 'achievements')
+          .cards.byPlayer(player, 'achievements')
           .filter(ach => ach.age === card.age)
         game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'achievements'))
       }

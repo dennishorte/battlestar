@@ -19,7 +19,7 @@ module.exports = {
       }
       else {
         const toReturn = game
-          .getCardsByZone(player, 'score')
+          .cards.byPlayer(player, 'score')
           .filter(other => other.color === card.color)
         game.actions.returnMany(player, toReturn)
         game.aUnsplay(player, card.color)

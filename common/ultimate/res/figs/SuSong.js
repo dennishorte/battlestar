@@ -26,7 +26,7 @@ module.exports = {
       func: (game, player) => {
         game.actions.chooseAndTransfer(
           player,
-          game.getCardsByZone(player, 'score'),
+          game.cards.byPlayer(player, 'score'),
           game.zones.byPlayer(player, 'forecast')
         )
       }

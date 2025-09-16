@@ -13,7 +13,7 @@ module.exports = {
       game.actions.drawAndScore(player, game.getEffectAge(self, 1))
 
       const totalValue = game
-        .getCardsByZone(player, 'score')
+        .cards.byPlayer(player, 'score')
         .map(card => card.getAge())
         .reduce((agg, next) => agg + next, 0)
 

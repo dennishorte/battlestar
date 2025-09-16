@@ -20,14 +20,14 @@ module.exports = {
       matches: (game, player, { age }) => {
         const ageCondition = age > 1
         const handCondition = game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(c => c.getAge() === game.getEffectAge(this, 1))
           .length > 0
 
         return ageCondition && handCondition
       },
       func: (game, player, { age }) => {
-        game.actions.returnMany(player, game.getCardsByZone(player, 'hand'))
+        game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
         game.actions.draw(player, { age })
         game.actions.draw(player, { age })
       }

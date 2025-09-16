@@ -25,7 +25,7 @@ module.exports = {
       matches: (game, player, { share }) => share,
       func: (game, player, { featuredBiscuit }) => {
         const choices = game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(card => card.checkHasBiscuit(featuredBiscuit))
         game.actions.chooseAndMeld(player, choices, { min: 0, max: choices.length })
       }

@@ -22,7 +22,7 @@ module.exports = {
       trigger: 'extra-achievements',
       func: (game, player) => {
         const ages = game
-          .getCardsByZone(player, 'score')
+          .cards.byPlayer(player, 'score')
           .filter(card => card.getAge() > 6)
           .map(card => card.getAge())
         return util.array.distinct(ages).length

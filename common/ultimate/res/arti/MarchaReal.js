@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cards = game.actions.chooseCards(player, game.getCardsByZone(player, 'hand'), { count: 2 })
+      const cards = game.actions.chooseCards(player, game.cards.byPlayer(player, 'hand'), { count: 2 })
 
       if (cards && cards.length > 0) {
         game.actions.revealMany(player, cards, { ordered: true })

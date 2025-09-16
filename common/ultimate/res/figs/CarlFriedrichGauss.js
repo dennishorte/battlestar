@@ -25,11 +25,11 @@ module.exports = {
       func(game, player, { card }) {
         const age = game.actions.chooseAge(player)
         const hand = game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(card => card.getAge() === age)
           .filter(other => other !== card)
         const score = game
-          .getCardsByZone(player, 'score')
+          .cards.byPlayer(player, 'score')
           .filter(card => card.getAge() === age)
 
         // Use distinct in case some Karma causes overlap in these two zones.

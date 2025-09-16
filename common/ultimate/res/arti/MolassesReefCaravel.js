@@ -10,13 +10,13 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      game.actions.returnMany(player, game.getCardsByZone(player, 'hand'))
+      game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
       game.actions.draw(player, { age: game.getEffectAge(self, 4) })
       game.actions.draw(player, { age: game.getEffectAge(self, 4) })
       game.actions.draw(player, { age: game.getEffectAge(self, 4) })
 
       const blueCards = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => card.color === 'blue')
       if (blueCards.length > 0) {
         game.actions.chooseAndMeld(player, blueCards)
@@ -27,8 +27,8 @@ module.exports = {
           args: { player }
         })
       }
-      game.actions.chooseAndScore(player, game.getCardsByZone(player, 'hand'))
-      game.actions.chooseAndReturn(player, game.getCardsByZone(player, 'score'))
+      game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'))
+      game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'))
     }
   ],
 }

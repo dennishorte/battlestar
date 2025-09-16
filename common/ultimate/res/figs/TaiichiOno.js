@@ -22,7 +22,7 @@ module.exports = {
       matches: () => true,
       func: (game, player, { card }) => {
         const choices = game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(other => other.dogmaBiscuit === card.dogmaBiscuit)
         game.actions.chooseAndAchieve(player, choices)
       }

@@ -17,7 +17,7 @@ module.exports = {
       })
       game.actions.draw(player, { age: game.getEffectAge(self, 1) })
       const choices = game
-        .getCardsByZone(player, 'hand')
+        .cards.byPlayer(player, 'hand')
         .filter(card => card.color === color)
       const melded = game.actions.chooseAndMeld(player, choices)
       if (melded && melded.length > 0) {

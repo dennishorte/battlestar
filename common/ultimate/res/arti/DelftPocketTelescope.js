@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       while (true) {
-        const card = game.actions.chooseCard(player, game.getCardsByZone(player, 'score'))
+        const card = game.actions.chooseCard(player, game.cards.byPlayer(player, 'score'))
 
         if (!card) {
           break

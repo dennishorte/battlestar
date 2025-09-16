@@ -17,7 +17,7 @@ module.exports = {
     const choices = game
       .players.all()
       .filter(other => other !== player)
-      .flatMap(player => game.getCardsByZone(player, 'score'))
+      .flatMap(player => game.cards.byPlayer(player, 'score'))
       .filter(card => card.checkIsFigure())
     game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(player, 'score'))
   },

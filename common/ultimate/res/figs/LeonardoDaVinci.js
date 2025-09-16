@@ -28,7 +28,7 @@ module.exports = {
       matches: (game, player, { card }) => card.color === 'yellow',
       func: (game, player) => {
         const toMeld = game
-          .getCardsByZone(player, 'hand')
+          .cards.byPlayer(player, 'hand')
           .filter(card => card.color !== 'yellow' && card.color !== 'purple')
         game.actions.meldMany(player, toMeld)
       }

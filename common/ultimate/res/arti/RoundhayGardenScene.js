@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const choices = game.util.highestCards(game.getCardsByZone(player, 'score'))
+      const choices = game.util.highestCards(game.cards.byPlayer(player, 'score'))
       const cards = game.actions.chooseAndMeld(player, choices)
       if (cards && cards.length > 0) {
         const card = cards[0]

@@ -35,7 +35,7 @@ module.exports = {
       func: (game, player, { card }) => {
         const cards = game
           .players.all()
-          .flatMap(player => game.getCardsByZone(player, 'score'))
+          .flatMap(player => game.cards.byPlayer(player, 'score'))
         cards.push(card)
         game.aRemoveMany(player, cards)
       }

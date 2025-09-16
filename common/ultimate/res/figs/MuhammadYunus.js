@@ -22,7 +22,7 @@ module.exports = {
       func: (game, player, { owner }) => {
         const returned = game.actions.chooseAndReturn(
           owner,
-          game.getCardsByZone(owner, 'hand'),
+          game.cards.byPlayer(owner, 'hand'),
           { min: 0, max: 1 }
         )
 

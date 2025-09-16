@@ -10,14 +10,14 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      if (game.getCardsByZone(player, 'score').length === 0) {
+      if (game.cards.byPlayer(player, 'score').length === 0) {
         const colors = game.actions.choose(player, game.utilColors(), { title: 'Choose a Color' })
         const color = colors[0]
-        game.actions.scoreMany(player, game.getCardsByZone(player, color))
+        game.actions.scoreMany(player, game.cards.byPlayer(player, color))
       }
 
       else {
-        game.actions.returnMany(player, game.getCardsByZone(player, 'score'))
+        game.actions.returnMany(player, game.cards.byPlayer(player, 'score'))
       }
     }
   ],

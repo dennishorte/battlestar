@@ -18,7 +18,7 @@ module.exports = {
       trigger: 'meld',
       kind: 'would-instead',
       matches: (game, player, { card }) => {
-        const cards = game.getCardsByZone(player, card.color)
+        const cards = game.cards.byPlayer(player, card.color)
         return cards.length > 0 && cards[0].getAge() === card.getAge()
       },
       func: (game, player, { card }) => {

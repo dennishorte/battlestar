@@ -13,7 +13,7 @@ module.exports = {
       const topYellow = game.getTopCard(player, 'yellow')
       if (topYellow) {
         const choices = game
-          .getCardsByZone(player, 'score')
+          .cards.byPlayer(player, 'score')
           .filter(card => card.getAge() === topYellow.getAge())
         const transferred =
           game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'score'))
@@ -22,7 +22,7 @@ module.exports = {
           const topGreen = game.getTopCard(player, 'green')
           if (topGreen) {
             const greenChoices = game
-              .getCardsByZone(player, 'score')
+              .cards.byPlayer(player, 'score')
               .filter(card => card.getAge() === topGreen.getAge())
             game.actions.chooseAndReturn(player, greenChoices)
           }

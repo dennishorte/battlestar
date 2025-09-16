@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const cards = game.actions.chooseAndReturn(player, game.getCardsByZone(player, 'hand'))
+      const cards = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'))
       if (cards && cards.length > 0) {
         const returned = cards[0]
         const biscuits = game.getBiscuitsByZone(game.zones.byPlayer(player, returned.color))

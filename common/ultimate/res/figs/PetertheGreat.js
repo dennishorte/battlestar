@@ -30,7 +30,7 @@ module.exports = {
       kind: 'would-first',
       matches: (game, player, { card }) => card.checkHasBiscuit('f'),
       func: (game, player) => {
-        const card = game.getCardsByZone(player, 'green').slice(-1)[0]
+        const card = game.cards.byPlayer(player, 'green').slice(-1)[0]
         if (card) {
           if (game.checkAchievementEligibility(player, card)) {
             game.aClaimAchievement(player, card)

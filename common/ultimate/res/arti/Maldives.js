@@ -11,17 +11,17 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const hand = game.getCardsByZone(player, 'hand')
+      const hand = game.cards.byPlayer(player, 'hand')
       const handCount = Math.max(0, hand.length - 2)
       game.actions.chooseAndReturn(player, hand, { count: handCount })
 
-      const score = game.getCardsByZone(player, 'score')
+      const score = game.cards.byPlayer(player, 'score')
       const scoreCount = Math.max(0, score.length - 2)
       game.actions.chooseAndReturn(player, score, { count: scoreCount })
     },
 
     (game, player) => {
-      const score = game.getCardsByZone(player, 'score')
+      const score = game.cards.byPlayer(player, 'score')
       const scoreCount = Math.max(0, score.length - 4)
       game.actions.chooseAndReturn(player, score, { count: scoreCount })
     },

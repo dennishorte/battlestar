@@ -15,7 +15,7 @@ module.exports = {
       const card = game.actions.drawAndMeld(player, age)
       game.aSplay(player, card.color, 'up')
 
-      if (game.getCardsByZone(player, card.color).length === card.getAge()) {
+      if (game.cards.byPlayer(player, card.color).length === card.getAge()) {
         game.actions.drawAndScore(player, game.getEffectAge(self, 10))
         /* throw new GameOverEvent({
          *   player,
