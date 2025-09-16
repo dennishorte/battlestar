@@ -1,22 +1,17 @@
-const CardBase = require(`../CardBase.js`)
 const { GameOverEvent } = require('../../../lib/game.js')
 
-function Card() {
-  this.id = `Earhart's Lockheed Electra 10E`  // Card names are unique in Innovation
-  this.name = `Earhart's Lockheed Electra 10E`
-  this.color = `blue`
-  this.age = 8
-  this.expansion = `arti`
-  this.biscuits = `ihii`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Earhart's Lockheed Electra 10E`,
+  color: `blue`,
+  age: 8,
+  expansion: `arti`,
+  biscuits: `ihii`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `For each value below nine, return a top card of that value from your board, in descending order. If you return eight cards, you win. Otherwise, claim an achievement, ignoring eligibility.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       let returned = 0
       for (let i = 8; i > 0; i--) {
         const choices = game
@@ -44,7 +39,7 @@ function Card() {
       if (returned === 8) {
         throw new GameOverEvent({
           player,
-          reason: this.name
+          reason: self.name
         })
       }
       else {
@@ -53,16 +48,5 @@ function Card() {
         game.aChooseAndAchieve(player, achievements)
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

@@ -1,22 +1,17 @@
-const CardBase = require(`../CardBase.js`)
 const { GameOverEvent } = require('../../../lib/game.js')
 
-function Card() {
-  this.id = `Seikan Tunnel`  // Card names are unique in Innovation
-  this.name = `Seikan Tunnel`
-  this.color = `green`
-  this.age = 10
-  this.expansion = `arti`
-  this.biscuits = `iiih`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Seikan Tunnel`,
+  color: `green`,
+  age: 10,
+  expansion: `arti`,
+  biscuits: `iiih`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `If you have the most cards of a color showing on your board out of all colors on all boards, you win.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       const zones = game
         .getPlayerAll()
         .flatMap(player => game.utilColors().map(color => {
@@ -34,7 +29,7 @@ function Card() {
       ) {
         throw new GameOverEvent({
           player,
-          reason: this.name
+          reason: self.name
         })
       }
 
@@ -42,16 +37,5 @@ function Card() {
         game.mLogNoEffect()
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

@@ -1,24 +1,18 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Hansen Writing Ball`  // Card names are unique in Innovation
-  this.name = `Hansen Writing Ball`
-  this.color = `green`
-  this.age = 7
-  this.expansion = `arti`
-  this.biscuits = `ilih`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Hansen Writing Ball`,
+  color: `green`,
+  age: 7,
+  expansion: `arti`,
+  biscuits: `ilih`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `I compel you to draw four {7}! Meld a blue card, then transfer all cards in your hand to my hand!`,
     `Draw and reveal a {7}. If it has no {i}, tuck it and repeat this effect.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player, { leader }) => {
+  ],
+  dogmaImpl: [
+    (game, player, { leader, self }) => {
       for (let i = 0; i < 4; i++) {
-        game.aDraw(player, { age: game.getEffectAge(this, 7) })
+        game.aDraw(player, { age: game.getEffectAge(self, 7) })
       }
 
       const choices = game
@@ -35,9 +29,9 @@ function Card() {
       )
     },
 
-    (game, player) => {
+    (game, player, { self }) => {
       while (true) {
-        const card = game.aDrawAndReveal(player, game.getEffectAge(this, 7))
+        const card = game.aDrawAndReveal(player, game.getEffectAge(self, 7))
         if (card) {
           if (card.checkHasBiscuit('i')) {
             game.mLog({ template: 'Card has a {i} biscuit' })
@@ -50,16 +44,5 @@ function Card() {
         }
       }
     },
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

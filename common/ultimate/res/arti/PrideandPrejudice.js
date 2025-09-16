@@ -1,23 +1,17 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Pride and Prejudice`  // Card names are unique in Innovation
-  this.name = `Pride and Prejudice`
-  this.color = `yellow`
-  this.age = 6
-  this.expansion = `arti`
-  this.biscuits = `hsls`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Pride and Prejudice`,
+  color: `yellow`,
+  age: 6,
+  expansion: `arti`,
+  biscuits: `hsls`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `Draw and meld a {6}. If the drawn card's color is the color with the fewest (or tied) number of cards on your board, score the melded card, and repeat this effect.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       while (true) {
-        const card = game.aDrawAndMeld(player, game.getEffectAge(this, 6))
+        const card = game.aDrawAndMeld(player, game.getEffectAge(self, 6))
 
         if (card) {
           const numCards = game
@@ -42,16 +36,5 @@ function Card() {
         }
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

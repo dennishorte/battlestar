@@ -1,25 +1,20 @@
-const CardBase = require(`../CardBase.js`)
 const { GameOverEvent } = require('../../../lib/game.js')
 
-function Card() {
-  this.id = `Garland's Ruby Slippers`  // Card names are unique in Innovation
-  this.name = `Garland's Ruby Slippers`
-  this.color = `purple`
-  this.age = 8
-  this.expansion = `arti`
-  this.biscuits = `hiii`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Garland's Ruby Slippers`,
+  color: `purple`,
+  age: 8,
+  expansion: `arti`,
+  biscuits: `hiii`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `Meld an {8} from your hand. If the melded card has no effects (of any kind), you win. Otherwise, execute the effects of the melded card as if they were on this card. Do not share them.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       const choices = game
         .getCardsByZone(player, 'hand')
-        .filter(card => card.getAge() === game.getEffectAge(this, 8))
+        .filter(card => card.getAge() === game.getEffectAge(self, 8))
       const cards = game.aChooseAndMeld(player, choices)
 
       if (cards && cards.length > 0) {
@@ -32,7 +27,7 @@ function Card() {
         ) {
           throw new GameOverEvent({
             player,
-            reason: this.name
+            reason: self.name
           })
         }
 
@@ -41,16 +36,5 @@ function Card() {
         }
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

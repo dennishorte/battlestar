@@ -1,25 +1,19 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Rosetta Stone`  // Card names are unique in Innovation
-  this.name = `Rosetta Stone`
-  this.color = `blue`
-  this.age = 2
-  this.expansion = `arti`
-  this.biscuits = `kkkh`
-  this.dogmaBiscuit = `k`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Rosetta Stone`,
+  color: `blue`,
+  age: 2,
+  expansion: `arti`,
+  biscuits: `kkkh`,
+  dogmaBiscuit: `k`,
+  dogma: [
     `Choose a card type. Draw two {2} of that type. Meld one and transfer the other to an opponent's board.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       const exp = game.aChoose(player, game.getExpansionList(), { title: 'Choose a card type' })
       const cards = [
-        game.aDraw(player, { age: game.getEffectAge(this, 2), exp }),
-        game.aDraw(player, { age: game.getEffectAge(this, 2), exp }),
+        game.aDraw(player, { age: game.getEffectAge(self, 2), exp }),
+        game.aDraw(player, { age: game.getEffectAge(self, 2), exp }),
       ].filter(card => card !== undefined)
 
       const card = game.aChooseCard(player, cards, { title: 'Choose a card to meld' })
@@ -31,16 +25,5 @@ function Card() {
         game.aTransfer(player, otherCard, game.getZoneByPlayer(opponent, otherCard.color))
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

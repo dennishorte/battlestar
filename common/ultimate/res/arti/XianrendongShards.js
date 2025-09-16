@@ -1,21 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Xianrendong Shards`  // Card names are unique in Innovation
-  this.name = `Xianrendong Shards`
-  this.color = `yellow`
-  this.age = 1
-  this.expansion = `arti`
-  this.biscuits = `hlll`
-  this.dogmaBiscuit = `l`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Xianrendong Shards`,
+  color: `yellow`,
+  age: 1,
+  expansion: `arti`,
+  biscuits: `hlll`,
+  dogmaBiscuit: `l`,
+  dogma: [
     `Reveal three cards from your hand. Score two, then tuck the other. If the scored cards were the same color, draw three {1}s.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       const cards = game.aChooseAndReveal(
         player,
         game.getCardsByZone(player, 'hand'),
@@ -32,22 +26,11 @@ function Card() {
         }
 
         if (scored.length == 2 && scored[0].color === scored[1].color) {
-          game.aDraw(player, { age: game.getEffectAge(this, 1) })
-          game.aDraw(player, { age: game.getEffectAge(this, 1) })
-          game.aDraw(player, { age: game.getEffectAge(this, 1) })
+          game.aDraw(player, { age: game.getEffectAge(self, 1) })
+          game.aDraw(player, { age: game.getEffectAge(self, 1) })
+          game.aDraw(player, { age: game.getEffectAge(self, 1) })
         }
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

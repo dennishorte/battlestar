@@ -1,21 +1,16 @@
-const CardBase = require(`../CardBase.js`)
 const util = require('../../../lib/util.js')
 
-function Card() {
-  this.id = `Periodic Table`  // Card names are unique in Innovation
-  this.name = `Periodic Table`
-  this.color = `blue`
-  this.age = 7
-  this.expansion = `arti`
-  this.biscuits = `shss`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Periodic Table`,
+  color: `blue`,
+  age: 7,
+  expansion: `arti`,
+  biscuits: `shss`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `Choose two top cards on your board of the same value. If you do, draw a card of value one higher and meld it. If it melded over one of the chosen cards, repeat this effect.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       while (true) {
         const byAge = {}
@@ -54,16 +49,5 @@ function Card() {
         }
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

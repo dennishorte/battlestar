@@ -1,22 +1,16 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Sandham Room Cricket Bat`  // Card names are unique in Innovation
-  this.name = `Sandham Room Cricket Bat`
-  this.color = `purple`
-  this.age = 5
-  this.expansion = `arti`
-  this.biscuits = `llfh`
-  this.dogmaBiscuit = `l`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Sandham Room Cricket Bat`,
+  color: `purple`,
+  age: 5,
+  expansion: `arti`,
+  biscuits: `llfh`,
+  dogmaBiscuit: `l`,
+  dogma: [
     `Draw and reveal a {6}. If it is red, claim an achievement, ignoring eligibility.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
-      const card = game.aDrawAndReveal(player, game.getEffectAge(this, 6))
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
+      const card = game.aDrawAndReveal(player, game.getEffectAge(self, 6))
       if (card.color === 'red') {
         game.mLog({ template: 'Card is red' })
         const choices = game.getAvailableAchievementsRaw(player)
@@ -26,16 +20,5 @@ function Card() {
         game.mLog({ template: 'Card is not red' })
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

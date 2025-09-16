@@ -1,20 +1,14 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Charter of Liberties`  // Card names are unique in Innovation
-  this.name = `Charter of Liberties`
-  this.color = `blue`
-  this.age = 3
-  this.expansion = `arti`
-  this.biscuits = `sshk`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Charter of Liberties`,
+  color: `blue`,
+  age: 3,
+  expansion: `arti`,
+  biscuits: `sshk`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `Tuck a card from your hand. If you do, splay left its color, then choose a (different) splayed color on any player's board. Execute all of that color's top card's non-demand dogma effects, without sharing.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const cards = game.aChooseAndTuck(player, game.getCardsByZone(player, 'hand'))
 
@@ -37,16 +31,5 @@ function Card() {
         }
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

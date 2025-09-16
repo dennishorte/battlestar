@@ -1,20 +1,14 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Higgs Boson`  // Card names are unique in Innovation
-  this.name = `Higgs Boson`
-  this.color = `blue`
-  this.age = 10
-  this.expansion = `arti`
-  this.biscuits = `sssh`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Higgs Boson`,
+  color: `blue`,
+  age: 10,
+  expansion: `arti`,
+  biscuits: `sssh`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `Transfer all cards on your board to your score pile.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const autoReturn = game.aYesNo(player, 'Auto return cards?')
       const scoreZone = game.getZoneByPlayer(player, 'score')
@@ -47,16 +41,5 @@ function Card() {
         }
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

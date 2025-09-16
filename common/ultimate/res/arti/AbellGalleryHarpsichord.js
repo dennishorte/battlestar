@@ -1,20 +1,14 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Abell Gallery Harpsichord`  // Card names are unique in Innovation
-  this.name = `Abell Gallery Harpsichord`
-  this.color = `purple`
-  this.age = 4
-  this.expansion = `arti`
-  this.biscuits = `lhcl`
-  this.dogmaBiscuit = `l`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Abell Gallery Harpsichord`,
+  color: `purple`,
+  age: 4,
+  expansion: `arti`,
+  biscuits: `lhcl`,
+  dogmaBiscuit: `l`,
+  dogma: [
     `For each value of top card on your board appearing exactly once, draw and score a card of that value in ascending order.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const topCards = game.getTopCards(player)
 
@@ -25,16 +19,5 @@ function Card() {
         }
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

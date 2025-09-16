@@ -1,23 +1,17 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Sibidu Needle`  // Card names are unique in Innovation
-  this.name = `Sibidu Needle`
-  this.color = `blue`
-  this.age = 1
-  this.expansion = `arti`
-  this.biscuits = `kkkh`
-  this.dogmaBiscuit = `k`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Sibidu Needle`,
+  color: `blue`,
+  age: 1,
+  expansion: `arti`,
+  biscuits: `kkkh`,
+  dogmaBiscuit: `k`,
+  dogma: [
     `Draw and reveal a {1}. If you have a top card of matching color and value to the drawn card, score the drawn card and repeat this effect.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       while (true) {
-        const card = game.aDrawAndReveal(player, game.getEffectAge(this, 1))
+        const card = game.aDrawAndReveal(player, game.getEffectAge(self, 1))
         if (card) {
           const top = game.getTopCard(player, card.color)
           if (top && top.getAge() === card.getAge()) {
@@ -29,16 +23,5 @@ function Card() {
         }
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

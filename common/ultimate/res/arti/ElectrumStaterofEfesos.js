@@ -1,23 +1,17 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Electrum Stater of Efesos`  // Card names are unique in Innovation
-  this.name = `Electrum Stater of Efesos`
-  this.color = `green`
-  this.age = 1
-  this.expansion = `arti`
-  this.biscuits = `chkc`
-  this.dogmaBiscuit = `c`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Electrum Stater of Efesos`,
+  color: `green`,
+  age: 1,
+  expansion: `arti`,
+  biscuits: `chkc`,
+  dogmaBiscuit: `c`,
+  dogma: [
     `Draw and reveal a {3}. If you do not have a top card of the drawn card's color, meld it and repeat this dogma effect.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       while (true) {
-        const card = game.aDrawAndReveal(player, game.getEffectAge(this, 3))
+        const card = game.aDrawAndReveal(player, game.getEffectAge(self, 3))
         if (game.getTopCard(player, card.color)) {
           game.mLog({
             template: '{player} already has a top card of matching color',
@@ -34,16 +28,5 @@ function Card() {
         }
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

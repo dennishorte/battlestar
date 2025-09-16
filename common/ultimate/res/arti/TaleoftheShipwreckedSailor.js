@@ -1,27 +1,21 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Tale of the Shipwrecked Sailor`  // Card names are unique in Innovation
-  this.name = `Tale of the Shipwrecked Sailor`
-  this.color = `purple`
-  this.age = 1
-  this.expansion = `arti`
-  this.biscuits = `hkss`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Tale of the Shipwrecked Sailor`,
+  color: `purple`,
+  age: 1,
+  expansion: `arti`,
+  biscuits: `hkss`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `Choose a color. Draw a {1}. Meld a card of the chosen color from your hand. If you do, splay that color left.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       const color = game.aChoose(player, game.utilColors(), { title: 'Choose a Color ' })[0]
       game.mLog({
         template: '{player} chooses {color}',
         args: { player, color }
       })
-      game.aDraw(player, { age: game.getEffectAge(this, 1) })
+      game.aDraw(player, { age: game.getEffectAge(self, 1) })
       const choices = game
         .getCardsByZone(player, 'hand')
         .filter(card => card.color === color)
@@ -30,16 +24,5 @@ function Card() {
         game.aSplay(player, color, 'left')
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

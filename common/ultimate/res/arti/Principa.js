@@ -1,20 +1,14 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Principa`  // Card names are unique in Innovation
-  this.name = `Principa`
-  this.color = `blue`
-  this.age = 5
-  this.expansion = `arti`
-  this.biscuits = `sshs`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Principa`,
+  color: `blue`,
+  age: 5,
+  expansion: `arti`,
+  biscuits: `sshs`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `Return all non-blue top cards from your board. For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order.`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player) => {
       const toReturn = game
         .getTopCards(player)
@@ -28,16 +22,5 @@ function Card() {
         game.aDrawAndMeld(player, card.getAge() + 1)
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

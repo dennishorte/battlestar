@@ -1,21 +1,15 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Mona Lisa`  // Card names are unique in Innovation
-  this.name = `Mona Lisa`
-  this.color = `yellow`
-  this.age = 4
-  this.expansion = `arti`
-  this.biscuits = `hcll`
-  this.dogmaBiscuit = `l`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Mona Lisa`,
+  color: `yellow`,
+  age: 4,
+  expansion: `arti`,
+  biscuits: `hcll`,
+  dogmaBiscuit: `l`,
+  dogma: [
     `Choose a number and a color. Draw five {4}, then reveal your hand. If you have exactly that many cards of that color, score them, and splay right your cards of that color. Otherwise, return all cards from your hand.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       const number = game.aChoose(player, [0,1,2,3,4,5,6,7,8,9], { title: 'Choose a number' })[0]
       const color = game.aChoose(player, game.utilColors(), { title: 'Choose a color' })[0]
 
@@ -24,11 +18,11 @@ function Card() {
         args: { player, number, color }
       })
 
-      game.aDraw(player, { age: game.getEffectAge(this, 4) })
-      game.aDraw(player, { age: game.getEffectAge(this, 4) })
-      game.aDraw(player, { age: game.getEffectAge(this, 4) })
-      game.aDraw(player, { age: game.getEffectAge(this, 4) })
-      game.aDraw(player, { age: game.getEffectAge(this, 4) })
+      game.aDraw(player, { age: game.getEffectAge(self, 4) })
+      game.aDraw(player, { age: game.getEffectAge(self, 4) })
+      game.aDraw(player, { age: game.getEffectAge(self, 4) })
+      game.aDraw(player, { age: game.getEffectAge(self, 4) })
+      game.aDraw(player, { age: game.getEffectAge(self, 4) })
 
       const hand = game.getCardsByZone(player, 'hand')
 
@@ -60,16 +54,5 @@ function Card() {
         game.aReturnMany(player, hand)
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

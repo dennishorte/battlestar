@@ -1,22 +1,17 @@
-const CardBase = require(`../CardBase.js`)
 const { GameOverEvent } = require('../../../lib/game.js')
 
-function Card() {
-  this.id = `Dolly the Sheep`  // Card names are unique in Innovation
-  this.name = `Dolly the Sheep`
-  this.color = `yellow`
-  this.age = 10
-  this.expansion = `arti`
-  this.biscuits = `hili`
-  this.dogmaBiscuit = `i`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Dolly the Sheep`,
+  color: `yellow`,
+  age: 10,
+  expansion: `arti`,
+  biscuits: `hili`,
+  dogmaBiscuit: `i`,
+  dogma: [
     `You may score your bottom yellow card. You may draw and tuck a {1}. If your bottom yellow card is Domestication, you win. Otherwise, meld the higest card in your hand, then draw a {0}.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       // You may score your bottom yellow card.
       const yellowCards = game.getCardsByZone(player, 'yellow')
       if (yellowCards.length === 0) {
@@ -39,7 +34,7 @@ function Card() {
       }
 
       // You may draw and tuck a 1.
-      const age = game.getEffectAge(this, 1)
+      const age = game.getEffectAge(self, 1)
       const doDrawAndTuck = game.aYesNo(player, `Draw and tuck a {${age}}?`)
       if (doDrawAndTuck) {
         game.aDrawAndTuck(player, age)
@@ -50,7 +45,7 @@ function Card() {
       if (newYellowCards.length > 0 && newYellowCards[newYellowCards.length - 1].name === 'Domestication') {
         throw new GameOverEvent({
           player,
-          reason: this.name
+          reason: self.name
         })
       }
 
@@ -61,19 +56,8 @@ function Card() {
           game.aMeld(player, cards[0])
         }
 
-        game.aDraw(player, { age: game.getEffectAge(this, 10) })
+        game.aDraw(player, { age: game.getEffectAge(self, 10) })
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

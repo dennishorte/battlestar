@@ -1,25 +1,19 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Molasses Reef Caravel`  // Card names are unique in Innovation
-  this.name = `Molasses Reef Caravel`
-  this.color = `green`
-  this.age = 4
-  this.expansion = `arti`
-  this.biscuits = `sssh`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Molasses Reef Caravel`,
+  color: `green`,
+  age: 4,
+  expansion: `arti`,
+  biscuits: `sssh`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `Return all cards from your hand. Draw three {4}. Meld a blue card from your hand. Score a card from your hand. Return a card from your score pile.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       game.aReturnMany(player, game.getCardsByZone(player, 'hand'))
-      game.aDraw(player, { age: game.getEffectAge(this, 4) })
-      game.aDraw(player, { age: game.getEffectAge(this, 4) })
-      game.aDraw(player, { age: game.getEffectAge(this, 4) })
+      game.aDraw(player, { age: game.getEffectAge(self, 4) })
+      game.aDraw(player, { age: game.getEffectAge(self, 4) })
+      game.aDraw(player, { age: game.getEffectAge(self, 4) })
 
       const blueCards = game
         .getCardsByZone(player, 'hand')
@@ -36,16 +30,5 @@ function Card() {
       game.aChooseAndScore(player, game.getCardsByZone(player, 'hand'))
       game.aChooseAndReturn(player, game.getCardsByZone(player, 'score'))
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

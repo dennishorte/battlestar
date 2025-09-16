@@ -1,21 +1,16 @@
-const CardBase = require(`../CardBase.js`)
 const { GameOverEvent } = require('../../../lib/game.js')
 
-function Card() {
-  this.id = `Exxon Valdez`  // Card names are unique in Innovation
-  this.name = `Exxon Valdez`
-  this.color = `red`
-  this.age = 10
-  this.expansion = `arti`
-  this.biscuits = `fhff`
-  this.dogmaBiscuit = `f`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Exxon Valdez`,
+  color: `red`,
+  age: 10,
+  expansion: `arti`,
+  biscuits: `fhff`,
+  dogmaBiscuit: `f`,
+  dogma: [
     `I compel you to remove all cards from your hand, score pile, board, and achievements from the game. You lose! If there is only one player remaining in the game, that player wins!`
-  ]
-
-  this.dogmaImpl = [
+  ],
+  dogmaImpl: [
     (game, player, { self }) => {
       const toRemove = [
         game.getCardsByZone(player, 'hand'),
@@ -37,16 +32,5 @@ function Card() {
 
       game.aYouLose(player, self)
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card

@@ -1,27 +1,21 @@
-const CardBase = require(`../CardBase.js`)
-
-function Card() {
-  this.id = `Cyrus Cylinder`  // Card names are unique in Innovation
-  this.name = `Cyrus Cylinder`
-  this.color = `purple`
-  this.age = 2
-  this.expansion = `arti`
-  this.biscuits = `hssk`
-  this.dogmaBiscuit = `s`
-  this.echo = ``
-  this.karma = []
-  this.dogma = [
+module.exports = {
+  name: `Cyrus Cylinder`,
+  color: `purple`,
+  age: 2,
+  expansion: `arti`,
+  biscuits: `hssk`,
+  dogmaBiscuit: `s`,
+  dogma: [
     `Choose any other top purple card on any player's board. Execute its non-demand dogma effects. Do not share them.`,
     `Splay left a color on any player's board.`
-  ]
-
-  this.dogmaImpl = [
-    (game, player) => {
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
       const choices = game
         .getPlayerAll()
         .map(player => game.getTopCard(player, 'purple'))
         .filter(card => card !== undefined)
-        .filter(card => card.name !== this.name)
+        .filter(card => card.name !== self.name)
 
       const card = game.aChooseCard(player, choices)
       if (card) {
@@ -42,16 +36,5 @@ function Card() {
         game.aSplay(player, color, 'left', { owner: other })
       }
     }
-  ]
-  this.echoImpl = []
-  this.karmaImpl = []
+  ],
 }
-
-Card.prototype = Object.create(CardBase.prototype)
-Object.defineProperty(Card.prototype, `constructor`, {
-  value: Card,
-  enumerable: false,
-  writable: true
-})
-
-module.exports = Card
