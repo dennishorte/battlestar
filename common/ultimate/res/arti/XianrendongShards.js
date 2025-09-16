@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `hlll`,
   dogmaBiscuit: `l`,
   dogma: [
-    `Reveal three cards from your hand. Score two, then tuck the other. If the scored cards were the same color, draw three {1}s.`
+    `Reveal three cards from your hand. Score two, then tuck the other. If you score two cards of the same color, draw three {1}s.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
