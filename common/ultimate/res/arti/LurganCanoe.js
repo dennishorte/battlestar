@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `hccc`,
   dogmaBiscuit: `c`,
   dogma: [
-    `Meld a card from your hand. Score all other cards of the same color from your board. If you scored at least one card, repeat this effect.`
+    `Meld a card from your hand. Score all other cards of the same color from your board. If you score a card, repeat this effect.`
   ],
   dogmaImpl: [
     (game, player) => {
