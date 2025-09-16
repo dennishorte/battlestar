@@ -1,0 +1,31 @@
+module.exports = {
+  id: `James Clerk Maxwell`,  // Card names are unique in Innovation
+  name: `James Clerk Maxwell`,
+  color: `blue`,
+  age: 7,
+  expansion: `figs`,
+  biscuits: `h*7i`,
+  dogmaBiscuit: `i`,
+  echo: ``,
+  karma: [
+    `Each card in hand provides one additional icon of every type on your board.`
+  ],
+  dogma: [],
+  dogmaImpl: [],
+  echoImpl: [],
+  karmaImpl: [
+    {
+      trigger: 'calculate-biscuits',
+      func: (game, player, { biscuits }) => {
+        const bonus = game.getCardsByZone(player, 'hand').length
+        const output = game.utilEmptyBiscuits()
+        for (const biscuit of Object.keys(biscuits)) {
+          if (biscuits[biscuit] > 0) {
+            output[biscuit] = bonus
+          }
+        }
+        return output
+      }
+    }
+  ]
+}

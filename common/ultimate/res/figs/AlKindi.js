@@ -1,0 +1,29 @@
+module.exports = {
+  id: `Al-Kindi`,  // Card names are unique in Innovation
+  name: `Al-Kindi`,
+  color: `purple`,
+  age: 3,
+  expansion: `figs`,
+  biscuits: `hcc*`,
+  dogmaBiscuit: `c`,
+  echo: ``,
+  karma: [
+    `If you would draw a card for sharing, first draw two cards of the same value.`
+  ],
+  dogma: [],
+  dogmaImpl: [],
+  echoImpl: [],
+  karmaImpl: [
+    {
+      trigger: 'draw',
+      matches(game, player, { share }) {
+        return share
+      },
+      func(game, player, { age }) {
+        game.aDraw(player, { age })
+        game.aDraw(player, { age })
+        return 'would-first'
+      }
+    }
+  ]
+}
