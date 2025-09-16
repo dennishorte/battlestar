@@ -16,7 +16,21 @@ module.exports = {
         .tops(player)
         .filter(card => card.checkHasBiscuit('k'))
       const highest = game.util.highestCards(topCastles)
-      game.actions.chooseAndTransfer(player, highest, game.zones.byPlayer(leader, 'hand'))
+      const transferred = game.actions.chooseAndTransfer(player, highest, game.zones.byPlayer(leader, 'hand'))
+
+      if (transferred.length === 0) {
+        const lowestCards = game.util.lowestCards(game.cards.tops(player))
+
+        if (lowestCards.length === 0) {
+          game.log.add({
+            template: '{player} has no top cards'
+          })
+        }
+        else {
+          const value = lowestCards[0].getAge()
+          game.actions.junkDeck(player, value)
+        }
+      }
     },
 
     (game, player, { self }) => {
