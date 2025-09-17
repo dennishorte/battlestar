@@ -28,7 +28,7 @@ module.exports = {
           orderedPlayers.length === 1
           || (orderedPlayers.length > 1 && orderedPlayers[0].age > orderedPlayers[1].age)
         ) {
-          game.aClaimAchievement(orderedPlayers[0].player, card)
+          game.actions.claimAchievement(orderedPlayers[0].player, card)
 
         }
         else {

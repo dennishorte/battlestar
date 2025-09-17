@@ -30,7 +30,7 @@ module.exports = {
         return player !== owner && game.checkAchievementEligibility(owner, card)
       },
       func: (game, player, { card, owner }) => {
-        game.aClaimAchievement(owner, card)
+        game.actions.claimAchievement(owner, card)
       }
     }
   ]

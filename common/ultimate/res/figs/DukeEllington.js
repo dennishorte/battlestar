@@ -30,7 +30,7 @@ module.exports = {
         return cardCondition && topCondition
       },
       func: (game, player, { card }) => {
-        game.aClaimAchievement(player, { card })
+        game.actions.claimAchievement(player, { card })
       }
     }
   ]

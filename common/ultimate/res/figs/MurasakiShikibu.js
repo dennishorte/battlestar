@@ -29,11 +29,11 @@ module.exports = {
           .filter(other => other.getAge() === card.getAge())
         const selected = game.actions.chooseCard(player, choices)
         if (selected) {
-          game.aClaimAchievement(player, { card: selected })
+          game.actions.claimAchievement(player, { card: selected })
         }
 
         if (game.checkAchievementEligibility(player, card)) {
-          game.aClaimAchievement(player, { card })
+          game.actions.claimAchievement(player, { card })
         }
       }
     }

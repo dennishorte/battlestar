@@ -1671,7 +1671,8 @@ Innovation.prototype.getAvailableAchievementsByAge = function(player, age) {
 
 Innovation.prototype.getAvailableStandardAchievements = function(player) {
   const achievementsZone = this
-    .zones.byId('achievements')
+    .zones
+    .byId('achievements')
     .cardlist()
     .filter(c => !c.isSpecialAchievement && !c.isDecree)
 

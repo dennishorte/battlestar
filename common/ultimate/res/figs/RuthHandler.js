@@ -26,7 +26,7 @@ module.exports = {
         const melded = game.actions.meldMany(player, toMeld)
         for (let i = 0; i < melded.length; i++) {
           const toAchieve = game.actions.draw(player, { age: game.getEffectAge(this, 9) })
-          game.aClaimAchievement(player, toAchieve)
+          game.actions.claimAchievement(player, toAchieve)
         }
       }
     }

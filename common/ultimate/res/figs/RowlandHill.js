@@ -23,7 +23,7 @@ module.exports = {
         if (cards && cards.length === 3) {
           const remaining = game.cards.byPlayer(player, 'hand')
           for (const card of remaining) {
-            game.aClaimAchievement(player, { card })
+            game.actions.claimAchievement(player, { card })
           }
         }
       }

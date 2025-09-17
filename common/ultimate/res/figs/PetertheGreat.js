@@ -33,7 +33,7 @@ module.exports = {
         const card = game.cards.byPlayer(player, 'green').slice(-1)[0]
         if (card) {
           if (game.checkAchievementEligibility(player, card)) {
-            game.aClaimAchievement(player, card)
+            game.actions.claimAchievement(player, card)
           }
           else {
             game.actions.score(player, card)
