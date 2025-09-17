@@ -9,7 +9,7 @@ describe("Terracotta Army", () => {
     t.setBoard(game,  {
       dennis: {
         artifact: ["Terracotta Army"],
-        hand: ['Calendar', 'Mapmaking'],
+        hand: ['Mapmaking', 'Pottery'],
       },
       micah: {
         green: ['Navigation'],
@@ -17,7 +17,7 @@ describe("Terracotta Army", () => {
       },
       decks: {
         base: {
-          1: ['Sailing'],
+          2: ['Fermenting'],
         }
       }
     })
@@ -29,8 +29,42 @@ describe("Terracotta Army", () => {
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
-        score: ['Calendar'],
-        hand: ['Mapmaking', 'Sailing'],
+        score: ['Pottery'],
+        hand: ['Mapmaking', 'Fermenting'],
+      },
+      micah: {
+        hand: ['The Wheel'],
+        score: ['Agriculture'],
+      },
+    })
+  })
+
+  test('dogma: nothing to score in hand', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+    t.setBoard(game,  {
+      dennis: {
+        artifact: ["Terracotta Army"],
+      },
+      micah: {
+        green: ['Navigation'],
+        hand: ['Agriculture', 'The Wheel'],
+      },
+      decks: {
+        base: {
+          2: ['Fermenting'],
+        }
+      }
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+
+    t.testIsFirstAction(request)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Terracotta Army'],
+        hand: ['Fermenting'],
       },
       micah: {
         hand: ['The Wheel'],

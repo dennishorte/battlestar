@@ -7,7 +7,7 @@ module.exports = {
   dogmaBiscuit: `c`,
   dogma: [
     `I compel you to return a top card with no {k}!`,
-    `Score a card from your hand with no {k}.`
+    `Score a card from your hand with no {k}. If you do, junk all cards in the deck of value equal to the scored card. Otherwise, tuck Terracotta Army.`
   ],
   dogmaImpl: [
     (game, player) => {
@@ -16,11 +16,17 @@ module.exports = {
         .filter(card => !card.checkHasBiscuit('k'))
       game.actions.chooseAndReturn(player, choices)
     },
-    (game, player) => {
+    (game, player, { self }) => {
       const choices = game
         .cards.byPlayer(player, 'hand')
         .filter(card => !card.checkHasBiscuit('k'))
-      game.actions.chooseAndScore(player, choices)
+      const scored = game.actions.chooseAndScore(player, choices)[0]
+      if (scored) {
+        game.actions.junkDeck(player, scored.getAge())
+      }
+      else {
+        game.actions.tuck(player, self)
+      }
     }
   ],
 }
