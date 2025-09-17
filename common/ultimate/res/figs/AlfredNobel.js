@@ -28,7 +28,7 @@ module.exports = {
           }
 
           let match = true
-          for (const opp of game.getPlayerOpponents(player)) {
+          for (const opp of game.players.opponents(player)) {
             const oppBiscuits = biscuits[opp.name]
             if (playerBiscuits[biscuit] < oppBiscuits[biscuit] * 2) {
               match = false

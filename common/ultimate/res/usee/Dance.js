@@ -17,7 +17,7 @@ module.exports = {
       const card = game.actions.chooseCard(player, choices)
       if (card) {
         const otherPlayers = game
-          .players.opponentsOf(player)
+          .players.opponents(player)
 
         const targetPlayer = game.actions.choosePlayer(player, otherPlayers)
         game.actions.transfer(player, card, game.zones.byPlayer(targetPlayer, card.color))

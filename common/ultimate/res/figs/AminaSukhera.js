@@ -18,7 +18,7 @@ module.exports = {
     {
       trigger: 'when-meld',
       func(game, player) {
-        for (const opp of game.getPlayerOpponents(player)) {
+        for (const opp of game.players.opponents(player)) {
           const topFigures = game
             .cards.tops(opp)
             .filter(card => card.checkIsFigure())

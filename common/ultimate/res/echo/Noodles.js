@@ -17,7 +17,7 @@ module.exports = {
         .filter(card => card.getAge() === game.getEffectAge(self, 1))
         .length
       const theirs = game
-        .players.opponentsOf(player)
+        .players.opponents(player)
         .map(player => game
           .cards.byPlayer(player, 'hand')
           .filter(card => card.getAge() === game.getEffectAge(self, 1))

@@ -689,7 +689,7 @@ Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
   // Do the card's dogma effects.
   if (opts.superExecute) {
     // Demand all opponents
-    opts.demanding = this.players.opponentsOf(player)
+    opts.demanding = this.players.opponents(player)
   }
   this.aCardEffects(player, card, 'dogma', opts)
 
@@ -1186,7 +1186,7 @@ Innovation.prototype.getInfoByKarmaTrigger = function(player, trigger) {
   }
 
   const global = this
-    .players.opponentsOf(player)
+    .players.opponents(player)
     .flatMap(opp => this.cards.tops(opp))
     .flatMap(card => card.getKarmaInfo(trigger))
     .filter(info => info.impl.triggerAll)

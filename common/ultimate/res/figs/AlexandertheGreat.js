@@ -19,7 +19,7 @@ module.exports = {
       trigger: 'when-meld',
       func(game, player) {
         const topFigures = game
-          .getPlayerOpponents(player)
+          .players.opponents(player)
           .flatMap(opp => game.cards.tops(opp))
           .filter(card => card.checkIsFigure())
           .filter(card => card.getAge() === 1 || card.getAge() === 2)

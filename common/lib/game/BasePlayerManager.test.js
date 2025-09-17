@@ -220,7 +220,7 @@ describe('BasePlayerManager', () => {
         expect(players[3]).toBe(playerManager.all()[2])
       })
 
-      test('opponentsOf() should return players not on the same team', () => {
+      test('opponents() should return players not on the same team', () => {
         // Create playerManager with custom team assignments
         const { playerManager } = createPlayerManager(4)
 
@@ -231,7 +231,7 @@ describe('BasePlayerManager', () => {
         playerManager.all()[3].team = 'teamB'
 
         // Get opponents of player 0 (teamA) - should be players 1 and 3 (teamB)
-        const opponents = playerManager.opponentsOf(playerManager.all()[0])
+        const opponents = playerManager.opponents(playerManager.all()[0])
 
         expect(opponents).toHaveLength(2)
         expect(opponents).toContain(playerManager.all()[1])

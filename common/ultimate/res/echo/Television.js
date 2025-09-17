@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const opponent = game.actions.choosePlayer(player, game.players.opponentsOf(player))
+      const opponent = game.actions.choosePlayer(player, game.players.opponents(player))
       const age = game.actions.chooseAge(player)
 
       const choices = game

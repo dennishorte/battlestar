@@ -21,7 +21,7 @@ module.exports = {
       if (tucked.length > 0) {
         const topValue = game.cards.top(player, color).getAge()
         const opponentValues = game
-          .players.opponentsOf(player)
+          .players.opponents(player)
           .map(opp => game.cards.top(opp, color))
           .filter(card => card)
           .map(card => card.getAge())

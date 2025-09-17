@@ -25,7 +25,7 @@ module.exports = {
       matches: (game, player, { card }) => card.checkHasBiscuit('s') || card.checkHasBiscuit('i'),
       func: (game, player) => {
         const choices = game
-          .getPlayerOpponents(player)
+          .players.opponents(player)
           .flatMap(opp => game.cards.tops(opp))
           .filter(card => !card.checkHasBiscuit('s') && !card.checkHasBiscuit('i'))
         game.actions.chooseAndScore(player, choices)

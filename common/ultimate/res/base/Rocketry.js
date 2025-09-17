@@ -18,7 +18,7 @@ module.exports = {
         .filter(x => x > 0)
         .length
 
-      const opp = game.actions.choosePlayer(player, game.players.opponentsOf(player))
+      const opp = game.actions.choosePlayer(player, game.players.opponents(player))
       game.actions.chooseAndReturn(player, game.cards.byPlayer(opp, 'score'), { count })
     }
   ],

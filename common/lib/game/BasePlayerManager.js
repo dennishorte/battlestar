@@ -87,7 +87,7 @@ class BasePlayerManager {
     return players
   }
 
-  opponentsOf(player) {
+  opponents(player) {
     return this.all().filter(other => other.team !== player.team)
   }
 

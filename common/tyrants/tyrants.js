@@ -1189,7 +1189,7 @@ Tyrants.prototype.aChooseOne = function(player, choices, opts={}) {
 
 Tyrants.prototype.aChooseToDiscard = function(player) {
   const opponents = this
-    .players.opponentsOf(player)
+    .players.opponents(player)
     .filter(p => this.cards.byPlayer(p, 'hand').length > 3)
     .map(p => p.name)
 

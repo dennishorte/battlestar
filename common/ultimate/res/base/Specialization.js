@@ -18,7 +18,7 @@ module.exports = {
         game.actions.reveal(player, card)
 
         const stolen = game
-          .players.opponentsOf(player)
+          .players.opponents(player)
           .map(opponent => game.cards.top(opponent, card.color))
           .filter(card => card !== undefined)
 

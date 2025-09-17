@@ -19,7 +19,7 @@ module.exports = {
       trigger: 'when-meld',
       func: (game, player) => {
         const figs = game
-          .getPlayerOpponents(player)
+          .players.opponents(player)
           .flatMap(player => game.cards.tops(player))
           .filter(card => card.checkIsFigure())
         game.actions.returnMany(player, figs)

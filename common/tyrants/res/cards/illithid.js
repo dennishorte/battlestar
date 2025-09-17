@@ -140,7 +140,7 @@ const cardData = [
       const location = game.aChooseAndPlaceSpy(player)
 
       const opponents = game
-        .players.opponentsOf(player)
+        .players.opponents(player)
         .filter(p => location.getTroops().some(troop => troop.owner === p))
 
       for (const opponent of opponents) {
@@ -445,7 +445,7 @@ const cardData = [
             game.aReturnASpyAnd(player, (game, player) => {
               game.aDraw(player)
               game
-                .players.opponentsOf(player)
+                .players.opponents(player)
                 .forEach(opp => game.aChooseAndDiscard(opp, {
                   requireThree: true,
                   forced: true,

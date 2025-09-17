@@ -26,7 +26,7 @@ module.exports = {
         const card = game.actions.draw(player, { age: game.getEffectAge(self, 4) })
         const playerBonusPoints = game.getBonuses(player).reduce((l, r) => l + r, 0)
         const otherBonusPoints = game
-          .players.opponentsOf(player)
+          .players.opponents(player)
           .map(opp => {
             const points = game.getBonuses(opp).reduce((l, r) => l + r, 0)
             return { opp, points }

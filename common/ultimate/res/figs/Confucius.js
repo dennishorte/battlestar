@@ -14,7 +14,7 @@ module.exports = {
   dogmaImpl: [],
   echoImpl: (game, player) => {
     const choices = game
-      .getPlayerOpponents(player)
+      .players.opponents(player)
       .flatMap(opp => game.cards.tops(opp))
       .filter(card => card.checkIsFigure())
       .filter(card => card.getAge() === 1)

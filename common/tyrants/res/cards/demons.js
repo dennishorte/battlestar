@@ -18,7 +18,7 @@ const cardData = [
     ],
     impl: (game, player) => {
       player.incrementCounter('power', 2)
-      for (const opp of game.players.opponentsOf(player)) {
+      for (const opp of game.players.opponents(player)) {
         game.aRecruit(opp, 'Insane Outcast', { noCost: true })
       }
     },
@@ -277,7 +277,7 @@ const cardData = [
           game.aChooseAndSupplant(player, { whiteOnly: true })
           game.aChooseAndSupplant(player, { whiteOnly: true })
 
-          for (const opp of game.players.opponentsOf(player)) {
+          for (const opp of game.players.opponents(player)) {
             game.aRecruit(opp, 'Insane Outcast', { noCost: true })
             game.aRecruit(opp, 'Insane Outcast', { noCost: true })
           }
@@ -462,7 +462,7 @@ const cardData = [
     ],
     impl: (game, player) => {
       player.incrementCounter('influence', 2)
-      const opp = game.actions.choosePlayer(player, game.players.opponentsOf(player))
+      const opp = game.actions.choosePlayer(player, game.players.opponents(player))
       if (opp) {
         game.aRecruit(opp, 'Insane Outcast', { noCost: true })
       }
@@ -519,7 +519,7 @@ const cardData = [
       "At end of turn, promote another card played this turn."
     ],
     impl: (game, player, { card }) => {
-      const opp = game.actions.choosePlayer(player, game.players.opponentsOf(player))
+      const opp = game.actions.choosePlayer(player, game.players.opponents(player))
       if (opp) {
         game.aRecruit(opp, 'Insane Outcast', { noCost: true })
         game.aDeferPromotion(player, card)

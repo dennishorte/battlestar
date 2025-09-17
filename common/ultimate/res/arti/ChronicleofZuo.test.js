@@ -17,7 +17,6 @@ describe('Chronicle of Zuo', () => {
       },
       decks: {
         base: {
-          2: ['Fermenting'],
           3: ['Machinery'],
           4: ['Reformation'],
         }
@@ -31,7 +30,7 @@ describe('Chronicle of Zuo', () => {
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
-        hand: ['Fermenting', 'Machinery', 'Reformation'],
+        hand: ['Machinery', 'Reformation'],
       },
       micah: {
         red: ['Engineering'],
@@ -53,7 +52,7 @@ describe('Chronicle of Zuo', () => {
       },
       decks: {
         base: {
-          2: ['Fermenting'],
+          3: ['Machinery'],
           4: ['Reformation'],
         }
       },
@@ -66,7 +65,7 @@ describe('Chronicle of Zuo', () => {
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
-        hand: ['Fermenting', 'Reformation'],
+        hand: ['Machinery', 'Reformation'],
       },
       micah: {
         red: ['Engineering'],

@@ -20,7 +20,7 @@ module.exports = {
       matches: (game, player, { card }) => card.color === 'red',
       func: (game, player) => {
         const choices = game
-          .getPlayerOpponents(player)
+          .players.opponents(player)
           .map(opp => game.cards.top(opp, 'red'))
           .filter(card => card !== undefined)
         const selected = game.actions.chooseCard(player, choices)

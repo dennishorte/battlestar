@@ -35,7 +35,7 @@ module.exports = {
 
         const score = game.getScore(player)
         const others = game
-          .getPlayerOpponents(player)
+          .players.opponents(player)
           .map(other => game.getScore(other))
         const mostPointsCondition = others.every(otherScore => otherScore < score)
         if (mostPointsCondition) {

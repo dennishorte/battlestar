@@ -26,7 +26,7 @@ module.exports = {
           })
           const playerScore = game.getScore(player)
           const targets = game
-            .players.opponentsOf(player)
+            .players.opponents(player)
             .filter(other => game.getScore(other) < playerScore)
 
           if (targets.length > 0) {

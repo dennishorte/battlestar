@@ -15,7 +15,7 @@ module.exports = {
     (game, player, { self }) => {
       const mine = game.getAchievementsByPlayer(player).total
       const others = game
-        .players.opponentsOf(player)
+        .players.opponents(player)
         .map(player => game.getAchievementsByPlayer(player).total * 2)
 
       if (mine > 0 && others.every(count => count <= mine)) {

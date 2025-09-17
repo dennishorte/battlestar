@@ -21,7 +21,7 @@ module.exports = {
 
       const otherCard = cards.filter(other => other !== card)[0]
       if (otherCard) {
-        const opponent = game.actions.choosePlayer(player, game.getPlayerOpponents(player))
+        const opponent = game.actions.choosePlayer(player, game.players.opponents(player))
         game.actions.transfer(player, otherCard, game.zones.byPlayer(opponent, otherCard.color))
       }
     }

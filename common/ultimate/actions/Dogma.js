@@ -130,7 +130,7 @@ function _shareBonus(player, card) {
 
   // Grace Hopper and Susan Blackmore have "if your opponent didn't share" karma effects
   else if (this.state.couldShare) {
-    for (const other of this.players.opponentsOf(player)) {
+    for (const other of this.players.opponents(player)) {
       this.game.aKarma(other, 'no-share', { card, leader: player })
     }
   }

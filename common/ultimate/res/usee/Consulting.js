@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const opponent = game.actions.choosePlayer(player, game.players.opponentsOf(player))
+      const opponent = game.actions.choosePlayer(player, game.players.opponents(player))
 
       game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
       game.actions.drawAndMeld(player, game.getEffectAge(self, 10))

@@ -13,7 +13,7 @@ module.exports = {
     (game, player, { self }) => {
       const playerCount = game.cards.byPlayer(player, 'score').length
       const otherCounts = game
-        .getPlayerOpponents(player)
+        .players.opponents(player)
         .map(player => game.cards.byPlayer(player, 'score').length)
       const hasMost = otherCounts.every(count => count < playerCount)
       if (hasMost) {

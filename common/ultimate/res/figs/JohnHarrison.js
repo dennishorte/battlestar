@@ -25,7 +25,7 @@ module.exports = {
       kind: 'would-first',
       matches: (game, player, { share }) => {
         const owner = game.getPlayerByCard(this)
-        const isOpponentCondition = game.getPlayerOpponents(owner).includes(player)
+        const isOpponentCondition = game.players.opponents(owner).includes(player)
         return isOpponentCondition && share
       },
       func: (game, player) => {
