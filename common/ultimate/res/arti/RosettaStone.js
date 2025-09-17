@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `kkkh`,
   dogmaBiscuit: `k`,
   dogma: [
-    `Choose a card type. Draw two {2} of that type. Meld one and transfer the other to an opponent's board.`
+    `Choose a set. Draw two {2} from that set. Meld one and transfer the other to an opponent's board.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
