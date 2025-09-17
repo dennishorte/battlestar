@@ -13,7 +13,7 @@ module.exports = {
       const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 6))
       if (card.color === 'red') {
         game.log.add({ template: 'Card is red' })
-        const choices = game.getAvailableAchievementsRaw(player)
+        const choices = game.getAvailableAchievements(player)
         game.actions.chooseAndAchieve(player, choices)
       }
       else {

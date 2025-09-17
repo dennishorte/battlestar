@@ -13,7 +13,7 @@ module.exports = {
       const cards = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
       if (cards && cards.length > 0) {
         const achievements = game
-          .getAvailableAchievementsRaw(player)
+          .getAvailableAchievements(player)
           .filter(card => card.getAge() === cards[0].getAge())
         game.actions.chooseAndAchieve(player, achievements)
       }

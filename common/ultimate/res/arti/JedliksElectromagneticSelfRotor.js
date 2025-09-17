@@ -14,7 +14,7 @@ module.exports = {
       game.actions.drawAndMeld(player, game.getEffectAge(self, 8))
 
       const choices = game
-        .getAvailableAchievementsRaw(player)
+        .getAvailableAchievements(player)
         .filter(ach => ach.age === 8)
 
       game.actions.chooseAndAchieve(player, choices)

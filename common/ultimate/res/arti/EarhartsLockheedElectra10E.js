@@ -40,7 +40,7 @@ module.exports = {
       }
       else {
         const achievements = game
-          .getAvailableAchievementsRaw(player)
+          .getAvailableAchievements(player)
         game.actions.chooseAndAchieve(player, achievements)
       }
     }

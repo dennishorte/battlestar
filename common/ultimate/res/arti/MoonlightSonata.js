@@ -20,7 +20,7 @@ module.exports = {
         game.actions.meld(player, cards[cards.length - 1])
 
         if (cards.length > 1) {
-          const achs = game.getAvailableAchievementsRaw(player)
+          const achs = game.getAvailableAchievements(player)
           game.actions.chooseAndAchieve(player, achs)
         }
       }

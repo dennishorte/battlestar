@@ -14,7 +14,7 @@ module.exports = {
       if (cards && cards.length > 0) {
         const card = cards[0]
         const choices = game
-          .getAvailableAchievementsRaw(player)
+          .getAvailableAchievements(player)
           .filter(ach => ach.getAge() === card.age)
         game.actions.chooseAndAchieve(player, choices)
       }

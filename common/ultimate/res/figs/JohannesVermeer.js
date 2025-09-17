@@ -20,7 +20,7 @@ module.exports = {
       matches: (game, player, { isStandard }) => isStandard,
       func: (game, player, { age }) => {
         const choices = game
-          .getAvailableAchievementsRaw(player)
+          .getAvailableAchievements(player)
           .filter(card => card.getAge() === age + 1)
         const formatted = game.formatAchievements(choices)
         const selected = game.actions.choose(player, formatted, { title: 'Choose Achievement' })

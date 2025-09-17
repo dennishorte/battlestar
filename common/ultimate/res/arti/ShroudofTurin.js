@@ -29,7 +29,7 @@ module.exports = {
         }
 
         if (totalReturned === 3) {
-          game.actions.chooseAndAchieve(player, game.getAvailableAchievementsRaw(player))
+          game.actions.chooseAndAchieve(player, game.getAvailableAchievements(player))
         }
       }
     }
