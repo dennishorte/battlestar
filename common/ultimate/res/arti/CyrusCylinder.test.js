@@ -23,11 +23,11 @@ describe('Cyrus Cylinder', () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'micah-blue')
 
     t.testChoices(request, ['Enterprise', 'Code of Laws'])
 
     request = t.choose(game, request, 'Code of Laws')
-    request = t.choose(game, request, 'micah-blue')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

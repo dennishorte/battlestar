@@ -6,10 +6,24 @@ module.exports = {
   biscuits: `hssk`,
   dogmaBiscuit: `s`,
   dogma: [
-    `Choose any other top purple card on any player's board. Execute its non-demand dogma effects. Do not share them.`,
-    `Splay left a color on any player's board.`
+    `Splay left a color on any player's board.`,
+    `Choose any top purple card other than Cyrus Cylinder on any player's board. Self-execute it.`,
   ],
   dogmaImpl: [
+    (game, player) => {
+      const splayChoices = game
+        .players.all()
+        .flatMap(player => game.util.colors().map(color => ({ player, color })))
+        .map(x => `${x.player.name}-${x.color}`)
+
+      const selections = game.actions.choose(player, splayChoices)
+      if (selections && selections.length > 0) {
+        const [playerName, color] = selections[0].split('-')
+        const other = game.players.byName(playerName)
+        game.actions.splay(player, color, 'left', { owner: other })
+      }
+    },
+
     (game, player, { self }) => {
       const choices = game
         .players.all()
@@ -22,19 +36,5 @@ module.exports = {
         game.aCardEffects(player, card, 'dogma')
       }
     },
-
-    (game, player) => {
-      const splayChoices = game
-        .players.all()
-        .flatMap(player => game.util.colors().map(color => ({ player, color })))
-        .map(x => `${x.player.name}-${x.color}`)
-
-      const selections = game.actions.choose(player, splayChoices)
-      if (selections && selections.length > 0) {
-        const [playerName, color] = selections[0].split('-')
-        const other = game.getPlayerByName(playerName)
-        game.actions.splay(player, color, 'left', { owner: other })
-      }
-    }
   ],
 }
