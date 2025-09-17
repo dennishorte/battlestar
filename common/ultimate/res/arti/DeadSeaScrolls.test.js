@@ -11,6 +11,7 @@ describe('Dead Sea Scrolls', () => {
         artifact: ['Dead Sea Scrolls'],
         blue: ['Mathematics', 'Calendar'],
       },
+      achievements: ['Sailing', 'Construction', 'Machinery'],
       decks: {
         arti: {
           2: ['Holy Grail'],
@@ -21,6 +22,7 @@ describe('Dead Sea Scrolls', () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'dennis')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -29,5 +31,8 @@ describe('Dead Sea Scrolls', () => {
         hand: ['Holy Grail'],
       },
     })
+
+    expect(game.cards.byZone('junk').findIndex(card => card.name === 'Construction')).not.toBe(-1)
+    expect(game.cards.byZone('junk').length).toBeGreaterThan(1)
   })
 })

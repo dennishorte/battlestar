@@ -425,7 +425,8 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   junkDeck(player, age, opts={}) {
-    const cards = this.cards.byDeck('base', age)
+    const exp = opts.exp || 'base'
+    const cards = this.cards.byDeck(exp, age)
     if (cards.length === 0) {
       this.log.add({
         template: 'The {age} deck is already empty.',
@@ -441,11 +442,10 @@ class UltimateActionManager extends BaseActionManager {
 
     if (doJunk) {
       this.log.add({
-        template: '{player} moves all cards in {age} deck to the junk',
-        args: { player, age }
+        template: '{player} moves all cards in {exp} {age} deck to the junk',
+        args: { player, age, exp }
       })
 
-      const cards = this.cards.byDeck('base', age)
       this.junkMany(player, cards, { ordered: true })
       return true
     }
