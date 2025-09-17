@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `hkks`,
   dogmaBiscuit: `k`,
   dogma: [
-    `I compel you to choose a top card on your board! Transfer all cards of the card's color from your board to my score pile!`
+    `I compel you to choose a top card on your board! Transfer all cards of that card's color from your board to my score pile!`
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
