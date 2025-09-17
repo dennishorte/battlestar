@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `lllh`,
   dogmaBiscuit: `l`,
   dogma: [
-    `Draw and meld a {3}. Meld your bottom card of the drawn card's color. Execute its non-demand dogma effects. Do not share them.`
+    `Draw and meld a {3}. Meld your bottom card of the drawn card's color, then self-execute it.`,
   ],
   dogmaImpl: [
     (game, player, { self }) => {
@@ -16,7 +16,7 @@ module.exports = {
         const toMeld = cards[cards.length - 1]
         const melded = game.actions.meld(player, toMeld)
         if (melded) {
-          game.aCardEffects(player, melded, 'dogma')
+          game.aSelfExecute(player, melded)
         }
       }
     }
