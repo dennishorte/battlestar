@@ -19,7 +19,7 @@ module.exports = {
             .length
 
           const hasFewestCards = game
-            .utilColors()
+            .util.colors()
             .map(color => game.cards.byPlayer(player, color).length)
             .every(count => count >= numCards)
 

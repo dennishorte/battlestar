@@ -23,7 +23,7 @@ module.exports = {
       trigger: 'calculate-biscuits',
       func(game, player) {
         const numSplayed = game
-          .utilColors()
+          .util.colors()
           .map(color => game.zones.byPlayer(player, color))
           .filter(zone => zone.splay !== 'none')
           .length

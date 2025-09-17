@@ -13,10 +13,10 @@ module.exports = {
       const age = game.actions.chooseAge(player)
 
       game
-        .utilColors()
+        .util.colors()
         .map(color => game.zones.byPlayer(player, color))
         .filter(zone => zone.cards().length >= 2 && zone.cards()[0].getAge() === age)
-        .forEach(zone => game.aSplay(player, zone.color, 'up'))
+        .forEach(zone => game.actions.splay(player, zone.color, 'up'))
 
       const toReturn = game
         .players.all()

@@ -26,14 +26,14 @@ module.exports = {
     (game, player) => {
       const splayChoices = game
         .players.all()
-        .flatMap(player => game.utilColors().map(color => ({ player, color })))
+        .flatMap(player => game.util.colors().map(color => ({ player, color })))
         .map(x => `${x.player.name}-${x.color}`)
 
       const selections = game.actions.choose(player, splayChoices)
       if (selections && selections.length > 0) {
         const [playerName, color] = selections[0].split('-')
         const other = game.getPlayerByName(playerName)
-        game.aSplay(player, color, 'left', { owner: other })
+        game.actions.splay(player, color, 'left', { owner: other })
       }
     }
   ],

@@ -14,12 +14,12 @@ module.exports = {
 
       if (cards && cards.length > 0) {
         const card = cards[0]
-        game.aSplay(player, card.color, 'left')
+        game.actions.splay(player, card.color, 'left')
 
         const choices = game
           .players.all()
           .flatMap(player => game
-            .utilColors()
+            .util.colors()
             .map(color => game.zones.byPlayer(player, color))
             .filter(zone => zone.splay !== 'none')
           )

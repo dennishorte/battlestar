@@ -14,7 +14,7 @@ module.exports = {
   dogmaImpl: [],
   echoImpl: (game, player) => {
     const rightColors = game
-      .utilColors()
+      .util.colors()
       .filter(color => game.zones.byPlayer(player, color).splay === 'right')
     game.actions.chooseAndSplay(player, rightColors, 'up')
   },

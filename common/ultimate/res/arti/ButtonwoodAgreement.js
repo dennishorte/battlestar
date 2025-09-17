@@ -10,12 +10,12 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const colors = game.actions.choose(player, game.utilColors(), { count: 3 })
+      const colors = game.actions.choose(player, game.util.colors(), { count: 3 })
       const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 8))
 
       if (colors.includes(card.color)) {
         game.actions.score(player, card)
-        game.aSplay(player, card.color, 'up')
+        game.actions.splay(player, card.color, 'up')
       }
       else {
         const toReturn = game

@@ -22,7 +22,7 @@ module.exports = {
       trigger: 'extra-achievements',
       func: (game, player) => {
         const visibleInspires = game
-          .utilColors()
+          .util.colors()
           .flatMap(color => game.cards.byPlayer(player, color))
           .filter(card => game.checkInspireIsVisible(card))
           .length

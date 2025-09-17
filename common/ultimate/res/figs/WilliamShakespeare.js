@@ -23,7 +23,7 @@ module.exports = {
       trigger: 'calculate-score',
       func: (game, player) => {
         let count = 0
-        for (const color of game.utilColors()) {
+        for (const color of game.util.colors()) {
           const zone = game.zones.byPlayer(player, color)
           const cards = zone.cards()
           for (const card of cards) {

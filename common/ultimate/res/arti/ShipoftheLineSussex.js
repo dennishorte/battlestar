@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       if (game.cards.byPlayer(player, 'score').length === 0) {
-        const colors = game.actions.choose(player, game.utilColors(), { title: 'Choose a Color' })
+        const colors = game.actions.choose(player, game.util.colors(), { title: 'Choose a Color' })
         const color = colors[0]
         game.actions.scoreMany(player, game.cards.byPlayer(player, color))
       }

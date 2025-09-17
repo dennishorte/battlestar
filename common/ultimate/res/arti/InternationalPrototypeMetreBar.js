@@ -13,7 +13,7 @@ module.exports = {
     (game, player, { self }) => {
       const age = game.actions.chooseAge(player)
       const card = game.actions.drawAndMeld(player, age)
-      game.aSplay(player, card.color, 'up')
+      game.actions.splay(player, card.color, 'up')
 
       if (game.cards.byPlayer(player, card.color).length === card.getAge()) {
         game.actions.drawAndScore(player, game.getEffectAge(self, 10))

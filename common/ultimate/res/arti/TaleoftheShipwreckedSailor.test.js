@@ -12,6 +12,7 @@ describe("Tale of the Shipwrecked Sailor", () => {
         purple: ['Monotheism'],
         hand: ['Code of Laws'],
       },
+      achievements: ['Domestication', 'Construction'],
       decks: {
         base: {
           1: ['Sailing'],
@@ -32,7 +33,9 @@ describe("Tale of the Shipwrecked Sailor", () => {
           splay: 'left'
         },
         hand: ['Sailing'],
-      }
+      },
+      standardAchievements: ['Construction'],
+      junk: ['Domestication'],
     })
   })
 })

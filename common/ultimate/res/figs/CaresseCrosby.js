@@ -23,7 +23,7 @@ module.exports = {
         return card.biscuits.includes('l')
       },
       func: (game, player, { card }) => {
-        game.aSplay(player, card.color, 'left')
+        game.actions.splay(player, card.color, 'left')
         game.actions.draw(player, { age: game.getEffectAge(this, 2) })
         game.actions.draw(player, { age: game.getEffectAge(this, 2) })
       },
@@ -35,7 +35,7 @@ module.exports = {
         const toSplayLeftCondition = direction === 'left'
         const notLeftCondition = game.zones.byPlayer(player, color).splay !== 'left'
         const leftCondition = game
-          .utilColors()
+          .util.colors()
           .filter(other => other !== color)
           .map(color => game.zones.byPlayer(player, color).splay)
           .filter(splay => splay === 'left')

@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const toScore = []
-      for (const color of game.utilColors()) {
+      for (const color of game.util.colors()) {
         const cards = game.cards.byPlayer(player, color)
         if (cards.length > 0) {
           toScore.push(cards[cards.length - 1])

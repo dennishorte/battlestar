@@ -24,7 +24,7 @@ module.exports = {
         return zone.cards().length > 1 && zone.splay === 'none'
       },
       func: (game, player, { card }) => {
-        game.aSplay(player, card.color, 'left')
+        game.actions.splay(player, card.color, 'left')
         game.actions.return(player, card)
       }
     }

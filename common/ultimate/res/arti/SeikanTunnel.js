@@ -13,7 +13,7 @@ module.exports = {
     (game, player, { self }) => {
       const zones = game
         .players.all()
-        .flatMap(player => game.utilColors().map(color => {
+        .flatMap(player => game.util.colors().map(color => {
           return {
             player,
             color,

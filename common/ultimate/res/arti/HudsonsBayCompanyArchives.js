@@ -11,13 +11,13 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const toScore = game
-        .utilColors()
+        .util.colors()
         .flatMap(color => game.cards.byPlayer(player, color).slice(-1))
       game.actions.scoreMany(player, toScore)
 
       const cards = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'score'))
       if (cards && cards.length > 0) {
-        game.aSplay(player, cards[0].color, 'right')
+        game.actions.splay(player, cards[0].color, 'right')
       }
     }
   ],

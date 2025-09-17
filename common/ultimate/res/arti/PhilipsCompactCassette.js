@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      for (const color of game.utilColors()) {
+      for (const color of game.util.colors()) {
         game.aUnsplay(player, color)
       }
     },

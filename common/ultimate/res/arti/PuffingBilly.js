@@ -19,7 +19,7 @@ module.exports = {
           .sort((l, r) => r[1] - l[1])
         const count = sorted[0][1]
         game.actions.draw(player, { age: count })
-        game.aSplay(player, returned.color, 'right')
+        game.actions.splay(player, returned.color, 'right')
       }
     }
   ],

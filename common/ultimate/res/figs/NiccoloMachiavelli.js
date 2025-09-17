@@ -15,7 +15,7 @@ module.exports = {
   echoImpl: [
     (game, player) => {
       const choices = game
-        .utilColors()
+        .util.colors()
         .filter(color => game.zones.byPlayer(player, color).splay === 'left')
       game.actions.chooseAndSplay(player, choices, 'right', { count: 1 })
     }
@@ -29,11 +29,11 @@ module.exports = {
           .filter(other => other !== player)
           .flatMap(other => {
             return game
-              .utilColors()
+              .util.colors()
               .filter(color => game.zones.byPlayer(other, color).splay !== 'none')
           })
         return game
-          .utilColors()
+          .util.colors()
           .filter(color => game.zones.byPlayer(player, color).splay === 'right')
           .filter(color => !othersSplayedColors.includes(color))
           .length

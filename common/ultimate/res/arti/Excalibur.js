@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const choices = game
-        .utilColors()
+        .util.colors()
         .map(color => {
           const playerTop = game.cards.top(player, color)
           const leaderTop = game.cards.top(leader, color)

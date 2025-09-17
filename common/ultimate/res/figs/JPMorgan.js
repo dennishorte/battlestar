@@ -25,7 +25,7 @@ module.exports = {
       trigger: 'calculate-biscuits',
       func: (game, player) => {
         let output = game.utilEmptyBiscuits()
-        for (const color of game.utilColors()) {
+        for (const color of game.util.colors()) {
           const zone = game.zones.byPlayer(player, color)
           if (zone.splay === 'up') {
             const biscuits = game.getBiscuitsByZone(zone)

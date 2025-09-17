@@ -13,7 +13,7 @@ module.exports = {
       const tucked = game.actions.chooseAndTuck(player, game.cards.byPlayer(player, 'hand'))
       if (tucked && tucked.length > 0) {
         const color = tucked[0].color
-        game.aSplay(player, color, 'up')
+        game.actions.splay(player, color, 'up')
 
         const toTuck = game
           .cards.byPlayer(player, 'score')

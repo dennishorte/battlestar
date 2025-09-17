@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const choices = game
-        .utilColors()
+        .util.colors()
         .filter(color => {
           const yours = game.zones.byPlayer(player, color).numVisibleCards()
           const mine = game.zones.byPlayer(leader, color).numVisibleCards()

@@ -15,7 +15,7 @@ module.exports = {
 
       if (autoReturn) {
         const cards = game
-          .utilColors()
+          .util.colors()
           .flatMap(color => game.cards.byPlayer(player, color))
 
         game.actions.transferMany(player, cards, scoreZone, { ordered: true })

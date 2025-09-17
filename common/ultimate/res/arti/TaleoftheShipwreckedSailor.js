@@ -6,11 +6,11 @@ module.exports = {
   biscuits: `hkss`,
   dogmaBiscuit: `s`,
   dogma: [
-    `Choose a color. Draw a {1}. Meld a card of the chosen color from your hand. If you do, splay that color left.`
+    `Choose a color. Draw a {1}. Meld a card of the chosen color from your hand. If you do, splay that color left, and junk an available achievement of value equal to the the value of the melded card.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const color = game.actions.choose(player, game.utilColors(), { title: 'Choose a Color ' })[0]
+      const color = game.actions.choose(player, game.util.colors(), { title: 'Choose a Color ' })[0]
       game.log.add({
         template: '{player} chooses {color}',
         args: { player, color }
@@ -20,8 +20,9 @@ module.exports = {
         .cards.byPlayer(player, 'hand')
         .filter(card => card.color === color)
       const melded = game.actions.chooseAndMeld(player, choices)
-      if (melded && melded.length > 0) {
-        game.aSplay(player, color, 'left')
+      if (melded.length > 0) {
+        game.actions.splay(player, color, 'left')
+        game.actions.junkAvailableAchievement(player, [melded[0].getAge()])
       }
     }
   ],

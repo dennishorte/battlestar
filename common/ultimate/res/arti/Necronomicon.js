@@ -27,7 +27,7 @@ module.exports = {
             template: '{player} will unsplay all stacks',
             args: { player }
           })
-          for (const color of game.utilColors()) {
+          for (const color of game.util.colors()) {
             game.aUnsplay(player, color)
           }
         }

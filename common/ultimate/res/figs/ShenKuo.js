@@ -18,7 +18,7 @@ module.exports = {
       trigger: 'calculate-score',
       func: (game, player) => {
         return game
-          .utilColors()
+          .util.colors()
           .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
           .length * 3
       }
