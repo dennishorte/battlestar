@@ -15,6 +15,7 @@ describe("Jiskairumoko Necklace", () => {
         score: ['Tools'],
         achievements: ['Sailing', 'Construction'],
       },
+      achievements: [],
     })
 
     let request
@@ -30,6 +31,21 @@ describe("Jiskairumoko Necklace", () => {
         red: ['Metalworking'],
         achievements: ['Construction'],
       },
+      junk: [
+        "Agriculture",
+        "Archery",
+        "City States",
+        "Clothing",
+        "Code of Laws",
+        "Domestication",
+        "Masonry",
+        "Mysticism",
+        "Oars",
+        "Pottery",
+        "The Wheel",
+        "Tools",
+        "Writing",
+      ],
     })
   })
 
