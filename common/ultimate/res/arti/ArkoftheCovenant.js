@@ -6,7 +6,8 @@ module.exports = {
   biscuits: `hkkk`,
   dogmaBiscuit: `k`,
   dogma: [
-    `Return a card from your hand. Transfer all cards of the same color from the boards of all players with no top Artifacts to your score pile. If Ark of the Covenant is a top card on any board, transfer it to your hand.`
+    `Return a card from your hand. Score all cards of the same color on the boards of all players with no top Artifacts.`,
+    `If Ark of the Covenant is a top card on any board, transfer it to your hand.`
   ],
   dogmaImpl: [
     (game, player) => {
@@ -14,14 +15,17 @@ module.exports = {
       if (cards && cards.length > 0) {
         const color = cards[0].color
 
-        const toTransfer = game
-          .players.all()
+        const toScore = game
+          .players
+          .all()
           .filter(player => game.cards.tops(player).every(card => !card.checkIsArtifact()))
           .flatMap(player => game.cards.byPlayer(player, color))
 
-        game.actions.transferMany(player, toTransfer, game.zones.byPlayer(player, 'score'), { ordered: true })
+        game.actions.scoreMany(player, toScore, game.zones.byPlayer(player, 'score'))
       }
+    },
 
+    (game, player) => {
       const ark = game.cards.byId('Ark of the Covenant')
       if (game.checkCardIsTop(ark)) {
         game.actions.transfer(player, ark, game.zones.byPlayer(player, 'hand'))

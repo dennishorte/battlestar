@@ -21,6 +21,7 @@ describe('Ark of the Covenant', () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
