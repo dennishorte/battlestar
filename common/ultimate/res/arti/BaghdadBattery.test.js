@@ -11,68 +11,45 @@ describe('Baghdad Battery', () => {
         artifact: ['Baghdad Battery'],
         hand: ['Paper', 'Jiskairumoko Necklace'],
       },
-      decks: {
-        base: {
-          2: ['Construction', 'Calendar', 'Fermenting', 'Monotheism', 'Mathematics']
-        },
-      },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Jiskairumoko Necklace')
-
-    t.testIsFirstAction(request)
-    t.testBoard(game, {
-      dennis: {
-        green: ['Paper', 'Jiskairumoko Necklace'],
-        score: ['Construction', 'Calendar', 'Fermenting', 'Monotheism', 'Mathematics'],
-      },
-    })
-  })
-
-  test('dogma: non-matching', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-    t.setBoard(game,  {
-      dennis: {
-        artifact: ['Baghdad Battery'],
-        hand: ['Paper', 'Construction'],
-      },
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'Paper')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         green: ['Paper'],
-        red: ['Construction'],
+        score: ['Jiskairumoko Necklace'],
       },
     })
+
+    expect(game.zones.byId('junk').cardlist().length > 0).toBe(true)
   })
 
-  test('dogma: only one', () => {
+  test('dogma: same age', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
         artifact: ['Baghdad Battery'],
-        hand: ['Paper'],
+        hand: ['Paper', 'Machinery'],
       },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'Paper')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         green: ['Paper'],
+        score: ['Machinery'],
       },
+      junk: [],
     })
   })
 })

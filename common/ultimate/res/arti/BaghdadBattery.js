@@ -6,21 +6,16 @@ module.exports = {
   biscuits: `cshc`,
   dogmaBiscuit: `c`,
   dogma: [
-    `Meld two cards from your hand. If you melded two of the same color and they are of different type, draw and score five {2}s.`
+    `Meld a card from your hand. Score a card from your hand. If you do both, and the cards have different values, junk all cards in the decks of both values.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const cards = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'), { count: 2 })
+      const melded = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))[0]
+      const scored = game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'))[0]
 
-      if (
-        cards
-        && cards.length === 2
-        && cards[0].color === cards[1].color
-        && cards[0].expansion !== cards[1].expansion
-      ) {
-        for (let i = 0; i < 5; i++) {
-          game.actions.drawAndScore(player, game.getEffectAge(self, 2))
-        }
+      if (melded && scored && melded.getAge() !== scored.getAge()) {
+        game.actions.junkDeck(player, melded.getAge())
+        game.actions.junkDeck(player, scored.getAge())
       }
     },
   ],
