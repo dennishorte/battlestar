@@ -31,6 +31,8 @@ describe("Moylough Belt Shrine", () => {
         hand: ['Tools'],
       }
     })
+
+    expect(game.cards.byZone('junk').length).toBeGreaterThan(4)
   })
 
   test('dogma: no cards in hand', () => {
@@ -52,7 +54,8 @@ describe("Moylough Belt Shrine", () => {
     t.testBoard(game, {
       micah: {
         green: ['The Wheel'],
-      }
+      },
+      junk: [],
     })
   })
 })

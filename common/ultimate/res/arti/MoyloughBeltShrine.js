@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `klhk`,
   dogmaBiscuit: `k`,
   dogma: [
-    `I compel your to reveal all cards in your hand and transfer the card of my choice to my board.`
+    `I compel your to reveal all cards in your hand and transfer the card of my choice to my board. If you do, junk all cards in the deck of the chosen card's value.`
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
@@ -20,12 +20,14 @@ module.exports = {
         return
       }
 
-      for (const card of cards) {
-        game.mReveal(player, card)
-      }
+      game.actions.revealMany(player, cards, { ordered: true })
 
       const card = game.actions.chooseCard(leader, cards)
-      game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
+      const transferred = game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
+
+      if (transferred) {
+        game.actions.junkDeck(player, transferred.getAge())
+      }
     }
   ],
 }
