@@ -15,7 +15,7 @@ module.exports = {
     (game, player) => game.actions.junkDeck(player, 1)
   ],
   echoImpl: (game, player) => {
-    const card = util.array.last(game.cards.byPlayer(player, 'blue'))
+    const card = game.cards.byPlayer(player, 'blue').slice(-1)[0]
     if (card) {
       game.actions.score(player, card)
     }
