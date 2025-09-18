@@ -11,10 +11,17 @@
       :color="color"
     />
 
-    <CardPile
-      :zone="game.zones.byPlayer(player, 'artifact')"
-      :expanded="true"
-    />
+    <template v-if="game.getExpansionList().includes('arti')">
+      <CardPile
+        :zone="game.zones.byPlayer(player, 'artifact')"
+        :expanded="true"
+      />
+
+      <CardPile
+        :zone="game.zones.byPlayer(player, 'museum')"
+        :expanded="true"
+      />
+    </template>
 
     <CardPile
       :zone="game.zones.byPlayer(player, 'achievements')"
@@ -30,15 +37,19 @@
       <ScoreExtras :player="player" />
     </CardPile>
 
-    <CardPile
-      :zone="game.zones.byPlayer(player, 'forecast')"
-      :header="countWithLimitHeader(player, 'forecast')"
-    />
+    <template v-if="game.getExpansionList().includes('echo')">
+      <CardPile
+        :zone="game.zones.byPlayer(player, 'forecast')"
+        :header="countWithLimitHeader(player, 'forecast')"
+      />
+    </template>
 
-    <CardPile
-      :zone="game.zones.byPlayer(player, 'safe')"
-      :header="countWithLimitHeader(player, 'safe')"
-    />
+    <template v-if="game.getExpansionList().includes('usee')">
+      <CardPile
+        :zone="game.zones.byPlayer(player, 'safe')"
+        :header="countWithLimitHeader(player, 'safe')"
+      />
+    </template>
 
     <CardPile
       :zone="game.zones.byPlayer(player, 'hand')"
