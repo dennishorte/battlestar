@@ -27,5 +27,8 @@ describe("Philosopher's Stone", () => {
         hand: ['Mathematics'],
       },
     })
+
+    const junk = game.cards.byZone('junk')
+    expect(junk[0].getAge()).toBe(2)
   })
 })
