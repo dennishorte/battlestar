@@ -29,7 +29,7 @@ const cardData = [
   require('./MoyloughBeltShrine.js'),
   require('./AlongtheRiverduringtheQingmingFestival.js'),
   require('./PhilosophersStone.js'),
-  require('./BeauvaisCathedralClock.js'),
+  require('./IfeHead.js'),
   require('./DunhuangStarChart.js'),
   require('./CharterofLiberties.js'),
   require('./Necronomicon.js'),

@@ -411,6 +411,10 @@ class UltimateActionManager extends BaseActionManager {
   })
 
   junkAvailableAchievement(player, ages, opts={}) {
+    if (!Array.isArray(ages)) {
+      ages = [ages]
+    }
+
     const eligible = ages.flatMap(age => this.game.getAvailableAchievementsByAge(player, age))
 
     const card = this.chooseCards(player, eligible, {
@@ -420,7 +424,7 @@ class UltimateActionManager extends BaseActionManager {
     })[0]
 
     if (card) {
-      this.junk(player, card)
+      return this.junk(player, card)
     }
   }
 
