@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `sshs`,
   dogmaBiscuit: `s`,
   dogma: [
-    `Return all cards from your hand. Draw a card of value equal to the number of cards returned.`
+    `Return all cards in your hand. Draw a card of value equal to the number of cards you return.`
   ],
   dogmaImpl: [
     (game, player) => {
