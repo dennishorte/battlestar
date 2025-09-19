@@ -1120,14 +1120,6 @@ Innovation.prototype.getAgesByZone = function(player, zoneName) {
   return util.array.distinct(ages).sort()
 }
 
-Innovation.prototype.getBottomCards = function(player) {
-  return this
-    .util.colors()
-    .map(color => this.cards.byPlayer(player, color))
-    .map(cards => cards[cards.length - 1])
-    .filter(card => card !== undefined)
-}
-
 Innovation.prototype.getEffectAge = function(card, age) {
   const player = this.players.byOwner(card)
 

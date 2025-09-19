@@ -12,7 +12,7 @@ module.exports = {
     (game, player) => {
       const repeatEffect = () => {
         const topCards = game.cards.tops(player)
-        const bottomCards = game.getBottomCards(player)
+        const bottomCards = game.cards.bottoms(player)
         const choices = topCards.concat(bottomCards)
 
         const returned = game.actions.chooseAndReturn(player, choices)[0]
