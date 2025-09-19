@@ -9,6 +9,7 @@ const util = require('../lib/util.js')
 const { UltimateLogManager } = require('./UltimateLogManager.js')
 const { UltimateActionManager } = require('./UltimateActionManager.js')
 const { UltimateCardManager } = require('./UltimateCardManager.js')
+const { UltimatePlayerManager } = require('./UltimatePlayerManager.js')
 const { UltimateUtils } = require('./UltimateUtils.js')
 const { UltimateZone } = require('./UltimateZone.js')
 const { UltimateZoneManager } = require('./UltimateZoneManager.js')
@@ -29,14 +30,15 @@ module.exports = {
 }
 
 function Innovation(serialized_data, viewerName) {
-  Game.call(this, serialized_data, viewerName)
+  Game.call(this, serialized_data, viewerName, {
+    LogManager: UltimateLogManager,
+    ActionManager: UltimateActionManager,
+    CardManager: UltimateCardManager,
+    PlayerManager: UltimatePlayerManager,
+    ZoneManager: UltimateZoneManager,
+  })
 
-  this.log = new UltimateLogManager(this, serialized_data.chat, viewerName)
-  this.actions = new UltimateActionManager(this)
-  this.cards = new UltimateCardManager(this)
   this.util = new UltimateUtils(this)
-  this.zones = new UltimateZoneManager(this)
-
 
   // Used in the UI for showing who will share/demand with an action
   this.getDogmaShareInfo = getDogmaShareInfo.bind(this.actions)
@@ -1085,16 +1087,7 @@ Innovation.prototype.getBiscuits = function() {
 }
 
 Innovation.prototype.getBiscuitsByPlayer = function(player) {
-  const boardBiscuits = this
-    .util.colors()
-    .map(color => this.zones.byPlayer(player, color))
-    .map(zone => zone.biscuits())
-    .reduce((l, r) => this.util.combineBiscuits(l, r))
-
-  return this
-    .getInfoByKarmaTrigger(player, 'calculate-biscuits')
-    .map(info => this.aCardEffect(player, info, { biscuits: boardBiscuits }))
-    .reduce((l, r) => this.util.combineBiscuits(l, r), boardBiscuits)
+  return player.biscuits()
 }
 
 Innovation.prototype.getBiscuitsByCard = function(card, splay) {

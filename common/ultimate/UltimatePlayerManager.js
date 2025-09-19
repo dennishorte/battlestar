@@ -4,8 +4,13 @@ const { UltimatePlayer } = require('./UltimatePlayer.js')
 
 class UltimatePlayerManager extends BasePlayerManager {
   constructor(game, users, opts={}) {
-    super(game, users, {
+    opts = Object.assign(opts, {
       playerClass: UltimatePlayer,
     })
+    super(game, users, opts)
   }
+}
+
+module.exports = {
+  UltimatePlayerManager,
 }

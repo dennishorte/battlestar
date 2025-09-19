@@ -24,9 +24,9 @@ module.exports = {
 
 
 function Tyrants(serialized_data, viewerName) {
-  Game.call(this, serialized_data, viewerName)
-
-  this.log = new TyrantsLogManager(this, serialized_data.chat)
+  Game.call(this, serialized_data, viewerName, {
+    LogManager: TyrantsLogManager,
+  })
 }
 
 util.inherit(Game, Tyrants)
