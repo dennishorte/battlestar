@@ -6,29 +6,40 @@ module.exports = {
   biscuits: `sssh`,
   dogmaBiscuit: `s`,
   dogma: [
-    `Return all cards from your hand. Draw three {4}. Meld a blue card from your hand. Score a card from your hand. Return a card from your score pile.`
+    `Return all cards from your hand.`,
+    `Draw three {4}. Meld a green card from your hand. Junk all cards in the deck of value equal to your top green card.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
       game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
+    },
+
+    (game, player, { self }) => {
       game.actions.draw(player, { age: game.getEffectAge(self, 4) })
       game.actions.draw(player, { age: game.getEffectAge(self, 4) })
       game.actions.draw(player, { age: game.getEffectAge(self, 4) })
 
-      const blueCards = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => card.color === 'blue')
-      if (blueCards.length > 0) {
-        game.actions.chooseAndMeld(player, blueCards)
+      const greenCards = game
+        .cards
+        .byPlayer(player, 'hand')
+        .filter(card => card.color === 'green')
+      if (greenCards.length > 0) {
+        game.actions.chooseAndMeld(player, greenCards)
       }
       else {
         game.log.add({
-          template: '{player} has no blue cards',
+          template: '{player} has no green cards',
           args: { player }
         })
       }
-      game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'))
-      game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'))
+
+      const topGreen = game
+        .cards
+        .top(player, 'green')
+
+      if (topGreen) {
+        game.actions.junkDeck(player, topGreen.getAge())
+      }
     }
   ],
 }
