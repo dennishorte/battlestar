@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `llhl`,
   dogmaBiscuit: `l`,
   dogma: [
-    `I compel you to transfer all top cards with a {c} from your board to my score pile!`,
+    `I compel you to transfer a top card with a {c} of each color from your board to my score pile!`,
     `Score a top card with a {c}.`
   ],
   dogmaImpl: [
