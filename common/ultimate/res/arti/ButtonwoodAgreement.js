@@ -22,7 +22,7 @@ module.exports = {
           .cards.byPlayer(player, 'score')
           .filter(other => other.color === card.color)
         game.actions.returnMany(player, toReturn)
-        game.aUnsplay(player, card.color)
+        game.actions.unsplay(player, card.color)
       }
     }
   ],

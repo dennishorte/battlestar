@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `hlll`,
   dogmaBiscuit: `l`,
   dogma: [
-    `Draw and reveal a {3}. If it is yellow, return all cards in your hand. If it is green, unsplay all your stacks. If it is red, return all cards in your score pile. If it is blue, draw a {9}.`
+    `Draw and reveal a {3}. If it is yellow: return all cards in your hand; green: unsplay all your colors; red: return all cards in your score pile; blue: draw a {9}.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
@@ -28,7 +28,7 @@ module.exports = {
             args: { player }
           })
           for (const color of game.util.colors()) {
-            game.aUnsplay(player, color)
+            game.actions.unsplay(player, color)
           }
         }
 
