@@ -12,6 +12,6 @@ describe('Adam Smith', () => {
     let request
     request = game.run()
 
-    expect(game.getBiscuitsByPlayer(t.dennis(game)).c).toBe(9)
+    expect(t.dennis(game).biscuits().c).toBe(9)
   })
 })

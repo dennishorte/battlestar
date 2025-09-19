@@ -96,7 +96,7 @@ describe('John Von Neumann', () => {
     let request
     request = game.run()
 
-    expect(game.getBiscuitsByPlayer(t.dennis(game))).toEqual({
+    expect(t.dennis(game).biscuits()).toEqual({
       k: 0,
       s: 0,
       l: 0,

@@ -49,7 +49,7 @@ describe('John Ericsson', () => {
     let request
     request = game.run()
 
-    expect(game.getBiscuitsByPlayer(t.dennis(game))).toEqual({
+    expect(t.dennis(game).biscuits()).toEqual({
       k: 0,
       s: 1,
       l: 0,

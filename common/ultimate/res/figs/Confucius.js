@@ -25,7 +25,7 @@ module.exports = {
       trigger: 'featured-biscuit',
       matches: (game, player, { biscuit }) => biscuit === 'k',
       func: (game, player) => {
-        const biscuits = game.getBiscuitsByPlayer(player)
+        const biscuits = player.biscuits()
         const choices = Object
           .entries(biscuits)
           .filter(([biscuit, count]) => count > 0)

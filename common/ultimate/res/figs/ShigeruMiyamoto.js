@@ -31,7 +31,7 @@ module.exports = {
       kind: 'would-first',
       matches: (game, player, { card }) => card.checkHasBiscuit('i'),
       func: (game, player) => {
-        const clocks = game.getBiscuitsByPlayer(player).i
+        const clocks = player.biscuits().i
         if (clocks === 1 || clocks === 3 || clocks === 6) {
           game.youWin(player, this.name)
         }

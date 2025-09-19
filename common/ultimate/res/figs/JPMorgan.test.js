@@ -67,7 +67,7 @@ describe('J.P. Morgan', () => {
     let request
     request = game.run()
 
-    expect(game.getBiscuitsByPlayer(t.dennis(game))).toEqual({
+    expect(t.dennis(game).biscuits()).toEqual({
       k: 2,
       s: 3,
       l: 4,

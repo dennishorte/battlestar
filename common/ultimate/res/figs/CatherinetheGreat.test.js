@@ -17,7 +17,7 @@ describe('Catherine the Great', () => {
     let request
     request = game.run()
 
-    expect(game.getBiscuitsByPlayer(t.dennis(game)).s).toBe(9)
+    expect(t.dennis(game).biscuits().s).toBe(9)
   })
 
   test('karma: meld purple', () => {

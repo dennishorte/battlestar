@@ -1082,12 +1082,8 @@ Innovation.prototype.getBiscuits = function() {
   const biscuits = this
     .players
     .all()
-    .map(player => [player.name, this.getBiscuitsByPlayer(player)])
+    .map(player => [player.name, player.biscuits()])
   return Object.fromEntries(biscuits)
-}
-
-Innovation.prototype.getBiscuitsByPlayer = function(player) {
-  return player.biscuits()
 }
 
 Innovation.prototype.getBiscuitsByCard = function(card, splay) {

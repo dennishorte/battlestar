@@ -34,7 +34,7 @@ module.exports = {
     },
 
     (game, player, { self }) => {
-      const biscuits = game.getBiscuitsByPlayer(player)
+      const biscuits = player.biscuits()
       if (biscuits.s >= 20) {
         game.youWin(player, self.name)
       }

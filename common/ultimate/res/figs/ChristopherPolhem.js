@@ -22,7 +22,7 @@ module.exports = {
     {
       trigger: 'calculate-score',
       func: (game, player) => {
-        return game.getBiscuitsByPlayer(player).f * 2
+        return player.biscuits().f * 2
       }
     },
   ]

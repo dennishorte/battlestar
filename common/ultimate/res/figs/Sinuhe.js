@@ -27,7 +27,7 @@ module.exports = {
     {
       trigger: 'calculate-score',
       func(game, player) {
-        const biscuits = game.getBiscuitsByPlayer(player)
+        const biscuits = player.biscuits()
         return biscuits.k
       }
     }

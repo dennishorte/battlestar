@@ -13,7 +13,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const count = Math.floor(game.getBiscuitsByPlayer(player).i / 2)
+      const count = Math.floor(player.biscuits().i / 2)
       for (let i = 0; i < count; i++) {
         game.actions.draw(player, { age: game.getEffectAge(self, 10) })
       }

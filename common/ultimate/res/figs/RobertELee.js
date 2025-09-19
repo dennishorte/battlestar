@@ -34,7 +34,7 @@ module.exports = {
     {
       trigger: 'extra-achievements',
       func: (game, player) => {
-        const leafBiscuits = game.getBiscuitsByPlayer(player).l
+        const leafBiscuits = player.biscuits().l
         return Math.floor(leafBiscuits / 7)
       }
     }

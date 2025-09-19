@@ -22,7 +22,7 @@ describe('Cristopher Columbus', () => {
     let request
     request = game.run()
 
-    const biscuits = game.getBiscuitsByPlayer(t.dennis(game))
+    const biscuits = t.dennis(game).biscuits()
     expect(biscuits).toEqual({
       l: 2,
       f: 3,

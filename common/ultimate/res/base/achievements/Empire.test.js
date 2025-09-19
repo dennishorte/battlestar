@@ -5,19 +5,23 @@ const t = require('../../../testutil.js')
 describe('Empire Achievement', () => {
   test('achieved', () => {
     const game = t.fixtureFirstPlayer()
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Databases'])
-      t.setColor(game, 'dennis', 'yellow', [])
-      t.setColor(game, 'dennis', 'red', ['Coal'])
-      t.setColor(game, 'dennis', 'blue', ['Philosophy'])
-      t.setColor(game, 'dennis', 'purple', ['Reformation'])
-      t.setColor(game, 'dennis', 'green', ['The Wheel', 'Navigation'])
-      t.setSplay(game, 'dennis', 'green', 'up')
+    t.setBoard(game, {
+      dennis: {
+        red: ['Coal'],
+        blue: ['Philosophy'],
+        purple: ['Reformation'],
+        green: {
+          cards: ['The Wheel', 'Navigation'],
+          splay: 'up',
+        },
+      },
     })
 
     let request
     request = game.run()
-    const biscuits = game.getBiscuitsByPlayer(t.dennis(game))
+
+    // Test preconditions
+    const biscuits = t.dennis(game).biscuits()
     expect(biscuits.c).toBe(3)
     expect(biscuits.f).toBe(3)
     expect(biscuits.k).toBe(3)
@@ -44,7 +48,7 @@ describe('Empire Achievement', () => {
 
     let request
     request = game.run()
-    const biscuits = game.getBiscuitsByPlayer(t.dennis(game))
+    const biscuits = t.dennis(game).biscuits()
     expect(biscuits.c).toBe(3)
     expect(biscuits.f).toBe(3)
     expect(biscuits.k).toBe(3)
@@ -71,7 +75,7 @@ describe('Empire Achievement', () => {
 
     let request
     request = game.run()
-    const biscuits = game.getBiscuitsByPlayer(t.dennis(game))
+    const biscuits = t.dennis(game).biscuits()
     expect(biscuits.c).toBe(3)
     expect(biscuits.f).toBe(3)
     expect(biscuits.k).toBe(3)

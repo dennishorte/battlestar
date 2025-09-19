@@ -19,7 +19,7 @@ module.exports = {
     },
 
     (game, player, { foreseen, self }) => {
-      const count = game.getBiscuitsByPlayer(player).s
+      const count = player.biscuits().s
       game.actions.junkAvailableAchievement(player, [count])
 
       game.log.addForeseen(foreseen, self)

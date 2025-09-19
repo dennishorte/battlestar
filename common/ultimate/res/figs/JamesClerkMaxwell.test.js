@@ -44,7 +44,7 @@ describe('James Clerk Maxwell', () => {
     let request
     request = game.run()
 
-    expect(game.getBiscuitsByPlayer(t.dennis(game))).toEqual({
+    expect(t.dennis(game).biscuits()).toEqual({
       k: 0,
       s: 5,
       l: 0,

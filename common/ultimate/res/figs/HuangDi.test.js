@@ -45,6 +45,6 @@ describe('Huang Di', () => {
     let request
     request = game.run()
 
-    expect(game.getBiscuitsByPlayer(t.dennis(game)).l).toBe(3)
+    expect(t.dennis(game).biscuits().l).toBe(3)
   })
 })

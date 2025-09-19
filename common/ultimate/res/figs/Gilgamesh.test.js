@@ -17,7 +17,7 @@ describe('Gilgamesh', () => {
     let request
     request = game.run()
 
-    expect(game.getBiscuitsByPlayer(t.dennis(game)).k).toBe(6)
+    expect(t.dennis(game).biscuits().k).toBe(6)
   })
 
 })

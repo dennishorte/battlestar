@@ -12,7 +12,7 @@ module.exports = {
     (game, player, { foreseen, leader }) => {
       // Biscuits that I have the most of on my board...
       const biscuits = Object
-        .entries(game.getBiscuitsByPlayer(leader))
+        .entries(leader.biscuits())
         .sort((l, r) => r[1] - l[1])
 
       const mostBiscuits = biscuits
