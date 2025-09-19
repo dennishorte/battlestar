@@ -2,13 +2,13 @@ Error.stackTraceLimit = 100
 
 const t = require('../../testutil.js')
 
-describe("Tortugas Galleon", () => {
+describe("Galleon Nuestra Senora De Atocha", () => {
 
   test('dogma', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
-        artifact: ["Tortugas Galleon"],
+        artifact: ["Galleon Nuestra Senora De Atocha"],
       },
       micah: {
         red: ['Coal'],
@@ -20,6 +20,7 @@ describe("Tortugas Galleon", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 2)
     request = t.choose(game, request, 'auto')
 
     t.testIsFirstAction(request)
