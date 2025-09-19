@@ -32,7 +32,7 @@ module.exports = {
       },
       func(game, player, { color }) {
         const zone = game.zones.byPlayer(player, color)
-        const biscuits = game.getBiscuitsByZone(zone)
+        const biscuits = zone.biscuits()
         return Math.max(biscuits.k, biscuits.s)
       }
     }

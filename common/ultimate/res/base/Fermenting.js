@@ -13,7 +13,7 @@ module.exports = {
       const count = game
         .util.colors()
         .map(color => game.zones.byPlayer(player, color))
-        .filter(zone => game.getBiscuitsByZone(zone).l > 0)
+        .filter(zone => zone.biscuits().l > 0)
         .length
 
       for (let i = 0; i < count; i++) {

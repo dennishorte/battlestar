@@ -8,6 +8,14 @@ class UltimateZone extends BaseZone {
     this.splay = undefined
   }
 
+  biscuits() {
+    return this
+      .cardlist()
+      .map(card => this.game.getBiscuitsRaw(card, this.splay))
+      .map(biscuitString => this.game.util.parseBiscuits(biscuitString))
+      .reduce((l, r) => this.game.util.combineBiscuits(l, r), this.game.util.emptyBiscuits())
+  }
+
   cardlist() {
     for (const zoneName of ['hand', 'forecast', 'score']) {
       if (this.name().endsWith('.' + zoneName)) {

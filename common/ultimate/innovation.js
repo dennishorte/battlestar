@@ -1088,7 +1088,7 @@ Innovation.prototype.getBiscuitsByPlayer = function(player) {
   const boardBiscuits = this
     .util.colors()
     .map(color => this.zones.byPlayer(player, color))
-    .map(zone => this.getBiscuitsByZone(zone))
+    .map(zone => zone.biscuits())
     .reduce((l, r) => this.util.combineBiscuits(l, r))
 
   return this
@@ -1104,17 +1104,9 @@ Innovation.prototype.getBiscuitsByCard = function(card, splay) {
 Innovation.prototype.getBiscuitsByColor = function(player) {
   const output = {}
   for (const color of this.util.colors()) {
-    output[color] = this.getBiscuitsByZone(this.zones.byPlayer(player, color))
+    output[color] = this.zones.byPlayer(player, color).biscuits()
   }
   return output
-}
-
-Innovation.prototype.getBiscuitsByZone = function(zone) {
-  return zone
-    .cardlist()
-    .map(card => this.getBiscuitsRaw(card, zone.splay))
-    .map(biscuitString => this.util.parseBiscuits(biscuitString))
-    .reduce((l, r) => this.util.combineBiscuits(l, r), this.util.emptyBiscuits())
 }
 
 Innovation.prototype.getBiscuitsRaw = function(card, splay) {

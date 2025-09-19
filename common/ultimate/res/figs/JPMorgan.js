@@ -28,7 +28,7 @@ module.exports = {
         for (const color of game.util.colors()) {
           const zone = game.zones.byPlayer(player, color)
           if (zone.splay === 'up') {
-            const biscuits = game.getBiscuitsByZone(zone)
+            const biscuits = zone.biscuits()
             output = game.utilCombineBiscuits(output, biscuits)
           }
         }
