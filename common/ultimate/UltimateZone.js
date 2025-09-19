@@ -8,7 +8,7 @@ class UltimateZone extends BaseZone {
     this.splay = undefined
   }
 
-  cards() {
+  cardlist() {
     for (const zoneName of ['hand', 'forecast', 'score']) {
       if (this.name().endsWith('.' + zoneName)) {
         const karmaInfos = this.game.getInfoByKarmaTrigger(this.player(), `list-${zoneName}`)
@@ -24,8 +24,7 @@ class UltimateZone extends BaseZone {
       }
     }
 
-    // Default implementation
-    return [...this._cards]
+    return super.cardlist()
   }
 
   player() {
