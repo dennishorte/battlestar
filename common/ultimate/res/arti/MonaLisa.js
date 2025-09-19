@@ -25,10 +25,7 @@ module.exports = {
       game.actions.draw(player, { age: game.getEffectAge(self, 4) })
 
       const hand = game.cards.byPlayer(player, 'hand')
-
-      for (const card of hand) {
-        game.mReveal(player, card)
-      }
+      game.actions.revealMany(player, hand, { ordered: true })
 
       const matches = hand.filter(card => card.color === color)
       const matchCount = matches.length === number
