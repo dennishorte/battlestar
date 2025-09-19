@@ -6,7 +6,8 @@ module.exports = {
   biscuits: `sshs`,
   dogmaBiscuit: `s`,
   dogma: [
-    `If you have fewer than four cards in your hand, return all non-green top cards from your board. Draw a {5} for each card returned. Meld a card from your hand.`
+    `If you have fewer than four cards in your hand, return your top card of each non-green color. Draw a {5} for each card returned.`,
+    `Meld a card from your hand.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
@@ -25,7 +26,9 @@ module.exports = {
       else {
         game.log.add({ template: 'Player has 4 or more cards in hand' })
       }
+    },
 
+    (game, player) => {
       game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
     }
   ],
