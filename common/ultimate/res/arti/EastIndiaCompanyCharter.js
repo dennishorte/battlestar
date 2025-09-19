@@ -6,11 +6,12 @@ module.exports = {
   biscuits: `cffh`,
   dogmaBiscuit: `f`,
   dogma: [
-    `Choose a value other than {5}. Return all cards of that value from all score piles. For each player that returned cards, draw and score a {5}.`
+    `Choose a value other than {5}. Return all cards of that value from all score piles. For each score pile from which cards were returned, draw and score a {5}. If you score only {5}s, junk all cards in the deck of the chosen value.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const age = game.actions.chooseAge(player, [1,2,3,4, /*5,*/ 6,7,8,9,10])
+      const choices = game.util.ages().filter(x => x !== game.getEffectAge(self, 5))
+      const age = game.actions.chooseAge(player, choices)
       const toReturn = []
       const playerCards = {}
       for (const player of game.players.all()) {
@@ -32,8 +33,14 @@ module.exports = {
         }
       }
 
+      const scored = []
       for (let i = 0; i < count; i++) {
-        game.actions.drawAndScore(player, game.getEffectAge(self, 5))
+        const card = game.actions.drawAndScore(player, game.getEffectAge(self, 5))
+        scored.push(card)
+      }
+
+      if (scored.every(card => card.getAge() === game.getEffectAge(self, 5))) {
+        game.actions.junkDeck(player, age)
       }
     }
   ],
