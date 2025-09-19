@@ -28,10 +28,10 @@ module.exports = {
         const five = game.actions.draw(player, { age: game.getEffectAge(self, 5) })
         const six = game.actions.draw(player, { age: game.getEffectAge(self, 6) })
 
-        const source = game.getBiscuitsByCard(card, 'top')
+        const source = card.visibleBiscuitsParsed()
         const choices = []
         for (const card of [five, six]) {
-          const biscuits = game.getBiscuitsByCard(card, 'top')
+          const biscuits = card.visibleBiscuitsParsed()
           for (const b of Object.keys(biscuits)) {
             if (source[b] > 0 && biscuits[b] > 0) {
               choices.push(card)

@@ -35,6 +35,18 @@ class UltimateZone extends BaseZone {
     return super.cardlist()
   }
 
+  isArtifactZone() {
+    return Boolean(this.owner) && this.id.endsWith('.artifact')
+  }
+
+  isColorZone() {
+    return Boolean(this.color)
+  }
+
+  isMuseumZone() {
+    return Boolean(this.owner) && this.id.endsWith('.museum')
+  }
+
   player() {
     return this.players.byZone(this)
   }

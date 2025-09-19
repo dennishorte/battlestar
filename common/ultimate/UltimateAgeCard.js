@@ -170,6 +170,52 @@ class UltimateAgeCard extends UltimateBaseCard {
     return this.biscuits.split(biscuit).length - 1
   }
 
+  visibleBiscuitsParsed() {
+    return this.game.util.parseBiscuits(this.visibleBiscuits())
+  }
+
+  visibleBiscuits() {
+    const isInBiscuitZone = this.zone.isColorZone() || this.zone.isArtifactZone() || this.zone.isMuseumZone()
+
+    if (!isInBiscuitZone) {
+      throw new Error('Cannot detect biscuits outside of biscuit zones')
+    }
+
+    const isTopCard = this.zone.isArtifactZone() || this.zone.isMuseumZone() || this.zone.cardlist()[0].id === this.id
+
+    // If this is a top card, return all of its biscuits
+    if (isTopCard) {
+      if (this.biscuits.length === 4) {
+        return this.biscuits
+      }
+      else {
+        // This ensures the meld biscuits from cities are executed in the correct order.
+        return this.biscuits[0] + this.biscuits.slice(4, 6) + this.biscuits.slice(1, 4)
+      }
+    }
+
+    // Otherwise, return based on the splay of this card's zone
+    const splay = this.zone.splay
+    if (splay === 'none') {
+      return ''
+    }
+    else if (splay === 'left') {
+      return this.biscuits.slice(3,4) + this.biscuits.slice(5,6)
+    }
+    else if (splay === 'right') {
+      return this.biscuits.slice(0, 2)
+    }
+    else if (splay === 'up') {
+      return this.biscuits.slice(1, 4)
+    }
+    else if (splay === 'aslant') {
+      return this.biscuits.slice(0, 4)
+    }
+    else {
+      throw new Error(`Unknown splay type: ${splay}`)
+    }
+  }
+
   getBiscuits(splay) {
     if (splay === 'top') {
       if (this.biscuits.length === 4) {

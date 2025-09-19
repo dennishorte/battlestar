@@ -1086,10 +1086,6 @@ Innovation.prototype.getBiscuits = function() {
   return Object.fromEntries(biscuits)
 }
 
-Innovation.prototype.getBiscuitsByCard = function(card, splay) {
-  return this.util.parseBiscuits(card.getBiscuits(splay))
-}
-
 Innovation.prototype.getBiscuitsByColor = function(player) {
   const output = {}
   for (const color of this.util.colors()) {
