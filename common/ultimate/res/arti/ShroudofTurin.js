@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `lhll`,
   dogmaBiscuit: `l`,
   dogma: [
-    `Return a card from your hand. If you do, return a top card from your board and a card from your score pile of the returned card's color. If you did all three, claim an achievement ignoring eligibility.`
+    `Return a card from your hand. If you do, return a top card of the same color from your board and a card of the same color from your score pile. If you do all three, claim an available achievement ignoring eligibility.`
   ],
   dogmaImpl: [
     (game, player) => {
@@ -29,7 +29,7 @@ module.exports = {
         }
 
         if (totalReturned === 3) {
-          game.actions.chooseAndAchieve(player, game.getAvailableAchievements(player))
+          game.actions.chooseAndAchieve(player, game.getAvailableStandardAchievements(player))
         }
       }
     }
