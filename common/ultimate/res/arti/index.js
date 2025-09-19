@@ -31,7 +31,7 @@ const cardData = [
   require('./PhilosophersStone.js'),
   require('./IfeHead.js'),
   require('./DunhuangStarChart.js'),
-  require('./CharterofLiberties.js'),
+  require('./YataNoKagami.js'),
   require('./Necronomicon.js'),
   require('./ShroudofTurin.js'),
   require('./EastIndiaCompanyCharter.js'),
