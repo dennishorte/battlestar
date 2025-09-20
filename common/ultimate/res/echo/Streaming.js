@@ -9,7 +9,7 @@ module.exports = {
     `Choose a color on your board. Choose to either achieve the top card of that color on your board, if eligible, or score it. If you do either, and Streaming was foreseen, repeat this effect using the same color.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { foreseen, self }) => {
       const colorChoices = game.cards.tops(player).map(card => card.color)
       const color = game.actions.choose(player, colorChoices, {
         title: 'Choose a color'
@@ -34,7 +34,8 @@ module.exports = {
         const action = game.actions.choose(player, options)[0]
         if (action === 'score') {
           const scored = game.actions.score(player, card)
-          if (scored) {
+          game.log.addForeseen(foreseen, self)
+          if (scored && foreseen) {
             continue
           }
           else {
@@ -43,7 +44,8 @@ module.exports = {
         }
         else {
           const achieved = game.actions.claimAchievement(player, { card })
-          if (achieved) {
+          game.log.addForeseen(foreseen, self)
+          if (achieved && foreseen) {
             continue
           }
           else {
