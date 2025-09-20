@@ -12,11 +12,16 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const card = game.actions.draw(player, { age: game.getEffectAge(self, 1), exp: 'echo' })
-      game.actions.reveal(player, card)
+      const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 1), { exp: 'echo' })
       if (card.checkHasBonus()) {
         const bonus = card.getBonuses()[0]
         game.actions.drawAndMeld(player, bonus)
+      }
+      else {
+        game.log.add({
+          template: '{card} has no bonuses',
+          args: { card }
+        })
       }
     },
 

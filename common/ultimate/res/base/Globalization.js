@@ -1,5 +1,3 @@
-
-
 module.exports = {
   name: `Globalization`,
   color: `yellow`,
@@ -14,8 +12,9 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = game
-        .cards.tops(player)
-        .filter(c => c.checkBiscuitIsVisible('l', 'top'))
+        .cards
+        .tops(player)
+        .filter(c => c.checkBiscuitIsVisible('l'))
         .map(c => c.id)
       const card = game.actions.chooseCard(player, choices)
 

@@ -1236,9 +1236,10 @@ Innovation.prototype.getScoreDetails = function(player) {
 }
 
 Innovation.prototype.getSplayByCard = function(card) {
-  const zone = card.zone
-  const cards = zone.cardlist()
-  return card === cards[0] ? 'top' : zone.splay
+  return card.getSplay()
+  /* const zone = card.zone
+   * const cards = zone.cardlist()
+   * return card === cards[0] ? 'top' : zone.splay */
 }
 
 Innovation.prototype.getSplayedZones = function(player) {
@@ -1283,7 +1284,6 @@ Innovation.prototype.getVisibleCardsByZone = function(player, zoneName) {
 Innovation.prototype.getVisibleEffects = function(card, kind, opts={}) {
   const player = opts.selfExecutor || this.players.byOwner(card)
   const isTop = this.checkCardIsTop(card) || card.zone.id.endsWith('.artifact')
-  const splay = this.getSplayByCard(card)
 
   if (kind === 'dogma') {
     if ((opts.selfExecutor || isTop) && card.dogma.length > 0) {
@@ -1300,13 +1300,12 @@ Innovation.prototype.getVisibleEffects = function(card, kind, opts={}) {
       .getInfoByKarmaTrigger(player, 'hex-effect')
       .filter(info => info.impl.matches(this, player, { card }))
     const includeHexesAsEcho = hexKarmas.length > 0
-    const echoIsVisible = card.checkEchoIsVisible(splay)
-    const hexIsVisible = includeHexesAsEcho && card.checkBiscuitIsVisible('h', splay)
+    const hexIsVisible = includeHexesAsEcho && card.checkBiscuitIsVisible('h')
 
     const texts = []
     const impls = []
 
-    if (echoIsVisible) {
+    if (card.checkEchoIsVisible()) {
       for (const text of util.getAsArray(card, 'echo')) {
         texts.push(text)
       }

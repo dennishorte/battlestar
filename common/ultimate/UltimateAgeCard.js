@@ -24,24 +24,26 @@ class UltimateAgeCard extends UltimateBaseCard {
     })
   }
 
-  checkBiscuitIsVisible(biscuit, splay) {
-    if (!splay) {
-      if (this.owner) {
-        if (this.checkIsTopCard()) {
-          splay = 'top'
-        }
-        else {
-          splay = this.game.zones.byPlayer(this.owner, this.color).splay
-        }
+  getSplay() {
+    if (this.owner) {
+      if (this.checkIsTopCard()) {
+        return 'top'
       }
       else {
-        throw new Error('Cannot calculate the splay for a card with no owner: ' + this.name)
+        return this.game.zones.byPlayer(this.owner, this.color).splay
       }
     }
+    else {
+      return 'top'
+    }
+  }
+
+  checkBiscuitIsVisible(biscuit) {
+    const splay = this.getSplay()
 
     if (biscuit === 'h') {
       // m also counts as an h
-      const mIsVisible = this.checkBiscuitIsVisible('m', splay)
+      const mIsVisible = this.checkBiscuitIsVisible('m')
       if (mIsVisible) {
         return true
       }
@@ -59,7 +61,7 @@ class UltimateAgeCard extends UltimateBaseCard {
   }
 
   checkEchoIsVisible(splay) {
-    return this.checkBiscuitIsVisible('&', splay)
+    return this.checkBiscuitIsVisible('&')
   }
 
   checkHasDemandExplicit() {
@@ -108,22 +110,23 @@ class UltimateAgeCard extends UltimateBaseCard {
   }
 
   checkIsOnPlayerBoard(player) {
-    if (!this.zone) {
+    if (!this.zone || !this.zone.owner) {
       return false
     }
 
-    const re = /^players.([^.]+).(yellow|red|green|blue|purple)$/i
-    const match = this.zone.id.match(re)
+    // Is on any player board?
+    if (!player) {
+      return Boolean(this.color)
+    }
 
-    return match && (!player || match[1] === player.name)
-  }
-
-  checkHasEcho() {
-    return this.echo.length > 0
+    // Is on a particular player board?
+    else {
+      return this.zone.owner.id === player.id && Boolean(this.color)
+    }
   }
 
   checkHasBonus() {
-    const re = /[0-9ab]/gi
+    const re = /[0-9abt]/gi
     const match = this.biscuits.match(re)
     return match !== null
   }
@@ -134,22 +137,19 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
 
     const biscuit = this.biscuits[4]
-    return (
-      biscuit === 'l'
-      || biscuit === 'c'
-      || biscuit === 'i'
-      || biscuit === 's'
-      || biscuit === 'k'
-      || biscuit === 'f'
-    )
+    return 'lciskfp'.includes(biscuit)
   }
 
   checkIsTopCard() {
     if (!this.owner) {
-      return false
+      return true
     }
 
-    return this.game.cards.top(this.owner, this.color).id === this.id
+    if (!this.zone.isColorZone()) {
+      return true
+    }
+
+    return this.game.cards.top(this.owner, this.color)?.id === this.id
   }
 
   checkSharesBiscuit(other) {
@@ -175,16 +175,10 @@ class UltimateAgeCard extends UltimateBaseCard {
   }
 
   visibleBiscuits() {
-    const isInBiscuitZone = this.zone.isColorZone() || this.zone.isArtifactZone() || this.zone.isMuseumZone()
-
-    if (!isInBiscuitZone) {
-      throw new Error('Cannot detect biscuits outside of biscuit zones')
-    }
-
-    const isTopCard = this.zone.isArtifactZone() || this.zone.isMuseumZone() || this.zone.cardlist()[0].id === this.id
+    const splay = this.getSplay()
 
     // If this is a top card, return all of its biscuits
-    if (isTopCard) {
+    if (splay === 'top') {
       if (this.biscuits.length === 4) {
         return this.biscuits
       }
@@ -194,8 +188,6 @@ class UltimateAgeCard extends UltimateBaseCard {
       }
     }
 
-    // Otherwise, return based on the splay of this card's zone
-    const splay = this.zone.splay
     if (splay === 'none') {
       return ''
     }

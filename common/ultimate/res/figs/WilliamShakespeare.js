@@ -27,8 +27,7 @@ module.exports = {
           const zone = game.zones.byPlayer(player, color)
           const cards = zone.cards()
           for (const card of cards) {
-            const splay = cards[0] === card ? 'top' : zone.splay
-            if (card.checkBiscuitIsVisible('h', splay)) {
+            if (card.checkBiscuitIsVisible('h')) {
               count += 1
             }
           }

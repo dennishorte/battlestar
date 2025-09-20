@@ -8,7 +8,7 @@ describe('Empire Achievement', () => {
     t.setBoard(game, {
       dennis: {
         red: ['Coal'],
-        blue: ['Philosophy'],
+        blue: ['Experimentation'],
         purple: ['Reformation'],
         green: {
           cards: ['The Wheel', 'Navigation'],
@@ -40,7 +40,7 @@ describe('Empire Achievement', () => {
       t.setHand(game, 'dennis', ['Escapism'])
       t.setColor(game, 'dennis', 'yellow', [])
       t.setColor(game, 'dennis', 'red', ['Coal'])
-      t.setColor(game, 'dennis', 'blue', ['Philosophy'])
+      t.setColor(game, 'dennis', 'blue', ['Experimentation'])
       t.setColor(game, 'dennis', 'purple', ['Reformation'])
       t.setColor(game, 'dennis', 'green', ['The Wheel', 'Navigation'])
       t.setSplay(game, 'dennis', 'green', 'up')
@@ -67,7 +67,7 @@ describe('Empire Achievement', () => {
       t.setHand(game, 'dennis', ['Bioengineering'])
       t.setColor(game, 'dennis', 'yellow', [])
       t.setColor(game, 'dennis', 'red', ['Coal'])
-      t.setColor(game, 'dennis', 'blue', ['Philosophy'])
+      t.setColor(game, 'dennis', 'blue', ['Experimentation'])
       t.setColor(game, 'dennis', 'purple', ['Reformation'])
       t.setColor(game, 'dennis', 'green', ['The Wheel', 'Navigation'])
       t.setSplay(game, 'dennis', 'green', 'up')
