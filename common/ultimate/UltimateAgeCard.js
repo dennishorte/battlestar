@@ -60,7 +60,7 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
   }
 
-  checkEchoIsVisible(splay) {
+  checkEchoIsVisible() {
     return this.checkBiscuitIsVisible('&')
   }
 
@@ -208,7 +208,7 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
   }
 
-  getBonuses(splay) {
+  getBonuses() {
     const rx = /([abt1-9])/g
     const matches = this
       .visibleBiscuits()

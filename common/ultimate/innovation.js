@@ -1072,7 +1072,7 @@ Innovation.prototype.getBonuses = function(player) {
   const bonuses = this
     .util.colors()
     .flatMap(color => this.zones.byPlayer(player, color))
-    .flatMap(zone => zone.cardlist().flatMap(card => card.getBonuses(this.getSplayByCard(card))))
+    .flatMap(zone => zone.cardlist().flatMap(card => card.getBonuses()))
 
   const karmaBonuses = this
     .getInfoByKarmaTrigger(player, 'list-bonuses')
@@ -1217,13 +1217,6 @@ Innovation.prototype.getScoreDetails = function(player) {
   details.total = details.scorePoints + details.bonusPoints + details.karmaPoints
 
   return details
-}
-
-Innovation.prototype.getSplayByCard = function(card) {
-  return card.getSplay()
-  /* const zone = card.zone
-   * const cards = zone.cardlist()
-   * return card === cards[0] ? 'top' : zone.splay */
 }
 
 Innovation.prototype.getSplayedZones = function(player) {
