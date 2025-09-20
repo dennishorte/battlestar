@@ -144,7 +144,7 @@ class UltimateAgeCard extends UltimateBaseCard {
   }
 
   checkSharesBiscuit(other) {
-    const biscuits = 'lciskf'.split('')
+    const biscuits = 'lciskfp'.split('')
     for (const biscuit of biscuits) {
       if (this.checkHasBiscuit(biscuit) && other.checkHasBiscuit(biscuit)) {
         return true
