@@ -87,26 +87,19 @@ class UltimateAgeCard extends UltimateBaseCard {
   }
 
   checkIsArtifact() {
-    return (
-      this.expansion === 'arti'
-      && this.name !== 'Timbuktu'
-      && this.name !== 'Complex Numbers'
-      && this.name !== 'Newton-Wickins Telescope'
-      && this.name !== 'Ching Shih'
-      && this.name !== 'Safety Pin'
-    )
+    return this.expansion === 'arti'
   }
 
   checkIsCity() {
-    return this.expansion === 'city' || this.isCity
+    return this.expansion === 'city'
   }
 
   checkIsEchoes() {
-    return this.expansion === 'echo' || this.name === 'Safety Pin'
+    return this.expansion === 'echo'
   }
 
   checkIsFigure() {
-    return this.expansion === 'figs' || this.name === 'Ching Shih'
+    return this.expansion === 'figs'
   }
 
   checkIsOnPlayerBoard(player) {
