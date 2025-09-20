@@ -119,9 +119,7 @@ class UltimateAgeCard extends UltimateBaseCard {
   }
 
   checkHasBonus() {
-    const re = /[0-9abt]/gi
-    const match = this.biscuits.match(re)
-    return match !== null
+    return this.getBonuses().length > 0
   }
 
   checkHasDiscoverBiscuit() {
