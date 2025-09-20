@@ -13,7 +13,7 @@ module.exports = {
       const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 2))
 
       if (card) {
-        const isBottom = game.getBottomCard(player, card.color).name === card.name
+        const isBottom = game.cards.bottom(player, card.color).name === card.name
         if (isBottom) {
           game.actions.score(player, card)
         }

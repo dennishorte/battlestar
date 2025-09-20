@@ -15,10 +15,10 @@ module.exports = {
 
       const cards = game.cards.byPlayer(player, chosenColor)
       if (cards.length > 0) {
-        game.actions.meld(player, game.getBottomCard(player, chosenColor))
+        game.actions.meld(player, game.cards.bottom(player, chosenColor))
 
         if (cards.length > 1) {
-          const bottomCard = game.getBottomCard(player, chosenColor)
+          const bottomCard = game.cards.bottom(player, chosenColor)
           game.actions.transfer(player, bottomCard, game.zones.byPlayer(leader, chosenColor))
         }
       }

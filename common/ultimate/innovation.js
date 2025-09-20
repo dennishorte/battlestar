@@ -1241,12 +1241,6 @@ Innovation.prototype.getSplayByCard = function(card) {
   return card === cards[0] ? 'top' : zone.splay
 }
 
-Innovation.prototype.getBottomCard = function(player, color) {
-  return this
-    .cards.byPlayer(player, color)
-    .slice(-1)[0]
-}
-
 Innovation.prototype.getSplayedZones = function(player) {
   return this
     .util.colors()

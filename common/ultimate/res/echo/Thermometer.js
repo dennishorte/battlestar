@@ -39,7 +39,7 @@ module.exports = {
   echoImpl: [
     (game, player) => {
       const splay = game.zones.byPlayer(player, 'green').splay
-      const toMeld = game.getBottomCard(player, 'green')
+      const toMeld = game.cards.bottom(player, 'green')
       if (toMeld) {
         game.actions.meld(player, toMeld)
         game.zones.byPlayer(player, 'green').splay = splay

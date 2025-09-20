@@ -12,7 +12,7 @@ module.exports = {
     (game, player, { self }) => {
       const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 7))
       if (card) {
-        const bottom = game.getBottomCard(player, card.color)
+        const bottom = game.cards.bottom(player, card.color)
         if (bottom.getAge() === 1) {
           game.log.add({ template: 'Bottom card is a {1}.' })
           game.actions.returnMany(player, game.cards.byPlayer(player, card.color), { ordered: true })

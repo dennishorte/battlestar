@@ -28,7 +28,7 @@ module.exports = {
       const count = game.actions.choose(player, [1, 2], { title: `Score your bottom 1 or 2 ${color} cards?` })
 
       for (let i = 0; i < count; i++) {
-        const card = game.getBottomCard(player, color)
+        const card = game.cards.bottom(player, color)
         if (card) {
           game.actions.score(player, card)
         }
