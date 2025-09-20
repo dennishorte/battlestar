@@ -1027,49 +1027,33 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
     }
   }
 
-  // Flags
-  this
-    .util.colors()
-    .flatMap(color => this.cards.byPlayer(player, color))
-    .map(card => {
-      const biscuits = card.visibleBiscuits()
-      return {
-        card,
-        count: biscuits.split(';').length - 1
-      }
-    })
-    .filter(x => x.count > 0)
-    .filter(x => {
-      const myCount = this.getVisibleCardsByZone(player, x.card.color)
-      const otherCounts = this
-        .players.all()
-        .filter(other => other !== player)
-        .map(other => this.getVisibleCardsByZone(other, x.card.color))
-      return otherCounts.every(count => count <= myCount)
-    })
-    .forEach(x => {
-      for (let i = 0; i < x.count; i++) {
-        ach.other.push(x.card)
-      }
-    })
+  // Flags and Fountains
+  const cards = this.zones.colorStacks(player).flatMap(zone => zone.cardlist())
+  const flags = cards.filter(card => card.checkBiscuitIsVisible(';'))
+  const fountains = cards.filter(card => card.checkBiscuitIsVisible(':'))
 
-  // Fountains
-  this
-    .util.colors()
-    .flatMap(color => this.cards.byPlayer(player, color))
-    .map(card => {
-      const biscuits = card.visibleBiscuits()
-      return {
-        card,
-        count: biscuits.split(':').length - 1
+  for (const card of flags) {
+    // Player must have the most or tied for the most visible cards of that color to get the achievement.
+    const myCount = card.zone.numVisibleCards()
+    const otherCounts = this
+      .players
+      .other(player)
+      .map(other => this.zones.byPlayer(other, card.color).numVisibleCards())
+
+    if (otherCounts.every(otherCount => otherCount <= myCount)) {
+      const count = card.visibleBiscuits().split(';').length - 1
+      for (let i = 0; i < count; i++) {
+        ach.other.push(card)
       }
-    })
-    .filter(x => x.count > 0)
-    .forEach(x => {
-      for (let i = 0; i < x.count; i++) {
-        ach.other.push(x.card)
-      }
-    })
+    }
+  }
+
+  for (const card of fountains) {
+    const count = card.visibleBiscuits().split(':').length - 1
+    for (let i = 0; i < count; i++) {
+      ach.other.push(card)
+    }
+  }
 
   ach.total = ach.standard.length + ach.special.length + ach.other.length
 
@@ -1267,17 +1251,6 @@ Innovation.prototype.getUniquePlayerWithMostBiscuits = function(biscuit) {
 
   if (most > 0 && mostPlayerNames.length === 1) {
     return this.players.byName(mostPlayerNames[0])
-  }
-}
-
-Innovation.prototype.getVisibleCardsByZone = function(player, zoneName) {
-  const zone = this.zones.byPlayer(player, zoneName)
-  const cards = zone.cardlist()
-  if (zone.splay === 'none') {
-    return cards.length > 0 ? 1 : 0
-  }
-  else {
-    return cards.length
   }
 }
 

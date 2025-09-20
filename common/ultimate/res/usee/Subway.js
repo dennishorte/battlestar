@@ -12,7 +12,7 @@ module.exports = {
     (game, player, { self }) => {
       const card = game.actions.drawAndTuck(player, game.getEffectAge(self, 7))
 
-      const visibleCards = game.getVisibleCardsByZone(player, card.color)
+      const visibleCards = game.zones.byPlayer(player, card.color).numVisibleCards()
 
       if (visibleCards >= 7) {
         game.actions.draw(player, { age: game.getEffectAge(self, 9) })

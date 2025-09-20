@@ -17,7 +17,7 @@ module.exports = {
           return {
             player,
             color,
-            count: game.getVisibleCardsByZone(player, color),
+            count: game.zones.byPlayer(player, color).numVisibleCards(),
           }
         }))
         .sort((l, r) => r.count - l.count)

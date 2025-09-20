@@ -56,15 +56,20 @@ class UltimateZone extends BaseZone {
   }
 
   numVisibleCards() {
+    return this.visibleCards().length
+  }
+
+  visibleCards() {
     if (this._cards.length === 0) {
-      return 0
+      return []
     }
-    else if (this.splay === undefined || this.splay === 'none') {
-      return 1
+    else if (this.splay === 'none') {
+      return this._cards.slice(0, 1)
     }
     else {
-      return this._cards.length
+      return this.cardlist()
     }
+
   }
 }
 
