@@ -1,4 +1,3 @@
-
 module.exports = {
   name: `Photography`,
   color: `blue`,
@@ -34,7 +33,7 @@ module.exports = {
         .map(zone => zone
           .cardlist()
           .map(card => {
-            const visibleBiscuits = game.getBiscuitsRaw(card, zone.splay)
+            const visibleBiscuits = card.visibleBiscuits()
             const echoBiscuits = (visibleBiscuits.match(/&/g) || []).length
             return echoBiscuits
           })

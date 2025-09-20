@@ -1086,12 +1086,6 @@ Innovation.prototype.getBiscuits = function() {
   return Object.fromEntries(biscuits)
 }
 
-Innovation.prototype.getBiscuitsRaw = function(card, splay) {
-  return this.checkCardIsTop(card)
-    ? card.getBiscuits('top')
-    : card.getBiscuits(splay)
-}
-
 Innovation.prototype.getBonuses = function(player) {
   const bonuses = this
     .util.colors()

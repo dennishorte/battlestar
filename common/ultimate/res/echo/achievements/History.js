@@ -9,6 +9,8 @@ module.exports = {
     const targetCount = reduceCost ? 3 : 4
 
     const infos = game.getInfoByKarmaTrigger(player, 'hex-effect')
+
+    // Stephen Hawking converts all hexes to echo effects.
     const includeHexesAsEcho = (card) => (
       infos.some(info => info.impl.matches(game, player, { card }))
     )
@@ -21,11 +23,15 @@ module.exports = {
       // Convert each stack to a count of echo effects
       .map(zone => zone
         .cardlist()
-        .flatMap(c =>
-          game
-            .getBiscuitsRaw(c, zone.splay)
-            .match(includeHexesAsEcho(c) ? /[hm&]/g : /&/g) || []
-        )
+        .flatMap(card => {
+          if (includeHexesAsEcho(card)) {
+            return card.checkBiscuitIsVisible('&') || card.checkBiscuitIsVisible('h')
+          }
+          else {
+            return card.checkBiscuitIsVisible('&')
+          }
+        })
+        .filter(bool => bool)
         .length
       )
       .some(count => count >= targetCount)
