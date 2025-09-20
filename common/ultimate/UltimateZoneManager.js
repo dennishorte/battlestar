@@ -10,9 +10,9 @@ class UltimateZoneManager extends BaseZoneManager {
     return this.game.util.colors().map(color => this.byPlayer(player, color))
   }
 
-  cardsWithBiscuit(player, biscuit) {
+  stacksWithBiscuit(player, biscuit) {
     return Object
-      .values(this.game.getBiscuitsByColor(player))
+      .values(player.biscuitsByColor())
       .map(biscuits => biscuits[biscuit])
       .filter(num => num > 0)
   }

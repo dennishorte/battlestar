@@ -1,4 +1,3 @@
-
 module.exports = {
   name: `Radio Telescope`,
   color: `blue`,
@@ -13,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { foreseen, self }) => {
       const count = Object
-        .values(game.getBiscuitsByColor(player))
+        .values(player.biscuitsByColor())
         .map(biscuits => biscuits.s)
         .filter(count => count > 0)
         .length

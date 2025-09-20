@@ -1086,14 +1086,6 @@ Innovation.prototype.getBiscuits = function() {
   return Object.fromEntries(biscuits)
 }
 
-Innovation.prototype.getBiscuitsByColor = function(player) {
-  const output = {}
-  for (const color of this.util.colors()) {
-    output[color] = this.zones.byPlayer(player, color).biscuits()
-  }
-  return output
-}
-
 Innovation.prototype.getBiscuitsRaw = function(card, splay) {
   return this.checkCardIsTop(card)
     ? card.getBiscuits('top')

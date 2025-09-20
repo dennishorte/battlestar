@@ -16,6 +16,14 @@ class UltimatePlayer extends BasePlayer {
       .map(info => this.game.aCardEffect(player, info, { biscuits: boardBiscuits }))
       .reduce((l, r) => this.game.util.combineBiscuits(l, r), boardBiscuits)
   }
+
+  biscuitsByColor() {
+    const output = {}
+    for (const color of this.game.util.colors()) {
+      output[color] = this.zones.byPlayer(this, color).biscuits()
+    }
+    return output
+  }
 }
 
 module.exports = {

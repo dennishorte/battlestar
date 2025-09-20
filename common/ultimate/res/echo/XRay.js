@@ -14,7 +14,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const age = game.actions.chooseAge(player)
-      const count = game.zones.cardsWithBiscuit(player, 'l').length
+      const count = game.zones.stacksWithBiscuit(player, 'l').length
 
       const drawn = []
       for (let i = 0; i < count; i++) {
