@@ -1032,8 +1032,7 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
     .util.colors()
     .flatMap(color => this.cards.byPlayer(player, color))
     .map(card => {
-      const splay = this.getSplayByCard(card)
-      const biscuits = card.getBiscuits(splay)
+      const biscuits = card.visibleBiscuits()
       return {
         card,
         count: biscuits.split(';').length - 1
@@ -1059,8 +1058,7 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
     .util.colors()
     .flatMap(color => this.cards.byPlayer(player, color))
     .map(card => {
-      const splay = this.getSplayByCard(card)
-      const biscuits = card.getBiscuits(splay)
+      const biscuits = card.visibleBiscuits()
       return {
         card,
         count: biscuits.split(':').length - 1

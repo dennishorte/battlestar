@@ -9,13 +9,7 @@ class UltimateBaseCard extends BaseCard {
   }
 
   checkHasBiscuit(biscuit) {
-    if (!this.biscuits) {
-      return false
-    }
-
-    return this
-      .getBiscuits('top')
-      .includes(biscuit)
+    return Boolean(this.biscuits?.includes(biscuit))
   }
 
   checkIsExpansion() {

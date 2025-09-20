@@ -53,7 +53,7 @@ function _maybeWhenMeldKarma(player, card, opts={}) {
 }
 
 function _maybeCityBiscuits(player, card) {
-  const biscuits = card.getBiscuits('top')
+  const biscuits = card.visibleBiscuits()
 
   for (const biscuit of biscuits) {
     switch (biscuit) {

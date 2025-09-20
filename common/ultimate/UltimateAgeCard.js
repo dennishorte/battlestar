@@ -216,44 +216,10 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
   }
 
-  getBiscuits(splay) {
-    if (splay === 'top') {
-      if (this.biscuits.length === 4) {
-        return this.biscuits
-      }
-      else {
-        // This ensures the meld biscuits from cities are executed in the correct order.
-        return this.biscuits[0] + this.biscuits.slice(4, 6) + this.biscuits.slice(1, 4)
-      }
-    }
-    else if (splay === 'none') {
-      return ''
-    }
-    else if (splay === 'left') {
-      return this.biscuits.slice(3,4) + this.biscuits.slice(5,6)
-    }
-    else if (splay === 'right') {
-      return this.biscuits.slice(0, 2)
-    }
-    else if (splay === 'up') {
-      return this.biscuits.slice(1, 4)
-    }
-    else if (splay === 'aslant') {
-      return this.biscuits.slice(0, 4)
-    }
-    else {
-      throw new Error(`Unknown splay type: ${splay}`)
-    }
-  }
-
   getBonuses(splay) {
-    if (!splay) {
-      splay = 'top'
-    }
-
     const rx = /([abt1-9])/g
     const matches = this
-      .getBiscuits(splay)
+      .visibleBiscuits()
       .match(rx)
 
     if (!matches) {
