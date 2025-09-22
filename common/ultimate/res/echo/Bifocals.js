@@ -19,7 +19,7 @@ module.exports = {
         const age = game
           .getAvailableStandardAchievements(player)
           .map(achievement => achievement.age)
-          .sort()[0] || 0
+          .sort((l, r) => l - r)[0] || 0
 
         game.actions.drawAndForeshadow(player, age)
       }
