@@ -9,7 +9,7 @@ module.exports = {
     `Splay each color on your board in a direction according to the exact number of cards of that color on your board: two or three, aslant; four or five, up; six or seven, right; eight or more, left. If you splay five colors, you win.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const directionFunc = (stack) => {
         const count = stack.cardlist().length
         if (count === 2 || count === 3) {
@@ -36,6 +36,8 @@ module.exports = {
         .filter(([stack, direction]) => direction !== 'none' && direction !== stack.splay)
         .map(([stack, direction]) => [stack.color, direction])
 
+      const splayed = []
+
       while (todo.length > 0) {
         const options = todo.map(([color, direction]) => `${color} ${direction}`)
         const selected = game.actions.choose(player, options, {
@@ -43,10 +45,18 @@ module.exports = {
         })[0]
 
         const [color, direction] = selected.split(' ')
-        game.actions.splay(player, color, direction)
+        const splayedColor = game.actions.splay(player, color, direction)
+
+        if (splayedColor) {
+          splayed.push(splayedColor)
+        }
 
         const removeIndex = todo.findIndex(([todoColor,]) => todoColor === color)
         todo.splice(removeIndex, 1)
+      }
+
+      if (splayed.length === 5) {
+        game.youWin(player, self.name)
       }
     }
   ],

@@ -63,4 +63,36 @@ describe("Touchscreen", () => {
       },
     })
   })
+
+  test('dogma: you win', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        red: {
+          cards: ['Coal', 'Coke', 'Industrialization', 'Archery', 'Construction', 'Engineering', 'Flight', 'Gunpowder'],
+          splay: 'up',
+        },
+        yellow: ['Agriculture', 'Masonry', 'Domestication', 'Machinery'],
+        green: {
+          cards: ['Classification', 'Databases', 'Paper', 'Sailing', 'Navigation', 'Mapmaking'],
+          splay: 'left',
+        },
+        blue: ['Touchscreen', 'Mathematics'],
+        purple: {
+          cards: ['Astronomy', 'Lighting'],
+          splay: 'left',
+        },
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Touchscreen')
+    request = t.choose(game, request, 'red left')
+    request = t.choose(game, request, 'yellow up')
+    request = t.choose(game, request, 'green right')
+    request = t.choose(game, request, 'purple aslant')
+
+    t.testGameOver(request, 'dennis', 'Touchscreen')
+  })
 })
