@@ -634,7 +634,7 @@ class UltimateActionManager extends BaseActionManager {
       this.acted(player)
     }
 
-    this.game._maybeDrawCity(owner)
+    this._maybeDrawCity(owner)
 
     return color
   }
@@ -837,6 +837,26 @@ class UltimateActionManager extends BaseActionManager {
       return impl.call(this, player, card, opts)
     }
   }
+
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Helper functions
+
+  // Used in two cases:
+  //  1. Player melds a card onto an empty color stack.
+  //  2. Player splays a color in a new direction.
+  _maybeDrawCity(player) {
+    if (!this.game.getExpansionList().includes('city')) {
+      return
+    }
+    if (this.cards.byPlayer(player, 'hand').some(card => card.checkIsCity())) {
+      return
+    }
+
+    this.draw(player, { exp: 'city' })
+  }
+
+
 }
 
 module.exports = {

@@ -869,20 +869,6 @@ Innovation.prototype.aKarma = function(player, kind, opts={}) {
   return this._aKarmaHelper(player, infos, { ...opts, trigger: kind })
 }
 
-// Used in two cases:
-//  1. Player melds a card onto an empty color stack.
-//  2. Player splays a color in a new direction.
-Innovation.prototype._maybeDrawCity = function(player) {
-  if (!this.getExpansionList().includes('city')) {
-    return
-  }
-  if (this.cards.byPlayer(player, 'hand').some(card => card.checkIsCity())) {
-    return
-  }
-
-  this.actions.draw(player, { exp: 'city' })
-}
-
 Innovation.prototype.aYouLose = function(player, card) {
   this.log.add({
     template: '{player} loses the game due to {card}',

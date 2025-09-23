@@ -33,7 +33,7 @@ function MeldAction(player, card, opts={}) {
     _maybeCityBiscuits.call(this, player, card)
     _maybeDiscoverBiscuit.call(this, player, card)
     if (isFirstCard) {
-      this.game._maybeDrawCity(player, opts)
+      this._maybeDrawCity(player, opts)
     }
     _maybeDigArtifact.call(this, player, card)
     _maybePromote.call(this, player, card)
