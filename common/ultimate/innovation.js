@@ -904,13 +904,6 @@ Innovation.prototype.checkAgeZeroInPlay = function() {
   return false
 }
 
-Innovation.prototype.checkCardIsTop = function(card) {
-  const re = /^players.[^.]*.(yellow|red|green|blue|purple)$/i
-  const isOnBoard = card.zone.id.match(re) !== null
-  const isTop = card.zone.peek() === card
-  return isOnBoard && isTop
-}
-
 Innovation.prototype.checkColorIsSplayed = function(player, color) {
   return this.zones.byPlayer(player, color).splay !== 'none'
 }
@@ -1189,7 +1182,7 @@ Innovation.prototype.getUniquePlayerWithMostBiscuits = function(biscuit) {
 
 Innovation.prototype.getVisibleEffects = function(card, kind, opts={}) {
   const player = opts.selfExecutor || this.players.byOwner(card)
-  const isTop = this.checkCardIsTop(card) || card.zone.id.endsWith('.artifact')
+  const isTop = card.isTopCardLoose() || card.zone.id.endsWith('.artifact')
 
   if (kind === 'dogma') {
     if ((opts.selfExecutor || isTop) && card.dogma.length > 0) {

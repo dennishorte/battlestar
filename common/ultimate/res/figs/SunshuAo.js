@@ -22,7 +22,7 @@ module.exports = {
         game.actions.meld(player, card)
         game.aCardEffects(player, card, 'dogma')
 
-        if (game.checkCardIsTop(card)) {
+        if (card.isTopCardStrict()) {
           game.log.add({
             template: '{player} returns {card} to hand',
             args: { player, card }

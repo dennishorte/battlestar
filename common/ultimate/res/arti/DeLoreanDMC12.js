@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      if (game.checkCardIsTop(self) && !self.zone.endsWith('.artifact')) {
+      if (self.isTopCardStrict() && !self.zone.endsWith('.artifact')) {
         const topCards = game
           .players.all()
           .flatMap(player => game.cards.tops(player))

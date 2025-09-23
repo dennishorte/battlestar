@@ -26,7 +26,7 @@ class UltimateAgeCard extends UltimateBaseCard {
 
   getSplay() {
     if (this.owner) {
-      if (this.checkIsTopCard()) {
+      if (this.isTopCardLoose()) {
         return 'top'
       }
       else {
@@ -131,7 +131,7 @@ class UltimateAgeCard extends UltimateBaseCard {
     return 'lciskfp'.includes(biscuit)
   }
 
-  checkIsTopCard() {
+  isTopCardLoose() {
     if (!this.owner) {
       return true
     }
@@ -140,6 +140,10 @@ class UltimateAgeCard extends UltimateBaseCard {
       return true
     }
 
+    return this.isTopCardStrict()
+  }
+
+  isTopCardStrict() {
     return this.game.cards.top(this.owner, this.color)?.id === this.id
   }
 

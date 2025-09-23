@@ -25,10 +25,9 @@ module.exports = {
       }
     },
 
-    (game, player) => {
-      const ark = game.cards.byId('Ark of the Covenant')
-      if (game.checkCardIsTop(ark)) {
-        game.actions.transfer(player, ark, game.zones.byPlayer(player, 'hand'))
+    (game, player, { self }) => {
+      if (self.isTopCardStrict()) {
+        game.actions.transfer(player, self, game.zones.byPlayer(player, 'hand'))
       }
       else {
         game.log.add({
