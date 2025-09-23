@@ -18,6 +18,36 @@ class UltimateActionManager extends BaseActionManager {
   endorse = EndorseAction
   meld = MeldAction
 
+  /**
+     This is the Achieve Action, not just claiming an achievemenet as part of a dogma action.
+   */
+  achieveAction(player, arg, opts={}) {
+    const _parseHiddenCardName = function(name) {
+      return {
+        expansion: name.substr(1,4),
+        age: parseInt(name.substr(6)),
+      }
+    }
+
+    if (arg.startsWith('safe: ')) {
+      const hiddenName = arg.substr(6)
+      const { expansion, age } = _parseHiddenCardName(hiddenName)
+      const card = this
+        .cards.byPlayer(player, 'safe')
+        .find(c => c.expansion === expansion && c.getAge() === age)
+      this.actions.claimAchievement(player, { card })
+    }
+    else if (arg.startsWith('*')) {
+      const { expansion, age } = _parseHiddenCardName(arg)
+      const isStandard = opts.nonAction ? false : true
+      this.actions.claimAchievement(player, { expansion, age, isStandard })
+    }
+    else {
+      const card = this.cards.byId(arg)
+      this.actions.claimAchievement(player, { card })
+    }
+  }
+
   acted(player) {
     if (!this.state.initializationComplete || !this.state.firstPicksComplete) {
       return
