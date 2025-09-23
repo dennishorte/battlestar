@@ -570,7 +570,7 @@ Innovation.prototype.aCardEffects = function(
   kind,
   opts={}
 ) {
-  const effects = this.getVisibleEffects(card, kind, opts)
+  const effects = card.visibleEffects(kind, opts)
   if (!effects) {
     return
   }
@@ -909,7 +909,7 @@ Innovation.prototype.checkColorIsSplayed = function(player, color) {
 }
 
 Innovation.prototype.checkEffectIsVisible = function(card) {
-  return this.getVisibleEffects(card, 'dogma') || this.getVisibleEffects(card, 'echo')
+  return card.visibleEffects('dogma') || card.visibleEffects('echo')
 }
 
 Innovation.prototype.checkInKarma = function() {
@@ -1073,7 +1073,7 @@ Innovation.prototype.getInfoByKarmaTrigger = function(player, trigger) {
 
 Innovation.prototype.getEffectByText = function(card, text) {
   for (const kind of ['dogma', 'echo']) {
-    const effects = this.getVisibleEffects(card, kind)
+    const effects = card.visibleEffects(kind)
     if (!effects) {
       continue
     }
@@ -1180,63 +1180,6 @@ Innovation.prototype.getUniquePlayerWithMostBiscuits = function(biscuit) {
   }
 }
 
-Innovation.prototype.getVisibleEffects = function(card, kind, opts={}) {
-  const player = opts.selfExecutor || this.players.byOwner(card)
-  const isTop = card.isTopCardLoose() || card.zone.id.endsWith('.artifact')
-
-  if (kind === 'dogma') {
-    if ((opts.selfExecutor || isTop) && card.dogma.length > 0) {
-      return {
-        card,
-        texts: card.dogma,
-        impls: card.getImpl('dogma'),
-      }
-    }
-  }
-
-  else if (kind === 'echo') {
-    const hexKarmas = this
-      .getInfoByKarmaTrigger(player, 'hex-effect')
-      .filter(info => info.impl.matches(this, player, { card }))
-    const includeHexesAsEcho = hexKarmas.length > 0
-    const hexIsVisible = includeHexesAsEcho && card.checkBiscuitIsVisible('h')
-
-    const texts = []
-    const impls = []
-
-    if (card.checkEchoIsVisible()) {
-      for (const text of util.getAsArray(card, 'echo')) {
-        texts.push(text)
-      }
-      for (const impl of util.getAsArray(card, 'echoImpl')) {
-        impls.push(impl)
-      }
-    }
-
-    if (hexIsVisible) {
-      const { text, impl } = hexKarmas[0].impl.func(this, player, { card })
-      if (text) {
-        texts.push(text)
-        impls.push(impl)
-      }
-    }
-
-    if (texts.length > 0) {
-      return {
-        card,
-        texts,
-        impls,
-      }
-    }
-  }
-
-  else {
-    throw new Error(`Unknown effect type: ${kind}`)
-  }
-
-  return undefined
-}
-
 Innovation.prototype.getVisibleEffectsByColor = function(player, color, kind) {
   const karma = this
     .getInfoByKarmaTrigger(player, `list-${kind}-effects`)
@@ -1257,7 +1200,7 @@ Innovation.prototype.getVisibleEffectsByColor = function(player, color, kind) {
       .cards
       .byPlayer(player, color)
       .reverse()
-      .map(card => this.getVisibleEffects(card, kind))
+      .map(card => card.visibleEffects(kind))
       .filter(effect => effect !== undefined)
   }
 }

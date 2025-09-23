@@ -272,7 +272,65 @@ class UltimateAgeCard extends UltimateBaseCard {
   }
 
   inHand(player) {
-    return this.owner === player && this.zone.id.endsWith('hand')
+    return this.owner === player && this.game.zone.id.endsWith('hand')
+  }
+
+  visibleEffects(kind, opts={}) {
+    const player = opts.selfExecutor || this.players.byOwner(this)
+    const isTop = this.isTopCardLoose() || this.zone.id.endsWith('.artifact')
+
+    if (kind === 'dogma') {
+      if ((opts.selfExecutor || isTop) && this.dogma.length > 0) {
+        return {
+          card: this,
+          texts: this.dogma,
+          impls: this.getImpl('dogma'),
+        }
+      }
+    }
+
+    else if (kind === 'echo') {
+      const hexKarmas = this
+        .game
+        .getInfoByKarmaTrigger(player, 'hex-effect')
+        .filter(info => info.impl.matches(this, player, { card: this }))
+      const includeHexesAsEcho = hexKarmas.length > 0
+      const hexIsVisible = includeHexesAsEcho && this.checkBiscuitIsVisible('h')
+
+      const texts = []
+      const impls = []
+
+      if (this.checkEchoIsVisible()) {
+        for (const text of util.getAsArray(this, 'echo')) {
+          texts.push(text)
+        }
+        for (const impl of util.getAsArray(this, 'echoImpl')) {
+          impls.push(impl)
+        }
+      }
+
+      if (hexIsVisible) {
+        const { text, impl } = hexKarmas[0].impl.func(this, player, { card: this })
+        if (text) {
+          texts.push(text)
+          impls.push(impl)
+        }
+      }
+
+      if (texts.length > 0) {
+        return {
+          card: this,
+          texts,
+          impls,
+        }
+      }
+    }
+
+    else {
+      throw new Error(`Unknown effect type: ${kind}`)
+    }
+
+    return undefined
   }
 }
 

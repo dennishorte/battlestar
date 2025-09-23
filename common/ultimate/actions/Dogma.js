@@ -70,7 +70,7 @@ function _executeEffects(player, card, shareData, opts) {
   // Store planned effects now, as changes to the stacks shouldn't affect them.
   const effects = [
     ...this.game.getVisibleEffectsByColor(card.owner, card.color, 'echo'),
-    this.game.getVisibleEffects(card, 'dogma')
+    card.visibleEffects('dogma'),
   ].filter(e => e !== undefined)
 
   const effectOpts = {
