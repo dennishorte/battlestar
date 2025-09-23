@@ -150,13 +150,13 @@ function _maybeDigArtifact(player, card) {
 
   // Dig up an artifact if player melded a card of lesser or equal age of the previous top card.
   if (next.getAge() >= card.getAge()) {
-    this.game.aDigArtifact(player, next.getAge())
+    this.game.actions.digArtifact(player, next.getAge())
     return
   }
 
   // Dig up an artifact if the melded card has its hex icon in the same position.
   if (next.getHexIndex() === card.getHexIndex()) {
-    this.game.aDigArtifact(player, next.getAge())
+    this.game.actions.digArtifact(player, next.getAge())
     return
   }
 }

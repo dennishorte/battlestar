@@ -869,25 +869,6 @@ Innovation.prototype.aKarma = function(player, kind, opts={}) {
   return this._aKarmaHelper(player, infos, { ...opts, trigger: kind })
 }
 
-Innovation.prototype.aDigArtifact = function(player, age) {
-  if (age > 11 || this.zones.byDeck('arti', age).cardlist().length === 0) {
-    this.log.add({
-      template: `Artifacts deck for age ${age} is empty.`
-    })
-    return
-  }
-
-  const card = this.actions.draw(player, { age, exp: 'arti' })
-  if (card) {
-    this.log.add({
-      template: '{player} digs {card}',
-      args: { player, card },
-    })
-    card.moveTo(this.zones.byPlayer(player, 'artifact'))
-    this.acted(player)
-  }
-}
-
 // Used in two cases:
 //  1. Player melds a card onto an empty color stack.
 //  2. Player splays a color in a new direction.

@@ -391,6 +391,25 @@ class UltimateActionManager extends BaseActionManager {
     return card
   }
 
+  digArtifact(player, age) {
+    if (age > this.util.maxAge() || this.cards.byDeck('arti', age).length === 0) {
+      this.log.add({
+        template: `Artifacts deck for age ${age} is empty.`
+      })
+      return
+    }
+
+    const card = this.actions.draw(player, { age, exp: 'arti' })
+    if (card) {
+      this.log.add({
+        template: '{player} digs {card}',
+        args: { player, card },
+      })
+      card.moveTo(this.zones.byPlayer(player, 'artifact'))
+      this.acted(player)
+    }
+  }
+
   foreshadow = UltimateActionManager.insteadKarmaWrapper('foreshadow', (player, card) => {
     const zoneLimit = this.game.getForecastLimit(player)
     const target = this.zones.byPlayer(player, 'forecast')
