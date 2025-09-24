@@ -269,17 +269,13 @@ class UltimateActionManager extends BaseActionManager {
       if (cardNames.includes('auto')) {
         return ['auto']
       }
-      else if (cardNames[0].startsWith('*')) {
-        // Card names were hidden. Convert back to arbitrary matching cards.
+      else {
         output = []
 
         for (const name of cardNames) {
           const mapping = choiceMap.find(m => m.name === name && !output.includes(m.card))
           output.push(mapping.card)
         }
-      }
-      else {
-        output = cardNames.map(name => this.cards.byId(name))
       }
 
       if (opts.guard && !opts.guard(output)) {
