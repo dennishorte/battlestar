@@ -13,7 +13,8 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const age = game.cards.top(player, 'blue').getAge()
+      const topCard = game.cards.top(player, 'blue')
+      const age = topCard ? topCard.getAge() : 1
       const cards = [
         game.actions.draw(player, { age }),
         game.actions.draw(player, { age }),
