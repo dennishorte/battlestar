@@ -10,6 +10,7 @@ describe("Sudoku", () => {
       dennis: {
         green: ['Barcode'],
         purple: ['Sudoku'],
+        hand: ['Monotheism', 'Mathematics']
       },
       decks: {
         base: {
@@ -22,6 +23,7 @@ describe("Sudoku", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Sudoku')
+    request = t.choose(game, request, 'Monotheism')
     request = t.choose(game, request, 4)
 
     t.testIsSecondPlayer(game)
@@ -29,7 +31,8 @@ describe("Sudoku", () => {
       dennis: {
         red: ['Colonialism', 'Engineering'],
         green: ['Barcode'],
-        purple: ['Sudoku'],
+        purple: ['Sudoku', 'Monotheism'],
+        hand: ['Mathematics'],
       },
     })
   })

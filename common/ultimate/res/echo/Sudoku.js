@@ -6,7 +6,7 @@ module.exports = {
   color: `purple`,
   age: 10,
   expansion: `echo`,
-  biscuits: `shsb`,
+  biscuits: `sh&b`,
   dogmaBiscuit: `s`,
   echo: `You may tuck any number of cards from your hand.`,
   dogma: [
