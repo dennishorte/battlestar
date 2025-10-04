@@ -106,7 +106,25 @@ const cardData = [
   require('./Twister.js')
 ]
 
-const achievementData = []
+function MuseumFactory(index) {
+  return {
+    name: 'Museum ' + index,
+    shortName: 'msm' + index,
+    expansion: 'arti',
+    text: '',
+    alt: '',
+    isSpecialAchievement: false,
+    isMuseum: true,
+  }
+}
+
+const achievementData = [
+  MuseumFactory(1),
+  MuseumFactory(2),
+  MuseumFactory(3),
+  MuseumFactory(4),
+  MuseumFactory(5),
+]
 
 module.exports = {
   cardData,

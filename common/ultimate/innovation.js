@@ -297,7 +297,7 @@ Innovation.prototype.artifact = function() {
     const action = this.requestInputSingle({
       actor: player.name,
       title: 'Free Artifact Action',
-      choices: ['dogma', 'return', 'skip']
+      choices: ['dogma', 'skip']
     })[0]
 
     switch (action) {
@@ -1455,6 +1455,10 @@ Innovation.prototype.getAvailableAchievements = function(player) {
 Innovation.prototype.getAvailableAchievementsByAge = function(player, age) {
   age = parseInt(age)
   return this.getAvailableStandardAchievements(player).filter(c => c.getAge() === age)
+}
+
+Innovation.prototype.getAvailableMuseums = function() {
+  return this.cards.byZone('achievements').filter(c => c.isMuseum)
 }
 
 Innovation.prototype.getAvailableStandardAchievements = function(player) {

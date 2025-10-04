@@ -1426,7 +1426,7 @@ describe('Innovation', () => {
       })
     })
 
-    describe.skip('artifacts', () => {
+    describe('artifacts', () => {
       test('hex position matching', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
         t.setBoard(game, {
@@ -1522,7 +1522,7 @@ describe('Innovation', () => {
         })
       })
 
-      test('can meld artifact on display', () => {
+      test('can activate or skip action', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
         t.setBoard(game, {
           dennis: {
@@ -1530,207 +1530,41 @@ describe('Innovation', () => {
           },
         })
 
-        const request1 = game.run()
-        const request2 = t.choose(game, request1, 'skip')
-        const request3 = t.choose(game, request2, 'Meld.Holmegaard Bows')
+        let request = game.run()
 
-        t.testBoard(game, {
-          dennis: {
-            red: ['Holmegaard Bows'],
-          },
-        })
+        t.testChoices(request, ['dogma', 'skip'])
       })
     })
 
-    describe.skip('relics', () => {
-      test('claim from achievements as achievement', () => {
+    describe('museums', () => {
+      test('museums are available in the achievements', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-        t.setBoard(game, {
-          dennis: {
-            green: ['Compass'],
-            hand: ['Sailing'],
-          },
-          decks: {
-            arti: {
-              3: ['Dunhuang Star Chart'],
-            }
-          }
-        })
-
-        const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Sailing')
-        const request3 = t.choose(game, request2, 'to my achievements')
-
-        t.testIsSecondPlayer(game)
-        t.testBoard(game, {
-          dennis: {
-            green: ['Sailing', 'Compass'],
-            artifact: ['Dunhuang Star Chart'],
-            achievements: ['Timbuktu'],
-          },
-        })
+        game.run()
+        const museums = game.getAvailableMuseums()
+        expect(museums.length).toBe(5)
       })
 
-      test('claim from achievements to hand', () => {
-        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-        t.setBoard(game, {
-          dennis: {
-            green: ['Compass'],
-            hand: ['Sailing'],
-          },
-          decks: {
-            arti: {
-              3: ['Dunhuang Star Chart'],
-            }
-          }
-        })
+      test('activated artifacts go to a museum', () => {
 
-        const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Sailing')
-        const request3 = t.choose(game, request2, 'to my hand')
-
-        t.testIsSecondPlayer(game)
-        t.testBoard(game, {
-          dennis: {
-            green: ['Sailing', 'Compass'],
-            artifact: ['Dunhuang Star Chart'],
-            hand: ['Timbuktu'],
-          },
-        })
       })
 
-      test('claim from opponent achievements', () => {
-        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-        t.setBoard(game, {
-          dennis: {
-            green: ['Compass'],
-            hand: ['Sailing'],
-          },
-          micah: {
-            achievements: ['Timbuktu'],
-          },
-          decks: {
-            arti: {
-              3: ['Dunhuang Star Chart'],
-            }
-          }
-        })
+      test('unactivated artifacts go to a museum', () => {
 
-        const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Sailing')
-        const request3 = t.choose(game, request2, 'to my achievements')
-
-        t.testIsSecondPlayer(game)
-        t.testBoard(game, {
-          dennis: {
-            green: ['Sailing', 'Compass'],
-            artifact: ['Dunhuang Star Chart'],
-            achievements: ['Timbuktu'],
-          },
-        })
       })
 
-      test('claim from my achievements to my hand', () => {
-        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-        t.setBoard(game, {
-          dennis: {
-            green: ['Compass'],
-            hand: ['Sailing'],
-            achievements: ['Timbuktu'],
-          },
-          decks: {
-            arti: {
-              3: ['Dunhuang Star Chart'],
-            }
-          }
-        })
+      test('artifacts in a museum can be melded', () => {
 
-        const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Sailing')
-        const request3 = t.choose(game, request2, 'to my hand')
-
-        t.testIsSecondPlayer(game)
-        t.testBoard(game, {
-          dennis: {
-            green: ['Sailing', 'Compass'],
-            artifact: ['Dunhuang Star Chart'],
-            hand: ['Timbuktu'],
-          },
-        })
       })
 
-      test.skip('return from achievements', () => {
-        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-        t.setBoard(game, {
-          dennis: {
-            purple: ["'30 World Cup Final Ball"],
-          },
-          micah: {
-            yellow: ['Agriculture'],
-            achievements: ['Timbuktu'],
-          },
-          decks: {
-            base: {
-              8: ['Flight', 'Mobility', 'Skyscrapers'],
-            }
-          }
-        })
+      test('museum checks are triggered', () => {
 
-        const request1 = game.run()
-        const request2 = t.choose(game, request1, "Dogma.'30 World Cup Final Ball")
-
-        t.testIsSecondPlayer(game)
-        t.testBoard(game, {
-          dennis: {
-            purple: ["'30 World Cup Final Ball"],
-            hand: ['Mobility', 'Skyscrapers'],
-          },
-          micah: {
-            yellow: ['Agriculture'],
-            hand: ['Flight'],
-          },
-        })
-
-        const timbuktu = game
-          .zones.byId('achievements')
-          .cardlist()
-          .find(card => card.name === 'Timbuktu')
-        expect(!!timbuktu).toBe(true)
       })
 
-      test.skip('return from hand (as a non-achievements zone)', () => {
-        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-        t.setBoard(game, {
-          dennis: {
-            yellow: ['Agriculture'],
-            hand: ['Timbuktu'],
-          },
-          decks: {
-            base: {
-              4: ['Gunpowder'],
-            }
-          }
-        })
+      test('artifacts rotate into hand if there are no museums', () => {
 
-        const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Dogma.Agriculture')
-        const request3 = t.choose(game, request2, 'Timbuktu')
-
-        t.testIsSecondPlayer(game)
-        t.testBoard(game, {
-          dennis: {
-            yellow: ['Agriculture'],
-            score: ['Gunpowder'],
-          },
-        })
-
-        const timbuktu = game
-          .zones.byId('achievements')
-          .cardlist()
-          .find(card => card.name === 'Timbuktu')
-        expect(!!timbuktu).toBe(true)
       })
     })
+
   })
 
   describe.skip('logs', () => {
