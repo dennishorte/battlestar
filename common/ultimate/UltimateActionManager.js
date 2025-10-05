@@ -534,6 +534,68 @@ class UltimateActionManager extends BaseActionManager {
     return card
   })
 
+  rotate(player, card) {
+    // Get a museum
+    const museum = this.game.getAvailableMuseums().sort((l, r) => l.name.localeCompare(r.name))[0]
+
+    // If there are no museums, rotate the card into the player's hand
+    if (!museum) {
+      this.log.add({
+        template: 'There are no available museums. {card} rotates to the hand of {player}.',
+        args: { card, player }
+      })
+      card.moveTo(this.zones.byPlayer(player, 'hand'))
+      return
+    }
+
+    // Otherwise, move the museum into the player's zone and place the card onto it
+    this.log.add({
+      template: '{card} rotates into a musuem',
+      args: { card }
+    })
+    museum.moveTo(this.zones.byPlayer(player, 'museum'))
+    card.moveTo(this.zones.byPlayer(player, 'museum'))
+
+    // If there are no more available museums, do a museum check
+    if (this.game.getAvailableMuseums().length === 0) {
+      this.log.add({
+        template: 'There are no available museums; doing a museum check.'
+      })
+
+      // The single player with the most museums claims one
+      const museumCounts = this
+        .players
+        .all()
+        .map(player => ({
+          player,
+          count: this.cards.byPlayer(player, 'museum').length / 2,
+        }))
+        .sort((l, r) => r.count - l.count)
+
+      if (museumCounts[0].count > museumCounts[1].count) {
+        const playerWithTheMost = museumCounts[0].player
+        this.log.add({
+          template: '{player} has the most museums',
+          args: { player: playerWithTheMost }
+        })
+        const museumToClaim = this.cards.byPlayer(playerWithTheMost, 'museum').find(card => card.isMuseum)
+        this.claimAchievement(playerWithTheMost, { card: museumToClaim })
+
+        // If so, return all cards on museums and all other museum cards
+        const cardsToReturn = this
+          .players
+          .all()
+          .flatMap(player => this.cards.byPlayer(player, 'museum'))
+
+        const museumsToReturn = cardsToReturn.filter(card => card.isMuseum)
+        const othersToReturn = cardsToReturn.filter(card => !card.isMuseum)
+
+        this.actions.returnMany(player, museumsToReturn, { ordered: true })
+        this.actions.returnMany(player, othersToReturn)
+      }
+    }
+  }
+
   safeguard = UltimateActionManager.insteadKarmaWrapper('safeguard', (player, card) => {
     const safeLimit = this.game.getSafeLimit(player)
     const safeZone = this.zones.byPlayer(player, 'safe')

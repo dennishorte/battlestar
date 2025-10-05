@@ -304,21 +304,18 @@ Innovation.prototype.artifact = function() {
       case 'dogma': {
         const startingZone = artifact.zone
         this.actions.dogma(player, artifact, { artifact: true })
-        if (startingZone === artifact.zone) {
-          this.actions.return(player, artifact)
-        }
+        this.actions.rotate(player, artifact)
         this.fadeFiguresCheck()
         break
       }
-      case 'return':
-        this.actions.return(player, artifact)
-        break
+
       case 'skip':
         this.log.add({
           template: '{player} skips the free artifact action',
           classes: ['action-header'],
           args: { player },
         })
+        this.actions.rotate(player, artifact)
         break
       default:
         throw new Error(`Unknown artifact action: ${action}`)
@@ -1458,7 +1455,11 @@ Innovation.prototype.getAvailableAchievementsByAge = function(player, age) {
 }
 
 Innovation.prototype.getAvailableMuseums = function() {
-  return this.cards.byZone('achievements').filter(c => c.isMuseum)
+  return this
+    .cards
+    .byZone('achievements')
+    .filter(c => c.isMuseum)
+    .sort((l, r) => l.name.localeCompare(r.name))
 }
 
 Innovation.prototype.getAvailableStandardAchievements = function(player) {
@@ -1648,17 +1649,19 @@ Innovation.prototype._generateActionChoicesEndorse = function() {
 Innovation.prototype._generateActionChoicesMeld = function() {
   const player = this.players.current()
   const cards = this
-    .zones.byPlayer(player, 'hand')
+    .zones
+    .byPlayer(player, 'hand')
     .cardlist()
-    .map(c => c.id)
 
   this
-    .cards.byPlayer(player, 'artifact')
-    .forEach(card => cards.push(card.id))
+    .cards
+    .byPlayer(player, 'museum')
+    .filter(card => !card.isMuseum)
+    .forEach(card => cards.push(card))
 
   return {
     title: 'Meld',
-    choices: cards,
+    choices: cards.map(c => c.id),
     min: 0,
     max: 1,
   }

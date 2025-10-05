@@ -11,12 +11,20 @@ function MeldAction(player, card, opts={}) {
 
   const isFirstCard = this.cards.byPlayer(player, card.color).length === 0
 
+  // If this card is in a museum, a museum card must be returned.
+  const fromMuseum = card.zone.isMuseumZone()
+
   card.moveTo(this.zones.byPlayer(player, card.color), 0)
 
   this.log.add({
     template: '{player} melds {card}',
     args: { player, card }
   })
+
+  if (fromMuseum) {
+    const museum = this.cards.byPlayer(player, 'museum').filter(card => card.isMuseum)[0]
+    this.return(player, museum)
+  }
 
   this.acted(player)
 
