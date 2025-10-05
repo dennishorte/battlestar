@@ -1559,6 +1559,67 @@ describe('Innovation', () => {
           })
         })
 
+        describe('siezing artifacts', () => {
+          test('seize artifact of the same age', () => {
+            const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+            t.setBoard(game, {
+              dennis: {
+                blue: ['Tools'],
+                hand: ['Pottery'],
+              },
+              micah: {
+                museum: ['Museum 2', 'Dancing Girl'],
+              },
+              junk: ['Museum 3', 'Museum 4', 'Museum 5'],
+            })
+
+            let request = game.run()
+            request = t.choose(game, request, 'Meld.Pottery')
+            request = t.choose(game, request, 'seize.Dancing Girl')
+
+            t.testIsSecondPlayer(game)
+            t.testBoard(game, {
+              dennis: {
+                blue: ['Pottery', 'Tools'],
+                museum: ['Museum 2', 'Dancing Girl'],
+              },
+            })
+          })
+
+          test('cannot seize if the age does not match', () => {
+            const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+            t.setBoard(game, {
+              dennis: {
+                blue: ['Mathematics'],
+                hand: ['Pottery'],
+              },
+              micah: {
+                museum: ['Museum 2', 'Dancing Girl'],
+              },
+              junk: ['Museum 3', 'Museum 4', 'Museum 5'],
+              decks: {
+                arti: {
+                  2: ['Rosetta Stone'],
+                },
+              },
+            })
+
+            let request = game.run()
+            request = t.choose(game, request, 'Meld.Pottery')
+
+            t.testIsSecondPlayer(game)
+            t.testBoard(game, {
+              dennis: {
+                blue: ['Pottery', 'Mathematics'],
+                artifact: ['Rosetta Stone'],
+              },
+              micah: {
+                museum: ['Museum 2', 'Dancing Girl'],
+              },
+            })
+          })
+        })
+
         test('artifacts rotate into hand if there are no museums', () => {
           const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
           t.setBoard(game, {

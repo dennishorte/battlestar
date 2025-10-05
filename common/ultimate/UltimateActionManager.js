@@ -392,21 +392,80 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   digArtifact(player, age) {
-    if (age > this.util.maxAge() || this.cards.byDeck('arti', age).length === 0) {
+    const choices = []
+
+    // Dig options
+    if (
+      this.cards.byPlayer(player, 'artifact').length === 0
+      && this.cards.byDeck('arti', age).length > 0
+      && age <= this.util.maxAge()
+    ) {
+      choices.push('dig')
+    }
+    else if (this.cards.byPlayer(player, 'artifact').length !== 0) {
+      this.log.add({
+        template: '{player} already has an artifact on display',
+        args: { player }
+      })
+    }
+    else {
       this.log.add({
         template: `Artifacts deck for age ${age} is empty.`
       })
-      return
     }
 
-    const card = this.actions.draw(player, { age, exp: 'arti' })
-    if (card) {
-      this.log.add({
-        template: '{player} digs {card}',
-        args: { player, card },
+    // Seize options
+    const canSeize = this
+      .players
+      .all()
+      .flatMap(player => this.cards.byPlayer(player, 'museum'))
+      .filter(card => !card.isMuseum)
+      .filter(card => card.getAge() === age)
+
+    if (canSeize.length > 0) {
+      choices.push({
+        title: 'seize',
+        choices: canSeize.map(c => c.id),
+        min: 0
       })
-      card.moveTo(this.zones.byPlayer(player, 'artifact'))
+    }
+
+    const chosen = this.choose(player, choices, {
+      title: 'Choose artifact option'
+    })[0]
+
+    if (chosen === 'dig') {
+      const card = this.actions.draw(player, { age, exp: 'arti' })
+      if (card) {
+        this.log.add({
+          template: '{player} digs {card}',
+          args: { player, card },
+        })
+        card.moveTo(this.zones.byPlayer(player, 'artifact'))
+        this.acted(player)
+      }
+    }
+    else if (chosen.title === 'seize') {
+      const cardName = chosen.selection[0]
+      const card = this.cards.byId(cardName)
+      const museum = card.zone.cardlist().find(card => card.isMuseum)
+      const originalOwner = card.owner
+      const playerMuseumZone = this.zones.byPlayer(player, 'museum')
+      card.moveTo(playerMuseumZone)
+      museum.moveTo(playerMuseumZone)
+
+      this.log.add({
+        template: '{player} seizes {card} from {player2}',
+        args: {
+          player,
+          card,
+          player2: originalOwner
+        }
+      })
       this.acted(player)
+    }
+    else {
+      throw new Error(`Unknown artifact action: ${chosen} (${chosen.title})`)
     }
   }
 

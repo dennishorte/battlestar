@@ -144,11 +144,6 @@ function _maybeDigArtifact(player, card) {
     return
   }
 
-  // Can only have one artifact on display at a time.
-  if (this.cards.byPlayer(player, 'artifact').length > 0) {
-    return
-  }
-
   const next = this.cards.byPlayer(player, card.color)[1]
 
   // No card underneath, so no artifact dig possible.
