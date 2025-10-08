@@ -1,17 +1,19 @@
 module.exports = {
-  name: `Petition of Rights`,
+  name: `Petition of Right`,
   color: `blue`,
   age: 4,
   expansion: `arti`,
   biscuits: `shcs`,
   dogmaBiscuit: `s`,
   dogma: [
-    `I compel you to transfer a card from your score pile to my score pile for each top card with a {k} on your board.`
+    `I compel you to transfer a card from your score pile to my score pile for every color with {k} on your board.`,
+    `Junk an available achievement of value equal to the number of {k} on your board.`
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
       const count = game
-        .cards.tops(player)
+        .cards
+        .tops(player)
         .filter(card => card.checkHasBiscuit('k'))
         .length
       game.actions.chooseAndTransfer(
@@ -20,6 +22,11 @@ module.exports = {
         game.zones.byPlayer(leader, 'score'),
         { count },
       )
-    }
+    },
+
+    (game, player) => {
+      const biscuits = player.biscuits().k
+      game.actions.junkAvailableAchievement(player, biscuits)
+    },
   ],
 }

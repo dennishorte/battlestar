@@ -40,7 +40,7 @@ const cardData = [
   require('./MonaLisa.js'),
   require('./MolassesReefCaravel.js'),
   require('./HuntLennoxGlobe.js'),
-  require('./PetitionofRights.js'),
+  require('./PetitionofRight.js'),
   require('./DelftPocketTelescope.js'),
   require('./CrossofCoronado.js'),
   require('./AbellGalleryHarpsichord.js'),
