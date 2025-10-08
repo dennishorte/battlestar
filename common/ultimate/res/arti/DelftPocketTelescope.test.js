@@ -28,6 +28,7 @@ describe('Delft Pocket Telescope', () => {
     t.testBoard(game, {
       dennis: {
         hand: ['Coal', 'Industrialization'],
+        museum: ['Museum 1', 'Delft Pocket Telescope'],
       }
     })
   })
@@ -55,6 +56,7 @@ describe('Delft Pocket Telescope', () => {
     t.testBoard(game, {
       dennis: {
         hand: ['Statistics', 'Industrialization'],
+        museum: ['Museum 1', 'Delft Pocket Telescope'],
       }
     })
   })
@@ -83,6 +85,7 @@ describe('Delft Pocket Telescope', () => {
     t.testBoard(game, {
       dennis: {
         hand: ['Coal', 'Classification'],
+        museum: ['Museum 1', 'Delft Pocket Telescope'],
       }
     })
   })

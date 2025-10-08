@@ -28,6 +28,7 @@ describe("Galleon Nuestra Senora De Atocha", () => {
       dennis: {
         blue: ['Mathematics'],
         score: ['Calendar', 'Construction'],
+        museum: ['Museum 1', 'Galleon Nuestra Senora De Atocha'],
       },
       micah: {
         red: ['Coal'],

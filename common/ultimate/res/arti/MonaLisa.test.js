@@ -35,6 +35,7 @@ describe("Mona Lisa", () => {
         },
         hand: ['Reformation', 'Experimentation', 'Enterprise', 'Perspective'],
         score: ['Oars', 'Gunpowder'],
+        museum: ['Museum 1', 'Mona Lisa'],
       },
     })
   })
@@ -65,6 +66,7 @@ describe("Mona Lisa", () => {
     t.testBoard(game, {
       dennis: {
         red: ['Construction', 'Archery'],
+        museum: ['Museum 1', 'Mona Lisa'],
       },
     })
   })

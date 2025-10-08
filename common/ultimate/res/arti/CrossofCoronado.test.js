@@ -37,6 +37,7 @@ describe('Cross of Coronado', () => {
     t.testBoard(game,  {
       dennis: {
         hand: ['Mathematics', 'Archery', 'Domestication', 'Sailing', 'Experimentation'],
+        museum: ['Museum 1', 'Cross of Coronado'],
       },
     })
   })

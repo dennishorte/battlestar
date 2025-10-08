@@ -27,6 +27,7 @@ describe("Molasses Reef Caravel", () => {
       dennis: {
         green: ['Navigation'],
         hand: ['Gunpowder', 'Reformation'],
+        museum: ['Museum 1', 'Molasses Reef Caravel'],
       },
     })
 

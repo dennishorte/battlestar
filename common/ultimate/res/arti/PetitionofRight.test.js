@@ -34,6 +34,7 @@ describe("Petition of Right", () => {
       dennis: {
         score: ['Tools', 'Sailing'],
         hand: ['Metalworking'],
+        museum: ['Museum 1', 'Petition of Right'],
       },
       micah: {
         purple: ['Philosophy'],

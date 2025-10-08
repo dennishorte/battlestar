@@ -37,6 +37,7 @@ describe('Abell Gallery Harpsichord', () => {
         red: ['Engineering'],
         purple: ['Societies'],
         score: ['Sailing', 'Construction', 'Astronomy'],
+        museum: ['Museum 1','Abell Gallery Harpsichord'],
       },
     })
   })

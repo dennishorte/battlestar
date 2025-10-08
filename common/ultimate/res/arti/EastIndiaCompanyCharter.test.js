@@ -31,6 +31,7 @@ describe('East India Company Charter', () => {
     t.testBoard(game, {
       dennis: {
         score: ['Tools', 'Gunpowder', 'Astronomy', 'Chemistry'],
+        museum: ['Museum 1', 'East India Company Charter'],
       },
       micah: {
         score: ['Engineering'],

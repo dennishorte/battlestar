@@ -33,7 +33,8 @@ describe('Hunt-Lennox Globe', () => {
         red: ['Coal', 'Archery'],
         blue: ['Tools'],
         green: ['Navigation', 'The Wheel'],
-        hand: ['Sailing', 'Enterprise', 'Calendar', 'Astronomy']
+        hand: ['Sailing', 'Enterprise', 'Calendar', 'Astronomy'],
+        museum: ['Museum 1', 'Hunt-Lennox Globe'],
       },
     })
   })
@@ -66,7 +67,8 @@ describe('Hunt-Lennox Globe', () => {
         red: ['Construction', 'Archery'],
         blue: ['Experimentation', 'Mathematics', 'Tools'],
         green: ['Navigation', 'The Wheel'],
-        hand: ['Sailing', 'Enterprise', 'Calendar']
+        hand: ['Sailing', 'Enterprise', 'Calendar'],
+        museum: ['Museum 1', 'Hunt-Lennox Globe'],
       },
     })
   })

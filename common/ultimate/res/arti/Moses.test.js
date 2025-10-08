@@ -34,6 +34,7 @@ describe("Moses", () => {
       dennis: {
         score: ['Navigation', 'Code of Laws', 'Sailing'],
         hand: ['Tools'],
+        museum: ['Museum 1', 'Moses'],
       },
       micah: {
         yellow: ['Agriculture'],
