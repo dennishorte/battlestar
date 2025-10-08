@@ -391,6 +391,7 @@ Innovation.prototype.action = function(count) {
   this.log.outdent()
 
   this.fadeFiguresCheck()
+  this.mResetDogmaInfo()
 }
 
 Innovation.prototype.fadeFiguresCheck = function() {
