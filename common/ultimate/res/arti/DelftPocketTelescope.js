@@ -17,7 +17,7 @@ module.exports = {
           break
         }
 
-        game.mReveal(player, card)
+        game.actions.reveal(player, card)
         const returned = game.actions.return(player, card)
 
         if (!returned) {
@@ -42,7 +42,7 @@ module.exports = {
 
         if (choices.length > 0) {
           const card = game.actions.chooseCard(player, choices)
-          game.mReveal(player, card)
+          game.actions.reveal(player, card)
           break
         }
         else {
