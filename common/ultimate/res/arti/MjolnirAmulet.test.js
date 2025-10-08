@@ -25,6 +25,7 @@ describe("Mjolnir Amulet", () => {
     t.testBoard(game, {
       dennis: {
         score: ['Archery', 'Coal'],
+        museum: ['Museum 1', 'Mjolnir Amulet'],
       },
       micah: {
         green: ['The Wheel'],

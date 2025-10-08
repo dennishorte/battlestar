@@ -25,6 +25,7 @@ describe("Philosopher's Stone", () => {
       dennis: {
         score: ['Tools', 'Sailing'],
         hand: ['Mathematics'],
+        museum: ['Museum 1', "Philosopher's Stone"],
       },
     })
 

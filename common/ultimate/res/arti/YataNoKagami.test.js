@@ -36,6 +36,7 @@ describe('Yata No Kagami', () => {
           splay: 'left',
         },
         hand: ['Tools'],
+        museum: ['Museum 1', 'Yata No Kagami'],
       },
       micah: {
         blue: ['Experimentation'],

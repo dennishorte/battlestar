@@ -33,6 +33,7 @@ describe('Excalibur', () => {
         green: ['The Wheel'],
         red: ['Construction'],
         purple: ['Philosophy'],
+        museum: ['Museum 1', 'Excalibur'],
       },
       micah: {
         red: ['Metalworking'],

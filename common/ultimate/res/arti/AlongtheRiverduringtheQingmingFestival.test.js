@@ -25,6 +25,7 @@ describe('Along the River during the Qingming Festival', () => {
     t.testBoard(game, {
       dennis: {
         yellow: ['Perspective'],
+        museum: ['Museum 1', 'Along the River during the Qingming Festival'],
       },
     })
   })
@@ -50,6 +51,7 @@ describe('Along the River during the Qingming Festival', () => {
     t.testBoard(game, {
       dennis: {
         score: ['Enterprise'],
+        museum: ['Museum 1', 'Along the River during the Qingming Festival'],
       },
     })
   })
@@ -76,6 +78,7 @@ describe('Along the River during the Qingming Festival', () => {
       dennis: {
         yellow: ['Perspective'],
         hand: ['Experimentation'],
+        museum: ['Museum 1', 'Along the River during the Qingming Festival'],
       },
     })
   })

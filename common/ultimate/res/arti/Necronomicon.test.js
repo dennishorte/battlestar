@@ -36,6 +36,7 @@ describe("Necronomicon", () => {
         },
         hand: ['Tools', 'Education'],
         score: ['Software'],
+        museum: ['Museum 1', 'Necronomicon'],
       },
     })
   })
@@ -72,6 +73,7 @@ describe("Necronomicon", () => {
           splay: 'left'
         },
         score: ['Software'],
+        museum: ['Museum 1', 'Necronomicon'],
       },
     })
   })
@@ -105,6 +107,7 @@ describe("Necronomicon", () => {
         red: ['Engineering', 'Archery'],
         hand: ['Tools', 'Paper'],
         score: ['Software'],
+        museum: ['Museum 1', 'Necronomicon'],
       },
     })
   })
@@ -140,6 +143,7 @@ describe("Necronomicon", () => {
           splay: 'left'
         },
         hand: ['Tools', 'Optics'],
+        museum: ['Museum 1', 'Necronomicon'],
       },
     })
   })
@@ -177,6 +181,7 @@ describe("Necronomicon", () => {
         },
         hand: ['Tools', 'Translation', 'Computers'],
         score: ['Software'],
+        museum: ['Museum 1', 'Necronomicon'],
       },
     })
   })

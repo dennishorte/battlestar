@@ -24,7 +24,8 @@ describe("Moylough Belt Shrine", () => {
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
-        purple: ['Code of Laws']
+        purple: ['Code of Laws'],
+        museum: ['Museum 1', 'Moylough Belt Shrine'],
       },
       micah: {
         green: ['The Wheel'],
@@ -52,6 +53,9 @@ describe("Moylough Belt Shrine", () => {
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
+      dennis: {
+        museum: ['Museum 1', 'Moylough Belt Shrine'],
+      },
       micah: {
         green: ['The Wheel'],
       },

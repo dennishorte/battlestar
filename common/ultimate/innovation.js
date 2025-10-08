@@ -1467,7 +1467,7 @@ Innovation.prototype.getAvailableStandardAchievements = function(player) {
     .zones
     .byId('achievements')
     .cardlist()
-    .filter(c => !c.isSpecialAchievement && !c.isDecree)
+    .filter(c => !c.isSpecialAchievement && !c.isDecree && !c.isMuseum)
 
   const fromKarma = this
     .getInfoByKarmaTrigger(player, 'list-achievements')

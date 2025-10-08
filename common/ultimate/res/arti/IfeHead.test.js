@@ -25,6 +25,7 @@ describe('Ife Head', () => {
           cards: ['Coal', 'Construction'],
           splay: 'right'
         },
+        museum: ['Museum 1', 'Ife Head'],
       },
       junk: ['Mathematics'],
     })
@@ -57,6 +58,7 @@ describe('Ife Head', () => {
           splay: 'right'
         },
         hand: ['Philosophy'],
+        museum: ['Museum 1', 'Ife Head'],
       },
       junk: [],
     })

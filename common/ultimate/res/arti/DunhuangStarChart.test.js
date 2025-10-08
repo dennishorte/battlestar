@@ -27,6 +27,7 @@ describe('Dunhuang Star Chart', () => {
     t.testBoard(game, {
       dennis: {
         hand: ['Canning'],
+        museum: ['Museum 1', 'Dunhuang Star Chart'],
       },
     })
   })

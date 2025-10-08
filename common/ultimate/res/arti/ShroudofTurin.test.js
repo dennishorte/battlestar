@@ -24,6 +24,7 @@ describe("Shroud of Turin", () => {
     t.testBoard(game, {
       dennis: {
         achievements: ['Software'],
+        museum: ['Museum 1', 'Shroud of Turin'],
       }
     })
   })
@@ -47,6 +48,7 @@ describe("Shroud of Turin", () => {
       dennis: {
         green: ['Compass'],
         score: ['Sailing'],
+        museum: ['Museum 1', 'Shroud of Turin'],
       }
     })
   })
@@ -68,6 +70,7 @@ describe("Shroud of Turin", () => {
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
+        museum: ['Museum 1', 'Shroud of Turin'],
       }
     })
   })
@@ -89,6 +92,7 @@ describe("Shroud of Turin", () => {
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
+        museum: ['Museum 1', 'Shroud of Turin'],
       }
     })
   })
