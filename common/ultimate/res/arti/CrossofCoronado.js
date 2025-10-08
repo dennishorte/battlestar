@@ -13,9 +13,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const cards = game.cards.byPlayer(player, 'hand')
-      for (const card of cards) {
-        game.mReveal(player, card)
-      }
+      game.actions.revealMany(player, cards, { ordered: true })
 
       const colors = util.array.distinct(cards.map(card => card.color))
       if (cards.length === 5 && colors.length === 5) {
