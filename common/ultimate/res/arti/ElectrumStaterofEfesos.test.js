@@ -28,6 +28,7 @@ describe('Electrum Stater of Efesos', () => {
         red: ['Construction'],
         yellow: ['Machinery'],
         hand: ['Engineering'],
+        museum: ['Museum 1', 'Electrum Stater of Efesos'],
       },
     })
   })

@@ -36,6 +36,7 @@ describe("Priest-King", () => {
         green: ['The Wheel'],
         score: ['Code of Laws'],
         hand: ['Tools'],
+        museum: ['Museum 1', 'Priest-King'],
       },
       micah: {
         red: ['Oars'],

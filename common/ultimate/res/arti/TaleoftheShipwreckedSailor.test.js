@@ -33,6 +33,7 @@ describe("Tale of the Shipwrecked Sailor", () => {
           splay: 'left'
         },
         hand: ['Sailing'],
+        museum: ['Museum 1', 'Tale of the Shipwrecked Sailor'],
       },
       standardAchievements: ['Construction'],
       junk: ['Domestication'],

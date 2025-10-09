@@ -27,6 +27,7 @@ describe('Basur Hoyuk Tokens', () => {
       dennis: {
         hand: ['Reformation'],
         score: ['Sailing'],
+        museum: ['Museum 1', 'Basur Hoyuk Tokens'],
       },
     })
   })
@@ -55,6 +56,7 @@ describe('Basur Hoyuk Tokens', () => {
     t.testBoard(game, {
       dennis: {
         purple: ['Monotheism', 'Code of Laws'],
+        museum: ['Museum 1', 'Basur Hoyuk Tokens'],
       },
     })
   })

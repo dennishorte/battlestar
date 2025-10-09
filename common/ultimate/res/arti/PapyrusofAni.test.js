@@ -29,6 +29,7 @@ describe("Papyrus of Ani", () => {
       dennis: {
         purple: ['Education'],
         score: ['Sailing'],
+        museum: ['Museum 1', 'Papyrus of Ani'],
       },
     })
   })
@@ -50,6 +51,7 @@ describe("Papyrus of Ani", () => {
     t.testBoard(game, {
       dennis: {
         hand: ['Tools'],
+        museum: ['Museum 1', 'Papyrus of Ani'],
       },
     })
   })

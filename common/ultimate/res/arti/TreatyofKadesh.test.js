@@ -36,6 +36,7 @@ describe("Treaty of Kadesh", () => {
         green: ['Sailing'],
         score: ['Archery'],
         hand: ['Tools'],
+        museum: ['Museum 1', 'Treaty of Kadesh'],
       },
       micah: {
         blue: ['Mathematics'],

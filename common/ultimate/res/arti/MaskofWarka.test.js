@@ -25,6 +25,7 @@ describe("Mask of Warka", () => {
       dennis: {
         hand: ['Sailing'],
         achievements: ['Construction', 'Robotics'],
+        museum: ['Museum 1', 'Mask of Warka'],
       },
     })
   })
@@ -50,6 +51,7 @@ describe("Mask of Warka", () => {
     t.testBoard(game, {
       dennis: {
         hand: ['Sailing', 'Calendar', 'Software'],
+        museum: ['Museum 1', 'Mask of Warka'],
       },
       micah: {
         hand: ['Mathematics'],

@@ -28,6 +28,7 @@ describe('Ark of the Covenant', () => {
       dennis: {
         blue: ['Mathematics'],
         score: ['Agriculture', 'Fermenting'],
+        museum: ['Museum 1', 'Ark of the Covenant'],
       },
     })
   })

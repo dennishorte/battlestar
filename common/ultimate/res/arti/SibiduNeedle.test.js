@@ -30,6 +30,7 @@ describe("Sibidu Needle", () => {
         blue: ['Calendar'],
         score: ['Sailing'],
         hand: ['Tools'],
+        museum: ['Museum 1', 'Sibidu Needle'],
       },
     })
   })

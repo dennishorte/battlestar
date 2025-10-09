@@ -37,6 +37,7 @@ describe("Pavlovian Tusk", () => {
         green: ['Navigation'],
         hand: ['Gunpowder', 'Enterprise'],
         score: ['Experimentation'],
+        museum: ['Museum 1', 'Pavlovian Tusk'],
       },
     })
   })
@@ -72,6 +73,7 @@ describe("Pavlovian Tusk", () => {
       dennis: {
         hand: ['Sailing', 'Enterprise'],
         score: ['Tools'],
+        museum: ['Museum 1', 'Pavlovian Tusk'],
       },
     })
   })

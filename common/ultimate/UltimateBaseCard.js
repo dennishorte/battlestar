@@ -17,7 +17,7 @@ class UltimateBaseCard extends BaseCard {
   }
 
   checkIsStandardAchievement() {
-    return !this.isSpecialAchievement && !this.isDecree
+    return !this.isSpecialAchievement && !this.isDecree && !this.isMuseum
   }
 
   getAge() {

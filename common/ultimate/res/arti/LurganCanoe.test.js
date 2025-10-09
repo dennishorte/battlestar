@@ -24,6 +24,7 @@ describe("Lurgan Canoe", () => {
       dennis: {
         red: ['Construction'],
         score: ['Archery', 'Oars'],
+        museum: ['Museum 1', 'Lurgan Canoe'],
       },
     })
   })

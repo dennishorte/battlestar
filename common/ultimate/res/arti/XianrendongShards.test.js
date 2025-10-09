@@ -32,6 +32,7 @@ describe("Xianrendong Shards", () => {
         red: ['Oars', 'Archery'],
         score: ['Calendar', 'Tools'],
         hand: ['Sailing', 'Code of Laws', 'Mysticism'],
+        museum: ['Museum 1', 'Xianrendong Shards'],
       },
     })
   })
@@ -63,6 +64,7 @@ describe("Xianrendong Shards", () => {
         red: ['Oars'],
         score: ['Calendar', 'Tools'],
         hand: ['Sailing', 'Code of Laws', 'Mysticism'],
+        museum: ['Museum 1', 'Xianrendong Shards'],
       },
     })
   })
@@ -90,6 +92,7 @@ describe("Xianrendong Shards", () => {
         red: ['Oars'],
         blue: ['Tools'],
         score: ['Calendar', 'Archery'],
+        museum: ['Museum 1', 'Xianrendong Shards'],
       },
     })
   })

@@ -31,6 +31,7 @@ describe('Holmegaard Bows', () => {
     t.testBoard(game, {
       dennis: {
         hand: ['Calendar', 'Construction', 'Tools'],
+        museum: ['Museum 1', 'Holmegaard Bows'],
       },
       micah: {
         yellow: ['Agriculture'],
@@ -66,6 +67,7 @@ describe('Holmegaard Bows', () => {
     t.testBoard(game, {
       dennis: {
         hand: ['Calendar', 'Mapmaking'],
+        museum: ['Museum 1', 'Holmegaard Bows'],
       },
       micah: {
         red: ['Gunpowder', 'Construction'],

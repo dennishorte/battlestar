@@ -26,6 +26,7 @@ describe("Jiskairumoko Necklace", () => {
     t.testBoard(game, {
       dennis: {
         achievements: ['Sailing'],
+        museum: ['Museum 1', 'Jiskairumoko Necklace'],
       },
       micah: {
         red: ['Metalworking'],
@@ -67,6 +68,9 @@ describe("Jiskairumoko Necklace", () => {
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
+      dennis: {
+        museum: ['Museum 1', 'Jiskairumoko Necklace'],
+      },
       micah: {
         red: ['Metalworking'],
         achievements: ['Sailing', 'Construction'],
@@ -93,6 +97,9 @@ describe("Jiskairumoko Necklace", () => {
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
+      dennis: {
+        museum: ['Museum 1', 'Jiskairumoko Necklace'],
+      },
       micah: {
         red: ['Metalworking'],
         achievements: ['Sailing', 'Construction'],
