@@ -23,6 +23,7 @@ describe('Baghdad Battery', () => {
       dennis: {
         green: ['Paper'],
         score: ['Jiskairumoko Necklace'],
+        museum: ['Museum 1', 'Baghdad Battery'],
       },
     })
 
@@ -48,6 +49,7 @@ describe('Baghdad Battery', () => {
       dennis: {
         green: ['Paper'],
         score: ['Machinery'],
+        museum: ['Museum 1', 'Baghdad Battery'],
       },
       junk: [],
     })

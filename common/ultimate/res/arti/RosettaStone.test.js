@@ -27,6 +27,7 @@ describe("Rosetta Stone", () => {
     t.testBoard(game, {
       dennis: {
         green: ['Baghdad Battery'],
+        museum: ['Museum 1', 'Rosetta Stone'],
       },
       micah: {
         green: ['Holy Lance'],

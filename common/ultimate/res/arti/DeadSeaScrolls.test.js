@@ -29,6 +29,7 @@ describe('Dead Sea Scrolls', () => {
       dennis: {
         blue: ['Mathematics', 'Calendar'],
         hand: ['Holy Grail'],
+        museum: ['Museum 1', 'Dead Sea Scrolls'],
       },
     })
 

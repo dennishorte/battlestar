@@ -33,6 +33,7 @@ describe('Cyrus Cylinder', () => {
     t.testBoard(game, {
       dennis: {
         purple: ['Enterprise', 'Monotheism'],
+        museum: ['Museum 1', 'Cyrus Cylinder'],
       },
       micah: {
         purple: ['Code of Laws'],

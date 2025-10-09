@@ -31,6 +31,7 @@ describe('Chronicle of Zuo', () => {
     t.testBoard(game, {
       dennis: {
         hand: ['Machinery', 'Reformation'],
+        museum: ['Museum 1', 'Chronicle of Zuo'],
       },
       micah: {
         red: ['Engineering'],
@@ -66,6 +67,7 @@ describe('Chronicle of Zuo', () => {
     t.testBoard(game, {
       dennis: {
         hand: ['Machinery', 'Reformation'],
+        museum: ['Museum 1', 'Chronicle of Zuo'],
       },
       micah: {
         red: ['Engineering'],

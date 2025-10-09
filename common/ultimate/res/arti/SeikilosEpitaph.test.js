@@ -28,6 +28,7 @@ describe("Seikilos Epitaph", () => {
       dennis: {
         green: ['Sailing', 'Compass'],
         blue: ['Tools'],
+        museum: ['Museum 1', 'Seikilos Epitaph'],
       },
     })
   })
@@ -63,6 +64,7 @@ describe("Seikilos Epitaph", () => {
           splay: 'left'
         },
         hand: ['Gunpowder'],
+        museum: ['Museum 1', 'Seikilos Epitaph'],
       },
     })
   })

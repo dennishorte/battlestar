@@ -31,6 +31,7 @@ describe("Terracotta Army", () => {
       dennis: {
         score: ['Pottery'],
         hand: ['Mapmaking', 'Fermenting'],
+        museum: ['Museum 1', 'Terracotta Army'],
       },
       micah: {
         hand: ['The Wheel'],

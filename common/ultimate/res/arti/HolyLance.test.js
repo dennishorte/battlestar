@@ -24,6 +24,7 @@ describe('Holy Lance', () => {
     t.testBoard(game, {
       dennis: {
         red: ['Holmegaard Bows'],
+        museum: ['Museum 1', 'Holy Lance'],
       },
       micah: {
         yellow: ['Fermenting'],
@@ -55,6 +56,7 @@ describe('Holy Lance', () => {
       dennis: {
         yellow: ['Holy Grail'],
         score: ['Industrialization'],
+        museum: ['Museum 1', 'Holy Lance'],
       },
     })
   })

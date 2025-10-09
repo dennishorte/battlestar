@@ -33,6 +33,7 @@ describe('Babylonian Chronicles', () => {
         yellow: ['Masonry'],
         score: ['Paper'],
         hand: ['Sailing'],
+        museum: ['Museum 1', 'Babylonian Chronicles'],
       },
       micah: {
         red: ['Archery'],

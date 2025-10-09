@@ -22,6 +22,7 @@ describe('Holy Grail', () => {
     t.testBoard(game, {
       dennis: {
         achievements: ['Construction'],
+        museum: ['Museum 1', 'Holy Grail'],
       },
     })
   })
@@ -40,6 +41,9 @@ describe('Holy Grail', () => {
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
+      dennis: {
+        museum: ['Museum 1', 'Holy Grail'],
+      },
     })
   })
 })

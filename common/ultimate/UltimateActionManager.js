@@ -594,6 +594,15 @@ class UltimateActionManager extends BaseActionManager {
   })
 
   rotate(player, card) {
+    // Only rotate cards if they are in the artifact zone.
+    if (!card.zone.isArtifactZone()) {
+      this.log.add({
+        template: '{card} is not in the artifact zone, so cannot be rotated',
+        args: { card },
+      })
+      return
+    }
+
     // Get a museum
     const museum = this.game.getAvailableMuseums().sort((l, r) => l.name.localeCompare(r.name))[0]
 
