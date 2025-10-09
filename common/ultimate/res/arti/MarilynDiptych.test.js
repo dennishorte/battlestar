@@ -25,6 +25,7 @@ describe("Marilyn Diptych", () => {
       dennis: {
         hand: ['Astronomy'],
         score: ['Robotics', 'Software', 'Canning'],
+        museum: ['Museum 1', 'Marilyn Diptych'],
       },
     })
   })

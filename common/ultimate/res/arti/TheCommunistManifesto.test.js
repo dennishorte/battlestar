@@ -28,6 +28,7 @@ describe("The Communist Manifesto", () => {
       dennis: {
         purple: ['Railroad'],
         hand: ['Classification', 'Metric System', 'Democracy'],
+        museum: ['Museum 1', 'The Communist Manifesto'],
       },
       micah: {
         purple: ['Lighting'],

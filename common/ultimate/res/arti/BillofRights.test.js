@@ -27,6 +27,7 @@ describe('Bill of Rights', () => {
     t.testBoard(game, {
       dennis: {
         blue: ['Experimentation', 'Tools', 'Alchemy', 'Pottery'],
+        museum: ['Museum 1', 'Bill of Rights'],
       }
     })
   })
@@ -51,6 +52,7 @@ describe('Bill of Rights', () => {
     t.testBoard(game, {
       dennis: {
         blue: ['Pottery'],
+        museum: ['Museum 1', 'Bill of Rights'],
       },
       micah: {
         blue: ['Experimentation', 'Tools', 'Alchemy']

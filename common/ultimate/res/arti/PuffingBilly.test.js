@@ -34,6 +34,7 @@ describe("Puffing Billy", () => {
           splay: 'right',
         },
         hand: ['Industrialization'],
+        museum: ['Museum 1', 'Puffing Billy'],
       }
     })
   })

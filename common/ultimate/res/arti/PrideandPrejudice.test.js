@@ -33,6 +33,7 @@ describe("Pride and Prejudice", () => {
         purple: ['Enterprise'],
         green: ['Sailing'],
         score: ['Canning'],
+        museum: ['Museum 1', 'Pride and Prejudice'],
       }
     })
   })

@@ -23,6 +23,7 @@ describe('Almira, Queen of the Castle', () => {
       dennis: {
         blue: ['Experimentation'],
         achievements: ['Enterprise'],
+        museum: ['Museum 1', 'Almira, Queen of the Castle'],
       },
     })
   })

@@ -29,6 +29,7 @@ describe("Periodic Table", () => {
         blue: ['Atomic Theory'],
         yellow: ['Canning'],
         purple: ['Lighting'],
+        museum: ['Museum 1', 'Periodic Table'],
       },
     })
   })
@@ -62,6 +63,7 @@ describe("Periodic Table", () => {
         yellow: ['Canning'],
         purple: ['Socialism'],
         red: ['Combustion', 'Machine Tools'],
+        museum: ['Museum 1', 'Periodic Table'],
       },
     })
   })

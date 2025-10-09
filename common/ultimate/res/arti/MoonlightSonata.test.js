@@ -31,6 +31,7 @@ describe("Moonlight Sonata", () => {
           splay: 'left'
         },
         achievements: ['Software'],
+        museum: ['Museum 1', 'Moonlight Sonata'],
       },
     })
   })
@@ -53,6 +54,7 @@ describe("Moonlight Sonata", () => {
     t.testBoard(game, {
       dennis: {
         red: ['Archery'],
+        museum: ['Museum 1', 'Moonlight Sonata'],
         //        achievements: ['Software'],
       },
     })

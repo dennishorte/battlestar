@@ -19,6 +19,9 @@ describe("Ship of the Line Sussex", () => {
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
+      dennis: {
+        museum: ['Museum 1', 'Ship of the Line Sussex'],
+      },
     })
   })
 
@@ -41,6 +44,7 @@ describe("Ship of the Line Sussex", () => {
     t.testBoard(game, {
       dennis: {
         score: ['Tools', 'Calendar'],
+        museum: ['Museum 1', 'Ship of the Line Sussex'],
       }
     })
   })

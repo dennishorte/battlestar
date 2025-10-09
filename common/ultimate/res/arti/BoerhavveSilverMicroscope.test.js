@@ -30,6 +30,7 @@ describe('Boerhavve Silver Microscope', () => {
         green: ['Paper'],
         hand: ['Enterprise'],
         score: ['Machinery'],
+        museum: ['Museum 1', 'Boerhavve Silver Microscope'],
       }
     })
   })
@@ -55,6 +56,7 @@ describe('Boerhavve Silver Microscope', () => {
     t.testBoard(game, {
       dennis: {
         score: ['Sailing'],
+        museum: ['Museum 1', 'Boerhavve Silver Microscope'],
       }
     })
   })

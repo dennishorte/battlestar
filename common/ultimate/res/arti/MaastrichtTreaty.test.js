@@ -24,6 +24,7 @@ describe("Maastricht Treaty", () => {
     t.testBoard(game, {
       dennis: {
         score: ['Tools', 'Sailing'],
+        museum: ['Museum 1', 'Maastricht Treaty'],
       },
       micah: {
         score: ['Software', 'Coal']

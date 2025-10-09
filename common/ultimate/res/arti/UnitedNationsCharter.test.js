@@ -36,6 +36,7 @@ describe("United Nations Charter", () => {
         red: ['Archery'],
         score: ['Construction', 'Feudalism'],
         hand: ['Robotics', 'Sailing'],
+        museum: ['Museum 1', 'United Nations Charter'],
       },
       micah: {
         red: ['Oars'],

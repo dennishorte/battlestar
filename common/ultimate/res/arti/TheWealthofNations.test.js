@@ -27,6 +27,7 @@ describe("The Wealth of Nations", () => {
     t.testBoard(game, {
       dennis: {
         score: ['Sailing', 'Gunpowder', 'Canning', 'Software'],
+        museum: ['Museum 1', 'The Wealth of Nations'],
       },
     })
   })

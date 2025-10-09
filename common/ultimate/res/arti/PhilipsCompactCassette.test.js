@@ -51,6 +51,7 @@ describe("Philips Compact Cassette", () => {
           splay: 'up'
         },
         hand: ['Quantum Theory'],
+        museum: ['Museum 1', 'Philips Compact Cassette'],
       },
       micah: {
         red: {

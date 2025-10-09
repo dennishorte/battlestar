@@ -32,6 +32,7 @@ describe("Hudson's Bay Company Archives", () => {
         blue: ['Mathematics'],
         green: ['Navigation'],
         score: ['Archery', 'Tools', 'The Wheel'],
+        museum: ['Museum 1', "Hudson's Bay Company Archives"],
       }
     })
   })

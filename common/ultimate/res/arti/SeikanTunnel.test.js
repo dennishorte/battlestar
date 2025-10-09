@@ -65,6 +65,7 @@ describe("Seikan Tunnel", () => {
     t.testBoard(game, {
       dennis: {
         red: ['Archery', 'Construction'],
+        museum: ['Museum 1', 'Seikan Tunnel'],
       },
       micah: {
         green: ['Sailing', 'Navigation'],

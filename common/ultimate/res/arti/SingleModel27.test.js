@@ -28,6 +28,7 @@ describe("Single Model 27", () => {
           splay: 'up'
         },
         score: ['Tools'],
+        museum: ['Museum 1', 'Single Model 27'],
       },
     })
   })

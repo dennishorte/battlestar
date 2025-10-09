@@ -27,6 +27,7 @@ describe('Frigate Constitution', () => {
     t.testBoard(game, {
       dennis: {
         purple: ['Enterprise'],
+        museum: ['Museum 1', 'Frigate Constitution'],
       },
       micah: {
         green: ['Electricity'],
@@ -55,6 +56,7 @@ describe('Frigate Constitution', () => {
     t.testBoard(game, {
       dennis: {
         purple: ['Enterprise'],
+        museum: ['Museum 1', 'Frigate Constitution'],
       },
       micah: {
         green: ['Electricity'],

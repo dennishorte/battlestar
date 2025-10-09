@@ -31,6 +31,7 @@ describe("Rock Around the Clock", () => {
         red: ['Industrialization'],
         green: ['Databases'],
         score: ['Fission', 'Services'],
+        museum: ['Museum 1', 'Rock Around the Clock'],
       }
     })
   })

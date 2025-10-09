@@ -24,6 +24,7 @@ describe('Higgs Boson', () => {
     t.testBoard(game, {
       dennis: {
         score: ['Atomic Theory', 'Experimentation', 'Canning', 'Agriculture', 'Sailing'],
+        museum: ['Museum 1', 'Higgs Boson'],
       },
     })
   })
@@ -52,6 +53,7 @@ describe('Higgs Boson', () => {
     t.testBoard(game, {
       dennis: {
         score: ['Atomic Theory', 'Experimentation', 'Canning', 'Agriculture', 'Sailing'],
+        museum: ['Museum 1', 'Higgs Boson'],
       },
     })
   })

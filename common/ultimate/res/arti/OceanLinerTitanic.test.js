@@ -29,6 +29,7 @@ describe("Ocean Liner Titanic", () => {
         red: ['Engineering'],
         green: ['Metric System'],
         score: ['Archery', 'Paper', 'Experimentation'],
+        museum: ['Museum 1', 'Ocean Liner Titanic'],
       },
     })
   })

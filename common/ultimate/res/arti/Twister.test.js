@@ -24,6 +24,9 @@ describe("Twister", () => {
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
+      dennis: {
+        museum: ['Museum 1', 'Twister'],
+      },
       micah: {
         red: ['Oars', 'Coal'],
         green: ['Sailing'],

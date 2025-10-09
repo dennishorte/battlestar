@@ -51,6 +51,9 @@ describe('Exxon Valdez', () => {
     request = t.choose(game, request, 'auto')
 
     t.testBoard(game, {
+      dennis: {
+        museum: ['Museum 1', 'Exxon Valdez'],
+      },
       scott: {
         red: ['Flight'],
       },

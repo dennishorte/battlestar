@@ -29,6 +29,7 @@ describe("U.S. Declaration of Independence", () => {
         blue: ['Chemistry'],
         hand: ['Canning'],
         score: ['Navigation'],
+        museum: ['Museum 1', 'U.S. Declaration of Independence'],
       },
       micah: {
         red: ['Flight'],

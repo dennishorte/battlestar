@@ -56,6 +56,7 @@ describe('Dolly the Sheep', () => {
         green: ['Sailing'],
         blue: ['Computers'],
         hand: ['Canning', 'Software'],
+        museum: ['Museum 1', 'Dolly the Sheep'],
       }
     })
   })

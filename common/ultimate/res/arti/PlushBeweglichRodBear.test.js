@@ -41,6 +41,7 @@ describe("Plush Beweglich Rod Bear", () => {
           splay: 'up'
         },
         score: ['Robotics'],
+        museum: ['Museum 1', 'Plush Beweglich Rod Bear'],
       },
       micah: {
         purple: ['Specialization', 'Code of Laws'],

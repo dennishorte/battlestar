@@ -31,6 +31,7 @@ describe('Corvette Challenger', () => {
           splay: 'up'
         },
         score: ['Machinery'],
+        museum: ['Museum 1', 'Corvette Challenger'],
       },
     })
   })

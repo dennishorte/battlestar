@@ -36,6 +36,7 @@ describe('Gujin Tushu Jinsheng', () => {
         yellow: ['Gujin Tushu Jinsheng'],
         red: ['Coal'],
         blue: ['Tools'],
+        museum: ['Museum 1', 'Gujin Tushu Jinsheng'],
       },
       micah: {
         blue: ['Experimentation'],
@@ -65,6 +66,7 @@ describe('Gujin Tushu Jinsheng', () => {
     t.testBoard(game, {
       dennis: {
         red: ['Coal'],
+        museum: ['Museum 1', 'Gujin Tushu Jinsheng'],
       },
       micah: {
         blue: ['Experimentation'],

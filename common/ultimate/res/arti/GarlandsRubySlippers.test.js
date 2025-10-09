@@ -40,6 +40,7 @@ describe("Garland's Ruby Slippers", () => {
           splay: 'up',
         },
         forecast: ['Corporations', 'Computers'],
+        museum: ['Museum 1', "Garland's Ruby Slippers"],
       },
     })
   })
@@ -72,6 +73,7 @@ describe("Garland's Ruby Slippers", () => {
       dennis: {
         red: ['Flight'],
         hand: ['Socialism'], // Share bonus
+        museum: ['Museum 1', "Garland's Ruby Slippers"],
       },
       micah: {
         blue: ['Software'],

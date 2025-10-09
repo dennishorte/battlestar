@@ -27,6 +27,7 @@ describe('30 World Cup Final Ball', () => {
     t.testBoard(game, {
       dennis: {
         hand: ['Quantum Theory'],
+        museum: ['Museum 1', "'30 World Cup Final Ball"],
       },
       micah: {
       }
@@ -59,6 +60,7 @@ describe('30 World Cup Final Ball', () => {
       dennis: {
         blue: ['Alchemy'],
         hand: ['Socialism'],
+        museum: ['Museum 1', "'30 World Cup Final Ball"],
       },
       micah: {
         blue: ['Experimentation'],
@@ -93,6 +95,7 @@ describe('30 World Cup Final Ball', () => {
     t.testBoard(game, {
       dennis: {
         hand: ['Socialism', 'Sailing'],
+        museum: ['Museum 1', "'30 World Cup Final Ball"],
       },
       micah: {
         yellow: ['Agriculture'],

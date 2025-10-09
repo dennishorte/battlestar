@@ -34,6 +34,7 @@ describe('Hansen Writing Ball', () => {
       dennis: {
         yellow: ['Refrigeration'],
         hand: ['Explosives', 'Experimentation', 'Bicycle', 'Sanitation', 'Railroad', 'Combustion'],
+        museum: ['Museum 1', 'Hansen Writing Ball'],
       },
       micah: {
         green: ['Databases'],

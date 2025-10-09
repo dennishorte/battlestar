@@ -26,6 +26,7 @@ describe("Meji-Mura Stamp Vending Machine", () => {
     t.testBoard(game, {
       dennis: {
         score: ['Reformation', 'Experimentation', 'Enterprise'],
+        museum: ['Museum 1', 'Meji-Mura Stamp Vending Machine'],
       },
     })
   })

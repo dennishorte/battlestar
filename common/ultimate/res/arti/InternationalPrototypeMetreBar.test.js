@@ -29,7 +29,8 @@ describe('International Prototype Metre Bar', () => {
         red: {
           cards: ['Construction', 'Archery'],
           splay: 'up'
-        }
+        },
+        museum: ['Museum 1', 'International Prototype Metre Bar'],
       },
     })
   })
@@ -61,6 +62,7 @@ describe('International Prototype Metre Bar', () => {
           splay: 'up',
         },
         score: ['Software'],
+        museum: ['Museum 1', 'International Prototype Metre Bar'],
       },
     })
 

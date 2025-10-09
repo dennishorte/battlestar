@@ -26,6 +26,7 @@ describe("Magnavox Odyssey", () => {
       dennis: {
         red: ['Robotics'],
         blue: ['Software'],
+        museum: ['Museum 1', 'Magnavox Odyssey'],
       },
     })
   })

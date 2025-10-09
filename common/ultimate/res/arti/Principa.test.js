@@ -32,6 +32,7 @@ describe("Principa", () => {
         blue: ['Calendar', 'Experimentation'],
         purple: ['Lighting'],
         yellow: ['Agriculture'],
+        museum: ['Museum 1', 'Principa'],
       }
     })
   })

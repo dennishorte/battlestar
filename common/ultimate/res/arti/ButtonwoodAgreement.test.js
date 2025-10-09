@@ -31,6 +31,7 @@ describe('Buttonwood Agreement', () => {
           splay: 'up'
         },
         score: ['Flight'],
+        museum: ['Museum 1', 'Buttonwood Agreement'],
       }
     })
   })
@@ -64,6 +65,7 @@ describe('Buttonwood Agreement', () => {
         red: ['Coal', 'Gunpowder'],
         score: ['Tools'],
         hand: ['Flight'],
+        museum: ['Museum 1', 'Buttonwood Agreement'],
       }
     })
   })

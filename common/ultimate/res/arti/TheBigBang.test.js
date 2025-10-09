@@ -30,6 +30,7 @@ describe("The Big Bang", () => {
     t.testBoard(game, {
       dennis: {
         blue: ['Encyclopedia', 'Mathematics'],
+        museum: ['Museum 1', 'The Big Bang'],
       },
       junk: ['Software'],
     })

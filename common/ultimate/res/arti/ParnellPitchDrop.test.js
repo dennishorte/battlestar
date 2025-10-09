@@ -27,6 +27,7 @@ describe("Parnell Pitch Drop", () => {
       dennis: {
         purple: ['Lighting'],
         red: ['Flight'],
+        museum: ['Museum 1', 'Parnell Pitch Drop'],
       },
     })
   })

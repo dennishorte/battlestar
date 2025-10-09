@@ -27,6 +27,7 @@ describe("Sandham Room Cricket Bat", () => {
       dennis: {
         hand: ['Industrialization'],
         achievements: ['Software'],
+        museum: ['Museum 1', 'Sandham Room Cricket Bat'],
       },
     })
   })
@@ -52,6 +53,7 @@ describe("Sandham Room Cricket Bat", () => {
     t.testBoard(game, {
       dennis: {
         hand: ['Classification'],
+        museum: ['Museum 1', 'Sandham Room Cricket Bat'],
       },
     })
   })

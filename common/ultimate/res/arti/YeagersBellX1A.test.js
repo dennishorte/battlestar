@@ -36,6 +36,7 @@ describe("Yeager's Bell X-1A", () => {
         green: ['Databases'],
         hand: ['Coal'],
         score: ['Calendar'],
+        museum: ['Museum 1', "Yeager's Bell X-1A"],
       },
       micah: {
         blue: ['Tools'],

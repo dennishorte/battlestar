@@ -29,6 +29,9 @@ describe('Colt Paterson Revolver', () => {
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
+      dennis: {
+        museum: ['Museum 1', 'Colt Paterson Revolver'],
+      },
       micah: {
         red: ['Industrialization'],
       }
@@ -59,6 +62,9 @@ describe('Colt Paterson Revolver', () => {
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
+      dennis: {
+        museum: ['Museum 1', 'Colt Paterson Revolver'],
+      },
       micah: {
         red: ['Industrialization'],
         hand: ['Coal', 'Experimentation', 'Lighting'],

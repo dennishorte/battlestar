@@ -27,6 +27,9 @@ describe("Submarine H. L. Hunley", () => {
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
+      dennis: {
+        museum: ['Museum 1', 'Submarine H. L. Hunley'],
+      },
       micah: {
         red: ['Coal'],
       }
@@ -56,6 +59,9 @@ describe("Submarine H. L. Hunley", () => {
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
+      dennis: {
+        museum: ['Museum 1', 'Submarine H. L. Hunley'],
+      },
       micah: {
         red: ['Coal'],
         purple: ['Lighting', 'Enterprise'],

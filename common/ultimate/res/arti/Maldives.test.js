@@ -31,6 +31,7 @@ describe("Maldives", () => {
     t.testBoard(game, {
       dennis: {
         score: ['Archery', 'Agriculture', 'Clothing', 'Mathematics'],
+        museum: ['Museum 1', 'Maldives'],
       },
       micah: {
         green: ['Databases'],
@@ -58,6 +59,7 @@ describe("Maldives", () => {
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
+        museum: ['Museum 1', 'Maldives'],
       },
       micah: {
         green: ['Databases'],

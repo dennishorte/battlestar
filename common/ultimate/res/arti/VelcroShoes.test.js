@@ -24,6 +24,7 @@ describe("Velcro Shoes", () => {
     t.testBoard(game, {
       dennis: {
         hand: ['Computers'],
+        museum: ['Museum 1', 'Velcro Shoes'],
       },
       micah: {
         red: ['Coal'],
@@ -51,6 +52,7 @@ describe("Velcro Shoes", () => {
     t.testBoard(game, {
       dennis: {
         score: ['Computers'],
+        museum: ['Museum 1', 'Velcro Shoes'],
       },
       micah: {
         red: ['Coal'],

@@ -25,7 +25,8 @@ describe("Syncom 3", () => {
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
-        hand: ['Services', 'Specialization', 'Satellites', 'Suburbia', 'Genetics']
+        hand: ['Services', 'Specialization', 'Satellites', 'Suburbia', 'Genetics'],
+        museum: ['Museum 1', 'Syncom 3'],
       }
     })
   })

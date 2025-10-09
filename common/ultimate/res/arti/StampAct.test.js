@@ -26,6 +26,7 @@ describe("Stamp Act", () => {
     t.testBoard(game, {
       dennis: {
         score: ['Calendar'],
+        museum: ['Museum 1', 'Stamp Act'],
       },
       micah: {
         blue: ['Writing'],
@@ -55,6 +56,9 @@ describe("Stamp Act", () => {
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
+      dennis: {
+        museum: ['Museum 1', 'Stamp Act'],
+      },
       micah: {
         blue: ['Writing'],
         green: ['Paper'],
@@ -84,6 +88,7 @@ describe("Stamp Act", () => {
     t.testBoard(game, {
       dennis: {
         score: ['Calendar'],
+        museum: ['Museum 1', 'Stamp Act'],
       },
       micah: {
         blue: ['Writing'],

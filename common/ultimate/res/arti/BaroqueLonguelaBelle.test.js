@@ -26,6 +26,7 @@ describe('Baroque-Longue la Belle', () => {
       dennis: {
         purple: ['Astronomy'],
         green: ['Metric System'],
+        museum: ['Museum 1', 'Baroque-Longue la Belle'],
       },
     })
   })

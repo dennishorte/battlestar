@@ -27,6 +27,7 @@ describe("Luna 3", () => {
     t.testBoard(game, {
       dennis: {
         score: ['Machinery'],
+        museum: ['Museum 1', 'Luna 3'],
       },
     })
   })

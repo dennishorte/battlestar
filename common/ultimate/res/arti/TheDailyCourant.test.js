@@ -36,6 +36,7 @@ describe("The Daily Courant", () => {
         red: ['Archery'],
         blue: ['Mathematics'],
         hand: ['Canning'],
+        museum: ['Museum 1', 'The Daily Courant'],
       },
       micah: {
         green: ['The Wheel'],

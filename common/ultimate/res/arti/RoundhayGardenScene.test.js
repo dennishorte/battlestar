@@ -29,6 +29,7 @@ describe("Roundhay Garden Scene", () => {
         blue: ['Experimentation'],
         purple: ['Astronomy'],
         score: ['Tools', 'Enterprise', 'Gunpowder'],
+        museum: ['Museum 1', 'Roundhay Garden Scene'],
       },
     })
   })

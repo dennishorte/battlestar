@@ -27,6 +27,7 @@ describe("Kilogram of the Archives", () => {
     t.testBoard(game, {
       dennis: {
         score: ['Software'],
+        museum: ['Museum 1', 'Kilogram of the Archives'],
       },
     })
   })
@@ -46,6 +47,9 @@ describe("Kilogram of the Archives", () => {
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
+      dennis: {
+        museum: ['Museum 1', 'Kilogram of the Archives'],
+      },
     })
   })
 
@@ -64,6 +68,9 @@ describe("Kilogram of the Archives", () => {
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
+      dennis: {
+        museum: ['Museum 1', 'Kilogram of the Archives'],
+      },
     })
   })
 })

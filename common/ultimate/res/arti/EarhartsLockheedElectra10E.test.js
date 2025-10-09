@@ -44,6 +44,7 @@ describe("Earhart's Lockheed Electra 10E", () => {
     t.testBoard(game, {
       dennis: {
         achievements: ['Software'],
+        museum: ['Museum 1', "Earhart's Lockheed Electra 10E"],
       },
     })
   })

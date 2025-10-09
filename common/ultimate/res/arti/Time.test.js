@@ -26,6 +26,7 @@ describe("Time", () => {
       dennis: {
         green: ['Databases'],
         purple: ['Lighting'],
+        museum: ['Museum 1', 'Time'],
       },
       micah: {
         green: ['Self Service'],

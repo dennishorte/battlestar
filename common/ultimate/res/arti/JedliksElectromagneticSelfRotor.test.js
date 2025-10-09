@@ -28,6 +28,7 @@ describe("Jedlik's Electromagnetic Self-Rotor", () => {
         purple: ['Socialism'],
         score: ['Flight'],
         achievements: ['Rocketry'],
+        museum: ['Museum 1', "Jedlik's Electromagnetic Self-Rotor"],
       },
     })
   })

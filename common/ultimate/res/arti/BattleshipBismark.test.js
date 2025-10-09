@@ -26,6 +26,9 @@ describe('Battleship Bismark', () => {
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
+      dennis: {
+        museum: ['Museum 1', 'Battleship Bismark'],
+      },
       micah: {
         hand: ['Flight']
       },

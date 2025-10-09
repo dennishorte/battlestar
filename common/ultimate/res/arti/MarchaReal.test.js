@@ -19,7 +19,11 @@ describe("Marcha Real", () => {
     request = t.choose(game, request, 'auto')
 
     t.testIsFirstAction(request)
-    t.testBoard(game, {})
+    t.testBoard(game, {
+      dennis: {
+        museum: ['Museum 1', 'Marcha Real'],
+      },
+    })
   })
 
   test('dogma: color matches', () => {
@@ -42,6 +46,7 @@ describe("Marcha Real", () => {
     t.testBoard(game, {
       dennis: {
         achievements: ['Robotics'],
+        museum: ['Museum 1', 'Marcha Real'],
       },
     })
   })
@@ -69,6 +74,7 @@ describe("Marcha Real", () => {
     t.testBoard(game, {
       dennis: {
         hand: ['Machinery'],
+        museum: ['Museum 1', 'Marcha Real'],
       }
     })
   })
