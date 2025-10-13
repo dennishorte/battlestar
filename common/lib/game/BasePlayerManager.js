@@ -123,7 +123,7 @@ class BasePlayerManager {
   }
 
   byOwner(obj) {
-    return obj.g ? obj.g.owner : obj.owner
+    return obj.owner
   }
 
   bySeat(index) {

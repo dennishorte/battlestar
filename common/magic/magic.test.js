@@ -138,7 +138,7 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
@@ -227,12 +227,12 @@ describe('Magic Actions', () => {
     const request1 = game.run()
     const request2 = t.do(game, request1, {
       name: 'active face',
-      cardId: game.cards.byPlayer(t.dennis(game), 'library')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'library')[0].id,
       faceIndex: 1,
     })
 
     const card = game.cards.byPlayer(t.dennis(game), 'library')[0]
-    expect(card.g.activeFaceIndex).toBe(1)
+    expect(card.activeFaceIndex).toBe(1)
   })
 
   test('add counter', () => {
@@ -242,18 +242,18 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'add counter',
-      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
       key: 'loyalty',
     })
 
     const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
-    expect(card.g.counters.loyalty).toBe(1)
+    expect(card.counters.loyalty).toBe(1)
   })
 
   test.skip('add counter player', () => {
@@ -284,24 +284,24 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'add counter',
-      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
       key: 'loyalty',
     })
     const request5 = t.do(game, request4, {
       name: 'adjust c-counter',
-      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
       key: 'loyalty',
       count: 2,
     })
 
     const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
-    expect(card.g.counters.loyalty).toBe(3)
+    expect(card.counters.loyalty).toBe(3)
   })
 
   test('annotate', () => {
@@ -311,18 +311,18 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'annotate',
-      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
       annotation: '+1/+1',
     })
 
     const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
-    expect(card.g.annotation).toBe('+1/+1')
+    expect(card.annotation).toBe('+1/+1')
   })
 
   test('annotate eot', () => {
@@ -332,18 +332,18 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'annotate eot',
-      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
       annotation: '+1/+1',
     })
 
     const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
-    expect(card.g.annotationEOT).toBe('+1/+1')
+    expect(card.annotationEOT).toBe('+1/+1')
   })
 
   test('attach', () => {
@@ -353,27 +353,27 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, { name: 'draw' })
     const request5 = t.do(game, request4, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 1,
     })
     const request6 = t.do(game, request5, {
       name: 'attach',
-      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[1].g.id,
-      targetId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[1].id,
+      targetId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
     })
 
     const source = game.cards.byPlayer(t.dennis(game), 'creatures')[1]
     const target = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
-    expect(source.g.attachedTo).toBe(target)
-    expect(target.g.attached).toEqual([source])
+    expect(source.attachedTo).toBe(target)
+    expect(target.attached).toEqual([source])
   })
 
   test('concede', () => {
@@ -399,31 +399,31 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, { name: 'draw' })
     const request5 = t.do(game, request4, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 1,
     })
     const request6 = t.do(game, request5, {
       name: 'attach',
-      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[1].g.id,
-      targetId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[1].id,
+      targetId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
     })
     const request7 = t.do(game, request6, {
       name: 'detach',
-      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[1].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[1].id,
     })
 
     const source = game.cards.byPlayer(t.dennis(game), 'creatures')[1]
     const target = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
-    expect(source.g.attachedTo).toBe(null)
-    expect(target.g.attached).toEqual([])
+    expect(source.attachedTo).toBe(null)
+    expect(target.attached).toEqual([])
   })
 
   test('draw game', () => {
@@ -468,11 +468,11 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'morph',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
     })
 
     const card = game.cards.byPlayer(t.dennis(game), 'stack')[0]
-    expect(card.g.morph).toBe(true)
+    expect(card.morph).toBe(true)
   })
 
   test('move all', () => {
@@ -482,14 +482,14 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, { name: 'draw' })
     const request5 = t.do(game, request4, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 1,
     })
@@ -539,25 +539,25 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'notap set',
-      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
     })
 
     const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
-    expect(card.g.noUntap).toBe(true)
+    expect(card.noUntap).toBe(true)
 
     const request5 = t.do(game, request4, {
       name: 'notap clear',
-      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
     })
 
     const card2 = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
-    expect(card2.g.noUntap).toBe(false)
+    expect(card2.noUntap).toBe(false)
   })
 
   test('pass priority', () => {
@@ -579,7 +579,7 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'reveal',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
     })
 
     const card = game.cards.byPlayer(t.dennis(game), 'hand')[0]
@@ -627,13 +627,13 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'secret',
-      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
     })
 
     const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
@@ -724,13 +724,13 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'stack effect',
-      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
     })
 
     t.testBoard(game, {
@@ -748,17 +748,17 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'tap',
-      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
     })
 
     const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
-    expect(card.g.tapped).toBe(true)
+    expect(card.tapped).toBe(true)
   })
 
   test('unmorph', () => {
@@ -768,21 +768,21 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'morph',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
     })
 
     // Verify the card is properly morphed
     const morphedCard = game.cards.byPlayer(t.dennis(game), 'stack')[0]
-    expect(morphedCard.g.morph).toBe(true)
+    expect(morphedCard.morph).toBe(true)
     expect(morphedCard.visibility.map(p => p.name)).toEqual(['dennis'])
 
     const request4 = t.do(game, request3, {
       name: 'unmorph',
-      cardId: game.cards.byPlayer(t.dennis(game), 'stack')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'stack')[0].id,
     })
 
     const card = game.cards.byPlayer(t.dennis(game), 'stack')[0]
-    expect(card.g.morph).toBe(false)
+    expect(card.morph).toBe(false)
     expect(card.visibility).toEqual(game.players.all())
   })
 
@@ -793,17 +793,17 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'secret',
-      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
     })
     const request5 = t.do(game, request4, {
       name: 'unsecret',
-      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
     })
 
     const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
@@ -818,21 +818,21 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })
     const request4 = t.do(game, request3, {
       name: 'tap',
-      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
     })
     const request5 = t.do(game, request4, {
       name: 'untap',
-      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
     })
 
     const card = game.cards.byPlayer(t.dennis(game), 'creatures')[0]
-    expect(card.g.tapped).toBe(false)
+    expect(card.tapped).toBe(false)
   })
 
   test('view all', () => {
@@ -842,7 +842,7 @@ describe('Magic Actions', () => {
     const request2 = t.do(game, request1, { name: 'draw' })
     const request3 = t.do(game, request2, {
       name: 'move card',
-      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].g.id,
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
       destId: 'players.dennis.creatures',
       destIndex: 0,
     })

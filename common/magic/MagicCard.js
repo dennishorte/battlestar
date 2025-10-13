@@ -4,28 +4,31 @@ const CardFilter = require('./util/CardFilter.js')
 const cardUtil = require('./util/cardUtil.js')
 const util = require('../lib/util.js')
 
-class GameData {
-  constructor() {
-    this.id = null
-    this.owner = null
-    this.activeFaceIndex = 0
+class GameData extends Serializer {
+  constructor(parent) {
+    const data = {
+      id: null,
+      owner: null,
+      activeFaceIndex: 0,
 
-    this.annotation = ''
-    this.annotationEOT = ''
+      annotation: '',
+      annotationEOT: '',
 
-    this.attached = []
-    this.attachedTo = null
+      attached: [],
+      attachedTo: null,
 
-    this.counters = {
-      '+1/+1': 0,
+      counters: {
+        '+1/+1': 0,
+      },
+      trackers: {},
+
+      morph: false,
+      secret: false,
+      noUntap: false,
+      tapped: false,
+      token: false,
     }
-    this.trackers = {}
-
-    this.morph = false
-    this.secret = false
-    this.noUntap = false
-    this.tapped = false
-    this.token = false
+    super(parent, data)
   }
 }
 
@@ -34,13 +37,14 @@ class MagicCard extends BaseCard {
   constructor(game, card) {
     super(game, card)
 
-    this.id = card._id
+    this.sourceId = card._id
 
     // Serializer injects all the fields from card directly into this object.
     this.serializer = new Serializer(this, card)
     this.serializer.inject()
 
-    this.g = new GameData()
+    this.gameData = new GameData(this)
+    this.gameData.inject()
   }
 
   static TYPELINE_DASH = '—'
@@ -452,15 +456,15 @@ class MagicCard extends BaseCard {
 
     // Card moved to a non-tap zone
     if (!['creatures', 'battlefield', 'land', 'attacking', 'blocking'].includes(targetKind)) {
-      if (this.g.tapped) {
+      if (this.tapped) {
         this.game.mUntap(this)
       }
 
-      if (this.g.attachedTo) {
+      if (this.attachedTo) {
         this.game.mDetach(this)
       }
 
-      for (const attached of this.g.attached) {
+      for (const attached of this.attached) {
         this.game.mDetach(attached)
       }
     }

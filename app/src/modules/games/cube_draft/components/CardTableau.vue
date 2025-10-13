@@ -2,7 +2,7 @@
   <div class="card-tableau">
     <div class="card-holder"
          v-for="card in cards"
-         :key="card.g.id"
+         :key="card.id"
          @click="cardClicked(card)" >
       <div class="card-display" @click="showDraftModal = true">
         <MagicCard
@@ -47,7 +47,7 @@ export default {
   methods: {
     cannotDraft(card) {
       const player = this.game.players.byName(this.actor.name)
-      return card.g.id === player.scarredCardId
+      return card.id === player.scarredCardId
     },
 
     cardClicked(card) {

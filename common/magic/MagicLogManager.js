@@ -32,14 +32,14 @@ class MagicLogManager extends BaseLogManager {
 
         if (isHidden) {
           entry.args[key] = {
-            value: card.g.morph ? 'a morph' : 'a card',
+            value: card.morph ? 'a morph' : 'a card',
             classes: ['card-hidden'],
           }
         }
         else {
           entry.args[key] = {
             value: card.name(),
-            cardId: card.g.id,  // Important in some UI situations.
+            cardId: card.id,  // Important in some UI situations.
             classes: ['card-name'],
           }
         }

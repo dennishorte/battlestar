@@ -61,10 +61,10 @@ class UICardWrapper extends magic.MagicCard {
     if (this.isVisible(player)) {
       return this.name(faceIndex)
     }
-    else if (this.g.secret) {
+    else if (this.secret) {
       return 'secret'
     }
-    else if (this.g.morph) {
+    else if (this.morph) {
       return 'morph'
     }
     else {

@@ -36,10 +36,10 @@ export default {
   computed: {
     count() {
       if (this.kind === 'counter') {
-        return this.card.g.counters[this.name]
+        return this.card.counters[this.name]
       }
       else if (this.kind === 'tracker') {
-        return this.card.g.trackers[this.name]
+        return this.card.trackers[this.name]
       }
       else {
         return 'error'
@@ -51,7 +51,7 @@ export default {
     incrementCounter(count) {
       this.do(null, {
         name: `adjust c-${this.kind}`,
-        cardId: this.card.g.id,
+        cardId: this.card.id,
         key: this.name,
         count,
       })

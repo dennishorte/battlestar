@@ -14,7 +14,7 @@
 
     <template v-if="libraryView">
       <TableauZoneCard v-for="card in topCards"
-                       :key="card.g.id"
+                       :key="card.id"
                        :card="card"
                        @click.stop="cardClicked(card)" />
       <div class="library-separator">
@@ -22,7 +22,7 @@
         <div>bottom</div>
       </div>
       <TableauZoneCard v-for="card in bottomCards"
-                       :key="card.g.id"
+                       :key="card.id"
                        :card="card"
                        @click.stop="cardClicked(card)" />
       <div class="bottom-space" @click.stop="zoneClicked('bottom')"/>
@@ -31,7 +31,7 @@
     <template v-else>
       <TableauZoneCard
         v-for="card in zone.cardlist()"
-        :key="card.g.id"
+        :key="card.id"
         :card="card"
         :show-grave-powers="showGravePowers"
         :show-mana-cost="showManaCost"

@@ -304,11 +304,8 @@ describe('BasePlayerManager', () => {
         const { playerManager } = createPlayerManager(4)
 
         // Create objects with owner references
-        const objectWithGOwner = { g: { owner: playerManager.all()[2] } }
         const objectWithOwner = { owner: playerManager.all()[3] }
 
-        // Test both types of owner references
-        expect(playerManager.byOwner(objectWithGOwner)).toBe(playerManager.all()[2])
         expect(playerManager.byOwner(objectWithOwner)).toBe(playerManager.all()[3])
       })
 

@@ -3,7 +3,7 @@ const { BaseZone, ZONE_KIND } = require('../lib/game/index.js')
 class MagicZone extends BaseZone {
   _updateCardVisibility(card) {
     if (this._kind === ZONE_KIND.public) {
-      if (card.g.morph || card.g.secret) {
+      if (card.morph || card.secret) {
         card.show(this.owner())
       }
       else {

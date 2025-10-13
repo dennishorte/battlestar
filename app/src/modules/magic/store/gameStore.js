@@ -85,7 +85,7 @@ export default {
     },
 
     setSelectedCard(state, card) {
-      state.selectedCardId = card ? card.g.id : null
+      state.selectedCardId = card ? card.id : null
     },
   },
 
@@ -116,8 +116,8 @@ export default {
         && Date.now() - state.doubleClick.time < 500  // 500 ms
       ) {
         state.game.doFunc(null, {
-          name: card.g.tapped ? 'untap' : 'tap',
-          cardId: card.g.id,
+          name: card.tapped ? 'untap' : 'tap',
+          cardId: card.id,
         })
         commit('setSelectedCard', null)
         commit('setDoubleClick', {
@@ -140,7 +140,7 @@ export default {
         commit('setSelectedCard', card)
       }
 
-      else if (state.selectedCardId === card.g.id) {
+      else if (state.selectedCardId === card.id) {
         commit('setSelectedCard', null)
       }
 

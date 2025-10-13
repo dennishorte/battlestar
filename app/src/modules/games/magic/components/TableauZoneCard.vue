@@ -15,8 +15,8 @@
           <i class="bi bi-eye" v-else-if="cardIsViewed"/>
           <i class="bi bi-eye-slash-fill" v-else-if="cardIsSecret"/>
 
-          <i class="bi bi-browser-edge" v-if="card.g.morph"/>
-          <i class="bi bi-bookmark-fill" v-if="card.g.token"/>
+          <i class="bi bi-browser-edge" v-if="card.morph"/>
+          <i class="bi bi-bookmark-fill" v-if="card.token"/>
 
           <i class="bi bi-lightning-fill" v-if="showScarIcon"/>
 
@@ -44,18 +44,18 @@
 
     <div ref="menu" :class="highlighted ? '' : 'd-none'">
       <DropdownMenu :notitle="true" :menu-end="true" class="menu dropdown">
-        <DropdownButton @click.stop="twiddle" v-if="card.g.tapped">untap</DropdownButton>
+        <DropdownButton @click.stop="twiddle" v-if="card.tapped">untap</DropdownButton>
         <DropdownButton @click.stop="twiddle" v-else>tap</DropdownButton>
 
         <DropdownButton @click.stop="closeup">close up</DropdownButton>
 
-        <DropdownButton @click.stop="unmorph" v-if="card.g.morph">unmorph</DropdownButton>
+        <DropdownButton @click.stop="unmorph" v-if="card.morph">unmorph</DropdownButton>
         <DropdownButton @click.stop="morph" v-else>morph</DropdownButton>
 
-        <DropdownButton @click.stop="unsecret" v-if="card.g.secret">unsecret</DropdownButton>
+        <DropdownButton @click.stop="unsecret" v-if="card.secret">unsecret</DropdownButton>
         <DropdownButton @click.stop="secret" v-else>secret</DropdownButton>
 
-        <DropdownButton @click.stop="detach" v-if="card.g.attachedTo">detach</DropdownButton>
+        <DropdownButton @click.stop="detach" v-if="card.attachedTo">detach</DropdownButton>
         <DropdownButton @click.stop="attach" v-else>attach</DropdownButton>
 
         <DropdownButton @click.stop="reveal">reveal</DropdownButton>
@@ -63,13 +63,13 @@
 
         <DropdownDivider />
 
-        <li v-for="counter in Object.keys(card.g.counters)" :key="counter">
+        <li v-for="counter in Object.keys(card.counters)" :key="counter">
           <button @click.stop="() => {}" class="dropdown-item counter-button">
             <CounterButtons @click.stop="() => {}" :card="card" :name="counter" />
           </button>
         </li>
 
-        <li v-for="tracker in Object.keys(card.g.trackers)" :key="tracker">
+        <li v-for="tracker in Object.keys(card.trackers)" :key="tracker">
           <button @click.stop="() => {}" class="dropdown-item tracker-button">
             <CounterButtons
               @click.stop="() => {}"
@@ -84,7 +84,7 @@
 
         <DropdownButton @click="toggleUntap">
           doesn't untap
-          <i class="bi bi-check-square" v-if="card.g.noUntap"/>
+          <i class="bi bi-check-square" v-if="card.noUntap"/>
           <i class="bi bi-square" v-else/>
         </DropdownButton>
 
@@ -144,40 +144,40 @@ export default {
     annotation() {
       const parts = []
 
-      for (const [key, value] of Object.entries(this.card.g.counters)) {
+      for (const [key, value] of Object.entries(this.card.counters)) {
         if (value !== 0) {
           parts.push(`${key}: ${value}`)
         }
       }
 
-      for (const [key, value] of Object.entries(this.card.g.trackers)) {
+      for (const [key, value] of Object.entries(this.card.trackers)) {
         if (value !== 0) {
           parts.push(`${key}: ${value}`)
         }
       }
 
-      if (this.card.g.annotation) {
-        parts.push(this.card.g.annotation)
+      if (this.card.annotation) {
+        parts.push(this.card.annotation)
       }
 
-      if (this.card.g.attachedTo) {
-        parts.push('attached to: ' + this.getDisplayName(this.card.g.attachedTo))
+      if (this.card.attachedTo) {
+        parts.push('attached to: ' + this.getDisplayName(this.card.attachedTo))
       }
 
-      if (this.card.g.attached.length > 0) {
-        const names = this.card.g.attached.map(c => this.getDisplayName(c)).join(', ')
+      if (this.card.attached.length > 0) {
+        const names = this.card.attached.map(c => this.getDisplayName(c)).join(', ')
         parts.push('attached: ' + names)
       }
 
-      if (this.card.g.annotationEOT) {
-        parts.push('eot: ' + this.card.g.annotationEOT)
+      if (this.card.annotationEOT) {
+        parts.push('eot: ' + this.card.annotationEOT)
       }
 
       return parts.join(', ')
     },
 
     cardIsSecret() {
-      return this.card.g.secret === true
+      return this.card.secret === true
     },
 
     cardIsRevealed() {
@@ -202,7 +202,7 @@ export default {
       if (this.hidden) {
         classes.push('hidden')
       }
-      if (this.card.g.tapped) {
+      if (this.card.tapped) {
         classes.push('tapped')
       }
       return classes
@@ -251,7 +251,7 @@ export default {
     },
 
     highlighted() {
-      return this.$store.state.magic.game.selectedCardId === this.card.g.id
+      return this.$store.state.magic.game.selectedCardId === this.card.id
     },
 
     isScarred() {
@@ -276,8 +276,8 @@ export default {
       const callback = (card) => {
         this.do(null, {
           name: 'attach',
-          cardId: this.card.g.id,
-          targetId: card.g.id
+          cardId: this.card.id,
+          targetId: card.id
         })
       }
 
@@ -297,7 +297,7 @@ export default {
     detach() {
       this.do(null, {
         name: 'detach',
-        cardId: this.card.g.id,
+        cardId: this.card.id,
       })
       this.$store.dispatch('magic/game/unselectCard')
     },
@@ -327,7 +327,7 @@ export default {
     morph() {
       this.do(null, {
         name: 'morph',
-        cardId: this.card.g.id,
+        cardId: this.card.id,
       })
       this.$store.dispatch('magic/game/unselectCard')
     },
@@ -335,22 +335,22 @@ export default {
     secret() {
       this.do(null, {
         name: 'secret',
-        cardId: this.card.g.id,
+        cardId: this.card.id,
       })
       this.$store.dispatch('magic/game/unselectCard')
     },
 
     twiddle() {
-      if (this.card.g.tapped) {
+      if (this.card.tapped) {
         this.do(null, {
           name: 'untap',
-          cardId: this.card.g.id,
+          cardId: this.card.id,
         })
       }
       else {
         this.do(null, {
           name: 'tap',
-          cardId: this.card.g.id,
+          cardId: this.card.id,
         })
       }
       this.$store.dispatch('magic/game/unselectCard')
@@ -359,7 +359,7 @@ export default {
     reveal() {
       this.do(null, {
         name: 'reveal',
-        cardId: this.card.g.id,
+        cardId: this.card.id,
       })
       this.$store.dispatch('magic/game/unselectCard')
     },
@@ -367,22 +367,22 @@ export default {
     stack() {
       this.do(null, {
         name: 'stack effect',
-        cardId: this.card.g.id,
+        cardId: this.card.id,
       })
       this.$store.dispatch('magic/game/unselectCard')
     },
 
     toggleUntap() {
       this.do(null, {
-        name: this.card.g.noUntap ? 'notap clear' : 'notap set',
-        cardId: this.card.g.id,
+        name: this.card.noUntap ? 'notap clear' : 'notap set',
+        cardId: this.card.id,
       })
     },
 
     unmorph() {
       this.do(null, {
         name: 'unmorph',
-        cardId: this.card.g.id,
+        cardId: this.card.id,
       })
       this.$store.dispatch('magic/game/unselectCard')
     },
@@ -390,7 +390,7 @@ export default {
     unsecret() {
       this.do(null, {
         name: 'unsecret',
-        cardId: this.card.g.id,
+        cardId: this.card.id,
       })
       this.$store.dispatch('magic/game/unselectCard')
     },

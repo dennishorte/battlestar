@@ -47,11 +47,17 @@ TestUtil.fixture = function(options) {
 function _juiceDeck(data) {
   for (const zone of ['main', 'side', 'command']) {
     data.cardIdsByZone[zone] = data.cardIdsByZone[zone].map(name => {
-      return TestCards.byName[name.toLowerCase()][0].id
+      return TestCards.byName[name.toLowerCase()][0].sourceId
     })
   }
   const deck = new DeckWrapper(data)
-  deck.initializeCardsSync(cardIds => cardIds.map(id => TestCards.byId[id]))
+  deck.initializeCardsSync(cardIds => cardIds.map(id => {
+    const card = TestCards.byId[id]
+    if (!card) {
+      throw new Error('Test card not found with id: ' + id)
+    }
+    return card
+  }))
   return deck
 }
 
@@ -125,8 +131,8 @@ TestUtil.fixtureDecksSelected = function(options) {
       cards.find(c => c.name() === 'Advance Scout'),
       cards.find(c => c.name() === 'Tithe'),
       cards.find(c => c.name() === 'Holy Strength'),
-      cards.find(c => c.g.id === 2), // plains
-      cards.find(c => c.g.id === 3), // plains
+      cards.find(c => c.id === 2), // plains
+      cards.find(c => c.id === 3), // plains
     ]
   })
 

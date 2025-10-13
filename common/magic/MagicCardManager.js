@@ -4,10 +4,6 @@ class MagicCardManager extends BaseCardManager {
   constructor(...args) {
     super(...args)
   }
-
-  _getCardId(card) {
-    return card.g.id
-  }
 }
 
 module.exports = {

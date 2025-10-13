@@ -108,7 +108,7 @@ export default {
     },
 
     counters() {
-      return Object.entries(this.selectedCard.g.counters)
+      return Object.entries(this.selectedCard.counters)
     },
 
     selectedCard() {
@@ -116,16 +116,16 @@ export default {
     },
 
     trackers() {
-      return Object.entries(this.selectedCard.g.trackers)
+      return Object.entries(this.selectedCard.trackers)
     },
   },
 
   watch: {
     selectedCard(newValue) {
       if (newValue) {
-        this.activeFaceIndex = newValue.g.activeFaceIndex
-        this.annotation = newValue.g.annotation
-        this.annotationEOT = newValue.g.annotationEOT
+        this.activeFaceIndex = newValue.activeFaceIndex
+        this.annotation = newValue.annotation
+        this.annotationEOT = newValue.annotationEOT
       }
     },
   },
@@ -135,7 +135,7 @@ export default {
       if (this.newCounter) {
         this.do(null, {
           name: 'add counter',
-          cardId: this.selectedCard.g.id,
+          cardId: this.selectedCard.id,
           key: this.newCounter,
         })
       }
@@ -145,7 +145,7 @@ export default {
       if (this.newTracker) {
         this.do(null, {
           name: 'add tracker',
-          cardId: this.selectedCard.g.id,
+          cardId: this.selectedCard.id,
           key: this.newTracker,
         })
       }
@@ -154,7 +154,7 @@ export default {
     debug() {
       const copy = this.selectedCard.toJSON()
       copy.g = { ...this.selectedCard.g }
-      copy.g.owner = this.selectedCard.g.owner.name
+      copy.owner = this.selectedCard.owner.name
       copy.visibility = this.selectedCard.visibility.map(player => player.name)
       copy.zone = this.selectedCard.zone
       copy.home = this.selectedCard.home
@@ -163,24 +163,24 @@ export default {
     },
 
     saveChanges() {
-      if (this.selectedCard.g.activeFaceIndex !== this.activeFaceIndex) {
+      if (this.selectedCard.activeFaceIndex !== this.activeFaceIndex) {
         this.do(null, {
           name: 'active face',
-          cardId: this.selectedCard.g.id,
+          cardId: this.selectedCard.id,
           faceIndex: this.activeFaceIndex,
         })
       }
-      if (this.selectedCard.g.annotation !== this.annotation) {
+      if (this.selectedCard.annotation !== this.annotation) {
         this.do(null, {
           name: 'annotate',
-          cardId: this.selectedCard.g.id,
+          cardId: this.selectedCard.id,
           annotation: this.annotation,
         })
       }
-      if (this.selectedCard.g.annotationEOT !== this.annotationEOT) {
+      if (this.selectedCard.annotationEOT !== this.annotationEOT) {
         this.do(null, {
           name: 'annotate eot',
-          cardId: this.selectedCard.g.id,
+          cardId: this.selectedCard.id,
           annotation: this.annotationEOT,
         })
       }

@@ -205,7 +205,7 @@ export default {
           .map(c => {
             const wrapped = this.cardLookup.byId[c._id]
             const clone = wrapped.clone()
-            clone.g.id = c.id
+            clone.id = c.id
             return clone
           })
         return cards
@@ -248,14 +248,14 @@ export default {
 
     cardUpdated({ updated, original }) {
       this.scarredCard = updated
-      this.scarredCard.g.id = original.g.id
+      this.scarredCard.id = original.id
     },
 
     async chooseCard(card) {
       await this.$store.dispatch('game/submitAction', {
         actor: this.actor.name,
         title: 'Draft Card',
-        selection: [card.g.id],
+        selection: [card.id],
         ignoreBranch: true,
       })
 
@@ -297,7 +297,7 @@ export default {
         title: 'Apply Scar',
         selection: [{
           scarId: scar.id,
-          cardId: this.scarredCard.g.id,
+          cardId: this.scarredCard.id,
         }],
       })
 
