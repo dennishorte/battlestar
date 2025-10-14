@@ -9,16 +9,13 @@ describe("The Daily Courant", () => {
     t.setBoard(game,  {
       dennis: {
         artifact: ["The Daily Courant"],
-        red: ['Archery'],
+        red: ['Construction'],
         blue: ['Mathematics'],
-      },
-      micah: {
-        green: ['The Wheel'],
-        hand: ['Canning'],
       },
       decks: {
         base: {
-          1: ['Sailing'],
+          1: ['Archery'],
+          2: ['Monotheism'],
           6: ['Encyclopedia'],
         }
       }
@@ -27,20 +24,43 @@ describe("The Daily Courant", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 6)
-    request = t.choose(game, request, 'Archery')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
-        red: ['Archery'],
+        red: ['Construction', 'Archery'],
         blue: ['Mathematics'],
-        hand: ['Canning'],
+        purple: ['Monotheism'],
         museum: ['Museum 1', 'The Daily Courant'],
       },
-      micah: {
-        green: ['The Wheel'],
-        hand: ['Sailing'],
+    })
+  })
+
+  test('dogma: no top card', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+    t.setBoard(game,  {
+      dennis: {
+        artifact: ["The Daily Courant"],
+        red: ['Construction'],
+      },
+      decks: {
+        base: {
+          1: ['Sailing', 'Archery'],
+          6: ['Encyclopedia'],
+        }
+      }
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+
+    t.testIsFirstAction(request)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Archery', 'Construction'],
+        green: ['Sailing'],
+        museum: ['Museum 1', 'The Daily Courant'],
       },
     })
   })

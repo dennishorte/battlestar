@@ -6,36 +6,21 @@ module.exports = {
   biscuits: `ffch`,
   dogmaBiscuit: `f`,
   dogma: [
-    `Draw a card of any value, then place it on top of the draw pile of its age. Execute the effects of one of your other top cards as if they were on this card. Do not share them.`
+    `Draw, reveal, and return a {6}. Draw and meld a card of value equal to the value of your top card of the same color as the returned card. Self-execute the melded card.`
   ],
   dogmaImpl: [
     (game, player) => {
-      const age = game.actions.chooseAge(player)
-      game.log.add({
-        template: '{player} choose age {age}',
-        args: { player, age }
-      })
-      const card = game.actions.draw(player, { age })
-      if (card) {
-        game.mMoveCardToTop(card, game.getZoneByCardHome(card))
-        game.log.add({
-          template: '{player} puts {card} on back on top of deck',
-          args: { player, card }
-        })
-      }
+      // Draw, reveal, return
+      const firstCard = game.actions.drawAndReveal(player, 6)
+      game.actions.return(player, firstCard)
 
-      const choices = game.cards.tops(player)
-      const toExecute = game.actions.chooseCard(player, choices)
-      if (toExecute) {
-        game.log.add({
-          template: '{player} executes {card}',
-          args: {
-            player,
-            card: toExecute
-          }
-        })
-        game.aExecuteAsIf(player, toExecute)
-      }
+      // Draw and meld
+      const topCard = game.cards.top(player, firstCard.color)
+      const age = topCard ? topCard.getAge() : 1
+      const meldCard = game.actions.drawAndMeld(player, age)
+
+      // Self execute
+      game.aSelfExecute(player, meldCard)
     }
   ],
 }
