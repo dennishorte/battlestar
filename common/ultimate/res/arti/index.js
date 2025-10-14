@@ -44,7 +44,7 @@ const cardData = [
   require('./DelftPocketTelescope.js'),
   require('./CrossofCoronado.js'),
   require('./AbellGalleryHarpsichord.js'),
-  require('./BillofRights.js'),
+  require('./GalleyWhydah.js'),
   require('./ShipoftheLineSussex.js'),
   require('./GujinTushuJinsheng.js'),
   require('./TheDailyCourant.js'),

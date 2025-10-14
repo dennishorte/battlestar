@@ -2,13 +2,13 @@ Error.stackTraceLimit = 100
 
 const t = require('../../testutil.js')
 
-describe('Bill of Rights', () => {
+describe('Galley Whydah', () => {
 
   test('dogma', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
-        artifact: ['Bill of Rights'],
+        artifact: ['Galley Whydah'],
         blue: ['Pottery'],
       },
       micah: {
@@ -26,8 +26,9 @@ describe('Bill of Rights', () => {
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
-        blue: ['Experimentation', 'Tools', 'Alchemy', 'Pottery'],
-        museum: ['Museum 1', 'Bill of Rights'],
+        blue: ['Experimentation', 'Tools', 'Alchemy'],
+        score: ['Pottery'],
+        museum: ['Museum 1', 'Galley Whydah'],
       }
     })
   })
@@ -36,7 +37,7 @@ describe('Bill of Rights', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
-        artifact: ['Bill of Rights'],
+        artifact: ['Galley Whydah'],
         blue: ['Pottery'],
       },
       micah: {
@@ -52,7 +53,7 @@ describe('Bill of Rights', () => {
     t.testBoard(game, {
       dennis: {
         blue: ['Pottery'],
-        museum: ['Museum 1', 'Bill of Rights'],
+        museum: ['Museum 1', 'Galley Whydah'],
       },
       micah: {
         blue: ['Experimentation', 'Tools', 'Alchemy']
