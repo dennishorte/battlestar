@@ -6,24 +6,25 @@ module.exports = {
   biscuits: `schs`,
   dogmaBiscuit: `s`,
   dogma: [
-    `If Gujin Tushu Jinsheng is on your board, choose any other top card on any other board. Execute the echo and dogma effects on the chosen card as if they were on this card. Do not share them.`
+    `If it is your turn, choose any top card on any other board and super-execute it.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      if (!game.isCardOnPlayerBoard(player, self)) {
+      if (player.id !== game.players.current().id) {
         game.log.add({
-          template: "{card} is not on {player}'s board.",
-          args: { card: self, player }
+          template: 'It is not {player} turn',
+          args: { player }
         })
         return
       }
 
       const choices = game
-        .getPlayerOther(player)
+        .players
+        .other(player)
         .flatMap(player => game.cards.tops(player))
       const card = game.actions.chooseCard(player, choices)
       if (card) {
-        game.aExecuteAsIf(player, card)
+        game.aSuperExecute(player, card)
       }
     }
   ],
