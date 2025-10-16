@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `fhfs`,
   dogmaBiscuit: `f`,
   dogma: [
-    `Return a card from your hand. Return a top card from your board. If you returned two cards and their values sum to ten, draw and score a {0}.`
+    `Return a card from your hand. Return a top card from your board. If you returned two cards and their values sum to ten, draw and score a {0}. Otherwise, junk all cards in the deck of value equal to the sum.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
@@ -20,7 +20,14 @@ module.exports = {
         }
         else {
           game.log.add({ template: 'Card values do not sum to 10' })
+          game.actions.junkDeck(player, sum)
         }
+      }
+      else {
+        game.log.add({
+          template: '{player} did not return two cards',
+          args: { player }
+        })
       }
     }
   ],
