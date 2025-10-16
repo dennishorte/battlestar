@@ -27,4 +27,26 @@ describe('Almira, Queen of the Castle', () => {
       },
     })
   })
+
+  test('dogma: no meld', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+    t.setBoard(game,  {
+      dennis: {
+        artifact: ['Almira, Queen of the Castle'],
+      },
+      achievements: ['Construction', 'Machinery'],
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+
+    t.testIsFirstAction(request)
+    t.testBoard(game, {
+      dennis: {
+        museum: ['Museum 1', 'Almira, Queen of the Castle'],
+      },
+    })
+    t.testDeckIsJunked(game, 2)
+  })
 })

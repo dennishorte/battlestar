@@ -6,16 +6,22 @@ module.exports = {
   biscuits: `chcc`,
   dogmaBiscuit: `c`,
   dogma: [
-    `Meld a card from your hand. Claim an achievement of matching value, ignoring eligiblilty.`
+    `Meld a card from your hand. If you do, claim an achievement of matching value, ignoring eligiblilty. Otherwise, junk all cards in the deck of value equal to the lowest available achievement, if there is one.`
   ],
   dogmaImpl: [
     (game, player) => {
-      const cards = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
-      if (cards && cards.length > 0) {
-        const achievements = game
-          .getAvailableAchievements(player)
-          .filter(card => card.getAge() === cards[0].getAge())
-        game.actions.chooseAndAchieve(player, achievements)
+      const card = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))[0]
+      const achievements = game.getAvailableStandardAchievements(player)
+
+      if (card) {
+        const choices = achievements.filter(c => c.getAge() === card.getAge())
+        game.actions.chooseAndAchieve(player, choices)
+      }
+      else {
+        const lowest = game.util.lowestCards(achievements)[0]
+        if (lowest) {
+          game.actions.junkDeck(player, lowest.getAge())
+        }
       }
     },
   ],
