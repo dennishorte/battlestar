@@ -50,7 +50,7 @@ const cardData = [
   require('./TheDailyCourant.js'),
   require('./BaroqueLonguelaBelle.js'),
   require('./HudsonsBayCompanyArchives.js'),
-  require('./BoerhavveSilverMicroscope.js'),
+  require('./BoerhaaveMicroscope.js'),
   require('./Principa.js'),
   require('./SandhamRoomCricketBat.js'),
   require('./AlmiraQueenoftheCastle.js'),

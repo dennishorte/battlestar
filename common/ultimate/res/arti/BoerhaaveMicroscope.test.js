@@ -2,13 +2,13 @@ Error.stackTraceLimit = 100
 
 const t = require('../../testutil.js')
 
-describe('Boerhavve Silver Microscope', () => {
+describe('Boerhavve Microscope', () => {
 
   test('dogma', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
-        artifact: ['Boerhavve Silver Microscope'],
+        artifact: ['Boerhavve Microscope'],
         blue: ['Pottery'],
         green: ['Paper'],
         hand: ['Calendar', 'Enterprise'],
@@ -30,7 +30,7 @@ describe('Boerhavve Silver Microscope', () => {
         green: ['Paper'],
         hand: ['Enterprise'],
         score: ['Machinery'],
-        museum: ['Museum 1', 'Boerhavve Silver Microscope'],
+        museum: ['Museum 1', 'Boerhavve Microscope'],
       }
     })
   })
@@ -39,7 +39,7 @@ describe('Boerhavve Silver Microscope', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
-        artifact: ['Boerhavve Silver Microscope'],
+        artifact: ['Boerhavve Microscope'],
       },
       decks: {
         base: {
@@ -56,7 +56,7 @@ describe('Boerhavve Silver Microscope', () => {
     t.testBoard(game, {
       dennis: {
         score: ['Sailing'],
-        museum: ['Museum 1', 'Boerhavve Silver Microscope'],
+        museum: ['Museum 1', 'Boerhavve Microscope'],
       }
     })
   })

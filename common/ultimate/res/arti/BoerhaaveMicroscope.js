@@ -1,12 +1,12 @@
 module.exports = {
-  name: `Boerhavve Silver Microscope`,
+  name: `Boerhavve Microscope`,
   color: `blue`,
   age: 5,
   expansion: `arti`,
   biscuits: `sfsh`,
   dogmaBiscuit: `s`,
   dogma: [
-    `Return the lowest card in your hand and the lowest top card on your board. Draw and score a card of value equal to the sum of the values of the cards returned.`
+    `Return the lowest card in your hand and the lowest top card on your board. Draw and score a card of value equal to the sum of the values of the cards you return.`
   ],
   dogmaImpl: [
     (game, player) => {
