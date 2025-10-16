@@ -11,7 +11,7 @@ describe("Puffing Billy", () => {
         artifact: ["Puffing Billy"],
         yellow: {
           cards: ['Canning', 'Agriculture', 'Sanitation'],
-          splay: 'up'
+          splay: 'left'
         },
         hand: ['Fermenting'],
       },
@@ -30,7 +30,7 @@ describe("Puffing Billy", () => {
     t.testBoard(game, {
       dennis: {
         yellow: {
-          cards: ['Canning', 'Agriculture', 'Sanitation'],
+          cards: ['Canning', 'Agriculture', 'Sanitation', 'Fermenting'],
           splay: 'right',
         },
         hand: ['Industrialization'],
