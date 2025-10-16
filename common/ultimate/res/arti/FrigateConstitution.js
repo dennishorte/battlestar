@@ -13,10 +13,11 @@ module.exports = {
       const card = game.actions.chooseCard(player, game.cards.byPlayer(player, 'hand'))
 
       if (card) {
-        game.mReveal(player, card)
+        game.actions.reveal(player, card)
 
         const matchingAges = game
-          .cards.tops(leader)
+          .cards
+          .tops(leader)
           .filter(other => other.getAge() === card.age)
 
         if (matchingAges.length === 0) {
