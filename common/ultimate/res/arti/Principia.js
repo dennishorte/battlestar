@@ -1,21 +1,23 @@
 module.exports = {
-  name: `Principa`,
+  name: `Principia`,
   color: `blue`,
   age: 5,
   expansion: `arti`,
   biscuits: `sshs`,
   dogmaBiscuit: `s`,
   dogma: [
-    `Return all non-blue top cards from your board. For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order.`
+    `Return you top card of each non-blue color. For each card you return, draw and meld a card of value one higher than the value of the returned card, in ascending order.`
   ],
   dogmaImpl: [
     (game, player) => {
       const toReturn = game
-        .cards.tops(player)
+        .cards
+        .tops(player)
         .filter(card => card.color !== 'blue')
 
       const returned = game
-        .actions.returnMany(player, toReturn)
+        .actions
+        .returnMany(player, toReturn)
         .sort((l, r) => l.getAge() - r.getAge())
 
       for (const card of returned) {

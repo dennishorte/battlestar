@@ -51,7 +51,7 @@ const cardData = [
   require('./BaroqueLonguelaBelle.js'),
   require('./HudsonsBayCompanyArchives.js'),
   require('./BoerhaaveMicroscope.js'),
-  require('./Principa.js'),
+  require('./Principia.js'),
   require('./SandhamRoomCricketBat.js'),
   require('./AlmiraQueenoftheCastle.js'),
   require('./FrigateConstitution.js'),
