@@ -38,6 +38,7 @@ describe("Sandham Room Cricket Bat", () => {
       dennis: {
         artifact: ["Sandham Room Cricket Bat"],
       },
+      achievements: ['Measurement', 'Industrialization', 'Lighting'],
       decks: {
         base: {
           6: ['Classification'],
@@ -48,6 +49,7 @@ describe("Sandham Room Cricket Bat", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, '**base-6*')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -55,6 +57,7 @@ describe("Sandham Room Cricket Bat", () => {
         hand: ['Classification'],
         museum: ['Museum 1', 'Sandham Room Cricket Bat'],
       },
+      junk: ['Industrialization'],
     })
   })
 })
