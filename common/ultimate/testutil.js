@@ -149,6 +149,14 @@ TestUtil.testChoices = function(request, expected, expectedMin, expectedMax) {
   }
 }
 
+TestUtil.testDeckIsJunked = function(game, age) {
+  const cards = game.cards.byDeck('base', age)
+  expect(cards.length).toBe(0)
+
+  const junk = game.cards.byZone('junk')
+  expect(cards.length).toBeGreaterThan(4)
+}
+
 TestUtil.testIsFirstAction = function(request) {
   const selector = request.selectors[0]
   expect(selector.actor).toBe('dennis')

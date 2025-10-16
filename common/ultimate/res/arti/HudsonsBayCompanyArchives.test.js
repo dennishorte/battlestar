@@ -35,5 +35,6 @@ describe("Hudson's Bay Company Archives", () => {
         museum: ['Museum 1', "Hudson's Bay Company Archives"],
       }
     })
+    t.testDeckIsJunked(game, 4)
   })
 })
