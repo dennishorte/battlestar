@@ -56,7 +56,7 @@ const cardData = [
   require('./AlmiraQueenoftheCastle.js'),
   require('./FrigateConstitution.js'),
   require('./USDeclarationofIndependence.js'),
-  require('./StampAct.js'),
+  require('./QianlongsDragonRobe.js'),
   require('./PrideandPrejudice.js'),
   require('./TheWealthofNations.js'),
   require('./ButtonwoodAgreement.js'),
