@@ -12,7 +12,7 @@ describe('Baroque-Longue la Belle', () => {
       },
       decks: {
         base: {
-          5: ['Astronomy', 'Metric System'],
+          5: ['Astronomy', 'Measurement'],
         },
       },
     })
@@ -25,7 +25,7 @@ describe('Baroque-Longue la Belle', () => {
     t.testBoard(game, {
       dennis: {
         purple: ['Astronomy'],
-        green: ['Metric System'],
+        green: ['Measurement'],
         museum: ['Museum 1', 'Baroque-Longue la Belle'],
       },
     })
