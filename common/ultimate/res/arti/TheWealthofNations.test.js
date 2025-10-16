@@ -30,5 +30,6 @@ describe("The Wealth of Nations", () => {
         museum: ['Museum 1', 'The Wealth of Nations'],
       },
     })
+    t.testDeckIsJunked(game, 4)
   })
 })

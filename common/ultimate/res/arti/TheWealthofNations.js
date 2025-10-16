@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `cfhc`,
   dogmaBiscuit: `c`,
   dogma: [
-    `Draw and score a {1}. Add up the values of all the cards in your score pile, divide by five, and round up. Draw and score a card of value equal to the result.`
+    `Draw and score a {1}. Add up the values of all the cards in your score pile, divide by five, and round up. Draw and score a card of value equal to the result. Junk all cards in the deck of that value.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
@@ -19,6 +19,8 @@ module.exports = {
 
       const age = Math.ceil(totalValue / 5)
       game.actions.drawAndScore(player, age)
+
+      game.actions.junkDeck(player, age)
     }
   ],
 }
