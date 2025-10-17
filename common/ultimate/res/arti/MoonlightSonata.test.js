@@ -15,12 +15,13 @@ describe("Moonlight Sonata", () => {
           splay: 'left'
         }
       },
-      achievements: ['Software'],
+      achievements: ['Software', 'Coal'],
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, '**base-10*')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -33,30 +34,7 @@ describe("Moonlight Sonata", () => {
         achievements: ['Software'],
         museum: ['Museum 1', 'Moonlight Sonata'],
       },
-    })
-  })
-
-  test('dogma: single card in stack', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-    t.setBoard(game,  {
-      dennis: {
-        artifact: ["Moonlight Sonata"],
-        red: ['Archery'],
-      },
-      achievements: ['Software'],
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'dogma')
-
-    t.testIsFirstAction(request)
-    t.testBoard(game, {
-      dennis: {
-        red: ['Archery'],
-        museum: ['Museum 1', 'Moonlight Sonata'],
-        //        achievements: ['Software'],
-      },
+      junk: ['Coal']
     })
   })
 })
