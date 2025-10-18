@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `lllh`,
   dogmaBiscuit: `l`,
   dogma: [
-    `Meld the highest card from your score pile. Draw and score two cards of value equal to the melded card. Execute the effects of the melded card as if they were on this card. Do not share them.`
+    `Meld the highest card from your score pile. Draw and score two cards of value equal to the melded card. Self-execute the melded card.`
   ],
   dogmaImpl: [
     (game, player) => {
@@ -16,7 +16,7 @@ module.exports = {
         const card = cards[0]
         game.actions.drawAndScore(player, card.getAge())
         game.actions.drawAndScore(player, card.getAge())
-        game.aExecuteAsIf(player, card)
+        game.aSelfExecute(player, card)
       }
     }
   ],
