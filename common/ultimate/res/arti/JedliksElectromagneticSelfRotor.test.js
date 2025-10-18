@@ -10,10 +10,39 @@ describe("Jedlik's Electromagnetic Self-Rotor", () => {
       dennis: {
         artifact: ["Jedlik's Electromagnetic Self-Rotor"],
       },
-      achievements: ['Lighting', 'Rocketry', 'Tools'],
       decks: {
         base: {
           8: ['Flight', 'Socialism']
+        }
+      }
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 4)
+
+    t.testIsFirstAction(request)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Socialism'],
+        score: ['Flight'],
+        museum: ['Museum 1', "Jedlik's Electromagnetic Self-Rotor"],
+      },
+    })
+    t.testDeckIsJunked(game, 4)
+  })
+
+  test('dogma: not a 8', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+    t.setBoard(game,  {
+      dennis: {
+        artifact: ["Jedlik's Electromagnetic Self-Rotor"],
+      },
+      decksExact: {
+        base: {
+          8: ['Flight'],
+          9: ['Computers'],
         }
       }
     })
@@ -25,9 +54,8 @@ describe("Jedlik's Electromagnetic Self-Rotor", () => {
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
-        purple: ['Socialism'],
+        blue: ['Computers'],
         score: ['Flight'],
-        achievements: ['Rocketry'],
         museum: ['Museum 1', "Jedlik's Electromagnetic Self-Rotor"],
       },
     })
