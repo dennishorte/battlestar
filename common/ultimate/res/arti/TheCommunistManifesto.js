@@ -6,19 +6,19 @@ module.exports = {
   biscuits: `cchl`,
   dogmaBiscuit: `c`,
   dogma: [
-    `For each player in the game, draw and reveal a {7}. Transfer one of the drawn cards to each player's board. Execute the non-demand dogma effects of your card. Do not share them.`
+    `For each player in the game, draw and reveal a {7}. Transfer one of the drawn cards to each other player's board. Meld the last, and self-execute it.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const players = game.getPlayersStarting(player)
-      const cards = players.map(_ => game.actions.drawAndReveal(player, game.getEffectAge(self, 7)))
+      const players = game.players.startingWith(player)
+      const cards = players.map(() => game.actions.drawAndReveal(player, game.getEffectAge(self, 7)))
 
       let remaining = cards
       let mine = null
       for (const target of players) {
         const title = `Choose a card to transfer to ${target.name}`
         const card = game.actions.chooseCard(player, remaining, { title })
-        remaining = remaining.filter(other => other !== card)
+        remaining = remaining.filter(other => !other.equals(card))
 
         const transferred = game.actions.transfer(player, card, game.zones.byPlayer(target, card.color))
         if (transferred && target === player) {
@@ -27,7 +27,7 @@ module.exports = {
       }
 
       if (mine) {
-        game.aCardEffects(player, mine, 'dogma')
+        game.aSelfExecute(player, mine)
       }
     }
   ],
