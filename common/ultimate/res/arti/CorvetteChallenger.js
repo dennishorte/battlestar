@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `lshl`,
   dogmaBiscuit: `l`,
   dogma: [
-    `Draw and tuck an {8}. Splay up the color of the tucked card. Draw and score a card of value equal to the number of cards of that color visible on your board.`
+    `Draw and tuck an {8}. Splay up the color of the tucked card. Draw and score a card of value equal to the number of cards of that color on your board. Junk all cards in the deck of that value.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
@@ -14,6 +14,7 @@ module.exports = {
       game.actions.splay(player, card.color, 'up')
       const numCards = game.cards.byPlayer(player, card.color).length
       game.actions.drawAndScore(player, numCards)
+      game.actions.junkDeck(player, numCards)
     }
   ],
 }

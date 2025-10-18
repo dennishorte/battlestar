@@ -34,5 +34,6 @@ describe('Corvette Challenger', () => {
         museum: ['Museum 1', 'Corvette Challenger'],
       },
     })
+    t.testDeckIsJunked(game, 3)
   })
 })
