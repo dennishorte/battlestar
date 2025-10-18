@@ -23,7 +23,7 @@ module.exports = {
         }
 
         if (cards[0].color === cards[1].color) {
-          const choices = game.getAvailableAchievements(player)
+          const choices = game.getAvailableStandardAchievements(player)
           game.actions.chooseAndAchieve(player, choices)
         }
       }
