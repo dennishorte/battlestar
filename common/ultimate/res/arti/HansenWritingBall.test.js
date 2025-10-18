@@ -16,7 +16,7 @@ describe('Hansen Writing Ball', () => {
       },
       decks: {
         base: {
-          7: ['Explosives', 'Atomic Theory', 'Bicycle', 'Sanitation', 'Lighting', 'Refrigeration', 'Railroad', 'Combustion'],
+          7: ['Explosives', 'Evolution', 'Bicycle', 'Sanitation', 'Lighting', 'Refrigeration', 'Railroad', 'Combustion'],
         }
       }
     })
@@ -25,9 +25,9 @@ describe('Hansen Writing Ball', () => {
     request = game.run()
     request = t.choose(game, request, 'dogma')
 
-    t.testChoices(request, ['Atomic Theory', 'Experimentation'])
+    t.testChoices(request, ['Evolution', 'Experimentation'])
 
-    request = t.choose(game, request, 'Atomic Theory')
+    request = t.choose(game, request, 'Evolution')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -38,7 +38,7 @@ describe('Hansen Writing Ball', () => {
       },
       micah: {
         green: ['Databases'],
-        blue: ['Atomic Theory'],
+        blue: ['Evolution'],
         hand: ['Lighting'],
       },
     })
