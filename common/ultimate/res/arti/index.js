@@ -67,7 +67,7 @@ const cardData = [
   require('./SubmarineHLHunley.js'),
   require('./JedliksElectromagneticSelfRotor.js'),
   require('./ColtPatersonRevolver.js'),
-  require('./SingleModel27.js'),
+  require('./SingerModel27.js'),
   require('./InternationalPrototypeMetreBar.js'),
   require('./HansenWritingBall.js'),
   require('./PeriodicTable.js'),

@@ -2,17 +2,18 @@ Error.stackTraceLimit = 100
 
 const t = require('../../testutil.js')
 
-describe("Single Model 27", () => {
+describe("Singer Model 27", () => {
 
   test('dogma', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
-        artifact: ["Single Model 27"],
+        artifact: ["Singer Model 27"],
         green: ['Clothing'],
         hand: ['Sailing'],
         score: ['The Wheel', 'Navigation', 'Tools'],
       },
+      achievements: ['Coal'],
     })
 
     let request
@@ -28,8 +29,9 @@ describe("Single Model 27", () => {
           splay: 'up'
         },
         score: ['Tools'],
-        museum: ['Museum 1', 'Single Model 27'],
+        museum: ['Museum 1', 'Singer Model 27'],
       },
+      junk: ['Coal'],
     })
   })
 })
