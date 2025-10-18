@@ -12,7 +12,7 @@ describe("Submarine H. L. Hunley", () => {
       },
       micah: {
         red: ['Coal'],
-        purple: ['Code of Laws'],
+        purple: ['Monotheism'],
       },
       decks: {
         base: {
@@ -36,7 +36,7 @@ describe("Submarine H. L. Hunley", () => {
     })
   })
 
-  test('dogma: bottom card is not 1', () => {
+  test('dogma: bottom card is odd', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
@@ -44,7 +44,7 @@ describe("Submarine H. L. Hunley", () => {
       },
       micah: {
         red: ['Coal'],
-        purple: ['Enterprise'],
+        purple: ['Code of Laws'],
       },
       decks: {
         base: {
@@ -64,7 +64,7 @@ describe("Submarine H. L. Hunley", () => {
       },
       micah: {
         red: ['Coal'],
-        purple: ['Lighting', 'Enterprise'],
+        purple: ['Lighting', 'Code of Laws'],
       }
     })
   })
