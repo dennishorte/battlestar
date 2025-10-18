@@ -8,7 +8,7 @@ module.exports = {
   biscuits: `shss`,
   dogmaBiscuit: `s`,
   dogma: [
-    `Choose two top cards on your board of the same value. If you do, draw a card of value one higher and meld it. If it melded over one of the chosen cards, repeat this effect.`
+    `Choose two top cards on your board of the same value. If you do, draw a card of value one higher and meld it. If you meld it over one of the chosen cards, repeat this effect.`
   ],
   dogmaImpl: [
     (game, player) => {
