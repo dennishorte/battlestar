@@ -6,24 +6,34 @@ module.exports = {
   biscuits: `chcf`,
   dogmaBiscuit: `c`,
   dogma: [
-    //    `Choose a value. Draw and meld a card of that value. Splay up the color of the melded card. If the number of cards of that color visible on your board is exactly equal to the card's value, you win. Otherwise, return the melded card.`
-    `Choose a value. Draw and meld a card of that value. Splay up the color of the melded card. If the number of cards of that color visible on your board is exactly equal to the card's value, draw and score a {0}. Otherwise, return the melded card.`
+    `Choose a value. Draw and reveal three cards of that value. Splay up the color of the cards. If the number of cards of each of those colors on your board is equal to that value, you win. Otherwise, return the drawn cards.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
       const age = game.actions.chooseAge(player)
-      const card = game.actions.drawAndMeld(player, age)
-      game.actions.splay(player, card.color, 'up')
+      const cards = [
+        game.actions.drawAndReveal(player, age),
+        game.actions.drawAndReveal(player, age),
+        game.actions.drawAndReveal(player, age),
+      ]
 
-      if (game.cards.byPlayer(player, card.color).length === card.getAge()) {
-        game.actions.drawAndScore(player, game.getEffectAge(self, 10))
-        /* throw new GameOverEvent({
-         *   player,
-         *   reason: self.name
-         * }) */
+      for (const card of cards) {
+        game.actions.splay(player, card.color, 'up')
+      }
+
+      const numbersOfCards = cards.map(card => ({
+        color: card.color,
+        count: game.cards.byPlayer(player, card.color).length
+      }))
+
+      const numbersString = numbersOfCards.map(({ color, count }) => `${color}: ${count}`).join(', ')
+      game.log.add({ template: numbersString })
+
+      if (numbersOfCards.every(({ count }) => count === age)) {
+        game.youWin(player, self.name)
       }
       else {
-        game.actions.return(player, card)
+        game.actions.returnMany(player, cards)
       }
     }
   ],
