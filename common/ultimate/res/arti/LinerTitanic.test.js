@@ -2,19 +2,24 @@ Error.stackTraceLimit = 100
 
 const t = require('../../testutil.js')
 
-describe("Ocean Liner Titanic", () => {
+describe("Liner Titanic", () => {
 
   test('dogma', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
-        artifact: ["Ocean Liner Titanic"],
+        artifact: ["Liner Titanic"],
         red: {
           cards: ['Engineering', 'Archery'],
           splay: 'left'
         },
         blue: ['Experimentation'],
         green: ['Metric System', 'Paper'],
+      },
+      decksExact: {
+        base: {
+          1: [],
+        }
       },
     })
 
@@ -29,8 +34,10 @@ describe("Ocean Liner Titanic", () => {
         red: ['Engineering'],
         green: ['Metric System'],
         score: ['Archery', 'Paper', 'Experimentation'],
-        museum: ['Museum 1', 'Ocean Liner Titanic'],
+        museum: ['Museum 1', 'Liner Titanic'],
       },
     })
+
+    t.testDeckIsJunked(game, 2)
   })
 })

@@ -78,7 +78,7 @@ const cardData = [
   require('./BattleshipYamato.js'),
   require('./PlushBeweglichRodBear.js'),
   require('./ActionComics1.js'),
-  require('./OceanLinerTitanic.js'),
+  require('./LinerTitanic.js'),
   require('./MejiMuraStampVendingMachine.js'),
   require('./ParnellPitchDrop.js'),
   require('./EarhartsLockheedElectra10E.js'),

@@ -1,5 +1,5 @@
 module.exports = {
-  name: `Ocean Liner Titanic`,
+  name: `Liner Titanic`,
   color: `green`,
   age: 8,
   expansion: `arti`,
@@ -19,6 +19,14 @@ module.exports = {
       }
 
       game.actions.scoreMany(player, toScore)
+
+      for (const age of game.util.ages()) {
+        const cards = game.cards.byDeck('base', age)
+        if (cards.length > 0) {
+          game.actions.junkDeck(player, age)
+          break
+        }
+      }
     }
   ],
 }
