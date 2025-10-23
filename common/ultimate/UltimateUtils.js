@@ -107,6 +107,10 @@ class UltimateUtils {
     return this.ages().sort((l, r) => r - l)[0]
   }
 
+  minAge() {
+    return 1
+  }
+
   parseBiscuits(biscuitString) {
     const counts = this.emptyBiscuits()
     for (const ch of biscuitString) {

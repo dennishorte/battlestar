@@ -1,4 +1,3 @@
-
 module.exports = {
   name: `Earhart's Lockheed Electra 10E`,
   color: `blue`,
@@ -7,14 +6,15 @@ module.exports = {
   biscuits: `ihii`,
   dogmaBiscuit: `i`,
   dogma: [
-    `For each value below nine, return a top card of that value from your board, in descending order. If you return eight cards, you win. Otherwise, claim an achievement, ignoring eligibility.`
+    `For each value below nine, junk a top card of that value from your board, in descending order. If there is a junked card of each value below nine, you win.`,
+    `Claim an available standard achievement, ignoring eligibility.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      let returned = 0
-      for (let i = 8; i > 0; i--) {
+      for (let i = 8; i >= game.util.minAge(); i--) {
         const choices = game
-          .cards.tops(player)
+          .cards
+          .tops(player)
           .filter(card => card.getAge() === i)
 
         if (!choices) {
@@ -22,27 +22,20 @@ module.exports = {
           continue
         }
 
-        const cards = game.actions.chooseAndReturn(player, choices)
-        if (cards && cards.length > 0) {
-          returned += 1
-        }
-        else {
-          game.log.add({ template: 'no card was returned' })
-        }
+        game.actions.chooseAndJunk(player, choices)
       }
 
-      game.log.add({
-        template: '{player} returned {count} cards',
-        args: { player, count: returned }
-      })
-      if (returned === 8) {
+      const junkCards = game.cards.byZone('junk')
+      const requiredAges = game.util.ages().filter(age => age < 9)
+      const junkedAges = requiredAges.filter(age => junkCards.some(card => card.getAge() === age))
+      if (junkedAges.length === requiredAges.length) {
         game.youWin(player, self.name)
       }
-      else {
-        const achievements = game
-          .getAvailableAchievements(player)
-        game.actions.chooseAndAchieve(player, achievements)
-      }
+    },
+
+    (game, player) => {
+      const achievements = game.getAvailableStandardAchievements(player)
+      game.actions.chooseAndAchieve(player, achievements)
     }
   ],
 }

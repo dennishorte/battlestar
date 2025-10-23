@@ -11,9 +11,9 @@ describe("Earhart's Lockheed Electra 10E", () => {
         artifact: ["Earhart's Lockheed Electra 10E"],
         red: ['Flight', 'Engineering'],
         purple: ['Lighting', 'Astronomy', 'Enterprise'],
-        yellow: ['Canning'],
         blue: ['Calendar', 'Tools'],
       },
+      junk: ['Canning'],
     })
 
     let request
