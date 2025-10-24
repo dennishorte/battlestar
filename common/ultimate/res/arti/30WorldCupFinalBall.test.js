@@ -8,7 +8,7 @@ describe('30 World Cup Final Ball', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
-        artifact: "'30 World Cup Final Ball",
+        artifact: ["'30 World Cup Final Ball"],
       },
       micah: {
       },
@@ -38,7 +38,7 @@ describe('30 World Cup Final Ball', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
-        artifact: "'30 World Cup Final Ball",
+        artifact: ["'30 World Cup Final Ball"],
         blue: ['Alchemy'],
       },
       micah: {
@@ -59,12 +59,11 @@ describe('30 World Cup Final Ball', () => {
     t.testBoard(game, {
       dennis: {
         blue: ['Alchemy'],
-        hand: ['Socialism'],
+        hand: ['Socialism', 'Quantum Theory'],
         museum: ['Museum 1', "'30 World Cup Final Ball"],
       },
       micah: {
-        blue: ['Experimentation'],
-        achievements: ['Quantum Theory'],
+        achievements: ['Experimentation'],
       }
     })
   })
@@ -73,7 +72,7 @@ describe('30 World Cup Final Ball', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
-        artifact: "'30 World Cup Final Ball",
+        artifact: ["'30 World Cup Final Ball"],
       },
       micah: {
         yellow: ['Agriculture'],
