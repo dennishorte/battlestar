@@ -8,8 +8,4 @@ module.exports = {
   dogmaBiscuit: `s`,
   dogma: [],
   dogmaImpl: [],
-  echoImpl: [],
-  karmaImpl: [
-    {}
-  ],
 }

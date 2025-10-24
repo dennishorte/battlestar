@@ -1,4 +1,3 @@
-
 module.exports = {
   name: `Garland's Ruby Slippers`,
   color: `purple`,
@@ -7,28 +6,27 @@ module.exports = {
   biscuits: `hiii`,
   dogmaBiscuit: `i`,
   dogma: [
-    `Meld an {8} from your hand. If the melded card has no effects (of any kind), you win. Otherwise, execute the effects of the melded card as if they were on this card. Do not share them.`
+    `Meld an {8} from your hand. If the melded card has no effects (of any kind), you win. Otherwise, self-execute it.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
       const choices = game
-        .cards.byPlayer(player, 'hand')
+        .cards
+        .byPlayer(player, 'hand')
         .filter(card => card.getAge() === game.getEffectAge(self, 8))
-      const cards = game.actions.chooseAndMeld(player, choices)
+      const card = game.actions.chooseAndMeld(player, choices)[0]
 
-      if (cards && cards.length > 0) {
-        const card = cards[0]
+      if (card) {
         if (
-          card.dogma.length === 0
-          && card.echo.length === 0
-          && card.inspire.length === 0
-          && card.karma.length === 0
+          !card.checkHasDogma()
+          && !card.checkHasEcho()
+          && !card.checkHasKarma()
         ) {
           game.youWin(player, self.name)
         }
 
         else {
-          game.aExecuteAsIf(player, card)
+          game.aSelfExecute(player, card)
         }
       }
     }

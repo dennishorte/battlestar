@@ -80,6 +80,18 @@ class UltimateAgeCard extends UltimateBaseCard {
     return this.checkHasDemandExplicit() || this.checkHasCompelExplicit()
   }
 
+  checkHasDogma() {
+    return this.dogma && this.dogma.length > 0
+  }
+
+  checkHasEcho() {
+    return this.echo && this.echo.length > 0
+  }
+
+  checkHasKarma() {
+    return this.karma && this.karma.length > 0
+  }
+
   checkHasShare() {
     const shareDogmaEffect = !this.checkHasDemand()
     const shareEchoEffect = !!this.echo
@@ -109,12 +121,12 @@ class UltimateAgeCard extends UltimateBaseCard {
 
     // Is on any player board?
     if (!player) {
-      return Boolean(this.color)
+      return Boolean(this.zone.color)
     }
 
     // Is on a particular player board?
     else {
-      return this.zone.owner.id === player.id && Boolean(this.color)
+      return this.zone.owner.id === player.id && Boolean(this.zone.color)
     }
   }
 
