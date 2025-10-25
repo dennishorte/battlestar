@@ -537,7 +537,7 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   junkDeck(player, age, opts={}) {
-    if (age < 1 || age > this.util.maxAge()) {
+    if (age < this.util.minAge() || age > this.util.maxAge()) {
       game.log.add({
         template: 'No deck of age {age}',
         args: { age }

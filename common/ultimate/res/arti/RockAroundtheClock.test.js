@@ -34,5 +34,6 @@ describe("Rock Around the Clock", () => {
         museum: ['Museum 1', 'Rock Around the Clock'],
       }
     })
+    t.testDeckIsJunked(game, 2)
   })
 })
