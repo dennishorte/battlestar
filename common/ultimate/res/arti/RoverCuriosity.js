@@ -6,13 +6,13 @@ module.exports = {
   biscuits: `hsss`,
   dogmaBiscuit: `s`,
   dogma: [
-    `Draw and meld an Artifact {0}. Execute each of the effects of the melded card as if they were on this card. Do not share them.`
+    `Draw and meld an Artifact {0}, then self-execute it.`,
   ],
   dogmaImpl: [
     (game, player, { self }) => {
       const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 10), { exp: 'arti' })
       if (card) {
-        game.aExecuteAsIf(player, card)
+        game.aSelfExecute(player, card)
       }
     }
   ],

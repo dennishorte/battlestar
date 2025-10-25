@@ -13,7 +13,7 @@ describe("Rover Curiosity", () => {
       },
       decks: {
         arti: {
-          10: ['Maastricht Treaty'],
+          10: ["Musk's Tesla Roadster"],
         }
       }
     })
@@ -22,6 +22,6 @@ describe("Rover Curiosity", () => {
     request = game.run()
     request = t.choose(game, request, 'dogma')
 
-    t.testGameOver(request, 'dennis', 'Maastricht Treaty')
+    t.testGameOver(request, 'dennis', "Musk's Tesla Roadster")
   })
 })
