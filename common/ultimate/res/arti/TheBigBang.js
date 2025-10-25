@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `shss`,
   dogmaBiscuit: `s`,
   dogma: [
-    `Execute the non-demand effects of your top blue card, without sharing. If this caused any change to occur, draw and remove a {0} from the game, then repeat this effect.`
+    `Self-execute your top blue card. If this causes any change to occur, draw and junk a {0}, then repeat this effect.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
@@ -15,13 +15,12 @@ module.exports = {
 
         const card = game.cards.top(player, 'blue')
         if (card) {
-          game.aCardEffects(player, card, 'echo')
-          game.aCardEffects(player, card, 'dogma')
+          game.aSelfExecute(player, card)
 
           if (game.state.dogmaInfo.theBigBangChange) {
             game.log.add({ template: 'The game state was changed due to the card effects.' })
             const card = game.actions.draw(player, { age: game.getEffectAge(self, 10) })
-            game.aRemove(player, card)
+            game.actions.junk(player, card)
             continue
           }
           else {
