@@ -1,4 +1,3 @@
-
 module.exports = {
   name: `Seikan Tunnel`,
   color: `green`,
@@ -7,7 +6,7 @@ module.exports = {
   biscuits: `iiih`,
   dogmaBiscuit: `i`,
   dogma: [
-    `If you have the most cards of a color showing on your board out of all colors on all boards, you win.`
+    `If you have the most cards of a color visible on your board out of all colors on all boards, you win.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
