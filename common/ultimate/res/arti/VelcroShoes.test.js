@@ -14,6 +14,11 @@ describe("Velcro Shoes", () => {
         red: ['Coal'],
         hand: ['Computers'],
       },
+      decks: {
+        base: {
+          1: ['Metalworking'],
+        },
+      }
     })
 
     let request
@@ -23,11 +28,11 @@ describe("Velcro Shoes", () => {
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
-        hand: ['Computers'],
+        hand: ['Computers', 'Metalworking'],
         museum: ['Museum 1', 'Velcro Shoes'],
       },
       micah: {
-        red: ['Coal'],
+        score: ['Coal'],
       },
     })
   })
@@ -42,6 +47,11 @@ describe("Velcro Shoes", () => {
         red: ['Coal'],
         score: ['Computers'],
       },
+      decks: {
+        base: {
+          1: ['Metalworking'],
+        },
+      }
     })
 
     let request
@@ -52,10 +62,11 @@ describe("Velcro Shoes", () => {
     t.testBoard(game, {
       dennis: {
         score: ['Computers'],
+        hand: ['Metalworking'],
         museum: ['Museum 1', 'Velcro Shoes'],
       },
       micah: {
-        red: ['Coal'],
+        score: ['Coal'],
       },
     })
   })
