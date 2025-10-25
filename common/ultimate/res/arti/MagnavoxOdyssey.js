@@ -1,4 +1,3 @@
-
 module.exports = {
   name: `Magnavox Odyssey`,
   color: `yellow`,
