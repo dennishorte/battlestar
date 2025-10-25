@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `hlll`,
   dogmaBiscuit: `l`,
   dogma: [
-    `I compel you to unsplay all colors on your board!`,
+    `I compel you to unsplay all splayed colors on your board!`,
     `Splay up two colors on your board.`
   ],
   dogmaImpl: [
