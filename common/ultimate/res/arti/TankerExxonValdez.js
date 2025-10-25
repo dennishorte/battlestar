@@ -1,4 +1,3 @@
-
 module.exports = {
   name: `Exxon Valdez`,
   color: `red`,
@@ -7,7 +6,7 @@ module.exports = {
   biscuits: `fhff`,
   dogmaBiscuit: `f`,
   dogma: [
-    `I compel you to remove all cards from your hand, score pile, board, and achievements from the game. You lose! If there is only one player remaining in the game, that player wins!`
+    `I compel you to junk all your cards. You lose!`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
@@ -20,9 +19,11 @@ module.exports = {
         game.cards.byPlayer(player, 'blue'),
         game.cards.byPlayer(player, 'purple'),
         game.cards.byPlayer(player, 'achievements'),
+        game.cards.byPlayer(player, 'artifact'),
+        game.cards.byPlayer(player, 'museum'),
       ].flat()
 
-      game.aRemoveMany(player, toRemove)
+      game.actions.junkMany(player, toRemove)
 
       game.log.add({
         template: '{player} junks all of their cards',

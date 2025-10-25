@@ -94,7 +94,7 @@ const cardData = [
   require('./Luna3.js'),
   require('./TheBigBang.js'),
   require('./MarilynDiptych.js'),
-  require('./ExxonValdez.js'),
+  require('./TankerExxonValdez.js'),
   require('./Maldives.js'),
   require('./DollytheSheep.js'),
   require('./WheresWaldo.js'),
