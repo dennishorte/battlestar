@@ -22,6 +22,7 @@ describe("Luna 3", () => {
     request = game.run()
     request = t.choose(game, request, 'dogma')
     request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 5)
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -30,5 +31,6 @@ describe("Luna 3", () => {
         museum: ['Museum 1', 'Luna 3'],
       },
     })
+    t.testDeckIsJunked(game, 5)
   })
 })
