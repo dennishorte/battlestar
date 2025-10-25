@@ -84,7 +84,7 @@ const cardData = [
   require('./EarhartsLockheedElectra10E.js'),
   require('./GarlandsRubySlippers.js'),
   require('./30WorldCupFinalBall.js'),
-  require('./UnitedNationsCharter.js'),
+  require('./CrusaderRabbit.js'),
   require('./VelcroShoes.js'),
   require('./RockAroundtheClock.js'),
   require('./MagnavoxOdyssey.js'),

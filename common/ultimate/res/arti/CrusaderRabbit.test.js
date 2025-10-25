@@ -2,17 +2,17 @@ Error.stackTraceLimit = 100
 
 const t = require('../../testutil.js')
 
-describe("United Nations Charter", () => {
+describe("Crusader Rabbit", () => {
 
   test('dogma', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
-        artifact: ["United Nations Charter"],
+        artifact: ["Crusader Rabbit"],
         red: ['Archery'],
       },
       micah: {
-        red: ['Construction', 'Oars'],
+        red: ['Construction', 'Oars', 'Coal'],
         green: ['The Wheel'],
         purple: ['Feudalism'],
         blue: ['Pottery'],
@@ -33,15 +33,14 @@ describe("United Nations Charter", () => {
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
-        red: ['Archery'],
-        score: ['Construction', 'Feudalism'],
+        score: ['Oars', 'Coal', 'Archery', 'Feudalism'],
         hand: ['Robotics', 'Sailing'],
-        museum: ['Museum 1', 'United Nations Charter'],
+        museum: ['Museum 1', 'Crusader Rabbit'],
       },
       micah: {
-        red: ['Oars'],
         green: ['The Wheel'],
         blue: ['Pottery'],
+        score: ['Construction'],
         hand: ['Software'],
       },
     })
