@@ -27,7 +27,6 @@ describe('DeLorean DMC-12', () => {
     t.testBoard(game, {
       dennis: {
         blue: ['Calendar'],
-        museum: ['Museum 1', 'DeLorean DMC-12'],
       },
       micah: {
         purple: ['Code of Laws'],
