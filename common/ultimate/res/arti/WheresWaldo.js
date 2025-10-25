@@ -1,10 +1,9 @@
-
 module.exports = {
   name: `Where's Waldo`,
   color: `yellow`,
   age: 10,
   expansion: `arti`,
-  biscuits: `lihl`,
+  biscuits: `lphl`,
   dogmaBiscuit: `l`,
   dogma: [
     `You win.`
