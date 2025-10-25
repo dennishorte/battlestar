@@ -34,6 +34,10 @@ class UltimateCardManager extends BaseCardManager {
     return this.util.colors().map(color => this.bottom(player, color)).filter(x => Boolean(x))
   }
 
+  fullBoard(player) {
+    return this.util.colors().flatMap(color => this.byPlayer(player, color))
+  }
+
   top(player, color) {
     return this.byPlayer(player, color)[0]
   }
