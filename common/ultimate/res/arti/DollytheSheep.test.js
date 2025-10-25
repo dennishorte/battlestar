@@ -38,7 +38,7 @@ describe('Dolly the Sheep', () => {
       decks: {
         base: {
           1: ['Sailing'],
-          10: ['Software'],
+          11: ['Hypersonics'],
         }
       }
     })
@@ -48,6 +48,7 @@ describe('Dolly the Sheep', () => {
     request = t.choose(game, request, 'dogma')
     request = t.choose(game, request, 'no')
     request = t.choose(game, request, 'yes')
+    request = t.choose(game, request, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -55,7 +56,7 @@ describe('Dolly the Sheep', () => {
         yellow: ['Statistics'],
         green: ['Sailing'],
         blue: ['Computers'],
-        hand: ['Canning', 'Software'],
+        hand: ['Canning', 'Hypersonics'],
         museum: ['Museum 1', 'Dolly the Sheep'],
       }
     })

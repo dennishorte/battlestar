@@ -1,4 +1,3 @@
-
 module.exports = {
   name: `Dolly the Sheep`,
   color: `yellow`,
@@ -7,7 +6,8 @@ module.exports = {
   biscuits: `hili`,
   dogmaBiscuit: `i`,
   dogma: [
-    `You may score your bottom yellow card. You may draw and tuck a {1}. If your bottom yellow card is Domestication, you win. Otherwise, meld the higest card in your hand, then draw a {0}.`
+    `You may score your bottom yellow card. You may draw and tuck a {1}. If your bottom yellow card is Domestication, you win. Otherwise, meld the higest card in your hand, then draw an {b}.`,
+    `Junk all available achievements.`,
   ],
   dogmaImpl: [
     (game, player, { self }) => {
@@ -20,7 +20,7 @@ module.exports = {
         })
       }
       else {
-        const doScoreYellow = game.aYesNo(player, 'Score your bottom yellow card?')
+        const doScoreYellow = game.actions.chooseYesNo(player, 'Score your bottom yellow card?')
         if (doScoreYellow) {
           game.actions.score(player, yellowCards[yellowCards.length - 1])
         }
@@ -34,7 +34,7 @@ module.exports = {
 
       // You may draw and tuck a 1.
       const age = game.getEffectAge(self, 1)
-      const doDrawAndTuck = game.aYesNo(player, `Draw and tuck a {${age}}?`)
+      const doDrawAndTuck = game.actions.chooseYesNo(player, `Draw and tuck a {${age}}?`)
       if (doDrawAndTuck) {
         game.actions.drawAndTuck(player, age)
       }
@@ -52,8 +52,12 @@ module.exports = {
           game.actions.meld(player, cards[0])
         }
 
-        game.actions.draw(player, { age: game.getEffectAge(self, 10) })
+        game.actions.draw(player, { age: game.getEffectAge(self, 11) })
       }
+    },
+
+    (game, player) => {
+      game.actions.junkMany(player, game.getAvailableAchievements(player))
     }
   ],
 }
