@@ -1,4 +1,3 @@
-
 module.exports = {
   name: `Marilyn Diptych`,
   color: `purple`,
@@ -7,7 +6,8 @@ module.exports = {
   biscuits: `ccch`,
   dogmaBiscuit: `c`,
   dogma: [
-    `You may score a card from your hand. You may transfer any card from your score pile to your hand. If you have exactly 25 points, you win.`
+    `You may score a card from your hand. You may transfer any card from your score pile to your hand. If you have exactly 25 points, you win.`,
+    `Junk an available standard achievement.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
@@ -17,6 +17,10 @@ module.exports = {
       if (game.getScore(player) === 25) {
         game.youWin(player, self.name)
       }
-    }
+    },
+
+    (game, player) => {
+      game.actions.junkAvailableAchievement(player, game.util.ages())
+    },
   ],
 }

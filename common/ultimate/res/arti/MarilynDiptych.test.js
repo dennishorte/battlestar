@@ -12,6 +12,7 @@ describe("Marilyn Diptych", () => {
         hand: ['Software'],
         score: ['Robotics', 'Astronomy', 'Canning'],
       },
+      achievements: ['Machinery'],
     })
 
     let request
@@ -27,6 +28,7 @@ describe("Marilyn Diptych", () => {
         score: ['Robotics', 'Software', 'Canning'],
         museum: ['Museum 1', 'Marilyn Diptych'],
       },
+      junk: ['Machinery'],
     })
   })
 
