@@ -8,7 +8,7 @@ module.exports = {
   biscuits: `hiii`,
   dogmaBiscuit: `i`,
   dogma: [
-    `Return all cards from your hand. Draw and reveal five {9}. If you revealed all five colors, you win.`
+    `Return all cards from your hand. Draw and reveal five {9}. If you reveal five colors, you win.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
