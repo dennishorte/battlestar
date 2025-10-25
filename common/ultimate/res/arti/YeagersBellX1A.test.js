@@ -19,6 +19,7 @@ describe("Yeager's Bell X-1A", () => {
         base: {
           9: ['Computers', 'Composites',],
           10: ['Databases'],
+          11: ['Hypersonics'],
         }
       }
     })
@@ -26,7 +27,6 @@ describe("Yeager's Bell X-1A", () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Coal')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -34,14 +34,13 @@ describe("Yeager's Bell X-1A", () => {
         red: ['Composites'],
         blue: ['Computers'],
         green: ['Databases'],
-        hand: ['Coal'],
-        score: ['Calendar'],
         museum: ['Museum 1', "Yeager's Bell X-1A"],
+        achievements: ['Hypersonics'],
       },
       micah: {
         blue: ['Tools'],
-        score: ['Sailing'],
-        hand: ['Canning'],
+        score: ['Sailing', 'Calendar'],
+        hand: ['Canning', 'Coal'],
       },
     })
   })
