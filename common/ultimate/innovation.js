@@ -878,7 +878,6 @@ Innovation.prototype.aYouLose = function(player, card) {
   if (livingPlayers.length === 1) {
     this.youWin(livingPlayers[0], card.name)
   }
-
 }
 
 
