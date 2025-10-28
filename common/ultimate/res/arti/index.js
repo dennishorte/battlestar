@@ -103,7 +103,17 @@ const cardData = [
   require('./RoverCuriosity.js'),
   require('./HiggsBoson.js'),
   require('./DeLoreanDMC12.js'),
-  require('./DragonsLair.js')
+  require('./DragonsLair.js'),
+  require('./16Psyche.js'),
+  require('./GreatBarrierReef.js'),
+  require('./Greenland.js'),
+  require('./JumboKingdom.js'),
+  require('./MartianInternet.js'),
+  require('./OculusQuest.js'),
+  require('./PizzaPacaya.js'),
+  require('./Sanskrit.js'),
+  require('./TasmanianTiger.js'),
+  require('./WhatDoestheFoxSay.js'),
 ]
 
 function MuseumFactory(index) {
