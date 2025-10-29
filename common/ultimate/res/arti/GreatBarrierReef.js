@@ -11,6 +11,16 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
+      const toJunk = game.util.colors().flatMap(color => {
+        return game.cards.byPlayer(player, color).slice(5)
+      })
+      game.actions.junkMany(player, toJunk)
+    },
+
+    (game, player) => {
+      for (const color of game.util.colors()) {
+        game.actions.splay(player, color, 'aslant')
+      }
     },
   ],
 }
