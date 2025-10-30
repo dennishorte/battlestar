@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import md5 from 'js-md5'
 
-import { magic } from 'battlestar-common'
+import { magic, util } from 'battlestar-common'
 
 const rootFields = [
   "id",
@@ -193,7 +193,7 @@ function prefilterVersions(cards) {
   const filteredCards = []
 
   for (let i = 0; i < cards.length; i++) {
-    const card = { ...cards[i] } // Clone to avoid modifying original
+    const card = util.deepcopy(cards[i])
 
     if (
       card.layout === 'art_series'
@@ -220,9 +220,31 @@ function prefilterVersions(cards) {
     }
 
     filteredCards.push(card)
+
+    generateAltNames(card, filteredCards)
   }
 
   return filteredCards
+}
+
+function generateAltNames(card, filteredCards) {
+  if (card.printed_name || (card.card_faces && card.card_faces[0].printed_name)) {
+    const copy = util.deepcopy(card)
+
+    if (card.printed_name) {
+      copy.oracle_text = copy.oracle_text.replaceAll(copy.name, copy.printed_name)
+      copy.name = copy.printed_name
+    }
+    else {
+      for (const face of copy.card_faces) {
+        util.assert(Boolean(face.printed_name))
+        face.oracle_text = face.oracle_text.replaceAll(face.name, face.printed_name)
+        face.name = face.printed_name
+      }
+    }
+
+    filteredCards.push(copy)
+  }
 }
 
 function postfilterVersions(cards) {

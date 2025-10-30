@@ -54,6 +54,7 @@ CardUtil.colorSymbolToName = function(symbol) {
     case 'b': return 'black'
     case 'r': return 'red'
     case 'g': return 'green'
+    case 'c': return 'colorless'
     default:
       throw new Error('Invalid color symbol: ' + symbol)
   }
