@@ -10,6 +10,23 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
+      // Set a flag indicating we're playing the Martian Internet game.
+      // Store the current state of each player's board.
+      // Store the current player and player action number.
+      // Store any dogma info for other cards that might have been played.
+      // Clear all of the above.
+
+      // Each player draws and melds a 9.
+      // The first player is based on the name of that 9 card.
+
+
+      // Alt idea:
+      // Start a new game, but skip the card initialization.
+      // Copy the cards from this game to the new game.
+      // Have a special start flag to draw 9s instead of 1s.
     },
   ],
+
+  restoreGameCallback(game, winner) {
+  },
 }
