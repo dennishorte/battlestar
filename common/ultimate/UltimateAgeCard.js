@@ -98,6 +98,10 @@ class UltimateAgeCard extends UltimateBaseCard {
     return shareDogmaEffect || shareEchoEffect
   }
 
+  checkIsAgeCard() {
+    return true
+  }
+
   checkIsArtifact() {
     return this.expansion === 'arti'
   }

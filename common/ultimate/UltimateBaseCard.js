@@ -20,6 +20,10 @@ class UltimateBaseCard extends BaseCard {
     return !this.isSpecialAchievement && !this.isDecree && !this.isMuseum
   }
 
+  checkIsAgeCard() {
+    return false // overridden in age cards
+  }
+
   getAge() {
     return this.age
   }
