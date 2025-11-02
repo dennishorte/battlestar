@@ -10,6 +10,8 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
+      const toTransfer = game.zones.colorStacks(player).flatMap(zone => zone.cardlist())
+      game.actions.transferMany(player, toTransfer, game.zones.byPlayer(player, 'hand'))
     },
   ],
 }
