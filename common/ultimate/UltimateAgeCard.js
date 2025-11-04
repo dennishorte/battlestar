@@ -288,7 +288,7 @@ class UltimateAgeCard extends UltimateBaseCard {
   }
 
   inHand(player) {
-    return this.owner === player && this.game.zone.id.endsWith('hand')
+    return this.owner === player && this.zone.id.endsWith('hand')
   }
 
   visibleEffects(kind, opts={}) {
