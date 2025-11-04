@@ -10,18 +10,30 @@ describe("What Does the Fox Say", () => {
       dennis: {
         artifact: ["What Does the Fox Say"],
       },
+      micah: {
+        green: ['Paper'],
+        blue: ['Translation'],
+      },
+      decks: {
+        base: {
+          11: ['Astrogeology', 'Hypersonics']
+        },
+      }
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'dogma')
+    request = t.choose(game, request, 'Astrogeology')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
+        red: ['Astrogeology'],
+        green: ['Hypersonics'],
         museum: ['Museum 1', "What Does the Fox Say"],
       },
+      micah: {},
     })
   })
 })
-
