@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Surveillance`,
@@ -30,10 +29,7 @@ module.exports = {
 
       if (leaderColors.every(color => playerColors.includes(color)) &&
           playerColors.every(color => leaderColors.includes(color))) {
-        throw new GameOverEvent({
-          player: leader,
-          reason: self.name
-        })
+        game.youWin(leader, self.name)
       }
     },
 

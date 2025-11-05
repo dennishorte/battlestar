@@ -21,7 +21,7 @@ module.exports = {
         }
         game.actions.returnMany(player, remaining.slice(1), { ordered: true })
 
-        const topYellowCard = game.getTopCard(leader, 'yellow')
+        const topYellowCard = game.cards.top(leader, 'yellow')
         if (topYellowCard && topYellowCard.name === 'Skyscrapers') {
           game.actions.transfer(player, topYellowCard, game.zones.byPlayer(leader, 'hand'))
         }

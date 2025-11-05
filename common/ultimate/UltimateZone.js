@@ -8,7 +8,15 @@ class UltimateZone extends BaseZone {
     this.splay = undefined
   }
 
-  cards() {
+  biscuits() {
+    return this
+      .cardlist()
+      .map(card => card.visibleBiscuits())
+      .map(biscuitString => this.game.util.parseBiscuits(biscuitString))
+      .reduce((l, r) => this.game.util.combineBiscuits(l, r), this.util.emptyBiscuits())
+  }
+
+  cardlist() {
     for (const zoneName of ['hand', 'forecast', 'score']) {
       if (this.name().endsWith('.' + zoneName)) {
         const karmaInfos = this.game.getInfoByKarmaTrigger(this.player(), `list-${zoneName}`)
@@ -24,8 +32,19 @@ class UltimateZone extends BaseZone {
       }
     }
 
-    // Default implementation
-    return [...this._cards]
+    return super.cardlist()
+  }
+
+  isArtifactZone() {
+    return Boolean(this.owner) && this.id.endsWith('.artifact')
+  }
+
+  isColorZone() {
+    return Boolean(this.color)
+  }
+
+  isMuseumZone() {
+    return Boolean(this.owner) && this.id.endsWith('.museum')
   }
 
   player() {
@@ -37,15 +56,20 @@ class UltimateZone extends BaseZone {
   }
 
   numVisibleCards() {
+    return this.visibleCards().length
+  }
+
+  visibleCards() {
     if (this._cards.length === 0) {
-      return 0
+      return []
     }
-    else if (this.splay === undefined || this.splay === 'none') {
-      return 1
+    else if (this.splay === 'none') {
+      return this._cards.slice(0, 1)
     }
     else {
-      return this._cards.length
+      return this.cardlist()
     }
+
   }
 }
 

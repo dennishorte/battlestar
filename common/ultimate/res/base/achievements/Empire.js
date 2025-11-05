@@ -6,7 +6,7 @@ module.exports = {
   alt: 'Construction',
   isSpecialAchievement: true,
   checkPlayerIsEligible: function(game, player, reduceCost) {
-    const biscuits = game.getBiscuitsByPlayer(player)
+    const biscuits = player.biscuits()
     delete biscuits['p']
     const targetCount = reduceCost ? 2 : 3
     const targetBiscuitCount = reduceCost ? 5 : 6

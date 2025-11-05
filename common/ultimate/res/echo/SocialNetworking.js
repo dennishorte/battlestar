@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Social Networking`,
@@ -25,11 +24,11 @@ module.exports = {
     },
 
     (game, player, { self }) => {
-      const mine = game.getBiscuitsByPlayer(player)
+      const mine = player.biscuits()
       const theirs = game
         .players
         .other(player)
-        .map(other => game.getBiscuitsByPlayer(other))
+        .map(other => other.biscuits())
 
       for (const biscuits of theirs) {
         if (mine.f >= biscuits.f || mine.c >= biscuits.c || mine.k >= biscuits.k) {
@@ -38,10 +37,7 @@ module.exports = {
         }
       }
 
-      throw new GameOverEvent({
-        player,
-        reason: self.name
-      })
+      game.youWin(player, self.name)
     }
   ],
   echoImpl: [

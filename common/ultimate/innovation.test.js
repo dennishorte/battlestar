@@ -219,436 +219,6 @@ describe('Innovation', () => {
     })
   })
 
-  describe('cities biscuits', () => {
-    test('plus icon', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      t.setBoard(game, {
-        dennis: {
-          red: ['Archery'],
-          hand: ['Athens'],
-        },
-        decks: {
-          base: {
-            2: ['Calendar'],
-          }
-        }
-      })
-
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Meld.Athens')
-
-      t.testIsSecondPlayer(game)
-      t.testBoard(game, {
-        dennis: {
-          red: ['Athens', 'Archery'],
-          hand: ['Calendar'],
-        }
-      })
-    })
-
-    test('flag but not most', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      t.setBoard(game, {
-        dennis: {
-          purple: ['Tokyo'],
-        },
-        micah: {
-          purple: {
-            cards: ['Enterprise', 'Code of Laws'],
-            splay: 'left',
-          },
-        },
-      })
-
-      const request1 = game.run()
-
-      const achievements = game.getAchievementsByPlayer(t.dennis(game))
-      expect(achievements.total).toBe(0)
-    })
-
-    test('flag and most', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      t.setBoard(game, {
-        dennis: {
-          purple: {
-            cards: ['Tokyo', 'Code of Laws'],
-            splay: 'left'
-          },
-        },
-        micah: {
-          purple: ['Enterprise'],
-        },
-      })
-
-      const request1 = game.run()
-
-      const achievements = game.getAchievementsByPlayer(t.dennis(game))
-      expect(achievements.total).toBe(1)
-    })
-
-    test('flag and equal', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      t.setBoard(game, {
-        dennis: {
-          purple: ['Tokyo'],
-        },
-        micah: {
-          purple: ['Enterprise'],
-        },
-      })
-
-      const request1 = game.run()
-
-      const achievements = game.getAchievementsByPlayer(t.dennis(game))
-      expect(achievements.total).toBe(1)
-    })
-
-    test('flag and most, but not splayed, so not visible', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      t.setBoard(game, {
-        dennis: {
-          purple: ['Tokyo', 'Code of Laws', 'The Internet'],
-        },
-        micah: {
-          purple: {
-            cards: ['Enterprise', 'Monotheism'],
-            splay: 'right',
-          },
-        },
-      })
-
-      const request1 = game.run()
-
-      const achievements = game.getAchievementsByPlayer(t.dennis(game))
-      expect(achievements.total).toBe(0)
-    })
-
-    test('fountain', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      t.setBoard(game, {
-        dennis: {
-          yellow: ['Nairobi'],
-        },
-      })
-
-      const request1 = game.run()
-
-      const achievements = game.getAchievementsByPlayer(t.dennis(game))
-      expect(achievements.total).toBe(2)
-    })
-
-    test('fountain: not top, but visible', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      t.setBoard(game, {
-        dennis: {
-          yellow: {
-            cards: ['Agriculture', 'Nairobi'],
-            splay: 'up'
-          }
-        },
-      })
-
-      const request1 = game.run()
-
-      const achievements = game.getAchievementsByPlayer(t.dennis(game))
-      expect(achievements.total).toBe(1)
-    })
-
-    test('fountain: hidden', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      t.setBoard(game, {
-        dennis: {
-          red: ['Archery', 'Brussels'],
-        },
-      })
-
-      const request1 = game.run()
-
-      const achievements = game.getAchievementsByPlayer(t.dennis(game))
-      expect(achievements.total).toBe(0)
-
-    })
-
-    test('splay left', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      t.setBoard(game, {
-        dennis: {
-          red: ['Archery'],
-          hand: ['Delhi'],
-        },
-        decks: {
-          city: {
-            3: ['Venice'],
-          }
-        },
-      })
-
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Meld.Delhi')
-
-      t.testIsSecondPlayer(game)
-      t.testBoard(game, {
-        dennis: {
-          red: {
-            cards: ['Delhi', 'Archery'],
-            splay: 'left'
-          },
-          hand: ['Venice'],
-        }
-      })
-    })
-
-    test('splay right', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      t.setBoard(game, {
-        dennis: {
-          red: ['Archery'],
-          hand: ['Tehran'],
-        },
-        decks: {
-          city: {
-            6: ['Vienna'],
-          }
-        },
-      })
-
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Meld.Tehran')
-
-      t.testIsSecondPlayer(game)
-      t.testBoard(game, {
-        dennis: {
-          red: {
-            cards: ['Tehran', 'Archery'],
-            splay: 'right'
-          },
-          hand: ['Vienna'],
-        }
-      })
-    })
-
-    test('splay up', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      t.setBoard(game, {
-        dennis: {
-          red: ['Archery'],
-          hand: ['Seoul'],
-        },
-        decks: {
-          city: {
-            10: ['Bangkok'],
-          }
-        },
-      })
-
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Meld.Seoul')
-
-      t.testIsSecondPlayer(game)
-      t.testBoard(game, {
-        dennis: {
-          red: {
-            cards: ['Seoul', 'Archery'],
-            splay: 'up'
-          },
-          hand: ['Bangkok'],
-        }
-      })
-    })
-
-    test('discover biscuit: simple', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      t.setBoard(game, {
-        dennis: {
-          purple: ['Code of Laws'],
-          hand: ['Mecca'],
-        },
-        decks: {
-          base: {
-            3: ['Medicine', 'Education', 'Compass']
-          }
-        }
-      })
-
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Meld.Mecca')
-
-      t.testIsSecondPlayer(game)
-      t.testBoard(game, {
-        dennis: {
-          purple: ['Mecca', 'Code of Laws'],
-          hand: ['Medicine', 'Compass'],
-        }
-      })
-    })
-
-    test('discover biscuit: not enough cards of age', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      t.setBoard(game, {
-        dennis: {
-          purple: ['Code of Laws'],
-          hand: ['Mecca'],
-        },
-        decks: {
-          base: {
-            3: ['Medicine', 'Education'],
-            4: ['Reformation'],
-          }
-        }
-      })
-
-      // Leave only two cards in the 3 deck.
-      game.testSetBreakpoint('before-first-player', (game) => {
-        const toExile = game.zones.byDeck('base', 3).cardlist().slice(2)
-        for (const card of toExile) {
-          game.mRemove(card)
-        }
-      })
-
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Meld.Mecca')
-
-      t.testIsSecondPlayer(game)
-      t.testBoard(game, {
-        dennis: {
-          purple: ['Mecca', 'Code of Laws'],
-          hand: ['Medicine'],
-        }
-      })
-    })
-
-    test.skip('discover biscuit: effects do not trigger', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city', 'figs'] })
-      t.setBoard(game, {
-        dennis: {
-          purple: ['Code of Laws'],
-          yellow: ['Rhazes'],
-          hand: ['Mecca', 'Machinery'],
-        },
-        decks: {
-          base: {
-            3: ['Medicine', 'Education', 'Compass']
-          }
-        }
-      })
-
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Meld.Mecca')
-
-      t.testIsSecondPlayer(game)
-      t.testBoard(game, {
-        dennis: {
-          purple: ['Mecca', 'Code of Laws'],
-          yellow: ['Rhazes'],
-          hand: ['Medicine', 'Compass', 'Machinery'],
-        }
-      })
-    })
-
-    test('junk biscuit', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      t.setBoard(game, {
-        dennis: {
-          purple: ['Reformation'],
-          hand: ['Seville'],
-        },
-        achievements: ['Optics', 'Perspective', 'Coal'],
-      })
-
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Meld.Seville')
-
-      t.testIsSecondPlayer(game)
-      t.testBoard(game, {
-        dennis: {
-          purple: ['Seville', 'Reformation'],
-        },
-        junk: ['Perspective'],
-      })
-    })
-
-    test('uplift biscuit', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      t.setBoard(game, {
-        dennis: {
-          purple: ['Monotheism'],
-          hand: ['Luoyang'],
-        },
-        decks: {
-          base: {
-            4: ['Gunpowder'],
-          }
-        }
-      })
-
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Meld.Luoyang')
-
-      t.testIsSecondPlayer(game)
-      t.testBoard(game, {
-        dennis: {
-          purple: ['Luoyang', 'Monotheism'],
-          hand: ['Gunpowder']
-        },
-        junk: [
-          "Alchemy",
-          "Compass",
-          "Feudalism",
-          "Engineering",
-          "Machinery",
-          "Medicine",
-          "Optics",
-          "Paper",
-          "Translation",
-        ]
-      })
-    })
-
-    test('unsplay biscuit', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      t.setBoard(game, {
-        dennis: {
-          red: {
-            cards: ['Coal', 'Metalworking'],
-            splay: 'left',
-          },
-          hand: ['Warsaw'],
-        },
-        micah: {
-          red: {
-            cards: ['Flight', 'Optics'],
-            splay: 'up',
-          },
-          green: {
-            cards: ['Measurement', 'Paper'],
-            splay: 'right',
-          },
-        },
-      })
-
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Meld.Warsaw')
-
-      t.testIsSecondPlayer(game)
-      t.testBoard(game, {
-        dennis: {
-          red: {
-            cards: ['Warsaw', 'Coal', 'Metalworking'],
-            splay: 'left',
-          },
-        },
-        micah: {
-          red: ['Flight', 'Optics'],
-          green: {
-            cards: ['Measurement', 'Paper'],
-            splay: 'right',
-          },
-        },
-      })
-    })
-
-  })
-
   describe.skip('karma', () => {
     test.skip('multiple if/then karmas, only choose one', () => {
 
@@ -1105,213 +675,139 @@ describe('Innovation', () => {
         expect(trigger).toThrow(GameOverEvent)
       })
     })
-  })
 
-  describe('endorse action', () => {
-    test('need a card of equal or lower age to tuck', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      game.testSetBreakpoint('before-first-player', (game) => {
-        t.setColor(game, 'dennis', 'green', ['The Wheel'])
-        t.setColor(game, 'dennis', 'red', ['Tikal'])
-        t.setHand(game, 'dennis', ['Cordoba'])
-      })
-      const result1 = game.run()
-      expect(t.getChoices(result1, 'Endorse')).toStrictEqual([])
-    })
-
-    test('can choose which card to tuck', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      game.testSetBreakpoint('before-first-player', (game) => {
-        t.setColor(game, 'dennis', 'green', ['The Wheel'])
-        t.setColor(game, 'dennis', 'red', ['Tikal'])
-        t.setHand(game, 'dennis', ['Mathematics', 'Tools', 'Cordoba'])
-      })
-      const result1 = game.run()
-      const result2 = t.choose(game, result1, 'Endorse.green')
-
-      expect(result2.selectors[0].choices).toStrictEqual(['Mathematics', 'Tools'])
-    })
-
-    test('leader goes twice, shares once, demands twice', () => {
-      const game = t.fixtureTopCard('Mapmaking', { numPlayers: 3 })
-      game.testSetBreakpoint('before-first-player', (game) => {
-        t.setColor(game, 'dennis', 'red', ['Barcelona'])
-        t.setColor(game, 'scott', 'green', ['Venice'])
-        t.setColor(game, 'scott', 'purple', ['Ephesus'])
-
-        t.clearBoard(game, 'micah')
-
-        t.setScore(game, 'micah', ['The Wheel', 'Clothing'])
-        t.setScore(game, 'scott', [])
-
-        t.setDeckTop(game, 'base', 1, ['Mysticism', 'Tools', 'Code of Laws'])
-
-        t.setHand(game, 'dennis', ['Masonry'])
-      })
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Endorse.green')
-      const request3 = t.choose(game, request2, 'Clothing') // Micah's choice
-
-      expect(t.cards(game, 'score').sort()).toStrictEqual([
-        'Clothing',
-        'Code of Laws',
-        'The Wheel',
-        'Tools',
-      ])
-      expect(t.cards(game, 'score', 'scott').sort()).toStrictEqual(['Mysticism'])
-    })
-
-    test('city biscuits must match featured biscuit; cities match themselves', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-      game.testSetBreakpoint('before-first-player', (game) => {
-        t.setColor(game, 'dennis', 'green', ['The Wheel'])
-        t.setColor(game, 'dennis', 'blue', ['Cordoba'])
-        t.setHand(game, 'dennis', ['Mathematics', 'Tools'])
-      })
-      const result1 = game.run()
-      expect(t.getChoices(result1, 'Endorse')).toStrictEqual(['blue'])
-    })
-
-    test.skip('triggers dogma karmas', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs', 'city'] })
-      t.setBoard(game, {
-        dennis: {
-          yellow: ['Vaccination'],
-          red: ['Athens'],
-          blue: ['Johannes Kepler'],
-          hand: ['Masonry', 'Sailing'],
-        },
-        micah: {
-          score: ['The Wheel'],
-        },
-        decks: {
-          base: {
-            7: ['Lighting'],
-            8: ['Flight', 'Rocketry'],
-          }
-        }
+    describe('endorse action', () => {
+      test('need a card of equal or lower age to tuck', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        game.testSetBreakpoint('before-first-player', (game) => {
+          t.setColor(game, 'dennis', 'green', ['The Wheel'])
+          t.setColor(game, 'dennis', 'red', ['Tikal'])
+          t.setHand(game, 'dennis', ['Cordoba'])
+        })
+        const result1 = game.run()
+        expect(t.getChoices(result1, 'Endorse')).toStrictEqual([])
       })
 
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Endorse.yellow')
-      const request3 = t.choose(game, request2, 'Sailing')
+      test('can choose which card to tuck', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        game.testSetBreakpoint('before-first-player', (game) => {
+          t.setColor(game, 'dennis', 'green', ['The Wheel'])
+          t.setColor(game, 'dennis', 'red', ['Tikal'])
+          t.setHand(game, 'dennis', ['Mathematics', 'Tools', 'Cordoba'])
+        })
+        const result1 = game.run()
+        const result2 = t.choose(game, result1, 'Endorse.green')
 
-      t.testBoard(game, {
-        dennis: {
-          yellow: ['Vaccination'],
-          blue: ['Rocketry', 'Johannes Kepler'],
-          red: ['Flight', 'Athens'],
-          hand: ['Masonry'],
-        },
-        micah: {
-          purple: ['Lighting'],
-        },
-        junk: ['Sailing'],
+        expect(result2.selectors[0].choices).toStrictEqual(['Mathematics', 'Tools'])
       })
 
-    })
-  })
+      test('leader goes twice, shares once, demands twice', () => {
+        const game = t.fixtureTopCard('Mapmaking', { numPlayers: 3 })
+        game.testSetBreakpoint('before-first-player', (game) => {
+          t.setColor(game, 'dennis', 'red', ['Barcelona'])
+          t.setColor(game, 'scott', 'green', ['Venice'])
+          t.setColor(game, 'scott', 'purple', ['Ephesus'])
 
-  describe('meld action', () => {
-    test('card goes on top', () => {
+          t.clearBoard(game, 'micah')
 
-    })
+          t.setScore(game, 'micah', ['The Wheel', 'Clothing'])
+          t.setScore(game, 'scott', [])
 
-    test('promote from forecast', () => {
-      const game = t.fixtureFirstPlayer()
-      t.setBoard(game, {
-        dennis: {
-          hand: ['Reformation'],
-          forecast: ['Sailing'],
-        },
-        decks: {
-          base: {
-            1: ['Tools'],
-          }
-        },
+          t.setDeckTop(game, 'base', 1, ['Mysticism', 'Tools', 'Code of Laws'])
+
+          t.setHand(game, 'dennis', ['Masonry'])
+        })
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Endorse.green')
+        const request3 = t.choose(game, request2, 'Clothing') // Micah's choice
+
+        expect(t.cards(game, 'score').sort()).toStrictEqual([
+          'Clothing',
+          'Code of Laws',
+          'The Wheel',
+          'Tools',
+        ])
+        expect(t.cards(game, 'score', 'scott').sort()).toStrictEqual(['Mysticism'])
       })
 
-      const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Meld.Reformation')
-
-      t.testIsSecondPlayer(game)
-      t.testBoard(game, {
-        dennis: {
-          purple: ['Reformation'],
-          green: ['Sailing'],
-          blue: ['Tools'],
-        }
+      test('city biscuits must match featured biscuit; cities match themselves', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        game.testSetBreakpoint('before-first-player', (game) => {
+          t.setColor(game, 'dennis', 'green', ['The Wheel'])
+          t.setColor(game, 'dennis', 'blue', ['Cordoba'])
+          t.setHand(game, 'dennis', ['Mathematics', 'Tools'])
+        })
+        const result1 = game.run()
+        expect(t.getChoices(result1, 'Endorse')).toStrictEqual(['blue'])
       })
-    })
 
-    describe.skip('echoes', () => {
-      test('draw rule: draw a base card if hand is empty', () => {
-        const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+      test.skip('triggers dogma karmas', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs', 'city'] })
         t.setBoard(game, {
           dennis: {
+            yellow: ['Vaccination'],
+            red: ['Athens'],
+            blue: ['Johannes Kepler'],
+            hand: ['Masonry', 'Sailing'],
+          },
+          micah: {
+            score: ['The Wheel'],
+          },
+          decks: {
+            base: {
+              7: ['Lighting'],
+              8: ['Flight', 'Rocketry'],
+            }
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Endorse.yellow')
+        const request3 = t.choose(game, request2, 'Sailing')
+
+        t.testBoard(game, {
+          dennis: {
+            yellow: ['Vaccination'],
+            blue: ['Rocketry', 'Johannes Kepler'],
+            red: ['Flight', 'Athens'],
+            hand: ['Masonry'],
+          },
+          micah: {
+            purple: ['Lighting'],
+          },
+          junk: ['Sailing'],
+        })
+
+      })
+    })
+  })
+
+
+  describe('expansions', () => {
+    describe('echoes', () => {
+      test('promote from forecast', () => {
+        const game = t.fixtureFirstPlayer()
+        t.setBoard(game, {
+          dennis: {
+            hand: ['Reformation'],
+            forecast: ['Sailing'],
           },
           decks: {
             base: {
               1: ['Tools'],
-            },
-          }
-        })
-
-        const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Draw.draw a card')
-
-        t.testIsSecondPlayer(game)
-        t.testBoard(game, {
-          dennis: {
-            hand: ['Tools'],
-          }
-        })
-      })
-
-      test('draw rule: draw an echoes card if hand is non-empty with no echoes', () => {
-        const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
-        t.setBoard(game, {
-          dennis: {
-            hand: ['Tools'],
+            }
           },
-          decks: {
-            echo: {
-              1: ['Plumbing'],
-            },
-          }
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Draw.draw a card')
+        const request2 = t.choose(game, request1, 'Meld.Reformation')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {
           dennis: {
-            hand: ['Tools', 'Plumbing'],
-          }
-        })
-      })
-
-      test('draw rule: draw a base card if hand already has an echoes card', () => {
-        const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
-        t.setBoard(game, {
-          dennis: {
-            hand: ['Tools', 'Plumbing'],
-          },
-          decks: {
-            base: {
-              1: ['Sailing'],
-            },
-          }
-        })
-
-        const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Draw.draw a card')
-
-        t.testIsSecondPlayer(game)
-        t.testBoard(game, {
-          dennis: {
-            hand: ['Tools', 'Plumbing', 'Sailing'],
+            purple: ['Reformation'],
+            green: ['Sailing'],
+            blue: ['Tools'],
           }
         })
       })
@@ -1406,27 +902,434 @@ describe('Innovation', () => {
       })
 
       test('plus icon', () => {
-        // Tested in 'cities biscuits'
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            red: ['Archery'],
+            hand: ['Athens'],
+          },
+          decks: {
+            base: {
+              2: ['Calendar'],
+            }
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Meld.Athens')
+
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
+          dennis: {
+            red: ['Athens', 'Archery'],
+            hand: ['Calendar'],
+          }
+        })
       })
 
-      test('splay left icon', () => {
-        // Tested in 'cities biscuits'
+      test('flag but not most', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            purple: ['Tokyo'],
+          },
+          micah: {
+            purple: {
+              cards: ['Enterprise', 'Code of Laws'],
+              splay: 'left',
+            },
+          },
+        })
+
+        const request1 = game.run()
+
+        const achievements = game.getAchievementsByPlayer(t.dennis(game))
+        expect(achievements.total).toBe(0)
       })
 
-      test('splay right icon', () => {
-        // Tested in 'cities biscuits'
+      test('flag and most', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            purple: {
+              cards: ['Tokyo', 'Code of Laws'],
+              splay: 'left'
+            },
+          },
+          micah: {
+            purple: ['Enterprise'],
+          },
+        })
+
+        const request1 = game.run()
+
+        const achievements = game.getAchievementsByPlayer(t.dennis(game))
+        expect(achievements.total).toBe(1)
       })
 
-      test('splay up icon', () => {
-        // Tested in 'cities biscuits'
+      test('flag and equal', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            purple: ['Tokyo'],
+          },
+          micah: {
+            purple: ['Enterprise'],
+          },
+        })
+
+        const request1 = game.run()
+
+        const achievements = game.getAchievementsByPlayer(t.dennis(game))
+        expect(achievements.total).toBe(1)
       })
 
-      test('discover biscuit', () => {
-        // Tested in 'cities biscuits'
+      test('flag and most, but not splayed, so not visible', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            purple: ['Tokyo', 'Code of Laws', 'The Internet'],
+          },
+          micah: {
+            purple: {
+              cards: ['Enterprise', 'Monotheism'],
+              splay: 'right',
+            },
+          },
+        })
+
+        const request1 = game.run()
+
+        const achievements = game.getAchievementsByPlayer(t.dennis(game))
+        expect(achievements.total).toBe(0)
+      })
+
+      test('fountain', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            yellow: ['Nairobi'],
+          },
+        })
+
+        const request1 = game.run()
+
+        const achievements = game.getAchievementsByPlayer(t.dennis(game))
+        expect(achievements.total).toBe(2)
+      })
+
+      test('fountain: not top, but visible', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            yellow: {
+              cards: ['Agriculture', 'Nairobi'],
+              splay: 'up'
+            }
+          },
+        })
+
+        const request1 = game.run()
+
+        const achievements = game.getAchievementsByPlayer(t.dennis(game))
+        expect(achievements.total).toBe(1)
+      })
+
+      test('fountain: hidden', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            red: ['Archery', 'Brussels'],
+          },
+        })
+
+        const request1 = game.run()
+
+        const achievements = game.getAchievementsByPlayer(t.dennis(game))
+        expect(achievements.total).toBe(0)
+
+      })
+
+      test('splay left', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            red: ['Archery'],
+            hand: ['Delhi'],
+          },
+          decks: {
+            city: {
+              3: ['Venice'],
+            }
+          },
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Meld.Delhi')
+
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
+          dennis: {
+            red: {
+              cards: ['Delhi', 'Archery'],
+              splay: 'left'
+            },
+            hand: ['Venice'],
+          }
+        })
+      })
+
+      test('splay right', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            red: ['Archery'],
+            hand: ['Tehran'],
+          },
+          decks: {
+            city: {
+              6: ['Vienna'],
+            }
+          },
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Meld.Tehran')
+
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
+          dennis: {
+            red: {
+              cards: ['Tehran', 'Archery'],
+              splay: 'right'
+            },
+            hand: ['Vienna'],
+          }
+        })
+      })
+
+      test('splay up', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            red: ['Archery'],
+            hand: ['Seoul'],
+          },
+          decks: {
+            city: {
+              10: ['Bangkok'],
+            }
+          },
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Meld.Seoul')
+
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
+          dennis: {
+            red: {
+              cards: ['Seoul', 'Archery'],
+              splay: 'up'
+            },
+            hand: ['Bangkok'],
+          }
+        })
+      })
+
+      test('discover biscuit: simple', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            purple: ['Code of Laws'],
+            hand: ['Mecca'],
+          },
+          decks: {
+            base: {
+              3: ['Medicine', 'Education', 'Compass']
+            }
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Meld.Mecca')
+
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
+          dennis: {
+            purple: ['Mecca', 'Code of Laws'],
+            hand: ['Medicine', 'Compass'],
+          }
+        })
+      })
+
+      test('discover biscuit: not enough cards of age', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            purple: ['Code of Laws'],
+            hand: ['Mecca'],
+          },
+          decks: {
+            base: {
+              3: ['Medicine', 'Education'],
+              4: ['Reformation'],
+            }
+          }
+        })
+
+        // Leave only two cards in the 3 deck.
+        game.testSetBreakpoint('before-first-player', (game) => {
+          const toExile = game.zones.byDeck('base', 3).cardlist().slice(2)
+          for (const card of toExile) {
+            game.mRemove(card)
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Meld.Mecca')
+
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
+          dennis: {
+            purple: ['Mecca', 'Code of Laws'],
+            hand: ['Medicine'],
+          }
+        })
+      })
+
+      test.skip('discover biscuit: effects do not trigger', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city', 'figs'] })
+        t.setBoard(game, {
+          dennis: {
+            purple: ['Code of Laws'],
+            yellow: ['Rhazes'],
+            hand: ['Mecca', 'Machinery'],
+          },
+          decks: {
+            base: {
+              3: ['Medicine', 'Education', 'Compass']
+            }
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Meld.Mecca')
+
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
+          dennis: {
+            purple: ['Mecca', 'Code of Laws'],
+            yellow: ['Rhazes'],
+            hand: ['Medicine', 'Compass', 'Machinery'],
+          }
+        })
+      })
+
+      test('junk biscuit', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            purple: ['Reformation'],
+            hand: ['Seville'],
+          },
+          achievements: ['Optics', 'Perspective', 'Coal'],
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Meld.Seville')
+
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
+          dennis: {
+            purple: ['Seville', 'Reformation'],
+          },
+          junk: ['Perspective'],
+        })
+      })
+
+      test('uplift biscuit', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            purple: ['Monotheism'],
+            hand: ['Luoyang'],
+          },
+          decks: {
+            base: {
+              4: ['Gunpowder'],
+            }
+          }
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Meld.Luoyang')
+
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
+          dennis: {
+            purple: ['Luoyang', 'Monotheism'],
+            hand: ['Gunpowder']
+          },
+          junk: [
+            "Alchemy",
+            "Compass",
+            "Feudalism",
+            "Engineering",
+            "Machinery",
+            "Medicine",
+            "Optics",
+            "Paper",
+            "Translation",
+          ]
+        })
+      })
+
+      test('unsplay biscuit', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            red: {
+              cards: ['Coal', 'Metalworking'],
+              splay: 'left',
+            },
+            hand: ['Warsaw'],
+          },
+          micah: {
+            red: {
+              cards: ['Flight', 'Optics'],
+              splay: 'up',
+            },
+            green: {
+              cards: ['Measurement', 'Paper'],
+              splay: 'right',
+            },
+          },
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, request1, 'Meld.Warsaw')
+
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
+          dennis: {
+            red: {
+              cards: ['Warsaw', 'Coal', 'Metalworking'],
+              splay: 'left',
+            },
+          },
+          micah: {
+            red: ['Flight', 'Optics'],
+            green: {
+              cards: ['Measurement', 'Paper'],
+              splay: 'right',
+            },
+          },
+        })
       })
     })
 
-    describe.skip('artifacts', () => {
+    describe('artifacts', () => {
       test('hex position matching', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
         t.setBoard(game, {
@@ -1522,7 +1425,7 @@ describe('Innovation', () => {
         })
       })
 
-      test('can meld artifact on display', () => {
+      test('can activate or skip action', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
         t.setBoard(game, {
           dennis: {
@@ -1530,205 +1433,211 @@ describe('Innovation', () => {
           },
         })
 
-        const request1 = game.run()
-        const request2 = t.choose(game, request1, 'skip')
-        const request3 = t.choose(game, request2, 'Meld.Holmegaard Bows')
+        let request = game.run()
 
-        t.testBoard(game, {
-          dennis: {
-            red: ['Holmegaard Bows'],
-          },
-        })
-      })
-    })
-
-    describe.skip('relics', () => {
-      test('claim from achievements as achievement', () => {
-        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-        t.setBoard(game, {
-          dennis: {
-            green: ['Compass'],
-            hand: ['Sailing'],
-          },
-          decks: {
-            arti: {
-              3: ['Dunhuang Star Chart'],
-            }
-          }
-        })
-
-        const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Sailing')
-        const request3 = t.choose(game, request2, 'to my achievements')
-
-        t.testIsSecondPlayer(game)
-        t.testBoard(game, {
-          dennis: {
-            green: ['Sailing', 'Compass'],
-            artifact: ['Dunhuang Star Chart'],
-            achievements: ['Timbuktu'],
-          },
-        })
+        t.testChoices(request, ['dogma', 'skip'])
       })
 
-      test('claim from achievements to hand', () => {
-        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-        t.setBoard(game, {
-          dennis: {
-            green: ['Compass'],
-            hand: ['Sailing'],
-          },
-          decks: {
-            arti: {
-              3: ['Dunhuang Star Chart'],
-            }
-          }
+      describe('museums', () => {
+        test('museums are available in the achievements', () => {
+          const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+          game.run()
+          const museums = game.getAvailableMuseums()
+          expect(museums.length).toBe(5)
         })
 
-        const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Sailing')
-        const request3 = t.choose(game, request2, 'to my hand')
+        test('activated artifacts go to a museum', () => {
+          const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+          t.setBoard(game, {
+            dennis: {
+              artifact: ['Holmegaard Bows'],
+            },
+            decks: {
+              base: {
+                2: ['Mathematics'],
+              },
+            },
+          })
 
-        t.testIsSecondPlayer(game)
-        t.testBoard(game, {
-          dennis: {
-            green: ['Sailing', 'Compass'],
-            artifact: ['Dunhuang Star Chart'],
-            hand: ['Timbuktu'],
-          },
-        })
-      })
+          let request = game.run()
+          request = t.choose(game, request, 'dogma')
 
-      test('claim from opponent achievements', () => {
-        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-        t.setBoard(game, {
-          dennis: {
-            green: ['Compass'],
-            hand: ['Sailing'],
-          },
-          micah: {
-            achievements: ['Timbuktu'],
-          },
-          decks: {
-            arti: {
-              3: ['Dunhuang Star Chart'],
-            }
-          }
+          t.testBoard(game, {
+            dennis: {
+              hand: ['Mathematics'],
+              museum: ['Museum 1', 'Holmegaard Bows'],
+            },
+          })
         })
 
-        const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Sailing')
-        const request3 = t.choose(game, request2, 'to my achievements')
+        test('unactivated artifacts go to a museum', () => {
+          const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+          t.setBoard(game, {
+            dennis: {
+              artifact: ['Holmegaard Bows'],
+            },
+          })
 
-        t.testIsSecondPlayer(game)
-        t.testBoard(game, {
-          dennis: {
-            green: ['Sailing', 'Compass'],
-            artifact: ['Dunhuang Star Chart'],
-            achievements: ['Timbuktu'],
-          },
-        })
-      })
+          let request = game.run()
+          request = t.choose(game, request, 'skip')
 
-      test('claim from my achievements to my hand', () => {
-        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-        t.setBoard(game, {
-          dennis: {
-            green: ['Compass'],
-            hand: ['Sailing'],
-            achievements: ['Timbuktu'],
-          },
-          decks: {
-            arti: {
-              3: ['Dunhuang Star Chart'],
-            }
-          }
+          t.testBoard(game, {
+            dennis: {
+              museum: ['Museum 1', 'Holmegaard Bows'],
+            },
+          })
         })
 
-        const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Sailing')
-        const request3 = t.choose(game, request2, 'to my hand')
+        test('artifacts in a museum can be melded', () => {
+          const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+          t.setBoard(game, {
+            dennis: {
+              museum: ['Museum 1', 'Holmegaard Bows'],
+            },
+          })
 
-        t.testIsSecondPlayer(game)
-        t.testBoard(game, {
-          dennis: {
-            green: ['Sailing', 'Compass'],
-            artifact: ['Dunhuang Star Chart'],
-            hand: ['Timbuktu'],
-          },
-        })
-      })
+          let request = game.run()
+          request = t.choose(game, request, 'Meld.Holmegaard Bows')
 
-      test.skip('return from achievements', () => {
-        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-        t.setBoard(game, {
-          dennis: {
-            purple: ["'30 World Cup Final Ball"],
-          },
-          micah: {
-            yellow: ['Agriculture'],
-            achievements: ['Timbuktu'],
-          },
-          decks: {
-            base: {
-              8: ['Flight', 'Mobility', 'Skyscrapers'],
-            }
-          }
+          t.testBoard(game, {
+            dennis: {
+              red: ['Holmegaard Bows'],
+            },
+          })
         })
 
-        const request1 = game.run()
-        const request2 = t.choose(game, request1, "Dogma.'30 World Cup Final Ball")
+        describe('museum checks', () => {
+          test('single player has most', () => {
+            const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+            t.setBoard(game, {
+              dennis: {
+                artifact: ['Holmegaard Bows'],
+              },
+              micah: {
+                museum: ['Museum 2', 'Dancing Girl', 'Museum 3', 'Ark of the Covenant'],
+              },
+              junk: ['Museum 4', 'Museum 5'],
+            })
 
-        t.testIsSecondPlayer(game)
-        t.testBoard(game, {
-          dennis: {
-            purple: ["'30 World Cup Final Ball"],
-            hand: ['Mobility', 'Skyscrapers'],
-          },
-          micah: {
-            yellow: ['Agriculture'],
-            hand: ['Flight'],
-          },
+            let request = game.run()
+            request = t.choose(game, request, 'skip')
+            request = t.choose(game, request, 'auto')
+
+            t.testIsFirstAction(request)
+            t.testBoard(game, {
+              dennis: {},
+              micah: {
+                achievements: ['Museum 2'],
+              }
+            })
+          })
+
+          test('tie for most', () => {
+            const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+            t.setBoard(game, {
+              dennis: {
+                artifact: ['Holmegaard Bows'],
+              },
+              micah: {
+                museum: ['Museum 2', 'Dancing Girl'],
+              },
+              junk: ['Museum 3', 'Museum 4', 'Museum 5'],
+            })
+
+            let request = game.run()
+            request = t.choose(game, request, 'skip')
+
+            t.testIsFirstAction(request)
+            t.testBoard(game, {
+              dennis: {
+                museum: ['Museum 1', 'Holmegaard Bows'],
+              },
+              micah: {
+                museum: ['Museum 2', 'Dancing Girl'],
+              }
+            })
+          })
         })
 
-        const timbuktu = game
-          .zones.byId('achievements')
-          .cardlist()
-          .find(card => card.name === 'Timbuktu')
-        expect(!!timbuktu).toBe(true)
-      })
+        describe('siezing artifacts', () => {
+          test('seize artifact of the same age', () => {
+            const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+            t.setBoard(game, {
+              dennis: {
+                blue: ['Tools'],
+                hand: ['Pottery'],
+              },
+              micah: {
+                museum: ['Museum 2', 'Dancing Girl'],
+              },
+              junk: ['Museum 3', 'Museum 4', 'Museum 5'],
+            })
 
-      test.skip('return from hand (as a non-achievements zone)', () => {
-        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-        t.setBoard(game, {
-          dennis: {
-            yellow: ['Agriculture'],
-            hand: ['Timbuktu'],
-          },
-          decks: {
-            base: {
-              4: ['Gunpowder'],
-            }
-          }
+            let request = game.run()
+            request = t.choose(game, request, 'Meld.Pottery')
+            request = t.choose(game, request, 'seize.Dancing Girl')
+
+            t.testIsSecondPlayer(game)
+            t.testBoard(game, {
+              dennis: {
+                blue: ['Pottery', 'Tools'],
+                museum: ['Museum 2', 'Dancing Girl'],
+              },
+            })
+          })
+
+          test('cannot seize if the age does not match', () => {
+            const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+            t.setBoard(game, {
+              dennis: {
+                blue: ['Mathematics'],
+                hand: ['Pottery'],
+              },
+              micah: {
+                museum: ['Museum 2', 'Dancing Girl'],
+              },
+              junk: ['Museum 3', 'Museum 4', 'Museum 5'],
+              decks: {
+                arti: {
+                  2: ['Rosetta Stone'],
+                },
+              },
+            })
+
+            let request = game.run()
+            request = t.choose(game, request, 'Meld.Pottery')
+
+            t.testIsSecondPlayer(game)
+            t.testBoard(game, {
+              dennis: {
+                blue: ['Pottery', 'Mathematics'],
+                artifact: ['Rosetta Stone'],
+              },
+              micah: {
+                museum: ['Museum 2', 'Dancing Girl'],
+              },
+            })
+          })
         })
 
-        const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Dogma.Agriculture')
-        const request3 = t.choose(game, request2, 'Timbuktu')
+        test('artifacts rotate into hand if there are no museums', () => {
+          const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+          t.setBoard(game, {
+            dennis: {
+              artifact: ['Holmegaard Bows'],
+            },
+            junk: ['Museum 1', 'Museum 2', 'Museum 3', 'Museum 4', 'Museum 5'],
+          })
 
-        t.testIsSecondPlayer(game)
-        t.testBoard(game, {
-          dennis: {
-            yellow: ['Agriculture'],
-            score: ['Gunpowder'],
-          },
+          let request = game.run()
+          request = t.choose(game, request, 'skip')
+
+          t.testBoard(game, {
+            dennis: {
+              hand: ['Holmegaard Bows'],
+            },
+          })
         })
-
-        const timbuktu = game
-          .zones.byId('achievements')
-          .cardlist()
-          .find(card => card.name === 'Timbuktu')
-        expect(!!timbuktu).toBe(true)
       })
     })
   })

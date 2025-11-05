@@ -44,7 +44,7 @@ module.exports = {
       if (selected.title === 'Splay left and self-execute') {
         const color = selected.selection[0]
         game.actions.splay(player, color, 'left')
-        const topCard = game.getTopCard(player, color)
+        const topCard = game.cards.top(player, color)
         if (topCard) {
           game.aSelfExecute(player, topCard)
         }

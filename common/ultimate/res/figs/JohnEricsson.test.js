@@ -1,0 +1,61 @@
+Error.stackTraceLimit = 100
+
+const t = require('../../testutil.js')
+
+describe('John Ericsson', () => {
+
+
+  test('karma: when-meld', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        hand: ['John Ericsson'],
+      },
+      micah: {
+        green: ['Adam Smith'],
+        purple: ['Emperor Meiji'],
+      }
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.John Ericsson')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['John Ericsson'],
+        score: ['Adam Smith'],
+      },
+      micah: {
+        purple: ['Emperor Meiji'],
+      }
+    })
+  })
+
+  test('karma: biscuits', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        green: ['Electricity'],
+        red: ['John Ericsson'],
+      },
+      micah: {
+        green: ['Adam Smith'],
+        purple: ['Emperor Meiji'],
+      }
+    })
+
+    let request
+    request = game.run()
+
+    expect(t.dennis(game).biscuits()).toEqual({
+      k: 0,
+      s: 1,
+      l: 0,
+      c: 0,
+      f: 4,
+      i: 8,
+    })
+  })
+})

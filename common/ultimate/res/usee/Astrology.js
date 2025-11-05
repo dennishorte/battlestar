@@ -22,7 +22,7 @@ module.exports = {
       game.actions.chooseAndSplay(player, choices, 'left', { min: 0, max: 1 })
     },
     (game, player) => {
-      const numPurpleCards = game.getVisibleCardsByZone(player, 'purple')
+      const numPurpleCards = game.zones.byPlayer(player, 'purple').numVisibleCards()
       const card = game.actions.drawAndMeld(player, numPurpleCards)
 
       if (card && !card.checkHasBiscuit('c')) {

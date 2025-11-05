@@ -57,20 +57,16 @@ module.exports = {
     },
 
     (game, player) => {
-      const hexes = game
+      const hexesPerColor = game
         // Grab each stack
-        .util
-        .colors()
-        .map(color => game.zones.byPlayer(player, color))
+        .zones
+        .colorStacks(player)
 
         // Convert each stack to a count of hexes
-        .map(zone => zone
-          .cardlist()
-          .map(c => (game.getBiscuitsRaw(c, zone.splay).match(/h/g) || []).length )
-          .reduce((prev, curr) => prev + curr, 0)
-        )
+        .map(zone => zone.cardlist().map(card => card.checkBiscuitIsVisible('h')).length)
 
-      if (hexes.some(count => count >= 5) && game.checkAchievementAvailable('Heritage')) {
+
+      if (hexesPerColor.some(count => count >= 5) && game.checkAchievementAvailable('Heritage')) {
         game.actions.claimAchievement(player, { name: 'Heritage' })
       }
     }

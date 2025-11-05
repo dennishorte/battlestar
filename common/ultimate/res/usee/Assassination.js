@@ -15,7 +15,7 @@ module.exports = {
 
       if (card.checkHasBiscuit('k')) {
         game.actions.transfer(player, card, game.zones.byPlayer(leader, 'score'))
-        const topCard = game.getTopCard(player, card.color)
+        const topCard = game.cards.top(player, card.color)
         if (topCard) {
           game.actions.transfer(player, topCard, game.zones.byPlayer(leader, 'score'))
         }
@@ -25,7 +25,7 @@ module.exports = {
     (game, player) => {
       const topGreenCards = game
         .players.all()
-        .map(p => game.getTopCard(p, 'green'))
+        .map(p => game.cards.top(p, 'green'))
         .filter(card => Boolean(card))
 
       if (topGreenCards.length === 0) {

@@ -13,7 +13,7 @@ module.exports = {
       const choices = game
         .util.colors()
         .map(color => game.zones.byPlayer(player, color))
-        .filter(zone => game.getBiscuitsByZone(zone).s > 0)
+        .filter(zone => zone.biscuits().s > 0)
         .map(zone => zone.color)
 
       const splayed = game.actions.chooseAndSplay(player, choices, 'left')[0]

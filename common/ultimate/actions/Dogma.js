@@ -42,7 +42,7 @@ function EndorseAction(player, color) {
 
   this.state.didEndorse = true
 
-  const card = this.game.getTopCard(player, color)
+  const card = this.game.cards.top(player, color)
 
   // Junk a card
   const featuredBiscuit = card.dogmaBiscuit
@@ -70,7 +70,7 @@ function _executeEffects(player, card, shareData, opts) {
   // Store planned effects now, as changes to the stacks shouldn't affect them.
   const effects = [
     ...this.game.getVisibleEffectsByColor(card.owner, card.color, 'echo'),
-    this.game.getVisibleEffects(card, 'dogma')
+    card.visibleEffects('dogma'),
   ].filter(e => e !== undefined)
 
   const effectOpts = {
@@ -130,7 +130,7 @@ function _shareBonus(player, card) {
 
   // Grace Hopper and Susan Blackmore have "if your opponent didn't share" karma effects
   else if (this.state.couldShare) {
-    for (const other of this.players.opponentsOf(player)) {
+    for (const other of this.players.opponents(player)) {
       this.game.aKarma(other, 'no-share', { card, leader: player })
     }
   }
@@ -182,7 +182,7 @@ function _getBiscuitComparator(player, featuredBiscuit, biscuits, opts) {
 
 function _getDogmaBiscuits(player, card, opts) {
   const biscuits = this.game.getBiscuits()
-  const artifactBiscuits = opts.artifact ? this.game.getBiscuitsByCard(card, 'top') : this.util.emptyBiscuits()
+  const artifactBiscuits = opts.artifact ? card.visibleBiscuitsParsed() : this.util.emptyBiscuits()
   biscuits[player.name] = this.util.combineBiscuits(biscuits[player.name], artifactBiscuits)
 
   return biscuits

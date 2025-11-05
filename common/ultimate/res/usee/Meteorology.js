@@ -25,7 +25,7 @@ module.exports = {
       }
     },
     (game, player) => {
-      const biscuits = game.getBiscuitsByPlayer(player)
+      const biscuits = player.biscuits()
       if (biscuits.k === 0) {
         game.actions.claimAchievement(player, { name: 'Zen' })
       }

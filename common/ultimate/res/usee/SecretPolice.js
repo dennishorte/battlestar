@@ -17,7 +17,7 @@ module.exports = {
         const tucked = game.actions.chooseAndTuck(player, game.cards.byPlayer(player, 'hand'), { count: 1 })[0]
 
         if (tucked) {
-          game.actions.return(player, game.getTopCard(player, tucked.color))
+          game.actions.return(player, game.cards.top(player, tucked.color))
           continue
         }
         else {

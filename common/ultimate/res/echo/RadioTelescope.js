@@ -1,5 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
-
 module.exports = {
   name: `Radio Telescope`,
   color: `blue`,
@@ -14,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { foreseen, self }) => {
       const count = Object
-        .values(game.getBiscuitsByColor(player))
+        .values(player.biscuitsByColor())
         .map(biscuits => biscuits.s)
         .filter(count => count > 0)
         .length
@@ -40,10 +38,7 @@ module.exports = {
       const melded = game.actions.chooseAndMeld(player, drawn)
 
       if (melded.length > 0 && melded[0].name === 'A.I.') {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
 
       const toReturn = drawn.filter(card => card !== melded[0])

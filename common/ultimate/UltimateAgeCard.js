@@ -24,24 +24,26 @@ class UltimateAgeCard extends UltimateBaseCard {
     })
   }
 
-  checkBiscuitIsVisible(biscuit, splay) {
-    if (!splay) {
-      if (this.owner) {
-        if (this.checkIsTopCard()) {
-          splay = 'top'
-        }
-        else {
-          splay = this.game.zones.byPlayer(this.owner, this.color).splay
-        }
+  getSplay() {
+    if (this.owner) {
+      if (this.isTopCardLoose()) {
+        return 'top'
       }
       else {
-        throw new Error('Cannot calculate the splay for a card with no owner: ' + this.name)
+        return this.game.zones.byPlayer(this.owner, this.color).splay
       }
     }
+    else {
+      return 'top'
+    }
+  }
+
+  checkBiscuitIsVisible(biscuit) {
+    const splay = this.getSplay()
 
     if (biscuit === 'h') {
       // m also counts as an h
-      const mIsVisible = this.checkBiscuitIsVisible('m', splay)
+      const mIsVisible = this.checkBiscuitIsVisible('m')
       if (mIsVisible) {
         return true
       }
@@ -58,8 +60,8 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
   }
 
-  checkEchoIsVisible(splay) {
-    return this.checkBiscuitIsVisible('&', splay)
+  checkEchoIsVisible() {
+    return this.checkBiscuitIsVisible('&')
   }
 
   checkHasDemandExplicit() {
@@ -78,54 +80,62 @@ class UltimateAgeCard extends UltimateBaseCard {
     return this.checkHasDemandExplicit() || this.checkHasCompelExplicit()
   }
 
+  checkHasDogma() {
+    return this.dogma && this.dogma.length > 0
+  }
+
+  checkHasEcho() {
+    return this.echo && this.echo.length > 0
+  }
+
+  checkHasKarma() {
+    return this.karma && this.karma.length > 0
+  }
+
   checkHasShare() {
     const shareDogmaEffect = !this.checkHasDemand()
     const shareEchoEffect = !!this.echo
     return shareDogmaEffect || shareEchoEffect
   }
 
+  checkIsAgeCard() {
+    return true
+  }
+
   checkIsArtifact() {
-    return (
-      this.expansion === 'arti'
-      && this.name !== 'Timbuktu'
-      && this.name !== 'Complex Numbers'
-      && this.name !== 'Newton-Wickins Telescope'
-      && this.name !== 'Ching Shih'
-      && this.name !== 'Safety Pin'
-    )
+    return this.expansion === 'arti'
   }
 
   checkIsCity() {
-    return this.expansion === 'city' || this.isCity
+    return this.expansion === 'city'
   }
 
   checkIsEchoes() {
-    return this.expansion === 'echo' || this.name === 'Safety Pin'
+    return this.expansion === 'echo'
   }
 
   checkIsFigure() {
-    return this.expansion === 'figs' || this.name === 'Ching Shih'
+    return this.expansion === 'figs'
   }
 
   checkIsOnPlayerBoard(player) {
-    if (!this.zone) {
+    if (!this.zone || !this.zone.owner) {
       return false
     }
 
-    const re = /^players.([^.]+).(yellow|red|green|blue|purple)$/i
-    const match = this.zone.id.match(re)
+    // Is on any player board?
+    if (!player) {
+      return Boolean(this.zone.color)
+    }
 
-    return match && (!player || match[1] === player.name)
-  }
-
-  checkHasEcho() {
-    return this.echo.length > 0
+    // Is on a particular player board?
+    else {
+      return this.zone.owner.id === player.id && Boolean(this.zone.color)
+    }
   }
 
   checkHasBonus() {
-    const re = /[0-9ab]/gi
-    const match = this.biscuits.match(re)
-    return match !== null
+    return this.getBonuses().length > 0
   }
 
   checkHasDiscoverBiscuit() {
@@ -134,26 +144,27 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
 
     const biscuit = this.biscuits[4]
-    return (
-      biscuit === 'l'
-      || biscuit === 'c'
-      || biscuit === 'i'
-      || biscuit === 's'
-      || biscuit === 'k'
-      || biscuit === 'f'
-    )
+    return 'lciskfp'.includes(biscuit)
   }
 
-  checkIsTopCard() {
+  isTopCardLoose() {
     if (!this.owner) {
-      return false
+      return true
     }
 
-    return this.game.cards.top(this.owner, this.color).id === this.id
+    if (!this.zone.isColorZone()) {
+      return true
+    }
+
+    return this.isTopCardStrict()
+  }
+
+  isTopCardStrict() {
+    return this.game.cards.top(this.owner, this.color)?.id === this.id
   }
 
   checkSharesBiscuit(other) {
-    const biscuits = 'lciskf'.split('')
+    const biscuits = 'lciskfp'.split('')
     for (const biscuit of biscuits) {
       if (this.checkHasBiscuit(biscuit) && other.checkHasBiscuit(biscuit)) {
         return true
@@ -170,7 +181,14 @@ class UltimateAgeCard extends UltimateBaseCard {
     return this.biscuits.split(biscuit).length - 1
   }
 
-  getBiscuits(splay) {
+  visibleBiscuitsParsed() {
+    return this.game.util.parseBiscuits(this.visibleBiscuits())
+  }
+
+  visibleBiscuits() {
+    const splay = this.getSplay()
+
+    // If this is a top card, return all of its biscuits
     if (splay === 'top') {
       if (this.biscuits.length === 4) {
         return this.biscuits
@@ -180,7 +198,8 @@ class UltimateAgeCard extends UltimateBaseCard {
         return this.biscuits[0] + this.biscuits.slice(4, 6) + this.biscuits.slice(1, 4)
       }
     }
-    else if (splay === 'none') {
+
+    if (splay === 'none') {
       return ''
     }
     else if (splay === 'left') {
@@ -200,14 +219,10 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
   }
 
-  getBonuses(splay) {
-    if (!splay) {
-      splay = 'top'
-    }
-
+  getBonuses() {
     const rx = /([abt1-9])/g
     const matches = this
-      .getBiscuits(splay)
+      .visibleBiscuits()
       .match(rx)
 
     if (!matches) {
@@ -274,6 +289,64 @@ class UltimateAgeCard extends UltimateBaseCard {
 
   inHand(player) {
     return this.owner === player && this.zone.id.endsWith('hand')
+  }
+
+  visibleEffects(kind, opts={}) {
+    const player = opts.selfExecutor || this.players.byOwner(this)
+    const isTop = this.isTopCardLoose() || this.zone.id.endsWith('.artifact')
+
+    if (kind === 'dogma') {
+      if ((opts.selfExecutor || isTop) && this.dogma.length > 0) {
+        return {
+          card: this,
+          texts: this.dogma,
+          impls: this.getImpl('dogma'),
+        }
+      }
+    }
+
+    else if (kind === 'echo') {
+      const hexKarmas = this
+        .game
+        .getInfoByKarmaTrigger(player, 'hex-effect')
+        .filter(info => info.impl.matches(this, player, { card: this }))
+      const includeHexesAsEcho = hexKarmas.length > 0
+      const hexIsVisible = includeHexesAsEcho && this.checkBiscuitIsVisible('h')
+
+      const texts = []
+      const impls = []
+
+      if (this.checkEchoIsVisible()) {
+        for (const text of util.getAsArray(this, 'echo')) {
+          texts.push(text)
+        }
+        for (const impl of util.getAsArray(this, 'echoImpl')) {
+          impls.push(impl)
+        }
+      }
+
+      if (hexIsVisible) {
+        const { text, impl } = hexKarmas[0].impl.func(this, player, { card: this })
+        if (text) {
+          texts.push(text)
+          impls.push(impl)
+        }
+      }
+
+      if (texts.length > 0) {
+        return {
+          card: this,
+          texts,
+          impls,
+        }
+      }
+    }
+
+    else {
+      throw new Error(`Unknown effect type: ${kind}`)
+    }
+
+    return undefined
   }
 }
 

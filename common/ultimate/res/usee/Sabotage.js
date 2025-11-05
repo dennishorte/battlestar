@@ -23,7 +23,7 @@ module.exports = {
 
         // Tuck top card of returned color
         const color = returned.color
-        const topCard = game.getTopCard(player, color)
+        const topCard = game.cards.top(player, color)
         if (topCard) {
           game.actions.tuck(player, topCard)
         }

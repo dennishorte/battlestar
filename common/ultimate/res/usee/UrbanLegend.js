@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Urban Legend`,
@@ -17,17 +16,14 @@ module.exports = {
       let drawnCards = 0
       colors.forEach(color => {
         const zone = game.zones.byPlayer(player, color)
-        if (game.getBiscuitsByZone(zone).f > 0) {
+        if (zone.biscuits().f > 0) {
           game.actions.draw(player, { age: game.getEffectAge(self, 9) })
           drawnCards++
         }
       })
 
       if (drawnCards === 5) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
     },
     (game, player) => {

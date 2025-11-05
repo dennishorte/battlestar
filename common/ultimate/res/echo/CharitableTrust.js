@@ -24,7 +24,7 @@ module.exports = {
       const melded = game.actions.chooseAndMeld(player, cards, { min: 0, max: 1 })[0]
 
       if (melded) {
-        const greenCard = game.getTopCard(player, 'green')
+        const greenCard = game.cards.top(player, 'green')
 
         if (!greenCard) {
           game.log.add({ template: 'no top green card' })

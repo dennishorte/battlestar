@@ -11,12 +11,20 @@ function MeldAction(player, card, opts={}) {
 
   const isFirstCard = this.cards.byPlayer(player, card.color).length === 0
 
+  // If this card is in a museum, a museum card must be returned.
+  const fromMuseum = card.zone.isMuseumZone()
+
   card.moveTo(this.zones.byPlayer(player, card.color), 0)
 
   this.log.add({
     template: '{player} melds {card}',
     args: { player, card }
   })
+
+  if (fromMuseum) {
+    const museum = this.cards.byPlayer(player, 'museum').filter(card => card.isMuseum)[0]
+    this.return(player, museum)
+  }
 
   this.acted(player)
 
@@ -33,7 +41,7 @@ function MeldAction(player, card, opts={}) {
     _maybeCityBiscuits.call(this, player, card)
     _maybeDiscoverBiscuit.call(this, player, card)
     if (isFirstCard) {
-      this.game._maybeDrawCity(player, opts)
+      this._maybeDrawCity(player, opts)
     }
     _maybeDigArtifact.call(this, player, card)
     _maybePromote.call(this, player, card)
@@ -53,7 +61,7 @@ function _maybeWhenMeldKarma(player, card, opts={}) {
 }
 
 function _maybeCityBiscuits(player, card) {
-  const biscuits = card.getBiscuits('top')
+  const biscuits = card.visibleBiscuits()
 
   for (const biscuit of biscuits) {
     switch (biscuit) {
@@ -70,7 +78,7 @@ function _maybeCityBiscuits(player, card) {
         this.splay(player, card.color, 'up')
         break
       case '=':
-        for (const opp of this.players.opponentsOf(player)) {
+        for (const opp of this.players.opponents(player)) {
           this.game.actions.unsplay(opp, card.color)
         }
         break
@@ -136,11 +144,6 @@ function _maybeDigArtifact(player, card) {
     return
   }
 
-  // Can only have one artifact on display at a time.
-  if (this.cards.byPlayer(player, 'artifact').length > 0) {
-    return
-  }
-
   const next = this.cards.byPlayer(player, card.color)[1]
 
   // No card underneath, so no artifact dig possible.
@@ -150,13 +153,13 @@ function _maybeDigArtifact(player, card) {
 
   // Dig up an artifact if player melded a card of lesser or equal age of the previous top card.
   if (next.getAge() >= card.getAge()) {
-    this.game.aDigArtifact(player, next.getAge())
+    this.game.actions.digArtifact(player, next.getAge())
     return
   }
 
   // Dig up an artifact if the melded card has its hex icon in the same position.
   if (next.getHexIndex() === card.getHexIndex()) {
-    this.game.aDigArtifact(player, next.getAge())
+    this.game.actions.digArtifact(player, next.getAge())
     return
   }
 }

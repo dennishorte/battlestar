@@ -40,11 +40,11 @@ module.exports = {
 }
 
 function Magic(serialized_data, viewerName) {
-  Game.call(this, serialized_data, viewerName)
-
-  this.log = new MagicLogManager(this, serialized_data.chat)
-  this.cards = new MagicCardManager(this)
-  this.players = new MagicPlayerManager(this, this.settings.players, this.settings.playerOptions || {})
+  Game.call(this, serialized_data, viewerName, {
+    LogManager: MagicLogManager,
+    CardManager: MagicCardManager,
+    PlayerManager: MagicPlayerManager,
+  })
 
   this.setCardWrapper(MagicCard)
 }

@@ -25,7 +25,7 @@ module.exports = {
 
     (game, player, { self }) => {
       const opponentColors = game
-        .players.opponentsOf(player)
+        .players.opponents(player)
         .flatMap(opp => game.cards.tops(opp))
         .map(card => card.color)
 

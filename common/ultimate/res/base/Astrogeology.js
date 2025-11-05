@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 
 module.exports = {
@@ -32,10 +31,7 @@ module.exports = {
     (game, player, { self }) => {
       const handSize = game.zones.byPlayer(player, 'hand').cardlist().length
       if (handSize >= 8) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
       else {
         game.log.addNoEffect()

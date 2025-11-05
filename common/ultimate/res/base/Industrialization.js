@@ -17,7 +17,7 @@ module.exports = {
 
       const playerWithMost = game.getUniquePlayerWithMostBiscuits('i')
       if (playerWithMost && playerWithMost.name === player.name) {
-        const card = game.getTopCard(player, 'red')
+        const card = game.cards.top(player, 'red')
         if (card) {
           game.actions.return(player, card)
         }

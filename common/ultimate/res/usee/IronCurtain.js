@@ -20,7 +20,7 @@ module.exports = {
 
       const toReturn = unsplayed
         .filter(color => color)
-        .map(color => game.getTopCard(player, color))
+        .map(color => game.cards.top(player, color))
 
       game.actions.returnMany(player, toReturn)
       game.actions.chooseAndSafeguard(player, game.getAvailableStandardAchievements(player), {

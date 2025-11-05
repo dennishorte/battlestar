@@ -16,6 +16,10 @@ class BaseCard {
     return GameProxy.create(this)
   }
 
+  equals(other) {
+    return this.id === other.id
+  }
+
   setHome(zone) {
     this.home = zone
   }

@@ -25,13 +25,13 @@ module.exports = {
 
         // If you chose to swap, do it.
         if (opp) {
-          const topRed = game.getTopCard(player, 'red')
+          const topRed = game.cards.top(player, 'red')
 
           if (topRed) {
             game.actions.transfer(player, topRed, game.zones.byPlayer(opp, 'red'))
 
             // After transferring, meld their top green card
-            const topGreen = game.getTopCard(opp, 'green')
+            const topGreen = game.cards.top(opp, 'green')
             if (topGreen) {
               game.actions.meld(player, topGreen)
             }

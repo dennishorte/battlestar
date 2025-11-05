@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       for (const target of [player, leader]) {
-        const topYellow = game.getTopCard(target, 'yellow')
+        const topYellow = game.cards.top(target, 'yellow')
         if (topYellow) {
           const choices = game
             .cards.byPlayer(player, 'score')

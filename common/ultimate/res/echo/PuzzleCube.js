@@ -1,5 +1,4 @@
 const util = require('../../../lib/util.js')
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Puzzle Cube`,
@@ -29,7 +28,7 @@ module.exports = {
       const count = game.actions.choose(player, [1, 2], { title: `Score your bottom 1 or 2 ${color} cards?` })
 
       for (let i = 0; i < count; i++) {
-        const card = game.getBottomCard(player, color)
+        const card = game.cards.bottom(player, color)
         if (card) {
           game.actions.score(player, card)
         }
@@ -51,10 +50,7 @@ module.exports = {
 
       const distinctCounts = util.array.distinct(visibleCounts).length
       if (distinctCounts === 1) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
     },
 

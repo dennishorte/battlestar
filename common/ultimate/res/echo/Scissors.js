@@ -54,7 +54,7 @@ module.exports = {
   ],
   echoImpl: [
     (game, player) => {
-      const card = game.getBottomCard(player, 'yellow')
+      const card = game.cards.bottom(player, 'yellow')
       if (card) {
         game.actions.score(player, card)
       }

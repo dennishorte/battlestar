@@ -1,5 +1,4 @@
 const { BaseActionManager } = require('../lib/game/index.js')
-const { GameOverEvent } = require('../lib/game.js')
 
 const { DogmaAction, EndorseAction } = require('./actions/Dogma.js')
 const { DrawAction } = require('./actions/Draw.js')
@@ -18,6 +17,36 @@ class UltimateActionManager extends BaseActionManager {
   draw = DrawAction
   endorse = EndorseAction
   meld = MeldAction
+
+  /**
+     This is the Achieve Action, not just claiming an achievemenet as part of a dogma action.
+   */
+  achieveAction(player, arg, opts={}) {
+    const _parseHiddenCardName = function(name) {
+      return {
+        expansion: name.substr(1,4),
+        age: parseInt(name.substr(6)),
+      }
+    }
+
+    if (arg.startsWith('safe: ')) {
+      const hiddenName = arg.substr(6)
+      const { expansion, age } = _parseHiddenCardName(hiddenName)
+      const card = this
+        .cards.byPlayer(player, 'safe')
+        .find(c => c.expansion === expansion && c.getAge() === age)
+      this.actions.claimAchievement(player, { card })
+    }
+    else if (arg.startsWith('*')) {
+      const { expansion, age } = _parseHiddenCardName(arg)
+      const isStandard = opts.nonAction ? false : true
+      this.actions.claimAchievement(player, { expansion, age, isStandard })
+    }
+    else {
+      const card = this.cards.byId(arg)
+      this.actions.claimAchievement(player, { card })
+    }
+  }
 
   acted(player) {
     if (!this.state.initializationComplete || !this.state.firstPicksComplete) {
@@ -55,10 +84,7 @@ class UltimateActionManager extends BaseActionManager {
     if (!this.state.wouldWinKarma) {
       for (const player of this.players.all()) {
         if (this.game.getAchievementsByPlayer(player).total >= this.game.getNumAchievementsToWin()) {
-          throw new GameOverEvent({
-            player,
-            reason: 'achievements'
-          })
+          this.game.youWin(player, 'achievements')
         }
       }
     }
@@ -365,6 +391,84 @@ class UltimateActionManager extends BaseActionManager {
     return card
   }
 
+  digArtifact(player, age) {
+    const choices = []
+
+    // Dig options
+    if (
+      this.cards.byPlayer(player, 'artifact').length === 0
+      && this.cards.byDeck('arti', age).length > 0
+      && age <= this.util.maxAge()
+    ) {
+      choices.push('dig')
+    }
+    else if (this.cards.byPlayer(player, 'artifact').length !== 0) {
+      this.log.add({
+        template: '{player} already has an artifact on display',
+        args: { player }
+      })
+    }
+    else {
+      this.log.add({
+        template: `Artifacts deck for age ${age} is empty.`
+      })
+    }
+
+    // Seize options
+    const canSeize = this
+      .players
+      .all()
+      .flatMap(player => this.cards.byPlayer(player, 'museum'))
+      .filter(card => !card.isMuseum)
+      .filter(card => card.getAge() === age)
+
+    if (canSeize.length > 0) {
+      choices.push({
+        title: 'seize',
+        choices: canSeize.map(c => c.id),
+        min: 0
+      })
+    }
+
+    const chosen = this.choose(player, choices, {
+      title: 'Choose artifact option'
+    })[0]
+
+    if (chosen === 'dig') {
+      const card = this.actions.draw(player, { age, exp: 'arti' })
+      if (card) {
+        this.log.add({
+          template: '{player} digs {card}',
+          args: { player, card },
+        })
+        card.moveTo(this.zones.byPlayer(player, 'artifact'))
+        this.acted(player)
+      }
+    }
+    else if (chosen.title === 'seize') {
+      const cardName = chosen.selection[0]
+      const card = this.cards.byId(cardName)
+      const museum = card.zone.cardlist().find(card => card.isMuseum)
+      const originalOwner = card.owner
+      const playerMuseumZone = this.zones.byPlayer(player, 'museum')
+      card.moveTo(playerMuseumZone)
+      museum.moveTo(playerMuseumZone)
+
+      this.log.add({
+        template: '{player} seizes {card} from {player2}',
+        args: {
+          player,
+          card,
+          player2: originalOwner
+        }
+      })
+      this.acted(player)
+    }
+    else {
+      throw new Error(`Unknown artifact action: ${chosen} (${chosen.title})`)
+    }
+  }
+
   foreshadow = UltimateActionManager.insteadKarmaWrapper('foreshadow', (player, card) => {
     const zoneLimit = this.game.getForecastLimit(player)
     const target = this.zones.byPlayer(player, 'forecast')
@@ -415,6 +519,10 @@ class UltimateActionManager extends BaseActionManager {
   })
 
   junkAvailableAchievement(player, ages, opts={}) {
+    if (!Array.isArray(ages)) {
+      ages = [ages]
+    }
+
     const eligible = ages.flatMap(age => this.game.getAvailableAchievementsByAge(player, age))
 
     const card = this.chooseCards(player, eligible, {
@@ -424,12 +532,21 @@ class UltimateActionManager extends BaseActionManager {
     })[0]
 
     if (card) {
-      this.junk(player, card)
+      return this.junk(player, card)
     }
   }
 
   junkDeck(player, age, opts={}) {
-    const cards = this.cards.byDeck('base', age)
+    if (age < this.util.minAge() || age > this.util.maxAge()) {
+      game.log.add({
+        template: 'No deck of age {age}',
+        args: { age }
+      })
+      return
+    }
+
+    const exp = opts.exp || 'base'
+    const cards = this.cards.byDeck(exp, age)
     if (cards.length === 0) {
       this.log.add({
         template: 'The {age} deck is already empty.',
@@ -445,11 +562,10 @@ class UltimateActionManager extends BaseActionManager {
 
     if (doJunk) {
       this.log.add({
-        template: '{player} moves all cards in {age} deck to the junk',
-        args: { player, age }
+        template: '{player} moves all cards in {exp} {age} deck to the junk',
+        args: { player, age, exp }
       })
 
-      const cards = this.cards.byDeck('base', age)
       this.junkMany(player, cards, { ordered: true })
       return true
     }
@@ -484,6 +600,77 @@ class UltimateActionManager extends BaseActionManager {
     this.acted(player)
     return card
   })
+
+  rotate(player, card) {
+    // Only rotate cards if they are in the artifact zone.
+    if (!card.zone.isArtifactZone()) {
+      this.log.add({
+        template: '{card} is not in the artifact zone, so cannot be rotated',
+        args: { card },
+      })
+      return
+    }
+
+    // Get a museum
+    const museum = this.game.getAvailableMuseums().sort((l, r) => l.name.localeCompare(r.name))[0]
+
+    // If there are no museums, rotate the card into the player's hand
+    if (!museum) {
+      this.log.add({
+        template: 'There are no available museums. {card} rotates to the hand of {player}.',
+        args: { card, player }
+      })
+      card.moveTo(this.zones.byPlayer(player, 'hand'))
+      return
+    }
+
+    // Otherwise, move the museum into the player's zone and place the card onto it
+    this.log.add({
+      template: '{card} rotates into a musuem',
+      args: { card }
+    })
+    museum.moveTo(this.zones.byPlayer(player, 'museum'))
+    card.moveTo(this.zones.byPlayer(player, 'museum'))
+
+    // If there are no more available museums, do a museum check
+    if (this.game.getAvailableMuseums().length === 0) {
+      this.log.add({
+        template: 'There are no available museums; doing a museum check.'
+      })
+
+      // The single player with the most museums claims one
+      const museumCounts = this
+        .players
+        .all()
+        .map(player => ({
+          player,
+          count: this.cards.byPlayer(player, 'museum').length / 2,
+        }))
+        .sort((l, r) => r.count - l.count)
+
+      if (museumCounts[0].count > museumCounts[1].count) {
+        const playerWithTheMost = museumCounts[0].player
+        this.log.add({
+          template: '{player} has the most museums',
+          args: { player: playerWithTheMost }
+        })
+        const museumToClaim = this.cards.byPlayer(playerWithTheMost, 'museum').find(card => card.isMuseum)
+        this.claimAchievement(playerWithTheMost, { card: museumToClaim })
+
+        // If so, return all cards on museums and all other museum cards
+        const cardsToReturn = this
+          .players
+          .all()
+          .flatMap(player => this.cards.byPlayer(player, 'museum'))
+
+        const museumsToReturn = cardsToReturn.filter(card => card.isMuseum)
+        const othersToReturn = cardsToReturn.filter(card => !card.isMuseum)
+
+        this.actions.returnMany(player, museumsToReturn, { ordered: true })
+        this.actions.returnMany(player, othersToReturn)
+      }
+    }
+  }
 
   safeguard = UltimateActionManager.insteadKarmaWrapper('safeguard', (player, card) => {
     const safeLimit = this.game.getSafeLimit(player)
@@ -585,7 +772,7 @@ class UltimateActionManager extends BaseActionManager {
       this.acted(player)
     }
 
-    this.game._maybeDrawCity(owner)
+    this._maybeDrawCity(owner)
 
     return color
   }
@@ -788,6 +975,26 @@ class UltimateActionManager extends BaseActionManager {
       return impl.call(this, player, card, opts)
     }
   }
+
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Helper functions
+
+  // Used in two cases:
+  //  1. Player melds a card onto an empty color stack.
+  //  2. Player splays a color in a new direction.
+  _maybeDrawCity(player) {
+    if (!this.game.getExpansionList().includes('city')) {
+      return
+    }
+    if (this.cards.byPlayer(player, 'hand').some(card => card.checkIsCity())) {
+      return
+    }
+
+    this.draw(player, { exp: 'city' })
+  }
+
+
 }
 
 module.exports = {

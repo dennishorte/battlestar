@@ -28,7 +28,7 @@ module.exports = {
     },
 
     (game, player) => {
-      const purple = game.getTopCard(player, 'purple')
+      const purple = game.cards.top(player, 'purple')
       if (purple) {
         game.actions.score(player, purple)
       }

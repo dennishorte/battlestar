@@ -17,7 +17,7 @@ module.exports = {
       )
 
       if (cards && cards.length > 0) {
-        const count = Math.floor(game.getBiscuitsByPlayer(player).s / 2)
+        const count = Math.floor(player.biscuits().s / 2)
         game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), { count })
       }
     }

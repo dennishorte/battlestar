@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const biscuits = game.getBiscuits()[player.name]
+      const biscuits = player.biscuits()
       const biscuitCounts = [0, 0, 0, 0, 0]
 
       for (const count of Object.values(biscuits)) {

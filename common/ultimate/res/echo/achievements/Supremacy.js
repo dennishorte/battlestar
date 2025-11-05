@@ -12,7 +12,7 @@ module.exports = {
     const colorCounts = game.util.emptyBiscuits()
     for (const color of game.util.colors()) {
       const zone = game.zones.byPlayer(player, color)
-      const biscuits = game.getBiscuitsByZone(zone)
+      const biscuits = zone.biscuits()
       for (const biscuit of Object.keys(colorCounts)) {
         if (biscuits[biscuit] >= targetBiscuitCount) {
           colorCounts[biscuit] += 1

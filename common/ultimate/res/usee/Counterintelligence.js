@@ -18,7 +18,7 @@ module.exports = {
       const tuckedCard = game.actions.chooseAndTuck(player, choices)[0]
 
       if (tuckedCard) {
-        const matchingCard = game.getTopCard(player, tuckedCard.color)
+        const matchingCard = game.cards.top(player, tuckedCard.color)
 
         if (matchingCard) {
           game.actions.transfer(player, matchingCard, game.zones.byPlayer(leader, matchingCard.color))

@@ -13,7 +13,7 @@ module.exports = {
       while (true) {
         const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 11))
 
-        const count = game.getVisibleCardsByZone(player, card.color)
+        const count = game.zones.byPlayer(player, card.color).numVisibleCards()
         game.log.add({
           template: '{player} has {count} visible {color} cards',
           args: { player, count, color: card.color }

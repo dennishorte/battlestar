@@ -13,7 +13,7 @@ module.exports = {
     const topCardMaxAge = Math.max(...topCardAges)
 
     const targetFactories = reduceCost ? 1 : 0
-    const numFactories = game.getBiscuitsByPlayer(player).f
+    const numFactories = player.biscuits().f
 
     return topCardMaxAge >= targetAge && numFactories <= targetFactories
   },

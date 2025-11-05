@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Saxophone`,
@@ -39,10 +38,7 @@ module.exports = {
       }
 
       if (count === 4) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
       else {
         for (let i = 0; i < count; i++) {

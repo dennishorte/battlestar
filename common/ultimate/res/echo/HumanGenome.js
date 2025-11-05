@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Human Genome`,
@@ -35,10 +34,7 @@ module.exports = {
         .sort()
 
       if (scoreValues.join('') === handValues.join('')) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
       else {
         game.log.add({

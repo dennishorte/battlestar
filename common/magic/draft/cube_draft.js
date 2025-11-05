@@ -20,9 +20,9 @@ module.exports = {
 }
 
 function CubeDraft(serialized_data, viewerName) {
-  Game.call(this, serialized_data, viewerName)
-
-  this.players = new CubeDraftPlayerManager(this, this.settings.players, this.settings.playerOptions || {})
+  Game.call(this, serialized_data, viewerName, {
+    PlayerManager: CubeDraftPlayerManager,
+  })
 }
 
 util.inherit(Game, CubeDraft)

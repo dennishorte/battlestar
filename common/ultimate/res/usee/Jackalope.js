@@ -29,7 +29,7 @@ module.exports = {
       const colors = game.util.colors()
       const colorCounts = colors.map(color => ({
         color,
-        count: game.getVisibleCardsByZone(player, color)
+        count: game.zones.byPlayer(player, color).numVisibleCards()
       }))
       const maxCount = Math.max(...colorCounts.map(c => c.count))
       const maxColors = colorCounts.filter(c => c.count === maxCount).map(c => c.color)

@@ -18,7 +18,7 @@ module.exports = {
         if (returned) {
           const revealed = game.actions.drawAndReveal(player, returned.getAge())
           if (revealed) {
-            const top = game.getTopCard(player, revealed.color)
+            const top = game.cards.top(player, revealed.color)
             if (!top || revealed.getAge() > top.getAge()) {
               game.actions.meld(player, revealed)
               break

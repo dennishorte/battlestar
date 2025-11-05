@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 
 module.exports = {
@@ -35,12 +34,9 @@ module.exports = {
     },
 
     (game, player, { self }) => {
-      const biscuits = game.getBiscuitsByPlayer(player)
+      const biscuits = player.biscuits()
       if (biscuits.s >= 20) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name
-        })
+        game.youWin(player, self.name)
       }
       else {
         game.log.addNoEffect()

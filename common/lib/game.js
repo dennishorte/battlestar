@@ -18,7 +18,15 @@ module.exports = {
 }
 
 
-function Game(serialized_data, viewerName) {
+function Game(serialized_data, viewerName, opts={}) {
+  opts = Object.assign({
+    LogManager: BaseLogManager,
+    ActionManager: BaseActionManager,
+    CardManager: BaseCardManager,
+    PlayerManager: BasePlayerManager,
+    ZoneManager: BaseZoneManager,
+  }, opts)
+
   this._id = serialized_data._id
 
   // State will be reset each time the game is run
@@ -49,11 +57,11 @@ function Game(serialized_data, viewerName) {
   this.viewerName = viewerName
 
   // Add log first so that when the later managers are loaded, they can initialize the log internally.
-  this.log = new BaseLogManager(this, serialized_data.chat, viewerName)
-  this.actions = new BaseActionManager(this)
-  this.cards = new BaseCardManager(this)
-  this.players = new BasePlayerManager(this, this.settings.players, this.settings.playerOptions || {})
-  this.zones = new BaseZoneManager(this)
+  this.log = new opts.LogManager(this, serialized_data.chat, viewerName)
+  this.actions = new opts.ActionManager(this)
+  this.cards = new opts.CardManager(this)
+  this.players = new opts.PlayerManager(this, this.settings.players, this.settings.playerOptions || {})
+  this.zones = new opts.ZoneManager(this)
 }
 
 function GameFactory(settings, viewerName=undefined) {

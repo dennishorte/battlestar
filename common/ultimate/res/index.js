@@ -4,15 +4,19 @@ const { UltimateAchievement } = require('../UltimateAchievement.js')
 // Import here to make migration to ES imports easier.
 const baseSet = require('./base')
 const echoSet = require('./echo')
+const figsSet = require('./figs')
 const citySet = require('./city')
+const artiSet = require('./arti')
 const useeSet = require('./usee')
 
-const ALL_EXPANSIONS = ['base', 'echo', 'city', 'usee']
+const ALL_EXPANSIONS = ['base', 'echo', 'figs', 'city', 'arti', 'usee']
 const ALL_AGES = [1,2,3,4,5,6,7,8,9,10,11]
 
 const sets = {
+  arti: artiSet,
   base: baseSet,
   echo: echoSet,
+  figs: figsSet,
   city: citySet,
   usee: useeSet,
 }

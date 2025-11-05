@@ -19,7 +19,7 @@ module.exports = {
     (game, player, { self }) => {
       const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 3))
 
-      if (game.getBottomCards(player).includes(card)) {
+      if (game.cards.bottoms(player).includes(card)) {
         game.actions.score(player, card)
 
         const sameColorInHand = game

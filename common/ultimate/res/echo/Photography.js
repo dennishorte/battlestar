@@ -1,5 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
-
 module.exports = {
   name: `Photography`,
   color: `blue`,
@@ -35,7 +33,7 @@ module.exports = {
         .map(zone => zone
           .cardlist()
           .map(card => {
-            const visibleBiscuits = game.getBiscuitsRaw(card, zone.splay)
+            const visibleBiscuits = card.visibleBiscuits()
             const echoBiscuits = (visibleBiscuits.match(/&/g) || []).length
             return echoBiscuits
           })
@@ -48,10 +46,7 @@ module.exports = {
 
         game.log.addForeseen(foreseen, self)
         if (foreseen) {
-          throw new GameOverEvent({
-            reason: self.name,
-            player
-          })
+          game.youWin(player, self.name)
         }
       }
       else {

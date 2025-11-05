@@ -24,9 +24,9 @@ module.exports = {
 
 
 function Tyrants(serialized_data, viewerName) {
-  Game.call(this, serialized_data, viewerName)
-
-  this.log = new TyrantsLogManager(this, serialized_data.chat)
+  Game.call(this, serialized_data, viewerName, {
+    LogManager: TyrantsLogManager,
+  })
 }
 
 util.inherit(Game, Tyrants)
@@ -1189,7 +1189,7 @@ Tyrants.prototype.aChooseOne = function(player, choices, opts={}) {
 
 Tyrants.prototype.aChooseToDiscard = function(player) {
   const opponents = this
-    .players.opponentsOf(player)
+    .players.opponents(player)
     .filter(p => this.cards.byPlayer(p, 'hand').length > 3)
     .map(p => p.name)
 

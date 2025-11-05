@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   name: `Fermi Paradox`,
@@ -29,10 +28,7 @@ module.exports = {
       const numBoardCards = game.cards.tops(player).length
 
       if (numBoardCards === 0) {
-        throw new GameOverEvent({
-          player,
-          reason: self.name,
-        })
+        game.youWin(player, self.name)
       }
       else {
         const valuedJunkCards = game

@@ -414,7 +414,7 @@ yellow
 fhfc
 f: I compel you to reveal your hand! Draw a {7}! If the color of the drawn card matches the color of any other card in your hand, return all cards in your hand and all cards in your score pile!
 
-Single Model 27
+Singer Model 27
 yellow
 7
 hfii

@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { foreseen, self }) => {
       while (true) {
-        const yellow = game.getTopCard(player, 'yellow')
+        const yellow = game.cards.top(player, 'yellow')
         const age = yellow ? yellow.getAge() + 1 : 1
         const melded = game.actions.drawAndMeld(player, age)
         if (melded && melded.color === 'yellow') {
@@ -39,7 +39,7 @@ module.exports = {
   echoImpl: [
     (game, player) => {
       const splay = game.zones.byPlayer(player, 'green').splay
-      const toMeld = game.getBottomCard(player, 'green')
+      const toMeld = game.cards.bottom(player, 'green')
       if (toMeld) {
         game.actions.meld(player, toMeld)
         game.zones.byPlayer(player, 'green').splay = splay

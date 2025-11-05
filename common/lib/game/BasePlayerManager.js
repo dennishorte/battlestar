@@ -77,6 +77,10 @@ class BasePlayerManager {
   ////////////////////////////////////////////////////////////////////////////////
   // Get multiple players
 
+  active() {
+    return this.all().filter(player => player.eliminated === false)
+  }
+
   all() {
     return new PlayerList(...this._players)
   }
@@ -87,7 +91,7 @@ class BasePlayerManager {
     return players
   }
 
-  opponentsOf(player) {
+  opponents(player) {
     return this.all().filter(other => other.team !== player.team)
   }
 

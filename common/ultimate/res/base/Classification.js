@@ -16,7 +16,7 @@ module.exports = {
 
         // Take cards into hand
         game
-          .players.opponentsOf(player)
+          .players.opponents(player)
           .flatMap(opp => game.zones.byPlayer(opp, 'hand').cardlist())
           .filter(card => card.color === revealed.color)
           .forEach(card => game.mTake(player, card))

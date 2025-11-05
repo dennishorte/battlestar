@@ -14,7 +14,7 @@ module.exports = {
     (game, player, { self }) => {
       const tucked = game.actions.drawAndTuck(player, game.getEffectAge(self, 4))
       if (tucked) {
-        const top = game.getTopCard(player, tucked.color)
+        const top = game.cards.top(player, tucked.color)
         if (top.getAge() < game.getEffectAge(self, 4)) {
           game.actions.drawAndScore(player, game.getEffectAge(self, 4))
         }

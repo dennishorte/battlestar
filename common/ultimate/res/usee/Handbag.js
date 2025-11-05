@@ -21,7 +21,7 @@ module.exports = {
       const choice = game.actions.choose(player, choices)[0]
 
       if (choice === choices[0]) {
-        const cards = game.getBottomCards(player)
+        const cards = game.cards.bottoms(player)
         game.actions.transferMany(player, cards, game.zones.byPlayer(player, 'hand'))
       }
       else if (choice === choices[1]) {

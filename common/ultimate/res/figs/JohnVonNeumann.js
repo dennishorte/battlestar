@@ -1,0 +1,48 @@
+module.exports = {
+  id: `John Von Neumann`,  // Card names are unique in Innovation
+  name: `John Von Neumann`,
+  color: `red`,
+  age: 8,
+  expansion: `figs`,
+  biscuits: `hii&`,
+  dogmaBiscuit: `i`,
+  echo: `Draw and reveal two {9}. If either is purple, return them.`,
+  karma: [
+    `When you meld this card, return all opponents' top figures.`,
+    `Each card in your hand provides two additional {i}.`
+  ],
+  dogma: [],
+  dogmaImpl: [],
+  echoImpl: (game, player) => {
+    const card1 = game.actions.drawAndReveal(player, game.getEffectAge(this, 9))
+    const card2 = game.actions.drawAndReveal(player, game.getEffectAge(this, 9))
+
+    if (card1.color === 'purple' || card2.color === 'purple') {
+      game.log.add({
+        template: '{player} drew a purple card',
+        args: { player }
+      })
+      game.actions.returnMany(player, [card1, card2])
+    }
+  },
+  karmaImpl: [
+    {
+      trigger: 'when-meld',
+      func: (game, player) => {
+        const figures = game
+          .players.opponents(player)
+          .flatMap(player => game.cards.tops(player))
+          .filter(card => card.checkIsFigure())
+        game.actions.returnMany(player, figures)
+      }
+    },
+    {
+      trigger: 'calculate-biscuits',
+      func: (game, player) => {
+        const output = game.utilEmptyBiscuits()
+        output.i = game.cards.byPlayer(player, 'hand').length * 2
+        return output
+      }
+    }
+  ]
+}

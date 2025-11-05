@@ -15,7 +15,7 @@ module.exports = {
     },
     (game, player) => {
       const bottomPurpleCard = game
-        .getBottomCards(player)
+        .cards.bottoms(player)
         .find(card => card.color === 'purple')
 
       if (bottomPurpleCard) {

@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       while (true) {
-        const opp = game.actions.choosePlayer(player, game.players.opponentsOf(player))
+        const opp = game.actions.choosePlayer(player, game.players.opponents(player))
         const card = game.actions.chooseCard(opp, game.cards.byPlayer(player, 'hand'))
         if (!card) {
           game.log.add({

@@ -12,13 +12,13 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const choices = game.util.colors().map(color => {
-        const count = game.getVisibleCardsByZone(leader, color)
+        const count = game.zones.byPlayer(leader, color).numVisibleCards()
         return `${color} (${count})`
       })
 
       const selected = game.actions.choose(leader, choices, { title: 'Choose a color' })
       const color = selected[0].split(' ')[0]
-      const count = game.getVisibleCardsByZone(leader, color)
+      const count = game.zones.byPlayer(leader, color).numVisibleCards()
 
       game.log.add({
         template: '{player} chooses {color} ({count})',
