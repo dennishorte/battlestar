@@ -29,7 +29,7 @@ export default {
 
   computed: {
     cards() {
-      return this.game.ui.modals.cardsViewer.cards
+      return this.game.ui.modals.cardsViewer.cards.filter(card => !card.isMuseum)
     },
 
     title() {

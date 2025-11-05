@@ -102,7 +102,7 @@ export default {
       const getExpansions = () => {
         if (this.models.randomizeExpansions) {
           const availableExpansions = ultimate.SUPPORTED_EXPANSIONS.filter(exp => exp !== 'base')
-          const expansionSelectionRate = .5
+          const expansionSelectionRate = .6
           const expansions = ['base']
           for (const exp of availableExpansions) {
             if (Math.random() < expansionSelectionRate) {

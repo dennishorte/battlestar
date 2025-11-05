@@ -31,7 +31,7 @@ export default {
 
   computed: {
     isTop() {
-      return this.game.checkCardIsTop(this.card)
+      return this.card.isTopCardStrict()
     },
   },
 }

@@ -35,10 +35,7 @@ export default {
 
   computed: {
     displayName() {
-      if (this.card.isRelic) {
-        return this.card.getAge().toString() + "'"
-      }
-      else if (this.card.isSpecialAchievement) {
+      if (this.card.isSpecialAchievement || this.card.isMuseum) {
         return this.card.shortName
       }
       else {

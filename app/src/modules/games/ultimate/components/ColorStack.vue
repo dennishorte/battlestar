@@ -79,7 +79,7 @@ export default {
     },
 
     biscuits() {
-      return this.game.getBiscuitsByZone(this.zone)
+      return this.zone.biscuits()
     },
 
     hexes() {

@@ -37,7 +37,7 @@ export default {
     },
 
     visibleEchoEffects() {
-      const effects = this.game.getVisibleEffects(this.card, 'echo')
+      const effects = this.card.visibleEffects('echo')
       if (effects) {
         return effects.texts
       }
