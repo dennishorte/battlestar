@@ -6,27 +6,26 @@ module.exports = {
   biscuits: `ppph`,
   dogmaBiscuit: `p`,
   dogma: [
-    `Start a new game, ignoring all players' current cards and without shuffling, each player drawing and melding a {9} to begin, the winner then transfering their cards to this game and junking each other player's other cards from that game.`
+//    `Start a new game, ignoring all players' current cards and without shuffling, each player drawing and melding a {9} to begin, the winner then transfering their cards to this game and junking each other player's other cards from that game.`
+    `Draw and meld an Artifacts card of any value. If the melded card has {l}, and you are the single player with the most {l}, you win.`,
   ],
   dogmaImpl: [
-    (game, player) => {
-      // Set a flag indicating we're playing the Martian Internet game.
-      // Store the current state of each player's board.
-      // Store the current player and player action number.
-      // Store any dogma info for other cards that might have been played.
-      // Clear all of the above.
+    (game, player, { self }) => {
+      const age = game.actions.chooseAge(player, game.util.ages())
+      const card = game.actions.draw(player, { age, exp: 'arti' })
+      game.actions.meld(player, card)
 
-      // Each player draws and melds a 9.
-      // The first player is based on the name of that 9 card.
+      const otherLeaves = game
+        .players
+        .other(player)
+        .map(player => player.biscuits().l)
 
+      const playerLeaves = player.biscuits().l
+      const playerHasMostLeaves = otherLeaves.every(l => l < playerLeaves)
 
-      // Alt idea:
-      // Start a new game, but skip the card initialization.
-      // Copy the cards from this game to the new game.
-      // Have a special start flag to draw 9s instead of 1s.
+      if (card.checkHasBiscuit('l') && playerHasMostLeaves) {
+        game.youWin(player, self.name)
+      }
     },
   ],
-
-  restoreGameCallback(game, winner) {
-  },
 }
