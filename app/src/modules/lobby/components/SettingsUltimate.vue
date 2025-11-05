@@ -64,7 +64,7 @@ export default {
         {
           text: 'Artifacts of History',
           value: 'arti',
-          disabled: true,
+          disabled: false,
         },
         {
           text: 'The Unseen',
