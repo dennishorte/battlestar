@@ -56,6 +56,7 @@ function factoryFromLobby(lobby) {
     game: 'Innovation: Ultimate',
     name: lobby.name,
     expansions: lobby.options.expansions,
+    randomizeExpansions: lobby.options.randomizeExpansions,
     players: lobby.users,
     seed: lobby.seed,
   })
