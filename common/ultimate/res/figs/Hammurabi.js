@@ -4,15 +4,11 @@ module.exports = {
   color: `red`,
   age: 1,
   expansion: `figs`,
-  biscuits: `s*h2`,
+  biscuits: `sph2`,
   dogmaBiscuit: `s`,
-  echo: ``,
   karma: [
-    `If a player would successfully demand something of you, first successfully demand that same thing of that player.`
+    `If a player would execute a demand effect against you, first execute that demand effect yourself on that player.`,
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'demand-success',
@@ -21,7 +17,8 @@ module.exports = {
       func: (game, player, { effectInfo, leader }) => {
         game.aCardEffect(leader, effectInfo, {
           biscuits: game.getBiscuits(),
-          leader: player
+          leader: player,
+          self: effectInfo.card,
         })
       }
     }
