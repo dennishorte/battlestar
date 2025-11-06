@@ -495,7 +495,7 @@ Innovation.prototype.aCardEffect = function(player, info, opts={}) {
   }
 
   const fn = typeof info.impl === 'function' ? info.impl : info.impl.func
-  const result = fn(this, player, opts)
+  const result = fn(this, player, { self: info.card, ...opts })
 
   if (opts.leader) {
     this.state.dogmaInfo.effectLeader = prevLeader

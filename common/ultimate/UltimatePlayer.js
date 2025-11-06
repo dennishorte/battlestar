@@ -13,7 +13,7 @@ class UltimatePlayer extends BasePlayer {
     return this
       .game
       .getInfoByKarmaTrigger(this, 'calculate-biscuits')
-      .map(info => this.game.aCardEffect(player, info, { biscuits: boardBiscuits }))
+      .map(info => this.game.aCardEffect(this, info, { biscuits: boardBiscuits }))
       .reduce((l, r) => this.game.util.combineBiscuits(l, r), boardBiscuits)
   }
 

@@ -4,21 +4,34 @@ module.exports = {
   color: `red`,
   age: 1,
   expansion: `figs`,
-  biscuits: `*h1k`,
+  biscuits: `ph1k`,
   dogmaBiscuit: `k`,
   karma: [
-    `Each bonus on your board provides one additional {k} for every top card on your board.`
+    `Each {k} on your board provides one additional {k} and one additional {f}`,
+    `Each {k} on an opponent's board subtracts one point from that opponent's score`,
   ],
   karmaImpl: [
     {
       trigger: 'calculate-biscuits',
-      func: (game, player) => {
-        const bonuses = game.getBonuses(player)
-        const topCards = game.cards.tops(player)
-        const biscuits = game.utilEmptyBiscuits()
-        biscuits.k = bonuses.length * topCards.length
-        return biscuits
+      func: (game, player, { biscuits }) => {
+        const output = game.util.emptyBiscuits()
+        output.k = biscuits.k
+        output.f = biscuits.k
+        return output
       }
-    }
+    },
+
+    {
+      trigger: 'calculate-score',
+      triggerAll: true,
+      func: (game, player, { self }) => {
+        if (player.id === self.owner.id) {
+          return 0
+        }
+        else {
+          return -player.biscuits().k
+        }
+      }
+    },
   ]
 }
