@@ -4,7 +4,7 @@ module.exports = {
   color: `red`,
   age: 1,
   expansion: `figs`,
-  biscuits: `hl*l`,
+  biscuits: `hlpl`,
   dogmaBiscuit: `l`,
   karma: [
     `You may issue a War Decree with any two figures.`,
