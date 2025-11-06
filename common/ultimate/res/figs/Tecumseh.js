@@ -6,15 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `fh&f`,
   dogmaBiscuit: `f`,
-  echo: `Draw and tuck a {6}.`,
   karma: [
     `If you would tuck a card with a {f}, first return a top card with a {f} from another player's board.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.drawAndTuck(player, game.getEffectAge(this, 6))
-  },
   karmaImpl: [
     {
       trigger: 'tuck',

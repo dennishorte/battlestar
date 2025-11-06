@@ -7,14 +7,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `hii*`,
   dogmaBiscuit: `i`,
-  echo: ``,
   karma: [
     `If you would meld a card of value 10 and you have top cards of values 9 and 8 on your board, instead you win.`,
     `Each card in your forecast counts as being in your hand.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'meld',

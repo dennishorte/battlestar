@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `*h1k`,
   dogmaBiscuit: `k`,
-  echo: ``,
   karma: [
     `Each bonus on your board provides one additional {k} for every top card on your board.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'calculate-biscuits',

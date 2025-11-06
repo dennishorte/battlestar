@@ -6,15 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `hs&s`,
   dogmaBiscuit: `s`,
-  echo: `Draw a {5}.`,
   karma: [
     `If you would take a Dogma action, first reveal all cards of the chosen card's color from your hand. Increase each {} value in any effect during this action by the number of cards you revealed.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.draw(player, { age: game.getEffectAge(this, 5) })
-  },
   karmaImpl: [
     {
       trigger: 'dogma',

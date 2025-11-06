@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `l*hl`,
   dogmaBiscuit: `l`,
-  echo: ``,
   karma: [
     `If you would meld the fifth visible card of a color on your board, first claim an achievement ignoring the scoring restriction.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'meld',

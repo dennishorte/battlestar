@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `c5h*`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
     `If you would draw a fifth card into your hand, first claim an achievement of that card's value or below, regardless of eligibility.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'draw',

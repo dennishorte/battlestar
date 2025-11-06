@@ -7,15 +7,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `hl&a`,
   dogmaBiscuit: `l`,
-  echo: `Score a top card from your board.`,
   karma: [
     `If you would score a card with a {k}, instead you win.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.chooseAndScore(player, game.cards.tops(player))
-  },
   karmaImpl: [
     {
       trigger: 'score',

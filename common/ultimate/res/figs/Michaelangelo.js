@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `ch*c`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
     `Each card in your hand is also considered part of your score pile.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'list-score',

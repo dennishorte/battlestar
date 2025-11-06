@@ -6,19 +6,8 @@ module.exports = {
   expansion: `figs`,
   biscuits: `&ssh`,
   dogmaBiscuit: `s`,
-  echo: `Splay one color right that you have splayed left.`,
   karma: [
     `Each color splayed right on your board but not splayed in any direction on any other player's board counts as an achievement.`
-  ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [
-    (game, player) => {
-      const choices = game
-        .util.colors()
-        .filter(color => game.zones.byPlayer(player, color).splay === 'left')
-      game.actions.chooseAndSplay(player, choices, 'right', { count: 1 })
-    }
   ],
   karmaImpl: [
     {

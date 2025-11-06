@@ -6,14 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `l*hl`,
   dogmaBiscuit: `l`,
-  echo: ``,
   karma: [
     `If you are required to fade a figure, instead do nothing.`,
     `Each two inspire effects visibile on your board counts as an achievement.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'no-fade'

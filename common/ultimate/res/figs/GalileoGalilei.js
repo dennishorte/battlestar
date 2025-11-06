@@ -6,19 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `hcc&`,
   dogmaBiscuit: `c`,
-  echo: `Draw and foreshadow a {5} or {6}.`,
   karma: [
     `If you would foreshadow a card of value not present in your forecast, first transfer all cards from your forecast into your hand.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    const age = game.actions.chooseAge(player, [
-      game.getEffectAge(this, 5),
-      game.getEffectAge(this, 6)
-    ])
-    game.actions.drawAndForeshadow(player, age)
-  },
   karmaImpl: [
     {
       trigger: 'foreshadow',

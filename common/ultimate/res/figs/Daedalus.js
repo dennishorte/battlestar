@@ -6,16 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `&hkk`,
   dogmaBiscuit: `k`,
-  echo: `Draw and foreshadow a {4}.`,
   karma: [
     `Each card in your forecast adds one to the value of your highest top card for the purpose of claiming achievements.`,
     `Each achievement adds its value to your score.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.drawAndForeshadow(player, game.getEffectAge(this, 4))
-  },
   karmaImpl: [
     {
       trigger: 'calculate-eligibility',

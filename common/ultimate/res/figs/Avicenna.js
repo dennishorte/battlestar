@@ -6,14 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `*lhl`,
   dogmaBiscuit: `l`,
-  echo: ``,
   karma: [
     `You may issue an Expansion Decree with any two figures.`,
     `If you are required to fade a figure, instead do nothing.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'decree-for-two',

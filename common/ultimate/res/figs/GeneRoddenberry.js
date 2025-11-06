@@ -7,19 +7,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `ch&9`,
   dogmaBiscuit: `c`,
-  echo: `Meld a top purple card from anywhere.`,
   karma: [
     `If you would meld a purple card, instead if it is Enterprise, you win. Otherwise, instead tuck the card and return any top figure.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    const purples = game
-      .players.all()
-      .map(player => game.cards.top(player, 'purple'))
-      .filter(card => card !== undefined)
-    game.actions.chooseAndMeld(player, purples)
-  },
   karmaImpl: [
     {
       trigger: 'meld',

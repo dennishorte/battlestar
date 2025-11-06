@@ -6,14 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `6ch*`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
     `You may issue a Trade Decree with any two figures.`,
     `If an opponent would draw a card for sharing, first draw a {6}. You may choose the type of card drawn.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'decree-for-two',

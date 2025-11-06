@@ -7,14 +7,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `lh8*`,
   dogmaBiscuit: `l`,
-  echo: ``,
   karma: [
     `If you would tuck a card with a {l}, first splay that color of your cards left, then draw two {2}.`,
     `If you would splay a fifth color left [with another card], instead you win.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'tuck',

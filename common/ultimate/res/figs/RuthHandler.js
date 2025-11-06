@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `9*hf`,
   dogmaBiscuit: `f`,
-  echo: ``,
   karma: [
     `If you would meld a card, first meld all other cards of that color from your hand, then draw and achieve a {9} for each card you melded in this way, regardless of eligibility.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'meld',

@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `sh*s`,
   dogmaBiscuit: `s`,
-  echo: ``,
   karma: [
     `If you would draw a card and have no figures of that value in hand, first say "Who is" and name a figure. Search the figures deck of that age for the named figure and take it into hand if present. Then shuffle that deck.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'draw',

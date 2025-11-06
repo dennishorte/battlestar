@@ -6,14 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `*ssh`,
   dogmaBiscuit: `s`,
-  echo: ``,
   karma: [
     `Each {s} on your board provides two additional {s}.`,
     `If you would meld a purple card, first transfer your top purple card into your hand.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'calculate-biscuits',

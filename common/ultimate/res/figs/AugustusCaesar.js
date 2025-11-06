@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `khk*`,
   dogmaBiscuit: `k`,
-  echo: ``,
   karma: [
     `If any player would meld or foreshadow a card of value less than 4, first reveal it. If it is red or green and has a {k}, instead transfer it to your board, then tuck all cards from your forecast.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: ['meld', 'foreshadow'],

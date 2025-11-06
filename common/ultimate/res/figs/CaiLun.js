@@ -6,17 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `&cch`,
   dogmaBiscuit: `c`,
-  echo: `You may splay one color of your cards left.`,
   karma: [
     `If you would claim an achievement, first draw and foreshadow a {3}.`,
     `Each card in your forecast counts as an available achievement for you.`
-  ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [
-    (game, player) => {
-      game.actions.chooseAndSplay(player, null, 'left')
-    }
   ],
   karmaImpl: [
     {

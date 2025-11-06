@@ -6,16 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `&3hs`,
   dogmaBiscuit: `s`,
-  echo: `Draw and meld a {4}.`,
   karma: [
     `You may issue an advancement decree with any two figures.`,
     `If you would meld a blue card of value above 3, instead return it and draw and meld a card of value one higher.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.drawAndMeld(player, game.getEffectAge(this, 4))
-  },
   karmaImpl: [
     {
       trigger: 'decree-for-two',

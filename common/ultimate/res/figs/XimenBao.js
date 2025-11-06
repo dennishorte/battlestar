@@ -6,14 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `*2hl`,
   dogmaBiscuit: `l`,
-  echo: ``,
   karma: [
     `You may issue an Expansion Decree with any two figures.`,
     `Each Inspire and Echo effect on your board counts as a part of this stack. When executing, order them from bottom to top, red, blue, green, purple, yellow.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'decree-for-two',

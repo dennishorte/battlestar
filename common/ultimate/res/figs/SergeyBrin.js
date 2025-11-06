@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `hii*`,
   dogmaBiscuit: `i`,
-  echo: ``,
   karma: [
     `Each top card on every player's board counts as a card you can activate with a Dogma action.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'list-effects',

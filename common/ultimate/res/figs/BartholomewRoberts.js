@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `*hc6`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
     `If you would score a card, first claim an achievement matching that card's value, ignoring the age requirement.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'score',

@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `*chc`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
     `If you would claim an achievement, first return three cards from your hand. If you do, claim all other cards in your hand as achievements, ignoring eligibility.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'achieve',

@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `*ssh`,
   dogmaBiscuit: `s`,
-  echo: ``,
   karma: [
     `Each card in your forecast counts as being in your score pile.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'list-score',

@@ -6,15 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `fha&`,
   dogmaBiscuit: `f`,
-  echo: `Draw and meld a {0}.`,
   karma: [
     `If you would meld a figure, instead tuck the figure and claim a standard achievement, regardless of eligibility.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.drawAndMeld(player, game.getEffectAge(this, 10))
-  },
   karmaImpl: [
     {
       trigger: 'meld',

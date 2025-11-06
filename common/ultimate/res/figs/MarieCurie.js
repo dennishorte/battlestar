@@ -8,15 +8,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `f&hf`,
   dogmaBiscuit: `f`,
-  echo: `Draw a {9}.`,
   karma: [
     `Each different value present in your score pile above 6 counts as an achievement.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.draw(player, { age: game.getEffectAge(this, 9) })
-  },
   karmaImpl: [
     {
       trigger: 'extra-achievements',

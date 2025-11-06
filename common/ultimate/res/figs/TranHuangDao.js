@@ -6,19 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `h&kk`,
   dogmaBiscuit: `k`,
-  echo: `Score a top red card of value less than 4 from anywhere.`,
   karma: [
     `Each two {k} on your board provides one additional icon of every other type on your board.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    const choices = game
-      .cards.topsAll()
-      .filter(card => card.getAge() < 4)
-      .filter(card => card.color === 'red')
-    game.actions.chooseAndScore(player, choices)
-  },
   karmaImpl: [
     {
       trigger: 'calculate-biscuits',

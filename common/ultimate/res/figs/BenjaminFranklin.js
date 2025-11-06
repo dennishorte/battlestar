@@ -6,29 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `s&h6`,
   dogmaBiscuit: `s`,
-  echo: `Take a top figure into your hand from any player's board. Meld it.`,
   karma: [
     `You may issue an Advancement Decree with any two figures.`,
     `If you would meld a card, first draw and meld a card of one higher value.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    const choices = game
-      .players.all()
-      .flatMap(p => game.cards.tops(p))
-      .filter(card => card.checkIsFigure())
-
-    const card = game.actions.chooseCard(player, choices)
-    if (card) {
-      game.log.add({
-        template: '{player} takes {card} into their hand',
-        args: { player, card }
-      })
-      game.mMoveCardTo(card, game.zones.byPlayer(player, 'hand'))
-      game.actions.meld(player, card)
-    }
-  },
   karmaImpl: [
     {
       trigger: 'decree-for-two',

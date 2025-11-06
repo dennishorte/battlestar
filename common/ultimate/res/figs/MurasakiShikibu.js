@@ -6,14 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `sh4*`,
   dogmaBiscuit: `s`,
-  echo: ``,
   karma: [
     `You may issue a Rivaly Decree with any two figures.`,
     `If you would claim a standard achievement, instead achieve a card of equal value from your score pile. Then claim the achievement, if you are still eligible.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'decree-for-two',

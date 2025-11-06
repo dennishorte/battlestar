@@ -6,16 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `hl&l`,
   dogmaBiscuit: `l`,
-  echo: `Draw and score a {9}.`,
   karma: [
     `When you meld this card, score all opponents' top figures.`,
     `If you would score a green card, instead remove it and all cards in all score piles from the game.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.drawAndScore(player, game.getEffectAge(this, 9))
-  },
   karmaImpl: [
     {
       trigger: 'when-meld',

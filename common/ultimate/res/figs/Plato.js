@@ -6,14 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `shs*`,
   dogmaBiscuit: `s`,
-  echo: ``,
   karma: [
     `You may issue a Rivalry Decree with any two figures.`,
     `Each splayed stack on your board provides one additional {k}, {s}, {l}, and {c}.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'decree-for-two',

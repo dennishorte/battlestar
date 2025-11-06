@@ -7,13 +7,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `sh9*`,
   dogmaBiscuit: `s`,
-  echo: ``,
   karma: [
     `If another player would not draw a card for sharing after a Dogma action, first draw and reveal a {0}. If it is blue, you win.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'no-share',

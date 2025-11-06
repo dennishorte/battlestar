@@ -6,14 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `s9*h`,
   dogmaBiscuit: `s`,
-  echo: ``,
   karma: [
     `If you are required to fade a figure, instead do nothing.`,
     `If you would meld a figure and have four top figures already, instead achieve it regardless of eligibility.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'no-fade',

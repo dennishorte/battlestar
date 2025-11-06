@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `1ch*`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
     `If you would meld a card, and your current top card of that color is of equal value, instead tuck it.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'meld',

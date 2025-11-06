@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `h*7i`,
   dogmaBiscuit: `i`,
-  echo: ``,
   karma: [
     `Each card in hand provides one additional icon of every type on your board.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'calculate-biscuits',

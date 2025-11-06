@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `hcc*`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
     `If you would draw a card for sharing, first draw two cards of the same value.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'draw',

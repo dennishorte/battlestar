@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `1c*h`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
     `If you would draw a card of value higher than 1 and you have a {1} in your hand, first return all cards from your hand and draw two cards of that value.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'draw',

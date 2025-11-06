@@ -6,16 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `c&hc`,
   dogmaBiscuit: `c`,
-  echo: `You may splay one color of your cards up.`,
   karma: [
     `You may issue a Trade Decree with any two figures.`,
     `Each biscuit in each color you have splayed up provides an additional biscuit of the same type.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.chooseAndSplay(player, null, 'up')
-  },
   karmaImpl: [
     {
       trigger: 'decree-for-two',

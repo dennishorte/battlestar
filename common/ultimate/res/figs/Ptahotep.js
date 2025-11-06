@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `h*kk`,
   dogmaBiscuit: `k`,
-  echo: ``,
   karma: [
     `If a player would successfully demand something of you, first transfer the highest card from that player's score pile to your score pile.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'demand-success',

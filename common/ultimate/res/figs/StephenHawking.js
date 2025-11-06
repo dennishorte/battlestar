@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `b*sh`,
   dogmaBiscuit: `s`,
-  echo: ``,
   karma: [
     `Each {h} on your board also counts as an echo effect reading "Score the bottom card of this color".`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'hex-effect',

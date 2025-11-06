@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `5h*c`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
     `If you would claim a standard achievement, first claim an achievement of value one higher, regardless of eligibility.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'achieve',

@@ -6,14 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `8*sh`,
   dogmaBiscuit: `s`,
-  echo: ``,
   karma: [
     `You may issue an Expansion Decree with any two figures.`,
     `If you would meld a card with a {s} or {i}, first score an opponent's top card with neither {s} nor {i}.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'decree-for-two',

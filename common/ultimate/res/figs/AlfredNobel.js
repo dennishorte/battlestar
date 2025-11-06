@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `chc*`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
     `Each icon type on your board counts as an achievement, if you have at least twice as many of that icon as every other player.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'extra-achievements',

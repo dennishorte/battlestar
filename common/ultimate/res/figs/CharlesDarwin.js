@@ -7,16 +7,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `&8hs`,
   dogmaBiscuit: `s`,
-  echo: `Draw an {8}.`,
   karma: [
     `You may issue an Advancement Decree with any two figures.`,
     `If you would claim an achievement, first if no other player has as many or more achievements as you, instead you win.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.draw(player, { age: game.getEffectAge(this, 8) })
-  },
   karmaImpl: [
     {
       trigger: 'decree-for-two',

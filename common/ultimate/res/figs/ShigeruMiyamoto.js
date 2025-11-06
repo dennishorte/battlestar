@@ -7,24 +7,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `hai&`,
   dogmaBiscuit: `i`,
-  echo: `Draw and reveal a {0}. If it does not have a {i}, score it.`,
   karma: [
     `If you would take a Dogma action and activate a card whose featured biscuit is {i}, first if you have exactly one, three, or six {i} on your board, you win.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    const card = game.actions.drawAndReveal(player, game.getEffectAge(this, 10))
-    if (!card.checkHasBiscuit('i')) {
-      game.actions.score(player, card)
-    }
-    else {
-      game.log.add({
-        template: '{card} has a clock biscuit; do not score',
-        args: { card }
-      })
-    }
-  },
   karmaImpl: [
     {
       trigger: 'dogma',

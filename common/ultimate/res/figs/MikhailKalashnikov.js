@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `*ffh`,
   dogmaBiscuit: `f`,
-  echo: ``,
   karma: [
     `If you would tuck a red card, instead choose a top red card on an opponent's board. Either transfer it to your score pile, or execute its non-demand Dogma effects for yourself only.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'tuck',

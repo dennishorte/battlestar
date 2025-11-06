@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `*shs`,
   dogmaBiscuit: `s`,
-  echo: ``,
   karma: [
     `If another player would not draw a share bonus after a Dogma action, first transfer the card they activated to your score pile.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'no-share',

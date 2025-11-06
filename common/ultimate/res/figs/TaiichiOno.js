@@ -6,15 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `hii&`,
   dogmaBiscuit: `i`,
-  echo: `Draw a {0}.`,
   karma: [
     `If you would take a Dogma action and activate a card, first achieve a card from your hand with featured icon matching that card's featured icon, regardless of eligibility.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.draw(player, { age: game.getEffectAge(this, 10) })
-  },
   karmaImpl: [
     {
       trigger: 'dogma',

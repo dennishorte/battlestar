@@ -6,14 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `*khk`,
   dogmaBiscuit: `k`,
-  echo: ``,
   karma: [
     `You may issue a War Decree with any two figures.`,
     `If you would draw for a share bonus, first meld any number of cards from your hand matching the Dogma action's featured biscuit.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'decree-for-two',

@@ -7,13 +7,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `*iih`,
   dogmaBiscuit: `i`,
-  echo: ``,
   karma: [
     `If an opponent would win, first score all other top figures in play. If you now have the most points, you win instead.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'would-win',

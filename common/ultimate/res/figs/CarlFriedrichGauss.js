@@ -8,15 +8,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `ss&h`,
   dogmaBiscuit: `s`,
-  echo: `Draw a {7}.`,
   karma: [
     `If you would meld a card, first choose a value and meld all other cards of that value from your hand and score pile.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.draw(player, { age: game.getEffectAge(this, 7) })
-  },
   karmaImpl: [
     {
       trigger: 'meld',

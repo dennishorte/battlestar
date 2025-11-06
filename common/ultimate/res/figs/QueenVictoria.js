@@ -6,21 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `ss&h`,
   dogmaBiscuit: `s`,
-  echo: `Transfer a figure from any score pile to yours.`,
   karma: [
     `You may issue a Rivalry Decree with any two figures.`,
     `If you would claim a standard achievement, first make an achievement available from any lower non-empty age.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    const choices = game
-      .players.all()
-      .filter(other => other !== player)
-      .flatMap(player => game.cards.byPlayer(player, 'score'))
-      .filter(card => card.checkIsFigure())
-    game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(player, 'score'))
-  },
   karmaImpl: [
     {
       trigger: 'decree-for-two',

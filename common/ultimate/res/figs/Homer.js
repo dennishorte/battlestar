@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `h*2k`,
   dogmaBiscuit: `k`,
-  echo: ``,
   karma: [
     `If you would remove or return a figure from your hand, instead tuck it.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: ['remove', 'return'],

@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `llh*`,
   dogmaBiscuit: `l`,
-  echo: ``,
   karma: [
     `If you would foreshadow a card of the same value as a card in your forecast, first score each card of that value in your forecast.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'foreshadow',

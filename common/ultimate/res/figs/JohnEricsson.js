@@ -6,14 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `hff*`,
   dogmaBiscuit: `f`,
-  echo: ``,
   karma: [
     `When you meld this card, score all opponents' top figures of value less than 7.`,
     `Each {f} on your board provides two additional {i}.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'when-meld',

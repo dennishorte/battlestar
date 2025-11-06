@@ -7,14 +7,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `ha*c`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
     `You may issue a Rivalry Decree with any two figures.`,
     `If you would tuck a yellow card after tucking a green card in the same turn, instead you win.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'decree-for-two',

@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `*fcc`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
     `Each {c} on your board provides two additional {c}.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'calculate-biscuits',

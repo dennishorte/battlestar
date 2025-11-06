@@ -6,21 +6,8 @@ module.exports = {
   expansion: `figs`,
   biscuits: `ss&h`,
   dogmaBiscuit: `s`,
-  echo: `Tuck a top card with a {k} from anywhere.`,
   karma: [
     `Each of your splayed colors counts as having a top card of value equal to the number of {s} or {k} in that color (whichever is higher) for the purpose of taking a Draw or Inspire action.`
-  ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [
-    (game, player) => {
-      const topCardsWithCastles = game
-        .players.all()
-        .flatMap(p => game.cards.tops(p))
-        .filter(card => card.biscuits.includes('k'))
-
-      game.actions.chooseAndTuck(player, topCardsWithCastles)
-    }
   ],
   karmaImpl: [
     {

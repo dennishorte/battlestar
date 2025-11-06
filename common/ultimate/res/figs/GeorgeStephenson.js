@@ -6,18 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `7&fh`,
   dogmaBiscuit: `f`,
-  echo: `You may splay up a color you have splayed right.`,
   karma: [
     `If you would claim an achievement, first transfer the bottom card from each non-empty age below 10 to the available achievements.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    const rightColors = game
-      .util.colors()
-      .filter(color => game.zones.byPlayer(player, color).splay === 'right')
-    game.actions.chooseAndSplay(player, rightColors, 'up')
-  },
   karmaImpl: [
     {
       trigger: 'achieve',

@@ -6,19 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `4hf&`,
   dogmaBiscuit: `f`,
-  echo: `Score a top card with a {k} from anywhere.`,
   karma: [
     `If you would score a card of a color you have splayed, instead tuck it, then draw a {3}.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    const choices = game
-      .cards
-      .topsAll()
-      .filter(card => card.checkHasBiscuit('k'))
-    game.actions.chooseAndScore(player, choices)
-  },
   karmaImpl: [
     {
       trigger: 'score',

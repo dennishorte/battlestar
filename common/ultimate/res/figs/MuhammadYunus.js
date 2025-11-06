@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `c*hc`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
     `If any player would take a Dogma action, first you may return a card from your hand. If you do, you have the sole majority in its featured icon until the end of the action.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'dogma',

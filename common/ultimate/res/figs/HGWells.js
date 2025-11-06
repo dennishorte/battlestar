@@ -6,13 +6,9 @@ module.exports = {
   expansion: `figs`,
   biscuits: `l*hl`,
   dogmaBiscuit: `l`,
-  echo: ``,
   karma: [
     `If you would foreshadow a card, instead meld it, execute its non-demand Dogma effects for yourself only, and remove it from the game if it is still a top card on your board.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'foreshadow',

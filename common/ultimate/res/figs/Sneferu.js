@@ -6,14 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `hkk*`,
   dogmaBiscuit: `k`,
-  echo: ``,
   karma: [
     `You may issue an Expansion decree with any two figures.`,
     `Each {k} on your board provides one additional {c}.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'decree-for-two',
