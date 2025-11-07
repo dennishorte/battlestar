@@ -152,6 +152,8 @@ Innovation.prototype.initializeTransientState = function() {
   this.state.karmaDepth = 0
   this.state.wouldWinKarma = false
   this.state.didEndorse = false
+  this.state.tuckCount = Object.fromEntries(this.players.all().map(p => [p.name, 0]))
+  this.state.scoreCount = Object.fromEntries(this.players.all().map(p => [p.name, 0]))
   this.stats = {
     melded: [],
     meldedBy: {},
@@ -479,6 +481,8 @@ Innovation.prototype.endTurn = function() {
 
   // Reset various turn-centric state
   this.state.didEndorse = false
+  this.state.tuckCount = Object.fromEntries(this.players.all().map(p => [p.name, 0]))
+  this.state.scoreCount = Object.fromEntries(this.players.all().map(p => [p.name, 0]))
   this.mResetDogmaInfo()
   this.mResetPeleCount()
   this.mResetDrawInfo()
@@ -802,6 +806,13 @@ Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
   if (infos.length === 0) {
     return
   }
+
+  /*
+     from the rules:
+     In the rare case that multiple “Would” karmas are triggered
+     by the same game event, the current player decides which
+     karma occurs and ignores the others.
+   */
   else if (infos.length > 1) {
     if (info.impl.kind && info.impl.kind.startsWith('would')) {
       this.log.add({
@@ -1094,7 +1105,8 @@ Innovation.prototype.getInfoByKarmaTrigger = function(player, trigger) {
   }
 
   const global = this
-    .players.opponents(player)
+    .players
+    .opponents(player)
     .flatMap(opp => this.cards.tops(opp))
     .flatMap(card => card.getKarmaInfo(trigger))
     .filter(info => info.impl.triggerAll)

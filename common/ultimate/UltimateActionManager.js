@@ -716,6 +716,7 @@ class UltimateActionManager extends BaseActionManager {
       template: '{player} scores {card}',
       args: { player, card }
     })
+    this.state.scoreCount[player.name] += 1
     this.acted(player)
     return card
   })
@@ -812,6 +813,7 @@ class UltimateActionManager extends BaseActionManager {
       template: '{player} tucks {card}',
       args: { player, card }
     })
+    this.state.tuckCount[player.name] += 1
     if (card.color === 'green') {
       util.array.pushUnique(this.state.tuckedGreenForPele, player)
     }
