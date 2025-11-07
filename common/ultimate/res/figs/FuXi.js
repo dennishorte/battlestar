@@ -4,11 +4,11 @@ module.exports = {
   color: `green`,
   age: 1,
   expansion: `figs`,
-  biscuits: `&chc`,
+  biscuits: `pchc`,
   dogmaBiscuit: `c`,
   karma: [
     `You may issue a Trade Decree with any two figures.`,
-    `Each card in your score pile and forecast provides one additional {s}.`
+    `If you would draw a card during your first action, first draw and score a {2}.`
   ],
   karmaImpl: [
     {
@@ -16,14 +16,14 @@ module.exports = {
       decree: 'Trade',
     },
     {
-      trigger: 'calculate-biscuits',
-      func(game, player) {
-        const scoreCount = game.cards.byPlayer(player, 'score').length
-        const forecaseCount = game.cards.byPlayer(player, 'forecast').length
-        const biscuits = game.utilEmptyBiscuits()
-        biscuits.s = scoreCount + forecaseCount
-        return biscuits
-      }
-    }
+      trigger: 'draw',
+      kind: 'would-first',
+      matches: (game, player, { age, self }) => {
+        return game.state.actionNumber === 1
+      },
+      func(game, player, { self }) {
+        game.actions.drawAndScore(player, game.getEffectAge(self, 2))
+      },
+    },
   ]
 }
