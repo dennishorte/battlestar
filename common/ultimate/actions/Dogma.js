@@ -22,6 +22,11 @@ function DogmaHelper(player, card, opts={}) {
 
   const shareData = getDogmaShareInfo.call(this, player, card, opts)
 
+  // Sargon of Akkad, for example, modifies who can share.
+  for (const player2 of this.game.players.all()) {
+    this.game.aKarma(player2, 'share-eligibility', { ...opts, card, shareData, leader: player })
+  }
+
   _initializeGlobalContext.call(this, shareData.biscuits, shareData.featuredBiscuit)
   _logSharing.call(this, shareData)
   _executeEffects.call(this, player, card, shareData, opts)
