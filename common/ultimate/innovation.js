@@ -150,6 +150,7 @@ Innovation.prototype.initializeTransientState = function() {
   this.state.turn = 1
   this.state.round = 1
   this.state.karmaDepth = 0
+  this.state.actionNumber = null
   this.state.wouldWinKarma = false
   this.state.didEndorse = false
   this.state.tuckCount = Object.fromEntries(this.players.all().map(p => [p.name, 0]))
@@ -372,6 +373,8 @@ Innovation.prototype.artifact = function() {
 Innovation.prototype.action = function(count) {
   const player = this.players.current()
 
+  this.state.actionNumber = count
+
   // The first player (or two) only gets one action
   const numFirstPlayers = this.players.all().length >= 4 ? 2 : 1
   if (this.state.turn <= numFirstPlayers) {
@@ -480,6 +483,7 @@ Innovation.prototype.endTurn = function() {
   this.state.round = Math.floor((this.state.turn + players.length - 1) / players.length)
 
   // Reset various turn-centric state
+  this.state.actionNumber = null
   this.state.didEndorse = false
   this.state.tuckCount = Object.fromEntries(this.players.all().map(p => [p.name, 0]))
   this.state.scoreCount = Object.fromEntries(this.players.all().map(p => [p.name, 0]))
