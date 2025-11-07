@@ -395,29 +395,25 @@ class UltimateActionManager extends BaseActionManager {
     const choices = []
 
     // Dig options
-    if (
-      this.cards.byPlayer(player, 'artifact').length === 0
-      && this.cards.byDeck('arti', age).length > 0
-      && age <= this.util.maxAge()
-    ) {
-      choices.push('dig')
-    }
-    else if (this.cards.byPlayer(player, 'artifact').length !== 0) {
+    if (this.cards.byPlayer(player, 'artifact').length > 0) {
       this.log.add({
         template: '{player} already has an artifact on display',
         args: { player }
       })
     }
-    else {
+    else if (this.cards.byDeck('arti', age).length === 0) {
       this.log.add({
         template: `Artifacts deck for age ${age} is empty.`
       })
+    }
+    else {
+      choices.push('dig')
     }
 
     // Seize options
     const canSeize = this
       .players
-      .all()
+      .other(player)
       .flatMap(player => this.cards.byPlayer(player, 'museum'))
       .filter(card => !card.isMuseum)
       .filter(card => card.getAge() === age)
@@ -428,6 +424,10 @@ class UltimateActionManager extends BaseActionManager {
         choices: canSeize.map(c => c.id),
         min: 0
       })
+    }
+
+    if (choices.length === 0) {
+      return
     }
 
     const chosen = this.choose(player, choices, {
