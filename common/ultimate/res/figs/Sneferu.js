@@ -4,11 +4,11 @@ module.exports = {
   color: `yellow`,
   age: 1,
   expansion: `figs`,
-  biscuits: `hkk*`,
+  biscuits: `hkkp`,
   dogmaBiscuit: `k`,
   karma: [
     `You may issue an Expansion decree with any two figures.`,
-    `Each {k} on your board provides one additional {c}.`
+    `If you would meld a card, first draw and tuck a {2}. If the tucked card has no {k}, return it.`,
   ],
   karmaImpl: [
     {
@@ -16,11 +16,14 @@ module.exports = {
       decree: 'Expansion'
     },
     {
-      trigger: 'calculate-biscuits',
-      func(game, player, { biscuits }) {
-        const output = game.utilEmptyBiscuits()
-        output.c = biscuits.k
-        return output
+      trigger: 'meld',
+      kind: 'would-first',
+      matches: () => true,
+      func(game, player, { self }) {
+        const card = game.actions.drawAndTuck(player, game.getEffectAge(self, 2))
+        if (!card.checkHasBiscuit('k')) {
+          game.actions.return(player, card)
+        }
       }
     }
   ]

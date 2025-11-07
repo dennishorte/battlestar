@@ -4,49 +4,63 @@ const t = require('../../testutil.js')
 
 describe('Sneferu', () => {
 
-  test('echo', () => {
+  test('karma: decree', () => {
+    t.testDecreeForTwo('Sneferu', 'Expansion')
+  })
+
+  test('karma: meld with k', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
+        red: ['Archery'],
         yellow: ['Sneferu'],
+        hand: ['The Wheel'],
       },
       decks: {
         base: {
-          1: ['Tools'],
-          2: ['Fermenting', 'Canal Building'],
+          2: ['Construction'],
         }
       }
     })
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Inspire.yellow')
+    request = t.choose(game, request, 'Meld.The Wheel')
 
-    t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        yellow: ['Sneferu', 'Fermenting', 'Canal Building'],
-        hand: ['Tools'],
+        red: ['Archery', 'Construction'],
+        green: ['The Wheel'],
+        yellow: ['Sneferu'],
       },
     })
   })
 
-  test('karma: decree', () => {
-    t.testDecreeForTwo('Sneferu', 'Expansion')
-  })
-
-  test('karma: biscuits', () => {
+  test('karma: meld without k', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
+        red: ['Archery'],
         yellow: ['Sneferu'],
-        green: ['The Wheel'],
+        hand: ['The Wheel'],
       },
+      decks: {
+        base: {
+          2: ['Mathematics'],
+        }
+      }
     })
 
     let request
     request = game.run()
+    request = t.choose(game, request, 'Meld.The Wheel')
 
-    expect(t.dennis(game).biscuits().c).toBe(5)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Archery'],
+        green: ['The Wheel'],
+        yellow: ['Sneferu'],
+      },
+    })
   })
 })
