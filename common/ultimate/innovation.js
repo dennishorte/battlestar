@@ -1150,7 +1150,7 @@ Innovation.prototype.getHighestTopAge = function(player, opts={}) {
   const baseAge = card ? card.getAge() : 0
 
   const karmaAdjustment = this
-    .getInfoByKarmaTrigger(player, 'calculate-eligibility')
+    .getInfoByKarmaTrigger(player, 'add-highest-top-age')
     .filter(info => info.impl.reason !== undefined)
     .filter(info => info.impl.reason === 'all' || info.impl.reason === opts.reason)
     .reduce((l, r) => l + r.impl.func(this, player), 0)

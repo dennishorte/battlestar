@@ -4,28 +4,18 @@ module.exports = {
   color: `blue`,
   age: 1,
   expansion: `figs`,
-  biscuits: `&hkk`,
+  biscuits: `phkk`,
   dogmaBiscuit: `k`,
   karma: [
-    `Each card in your forecast adds one to the value of your highest top card for the purpose of claiming achievements.`,
-    `Each achievement adds its value to your score.`
+    `Each unsplayed color on your board adds one to the value of yoru highest top card for the purpose of claiming achievements.`
   ],
   karmaImpl: [
     {
-      trigger: 'calculate-eligibility',
+      trigger: 'add-highest-top-age',
       reason: 'achieve',
       func(game, player) {
-        return game.cards.byPlayer(player, 'forecast').length
+        return game.zones.colorStacks(player).filter(zone => zone.splay === 'none').length
       },
     },
-    {
-      trigger: 'calculate-score',
-      func(game, player) {
-        return game
-          .cards.byPlayer(player, 'achievements')
-          .filter(card => card.getAge() !== undefined)
-          .reduce((l, r) => l + r.getAge(), 0)
-      }
-    }
   ]
 }
