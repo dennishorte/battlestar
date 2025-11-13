@@ -16,6 +16,10 @@ class UltimateBaseCard extends BaseCard {
     return this.expansion !== 'base'
   }
 
+  checkIsMuseum() {
+    return this.isMuseum
+  }
+
   checkIsStandardAchievement() {
     return !this.isSpecialAchievement && !this.isDecree && !this.isMuseum
   }

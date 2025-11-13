@@ -19,6 +19,7 @@
 
       <CardPile
         :zone="game.zones.byPlayer(player, 'museum')"
+        :expanded="true"
       />
     </template>
 

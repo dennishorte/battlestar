@@ -5,11 +5,19 @@
     </div>
 
     <div v-if="expanded">
-      <CardFull
-        v-for="card in cards"
-        :key="card.id"
-        :card="card"
-      />
+      <template v-for="card in cards">
+        <CardFullMuseum
+          v-if="card.checkIsMuseum()"
+          :key="card.id"
+          :card="card"
+        />
+
+        <CardFull
+          v-else
+          :key="card.id"
+          :card="card"
+        />
+      </template>
     </div>
 
     <div v-else class="card-pile-list">
@@ -27,6 +35,7 @@
 
 <script>
 import CardFull from './CardFull'
+import CardFullMuseum from './CardFullMuseum'
 import CardSquare from './CardSquare'
 
 const orderedExpansions = ['base', 'echo', 'figs', 'city', 'arti']
@@ -36,6 +45,7 @@ export default {
 
   components: {
     CardFull,
+    CardFullMuseum,
     CardSquare,
   },
 
