@@ -55,30 +55,11 @@ export default {
 
 
 <style scoped>
-.card-full {
+.card-full-museum {
   border: 1px solid #7d6c50;
   padding: .2rem;
   margin-bottom: 1px;
   max-width: 300px;
-}
-
-.card-age {
-  display: flex;
-  flex-direction: column;
-}
-
-.card-biscuits {
-  margin-top: -5px;
-  margin-bottom: 3px;
-}
-
-.card-biscuits-row {
-  display: flex;
-  flex-direction: row;
-}
-
-.card-text {
-  margin-top: 3px;
 }
 
 .card-top {
@@ -93,31 +74,5 @@ export default {
   flex-grow: 1;
   text-align: right;
   margin-right: .3em;
-}
-
-.card-effect {
-  font-size: .8em;
-  line-height: 1.2em;
-}
-
-.small-card-square {
-  height: 1.2em;
-  width: 1.2em;
-  line-height: 1.15em;
-  margin-bottom: 0;
-}
-
-.card-age-square {
-  margin-top: -2px;
-}
-
-.demand {
-  background: repeating-linear-gradient(
-    45deg,
-    rgba(0, 0, 0, 0),
-    rgba(0, 0, 0, 0) 10px,
-    rgba(255, 0, 0, .1) 10px,
-    rgba(255, 0, 0, .1) 20px
-  );
 }
 </style>
