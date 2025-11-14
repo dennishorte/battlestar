@@ -35,6 +35,10 @@ class UltimateZone extends BaseZone {
     return super.cardlist()
   }
 
+  isPlayerAchievementsZone() {
+    return Boolean(this.owner) && this.id.endsWith('.achievements')
+  }
+
   isArtifactZone() {
     return Boolean(this.owner) && this.id.endsWith('.artifact')
   }
