@@ -35,11 +35,27 @@ class BaseCard {
   moveTo(zone, index=null) {
     const prevZone = this.zone
     const prevIndex = this.zone.cardlist().findIndex(card => card.id === this.id)
-    const newIndex = index !== null
-      ? index
-      : (prevZone.id === zone.id
-        ? zone.cardlist().length - 1
-        : zone.cardlist().length)
+
+    let newIndex = index
+
+    // If no index is specified, put the card on the bottom of the zone.
+    if (index === null) {
+      newIndex = zone.cardlist().length
+
+      // If the card is moving within the same zone, its movement will reduce the total number
+      // of items in the zone.
+      if (prevZone.id === zone.id) {
+        newIndex -= 1
+      }
+    }
+
+    // The index for the card has been specified, but we need to check if the card is moving within
+    // the same zone, and if so, if it is moving to a lower position than where it started.
+    else if (prevZone.id === zone.id) {
+      if (index > prevIndex) {
+        newIndex -= 1
+      }
+    }
 
     const beforeCache = this._beforeMoveTo(zone, index, prevZone, prevIndex) || {}
 
