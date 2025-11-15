@@ -63,7 +63,7 @@ module.exports = {
         .colorStacks(player)
 
         // Convert each stack to a count of hexes
-        .map(zone => zone.cardlist().map(card => card.checkBiscuitIsVisible('h')).length)
+        .map(zone => zone.cardlist().filter(card => card.checkBiscuitIsVisible('h')).length)
 
 
       if (hexesPerColor.some(count => count >= 5) && game.checkAchievementAvailable('Heritage')) {
