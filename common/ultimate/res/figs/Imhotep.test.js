@@ -4,106 +4,107 @@ const t = require('../../testutil.js')
 
 describe('Imhotep', () => {
 
-  test('echo', () => {
+  test('karma: first action does nothing', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
+        green: ['The Wheel'],
         blue: ['Imhotep'],
       },
       decks: {
         base: {
-          2: ['Fermenting']
+          1: ['Tools', 'Agriculture'],
         }
       }
     })
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Imhotep')
+    request = t.choose(game, request, 'Dogma.The Wheel')
 
     t.testBoard(game, {
       dennis: {
+        green: ['The Wheel'],
         blue: ['Imhotep'],
-        yellow: ['Fermenting']
+        hand: ['Tools', 'Agriculture'],
       },
     })
   })
 
-  test('karma: meld', () => {
+  test('karma: second action age 2 does nothing', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
-        red: ['Archery', 'Oars'],
-        blue: ['Imhotep'],
-        hand: ['Construction']
+        hand: ['The Wheel'],
       },
+      micah: {
+        blue: ['Imhotep'],
+        hand: ['Fermenting'],
+      },
+      decks: {
+        base: {
+          2: ['Construction'],
+        }
+      }
     })
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Construction')
+    request = t.choose(game, request, 'Meld.The Wheel')
+    request = t.choose(game, request, 'Meld.Fermenting')
+    request = t.choose(game, request, 'Dogma.Fermenting')
 
     t.testBoard(game, {
       dennis: {
-        red: {
-          cards: ['Archery', 'Oars'],
-          splay: 'left'
-        },
+        green: ['The Wheel'],
+      },
+      micah: {
+        yellow: ['Fermenting'],
         blue: ['Imhotep'],
+        hand: ['Construction'],
       },
     })
   })
 
-
-  test('karma: meld (already splayed)', () => {
+  test('karma: second action age 1', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
-        red: {
-          cards: ['Archery', 'Oars'],
-          splay: 'left'
-        },
-        blue: ['Imhotep'],
-        hand: ['Construction']
+        green: ['Paper'],
+        hand: ['Fermenting'],
       },
+      micah: {
+        green: ['Sailing'],
+        blue: ['Imhotep'],
+        hand: ['The Wheel'],
+      },
+      decks: {
+        base: {
+          1: ['Tools', 'Agriculture'],
+          2: ['Mapmaking'],
+        }
+      }
     })
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Construction')
+    request = t.choose(game, request, 'Meld.Fermenting')
+    request = t.choose(game, request, 'Meld.The Wheel')
+    request = t.choose(game, request, 'Dogma.The Wheel')
+    request = t.choose(game, request, 'auto')
+
 
     t.testBoard(game, {
       dennis: {
-        red: {
-          cards: ['Construction', 'Archery', 'Oars'],
-          splay: 'left'
+        yellow: ['Fermenting'],
+      },
+      micah: {
+        green: {
+          cards: ['The Wheel', 'Sailing'],
+          splay: 'left',
         },
         blue: ['Imhotep'],
-      },
-    })
-  })
-
-  test('karma: meld (not enough cards)', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        red: ['Archery'],
-        blue: ['Imhotep'],
-        hand: ['Construction']
-      },
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Meld.Construction')
-
-    t.testBoard(game, {
-      dennis: {
-        red: {
-          cards: ['Construction', 'Archery'],
-          splay: 'none',
-        },
-        blue: ['Imhotep'],
+        hand: ['Tools', 'Agriculture'],
       },
     })
   })
