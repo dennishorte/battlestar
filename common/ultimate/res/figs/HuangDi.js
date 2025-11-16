@@ -4,11 +4,11 @@ module.exports = {
   color: `blue`,
   age: 1,
   expansion: `figs`,
-  biscuits: `ss&h`,
+  biscuits: `ssph`,
   dogmaBiscuit: `s`,
   karma: [
     `You may issue an advancement decree with any two figures.`,
-    `Each {s} on your board provides one additional {l}.`
+    `If you would dogma a card using {l} as a featured icon, first draw a {2}`,
   ],
   karmaImpl: [
     {
@@ -16,11 +16,12 @@ module.exports = {
       decree: 'Advancement',
     },
     {
-      trigger: 'calculate-biscuits',
-      func: (game, player, { biscuits }) => {
-        const output = game.utilEmptyBiscuits()
-        output.l = biscuits.s
-        return output
+      trigger: 'dogma',
+      matches: (game, player) => {
+        return game.state.dogmaInfo.featuredBiscuit === 'l'
+      },
+      func: (game, player, { self }) => {
+        game.actions.draw(player, { age: game.getEffectAge(self, 2) })
       }
     }
   ]

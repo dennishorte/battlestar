@@ -14,12 +14,6 @@ function DogmaAction(player, card, opts={}) {
 }
 
 function DogmaHelper(player, card, opts={}) {
-  const karmaKind = this.game.aKarma(player, 'dogma', { ...opts, card })
-  if (karmaKind === 'would-instead') {
-    this.acted(player)
-    return
-  }
-
   const shareData = getDogmaShareInfo.call(this, player, card, opts)
 
   // Sargon of Akkad, for example, modifies who can share.
@@ -28,6 +22,13 @@ function DogmaHelper(player, card, opts={}) {
   }
 
   _initializeGlobalContext.call(this, shareData.biscuits, shareData.featuredBiscuit)
+
+  const karmaKind = this.game.aKarma(player, 'dogma', { ...opts, card })
+  if (karmaKind === 'would-instead') {
+    this.acted(player)
+    return
+  }
+
   _logSharing.call(this, shareData)
   _executeEffects.call(this, player, card, shareData, opts)
 
