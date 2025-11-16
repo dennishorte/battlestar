@@ -24,7 +24,7 @@ module.exports = {
       const tucked = game.actions.chooseAndTuck(player, game.cards.byPlayer(player, 'hand'))[0]
 
       game.log.addForeseen(foreseen, self)
-      if (foreseen) {
+      if (foreseen && tucked) {
         const cards = game.cards.byDeck('base', tucked.getAge())
 
         // The player can't look at the cards in the deck in advance, so they can't really pick an order.
