@@ -9,7 +9,7 @@ module.exports = {
     `Choose an opponent. That player chooses a card (unrevealed) in your hand. Meld the chosen card. If you do, and it is your turn, self-execute the card, then repeat this effect.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       while (true) {
         const opp = game.actions.choosePlayer(player, game.players.opponents(player))
         const card = game.actions.chooseCard(opp, game.cards.byPlayer(player, 'hand'))
@@ -28,7 +28,7 @@ module.exports = {
         const melded = game.actions.meld(player, card)
         if (melded) {
           if (player.id === game.players.current().id) {
-            game.aSelfExecute(player, melded)
+            game.aSelfExecute(self, player, melded)
             continue
           }
           else {

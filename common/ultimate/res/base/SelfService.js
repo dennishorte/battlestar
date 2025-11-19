@@ -32,7 +32,7 @@ module.exports = {
         .filter(card => card !== self)
       const card = game.actions.chooseCard(player, choices)
       if (card) {
-        game.aSelfExecute(player, card)
+        game.aSelfExecute(self, player, card)
       }
     },
 

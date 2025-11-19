@@ -9,7 +9,7 @@ module.exports = {
     `Choose a non-purple color. Self-execute your top card of that color. Score your top card of that color. If you do, repeat this effect with the same color if you have scored fewer than nine points due to Legend during this action.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       if (!game.state.dogmaInfo.legend) {
         game.state.dogmaInfo.legend = {}
       }
@@ -28,7 +28,7 @@ module.exports = {
           game.log.add({ template: 'No top card remaining in ' + firstCard.color })
           return
         }
-        game.aSelfExecute(player, card)
+        game.aSelfExecute(self, player, card)
         const scored = game.actions.score(player, game.cards.top(player, firstCard.color))
         if (scored) {
           totals[player.name] += scored.getAge()

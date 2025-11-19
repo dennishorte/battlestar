@@ -15,7 +15,7 @@ module.exports = {
 
         const card = game.cards.top(player, 'blue')
         if (card) {
-          game.aSelfExecute(player, card)
+          game.aSelfExecute(self, player, card)
 
           if (game.state.dogmaInfo.theBigBangChange) {
             game.log.add({ template: 'The game state was changed due to the card effects.' })

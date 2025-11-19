@@ -9,7 +9,7 @@ module.exports = {
     `Draw, reveal, and return a {6}. Draw and meld a card of value equal to the value of your top card of the same color as the returned card. Self-execute the melded card.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       // Draw, reveal, return
       const firstCard = game.actions.drawAndReveal(player, 6)
       game.actions.return(player, firstCard)
@@ -20,7 +20,7 @@ module.exports = {
       const meldCard = game.actions.drawAndMeld(player, age)
 
       // Self execute
-      game.aSelfExecute(player, meldCard)
+      game.aSelfExecute(self, player, meldCard)
     }
   ],
 }

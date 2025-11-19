@@ -22,7 +22,7 @@ module.exports = {
       const card = game.actions.chooseAndMeld(player, choices)[0]
 
       if (card) {
-        game.aSelfExecute(player, card)
+        game.aSelfExecute(self, player, card)
       }
       else {
         game.actions.draw(player, { age: game.getEffectAge(self, 11) })

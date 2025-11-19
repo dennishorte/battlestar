@@ -9,7 +9,7 @@ module.exports = {
     `If it is your turn, transfer a top card from any board to your board, then super-execute a top card on your board other than Deepfake. If the transferred card is still a top card, transfer it to its original board.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       // If it is your turn...
       if (game.players.current().id !== player.id) {
         game.log.add({
@@ -39,7 +39,7 @@ module.exports = {
         .filter(card => card.name !== 'Deepfake')
 
       const cardToExecute = game.actions.chooseCard(player, executeOptions)
-      game.aSuperExecute(player, cardToExecute)
+      game.aSuperExecute(self, player, cardToExecute)
 
       // If the transferred card is still a top card...
       const topCardOfTransferredColor = game.cards.top(player, cardToTransfer.color)

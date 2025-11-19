@@ -14,7 +14,7 @@ module.exports = {
     (game, player, { self }) => {
       const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
       if (card) {
-        game.aSelfExecute(player, card)
+        game.aSelfExecute(self, player, card)
       }
     }
   ],

@@ -9,7 +9,7 @@ module.exports = {
     `Claim an available standard achievement, regardless of eligibility. Self-execute it.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const choices = game.getAvailableStandardAchievements(player)
       const achievement = game.actions.chooseCards(player, choices, {
         title: 'Choose a standard achievement to claim',
@@ -19,7 +19,7 @@ module.exports = {
       if (achievement) {
         game.actions.claimAchievement(player, achievement)
         game.actions.reveal(player, achievement)
-        game.aSelfExecute(player, achievement)
+        game.aSelfExecute(self, player, achievement)
       }
     },
   ],

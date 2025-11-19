@@ -23,7 +23,7 @@ module.exports = {
 
         const toSelfExecute = game.actions.chooseCard(player, choices)
         if (toSelfExecute) {
-          game.aSelfExecute(player, toSelfExecute)
+          game.aSelfExecute(self, player, toSelfExecute)
         }
       }
     }

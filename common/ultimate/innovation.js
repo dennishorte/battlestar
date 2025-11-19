@@ -601,12 +601,12 @@ Innovation.prototype.aTrackChainRule = function(player, card) {
   // A second card is calling self-execute. Award the chain achievement.
   else if (data.cardName !== card.name) {
     this.log.add({
-      template: '{player} achieves a Chain Achievement',
-      args: { player }
+      template: '{player} achieves a Chain Achievement because {card} is recursively self-executing',
+      args: { player, card }
     })
-    const card = this.zones.byDeck('base', 11).cardlist()[0]
-    if (card) {
-      this.actions.claimAchievement(player, card)
+    const achievement = this.zones.byDeck('base', 11).cardlist()[0]
+    if (achievement) {
+      this.actions.claimAchievement(player, achievement)
     }
     else {
       this.log.add({ template: 'There are no cards left in the 11 deck to achieve.' })
@@ -628,8 +628,8 @@ Innovation.prototype.aFinishChainEvent = function(player, card) {
   }
 }
 
-Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
-  this.aTrackChainRule(player, card)
+Innovation.prototype.aSelfExecute = function(executingCard, player, card, opts={}) {
+  this.aTrackChainRule(player, executingCard)
 
   const topCard = this.cards.top(player, card.color)
   const isTopCard = topCard && topCard.name === card.name
@@ -669,8 +669,8 @@ Innovation.prototype.aSelfExecute = function(player, card, opts={}) {
   this.aFinishChainEvent(player, card)
 }
 
-Innovation.prototype.aSuperExecute = function(player, card) {
-  this.aSelfExecute(player, card, { superExecute: true })
+Innovation.prototype.aSuperExecute = function(executingCard, player, card) {
+  this.aSelfExecute(executingCard, player, card, { superExecute: true })
 }
 
 Innovation.prototype.aDecree = function(player, name) {

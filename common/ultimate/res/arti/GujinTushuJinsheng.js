@@ -24,7 +24,7 @@ module.exports = {
         .flatMap(player => game.cards.tops(player))
       const card = game.actions.chooseCard(player, choices)
       if (card) {
-        game.aSuperExecute(player, card)
+        game.aSuperExecute(self, player, card)
       }
     }
   ],

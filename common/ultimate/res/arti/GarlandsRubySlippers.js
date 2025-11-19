@@ -26,7 +26,7 @@ module.exports = {
         }
 
         else {
-          game.aSelfExecute(player, card)
+          game.aSelfExecute(self, player, card)
         }
       }
     }
