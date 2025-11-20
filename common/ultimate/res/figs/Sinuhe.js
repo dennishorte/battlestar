@@ -4,7 +4,7 @@ module.exports = {
   color: `purple`,
   age: 1,
   expansion: `figs`,
-  biscuits: `&llh`,
+  biscuits: `pllh`,
   dogmaBiscuit: `l`,
   karma: [
     `You may issue a Rivaly Decree with any two figures.`,

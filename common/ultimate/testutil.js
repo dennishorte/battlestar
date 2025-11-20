@@ -178,7 +178,7 @@ TestUtil.testDeckIsJunked = function(game, age) {
 TestUtil.testDecreeForTwo = function(figureName, decreeName) {
   const game = TestUtil.fixtureTopCard(figureName, { expansions: ['base', 'figs'] })
   game.testSetBreakpoint('before-first-player', (game) => {
-    TestUtil.setHand(game, 'dennis', ['Homer', 'Ptahotep'])
+    TestUtil.setHand(game, 'dennis', ['Homer', 'Ptahhotep'])
   })
   const request1 = game.run()
   expect(TestUtil.getChoices(request1, 'Decree')).toEqual([decreeName])
