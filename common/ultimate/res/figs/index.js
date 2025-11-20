@@ -4,7 +4,7 @@ const cardData = [
   require('./FuXi.js'),
   require('./Hatshepsut.js'),
   require('./Daedalus.js'),
-  require('./Ptahotep.js'),
+  require('./Ptahhotep.js'),
   require('./Shennong.js'),
   require('./HuangDi.js'),
   require('./Imhotep.js'),
