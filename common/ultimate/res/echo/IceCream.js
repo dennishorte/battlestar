@@ -8,7 +8,7 @@ module.exports = {
   echo: `Score a non-purple top card from your board without a bonus.`,
   dogma: [
     `I demand you draw and meld a {1}!`,
-    `Choose the {6}, {7}, {8}, or {9} deck. You may junk all cards in the chosen deck. If you do, score the highest card in the junk, if eligible.`
+    `Choose the {6}, {7}, {8}, or {9} deck. You may junk all cards in the chosen deck. If you do, achieve the highest card in the junk, if eligible.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
