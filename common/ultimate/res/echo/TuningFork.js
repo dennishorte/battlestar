@@ -14,14 +14,13 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       while (true) {
-        const returned = game.actions.chooseAndForeshadow(player, game.cards.byPlayer(player, 'hand'))[0]
-        if (returned) {
-          const revealed = game.actions.drawAndReveal(player, returned.getAge())
+        const foreshadowed = game.actions.chooseAndForeshadow(player, game.cards.byPlayer(player, 'hand'))[0]
+        if (foreshadowed) {
+          const revealed = game.actions.drawAndReveal(player, foreshadowed.getAge())
           if (revealed) {
             const top = game.cards.top(player, revealed.color)
             if (!top || revealed.getAge() > top.getAge()) {
               game.actions.meld(player, revealed)
-              break
             }
             else {
               game.actions.return(player, revealed)
@@ -29,12 +28,11 @@ module.exports = {
               if (repeat) {
                 continue
               }
-              else {
-                break
-              }
             }
           }
         }
+
+        break
       }
     }
   ],
