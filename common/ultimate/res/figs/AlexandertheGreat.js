@@ -4,11 +4,11 @@ module.exports = {
   color: `red`,
   age: 2,
   expansion: `figs`,
-  biscuits: `2*hk`,
+  biscuits: `2phk`,
   dogmaBiscuit: `k`,
   karma: [
-    `When you meld this card, score all opponent's top figures of value 1 or 2.`,
-    `If you would take a Dogma action, instead of using the featured icon use each player's current score.`
+    `When you meld this card, score all opponent's top figures.`,
+    `If you would take a Dogma action, first draw and score a {2}. If it isn't a {2}, score Alexander the Great.`,
   ],
   karmaImpl: [
     {
@@ -18,15 +18,20 @@ module.exports = {
           .players.opponents(player)
           .flatMap(opp => game.cards.tops(opp))
           .filter(card => card.checkIsFigure())
-          .filter(card => card.getAge() === 1 || card.getAge() === 2)
 
         game.actions.scoreMany(player, topFigures)
       }
     },
     {
-      trigger: 'featured-biscuit',
+      trigger: 'dogma',
+      kind: 'would-first',
       matches: () => true,
-      func: () => 'score'
+      func: (game, player, { self }) => {
+        const scored = game.actions.drawAndScore(player, game.getEffectAge(self, 2))
+        if (scored.getAge() !== game.getEffectAge(self, 2)) {
+          game.actions.score(player, self)
+        }
+      },
     },
   ]
 }
