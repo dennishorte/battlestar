@@ -4,51 +4,96 @@ const t = require('../../testutil.js')
 
 describe('Homer', () => {
 
-
-  test('karma: remove', () => {
-    const game = t.fixtureDecrees()
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'purple', ['Homer'])
+  test('karma: junk from hand', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs', 'city'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Agriculture'],
+        blue: ['Atlantis'],
+        purple: ['Homer'],
+        hand: ['Shennong'],
+      },
+      decks: {
+        base: {
+          2: ['Mathematics'],
+        }
+      }
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Decree.Trade')
 
-    expect(t.cards(game, 'red')).toStrictEqual(['Yi Sun-Sin'])
-    expect(t.cards(game, 'yellow')).toStrictEqual(['Ximen Bao'])
-    expect(t.cards(game, 'green')).toStrictEqual(['Ptolemy'])
-    expect(t.cards(game, 'blue')).toStrictEqual(['Daedalus'])
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Endorse.yellow')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Agriculture', 'Shennong'],
+        blue: ['Mathematics'],
+        purple: ['Homer'],
+      },
+    })
   })
 
-  test('karma: return', () => {
-    const game = t.fixtureTopCard('Agriculture', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'purple', ['Homer'])
-      t.setHand(game, 'dennis', ['Fu Xi'])
-      t.setDeckTop(game, 'base', 2, ['Mathematics'])
+  test('karma: junk non-figure from hand', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs', 'city'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Agriculture'],
+        blue: ['Atlantis'],
+        purple: ['Homer'],
+        hand: ['Domestication'],
+      },
+      decks: {
+        base: {
+          2: ['Mathematics'],
+        }
+      }
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Agriculture')
-    const result3 = t.choose(game, result2, 'Fu Xi')
 
-    expect(t.cards(game, 'green')).toStrictEqual(['Fu Xi'])
-    expect(t.cards(game, 'blue')).toStrictEqual([])
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Endorse.yellow')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Agriculture'],
+        blue: ['Mathematics'],
+        purple: ['Homer'],
+      },
+      junk: ['Domestication'],
+    })
   })
 
-  test('karma: return from score does not trigger', () => {
-    const game = t.fixtureTopCard('Printing Press', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'purple', ['Homer'])
-      t.setScore(game, 'dennis', ['Fu Xi'])
-      t.setDeckTop(game, 'base', 3, ['Paper'])
+  test('karma: return from hand', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Agriculture'],
+        blue: ['Tools'],
+        purple: ['Homer'],
+        hand: ['Shennong'],
+      },
+      decks: {
+        base: {
+          2: ['Mathematics'],
+        }
+      }
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Printing Press')
-    const result3 = t.choose(game, result2, 'Fu Xi')
 
-    expect(t.cards(game, 'green')).toStrictEqual([])
-    expect(t.cards(game, 'score')).toStrictEqual([])
-    const FuXi = game.cards.byId('Fu Xi')
-    expect(FuXi.zone).toBe('decks.figs.1')
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.Agriculture')
+    request = t.choose(game, request, 'Shennong')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Agriculture', 'Shennong'],
+        blue: ['Mathematics'],
+        purple: ['Homer'],
+      },
+    })
   })
 
 })

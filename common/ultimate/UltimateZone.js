@@ -47,6 +47,10 @@ class UltimateZone extends BaseZone {
     return Boolean(this.color)
   }
 
+  isHandZone() {
+    return Boolean(this.owner) && this.id.endsWith('.hand')
+  }
+
   isMuseumZone() {
     return Boolean(this.owner) && this.id.endsWith('.museum')
   }
