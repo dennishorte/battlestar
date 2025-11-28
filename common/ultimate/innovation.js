@@ -732,6 +732,13 @@ Innovation.prototype.aDecree = function(player, name) {
   })
   this.log.indent()
 
+  // Handle karma
+  const karmaKind = this.aKarma(player, 'decree')
+  if (karmaKind === 'would-instead') {
+    this.acted(player)
+    return
+  }
+
   this.actions.junkMany(player, hand.cardlist(), { ordered: true })
 
   let doImpl = false
@@ -879,6 +886,14 @@ Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
         args: {
           player,
         }
+      })
+    }
+    else if (opts.trigger === 'decree') {
+      this.log.add({
+        template: '{player} would issue a decree, triggering...',
+        args: {
+          player,
+        },
       })
     }
     else {
