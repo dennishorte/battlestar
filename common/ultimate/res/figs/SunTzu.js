@@ -4,7 +4,7 @@ module.exports = {
   color: `red`,
   age: 2,
   expansion: `figs`,
-  biscuits: `*khk`,
+  biscuits: `pkhk`,
   dogmaBiscuit: `k`,
   karma: [
     `You may issue a War Decree with any two figures.`,
@@ -21,7 +21,8 @@ module.exports = {
       matches: (game, player, { share }) => share,
       func: (game, player, { featuredBiscuit }) => {
         const choices = game
-          .cards.byPlayer(player, 'hand')
+          .cards
+          .byPlayer(player, 'hand')
           .filter(card => card.checkHasBiscuit(featuredBiscuit))
         game.actions.chooseAndMeld(player, choices, { min: 0, max: choices.length })
       }
