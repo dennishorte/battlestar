@@ -54,6 +54,7 @@ function InnovationFactory(settings, viewerName) {
 function factoryFromLobby(lobby) {
   return GameFactory({
     game: 'Innovation: Ultimate',
+    version: 2,
     name: lobby.name,
     expansions: lobby.options.expansions,
     randomizeExpansions: lobby.options.randomizeExpansions,
@@ -82,6 +83,7 @@ Innovation.prototype.initialize = function() {
   this.log.indent()
 
   this.initializeCards()
+  this.initializeExpansions()
   this.initializeTeams()
   this.initializeZones()
   this.initializeStartingCards()
@@ -99,6 +101,41 @@ Innovation.prototype.initializeCards = function() {
   for (const exp of res.ALL_EXPANSIONS) {
     this.cards.registerExpansion(exp, cardData[exp])
   }
+}
+
+Innovation.prototype.initializeExpansions = function() {
+  if (!this.version || this.version < 2) {
+    return
+  }
+
+
+  if (this.settings.randomizeExpansions) {
+    this.settings.expansions = ['base']
+
+    const probability = .6
+    game.log.add({
+      template: 'Expansions will be randomly selected with probability {prob}.',
+      args: { prob: probability },
+    })
+
+    const availableExpansions = ultimate.SUPPORTED_EXPANSIONS.filter(exp => exp !== 'base')
+    for (const exp of availableExpansions) {
+      const randomNumber = this.random()
+      this.log.add({
+        template: '{expansion} rolled {number}',
+        args: { expansion: exp, number, randomNumber }
+      })
+
+      if (randomNumber < probability) {
+        this.settings.expansions.push(exp)
+      }
+    }
+  }
+
+  this.log.add({
+    template: 'The following expansions were selected: {expansions}',
+    args: { expansions: this.settings.expansions },
+  })
 }
 
 Innovation.prototype.initializeTransientState = function() {

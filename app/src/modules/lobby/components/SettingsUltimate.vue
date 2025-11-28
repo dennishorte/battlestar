@@ -99,25 +99,8 @@ export default {
     },
 
     optionsChanged() {
-      const getExpansions = () => {
-        if (this.models.randomizeExpansions) {
-          const availableExpansions = ultimate.SUPPORTED_EXPANSIONS.filter(exp => exp !== 'base')
-          const expansionSelectionRate = .6
-          const expansions = ['base']
-          for (const exp of availableExpansions) {
-            if (Math.random() < expansionSelectionRate) {
-              expansions.push(exp)
-            }
-          }
-          return expansions
-        }
-        else {
-          return [...this.models.expansions]
-        }
-      }
-
       this.lobby.options = {
-        expansions: getExpansions(),
+        expansions: this.models.randomizeExpansions ? [] : this.models.expansions,
         randomizeExpansions: this.models.randomizeExpansions,
       }
       this.updateValid()
