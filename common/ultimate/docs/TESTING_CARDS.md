@@ -612,6 +612,8 @@ test('dogma (two players to transfer)', () => {
 
 **Important**: You cannot test the `achievements` zone directly in `t.testBoard()` because it includes all special achievements that are always present. Instead, test the `junk` zone to verify whether achievements were junked.
 
+**Note on Figure Drawing**: When a player claims a standard achievement using the "Achieve" action, opponents draw figures. However, if an achievement is claimed via a card effect (such as Masonry's dogma or other karma effects), opponents do **not** draw figures. Only the "Achieve" action triggers figure drawing for opponents.
+
 ```javascript
 test('dogma: junking age 1 achievement', () => {
   const game = t.fixtureFirstPlayer()
@@ -746,7 +748,22 @@ The `testDecreeForTwo` helper tests that when a figure is the top card, it produ
    - The karma not triggering when it shouldn't
    - Interactions with other cards
 
-8. **Use `setBoard` for All Initial State**: Always use `t.setBoard()` to set up initial game state. The `testSetBreakpoint` approach is rarely needed - most setup can be done with `setBoard`:
+8. **Ensure Effects Complete**: Always verify that effects have fully executed by checking the turn state at the end of your test. Use `t.testIsSecondPlayer(game)` or `t.testIsFirstAction(request)` to ensure the effect completed and the game advanced properly:
+   ```javascript
+   let request
+   request = game.run()
+   request = t.choose(game, request, 'Dogma.SomeCard')
+   request = t.choose(game, request, 'someChoice')
+   request = t.choose(game, request, 'auto') // If needed for ordering
+   
+   t.testIsSecondPlayer(game) // Ensures the effect completed
+   t.testBoard(game, {
+     // ... expected state
+   })
+   ```
+   **Exception**: Only omit this check if you specifically want to test an incomplete effect or are testing an intermediate state.
+
+9. **Use `setBoard` for All Initial State**: Always use `t.setBoard()` to set up initial game state. The `testSetBreakpoint` approach is rarely needed - most setup can be done with `setBoard`:
    ```javascript
    t.setBoard(game, {
      dennis: {
@@ -756,13 +773,13 @@ The `testDecreeForTwo` helper tests that when a figure is the top card, it produ
    ```
    If you do need `testSetBreakpoint`, still use `setBoard` inside it rather than individual functions.
 
-9. **Check Request States**: When testing multi-step interactions, verify intermediate request states:
+10. **Check Request States**: When testing multi-step interactions, verify intermediate request states:
    ```javascript
    const result2 = t.choose(game, result1, 'Dogma.Code of Laws')
    expect(result2.selectors[0].choices.sort()).toEqual(['Metalworking', 'Writing'])
    ```
 
-10. **Test with Correct Expansions**: Always specify the required expansions:
+11. **Test with Correct Expansions**: Always specify the required expansions:
     ```javascript
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     ```

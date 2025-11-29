@@ -125,12 +125,14 @@ class UltimateAgeCard extends UltimateBaseCard {
 
     // Is on any player board?
     if (!player) {
-      return Boolean(this.zone.color)
+      return this.zone.isColorZone()
     }
 
     // Is on a particular player board?
+    // Note: zone.owner is a function, so we need to call it
     else {
-      return this.zone.owner.id === player.id && Boolean(this.zone.color)
+      const zoneOwner = this.zone.owner()
+      return zoneOwner && zoneOwner.id === player.id && this.zone.isColorZone()
     }
   }
 

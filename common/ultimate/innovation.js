@@ -418,6 +418,20 @@ Innovation.prototype.action = function(count) {
   }
   else if (name === 'Dogma') {
     const card = this.cards.byId(arg)
+    
+    // Validate that the card belongs to the player's board
+    if (!card.checkIsOnPlayerBoard(player)) {
+      const cardOwner = card.owner ? card.owner.name : 'no one'
+      const zoneOwner = card.zone ? (card.zone.owner ? card.zone.owner().name : 'unknown') : 'no zone'
+      const cardLocation = card.zone ? card.zone.id : 'unknown location'
+      const zoneColor = card.zone && card.zone.color ? card.zone.color : 'no color'
+      throw new Error(
+        `Cannot activate dogma: "${card.name}" is not on ${player.name}'s board. ` +
+        `Card owner: ${cardOwner}, Zone owner: ${zoneOwner}, Location: ${cardLocation}, Zone color: ${zoneColor}. ` +
+        `Players can only activate cards on their own board.`
+      )
+    }
+    
     this.actions.dogma(player, card)
   }
   else if (name === 'Draw') {
