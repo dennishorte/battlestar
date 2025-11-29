@@ -23,7 +23,7 @@ function DogmaHelper(player, card, opts={}) {
 
   _initializeGlobalContext.call(this, shareData.biscuits, shareData.featuredBiscuit)
 
-  const karmaKind = this.game.aKarma(player, 'dogma', { ...opts, card })
+  const karmaKind = this.game.aKarma(player, 'dogma', { ...opts, ...shareData, card })
   if (karmaKind === 'would-instead') {
     this.acted(player)
     return
@@ -160,35 +160,8 @@ function _shareBonus(player, card) {
 }
 
 function _getBiscuitComparator(player, featuredBiscuit, biscuits, opts) {
-
-  // Some karmas affect how sharing is calculated by adjusting the featured biscuit.
-  const featuredBiscuitKarmas = this
-    .game
-    .getInfoByKarmaTrigger(player, 'featured-biscuit')
-    .filter(info => info.impl.matches(this, player, { biscuit: featuredBiscuit }))
-
-  let adjustedBiscuit
-
-  if (opts.noBiscuitKarma || featuredBiscuitKarmas.length === 0) {
-    adjustedBiscuit = featuredBiscuit
-  }
-  else if (featuredBiscuitKarmas.length === 1) {
-    const info = featuredBiscuitKarmas[0]
-    this.log.add({
-      template: '{card} karma: {text}',
-      args: {
-        card: info.card,
-        text: info.text
-      }
-    })
-    adjustedBiscuit = this.game.aCardEffect(player, info, { baseBiscuit: featuredBiscuit })
-  }
-  else {
-    throw new Error('Multiple biscuit karmas are not supported')
-  }
-
   return (other) => {
-    if (adjustedBiscuit === 'score') {
+    if (featuredBiscuit === 'score') {
       return this.game.getScore(other) >= this.game.getScore(player)
     }
     else if (this.state.dogmaInfo.soleMajority === other) {
@@ -198,7 +171,7 @@ function _getBiscuitComparator(player, featuredBiscuit, biscuits, opts) {
       return false
     }
     else {
-      return biscuits[other.name][adjustedBiscuit] >= biscuits[player.name][adjustedBiscuit]
+      return biscuits[other.name][featuredBiscuit] >= biscuits[player.name][featuredBiscuit]
     }
   }
 }

@@ -12,7 +12,9 @@ This guide explains how to write tests for Innovation cards, including base card
 6. [Testing Karma Effects](#testing-karma-effects)
 7. [Testing Echo Effects](#testing-echo-effects)
 8. [Common Patterns](#common-patterns)
-9. [Best Practices](#best-practices)
+9. [Important Gotchas](#important-gotchas)
+10. [Common Mistakes to Avoid](#common-mistakes-to-avoid)
+11. [Best Practices](#best-practices)
 
 ## Running Tests
 
@@ -97,6 +99,9 @@ The test utilities are available through `t` (imported from `testutil.js`). Key 
 ### Asserting Game State
 
 - **`t.testBoard(game, expectedState)`** - Asserts the entire game board matches expected state
+  - **Always use `t.testBoard()` for assertions** - It's the preferred way to verify game state
+  - Avoid using individual `expect()` statements for game state checks
+  - `testBoard` ensures all zones are properly validated and provides better error messages
 - **`t.testZone(game, zoneName, expectedCards, opts)`** - Asserts a zone contains expected cards
 - **`t.testIsSecondPlayer(game)`** - Asserts it's the second player's turn
 - **`t.testChoices(request, expected, expectedMin, expectedMax)`** - Asserts available choices
@@ -136,6 +141,21 @@ t.setBoard(game, {
     base: {
       1: ['Tools'],  // Top card of age 1 deck
       2: ['Mathematics', 'Construction'],  // Top cards (in order)
+    }
+  }
+})
+```
+
+**Important**: When a card effect draws cards, you must specify those cards in the `decks` section of `setBoard` to ensure deterministic test behavior. This prevents tests from failing due to randomization changes:
+
+```javascript
+t.setBoard(game, {
+  dennis: {
+    blue: ['Experimentation'], // This card's dogma draws a {5}
+  },
+  decks: {
+    base: {
+      5: ['Measurement'], // Specify the card that will be drawn
     }
   }
 })
@@ -715,6 +735,33 @@ test('karma: decree', () => {
 ```
 
 The `testDecreeForTwo` helper tests that when a figure is the top card, it produces the expected decree.
+
+## Important Gotchas
+
+When writing tests, be aware of these common pitfalls:
+
+1. **Card Color Validation**: The `setColor` function (used internally by `setBoard`) validates that cards are placed in their correct color piles. You'll get an error if you try to place a card in the wrong color pile.
+
+2. **Karma `owner` Parameter**: In karma effects, the `owner` parameter refers to the owner of the **karma card**, not necessarily the player whose card is being dogmatized.
+
+3. **Auto-Ordering**: After melding or scoring multiple cards, you may need to call `t.choose(game, request, 'auto')` to auto-order them.
+
+4. **Artifact Actions**: At the start of each player's turn, there's a free artifact action. You may need to handle this in tests if artifacts are present.
+
+5. **First Round Actions**: In the first round, players only get one action, not two.
+
+6. **Card Ownership Validation**: The game validates that players can only activate cards on their own board. If you try to activate a card on another player's board, you'll get a helpful error message.
+
+## Common Mistakes to Avoid
+
+1. ❌ Using `setHand`, `setColor`, etc. directly instead of `setBoard`
+2. ❌ Forgetting to include `t.testIsSecondPlayer(game)` at the end
+3. ❌ Testing `achievements` zone directly instead of `junk`
+4. ❌ Assuming card order after melding (cards go to front, not end)
+5. ❌ Assuming opponents draw figures when achievements are claimed via card effects
+6. ❌ Trying to activate cards on other players' boards
+7. ❌ Not accounting for artifact actions at start of turn
+8. ❌ Forgetting to specify required expansions
 
 ## Best Practices
 

@@ -4,31 +4,23 @@ module.exports = {
   color: `purple`,
   age: 2,
   expansion: `figs`,
-  biscuits: `hl&3`,
+  biscuits: `hlp3`,
   dogmaBiscuit: `l`,
   karma: [
-    `If you would take a Dogma action and activate a card with a {k} as a featured icon, instead choose any other icon on your board as the featured icon.`
+    `If you would dogma a card using {k} as a featured icon, instead score the card and junk all cards in the {2} deck or the {3} deck.`
   ],
   karmaImpl: [
     {
-      trigger: 'featured-biscuit',
-      matches: (game, player, { biscuit }) => biscuit === 'k',
-      func: (game, player) => {
-        const biscuits = player.biscuits()
-        const choices = Object
-          .entries(biscuits)
-          .filter(([biscuit, count]) => count > 0)
-          .map(([biscuit, count]) => biscuit)
-          .filter(biscuit => biscuit !== 'k')
-
-        const biscuit = game.requestInputSingle({
-          actor: player.name,
-          title: 'Choose a Biscuit',
-          choices,
-        })[0]
-
-        return biscuit
-      }
+      trigger: 'dogma',
+      kind: 'would-instead',
+      matches: (game, player, { featuredBiscuit }) => featuredBiscuit === 'k',
+      func: (game, player, { card, self }) => {
+        game.actions.score(player, card)
+        game.actions.chooseAndJunkDeck(player, [
+          game.getEffectAge(self, 2),
+          game.getEffectAge(self, 3),
+        ])
+      },
     }
   ]
 }
