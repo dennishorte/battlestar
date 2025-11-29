@@ -4,25 +4,35 @@ module.exports = {
   color: `yellow`,
   age: 2,
   expansion: `figs`,
-  biscuits: `&cch`,
+  biscuits: `pcch`,
   dogmaBiscuit: `c`,
   karma: [
-    `If you would claim an achievement, first draw and foreshadow a {3}.`,
-    `Each card in your forecast counts as an available achievement for you.`
+    `If a player would score a card, first splay all colors on your board left.`,
+    `Each top card on your board of a color not splayed counts as an available achievement for you.`,
   ],
   karmaImpl: [
     {
-      trigger: 'achieve',
+      trigger: 'score',
+      triggerAll: true,
       kind: 'would-first',
       matches: () => true,
-      func: (game, player) => {
-        game.actions.drawAndForeshadow(player, game.getEffectAge(this, 3))
+      func: (game, player, { owner }) => {
+        for (const color of game.util.colors()) {
+          game.actions.splay(owner, color, 'left')
+        }
       }
     },
     {
       trigger: 'list-achievements',
       func(game, player) {
-        return game.cards.byPlayer(player, 'forecast')
+        const cards = []
+        for (const color of game.util.colors()) {
+          const zone = game.zones.byPlayer(player, color)
+          if (zone.splay === 'none' && zone.cardlist().length > 0) {
+            cards.push(game.cards.top(player, color))
+          }
+        }
+        return cards
       }
     }
   ]

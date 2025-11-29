@@ -4,91 +4,96 @@ const t = require('../../testutil.js')
 
 describe('Cai Lun', () => {
 
-  test('echo', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        green: ['Navigation', 'Sailing',],
-        yellow: ['Cai Lun', 'Fermenting'],
-      },
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Cai Lun')
-
-    t.testChoices(request, ['green', 'yellow'])
-
-    request = t.choose(game, request, 'green')
-
-    t.testBoard(game, {
-      dennis: {
-        green: {
-          cards: ['Navigation', 'Sailing'],
-          splay: 'left'
-        },
-        yellow: ['Cai Lun', 'Fermenting'],
-      },
-    })
-  })
-
-  test('karma: achievement', () => {
+  test('karma: score', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
         yellow: ['Cai Lun', 'Fermenting'],
-        score: ['Machine Tools'],
+        green: ['Clothing', 'Sailing'],
       },
-      achievements: ['Domestication'],
       decks: {
         base: {
-          3: ['Machinery']
+          1: ['Metalworking', 'Tools'],
         },
-        figs: {
-          1: ['Homer']
-        }
       }
     })
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Achieve.age 1')
+    request = t.choose(game, request, 'Dogma.Clothing')
 
     t.testBoard(game, {
       dennis: {
-        yellow: ['Cai Lun', 'Fermenting'],
-        score: ['Machine Tools'],
-        forecast: ['Machinery'],
-        achievements: ['Domestication'],
+        yellow: {
+          cards: ['Cai Lun', 'Fermenting'],
+          splay: 'left',
+        },
+        green: {
+          cards: ['Clothing', 'Sailing'],
+          splay: 'left',
+        },
+        score: ['Metalworking', 'Tools'],
       },
-      micah: {
-        hand: ['Homer']
-      }
     })
   })
 
-  test('karma: forecast achievements', () => {
+  test('karma: score (by other player)', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Cai Lun', 'Fermenting'],
+        green: ['Sailing'],
+        hand: ['Mapmaking'],
+      },
+      micah: {
+        red: ['Archery', 'Construction'],
+        green: ['Clothing'],
+      },
+      decks: {
+        base: {
+          1: ['Metalworking'],
+        },
+      }
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Meld.Mapmaking')
+    request = t.choose(game, request, 'Dogma.Clothing')
+
+    t.testBoard(game, {
+      dennis: {
+        yellow: {
+          cards: ['Cai Lun', 'Fermenting'],
+          splay: 'left',
+        },
+        green: {
+          cards: ['Mapmaking', 'Sailing'],
+          splay: 'left',
+        },
+      },
+      micah: {
+        red: ['Archery', 'Construction'],
+        green: ['Clothing'],
+        score: ['Metalworking'],
+      },
+    })
+  })
+
+  test('karma: available achievements', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
         yellow: ['Cai Lun'],
-        score: ['Machine Tools'],
-        forecast: ['The Wheel'],
+        green: ['The Wheel'],
+        score: ['Coal'],
       },
       achievements: ['Domestication'],
-      decks: {
-        base: {
-          3: ['Machinery']
-        },
-        figs: {
-          1: ['Homer']
-        }
-      }
     })
 
     let request
     request = game.run()
 
-    t.testActionChoices(request, 'Achieve', ['age 1', 'The Wheel'])
+    t.testActionChoices(request, 'Achieve', ['*base-1*', 'The Wheel'])
   })
 })
