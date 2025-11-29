@@ -493,6 +493,17 @@ TestUtil.setColor = function(game, playerName, colorName, cardNames) {
   const player = game.players.byName(playerName)
   const zone = game.zones.byPlayer(player, colorName)
   const cards = cardNames.map(name => game.cards.byId(name))
+  
+  // Validate that all cards match the color pile they're being placed in
+  for (const card of cards) {
+    if (card.color !== colorName) {
+      throw new Error(
+        `Card color mismatch: Attempting to place "${card.name}" (color: ${card.color}) in ${colorName} pile for player ${playerName}. ` +
+        `Cards must be placed in their own color pile.`
+      )
+    }
+  }
+  
   for (const card of zone.cardlist()) {
     game.actions.return(player, card, { silent: true })
   }

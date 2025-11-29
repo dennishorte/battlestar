@@ -4,11 +4,11 @@ module.exports = {
   color: `blue`,
   age: 2,
   expansion: `figs`,
-  biscuits: `sh&s`,
+  biscuits: `shps`,
   dogmaBiscuit: `s`,
   karma: [
     `You may issue an Advancement Decree with any two figures.`,
-    `If you would take a Dogma action, first increase every {} value in each echo and dogma effect by one.`
+    `If you would execute an effect, first increase every age value in the effect by one for the duration of the effect.`
   ],
   karmaImpl: [
     {
