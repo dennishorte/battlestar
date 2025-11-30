@@ -54,7 +54,7 @@ function InnovationFactory(settings, viewerName) {
 function factoryFromLobby(lobby) {
   return GameFactory({
     game: 'Innovation: Ultimate',
-    version: 2,
+    version: 3,
     name: lobby.name,
     expansions: lobby.options.expansions,
     randomizeExpansions: lobby.options.randomizeExpansions,
@@ -259,7 +259,12 @@ Innovation.prototype.initializeZonesPlayers = function() {
 Innovation.prototype.initializeStartingCards = function() {
   for (const player of this.players.all()) {
     this.actions.draw(player, { exp: 'base', age: 1 })
-    this.actions.draw(player, { exp: 'base', age: 1 })
+    if (version < 3 && this.getExpansionList().includes('echo')) {
+      this.actions.draw(player, { exp: 'echo', age: 1 })
+    }
+    else {
+      this.actions.draw(player, { exp: 'base', age: 1 })
+    }
   }
 }
 
