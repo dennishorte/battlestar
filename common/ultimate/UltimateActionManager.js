@@ -381,7 +381,7 @@ class UltimateActionManager extends BaseActionManager {
       const others = this
         .players
         .startingWith(player)
-        .filter(other => !this.checkSameTeam(player, other))
+        .filter(other => !this.game.checkSameTeam(player, other))
 
       for (const opp of others) {
         this.draw(opp, { exp: 'figs' })

@@ -418,7 +418,7 @@ Innovation.prototype.action = function(count) {
   }
   else if (name === 'Dogma') {
     const card = this.cards.byId(arg)
-    
+
     // Validate that the card belongs to the player's board
     if (!card.checkIsOnPlayerBoard(player)) {
       const cardOwner = card.owner ? card.owner.name : 'no one'
@@ -431,7 +431,7 @@ Innovation.prototype.action = function(count) {
         `Players can only activate cards on their own board.`
       )
     }
-    
+
     this.actions.dogma(player, card)
   }
   else if (name === 'Draw') {
@@ -1206,10 +1206,10 @@ Innovation.prototype.getNumAchievementsToWin = function() {
 }
 
 Innovation.prototype.getScore = function(player, opts={}) {
-  return this.getScoreDetails(player).total * (opts.doubleScore ? 2 : 1)
+  return this.getScoreDetails(player, opts).total * (opts.doubleScore ? 2 : 1)
 }
 
-Innovation.prototype.getScoreDetails = function(player) {
+Innovation.prototype.getScoreDetails = function(player, opts={}) {
   const details = {
     score: [],
     bonuses: [],
@@ -1221,7 +1221,12 @@ Innovation.prototype.getScoreDetails = function(player) {
     total: 0
   }
 
-  details.score = this.cards.byPlayer(player, 'score').map(card => card.getAge()).sort()
+  details.score = this
+    .cards
+    .byPlayer(player, 'score')
+    .filter(card => !opts.excludeCards || opts.excludeCards.findIndex(x => x.id !== card.id) === -1)
+    .map(card => card.getAge())
+    .sort()
   details.bonuses = this.getBonuses(player)
   details.karma = this
     .getInfoByKarmaTrigger(player, 'calculate-score')

@@ -210,7 +210,103 @@ TestUtil.testZone = function(game, zoneName, expectedCards, opts={}) {
   expect(zoneCards).toEqual(expectedCards)
 }
 
+// Helper function to validate that no card is declared in multiple locations
+function _validateNoDuplicateCards(game, state) {
+  const cardLocations = new Map() // cardName -> array of location strings
+
+  // Helper to add a card location
+  function addCardLocation(cardName, location) {
+    if (!cardLocations.has(cardName)) {
+      cardLocations.set(cardName, [])
+    }
+    cardLocations.get(cardName).push(location)
+  }
+
+  // Check player boards
+  for (const playerName of ['dennis', 'micah', 'scott', 'eliya']) {
+    const playerBoard = state[playerName]
+    if (playerBoard) {
+      // Check color piles
+      for (const color of game.util.colors()) {
+        if (playerBoard[color]) {
+          const cards = playerBoard[color].cards || playerBoard[color]
+          for (const cardName of cards) {
+            addCardLocation(cardName, `${playerName}.${color}`)
+          }
+        }
+      }
+
+      // Check player zones
+      for (const zoneName of ['artifact', 'score', 'achievements', 'forecast', 'hand', 'safe', 'museum']) {
+        if (zoneName in playerBoard) {
+          for (const cardName of playerBoard[zoneName]) {
+            addCardLocation(cardName, `${playerName}.${zoneName}`)
+          }
+        }
+      }
+    }
+  }
+
+  // Check global achievements
+  if (state.achievements) {
+    for (const cardName of state.achievements) {
+      addCardLocation(cardName, 'achievements')
+    }
+  }
+
+  // Check junk
+  if (state.junk) {
+    for (const cardName of state.junk) {
+      addCardLocation(cardName, 'junk')
+    }
+  }
+
+  // Check decks
+  const decks = state.decks || {}
+  for (const exp of Object.keys(decks)) {
+    for (const [age, cards] of Object.entries(decks[exp])) {
+      for (const cardName of cards) {
+        addCardLocation(cardName, `decks.${exp}.${age}`)
+      }
+    }
+  }
+
+  // Check decksExact
+  const decksExact = state.decksExact || {}
+  for (const exp of Object.keys(decksExact)) {
+    for (const [age, cards] of Object.entries(decksExact[exp])) {
+      for (const cardName of cards) {
+        addCardLocation(cardName, `decksExact.${exp}.${age}`)
+      }
+    }
+  }
+
+  // Check for duplicates
+  const duplicates = []
+  for (const [cardName, locations] of cardLocations.entries()) {
+    if (locations.length > 1) {
+      duplicates.push({
+        card: cardName,
+        locations: locations
+      })
+    }
+  }
+
+  if (duplicates.length > 0) {
+    const errorMessages = duplicates.map(dup => 
+      `  "${dup.card}" appears in: ${dup.locations.join(', ')}`
+    )
+    throw new Error(
+      `Card declared in multiple locations in setBoard:\n${errorMessages.join('\n')}\n` +
+      `Each card can only be in one location at a time.`
+    )
+  }
+}
+
 TestUtil.setBoard = function(game, state) {
+  // Validate that no card is declared in multiple locations
+  _validateNoDuplicateCards(game, state)
+
   game.testSetBreakpoint('before-first-player', (game) => {
     if (state.achievements) {
       TestUtil.setAvailableAchievements(game, state.achievements)

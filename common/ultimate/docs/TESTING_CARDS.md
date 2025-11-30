@@ -668,6 +668,16 @@ test('dogma: junking age 1 achievement', () => {
 })
 ```
 
+**Important**: When using hidden achievement names like `*base-1*` or `*echo-2*` in `t.choose()`, the selection is **non-deterministic** if there are multiple achievements of the same expansion and age available. The game may select any matching achievement, which can cause tests to fail intermittently. To ensure deterministic behavior, use achievements from different expansions so each selection is unique:
+
+```javascript
+t.setBoard(game, {
+  achievements: ['The Wheel', 'Heritage'], // base age 1 and echo age 1 - unique selections
+})
+request = t.choose(game, request, 'Achieve.*base-1*') // Will always select The Wheel
+request = t.choose(game, request, 'Achieve.*echo-1*')  // Will always select Heritage
+```
+
 To verify that **no achievement was junked**, test that the junk is empty:
 
 ```javascript
