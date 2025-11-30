@@ -104,7 +104,7 @@ Innovation.prototype.initializeCards = function() {
 }
 
 Innovation.prototype.initializeExpansions = function() {
-  if (!this.version || this.version < 2) {
+  if (!this.settings.version || this.settings.version < 2) {
     return
   }
 
@@ -113,20 +113,25 @@ Innovation.prototype.initializeExpansions = function() {
     this.settings.expansions = ['base']
 
     const probability = .6
-    game.log.add({
+    this.log.add({
       template: 'Expansions will be randomly selected with probability {prob}.',
       args: { prob: probability },
     })
 
-    const availableExpansions = ultimate.SUPPORTED_EXPANSIONS.filter(exp => exp !== 'base')
+    const availableExpansions = SUPPORTED_EXPANSIONS.filter(exp => exp !== 'base')
     for (const exp of availableExpansions) {
       const randomNumber = this.random()
+      const includeThisExpansion = randomNumber < probability
       this.log.add({
-        template: '{expansion} rolled {number}',
-        args: { expansion: exp, number, randomNumber }
+        template: '{expansion} rolled {number} {emoji}',
+        args: {
+          expansion: exp,
+          number: randomNumber.toPrecision(2),
+          emoji: includeThisExpansion ? '✅' : '❌',
+        }
       })
 
-      if (randomNumber < probability) {
+      if (includeThisExpansion) {
         this.settings.expansions.push(exp)
       }
     }
@@ -134,7 +139,7 @@ Innovation.prototype.initializeExpansions = function() {
 
   this.log.add({
     template: 'The following expansions were selected: {expansions}',
-    args: { expansions: this.settings.expansions },
+    args: { expansions: this.settings.expansions.join() },
   })
 }
 
