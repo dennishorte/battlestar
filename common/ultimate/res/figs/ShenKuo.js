@@ -4,19 +4,42 @@ module.exports = {
   color: `green`,
   age: 3,
   expansion: `figs`,
-  biscuits: `ch*c`,
+  biscuits: `chpc`,
   dogmaBiscuit: `c`,
   karma: [
-    `Each splayed color on your board provides three additional points towards your score.`
+    `If you would score a non-figure, instead splay that card's color right.`,
+    `If you would splay a color left, instead splay that color right.`,
+    `Each visible card on your board provides an additional point towards your score.`
   ],
   karmaImpl: [
+    {
+      trigger: 'score',
+      kind: 'would-instead',
+      matches: (game, player, { card }) => !card.checkIsFigure(),
+      func: (game, player, { card }) => game.actions.splay(player, card.color, 'right')
+    },
+    {
+      trigger: 'splay',
+      kind: 'would-instead',
+      matches: (game, player, { direction }) => direction === 'left',
+      func: (game, player, { color }) => game.actions.splay(player, color, 'right')
+    },
     {
       trigger: 'calculate-score',
       func: (game, player) => {
         return game
-          .util.colors()
-          .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
-          .length * 3
+          .util
+          .colors()
+          .map(color => game.zones.byPlayer(player, color))
+          .map(zone => {
+            if (zone.splay === 'none') {
+              return zone.cardlist().length > 0 ? 1 : 0
+            }
+            else {
+              return zone.cardlist().length
+            }
+          })
+          .reduce((count, acc) => count + acc, 0)
       }
     }
   ]
