@@ -94,6 +94,7 @@ The test utilities are available through `t` (imported from `testutil.js`). Key 
 
 - **`t.choose(game, request, ...selections)`** - Makes a selection from an input request
   - **Note**: `game.run()` is automatically called each time `t.choose()` is called, so calling `game.run()` multiple times has no effect
+  - **Note**: The game auto-chooses effects when there are zero or one valid choices, so no `t.choose()` call is needed in those cases. Only call `t.choose()` when there are multiple valid choices that require player input.
 - **`t.do(game, request, action)`** - Performs an action from an "any" input request
 - **`game.run()`** - Runs the game until it needs input
   - **Note**: You typically only need to call this once at the start of a test. After that, `t.choose()` automatically advances the game state
@@ -742,17 +743,29 @@ The `testDecreeForTwo` helper tests that when a figure is the top card, it produ
 
 When writing tests, be aware of these common pitfalls:
 
-1. **Card Color Validation**: The `setColor` function (used internally by `setBoard`) validates that cards are placed in their correct color piles. You'll get an error if you try to place a card in the wrong color pile.
+1. **Top Card Requirement**: Only the **top card** (first card in the array) of a color pile can be the target of a dogma action. When setting up tests with `t.setBoard()`, ensure the card you want to dogma is the first card in its color pile array. For example:
+   ```javascript
+   t.setBoard(game, {
+     dennis: {
+       purple: ['Philosophy'], // Philosophy is on top, can be dogmatized
+       // NOT: purple: ['OtherCard', 'Philosophy'] // Philosophy is not on top
+     }
+   })
+   ```
 
-2. **Karma `owner` Parameter**: In karma effects, the `owner` parameter refers to the owner of the **karma card**, not necessarily the player whose card is being dogmatized.
+2. **Card Color Validation**: The `setColor` function (used internally by `setBoard`) validates that cards are placed in their correct color piles. You'll get an error if you try to place a card in the wrong color pile.
 
-3. **Auto-Ordering**: After melding or scoring multiple cards, you may need to call `t.choose(game, request, 'auto')` to auto-order them.
+3. **Karma `owner` Parameter**: In karma effects, the `owner` parameter refers to the owner of the **karma card**, not necessarily the player whose card is being dogmatized.
 
-4. **Artifact Actions**: At the start of each player's turn, there's a free artifact action. You may need to handle this in tests if artifacts are present.
+4. **Auto-Ordering**: After melding or scoring multiple cards, you may need to call `t.choose(game, request, 'auto')` to auto-order them.
 
-5. **First Round Actions**: In the first round, players only get one action, not two.
+5. **Artifact Actions**: At the start of each player's turn, there's a free artifact action. You may need to handle this in tests if artifacts are present.
 
-6. **Card Ownership Validation**: The game validates that players can only activate cards on their own board. If you try to activate a card on another player's board, you'll get a helpful error message.
+6. **First Round Actions**: In the first round, players only get one action, not two.
+
+7. **Card Ownership Validation**: The game validates that players can only activate cards on their own board. If you try to activate a card on another player's board, you'll get a helpful error message.
+
+8. **Auto-Choosing**: The game automatically chooses effects when there are zero or one valid choices, so you don't need to call `t.choose()` in those cases. For example, if a dogma effect has only one valid target, the game will automatically select it without requiring a `t.choose()` call.
 
 ## Common Mistakes to Avoid
 
