@@ -512,6 +512,24 @@ TestUtil.setColor = function(game, playerName, colorName, cardNames) {
   }
 }
 
+// Helper function to validate that cards match the deck they're being placed in
+function _validateCardsForDeck(cards, exp, age) {
+  for (const card of cards) {
+    if (card.age !== age) {
+      throw new Error(
+        `Card age mismatch: Attempting to place "${card.name}" (age: ${card.age}) in ${exp} age ${age} deck. ` +
+        `Cards must be placed in decks matching their age.`
+      )
+    }
+    if (card.expansion !== exp) {
+      throw new Error(
+        `Card expansion mismatch: Attempting to place "${card.name}" (expansion: ${card.expansion}) in ${exp} age ${age} deck. ` +
+        `Cards must be placed in decks matching their expansion.`
+      )
+    }
+  }
+}
+
 // Other cards will be sent to the junk.
 TestUtil.setDeckExact = function(game, exp, age, cardNames) {
   const deck = game.zones.byDeck(exp, age)
@@ -523,6 +541,8 @@ TestUtil.setDeckExact = function(game, exp, age, cardNames) {
     .map(c => game.cards.byId(c))
     .reverse()
 
+  _validateCardsForDeck(cards, exp, age)
+
   for (const card of cards) {
     card.moveToTop(deck)
   }
@@ -532,6 +552,11 @@ TestUtil.setDeckTop = function(game, exp, age, cardNames) {
   const cards = cardNames
     .map(c => game.cards.byId(c))
     .reverse()
+  
+  // Validate that all cards match the deck they're being placed in
+  // (cards are moved to card.home, but we verify the age matches what was requested)
+  _validateCardsForDeck(cards, exp, age)
+  
   for (const card of cards) {
     card.moveTo(card.home, 0)
   }

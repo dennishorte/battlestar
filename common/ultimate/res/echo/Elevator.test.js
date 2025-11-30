@@ -17,7 +17,7 @@ describe("Elevator", () => {
       },
       decks: {
         echo: {
-          7: ['Bifocals'],
+          6: ['Bifocals'],
         },
       },
     })
@@ -55,7 +55,7 @@ describe("Elevator", () => {
       },
       decks: {
         echo: {
-          7: ['Bifocals'],
+          6: ['Bifocals'],
         },
       },
     })

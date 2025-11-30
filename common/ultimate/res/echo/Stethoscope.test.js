@@ -13,7 +13,7 @@ describe("Stethoscope", () => {
         hand: ['Canning'],
       },
       decks: {
-        echo: {
+        base: {
           7: ['Combustion'],
         },
       },

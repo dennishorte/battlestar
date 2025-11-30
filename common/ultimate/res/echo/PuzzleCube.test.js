@@ -15,8 +15,8 @@ describe("Puzzle Cube", () => {
         },
       },
       decks: {
-        10: {
-          echo: ['Sudoku'],
+        echo: {
+          10: ['Sudoku'],
         },
       }
     })
@@ -50,8 +50,8 @@ describe("Puzzle Cube", () => {
         score: ['Mathematics', 'Coal'],
       },
       decks: {
-        10: {
-          echo: ['Sudoku'],
+        echo: {
+          10: ['Sudoku'],
         },
       }
     })

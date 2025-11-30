@@ -17,7 +17,7 @@ describe("Horseshoes", () => {
         purple: ['Mysticism'],
       },
       decks: {
-        usee: {
+        echo: {
           2: ['Watermill', 'Chaturanga'],
         },
       }
