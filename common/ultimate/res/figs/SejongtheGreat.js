@@ -4,11 +4,11 @@ module.exports = {
   color: `blue`,
   age: 3,
   expansion: `figs`,
-  biscuits: `&3hs`,
+  biscuits: `p3hs`,
   dogmaBiscuit: `s`,
   karma: [
     `You may issue an advancement decree with any two figures.`,
-    `If you would meld a blue card of value above 3, instead return it and draw and meld a card of value one higher.`
+    `If you would meld a card of value equal to your top red card, instead return it and draw and meld a card of value one higher.`
   ],
   karmaImpl: [
     {
@@ -18,7 +18,10 @@ module.exports = {
     {
       trigger: 'meld',
       kind: 'would-instead',
-      matches: (game, player, { card }) => card.color === 'blue' && card.getAge() > 3,
+      matches: (game, player, { card }) => {
+        const topRed = game.cards.top(player, 'red')
+        return topRed && topRed.getAge() === card.getAge()
+      },
       func: (game, player, { card }) => {
         game.actions.return(player, card)
         game.actions.drawAndMeld(player, card.getAge() + 1)
