@@ -4,11 +4,11 @@ module.exports = {
   color: `red`,
   age: 3,
   expansion: `figs`,
-  biscuits: `3h&k`,
+  biscuits: `3hpk`,
   dogmaBiscuit: `k`,
   karma: [
     `You may issue a War Decree with any two figures.`,
-    `If you would score a non-figure card, instead meld the card, then you may splay left the color of that card.`
+    `If you would dogma a card with a demand effect, instead score a top card with {k} of each color on each opponent's board.`,
   ],
   karmaImpl: [
     {
@@ -16,12 +16,16 @@ module.exports = {
       decree: 'War',
     },
     {
-      trigger: 'score',
+      trigger: 'dogma',
       kind: 'would-instead',
-      matches: (game, player, { card }) => card.expansion !== 'figs',
-      func: (game, player, { card }) => {
-        game.actions.meld(player, card)
-        game.actions.chooseAndSplay(player, [card.color], 'left')
+      matches: (game, player, { card }) => card.checkHasBiscuit('k'),
+      func: (game, player) => {
+        const toScore = game
+          .players
+          .opponents(player)
+          .flatMap(opponent => game.cards.tops(opponent))
+          .filter(card => card.checkHasBiscuit('k'))
+        game.actions.scoreMany(player, toScore)
       }
     }
   ]

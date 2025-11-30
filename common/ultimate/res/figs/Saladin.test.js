@@ -3,39 +3,41 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 
 describe('Saladin', () => {
-
-
   test('karma: decree', () => {
     t.testDecreeForTwo('Saladin', 'War')
   })
 
-  test('karma: score', () => {
+  test('karma: dogma', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
         red: ['Saladin'],
-        green: ['Sailing'],
+        green: ['Mapmaking'],
         yellow: ['Masonry'],
       },
       micah: {
-        green: ['The Wheel']
+        green: ['The Wheel'],
+        blue: ['Tools'],
+        purple: ['Code of Laws'],
+        score: ['Domestication'],
       }
     })
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Saladin')
-    request = t.choose(game, request, 'The Wheel')
-    request = t.choose(game, request, 'green')
+    request = t.choose(game, request, 'Dogma.Mapmaking')
+    request = t.choose(game, request, 'auto')
 
     t.testBoard(game, {
       dennis: {
         red: ['Saladin'],
+        green: ['Mapmaking'],
         yellow: ['Masonry'],
-        green: {
-          cards: ['The Wheel', 'Sailing'],
-          splay: 'left'
-        }
+        score: ['The Wheel', 'Tools'],
+      },
+      micah: {
+        purple: ['Code of Laws'],
+        score: ['Domestication'],
       },
     })
   })
