@@ -93,8 +93,10 @@ The test utilities are available through `t` (imported from `testutil.js`). Key 
 ### Interacting with the Game
 
 - **`t.choose(game, request, ...selections)`** - Makes a selection from an input request
+  - **Note**: `game.run()` is automatically called each time `t.choose()` is called, so calling `game.run()` multiple times has no effect
 - **`t.do(game, request, action)`** - Performs an action from an "any" input request
 - **`game.run()`** - Runs the game until it needs input
+  - **Note**: You typically only need to call this once at the start of a test. After that, `t.choose()` automatically advances the game state
 
 ### Asserting Game State
 
