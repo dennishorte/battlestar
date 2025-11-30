@@ -1,3 +1,5 @@
+const util = require('../../../lib/util.js')
+
 module.exports = {
   id: `Alhazen`,  // Card names are unique in Innovation
   name: `Alhazen`,
@@ -7,21 +9,35 @@ module.exports = {
   biscuits: `ss&h`,
   dogmaBiscuit: `s`,
   karma: [
-    `Each of your splayed colors counts as having a top card of value equal to the number of {s} or {k} in that color (whichever is higher) for the purpose of taking a Draw or Inspire action.`
+    `If you would take a Draw action, instead tuck a top card with a {k} from anywhere. Then draw a card of value equal to the number of {k} or {s} in a color on your board.`
   ],
   karmaImpl: [
     {
-      trigger: 'top-card-value',
-      matches(game, player, { action, color }) {
-        const actionCondition = action === 'draw' || action === 'inspire'
-        const splayCondition = game.zones.byPlayer(player, color).splay !== 'none'
-        return actionCondition && splayCondition
+      trigger: 'draw-action',
+      kind: 'would-instead',
+      matches: () => true,
+      func: (game, player) => {
+        const canTuck = game.cards.topsAll().filter(card => card.checkHasBiscuit('k'))
+        game.actions.chooseAndTuck(player, canTuck)
+
+        const ageChoices = game
+          .util
+          .colors()
+          .map(color => game.zones.byPlayer(player, color))
+          .flatMap(zone => {
+            const biscuits = zone.biscuits()
+            return [biscuits.s, biscuits.k]
+          })
+          .filter(age => age > 0) // Filter out 0 values
+        const uniqueChoices = util
+          .array
+          .distinct(ageChoices)
+          .sort((l, r) => l - r)
+        const ageToDraw = game.actions.chooseAge(player, uniqueChoices, {
+          title: 'Choose an age to draw',
+        })
+        game.actions.draw(player, { age: ageToDraw })
       },
-      func(game, player, { color }) {
-        const zone = game.zones.byPlayer(player, color)
-        const biscuits = zone.biscuits()
-        return Math.max(biscuits.k, biscuits.s)
-      }
     }
   ]
 }
