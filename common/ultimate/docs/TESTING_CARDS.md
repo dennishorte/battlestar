@@ -455,6 +455,8 @@ Karma effects are special abilities on figure cards that trigger under certain c
 - `junk` - When a card is junked
 - `return` - When a card is returned
 
+**Important**: Karma effects only trigger for actions taken by the **owner** of the karma card. For example, if dennis has a figure with a karma effect, that karma will only trigger when dennis takes an action (like dogmatizing a card), not when other players take actions. The exception is karma effects with `triggerAll: true`, which can trigger for all players, but the effect still applies to the owner of the karma card.
+
 ### Testing Karma on Dogma
 
 ```javascript
