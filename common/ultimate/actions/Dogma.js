@@ -68,10 +68,27 @@ function EndorseAction(player, color) {
 
 function _executeEffects(player, card, shareData, opts) {
   // Store planned effects now, as changes to the stacks shouldn't affect them.
-  const effects = [
-    ...this.game.getVisibleEffectsByColor(card.owner, card.color, 'echo'),
-    card.visibleEffects('dogma'),
-  ].filter(e => e !== undefined)
+  let effects = []
+
+  if (this.game.settings.version < 4) {
+    effects = [
+      ...this.game.getVisibleEffectsByColor(card.owner, card.color, 'echo'),
+      card.visibleEffects('dogma'),
+    ]
+  }
+  else {
+    if (opts.artifact) {
+      effects = [card.visibleEffects('dogma')]
+    }
+    else {
+      effects = [
+        ...this.game.getVisibleEffectsByColor(card.owner, card.color, 'echo'),
+        card.visibleEffects('dogma'),
+      ]
+    }
+  }
+
+  effects = effects.filter(e => e !== undefined)
 
   const effectOpts = {
     sharing: shareData.sharing,
