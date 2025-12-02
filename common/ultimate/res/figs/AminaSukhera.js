@@ -4,24 +4,25 @@ module.exports = {
   color: `red`,
   age: 4,
   expansion: `figs`,
-  biscuits: `f*fh`,
+  biscuits: `fpfh`,
   dogmaBiscuit: `f`,
   karma: [
-    `When you meld this card, score all opponents' top figures of value 4.`,
+    `If you would dogma a card as your second action, first score a figure from an opponent's hand.`,
     `Each top card with a {k} on your board counts as an available achievement for you.`
   ],
   karmaImpl: [
     {
-      trigger: 'when-meld',
-      func(game, player) {
-        for (const opp of game.players.opponents(player)) {
-          const topFigures = game
-            .cards.tops(opp)
-            .filter(card => card.checkIsFigure())
-            .filter(card => card.getAge() === 4)
-          game.actions.scoreMany(player, topFigures)
-        }
-      }
+      trigger: 'dogma',
+      kind: 'would-first',
+      matches: (game, player) => game.state.actionNumber === 2,
+      func: (game, player) => {
+        const options = game
+          .players
+          .opponents(player)
+          .flatMap(opponent => game.cards.byPlayer(opponent, 'hand'))
+          .filter(card => card.checkIsFigure())
+        game.actions.chooseAndScore(player, options)
+      },
     },
     {
       trigger: 'list-achievements',
