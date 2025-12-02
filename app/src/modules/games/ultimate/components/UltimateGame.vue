@@ -137,10 +137,13 @@ export default {
           const player = this.game.players.current()
           const card = this.game.cards.byPlayer(player, 'artifact')[0]
           const effects = this.game.getVisibleEffectsByColor(player, card.color, 'echo')
+          const subtitles = this.game.version < 4
+            ? [`${effects.length} echo effects will trigger`]
+            : undefined
           if (effects.length > 0) {
             selector.choices[0] = {
               title: 'dogma',
-              subtitles: [`${effects.length} echo effects will trigger`]
+              subtitles
             }
           }
         }
