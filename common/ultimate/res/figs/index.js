@@ -41,7 +41,7 @@ const cardData = [
   require('./NiccoloMachiavelli.js'),
   require('./AminaSukhera.js'),
   require('./Michaelangelo.js'),
-  require('./Takiyuddin.js'),
+  require('./TakiadDin.js'),
   require('./GalileoGalilei.js'),
   require('./WilliamShakespeare.js'),
   require('./SamueldeChamplain.js'),
