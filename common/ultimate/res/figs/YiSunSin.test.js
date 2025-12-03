@@ -4,76 +4,163 @@ const t = require('../../testutil.js')
 
 describe('Yi Sun-Sin', () => {
 
-  test('echo', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        red: ['Yi Sun-Sin'],
-        green: ['The Wheel'],
-      },
-      micah: {
-        yellow: ['Masonry'],
-        red: ['Construction'],
-        blue: ['Writing'],
-      },
+  describe('If any player would transfer a card or exchange any number of cards, instead tuck that card or those cards, draw and tuck a {4}, and score a top card with a {k} from anywhere.', () => {
+
+    describe('transfer action', () => {
+      test('karma: owner transfers card, tucks it, draws and tucks {4}, scores top card with {k}', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+        t.setBoard(game, {
+          dennis: {
+            red: ['Yi Sun-Sin'],
+            green: ['Mapmaking'],
+          },
+          micah: {
+            yellow: ['Masonry'],
+            score: ['Metalworking'],
+          },
+          decks: {
+            base: {
+              4: ['Gunpowder'],
+            }
+          }
+        })
+
+        let request
+        request = game.run()
+        request = t.choose(game, request, 'Dogma.Mapmaking')
+        request = t.choose(game, request, 'Masonry')
+
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
+          dennis: {
+            red: ['Yi Sun-Sin', 'Metalworking', 'Gunpowder'],
+            green: ['Mapmaking'],
+            score: ['Masonry'],
+          },
+        })
+      })
+
+      test('karma: opponent transfers card, owner tucks it, draws and tucks {4}, scores top card with {k}', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+        t.setBoard(game, {
+          dennis: {
+            red: ['Yi Sun-Sin'],
+            score: ['Metalworking']
+          },
+          micah: {
+            green: ['Mapmaking'],
+          },
+          decks: {
+            base: {
+              4: ['Printing Press', 'Gunpowder'],
+            }
+          }
+        })
+
+        let request
+        request = game.run()
+        // Skip dennis's turn by drawing a card (first round only has one action)
+        request = t.choose(game, request, 'Draw.draw a card')
+        // Now micah's turn starts
+        request = t.choose(game, request, 'Dogma.Mapmaking')
+
+        t.testBoard(game, {
+          dennis: {
+            red: ['Yi Sun-Sin', 'Metalworking', 'Gunpowder'],
+            hand: ['Printing Press'],
+            score: ['Mapmaking'], // Mapmaking has {k} biscuit, so it gets scored
+          },
+          micah: {
+          },
+        })
+      })
     })
 
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Yi Sun-Sin')
+    describe('exchange action', () => {
+      test('karma: owner exchanges cards, tucks them, draws and tucks {4}, scores top card with {k}', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+        t.setBoard(game, {
+          dennis: {
+            red: ['Yi Sun-Sin'],
+            yellow: ['Canal Building'],
+            hand: ['Metalworking'], // Age 1
+            score: ['The Wheel'], // Age 1
+          },
+          micah: {
+            yellow: ['Masonry'], // Has {k} biscuit
+          },
+          decks: {
+            base: {
+              4: ['Gunpowder'],
+            }
+          }
+        })
 
-    t.testChoices(request, ['The Wheel', 'Masonry', 'Construction'])
+        let request
+        request = game.run()
+        request = t.choose(game, request, 'Dogma.Canal Building')
+        request = t.choose(game, request, 'Exchange highest cards between hand and score pile')
+        // TuckMany asks to choose which cards to tuck (or use 'auto' to tuck all)
+        request = t.choose(game, request, 'auto')
+        // Choose which top card with {k} to score (Masonry on micah's board)
+        request = t.choose(game, request, 'Masonry')
 
-    request = t.choose(game,request, 'Construction')
+        t.testBoard(game, {
+          dennis: {
+            red: ['Yi Sun-Sin', 'Metalworking', 'Gunpowder'],
+            yellow: ['Canal Building'],
+            green: ['The Wheel'],
+            score: ['Masonry'],
+          },
+          micah: {
+          },
+        })
+      })
 
-    t.testIsSecondPlayer(game)
-    t.testBoard(game, {
-      dennis: {
-        red: ['Yi Sun-Sin'],
-        green: ['The Wheel'],
-        score: ['Construction'],
-      },
-      micah: {
-        yellow: ['Masonry'],
-        blue: ['Writing'],
-      },
+      test('karma: opponent exchanges cards, owner tucks them, draws and tucks {4}, scores top card with {k}', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+        t.setBoard(game, {
+          dennis: {
+            red: ['Yi Sun-Sin'],
+            yellow: ['Masonry'], // Has {k} biscuit
+          },
+          micah: {
+            yellow: ['Canal Building'],
+            hand: ['Metalworking'], // Age 1
+            score: ['The Wheel'], // Age 1
+          },
+          decks: {
+            base: {
+              4: ['Printing Press', 'Gunpowder'],
+            }
+          }
+        })
+
+        let request
+        request = game.run()
+        // Skip dennis's turn by drawing a card (first round only has one action)
+        request = t.choose(game, request, 'Draw.draw a card')
+        // Now micah's turn starts
+        request = t.choose(game, request, 'Dogma.Canal Building')
+        request = t.choose(game, request, 'Exchange highest cards between hand and score pile')
+        // TuckMany asks to choose which cards to tuck (or use 'auto' to tuck all)
+        request = t.choose(game, request, 'auto')
+        // Choose which top card with {k} to score (Masonry on dennis's board)
+        request = t.choose(game, request, 'Masonry')
+
+        t.testBoard(game, {
+          dennis: {
+            red: ['Yi Sun-Sin', 'Metalworking', 'Gunpowder'],
+            green: ['The Wheel'],
+            hand: ['Printing Press'],
+            score: ['Masonry'],
+          },
+          micah: {
+            yellow: ['Canal Building'],
+          },
+        })
+      })
     })
   })
 
-  test('karma: score', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        red: ['Yi Sun-Sin'],
-        purple: {
-          cards: ['Enterprise', 'Education'],
-          splay: 'up'
-        },
-      },
-      micah: {
-        purple: ['Monotheism'],
-      },
-      decks: {
-        base: {
-          3: ['Engineering'],
-        }
-      }
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Yi Sun-Sin')
-
-    t.testIsSecondPlayer(game)
-    t.testBoard(game, {
-      dennis: {
-        red: ['Yi Sun-Sin'],
-        purple: {
-          cards: ['Enterprise', 'Education', 'Monotheism'],
-          splay: 'up'
-        },
-        hand: ['Engineering']
-      },
-    })
-  })
 })

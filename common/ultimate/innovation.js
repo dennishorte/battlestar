@@ -749,7 +749,7 @@ Innovation.prototype.aDecree = function(player, name) {
   // Handle karma
   const karmaKind = this.aKarma(player, 'decree')
   if (karmaKind === 'would-instead') {
-    this.acted(player)
+    this.actions.acted(player)
     return
   }
 
@@ -788,6 +788,12 @@ Innovation.prototype.aDecree = function(player, name) {
 }
 
 Innovation.prototype.aExchangeCards = function(player, cards1, cards2, zone1, zone2) {
+  const karmaKind = this.aKarma(player, 'exchange', { cards1, cards2, zone1, zone2 })
+  if (karmaKind === 'would-instead') {
+    this.actions.acted(player)
+    return 'would-instead'
+  }
+
   this.log.add({
     template: '{player} exchanges {count1} cards for {count2} cards',
     args: {
@@ -815,7 +821,11 @@ Innovation.prototype.aExchangeZones = function(player, zone1, zone2) {
   const cards1 = zone1.cardlist()
   const cards2 = zone2.cardlist()
 
-  this.aExchangeCards(player, cards1, cards2, zone1, zone2)
+  const result = this.aExchangeCards(player, cards1, cards2, zone1, zone2)
+
+  if (result === 'would-instead') {
+    return
+  }
 
   this.log.add({
     template: '{player} exchanges {count1} cards from {zone1} for {count2} cards from {zone2}',
@@ -910,6 +920,14 @@ Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
         },
       })
     }
+    else if (opts.trigger === 'exchange') {
+      this.log.add({
+        template: '{player} would exchange cards, triggering...',
+        args: {
+          player,
+        }
+      })
+    }
     else {
       this.log.add({
         template: '{player} would {trigger} {card}, triggering...',
@@ -949,6 +967,7 @@ Innovation.prototype.aKarma = function(player, kind, opts={}) {
     .filter(info => {
       return info.impl.matches(this, player, { ...opts, owner: info.owner, self: info.card })
     })
+
   return this._aKarmaHelper(player, infos, { ...opts, trigger: kind })
 }
 
@@ -1145,7 +1164,8 @@ Innovation.prototype.getInfoByKarmaTrigger = function(player, trigger) {
     .filter(info => info.impl.triggerAll)
 
   const thisPlayer = this
-    .cards.tops(player)
+    .cards
+    .tops(player)
     .flatMap(card => card.getKarmaInfo(trigger))
 
   const all = [...thisPlayer, ...global]
