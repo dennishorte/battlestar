@@ -17,12 +17,16 @@ function DrawAction(player, opts={}) {
   const baseAge = age !== undefined ? (age || 1) : (highestTopAge || 1)
 
   // Adjust age based on empty decks.
-  const [ adjustedAge, adjustedExp ] = _adjustedDrawDeck.call(this, baseAge, baseExp)
+  let [ adjustedAge, adjustedExp ] = _adjustedDrawDeck.call(this, baseAge, baseExp)
 
   const karmaKind = this.game.aKarma(player, 'draw', { ...opts, age: adjustedAge })
   if (karmaKind === 'would-instead') {
     this.acted(player)
     return
+  }
+  else if (karmaKind === 'would-first') {
+    // Some effects junk decks, which might affect the draw age.
+    [ adjustedAge, adjustedExp ] = _adjustedDrawDeck.call(this, baseAge, baseExp)
   }
 
   return _doDraw.call(this, player, adjustedExp, adjustedAge, opts)
