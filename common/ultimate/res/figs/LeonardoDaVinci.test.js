@@ -4,112 +4,101 @@ const t = require('../../testutil.js')
 
 describe('Leonardo Da Vinci', () => {
 
-  test('echo', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        yellow: ['Leonardo Da Vinci'],
-      },
-      micah: {
-        purple: ['Homer'],
-        green: ['Fu Xi'],
-      }
-    })
+  describe('If you would meld a card, first meld another card in your hand. If the other card is purple, draw three {4}, then score a top figure from anywhere.', () => {
 
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Leonardo Da Vinci')
-
-    t.testChoices(request, ['Homer', 'Leonardo Da Vinci'])
-
-    request = t.choose(game, request, 'Homer')
-
-    t.testIsSecondPlayer(game)
-    t.testBoard(game, {
-      dennis: {
-        yellow: ['Leonardo Da Vinci'],
-        score: ['Homer'],
-      },
-      micah: {
-        green: ['Fu Xi'],
-      }
-    })
-  })
-
-  test('karma: meld purple', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        yellow: ['Leonardo Da Vinci'],
-        hand: ['Monotheism']
-      },
-      decks: {
-        base: {
-          4: ['Gunpowder', 'Enterprise', 'Reformation']
+    test('karma: meld a card, first meld a purple card, draw three {4}, score a top figure', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          yellow: ['Leonardo Da Vinci'],
+          hand: ['Philosophy', 'Construction'], // Philosophy is purple, Construction to meld
+        },
+        micah: {
+          red: ['Yi Sun-Sin'], // Top figure to score
+        },
+        decks: {
+          base: {
+            4: ['Gunpowder', 'Printing Press', 'Experimentation'], // Three {4} cards to draw
+          }
         }
-      }
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, request, 'Meld.Construction')
+      request = t.choose(game, request, 'Yi Sun-Sin')
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          yellow: ['Leonardo Da Vinci'],
+          purple: ['Philosophy'], // Melded first
+          red: ['Construction'], // Then melded
+          hand: ['Gunpowder', 'Printing Press', 'Experimentation'], // Three {4} cards drawn
+          score: ['Yi Sun-Sin'], // Top figure scored
+        },
+        micah: {
+          red: [],
+        },
+      })
     })
 
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Meld.Monotheism')
+    test('karma: no other cards in hand to meld first', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          yellow: ['Leonardo Da Vinci'],
+          hand: ['Construction'],
+        },
+        micah: {
+          red: ['Yi Sun-Sin'],
+        },
+      })
 
-    t.testBoard(game, {
-      dennis: {
-        yellow: ['Leonardo Da Vinci'],
-        purple: ['Monotheism'],
-        hand: ['Gunpowder', 'Enterprise', 'Reformation']
-      },
+      let request
+      request = game.run()
+      request = t.choose(game, request, 'Meld.Construction')
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          yellow: ['Leonardo Da Vinci'],
+          red: ['Construction'], // Then melded
+        },
+        micah: {
+          red: ['Yi Sun-Sin'],
+        },
+      })
+    })
+
+    test('karma: meld a card, first meld another non-purple card from hand', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          yellow: ['Leonardo Da Vinci'],
+          hand: ['Construction', 'Tools'],
+        },
+        micah: {
+          red: ['Yi Sun-Sin'],
+        },
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, request, 'Meld.Construction')
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          yellow: ['Leonardo Da Vinci'],
+          red: ['Construction'],
+          blue: ['Tools'],
+        },
+        micah: {
+          red: ['Yi Sun-Sin'],
+        },
+      })
     })
   })
 
-  test('karma: meld yellow', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        yellow: ['Leonardo Da Vinci'],
-        hand: ['Vaccination', 'Agriculture', 'Services', 'Tools', 'Coal']
-      },
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Meld.Vaccination')
-
-    t.testChoices(request, ['Tools', 'Coal'])
-
-    request = t.choose(game, request, 'auto')
-
-    t.testBoard(game, {
-      dennis: {
-        yellow: ['Vaccination', 'Leonardo Da Vinci'],
-        blue: ['Tools'],
-        red: ['Coal'],
-        hand: ['Agriculture', 'Services']
-      },
-    })
-  })
-
-  test('karma: non-yellow, non-purple', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        yellow: ['Leonardo Da Vinci'],
-        hand: ['Vaccination', 'Agriculture', 'Services', 'Tools', 'Coal']
-      },
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Meld.Coal')
-
-    t.testBoard(game, {
-      dennis: {
-        yellow: ['Leonardo Da Vinci'],
-        red: ['Coal'],
-        hand: ['Vaccination', 'Agriculture', 'Services', 'Tools']
-      },
-    })
-
-  })
 })
