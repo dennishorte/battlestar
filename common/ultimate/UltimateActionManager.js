@@ -354,7 +354,10 @@ class UltimateActionManager extends BaseActionManager {
 
     // Special achievements can only be claimed from the achievements zone
     if (card.isSpecialAchievement && card.zone.id !== 'achievements') {
-      console.log(card.name, card.zone.id)
+      this.log.add({
+        template: `{card} has already been claimed`,
+        args: { card }
+      })
       return
     }
 
