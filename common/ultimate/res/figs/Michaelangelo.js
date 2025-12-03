@@ -4,7 +4,7 @@ module.exports = {
   color: `yellow`,
   age: 4,
   expansion: `figs`,
-  biscuits: `ch*c`,
+  biscuits: `chpc`,
   dogmaBiscuit: `c`,
   karma: [
     `Each card in your hand is also considered part of your score pile.`
