@@ -26,7 +26,7 @@ module.exports = {
     },
 
     (game, player) => {
-      const splayed = game.actions.chooseAndSplay(player, ['green'], 'right')
+      const splayed = game.actions.chooseAndSplay(player, ['green'], 'right')[0]
       if (splayed) {
         game.actions.chooseAndSplay(player, game.util.colors(), 'up', { count: 1 })
       }
