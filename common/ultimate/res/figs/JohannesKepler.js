@@ -1,13 +1,15 @@
+const util = require('../../../lib/util.js')
+
 module.exports = {
   id: `Johannes Kepler`,  // Card names are unique in Innovation
   name: `Johannes Kepler`,
   color: `blue`,
   age: 4,
   expansion: `figs`,
-  biscuits: `hs&s`,
+  biscuits: `hsps`,
   dogmaBiscuit: `s`,
   karma: [
-    `If you would take a Dogma action, first reveal all cards of the chosen card's color from your hand. Increase each {} value in any effect during this action by the number of cards you revealed.`
+    `If you would take a Dogma action, instead do so while increasing each {} value in every effect during this action by the number of different top card values on your board greater than 3.`
   ],
   karmaImpl: [
     {
@@ -15,16 +17,18 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func: (game, player, { card }) => {
-        const matchingCards = game
-          .cards.byPlayer(player, 'hand')
-          .filter(other => other.color === card.color)
+        const topAgesGreaterThanThree = game
+          .cards
+          .tops(player)
+          .filter(card => card.getAge() > 3)
+          .map(card => card.getAge())
+        const uniqueAges = util.array.distinct(topAgesGreaterThanThree)
 
-        matchingCards.forEach(card => game.mReveal(player, card))
-        game.state.dogmaInfo.globalAgeIncrease = matchingCards.length
+        game.state.dogmaInfo.globalAgeIncrease = uniqueAges.length
         game.log.add({
           template: 'All {} values increased by {value} during this dogma action',
           args: {
-            value: matchingCards.length
+            value: uniqueAges.length
           }
         })
       }
