@@ -1650,13 +1650,20 @@ Innovation.prototype._generateActionChoicesDecree = function() {
   const player = this.players.current()
 
   const figuresInHand = this
-    .zones.byPlayer(player, 'hand')
+    .zones
+    .byPlayer(player, 'hand')
     .cardlist()
     .filter(c => c.checkIsFigure())
 
   const figuresByAge = this.util.separateByAge(figuresInHand)
 
   const availableDecrees = []
+
+  if (this.getInfoByKarmaTrigger(player, 'decree-for-any-three').length > 0 && figuresInHand.length >= 3) {
+    for (const color of this.util.colors()) {
+      availableDecrees.push(this.util.colorToDecree(color))
+    }
+  }
 
   if (Object.keys(figuresByAge).length >= 3) {
     figuresInHand
