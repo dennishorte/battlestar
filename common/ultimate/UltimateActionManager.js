@@ -825,8 +825,8 @@ class UltimateActionManager extends BaseActionManager {
     return card
   })
 
-  unsplay(player, color) {
-    const zone = this.zones.byPlayer(player, color)
+  unsplay(player, colorOrZone) {
+    const zone = typeof colorOrZone === 'string' ? this.zones.byPlayer(player, color) : colorOrZone
 
     if (zone.splay === 'none') {
       this.log.add({
@@ -840,7 +840,7 @@ class UltimateActionManager extends BaseActionManager {
         args: { player, zone }
       })
       zone.splay = 'none'
-      return color
+      return colorOrZone
     }
   }
 
