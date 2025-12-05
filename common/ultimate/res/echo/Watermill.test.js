@@ -33,8 +33,13 @@ describe("Watermill", () => {
       dennis: {
         red: ['Crossbow'],
         yellow: ['Watermill'],
-        hand: ['Sailing', 'Fermenting', 'Optics'],
+        hand: ['Sailing', 'Fermenting'],
       },
+      decks: {
+        base: {
+          3: ['Optics'],
+        }
+      }
     })
 
     let request
@@ -45,9 +50,9 @@ describe("Watermill", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        red: ['Crossbow', 'Optics'],
+        red: ['Crossbow'],
         yellow: ['Watermill', 'Fermenting'],
-        hand: ['Sailing'],
+        hand: ['Sailing', 'Optics'],
       },
     })
   })
@@ -57,11 +62,12 @@ describe("Watermill", () => {
     t.setBoard(game,  {
       dennis: {
         forecast: ['Watermill'],
-        hand: ['Sailing', 'Fermenting', 'Optics', 'Crossbow'],
+        hand: ['Sailing', 'Fermenting', 'Crossbow'],
       },
       decksExact: {
         base: {
           2: ['Construction', 'Mapmaking'],
+          3: ['Optics'],
         },
       },
     })
@@ -74,10 +80,10 @@ describe("Watermill", () => {
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        red: ['Crossbow', 'Optics', 'Construction'],
+        red: ['Crossbow', 'Construction'],
         yellow: ['Watermill', 'Fermenting'],
         green: ['Mapmaking'],
-        hand: ['Sailing'],
+        hand: ['Sailing', 'Optics'],
       },
     })
   })

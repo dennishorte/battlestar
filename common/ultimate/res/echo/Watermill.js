@@ -1,3 +1,5 @@
+const util = require('../../../lib/util.js')
+
 module.exports = {
   name: `Watermill`,
   color: `yellow`,
@@ -7,17 +9,17 @@ module.exports = {
   dogmaBiscuit: `l`,
   echo: ``,
   dogma: [
-    `Tuck a card of value equal to a bonus on your board, if you have one.`,
+    `Draw a card of value equal to a bonus on your board, if you have one.`,
     `Tuck a card from your hand. If Watermill was foreseen, tuck all cards from the deck of value equal to the tucked card.`,
   ],
   dogmaImpl: [
     (game, player) => {
-      const bonuses = game.getBonuses(player)
-      const choices = game
-        .cards
-        .byPlayer(player, 'hand')
-        .filter(card => bonuses.includes(card.getAge()))
-      game.actions.chooseAndTuck(player, choices)
+      const bonuses = util.array.distinct(game.getBonuses(player)).sort((l, r) => l - r)
+
+      if (bonuses.length > 0) {
+        const age = game.actions.chooseAge(player, bonuses)
+        game.actions.draw(player, { age })
+      }
     },
 
     (game, player, { foreseen, self }) => {
