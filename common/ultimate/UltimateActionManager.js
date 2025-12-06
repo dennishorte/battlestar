@@ -826,7 +826,7 @@ class UltimateActionManager extends BaseActionManager {
   })
 
   unsplay(player, colorOrZone) {
-    const zone = typeof colorOrZone === 'string' ? this.zones.byPlayer(player, color) : colorOrZone
+    const zone = typeof colorOrZone === 'string' ? this.zones.byPlayer(player, colorOrZone) : colorOrZone
 
     if (zone.splay === 'none') {
       this.log.add({

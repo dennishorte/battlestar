@@ -1039,7 +1039,7 @@ describe('Innovation', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
         t.setBoard(game, {
           dennis: {
-            red: ['Archery', 'Brussels'],
+            purple: ['Monotheism', 'Brussels'],
           },
         })
 
@@ -1690,10 +1690,10 @@ describe('zone size limits', () => {
     t.setBoard(game, {
       dennis: {
         yellow: ['Tomb'],
-        blue: ['Tools', 'Writing'],
+        blue: ['Experimentation', 'Writing'],
         green: ['The Wheel'],
         achievements: ['Agriculture'],
-        safe: ['Software', 'Flight', 'Optics', 'Tools', 'Metalworking'],
+        safe: ['Software', 'Flight', 'Engineering', 'Tools', 'Metalworking'],
       },
       achievements: ['Domestication', 'Construction', 'Optics'],
     })
@@ -1708,7 +1708,7 @@ describe('zone size limits', () => {
       dennis: {
         green: ['The Wheel'],
         hand: ['Domestication'],
-        safe: ['Software', 'Flight', 'Optics', 'Tools', 'Metalworking'],
+        safe: ['Software', 'Flight', 'Engineering', 'Tools', 'Metalworking'],
         achievements: ['Agriculture'],
       },
     })
@@ -1719,10 +1719,10 @@ describe('zone size limits', () => {
     t.setBoard(game, {
       dennis: {
         yellow: ['Tomb'],
-        blue: ['Tools', 'Writing'],
+        blue: ['Experimentation', 'Writing'],
         green: ['The Wheel'],
         achievements: ['Agriculture'],
-        safe: ['Software', 'Flight', 'Optics', 'Tools'],
+        safe: ['Software', 'Flight', 'Engineering', 'Tools'],
       },
       achievements: ['Domestication', 'Construction', 'Optics'],
     })
@@ -1737,7 +1737,7 @@ describe('zone size limits', () => {
       dennis: {
         green: ['The Wheel'],
         hand: ['Domestication'],
-        safe: ['Software', 'Flight', 'Optics', 'Tools', 'Construction'],
+        safe: ['Software', 'Flight', 'Engineering', 'Tools', 'Construction'],
         achievements: ['Agriculture'],
       },
     })
@@ -1748,13 +1748,13 @@ describe('zone size limits', () => {
     t.setBoard(game, {
       dennis: {
         yellow: ['Tomb'],
-        blue: ['Tools', 'Writing'],
+        blue: ['Experimentation', 'Writing'],
         green: {
           cards: ['The Wheel', 'Sailing'],
           splay: 'left',
         },
         achievements: ['Agriculture'],
-        safe: ['Software', 'Flight', 'Optics', 'Tools'],
+        safe: ['Software', 'Flight', 'Engineering', 'Tools'],
       },
       achievements: ['Domestication', 'Construction', 'Optics'],
     })
@@ -1772,7 +1772,7 @@ describe('zone size limits', () => {
           splay: 'left',
         },
         hand: ['Domestication'],
-        safe: ['Software', 'Flight', 'Optics', 'Tools'],
+        safe: ['Software', 'Flight', 'Engineering', 'Tools'],
         achievements: ['Agriculture'],
       },
     })
@@ -1783,13 +1783,13 @@ describe('zone size limits', () => {
     t.setBoard(game, {
       dennis: {
         yellow: ['Tomb'],
-        blue: ['Tools', 'Writing'],
+        blue: ['Experimentation', 'Writing'],
         green: {
           cards: ['The Wheel', 'Sailing'],
           splay: 'left',
         },
         achievements: ['Agriculture'],
-        safe: ['Software', 'Flight', 'Optics'],
+        safe: ['Software', 'Flight', 'Engineering'],
       },
       achievements: ['Domestication', 'Construction', 'Optics'],
     })
@@ -1807,7 +1807,7 @@ describe('zone size limits', () => {
           splay: 'left',
         },
         hand: ['Domestication'],
-        safe: ['Software', 'Flight', 'Optics', 'Construction'],
+        safe: ['Software', 'Flight', 'Engineering', 'Construction'],
         achievements: ['Agriculture'],
       },
     })
@@ -1818,13 +1818,13 @@ describe('zone size limits', () => {
     t.setBoard(game, {
       dennis: {
         yellow: ['Tomb'],
-        blue: ['Tools', 'Writing'],
+        blue: ['Experimentation', 'Writing'],
         green: {
           cards: ['The Wheel', 'Sailing'],
           splay: 'right',
         },
         achievements: ['Agriculture'],
-        safe: ['Software', 'Flight', 'Optics'],
+        safe: ['Software', 'Flight', 'Engineering'],
       },
       achievements: ['Domestication', 'Construction', 'Optics'],
     })
@@ -1842,7 +1842,7 @@ describe('zone size limits', () => {
           splay: 'right',
         },
         hand: ['Domestication'],
-        safe: ['Software', 'Flight', 'Optics'],
+        safe: ['Software', 'Flight', 'Engineering'],
         achievements: ['Agriculture'],
       },
     })
@@ -1853,7 +1853,7 @@ describe('zone size limits', () => {
     t.setBoard(game, {
       dennis: {
         yellow: ['Tomb'],
-        blue: ['Tools', 'Writing'],
+        blue: ['Experimentation', 'Writing'],
         green: {
           cards: ['The Wheel', 'Sailing'],
           splay: 'right',
@@ -1888,7 +1888,7 @@ describe('zone size limits', () => {
     t.setBoard(game, {
       dennis: {
         yellow: ['Tomb'],
-        blue: ['Tools', 'Writing'],
+        blue: ['Experimentation', 'Writing'],
         green: {
           cards: ['The Wheel', 'Sailing'],
           splay: 'up',
@@ -1923,7 +1923,7 @@ describe('zone size limits', () => {
     t.setBoard(game, {
       dennis: {
         yellow: ['Tomb'],
-        blue: ['Tools', 'Writing'],
+        blue: ['Experimentation', 'Writing'],
         green: {
           cards: ['The Wheel', 'Sailing'],
           splay: 'up',
@@ -1958,7 +1958,7 @@ describe('zone size limits', () => {
     t.setBoard(game, {
       dennis: {
         yellow: ['Tomb'],
-        blue: ['Tools', 'Writing'],
+        blue: ['Experimentation', 'Writing'],
         green: {
           cards: ['The Wheel', 'Sailing'],
           splay: 'aslant',
@@ -1993,7 +1993,7 @@ describe('zone size limits', () => {
     t.setBoard(game, {
       dennis: {
         yellow: ['Tomb'],
-        blue: ['Tools', 'Writing'],
+        blue: ['Experimentation', 'Writing'],
         green: {
           cards: ['The Wheel', 'Sailing'],
           splay: 'aslant',
