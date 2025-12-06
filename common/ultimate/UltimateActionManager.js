@@ -19,6 +19,50 @@ class UltimateActionManager extends BaseActionManager {
   meld = MeldAction
 
   /**
+     Validates that a player can claim a specific achievement.
+     Throws an Error if the player is not eligible.
+   */
+  _validateAchievementClaim(player, card, opts={}) {
+    if (!card) {
+      throw new Error('Achievement not found')
+    }
+
+    // Special achievements have their own eligibility check
+    if (card.isSpecialAchievement) {
+      if (card.zone.id !== 'achievements') {
+        throw new Error(`${card.name} has already been claimed`)
+      }
+      if (card.checkPlayerIsEligible) {
+        const reduceCost = this.game.getInfoByKarmaTrigger(
+          player,
+          'reduce-special-achievement-requirements'
+        ).length > 0
+        if (!card.checkPlayerIsEligible(this.game, player, reduceCost)) {
+          throw new Error(`Player is not eligible for ${card.name}`)
+        }
+      }
+      return
+    }
+
+    // Standard achievements check age and score requirements
+    if (!this.game.checkAchievementEligibility(player, card, opts)) {
+      const topCardAge = this.game.getHighestTopAge(player, { reason: 'achieve' })
+      const scoreCost = this.game.getScoreCost(player, card)
+      const currentScore = this.game.getScore(player, opts)
+
+      const issues = []
+      if (card.getAge() > topCardAge) {
+        issues.push(`age requirement (need age ${card.getAge()}, have ${topCardAge})`)
+      }
+      if (scoreCost > currentScore) {
+        issues.push(`score requirement (need ${scoreCost}, have ${currentScore})`)
+      }
+
+      throw new Error(`Not eligible for ${card.name}: ${issues.join(', ')}`)
+    }
+  }
+
+  /**
      This is the Achieve Action, not just claiming an achievemenet as part of a dogma action.
    */
   achieveAction(player, arg, opts={}) {
@@ -29,21 +73,44 @@ class UltimateActionManager extends BaseActionManager {
       }
     }
 
+    let card
+    let claimOpts = { ...opts }
+
     if (arg.startsWith('safe: ')) {
       const hiddenName = arg.substr(6)
       const { expansion, age } = _parseHiddenCardName(hiddenName)
-      const card = this
-        .cards.byPlayer(player, 'safe')
+      card = this
+        .cards
+        .byPlayer(player, 'safe')
         .find(c => c.expansion === expansion && c.getAge() === age)
-      this.actions.claimAchievement(player, { card })
     }
     else if (arg.startsWith('*')) {
       const { expansion, age } = _parseHiddenCardName(arg)
-      const isStandard = opts.nonAction ? false : true
-      this.actions.claimAchievement(player, { expansion, age, isStandard })
+      claimOpts.expansion = expansion
+      claimOpts.age = age
+      claimOpts.isStandard = opts.nonAction ? false : true
+      card = this
+        .game
+        .cards
+        .byZone('achievements')
+        .filter(card => !card.isSpecialAchievement && !card.isDecree)
+        .find(c => c.getAge() === age && c.expansion === expansion)
     }
     else {
-      const card = this.cards.byId(arg)
+      card = this.cards.byId(arg)
+    }
+
+    // Validate eligibility before claiming
+    this._validateAchievementClaim(player, card, claimOpts)
+
+    // Claim the achievement
+    if (arg.startsWith('safe: ')) {
+      this.actions.claimAchievement(player, { card })
+    }
+    else if (arg.startsWith('*')) {
+      this.actions.claimAchievement(player, { expansion: claimOpts.expansion, age: claimOpts.age, isStandard: claimOpts.isStandard })
+    }
+    else {
       this.actions.claimAchievement(player, { card })
     }
   }

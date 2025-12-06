@@ -4,27 +4,34 @@ module.exports = {
   color: `red`,
   age: 5,
   expansion: `figs`,
-  biscuits: `&ffh`,
+  biscuits: `pffh`,
   dogmaBiscuit: `f`,
   karma: [
-    `You may issue a War Decree with any two figures.`,
-    `If an opponent would claim an achievement that you are eligible to claim, instead you achieve it.`
+    `If an opponent would claim an achievement, first you claim another available standard achievement if eligible.`,
+    `If you would dogma a yellow card, first transfer all purple cards on your board to the available achievements.`
   ],
   karmaImpl: [
     {
-      trigger: 'decree-for-two',
-      decree: 'War',
-    },
-    {
       trigger: 'achieve',
       triggerAll: true,
-      kind: 'would-instead',
-      matches: (game, player, { card }) => {
-        const owner = game.getPlayerByCard(this)
-        return player !== owner && game.checkAchievementEligibility(owner, card)
-      },
+      kind: 'would-first',
+      matches: (game, player, { owner }) => player.id !== owner.id,
       func: (game, player, { card, owner }) => {
-        game.actions.claimAchievement(owner, card)
+        const choices = game
+          .getAvailableStandardAchievements(owner)
+          .filter(achievement => game.checkAchievementEligibility(owner, achievement))
+          .filter(achievement => achievement.id !== card.id)
+
+        game.actions.chooseAndAchieve(owner, choices)
+      }
+    },
+    {
+      trigger: 'dogma',
+      kind: 'would-first',
+      matches: (game, player, { card }) => card.color === 'yellow',
+      func: (game, player) => {
+        const toTransfer = game.cards.byPlayer(player, 'purple')
+        game.actions.transferMany(player, toTransfer, game.zones.byId('achievements'), { ordered: true })
       }
     }
   ]

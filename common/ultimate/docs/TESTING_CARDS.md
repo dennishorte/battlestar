@@ -164,6 +164,20 @@ t.setBoard(game, {
 })
 ```
 
+**Important**: When setting up decks, the age of cards must match the deck age. You cannot place an age 5 card in an age 3 deck. The test framework will throw an error if there's a mismatch:
+
+```javascript
+decks: {
+  base: {
+    3: ['Engineering'], // ✅ Correct: Engineering is age 3
+    // 3: ['Measurement'], // ❌ Error: Measurement is age 5
+  },
+  figs: {
+    3: ['Al-Kindi'], // ✅ Correct: Al-Kindi is age 3
+  }
+}
+```
+
 ### Player Zones
 
 For each player, you can set:
@@ -457,6 +471,27 @@ Karma effects are special abilities on figure cards that trigger under certain c
 
 **Important**: Karma effects only trigger for actions taken by the **owner** of the karma card. For example, if dennis has a figure with a karma effect, that karma will only trigger when dennis takes an action (like dogmatizing a card), not when other players take actions. The exception is karma effects with `triggerAll: true`, which can trigger for all players, but the effect still applies to the owner of the karma card.
 
+**Important for Karma Implementation**: When writing karma effects with `triggerAll: true`, the `player` parameter in the karma function refers to the player taking the action, while the `owner` parameter (available in the opts) refers to the owner of the karma card. The effect should typically use `owner` to apply to the correct player:
+
+```javascript
+// In the karma implementation:
+{
+  trigger: 'achieve',
+  triggerAll: true,
+  kind: 'would-first',
+  matches: (game, player, { owner }) => player.id !== owner.id,
+  func: (game, player, { card, owner }) => {
+    // Use 'owner' here, not 'player'
+    // 'player' is the one taking the action (opponent claiming achievement)
+    // 'owner' is the one who owns the karma card (dennis)
+    const choices = game
+      .getAvailableStandardAchievements(owner)  // ✅ Use owner
+      .filter(achievement => game.checkAchievementEligibility(owner, achievement))
+    game.actions.chooseAndAchieve(owner, choices)  // ✅ Use owner
+  }
+}
+```
+
 ### Testing Karma on Dogma
 
 ```javascript
@@ -638,6 +673,28 @@ test('dogma (two players to transfer)', () => {
 **Important**: You cannot test the `achievements` zone directly in `t.testBoard()` because it includes all special achievements that are always present. Instead, test the `junk` zone to verify whether achievements were junked.
 
 **Note on Figure Drawing**: When a player claims a standard achievement using the "Achieve" action, opponents draw figures. However, if an achievement is claimed via a card effect (such as Masonry's dogma or other karma effects), opponents do **not** draw figures. Only the "Achieve" action triggers figure drawing for opponents.
+
+**Setting Up Decks for Figure Drawing**: When testing scenarios where achievements will be claimed via the "Achieve" action, you must set up figure decks in `decks`. The age of the figure deck must match the **age of the achievement being claimed**, not the figure's age. Opponents draw one figure from each figure expansion deck of that age:
+
+```javascript
+t.setBoard(game, {
+  achievements: ['The Wheel', 'Machinery'], // Age 1 and age 3 achievements
+  decks: {
+    base: {
+      1: ['Tools'], // Age 1 base card (for when age 1 achievement is claimed)
+      3: ['Engineering'], // Age 3 base card (for when age 3 achievement is claimed)
+    },
+    figs: {
+      1: ['Fu Xi'], // Age 1 figure (for when age 1 achievement is claimed)
+      3: ['Al-Kindi'], // Age 3 figure (for when age 3 achievement is claimed)
+    }
+  }
+})
+
+// When micah claims Machinery (age 3) via Achieve action:
+// - dennis (opponent) draws from base age 3 deck → Engineering
+// - dennis (opponent) draws from figs age 3 deck → Al-Kindi
+```
 
 ```javascript
 test('dogma: junking age 1 achievement', () => {
