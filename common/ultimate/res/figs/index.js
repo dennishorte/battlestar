@@ -51,7 +51,7 @@ const cardData = [
   require('./BartholomewRoberts.js'),
   require('./PetertheGreat.js'),
   require('./IsaacNewton.js'),
-  require('./AntoineVanLeeuwenhoek.js'),
+  require('./AntonieVanLeeuwenhoek.js'),
   require('./Shivaji.js'),
   require('./ChristopherPolhem.js'),
   require('./LudwigVanBeethoven.js'),
