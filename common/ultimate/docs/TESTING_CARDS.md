@@ -836,6 +836,8 @@ When writing tests, be aware of these common pitfalls:
 
 8. **Auto-Choosing**: The game automatically chooses effects when there are zero or one valid choices, so you don't need to call `t.choose()` in those cases. For example, if a dogma effect has only one valid target, the game will automatically select it without requiring a `t.choose()` call.
 
+9. **No Conditionals or Loops**: Tests should never include conditionals on requests or use loops to handle selectors. Tests must be explicit and deterministic. If you need to handle multiple selectors, call `t.choose()` for each one explicitly in sequence.
+
 ## Common Mistakes to Avoid
 
 1. ❌ Using `setHand`, `setColor`, etc. directly instead of `setBoard`
@@ -846,6 +848,7 @@ When writing tests, be aware of these common pitfalls:
 6. ❌ Trying to activate cards on other players' boards
 7. ❌ Not accounting for artifact actions at start of turn
 8. ❌ Forgetting to specify required expansions
+9. ❌ Using conditionals or loops on request selectors (tests must be explicit and deterministic)
 
 ## Best Practices
 
@@ -914,6 +917,37 @@ When writing tests, be aware of these common pitfalls:
     ```javascript
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     ```
+
+12. **Never Use Conditionals or Loops on Requests**: Tests should be deterministic and explicit. Never use conditionals or loops to handle request selectors:
+    ```javascript
+    // ❌ BAD: Using conditionals or loops
+    while (request.selectors && request.selectors.length > 0 && request.selectors[0].actor === 'dennis') {
+      request = game.run()
+    }
+    
+    if (request.selectors && request.selectors.length > 0) {
+      request = t.choose(game, request, 'someChoice')
+    }
+    ```
+    
+    Instead, explicitly handle each expected selector in sequence:
+    ```javascript
+    // ✅ GOOD: Explicit, deterministic test flow
+    let request
+    request = game.run()
+    request = t.choose(game, request, 'Dogma.SomeCard')
+    request = t.choose(game, request, 'someChoice')
+    request = t.choose(game, request, 'auto') // If needed for ordering
+    
+    t.testIsSecondPlayer(game)
+    ```
+    
+    If you find yourself needing conditionals or loops, it usually means:
+    - The test setup is incorrect (missing required cards/state)
+    - You're not handling all expected selectors explicitly
+    - The game state isn't what you expect (investigate why)
+    
+    **Exception**: The only acceptable use of conditionals is when testing optional effects that may or may not create selectors, and even then, prefer explicit test cases for each branch rather than conditional logic.
 
 ## Example: Complete Test File
 

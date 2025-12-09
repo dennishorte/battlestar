@@ -383,8 +383,11 @@ class UltimateActionManager extends BaseActionManager {
     return output
   }
 
-  chooseColor(player) {
-    return this.choose(player, this.util.colors(), { title: 'Choose a color' })[0]
+  chooseColor(player, choices) {
+    if (!choices) {
+      choices = this.util.colors()
+    }
+    return this.choose(player, choices, { title: 'Choose a color' })[0]
   }
 
   claimAchievement(player, opts={}) {
