@@ -22,7 +22,7 @@ describe('Bartolomeo Cristofori', () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Meld.Canning')
-    request = t.choose(game, request, 'age 5')
+    request = t.choose(game, request, '**base-5*')
 
     t.testBoard(game, {
       dennis: {
