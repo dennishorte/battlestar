@@ -753,15 +753,26 @@ test('dogma (two players to transfer)', () => {
 
 ## Best Practices
 
-1. **Test Happy Path First**: Start with most common scenario
-2. **Test Edge Cases**: Empty hands/zones, no valid targets, optional effects skipped
-3. **Use Descriptive Test Names**: `test('dogma: demand effect transfers highest card', () => {`
-4. **Group Related Tests**: Use `describe` blocks
-5. **Use `t.testBoard()`**: For complex states, use this instead of individual assertions
-6. **Test Both Sides**: If conditional logic, test both branches
-7. **Ensure Effects Complete**: Use `t.testIsSecondPlayer(game)` to verify completion
-8. **Test with Correct Expansions**: Always specify `{ expansions: ['base', 'figs'] }`
-9. **Never Use Conditionals/Loops**: Tests must be explicit and deterministic
+1. **Plan Before Implementing**: Before writing tests, plan which tests to write. Consider:
+   - Happy path scenarios
+   - Edge cases (empty zones, no valid targets, optional effects)
+   - Different branches of conditional logic
+   - All trigger conditions for karma effects
+2. **Implement One Test at a Time**: Write and verify each test passes before moving to the next:
+   - Write one test
+   - Run it to ensure it passes
+   - Fix any issues before proceeding
+   - Only then write the next test
+3. **Stop and Ask for Help**: If you find a test you can't get to work correctly after reasonable attempts, stop and ask for help rather than continuing with broken tests
+4. **Test Happy Path First**: Start with most common scenario
+5. **Test Edge Cases**: Empty hands/zones, no valid targets, optional effects skipped
+6. **Use Descriptive Test Names**: `test('dogma: demand effect transfers highest card', () => {`
+7. **Group Related Tests**: Use `describe` blocks
+8. **Use `t.testBoard()`**: For complex states, use this instead of individual assertions
+9. **Test Both Sides**: If conditional logic, test both branches
+10. **Ensure Effects Complete**: Use `t.testIsSecondPlayer(game)` to verify completion
+11. **Test with Correct Expansions**: Always specify `{ expansions: ['base', 'figs'] }`
+12. **Never Use Conditionals/Loops**: Tests must be explicit and deterministic
 
 ## Running Tests
 
