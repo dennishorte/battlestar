@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const age = game.actions.chooseAge(player)
+      const age = game.actions.chooseAge(leader)
       const toTransfer = game
         .cards
         .byPlayer(player, 'score')
