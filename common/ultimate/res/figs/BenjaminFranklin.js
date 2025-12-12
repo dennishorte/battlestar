@@ -4,11 +4,11 @@ module.exports = {
   color: `blue`,
   age: 6,
   expansion: `figs`,
-  biscuits: `s&h6`,
+  biscuits: `sph6`,
   dogmaBiscuit: `s`,
   karma: [
     `You may issue an Advancement Decree with any two figures.`,
-    `If you would meld a card, first draw and meld a card of one higher value.`
+    `If you would meld a card, first if there is a top figure of the same color on any opponent's board, transfer that figure to your hand.`
   ],
   karmaImpl: [
     {
@@ -20,7 +20,13 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func(game, player, { card }) {
-        game.actions.drawAndMeld(player, card.getAge() + 1)
+        const mayTransfer = game
+          .players
+          .opponents(player)
+          .flatMap(opponent => game.cards.tops(opponent))
+          .filter(card => card.checkIsFigure())
+          .filter(topCard => card.color === topCard.color)
+        game.actions.chooseAndTransfer(player, mayTransfer, game.zones.byPlayer(player, 'hand'))
       }
     }
   ]
