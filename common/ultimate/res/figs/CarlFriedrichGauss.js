@@ -6,10 +6,11 @@ module.exports = {
   color: `blue`,
   age: 6,
   expansion: `figs`,
-  biscuits: `ss&h`,
+  biscuits: `ssph`,
   dogmaBiscuit: `s`,
   karma: [
-    `If you would meld a card, first choose a value and meld all other cards of that value from your hand and score pile.`
+    `If you would meld a card, first choose a value and meld all other cards of that value from your hand and score pile.`,
+    `If you would take a Draw action, first draw a {7}.`,
   ],
   karmaImpl: [
     {
@@ -19,11 +20,13 @@ module.exports = {
       func(game, player, { card }) {
         const age = game.actions.chooseAge(player)
         const hand = game
-          .cards.byPlayer(player, 'hand')
+          .cards
+          .byPlayer(player, 'hand')
           .filter(card => card.getAge() === age)
           .filter(other => other !== card)
         const score = game
-          .cards.byPlayer(player, 'score')
+          .cards
+          .byPlayer(player, 'score')
           .filter(card => card.getAge() === age)
 
         // Use distinct in case some Karma causes overlap in these two zones.
@@ -36,6 +39,14 @@ module.exports = {
           game.actions.meldMany(player, cards)
         }
       }
-    }
+    },
+    {
+      trigger: 'draw-action',
+      kind: 'would-first',
+      matches: () => true,
+      func: (game, player, { self }) => {
+        game.actions.draw(player, { age: game.getEffectAge(self, 7) })
+      },
+    },
   ]
 }
