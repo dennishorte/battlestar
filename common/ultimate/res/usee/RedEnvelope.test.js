@@ -16,6 +16,7 @@ describe('Red Envelope', () => {
     request = game.run()
     request = t.choose(game, request, 'Dogma.Red Envelope')
     request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'yes')
     request = t.choose(game, request, 'Masonry', 'Sailing')
     request = t.choose(game, request, 'auto')
 

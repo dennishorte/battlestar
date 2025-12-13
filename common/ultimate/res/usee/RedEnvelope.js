@@ -42,7 +42,11 @@ module.exports = {
         return
       }
 
-      game.actions.chooseAndScore(player, choices, { min: 2, max: 3 })
+      const doScoreCards = game.actions.chooseYesNo(player, 'Score exactly two or three cards from your hand?')
+
+      if (doScoreCards) {
+        game.actions.chooseAndScore(player, choices, { min: 2, max: 3 })
+      }
     }
   ],
 }
