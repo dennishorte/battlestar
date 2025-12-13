@@ -4,10 +4,10 @@ module.exports = {
   color: `yellow`,
   age: 7,
   expansion: `figs`,
-  biscuits: `*chc`,
+  biscuits: `pchc`,
   dogmaBiscuit: `c`,
   karma: [
-    `If you would claim an achievement, first return three cards from your hand. If you do, claim all other cards in your hand as achievements, ignoring eligibility.`
+    `If you would claim an achievement, first return three cards from your hand. If you do, achieve all other cards in your hand, ignoring eligibility.`
   ],
   karmaImpl: [
     {
@@ -15,7 +15,7 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func: (game, player) => {
-        const cards = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { count: 3})
+        const cards = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { count: 3 })
         if (cards && cards.length === 3) {
           const remaining = game.cards.byPlayer(player, 'hand')
           for (const card of remaining) {

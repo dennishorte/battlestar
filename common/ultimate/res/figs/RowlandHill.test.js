@@ -23,7 +23,7 @@ describe('Rowland Hill', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Achieve.age 2')
+    request = t.choose(game, request, 'Achieve.*base-2*')
     request = t.choose(game, request, 'Fermenting', 'Canal Building', 'Vaccination')
     request = t.choose(game, request, 'auto')
 
