@@ -390,6 +390,19 @@ class UltimateActionManager extends BaseActionManager {
     return this.choose(player, choices, { title: 'Choose a color' })[0]
   }
 
+  chooseZone(player, zones) {
+    if (zones.length === 0) {
+      return undefined
+    }
+
+    const zoneIds = zones.map(zone => zone.id)
+    const selectedId = this.game.actions.choose(player, zoneIds, {
+      title: 'Choose a zone',
+    })[0]
+
+    return this.game.zones.byId(selectedId)
+  }
+
   claimAchievement(player, opts={}) {
     // Identify the card to be achieved
     const card = function() {
