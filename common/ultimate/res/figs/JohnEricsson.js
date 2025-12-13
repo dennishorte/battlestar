@@ -4,30 +4,38 @@ module.exports = {
   color: `red`,
   age: 7,
   expansion: `figs`,
-  biscuits: `hff*`,
+  biscuits: `hffp`,
   dogmaBiscuit: `f`,
   karma: [
-    `When you meld this card, score all opponents' top figures of value less than 7.`,
-    `Each {f} on your board provides two additional {i}.`
+    `If you would dogma a card of a color an opponent has splayed right, first unsplay that color on an opponent's board.`,
+    `If an opponent would draw a card, first draw and tuck a {7}.`
   ],
   karmaImpl: [
     {
-      trigger: 'when-meld',
-      func: (game, player) => {
-        const figs = game
-          .players.opponents(player)
-          .flatMap(opp => game.cards.tops(opp))
-          .filter(card => card.checkIsFigure())
-          .filter(card => card.getAge() < 7)
-        game.actions.scoreMany(player, figs)
+      trigger: 'dogma',
+      kind: 'would-first',
+      matches: (game, player, { card }) => {
+        const opponentSplays = game
+          .players
+          .opponents(player)
+          .map(opponent => game.zones.byPlayer(opponent, card.color).splay)
+        return opponentSplays.some(splay => splay === 'right')
+      },
+      func: (game, player, { card }) => {
+        const opponentChoices = game
+          .players
+          .opponents(player)
+          .filter(opponent => game.zones.byPlayer(opponent, card.color).splay === 'right')
+        const opponent = game.actions.choosePlayer(player, opponentChoices)
+        game.actions.unsplay(player, game.zones.byPlayer(opponent, card.color))
       }
     },
     {
-      trigger: 'calculate-biscuits',
-      func: (game, player, { biscuits }) => {
-        const output = game.utilEmptyBiscuits()
-        output.i = biscuits.f * 2
-        return output
+      trigger: 'draw',
+      triggerAll: true,
+      matches: (game, player, { owner }) => player.isOpponent(owner),
+      func: (game, player, { owner, self }) => {
+        game.actions.drawAndTuck(owner, game.getEffectAge(self, 7))
       }
     }
   ]

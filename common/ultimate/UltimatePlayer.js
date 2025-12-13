@@ -24,6 +24,10 @@ class UltimatePlayer extends BasePlayer {
     }
     return output
   }
+
+  isOpponent(other) {
+    return this.team !== other.team
+  }
 }
 
 module.exports = {
