@@ -4,106 +4,118 @@ const t = require('../../testutil.js')
 
 describe('George Stephenson', () => {
 
-  test('echo', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        green: {
-          cards: ['George Stephenson', 'Navigation'],
-          splay: 'right',
+  describe('If you would dogma a card of a color you have splayed right, first splay that color on your board up.', () => {
+    test('karma: dogma card of color splayed right, splay that color up', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          green: ['George Stephenson'],
+          red: {
+            cards: ['Archery', 'Metalworking', 'Construction'],
+            splay: 'right', // Red splayed right
+          },
         },
-        purple: {
-          cards: ['Lighting', 'Enterprise'],
-          splay: 'right'
-        },
-        yellow: {
-          cards: ['Canning', 'Agriculture'],
-          splay: 'left'
+        decks: {
+          base: {
+            1: ['Tools'],
+          }
         }
-      },
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, request, 'Dogma.Archery')
+      // Karma triggers: splay red up (was right, now up)
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          green: ['George Stephenson'],
+          red: {
+            cards: ['Archery', 'Metalworking', 'Construction'],
+            splay: 'up', // Red splayed up (changed from right)
+          },
+          hand: ['Tools']
+        },
+      })
     })
 
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.George Stephenson')
-
-    t.testChoices(request, ['green', 'purple'])
-
-    request = t.choose(game, request, 'purple')
-
-    t.testBoard(game, {
-      dennis: {
-        green: {
-          cards: ['George Stephenson', 'Navigation'],
-          splay: 'right',
+    test('karma: does not trigger if color not splayed right', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          green: ['George Stephenson'],
+          red: {
+            cards: ['Archery', 'Metalworking', 'Construction'],
+            splay: 'left', // Red splayed left, not right
+          },
         },
-        purple: {
-          cards: ['Lighting', 'Enterprise'],
-          splay: 'up'
-        },
-        yellow: {
-          cards: ['Canning', 'Agriculture'],
-          splay: 'left'
+        decks: {
+          base: {
+            1: ['Tools'],
+          }
         }
-      },
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, request, 'Dogma.Archery')
+      // Karma should NOT trigger (red is splayed left, not right)
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          green: ['George Stephenson'],
+          red: {
+            cards: ['Archery', 'Metalworking', 'Construction'],
+            splay: 'left', // Red remains splayed left (karma did not trigger)
+          },
+          hand: ['Tools']
+        },
+      })
     })
   })
 
-  test('karma: claim', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        green: ['George Stephenson'],
-        purple: ['Lighting'],
-        blue: {
-          cards: [
-            'Bioengineering',
-            'Computers',
-            'Publications',
-            'Rocketry',
-            'Quantum Theory'
-          ],
-          splay: 'up'
+  describe('If you would claim an achievement, first transfer the bottom yellow card on each board to the available achievements.', () => {
+    test('karma: claim achievement, transfer bottom yellow cards from all boards', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          green: ['George Stephenson'],
+          yellow: ['Agriculture', 'Masonry'], // Masonry is bottom yellow card
+          score: ['Canning'], // Age 10, enough score for age 1 achievement
         },
-        hand: ['Software']
-      },
-      achievements: ['The Wheel', 'Calendar', 'Coal', 'Composites']
-    })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      game.getZoneByDeck('base', 3).cards().forEach(card => game.mRemove(t.dennis(game), card))
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Meld.Software')
-
-    t.testBoard(game, {
-      dennis: {
-        green: ['George Stephenson'],
-        purple: ['Lighting'],
-        blue: {
-          cards: [
-            'Software',
-            'Bioengineering',
-            'Computers',
-            'Publications',
-            'Rocketry',
-            'Quantum Theory'
-          ],
-          splay: 'up'
+        micah: {
+          yellow: ['Vaccination', 'Antibiotics'], // Antibiotics is bottom yellow card
         },
-        achievements: ['World']
-      }
+        achievements: ['Sailing'], // Age 1 achievement to claim
+        decks: {
+          figs: {
+            6: ['John Loudon McAdam'],
+          }
+        }
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, request, 'Achieve.*base-1*') // Claim age 1 achievement (Sailing)
+      request = t.choose(game, request, 'auto')
+
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          green: ['George Stephenson'],
+          yellow: ['Agriculture'],
+          score: ['Canning'],
+          achievements: ['Sailing'],
+        },
+        micah: {
+          yellow: ['Vaccination'],
+          hand: ['John Loudon McAdam'],
+        },
+        standardAchievements: ['Masonry', 'Antibiotics'],
+      })
     })
-
-    const achievements = game
-      .getZoneById('achievements')
-      .cards()
-      .filter(card => !card.isSpecialAchievement)
-      .map(card => card.age)
-      .sort()
-
-    expect(achievements).toStrictEqual([1,1,2,2,4,5,5,6,7,8,9,9])
   })
-
 })
