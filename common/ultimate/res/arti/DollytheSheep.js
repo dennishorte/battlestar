@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `hili`,
   dogmaBiscuit: `i`,
   dogma: [
-    `You may score your bottom yellow card. You may draw and tuck a {1}. If your bottom yellow card is Domestication, you win. Otherwise, meld the higest card in your hand, then draw an {b}.`,
+    `You may score your bottom yellow card. You may draw and tuck a {1}. If your bottom yellow card is Domestication, you win. Otherwise, meld the higest card in your hand, then draw an {e}.`,
     `Junk all available achievements.`,
   ],
   dogmaImpl: [
