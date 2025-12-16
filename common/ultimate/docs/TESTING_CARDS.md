@@ -102,7 +102,7 @@ t.setBoard(game, {
 - Card ages in `decks` must match deck age (age 3 card → age 3 deck)
 - Always specify cards that will be drawn in `decks` for deterministic tests
 - Card order matters: meld = front, tuck = end
-- Only top card (first in array) can be dogmatized
+- **CRITICAL: Only top card (first in array) can be dogmatized** - If you need to dogma a card, it MUST be the first card in its color array. If you put another card before it in the array, you cannot dogma it. Always check that the card you want to dogma is at index 0 of its color stack.
 
 ## Reference: Cards for Testing Actions
 
@@ -732,14 +732,15 @@ test('dogma (two players to transfer)', () => {
 
 ## Important Gotchas
 
-1. **Top Card Requirement**: Only the **top card** (first in array) can be dogmatized
+1. **Top Card Requirement**: Only the **top card** (first in array) can be dogmatized. **CRITICAL**: If you need to dogma a card in your test, it MUST be the first card in its color array. For example, if you have `green: ['Alfred Nobel', 'Mapmaking']`, you can only dogma Alfred Nobel, NOT Mapmaking. To dogma Mapmaking, you must put it first: `green: ['Mapmaking', 'Alfred Nobel']`.
 2. **Card Color Validation**: Cards must be in correct color piles
 3. **Karma `owner` Parameter**: In karma with `triggerAll: true`, `owner` is karma card owner, `player` is action taker
 4. **Auto-Ordering**: After melding/scoring multiple cards, may need `t.choose(game, request, 'auto')`
-5. **Artifact Actions**: Free artifact action at start of turn (handle if artifacts present)
-6. **First Round**: Players only get one action in first round, not two
-7. **Auto-Choosing**: Game auto-chooses when zero or one valid choice (no `t.choose()` needed)
-8. **No Conditionals/Loops**: Tests must be explicit and deterministic - never use conditionals or loops on request selectors
+5. **Auto-Selection of Exact Counts**: When a player must choose a specific number of items and has exactly that many available, the system auto-selects them. However, you may still need to choose the order in which they are processed. Use `t.choose(game, request, 'auto')` for ordering when the order doesn't matter in the test.
+6. **Artifact Actions**: Free artifact action at start of turn (handle if artifacts present)
+7. **First Round**: Players only get one action in first round, not two
+8. **Auto-Choosing**: Game auto-chooses when zero or one valid choice (no `t.choose()` needed)
+9. **No Conditionals/Loops**: Tests must be explicit and deterministic - never use conditionals or loops on request selectors
 
 ## Common Mistakes to Avoid
 

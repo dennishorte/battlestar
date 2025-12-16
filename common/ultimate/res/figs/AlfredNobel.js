@@ -4,10 +4,11 @@ module.exports = {
   color: `green`,
   age: 7,
   expansion: `figs`,
-  biscuits: `chc*`,
+  biscuits: `chcp`,
   dogmaBiscuit: `c`,
   karma: [
-    `Each icon type on your board counts as an achievement, if you have at least twice as many of that icon as every other player.`
+    `Each standard icon type on your board counts as an achievement, if you have at least twice as many of that icon as every opponent.`,
+    `If a player would transfer a card, first junk all cards in the {7} deck.`,
   ],
   karmaImpl: [
     {
@@ -39,6 +40,15 @@ module.exports = {
 
         return bonusAchievements
       }
+    },
+    {
+      trigger: 'transfer',
+      triggerAll: true,
+      kind: 'would-first',
+      matches: () => true,
+      func: (game, player, { owner, self }) => {
+        game.actions.junkDeck(owner, game.getEffectAge(self, 7))
+      },
     }
   ]
 }
