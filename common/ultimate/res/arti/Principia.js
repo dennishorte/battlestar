@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `sshs`,
   dogmaBiscuit: `s`,
   dogma: [
-    `Return you top card of each non-blue color. For each card you return, draw and meld a card of value one higher than the value of the returned card, in ascending order.`
+    `Return your top card of each non-blue color. For each card you return, draw and meld a card of value one higher than the value of the returned card, in ascending order.`
   ],
   dogmaImpl: [
     (game, player) => {
