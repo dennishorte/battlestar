@@ -4,29 +4,28 @@ module.exports = {
   color: `red`,
   age: 8,
   expansion: `figs`,
-  biscuits: `hii&`,
+  biscuits: `hiip`,
   dogmaBiscuit: `i`,
   karma: [
-    `When you meld this card, return all opponents' top figures.`,
-    `Each card in your hand provides two additional {i}.`
+    `If you would draw an {8}, first junk all cards in the {8} deck.`,
+    `If you would meld a card, instead meld it and self-execute it.`,
   ],
   karmaImpl: [
     {
-      trigger: 'when-meld',
-      func: (game, player) => {
-        const figures = game
-          .players.opponents(player)
-          .flatMap(player => game.cards.tops(player))
-          .filter(card => card.checkIsFigure())
-        game.actions.returnMany(player, figures)
+      trigger: 'draw',
+      kind: 'would-first',
+      matches: (game, player, { age, self }) => age === game.getEffectAge(self, 8),
+      func: (game, player, { self }) => {
+        game.actions.junkDeck(player, game.getEffectAge(self, 8))
       }
     },
     {
-      trigger: 'calculate-biscuits',
-      func: (game, player) => {
-        const output = game.utilEmptyBiscuits()
-        output.i = game.cards.byPlayer(player, 'hand').length * 2
-        return output
+      trigger: 'meld',
+      kind: 'would-instead',
+      matches: () => true,
+      func: (game, player, { card, self }) => {
+        game.actions.meld(player, card)
+        game.aSelfExecute(self, player, card)
       }
     }
   ]
