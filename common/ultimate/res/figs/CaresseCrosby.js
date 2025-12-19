@@ -1,45 +1,37 @@
-
 module.exports = {
   id: `Caresse Crosby`,  // Card names are unique in Innovation
   name: `Caresse Crosby`,
   color: `yellow`,
   age: 8,
   expansion: `figs`,
-  biscuits: `lh8*`,
+  biscuits: `lh8p`,
   dogmaBiscuit: `l`,
   karma: [
-    `If you would tuck a card with a {l}, first splay that color of your cards left, then draw two {2}.`,
-    `If you would splay a fifth color left [with another card], instead you win.`
+    `If a player would dogma a card of a color you do not have splayed left, first splay that color on any board left and draw two {2}. If you splay a fifth color left on your board this way, you win.`
   ],
   karmaImpl: [
     {
-      trigger: 'tuck',
+      trigger: 'dogma',
+      triggerAll: true,
       kind: 'would-first',
-      matches(game, player, { card }) {
-        return card.biscuits.includes('l')
-      },
-      func: (game, player, { card }) => {
-        game.actions.splay(player, card.color, 'left')
-        game.actions.draw(player, { age: game.getEffectAge(this, 2) })
-        game.actions.draw(player, { age: game.getEffectAge(this, 2) })
-      },
-    },
-    {
-      trigger: 'splay',
-      kind: 'would-instead',
-      matches(game, player, { color, direction }) {
-        const toSplayLeftCondition = direction === 'left'
-        const notLeftCondition = game.zones.byPlayer(player, color).splay !== 'left'
-        const leftCondition = game
-          .util.colors()
-          .filter(other => other !== color)
-          .map(color => game.zones.byPlayer(player, color).splay)
-          .filter(splay => splay === 'left')
-          .length === 4
-        return toSplayLeftCondition && leftCondition && notLeftCondition
-      },
-      func(game, player) {
-        game.youWin(player, 'Caresse Crosby')
+      matches: (game, player, { card, self }) => game.zones.byPlayer(player, card.color).splay !== 'left',
+      func(game, player, { card, self, owner }) {
+        const choices = game
+          .players
+          .all()
+          .filter(other => game.zones.byPlayer(other, card.color).splay !== 'left')
+          .filter(other => game.zones.byPlayer(other, card.color).cardlist().length > 1)
+
+        const chosenPlayer = game.actions.choosePlayer(player, choices)
+        game.actions.splay(player, card.color, 'left', { owner: chosenPlayer })
+
+        game.actions.draw(owner, { age: game.getEffectAge(self, 2) })
+        game.actions.draw(owner, { age: game.getEffectAge(self, 2) })
+
+        const allLeft = game.zones.colorStacks(owner).every(stack => stack.splay === 'left')
+        if (chosenPlayer.id === owner.id && allLeft) {
+          game.youWin(owner, self.name)
+        }
       }
     },
   ]
