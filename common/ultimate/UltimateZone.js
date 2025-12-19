@@ -16,9 +16,9 @@ class UltimateZone extends BaseZone {
       .reduce((l, r) => this.game.util.combineBiscuits(l, r), this.util.emptyBiscuits())
   }
 
-  cardlist() {
+  cardlist(opts={}) {
     for (const zoneName of ['hand', 'forecast', 'score']) {
-      if (this.name().endsWith('.' + zoneName)) {
+      if (this.name().endsWith('.' + zoneName) && !opts.noKarma) {
         const karmaInfos = this.game.getInfoByKarmaTrigger(this.player(), `list-${zoneName}`)
         if (karmaInfos.length === 1) {
           return karmaInfos[0].impl.func(this.game, this.player())
