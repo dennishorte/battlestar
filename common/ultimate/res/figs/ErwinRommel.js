@@ -4,11 +4,11 @@ module.exports = {
   color: `red`,
   age: 8,
   expansion: `figs`,
-  biscuits: `fhf&`,
+  biscuits: `fhfp`,
   dogmaBiscuit: `f`,
   karma: [
     `You may issue a War Decree with any two figures.`,
-    `If you would score a card, instead score the top card of its color from all boards.`
+    `If you would score a non-figure, instead score the top card of its color from all boards, and score a card in any score pile.`
   ],
   karmaImpl: [
     {
@@ -18,13 +18,21 @@ module.exports = {
     {
       trigger: 'score',
       kind: 'would-instead',
-      matches: () => true,
+      matches: (game, player, { card }) => !card.checkIsFigure(),
       func: (game, player, { card }) => {
         const cards = game
-          .players.all()
-          .flatMap(player => game.cards.tops(player))
-          .filter(other => other.color === card.color)
+          .players
+          .all()
+          .map(player => game.cards.top(player, card.color))
+          .filter(topCard => Boolean(topCard))
         game.actions.scoreMany(player, cards)
+
+        const scorePileCards = game
+          .players
+          .other(player)
+          .flatMap(other => game.cards.byPlayer(other, 'score'))
+
+        game.actions.chooseAndScore(player, scorePileCards)
       }
     }
   ]
