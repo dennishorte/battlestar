@@ -4,11 +4,11 @@ module.exports = {
   color: `blue`,
   age: 8,
   expansion: `figs`,
-  biscuits: `hs&8`,
+  biscuits: `hsp8`,
   dogmaBiscuit: `s`,
   karma: [
     `You may issue an Advancement Decree with any two figures.`,
-    `Each {} value in any of your effects counts as a {0}.`
+    `If you would take a Draw action, first meld all cards with {s} or {i} from each player's hand.`
   ],
   karmaImpl: [
     {
@@ -16,9 +16,18 @@ module.exports = {
       decree: 'Advancement'
     },
     {
-      trigger: 'effect-age',
-      func(game, player, card, age) {
-        return 10
+      trigger: 'draw-action',
+      kind: 'would-first',
+      matches: () => true,
+      func(game, player) {
+        const toMeld = game
+          .players
+          .all()
+          .flatMap(other => game.cards.byPlayer(other, 'hand'))
+          .filter(card => card.checkHasBiscuit('s') || card.checkHasBiscuit('i'))
+
+        game.actions.revealMany(player, toMeld, { ordered: true })
+        game.actions.meldMany(player, toMeld)
       }
     }
   ]
