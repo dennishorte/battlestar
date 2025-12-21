@@ -632,6 +632,102 @@ test('karma: opponent dogmas card with {k}', () => {
 })
 ```
 
+## Common Testing Patterns Learned
+
+### Testing Karma with `triggerAll: true`
+
+When testing karma that affects opponents, simplify by putting the karma card on the opponent's board:
+
+```javascript
+// ❌ Complex: Having owner draw cards to get to opponent's turn
+test('karma: opponent scores card', () => {
+  const game = t.fixtureFirstPlayer({ numPlayers: 2 })
+  t.setBoard(game, {
+    dennis: {
+      green: ['Emmy Noether'], // Owner
+    },
+    micah: {
+      purple: ['Philosophy'],
+      hand: ['Tools'],
+    },
+  })
+  // ... complex turn management
+})
+
+// ✅ Simple: Put karma on opponent's board, owner does action
+test('karma: opponent scores card', () => {
+  const game = t.fixtureFirstPlayer()
+  t.setBoard(game, {
+    dennis: {
+      purple: ['Philosophy'], // Owner does action
+      hand: ['Tools'],
+    },
+    micah: {
+      green: ['Emmy Noether'], // Karma on opponent's board
+    },
+  })
+  // ... simple, direct test
+})
+```
+
+### Setting Up Decks for Deterministic Draws
+
+Always specify cards that will be drawn in the `decks` section:
+
+```javascript
+t.setBoard(game, {
+  dennis: {
+    blue: ['Writing'], // Draws age 2
+  },
+  decks: {
+    base: {
+      2: ['Mathematics'], // Ensures Mathematics is drawn
+    },
+  },
+})
+```
+
+### Handling Action Return Values
+
+Some actions return arrays. Always check the return type:
+
+```javascript
+// chooseAndScore returns an array
+const scoredCards = game.actions.chooseAndScore(player, choices)
+if (scoredCards && scoredCards.length > 0) {
+  const scoredCard = scoredCards[0] // Access first element
+  // Use scoredCard...
+}
+```
+
+### Verifying Card Properties
+
+Before using cards in filters, verify their properties:
+
+```javascript
+// ❌ Wrong: Assuming Archery doesn't have 's'
+const choices = cards.filter(card => !card.checkHasBiscuit('s'))
+// Archery has biscuits 'kshk' which includes 's'!
+
+// ✅ Correct: Check first
+read_file('common/ultimate/res/base/Archery.js')
+// Then use appropriate cards like Oars (biscuits 'kchk', no 's')
+```
+
+### First Player Action Count
+
+Remember: The first player only gets one action:
+
+```javascript
+// ❌ Wrong: Two actions for first player
+request = t.choose(game, request, 'Draw.Draw a card')
+request = t.choose(game, request, 'Draw.Draw a card') // This won't work!
+
+// ✅ Correct: One action for first player
+request = t.choose(game, request, 'Draw.Draw a card')
+// Now it's the second player's turn
+```
+
 ## Testing Echo Effects
 
 Echo effects trigger when you dogma the figure itself. Test like regular dogma:
@@ -738,9 +834,13 @@ test('dogma (two players to transfer)', () => {
 4. **Auto-Ordering**: After melding/scoring multiple cards, may need `t.choose(game, request, 'auto')`
 5. **Auto-Selection of Exact Counts**: When a player must choose a specific number of items and has exactly that many available, the system auto-selects them. However, you may still need to choose the order in which they are processed. Use `t.choose(game, request, 'auto')` for ordering when the order doesn't matter in the test.
 6. **Artifact Actions**: Free artifact action at start of turn (handle if artifacts present)
-7. **First Round**: Players only get one action in first round, not two
+7. **First Player Action Count**: **CRITICAL**: The first player to act only gets **one action**, not two. This applies to the very first player in the game. After the first round, players get two actions per turn.
 8. **Auto-Choosing**: Game auto-chooses when zero or one valid choice (no `t.choose()` needed)
 9. **No Conditionals/Loops**: Tests must be explicit and deterministic - never use conditionals or loops on request selectors
+10. **Deterministic Draws**: When drawing cards in tests, **always set up decks in `setBoard`** so draws are deterministic. For example, if a card draws age 2, set `decks: { base: { 2: ['Mathematics'] } }` to ensure Mathematics is drawn.
+11. **Action Return Values**: Some actions return arrays, not single values. For example, `game.actions.chooseAndScore()` returns an array of cards. Access the first element if you need a single card: `const scoredCard = scoredCards[0]`.
+12. **Card Biscuit Verification**: When filtering cards by biscuits (e.g., cards without `s` or `i`), **double-check the actual biscuits** on the cards you're using. Use `read_file` to verify card biscuits before using them in tests.
+13. **Simplifying Test Setup**: Instead of complex turn management (e.g., having one player draw cards to advance to another player's turn), simplify by putting the karma card on the opponent's board and having the owner perform the action. This makes tests clearer and easier to understand.
 
 ## Common Mistakes to Avoid
 
@@ -751,6 +851,11 @@ test('dogma (two players to transfer)', () => {
 5. ❌ Assuming opponents draw figures when achievements claimed via card effects
 6. ❌ Not specifying required expansions
 7. ❌ Using conditionals or loops on request selectors
+8. ❌ Giving the first player two actions (they only get one)
+9. ❌ Drawing cards without setting up decks in `setBoard` (makes tests non-deterministic)
+10. ❌ Assuming action methods return single values when they return arrays
+11. ❌ Using cards with wrong biscuits without verifying (e.g., using Archery when filtering out cards with `s`)
+12. ❌ Overcomplicating tests with unnecessary turn management instead of simplifying setup
 
 ## Best Practices
 
@@ -774,6 +879,10 @@ test('dogma (two players to transfer)', () => {
 10. **Ensure Effects Complete**: Use `t.testIsSecondPlayer(game)` to verify completion
 11. **Test with Correct Expansions**: Always specify `{ expansions: ['base', 'figs'] }`
 12. **Never Use Conditionals/Loops**: Tests must be explicit and deterministic
+13. **Set Up Decks for All Draws**: Always specify cards in `decks` that will be drawn to ensure deterministic behavior
+14. **Verify Card Properties**: When filtering by biscuits or other properties, verify the actual card properties using `read_file` before using them in tests
+15. **Simplify Test Setup**: Prefer simple, direct setups over complex turn management. For karma tests, consider putting the karma card on the opponent's board and having the owner perform the action.
+16. **Check Return Types**: When using action methods, check whether they return single values or arrays, and handle accordingly
 
 ## Running Tests
 
