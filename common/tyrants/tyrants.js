@@ -735,15 +735,26 @@ Tyrants.prototype.checkForEndOfGame = function() {
   if (this.state.endGameTriggered && this.players.current() === this.players.first()) {
 
     const scores = this
-      .players.all()
+      .players
+      .all()
       .map(p => [p, this.getScore(p)])
       .sort((l, r) => r[1] - l[1])
-    const winner = scores[0][0]
 
-    throw new GameOverEvent({
-      player: winner.name,
-      reason: 'ALL THE POINTS!'
-    })
+    if (scores[0][1] === scores[0][2]) {
+      throw new GameOverEvent({
+        player: 'draw',
+        reason: 'Points are tied; no tiebreakers',
+      })
+    }
+
+    else {
+      const winner = scores[0][0]
+
+      throw new GameOverEvent({
+        player: winner.name,
+        reason: 'ALL THE POINTS!'
+      })
+    }
   }
 }
 
