@@ -758,7 +758,7 @@ Tyrants.prototype.checkForEndOfGame = function() {
         template: 'Multiple players are tied for the highest score. There is no tie breaker, so they share the victory.'
       })
       throw new GameOverEvent({
-        player: 'draw',
+        player: 'All players with the highest score',
         reason: 'Points are tied',
       })
     }
