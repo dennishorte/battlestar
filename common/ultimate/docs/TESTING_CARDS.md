@@ -1,6 +1,6 @@
 # How to Write Tests for Cards
 
-This guide explains how to write tests for Innovation cards, optimized for LLM usage. Start with the examples, then reference the detailed sections as needed.
+This guide explains how to write tests for Innovation cards, optimized for LLM usage.
 
 ## Quick Start: Complete Example
 
@@ -57,7 +57,7 @@ describe('CardName', () => {
 - **`game.run()`** - Run game until input needed (call once at start)
 
 ### Assertions
-- **`t.testBoard(game, expectedState)`** - **Always use this** for state assertions
+- **`t.testBoard(game, expectedState)`** - **Always use this** for state assertions (includes `junk` zone)
 - **`t.testIsSecondPlayer(game)`** - Verify turn advanced
 - **`t.testChoices(request, expected)`** - Verify available choices
 
@@ -85,7 +85,7 @@ t.setBoard(game, {
     hand: ['Mathematics'],
   },
   achievements: ['Machinery', 'Navigation'],
-  junk: ['Construction'],
+  junk: ['Construction'],  // Test junk contents directly in testBoard
   decks: {
     base: {
       1: ['Tools'],  // Top card of age 1 deck
@@ -102,7 +102,8 @@ t.setBoard(game, {
 - Card ages in `decks` must match deck age (age 3 card → age 3 deck)
 - Always specify cards that will be drawn in `decks` for deterministic tests
 - Card order matters: meld = front, tuck = end
-- **CRITICAL: Only top card (first in array) can be dogmatized** - If you need to dogma a card, it MUST be the first card in its color array. If you put another card before it in the array, you cannot dogma it. Always check that the card you want to dogma is at index 0 of its color stack.
+- **CRITICAL: Only top card (first in array) can be dogmatized** - If you need to dogma a card, it MUST be the first card in its color array.
+- **Junk contents**: Test directly in `testBoard` using `junk: ['CardName']` - no need for separate `expect` statements
 
 ## Reference: Cards for Testing Actions
 
@@ -135,6 +136,7 @@ Quick lookup for cards to use in tests:
 - **Archery** (red, age 1) - "I demand you draw a {1}, then transfer highest card"
 - **Construction** (red, age 2) - "I demand you transfer two cards"
 - **Gunpowder** (red, age 4), **Currency** (yellow, age 4)
+- **Globalization** (yellow, age 10) - Demand with multiple effects (see H.G. Wells tests)
 
 ### Draw Actions
 - **The Wheel** (green, age 1) - "Draw two {1}" - Very common
@@ -144,7 +146,7 @@ Quick lookup for cards to use in tests:
 - **Lighting** (green, age 7), **Explosives** (red, age 7)
 - **Skyscrapers** (yellow, age 8), **Rocketry** (red, age 8)
 - **Services** (yellow, age 9), **Suburbia** (green, age 9), **Specialization** (blue, age 9)
-- **Databases** (blue, age 10)
+- **Databases** (blue, age 10), **A.I.** (blue, age 10) - Simple effects for testing
 
 ### Splay Actions
 - **Philosophy** (purple, age 2) - "You may splay left any one color"
@@ -156,6 +158,8 @@ Quick lookup for cards to use in tests:
 - **{s}**: Tools (blue, 1), Writing (blue, 1), Mathematics (blue, 2)
 - **{c}**: Optics (red, 3), Translation (blue, 3), Skyscrapers (yellow, 8)
 - **{f}**: Corporations (green, 6), Fermenting (yellow, 2)
+- **{l}**: Agriculture (yellow, 1), Sailing (green, 1), Fermenting (yellow, 2)
+- **{i}**: Software (blue, 10), Databases (green, 10)
 
 ### Achievement Cards
 - **The Wheel** (green, age 1), **Mathematics** (blue, age 2), **Machinery** (red, age 3)
@@ -167,333 +171,32 @@ Quick lookup for cards to use in tests:
 - **Age 3**: Al-Kindi, Alhazen (draw-action karma)
 - **Age 5**: Peter the Great (decree + return karma), Antonie Van Leeuwenhoek (draw + achieve karma), Johannes Vermeer (meld + achieve karma)
 - **Age 6**: Carl Friedrich Gauss (meld karma), Napoleon Bonaparte (decree + score/return karma), Shivaji (achieve + dogma karma)
+- **Age 8**: Albert Einstein (meldMany karma), H.G. Wells (super-execute karma)
 
-## Reference: Karma Implementation Examples
+## Reference: Karma Implementation Patterns
 
-### `would-first` Pattern
-
-**Archimedes** - Increase effect age:
-```javascript
-{
-  trigger: 'dogma',
-  karmaKind: 'would-first',
-  matches: () => true,
-  func(game, player, card, age) {
-    game.state.dogmaInfo.globalAgeIncrease = 1
-  }
-}
-```
-
-**Carl Friedrich Gauss** - Meld other cards of same age first:
-```javascript
-{
-  trigger: 'meld',
-  kind: 'would-first',
-  matches: () => true,
-  func(game, player, { card }) {
-    const age = game.actions.chooseAge(player)
-    const hand = game.cards.byPlayer(player, 'hand')
-      .filter(card => card.getAge() === age)
-      .filter(other => other !== card)
-    const score = game.cards.byPlayer(player, 'score')
-      .filter(card => card.getAge() === age)
-    const cards = util.array.distinct([...hand, ...score])
-    if (cards.length === 0) {
-      game.log.addNoEffect()
-    } else {
-      game.actions.meldMany(player, cards)
-    }
-  }
-}
-```
-
-**Peter the Great** - Score bottom green before return:
-```javascript
-{
-  trigger: 'return',
-  kind: 'would-first',
-  matches: () => true,
-  func: (game, player) => {
-    const card = game.cards.bottom(player, 'green')
-    if (card) {
-      game.actions.score(player, card)
-      if (card.checkHasBiscuit('c')) {
-        const toAchieve = game.cards.bottom(player, 'green')
-        if (toAchieve && game.checkAchievementEligibility(player, toAchieve)) {
-          game.actions.claimAchievement(player, toAchieve)
-        }
-      }
-    }
-  }
-}
-```
-
-**Johannes Vermeer** - Score all cards of color before meld:
-```javascript
-{
-  trigger: 'meld',
-  kind: 'would-first',
-  matches: () => true,
-  func: (game, player) => {
-    const colors = game.cards.tops(player).map(card => card.color)
-    const color = game.actions.chooseColor(player, colors)
-    if (color) {
-      game.actions.scoreMany(player, game.cards.byPlayer(player, color))
-    }
-  }
-}
-```
-
-**Antonie Van Leeuwenhoek** - Optional return before draw:
-```javascript
-{
-  trigger: 'draw',
-  kind: 'would-first',
-  matches: () => true,
-  func: (game, player) => {
-    const age5Cards = game.cards.byPlayer(player, 'hand')
-      .filter(card => card.getAge() === 5)
-    if (age5Cards.length === 0) return
-    const returned = game.actions.chooseAndReturn(player, age5Cards, { min: 0, max: 1 })
-    if (returned.length > 0) {
-      game.actions.draw(player, { age: 6 })
-    }
-  }
-}
-```
-
-**Shivaji** - Opponent claims achievement, owner claims another first (with `triggerAll: true`):
-```javascript
-{
-  trigger: 'achieve',
-  triggerAll: true,
-  kind: 'would-first',
-  matches: (game, player, { owner }) => player.id !== owner.id,
-  func: (game, player, { card, owner }) => {
-    // 'player' = opponent taking action, 'owner' = karma card owner
-    const choices = game.getAvailableStandardAchievements(owner)
-      .filter(achievement => achievement.id !== card.id)
-      .filter(achievement => game.checkAchievementEligibility(owner, achievement))
-    game.actions.chooseAndAchieve(owner, choices)
-  }
-}
-```
-
-### `would-instead` Pattern
-
-**Homer** - Tuck instead of junk/return:
-```javascript
-{
-  trigger: ['junk', 'return'],
-  kind: 'would-instead',
-  matches(game, player, { card }) {
-    return card.checkIsFigure() && card.zone.isHandZone()
-  },
-  func(game, player, { card }) {
-    return game.actions.tuck(player, card)
-  }
-}
-```
-
-**Augustus Caesar** - Draw and reveal instead of dogma (with `triggerAll: true`):
-```javascript
-{
-  trigger: 'dogma',
-  triggerAll: true,
-  kind: 'would-instead',
-  matches: (game, player, { card }) => card.checkHasBiscuit('k'),
-  func(game, player, { card, owner, self }) {
-    // 'player' = one taking action, 'owner' = karma card owner
-    const drawn = game.actions.drawAndReveal(owner, card.getAge())
-    if (drawn.checkHasBiscuit('k') || drawn.checkHasBiscuit('s')) {
-      game.actions.meld(owner, drawn)
-    } else {
-      game.aSuperExecute(self, player, card)
-    }
-  }
-}
-```
-
-**Alhazen** - Tuck and draw instead of draw action:
-```javascript
-{
-  trigger: 'draw-action',
-  kind: 'would-instead',
-  matches: () => true,
-  func: (game, player) => {
-    const canTuck = game.cards.topsAll().filter(card => card.checkHasBiscuit('k'))
-    game.actions.chooseAndTuck(player, canTuck)
-    const ageChoices = game.util.colors()
-      .map(color => game.zones.byPlayer(player, color))
-      .flatMap(zone => {
-        const biscuits = zone.biscuits()
-        return [biscuits.s, biscuits.k]
-      })
-      .filter(age => age > 0)
-    const uniqueChoices = util.array.distinct(ageChoices).sort((l, r) => l - r)
-    const ageToDraw = game.actions.chooseAge(player, uniqueChoices)
-    game.actions.draw(player, { age: ageToDraw })
-  }
-}
-```
-
-**Napoleon Bonaparte** - Tuck and score instead of score/return:
-```javascript
-{
-  trigger: ['score', 'return'],
-  kind: 'would-instead',
-  matches: (game, player, { card }) => card.checkHasBiscuit('f'),
-  func: (game, player, { card }) => {
-    game.actions.tuck(player, card)
-    const choices = game.cards.topsAll().filter(card => card.getAge() === 6)
-    game.actions.chooseAndScore(player, choices)
-  }
-}
-```
-
-### Decree Triggers
-
-```javascript
-{
-  trigger: 'decree-for-two',
-  decree: 'Trade'  // or 'Advancement', 'War', etc.
-}
-```
-
-### Conditional Matches
-
-**Fu Xi** - Only on first action:
-```javascript
-{
-  trigger: 'draw',
-  kind: 'would-first',
-  matches: (game, player, { age, self }) => {
-    return game.state.actionNumber === 1 && age === game.getEffectAge(self, 1)
-  },
-  func(game, player, { self }) {
-    game.actions.drawAndScore(player, game.getEffectAge(self, 2))
-  }
-}
-```
-
-**Augustus Caesar** - Only when dogmatizing card with {k}:
-```javascript
-{
-  trigger: 'dogma',
-  triggerAll: true,
-  kind: 'would-instead',
-  matches: (game, player, { card }) => card.checkHasBiscuit('k'),
-  func(game, player, { card, owner, self }) {
-    // Implementation
-  }
-}
-```
+See test files for complete examples:
+- **`would-first`**: Archimedes, Carl Friedrich Gauss, Peter the Great, Johannes Vermeer, Antonie Van Leeuwenhoek, Shivaji, John Von Neumann, Caresse Crosby, Nikola Tesla, J.P. Morgan, Emmy Noether, Marie Curie, Albert Einstein
+- **`would-instead`**: Homer, Augustus Caesar, Alhazen, Napoleon Bonaparte, Emperor Meiji, Erwin Rommel, John Von Neumann, H.G. Wells
+- **`triggerAll: true`**: Augustus Caesar, Caresse Crosby, J.P. Morgan, Emmy Noether
+- **`list-hand`**: Emperor Meiji
+- **`extra-achievements`**: Marie Curie
+- **`calculate-score`**: Emmy Noether
+- **`decree-for-two`**: Archimedes, Augustus Caesar, Peter the Great, Napoleon Bonaparte, Nikola Tesla, J.P. Morgan, Albert Einstein, H.G. Wells
 
 ## Testing Dogma Effects
 
 ### Simple Dogma with Choices
-
-```javascript
-test('dogma: choose a color', () => {
-  const game = t.fixtureTopCard('Philosophy')
-  t.setBoard(game, {
-    dennis: {
-      purple: ['Philosophy'],
-      red: ['Construction', 'Industrialization'],
-    }
-  })
-  
-  let request
-  request = game.run()
-  request = t.choose(game, request, 'Dogma.Philosophy')
-  t.choose(game, request, 'red')
-  
-  const red = game.zones.byPlayer(t.dennis(game), 'red')
-  expect(red.splay).toBe('left')
-})
-```
+See **Philosophy** tests for choosing colors.
 
 ### Optional Effects
-
-```javascript
-test('dogma: do not choose a color', () => {
-  const game = t.fixtureTopCard('Philosophy')
-  t.setBoard(game, {
-    dennis: {
-      purple: ['Philosophy'],
-      red: ['Construction'],
-    }
-  })
-  
-  let request
-  request = game.run()
-  request = t.choose(game, request, 'Dogma.Philosophy')
-  t.choose(game, request)  // Empty selection = skip optional
-  
-  const red = game.zones.byPlayer(t.dennis(game), 'red')
-  expect(red.splay).toBe('none')
-})
-```
+See **Philosophy** tests for skipping optional effects.
 
 ### Demand Effects (Affecting Opponents)
-
-```javascript
-test('dogma: demand effect transfers highest card', () => {
-  const game = t.fixtureFirstPlayer()
-  t.setBoard(game, {
-    dennis: {
-      red: ['Archery'],
-      hand: [],
-    },
-    micah: {
-      hand: ['Gunpowder', 'Currency'],
-    },
-    decks: {
-      base: {
-        1: ['Tools'],
-      }
-    }
-  })
-  
-  let request
-  request = game.run()
-  request = t.choose(game, request, 'Dogma.Archery')
-  
-  t.testBoard(game, {
-    dennis: {
-      red: ['Archery'],
-      hand: ['Gunpowder'],
-    },
-    micah: {
-      hand: ['Currency', 'Tools'],
-    }
-  })
-})
-```
+See **Archery** tests for demand effects. When testing super-execute vs self-execute, use cards with demand effects (e.g., **Globalization**, **Databases**, **A.I.**) to verify opponents are demanded.
 
 ### Multiple Steps
-
-```javascript
-test('dogma: with splay', () => {
-  const game = t.fixtureTopCard('Code of Laws')
-  t.setBoard(game, {
-    dennis: {
-      purple: ['Code of Laws'],
-      blue: ['Tools'],
-      hand: ['Writing', 'Agriculture', 'Metalworking'],
-    }
-  })
-  
-  let request
-  request = game.run()
-  request = t.choose(game, request, 'Dogma.Code of Laws')
-  request = t.choose(game, request, 'Writing')
-  request = t.choose(game, request, 'blue')
-  
-  expect(t.cards(game, 'blue')).toEqual(['Tools', 'Writing'])
-  expect(t.zone(game, 'blue').splay).toBe('left')
-})
-```
+See **Code of Laws** tests for multi-step dogma effects. **Important**: Cards with multiple dogma effects (like **Globalization**) require handling all effects in sequence.
 
 ## Testing Karma Effects
 
@@ -502,158 +205,35 @@ Karma effects trigger on specific actions. Common triggers: `dogma`, `meld`, `tu
 **Important**: Karma only triggers for actions by the **owner** of the karma card, except with `triggerAll: true` (which triggers for all players but effect applies to owner).
 
 ### Testing Karma on Dogma
-
-```javascript
-test('karma', () => {
-  const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-  t.setBoard(game, {
-    dennis: {
-      blue: ['Carl Friedrich Gauss'],
-      score: ['The Wheel', 'Construction'],
-      hand: ['Quantum Theory', 'Sailing', 'Enterprise'],
-    },
-  })
-  
-  let request
-  request = game.run()
-  request = t.choose(game, request, 'Meld.Quantum Theory')
-  request = t.choose(game, request, 1)  // Choose age 1
-  request = t.choose(game, request, 'Sailing')
-  
-  t.testBoard(game, {
-    dennis: {
-      green: ['The Wheel', 'Sailing'],
-      blue: ['Quantum Theory', 'Carl Friedrich Gauss'],
-      score: ['Construction'],
-      hand: ['Enterprise'],
-    },
-  })
-})
-```
+See **Carl Friedrich Gauss** tests for meld karma.
 
 ### Testing `would-instead` Karma
-
-```javascript
-test('karma: junk from hand', () => {
-  const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs', 'city'] })
-  t.setBoard(game, {
-    dennis: {
-      yellow: ['Agriculture'],
-      blue: ['Atlantis'],
-      purple: ['Homer'],
-      hand: ['Shennong'],
-    },
-    decks: {
-      base: {
-        2: ['Mathematics'],
-      }
-    }
-  })
-  
-  let request
-  request = game.run()
-  request = t.choose(game, request, 'Endorse.yellow')
-  
-  t.testIsSecondPlayer(game)
-  t.testBoard(game, {
-    dennis: {
-      yellow: ['Agriculture', 'Shennong'],  // Tucked instead of junked
-      blue: ['Mathematics'],
-      purple: ['Homer'],
-    },
-  })
-})
-```
+See **Homer** tests for junk/return karma, **Emperor Meiji** for meld karma with win condition, **Erwin Rommel** for score karma, **H.G. Wells** for dogma karma with super-execute.
 
 ### Testing `would-first` Karma
-
-```javascript
-test('karma: effect age', () => {
-  const game = t.fixtureTopCard('Archimedes', { expansions: ['base', 'figs'] })
-  t.setBoard(game, {
-    dennis: {
-      green: ['The Wheel', 'Archimedes'],
-    },
-    decks: {
-      base: {
-        2: ['Calendar', 'Construction'],  // The Wheel draws {1}, karma increases to {2}
-      }
-    }
-  })
-  
-  let request
-  request = game.run()
-  request = t.choose(game, request, 'Dogma.The Wheel')
-  
-  expect(t.cards(game, 'hand').sort()).toStrictEqual(['Calendar', 'Construction'])
-})
-```
+See **Archimedes** tests for effect age karma, **John Von Neumann** for meld + self-execute, **Caresse Crosby** for dogma karma with triggerAll, **Nikola Tesla** for meld karma, **J.P. Morgan** for dogma karma with triggerAll, **Emmy Noether** for score karma with triggerAll, **Marie Curie** for draw karma, **Albert Einstein** for draw-action karma with meldMany.
 
 ### Testing `triggerAll: true` Karma
-
-For karma with `triggerAll: true`, test both owner and opponent actions:
-
-```javascript
-test('karma: opponent dogmas card with {k}', () => {
-  const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-  t.setBoard(game, {
-    dennis: {
-      green: ['Augustus Caesar'],  // Owner of karma card
-      hand: [],
-    },
-    micah: {
-      red: ['Archery'],  // Has {k} biscuit
-      hand: ['Gunpowder', 'Currency'],
-    },
-    achievements: ['The Wheel', 'Mathematics'],
-    decks: {
-      base: {
-        1: ['Metalworking'],  // Drawn to dennis (owner), then melded
-      }
-    }
-  })
-  
-  let request
-  request = game.run()
-  request = t.choose(game, request, 'Dogma.Archery')
-  
-  t.testBoard(game, {
-    dennis: {
-      green: ['Augustus Caesar'],
-      red: ['Metalworking'],  // Melded to dennis (owner of karma card)
-      hand: [],
-    },
-    micah: {
-      red: ['Archery'],
-      hand: ['Gunpowder', 'Currency'],
-    },
-    junk: [],
-  })
-})
-```
+See **Augustus Caesar**, **Caresse Crosby**, **J.P. Morgan**, **Emmy Noether** tests. For karma that affects opponents, simplify by putting the karma card on the opponent's board and having the owner perform the action.
 
 ## Common Testing Patterns Learned
 
-### Testing Karma with `triggerAll: true`
+### Stack Behavior (Color Stacks)
+Color stacks work like computer science stacks: **first card melded goes to bottom, last card melded goes to top (index 0)**. See **Albert Einstein** tests for examples of explicit melding order.
 
+```javascript
+// When melding multiple cards, select them in reverse order of desired stack position
+// First selected = bottom of stack, last selected/auto = top of stack (index 0)
+request = t.choose(game, request, 'Tools')      // Goes to bottom
+request = t.choose(game, request, 'Mathematics') // Goes in middle
+// Writing is auto-selected as last = goes to top (index 0)
+// Result: ['Writing', 'Mathematics', 'Tools'] (top to bottom)
+```
+
+### Testing Karma with `triggerAll: true`
 When testing karma that affects opponents, simplify by putting the karma card on the opponent's board:
 
 ```javascript
-// ❌ Complex: Having owner draw cards to get to opponent's turn
-test('karma: opponent scores card', () => {
-  const game = t.fixtureFirstPlayer({ numPlayers: 2 })
-  t.setBoard(game, {
-    dennis: {
-      green: ['Emmy Noether'], // Owner
-    },
-    micah: {
-      purple: ['Philosophy'],
-      hand: ['Tools'],
-    },
-  })
-  // ... complex turn management
-})
-
 // ✅ Simple: Put karma on opponent's board, owner does action
 test('karma: opponent scores card', () => {
   const game = t.fixtureFirstPlayer()
@@ -671,7 +251,6 @@ test('karma: opponent scores card', () => {
 ```
 
 ### Setting Up Decks for Deterministic Draws
-
 Always specify cards that will be drawn in the `decks` section:
 
 ```javascript
@@ -688,7 +267,6 @@ t.setBoard(game, {
 ```
 
 ### Handling Action Return Values
-
 Some actions return arrays. Always check the return type:
 
 ```javascript
@@ -696,12 +274,10 @@ Some actions return arrays. Always check the return type:
 const scoredCards = game.actions.chooseAndScore(player, choices)
 if (scoredCards && scoredCards.length > 0) {
   const scoredCard = scoredCards[0] // Access first element
-  // Use scoredCard...
 }
 ```
 
 ### Verifying Card Properties
-
 Before using cards in filters, verify their properties:
 
 ```javascript
@@ -715,7 +291,6 @@ read_file('common/ultimate/res/base/Archery.js')
 ```
 
 ### First Player Action Count
-
 Remember: The first player only gets one action:
 
 ```javascript
@@ -728,42 +303,24 @@ request = t.choose(game, request, 'Draw.Draw a card')
 // Now it's the second player's turn
 ```
 
+### MeldMany with Explicit Ordering
+When using `meldMany` with multiple cards, you only need to explicitly select all but one - the last card is auto-selected. Select cards in reverse order of desired stack position (first selected = bottom, last/auto = top). See **Albert Einstein** tests.
+
+### Testing Super-Execute vs Self-Execute
+To verify super-execute (demands all opponents) vs self-execute (only affects owner), use cards with demand effects. See **H.G. Wells** tests for examples using **Globalization** and **A.I.**.
+
+### Testing Cards with Multiple Effects
+When a card has multiple dogma effects (e.g., **Globalization**), all effects execute in sequence. Ensure your test handles all effects. See **H.G. Wells** tests.
+
 ## Testing Echo Effects
 
-Echo effects trigger when you dogma the figure itself. Test like regular dogma:
-
-```javascript
-test('echo', () => {
-  const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-  t.setBoard(game, {
-    dennis: {
-      blue: ['Carl Friedrich Gauss'],
-    },
-    decks: {
-      base: {
-        7: ['Lighting']
-      }
-    }
-  })
-  
-  let request
-  request = game.run()
-  request = t.choose(game, request, 'Dogma.Carl Friedrich Gauss')
-  
-  t.testBoard(game, {
-    dennis: {
-      blue: ['Carl Friedrich Gauss'],
-      hand: ['Lighting']
-    },
-  })
-})
-```
+Echo effects trigger when you dogma the figure itself. Test like regular dogma. See **Carl Friedrich Gauss** tests.
 
 ## Common Patterns
 
 ### Testing Achievements
 
-**Important**: Don't test `achievements` zone directly (includes special achievements). Test `junk` zone instead.
+**Important**: Don't test `achievements` zone directly (includes special achievements). Test `junk` zone instead using `testBoard`.
 
 **Figure Drawing**: When a player claims a standard achievement via "Achieve" action, opponents draw figures. If claimed via card effect, opponents do NOT draw figures.
 
@@ -805,48 +362,33 @@ test('karma: decree', () => {
 
 ### Testing Multiple Players
 
-```javascript
-test('dogma (two players to transfer)', () => {
-  const game = t.fixtureFirstPlayer({ numPlayers: 3 })
-  t.setBoard(game, {
-    dennis: {
-      red: ['Optics'],
-      score: ['Reformation', 'The Wheel'],
-    },
-    // ... other players
-  })
-  
-  let request
-  request = game.run()
-  request = t.choose(game, request, 'Dogma.Optics')
-  request = t.choose(game, request, 'micah')
-  request = t.choose(game, request, 'The Wheel')
-  
-  // Assertions...
-})
-```
+See **Optics** tests for examples with multiple players.
 
 ## Important Gotchas
 
-1. **Top Card Requirement**: Only the **top card** (first in array) can be dogmatized. **CRITICAL**: If you need to dogma a card in your test, it MUST be the first card in its color array. For example, if you have `green: ['Alfred Nobel', 'Mapmaking']`, you can only dogma Alfred Nobel, NOT Mapmaking. To dogma Mapmaking, you must put it first: `green: ['Mapmaking', 'Alfred Nobel']`.
+1. **Top Card Requirement**: Only the **top card** (first in array) can be dogmatized. **CRITICAL**: If you need to dogma a card in your test, it MUST be the first card in its color array.
 2. **Card Color Validation**: Cards must be in correct color piles
 3. **Karma `owner` Parameter**: In karma with `triggerAll: true`, `owner` is karma card owner, `player` is action taker
-4. **Auto-Ordering**: After melding/scoring multiple cards, may need `t.choose(game, request, 'auto')`
+4. **Stack Behavior**: Color stacks work like CS stacks - first melded at bottom, last melded at top (index 0). When melding multiple cards, select in reverse order of desired position.
 5. **Auto-Selection of Exact Counts**: When a player must choose a specific number of items and has exactly that many available, the system auto-selects them. However, you may still need to choose the order in which they are processed. Use `t.choose(game, request, 'auto')` for ordering when the order doesn't matter in the test.
-6. **Artifact Actions**: Free artifact action at start of turn (handle if artifacts present)
-7. **First Player Action Count**: **CRITICAL**: The first player to act only gets **one action**, not two. This applies to the very first player in the game. After the first round, players get two actions per turn.
-8. **Auto-Choosing**: Game auto-chooses when zero or one valid choice (no `t.choose()` needed)
-9. **No Conditionals/Loops**: Tests must be explicit and deterministic - never use conditionals or loops on request selectors
-10. **Deterministic Draws**: When drawing cards in tests, **always set up decks in `setBoard`** so draws are deterministic. For example, if a card draws age 2, set `decks: { base: { 2: ['Mathematics'] } }` to ensure Mathematics is drawn.
-11. **Action Return Values**: Some actions return arrays, not single values. For example, `game.actions.chooseAndScore()` returns an array of cards. Access the first element if you need a single card: `const scoredCard = scoredCards[0]`.
-12. **Card Biscuit Verification**: When filtering cards by biscuits (e.g., cards without `s` or `i`), **double-check the actual biscuits** on the cards you're using. Use `read_file` to verify card biscuits before using them in tests.
-13. **Simplifying Test Setup**: Instead of complex turn management (e.g., having one player draw cards to advance to another player's turn), simplify by putting the karma card on the opponent's board and having the owner perform the action. This makes tests clearer and easier to understand.
+6. **MeldMany Ordering**: When using `meldMany` with multiple cards, only select all but one explicitly - the last is auto-selected. Select in reverse order of desired stack position.
+7. **Artifact Actions**: Free artifact action at start of turn (handle if artifacts present)
+8. **First Player Action Count**: **CRITICAL**: The first player to act only gets **one action**, not two. This applies to the very first player in the game. After the first round, players get two actions per turn.
+9. **Auto-Choosing**: Game auto-chooses when zero or one valid choice (no `t.choose()` needed)
+10. **No Conditionals/Loops**: Tests must be explicit and deterministic - never use conditionals or loops on request selectors
+11. **Deterministic Draws**: When drawing cards in tests, **always set up decks in `setBoard`** so draws are deterministic.
+12. **Action Return Values**: Some actions return arrays, not single values. For example, `game.actions.chooseAndScore()` returns an array of cards. Access the first element if you need a single card: `const scoredCard = scoredCards[0]`.
+13. **Card Biscuit Verification**: When filtering cards by biscuits (e.g., cards without `s` or `i`), **double-check the actual biscuits** on the cards you're using. Use `read_file` to verify card biscuits before using them in tests.
+14. **Simplifying Test Setup**: Instead of complex turn management (e.g., having one player draw cards to advance to another player's turn), simplify by putting the karma card on the opponent's board and having the owner perform the action.
+15. **Junk Contents**: Test junk contents directly in `testBoard` using `junk: ['CardName']` - no need for separate `expect` statements.
+16. **Multiple Card Effects**: When a card has multiple dogma effects, all effects execute in sequence. Ensure your test handles all effects.
+17. **Super-Execute Parameters**: `game.aSuperExecute(executingCard, player, card)` - the first parameter is the card executing the super-execute, not the player.
 
 ## Common Mistakes to Avoid
 
 1. ❌ Using `setHand`, `setColor`, etc. directly instead of `setBoard`
 2. ❌ Forgetting `t.testIsSecondPlayer(game)` at end
-3. ❌ Testing `achievements` zone directly instead of `junk`
+3. ❌ Testing `achievements` zone directly instead of `junk` in `testBoard`
 4. ❌ Wrong card order after melding (cards go to front, not end)
 5. ❌ Assuming opponents draw figures when achievements claimed via card effects
 6. ❌ Not specifying required expansions
@@ -856,6 +398,9 @@ test('dogma (two players to transfer)', () => {
 10. ❌ Assuming action methods return single values when they return arrays
 11. ❌ Using cards with wrong biscuits without verifying (e.g., using Archery when filtering out cards with `s`)
 12. ❌ Overcomplicating tests with unnecessary turn management instead of simplifying setup
+13. ❌ Incorrect stack ordering when melding multiple cards (remember: first selected = bottom, last/auto = top)
+14. ❌ Using separate `expect` statements for junk instead of testing in `testBoard`
+15. ❌ Not handling all effects when testing cards with multiple dogma effects
 
 ## Best Practices
 
@@ -874,7 +419,7 @@ test('dogma (two players to transfer)', () => {
 5. **Test Edge Cases**: Empty hands/zones, no valid targets, optional effects skipped
 6. **Use Descriptive Test Names**: `test('dogma: demand effect transfers highest card', () => {`
 7. **Group Related Tests**: Use `describe` blocks
-8. **Use `t.testBoard()`**: For complex states, use this instead of individual assertions
+8. **Use `t.testBoard()`**: For complex states, use this instead of individual assertions (includes `junk` zone)
 9. **Test Both Sides**: If conditional logic, test both branches
 10. **Ensure Effects Complete**: Use `t.testIsSecondPlayer(game)` to verify completion
 11. **Test with Correct Expansions**: Always specify `{ expansions: ['base', 'figs'] }`
@@ -883,6 +428,8 @@ test('dogma (two players to transfer)', () => {
 14. **Verify Card Properties**: When filtering by biscuits or other properties, verify the actual card properties using `read_file` before using them in tests
 15. **Simplify Test Setup**: Prefer simple, direct setups over complex turn management. For karma tests, consider putting the karma card on the opponent's board and having the owner perform the action.
 16. **Check Return Types**: When using action methods, check whether they return single values or arrays, and handle accordingly
+17. **Test Junk in testBoard**: Use `junk: ['CardName']` in `testBoard` instead of separate `expect` statements
+18. **Handle All Effects**: When testing cards with multiple dogma effects, ensure all effects are handled in sequence
 
 ## Running Tests
 
