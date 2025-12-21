@@ -744,7 +744,7 @@ Tyrants.prototype.checkForEndOfGame = function() {
       .sort((l, r) => r.score - l.score)
 
     for (const score of scores) {
-      game.log.add({
+      this.log.add({
         template: '{player}: {score}',
         args: {
           player: score.player,
@@ -754,7 +754,7 @@ Tyrants.prototype.checkForEndOfGame = function() {
     }
 
     if (scores[0].score === scores[1].score) {
-      game.log.add({
+      this.log.add({
         template: 'Multiple players are tied for the highest score. There is no tie breaker, so they share the victory.'
       })
       throw new GameOverEvent({
