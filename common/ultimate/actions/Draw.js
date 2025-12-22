@@ -19,7 +19,7 @@ function DrawAction(player, opts={}) {
   // Adjust age based on empty decks.
   let [ adjustedAge, adjustedExp ] = _adjustedDrawDeck.call(this, baseAge, baseExp)
 
-  const karmaKind = this.game.aKarma(player, 'draw', { ...opts, age: adjustedAge })
+  const karmaKind = this.game.aKarma(player, 'draw', { ...opts, age: adjustedAge, exp: adjustedExp })
   if (karmaKind === 'would-instead') {
     this.acted(player)
     return
