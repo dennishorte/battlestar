@@ -23,8 +23,15 @@ describe('Philosophy', () => {
     request = t.choose(game, request, 'Dogma.Philosophy')
     t.choose(game, request, 'red')
     
-    const red = game.zones.byPlayer(t.dennis(game), 'red')
-    expect(red.splay).toBe('left')
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Philosophy'],
+        red: {
+          cards: ['Construction', 'Industrialization'],
+          splay: 'left',
+        },
+      }
+    })
   })
 })
 ```
@@ -102,7 +109,7 @@ t.setBoard(game, {
 - Card ages in `decks` must match deck age (age 3 card → age 3 deck)
 - Always specify cards that will be drawn in `decks` for deterministic tests
 - Card order matters: meld = front, tuck = end
-- **CRITICAL: Only top card (first in array) can be dogmatized** - If you need to dogma a card, it MUST be the first card in its color array.
+- **CRITICAL: Only top card (first in array) can be dogmatized and only top card karmas trigger** - If you need to dogma a card, it MUST be the first card in its color array.
 - **Junk contents**: Test directly in `testBoard` using `junk: ['CardName']` - no need for separate `expect` statements
 
 ## Reference: Cards for Testing Actions
