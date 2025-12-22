@@ -1,28 +1,26 @@
-
 module.exports = {
   id: `Grace Hopper`,  // Card names are unique in Innovation
   name: `Grace Hopper`,
   color: `blue`,
   age: 9,
   expansion: `figs`,
-  biscuits: `sh9*`,
+  biscuits: `sh9p`,
   dogmaBiscuit: `s`,
   karma: [
-    `If another player would not draw a card for sharing after a Dogma action, first draw and reveal a {0}. If it is blue, you win.`
+    `If an opponent would not draw a card for sharing after a Dogma action, first draw and reveal a {0}. If it is blue, you win.`
   ],
   karmaImpl: [
     {
       trigger: 'no-share',
       triggerAll: true,
       kind: 'would-first',
-      matches: (game, player) => {
-        return player === game.getPlayerByCard(this)
+      matches: (game, player, { owner, self }) => {
+        return player.isOpponent(owner)
       },
-      func: (game, player) => {
-        const card = game.actions.draw(player, { age: game.getEffectAge(this, 10) })
-        if (card && card.color === 'blue') {
-          game.mReveal(player, card)
-          game.youWin(player, this.name)
+      func: (game, player, { owner, self }) => {
+        const card = game.actions.drawAndReveal(owner, game.getEffectAge(self, 10))
+        if (card.color === 'blue') {
+          game.youWin(owner, self.name)
         }
       }
     }
