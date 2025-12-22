@@ -4,35 +4,29 @@ module.exports = {
   color: `yellow`,
   age: 9,
   expansion: `figs`,
-  biscuits: `hl&l`,
+  biscuits: `hlpl`,
   dogmaBiscuit: `l`,
   karma: [
-    `When you meld this card, score all opponents' top figures.`,
-    `If you would score a green card, instead remove it and all cards in all score piles from the game.`
+    `If you would meld a card, first draw and score a {9}. If the scored card is yellow, junk all cards in all score piles and all available standard achievements.`
   ],
   karmaImpl: [
     {
-      trigger: 'when-meld',
-      func: (game, player) => {
-        const cards = game
-          .players.opponents(player)
-          .flatMap(opp => game.cards.tops(opp))
-          .filter(card => card.checkIsFigure())
-        game.actions.scoreMany(player, cards)
+      trigger: 'meld',
+      kind: 'would-first',
+      matches: () => true,
+      func: (game, player, { self }) => {
+        const drawnCard = game.actions.drawAndScore(player, game.getEffectAge(self, 9))
+        if (drawnCard.color === 'yellow') {
+          const allScoreCards = game
+            .players
+            .all()
+            .flatMap(player2 => game.cards.byPlayer(player2, 'score'))
+          game.actions.junkMany(player, allScoreCards)
+
+          const allAvailableAchievements = game.getAvailableStandardAchievements(player)
+          game.actions.junkMany(player, allAvailableAchievements)
+        }
       }
     },
-
-    {
-      trigger: 'score',
-      kind: 'would-instead',
-      matches: (game, player, { card }) => card.color === 'green',
-      func: (game, player, { card }) => {
-        const cards = game
-          .players.all()
-          .flatMap(player => game.cards.byPlayer(player, 'score'))
-        cards.push(card)
-        game.aRemoveMany(player, cards)
-      }
-    }
   ]
 }
