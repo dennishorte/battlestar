@@ -4,37 +4,53 @@ module.exports = {
   color: `red`,
   age: 9,
   expansion: `figs`,
-  biscuits: `*ffh`,
+  biscuits: `pffh`,
   dogmaBiscuit: `f`,
   karma: [
-    `If you would tuck a red card, instead choose a top red card on an opponent's board. Either transfer it to your score pile, or execute its non-demand Dogma effects for yourself only.`
+    `If an opponent would meld a card, first choose a top red card on an opponent's board. Choose to either score it, or self-execute it.`
   ],
   karmaImpl: [
     {
-      trigger: 'tuck',
-      kind: 'would-instead',
-      matches: (game, player, { card }) => card.color === 'red',
-      func: (game, player) => {
+      trigger: 'meld',
+      triggerAll: true,
+      kind: 'would-first',
+      matches: (game, player, { owner }) => player.isOpponent(owner),
+      func: (game, player, { self, owner }) => {
         const choices = game
-          .players.opponents(player)
-          .map(opp => game.cards.top(opp, 'red'))
-          .filter(card => card !== undefined)
-        const selected = game.actions.chooseCard(player, choices)
-        game.log.add({
-          template: '{player} chooses {card}',
-          args: {
-            player,
-            card: selected
+          .players
+          .opponents(owner)
+          .map(opponent => game.cards.top(opponent, 'red'))
+          .filter(card => Boolean(card))
+          .map(card => card.id)
+
+        if (choices.length === 0) {
+          game.log.add({
+            template: 'No opponent has a top red card',
+          })
+          return
+        }
+
+        const actions = [
+          {
+            title: 'score',
+            choices,
+            min: 0,
+          },
+          {
+            title: 'self-execute',
+            choices,
+            min: 0,
           }
-        })
+        ]
 
-        const action = game.actions.choose(player, ['transfer it', 'execute it'])[0]
+        const selected = game.actions.choose(owner, actions)[0]
+        const card = game.cards.byId(selected.selection[0])
 
-        if (action === 'transfer it') {
-          game.actions.transfer(player, selected, game.zones.byPlayer(player, 'score'))
+        if (selected.title === 'score') {
+          game.actions.score(owner, card)
         }
         else {
-          game.aCardEffects(player, selected, 'dogma')
+          game.aSelfExecute(self, owner, card)
         }
       }
     }
