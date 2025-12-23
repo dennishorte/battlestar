@@ -92,7 +92,7 @@ const cardData = [
   require('./Pele.js'),
   require('./GraceHopper.js'),
   require('./TaiichiOno.js'),
-  require('./GeneRoddenberry.js'),
+  require('./RodSerling.js'),
   require('./WernherVonBraun.js'),
   require('./JackieChan.js'),
   require('./StephenHawking.js'),
