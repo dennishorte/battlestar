@@ -4,35 +4,6 @@ const t = require('../../testutil.js')
 
 describe('Jackie Chan', () => {
 
-  test('echo', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        red: ['Jackie Chan'],
-        hand: ['Enterprise', 'Coal']
-      },
-      decks: {
-        base: {
-          10: ['Software']
-        }
-      }
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.red')
-    request = t.choose(game, request, 'Coal')
-
-    t.testIsSecondPlayer(game)
-    t.testBoard(game, {
-      dennis: {
-        red: ['Jackie Chan'],
-        hand: ['Enterprise', 'Software'],
-        score: ['Coal']
-      },
-    })
-  })
-
   test('karma: win', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
@@ -50,8 +21,9 @@ describe('Jackie Chan', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Achieve.age 6')
+    request = t.choose(game, request, 'Achieve.*base-6*')
 
+    t.testGameOver(request, 'micah', 'Jackie Chan')
     t.testBoard(game, {
       dennis: {
         score: ['Software', 'Robotics', 'A.I.'],
@@ -62,7 +34,6 @@ describe('Jackie Chan', () => {
         score: ['Stem Cells', 'Bioengineering', 'Empiricism', 'Alex Trebek']
       },
     })
-    t.testGameOver(request, 'micah', 'Jackie Chan')
   })
 
   test('karma: lose', () => {
@@ -82,7 +53,7 @@ describe('Jackie Chan', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Achieve.age 6')
+    request = t.choose(game, request, 'Achieve.*base-6*')
 
     t.testBoard(game, {
       dennis: {

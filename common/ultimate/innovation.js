@@ -70,7 +70,15 @@ Innovation.prototype._mainProgram = function() {
 }
 
 Innovation.prototype._gameOver = function(event) {
-  // TODO (dennis): handle would-win karma effects
+  // Check for 'would-win' karmas.
+  this.state.wouldWinKarma = true
+  const result = this.aKarma(event.data.player, 'would-win', { event })
+  this.state.wouldWinKarma = false
+
+  if (result) {
+    return result
+  }
+
   return event
 }
 
@@ -952,7 +960,7 @@ Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
   this._karmaOut()
   this.log.outdent()
 
-  if (info.impl.kind === 'variable') {
+  if (info.impl.kind === 'variable' || info.impl.kind === 'game-over') {
     return result
   }
   else {
