@@ -14,6 +14,14 @@ function DogmaAction(player, card, opts={}) {
 }
 
 function DogmaHelper(player, card, opts={}) {
+  // Pre-dogma allows for Muhammad Yunus to modify who has the sole-majority in an icon before
+  // share data is calculated.
+  const preKarmaKind = this.game.aKarma(player, 'pre-dogma', { ...opts, card })
+  if (preKarmaKind === 'would-instead') {
+    this.acted(player)
+    return
+  }
+
   const shareData = getDogmaShareInfo.call(this, player, card, opts)
 
   // Sargon of Akkad, for example, modifies who can share.
@@ -164,10 +172,10 @@ function _getBiscuitComparator(player, featuredBiscuit, biscuits, opts) {
     if (featuredBiscuit === 'score') {
       return this.game.getScore(other) >= this.game.getScore(player)
     }
-    else if (this.state.dogmaInfo.soleMajority === other) {
+    else if (this.state.dogmaInfo.soleMajorityPlayerId === other.id) {
       return true
     }
-    else if (this.state.dogmaInfo.soleMajority === player) {
+    else if (this.state.dogmaInfo.soleMajorityPlayerId === player.id) {
       return false
     }
     else {

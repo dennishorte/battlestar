@@ -4,14 +4,12 @@ const t = require('../../testutil.js')
 
 describe('Muhammad Yunus', () => {
 
-
   test('karma: dogma (active player, no)', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
-        green: ['Muhammad Yunus'],
+        green: ['Muhammad Yunus', 'Sailing'],
         purple: ['Code of Laws'],
-        hand: ['The Wheel', 'Canning']
       },
       micah: {
         green: ['Navigation'],
@@ -32,9 +30,9 @@ describe('Muhammad Yunus', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
-        green: ['Muhammad Yunus'],
+        green: ['Muhammad Yunus', 'Sailing'],
         purple: ['Code of Laws'],
-        hand: ['The Wheel', 'Canning']
+        hand: ['The Wheel'],
       },
       micah: {
         green: ['Navigation'],
@@ -46,7 +44,7 @@ describe('Muhammad Yunus', () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Code of Laws')
-    request = t.choose(game, request, 'Canning')
+    request = t.choose(game, request, 'Sailing')
 
     t.testChoices(request, ['The Wheel']) // Dennis's choice for Code of Laws
   })
@@ -77,8 +75,8 @@ describe('Muhammad Yunus', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       micah: {
-        green: ['Muhammad Yunus'],
-        hand: ['The Wheel', 'Canning']
+        green: ['Muhammad Yunus', 'Sailing'],
+        hand: ['The Wheel'],
       },
       dennis: {
         green: ['Navigation'],
@@ -90,7 +88,7 @@ describe('Muhammad Yunus', () => {
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Code of Laws')
-    request = t.choose(game, request, 'Canning')
+    request = t.choose(game, request, 'Sailing')
 
     t.testChoices(request, ['The Wheel']) // Micah's choice for Code of Laws
   })
@@ -107,15 +105,15 @@ describe('Muhammad Yunus', () => {
         hand: ['Sailing'],
       },
       scott: {
-        green: ['Muhammad Yunus'],
-        hand: ['The Wheel', 'Canning']
+        green: ['Muhammad Yunus', 'Paper'],
+        hand: ['The Wheel']
       },
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Code of Laws')
-    request = t.choose(game, request, 'Canning')
+    request = t.choose(game, request, 'Paper')
 
     t.testChoices(request, ['The Wheel']) // Micah's choice for Code of Laws
   })
