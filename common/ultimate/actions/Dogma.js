@@ -145,6 +145,12 @@ function _statsRecordDogmaActions(player, card) {
 function _shareBonus(player, card) {
   // Share bonus
   if (this.state.shared) {
+    const shareKarmaKind = this.game.aKarma(player, 'share', { card })
+    if (shareKarmaKind === 'would-instead') {
+      this.acted(player)
+      return
+    }
+
     this.log.add({
       template: '{player} draws a sharing bonus',
       args: { player }
