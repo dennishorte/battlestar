@@ -97,7 +97,7 @@ const cardData = [
   require('./JackieChan.js'),
   require('./StephenHawking.js'),
   require('./MartinScorsese.js'),
-  require('./KimYuNa.js'),
+  require('./YunaKim.js'),
   require('./SusanBlackmore.js'),
   require('./MargaretThatcher.js'),
   require('./AlexTrebek.js'),
