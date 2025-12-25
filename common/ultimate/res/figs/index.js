@@ -103,7 +103,17 @@ const cardData = [
   require('./AlexTrebek.js'),
   require('./ShigeruMiyamoto.js'),
   require('./MuhammadYunus.js'),
-  require('./SergeyBrin.js')
+  require('./SergeyBrin.js'),
+  require('./MaxVerstappen.js'),
+  require('./SheikhTamim.js'),
+  require('./GretaThunberg.js'),
+  require('./ThereseKirongozi.js'),
+  require('./BearGrylls.js'),
+  require('./BoyanSlat.js'),
+  require('./GiuseppeScionti.js'),
+  require('./KonstantinNovoselov.js'),
+  require('./EmmaWatson.js'),
+  require('./LilyHevesh.js')
 ]
 
 const achievementData = [
