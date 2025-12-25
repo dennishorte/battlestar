@@ -4,36 +4,33 @@ module.exports = {
   color: `blue`,
   age: 10,
   expansion: `figs`,
-  biscuits: `b*sh`,
+  biscuits: `bpsh`,
   dogmaBiscuit: `s`,
   karma: [
-    `Each {h} on your board also counts as an echo effect reading "Score the bottom card of this color".`
+    `If you would dogma a card, first score your bottom card of its color for each {h} in that color on your board.`,
+    `If you would draw a card, first draw and tuck a card of the same value.`
   ],
   karmaImpl: [
     {
-      trigger: 'hex-effect',
-      triggerAll: true,
-      matches: (game, player, { card }) => {
-        // Only affects cards that are on the same board as Stephen Hawking.
-        return game.getPlayerByCard(this) === game.getPlayerByCard(card)
-      },
-
-      // Note that player here is the owner of Stephen Hawking and card is a card in a stack
-      // that has a visible hex, and so gets this extra echo effect.
+      trigger: 'dogma',
+      kind: 'would-first',
+      matches: () => true,
       func: (game, player, { card }) => {
-        return {
-          text: 'Score the bottom card of this color.',
-          impl: (game, player) => {
-            const cards = game.zones.byPlayer(player, card.color).cards()
-            if (cards.length === 0) {
-              game.log.addNoEffect()
-            }
-            else {
-              game.actions.score(player, cards[cards.length - 1])
-            }
-          }
+        const cards = game.cards.byPlayer(player, card.color)
+        const hexes = cards.filter(card => card.checkBiscuitIsVisible('h')).length
+
+        for (let i = 0; i < hexes; i++) {
+          game.actions.score(player, game.cards.bottom(player, card.color))
         }
       }
-    }
+    },
+    {
+      trigger: 'draw',
+      kind: 'would-first',
+      matches: () => true,
+      func: (game, player, { age }) => {
+        game.actions.drawAndTuck(player, age)
+      }
+    },
   ]
 }
