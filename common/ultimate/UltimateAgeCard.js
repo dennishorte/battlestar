@@ -39,8 +39,6 @@ class UltimateAgeCard extends UltimateBaseCard {
   }
 
   checkBiscuitIsVisible(biscuit) {
-    const splay = this.getSplay()
-
     if (biscuit === 'h') {
       // m also counts as an h
       const mIsVisible = this.checkBiscuitIsVisible('m')
@@ -49,15 +47,25 @@ class UltimateAgeCard extends UltimateBaseCard {
       }
     }
 
-    const biscuitIndex = this.biscuits.indexOf(biscuit)
-    switch (splay) {
-      case 'left': return biscuitIndex === 3 || biscuitIndex === 5
-      case 'right': return biscuitIndex === 0 || biscuitIndex === 1
-      case 'up': return biscuitIndex === 1 || biscuitIndex === 2 || biscuitIndex === 3
-      case 'aslant': return biscuitIndex === 0 || biscuitIndex === 1 || biscuitIndex === 2 || biscuitIndex === 3
-      case 'top': return biscuitIndex !== -1
-      default: return false
+    const biscuitIndices = []
+    for (let i = 0; i < this.biscuits.length; i++) {
+      if (this.biscuits[i] === biscuit) {
+        biscuitIndices.push(i)
+      }
     }
+
+    const splay = this.getSplay()
+
+    return biscuitIndices.some(biscuitIndex => {
+      switch (splay) {
+        case 'left': return biscuitIndex === 3 || biscuitIndex === 5
+        case 'right': return biscuitIndex === 0 || biscuitIndex === 1
+        case 'up': return biscuitIndex === 1 || biscuitIndex === 2 || biscuitIndex === 3
+        case 'aslant': return biscuitIndex === 0 || biscuitIndex === 1 || biscuitIndex === 2 || biscuitIndex === 3
+        case 'top': return biscuitIndex !== -1
+        default: return false
+      }
+    })
   }
 
   checkEchoIsVisible() {
@@ -308,13 +316,6 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
 
     else if (kind === 'echo') {
-      const hexKarmas = this
-        .game
-        .getInfoByKarmaTrigger(player, 'hex-effect')
-        .filter(info => info.impl.matches(this, player, { card: this }))
-      const includeHexesAsEcho = hexKarmas.length > 0
-      const hexIsVisible = includeHexesAsEcho && this.checkBiscuitIsVisible('h')
-
       const texts = []
       const impls = []
 
@@ -323,14 +324,6 @@ class UltimateAgeCard extends UltimateBaseCard {
           texts.push(text)
         }
         for (const impl of util.getAsArray(this, 'echoImpl')) {
-          impls.push(impl)
-        }
-      }
-
-      if (hexIsVisible) {
-        const { text, impl } = hexKarmas[0].impl.func(this, player, { card: this })
-        if (text) {
-          texts.push(text)
           impls.push(impl)
         }
       }
