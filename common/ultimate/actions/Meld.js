@@ -21,6 +21,8 @@ function MeldAction(player, card, opts={}) {
     args: { player, card }
   })
 
+  this.game.aKarma(player, 'when-meld', { ...opts, card })
+
   if (fromMuseum) {
     const museum = this.cards.byPlayer(player, 'museum').filter(card => card.isMuseum)[0]
     this.return(player, museum)

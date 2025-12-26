@@ -13,6 +13,7 @@ module.exports = {
   karmaImpl: [
     {
       trigger: 'when-meld',
+      matches: () => true,
       func(game, player) {
         const topFigures = game
           .players.opponents(player)
