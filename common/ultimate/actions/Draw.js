@@ -98,6 +98,8 @@ function _adjustedDrawDeck(age, exp) {
 }
 
 // Determine which expansion to draw from.
+// If playing with more than one of Figures, Echoes, and The Unseen, the draw
+// rule for Figures is checked first, then Echoes, then Unseen.
 function _determineBaseDrawExpansion(player) {
   // Whether the player ends up drawing echoes, unseen, or base, this counts as their
   // first base draw, and so following draws won't draw unseen cards.
@@ -105,24 +107,49 @@ function _determineBaseDrawExpansion(player) {
   if (isFirstBaseDraw){
     this.game.mSetFirstBaseDraw(player)
   }
-  if (this.game.getExpansionList().includes('echo')) {
-    const topAges = this
-      .cards
-      .tops(player)
-      .map(c => c.getAge())
-      .sort((l, r) => l - r)
-      .reverse()
 
-    if (topAges.length === 1 || (topAges.length > 1 && topAges[0] != topAges[1])) {
-      return 'echo'
+  if (this.game.settings.version < 5) {
+    if (this.game.getExpansionList().includes('echo')) {
+      const topAges = this
+        .cards
+        .tops(player)
+        .map(c => c.getAge())
+        .sort((l, r) => l - r)
+        .reverse()
+
+      if (topAges.length === 1 || (topAges.length > 1 && topAges[0] != topAges[1])) {
+        return 'echo'
+      }
     }
-  }
-  if (this.game.getExpansionList().includes('usee')) {
-    if (isFirstBaseDraw) {
-      return 'usee'
+    if (this.game.getExpansionList().includes('usee')) {
+      if (isFirstBaseDraw) {
+        return 'usee'
+      }
     }
+    return 'base'
   }
-  return 'base'
+  else {
+    let exp = 'base'
+
+    if (this.game.getExpansionList().includes('echo')) {
+      const topAges = this
+        .cards
+        .tops(player)
+        .map(c => c.getAge())
+        .sort((l, r) => l - r)
+        .reverse()
+
+      if (topAges.length === 1 || (topAges.length > 1 && topAges[0] != topAges[1])) {
+        exp = 'echo'
+      }
+    }
+    if (this.game.getExpansionList().includes('usee')) {
+      if (isFirstBaseDraw) {
+        exp = 'usee'
+      }
+    }
+    return exp
+  }
 }
 
 function _getAgeForDrawAction(player, isAction) {
