@@ -437,6 +437,11 @@ Innovation.prototype.action = function(count) {
   }
   else if (name === 'Dogma') {
     const card = this.cards.byId(arg)
+    const karmaKind = this.aKarma(player, 'dogma-action', { card })
+    if (karmaKind === 'would-instead') {
+      this.actions.acted(player)
+      return
+    }
     this.actions.dogma(player, card)
   }
   else if (name === 'Draw') {
