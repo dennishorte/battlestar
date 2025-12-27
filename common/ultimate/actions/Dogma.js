@@ -115,19 +115,6 @@ function _executeEffects(player, card, shareData, opts) {
 
   for (const e of effects) {
     for (let i = 0; i < e.texts.length; i++) {
-      const karmaKind = this.game.aKarma(player, 'dogma-effect', {
-        ...opts,
-        ...shareData,
-        card,
-        effect: function() {
-          this.game.aOneEffect(player, e.card, e.texts[i], e.impls[i], effectOpts)
-        }
-      })
-      if (karmaKind === 'would-instead') {
-        this.acted(player)
-        return
-      }
-
       this.game.aOneEffect(player, e.card, e.texts[i], e.impls[i], effectOpts)
       if (this.state.dogmaInfo.earlyTerminate) {
         return

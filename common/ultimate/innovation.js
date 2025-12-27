@@ -610,6 +610,22 @@ Innovation.prototype.aOneEffect = function(
           }
         }
 
+        const dogmaEffectKarmaKind = this.aKarma(actor, 'dogma-effect', {
+          ...opts,
+          card,
+          effect: function() {
+            this.game.aCardEffect(actor, effectInfo, {
+              leader: opts.leader,
+              self: card,
+              foreseen: opts.foreseen,
+            })
+          }
+        })
+        if (dogmaEffectKarmaKind === 'would-instead') {
+          this.acted(player)
+          continue
+        }
+
         const result = this.aCardEffect(actor, effectInfo, {
           leader: opts.leader,
           self: card,
@@ -1168,7 +1184,7 @@ Innovation.prototype.getInfoByKarmaTrigger = function(player, trigger) {
 
   const global = this
     .players
-    .opponents(player)
+    .other(player)
     .flatMap(opp => this.cards.tops(opp))
     .flatMap(card => card.getKarmaInfo(trigger))
     .filter(info => info.impl.triggerAll)

@@ -4,9 +4,19 @@ module.exports = {
   color: `blue`,
   age: 11,
   expansion: `figs`,
-  biscuits: ``,
-  dogmaBiscuit: ``,
-  karma: [],
-  karmaImpl: []
+  biscuits: `ffph`,
+  dogmaBiscuit: `f`,
+  karma: [
+    `If you would execute a dogma effect, first draw and score a {9}.`
+  ],
+  karmaImpl: [
+    {
+      trigger: 'dogma-effect',
+      kind: 'would-first',
+      matches: () => true,
+      func: (game, player, { self }) => {
+        game.actions.drawAndScore(player, game.getEffectAge(self, 9))
+      }
+    }
+  ]
 }
-
