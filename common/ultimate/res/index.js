@@ -10,7 +10,7 @@ const artiSet = require('./arti')
 const useeSet = require('./usee')
 const survSet = require('./surv')
 
-const ALL_EXPANSIONS = ['base', 'echo', 'figs', 'city', 'arti', 'usee', 'surv']
+const ALL_EXPANSIONS = ['base', 'echo', 'figs', 'city', 'arti', 'usee']
 const ALL_AGES = [1,2,3,4,5,6,7,8,9,10,11]
 
 const sets = {

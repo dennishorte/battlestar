@@ -1555,9 +1555,10 @@ Innovation.prototype._generateActionChoices = function() {
   const choices = []
   choices.push(this._generateActionChoicesAchieve())
   choices.push(this._generateActionChoicesDecree())
-  choices.push(this._generateActionChoicesDogma())
   choices.push(this._generateActionChoicesDraw())
+  choices.push(this._generateActionChoicesDogma())
   choices.push(this._generateActionChoicesEndorse())
+  choices.push(this._generateActionChoicesAuspice())
   choices.push(this._generateActionChoicesMeld())
   return choices
 }
@@ -1723,7 +1724,7 @@ Innovation.prototype.getDogmaTargets = function(player) {
 Innovation.prototype._generateActionChoicesDogma = function() {
   const player = this.players.current()
 
-  const dogmaTargets = this.cards.tops(player)
+  const dogmaTargets = this.cards.tops(player).filter(card => card.dogma.length > 0)
 
   const extraEffects = this
     .getInfoByKarmaTrigger(player, 'list-effects')
@@ -1745,6 +1746,32 @@ Innovation.prototype._generateActionChoicesDraw = function() {
   return {
     title: 'Draw',
     choices: ['draw a card'],
+    min: 0,
+  }
+}
+
+Innovation.prototype._generateActionChoicesAuspice = function() {
+  const standardBiscuits = Object.keys(this.util.emptyBiscuits())
+  const _isStandardBiscuit = function(biscuit) {
+    return standardBiscuits.includes(biscuit)
+  }
+  const player = this.players.current()
+  const topFigureBiscuits = this
+    .cards
+    .tops(player)
+    .filter(card => card.checkIsFigure())
+    .flatMap(card => card.biscuits.split('').filter(biscuit => _isStandardBiscuit(biscuit)))
+    .filter(biscuit => biscuit !== 'p') // Can't auspice person biscuits because that doesn't change anything.
+
+  const validAuspiceTargets = this
+    .cards
+    .tops(player)
+    .filter(card => topFigureBiscuits.includes(card.dogmaBiscuit))
+    .filter(card => card.dogma.length > 0)
+
+  return {
+    title: 'Auspice',
+    choices: validAuspiceTargets.map(card => card.name),
     min: 0,
   }
 }

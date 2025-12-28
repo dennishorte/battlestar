@@ -676,6 +676,24 @@ describe('Innovation', () => {
       })
     })
 
+    describe('auspice action', () => {
+      test('top figure matches featured biscuit', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+        t.setBoard(game, {
+          dennis: {
+            blue: ['Archimedes'],
+            green: ['Paper'],
+            yellow: ['Agriculture'],
+          }
+        })
+
+        const request = game.run()
+
+        const auspiceChoices = request.selectors[0].choices.find(choice => choice.title === 'Auspice')
+        expect(auspiceChoices.choices).toStrictEqual(['Paper'])
+      })
+    })
+
     describe('endorse action', () => {
       test('need a card of equal or lower age to tuck', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
