@@ -1,11 +1,12 @@
 module.exports = {
   name: `Fishing`,
-  color: `blue`,
+  color: `green`,
   age: 0,
   expansion: `surv`,
-  biscuits: ``,
-  dogmaBiscuit: ``,
-  dogma: [],
+  biscuits: `rhrc`,
+  dogmaBiscuit: `r`,
+  dogma: [
+    `Draw and meld a {z}. Reveal all hand and transfer all revealed card of that drawn card's color to your hand, and if you draw Fresh Water, draw a {1}. If you have three cards of any one color in your hand, draw a {2}.`
+  ],
   dogmaImpl: [],
 }
-

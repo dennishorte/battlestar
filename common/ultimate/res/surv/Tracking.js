@@ -1,11 +1,12 @@
 module.exports = {
   name: `Tracking`,
-  color: `green`,
+  color: `purple`,
   age: 0,
   expansion: `surv`,
-  biscuits: ``,
-  dogmaBiscuit: ``,
-  dogma: [],
+  biscuits: `chcr`,
+  dogmaBiscuit: `c`,
+  dogma: [
+    `Draw to {z}. Return one of them.`
+  ],
   dogmaImpl: [],
 }
-

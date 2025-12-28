@@ -3,9 +3,10 @@ module.exports = {
   color: `green`,
   age: 0,
   expansion: `surv`,
-  biscuits: ``,
-  dogmaBiscuit: ``,
-  dogma: [],
+  biscuits: `lhlr`,
+  dogmaBiscuit: `l`,
+  dogma: [
+    `Draw a {z}. If it has no {r}, you may reveal it, score it, and draw a {z}.`
+  ],
   dogmaImpl: [],
 }
-
