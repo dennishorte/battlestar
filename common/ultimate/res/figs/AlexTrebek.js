@@ -14,7 +14,7 @@ module.exports = {
       trigger: 'draw',
       matches: (game, player) => game.cards.byPlayer(player, 'hand').every(card => !card.checkIsFigure()),
       func: (game, player) => {
-        const age = game.actions.chooseAge(player, game.util.ages())
+        const age = game.actions.chooseAge(player, game.getAges())
 
         const choices = game.zones.byDeck('figs', age).cardlist()
           .filter(card => card.checkIsFigure())

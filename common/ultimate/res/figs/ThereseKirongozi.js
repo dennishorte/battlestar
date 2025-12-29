@@ -16,7 +16,7 @@ module.exports = {
       kind: 'would-instead',
       matches: (game, player, { owner }) => player.isOpponent(owner),
       func: (game, player, { self }) => {
-        const age = game.actions.chooseAge(player, game.util.ages())
+        const age = game.actions.chooseAge(player, game.getAges())
         const card = game.actions.drawAndReveal(player, age)
         game.actions.return(player, card)
 

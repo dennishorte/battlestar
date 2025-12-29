@@ -43,7 +43,7 @@ module.exports = {
     }
 
     const handAges = game.cards.byPlayer(player, 'hand').map(card => card.getAge())
-    const ages = game.util.ages().filter(age => handAges.includes(age))
+    const ages = game.getAges().filter(age => handAges.includes(age))
     const age = game.actions.chooseAge(player, ages)
 
     if (age) {

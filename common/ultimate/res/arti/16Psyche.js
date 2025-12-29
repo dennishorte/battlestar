@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const topCards = game.cards.tops(player)
-      const values = game.util.ages().filter(age => topCards.every(card => card.getAge() !== age))
+      const values = game.getAges().filter(age => topCards.every(card => card.getAge() !== age))
 
       const age = game.actions.chooseAge(player, values)
       const deckCards = game.cards.byDeck('base', age)

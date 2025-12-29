@@ -14,6 +14,7 @@ module.exports = {
       trigger: 'when-meld',
       matches: () => true,
       func: (game, player) => {
+        game.state.useAgeZero = true
         throw new Error('not implemented; need the zero deck')
       }
     },

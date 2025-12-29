@@ -22,7 +22,7 @@ module.exports = {
         const tuckedFromScore = game.actions.tuckMany(player, toTuck)
 
         if (tuckedFromScore.length > 0) {
-          game.actions.junkAvailableAchievement(player, game.util.ages())
+          game.actions.junkAvailableAchievement(player, game.getAges())
         }
       }
     }

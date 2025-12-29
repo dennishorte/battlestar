@@ -91,6 +91,8 @@ Innovation.prototype.initialize = function() {
   this.log.add({ template: 'Initializing' })
   this.log.indent()
 
+  this.state.useAgeZero = false
+
   this.initializeCards()
   this.initializeExpansions()
   this.initializeTeams()
@@ -1120,6 +1122,23 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
   return ach
 }
 
+Innovation.prototype.getAges = function() {
+  if (this.state.useAgeZero) {
+    return [0,1,2,3,4,5,6,7,8,9,10,11]
+  }
+  else {
+    return [1,2,3,4,5,6,7,8,9,10,11]
+  }
+}
+
+Innovation.prototype.getMinAge = function() {
+  return this.getAges()[0]
+}
+
+Innovation.prototype.getMaxAge = function() {
+  return this.getAges().slice(-1)[0]
+}
+
 Innovation.prototype.getBiscuits = function() {
   const biscuits = this
     .players
@@ -1239,7 +1258,7 @@ Innovation.prototype.getHighestTopCard = function(player) {
 
 Innovation.prototype.getNonEmptyAges = function() {
   return this
-    .util.ages()
+    .getAges()
     .filter(age => this.zones.byDeck('base', age).cardlist().length > 0)
 }
 

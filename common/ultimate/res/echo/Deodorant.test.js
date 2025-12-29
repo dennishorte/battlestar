@@ -70,6 +70,7 @@ describe("Deodorant", () => {
         yellow: ['Deodorant'],
         green: ['Measurement'],
       },
+      achievements: ['Invention'],
       decks: {
         base: {
           3: ['Paper'],

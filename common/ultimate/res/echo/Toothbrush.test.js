@@ -11,6 +11,7 @@ describe("Toothbrush", () => {
         yellow: ['Toothbrush'],
         hand: ['Tools', 'Sailing', 'Machinery'],
       },
+      achievements: ['Philosophy'],
     })
 
     let request
@@ -56,6 +57,7 @@ describe("Toothbrush", () => {
         score: ['Software', 'Canning'],
       },
       junk: ['Engineering'],
+      achievements: ['Philosophy'],
     })
 
     let request

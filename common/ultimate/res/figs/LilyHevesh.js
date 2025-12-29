@@ -21,7 +21,7 @@ module.exports = {
         for (let i = 0; i < 5; i++) {
           const decks = game
             .getExpansionList()
-            .flatMap(exp => game.util.ages().map(age => ({ exp, age })))
+            .flatMap(exp => game.getAges().map(age => ({ exp, age })))
             .filter(({ exp, age }) => {
               const deck = game.cards.byDeck(exp, age)
               return deck && deck.length > 0

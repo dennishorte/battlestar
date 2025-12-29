@@ -15,7 +15,7 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func: (game, player) => {
-        const value = game.actions.chooseAge(player, game.util.ages())
+        const value = game.actions.chooseAge(player, game.getAges())
         const toReturn = game
           .players
           .all()
