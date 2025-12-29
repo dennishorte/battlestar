@@ -2,7 +2,7 @@ module.exports = {
   name: `Hunting`,
   color: `green`,
   age: 0,
-  expansion: `surv`,
+  expansion: `base`,
   biscuits: `rrhk`,
   dogmaBiscuit: `r`,
   dogma: [

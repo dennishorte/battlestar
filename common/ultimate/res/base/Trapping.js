@@ -2,7 +2,7 @@ module.exports = {
   name: `Trapping`,
   color: `red`,
   age: 0,
-  expansion: `surv`,
+  expansion: `base`,
   biscuits: `hrrl`,
   dogmaBiscuit: `r`,
   dogma: [

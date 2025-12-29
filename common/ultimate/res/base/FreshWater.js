@@ -2,7 +2,7 @@ module.exports = {
   name: `Fresh Water`,
   color: `yellow`,
   age: 0,
-  expansion: `surv`,
+  expansion: `base`,
   biscuits: `rlhl`,
   dogmaBiscuit: `l`,
   dogma: [

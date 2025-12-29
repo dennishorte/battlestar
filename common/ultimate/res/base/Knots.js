@@ -2,7 +2,7 @@ module.exports = {
   name: `Knots`,
   color: `blue`,
   age: 0,
-  expansion: `surv`,
+  expansion: `base`,
   biscuits: `lhss`,
   dogmaBiscuit: `s`,
   dogma: [

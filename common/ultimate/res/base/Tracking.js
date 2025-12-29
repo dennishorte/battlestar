@@ -2,7 +2,7 @@ module.exports = {
   name: `Tracking`,
   color: `purple`,
   age: 0,
-  expansion: `surv`,
+  expansion: `base`,
   biscuits: `chcr`,
   dogmaBiscuit: `c`,
   dogma: [

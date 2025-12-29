@@ -2,7 +2,7 @@ module.exports = {
   name: `Shelter`,
   color: `yellow`,
   age: 0,
-  expansion: `surv`,
+  expansion: `base`,
   biscuits: `hskk`,
   dogmaBiscuit: `k`,
   dogma: [

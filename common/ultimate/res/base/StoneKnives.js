@@ -2,7 +2,7 @@ module.exports = {
   name: `Stone Knives`,
   color: `red`,
   age: 0,
-  expansion: `surv`,
+  expansion: `base`,
   biscuits: `hkck`,
   dogmaBiscuit: `k`,
   dogma: [

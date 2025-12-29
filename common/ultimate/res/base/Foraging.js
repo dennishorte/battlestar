@@ -2,7 +2,7 @@ module.exports = {
   name: `Foraging`,
   color: `green`,
   age: 0,
-  expansion: `surv`,
+  expansion: `base`,
   biscuits: `lhlr`,
   dogmaBiscuit: `l`,
   dogma: [

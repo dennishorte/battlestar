@@ -2,7 +2,7 @@ module.exports = {
   name: `Skinning`,
   color: `yellow`,
   age: 0,
-  expansion: `surv`,
+  expansion: `base`,
   biscuits: `hlrr`,
   dogmaBiscuit: `r`,
   dogma: [

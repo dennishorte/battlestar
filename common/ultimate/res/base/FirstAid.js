@@ -2,7 +2,7 @@ module.exports = {
   name: `First Aid`,
   color: `blue`,
   age: 0,
-  expansion: `surv`,
+  expansion: `base`,
   biscuits: `slhl`,
   dogmaBiscuit: `l`,
   dogma: [

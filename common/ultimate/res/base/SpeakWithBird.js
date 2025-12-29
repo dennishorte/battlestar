@@ -2,7 +2,7 @@ module.exports = {
   name: `Speak with Bird`,
   color: `purple`,
   age: 0,
-  expansion: `surv`,
+  expansion: `base`,
   biscuits: `hllk`,
   dogmaBiscuit: `l`,
   dogma: [

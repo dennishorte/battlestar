@@ -2,7 +2,7 @@ module.exports = {
   name: `Curing`,
   color: `blue`,
   age: 0,
-  expansion: `surv`,
+  expansion: `base`,
   biscuits: `chrc`,
   dogmaBiscuit: `c`,
   dogma: [

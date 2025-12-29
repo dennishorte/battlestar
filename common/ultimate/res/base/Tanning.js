@@ -2,7 +2,7 @@ module.exports = {
   name: `Tanning`,
   color: `purple`,
   age: 0,
-  expansion: `surv`,
+  expansion: `base`,
   biscuits: `cchk`,
   dogmaBiscuit: `c`,
   dogma: [
