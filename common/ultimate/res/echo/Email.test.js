@@ -8,13 +8,11 @@ describe('Email', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo', 'city'] })
     t.setBoard(game, {
       dennis: {
-        green: {
-          cards: ['Babylon', 'Email'],
-          splay: 'right'
-        }
+        green: ['Email'],
       },
       decks: {
         echo: {
+          9: ['Wristwatch'],
           10: ['Social Networking'],
         }
       }
@@ -22,16 +20,13 @@ describe('Email', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Babylon')
+    request = t.choose(game, request, 'Dogma.Email')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        green: {
-          cards: ['Babylon', 'Email'],
-          splay: 'right'
-        },
-        forecast: ['Social Networking'],
+        green: ['Email'],
+        forecast: ['Social Networking', 'Wristwatch'],
       },
     })
   })
