@@ -4,7 +4,7 @@ const t = require('../../testutil.js')
 
 describe('Curing', () => {
   test('dogma: score card with {r}', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'surv'] })
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'surv'], useAgeZero: true })
     t.setBoard(game, {
       dennis: {
         blue: ['Curing'],
@@ -28,7 +28,7 @@ describe('Curing', () => {
   })
 
   test('dogma: score card with {r}, then exchange', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'surv'] })
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'surv'], useAgeZero: true })
     t.setBoard(game, {
       dennis: {
         blue: ['Curing'],
@@ -62,7 +62,7 @@ describe('Curing', () => {
   })
 
   test('dogma: score card with {r}, choose not to exchange', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'surv'] })
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'surv'], useAgeZero: true })
     t.setBoard(game, {
       dennis: {
         blue: ['Curing'],
@@ -94,7 +94,7 @@ describe('Curing', () => {
   })
 
   test('dogma: multiple cards with {r}', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'surv'] })
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'surv'], useAgeZero: true })
     t.setBoard(game, {
       dennis: {
         blue: ['Curing'],
@@ -120,7 +120,7 @@ describe('Curing', () => {
   })
 
   test('dogma: exchange with multiple highest cards', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'surv'] })
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'surv'], useAgeZero: true })
     t.setBoard(game, {
       dennis: {
         blue: ['Curing'],
@@ -154,7 +154,7 @@ describe('Curing', () => {
   })
 
   test('dogma: you lose (no cards with {r})', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'surv'] })
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'surv'], useAgeZero: true })
     t.setBoard(game, {
       dennis: {
         blue: ['Curing'], // Tools has no {r} biscuit
