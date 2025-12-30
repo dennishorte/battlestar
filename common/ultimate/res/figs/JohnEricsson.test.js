@@ -9,28 +9,38 @@ describe('John Ericsson', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
       t.setBoard(game, {
         dennis: {
-          red: ['John Ericsson', 'Archery'], // Card to dogma (red)
+          red: ['John Ericsson'], // John Ericsson on top (karma card)
+          green: ['Sailing'], // Sailing on top (card to dogma - green)
         },
         micah: {
-          red: {
-            cards: ['Gunpowder', 'Construction'],
-            splay: 'right', // Red splayed right
+          green: {
+            cards: ['The Wheel', 'Mapmaking'],
+            splay: 'right', // Green splayed right
+          },
+        },
+        decks: {
+          base: {
+            1: ['Tools'], // Card for Sailing's effect (draw and meld a {1})
           },
         },
       })
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Archery')
-      // Karma triggers: unsplay red on micah's board
+      request = t.choose(game, request, 'Dogma.Sailing')
+      // Karma triggers (would-first): unsplay green on micah's board
+      // When only one opponent, choosePlayer auto-selects and unsplay happens immediately
+      // Sailing's dogma executes: draw and meld a {1} (auto-melds, no choice needed)
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
         dennis: {
-          red: ['John Ericsson', 'Archery'],
+          red: ['John Ericsson'],
+          green: ['Sailing'],
+          blue: ['Tools'], // Tools (blue) drawn and melded by Sailing
         },
         micah: {
-          red: ['Gunpowder', 'Construction'], // Red unsplayed (splay: 'none')
+          green: ['The Wheel', 'Mapmaking'], // Green unsplayed (splay: 'none')
         },
       })
     })
@@ -39,30 +49,39 @@ describe('John Ericsson', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
       t.setBoard(game, {
         dennis: {
-          red: ['John Ericsson', 'Archery'], // Card to dogma (red)
+          red: ['John Ericsson'], // John Ericsson on top (karma card)
+          green: ['Sailing'], // Sailing on top (card to dogma - green)
         },
         micah: {
-          red: {
-            cards: ['Gunpowder', 'Construction'],
-            splay: 'left', // Red splayed left, not right
+          green: {
+            cards: ['The Wheel', 'Mapmaking'],
+            splay: 'left', // Green splayed left, not right
+          },
+        },
+        decks: {
+          base: {
+            1: ['Tools'], // Card for Sailing's effect (draw and meld a {1})
           },
         },
       })
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Archery')
-      // Karma should NOT trigger (red is splayed left, not right)
+      request = t.choose(game, request, 'Dogma.Sailing')
+      // Karma should NOT trigger (green is splayed left, not right)
+      // Sailing's dogma executes: draw and meld a {1} (auto-melds, no choice needed)
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
         dennis: {
-          red: ['John Ericsson', 'Archery'],
+          red: ['John Ericsson'],
+          green: ['Sailing'],
+          blue: ['Tools'], // Tools (blue) drawn and melded by Sailing
         },
         micah: {
-          red: {
-            cards: ['Gunpowder', 'Construction'],
-            splay: 'left', // Red remains splayed left (karma did not trigger)
+          green: {
+            cards: ['The Wheel', 'Mapmaking'],
+            splay: 'left', // Green remains splayed left (karma did not trigger)
           },
         },
       })
@@ -72,41 +91,53 @@ describe('John Ericsson', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'], numPlayers: 3 })
       t.setBoard(game, {
         dennis: {
-          red: ['John Ericsson', 'Archery'], // Card to dogma (red)
+          red: ['John Ericsson'], // John Ericsson on top (karma card)
+          green: ['Sailing'], // Sailing on top (card to dogma - green)
         },
         micah: {
-          red: {
-            cards: ['Gunpowder', 'Construction'],
-            splay: 'right', // Red splayed right
+          green: {
+            cards: ['The Wheel', 'Mapmaking'],
+            splay: 'right', // Green splayed right
           },
         },
         scott: {
-          red: {
-            cards: ['Metalworking', 'Road Building'],
-            splay: 'right', // Red also splayed right
+          green: {
+            cards: ['Currency', 'Clothing'],
+            splay: 'right', // Green also splayed right
+          },
+        },
+        decks: {
+          base: {
+            1: ['Tools'], // Card for Sailing's effect (draw and meld a {1})
           },
         },
       })
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Archery')
-      // Karma triggers: choose which opponent to unsplay
-      request = t.choose(game, request, 'micah') // Choose to unsplay micah's red
+      request = t.choose(game, request, 'Dogma.Sailing')
+      // Karma triggers (would-first): choose which opponent to unsplay
+      request = t.choose(game, request, 'micah') // Choose to unsplay micah's green
+      // Sailing's dogma executes: draw and meld a {1} (auto-melds, no choice needed)
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
         dennis: {
-          red: ['John Ericsson', 'Archery'],
+          red: ['John Ericsson'],
+          green: ['Sailing'],
+          purple: ['Railroad'], // Initial pick in 3-player game
+          yellow: ['Masonry'], // Initial pick in 3-player game
+          hand: ['Alfred Nobel'], // Initial pick in 3-player game
         },
         micah: {
-          red: ['Gunpowder', 'Construction'], // Red unsplayed (splay: 'none')
+          green: ['The Wheel', 'Mapmaking'], // Green unsplayed (splay: 'none')
         },
         scott: {
-          red: {
-            cards: ['Metalworking', 'Road Building'],
-            splay: 'right', // Red remains splayed right (not chosen)
+          green: {
+            cards: ['Currency', 'Clothing'],
+            splay: 'right', // Green remains splayed right (not chosen)
           },
+          blue: ['Tools'], // Tools (blue) drawn and melded by Sailing
         },
       })
     })

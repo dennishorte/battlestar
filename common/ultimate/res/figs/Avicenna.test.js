@@ -117,7 +117,7 @@ describe('Avicenna', () => {
         micah: {
           hand: [],
         },
-        achievements: ['The Wheel', 'Mathematics'],
+        achievements: ['Sailing', 'Mathematics'],
         decks: {
           base: {
             1: ['Tools', 'Agriculture'],
@@ -143,7 +143,7 @@ describe('Avicenna', () => {
       const junkCards = game.zones.byId('junk').cardlist().map(c => c.name)
       // The Wheel achievement should not be junked by Avicenna's karma
       expect(junkCards).not.toContain('The Wheel')
-      
+
       // Verify The Wheel card is still on dennis's board (dogma executed normally)
       expect(t.cards(game, 'green', 'dennis')).toContain('The Wheel')
     })

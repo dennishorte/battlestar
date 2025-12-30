@@ -248,23 +248,25 @@ describe('Isaac Newton', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
-        blue: ['Isaac Newton', 'Mathematics'], // Age 2 (multiple cards for splay)
+        blue: ['Isaac Newton'], // Age 2 (multiple cards for splay)
         green: ['The Wheel', 'Sailing'], // Age 1 (won't splay - age doesn't match)
         red: ['Construction', 'Road Building'], // Age 2 (multiple cards for splay)
         yellow: ['Machinery'], // Age 3 (won't splay - age doesn't match, only one card anyway)
+        purple: ['Philosophy'],
       },
     })
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Mathematics') // Dogma age 2 card
+    request = t.choose(game, request, 'Dogma.Philosophy') // Dogma age 2 card
+    request = t.choose(game, request)
     // Mathematics's dogma: optionally return a card and draw/meld one higher
     // Skip returning (min: 0)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        blue: ['Isaac Newton', 'Mathematics'],
+        blue: ['Isaac Newton'],
         green: {
           cards: ['The Wheel', 'Sailing'],
           splay: 'none', // Not splayed (age 1 doesn't match age 2)
@@ -277,6 +279,7 @@ describe('Isaac Newton', () => {
           cards: ['Machinery'],
           splay: 'none', // Not splayed (age 3 doesn't match age 2)
         },
+        purple: ['Philosophy'],
       },
     })
   })

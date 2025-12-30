@@ -63,6 +63,9 @@ describe('Charles Darwin', () => {
         base: {
           8: ['Skyscrapers'], // Age 8 card to be drawn
         },
+        figs: {
+          1: ['Sargon of Akkad'],
+        }
       },
     })
 

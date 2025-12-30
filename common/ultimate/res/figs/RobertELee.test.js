@@ -39,6 +39,7 @@ describe('Robert E. Lee', () => {
           red: ['Robert E. Lee'],
           yellow: ['Agriculture'],
         },
+        achievements: ['Tools'],
         decks: {
           base: {
             1: ['Sailing'], // Card drawn by Archery's demand effect
@@ -61,6 +62,7 @@ describe('Robert E. Lee', () => {
         micah: {
           red: ['Robert E. Lee'],
         },
+        junk: ['Tools'],
       })
     })
 
@@ -75,6 +77,7 @@ describe('Robert E. Lee', () => {
           red: ['Robert E. Lee'],
           yellow: ['Agriculture'], // Card with {l} biscuit, different color from Archery (red)
         },
+        achievements: ['Tools'],
         decks: {
           base: {
             1: ['Sailing'], // Card drawn by Archery's demand effect
@@ -97,6 +100,7 @@ describe('Robert E. Lee', () => {
         micah: {
           red: ['Robert E. Lee'],
         },
+        junk: ['Tools'],
       })
     })
 

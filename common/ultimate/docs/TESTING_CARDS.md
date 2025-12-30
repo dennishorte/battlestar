@@ -17,12 +17,12 @@ describe('Philosophy', () => {
         red: ['Construction', 'Industrialization'],
       }
     })
-    
+
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Philosophy')
     t.choose(game, request, 'red')
-    
+
     t.testBoard(game, {
       dennis: {
         purple: ['Philosophy'],
@@ -302,11 +302,11 @@ Remember: The first player only gets one action:
 
 ```javascript
 // ❌ Wrong: Two actions for first player
-request = t.choose(game, request, 'Draw.Draw a card')
-request = t.choose(game, request, 'Draw.Draw a card') // This won't work!
+request = t.choose(game, request, 'Draw.draw a card')
+request = t.choose(game, request, 'Draw.draw a card') // This won't work!
 
 // ✅ Correct: One action for first player
-request = t.choose(game, request, 'Draw.Draw a card')
+request = t.choose(game, request, 'Draw.draw a card')
 // Now it's the second player's turn
 ```
 

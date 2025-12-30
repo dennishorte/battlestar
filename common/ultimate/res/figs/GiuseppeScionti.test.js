@@ -85,7 +85,10 @@ describe('Giuseppe Scionti', () => {
         base: {
           1: ['Tools', 'The Wheel'], // Cards for Sailing's effect
           9: ['Services'], // Age 9 card to draw and score by karma
-        }
+        },
+        figs: {
+          1: ['Sargon of Akkad'],
+        },
       }
     })
 

@@ -42,6 +42,7 @@ describe('Edward Jenner', () => {
         yellow: ['Edward Jenner'],
         hand: ['The Wheel', 'Enterprise'],
       },
+      achievements: [],
       scott: {
         hand: ['Mathematics'],
       },

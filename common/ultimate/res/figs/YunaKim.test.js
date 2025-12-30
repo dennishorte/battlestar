@@ -42,7 +42,7 @@ describe('Yuna Kim', () => {
       },
       decks: {
         base: {
-          1: ['Archery'], // Age 1 red card to draw and score
+          1: ['Archery', 'Metalworking'], // Age 1 red card to draw and score
         }
       }
     })
@@ -116,6 +116,11 @@ describe('Yuna Kim', () => {
         blue: ['Writing', 'Printing Press', 'Experimentation', 'Computers'], // 4 blue cards - top 3 will be returned
         hand: ['Software'], // Blue card to meld
       },
+      decks: {
+        base: {
+          10: ['Robotics'],
+        }
+      }
     })
 
     let request

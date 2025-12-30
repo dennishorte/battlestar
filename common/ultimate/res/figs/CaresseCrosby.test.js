@@ -46,11 +46,16 @@ describe('Caresse Crosby', () => {
             splay: 'left', // Blue already splayed left (needs 2+ cards to splay)
           },
         },
+        decks: {
+          base: {
+            2: ['Fermenting'],
+          }
+        }
       })
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Mathematics') // dennis dogmas Mathematics (blue)
+      request = t.choose(game, request, 'Dogma.Writing') // dennis dogmas Mathematics (blue)
       // Karma does NOT trigger: dennis already has blue splayed left
 
       t.testIsSecondPlayer(game)
@@ -61,6 +66,7 @@ describe('Caresse Crosby', () => {
             cards: ['Writing', 'Mathematics'],
             splay: 'left', // Still splayed left, no change
           },
+          hand: ['Fermenting'],
         },
       })
     })
@@ -96,7 +102,7 @@ describe('Caresse Crosby', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel') // dennis dogmas The Wheel (green)
+      request = t.choose(game, request, 'Dogma.Navigation')
       // Karma triggers: dennis doesn't have green splayed left
       // Only dennis can be chosen (only player with green cards), so auto-selected
       // This is the fifth color splayed left on dennis's board, so dennis wins

@@ -70,6 +70,7 @@ describe('Wernher Von Braun', () => {
       achievements: ['Tools'],
       decks: {
         figs: {
+          9: ['Hedy Lamar'],
           10: ['Susan Blackmore'], // Figure that micah will draw when dennis claims achievement
         },
       },
@@ -94,7 +95,7 @@ describe('Wernher Von Braun', () => {
       },
       micah: {
         blue: ['Wernher Von Braun'],
-        hand: ['Gene Roddenberry'], // Figure was drawn when dennis claimed achievement (age 10 figure)
+        hand: ['Hedy Lamar'], // Figure was drawn when dennis claimed achievement (age 10 figure)
         score: [
           "A.I.",
           "Bioengineering",

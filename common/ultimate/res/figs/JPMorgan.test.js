@@ -29,7 +29,7 @@ describe('J.P. Morgan', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.Draw a card') // dennis draws (first action)
+      request = t.choose(game, request, 'Draw.draw a card') // dennis draws (first action)
       // Now micah's turn
       request = t.choose(game, request, 'Dogma.Mathematics') // Micah dogmas Mathematics (blue)
       // Karma triggers: splay blue up on dennis's board

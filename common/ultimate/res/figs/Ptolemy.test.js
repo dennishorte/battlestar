@@ -30,7 +30,7 @@ describe('Ptolemy', () => {
     let request
     request = game.run()
 
-    t.testActionChoices(request, 'Dogma', ['Domestication', 'Pottery', 'Writing', 'Ptolemy'])
+    t.testActionChoices(request, 'Dogma', ['Domestication', 'Pottery', 'Writing'])
 
     request = t.choose(game, request, 'Dogma.Writing')
 

@@ -18,6 +18,7 @@ describe('Ludwig Van Beethoven', () => {
           hand: ['Sailing'],
           score: ['Archery'], // Card in score pile to be junked
         },
+        achievements: ['Steam Engine'],
         decks: {
           base: {
             2: ['Mapmaking'],

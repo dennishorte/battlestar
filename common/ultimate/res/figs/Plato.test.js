@@ -48,7 +48,7 @@ describe('Plato', () => {
         green: ['The Wheel'], // Only one card in green, so splay fails
         hand: [],
       },
-      achievements: ['The Wheel', 'Mathematics'], // Mathematics is age 2
+      achievements: ['Sailing', 'Mathematics'], // Mathematics is age 2
       decks: {
         base: {
           1: ['Domestication', 'Metalworking'], // Cards that The Wheel will draw (draws two {1})

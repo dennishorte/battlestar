@@ -25,6 +25,7 @@ describe('George Stephenson', () => {
       let request
       request = game.run()
       request = t.choose(game, request, 'Dogma.Archery')
+      request = t.choose(game, request, '**base-1*')
       // Karma triggers: splay red up (was right, now up)
 
       t.testIsSecondPlayer(game)
@@ -60,6 +61,7 @@ describe('George Stephenson', () => {
       let request
       request = game.run()
       request = t.choose(game, request, 'Dogma.Archery')
+      request = t.choose(game, request, '**base-1*')
       // Karma should NOT trigger (red is splayed left, not right)
 
       t.testIsSecondPlayer(game)

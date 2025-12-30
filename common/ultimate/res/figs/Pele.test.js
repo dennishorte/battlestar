@@ -21,6 +21,7 @@ describe('Pele', () => {
       decks: {
         base: {
           1: ['Domestication'],   // Age 1, will be drawn and scored by Pottery
+          2: ['Mapmaking'],
         }
       }
     })
@@ -57,6 +58,7 @@ describe('Pele', () => {
       decks: {
         base: {
           1: ['Domestication'],   // Age 1, will be drawn and scored by Pottery
+          2: ['Mapmaking'],
         }
       }
     })
@@ -94,6 +96,7 @@ describe('Pele', () => {
       decks: {
         base: {
           1: ['Domestication'],   // Age 1, will be drawn and scored by Pottery
+          2: ['Mapmaking'],
         }
       }
     })
@@ -132,6 +135,7 @@ describe('Pele', () => {
       decks: {
         base: {
           1: ['Domestication'],   // Age 1, will be drawn and scored by Pottery
+          2: ['Mapmaking'],
         }
       }
     })

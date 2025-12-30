@@ -115,7 +115,7 @@ describe('Marie Curie', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.Draw a card') // Draw action draws age 8
+      request = t.choose(game, request, 'Draw.draw a card') // Draw action draws age 8
       // Karma does NOT trigger: age 8 is already in hand
 
       t.testIsSecondPlayer(game)
@@ -144,7 +144,7 @@ describe('Marie Curie', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.Draw a card') // Draw action draws age 8
+      request = t.choose(game, request, 'Draw.draw a card') // Draw action draws age 8
       // Karma triggers: hand is empty, so age 8 is not in hand, first draw age 9
 
       t.testIsSecondPlayer(game)

@@ -56,7 +56,7 @@ describe('John Von Neumann', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.Draw a card')
+      request = t.choose(game, request, 'Draw.draw a card')
       // Karma triggers: first junk all cards in the age 8 deck
       // After junking, the draw action should complete (possibly with no card if deck is empty)
       // If there's another request, it might be asking for something else - need to investigate
@@ -86,7 +86,7 @@ describe('John Von Neumann', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.Draw a card')
+      request = t.choose(game, request, 'Draw.draw a card')
       // Karma triggers: first junk all cards in the age 8 deck (already empty, so no effect)
       // Then try to draw age 8 (fails since deck is empty, but draw action may allow choosing different age)
       // The draw action might fall back to available decks or allow re-selection

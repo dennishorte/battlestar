@@ -67,9 +67,11 @@ describe('Shivaji', () => {
         decks: {
           base: {
             3: ['Engineering'],
+            5: ['Measurement'],
           },
           figs: {
             3: ['Al-Kindi'],
+            5: ['Samuel de Champlain'],
           }
         }
       })
@@ -116,9 +118,11 @@ describe('Shivaji', () => {
         decks: {
           base: {
             3: ['Engineering'],
+            5: ['Measurement'],
           },
           figs: {
             3: ['Al-Kindi'],
+            5: ['Samuel de Champlain'],
           }
         }
       })
@@ -163,9 +167,11 @@ describe('Shivaji', () => {
         decks: {
           base: {
             3: ['Engineering'],
+            5: ['Measurement'],
           },
           figs: {
             3: ['Al-Kindi'],
+            5: ['Samuel de Champlain'],
           }
         }
       })
@@ -325,20 +331,28 @@ describe('Shivaji', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
       t.setBoard(game, {
         dennis: {
-          red: ['Shivaji', 'Archery'],
+          red: ['Shivaji'],
+          green: ['Sailing'],
           purple: ['Lighting', 'Philosophy'], // Purple cards remain
         },
+        decks: {
+          base: {
+            1: ['Tools'],
+          }
+        }
       })
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Archery')
+      request = t.choose(game, request, 'Dogma.Sailing')
       // Karma does not trigger because Archery is red, not yellow
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
         dennis: {
-          red: ['Shivaji', 'Archery'],
+          red: ['Shivaji'],
+          green: ['Sailing'],
+          blue: ['Tools'],
           purple: ['Lighting', 'Philosophy'], // Purple cards remain
         },
       })

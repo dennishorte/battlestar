@@ -67,7 +67,6 @@ describe('Ptahhotep', () => {
         hand: ['Fermenting'],
       },
       micah: {
-        green: ['Sailing'],
         purple: ['Ptahhotep'],
         hand: ['The Wheel', 'Sailing'],
       },

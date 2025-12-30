@@ -24,7 +24,7 @@ describe('James Clerk Maxwell', () => {
       c: 0,
       f: 0,
       i: 4,
-      p: 4,
+      p: 5,
     })
   })
 

@@ -117,17 +117,15 @@ describe('Augustus Caesar', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
-        green: ['Augustus Caesar'], // Owner of karma card
+        red: ['Archery'], // Has {k} biscuit - dennis does the karma action
         hand: [],
       },
       micah: {
-        red: ['Archery'], // Has {k} biscuit
-        hand: ['Gunpowder', 'Currency'],
+        green: ['Augustus Caesar'], // Owner of karma card
       },
-      achievements: ['The Wheel', 'Mathematics'],
       decks: {
         base: {
-          1: ['Metalworking'], // Has {k} biscuit, age 1 - drawn to dennis (owner of Augustus Caesar), then melded
+          1: ['Metalworking'], // Has {k} biscuit, age 1 - drawn to micah (owner of Augustus Caesar), then melded
         }
       }
     })
@@ -138,13 +136,12 @@ describe('Augustus Caesar', () => {
 
     t.testBoard(game, {
       dennis: {
-        green: ['Augustus Caesar'],
-        red: ['Metalworking'], // Metalworking was melded to dennis (owner of karma card)
-        hand: [],
+        red: ['Archery'],
+        hand: [], // No transfer occurred (Archery dogma did not execute)
       },
       micah: {
-        red: ['Archery'],
-        hand: ['Gunpowder', 'Currency'], // No transfer occurred (Archery dogma did not execute)
+        green: ['Augustus Caesar'],
+        red: ['Metalworking'], // Metalworking was melded to micah (owner of karma card)
       },
       junk: [], // No achievement was junked (Archery dogma did not execute)
     })
@@ -154,17 +151,15 @@ describe('Augustus Caesar', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
-        green: ['Augustus Caesar'], // Owner of karma card
+        red: ['Archery'], // Has {k} biscuit, age 1 - dennis does the karma action
         hand: [],
       },
       micah: {
-        red: ['Archery'], // Has {k} biscuit, age 1
-        hand: ['Gunpowder', 'Currency'],
+        green: ['Augustus Caesar'], // Owner of karma card
       },
-      achievements: ['The Wheel', 'Mathematics'],
       decks: {
         base: {
-          1: ['Tools'], // Has {s} biscuit, age 1 - drawn to dennis (owner of Augustus Caesar), then melded
+          1: ['Tools'], // Has {s} biscuit, age 1 - drawn to micah (owner of Augustus Caesar), then melded
         }
       }
     })
@@ -175,13 +170,12 @@ describe('Augustus Caesar', () => {
 
     t.testBoard(game, {
       dennis: {
-        green: ['Augustus Caesar'],
-        blue: ['Tools'], // Tools was melded to dennis (owner of karma card)
-        hand: [],
+        red: ['Archery'],
+        hand: [], // No transfer occurred (Archery dogma did not execute)
       },
       micah: {
-        red: ['Archery'],
-        hand: ['Gunpowder', 'Currency'], // No transfer occurred (Archery dogma did not execute)
+        green: ['Augustus Caesar'],
+        blue: ['Tools'], // Tools was melded to micah (owner of karma card)
       },
       junk: [], // No achievement was junked (Archery dogma did not execute)
     })
@@ -191,17 +185,17 @@ describe('Augustus Caesar', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
-        green: ['Augustus Caesar'], // Owner of karma card
+        red: ['Archery'], // Has {k} biscuit, age 1 - dennis does the karma action
         hand: [],
       },
       micah: {
-        red: ['Archery'], // Has {k} biscuit, age 1
-        hand: ['Gunpowder', 'Currency'], // Age 4 and Age 3
+        green: ['Augustus Caesar'], // Owner of karma card
+        hand: ['Gunpowder'],
       },
       achievements: ['The Wheel', 'Mathematics'],
       decks: {
         base: {
-          1: ['Code of Laws', 'Tools'], // Code of Laws drawn by karma to dennis, Tools drawn by demand to micah
+          1: ['Code of Laws', 'Tools'], // Code of Laws drawn by karma to micah, Tools drawn by demand to micah
         }
       }
     })
@@ -213,12 +207,12 @@ describe('Augustus Caesar', () => {
 
     t.testBoard(game, {
       dennis: {
-        green: ['Augustus Caesar'],
-        hand: ['Code of Laws', 'Gunpowder'], // Code of Laws from karma draw, Gunpowder transferred from micah by demand
+        red: ['Archery'],
+        hand: ['Gunpowder'], // Gunpowder transferred from micah by demand
       },
       micah: {
-        red: ['Archery'],
-        hand: ['Currency', 'Tools'], // Tools drawn by demand effect
+        green: ['Augustus Caesar'],
+        hand: ['Code of Laws', 'Tools'], // Code of Laws from karma draw, Tools drawn by demand effect
       },
       junk: ['The Wheel'], // Achievement was junked (super-execute ran both effects)
     })

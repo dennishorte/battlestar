@@ -17,7 +17,10 @@ describe('Sheikh Tamim', () => {
       decks: {
         base: {
           1: ['Clothing', 'The Wheel'], // Card drawn by Mysticism's dogma (green, doesn't match red/purple, stays in hand)
-        }
+        },
+        figs: {
+          11: ['Giuseppe Scionti'],
+        },
       }
     })
 
@@ -58,7 +61,7 @@ describe('Sheikh Tamim', () => {
       decks: {
         base: {
           1: ['Clothing'], // Card drawn by Mysticism's dogma
-        }
+        },
       }
     })
 
@@ -130,7 +133,10 @@ describe('Sheikh Tamim', () => {
       decks: {
         base: {
           1: ['Clothing', 'The Wheel'], // Card drawn by Mysticism's dogma
-        }
+        },
+        figs: {
+          11: ['Giuseppe Scionti'],
+        },
       }
     })
 

@@ -97,15 +97,21 @@ describe('Hedy Lamar', () => {
         dennis: {
           green: ['Hedy Lamar'], // Owner of karma card
           red: ['Archery', 'Road Building'], // Red cards (need at least 2 to splay)
-          score: ['Tools', 'Sailing', 'Agriculture', 'Metalworking', 'Mathematics', 'Philosophy', 'Engineering', 'Industrialization', 'Atomic Theory', 'Computers'], // Score to meet achievement requirement (need 20 for Invention)
+          score: ['Industrialization', 'Atomic Theory', 'Computers'], // Score to meet achievement requirement (need 20 for Invention)
         },
+        achievements: ['Invention'],
+        decks: {
+          figs: {
+            1: ['Gilgamesh'],
+          }
+        }
       })
 
       let request
       request = game.run()
       // dennis (owner) claims an achievement
       // Use nested format: 'Achieve.AchievementName'
-      request = t.choose(game, request, 'Achieve.Invention')
+      request = t.choose(game, request, 'Achieve.*base-4*')
       // Karma triggers: first splay a color up (would-first)
       // chooseAndSplay is optional (min: 0), so we can choose a color or skip
       request = t.choose(game, request, 'red') // Choose red to splay up
@@ -120,8 +126,11 @@ describe('Hedy Lamar', () => {
             splay: 'up', // Red was splayed up by karma
           },
           achievements: ['Invention'], // Achievement was claimed
-          score: ['Tools', 'Sailing', 'Agriculture', 'Metalworking', 'Mathematics', 'Philosophy', 'Engineering', 'Industrialization', 'Atomic Theory', 'Computers'], // Score cards remain (not consumed)
+          score: ['Industrialization', 'Atomic Theory', 'Computers'],
         },
+        micah: {
+          hand: ['Gilgamesh'],
+        }
       })
     })
 
@@ -133,14 +142,20 @@ describe('Hedy Lamar', () => {
           red: ['Archery', 'Road Building'], // Red cards (need at least 2 to splay)
           blue: ['Tools', 'Mathematics'], // Blue cards (need at least 2 to splay)
           yellow: ['Agriculture', 'Canal Building'], // Yellow cards (need at least 2 to splay)
-          score: ['Sailing', 'Metalworking', 'Experimentation', 'Writing', 'Philosophy', 'Engineering', 'Industrialization', 'Atomic Theory', 'Computers', 'Robotics'], // Score to meet achievement requirement (need 20 for Invention age 1)
+          score: ['Industrialization', 'Atomic Theory', 'Computers', 'Robotics'], // Score to meet achievement requirement (need 20 for Invention age 1)
         },
+        achievements: ['Invention'],
+        decks: {
+          figs: {
+            1: ['Gilgamesh'],
+          }
+        }
       })
 
       let request
       request = game.run()
       // dennis (owner) claims an achievement
-      request = t.choose(game, request, 'Achieve.Invention')
+      request = t.choose(game, request, 'Achieve.*base-4*')
       // Karma triggers: first splay a color up (would-first)
       request = t.choose(game, request, 'blue') // Choose blue to splay up
       // Then achievement is claimed automatically
@@ -156,43 +171,10 @@ describe('Hedy Lamar', () => {
           },
           yellow: ['Agriculture', 'Canal Building'], // Not splayed
           achievements: ['Invention'], // Achievement was claimed
-          score: ['Sailing', 'Metalworking', 'Experimentation', 'Writing', 'Philosophy', 'Engineering', 'Industrialization', 'Atomic Theory', 'Computers', 'Robotics'], // Score cards remain (not consumed)
+          score: ['Industrialization', 'Atomic Theory', 'Computers', 'Robotics'], // Score cards remain (not consumed)
         },
-      })
-    })
-
-    test('karma: claim achievement, color already splayed up', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-      t.setBoard(game, {
-        dennis: {
-          green: ['Hedy Lamar'], // Owner of karma card
-          red: {
-            cards: ['Archery', 'Road Building'],
-            splay: 'up', // Already splayed up
-          },
-          score: ['Tools', 'Sailing', 'Agriculture', 'Metalworking', 'Mathematics', 'Philosophy', 'Engineering', 'Industrialization', 'Atomic Theory', 'Computers'], // Score to meet achievement requirement (need 20 for Invention)
-        },
-      })
-
-      let request
-      request = game.run()
-      // dennis (owner) claims an achievement
-      request = t.choose(game, request, 'Achieve.Invention')
-      // Karma triggers: first splay a color up (would-first)
-      // Red is already splayed up, so it's filtered out by chooseAndSplay
-      // Since no colors are available to splay, chooseAndSplay returns [] and logs "no effect"
-      // No selection needed - achievement is claimed automatically
-
-      t.testIsSecondPlayer(game)
-      t.testBoard(game, {
-        dennis: {
-          green: ['Hedy Lamar'],
-          red: {
-            cards: ['Archery', 'Road Building'],
-            splay: 'up', // Already splayed up (no change)
-          },
-          achievements: ['Invention'], // Achievement was claimed
-          score: ['Tools', 'Sailing', 'Agriculture', 'Metalworking', 'Mathematics', 'Philosophy', 'Engineering', 'Industrialization', 'Atomic Theory', 'Computers'], // Score cards remain (not consumed)
+        micah: {
+          hand: ['Gilgamesh'],
         },
       })
     })

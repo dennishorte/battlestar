@@ -27,7 +27,6 @@ describe('Huang Di', () => {
     request = game.run()
     request = t.choose(game, request, 'Dogma.Agriculture')
     request = t.choose(game, request, 'Tools')
-    t.dumpLog(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
