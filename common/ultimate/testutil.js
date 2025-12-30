@@ -110,6 +110,9 @@ TestUtil.fixtureFirstPlayer = function(options) {
   game.testSetBreakpoint('before-first-player', (game) => {
     TestUtil.clearBoards(game)
     TestUtil.clearHands(game)
+    if (options.useAgeZero) {
+      game.state.useAgeZero = true
+    }
   })
 
   return game
@@ -293,7 +296,7 @@ function _validateNoDuplicateCards(game, state) {
   }
 
   if (duplicates.length > 0) {
-    const errorMessages = duplicates.map(dup => 
+    const errorMessages = duplicates.map(dup =>
       `  "${dup.card}" appears in: ${dup.locations.join(', ')}`
     )
     throw new Error(
@@ -589,7 +592,7 @@ TestUtil.setColor = function(game, playerName, colorName, cardNames) {
   const player = game.players.byName(playerName)
   const zone = game.zones.byPlayer(player, colorName)
   const cards = cardNames.map(name => game.cards.byId(name))
-  
+
   // Validate that all cards match the color pile they're being placed in
   for (const card of cards) {
     if (card.color !== colorName) {
@@ -599,7 +602,7 @@ TestUtil.setColor = function(game, playerName, colorName, cardNames) {
       )
     }
   }
-  
+
   for (const card of zone.cardlist()) {
     game.actions.return(player, card, { silent: true })
   }
@@ -648,11 +651,11 @@ TestUtil.setDeckTop = function(game, exp, age, cardNames) {
   const cards = cardNames
     .map(c => game.cards.byId(c))
     .reverse()
-  
+
   // Validate that all cards match the deck they're being placed in
   // (cards are moved to card.home, but we verify the age matches what was requested)
   _validateCardsForDeck(cards, exp, age)
-  
+
   for (const card of cards) {
     card.moveTo(card.home, 0)
   }
