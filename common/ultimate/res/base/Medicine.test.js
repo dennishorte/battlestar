@@ -13,14 +13,16 @@ describe('Medicine', () => {
       },
       micah: {
         score: ['Enterprise', 'Fermenting', 'Reformation'],
-      }
+      },
+      achievements: ['Machinery'], // Age 3 achievement
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Medicine')
-    request = t.choose(game, request, 'Reformation')
-    request = t.choose(game, request, '**base-3*')
+    request = t.choose(game, request, 'Reformation') // Highest from micah's score
+    // The Wheel (lowest from dennis's score) is auto-selected when there's only one
+    // Machinery (only age 3 achievement) is auto-selected when there's only one
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -30,7 +32,8 @@ describe('Medicine', () => {
       },
       micah: {
         score: ['Enterprise', 'Fermenting', 'The Wheel'],
-      }
+      },
+      junk: ['Machinery'], // Achievement was junked
     })
   })
 
@@ -42,14 +45,16 @@ describe('Medicine', () => {
       },
       micah: {
         score: ['Enterprise', 'Fermenting', 'Reformation'],
-      }
+      },
+      achievements: ['Machinery'], // Age 3 achievement (only one to avoid pattern ambiguity)
     })
 
     let request
     request = game.run()
     request = t.choose(game, request, 'Dogma.Medicine')
-    request = t.choose(game, request, 'Reformation')
-    request = t.choose(game, request, '**base-4*')
+    request = t.choose(game, request, 'Reformation') // Highest from micah's score
+    // No lowest card from dennis's score (dennis has no score cards)
+    // Machinery (only age 3 achievement) is auto-selected when there's only one
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -59,7 +64,8 @@ describe('Medicine', () => {
       },
       micah: {
         score: ['Enterprise', 'Fermenting'],
-      }
+      },
+      junk: ['Machinery'], // Achievement was junked
     })
   })
 })

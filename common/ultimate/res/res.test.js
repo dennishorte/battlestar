@@ -14,11 +14,15 @@ describe('Card data validations', () => {
     })
 
     test('has the correct number of age cards', () => {
-      expect(cardData[exp].cards.length).toBe(115)
+      // base expansion has 15 age 0 cards, others don't
+      const expectedAgeCards = exp === 'base' ? 130 : 115
+      expect(cardData[exp].cards.length).toBe(expectedAgeCards)
     })
 
     test('has the correct number of cards in the byName lookup', () => {
-      expect(Object.keys(cardData[exp].byName).length).toBe(120)
+      // base expansion has 15 age 0 cards, others don't
+      const expectedTotalCards = exp === 'base' ? 135 : 120
+      expect(Object.keys(cardData[exp].byName).length).toBe(expectedTotalCards)
     })
 
     test('has the correct number of cards per age', () => {
@@ -31,7 +35,7 @@ describe('Card data validations', () => {
       const COLOR_DISTRIBUTION = [3,2,2,2,2,2,2,2,2,2,2]
       const actual = {}
       for (const color of COLORS) {
-        const cards = cardData[exp].cards.filter(card => card.color === color)
+        const cards = cardData[exp].cards.filter(card => card.color === color && card.age >= 1)
         const counts = Object
           .entries(util.array.groupBy(cards, card => card.age))
           .sort((l, r) => l[0] - r[0])

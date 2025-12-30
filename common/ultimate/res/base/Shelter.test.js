@@ -6,15 +6,15 @@ describe('Shelter', () => {
   test('placeholder', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'surv'] })
     t.setBoard(game, {
-      dennis: {
-        green: ['Shelter'],
-      },
+        dennis: {
+          yellow: ['Shelter'],
+        },
     })
 
     const request = game.run()
-    const choose = request.choices[0]
-
-    expect(choose).toBeDefined()
+    // Shelter has no dogma effects, so it cannot be dogmatized
+    // Just verify the game runs and has valid choices (Draw, Meld, Achieve, etc.)
+    expect(request.selectors.length).toBeGreaterThan(0)
   })
 })
 

@@ -1273,6 +1273,7 @@ describe('Innovation', () => {
             purple: ['Monotheism'],
             hand: ['Luoyang'],
           },
+          achievements: [],
           decks: {
             base: {
               4: ['Gunpowder'],
@@ -1292,6 +1293,7 @@ describe('Innovation', () => {
           junk: [
             "Alchemy",
             "Compass",
+            "Education",
             "Feudalism",
             "Engineering",
             "Machinery",

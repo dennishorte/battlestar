@@ -14,6 +14,7 @@ describe('Empire Achievement', () => {
           cards: ['The Wheel', 'Navigation'],
           splay: 'up',
         },
+        hand: ['Databases'], // Databases needs to be in hand to meld
       },
     })
 
