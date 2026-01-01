@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `chfc`,
   dogmaBiscuit: `c`,
   dogma: [
-    `Score the bottom card of every color on your board. Meld a card from your score pile. Splay right the color of the melded card. Junk all cards of value equal to the melded card.`
+    `Score the bottom card of every color on your board. Meld a card from your score pile. Splay right the color of the melded card. Junk all cards in the deck of value equal to the melded card.`
   ],
   dogmaImpl: [
     (game, player) => {
