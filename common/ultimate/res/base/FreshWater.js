@@ -10,7 +10,16 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const splayed = game.actions.chooseAndSplay(player, game.util.colors(), 'left', { count: 1 })[0]
+      const choices = game
+        .util
+        .colors()
+        .filter(color => {
+          const unsplayedCondition = game.zones.byPlayer(player, color).splay === 'none'
+          const canSplayCondition = game.cards.byPlayer(player, color).length > 1
+          return unsplayedCondition && canSplayCondition
+        })
+
+      const splayed = game.actions.chooseAndSplay(player, choices, 'left', { count: 1 })[0]
       if (!splayed) {
         game.aYouLose(player, self)
       }
