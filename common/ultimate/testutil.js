@@ -79,7 +79,7 @@ TestUtil.fixtureDecrees = function(options={}) {
   return game
 }
 
-TestUtil.fixtureFirstPlayer = function(options) {
+TestUtil.fixtureFirstPlayer = function(options={}) {
   const game = TestUtil.fixture(options)
   const request1 = game.run()
   game.respondToInputRequest({
