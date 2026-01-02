@@ -1,6 +1,6 @@
 <template>
   <div class="decks">
-    <div v-for="age in [11,10,9,8,7,6,5,4,3,2,1]" :key="age" class="decks-row">
+    <div v-for="age in ages" :key="age" class="decks-row">
       <div class="decks-box">
         <div class="age-box">{{ age }}</div>
       </div>
@@ -22,6 +22,10 @@ export default {
   inject: ['game'],
 
   computed: {
+    ages() {
+      return this.game.getAges().reverse()
+    },
+
     doubleColumn() {
       return this.expansions.length < 3
     },
