@@ -14,15 +14,29 @@ function DogmaAction(player, card, opts={}) {
 }
 
 function DogmaHelper(player, card, opts={}) {
-  const karmaKind = this.game.aKarma(player, 'dogma', { ...opts, card })
-  if (karmaKind === 'would-instead') {
+  // Pre-dogma allows for Muhammad Yunus to modify who has the sole-majority in an icon before
+  // share data is calculated.
+  const preKarmaKind = this.game.aKarma(player, 'pre-dogma', { ...opts, card })
+  if (preKarmaKind === 'would-instead') {
     this.acted(player)
     return
   }
 
   const shareData = getDogmaShareInfo.call(this, player, card, opts)
 
+  // Sargon of Akkad, for example, modifies who can share.
+  for (const player2 of this.game.players.all()) {
+    this.game.aKarma(player2, 'share-eligibility', { ...opts, card, shareData, leader: player })
+  }
+
   _initializeGlobalContext.call(this, shareData.biscuits, shareData.featuredBiscuit)
+
+  const karmaKind = this.game.aKarma(player, 'dogma', { ...opts, ...shareData, card })
+  if (karmaKind === 'would-instead') {
+    this.acted(player)
+    return
+  }
+
   _logSharing.call(this, shareData)
   _executeEffects.call(this, player, card, shareData, opts)
 
@@ -101,7 +115,7 @@ function _executeEffects(player, card, shareData, opts) {
 
   for (const e of effects) {
     for (let i = 0; i < e.texts.length; i++) {
-      const result = this.game.aOneEffect(player, e.card, e.texts[i], e.impls[i], effectOpts)
+      this.game.aOneEffect(player, e.card, e.texts[i], e.impls[i], effectOpts)
       if (this.state.dogmaInfo.earlyTerminate) {
         return
       }
@@ -131,6 +145,12 @@ function _statsRecordDogmaActions(player, card) {
 function _shareBonus(player, card) {
   // Share bonus
   if (this.state.shared) {
+    const shareKarmaKind = this.game.aKarma(player, 'share', { card })
+    if (shareKarmaKind === 'would-instead') {
+      this.acted(player)
+      return
+    }
+
     this.log.add({
       template: '{player} draws a sharing bonus',
       args: { player }
@@ -148,51 +168,24 @@ function _shareBonus(player, card) {
   // Grace Hopper and Susan Blackmore have "if your opponent didn't share" karma effects
   else if (this.state.couldShare) {
     for (const other of this.players.opponents(player)) {
-      this.game.aKarma(other, 'no-share', { card, leader: player })
+      this.game.aKarma(player, 'no-share', { card })
     }
   }
 }
 
 function _getBiscuitComparator(player, featuredBiscuit, biscuits, opts) {
-
-  // Some karmas affect how sharing is calculated by adjusting the featured biscuit.
-  const featuredBiscuitKarmas = this
-    .game
-    .getInfoByKarmaTrigger(player, 'featured-biscuit')
-    .filter(info => info.impl.matches(this, player, { biscuit: featuredBiscuit }))
-
-  let adjustedBiscuit
-
-  if (opts.noBiscuitKarma || featuredBiscuitKarmas.length === 0) {
-    adjustedBiscuit = featuredBiscuit
-  }
-  else if (featuredBiscuitKarmas.length === 1) {
-    const info = featuredBiscuitKarmas[0]
-    this.log.add({
-      template: '{card} karma: {text}',
-      args: {
-        card: info.card,
-        text: info.text
-      }
-    })
-    adjustedBiscuit = this.game.aCardEffect(player, info, { baseBiscuit: featuredBiscuit })
-  }
-  else {
-    throw new Error('Multiple biscuit karmas are not supported')
-  }
-
   return (other) => {
-    if (adjustedBiscuit === 'score') {
+    if (featuredBiscuit === 'score') {
       return this.game.getScore(other) >= this.game.getScore(player)
     }
-    else if (this.state.dogmaInfo.soleMajority === other) {
+    else if (this.state.dogmaInfo.soleMajorityPlayerId === other.id) {
       return true
     }
-    else if (this.state.dogmaInfo.soleMajority === player) {
+    else if (this.state.dogmaInfo.soleMajorityPlayerId === player.id) {
       return false
     }
     else {
-      return biscuits[other.name][adjustedBiscuit] >= biscuits[player.name][adjustedBiscuit]
+      return biscuits[other.name][featuredBiscuit] >= biscuits[player.name][featuredBiscuit]
     }
   }
 }

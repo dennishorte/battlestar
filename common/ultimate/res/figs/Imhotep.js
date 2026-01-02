@@ -4,28 +4,31 @@ module.exports = {
   color: `blue`,
   age: 1,
   expansion: `figs`,
-  biscuits: `khk&`,
+  biscuits: `khkp`,
   dogmaBiscuit: `k`,
-  echo: `Draw and meld a {2}.`,
   karma: [
-    `If you would meld a card over an unsplayed color with more than one card, instead splay that color left and return the card.`
+    `If you would dogma a {1} as your second action, first draw and meld a {2}, then splay left the color of the melded card on your board. If you do both, and the melded card was a {2}, return the top card of that color from all boards.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.drawAndMeld(player, game.getEffectAge(this, 2))
-  },
   karmaImpl: [
     {
-      trigger: 'meld',
-      kind: 'would-instead',
-      matches: (game, player, { card }) => {
-        const zone = game.zones.byPlayer(player, card.color)
-        return zone.cards().length > 1 && zone.splay === 'none'
+      trigger: 'dogma',
+      kind: 'would-first',
+      matches: (game, player, { card, self }) => {
+        const secondActionCondition = game.state.actionNumber === 2
+        const ageCondition = card.getAge() === game.getEffectAge(self, 1)
+        return secondActionCondition && ageCondition
       },
-      func: (game, player, { card }) => {
-        game.actions.splay(player, card.color, 'left')
-        game.actions.return(player, card)
+      func: (game, player, { self }) => {
+        const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 2))
+        const splayed = game.actions.splay(player, card.color, 'left')
+
+        if (splayed && card.getAge() === game.getEffectAge(self, 2)) {
+          const toReturn = game
+            .players
+            .all()
+            .map(p => game.cards.top(p, card.color))
+          game.actions.returnMany(player, toReturn)
+        }
       }
     }
   ]

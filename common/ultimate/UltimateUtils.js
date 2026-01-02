@@ -6,10 +6,6 @@ class UltimateUtils {
     this.game = game
   }
 
-  ages() {
-    return [1,2,3,4,5,6,7,8,9,10,11]
-  }
-
   biscuitNames() {
     return [
       'castle',
@@ -101,14 +97,6 @@ class UltimateUtils {
   lowestCards(cards) {
     const sorted = [...cards].sort((l, r) => l.getAge() - r.getAge())
     return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
-  }
-
-  maxAge() {
-    return this.ages().sort((l, r) => r - l)[0]
-  }
-
-  minAge() {
-    return 1
   }
 
   parseBiscuits(biscuitString) {

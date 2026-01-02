@@ -4,25 +4,24 @@ module.exports = {
   color: `green`,
   age: 1,
   expansion: `figs`,
-  biscuits: `1ch*`,
+  biscuits: `1chp`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
-    `If you would meld a card, and your current top card of that color is of equal value, instead tuck it.`
+    `If you would not be eligible for sharing, instead become eligible for sharing and junk and available achievement of value 1.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
-      trigger: 'meld',
+      trigger: 'share-eligibility',
+      triggerAll: true,
       kind: 'would-instead',
-      matches: (game, player, { card }) => {
-        const cards = game.cards.byPlayer(player, card.color)
-        return cards.length > 0 && cards[0].getAge() === card.getAge()
+      matches: (game, player, { shareData }) => {
+        const notEligibleCondition = !shareData.sharing.find(p => p.id === player.id)
+        const notCurrentPlayerCondition = game.players.current().id !== player.id
+        return notEligibleCondition && notCurrentPlayerCondition
       },
-      func: (game, player, { card }) => {
-        game.actions.tuck(player, card)
+      func: (game, player, { shareData }) => {
+        shareData.sharing.push(player)
+        game.actions.junkAvailableAchievement(player, 1)
       }
     }
   ]

@@ -4,7 +4,11 @@ const t = require('../../testutil.js')
 
 describe('Fu Xi', () => {
 
-  test('echo', () => {
+  test('karma: decree', () => {
+    t.testDecreeForTwo('Fu Xi', 'Trade')
+  })
+
+  test('karma: draw', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
@@ -12,41 +16,23 @@ describe('Fu Xi', () => {
       },
       decks: {
         base: {
-          2: ['Calendar']
+          1: ['Tools'],
+          2: ['Mapmaking'],
         }
       }
     })
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Fu Xi')
+    request = t.choose(game, request, 'Draw.draw a card')
 
-    t.testBoard(game, {
-      dennis: {
-        green: ['Fu Xi'],
-        score: ['Calendar']
-      },
-    })
-  })
-
-  test('karma: decree', () => {
-    t.testDecreeForTwo('Fu Xi', 'Trade')
-  })
-
-  test('karma: biscuits', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
         green: ['Fu Xi'],
-        score: ['Calendar', 'Software'],
-        forecast: ['Alexander the Great', 'Enterprise']
+        hand: ['Tools'],
+        score: ['Mapmaking'],
       },
     })
-
-    let request
-    request = game.run()
-
-    expect(t.dennis(game).biscuits().s).toBe(4)
   })
 
 })

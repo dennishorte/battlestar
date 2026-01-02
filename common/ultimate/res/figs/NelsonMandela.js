@@ -4,29 +4,26 @@ module.exports = {
   color: `red`,
   age: 9,
   expansion: `figs`,
-  biscuits: `l*hl`,
+  biscuits: `lphl`,
   dogmaBiscuit: `l`,
-  echo: ``,
   karma: [
-    `If you are required to fade a figure, instead do nothing.`,
-    `Each two inspire effects visibile on your board counts as an achievement.`
+    `If you would dogma a card as your second action, instead super-execute the card.`,
+    `Each two {p} on your board counts as an achievement.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
-      trigger: 'no-fade'
+      trigger: 'dogma',
+      kind: 'would-instead',
+      matches: (game) => game.state.actionNumber === 2,
+      func: (game, player, { card, self }) => {
+        game.aSuperExecute(self, player, card)
+      },
     },
     {
       trigger: 'extra-achievements',
       func: (game, player) => {
-        const visibleInspires = game
-          .util.colors()
-          .flatMap(color => game.cards.byPlayer(player, color))
-          .filter(card => game.checkInspireIsVisible(card))
-          .length
-        return Math.floor(visibleInspires / 2)
+        const personBiscuits = player.biscuits().p
+        return Math.floor(personBiscuits / 2)
       }
     }
   ]

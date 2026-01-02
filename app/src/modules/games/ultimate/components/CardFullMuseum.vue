@@ -15,16 +15,8 @@
 
 
 <script>
-import CardText from './CardText'
-
-import { util } from 'battlestar-common'
-
 export default {
   name: 'CardFullMuseum',
-
-  components: {
-    CardText,
-  },
 
   props: {
     card: {

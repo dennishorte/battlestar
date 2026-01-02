@@ -72,7 +72,7 @@ describe("Radio Telescope", () => {
       },
       decks: {
         base: {
-          9: ['Software'],
+          9: ['Computers'],
           10: ['A.I.'],
         },
       }

@@ -1,3 +1,4 @@
+const util = require('../../../lib/util.js')
 
 module.exports = {
   id: `Emperor Meiji`,  // Card names are unique in Innovation
@@ -5,44 +6,46 @@ module.exports = {
   color: `purple`,
   age: 7,
   expansion: `figs`,
-  biscuits: `hii*`,
+  biscuits: `hiip`,
   dogmaBiscuit: `i`,
-  echo: ``,
   karma: [
-    `If you would meld a card of value 10 and you have top cards of values 9 and 8 on your board, instead you win.`,
-    `Each card in your forecast counts as being in your hand.`
+    `If you would meld a {0} and you have top cards of five different values on your board, instead you win.`,
+    `One your turn, until your second action, each card in an opponent's hand counts as being in your hand.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'meld',
       kind: 'would-instead',
-      matches: (game, player, { card }) => {
-        const cardCondition = card.getAge() === 10
-        const nineCondition = game
-          .cards.tops(player)
-          .filter(card => card.getAge() === 9)
-          .length > 0
-        const eightCondition = game
-          .cards.tops(player)
-          .filter(card => card.getAge() === 8)
-          .length > 0
-        return cardCondition && nineCondition && eightCondition
+      matches: (game, player, { self }) => {
+        const topValues = game.cards.tops(player).map(card => card.getAge())
+        const uniqueValues = util.array.distinct(topValues)
+        return uniqueValues.length === 5
       },
-      func: (game, player) => {
-        game.youWin(player, 'Emperor Meiji')
+      func: (game, player, { self }) => {
+        game.youWin(player, self.name)
       }
     },
 
     {
       trigger: 'list-hand',
       func: (game, player) => {
-        return [
-          ...game.zones.byPlayer(player, 'hand')._cards,
-          ...game.zones.byPlayer(player, 'forecast')._cards,
-        ]
+        const playerTurnCondition = game.players.current().id === player.id
+        const actionNumberCondition = game.state.actionNumber < 2
+
+        if (playerTurnCondition && actionNumberCondition) {
+          const opponentHands = game
+            .players
+            .opponents(player)
+            .flatMap(opponent => game.zones.byPlayer(opponent, 'hand').cardlist({ noKarma: true }))
+
+          return [
+            ...game.zones.byPlayer(player, 'hand').cardlist({ noKarma: true }),
+            ...opponentHands,
+          ]
+        }
+        else {
+          return game.zones.byPlayer(player, 'hand').cardlist({ noKarma: true })
+        }
       }
     }
   ]

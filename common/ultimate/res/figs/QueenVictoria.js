@@ -4,48 +4,39 @@ module.exports = {
   color: `purple`,
   age: 7,
   expansion: `figs`,
-  biscuits: `ss&h`,
+  biscuits: `ssph`,
   dogmaBiscuit: `s`,
-  echo: `Transfer a figure from any score pile to yours.`,
   karma: [
     `You may issue a Rivalry Decree with any two figures.`,
-    `If you would claim a standard achievement, first make an achievement available from any lower non-empty age.`
+    `If you would score a card, first choose a figure in any score pile. Choose to either score it or transfer it to the available achievements.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    const choices = game
-      .players.all()
-      .filter(other => other !== player)
-      .flatMap(player => game.cards.byPlayer(player, 'score'))
-      .filter(card => card.checkIsFigure())
-    game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(player, 'score'))
-  },
   karmaImpl: [
     {
       trigger: 'decree-for-two',
       decree: 'Rivalry',
     },
     {
-      trigger: 'achieve',
+      trigger: 'score',
       kind: 'would-first',
-      matches: (game, player, { isStandard }) => isStandard,
-      func: (game, player, { card }) => {
-        const ages = game
-          .getNonEmptyAges()
-          .filter(age => age < card.getAge())
-        const age = game.actions.chooseAge(player, ages)
-        if (age) {
-          const deckCards = game.getZoneByDeck('base', age).cards()
-          const card = deckCards[deckCards.length - 1]
-          game.mMoveCardTo(card, game.getZoneById('achievements'))
-          game.log.add({
-            template: '{player} moves {card} to the available achievements',
-            args: { player, card }
-          })
-        }
-        else {
-          game.log.addNoEffect()
+      matches: () => true,
+      func: (game, player) => {
+        const options = game
+          .players
+          .all()
+          .flatMap(p => game.cards.byPlayer(p, 'score'))
+          .filter(card => card.checkIsFigure())
+
+        const chosenCard = game.actions.chooseCard(player, options)
+
+        if (chosenCard) {
+          const action = game.actions.choose(player, ['score it', 'transfer it to the avaiable achievements'])[0]
+
+          if (action === 'score it') {
+            game.actions.score(player, chosenCard)
+          }
+          else {
+            game.actions.transfer(player, chosenCard, game.zones.byId('achievements'))
+          }
         }
       }
     }

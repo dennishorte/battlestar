@@ -18,7 +18,7 @@ module.exports = {
         .cards.byPlayer(player, 'score')
         .map(c => c.age)
 
-      for (const age of game.util.ages()) {
+      for (const age of game.getAges()) {
         if (!topCardValues.includes(age) && !scoreCardValues.includes(age)) {
           game.actions.drawAndScore(player, age)
         }

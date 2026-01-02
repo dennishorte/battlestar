@@ -4,27 +4,32 @@ module.exports = {
   color: `red`,
   age: 3,
   expansion: `figs`,
-  biscuits: `h&kk`,
+  biscuits: `hpkk`,
   dogmaBiscuit: `k`,
-  echo: `Score a top red card of value less than 4 from anywhere.`,
   karma: [
-    `Each two {k} on your board provides one additional icon of every other type on your board.`
+    `If you would draw a {3}, first score a top red card of value less than 4 from anywhere.`,
+    `Each two {k} on your board provides one additional icon of every other standard icon on your board.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    const choices = game
-      .cards.topsAll()
-      .filter(card => card.getAge() < 4)
-      .filter(card => card.color === 'red')
-    game.actions.chooseAndScore(player, choices)
-  },
   karmaImpl: [
+    {
+      trigger: 'draw',
+      kind: 'would-first',
+      matches: (game, player, { age, self }) => age === game.getEffectAge(self, 3),
+      func: (game, player) => {
+        const options = game
+          .players
+          .all()
+          .map(p => game.cards.top(p, 'red'))
+          .filter(x => Boolean(x))
+          .filter(x => x.getAge() < 4)
+        game.actions.chooseAndScore(player, options)
+      }
+    },
     {
       trigger: 'calculate-biscuits',
       func: (game, player, { biscuits }) => {
         const bonus = Math.floor(biscuits.k / 2)
-        const output = game.utilEmptyBiscuits()
+        const output = game.util.emptyBiscuits()
         for (const b of Object.keys(biscuits)) {
           if (b !== 'k' && biscuits[b] > 0) {
             output[b] = bonus

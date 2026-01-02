@@ -4,31 +4,12 @@ module.exports = {
   color: `blue`,
   age: 6,
   expansion: `figs`,
-  biscuits: `s&h6`,
+  biscuits: `sph6`,
   dogmaBiscuit: `s`,
-  echo: `Take a top figure into your hand from any player's board. Meld it.`,
   karma: [
     `You may issue an Advancement Decree with any two figures.`,
-    `If you would meld a card, first draw and meld a card of one higher value.`
+    `If you would meld a card, first if there is a top figure of the same color on any opponent's board, transfer that figure to your hand.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    const choices = game
-      .players.all()
-      .flatMap(p => game.cards.tops(p))
-      .filter(card => card.checkIsFigure())
-
-    const card = game.actions.chooseCard(player, choices)
-    if (card) {
-      game.log.add({
-        template: '{player} takes {card} into their hand',
-        args: { player, card }
-      })
-      game.mMoveCardTo(card, game.zones.byPlayer(player, 'hand'))
-      game.actions.meld(player, card)
-    }
-  },
   karmaImpl: [
     {
       trigger: 'decree-for-two',
@@ -39,7 +20,13 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func(game, player, { card }) {
-        game.actions.drawAndMeld(player, card.getAge() + 1)
+        const mayTransfer = game
+          .players
+          .opponents(player)
+          .flatMap(opponent => game.cards.tops(opponent))
+          .filter(card => card.checkIsFigure())
+          .filter(topCard => card.color === topCard.color)
+        game.actions.chooseAndTransfer(player, mayTransfer, game.zones.byPlayer(player, 'hand'))
       }
     }
   ]

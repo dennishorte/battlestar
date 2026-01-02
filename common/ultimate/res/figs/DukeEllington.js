@@ -4,16 +4,12 @@ module.exports = {
   color: `purple`,
   age: 8,
   expansion: `figs`,
-  biscuits: `s9*h`,
+  biscuits: `s9ph`,
   dogmaBiscuit: `s`,
-  echo: ``,
   karma: [
     `If you are required to fade a figure, instead do nothing.`,
-    `If you would meld a figure and have four top figures already, instead achieve it regardless of eligibility.`
+    `If you would meld a figure and have at least four top figures already, instead you win.`,
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'no-fade',
@@ -24,13 +20,14 @@ module.exports = {
       matches: (game, player, { card }) => {
         const cardCondition = card.checkIsFigure()
         const topCondition = game
-          .cards.tops(player)
+          .cards
+          .tops(player)
           .filter(card => card.checkIsFigure())
           .length >= 4
         return cardCondition && topCondition
       },
-      func: (game, player, { card }) => {
-        game.actions.claimAchievement(player, { card })
+      func: (game, player, { self }) => {
+        game.youWin(player, self.name)
       }
     }
   ]

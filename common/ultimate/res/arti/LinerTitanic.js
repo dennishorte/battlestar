@@ -20,7 +20,7 @@ module.exports = {
 
       game.actions.scoreMany(player, toScore)
 
-      for (const age of game.util.ages()) {
+      for (const age of game.getAges()) {
         const cards = game.cards.byDeck('base', age)
         if (cards.length > 0) {
           game.actions.junkDeck(player, age)

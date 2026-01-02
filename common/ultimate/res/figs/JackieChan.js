@@ -1,3 +1,4 @@
+const { GameOverEvent } = require('../../../lib/game.js')
 
 module.exports = {
   id: `Jackie Chan`,  // Card names are unique in Innovation
@@ -5,52 +6,62 @@ module.exports = {
   color: `red`,
   age: 10,
   expansion: `figs`,
-  biscuits: `*iih`,
+  biscuits: `piih`,
   dogmaBiscuit: `i`,
-  echo: ``,
   karma: [
-    `If an opponent would win, first score all other top figures in play. If you now have the most points, you win instead.`
+    `If an opponent would win, first score all other top figures anywhere. If you now have the most points, you win instead.`,
+    `If you would draw a card, first score a figure from your hand.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'would-win',
       triggerAll: true,
-      matches: (game, player, { owner, self }) => {
-        return (
-          player !== game.getPlayerByCard(self)
-          && owner === game.getPlayerByCard(self)
-        )
-      },
-      func: (game, player, { owner, self }) => {
-        player = owner
+      kind: 'game-over',
+      matches: (game, player, { owner }) => player.id !== owner.id,
+      func: (game, player, { event, owner, self }) => {
         const topFigures = game
-          .players.all()
+          .players
+          .all()
           .flatMap(player => game.cards.tops(player))
           .filter(card => card.checkIsFigure())
-          .filter(card => card !== self)
-        game.actions.scoreMany(player, topFigures, { ordered: true })
+          .filter(card => card.id !== self.id)
+        game.actions.scoreMany(owner, topFigures)
 
-        const score = game.getScore(player)
+        const score = game.getScore(owner)
         const others = game
-          .players.opponents(player)
+          .players
+          .opponents(owner)
           .map(other => game.getScore(other))
         const mostPointsCondition = others.every(otherScore => otherScore < score)
         if (mostPointsCondition) {
           game.log.add({
             template: '{player} now has the most points',
-            args: { player }
+            args: { player: owner }
           })
-          game.youWin(player, this.name)
+          return new GameOverEvent({
+            player: owner,
+            reason: self.name,
+          })
         }
         else {
           game.log.add({
             template: '{player} still does not have the most points',
-            args: { player }
+            args: { player: owner }
           })
+          return event
         }
+      }
+    },
+    {
+      trigger: 'draw',
+      kind: 'would-first',
+      matches: () => true,
+      func: (game, player) => {
+        const choices = game
+          .cards
+          .byPlayer(player, 'hand')
+          .filter(card => card.checkIsFigure())
+        game.actions.chooseAndScore(player, choices)
       }
     }
   ]

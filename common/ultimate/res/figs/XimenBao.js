@@ -4,35 +4,28 @@ module.exports = {
   color: `yellow`,
   age: 2,
   expansion: `figs`,
-  biscuits: `*2hl`,
+  biscuits: `p2hl`,
   dogmaBiscuit: `l`,
-  echo: ``,
   karma: [
     `You may issue an Expansion Decree with any two figures.`,
-    `Each Inspire and Echo effect on your board counts as a part of this stack. When executing, order them from bottom to top, red, blue, green, purple, yellow.`
+    `If you would issue a decree, first junk all cards from all opponents' hands.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'decree-for-two',
       decree: 'Expansion',
     },
     {
-      trigger: ['list-echo-effects', 'list-inspire-effects'],
-      func(game, player, { color, kind }) {
-        if (color !== 'yellow') {
-          return game.getVisibleEffectsByColor(player, color, kind)
-        }
-        else {
-          return game
-            .getVisibleEffectsByColor(player, 'red', kind)
-            .concat(game.getVisibleEffectsByColor(player, 'blue', kind))
-            .concat(game.getVisibleEffectsByColor(player, 'green', kind))
-            .concat(game.getVisibleEffectsByColor(player, 'purple', kind))
-            .concat(game.getVisibleEffectsByColor(player, 'yellow', kind))
-        }
+      trigger: ['decree'],
+      kind: 'would-first',
+      matches: () => true,
+      func(game, player) {
+        const toJunk = game
+          .players
+          .opponents(player)
+          .flatMap(opponent => game.cards.byPlayer(opponent, 'hand'))
+
+        game.actions.junkMany(player, toJunk, { ordered: true })
       }
     }
   ]

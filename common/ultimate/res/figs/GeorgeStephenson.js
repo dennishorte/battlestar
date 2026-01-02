@@ -4,34 +4,32 @@ module.exports = {
   color: `green`,
   age: 7,
   expansion: `figs`,
-  biscuits: `7&fh`,
+  biscuits: `7pfh`,
   dogmaBiscuit: `f`,
-  echo: `You may splay up a color you have splayed right.`,
   karma: [
-    `If you would claim an achievement, first transfer the bottom card from each non-empty age below 10 to the available achievements.`
+    `If you would dogma a card of a color you have splayed right, first splay that color on your board up.`,
+    `If you would claim an achievement, first transfer the bottom yellow card on each board to the available achievements.`,
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    const rightColors = game
-      .util.colors()
-      .filter(color => game.zones.byPlayer(player, color).splay === 'right')
-    game.actions.chooseAndSplay(player, rightColors, 'up')
-  },
   karmaImpl: [
+    {
+      trigger: 'dogma',
+      kind: 'would-first',
+      matches: (game, player, { card }) => game.zones.byPlayer(player, card.color).splay === 'right',
+      func: (game, player, { card }) => {
+        game.actions.splay(player, card.color, 'up')
+      }
+    },
     {
       trigger: 'achieve',
       kind: 'would-first',
       matches: () => true,
       func: (game, player) => {
-        for (let i = 1; i < 10; i++) {
-          const deck = game.getZoneByDeck('base', i)
-          const cards = deck.cards()
-          if (cards.length > 0) {
-            const card = cards[cards.length - 1]
-            game.mTransfer(player, card, game.getZoneById('achievements'))
-          }
-        }
+        const toTransfer = game
+          .players
+          .all()
+          .map(p => game.cards.bottom(p, 'yellow'))
+          .filter(card => Boolean(card))
+        game.actions.transferMany(player, toTransfer, game.zones.byId('achievements'))
       }
     }
   ]

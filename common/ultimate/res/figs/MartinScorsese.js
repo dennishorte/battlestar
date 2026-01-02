@@ -4,17 +4,11 @@ module.exports = {
   color: `purple`,
   age: 10,
   expansion: `figs`,
-  biscuits: `fha&`,
+  biscuits: `fhap`,
   dogmaBiscuit: `f`,
-  echo: `Draw and meld a {0}.`,
   karma: [
-    `If you would meld a figure, instead tuck the figure and claim a standard achievement, regardless of eligibility.`
+    `If you would meld a figure, instead tuck the figure and claim an achievement, regardless of eligibility.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.drawAndMeld(player, game.getEffectAge(this, 10))
-  },
   karmaImpl: [
     {
       trigger: 'meld',
@@ -22,18 +16,8 @@ module.exports = {
       matches: (game, player, { card }) => card.checkIsFigure(),
       func: (game, player, { card }) => {
         game.actions.tuck(player, card)
-        const choices = game
-          .getZoneById('achievements')
-          .cards()
-          .filter(card => !card.isSpecialAchievement)
-        const formatted = game.formatAchievements(choices)
-        const selected = game.actions.choose(player, formatted)[0]
-        if (selected) {
-          game.aAchieveAction(player, selected, { nonAction: true })
-        }
-        else {
-          game.log.add({ template: 'There are no available standard achievements', })
-        }
+        const choices = game.getAvailableStandardAchievements(player)
+        game.actions.chooseAndAchieve(player, choices)
       }
     }
   ]

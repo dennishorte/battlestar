@@ -9,7 +9,7 @@ describe('Babylonian Chronicles', () => {
     t.setBoard(game,  {
       dennis: {
         artifact: ['Babylonian Chronicles'],
-        score: ['Paper'],
+        score: ['Engineering'],
       },
       micah: {
         red: ['Archery'],
@@ -31,7 +31,7 @@ describe('Babylonian Chronicles', () => {
     t.testBoard(game, {
       dennis: {
         yellow: ['Masonry'],
-        score: ['Paper'],
+        score: ['Engineering', 'Paper'],
         hand: ['Sailing'],
         museum: ['Museum 1', 'Babylonian Chronicles'],
       },

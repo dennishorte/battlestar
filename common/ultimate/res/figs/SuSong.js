@@ -6,29 +6,24 @@ module.exports = {
   expansion: `figs`,
   biscuits: `c*h3`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
     `You may issue a Trade Decree with any two figures.`,
-    `If you would draw a {3}, first transfer a card from your score pile to your forecast.`
+    `If you would meld a card, first draw and meld a {3}. If the drawn card has no {l}, return it.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'decree-for-two',
       decree: 'Trade',
     },
     {
-      trigger: 'draw',
+      trigger: 'meld',
       kind: 'would-first',
-      matches: (game, player, { age }) => age === 3,
-      func: (game, player) => {
-        game.actions.chooseAndTransfer(
-          player,
-          game.cards.byPlayer(player, 'score'),
-          game.zones.byPlayer(player, 'forecast')
-        )
+      matches: (game, player) => true,
+      func: (game, player, { self }) => {
+        const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 3))
+        if (!card.checkHasBiscuit('l')) {
+          game.actions.return(player, card)
+        }
       }
     }
   ]

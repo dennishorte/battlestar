@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      for (let i = 8; i >= game.util.minAge(); i--) {
+      for (let i = 8; i >= game.getMinAge(); i--) {
         const choices = game
           .cards
           .tops(player)
@@ -26,7 +26,7 @@ module.exports = {
       }
 
       const junkCards = game.cards.byZone('junk')
-      const requiredAges = game.util.ages().filter(age => age < 9)
+      const requiredAges = game.getAges().filter(age => age < 9)
       const junkedAges = requiredAges.filter(age => junkCards.some(card => card.getAge() === age))
       if (junkedAges.length === requiredAges.length) {
         game.youWin(player, self.name)

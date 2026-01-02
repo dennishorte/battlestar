@@ -19,6 +19,50 @@ class UltimateActionManager extends BaseActionManager {
   meld = MeldAction
 
   /**
+     Validates that a player can claim a specific achievement.
+     Throws an Error if the player is not eligible.
+   */
+  _validateAchievementClaim(player, card, opts={}) {
+    if (!card) {
+      throw new Error('Achievement not found')
+    }
+
+    // Special achievements have their own eligibility check
+    if (card.isSpecialAchievement) {
+      if (card.zone.id !== 'achievements') {
+        throw new Error(`${card.name} has already been claimed`)
+      }
+      if (card.checkPlayerIsEligible) {
+        const reduceCost = this.game.getInfoByKarmaTrigger(
+          player,
+          'reduce-special-achievement-requirements'
+        ).length > 0
+        if (!card.checkPlayerIsEligible(this.game, player, reduceCost)) {
+          throw new Error(`Player is not eligible for ${card.name}`)
+        }
+      }
+      return
+    }
+
+    // Standard achievements check age and score requirements
+    if (!this.game.checkAchievementEligibility(player, card, opts)) {
+      const topCardAge = this.game.getHighestTopAge(player, { reason: 'achieve' })
+      const scoreCost = this.game.getScoreCost(player, card)
+      const currentScore = this.game.getScore(player, opts)
+
+      const issues = []
+      if (card.getAge() > topCardAge) {
+        issues.push(`age requirement (need age ${card.getAge()}, have ${topCardAge})`)
+      }
+      if (scoreCost > currentScore) {
+        issues.push(`score requirement (need ${scoreCost}, have ${currentScore})`)
+      }
+
+      throw new Error(`Not eligible for ${card.name}: ${issues.join(', ')}`)
+    }
+  }
+
+  /**
      This is the Achieve Action, not just claiming an achievemenet as part of a dogma action.
    */
   achieveAction(player, arg, opts={}) {
@@ -29,21 +73,44 @@ class UltimateActionManager extends BaseActionManager {
       }
     }
 
+    let card
+    let claimOpts = { ...opts }
+
     if (arg.startsWith('safe: ')) {
       const hiddenName = arg.substr(6)
       const { expansion, age } = _parseHiddenCardName(hiddenName)
-      const card = this
-        .cards.byPlayer(player, 'safe')
+      card = this
+        .cards
+        .byPlayer(player, 'safe')
         .find(c => c.expansion === expansion && c.getAge() === age)
-      this.actions.claimAchievement(player, { card })
     }
     else if (arg.startsWith('*')) {
       const { expansion, age } = _parseHiddenCardName(arg)
-      const isStandard = opts.nonAction ? false : true
-      this.actions.claimAchievement(player, { expansion, age, isStandard })
+      claimOpts.expansion = expansion
+      claimOpts.age = age
+      claimOpts.isStandard = opts.nonAction ? false : true
+      card = this
+        .game
+        .cards
+        .byZone('achievements')
+        .filter(card => !card.isSpecialAchievement && !card.isDecree)
+        .find(c => c.getAge() === age && c.expansion === expansion)
     }
     else {
-      const card = this.cards.byId(arg)
+      card = this.cards.byId(arg)
+    }
+
+    // Validate eligibility before claiming
+    this._validateAchievementClaim(player, card, claimOpts)
+
+    // Claim the achievement
+    if (arg.startsWith('safe: ')) {
+      this.actions.claimAchievement(player, { card })
+    }
+    else if (arg.startsWith('*')) {
+      this.actions.claimAchievement(player, { expansion: claimOpts.expansion, age: claimOpts.age, isStandard: claimOpts.isStandard })
+    }
+    else {
       this.actions.claimAchievement(player, { card })
     }
   }
@@ -113,7 +180,7 @@ class UltimateActionManager extends BaseActionManager {
 
   chooseAge(player, ages, opts={}) {
     if (!ages) {
-      ages = this.game.util.ages()
+      ages = this.game.getAges()
     }
     else {
       ages = [...ages]
@@ -263,7 +330,13 @@ class UltimateActionManager extends BaseActionManager {
         card = this.cards.byId(card)
       }
 
-      if (opts.hidden || !card.visible(player)) {
+      let cardIsHidden = opts.hidden || !card.visible(player)
+      if (opts.visible) {
+        cardIsHidden = false
+      }
+
+
+      if (cardIsHidden) {
         return { name: card.getHiddenName(this.game), card }
       }
       else {
@@ -316,8 +389,24 @@ class UltimateActionManager extends BaseActionManager {
     return output
   }
 
-  chooseColor(player) {
-    return this.choose(player, this.util.colors(), { title: 'Choose a color' })[0]
+  chooseColor(player, choices) {
+    if (!choices) {
+      choices = this.util.colors()
+    }
+    return this.choose(player, choices, { title: 'Choose a color' })[0]
+  }
+
+  chooseZone(player, zones) {
+    if (zones.length === 0) {
+      return undefined
+    }
+
+    const zoneIds = zones.map(zone => zone.id)
+    const selectedId = this.game.actions.choose(player, zoneIds, {
+      title: 'Choose a zone',
+    })[0]
+
+    return this.game.zones.byId(selectedId)
   }
 
   claimAchievement(player, opts={}) {
@@ -354,7 +443,10 @@ class UltimateActionManager extends BaseActionManager {
 
     // Special achievements can only be claimed from the achievements zone
     if (card.isSpecialAchievement && card.zone.id !== 'achievements') {
-      console.log(card.name, card.zone.id)
+      this.log.add({
+        template: `{card} has already been claimed`,
+        args: { card }
+      })
       return
     }
 
@@ -381,7 +473,7 @@ class UltimateActionManager extends BaseActionManager {
       const others = this
         .players
         .startingWith(player)
-        .filter(other => !this.checkSameTeam(player, other))
+        .filter(other => !this.game.checkSameTeam(player, other))
 
       for (const opp of others) {
         this.draw(opp, { exp: 'figs' })
@@ -537,7 +629,7 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   junkDeck(player, age, opts={}) {
-    if (age < this.util.minAge() || age > this.util.maxAge()) {
+    if (age < this.game.getMinAge() || age > this.game.getMaxAge()) {
       game.log.add({
         template: 'No deck of age {age}',
         args: { age }
@@ -716,6 +808,7 @@ class UltimateActionManager extends BaseActionManager {
       template: '{player} scores {card}',
       args: { player, card }
     })
+    this.state.scoreCount[player.name] += 1
     this.acted(player)
     return card
   })
@@ -812,6 +905,7 @@ class UltimateActionManager extends BaseActionManager {
       template: '{player} tucks {card}',
       args: { player, card }
     })
+    this.state.tuckCount[player.name] += 1
     if (card.color === 'green') {
       util.array.pushUnique(this.state.tuckedGreenForPele, player)
     }
@@ -820,8 +914,8 @@ class UltimateActionManager extends BaseActionManager {
     return card
   })
 
-  unsplay(player, color) {
-    const zone = this.zones.byPlayer(player, color)
+  unsplay(player, colorOrZone) {
+    const zone = typeof colorOrZone === 'string' ? this.zones.byPlayer(player, colorOrZone) : colorOrZone
 
     if (zone.splay === 'none') {
       this.log.add({
@@ -835,7 +929,7 @@ class UltimateActionManager extends BaseActionManager {
         args: { player, zone }
       })
       zone.splay = 'none'
-      return color
+      return colorOrZone
     }
   }
 

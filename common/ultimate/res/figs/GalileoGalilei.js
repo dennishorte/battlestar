@@ -4,37 +4,28 @@ module.exports = {
   color: `green`,
   age: 4,
   expansion: `figs`,
-  biscuits: `hcc&`,
+  biscuits: `hccp`,
   dogmaBiscuit: `c`,
-  echo: `Draw and foreshadow a {5} or {6}.`,
   karma: [
-    `If you would foreshadow a card of value not present in your forecast, first transfer all cards from your forecast into your hand.`
+    `If you would draw a card, first junk all cards in the {4} or {5} deck.`,
+    `If you would meld a card, first junk an available achievement of value 3, 4, or 5.`,
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    const age = game.actions.chooseAge(player, [
-      game.getEffectAge(this, 5),
-      game.getEffectAge(this, 6)
-    ])
-    game.actions.drawAndForeshadow(player, age)
-  },
   karmaImpl: [
     {
-      trigger: 'foreshadow',
+      trigger: 'draw',
       kind: 'would-first',
-      matches: (game, player, { card }) => {
-        const forecastCards = game.cards.byPlayer(player, 'forecast')
-        const matchedAge = forecastCards.find(c => c.getAge() === card.getAge())
-        return matchedAge === undefined
+      matches: () => true,
+      func: (game, player, { self }) => {
+        game.actions.chooseAndJunkDeck(player, [game.getEffectAge(self, 4), game.getEffectAge(self, 5)])
       },
-      func: (game, player) => {
-        game.actions.transferMany(
-          player,
-          game.cards.byPlayer(player, 'forecast'),
-          game.zones.byPlayer(player, 'hand')
-        )
-      }
+    },
+    {
+      trigger: 'meld',
+      kind: 'would-first',
+      matches: () => true,
+      func: (game, player, { self }) => {
+        game.actions.junkAvailableAchievement(player, [3, 4, 5])
+      },
     }
   ]
 }

@@ -4,26 +4,34 @@ module.exports = {
   color: `green`,
   age: 5,
   expansion: `figs`,
-  biscuits: `*hc6`,
+  biscuits: `phc6`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
-    `If you would score a card, first claim an achievement matching that card's value, ignoring the age requirement.`
+    `If you would take a Draw action, instead score a top card with a {c} from anywhere.`,
+    `If you would draw a card, first claim an available achievement matching that card's value, regardless of eligibility.`,
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
-      trigger: 'score',
+      trigger: 'draw-action',
+      kind: 'would-instead',
+      matches: () => true,
+      func: (game, player) => {
+        const canScore = game
+          .cards
+          .topsAll()
+          .filter(card => card.checkHasBiscuit('c'))
+        game.actions.chooseAndScore(player, canScore)
+      },
+    },
+    {
+      trigger: 'draw',
       kind: 'would-first',
       matches: () => true,
-      func(game, player, { card }) {
-        const eligible = game
-          .getEligibleAchievementsRaw(player, { ignoreAge: true })
-          .filter(other => card.getAge() === other.getAge())
-
-        game.actions.chooseAndAchieve(player, eligible, { nonAction: true })
+      func: (game, player, { age }) => {
+        const canAchieve = game
+          .getAvailableStandardAchievements(player)
+          .filter(card => card.getAge() === age)
+        game.actions.chooseAndAchieve(player, canAchieve, { nonAction: true })
       }
     }
   ]

@@ -4,25 +4,23 @@ module.exports = {
   color: `green`,
   age: 9,
   expansion: `figs`,
-  biscuits: `i&ih`,
+  biscuits: `ipih`,
   dogmaBiscuit: `i`,
-  echo: `You may splay one color of your cards up.`,
   karma: [
-    `You may issue a Trade Decree with any two figures.`,
-    `Each special achievement is claimed with one fewer or one lower of each requirement listed for you.`
+    `Each special achievement is claimed with one fewer or one lower of each requirement listed for you.`,
+    `If you would claim an achievement, first splay a color of your cards up.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.chooseAndSplay(player, null, 'up')
-  },
   karmaImpl: [
     {
-      trigger: 'decree-for-two',
-      decree: 'Trade',
+      trigger: 'reduce-special-achievement-requirements',
     },
     {
-      trigger: 'reduce-special-achievement-requirements',
+      trigger: 'achieve',
+      kind: 'would-first',
+      matches: () => true,
+      func: (game, player) => {
+        game.actions.chooseAndSplay(player, game.util.colors(), 'up')
+      }
     }
   ]
 }

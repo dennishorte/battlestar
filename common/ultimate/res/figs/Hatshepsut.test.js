@@ -4,7 +4,6 @@ const t = require('../../testutil.js')
 
 describe('Hatshepsut', () => {
 
-
   test('karma (one in hand)', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {

@@ -4,26 +4,22 @@ const t = require('../../testutil.js')
 
 describe('William Shakespeare', () => {
 
-
   test('karma: decree', () => {
     t.testDecreeForTwo('William Shakespeare', 'Rivalry')
   })
 
-  test('karma: score', () => {
+  test('karma: decree for any three', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
-        purple: {
-          cards: ['William Shakespeare', 'Enterprise', 'Education'],
-          splay: 'up'
-        },
-        green: ['The Wheel'],
+        purple: ['William Shakespeare'],
+        hand: ['Sargon of Akkad', 'Niccolo Machiavelli', 'Yi Sun-Sin'],
       },
     })
 
     let request
     request = game.run()
-
-    expect(game.getScore(t.dennis(game))).toBe(4 + 3)
+    expect(t.getChoices(request, 'Decree').sort())
+      .toEqual(['War', 'Trade', 'Advancement', 'Expansion', 'Rivalry'].sort())
   })
 })

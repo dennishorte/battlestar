@@ -4,35 +4,24 @@ module.exports = {
   color: `green`,
   age: 8,
   expansion: `figs`,
-  biscuits: `c&hc`,
+  biscuits: `cphc`,
   dogmaBiscuit: `c`,
-  echo: `You may splay one color of your cards up.`,
   karma: [
     `You may issue a Trade Decree with any two figures.`,
-    `Each biscuit in each color you have splayed up provides an additional biscuit of the same type.`
+    `If a player would dogma a card, first splay the color of the card up on your board.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.chooseAndSplay(player, null, 'up')
-  },
   karmaImpl: [
     {
       trigger: 'decree-for-two',
       decree: 'Trade'
     },
     {
-      trigger: 'calculate-biscuits',
-      func: (game, player) => {
-        let output = game.utilEmptyBiscuits()
-        for (const color of game.util.colors()) {
-          const zone = game.zones.byPlayer(player, color)
-          if (zone.splay === 'up') {
-            const biscuits = zone.biscuits()
-            output = game.utilCombineBiscuits(output, biscuits)
-          }
-        }
-        return output
+      trigger: 'dogma',
+      triggerAll: true,
+      kind: 'would-first',
+      matches: () => true,
+      func: (game, player, { card, owner }) => {
+        game.actions.splay(owner, card.color, 'up')
       }
     }
   ]

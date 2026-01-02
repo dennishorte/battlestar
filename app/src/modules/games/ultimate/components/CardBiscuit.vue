@@ -115,6 +115,9 @@ export default {
       if (this.biscuit === 'e') {
         return 11
       }
+      if (this.biscuit === 'z') {
+        return 0
+      }
       return this.biscuit
     },
 

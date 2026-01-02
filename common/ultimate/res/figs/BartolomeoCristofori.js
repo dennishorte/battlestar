@@ -4,25 +4,21 @@ module.exports = {
   color: `purple`,
   age: 5,
   expansion: `figs`,
-  biscuits: `l*hl`,
+  biscuits: `lphl`,
   dogmaBiscuit: `l`,
-  echo: ``,
   karma: [
-    `If you would meld the fifth visible card of a color on your board, first claim an achievement ignoring the scoring restriction.`
+    `If you would meld a fifth visible card of a color on your board, first claim an available standard achievement regardless of eligibility.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'meld',
       kind: 'would-first',
       matches(game, player, { card }) {
         const zone = game.zones.byPlayer(player, card.color)
-        return zone.splay !== 'none' && zone.cards().length === 4
+        return zone.splay !== 'none' && zone.cardlist().length === 4
       },
       func(game, player) {
-        const choices = game.getEligibleAchievements(player, { ignoreScore: true })
+        const choices = game.getAvailableStandardAchievements(player)
         game.actions.chooseAndAchieve(player, choices)
       }
     }

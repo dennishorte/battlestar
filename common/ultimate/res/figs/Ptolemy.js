@@ -4,16 +4,12 @@ module.exports = {
   color: `green`,
   age: 2,
   expansion: `figs`,
-  biscuits: `hc*c`,
+  biscuits: `hcpc`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
     `You may issue a Trade Decree with any two figures.`,
     `Each top blue card on every player's board counts as a card you can activate with a Dogma action.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'decree-for-two',

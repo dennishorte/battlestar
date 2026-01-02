@@ -6,14 +6,10 @@ module.exports = {
   expansion: `figs`,
   biscuits: `h*7c`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
     `You may issue a Rivalry Decree with any two figures.`,
-    `If you would score a card with a {s}, instead return it and all cards from your score pile, then draw and score four {5}.`
+    `If you would score a card, first junk all cards from your score pile, then draw and score four {5}. If you score only {5}, draw and score four {5}.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'decree-for-two',
@@ -21,16 +17,26 @@ module.exports = {
     },
     {
       trigger: 'score',
-      kind: 'would-instead',
-      matches: (game, player, { card }) => card.biscuits.includes('s'),
-      func: (game, player, { card }) => {
-        const toReturn = game.cards.byPlayer(player, 'score')
-        toReturn.push(card)
-        game.actions.returnMany(player, toReturn)
-        game.actions.drawAndScore(player, game.getEffectAge(this, 5))
-        game.actions.drawAndScore(player, game.getEffectAge(this, 5))
-        game.actions.drawAndScore(player, game.getEffectAge(this, 5))
-        game.actions.drawAndScore(player, game.getEffectAge(this, 5))
+      kind: 'would-first',
+      matches: () => true,
+      func: (game, player, { self }) => {
+        const toJunk = game.cards.byPlayer(player, 'score')
+        game.actions.junkMany(player, toJunk, { ordered: true })
+
+        const drawn = [
+          game.actions.drawAndScore(player, game.getEffectAge(self, 5)),
+          game.actions.drawAndScore(player, game.getEffectAge(self, 5)),
+          game.actions.drawAndScore(player, game.getEffectAge(self, 5)),
+          game.actions.drawAndScore(player, game.getEffectAge(self, 5)),
+        ]
+
+        const ages = drawn.map(card => card.getAge())
+        if (ages.every(age => age === game.getEffectAge(self, 5))) {
+          game.actions.drawAndScore(player, game.getEffectAge(self, 5))
+          game.actions.drawAndScore(player, game.getEffectAge(self, 5))
+          game.actions.drawAndScore(player, game.getEffectAge(self, 5))
+          game.actions.drawAndScore(player, game.getEffectAge(self, 5))
+        }
       }
     }
   ]

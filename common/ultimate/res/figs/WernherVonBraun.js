@@ -4,22 +4,28 @@ module.exports = {
   color: `blue`,
   age: 9,
   expansion: `figs`,
-  biscuits: `*ssh`,
+  biscuits: `pssh`,
   dogmaBiscuit: `s`,
-  echo: ``,
   karma: [
-    `Each card in your forecast counts as being in your score pile.`
+    `If a player would draw a figure, first junk all cards in the {9} or {0} deck.`,
+    `Each valued card in the junk counts as being in your score pile.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
+    {
+      trigger: 'draw',
+      triggerAll: true,
+      kind: 'would-first',
+      matches: (game, player, { exp }) => exp === 'figs',
+      func: (game, player, { owner, self }) => {
+        game.actions.chooseAndJunkDeck(owner, [game.getEffectAge(self, 9), game.getEffectAge(self, 10)])
+      }
+    },
     {
       trigger: 'list-score',
       func(game, player) {
         return [
           ...game.zones.byPlayer(player, 'score')._cards,
-          ...game.zones.byPlayer(player, 'forecast')._cards,
+          ...game.zones.byId('junk')._cards,
         ]
       }
     }

@@ -40,7 +40,7 @@ class BaseCard {
 
     // If no index is specified, put the card on the bottom of the zone.
     if (index === null) {
-      newIndex = zone.cardlist().length
+      newIndex = zone.nextIndex()
 
       // If the card is moving within the same zone, its movement will reduce the total number
       // of items in the zone.

@@ -20,7 +20,7 @@ module.exports = {
     },
 
     (game, player) => {
-      game.actions.junkAvailableAchievement(player, game.util.ages())
+      game.actions.junkAvailableAchievement(player, game.getAges())
     },
   ],
 }

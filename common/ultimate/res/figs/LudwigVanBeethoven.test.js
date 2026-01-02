@@ -4,96 +4,115 @@ const t = require('../../testutil.js')
 
 describe('Ludwig Van Beethoven', () => {
 
-  test('echo', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        purple: ['Ludwig Van Beethoven'],
-        hand: ['Coal', 'Canning']
-      },
-      decks: {
-        base: {
-          6: ['Atomic Theory']
-        }
-      }
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.purple')
-    request = t.choose(game, request, 'Canning')
-
-    t.testIsSecondPlayer(game)
-    t.testBoard(game, {
-      dennis: {
-        purple: ['Ludwig Van Beethoven'],
-        score: ['Canning'],
-        hand: ['Coal', 'Atomic Theory']
-      },
-    })
-  })
-
   test('karma: decree', () => {
     t.testDecreeForTwo('Ludwig Van Beethoven', 'Rivalry')
   })
 
-  test('karma: score with s', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        purple: ['Ludwig Van Beethoven'],
-        hand: ['Writing'],
-        score: ['The Wheel', 'Canning']
-      },
-      decks: {
-        base: {
-          5: ['Coal', 'Astronomy', 'Banking', 'The Pirate Code'],
-          6: ['Atomic Theory']
+  describe('If you would score a card, first junk all cards from your score pile, then draw and score four {5}. If you score only {5}, draw and score four {5}.', () => {
+    test('karma: score card, junk score pile, draw and score four age 5', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Ludwig Van Beethoven'],
+          yellow: ['Agriculture'],
+          hand: ['Sailing'],
+          score: ['Archery'], // Card in score pile to be junked
+        },
+        achievements: ['Steam Engine'],
+        decks: {
+          base: {
+            2: ['Mapmaking'],
+            6: ['Canning'],
+          }
+        },
+        decksExact: {
+          base: {
+            5: ['Measurement', 'Coal', 'Chemistry'], // Four age 5 cards to draw and score by karma
+          }
         }
-      }
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, request, 'Dogma.Agriculture')
+      request = t.choose(game, request, 'Sailing')
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          purple: ['Ludwig Van Beethoven'],
+          yellow: ['Agriculture'],
+          score: ['Measurement', 'Coal', 'Chemistry', 'Canning', 'Mapmaking'], // Four age 5 cards scored by karma
+        },
+        junk: [
+          'Archery',
+          'Astronomy',
+          'Banking',
+          'Physics',
+          'Societies',
+          'Statistics',
+          'The Pirate Code',
+        ],
+      })
     })
 
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.purple')
-    request = t.choose(game, request, 'auto')
-
-    t.testIsSecondPlayer(game)
-    t.testBoard(game, {
-      dennis: {
-        purple: ['Ludwig Van Beethoven'],
-        hand: ['Atomic Theory'],
-        score: ['Coal', 'Astronomy', 'Banking', 'The Pirate Code']
-      },
-    })
-  })
-
-  test('karma: score without s', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        purple: ['Ludwig Van Beethoven'],
-        hand: ['Agriculture'],
-        score: ['The Wheel', 'Canning']
-      },
-      decks: {
-        base: {
-          6: ['Atomic Theory']
+    test('karma: all four are age 5, draw and score four more', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Ludwig Van Beethoven'],
+          yellow: ['Agriculture'],
+          hand: ['Sailing'],
+          score: ['Archery'], // Card in score pile to be junked
+        },
+        decks: {
+          base: {
+            2: ['Mapmaking'],
+            5: [
+              'Measurement',
+              'Coal',
+              'Chemistry',
+              'Astronomy',
+              'Banking',
+              'Statistics',
+              'The Pirate Code',
+              'Societies',
+            ],
+          }
+        },
+        decksExact: {
+          base: {
+          }
         }
-      }
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, request, 'Dogma.Agriculture')
+      request = t.choose(game, request, 'Sailing')
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          purple: ['Ludwig Van Beethoven'],
+          yellow: ['Agriculture'],
+          score: [
+            'Measurement',
+            'Coal',
+            'Chemistry',
+            'Astronomy',
+            'Mapmaking',
+            'Banking',
+            'Statistics',
+            'The Pirate Code',
+            'Societies',
+          ], // Four age 5 cards scored by karma
+        },
+        junk: [
+          'Archery',
+        ],
+      })
     })
 
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.purple')
-
-    t.testBoard(game, {
-      dennis: {
-        purple: ['Ludwig Van Beethoven'],
-        score: ['The Wheel', 'Canning', 'Agriculture'],
-        hand: ['Atomic Theory'],
-      },
-    })
   })
-
 })

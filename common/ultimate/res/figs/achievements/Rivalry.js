@@ -12,14 +12,13 @@ module.exports = {
     const otherPlayers = game
       .players.all()
       .filter(p => p.name !== player.name)
-      .map(p => p.name)
     const other = game.actions.choosePlayer(player, otherPlayers)
 
     // Choose three cards
     const scoreCards = game
       .zones
       .byPlayer(other, 'score')
-      .cards()
+      .cardlist()
       .map(c => c.id)
     const cardNames = game.requestInputSingle({
       actor: player.name,

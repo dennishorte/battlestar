@@ -14,15 +14,20 @@ function DrawAction(player, opts={}) {
 
   // If age is not specified, draw based on player's current highest top card.
   const highestTopAge = _getAgeForDrawAction.call(this, player, isAction)
-  const baseAge = age !== undefined ? (age || 1) : (highestTopAge || 1)
+  const minAge = this.game.getMinAge()
+  const baseAge = age !== undefined ? (age || minAge) : (highestTopAge || minAge)
 
   // Adjust age based on empty decks.
-  const [ adjustedAge, adjustedExp ] = _adjustedDrawDeck.call(this, baseAge, baseExp)
+  let [ adjustedAge, adjustedExp ] = _adjustedDrawDeck.call(this, baseAge, baseExp)
 
-  const karmaKind = this.game.aKarma(player, 'draw', { ...opts, age: adjustedAge })
+  const karmaKind = this.game.aKarma(player, 'draw', { ...opts, age: adjustedAge, exp: adjustedExp })
   if (karmaKind === 'would-instead') {
     this.acted(player)
     return
+  }
+  else if (karmaKind === 'would-first') {
+    // Some effects junk decks, which might affect the draw age.
+    [ adjustedAge, adjustedExp ] = _adjustedDrawDeck.call(this, baseAge, baseExp)
   }
 
   return _doDraw.call(this, player, adjustedExp, adjustedAge, opts)
@@ -30,7 +35,7 @@ function DrawAction(player, opts={}) {
 
 
 function _doDraw(player, exp, age, opts={}) {
-  if (age > 11) {
+  if (age > this.game.getMaxAge()) {
     const scores = this
       .game
       .players
@@ -76,7 +81,7 @@ function _doDraw(player, exp, age, opts={}) {
 }
 
 function _adjustedDrawDeck(age, exp) {
-  if (age > 11) {
+  if (age > this.game.getMaxAge()) {
     return [12, 'base']
   }
 
@@ -165,7 +170,7 @@ function _getAgeForDrawAction(player, isAction) {
     .map(color => {
       const zone = this.zones.byPlayer(player, color)
       if (zone.cardlist().length === 0) {
-        return 1
+        return this.game.getMinAge()
       }
 
       const actionType = isAction ? 'draw' : 'other'

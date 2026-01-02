@@ -4,71 +4,130 @@ const t = require('../../testutil.js')
 
 describe('Queen Victoria', () => {
 
-  test('echo', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        purple: ['Queen Victoria'],
-      },
-      micah: {
-        score: ['Fu Xi']
-      }
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Queen Victoria')
-
-    t.testIsSecondPlayer(game)
-    t.testBoard(game, {
-      dennis: {
-        purple: ['Queen Victoria'],
-        score: ['Fu Xi'],
-      },
-    })
-  })
-
   test('karma: decree', () => {
     t.testDecreeForTwo('Queen Victoria', 'Rivalry')
   })
 
-  test('karma: achieve', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        purple: ['Queen Victoria'],
-        score: ['Software'],
-      },
-      achievements: ['The Wheel', 'Calendar', 'Engineering'],
-      decks: {
-        figs: {
-          1: ['Fu Xi']
-        }
-      }
+  describe('If you would score a card, first choose a figure in any score pile. Choose to either score it or transfer it to the available achievements.', () => {
+    test('karma: score card, choose figure from own score pile and score it', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Queen Victoria'],
+          yellow: ['Agriculture'], // Card with score effect
+          hand: ['Tools'], // Card to return
+          score: ['Carl Friedrich Gauss', 'Archimedes'], // Figures in score pile
+        },
+        decks: {
+          base: {
+            2: ['Mathematics'], // Card drawn and scored after returning Tools
+          },
+        },
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, request, 'Dogma.Agriculture')
+      request = t.choose(game, request, 'Tools') // Return Tools
+      // Karma triggers: choose figure from score pile (before scoring Mathematics)
+      request = t.choose(game, request, 'Carl Friedrich Gauss')
+      request = t.choose(game, request, 'score it')
+      // Now Mathematics is scored (from Agriculture effect)
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          purple: ['Queen Victoria'],
+          yellow: ['Agriculture'],
+          score: ['Carl Friedrich Gauss', 'Mathematics', 'Archimedes'], // Carl Friedrich Gauss scored, Mathematics drawn and scored
+          hand: [],
+        },
+      })
     })
 
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Achieve.age 2')
+    test('karma: score card, choose figure from opponent score pile and score it', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Queen Victoria'],
+          yellow: ['Agriculture'], // Card with score effect
+          hand: ['Tools'], // Card to return
+          score: ['Archimedes'], // Figure in own score pile (to force selection)
+        },
+        micah: {
+          score: ['Carl Friedrich Gauss'], // Figure in opponent's score pile
+        },
+        decks: {
+          base: {
+            2: ['Mathematics'], // Card drawn and scored after returning Tools
+          },
+        },
+      })
 
-    t.testIsSecondPlayer(game)
-    t.testBoard(game, {
-      dennis: {
-        purple: ['Queen Victoria'],
-        achievements: ['Calendar'],
-        score: ['Software'],
-      },
-      micah: {
-        hand: ['Fu Xi'],
-      },
+      let request
+      request = game.run()
+      request = t.choose(game, request, 'Dogma.Agriculture')
+      request = t.choose(game, request, 'Tools') // Return Tools
+      // Karma triggers: choose figure from any score pile (both dennis and micah have figures)
+      // Opponent's figure is shown as "**figs-6* (micah)" where 6 is the age
+      request = t.choose(game, request, '**figs-6* (micah)')
+      request = t.choose(game, request, 'score it')
+      // Now Mathematics is scored (from Agriculture effect)
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          purple: ['Queen Victoria'],
+          yellow: ['Agriculture'],
+          score: ['Carl Friedrich Gauss', 'Mathematics', 'Archimedes'], // Carl Friedrich Gauss scored from opponent, Mathematics drawn and scored
+          hand: [],
+        },
+        micah: {
+          score: [], // Carl Friedrich Gauss transferred to dennis
+        },
+      })
     })
 
-    const achievements = game
-      .getZoneById('achievements')
-      .cards()
-      .filter(card => !card.isSpecialAchievement)
-      .map(card => card.age)
-      .sort()
-    expect(achievements).toStrictEqual([1,1,3])
+    test('karma: score card, no figures in score piles, proceeds normally', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Queen Victoria'],
+          yellow: ['Agriculture'], // Card with score effect
+          hand: ['Tools'], // Card to return
+          score: ['The Wheel'], // No figures, just regular card
+        },
+        micah: {
+          score: ['Construction'], // No figures, just regular card
+        },
+        decks: {
+          base: {
+            2: ['Mathematics'], // Card drawn and scored after returning Tools
+          },
+        },
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, request, 'Dogma.Agriculture')
+      request = t.choose(game, request, 'Tools') // Return Tools
+      // Karma triggers but no figures available, so proceeds normally
+      // Mathematics is scored (from Agriculture effect)
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          purple: ['Queen Victoria'],
+          yellow: ['Agriculture'],
+          score: ['The Wheel', 'Mathematics'], // Mathematics drawn and scored normally
+          hand: [],
+        },
+        micah: {
+          score: ['Construction'],
+        },
+      })
+    })
+
   })
+
 })

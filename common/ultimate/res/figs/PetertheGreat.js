@@ -4,43 +4,48 @@ module.exports = {
   color: `red`,
   age: 5,
   expansion: `figs`,
-  biscuits: `f*5h`,
+  biscuits: `fp5h`,
   dogmaBiscuit: `f`,
-  echo: ``,
   karma: [
-    `When you meld this card, return all opponents' top figures.`,
-    `If you would tuck a card with a {f}, first achieve your bottom green card, if elibible. Otherwise, score it.`
+    `You may issue a War Decree with any two figures.`,
+    `If you would return a card, first score you bottom green card. If the scored card has {c}, achieve your bottom green card, if eligible.`,
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
-      trigger: 'when-meld',
-      func: (game, player) => {
-        const figs = game
-          .players.opponents(player)
-          .flatMap(player => game.cards.tops(player))
-          .filter(card => card.checkIsFigure())
-        game.actions.returnMany(player, figs)
-      }
+      trigger: 'decree-for-two',
+      decree: 'War',
     },
     {
-      trigger: 'tuck',
+      trigger: 'return',
       kind: 'would-first',
-      matches: (game, player, { card }) => card.checkHasBiscuit('f'),
+      matches: () => true,
       func: (game, player) => {
-        const card = game.cards.byPlayer(player, 'green').slice(-1)[0]
+        const card = game.cards.bottom(player, 'green')
         if (card) {
-          if (game.checkAchievementEligibility(player, card)) {
-            game.actions.claimAchievement(player, card)
-          }
-          else {
-            game.actions.score(player, card)
+          game.actions.score(player, card)
+          if (card.checkHasBiscuit('c')) {
+            const toAchieve = game.cards.bottom(player, 'green')
+            if (toAchieve) {
+              if (game.checkAchievementEligibility(player, toAchieve)) {
+                game.actions.claimAchievement(player, toAchieve)
+              }
+              else {
+                game.log.add({
+                  template: 'Not eligible to claim bottom green card.'
+                })
+              }
+            }
+            else {
+              game.log.add({
+                template: 'No bottom green cards remaining to achieve',
+              })
+            }
           }
         }
         else {
-          game.log.addNoEffect()
+          game.log.add({
+            template: 'No bottom green cards remaining to score',
+          })
         }
       }
     }

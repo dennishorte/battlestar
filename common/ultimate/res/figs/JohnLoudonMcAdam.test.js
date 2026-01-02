@@ -23,6 +23,6 @@ describe('John Loudon McAdam', () => {
     let request
     request = game.run()
 
-    t.testActionChoices(request, 'Achieve', ['age 1', 'age 2', 'Sparta'])
+    t.testActionChoices(request, 'Achieve', ['*base-1*', '*base-2*', 'Sparta'])
   })
 })

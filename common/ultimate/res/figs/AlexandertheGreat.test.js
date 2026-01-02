@@ -6,53 +6,82 @@ describe('Alexander the Great', () => {
 
   test('karma: meld-this', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Alexander the Great'])
-      t.setColor(game, 'micah', 'green', ['Hatshepsut'])
-      t.setColor(game, 'micah', 'purple', ['Al-Kindi'])
-      t.setColor(game, 'micah', 'yellow', ['Cai Lun'])
+    t.setBoard(game, {
+      dennis: {
+        hand: ['Alexander the Great'],
+      },
+      micah: {
+        purple: ['Homer'],
+      },
     })
+
     let request
     request = game.run()
     request = t.choose(game, request, 'Meld.Alexander the Great')
-    request = t.choose(game, request, 'auto')
 
-    t.testZone(game, 'score', ['Hatshepsut', 'Cai Lun'], { sort: true })
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Alexander the Great'],
+        score: ['Homer'],
+      },
+    })
   })
 
-  test('karma: featured-biscuit (test 1)', () => {
-    const game = t.fixtureTopCard('Alexander the Great', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'blue', ['Atomic Theory'])
-      t.setColor(game, 'micah', 'purple', ['Education'])
-
-      t.setScore(game, 'dennis', ['Tools'])
-
-      t.setDeckTop(game, 'base', 7, ['Electricity', 'Bicycle'])
+  test('karma: dogma', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        red: ['Alexander the Great'],
+        yellow: ['Agriculture'],
+      },
+      decks: {
+        base: {
+          2: ['Mapmaking'],
+        }
+      }
     })
+
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Atomic Theory')
+    request = t.choose(game, request, 'Dogma.Agriculture')
 
-    t.testZone(game, 'green', ['Electricity'])
-    t.testZone(game, 'green', [], { player: 'micah' })
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Alexander the Great'],
+        yellow: ['Agriculture'],
+        score: ['Mapmaking'],
+      },
+    })
   })
 
-  test('karma: featured-biscuit (test 2)', () => {
-    const game = t.fixtureTopCard('Alexander the Great', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'blue', ['Atomic Theory'])
-      t.setColor(game, 'micah', 'purple', ['Education'])
-
-      t.setScore(game, 'micah', ['Calendar'])
-
-      t.setDeckTop(game, 'base', 7, ['Electricity', 'Bicycle'])
+  test('karma: dogma, not a 2', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        red: ['Alexander the Great'],
+        yellow: ['Agriculture'],
+      },
+      decksExact: {
+        base: {
+          2: [],
+          3: ['Machinery'],
+        }
+      }
     })
+
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Atomic Theory')
+    request = t.choose(game, request, 'Dogma.Agriculture')
 
-    t.testZone(game, 'green', ['Bicycle'])
-    t.testZone(game, 'green', ['Electricity'], { player: 'micah' })
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Agriculture'],
+        score: ['Machinery', 'Alexander the Great'],
+      },
+    })
   })
+
 })

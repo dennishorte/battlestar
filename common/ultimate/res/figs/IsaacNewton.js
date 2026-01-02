@@ -4,27 +4,35 @@ module.exports = {
   color: `blue`,
   age: 5,
   expansion: `figs`,
-  biscuits: `hs&s`,
+  biscuits: `hsps`,
   dogmaBiscuit: `s`,
-  echo: `Splay one color of your cards right.`,
   karma: [
-    `If you would take a Draw or Inspire action, first draw and reveal a {1} and transfer it to any player's board.`
+    `If you would take a Draw action, first draw and reveal a {1} and transfer it to any player's board.`,
+    `If you would dogma a card, first splay right every color on your board with a top card of that card's value.`,
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.chooseAndSplay(player, null, 'right')
-  },
   karmaImpl: [
     {
-      trigger: ['draw-action', 'inspire'],
+      trigger: 'draw-action',
       kind: 'would-first',
       matches: () => true,
-      func: (game, player) => {
-        const card = game.actions.drawAndReveal(player, game.getEffectAge(this, 1))
-        const targetPlayer = game.actions.choosePlayer(player, game.players.all().map(p => p.name))
+      func: (game, player, { self }) => {
+        const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 1))
+        const targetPlayer = game.actions.choosePlayer(player, game.players.all())
         const target = game.zones.byPlayer(targetPlayer, card.color)
         game.actions.transfer(player, card, target)
+      }
+    },
+    {
+      trigger: 'dogma',
+      kind: 'would-first',
+      matches: () => true,
+      func: (game, player, { card }) => {
+        for (const color of game.util.colors()) {
+          const topCard = game.cards.top(player, color)
+          if (topCard && topCard.getAge() === card.getAge()) {
+            game.actions.splay(player, color, 'right')
+          }
+        }
       }
     }
   ]

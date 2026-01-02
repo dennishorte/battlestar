@@ -4,15 +4,12 @@ module.exports = {
   color: `purple`,
   age: 5,
   expansion: `figs`,
-  biscuits: `5h*c`,
+  biscuits: `5hpc`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
-    `If you would claim a standard achievement, first claim an achievement of value one higher, regardless of eligibility.`
+    `If you would claim a standard achievement, first claim an available achievement of value one higher, regardless of eligibility.`,
+    `If you would meld a card, first score all cards of a color on your board.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'achieve',
@@ -22,12 +19,20 @@ module.exports = {
         const choices = game
           .getAvailableAchievements(player)
           .filter(card => card.getAge() === age + 1)
-        const formatted = game.formatAchievements(choices)
-        const selected = game.actions.choose(player, formatted, { title: 'Choose Achievement' })
-        if (selected && selected.length > 0) {
-          game.aAchieveAction(player, selected[0], { nonAction: true })
+        game.actions.chooseAndAchieve(player, choices)
+      }
+    },
+    {
+      trigger: 'meld',
+      kind: 'would-first',
+      matches: () => true,
+      func: (game, player) => {
+        const colors = game.cards.tops(player).map(card => card.color)
+        const color = game.actions.chooseColor(player, colors)
+        if (color) {
+          game.actions.scoreMany(player, game.cards.byPlayer(player, color))
         }
       }
-    }
+    },
   ]
 }

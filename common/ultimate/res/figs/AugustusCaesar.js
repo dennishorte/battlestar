@@ -4,37 +4,24 @@ module.exports = {
   color: `green`,
   age: 2,
   expansion: `figs`,
-  biscuits: `khk*`,
+  biscuits: `khkp`,
   dogmaBiscuit: `k`,
-  echo: ``,
   karma: [
-    `If any player would meld or foreshadow a card of value less than 4, first reveal it. If it is red or green and has a {k}, instead transfer it to your board, then tuck all cards from your forecast.`
+    `If any player would dogma a card with {k}, instead draw and reveal a card of the same value. If it has {k} or {s}, meld it. Otherwise, the player super-executes the original card.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
-      trigger: ['meld', 'foreshadow'],
+      trigger: 'dogma',
       triggerAll: true,
-      kind: 'variable',
-      matches: (game, player, { card }) => {
-        return card.age < 4
-      },
-      func(game, player, { card, owner }) {
-        game.mReveal(player, card)
-
-        const biscuitRequirement = card.biscuits.includes('k')
-        const colorRequirement = card.color === 'green' || card.color === 'red'
-        if (biscuitRequirement && colorRequirement) {
-          const target = game.zones.byPlayer(owner, card.color)
-          game.mTransfer(owner, card, target)
-          game.actions.tuckMany(owner, game.cards.byPlayer(owner, 'forecast'))
-          return 'would-instead'
+      kind: 'would-instead',
+      matches: (game, player, { card }) => card.checkHasBiscuit('k'),
+      func(game, player, { card, owner, self }) {
+        const drawn = game.actions.drawAndReveal(owner, card.getAge())
+        if (drawn.checkHasBiscuit('k') || drawn.checkHasBiscuit('s')) {
+          game.actions.meld(owner, drawn)
         }
         else {
-          game.log.add({ template: 'no additional effect' })
-          return 'would-first'
+          game.aSuperExecute(self, player, card)
         }
       },
     }

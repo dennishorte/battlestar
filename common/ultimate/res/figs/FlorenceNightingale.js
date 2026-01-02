@@ -4,35 +4,23 @@ module.exports = {
   color: `yellow`,
   age: 7,
   expansion: `figs`,
-  biscuits: `hl*7`,
+  biscuits: `hlp7`,
   dogmaBiscuit: `l`,
-  echo: ``,
   karma: [
     `You may issue an Expansion decree with any two figures.`,
-    `If an opponent's effect would transfer, return, or remove a card from your score pile, instead leave it there.`
+    `If a player would transfer, return, meld, score, or junk a card from your score pile, instead leave it there.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'decree-for-two',
       decree: 'Expansion'
     },
     {
-      trigger: ['transfer', 'return', 'remove'],
+      trigger: ['transfer', 'return', 'meld', 'score', 'junk'],
       triggerAll: true,
       kind: 'would-instead',
-      matches: (game, player, { card }) => {
-        const florenceOwner = game.getPlayerByCard(this)
-        const cardOwner = game.getPlayerByCard(card)
-
-        const thisIsMyCardCondition = florenceOwner === cardOwner
-        const thisIsNotMyEffectCondition = florenceOwner !== game.state.dogmaInfo.effectLeader
-        const cardIsInMyScoreCondition =
-          game.getZoneByCard(card) === game.zones.byPlayer(cardOwner, 'score')
-
-        return thisIsMyCardCondition && thisIsNotMyEffectCondition && cardIsInMyScoreCondition
+      matches: (game, player, { card, owner }) => {
+        return card.zone.id === game.zones.byPlayer(owner, 'score').id
       },
       func: (game, player, { card }) => {
         game.log.add({

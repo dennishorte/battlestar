@@ -31,10 +31,6 @@ class BasePlayer {
     return this.counters[name] || 0
   }
 
-  isCurrentPlayer() {
-    return this.game.players.current().id === this.id
-  }
-
   incrementCounter(name, count=1, opts={}) {
     if (!opts.silent) {
       this.log.add({
@@ -52,6 +48,14 @@ class BasePlayer {
     }
 
     this.counters[name] += count
+  }
+
+  isCurrentPlayer() {
+    return this.game.players.current().id === this.id
+  }
+
+  isOpponent(other) {
+    return this.team !== other.team
   }
 
   setCounter(name, value, opts={}) {

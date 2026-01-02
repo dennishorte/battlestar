@@ -35,7 +35,7 @@ export default {
 
   computed: {
     displayName() {
-      if (this.card.isSpecialAchievement || this.card.isMuseum) {
+      if (this.card.isSpecialAchievement || this.card.isMuseum || this.card.isDecree) {
         return this.card.shortName
       }
       else {

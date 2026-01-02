@@ -4,46 +4,6 @@ const t = require('../../testutil.js')
 
 describe('Hedy Lamar', () => {
 
-  test('echo', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        red: {
-          cards: ['Coal', 'Archery'],
-          splay: 'left'
-        },
-        blue: ['Mathematics', 'Tools'],
-        green: ['Hedy Lamar'],
-      },
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Hedy Lamar')
-
-    t.testChoices(request, ['red', 'blue'])
-
-    request = t.choose(game, request, 'blue')
-
-    t.testBoard(game, {
-      dennis: {
-        red: {
-          cards: ['Coal', 'Archery'],
-          splay: 'left'
-        },
-        blue: {
-          cards: ['Mathematics', 'Tools'],
-          splay: 'up'
-        },
-        green: ['Hedy Lamar'],
-      },
-    })
-  })
-
-  test('karma: decree', () => {
-    t.testDecreeForTwo('Hedy Lamar', 'Trade')
-  })
-
   describe('karma: achievements', () => {
 
     test('Empire', () => {
@@ -51,7 +11,7 @@ describe('Hedy Lamar', () => {
       t.setBoard(game, {
         dennis: {
           red: {
-            cards: ['Mobility', 'Road Building', 'Coal'],
+            cards: ['Mobility', 'Road Building'],
             splay: 'left'
           },  // ffikk
           yellow: {
@@ -67,12 +27,14 @@ describe('Hedy Lamar', () => {
       let request
       request = game.run()
       request = t.choose(game, request, 'Meld.Hedy Lamar')
+      request = t.choose(game, request, 'red')
 
+      t.testIsSecondPlayer(game)
       t.testBoard(game, {
         dennis: {
           red: {
-            cards: ['Mobility', 'Road Building', 'Coal'],
-            splay: 'left'
+            cards: ['Mobility', 'Road Building'],
+            splay: 'up'
           },  // ffikk
           yellow: {
             cards: ['Skyscrapers', 'Agriculture'],
@@ -107,6 +69,7 @@ describe('Hedy Lamar', () => {
       let request
       request = game.run()
       request = t.choose(game, request, 'Meld.Hedy Lamar')
+      request = t.choose(game, request, 'yellow')
 
       t.testBoard(game, {
         dennis: {
@@ -116,8 +79,8 @@ describe('Hedy Lamar', () => {
           },  // fkkk
           yellow: {
             cards: ['Skyscrapers', 'Agriculture'],
-            splay: 'right'
-          }, // ccfl
+            splay: 'up'
+          }, // ccflll
           green: ['Hedy Lamar'], // ii
           blue: ['Experimentation'], // sss
           purple: ['Code of Laws'], // ccl
@@ -125,10 +88,95 @@ describe('Hedy Lamar', () => {
         },
       })
     })
+  })
 
-    test.skip('other achievements', () => {
+  describe('If you would claim an achievement, first splay a color of your cards up.', () => {
+    test('karma: claim achievement, splay a color up first', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          green: ['Hedy Lamar'], // Owner of karma card
+          red: ['Archery', 'Road Building'], // Red cards (need at least 2 to splay)
+          score: ['Industrialization', 'Atomic Theory', 'Computers'], // Score to meet achievement requirement (need 20 for Invention)
+        },
+        achievements: ['Invention'],
+        decks: {
+          figs: {
+            1: ['Gilgamesh'],
+          }
+        }
+      })
 
+      let request
+      request = game.run()
+      // dennis (owner) claims an achievement
+      // Use nested format: 'Achieve.AchievementName'
+      request = t.choose(game, request, 'Achieve.*base-4*')
+      // Karma triggers: first splay a color up (would-first)
+      // chooseAndSplay is optional (min: 0), so we can choose a color or skip
+      request = t.choose(game, request, 'red') // Choose red to splay up
+      // Then achievement is claimed automatically
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          green: ['Hedy Lamar'],
+          red: {
+            cards: ['Archery', 'Road Building'],
+            splay: 'up', // Red was splayed up by karma
+          },
+          achievements: ['Invention'], // Achievement was claimed
+          score: ['Industrialization', 'Atomic Theory', 'Computers'],
+        },
+        micah: {
+          hand: ['Gilgamesh'],
+        }
+      })
     })
 
+    test('karma: claim achievement, multiple colors available to splay', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          green: ['Hedy Lamar'], // Owner of karma card
+          red: ['Archery', 'Road Building'], // Red cards (need at least 2 to splay)
+          blue: ['Tools', 'Mathematics'], // Blue cards (need at least 2 to splay)
+          yellow: ['Agriculture', 'Canal Building'], // Yellow cards (need at least 2 to splay)
+          score: ['Industrialization', 'Atomic Theory', 'Computers', 'Robotics'], // Score to meet achievement requirement (need 20 for Invention age 1)
+        },
+        achievements: ['Invention'],
+        decks: {
+          figs: {
+            1: ['Gilgamesh'],
+          }
+        }
+      })
+
+      let request
+      request = game.run()
+      // dennis (owner) claims an achievement
+      request = t.choose(game, request, 'Achieve.*base-4*')
+      // Karma triggers: first splay a color up (would-first)
+      request = t.choose(game, request, 'blue') // Choose blue to splay up
+      // Then achievement is claimed automatically
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          green: ['Hedy Lamar'],
+          red: ['Archery', 'Road Building'], // Not splayed
+          blue: {
+            cards: ['Tools', 'Mathematics'],
+            splay: 'up', // Blue was splayed up by karma
+          },
+          yellow: ['Agriculture', 'Canal Building'], // Not splayed
+          achievements: ['Invention'], // Achievement was claimed
+          score: ['Industrialization', 'Atomic Theory', 'Computers', 'Robotics'], // Score cards remain (not consumed)
+        },
+        micah: {
+          hand: ['Gilgamesh'],
+        },
+      })
+    })
   })
 })

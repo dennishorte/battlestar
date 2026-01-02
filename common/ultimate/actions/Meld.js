@@ -21,6 +21,8 @@ function MeldAction(player, card, opts={}) {
     args: { player, card }
   })
 
+  this.game.aKarma(player, 'when-meld', { ...opts, card })
+
   if (fromMuseum) {
     const museum = this.cards.byPlayer(player, 'museum').filter(card => card.isMuseum)[0]
     this.return(player, museum)
@@ -47,17 +49,8 @@ function MeldAction(player, card, opts={}) {
     _maybePromote.call(this, player, card)
   }
 
-  _maybeWhenMeldKarma.call(this, player, card, opts)
-
   this.log.outdent()
   return card
-}
-
-function _maybeWhenMeldKarma(player, card, opts={}) {
-  const infos = card
-    .getKarmaInfo('when-meld')
-    .filter(info => info.impl.matches ? info.impl.matches(this, player, opts) : true)
-  this.game._aKarmaHelper(player, infos, opts)
 }
 
 function _maybeCityBiscuits(player, card) {

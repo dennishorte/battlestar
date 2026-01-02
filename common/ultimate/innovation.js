@@ -4,6 +4,7 @@ const {
   GameOverEvent,
 } = require('../lib/game.js')
 const res = require('./res/index.js')
+const selector = require('../lib/selector.js')
 const util = require('../lib/util.js')
 
 const { UltimateLogManager } = require('./UltimateLogManager.js')
@@ -16,7 +17,7 @@ const { UltimateZoneManager } = require('./UltimateZoneManager.js')
 
 const { getDogmaShareInfo } = require('./actions/Dogma.js')
 
-const SUPPORTED_EXPANSIONS = ['base', 'echo', 'city', 'arti', 'usee']
+const SUPPORTED_EXPANSIONS = ['base', 'echo', 'figs', 'city', 'arti', 'usee']
 
 module.exports = {
   GameOverEvent,
@@ -70,7 +71,15 @@ Innovation.prototype._mainProgram = function() {
 }
 
 Innovation.prototype._gameOver = function(event) {
-  // TODO (dennis): handle would-win karma effects
+  // Check for 'would-win' karmas.
+  this.state.wouldWinKarma = true
+  const result = this.aKarma(event.data.player, 'would-win', { event })
+  this.state.wouldWinKarma = false
+
+  if (result) {
+    return result
+  }
+
   return event
 }
 
@@ -81,6 +90,8 @@ Innovation.prototype._gameOver = function(event) {
 Innovation.prototype.initialize = function() {
   this.log.add({ template: 'Initializing' })
   this.log.indent()
+
+  this.state.useAgeZero = false
 
   this.initializeCards()
   this.initializeExpansions()
@@ -150,8 +161,11 @@ Innovation.prototype.initializeTransientState = function() {
   this.state.turn = 1
   this.state.round = 1
   this.state.karmaDepth = 0
+  this.state.actionNumber = null
   this.state.wouldWinKarma = false
   this.state.didEndorse = false
+  this.state.tuckCount = Object.fromEntries(this.players.all().map(p => [p.name, 0]))
+  this.state.scoreCount = Object.fromEntries(this.players.all().map(p => [p.name, 0]))
   this.stats = {
     melded: [],
     meldedBy: {},
@@ -370,6 +384,8 @@ Innovation.prototype.artifact = function() {
 Innovation.prototype.action = function(count) {
   const player = this.players.current()
 
+  this.state.actionNumber = count
+
   // The first player (or two) only gets one action
   const numFirstPlayers = this.players.all().length >= 4 ? 2 : 1
   if (this.state.turn <= numFirstPlayers) {
@@ -391,11 +407,21 @@ Innovation.prototype.action = function(count) {
   })
   this.log.indent()
 
-  const chosenAction = this.requestInputSingle({
+  const inputRequest = {
     actor: player.name,
     title: `Choose ${countTerm} Action`,
     choices: this._generateActionChoices(),
-  })[0]
+  }
+  const chosenAction = this.requestInputSingle(inputRequest)[0]
+
+  const validationResult = selector.validate(inputRequest, {
+    title: inputRequest.title,
+    selection: [chosenAction]
+  })
+
+  if (!validationResult.valid) {
+    throw new Error(validationResult.mismatch)
+  }
 
   if (!chosenAction.selection) {
     console.log(chosenAction)
@@ -413,6 +439,11 @@ Innovation.prototype.action = function(count) {
   }
   else if (name === 'Dogma') {
     const card = this.cards.byId(arg)
+    const karmaKind = this.aKarma(player, 'dogma-action', { card })
+    if (karmaKind === 'would-instead') {
+      this.actions.acted(player)
+      return
+    }
     this.actions.dogma(player, card)
   }
   else if (name === 'Draw') {
@@ -478,7 +509,10 @@ Innovation.prototype.endTurn = function() {
   this.state.round = Math.floor((this.state.turn + players.length - 1) / players.length)
 
   // Reset various turn-centric state
+  this.state.actionNumber = null
   this.state.didEndorse = false
+  this.state.tuckCount = Object.fromEntries(this.players.all().map(p => [p.name, 0]))
+  this.state.scoreCount = Object.fromEntries(this.players.all().map(p => [p.name, 0]))
   this.mResetDogmaInfo()
   this.mResetPeleCount()
   this.mResetDrawInfo()
@@ -495,7 +529,7 @@ Innovation.prototype.aCardEffect = function(player, info, opts={}) {
   }
 
   const fn = typeof info.impl === 'function' ? info.impl : info.impl.func
-  const result = fn(this, player, opts)
+  const result = fn(this, player, { self: info.card, ...opts })
 
   if (opts.leader) {
     this.state.dogmaInfo.effectLeader = prevLeader
@@ -576,6 +610,22 @@ Innovation.prototype.aOneEffect = function(
             this.log.outdent()
             continue
           }
+        }
+
+        const dogmaEffectKarmaKind = this.aKarma(actor, 'dogma-effect', {
+          ...opts,
+          card,
+          effect: function() {
+            this.game.aCardEffect(actor, effectInfo, {
+              leader: opts.leader,
+              self: card,
+              foreseen: opts.foreseen,
+            })
+          }
+        })
+        if (dogmaEffectKarmaKind === 'would-instead') {
+          this.acted(player)
+          continue
         }
 
         const result = this.aCardEffect(actor, effectInfo, {
@@ -724,6 +774,13 @@ Innovation.prototype.aDecree = function(player, name) {
   })
   this.log.indent()
 
+  // Handle karma
+  const karmaKind = this.aKarma(player, 'decree')
+  if (karmaKind === 'would-instead') {
+    this.actions.acted(player)
+    return
+  }
+
   this.actions.junkMany(player, hand.cardlist(), { ordered: true })
 
   let doImpl = false
@@ -759,6 +816,12 @@ Innovation.prototype.aDecree = function(player, name) {
 }
 
 Innovation.prototype.aExchangeCards = function(player, cards1, cards2, zone1, zone2) {
+  const karmaKind = this.aKarma(player, 'exchange', { cards1, cards2, zone1, zone2 })
+  if (karmaKind === 'would-instead') {
+    this.actions.acted(player)
+    return 'would-instead'
+  }
+
   this.log.add({
     template: '{player} exchanges {count1} cards for {count2} cards',
     args: {
@@ -786,7 +849,11 @@ Innovation.prototype.aExchangeZones = function(player, zone1, zone2) {
   const cards1 = zone1.cardlist()
   const cards2 = zone2.cardlist()
 
-  this.aExchangeCards(player, cards1, cards2, zone1, zone2)
+  const result = this.aExchangeCards(player, cards1, cards2, zone1, zone2)
+
+  if (result === 'would-instead') {
+    return
+  }
 
   this.log.add({
     template: '{player} exchanges {count1} cards from {zone1} for {count2} cards from {zone2}',
@@ -802,6 +869,13 @@ Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
   if (infos.length === 0) {
     return
   }
+
+  /*
+     from the rules:
+     In the rare case that multiple “Would” karmas are triggered
+     by the same game event, the current player decides which
+     karma occurs and ignores the others.
+   */
   else if (infos.length > 1) {
     if (info.impl.kind && info.impl.kind.startsWith('would')) {
       this.log.add({
@@ -866,6 +940,22 @@ Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
         }
       })
     }
+    else if (opts.trigger === 'decree') {
+      this.log.add({
+        template: '{player} would issue a decree, triggering...',
+        args: {
+          player,
+        },
+      })
+    }
+    else if (opts.trigger === 'exchange') {
+      this.log.add({
+        template: '{player} would exchange cards, triggering...',
+        args: {
+          player,
+        }
+      })
+    }
     else {
       this.log.add({
         template: '{player} would {trigger} {card}, triggering...',
@@ -890,7 +980,7 @@ Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
   this._karmaOut()
   this.log.outdent()
 
-  if (info.impl.kind === 'variable') {
+  if (info.impl.kind === 'variable' || info.impl.kind === 'game-over') {
     return result
   }
   else {
@@ -905,6 +995,7 @@ Innovation.prototype.aKarma = function(player, kind, opts={}) {
     .filter(info => {
       return info.impl.matches(this, player, { ...opts, owner: info.owner, self: info.card })
     })
+
   return this._aKarmaHelper(player, infos, { ...opts, trigger: kind })
 }
 
@@ -1031,6 +1122,23 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
   return ach
 }
 
+Innovation.prototype.getAges = function() {
+  if (this.state.useAgeZero) {
+    return [0,1,2,3,4,5,6,7,8,9,10,11]
+  }
+  else {
+    return [1,2,3,4,5,6,7,8,9,10,11]
+  }
+}
+
+Innovation.prototype.getMinAge = function() {
+  return this.getAges()[0]
+}
+
+Innovation.prototype.getMaxAge = function() {
+  return this.getAges().slice(-1)[0]
+}
+
 Innovation.prototype.getBiscuits = function() {
   const biscuits = this
     .players
@@ -1094,13 +1202,15 @@ Innovation.prototype.getInfoByKarmaTrigger = function(player, trigger) {
   }
 
   const global = this
-    .players.opponents(player)
+    .players
+    .other(player)
     .flatMap(opp => this.cards.tops(opp))
     .flatMap(card => card.getKarmaInfo(trigger))
     .filter(info => info.impl.triggerAll)
 
   const thisPlayer = this
-    .cards.tops(player)
+    .cards
+    .tops(player)
     .flatMap(card => card.getKarmaInfo(trigger))
 
   const all = [...thisPlayer, ...global]
@@ -1134,7 +1244,7 @@ Innovation.prototype.getHighestTopAge = function(player, opts={}) {
   const baseAge = card ? card.getAge() : 0
 
   const karmaAdjustment = this
-    .getInfoByKarmaTrigger(player, 'calculate-eligibility')
+    .getInfoByKarmaTrigger(player, 'add-highest-top-age')
     .filter(info => info.impl.reason !== undefined)
     .filter(info => info.impl.reason === 'all' || info.impl.reason === opts.reason)
     .reduce((l, r) => l + r.impl.func(this, player), 0)
@@ -1148,7 +1258,7 @@ Innovation.prototype.getHighestTopCard = function(player) {
 
 Innovation.prototype.getNonEmptyAges = function() {
   return this
-    .util.ages()
+    .getAges()
     .filter(age => this.zones.byDeck('base', age).cardlist().length > 0)
 }
 
@@ -1161,10 +1271,10 @@ Innovation.prototype.getNumAchievementsToWin = function() {
 }
 
 Innovation.prototype.getScore = function(player, opts={}) {
-  return this.getScoreDetails(player).total * (opts.doubleScore ? 2 : 1)
+  return this.getScoreDetails(player, opts).total * (opts.doubleScore ? 2 : 1)
 }
 
-Innovation.prototype.getScoreDetails = function(player) {
+Innovation.prototype.getScoreDetails = function(player, opts={}) {
   const details = {
     score: [],
     bonuses: [],
@@ -1176,7 +1286,12 @@ Innovation.prototype.getScoreDetails = function(player) {
     total: 0
   }
 
-  details.score = this.cards.byPlayer(player, 'score').map(card => card.getAge()).sort()
+  details.score = this
+    .cards
+    .byPlayer(player, 'score')
+    .filter(card => !opts.excludeCards || opts.excludeCards.findIndex(x => x.id !== card.id) === -1)
+    .map(card => card.getAge())
+    .sort()
   details.bonuses = this.getBonuses(player)
   details.karma = this
     .getInfoByKarmaTrigger(player, 'calculate-score')
@@ -1459,9 +1574,10 @@ Innovation.prototype._generateActionChoices = function() {
   const choices = []
   choices.push(this._generateActionChoicesAchieve())
   choices.push(this._generateActionChoicesDecree())
-  choices.push(this._generateActionChoicesDogma())
   choices.push(this._generateActionChoicesDraw())
+  choices.push(this._generateActionChoicesDogma())
   choices.push(this._generateActionChoicesEndorse())
+  choices.push(this._generateActionChoicesAuspice())
   choices.push(this._generateActionChoicesMeld())
   return choices
 }
@@ -1580,13 +1696,20 @@ Innovation.prototype._generateActionChoicesDecree = function() {
   const player = this.players.current()
 
   const figuresInHand = this
-    .zones.byPlayer(player, 'hand')
+    .zones
+    .byPlayer(player, 'hand')
     .cardlist()
     .filter(c => c.checkIsFigure())
 
   const figuresByAge = this.util.separateByAge(figuresInHand)
 
   const availableDecrees = []
+
+  if (this.getInfoByKarmaTrigger(player, 'decree-for-any-three').length > 0 && figuresInHand.length >= 3) {
+    for (const color of this.util.colors()) {
+      availableDecrees.push(this.util.colorToDecree(color))
+    }
+  }
 
   if (Object.keys(figuresByAge).length >= 3) {
     figuresInHand
@@ -1620,7 +1743,7 @@ Innovation.prototype.getDogmaTargets = function(player) {
 Innovation.prototype._generateActionChoicesDogma = function() {
   const player = this.players.current()
 
-  const dogmaTargets = this.cards.tops(player)
+  const dogmaTargets = this.cards.tops(player).filter(card => card.dogma.length > 0)
 
   const extraEffects = this
     .getInfoByKarmaTrigger(player, 'list-effects')
@@ -1642,6 +1765,32 @@ Innovation.prototype._generateActionChoicesDraw = function() {
   return {
     title: 'Draw',
     choices: ['draw a card'],
+    min: 0,
+  }
+}
+
+Innovation.prototype._generateActionChoicesAuspice = function() {
+  const standardBiscuits = Object.keys(this.util.emptyBiscuits())
+  const _isStandardBiscuit = function(biscuit) {
+    return standardBiscuits.includes(biscuit)
+  }
+  const player = this.players.current()
+  const topFigureBiscuits = this
+    .cards
+    .tops(player)
+    .filter(card => card.checkIsFigure())
+    .flatMap(card => card.biscuits.split('').filter(biscuit => _isStandardBiscuit(biscuit)))
+    .filter(biscuit => biscuit !== 'p') // Can't auspice person biscuits because that doesn't change anything.
+
+  const validAuspiceTargets = this
+    .cards
+    .tops(player)
+    .filter(card => topFigureBiscuits.includes(card.dogmaBiscuit))
+    .filter(card => card.dogma.length > 0)
+
+  return {
+    title: 'Auspice',
+    choices: validAuspiceTargets.map(card => card.name),
     min: 0,
   }
 }

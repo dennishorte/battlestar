@@ -4,74 +4,78 @@ const t = require('../../testutil.js')
 
 describe('Erwin Rommel', () => {
 
-  test('echo (and forecast in hand karma)', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        red: ['Erwin Rommel'],
-      },
-      micah: {
-        score: ['The Wheel', 'Enterprise']
-      }
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Erwin Rommel')
-    request = t.choose(game, request, '**base-4* (micah)')
-
-    t.testBoard(game, {
-      dennis: {
-        red: ['Erwin Rommel'],
-        score: ['Enterprise']
-      },
-      micah: {
-        score: ['The Wheel']
-      }
-    })
-  })
-
   test('karma: decree', () => {
     t.testDecreeForTwo('Erwin Rommel', 'War')
   })
 
-  test('karma: score', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        red: ['Erwin Rommel'],
-        yellow: ['Agriculture'],
-        blue: ['Computers'],
-        hand: ['The Wheel'],
-      },
-      micah: {
-        blue: ['Mathematics'],
-        purple: ['Enterprise'],
-      },
-      decks: {
-        base: {
-          2: ['Calendar'],
-        }
-      }
+  describe('If you would score a non-figure, instead score the top card of its color from all boards, and score a card in any score pile.', () => {
+    test('karma: score figure, proceeds normally (karma does not trigger)', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          red: ['Erwin Rommel'],
+          purple: ['Philosophy'], // Card with score effect
+          hand: ['Carl Friedrich Gauss'], // Figure to score
+        },
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, request, 'Dogma.Philosophy')
+      request = t.choose(game, request, 'Carl Friedrich Gauss') // Score figure
+      // Karma does NOT trigger (only triggers for non-figures)
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          red: ['Erwin Rommel'],
+          purple: ['Philosophy'],
+          score: ['Carl Friedrich Gauss'], // Figure scored normally
+          hand: [],
+        },
+      })
     })
 
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Agriculture')
-    request = t.choose(game, request, 'The Wheel')
+    test('karma: score non-figure, score top cards of color from all boards and card from score pile', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          red: ['Erwin Rommel'],
+          purple: ['Philosophy'], // Card with score effect
+          blue: ['Writing'], // Top blue card on dennis's board
+          yellow: ['Fermenting'],
+          hand: ['Tools'], // Age 1, blue - non-figure to score
+        },
+        micah: {
+          blue: ['Mathematics'], // Top blue card on micah's board
+          score: ['The Wheel'], // Card in opponent's score pile
+        },
+      })
 
-    t.setBoard(game, {
-      dennis: {
-        red: ['Erwin Rommel'],
-        yellow: ['Agriculture'],
-        blue: ['Computers'],
-        hand: ['Calendar'],
-        score: ['Computers', 'Mathematics']
-      },
-      micah: {
-        purple: ['Enterprise'],
-      },
+      let request
+      request = game.run()
+      request = t.choose(game, request, 'Dogma.Philosophy')
+      request = t.choose(game, request, 'Tools') // Score Tools (blue, age 1, non-figure)
+      // Karma triggers: instead of scoring Tools, score top blue cards from all boards
+      request = t.choose(game, request, 'auto') // Auto-order/score all top blue cards
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          red: ['Erwin Rommel'],
+          purple: ['Philosophy'],
+          yellow: ['Fermenting'],
+          blue: [], // Writing was scored
+          score: ['Writing', 'Mathematics', 'The Wheel'], // Top blue cards from both boards + card from score pile
+          hand: ['Tools'],
+        },
+        micah: {
+          blue: [], // Mathematics scored
+          score: [], // The Wheel scored
+        },
+      })
     })
+
   })
 
 })

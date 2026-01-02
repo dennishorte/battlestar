@@ -4,7 +4,6 @@ const t = require('../../testutil.js')
 
 describe('Grace Hopper', () => {
 
-
   test('karma: no share, not blue', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {

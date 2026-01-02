@@ -3,100 +3,139 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 
 describe('Alhazen', () => {
-  test('echo (test 1)', () => {
-    const game = t.fixtureTopCard('Alhazen', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'green', ['The Wheel'])
-      t.setColor(game, 'micah', 'red', ['Archery'])
-    })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Alhazen')
 
-    t.testChoices(request, ['The Wheel', 'Archery'])
+  describe('karma: draw action', () => {
+    test('tuck a top card with {k} and draw based on {k} or {s} count', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          blue: ['Alhazen'],
+          red: ['Metalworking'], // Metalworking has {k} biscuits (kkhk) - 3 {k} icons
+          // Red zone has 3 {k} icons from Metalworking
+        },
+        micah: {
+          red: ['Saladin'], // Saladin has {k} biscuit (3hpk) - 1 {k} icon
+        },
+        decks: {
+          base: {
+            3: ['Engineering'], // Will be drawn (age 3 = number of {k} in red)
+          }
+        }
+      })
 
-    request = t.choose(game, request, 'The Wheel')
+      let request
+      request = game.run()
+      request = t.choose(game, request, 'Draw.draw a card')
+      // After Draw action, karma should trigger and create a request to choose which card to tuck
+      request = t.choose(game, request, 'Metalworking')
+      // Should choose age to draw (3, from red zone's {k} count)
+      request = t.choose(game, request, 3)
 
-    t.testZone(game, 'green', ['The Wheel'])
-  })
-
-  test('echo (test 2)', () => {
-    const game = t.fixtureTopCard('Alhazen', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'green', ['The Wheel'])
-      t.setColor(game, 'micah', 'red', ['Archery'])
-    })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Alhazen')
-
-    t.testChoices(request, ['The Wheel', 'Archery'])
-
-    request = t.choose(game, request, 'Archery')
-
-    t.testZone(game, 'red', ['Archery'])
-  })
-
-  test('karma: draw', () => {
-    const game = t.fixtureTopCard('Alhazen', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'red', ['Metalworking', 'Archery', 'Oars'])
-      t.setSplay(game, 'dennis', 'red', 'right')
-      t.setDeckTop(game, 'base', 5, ['Chemistry'])
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Draw.draw a card')
-
-    t.testZone(game, 'hand', ['Chemistry'])
-  })
-
-  test('karma: draw (not splayed)', () => {
-    const game = t.fixtureTopCard('Alhazen', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'purple', ['Enterprise'])
-      t.setColor(game, 'dennis', 'red', ['Metalworking', 'Archery', 'Oars'])
-      t.setDeckTop(game, 'base', 4, ['Experimentation'])
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          blue: ['Alhazen'],
+          red: ['Metalworking'], // Metalworking was tucked (at end of pile)
+          hand: ['Engineering'], // Drew age 3 card
+        },
+        micah: {
+          red: ['Saladin'],
+        },
+      })
     })
 
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Draw.draw a card')
+    test('multiple age choices from different colors', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          blue: {
+            cards: ['Alhazen', 'Mathematics'],
+            splay: 'aslant',
+          },
+          green: ['The Wheel'], // The Wheel: hsss = 3 {s}
+        },
+        micah: {
+          blue: ['Tools'],
+        },
+      })
 
-    t.testZone(game, 'hand', ['Experimentation'])
-  })
+      let request
+      request = game.run()
+      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, request, 'Tools')
 
-  test('karma: inspire', () => {
-    const game = t.fixtureTopCard('Alhazen', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'yellow', ['Avicenna', 'Agriculture'])
-      t.setSplay(game, 'dennis', 'yellow', 'left')
-      t.setColor(game, 'dennis', 'red', ['Metalworking', 'Archery', 'Oars'])
-      t.setSplay(game, 'dennis', 'red', 'right')
-      t.setDeckTop(game, 'base', 1, ['Domestication'])
+      t.testBoard(game, {
+        dennis: {
+          blue: {
+            cards: ['Alhazen', 'Mathematics', 'Tools'],
+            splay: 'aslant',
+          },
+          green: ['The Wheel'], // The Wheel: hsss = 3 {s}
+        },
+      })
+
+      t.testChoices(request, [1, 3, 6])
     })
 
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.yellow')
+    test('does not trigger on non-action draw', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          blue: ['Alhazen'],
+          green: ['The Wheel'], // The Wheel's dogma draws cards
+        },
+        decks: {
+          base: {
+            1: ['Tools', 'Sailing'],
+          }
+        }
+      })
 
-    t.testZone(game, 'hand', ['Domestication'])
-  })
+      let request
+      request = game.run()
+      request = t.choose(game, request, 'Dogma.The Wheel')
+      // The Wheel's dogma draws cards, but Alhazen's karma should not trigger
+      // (only triggers on Draw action, not on draws from dogma effects)
 
-  test('karma: inspire (not splayed)', () => {
-    const game = t.fixtureTopCard('Alhazen', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'yellow', ['Avicenna', 'Agriculture'])
-      t.setColor(game, 'dennis', 'red', ['Metalworking', 'Archery', 'Oars'])
-      t.setSplay(game, 'dennis', 'red', 'right')
-      t.setDeckTop(game, 'base', 3, ['Engineering', 'Machinery'])
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          blue: ['Alhazen'],
+          green: ['The Wheel'],
+          hand: ['Tools', 'Sailing'], // Drew normally from dogma
+        },
+      })
     })
 
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Inspire.yellow')
+    test('tuck from own board', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          blue: ['Alhazen'],
+          red: ['Metalworking', 'Archery'], // Metalworking has {k}, Archery doesn't
+          // Red zone has 3 {k} icons from Metalworking
+        },
+        decks: {
+          base: {
+            2: ['Calendar'],
+          }
+        }
+      })
 
-    t.testZone(game, 'hand', ['Machinery'])
+      let request
+      request = game.run()
+      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, request, 2) // Choose an available age
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          blue: ['Alhazen'],
+          red: ['Archery', 'Metalworking'], // Metalworking tucked to end
+          hand: ['Calendar'], // Card drawn based on chosen age
+        },
+      })
+    })
   })
+
 })

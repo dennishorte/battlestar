@@ -194,6 +194,98 @@ Game.prototype.requestInputAny = function(array) {
   }
 }
 
+/**
+ * Requests input from one or more players. Blocks until all players have responded,
+ * or throws an InputRequestEvent if responses are not available.
+ *
+ * @param {Array|Object} array - A single selector object or array of selector objects
+ * @returns {Array} Array of response objects, one per input request
+ * @throws {InputRequestEvent} If responses are not available and cannot be auto-responded
+ *
+ * @example
+ * // Simple request format (flat choices)
+ * const responses = game.requestInputMany([
+ *   {
+ *     actor: 'dennis',
+ *     title: 'Choose a Color',
+ *     choices: ['red', 'blue', 'green']
+ *   }
+ * ])
+ *
+ * @example
+ * // Nested request format (nested choices)
+ * const responses = game.requestInputMany([
+ *   {
+ *     actor: 'dennis',
+ *     title: 'Choose First Action',
+ *     choices: [
+ *       {
+ *         title: 'Dogma',
+ *         choices: ['Archery', 'The Wheel', 'Mathematics']
+ *       },
+ *       {
+ *         title: 'Meld',
+ *         choices: ['card-id-1', 'card-id-2'],
+ *         min: 0,
+ *         max: 1
+ *       }
+ *     ]
+ *   }
+ * ])
+ *
+ * REQUEST FORMAT:
+ * Each selector object in the array must have:
+ *   - actor: {string} - Player name who must respond
+ *   - title: {string} - Title/prompt for the selection
+ *   - choices: {Array} - Array of available choices. Each choice can be:
+ *     * Simple: string, number, or any primitive value
+ *     * Nested: object with { title: string, choices: Array, min?: number, max?: number, count?: number }
+ *   - min?: {number} - Minimum number of selections (default: 1)
+ *   - max?: {number} - Maximum number of selections (default: 1)
+ *   - count?: {number} - Exact number of selections required (overrides min/max)
+ *
+ * RESPONSE FORMAT:
+ * Returns an array of response objects, one per request. Each response has:
+ *   - actor: {string} - Player name who responded
+ *   - title: {string} - Must match the request title
+ *   - selection: {Array} - Array of selected values. Each selection can be:
+ *     * Simple: string, number, or any primitive value (matches simple choices)
+ *     * Nested: object with { title: string, selection: Array } (matches nested choices)
+ *
+ * NESTED STRUCTURE EXAMPLES:
+ *
+ * Request with nested choices:
+ *   {
+ *     title: 'Choose Action',
+ *     choices: [
+ *       { title: 'Dogma', choices: ['Archery', 'The Wheel'] },
+ *       { title: 'Meld', choices: ['card-1', 'card-2'] }
+ *     ]
+ *   }
+ *
+ * Corresponding response:
+ *   {
+ *     title: 'Choose Action',
+ *     selection: [{
+ *       title: 'Dogma',
+ *       selection: ['Archery']
+ *     }]
+ *   }
+ *
+ * Multiple selections (when max > 1):
+ *   {
+ *     title: 'Choose Colors',
+ *     choices: ['red', 'blue', 'green'],
+ *     min: 1,
+ *     max: 2
+ *   }
+ *
+ * Corresponding response:
+ *   {
+ *     title: 'Choose Colors',
+ *     selection: ['red', 'blue']
+ *   }
+ */
 Game.prototype.requestInputMany = function(array) {
   if (!Array.isArray(array)) {
     array = [array]

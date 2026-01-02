@@ -8,7 +8,7 @@ describe('Metric System', () => {
     const game = t.fixtureFirstPlayer()
     t.setBoard(game, {
       dennis: {
-        green: ['Metric System', 'Tools'],
+        green: ['Metric System', 'Sailing'],
         red: ['Oars', 'Archery'],
       },
     })
@@ -25,7 +25,7 @@ describe('Metric System', () => {
     t.testBoard(game, {
       dennis: {
         green: {
-          cards: ['Metric System', 'Tools'],
+          cards: ['Metric System', 'Sailing'],
           splay: 'right'
         },
         red: ['Oars', 'Archery'],
@@ -38,7 +38,7 @@ describe('Metric System', () => {
     t.setBoard(game, {
       dennis: {
         green: {
-          cards: ['Metric System', 'Tools'],
+          cards: ['Metric System', 'Sailing'],
           splay: 'right'
         },
         red: ['Oars', 'Archery'],
@@ -57,7 +57,7 @@ describe('Metric System', () => {
     t.testBoard(game, {
       dennis: {
         green: {
-          cards: ['Metric System', 'Tools'],
+          cards: ['Metric System', 'Sailing'],
           splay: 'right'
         },
         red: {

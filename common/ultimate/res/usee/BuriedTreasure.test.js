@@ -7,7 +7,7 @@ describe('Buried Treasure', () => {
     t.setBoard(game, {
       dennis: {
         green: ['Buried Treasure'],
-        score: ['Coal', 'Statistics', 'The Wheel']
+        score: ['Coal', 'Statistics', 'Sailing']
       },
       micah: {
         score: ['Astronomy', 'Metric System'],
@@ -30,7 +30,7 @@ describe('Buried Treasure', () => {
     t.testBoard(game, {
       dennis: {
         green: ['Buried Treasure'],
-        score: ['The Wheel'],
+        score: ['Sailing'],
       },
       micah: {
         score: ['Metric System'],
@@ -44,7 +44,7 @@ describe('Buried Treasure', () => {
     t.setBoard(game, {
       dennis: {
         green: ['Buried Treasure'],
-        score: ['Coal', 'Statistics', 'The Wheel']
+        score: ['Coal', 'Statistics', 'Sailing']
       },
       micah: {
         score: ['Astronomy', 'Metric System', 'Banking'],
@@ -69,7 +69,7 @@ describe('Buried Treasure', () => {
     t.testBoard(game, {
       dennis: {
         green: ['Buried Treasure'],
-        score: ['The Wheel', 'Canning', 'Software', 'Agriculture'],
+        score: ['The Wheel', 'Canning', 'Software', 'Sailing'],
         safe: ['Pen Name'],
       },
       micah: {

@@ -9,96 +9,32 @@ describe('Ximen Bao', () => {
     t.testDecreeForTwo('Ximen Bao', 'Expansion')
   })
 
-  test('karma: inspire effects', () => {
+  test('karma: when decree', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
-        yellow: ['Ximen Bao'],
-        purple: {
-          cards: ['Code of Laws', 'Homer', 'Ptahotep'],
-          splay: 'right'
-        },
-        red: {
-          cards: ['Archery', 'Tigernmas'],
-          splay: 'up',
-        },
-        hand: ['Monotheism'],
+        yellow: ['Ximen Bao', 'Agriculture'],
+        hand: ['Homer', 'Shennong'],
       },
-      decks: {
-        base: {
-          1: ['Tools'],
-          2: ['Construction', 'Mapmaking'],
-        }
-      }
+      micah: {
+        hand: ['Domestication', 'Tools'],
+      },
     })
 
     let request
     request = game.run()
-
-    t.testActionChoices(request, 'Inspire', ['yellow', 'purple', 'red'])
-
-    request = t.choose(game, request, 'Inspire.yellow')
-    request = t.choose(game, request, 'Archery')
-    request = t.choose(game, request, 'Monotheism')
-    request = t.choose(game, request, 'Ximen Bao')
+    request = t.choose(game, request, 'Decree.Expansion')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
-        purple: {
-          cards: ['Code of Laws', 'Homer', 'Ptahotep', 'Monotheism'],
-          splay: 'right'
-        },
-        red: ['Tigernmas', 'Construction'],
-        hand: ['Tools', 'Mapmaking'],
-        score: ['Archery', 'Ximen Bao']
-      },
-    })
-
-  })
-
-  test('karma: echo effects', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        yellow: ['Ximen Bao'],
-        purple: {
-          cards: ['Code of Laws', 'Sinuhe'],
-          splay: 'right'
-        },
-        blue: {
-          cards: ['Tools', 'Huang Di'],
+        yellow: {
+          cards: ['Ximen Bao', 'Agriculture'],
           splay: 'up',
         },
-        hand: ['Monotheism'],
+        achievements: ['Expansion'],
       },
-      decks: {
-        base: {
-          2: ['Construction', 'Mapmaking'],
-        }
-      }
-    })
-
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Ximen Bao')
-    request = t.choose(game, request, 2)
-
-    t.testIsSecondPlayer(game)
-    t.testBoard(game, {
-      dennis: {
-        yellow: ['Ximen Bao'],
-        purple: {
-          cards: ['Code of Laws', 'Sinuhe'],
-          splay: 'right'
-        },
-        blue: {
-          cards: ['Tools', 'Huang Di'],
-          splay: 'up',
-        },
-        hand: ['Monotheism', 'Construction'],
-        forecast: ['Mapmaking'],
-      },
+      junk: ['Homer', 'Shennong', 'Domestication', 'Tools'],
     })
 
   })

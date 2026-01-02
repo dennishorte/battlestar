@@ -4,15 +4,12 @@ module.exports = {
   color: `green`,
   age: 10,
   expansion: `figs`,
-  biscuits: `hii*`,
+  biscuits: `hiip`,
   dogmaBiscuit: `i`,
-  echo: ``,
   karma: [
-    `Each top card on every player's board counts as a card you can activate with a Dogma action.`
+    `Each top card on every player's board counts as a card you can activate with a Dogma action.`,
+    `If you would dogma a card on another player's board, first splay its color up on your board.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'list-effects',
@@ -20,6 +17,14 @@ module.exports = {
         return game
           .players.all()
           .flatMap(player => game.getDogmaTargets(player))
+      }
+    },
+    {
+      trigger: 'dogma',
+      kind: 'would-first',
+      matches: (game, player, { card }) => card.owner.id !== player.id,
+      func: (game, player, { card }) => {
+        game.actions.splay(player, card.color, 'up')
       }
     }
   ]

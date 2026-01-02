@@ -4,32 +4,27 @@ module.exports = {
   color: `yellow`,
   age: 3,
   expansion: `figs`,
-  biscuits: `hll&`,
+  biscuits: `hllp`,
   dogmaBiscuit: `l`,
-  echo: `Draw and foreshadow a {3}, {4}, or {5}.`,
   karma: [
-    `If you would draw a card, first tuck a card of the same value from your hand.`
+    `If you would draw a card, first tuck a card of the same value from your hand or from an opponent's score pile.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    const age = game.actions.chooseAge(player, [
-      game.getEffectAge(this, 3),
-      game.getEffectAge(this, 4),
-      game.getEffectAge(this, 5),
-    ])
-    game.actions.drawAndForeshadow(player, age)
-  },
   karmaImpl: [
     {
       trigger: 'draw',
       kind: 'would-first',
       matches: () => true,
       func: (game, player, { age }) => {
-        const choices = game
-          .cards.byPlayer(player, 'hand')
+        const handCards = game
+          .cards
+          .byPlayer(player, 'hand')
           .filter(other => other.getAge() === age)
-        game.actions.chooseAndTuck(player, choices)
+        const scoreCards = game
+          .players
+          .opponents(player)
+          .flatMap(opponent => game.cards.byPlayer(opponent, 'score'))
+          .filter(card => card.getAge() === age)
+        game.actions.chooseAndTuck(player, [...handCards, ...scoreCards])
       }
     }
   ]

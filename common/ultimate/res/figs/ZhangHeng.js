@@ -4,33 +4,21 @@ module.exports = {
   color: `blue`,
   age: 2,
   expansion: `figs`,
-  biscuits: `l&2h`,
+  biscuits: `lp2h`,
   dogmaBiscuit: `l`,
-  echo: `Draw and tuck a {3}. Score all cards above it.`,
   karma: [
-    `Each card in your score pile counts as a bonus of its value on your board.`
+    `If a player would claim an achievement, first draw and tuck a {3}, then score all cards above the tucked card.`,
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    const card = game.actions.drawAndTuck(player, game.getEffectAge(this, 3))
-    if (card) {
-      const zone = game.zones.byPlayer(player, card.color)
-      const toScore = zone
-        .cards()
-        .filter(c => c !== card)
-
-      game.actions.scoreMany(player, toScore, { ordered: true })
-    }
-  },
   karmaImpl: [
     {
-      trigger: 'list-bonuses',
-      func: (game, player) => {
-        return game
-          .cards
-          .byPlayer(player, 'score')
-          .map(card => card.getAge())
+      trigger: 'achieve',
+      triggerAll: true,
+      matches: () => true,
+      func: (game, player, { self, owner }) => {
+        const card = game.actions.drawAndTuck(owner, game.getEffectAge(self, 3))
+
+        const toScore = game.cards.byPlayer(owner, card.color).filter(c => c.id !== card.id)
+        game.actions.scoreMany(player, toScore)
       }
     }
   ]

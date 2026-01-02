@@ -89,6 +89,10 @@ class BaseZone {
   ////////////////////////////////////////////////////////////////////////////////
   // Misc
 
+  nextIndex() {
+    return this._cards.length
+  }
+
   random() {
     return util.array.select(this._cards, this.game.random)
   }

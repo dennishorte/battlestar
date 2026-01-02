@@ -4,28 +4,26 @@ module.exports = {
   color: `yellow`,
   age: 1,
   expansion: `figs`,
-  biscuits: `llh*`,
+  biscuits: `llhp`,
   dogmaBiscuit: `l`,
-  echo: ``,
   karma: [
-    `If you would foreshadow a card of the same value as a card in your forecast, first score each card of that value in your forecast.`
+    `If you would draw a {1} during your first action, first draw an score a card of value equal to the number of {1} in your hand.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
-      trigger: 'foreshadow',
+      trigger: 'draw',
       kind: 'would-first',
-      matches: (game, player, { card }) => {
-        const forecast = game.cards.byPlayer(player, 'forecast')
-        return forecast.find(other => other.getAge() === card.getAge())
+      matches: (game, player, { age, self }) => {
+        return game.state.actionNumber === 1 && age === game.getEffectAge(self, 1)
       },
-      func(game, player, { card }) {
-        const toScore = game
-          .cards.byPlayer(player, 'forecast')
-          .filter(other => other.getAge() === card.getAge())
-        game.actions.scoreMany(player, toScore)
+      func(game, player, { self }) {
+        const effectAge = game.getEffectAge(self, 1)
+        const count = game
+          .cards
+          .byPlayer(player, 'hand')
+          .filter(card => card.getAge() === effectAge)
+          .length
+        game.actions.drawAndScore(player, count)
       },
     }
   ]

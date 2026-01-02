@@ -4,18 +4,12 @@ module.exports = {
   color: `blue`,
   age: 2,
   expansion: `figs`,
-  biscuits: `sh&s`,
+  biscuits: `shps`,
   dogmaBiscuit: `s`,
-  echo: `Draw a {2}.`,
   karma: [
     `You may issue an Advancement Decree with any two figures.`,
-    `If you would take a Dogma action, first increase every {} value in each echo and dogma effect by one.`
+    `If you would execute an effect, first increase every age value in the effect by one for the duration of the effect.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    game.actions.draw(player, { age: game.getEffectAge(this, 2) })
-  },
   karmaImpl: [
     {
       trigger: 'decree-for-two',

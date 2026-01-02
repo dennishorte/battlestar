@@ -77,7 +77,7 @@ describe('Self Service', () => {
       dennis: {
         green: ['Self Service'],
         blue: ['Computers', 'Tools'],
-        yellow: ['Domestication'],
+        yellow: ['Agriculture'],
         hand: ['Canning'],
         achievements: ['Sailing', 'Domestication'],
       },

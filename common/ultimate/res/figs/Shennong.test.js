@@ -10,11 +10,11 @@ describe('Shennong', () => {
     t.setBoard(game, {
       dennis: {
         yellow: ['Shennong'],
-        forecast: ['Construction', 'The Wheel', 'Fermenting', 'Engineering'],
+        hand: ['Construction', 'The Wheel', 'Fermenting', 'Code of Laws'],
       },
       decks: {
         base: {
-          1: ['Sailing'],
+          1: ['Metalworking'],
           2: ['Calendar'],
         }
       }
@@ -22,16 +22,14 @@ describe('Shennong', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Inspire.yellow')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, request, 'Draw.draw a card')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
         yellow: ['Shennong'],
-        forecast: ['The Wheel', 'Engineering', 'Calendar'],
-        score: ['Construction', 'Fermenting'],
-        hand: ['Sailing'],
+        hand: ['Construction', 'The Wheel', 'Fermenting', 'Code of Laws', 'Metalworking'],
+        score: ['Calendar'],
       },
     })
   })

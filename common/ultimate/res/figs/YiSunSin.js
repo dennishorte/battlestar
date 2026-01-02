@@ -4,32 +4,31 @@ module.exports = {
   color: `red`,
   age: 4,
   expansion: `figs`,
-  biscuits: `4hf&`,
+  biscuits: `4hfp`,
   dogmaBiscuit: `f`,
-  echo: `Score a top card with a {k} from anywhere.`,
   karma: [
-    `If you would score a card of a color you have splayed, instead tuck it, then draw a {3}.`
+    `If any player would transfer a card or exchange any number of cards, instead tuck that card or those cards, draw and tuck a {4}, and score a top card with a {k} from anywhere.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: (game, player) => {
-    const choices = game
-      .cards
-      .topsAll()
-      .filter(card => card.checkHasBiscuit('k'))
-    game.actions.chooseAndScore(player, choices)
-  },
   karmaImpl: [
     {
-      trigger: 'score',
+      trigger: ['transfer', 'exchange'],
+      triggerAll: true,
       kind: 'would-instead',
-      matches(game, player, { card }) {
-        const zone = game.zones.byPlayer(player, card.color)
-        return zone.splay !== 'none'
-      },
-      func: (game, player, { card }) => {
-        game.actions.tuck(player, card)
-        game.actions.draw(player, { age: game.getEffectAge(this, 3) })
+      matches: () => true,
+      func: (game, player, { card, cards1, cards2, owner, self, trigger }) => {
+        const toTuck = trigger === 'transfer'
+          ? [card]
+          : [...cards1, ...cards2]
+
+        game.actions.tuckMany(owner, toTuck)
+        game.actions.drawAndTuck(owner, game.getEffectAge(self, 4))
+
+        const topCastles = game
+          .cards
+          .topsAll()
+          .filter(card => card.checkHasBiscuit('k'))
+
+        game.actions.chooseAndScore(owner, topCastles)
       }
     }
   ]

@@ -15,8 +15,7 @@ module.exports = {
       const scoreCards = game.cards.byPlayer(player, 'score')
       const scoreByValue = util.array.groupBy(scoreCards, card => card.getAge())
       const value = game
-        .util
-        .ages()
+        .getAges()
         .sort((l, r) => l - r)
         .find(age => (age in scoreByValue) && scoreByValue[age].length === 1)
       if (value) {
@@ -31,7 +30,7 @@ module.exports = {
             game.log.add({
               template: 'Two cards were melded'
             })
-            for (const age of game.util.ages()) {
+            for (const age of game.getAges()) {
               for (const exp of game.getExpansionList()) {
                 const cards = game.cards.byDeck(exp, age)
                 if (cards.length > 0) {

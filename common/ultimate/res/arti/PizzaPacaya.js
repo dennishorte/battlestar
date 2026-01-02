@@ -13,7 +13,7 @@ module.exports = {
       const toJunk = game.zones.colorStacks(player).flatMap(zone => zone.cardlist())
       game.actions.junkMany(player, toJunk)
 
-      for (const age of game.util.ages()) {
+      for (const age of game.getAges()) {
         game.actions.drawAndMeld(player, age)
       }
     },

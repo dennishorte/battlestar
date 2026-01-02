@@ -4,15 +4,12 @@ module.exports = {
   color: `green`,
   age: 5,
   expansion: `figs`,
-  biscuits: `c5h*`,
+  biscuits: `c5hp`,
   dogmaBiscuit: `c`,
-  echo: ``,
   karma: [
-    `If you would draw a fifth card into your hand, first claim an achievement of that card's value or below, regardless of eligibility.`
+    `If you would draw a fifth card into your hand, first claim an achievement of that card's value or below, regardless of eligibility.`,
+    `If you would draw a first card into your hand, first draw a {6}.`
   ],
-  dogma: [],
-  dogmaImpl: [],
-  echoImpl: [],
   karmaImpl: [
     {
       trigger: 'draw',
@@ -24,6 +21,14 @@ module.exports = {
           .filter(ach => ach.getAge() <= age)
         game.actions.chooseAndAchieve(player, choices, { nonAction: true })
       }
-    }
+    },
+    {
+      trigger: 'draw',
+      kind: 'would-first',
+      matches: (game, player) => game.cards.byPlayer(player, 'hand').length === 0,
+      func: (game, player, { self }) => {
+        game.actions.draw(player, { age: game.getEffectAge(self, 6) })
+      },
+    },
   ]
 }
