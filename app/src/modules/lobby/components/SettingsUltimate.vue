@@ -31,8 +31,6 @@
 
 
 <script>
-import { ultimate} from 'battlestar-common'
-
 export default {
   name: 'UltimateSettings',
 
@@ -54,7 +52,7 @@ export default {
         {
           text: 'Figures in the Sand',
           value: 'figs',
-          disabled: true,
+          disabled: false,
         },
         {
           text: 'Cities of Destiny',
