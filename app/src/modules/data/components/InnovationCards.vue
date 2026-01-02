@@ -10,6 +10,8 @@
 <script>
 import InnovationCardSet from './InnovationCardSet'
 
+import { ultimate } from 'battlestar-common'
+
 export default {
   name: 'InnovationData',
 
@@ -19,7 +21,7 @@ export default {
 
   data() {
     return {
-      expansions: ['base', 'city', 'usee'],
+      expansions: ultimate.SUPPORTED_EXPANSIONS,
     }
   },
 }
