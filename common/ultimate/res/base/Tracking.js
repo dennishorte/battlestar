@@ -8,5 +8,14 @@ module.exports = {
   dogma: [
     `Draw to {z}. Return one of them.`
   ],
-  dogmaImpl: [],
+  dogmaImpl: [
+    (game, player, { self }) => {
+      const drawnCards = [
+        game.actions.draw(player, { age: game.getEffectAge(self, 0) }),
+        game.actions.draw(player, { age: game.getEffectAge(self, 0) }),
+      ]
+
+      game.actions.chooseAndReturn(player, drawnCards)
+    }
+  ],
 }
