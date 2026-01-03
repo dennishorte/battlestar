@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `ppph`,
   dogmaBiscuit: `p`,
   dogma: [
-//    `Start a new game, ignoring all players' current cards and without shuffling, each player drawing and melding a {9} to begin, the winner then transfering their cards to this game and junking each other player's other cards from that game.`
+    //    `Start a new game, ignoring all players' current cards and without shuffling, each player drawing and melding a {9} to begin, the winner then transfering their cards to this game and junking each other player's other cards from that game.`
     `Draw and meld an Artifacts card of any value. If the melded card has {l}, and you are the single player with the most {l}, you win.`,
   ],
   dogmaImpl: [

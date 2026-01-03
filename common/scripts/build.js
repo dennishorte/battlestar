@@ -50,7 +50,8 @@ function copyDirectory(src, dest, excludePatterns = []) {
         fs.mkdirSync(destPath, { recursive: true })
       }
       copyDirectory(srcPath, destPath, excludePatterns)
-    } else if (entry.isFile()) {
+    }
+    else if (entry.isFile()) {
       // Skip TypeScript source files (they'll be compiled)
       // But keep .d.ts files and test files
       if (entry.name.endsWith('.ts') && !entry.name.endsWith('.d.ts') && !entry.name.endsWith('.test.ts')) {
@@ -85,7 +86,7 @@ for (const entry of rootFiles) {
   if (entry.isFile()) {
     const fileName = entry.name
     // Skip certain files
-    if (fileName === 'package-lock.json' || 
+    if (fileName === 'package-lock.json' ||
         fileName === 'tsconfig.json' ||
         fileName.startsWith('.') ||
         fileName.endsWith('.ts')) {
@@ -97,10 +98,12 @@ for (const entry of rootFiles) {
       // Update main to point to the dist location
       packageJson.main = 'main.js'
       fs.writeFileSync(path.join(distDir, fileName), JSON.stringify(packageJson, null, 2) + '\n')
-    } else {
+    }
+    else {
       copyFile(path.join(commonDir, fileName), path.join(distDir, fileName))
     }
-  } else if (entry.isDirectory() && entry.name !== 'node_modules' && entry.name !== 'scripts') {
+  }
+  else if (entry.isDirectory() && entry.name !== 'node_modules' && entry.name !== 'scripts') {
     copyDirectory(
       path.join(commonDir, entry.name),
       path.join(distDir, entry.name),
@@ -115,13 +118,14 @@ console.log('Installing dependencies in common_dist...')
 // Run npm install in common_dist
 const { execSync } = require('child_process')
 try {
-  execSync('npm install', { 
-    cwd: distDir, 
+  execSync('npm install', {
+    cwd: distDir,
     stdio: 'inherit',
     env: { ...process.env, npm_config_progress: 'false' }
   })
   console.log('Dependencies installed successfully')
-} catch (error) {
+}
+catch (error) {
   console.error('Warning: Failed to install dependencies in common_dist')
   console.error('You may need to run "npm install" manually in common_dist')
 }
