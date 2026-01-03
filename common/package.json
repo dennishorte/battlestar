@@ -9,18 +9,23 @@
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.27.1",
     "@eslint/js": "^9.26.0",
+    "@types/node": "^20.0.0",
     "csv-parser": "^3.2.0",
     "eslint": "^9.27.0",
     "eslint-plugin-jest": "^28.11.0",
     "jest": "^27.5.1",
     "n-readlines": "^1.0.1",
-    "string-format": "^2.0.0"
+    "string-format": "^2.0.0",
+    "typescript": "^5.0.0"
   },
   "scripts": {
-    "test": "jest --runInBand",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
+    "pretest": "npm run build",
+    "test": "cd ../common_dist && jest --runInBand",
+    "test:watch": "cd ../common_dist && jest --watch",
+    "test:coverage": "cd ../common_dist && jest --coverage",
     "lint": "npx eslint --max-warnings=0 .",
-    "lint:fix": "npx eslint --fix --max-warnings=0 ."
+    "lint:fix": "npx eslint --fix --max-warnings=0 .",
+    "build": "tsc && node scripts/build.js",
+    "build:watch": "tsc --watch"
   }
 }

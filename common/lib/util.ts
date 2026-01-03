@@ -1,17 +1,117 @@
+// Point type definition
+interface Point {
+  x: number
+  y: number
+}
+
+// Event type for offsetPoint
+interface OffsetEvent {
+  offsetX: number
+  offsetY: number
+}
+
+// Type for random number generator function
+type RngFunction = () => number
+
+// Type for key function that can return a single key or array of keys
+type KeyFunction<T> = (elem: T) => string | number | (string | number)[] | null
+
+// Type for value transformation function
+type ValueFunction<T, V> = (elem: T) => V
+
+// Type for predicate function
+type Predicate<T> = (elem: T) => boolean
+
+// Type for mapping function
+type MapFunction<T, R> = (elem: T, index?: number, array?: T[]) => R
+
+// Type for comparison function
+type CompareFunction<T> = (a: T, b: T) => number
+
+// Type for dictionary map function
+type DictMapFunction<K, V, OK, OV> = (key: K, value: V) => [OK, OV]
+
 const Util = {
   array: {},
   dict: {},
   event: {},
   point: {},
+} as {
+  array: {
+    chunk: <T>(array: T[], size: number) => T[][]
+    collect: <T, V = T>(
+      elems: T[],
+      keyFunc: KeyFunction<T>,
+      valueFunc?: ValueFunction<T, V>
+    ) => Record<string | number, V[]>
+    countBy: <T>(array: T[], fn: (elem: T) => string | number) => Record<string | number, number>
+    distinct: <T>(array: T[] | null | undefined, keyFunc?: (elem: T) => string | number) => T[]
+    elementsEqual: <T>(a: T[], b: T[]) => boolean
+    fill: <T>(count: number, value: T) => T[]
+    intersection: <T>(array1: T[], array2: T[]) => T[]
+    isDistinct: <T>(array: T[]) => boolean
+    groupBy: <T>(array: T[], fn: MapFunction<T, string | number>) => Record<string | number, T[]>
+    last: <T>(array: T[]) => T
+    pairs: <T>(array: T[]) => [T, T][]
+    pushUnique: <T>(array: T[], value: T) => void
+    remove: <T>(array: T[], elem: T) => void
+    removeByPredicate: <T>(array: T[], pred: Predicate<T>) => void
+    reverseIter: <T>(array: T[]) => Generator<T>
+    select: <T>(array: T[], rng?: RngFunction) => T
+    selectMany: <T>(array: T[], count: number, rng?: RngFunction) => T[]
+    shuffle: <T>(array: T[], rng?: RngFunction) => T[]
+    swap: <T>(array: T[], i: number, j: number) => void
+    takeRightWhile: <T>(array: T[], predicate: Predicate<T>) => T[]
+    takeWhile: <T>(array: T[], predicate: Predicate<T>) => T[]
+    toDict: <T>(
+      array: T[],
+      keyFn: string | ((obj: T) => string | number | null | undefined)
+    ) => Record<string | number, T>
+    uniqueMaxBy: <T>(array: T[], pred: (elem: T) => number) => T | undefined
+  }
+  dict: {
+    strictEquals: (a: any, b: any) => boolean
+    map: <K extends string | number, V, OK extends string | number, OV>(
+      dict: Record<K, V>,
+      func: DictMapFunction<K, V, OK, OV>
+    ) => Record<OK, OV>
+    compare: (obj1: any, obj2: any, path?: string) => string[]
+    displayDifferences: (obj1: any, obj2: any) => boolean
+  }
+  event: {
+    offsetPoint: (event: OffsetEvent) => Point
+  }
+  point: {
+    add: (a: Point, b: Point) => Point
+    sub: (a: Point, b: Point) => Point
+  }
+  assert: (test: any, message: string) => void
+  ensure: <T extends Record<string, any>, K extends keyof T>(
+    obj: T,
+    prop: K,
+    defaultValue: T[K]
+  ) => T
+  getAsArray: <T>(object: Record<string, T | T[]>, key: string) => T[]
+  hasOwn: (obj: any, prop: string | number | symbol) => boolean
+  inherit: (parent: new (...args: any[]) => any, child: new (...args: any[]) => any) => void
+  isDigit: (str: string) => boolean
+  isDigits: (str: string) => boolean
+  range: (...args: number[]) => number[]
+  stringReverse: (str: string) => string
+  toCamelCase: (str: string) => string
+  toCapsCase: (str: string) => string
+  toKebabCase: (str: string) => string
+  toPlainCase: (str: string) => string
+  toTitleCase: (str: string) => string
+  toSnakeCase: (str: string) => string
+  deepcopy: <T>(obj: T) => T
 }
-module.exports = Util
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Array functions
 
-Util.array.chunk = function(array, size) {
-  const chunks = []
+Util.array.chunk = function<T>(array: T[], size: number): T[][] {
+  const chunks: T[][] = []
   for (let i = 0; i < array.length; i += size) {
     chunks.push(array.slice(i, i + size))
   }
@@ -21,14 +121,18 @@ Util.array.chunk = function(array, size) {
 /**
  * Groups array elements by keys and collects them into an object.
  *
- * @param {Array} elems - The array of elements to process
- * @param {Function} keyFunc - Function that returns a key or array of keys for each element
- * @param {Function} [valueFunc] - Optional function to transform each element before collection
- * @returns {Object} An object where keys are the results of keyFunc and values are arrays of
- *                   (transformed) elements that correspond to each key
+ * @param elems - The array of elements to process
+ * @param keyFunc - Function that returns a key or array of keys for each element
+ * @param valueFunc - Optional function to transform each element before collection
+ * @returns An object where keys are the results of keyFunc and values are arrays of
+ *          (transformed) elements that correspond to each key
  */
-Util.array.collect = function(elems, keyFunc, valueFunc = elem => elem) {
-  const output = {}
+Util.array.collect = function<T, V = T>(
+  elems: T[],
+  keyFunc: KeyFunction<T>,
+  valueFunc: ValueFunction<T, V> = (elem: T) => elem as unknown as V
+): Record<string | number, V[]> {
+  const output: Record<string | number, V[]> = {}
 
   if (!Array.isArray(elems) || elems.length === 0) {
     return output
@@ -36,7 +140,8 @@ Util.array.collect = function(elems, keyFunc, valueFunc = elem => elem) {
 
   for (const elem of elems) {
     // Normalize keys to always be an array
-    const keys = [].concat(keyFunc(elem))
+    const keyResult = keyFunc(elem)
+    const keys = Array.isArray(keyResult) ? keyResult : (keyResult === null ? [] : [keyResult])
 
     for (const key of keys) {
       if (key === null) {
@@ -54,28 +159,35 @@ Util.array.collect = function(elems, keyFunc, valueFunc = elem => elem) {
   return output
 }
 
-Util.array.countBy = function(array, fn) {
+Util.array.countBy = function<T>(
+  array: T[],
+  fn: (elem: T) => string | number
+): Record<string | number, number> {
   return array.reduce((counts, elem) => {
-    counts[fn(elem)] = (counts[fn(elem)] || 0) + 1
+    const key = fn(elem)
+    counts[key] = (counts[key] || 0) + 1
     return counts
-  }, {})
+  }, {} as Record<string | number, number>)
 }
 
 /**
  * Returns an array of distinct elements based on the key function.
  * If multiple elements have the same key, only the first one is kept.
  *
- * @param {Array} array - The array to process
- * @param {Function} keyFunc - Function to extract the key for comparison
- * @returns {Array} Array with duplicate elements removed
+ * @param array - The array to process
+ * @param keyFunc - Function to extract the key for comparison
+ * @returns Array with duplicate elements removed
  */
-Util.array.distinct = function(array, keyFunc = elem => elem) {
+Util.array.distinct = function<T>(
+  array: T[] | null | undefined,
+  keyFunc: (elem: T) => string | number = (elem: T) => elem as unknown as string | number
+): T[] {
   if (!array || array.length === 0) {
     return []
   }
 
-  const seen = new Set()
-  const result = []
+  const seen = new Set<string | number>()
+  const result: T[] = []
 
   for (const item of array) {
     const key = keyFunc(item)
@@ -88,34 +200,37 @@ Util.array.distinct = function(array, keyFunc = elem => elem) {
   return result
 }
 
-Util.array.elementsEqual = function(a, b) {
+Util.array.elementsEqual = function<T>(a: T[], b: T[]): boolean {
   return (
     a.length === b.length
     && a.every((elem, index) => elem === b[index])
   )
 }
 
-Util.array.fill = function(count, value) {
-  const output = []
+Util.array.fill = function<T>(count: number, value: T): T[] {
+  const output: T[] = []
   for (let i = 0; i < count; i++) {
     output.push(value)
   }
   return output
 }
 
-Util.array.intersection = function(array1, array2) {
+Util.array.intersection = function<T>(array1: T[], array2: T[]): T[] {
   return array1.filter(x => array2.includes(x))
 }
 
-Util.array.isDistinct = function(array) {
+Util.array.isDistinct = function<T>(array: T[]): boolean {
   return array.length === Util.array.distinct(array).length
 }
 
-Util.array.groupBy = function(array, fn) {
-  const groups = {}
+Util.array.groupBy = function<T>(
+  array: T[],
+  fn: MapFunction<T, string | number>
+): Record<string | number, T[]> {
+  const groups: Record<string | number, T[]> = {}
   for (let i = 0; i < array.length; i++) {
     const key = fn(array[i], i, array)
-    if (!Object.hasOwn(groups, key)) {
+    if (!Util.hasOwn(groups, key)) {
       groups[key] = []
     }
 
@@ -124,40 +239,40 @@ Util.array.groupBy = function(array, fn) {
   return groups
 }
 
-Util.array.last = function(array) {
+Util.array.last = function<T>(array: T[]): T {
   if (array.length === 0) {
     throw new Error('Cannot call last on empty array')
   }
   return array[array.length - 1]
 }
 
-Util.array.pairs = function(array) {
+Util.array.pairs = function<T>(array: T[]): [T, T][] {
   return array.flatMap(
-    (v, i) => array.slice(i+1).map(w => [v, w])
+    (v, i) => array.slice(i+1).map(w => [v, w] as [T, T])
   )
 }
 
-Util.array.pushUnique = function(array, value) {
+Util.array.pushUnique = function<T>(array: T[], value: T): void {
   if (array.indexOf(value) === -1) {
     array.push(value)
   }
 }
 
-Util.array.remove = function(array, elem) {
+Util.array.remove = function<T>(array: T[], elem: T): void {
   const index = array.indexOf(elem)
   if (index !== -1) {
     array.splice(index, 1)
   }
 }
 
-Util.array.removeByPredicate = function(array, pred) {
+Util.array.removeByPredicate = function<T>(array: T[], pred: Predicate<T>): void {
   const index = array.findIndex(x => pred(x))
   if (index !== -1) {
     array.splice(index, 1)
   }
 }
 
-Util.array.reverseIter = function*(array) {
+Util.array.reverseIter = function*<T>(array: T[]): Generator<T> {
   let i = array.length
   while (i > 0) {
     i -= 1
@@ -165,7 +280,7 @@ Util.array.reverseIter = function*(array) {
   }
 }
 
-Util.array.select = function(array, rng) {
+Util.array.select = function<T>(array: T[], rng?: RngFunction): T {
   if (!rng) {
     rng = Math.random
   }
@@ -174,11 +289,11 @@ Util.array.select = function(array, rng) {
   return array[index]
 }
 
-Util.array.selectMany = function(array, count, rng) {
+Util.array.selectMany = function<T>(array: T[], count: number, rng?: RngFunction): T[] {
   return Util.array.shuffle([...array], rng).slice(0, count)
 }
 
-Util.array.shuffle = function(array, rng) {
+Util.array.shuffle = function<T>(array: T[], rng?: RngFunction): T[] {
   if (!rng) {
     rng = Math.random
   }
@@ -200,14 +315,14 @@ Util.array.shuffle = function(array, rng) {
   return array
 }
 
-Util.array.swap = function(array, i, j) {
+Util.array.swap = function<T>(array: T[], i: number, j: number): void {
   const tmp = array[i]
   array[i] = array[j]
   array[j] = tmp
 }
 
-Util.array.takeRightWhile = function(array, predicate) {
-  const accumulator = []
+Util.array.takeRightWhile = function<T>(array: T[], predicate: Predicate<T>): T[] {
+  const accumulator: T[] = []
   for (let i = array.length - 1; i >= 0; i--) {
     if (predicate(array[i])) {
       accumulator.push(array[i])
@@ -219,8 +334,8 @@ Util.array.takeRightWhile = function(array, predicate) {
   return accumulator.reverse()
 }
 
-Util.array.takeWhile = function(array, predicate) {
-  const accumulator = []
+Util.array.takeWhile = function<T>(array: T[], predicate: Predicate<T>): T[] {
+  const accumulator: T[] = []
   for (let i = 0; i < array.length; i++) {
     if (predicate(array[i])) {
       accumulator.push(array[i])
@@ -235,16 +350,19 @@ Util.array.takeWhile = function(array, predicate) {
 /**
  * Converts an array of objects into a dictionary mapping keys to objects
  *
- * @param {Array} array - Array of objects to convert
- * @param {Function|string} keyFn - Function to extract key or property name to use as key
- * @returns {Object} Dictionary mapping keys to objects
+ * @param array - Array of objects to convert
+ * @param keyFn - Function to extract key or property name to use as key
+ * @returns Dictionary mapping keys to objects
  */
-Util.array.toDict = function(array, keyFn) {
+Util.array.toDict = function<T>(
+  array: T[],
+  keyFn: string | ((obj: T) => string | number | null | undefined)
+): Record<string | number, T> {
   const keyFunc = typeof keyFn === 'string'
-    ? (obj) => obj[keyFn]
+    ? (obj: T) => (obj as Record<string, any>)[keyFn] as string | number | null | undefined
     : keyFn
 
-  const result = {}
+  const result: Record<string | number, T> = {}
 
   for (const item of array) {
     const key = keyFunc(item)
@@ -256,7 +374,7 @@ Util.array.toDict = function(array, keyFn) {
   return result
 }
 
-Util.array.uniqueMaxBy = function(array, pred) {
+Util.array.uniqueMaxBy = function<T>(array: T[], pred: (elem: T) => number): T | undefined {
   if (array.length === 0) {
     return undefined
   }
@@ -279,22 +397,25 @@ Util.array.uniqueMaxBy = function(array, pred) {
 ////////////////////////////////////////////////////////////////////////////////
 // Dict functions
 
-Util.dict.strictEquals = function(a, b) {
+Util.dict.strictEquals = function(a: any, b: any): boolean {
   return JSON.stringify(a) === JSON.stringify(b)
 }
 
-Util.dict.map = function(dict, func) {
-  const output = {}
+Util.dict.map = function<K extends string | number, V, OK extends string | number, OV>(
+  dict: Record<K, V>,
+  func: DictMapFunction<K, V, OK, OV>
+): Record<OK, OV> {
+  const output: Record<OK, OV> = {} as Record<OK, OV>
   for (const [key, value] of Object.entries(dict)) {
-    const [okey, ovalue] = func(key, value)
+    const [okey, ovalue] = func(key as K, value as V)
     output[okey] = ovalue
   }
   return output
 }
 
-Util.dict.compare = function(obj1, obj2, path = '') {
+Util.dict.compare = function(obj1: any, obj2: any, path: string = ''): string[] {
   // Initialize an array to store differences
-  const differences = []
+  const differences: string[] = []
 
   // Get all keys from both objects
   const allKeys = new Set([...Object.keys(obj1), ...Object.keys(obj2)])
@@ -379,7 +500,7 @@ Util.dict.compare = function(obj1, obj2, path = '') {
 }
 
 // Function to display differences in a readable format
-Util.dict.displayDifferences = function(obj1, obj2) {
+Util.dict.displayDifferences = function(obj1: any, obj2: any): boolean {
   const differences = Util.dict.compare(obj1, obj2)
 
   if (differences.length === 0) {
@@ -399,7 +520,7 @@ Util.dict.displayDifferences = function(obj1, obj2) {
 ////////////////////////////////////////////////////////////////////////////////
 // Event Functions
 
-Util.event.offsetPoint = function(event) {
+Util.event.offsetPoint = function(event: OffsetEvent): Point {
   return {
     x: event.offsetX,
     y: event.offsetY,
@@ -410,14 +531,14 @@ Util.event.offsetPoint = function(event) {
 ////////////////////////////////////////////////////////////////////////////////
 // Point Functions
 
-Util.point.add = function(a, b) {
+Util.point.add = function(a: Point, b: Point): Point {
   return {
     x: a.x + b.x,
     y: a.y + b.y
   }
 }
 
-Util.point.sub = function(a, b) {
+Util.point.sub = function(a: Point, b: Point): Point {
   return {
     x: a.x - b.x,
     y: a.y - b.y
@@ -428,29 +549,36 @@ Util.point.sub = function(a, b) {
 ////////////////////////////////////////////////////////////////////////////////
 // Miscellaneous
 
-Util.assert = function(test, message) {
+Util.assert = function(test: any, message: string): void {
   if (!test) {
     throw new Error(message)
   }
 }
 
-Util.ensure = function(obj, prop, defaultValue) {
+Util.ensure = function<T extends Record<string, any>, K extends keyof T>(
+  obj: T,
+  prop: K,
+  defaultValue: T[K]
+): T {
   if (!Util.hasOwn(obj, prop)) {
     obj[prop] = defaultValue
   }
   return obj
 }
 
-Util.getAsArray = function(object, key) {
+Util.getAsArray = function<T>(object: Record<string, T | T[]>, key: string): T[] {
   const value = object[key]
   return Array.isArray(value) ? value : [value]
 }
 
-Util.hasOwn = function(obj, prop) {
+Util.hasOwn = function(obj: any, prop: string | number | symbol): boolean {
   return Object.prototype.hasOwnProperty.call(obj, prop)
 }
 
-Util.inherit = function(parent, child) {
+Util.inherit = function(
+  parent: new (...args: any[]) => any,
+  child: new (...args: any[]) => any
+): void {
   child.prototype = Object.create(parent.prototype)
   Object.defineProperty(child.prototype, 'constructor', {
     value: child,
@@ -459,16 +587,16 @@ Util.inherit = function(parent, child) {
   })
 }
 
-Util.isDigit = function(str) {
+Util.isDigit = function(str: string): boolean {
   return str.length === 1 && /[0-9]/.test(str)
 }
 
-Util.isDigits = function(str) {
+Util.isDigits = function(str: string): boolean {
   return /^[0-9]+$/.test(str)
 }
 
-Util.range = function(...args) {
-  let start, end, step
+Util.range = function(...args: number[]): number[] {
+  let start: number, end: number, step: number
 
   if (args.length === 1) {
     start = 0
@@ -486,31 +614,31 @@ Util.range = function(...args) {
     throw new Error('Invalid args to range function')
   }
 
-  const output = []
+  const output: number[] = []
   for (let i = start; i < end; i += step) {
     output.push(i)
   }
   return output
 }
 
-Util.stringReverse = function(str) {
+Util.stringReverse = function(str: string): string {
   return [...str].reverse().join("")
 }
 
-Util.toCamelCase = function(str) {
+Util.toCamelCase = function(str: string): string {
   const downCased = str[0].toLowerCase() + str.slice(1)
   return downCased.replace(/\W/g, '')
 }
 
-Util.toCapsCase = function(str) {
+Util.toCapsCase = function(str: string): string {
   return str.replace(/\W/g, '')
 }
 
-Util.toKebabCase = function(str) {
+Util.toKebabCase = function(str: string): string {
   return str.toLowerCase().replace(/\W/g, '-')
 }
 
-Util.toPlainCase = function(str) {
+Util.toPlainCase = function(str: string): string {
   return str
     .replace(/([a-z])([A-Z])/g, '$1 $2')   // Handle camelCase and PascalCase: insert space before uppercase letters
     .replace(/[_-]/g, ' ')                 // Replace underscores and hyphens with spaces
@@ -519,18 +647,21 @@ Util.toPlainCase = function(str) {
     .trim()
 }
 
-Util.toTitleCase = function(str) {
+Util.toTitleCase = function(str: string): string {
   return str
     .toLowerCase()
-    .split()
+    .split(' ')
     .map(token => token[0].toUpperCase() + token.slice(1))
     .join(' ')
 }
 
-Util.toSnakeCase = function(str) {
+Util.toSnakeCase = function(str: string): string {
   return str.toLowerCase().replace(/\W/g, '_')
 }
 
-Util.deepcopy = function(obj) {
+Util.deepcopy = function<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj))
 }
+
+module.exports = Util
+

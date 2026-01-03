@@ -1,5 +1,6 @@
 node_modules
 dist
+common_dist
 restart_prod.sh
 api/src/version.js
 app/src/assets/version.js
