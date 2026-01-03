@@ -14,7 +14,7 @@ module.exports = {
     {
       trigger: 'dogma',
       kind: 'would-first',
-      matches: (game, player) => game.state.actionNumber === 2,
+      matches: (game) => game.state.actionNumber === 2,
       func: (game, player) => {
         const options = game
           .players

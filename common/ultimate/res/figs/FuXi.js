@@ -18,7 +18,7 @@ module.exports = {
     {
       trigger: 'draw',
       kind: 'would-first',
-      matches: (game, player, { age, self }) => {
+      matches: (game) => {
         return game.state.actionNumber === 1
       },
       func(game, player, { self }) {

@@ -27,7 +27,7 @@ module.exports = {
       const returned = game.actions.returnMany(player, toReturn.flat())
 
       let count = 0
-      for (const [player, cards] of Object.entries(playerCards)) {
+      for (const [, cards] of Object.entries(playerCards)) {
         if (cards.some(card => returned.includes(card))) {
           count += 1
         }

@@ -11,7 +11,6 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader, self }) => {
-      const invalidColors = game.cards.tops(leader).map(card => card.color)
       const revealChoices = game
         .cards
         .byPlayer(player, 'hand')

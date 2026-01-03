@@ -9,7 +9,7 @@ module.exports = {
     `Meld a card from your hand. Score a card from your hand. If you do both, and the cards have different values, junk all cards in the decks of both values.`
   ],
   dogmaImpl: [
-    (game, player, { self }) => {
+    (game, player) => {
       const melded = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))[0]
       const scored = game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'))[0]
 

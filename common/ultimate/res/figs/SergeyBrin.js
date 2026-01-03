@@ -13,10 +13,10 @@ module.exports = {
   karmaImpl: [
     {
       trigger: 'list-effects',
-      func: (game, player) => {
+      func: (game) => {
         return game
           .players.all()
-          .flatMap(player => game.getDogmaTargets(player))
+          .flatMap(p => game.getDogmaTargets(p))
       }
     },
     {

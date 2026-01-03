@@ -18,7 +18,7 @@ module.exports = {
     {
       trigger: 'meld',
       kind: 'would-first',
-      matches: (game, player) => true,
+      matches: () => true,
       func: (game, player, { self }) => {
         const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 3))
         if (!card.checkHasBiscuit('l')) {

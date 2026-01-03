@@ -305,7 +305,6 @@ class UltimateAgeCard extends UltimateBaseCard {
   }
 
   visibleEffects(kind, opts={}) {
-    const player = opts.selfExecutor || this.players.byOwner(this)
     const isTop = this.isTopCardLoose() || this.zone.id.endsWith('.artifact')
 
     if (kind === 'dogma') {

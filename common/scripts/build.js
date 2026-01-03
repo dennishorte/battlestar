@@ -88,7 +88,7 @@ for (const entry of rootFiles) {
     // Skip certain files
     if (fileName === 'package-lock.json' ||
         fileName === 'tsconfig.json' ||
-        fileName.startsWith('.') ||
+        (fileName.startsWith('.') && fileName !== '.babelrc') ||
         fileName.endsWith('.ts')) {
       continue
     }
@@ -112,6 +112,12 @@ for (const entry of rootFiles) {
   }
 }
 
+// Explicitly copy .babelrc if it exists
+const babelrcPath = path.join(commonDir, '.babelrc')
+if (fs.existsSync(babelrcPath)) {
+  copyFile(babelrcPath, path.join(distDir, '.babelrc'))
+}
+
 console.log('Build complete! Files copied to common_dist')
 console.log('Installing dependencies in common_dist...')
 
@@ -125,7 +131,7 @@ try {
   })
   console.log('Dependencies installed successfully')
 }
-catch (error) {
+catch {
   console.error('Warning: Failed to install dependencies in common_dist')
   console.error('You may need to run "npm install" manually in common_dist')
 }

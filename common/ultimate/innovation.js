@@ -358,7 +358,6 @@ Innovation.prototype.artifact = function() {
 
     switch (action) {
       case 'dogma': {
-        const startingZone = artifact.zone
         this.actions.dogma(player, artifact, { artifact: true })
         this.actions.rotate(player, artifact)
         this.fadeFiguresCheck()
