@@ -166,7 +166,7 @@ function _maybePromote(player, card) {
 
   if (choices.length > 0) {
     this.log.add({
-      template: '{player} muse promote a card from forecast',
+      template: '{player} must promote a card from forecast',
       args: { player },
     })
     const cards = this.chooseAndMeld(player, choices)
