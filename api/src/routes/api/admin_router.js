@@ -274,4 +274,114 @@ router.post('/impersonation-status', async (req, res) => {
   }
 })
 
+/**
+ * @swagger
+ * /admin/clear-impersonation:
+ *   post:
+ *     summary: Force clear impersonation for a user
+ *     description: Admin-only endpoint to force clear impersonation state for a user (useful when impersonation token is lost)
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - targetUserId
+ *             properties:
+ *               targetUserId:
+ *                 type: string
+ *                 description: ID of the user to clear impersonation for
+ *     responses:
+ *       200:
+ *         description: Impersonation cleared successfully
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: User not found or not being impersonated
+ */
+router.post('/clear-impersonation', async (req, res) => {
+  try {
+    const { targetUserId } = req.body
+
+    if (!targetUserId) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'targetUserId is required'
+      })
+    }
+
+    logger.info(`Admin ${req.user.name} clearing impersonation for user ${targetUserId}`)
+
+    const result = await db.user.clearImpersonation(targetUserId)
+
+    logger.info(`Impersonation cleared for user ${result.targetUserName}`)
+
+    res.status(200).json({
+      status: 'success',
+      ...result
+    })
+  }
+  catch (error) {
+    logger.error(`Clear impersonation error: ${error.message}`)
+    res.status(400).json({
+      status: 'error',
+      message: error.message
+    })
+  }
+})
+
+/**
+ * @swagger
+ * /admin/clear-all-impersonations:
+ *   post:
+ *     summary: Force clear impersonation for all users
+ *     description: Admin-only endpoint to force clear all impersonation states (useful for cleanup when impersonation tokens are lost)
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: All impersonations cleared successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 clearedCount:
+ *                   type: number
+ *                 totalFound:
+ *                   type: number
+ *       400:
+ *         description: Bad request
+ */
+router.post('/clear-all-impersonations', async (req, res) => {
+  try {
+    logger.info(`Admin ${req.user.name} clearing all impersonations`)
+
+    const result = await db.user.clearAllImpersonations()
+
+    logger.info(`Cleared ${result.clearedCount} impersonation(s)`)
+
+    res.status(200).json({
+      status: 'success',
+      ...result
+    })
+  }
+  catch (error) {
+    logger.error(`Clear all impersonations error: ${error.message}`)
+    res.status(400).json({
+      status: 'error',
+      message: error.message
+    })
+  }
+})
+
 export default router

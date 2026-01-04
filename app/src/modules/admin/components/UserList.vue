@@ -26,6 +26,7 @@
               <DropdownItem v-if="!isImpersonating && user.name !== currentUserName">
                 <button @click="impersonate(user)">impersonate</button>
               </DropdownItem>
+              <DropdownItem><button @click="clearImpersonation(user)">clear impersonation</button></DropdownItem>
               <DropdownItem><button @click="deactivate(user._id)">deactivate</button></DropdownItem>
               <DropdownItem><button @click="edit(user)">edit</button></DropdownItem>
             </DropdownMenu>
@@ -96,6 +97,21 @@ export default {
         }
         catch (error) {
           alert(`Failed to impersonate user: ${error.message}`)
+        }
+      }
+    },
+
+    async clearImpersonation(user) {
+      if (confirm(`Are you sure you want to clear impersonation for ${user.name}?`)) {
+        try {
+          await this.$post('/api/admin/clear-impersonation', {
+            targetUserId: user._id
+          })
+          alert(`Impersonation cleared for ${user.name}`)
+          this.$emit('users-updated')
+        }
+        catch (error) {
+          alert(`Failed to clear impersonation: ${error.message}`)
         }
       }
     },

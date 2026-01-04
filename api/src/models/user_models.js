@@ -130,7 +130,7 @@ User.startImpersonation = async function(adminId, targetUserId) {
 
   // Check if target user is already being impersonated
   if (targetUser.impersonatedBy) {
-    throw new Error('User is already being impersonated')
+    throw new Error('User is already being impersonated. Use /api/admin/clear-impersonation to clear the existing impersonation state.')
   }
 
   // Generate impersonation token
@@ -215,6 +215,70 @@ User.getImpersonationStatus = async function(userId) {
 
   return {
     isImpersonated: false
+  }
+}
+
+User.clearImpersonation = async function(targetUserId) {
+  const user = await User.findById(targetUserId)
+
+  if (!user) {
+    throw new Error('Target user not found')
+  }
+
+  if (!user.impersonatedBy) {
+    throw new Error('User is not being impersonated')
+  }
+
+  // Clear impersonation data
+  const filter = { _id: targetUserId }
+  const updater = {
+    $unset: {
+      impersonatedBy: 1,
+      impersonationToken: 1,
+      originalAdminId: 1,
+      impersonationStartTime: 1
+    }
+  }
+
+  await userCollection.updateOne(filter, updater)
+
+  return {
+    message: 'Impersonation cleared successfully',
+    targetUserId: user._id,
+    targetUserName: user.name
+  }
+}
+
+User.clearAllImpersonations = async function() {
+  // Find all users with impersonation data
+  const usersWithImpersonation = await userCollection.find({
+    impersonatedBy: { $exists: true }
+  }).toArray()
+
+  if (usersWithImpersonation.length === 0) {
+    return {
+      message: 'No users are currently being impersonated',
+      clearedCount: 0
+    }
+  }
+
+  // Clear impersonation data for all users
+  const result = await userCollection.updateMany(
+    { impersonatedBy: { $exists: true } },
+    {
+      $unset: {
+        impersonatedBy: 1,
+        impersonationToken: 1,
+        originalAdminId: 1,
+        impersonationStartTime: 1
+      }
+    }
+  )
+
+  return {
+    message: 'All impersonations cleared successfully',
+    clearedCount: result.modifiedCount,
+    totalFound: usersWithImpersonation.length
   }
 }
 

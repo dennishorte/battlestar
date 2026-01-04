@@ -9,6 +9,7 @@
     <div class="buttons">
       <BButton variant="secondary" @click="updateScryfall">Update Scryfall Data</BButton>
       <BButton variant="secondary" @click="gameLoaderVis = true">Load Game</BButton>
+      <BButton variant="warning" @click="clearAllImpersonations">Clear All Impersonations</BButton>
     </div>
 
     <BModal v-model="gameLoaderVis" @ok="loadGame">
@@ -164,6 +165,24 @@ export default {
 
       // Redirect to the loaded game
       this.$router.push(`/game/${gameId}`)
+    },
+
+    async clearAllImpersonations() {
+      if (confirm('Are you sure you want to clear all impersonations? This will clear impersonation state for all users.')) {
+        this.status = 'waiting'
+        this.message = 'Clearing all impersonations...'
+
+        try {
+          const result = await this.$post('/api/admin/clear-all-impersonations', {})
+          this.message = `Cleared ${result.clearedCount} impersonation(s)`
+          this.status = 'success'
+        }
+        catch (e) {
+          this.status = 'error'
+          this.message = e.response?.data?.message || 'Failed to clear impersonations. Check console for details.'
+          throw e
+        }
+      }
     },
   },
 }
