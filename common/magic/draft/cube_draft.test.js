@@ -330,13 +330,10 @@ describe('CubeDraft', () => {
       // Check that packs in scar rounds have scars assigned
       for (const pack of game.state.packs) {
         if (pack.index === 0 || pack.index === 2) { // Rounds 1 and 3 have scars
-          // eslint-disable-next-line jest/no-conditional-expect
           expect(pack.scars).toBeDefined()
-          // eslint-disable-next-line jest/no-conditional-expect
           expect(pack.scars.length).toBe(2)
         }
         else { // Round 2 has no scars
-          // eslint-disable-next-line jest/no-conditional-expect
           expect(pack.scars).toBeUndefined()
         }
       }

@@ -118,6 +118,18 @@ if (fs.existsSync(babelrcPath)) {
   copyFile(babelrcPath, path.join(distDir, '.babelrc'))
 }
 
+// Explicitly copy vitest.config.mjs if it exists
+const vitestConfigPath = path.join(commonDir, 'vitest.config.mjs')
+if (fs.existsSync(vitestConfigPath)) {
+  copyFile(vitestConfigPath, path.join(distDir, 'vitest.config.mjs'))
+}
+
+// Explicitly copy vitest.setup.js if it exists
+const vitestSetupPath = path.join(commonDir, 'vitest.setup.js')
+if (fs.existsSync(vitestSetupPath)) {
+  copyFile(vitestSetupPath, path.join(distDir, 'vitest.setup.js'))
+}
+
 console.log('Build complete! Files copied to common_dist')
 console.log('Installing dependencies in common_dist...')
 

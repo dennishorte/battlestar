@@ -5,13 +5,13 @@ const createMockCard = (id, name, additionalProps = {}) => {
   return {
     id,
     name,
-    setHome: jest.fn(),
-    setZone: jest.fn(),
-    hide: jest.fn(),
-    reveal: jest.fn(),
-    show: jest.fn(),
-    revealed: jest.fn(),
-    visible: jest.fn(),
+    setHome: vi.fn(),
+    setZone: vi.fn(),
+    hide: vi.fn(),
+    reveal: vi.fn(),
+    show: vi.fn(),
+    revealed: vi.fn(),
+    visible: vi.fn(),
     ...additionalProps
   }
 }
@@ -20,7 +20,7 @@ const createMockCard = (id, name, additionalProps = {}) => {
 const createTestFixture = (kind='public') => {
   // Setup mock game object
   const mockGame = {
-    random: jest.fn()
+    random: vi.fn()
   }
 
   // Setup mock cards using factory
@@ -63,7 +63,7 @@ describe('BaseZone', () => {
     })
 
     test('should set id, name, kind, and (optionally) owner', () => {
-      const mockGame = { random: jest.fn() }
+      const mockGame = { random: vi.fn() }
       const mockOwner = { name: 'test-player' }
 
       const zone = new BaseZone(mockGame, 'my-zone', 'My Zone', 'private', mockOwner)
@@ -82,7 +82,7 @@ describe('BaseZone', () => {
     })
 
     test('should set owner to null by default', () => {
-      const mockGame = { random: jest.fn() }
+      const mockGame = { random: vi.fn() }
 
       const zone = new BaseZone(mockGame, 'test-zone', 'Test Zone', 'public')
 
@@ -129,7 +129,7 @@ describe('BaseZone', () => {
 
   describe('owner()', () => {
     test('should return the owner', () => {
-      const mockGame = { random: jest.fn() }
+      const mockGame = { random: vi.fn() }
       const mockOwner = { name: 'test-player' }
 
       const zone = new BaseZone(mockGame, 'test-zone', 'Test Zone', 'private', mockOwner)
@@ -171,7 +171,7 @@ describe('BaseZone', () => {
       const { zone, mockCard1, mockCard2 } = createTestFixture()
 
       // Spy on the _updateCardVisibility method
-      const updateVisibilitySpy = jest.spyOn(zone, '_updateCardVisibility')
+      const updateVisibilitySpy = vi.spyOn(zone, '_updateCardVisibility')
 
       zone.initializeCards([mockCard1, mockCard2])
 
@@ -220,7 +220,7 @@ describe('BaseZone', () => {
       test('should call _updateCardVisibility on added card', () => {
         const { zone, mockCard1, mockCard2 } = createTestFixture()
 
-        const updateVisibilitySpy = jest.spyOn(zone, '_updateCardVisibility')
+        const updateVisibilitySpy = vi.spyOn(zone, '_updateCardVisibility')
 
         zone.initializeCards([mockCard1])
         zone.push(mockCard2)
@@ -272,7 +272,7 @@ describe('BaseZone', () => {
       test('should call _updateCardVisibility on added card', () => {
         const { zone, mockCard1, mockCard2 } = createTestFixture()
 
-        const updateVisibilitySpy = jest.spyOn(zone, '_updateCardVisibility')
+        const updateVisibilitySpy = vi.spyOn(zone, '_updateCardVisibility')
 
         zone.initializeCards([mockCard1])
         zone.push(mockCard2, 0)
@@ -928,9 +928,9 @@ describe('BaseZone', () => {
       const { zone, mockCard1, mockCard2, mockCard3 } = createTestFixture('private')
 
       // Mock the revealed() method to return different states
-      mockCard1.revealed = jest.fn().mockReturnValue(true)
-      mockCard2.revealed = jest.fn().mockReturnValue(false)
-      mockCard3.revealed = jest.fn().mockReturnValue(false)
+      mockCard1.revealed = vi.fn().mockReturnValue(true)
+      mockCard2.revealed = vi.fn().mockReturnValue(false)
+      mockCard3.revealed = vi.fn().mockReturnValue(false)
 
       zone.initializeCards([mockCard1, mockCard2, mockCard3])
       zone.revealNext()
@@ -942,8 +942,8 @@ describe('BaseZone', () => {
     test('should do nothing when all cards are already revealed', () => {
       const { zone, mockCard1, mockCard2 } = createTestFixture('private')
 
-      mockCard1.revealed = jest.fn().mockReturnValue(true)
-      mockCard2.revealed = jest.fn().mockReturnValue(true)
+      mockCard1.revealed = vi.fn().mockReturnValue(true)
+      mockCard2.revealed = vi.fn().mockReturnValue(true)
 
       zone.initializeCards([mockCard1, mockCard2])
       zone.revealNext()
@@ -963,9 +963,9 @@ describe('BaseZone', () => {
     test('should reveal only one card even if multiple are hidden', () => {
       const { zone, mockCard1, mockCard2, mockCard3 } = createTestFixture('private')
 
-      mockCard1.revealed = jest.fn().mockReturnValue(false)
-      mockCard2.revealed = jest.fn().mockReturnValue(false)
-      mockCard3.revealed = jest.fn().mockReturnValue(false)
+      mockCard1.revealed = vi.fn().mockReturnValue(false)
+      mockCard2.revealed = vi.fn().mockReturnValue(false)
+      mockCard3.revealed = vi.fn().mockReturnValue(false)
 
       zone.initializeCards([mockCard1, mockCard2, mockCard3])
       zone.revealNext()
@@ -1080,9 +1080,9 @@ describe('BaseZone', () => {
       const { zone, mockCard1, mockCard2, mockCard3 } = createTestFixture()
       const mockPlayer = { id: 'player1', name: 'Player 1' }
 
-      mockCard1.visible = jest.fn().mockReturnValue(true)
-      mockCard2.visible = jest.fn().mockReturnValue(false)
-      mockCard3.visible = jest.fn().mockReturnValue(false)
+      mockCard1.visible = vi.fn().mockReturnValue(true)
+      mockCard2.visible = vi.fn().mockReturnValue(false)
+      mockCard3.visible = vi.fn().mockReturnValue(false)
 
       zone.initializeCards([mockCard1, mockCard2, mockCard3])
       zone.showNext(mockPlayer)
@@ -1095,8 +1095,8 @@ describe('BaseZone', () => {
       const { zone, mockCard1, mockCard2 } = createTestFixture()
       const mockPlayer = { id: 'player1', name: 'Player 1' }
 
-      mockCard1.visible = jest.fn().mockReturnValue(true)
-      mockCard2.visible = jest.fn().mockReturnValue(true)
+      mockCard1.visible = vi.fn().mockReturnValue(true)
+      mockCard2.visible = vi.fn().mockReturnValue(true)
 
       zone.initializeCards([mockCard1, mockCard2])
       zone.showNext(mockPlayer)
@@ -1118,9 +1118,9 @@ describe('BaseZone', () => {
       const { zone, mockCard1, mockCard2, mockCard3 } = createTestFixture()
       const mockPlayer = { id: 'player1', name: 'Player 1' }
 
-      mockCard1.visible = jest.fn().mockReturnValue(false)
-      mockCard2.visible = jest.fn().mockReturnValue(false)
-      mockCard3.visible = jest.fn().mockReturnValue(false)
+      mockCard1.visible = vi.fn().mockReturnValue(false)
+      mockCard2.visible = vi.fn().mockReturnValue(false)
+      mockCard3.visible = vi.fn().mockReturnValue(false)
 
       zone.initializeCards([mockCard1, mockCard2, mockCard3])
       zone.showNext(mockPlayer)
@@ -1134,7 +1134,7 @@ describe('BaseZone', () => {
       const { zone, mockCard1 } = createTestFixture()
       const mockPlayer = { id: 'player1', name: 'Player 1' }
 
-      mockCard1.visible = jest.fn().mockReturnValue(false)
+      mockCard1.visible = vi.fn().mockReturnValue(false)
 
       zone.initializeCards([mockCard1])
       zone.showNext(mockPlayer)
@@ -1221,7 +1221,7 @@ describe('BaseZone', () => {
 
     describe('private zone kind', () => {
       test('should call show(owner) on card', () => {
-        const mockGame = { random: jest.fn() }
+        const mockGame = { random: vi.fn() }
         const mockOwner = { id: 'owner1', name: 'Owner' }
         const zone = new BaseZone(mockGame, 'test-zone', 'Test Zone', 'private', mockOwner)
         const { mockCard1 } = createTestFixture()
@@ -1252,7 +1252,7 @@ describe('BaseZone', () => {
 
     describe('unknown zone kind', () => {
       test('should throw error for unknown zone kind', () => {
-        const mockGame = { random: jest.fn() }
+        const mockGame = { random: vi.fn() }
         const zone = new BaseZone(mockGame, 'test-zone', 'Test Zone', 'unknown')
         const { mockCard1 } = createTestFixture()
 
@@ -1310,7 +1310,7 @@ describe('BaseZone', () => {
     })
 
     test('should work with different zone kinds (public, private, hidden)', () => {
-      const mockGame = { random: jest.fn() }
+      const mockGame = { random: vi.fn() }
       const mockOwner = { id: 'owner1', name: 'Owner' }
       const { mockCard1, mockCard2, mockCard3 } = createTestFixture()
 

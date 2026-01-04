@@ -46,7 +46,7 @@ describe('BaseLogManager', () => {
       const { logManager } = createLogManager()
 
       // Create a spy on _enrichLogArgs to verify it's called
-      const enrichLogArgsSpy = jest.spyOn(logManager, '_enrichLogArgs')
+      const enrichLogArgsSpy = vi.spyOn(logManager, '_enrichLogArgs')
 
       // Add a log entry
       logManager.add({
@@ -75,7 +75,7 @@ describe('BaseLogManager', () => {
       const { logManager } = createLogManager()
 
       // Mock console.log to prevent test output pollution
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
       // Expect error when adding log entry without template
       expect(() => {
@@ -93,7 +93,7 @@ describe('BaseLogManager', () => {
       const { logManager } = createLogManager()
 
       // Mock the add method to capture what's passed to it
-      const addSpy = jest.spyOn(logManager, 'add')
+      const addSpy = vi.spyOn(logManager, 'add')
 
       // Call addDoNothing
       logManager.addDoNothing('Player1')
@@ -123,7 +123,7 @@ describe('BaseLogManager', () => {
       const { logManager } = createLogManager()
 
       // Spy on the add method
-      const addSpy = jest.spyOn(logManager, 'add')
+      const addSpy = vi.spyOn(logManager, 'add')
 
       // Call addNoEffect
       logManager.addNoEffect()
@@ -161,7 +161,7 @@ describe('BaseLogManager', () => {
       // Mock Date.now to have consistent IDs for testing
       const originalDateNow = Date.now
       const mockNow = 12345
-      Date.now = jest.fn(() => mockNow)
+      Date.now = vi.fn(() => mockNow)
 
       // Add a chat message
       logManager.chat('Player1', 'Hello world')

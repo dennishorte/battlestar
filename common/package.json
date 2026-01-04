@@ -12,17 +12,17 @@
     "@types/node": "^20.0.0",
     "csv-parser": "^3.2.0",
     "eslint": "^9.27.0",
-    "eslint-plugin-jest": "^28.11.0",
-    "jest": "^27.5.1",
+    "eslint-plugin-vitest": "^0.5.1",
     "n-readlines": "^1.0.1",
     "string-format": "^2.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^2.1.8"
   },
   "scripts": {
     "pretest": "npm run build",
-    "test": "cd ../common_dist && jest --runInBand",
-    "test:watch": "cd ../common_dist && jest --watch",
-    "test:coverage": "cd ../common_dist && jest --coverage",
+    "test": "cd ../common_dist && npx vitest run",
+    "test:watch": "cd ../common_dist && npx vitest",
+    "test:coverage": "cd ../common_dist && npx vitest run --coverage",
     "lint": "npx eslint --max-warnings=0 .",
     "lint:fix": "npx eslint --fix --max-warnings=0 .",
     "build": "tsc && node scripts/build.js",

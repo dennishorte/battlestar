@@ -2,25 +2,21 @@ const { BasePlayer } = require('./BasePlayer.js')
 const { BasePlayerManager } = require('./BasePlayerManager.js')
 const util = require('../util.js')
 
-// Need to mock util for shuffle functionality
-jest.mock('../util.js', () => ({
-  array: {
-    shuffle: jest.fn((array) => {
-      // For tests, make shuffle predictable by reversing the array
-      const reversed = [...array].reverse()
-      // Copy the reversed values back to the original array (mutating it in place)
-      for (let i = 0; i < array.length; i++) {
-        array[i] = reversed[i]
-      }
-      return array
-    })
+// Spy on and mock the shuffle function
+// For tests, make shuffle predictable by reversing the array
+const mockShuffle = vi.spyOn(util.array, 'shuffle').mockImplementation((array) => {
+  const reversed = [...array].reverse()
+  // Copy the reversed values back to the original array (mutating it in place)
+  for (let i = 0; i < array.length; i++) {
+    array[i] = reversed[i]
   }
-}))
+  return array
+})
 
 describe('BasePlayerManager', () => {
   // Reset mocks before each test
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   // Fixture function to create a new BasePlayerManager instance
@@ -28,7 +24,7 @@ describe('BasePlayerManager', () => {
     // Create mock game
     const game = {
       log: {
-        add: jest.fn()
+        add: vi.fn()
       }
     }
 
@@ -59,7 +55,7 @@ describe('BasePlayerManager', () => {
       expect(playerManager.all()[0]).toBeInstanceOf(BasePlayer)
 
       // With default options, shuffle should be called
-      expect(util.array.shuffle).toHaveBeenCalled()
+      expect(mockShuffle).toHaveBeenCalled()
 
       // Check default current player is set to first player
       expect(playerManager.current()).toBe(playerManager.all()[0])

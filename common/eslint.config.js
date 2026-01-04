@@ -1,6 +1,6 @@
 // eslint.config.js
 const { defineConfig } = require("eslint/config")
-const jest = require('eslint-plugin-jest')
+const vitest = require('eslint-plugin-vitest')
 const js = require("@eslint/js")
 
 
@@ -17,10 +17,9 @@ module.exports = defineConfig([
   },
   {
     files: ["**/*.js"],
-    plugins: { js, jest },
+    plugins: { js, vitest },
     extends: [
       "js/recommended",
-      "jest/recommended",
     ],
 
     languageOptions: {
@@ -109,10 +108,21 @@ module.exports = defineConfig([
       'no-unused-vars': ['warn', {
         varsIgnorePattern: 'request|result[0-9]?',
       }],
-
-      "jest/expect-expect": "off",
-      "jest/no-disabled-tests": "off",
-      "jest/no-standalone-expect": "off",
+    },
+  },
+  {
+    files: ["**/*.test.js", "**/testutil*.js"],
+    plugins: { vitest },
+    languageOptions: {
+      globals: {
+        ...vitest.environments.env.globals,
+      },
+    },
+    rules: {
+      ...vitest.configs.recommended.rules,
+      "vitest/expect-expect": "off",
+      "vitest/no-disabled-tests": "off",
+      "vitest/no-standalone-expect": "off",
     },
   },
 ])
