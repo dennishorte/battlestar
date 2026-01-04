@@ -144,9 +144,14 @@ router.post('/impersonate', async (req, res) => {
       targetUserId: req.body?.targetUserId?.toString(),
       errorName: error.name
     })
+
+    // Provide more context for "already impersonated" errors
+    const isAlreadyImpersonated = error.message.includes('already being impersonated')
     res.status(400).json({
       status: 'error',
-      message: error.message
+      message: error.message,
+      code: isAlreadyImpersonated ? 'ALREADY_IMPERSONATED' : 'IMPERSONATION_ERROR',
+      targetUserId: req.body?.targetUserId?.toString()
     })
   }
 })

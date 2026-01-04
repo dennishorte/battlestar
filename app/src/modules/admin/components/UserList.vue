@@ -96,7 +96,25 @@ export default {
           // No need to reload - the store will handle switching to the impersonated user
         }
         catch (error) {
-          alert(`Failed to impersonate user: ${error.message}`)
+          const errorData = error.response?.data || {}
+          const errorMessage = errorData.message || error.message
+
+          // If user is already being impersonated, offer to clear it
+          if (errorData.code === 'ALREADY_IMPERSONATED' || errorMessage.includes('already being impersonated')) {
+            if (confirm(`${errorMessage}\n\nWould you like to clear the impersonation now?`)) {
+              await this.clearImpersonation(user)
+              // After clearing, try impersonating again
+              try {
+                await this.$store.dispatch('auth/startImpersonation', user._id)
+              }
+              catch (retryError) {
+                alert(`Failed to impersonate after clearing: ${retryError.response?.data?.message || retryError.message}`)
+              }
+            }
+          }
+          else {
+            alert(`Failed to impersonate user: ${errorMessage}`)
+          }
         }
       }
     },

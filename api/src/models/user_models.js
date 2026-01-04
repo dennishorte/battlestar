@@ -130,7 +130,9 @@ User.startImpersonation = async function(adminId, targetUserId) {
 
   // Check if target user is already being impersonated
   if (targetUser.impersonatedBy) {
-    throw new Error('User is already being impersonated. Use /api/admin/clear-impersonation to clear the existing impersonation state.')
+    const impersonatingAdmin = await User.findById(targetUser.impersonatedBy)
+    const adminName = impersonatingAdmin ? impersonatingAdmin.name : 'Unknown'
+    throw new Error(`User is already being impersonated by ${adminName}. Please clear the impersonation first.`)
   }
 
   // Generate impersonation token
