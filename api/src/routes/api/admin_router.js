@@ -108,6 +108,16 @@ router.post('/impersonate', async (req, res) => {
     const { targetUserId } = req.body
     const adminId = req.user._id
 
+    // Log request details for debugging
+    logger.info('Impersonation attempt', {
+      adminId: adminId?.toString(),
+      adminIdType: typeof adminId,
+      adminName: req.user?.name,
+      targetUserId: targetUserId?.toString(),
+      targetUserIdType: typeof targetUserId,
+      targetUserIdLength: targetUserId?.toString().length
+    })
+
     if (!targetUserId) {
       return res.status(400).json({
         status: 'error',
@@ -125,7 +135,15 @@ router.post('/impersonate', async (req, res) => {
     })
   }
   catch (error) {
-    logger.error(`Impersonation error: ${error.message}`)
+    // Log full error details including stack trace
+    logger.error('Impersonation error', {
+      message: error.message,
+      stack: error.stack,
+      adminId: req.user?._id?.toString(),
+      adminName: req.user?.name,
+      targetUserId: req.body?.targetUserId?.toString(),
+      errorName: error.name
+    })
     res.status(400).json({
       status: 'error',
       message: error.message
