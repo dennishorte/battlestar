@@ -157,6 +157,14 @@ class UltimateActionManager extends BaseActionManager {
     }
   }
 
+  auspice(player, card) {
+    this.log.add({
+      template: '{player} uses auspice on {card}',
+      args: { player, card }
+    })
+    this.dogma(player, card, { featuredBiscuit: 'p' })
+  }
+
   choose(player, choices, opts={}) {
     if (this.state.dogmaInfo.mayIsMust) {
       opts.min = Math.max(1, opts.min || 1)

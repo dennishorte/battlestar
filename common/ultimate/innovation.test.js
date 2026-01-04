@@ -544,6 +544,43 @@ describe('Innovation', () => {
       })
     })
 
+    describe('auspice action', () => {
+      test('auspice uses person biscuits', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+        t.setBoard(game, {
+          dennis: {
+            blue: ['Archimedes'],
+            purple: ['Astronomy'],
+          },
+          micah: {
+            blue: ['Experimentation'],
+            purple: ['Philosophy'],
+          },
+          decks: {
+            base: {
+              7: ['Lighting'],
+            }
+          },
+        })
+
+        let request
+        request = game.run()
+        request = t.choose(game, request, 'Auspice.Astronomy')
+
+        t.setBoard(game, {
+          dennis: {
+            blue: ['Archimedes'],
+            purple: ['Astronomy'],
+            hand: ['Lighting'],
+          },
+          micah: {
+            blue: ['Experimentation'],
+            purple: ['Philosophy'],
+          },
+        })
+      })
+    })
+
     describe('dogma action', () => {
       test.skip('echo', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })

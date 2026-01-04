@@ -434,6 +434,10 @@ Innovation.prototype.action = function(count) {
   if (name === 'Achieve') {
     this.actions.achieveAction(player, arg)
   }
+  else if (name === 'Auspice') {
+    const card = this.cards.byId(arg)
+    this.actions.auspice(player, card)
+  }
   else if (name === 'Decree') {
     this.aDecree(player, arg)
   }
