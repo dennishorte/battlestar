@@ -6,7 +6,7 @@ module.exports = {
   color: `blue`,
   age: 3,
   expansion: `figs`,
-  biscuits: `ss&h`,
+  biscuits: `ssph`,
   dogmaBiscuit: `s`,
   karma: [
     `If you would take a Draw action, instead tuck a top card with a {k} from anywhere. Then draw a card of value equal to the number of {k} or {s} in a color on your board.`
