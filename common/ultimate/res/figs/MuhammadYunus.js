@@ -16,7 +16,7 @@ module.exports = {
       decree: 'Trade',
     },
     {
-      trigger: 'pre-dogma',
+      trigger: 'dogma',
       triggerAll: true,
       kind: 'would-first',
       matches: () => true,
@@ -33,6 +33,7 @@ module.exports = {
             args: { player: owner }
           })
           game.state.dogmaInfo.soleMajorityPlayerId = owner.id
+          game.state.dogmaInfo.recalculateSharingAndDemanding()
         }
       }
     }

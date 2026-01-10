@@ -14,11 +14,11 @@ module.exports = {
       trigger: 'dogma',
       kind: 'would-first',
       matches: () => true,
-      func: (game, player, { card, featuredBiscuit }) => {
+      func: (game, player, { card }) => {
         const mayReturn = game
           .cards
           .byPlayer(player, 'hand')
-          .filter(card => card.checkHasBiscuit(featuredBiscuit))
+          .filter(card => card.checkHasBiscuit(game.state.dogmaInfo.featuredBiscuit))
 
         const returned = game.actions.chooseAndReturn(player, mayReturn, { min: 0 })[0]
 

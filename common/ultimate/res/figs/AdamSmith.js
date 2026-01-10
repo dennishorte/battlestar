@@ -22,7 +22,7 @@ module.exports = {
     {
       trigger: 'dogma',
       kind: 'would-first',
-      matches: (game, player, { sharing }) => sharing.length === 0,
+      matches: (game) => game.state.dogmaInfo.sharing.length === 0,
       func: (game, player) => {
         const junkedCards = game.actions.junkDeck(player, 6)
 

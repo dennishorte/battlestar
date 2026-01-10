@@ -101,7 +101,10 @@ class UltimateAgeCard extends UltimateBaseCard {
   }
 
   checkHasShare() {
-    const shareDogmaEffect = !this.checkHasDemand()
+    const shareDogmaEffect = this.dogma.some(text => {
+      const lowercase = text.toLowerCase()
+      return !lowercase.startsWith('i demand') && !lowercase.startsWith('i compel')
+    })
     const shareEchoEffect = !!this.echo
     return shareDogmaEffect || shareEchoEffect
   }

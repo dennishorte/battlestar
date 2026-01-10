@@ -443,11 +443,6 @@ Innovation.prototype.action = function(count) {
   }
   else if (name === 'Dogma') {
     const card = this.cards.byId(arg)
-    const karmaKind = this.aKarma(player, 'dogma-action', { card })
-    if (karmaKind === 'would-instead') {
-      this.actions.acted(player)
-      return
-    }
     this.actions.dogma(player, card)
   }
   else if (name === 'Draw') {
@@ -566,8 +561,9 @@ Innovation.prototype.aOneEffect = function(
     .concat(opts.demanding)
 
   const actorsOrdered = this
-    .players.endingWith(player)
-    .filter(player => actors.includes(player))
+    .players
+    .endingWith(player)
+    .filter(player => actors.some(actor => actor.id === player.id))
 
   for (const actor of actorsOrdered) {
     this.state.dogmaInfo.acting = actor
@@ -577,14 +573,10 @@ Innovation.prototype.aOneEffect = function(
       const isDemand = text.toLowerCase().startsWith('i demand')
       const isCompel = text.toLowerCase().startsWith('i compel')
 
-      if (!isDemand && !isCompel) {
-        this.state.couldShare = true
-      }
-
-      const demand = isDemand && opts.demanding.includes(actor)
-      const compel = isCompel && opts.sharing.includes(actor) && actor !== player
-      const share = !isDemand && !isCompel && !opts.noShare && opts.sharing.includes(actor) && z === 0
-      const owner = !isDemand && !isCompel && actor === player
+      const demand = isDemand && opts.demanding.some(target => target.id === actor.id)
+      const compel = isCompel && opts.sharing.some(target => target.id === actor.id) && actor !== player
+      const share = !isDemand && !isCompel && !opts.noShare && opts.sharing.some(target => target.id === actor.id) && z === 0
+      const owner = !isDemand && !isCompel && actor.id === player.id
 
       if (compel || demand || share || owner) {
         this.log.add({
@@ -601,7 +593,7 @@ Innovation.prototype.aOneEffect = function(
         }
 
         if (demand || compel) {
-          this.state.dogmaInfo.demanding = true
+          this.state.dogmaInfo.isDemandEffect = true
 
           const karmaKind = this.aKarma(actor, 'demand-success', {
             card,
@@ -609,7 +601,7 @@ Innovation.prototype.aOneEffect = function(
             leader: opts.leader
           })
           if (karmaKind === 'would-instead') {
-            this.state.dogmaInfo.demanding = false
+            this.state.dogmaInfo.isDemandEffect = false
             this.actions.acted(player)
             this.log.outdent()
             continue
@@ -639,7 +631,7 @@ Innovation.prototype.aOneEffect = function(
         })
 
         if (demand || compel) {
-          this.state.dogmaInfo.demanding = false
+          this.state.dogmaInfo.isDemandEffect = false
         }
 
         this.log.outdent()

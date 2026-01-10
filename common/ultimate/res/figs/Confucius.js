@@ -13,7 +13,7 @@ module.exports = {
     {
       trigger: 'dogma',
       kind: 'would-instead',
-      matches: (game, player, { featuredBiscuit }) => featuredBiscuit === 'k',
+      matches: (game) => game.state.dogmaInfo.featuredBiscuit === 'k',
       func: (game, player, { card, self }) => {
         game.actions.score(player, card)
         game.actions.chooseAndJunkDeck(player, [

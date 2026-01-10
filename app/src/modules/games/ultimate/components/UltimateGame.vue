@@ -105,21 +105,21 @@ export default {
           for (const option of selector.choices) {
             const cardName = option.title || option
             const card = this.game.cards.byId(cardName)
-            const shareInfo = this.game.getDogmaShareInfo(player, card, { noBiscuitKarma: true })
+            const shareInfo = this.game.getDogmaShareInfo(player, card)
 
             const subtitles = []
 
-            if (shareInfo.hasShare && shareInfo.sharing.length > 0) {
+            if (card.checkHasShare() && shareInfo.sharing.length > 0) {
               const shareNames = shareInfo.sharing.map(p => p.name).join(', ')
               subtitles.push(`share with ${shareNames}`)
             }
 
-            if (shareInfo.hasCompel && shareInfo.sharing.length > 0) {
+            if (card.checkHasCompelExplicit() && shareInfo.sharing.length > 0) {
               const compelNames = shareInfo.sharing.map(p => p.name).join(', ')
               subtitles.push(`compel ${compelNames}`)
             }
 
-            if (shareInfo.hasDemand && shareInfo.demanding.length > 0) {
+            if (card.checkHadDemandExplicit() && shareInfo.demanding.length > 0) {
               const demandNames = shareInfo.demanding.map(p => p.name).join(', ')
               subtitles.push(`demand ${demandNames}`)
             }

@@ -13,7 +13,7 @@ module.exports = {
     {
       trigger: 'dogma',
       kind: 'would-instead',
-      matches: (game, player, { featuredBiscuit }) => featuredBiscuit === 's',
+      matches: (game) => game.state.dogmaInfo.featuredBiscuit === 's',
       func: (game, player, { self }) => {
         const junkedCard = game.actions.drawAndJunk(player, game.getEffectAge(self, 10))
         game.aSuperExecute(self, player, junkedCard)

@@ -121,12 +121,12 @@ class UltimateActionManager extends BaseActionManager {
     }
 
     if (
-      !this.state.dogmaInfo.demanding
+      !this.state.dogmaInfo.isDemandEffect
       && this.state.dogmaInfo.acting
       && this.state.dogmaInfo.acting.name === player.name
       && !this.game.checkSameTeam(player, this.players.current())
     ) {
-      this.state.shared = true
+      this.state.dogmaInfo.shared = true
     }
 
     // Special handling for "The Big Bang"
@@ -162,7 +162,7 @@ class UltimateActionManager extends BaseActionManager {
       template: '{player} uses auspice on {card}',
       args: { player, card }
     })
-    this.dogma(player, card, { featuredBiscuit: 'p' })
+    this.dogma(player, card, { auspice: true })
   }
 
   choose(player, choices, opts={}) {

@@ -16,7 +16,7 @@ module.exports = {
       decree: 'War',
     },
     {
-      trigger: 'dogma-action',
+      trigger: 'dogma',
       kind: 'would-first',
       matches: () => true,
       func: (game, player) => {

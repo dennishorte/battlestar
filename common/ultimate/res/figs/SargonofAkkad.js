@@ -14,13 +14,13 @@ module.exports = {
       trigger: 'share-eligibility',
       triggerAll: true,
       kind: 'would-instead',
-      matches: (game, player, { shareData }) => {
-        const notEligibleCondition = !shareData.sharing.find(p => p.id === player.id)
+      matches: (game, player) => {
+        const notEligibleCondition = !game.state.dogmaInfo.sharing.find(p => p.id === player.id)
         const notCurrentPlayerCondition = game.players.current().id !== player.id
         return notEligibleCondition && notCurrentPlayerCondition
       },
-      func: (game, player, { shareData }) => {
-        shareData.sharing.push(player)
+      func: (game, player) => {
+        game.state.dogmaInfo.sharing.push(player)
         game.actions.junkAvailableAchievement(player, 1)
       }
     }

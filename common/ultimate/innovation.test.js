@@ -597,21 +597,36 @@ describe('Innovation', () => {
       })
 
       test('share', () => {
-        const game = t.fixtureTopCard('Writing')
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setColor(game, 'dennis', 'red', [])
-          t.setColor(game, 'micah', 'blue', ['Tools'])
+        const game = t.fixtureFirstPlayer()
+        t.setBoard(game, {
+          dennis: {
+            blue: ['Writing'],
+          },
+          micah: {
+            blue: ['Tools'],
+          },
+          decks: {
+            base: {
+              1: ['Sailing'],
+              2: ['Philosophy', 'Construction'],
+            }
+          }
         })
-        const request = game.run()
-        t.choose(game, request, 'Dogma.Writing')
 
-        const dennis = game.players.byName('dennis')
-        const dennisHandAges = game.zones.byPlayer(dennis, 'hand').cardlist().map(c => c.age).sort()
-        expect(dennisHandAges).toStrictEqual([1, 2])
+        let request
+        request = game.run()
+        request = t.choose(game, request, 'Dogma.Writing')
 
-        const micah = game.players.byName('micah')
-        const micahHandAges = game.zones.byPlayer(micah, 'hand').cardlist().map(c => c.age).sort()
-        expect(micahHandAges).toStrictEqual([2])
+        t.testBoard(game, {
+          dennis: {
+            blue: ['Writing'],
+            hand: ['Sailing', 'Construction'],
+          },
+          micah: {
+            blue: ['Tools'],
+            hand: ['Philosophy'],
+          },
+        })
       })
 
       test('no share', () => {

@@ -14,31 +14,69 @@ function DogmaAction(player, card, opts={}) {
 }
 
 function DogmaHelper(player, card, opts={}) {
-  // Pre-dogma allows for Muhammad Yunus to modify who has the sole-majority in an icon before
-  // share data is calculated.
-  const preKarmaKind = this.game.aKarma(player, 'pre-dogma', { ...opts, card })
-  if (preKarmaKind === 'would-instead') {
-    this.acted(player)
-    return
+  _statsRecordDogmaActions.call(this, player, card)
+
+  const biscuits = _getDogmaBiscuits.call(this, player, card, opts)
+  const featuredBiscuit = opts.auspice ? 'p' : card.dogmaBiscuit
+  const { sharing, demanding} = _getSharingAndDemanding.call(
+    this,
+    player,
+    featuredBiscuit,
+    biscuits,
+  )
+
+  const self = this
+
+  this.state.dogmaInfo = {
+    leader: player,
+    card: card,
+    shared: false,
+    earlyTerminate: false,
+
+    biscuits,          // Cached biscuits at the beginning of the dogma effect.
+    featuredBiscuit,   // Featured biscuit being used for determing sharing/demands, etc.
+
+    sharing,   // Array of players who will share during this dogma action.
+    demanding, // Array of players who will be subject to demands during this dogma action.
+
+    // Player who is currently executing an effect.
+    // This can be a player who is sharing or being demands.
+    acting: null,
+
+    // Tracks if the current effect is a demand effect.
+    isDemandEffect: false,
+
+    // Special case for The Big Bang
+    theBigBangChange: false,
+
+    opts,
+
+    // Needed for Muhammad Yunus
+    recalculateSharingAndDemanding() {
+      const { sharing, demanding } = _getSharingAndDemanding.call(
+        self,
+        player,
+        featuredBiscuit,
+        biscuits,
+      )
+      self.state.dogmaInfo.sharing = sharing
+      self.state.dogmaInfo.demanding = demanding
+    },
   }
 
-  const shareData = getDogmaShareInfo.call(this, player, card, opts)
-
-  // Sargon of Akkad, for example, modifies who can share.
-  for (const player2 of this.game.players.all()) {
-    this.game.aKarma(player2, 'share-eligibility', { ...opts, card, shareData, leader: player })
-  }
-
-  _initializeGlobalContext.call(this, shareData.biscuits, shareData.featuredBiscuit)
-
-  const karmaKind = this.game.aKarma(player, 'dogma', { ...opts, ...shareData, card })
+  const karmaKind = this.game.aKarma(player, 'dogma', { ...opts, card })
   if (karmaKind === 'would-instead') {
     this.acted(player)
     return
   }
 
-  _logSharing.call(this, shareData)
-  _executeEffects.call(this, player, card, shareData, opts)
+  // Sargon of Akkad, for example, modifies who can share.
+  for (const player2 of this.game.players.all()) {
+    this.game.aKarma(player2, 'share-eligibility', { ...opts, card, leader: player })
+  }
+
+  _logSharing.call(this)
+  _executeEffects.call(this, player, card, opts)
 
   if (this.state.dogmaInfo.earlyTerminate) {
     return
@@ -80,7 +118,7 @@ function EndorseAction(player, color) {
   this.log.outdent()
 }
 
-function _executeEffects(player, card, shareData, opts) {
+function _executeEffects(player, card, opts) {
   // Store planned effects now, as changes to the stacks shouldn't affect them.
   let effects = []
 
@@ -104,32 +142,19 @@ function _executeEffects(player, card, shareData, opts) {
 
   effects = effects.filter(e => e !== undefined)
 
-  const effectOpts = {
-    sharing: shareData.sharing,
-    demanding: shareData.demanding,
-    endorsed: opts.endorsed,
-    foreseen: opts.foreseen,
-  }
-
-  _statsRecordDogmaActions.call(this, player, card, effectOpts)
-
   for (const e of effects) {
     for (let i = 0; i < e.texts.length; i++) {
-      this.game.aOneEffect(player, e.card, e.texts[i], e.impls[i], effectOpts)
+      this.game.aOneEffect(player, e.card, e.texts[i], e.impls[i], {
+        sharing: this.state.dogmaInfo.sharing,
+        demanding: this.state.dogmaInfo.demanding,
+        endorsed: opts.endorsed,
+        foreseen: opts.foreseen,
+      })
       if (this.state.dogmaInfo.earlyTerminate) {
         return
       }
     }
   }
-}
-
-function _initializeGlobalContext(biscuits, featuredBiscuit) {
-  this.state.shared = false
-  this.state.couldShare = false
-
-  this.state.dogmaInfo.biscuits = biscuits
-  this.state.dogmaInfo.featuredBiscuit = featuredBiscuit
-  this.state.dogmaInfo.earlyTerminate = false
 }
 
 function _statsRecordDogmaActions(player, card) {
@@ -144,7 +169,7 @@ function _statsRecordDogmaActions(player, card) {
 
 function _shareBonus(player, card) {
   // Share bonus
-  if (this.state.shared) {
+  if (this.state.dogmaInfo.shared) {
     const shareKarmaKind = this.game.aKarma(player, 'share', { card })
     if (shareKarmaKind === 'would-instead') {
       this.acted(player)
@@ -166,14 +191,14 @@ function _shareBonus(player, card) {
   }
 
   // Grace Hopper and Susan Blackmore have "if your opponent didn't share" karma effects
-  else if (this.state.couldShare) {
+  else if (card.checkHasShare()) {
     for (const other of this.players.opponents(player)) {
       this.game.aKarma(player, 'no-share', { card })
     }
   }
 }
 
-function _getBiscuitComparator(player, featuredBiscuit, biscuits, opts) {
+function _getBiscuitComparator(player, featuredBiscuit, biscuits) {
   return (other) => {
     if (featuredBiscuit === 'score') {
       return this.game.getScore(other) >= this.game.getScore(player)
@@ -198,28 +223,8 @@ function _getDogmaBiscuits(player, card, opts) {
   return biscuits
 }
 
-function getDogmaShareInfo(player, card, opts={}) {
-  // Store the biscuits now because changes caused by the dogma action should
-  // not affect the number of biscuits used for evaluting the effect.
-  const biscuits = opts.biscuits || _getDogmaBiscuits.call(this, player, card, opts)
-
-  const featuredBiscuit = opts.featuredBiscuit || card.dogmaBiscuit
-
-  const { sharing, demanding } = _getSharingAndDemanding.call(this, player, featuredBiscuit, biscuits, opts)
-
-  return {
-    biscuits,
-    featuredBiscuit,
-    hasShare: card.checkHasShare(),
-    hasDemand: card.checkHasDemandExplicit(),
-    hasCompel: card.checkHasCompelExplicit(),
-    sharing,
-    demanding,
-  }
-}
-
-function _getSharingAndDemanding(player, featuredBiscuit, biscuits, opts={}) {
-  const biscuitComparator = _getBiscuitComparator.call(this, player, featuredBiscuit, biscuits, opts)
+function _getSharingAndDemanding(player, featuredBiscuit, biscuits) {
+  const biscuitComparator = _getBiscuitComparator.call(this, player, featuredBiscuit, biscuits)
   const otherPlayers = this.players.other(player)
 
   const sharing = otherPlayers.filter(p => biscuitComparator(p))
@@ -228,18 +233,18 @@ function _getSharingAndDemanding(player, featuredBiscuit, biscuits, opts={}) {
   return { sharing, demanding }
 }
 
-function _logSharing(shareData) {
-  if (shareData.sharing.length > 0) {
+function _logSharing() {
+  if (this.state.dogmaInfo.sharing.length > 0) {
     this.log.add({
       template: 'Effects will share with {players}.',
-      args: { players: shareData.sharing },
+      args: { players: this.state.dogmaInfo.sharing },
     })
   }
 
-  if (shareData.demanding.length > 0) {
+  if (this.state.dogmaInfo.demanding.length > 0) {
     this.log.add({
       template: 'Demands will be made of {players}.',
-      args: { players: shareData.demanding },
+      args: { players: this.state.dogmaInfo.demanding },
     })
   }
 }
@@ -249,5 +254,7 @@ module.exports = {
   DogmaAction,
   EndorseAction,
 
-  getDogmaShareInfo, // used by UI in app
+  getDogmaShareInfo(player, card) {
+    return _getSharingAndDemanding(player, card.dogmaBiscuit, this.getBiscuits())
+  },
 }

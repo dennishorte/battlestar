@@ -11,7 +11,7 @@ module.exports = {
   ],
   karmaImpl: [
     {
-      trigger: 'dogma-action',
+      trigger: 'dogma',
       triggerAll: true,
       kind: 'would-instead',
       matches: (game, player, { owner }) => player.isOpponent(owner),
