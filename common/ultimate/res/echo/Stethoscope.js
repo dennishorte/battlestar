@@ -18,11 +18,11 @@ module.exports = {
         const melded = game.state.dogmaInfo.stethoscope[player.name]
         if (melded && melded.some(card => card.color === 'blue')) {
           game.actions.draw(player, { age: game.getEffectAge(self, 8) })
-        }
 
-        game.log.addForeseen(foreseen, self)
-        if (foreseen) {
-          game.actions.draw(player, { age: game.getEffectAge(self, 9) })
+          game.log.addForeseen(foreseen, self)
+          if (foreseen) {
+            game.actions.draw(player, { age: game.getEffectAge(self, 9) })
+          }
         }
       }
       else {
