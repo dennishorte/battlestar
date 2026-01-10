@@ -16,14 +16,14 @@ module.exports = {
       triggerAll: true,
       kind: 'would-first',
       matches: (game, player, { card }) => card.checkHasDemand(),
-      func: (game, player, { card }) => {
+      func: (game, player, { card, owner }) => {
         const mayTransfer = game
           .cards
           .topsAll()
           .filter(other => other.color !== card.color)
           .filter(other => other.checkHasBiscuit('l'))
 
-        const toTransfer = game.actions.chooseCard(player, mayTransfer, {
+        const toTransfer = game.actions.chooseCard(owner, mayTransfer, {
           title: 'Choose a card to transfer',
         })
 
@@ -34,9 +34,9 @@ module.exports = {
             .filter(p => p.id !== toTransfer.owner.id)
             .map(p => game.zones.byPlayer(p, toTransfer.color))
 
-          const transferZone = game.actions.chooseZone(player, transferZoneOptions)
+          const transferZone = game.actions.chooseZone(owner, transferZoneOptions)
 
-          game.actions.transfer(player, toTransfer, transferZone)
+          game.actions.transfer(owner, toTransfer, transferZone)
         }
       }
     },
