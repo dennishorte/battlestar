@@ -20,3 +20,14 @@ module.exports = {
   ...BaseZone,
   ...BaseZoneManager,
 }
+
+// Also export types
+export * from './BaseActionManager.js'
+export * from './BaseCard.js'
+export * from './BaseCardManager.js'
+export * from './BaseLogManager.js'
+export * from './BasePlayer.js'
+export * from './BasePlayerManager.js'
+export * from './BaseZone.js'
+export * from './BaseZoneManager.js'
+export * from './GameProxy.js'

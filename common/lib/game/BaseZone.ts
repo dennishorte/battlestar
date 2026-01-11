@@ -1,3 +1,4 @@
+import type { Game } from './GameProxy.js'
 const { GameProxy } = require('./GameProxy.js')
 const util = require('../util.js')
 
@@ -5,40 +6,69 @@ const ZONE_KIND = {
   public: 'public',
   private: 'private',
   hidden: 'hidden'
+} as const
+
+type ZoneKind = typeof ZONE_KIND[keyof typeof ZONE_KIND]
+
+// Forward declarations for circular dependencies
+interface BaseCard {
+  id: string | null
+  zone: BaseZone | null
+  setHome(zone: BaseZone): void
+  setZone(zone: BaseZone): void
+  hide(): void
+  reveal(): void
+  revealed(): boolean
+  show(player: BasePlayer): void
+  visible(player: BasePlayer): boolean
 }
 
+interface BasePlayer {
+  name: string
+}
 
 class BaseZone {
-  constructor(game, id, name, kind, owner=null) {
+  id: string
+  game: Game
+
+  private _name: string
+  private _kind: ZoneKind
+  private _owner: BasePlayer | null
+  private _cards: BaseCard[]
+  private _initialized: boolean
+
+  constructor(game: Game, id: string, name: string, kind: ZoneKind, owner: BasePlayer | null = null) {
     this.id = id
     this.game = game
 
     this._name = name
     this._kind = kind
     this._owner = owner
+    this._cards = []
+    this._initialized = false
 
     const proxy = GameProxy.create(this)
     this.reset.call(proxy)
     return proxy
   }
 
-  cardlist() {
+  cardlist(): BaseCard[] {
     return [...this._cards]
   }
 
-  kind() {
+  kind(): ZoneKind {
     return this._kind
   }
 
-  name() {
+  name(): string {
     return this._name
   }
 
-  owner() {
+  owner(): BasePlayer | null {
     return this._owner
   }
 
-  initializeCards(cards) {
+  initializeCards(cards: BaseCard[]): void {
     if (this._initialized) {
       throw new Error('Zone already initialized')
     }
@@ -52,7 +82,7 @@ class BaseZone {
     }
   }
 
-  reset() {
+  reset(): void {
     this._cards = []
     this._initialized = false
   }
@@ -60,9 +90,9 @@ class BaseZone {
   /**
    * Negative indices push from the back of the cards array, the same as with array.splice.
    */
-  push(card, index) {
+  push(card: BaseCard, index: number): void {
     if (card.zone) {
-      card.zone.remove(card)
+      (card.zone as BaseZone).remove(card)
     }
 
     if (index > this._cards.length) {
@@ -74,11 +104,11 @@ class BaseZone {
     card.setZone(this)
   }
 
-  peek(index=0) {
+  peek(index: number = 0): BaseCard | undefined {
     return this._cards.at(index)
   }
 
-  remove(card) {
+  remove(card: BaseCard): void {
     const index = this._cards.findIndex(c => c.id === card.id)
     if (index === -1) {
       throw new Error(`Card (${card.id}) not found in zone (${this.id})`)
@@ -89,22 +119,22 @@ class BaseZone {
   ////////////////////////////////////////////////////////////////////////////////
   // Misc
 
-  nextIndex() {
+  nextIndex(): number {
     return this._cards.length
   }
 
-  random() {
+  random(): BaseCard {
     return util.array.select(this._cards, this.game.random)
   }
 
   ////////////////////////////////////////////////////////////////////////////////
   // Ordering
 
-  shuffle() {
+  shuffle(): void {
     util.array.shuffle(this._cards, this.game.random)
   }
 
-  shuffleTop(count) {
+  shuffleTop(count: number): void {
     if (!count || count < 1 || count > this._cards.length) {
       throw new Error(`Invalid count: ${count}`)
     }
@@ -116,7 +146,7 @@ class BaseZone {
     this._cards.splice(0, count, ...topCards)
   }
 
-  shuffleBottom(count) {
+  shuffleBottom(count: number): void {
     if (!count || count < 1 || count > this._cards.length) {
       throw new Error(`Invalid count: ${count}`)
     }
@@ -129,18 +159,18 @@ class BaseZone {
     this._cards.splice(startIndex, count, ...bottomCards)
   }
 
-  shuffleBottomVisible() {
+  shuffleBottomVisible(): void {
     throw new Error('not implemented')
   }
 
-  sort(fn) {
+  sort(fn: (l: BaseCard, r: BaseCard) => number): void {
     this._cards.sort((l, r) => fn(l, r))
   }
 
-  sortByName() {
+  sortByName(): void {
     this.sort((l, r) => {
-      const lName = typeof l.name === 'function' ? l.name() : l.name
-      const rName = typeof r.name === 'function' ? r.name() : r.name
+      const lName = typeof (l as any).name === 'function' ? (l as any).name() : (l as any).name
+      const rName = typeof (r as any).name === 'function' ? (r as any).name() : (r as any).name
       return lName.localeCompare(rName)
     })
   }
@@ -148,15 +178,15 @@ class BaseZone {
   ////////////////////////////////////////////////////////////////////////////////
   // Visibility
 
-  hide() {
+  hide(): void {
     this._cards.forEach(card => card.hide())
   }
 
-  reveal() {
+  reveal(): void {
     this._cards.forEach(card => card.reveal())
   }
 
-  revealNext() {
+  revealNext(): void {
     for (let i = 0; i < this._cards.length; i++) {
       const card = this._cards[i]
       if (!card.revealed()) {
@@ -166,16 +196,16 @@ class BaseZone {
     }
   }
 
-  revealRandom() {
+  revealRandom(): void {
     const card = util.array.select(this._cards, this.game.random)
     card.reveal()
   }
 
-  show(player) {
+  show(player: BasePlayer): void {
     this._cards.forEach(card => card.show(player))
   }
 
-  showNext(player) {
+  showNext(player: BasePlayer): void {
     for (let i = 0; i < this._cards.length; i++) {
       const card = this._cards[i]
       if (!card.visible(player)) {
@@ -185,21 +215,21 @@ class BaseZone {
     }
   }
 
-  showRandom(player) {
+  showRandom(player: BasePlayer): void {
     const card = util.array.select(this._cards, this.game.random)
     card.show(player)
   }
 
   ////////////////////////////////////////////////////////////////////////////////
   // Protected
-  _updateCardVisibility(card) {
+  _updateCardVisibility(card: BaseCard): void {
     switch (this._kind) {
       case ZONE_KIND.public:
         card.reveal()
         break
 
       case ZONE_KIND.private:
-        card.show(this.owner())
+        card.show(this.owner()!)
         break
 
       case ZONE_KIND.hidden:
@@ -216,3 +246,5 @@ module.exports = {
   BaseZone,
   ZONE_KIND,
 }
+
+export { BaseZone, ZONE_KIND, ZoneKind }

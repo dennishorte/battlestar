@@ -1,7 +1,51 @@
+import type { Game } from './GameProxy.js'
 const { GameProxy } = require('./GameProxy.js')
 
+interface PlayerData {
+  _id: string
+  name: string
+  team?: string
+  [key: string]: unknown
+}
+
+interface LogEntry {
+  template: string
+  args: Record<string, unknown>
+  classes?: string[]
+}
+
+interface LogManager {
+  add(entry: LogEntry): void
+}
+
+interface PlayerManager {
+  current(): BasePlayer
+}
+
+interface CounterOptions {
+  silent?: boolean
+}
+
 class BasePlayer {
-  constructor(game, data) {
+  game: Game
+
+  _id: string
+  id: string
+  name: string
+  team: string
+
+  index: number | undefined  // deprecated version of seatNumber
+  seatNumber: number | undefined
+
+  eliminated: boolean
+
+  counters: Record<string, number>
+
+  // Proxied properties from game
+  declare log: LogManager
+  declare players: PlayerManager
+
+  constructor(game: Game, data: PlayerData) {
     this.game = game
 
     this._id = data._id
@@ -19,19 +63,19 @@ class BasePlayer {
     return GameProxy.create(this)
   }
 
-  addCounter(name, count=0) {
+  addCounter(name: string, count: number = 0): void {
     this.counters[name] = count
   }
 
-  decrementCounter(name, count=1) {
+  decrementCounter(name: string, count: number = 1): void {
     this.incrementCounter(name, -count)
   }
 
-  getCounter(name) {
+  getCounter(name: string): number {
     return this.counters[name] || 0
   }
 
-  incrementCounter(name, count=1, opts={}) {
+  incrementCounter(name: string, count: number = 1, opts: CounterOptions = {}): void {
     if (!opts.silent) {
       this.log.add({
         template: "{player} '{counter}': {initial} {sign} {amount} = {final}",
@@ -50,15 +94,15 @@ class BasePlayer {
     this.counters[name] += count
   }
 
-  isCurrentPlayer() {
-    return this.game.players.current().id === this.id
+  isCurrentPlayer(): boolean {
+    return this.players.current().id === this.id
   }
 
-  isOpponent(other) {
+  isOpponent(other: BasePlayer): boolean {
     return this.team !== other.team
   }
 
-  setCounter(name, value, opts={}) {
+  setCounter(name: string, value: number, opts: CounterOptions = {}): void {
     if (!opts.silent) {
       this.log.add({
         template: "{player} '{counter}': set from {initial} to {final}",
@@ -75,9 +119,11 @@ class BasePlayer {
     this.counters[name] = value
   }
 
-  static isActive(player) {
+  static isActive(player: BasePlayer): boolean {
     return !player.eliminated
   }
 }
 
 module.exports = { BasePlayer }
+
+export { BasePlayer, PlayerData, CounterOptions }

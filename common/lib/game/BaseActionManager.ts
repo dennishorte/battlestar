@@ -1,14 +1,60 @@
+import type { Game } from './GameProxy.js'
 const { GameProxy } = require('./GameProxy.js')
 const selector = require('../selector.js')
 const util = require('../util.js')
 
+// Forward declarations for circular dependencies
+interface BasePlayer {
+  name: string
+}
+
+interface BaseCard {
+  id: string | null
+  name?: string | (() => string)
+}
+
+interface LogManager {
+  add(entry: { template: string; args?: Record<string, unknown>; classes?: string[] }): void
+  addNoEffect(): void
+  addDoNothing(player: BasePlayer): void
+}
+
+interface ChooseOptions {
+  title?: string
+  min?: number
+  max?: number
+  count?: number
+  guard?: (cards: BaseCard[]) => boolean
+  [key: string]: unknown
+}
+
+interface ChooseSelector {
+  actor: string
+  choices: unknown[]
+  title?: string
+  min?: number
+  max?: number
+  count?: number
+  [key: string]: unknown
+}
+
+interface NestedSelection {
+  title: string
+  selection: unknown[]
+}
+
 class BaseActionManager {
-  constructor(game) {
+  game: Game
+
+  // Proxied property from game
+  declare log: LogManager
+
+  constructor(game: Game) {
     this.game = game
     return GameProxy.create(this)
   }
 
-  choose(player, choices, opts={}) {
+  choose(player: BasePlayer, choices: unknown[], opts: ChooseOptions = {}): unknown[] {
     if (choices.length === 0) {
       this.log.addNoEffect()
       return []
@@ -19,13 +65,13 @@ class BaseActionManager {
       opts.title = '(optional) ' + title
     }
 
-    const chooseSelector = {
+    const chooseSelector: ChooseSelector = {
       actor: player.name,
       choices: choices,
       ...opts
     }
 
-    const selected = this.game.requestInputSingle(chooseSelector)
+    const selected = this.game.requestInputSingle(chooseSelector) as unknown[]
 
     this._validateChooseResponse(selected, chooseSelector)
 
@@ -38,7 +84,7 @@ class BaseActionManager {
     }
   }
 
-  _validateChooseResponse(selected, chooseSelector) {
+  _validateChooseResponse(selected: unknown[], chooseSelector: ChooseSelector): boolean {
     // Validate counts
     const { min, max } = selector.minMax(chooseSelector)
     if (selected.length < min || selected.length > max) {
@@ -63,11 +109,12 @@ class BaseActionManager {
     return true
   }
 
-  _validateChooseResponse_getIndexOfSelection(selection, choices) {
-    if (typeof selection === 'object') {
-      const index = choices.findIndex(ch => ch.title === selection.title)
-      const option = choices[index]
-      this._validateChooseResponse(selection.selection, option)
+  _validateChooseResponse_getIndexOfSelection(selection: unknown, choices: unknown[]): number {
+    if (typeof selection === 'object' && selection !== null) {
+      const nestedSelection = selection as NestedSelection
+      const index = (choices as NestedSelection[]).findIndex(ch => ch.title === nestedSelection.title)
+      const option = choices[index] as ChooseSelector
+      this._validateChooseResponse(nestedSelection.selection, option)
 
       // If _validateChooseResponse doesn't throw an exception, it succeeded.
       return index
@@ -77,18 +124,18 @@ class BaseActionManager {
     }
   }
 
-  chooseCard(player, choices, opts={}) {
+  chooseCard(player: BasePlayer, choices: BaseCard[], opts: ChooseOptions = {}): BaseCard | undefined {
     return this.chooseCards(player, choices, opts)[0]
   }
 
-  chooseCards(player, choices, opts={}) {
+  chooseCards(player: BasePlayer, choices: BaseCard[], opts: ChooseOptions = {}): BaseCard[] {
     while (true) {
-      const choiceNames = choices.map(c => c.name).sort()
-      const selection = this.choose(player, choiceNames, opts)
-      const used = []
+      const choiceNames = choices.map(c => (c as any).name).sort()
+      const selection = this.choose(player, choiceNames, opts) as string[]
+      const used: BaseCard[] = []
 
       const selectedCards = selection.map(s => {
-        const card = choices.find(c => c.name === s && !used.some(u => u.id === c.id))
+        const card = choices.find(c => (c as any).name === s && !used.some(u => u.id === c.id))!
         used.push(card)
         return card
       })
@@ -103,24 +150,24 @@ class BaseActionManager {
     }
   }
 
-  choosePlayer(player, choices, opts={}) {
+  choosePlayer(player: BasePlayer, choices: BasePlayer[], opts: ChooseOptions = {}): BasePlayer | undefined {
     const playerNames = this.choose(
       player,
       choices.map(player => player.name),
       { ...opts, title: 'Choose Player' },
-    )
+    ) as string[]
     return choices.find(p => p.name === playerNames[0])
   }
 
-  chooseYesNo(player, title) {
-    const choice = this.choose(player, ['yes', 'no'], { title, count: 1 })
+  chooseYesNo(player: BasePlayer, title: string): boolean {
+    const choice = this.choose(player, ['yes', 'no'], { title, count: 1 }) as string[]
     return choice[0] === 'yes'
   }
 
-  flipCoin(player) {
-    const choice = this.choose(player, ['heads', 'tails'], {
+  flipCoin(player: BasePlayer): boolean {
+    const choice = (this.choose(player, ['heads', 'tails'], {
       title: 'Call it...'
-    })[0]
+    }) as string[])[0]
     const value = this.game.random() < .5 ? 'heads' : 'tails'
 
     this.log.add({
@@ -135,7 +182,7 @@ class BaseActionManager {
     return value === choice
   }
 
-  rollDie(player, faces) {
+  rollDie(player: BasePlayer, faces: number): void {
     const result = Math.floor(this.game.random() * faces) + 1
 
     const extra = faces === 2
@@ -153,3 +200,5 @@ class BaseActionManager {
 module.exports = {
   BaseActionManager,
 }
+
+export { BaseActionManager, ChooseOptions, ChooseSelector }

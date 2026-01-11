@@ -1,6 +1,27 @@
+import type { Game } from './GameProxy.js'
+import type { BasePlayer } from './BasePlayer.js'
+
+interface LogArgValue {
+  value: unknown
+  classes?: string[]
+}
+
+type LogArgHandler = (value: unknown) => LogArgValue
+
+interface LogMessage {
+  template: string
+  args?: Record<string, unknown>
+  classes?: string[]
+}
 
 class Chat {
-  constructor(playerName, text, position) {
+  id: number
+  author: string
+  position: number
+  text: string
+  type: 'chat'
+
+  constructor(playerName: string, text: string, position: number) {
     this.id = Date.now()
     this.author = playerName
     this.position = position
@@ -10,25 +31,49 @@ class Chat {
 }
 
 class LogEntry {
-  constructor(id, indent, template, args, classes) {
+  id: number
+  indent: number
+  template: string
+  args: Record<string, LogArgValue>
+  classes: string[]
+  type: 'log'
+
+  constructor(id: number, indent: number, template: string, args: Record<string, unknown>, classes: string[]) {
     this.id = id
     this.indent = indent
     this.template = template
-    this.args = args
+    this.args = args as Record<string, LogArgValue>
     this.classes = classes
     this.type = 'log'
   }
 }
 
+interface ResponseData {
+  actor: string
+  [key: string]: unknown
+}
+
 class Response {
-  constructor(data) {
+  data: ResponseData
+  type: 'response-received'
+
+  constructor(data: ResponseData) {
     this.data = data
     this.type = 'response-received'
   }
 }
 
+type MergedEntry = Chat | LogEntry | Response
+
 class BaseLogManager {
-  constructor(game, chat, viewerName) {
+  protected _game: Game
+  protected _chat: Chat[]
+  protected _log: (LogEntry | Response)[]
+  protected _indent: number
+  protected _viewerName: string | undefined
+  protected _logArgHandlers: Map<string, LogArgHandler>
+
+  constructor(game: Game, chat?: Chat[], viewerName?: string) {
     this._game = game
     this._chat = chat || []
     this._log = []
@@ -41,7 +86,7 @@ class BaseLogManager {
   ////////////////////////////////////////////////////////////////////////////////
   // Actions
 
-  add(msg) {
+  add(msg: LogMessage): void {
     if (!msg.template) {
       console.log(msg)
       throw new Error('Log entry missing template')
@@ -61,36 +106,36 @@ class BaseLogManager {
     this._log.push(entry)
   }
 
-  addDoNothing(player) {
+  addDoNothing(player: BasePlayer): void {
     this.add({
       template: '{player} does nothing',
       args: { player },
     })
   }
 
-  addNoEffect() {
+  addNoEffect(): void {
     this.add({ template: 'no effect' })
   }
 
-  chat(playerName, text) {
+  chat(playerName: string, text: string): void {
     const chat = new Chat(playerName, text, this._log.length)
     this._chat.push(chat)
   }
 
-  deleteChat(id) {
+  deleteChat(id: number): void {
     const index = this._chat.findIndex(c => c.id === id)
     this._chat.splice(index, 1)
   }
 
-  indent(count=1) {
+  indent(count: number = 1): void {
     this._indent += count
   }
 
-  outdent(count=1) {
+  outdent(count: number = 1): void {
     this._indent -= count
   }
 
-  reindexChat() {
+  reindexChat(): void {
     const maxIndex = this._log.length
     for (const chat of this._chat) {
       if (chat.position > maxIndex) {
@@ -99,45 +144,45 @@ class BaseLogManager {
     }
   }
 
-  reset() {
+  reset(): void {
     this._log = []
   }
 
   // This allows the log to calculate and find new messages for a given player.
-  responseReceived(data) {
+  responseReceived(data: ResponseData): void {
     const resp = new Response(data)
     this._log.push(resp)
   }
 
-  setIndent(value) {
+  setIndent(value: number): void {
     this._indent = value <= 0 ? 0 : value
   }
 
-  setChat(chat) {
+  setChat(chat: Chat[]): void {
     this._chat = chat
   }
 
   ////////////////////////////////////////////////////////////////////////////////
   // Getters
 
-  getChat() {
+  getChat(): Chat[] {
     return [...this._chat]
   }
 
-  getLog() {
+  getLog(): (LogEntry | Response)[] {
     return [...this._log]
   }
 
-  getIndent() {
+  getIndent(): number {
     return this._indent
   }
 
-  merged() {
+  merged(): MergedEntry[] {
     if (this._chat.length === 0) {
       return this.getLog()
     }
 
-    const output = []
+    const output: MergedEntry[] = []
 
     let chatIndex = 0
     let logIndex = 0
@@ -159,8 +204,8 @@ class BaseLogManager {
     return output
   }
 
-  newChatsCount(playerOrName) {
-    const playerName = playerOrName.name ? playerOrName.name : playerOrName
+  newChatsCount(playerOrName: BasePlayer | string): number {
+    const playerName = typeof playerOrName === 'object' && playerOrName.name ? playerOrName.name : playerOrName as string
 
     // See if any chats exist before the last response of this player.
     // If yes, assume they are new.
@@ -185,36 +230,36 @@ class BaseLogManager {
   ////////////////////////////////////////////////////////////////////////////////
   // Handler system
 
-  registerHandler(key, handler) {
+  registerHandler(key: string, handler: LogArgHandler): void {
     this._logArgHandlers.set(key, handler)
   }
 
-  unregisterHandler(key) {
+  unregisterHandler(key: string): void {
     this._logArgHandlers.delete(key)
   }
 
-  _registerDefaultHandlers() {
+  _registerDefaultHandlers(): void {
     // Handler for 'players' key
     this.registerHandler('players', (players) => ({
-      value: players.map(p => p.name || p).join(', '),
+      value: (players as BasePlayer[]).map(p => p.name || p).join(', '),
       classes: ['player-names'],
     }))
 
     // Handler for keys starting with 'player'
     this.registerHandler('player*', (player) => ({
-      value: player.name || player,
+      value: (player as BasePlayer).name || player,
       classes: ['player-name']
     }))
 
     // Handler for keys starting with 'card'
     this.registerHandler('card*', (card) => ({
-      value: card.id,
+      value: (card as { id: string }).id,
       classes: ['card-id'],
     }))
 
     // Handler for keys starting with 'zone'
     this.registerHandler('zone*', (zone) => ({
-      value: zone.name(),
+      value: (zone as { name(): string }).name(),
       classes: ['zone-name']
     }))
   }
@@ -223,13 +268,13 @@ class BaseLogManager {
   // protected members
 
 
-  _enrichLogArgs(entry) {
+  _enrichLogArgs(entry: LogEntry): void {
     for (const key of Object.keys(entry.args)) {
-      let handler = null
+      let handler: LogArgHandler | null = null
 
       // Check for exact key match first
       if (this._logArgHandlers.has(key)) {
-        handler = this._logArgHandlers.get(key)
+        handler = this._logArgHandlers.get(key)!
       }
       // Check for wildcard patterns (keys ending with '*')
       else {
@@ -253,8 +298,8 @@ class BaseLogManager {
     }
   }
 
-  // eslint-disable-next-line
-  _postEnrichArgs(entry) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _postEnrichArgs(entry: LogEntry): boolean {
     return false
   }
 }
@@ -264,3 +309,4 @@ module.exports = {
   BaseLogManager,
 }
 
+export { BaseLogManager, LogEntry, Chat, Response, LogMessage, LogArgHandler, LogArgValue }
