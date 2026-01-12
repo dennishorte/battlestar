@@ -1,23 +1,48 @@
-module.exports = {
-  apply,
-  toString,
+interface LogArg {
+  value: unknown
+  classes?: string[]
 }
 
-function apply(entry) {
+interface LogEntry {
+  type?: 'chat' | 'log'
+  template: string
+  args: Record<string, LogArg>
+  indent: number
+  author?: string
+  text?: string
+}
+
+interface ChatEntry {
+  type: 'chat'
+  author: string
+  text: string
+}
+
+interface Token {
+  substitute: boolean
+  token: string
+}
+
+interface FormattedToken {
+  classes: string
+  value: unknown
+}
+
+function apply(entry: LogEntry): FormattedToken[] {
   return templateSubstitute(entry.template, entry.args)
 }
 
-function toString(entry) {
+function toString(entry: LogEntry | ChatEntry): string {
   if (entry.type === 'chat') {
     return `chat> ${entry.author} ${entry.text}`
   }
 
   else {
-    const tokens = templateSubstitute(entry.template, entry.args)
+    const tokens = templateSubstitute((entry as LogEntry).template, (entry as LogEntry).args)
     const message = tokens.map(t => t.value).join('')
 
     let indent = ''
-    for (let i = 0; i < entry.indent; i++) {
+    for (let i = 0; i < (entry as LogEntry).indent; i++) {
       indent += '..'
     }
 
@@ -25,7 +50,7 @@ function toString(entry) {
   }
 }
 
-function templateSubstitute(template, args) {
+function templateSubstitute(template: string, args: Record<string, LogArg>): FormattedToken[] {
   const tokens = templateTokenize(template)
 
   return tokens.map(({ substitute, token }) => {
@@ -53,12 +78,12 @@ function templateSubstitute(template, args) {
   })
 }
 
-function templateTokenize(template) {
+function templateTokenize(template: string): Token[] {
   let prev = 0
-  let state = 'out'
-  const tokens = []
+  let state: 'in' | 'out' = 'out'
+  const tokens: Token[] = []
 
-  const push = function(token, substitute) {
+  const push = function(token: string, substitute: boolean): void {
     tokens.push({
       substitute: substitute,
       token: token,
@@ -96,3 +121,10 @@ function templateTokenize(template) {
 
   return tokens
 }
+
+module.exports = {
+  apply,
+  toString,
+}
+
+export { apply, toString, LogEntry, ChatEntry, LogArg, FormattedToken }

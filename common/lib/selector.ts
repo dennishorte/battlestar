@@ -1,13 +1,47 @@
 const util = require('./util.js')
 
-
-module.exports = {
-  minMax,
-  validate,
+interface Choice {
+  title: string
+  choices?: Choice[]
+  selection?: Choice[]
+  extra?: boolean
+  exclusive?: boolean
 }
 
+interface Selector {
+  title?: string
+  choices?: Choice[] | string[]
+  selection?: Choice[] | string[]
+  count?: number
+  min?: number
+  max?: number
+}
 
-function validate(selector, selection, opts={}) {
+interface Annotation {
+  isValid?: boolean
+  mismatch?: string
+}
+
+interface AnnotatedSelector extends Selector {
+  annotation?: Annotation
+}
+
+interface ValidateOptions {
+  annotate?: boolean
+  ignoreTitle?: boolean
+}
+
+interface ValidateResult {
+  valid: boolean
+  mismatch?: string
+}
+
+interface MinMaxResult {
+  min: number
+  max: number
+}
+
+function validate(selector: Selector, selection: Selector, opts: ValidateOptions = {}): ValidateResult {
   if (!opts.annotate) {
     selector = util.deepcopy(selector)
     selection = util.deepcopy(selection)
@@ -20,7 +54,7 @@ function validate(selector, selection, opts={}) {
   )
 }
 
-function _normalize(selector) {
+function _normalize(selector: Selector): Selector {
   const choices = selector.choices || selector.selection
   if (!choices) {
     return selector
@@ -30,16 +64,16 @@ function _normalize(selector) {
     const opt = choices[i]
 
     if (typeof opt === 'string') {
-      choices[i] = { title: opt }
+      (choices as Choice[])[i] = { title: opt }
     }
     else {
-      choices[i] = _normalize(opt)
+      (choices as Choice[])[i] = _normalize(opt as Selector) as Choice
     }
   }
   return selector
 }
 
-function _validate(selector, selection, opts) {
+function _validate(selector: Selector, selection: AnnotatedSelector, opts: ValidateOptions): ValidateResult {
   if (opts.annotate) {
     selection.annotation = {}
   }
@@ -47,8 +81,8 @@ function _validate(selector, selection, opts) {
   // If titles don't match, doesn't matter how the choices line up.
   if (!opts.ignoreTitle && selector.title !== selection.title) {
     if (opts.annotate) {
-      selection.annotation.isValid = false
-      selection.annotation.mismatch = 'title'
+      selection.annotation!.isValid = false
+      selection.annotation!.mismatch = 'title'
     }
     return {
       valid: false,
@@ -59,12 +93,12 @@ function _validate(selector, selection, opts) {
   const { min, max } = minMax(selector)
 
   // Test each selection in selection to see if it matches a valid choice in selector
-  const unused = [...selector.choices]
-  const matched = []
-  const unmatched = []
+  const unused = [...(selector.choices as Choice[])]
+  const matched: Choice[] = []
+  const unmatched: Choice[] = []
   let exclusive = false
   let count = 0
-  for (const sel of selection.selection) {
+  for (const sel of (selection.selection as Choice[])) {
     for (const opt of unused) {
       if (sel.title === opt.title) {
         let match = true
@@ -75,7 +109,7 @@ function _validate(selector, selection, opts) {
             match = false
           }
           else {
-            match = _validate(opt, sel, opts).valid
+            match = _validate(opt as Selector, sel as AnnotatedSelector, opts).valid
           }
         }
 
@@ -106,8 +140,8 @@ function _validate(selector, selection, opts) {
   }
   else if (exclusive && count > 1) {
     if (opts.annotate) {
-      selection.annotation.isValid = false
-      selection.annotation.mismatch = 'exclusive'
+      selection.annotation!.isValid = false
+      selection.annotation!.mismatch = 'exclusive'
     }
     return {
       valid: false,
@@ -116,14 +150,14 @@ function _validate(selector, selection, opts) {
   }
   else if (min <= count && count <= max) {
     if (opts.annotate) {
-      selection.annotation.isValid = true
+      selection.annotation!.isValid = true
     }
     return { valid: true }
   }
   else {
     if (opts.annotate) {
-      selection.annotation.isValid = false
-      selection.annotation.mismatch = `failed test: ${min} <= ${count} <= ${max}`
+      selection.annotation!.isValid = false
+      selection.annotation!.mismatch = `failed test: ${min} <= ${count} <= ${max}`
     }
     return {
       valid: false,
@@ -132,9 +166,9 @@ function _validate(selector, selection, opts) {
   }
 }
 
-function minMax(selector) {
-  let min
-  let max
+function minMax(selector: Selector): MinMaxResult {
+  let min: number
+  let max: number
 
   if (selector.count) {
     min = selector.count
@@ -146,20 +180,27 @@ function minMax(selector) {
   }
   else if (selector.min !== undefined && selector.max === undefined) {
     min = selector.min
-    max = selector.choices.length
+    max = (selector.choices as unknown[]).length
   }
   else if (selector.min === undefined && selector.max !== undefined) {
     min = 0
     max = selector.max
   }
   else {
-    min = selector.min
-    max = selector.max
+    min = selector.min!
+    max = selector.max!
   }
   util.assert(min <= max, `min (${min}) must be <= max (${max})`)
 
-  min = Math.min(min, selector.choices.length)
-  max = Math.min(max, selector.choices.length)
+  min = Math.min(min, (selector.choices as unknown[]).length)
+  max = Math.min(max, (selector.choices as unknown[]).length)
 
   return { min, max }
 }
+
+module.exports = {
+  minMax,
+  validate,
+}
+
+export { minMax, validate, Selector, Choice, ValidateOptions, ValidateResult, MinMaxResult }
