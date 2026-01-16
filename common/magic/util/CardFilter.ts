@@ -1,5 +1,47 @@
+interface CardFilterOptions {
+  kind: string
+  value: string | string[]
+  operator?: string | null
+  or?: boolean
+  only?: boolean
+  red?: boolean | null
+  green?: boolean | null
+  black?: boolean | null
+  white?: boolean | null
+  blue?: boolean | null
+}
+
+interface FilterableCard {
+  isLegalIn(format: string): boolean
+  colors(): string[]
+  colorIdentity(): string[]
+  numFaces(): number
+  cmc(faceIndex?: number): number | null
+  power(faceIndex?: number): number | string | null
+  toughness(faceIndex?: number): number | string | null
+  loyalty(faceIndex?: number): number | string | null
+  defense(faceIndex?: number): number | string | null
+  name(faceIndex?: number): string | null
+  oracleText(faceIndex?: number): string | null
+  flavorText(faceIndex?: number): string | null
+  set(faceIndex?: number): string | null
+  typeLine(faceIndex?: number): string | null
+  [key: string]: unknown
+}
+
 class CardFilter {
-  constructor(opts) {
+  kind: string
+  value: string | string[]
+  operator: string | null
+  or: boolean
+  only: boolean
+  red: boolean | null
+  green: boolean | null
+  black: boolean | null
+  white: boolean | null
+  blue: boolean | null
+
+  constructor(opts: CardFilterOptions) {
     this.kind = opts.kind
     this.value = opts.value
     this.operator = opts.operator || null
@@ -13,15 +55,15 @@ class CardFilter {
     this.blue = opts.blue || null
   }
 
-  matches(card) {
+  matches(card: FilterableCard): boolean {
     if (this.kind === 'legality') {
-      return card.isLegalIn(this.value)
+      return card.isLegalIn(this.value as string)
     }
     else if (this.kind === 'colors' || this.kind === 'identity') {
       const fieldValue = (this.kind === 'colors' ? card.colors() : card.colorIdentity()).map(c => c.toLowerCase())
-      const targetValueMatches = ['white', 'blue', 'black', 'red', 'green']
+      const targetValueMatches = (['white', 'blue', 'black', 'red', 'green'] as const)
         .map(color => this[color] ? colorNameToSymbol[color] : undefined)
-        .filter(symbol => symbol !== undefined)
+        .filter((symbol): symbol is string => symbol !== undefined)
         .map(symbol => fieldValue.includes(symbol))
 
       // If no colors are specified in the filter, match only colorless cards
@@ -53,29 +95,30 @@ class CardFilter {
       }
     }
     else {
-      const fieldKey = fieldMapping[this.kind]
+      const fieldKey = fieldMapping[this.kind as keyof typeof fieldMapping]
 
       // Check if the field is valid before proceeding
       if (!fieldKey) {
         throw new Error(`Unhandled filter field: ${this.kind}`)
       }
 
-      const fieldValues = []
+      const fieldValues: (string | number | null)[] = []
+      const fieldMethod = card[fieldKey] as (faceIndex?: number) => string | number | null
 
-      if (card[fieldKey]()) {
-        fieldValues.push(card[fieldKey]())
+      if (fieldMethod.call(card)) {
+        fieldValues.push(fieldMethod.call(card))
       }
       else {
         for (let i = 0; i < card.numFaces(); i++) {
-          fieldValues.push(card[fieldKey](i))
+          fieldValues.push(fieldMethod.call(card, i))
         }
       }
 
       if (textFields.includes(this.kind)) {
-        const lowerValues = fieldValues.map(x => x ? x.toLowerCase() : '')
+        const lowerValues = fieldValues.map(x => x ? String(x).toLowerCase() : '')
 
         if (this.operator === 'or') {
-          const targetValues = this.value.map(v => v.toLowerCase())
+          const targetValues = (this.value as string[]).map(v => v.toLowerCase())
           return targetValues.some(targetValue =>
             lowerValues.some(fieldValue => fieldValue.includes(targetValue))
           )
@@ -83,7 +126,7 @@ class CardFilter {
 
         else {
           const fieldValue = lowerValues.join(' ')
-          const targetValue = this.value.toLowerCase()
+          const targetValue = (this.value as string).toLowerCase()
 
           if (this.operator === 'and') {
             return fieldValue.includes(targetValue)
@@ -97,8 +140,8 @@ class CardFilter {
         }
       }
       else if (numberFields.includes(this.kind)) {
-        const targetValue = parseFloat(this.value)
-        const floatValues = fieldValues.map(val => parseFloat(val))
+        const targetValue = parseFloat(this.value as string)
+        const floatValues = fieldValues.map(val => parseFloat(String(val)))
 
         return floatValues.some(fieldValue => {
           if (fieldValue === -999) {
@@ -119,6 +162,8 @@ class CardFilter {
         })
       }
     }
+
+    return false
   }
 }
 
@@ -137,8 +182,9 @@ const fieldMapping = {
   text: 'oracleText',
   toughness: 'toughness',
   type: 'typeLine',
-}
-const colorNameToSymbol = {
+} as const
+
+const colorNameToSymbol: Record<string, string> = {
   white: 'w',
   blue: 'u',
   black: 'b',
@@ -147,3 +193,5 @@ const colorNameToSymbol = {
 }
 
 module.exports = CardFilter
+
+export { CardFilter, CardFilterOptions, FilterableCard }

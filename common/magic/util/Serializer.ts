@@ -1,18 +1,24 @@
 const util = require('../../lib/util.js')
 
+interface SerializerData {
+  [key: string]: unknown
+}
 
 class Serializer {
-  constructor(parent, data) {
+  parent: Record<string, unknown>
+  data: SerializerData
+
+  constructor(parent: Record<string, unknown>, data: SerializerData) {
     this.parent = parent
     this.data = data
   }
 
-  inject() {
+  inject(): void {
     Object.assign(this.parent, this.data)
   }
 
-  serialize() {
-    const output = {}
+  serialize(): SerializerData {
+    const output: SerializerData = {}
     for (const key of Object.keys(this.data)) {
       output[key] = this.parent[key]
     }
@@ -23,3 +29,5 @@ class Serializer {
 module.exports = {
   Serializer,
 }
+
+export { Serializer, SerializerData }

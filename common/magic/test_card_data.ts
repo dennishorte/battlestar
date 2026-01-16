@@ -1,7 +1,41 @@
 const { MagicCard } = require('./MagicCard.js')
 const lookup = require('./util/cardLookup.js')
 
-const whiteCards = [
+interface CardFace {
+  artist: string
+  name: string
+  oracle_text: string
+  type_line: string
+  colors: string[]
+  image_uri: string
+  flavor_text?: string
+  mana_cost?: string
+  power?: string
+  toughness?: string
+}
+
+interface CardData {
+  _id: string
+  source: string
+  data: {
+    layout: string
+    cmc: number
+    color_identity: string[]
+    produced_mana?: string[]
+    set: string
+    collector_number: string
+    digital: boolean
+    rarity: string
+    card_faces: CardFace[]
+    name: string
+    colors: string[]
+    type_line: string
+    legal: string[]
+    _id: string
+  }
+}
+
+const whiteCards: CardData[] = [
   {
     _id: '00293ce4-3475-4064-8510-9e8c02faf3bf',
     source: 'scryfall',
@@ -246,7 +280,7 @@ const whiteCards = [
   },
 ]
 
-const redCards = [
+const redCards: CardData[] = [
   {
     _id: '005a993c-5111-4364-9fba-75b3d94a8296',
     source: 'scryfall',

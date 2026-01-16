@@ -1,13 +1,32 @@
 const util = require('../../lib/util.js')
 
-function create(cards) {
-  const lookup = {
+interface CardFace {
+  name: string
+  [key: string]: unknown
+}
+
+interface Card {
+  _id: string
+  name(): string
+  numFaces(): number
+  faces(): CardFace[]
+  [key: string]: unknown
+}
+
+interface CardLookup {
+  array: Card[]
+  byId: Record<string, Card>
+  byName: Record<string, Card[]>
+  deckJuicer: (cardIds: string[]) => Card[]
+}
+
+function create(cards: Card[]): CardLookup {
+  const lookup: CardLookup = {
     array: cards,
     byId: util.array.toDict(cards, '_id'),
     byName: util.array.collect(cards, _allCardNames),
+    deckJuicer: (cardIds: string[]) => cardIds.map(id => lookup.byId[id]),
   }
-
-  lookup.deckJuicer = (cardIds) => cardIds.map(id => lookup.byId[id])
 
   return lookup
 }
@@ -20,7 +39,7 @@ module.exports = {
 ////////////////////////////////////////////////////////////////////////////////
 // Helper functions
 
-function _allCardNames(card) {
+function _allCardNames(card: Card): string[] {
   const names = [card.name()]
 
   if (card.numFaces() > 0) {
@@ -49,3 +68,5 @@ function _allCardNames(card) {
 
   return names.map(name => name.toLowerCase())
 }
+
+export { create, CardLookup, Card, CardFace }

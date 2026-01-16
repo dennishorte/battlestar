@@ -4,9 +4,111 @@ const CardFilter = require('./util/CardFilter.js')
 const cardUtil = require('./util/cardUtil.js')
 const util = require('../lib/util.js')
 
+import type { BaseCard as BaseCardType } from '../lib/game/index.js'
+import type { Serializer as SerializerType, SerializerData } from './util/Serializer.js'
+import type { CardFilterOptions } from './util/CardFilter.js'
+
+interface MagicGame {
+  mAdjustCardVisibility(card: MagicCard): void
+  mMaybeClearAnnotations(card: MagicCard): void
+  mMaybeClearCounters(card: MagicCard): void
+  mMaybeRemoveTokens(card: MagicCard): void
+  mUntap(card: MagicCard): void
+  mTap(card: MagicCard): void
+  mDetach(card: MagicCard): void
+  log: {
+    indent(): void
+    outdent(): void
+    add(entry: LogEntry): void
+  }
+  viewerName: string
+  [key: string]: unknown
+}
+
+interface LogEntry {
+  template: string
+  args: Record<string, unknown>
+  classes?: string[]
+}
+
+interface MagicZone {
+  id: string
+  name(): string
+  owner(): { name: string } | null
+  kind(): string
+  cardlist(): MagicCard[]
+  remove(card: MagicCard): void
+  [key: string]: unknown
+}
+
+interface CardFaceData {
+  artist: string
+  defense: string
+  flavor_text: string
+  image_uri: string
+  loyalty: string
+  mana_cost: string
+  name: string
+  oracle_text: string
+  power: string
+  toughness: string
+  type_line: string
+  color_indicator: string[]
+  produced_mana: string[]
+  scarred?: boolean
+  [key: string]: unknown
+}
+
+interface CardDataInner {
+  id: string
+  layout: string
+  digital: boolean
+  rarity: string
+  legal: string[]
+  set?: string
+  collector_number?: string
+  card_faces: CardFaceData[]
+  [key: string]: unknown
+}
+
+interface CardData extends SerializerData {
+  _id: string
+  id: string
+  source: string
+  data: CardDataInner
+  changes?: ChangeData[]
+  [key: string]: unknown
+}
+
+interface ChangeData {
+  changes: {
+    type: string
+    faceIndex: number
+    field: string
+    oldValue: unknown
+  }[]
+}
+
+interface GameDataValues {
+  id: string | null
+  owner: string | null
+  activeFaceIndex: number
+  annotation: string
+  annotationEOT: string
+  attached: MagicCard[]
+  attachedTo: MagicCard | null
+  counters: Record<string, number>
+  trackers: Record<string, unknown>
+  morph: boolean
+  secret: boolean
+  noUntap: boolean
+  tapped: boolean
+  token: boolean
+}
+
 class GameData extends Serializer {
-  constructor(parent) {
-    const data = {
+  constructor(parent: MagicCard) {
+    const data: GameDataValues = {
       id: null,
       owner: null,
       activeFaceIndex: 0,
@@ -34,7 +136,44 @@ class GameData extends Serializer {
 
 
 class MagicCard extends BaseCard {
-  constructor(game, card) {
+  sourceId: string
+  serializer: SerializerType
+  gameData: GameData
+  game!: MagicGame
+  zone!: MagicZone
+  visibility!: { name: string }[]
+  activeFace!: string
+
+  // Inherited from BaseCard
+  reveal!: () => void
+  hide!: () => void
+  show!: (player: unknown) => void
+  visible!: (player: unknown) => boolean
+  moveTo!: (zone: unknown, index?: number) => void
+
+  // Injected by serializer
+  _id!: string
+  data!: CardDataInner
+  source!: string
+  changes?: ChangeData[]
+
+  // Injected by gameData
+  id!: string | null
+  owner!: string | null | undefined
+  activeFaceIndex!: number
+  annotation!: string
+  annotationEOT!: string
+  attached!: MagicCard[]
+  attachedTo!: MagicCard | null
+  counters!: Record<string, number>
+  trackers!: Record<string, unknown>
+  morph!: boolean
+  secret!: boolean
+  noUntap!: boolean
+  tapped!: boolean
+  token!: boolean
+
+  constructor(game: MagicGame, card: CardData) {
     super(game, card)
 
     this.sourceId = card._id
@@ -50,7 +189,7 @@ class MagicCard extends BaseCard {
   static TYPELINE_DASH = '—'
   static TYPELINE_SPLITTER_REGEX = /[\u002d\u2013\u2014]/
 
-  static blankFace() {
+  static blankFace(): CardFaceData {
     return {
       artist: '',
       defense: '',
@@ -71,7 +210,7 @@ class MagicCard extends BaseCard {
     }
   }
 
-  static blankCard() {
+  static blankCard(): { id: string; source: string; data: CardDataInner } {
     return {
       id: '',
       source: 'adhoc_token',
@@ -88,28 +227,28 @@ class MagicCard extends BaseCard {
     }
   }
 
-  toJSON() {
+  toJSON(): SerializerData {
     return this.serializer.serialize()
   }
 
-  id() {
+  getId(): string {
     return this._id
   }
 
-  _getColorProp(name, faceIndex) {
+  _getColorProp(name: string, faceIndex?: number): string[] {
     if (typeof faceIndex === 'number') {
-      return this.face(faceIndex)[name] || []
+      return (this.face(faceIndex)[name] as string[]) || []
     }
     else {
-      let colors = []
+      let colors: string[] = []
       for (const face of this.faces()) {
-        colors = colors.concat(face[name] || [])
+        colors = colors.concat((face[name] as string[]) || [])
       }
       return util.array.distinct(colors).sort()
     }
   }
 
-  colors(faceIndex) {
+  colors(faceIndex?: number): string[] {
     if (/\bdevoid\b/i.test(this.oracleText(faceIndex).toLowerCase())) {
       return []
     }
@@ -120,48 +259,48 @@ class MagicCard extends BaseCard {
       return this.colorsInManaCost(faceIndex)
     }
   }
-  colorsInManaCost(faceIndex) {
+  colorsInManaCost(faceIndex?: number): string[] {
     const manaCost = this.manaCost(faceIndex).toLowerCase()
     return ['w', 'u', 'b', 'r', 'g'].filter(c => manaCost.includes(c))
   }
-  colorsInOracleText(faceIndex) {
+  colorsInOracleText(faceIndex?: number): string[] {
     const text = this.oracleText(faceIndex).toLowerCase()
     const symbols = cardUtil.extractSymbolsFromText(text).join('')
     return ['w', 'u', 'b', 'r', 'g'].filter(c => symbols.includes(c))
   }
-  colorIdentity(faceIndex) {
+  colorIdentity(faceIndex?: number): string[] {
     return util.array.distinct(
       [
         ...this.producedMana(faceIndex),
         ...this.colorIndicator(faceIndex),
         ...this.colorsInManaCost(faceIndex),
         ...this.colorsInOracleText(faceIndex),
-      ].map(c => c.toLowerCase())
+      ].map((c: string) => c.toLowerCase())
     ).sort()
   }
-  colorIndicator(faceIndex) {
+  colorIndicator(faceIndex?: number): string[] {
     return this._getColorProp('color_indicator', faceIndex)
   }
-  colorKey(faceIndex) {
+  colorKey(faceIndex?: number): string {
     return this.colors(faceIndex).map(c => c.toLowerCase()).sort().join('')
   }
-  colorName(faceIndex) {
+  colorName(faceIndex?: number): string {
     return cardUtil.COLOR_KEY_TO_NAME[this.colorKey(faceIndex)]
   }
 
-  producedMana(faceIndex) {
+  producedMana(faceIndex?: number): string[] {
     return this._getColorProp('produced_mana', faceIndex)
   }
 
-  typeLine(faceIndex) {
+  typeLine(faceIndex?: number): string {
     if (typeof faceIndex === 'number') {
       return this.face(faceIndex).type_line
     }
     else {
-      return this.faces().map(face => face.type_line).join(' // ')
+      return this.faces().map((face: CardFaceData) => face.type_line).join(' // ')
     }
   }
-  supertypes(faceIndex) {
+  supertypes(faceIndex?: number): string[] {
     const supertypesString = this
       .typeLine(faceIndex)
       .toLowerCase()
@@ -169,7 +308,7 @@ class MagicCard extends BaseCard {
       ?.trim()
     return supertypesString ? supertypesString.split(/\s+/) : []
   }
-  subtypes(faceIndex) {
+  subtypes(faceIndex?: number): string[] {
     const subtypesString = this
       .typeLine(faceIndex)
       .toLowerCase()
@@ -178,37 +317,37 @@ class MagicCard extends BaseCard {
     return subtypesString ? subtypesString.split(/\s+/) : []
   }
 
-  name(faceIndex) {
+  name(faceIndex?: number): string {
     if (typeof faceIndex === 'number') {
       return this.face(faceIndex).name
     }
     else {
-      return this.faces().map(face => face.name).join(' // ')
+      return this.faces().map((face: CardFaceData) => face.name).join(' // ')
     }
   }
-  set() {
+  set(): string {
     return this.data.set || 'custom'
   }
-  collectorNumber() {
+  collectorNumber(): string | undefined {
     return this.data.collector_number
   }
-  layout() {
+  layout(): string {
     return this.data.layout
   }
-  rarity() {
+  rarity(): string {
     return this.data.rarity
   }
-  isDigital() {
+  isDigital(): boolean {
     return this.data.digital
   }
-  legalities() {
+  legalities(): string[] {
     return this.data.legal
   }
 
-  cmc() {
+  cmc(): number {
     return this.manaValue()
   }
-  manaValue() {
+  manaValue(): number {
     if (this.layout() === 'split') {
       return cardUtil.manaCostFromCastingCost(this.manaCost())
     }
@@ -216,62 +355,62 @@ class MagicCard extends BaseCard {
       return cardUtil.manaCostFromCastingCost(this.manaCost(0))
     }
   }
-  manaCost(faceIndex) {
+  manaCost(faceIndex?: number): string {
     if (typeof faceIndex === 'number') {
       return this.face(faceIndex).mana_cost || ''
     }
     else {
-      return this.faces().map(face => face.mana_cost || '').join(' // ')
+      return this.faces().map((face: CardFaceData) => face.mana_cost || '').join(' // ')
     }
   }
 
-  oracleText(faceIndex) {
+  oracleText(faceIndex?: number): string {
     return this.oracleTextCardName(faceIndex).replaceAll('CARD_NAME', this.name(faceIndex))
   }
 
-  oracleTextCardName(faceIndex) {
+  oracleTextCardName(faceIndex?: number): string {
     if (typeof faceIndex === 'number') {
       return this.face(faceIndex).oracle_text || ''
     }
     else {
-      return this.faces().map(face => face.oracle_text || '').join('\n//\n')
+      return this.faces().map((face: CardFaceData) => face.oracle_text || '').join('\n//\n')
     }
   }
 
-  flavorText(faceIndex) {
+  flavorText(faceIndex?: number): string {
     if (typeof faceIndex === 'number') {
       return this.face(faceIndex).flavor_text
     }
     else {
-      return this.faces().map(face => face.flavor_text).join('\n//\n')
+      return this.faces().map((face: CardFaceData) => face.flavor_text).join('\n//\n')
     }
   }
 
-  power(faceIndex) {
+  power(faceIndex?: number): string | undefined {
     if (typeof faceIndex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).power
   }
-  toughness(faceIndex) {
+  toughness(faceIndex?: number): string | undefined {
     if (typeof faceIndex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).toughness
   }
-  powerToughness(faceIndex) {
+  powerToughness(faceIndex?: number): string | undefined {
     if (typeof faceIndex !== 'number') {
       return undefined
     }
     return `${this.power(faceIndex)}/${this.toughness(faceIndex)}`
   }
-  loyalty(faceIndex) {
+  loyalty(faceIndex?: number): string | undefined {
     if (typeof faceIndex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).loyalty
   }
-  defense(faceIndex) {
+  defense(faceIndex?: number): string | undefined {
     if (typeof faceIndex !== 'number') {
       return undefined
     }
@@ -279,87 +418,87 @@ class MagicCard extends BaseCard {
   }
 
 
-  artist(faceIndex) {
+  artist(faceIndex?: number): string | undefined {
     if (typeof faceIndex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).artist
   }
-  imageUri(faceIndex) {
+  imageUri(faceIndex?: number): string | undefined {
     if (typeof faceIndex !== 'number') {
       return undefined
     }
     return this.face(faceIndex).image_uri
   }
 
-  hasColorIndicator(faceIndex) {
+  hasColorIndicator(faceIndex?: number): boolean {
     return this.colorIndicator(faceIndex).length > 0
   }
 
-  isArtifact(faceIndex) {
+  isArtifact(faceIndex?: number): boolean {
     return this.supertypes(faceIndex).includes('artifact')
   }
-  isCreature(faceIndex) {
+  isCreature(faceIndex?: number): boolean {
     return this.supertypes(faceIndex).includes('creature')
   }
-  isColorless(faceIndex) {
+  isColorless(faceIndex?: number): boolean {
     return this.colors(faceIndex).length === 0
   }
-  isCubeCard() {
+  isCubeCard(): boolean {
     return this.source === 'custom'
   }
-  isLand(faceIndex) {
+  isLand(faceIndex?: number): boolean {
     return this.typeLine(faceIndex).toLowerCase().includes('land')
   }
-  isMulticolor(faceIndex) {
+  isMulticolor(faceIndex?: number): boolean {
     return this.colors(faceIndex).length > 1
   }
-  isSiege(faceIndex) {
+  isSiege(faceIndex?: number): boolean {
     return this.subtypes(faceIndex).includes('siege')
   }
-  isPlaneswalker(faceIndex) {
+  isPlaneswalker(faceIndex?: number): boolean {
     return this.supertypes(faceIndex).includes('planeswalker')
   }
-  isVehicle(faceIndex) {
+  isVehicle(faceIndex?: number): boolean {
     return this.subtypes(faceIndex).includes('vehicle')
   }
 
-  isLegalIn(format) {
+  isLegalIn(format: string): boolean {
     return this.data.legal && this.data.legal.includes(format)
   }
-  isScarred(faceIndex) {
+  isScarred(faceIndex?: number): boolean {
     if (typeof faceIndex === 'number') {
       return Boolean(this.face(faceIndex).scarred)  // Often is undefined for scryfall cards
     }
     else {
-      return this.faces().some(face => face.scarred)
+      return this.faces().some((face: CardFaceData) => face.scarred)
     }
   }
-  isVisible(player) {
+  isVisible(player: { name: string }): boolean {
     return this.visibility.includes(player)
   }
 
-  face(index) {
+  face(index: number): CardFaceData {
     if (!this.faces()) {
       throw new Error('stop 0')
     }
 
     if (!this.faces()[index]) {
-      throw new Error('stop 1', index)
+      throw new Error('stop 1: ' + index)
     }
     return this.faces()[index]
   }
-  faces() {
+  faces(): CardFaceData[] {
     return this.data.card_faces
   }
-  numFaces() {
+  numFaces(): number {
     return this.faces().length
   }
 
   ////////////////////////////////////////////////////////////////////////////////
   // Scars
 
-  oldVersions(faceIndex, fieldName) {
+  oldVersions(faceIndex: number, fieldName: string): unknown[] {
     if (!this.changes) {
       return []
     }
@@ -376,7 +515,7 @@ class MagicCard extends BaseCard {
 
   // Tests if the game-related attributes of two cards are the same.
   // Ignores attributes like artist, which don't affect game play.
-  same(other) {
+  same(other: MagicCard): boolean {
     const topEquals = (
       this.layout() === other.layout()
       && this.cmc() === other.cmc()
@@ -406,31 +545,31 @@ class MagicCard extends BaseCard {
     return true
   }
 
-  matchesFilters(filters) {
+  matchesFilters(filters: CardFilterOptions[]): boolean {
     return filters.every(filterData => {
       const filter = new CardFilter(filterData)
       return filter.matches(this)
     })
   }
 
-  clone() {
-    return new MagicCard(this.toJSON())
+  clone(): MagicCard {
+    return new MagicCard(this.game, this.toJSON() as CardData)
   }
 
   ////////////////////////////////////////////////////////////////////////////////
   // Card editing
-  addFace() {
-    this.faces().push(cardUtil.blankFace())
+  addFace(): void {
+    this.faces().push(MagicCard.blankFace())
   }
 
-  removeFace(index) {
+  removeFace(index: number): void {
     this.faces().splice(index, 1)
   }
 
   ////////////////////////////////////////////////////////////////////////////////
   // Base Card Extensions
 
-  _afterMoveTo(zone, _unused1, prevZone) {
+  _afterMoveTo(zone: MagicZone, _unused1: unknown, prevZone: MagicZone): void {
     this.game.mAdjustCardVisibility(this)
     this.game.mMaybeClearAnnotations(this)
     this.game.mMaybeClearCounters(this)
@@ -479,3 +618,5 @@ class MagicCard extends BaseCard {
 module.exports = {
   MagicCard,
 }
+
+export { MagicCard, CardData, CardFaceData, CardDataInner, MagicGame, MagicZone }

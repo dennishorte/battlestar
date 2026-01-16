@@ -1,14 +1,33 @@
 const util = require('../../lib/util.js')
 
-const CardUtil = {
-  diff: require('./cardDiff.js'),
-  lookup: require('./cardLookup.js'),
+import * as cardDiff from './cardDiff.js'
+import * as cardLookup from './cardLookup.js'
+
+interface RulesTextPart {
+  type: string
+  text: string
 }
-module.exports = CardUtil
 
-CardUtil.COLORS = ['white', 'blue', 'black', 'red', 'green']
+interface ParsedRulesLine {
+  parts: RulesTextPart[]
+}
 
-CardUtil.COLOR_KEY_TO_NAME = {
+interface ParsedCard {
+  name: string
+  zone: string
+  remove?: boolean
+}
+
+interface CategorizedMana {
+  type: 'variable' | 'colorless' | 'colored' | 'unknown'
+  symbol: string
+  sortKey: string | number
+  color?: string
+}
+
+const COLORS = ['white', 'blue', 'black', 'red', 'green']
+
+const COLOR_KEY_TO_NAME: Record<string, string> = {
   '': 'colorless',
   w: 'white',
   u: 'blue',
@@ -47,7 +66,7 @@ CardUtil.COLOR_KEY_TO_NAME = {
   bgruw: 'five-color',
 }
 
-CardUtil.colorSymbolToName = function(symbol) {
+function colorSymbolToName(symbol: string): string {
   switch (symbol.toLowerCase()) {
     case 'w': return 'white'
     case 'u': return 'blue'
@@ -60,20 +79,19 @@ CardUtil.colorSymbolToName = function(symbol) {
   }
 }
 
-CardUtil.parseRulesLine = function(line) {
-  const output = {
-
+function parseRulesLine(line: string): ParsedRulesLine {
+  const output: ParsedRulesLine = {
     parts: [],
   }
 
-  const newPart = () => ({
+  const newPart = (): RulesTextPart => ({
     type: 'text',
     text: '',
   })
 
   let part = newPart()
 
-  const close = () => {
+  const close = (): void => {
     if (part.text) {
       output.parts.push(part)
       part = newPart()
@@ -127,19 +145,19 @@ CardUtil.parseRulesLine = function(line) {
   return output
 }
 
-CardUtil.parseOracleText = function(text) {
+function parseOracleText(text: string): ParsedRulesLine[] {
   if (!text) {
     return []
   }
 
-  const output = []
+  const output: ParsedRulesLine[] = []
 
   for (const line of text.split('\n')) {
     try {
-      output.push(this.parseRulesLine(line))
+      output.push(parseRulesLine(line))
     }
     catch (e) {
-      console.log(e.message)
+      console.log((e as Error).message)
       output.push({
         parts: [{
           type: 'parse_error',
@@ -152,11 +170,11 @@ CardUtil.parseOracleText = function(text) {
   return output
 }
 
-CardUtil.manaSymbolsFromString = function(string) {
-  return CardUtil.extractSymbolsFromText(string.toLowerCase())
+function manaSymbolsFromString(string: string): string[] {
+  return extractSymbolsFromText(string.toLowerCase())
 }
 
-CardUtil.extractSymbolsFromText = function(string) {
+function extractSymbolsFromText(string: string): string[] {
   const matches = string.match(/\{([^{}]+)\}/g)
   if (!matches) {
     return []
@@ -164,7 +182,7 @@ CardUtil.extractSymbolsFromText = function(string) {
 
   return matches
     .map(x => x.slice(1, -1))
-    .filter(symbol => symbol.trim().length > 0 )
+    .filter(symbol => symbol.trim().length > 0)
 }
 
 // Mana cost string should be in the format {2}{U}.
@@ -172,8 +190,8 @@ CardUtil.extractSymbolsFromText = function(string) {
 // Split mana symbols can include or exclude the slash. eg. {G/U} or {gu} are fine.
 // Extra symbols are ignored, so you can pass in multiple mana costs with a divider to
 // get the total. eg. {3}{R} // {R/G}
-CardUtil.manaCostFromCastingCost = function(string) {
-  const symbols = CardUtil.extractSymbolsFromText(string.toLowerCase())
+function manaCostFromCastingCost(string: string): number {
+  const symbols = extractSymbolsFromText(string.toLowerCase())
   let total = 0
 
   for (const symbol of symbols) {
@@ -197,8 +215,8 @@ CardUtil.manaCostFromCastingCost = function(string) {
 // Text segmenter that segments text into words, punctuation, and whitespace.
 // Consecutive icons are considered a single "word".
 // eg. {UP}{T} is a single word token.
-CardUtil.segmentText = function(text) {
-  const tokens = []
+function segmentText(text: string): string[] {
+  const tokens: string[] = []
   let i = 0
 
   while (i < text.length) {
@@ -272,15 +290,15 @@ CardUtil.segmentText = function(text) {
 // Colored symbols are sorted wubrg, treated as a cirle, with the start symbol chosen to minimize the
 // distance around the circle traveled to cover all of the symbols.
 // So, gw is preferred over wg, and ur over ru.
-CardUtil.sortManaArray = function(manaArray) {
+function sortManaArray(manaArray: string[]): string[] {
   if (!Array.isArray(manaArray) || manaArray.length === 0) {
     return manaArray
   }
 
   // Helper function to extract first color from complex symbols
-  function getFirstColor(symbol) {
+  function getFirstColor(symbol: string): string | null {
     const colorOrder = 'wubrg'
-    for (let char of symbol.toLowerCase()) {
+    for (const char of symbol.toLowerCase()) {
       if (colorOrder.includes(char)) {
         return char
       }
@@ -289,7 +307,7 @@ CardUtil.sortManaArray = function(manaArray) {
   }
 
   // Helper function to categorize mana symbols
-  function categorizeMana(symbol) {
+  function categorizeMana(symbol: string): CategorizedMana {
     const str = symbol.toString().toLowerCase()
 
     if (['x', 'y', 'z'].includes(str)) {
@@ -319,22 +337,22 @@ CardUtil.sortManaArray = function(manaArray) {
   const unknown = categorized.filter(m => m.type === 'unknown')
 
   // Sort variables (x, y, z)
-  variables.sort((a, b) => a.sortKey.localeCompare(b.sortKey))
+  variables.sort((a, b) => (a.sortKey as string).localeCompare(b.sortKey as string))
 
   // Sort colorless by numeric value
-  colorless.sort((a, b) => a.sortKey - b.sortKey)
+  colorless.sort((a, b) => (a.sortKey as number) - (b.sortKey as number))
 
   // Sort unknown alphabetically
-  unknown.sort((a, b) => a.sortKey.localeCompare(b.sortKey))
+  unknown.sort((a, b) => (a.sortKey as string).localeCompare(b.sortKey as string))
 
   // Optimize colored mana ordering
-  function optimizeColorOrder(coloredMana) {
+  function optimizeColorOrder(coloredMana: CategorizedMana[]): CategorizedMana[] {
     if (coloredMana.length <= 1) {
       return coloredMana
     }
 
     const colors = 'wubrg'
-    const uniqueColors = [...new Set(coloredMana.map(m => m.color))]
+    const uniqueColors = [...new Set(coloredMana.map(m => m.color!))]
 
     if (uniqueColors.length === 1) {
       // All same color, maintain original relative order
@@ -346,12 +364,12 @@ CardUtil.sortManaArray = function(manaArray) {
       const bestOrder = ['w', 'u', 'b', 'r', 'g']
 
       // Group mana by color and sort within groups
-      const colorGroups = {}
+      const colorGroups: Record<string, CategorizedMana[]> = {}
       coloredMana.forEach(mana => {
-        if (!colorGroups[mana.color]) {
-          colorGroups[mana.color] = []
+        if (!colorGroups[mana.color!]) {
+          colorGroups[mana.color!] = []
         }
-        colorGroups[mana.color].push(mana)
+        colorGroups[mana.color!].push(mana)
       })
 
       // Sort within each color group to maintain stability
@@ -360,7 +378,7 @@ CardUtil.sortManaArray = function(manaArray) {
       })
 
       // Combine in WUBRG order
-      const result = []
+      const result: CategorizedMana[] = []
       bestOrder.forEach(color => {
         if (colorGroups[color]) {
           result.push(...colorGroups[color])
@@ -371,7 +389,7 @@ CardUtil.sortManaArray = function(manaArray) {
     }
 
     // Find optimal starting color to minimize total distance
-    let bestOrder = null
+    let bestOrder: string[] | null = null
     let bestScore = Infinity // For tie-breaking
 
     // Try starting from each unique color
@@ -384,7 +402,7 @@ CardUtil.sortManaArray = function(manaArray) {
 
       // Greedily add nearest remaining colors
       while (remaining.length > 0) {
-        let nearestColor = null
+        let nearestColor: string | null = null
         let nearestDistance = Infinity
 
         for (const color of remaining) {
@@ -396,7 +414,7 @@ CardUtil.sortManaArray = function(manaArray) {
 
           if (distance < nearestDistance ||
               (distance === nearestDistance &&
-               colors.indexOf(color) < colors.indexOf(nearestColor))) {
+               colors.indexOf(color) < colors.indexOf(nearestColor!))) {
             nearestDistance = distance
             nearestColor = color
           }
@@ -404,15 +422,15 @@ CardUtil.sortManaArray = function(manaArray) {
 
         // Check if this step wraps around (goes from a later color to an earlier one)
         const currentIndex = colors.indexOf(currentColor)
-        const nextIndex = colors.indexOf(nearestColor)
+        const nextIndex = colors.indexOf(nearestColor!)
         if (nextIndex < currentIndex) {
           wrapArounds++
         }
 
-        order.push(nearestColor)
+        order.push(nearestColor!)
         totalDistance += nearestDistance
-        currentColor = nearestColor
-        remaining.splice(remaining.indexOf(nearestColor), 1)
+        currentColor = nearestColor!
+        remaining.splice(remaining.indexOf(nearestColor!), 1)
       }
 
       // Scoring: prefer lower distance, then fewer wrap-arounds, then starting with W
@@ -425,12 +443,12 @@ CardUtil.sortManaArray = function(manaArray) {
     }
 
     // Group mana by color and sort within groups
-    const colorGroups = {}
+    const colorGroups: Record<string, CategorizedMana[]> = {}
     coloredMana.forEach(mana => {
-      if (!colorGroups[mana.color]) {
-        colorGroups[mana.color] = []
+      if (!colorGroups[mana.color!]) {
+        colorGroups[mana.color!] = []
       }
-      colorGroups[mana.color].push(mana)
+      colorGroups[mana.color!].push(mana)
     })
 
     // Sort within each color group to maintain stability
@@ -439,8 +457,8 @@ CardUtil.sortManaArray = function(manaArray) {
     })
 
     // Combine in optimal order
-    const result = []
-    bestOrder.forEach(color => {
+    const result: CategorizedMana[] = []
+    bestOrder!.forEach(color => {
       result.push(...colorGroups[color])
     })
 
@@ -460,13 +478,13 @@ CardUtil.sortManaArray = function(manaArray) {
   return result
 }
 
-CardUtil.parseCardlist = function(cardlist) {
-  function parseCardListLine(line) {
+function parseCardlist(cardlist: string): ParsedCard[] {
+  function parseCardListLine(line: string): { name: string; count: number } {
     const [name, count] = parseCardLineCount(line)
     return { name, count }
   }
 
-  function parseCardLineCount(line) {
+  function parseCardLineCount(line: string): [string, number] {
     if (line.charAt(0) === '-') {
       return [line.slice(1).trim(), -1]
     }
@@ -489,7 +507,7 @@ CardUtil.parseCardlist = function(cardlist) {
     }
   }
 
-  const cards = []
+  const cards: ParsedCard[] = []
 
   let zoneName = 'main'
 
@@ -520,22 +538,60 @@ CardUtil.parseCardlist = function(cardlist) {
     }
     else {
       const card = parseCardListLine(line)
-      card.zone = zoneName
+      const entry: ParsedCard = {
+        name: card.name,
+        zone: zoneName,
+      }
 
       const count = card.count
-      delete card.count
 
       if (count === -1) {
-        card.remove = true
-        cards.push(card)
+        entry.remove = true
+        cards.push(entry)
       }
       else {
         for (let i = 0; i < count; i++) {
-          cards.push({ ...card })
+          cards.push({ ...entry })
         }
       }
     }
   }
 
   return cards
+}
+
+const CardUtil = {
+  diff: cardDiff,
+  lookup: cardLookup,
+  COLORS,
+  COLOR_KEY_TO_NAME,
+  colorSymbolToName,
+  parseRulesLine,
+  parseOracleText,
+  manaSymbolsFromString,
+  extractSymbolsFromText,
+  manaCostFromCastingCost,
+  segmentText,
+  sortManaArray,
+  parseCardlist,
+}
+
+module.exports = CardUtil
+
+export {
+  CardUtil,
+  COLORS,
+  COLOR_KEY_TO_NAME,
+  colorSymbolToName,
+  parseRulesLine,
+  parseOracleText,
+  manaSymbolsFromString,
+  extractSymbolsFromText,
+  manaCostFromCastingCost,
+  segmentText,
+  sortManaArray,
+  parseCardlist,
+  RulesTextPart,
+  ParsedRulesLine,
+  ParsedCard,
 }

@@ -1,8 +1,8 @@
-import {
+const {
   calculateCardChanges,
   calculateChangesFromOriginal,
   extractOriginalData
-} from './cardDiff.js'
+} = require('./cardDiff.js')
 
 describe('Card Diff Utilities', () => {
   describe('calculateCardChanges', () => {
@@ -33,7 +33,7 @@ describe('Card Diff Utilities', () => {
           card_faces: []
         }
 
-        const result = calculateCardChanges(currentData, undefined)
+        const result = calculateCardChanges(currentData, null)
 
         expect(result).toEqual({
           type: 'creation',

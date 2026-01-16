@@ -1,7 +1,19 @@
 const { BaseZone, ZONE_KIND } = require('../lib/game/index.js')
 
+import type { BaseZone as BaseZoneType } from '../lib/game/index.js'
+
+interface MagicZoneCard {
+  morph: boolean
+  secret: boolean
+  show(owner: unknown): void
+  reveal(): void
+  hide(): void
+}
+
 class MagicZone extends BaseZone {
-  _updateCardVisibility(card) {
+  _kind!: string
+
+  _updateCardVisibility(card: MagicZoneCard): void {
     if (this._kind === ZONE_KIND.public) {
       if (card.morph || card.secret) {
         card.show(this.owner())
@@ -25,3 +37,5 @@ class MagicZone extends BaseZone {
 module.exports = {
   MagicZone,
 }
+
+export { MagicZone }

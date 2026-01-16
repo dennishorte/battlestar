@@ -5,13 +5,44 @@
  * a structured change object that can be stored in the database.
  */
 
+interface CardFace {
+  name?: string
+  [key: string]: unknown
+}
+
+interface CardData {
+  card_faces?: CardFace[]
+  [key: string]: unknown
+}
+
+interface Change {
+  type: string
+  faceIndex: number | null
+  field: string | null
+  oldValue: unknown
+  newValue: unknown
+  summary: string
+}
+
+interface ChangeResult {
+  type: string
+  summary: string
+  changes: Change[]
+  facesAdded: number
+  facesRemoved: number
+  fieldsChanged: number
+}
+
+interface Edit {
+  action: string
+  oldData?: CardData
+  date?: string | Date
+}
+
 /**
  * Calculates the changes between the current card data and the previous version
- * @param {Object} currentData - The new card data
- * @param {Object} previousData - The previous card data (from oldData in edit)
- * @returns {Object} Structured change information
  */
-function calculateCardChanges(currentData, previousData) {
+function calculateCardChanges(currentData: CardData, previousData: CardData | null): ChangeResult {
   if (!previousData) {
     // This is a new card creation
     return {
@@ -24,7 +55,7 @@ function calculateCardChanges(currentData, previousData) {
     }
   }
 
-  const changes = []
+  const changes: Change[] = []
   let fieldsChanged = 0
 
   // Get all root-level fields from both current and previous data (excluding card_faces)
@@ -115,13 +146,8 @@ function calculateCardChanges(currentData, previousData) {
 
 /**
  * Compares a single field between two values
- * @param {string} field - The field name
- * @param {*} currentValue - The current value
- * @param {*} previousValue - The previous value
- * @param {number|null} faceIndex - The face index (null for root fields)
- * @returns {Object|null} Change object or null if no change
  */
-function compareField(field, currentValue, previousValue, faceIndex) {
+function compareField(field: string, currentValue: unknown, previousValue: unknown, faceIndex: number | null): Change | null {
   // Normalize values for comparison (case-insensitive)
   const currentNormalized = normalizeValue(currentValue)
   const previousNormalized = normalizeValue(previousValue)
@@ -151,11 +177,9 @@ function compareField(field, currentValue, previousValue, faceIndex) {
 }
 
 /**
- * Normalizes values for comparison (handles undefined, null, empty strings, empty arrays, and case-insensitive strings)
- * @param {*} value - The value to normalize
- * @returns {*} Normalized value
+ * Normalizes values for comparison
  */
-function normalizeValue(value) {
+function normalizeValue(value: unknown): unknown {
   if (value === undefined || value === null) {
     return null
   }
@@ -165,7 +189,6 @@ function normalizeValue(value) {
     if (trimmed === '') {
       return null
     }
-    // Convert to lowercase for case-insensitive comparison
     return trimmed.toLowerCase()
   }
 
@@ -173,13 +196,11 @@ function normalizeValue(value) {
     if (value.length === 0) {
       return null
     }
-    // Normalize array elements recursively
     return value.map(item => normalizeValue(item))
   }
 
   if (typeof value === 'object' && value !== null) {
-    // Normalize object values recursively
-    const normalized = {}
+    const normalized: Record<string, unknown> = {}
     for (const [key, val] of Object.entries(value)) {
       normalized[key] = normalizeValue(val)
     }
@@ -191,11 +212,8 @@ function normalizeValue(value) {
 
 /**
  * Deep equality check for values
- * @param {*} a - First value
- * @param {*} b - Second value
- * @returns {boolean} True if values are equal
  */
-function isEqual(a, b) {
+function isEqual(a: unknown, b: unknown): boolean {
   if (a === b) {
     return true
   }
@@ -208,14 +226,14 @@ function isEqual(a, b) {
   }
 
   if (typeof a === 'object' && typeof b === 'object' && a !== null && b !== null) {
-    const keysA = Object.keys(a)
-    const keysB = Object.keys(b)
+    const keysA = Object.keys(a as Record<string, unknown>)
+    const keysB = Object.keys(b as Record<string, unknown>)
 
     if (keysA.length !== keysB.length) {
       return false
     }
 
-    return keysA.every(key => isEqual(a[key], b[key]))
+    return keysA.every(key => isEqual((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key]))
   }
 
   return false
@@ -223,13 +241,8 @@ function isEqual(a, b) {
 
 /**
  * Generates a human-readable summary for a field change
- * @param {string} field - The field name
- * @param {*} oldValue - The old value
- * @param {*} newValue - The new value
- * @param {number|null} faceIndex - The face index
- * @returns {string} Human-readable summary
  */
-function generateFieldChangeSummary(field, oldValue, newValue, faceIndex) {
+function generateFieldChangeSummary(field: string, oldValue: unknown, newValue: unknown, faceIndex: number | null): string {
   const facePrefix = faceIndex !== null ? `Face ${faceIndex}: ` : ''
   const fieldName = formatFieldName(field)
 
@@ -246,11 +259,9 @@ function generateFieldChangeSummary(field, oldValue, newValue, faceIndex) {
 
 /**
  * Formats field names for display
- * @param {string} field - The field name
- * @returns {string} Formatted field name
  */
-function formatFieldName(field) {
-  const fieldNames = {
+function formatFieldName(field: string): string {
+  const fieldNames: Record<string, string> = {
     'oracle_text': 'rules text',
     'type_line': 'type line',
     'mana_cost': 'mana cost',
@@ -266,10 +277,8 @@ function formatFieldName(field) {
 
 /**
  * Truncates long values for display in summaries
- * @param {*} value - The value to truncate
- * @returns {string} Truncated string representation
  */
-function truncateValue(value) {
+function truncateValue(value: unknown): string {
   if (value === null || value === undefined) {
     return 'empty'
   }
@@ -284,18 +293,13 @@ function truncateValue(value) {
 
 /**
  * Generates an overall summary of all changes
- * @param {Array} changes - Array of individual changes
- * @param {number} facesAdded - Number of faces added
- * @param {number} facesRemoved - Number of faces removed
- * @param {number} fieldsChanged - Total number of fields changed
- * @returns {string} Overall summary
  */
-function generateChangeSummary(changes, facesAdded, facesRemoved, fieldsChanged) {
+function generateChangeSummary(changes: Change[], facesAdded: number, facesRemoved: number, fieldsChanged: number): string {
   if (fieldsChanged === 0) {
     return 'No changes detected'
   }
 
-  const parts = []
+  const parts: string[] = []
 
   if (facesAdded > 0) {
     parts.push(`${facesAdded} face${facesAdded > 1 ? 's' : ''} added`)
@@ -319,11 +323,8 @@ function generateChangeSummary(changes, facesAdded, facesRemoved, fieldsChanged)
 
 /**
  * Calculates changes from the original version (for legacy cube display)
- * @param {Object} currentData - The current card data
- * @param {Object} originalData - The original card data from creation
- * @returns {Object} Changes from original version
  */
-function calculateChangesFromOriginal(currentData, originalData) {
+function calculateChangesFromOriginal(currentData: CardData, originalData: CardData | null): ChangeResult {
   if (!originalData) {
     return {
       type: 'no_original',
@@ -348,10 +349,8 @@ function calculateChangesFromOriginal(currentData, originalData) {
 
 /**
  * Extracts the original card data from the edits array
- * @param {Array} edits - The edits array from the card document
- * @returns {Object|null} The original card data or null if not found
  */
-function extractOriginalData(edits) {
+function extractOriginalData(edits: Edit[] | null | undefined): CardData | null {
   if (!edits || edits.length === 0) {
     return null
   }
@@ -361,19 +360,28 @@ function extractOriginalData(edits) {
   if (creationEdit) {
     // For creation, there's no oldData, so we need to reconstruct from the first update
     const firstUpdate = edits.find(edit => edit.action === 'update')
-    return firstUpdate ? firstUpdate.oldData : null
+    return firstUpdate ? firstUpdate.oldData || null : null
   }
 
   // If no creation edit found, use the oldest update's oldData
   const oldestUpdate = edits
     .filter(edit => edit.action === 'update' && edit.oldData)
-    .sort((a, b) => new Date(a.date) - new Date(b.date))[0]
+    .sort((a, b) => new Date(a.date!).getTime() - new Date(b.date!).getTime())[0]
 
-  return oldestUpdate ? oldestUpdate.oldData : null
+  return oldestUpdate ? oldestUpdate.oldData || null : null
 }
 
 module.exports = {
   calculateCardChanges,
   calculateChangesFromOriginal,
   extractOriginalData,
+}
+
+export {
+  calculateCardChanges,
+  calculateChangesFromOriginal,
+  extractOriginalData,
+  CardData,
+  Change,
+  ChangeResult,
 }

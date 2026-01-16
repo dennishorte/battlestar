@@ -1,8 +1,45 @@
 const { BaseLogManager } = require('../lib/game/index.js')
 
+import type { BaseLogManager as BaseLogManagerType } from '../lib/game/index.js'
+
+interface Player {
+  name: string
+  [key: string]: unknown
+}
+
+interface Card {
+  id: string
+  morph: boolean
+  visibility: Player[]
+  name(): string
+  [key: string]: unknown
+}
+
+interface Zone {
+  name(): string
+  owner(): Player | null
+}
+
+interface LogEntry {
+  template: string
+  args: Record<string, LogArg | Player | Player[] | Card | Zone | string | number>
+  classes?: string[]
+}
+
+interface LogArg {
+  value: unknown
+  cardId?: string
+  classes?: string[]
+}
+
+interface MagicLogGame {
+  viewerName: string
+}
 
 class MagicLogManager extends BaseLogManager {
-  addStackPush(player, card) {
+  _game!: MagicLogGame
+
+  addStackPush(player: Player, card: Card): void {
     this.add({
       template: '{player} puts {card} on the stack',
       args: { player, card },
@@ -10,24 +47,24 @@ class MagicLogManager extends BaseLogManager {
     })
   }
 
-  _enrichLogArgs(entry) {
+  _enrichLogArgs(entry: LogEntry): void {
     for (const key of Object.keys(entry.args)) {
       if (key === 'players') {
-        const players = entry.args[key]
+        const players = entry.args[key] as Player[]
         entry.args[key] = {
           value: players.map(p => p.name || p).join(', '),
           classes: ['player-names'],
         }
       }
       else if (key.startsWith('player')) {
-        const player = entry.args[key]
+        const player = entry.args[key] as Player
         entry.args[key] = {
           value: player.name || player,
           classes: ['player-name']
         }
       }
       else if (key.startsWith('card')) {
-        const card = entry.args[key]
+        const card = entry.args[key] as Card
         const isHidden = !card.visibility.find(p => p.name === this._game.viewerName)
 
         if (isHidden) {
@@ -45,7 +82,7 @@ class MagicLogManager extends BaseLogManager {
         }
       }
       else if (key.startsWith('zone')) {
-        const zone = entry.args[key]
+        const zone = entry.args[key] as Zone
         const owner = zone.owner()
 
         const value = owner ? `${owner.name}'s ${zone.name()}` : zone.name()
@@ -67,3 +104,5 @@ class MagicLogManager extends BaseLogManager {
 
 
 module.exports = { MagicLogManager }
+
+export { MagicLogManager, LogEntry, LogArg }

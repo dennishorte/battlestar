@@ -1,4 +1,28 @@
-module.exports = [
+interface MagicSet {
+  object: string
+  id: string
+  code: string
+  mtgo_code?: string
+  arena_code?: string
+  tcgplayer_id?: number
+  name: string
+  uri: string
+  scryfall_uri: string
+  search_uri: string
+  released_at: string
+  set_type: string
+  card_count: number
+  parent_set_code?: string
+  digital: boolean
+  nonfoil_only: boolean
+  foil_only: boolean
+  block_code?: string
+  block?: string
+  icon_svg_uri: string
+  printed_size?: number
+}
+
+const sets: MagicSet[] = [
   {
     "object": "set",
     "id": "178a07bb-cd54-4443-8b62-675e0c52cfe3",
@@ -18433,3 +18457,6 @@ module.exports = [
     "icon_svg_uri": "https://svgs.scryfall.io/sets/lea.svg?1763960400"
   }
 ]
+
+export { sets, MagicSet }
+module.exports = sets

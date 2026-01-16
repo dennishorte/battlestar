@@ -1,6 +1,48 @@
 const { Serializer } = require('./Serializer.js')
 
-function _emptyZones() {
+import type { Serializer as SerializerType, SerializerData } from './Serializer.js'
+
+interface DeckCard {
+  _id: string
+  toJSON(): unknown
+  [key: string]: unknown
+}
+
+interface CardsByZone {
+  main: DeckCard[]
+  side: DeckCard[]
+  command: DeckCard[]
+  [zone: string]: DeckCard[]
+}
+
+interface CardIdsByZone {
+  main: string[]
+  side: string[]
+  command: string[]
+  [zone: string]: string[]
+}
+
+interface DeckData extends SerializerData {
+  name: string
+  format: string
+  cardIdsByZone: CardIdsByZone
+  [key: string]: unknown
+}
+
+interface GameJSON {
+  data: SerializerData
+  cards: {
+    main: unknown[]
+    side: unknown[]
+    command: unknown[]
+  }
+}
+
+type Juicer = (cardIds: string[]) => DeckCard[]
+type AsyncJuicer = (cardIds: string[]) => Promise<DeckCard[]>
+type CardFactory = (cardData: unknown) => DeckCard
+
+function _emptyZones(): CardsByZone {
   return {
     main: [],
     side: [],
@@ -9,18 +51,25 @@ function _emptyZones() {
 }
 
 class DeckWrapper {
-  constructor(deck) {
+  serializer: SerializerType
+  _modified: boolean
+  _cardsByZone: CardsByZone | undefined
+  name!: string
+  format!: string
+  cardIdsByZone!: CardIdsByZone
+
+  constructor(deck: DeckData) {
     this.serializer = new Serializer(this, deck)
     this.serializer.inject()
     this._modified = false
     this._cardsByZone = undefined
   }
 
-  toJSON() {
+  toJSON(): SerializerData {
     return this.serializer.serialize()
   }
 
-  async initializeCardsAsync(juicer) {
+  async initializeCardsAsync(juicer: AsyncJuicer): Promise<DeckWrapper> {
     this._cardsByZone = _emptyZones()
     for (const zone of Object.keys(this.cardIdsByZone)) {
       this._cardsByZone[zone] = await juicer(this.cardIdsByZone[zone])
@@ -31,7 +80,7 @@ class DeckWrapper {
   /**
      A juicer takes an array of cardIds and returns an array of MagicCard objects matching those ids.
    */
-  initializeCardsSync(juicer) {
+  initializeCardsSync(juicer: Juicer): DeckWrapper {
     this._cardsByZone = _emptyZones()
     for (const zone of Object.keys(this.cardIdsByZone)) {
       this._cardsByZone[zone] = juicer(this.cardIdsByZone[zone])
@@ -39,25 +88,25 @@ class DeckWrapper {
     return this
   }
 
-  setCardsByZone(cards) {
+  setCardsByZone(cards: CardsByZone): void {
     this._cardsByZone = cards
   }
 
-  cardlist(zone) {
+  cardlist(zone: string): DeckCard[] {
     if (!this.ready()) {
       throw new Error('cards not loaded')
     }
-    return [...this._cardsByZone[zone]]
+    return [...this._cardsByZone![zone]]
   }
 
-  addCard(card, zone) {
+  addCard(card: DeckCard, zone: string): DeckWrapper {
     this.cardIdsByZone[zone].push(card._id)
-    this._cardsByZone[zone].push(card)
+    this._cardsByZone![zone].push(card)
     this._modified = true
     return this
   }
 
-  removeCard(card, zone) {
+  removeCard(card: DeckCard, zone: string): DeckWrapper {
     const toRemove = this.cardIdsByZone[zone].findIndex(id => id === card._id)
     if (toRemove === -1) {
       console.log('removeCard', card, zone)
@@ -65,12 +114,12 @@ class DeckWrapper {
     }
 
     this.cardIdsByZone[zone].splice(toRemove, 1)
-    this._cardsByZone[zone].splice(toRemove, 1)
+    this._cardsByZone![zone].splice(toRemove, 1)
     this._modified = true
     return this
   }
 
-  setName(name) {
+  setName(name: string): DeckWrapper {
     if (this.name !== name) {
       this.name = name
       this._modified = true
@@ -78,7 +127,7 @@ class DeckWrapper {
     return this
   }
 
-  setFormat(format) {
+  setFormat(format: string): DeckWrapper {
     if (this.format !== format) {
       this.format = format
       this._modified = true
@@ -86,30 +135,30 @@ class DeckWrapper {
     return this
   }
 
-  isModified() {
+  isModified(): boolean {
     return this._modified
   }
 
-  getCardCount(zone) {
+  getCardCount(zone: string): number {
     return this.cardIdsByZone[zone].length
   }
 
-  ready() {
+  ready(): boolean {
     return this._cardsByZone !== undefined
   }
 
-  zones() {
+  zones(): string[] {
     return Object.keys(this.cardIdsByZone)
   }
 
-  markSaved() {
+  markSaved(): DeckWrapper {
     this._modified = false
     return this
   }
 
-  toGameJSON() {
-    const deepcopy = (zone) => {
-      return this._cardsByZone[zone].map(card => card.toJSON())
+  toGameJSON(): GameJSON {
+    const deepcopy = (zone: string): unknown[] => {
+      return this._cardsByZone![zone].map(card => card.toJSON())
     }
 
     return {
@@ -122,9 +171,9 @@ class DeckWrapper {
     }
   }
 
-  static fromGameJSON(json, cardFactory) {
-    const deck = new DeckWrapper(json.data)
-    const cards = {
+  static fromGameJSON(json: GameJSON, cardFactory: CardFactory): DeckWrapper {
+    const deck = new DeckWrapper(json.data as DeckData)
+    const cards: CardsByZone = {
       main: json.cards.main.map(card => cardFactory(card)),
       side: json.cards.side.map(card => cardFactory(card)),
       command: json.cards.command.map(card => cardFactory(card)),
@@ -135,3 +184,5 @@ class DeckWrapper {
 }
 
 module.exports = DeckWrapper
+
+export { DeckWrapper, DeckData, DeckCard, CardsByZone, CardIdsByZone, GameJSON }
