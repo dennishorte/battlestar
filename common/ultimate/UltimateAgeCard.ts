@@ -1,13 +1,88 @@
 const { UltimateBaseCard } = require('./UltimateBaseCard.js')
 const util = require('../lib/util.js')
 
+import type { Player } from './UltimateBaseCard.js'
+
+interface KarmaImpl {
+  trigger: string | string[]
+  func?: (game: unknown, player: Player) => unknown
+}
+
+interface AgeCardData {
+  name: string
+  color?: string
+  age?: number
+  visibleAge?: number | null
+  expansion?: string
+  biscuits?: string
+  dogmaBiscuit?: string
+  echo?: string | string[]
+  karma?: string[]
+  dogma?: string[]
+  dogmaImpl?: Array<(game: unknown, player: Player) => void>
+  echoImpl?: Array<(game: unknown, player: Player) => void>
+  karmaImpl?: KarmaImpl[]
+}
+
+interface Zone {
+  id: string
+  splay: string
+  owner(): Player | null
+  isColorZone(): boolean
+}
+
+interface UltimateUtils {
+  parseBiscuits(biscuitString: string): Record<string, number>
+  getAsArray<T>(obj: unknown, key: string): T[]
+}
+
+interface Game {
+  zones: {
+    byPlayer(player: Player, zone: string): Zone
+  }
+  cards: {
+    top(player: Player, color: string): { id: string } | null
+  }
+  util: UltimateUtils
+}
+
+interface VisibleEffectsResult {
+  card: UltimateAgeCard
+  texts: string[]
+  impls: Array<(game: unknown, player: Player) => void>
+}
+
+interface KarmaInfo {
+  card: UltimateAgeCard
+  index: number
+  text: string
+  impl: KarmaImpl
+}
+
 class UltimateAgeCard extends UltimateBaseCard {
-  constructor(game, data) {
+  version!: number
+  declare name: string
+  color!: string
+  age!: number
+  visibleAge!: number | null
+  expansion!: string
+  biscuits!: string
+  dogmaBiscuit!: string
+  echo!: string[]
+  karma!: string[]
+  dogma!: string[]
+  dogmaImpl!: Array<(game: unknown, player: Player) => void>
+  echoImpl!: Array<(game: unknown, player: Player) => void>
+  karmaImpl!: KarmaImpl[]
+  owner!: Player | null
+  zone!: Zone
+  declare game: Game
+
+  constructor(game: Game, data: AgeCardData) {
     super(game, data)
 
     Object.assign(this, {
       version: 2,
-      name: '',
       color: '',
       age: 1,
       visibleAge: null,
@@ -24,7 +99,7 @@ class UltimateAgeCard extends UltimateBaseCard {
     })
   }
 
-  getSplay() {
+  getSplay(): string {
     if (this.owner) {
       if (this.isTopCardLoose()) {
         return 'top'
@@ -38,7 +113,7 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
   }
 
-  checkBiscuitIsVisible(biscuit) {
+  checkBiscuitIsVisible(biscuit: string): boolean {
     if (biscuit === 'h') {
       // m also counts as an h
       const mIsVisible = this.checkBiscuitIsVisible('m')
@@ -47,7 +122,7 @@ class UltimateAgeCard extends UltimateBaseCard {
       }
     }
 
-    const biscuitIndices = []
+    const biscuitIndices: number[] = []
     for (let i = 0; i < this.biscuits.length; i++) {
       if (this.biscuits[i] === biscuit) {
         biscuitIndices.push(i)
@@ -68,39 +143,39 @@ class UltimateAgeCard extends UltimateBaseCard {
     })
   }
 
-  checkEchoIsVisible() {
+  checkEchoIsVisible(): boolean {
     return this.checkBiscuitIsVisible('&')
   }
 
-  checkHasDemandExplicit() {
+  checkHasDemandExplicit(): boolean {
     return this
       .dogma
       .some(text => text.toLowerCase().startsWith('i demand'))
   }
 
-  checkHasCompelExplicit() {
+  checkHasCompelExplicit(): boolean {
     return this
       .dogma
       .some(text => text.toLowerCase().startsWith('i compel'))
   }
 
-  checkHasDemand() {
+  checkHasDemand(): boolean {
     return this.checkHasDemandExplicit() || this.checkHasCompelExplicit()
   }
 
-  checkHasDogma() {
+  checkHasDogma(): boolean {
     return this.dogma && this.dogma.length > 0
   }
 
-  checkHasEcho() {
+  checkHasEcho(): boolean {
     return this.echo && this.echo.length > 0
   }
 
-  checkHasKarma() {
+  checkHasKarma(): boolean {
     return this.karma && this.karma.length > 0
   }
 
-  checkHasShare() {
+  checkHasShare(): boolean {
     const shareDogmaEffect = this.dogma.some(text => {
       const lowercase = text.toLowerCase()
       return !lowercase.startsWith('i demand') && !lowercase.startsWith('i compel')
@@ -109,27 +184,27 @@ class UltimateAgeCard extends UltimateBaseCard {
     return shareDogmaEffect || shareEchoEffect
   }
 
-  checkIsAgeCard() {
+  checkIsAgeCard(): boolean {
     return true
   }
 
-  checkIsArtifact() {
+  checkIsArtifact(): boolean {
     return this.expansion === 'arti'
   }
 
-  checkIsCity() {
+  checkIsCity(): boolean {
     return this.expansion === 'city'
   }
 
-  checkIsEchoes() {
+  checkIsEchoes(): boolean {
     return this.expansion === 'echo'
   }
 
-  checkIsFigure() {
+  checkIsFigure(): boolean {
     return this.expansion === 'figs'
   }
 
-  checkIsOnPlayerBoard(player) {
+  checkIsOnPlayerBoard(player?: Player): boolean {
     if (!this.zone || !this.zone.owner) {
       return false
     }
@@ -143,15 +218,15 @@ class UltimateAgeCard extends UltimateBaseCard {
     // Note: zone.owner is a function, so we need to call it
     else {
       const zoneOwner = this.zone.owner()
-      return zoneOwner && zoneOwner.id === player.id && this.zone.isColorZone()
+      return Boolean(zoneOwner && zoneOwner.id === player.id && this.zone.isColorZone())
     }
   }
 
-  checkHasBonus() {
+  checkHasBonus(): boolean {
     return this.getBonuses().length > 0
   }
 
-  checkHasDiscoverBiscuit() {
+  checkHasDiscoverBiscuit(): boolean {
     if (this.biscuits.length < 6) {
       return false
     }
@@ -160,7 +235,7 @@ class UltimateAgeCard extends UltimateBaseCard {
     return 'lciskfp'.includes(biscuit)
   }
 
-  isTopCardLoose() {
+  isTopCardLoose(): boolean {
     if (!this.owner) {
       return true
     }
@@ -172,11 +247,11 @@ class UltimateAgeCard extends UltimateBaseCard {
     return this.isTopCardStrict()
   }
 
-  isTopCardStrict() {
-    return this.game.cards.top(this.owner, this.color)?.id === this.id
+  isTopCardStrict(): boolean {
+    return this.game.cards.top(this.owner!, this.color)?.id === this.id
   }
 
-  checkSharesBiscuit(other) {
+  checkSharesBiscuit(other: UltimateAgeCard): boolean {
     const biscuits = 'lciskfp'.split('')
     for (const biscuit of biscuits) {
       if (this.checkHasBiscuit(biscuit) && other.checkHasBiscuit(biscuit)) {
@@ -186,19 +261,19 @@ class UltimateAgeCard extends UltimateBaseCard {
     return false
   }
 
-  getAge() {
+  getAge(): number {
     return this.checkIsOnPlayerBoard() ? (this.visibleAge || this.age) : this.age
   }
 
-  getBiscuitCount(biscuit) {
+  getBiscuitCount(biscuit: string): number {
     return this.biscuits.split(biscuit).length - 1
   }
 
-  visibleBiscuitsParsed() {
+  visibleBiscuitsParsed(): Record<string, number> {
     return this.game.util.parseBiscuits(this.visibleBiscuits())
   }
 
-  visibleBiscuits() {
+  visibleBiscuits(): string {
     const splay = this.getSplay()
 
     // If this is a top card, return all of its biscuits
@@ -232,7 +307,7 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
   }
 
-  getBonuses() {
+  getBonuses(): number[] {
     const rx = /([abt1-9])/g
     const matches = this
       .visibleBiscuits()
@@ -254,7 +329,7 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
   }
 
-  getHexIndex() {
+  getHexIndex(): number {
     if (this.biscuits.includes('m')) {
       return this.biscuits.indexOf('m')
     }
@@ -263,8 +338,8 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
   }
 
-  getKarmaInfo(trigger) {
-    const matches = []
+  getKarmaInfo(trigger: string): KarmaInfo[] {
+    const matches: KarmaInfo[] = []
     for (let i = 0; i < this.karma.length; i++) {
       const impl = this.karmaImpl[i]
       const triggers = util.getAsArray(impl, 'trigger')
@@ -280,7 +355,7 @@ class UltimateAgeCard extends UltimateBaseCard {
     return matches
   }
 
-  getImpl(kind) {
+  getImpl(kind: string): Array<(game: unknown, player: Player) => void> | KarmaImpl[] {
     if (kind.startsWith('karma')) {
       kind = kind.substr(6)
       const impl = this.karmaImpl.find(impl => impl.trigger === kind)
@@ -296,15 +371,15 @@ class UltimateAgeCard extends UltimateBaseCard {
       }
     }
     else {
-      return this[`${kind}Impl`]
+      return (this as unknown as Record<string, Array<(game: unknown, player: Player) => void>>)[`${kind}Impl`]
     }
   }
 
-  inHand(player) {
+  inHand(player: Player): boolean {
     return this.owner === player && this.zone.id.endsWith('hand')
   }
 
-  visibleEffects(kind, opts={}) {
+  visibleEffects(kind: string, opts: { selfExecutor?: boolean } = {}): VisibleEffectsResult | undefined {
     const isTop = this.isTopCardLoose() || this.zone.id.endsWith('.artifact')
 
     if (kind === 'dogma') {
@@ -312,14 +387,14 @@ class UltimateAgeCard extends UltimateBaseCard {
         return {
           card: this,
           texts: this.dogma,
-          impls: this.getImpl('dogma'),
+          impls: this.getImpl('dogma') as Array<(game: unknown, player: Player) => void>,
         }
       }
     }
 
     else if (kind === 'echo') {
-      const texts = []
-      const impls = []
+      const texts: string[] = []
+      const impls: Array<(game: unknown, player: Player) => void> = []
 
       if (this.checkEchoIsVisible()) {
         for (const text of util.getAsArray(this, 'echo')) {
@@ -350,3 +425,6 @@ class UltimateAgeCard extends UltimateBaseCard {
 module.exports = {
   UltimateAgeCard,
 }
+
+export { UltimateAgeCard }
+export type { AgeCardData, KarmaImpl, KarmaInfo, VisibleEffectsResult }

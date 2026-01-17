@@ -1,4 +1,83 @@
-function DrawAction(player, opts={}) {
+interface Player {
+  name: string
+}
+
+interface Card {
+  moveTo(zone: Zone): void
+  getAge(): number
+}
+
+interface Zone {
+  cardlist(): Card[]
+  peek(): Card | null
+}
+
+interface ZoneManager {
+  byDeck(exp: string, age: number): Zone
+  byPlayer(player: Player, zone: string): Zone
+}
+
+interface CardManager {
+  tops(player: Player): Card[]
+}
+
+interface PlayerManager {
+  all(): Player[]
+}
+
+interface UltimateUtils {
+  colors(): string[]
+}
+
+interface KarmaInfo {
+  impl: {
+    matches(game: unknown, player: Player, opts: { action: string; color: string; isAction?: boolean }): boolean
+    func(game: unknown, player: Player, opts: { color: string }): number
+  }
+}
+
+interface GameSettings {
+  version: number
+}
+
+interface Game {
+  getMinAge(): number
+  getMaxAge(): number
+  getScore(player: Player): number
+  getAchievementsByPlayer(player: Player): { total: number }
+  getExpansionList(): string[]
+  youWin(player: Player, reason: string): void
+  settings: GameSettings
+  checkIsFirstBaseDraw(player: Player): boolean
+  mSetFirstBaseDraw(player: Player): void
+  aKarma(player: Player, trigger: string, opts?: Record<string, unknown>): string | undefined
+  getInfoByKarmaTrigger(player: Player, trigger: string, opts?: Record<string, unknown>): KarmaInfo[]
+  checkInKarma(): boolean
+  util: UltimateUtils
+  players: PlayerManager
+}
+
+interface ActionManager {
+  game: Game
+  zones: ZoneManager
+  cards: CardManager
+  log: {
+    add(entry: { template: string; args?: Record<string, unknown> }): void
+  }
+  acted(player: Player): void
+  _karmaIn(): void
+  _karmaOut(): void
+}
+
+interface DrawOptions {
+  age?: number
+  isAction?: boolean
+  exp?: string
+  silent?: boolean
+  [key: string]: unknown
+}
+
+function DrawAction(this: ActionManager, player: Player, opts: DrawOptions = {}): Card | undefined {
   const { age, isAction } = opts
 
   if (isAction) {
@@ -18,7 +97,7 @@ function DrawAction(player, opts={}) {
   const baseAge = age !== undefined ? (age || minAge) : (highestTopAge || minAge)
 
   // Adjust age based on empty decks.
-  let [ adjustedAge, adjustedExp ] = _adjustedDrawDeck.call(this, baseAge, baseExp)
+  let [adjustedAge, adjustedExp] = _adjustedDrawDeck.call(this, baseAge, baseExp)
 
   const karmaKind = this.game.aKarma(player, 'draw', { ...opts, age: adjustedAge, exp: adjustedExp })
   if (karmaKind === 'would-instead') {
@@ -27,14 +106,14 @@ function DrawAction(player, opts={}) {
   }
   else if (karmaKind === 'would-first') {
     // Some effects junk decks, which might affect the draw age.
-    [ adjustedAge, adjustedExp ] = _adjustedDrawDeck.call(this, baseAge, baseExp)
+    [adjustedAge, adjustedExp] = _adjustedDrawDeck.call(this, baseAge, baseExp)
   }
 
   return _doDraw.call(this, player, adjustedExp, adjustedAge, opts)
 }
 
 
-function _doDraw(player, exp, age, opts={}) {
+function _doDraw(this: ActionManager, player: Player, exp: string, age: number, opts: DrawOptions = {}): Card | undefined {
   if (age > this.game.getMaxAge()) {
     const scores = this
       .game
@@ -44,6 +123,7 @@ function _doDraw(player, exp, age, opts={}) {
         player,
         score: this.game.getScore(player),
         achs: this.game.getAchievementsByPlayer(player).total,
+        reason: '',
       }))
       .sort((l, r) => {
         if (r.score !== l.score) {
@@ -58,6 +138,7 @@ function _doDraw(player, exp, age, opts={}) {
         }
         else {
           this.game.youWin(player, 'Tied for points and achievements; player who drew the big card wins!')
+          return 0
         }
       })
 
@@ -66,7 +147,7 @@ function _doDraw(player, exp, age, opts={}) {
 
   const source = this.zones.byDeck(exp, age)
   const hand = this.zones.byPlayer(player, 'hand')
-  const card = source.peek()
+  const card = source.peek()!
   card.moveTo(hand)
 
   if (!opts.silent) {
@@ -80,7 +161,7 @@ function _doDraw(player, exp, age, opts={}) {
   return card
 }
 
-function _adjustedDrawDeck(age, exp) {
+function _adjustedDrawDeck(this: ActionManager, age: number, exp: string): [number, string] {
   if (age > this.game.getMaxAge()) {
     return [12, 'base']
   }
@@ -105,11 +186,11 @@ function _adjustedDrawDeck(age, exp) {
 // Determine which expansion to draw from.
 // If playing with more than one of Figures, Echoes, and The Unseen, the draw
 // rule for Figures is checked first, then Echoes, then Unseen.
-function _determineBaseDrawExpansion(player) {
+function _determineBaseDrawExpansion(this: ActionManager, player: Player): string {
   // Whether the player ends up drawing echoes, unseen, or base, this counts as their
   // first base draw, and so following draws won't draw unseen cards.
   const isFirstBaseDraw = this.game.checkIsFirstBaseDraw(player)
-  if (isFirstBaseDraw){
+  if (isFirstBaseDraw) {
     this.game.mSetFirstBaseDraw(player)
   }
 
@@ -118,8 +199,8 @@ function _determineBaseDrawExpansion(player) {
       const topAges = this
         .cards
         .tops(player)
-        .map(c => c.getAge())
-        .sort((l, r) => l - r)
+        .map((c: Card) => c.getAge())
+        .sort((l: number, r: number) => l - r)
         .reverse()
 
       if (topAges.length === 1 || (topAges.length > 1 && topAges[0] != topAges[1])) {
@@ -140,8 +221,8 @@ function _determineBaseDrawExpansion(player) {
       const topAges = this
         .cards
         .tops(player)
-        .map(c => c.getAge())
-        .sort((l, r) => l - r)
+        .map((c: Card) => c.getAge())
+        .sort((l: number, r: number) => l - r)
         .reverse()
 
       if (topAges.length === 1 || (topAges.length > 1 && topAges[0] != topAges[1])) {
@@ -157,7 +238,7 @@ function _determineBaseDrawExpansion(player) {
   }
 }
 
-function _getAgeForDrawAction(player, isAction) {
+function _getAgeForDrawAction(this: ActionManager, player: Player, isAction?: boolean): number {
   const karmaInfos = this.game.getInfoByKarmaTrigger(player, 'top-card-value', { isAction })
 
   if (karmaInfos.length > 1) {
@@ -167,7 +248,7 @@ function _getAgeForDrawAction(player, isAction) {
   const ageValues = this
     .game
     .util.colors()
-    .map(color => {
+    .map((color: string) => {
       const zone = this.zones.byPlayer(player, color)
       if (zone.cardlist().length === 0) {
         return this.game.getMinAge()
@@ -177,11 +258,11 @@ function _getAgeForDrawAction(player, isAction) {
       const karmaMatches = (
         !this.game.checkInKarma()
         && karmaInfos.length === 1
-        && karmaInfos[0].impl.matches(this, player, { action: actionType, color, isAction })
+        && karmaInfos[0].impl.matches(this as unknown as Game, player, { action: actionType, color, isAction })
       )
       if (karmaMatches) {
         this._karmaIn()
-        const result = karmaInfos[0].impl.func(this, player, { color })
+        const result = karmaInfos[0].impl.func(this as unknown as Game, player, { color })
         this._karmaOut()
         return result
       }
@@ -198,3 +279,6 @@ function _getAgeForDrawAction(player, isAction) {
 module.exports = {
   DrawAction,
 }
+
+export { DrawAction }
+export type { DrawOptions }

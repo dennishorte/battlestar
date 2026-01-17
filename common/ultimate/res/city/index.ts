@@ -1,4 +1,7 @@
-const cardData = [
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+import type { AchievementData } from '../../UltimateAchievement.js'
+
+const cardData: AgeCardData[] = [
   require('./Athens.js'),
   require('./ChangAn.js'),
   require('./Thebes.js'),
@@ -116,7 +119,7 @@ const cardData = [
   require('./Lima.js')
 ]
 
-const achievementData = [
+const achievementData: AchievementData[] = [
   require('./achievements/Fame.js'),
   require('./achievements/Glory.js'),
   require('./achievements/Tradition.js'),
@@ -128,3 +131,5 @@ module.exports = {
   cardData,
   achievementData,
 }
+
+export { cardData, achievementData }

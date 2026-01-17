@@ -1,12 +1,24 @@
 const util = require('../lib/util.js')
 
+import type { BiscuitCounts } from './UltimatePlayer.js'
+
+interface Card {
+  getAge(): number
+  age: number
+}
+
+interface Game {
+  // Game reference (not used in most methods)
+}
 
 class UltimateUtils {
-  constructor(game) {
+  game: Game
+
+  constructor(game: Game) {
     this.game = game
   }
 
-  biscuitNames() {
+  biscuitNames(): string[] {
     return [
       'castle',
       'clock',
@@ -18,7 +30,7 @@ class UltimateUtils {
     ]
   }
 
-  biscuitNameToIcon(name) {
+  biscuitNameToIcon(name: string): string {
     switch (name) {
       case 'castle': return 'k'
       case 'clock': return 'i'
@@ -32,7 +44,7 @@ class UltimateUtils {
     throw new Error('Unknown biscuit name: ' + name)
   }
 
-  biscuitIconToName(icon) {
+  biscuitIconToName(icon: string): string {
     switch (icon) {
       case 'k': return 'castle'
       case 'i': return 'clock'
@@ -46,7 +58,7 @@ class UltimateUtils {
     throw new Error('Unknown biscuit icon: ' + icon)
   }
 
-  colors() {
+  colors(): string[] {
     return [
       'red',
       'yellow',
@@ -56,7 +68,7 @@ class UltimateUtils {
     ]
   }
 
-  colorToDecree(color) {
+  colorToDecree(color: string): string {
     switch (color) {
       case 'red': return 'War'
       case 'yellow': return 'Expansion'
@@ -68,16 +80,16 @@ class UltimateUtils {
     }
   }
 
-  combineBiscuits(left, right) {
+  combineBiscuits(left: BiscuitCounts, right: BiscuitCounts): BiscuitCounts {
     const combined = this.emptyBiscuits()
-    for (const biscuit of Object.keys(combined)) {
+    for (const biscuit of Object.keys(combined) as (keyof BiscuitCounts)[]) {
       combined[biscuit] += left[biscuit]
       combined[biscuit] += right[biscuit]
     }
     return combined
   }
 
-  emptyBiscuits() {
+  emptyBiscuits(): BiscuitCounts {
     return {
       c: 0,
       f: 0,
@@ -89,28 +101,28 @@ class UltimateUtils {
     }
   }
 
-  highestCards(cards) {
+  highestCards(cards: Card[]): Card[] {
     const sorted = [...cards].sort((l, r) => r.getAge() - l.getAge())
-    return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
+    return util.array.takeWhile(sorted, (card: Card) => card.getAge() === sorted[0].getAge())
   }
 
-  lowestCards(cards) {
+  lowestCards(cards: Card[]): Card[] {
     const sorted = [...cards].sort((l, r) => l.getAge() - r.getAge())
-    return util.array.takeWhile(sorted, card => card.getAge() === sorted[0].getAge())
+    return util.array.takeWhile(sorted, (card: Card) => card.getAge() === sorted[0].getAge())
   }
 
-  parseBiscuits(biscuitString) {
+  parseBiscuits(biscuitString: string): BiscuitCounts {
     const counts = this.emptyBiscuits()
     for (const ch of biscuitString) {
       if (Object.hasOwn(counts, ch)) {
-        counts[ch] += 1
+        counts[ch as keyof BiscuitCounts] += 1
       }
     }
     return counts
   }
 
-  separateByAge(cards) {
-    const byAge = {}
+  separateByAge(cards: Card[]): Record<number, Card[]> {
+    const byAge: Record<number, Card[]> = {}
     for (const card of cards) {
       if (Object.hasOwn(byAge, card.age)) {
         byAge[card.age].push(card)
@@ -122,10 +134,11 @@ class UltimateUtils {
     return byAge
   }
 
-  serializeObject(obj) {
-    if (typeof obj === 'object') {
-      util.assert(obj.id !== undefined, 'Object has no id. Cannot serialize.')
-      return obj.id
+  serializeObject(obj: unknown): string {
+    if (typeof obj === 'object' && obj !== null) {
+      const objWithId = obj as { id?: string }
+      util.assert(objWithId.id !== undefined, 'Object has no id. Cannot serialize.')
+      return objWithId.id!
     }
     else if (typeof obj === 'string') {
       return obj
@@ -139,3 +152,5 @@ class UltimateUtils {
 module.exports = {
   UltimateUtils,
 }
+
+export { UltimateUtils }

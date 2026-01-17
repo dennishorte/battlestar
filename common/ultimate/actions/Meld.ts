@@ -1,7 +1,95 @@
 const util = require('../../lib/util.js')
 
+interface Player {
+  name: string
+}
 
-function MeldAction(player, card, opts={}) {
+interface Card {
+  id: string
+  name: string
+  age: number
+  color: string
+  biscuits: string
+  zone: Zone
+  isMuseum?: boolean
+  moveTo(zone: Zone, position?: number): void
+  getAge(): number
+  getHexIndex(): number
+  visibleBiscuits(): string
+  checkIsCity(): boolean
+  checkHasBiscuit(biscuit: string): boolean
+  checkHasDiscoverBiscuit(): boolean
+}
+
+interface Zone {
+  id: string
+  splay: string
+  isMuseumZone(): boolean
+  cardlist(): Card[]
+}
+
+interface ZoneManager {
+  byPlayer(player: Player, zone: string): Zone
+}
+
+interface CardManager {
+  byId(id: string): Card
+  byPlayer(player: Player, zone: string): Card[]
+  byDeck(exp: string, age: number): Card[]
+}
+
+interface PlayerManager {
+  opponents(player: Player): Player[]
+}
+
+interface Log {
+  add(entry: { template: string; args?: Record<string, unknown> }): void
+  indent(): void
+  outdent(): void
+}
+
+interface GameStats {
+  melded: string[]
+  meldedBy: Record<string, string>
+  highestMelded: number
+  firstToMeldOfAge: [number, string][]
+}
+
+interface Game {
+  aKarma(player: Player, trigger: string, opts?: Record<string, unknown>): string | undefined
+  getExpansionList(): string[]
+  stats: GameStats
+  actions: ActionManager
+  cards: CardManager
+}
+
+interface ActionManager {
+  game: Game
+  zones: ZoneManager
+  cards: CardManager
+  players: PlayerManager
+  log: Log
+  acted(player: Player): void
+  draw(player: Player, opts?: { age?: number; exp?: string }): Card
+  splay(player: Player, color: string, direction: string): void
+  unsplay(player: Player, color: string): void
+  junkDeck(player: Player, age: number): void
+  junkAvailableAchievement(player: Player, ages: number[]): void
+  claimAchievement(player: Player, opts: { name: string }): void
+  return(player: Player, card: Card): void
+  reveal(player: Player, card: Card): void
+  chooseAndMeld(player: Player, choices: Card[]): Card[]
+  dogma(player: Player, card: Card, opts?: { foreseen?: boolean }): void
+  digArtifact(player: Player, age: number): void
+  _maybeDrawCity(player: Player, opts?: Record<string, unknown>): void
+}
+
+interface MeldOptions {
+  asAction?: boolean
+  [key: string]: unknown
+}
+
+function MeldAction(this: ActionManager, player: Player, card: Card, opts: MeldOptions = {}): Card | undefined {
   // TODO: Figure out how to convert this to use UltimateActionManager.insteadKarmaWrapper
   const karmaKind = this.game.aKarma(player, 'meld', { ...opts, card })
   if (karmaKind === 'would-instead') {
@@ -24,7 +112,7 @@ function MeldAction(player, card, opts={}) {
   this.game.aKarma(player, 'when-meld', { ...opts, card })
 
   if (fromMuseum) {
-    const museum = this.cards.byPlayer(player, 'museum').filter(card => card.isMuseum)[0]
+    const museum = this.cards.byPlayer(player, 'museum').filter((card: Card) => card.isMuseum)[0]
     this.return(player, museum)
   }
 
@@ -53,7 +141,7 @@ function MeldAction(player, card, opts={}) {
   return card
 }
 
-function _maybeCityBiscuits(player, card) {
+function _maybeCityBiscuits(this: ActionManager, player: Player, card: Card): void {
   const biscuits = card.visibleBiscuits()
 
   for (const biscuit of biscuits) {
@@ -89,7 +177,7 @@ function _maybeCityBiscuits(player, card) {
   }
 }
 
-function _maybeCityMeldAchievements(player, card) {
+function _maybeCityMeldAchievements(this: ActionManager, player: Player, card: Card): void {
   if (
     card.checkHasBiscuit('<')
     && this.zones.byPlayer(player, card.color).splay === 'left'
@@ -115,7 +203,7 @@ function _maybeCityMeldAchievements(player, card) {
   }
 }
 
-function _maybeDiscoverBiscuit(player, card) {
+function _maybeDiscoverBiscuit(this: ActionManager, player: Player, card: Card): void {
   if (card.checkHasDiscoverBiscuit()) {
     const age = card.getAge()
     const biscuit = card.biscuits[4]
@@ -123,16 +211,16 @@ function _maybeDiscoverBiscuit(player, card) {
     const numDraw = Math.min(maxDraw, age)
 
     for (let i = 0; i < numDraw; i++) {
-      const card = this.draw(player, { exp: 'base', age })
-      this.reveal(player, card)
-      if (!card.checkHasBiscuit(biscuit)) {
-        this.return(player, card)
+      const drawnCard = this.draw(player, { exp: 'base', age })
+      this.reveal(player, drawnCard)
+      if (!drawnCard.checkHasBiscuit(biscuit)) {
+        this.return(player, drawnCard)
       }
     }
   }
 }
 
-function _maybeDigArtifact(player, card) {
+function _maybeDigArtifact(this: ActionManager, player: Player, card: Card): void {
   if (!this.game.getExpansionList().includes('arti')) {
     return
   }
@@ -157,12 +245,12 @@ function _maybeDigArtifact(player, card) {
   }
 }
 
-function _maybePromote(player, card) {
+function _maybePromote(this: ActionManager, player: Player, card: Card): void {
   const choices = this
     .game
     .cards
     .byPlayer(player, 'forecast')
-    .filter(other => other.getAge() <= card.getAge())
+    .filter((other: Card) => other.getAge() <= card.getAge())
 
   if (choices.length > 0) {
     this.log.add({
@@ -177,11 +265,11 @@ function _maybePromote(player, card) {
   }
 }
 
-function _statsCardWasMelded(card) {
+function _statsCardWasMelded(this: ActionManager, card: Card): void {
   util.array.pushUnique(this.game.stats.melded, card.name)
 }
 
-function _statsCardWasMeldedBy(player, card) {
+function _statsCardWasMeldedBy(this: ActionManager, player: Player, card: Card): void {
   if (card.name in this.game.stats.meldedBy) {
     return
   }
@@ -190,7 +278,7 @@ function _statsCardWasMeldedBy(player, card) {
   }
 }
 
-function _statsFirstToMeldOfAge(player, card) {
+function _statsFirstToMeldOfAge(this: ActionManager, player: Player, card: Card): void {
   if (card.age > this.game.stats.highestMelded) {
     this.game.stats.firstToMeldOfAge.push([card.age, player.name])
     this.game.stats.highestMelded = card.age
@@ -200,3 +288,6 @@ function _statsFirstToMeldOfAge(player, card) {
 module.exports = {
   MeldAction
 }
+
+export { MeldAction }
+export type { MeldOptions }

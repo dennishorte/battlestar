@@ -1,21 +1,56 @@
 const { BaseLogManager } = require('../lib/game/index.js')
 
+import type { UltimatePlayer } from './UltimatePlayer.js'
+
+interface Card {
+  name: string
+  isSpecialAchievement?: boolean
+  isDecree?: boolean
+  expansion?: string
+  visibleAge?: number
+  visibility: UltimatePlayer[]
+  getAge(): number
+  getHiddenName(name: string): string
+}
+
+interface UltimateUtils {
+  biscuitIconToName(icon: string): string
+}
+
+interface Game {
+  util: UltimateUtils
+}
+
+interface LogEntry {
+  template: string
+  args?: Record<string, unknown>
+}
+
+interface HandlerResult {
+  value: string
+  classes: string[]
+  card?: Card
+}
 
 class UltimateLogManager extends BaseLogManager {
-  constructor(game, chat, viewerName) {
+  _viewerName!: string
+  _name!: string
+  _game!: Game
+
+  constructor(game: Game, chat: unknown, viewerName: string) {
     super(game, chat, viewerName)
     this._registerUltimateHandlers()
   }
 
-  _registerUltimateHandlers() {
+  _registerUltimateHandlers(): void {
     // Override the default card handler with Ultimate-specific logic
-    this.registerHandler('card*', (card) => {
-      let name
+    this.registerHandler('card*', (card: Card): HandlerResult => {
+      let name: string
       if (card.isSpecialAchievement || card.isDecree) {
         name = card.name
       }
       else {
-        const viewerCanSee = Boolean(card.visibility.find(player => player.name === this._viewerName))
+        const viewerCanSee = Boolean(card.visibility.find((player: UltimatePlayer) => player.name === this._viewerName))
         name = viewerCanSee ? card.name : card.getHiddenName(this._name)
       }
 
@@ -37,7 +72,7 @@ class UltimateLogManager extends BaseLogManager {
       }
     })
 
-    this.registerHandler('biscuit*', (biscuit) => {
+    this.registerHandler('biscuit*', (biscuit: string): HandlerResult => {
       if (biscuit.length === 1) {
         return {
           value: this._game.util.biscuitIconToName(biscuit),
@@ -53,17 +88,17 @@ class UltimateLogManager extends BaseLogManager {
     })
   }
 
-  _postEnrichArgs(entry) {
+  _postEnrichArgs(entry: LogEntry): boolean {
     // Attempt to combine this entry with the previous entry.
 
     if (this.getLog().length === 0) {
       return false
     }
 
-    const prev = this.getLog().slice(-1)[0]
+    const prev = this.getLog().slice(-1)[0] as LogEntry & { args?: { player?: { value: string }, card?: { card: Card } } }
 
     if (!prev.args) {
-      return
+      return false
     }
 
     const combinable = ['foreshadows', 'melds', 'returns', 'tucks', 'reveals', 'scores', 'junks']
@@ -76,14 +111,15 @@ class UltimateLogManager extends BaseLogManager {
     )
 
     if (entryIsCombinable && prevWasDraw) {
+      const entryArgs = entry.args as { player?: { value: string }, card?: { card: Card } }
       const argsMatch = (
-        prev.args.player.value === entry.args.player.value
-        && prev.args.card.card === entry.args.card.card
+        prev.args.player?.value === entryArgs.player?.value
+        && prev.args.card?.card === entryArgs.card?.card
       )
 
       if (argsMatch) {
         prev.template = prev.template.slice(0, -6) + 'and ' + entryAction + ' {card}'
-        prev.args.card = entry.args.card
+        prev.args.card = entryArgs.card
         return true
       }
     }
@@ -91,7 +127,7 @@ class UltimateLogManager extends BaseLogManager {
     return false
   }
 
-  addForeseen(wasForeseen, card) {
+  addForeseen(wasForeseen: boolean, card: Card): void {
     if (wasForeseen) {
       this.add({
         template: '{card} was foreseen',
@@ -108,3 +144,5 @@ class UltimateLogManager extends BaseLogManager {
 }
 
 module.exports = { UltimateLogManager }
+
+export { UltimateLogManager }

@@ -1,4 +1,122 @@
-function DogmaAction(player, card, opts={}) {
+import type { BiscuitCounts } from '../UltimatePlayer.js'
+
+interface Player {
+  id: string
+  name: string
+}
+
+interface VisibleEffectsResult {
+  card: Card
+  texts: string[]
+  impls: Array<(game: unknown, player: Player) => void>
+}
+
+interface Card {
+  id: string
+  name: string
+  color: string
+  owner: Player | null
+  dogmaBiscuit: string
+  biscuits: string
+  visibleEffects(kind: string): VisibleEffectsResult | undefined
+  visibleBiscuitsParsed(): BiscuitCounts
+  checkIsCity(): boolean
+  checkHasShare(): boolean
+  getAge(): number
+}
+
+interface Zone {
+  id: string
+}
+
+interface ZoneManager {
+  byPlayer(player: Player, zone: string): Zone
+}
+
+interface CardManager {
+  tops(player: Player): Card[]
+  byPlayer(player: Player, zone: string): Card[]
+  top(player: Player, color: string): Card
+}
+
+interface PlayerManager {
+  all(): Player[]
+  other(player: Player): Player[]
+}
+
+interface Log {
+  add(entry: { template: string; classes?: string[]; args?: Record<string, unknown> }): void
+  indent(): void
+  outdent(): void
+}
+
+interface GameStats {
+  dogmaActions: Record<string, number>
+}
+
+interface DogmaInfo {
+  leader: Player
+  card: Card
+  shared: boolean
+  earlyTerminate: boolean
+  biscuits: Record<string, BiscuitCounts>
+  featuredBiscuit: string
+  sharing: Player[]
+  demanding: Player[]
+  acting: Player | null
+  isDemandEffect: boolean
+  theBigBangChange: boolean
+  opts: DogmaOptions
+  soleMajorityPlayerId?: string
+  mayIsMust?: boolean
+  recalculateSharingAndDemanding(): void
+}
+
+interface GameSettings {
+  version: number
+}
+
+interface Game {
+  aKarma(player: Player, trigger: string, opts?: Record<string, unknown>): string | undefined
+  aOneEffect(player: Player, card: Card, text: string, impl: unknown, opts: Record<string, unknown>): void
+  getBiscuits(): Record<string, BiscuitCounts>
+  getScore(player: Player): number
+  getExpansionList(): string[]
+  getVisibleEffectsByColor(player: Player | null, color: string, kind: string): VisibleEffectsResult[]
+  mResetDogmaInfo(): void
+  stats: GameStats
+  players: PlayerManager
+  cards: CardManager
+  settings: GameSettings
+}
+
+interface ActionManager {
+  game: Game
+  state: {
+    dogmaInfo: DogmaInfo
+    didEndorse?: boolean
+  }
+  zones: ZoneManager
+  cards: CardManager
+  players: PlayerManager
+  log: Log
+  util: {
+    emptyBiscuits(): BiscuitCounts
+    combineBiscuits(left: BiscuitCounts, right: BiscuitCounts): BiscuitCounts
+  }
+  acted(player: Player): void
+  draw(player: Player, opts?: { exp?: string; share?: boolean; featuredBiscuit?: string }): Card
+  chooseAndJunk(player: Player, choices: string[], opts?: { title?: string }): void
+}
+
+interface DogmaOptions {
+  auspice?: boolean
+  artifact?: boolean
+  endorsed?: boolean
+  foreseen?: boolean
+}
+
+function DogmaAction(this: ActionManager, player: Player, card: Card, opts: DogmaOptions = {}): void {
   this.log.add({
     template: '{player} activates the dogma effects of {card}',
     classes: ['player-action'],
@@ -13,12 +131,12 @@ function DogmaAction(player, card, opts={}) {
   this.game.mResetDogmaInfo()
 }
 
-function DogmaHelper(player, card, opts={}) {
+function DogmaHelper(this: ActionManager, player: Player, card: Card, opts: DogmaOptions = {}): void {
   _statsRecordDogmaActions.call(this, player, card)
 
   const biscuits = _getDogmaBiscuits.call(this, player, card, opts)
   const featuredBiscuit = opts.auspice ? 'p' : card.dogmaBiscuit
-  const { sharing, demanding} = _getSharingAndDemanding.call(
+  const { sharing, demanding } = _getSharingAndDemanding.call(
     this,
     player,
     featuredBiscuit,
@@ -85,7 +203,7 @@ function DogmaHelper(player, card, opts={}) {
   _shareBonus.call(this, player, card)
 }
 
-function EndorseAction(player, color) {
+function EndorseAction(this: ActionManager, player: Player, color: string): void {
   this.log.add({
     template: '{player} endorses {color}',
     args: { player, color }
@@ -101,13 +219,13 @@ function EndorseAction(player, color) {
   const cities = this
     .game
     .cards.tops(player)
-    .filter(card => card.checkIsCity())
-    .filter(card => card.biscuits.includes(featuredBiscuit))
+    .filter((card: Card) => card.checkIsCity())
+    .filter((card: Card) => card.biscuits.includes(featuredBiscuit))
   const junkChoices = this
     .cards
     .byPlayer(player, 'hand')
-    .filter(card => cities.some(city => card.getAge() <= city.getAge()))
-    .map(card => card.id)
+    .filter((card: Card) => cities.some((city: Card) => card.getAge() <= city.getAge()))
+    .map((card: Card) => card.id)
 
   this.chooseAndJunk(player, junkChoices, {
     title: 'Junk a card to endorse'
@@ -118,29 +236,31 @@ function EndorseAction(player, color) {
   this.log.outdent()
 }
 
-function _executeEffects(player, card, opts) {
+interface CardWithAge extends Card {
+  getAge(): number
+}
+
+function _executeEffects(this: ActionManager, player: Player, card: Card, opts: DogmaOptions): void {
   // Store planned effects now, as changes to the stacks shouldn't affect them.
-  let effects = []
+  let effects: VisibleEffectsResult[] = []
 
   if (this.game.settings.version < 4) {
     effects = [
       ...this.game.getVisibleEffectsByColor(card.owner, card.color, 'echo'),
       card.visibleEffects('dogma'),
-    ]
+    ].filter((e): e is VisibleEffectsResult => e !== undefined)
   }
   else {
     if (opts.artifact) {
-      effects = [card.visibleEffects('dogma')]
+      effects = [card.visibleEffects('dogma')].filter((e): e is VisibleEffectsResult => e !== undefined)
     }
     else {
       effects = [
         ...this.game.getVisibleEffectsByColor(card.owner, card.color, 'echo'),
         card.visibleEffects('dogma'),
-      ]
+      ].filter((e): e is VisibleEffectsResult => e !== undefined)
     }
   }
-
-  effects = effects.filter(e => e !== undefined)
 
   for (const e of effects) {
     for (let i = 0; i < e.texts.length; i++) {
@@ -157,7 +277,7 @@ function _executeEffects(player, card, opts) {
   }
 }
 
-function _statsRecordDogmaActions(player, card) {
+function _statsRecordDogmaActions(this: ActionManager, _player: Player, card: Card): void {
   if (card.name in this.game.stats.dogmaActions) {
     this.game.stats.dogmaActions[card.name] += 1
   }
@@ -167,7 +287,7 @@ function _statsRecordDogmaActions(player, card) {
 }
 
 
-function _shareBonus(player, card) {
+function _shareBonus(this: ActionManager, player: Player, card: Card): void {
   // Share bonus
   if (this.state.dogmaInfo.shared) {
     const shareKarmaKind = this.game.aKarma(player, 'share', { card })
@@ -196,8 +316,8 @@ function _shareBonus(player, card) {
   }
 }
 
-function _getBiscuitComparator(player, featuredBiscuit, biscuits) {
-  return (other) => {
+function _getBiscuitComparator(this: ActionManager, player: Player, featuredBiscuit: string, biscuits: Record<string, BiscuitCounts>): (other: Player) => boolean {
+  return (other: Player) => {
     if (featuredBiscuit === 'score') {
       return this.game.getScore(other) >= this.game.getScore(player)
     }
@@ -208,12 +328,12 @@ function _getBiscuitComparator(player, featuredBiscuit, biscuits) {
       return false
     }
     else {
-      return biscuits[other.name][featuredBiscuit] >= biscuits[player.name][featuredBiscuit]
+      return biscuits[other.name][featuredBiscuit as keyof BiscuitCounts] >= biscuits[player.name][featuredBiscuit as keyof BiscuitCounts]
     }
   }
 }
 
-function _getDogmaBiscuits(player, card, opts) {
+function _getDogmaBiscuits(this: ActionManager, player: Player, card: Card, opts: DogmaOptions): Record<string, BiscuitCounts> {
   const biscuits = this.game.getBiscuits()
   const artifactBiscuits = opts.artifact ? card.visibleBiscuitsParsed() : this.util.emptyBiscuits()
   biscuits[player.name] = this.util.combineBiscuits(biscuits[player.name], artifactBiscuits)
@@ -221,17 +341,17 @@ function _getDogmaBiscuits(player, card, opts) {
   return biscuits
 }
 
-function _getSharingAndDemanding(player, featuredBiscuit, biscuits) {
+function _getSharingAndDemanding(this: ActionManager, player: Player, featuredBiscuit: string, biscuits: Record<string, BiscuitCounts>): { sharing: Player[]; demanding: Player[] } {
   const biscuitComparator = _getBiscuitComparator.call(this, player, featuredBiscuit, biscuits)
   const otherPlayers = this.players.other(player)
 
-  const sharing = otherPlayers.filter(p => biscuitComparator(p))
-  const demanding = otherPlayers.filter(p => !biscuitComparator(p))
+  const sharing = otherPlayers.filter((p: Player) => biscuitComparator(p))
+  const demanding = otherPlayers.filter((p: Player) => !biscuitComparator(p))
 
   return { sharing, demanding }
 }
 
-function _logSharing() {
+function _logSharing(this: ActionManager): void {
   if (this.state.dogmaInfo.sharing.length > 0) {
     this.log.add({
       template: 'Effects will share with {players}.',
@@ -247,12 +367,16 @@ function _logSharing() {
   }
 }
 
+function getDogmaShareInfo(this: { getBiscuits(): Record<string, BiscuitCounts> }, player: Player, card: Card): { sharing: Player[]; demanding: Player[] } {
+  return _getSharingAndDemanding.call(this as unknown as ActionManager, player, card.dogmaBiscuit, this.getBiscuits())
+}
+
 
 module.exports = {
   DogmaAction,
   EndorseAction,
-
-  getDogmaShareInfo(player, card) {
-    return _getSharingAndDemanding(player, card.dogmaBiscuit, this.getBiscuits())
-  },
+  getDogmaShareInfo,
 }
+
+export { DogmaAction, EndorseAction, getDogmaShareInfo }
+export type { DogmaOptions, DogmaInfo }

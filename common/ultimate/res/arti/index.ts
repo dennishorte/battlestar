@@ -1,4 +1,7 @@
-const cardData = [
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+import type { AchievementData } from '../../UltimateAchievement.js'
+
+const cardData: AgeCardData[] = [
   require('./HolmegaardBows.js'),
   require('./PapyrusofAni.js'),
   require('./PavlovianTusk.js'),
@@ -116,7 +119,17 @@ const cardData = [
   require('./WhatDoestheFoxSay.js'),
 ]
 
-function MuseumFactory(index) {
+interface MuseumData {
+  name: string
+  shortName: string
+  expansion: string
+  text: string
+  alt: string
+  isSpecialAchievement: boolean
+  isMuseum: boolean
+}
+
+function MuseumFactory(index: number): MuseumData {
   return {
     name: 'Museum ' + index,
     shortName: 'msm' + index,
@@ -128,7 +141,7 @@ function MuseumFactory(index) {
   }
 }
 
-const achievementData = [
+const achievementData: (AchievementData | MuseumData)[] = [
   MuseumFactory(1),
   MuseumFactory(2),
   MuseumFactory(3),
@@ -140,3 +153,5 @@ module.exports = {
   cardData,
   achievementData,
 }
+
+export { cardData, achievementData }
