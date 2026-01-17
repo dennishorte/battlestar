@@ -1,4 +1,6 @@
-const cardData = [
+import type { CardData } from './base.js'
+
+const cardData: CardData[] = [
   {
     name: "Aboleth",
     aspect: "guile",
@@ -17,14 +19,14 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: 'Place 2 spies',
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             game.aChooseAndPlaceSpy(player)
             game.aChooseAndPlaceSpy(player)
           }
         },
         {
           title: 'Draw a card for each spy you have on the board',
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             const count = 5 - game.cards.byPlayer(player, 'spies').length
             for (let i = 0; i < count; i++) {
               game.aDraw(player)
@@ -46,7 +48,6 @@ const cardData = [
     autoplay: true,
     text: [
       "At end of turn, promote another card played this turn.",
-      //      "If an opponent causes you to discard this, you may promote it instead."
       "If an opponent causes you to discard this, you may promote it instead. If you do, draw a card.",
     ],
     impl: (game, player, { card }) => {
@@ -110,13 +111,13 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: 'Place a spy',
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             game.aChooseAndPlaceSpy(player)
           }
         },
         {
           title: 'Return one of your spies > +2 power, + 2 influence',
-          impl: (game, player) => game.aReturnASpyAnd(player, (game, player) => {
+          impl: (game: any, player: any) => game.aReturnASpyAnd(player, (game: any, player: any) => {
             player.incrementCounter('power', 2)
             player.incrementCounter('influence', 2)
           })
@@ -141,7 +142,7 @@ const cardData = [
 
       const opponents = game
         .players.opponents(player)
-        .filter(p => location.getTroops().some(troop => troop.owner === p))
+        .filter((p: any) => location.getTroops().some((troop: any) => troop.owner === p))
 
       for (const opponent of opponents) {
         game.aChooseAndDiscard(opponent, {
@@ -170,13 +171,13 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: 'Place a spy',
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             game.aChooseAndPlaceSpy(player)
           }
         },
         {
           title: "Return one of your spies > Assassinate a troop at that spy's site",
-          impl: (game, player) => game.aReturnASpyAnd(player, (game, player, { loc }) => {
+          impl: (game: any, player: any) => game.aReturnASpyAnd(player, (game: any, player: any, { loc }: { loc: any }) => {
             game.aChooseAndAssassinate(player, { loc })
           })
         },
@@ -218,8 +219,8 @@ const cardData = [
       const loc = game.aChooseLocation(player, game.getPresence(player))
       const troops = loc
         .getTroops()
-        .filter(troop => troop.owner !== player)
-        .map(troop => troop.getOwnerName())
+        .filter((troop: any) => troop.owner !== player)
+        .map((troop: any) => troop.getOwnerName())
       const targets = game.actions.choose(player, troops, { min: 0, max: 3, title: 'Choose up to three troops to assassinate' })
 
       for (const target of targets) {
@@ -294,11 +295,11 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: '+2 influence',
-          impl: (game, player) => player.incrementCounter('influence', 2),
+          impl: (game: any, player: any) => player.incrementCounter('influence', 2),
         },
         {
           title: 'Draw a card. Choose one opponent with more than 3 cards to discard a card',
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             game.aDraw(player)
             game.aChooseToDiscard(player)
           }
@@ -355,11 +356,11 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: '+3 influence',
-          impl: (game, player) => player.incrementCounter('influence', 3),
+          impl: (game: any, player: any) => player.incrementCounter('influence', 3),
         },
         {
           title: 'Return up to two troops or spies',
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             game.aChooseAndReturn(player)
             game.aChooseAndReturn(player)
           }
@@ -411,7 +412,7 @@ const cardData = [
 
       const opponents = game
         .players.all()
-        .filter(p => p !== player)
+        .filter((p: any) => p !== player)
       for (const opp of opponents) {
         game.aDeferDiscard(opp, card, player)
       }
@@ -435,18 +436,18 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: 'Place a spy',
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             game.aChooseAndPlaceSpy(player)
           }
         },
         {
           title: 'Return one of your spies > Draw a card. Each opponent with more than 3 cards must discard a card',
-          impl: (game, player) => {
-            game.aReturnASpyAnd(player, (game, player) => {
+          impl: (game: any, player: any) => {
+            game.aReturnASpyAnd(player, (game: any, player: any) => {
               game.aDraw(player)
               game
                 .players.opponents(player)
-                .forEach(opp => game.aChooseAndDiscard(opp, {
+                .forEach((opp: any) => game.aChooseAndDiscard(opp, {
                   requireThree: true,
                   forced: true,
                   forcedBy: player.name,
@@ -491,7 +492,7 @@ const cardData = [
     impl: (game, player) => {
       const controlCount = game
         .getLocationAll()
-        .filter(loc => loc.getController() === player)
+        .filter((loc: any) => loc.getController() === player)
         .length
       for (let i = 0; i < controlCount; i++) {
         game.aChooseAndAssassinate(player, { whiteOnly: true })
@@ -512,29 +513,24 @@ const cardData = [
       "Choose 1:",
       "- +2 power and +1 influence",
       "- +1 power and +2 influence",
-      /* "+2 power",
-       * "+1 influence" */
     ],
     impl: (game, player) => {
       game.aChooseOne(player, [
         {
           title: '+2 power and +1 influence',
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             player.incrementCounter('power', 2)
             player.incrementCounter('influence', 1)
           }
         },
         {
           title: '+1 power and +2 influence',
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             player.incrementCounter('power', 1)
             player.incrementCounter('influence', 2)
           }
         },
       ])
-
-      /* player.incrementCounter('power', 2)
-       * player.incrementCounter('influence', 1) */
     }
   },
   {
@@ -547,14 +543,13 @@ const cardData = [
     innerPoints: 6,
     count: 1,
     text: [
-      //      "Play a card in the market that costs 4 or less as if it was in your hand, then devour that card."
       "Play a card in the market that costs 6 or less as if it was in your hand, then devour that card."
     ],
     impl: (game, player) => {
       const choices = game
         .zones.byId('market')
         .cardlist()
-        .filter(card => card.cost <= 6)
+        .filter((card: any) => card.cost <= 6)
       const card = game.actions.chooseCard(player, choices)
       if (card) {
         card.moveTo(game.zones.byPlayer(player, 'hand'))
@@ -603,3 +598,5 @@ const cardData = [
 module.exports = {
   cardData,
 }
+
+export { cardData }

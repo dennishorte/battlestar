@@ -1,7 +1,8 @@
 const util = require('../../../lib/util.js')
 
+import type { CardData } from './base.js'
 
-const cardData = [
+const cardData: CardData[] = [
   {
     "name": "Banshee",
     "aspect": "guile",
@@ -18,7 +19,7 @@ const cardData = [
       const loc = game.aChooseAndPlaceSpy(player)
       const enemySpies = loc
         .getSpies()
-        .filter(spy => spy.owner !== player)
+        .filter((spy: any) => spy.owner !== player)
       if (enemySpies.length > 0) {
         player.incrementCounter('power', 3)
       }
@@ -61,7 +62,6 @@ const cardData = [
     "count": 3,
     "text": [
       "Choose one:",
-      //      "- Place a spy.",
       "- Place two spies.",
       "- Return one of your spies > Recruit up to 2 cards that each cost 3 or less without paying their costs."
     ],
@@ -69,14 +69,14 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: 'Place two spies',
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             game.aChooseAndPlaceSpy(player)
             game.aChooseAndPlaceSpy(player)
           }
         },
         {
           title: 'Return one of your spies > Recruit up to 2 cards that each cost 3 or less without paying their costs',
-          impl: (game, player) => game.aReturnASpyAnd(player, (game, player) => {
+          impl: (game: any, player: any) => game.aReturnASpyAnd(player, (game: any, player: any) => {
             for (let i = 0; i < 2; i++) {
               game.aChooseAndRecruit(player, 3)
             }
@@ -103,13 +103,13 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: '+2 influence',
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             player.incrementCounter('influence', 2)
           }
         },
         {
           title: 'Devour this card > At end of turn, promote up to 2 other cards played this turn',
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             // Just assume they actually want to devour this card if they took this choice.
             game.aDevour(player, card)
             game.aDeferPromotion(player, card)
@@ -137,7 +137,7 @@ const cardData = [
 
       const playerTroops = game
         .cards.byPlayer(player, 'trophyHall')
-        .filter(card => card.getOwnerName() !== 'neutral')
+        .filter((card: any) => card.getOwnerName() !== 'neutral')
         .length
 
       player.incrementCounter('points', Math.floor(playerTroops / 5))
@@ -177,8 +177,6 @@ const cardData = [
     "count": 2,
     "text": [
       "Choose one:",
-      //      "- Place a spy.",
-      //      "- Return one of your spies > For the rest of your turn treat the top card of the devoured deck as if it was in the market."
       "- Place a spy. For the rest of your turn treat the top card of the devoured deck as if it was in the market.",
       "- Return one of your spies > You may devour a card in your discard pile. If you do, gain the effects of the devoured card.",
     ],
@@ -207,19 +205,6 @@ const cardData = [
             })
           },
         },
-
-        /* {
-         *   title: 'Place a spy',
-         *   impl: () => {
-         *     game.aChooseAndPlaceSpy(player)
-         *   }
-         * },
-         * {
-         *   title: 'Return one of your spies > For the rest of your turn treat the top card of the devoured deck as if it was in the market',
-         *   impl: () => game.aReturnASpyAnd(player, () => {
-         *     game.mSetGhostFlag()
-         *   })
-         * }, */
       ])
     },
   },
@@ -233,9 +218,6 @@ const cardData = [
     "innerPoints": 6,
     "count": 1,
     "text": [
-      // "Return another player's troop or spy."
-      // "At end of turn, you may promote any number of undead cards played this turn."
-
       "Choose one:",
       "- Return another player's troop or spy.",
       "- Undead cascade 4.",
@@ -279,8 +261,8 @@ const cardData = [
       const loc = game.aChooseAndPlaceSpy(player)
       const otherPlayers = loc
         .getTroops()
-        .filter(troop => troop.isOtherPlayer(player))
-        .map(troop => troop.owner)
+        .filter((troop: any) => troop.isOtherPlayer(player))
+        .map((troop: any) => troop.owner)
       const otherPlayersDistinct = util.array.distinct(otherPlayers)
 
       if (otherPlayersDistinct.length > 0) {
@@ -290,7 +272,7 @@ const cardData = [
 
         if (targetPlayer) {
           const troopZone = game.zones.byPlayer(targetPlayer, 'trophyHall')
-          const choices = troopZone.cardlist().map(troop => troop.getOwnerName()).sort()
+          const choices = troopZone.cardlist().map((troop: any) => troop.getOwnerName()).sort()
           const selections = game.actions.choose(player, choices, {
             title: 'Choose up to 2 troops to reanimate',
             min: 0,
@@ -298,7 +280,7 @@ const cardData = [
           })
 
           for (const selection of selections) {
-            const troop = troopZone.cardlist().find(c => c.getOwnerName() === selection)
+            const troop = troopZone.cardlist().find((c: any) => c.getOwnerName() === selection)
             game.aChooseAndDeploy(player, { troop })
           }
         }
@@ -340,7 +322,7 @@ const cardData = [
             game.aDevour(player, card)
             const loc = game.aChooseLocation(player, game.getPresence(player))
             if (loc) {
-              const troops = loc.getTroops().filter(troop => troop.isNeutral())
+              const troops = loc.getTroops().filter((troop: any) => troop.isNeutral())
               const chosen = game.actions.choose(player, troops.map(() => 'neutral'), {
                 title: 'Choose which troops to deploy your Minotaur Skeleton against',
                 min: 0,
@@ -381,15 +363,15 @@ const cardData = [
             impl: () => {
               const players = game
                 .players.all()
-                .filter(p => game
+                .filter((p: any) => game
                   .cards.byPlayer(p, 'trophyHall')
-                  .some(troop => troop.isNeutral())
+                  .some((troop: any) => troop.isNeutral())
                 )
               const targetPlayer = game.actions.choosePlayer(player, players)
               if (targetPlayer) {
                 const troop = game
                   .cards.byPlayer(targetPlayer, 'trophyHall')
-                  .find(troop => troop.isNeutral())
+                  .find((troop: any) => troop.isNeutral())
                 game.aChooseAndDeploy(player, {
                   anywhere: true,
                   troop,
@@ -426,7 +408,7 @@ const cardData = [
         {
           title: 'Promote this card, or a card from your hand or discard pile',
           impl: () => {
-            const choices = [{
+            const choices: any[] = [{
               title: 'this card',
               choices: [card.name],
               min: 0,
@@ -436,7 +418,7 @@ const cardData = [
             if (game.cards.byPlayer(player, 'hand').length > 0) {
               choices.push({
                 title: 'hand',
-                choices: game.cards.byPlayer(player, 'hand').map(c => c.name),
+                choices: game.cards.byPlayer(player, 'hand').map((c: any) => c.name),
                 min: 0,
                 max: 1,
               })
@@ -445,7 +427,7 @@ const cardData = [
             if (game.cards.byPlayer(player, 'discard').length > 0) {
               choices.push({
                 title: 'discard',
-                choices: game.cards.byPlayer(player, 'discard').map(c => c.name),
+                choices: game.cards.byPlayer(player, 'discard').map((c: any) => c.name),
                 min: 0,
                 max: 1,
               })
@@ -459,8 +441,8 @@ const cardData = [
 
             else {
               const zone = game.zones.byPlayer(player, selection.title)
-              const card = zone.cardlist().find(c => c.name === selection.selection[0])
-              game.aPromote(player, card)
+              const cardToPromote = zone.cardlist().find((c: any) => c.name === selection.selection[0])
+              game.aPromote(player, cardToPromote)
             }
           }
         },
@@ -668,3 +650,5 @@ const cardData = [
 module.exports = {
   cardData,
 }
+
+export { cardData }

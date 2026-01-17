@@ -1,4 +1,22 @@
-const cardData = [
+interface CardData {
+  name: string
+  aspect: string
+  race: string
+  expansion: string
+  cost: number
+  points: number
+  innerPoints: number
+  count: number
+  autoplay?: boolean
+  text: string[]
+  impl: (game: any, player: any, opts?: any) => void
+  triggers?: Array<{
+    kind: string
+    impl: (game: any, player: any, opts: any) => void
+  }>
+}
+
+const cardData: CardData[] = [
   {
     name: "Priestess of Lolth",
     aspect: "obedience",
@@ -88,3 +106,5 @@ const cardData = [
 module.exports = {
   cardData
 }
+
+export { CardData, cardData }

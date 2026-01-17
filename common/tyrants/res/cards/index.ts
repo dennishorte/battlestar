@@ -8,7 +8,17 @@ const elementalExp = require('./elementals.js')
 const illithidExp = require('./illithid.js')
 const undeadExp = require('./undead.js')
 
-const baseData = [
+import type { CardData } from './base.js'
+import type { TyrantsCard as TyrantsCardType } from '../../TyrantsCard.js'
+
+interface CardFactory {
+  all: TyrantsCardType[]
+  byExpansion: Record<string, TyrantsCardType[]>
+  byId: Record<string, TyrantsCardType>
+  byName: Record<string, TyrantsCardType[]>
+}
+
+const baseData: CardData[] = [
   ...baseExp.cardData,
   ...demonsExp.cardData,
   ...dragonsExp.cardData,
@@ -19,15 +29,15 @@ const baseData = [
 ]
 
 
-function factory(game) {
-  const cards = []
-  const byExpansion = {}
-  const byId = {}
-  const byName = {}
+function factory(game: unknown): CardFactory {
+  const cards: TyrantsCardType[] = []
+  const byExpansion: Record<string, TyrantsCardType[]> = {}
+  const byId: Record<string, TyrantsCardType> = {}
+  const byName: Record<string, TyrantsCardType[]> = {}
   for (const data of baseData) {
     for (let i = 0; i < data.count; i++) {
       const id = data.name.toLowerCase().replaceAll(' ', '-') + '-' + i
-      data.id = id
+      ;(data as any).id = id
       const card = new TyrantsCard(game, data)
 
       cards.push(card)
@@ -55,3 +65,5 @@ function factory(game) {
 module.exports = {
   factory,
 }
+
+export { factory, CardFactory }

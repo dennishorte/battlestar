@@ -1,4 +1,6 @@
-const cardData = [
+import type { CardData } from './base.js'
+
+const cardData: CardData[] = [
   {
     name: "Dragon Cultist",
     aspect: "malice",
@@ -16,11 +18,11 @@ const cardData = [
     impl: (game, player) => game.aChooseOne(player, [
       {
         title: '+2 power',
-        impl: (game, player) => player.incrementCounter('power', 2),
+        impl: (game: any, player: any) => player.incrementCounter('power', 2),
       },
       {
         title: '+2 influence',
-        impl: (game, player) => player.incrementCounter('influence', 2),
+        impl: (game: any, player: any) => player.incrementCounter('influence', 2),
       },
     ])
   },
@@ -60,7 +62,7 @@ const cardData = [
 
       const playerTroops = game
         .cards.byPlayer(player, 'trophyHall')
-        .filter(troop => !troop.isNeutral())
+        .filter((troop: any) => !troop.isNeutral())
         .length
 
       if (playerTroops >= 5) {
@@ -103,7 +105,7 @@ const cardData = [
 
       const totalControl = game
         .getLocationAll()
-        .filter(loc => loc.getTotalController() === player)
+        .filter((loc: any) => loc.getTotalController() === player)
         .length
 
       player.incrementCounter('points', totalControl)
@@ -126,11 +128,11 @@ const cardData = [
     impl: (game, player) => game.aChooseOne(player, [
       {
         title: 'Deploy a troop',
-        impl: (game, player) => game.aChooseAndDeploy(player)
+        impl: (game: any, player: any) => game.aChooseAndDeploy(player)
       },
       {
         title: 'Assassinate a white troop',
-        impl: (game, player) => game.aChooseAndAssassinate(player, { whiteOnly: true })
+        impl: (game: any, player: any) => game.aChooseAndAssassinate(player, { whiteOnly: true })
       },
     ])
   },
@@ -191,7 +193,7 @@ const cardData = [
 
       const controlledSites = game
         .getLocationAll()
-        .filter(loc => loc.getController() === player)
+        .filter((loc: any) => loc.getController() === player)
         .length
       game.log.add({
         template: '{player} controls {count} sites',
@@ -221,7 +223,7 @@ const cardData = [
 
       const whiteTrophies = game
         .cards.byPlayer(player, 'trophyHall')
-        .filter(card => card.name === 'neutral')
+        .filter((card: any) => card.name === 'neutral')
         .length
       player.incrementCounter('points', Math.floor(whiteTrophies / 3))
     }
@@ -243,11 +245,11 @@ const cardData = [
     impl: (game, player) => game.aChooseOne(player, [
       {
         title: 'Place a spy',
-        impl: (game, player) => game.aChooseAndPlaceSpy(player),
+        impl: (game: any, player: any) => game.aChooseAndPlaceSpy(player),
       },
       {
         title: 'Return one of your spies > +3 influence',
-        impl: (game, player) => game.aReturnASpyAnd(player, (game, player) => {
+        impl: (game: any, player: any) => game.aReturnASpyAnd(player, (game: any, player: any) => {
           player.incrementCounter('influence', 3)
         })
       }
@@ -270,11 +272,11 @@ const cardData = [
     impl: (game, player) => game.aChooseOne(player, [
       {
         title: 'Place a spy',
-        impl: (game, player) => game.aChooseAndPlaceSpy(player),
+        impl: (game: any, player: any) => game.aChooseAndPlaceSpy(player),
       },
       {
         title: 'Return one of your spies > +4 power',
-        impl: (game, player) => game.aReturnASpyAnd(player, (game, player) => {
+        impl: (game: any, player: any) => game.aReturnASpyAnd(player, (game: any, player: any) => {
           player.incrementCounter('power', 4)
         })
       }
@@ -298,8 +300,8 @@ const cardData = [
       if (loc) {
         const anotherPlayer = loc
           .getTroops()
-          .filter(troop => Boolean(troop.owner))
-          .filter(troop => game.players.byOwner(troop) !== player)
+          .filter((troop: any) => Boolean(troop.owner))
+          .filter((troop: any) => game.players.byOwner(troop) !== player)
           .length > 0
         if (anotherPlayer) {
           player.incrementCounter('influence', 2)
@@ -343,7 +345,7 @@ const cardData = [
     impl: (game, player) => game.aChooseOne(player, [
       {
         title: "Place a spy, then supplant a troop at that spy's site",
-        impl: (game, player) => {
+        impl: (game: any, player: any) => {
           const loc = game.aChooseAndPlaceSpy(player)
           if (loc) {
             game.aChooseAndSupplant(player, { loc })
@@ -352,7 +354,7 @@ const cardData = [
       },
       {
         title: "Return one of your spies > Supplant a troop at that spy's site, then gain 1 VP for each site control marker you have",
-        impl: (game, player) => game.aReturnASpyAnd(player, (game, player, { loc }) => {
+        impl: (game: any, player: any) => game.aReturnASpyAnd(player, (game: any, player: any, { loc }: { loc: any }) => {
           game.aChooseAndSupplant(player, { loc })
           player.incrementCounter('points', game.getControlMarkers(player).length)
         })
@@ -448,7 +450,7 @@ const cardData = [
     impl: (game, player, { card }) => {
       game.aDeferPromotion(player, card, { optional: true })
       game.aDeferPromotion(player, card, { optional: true })
-      game.aDeferSpecial(player, card, (game, player) => {
+      game.aDeferSpecial(player, card, (game: any, player: any) => {
         const innerCircle = game.cards.byPlayer(player, 'innerCircle').length
         player.incrementCounter('points', Math.floor(innerCircle / 3))
       })
@@ -459,3 +461,5 @@ const cardData = [
 module.exports = {
   cardData
 }
+
+export { cardData }

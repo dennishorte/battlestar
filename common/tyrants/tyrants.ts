@@ -11,19 +11,327 @@ const { TyrantsMapZone } = require('./TyrantsMapZone.js')
 const { TyrantsToken } = require('./TyrantsToken.js')
 const { TyrantsZone } = require('./TyrantsZone.js')
 
+import type { TyrantsMapZone as TyrantsMapZoneType } from './TyrantsMapZone.js'
+import type { TyrantsToken as TyrantsTokenType } from './TyrantsToken.js'
+import type { TyrantsZone as TyrantsZoneType } from './TyrantsZone.js'
 
-module.exports = {
-  GameOverEvent,
-  Tyrants,
-  TyrantsFactory,
-
-  constructor: Tyrants,
-  factory: factoryFromLobby,
-  res,
+interface Player {
+  name: string
+  color?: string
+  addCounter(name: string): void
+  getCounter(name: string): number
+  setCounter(name: string, value: number): void
+  incrementCounter(name: string, amount?: number, opts?: { silent?: boolean }): void
 }
 
+interface Card {
+  id: string
+  name: string
+  zone: TyrantsZoneType | TyrantsMapZoneType
+  owner?: Player
+  visibility: Player[]
+  cost: number
+  points: number
+  innerPoints: number
+  aspect?: string
+  race?: string
+  autoplay?: boolean
+  isTroop?: boolean
+  isSpy?: boolean
+  home?: TyrantsZoneType
+  triggers?: CardTrigger[]
+  impl(game: Tyrants, player: Player, opts: { card: Card }): void
+  moveTo(zone: TyrantsZoneType | TyrantsMapZoneType): void
+  getOwnerName(): string
+}
 
-function Tyrants(serialized_data, viewerName) {
+interface CardTrigger {
+  kind: string
+  impl(game: Tyrants, player: Player, opts: { card: Card; forcedBy?: string }): unknown
+}
+
+interface ControlMarker {
+  locName: string
+  ownerName: string
+  influence: number
+  points?: number
+  total: boolean
+}
+
+interface EndOfTurnAction {
+  player: Player
+  source: Card
+  action: string
+  forcedBy?: string
+  aspect?: string
+  opts?: { optional?: boolean }
+  fn?: (game: Tyrants, player: Player) => void
+}
+
+interface ActionChoice {
+  title: string
+  choices: string[]
+  min: number
+  max: number
+}
+
+interface ChosenAction {
+  title?: string
+  action?: string
+  selection?: string[]
+  location?: string
+}
+
+interface ChooseOneOption {
+  title: string
+  impl: (game: Tyrants, player: Player, opts?: Record<string, unknown>) => void
+}
+
+interface CascadeOpts {
+  key: string
+  value: unknown
+  maxCost: number
+}
+
+interface CollectTargetsOpts {
+  loc?: TyrantsMapZoneType
+  anywhere?: boolean
+  whiteOnly?: boolean
+  noWhite?: boolean
+  noTroops?: boolean
+  noSpies?: boolean
+}
+
+interface DeployOpts {
+  troop?: TyrantsTokenType
+  white?: boolean
+  anywhere?: boolean
+}
+
+interface DiscardOpts {
+  zone?: string
+  forced?: boolean
+  forcedBy?: string
+  requireThree?: boolean
+  title?: string
+  min?: number
+  max?: number
+}
+
+interface DevourOpts {
+  zone?: string
+  then?: (opts: { card: Card }) => void
+}
+
+interface BuyActionOpts {
+  aspect?: string
+}
+
+interface ScoreBreakdown {
+  deck: number
+  'inner circle': number
+  'trophy hall': number
+  control: number
+  'total control': number
+  'victory points': number
+  total: number
+}
+
+interface Settings {
+  map: string
+  expansions: string[]
+  chooseColors?: boolean
+  menzoExtraNeutral?: boolean
+}
+
+interface State {
+  turn: number
+  endOfTurnActions: EndOfTurnAction[]
+  ghostFlag: boolean
+  initializationComplete: boolean
+  endGameTriggered?: boolean
+}
+
+interface CardData {
+  all: Card[]
+  byName: Record<string, Card[]>
+  byExpansion: Record<string, Card[]>
+}
+
+interface Lobby {
+  name: string
+  seed: unknown
+  users: unknown[]
+  options: {
+    expansions: string[]
+    map: string
+    menzoExtraNeutral?: boolean
+  }
+}
+
+interface Tyrants {
+  state: State
+  settings: Settings
+  log: {
+    add(entry: Record<string, unknown>): void
+    addDoNothing(player: Player): void
+    indent(): void
+    outdent(): void
+    setIndent(level: number): void
+  }
+  players: {
+    all(): Player[]
+    current(): Player
+    first(): Player
+    byName(name: string): Player
+    byOwner(card: Card): Player | undefined
+    opponents(player: Player): Player[]
+    advancePlayer(): void
+  }
+  zones: {
+    all(): (TyrantsZoneType | TyrantsMapZoneType)[]
+    byId(id: string): TyrantsZoneType | TyrantsMapZoneType
+    byPlayer(player: Player, name: string): TyrantsZoneType
+    register(zone: TyrantsZoneType | TyrantsMapZoneType): void
+  }
+  cards: {
+    all(): Card[]
+    byId(id: string): Card
+    byPlayer(player: Player, zone: string): Card[]
+    register(card: Card): void
+  }
+  actions: {
+    choose(player: Player, choices: string[] | ActionChoice[], opts?: Record<string, unknown>): string[]
+    chooseCard(player: Player, cards: Card[], opts?: Record<string, unknown>): Card | undefined
+    chooseCards(player: Player, cards: Card[], opts?: Record<string, unknown>): Card[]
+    chooseYesNo(player: Player, prompt: string): boolean
+  }
+  random: () => number
+  doingSetup: boolean
+
+  requestInputSingle(opts: Record<string, unknown>): ChosenAction[]
+
+  _mainProgram(): void
+  _breakpoint(name: string): void
+  _checkDoingSetup(): boolean
+
+  initialize(): void
+  initializePlayers(): void
+  initializeZones(): void
+  initializeMapZones(): void
+  initializeMarketZones(): void
+  initializeTokenZones(): void
+  initializePlayerZones(): void
+  initializeCards(): void
+  initializeTokens(): void
+  initializeStartingHands(): void
+  initializeTransientState(): void
+
+  chooseInitialLocations(): void
+  mainLoop(): void
+  preActions(): void
+  doActions(): void
+  endOfTurn(): void
+  cleanup(): void
+  drawHand(): void
+  nextPlayer(): void
+  checkForEndOfGame(): void
+  checkForEndGameTriggers(): void
+
+  _generateActionChoices(): (string | ActionChoice | undefined)[]
+  _generateCardActions(): ActionChoice | undefined
+  _generateAutoCardAction(): string | undefined
+  _generateBuyActions(maxCost?: number, opts?: BuyActionOpts): ActionChoice | undefined
+  _generatePowerActions(): ActionChoice | undefined
+  _generatePassAction(): string
+  _processEndOfTurnActions(): void
+  _collectTargets(player: Player, opts?: CollectTargetsOpts): { troops: string[]; spies: string[] }
+
+  // Core Actions
+  aAssassinate(player: Player, loc: TyrantsMapZoneType, owner: Player | 'neutral'): TyrantsTokenType
+  aAutoPlayCards(): void
+  aCascade(player: Player, opts: CascadeOpts): void
+  aChooseAndAssassinate(player: Player, opts?: { loc?: TyrantsMapZoneType; whiteOnly?: boolean }): TyrantsTokenType | undefined
+  aChooseAndDevour(player: Player, opts?: DevourOpts): void
+  aChooseAndDevourMarket(player: Player, opts?: { max?: number }): void
+  aChooseAndDiscard(player: Player, opts?: DiscardOpts): Card | undefined
+  aChooseAndDeploy(player: Player, opts?: DeployOpts): TyrantsMapZoneType | undefined
+  aChooseAndMoveTroop(player: Player, opts?: CollectTargetsOpts): void
+  aChooseAndPlaceSpy(player: Player): TyrantsMapZoneType | undefined
+  aChooseAndPromote(player: Player, cards: Card[], opts?: { min?: number; max?: number }): void
+  aChooseAndRecruit(player: Player, maxCost: number, opts?: BuyActionOpts): void
+  aChooseAndReturn(player: Player, opts?: CollectTargetsOpts): void
+  aChooseAndSupplant(player: Player, opts?: CollectTargetsOpts): void
+  aChooseColor(player: Player): void
+  aChooseLocation(player: Player, locations: TyrantsMapZoneType[], opts?: { title?: string; min?: number; max?: number }): TyrantsMapZoneType | undefined
+  aChooseOne(player: Player, choices: ChooseOneOption[], opts?: Record<string, unknown>): void
+  aChooseToDiscard(player: Player): void
+  aDeferDiscard(player: Player, source: Card, forcingPlayer: Player): void
+  aDeferPromotion(player: Player, source: Card, opts?: { optional?: boolean }): void
+  aDeferPromotionAspect(player: Player, source: Card, aspect: string): void
+  aDeferPromotionSpecial(player: Player, source: Card): void
+  aDeferSpecial(player: Player, source: Card, fn: (game: Tyrants, player: Player) => void): void
+  aDeploy(player: Player, loc: TyrantsMapZoneType, opts?: DeployOpts): void
+  aDeployWithPowerAt(player: Player, locId?: string): void
+  aDevour(player: Player, card: Card, opts?: { noRefill?: boolean }): void
+  aDevourThisAnd(player: Player, card: Card, title: string, fn: (game: Tyrants, player: Player) => void): void
+  aDiscard(player: Player, card: Card): void
+  aDraw(player: Player, opts?: { silent?: boolean }): Card | 'no-more-cards'
+  aPlaceSpy(player: Player, loc: TyrantsMapZoneType): void
+  aPlayCard(player: Player, card: Card): void
+  aPromote(player: Player, card: Card, opts?: { silent?: boolean }): Card
+  aPromoteTopCard(player: Player): void
+  aRecruit(player: Player, cardName: string, opts?: { noCost?: boolean }): void
+  aReduceDraw(player: Player): void
+  aReturnASpyAnd(player: Player, fn: (game: Tyrants, player: Player, opts: { loc: TyrantsMapZoneType }) => void): void
+  aReturnSpy(player: Player, loc: TyrantsMapZoneType, owner: Player): void
+  aReturnTroop(player: Player, loc: TyrantsMapZoneType, owner: Player | 'neutral'): void
+  aSupplant(player: Player, loc: TyrantsMapZoneType, owner: Player | 'neutral'): void
+  aWithFocus(player: Player, test: (card: Card) => boolean, fn: () => void): void
+  aWithFocusAspect(player: Player, aspect: string, fn: () => void): void
+  aWithFocusInsaneOutcast(player: Player, fn: () => void): void
+
+  // Getters
+  getAssassinateChoices(player: Player, opts?: { loc?: TyrantsMapZoneType; whiteOnly?: boolean }): string[]
+  getCardById(cardId: string): Card
+  getControlMarkers(player?: Player): ControlMarker[]
+  getDeployChoices(player: Player, opts?: { anywhere?: boolean }): TyrantsMapZoneType[]
+  getExpansionList(): string[]
+  getLocationAll(): TyrantsMapZoneType[]
+  getLocationByName(name: string): TyrantsMapZoneType
+  getLocationNeighbors(loc: TyrantsMapZoneType): TyrantsMapZoneType[]
+  getLocationsByPresence(player: Player): TyrantsMapZoneType[]
+  getPresence(player: Player): TyrantsMapZoneType[]
+  getRound(): number
+  getScore(player: Player): number
+  getScoreBreakdown(player: Player): ScoreBreakdown
+
+  // Internal Methods
+  mAdjustCardVisibility(card: Card): void
+  mAdjustControlMarkerOwnership(previous: ControlMarker[]): void
+  mAdjustPresence(source: TyrantsZoneType | TyrantsMapZoneType, target: TyrantsZoneType | TyrantsMapZoneType, card: Card): void
+  mAssassinate(player: Player, loc: TyrantsMapZoneType, owner: Player | 'neutral'): TyrantsTokenType
+  mCalculatePresence(location: TyrantsMapZoneType): void
+  mCheckZoneLimits(zone: TyrantsZoneType | TyrantsMapZoneType): void
+  mDeploy(player: Player, loc: TyrantsMapZoneType, opts?: DeployOpts): TyrantsTokenType
+  mDevour(card: Card): void
+  mExecuteCard(player: Player, card: Card): void
+  mPlaceSpy(player: Player, loc: TyrantsMapZoneType): void
+  mRefillHand(player: Player): void
+  mRefillMarket(quiet?: boolean): void
+  mReshuffleDiscard(player: Player): void
+  mReturn(item: TyrantsTokenType): void
+  mSetGhostFlag(): void
+  mShuffle(zone: TyrantsZoneType): void
+}
+
+interface TyrantsConstructor {
+  new (serialized_data: unknown, viewerName: string): Tyrants
+  (this: Tyrants, serialized_data: unknown, viewerName: string): void
+  prototype: Tyrants
+}
+
+function Tyrants(this: Tyrants, serialized_data: unknown, viewerName: string): void {
   Game.call(this, serialized_data, viewerName, {
     LogManager: TyrantsLogManager,
   })
@@ -31,12 +339,12 @@ function Tyrants(serialized_data, viewerName) {
 
 util.inherit(Game, Tyrants)
 
-function TyrantsFactory(settings, viewerName) {
+function TyrantsFactory(settings: Settings, viewerName: string): Tyrants {
   const data = GameFactory(settings)
-  return new Tyrants(data, viewerName)
+  return new (Tyrants as TyrantsConstructor)(data, viewerName)
 }
 
-function factoryFromLobby(lobby) {
+function factoryFromLobby(lobby: Lobby): unknown {
   return GameFactory({
     game: 'Tyrants of the Underdark',
     name: lobby.name,
@@ -49,7 +357,7 @@ function factoryFromLobby(lobby) {
   })
 }
 
-Tyrants.prototype._mainProgram = function() {
+Tyrants.prototype._mainProgram = function(this: Tyrants): void {
   this.initialize()
   this.chooseInitialLocations()
   this.mainLoop()
@@ -59,7 +367,7 @@ Tyrants.prototype._mainProgram = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization
 
-Tyrants.prototype.initialize = function() {
+Tyrants.prototype.initialize = function(this: Tyrants): void {
   this.log.add({ template: 'Initializing' })
   this.log.indent()
 
@@ -79,7 +387,7 @@ Tyrants.prototype.initialize = function() {
   this.doingSetup = false
 }
 
-Tyrants.prototype.initializeZones = function() {
+Tyrants.prototype.initializeZones = function(this: Tyrants): void {
   this.initializeMapZones()
   this.initializeMarketZones()
   this.initializePlayerZones()
@@ -88,7 +396,7 @@ Tyrants.prototype.initializeZones = function() {
   this.zones.register(new TyrantsZone(this, 'devoured', 'devoured', 'public'))
 }
 
-Tyrants.prototype.initializePlayers = function() {
+Tyrants.prototype.initializePlayers = function(this: Tyrants): void {
   for (const player of this.players.all()) {
     player.addCounter('points')
     player.addCounter('influence')
@@ -97,28 +405,28 @@ Tyrants.prototype.initializePlayers = function() {
   }
 }
 
-Tyrants.prototype.initializeMapZones = function() {
+Tyrants.prototype.initializeMapZones = function(this: Tyrants): void {
   for (const data of res.maps[this.settings.map]) {
     const zone = new TyrantsMapZone(this, data)
     this.zones.register(zone)
   }
 }
 
-Tyrants.prototype.initializeMarketZones = function() {
+Tyrants.prototype.initializeMarketZones = function(this: Tyrants): void {
   this.zones.register(new TyrantsZone(this, 'market', 'market', 'public'))
   this.zones.register(new TyrantsZone(this, 'priestess', 'priestess', 'public'))
   this.zones.register(new TyrantsZone(this, 'guard', 'guard', 'public'))
   this.zones.register(new TyrantsZone(this, 'outcast', 'outcast', 'public'))
 }
 
-Tyrants.prototype.initializeTokenZones = function() {
+Tyrants.prototype.initializeTokenZones = function(this: Tyrants): void {
   this.zones.register(new TyrantsZone(this, 'neutrals', 'neutrals', 'public'))
 }
 
-Tyrants.prototype.initializePlayerZones = function() {
+Tyrants.prototype.initializePlayerZones = function(this: Tyrants): void {
   const self = this
 
-  function _addPlayerZone(player, name, kind) {
+  function _addPlayerZone(player: Player, name: string, kind: string): void {
     const id = `players.${player.name}.${name}`
     const zone = new TyrantsZone(self, id, id, kind, player)
     self.zones.register(zone)
@@ -137,18 +445,18 @@ Tyrants.prototype.initializePlayerZones = function() {
   }
 }
 
-Tyrants.prototype.initializeCards = function() {
+Tyrants.prototype.initializeCards = function(this: Tyrants): void {
   const expansions = this.getExpansionList()
 
   this.log.add({ template: 'Loading expansion: ' + expansions[0] })
   this.log.add({ template: 'Loading expansion: ' + expansions[1] })
 
-  const cardData = res.cards.factory(this)
-  cardData.all.forEach(card => this.cards.register(card))
+  const cardData: CardData = res.cards.factory(this)
+  cardData.all.forEach((card: Card) => this.cards.register(card))
 
-  this.zones.byId('priestess').initializeCards(cardData.byName['Priestess of Lolth'])
-  this.zones.byId('guard').initializeCards(cardData.byName['House Guard'])
-  this.zones.byId('outcast').initializeCards(cardData.byName['Insane Outcast'])
+  ;(this.zones.byId('priestess') as any).initializeCards(cardData.byName['Priestess of Lolth'])
+  ;(this.zones.byId('guard') as any).initializeCards(cardData.byName['House Guard'])
+  ;(this.zones.byId('outcast') as any).initializeCards(cardData.byName['Insane Outcast'])
 
   // Market deck
   const marketZone = new TyrantsZone(this, 'marketDeck', 'marketDeck', 'private')
@@ -156,8 +464,8 @@ Tyrants.prototype.initializeCards = function() {
 
   const marketCards = this
     .getExpansionList()
-    .flatMap(exp => cardData.byExpansion[exp])
-  marketZone.initializeCards(marketCards)
+    .flatMap((exp: string) => cardData.byExpansion[exp])
+  ;(marketZone as any).initializeCards(marketCards)
   marketZone.shuffle()
 
   // Market cards
@@ -170,7 +478,7 @@ Tyrants.prototype.initializeCards = function() {
   let x = 0
   let y = 0
   for (const player of this.players.all()) {
-    const cards = []
+    const cards: Card[] = []
 
     for (let i = 0; i < 7; i++) {
       const card = cardData.byName['Noble'][x]
@@ -185,14 +493,14 @@ Tyrants.prototype.initializeCards = function() {
     }
 
     const deck = this.zones.byPlayer(player, 'deck')
-    deck.initializeCards(cards)
+    ;(deck as any).initializeCards(cards)
     deck.shuffle()
   }
 }
 
-Tyrants.prototype.initializeTokens = function() {
+Tyrants.prototype.initializeTokens = function(this: Tyrants): void {
   for (const player of this.players.all()) {
-    const troops = []
+    const troops: TyrantsTokenType[] = []
     for (let i = 0; i < 40; i++) {
       const name = `troop-${player.name}`
       const token = new TyrantsToken(this, name + '-' + i, name)
@@ -201,9 +509,9 @@ Tyrants.prototype.initializeTokens = function() {
       token.owner = player
       troops.push(token)
     }
-    this.zones.byPlayer(player, 'troops').initializeCards(troops)
+    ;(this.zones.byPlayer(player, 'troops') as any).initializeCards(troops)
 
-    const spies = []
+    const spies: TyrantsTokenType[] = []
     for (let i = 0; i < 5; i++) {
       const name = `spy-${player.name}`
       const token = new TyrantsToken(this, name + '-' + i, name)
@@ -212,46 +520,46 @@ Tyrants.prototype.initializeTokens = function() {
       token.owner = player
       spies.push(token)
     }
-    this.zones.byPlayer(player, 'spies').initializeCards(spies)
+    ;(this.zones.byPlayer(player, 'spies') as any).initializeCards(spies)
   }
 
   // Neutrals
-  const neutrals = []
+  const neutrals: TyrantsTokenType[] = []
   for (let i = 0; i < 80; i++) {
     const token = new TyrantsToken(this, 'neutral-' + i, 'neutral')
     this.cards.register(token)
     token.isTroop = true
     neutrals.push(token)
   }
-  this.zones.byId('neutrals').initializeCards(neutrals)
+  ;(this.zones.byId('neutrals') as any).initializeCards(neutrals)
 
 
   // Place neutrals on map
-  const neutralZone = this.zones.byId('neutrals')
+  const neutralZone = this.zones.byId('neutrals') as TyrantsZoneType
   for (const loc of this.getLocationAll()) {
     for (let i = 0; i < loc.neutrals; i++) {
-      neutralZone.peek().moveTo(loc)
+      ;(neutralZone.peek() as any).moveTo(loc)
     }
   }
 
   if (this.settings.menzoExtraNeutral) {
     const menzo = this.getLocationByName('Menzoberranzan')
-    neutralZone.peek().moveTo(menzo)
+    ;(neutralZone.peek() as any).moveTo(menzo)
   }
 }
 
-Tyrants.prototype.initializeStartingHands = function() {
+Tyrants.prototype.initializeStartingHands = function(this: Tyrants): void {
   for (const player of this.players.all()) {
     this.mRefillHand(player)
   }
 }
 
-Tyrants.prototype.initializeTransientState = function() {
+Tyrants.prototype.initializeTransientState = function(this: Tyrants): void {
   this.state.turn = 0
   this.state.endOfTurnActions = []
 }
 
-Tyrants.prototype.chooseInitialLocations = function() {
+Tyrants.prototype.chooseInitialLocations = function(this: Tyrants): void {
   this.log.add({ template: 'Choosing starting locations' })
   this.log.indent()
 
@@ -260,11 +568,11 @@ Tyrants.prototype.chooseInitialLocations = function() {
 
     const choices = this
       .getLocationAll()
-      .filter(loc => loc.start)
-      .filter(loc => loc.getTroops().filter(t => t.name !== 'neutral').length === 0)
+      .filter((loc: TyrantsMapZoneType) => loc.start)
+      .filter((loc: TyrantsMapZoneType) => loc.getTroops().filter((t: any) => t.name !== 'neutral').length === 0)
 
     const loc = this.aChooseLocation(player, choices, { title: 'Choose starting location' })
-    this.aDeploy(player, loc)
+    this.aDeploy(player, loc!)
   }
 
   this.log.outdent()
@@ -274,7 +582,7 @@ Tyrants.prototype.chooseInitialLocations = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Main Loop
 
-Tyrants.prototype.mainLoop = function() {
+Tyrants.prototype.mainLoop = function(this: Tyrants): void {
   while (true) {
     this.log.setIndent(0)
     this.log.add({
@@ -301,7 +609,7 @@ Tyrants.prototype.mainLoop = function() {
   }
 }
 
-Tyrants.prototype.preActions = function() {
+Tyrants.prototype.preActions = function(this: Tyrants): void {
   const player = this.players.current()
 
   // Gain influence from site control tokens.
@@ -320,7 +628,7 @@ Tyrants.prototype.preActions = function() {
   }
 }
 
-Tyrants.prototype.doActions = function() {
+Tyrants.prototype.doActions = function(this: Tyrants): void {
   const player = this.players.current()
 
   while (true) {
@@ -328,7 +636,7 @@ Tyrants.prototype.doActions = function() {
       actor: player.name,
       title: `Choose Action`,
       choices: this._generateActionChoices(),
-    })[0]
+    })[0] as string | ChosenAction
 
     if (chosenAction === 'Pass') {
       this.log.add({
@@ -343,19 +651,20 @@ Tyrants.prototype.doActions = function() {
       continue
     }
 
-    else if (chosenAction.action === 'place-troop-with-power') {
+    else if (typeof chosenAction === 'object' && chosenAction.action === 'place-troop-with-power') {
       this.aDeployWithPowerAt(player, chosenAction.location)
       continue
     }
 
-    const name = chosenAction.title
-    const arg = chosenAction.selection[0]
+    const action = chosenAction as ChosenAction
+    const name = action.title
+    const arg = action.selection![0]
 
     if (name === 'Play Card') {
       const card = this
         .cards.byPlayer(player, 'hand')
-        .find(c => c.name === arg)
-      this.aPlayCard(player, card)
+        .find((c: Card) => c.name === arg)
+      this.aPlayCard(player, card!)
       continue
     }
     else if (name === 'Recruit') {
@@ -408,8 +717,8 @@ Tyrants.prototype.doActions = function() {
   }
 }
 
-Tyrants.prototype._generateActionChoices = function() {
-  const choices = []
+Tyrants.prototype._generateActionChoices = function(this: Tyrants): (string | ActionChoice | undefined)[] {
+  const choices: (string | ActionChoice | undefined)[] = []
   choices.push(this._generateCardActions())
   choices.push(this._generateAutoCardAction())
   choices.push(this._generateBuyActions())
@@ -418,8 +727,8 @@ Tyrants.prototype._generateActionChoices = function() {
   return choices.filter(action => Boolean(action))
 }
 
-Tyrants.prototype._generateCardActions = function() {
-  const choices = []
+Tyrants.prototype._generateCardActions = function(this: Tyrants): ActionChoice | undefined {
+  const choices: string[] = []
   for (const card of this.cards.byPlayer(this.players.current(), 'hand')) {
     choices.push(card.name)
   }
@@ -439,11 +748,11 @@ Tyrants.prototype._generateCardActions = function() {
   }
 }
 
-Tyrants.prototype._generateAutoCardAction = function() {
+Tyrants.prototype._generateAutoCardAction = function(this: Tyrants): string | undefined {
   const player = this.players.current()
   const cards = this.cards.byPlayer(player, 'hand')
 
-  if (cards.some(card => card.autoplay)) {
+  if (cards.some((card: Card) => card.autoplay)) {
     return 'Auto-play Cards'
   }
   else {
@@ -451,30 +760,28 @@ Tyrants.prototype._generateAutoCardAction = function() {
   }
 }
 
-Tyrants.prototype._generateBuyActions = function(maxCost=0, opts={}) {
-  const choices = []
+Tyrants.prototype._generateBuyActions = function(this: Tyrants, maxCost: number = 0, opts: BuyActionOpts = {}): ActionChoice | undefined {
+  const choices: { card: Card; devoured?: boolean }[] = []
 
-  const priestess = this.zones.byId('priestess').peek()
+  const priestess = (this.zones.byId('priestess') as TyrantsZoneType).peek() as Card | undefined
   if (priestess) {
     choices.push({ card: priestess })
   }
 
-  const guard = this.zones.byId('guard').peek()
+  const guard = (this.zones.byId('guard') as TyrantsZoneType).peek() as Card | undefined
   if (guard) {
     choices.push({ card: guard })
   }
 
-  const market = this
-    .zones.byId('market')
-    .cardlist()
-    .sort((l, r) => l.name.localeCompare(r.name))
-    .sort((l, r) => l.cost - r.cost)
+  const market = ((this.zones.byId('market') as TyrantsZoneType).cardlist() as unknown as Card[])
+    .sort((l: Card, r: Card) => l.name.localeCompare(r.name))
+    .sort((l: Card, r: Card) => l.cost - r.cost)
   for (const card of market) {
     choices.push({ card })
   }
 
   if (this.state.ghostFlag) {
-    const devoured = this.zones.byId('devoured').cardlist().slice(-1)[0]
+    const devoured = ((this.zones.byId('devoured') as TyrantsZoneType).cardlist() as unknown as Card[]).slice(-1)[0]
     if (devoured) {
       choices.push({
         card: devoured,
@@ -509,9 +816,9 @@ Tyrants.prototype._generateBuyActions = function(maxCost=0, opts={}) {
   }
 }
 
-Tyrants.prototype._generatePowerActions = function() {
+Tyrants.prototype._generatePowerActions = function(this: Tyrants): ActionChoice | undefined {
   const player = this.players.current()
-  const choices = []
+  const choices: string[] = []
 
   const power = player.getCounter('power')
   if (
@@ -544,11 +851,11 @@ Tyrants.prototype._generatePowerActions = function() {
   }
 }
 
-Tyrants.prototype._generatePassAction = function() {
+Tyrants.prototype._generatePassAction = function(this: Tyrants): string {
   return 'Pass'
 }
 
-Tyrants.prototype._processEndOfTurnActions = function() {
+Tyrants.prototype._processEndOfTurnActions = function(this: Tyrants): void {
   // Discard
   for (const action of this.state.endOfTurnActions) {
     if (action.action === 'discard') {
@@ -561,7 +868,7 @@ Tyrants.prototype._processEndOfTurnActions = function() {
   }
 
   // Promotions
-  const promos = []
+  const promos: EndOfTurnAction[] = []
 
   for (const action of this.state.endOfTurnActions) {
     if (action.action === 'promote-other') {
@@ -576,10 +883,10 @@ Tyrants.prototype._processEndOfTurnActions = function() {
           aspect: action.aspect,
         }
       })
-      const choices = this
-        .cards.byPlayer(action.player, 'played')
-        .filter(card => card.aspect === action.aspect)
-        .sort(card => card.name)
+      const choices = (this
+        .cards.byPlayer(action.player, 'played') as Card[])
+        .filter((card: Card) => card.aspect === action.aspect)
+        .sort((l: Card, r: Card) => l.name.localeCompare(r.name))
       this.aChooseAndPromote(action.player, choices, { min: 1, max: 1 })
     }
 
@@ -589,10 +896,10 @@ Tyrants.prototype._processEndOfTurnActions = function() {
           template: '{player} may promote any number of undead cards',
           args: { player: action.player }
         })
-        const choices = this
-          .cards.byPlayer(action.player, 'played')
-          .filter(card => card.race === 'undead')
-          .sort(card => card.name)
+        const choices = (this
+          .cards.byPlayer(action.player, 'played') as Card[])
+          .filter((card: Card) => card.race === 'undead')
+          .sort((l: Card, r: Card) => l.name.localeCompare(r.name))
         this.aChooseAndPromote(action.player, choices, { min: 0, max: choices.length })
       }
       else {
@@ -601,25 +908,25 @@ Tyrants.prototype._processEndOfTurnActions = function() {
     }
   }
 
-  const promoChoices = []
+  const promoChoices: Card[] = []
   for (const promo of promos) {
     this
       .cards.byPlayer(promo.player, 'played')
-      .filter(card => card !== promo.source)
-      .forEach(card => util.array.pushUnique(promoChoices, card))
+      .filter((card: Card) => card !== promo.source)
+      .forEach((card: Card) => util.array.pushUnique(promoChoices, card))
   }
 
   if (promoChoices.length > 0) {
     const player = this.players.current()
 
     const max = promos.length
-    const min = promos.filter(p => !p.opts.optional).length
+    const min = promos.filter(p => !p.opts?.optional).length
 
     this.log.add({
       template: '{player} may promote {max} cards',
       args: { player, max }
     })
-    promoChoices.sort((l, r) => l.name.localeCompare(r.name))
+    promoChoices.sort((l: Card, r: Card) => l.name.localeCompare(r.name))
     this.aChooseAndPromote(player, promoChoices, { min, max })
   }
 
@@ -627,14 +934,14 @@ Tyrants.prototype._processEndOfTurnActions = function() {
 
   for (const action of this.state.endOfTurnActions) {
     if (action.action === 'special') {
-      action.fn(this, action.player)
+      action.fn!(this, action.player)
     }
   }
 
   this.state.endOfTurnActions = []
 }
 
-Tyrants.prototype.endOfTurn = function() {
+Tyrants.prototype.endOfTurn = function(this: Tyrants): void {
   this._processEndOfTurnActions()
 
   // Gain points for control markers.
@@ -659,7 +966,7 @@ Tyrants.prototype.endOfTurn = function() {
   this.state.ghostFlag = false
 }
 
-Tyrants.prototype.cleanup = function() {
+Tyrants.prototype.cleanup = function(this: Tyrants): void {
   const player = this.players.current()
   const playedCards = this.cards.byPlayer(player, 'played')
 
@@ -693,7 +1000,7 @@ Tyrants.prototype.cleanup = function() {
   this.checkForEndGameTriggers()
 }
 
-Tyrants.prototype.checkForEndGameTriggers = function() {
+Tyrants.prototype.checkForEndGameTriggers = function(this: Tyrants): void {
 
   // Any player has zero troops left
   for (const player of this.players.all()) {
@@ -707,7 +1014,7 @@ Tyrants.prototype.checkForEndGameTriggers = function() {
   }
 
   // The market is depleted
-  if (this.zones.byId('marketDeck').cardlist().length === 0) {
+  if ((this.zones.byId('marketDeck') as TyrantsZoneType).cardlist().length === 0) {
     this.log.add({
       template: 'The market is depleted'
     })
@@ -722,26 +1029,26 @@ Tyrants.prototype.checkForEndGameTriggers = function() {
   }
 }
 
-Tyrants.prototype.drawHand = function() {
+Tyrants.prototype.drawHand = function(this: Tyrants): void {
   this.mRefillHand(this.players.current())
 }
 
-Tyrants.prototype.nextPlayer = function() {
+Tyrants.prototype.nextPlayer = function(this: Tyrants): void {
   this.players.advancePlayer()
   this.state.turn += 1
 }
 
-Tyrants.prototype.checkForEndOfGame = function() {
+Tyrants.prototype.checkForEndOfGame = function(this: Tyrants): void {
   if (this.state.endGameTriggered && this.players.current() === this.players.first()) {
 
     const scores = this
       .players
       .all()
-      .map(player => ({
+      .map((player: Player) => ({
         player,
         score: this.getScore(player)
       }))
-      .sort((l, r) => r.score - l.score)
+      .sort((l: { score: number }, r: { score: number }) => r.score - l.score)
 
     for (const score of scores) {
       this.log.add({
@@ -776,7 +1083,7 @@ Tyrants.prototype.checkForEndOfGame = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Alt Actions
 
-Tyrants.prototype.aDeployWithPowerAt = function(player, locId=null) {
+Tyrants.prototype.aDeployWithPowerAt = function(this: Tyrants, player: Player, locId: string | null = null): void {
   this.log.add({
     template: '{player} power: Deploy a Troop',
     args: { player }
@@ -799,14 +1106,14 @@ Tyrants.prototype.aDeployWithPowerAt = function(player, locId=null) {
 ////////////////////////////////////////////////////////////////////////////////
 // Core Functionality
 
-Tyrants.prototype.aCascade = function(player, opts) {
-  const marketZone = this.zones.byId('marketDeck')
+Tyrants.prototype.aCascade = function(this: Tyrants, player: Player, opts: CascadeOpts): void {
+  const marketZone = this.zones.byId('marketDeck') as TyrantsZoneType
 
-  const unused = []
-  let found = null
+  const unused: Card[] = []
+  let found: Card | null = null
 
-  for (const card of marketZone.cardlist()) {
-    if (card[opts.key] === opts.value && card.cost <= opts.maxCost) {
+  for (const card of marketZone.cardlist() as unknown as Card[]) {
+    if ((card as unknown as Record<string, unknown>)[opts.key] === opts.value && card.cost <= opts.maxCost) {
       found = card
       break
     }
@@ -856,25 +1163,25 @@ Tyrants.prototype.aCascade = function(player, opts) {
   }
 }
 
-Tyrants.prototype.aChooseColor = function(player) {
+Tyrants.prototype.aChooseColor = function(this: Tyrants, player: Player): void {
   // This option exists so that games in progress when color selection is introduced don't break
   if (!this.settings.chooseColors) {
     return
   }
 
-  const availableColors = Object.entries(res.colors)
-    .filter(([, hex]) => !this.players.all().some(p => p.color === hex))
+  const availableColors = (Object.entries(res.colors) as [string, string][])
+    .filter(([, hex]) => !this.players.all().some((p: Player) => p.color === hex))
     .map(([name]) => name)
 
   const chosen = this.actions.choose(player, availableColors, {
     title: 'Choose a player color',
   })
-  player.color = res.colors[chosen]
+  player.color = res.colors[chosen[0]]
 }
 
-Tyrants.prototype.aChooseLocation = function(player, locations, opts={}) {
+Tyrants.prototype.aChooseLocation = function(this: Tyrants, player: Player, locations: TyrantsMapZoneType[], opts: { title?: string; min?: number; max?: number } = {}): TyrantsMapZoneType | undefined {
   const choices = locations
-    .map(loc => loc.name())
+    .map((loc: TyrantsMapZoneType) => loc.name())
     .sort()
 
   if (!opts.title) {
@@ -883,11 +1190,11 @@ Tyrants.prototype.aChooseLocation = function(player, locations, opts={}) {
 
   const selection = this.actions.choose(player, choices, opts)
   if (selection.length > 0) {
-    return locations.find(loc => loc.name() === selection[0])
+    return locations.find((loc: TyrantsMapZoneType) => loc.name() === selection[0])
   }
 }
 
-Tyrants.prototype.aChooseAndAssassinate = function(player, opts={}) {
+Tyrants.prototype.aChooseAndAssassinate = function(this: Tyrants, player: Player, opts: { loc?: TyrantsMapZoneType; whiteOnly?: boolean } = {}): TyrantsTokenType | undefined {
   const choices = this.getAssassinateChoices(player, opts)
   const selection = this.actions.choose(player, choices)
   if (selection.length > 0) {
@@ -898,7 +1205,7 @@ Tyrants.prototype.aChooseAndAssassinate = function(player, opts={}) {
   }
 }
 
-Tyrants.prototype.aChooseAndDevour = function(player, opts={}) {
+Tyrants.prototype.aChooseAndDevour = function(this: Tyrants, player: Player, opts: DevourOpts = {}): void {
   const zoneName = opts.zone ? opts.zone : 'hand'
   const chosen = this.actions.chooseCard(player, this.cards.byPlayer(player, zoneName), {
     min: 0,
@@ -919,8 +1226,8 @@ Tyrants.prototype.aChooseAndDevour = function(player, opts={}) {
   }
 }
 
-Tyrants.prototype.aChooseAndDevourMarket = function(player, opts={}) {
-  const chosen = this.actions.chooseCards(player, this.zones.byId('market').cardlist(), {
+Tyrants.prototype.aChooseAndDevourMarket = function(this: Tyrants, player: Player, opts: { max?: number } = {}): void {
+  const chosen = this.actions.chooseCards(player, (this.zones.byId('market') as TyrantsZoneType).cardlist() as any, {
     min: 0,
     max: opts.max || 1,
     title: 'Choose cards to devour from the market',
@@ -938,7 +1245,7 @@ Tyrants.prototype.aChooseAndDevourMarket = function(player, opts={}) {
   }
 }
 
-Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
+Tyrants.prototype.aChooseAndDiscard = function(this: Tyrants, player: Player, opts: DiscardOpts = {}): Card | undefined {
   if (opts.requireThree) {
     const cardsInHand = this.cards.byPlayer(player, 'hand').length
     if (cardsInHand <= 3) {
@@ -960,7 +1267,7 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
     opts.title = 'Choose a card to discard'
   }
 
-  const chosen = this.actions.chooseCard(player, this.cards.byPlayer(player, 'hand'), opts)
+  const chosen = this.actions.chooseCard(player, this.cards.byPlayer(player, 'hand'), opts as any)
   if (chosen) {
     // Some cards have triggers if an opponent causes you to discard.
     if (opts.forced) {
@@ -969,7 +1276,7 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
         if (trigger.kind === 'discard-this') {
           const result = trigger.impl(this, player, { card: chosen, forcedBy: opts.forcedBy })
           this.log.outdent()
-          return result
+          return result as Card | undefined
         }
       }
     }
@@ -989,7 +1296,7 @@ Tyrants.prototype.aChooseAndDiscard = function(player, opts={}) {
   this.log.outdent()
 }
 
-Tyrants.prototype.aChooseAndSupplant = function(player, opts={}) {
+Tyrants.prototype.aChooseAndSupplant = function(this: Tyrants, player: Player, opts: CollectTargetsOpts = {}): void {
   const troops = this.cards.byPlayer(player, 'troops')
   if (troops.length === 0) {
     this.log.add({
@@ -1009,10 +1316,10 @@ Tyrants.prototype.aChooseAndSupplant = function(player, opts={}) {
   }
 }
 
-Tyrants.prototype.aChooseAndDeploy = function(player, opts={}) {
+Tyrants.prototype.aChooseAndDeploy = function(this: Tyrants, player: Player, opts: DeployOpts = {}): TyrantsMapZoneType | undefined {
   // If the player is deploying a white troop, fetch it from the bank.
   if (opts.white) {
-    const white = this.zones.byId('neutrals').peek()
+    const white = (this.zones.byId('neutrals') as TyrantsZoneType).peek() as TyrantsTokenType | undefined
     if (!white) {
       this.log.add({ template: 'There are no neutral troops left in the supply' })
       return
@@ -1040,19 +1347,19 @@ Tyrants.prototype.aChooseAndDeploy = function(player, opts={}) {
 }
 
 // Only supports moving troops.
-Tyrants.prototype.aChooseAndMoveTroop = function(player, opts={}) {
+Tyrants.prototype.aChooseAndMoveTroop = function(this: Tyrants, player: Player, opts: CollectTargetsOpts = {}): void {
   const choices = this._collectTargets(player, opts).troops
   const toMove = this.actions.choose(player, choices, { title: "Choose a troop to move" })[0]
   if (toMove) {
     const [locName, ownerName] = toMove.split(', ')
     const source = this.getLocationByName(locName)
     const owner = ownerName === 'neutral' ? 'neutral' : this.players.byName(ownerName)
-    const troop = source.getTroops(owner)[0]
+    const troop = source.getTroops(owner as any)[0]
 
     const destChoices = this
       .getLocationAll()
-      .filter(loc => loc.checkHasOpenTroopSpace())
-      .filter(loc => loc !== source)
+      .filter((loc: TyrantsMapZoneType) => loc.checkHasOpenTroopSpace())
+      .filter((loc: TyrantsMapZoneType) => loc !== source)
 
     const dest = this.aChooseLocation(player, destChoices)
 
@@ -1063,7 +1370,7 @@ Tyrants.prototype.aChooseAndMoveTroop = function(player, opts={}) {
 
     util.assert(!!troop, `Invalid selection for moving a troop: ${toMove}`)
 
-    troop.moveTo(dest)
+    ;(troop as any).moveTo(dest)
     this.log.add({
       template: '{player} moves a {player2} troop from {zone1} to {zone2}',
       args: {
@@ -1076,7 +1383,7 @@ Tyrants.prototype.aChooseAndMoveTroop = function(player, opts={}) {
   }
 }
 
-Tyrants.prototype.aChooseAndPlaceSpy = function(player) {
+Tyrants.prototype.aChooseAndPlaceSpy = function(this: Tyrants, player: Player): TyrantsMapZoneType | undefined {
   // Check that the player has spies remaining to place.
   if (this.cards.byPlayer(player, 'spies').length === 0) {
     this.log.add({
@@ -1089,8 +1396,8 @@ Tyrants.prototype.aChooseAndPlaceSpy = function(player) {
   // Player can choose to place a spy on area site that does not have a spy of theirs on it already.
   const choices = this
     .getLocationAll()
-    .filter(l => l.checkIsSite())
-    .filter(l => l.getSpies(player).length === 0)
+    .filter((l: TyrantsMapZoneType) => l.checkIsSite())
+    .filter((l: TyrantsMapZoneType) => l.getSpies(player as any).length === 0)
 
   const loc = this.aChooseLocation(player, choices, { title: 'Choose a location for a spy' })
   if (loc) {
@@ -1099,22 +1406,22 @@ Tyrants.prototype.aChooseAndPlaceSpy = function(player) {
   }
 }
 
-Tyrants.prototype.aChooseAndPromote = function(player, cardsToChoose, opts={}) {
+Tyrants.prototype.aChooseAndPromote = function(this: Tyrants, player: Player, cardsToChoose: Card[], opts: { min?: number; max?: number } = {}): void {
   const choiceNames = cardsToChoose
-    .map(c => c.name)
+    .map((c: Card) => c.name)
     .sort()
 
   const choices = this.actions.choose(player, choiceNames, { ...opts, title: 'Choose cards to promote' })
 
-  const done = []
+  const done: Card[] = []
   for (const choice of choices) {
-    const card = cardsToChoose.find(c => c.name === choice && !done.includes(c))
-    done.push(card)
-    this.aPromote(player, card)
+    const card = cardsToChoose.find((c: Card) => c.name === choice && !done.includes(c))
+    done.push(card!)
+    this.aPromote(player, card!)
   }
 }
 
-Tyrants.prototype.aChooseAndRecruit = function(player, maxCost, opts) {
+Tyrants.prototype.aChooseAndRecruit = function(this: Tyrants, player: Player, maxCost: number, opts?: BuyActionOpts): void {
   const choices = this._generateBuyActions(maxCost, opts)
 
   if (choices) {
@@ -1128,8 +1435,8 @@ Tyrants.prototype.aChooseAndRecruit = function(player, maxCost, opts) {
   }
 }
 
-Tyrants.prototype._collectTargets = function(player, opts={}) {
-  let baseLocations
+Tyrants.prototype._collectTargets = function(this: Tyrants, player: Player, opts: CollectTargetsOpts = {}): { troops: string[]; spies: string[] } {
+  let baseLocations: TyrantsMapZoneType[]
   if (opts.loc) {
     baseLocations = [opts.loc]
   }
@@ -1141,15 +1448,15 @@ Tyrants.prototype._collectTargets = function(player, opts={}) {
   }
 
   const troops = baseLocations
-    .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
-    .filter(([, troop]) => troop.owner !== player)
+    .flatMap((loc: TyrantsMapZoneType) => (loc.getTroops() as unknown as TyrantsTokenType[]).map((troop) => [loc, troop] as [TyrantsMapZoneType, TyrantsTokenType]))
+    .filter(([, troop]) => troop.owner !== (player as any))
     .filter(([, troop]) => opts.whiteOnly ? !troop.owner : true)
     .filter(([, troop]) => opts.noWhite ? !!troop.owner : true)
     .map(([loc, troop]) => `${loc.name()}, ${troop.getOwnerName()}`)
 
   const spies = baseLocations
-    .flatMap(loc => loc.getSpies().map(spy => [loc, spy]))
-    .filter(([, spy]) => spy.owner !== player)
+    .flatMap((loc: TyrantsMapZoneType) => (loc.getSpies() as unknown as TyrantsTokenType[]).map((spy) => [loc, spy] as [TyrantsMapZoneType, TyrantsTokenType]))
+    .filter(([, spy]) => spy.owner !== (player as any))
     .map(([loc, spy]) => `${loc.name()}, ${spy.getOwnerName()}`)
 
   return {
@@ -1158,10 +1465,10 @@ Tyrants.prototype._collectTargets = function(player, opts={}) {
   }
 }
 
-Tyrants.prototype.aChooseAndReturn = function(player, opts={}) {
+Tyrants.prototype.aChooseAndReturn = function(this: Tyrants, player: Player, opts: CollectTargetsOpts = {}): void {
   const targets = this._collectTargets(player, opts)
 
-  const choices = []
+  const choices: ActionChoice[] = []
   if (targets.troops.length > 0) {
     choices.push({
       title: 'troop',
@@ -1181,16 +1488,16 @@ Tyrants.prototype.aChooseAndReturn = function(player, opts={}) {
 
   const selection = this.actions.choose(player, choices, {
     title: 'Choose a token to return',
-  })
+  }) as unknown as ChosenAction[]
 
   if (selection.length > 0) {
     const kind = selection[0].title
-    const [locName, ownerName] = selection[0].selection[0].split(', ')
+    const [locName, ownerName] = selection[0].selection![0].split(', ')
     const loc = this.getLocationByName(locName)
     const owner = ownerName === 'neutral' ? 'neutral' : this.players.byName(ownerName)
 
     if (kind === 'spy') {
-      this.aReturnSpy(player, loc, owner)
+      this.aReturnSpy(player, loc, owner as Player)
     }
     else if (kind === 'troop') {
       this.aReturnTroop(player, loc, owner)
@@ -1201,9 +1508,9 @@ Tyrants.prototype.aChooseAndReturn = function(player, opts={}) {
   }
 }
 
-Tyrants.prototype.aChooseOne = function(player, choices, opts={}) {
-  const selection = this.actions.choose(player, choices.map(c => c.title))[0]
-  const impl = choices.find(c => c.title === selection).impl
+Tyrants.prototype.aChooseOne = function(this: Tyrants, player: Player, choices: ChooseOneOption[], opts: Record<string, unknown> = {}): void {
+  const selection = this.actions.choose(player, choices.map((c: ChooseOneOption) => c.title))[0]
+  const impl = choices.find((c: ChooseOneOption) => c.title === selection)!.impl
 
   this.log.add({
     template: '{player} chooses {selection}',
@@ -1212,11 +1519,11 @@ Tyrants.prototype.aChooseOne = function(player, choices, opts={}) {
   impl(this, player, opts)
 }
 
-Tyrants.prototype.aChooseToDiscard = function(player) {
+Tyrants.prototype.aChooseToDiscard = function(this: Tyrants, player: Player): void {
   const opponents = this
     .players.opponents(player)
-    .filter(p => this.cards.byPlayer(p, 'hand').length > 3)
-    .map(p => p.name)
+    .filter((p: Player) => this.cards.byPlayer(p, 'hand').length > 3)
+    .map((p: Player) => p.name)
 
   const choice = this.actions.choose(player, opponents, { title: 'Choose an opponent to discard' })
   if (choice.length > 0) {
@@ -1230,7 +1537,7 @@ Tyrants.prototype.aChooseToDiscard = function(player) {
   }
 }
 
-Tyrants.prototype.aDeferDiscard = function(player, source, forcingPlayer) {
+Tyrants.prototype.aDeferDiscard = function(this: Tyrants, player: Player, source: Card, forcingPlayer: Player): void {
   this.state.endOfTurnActions.push({
     player,
     source,
@@ -1239,7 +1546,7 @@ Tyrants.prototype.aDeferDiscard = function(player, source, forcingPlayer) {
   })
 }
 
-Tyrants.prototype.aDeferPromotion = function(player, source, opts={}) {
+Tyrants.prototype.aDeferPromotion = function(this: Tyrants, player: Player, source: Card, opts: { optional?: boolean } = {}): void {
   this.state.endOfTurnActions.push({
     player,
     source,
@@ -1248,7 +1555,7 @@ Tyrants.prototype.aDeferPromotion = function(player, source, opts={}) {
   })
 }
 
-Tyrants.prototype.aDeferPromotionAspect = function(player, source, aspect) {
+Tyrants.prototype.aDeferPromotionAspect = function(this: Tyrants, player: Player, source: Card, aspect: string): void {
   this.state.endOfTurnActions.push({
     player,
     source,
@@ -1257,7 +1564,7 @@ Tyrants.prototype.aDeferPromotionAspect = function(player, source, aspect) {
   })
 }
 
-Tyrants.prototype.aDeferPromotionSpecial = function(player, source) {
+Tyrants.prototype.aDeferPromotionSpecial = function(this: Tyrants, player: Player, source: Card): void {
   this.state.endOfTurnActions.push({
     player,
     source,
@@ -1265,7 +1572,7 @@ Tyrants.prototype.aDeferPromotionSpecial = function(player, source) {
   })
 }
 
-Tyrants.prototype.aDeferSpecial = function(player, source, fn) {
+Tyrants.prototype.aDeferSpecial = function(this: Tyrants, player: Player, source: Card, fn: (game: Tyrants, player: Player) => void): void {
   this.state.endOfTurnActions.push({
     player,
     source,
@@ -1274,7 +1581,7 @@ Tyrants.prototype.aDeferSpecial = function(player, source, fn) {
   })
 }
 
-Tyrants.prototype.aAutoPlayCards = function() {
+Tyrants.prototype.aAutoPlayCards = function(this: Tyrants): void {
   const player = this.players.current()
   const cards = this.cards.byPlayer(player, 'hand')
   for (const card of cards) {
@@ -1284,7 +1591,7 @@ Tyrants.prototype.aAutoPlayCards = function() {
   }
 }
 
-Tyrants.prototype.aAssassinate = function(player, loc, owner) {
+Tyrants.prototype.aAssassinate = function(this: Tyrants, player: Player, loc: TyrantsMapZoneType, owner: Player | 'neutral'): TyrantsTokenType {
   const troop = this.mAssassinate(player, loc, owner)
   this.log.add({
     template: '{player} assassinates {card} at {loc}',
@@ -1297,7 +1604,7 @@ Tyrants.prototype.aAssassinate = function(player, loc, owner) {
   return troop
 }
 
-Tyrants.prototype.aDeploy = function(player, loc, opts={}) {
+Tyrants.prototype.aDeploy = function(this: Tyrants, player: Player, loc: TyrantsMapZoneType, opts: DeployOpts = {}): void {
   const deployed = this.mDeploy(player, loc, opts)
   this.log.add({
     template: '{player} deploys {card} to {loc}',
@@ -1305,7 +1612,7 @@ Tyrants.prototype.aDeploy = function(player, loc, opts={}) {
   })
 }
 
-Tyrants.prototype.aDevour = function(player, card, opts={}) {
+Tyrants.prototype.aDevour = function(this: Tyrants, player: Player, card: Card, opts: { noRefill?: boolean } = {}): void {
   this.log.add({
     template: '{player} devours {card} from {zone}',
     args: { player, card, zone: card.zone },
@@ -1317,7 +1624,7 @@ Tyrants.prototype.aDevour = function(player, card, opts={}) {
   }
 }
 
-Tyrants.prototype.aDevourThisAnd = function(player, card, title, fn) {
+Tyrants.prototype.aDevourThisAnd = function(this: Tyrants, player: Player, card: Card, title: string, fn: (game: Tyrants, player: Player) => void): void {
   this.log.add({
     template: `{player} may activate '${title}'`,
     args: { player }
@@ -1334,7 +1641,7 @@ Tyrants.prototype.aDevourThisAnd = function(player, card, title, fn) {
   this.log.outdent()
 }
 
-Tyrants.prototype.aDiscard = function(player, card) {
+Tyrants.prototype.aDiscard = function(this: Tyrants, player: Player, card: Card): void {
   card.moveTo(this.zones.byPlayer(player, 'discard'))
   this.log.add({
     template: '{player} discards {card}',
@@ -1342,7 +1649,7 @@ Tyrants.prototype.aDiscard = function(player, card) {
   })
 }
 
-Tyrants.prototype.aDraw = function(player, opts={}) {
+Tyrants.prototype.aDraw = function(this: Tyrants, player: Player, opts: { silent?: boolean } = {}): Card | 'no-more-cards' {
   const deck = this.zones.byPlayer(player, 'deck')
   const hand = this.zones.byPlayer(player, 'hand')
 
@@ -1365,11 +1672,11 @@ Tyrants.prototype.aDraw = function(player, opts={}) {
       args: { player }
     })
   }
-  return deck.peek().moveTo(hand)
+  return (deck.peek() as any).moveTo(hand)
 }
 
 
-Tyrants.prototype.aPlaceSpy = function(player, loc) {
+Tyrants.prototype.aPlaceSpy = function(this: Tyrants, player: Player, loc: TyrantsMapZoneType): void {
   this.mPlaceSpy(player, loc)
   this.log.add({
     template: '{player} places a spy at {loc}',
@@ -1377,7 +1684,7 @@ Tyrants.prototype.aPlaceSpy = function(player, loc) {
   })
 }
 
-Tyrants.prototype.aPlayCard = function(player, card) {
+Tyrants.prototype.aPlayCard = function(this: Tyrants, player: Player, card: Card): void {
   // There are several cases where a card not owned by the player is played, such as
   // Ulitharid and undead cascade.
 //  util.assert(card.owner === player, 'Card is not owned by player')
@@ -1392,7 +1699,7 @@ Tyrants.prototype.aPlayCard = function(player, card) {
   this.mExecuteCard(player, card)
 }
 
-Tyrants.prototype.aPromote = function(player, card, opts={}) {
+Tyrants.prototype.aPromote = function(this: Tyrants, player: Player, card: Card, opts: { silent?: boolean } = {}): Card {
   if (card.name === 'Insane Outcast') {
     card.moveTo(this.zones.byId('outcast'))
   }
@@ -1409,7 +1716,7 @@ Tyrants.prototype.aPromote = function(player, card, opts={}) {
   return card
 }
 
-Tyrants.prototype.aPromoteTopCard = function(player) {
+Tyrants.prototype.aPromoteTopCard = function(this: Tyrants, player: Player): void {
   const deck = this.zones.byPlayer(player, 'deck')
 
   if (deck.cardlist().length === 0) {
@@ -1431,24 +1738,24 @@ Tyrants.prototype.aPromoteTopCard = function(player) {
 
   this.log.add({ template: 'Promoting top card of deck' })
   this.log.indent()
-  this.aPromote(player, deck.peek())
+  this.aPromote(player, deck.peek() as unknown as Card)
   this.log.outdent()
 }
 
-Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
-  let card
+Tyrants.prototype.aRecruit = function(this: Tyrants, player: Player, cardName: string, opts: { noCost?: boolean } = {}): void {
+  let card: Card | undefined
 
   if (cardName.startsWith('devoured: ')) {
-    card = this.zones.byId('devoured').cardlist().slice(-1)[0]
+    card = ((this.zones.byId('devoured') as TyrantsZoneType).cardlist() as unknown as Card[]).slice(-1)[0]
   }
   else if (cardName === 'Priestess of Lolth') {
-    card = this.zones.byId('priestess').peek()
+    card = (this.zones.byId('priestess') as TyrantsZoneType).peek() as Card | undefined
   }
   else if (cardName === 'House Guard') {
-    card = this.zones.byId('guard').peek()
+    card = (this.zones.byId('guard') as TyrantsZoneType).peek() as Card | undefined
   }
   else if (cardName === 'Insane Outcast') {
-    card = this.zones.byId('outcast').peek()
+    card = (this.zones.byId('outcast') as TyrantsZoneType).peek() as Card | undefined
 
     if (!card) {
       this.log.indent()
@@ -1458,16 +1765,16 @@ Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
     }
   }
   else {
-    const market = this.zones.byId('market').cardlist()
-    card = market.find(c => c.name === cardName)
+    const market = (this.zones.byId('market') as TyrantsZoneType).cardlist() as unknown as Card[]
+    card = market.find((c: Card) => c.name === cardName)
   }
 
   util.assert(!!card, `Unable to find card to recruit: ${cardName}`)
 
-  card.moveTo(this.zones.byPlayer(player, 'discard'))
+  card!.moveTo(this.zones.byPlayer(player, 'discard'))
 
   if (!opts.noCost) {
-    player.incrementCounter('influence', -card.cost)
+    player.incrementCounter('influence', -card!.cost)
   }
 
   this.log.add({
@@ -1479,12 +1786,12 @@ Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
 }
 
 // Player will draw one less card the next time they refill their hand.
-Tyrants.prototype.aReduceDraw = function(player) {
+Tyrants.prototype.aReduceDraw = function(this: Tyrants, player: Player): void {
   player.incrementCounter('reduce-draw')
 }
 
-Tyrants.prototype.aReturnSpy = function(player, loc, owner) {
-  const spy = loc.getSpies(owner, loc)[0]
+Tyrants.prototype.aReturnSpy = function(this: Tyrants, player: Player, loc: TyrantsMapZoneType, owner: Player): void {
+  const spy = loc.getSpies(owner as any)[0] as unknown as TyrantsTokenType
   util.assert(!!spy, `No spy belonging to ${owner.name} at ${loc.name()}`)
   this.mReturn(spy)
   this.log.add({
@@ -1497,11 +1804,11 @@ Tyrants.prototype.aReturnSpy = function(player, loc, owner) {
   })
 }
 
-Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
+Tyrants.prototype.aReturnASpyAnd = function(this: Tyrants, player: Player, fn: (game: Tyrants, player: Player, opts: { loc: TyrantsMapZoneType }) => void): void {
   // Choose a spy to return
   const locations = this
     .getLocationAll()
-    .filter(loc => loc.getSpies(player).length > 0)
+    .filter((loc: TyrantsMapZoneType) => loc.getSpies(player as any).length > 0)
 
   if (locations.length === 0) {
     this.log.add({
@@ -1514,7 +1821,7 @@ Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
 
   // If a spy was returned, execute fn
   if (loc) {
-    const spy = loc.getSpies(player)[0]
+    const spy = loc.getSpies(player as any)[0] as unknown as TyrantsTokenType
 
     this.log.add({
       template: `{player} returns {card} from {zone}`,
@@ -1537,9 +1844,9 @@ Tyrants.prototype.aReturnASpyAnd = function(player, fn) {
   }
 }
 
-Tyrants.prototype.aReturnTroop = function(player, loc, owner) {
-  const troop = loc.getTroops(owner, loc)[0]
-  util.assert(!!troop, `No troop belonging to ${owner.name} at ${loc.name()}`)
+Tyrants.prototype.aReturnTroop = function(this: Tyrants, player: Player, loc: TyrantsMapZoneType, owner: Player | 'neutral'): void {
+  const troop = loc.getTroops(owner as any)[0] as unknown as TyrantsTokenType
+  util.assert(!!troop, `No troop belonging to ${typeof owner === 'string' ? owner : owner.name} at ${loc.name()}`)
   this.log.add({
     template: `{player} returns {card} from {zone}`,
     args: {
@@ -1551,26 +1858,26 @@ Tyrants.prototype.aReturnTroop = function(player, loc, owner) {
   this.mReturn(troop)
 }
 
-Tyrants.prototype.aSupplant = function(player, loc, owner) {
+Tyrants.prototype.aSupplant = function(this: Tyrants, player: Player, loc: TyrantsMapZoneType, owner: Player | 'neutral'): void {
   this.mAssassinate(player, loc, owner)
   this.mDeploy(player, loc)
 
-  owner = owner ? owner : 'neutral'
+  const ownerDisplay = owner ? owner : 'neutral'
 
   this.log.add({
     template: '{player1} supplants {player2} troop at {loc}',
     args: {
       player1: player,
-      player2: owner,
+      player2: ownerDisplay,
       loc
     }
   })
 }
 
-Tyrants.prototype.aWithFocus = function(player, test, fn) {
+Tyrants.prototype.aWithFocus = function(this: Tyrants, player: Player, test: (card: Card) => boolean, fn: () => void): void {
   const played = this.cards.byPlayer(player, 'played')
   const playedAspect = played
-    .filter(card => test(card))
+    .filter((card: Card) => test(card))
     .length > 1
 
   if (playedAspect) {
@@ -1584,7 +1891,7 @@ Tyrants.prototype.aWithFocus = function(player, test, fn) {
 
   const inHand = this.cards.byPlayer(player, 'hand')
   const inHandAspect = inHand
-    .filter(card => test(card))
+    .filter((card: Card) => test(card))
     .length > 0
 
   if (inHandAspect) {
@@ -1601,125 +1908,127 @@ Tyrants.prototype.aWithFocus = function(player, test, fn) {
   })
 }
 
-Tyrants.prototype.aWithFocusAspect = function(player, aspect, fn) {
-  const test = (card) => card.aspect === aspect
+Tyrants.prototype.aWithFocusAspect = function(this: Tyrants, player: Player, aspect: string, fn: () => void): void {
+  const test = (card: Card): boolean => card.aspect === aspect
   this.aWithFocus(player, test, fn)
 }
 
-Tyrants.prototype.aWithFocusInsaneOutcast = function(player, fn) {
-  const test = (card) => card.name === 'Insane Outcast'
+Tyrants.prototype.aWithFocusInsaneOutcast = function(this: Tyrants, player: Player, fn: () => void): void {
+  const test = (card: Card): boolean => card.name === 'Insane Outcast'
   this.aWithFocus(player, test, fn)
 }
 
-Tyrants.prototype.getAssassinateChoices = function(player, opts={}) {
+Tyrants.prototype.getAssassinateChoices = function(this: Tyrants, player: Player, opts: { loc?: TyrantsMapZoneType; whiteOnly?: boolean } = {}): string[] {
   const presence = opts.loc ? [opts.loc] : this.getPresence(player)
 
   const troops = presence
-    .filter(loc => opts.loc ? loc === opts.loc : true)
-    .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
-    .filter(([, troop]) => troop.owner !== player)
+    .filter((loc: TyrantsMapZoneType) => opts.loc ? loc === opts.loc : true)
+    .flatMap((loc: TyrantsMapZoneType) => (loc.getTroops() as unknown as TyrantsTokenType[]).map((troop) => [loc, troop] as [TyrantsMapZoneType, TyrantsTokenType]))
+    .filter(([, troop]) => troop.owner !== (player as any))
     .filter(([, troop]) => opts.whiteOnly ? !troop.owner : true)
     .map(([loc, troop]) => `${loc.name()}, ${troop.getOwnerName()}`)
   const choices = util.array.distinct(troops).sort()
   return choices
 }
 
-Tyrants.prototype.getCardById = function(cardId) {
+Tyrants.prototype.getCardById = function(this: Tyrants, cardId: string): Card {
   // TODO: deprecate
   return this.cards.byId(cardId)
 }
 
-Tyrants.prototype.getControlMarkers = function(player) {
+Tyrants.prototype.getControlMarkers = function(this: Tyrants, player?: Player): ControlMarker[] {
   const markers = this
     .getLocationAll()
-    .map(loc => loc.getControlMarker())
-    .filter(marker => Boolean(marker))
+    .map((loc: TyrantsMapZoneType) => loc.getControlMarker())
+    .filter((marker) => Boolean(marker)) as ControlMarker[]
 
   if (player) {
-    return markers.filter(marker => marker.ownerName === player.name)
+    return markers.filter((marker: ControlMarker) => marker.ownerName === player.name)
   }
   else {
     return markers
   }
 }
 
-Tyrants.prototype.getDeployChoices = function(player, opts={}) {
+Tyrants.prototype.getDeployChoices = function(this: Tyrants, player: Player, opts: { anywhere?: boolean } = {}): TyrantsMapZoneType[] {
   const base = opts.anywhere ? this.getLocationAll() : this.getPresence(player)
-  return base.filter(loc => loc.getTroops().length < loc.size)
+  return base.filter((loc: TyrantsMapZoneType) => loc.getTroops().length < loc.size)
 }
 
-Tyrants.prototype.getExpansionList = function() {
+Tyrants.prototype.getExpansionList = function(this: Tyrants): string[] {
   return this.settings.expansions
 }
 
-Tyrants.prototype.getLocationAll = function() {
-  return this.zones.all().filter(z => z.id.startsWith('map.'))
+Tyrants.prototype.getLocationAll = function(this: Tyrants): TyrantsMapZoneType[] {
+  return this.zones.all().filter((z: TyrantsZoneType | TyrantsMapZoneType) => z.id.startsWith('map.')) as TyrantsMapZoneType[]
 }
 
-Tyrants.prototype.getLocationNeighbors = function(loc) {
+Tyrants.prototype.getLocationNeighbors = function(this: Tyrants, loc: TyrantsMapZoneType): TyrantsMapZoneType[] {
   return loc
     .neighborNames
-    .map(name => this.getLocationByName(name))
-    .filter(neighbor => Boolean(neighbor))
+    .map((name: string) => this.getLocationByName(name))
+    .filter((neighbor: TyrantsMapZoneType | undefined) => Boolean(neighbor)) as TyrantsMapZoneType[]
 }
 
-Tyrants.prototype.getLocationByName = function(name) {
+Tyrants.prototype.getLocationByName = function(this: Tyrants, name: string): TyrantsMapZoneType {
   // TODO: deprecate
   const id = `map.${name}`
-  return this.zones.byId(id)
+  return this.zones.byId(id) as TyrantsMapZoneType
 }
 
-Tyrants.prototype.getLocationsByPresence = function(player) {
+Tyrants.prototype.getLocationsByPresence = function(this: Tyrants, player: Player): TyrantsMapZoneType[] {
   return this
     .getLocationAll()
-    .filter(loc => loc.chechHasPresence(player))
+    .filter((loc: TyrantsMapZoneType) => loc.chechHasPresence(player as any))
 }
 
-Tyrants.prototype.getPresence = function(player) {
+Tyrants.prototype.getPresence = function(this: Tyrants, player: Player): TyrantsMapZoneType[] {
   return this
     .getLocationAll()
-    .filter(loc => loc.presence.includes(player))
+    .filter((loc: TyrantsMapZoneType) => loc.presence.includes(player as any))
 }
 
-Tyrants.prototype.getRound = function() {
+Tyrants.prototype.getRound = function(this: Tyrants): number {
   return Math.floor(this.state.turn / this.players.all().length) + 1
 }
 
-Tyrants.prototype.getScore = function(player) {
+Tyrants.prototype.getScore = function(this: Tyrants, player: Player): number {
   return this.getScoreBreakdown(player).total
 }
 
-Tyrants.prototype.getScoreBreakdown = function(player) {
+Tyrants.prototype.getScoreBreakdown = function(this: Tyrants, player: Player): ScoreBreakdown {
   const self = this
 
-  const summary = {
+  const summary: ScoreBreakdown = {
     "deck": [
       ...self.cards.byPlayer(player, 'hand'),
       ...self.cards.byPlayer(player, 'discard'),
       ...self.cards.byPlayer(player, 'deck'),
       ...self.cards.byPlayer(player, 'played'),
-    ].map(card => card.points)
-      .reduce((a, b) => a + b, 0),
+    ].map((card: Card) => card.points)
+      .reduce((a: number, b: number) => a + b, 0),
 
     "inner circle": self
       .cards.byPlayer(player, 'innerCircle')
-      .map(card => card.innerPoints)
-      .reduce((a, b) => a + b, 0),
+      .map((card: Card) => card.innerPoints)
+      .reduce((a: number, b: number) => a + b, 0),
 
     "trophy hall": self.cards.byPlayer(player, 'trophyHall').length,
 
     "control": self
       .getLocationAll()
-      .filter(loc => loc.getController() === player)
-      .map(loc => loc.points)
-      .reduce((a, b) => a + b, 0),
+      .filter((loc: TyrantsMapZoneType) => loc.getController() === (player as any))
+      .map((loc: TyrantsMapZoneType) => loc.points)
+      .reduce((a: number, b: number) => a + b, 0),
 
     "total control": self
       .getLocationAll()
-      .filter(loc => loc.getTotalController() === player)
+      .filter((loc: TyrantsMapZoneType) => loc.getTotalController() === (player as any))
       .length * 2,
 
-    "victory points": player.getCounter('points')
+    "victory points": player.getCounter('points'),
+
+    total: 0
   }
 
   summary.total = (
@@ -1734,7 +2043,7 @@ Tyrants.prototype.getScoreBreakdown = function(player) {
   return summary
 }
 
-Tyrants.prototype.mAdjustCardVisibility = function(card) {
+Tyrants.prototype.mAdjustCardVisibility = function(this: Tyrants, card: Card): void {
   if (!this.state.initializationComplete) {
     return
   }
@@ -1742,16 +2051,16 @@ Tyrants.prototype.mAdjustCardVisibility = function(card) {
   const zone = card.zone
 
   // Forget everything about a card if it is returned.
-  if (zone.kind() === 'hidden') {
+  if ((zone.kind() as string) === 'hidden') {
     card.visibility = []
   }
 
-  else if (zone.kind() === 'public' || zone.kind() === 'location') {
+  else if ((zone.kind() as string) === 'public' || (zone.kind() as string) === 'location') {
     card.visibility = this.players.all()
   }
 
   else if (zone.kind() === 'private') {
-    util.array.pushUnique(card.visibility, zone.owner)
+    util.array.pushUnique(card.visibility, (zone as TyrantsZoneType).owner)
   }
 
   else {
@@ -1759,10 +2068,10 @@ Tyrants.prototype.mAdjustCardVisibility = function(card) {
   }
 }
 
-Tyrants.prototype.mAdjustControlMarkerOwnership = function(previous) {
+Tyrants.prototype.mAdjustControlMarkerOwnership = function(this: Tyrants, previous: ControlMarker[]): void {
   const markers = this.getControlMarkers()
   for (const marker of markers) {
-    const prev = previous.find(p => p.locName === marker.locName)
+    const prev = previous.find((p: ControlMarker) => p.locName === marker.locName)!
 
     if (prev.ownerName !== '' && marker.ownerName === '') {
       const player = this.players.byName(prev.ownerName)
@@ -1800,33 +2109,33 @@ Tyrants.prototype.mAdjustControlMarkerOwnership = function(previous) {
   }
 }
 
-Tyrants.prototype.mAdjustPresence = function(source, target, card) {
+Tyrants.prototype.mAdjustPresence = function(this: Tyrants, source: TyrantsZoneType | TyrantsMapZoneType, target: TyrantsZoneType | TyrantsMapZoneType, card: Card): void {
   if (card.isSpy || card.isTroop) {
-    const toUpdate = []
+    const toUpdate: TyrantsMapZoneType[] = []
 
     for (const zone of [source, target]) {
-      if (zone.kind() === 'location') {
-        toUpdate.push(zone)
-        this.getLocationNeighbors(zone).forEach(loc => util.array.pushUnique(toUpdate, loc))
+      if ((zone.kind() as string) === 'location') {
+        toUpdate.push(zone as TyrantsMapZoneType)
+        this.getLocationNeighbors(zone as TyrantsMapZoneType).forEach((loc: TyrantsMapZoneType) => util.array.pushUnique(toUpdate, loc))
       }
     }
 
     toUpdate
-      .forEach(loc => this.mCalculatePresence(loc))
+      .forEach((loc: TyrantsMapZoneType) => this.mCalculatePresence(loc))
   }
 }
 
-Tyrants.prototype.mAssassinate = function(player, loc, owner) {
-  const target = loc.getTroops(owner)[0]
+Tyrants.prototype.mAssassinate = function(this: Tyrants, player: Player, loc: TyrantsMapZoneType, owner: Player | 'neutral'): TyrantsTokenType {
+  const target = loc.getTroops(owner as any)[0] as unknown as TyrantsTokenType
 
   util.assert(!!target, 'No valid target for owner at location')
 
-  target.moveTo(this.zones.byPlayer(player, 'trophyHall'))
+  ;(target as any).moveTo(this.zones.byPlayer(player, 'trophyHall'))
   return target
 }
 
-Tyrants.prototype.mCalculatePresence = function(location) {
-  util.assert(location.kind() === 'location')
+Tyrants.prototype.mCalculatePresence = function(this: Tyrants, location: TyrantsMapZoneType): void {
+  util.assert((location.kind() as string) === 'location')
 
   const relevantTroops = [
     location,
@@ -1834,35 +2143,35 @@ Tyrants.prototype.mCalculatePresence = function(location) {
   ]
 
   const playersByTroop = relevantTroops
-    .flatMap(loc => loc.getTroops())
-    .map(card => this.players.byOwner(card))
-    .filter(player => Boolean(player))
+    .flatMap((loc: TyrantsMapZoneType) => loc.getTroops() as unknown as TyrantsTokenType[])
+    .map((card) => this.players.byOwner(card as any))
+    .filter((player: Player | undefined) => Boolean(player)) as Player[]
 
-  const playersBySpy = location
-    .getSpies()
-    .map(card => this.players.byOwner(card))
-    .filter(player => Boolean(player))
+  const playersBySpy = (location.getSpies() as unknown as TyrantsTokenType[])
+    .map((card) => this.players.byOwner(card as any))
+    .filter((player: Player | undefined) => Boolean(player)) as Player[]
 
   location.presence = util.array.distinct([...playersByTroop, ...playersBySpy])
 }
 
-Tyrants.prototype.mCheckZoneLimits = function(zone) {
-  if (zone.kind() === 'location') {
-    util.assert(zone.getTroops().length <= zone.size, `Too many troops in ${zone.id}`)
+Tyrants.prototype.mCheckZoneLimits = function(this: Tyrants, zone: TyrantsZoneType | TyrantsMapZoneType): void {
+  if ((zone.kind() as string) === 'location') {
+    const mapZone = zone as TyrantsMapZoneType
+    util.assert(mapZone.getTroops().length <= mapZone.size, `Too many troops in ${zone.id}`)
 
-    const spies = zone.getSpies()
-    const uniqueSpies = util.array.distinct(spies.map(spy => spy.owner.name))
+    const spies = mapZone.getSpies() as unknown as TyrantsTokenType[]
+    const uniqueSpies = util.array.distinct(spies.map((spy) => spy.owner!.name))
     util.assert(spies.length === uniqueSpies.length, `More than one spy per player at ${zone.id}`)
   }
 }
 
-Tyrants.prototype.mDeploy = function(player, loc, opts={}) {
-  const troop = opts.troop || this.cards.byPlayer(player, 'troops')[0]
-  troop.moveTo(loc)
+Tyrants.prototype.mDeploy = function(this: Tyrants, player: Player, loc: TyrantsMapZoneType, opts: DeployOpts = {}): TyrantsTokenType {
+  const troop = (opts.troop || this.cards.byPlayer(player, 'troops')[0]) as TyrantsTokenType
+  ;(troop as any).moveTo(loc)
   return troop
 }
 
-Tyrants.prototype.mDevour = function(card) {
+Tyrants.prototype.mDevour = function(this: Tyrants, card: Card): void {
   if (card.name === 'Insane Outcast') {
     card.moveTo(this.zones.byId('outcast'))
   }
@@ -1871,18 +2180,18 @@ Tyrants.prototype.mDevour = function(card) {
   }
 }
 
-Tyrants.prototype.mExecuteCard = function(player, card) {
+Tyrants.prototype.mExecuteCard = function(this: Tyrants, player: Player, card: Card): void {
   this.log.indent()
   card.impl(this, player, { card })
   this.log.outdent()
 }
 
-Tyrants.prototype.mPlaceSpy = function(player, loc) {
+Tyrants.prototype.mPlaceSpy = function(this: Tyrants, player: Player, loc: TyrantsMapZoneType): void {
   const spy = this.cards.byPlayer(player, 'spies')[0]
   spy.moveTo(loc)
 }
 
-Tyrants.prototype.mReshuffleDiscard = function(player) {
+Tyrants.prototype.mReshuffleDiscard = function(this: Tyrants, player: Player): void {
   const discard = this.zones.byPlayer(player, 'discard')
   const deck = this.zones.byPlayer(player, 'deck')
 
@@ -1909,15 +2218,15 @@ Tyrants.prototype.mReshuffleDiscard = function(player) {
   this.mShuffle(deck)
 }
 
-Tyrants.prototype.mReturn = function(item) {
-  item.moveTo(item.home)
+Tyrants.prototype.mReturn = function(this: Tyrants, item: TyrantsTokenType): void {
+  item.moveTo(item.home!)
 }
 
-Tyrants.prototype.mShuffle = function(zone) {
+Tyrants.prototype.mShuffle = function(this: Tyrants, zone: TyrantsZoneType): void {
   util.array.shuffle(zone._cards, this.random)
 }
 
-Tyrants.prototype.mRefillHand = function(player) {
+Tyrants.prototype.mRefillHand = function(this: Tyrants, player: Player): void {
   const deck = this.zones.byPlayer(player, 'deck')
   const hand = this.zones.byPlayer(player, 'hand')
 
@@ -1973,9 +2282,9 @@ Tyrants.prototype.mRefillHand = function(player) {
   this.log.outdent()
 }
 
-Tyrants.prototype.mRefillMarket = function(quiet=false) {
-  const deck = this.zones.byId('marketDeck')
-  const market = this.zones.byId('market')
+Tyrants.prototype.mRefillMarket = function(this: Tyrants, quiet: boolean = false): void {
+  const deck = this.zones.byId('marketDeck') as TyrantsZoneType
+  const market = this.zones.byId('market') as TyrantsZoneType
   const count = 6 - market.cardlist().length
 
   for (let i = 0; i < count; i++) {
@@ -1997,10 +2306,23 @@ Tyrants.prototype.mRefillMarket = function(quiet=false) {
   }
 }
 
-Tyrants.prototype.mSetGhostFlag = function() {
+Tyrants.prototype.mSetGhostFlag = function(this: Tyrants): void {
   this.state.ghostFlag = true
 }
 
-Tyrants.prototype._checkDoingSetup = function() {
+Tyrants.prototype._checkDoingSetup = function(this: Tyrants): boolean {
   return this.doingSetup
 }
+
+
+module.exports = {
+  GameOverEvent,
+  Tyrants,
+  TyrantsFactory,
+
+  constructor: Tyrants,
+  factory: factoryFromLobby,
+  res,
+}
+
+export type { Tyrants, Player, Card, ControlMarker, Settings, ScoreBreakdown }

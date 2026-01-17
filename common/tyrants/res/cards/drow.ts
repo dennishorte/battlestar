@@ -1,4 +1,6 @@
-const cardData = [
+import type { CardData } from './base.js'
+
+const cardData: CardData[] = [
   {
     name: "Blackguard",
     aspect: "malice",
@@ -17,11 +19,11 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: '+2 power',
-          impl: (game, player) => player.incrementCounter('power', 2),
+          impl: (game: any, player: any) => player.incrementCounter('power', 2),
         },
         {
           title: 'Assassinate a troop',
-          impl: (game, player) => game.aChooseAndAssassinate(player),
+          impl: (game: any, player: any) => game.aChooseAndAssassinate(player),
         },
       ])
     }
@@ -90,11 +92,11 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: '+2 influence',
-          impl: (game, player) => player.incrementCounter('influence', 2),
+          impl: (game: any, player: any) => player.incrementCounter('influence', 2),
         },
         {
           title: 'Assassinate a troop',
-          impl: (game, player) => game.aChooseAndAssassinate(player),
+          impl: (game: any, player: any) => game.aChooseAndAssassinate(player),
         },
       ])
     }
@@ -166,7 +168,7 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: 'Deploy 4 troops',
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             game.aChooseAndDeploy(player)
             game.aChooseAndDeploy(player)
             game.aChooseAndDeploy(player)
@@ -175,7 +177,7 @@ const cardData = [
         },
         {
           title: 'Supplant a white troop anywhere on the board',
-          impl: (game, player) => game.aChooseAndSupplant(player, { whiteOnly: true, anywhere: true }),
+          impl: (game: any, player: any) => game.aChooseAndSupplant(player, { whiteOnly: true, anywhere: true }),
         },
       ])
     }
@@ -198,11 +200,11 @@ const cardData = [
       const choice = [
         {
           title: 'Deploy a troop',
-          impl: (game, player) => game.aChooseAndDeploy(player)
+          impl: (game: any, player: any) => game.aChooseAndDeploy(player)
         },
         {
           title: 'Assassinate a white troop',
-          impl: (game, player) => game.aChooseAndAssassinate(player, { whiteOnly: true })
+          impl: (game: any, player: any) => game.aChooseAndAssassinate(player, { whiteOnly: true })
         }
       ]
       game.aChooseOne(player, choice)
@@ -228,11 +230,11 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: 'Place a spy',
-          impl: (game, player) => game.aChooseAndPlaceSpy(player),
+          impl: (game: any, player: any) => game.aChooseAndPlaceSpy(player),
         },
         {
           title: "Return one of your spies > Supplant a troop at that spy's site",
-          impl: (game, player) => game.aReturnASpyAnd(player, (game, player, { loc }) => {
+          impl: (game: any, player: any) => game.aReturnASpyAnd(player, (game: any, player: any, { loc }: { loc: any }) => {
             game.aChooseAndSupplant(player, { loc })
           })
         },
@@ -271,9 +273,9 @@ const cardData = [
       if (loc) {
         const players = loc
           .getTroops()
-          .map(troop => game.players.byOwner(troop))
-          .filter(other => !!other)
-          .filter(other => other !== player)
+          .map((troop: any) => game.players.byOwner(troop))
+          .filter((other: any) => !!other)
+          .filter((other: any) => other !== player)
         if (players.length > 0) {
           player.incrementCounter('power', 1)
         }
@@ -298,11 +300,11 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: 'Place a spy',
-          impl: (game, player) => game.aChooseAndPlaceSpy(player),
+          impl: (game: any, player: any) => game.aChooseAndPlaceSpy(player),
         },
         {
           title: "Return one of your spies > Draw 3 cards",
-          impl: (game, player) => game.aReturnASpyAnd(player, (game, player) => {
+          impl: (game: any, player: any) => game.aReturnASpyAnd(player, (game: any, player: any) => {
             game.aDraw(player)
             game.aDraw(player)
             game.aDraw(player)
@@ -329,14 +331,14 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: 'Place 2 spies',
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             game.aChooseAndPlaceSpy(player)
             game.aChooseAndPlaceSpy(player)
           }
         },
         {
           title: "Return one of your spies > +4 power",
-          impl: (game, player) => game.aReturnASpyAnd(player, (game, player) => {
+          impl: (game: any, player: any) => game.aReturnASpyAnd(player, (game: any, player: any) => {
             player.incrementCounter('power', 4)
           })
         },
@@ -361,11 +363,11 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: '+2 influence',
-          impl: (game, player) => player.incrementCounter('influence', 2),
+          impl: (game: any, player: any) => player.incrementCounter('influence', 2),
         },
         {
           title: "At end of turn, promote another card played this turn",
-          impl: (game, player, { card }) => game.aDeferPromotion(player, card),
+          impl: (game: any, player: any, { card }: { card: any }) => game.aDeferPromotion(player, card),
         },
       ], opts)
     }
@@ -457,3 +459,5 @@ const cardData = [
 module.exports = {
   cardData,
 }
+
+export { cardData }

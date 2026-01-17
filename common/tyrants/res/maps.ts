@@ -1,4 +1,27 @@
-const mapData = [
+interface MapZoneData {
+  name: string
+  short: string
+  region: number
+  size: number
+  neutrals: number
+  points: number
+  start: boolean
+  control: {
+    influence: number
+    points: number
+  }
+  totalControl: {
+    influence: number
+    points: number
+  }
+  neighbors: string[]
+  ui?: {
+    x: number
+    y: number
+  }
+}
+
+const mapData: MapZoneData[] = [
   {
     "name": "araum-chasm",
     "short": "araum-chasm",
@@ -1882,3 +1905,5 @@ module.exports = {
   'base-3b': mapData.filter(zone => [2, 3].includes(zone.region)),
   'base-4': mapData,
 }
+
+export { MapZoneData }

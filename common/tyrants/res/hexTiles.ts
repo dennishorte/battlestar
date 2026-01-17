@@ -1,4 +1,28 @@
-const a2sites = [
+interface Site {
+  name: string
+  dx?: number
+  dy?: number
+  size?: number
+  neutrals?: number
+  value?: number
+  start?: boolean
+  token?: string
+  kind?: string
+  paths: string[]
+}
+
+interface HexTile {
+  name: string
+  sites: Site[]
+}
+
+interface LayoutEntry {
+  id: string
+  pos: [number, number]
+  neighbors?: string[]
+}
+
+const a2sites: Site[] = [
   {
     name: 'Fogtown',
     dx: -35,
@@ -43,7 +67,7 @@ const a2sites = [
   },
 ]
 
-const b2sites = [
+const b2sites: Site[] = [
   {
     name: 'Lolth Shrine',
     token: 'Tsenviilyq',
@@ -114,7 +138,7 @@ const b2sites = [
   },
 ]
 
-const c1sites = [
+const c1sites: Site[] = [
   {
     name: 'The Twilight',
     dx: -15,
@@ -195,7 +219,7 @@ const c1sites = [
   },
 ]
 
-const layout_test = [
+const layout_test: LayoutEntry[] = [
   {
     id: 'a0',
     pos: [0, .5],
@@ -211,7 +235,7 @@ const layout_test = [
 ]
 
 
-const layout_2p = [
+const layout_2p: LayoutEntry[] = [
   {
     id: 'a0',
     neighbors: ['c0', 'c1', 'c2', 'c3', 'c4', 'c5'],
@@ -259,6 +283,14 @@ const layout_2p = [
   },
 ]
 
+const directions = {
+  N: 0,
+  NE: 1,
+  SE: 2,
+  S: 3,
+  SW: 4,
+  NW: 5,
+}
 
 export default {
   hexes: {
@@ -287,22 +319,14 @@ export default {
     2: layout_2p,
   },
 
-  directions: {
-    N: 0,
-    NE: 1,
-    SE: 2,
-    S: 3,
-    SW: 4,
-    NW: 5,
+  directions,
+
+  translate: (_hex: unknown, _dir: number) => {
+    // Implementation incomplete in original
   },
 
-  translate: (hex, dir) => {
-    switch (dir) {
-      case this.directions.N:
-        hex.pos[0]
-    }
-  },
-
-  oppositeDirection: (dir) => (dir + 3) % 6,
-  rotatedDirection: (dir, r) => (dir + r) % 6,
+  oppositeDirection: (dir: number) => (dir + 3) % 6,
+  rotatedDirection: (dir: number, r: number) => (dir + r) % 6,
 }
+
+export { Site, HexTile, LayoutEntry }

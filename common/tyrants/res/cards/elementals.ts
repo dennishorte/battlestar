@@ -1,4 +1,6 @@
-const cardData = [
+import type { CardData } from './base.js'
+
+const cardData: CardData[] = [
   {
     "name": "Eternal Flame Cultist",
     "aspect": "malice",
@@ -38,11 +40,11 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: '+2 power',
-          impl: (game, player) => player.incrementCounter('power', 2),
+          impl: (game: any, player: any) => player.incrementCounter('power', 2),
         },
         {
           title: '+2 influence',
-          impl: (game, player) => player.incrementCounter('influence', 2),
+          impl: (game: any, player: any) => player.incrementCounter('influence', 2),
         },
       ])
       game.aWithFocusAspect(player, 'malice', () => {
@@ -453,3 +455,5 @@ const cardData = [
 module.exports = {
   cardData,
 }
+
+export { cardData }

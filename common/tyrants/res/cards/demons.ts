@@ -1,7 +1,8 @@
 const util = require('../../../lib/util.js')
 
+import type { CardData } from './base.js'
 
-const cardData = [
+const cardData: CardData[] = [
   {
     "name": "Ghoul",
     "aspect": "malice",
@@ -42,11 +43,11 @@ const cardData = [
         then: () => game.aChooseOne(player, [
           {
             title: '+3 influence',
-            impl: (game, player) => player.incrementCounter('influence', 3)
+            impl: (game: any, player: any) => player.incrementCounter('influence', 3)
           },
           {
             title: 'Assassinate a troop',
-            impl: (game, player) => game.aChooseAndAssassinate(player)
+            impl: (game: any, player: any) => game.aChooseAndAssassinate(player)
           }
         ])
       })
@@ -113,11 +114,11 @@ const cardData = [
           // Select two troops from any trophy halls.
           const choices = game
             .players.all()
-            .flatMap(player => {
+            .flatMap((player: any) => {
               const trophies = game
                 .cards.byPlayer(player, 'trophyHall')
-                .map(troop => troop.getOwnerName())
-              return trophies.map(ownerName => `${player.name}: ${ownerName}`)
+                .map((troop: any) => troop.getOwnerName())
+              return trophies.map((ownerName: any) => `${player.name}: ${ownerName}`)
             })
             .sort()
 
@@ -132,7 +133,7 @@ const cardData = [
             const trophyPlayer = game.players.byName(trophyName)
             const troop = game
               .cards.byPlayer(trophyPlayer, 'trophyHall')
-              .find(c => c.getOwnerName() === ownerName)
+              .find((c: any) => c.getOwnerName() === ownerName)
             game.aChooseAndDeploy(player, {
               troop,
               anywhere: true,
@@ -159,17 +160,17 @@ const cardData = [
       const loc2 = game.aChooseAndDeploy(player)
 
       // Get locations and adjacent locations of deployed troops
-      const locs = [loc1, loc2].filter(l => Boolean(l))
-      const neighbors = locs.flatMap(l => game.getLocationNeighbors(l))
+      const locs = [loc1, loc2].filter((l: any) => Boolean(l))
+      const neighbors = locs.flatMap((l: any) => game.getLocationNeighbors(l))
       const combined = util.array.distinct(locs.concat(neighbors))
 
       // Get all opponents at the locations
       const opponents = util
         .array
-        .distinct(combined.flatMap(loc => loc.cardlist().map(troop => troop.getOwnerName())))
-        .filter(name => name !== 'neutral')
-        .map(name => game.players.byName(name))
-        .filter(p => p !== player)
+        .distinct(combined.flatMap((loc: any) => loc.cardlist().map((troop: any) => troop.getOwnerName())))
+        .filter((name: any) => name !== 'neutral')
+        .map((name: any) => game.players.byName(name))
+        .filter((p: any) => p !== player)
 
       const opponent = game.actions.choosePlayer(player, opponents)
       if (opponent) {
@@ -217,7 +218,7 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: 'Deploy 3 troops',
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             game.aChooseAndDeploy(player)
             game.aChooseAndDeploy(player)
             game.aChooseAndDeploy(player)
@@ -225,7 +226,7 @@ const cardData = [
         },
         {
           title: 'Assassinate 2 white troops',
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             game.aChooseAndAssassinate(player, { whiteOnly: true })
             game.aChooseAndAssassinate(player, { whiteOnly: true })
           }
@@ -303,12 +304,12 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: 'Place a spy',
-          impl: (game, player) => game.aChooseAndPlaceSpy(player)
+          impl: (game: any, player: any) => game.aChooseAndPlaceSpy(player)
         },
         {
           title: 'Return one of your spies > Draw 2 cards',
-          impl: (game, player) => {
-            game.aReturnASpyAnd(player, (game, player) => {
+          impl: (game: any, player: any) => {
+            game.aReturnASpyAnd(player, (game: any, player: any) => {
               game.aDraw(player)
               game.aDraw(player)
             })
@@ -335,12 +336,12 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: 'Place a spy',
-          impl: (game, player) => game.aChooseAndPlaceSpy(player)
+          impl: (game: any, player: any) => game.aChooseAndPlaceSpy(player)
         },
         {
           title: 'Return one of your spies > +2 power, +2 influence',
-          impl: (game, player) => {
-            game.aReturnASpyAnd(player, (game, player) => {
+          impl: (game: any, player: any) => {
+            game.aReturnASpyAnd(player, (game: any, player: any) => {
               player.incrementCounter('influence', 2)
               player.incrementCounter('power', 2)
             })
@@ -390,12 +391,12 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: 'Place a spy',
-          impl: (game, player) => game.aChooseAndPlaceSpy(player)
+          impl: (game: any, player: any) => game.aChooseAndPlaceSpy(player)
         },
         {
           title: 'Return one of your spies > +5 power',
-          impl: (game, player) => {
-            game.aReturnASpyAnd(player, (game, player) => {
+          impl: (game: any, player: any) => {
+            game.aReturnASpyAnd(player, (game: any, player: any) => {
               player.incrementCounter('power', 5)
             })
           }
@@ -421,17 +422,17 @@ const cardData = [
       game.aChooseOne(player, [
         {
           title: 'Place 2 spies',
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             game.aChooseAndPlaceSpy(player)
             game.aChooseAndPlaceSpy(player)
           }
         },
         {
           title: "Return any number of your spies > Supplant a troop at each of the returned spies' sites",
-          impl: (game, player) => {
+          impl: (game: any, player: any) => {
             while (true) {
               let returned = false
-              game.aReturnASpyAnd(player, (game, player, { loc }) => {
+              game.aReturnASpyAnd(player, (game: any, player: any, { loc }: { loc: any }) => {
                 if (loc) {
                   returned = true
                   game.aChooseAndSupplant(player, { loc })
@@ -554,3 +555,5 @@ const cardData = [
 module.exports = {
   cardData,
 }
+
+export { cardData }
