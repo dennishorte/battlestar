@@ -1,4 +1,7 @@
-const cards = [
+import { CardData } from '../card.js'
+
+// Note: These cards are defined but not currently exported (original file exported empty array)
+const _cards: CardData[] = [
   {
     expansion: 'revised',
     deck: 'major_improvements',
@@ -167,4 +170,8 @@ const cards = [
   },
 ]
 
-module.exports = []
+// Suppress unused variable warning
+void _cards
+
+// Original file exported empty array - maintaining same behavior
+export default []

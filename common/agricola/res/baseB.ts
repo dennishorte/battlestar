@@ -1,4 +1,6 @@
-const cardData = [
+import { CardData, fromObject, Card } from '../card.js'
+
+const cardData: CardData[] = [
   {
     id: 'mini_pasture',
     name: 'Mini Pasture',
@@ -617,18 +619,16 @@ const cardData = [
   },
 ]
 
-const Card = require('../card.js')
-
-const common = {
+const common: CardData = {
   expansion: 'revised',
-  deck: 'A',
+  deck: 'B',
 }
 
-const cards = cardData
+const cards: Card[] = cardData
   .map(datum => Object.assign({}, common, datum))
-  .map(datum => Card.fromObject(datum))
+  .map(datum => fromObject(datum))
 
-module.exports = {
+export default {
   minorImprovements: cards.filter(c => c.type === 'minor improvement'),
   occupations: cards.filter(c => c.type === 'occupation'),
 }

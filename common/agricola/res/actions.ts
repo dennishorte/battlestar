@@ -1,4 +1,6 @@
-const Actions = [
+import { CardData } from '../card.js'
+
+const Actions: CardData[] = [
   {
     type: 'action',
     id: 'action_fencing',
@@ -10,7 +12,7 @@ const Actions = [
     impl: [
       {
         trigger: 'select-this-action',
-        func: (game, player) => {
+        func: (_game: unknown, _player: unknown) => {
 
         }
       }
@@ -28,13 +30,13 @@ const Actions = [
     impl: [
       {
         trigger: 'preparation-phase',
-        func: (game) => {
+        func: (_game: unknown) => {
 
         }
       },
       {
         trigger: 'select-this-action',
-        func: (game, player) => {
+        func: (_game: unknown, _player: unknown) => {
 
         }
       }
@@ -51,7 +53,7 @@ const Actions = [
     impl: [
       {
         trigger: 'select-this-action',
-        func: (game, player) => {
+        func: (_game: unknown, _player: unknown) => {
 
         }
       }
@@ -68,7 +70,7 @@ const Actions = [
     impl: [
       {
         trigger: 'select-this-action',
-        func: (game, player) => {
+        func: (_game: unknown, _player: unknown) => {
 
         }
       }
@@ -86,7 +88,7 @@ const Actions = [
     impl: [
       {
         trigger: 'select-this-action',
-        func: (game, player) => {
+        func: (_game: unknown, _player: unknown) => {
 
         }
       }
@@ -103,7 +105,7 @@ const Actions = [
     impl: [
       {
         trigger: 'select-this-action',
-        func: (game, player) => {
+        func: (_game: unknown, _player: unknown) => {
 
         }
       }
@@ -121,13 +123,13 @@ const Actions = [
     impl: [
       {
         trigger: 'preparation-phase',
-        func: (game) => {
+        func: (_game: unknown) => {
 
         }
       },
       {
         trigger: 'select-this-action',
-        func: (game, player) => {
+        func: (_game: unknown, _player: unknown) => {
 
         }
       }
@@ -146,13 +148,13 @@ const Actions = [
     impl: [
       {
         trigger: 'preparation-phase',
-        func: (game) => {
+        func: (_game: unknown) => {
 
         }
       },
       {
         trigger: 'select-this-action',
-        func: (game, player) => {
+        func: (_game: unknown, _player: unknown) => {
 
         }
       }
@@ -169,7 +171,7 @@ const Actions = [
     impl: [
       {
         trigger: 'select-this-action',
-        func: (game, player) => {
+        func: (_game: unknown, _player: unknown) => {
 
         }
       }
@@ -188,13 +190,13 @@ const Actions = [
     impl: [
       {
         trigger: 'preparation-phase',
-        func: (game) => {
+        func: (_game: unknown) => {
 
         }
       },
       {
         trigger: 'select-this-action',
-        func: (game, player) => {
+        func: (_game: unknown, _player: unknown) => {
 
         }
       }
@@ -212,13 +214,13 @@ const Actions = [
     impl: [
       {
         trigger: 'preparation-phase',
-        func: (game) => {
+        func: (_game: unknown) => {
 
         }
       },
       {
         trigger: 'select-this-action',
-        func: (game, player) => {
+        func: (_game: unknown, _player: unknown) => {
 
         }
       }
@@ -236,7 +238,7 @@ const Actions = [
     impl: [
       {
         trigger: 'select-this-action',
-        func: (game, player) => {
+        func: (_game: unknown, _player: unknown) => {
 
         }
       }
@@ -253,7 +255,7 @@ const Actions = [
     impl: [
       {
         trigger: 'select-this-action',
-        func: (game, player) => {
+        func: (_game: unknown, _player: unknown) => {
 
         }
       }
@@ -271,7 +273,7 @@ const Actions = [
     impl: [
       {
         trigger: 'select-this-action',
-        func: (game, player) => {
+        func: (_game: unknown, _player: unknown) => {
 
         }
       }
@@ -279,4 +281,4 @@ const Actions = [
   },
 ]
 
-module.exports = Actions
+export default Actions
