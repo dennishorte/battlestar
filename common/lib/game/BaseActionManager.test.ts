@@ -155,8 +155,8 @@ describe('BaseActionManager', () => {
         const { fixture, actionManager, player1, game } = createUniqueFixture()
 
         // Mock requestInputSingle to capture the selector
-        let capturedSelector = null
-        game.requestInputSingle = (selector) => {
+        let capturedSelector: { title?: string } | null = null
+        game.requestInputSingle = (selector: { title?: string }) => {
           capturedSelector = selector
           return ['option1']
         }
@@ -165,7 +165,7 @@ describe('BaseActionManager', () => {
         actionManager.choose(player1, ['option1', 'option2'], { title: 'Custom Title' })
 
         // Verify the custom title was used
-        expect(capturedSelector.title).toBe('Custom Title')
+        expect(capturedSelector!.title).toBe('Custom Title')
 
         fixture.assertAllResponsesConsumed()
       })
@@ -174,8 +174,8 @@ describe('BaseActionManager', () => {
         const { fixture, actionManager, player1, game } = createUniqueFixture()
 
         // Mock requestInputSingle to capture the selector
-        let capturedSelector = null
-        game.requestInputSingle = (selector) => {
+        let capturedSelector: { title?: string } | null = null
+        game.requestInputSingle = (selector: { title?: string }) => {
           capturedSelector = selector
           return []
         }
@@ -184,7 +184,7 @@ describe('BaseActionManager', () => {
         actionManager.choose(player1, ['option1', 'option2'], { min: 0, title: 'Select Cards' })
 
         // Verify the "(optional)" prefix was added
-        expect(capturedSelector.title).toBe('(optional) Select Cards')
+        expect(capturedSelector!.title).toBe('(optional) Select Cards')
 
         fixture.assertAllResponsesConsumed()
       })
@@ -193,8 +193,8 @@ describe('BaseActionManager', () => {
         const { fixture, actionManager, player1, game } = createUniqueFixture()
 
         // Mock requestInputSingle to capture the selector
-        let capturedSelector = null
-        game.requestInputSingle = (selector) => {
+        let capturedSelector: Record<string, unknown> | null = null
+        game.requestInputSingle = (selector: Record<string, unknown>) => {
           capturedSelector = selector
           return ['option1']
         }
@@ -210,13 +210,13 @@ describe('BaseActionManager', () => {
         actionManager.choose(player1, ['option1', 'option2'], options)
 
         // Verify options were passed through
-        expect(capturedSelector.actor).toBe(player1.name)
-        expect(capturedSelector.title).toBe('Test Title')
-        expect(capturedSelector.min).toBe(1)
-        expect(capturedSelector.max).toBe(2)
-        expect(capturedSelector.customProperty).toBe('test_value')
-        expect(capturedSelector.choices).toEqual(['option1', 'option2'])
-        expect(capturedSelector.count).toBeUndefined()
+        expect(capturedSelector!.actor).toBe(player1.name)
+        expect(capturedSelector!.title).toBe('Test Title')
+        expect(capturedSelector!.min).toBe(1)
+        expect(capturedSelector!.max).toBe(2)
+        expect(capturedSelector!.customProperty).toBe('test_value')
+        expect(capturedSelector!.choices).toEqual(['option1', 'option2'])
+        expect(capturedSelector!.count).toBeUndefined()
 
         fixture.assertAllResponsesConsumed()
       })
@@ -272,8 +272,8 @@ describe('BaseActionManager', () => {
       const cards = fixture.createMockCards(['Card A', 'Card B'])
 
       // Mock requestInputSingle to capture options
-      let capturedSelector = null
-      game.requestInputSingle = (selector) => {
+      let capturedSelector: Record<string, unknown> | null = null
+      game.requestInputSingle = (selector: Record<string, unknown>) => {
         capturedSelector = selector
         return ['Card A']
       }
@@ -282,8 +282,8 @@ describe('BaseActionManager', () => {
       actionManager.chooseCard(player1, cards, { title: 'Pick a card', customOpt: 'test' })
 
       // Verify options were passed through
-      expect(capturedSelector.title).toBe('Pick a card')
-      expect(capturedSelector.customOpt).toBe('test')
+      expect(capturedSelector!.title).toBe('Pick a card')
+      expect(capturedSelector!.customOpt).toBe('test')
 
       fixture.assertAllResponsesConsumed()
     })
@@ -418,8 +418,8 @@ describe('BaseActionManager', () => {
       const { fixture, actionManager, player1, game } = createUniqueFixture()
 
       // Mock requestInputSingle to capture selector
-      let capturedSelector = null
-      game.requestInputSingle = (selector) => {
+      let capturedSelector: { title?: string } | null = null
+      game.requestInputSingle = (selector: { title?: string }) => {
         capturedSelector = selector
         return ['yes']
       }
@@ -428,7 +428,7 @@ describe('BaseActionManager', () => {
       actionManager.chooseYesNo(player1, 'Confirm action?')
 
       // Verify title was used
-      expect(capturedSelector.title).toBe('Confirm action?')
+      expect(capturedSelector!.title).toBe('Confirm action?')
 
       fixture.assertAllResponsesConsumed()
     })
@@ -437,8 +437,8 @@ describe('BaseActionManager', () => {
       const { fixture, actionManager, player1, game } = createUniqueFixture()
 
       // Mock requestInputSingle to capture selector
-      let capturedSelector = null
-      game.requestInputSingle = (selector) => {
+      let capturedSelector: { choices?: string[] } | null = null
+      game.requestInputSingle = (selector: { choices?: string[] }) => {
         capturedSelector = selector
         return ['no']
       }
@@ -447,7 +447,7 @@ describe('BaseActionManager', () => {
       actionManager.chooseYesNo(player1, 'Test question?')
 
       // Verify only yes/no choices are provided
-      expect(capturedSelector.choices).toEqual(['yes', 'no'])
+      expect(capturedSelector!.choices).toEqual(['yes', 'no'])
 
       fixture.assertAllResponsesConsumed()
     })
@@ -469,7 +469,7 @@ describe('BaseActionManager', () => {
       // Track calls to requestInputSingle
       let callCount = 0
       const originalRequestInputSingle = game.requestInputSingle
-      game.requestInputSingle = (selector) => {
+      game.requestInputSingle = (selector: unknown) => {
         callCount++
         return originalRequestInputSingle.call(game, selector)
       }
@@ -488,8 +488,8 @@ describe('BaseActionManager', () => {
       const { fixture, actionManager, player1, game } = createUniqueFixture()
 
       // Mock requestInputSingle to capture selector
-      let capturedSelector = null
-      game.requestInputSingle = (selector) => {
+      let capturedSelector: { actor?: string } | null = null
+      game.requestInputSingle = (selector: { actor?: string }) => {
         capturedSelector = selector
         return ['choice1']
       }
@@ -498,7 +498,7 @@ describe('BaseActionManager', () => {
       actionManager.choose(player1, ['choice1', 'choice2'])
 
       // Verify player.name is used as actor
-      expect(capturedSelector.actor).toBe(player1.name)
+      expect(capturedSelector!.actor).toBe(player1.name)
 
       fixture.assertAllResponsesConsumed()
     })
@@ -535,12 +535,12 @@ describe('BaseActionManager', () => {
 
       // Test with null choices
       expect(() => {
-        actionManager.choose(player1, null)
+        actionManager.choose(player1, null as unknown as string[])
       }).toThrow()
 
       // Test with undefined choices
       expect(() => {
-        actionManager.choose(player1, undefined)
+        actionManager.choose(player1, undefined as unknown as string[])
       }).toThrow()
 
       fixture.assertAllResponsesConsumed()

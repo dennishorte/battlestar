@@ -10,7 +10,7 @@ const util = require('../lib/util.js')
 ////////////////////////////////////////////////////////////////////////////////
 // TestGame fixture
 
-function TestGame(serialized_data) {
+function TestGame(serialized_data: unknown) {
   Game.call(this, serialized_data)
 }
 

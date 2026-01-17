@@ -7,7 +7,7 @@ describe('pathAll', () => {
       array: [{ name: 'bar'}, { name: 'foo'}, { name: 'world' }],
       object: { a: { name: 'foo' } },
     }
-    const matches = jsonpath.pathAll(state, x => x.name === 'foo')
+    const matches = jsonpath.pathAll(state, (x: { name: string }) => x.name === 'foo')
 
     expect(matches.sort()).toStrictEqual([
       '.array[1]',

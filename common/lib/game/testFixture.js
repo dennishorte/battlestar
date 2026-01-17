@@ -26,7 +26,7 @@ class GameTestFixture {
 
   /**
    * Creates and sets up the game instance.
-   * @returns {GameTestFixture} - Fluent interface
+   * @returns - Fluent interface
    */
   setup() {
     this.game = GameFactory(this.options, 'player1')
@@ -44,7 +44,7 @@ class GameTestFixture {
 
   /**
    * Mock the input request system to use queued responses.
-   * @returns {GameTestFixture} - Fluent interface
+   * @returns - Fluent interface
    */
   mockInputRequests() {
     // Store original method for potential restoration
@@ -70,9 +70,9 @@ class GameTestFixture {
 
   /**
    * Queue a response that will be returned when the game requests input.
-   * @param {string} actor - The player name making the selection
-   * @param {Array} selection - The selection array
-   * @returns {GameTestFixture} - Fluent interface
+   * @param actor - The player name making the selection
+   * @param selection - The selection array
+   * @returns - Fluent interface
    */
   queueResponse(actor, selection) {
     this.queuedResponses.push({
@@ -85,8 +85,8 @@ class GameTestFixture {
 
   /**
    * Queue multiple responses at once.
-   * @param {Array} responses - Array of {actor, selection} objects
-   * @returns {GameTestFixture} - Fluent interface
+   * @param responses - Array of {actor, selection} objects
+   * @returns - Fluent interface
    */
   queueResponses(responses) {
     responses.forEach(response => this.queueResponse(response.actor, response.selection))
@@ -95,8 +95,8 @@ class GameTestFixture {
 
   /**
    * Get a player by name.
-   * @param {string} name - Player name
-   * @returns {Object} - Player object
+   * @param name - Player name
+   * @returns - Player object
    */
   getPlayer(name) {
     const player = this.game.players.byName(name)
@@ -108,7 +108,7 @@ class GameTestFixture {
 
   /**
    * Get the first player for convenience.
-   * @returns {Object} - Player object
+   * @returns - Player object
    */
   getPlayer1() {
     return this.getPlayer('player1')
@@ -116,7 +116,7 @@ class GameTestFixture {
 
   /**
    * Get the second player for convenience.
-   * @returns {Object} - Player object
+   * @returns - Player object
    */
   getPlayer2() {
     return this.getPlayer('player2')
@@ -124,8 +124,8 @@ class GameTestFixture {
 
   /**
    * Create mock cards for testing card-related methods.
-   * @param {Array} cardNames - Array of card names to create
-   * @returns {Array} - Array of mock card objects
+   * @param cardNames - Array of card names to create
+   * @returns - Array of mock card objects
    */
   createMockCards(cardNames) {
     return cardNames.map(name => ({
@@ -137,7 +137,7 @@ class GameTestFixture {
 
   /**
    * Clear all queued responses.
-   * @returns {GameTestFixture} - Fluent interface
+   * @returns - Fluent interface
    */
   clearResponses() {
     this.queuedResponses = []
@@ -146,7 +146,7 @@ class GameTestFixture {
 
   /**
    * Get the number of queued responses remaining.
-   * @returns {number} - Number of queued responses
+   * @returns - Number of queued responses
    */
   getQueuedResponseCount() {
     return this.queuedResponses.length
@@ -165,7 +165,7 @@ class GameTestFixture {
 
   /**
    * Restore original game methods (useful for cleanup).
-   * @returns {GameTestFixture} - Fluent interface
+   * @returns - Fluent interface
    */
   restore() {
     Object.keys(this.originalMethods).forEach(methodName => {
@@ -177,7 +177,7 @@ class GameTestFixture {
 
   /**
    * Get access to the game's action manager.
-   * @returns {BaseActionManager} - The action manager instance
+   * @returns - The action manager instance
    */
   getActionManager() {
     return this.game.actions
@@ -185,7 +185,7 @@ class GameTestFixture {
 
   /**
    * Get access to the game's card manager.
-   * @returns {BaseCardManager} - The card manager instance
+   * @returns - The card manager instance
    */
   getCardManager() {
     return this.game.cards
@@ -193,7 +193,7 @@ class GameTestFixture {
 
   /**
    * Get access to the game's player manager.
-   * @returns {BasePlayerManager} - The player manager instance
+   * @returns - The player manager instance
    */
   getPlayerManager() {
     return this.game.players
@@ -201,7 +201,7 @@ class GameTestFixture {
 
   /**
    * Get access to the game's zone manager.
-   * @returns {BaseZoneManager} - The zone manager instance
+   * @returns - The zone manager instance
    */
   getZoneManager() {
     return this.game.zones
@@ -209,7 +209,7 @@ class GameTestFixture {
 
   /**
    * Get access to the game's log manager.
-   * @returns {BaseLogManager} - The log manager instance
+   * @returns - The log manager instance
    */
   getLogManager() {
     return this.game.log
@@ -218,7 +218,7 @@ class GameTestFixture {
   /**
    * Helper method to inspect the current log entries.
    * Useful for testing logging behavior.
-   * @returns {Array} - Array of log entries
+   * @returns - Array of log entries
    */
   getLogEntries() {
     return this.game.log.getLog()
@@ -226,7 +226,7 @@ class GameTestFixture {
 
   /**
    * Helper method to get the most recent log entry.
-   * @returns {Object} - Most recent log entry
+   * @returns - Most recent log entry
    */
   getLastLogEntry() {
     const entries = this.getLogEntries()
@@ -238,8 +238,8 @@ class GameTestFixture {
  * Factory function to create a configured test fixture.
  * This is the main entry point for most tests.
  *
- * @param {Object} options - Game configuration options
- * @returns {GameTestFixture} - Configured and ready-to-use fixture
+ * @param options - Game configuration options
+ * @returns - Configured and ready-to-use fixture
  */
 function createGameFixture(options = {}) {
   return new GameTestFixture(options).setup().mockInputRequests()
@@ -249,8 +249,8 @@ function createGameFixture(options = {}) {
  * Factory function for BaseActionManager-specific tests.
  * Provides convenient access to the action manager and common players.
  *
- * @param {Object} options - Game configuration options
- * @returns {Object} - Object with fixture, actionManager, and player references
+ * @param options - Game configuration options
+ * @returns - Object with fixture, actionManager, and player references
  */
 function createActionManagerFixture(options = {}) {
   const fixture = createGameFixture(options)

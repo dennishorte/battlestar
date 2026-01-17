@@ -51,7 +51,7 @@ function _juiceDeck(data) {
     })
   }
   const deck = new DeckWrapper(data)
-  deck.initializeCardsSync(cardIds => cardIds.map(id => {
+  deck.initializeCardsSync((cardIds) => cardIds.map((id) => {
     const card = TestCards.byId[id]
     if (!card) {
       throw new Error('Test card not found with id: ' + id)

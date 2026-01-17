@@ -1,7 +1,21 @@
 const { BaseZone } = require('./BaseZone.js')
 
+interface MockCard {
+  id: string
+  name: string
+  setHome: ReturnType<typeof vi.fn>
+  setZone: ReturnType<typeof vi.fn>
+  hide: ReturnType<typeof vi.fn>
+  reveal: ReturnType<typeof vi.fn>
+  show: ReturnType<typeof vi.fn>
+  revealed: ReturnType<typeof vi.fn>
+  visible: ReturnType<typeof vi.fn>
+  value?: number
+  [key: string]: unknown
+}
+
 // Mock card factory function
-const createMockCard = (id, name, additionalProps = {}) => {
+const createMockCard = (id: string, name: string, additionalProps: Record<string, unknown> = {}): MockCard => {
   return {
     id,
     name,
@@ -715,7 +729,7 @@ describe('BaseZone', () => {
 
       zone.initializeCards([cardA, cardB, cardC])
 
-      zone.sort((a, b) => a.value - b.value)
+      zone.sort((a: MockCard, b: MockCard) => (a.value || 0) - (b.value || 0))
 
       expect(zone.cardlist()).toEqual([cardB, cardC, cardA])
     })
@@ -729,9 +743,9 @@ describe('BaseZone', () => {
 
       zone.initializeCards([cardA, cardB, cardC])
 
-      zone.sort((a, b) => a.value - b.value)
+      zone.sort((a: MockCard, b: MockCard) => (a.value || 0) - (b.value || 0))
 
-      expect(zone.cardlist().map(c => c.value)).toEqual([2, 5, 8])
+      expect(zone.cardlist().map((c: MockCard) => c.value)).toEqual([2, 5, 8])
     })
 
     test('should sort in descending order with reverse comparison', () => {
@@ -743,16 +757,16 @@ describe('BaseZone', () => {
 
       zone.initializeCards([cardA, cardB, cardC])
 
-      zone.sort((a, b) => b.value - a.value)
+      zone.sort((a: MockCard, b: MockCard) => (b.value || 0) - (a.value || 0))
 
-      expect(zone.cardlist().map(c => c.value)).toEqual([8, 5, 2])
+      expect(zone.cardlist().map((c: MockCard) => c.value)).toEqual([8, 5, 2])
     })
 
     test('should handle empty array', () => {
       const { zone } = createTestFixture()
 
       expect(() => {
-        zone.sort((a, b) => a.value - b.value)
+        zone.sort((a: MockCard, b: MockCard) => (a.value || 0) - (b.value || 0))
       }).not.toThrow()
 
       expect(zone.cardlist()).toEqual([])
@@ -764,7 +778,7 @@ describe('BaseZone', () => {
       zone.initializeCards([mockCard1])
 
       expect(() => {
-        zone.sort((a, b) => a.name().localeCompare(b.name()))
+        zone.sort((a: MockCard, b: MockCard) => a.name.localeCompare(b.name))
       }).not.toThrow()
 
       expect(zone.cardlist()).toEqual([mockCard1])

@@ -2,7 +2,7 @@ const { BaseLogManager } = require('./BaseLogManager.js')
 
 describe('BaseLogManager', () => {
   // Fixture function to create a new BaseLogManager instance
-  function createLogManager(chat = []) {
+  function createLogManager(chat: unknown[] = []) {
     // Create mock game
     const game = {
       // Add any game properties/methods needed for testing
@@ -205,7 +205,7 @@ describe('BaseLogManager', () => {
       expect(chatAfterDelete).toHaveLength(2)
       expect(chatAfterDelete[0].id).toBe(123)
       expect(chatAfterDelete[1].id).toBe(789)
-      expect(chatAfterDelete.find(c => c.id === 456)).toBeUndefined()
+      expect(chatAfterDelete.find((c: { id: number }) => c.id === 456)).toBeUndefined()
     })
 
     test('reindexChat should adjust chat positions', () => {
@@ -373,18 +373,18 @@ describe('BaseLogManager', () => {
 
       // The actual order will depend on how the implementation merges them
       // Let's check that we have the right number of each type
-      const logEntries = merged.filter(entry => entry.type === 'log')
-      const chatEntries = merged.filter(entry => entry.type === 'chat')
+      const logEntries = merged.filter((entry: { type: string }) => entry.type === 'log')
+      const chatEntries = merged.filter((entry: { type: string }) => entry.type === 'chat')
 
       expect(logEntries).toHaveLength(3)
       expect(chatEntries).toHaveLength(3)
 
       // Check that all original items are present
-      expect(logEntries.map(l => l.template)).toEqual([
+      expect(logEntries.map((l: { template: string }) => l.template)).toEqual([
         'Log entry 1', 'Log entry 2', 'Log entry 3'
       ])
 
-      expect(chatEntries.map(c => c.id)).toEqual([123, 456, 789])
+      expect(chatEntries.map((c: { id: number }) => c.id)).toEqual([123, 456, 789])
     })
 
     test('merged should handle case with no chat messages', () => {

@@ -4,7 +4,7 @@ const util = require('../util.js')
 
 // Spy on and mock the shuffle function
 // For tests, make shuffle predictable by reversing the array
-const mockShuffle = vi.spyOn(util.array, 'shuffle').mockImplementation((array) => {
+const mockShuffle = vi.spyOn(util.array, 'shuffle').mockImplementation((array: unknown[]) => {
   const reversed = [...array].reverse()
   // Copy the reversed values back to the original array (mutating it in place)
   for (let i = 0; i < array.length; i++) {
@@ -96,7 +96,7 @@ describe('BasePlayerManager', () => {
       const { playerManager } = createPlayerManager()
 
       // Check that each player has the correct seat number
-      playerManager.all().forEach((player, index) => {
+      playerManager.all().forEach((player: { seatNumber: number; index: number }, index: number) => {
         expect(player.seatNumber).toBe(index)
         expect(player.index).toBe(index) // Deprecated but still should be set
       })
@@ -119,7 +119,7 @@ describe('BasePlayerManager', () => {
       expect(playerManager.all()).toHaveLength(10)
 
       // Check seat numbers assigned correctly
-      playerManager.all().forEach((player, index) => {
+      playerManager.all().forEach((player: { seatNumber: number }, index: number) => {
         expect(player.seatNumber).toBe(index)
       })
     })
@@ -278,7 +278,7 @@ describe('BasePlayerManager', () => {
         expect(player.id).toBe('user3')
 
         // Find the actual index of the player with id 'user3'
-        const index = playerManager.all().findIndex(p => p.id === 'user3')
+        const index = playerManager.all().findIndex((p: { id: string }) => p.id === 'user3')
         expect(player).toBe(playerManager.all()[index])
       })
 
@@ -292,7 +292,7 @@ describe('BasePlayerManager', () => {
         expect(player.name).toBe('user2')
 
         // Find the actual index of the player with name 'user2'
-        const index = playerManager.all().findIndex(p => p.name === 'user2')
+        const index = playerManager.all().findIndex((p: { name: string }) => p.name === 'user2')
         expect(player).toBe(playerManager.all()[index])
       })
 
@@ -326,7 +326,7 @@ describe('BasePlayerManager', () => {
         expect(player.name).toBe('user3')
 
         // Find the actual index of the player with name 'user3'
-        const index = playerManager.all().findIndex(p => p.name === 'user3')
+        const index = playerManager.all().findIndex((p: { name: string }) => p.name === 'user3')
         expect(player).toBe(playerManager.all()[index])
 
         // Should return undefined for zones without player references

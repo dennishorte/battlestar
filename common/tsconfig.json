@@ -23,7 +23,10 @@
   "exclude": [
     "node_modules",
     "**/*.test.ts",
-    "**/testutil.ts"
+    "**/testutil.ts",
+    "**/testutil_cube.ts",
+    "**/testFixture.ts",
+    "**/test_common.ts"
   ]
 }
 
