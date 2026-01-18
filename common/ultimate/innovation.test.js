@@ -728,7 +728,7 @@ describe('Innovation', () => {
       })
     })
 
-    describe('auspice action', () => {
+    describe('auspice action with figures', () => {
       test('top figure matches featured biscuit', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
         t.setBoard(game, {
