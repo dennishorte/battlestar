@@ -1,6 +1,6 @@
 import type { Game } from './GameProxy.js'
-const { GameProxy } = require('./GameProxy.js')
-const util = require('../util.js')
+import { GameProxy } from './GameProxy.js'
+import util from '../util.js'
 
 // Forward declarations for circular dependencies
 interface BaseZone {
@@ -145,10 +145,6 @@ class BaseCard {
   _beforeMoveTo(newZone: BaseZone, newIndex: number | null, oldZone: BaseZone, oldIndex: number): BeforeMoveResult | void {
     // To be overridden by child classes
   }
-}
-
-module.exports = {
-  BaseCard,
 }
 
 export { BaseCard, CardData, BeforeMoveResult }

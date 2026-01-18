@@ -1,7 +1,7 @@
 import type { Game } from './GameProxy.js'
-const { GameProxy } = require('./GameProxy.js')
-const selector = require('../selector.js')
-const util = require('../util.js')
+import { GameProxy } from './GameProxy.js'
+import * as selector from '../selector.js'
+import util from '../util.js'
 
 // Forward declarations for circular dependencies
 interface BasePlayer {
@@ -195,10 +195,6 @@ class BaseActionManager {
       classes: ['die-roll'],
     })
   }
-}
-
-module.exports = {
-  BaseActionManager,
 }
 
 export { BaseActionManager, ChooseOptions, ChooseSelector }

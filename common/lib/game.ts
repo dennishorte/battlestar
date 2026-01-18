@@ -1,14 +1,13 @@
-const seedrandom = require('seedrandom')
-const selector = require('./selector.js')
-const util = require('./util.js')
-
-const {
+import seedrandom from 'seedrandom'
+import * as selector from './selector.js'
+import util from './util.js'
+import {
   BaseActionManager,
   BaseCardManager,
   BaseLogManager,
   BasePlayerManager,
   BaseZoneManager,
-} = require('./game/index.js')
+} from './game/index.js'
 
 interface PlayerData {
   _id: string
@@ -44,10 +43,11 @@ interface Response {
 }
 
 interface Chat {
+  id: number
   author: string
   text: string
   position: number
-  [key: string]: unknown
+  type: 'chat'
 }
 
 interface GameState {
@@ -107,7 +107,9 @@ interface Game {
   cards: InstanceType<typeof BaseCardManager>
   players: InstanceType<typeof BasePlayerManager>
   zones: InstanceType<typeof BaseZoneManager>
+  util: typeof util
   constructor: GameConstructor
+  [key: string]: unknown
 
   // Methods
   serialize(): SerializedGame
@@ -122,7 +124,7 @@ interface Game {
   getWaiting(player?: { name: string }): SelectorInput | InputRequestEventInstance | undefined
   requestInputAny(array: SelectorInput | SelectorInput[]): Response
   requestInputMany(array: SelectorInput | SelectorInput[]): Response[]
-  requestInputSingle(selector: SelectorInput): unknown[]
+  requestInputSingle(selector: unknown): unknown[]
   respondToInputRequest(response: Response): unknown
   run(): unknown
   undo(): '__NO_MORE_ACTIONS__' | '__NO_UNDO__' | '__SUCCESS__'
@@ -291,7 +293,7 @@ Game.prototype.getPlayerNamesWaiting = function(this: Game): string[] {
 }
 
 Game.prototype.getPlayerViewer = function(this: Game): unknown {
-  return this.players.byName(this.viewerName)
+  return this.viewerName ? this.players.byName(this.viewerName) : undefined
 }
 
 Game.prototype.getWaiting = function(this: Game, player?: { name: string }): SelectorInput | InputRequestEventInstance | undefined {
@@ -608,13 +610,6 @@ Game.prototype.historicalView = function(this: Game, index: number): Game {
   }
 
   return new this.constructor(data, this.viewerName)
-}
-
-module.exports = {
-  Game,
-  GameFactory,
-  GameOverEvent,
-  InputRequestEvent,
 }
 
 export {

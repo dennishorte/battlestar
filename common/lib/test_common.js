@@ -1,5 +1,5 @@
-const log = require('./log.js')
-const util = require('./util.js')
+import log from './log.js'
+import util from './util.js'
 
 const TestCommon = {
   // Basic fixture to set up a game
@@ -111,4 +111,4 @@ function _dumpZonesRecursive(root, indent=0) {
   return output.join('\n')
 }
 
-module.exports = TestCommon
+export default TestCommon

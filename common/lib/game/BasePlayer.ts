@@ -1,5 +1,5 @@
 import type { Game } from './GameProxy.js'
-const { GameProxy } = require('./GameProxy.js')
+import { GameProxy } from './GameProxy.js'
 
 interface PlayerData {
   _id: string
@@ -123,7 +123,5 @@ class BasePlayer {
     return !player.eliminated
   }
 }
-
-module.exports = { BasePlayer }
 
 export { BasePlayer, PlayerData, CounterOptions }

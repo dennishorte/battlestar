@@ -1,10 +1,10 @@
-const {
+import {
   Game,
   GameFactory,
   GameOverEvent,
   InputRequestEvent,
-} = require('./game.js')
-const util = require('../lib/util.js')
+} from './game.js'
+import util from '../lib/util.js'
 
 
 ////////////////////////////////////////////////////////////////////////////////

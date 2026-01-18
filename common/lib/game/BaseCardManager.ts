@@ -1,5 +1,5 @@
 import type { Game } from './GameProxy.js'
-const { GameProxy } = require('./GameProxy.js')
+import { GameProxy } from './GameProxy.js'
 
 // Forward declarations for circular dependencies
 interface BasePlayer {
@@ -71,10 +71,6 @@ class BaseCardManager {
   protected _getCardId(card: BaseCard): string {
     return card.id!
   }
-}
-
-module.exports = {
-  BaseCardManager,
 }
 
 export { BaseCardManager }

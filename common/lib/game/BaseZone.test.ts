@@ -1,4 +1,4 @@
-const { BaseZone } = require('./BaseZone.js')
+import { BaseZone } from './BaseZone.js'
 
 interface MockCard {
   id: string

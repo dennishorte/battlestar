@@ -1,8 +1,7 @@
 import type { Game } from './GameProxy.js'
-const { BasePlayer } = require('./BasePlayer.js')
-const { GameProxy } = require('./GameProxy.js')
-
-const util = require('../util.js')
+import { BasePlayer } from './BasePlayer.js'
+import { GameProxy } from './GameProxy.js'
+import util from '../util.js'
 
 interface PlayerData {
   _id: string
@@ -204,10 +203,6 @@ class BasePlayerManager {
   rightOf(player: BasePlayerInterface): BasePlayerInterface {
     return this.preceding(player)
   }
-}
-
-module.exports = {
-  BasePlayerManager,
 }
 
 export { BasePlayerManager, PlayerList, PlayerManagerOptions }

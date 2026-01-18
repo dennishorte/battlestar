@@ -122,9 +122,4 @@ function templateTokenize(template: string): Token[] {
   return tokens
 }
 
-module.exports = {
-  apply,
-  toString,
-}
-
 export { apply, toString, LogEntry, ChatEntry, LogArg, FormattedToken }

@@ -1,4 +1,4 @@
-const { createActionManagerFixture } = require('./testFixture.js')
+import { createActionManagerFixture } from './testFixture.js'
 
 describe('BaseActionManager', () => {
   // Helper function to create a unique fixture for each test

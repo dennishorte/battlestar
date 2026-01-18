@@ -1,4 +1,4 @@
-const { BaseLogManager } = require('./BaseLogManager.js')
+import { BaseLogManager } from './BaseLogManager.js'
 
 describe('BaseLogManager', () => {
   // Fixture function to create a new BaseLogManager instance

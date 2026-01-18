@@ -1,6 +1,6 @@
 import type { Game } from './GameProxy.js'
-const { BaseZone } = require('./BaseZone.js')
-const { GameProxy } = require('./GameProxy.js')
+import { BaseZone, ZoneKind } from './BaseZone.js'
+import { GameProxy } from './GameProxy.js'
 
 // Forward declarations for circular dependencies
 interface BasePlayer {
@@ -16,7 +16,7 @@ interface BaseZoneInterface {
   cardlist(): BaseCard[]
 }
 
-type ZoneConstructor = new (game: Game, id: string, name: string, kind: string, owner?: BasePlayer | null) => BaseZoneInterface
+type ZoneConstructor = new (game: Game, id: string, name: string, kind: ZoneKind, owner?: BasePlayer | null) => BaseZoneInterface
 
 class BaseZoneManager {
   game: Game
@@ -31,7 +31,7 @@ class BaseZoneManager {
     return GameProxy.create(this)
   }
 
-  create(...args: [Game, string, string, string, (BasePlayer | null)?]): BaseZoneInterface {
+  create(...args: [Game, string, string, ZoneKind, (BasePlayer | null)?]): BaseZoneInterface {
     const zone = new this._zoneConstructor(...args)
     this.register(zone)
     return zone
@@ -67,10 +67,6 @@ class BaseZoneManager {
     const id = `players.${player.name}.${zoneName}`
     return this.byId(id)
   }
-}
-
-module.exports = {
-  BaseZoneManager,
 }
 
 export { BaseZoneManager, ZoneConstructor }

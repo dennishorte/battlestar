@@ -1,4 +1,4 @@
-const { validate } = require('./selector.js')
+import { validate } from './selector.js'
 
 test('titles must match', () => {
   const selector = {

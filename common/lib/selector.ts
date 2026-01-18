@@ -1,4 +1,4 @@
-const util = require('./util.js')
+import util from './util.js'
 
 interface Choice {
   title: string
@@ -10,8 +10,8 @@ interface Choice {
 
 interface Selector {
   title?: string
-  choices?: Choice[] | string[]
-  selection?: Choice[] | string[]
+  choices?: Choice[] | string[] | unknown[] | '__UNSPECIFIED__'
+  selection?: Choice[] | string[] | unknown[]
   count?: number
   min?: number
   max?: number
@@ -196,11 +196,6 @@ function minMax(selector: Selector): MinMaxResult {
   max = Math.min(max, (selector.choices as unknown[]).length)
 
   return { min, max }
-}
-
-module.exports = {
-  minMax,
-  validate,
 }
 
 export { minMax, validate, Selector, Choice, ValidateOptions, ValidateResult, MinMaxResult }

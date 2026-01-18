@@ -1,10 +1,10 @@
 // eslint.config.js
-const { defineConfig } = require("eslint/config")
-const vitest = require('eslint-plugin-vitest')
-const js = require("@eslint/js")
+import { defineConfig } from "eslint/config"
+import vitest from 'eslint-plugin-vitest'
+import js from "@eslint/js"
 
 
-module.exports = defineConfig([
+export default defineConfig([
   {
     ignores: [
       '**/node_modules/**',
@@ -77,13 +77,6 @@ module.exports = defineConfig([
         process: "readonly",
         root: "readonly",
         setImmediate: "readonly",
-
-        // Node.js commonjs specific
-        __dirname: "readonly",
-        __filename: "readonly",
-        exports: "writable",
-        module: "readonly",
-        require: "readonly",
       },
     },
 
@@ -123,6 +116,24 @@ module.exports = defineConfig([
       "vitest/expect-expect": "off",
       "vitest/no-disabled-tests": "off",
       "vitest/no-standalone-expect": "off",
+    },
+  },
+  // Temporary: Allow CommonJS in files not yet converted to ESM
+  {
+    files: [
+      "main.js",
+      "magic/**/*.js",
+      "tyrants/**/*.js",
+      "ultimate/**/*.js",
+      "**/dev/**/*.js",
+    ],
+    languageOptions: {
+      globals: {
+        require: "readonly",
+        module: "readonly",
+        __dirname: "readonly",
+        __filename: "readonly",
+      },
     },
   },
 ])

@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import { execSync } from 'child_process'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const commonDir = path.resolve(__dirname, '..')
 const distDir = path.resolve(commonDir, '..', 'common_dist')
@@ -134,7 +139,6 @@ console.log('Build complete! Files copied to common_dist')
 console.log('Installing dependencies in common_dist...')
 
 // Run npm install in common_dist
-const { execSync } = require('child_process')
 try {
   execSync('npm install', {
     cwd: distDir,
@@ -147,4 +151,3 @@ catch {
   console.error('Warning: Failed to install dependencies in common_dist')
   console.error('You may need to run "npm install" manually in common_dist')
 }
-

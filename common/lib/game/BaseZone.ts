@@ -1,6 +1,6 @@
 import type { Game } from './GameProxy.js'
-const { GameProxy } = require('./GameProxy.js')
-const util = require('../util.js')
+import { GameProxy } from './GameProxy.js'
+import util from '../util.js'
 
 const ZONE_KIND = {
   public: 'public',
@@ -240,11 +240,6 @@ class BaseZone {
         throw new Error('Unknown zone kind: ' + this._kind)
     }
   }
-}
-
-module.exports = {
-  BaseZone,
-  ZONE_KIND,
 }
 
 export { BaseZone, ZONE_KIND, ZoneKind }

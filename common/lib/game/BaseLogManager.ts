@@ -305,8 +305,4 @@ class BaseLogManager {
 }
 
 
-module.exports = {
-  BaseLogManager,
-}
-
 export { BaseLogManager, LogEntry, Chat, Response, LogMessage, LogArgHandler, LogArgValue }

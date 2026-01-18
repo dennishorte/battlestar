@@ -85,7 +85,7 @@ const Util = {
     add: (a: Point, b: Point) => Point
     sub: (a: Point, b: Point) => Point
   }
-  assert: (test: any, message: string) => void
+  assert: (test: any, message?: string) => void
   ensure: <T extends Record<string, any>, K extends keyof T>(
     obj: T,
     prop: K,
@@ -306,7 +306,7 @@ Util.array.shuffle = function<T>(array: T[], rng?: RngFunction): T[] {
 
     // Pick a remaining element...
     randomIndex = Math.floor(rng() * currentIndex)
-    currentIndex--
+    currentIndex--;
 
     // And swap it with the current element.
     [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]]
@@ -549,7 +549,7 @@ Util.point.sub = function(a: Point, b: Point): Point {
 ////////////////////////////////////////////////////////////////////////////////
 // Miscellaneous
 
-Util.assert = function(test: any, message: string): void {
+Util.assert = function(test: any, message: string = 'Assertion failed'): void {
   if (!test) {
     throw new Error(message)
   }
@@ -663,5 +663,4 @@ Util.deepcopy = function<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj))
 }
 
-module.exports = Util
-
+export default Util

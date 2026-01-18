@@ -259,16 +259,6 @@ function nextPhase(context: TransitionContext): void {
   rk.splice(context.data.factory.stepsRemaining, 0, 1)
 }
 
-module.exports = {
-  markDone,
-  nextPhase,
-  phaseFactory,
-  repeatSteps,
-  stepFactory,
-  transitionFactory,
-  transitionFactory2,
-}
-
 export {
   markDone,
   nextPhase,

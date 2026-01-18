@@ -1,7 +1,7 @@
 {
   "name": "battlestar-common",
   "version": "0.0.1",
-  "type": "commonjs",
+  "type": "module",
   "main": "main.js",
   "dependencies": {
     "seedrandom": "^3.0.5"
@@ -10,6 +10,7 @@
     "@babel/plugin-transform-modules-commonjs": "^7.27.1",
     "@eslint/js": "^9.26.0",
     "@types/node": "^20.0.0",
+    "@types/seedrandom": "^3.0.8",
     "csv-parser": "^3.2.0",
     "eslint": "^9.27.0",
     "eslint-plugin-vitest": "^0.5.1",

@@ -1,6 +1,6 @@
-const { BasePlayer } = require('./BasePlayer.js')
-const { BasePlayerManager } = require('./BasePlayerManager.js')
-const util = require('../util.js')
+import { BasePlayer } from './BasePlayer.js'
+import { BasePlayerManager } from './BasePlayerManager.js'
+import util from '../util.js'
 
 // Spy on and mock the shuffle function
 // For tests, make shuffle predictable by reversing the array

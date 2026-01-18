@@ -25,7 +25,7 @@ interface Game {
   util: unknown
   zones: unknown
   random: () => number
-  requestInputSingle: (selector: unknown) => unknown[]
+  requestInputSingle: (...args: unknown[]) => unknown[]
   [key: string]: unknown
 }
 
@@ -54,9 +54,5 @@ class GameProxy {
   }
 }
 
-
-module.exports = {
-  GameProxy,
-}
 
 export { GameProxy, Game, GameHolder, PROXY_ITEMS }

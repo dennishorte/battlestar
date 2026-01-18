@@ -1,4 +1,4 @@
-const { GameFactory } = require('../game.js')
+import { GameFactory } from '../game.js'
 
 /**
  * Test fixture for BaseActionManager and related game component tests.
@@ -264,7 +264,7 @@ function createActionManagerFixture(options = {}) {
   }
 }
 
-module.exports = {
+export {
   GameTestFixture,
   createGameFixture,
   createActionManagerFixture

@@ -111,11 +111,4 @@ function _pathRecursive(matcher: MatcherFunction, root: unknown, matches: string
   }
 }
 
-module.exports = {
-  at,
-  path,
-  pathAll,
-  setVerbose,
-}
-
 export { at, path, pathAll, setVerbose, MatcherFunction }

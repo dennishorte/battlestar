@@ -1,4 +1,4 @@
-const jsonpath = require('./jsonpath.js')
+import * as jsonpath from './jsonpath.js'
 
 describe('pathAll', () => {
   test('finds multiple hits', () => {
