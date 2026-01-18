@@ -10,6 +10,10 @@ const { TyrantsLogManager } = require('./TyrantsLogManager.js')
 const { TyrantsMapZone } = require('./TyrantsMapZone.js')
 const { TyrantsToken } = require('./TyrantsToken.js')
 const { TyrantsZone } = require('./TyrantsZone.js')
+const { TyrantsActionManager } = require('./TyrantsActionManager.js')
+const { TyrantsCardManager } = require('./TyrantsCardManager.js')
+const { TyrantsPlayerManager } = require('./TyrantsPlayerManager.js')
+const { TyrantsZoneManager } = require('./TyrantsZoneManager.js')
 
 import type { TyrantsMapZone as TyrantsMapZoneType } from './TyrantsMapZone.js'
 import type { TyrantsToken as TyrantsTokenType } from './TyrantsToken.js'
@@ -334,6 +338,10 @@ interface TyrantsConstructor {
 function Tyrants(this: Tyrants, serialized_data: unknown, viewerName: string): void {
   Game.call(this, serialized_data, viewerName, {
     LogManager: TyrantsLogManager,
+    ActionManager: TyrantsActionManager,
+    CardManager: TyrantsCardManager,
+    PlayerManager: TyrantsPlayerManager,
+    ZoneManager: TyrantsZoneManager,
   })
 }
 
