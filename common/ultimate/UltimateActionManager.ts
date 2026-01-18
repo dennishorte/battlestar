@@ -579,7 +579,7 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   chooseCard(player: UltimatePlayer, cards: (Card | string)[], opts: ChooseOptions = {}): Card | undefined {
-    const result = this.chooseCards(player, cards, { ...opts, min: 1, max: 1 })
+    const result = this.chooseCards(player, cards, { min: 1, max: 1, ...opts })
     return result[0]
   }
 
