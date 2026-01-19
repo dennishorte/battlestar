@@ -1,7 +1,5 @@
-const { TyrantsZone } = require('./TyrantsZone.js')
-const util = require('../lib/util.js')
-
-import type { TyrantsZone as TyrantsZoneType } from './TyrantsZone.js'
+import { TyrantsZone } from './TyrantsZone.js'
+import util from '../lib/util.js'
 import type { Player, TyrantsGame } from './TyrantsBaseCard.js'
 
 interface MapZoneData {
@@ -251,8 +249,5 @@ class TyrantsMapZone extends TyrantsZone {
   }
 }
 
-module.exports = {
-  TyrantsMapZone,
-}
-
-export { TyrantsMapZone, MapZoneData, ControlMarker }
+export { TyrantsMapZone }
+export type { MapZoneData, ControlMarker }

@@ -1,4 +1,4 @@
-const { BaseZoneManager } = require('../lib/game/index.js')
+import { BaseZoneManager } from '../lib/game/index.js'
 
 import type { UltimatePlayer, BiscuitCounts } from './UltimatePlayer.js'
 
@@ -33,10 +33,6 @@ class UltimateZoneManager extends BaseZoneManager {
       .map((biscuits: BiscuitCounts) => biscuits[biscuit])
       .filter((num: number) => num > 0)
   }
-}
-
-module.exports = {
-  UltimateZoneManager,
 }
 
 export { UltimateZoneManager }

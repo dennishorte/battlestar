@@ -1,21 +1,21 @@
-const {
+import {
   Game,
   GameFactory,
   GameOverEvent,
-} = require('../lib/game.js')
-const res = require('./res/index.js')
-const selector = require('../lib/selector.js')
-const util = require('../lib/util.js')
+} from '../lib/game.js'
+import res from './res/index.js'
+import selector from '../lib/selector.js'
+import util from '../lib/util.js'
 
-const { UltimateLogManager } = require('./UltimateLogManager.js')
-const { UltimateActionManager } = require('./UltimateActionManager.js')
-const { UltimateCardManager } = require('./UltimateCardManager.js')
-const { UltimatePlayerManager } = require('./UltimatePlayerManager.js')
-const { UltimateUtils } = require('./UltimateUtils.js')
-const { UltimateZone } = require('./UltimateZone.js')
-const { UltimateZoneManager } = require('./UltimateZoneManager.js')
+import { UltimateLogManager } from './UltimateLogManager.js'
+import { UltimateActionManager } from './UltimateActionManager.js'
+import { UltimateCardManager } from './UltimateCardManager.js'
+import { UltimatePlayerManager } from './UltimatePlayerManager.js'
+import { UltimateUtils } from './UltimateUtils.js'
+import { UltimateZone } from './UltimateZone.js'
+import { UltimateZoneManager } from './UltimateZoneManager.js'
 
-const { getDogmaShareInfo } = require('./actions/Dogma.js')
+import { getDogmaShareInfo } from './actions/Dogma.js'
 
 import type { UltimatePlayer, BiscuitCounts } from './UltimatePlayer.js'
 import type { DogmaInfo } from './actions/Dogma.js'
@@ -2126,15 +2126,11 @@ function factoryFromLobby(lobby: Lobby): unknown {
   })
 }
 
-module.exports = {
+export {
   GameOverEvent,
   Innovation,
   InnovationFactory,
-
-  constructor: Innovation,
-  factory: factoryFromLobby,
+  factoryFromLobby,
   res,
   SUPPORTED_EXPANSIONS,
 }
-
-export { Innovation, InnovationFactory, factoryFromLobby, SUPPORTED_EXPANSIONS }

@@ -1,4 +1,4 @@
-const { BasePlayer } = require('../lib/game/index.js')
+import { BasePlayer } from '../lib/game/index.js'
 
 interface BiscuitCounts {
   c: number
@@ -63,10 +63,6 @@ class UltimatePlayer extends BasePlayer {
     }
     return output
   }
-}
-
-module.exports = {
-  UltimatePlayer,
 }
 
 export { UltimatePlayer }

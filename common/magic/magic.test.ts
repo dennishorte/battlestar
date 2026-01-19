@@ -1,8 +1,8 @@
 Error.stackTraceLimit = 100
 
-const TestCards = require('./test_card_data.js')
-const t = require('./testutil.js')
-const util = require('../lib/util.js')
+import TestCards from './test_card_data.js'
+import t from './testutil.js'
+import util from '../lib/util.js'
 
 
 describe('Magic', () => {

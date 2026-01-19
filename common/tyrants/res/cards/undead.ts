@@ -1,5 +1,4 @@
-const util = require('../../../lib/util.js')
-
+import util from '../../../lib/util.js'
 import type { CardData } from './base.js'
 
 const cardData: CardData[] = [
@@ -646,9 +645,5 @@ const cardData: CardData[] = [
     },
   }
 ]
-
-module.exports = {
-  cardData,
-}
 
 export { cardData }

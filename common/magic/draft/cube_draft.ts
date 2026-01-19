@@ -1,13 +1,13 @@
-const {
+import {
   Game,
   GameFactory,
   GameOverEvent,
-} = require('../../lib/game.js')
+} from '../../lib/game.js'
 
-const { Pack } = require('./pack.js')
-const util = require('../../lib/util.js')
+import { Pack } from './pack.js'
+import util from '../../lib/util.js'
 
-const { CubeDraftPlayerManager } = require('./CubeDraftPlayerManager.js')
+import { CubeDraftPlayerManager } from './CubeDraftPlayerManager.js'
 
 import type { Game as GameType } from '../../lib/game.js'
 import type { Pack as PackType, PackCard, Player as PackPlayer } from './pack.js'
@@ -591,13 +591,11 @@ CubeDraft.prototype._responseReceived = function(this: CubeDraft, response: Acti
   }
 }
 
-module.exports = {
+export {
   GameOverEvent,
   CubeDraft,
   CubeDraftFactory,
 
-  constructor: CubeDraft,
-  factory: factoryFromLobby,
+  CubeDraft as constructor,
+  factoryFromLobby as factory,
 }
-
-export { CubeDraft, CubeDraftFactory }

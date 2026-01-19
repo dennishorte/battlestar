@@ -1,6 +1,4 @@
-const { BaseZone, ZONE_KIND } = require('../lib/game/index.js')
-
-import type { BaseZone as BaseZoneType } from '../lib/game/index.js'
+import { BaseZone, ZONE_KIND } from '../lib/game/index.js'
 import type { Player } from './TyrantsBaseCard.js'
 
 interface Card {
@@ -29,10 +27,6 @@ class TyrantsZone extends BaseZone {
       throw new Error('Unknown zone kind: ' + kind)
     }
   }
-}
-
-module.exports = {
-  TyrantsZone,
 }
 
 export { TyrantsZone }

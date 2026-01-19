@@ -1,4 +1,4 @@
-const { BaseCardManager } = require('../lib/game/index.js')
+import { BaseCardManager } from '../lib/game/index.js'
 
 import type { TyrantsPlayer } from './TyrantsPlayer.js'
 
@@ -25,10 +25,6 @@ class TyrantsCardManager extends BaseCardManager {
   constructor(...args: unknown[]) {
     super(...args)
   }
-}
-
-module.exports = {
-  TyrantsCardManager,
 }
 
 export { TyrantsCardManager }

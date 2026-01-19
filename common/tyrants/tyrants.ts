@@ -1,19 +1,19 @@
-const {
+import {
   Game,
   GameFactory,
   GameOverEvent,
-} = require('./../lib/game.js')
-const res = require('./res/index.js')
-const util = require('../lib/util.js')
+} from './../lib/game.js'
+import * as res from './res/index.js'
+import util from '../lib/util.js'
 
-const { TyrantsLogManager } = require('./TyrantsLogManager.js')
-const { TyrantsMapZone } = require('./TyrantsMapZone.js')
-const { TyrantsToken } = require('./TyrantsToken.js')
-const { TyrantsZone } = require('./TyrantsZone.js')
-const { TyrantsActionManager } = require('./TyrantsActionManager.js')
-const { TyrantsCardManager } = require('./TyrantsCardManager.js')
-const { TyrantsPlayerManager } = require('./TyrantsPlayerManager.js')
-const { TyrantsZoneManager } = require('./TyrantsZoneManager.js')
+import { TyrantsLogManager } from './TyrantsLogManager.js'
+import { TyrantsMapZone } from './TyrantsMapZone.js'
+import { TyrantsToken } from './TyrantsToken.js'
+import { TyrantsZone } from './TyrantsZone.js'
+import { TyrantsActionManager } from './TyrantsActionManager.js'
+import { TyrantsCardManager } from './TyrantsCardManager.js'
+import { TyrantsPlayerManager } from './TyrantsPlayerManager.js'
+import { TyrantsZoneManager } from './TyrantsZoneManager.js'
 
 import type { TyrantsMapZone as TyrantsMapZoneType } from './TyrantsMapZone.js'
 import type { TyrantsToken as TyrantsTokenType } from './TyrantsToken.js'
@@ -2323,13 +2323,11 @@ Tyrants.prototype._checkDoingSetup = function(this: Tyrants): boolean {
 }
 
 
-module.exports = {
+export {
   GameOverEvent,
   Tyrants,
   TyrantsFactory,
-
-  constructor: Tyrants,
-  factory: factoryFromLobby,
+  factoryFromLobby as factory,
   res,
 }
 

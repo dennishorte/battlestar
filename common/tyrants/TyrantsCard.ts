@@ -1,6 +1,5 @@
-const { TyrantsBaseCard } = require('./TyrantsBaseCard.js')
-
-import type { TyrantsBaseCard as TyrantsBaseCardType, TyrantsGame, Player } from './TyrantsBaseCard.js'
+import { TyrantsBaseCard } from './TyrantsBaseCard.js'
+import type { TyrantsGame, Player } from './TyrantsBaseCard.js'
 
 interface TyrantsCardData {
   id?: string
@@ -65,8 +64,5 @@ class TyrantsCard extends TyrantsBaseCard {
   }
 }
 
-module.exports = {
-  TyrantsCard,
-}
-
-export { TyrantsCard, TyrantsCardData, CardTrigger }
+export { TyrantsCard }
+export type { TyrantsCardData, CardTrigger }

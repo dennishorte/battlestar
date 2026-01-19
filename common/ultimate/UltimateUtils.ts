@@ -1,4 +1,4 @@
-const util = require('../lib/util.js')
+import util from '../lib/util.js'
 
 import type { BiscuitCounts } from './UltimatePlayer.js'
 
@@ -147,10 +147,6 @@ class UltimateUtils {
       throw new Error(`Cannot serialize element of type ${typeof obj}`)
     }
   }
-}
-
-module.exports = {
-  UltimateUtils,
 }
 
 export { UltimateUtils }

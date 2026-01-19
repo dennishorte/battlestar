@@ -1,4 +1,4 @@
-const { BaseCard } = require('../lib/game/index.js')
+import { BaseCard } from '../lib/game/index.js'
 
 interface CardData {
   name: string
@@ -94,10 +94,6 @@ class UltimateBaseCard extends BaseCard {
       }
     }
   }
-}
-
-module.exports = {
-  UltimateBaseCard,
 }
 
 export { UltimateBaseCard }

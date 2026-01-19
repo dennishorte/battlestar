@@ -1,22 +1,29 @@
-const {
+import {
   Game,
   GameFactory,
   GameOverEvent,
-} = require('../lib/game.js')
+} from '../lib/game.js'
 
-const res = require('./data.js')
-const util = require('../lib/util.js')
+import * as res from './data.js'
+import util from '../lib/util.js'
+
+import * as CubeWrapperModule from './util/CubeWrapper.js'
+import * as DeckWrapperModule from './util/DeckWrapper.js'
 
 const wrappers = {
-  cube: require('./util/CubeWrapper.js'),
-  deck: require('./util/DeckWrapper.js'),
+  cube: CubeWrapperModule,
+  deck: DeckWrapperModule,
 }
 
-const { MagicCard } = require('./MagicCard.js')
-const { MagicCardManager } = require('./MagicCardManager.js')
-const { MagicLogManager } = require('./MagicLogManager.js')
-const { MagicPlayerManager } = require('./MagicPlayerManager.js')
-const { MagicZone } = require('./MagicZone.js')
+import { MagicCard } from './MagicCard.js'
+import { MagicCardManager } from './MagicCardManager.js'
+import { MagicLogManager } from './MagicLogManager.js'
+import { MagicPlayerManager } from './MagicPlayerManager.js'
+import { MagicZone } from './MagicZone.js'
+
+import * as cubeDraft from './draft/cube_draft.js'
+import * as pack from './draft/pack.js'
+import * as cardUtilModule from './util/cardUtil.js'
 
 import type { Game as GameType } from '../lib/game.js'
 import type { MagicCard as MagicCardType, CardData } from './MagicCard.js'
@@ -1512,30 +1519,31 @@ Magic.prototype.utilSerializeObject = function(this: Magic, obj: { id?: string }
   }
 }
 
-module.exports = {
+const draft = {
+  cube: cubeDraft,
+  pack: pack,
+}
+
+const utilExports = {
+  card: cardUtilModule,
+  wrapper: wrappers,
+}
+
+export {
   GameOverEvent,
   Magic,
   MagicFactory,
 
   MagicCard,
 
-  constructor: Magic,
-  factory: factoryFromLobby,
+  Magic as constructor,
+  factoryFromLobby as factory,
   res,
-  draft: {
-    cube: require('./draft/cube_draft.js'),
-    pack: require('./draft/pack.js'),
-  },
-  util: {
-    card: require('./util/cardUtil.js'),
-    wrapper: wrappers,
-  },
+  draft,
+  utilExports as util,
 }
 
-export {
-  Magic,
-  MagicFactory,
-  MagicCard,
+export type {
   Player,
   Zone,
   MagicState,

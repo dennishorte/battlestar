@@ -1,6 +1,4 @@
-const { BaseLogManager } = require('../lib/game/index.js')
-
-import type { BaseLogManager as BaseLogManagerType } from '../lib/game/index.js'
+import { BaseLogManager } from '../lib/game/index.js'
 import type { Player } from './TyrantsBaseCard.js'
 
 interface LogEntry {
@@ -71,7 +69,5 @@ class TyrantsLogManager extends BaseLogManager {
     }
   }
 }
-
-module.exports = { TyrantsLogManager }
 
 export { TyrantsLogManager }

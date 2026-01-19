@@ -1,8 +1,8 @@
-const { BaseCard } = require('../lib/game/index.js')
-const { Serializer } = require('./util/Serializer.js')
-const CardFilter = require('./util/CardFilter.js')
-const cardUtil = require('./util/cardUtil.js')
-const util = require('../lib/util.js')
+import { BaseCard } from '../lib/game/index.js'
+import { Serializer } from './util/Serializer.js'
+import CardFilter from './util/CardFilter.js'
+import * as cardUtil from './util/cardUtil.js'
+import util from '../lib/util.js'
 
 import type { BaseCard as BaseCardType } from '../lib/game/index.js'
 import type { Serializer as SerializerType, SerializerData } from './util/Serializer.js'
@@ -615,8 +615,5 @@ class MagicCard extends BaseCard {
   }
 }
 
-module.exports = {
-  MagicCard,
-}
-
-export { MagicCard, CardData, CardFaceData, CardDataInner, MagicGame, MagicZone }
+export { MagicCard }
+export type { CardData, CardFaceData, CardDataInner, MagicGame, MagicZone }

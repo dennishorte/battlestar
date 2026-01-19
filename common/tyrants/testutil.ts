@@ -1,7 +1,7 @@
-const { GameOverEvent } = require('../lib/game.js')
-const { TyrantsFactory } = require('./tyrants.js')
-const TestCommon = require('../lib/test_common.js')
-const util = require('../lib/util.js')
+import { GameOverEvent } from '../lib/game.js'
+import { TyrantsFactory } from './tyrants.js'
+import TestCommon from '../lib/test_common.ts'
+import util from '../lib/util.js'
 
 interface Player {
   name: string
@@ -584,4 +584,4 @@ TestUtil.testLocation = function(game: Game, location: Location, testState: Loca
   expect(actual).toStrictEqual(expected)
 }
 
-module.exports = TestUtil
+export default TestUtil

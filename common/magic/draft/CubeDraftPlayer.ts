@@ -1,4 +1,4 @@
-const { BasePlayer } = require('../../lib/game/index.js')
+import { BasePlayer } from '../../lib/game/index.js'
 
 import type { BasePlayer as BasePlayerType } from '../../lib/game/index.js'
 import type { Pack, PackCard } from './pack.js'
@@ -36,7 +36,5 @@ class CubeDraftPlayer extends BasePlayer {
   }
 }
 
-
-module.exports = { CubeDraftPlayer }
 
 export { CubeDraftPlayer }

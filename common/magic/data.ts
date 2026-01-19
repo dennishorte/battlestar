@@ -1,6 +1,5 @@
-const setData = require('./data_sets.js')
+import setData from './data_sets.js'
 
-
-module.exports = {
+export {
   setData,
 }

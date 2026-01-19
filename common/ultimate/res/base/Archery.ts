@@ -1,0 +1,24 @@
+export default {
+  name: `Archery`,
+  color: `red`,
+  age: 1,
+  expansion: `base`,
+  biscuits: `kshk`,
+  dogmaBiscuit: `k`,
+  dogma: [
+    `I demand you draw a {1}, then transfer the highest card in your hand to my hand!`,
+    `Junk an available achievement of value 1 or 2.`
+  ],
+  dogmaImpl: [
+    (game, player, { leader, self }) => {
+      game.actions.draw(player, { age: game.getEffectAge(self, 1) })
+      const highest = game.actions.chooseHighest(player, game.cards.byPlayer(player, 'hand'), 1)
+      if (highest.length > 0) {
+        game.actions.transfer(player, highest[0], game.zones.byPlayer(leader, 'hand'))
+      }
+    },
+    (game, player) => {
+      game.actions.junkAvailableAchievement(player, [1, 2])
+    }
+  ],
+}

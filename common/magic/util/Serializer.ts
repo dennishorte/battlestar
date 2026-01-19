@@ -1,4 +1,4 @@
-const util = require('../../lib/util.js')
+import util from '../../lib/util.js'
 
 interface SerializerData {
   [key: string]: unknown
@@ -26,8 +26,5 @@ class Serializer {
   }
 }
 
-module.exports = {
-  Serializer,
-}
-
-export { Serializer, SerializerData }
+export { Serializer }
+export type { SerializerData }

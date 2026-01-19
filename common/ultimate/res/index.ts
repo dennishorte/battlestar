@@ -1,16 +1,14 @@
-const { UltimateAgeCard } = require('../UltimateAgeCard.js')
-const { UltimateAchievement } = require('../UltimateAchievement.js')
+import { UltimateAgeCard } from '../UltimateAgeCard.js'
+import { UltimateAchievement } from '../UltimateAchievement.js'
+import baseSet from './base/index.js'
+import echoSet from './echo/index.js'
+import figsSet from './figs/index.js'
+import citySet from './city/index.js'
+import artiSet from './arti/index.js'
+import useeSet from './usee/index.js'
 
 import type { AgeCardData } from '../UltimateAgeCard.js'
 import type { AchievementData } from '../UltimateAchievement.js'
-
-// Import here to make migration to ES imports easier.
-const baseSet = require('./base')
-const echoSet = require('./echo')
-const figsSet = require('./figs')
-const citySet = require('./city')
-const artiSet = require('./arti')
-const useeSet = require('./usee')
 
 const ALL_EXPANSIONS = ['base', 'echo', 'figs', 'city', 'arti', 'usee'] as const
 const ALL_AGES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] as const
@@ -97,10 +95,5 @@ function factory(game: Game): Record<string, GeneratedData | { byName: Record<st
   return output
 }
 
-module.exports = {
-  factory,
-  ALL_AGES,
-  ALL_EXPANSIONS,
-}
-
 export { factory, ALL_AGES, ALL_EXPANSIONS }
+export default { factory, ALL_AGES, ALL_EXPANSIONS }

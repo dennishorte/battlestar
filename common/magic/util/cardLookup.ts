@@ -1,4 +1,4 @@
-const util = require('../../lib/util.js')
+import util from '../../lib/util.js'
 
 interface CardFace {
   name: string
@@ -30,11 +30,6 @@ function create(cards: Card[]): CardLookup {
 
   return lookup
 }
-
-module.exports = {
-  create,
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper functions
@@ -69,4 +64,5 @@ function _allCardNames(card: Card): string[] {
   return names.map(name => name.toLowerCase())
 }
 
-export { create, CardLookup, Card, CardFace }
+export { create }
+export type { CardLookup, Card, CardFace }

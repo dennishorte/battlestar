@@ -1,6 +1,5 @@
-const { BaseZoneManager } = require('../lib/game/index.js')
-const { TyrantsZone } = require('./TyrantsZone.js')
-
+import { BaseZoneManager } from '../lib/game/index.js'
+import { TyrantsZone } from './TyrantsZone.js'
 import type { TyrantsPlayer } from './TyrantsPlayer.js'
 
 interface Zone {
@@ -19,10 +18,6 @@ class TyrantsZoneManager extends BaseZoneManager {
     super(game)
     this._zoneConstructor = TyrantsZone
   }
-}
-
-module.exports = {
-  TyrantsZoneManager,
 }
 
 export { TyrantsZoneManager }

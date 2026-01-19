@@ -1,8 +1,8 @@
-const {
+import {
   calculateCardChanges,
   calculateChangesFromOriginal,
   extractOriginalData
-} = require('./cardDiff.js')
+} from './cardDiff.js'
 
 describe('Card Diff Utilities', () => {
   describe('calculateCardChanges', () => {

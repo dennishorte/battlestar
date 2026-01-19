@@ -1,5 +1,5 @@
-const { MagicCard } = require('./MagicCard.js')
-const lookup = require('./util/cardLookup.js')
+import { MagicCard } from './MagicCard.js'
+import * as lookup from './util/cardLookup.js'
 
 interface CardFace {
   artist: string
@@ -532,4 +532,4 @@ const cards = [
   ...redCards,
 ].map(data => new MagicCard(null, data))
 
-module.exports = lookup.create(cards)
+export default lookup.create(cards)

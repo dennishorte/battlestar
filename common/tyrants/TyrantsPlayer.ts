@@ -1,4 +1,4 @@
-const { BasePlayer } = require('../lib/game/index.js')
+import { BasePlayer } from '../lib/game/index.js'
 
 interface PlayerData {
   name: string
@@ -17,10 +17,6 @@ class TyrantsPlayer extends BasePlayer {
   constructor(game: Game, data: PlayerData) {
     super(game, data)
   }
-}
-
-module.exports = {
-  TyrantsPlayer,
 }
 
 export { TyrantsPlayer }

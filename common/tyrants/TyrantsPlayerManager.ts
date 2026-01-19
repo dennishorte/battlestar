@@ -1,5 +1,5 @@
-const { BasePlayerManager } = require('../lib/game/index.js')
-const { TyrantsPlayer } = require('./TyrantsPlayer.js')
+import { BasePlayerManager } from '../lib/game/index.js'
+import { TyrantsPlayer } from './TyrantsPlayer.js'
 
 interface User {
   name: string
@@ -21,10 +21,6 @@ class TyrantsPlayerManager extends BasePlayerManager {
     })
     super(game, users, opts)
   }
-}
-
-module.exports = {
-  TyrantsPlayerManager,
 }
 
 export { TyrantsPlayerManager }

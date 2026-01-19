@@ -1,7 +1,7 @@
-const CardFilter = require('./CardFilter.js')
-const { MagicCard } = require('../MagicCard.js')
-const fs = require('fs')
-const path = require('path')
+import CardFilter from './CardFilter.js'
+import { MagicCard } from '../MagicCard.js'
+import fs from 'fs'
+import path from 'path'
 
 describe('CardFilter', () => {
   let testCards = {}

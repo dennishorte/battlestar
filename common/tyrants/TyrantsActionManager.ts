@@ -1,4 +1,4 @@
-const { BaseActionManager } = require('../lib/game/index.js')
+import { BaseActionManager } from '../lib/game/index.js'
 
 import type { TyrantsPlayer } from './TyrantsPlayer.js'
 
@@ -68,10 +68,6 @@ class TyrantsActionManager extends BaseActionManager {
   }
 
   // Action methods will be moved here from tyrants.ts
-}
-
-module.exports = {
-  TyrantsActionManager,
 }
 
 export { TyrantsActionManager }

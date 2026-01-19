@@ -1,5 +1,5 @@
-const { UltimateBaseCard } = require('./UltimateBaseCard.js')
-const util = require('../lib/util.js')
+import { UltimateBaseCard } from './UltimateBaseCard.js'
+import util from '../lib/util.js'
 
 import type { Player } from './UltimateBaseCard.js'
 
@@ -420,10 +420,6 @@ class UltimateAgeCard extends UltimateBaseCard {
 
     return undefined
   }
-}
-
-module.exports = {
-  UltimateAgeCard,
 }
 
 export { UltimateAgeCard }

@@ -1,13 +1,11 @@
-const { TyrantsCard } = require('../../TyrantsCard.js')
-
-const baseExp = require('./base.js')
-const demonsExp = require('./demons.js')
-const dragonsExp = require('./dragons.js')
-const drowExp = require('./drow.js')
-const elementalExp = require('./elementals.js')
-const illithidExp = require('./illithid.js')
-const undeadExp = require('./undead.js')
-
+import { TyrantsCard } from '../../TyrantsCard.js'
+import { cardData as baseCardData } from './base.js'
+import { cardData as demonsCardData } from './demons.js'
+import { cardData as dragonsCardData } from './dragons.js'
+import { cardData as drowCardData } from './drow.js'
+import { cardData as elementalCardData } from './elementals.js'
+import { cardData as illithidCardData } from './illithid.js'
+import { cardData as undeadCardData } from './undead.js'
 import type { CardData } from './base.js'
 import type { TyrantsCard as TyrantsCardType } from '../../TyrantsCard.js'
 
@@ -19,13 +17,13 @@ interface CardFactory {
 }
 
 const baseData: CardData[] = [
-  ...baseExp.cardData,
-  ...demonsExp.cardData,
-  ...dragonsExp.cardData,
-  ...drowExp.cardData,
-  ...elementalExp.cardData,
-  ...illithidExp.cardData,
-  ...undeadExp.cardData,
+  ...baseCardData,
+  ...demonsCardData,
+  ...dragonsCardData,
+  ...drowCardData,
+  ...elementalCardData,
+  ...illithidCardData,
+  ...undeadCardData,
 ]
 
 
@@ -62,8 +60,5 @@ function factory(game: unknown): CardFactory {
   }
 }
 
-module.exports = {
-  factory,
-}
-
-export { factory, CardFactory }
+export { factory }
+export type { CardFactory }

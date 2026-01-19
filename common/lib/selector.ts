@@ -199,3 +199,4 @@ function minMax(selector: Selector): MinMaxResult {
 }
 
 export { minMax, validate, Selector, Choice, ValidateOptions, ValidateResult, MinMaxResult }
+export default { minMax, validate }

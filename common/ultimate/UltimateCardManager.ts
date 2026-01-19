@@ -1,4 +1,4 @@
-const { BaseCardManager } = require('../lib/game/index.js')
+import { BaseCardManager } from '../lib/game/index.js'
 
 import type { UltimatePlayer } from './UltimatePlayer.js'
 
@@ -97,10 +97,6 @@ class UltimateCardManager extends BaseCardManager {
     super.reset()
     this._expansions = {}
   }
-}
-
-module.exports = {
-  UltimateCardManager,
 }
 
 export { UltimateCardManager }

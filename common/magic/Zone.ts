@@ -1,4 +1,4 @@
-const util = require('../lib/util.js')
+import util from '../lib/util.js'
 
 // Forward declarations for types
 interface Game {
@@ -145,7 +145,8 @@ Zone.prototype.sortCardsByName = function(this: Zone): void {
   this._cards.sort((l: Card, r: Card) => l.name().localeCompare(r.name()))
 }
 
-module.exports = {
-  PlayerZone: PlayerZone as unknown as PlayerZoneConstructor,
-  Zone: Zone as unknown as ZoneConstructor,
+export {
+  PlayerZone as PlayerZone,
+  Zone as Zone,
 }
+export type { ZoneConstructor, PlayerZoneConstructor }

@@ -1,4 +1,4 @@
-module.exports = {
+const colors = {
   red: '#f77278',
   orange: '#f77278',
   yellow: '#fcfc6f',
@@ -8,3 +8,5 @@ module.exports = {
   indigo: '#7274f7',
   pink: '#f772f7',
 }
+
+export default colors

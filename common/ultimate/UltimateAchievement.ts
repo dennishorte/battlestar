@@ -1,4 +1,4 @@
-const { UltimateBaseCard } = require('./UltimateBaseCard.js')
+import { UltimateBaseCard } from './UltimateBaseCard.js'
 
 import type { Player, Game } from './UltimateBaseCard.js'
 
@@ -41,10 +41,6 @@ class UltimateAchievement extends UltimateBaseCard {
       ...data
     })
   }
-}
-
-module.exports = {
-  UltimateAchievement,
 }
 
 export { UltimateAchievement }

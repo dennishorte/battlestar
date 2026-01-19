@@ -1,10 +1,10 @@
-const { BaseActionManager } = require('../lib/game/index.js')
+import { BaseActionManager } from '../lib/game/index.js'
 
-const { DogmaAction, EndorseAction } = require('./actions/Dogma.js')
-const { DrawAction } = require('./actions/Draw.js')
-const { MeldAction } = require('./actions/Meld.js')
+import { DogmaAction, EndorseAction } from './actions/Dogma.js'
+import { DrawAction } from './actions/Draw.js'
+import { MeldAction } from './actions/Meld.js'
 
-const util = require('../lib/util.js')
+import util from '../lib/util.js'
 
 import type { UltimatePlayer, BiscuitCounts } from './UltimatePlayer.js'
 import type { DogmaInfo } from './actions/Dogma.js'
@@ -1283,10 +1283,6 @@ class UltimateActionManager extends BaseActionManager {
   }
 
 
-}
-
-module.exports = {
-  UltimateActionManager,
 }
 
 export { UltimateActionManager }

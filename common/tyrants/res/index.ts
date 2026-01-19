@@ -1,5 +1,5 @@
-module.exports = {
-  cards: require('./cards/index.js'),
-  colors: require('./colors.js'),
-  maps: require('./maps.js'),
-}
+import * as cards from './cards/index.js'
+import colors from './colors.js'
+import maps from './maps.js'
+
+export { cards, colors, maps }

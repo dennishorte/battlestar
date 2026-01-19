@@ -1,4 +1,4 @@
-const { BaseZone } = require('../lib/game/index.js')
+import { BaseZone } from '../lib/game/index.js'
 
 import type { UltimatePlayer, BiscuitCounts } from './UltimatePlayer.js'
 
@@ -113,10 +113,6 @@ class UltimateZone extends BaseZone {
     }
 
   }
-}
-
-module.exports = {
-  UltimateZone,
 }
 
 export { UltimateZone }

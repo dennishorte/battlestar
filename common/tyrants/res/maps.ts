@@ -1899,11 +1899,12 @@ const mapData: MapZoneData[] = [
   }
 ]
 
-module.exports = {
+const maps = {
   'base-2': mapData.filter(zone => zone.region === 2),
   'base-3a': mapData.filter(zone => [1, 2].includes(zone.region)),
   'base-3b': mapData.filter(zone => [2, 3].includes(zone.region)),
   'base-4': mapData,
 }
 
-export { MapZoneData }
+export default maps
+export type { MapZoneData }

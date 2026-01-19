@@ -1,4 +1,4 @@
-const CardUtil = require('./cardUtil.js')
+import CardUtil from './cardUtil.js'
 
 describe('CardUtil.extractSymbolsFromText', () => {
   // Basic functionality

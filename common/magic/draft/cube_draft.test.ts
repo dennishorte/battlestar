@@ -1,6 +1,6 @@
 Error.stackTraceLimit = 100
 
-const t = require('./testutil_cube.js')
+import t from './testutil_cube.js'
 
 
 describe('CubeDraft', () => {

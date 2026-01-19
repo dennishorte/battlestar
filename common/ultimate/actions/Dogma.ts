@@ -372,11 +372,5 @@ function getDogmaShareInfo(this: { getBiscuits(): Record<string, BiscuitCounts> 
 }
 
 
-module.exports = {
-  DogmaAction,
-  EndorseAction,
-  getDogmaShareInfo,
-}
-
 export { DogmaAction, EndorseAction, getDogmaShareInfo }
 export type { DogmaOptions, DogmaInfo }

@@ -371,16 +371,12 @@ function extractOriginalData(edits: Edit[] | null | undefined): CardData | null 
   return oldestUpdate ? oldestUpdate.oldData || null : null
 }
 
-module.exports = {
-  calculateCardChanges,
-  calculateChangesFromOriginal,
-  extractOriginalData,
-}
-
 export {
   calculateCardChanges,
   calculateChangesFromOriginal,
   extractOriginalData,
+}
+export type {
   CardData,
   Change,
   ChangeResult,

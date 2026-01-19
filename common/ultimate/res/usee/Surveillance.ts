@@ -1,0 +1,40 @@
+
+export default {
+  name: `Surveillance`,
+  color: `yellow`,
+  age: 9,
+  expansion: `usee`,
+  biscuits: `siih`,
+  dogmaBiscuit: `i`,
+  dogma: [
+    `I demand you reveal your hand! If each color present in my hand is present in yours, and vice versa, and your hand is not empty, I win!`,
+    `Draw a {0}.`
+  ],
+  dogmaImpl: [
+    (game, player, { leader, self }) => {
+      const leaderHand = game.cards.byPlayer(leader, 'hand')
+      const leaderColors = [...new Set(leaderHand.map(card => card.color))]
+
+      const playerHand = game.cards.byPlayer(player, 'hand')
+      const playerColors = [...new Set(playerHand.map(card => card.color))]
+
+      if (playerHand.length === 0) {
+        game.log.addNoEffect()
+        return
+      }
+
+      game.actions.revealMany(player, playerHand, { ordered: true })
+      game.actions.revealMany(player, leaderHand, { ordered: true })
+
+
+      if (leaderColors.every(color => playerColors.includes(color)) &&
+          playerColors.every(color => leaderColors.includes(color))) {
+        game.youWin(leader, self.name)
+      }
+    },
+
+    (game, player, { self }) => {
+      game.actions.draw(player, { age: game.getEffectAge(self, 10) })
+    }
+  ],
+}

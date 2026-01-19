@@ -329,4 +329,4 @@ export default {
   rotatedDirection: (dir: number, r: number) => (dir + r) % 6,
 }
 
-export { Site, HexTile, LayoutEntry }
+export type { Site, HexTile, LayoutEntry }

@@ -1,4 +1,4 @@
-const util = require('../../lib/util.js')
+import util from '../../lib/util.js'
 
 import * as cardDiff from './cardDiff.js'
 import * as cardLookup from './cardLookup.js'
@@ -576,8 +576,7 @@ const CardUtil = {
   parseCardlist,
 }
 
-module.exports = CardUtil
-
+export default CardUtil
 export {
   CardUtil,
   COLORS,
@@ -591,6 +590,8 @@ export {
   segmentText,
   sortManaArray,
   parseCardlist,
+}
+export type {
   RulesTextPart,
   ParsedRulesLine,
   ParsedCard,

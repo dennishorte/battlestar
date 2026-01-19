@@ -1,0 +1,33 @@
+export default {
+  name: `Crossbow`,
+  color: `red`,
+  age: 2,
+  expansion: `echo`,
+  biscuits: `3hkk`,
+  dogmaBiscuit: `k`,
+  echo: [],
+  dogma: [
+    `I demand you transfer an expansion from your hand to my score pile!`,
+    `Transfer a card from your hand to any other player's board.`
+  ],
+  dogmaImpl: [
+    (game, player, { leader }) => {
+      const choices = game
+        .cards.byPlayer(player, 'hand')
+        .filter(card => card.checkIsExpansion())
+      game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'score'))
+    },
+
+    (game, player) => {
+      const otherChoices = game
+        .players.all()
+        .filter(other => other !== player)
+      const other = game.actions.choosePlayer(player, otherChoices)
+      const card = game.actions.chooseCard(player, game.cards.byPlayer(player, 'hand'))
+      if (card) {
+        game.actions.transfer(player, card, game.zones.byPlayer(other, card.color))
+      }
+    },
+  ],
+  echoImpl: [],
+}

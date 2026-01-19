@@ -1,4 +1,4 @@
-const { Serializer } = require('./Serializer.js')
+import { Serializer } from './Serializer.js'
 
 import type { Serializer as SerializerType, SerializerData } from './Serializer.js'
 
@@ -183,6 +183,9 @@ class DeckWrapper {
   }
 }
 
-module.exports = DeckWrapper
+export default DeckWrapper
+export { DeckWrapper, fromGameJSON }
 
-export { DeckWrapper, DeckData, DeckCard, CardsByZone, CardIdsByZone, GameJSON }
+const fromGameJSON = DeckWrapper.fromGameJSON
+
+export type { DeckData, DeckCard, CardsByZone, CardIdsByZone, GameJSON }

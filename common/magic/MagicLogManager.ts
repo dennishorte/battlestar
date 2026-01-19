@@ -1,4 +1,4 @@
-const { BaseLogManager } = require('../lib/game/index.js')
+import { BaseLogManager } from '../lib/game/index.js'
 
 import type { BaseLogManager as BaseLogManagerType } from '../lib/game/index.js'
 
@@ -103,6 +103,5 @@ class MagicLogManager extends BaseLogManager {
 }
 
 
-module.exports = { MagicLogManager }
-
-export { MagicLogManager, LogEntry, LogArg }
+export { MagicLogManager }
+export type { LogEntry, LogArg }

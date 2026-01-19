@@ -1,4 +1,4 @@
-const util = require('../../lib/util.js')
+import util from '../../lib/util.js'
 
 interface Player {
   name: string
@@ -283,10 +283,6 @@ function _statsFirstToMeldOfAge(this: ActionManager, player: Player, card: Card)
     this.game.stats.firstToMeldOfAge.push([card.age, player.name])
     this.game.stats.highestMelded = card.age
   }
-}
-
-module.exports = {
-  MeldAction
 }
 
 export { MeldAction }

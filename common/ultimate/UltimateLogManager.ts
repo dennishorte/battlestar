@@ -1,4 +1,4 @@
-const { BaseLogManager } = require('../lib/game/index.js')
+import { BaseLogManager } from '../lib/game/index.js'
 
 import type { UltimatePlayer } from './UltimatePlayer.js'
 
@@ -142,7 +142,5 @@ class UltimateLogManager extends BaseLogManager {
     }
   }
 }
-
-module.exports = { UltimateLogManager }
 
 export { UltimateLogManager }

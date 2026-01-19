@@ -1,4 +1,4 @@
-const util = require('../../lib/util.js')
+import util from '../../lib/util.js'
 
 interface PackCard {
   id: string
@@ -220,10 +220,5 @@ function makeSetPacks(cards: CardInput[], options: MakePacksOptions): PackCard[]
   return packs
 }
 
-module.exports = {
-  Pack,
-  makeCubePacks,
-  makeSetPacks,
-}
-
-export { Pack, PackCard, Player, MakePacksOptions, makeCubePacks, makeSetPacks }
+export { Pack, makeCubePacks, makeSetPacks }
+export type { PackCard, Player, MakePacksOptions }

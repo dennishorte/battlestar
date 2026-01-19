@@ -103,8 +103,5 @@ const cardData: CardData[] = [
   },
 ]
 
-module.exports = {
-  cardData
-}
-
-export { CardData, cardData }
+export { cardData }
+export type { CardData }

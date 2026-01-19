@@ -456,8 +456,4 @@ const cardData: CardData[] = [
   },
 ]
 
-module.exports = {
-  cardData,
-}
-
 export { cardData }

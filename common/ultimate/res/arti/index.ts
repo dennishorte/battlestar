@@ -1,123 +1,121 @@
 import type { AgeCardData } from '../../UltimateAgeCard.js'
 import type { AchievementData } from '../../UltimateAchievement.js'
 
-const cardData: AgeCardData[] = [
-  require('./HolmegaardBows.js'),
-  require('./PapyrusofAni.js'),
-  require('./PavlovianTusk.js'),
-  require('./DancingGirl.js'),
-  require('./LurganCanoe.js'),
-  require('./XianrendongShards.js'),
-  require('./PriestKing.js'),
-  require('./ElectrumStaterofEfesos.js'),
-  require('./JiskairumokoNecklace.js'),
-  require('./TreatyofKadesh.js'),
-  require('./SibiduNeedle.js'),
-  require('./BasurHoyukTokens.js'),
-  require('./MaskofWarka.js'),
-  require('./ArkoftheCovenant.js'),
-  require('./TaleoftheShipwreckedSailor.js'),
-  require('./ChronicleofZuo.js'),
-  require('./BabylonianChronicles.js'),
-  require('./HolyGrail.js'),
-  require('./TerracottaArmy.js'),
-  require('./HolyLance.js'),
-  require('./BaghdadBattery.js'),
-  require('./SeikilosEpitaph.js'),
-  require('./RosettaStone.js'),
-  require('./DeadSeaScrolls.js'),
-  require('./CyrusCylinder.js'),
-  require('./Excalibur.js'),
-  require('./MjolnirAmulet.js'),
-  require('./MoyloughBeltShrine.js'),
-  require('./AlongtheRiverduringtheQingmingFestival.js'),
-  require('./PhilosophersStone.js'),
-  require('./IfeHead.js'),
-  require('./DunhuangStarChart.js'),
-  require('./YataNoKagami.js'),
-  require('./Necronomicon.js'),
-  require('./ShroudofTurin.js'),
-  require('./EastIndiaCompanyCharter.js'),
-  require('./GalleonNuestraSenoraDeAtocha.js'),
-  require('./Moses.js'),
-  require('./MonaLisa.js'),
-  require('./MolassesReefCaravel.js'),
-  require('./HuntLennoxGlobe.js'),
-  require('./PetitionofRight.js'),
-  require('./DelftPocketTelescope.js'),
-  require('./CrossofCoronado.js'),
-  require('./AbellGalleryHarpsichord.js'),
-  require('./GalleyWhydah.js'),
-  require('./ShipoftheLineSussex.js'),
-  require('./GujinTushuJinsheng.js'),
-  require('./TheDailyCourant.js'),
-  require('./BaroqueLonguelaBelle.js'),
-  require('./HudsonsBayCompanyArchives.js'),
-  require('./BoerhaaveMicroscope.js'),
-  require('./Principia.js'),
-  require('./SandhamRoomCricketBat.js'),
-  require('./AlmiraQueenoftheCastle.js'),
-  require('./FrigateConstitution.js'),
-  require('./USDeclarationofIndependence.js'),
-  require('./QianlongsDragonRobe.js'),
-  require('./PrideandPrejudice.js'),
-  require('./TheWealthofNations.js'),
-  require('./ButtonwoodAgreement.js'),
-  require('./KilogramoftheArchives.js'),
-  require('./PuffingBilly.js'),
-  require('./MoonlightSonata.js'),
-  require('./MarchaReal.js'),
-  require('./SubmarineHLHunley.js'),
-  require('./JedliksElectromagneticSelfRotor.js'),
-  require('./ColtPatersonRevolver.js'),
-  require('./SingerModel27.js'),
-  require('./InternationalPrototypeMetreBar.js'),
-  require('./HansenWritingBall.js'),
-  require('./PeriodicTable.js'),
-  require('./CorvetteChallenger.js'),
-  require('./RoundhayGardenScene.js'),
-  require('./TheCommunistManifesto.js'),
-  require('./BattleshipBismark.js'),
-  require('./BattleshipYamato.js'),
-  require('./PlushBeweglichRodBear.js'),
-  require('./ActionComics1.js'),
-  require('./LinerTitanic.js'),
-  require('./MeijiMuraStampVendingMachine.js'),
-  require('./ParnellPitchDrop.js'),
-  require('./EarhartsLockheedElectra10E.js'),
-  require('./GarlandsRubySlippers.js'),
-  require('./30WorldCupFinalBall.js'),
-  require('./CrusaderRabbit.js'),
-  require('./VelcroShoes.js'),
-  require('./RockAroundtheClock.js'),
-  require('./MagnavoxOdyssey.js'),
-  require('./PhilipsCompactCassette.js'),
-  require('./Syncom3.js'),
-  require('./YeagersBellX1A.js'),
-  require('./Luna3.js'),
-  require('./TheBigBang.js'),
-  require('./MarilynDiptych.js'),
-  require('./TankerExxonValdez.js'),
-  require('./Maldives.js'),
-  require('./DollytheSheep.js'),
-  require('./WheresWaldo.js'),
-  require('./MusksTeslaRoadster.js'),
-  require('./SeikanTunnel.js'),
-  require('./RoverCuriosity.js'),
-  require('./HiggsBoson.js'),
-  require('./DeLoreanDMC12.js'),
-  require('./DragonsLair.js'),
-  require('./16Psyche.js'),
-  require('./GreatBarrierReef.js'),
-  require('./Greenland.js'),
-  require('./JumboKingdom.js'),
-  require('./MartianInternet.js'),
-  require('./OculusQuest.js'),
-  require('./PizzaPacaya.js'),
-  require('./Sanskrit.js'),
-  require('./TasmanianTiger.js'),
-  require('./WhatDoestheFoxSay.js'),
-]
+import HolmegaardBows from './HolmegaardBows.js'
+import PapyrusofAni from './PapyrusofAni.js'
+import PavlovianTusk from './PavlovianTusk.js'
+import DancingGirl from './DancingGirl.js'
+import LurganCanoe from './LurganCanoe.js'
+import XianrendongShards from './XianrendongShards.js'
+import PriestKing from './PriestKing.js'
+import ElectrumStaterofEfesos from './ElectrumStaterofEfesos.js'
+import JiskairumokoNecklace from './JiskairumokoNecklace.js'
+import TreatyofKadesh from './TreatyofKadesh.js'
+import SibiduNeedle from './SibiduNeedle.js'
+import BasurHoyukTokens from './BasurHoyukTokens.js'
+import MaskofWarka from './MaskofWarka.js'
+import ArkoftheCovenant from './ArkoftheCovenant.js'
+import TaleoftheShipwreckedSailor from './TaleoftheShipwreckedSailor.js'
+import ChronicleofZuo from './ChronicleofZuo.js'
+import BabylonianChronicles from './BabylonianChronicles.js'
+import HolyGrail from './HolyGrail.js'
+import TerracottaArmy from './TerracottaArmy.js'
+import HolyLance from './HolyLance.js'
+import BaghdadBattery from './BaghdadBattery.js'
+import SeikilosEpitaph from './SeikilosEpitaph.js'
+import RosettaStone from './RosettaStone.js'
+import DeadSeaScrolls from './DeadSeaScrolls.js'
+import CyrusCylinder from './CyrusCylinder.js'
+import Excalibur from './Excalibur.js'
+import MjolnirAmulet from './MjolnirAmulet.js'
+import MoyloughBeltShrine from './MoyloughBeltShrine.js'
+import AlongtheRiverduringtheQingmingFestival from './AlongtheRiverduringtheQingmingFestival.js'
+import PhilosophersStone from './PhilosophersStone.js'
+import IfeHead from './IfeHead.js'
+import DunhuangStarChart from './DunhuangStarChart.js'
+import YataNoKagami from './YataNoKagami.js'
+import Necronomicon from './Necronomicon.js'
+import ShroudofTurin from './ShroudofTurin.js'
+import EastIndiaCompanyCharter from './EastIndiaCompanyCharter.js'
+import GalleonNuestraSenoraDeAtocha from './GalleonNuestraSenoraDeAtocha.js'
+import Moses from './Moses.js'
+import MonaLisa from './MonaLisa.js'
+import MolassesReefCaravel from './MolassesReefCaravel.js'
+import HuntLennoxGlobe from './HuntLennoxGlobe.js'
+import PetitionofRight from './PetitionofRight.js'
+import DelftPocketTelescope from './DelftPocketTelescope.js'
+import CrossofCoronado from './CrossofCoronado.js'
+import AbellGalleryHarpsichord from './AbellGalleryHarpsichord.js'
+import GalleyWhydah from './GalleyWhydah.js'
+import ShipoftheLineSussex from './ShipoftheLineSussex.js'
+import GujinTushuJinsheng from './GujinTushuJinsheng.js'
+import TheDailyCourant from './TheDailyCourant.js'
+import BaroqueLonguelaBelle from './BaroqueLonguelaBelle.js'
+import HudsonsBayCompanyArchives from './HudsonsBayCompanyArchives.js'
+import BoerhaaveMicroscope from './BoerhaaveMicroscope.js'
+import Principia from './Principia.js'
+import SandhamRoomCricketBat from './SandhamRoomCricketBat.js'
+import AlmiraQueenoftheCastle from './AlmiraQueenoftheCastle.js'
+import FrigateConstitution from './FrigateConstitution.js'
+import USDeclarationofIndependence from './USDeclarationofIndependence.js'
+import QianlongsDragonRobe from './QianlongsDragonRobe.js'
+import PrideandPrejudice from './PrideandPrejudice.js'
+import TheWealthofNations from './TheWealthofNations.js'
+import ButtonwoodAgreement from './ButtonwoodAgreement.js'
+import KilogramoftheArchives from './KilogramoftheArchives.js'
+import PuffingBilly from './PuffingBilly.js'
+import MoonlightSonata from './MoonlightSonata.js'
+import MarchaReal from './MarchaReal.js'
+import SubmarineHLHunley from './SubmarineHLHunley.js'
+import JedliksElectromagneticSelfRotor from './JedliksElectromagneticSelfRotor.js'
+import ColtPatersonRevolver from './ColtPatersonRevolver.js'
+import SingerModel27 from './SingerModel27.js'
+import InternationalPrototypeMetreBar from './InternationalPrototypeMetreBar.js'
+import HansenWritingBall from './HansenWritingBall.js'
+import PeriodicTable from './PeriodicTable.js'
+import CorvetteChallenger from './CorvetteChallenger.js'
+import RoundhayGardenScene from './RoundhayGardenScene.js'
+import TheCommunistManifesto from './TheCommunistManifesto.js'
+import BattleshipBismark from './BattleshipBismark.js'
+import BattleshipYamato from './BattleshipYamato.js'
+import PlushBeweglichRodBear from './PlushBeweglichRodBear.js'
+import ActionComics1 from './ActionComics1.js'
+import LinerTitanic from './LinerTitanic.js'
+import MeijiMuraStampVendingMachine from './MeijiMuraStampVendingMachine.js'
+import ParnellPitchDrop from './ParnellPitchDrop.js'
+import EarhartsLockheedElectra10E from './EarhartsLockheedElectra10E.js'
+import GarlandsRubySlippers from './GarlandsRubySlippers.js'
+import WorldCupFinalBall30 from './30WorldCupFinalBall.js'
+import CrusaderRabbit from './CrusaderRabbit.js'
+import VelcroShoes from './VelcroShoes.js'
+import RockAroundtheClock from './RockAroundtheClock.js'
+import MagnavoxOdyssey from './MagnavoxOdyssey.js'
+import PhilipsCompactCassette from './PhilipsCompactCassette.js'
+import Syncom3 from './Syncom3.js'
+import YeagersBellX1A from './YeagersBellX1A.js'
+import Luna3 from './Luna3.js'
+import TheBigBang from './TheBigBang.js'
+import MarilynDiptych from './MarilynDiptych.js'
+import TankerExxonValdez from './TankerExxonValdez.js'
+import Maldives from './Maldives.js'
+import DollytheSheep from './DollytheSheep.js'
+import WheresWaldo from './WheresWaldo.js'
+import MusksTeslaRoadster from './MusksTeslaRoadster.js'
+import SeikanTunnel from './SeikanTunnel.js'
+import RoverCuriosity from './RoverCuriosity.js'
+import HiggsBoson from './HiggsBoson.js'
+import DeLoreanDMC12 from './DeLoreanDMC12.js'
+import DragonsLair from './DragonsLair.js'
+import Psyche16 from './16Psyche.js'
+import GreatBarrierReef from './GreatBarrierReef.js'
+import Greenland from './Greenland.js'
+import JumboKingdom from './JumboKingdom.js'
+import MartianInternet from './MartianInternet.js'
+import OculusQuest from './OculusQuest.js'
+import PizzaPacaya from './PizzaPacaya.js'
+import Sanskrit from './Sanskrit.js'
+import TasmanianTiger from './TasmanianTiger.js'
+import WhatDoestheFoxSay from './WhatDoestheFoxSay.js'
 
 interface MuseumData {
   name: string
@@ -141,6 +139,124 @@ function MuseumFactory(index: number): MuseumData {
   }
 }
 
+const cardData: AgeCardData[] = [
+  HolmegaardBows,
+  PapyrusofAni,
+  PavlovianTusk,
+  DancingGirl,
+  LurganCanoe,
+  XianrendongShards,
+  PriestKing,
+  ElectrumStaterofEfesos,
+  JiskairumokoNecklace,
+  TreatyofKadesh,
+  SibiduNeedle,
+  BasurHoyukTokens,
+  MaskofWarka,
+  ArkoftheCovenant,
+  TaleoftheShipwreckedSailor,
+  ChronicleofZuo,
+  BabylonianChronicles,
+  HolyGrail,
+  TerracottaArmy,
+  HolyLance,
+  BaghdadBattery,
+  SeikilosEpitaph,
+  RosettaStone,
+  DeadSeaScrolls,
+  CyrusCylinder,
+  Excalibur,
+  MjolnirAmulet,
+  MoyloughBeltShrine,
+  AlongtheRiverduringtheQingmingFestival,
+  PhilosophersStone,
+  IfeHead,
+  DunhuangStarChart,
+  YataNoKagami,
+  Necronomicon,
+  ShroudofTurin,
+  EastIndiaCompanyCharter,
+  GalleonNuestraSenoraDeAtocha,
+  Moses,
+  MonaLisa,
+  MolassesReefCaravel,
+  HuntLennoxGlobe,
+  PetitionofRight,
+  DelftPocketTelescope,
+  CrossofCoronado,
+  AbellGalleryHarpsichord,
+  GalleyWhydah,
+  ShipoftheLineSussex,
+  GujinTushuJinsheng,
+  TheDailyCourant,
+  BaroqueLonguelaBelle,
+  HudsonsBayCompanyArchives,
+  BoerhaaveMicroscope,
+  Principia,
+  SandhamRoomCricketBat,
+  AlmiraQueenoftheCastle,
+  FrigateConstitution,
+  USDeclarationofIndependence,
+  QianlongsDragonRobe,
+  PrideandPrejudice,
+  TheWealthofNations,
+  ButtonwoodAgreement,
+  KilogramoftheArchives,
+  PuffingBilly,
+  MoonlightSonata,
+  MarchaReal,
+  SubmarineHLHunley,
+  JedliksElectromagneticSelfRotor,
+  ColtPatersonRevolver,
+  SingerModel27,
+  InternationalPrototypeMetreBar,
+  HansenWritingBall,
+  PeriodicTable,
+  CorvetteChallenger,
+  RoundhayGardenScene,
+  TheCommunistManifesto,
+  BattleshipBismark,
+  BattleshipYamato,
+  PlushBeweglichRodBear,
+  ActionComics1,
+  LinerTitanic,
+  MeijiMuraStampVendingMachine,
+  ParnellPitchDrop,
+  EarhartsLockheedElectra10E,
+  GarlandsRubySlippers,
+  WorldCupFinalBall30,
+  CrusaderRabbit,
+  VelcroShoes,
+  RockAroundtheClock,
+  MagnavoxOdyssey,
+  PhilipsCompactCassette,
+  Syncom3,
+  YeagersBellX1A,
+  Luna3,
+  TheBigBang,
+  MarilynDiptych,
+  TankerExxonValdez,
+  Maldives,
+  DollytheSheep,
+  WheresWaldo,
+  MusksTeslaRoadster,
+  SeikanTunnel,
+  RoverCuriosity,
+  HiggsBoson,
+  DeLoreanDMC12,
+  DragonsLair,
+  Psyche16,
+  GreatBarrierReef,
+  Greenland,
+  JumboKingdom,
+  MartianInternet,
+  OculusQuest,
+  PizzaPacaya,
+  Sanskrit,
+  TasmanianTiger,
+  WhatDoestheFoxSay,
+]
+
 const achievementData: (AchievementData | MuseumData)[] = [
   MuseumFactory(1),
   MuseumFactory(2),
@@ -149,9 +265,6 @@ const achievementData: (AchievementData | MuseumData)[] = [
   MuseumFactory(5),
 ]
 
-module.exports = {
-  cardData,
-  achievementData,
-}
-
 export { cardData, achievementData }
+
+export default { cardData, achievementData }

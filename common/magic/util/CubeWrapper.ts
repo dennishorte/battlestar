@@ -1,5 +1,5 @@
-const { Serializer } = require('./Serializer.js')
-const util = require('../../lib/util.js')
+import { Serializer } from './Serializer.js'
+import util from '../../lib/util.js'
 
 import type { Serializer as SerializerType, SerializerData } from './Serializer.js'
 import type { CardFilter } from './CardFilter.js'
@@ -241,6 +241,6 @@ function _nextScarIndex(scars: Scar[]): number {
   return Math.max(...indices) + 1
 }
 
-module.exports = CubeWrapper
-
-export { CubeWrapper, CubeData, CubeCard, Achievement, Scar, CubeFlags, CubeTimestamps }
+export default CubeWrapper
+export { CubeWrapper }
+export type { CubeData, CubeCard, Achievement, Scar, CubeFlags, CubeTimestamps }

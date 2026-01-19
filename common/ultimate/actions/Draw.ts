@@ -276,9 +276,5 @@ function _getAgeForDrawAction(this: ActionManager, player: Player, isAction?: bo
 
 
 
-module.exports = {
-  DrawAction,
-}
-
 export { DrawAction }
 export type { DrawOptions }

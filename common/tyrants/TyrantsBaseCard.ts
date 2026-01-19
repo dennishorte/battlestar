@@ -1,6 +1,4 @@
-const { BaseCard } = require('../lib/game/BaseCard.js')
-
-import type { BaseCard as BaseCardType } from '../lib/game/BaseCard.js'
+import { BaseCard } from '../lib/game/BaseCard.js'
 
 interface ControlMarker {
   locName: string
@@ -53,8 +51,5 @@ class TyrantsBaseCard extends BaseCard {
   }
 }
 
-module.exports = {
-  TyrantsBaseCard,
-}
-
-export { TyrantsBaseCard, ControlMarker, Player, TyrantsGame }
+export { TyrantsBaseCard }
+export type { ControlMarker, Player, TyrantsGame }

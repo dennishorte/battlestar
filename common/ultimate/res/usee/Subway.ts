@@ -1,0 +1,26 @@
+export default {
+  name: `Subway`,
+  color: `yellow`,
+  age: 7,
+  expansion: `usee`,
+  biscuits: `liih`,
+  dogmaBiscuit: `i`,
+  dogma: [
+    `Draw and tuck a {7}. If you have at least seven visible cards on your board of the color of the tucked card, draw a {9}. Otherwise, junk all cards on your board of that color, and draw an {8}.`
+  ],
+  dogmaImpl: [
+    (game, player, { self }) => {
+      const card = game.actions.drawAndTuck(player, game.getEffectAge(self, 7))
+
+      const visibleCards = game.zones.byPlayer(player, card.color).numVisibleCards()
+
+      if (visibleCards >= 7) {
+        game.actions.draw(player, { age: game.getEffectAge(self, 9) })
+      }
+      else {
+        game.actions.junkMany(player, game.cards.byPlayer(player, card.color), { ordered: true })
+        game.actions.draw(player, { age: game.getEffectAge(self, 8) })
+      }
+    },
+  ],
+}

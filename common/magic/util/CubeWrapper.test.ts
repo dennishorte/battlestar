@@ -1,4 +1,4 @@
-const CubeWrapper = require('./CubeWrapper.js')
+import CubeWrapper from './CubeWrapper.js'
 
 describe('CubeWrapper', () => {
   describe('card management', () => {

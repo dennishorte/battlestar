@@ -118,14 +118,11 @@ export default defineConfig([
       "vitest/no-standalone-expect": "off",
     },
   },
-  // Temporary: Allow CommonJS in files not yet converted to ESM
+  // Allow CommonJS in dev scripts and agricola (not yet converted)
   {
     files: [
-      "main.js",
-      "magic/**/*.js",
-      "tyrants/**/*.js",
-      "ultimate/**/*.js",
       "**/dev/**/*.js",
+      "agricola/**/*.js",
     ],
     languageOptions: {
       globals: {

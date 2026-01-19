@@ -192,6 +192,6 @@ const colorNameToSymbol: Record<string, string> = {
   green: 'g',
 }
 
-module.exports = CardFilter
-
-export { CardFilter, CardFilterOptions, FilterableCard }
+export default CardFilter
+export { CardFilter }
+export type { CardFilterOptions, FilterableCard }

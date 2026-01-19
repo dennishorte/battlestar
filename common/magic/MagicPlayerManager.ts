@@ -1,4 +1,4 @@
-const { BasePlayerManager } = require('../lib/game/index.js')
+import { BasePlayerManager } from '../lib/game/index.js'
 
 import type { BasePlayerManager as BasePlayerManagerType } from '../lib/game/index.js'
 
@@ -15,7 +15,5 @@ class MagicPlayerManager extends BasePlayerManager {
     return this.byZone(card.zone)
   }
 }
-
-module.exports = { MagicPlayerManager }
 
 export { MagicPlayerManager }
