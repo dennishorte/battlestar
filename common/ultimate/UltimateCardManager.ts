@@ -1,4 +1,5 @@
 import { BaseCardManager } from '../lib/game/index.js'
+import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 import type { UltimatePlayer } from './UltimatePlayer.js'
 
@@ -33,19 +34,17 @@ interface PlayerManager {
   all(): UltimatePlayer[]
 }
 
-interface Game {
+interface Game extends BaseGame {
   zones: ZoneManager
 }
 
-class UltimateCardManager extends BaseCardManager {
+class UltimateCardManager extends BaseCardManager<Game> {
   _expansions!: Record<string, ExpansionData>
-  game!: Game
-  zones!: ZoneManager
-  players!: PlayerManager
-  util!: UltimateUtils
+  declare players: PlayerManager
+  declare util: UltimateUtils
 
-  constructor(...args: unknown[]) {
-    super(...args)
+  constructor(game: Game) {
+    super(game)
   }
 
   registerExpansion(exp: string, data: ExpansionData): void {

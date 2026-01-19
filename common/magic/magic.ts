@@ -140,11 +140,10 @@ interface LobbyData {
   }
 }
 
-interface SerializedMagic {
+interface SerializedMagic extends SerializedGame {
   waiting?: unknown
   gameOver?: boolean
   gameOverData?: unknown
-  [key: string]: unknown
 }
 
 class Magic extends Game {

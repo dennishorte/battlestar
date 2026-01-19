@@ -28,21 +28,25 @@ interface BeforeMoveResult {
   [key: string]: unknown
 }
 
-class BaseCard {
-  game: Game
+class BaseCard<
+  TGame extends Game = Game,
+  TZone extends BaseZone = BaseZone,
+  TOwner extends BasePlayer = BasePlayer
+> {
+  game: TGame
   data: CardData
 
   id: string | null
-  owner: BasePlayer | null
+  owner: TOwner | null
 
-  home: BaseZone | null   // Home location (where it returns to)
-  zone: BaseZone | null   // Current location
+  home: TZone | null   // Home location (where it returns to)
+  zone: TZone | null   // Current location
   visibility: BasePlayer[]
 
   // Proxied properties from game
   declare players: BasePlayerManager
 
-  constructor(game: Game, data: CardData) {
+  constructor(game: TGame, data: CardData) {
     this.game = game
     this.data = data
 
@@ -137,12 +141,12 @@ class BaseCard {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _afterMoveTo(newZone: BaseZone, newIndex: number | null, oldZone: BaseZone, oldIndex: number, beforeCache?: BeforeMoveResult): void {
+  _afterMoveTo(newZone: TZone, newIndex: number | null, oldZone: TZone, oldIndex: number, beforeCache?: BeforeMoveResult): void {
     // To be overridden by child classes
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _beforeMoveTo(newZone: BaseZone, newIndex: number | null, oldZone: BaseZone, oldIndex: number): BeforeMoveResult | void {
+  _beforeMoveTo(newZone: TZone, newIndex: number | null, oldZone: TZone, oldIndex: number): BeforeMoveResult | void {
     // To be overridden by child classes
   }
 }

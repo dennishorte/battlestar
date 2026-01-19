@@ -42,8 +42,8 @@ class PlayerList extends Array<BasePlayerInterface> {
 }
 
 
-class BasePlayerManager {
-  game: Game
+class BasePlayerManager<TGame extends Game = Game> {
+  game: TGame
   protected _users: PlayerData[]
   protected _players: BasePlayerInterface[]
   protected _currentPlayer: BasePlayerInterface | null
@@ -52,7 +52,7 @@ class BasePlayerManager {
   // Proxied property from game
   declare log: LogManager
 
-  constructor(game: Game, users: PlayerData[], opts: PlayerManagerOptions = {}) {
+  constructor(game: TGame, users: PlayerData[], opts: PlayerManagerOptions = {}) {
     this.game = game
     this._users = [...users]
 

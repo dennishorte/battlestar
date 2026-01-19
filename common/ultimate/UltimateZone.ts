@@ -1,4 +1,5 @@
-import { BaseZone } from '../lib/game/index.js'
+import { BaseZone, ZONE_KIND, ZoneKind } from '../lib/game/index.js'
+import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 import type { UltimatePlayer, BiscuitCounts } from './UltimatePlayer.js'
 
@@ -18,7 +19,7 @@ interface KarmaInfo {
   }
 }
 
-interface Game {
+interface Game extends BaseGame {
   util: UltimateUtils
   getInfoByKarmaTrigger(player: UltimatePlayer, trigger: string): KarmaInfo[]
 }
@@ -27,15 +28,13 @@ interface Players {
   byZone(zone: UltimateZone): UltimatePlayer | null
 }
 
-class UltimateZone extends BaseZone {
+class UltimateZone extends BaseZone<Game, Card, UltimatePlayer> {
   color: string | undefined
   splay: string | undefined
-  game!: Game
-  players!: Players
-  _cards!: Card[]
-  util!: UltimateUtils
+  declare players: Players
+  declare util: UltimateUtils
 
-  constructor(game: Game, id: string, name: string, kind: string, owner: UltimatePlayer | null = null) {
+  constructor(game: Game, id: string, name: string, kind: ZoneKind, owner: UltimatePlayer | null = null) {
     super(game, id, name, kind, owner)
 
     this.color = undefined

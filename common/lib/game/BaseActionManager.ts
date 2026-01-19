@@ -43,13 +43,13 @@ interface NestedSelection {
   selection: unknown[]
 }
 
-class BaseActionManager {
-  game: Game
+class BaseActionManager<TGame extends Game = Game> {
+  game: TGame
 
   // Proxied property from game
   declare log: LogManager
 
-  constructor(game: Game) {
+  constructor(game: TGame) {
     this.game = game
     return GameProxy.create(this)
   }
@@ -124,18 +124,20 @@ class BaseActionManager {
     }
   }
 
-  chooseCard(player: BasePlayer, choices: BaseCard[], opts: ChooseOptions = {}): BaseCard | undefined {
+  chooseCard(player: BasePlayer, choices: unknown[], opts: ChooseOptions = {}): BaseCard | undefined {
     return this.chooseCards(player, choices, opts)[0]
   }
 
-  chooseCards(player: BasePlayer, choices: BaseCard[], opts: ChooseOptions = {}): BaseCard[] {
+  chooseCards(player: BasePlayer, choices: unknown[], opts: ChooseOptions = {}): BaseCard[] {
     while (true) {
-      const choiceNames = choices.map(c => (c as any).name).sort()
+      // Filter out strings and only use card objects for base implementation
+      const cards = choices.filter((c): c is BaseCard => typeof c !== 'string' && c !== null && typeof c === 'object')
+      const choiceNames = cards.map(c => (c as BaseCard & { name?: string | (() => string) }).name).sort()
       const selection = this.choose(player, choiceNames, opts) as string[]
       const used: BaseCard[] = []
 
       const selectedCards = selection.map(s => {
-        const card = choices.find(c => (c as any).name === s && !used.some(u => u.id === c.id))!
+        const card = cards.find(c => (c as BaseCard & { name?: string | (() => string) }).name === s && !used.some(u => u.id === c.id))!
         used.push(card)
         return card
       })

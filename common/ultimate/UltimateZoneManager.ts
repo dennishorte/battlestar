@@ -1,4 +1,5 @@
 import { BaseZoneManager } from '../lib/game/index.js'
+import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 import type { UltimatePlayer, BiscuitCounts } from './UltimatePlayer.js'
 
@@ -11,12 +12,11 @@ interface Zone {
   biscuits(): BiscuitCounts
 }
 
-interface Game {
+interface Game extends BaseGame {
   util: UltimateUtils
 }
 
-class UltimateZoneManager extends BaseZoneManager {
-  game!: Game
+class UltimateZoneManager extends BaseZoneManager<Game> {
 
   byDeck(exp: string, age: number): Zone {
     const id = `decks.${exp}.${age}`

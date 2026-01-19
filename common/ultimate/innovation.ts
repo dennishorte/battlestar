@@ -254,7 +254,7 @@ interface ScoreDetails {
 }
 
 class Innovation extends Game<InnovationState, InnovationSettings> {
-  util!: UltimateUtilsInterface
+  declare util: UltimateUtilsInterface
   stats!: GameStats
   getDogmaShareInfo!: (player: UltimatePlayer, card: Card) => { sharing: UltimatePlayer[]; demanding: UltimatePlayer[] }
 
@@ -267,7 +267,7 @@ class Innovation extends Game<InnovationState, InnovationSettings> {
       ZoneManager: UltimateZoneManager,
     })
 
-    this.util = new UltimateUtils(this)
+    this.util = new UltimateUtils(this) as unknown as UltimateUtilsInterface
 
     // Used in the UI for showing who will share/demand with an action
     this.getDogmaShareInfo = getDogmaShareInfo.bind(this.actions)
@@ -279,14 +279,16 @@ class Innovation extends Game<InnovationState, InnovationSettings> {
     this.mainLoop()
   }
 
-  _gameOver(event: { data: { player: UltimatePlayer } }): unknown {
-    // Check for 'would-win' karmas.
+  override _gameOver(event: { data: GameOverData }): { data: GameOverData } {
+    // Check for 'would-win' karmas (like Jackie Chan).
+    // The karma can change who wins the game.
     this.state.wouldWinKarma = true
-    const result = this.aKarma(event.data.player, 'would-win', { event })
+    const result = this.aKarma(event.data.player as UltimatePlayer, 'would-win', { event })
     this.state.wouldWinKarma = false
 
-    if (result) {
-      return result
+    if (result && typeof result === 'object' && 'data' in result) {
+      // Karma changed the outcome - return the new result
+      return result as { data: GameOverData }
     }
 
     return event

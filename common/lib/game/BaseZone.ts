@@ -27,17 +27,21 @@ interface BasePlayer {
   name: string
 }
 
-class BaseZone {
+class BaseZone<
+  TGame extends Game = Game,
+  TCard extends BaseCard = BaseCard,
+  TOwner extends BasePlayer = BasePlayer
+> {
   id: string
-  game: Game
+  game: TGame
 
-  private _name: string
-  private _kind: ZoneKind
-  private _owner: BasePlayer | null
-  private _cards: BaseCard[]
+  protected _name: string
+  protected _kind: ZoneKind
+  protected _owner: TOwner | null
+  protected _cards: TCard[]
   private _initialized: boolean
 
-  constructor(game: Game, id: string, name: string, kind: ZoneKind, owner: BasePlayer | null = null) {
+  constructor(game: TGame, id: string, name: string, kind: ZoneKind, owner: TOwner | null = null) {
     this.id = id
     this.game = game
 
@@ -52,7 +56,7 @@ class BaseZone {
     return proxy
   }
 
-  cardlist(): BaseCard[] {
+  cardlist(): TCard[] {
     return [...this._cards]
   }
 
@@ -64,7 +68,7 @@ class BaseZone {
     return this._name
   }
 
-  owner(): BasePlayer | null {
+  owner(): TOwner | null {
     return this._owner
   }
 
@@ -104,7 +108,7 @@ class BaseZone {
     card.setZone(this)
   }
 
-  peek(index: number = 0): BaseCard | undefined {
+  peek(index: number = 0): TCard | undefined {
     return this._cards.at(index)
   }
 
@@ -123,7 +127,7 @@ class BaseZone {
     return this._cards.length
   }
 
-  random(): BaseCard {
+  random(): TCard {
     return util.array.select(this._cards, this.game.random)
   }
 
@@ -222,7 +226,7 @@ class BaseZone {
 
   ////////////////////////////////////////////////////////////////////////////////
   // Protected
-  _updateCardVisibility(card: BaseCard): void {
+  _updateCardVisibility(card: TCard): void {
     switch (this._kind) {
       case ZONE_KIND.public:
         card.reveal()

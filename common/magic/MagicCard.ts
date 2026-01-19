@@ -1,4 +1,5 @@
-import { BaseCard } from '../lib/game/index.js'
+import { BaseCard, BeforeMoveResult } from '../lib/game/index.js'
+import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 import { Serializer } from './util/Serializer.js'
 import CardFilter from './util/CardFilter.js'
 import * as cardUtil from './util/cardUtil.js'
@@ -8,7 +9,7 @@ import type { BaseCard as BaseCardType } from '../lib/game/index.js'
 import type { Serializer as SerializerType, SerializerData } from './util/Serializer.js'
 import type { CardFilterOptions } from './util/CardFilter.js'
 
-interface MagicGame {
+interface MagicGame extends BaseGame {
   mAdjustCardVisibility(card: MagicCard): void
   mMaybeClearAnnotations(card: MagicCard): void
   mMaybeClearCounters(card: MagicCard): void
@@ -135,21 +136,16 @@ class GameData extends Serializer {
 }
 
 
-class MagicCard extends BaseCard {
+interface MagicOwner {
+  name: string
+}
+
+class MagicCard extends BaseCard<MagicGame, MagicZone, MagicOwner> {
   sourceId: string
   serializer: SerializerType
   gameData: GameData
-  game!: MagicGame
-  zone!: MagicZone
-  visibility!: { name: string }[]
+  declare visibility: { name: string }[]
   activeFace!: string
-
-  // Inherited from BaseCard
-  reveal!: () => void
-  hide!: () => void
-  show!: (player: unknown) => void
-  visible!: (player: unknown) => boolean
-  moveTo!: (zone: unknown, index?: number) => void
 
   // Injected by serializer
   _id!: string
@@ -158,8 +154,8 @@ class MagicCard extends BaseCard {
   changes?: ChangeData[]
 
   // Injected by gameData
-  id!: string | null
-  owner!: string | null | undefined
+  declare id: string | null
+  declare owner: MagicOwner | null
   activeFaceIndex!: number
   annotation!: string
   annotationEOT!: string
@@ -569,7 +565,7 @@ class MagicCard extends BaseCard {
   ////////////////////////////////////////////////////////////////////////////////
   // Base Card Extensions
 
-  _afterMoveTo(zone: MagicZone, _unused1: unknown, prevZone: MagicZone): void {
+  override _afterMoveTo(zone: MagicZone, _newIndex: number | null, prevZone: MagicZone, _oldIndex: number, _beforeCache?: BeforeMoveResult): void {
     this.game.mAdjustCardVisibility(this)
     this.game.mMaybeClearAnnotations(this)
     this.game.mMaybeClearCounters(this)

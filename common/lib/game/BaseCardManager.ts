@@ -19,14 +19,14 @@ interface BaseZoneManager {
   byId(zoneId: string): BaseZone
 }
 
-class BaseCardManager {
-  game: Game
+class BaseCardManager<TGame extends Game = Game> {
+  game: TGame
   protected _cards: Record<string, BaseCard>
 
   // Proxied property from game
   declare zones: BaseZoneManager
 
-  constructor(game: Game) {
+  constructor(game: TGame) {
     this.game = game
     this._cards = {}
     this.reset()

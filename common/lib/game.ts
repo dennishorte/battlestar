@@ -130,7 +130,7 @@ class Game<
   cards: InstanceType<typeof BaseCardManager>
   players: InstanceType<typeof BasePlayerManager>
   zones: InstanceType<typeof BaseZoneManager>
-  util: typeof util = util;
+  util: typeof util | unknown = util;
   [key: string]: unknown
 
   constructor(serialized_data: SerializedGame, viewerName?: string, opts: GameOptions = {}) {

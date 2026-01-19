@@ -65,15 +65,15 @@ class Response {
 
 type MergedEntry = Chat | LogEntry | Response
 
-class BaseLogManager {
-  protected _game: Game
+class BaseLogManager<TGame extends Game = Game> {
+  protected _game: TGame
   protected _chat: Chat[]
   protected _log: (LogEntry | Response)[]
   protected _indent: number
   protected _viewerName: string | undefined
   protected _logArgHandlers: Map<string, LogArgHandler>
 
-  constructor(game: Game, chat?: Chat[], viewerName?: string) {
+  constructor(game: TGame, chat?: Chat[], viewerName?: string) {
     this._game = game
     this._chat = chat || []
     this._log = []

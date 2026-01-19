@@ -18,12 +18,12 @@ interface BaseZoneInterface {
 
 type ZoneConstructor = new (game: Game, id: string, name: string, kind: ZoneKind, owner?: BasePlayer | null) => BaseZoneInterface
 
-class BaseZoneManager {
-  game: Game
+class BaseZoneManager<TGame extends Game = Game> {
+  game: TGame
   protected _zoneConstructor: ZoneConstructor
   protected _zones: Record<string, BaseZoneInterface>
 
-  constructor(game: Game) {
+  constructor(game: TGame) {
     this._zoneConstructor = BaseZone
     this.game = game
     this._zones = {}

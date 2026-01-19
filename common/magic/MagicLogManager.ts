@@ -1,6 +1,5 @@
 import { BaseLogManager } from '../lib/game/index.js'
-
-import type { BaseLogManager as BaseLogManagerType } from '../lib/game/index.js'
+import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 interface Player {
   name: string
@@ -32,12 +31,11 @@ interface LogArg {
   classes?: string[]
 }
 
-interface MagicLogGame {
+interface MagicLogGame extends BaseGame {
   viewerName: string
 }
 
-class MagicLogManager extends BaseLogManager {
-  _game!: MagicLogGame
+class MagicLogManager extends BaseLogManager<MagicLogGame> {
 
   addStackPush(player: Player, card: Card): void {
     this.add({

@@ -1,6 +1,5 @@
 import { BaseZone, ZONE_KIND } from '../lib/game/index.js'
-
-import type { BaseZone as BaseZoneType } from '../lib/game/index.js'
+import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 interface MagicZoneCard {
   morph: boolean
@@ -10,10 +9,8 @@ interface MagicZoneCard {
   hide(): void
 }
 
-class MagicZone extends BaseZone {
-  _kind!: string
-
-  _updateCardVisibility(card: MagicZoneCard): void {
+class MagicZone extends BaseZone<BaseGame, MagicZoneCard> {
+  override _updateCardVisibility(card: MagicZoneCard): void {
     if (this._kind === ZONE_KIND.public) {
       if (card.morph || card.secret) {
         card.show(this.owner())

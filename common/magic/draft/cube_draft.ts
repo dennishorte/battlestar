@@ -82,11 +82,10 @@ interface LobbyData {
   packs: unknown[][]
 }
 
-interface SerializedCubeDraft {
+interface SerializedCubeDraft extends SerializedGame {
   waiting?: unknown
   gameOver?: boolean
   gameOverData?: unknown
-  [key: string]: unknown
 }
 
 class CubeDraft extends Game<CubeDraftState, CubeDraftSettings> {

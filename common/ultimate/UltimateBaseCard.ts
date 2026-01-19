@@ -1,4 +1,5 @@
-import { BaseCard } from '../lib/game/index.js'
+import { BaseCard, BeforeMoveResult } from '../lib/game/index.js'
+import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 interface CardData {
   name: string
@@ -15,7 +16,7 @@ interface Player {
   name: string
 }
 
-interface Game {
+interface Game extends BaseGame {
   players: {
     byOwner(card: UltimateBaseCard): Player | null
   }
@@ -25,17 +26,14 @@ interface Zone {
   owner(): Player | null
 }
 
-class UltimateBaseCard extends BaseCard {
-  id!: string
-  name!: string
+class UltimateBaseCard extends BaseCard<Game, Zone, Player> {
+  declare name: string
   expansion?: string
   age?: number
   biscuits?: string
   isMuseum?: boolean
   isSpecialAchievement?: boolean
   isDecree?: boolean
-  owner?: Player | null
-  game!: Game
 
   constructor(game: Game, data: CardData) {
     super(game, data)
@@ -82,12 +80,12 @@ class UltimateBaseCard extends BaseCard {
     }
   }
 
-  _afterMoveTo(newZone: Zone): void {
+  override _afterMoveTo(newZone: Zone, _newIndex: number | null, _oldZone: Zone, _oldIndex: number, _beforeCache?: BeforeMoveResult): void {
     // In Innovation, card ownership is determined entirely by where the card is located.
     this.owner = newZone.owner()
   }
 
-  _beforeMoveTo(newZone: Zone, newIndex: number, prevZone: Zone, prevIndex: number): { preventDefault: boolean } | undefined {
+  override _beforeMoveTo(newZone: Zone, newIndex: number | null, prevZone: Zone, prevIndex: number): BeforeMoveResult | void {
     if (prevZone === newZone && prevIndex === newIndex) {
       return {
         preventDefault: true,

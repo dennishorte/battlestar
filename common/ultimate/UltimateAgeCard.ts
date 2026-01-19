@@ -51,10 +51,10 @@ class UltimateAgeCard extends UltimateBaseCard {
   version!: number
   declare name: string
   color!: string
-  age!: number
+  declare age: number
   visibleAge!: number | null
-  expansion!: string
-  biscuits!: string
+  declare expansion: string
+  declare biscuits: string
   dogmaBiscuit!: string
   echo!: string[]
   karma!: string[]
@@ -62,9 +62,6 @@ class UltimateAgeCard extends UltimateBaseCard {
   dogmaImpl!: Array<(game: unknown, player: Player) => void>
   echoImpl!: Array<(game: unknown, player: Player) => void>
   karmaImpl!: KarmaImpl[]
-  owner!: Player | null
-  zone!: Zone
-  declare game: Game
 
   constructor(game: Game, data: AgeCardData) {
     super(game, data)

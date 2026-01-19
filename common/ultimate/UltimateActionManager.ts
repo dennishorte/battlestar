@@ -1,4 +1,5 @@
 import { BaseActionManager } from '../lib/game/index.js'
+import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 import { DogmaAction, EndorseAction } from './actions/Dogma.js'
 import { DrawAction } from './actions/Draw.js'
@@ -100,7 +101,7 @@ interface GameState {
   didEndorse?: boolean
 }
 
-interface Game {
+interface Game extends BaseGame {
   util: UltimateUtils
   zones: ZoneManager
   cards: CardManager
@@ -175,15 +176,14 @@ interface TransferTarget {
 
 type ActionFunction = (player: UltimatePlayer, card: Card, opts?: Record<string, unknown>) => Card | undefined
 
-class UltimateActionManager extends BaseActionManager {
-  game!: Game
-  state!: GameState
-  zones!: ZoneManager
-  cards!: CardManager
-  players!: PlayerManager
-  log!: Log
-  util!: UltimateUtils
-  actions!: UltimateActionManager
+class UltimateActionManager extends BaseActionManager<Game> {
+  declare state: GameState
+  declare zones: ZoneManager
+  declare cards: CardManager
+  declare players: PlayerManager
+  declare log: Log
+  declare util: UltimateUtils
+  declare actions: UltimateActionManager
 
   constructor(game: Game) {
     super(game)
@@ -502,7 +502,7 @@ class UltimateActionManager extends BaseActionManager {
     return this.util.biscuitNameToIcon(biscuitName)
   }
 
-  chooseCards(player: UltimatePlayer, cards: (Card | string)[], opts: ChooseOptions = {}): Card[] {
+  override chooseCards(player: UltimatePlayer, cards: (Card | string)[], opts: ChooseOptions = {}): Card[] {
     if (cards.length === 0 || opts.count === 0 || opts.max === 0) {
       this.log.addNoEffect()
       return []
@@ -578,7 +578,7 @@ class UltimateActionManager extends BaseActionManager {
     return output
   }
 
-  chooseCard(player: UltimatePlayer, cards: (Card | string)[], opts: ChooseOptions = {}): Card | undefined {
+  override chooseCard(player: UltimatePlayer, cards: (Card | string)[], opts: ChooseOptions = {}): Card | undefined {
     const result = this.chooseCards(player, cards, { min: 1, max: 1, ...opts })
     return result[0]
   }

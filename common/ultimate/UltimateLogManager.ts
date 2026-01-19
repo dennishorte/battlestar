@@ -1,4 +1,5 @@
-import { BaseLogManager } from '../lib/game/index.js'
+import { BaseLogManager, Chat } from '../lib/game/index.js'
+import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 import type { UltimatePlayer } from './UltimatePlayer.js'
 
@@ -17,7 +18,7 @@ interface UltimateUtils {
   biscuitIconToName(icon: string): string
 }
 
-interface Game {
+interface Game extends BaseGame {
   util: UltimateUtils
 }
 
@@ -32,12 +33,11 @@ interface HandlerResult {
   card?: Card
 }
 
-class UltimateLogManager extends BaseLogManager {
-  _viewerName!: string
+class UltimateLogManager extends BaseLogManager<Game> {
+  declare _viewerName: string
   _name!: string
-  _game!: Game
 
-  constructor(game: Game, chat: unknown, viewerName: string) {
+  constructor(game: Game, chat: Chat[] | undefined, viewerName: string) {
     super(game, chat, viewerName)
     this._registerUltimateHandlers()
   }

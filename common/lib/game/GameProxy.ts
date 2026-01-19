@@ -11,8 +11,8 @@ const PROXY_ITEMS = [
 type ProxyItem = typeof PROXY_ITEMS[number]
 
 // Interface for objects that have a game reference
-interface GameHolder {
-  game: Game
+interface GameHolder<TGame extends Game = Game> {
+  game: TGame
 }
 
 // Interface for the Game object that holds the proxied properties
@@ -30,7 +30,7 @@ interface Game {
 }
 
 class GameProxy {
-  static create<T extends GameHolder>(target: T): T {
+  static create<T extends GameHolder<Game>>(target: T): T {
     return new Proxy(target, {
       get(target, prop: string | symbol) {
         if (typeof prop === 'string' && PROXY_ITEMS.includes(prop as ProxyItem)) {

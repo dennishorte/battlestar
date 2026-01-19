@@ -26,8 +26,8 @@ interface CounterOptions {
   silent?: boolean
 }
 
-class BasePlayer {
-  game: Game
+class BasePlayer<TGame extends Game = Game> {
+  game: TGame
 
   _id: string
   id: string
@@ -45,7 +45,7 @@ class BasePlayer {
   declare log: LogManager
   declare players: PlayerManager
 
-  constructor(game: Game, data: PlayerData) {
+  constructor(game: TGame, data: PlayerData) {
     this.game = game
 
     this._id = data._id

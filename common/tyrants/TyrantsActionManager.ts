@@ -1,4 +1,5 @@
 import { BaseActionManager } from '../lib/game/index.js'
+import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 import type { TyrantsPlayer } from './TyrantsPlayer.js'
 
@@ -47,7 +48,7 @@ interface GameState {
   endOfTurnActions: unknown[]
 }
 
-interface Game {
+interface Game extends BaseGame {
   zones: ZoneManager
   cards: CardManager
   players: PlayerManager
@@ -55,13 +56,12 @@ interface Game {
   state: GameState
 }
 
-class TyrantsActionManager extends BaseActionManager {
-  game!: Game
-  zones!: ZoneManager
-  cards!: CardManager
-  players!: PlayerManager
-  log!: Log
-  state!: GameState
+class TyrantsActionManager extends BaseActionManager<Game> {
+  declare zones: ZoneManager
+  declare cards: CardManager
+  declare players: PlayerManager
+  declare log: Log
+  declare state: GameState
 
   constructor(game: Game) {
     super(game)

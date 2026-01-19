@@ -1,4 +1,5 @@
 import { BasePlayer } from '../lib/game/index.js'
+import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 interface BiscuitCounts {
   c: number
@@ -19,7 +20,7 @@ interface UltimateUtils {
   colors(): string[]
 }
 
-interface Game {
+interface Game extends BaseGame {
   zones: {
     colorStacks(player: UltimatePlayer): Zone[]
   }
@@ -33,11 +34,8 @@ interface KarmaInfo {
   impl: unknown
 }
 
-class UltimatePlayer extends BasePlayer {
-  id!: string
-  name!: string
-  game!: Game
-  zones!: {
+class UltimatePlayer extends BasePlayer<Game> {
+  declare zones: {
     byPlayer(player: UltimatePlayer, zone: string): Zone
   }
 

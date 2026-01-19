@@ -1,4 +1,5 @@
 import { BaseCardManager } from '../lib/game/index.js'
+import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 import type { TyrantsPlayer } from './TyrantsPlayer.js'
 
@@ -14,16 +15,13 @@ interface ZoneManager {
   byId(id: string): Zone
 }
 
-interface Game {
+interface Game extends BaseGame {
   zones: ZoneManager
 }
 
-class TyrantsCardManager extends BaseCardManager {
-  game!: Game
-  zones!: ZoneManager
-
-  constructor(...args: unknown[]) {
-    super(...args)
+class TyrantsCardManager extends BaseCardManager<Game> {
+  constructor(game: Game) {
+    super(game)
   }
 }
 
