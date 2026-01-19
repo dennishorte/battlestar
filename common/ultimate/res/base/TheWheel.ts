@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `The Wheel`,
   color: `green`,
@@ -13,5 +15,6 @@ export default {
       game.actions.draw(player, { age: game.getEffectAge(self, 1) })
       game.actions.draw(player, { age: game.getEffectAge(self, 1) })
     }
+
   ],
-}
+} satisfies AgeCardData

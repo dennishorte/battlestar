@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Taki ad-Din`,  // Card names are unique in Innovation
   name: `Taki ad-Din`,
@@ -25,7 +27,8 @@ export default {
         if (card.checkHasBiscuit('s')) {
           game.actions.meld(player, card)
         }
+
       }
     }
   ]
-}
+} satisfies AgeCardData

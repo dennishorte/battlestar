@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Cabal`,
   color: `red`,
@@ -35,5 +37,6 @@ export default {
 
       game.actions.chooseAndSafeguard(player, availableAchievements, { hidden: true })
     }
+
   ],
-}
+} satisfies AgeCardData

@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Dragon's Lair`,
@@ -36,6 +37,7 @@ export default {
                 if (cards.length > 0) {
                   game.actions.junk(player, cards[0])
                 }
+
               }
             }
           }
@@ -54,4 +56,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

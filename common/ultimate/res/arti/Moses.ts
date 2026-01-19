@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Moses`,
   color: `yellow`,
@@ -24,5 +26,6 @@ export default {
         .filter(card => card.checkHasBiscuit('c'))
       game.actions.chooseAndScore(player, choices)
     }
+
   ],
-}
+} satisfies AgeCardData

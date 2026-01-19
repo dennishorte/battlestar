@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Tanning`,
   color: `purple`,
@@ -23,6 +25,7 @@ export default {
       if (transferred) {
         game.actions.meld(player, game.cards.bottom(target, transferred.color))
       }
+
     },
   ],
-}
+} satisfies AgeCardData

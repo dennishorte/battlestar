@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Pride and Prejudice`,
   color: `yellow`,
@@ -27,6 +29,7 @@ export default {
             game.actions.score(player, card)
             continue
           }
+
           else {
             break
           }
@@ -37,4 +40,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

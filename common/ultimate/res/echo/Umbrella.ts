@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Umbrella`,
   color: `green`,
@@ -15,8 +17,9 @@ export default {
       const scoreCount = returned.length * 2
       game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), { count: scoreCount })
     }
+
   ],
   echoImpl: (game, player) => {
     game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1 })
   },
-}
+} satisfies AgeCardData

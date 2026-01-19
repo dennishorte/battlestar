@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Necronomicon`,
   color: `purple`,
@@ -18,6 +20,7 @@ export default {
           game.log.add({
             template: '{player} will return all cards from hand',
             args: { player }
+
           })
           game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
         }
@@ -54,4 +57,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

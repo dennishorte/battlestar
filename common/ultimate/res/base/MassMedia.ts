@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Mass Media`,
   color: `green`,
@@ -17,6 +19,7 @@ export default {
         game.log.add({
           template: '{player} chooses age {age}',
           args: { player, age }
+
         })
         game.log.indent()
         const toReturn = game
@@ -32,4 +35,4 @@ export default {
       game.actions.chooseAndSplay(player, ['purple'], 'up')
     },
   ],
-}
+} satisfies AgeCardData

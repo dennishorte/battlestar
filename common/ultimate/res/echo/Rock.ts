@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 
 export default {
   name: `Rock`,
@@ -21,6 +23,7 @@ export default {
         if (next && next.name === 'Scissors') {
           game.youWin(leader, self.name)
         }
+
       }
     },
 
@@ -34,4 +37,4 @@ export default {
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

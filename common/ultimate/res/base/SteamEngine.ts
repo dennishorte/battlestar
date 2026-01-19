@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Steam Engine`,
   color: `yellow`,
@@ -20,6 +22,7 @@ export default {
       if (card.name === 'Steam Engine') {
         game.actions.junkDeck(player, 6)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

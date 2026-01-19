@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Ruler`,
   color: `blue`,
@@ -23,10 +25,11 @@ export default {
       game.actions.foreshadow(player, foreshadowed)
       game.actions.return(player, cards.filter(x => x.id !== foreshadowed.id)[0])
     }
+
   ],
   echoImpl: [
     (game, player, { self }) => {
       game.actions.draw(player, { age: game.getEffectAge(self, 2) })
     }
   ],
-}
+} satisfies AgeCardData

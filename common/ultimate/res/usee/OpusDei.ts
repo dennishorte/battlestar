@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Opus Dei`,
   color: `purple`,
@@ -19,6 +21,7 @@ export default {
         game.actions.splay(player, card.color, 'up')
         game.actions.safeguard(player, card)
       }
+
     },
     (game, player, { self }) => {
       const splayColors = game.util.colors().filter(color => game.zones.byPlayer(player, color).splay === 'up')
@@ -28,4 +31,4 @@ export default {
       })
     }
   ],
-}
+} satisfies AgeCardData

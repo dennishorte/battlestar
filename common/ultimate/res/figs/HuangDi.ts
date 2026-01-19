@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Huang Di`,  // Card names are unique in Innovation
   name: `Huang Di`,
@@ -23,6 +25,7 @@ export default {
       func: (game, player, { self }) => {
         game.actions.draw(player, { age: game.getEffectAge(self, 2) })
       }
+
     }
   ]
-}
+} satisfies AgeCardData

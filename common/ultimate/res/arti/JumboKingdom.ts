@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Jumbo Kingdom`,
@@ -40,6 +41,7 @@ export default {
             game.log.add({
               template: '{player} scored fewer than 11 points',
               args: { player }
+
             })
             continue
           }
@@ -49,4 +51,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

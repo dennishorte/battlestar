@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Printing Press`,
   color: `blue`,
@@ -26,9 +28,10 @@ export default {
         const drawAge = topPurple ? topPurple.getAge() + 2 : 2
         game.actions.draw(player, { age: drawAge })
       }
+
     },
     (game, player) => {
       game.actions.chooseAndSplay(player, ['blue'], 'right')
     }
   ],
-}
+} satisfies AgeCardData

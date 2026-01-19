@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Scouting`,
   color: `blue`,
@@ -23,6 +25,7 @@ export default {
           game.log.add({
             template: '{player} keeps the card',
             args: { player }
+
           })
         }
         else {
@@ -35,4 +38,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

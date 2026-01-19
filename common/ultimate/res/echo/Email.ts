@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Email`,
   color: `green`,
@@ -22,6 +24,7 @@ export default {
       if (card) {
         game.aCardEffects(player, card, 'dogma')
       }
+
       else {
         game.log.addNoEffect()
       }
@@ -30,4 +33,4 @@ export default {
   echoImpl: (game, player, { self }) => {
     game.actions.drawAndForeshadow(player, game.getEffectAge(self, 10))
   },
-}
+} satisfies AgeCardData

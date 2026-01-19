@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Galley Whydah`,
   color: `red`,
@@ -26,6 +28,7 @@ export default {
           game.cards.byPlayer(leader, colors[0]).reverse(),
           game.zones.byPlayer(leader, 'score'),
           { ordered: true }
+
         )
 
         // Transfer your cards to me
@@ -35,4 +38,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

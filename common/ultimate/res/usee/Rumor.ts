@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Rumor`,
   color: `green`,
@@ -20,6 +22,7 @@ export default {
       if (returned) {
         game.actions.draw(player, { age: returned.age + 1 })
       }
+
     },
 
     (game, player) => {
@@ -32,4 +35,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

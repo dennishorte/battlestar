@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Niccolo Machiavelli`,  // Card names are unique in Innovation
   name: `Niccolo Machiavelli`,
@@ -21,6 +23,7 @@ export default {
             if (game.zones.byPlayer(player, color).splay !== 'right') {
               return false
             }
+
             else {
               return !game.players.other(player).some(other => {
                 return game.zones.byPlayer(other, color).splay === 'right'
@@ -43,4 +46,4 @@ export default {
       }
     },
   ]
-}
+} satisfies AgeCardData

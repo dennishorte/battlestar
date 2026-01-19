@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Area 51`,
   color: `green`,
@@ -24,6 +26,7 @@ export default {
       if (choice === choices[0]) {
         game.actions.draw(player, { age: game.getEffectAge(self, 11) })
       }
+
       else {
         const available = game.getAvailableStandardAchievements(player)
         const achievement = game.actions.chooseCards(player, available, { hidden: true })[0]
@@ -49,4 +52,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

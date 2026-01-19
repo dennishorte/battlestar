@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Pilgrimage`,
   color: `red`,
@@ -37,4 +39,4 @@ export default {
       game.actions.junkDeck(player, 1, { optional: true })
     }
   ],
-}
+} satisfies AgeCardData

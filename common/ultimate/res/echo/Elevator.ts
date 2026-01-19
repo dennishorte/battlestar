@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Elevator`,
@@ -68,4 +69,4 @@ export default {
       }
     }
   },
-}
+} satisfies AgeCardData

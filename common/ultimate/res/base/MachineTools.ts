@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Machine Tools`,
   color: `red`,
@@ -15,5 +17,6 @@ export default {
         .reduce((l, r) => Math.max(l, r.getAge()), 0)
       game.actions.drawAndScore(player, age)
     }
+
   ],
-}
+} satisfies AgeCardData

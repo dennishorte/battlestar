@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Metalworking`,
   color: `red`,
@@ -15,10 +17,11 @@ export default {
         if (card.checkHasBiscuit('k')) {
           game.actions.score(player, card)
         }
+
         else {
           break
         }
       }
     }
   ],
-}
+} satisfies AgeCardData

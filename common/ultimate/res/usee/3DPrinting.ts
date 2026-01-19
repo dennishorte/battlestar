@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `3D Printing`,
   color: `purple`,
@@ -50,4 +52,4 @@ export default {
       repeatEffect() // Start the repeating effect
     },
   ],
-}
+} satisfies AgeCardData

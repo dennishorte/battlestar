@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Cyrus Cylinder`,
   color: `purple`,
@@ -22,6 +24,7 @@ export default {
         const other = game.players.byName(playerName)
         game.actions.splay(player, color, 'left', { owner: other })
       }
+
     },
 
     (game, player, { self }) => {
@@ -37,4 +40,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

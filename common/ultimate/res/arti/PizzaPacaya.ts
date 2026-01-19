@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Pizza Pacaya`,
   color: `red`,
@@ -16,6 +18,7 @@ export default {
       for (const age of game.getAges()) {
         game.actions.drawAndMeld(player, age)
       }
+
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Machinery`,
   color: `yellow`,
@@ -33,6 +35,7 @@ export default {
           count: yours.length,
           player2: player,
         }
+
       })
       game.log.add({
         template: '{player} give back {count} cards to {player2}',
@@ -55,4 +58,4 @@ export default {
       game.actions.chooseAndSplay(player, ['red'], 'left')
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Rowland Hill`,  // Card names are unique in Innovation
   name: `Rowland Hill`,
@@ -21,8 +23,9 @@ export default {
           for (const card of remaining) {
             game.actions.claimAchievement(player, { card })
           }
+
         }
       }
     }
   ]
-}
+} satisfies AgeCardData

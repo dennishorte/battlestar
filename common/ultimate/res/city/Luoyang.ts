@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Luoyang`,
   color: `purple`,
@@ -5,4 +7,4 @@ export default {
   expansion: `city`,
   biscuits: `ssl2|h`,
   dogmaBiscuit: `s`,
-}
+} satisfies AgeCardData

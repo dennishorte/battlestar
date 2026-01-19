@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 
 export default {
   name: `Order of the Occult Hand`,
@@ -20,6 +22,7 @@ export default {
       if (hasAge3) {
         game.aYouLose(player, self)
       }
+
     },
     (game, player, { self }) => {
       const hasAge7 = game
@@ -36,4 +39,4 @@ export default {
       game.actions.splay(player, 'blue', 'up')
     }
   ],
-}
+} satisfies AgeCardData

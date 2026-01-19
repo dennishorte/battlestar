@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Lurgan Canoe`,
   color: `yellow`,
@@ -22,6 +24,7 @@ export default {
             game.log.add({ template: 'Repeat this effect.' })
             continue
           }
+
           else {
             game.log.add({ template: 'No cards were scored.' })
             break
@@ -34,4 +37,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

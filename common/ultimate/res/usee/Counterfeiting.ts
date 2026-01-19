@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Counterfeiting`,
   color: `green`,
@@ -18,6 +20,7 @@ export default {
         if (scored) {
           continue
         }
+
         else {
           break
         }
@@ -29,4 +32,4 @@ export default {
       game.actions.chooseAndSplay(player, colorChoices, splayDirection)
     }
   ],
-}
+} satisfies AgeCardData

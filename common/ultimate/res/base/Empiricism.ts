@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 
 
 export default {
@@ -21,6 +23,7 @@ export default {
           color1: colors[0],
           color2: colors[1],
         }
+
       })
 
       const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 9))
@@ -43,4 +46,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

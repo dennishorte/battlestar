@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Exile`,
   color: `yellow`,
@@ -48,4 +50,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

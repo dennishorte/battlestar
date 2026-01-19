@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Philosophy`,
   color: `purple`,
@@ -21,5 +23,6 @@ export default {
 
       game.actions.chooseAndScore(player, choices, { min: 0, max: 1 })
     }
+
   ],
-}
+} satisfies AgeCardData

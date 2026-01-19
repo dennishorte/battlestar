@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Yi Sun-Sin`,  // Card names are unique in Innovation
   name: `Yi Sun-Sin`,
@@ -30,6 +32,7 @@ export default {
 
         game.actions.chooseAndScore(owner, topCastles)
       }
+
     }
   ]
-}
+} satisfies AgeCardData

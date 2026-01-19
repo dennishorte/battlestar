@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Fission`,
   color: `red`,
@@ -26,6 +28,7 @@ export default {
         game.state.dogmaInfo.earlyTerminate = true
         return
       }
+
       else {
         game.log.add({ template: 'The card was not red.' })
       }
@@ -36,4 +39,4 @@ export default {
       game.actions.draw(player, { age: game.getEffectAge(self, 10) })
     }
   ],
-}
+} satisfies AgeCardData

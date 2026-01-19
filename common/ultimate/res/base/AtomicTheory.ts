@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Atomic Theory`,
   color: `blue`,
@@ -18,4 +20,4 @@ export default {
       game.actions.drawAndMeld(player, game.getEffectAge(self, 7))
     },
   ],
-}
+} satisfies AgeCardData

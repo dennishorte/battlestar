@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Masquerade`,
   color: `purple`,
@@ -27,10 +29,11 @@ export default {
         if (returned.some(card => card.getAge() === game.getEffectAge(self, 4))) {
           game.actions.claimAchievement(player, game.cards.byId('Anonymity'))
         }
+
       }
     },
     (game, player) => {
       game.actions.chooseAndSplay(player, ['purple'], 'left')
     }
   ],
-}
+} satisfies AgeCardData

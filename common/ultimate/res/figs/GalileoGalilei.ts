@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Galileo Galilei`,  // Card names are unique in Innovation
   name: `Galileo Galilei`,
@@ -27,5 +29,6 @@ export default {
         game.actions.junkAvailableAchievement(player, [3, 4, 5])
       },
     }
+
   ]
-}
+} satisfies AgeCardData

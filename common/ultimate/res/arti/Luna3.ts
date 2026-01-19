@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Luna 3`,
   color: `blue`,
@@ -20,4 +22,4 @@ export default {
       game.actions.junkDeck(player, age)
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `'30 World Cup Final Ball`,
   color: `purple`,
@@ -35,6 +37,7 @@ export default {
         ) {
           game.actions.claimAchievement(orderedPlayers[0].player, orderedPlayers[0].card)
         }
+
         else {
           game.log.add({
             template: 'No single player has the highest top card.'
@@ -44,4 +47,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

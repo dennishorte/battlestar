@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Hedy Lamar`,  // Card names are unique in Innovation
   name: `Hedy Lamar`,
@@ -21,6 +23,7 @@ export default {
       func: (game, player) => {
         game.actions.chooseAndSplay(player, game.util.colors(), 'up')
       }
+
     }
   ]
-}
+} satisfies AgeCardData

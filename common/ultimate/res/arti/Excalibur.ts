@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Excalibur`,
   color: `red`,
@@ -19,6 +21,7 @@ export default {
           if (!playerTop) {
             return undefined
           }
+
           else if (!leaderTop) {
             return playerTop
           }
@@ -37,4 +40,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

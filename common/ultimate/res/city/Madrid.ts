@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Madrid`,
   color: `blue`,
@@ -5,4 +7,4 @@ export default {
   expansion: `city`,
   biscuits: `sssc<h`,
   dogmaBiscuit: `s`,
-}
+} satisfies AgeCardData

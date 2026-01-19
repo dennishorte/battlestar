@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   name: 'Confidence',
   shortName: 'conf',
@@ -19,4 +21,4 @@ export default {
 
     return topCardMaxAge >= targetAge && numSecrets >= targetNumSecrets
   },
-}
+} satisfies AgeCardData

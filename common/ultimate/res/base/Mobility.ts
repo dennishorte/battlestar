@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Mobility`,
   color: `red`,
@@ -23,6 +25,7 @@ export default {
         if (cards && cards.length > 0) {
           transferred = true
         }
+
       }
       else if (highest.length === 1) {
         const card = game.actions.transfer(player, highest[0], destination)
@@ -44,4 +47,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

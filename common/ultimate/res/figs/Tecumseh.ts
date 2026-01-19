@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Tecumseh`,  // Card names are unique in Innovation
   name: `Tecumseh`,
@@ -31,6 +33,7 @@ export default {
               choices: cards.map(card => card.id),
               count: 1,
             }
+
           })
           .filter(({ choices }) => choices.length > 0)
 
@@ -46,4 +49,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

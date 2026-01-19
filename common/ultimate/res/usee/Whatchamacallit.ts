@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Whatchamacallit`,
   color: `yellow`,
@@ -22,7 +24,8 @@ export default {
         if (!topCardValues.includes(age) && !scoreCardValues.includes(age)) {
           game.actions.drawAndScore(player, age)
         }
+
       }
     },
   ],
-}
+} satisfies AgeCardData

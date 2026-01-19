@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Physics`,
   color: `blue`,
@@ -20,6 +22,7 @@ export default {
         })
         game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
       }
+
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Joy Buzzer`,
   color: `purple`,
@@ -28,6 +30,7 @@ export default {
       if (topPurple) {
         game.actions.score(player, topPurple)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

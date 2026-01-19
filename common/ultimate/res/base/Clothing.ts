@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Clothing`,
   color: `green`,
@@ -38,6 +40,7 @@ export default {
       if (playerOnlyColors === 0) {
         game.log.addNoEffect()
       }
+
       else {
         for (let i = 0; i < playerOnlyColors; i++) {
           game.actions.drawAndScore(player, game.getEffectAge(self, 1))
@@ -45,4 +48,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

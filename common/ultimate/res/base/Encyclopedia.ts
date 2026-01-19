@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Encyclopedia`,
   color: `blue`,
@@ -34,4 +36,4 @@ export default {
       game.actions.junkAvailableAchievement(player, [5, 6, 7], { min: 0 })
     },
   ],
-}
+} satisfies AgeCardData

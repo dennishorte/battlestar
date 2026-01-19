@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Mathematics`,
   color: `blue`,
@@ -15,6 +17,7 @@ export default {
         const card = cards[0]
         game.actions.drawAndMeld(player, card.getAge() + 1)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

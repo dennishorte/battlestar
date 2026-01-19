@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `City States`,
   color: `purple`,
@@ -22,6 +24,7 @@ export default {
           if (transferred) {
             game.actions.draw(player, { age: game.getEffectAge(self, 1) })
           }
+
           else {
             game.log.add({ template: 'no card was transferred' })
           }
@@ -29,4 +32,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

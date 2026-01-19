@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `X-Ray`,
   color: `blue`,
@@ -36,4 +38,4 @@ export default {
   echoImpl: (game, player, { self }) => {
     game.actions.drawAndTuck(player, game.getEffectAge(self, 8))
   },
-}
+} satisfies AgeCardData

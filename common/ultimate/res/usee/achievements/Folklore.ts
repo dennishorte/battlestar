@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   name: 'Folklore',
   shortName: 'folk',
@@ -17,4 +19,4 @@ export default {
 
     return topCardMaxAge >= targetAge && numFactories <= targetFactories
   },
-}
+} satisfies AgeCardData

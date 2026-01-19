@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Code of Laws`,
   color: `purple`,
@@ -25,6 +27,7 @@ export default {
         const color = tucked[0].color
         game.actions.chooseAndSplay(player, [color], 'left')
       }
+
     }
   ],
-}
+} satisfies AgeCardData

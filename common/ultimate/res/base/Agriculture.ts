@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Agriculture`,
   color: `yellow`,
@@ -17,6 +19,7 @@ export default {
         const card = returned[0]
         game.actions.drawAndScore(player, card.getAge() + 1)
       }
+
     },
   ],
-}
+} satisfies AgeCardData

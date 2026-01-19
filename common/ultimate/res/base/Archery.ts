@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Archery`,
   color: `red`,
@@ -16,9 +18,10 @@ export default {
       if (highest.length > 0) {
         game.actions.transfer(player, highest[0], game.zones.byPlayer(leader, 'hand'))
       }
+
     },
     (game, player) => {
       game.actions.junkAvailableAchievement(player, [1, 2])
     }
   ],
-}
+} satisfies AgeCardData

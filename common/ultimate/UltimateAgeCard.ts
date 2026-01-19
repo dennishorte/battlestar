@@ -2,35 +2,15 @@ import { UltimateBaseCard } from './UltimateBaseCard.js'
 import util from '../lib/util.js'
 
 import type { Player } from './UltimateBaseCard.js'
-
-interface KarmaImpl {
-  trigger: string | string[]
-  kind?: string
-  decree?: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  matches?: (...args: any[]) => boolean
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  func?: (...args: any[]) => unknown
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type DogmaFunction = (game: any, player: any, context?: any) => void
-
-interface AgeCardData {
-  name: string
-  color?: string
-  age?: number
-  visibleAge?: number | null
-  expansion?: string
-  biscuits?: string
-  dogmaBiscuit?: string
-  echo?: string | string[]
-  karma?: string[]
-  dogma?: string[]
-  dogmaImpl?: DogmaFunction[]
-  echoImpl?: DogmaFunction | DogmaFunction[]
-  karmaImpl?: KarmaImpl[]
-}
+import type {
+  AgeCardData,
+  DogmaFunction,
+  KarmaImpl,
+  CardEffectGame,
+  CardEffectPlayer,
+  DogmaContext,
+  KarmaContext,
+} from './types.js'
 
 interface Zone {
   id: string
@@ -431,4 +411,15 @@ class UltimateAgeCard extends UltimateBaseCard {
 }
 
 export { UltimateAgeCard }
-export type { AgeCardData, KarmaImpl, KarmaInfo, VisibleEffectsResult }
+export type { KarmaInfo, VisibleEffectsResult }
+
+// Re-export types from types.ts for use by card files
+export type {
+  AgeCardData,
+  DogmaFunction,
+  KarmaImpl,
+  CardEffectGame,
+  CardEffectPlayer,
+  DogmaContext,
+  KarmaContext,
+} from './types.js'

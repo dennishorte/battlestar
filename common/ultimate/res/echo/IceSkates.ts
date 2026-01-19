@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Ice Skates`,
   color: `green`,
@@ -17,6 +19,7 @@ export default {
         game.actions.junkDeck(player, 1)
         game.actions.junkDeck(player, 2)
       }
+
     },
     (game, player, { self }) => {
       const returned = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 2 })
@@ -42,4 +45,4 @@ export default {
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

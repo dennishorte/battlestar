@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Flute`,
   color: `purple`,
@@ -24,9 +26,10 @@ export default {
       if (card && card.checkHasBonus()) {
         game.actions.draw(player, { age: game.getEffectAge(self, 1) })
       }
+
     },
   ],
   echoImpl: (game, player) => {
     game.actions.chooseAndSplay(player, null, 'left')
   },
-}
+} satisfies AgeCardData

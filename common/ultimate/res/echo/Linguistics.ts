@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Linguistics`,
@@ -28,6 +29,7 @@ export default {
             .filter(x => x.getAge() === age)
           game.actions.junkMany(player, achievements, { ordered: true })
         }
+
       }
     }
   ],
@@ -45,4 +47,4 @@ export default {
       game.actions.draw(player, { age: game.getEffectAge(self, 3) })
     }
   },
-}
+} satisfies AgeCardData

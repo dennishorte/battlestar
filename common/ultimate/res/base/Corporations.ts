@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Corporations`,
   color: `green`,
@@ -19,9 +21,10 @@ export default {
       if (cards && cards.length > 0) {
         game.actions.drawAndMeld(player, game.getEffectAge(self, 8))
       }
+
     },
     (game, player, { self }) => {
       game.actions.drawAndMeld(player, game.getEffectAge(self, 8))
     }
   ],
-}
+} satisfies AgeCardData

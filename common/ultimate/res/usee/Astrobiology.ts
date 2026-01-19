@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Astrobiology`,
   color: `blue`,
@@ -22,6 +24,7 @@ export default {
 
         game.actions.scoreMany(player, cardsToScore)
       }
+
     },
   ],
-}
+} satisfies AgeCardData

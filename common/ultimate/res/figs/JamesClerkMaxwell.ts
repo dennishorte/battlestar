@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `James Clerk Maxwell`,  // Card names are unique in Innovation
   name: `James Clerk Maxwell`,
@@ -20,6 +22,7 @@ export default {
           if (biscuits[biscuit] > 0) {
             output[biscuit] = bonus
           }
+
         }
         return output
       }
@@ -34,4 +37,4 @@ export default {
       },
     }
   ]
-}
+} satisfies AgeCardData

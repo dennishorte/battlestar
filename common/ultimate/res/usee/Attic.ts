@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Attic`,
@@ -27,6 +28,7 @@ export default {
         if (action === 'score') {
           game.actions.score(player, card)
         }
+
         else {
           game.actions.safeguard(player, card)
         }
@@ -45,4 +47,4 @@ export default {
       game.actions.drawAndScore(player, value)
     }
   ],
-}
+} satisfies AgeCardData

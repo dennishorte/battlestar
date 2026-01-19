@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 
 
 export default {
@@ -36,6 +38,7 @@ export default {
       if (conditionMet) {
         game.youWin(game.players.byName(biscuits[0].player), 'Bioengineering')
       }
+
       else if (biscuits[0].leafs === biscuits[1].leafs) {
         game.log.add({ template: 'there is a tie for fewest leafs' })
       }
@@ -44,4 +47,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

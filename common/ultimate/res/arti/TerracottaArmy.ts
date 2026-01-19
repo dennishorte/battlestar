@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Terracotta Army`,
   color: `yellow`,
@@ -24,9 +26,10 @@ export default {
       if (scored) {
         game.actions.junkDeck(player, scored.getAge())
       }
+
       else {
         game.actions.tuck(player, self)
       }
     }
   ],
-}
+} satisfies AgeCardData

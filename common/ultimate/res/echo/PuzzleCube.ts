@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Puzzle Cube`,
@@ -63,4 +64,4 @@ export default {
       game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'score'))
     }
   ],
-}
+} satisfies AgeCardData

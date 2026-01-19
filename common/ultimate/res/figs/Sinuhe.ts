@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Sinuhe`,  // Card names are unique in Innovation
   name: `Sinuhe`,
@@ -21,6 +23,7 @@ export default {
         const biscuits = player.biscuits()
         return biscuits.k
       }
+
     }
   ]
-}
+} satisfies AgeCardData

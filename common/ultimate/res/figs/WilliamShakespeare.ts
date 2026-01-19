@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `William Shakespeare`,  // Card names are unique in Innovation
   name: `William Shakespeare`,
@@ -18,5 +20,6 @@ export default {
     {
       trigger: 'decree-for-any-three',
     }
+
   ]
-}
+} satisfies AgeCardData

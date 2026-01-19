@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Cai Lun`,  // Card names are unique in Innovation
   name: `Cai Lun`,
@@ -20,6 +22,7 @@ export default {
         for (const color of game.util.colors()) {
           game.actions.splay(owner, color, 'left')
         }
+
       }
     },
     {
@@ -36,4 +39,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

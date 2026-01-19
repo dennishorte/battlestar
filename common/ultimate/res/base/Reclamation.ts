@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Reclamation`,
   color: `yellow`,
@@ -24,6 +26,7 @@ export default {
         game.log.add({
           template: 'Sum of returned cards is {total}, drawing and melding a {value}',
           args: { total: totalValue, value: drawValue }
+
         })
 
         const meldedCard = game.actions.drawAndMeld(player, drawValue)
@@ -41,4 +44,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

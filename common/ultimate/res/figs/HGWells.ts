@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `H.G. Wells`,  // Card names are unique in Innovation
   name: `H.G. Wells`,
@@ -18,6 +20,7 @@ export default {
         const junkedCard = game.actions.drawAndJunk(player, game.getEffectAge(self, 10))
         game.aSuperExecute(self, player, junkedCard)
       }
+
     }
   ]
-}
+} satisfies AgeCardData

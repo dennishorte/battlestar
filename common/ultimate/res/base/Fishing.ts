@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Fishing`,
@@ -37,4 +38,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

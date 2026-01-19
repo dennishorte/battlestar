@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Seikilos Epitaph`,
   color: `blue`,
@@ -18,7 +20,8 @@ export default {
         if (melded) {
           game.aSelfExecute(self, player, melded)
         }
+
       }
     }
   ],
-}
+} satisfies AgeCardData

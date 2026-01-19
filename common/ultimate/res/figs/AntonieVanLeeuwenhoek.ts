@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Antonie Van Leeuwenhoek`,  // Card names are unique in Innovation
   name: `Antonie Van Leeuwenhoek`,
@@ -20,6 +22,7 @@ export default {
           .filter(other => other.getAge() === card.getAge())
           .length * 10
       }
+
     },
     {
       trigger: 'draw',
@@ -43,4 +46,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

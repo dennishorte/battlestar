@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Grace Hopper`,  // Card names are unique in Innovation
   name: `Grace Hopper`,
@@ -22,7 +24,8 @@ export default {
         if (card.color === 'blue') {
           game.youWin(owner, self.name)
         }
+
       }
     }
   ]
-}
+} satisfies AgeCardData

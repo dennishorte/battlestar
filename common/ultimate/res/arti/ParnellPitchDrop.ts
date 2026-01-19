@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Parnell Pitch Drop`,
   color: `blue`,
@@ -16,6 +18,7 @@ export default {
       if (!junked && card.biscuits.split('i').length - 1 >= 3) {
         game.youWin(player, self.name)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

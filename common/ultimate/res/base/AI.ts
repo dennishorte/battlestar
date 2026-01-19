@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 
 
 export default {
@@ -31,10 +33,11 @@ export default {
         if (playerScores[0].score < playerScores[1].score) {
           game.youWin(playerScores[0].player, 'A.I.')
         }
+
         else {
           game.log.addNoEffect()
         }
       }
     },
   ],
-}
+} satisfies AgeCardData

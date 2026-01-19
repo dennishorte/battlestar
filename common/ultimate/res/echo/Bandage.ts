@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Bandage`,
   color: `red`,
@@ -28,6 +30,7 @@ export default {
         const availableAchievements = game.getAvailableAchievements(player)
         game.actions.chooseAndJunk(player, availableAchievements, { count })
       }
+
     }
   ],
   echoImpl: [
@@ -38,4 +41,4 @@ export default {
       game.actions.chooseAndMeld(player, choices)
     }
   ],
-}
+} satisfies AgeCardData

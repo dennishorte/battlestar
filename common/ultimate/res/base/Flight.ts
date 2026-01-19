@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Flight`,
   color: `red`,
@@ -15,6 +17,7 @@ export default {
       if (redSplay === 'up') {
         game.actions.chooseAndSplay(player, null, 'up')
       }
+
       else {
         game.log.add({ template: 'no effect' })
       }
@@ -29,4 +32,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

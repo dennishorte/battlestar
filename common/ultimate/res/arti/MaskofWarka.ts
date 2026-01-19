@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Mask of Warka`,
   color: `purple`,
@@ -23,6 +25,7 @@ export default {
         if (matchingColor.length > 0) {
           revealedBy.push(plyr)
         }
+
       }
 
       if (revealedBy.length === 1 && revealedBy[0] === player) {
@@ -39,4 +42,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

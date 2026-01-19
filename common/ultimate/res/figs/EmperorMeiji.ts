@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   id: `Emperor Meiji`,  // Card names are unique in Innovation
@@ -24,6 +25,7 @@ export default {
       func: (game, player, { self }) => {
         game.youWin(player, self.name)
       }
+
     },
 
     {
@@ -49,4 +51,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Bicycle`,
   color: `green`,
@@ -18,9 +20,10 @@ export default {
           game.zones.byPlayer(player, 'score'),
         )
       }
+
       else {
         game.log.addDoNothing(player)
       }
     }
   ],
-}
+} satisfies AgeCardData

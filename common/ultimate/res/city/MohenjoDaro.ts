@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Mohenjo-Daro`,
   color: `purple`,
@@ -5,4 +7,4 @@ export default {
   expansion: `city`,
   biscuits: `lllk+h`,
   dogmaBiscuit: `l`,
-}
+} satisfies AgeCardData

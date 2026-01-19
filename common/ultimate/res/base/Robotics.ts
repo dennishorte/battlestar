@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Robotics`,
   color: `red`,
@@ -15,6 +17,7 @@ export default {
       if (card) {
         game.actions.score(player, card)
       }
+
     },
     (game, player, { self }) => {
       const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
@@ -23,4 +26,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

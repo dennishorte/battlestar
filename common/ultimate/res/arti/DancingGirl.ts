@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Dancing Girl`,
@@ -29,6 +30,7 @@ export default {
         game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
         util.array.remove(toTransfer, card)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

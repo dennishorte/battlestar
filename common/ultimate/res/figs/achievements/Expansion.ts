@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   id: 'Expansion',
   name: 'Expansion',
@@ -10,4 +12,5 @@ export default {
   decreeImpl: (game, player) => {
     game.actions.chooseAndSplay(player, null, 'up', { count: 1 })
   }
-}
+
+} satisfies AgeCardData

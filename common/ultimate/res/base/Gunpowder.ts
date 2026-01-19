@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Gunpowder`,
   color: `red`,
@@ -18,6 +20,7 @@ export default {
       if (cards && cards.length > 0) {
         game.state.dogmaInfo.gunpowderCardWasTransferred = true
       }
+
     },
 
     (game, player, { self }) => {
@@ -29,4 +32,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

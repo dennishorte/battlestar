@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Kilogram of the Archives`,
   color: `blue`,
@@ -18,6 +20,7 @@ export default {
         if (sum === 10) {
           game.actions.drawAndScore(player, game.getEffectAge(self, 10))
         }
+
         else {
           game.log.add({ template: 'Card values do not sum to 10' })
           game.actions.junkDeck(player, sum)
@@ -31,4 +34,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

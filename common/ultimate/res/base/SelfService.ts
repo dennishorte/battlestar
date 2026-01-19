@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 
 
 export default {
@@ -21,6 +23,7 @@ export default {
       if (mine > 0 && others.every(count => count <= mine)) {
         game.youWin(player, self.name)
       }
+
       else {
         game.log.addNoEffect()
       }
@@ -37,4 +40,4 @@ export default {
     },
 
   ],
-}
+} satisfies AgeCardData

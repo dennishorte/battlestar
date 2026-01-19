@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Homer`,  // Card names are unique in Innovation
   name: `Homer`,
@@ -21,6 +23,7 @@ export default {
           const toReturn = game.cards.top(player, tucked.color)
           game.actions.return(player, toReturn)
         }
+
       }
     },
     {
@@ -34,4 +37,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

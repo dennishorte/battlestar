@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Coke`,
   color: `red`,
@@ -20,6 +22,7 @@ export default {
             game.actions.meld(player, card)
             continue
           }
+
           else {
             game.log.add({ template: 'Card did not have {f}.' })
             game.actions.foreshadow(player, card)
@@ -45,4 +48,4 @@ export default {
       game.actions.drawAndTuck(player, game.getEffectAge(self, 4))
     }
   ],
-}
+} satisfies AgeCardData

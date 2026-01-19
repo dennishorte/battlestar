@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Boyan Slat`,  // Card names are unique in Innovation
   name: `Boyan Slat`,
@@ -27,7 +29,8 @@ export default {
         if (returned.length === 1) {
           game.actions.claimAchievement(player, returned[0])
         }
+
       }
     }
   ]
-}
+} satisfies AgeCardData

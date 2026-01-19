@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Exoskeleton`,
   color: `red`,
@@ -32,10 +34,11 @@ export default {
         if (foreseen && achieved.length > 0) {
           continue
         }
+
         else {
           break
         }
       }
     },
   ],
-}
+} satisfies AgeCardData

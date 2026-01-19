@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Hot Air Balloon`,
   color: `green`,
@@ -55,4 +57,4 @@ export default {
   echoImpl: (game, player, { self }) => {
     game.actions.drawAndScore(player, game.getEffectAge(self, 7))
   },
-}
+} satisfies AgeCardData

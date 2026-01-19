@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Mona Lisa`,
   color: `yellow`,
@@ -16,6 +18,7 @@ export default {
       game.log.add({
         template: '{player} chooses {number} {color}',
         args: { player, number, color }
+
       })
 
       game.actions.draw(player, { age: game.getEffectAge(self, 4) })
@@ -52,4 +55,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

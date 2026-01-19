@@ -1,5 +1,6 @@
 
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 
 export default {
@@ -25,6 +26,7 @@ export default {
           for (let i = 0; i < distinctAges.length; i++) {
             game.actions.draw(player, { age: game.getEffectAge(self, 10) })
           }
+
         }
         else if (card.getAge() === game.getEffectAge(self, 11)) {
           game.actions.junkDeck(player, game.getEffectAge(self, 11))
@@ -32,4 +34,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

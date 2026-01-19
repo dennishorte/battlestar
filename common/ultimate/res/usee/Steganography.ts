@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Steganography`,
   color: `purple`,
@@ -22,9 +24,10 @@ export default {
         const numCards = game.cards.byPlayer(player, splayed).length
         game.actions.safeguardAvailableAchievement(player, numCards)
       }
+
       else {
         game.actions.drawAndTuck(player, game.getEffectAge(self, 3))
       }
     },
   ],
-}
+} satisfies AgeCardData

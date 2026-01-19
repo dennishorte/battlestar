@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Assassination`,
   color: `red`,
@@ -19,6 +21,7 @@ export default {
         if (topCard) {
           game.actions.transfer(player, topCard, game.zones.byPlayer(leader, 'score'))
         }
+
       }
     },
 
@@ -33,4 +36,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

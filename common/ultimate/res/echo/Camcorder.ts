@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Camcorder`,
   color: `red`,
@@ -30,7 +32,8 @@ export default {
         game.actions.draw(player, { age: game.getEffectAge(self, 9) })
         game.actions.draw(player, { age: game.getEffectAge(self, 9) })
       }
+
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Construction`,
   color: `red`,
@@ -17,6 +19,7 @@ export default {
         game.cards.byPlayer(player, 'hand'),
         game.zones.byPlayer(leader, 'hand'),
         { count: 2 }
+
       )
 
       // Draw a 2
@@ -42,4 +45,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

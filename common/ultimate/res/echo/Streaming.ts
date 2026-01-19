@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Streaming`,
   color: `blue`,
@@ -21,6 +23,7 @@ export default {
           game.log.add({
             template: '{player} has no more {color} cards',
             args: { player, color }
+
           })
           break
         }
@@ -55,4 +58,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

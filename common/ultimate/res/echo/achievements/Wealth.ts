@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   name: 'Wealth',
   shortName: 'wlth',
@@ -9,4 +11,4 @@ export default {
     const targetCount = reduceCost ? 7 : 8
     return game.getBonuses(player).length >= targetCount
   },
-}
+} satisfies AgeCardData

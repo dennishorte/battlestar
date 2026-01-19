@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Dark Web`,
   color: `red`,
@@ -25,6 +27,7 @@ export default {
             min: 0
           })
         }
+
       }
 
       const selected = game.actions.choose(player, choices, {
@@ -76,4 +79,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

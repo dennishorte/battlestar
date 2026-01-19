@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Hatshepsut`,  // Card names are unique in Innovation
   name: `Hatshepsut`,
@@ -28,7 +30,8 @@ export default {
         for (let i = 0; i < returned.length; i++) {
           game.actions.draw(player, { age })
         }
+
       }
     }
   ]
-}
+} satisfies AgeCardData

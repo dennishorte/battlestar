@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Taqiyya`,
   color: `purple`,
@@ -28,6 +30,7 @@ export default {
 
         game.actions.chooseAndScore(player, sameColorInHand, { min: 0, max: sameColorInHand.length })
       }
+
     }
   ],
-}
+} satisfies AgeCardData

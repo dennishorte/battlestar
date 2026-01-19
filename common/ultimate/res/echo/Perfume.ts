@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Perfume`,
   color: `blue`,
@@ -23,6 +25,7 @@ export default {
         if (transferred) {
           game.actions.drawAndMeld(player, card.getAge())
         }
+
       }
     }
   ],
@@ -36,4 +39,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

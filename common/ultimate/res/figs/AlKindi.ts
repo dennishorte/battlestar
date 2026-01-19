@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Al-Kindi`,  // Card names are unique in Innovation
   name: `Al-Kindi`,
@@ -20,6 +22,7 @@ export default {
         game.actions.draw(player, { age })
         return 'would-first'
       }
+
     },
     {
       trigger: 'draw',
@@ -31,4 +34,4 @@ export default {
       }
     },
   ]
-}
+} satisfies AgeCardData

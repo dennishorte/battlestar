@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Babylonian Chronicles`,
   color: `red`,
@@ -20,10 +22,11 @@ export default {
       if (card) {
         game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
       }
+
     },
 
     (game, player, { self }) => {
       game.actions.drawAndScore(player, game.getEffectAge(self, 3))
     },
   ],
-}
+} satisfies AgeCardData

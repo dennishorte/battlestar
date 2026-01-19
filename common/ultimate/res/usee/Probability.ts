@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Probability`,
   color: `blue`,
@@ -34,6 +36,7 @@ export default {
         game.actions.drawAndScore(player, game.getEffectAge(self, 6))
         game.actions.drawAndScore(player, game.getEffectAge(self, 6))
       }
+
       else if (numberOfBiscuits === 4) {
         game.actions.draw(player, {age: game.getEffectAge(self, 7)})
       }
@@ -41,4 +44,4 @@ export default {
       game.actions.draw(player, {age: game.getEffectAge(self, 6)})
     },
   ],
-}
+} satisfies AgeCardData

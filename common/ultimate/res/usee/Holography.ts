@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Holography`,
   color: `purple`,
@@ -45,4 +47,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

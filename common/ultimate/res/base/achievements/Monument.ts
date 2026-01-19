@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   name: 'Monument',
   shortName: 'monu',
@@ -13,4 +15,4 @@ export default {
     const targetCount = reduceCost ? 3 : 4
     return topDemands.length >= targetCount
   },
-}
+} satisfies AgeCardData

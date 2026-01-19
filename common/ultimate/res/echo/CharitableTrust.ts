@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Charitable Trust`,
   color: `green`,
@@ -51,4 +53,4 @@ export default {
 
     game.state.dogmaInfo.charitableTrust[player.name].push(card)
   },
-}
+} satisfies AgeCardData

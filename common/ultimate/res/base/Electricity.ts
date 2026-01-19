@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Electricity`,
   color: `green`,
@@ -18,7 +20,8 @@ export default {
         for (let i = 0; i < returned.length; i++) {
           game.actions.draw(player, { age: game.getEffectAge(self, 8) })
         }
+
       }
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Sargon of Akkad`,  // Card names are unique in Innovation
   name: `Sargon of Akkad`,
@@ -23,6 +25,7 @@ export default {
         game.state.dogmaInfo.sharing.push(player)
         game.actions.junkAvailableAchievement(player, 1)
       }
+
     }
   ]
-}
+} satisfies AgeCardData

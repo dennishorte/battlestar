@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Radio Telescope`,
   color: `blue`,
@@ -23,6 +25,7 @@ export default {
         if (card) {
           drawn.push(card)
         }
+
       }
 
       game.log.addForeseen(foreseen, self)
@@ -46,4 +49,4 @@ export default {
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

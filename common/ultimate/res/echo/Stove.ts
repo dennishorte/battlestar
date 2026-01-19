@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Stove`,
   color: `yellow`,
@@ -18,6 +20,7 @@ export default {
         if (top.getAge() < game.getEffectAge(self, 4)) {
           game.actions.drawAndScore(player, game.getEffectAge(self, 4))
         }
+
       }
     },
 
@@ -31,4 +34,4 @@ export default {
       .filter(card => !card.checkHasBiscuit('f'))
     game.actions.chooseAndScore(player, choices)
   },
-}
+} satisfies AgeCardData

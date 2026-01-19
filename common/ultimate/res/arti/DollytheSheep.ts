@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Dolly the Sheep`,
   color: `yellow`,
@@ -19,6 +21,7 @@ export default {
           args: { player },
         })
       }
+
       else {
         const doScoreYellow = game.actions.chooseYesNo(player, 'Score your bottom yellow card?')
         if (doScoreYellow) {
@@ -60,4 +63,4 @@ export default {
       game.actions.junkMany(player, game.getAvailableAchievements(player))
     }
   ],
-}
+} satisfies AgeCardData

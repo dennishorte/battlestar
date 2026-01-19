@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Michaelangelo`,  // Card names are unique in Innovation
   name: `Michaelangelo`,
@@ -18,6 +20,7 @@ export default {
           ...game.zones.byPlayer(player, 'hand')._cards,
         ]
       }
+
     }
   ]
-}
+} satisfies AgeCardData

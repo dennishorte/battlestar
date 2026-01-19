@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Samuel de Champlain`,  // Card names are unique in Innovation
   name: `Samuel de Champlain`,
@@ -21,6 +23,7 @@ export default {
           .filter(ach => ach.getAge() <= age)
         game.actions.chooseAndAchieve(player, choices, { nonAction: true })
       }
+
     },
     {
       trigger: 'draw',
@@ -31,4 +34,4 @@ export default {
       },
     },
   ]
-}
+} satisfies AgeCardData

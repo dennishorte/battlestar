@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Cloaking`,
   color: `red`,
@@ -22,6 +24,7 @@ export default {
       if (card) {
         game.actions.transfer(player, card, game.zones.byPlayer(leader, 'safe'))
       }
+
     },
   ],
-}
+} satisfies AgeCardData

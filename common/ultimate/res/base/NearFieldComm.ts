@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Near-Field Comm`,
   color: `yellow`,
@@ -15,6 +17,7 @@ export default {
       game.log.add({
         template: '{leader} chooses value {value}',
         args: { leader, value }
+
       })
 
       const cardsToTransfer = game
@@ -42,4 +45,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Where's Waldo`,
   color: `yellow`,
@@ -12,5 +14,6 @@ export default {
     (game, player, { self }) => {
       game.youWin(player, self.name)
     }
+
   ],
-}
+} satisfies AgeCardData

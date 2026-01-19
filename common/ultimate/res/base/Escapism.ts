@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Escapism`,
   color: `purple`,
@@ -40,4 +42,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

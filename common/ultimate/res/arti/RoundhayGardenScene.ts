@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Roundhay Garden Scene`,
   color: `purple`,
@@ -18,6 +20,7 @@ export default {
         game.actions.drawAndScore(player, card.getAge())
         game.aSelfExecute(self, player, card)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

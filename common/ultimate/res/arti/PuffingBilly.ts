@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Puffing Billy`,
   color: `blue`,
@@ -22,6 +24,7 @@ export default {
         game.actions.draw(player, { age: count })
         game.actions.splay(player, returned.color, 'right')
       }
+
     }
   ],
-}
+} satisfies AgeCardData

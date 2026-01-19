@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Sanskrit`,
   color: `green`,
@@ -20,6 +22,7 @@ export default {
         game.log.add({
           template: '{player} did not junk all cards in all score piles',
           args: { player }
+
         })
       }
       else if (junked.length === 0) {
@@ -50,4 +53,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

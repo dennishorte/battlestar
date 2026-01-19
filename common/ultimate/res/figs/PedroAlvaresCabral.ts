@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Pedro Alvarez Cabral`,  // Card names are unique in Innovation
   name: `Pedro Alvarez Cabral`,
@@ -26,8 +28,9 @@ export default {
           if (tops.length > 0) {
             game.youWin(player, self.name)
           }
+
         }
       }
     }
   ]
-}
+} satisfies AgeCardData

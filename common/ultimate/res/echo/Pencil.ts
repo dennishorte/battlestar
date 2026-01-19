@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Pencil`,
   color: `yellow`,
@@ -24,6 +26,7 @@ export default {
           if (card) {
             drawn.push(card)
           }
+
         }
 
         const card = game.actions.chooseCard(player, drawn, { title: 'Choose a card to foreshadow' })
@@ -35,4 +38,4 @@ export default {
   echoImpl: (game, player, { self }) => {
     game.actions.draw(player, { age: game.getEffectAge(self, 5) })
   },
-}
+} satisfies AgeCardData

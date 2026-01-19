@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Nelson Mandela`,  // Card names are unique in Innovation
   name: `Nelson Mandela`,
@@ -25,6 +27,7 @@ export default {
         const personBiscuits = player.biscuits().p
         return Math.floor(personBiscuits / 2)
       }
+
     }
   ]
-}
+} satisfies AgeCardData

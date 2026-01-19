@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Cipher`,
   color: `green`,
@@ -17,10 +19,11 @@ export default {
         const highestValue = Math.max(...returned.map(card => card.getAge()))
         game.actions.draw(player, { age: highestValue + 1 })
       }
+
     },
     (game, player, { self }) => {
       game.actions.draw(player, { age: game.getEffectAge(self, 2) })
       game.actions.chooseAndSplay(player, ['blue'], 'left')
     }
   ],
-}
+} satisfies AgeCardData

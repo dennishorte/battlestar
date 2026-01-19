@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Fresh Water`,
   color: `yellow`,
@@ -23,6 +25,7 @@ export default {
       if (!splayed) {
         game.aYouLose(player, self)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Green Hydrogen`,
   color: `green`,
@@ -19,6 +21,7 @@ export default {
       for (let i = 0; i < numScored; i++) {
         game.actions.drawAndTuck(player, game.getEffectAge(self, 11))
       }
+
     },
   ],
-}
+} satisfies AgeCardData

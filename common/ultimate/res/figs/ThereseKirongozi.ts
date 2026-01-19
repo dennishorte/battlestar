@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Therese Kirongozi`,  // Card names are unique in Innovation
   name: `Therese Kirongozi`,
@@ -24,7 +26,8 @@ export default {
         if (topCard) {
           game.aSuperExecute(self, player, topCard)
         }
+
       }
     }
   ]
-}
+} satisfies AgeCardData

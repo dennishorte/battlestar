@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `John Ericsson`,  // Card names are unique in Innovation
   name: `John Ericsson`,
@@ -29,6 +31,7 @@ export default {
         const opponent = game.actions.choosePlayer(player, opponentChoices)
         game.actions.unsplay(player, game.zones.byPlayer(opponent, card.color))
       }
+
     },
     {
       trigger: 'draw',
@@ -39,4 +42,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

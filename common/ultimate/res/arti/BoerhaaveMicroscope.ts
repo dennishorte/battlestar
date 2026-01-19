@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Boerhavve Microscope`,
   color: `blue`,
@@ -23,5 +25,6 @@ export default {
 
       game.actions.drawAndScore(player, returnedSum)
     }
+
   ],
-}
+} satisfies AgeCardData

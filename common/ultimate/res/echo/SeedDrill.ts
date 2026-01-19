@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Seed Drill`,
   color: `green`,
@@ -33,6 +35,7 @@ export default {
 
         game.actions.chooseAndAchieve(player, achievable)
       }
+
       else {
         game.log.add({
           template: '{player} chooses not to junk a deck',
@@ -42,4 +45,4 @@ export default {
     },
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

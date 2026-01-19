@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Florence Nightingale`,  // Card names are unique in Innovation
   name: `Florence Nightingale`,
@@ -26,8 +28,9 @@ export default {
         game.log.add({
           template: '{card} is not moved',
           args: { card }
+
         })
       }
     }
   ]
-}
+} satisfies AgeCardData

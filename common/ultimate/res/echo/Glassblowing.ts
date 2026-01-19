@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Glassblowing`,
   color: `green`,
@@ -20,6 +22,7 @@ export default {
       if (lowest.length === 0) {
         game.actions.drawAndForeshadow(player, 3)
       }
+
       else {
         game.actions.drawAndForeshadow(player, lowest[0].getAge() + 3)
       }
@@ -37,4 +40,4 @@ export default {
       game.actions.chooseAndScore(player, choices)
     }
   ],
-}
+} satisfies AgeCardData

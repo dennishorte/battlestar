@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Shivaji`,  // Card names are unique in Innovation
   name: `Shivaji`,
@@ -24,6 +26,7 @@ export default {
 
         game.actions.chooseAndAchieve(owner, choices)
       }
+
     },
     {
       trigger: 'dogma',
@@ -35,4 +38,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

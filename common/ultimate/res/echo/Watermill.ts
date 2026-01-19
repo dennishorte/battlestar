@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Watermill`,
@@ -20,6 +21,7 @@ export default {
         const age = game.actions.chooseAge(player, bonuses)
         game.actions.draw(player, { age })
       }
+
     },
 
     (game, player, { foreseen, self }) => {
@@ -35,4 +37,4 @@ export default {
     },
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

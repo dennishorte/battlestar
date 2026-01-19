@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Services`,
   color: `purple`,
@@ -22,6 +24,7 @@ export default {
           .filter(card => !card.checkHasBiscuit('l'))
         game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'))
       }
+
     }
   ],
-}
+} satisfies AgeCardData

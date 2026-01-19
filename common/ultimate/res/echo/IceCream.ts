@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Ice Cream`,
   color: `purple`,
@@ -31,6 +33,7 @@ export default {
           .filter(card => game.checkAchievementEligibility(player, card))
         game.actions.chooseAndAchieve(player, options)
       }
+
     }
   ],
   echoImpl: (game, player) => {
@@ -40,4 +43,4 @@ export default {
       .filter(card => !card.checkHasBonus())
     game.actions.chooseAndScore(player, choices)
   },
-}
+} satisfies AgeCardData

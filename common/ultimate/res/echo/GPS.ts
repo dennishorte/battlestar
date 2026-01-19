@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `GPS`,
   color: `green`,
@@ -31,7 +33,8 @@ export default {
       if (foreseen) {
         game.actions.foreshadowMany(player, drawn)
       }
+
     },
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

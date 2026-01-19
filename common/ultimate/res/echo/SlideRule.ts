@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Slide Rule`,
   color: `blue`,
@@ -26,6 +28,7 @@ export default {
       const drawAge = lowestAge + splayedCount
       game.actions.draw(player, { age: drawAge })
     }
+
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

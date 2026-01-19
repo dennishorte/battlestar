@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Suburbia`,
   color: `yellow`,
@@ -17,6 +19,7 @@ export default {
         for (let i = 0; i < tucked.length; i++) {
           game.actions.drawAndScore(player, game.getEffectAge(self, 1))
         }
+
       }
     },
 
@@ -24,4 +27,4 @@ export default {
       game.actions.junkDeck(player, 9, { optional: true })
     },
   ],
-}
+} satisfies AgeCardData

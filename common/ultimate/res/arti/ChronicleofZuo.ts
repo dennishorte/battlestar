@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Chronicle of Zuo`,
   color: `red`,
@@ -36,4 +38,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

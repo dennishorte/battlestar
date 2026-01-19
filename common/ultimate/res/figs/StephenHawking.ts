@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Stephen Hawking`,  // Card names are unique in Innovation
   name: `Stephen Hawking`,
@@ -22,6 +24,7 @@ export default {
         for (let i = 0; i < hexes; i++) {
           game.actions.score(player, game.cards.bottom(player, card.color))
         }
+
       }
     },
     {
@@ -33,4 +36,4 @@ export default {
       }
     },
   ]
-}
+} satisfies AgeCardData

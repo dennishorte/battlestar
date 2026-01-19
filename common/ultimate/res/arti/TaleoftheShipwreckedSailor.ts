@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Tale of the Shipwrecked Sailor`,
   color: `purple`,
@@ -14,6 +16,7 @@ export default {
       game.log.add({
         template: '{player} chooses {color}',
         args: { player, color }
+
       })
       game.actions.draw(player, { age: game.getEffectAge(self, 1) })
       const choices = game
@@ -26,4 +29,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

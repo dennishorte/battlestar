@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Plato`,  // Card names are unique in Innovation
   name: `Plato`,
@@ -25,7 +27,8 @@ export default {
         if (!didSplay) {
           game.actions.junkAvailableAchievement(player, 2)
         }
+
       }
     }
   ]
-}
+} satisfies AgeCardData

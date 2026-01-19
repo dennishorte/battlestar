@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Air Conditioner`,
   color: `yellow`,
@@ -28,4 +30,4 @@ export default {
   echoImpl: (game, player) => {
     game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1 })
   },
-}
+} satisfies AgeCardData

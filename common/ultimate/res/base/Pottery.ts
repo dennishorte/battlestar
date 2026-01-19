@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Pottery`,
   color: `blue`,
@@ -15,6 +17,7 @@ export default {
         player,
         game.cards.byPlayer(player, 'hand'),
         { min: 0, max: 3 }
+
       )
 
       if (cards && cards.length > 0) {
@@ -26,4 +29,4 @@ export default {
       game.actions.draw(player, { age: game.getEffectAge(self, 1) })
     }
   ],
-}
+} satisfies AgeCardData

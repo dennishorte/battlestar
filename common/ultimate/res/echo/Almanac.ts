@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Almanac`,
   color: `blue`,
@@ -22,6 +24,7 @@ export default {
         const bonuses = card.getBonuses()
         game.actions.drawAndScore(player, bonuses[0] + 1)
       }
+
     },
 
     (game, player, { foreseen, self }) => {
@@ -37,4 +40,4 @@ export default {
   echoImpl: (game, player, { self }) => {
     game.actions.drawAndForeshadow(player, game.getEffectAge(self, 4), { exp: 'echo' })
   },
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Robert E. Lee`,  // Card names are unique in Innovation
   name: `Robert E. Lee`,
@@ -38,6 +40,7 @@ export default {
 
           game.actions.transfer(owner, toTransfer, transferZone)
         }
+
       }
     },
     {
@@ -48,4 +51,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

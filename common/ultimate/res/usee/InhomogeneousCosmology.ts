@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Inhomogeneous Cosmology`,
   color: `blue`,
@@ -20,6 +22,7 @@ export default {
           game.log.add({
             template: '{player} puts {card} on top of its deck',
             args: { player, card: topCardChosen }
+
           })
           topCardChosen.moveTo(topCardChosen.home, 0)
         }
@@ -41,4 +44,4 @@ export default {
       })
     }
   ],
-}
+} satisfies AgeCardData

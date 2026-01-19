@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Optics`,
   color: `red`,
@@ -16,6 +18,7 @@ export default {
           game.log.add({
             template: '{card} has a {c} biscuit',
             args: { card }
+
           })
           game.actions.drawAndScore(player, game.getEffectAge(self, 4))
         }
@@ -41,4 +44,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

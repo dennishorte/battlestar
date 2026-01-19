@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Jackalope`,
   color: `yellow`,
@@ -23,6 +25,7 @@ export default {
         if (transferred) {
           game.actions.unsplay(player, card.color)
         }
+
       }
     },
     (game, player) => {
@@ -37,4 +40,4 @@ export default {
       game.actions.chooseAndUnsplay(player, maxColors)
     }
   ],
-}
+} satisfies AgeCardData

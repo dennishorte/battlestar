@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Ark of the Covenant`,
   color: `purple`,
@@ -23,6 +25,7 @@ export default {
 
         game.actions.scoreMany(player, toScore, game.zones.byPlayer(player, 'score'))
       }
+
     },
 
     (game, player, { self }) => {
@@ -37,4 +40,4 @@ export default {
 
     }
   ],
-}
+} satisfies AgeCardData

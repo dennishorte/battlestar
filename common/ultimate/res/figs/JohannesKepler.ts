@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   id: `Johannes Kepler`,  // Card names are unique in Innovation
@@ -30,8 +31,9 @@ export default {
           args: {
             value: uniqueAges.length
           }
+
         })
       }
     }
   ]
-}
+} satisfies AgeCardData

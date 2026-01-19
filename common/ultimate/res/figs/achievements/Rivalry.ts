@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   id: 'Rivalry',
   name: 'Rivalry',
@@ -37,4 +39,5 @@ export default {
       .filter(c => c.checkIsFigure())
     game.actions.returnMany(player, topFigures)
   }
-}
+
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Albert Einstein`,  // Card names are unique in Innovation
   name: `Albert Einstein`,
@@ -29,6 +31,7 @@ export default {
         game.actions.revealMany(player, toMeld, { ordered: true })
         game.actions.meldMany(player, toMeld)
       }
+
     }
   ]
-}
+} satisfies AgeCardData

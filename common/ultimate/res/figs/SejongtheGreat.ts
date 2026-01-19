@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Sejong the Great`,  // Card names are unique in Innovation
   name: `Sejong the Great`,
@@ -26,6 +28,7 @@ export default {
         game.actions.return(player, card)
         game.actions.drawAndMeld(player, card.getAge() + 1)
       }
+
     }
   ]
-}
+} satisfies AgeCardData

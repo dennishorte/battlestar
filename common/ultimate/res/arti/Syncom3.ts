@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Syncom 3`,
@@ -27,6 +28,7 @@ export default {
       if (colorCount === 5) {
         game.youWin(player, self.name)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

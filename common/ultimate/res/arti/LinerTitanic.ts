@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Liner Titanic`,
   color: `green`,
@@ -16,6 +18,7 @@ export default {
         if (cards.length > 0) {
           toScore.push(cards[cards.length - 1])
         }
+
       }
 
       game.actions.scoreMany(player, toScore)
@@ -29,4 +32,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

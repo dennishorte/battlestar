@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Philips Compact Cassette`,
   color: `green`,
@@ -14,10 +16,11 @@ export default {
       for (const color of game.util.colors()) {
         game.actions.unsplay(player, color)
       }
+
     },
 
     (game, player) => {
       game.actions.chooseAndSplay(player, null, 'up', { count: 2 })
     },
   ],
-}
+} satisfies AgeCardData

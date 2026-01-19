@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Canning`,
   color: `yellow`,
@@ -21,6 +23,7 @@ export default {
 
         game.actions.scoreMany(player, toReturn)
       }
+
       else {
         game.log.addDoNothing(player)
       }
@@ -30,4 +33,4 @@ export default {
       game.actions.chooseAndSplay(player, ['yellow'], 'right')
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Meiji-Mura Stamp Vending Machine`,
   color: `green`,
@@ -26,7 +28,8 @@ export default {
           const highestAge = scoredAges[0]
           game.actions.junkDeck(player, highestAge)
         }
+
       }
     }
   ],
-}
+} satisfies AgeCardData

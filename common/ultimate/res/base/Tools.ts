@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Tools`,
   color: `blue`,
@@ -19,6 +21,7 @@ export default {
           if (returned.length === 3) {
             game.actions.drawAndMeld(player, game.getEffectAge(self, 3))
           }
+
         }
         else {
           game.log.addDoNothing(player)
@@ -41,4 +44,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

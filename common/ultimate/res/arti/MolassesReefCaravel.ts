@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Molasses Reef Caravel`,
   color: `green`,
@@ -26,6 +28,7 @@ export default {
       if (greenCards.length > 0) {
         game.actions.chooseAndMeld(player, greenCards)
       }
+
       else {
         game.log.add({
           template: '{player} has no green cards',
@@ -42,4 +45,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Higgs Boson`,
   color: `blue`,
@@ -12,5 +14,6 @@ export default {
     (game, player) => {
       game.actions.scoreMany(player, game.cards.fullBoard(player))
     }
+
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Deodorant`,
   color: `yellow`,
@@ -20,6 +22,7 @@ export default {
       if (hasTopWithCastle) {
         game.actions.drawAndMeld(player, game.getEffectAge(self, 3))
       }
+
       else {
         game.actions.draw(player, { age: game.getEffectAge(self, 4) })
       }
@@ -39,4 +42,4 @@ export default {
   echoImpl: (game, player, { self }) => {
     game.actions.drawAndMeld(player, game.getEffectAge(self, 3))
   },
-}
+} satisfies AgeCardData

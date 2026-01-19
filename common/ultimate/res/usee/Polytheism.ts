@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Polytheism`,
   color: `purple`,
@@ -23,6 +25,7 @@ export default {
             if (b in meldedBiscuits) {
               meldedBiscuits[b] += 1
             }
+
           }
           continue
         }
@@ -35,4 +38,4 @@ export default {
       game.actions.drawAndTuck(player, game.getEffectAge(self, 1))
     }
   ],
-}
+} satisfies AgeCardData

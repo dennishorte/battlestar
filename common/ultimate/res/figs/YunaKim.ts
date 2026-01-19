@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Yuna Kim`,  // Card names are unique in Innovation
   name: `Yuna Kim`,
@@ -21,6 +23,7 @@ export default {
         if (top && top.checkHasBiscuit('k')) {
           game.youWin(player, self.name)
         }
+
       }
     },
     {
@@ -39,4 +42,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Feudalism`,
   color: `purple`,
@@ -19,10 +21,11 @@ export default {
         const card = cards[0]
         game.actions.unsplay(player, card.color)
       }
+
     },
 
     (game, player) => {
       game.actions.chooseAndSplay(player, ['yellow', 'purple'], 'left')
     }
   ],
-}
+} satisfies AgeCardData

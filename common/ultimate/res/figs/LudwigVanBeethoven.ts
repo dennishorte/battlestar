@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Ludwig Van Beethoven`,  // Card names are unique in Innovation
   name: `Ludwig Van Beethoven`,
@@ -37,7 +39,8 @@ export default {
           game.actions.drawAndScore(player, game.getEffectAge(self, 5))
           game.actions.drawAndScore(player, game.getEffectAge(self, 5))
         }
+
       }
     }
   ]
-}
+} satisfies AgeCardData

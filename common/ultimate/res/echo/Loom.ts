@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Loom`,
@@ -23,6 +24,7 @@ export default {
         game.log.add({
           template: '{player} has fewer than two different ages in score pile',
           args: { player }
+
         })
       }
 
@@ -75,4 +77,4 @@ export default {
     const choices = game.util.lowestCards(game.cards.tops(player))
     game.actions.chooseAndScore(player, choices)
   },
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Rock Around the Clock`,
   color: `yellow`,
@@ -19,6 +21,7 @@ export default {
       for (let i = 0; i < matchingCards; i++) {
         game.actions.drawAndScore(player, game.getEffectAge(self, 9))
       }
+
     },
 
     (game, player) => {
@@ -26,4 +29,4 @@ export default {
       game.actions.junkDeck(player, age)
     },
   ],
-}
+} satisfies AgeCardData

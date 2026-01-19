@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Priest-King`,
   color: `green`,
@@ -18,6 +20,7 @@ export default {
           if (player.name === game.players.current().name) {
             game.aSuperExecute(self, player, top)
           }
+
           else {
             game.aSelfExecute(self, player, top)
           }
@@ -31,4 +34,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

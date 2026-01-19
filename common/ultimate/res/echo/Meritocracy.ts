@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Meritocracy`,
   color: `purple`,
@@ -55,4 +57,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

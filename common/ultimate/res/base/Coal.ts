@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Coal`,
   color: `red`,
@@ -33,6 +35,7 @@ export default {
           if (toScore) {
             game.actions.score(player, toScore)
           }
+
         }
       }
       else {
@@ -40,4 +43,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   name: 'Mystery',
   shortName: 'myst',
@@ -17,4 +19,4 @@ export default {
 
     return topCardMaxAge >= targetAge && actualColors < targetColors
   },
-}
+} satisfies AgeCardData

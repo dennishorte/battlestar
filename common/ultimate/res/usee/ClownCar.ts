@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Clown Car`,
   color: `purple`,
@@ -18,10 +20,11 @@ export default {
           game.actions.meld(player, card)
           canRepeat = !card.checkHasBiscuit('c')
         }
+
         else {
           canRepeat = false
         }
       }
     },
   ],
-}
+} satisfies AgeCardData

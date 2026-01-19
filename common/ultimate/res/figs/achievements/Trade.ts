@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   id: 'Trade',
   name: 'Trade',
@@ -13,4 +15,5 @@ export default {
     game.actions.drawAndForeshadow(player, age)
     game.actions.drawAndForeshadow(player, age)
   }
-}
+
+} satisfies AgeCardData

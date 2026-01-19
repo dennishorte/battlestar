@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Galleon Nuestra Senora De Atocha`,
   color: `red`,
@@ -27,7 +29,8 @@ export default {
         if (card) {
           game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
         }
+
       }
     }
   ],
-}
+} satisfies AgeCardData

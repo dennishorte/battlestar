@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `16 Psyche`,
   color: `red`,
@@ -21,4 +23,4 @@ export default {
       game.actions.scoreMany(player, junkCards, { ordered: true })
     },
   ],
-}
+} satisfies AgeCardData

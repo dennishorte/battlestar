@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Perspective`,
   color: `yellow`,
@@ -14,6 +16,7 @@ export default {
         player,
         game.cards.byPlayer(player, 'hand'),
         { min: 0, max: 1 }
+
       )
 
       if (cards && cards.length > 0) {
@@ -22,4 +25,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

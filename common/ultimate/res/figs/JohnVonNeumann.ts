@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `John Von Neumann`,  // Card names are unique in Innovation
   name: `John Von Neumann`,
@@ -18,6 +20,7 @@ export default {
       func: (game, player, { self }) => {
         game.actions.junkDeck(player, game.getEffectAge(self, 8))
       }
+
     },
     {
       trigger: 'meld',
@@ -29,4 +32,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

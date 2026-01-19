@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Homing Pigeons`,
   color: `green`,
@@ -27,6 +29,7 @@ export default {
         for (const color of game.util.colors()) {
           game.actions.splay(player, color, 'left')
         }
+
       }
       else {
         game.actions.chooseAndSplay(player, ['green', 'red'], 'left')
@@ -34,4 +37,4 @@ export default {
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

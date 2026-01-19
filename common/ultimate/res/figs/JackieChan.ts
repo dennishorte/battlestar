@@ -1,4 +1,5 @@
 import { GameOverEvent } from '../../../lib/game.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   id: `Jackie Chan`,  // Card names are unique in Innovation
@@ -37,6 +38,7 @@ export default {
           game.log.add({
             template: '{player} now has the most points',
             args: { player: owner }
+
           })
           return new GameOverEvent({
             player: owner,
@@ -65,4 +67,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

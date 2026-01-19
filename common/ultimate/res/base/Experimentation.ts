@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Experimentation`,
   color: `blue`,
@@ -11,4 +13,4 @@ export default {
   dogmaImpl: [
     (game, player, { self }) => game.actions.drawAndMeld(player, game.getEffectAge(self, 5)),
   ],
-}
+} satisfies AgeCardData

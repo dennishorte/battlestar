@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Industrialization`,
   color: `red`,
@@ -27,4 +29,4 @@ export default {
       game.actions.chooseAndSplay(player, ['red', 'purple'], 'right')
     },
   ],
-}
+} satisfies AgeCardData

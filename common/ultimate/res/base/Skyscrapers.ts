@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Skyscrapers`,
   color: `yellow`,
@@ -19,6 +21,7 @@ export default {
         if (remaining.length > 0) {
           game.actions.score(player, remaining[0])
         }
+
         game.actions.returnMany(player, remaining.slice(1), { ordered: true })
 
         const topYellowCard = game.cards.top(leader, 'yellow')
@@ -28,4 +31,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

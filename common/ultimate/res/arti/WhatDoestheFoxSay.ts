@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `What Does the Fox Say`,
   color: `yellow`,
@@ -26,9 +28,10 @@ export default {
       if (player.isCurrentPlayer()) {
         game.aSuperExecute(self, player, other)
       }
+
       else {
         game.aSelfExecute(self, player, other)
       }
     },
   ],
-}
+} satisfies AgeCardData

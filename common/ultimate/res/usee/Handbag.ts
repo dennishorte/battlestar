@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Handbag`,
@@ -24,6 +25,7 @@ export default {
         const cards = game.cards.bottoms(player)
         game.actions.transferMany(player, cards, game.zones.byPlayer(player, 'hand'))
       }
+
       else if (choice === choices[1]) {
         const cards = game.cards.byPlayer(player, 'score')
         game.actions.tuckMany(player, cards)
@@ -39,4 +41,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

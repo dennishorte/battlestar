@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Lightning Rod`,
   color: `blue`,
@@ -17,6 +19,7 @@ export default {
       if (card) {
         game.actions.return(player, game.cards.top(player, card.color))
       }
+
     },
 
     (game, player) => {
@@ -30,4 +33,4 @@ export default {
   echoImpl: (game, player, { self }) => {
     game.actions.drawAndTuck(player, game.getEffectAge(self, 5))
   },
-}
+} satisfies AgeCardData

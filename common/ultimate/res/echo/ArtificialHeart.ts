@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Artificial Heart`,
   color: `blue`,
@@ -19,8 +21,9 @@ export default {
         if (!foreseen || achieved.length === 0) {
           break
         }
+
       }
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Metric System`,
   color: `green`,
@@ -14,6 +16,7 @@ export default {
       if (game.zones.byPlayer(player, 'green').splay === 'right') {
         game.actions.chooseAndSplay(player, null, 'right')
       }
+
       else {
         game.log.addNoEffect()
       }
@@ -23,4 +26,4 @@ export default {
       game.actions.chooseAndSplay(player, ['green'], 'right')
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Private Eye`,
   color: `blue`,
@@ -20,6 +22,7 @@ export default {
         game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
         game.actions.draw(player, { age: game.getEffectAge(self, 7) })
       }
+
     },
     (game, player) => {
       const secrets = game.cards.byPlayer(player, 'safe')
@@ -29,4 +32,4 @@ export default {
       game.actions.chooseAndSplay(player, ['blue'], 'right')
     }
   ],
-}
+} satisfies AgeCardData

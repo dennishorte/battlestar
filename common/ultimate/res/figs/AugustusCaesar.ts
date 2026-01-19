@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Augustus Caesar`,  // Card names are unique in Innovation
   name: `Augustus Caesar`,
@@ -20,10 +22,11 @@ export default {
         if (drawn.checkHasBiscuit('k') || drawn.checkHasBiscuit('s')) {
           game.actions.meld(owner, drawn)
         }
+
         else {
           game.aSuperExecute(self, player, card)
         }
       },
     }
   ]
-}
+} satisfies AgeCardData

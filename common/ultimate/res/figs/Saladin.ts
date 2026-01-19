@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Saladin`,  // Card names are unique in Innovation
   name: `Saladin`,
@@ -27,6 +29,7 @@ export default {
           .filter(card => card.checkHasBiscuit('k'))
         game.actions.scoreMany(player, toScore)
       }
+
     }
   ]
-}
+} satisfies AgeCardData

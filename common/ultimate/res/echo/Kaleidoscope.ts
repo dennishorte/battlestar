@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Kaleidoscope`,
   color: `purple`,
@@ -16,6 +18,7 @@ export default {
       if (card) {
         game.actions.chooseAndSplay(player, [card.color], 'right')
       }
+
     },
 
     (game, player, { foreseen, self }) => {
@@ -32,4 +35,4 @@ export default {
     },
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

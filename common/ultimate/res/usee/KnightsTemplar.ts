@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Knights Templar`,
   color: `red`,
@@ -23,6 +25,7 @@ export default {
           if (topCard) {
             game.actions.transfer(player, topCard, game.zones.byPlayer(leader, 'score'))
           }
+
         }
       }
     },
@@ -30,4 +33,4 @@ export default {
       game.actions.chooseAndSplay(player, ['red', 'green'], 'left')
     },
   ],
-}
+} satisfies AgeCardData

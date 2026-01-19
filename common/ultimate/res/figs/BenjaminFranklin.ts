@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Benjamin Franklin`,  // Card names are unique in Innovation
   name: `Benjamin Franklin`,
@@ -28,6 +30,7 @@ export default {
           .filter(topCard => card.color === topCard.color)
         game.actions.chooseAndTransfer(player, mayTransfer, game.zones.byPlayer(player, 'hand'))
       }
+
     }
   ]
-}
+} satisfies AgeCardData

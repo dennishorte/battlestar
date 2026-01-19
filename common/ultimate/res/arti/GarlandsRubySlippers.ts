@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Garland's Ruby Slippers`,
   color: `purple`,
@@ -31,4 +33,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

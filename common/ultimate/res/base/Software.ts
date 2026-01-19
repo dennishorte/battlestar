@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Software`,
   color: `blue`,
@@ -19,8 +21,9 @@ export default {
       game.log.add({
         template: '{player} will execute {card}',
         args: { player, card }
+
       })
       game.aSelfExecute(self, player, card)
     },
   ],
-}
+} satisfies AgeCardData

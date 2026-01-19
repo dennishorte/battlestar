@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Sudoku`,
@@ -31,4 +32,4 @@ export default {
       game.actions.chooseAndTuck(player, game.cards.byPlayer(player, 'hand'), { min: 0 })
     }
   ],
-}
+} satisfies AgeCardData

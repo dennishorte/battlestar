@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Hypersonics`,
   color: `green`,
@@ -17,6 +19,7 @@ export default {
         if (!valueMap.has(age)) {
           valueMap.set(age, [])
         }
+
         valueMap.get(age).push(card)
       })
 
@@ -58,4 +61,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

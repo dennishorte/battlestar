@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Pele`,  // Card names are unique in Innovation
   name: `Pele`,
@@ -28,6 +30,7 @@ export default {
           game.log.add({
             template: '{player} does not have both a green and a yellow card',
             args: { player }
+
           })
           return
         }
@@ -54,4 +57,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

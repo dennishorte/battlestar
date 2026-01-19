@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Reformation`,
   color: `purple`,
@@ -44,4 +46,4 @@ export default {
       game.actions.chooseAndTuck(player, choices, { count })
     }
   ],
-}
+} satisfies AgeCardData

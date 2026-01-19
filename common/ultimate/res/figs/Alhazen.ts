@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   id: `Alhazen`,  // Card names are unique in Innovation
@@ -39,5 +40,6 @@ export default {
         game.actions.draw(player, { age: ageToDraw })
       },
     }
+
   ]
-}
+} satisfies AgeCardData

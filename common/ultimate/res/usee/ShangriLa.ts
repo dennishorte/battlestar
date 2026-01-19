@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Shangri-La`,
   color: `yellow`,
@@ -15,6 +17,7 @@ export default {
         if (tucked.checkHasBiscuit('f')) {
           game.actions.score(player, tucked)
         }
+
         else {
           const melded = game.actions.drawAndMeld(player, game.getEffectAge(self, 8))
           if (melded.getAge() === 8) {
@@ -27,4 +30,4 @@ export default {
       executeEffect()
     },
   ],
-}
+} satisfies AgeCardData

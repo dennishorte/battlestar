@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Space Traffic`,
   color: `green`,
@@ -18,6 +20,7 @@ export default {
         if (stack.length === 1) {
           game.log.add({ template: 'no card above tucked card' })
         }
+
         else {
           const cardAbove = stack.slice(-2, -1)[0]
           if (cardAbove.getAge() === game.getEffectAge(self, 11)) {
@@ -60,4 +63,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

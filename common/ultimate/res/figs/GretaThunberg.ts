@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Greta Thunberg`,  // Card names are unique in Innovation
   name: `Greta Thunberg`,
@@ -30,7 +32,8 @@ export default {
         if (topFactories.length === 0) {
           game.youWin(owner, self.name)
         }
+
       }
     }
   ]
-}
+} satisfies AgeCardData

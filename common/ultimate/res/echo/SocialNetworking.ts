@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 
 export default {
   name: `Social Networking`,
@@ -35,6 +37,7 @@ export default {
           game.log.addNoEffect()
           return
         }
+
       }
 
       game.youWin(player, self.name)
@@ -49,4 +52,4 @@ export default {
       game.actions.chooseAndScore(player, options)
     }
   ],
-}
+} satisfies AgeCardData

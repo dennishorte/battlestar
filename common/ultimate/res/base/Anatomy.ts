@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Anatomy`,
   color: `yellow`,
@@ -18,6 +20,7 @@ export default {
           .filter(card => card.getAge() === returned.getAge())
         game.actions.chooseAndReturn(player, matchingTopCards)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

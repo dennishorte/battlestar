@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Greenland`,
   color: `green`,
@@ -18,6 +20,7 @@ export default {
         if (returned) {
           continue
         }
+
         else {
           break
         }
@@ -38,4 +41,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

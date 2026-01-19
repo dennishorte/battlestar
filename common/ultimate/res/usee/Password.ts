@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Password`,
   color: `red`,
@@ -27,9 +29,10 @@ export default {
       if (safeguarded) {
         game.actions.score(player, drawnCard)
       }
+
       else {
         game.actions.returnMany(player, otherHandCards)
       }
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Denver Airport`,
   color: `green`,
@@ -21,10 +23,11 @@ export default {
       if (card) {
         game.actions.claimAchievement(player, { card })
       }
+
     },
 
     (game, player) => {
       game.actions.chooseAndSplay(player, ['purple'], 'up')
     }
   ],
-}
+} satisfies AgeCardData

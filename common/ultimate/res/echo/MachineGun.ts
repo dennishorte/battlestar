@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Machine Gun`,
   color: `red`,
@@ -23,6 +25,7 @@ export default {
         game.actions.chooseAndJunk(player, achievements, { count: 4 })
         game.actions.draw(player, { age: game.getEffectAge(self, 7) })
       }
+
     },
 
     (game, player) => {
@@ -47,4 +50,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

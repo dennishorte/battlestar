@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Confession`,
   color: `purple`,
@@ -21,6 +23,7 @@ export default {
         game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'score'))
         game.actions.drawAndScore(player, game.getEffectAge(self, 4))
       }
+
     },
     (game, player, { self }) => {
       const age = game.getEffectAge(self, 4)
@@ -34,4 +37,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

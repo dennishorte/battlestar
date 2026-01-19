@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Ship of the Line Sussex`,
   color: `red`,
@@ -21,4 +23,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

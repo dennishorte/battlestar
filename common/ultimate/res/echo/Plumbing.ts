@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Plumbing`,
   color: `red`,
@@ -17,8 +19,9 @@ export default {
     if (card) {
       game.actions.score(player, card)
     }
+
     else {
       game.log.addNoEffect()
     }
   },
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Chintz`,
   color: `green`,
@@ -21,6 +23,7 @@ export default {
         game.actions.draw(player, { age: game.getEffectAge(self, 4) })
         game.actions.drawAndScore(player, game.getEffectAge(self, 4))
       }
+
     },
 
     (game, player, { foreseen, self }) => {
@@ -32,4 +35,4 @@ export default {
     },
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Noodles`,
   color: `yellow`,
@@ -27,6 +29,7 @@ export default {
       if (theirs.every(count => count < mine)) {
         game.actions.drawAndScore(player, game.getEffectAge(self, 2))
       }
+
       else {
         game.log.addNoEffect()
       }
@@ -43,4 +46,4 @@ export default {
     },
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

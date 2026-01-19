@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Steamboat`,
   color: `green`,
@@ -30,4 +32,4 @@ export default {
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

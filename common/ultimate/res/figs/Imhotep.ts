@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Imhotep`,  // Card names are unique in Innovation
   name: `Imhotep`,
@@ -29,7 +31,8 @@ export default {
             .map(p => game.cards.top(p, card.color))
           game.actions.returnMany(player, toReturn)
         }
+
       }
     }
   ]
-}
+} satisfies AgeCardData

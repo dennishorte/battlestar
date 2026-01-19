@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Christiaan Huygens`,  // Card names are unique in Innovation
   name: `Christiaan Huygens`,
@@ -32,6 +34,7 @@ export default {
           count = 1
           age = game.getEffectAge(self, 7)
         }
+
         else if (drawChoice.startsWith('draw two')) {
           count = 2
           age = game.getEffectAge(self, 8)
@@ -64,4 +67,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

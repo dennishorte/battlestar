@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Photography`,
   color: `blue`,
@@ -57,4 +59,4 @@ export default {
   echoImpl: (game, player) => {
     game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'forecast'))
   },
-}
+} satisfies AgeCardData

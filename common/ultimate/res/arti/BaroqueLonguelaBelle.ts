@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Baroque-Longue la Belle`,
   color: `green`,
@@ -15,7 +17,8 @@ export default {
         if (card.color === 'green') {
           break
         }
+
       }
     }
   ],
-}
+} satisfies AgeCardData

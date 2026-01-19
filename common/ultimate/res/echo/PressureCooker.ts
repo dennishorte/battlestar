@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Pressure Cooker`,
   color: `yellow`,
@@ -17,6 +19,7 @@ export default {
       if (foreseen) {
         game.actions.meldMany(player, game.cards.byPlayer(player, 'hand'))
       }
+
     },
 
     (game, player) => {
@@ -38,4 +41,4 @@ export default {
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

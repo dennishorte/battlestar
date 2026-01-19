@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Tasmanian Tiger`,
   color: `yellow`,
@@ -26,6 +28,7 @@ export default {
             game.actions.transfer(player, scoreCard, game.zones.byPlayer(topCard.owner, topCard.color))
             game.actions.transfer(player, topCard, game.zones.byPlayer(player, 'score'))
           }
+
         }
 
         const returned = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), {
@@ -42,4 +45,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

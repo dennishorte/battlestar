@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Canal Building`,
   color: `yellow`,
@@ -17,6 +19,7 @@ export default {
         game.log.add({
           template: '{player} exchanges the highest cards in their hand and score pile',
           args: { player }
+
         })
         const hand = game.zones.byPlayer(player, 'hand')
         const score = game.zones.byPlayer(player, 'score')
@@ -30,4 +33,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

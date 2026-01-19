@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Delft Pocket Telescope`,
   color: `blue`,
@@ -53,4 +55,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `The Pirate Code`,
   color: `red`,
@@ -19,6 +21,7 @@ export default {
       if (transferred && transferred.length > 0) {
         game.state.dogmaInfo.piratesLooted = true
       }
+
     },
 
     (game, player) => {
@@ -36,4 +39,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

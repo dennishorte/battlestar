@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Baghdad Battery`,
   color: `green`,
@@ -17,6 +19,7 @@ export default {
         game.actions.junkDeck(player, melded.getAge())
         game.actions.junkDeck(player, scored.getAge())
       }
+
     },
   ],
-}
+} satisfies AgeCardData

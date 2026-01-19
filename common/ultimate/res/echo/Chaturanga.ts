@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Chaturanga`,
   color: `purple`,
@@ -24,7 +26,8 @@ export default {
         const numColors = game.cards.tops(player).length
         game.actions.drawAndForeshadow(player, numColors)
       }
+
     },
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

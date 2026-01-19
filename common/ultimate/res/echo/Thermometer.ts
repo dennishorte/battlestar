@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Thermometer`,
   color: `blue`,
@@ -21,6 +23,7 @@ export default {
           })
           continue
         }
+
         else {
           game.log.addForeseen(foreseen, self)
           if (foreseen && ['red', 'purple'].includes(melded.color)) {
@@ -46,4 +49,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

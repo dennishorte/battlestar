@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Concealment`,
   color: `red`,
@@ -21,6 +23,7 @@ export default {
       if (bottomPurpleCard) {
         game.actions.safeguard(player, bottomPurpleCard)
       }
+
       else {
         game.log.add({
           template: '{player} has no bottom purple card',
@@ -29,4 +32,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Chemistry`,
   color: `blue`,
@@ -19,5 +21,6 @@ export default {
       game.actions.drawAndScore(player, age)
       game.actions.chooseAndReturn(player, game.zones.byPlayer(player, 'score').cardlist())
     }
+
   ],
-}
+} satisfies AgeCardData

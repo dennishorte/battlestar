@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 
 
 export default {
@@ -38,4 +40,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

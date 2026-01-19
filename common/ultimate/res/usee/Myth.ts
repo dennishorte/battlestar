@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Myth`,
@@ -29,6 +30,7 @@ export default {
             if (toTuck.length == 2 && toTuck[0].color === toTuck[1].color) {
               return true
             }
+
             else if (toTuck.length < 2) {
               return true
             }
@@ -55,4 +57,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

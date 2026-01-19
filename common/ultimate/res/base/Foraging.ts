@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Foraging`,
   color: `green`,
@@ -19,7 +21,8 @@ export default {
           game.actions.score(player, drawnCard)
           game.actions.draw(player, { age: game.getEffectAge(self, 0) })
         }
+
       }
     }
   ],
-}
+} satisfies AgeCardData

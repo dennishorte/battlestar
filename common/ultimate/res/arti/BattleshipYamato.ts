@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Battleship Yamato`,
   color: `red`,
@@ -8,4 +10,4 @@ export default {
   dogmaBiscuit: `s`,
   dogma: [],
   dogmaImpl: [],
-}
+} satisfies AgeCardData

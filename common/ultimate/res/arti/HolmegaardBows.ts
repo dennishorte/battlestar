@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Holmegaard Bows`,
   color: `red`,
@@ -26,6 +28,7 @@ export default {
             template: '{player} has no top cards'
           })
         }
+
         else {
           const value = lowestCards[0].getAge()
           game.actions.junkDeck(player, value)
@@ -37,4 +40,4 @@ export default {
       game.actions.draw(player, { age: game.getEffectAge(self, 2) })
     }
   ],
-}
+} satisfies AgeCardData

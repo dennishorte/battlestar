@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Liquid Fire`,
   color: `red`,
@@ -20,6 +22,7 @@ export default {
           if (card.color === 'red') {
             game.actions.transferMany(player, game.cards.byPlayer(player, 'hand'), game.zones.byPlayer(leader, 'score'))
           }
+
         }
       }
       else {
@@ -31,4 +34,4 @@ export default {
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

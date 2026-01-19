@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Sibidu Needle`,
   color: `blue`,
@@ -17,6 +19,7 @@ export default {
           if (top && top.getAge() === card.getAge()) {
             game.actions.score(player, card)
           }
+
           else {
             break
           }
@@ -24,4 +27,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

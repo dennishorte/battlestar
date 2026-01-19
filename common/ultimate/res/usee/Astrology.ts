@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Astrology`,
   color: `blue`,
@@ -28,6 +30,7 @@ export default {
       if (card && !card.checkHasBiscuit('c')) {
         game.actions.tuck(player, card)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

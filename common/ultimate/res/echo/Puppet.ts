@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Puppet`,
   color: `purple`,
@@ -16,6 +18,7 @@ export default {
         .map(c => c.getAge())
       game.actions.junkAvailableAchievement(player, ages)
     }
+
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   name: 'Supremacy',
   shortName: 'supr',
@@ -17,8 +19,9 @@ export default {
         if (biscuits[biscuit] >= targetBiscuitCount) {
           colorCounts[biscuit] += 1
         }
+
       }
     }
     return Object.values(colorCounts).some(count => count >= targetColorsCount)
   },
-}
+} satisfies AgeCardData

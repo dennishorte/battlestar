@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Isaac Newton`,  // Card names are unique in Innovation
   name: `Isaac Newton`,
@@ -21,6 +23,7 @@ export default {
         const target = game.zones.byPlayer(targetPlayer, card.color)
         game.actions.transfer(player, card, target)
       }
+
     },
     {
       trigger: 'dogma',
@@ -36,4 +39,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

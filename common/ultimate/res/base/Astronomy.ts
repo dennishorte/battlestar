@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Astronomy`,
   color: `purple`,
@@ -18,6 +20,7 @@ export default {
             game.actions.meld(player, card)
             game.log.add({ template: 'dogma effect repeats' })
           }
+
           else {
             break
           }
@@ -41,4 +44,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Susan Blackmore`,  // Card names are unique in Innovation
   name: `Susan Blackmore`,
@@ -19,6 +21,7 @@ export default {
       func: (game, player, { card, self, owner }) => {
         game.aSelfExecute(self, owner, card)
       }
+
     },
     {
       trigger: 'share',
@@ -29,4 +32,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

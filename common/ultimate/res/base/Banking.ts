@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Banking`,
   color: `green`,
@@ -22,6 +24,7 @@ export default {
         game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
         game.actions.drawAndScore(player, game.getEffectAge(self, 5))
       }
+
       else {
         game.log.addNoEffect()
       }
@@ -31,4 +34,4 @@ export default {
       game.actions.chooseAndSplay(player, ['green'], 'right')
     }
   ],
-}
+} satisfies AgeCardData

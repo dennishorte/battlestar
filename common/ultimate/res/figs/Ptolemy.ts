@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Ptolemy`,  // Card names are unique in Innovation
   name: `Ptolemy`,
@@ -23,6 +25,7 @@ export default {
           .map(p => game.cards.top(p, 'blue'))
           .filter(card => card !== undefined)
       }
+
     }
   ]
-}
+} satisfies AgeCardData

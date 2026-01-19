@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Fingerprints`,
   color: `yellow`,
@@ -34,9 +36,10 @@ export default {
         })
         game.actions.transfer(player, card, game.zones.byPlayer(transferTo, card.color))
       }
+
       else {
         game.log.addNoEffect()
       }
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Exxon Valdez`,
   color: `red`,
@@ -28,9 +30,10 @@ export default {
       game.log.add({
         template: '{player} junks all of their cards',
         args: { player }
+
       })
 
       game.aYouLose(player, self)
     }
   ],
-}
+} satisfies AgeCardData

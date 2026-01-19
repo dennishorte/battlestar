@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Road Building`,
   color: `red`,
@@ -35,6 +37,7 @@ export default {
             if (topGreen) {
               game.actions.meld(player, topGreen)
             }
+
           }
         }
         else {
@@ -46,4 +49,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

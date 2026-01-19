@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Taiichi Ono`,  // Card names are unique in Innovation
   name: `Taiichi Ono`,
@@ -24,7 +26,8 @@ export default {
         if (!achieved) {
           game.actions.draw(player, { age: game.getEffectAge(self, 11) })
         }
+
       }
     }
   ]
-}
+} satisfies AgeCardData

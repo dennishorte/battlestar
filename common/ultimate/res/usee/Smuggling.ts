@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Smuggling`,
   color: `green`,
@@ -21,7 +23,8 @@ export default {
             count: 1,
           })
         }
+
       }
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Queen Victoria`,  // Card names are unique in Innovation
   name: `Queen Victoria`,
@@ -34,6 +36,7 @@ export default {
           if (action === 'score it') {
             game.actions.score(player, chosenCard)
           }
+
           else {
             game.actions.transfer(player, chosenCard, game.zones.byId('achievements'))
           }
@@ -41,4 +44,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

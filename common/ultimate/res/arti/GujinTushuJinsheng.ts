@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Gujin Tushu Jinsheng`,
   color: `yellow`,
@@ -14,6 +16,7 @@ export default {
         game.log.add({
           template: 'It is not {player} turn',
           args: { player }
+
         })
         return
       }
@@ -28,4 +31,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

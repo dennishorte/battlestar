@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Education`,
   color: `purple`,
@@ -20,10 +22,11 @@ export default {
           const age = newHighest.length > 0 ? newHighest[0].getAge() + 2 : 2
           game.actions.draw(player, { age })
         }
+
       }
       else {
         game.log.addDoNothing(player)
       }
     }
   ],
-}
+} satisfies AgeCardData

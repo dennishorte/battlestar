@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Metaverse`,
   color: `purple`,
@@ -20,9 +22,10 @@ export default {
         game.log.add({
           template: '{player} scored fewer than three cards and loses the game!',
           args: { player }
+
         })
         game.aYouLose(player, self)
       }
     },
   ],
-}
+} satisfies AgeCardData

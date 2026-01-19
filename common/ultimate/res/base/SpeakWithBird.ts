@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Speak with Bird`,
   color: `purple`,
@@ -16,6 +18,7 @@ export default {
       if (topValues.length === 5 && topValues.every(value => value === 0)) {
         game.youWin(player, self.name)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

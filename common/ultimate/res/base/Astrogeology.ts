@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 
 
 export default {
@@ -24,6 +26,7 @@ export default {
             const toReturn = cards.slice(4)
             game.actions.transferMany(player, toReturn, game.zones.byPlayer(player, 'hand'), { ordered: true })
           }
+
         }
       }
     },
@@ -38,4 +41,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Colt Paterson Revolver`,
   color: `yellow`,
@@ -19,6 +21,7 @@ export default {
         game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
         game.actions.returnMany(player, game.cards.byPlayer(player, 'score'))
       }
+
     }
   ],
-}
+} satisfies AgeCardData

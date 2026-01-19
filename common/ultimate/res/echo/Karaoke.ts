@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Karaoke`,
   color: `purple`,
@@ -21,6 +23,7 @@ export default {
         game.log.add({
           template: '{player} did not meld any cards during the echo effect',
           args: { player }
+
         })
         return
       }
@@ -59,4 +62,4 @@ export default {
       })
     }
   },
-}
+} satisfies AgeCardData

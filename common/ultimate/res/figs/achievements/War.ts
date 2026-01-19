@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   id: 'War',
   name: 'War',
@@ -20,6 +22,7 @@ export default {
         player,
         age: value
       }
+
     })
 
     const cardsToReturn = []
@@ -33,4 +36,4 @@ export default {
 
     game.actions.returnMany(player, cardsToReturn)
   }
-}
+} satisfies AgeCardData

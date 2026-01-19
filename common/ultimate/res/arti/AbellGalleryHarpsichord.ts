@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Abell Gallery Harpsichord`,
   color: `purple`,
@@ -17,7 +19,8 @@ export default {
         if (matching === 1) {
           game.actions.drawAndScore(player, i)
         }
+
       }
     }
   ],
-}
+} satisfies AgeCardData

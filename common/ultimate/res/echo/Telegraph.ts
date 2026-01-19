@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Telegraph`,
   color: `green`,
@@ -26,6 +28,7 @@ export default {
             }),
             min: 0,
           }
+
         })
 
       const choice = game.actions.choose(player, choices, { min: 0, max: 1 })[0].selection[0]
@@ -50,4 +53,4 @@ export default {
     },
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

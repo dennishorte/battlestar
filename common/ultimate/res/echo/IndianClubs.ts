@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Indian Clubs`,
@@ -18,6 +19,7 @@ export default {
       if (foreseen) {
         game.actions.returnMany(player, game.cards.byPlayer(player, 'score'))
       }
+
       else {
         game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'), { count: 2 })
       }
@@ -48,4 +50,4 @@ export default {
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

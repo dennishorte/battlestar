@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Lever`,
@@ -23,6 +24,7 @@ export default {
           for (let i = 0; i < count; i++) {
             toDraw.push(parseInt(age) + 1)
           }
+
         }
 
         toDraw.sort()
@@ -41,4 +43,4 @@ export default {
       game.actions.draw(player, { age: game.getEffectAge(self, 2) })
     }
   ],
-}
+} satisfies AgeCardData

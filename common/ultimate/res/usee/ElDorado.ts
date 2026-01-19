@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `El Dorado`,
   color: `green`,
@@ -27,4 +29,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

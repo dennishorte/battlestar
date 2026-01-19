@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Bangle`,
   color: `red`,
@@ -58,4 +60,4 @@ export default {
       game.actions.chooseAndTuck(player, cards)
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 function countItemsOrdered(arr) {
   const counts = {}
@@ -38,6 +39,7 @@ export default {
       game.log.add({
         template: '{player} reveals their hand to show how many of which color they have',
         args: { player: leader }
+
       })
       game.actions.revealMany(leader, leaderHandCards, { ordered: true })
 
@@ -69,4 +71,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Dance`,
   color: `green`,
@@ -35,7 +37,8 @@ export default {
         if (meldCard) {
           game.actions.meld(player, meldCard)
         }
+
       }
     },
   ],
-}
+} satisfies AgeCardData

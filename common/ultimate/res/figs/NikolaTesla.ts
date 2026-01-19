@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Nikola Tesla`,  // Card names are unique in Innovation
   name: `Nikola Tesla`,
@@ -34,8 +36,9 @@ export default {
           if (highestAge <= scoredCard.getAge()) {
             game.actions.draw(player, { age: game.getEffectAge(self, 9) })
           }
+
         }
       }
     }
   ]
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Ife Head`,
   color: `green`,
@@ -31,7 +33,8 @@ export default {
         if (!junked) {
           game.actions.draw(player, { age: count })
         }
+
       }
     }
   ],
-}
+} satisfies AgeCardData

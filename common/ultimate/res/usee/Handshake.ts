@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Handshake`,
@@ -30,4 +31,4 @@ export default {
       game.actions.transferMany(player, transferCards, leaderHand, { ordered: true })
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Meteorology`,
   color: `blue`,
@@ -15,6 +17,7 @@ export default {
       if (card.checkHasBiscuit('l')) {
         game.actions.score(player, card)
       }
+
       else if (card.checkHasBiscuit('c')) {
         game.actions.return(player, card)
         game.actions.draw(player, { age: game.getEffectAge(self, 3) })
@@ -34,4 +37,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

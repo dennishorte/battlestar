@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Stethoscope`,
   color: `blue`,
@@ -23,6 +25,7 @@ export default {
           if (foreseen) {
             game.actions.draw(player, { age: game.getEffectAge(self, 9) })
           }
+
         }
       }
       else {
@@ -51,4 +54,4 @@ export default {
       game.state.dogmaInfo.stethoscope[player.name].push(card)
     })
   },
-}
+} satisfies AgeCardData

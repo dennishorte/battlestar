@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Marilyn Diptych`,
   color: `purple`,
@@ -17,10 +19,11 @@ export default {
       if (game.getScore(player) === 25) {
         game.youWin(player, self.name)
       }
+
     },
 
     (game, player) => {
       game.actions.junkAvailableAchievement(player, game.getAges())
     },
   ],
-}
+} satisfies AgeCardData

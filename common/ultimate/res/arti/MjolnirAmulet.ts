@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Mjolnir Amulet`,
   color: `red`,
@@ -19,6 +21,7 @@ export default {
           { ordered: true },
         )
       }
+
       else {
         game.log.add({
           template: '{player} chooses nothing',
@@ -27,4 +30,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

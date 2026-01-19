@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Fertilizer`,
   color: `yellow`,
@@ -23,6 +25,7 @@ export default {
           )
         game.actions.transferMany(player, toTransfer, game.zones.byPlayer(player, 'hand'))
       }
+
     },
 
     (game, player) => {
@@ -31,4 +34,4 @@ export default {
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

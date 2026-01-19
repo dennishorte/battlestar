@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Cross of Coronado`,
@@ -19,6 +20,7 @@ export default {
       if (cards.length === 5 && colors.length === 5) {
         game.youWin(player, self.name)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

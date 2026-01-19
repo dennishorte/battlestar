@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Emmy Noether`,  // Card names are unique in Innovation
   name: `Emmy Noether`,
@@ -17,6 +19,7 @@ export default {
         const biscuits = player.biscuits()
         return biscuits.i * biscuits.i
       }
+
     },
     {
       trigger: 'score',
@@ -28,4 +31,4 @@ export default {
       }
     },
   ]
-}
+} satisfies AgeCardData

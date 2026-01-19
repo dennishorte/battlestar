@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Hansen Writing Ball`,
   color: `green`,
@@ -45,4 +47,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

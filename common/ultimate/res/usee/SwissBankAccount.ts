@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Swiss Bank Account`,
   color: `green`,
@@ -23,6 +25,7 @@ export default {
           .filter(c => c.age === achievement.age)
         game.actions.scoreMany(player, cardsInHand)
       }
+
     },
     (game, player, { self }) => {
       const secretCount = game.cards.byPlayer(player, 'safe').length
@@ -31,4 +34,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

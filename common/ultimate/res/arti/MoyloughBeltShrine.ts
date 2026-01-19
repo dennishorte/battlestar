@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Moylough Belt Shrine`,
   color: `yellow`,
@@ -16,6 +18,7 @@ export default {
         game.log.add({
           template: '{player} has no cards in hand',
           args: { player }
+
         })
         return
       }
@@ -30,4 +33,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

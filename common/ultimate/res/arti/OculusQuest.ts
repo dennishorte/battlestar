@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Oculus Quest`,
   color: `purple`,
@@ -14,4 +16,4 @@ export default {
       game.actions.transferMany(player, toTransfer, game.zones.byPlayer(player, 'hand'))
     },
   ],
-}
+} satisfies AgeCardData

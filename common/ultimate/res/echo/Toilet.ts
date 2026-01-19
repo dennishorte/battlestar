@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Toilet`,
@@ -27,6 +28,7 @@ export default {
         if (selected) {
           toReturn.push(selected)
         }
+
       }
 
       game.actions.returnMany(player, toReturn)
@@ -46,4 +48,4 @@ export default {
   echoImpl: (game, player, { self }) => {
     game.actions.drawAndTuck(player, game.getEffectAge(self, 4))
   },
-}
+} satisfies AgeCardData

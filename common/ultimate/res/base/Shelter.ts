@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Shelter`,
   color: `yellow`,
@@ -18,6 +20,7 @@ export default {
       if (playerScoreCount < leaderScoreCount) {
         game.aYouLose(player, self)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

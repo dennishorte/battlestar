@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Cell Phone`,
   color: `yellow`,
@@ -17,6 +19,7 @@ export default {
       for (let i = 0; i < count; i++) {
         game.actions.draw(player, { age: game.getEffectAge(self, 10) })
       }
+
     },
 
     (game, player) => {
@@ -43,4 +46,4 @@ export default {
       game.actions.drawAndForeshadow(player, game.getEffectAge(self, 11))
     },
   ],
-}
+} satisfies AgeCardData

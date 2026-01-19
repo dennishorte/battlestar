@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 
 export default {
   name: `Fermi Paradox`,
@@ -30,6 +32,7 @@ export default {
       if (numBoardCards === 0) {
         game.youWin(player, self.name)
       }
+
       else {
         const valuedJunkCards = game
           .zones.byId('junk')
@@ -40,4 +43,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

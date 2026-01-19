@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   name: 'Empire',
   shortName: 'empr',
@@ -16,4 +18,4 @@ export default {
     const numMatches = Object.values(biscuits).filter(count => count >= targetCount).length
     return numMatches >= targetBiscuitCount
   },
-}
+} satisfies AgeCardData

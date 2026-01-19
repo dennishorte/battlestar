@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Wernher Von Braun`,  // Card names are unique in Innovation
   name: `Wernher Von Braun`,
@@ -19,6 +21,7 @@ export default {
       func: (game, player, { owner, self }) => {
         game.actions.chooseAndJunkDeck(owner, [game.getEffectAge(self, 9), game.getEffectAge(self, 10)])
       }
+
     },
     {
       trigger: 'list-score',
@@ -30,4 +33,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

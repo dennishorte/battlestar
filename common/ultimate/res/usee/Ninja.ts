@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Ninja`,
   color: `red`,
@@ -20,10 +22,11 @@ export default {
         if (topCard) {
           game.actions.transfer(player, topCard, game.zones.byPlayer(leader, topCard.color))
         }
+
       }
     },
     (game, player) => {
       game.actions.chooseAndSplay(player, ['red'], 'right')
     },
   ],
-}
+} satisfies AgeCardData

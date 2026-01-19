@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Telescope`,
   color: `blue`,
@@ -20,6 +22,7 @@ export default {
         game.log.add({
           template: '{player} returns {card} to the top of its deck',
           args: { player, card: toPlace }
+
         })
         toPlace.moveToTop(toPlace.home)
         game.actions.acted(player)
@@ -38,4 +41,4 @@ export default {
       game.actions.foreshadow(player, card)
     }
   },
-}
+} satisfies AgeCardData

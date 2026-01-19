@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Secret History`,
   color: `green`,
@@ -24,9 +26,10 @@ export default {
       if (redSplay === 'right' && purpleSplay === 'right') {
         game.actions.claimAchievement(player, { name: 'Mystery' })
       }
+
       else {
         game.actions.chooseAndSplay(player, ['red', 'purple'], 'right', { count: 1 })
       }
     }
   ],
-}
+} satisfies AgeCardData

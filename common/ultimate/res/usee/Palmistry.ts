@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Palmistry`,
   color: `blue`,
@@ -20,6 +22,7 @@ export default {
       if (returned.length === 2) {
         game.actions.drawAndScore(player, game.getEffectAge(self, 2))
       }
+
     }
   ],
-}
+} satisfies AgeCardData

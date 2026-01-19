@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Morphine`,
   color: `yellow`,
@@ -23,6 +25,7 @@ export default {
       if (!game.state.dogmaInfo.morphine) {
         game.state.dogmaInfo.morphine = 0
       }
+
       if (returned) {
         game.state.dogmaInfo.morphine = Math.max(
           game.state.dogmaInfo.morphine,
@@ -51,4 +54,4 @@ export default {
       .filter(card => card.getAge() % 2 === 1)
     game.actions.chooseAndScore(player, choices)
   },
-}
+} satisfies AgeCardData

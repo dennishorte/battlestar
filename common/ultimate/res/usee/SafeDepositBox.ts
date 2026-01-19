@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Safe Deposit Box`,
   color: `red`,
@@ -19,6 +21,7 @@ export default {
         game.actions.drawAndJunk(player, game.getEffectAge(self, 7))
         game.actions.drawAndJunk(player, game.getEffectAge(self, 7))
       }
+
       else if (choice === 'Exchange') {
         const scoreCards = game.cards.byPlayer(player, 'score')
         const valuedJunkCards = game
@@ -41,4 +44,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

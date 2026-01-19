@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Counterintelligence`,
   color: `blue`,
@@ -24,10 +26,11 @@ export default {
           game.actions.transfer(player, matchingCard, game.zones.byPlayer(leader, matchingCard.color))
           game.actions.draw(player, { age: game.getEffectAge(self, 7) })
         }
+
       }
     },
     (game, player, { self }) => {
       game.actions.draw(player, { age: game.getEffectAge(self, 8) })
     }
   ],
-}
+} satisfies AgeCardData

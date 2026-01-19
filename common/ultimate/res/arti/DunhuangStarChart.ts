@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Dunhuang Star Chart`,
   color: `blue`,
@@ -15,6 +17,7 @@ export default {
       if (returned) {
         game.actions.draw(player, { age: returned.length })
       }
+
     }
   ],
-}
+} satisfies AgeCardData

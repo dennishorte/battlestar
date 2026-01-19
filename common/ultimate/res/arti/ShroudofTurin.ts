@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Shroud of Turin`,
   color: `purple`,
@@ -34,4 +36,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

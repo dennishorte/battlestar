@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Principia`,
   color: `blue`,
@@ -23,6 +25,7 @@ export default {
       for (const card of returned) {
         game.actions.drawAndMeld(player, card.getAge() + 1)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

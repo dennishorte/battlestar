@@ -1,5 +1,6 @@
 
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 
 export default {
@@ -28,9 +29,10 @@ export default {
           .filter(card => card.getAge() === value)
         game.actions.transferMany(player, cards, game.zones.byPlayer(player, 'hand'), { ordered: true })
       }
+
     },
     (game, player) => {
       game.actions.chooseAndSplay(player, ['yellow'], 'right')
     }
   ],
-}
+} satisfies AgeCardData

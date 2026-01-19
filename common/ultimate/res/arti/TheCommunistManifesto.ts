@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `The Communist Manifesto`,
   color: `purple`,
@@ -24,6 +26,7 @@ export default {
         if (transferred && target === player) {
           mine = card
         }
+
       }
 
       if (mine) {
@@ -31,4 +34,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

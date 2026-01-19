@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Silk`,
@@ -38,6 +39,7 @@ export default {
           game.actions.scoreMany(player, toScore)
           break
         }
+
         else {
           game.log.add({ template: 'Must choose only one card per color' })
           continue
@@ -45,4 +47,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

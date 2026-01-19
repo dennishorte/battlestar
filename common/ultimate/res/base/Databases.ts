@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Databases`,
   color: `green`,
@@ -17,5 +19,6 @@ export default {
       const count = Math.max(...achievementAges)
       game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'), { count })
     }
+
   ],
-}
+} satisfies AgeCardData

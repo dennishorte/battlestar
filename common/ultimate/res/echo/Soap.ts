@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Soap`,
   color: `yellow`,
@@ -32,8 +34,9 @@ export default {
             .filter(card => game.checkAchievementEligibility(player, card))
           game.actions.chooseAndAchieve(player, eligible, { min: 0, max: 1 })
         }
+
       }
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

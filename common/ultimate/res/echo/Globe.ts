@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Globe`,
   color: `green`,
@@ -54,4 +56,4 @@ export default {
     },
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

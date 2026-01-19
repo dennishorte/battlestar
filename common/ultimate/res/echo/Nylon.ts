@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Nylon`,
   color: `green`,
@@ -19,6 +21,7 @@ export default {
           if (card) {
             tucked.push(card)
           }
+
         }
 
         if (tucked.some(card => card.color === 'green')) {
@@ -39,4 +42,4 @@ export default {
     },
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

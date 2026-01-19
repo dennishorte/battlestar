@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Holy Grail`,
   color: `yellow`,
@@ -18,6 +20,7 @@ export default {
           .filter(ach => ach.getAge() === card.age)
         game.actions.chooseAndAchieve(player, choices)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

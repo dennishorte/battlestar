@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Ride-Hailing`,
   color: `yellow`,
@@ -24,9 +26,10 @@ export default {
       if (card) {
         game.aSelfExecute(self, player, card)
       }
+
       else {
         game.actions.draw(player, { age: game.getEffectAge(self, 11) })
       }
     }
   ],
-}
+} satisfies AgeCardData

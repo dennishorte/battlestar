@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Tran Huang Dao`,  // Card names are unique in Innovation
   name: `Tran Huang Dao`,
@@ -24,6 +26,7 @@ export default {
           .filter(x => x.getAge() < 4)
         game.actions.chooseAndScore(player, options)
       }
+
     },
     {
       trigger: 'calculate-biscuits',
@@ -39,4 +42,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

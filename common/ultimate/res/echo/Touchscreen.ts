@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Touchscreen`,
   color: `blue`,
@@ -15,6 +17,7 @@ export default {
         if (count === 2 || count === 3) {
           return 'aslant'
         }
+
         else if (count === 4 || count === 5) {
           return 'up'
         }
@@ -60,4 +63,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

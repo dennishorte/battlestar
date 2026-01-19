@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `McCarthyism`,
   color: `red`,
@@ -22,6 +24,7 @@ export default {
         game.log.add({
           template: '{player} has Socialism on their board and loses the game!',
           args: { player }
+
         })
         game.aYouLose(player, self)
       }
@@ -41,4 +44,4 @@ export default {
       game.actions.chooseAndSplay(player, ['red', 'blue'], 'up')
     }
   ],
-}
+} satisfies AgeCardData

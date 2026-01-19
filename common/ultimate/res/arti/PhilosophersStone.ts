@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Philosopher's Stone`,
   color: `green`,
@@ -19,7 +21,8 @@ export default {
         if (totalValue <= 11) {
           game.actions.junkDeck(player, totalValue)
         }
+
       }
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Sergey Brin`,  // Card names are unique in Innovation
   name: `Sergey Brin`,
@@ -18,6 +20,7 @@ export default {
           .players.all()
           .flatMap(p => game.getDogmaTargets(p))
       }
+
     },
     {
       trigger: 'dogma',
@@ -28,4 +31,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

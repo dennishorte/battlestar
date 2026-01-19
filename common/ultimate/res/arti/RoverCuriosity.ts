@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Rover Curiosity`,
   color: `blue`,
@@ -14,6 +16,7 @@ export default {
       if (card) {
         game.aSelfExecute(self, player, card)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

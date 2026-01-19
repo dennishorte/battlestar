@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Mapmaking`,
   color: `green`,
@@ -22,6 +24,7 @@ export default {
       if (transferredCards.length > 0) {
         game.state.dogmaInfo.transferred = true
       }
+
     },
 
     (game, player, { self }) => {
@@ -33,4 +36,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

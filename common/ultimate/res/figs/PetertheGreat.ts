@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Peter the Great`,  // Card names are unique in Innovation
   name: `Peter the Great`,
@@ -29,6 +31,7 @@ export default {
               if (game.checkAchievementEligibility(player, toAchieve)) {
                 game.actions.claimAchievement(player, toAchieve)
               }
+
               else {
                 game.log.add({
                   template: 'Not eligible to claim bottom green card.'
@@ -50,4 +53,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

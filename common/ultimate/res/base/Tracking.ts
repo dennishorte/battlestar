@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Tracking`,
   color: `purple`,
@@ -17,5 +19,6 @@ export default {
 
       game.actions.chooseAndReturn(player, drawnCards)
     }
+
   ],
-}
+} satisfies AgeCardData

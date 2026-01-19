@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Whataboutism`,
   color: `purple`,
@@ -22,6 +24,7 @@ export default {
         if (result) {
           transferred = true
         }
+
       }
 
       if (transferred) {
@@ -29,4 +32,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

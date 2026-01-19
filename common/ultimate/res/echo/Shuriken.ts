@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Shuriken`,
   color: `red`,
@@ -29,6 +31,7 @@ export default {
           if (trans) {
             transferred.push(trans)
           }
+
         }
 
         if (foreseen && transferred.length === 2) {
@@ -43,4 +46,4 @@ export default {
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

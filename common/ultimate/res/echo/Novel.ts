@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Novel`,
   color: `purple`,
@@ -53,4 +55,4 @@ export default {
   echoImpl: (game, player) => {
     game.actions.returnMany(player, game.cards.byPlayer(player, 'forecast'))
   },
-}
+} satisfies AgeCardData

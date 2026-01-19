@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Martian Internet`,
   color: `blue`,
@@ -26,6 +28,7 @@ export default {
       if (card.checkHasBiscuit('l') && playerHasMostLeaves) {
         game.youWin(player, self.name)
       }
+
     },
   ],
-}
+} satisfies AgeCardData

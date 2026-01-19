@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Teleprompter`,
   color: `green`,
@@ -63,4 +65,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

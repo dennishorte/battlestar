@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `ATM`,
   color: `yellow`,
@@ -23,6 +25,7 @@ export default {
       if (card) {
         game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
       }
+
     },
 
     (game, player) => {
@@ -37,4 +40,4 @@ export default {
     const age = game.actions.chooseAge(player)
     game.actions.drawAndScore(player, age)
   },
-}
+} satisfies AgeCardData

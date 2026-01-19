@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Max Verstappen`,  // Card names are unique in Innovation
   name: `Max Verstappen`,
@@ -30,6 +32,7 @@ export default {
           if (game.state.dogmaInfo.earlyTerminate) {
             return
           }
+
         }
 
         if (returned.length > 0) {
@@ -38,4 +41,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

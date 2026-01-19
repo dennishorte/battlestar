@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Adam Smith`,  // Card names are unique in Innovation
   name: `Adam Smith`,
@@ -18,6 +20,7 @@ export default {
         extras.c = biscuits.c * 2
         return extras
       }
+
     },
     {
       trigger: 'dogma',
@@ -32,4 +35,4 @@ export default {
       },
     },
   ]
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Calendar`,
   color: `blue`,
@@ -23,9 +25,10 @@ export default {
         game.actions.draw(player, { age: game.getEffectAge(self, 3) })
         game.actions.draw(player, { age: game.getEffectAge(self, 3) })
       }
+
       else {
         game.log.addNoEffect()
       }
     }
   ],
-}
+} satisfies AgeCardData

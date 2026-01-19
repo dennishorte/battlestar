@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Ximen Bao`,  // Card names are unique in Innovation
   name: `Ximen Bao`,
@@ -27,6 +29,7 @@ export default {
 
         game.actions.junkMany(player, toJunk, { ordered: true })
       }
+
     }
   ]
-}
+} satisfies AgeCardData

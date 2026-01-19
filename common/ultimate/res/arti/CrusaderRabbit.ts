@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Crusader Rabbit`,
   color: `red`,
@@ -30,9 +32,10 @@ export default {
         game.actions.chooseAndScore(player, matches)
         game.actions.draw(player, { age: game.getEffectAge(self, 10) })
       }
+
       else {
         game.log.addNoEffect()
       }
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 
 
 export default {
@@ -32,9 +34,10 @@ export default {
       if (greenCount >= 10) {
         game.youWin(player, 'Collaboration')
       }
+
       else {
         game.log.addNoEffect()
       }
     },
   ],
-}
+} satisfies AgeCardData

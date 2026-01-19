@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Knots`,
   color: `blue`,
@@ -20,6 +22,7 @@ export default {
       if (revealed) {
         game.actions.draw(player, { age: game.getEffectAge(self, 1) })
       }
+
     }
   ],
-}
+} satisfies AgeCardData

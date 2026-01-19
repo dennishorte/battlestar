@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Qianlong's Dragon Robe`,
   color: `yellow`,
@@ -16,6 +18,7 @@ export default {
       if (redCard) {
         game.actions.transfer(player, redCard, leaderScore)
       }
+
       else {
         game.log.add({
           template: '{player} has no red cards',
@@ -41,4 +44,4 @@ export default {
       game.actions.chooseAndTransfer(player, purpleCards, game.zones.byPlayer(leader, 'hand'))
     }
   ],
-}
+} satisfies AgeCardData

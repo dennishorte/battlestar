@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Secret Police`,
@@ -20,6 +21,7 @@ export default {
           game.actions.return(player, game.cards.top(player, tucked.color))
           continue
         }
+
         else {
           game.actions.draw(player, { age: game.getEffectAge(self, 3) })
           break
@@ -35,4 +37,4 @@ export default {
       })
     }
   ],
-}
+} satisfies AgeCardData

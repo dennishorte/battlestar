@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Charles Darwin`,  // Card names are unique in Innovation
   name: `Charles Darwin`,
@@ -32,10 +34,11 @@ export default {
         if (nobodyHasMoreCondition) {
           game.youWin(player, self.name)
         }
+
         else {
           game.actions.draw(player, { age: game.getEffectAge(self, 8) })
         }
       }
     }
   ]
-}
+} satisfies AgeCardData

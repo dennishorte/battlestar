@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Socialism`,
   color: `purple`,
@@ -21,10 +23,11 @@ export default {
         game.actions.tuck(player, card)
         game.actions.tuckMany(player, game.cards.byPlayer(player, 'hand'))
       }
+
     },
 
     (game, player) => {
       game.actions.junkAvailableAchievement(player, [8, 9, 10], { min: 0 })
     },
   ],
-}
+} satisfies AgeCardData

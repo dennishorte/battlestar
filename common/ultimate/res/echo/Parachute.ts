@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Parachute`,
   color: `red`,
@@ -29,7 +31,8 @@ export default {
 
         game.actions.junkMany(player, toJunk, { ordered: true })
       }
+
     },
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

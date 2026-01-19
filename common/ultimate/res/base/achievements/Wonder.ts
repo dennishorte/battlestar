@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   name: 'Wonder',
   shortName: 'wond',
@@ -17,4 +19,4 @@ export default {
 
     return directionMatch >= numColors
   },
-}
+} satisfies AgeCardData

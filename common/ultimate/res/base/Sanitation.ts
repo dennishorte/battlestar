@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Sanitation`,
   color: `yellow`,
@@ -30,4 +32,4 @@ export default {
       game.actions.junkDeck(player, age)
     },
   ],
-}
+} satisfies AgeCardData

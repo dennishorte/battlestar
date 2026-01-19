@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Jiskairumoko Necklace`,
   color: `green`,
@@ -20,6 +22,7 @@ export default {
         game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'achievements'))
         game.actions.junkDeck(player, card.getAge())
       }
+
     }
   ],
-}
+} satisfies AgeCardData

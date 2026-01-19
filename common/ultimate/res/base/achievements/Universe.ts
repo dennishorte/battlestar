@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   name: 'Universe',
   shortName: 'univ',
@@ -17,4 +19,4 @@ export default {
 
     return matchCount >= targetCount
   },
-}
+} satisfies AgeCardData

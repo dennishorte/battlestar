@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Triad`,
   color: `purple`,
@@ -17,9 +19,10 @@ export default {
         game.actions.chooseAndTuck(player, hand.cardlist())
         game.actions.chooseAndScore(player, hand.cardlist())
       }
+
       else {
         game.log.addNoEffect()
       }
     },
   ],
-}
+} satisfies AgeCardData

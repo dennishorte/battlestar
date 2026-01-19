@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Seikan Tunnel`,
   color: `green`,
@@ -18,6 +20,7 @@ export default {
             color,
             count: game.zones.byPlayer(player, color).numVisibleCards(),
           }
+
         }))
         .sort((l, r) => r.count - l.count)
 
@@ -33,4 +36,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

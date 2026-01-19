@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Xianrendong Shards`,
   color: `yellow`,
@@ -14,6 +16,7 @@ export default {
         player,
         game.cards.byPlayer(player, 'hand'),
         { count: 3 }
+
       )
 
       if (cards.length > 0) {
@@ -33,4 +36,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

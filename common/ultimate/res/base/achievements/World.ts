@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   name: 'World',
   shortName: 'wrld',
@@ -9,4 +11,4 @@ export default {
     const targetInfo = reduceCost ? 11 : 12
     return player.biscuits().i >= targetInfo
   },
-}
+} satisfies AgeCardData

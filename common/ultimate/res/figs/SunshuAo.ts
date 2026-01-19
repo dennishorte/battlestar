@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Sunshu Ao`,  // Card names are unique in Innovation
   name: `Sunshu Ao`,
@@ -32,6 +34,7 @@ export default {
         const card = game.actions.draw(player, { age: game.getEffectAge(self, 1) })
         game.actions.claimAchievement(player, { card })
       }
+
     },
     {
       trigger: 'tuck',
@@ -45,4 +48,4 @@ export default {
       }
     },
   ]
-}
+} satisfies AgeCardData

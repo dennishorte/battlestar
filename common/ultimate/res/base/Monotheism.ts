@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Monotheism`,
   color: `purple`,
@@ -21,10 +23,11 @@ export default {
       if (transferred.length > 0) {
         game.actions.drawAndTuck(player, game.getEffectAge(self, 1))
       }
+
     },
 
     (game, player, { self }) => {
       game.actions.drawAndTuck(player, game.getEffectAge(self, 1))
     }
   ],
-}
+} satisfies AgeCardData

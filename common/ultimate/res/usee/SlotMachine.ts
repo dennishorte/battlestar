@@ -1,4 +1,5 @@
 import { GameOverEvent } from '../../../lib/game.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Slot Machine`,
@@ -38,4 +39,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

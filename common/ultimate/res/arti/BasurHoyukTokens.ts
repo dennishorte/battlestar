@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Basur Hoyuk Tokens`,
   color: `blue`,
@@ -18,7 +20,8 @@ export default {
           toReturn.push(card)
           game.actions.returnMany(player, toReturn)
         }
+
       }
     }
   ],
-}
+} satisfies AgeCardData

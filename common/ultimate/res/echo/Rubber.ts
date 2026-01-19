@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Rubber`,
   color: `red`,
@@ -30,10 +32,11 @@ export default {
         const choices = game.cards.tops(player)
         game.actions.chooseAndForeshadow(player, choices)
       }
+
     },
   ],
   echoImpl: (game, player, { self }) => {
     game.actions.drawAndTuck(player, game.getEffectAge(self, 8))
     game.actions.drawAndTuck(player, game.getEffectAge(self, 8))
   },
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Iron Curtain`,
   color: `red`,
@@ -29,4 +31,4 @@ export default {
       })
     },
   ],
-}
+} satisfies AgeCardData

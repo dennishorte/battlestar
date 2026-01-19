@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 
 export default {
   name: `Holy Lance`,
@@ -19,6 +21,7 @@ export default {
       if (card) {
         game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
       }
+
     },
 
     (game, player) => {
@@ -32,4 +35,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

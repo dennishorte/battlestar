@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Skinning`,
   color: `yellow`,
@@ -20,6 +22,7 @@ export default {
       if (scored) {
         game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'), { count: scored.getBiscuitCount('r') })
       }
+
     }
   ],
-}
+} satisfies AgeCardData

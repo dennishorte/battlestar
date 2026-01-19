@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Avicenna`,  // Card names are unique in Innovation
   name: `Avicenna`,
@@ -35,4 +37,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

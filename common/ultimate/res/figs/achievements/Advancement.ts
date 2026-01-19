@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   id: 'Advancement',
   name: 'Advancement',
@@ -12,4 +14,5 @@ export default {
     const decreeAge = highestAge + 2
     game.actions.draw(player, { age: decreeAge })
   }
-}
+
+} satisfies AgeCardData

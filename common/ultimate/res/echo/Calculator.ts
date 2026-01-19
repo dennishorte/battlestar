@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Calculator`,
   color: `blue`,
@@ -27,6 +29,7 @@ export default {
             game.log.add({ template: 'Total age was not less than 12' })
             break
           }
+
           else {
             game.actions.draw(player, { age: total })
             if (repeated) {
@@ -50,4 +53,4 @@ export default {
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

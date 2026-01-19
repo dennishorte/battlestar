@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   id: `Carl Friedrich Gauss`,  // Card names are unique in Innovation
@@ -35,6 +36,7 @@ export default {
         if (cards.length === 0) {
           game.log.addNoEffect()
         }
+
         else {
           game.actions.meldMany(player, cards)
         }
@@ -49,4 +51,4 @@ export default {
       },
     },
   ]
-}
+} satisfies AgeCardData

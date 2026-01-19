@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Quantum Theory`,
   color: `blue`,
@@ -14,6 +16,7 @@ export default {
         player,
         game.cards.byPlayer(player, 'hand'),
         { min: 0, max: 2 }
+
       )
 
       if (returned && returned.length == 2) {
@@ -22,4 +25,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

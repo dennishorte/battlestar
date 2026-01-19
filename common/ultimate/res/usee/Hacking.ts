@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Hacking`,
   color: `blue`,
@@ -26,4 +28,4 @@ export default {
       game.actions.meldMany(player, toMeld)
     },
   ],
-}
+} satisfies AgeCardData

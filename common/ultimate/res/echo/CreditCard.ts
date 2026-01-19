@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Credit Card`,
   color: `green`,
@@ -30,6 +32,7 @@ export default {
           if (foreseen) {
             continue
           }
+
         }
 
         break
@@ -43,4 +46,4 @@ export default {
   echoImpl: (game, player, { self }) => {
     game.actions.drawAndForeshadow(player, game.getEffectAge(self, 9))
   },
-}
+} satisfies AgeCardData

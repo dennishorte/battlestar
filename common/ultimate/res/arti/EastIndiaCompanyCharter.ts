@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `East India Company Charter`,
   color: `red`,
@@ -14,6 +16,7 @@ export default {
       const age = game.actions.chooseAge(player, choices)
       const toReturn = []
       const playerCards = {}
+
       for (const player of game.players.all()) {
         const cards = game
           .cards.byPlayer(player, 'score')
@@ -44,4 +47,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

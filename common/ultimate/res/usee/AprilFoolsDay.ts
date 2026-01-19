@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `April Fool's Day`,
   color: `yellow`,
@@ -21,6 +23,7 @@ export default {
       if (selectedCard) {
         game.actions.transfer(player, selectedCard, game.zones.byPlayer(rightPlayer, selectedCard.color))
       }
+
       else {
         game.actions.claimAchievement(player, { name: 'Folklore' })
       }
@@ -40,4 +43,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

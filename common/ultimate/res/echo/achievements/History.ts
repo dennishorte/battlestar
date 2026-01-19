@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   name: 'History',
   shortName: 'hist',
@@ -22,4 +24,4 @@ export default {
       )
       .some(count => count >= targetCount)
   },
-}
+} satisfies AgeCardData

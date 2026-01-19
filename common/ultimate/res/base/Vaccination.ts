@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Vaccination`,
   color: `yellow`,
@@ -39,4 +41,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

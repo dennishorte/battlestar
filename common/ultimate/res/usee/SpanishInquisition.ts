@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Spanish Inquisition`,
   color: `red`,
@@ -26,9 +28,10 @@ export default {
         const redCards = game.cards.byPlayer(player, 'red')
         game.actions.returnMany(player, redCards, { ordered: true })
       }
+
       else {
         game.log.addNoEffect()
       }
     },
   ],
-}
+} satisfies AgeCardData

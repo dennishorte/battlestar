@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Battleship Bismark`,
   color: `red`,
@@ -15,6 +17,7 @@ export default {
         const toReturn = game.cards.byPlayer(player, card.color)
         game.actions.returnMany(player, toReturn, { ordered: true })
       }
+
     }
   ],
-}
+} satisfies AgeCardData

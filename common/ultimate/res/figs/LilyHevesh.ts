@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   id: `Lily Hevesh`,  // Card names are unique in Innovation
@@ -36,6 +37,7 @@ export default {
             game.actions.reveal(player, card)
             revealed.push(card)
           }
+
         }
 
         const revealedColors = revealed.map(card => card.color)
@@ -53,4 +55,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

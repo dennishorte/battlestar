@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Hiking`,
   color: `green`,
@@ -24,8 +26,9 @@ export default {
             game.actions.meld(player, secondCard)
             game.actions.draw(player, { age: game.getEffectAge(self, 8) })
           }
+
         }
       }
     },
   ],
-}
+} satisfies AgeCardData

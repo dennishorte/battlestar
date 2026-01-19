@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Periodic Table`,
@@ -14,6 +15,7 @@ export default {
     (game, player) => {
       while (true) {
         const byAge = {}
+
         for (const card of game.cards.tops(player)) {
           if (!Object.hasOwn(byAge, card.age)) {
             byAge[card.age] = [card]
@@ -50,4 +52,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

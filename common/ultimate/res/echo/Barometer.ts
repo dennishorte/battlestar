@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Barometer`,
@@ -24,6 +25,7 @@ export default {
       if (age) {
         game.actions.drawAndForeshadow(player, age)
       }
+
     },
 
     (game, player) => {
@@ -42,4 +44,4 @@ export default {
       .filter(card => card.getAge() === 5)
     game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'))
   },
-}
+} satisfies AgeCardData

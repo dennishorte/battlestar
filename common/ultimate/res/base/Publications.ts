@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Publications`,
   color: `blue`,
@@ -32,6 +34,7 @@ export default {
           junked = true
           game.actions.junk(player, toJunk)
         }
+
       }
       else {
         game.log.add({ template: 'no special achievements available' })
@@ -56,4 +59,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

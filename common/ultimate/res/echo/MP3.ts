@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `MP3`,
@@ -19,6 +20,7 @@ export default {
       if (age) {
         game.actions.drawAndScore(player, age)
       }
+
     },
 
     (game, player) => {
@@ -44,4 +46,4 @@ export default {
       game.actions.drawAndScore(player, game.getEffectAge(self, 10))
     }
   ],
-}
+} satisfies AgeCardData

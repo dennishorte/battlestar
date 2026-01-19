@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Sandham Room Cricket Bat`,
   color: `purple`,
@@ -17,10 +19,11 @@ export default {
         game.log.add({ template: 'Card is red' })
         game.actions.chooseAndAchieve(player, choices)
       }
+
       else {
         game.log.add({ template: 'Card is not red' })
         game.actions.chooseAndJunk(player, choices)
       }
     }
   ],
-}
+} satisfies AgeCardData

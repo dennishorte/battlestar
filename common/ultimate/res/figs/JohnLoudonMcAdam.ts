@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `John Loudon McAdam`,  // Card names are unique in Innovation
   name: `John Loudon McAdam`,
@@ -22,6 +24,7 @@ export default {
           .cards.tops(player)
           .filter(card => card.biscuits.includes('f'))
       }
+
     }
   ]
-}
+} satisfies AgeCardData

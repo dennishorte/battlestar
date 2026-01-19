@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Palampore`,
@@ -27,6 +28,7 @@ export default {
       if (age) {
         game.actions.drawAndScore(player, age)
       }
+
     },
 
     (game, player) => {
@@ -44,4 +46,4 @@ export default {
     },
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

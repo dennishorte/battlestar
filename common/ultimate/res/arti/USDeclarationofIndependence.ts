@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `U.S. Declaration of Independence`,
   color: `red`,
@@ -25,6 +27,7 @@ export default {
       if (card) {
         game.actions.transfer(player, card, game.zones.byPlayer(leader, card.color))
       }
+
     }
   ],
-}
+} satisfies AgeCardData

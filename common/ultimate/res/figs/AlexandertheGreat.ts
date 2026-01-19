@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Alexander the Great`,  // Card names are unique in Innovation
   name: `Alexander the Great`,
@@ -22,6 +24,7 @@ export default {
 
         game.actions.scoreMany(player, topFigures)
       }
+
     },
     {
       trigger: 'dogma',
@@ -35,4 +38,4 @@ export default {
       },
     },
   ]
-}
+} satisfies AgeCardData

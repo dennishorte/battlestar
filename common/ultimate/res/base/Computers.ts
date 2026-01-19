@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Computers`,
   color: `blue`,
@@ -16,6 +18,7 @@ export default {
       if (card) {
         game.aSelfExecute(self, player, card)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

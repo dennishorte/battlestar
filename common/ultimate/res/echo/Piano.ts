@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Piano`,
@@ -23,6 +24,7 @@ export default {
           for (const age of values) {
             game.actions.drawAndScore(player, age)
           }
+
         }
 
         else {
@@ -53,4 +55,4 @@ export default {
       game.actions.draw(player, { age })
     }
   },
-}
+} satisfies AgeCardData

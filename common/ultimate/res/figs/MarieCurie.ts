@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   id: `Marie Curie`,  // Card names are unique in Innovation
@@ -23,6 +24,7 @@ export default {
           .map(card => card.getAge())
         return util.array.distinct(ages).length
       }
+
     },
     {
       trigger: 'draw',
@@ -36,4 +38,4 @@ export default {
       },
     },
   ]
-}
+} satisfies AgeCardData

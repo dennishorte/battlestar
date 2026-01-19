@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Escape Room`,
   color: `yellow`,
@@ -22,6 +24,7 @@ export default {
         if (!scored) {
           game.aYouLose(player, self)
         }
+
       }
     },
     (game, player) => {
@@ -33,4 +36,4 @@ export default {
       game.actions.scoreMany(player, toScore)
     }
   ],
-}
+} satisfies AgeCardData

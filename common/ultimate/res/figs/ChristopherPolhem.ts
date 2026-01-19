@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Christopher Polhem`,  // Card names are unique in Innovation
   name: `Christopher Polhem`,
@@ -22,6 +24,7 @@ export default {
         const achievementCount = game.cards.byPlayer(player, 'achievements').length
         return factoryCount * achievementCount
       }
+
     },
   ]
-}
+} satisfies AgeCardData

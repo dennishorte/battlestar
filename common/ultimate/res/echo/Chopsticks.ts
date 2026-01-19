@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Chopsticks`,
   color: `yellow`,
@@ -19,9 +21,10 @@ export default {
           .filter(card => game.checkAchievementEligibility(player, card))
         game.actions.chooseAndAchieve(player, choices, { count: 1 })
       }
+
     }
   ],
   echoImpl: (game, player, { self }) => {
     game.actions.drawAndForeshadow(player, game.getEffectAge(self, 1), { optional: true })
   },
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Horseshoes`,
   color: `red`,
@@ -21,6 +23,7 @@ export default {
         if (transferred) {
           game.actions.drawAndMeld(player, game.getEffectAge(self, 2))
         }
+
       }
     }
   ],
@@ -28,4 +31,4 @@ export default {
     const age = game.actions.chooseAge(player, [game.getEffectAge(self, 2), game.getEffectAge(self, 3)])
     game.actions.drawAndForeshadow(player, age)
   },
-}
+} satisfies AgeCardData

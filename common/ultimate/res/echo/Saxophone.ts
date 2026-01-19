@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 
 export default {
   name: `Saxophone`,
@@ -48,4 +50,4 @@ export default {
     },
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

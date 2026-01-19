@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Bell`,
   color: `purple`,
@@ -25,9 +27,10 @@ export default {
         game.log.add({ template: 'I do not have a good way to hide only the cards in other player hands, so the game just automatically returns them all.' })
         game.actions.returnMany(player, cards, { ordered: true })
       }
+
     },
   ],
   echoImpl: (game, player) => {
     game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1 })
   },
-}
+} satisfies AgeCardData

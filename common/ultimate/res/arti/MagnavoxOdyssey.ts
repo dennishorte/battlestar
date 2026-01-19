@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Magnavox Odyssey`,
   color: `yellow`,
@@ -16,9 +18,10 @@ export default {
       if (card1.color === card2.color) {
         game.youWin(player, self.name)
       }
+
       else {
         game.log.add({ template: 'Colors do not match' })
       }
     }
   ],
-}
+} satisfies AgeCardData

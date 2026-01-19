@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Electrum Stater of Efesos`,
   color: `green`,
@@ -16,6 +18,7 @@ export default {
           game.log.add({
             template: '{player} already has a top card of matching color',
             args: { player }
+
           })
           break
         }
@@ -29,4 +32,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

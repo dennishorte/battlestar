@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Measurement`,
   color: `green`,
@@ -20,9 +22,10 @@ export default {
         game.actions.splay(player, card.color, 'right')
         game.actions.draw(player, { age: game.cards.byPlayer(player, card.color).length })
       }
+
       else {
         game.log.addDoNothing(player)
       }
     }
   ],
-}
+} satisfies AgeCardData

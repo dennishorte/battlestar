@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Hitchhiking`,
   color: `green`,
@@ -23,7 +25,8 @@ export default {
           })
           game.aSelfExecute(self, player, cardInHand)
         }
+
       }
     },
   ],
-}
+} satisfies AgeCardData

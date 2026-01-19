@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Pagoda`,
   color: `purple`,
@@ -26,8 +28,9 @@ export default {
             .flatMap(p => game.cards.byPlayer(p, card.color))
           game.actions.meldMany(player, toMeld)
         }
+
       }
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

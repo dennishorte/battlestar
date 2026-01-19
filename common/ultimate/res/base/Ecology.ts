@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Ecology`,
   color: `yellow`,
@@ -15,6 +17,7 @@ export default {
         player,
         game.cards.byPlayer(player, 'hand'),
         { min: 0, max: 1 }
+
       )
 
       if (cards && cards.length > 0) {
@@ -28,4 +31,4 @@ export default {
       game.actions.junkDeck(player, 10, { optional: true })
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Tomb`,
   color: `yellow`,
@@ -20,6 +22,7 @@ export default {
       if (choices.length > 0) {
         game.actions.safeguard(player, choices[0])
       }
+
       else {
         game.log.addNoEffect()
       }
@@ -47,4 +50,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

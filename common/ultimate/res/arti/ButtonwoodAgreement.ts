@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Buttonwood Agreement`,
   color: `green`,
@@ -17,6 +19,7 @@ export default {
         game.actions.score(player, card)
         game.actions.splay(player, card.color, 'up')
       }
+
       else {
         const toReturn = game
           .cards.byPlayer(player, 'score')
@@ -26,4 +29,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

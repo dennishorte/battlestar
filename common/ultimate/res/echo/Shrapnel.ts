@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Shrapnel`,
   color: `red`,
@@ -25,7 +27,8 @@ export default {
           .slice(-1)
         game.actions.scoreMany(player, toScore)
       }
+
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

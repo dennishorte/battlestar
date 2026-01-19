@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Symbology`,
   color: `purple`,
@@ -17,6 +19,7 @@ export default {
         if (count >= 4) {
           biscuitCounts[4] += 1
         }
+
         if (count >= 3) {
           biscuitCounts[3] += 1
         }
@@ -43,4 +46,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

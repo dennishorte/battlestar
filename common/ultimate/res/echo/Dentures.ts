@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Dentures`,
   color: `yellow`,
@@ -67,4 +69,4 @@ export default {
       game.state.dogmaInfo.dentures[player.name] = card
     }
   ],
-}
+} satisfies AgeCardData

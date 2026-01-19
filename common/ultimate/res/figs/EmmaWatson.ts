@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Emma Watson`,  // Card names are unique in Innovation
   name: `Emma Watson`,
@@ -19,6 +21,7 @@ export default {
           for (const color of game.util.colors()) {
             game.actions.unsplay(player, game.zones.byPlayer(target, color))
           }
+
         }
       }
     },
@@ -46,4 +49,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

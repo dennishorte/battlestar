@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   name: 'Anonymity',
   shortName: 'anon',
@@ -22,4 +24,4 @@ export default {
 
     return topCardMaxAge >= age && numStandardAchievements <= numAchievements
   },
-}
+} satisfies AgeCardData

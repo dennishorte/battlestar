@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Explosives`,
   color: `red`,
@@ -21,6 +23,7 @@ export default {
       if (transferredCondition && emptyHandCondition) {
         game.actions.draw(player, { age: game.getEffectAge(self, 7) })
       }
+
     }
   ],
-}
+} satisfies AgeCardData

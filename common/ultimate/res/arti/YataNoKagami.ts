@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Yata No Kagami`,
   color: `blue`,
@@ -25,7 +27,8 @@ export default {
         if (toSelfExecute) {
           game.aSelfExecute(self, player, toSelfExecute)
         }
+
       }
     }
   ],
-}
+} satisfies AgeCardData

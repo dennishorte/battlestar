@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Alex Trebek`,  // Card names are unique in Innovation
   name: `Alex Trebek`,
@@ -27,6 +29,7 @@ export default {
         game.log.add({
           template: '{player} says "Who is {name}?"',
           args: { player, name: card.name }
+
         })
 
         if (card.zone === card.home) {
@@ -46,4 +49,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

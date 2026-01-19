@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Comb`,
   color: `green`,
@@ -32,7 +34,8 @@ export default {
 
         game.actions.returnMany(player, toReturn)
       }
+
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

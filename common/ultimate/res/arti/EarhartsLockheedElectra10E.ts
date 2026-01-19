@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Earhart's Lockheed Electra 10E`,
   color: `blue`,
@@ -38,4 +40,4 @@ export default {
       game.actions.chooseAndAchieve(player, achievements)
     }
   ],
-}
+} satisfies AgeCardData

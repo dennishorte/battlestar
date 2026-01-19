@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Mystery Box`,
   color: `green`,
@@ -21,6 +23,7 @@ export default {
         game.actions.reveal(player, achievement)
         game.aSelfExecute(self, player, achievement)
       }
+
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Secretum Secretorum`,
   color: `blue`,
@@ -28,6 +30,7 @@ export default {
         if (card) {
           drawnCards.push(card)
         }
+
       }
 
       if (drawnCards.length > 0) {
@@ -39,4 +42,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Shen Kuo`,  // Card names are unique in Innovation
   name: `Shen Kuo`,
@@ -35,6 +37,7 @@ export default {
             if (zone.splay === 'none') {
               return zone.cardlist().length > 0 ? 1 : 0
             }
+
             else {
               return zone.cardlist().length
             }
@@ -43,4 +46,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

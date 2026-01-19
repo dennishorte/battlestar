@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Fermenting`,
   color: `yellow`,
@@ -19,6 +21,7 @@ export default {
       for (let i = 0; i < count; i++) {
         game.actions.draw(player, { age: game.getEffectAge(self, 2) })
       }
+
     }
   ],
-}
+} satisfies AgeCardData

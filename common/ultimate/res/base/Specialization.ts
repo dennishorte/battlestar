@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Specialization`,
   color: `purple`,
@@ -24,9 +26,10 @@ export default {
 
         game.actions.transferMany(player, stolen, hand)
       }
+
     },
     (game, player) => {
       game.actions.chooseAndSplay(player, ['yellow', 'blue'], 'up')
     },
   ],
-}
+} satisfies AgeCardData

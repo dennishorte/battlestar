@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Freemasons`,
@@ -27,9 +28,10 @@ export default {
         game.actions.draw(player, { age: game.getEffectAge(self, 3) })
         game.actions.draw(player, { age: game.getEffectAge(self, 3) })
       }
+
     },
     (game, player) => {
       game.actions.chooseAndSplay(player, ['yellow', 'blue'], 'left')
     }
   ],
-}
+} satisfies AgeCardData

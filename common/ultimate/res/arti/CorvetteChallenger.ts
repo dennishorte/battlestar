@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Corvette Challenger`,
   color: `blue`,
@@ -16,5 +18,6 @@ export default {
       game.actions.drawAndScore(player, numCards)
       game.actions.junkDeck(player, numCards)
     }
+
   ],
-}
+} satisfies AgeCardData

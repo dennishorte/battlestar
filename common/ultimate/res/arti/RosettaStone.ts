@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Rosetta Stone`,
   color: `blue`,
@@ -24,6 +26,7 @@ export default {
         const opponent = game.actions.choosePlayer(player, game.players.opponents(player))
         game.actions.transfer(player, otherCard, game.zones.byPlayer(opponent, otherCard.color))
       }
+
     }
   ],
-}
+} satisfies AgeCardData

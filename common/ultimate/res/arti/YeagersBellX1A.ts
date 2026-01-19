@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Yeager's Bell X-1A`,
   color: `blue`,
@@ -19,6 +21,7 @@ export default {
             game.log.add({ template: 'Card had an {i}.' })
             continue
           }
+
           else {
             game.log.add({ template: 'Card did not have an {i}.' })
             break
@@ -27,4 +30,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

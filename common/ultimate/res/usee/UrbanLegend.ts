@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 
 export default {
   name: `Urban Legend`,
@@ -20,6 +22,7 @@ export default {
           game.actions.draw(player, { age: game.getEffectAge(self, 9) })
           drawnCards++
         }
+
       })
 
       if (drawnCards === 5) {
@@ -30,4 +33,4 @@ export default {
       game.actions.chooseAndSplay(player, ['yellow', 'purple'], 'up')
     }
   ],
-}
+} satisfies AgeCardData

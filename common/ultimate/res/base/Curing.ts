@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Curing`,
   color: `blue`,
@@ -22,6 +24,7 @@ export default {
       if (!scored) {
         game.aYouLose(player, self)
       }
+
     },
     (game, player) => {
       const doExchange = game.actions.chooseYesNo(player, 'Exchange cards?')
@@ -35,4 +38,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Plot Voucher`,
   color: `green`,
@@ -29,4 +31,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `DeLorean DMC-12`,
   color: `purple`,
@@ -23,9 +25,10 @@ export default {
           .flatMap(player => game.cards.byPlayer(player, 'hand'))
         game.actions.junkMany(player, hands, { ordered: true })
       }
+
       else {
         game.log.addNoEffect()
       }
     }
   ],
-}
+} satisfies AgeCardData

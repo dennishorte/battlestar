@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Jeans`,
   color: `green`,
@@ -42,6 +44,7 @@ export default {
         if (card) {
           game.actions.transfer(player, card, game.zones.byPlayer(player, 'hand'))
         }
+
       }
     },
   ],
@@ -64,4 +67,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

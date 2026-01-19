@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Gallery`,
   color: `yellow`,
@@ -15,6 +17,7 @@ export default {
       if (scoreCards.some(card => card.age === game.getEffectAge(self, 2))) {
         game.actions.draw(player, { age: game.getEffectAge(self, 6) })
       }
+
       else {
         game.log.addNoEffect()
       }
@@ -29,4 +32,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

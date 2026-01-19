@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Stem Cells`,
   color: `yellow`,
@@ -31,4 +33,4 @@ export default {
       game.actions.draw(player, { age: game.getEffectAge(self, 11) })
     },
   ],
-}
+} satisfies AgeCardData

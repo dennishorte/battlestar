@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Algocracy`,
   color: `green`,
@@ -20,6 +22,7 @@ export default {
         game.log.add({
           template: 'There is no single player with the most {biscuit}',
           args: { biscuit }
+
         })
         return
       }
@@ -43,4 +46,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

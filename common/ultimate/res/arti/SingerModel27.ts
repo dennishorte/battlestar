@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Singer Model 27`,
   color: `yellow`,
@@ -24,7 +26,8 @@ export default {
         if (tuckedFromScore.length > 0) {
           game.actions.junkAvailableAchievement(player, game.getAges())
         }
+
       }
     }
   ],
-}
+} satisfies AgeCardData

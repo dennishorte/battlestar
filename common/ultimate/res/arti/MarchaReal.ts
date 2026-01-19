@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Marcha Real`,
   color: `purple`,
@@ -29,4 +31,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

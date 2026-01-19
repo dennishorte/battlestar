@@ -1,5 +1,6 @@
 
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Magnifying Glass`,
@@ -37,6 +38,7 @@ export default {
         if (returned && returned.length === 3) {
           game.actions.draw(player, { age: age + 2 })
         }
+
       }
     },
 
@@ -50,4 +52,4 @@ export default {
       game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'))
     }
   ],
-}
+} satisfies AgeCardData

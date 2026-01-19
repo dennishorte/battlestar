@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Trapping`,
   color: `red`,
@@ -16,6 +18,7 @@ export default {
       game.log.add({
         template: '{player} reveal their hand',
         args: { player }
+
       })
       game.actions.revealMany(player, handCards, { ordered: true })
 
@@ -29,4 +32,4 @@ export default {
       game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'hand'))
     }
   ],
-}
+} satisfies AgeCardData

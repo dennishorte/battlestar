@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Padlock`,
@@ -40,4 +41,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

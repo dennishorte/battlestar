@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Archimedes`,  // Card names are unique in Innovation
   name: `Archimedes`,
@@ -22,6 +24,7 @@ export default {
       func(game) {
         game.state.dogmaInfo.globalAgeIncrease = 1
       }
+
     }
   ]
-}
+} satisfies AgeCardData

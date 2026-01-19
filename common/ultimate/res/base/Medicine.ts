@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Medicine`,
   color: `yellow`,
@@ -29,5 +31,6 @@ export default {
     (game, player) => {
       game.actions.junkAvailableAchievement(player, [3, 4])
     }
+
   ],
-}
+} satisfies AgeCardData

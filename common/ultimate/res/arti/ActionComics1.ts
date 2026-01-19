@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Action Comics #1`,
   color: `yellow`,
@@ -16,6 +18,7 @@ export default {
           game.log.add({
             template: '{card} is green',
             args: { card }
+
           })
 
           if (self.isTopCardStrict()) {
@@ -63,4 +66,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Frigate Constitution`,
   color: `red`,
@@ -24,6 +26,7 @@ export default {
           game.log.add({
             template: "Card age does not match any of {player}'s top cards",
             args: { player: leader }
+
           })
         }
         else {
@@ -34,4 +37,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

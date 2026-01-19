@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Kobukson`,
   color: `red`,
@@ -30,6 +32,7 @@ export default {
       if (foreseen) {
         game.actions.drawAndMeld(player, game.getEffectAge(self, 5))
       }
+
     },
   ],
   echoImpl: (game, player) => {
@@ -45,4 +48,4 @@ export default {
       game.actions.splay(player, color, 'left', { owner: target })
     }
   },
-}
+} satisfies AgeCardData

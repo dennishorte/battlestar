@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Along the River during the Qingming Festival`,
   color: `yellow`,
@@ -16,6 +18,7 @@ export default {
           game.actions.tuck(player, card)
           break
         }
+
         else if (card.color === 'purple') {
           game.actions.score(player, card)
           break
@@ -29,4 +32,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

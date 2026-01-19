@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Candles`,
   color: `red`,
@@ -23,6 +25,7 @@ export default {
       if (transferred && transferred.length > 0) {
         game.actions.draw(player, { age: game.getEffectAge(self, 1) })
       }
+
     }
   ],
   echoImpl: (game, player, { self }) => {
@@ -37,4 +40,4 @@ export default {
       game.actions.draw(player, { age: game.getEffectAge(self, 3) })
     }
   },
-}
+} satisfies AgeCardData

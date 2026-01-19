@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Jet`,
@@ -25,6 +26,7 @@ export default {
           if (returned) {
             valuesToJunk.push(returned.getAge())
           }
+
         }
         else {
           game.log.add({
@@ -65,4 +67,4 @@ export default {
       game.state.dogmaInfo.jet = cards[0]
     }
   },
-}
+} satisfies AgeCardData

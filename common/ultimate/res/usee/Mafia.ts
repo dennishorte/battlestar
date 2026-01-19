@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Mafia`,
   color: `yellow`,
@@ -49,4 +51,4 @@ export default {
       game.actions.chooseAndSplay(player, ['red', 'yellow'], 'right')
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Fight Club`,
   color: `red`,
@@ -17,9 +19,10 @@ export default {
       if (secret) {
         game.actions.transfer(player, secret, game.zones.byPlayer(leader, 'achievements'))
       }
+
     },
     (game, player) => {
       game.actions.chooseAndSplay(player, ['yellow'], 'up')
     }
   ],
-}
+} satisfies AgeCardData

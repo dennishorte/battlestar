@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Hudson's Bay Company Archives`,
   color: `green`,
@@ -20,6 +22,7 @@ export default {
         game.actions.splay(player, card.color, 'right')
         game.actions.junkDeck(player, card.getAge())
       }
+
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Treaty of Kadesh`,
   color: `blue`,
@@ -27,4 +29,4 @@ export default {
       game.actions.chooseAndScore(player, choices)
     },
   ],
-}
+} satisfies AgeCardData

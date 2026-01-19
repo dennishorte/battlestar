@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Genetics`,
   color: `blue`,
@@ -18,6 +20,7 @@ export default {
           game.log.add({
             template: '{card} is not in its stack',
             args: { card }
+
           })
         }
         else {
@@ -26,4 +29,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

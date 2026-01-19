@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Climatology`,
   color: `blue`,
@@ -21,6 +23,7 @@ export default {
       game.log.add({
         template: '{leader} chooses {icon}',
         args: { leader, icon }
+
       })
 
       const choices = game
@@ -45,4 +48,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

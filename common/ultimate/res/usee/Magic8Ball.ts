@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Magic 8-Ball`,
   color: `yellow`,
@@ -22,6 +24,7 @@ export default {
         game.log.add({
           template: '{player} chooses: ' + choice,
           args: { player }
+
         })
 
         const tucked = game.actions.drawAndTuck(player, game.getEffectAge(self, 8))
@@ -64,4 +67,4 @@ export default {
 
     },
   ],
-}
+} satisfies AgeCardData

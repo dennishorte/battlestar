@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Secret Santa`,
   color: `red`,
@@ -16,6 +18,7 @@ export default {
       if (card) {
         game.actions.meld(player, card)
       }
+
     },
     (game, player, { self }) => {
       game.actions.drawAndScore(player, game.getEffectAge(self, 10))
@@ -23,4 +26,4 @@ export default {
       game.actions.drawAndScore(player, game.getEffectAge(self, 10))
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,5 +1,6 @@
 
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Sunglasses`,
@@ -59,4 +60,4 @@ export default {
       .filter(card => splayedColors.includes(card.color))
     game.actions.chooseAndScore(player, choices)
   },
-}
+} satisfies AgeCardData

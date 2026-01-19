@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Navigation`,
   color: `green`,
@@ -15,5 +17,6 @@ export default {
         .filter(card => card.getAge() === 2 || card.getAge() === 3)
       game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'score'))
     }
+
   ],
-}
+} satisfies AgeCardData

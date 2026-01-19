@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `The Big Bang`,
   color: `purple`,
@@ -23,6 +25,7 @@ export default {
             game.actions.junk(player, card)
             continue
           }
+
           else {
             game.log.add({ template: 'No changes due to card effects' })
             break
@@ -35,4 +38,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

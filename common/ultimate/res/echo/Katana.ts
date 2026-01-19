@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Katana`,
   color: `red`,
@@ -21,7 +23,8 @@ export default {
         const achievements = game.getAvailableStandardAchievements(player)
         game.actions.junkMany(player, achievements, { ordered: true })
       }
+
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

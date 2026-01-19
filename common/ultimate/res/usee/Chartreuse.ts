@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Chartreuse`,
   color: `yellow`,
@@ -27,5 +29,6 @@ export default {
     (game, player) => {
       game.actions.chooseAndSplay(player, ['green', 'yellow'], 'right')
     }
+
   ],
-}
+} satisfies AgeCardData

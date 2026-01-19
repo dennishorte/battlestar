@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Toothbrush`,
@@ -28,6 +29,7 @@ export default {
           .filter(card => game.checkAchievementEligibility(player, card))
         game.actions.chooseAndAchieve(player, choices, { hidden: true })
       }
+
     }
   ],
   echoImpl: [
@@ -46,4 +48,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

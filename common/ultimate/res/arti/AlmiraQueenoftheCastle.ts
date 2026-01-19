@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Almira, Queen of the Castle`,
   color: `purple`,
@@ -17,6 +19,7 @@ export default {
         const choices = achievements.filter(c => c.getAge() === card.getAge())
         game.actions.chooseAndAchieve(player, choices)
       }
+
       else {
         const lowest = game.util.lowestCards(achievements)[0]
         if (lowest) {
@@ -25,4 +28,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Bartholomew Roberts`,  // Card names are unique in Innovation
   name: `Bartholomew Roberts`,
@@ -33,6 +35,7 @@ export default {
           .filter(card => card.getAge() === age)
         game.actions.chooseAndAchieve(player, canAchieve, { nonAction: true })
       }
+
     }
   ]
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Sniping`,
   color: `red`,
@@ -21,7 +23,8 @@ export default {
           const bottomCard = game.cards.bottom(player, chosenColor)
           game.actions.transfer(player, bottomCard, game.zones.byPlayer(leader, chosenColor))
         }
+
       }
     },
   ],
-}
+} satisfies AgeCardData

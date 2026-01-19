@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Papyrus of Ani`,
   color: `red`,
@@ -26,10 +28,11 @@ export default {
           game.actions.meld(player, drawn)
           game.aCardEffects(player, drawn, 'dogma')
         }
+
       }
       else {
         game.log.addDoNothing(player)
       }
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Typewriter`,
@@ -22,7 +23,8 @@ export default {
         const age = game.util.highestCards(hand)[0].getAge() + 1
         game.actions.draw(player, { age })
       }
+
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

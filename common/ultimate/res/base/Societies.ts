@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Societies`,
   color: `purple`,
@@ -18,6 +20,7 @@ export default {
           if (!leaderCard) {
             return true
           }
+
           else {
             return leaderCard.getAge() < card.getAge()
           }
@@ -28,4 +31,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

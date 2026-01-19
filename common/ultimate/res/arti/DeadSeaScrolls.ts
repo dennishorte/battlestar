@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Dead Sea Scrolls`,
   color: `purple`,
@@ -22,4 +24,4 @@ export default {
       game.actions.junkAvailableAchievement(player, [highestTopAge])
     },
   ],
-}
+} satisfies AgeCardData

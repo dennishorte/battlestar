@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Invention`,
   color: `green`,
@@ -18,6 +20,7 @@ export default {
       if (colors && colors.length > 0) {
         game.actions.drawAndScore(player, game.getEffectAge(self, 4))
       }
+
     },
 
     (game, player) => {
@@ -36,4 +39,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

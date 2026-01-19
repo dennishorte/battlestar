@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Camouflage`,
   color: `red`,
@@ -20,6 +22,7 @@ export default {
               validCards.push(card)
               break
             }
+
           }
         }
         return validCards
@@ -83,4 +86,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

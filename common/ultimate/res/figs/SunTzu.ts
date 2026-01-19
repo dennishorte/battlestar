@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Sun Tzu`,  // Card names are unique in Innovation
   name: `Sun Tzu`,
@@ -26,6 +28,7 @@ export default {
           .filter(card => card.checkHasBiscuit(featuredBiscuit))
         game.actions.chooseAndMeld(player, choices, { min: 0, max: choices.length })
       }
+
     },
   ]
-}
+} satisfies AgeCardData

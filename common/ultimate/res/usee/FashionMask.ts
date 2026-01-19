@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Fashion Mask`,
   color: `yellow`,
@@ -34,5 +36,6 @@ export default {
       game.actions.splay(player, 'yellow', 'aslant')
       game.actions.splay(player, 'purple', 'aslant')
     }
+
   ],
-}
+} satisfies AgeCardData

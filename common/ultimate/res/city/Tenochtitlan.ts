@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Tenochtitlan`,
   color: `red`,
@@ -5,4 +7,4 @@ export default {
   expansion: `city`,
   biscuits: `kk4s<h`,
   dogmaBiscuit: `k`,
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Propaganda`,
   color: `purple`,
@@ -24,6 +26,7 @@ export default {
         game.log.add({
           template: '{player} does not have a {color} card to meld',
           args: { player, color: chosenColor }
+
         })
       }
       else {
@@ -48,4 +51,4 @@ export default {
       game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
     }
   ],
-}
+} satisfies AgeCardData

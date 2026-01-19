@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Democracy`,
   color: `purple`,
@@ -14,6 +16,7 @@ export default {
         game.state.dogmaInfo.democracyMaxReturned = 0
         game.state.dogmaInfo.democracyLastPlayer = ''
       }
+
       const hand = game.cards.byPlayer(player, 'hand')
       const cards = game.actions.chooseAndReturn(player, hand, { min: 0, max: hand.length })
 
@@ -29,4 +32,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

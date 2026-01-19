@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Zhang Heng`,  // Card names are unique in Innovation
   name: `Zhang Heng`,
@@ -20,6 +22,7 @@ export default {
         const toScore = game.cards.byPlayer(owner, card.color).filter(c => c.id !== card.id)
         game.actions.scoreMany(player, toScore)
       }
+
     }
   ]
-}
+} satisfies AgeCardData

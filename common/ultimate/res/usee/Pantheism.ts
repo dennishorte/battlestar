@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Pantheism`,
@@ -31,9 +32,10 @@ export default {
         const colorToSplay = colorToScore === firstCard.color ? secondCard.color : firstCard.color
         game.actions.splay(player, colorToSplay, 'right')
       }
+
     },
     (game, player, { self }) => {
       game.actions.drawAndTuck(player, game.getEffectAge(self, 4))
     }
   ],
-}
+} satisfies AgeCardData

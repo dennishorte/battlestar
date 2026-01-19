@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: 'Rocketry',
   color: 'blue',
@@ -19,5 +21,6 @@ export default {
       const opp = game.actions.choosePlayer(player, game.players.opponents(player))
       game.actions.chooseAndReturn(player, game.cards.byPlayer(opp, 'score'), { count })
     }
+
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Petition of Right`,
   color: `blue`,
@@ -29,4 +31,4 @@ export default {
       game.actions.junkAvailableAchievement(player, biscuits)
     },
   ],
-}
+} satisfies AgeCardData

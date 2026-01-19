@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Legend`,
   color: `purple`,
@@ -12,6 +14,7 @@ export default {
     (game, player, { self }) => {
       if (!game.state.dogmaInfo.legend) {
         game.state.dogmaInfo.legend = {}
+
       }
 
       const totals = game.state.dogmaInfo.legend
@@ -55,4 +58,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

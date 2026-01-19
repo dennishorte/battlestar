@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Television`,
   color: `purple`,
@@ -35,6 +37,7 @@ export default {
             .filter(card => game.checkAchievementEligibility(player, card))
           game.actions.chooseAndAchieve(player, achieveChoices)
         }
+
       }
     }
   ],
@@ -43,4 +46,4 @@ export default {
       game.actions.drawAndMeld(player, game.getEffectAge(self, 8))
     }
   ],
-}
+} satisfies AgeCardData

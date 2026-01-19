@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Velcro Shoes`,
   color: `red`,
@@ -40,4 +42,4 @@ export default {
       game.actions.chooseAndScore(player, highest)
     }
   ],
-}
+} satisfies AgeCardData

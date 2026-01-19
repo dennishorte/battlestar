@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `The Daily Courant`,
   color: `yellow`,
@@ -22,5 +24,6 @@ export default {
       // Self execute
       game.aSelfExecute(self, player, meldCard)
     }
+
   ],
-}
+} satisfies AgeCardData

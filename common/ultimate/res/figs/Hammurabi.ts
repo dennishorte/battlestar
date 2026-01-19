@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Hammurabi`,  // Card names are unique in Innovation
   name: `Hammurabi`,
@@ -21,6 +23,7 @@ export default {
           self: effectInfo.card,
         })
       }
+
     }
   ]
-}
+} satisfies AgeCardData

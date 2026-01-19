@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Composites`,
   color: `red`,
@@ -19,5 +21,6 @@ export default {
       )
       game.actions.chooseAndTransfer(player, highestScore, game.zones.byPlayer(leader, 'score'))
     }
+
   ],
-}
+} satisfies AgeCardData

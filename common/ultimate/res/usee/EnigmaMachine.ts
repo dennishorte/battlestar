@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Enigma Machine`,
   color: `red`,
@@ -22,6 +24,7 @@ export default {
         const achievements = game.getAvailableStandardAchievements(player)
         game.actions.safeguardMany(player, achievements)
       }
+
       else if (choice === choices[1]) {
         const secrets = game.zones.byPlayer(player, 'safe').cardlist()
         game.actions.transferMany(player, secrets, game.zones.byPlayer(player, 'hand'))
@@ -38,4 +41,4 @@ export default {
       game.actions.chooseAndSplay(player, colors, 'up', { count: 1 })
     }
   ],
-}
+} satisfies AgeCardData

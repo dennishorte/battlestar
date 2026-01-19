@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Laser`,
   color: `blue`,
@@ -28,7 +30,8 @@ export default {
       if (foreseen) {
         game.actions.drawAndMeld(player, game.getEffectAge(self, 11))
       }
+
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

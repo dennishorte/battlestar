@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Evolution`,
   color: `blue`,
@@ -14,6 +16,7 @@ export default {
       game.log.add({
         template: '{player} chooses {option}',
         args: { player, option: selection }
+
       })
 
       if (selection === 'Draw and Score and Return') {
@@ -31,4 +34,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

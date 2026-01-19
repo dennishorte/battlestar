@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Deepfake`,
   color: `purple`,
@@ -15,6 +17,7 @@ export default {
         game.log.add({
           template: "It is not {player}'s turn",
           args: { player }
+
         })
         return
       }
@@ -50,4 +53,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

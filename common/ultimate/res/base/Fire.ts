@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Fire`,
   color: `red`,
@@ -26,6 +28,7 @@ export default {
       if (!revealed) {
         game.aYouLose(player, self)
       }
+
     },
     (game, player, { self }) => {
       const validColors = game.cards.tops(player).map(card => card.color)
@@ -42,4 +45,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

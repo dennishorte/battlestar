@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Quantum Computers`,
   color: `blue`,
@@ -16,6 +18,7 @@ export default {
       if (lose) {
         game.aYouLose(player, self)
       }
+
     },
 
     (game, player, { self }) => {
@@ -44,4 +47,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

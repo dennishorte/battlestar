@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Buried Treasure`,
   color: `green`,
@@ -26,6 +28,7 @@ export default {
         const availableStandard = game.getAvailableStandardAchievements(player)
         game.actions.chooseAndScore(player, availableStandard, { count: 3, hidden: true })
       }
+
     },
   ],
-}
+} satisfies AgeCardData

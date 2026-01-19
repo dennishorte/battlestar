@@ -1,5 +1,6 @@
 
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 
 export default {
@@ -23,7 +24,8 @@ export default {
           game.actions.draw(player, { age: game.getEffectAge(self, 8) })
           game.actions.draw(player, { age: game.getEffectAge(self, 8) })
         }
+
       }
     }
   ],
-}
+} satisfies AgeCardData

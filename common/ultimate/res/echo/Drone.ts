@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Drone`,
   color: `red`,
@@ -17,6 +19,7 @@ export default {
         game.log.add({
           template: '{player} has {count} visible {color} cards',
           args: { player, count, color: card.color }
+
         })
 
         if (count < 6) {
@@ -34,4 +37,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

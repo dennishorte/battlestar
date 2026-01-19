@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../../UltimateAgeCard.js'
+
 export default {
   name: 'Destiny',
   shortName: 'dest',
@@ -9,4 +11,4 @@ export default {
     const targetCount = reduceCost ? 4 : 5
     return game.cards.byPlayer(player, 'forecast').length >= targetCount
   },
-}
+} satisfies AgeCardData

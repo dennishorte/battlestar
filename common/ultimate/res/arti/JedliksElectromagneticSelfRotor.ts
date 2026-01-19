@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Jedlik's Electromagnetic Self-Rotor`,
   color: `red`,
@@ -21,6 +23,7 @@ export default {
         const value = game.actions.chooseAge(player)
         game.actions.junkDeck(player, value)
       }
+
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Great Barrier Reef`,
   color: `blue`,
@@ -21,6 +23,7 @@ export default {
       for (const color of game.util.colors()) {
         game.actions.splay(player, color, 'aslant')
       }
+
     },
   ],
-}
+} satisfies AgeCardData

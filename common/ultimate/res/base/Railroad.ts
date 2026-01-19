@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Railroad`,
   color: `purple`,
@@ -27,5 +29,6 @@ export default {
         .filter(color => game.zones.byPlayer(player, color).splay === 'right')
       game.actions.chooseAndSplay(player, choices, 'up')
     }
+
   ],
-}
+} satisfies AgeCardData

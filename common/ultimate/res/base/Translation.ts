@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Translation`,
   color: `blue`,
@@ -15,6 +17,7 @@ export default {
       if (cards.length === 0) {
         game.log.addNoEffect()
       }
+
       else {
         const doIt = game.actions.chooseYesNo(player, 'Meld all cards in your score pile?')
         if (doIt) {
@@ -34,4 +37,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

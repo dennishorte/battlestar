@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Leonardo Da Vinci`,  // Card names are unique in Innovation
   name: `Leonardo Da Vinci`,
@@ -33,7 +35,8 @@ export default {
             .filter(card => card.checkIsFigure())
           game.actions.chooseAndScore(player, topFigures)
         }
+
       }
     },
   ]
-}
+} satisfies AgeCardData

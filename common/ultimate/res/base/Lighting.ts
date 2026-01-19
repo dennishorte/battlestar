@@ -1,5 +1,6 @@
 
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 
 export default {
@@ -24,7 +25,8 @@ export default {
         for (let i = 0; i < ages.length; i++) {
           game.actions.drawAndScore(player, game.getEffectAge(self, 7))
         }
+
       }
     }
   ],
-}
+} satisfies AgeCardData

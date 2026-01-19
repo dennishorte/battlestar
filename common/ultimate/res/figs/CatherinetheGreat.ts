@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Catherine the Great`,  // Card names are unique in Innovation
   name: `Catherine the Great`,
@@ -17,6 +19,7 @@ export default {
         const extra = game.util.emptyBiscuits()
         extra.s = biscuits.s
         extra.i = biscuits.s  // Each {s} provides one additional {i}
+
         return extra
       }
     },
@@ -34,4 +37,4 @@ export default {
       },
     }
   ]
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Bartolomeo Cristofori`,  // Card names are unique in Innovation
   name: `Bartolomeo Cristofori`,
@@ -21,6 +23,7 @@ export default {
         const choices = game.getAvailableStandardAchievements(player)
         game.actions.chooseAndAchieve(player, choices)
       }
+
     }
   ]
-}
+} satisfies AgeCardData

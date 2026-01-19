@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Stone Knives`,
   color: `red`,
@@ -18,6 +20,7 @@ export default {
       if (topCard) {
         game.actions.transfer(player, topCard, game.zones.byPlayer(leader, card.color))
       }
+
     },
     (game, player, { self }) => {
       const topCards = game.cards.tops(player)
@@ -27,4 +30,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

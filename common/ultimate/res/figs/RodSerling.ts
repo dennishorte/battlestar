@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Rod Serling`,  // Card names are unique in Innovation
   name: `Rod Serling`,
@@ -18,6 +20,7 @@ export default {
         if (age && age < 4) {
           return true
         }
+
         if (card && card.getAge() < 4) {
           return true
         }
@@ -28,4 +31,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Plush Beweglich Rod Bear`,
   color: `yellow`,
@@ -26,5 +28,6 @@ export default {
 
       game.actions.returnMany(player, toReturn)
     }
+
   ],
-}
+} satisfies AgeCardData

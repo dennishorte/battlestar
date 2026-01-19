@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Gilgamesh`,  // Card names are unique in Innovation
   name: `Gilgamesh`,
@@ -19,6 +21,7 @@ export default {
         output.f = biscuits.k
         return output
       }
+
     },
 
     {
@@ -34,4 +37,4 @@ export default {
       }
     },
   ]
-}
+} satisfies AgeCardData

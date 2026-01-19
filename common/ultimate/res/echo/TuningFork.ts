@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Tuning Fork`,
@@ -22,6 +23,7 @@ export default {
             if (!top || revealed.getAge() > top.getAge()) {
               game.actions.meld(player, revealed)
             }
+
             else {
               game.actions.return(player, revealed)
               const repeat = game.actions.chooseYesNo(player, 'Repeat this effect?')
@@ -49,4 +51,4 @@ export default {
       game.actions.draw(player, { age })
     }
   },
-}
+} satisfies AgeCardData

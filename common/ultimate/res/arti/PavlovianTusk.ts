@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Pavlovian Tusk`,
   color: `red`,
@@ -22,5 +24,6 @@ export default {
       const remainining = cards.filter(card => !returned.includes(card))
       game.actions.chooseAndScore(player, remainining)
     }
+
   ],
-}
+} satisfies AgeCardData

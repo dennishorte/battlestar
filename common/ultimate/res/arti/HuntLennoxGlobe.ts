@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Hunt-Lennox Globe`,
   color: `green`,
@@ -21,6 +23,7 @@ export default {
           for (let i = 0; i < returned.length; i++) {
             game.actions.draw(player, { age: game.getEffectAge(self, 5) })
           }
+
         }
       }
       else {
@@ -32,4 +35,4 @@ export default {
       game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
     }
   ],
-}
+} satisfies AgeCardData

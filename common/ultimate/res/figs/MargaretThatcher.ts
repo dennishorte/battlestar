@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Margaret Thatcher`,  // Card names are unique in Innovation
   name: `Margaret Thatcher`,
@@ -26,6 +28,7 @@ export default {
           .filter(card => card.biscuits.includes('f') || card.biscuits.includes('c'))
         game.actions.chooseAndScore(player, choices)
       }
+
     }
   ]
-}
+} satisfies AgeCardData

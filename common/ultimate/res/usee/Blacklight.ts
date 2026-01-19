@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Blacklight`,
   color: `blue`,
@@ -25,6 +27,7 @@ export default {
           max: 1,
         })
       }
+
       if (splayChoices.length > 0) {
         choices.push({
           title: 'Splay up and draw',
@@ -48,4 +51,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

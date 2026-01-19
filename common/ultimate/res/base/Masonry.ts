@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Masonry`,
   color: `yellow`,
@@ -18,6 +20,7 @@ export default {
       if (cards) {
         game.actions.meldMany(player, cards)
       }
+
     },
 
     (game, player) => {
@@ -31,4 +34,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

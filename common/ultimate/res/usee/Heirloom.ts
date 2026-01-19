@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Heirloom`,
   color: `yellow`,
@@ -16,6 +18,7 @@ export default {
       if (transferred) {
         game.actions.draw(player, { age: transferred.getAge() + 1 })
       }
+
       else {
         const topRed = game.cards.top(player, 'red')
         if (topRed) {
@@ -28,4 +31,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

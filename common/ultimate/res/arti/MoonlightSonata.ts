@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Moonlight Sonata`,
   color: `purple`,
@@ -21,6 +23,7 @@ export default {
         const cards = game.cards.byPlayer(player, color)
         game.actions.meld(player, cards[cards.length - 1])
       }
+
     },
 
     (game, player) => {
@@ -31,4 +34,4 @@ export default {
       game.actions.chooseAndJunk(player, junkChoices)
     },
   ],
-}
+} satisfies AgeCardData

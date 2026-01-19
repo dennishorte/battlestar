@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `First Aid`,
   color: `blue`,
@@ -23,10 +25,11 @@ export default {
         if (colorMatchedHandCards.length === 1) {
           game.actions.meld(player, colorMatchedHandCards[0])
         }
+
         else {
           game.aYouLose(player, self)
         }
       }
     }
   ],
-}
+} satisfies AgeCardData

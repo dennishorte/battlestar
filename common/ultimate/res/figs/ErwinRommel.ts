@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Erwin Rommel`,  // Card names are unique in Innovation
   name: `Erwin Rommel`,
@@ -34,6 +36,7 @@ export default {
 
         game.actions.chooseAndScore(player, scorePileCards)
       }
+
     }
   ]
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Octant`,
   color: `red`,
@@ -24,6 +26,7 @@ export default {
         if (!foreseen) {
           game.actions.drawAndForeshadow(player, game.getEffectAge(self, 6))
         }
+
       }
     },
 
@@ -32,4 +35,4 @@ export default {
     },
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

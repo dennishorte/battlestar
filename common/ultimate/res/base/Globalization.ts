@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Globalization`,
   color: `yellow`,
@@ -21,6 +23,7 @@ export default {
       if (card) {
         game.actions.return(player, card)
       }
+
     },
 
     (game, player, { self }) => {
@@ -48,4 +51,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

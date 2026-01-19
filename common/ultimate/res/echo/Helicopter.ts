@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Helicopter`,
   color: `red`,
@@ -30,6 +32,7 @@ export default {
             game.actions.return(player, toReturn)
             continue
           }
+
         }
 
         break
@@ -37,4 +40,4 @@ export default {
     }
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

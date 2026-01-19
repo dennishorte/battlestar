@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Woodworking`,
   color: `yellow`,
@@ -17,7 +19,8 @@ export default {
         if (isBottom) {
           game.actions.score(player, card)
         }
+
       }
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Dice`,
   color: `blue`,
@@ -17,6 +19,7 @@ export default {
         const bonus = card.getBonuses()[0]
         game.actions.drawAndMeld(player, bonus)
       }
+
       else {
         game.log.add({
           template: '{card} has no bonuses',
@@ -52,4 +55,4 @@ export default {
     },
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

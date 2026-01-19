@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Colonialism`,
   color: `red`,
@@ -15,10 +17,11 @@ export default {
         if (card.biscuits.includes('c')) {
           game.log.add({ template: 'effect repeats' })
         }
+
         else {
           break
         }
       }
     }
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Black Market`,
   color: `green`,
@@ -35,4 +37,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

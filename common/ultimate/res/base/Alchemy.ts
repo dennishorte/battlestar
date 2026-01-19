@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Alchemy`,
   color: `blue`,
@@ -37,4 +39,4 @@ export default {
       game.actions.chooseAndScore(player, hand())
     },
   ],
-}
+} satisfies AgeCardData

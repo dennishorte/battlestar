@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Crossbow`,
   color: `red`,
@@ -27,7 +29,8 @@ export default {
       if (card) {
         game.actions.transfer(player, card, game.zones.byPlayer(other, card.color))
       }
+
     },
   ],
   echoImpl: [],
-}
+} satisfies AgeCardData

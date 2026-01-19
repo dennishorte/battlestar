@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Consulting`,
   color: `blue`,
@@ -21,9 +23,10 @@ export default {
       game.log.add({
         template: '{opponent} chooses {card} for {player} to execute',
         args: { opponent, player, card }
+
       })
 
       game.aSuperExecute(self, player, card)
     },
   ],
-}
+} satisfies AgeCardData

@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Clock`,
   color: `purple`,
@@ -34,6 +36,7 @@ export default {
 
       game.actions.junkAvailableAchievement(player, [count])
     }
+
   ],
   echoImpl: [
     (game, player) => {
@@ -52,4 +55,4 @@ export default {
       game.actions.chooseAndSplay(player, choices, 'right')
     }
   ],
-}
+} satisfies AgeCardData

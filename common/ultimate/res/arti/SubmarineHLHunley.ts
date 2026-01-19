@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Submarine H. L. Hunley`,
   color: `red`,
@@ -17,10 +19,11 @@ export default {
           game.log.add({ template: 'Bottom card is even-valued.' })
           game.actions.returnMany(player, game.cards.byPlayer(player, card.color), { ordered: true })
         }
+
         else {
           game.log.add({ template: 'Bottom card is odd-valued.' })
         }
       }
     }
   ],
-}
+} satisfies AgeCardData

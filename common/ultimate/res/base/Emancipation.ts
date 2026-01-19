@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Emancipation`,
   color: `purple`,
@@ -19,10 +21,11 @@ export default {
       if (cards && cards.length > 0) {
         game.actions.draw(player, { age: game.getEffectAge(self, 6) })
       }
+
     },
 
     (game, player) => {
       game.actions.chooseAndSplay(player, ['red', 'purple'], 'right')
     },
   ],
-}
+} satisfies AgeCardData

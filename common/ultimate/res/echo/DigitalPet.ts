@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Digital Pet`,
   color: `yellow`,
@@ -18,5 +20,6 @@ export default {
 
       game.actions.returnMany(player, toReturn)
     }
+
   ],
-}
+} satisfies AgeCardData

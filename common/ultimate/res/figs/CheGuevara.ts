@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Che Guevara`,  // Card names are unique in Innovation
   name: `Che Guevara`,
@@ -26,7 +28,8 @@ export default {
           const allAvailableAchievements = game.getAvailableStandardAchievements(player)
           game.actions.junkMany(player, allAvailableAchievements)
         }
+
       }
     },
   ]
-}
+} satisfies AgeCardData

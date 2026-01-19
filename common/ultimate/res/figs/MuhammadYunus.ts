@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Muhammad Yunus`,  // Card names are unique in Innovation
   name: `Muhammad Yunus`,
@@ -25,6 +27,7 @@ export default {
           owner,
           [game.cards.bottom(owner, 'green')],
           { min: 0, max: 1 }
+
         )[0]
 
         if (returned) {
@@ -38,4 +41,4 @@ export default {
       }
     }
   ]
-}
+} satisfies AgeCardData

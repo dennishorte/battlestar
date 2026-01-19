@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Maldives`,
   color: `red`,
@@ -26,4 +28,4 @@ export default {
       game.actions.chooseAndReturn(player, score, { count: scoreCount })
     },
   ],
-}
+} satisfies AgeCardData

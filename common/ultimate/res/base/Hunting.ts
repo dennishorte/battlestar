@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Hunting`,
   color: `green`,
@@ -17,5 +19,6 @@ export default {
 
       game.actions.chooseAndTransfer(leader, drawnCards, { toBoard: true, player: leader })
     }
+
   ],
-}
+} satisfies AgeCardData

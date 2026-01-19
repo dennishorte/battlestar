@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Musk's Tesla Roadster`,
   color: `green`,
@@ -19,6 +21,7 @@ export default {
       if (hasMost) {
         game.youWin(player, self.name)
       }
+
       else {
         const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 11))
         const scored = game.actions.scoreMany(player, game.cards.byPlayer(player, card.color))
@@ -31,4 +34,4 @@ export default {
       }
     }
   ],
-}
+} satisfies AgeCardData

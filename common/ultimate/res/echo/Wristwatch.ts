@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   name: `Wristwatch`,
   color: `yellow`,
@@ -22,6 +24,7 @@ export default {
 
         game.actions.returnMany(player, toReturn)
       }
+
     },
 
     (game, player) => {
@@ -36,4 +39,4 @@ export default {
     const choices = game.cards.tops(player)
     game.actions.chooseAndTuck(player, choices)
   },
-}
+} satisfies AgeCardData

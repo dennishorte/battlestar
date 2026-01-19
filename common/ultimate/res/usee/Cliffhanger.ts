@@ -1,4 +1,5 @@
 import util from '../../../lib/util.js'
+import type { AgeCardData } from '../../UltimateAgeCard.js'
 
 export default {
   name: `Cliffhanger`,
@@ -21,6 +22,7 @@ export default {
         game.log.add({
           template: 'No cards of age {4} in safe; safeguarding top of {age} pile',
           args: { age }
+
         })
 
         const topCard = game.zones.byDeck('base', 4).cardlist()[0]
@@ -58,4 +60,4 @@ export default {
       }
     },
   ],
-}
+} satisfies AgeCardData

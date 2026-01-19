@@ -1,3 +1,5 @@
+import type { AgeCardData } from '../../UltimateAgeCard.js'
+
 export default {
   id: `Shigeru Miyamoto`,  // Card names are unique in Innovation
   name: `Shigeru Miyamoto`,
@@ -19,10 +21,11 @@ export default {
         if (clocks === 1 || clocks === 3 || clocks === 6) {
           game.youWin(player, self.name)
         }
+
         else {
           game.log.addNoEffect()
         }
       }
     }
   ]
-}
+} satisfies AgeCardData
