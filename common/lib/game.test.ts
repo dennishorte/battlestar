@@ -3,53 +3,53 @@ import {
   GameFactory,
   GameOverEvent,
   InputRequestEvent,
+  SerializedGame,
 } from './game.js'
-import util from '../lib/util.js'
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // TestGame fixture
 
-function TestGame(serialized_data: unknown) {
-  Game.call(this, serialized_data)
-}
+class TestGame extends Game {
+  constructor(serialized_data: SerializedGame) {
+    super(serialized_data)
+  }
 
-util.inherit(Game, TestGame)
+  _mainProgram(): void {
+    this.main()
+  }
 
-TestGame.prototype._mainProgram = function() {
-  this.main()
-}
-
-TestGame.prototype.main = function() {
-  this.state.testColor = this.requestInputSingle({
-    actor: 'dennis',
-    title: "Choose a Color",
-    choices: ['red', 'blue'],
-  })[0]
-
-  this.state.testMulti = this.requestInputMany([
-    {
+  main(): void {
+    this.state.testColor = this.requestInputSingle({
       actor: 'dennis',
-      title: 'How Many',
-      choices: [1,2,3,4]
-    },
-    {
-      actor: 'micah',
-      title: 'How Many',
-      choices: [5,6,7]
-    }
-  ])
+      title: "Choose a Color",
+      choices: ['red', 'blue'],
+    })[0]
 
-  throw new GameOverEvent({
-    player: 'everyone',
-    reason: 'game over',
-  })
+    this.state.testMulti = this.requestInputMany([
+      {
+        actor: 'dennis',
+        title: 'How Many',
+        choices: [1,2,3,4]
+      },
+      {
+        actor: 'micah',
+        title: 'How Many',
+        choices: [5,6,7]
+      }
+    ])
+
+    throw new GameOverEvent({
+      player: 'everyone',
+      reason: 'game over',
+    })
+  }
 }
 
-function TestFactory() {
+function TestFactory(): TestGame {
   const data = GameFactory({
     name: 'test_game',
-    players: ['dennis', 'micah'],
+    players: [{ _id: 'dennis_id', name: 'dennis' }, { _id: 'micah_id', name: 'micah' }],
     seed: 'test_seed'
   }).serialize()
   return new TestGame(data)

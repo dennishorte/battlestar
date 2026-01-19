@@ -1,11 +1,11 @@
 Error.stackTraceLimit = 100
 
-const {
+import {
   GameOverEvent,
   InputRequestEvent,
-} = require('../lib/game.js')
+} from '../lib/game.js'
 
-const t = require('./testutil.js')
+import t from './testutil.js'
 
 describe.skip('fixture', () => {
   test('game is created', () => {
