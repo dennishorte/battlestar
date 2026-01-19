@@ -2,6 +2,8 @@ import {
   Game,
   GameFactory,
   GameOverEvent,
+  GameState as BaseGameState,
+  GameSettings as BaseGameSettings,
 } from '../lib/game.js'
 import res from './res/index.js'
 import selector from '../lib/selector.js'
@@ -156,7 +158,7 @@ interface VisibleEffectsResult {
   impls: Array<(game: unknown, player: UltimatePlayer) => void>
 }
 
-interface GameState {
+interface InnovationState extends BaseGameState {
   initializationComplete: boolean
   firstPicksComplete: boolean
   dogmaInfo: DogmaInfo & {
@@ -177,7 +179,7 @@ interface GameState {
   drawInfo: Record<string, { drewFirstBaseCard: boolean }>
 }
 
-interface GameSettings {
+interface InnovationSettings extends BaseGameSettings {
   version: number
   expansions: string[]
   randomizeExpansions?: boolean
@@ -251,15 +253,8 @@ interface ScoreDetails {
   total: number
 }
 
-class Innovation extends Game {
+class Innovation extends Game<InnovationState, InnovationSettings> {
   util!: UltimateUtilsInterface
-  zones!: ZoneManager
-  cards!: CardManager
-  players!: PlayerManager
-  actions!: ActionManager
-  log!: Log
-  state!: GameState
-  settings!: GameSettings
   stats!: GameStats
   getDogmaShareInfo!: (player: UltimatePlayer, card: Card) => { sharing: UltimatePlayer[]; demanding: UltimatePlayer[] }
 
@@ -2109,7 +2104,7 @@ class Innovation extends Game {
   }
 }
 
-function InnovationFactory(settings: GameSettings, viewerName: string): Innovation {
+function InnovationFactory(settings: Partial<InnovationSettings>, viewerName: string): Innovation {
   const data = GameFactory(settings)
   return new Innovation(data, viewerName)
 }

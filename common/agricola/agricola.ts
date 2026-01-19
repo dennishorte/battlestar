@@ -3,6 +3,9 @@ import {
   GameFactory,
   GameOverEvent,
   SerializedGame,
+  GameState,
+  GameSettings as BaseGameSettings,
+  GameOverData as BaseGameOverData,
 } from '../lib/game.js'
 import res from './resources.js'
 import util from '../lib/util.js'
@@ -29,12 +32,8 @@ interface LobbyData {
   seed: string
 }
 
-interface GameSettings {
-  game?: string
-  name: string
+interface AgricolaSettings extends BaseGameSettings {
   expansions: string[]
-  players: PlayerData[]
-  seed: string
   draft?: boolean
   numPlayers?: number
 }
@@ -73,7 +72,7 @@ interface AgricolaPlayer {
   }
 }
 
-interface AgricolaState {
+interface AgricolaState extends GameState {
   phase: string
   initializationComplete: boolean
   round: number
@@ -91,27 +90,12 @@ interface AgricolaState {
   startingPlayer?: AgricolaPlayer
 }
 
-interface GameOverData {
+interface AgricolaGameOverData extends BaseGameOverData {
   player: AgricolaPlayer
-  reason: string
 }
 
-class Agricola extends Game {
-  declare state: AgricolaState
-  declare settings: GameSettings
+class Agricola extends Game<AgricolaState, AgricolaSettings, AgricolaGameOverData> {
   declare random: () => number
-  declare players: {
-    all(): AgricolaPlayer[]
-  }
-  declare zones: {
-    byId(id: string): Zone
-    byPlayer(player: AgricolaPlayer, zone: string): Zone
-  }
-  declare log: {
-    add(entry: { template: string; args?: Record<string, unknown> }): void
-    indent(): void
-    outdent(): void
-  }
 
   constructor(serialized_data: SerializedGame, viewerName?: string) {
     super(serialized_data, viewerName)
@@ -123,7 +107,7 @@ class Agricola extends Game {
     this.mainLoop()
   }
 
-  _gameOver(event: { data: GameOverData }): { data: GameOverData } {
+  _gameOver(event: { data: AgricolaGameOverData }): { data: AgricolaGameOverData } {
     this.log.add({
       template: '{player} wins due to {reason}',
       args: {
@@ -372,7 +356,7 @@ class Agricola extends Game {
   }
 }
 
-function AgricolaFactory(settings: GameSettings, viewerName?: string): Agricola {
+function AgricolaFactory(settings: Partial<AgricolaSettings>, viewerName?: string): Agricola {
   const data = GameFactory(settings)
   return new Agricola(data.serialize(), viewerName)
 }

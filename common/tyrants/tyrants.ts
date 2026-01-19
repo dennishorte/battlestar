@@ -3,6 +3,8 @@ import {
   GameFactory,
   GameOverEvent,
   SerializedGame,
+  GameState,
+  GameSettings,
 } from './../lib/game.js'
 import * as res from './res/index.js'
 
@@ -141,14 +143,14 @@ interface ScoreBreakdown {
   total: number
 }
 
-interface Settings {
+interface TyrantsSettings extends GameSettings {
   map: string
   expansions: string[]
   chooseColors?: boolean
   menzoExtraNeutral?: boolean
 }
 
-interface State {
+interface TyrantsState extends GameState {
   turn: number
   endOfTurnActions: EndOfTurnAction[]
   ghostFlag: boolean
@@ -173,43 +175,7 @@ interface Lobby {
   }
 }
 
-class Tyrants extends Game {
-  declare state: State
-  declare settings: Settings
-  declare log: {
-    add(entry: Record<string, unknown>): void
-    addDoNothing(player: Player): void
-    indent(): void
-    outdent(): void
-    setIndent(level: number): void
-  }
-  declare players: {
-    all(): Player[]
-    current(): Player
-    first(): Player
-    byName(name: string): Player
-    byOwner(card: Card): Player | undefined
-    opponents(player: Player): Player[]
-    advancePlayer(): void
-  }
-  declare zones: {
-    all(): (TyrantsZoneType | TyrantsMapZoneType)[]
-    byId(id: string): TyrantsZoneType | TyrantsMapZoneType
-    byPlayer(player: Player, name: string): TyrantsZoneType
-    register(zone: TyrantsZoneType | TyrantsMapZoneType): void
-  }
-  declare cards: {
-    all(): Card[]
-    byId(id: string): Card
-    byPlayer(player: Player, zone: string): Card[]
-    register(card: Card): void
-  }
-  declare actions: {
-    choose(player: Player, choices: string[] | ActionChoice[], opts?: Record<string, unknown>): string[]
-    chooseCard(player: Player, cards: Card[], opts?: Record<string, unknown>): Card | undefined
-    chooseCards(player: Player, cards: Card[], opts?: Record<string, unknown>): Card[]
-    chooseYesNo(player: Player, prompt: string): boolean
-  }
+class Tyrants extends Game<TyrantsState, TyrantsSettings> {
   declare random: () => number
   doingSetup: boolean = false
 

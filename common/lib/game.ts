@@ -108,17 +108,21 @@ class InputRequestEvent {
   }
 }
 
-class Game {
+class Game<
+  TState extends GameState = GameState,
+  TSettings extends GameSettings = GameSettings,
+  TGameOverData extends GameOverData = GameOverData
+> {
   _id: string | undefined
-  state: GameState
+  state: TState
   branchId: string | undefined
-  settings: GameSettings
+  settings: TSettings
   responses: Response[]
   undoCount: number
   waiting: InputRequestEventInstance | null
-  breakpoints: Record<string, ((game: Game) => void)[]>
+  breakpoints: Record<string, ((game: Game<TState, TSettings, TGameOverData>) => void)[]>
   gameOver: boolean
-  gameOverData: GameOverData | null
+  gameOverData: TGameOverData | null
   random: () => number
   viewerName: string | undefined
   log: InstanceType<typeof BaseLogManager>
@@ -148,7 +152,7 @@ class Game {
     this.branchId = serialized_data.branchId
 
     // Settings are immutable data
-    this.settings = serialized_data.settings
+    this.settings = serialized_data.settings as TSettings
 
     // Responses are the history of choices made by users.
     // This should never be reset.
@@ -335,7 +339,7 @@ class Game {
       else if (e instanceof GameOverEvent) {
         // Some games, such as Innovation, can alter the outcome of a game over event based on
         // board conditions. (eg. Jackie Chan in Innovation)
-        const result = this._gameOver(e as GameOverEventInstance)
+        const result = this._gameOver(e as unknown as { data: TGameOverData })
 
         this.gameOver = true
         this.gameOverData = result.data
@@ -421,7 +425,7 @@ class Game {
   ////////////////////////////////////////////////////////////////////////////////
   // Protected Methods
 
-  _gameOver(event: { data: GameOverData }): { data: GameOverData } {
+  _gameOver(event: { data: TGameOverData }): { data: TGameOverData } {
     this.log.setIndent(0)
     return event
   }
@@ -430,11 +434,11 @@ class Game {
     throw new Error('Please implement _mainProgram')
   }
 
-  _blankState(more: Record<string, unknown> = {}): GameState {
+  _blankState(more: Record<string, unknown> = {}): TState {
     return Object.assign({
       indent: 0,
       responseIndex: -1,
-    }, more)
+    }, more) as TState
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -519,7 +523,7 @@ class Game {
   ////////////////////////////////////////////////////////////////////////////////
   // Test only methods
 
-  testSetBreakpoint(name: string, fn: (game: Game) => void): void {
+  testSetBreakpoint(name: string, fn: (game: Game<TState, TSettings, TGameOverData>) => void): void {
     if (Object.hasOwn(this.breakpoints, name)) {
       this.breakpoints[name].push(fn)
     }
@@ -538,14 +542,14 @@ class Game {
   ////////////////////////////////////////////////////////////////////////////////
   // Specialty functions
 
-  historicalView(index: number): Game {
+  historicalView(index: number): Game<TState, TSettings, TGameOverData> {
     const data: SerializedGame = {
       _id: this._id,
-      settings: this.settings,
+      settings: this.settings as GameSettings,
       responses: this.responses.slice(0, index + 1),
     }
 
-    return new (this.constructor as typeof Game)(data, this.viewerName)
+    return new (this.constructor as new (data: SerializedGame, viewerName?: string) => Game<TState, TSettings, TGameOverData>)(data, this.viewerName)
   }
 }
 

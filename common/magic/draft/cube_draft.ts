@@ -3,6 +3,8 @@ import {
   GameFactory,
   GameOverEvent,
   SerializedGame,
+  GameState,
+  GameSettings,
 } from '../../lib/game.js'
 
 import { Pack } from './pack.js'
@@ -23,7 +25,7 @@ interface CubeDraftPlayer extends PackPlayer {
   scarredCardId: string | null
 }
 
-interface CubeDraftSettings {
+interface CubeDraftSettings extends GameSettings {
   packs: unknown[][]
   cubeName: string | null
   set: { name: string } | null
@@ -33,10 +35,9 @@ interface CubeDraftSettings {
   scars: unknown[]
 }
 
-interface CubeDraftState {
+interface CubeDraftState extends GameState {
   initializationComplete?: boolean
   packs: PackType[]
-  [key: string]: unknown
 }
 
 interface LogEntry {
@@ -88,25 +89,9 @@ interface SerializedCubeDraft {
   [key: string]: unknown
 }
 
-class CubeDraft extends Game {
-  declare settings: CubeDraftSettings
-  declare state: CubeDraftState
+class CubeDraft extends Game<CubeDraftState, CubeDraftSettings> {
   cardsById: Record<string, PackCard> = {}
   declare random: () => number
-  declare waiting: unknown
-  declare gameOver: boolean
-  declare gameOverData: unknown
-  declare log: {
-    add(entry: LogEntry): void
-    indent(): void
-    outdent(): void
-  }
-  declare players: {
-    all(): CubeDraftPlayer[]
-    byName(name: string): CubeDraftPlayer
-    following(player: CubeDraftPlayer): CubeDraftPlayer
-    preceding(player: CubeDraftPlayer): CubeDraftPlayer
-  }
 
   constructor(serialized_data: SerializedGame, viewerName?: string) {
     super(serialized_data, viewerName, {
