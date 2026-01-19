@@ -123,3 +123,4 @@ function templateTokenize(template: string): Token[] {
 }
 
 export { apply, toString, LogEntry, ChatEntry, LogArg, FormattedToken }
+export default { apply, toString }

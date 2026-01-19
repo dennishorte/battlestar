@@ -18459,4 +18459,4 @@ const sets: MagicSet[] = [
 ]
 
 export { sets, MagicSet }
-module.exports = sets
+export default sets

@@ -7,6 +7,9 @@ export default defineConfig({
     setupFiles: ['./vitest.setup.js'],
     include: ['**/*.test.js', '**/*.test.ts'],
     exclude: ['**/node_modules/**', '**/coverage/**'],
+    typecheck: {
+      enabled: false,
+    },
     coverage: {
       provider: 'v8',
       include: ['**/*.js'],

@@ -1,6 +1,6 @@
 import { GameOverEvent } from '../lib/game.js'
 import { TyrantsFactory } from './tyrants.js'
-import TestCommon from '../lib/test_common.ts'
+import TestCommon from '../lib/test_common.js'
 import util from '../lib/util.js'
 
 interface Player {

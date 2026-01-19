@@ -1,16 +1,6 @@
 import util from '../lib/util.js'
 
 // Forward declarations for types
-interface Game {
-  log: {
-    add: (entry: unknown) => void
-  }
-  players: {
-    byZone: (zone: Zone) => Player | undefined
-  }
-  random: () => number
-}
-
 interface Player {
   name: string
 }
@@ -20,6 +10,20 @@ interface Card {
   home: string | undefined
   visibility: Player[]
   name: () => string
+}
+
+// Use 'any' for self-referential types to avoid circular dependency issues
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ZoneInstance = any
+
+interface Game {
+  log: {
+    add: (entry: unknown) => void
+  }
+  players: {
+    byZone: (zone: ZoneInstance) => Player | undefined
+  }
+  random: () => number
 }
 
 export interface Zone {
@@ -37,16 +41,6 @@ export interface Zone {
   shuffle(opts?: { silent?: boolean }): void
   shuffleBottom(count: number, opts?: { silent?: boolean }): void
   sortCardsByName(): void
-}
-
-interface ZoneConstructor {
-  new (game: Game, name: string, kind: string): Zone
-  (this: Zone, game: Game, name: string, kind: string): void
-}
-
-interface PlayerZoneConstructor {
-  new (game: Game, player: Player, name: string, kind: string): Zone
-  (this: Zone, game: Game, player: Player, name: string, kind: string): void
 }
 
 function Zone(this: Zone, game: Game, name: string, kind: string): void {
@@ -149,4 +143,3 @@ export {
   PlayerZone as PlayerZone,
   Zone as Zone,
 }
-export type { ZoneConstructor, PlayerZoneConstructor }

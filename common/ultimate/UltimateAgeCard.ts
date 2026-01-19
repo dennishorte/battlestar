@@ -5,8 +5,16 @@ import type { Player } from './UltimateBaseCard.js'
 
 interface KarmaImpl {
   trigger: string | string[]
-  func?: (game: unknown, player: Player) => unknown
+  kind?: string
+  decree?: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  matches?: (...args: any[]) => boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  func?: (...args: any[]) => unknown
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type DogmaFunction = (game: any, player: any, context?: any) => void
 
 interface AgeCardData {
   name: string
@@ -19,8 +27,8 @@ interface AgeCardData {
   echo?: string | string[]
   karma?: string[]
   dogma?: string[]
-  dogmaImpl?: Array<(game: unknown, player: Player) => void>
-  echoImpl?: Array<(game: unknown, player: Player) => void>
+  dogmaImpl?: DogmaFunction[]
+  echoImpl?: DogmaFunction | DogmaFunction[]
   karmaImpl?: KarmaImpl[]
 }
 
@@ -49,7 +57,7 @@ interface Game {
 interface VisibleEffectsResult {
   card: UltimateAgeCard
   texts: string[]
-  impls: Array<(game: unknown, player: Player) => void>
+  impls: DogmaFunction[]
 }
 
 interface KarmaInfo {

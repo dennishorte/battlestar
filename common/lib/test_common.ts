@@ -1,5 +1,5 @@
-import log from './log.ts'
-import util from './util.ts'
+import log from './log.js'
+import util from './util.js'
 
 const TestCommon = {
   // Basic fixture to set up a game

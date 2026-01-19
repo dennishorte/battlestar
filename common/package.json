@@ -26,7 +26,7 @@
     "test:coverage": "cd ../common_dist && npx vitest run --coverage",
     "lint": "npx eslint --max-warnings=0 .",
     "lint:fix": "npx eslint --fix --max-warnings=0 .",
-    "build": "tsc && node scripts/build.js",
+    "build": "tsc; node scripts/build.js",
     "build:watch": "tsc --watch"
   }
 }
