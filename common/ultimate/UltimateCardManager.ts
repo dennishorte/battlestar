@@ -1,9 +1,9 @@
-import { BaseCardManager } from '../lib/game/index.js'
+import { BaseCardManager, ICard, IZone } from '../lib/game/index.js'
 import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 import type { UltimatePlayer } from './UltimatePlayer.js'
 
-interface Card {
+interface Card extends ICard {
   id: string
 }
 
@@ -16,7 +16,7 @@ interface ExpansionData {
   achievements: Achievement[]
 }
 
-interface Zone {
+interface Zone extends IZone {
   cardlist(): Card[]
   peek(): Card | null
 }

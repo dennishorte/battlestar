@@ -1,13 +1,13 @@
-import { BaseCardManager } from '../lib/game/index.js'
+import { BaseCardManager, ICard, IZone } from '../lib/game/index.js'
 import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 import type { TyrantsPlayer } from './TyrantsPlayer.js'
 
-interface Card {
+interface Card extends ICard {
   id: string
 }
 
-interface Zone {
+interface Zone extends IZone {
   cardlist(): Card[]
 }
 

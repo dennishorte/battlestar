@@ -1,4 +1,4 @@
-import { BaseActionManager } from '../lib/game/index.js'
+import { BaseActionManager, ICard, IZone, ILogManager } from '../lib/game/index.js'
 import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 import { DogmaAction, EndorseAction } from './actions/Dogma.js'
@@ -10,7 +10,7 @@ import util from '../lib/util.js'
 import type { UltimatePlayer, BiscuitCounts } from './UltimatePlayer.js'
 import type { DogmaInfo } from './actions/Dogma.js'
 
-interface Card {
+interface Card extends ICard {
   id: string
   name: string
   age: number
@@ -32,7 +32,7 @@ interface Card {
   checkIsCity(): boolean
 }
 
-interface Zone {
+interface Zone extends IZone {
   id: string
   splay: string
   cardlist(): Card[]
@@ -75,7 +75,7 @@ interface PlayerManager {
   startingWith(player: UltimatePlayer): UltimatePlayer[]
 }
 
-interface Log {
+interface Log extends ILogManager {
   add(entry: { template: string; args?: Record<string, unknown> }): void
   addNoEffect(): void
   addDoNothing(player: UltimatePlayer): void

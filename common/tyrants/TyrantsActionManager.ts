@@ -1,9 +1,9 @@
-import { BaseActionManager } from '../lib/game/index.js'
+import { BaseActionManager, ICard, IZone, ILogManager } from '../lib/game/index.js'
 import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 import type { TyrantsPlayer } from './TyrantsPlayer.js'
 
-interface Card {
+interface Card extends ICard {
   id: string
   name: string
   zone: Zone
@@ -11,7 +11,7 @@ interface Card {
   moveTo(zone: Zone, position?: number): Card
 }
 
-interface Zone {
+interface Zone extends IZone {
   id: string
   cardlist(): Card[]
   peek(): Card | null
@@ -35,7 +35,7 @@ interface PlayerManager {
   opponents(player: TyrantsPlayer): TyrantsPlayer[]
 }
 
-interface Log {
+interface Log extends ILogManager {
   add(entry: { template: string; args?: Record<string, unknown> }): void
   addNoEffect(): void
   addDoNothing(player: TyrantsPlayer): void

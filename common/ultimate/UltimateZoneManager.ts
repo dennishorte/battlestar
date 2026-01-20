@@ -1,4 +1,4 @@
-import { BaseZoneManager } from '../lib/game/index.js'
+import { BaseZoneManager, IZone } from '../lib/game/index.js'
 import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 import type { UltimatePlayer, BiscuitCounts } from './UltimatePlayer.js'
@@ -7,7 +7,7 @@ interface UltimateUtils {
   colors(): string[]
 }
 
-interface Zone {
+interface Zone extends IZone {
   id: string
   biscuits(): BiscuitCounts
 }

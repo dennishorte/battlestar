@@ -10,6 +10,7 @@ import {
 import {
   BasePlayerInterface,
   BaseZoneInterface,
+  ICard,
 } from './../lib/game/index.js'
 import * as res from './res/index.js'
 
@@ -34,7 +35,7 @@ interface Player extends BasePlayerInterface {
   incrementCounter(name: string, amount?: number, opts?: { silent?: boolean }): void
 }
 
-interface Card {
+interface Card extends ICard {
   id: string
   name: string
   zone: TyrantsZoneType | TyrantsMapZoneType
