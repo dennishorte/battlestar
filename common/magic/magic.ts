@@ -41,6 +41,7 @@ import * as cardUtilModule from './util/cardUtil.js'
 import type { MagicCard as MagicCardType, CardData } from './MagicCard.js'
 import type { DeckWrapper } from './util/DeckWrapper.js'
 
+// Player interface - used since MagicPlayerManager doesn't export MagicPlayer
 interface Player extends BasePlayerInterface {
   counters: Record<string, number>
   addCounter(name: string, value: number): void
@@ -48,15 +49,16 @@ interface Player extends BasePlayerInterface {
   [key: string]: unknown
 }
 
+// Zone interface extending BaseZoneInterface with Magic-specific methods
 interface Zone extends BaseZoneInterface {
   cardlist(): MagicCardType[]
-  push(card: MagicCardType): void
+  push(card: MagicCardType, index?: number): void
   shuffle(): void
   shuffleBottom(count: number): void
   sortByName(): void
   kind(): string
   owner(): Player | null
-  name: string
+  name(): string  // Method, not property
   remove(card: MagicCardType): void
   initializeCards(cards: MagicCardType[]): void
 }
@@ -753,7 +755,7 @@ class Magic extends Game<MagicState, MagicSettings, GameOverData, MagicCardType,
     const startingZone = card.zone as unknown as Zone
     const dest = this.zones.byId(destId)
 
-    const enforceOrdering = dest.name === 'graveyard'
+    const enforceOrdering = dest.name() === 'graveyard'
     if (enforceOrdering) {
       destIndex = 0
     }

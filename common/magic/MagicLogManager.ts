@@ -1,23 +1,17 @@
-import { BaseLogManager } from '../lib/game/index.js'
+import { BaseLogManager, IPlayer } from '../lib/game/index.js'
 import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
-interface Player {
-  name: string
-  [key: string]: unknown
-}
+import type { MagicCard } from './MagicCard.js'
+import type { MagicZone } from './MagicZone.js'
 
-interface Card {
-  id: string
-  morph: boolean
-  visibility: Player[]
-  name(): string
-  [key: string]: unknown
-}
+// Use IPlayer for the Player type - has name property
+type Player = IPlayer
 
-interface Zone {
-  name(): string
-  owner(): Player | null
-}
+// Use MagicCard for the Card type
+type Card = MagicCard
+
+// MagicZone has name() and owner() methods from BaseZone
+type Zone = MagicZone
 
 interface LogEntry {
   template: string

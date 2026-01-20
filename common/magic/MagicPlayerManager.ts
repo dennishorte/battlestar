@@ -1,9 +1,8 @@
-import { BasePlayerManager, BasePlayerInterface, IZone } from '../lib/game/index.js'
+import { BasePlayerManager, BasePlayerInterface } from '../lib/game/index.js'
 
-interface MagicCard {
-  zone: IZone | null
-}
+import type { MagicCard } from './MagicCard.js'
 
+// MagicPlayer interface - there's no MagicPlayer class, players use BasePlayer with these extra properties
 interface MagicPlayer extends BasePlayerInterface {
   counters: Record<string, number>
   addCounter(name: string, value: number): void
