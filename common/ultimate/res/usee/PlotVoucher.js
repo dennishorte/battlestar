@@ -21,10 +21,10 @@ module.exports = {
 
       if (safeguarded && melded) {
         if (game.players.current().name === player.name) {
-          game.aSuperExecute(self, player, melded)
+          game.actions.superExecute(self, player, melded)
         }
         else {
-          game.aSelfExecute(self, player, melded)
+          game.actions.selfExecute(self, player, melded)
         }
       }
     },

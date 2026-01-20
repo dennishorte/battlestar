@@ -33,7 +33,7 @@ module.exports = {
       const achieved = game.actions.chooseAndAchieve(player, options)
 
       if (achieved) {
-        game.aSelfExecute(self, player, card)
+        game.actions.selfExecute(self, player, card)
       }
     },
   ],

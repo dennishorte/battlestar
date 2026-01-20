@@ -989,6 +989,51 @@ class UltimateActionManager extends BaseActionManager {
     this.acted(player)
   }
 
+  selfExecute(executingCard, player, card, opts={}) {
+    this.game.aTrackChainRule(player, executingCard)
+
+    const topCard = this.cards.top(player, card.color)
+    const isTopCard = topCard && topCard.name === card.name
+
+    opts.selfExecutor = player
+
+    this.log.add({
+      template: '{player} will {kind}-execute {card}',
+      args: {
+        player,
+        card,
+        kind: (opts.superExecute ? 'super' : 'self'),
+      }
+    })
+
+    // Do all visible echo effects in this color.
+    if (isTopCard) {
+      const cards = this
+        .cards.byPlayer(player, card.color)
+        .filter(other => other.id !== card.id)
+        .reverse()
+      for (const other of cards) {
+        this.game.aCardEffects(player, other, 'echo', opts)
+      }
+    }
+
+    // Do the card's echo effects.
+    this.game.aCardEffects(player, card, 'echo', opts)
+
+    // Do the card's dogma effects.
+    if (opts.superExecute) {
+      // Demand all opponents
+      opts.demanding = this.players.opponents(player)
+    }
+    this.game.aCardEffects(player, card, 'dogma', opts)
+
+    this.game.aFinishChainEvent(player, card)
+  }
+
+  superExecute(executingCard, player, card) {
+    this.selfExecute(executingCard, player, card, { superExecute: true })
+  }
+
   foreshadowMany = UltimateActionManager.createManyMethod('foreshadow', 2)
   junkMany = UltimateActionManager.createManyMethod('junk', 2)
   meldMany = UltimateActionManager.createManyMethod('meld', 2)

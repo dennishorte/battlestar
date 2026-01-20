@@ -16,7 +16,7 @@ module.exports = {
         const card = cards[0]
         game.actions.drawAndScore(player, card.getAge())
         game.actions.drawAndScore(player, card.getAge())
-        game.aSelfExecute(self, player, card)
+        game.actions.selfExecute(self, player, card)
       }
     }
   ],

@@ -36,7 +36,7 @@ module.exports = {
           game.actions.draw(player, { age: cardValue })
         }
 
-        game.aSelfExecute(self, player, card)
+        game.actions.selfExecute(self, player, card)
       }
     }
   ],

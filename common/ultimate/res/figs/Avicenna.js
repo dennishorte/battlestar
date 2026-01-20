@@ -31,7 +31,7 @@ module.exports = {
         const lowest = availableAchievements.sort((l, r) => l.getAge() - r.getAge())[0].getAge()
         const junked = game.actions.junkAvailableAchievement(player, lowest)
 
-        game.aSuperExecute(self, player, junked)
+        game.actions.superExecute(self, player, junked)
       }
     }
   ]

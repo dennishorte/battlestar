@@ -25,7 +25,7 @@ module.exports = {
       matches: () => true,
       func: (game, player, { card, self }) => {
         game.actions.meld(player, card)
-        game.aSelfExecute(self, player, card)
+        game.actions.selfExecute(self, player, card)
       }
     }
   ]

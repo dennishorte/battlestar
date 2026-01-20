@@ -20,7 +20,7 @@ module.exports = {
       const meldCard = game.actions.drawAndMeld(player, age)
 
       // Self execute
-      game.aSelfExecute(self, player, meldCard)
+      game.actions.selfExecute(self, player, meldCard)
     }
   ],
 }

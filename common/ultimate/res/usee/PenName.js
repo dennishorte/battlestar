@@ -46,7 +46,7 @@ module.exports = {
         game.actions.splay(player, color, 'left')
         const topCard = game.cards.top(player, color)
         if (topCard) {
-          game.aSelfExecute(self, player, topCard)
+          game.actions.selfExecute(self, player, topCard)
         }
       }
       else if (selected.title === 'Meld and splay right') {

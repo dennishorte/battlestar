@@ -16,7 +16,7 @@ module.exports = {
         const toMeld = cards[cards.length - 1]
         const melded = game.actions.meld(player, toMeld)
         if (melded) {
-          game.aSelfExecute(self, player, melded)
+          game.actions.selfExecute(self, player, melded)
         }
       }
     }

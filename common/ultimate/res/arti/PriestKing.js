@@ -16,10 +16,10 @@ module.exports = {
         const top = game.cards.top(player, card.color)
         if (top) {
           if (player.name === game.players.current().name) {
-            game.aSuperExecute(self, player, top)
+            game.actions.superExecute(self, player, top)
           }
           else {
-            game.aSelfExecute(self, player, top)
+            game.actions.selfExecute(self, player, top)
           }
         }
         else {

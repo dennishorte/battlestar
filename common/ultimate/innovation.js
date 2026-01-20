@@ -714,51 +714,6 @@ Innovation.prototype.aFinishChainEvent = function(player, card) {
   }
 }
 
-Innovation.prototype.aSelfExecute = function(executingCard, player, card, opts={}) {
-  this.aTrackChainRule(player, executingCard)
-
-  const topCard = this.cards.top(player, card.color)
-  const isTopCard = topCard && topCard.name === card.name
-
-  opts.selfExecutor = player
-
-  this.log.add({
-    template: '{player} will {kind}-execute {card}',
-    args: {
-      player,
-      card,
-      kind: (opts.superExecute ? 'super' : 'self'),
-    }
-  })
-
-  // Do all visible echo effects in this color.
-  if (isTopCard) {
-    const cards = this
-      .cards.byPlayer(player, card.color)
-      .filter(other => other.id !== card.id)
-      .reverse()
-    for (const other of cards) {
-      this.aCardEffects(player, other, 'echo', opts)
-    }
-  }
-
-  // Do the card's echo effects.
-  this.aCardEffects(player, card, 'echo', opts)
-
-  // Do the card's dogma effects.
-  if (opts.superExecute) {
-    // Demand all opponents
-    opts.demanding = this.players.opponents(player)
-  }
-  this.aCardEffects(player, card, 'dogma', opts)
-
-  this.aFinishChainEvent(player, card)
-}
-
-Innovation.prototype.aSuperExecute = function(executingCard, player, card) {
-  this.aSelfExecute(executingCard, player, card, { superExecute: true })
-}
-
 Innovation.prototype.aDecree = function(player, name) {
   const card = this.cards.byId(name)
   const hand = this.zones.byPlayer(player, 'hand')

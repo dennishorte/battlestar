@@ -28,7 +28,7 @@ module.exports = {
         const melded = game.actions.meld(player, card)
         if (melded) {
           if (player.id === game.players.current().id) {
-            game.aSelfExecute(self, player, melded)
+            game.actions.selfExecute(self, player, melded)
             continue
           }
           else {

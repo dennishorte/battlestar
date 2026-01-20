@@ -23,7 +23,7 @@ module.exports = {
     (game, player, { self }) => {
       const cards = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
       if (cards && cards.length > 0) {
-        game.aSelfExecute(self, player, cards[0])
+        game.actions.selfExecute(self, player, cards[0])
       }
     }
   ],

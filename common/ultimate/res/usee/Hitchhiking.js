@@ -21,7 +21,7 @@ module.exports = {
           game.log.add({
             template: 'Having the other player make the decisions is not implemented yet.'
           })
-          game.aSelfExecute(self, player, cardInHand)
+          game.actions.selfExecute(self, player, cardInHand)
         }
       }
     },

@@ -17,7 +17,7 @@ module.exports = {
       kind: 'would-first',
       matches: (game, player, { owner }) => player.id !== owner.id,
       func: (game, player, { card, self, owner }) => {
-        game.aSelfExecute(self, owner, card)
+        game.actions.selfExecute(self, owner, card)
       }
     },
     {
@@ -25,7 +25,7 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func: (game, player, { card, self }) => {
-        game.aSelfExecute(self, player, card)
+        game.actions.selfExecute(self, player, card)
       }
     }
   ]

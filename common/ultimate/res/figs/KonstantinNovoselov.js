@@ -19,7 +19,7 @@ module.exports = {
         for (const color of colorOrder) {
           const topCard = game.cards.top(player, color)
           if (topCard) {
-            game.aSuperExecute(self, player, topCard)
+            game.actions.superExecute(self, player, topCard)
           }
         }
       }

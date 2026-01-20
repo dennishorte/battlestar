@@ -12,7 +12,7 @@ module.exports = {
     (game, player, { self }) => {
       const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 10), { exp: 'arti' })
       if (card) {
-        game.aSelfExecute(self, player, card)
+        game.actions.selfExecute(self, player, card)
       }
     }
   ],
