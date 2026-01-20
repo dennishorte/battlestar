@@ -16,7 +16,7 @@ interface Game extends BaseGame {
   util: UltimateUtils
 }
 
-class UltimateZoneManager extends BaseZoneManager<Game> {
+class UltimateZoneManager extends BaseZoneManager<any, Zone> {
 
   byDeck(exp: string, age: number): Zone {
     const id = `decks.${exp}.${age}`

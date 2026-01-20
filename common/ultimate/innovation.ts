@@ -260,6 +260,12 @@ interface ScoreDetails {
 }
 
 class Innovation extends Game<InnovationState, InnovationSettings, GameOverData, Card, Zone, UltimatePlayer> {
+  // Redeclare managers with specific types for access to game-specific methods
+  // Note: cards and zones omitted due to local interface incompatibilities
+  declare actions: UltimateActionManager
+  declare players: UltimatePlayerManager
+  declare log: UltimateLogManager
+
   declare util: UltimateUtilsInterface
   stats!: GameStats
   getDogmaShareInfo!: (player: UltimatePlayer, card: Card) => { sharing: UltimatePlayer[]; demanding: UltimatePlayer[] }

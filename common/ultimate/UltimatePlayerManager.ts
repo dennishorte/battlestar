@@ -1,21 +1,12 @@
-import { BasePlayerManager } from '../lib/game/index.js'
+import { BasePlayerManager, PlayerData } from '../lib/game/index.js'
 import { UltimatePlayer } from './UltimatePlayer.js'
-
-interface User {
-  name: string
-  id?: string
-}
-
-interface Game {
-  // Game reference
-}
 
 interface PlayerManagerOptions {
   playerClass?: typeof UltimatePlayer
 }
 
-class UltimatePlayerManager extends BasePlayerManager {
-  constructor(game: Game, users: User[], opts: PlayerManagerOptions = {}) {
+class UltimatePlayerManager extends BasePlayerManager<any, UltimatePlayer> {
+  constructor(game: any, users: PlayerData[], opts: PlayerManagerOptions = {}) {
     opts = Object.assign(opts, {
       playerClass: UltimatePlayer,
     })

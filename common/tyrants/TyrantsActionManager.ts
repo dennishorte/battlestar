@@ -56,7 +56,7 @@ interface Game extends BaseGame {
   state: GameState
 }
 
-class TyrantsActionManager extends BaseActionManager<Game> {
+class TyrantsActionManager extends BaseActionManager<any> {
   declare zones: ZoneManager
   declare cards: CardManager
   declare players: PlayerManager

@@ -38,7 +38,7 @@ interface Game extends BaseGame {
   zones: ZoneManager
 }
 
-class UltimateCardManager extends BaseCardManager<Game> {
+class UltimateCardManager extends BaseCardManager<any, Card> {
   _expansions!: Record<string, ExpansionData>
   declare players: PlayerManager
   declare util: UltimateUtils

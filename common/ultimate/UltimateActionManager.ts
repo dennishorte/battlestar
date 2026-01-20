@@ -176,7 +176,7 @@ interface TransferTarget {
 
 type ActionFunction = (player: UltimatePlayer, card: Card, opts?: Record<string, unknown>) => Card | undefined
 
-class UltimateActionManager extends BaseActionManager<Game> {
+class UltimateActionManager extends BaseActionManager<any> {
   declare state: GameState
   declare zones: ZoneManager
   declare cards: CardManager

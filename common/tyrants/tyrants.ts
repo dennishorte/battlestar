@@ -181,6 +181,11 @@ interface Lobby {
 }
 
 class Tyrants extends Game<TyrantsState, TyrantsSettings, GameOverData, Card, TyrantsZoneType, Player> {
+  // Redeclare managers with specific types for access to game-specific methods
+  declare actions: TyrantsActionManager
+  declare players: TyrantsPlayerManager
+  declare log: TyrantsLogManager
+
   declare random: () => number
   doingSetup: boolean = false
 

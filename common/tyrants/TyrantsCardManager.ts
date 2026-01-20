@@ -19,8 +19,8 @@ interface Game extends BaseGame {
   zones: ZoneManager
 }
 
-class TyrantsCardManager extends BaseCardManager<Game> {
-  constructor(game: Game) {
+class TyrantsCardManager extends BaseCardManager<any, Card> {
+  constructor(game: any) {
     super(game)
   }
 }
