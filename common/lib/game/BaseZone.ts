@@ -78,7 +78,7 @@ class BaseZone<
     }
 
     this._initialized = true
-    this._cards = [...cards]
+    this._cards = [...cards] as TCard[]
     for (const card of this._cards) {
       card.setHome(this)
       card.setZone(this)
@@ -102,8 +102,8 @@ class BaseZone<
     if (index > this._cards.length) {
       throw new Error('Index out of bounds: ' + index)
     }
-    this._cards.splice(index, 0, card)
-    this._updateCardVisibility(card)
+    this._cards.splice(index, 0, card as TCard)
+    this._updateCardVisibility(card as TCard)
 
     card.setZone(this)
   }

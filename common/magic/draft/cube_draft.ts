@@ -5,7 +5,10 @@ import {
   SerializedGame,
   GameState,
   GameSettings,
+  SelectorInput,
+  PlayerData,
 } from '../../lib/game.js'
+import { BasePlayerManager } from '../../lib/game/index.js'
 
 import { Pack } from './pack.js'
 import util from '../../lib/util.js'
@@ -94,8 +97,18 @@ class CubeDraft extends Game<CubeDraftState, CubeDraftSettings> {
 
   constructor(serialized_data: SerializedGame, viewerName?: string) {
     super(serialized_data, viewerName, {
-      PlayerManager: CubeDraftPlayerManager,
+      PlayerManager: CubeDraftPlayerManager as unknown as typeof BasePlayerManager,
     })
+  }
+
+  // Helper method to get properly typed players
+  getAllPlayers(): CubeDraftPlayer[] {
+    return this.players.all() as unknown as CubeDraftPlayer[]
+  }
+
+  // Helper method to get typed player by name
+  getPlayerByName(name: string): CubeDraftPlayer {
+    return this.players.byName(name) as unknown as CubeDraftPlayer
   }
 
   serialize(): SerializedCubeDraft {
@@ -116,8 +129,7 @@ class CubeDraft extends Game<CubeDraftState, CubeDraftSettings> {
 
     // Open the first pack for each player.
     this.log.indent()
-    this
-      .players.all()
+    this.getAllPlayers()
       .forEach(player => this.aOpenNextPack(player))
 
     this.mainLoop()
@@ -141,7 +153,7 @@ class CubeDraft extends Game<CubeDraftState, CubeDraftSettings> {
   }
 
   initializePacks(): void {
-    this.state.packs = this.settings.packs.map(packData => new Pack(this, packData))
+    this.state.packs = this.settings.packs.map(packData => new Pack(this, packData as (string | Partial<PackCard>)[]))
     this.cardsById = {}
 
     this.log.add({ template: 'Passing out packs' })
@@ -159,7 +171,7 @@ class CubeDraft extends Game<CubeDraftState, CubeDraftSettings> {
 
     let packIndex = 0
 
-    for (const player of this.players.all()) {
+    for (const player of this.getAllPlayers()) {
       for (let p_i = 0; p_i < this.settings.numPacks; p_i++) {
         const pack = this.state.packs[packIndex]
         pack.index = p_i
@@ -201,11 +213,11 @@ class CubeDraft extends Game<CubeDraftState, CubeDraftSettings> {
 
   mainLoop(): void {
     while (!this.checkGameComplete()) {
-      const playerOptions = this.players.all()
+      const playerOptions = this.getAllPlayers()
         .filter(p => this.checkPlayerHasOption(p))
         .map(p => this.getPlayerOptions(p)) as PlayerOption[]
-      const action = this.requestInputAny(playerOptions)
-      const player = this.players.byName(action.actor)
+      const action = this.requestInputAny(playerOptions as unknown as SelectorInput[])
+      const player = this.getPlayerByName(action.actor)
 
       switch (action.title) {
         case 'Apply Scar':
@@ -213,7 +225,7 @@ class CubeDraft extends Game<CubeDraftState, CubeDraftSettings> {
           break
 
         case 'Draft Card':
-          this.aDraftCard(player, this.getNextPackForPlayer(player)!, action.selection[0])
+          this.aDraftCard(player, this.getNextPackForPlayer(player)!, action.selection[0] as string | { title: string })
           break
 
         default:
@@ -326,8 +338,7 @@ class CubeDraft extends Game<CubeDraftState, CubeDraftSettings> {
   }
 
   checkGameComplete(): boolean {
-    return this
-      .players.all()
+    return this.getAllPlayers()
       .every(player => !this.getNextPackForPlayer(player))
   }
 
@@ -385,12 +396,12 @@ class CubeDraft extends Game<CubeDraftState, CubeDraftSettings> {
     util.assert(Boolean(pack.waiting), 'pack does not have a waiting player')
 
     const direction = pack.index! % 2
-    const waitingPlayer = pack.waiting as unknown as CubeDraftPlayer
+    const waitingPlayer = pack.waiting as unknown as Parameters<typeof this.players.following>[0]
     if (direction === 0) {
-      return this.players.following(waitingPlayer)
+      return this.players.following(waitingPlayer) as unknown as CubeDraftPlayer
     }
     else {
-      return this.players.preceding(waitingPlayer)
+      return this.players.preceding(waitingPlayer) as unknown as CubeDraftPlayer
     }
   }
 
@@ -507,7 +518,7 @@ class CubeDraft extends Game<CubeDraftState, CubeDraftSettings> {
 }
 
 function CubeDraftFactory(settings: unknown, viewerName?: string): CubeDraft {
-  const data = GameFactory(settings)
+  const data = GameFactory(settings as Partial<GameSettings>)
   return new CubeDraft(data.serialize(), viewerName)
 }
 
@@ -515,7 +526,7 @@ function factoryFromLobby(lobby: LobbyData): unknown {
   return GameFactory({
     game: lobby.game,
     name: lobby.name,
-    players: lobby.users,
+    players: lobby.users as PlayerData[],
     seed: lobby.seed,
 
     cubeId: lobby.options.cubeId,

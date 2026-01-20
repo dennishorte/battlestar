@@ -3,11 +3,12 @@ import { GameProxy } from './GameProxy.js'
 import util from '../util.js'
 
 // Forward declarations for circular dependencies
+// Using 'unknown' for card types to avoid circular type dependencies
 interface BaseZone {
   id: string
-  cardlist(): BaseCard[]
+  cardlist(): unknown[]
   nextIndex(): number
-  push(card: BaseCard, index: number): void
+  push(card: unknown, index: number): void
 }
 
 interface BasePlayer {
@@ -65,11 +66,11 @@ class BaseCard<
   }
 
   setHome(zone: BaseZone): void {
-    this.home = zone
+    this.home = zone as TZone
   }
 
   setZone(zone: BaseZone): void {
-    this.zone = zone
+    this.zone = zone as TZone
   }
 
   moveHome(): void {
@@ -78,7 +79,7 @@ class BaseCard<
 
   moveTo(zone: BaseZone, index: number | null = null): this | null {
     const prevZone = this.zone!
-    const prevIndex = this.zone!.cardlist().findIndex(card => card.id === this.id)
+    const prevIndex = this.zone!.cardlist().findIndex(card => (card as BaseCard).id === this.id)
 
     let newIndex = index
 
@@ -101,14 +102,14 @@ class BaseCard<
       }
     }
 
-    const beforeCache: BeforeMoveResult = this._beforeMoveTo(zone, index, prevZone, prevIndex) || {}
+    const beforeCache: BeforeMoveResult = this._beforeMoveTo(zone as TZone, index, prevZone as TZone, prevIndex) || {}
 
     if (beforeCache.preventDefault) {
       return null
     }
 
     zone.push(this, newIndex!)
-    this._afterMoveTo(zone, index, prevZone, prevIndex, beforeCache)
+    this._afterMoveTo(zone as TZone, index, prevZone as TZone, prevIndex, beforeCache)
 
     return this
   }

@@ -23,36 +23,39 @@ interface BasePlayerInterface {
   eliminated: boolean
 }
 
-type PlayerConstructor = new (game: Game, data: PlayerData) => BasePlayerInterface
+type PlayerConstructor<T extends BasePlayerInterface = BasePlayerInterface> = new (game: Game, data: PlayerData) => T
 
-interface PlayerManagerOptions {
+interface PlayerManagerOptions<T extends BasePlayerInterface = BasePlayerInterface> {
   firstPlayerId?: string | null
   shuffleSeats?: boolean
-  playerClass?: PlayerConstructor
+  playerClass?: PlayerConstructor<T>
 }
 
-class PlayerList extends Array<BasePlayerInterface> {
-  constructor(...args: BasePlayerInterface[]) {
+class PlayerList<T extends BasePlayerInterface = BasePlayerInterface> extends Array<T> {
+  constructor(...args: T[]) {
     super(...args)
   }
 
-  active(): PlayerList {
-    return new PlayerList(...this.filter(player => !player.eliminated))
+  active(): PlayerList<T> {
+    return new PlayerList<T>(...this.filter(player => !player.eliminated))
   }
 }
 
 
-class BasePlayerManager<TGame extends Game = Game> {
+class BasePlayerManager<
+  TGame extends Game = Game,
+  TPlayer extends BasePlayerInterface = BasePlayerInterface
+> {
   game: TGame
   protected _users: PlayerData[]
-  protected _players: BasePlayerInterface[]
-  protected _currentPlayer: BasePlayerInterface | null
-  protected _opts: Required<PlayerManagerOptions>
+  protected _players: TPlayer[]
+  protected _currentPlayer: TPlayer | null
+  protected _opts: Required<PlayerManagerOptions<TPlayer>>
 
   // Proxied property from game
   declare log: LogManager
 
-  constructor(game: TGame, users: PlayerData[], opts: PlayerManagerOptions = {}) {
+  constructor(game: TGame, users: PlayerData[], opts: PlayerManagerOptions<TPlayer> = {}) {
     this.game = game
     this._users = [...users]
 
@@ -64,8 +67,8 @@ class BasePlayerManager<TGame extends Game = Game> {
     this._opts = Object.assign({
       firstPlayerId: null,
       shuffleSeats: true,
-      playerClass: BasePlayer,
-    }, opts)
+      playerClass: BasePlayer as PlayerConstructor<TPlayer>,
+    }, opts) as Required<PlayerManagerOptions<TPlayer>>
 
     const proxy = GameProxy.create(this)
 
@@ -75,7 +78,7 @@ class BasePlayerManager<TGame extends Game = Game> {
   }
 
   reset(): void {
-    this._players = this._users.map(user => new this._opts.playerClass(this.game, user))
+    this._players = this._users.map(user => new this._opts.playerClass(this.game, user)) as TPlayer[]
 
     if (this._opts.shuffleSeats) {
       util.array.shuffle(this._players, this.game.random)
@@ -107,36 +110,36 @@ class BasePlayerManager<TGame extends Game = Game> {
     this._currentPlayer = this.next()
   }
 
-  passToPlayer(player: BasePlayerInterface): void {
+  passToPlayer(player: TPlayer): void {
     this._currentPlayer = player
   }
 
   ////////////////////////////////////////////////////////////////////////////////
   // Get multiple players
 
-  active(): PlayerList {
-    return new PlayerList(...this.all().filter(player => player.eliminated === false))
+  active(): PlayerList<TPlayer> {
+    return new PlayerList<TPlayer>(...this.all().filter(player => player.eliminated === false))
   }
 
-  all(): PlayerList {
-    return new PlayerList(...this._players)
+  all(): PlayerList<TPlayer> {
+    return new PlayerList<TPlayer>(...this._players)
   }
 
-  endingWith(player: BasePlayerInterface): PlayerList {
+  endingWith(player: TPlayer): PlayerList<TPlayer> {
     const players = this.startingWith(player)
     players.push(players.shift()!)
     return players
   }
 
-  opponents(player: BasePlayerInterface): PlayerList {
-    return new PlayerList(...this.all().filter(other => other.team !== player.team))
+  opponents(player: TPlayer): PlayerList<TPlayer> {
+    return new PlayerList<TPlayer>(...this.all().filter(other => other.team !== player.team))
   }
 
-  other(player: BasePlayerInterface): PlayerList {
-    return new PlayerList(...this.all().filter(other => other.id !== player.id))
+  other(player: TPlayer): PlayerList<TPlayer> {
+    return new PlayerList<TPlayer>(...this.all().filter(other => other.id !== player.id))
   }
 
-  startingWith(player: BasePlayerInterface): PlayerList {
+  startingWith(player: TPlayer): PlayerList<TPlayer> {
     const players = this.all()
     while (players[0].id !== player.id) {
       players.push(players.shift()!)
@@ -144,65 +147,65 @@ class BasePlayerManager<TGame extends Game = Game> {
     return players
   }
 
-  startingWithCurrent(): PlayerList {
+  startingWithCurrent(): PlayerList<TPlayer> {
     return this.startingWith(this.current())
   }
 
-  teamOf(player: BasePlayerInterface): PlayerList {
-    return new PlayerList(...this.all().filter(other => other.team === player.team))
+  teamOf(player: TPlayer): PlayerList<TPlayer> {
+    return new PlayerList<TPlayer>(...this.all().filter(other => other.team === player.team))
   }
 
   ////////////////////////////////////////////////////////////////////////////////
   // Get single players
 
-  byId(id: string): BasePlayerInterface | undefined {
+  byId(id: string): TPlayer | undefined {
     return this.all().find(p => p.id === id)
   }
 
-  byName(name: string): BasePlayerInterface | undefined {
+  byName(name: string): TPlayer | undefined {
     return this.all().find(p => p.name === name)
   }
 
-  byOwner(obj: { owner: BasePlayerInterface }): BasePlayerInterface {
+  byOwner(obj: { owner: TPlayer }): TPlayer {
     return obj.owner
   }
 
-  bySeat(index: number): BasePlayerInterface {
+  bySeat(index: number): TPlayer {
     return this.all()[index]
   }
 
-  byZone(zone: { owner(): BasePlayerInterface | null }): BasePlayerInterface | null {
+  byZone(zone: { owner(): TPlayer | null }): TPlayer | null {
     // TODO: deprecate this, since the player can be taken straight off the zone
     return zone.owner()
   }
 
-  current(): BasePlayerInterface {
+  current(): TPlayer {
     return this._currentPlayer!
   }
 
-  first(): BasePlayerInterface {
+  first(): TPlayer {
     return this.all()[0]
   }
 
-  following(player: BasePlayerInterface): BasePlayerInterface {
+  following(player: TPlayer): TPlayer {
     return this.endingWith(player).active()[0]
   }
 
-  leftOf(player: BasePlayerInterface): BasePlayerInterface {
+  leftOf(player: TPlayer): TPlayer {
     return this.following(player)
   }
 
-  next(): BasePlayerInterface {
+  next(): TPlayer {
     return this.following(this.current())
   }
 
-  preceding(player: BasePlayerInterface): BasePlayerInterface {
+  preceding(player: TPlayer): TPlayer {
     return this.startingWith(player).active().slice(-1)[0]
   }
 
-  rightOf(player: BasePlayerInterface): BasePlayerInterface {
+  rightOf(player: TPlayer): TPlayer {
     return this.preceding(player)
   }
 }
 
-export { BasePlayerManager, PlayerList, PlayerManagerOptions }
+export { BasePlayerManager, BasePlayerInterface, PlayerList, PlayerManagerOptions }

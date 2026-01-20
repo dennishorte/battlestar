@@ -10,6 +10,7 @@ interface FixtureOptions {
   numPlayers?: number
   draft?: boolean
   players?: { _id: string; name: string }[]
+  [key: string]: unknown
 }
 
 const TestUtil = { ...TestCommon } as Record<string, unknown>

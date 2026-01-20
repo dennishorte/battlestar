@@ -1,4 +1,17 @@
-import { GameFactory } from '../game.js'
+import { Game, GameFactory } from '../game.js'
+
+interface QueuedResponse {
+  actor: string
+  selection: unknown[]
+  isUserResponse: boolean
+}
+
+interface FixtureOptions {
+  name?: string
+  seed?: string
+  players?: { _id: string; name: string }[]
+  [key: string]: unknown
+}
 
 /**
  * Test fixture for BaseActionManager and related game component tests.
@@ -8,7 +21,12 @@ import { GameFactory } from '../game.js'
  * while maintaining consistency across the test suite.
  */
 class GameTestFixture {
-  constructor(options = {}) {
+  options: FixtureOptions
+  game: Game | null
+  queuedResponses: QueuedResponse[]
+  originalMethods: Record<string, unknown>
+
+  constructor(options: FixtureOptions = {}) {
     this.options = {
       name: 'test_game',
       seed: 'test_seed',

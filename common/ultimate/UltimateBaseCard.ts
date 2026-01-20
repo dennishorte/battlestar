@@ -2,6 +2,7 @@ import { BaseCard, BeforeMoveResult } from '../lib/game/index.js'
 import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 interface CardData {
+  id?: string | null
   name: string
   expansion?: string
   age?: number
@@ -9,6 +10,7 @@ interface CardData {
   isMuseum?: boolean
   isSpecialAchievement?: boolean
   isDecree?: boolean
+  [key: string]: unknown
 }
 
 interface Player {
@@ -23,6 +25,10 @@ interface Game extends BaseGame {
 }
 
 interface Zone {
+  id: string
+  cardlist(): unknown[]
+  nextIndex(): number
+  push(card: unknown, index: number): void
   owner(): Player | null
 }
 

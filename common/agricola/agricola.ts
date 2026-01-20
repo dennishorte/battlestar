@@ -21,6 +21,7 @@ class Zone {
 interface PlayerData {
   _id: string
   name: string
+  [key: string]: unknown
 }
 
 interface LobbyData {
@@ -249,16 +250,16 @@ class Agricola extends Game<AgricolaState, AgricolaSettings, AgricolaGameOverDat
 
   initializeCards(): void {
     // Shuffle the action cards.
-    const actionCards = util.array.shuffle([...res.default.cards.actions], this.random)
+    const actionCards = util.array.shuffle([...res.cards.actions], this.random)
     actionCards.sort((l: { stage?: number }, r: { stage?: number }) => (l.stage ?? 0) - (r.stage ?? 0))
-    this.zones.byId('roundDeck').setCards(actionCards as unknown as Card[])
+    ;(this.zones.byId('roundDeck') as unknown as Zone).setCards(actionCards as unknown as Card[])
 
     // Shuffle and deal the minor improvements and occupations
     const occupations = util.array.shuffle(this.getAllOccupations(), this.random)
     const minorImprovements = util.array.shuffle(this.getAllMinorImprovements(), this.random)
     for (const player of this.players.all()) {
-      const occupationZone = this.zones.byPlayer(player, 'occupations')
-      const minorImprovementZone = this.zones.byPlayer(player, 'minorImprovements')
+      const occupationZone = this.zones.byPlayer(player, 'occupations') as unknown as Zone
+      const minorImprovementZone = this.zones.byPlayer(player, 'minorImprovements') as unknown as Zone
       for (let i = 0; i < 7; i++) {
         occupationZone.addCard(occupations.pop()!)
         minorImprovementZone.addCard(minorImprovements.pop()!)
@@ -329,7 +330,7 @@ class Agricola extends Game<AgricolaState, AgricolaSettings, AgricolaGameOverDat
   getAllMinorImprovements(): Card[] {
     let minorImprovements: Card[] = []
     for (const exp of this.settings.expansions) {
-      const expCards = res.default.cards[exp as keyof typeof res.default.cards]
+      const expCards = res.cards[exp as keyof typeof res.cards]
       if (expCards && 'minorImprovements' in expCards) {
         minorImprovements = minorImprovements.concat((expCards as { minorImprovements: Card[] }).minorImprovements)
       }
@@ -340,7 +341,7 @@ class Agricola extends Game<AgricolaState, AgricolaSettings, AgricolaGameOverDat
   getAllOccupations(): Card[] {
     let occupations: Card[] = []
     for (const exp of this.settings.expansions) {
-      const expCards = res.default.cards[exp as keyof typeof res.default.cards]
+      const expCards = res.cards[exp as keyof typeof res.cards]
       if (expCards && 'occupations' in expCards) {
         occupations = occupations.concat((expCards as { occupations: Card[] }).occupations)
       }
