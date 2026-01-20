@@ -1,10 +1,11 @@
-import { BaseCardManager } from '../lib/game/index.js'
+import { BaseCardManager, ICard } from '../lib/game/index.js'
 
-import type { BaseCardManager as BaseCardManagerType } from '../lib/game/index.js'
+import type { MagicCard } from './MagicCard.js'
 
-class MagicCardManager extends BaseCardManager {
-  constructor(...args: unknown[]) {
-    super(...args)
+// MagicCard extends ICard, so we use it as the TCard parameter
+class MagicCardManager extends BaseCardManager<any, MagicCard> {
+  constructor(game: any) {
+    super(game)
   }
 }
 

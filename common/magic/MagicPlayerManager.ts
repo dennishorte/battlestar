@@ -1,18 +1,20 @@
-import { BasePlayerManager } from '../lib/game/index.js'
-
-import type { BasePlayerManager as BasePlayerManagerType } from '../lib/game/index.js'
+import { BasePlayerManager, BasePlayerInterface, IZone } from '../lib/game/index.js'
 
 interface MagicCard {
-  zone: unknown
+  zone: IZone | null
 }
 
-interface Player {
+interface MagicPlayer extends BasePlayerInterface {
+  counters: Record<string, number>
+  addCounter(name: string, value: number): void
+  incrementCounter(name: string, amount: number): void
   [key: string]: unknown
 }
 
-class MagicPlayerManager extends BasePlayerManager {
-  byController(card: MagicCard): Player {
-    return this.byZone(card.zone)
+class MagicPlayerManager extends BasePlayerManager<any, MagicPlayer> {
+  byController(card: MagicCard): MagicPlayer | null {
+    if (!card.zone) return null
+    return this.byZone(card.zone as unknown as { owner(): MagicPlayer | null })
   }
 }
 

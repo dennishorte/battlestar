@@ -159,6 +159,11 @@ interface SerializedMagic extends SerializedGame {
 }
 
 class Magic extends Game<MagicState, MagicSettings, GameOverData, MagicCardType, Zone, Player> {
+  // Redeclare managers with specific types for access to game-specific methods
+  declare cards: MagicCardManager
+  declare players: MagicPlayerManager
+  declare log: MagicLogManager
+
   cardWrapper: typeof MagicCard
 
   constructor(serialized_data: SerializedGame, viewerName?: string) {
