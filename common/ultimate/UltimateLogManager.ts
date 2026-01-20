@@ -2,16 +2,11 @@ import { BaseLogManager, Chat } from '../lib/game/index.js'
 import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 import type { UltimatePlayer } from './UltimatePlayer.js'
+import type { UltimateBaseCard } from './UltimateBaseCard.js'
 
-interface Card {
-  name: string
-  isSpecialAchievement?: boolean
-  isDecree?: boolean
-  expansion?: string
+// Card type extends UltimateBaseCard with optional visibleAge (from UltimateAgeCard)
+interface Card extends UltimateBaseCard {
   visibleAge?: number
-  visibility: UltimatePlayer[]
-  getAge(): number
-  getHiddenName(name: string): string
 }
 
 interface UltimateUtils {

@@ -1,25 +1,19 @@
 import { BaseLogManager } from '../lib/game/index.js'
 import type { Player } from './TyrantsBaseCard.js'
+import type { TyrantsBaseCard } from './TyrantsBaseCard.js'
+import type { TyrantsZone } from './TyrantsZone.js'
 
 interface LogEntry {
   args: Record<string, unknown>
 }
 
-interface Card {
-  id: string
-}
-
-interface Zone {
-  name(): string
-}
+// Use actual types
+type Card = TyrantsBaseCard
+type Zone = TyrantsZone
 
 interface LogValue {
   value: string
   classes?: string[]
-}
-
-interface TyrantsLogManager extends BaseLogManagerType {
-  _enrichLogArgs(entry: LogEntry): void
 }
 
 class TyrantsLogManager extends BaseLogManager {

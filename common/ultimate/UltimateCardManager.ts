@@ -1,11 +1,12 @@
-import { BaseCardManager, ICard, IZone } from '../lib/game/index.js'
+import { BaseCardManager, ICard } from '../lib/game/index.js'
 import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 import type { UltimatePlayer } from './UltimatePlayer.js'
+import type { UltimateBaseCard } from './UltimateBaseCard.js'
+import type { UltimateZone } from './UltimateZone.js'
 
-interface Card extends ICard {
-  id: string
-}
+// Use UltimateBaseCard as base, but we work with ICard for registration
+type Card = UltimateBaseCard
 
 interface Achievement {
   id: string
@@ -16,10 +17,8 @@ interface ExpansionData {
   achievements: Achievement[]
 }
 
-interface Zone extends IZone {
-  cardlist(): Card[]
-  peek(): Card | null
-}
+// Use UltimateZone type
+type Zone = UltimateZone
 
 interface UltimateUtils {
   colors(): string[]
