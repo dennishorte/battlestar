@@ -1,21 +1,13 @@
-import { BaseActionManager, ICard, IZone, ILogManager } from '../lib/game/index.js'
+import { BaseActionManager, ILogManager } from '../lib/game/index.js'
 import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 import type { TyrantsPlayer } from './TyrantsPlayer.js'
+import type { TyrantsBaseCard } from './TyrantsBaseCard.js'
+import type { TyrantsZone } from './TyrantsZone.js'
 
-interface Card extends ICard {
-  id: string
-  name: string
-  zone: Zone
-  owner: TyrantsPlayer | null
-  moveTo(zone: Zone, position?: number): Card
-}
-
-interface Zone extends IZone {
-  id: string
-  cardlist(): Card[]
-  peek(): Card | null
-}
+// Use actual types
+type Card = TyrantsBaseCard
+type Zone = TyrantsZone
 
 interface ZoneManager {
   byId(id: string): Zone
