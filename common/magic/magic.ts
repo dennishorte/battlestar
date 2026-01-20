@@ -7,8 +7,15 @@ import {
   GameSettings,
   SelectorInput,
   PlayerData,
+  GameOverData,
 } from '../lib/game.js'
-import { BasePlayerManager, BaseLogManager, BaseCardManager } from '../lib/game/index.js'
+import {
+  BasePlayerManager,
+  BaseLogManager,
+  BaseCardManager,
+  BasePlayerInterface,
+  BaseZoneInterface,
+} from '../lib/game/index.js'
 
 import * as res from './data.js'
 import util from '../lib/util.js'
@@ -34,18 +41,14 @@ import * as cardUtilModule from './util/cardUtil.js'
 import type { MagicCard as MagicCardType, CardData } from './MagicCard.js'
 import type { DeckWrapper } from './util/DeckWrapper.js'
 
-interface Player {
-  name: string
-  team: string
-  eliminated?: boolean
+interface Player extends BasePlayerInterface {
   counters: Record<string, number>
   addCounter(name: string, value: number): void
   incrementCounter(name: string, amount: number): void
   [key: string]: unknown
 }
 
-interface Zone {
-  id: string
+interface Zone extends BaseZoneInterface {
   cardlist(): MagicCardType[]
   push(card: MagicCardType): void
   shuffle(): void
@@ -155,7 +158,7 @@ interface SerializedMagic extends SerializedGame {
   gameOverData?: unknown
 }
 
-class Magic extends Game<MagicState, MagicSettings> {
+class Magic extends Game<MagicState, MagicSettings, GameOverData, MagicCardType, Zone, Player> {
   cardWrapper: typeof MagicCard
 
   constructor(serialized_data: SerializedGame, viewerName?: string) {
@@ -166,31 +169,6 @@ class Magic extends Game<MagicState, MagicSettings> {
     })
 
     this.cardWrapper = MagicCard
-  }
-
-  // Helper methods for properly typed access
-  getPlayer(name: string): Player {
-    return this.players.byName(name) as unknown as Player
-  }
-
-  getAllPlayers(): Player[] {
-    return this.players.all() as unknown as Player[]
-  }
-
-  getCurrentPlayer(): Player {
-    return this.players.current() as unknown as Player
-  }
-
-  getZone(id: string): Zone {
-    return this.zones.byId(id) as unknown as Zone
-  }
-
-  getCard(id: string): MagicCardType {
-    return this.cards.byId(id) as unknown as MagicCardType
-  }
-
-  getAllCards(): MagicCardType[] {
-    return this.cards.all() as unknown as MagicCardType[]
   }
 
   serialize(): SerializedMagic {

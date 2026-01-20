@@ -1,15 +1,10 @@
-import { BasePlayer } from '../../lib/game/index.js'
+import { BasePlayer, PlayerData as BasePlayerData } from '../../lib/game/index.js'
+import { Game } from '../../lib/game.js'
 
-import type { BasePlayer as BasePlayerType } from '../../lib/game/index.js'
 import type { Pack, PackCard } from './pack.js'
 
-interface PlayerData {
+interface CubeDraftPlayerData extends BasePlayerData {
   deckId?: string
-  [key: string]: unknown
-}
-
-interface DraftGame {
-  [key: string]: unknown
 }
 
 class CubeDraftPlayer extends BasePlayer {
@@ -22,7 +17,7 @@ class CubeDraftPlayer extends BasePlayer {
   scarredRounds: number[]
   scarredCardId: string | null
 
-  constructor(game: DraftGame, data: PlayerData) {
+  constructor(game: Game, data: CubeDraftPlayerData) {
     super(game, data)
 
     this.deckId = data.deckId

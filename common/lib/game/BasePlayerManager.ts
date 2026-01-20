@@ -67,7 +67,7 @@ class BasePlayerManager<
     this._opts = Object.assign({
       firstPlayerId: null,
       shuffleSeats: true,
-      playerClass: BasePlayer as PlayerConstructor<TPlayer>,
+      playerClass: BasePlayer as unknown as PlayerConstructor<TPlayer>,
     }, opts) as Required<PlayerManagerOptions<TPlayer>>
 
     const proxy = GameProxy.create(this)

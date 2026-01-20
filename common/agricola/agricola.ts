@@ -6,16 +6,39 @@ import {
   GameState,
   GameSettings as BaseGameSettings,
   GameOverData as BaseGameOverData,
+  BasePlayerInterface,
+  BaseZoneInterface,
+  BaseCard,
 } from '../lib/game.js'
 import res from './resources.js'
 import util from '../lib/util.js'
 import { Card } from './card.js'
 
 // temporary filler because old gameZone was deprecated; migrate to BaseZone
-class Zone {
-  constructor(_game: Agricola, _name: string, _type: string) {}
-  setCards(_cards: Card[]): void {}
-  addCard(_card: Card): void {}
+interface AgricolaZone extends BaseZoneInterface {
+  setCards(cards: Card[]): void
+  addCard(card: Card): void
+}
+
+class Zone implements AgricolaZone {
+  id: string
+  private _cards: unknown[] = []
+
+  constructor(_game: Agricola, name: string, _type: string) {
+    this.id = name
+  }
+
+  cardlist(): { zone: BaseZoneInterface | null }[] {
+    return this._cards as { zone: BaseZoneInterface | null }[]
+  }
+
+  setCards(cards: Card[]): void {
+    this._cards = cards
+  }
+
+  addCard(card: Card): void {
+    this._cards.push(card)
+  }
 }
 
 interface PlayerData {
@@ -39,11 +62,8 @@ interface AgricolaSettings extends BaseGameSettings {
   numPlayers?: number
 }
 
-interface AgricolaPlayer {
+interface AgricolaPlayer extends BasePlayerInterface {
   _id: string
-  id: string
-  name: string
-  index?: number
   food?: number
   resources: {
     fences: number
@@ -95,7 +115,7 @@ interface AgricolaGameOverData extends BaseGameOverData {
   player: AgricolaPlayer
 }
 
-class Agricola extends Game<AgricolaState, AgricolaSettings, AgricolaGameOverData> {
+class Agricola extends Game<AgricolaState, AgricolaSettings, AgricolaGameOverData, BaseCard, AgricolaZone, AgricolaPlayer> {
   declare random: () => number
 
   constructor(serialized_data: SerializedGame, viewerName?: string) {
@@ -146,6 +166,10 @@ class Agricola extends Game<AgricolaState, AgricolaSettings, AgricolaGameOverDat
       _id: p._id,
       id: p.name,
       name: p.name,
+      team: p.name,  // Each player is their own team
+      index: undefined,
+      seatNumber: undefined,
+      eliminated: false,
 
       resources: {
         fences: 15,

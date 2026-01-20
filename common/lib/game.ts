@@ -3,10 +3,13 @@ import * as selector from './selector.js'
 import util from './util.js'
 import {
   BaseActionManager,
+  BaseCard,
   BaseCardManager,
   BaseLogManager,
   BasePlayerManager,
+  BasePlayerInterface,
   BaseZoneManager,
+  BaseZoneInterface,
 } from './game/index.js'
 
 interface PlayerData {
@@ -111,7 +114,10 @@ class InputRequestEvent {
 class Game<
   TState extends GameState = GameState,
   TSettings extends GameSettings = GameSettings,
-  TGameOverData extends GameOverData = GameOverData
+  TGameOverData extends GameOverData = GameOverData,
+  TCard extends BaseCard = BaseCard,
+  TZone extends BaseZoneInterface = BaseZoneInterface,
+  TPlayer extends BasePlayerInterface = BasePlayerInterface
 > {
   _id: string | undefined
   state: TState
@@ -120,16 +126,16 @@ class Game<
   responses: Response[]
   undoCount: number
   waiting: InputRequestEventInstance | null
-  breakpoints: Record<string, ((game: Game<TState, TSettings, TGameOverData>) => void)[]>
+  breakpoints: Record<string, ((game: Game<TState, TSettings, TGameOverData, TCard, TZone, TPlayer>) => void)[]>
   gameOver: boolean
   gameOverData: TGameOverData | null
   random: () => number
   viewerName: string | undefined
   log: InstanceType<typeof BaseLogManager>
   actions: InstanceType<typeof BaseActionManager>
-  cards: InstanceType<typeof BaseCardManager>
-  players: InstanceType<typeof BasePlayerManager>
-  zones: InstanceType<typeof BaseZoneManager>
+  cards: BaseCardManager<this, TCard>
+  players: BasePlayerManager<this, TPlayer>
+  zones: BaseZoneManager<this, TZone>
   util: typeof util | unknown = util;
   [key: string]: unknown
 
@@ -590,4 +596,7 @@ export {
   GameOptions,
   GameState,
   PlayerData,
+  BasePlayerInterface,
+  BaseZoneInterface,
+  BaseCard,
 }

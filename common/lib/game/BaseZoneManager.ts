@@ -16,28 +16,31 @@ interface BaseZoneInterface {
   cardlist(): BaseCard[]
 }
 
-type ZoneConstructor = new (game: Game, id: string, name: string, kind: ZoneKind, owner?: BasePlayer | null) => BaseZoneInterface
+type ZoneConstructor<TZone extends BaseZoneInterface = BaseZoneInterface> = new (game: Game, id: string, name: string, kind: ZoneKind, owner?: BasePlayer | null) => TZone
 
-class BaseZoneManager<TGame extends Game = Game> {
+class BaseZoneManager<
+  TGame extends Game = Game,
+  TZone extends BaseZoneInterface = BaseZoneInterface
+> {
   game: TGame
-  protected _zoneConstructor: ZoneConstructor
-  protected _zones: Record<string, BaseZoneInterface>
+  protected _zoneConstructor: ZoneConstructor<TZone>
+  protected _zones: Record<string, TZone>
 
   constructor(game: TGame) {
-    this._zoneConstructor = BaseZone
+    this._zoneConstructor = BaseZone as unknown as ZoneConstructor<TZone>
     this.game = game
     this._zones = {}
 
     return GameProxy.create(this)
   }
 
-  create(...args: [Game, string, string, ZoneKind, (BasePlayer | null)?]): BaseZoneInterface {
+  create(...args: [Game, string, string, ZoneKind, (BasePlayer | null)?]): TZone {
     const zone = new this._zoneConstructor(...args)
     this.register(zone)
     return zone
   }
 
-  register(zone: BaseZoneInterface): void {
+  register(zone: TZone): void {
     if (Object.hasOwn(this._zones, zone.id)) {
       throw new Error('Duplicate zone id: ' + zone.id)
     }
@@ -51,22 +54,22 @@ class BaseZoneManager<TGame extends Game = Game> {
   ////////////////////////////////////////////////////////////////////////////////
   // Getters
 
-  all(): BaseZoneInterface[] {
+  all(): TZone[] {
     return Object.values(this._zones)
   }
 
-  byCard(card: BaseCard): BaseZoneInterface | null {
-    return card.zone
+  byCard(card: BaseCard): TZone | null {
+    return card.zone as TZone | null
   }
 
-  byId(id: string): BaseZoneInterface {
+  byId(id: string): TZone {
     return this._zones[id]
   }
 
-  byPlayer(player: BasePlayer, zoneName: string): BaseZoneInterface {
+  byPlayer(player: BasePlayer, zoneName: string): TZone {
     const id = `players.${player.name}.${zoneName}`
     return this.byId(id)
   }
 }
 
-export { BaseZoneManager, ZoneConstructor }
+export { BaseZoneManager, ZoneConstructor, BaseZoneInterface }

@@ -5,7 +5,12 @@ import {
   SerializedGame,
   GameState,
   GameSettings,
+  GameOverData,
 } from './../lib/game.js'
+import {
+  BasePlayerInterface,
+  BaseZoneInterface,
+} from './../lib/game/index.js'
 import * as res from './res/index.js'
 
 import { TyrantsLogManager } from './TyrantsLogManager.js'
@@ -21,8 +26,7 @@ import type { TyrantsMapZone as TyrantsMapZoneType } from './TyrantsMapZone.js'
 import type { TyrantsToken as TyrantsTokenType } from './TyrantsToken.js'
 import type { TyrantsZone as TyrantsZoneType } from './TyrantsZone.js'
 
-interface Player {
-  name: string
+interface Player extends BasePlayerInterface {
   color?: string
   addCounter(name: string): void
   getCounter(name: string): number
@@ -175,7 +179,7 @@ interface Lobby {
   }
 }
 
-class Tyrants extends Game<TyrantsState, TyrantsSettings> {
+class Tyrants extends Game<TyrantsState, TyrantsSettings, GameOverData, Card, TyrantsZoneType, Player> {
   declare random: () => number
   doingSetup: boolean = false
 

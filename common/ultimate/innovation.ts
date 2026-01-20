@@ -4,7 +4,12 @@ import {
   GameOverEvent,
   GameState as BaseGameState,
   GameSettings as BaseGameSettings,
+  GameOverData,
 } from '../lib/game.js'
+import {
+  BasePlayerInterface,
+  BaseZoneInterface,
+} from '../lib/game/index.js'
 import res from './res/index.js'
 import selector from '../lib/selector.js'
 import util from '../lib/util.js'
@@ -58,8 +63,7 @@ interface Card {
   decreeImpl?(game: Innovation, player: UltimatePlayer): void
 }
 
-interface Zone {
-  id: string
+interface Zone extends BaseZoneInterface {
   color?: string
   splay?: string
   owner?: UltimatePlayer
@@ -253,7 +257,7 @@ interface ScoreDetails {
   total: number
 }
 
-class Innovation extends Game<InnovationState, InnovationSettings> {
+class Innovation extends Game<InnovationState, InnovationSettings, GameOverData, Card, Zone, UltimatePlayer> {
   declare util: UltimateUtilsInterface
   stats!: GameStats
   getDogmaShareInfo!: (player: UltimatePlayer, card: Card) => { sharing: UltimatePlayer[]; demanding: UltimatePlayer[] }
