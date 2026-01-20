@@ -125,7 +125,7 @@ describe('Rod Serling', () => {
       request = t.choose(game, request, 'Gunpowder') // Return Gunpowder (age 4, >= 4) to score age 5
       // Agriculture scores Chemistry (age 5, >= 4)
       // Karma does NOT trigger (neither return nor score triggers it)
-      
+
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
         dennis: {
@@ -190,11 +190,11 @@ describe('Rod Serling', () => {
       // dennis has Rod Serling (age 9) and Gunpowder (age 4), so highest is 9
       // This will draw age 9, not age 4
       // We need to force age 4 draw
-      
+
       // Let me use Gunpowder's dogma which draws age 2, but we need age 4
       // Actually, let's just accept that with Rod Serling on the board, it will draw age 9
       // But we can test that age 9 >= 4, so karma doesn't trigger
-      
+
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
         dennis: {

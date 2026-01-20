@@ -12,7 +12,7 @@ module.exports = {
     (game, player) => {
       const decision = game.actions.chooseYesNo(player, 'Exchange your hand and score pile?')
       if (decision) {
-        game.aExchangeZones(
+        game.actions.exchangeZones(
           player,
           game.zones.byPlayer(player, 'hand'),
           game.zones.byPlayer(player, 'score'),

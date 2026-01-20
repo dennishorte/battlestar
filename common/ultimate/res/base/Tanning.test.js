@@ -16,8 +16,8 @@ describe('Tanning', () => {
       }
     })
 
-      let request
-      request = game.run()
+    let request
+    request = game.run()
     request = t.choose(game, request, 'Dogma.Tanning')
     // First effect: score two cards from hand
     // chooseAndScore with count: 2 requires selecting 2 cards at once

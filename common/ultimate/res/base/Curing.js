@@ -31,7 +31,7 @@ module.exports = {
         const handCards = handZone.cardlist()
         const scoreZone = game.zones.byPlayer(opponent, 'score')
         const scoreCards = game.util.highestCards(scoreZone.cardlist())
-        game.aExchangeCards(player, handCards, scoreCards, handZone, scoreZone)
+        game.actions.exchangeCards(player, handCards, scoreCards, handZone, scoreZone)
       }
     },
   ],

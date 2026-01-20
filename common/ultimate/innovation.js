@@ -811,54 +811,6 @@ Innovation.prototype.aDecree = function(player, name) {
   this.log.outdent()
 }
 
-Innovation.prototype.aExchangeCards = function(player, cards1, cards2, zone1, zone2) {
-  const karmaKind = this.aKarma(player, 'exchange', { cards1, cards2, zone1, zone2 })
-  if (karmaKind === 'would-instead') {
-    this.actions.acted(player)
-    return 'would-instead'
-  }
-
-  this.log.add({
-    template: '{player} exchanges {count1} cards for {count2} cards',
-    args: {
-      player,
-      count1: cards1.length,
-      count2: cards2.length,
-    }
-  })
-
-  let acted = false
-
-  for (const card of cards1) {
-    acted = Boolean(card.moveTo(zone2)) || acted
-  }
-  for (const card of cards2) {
-    acted = Boolean(card.moveTo(zone1)) || acted
-  }
-
-  if (acted) {
-    this.actions.acted(player)
-  }
-}
-
-Innovation.prototype.aExchangeZones = function(player, zone1, zone2) {
-  const cards1 = zone1.cardlist()
-  const cards2 = zone2.cardlist()
-
-  const result = this.aExchangeCards(player, cards1, cards2, zone1, zone2)
-
-  if (result === 'would-instead') {
-    return
-  }
-
-  this.log.add({
-    template: '{player} exchanges {count1} cards from {zone1} for {count2} cards from {zone2}',
-    args: { player, zone1, zone2, count1: cards1.length, count2: cards2.length }
-  })
-
-  this.actions.acted(player)
-}
-
 Innovation.prototype._aKarmaHelper = function(player, infos, opts={}) {
   let info = infos[0]
 

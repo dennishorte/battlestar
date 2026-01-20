@@ -23,7 +23,7 @@ module.exports = {
         const handHighest = game.util.highestCards(hand.cardlist())
         const scoreHighest = game.util.highestCards(score.cardlist())
 
-        game.aExchangeCards(player, handHighest, scoreHighest, hand, score)
+        game.actions.exchangeCards(player, handHighest, scoreHighest, hand, score)
       }
       else {
         game.actions.junkDeck(player, 3)

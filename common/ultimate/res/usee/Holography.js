@@ -35,7 +35,7 @@ module.exports = {
           .filter(card => card.checkIsStandardAchievement())
           .filter(card => card.getAge() < lowestScoreCardsValue)
 
-        game.aExchangeCards(
+        game.actions.exchangeCards(
           player,
           lowestScoreCards,
           matchingAchievements,

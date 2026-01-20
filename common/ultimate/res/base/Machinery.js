@@ -18,7 +18,7 @@ module.exports = {
       const yours = playerHand.cardlist()
       const mine = game.util.highestCards(leaderHand.cardlist())
 
-      game.aExchangeCards(
+      game.actions.exchangeCards(
         player,
         yours,
         mine,
