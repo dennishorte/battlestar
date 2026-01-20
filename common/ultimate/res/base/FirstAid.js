@@ -24,7 +24,7 @@ module.exports = {
           game.actions.meld(player, colorMatchedHandCards[0])
         }
         else {
-          game.aYouLose(player, self)
+          game.youLose(player, self.name)
         }
       }
     }

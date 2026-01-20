@@ -21,7 +21,7 @@ module.exports = {
           template: '{player} scored fewer than three cards and loses the game!',
           args: { player }
         })
-        game.aYouLose(player, self)
+        game.youLose(player, self.name)
       }
     },
   ],

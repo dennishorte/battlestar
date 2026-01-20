@@ -413,6 +413,20 @@ Game.prototype.youWin = function(player, reason) {
   })
 }
 
+Game.prototype.youLose = function(player, reason) {
+  this.log.add({
+    template: '{player} is eliminated due to {reason}',
+    args: { player, reason },
+  })
+  player.eliminated = true
+
+  const activePlayers = this.players.active()
+
+  if (activePlayers.length === 1) {
+    this.youWin(activePlayers[0], reason)
+  }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Chat and Logging

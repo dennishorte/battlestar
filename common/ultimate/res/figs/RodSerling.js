@@ -24,7 +24,7 @@ module.exports = {
         return false
       },
       func: (game, player, { self }) => {
-        game.aYouLose(player, self)
+        game.youLose(player, self.name)
       }
     }
   ]

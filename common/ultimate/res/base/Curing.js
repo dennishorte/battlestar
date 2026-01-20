@@ -20,7 +20,7 @@ module.exports = {
       const scored = game.actions.chooseAndScore(player, scoreChoices)[0]
 
       if (!scored) {
-        game.aYouLose(player, self)
+        game.youLose(player, self.name)
       }
     },
     (game, player) => {

@@ -24,7 +24,7 @@ module.exports = {
       const revealed = game.actions.chooseAndReveal(player, revealChoices)[0]
 
       if (!revealed) {
-        game.aYouLose(player, self)
+        game.youLose(player, self.name)
       }
     },
     (game, player, { self }) => {
@@ -37,7 +37,7 @@ module.exports = {
       const melded = game.actions.chooseAndMeld(player, meldChoices)
 
       if (!melded || (Array.isArray(melded) && melded.length === 0)) {
-        game.aYouLose(player, self)
+        game.youLose(player, self.name)
         return
       }
     },

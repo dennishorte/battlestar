@@ -16,7 +16,7 @@ module.exports = {
       const leaderScoreCount = game.cards.byPlayer(leader, 'score').length
 
       if (playerScoreCount < leaderScoreCount) {
-        game.aYouLose(player, self)
+        game.youLose(player, self.name)
       }
     }
   ],

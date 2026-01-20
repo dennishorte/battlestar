@@ -18,7 +18,7 @@ module.exports = {
         .some(card => card.getAge() === 3)
 
       if (hasAge3) {
-        game.aYouLose(player, self)
+        game.youLose(player, self.name)
       }
     },
     (game, player, { self }) => {

@@ -25,7 +25,7 @@ module.exports = {
               template: '{player} tucked the card just under an 11',
               args: { player },
             })
-            game.aYouLose(player, self)
+            game.youLose(player, self.name)
           }
         }
 

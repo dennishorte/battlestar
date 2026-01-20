@@ -901,20 +901,6 @@ Innovation.prototype.aKarma = function(player, kind, opts={}) {
   return this._aKarmaHelper(player, infos, { ...opts, trigger: kind })
 }
 
-Innovation.prototype.aYouLose = function(player, card) {
-  this.log.add({
-    template: '{player} loses the game due to {card}',
-    args: { player, card },
-  })
-  player.dead = true
-
-  const livingPlayers = this.players.all().filter(player => !player.dead)
-
-  if (livingPlayers.length === 1) {
-    this.youWin(livingPlayers[0], card.name)
-  }
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Checkers

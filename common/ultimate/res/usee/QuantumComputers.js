@@ -14,7 +14,7 @@ module.exports = {
     (game, player, { self }) => {
       const lose = !game.actions.flipCoin(player)
       if (lose) {
-        game.aYouLose(player, self)
+        game.youLose(player, self.name)
       }
     },
 
@@ -38,7 +38,7 @@ module.exports = {
             template: '{player} has no secrets to return and loses the game!',
             args: { player },
           })
-          game.aYouLose(player, self)
+          game.youLose(player, self.name)
           break
         }
       }

@@ -23,7 +23,7 @@ module.exports = {
           template: '{player} has Socialism on their board and loses the game!',
           args: { player }
         })
-        game.aYouLose(player, self)
+        game.youLose(player, self.name)
       }
     },
 
