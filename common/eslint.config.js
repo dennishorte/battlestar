@@ -12,7 +12,6 @@ module.exports = defineConfig([
       '**/build/**',
       '**/test/**',
       '**/test/**',
-      'agricola/**',
     ],
   },
   {
