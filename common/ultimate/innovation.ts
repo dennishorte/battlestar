@@ -23,6 +23,7 @@ import { UltimatePlayerManager } from './UltimatePlayerManager.js'
 import { UltimateUtils } from './UltimateUtils.js'
 import { UltimateZone } from './UltimateZone.js'
 import { UltimateZoneManager } from './UltimateZoneManager.js'
+import { UltimateBaseCard } from './UltimateBaseCard.js'
 
 import { getDogmaShareInfo } from './actions/Dogma.js'
 
@@ -31,37 +32,12 @@ import type { DogmaInfo } from './actions/Dogma.js'
 
 const SUPPORTED_EXPANSIONS = ['base', 'echo', 'figs', 'city', 'arti', 'usee']
 
-interface Card extends ICard {
-  id: string
-  name: string
-  age: number
-  color: string
-  expansion: string
-  zone: Zone
-  owner: UltimatePlayer | null
-  visibility: string[]
-  biscuits: string
-  dogmaBiscuit: string
-  dogma: string[]
+// Card type alias - uses UltimateBaseCard as the base with additional optional properties
+// that exist on specific card types (achievements, decrees, etc.)
+interface Card extends UltimateBaseCard {
+  // Additional properties/methods on specific card types
   text?: string
-  isSpecialAchievement?: boolean
-  isDecree?: boolean
-  isMuseum?: boolean
-  visibleAge?: number
-  moveTo(zone: Zone | string, position?: number): Card
-  moveHome(): void
-  reveal(): void
-  getAge(): number
-  getHiddenName(): string
-  checkHasBiscuit(biscuit: string): boolean
-  checkIsCity(): boolean
-  checkIsFigure(): boolean
-  checkBiscuitIsVisible(biscuit: string): boolean
   checkPlayerIsEligible?(game: Innovation, player: UltimatePlayer, reduceCost: boolean): boolean
-  visibleBiscuits(): string
-  visibleEffects(kind: string, opts?: { selfExecutor?: boolean }): VisibleEffectsResult | undefined
-  getBonuses(): number[]
-  getKarmaInfo(trigger: string): KarmaInfo[]
   decreeImpl?(game: Innovation, player: UltimatePlayer): void
 }
 
@@ -261,7 +237,8 @@ interface ScoreDetails {
 
 class Innovation extends Game<InnovationState, InnovationSettings, GameOverData, Card, Zone, UltimatePlayer> {
   // Redeclare managers with specific types for access to game-specific methods
-  // Note: cards and zones omitted due to local interface incompatibilities
+  declare cards: UltimateCardManager
+  declare zones: UltimateZoneManager
   declare actions: UltimateActionManager
   declare players: UltimatePlayerManager
   declare log: UltimateLogManager

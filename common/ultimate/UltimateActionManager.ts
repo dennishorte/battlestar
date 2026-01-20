@@ -9,37 +9,12 @@ import util from '../lib/util.js'
 
 import type { UltimatePlayer, BiscuitCounts } from './UltimatePlayer.js'
 import type { DogmaInfo } from './actions/Dogma.js'
+import type { UltimateBaseCard } from './UltimateBaseCard.js'
+import type { UltimateZone } from './UltimateZone.js'
 
-interface Card extends ICard {
-  id: string
-  name: string
-  age: number
-  color: string
-  expansion: string
-  zone: Zone
-  owner: UltimatePlayer | null
-  isSpecialAchievement?: boolean
-  isDecree?: boolean
-  isMuseum?: boolean
-  visibility: UltimatePlayer[]
-  visible(player: UltimatePlayer): boolean
-  moveTo(zone: Zone, position?: number): Card
-  moveHome(): void
-  reveal(): void
-  getAge(): number
-  getHiddenName(game: Game): string
-  checkHasBiscuit(biscuit: string): boolean
-  checkIsCity(): boolean
-}
-
-interface Zone extends IZone {
-  id: string
-  splay: string
-  cardlist(): Card[]
-  peek(): Card | null
-  isArtifactZone(): boolean
-  isMuseumZone(): boolean
-}
+// Use actual class types
+type Card = UltimateBaseCard
+type Zone = UltimateZone
 
 interface UltimateUtils {
   colors(): string[]
@@ -101,7 +76,8 @@ interface GameState {
   didEndorse?: boolean
 }
 
-interface Game extends BaseGame {
+// Note: Not extending BaseGame to avoid index signature compatibility issues
+interface Game {
   util: UltimateUtils
   zones: ZoneManager
   cards: CardManager

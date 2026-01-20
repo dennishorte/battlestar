@@ -2,15 +2,15 @@ import { BaseZone, ZONE_KIND, ZoneKind } from '../lib/game/index.js'
 import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
 import type { UltimatePlayer, BiscuitCounts } from './UltimatePlayer.js'
+import type { UltimateBaseCard } from './UltimateBaseCard.js'
+
+// Use UltimateBaseCard as the card type
+type Card = UltimateBaseCard
 
 interface UltimateUtils {
   parseBiscuits(biscuitString: string): BiscuitCounts
   combineBiscuits(left: BiscuitCounts, right: BiscuitCounts): BiscuitCounts
   emptyBiscuits(): BiscuitCounts
-}
-
-interface Card {
-  visibleBiscuits(): string
 }
 
 interface KarmaInfo {

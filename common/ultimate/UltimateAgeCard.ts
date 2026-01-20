@@ -1,7 +1,7 @@
 import { UltimateBaseCard } from './UltimateBaseCard.js'
 import util from '../lib/util.js'
 
-import type { Player } from './UltimateBaseCard.js'
+import type { Player, KarmaInfo, VisibleEffectsResult, Game, Zone, CardData } from './UltimateBaseCard.js'
 import type {
   AgeCardData,
   DogmaFunction,
@@ -12,40 +12,7 @@ import type {
   KarmaContext,
 } from './types.js'
 
-interface Zone {
-  id: string
-  splay: string
-  owner(): Player | null
-  isColorZone(): boolean
-}
-
-interface UltimateUtils {
-  parseBiscuits(biscuitString: string): Record<string, number>
-  getAsArray<T>(obj: unknown, key: string): T[]
-}
-
-interface Game {
-  zones: {
-    byPlayer(player: Player, zone: string): Zone
-  }
-  cards: {
-    top(player: Player, color: string): { id: string } | null
-  }
-  util: UltimateUtils
-}
-
-interface VisibleEffectsResult {
-  card: UltimateAgeCard
-  texts: string[]
-  impls: DogmaFunction[]
-}
-
-interface KarmaInfo {
-  card: UltimateAgeCard
-  index: number
-  text: string
-  impl: KarmaImpl
-}
+// Zone, Game interfaces imported from UltimateBaseCard.ts
 
 class UltimateAgeCard extends UltimateBaseCard {
   version!: number
@@ -64,7 +31,7 @@ class UltimateAgeCard extends UltimateBaseCard {
   karmaImpl!: KarmaImpl[]
 
   constructor(game: Game, data: AgeCardData) {
-    super(game, data)
+    super(game, data as CardData)
 
     Object.assign(this, {
       version: 2,
@@ -98,7 +65,7 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
   }
 
-  checkBiscuitIsVisible(biscuit: string): boolean {
+  override checkBiscuitIsVisible(biscuit: string): boolean {
     if (biscuit === 'h') {
       // m also counts as an h
       const mIsVisible = this.checkBiscuitIsVisible('m')
@@ -144,7 +111,7 @@ class UltimateAgeCard extends UltimateBaseCard {
       .some(text => text.toLowerCase().startsWith('i compel'))
   }
 
-  checkHasDemand(): boolean {
+  override checkHasDemand(): boolean {
     return this.checkHasDemandExplicit() || this.checkHasCompelExplicit()
   }
 
@@ -173,19 +140,19 @@ class UltimateAgeCard extends UltimateBaseCard {
     return true
   }
 
-  checkIsArtifact(): boolean {
+  override checkIsArtifact(): boolean {
     return this.expansion === 'arti'
   }
 
-  checkIsCity(): boolean {
+  override checkIsCity(): boolean {
     return this.expansion === 'city'
   }
 
-  checkIsEchoes(): boolean {
+  override checkIsEchoes(): boolean {
     return this.expansion === 'echo'
   }
 
-  checkIsFigure(): boolean {
+  override checkIsFigure(): boolean {
     return this.expansion === 'figs'
   }
 
@@ -207,7 +174,7 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
   }
 
-  checkHasBonus(): boolean {
+  override checkHasBonus(): boolean {
     return this.getBonuses().length > 0
   }
 
@@ -232,11 +199,11 @@ class UltimateAgeCard extends UltimateBaseCard {
     return this.isTopCardStrict()
   }
 
-  isTopCardStrict(): boolean {
+  override isTopCardStrict(): boolean {
     return this.game.cards.top(this.owner!, this.color)?.id === this.id
   }
 
-  checkSharesBiscuit(other: UltimateAgeCard): boolean {
+  override checkSharesBiscuit(other: UltimateBaseCard): boolean {
     const biscuits = 'lciskfp'.split('')
     for (const biscuit of biscuits) {
       if (this.checkHasBiscuit(biscuit) && other.checkHasBiscuit(biscuit)) {
@@ -250,15 +217,15 @@ class UltimateAgeCard extends UltimateBaseCard {
     return this.checkIsOnPlayerBoard() ? (this.visibleAge || this.age) : this.age
   }
 
-  getBiscuitCount(biscuit: string): number {
+  override getBiscuitCount(biscuit: string): number {
     return this.biscuits.split(biscuit).length - 1
   }
 
-  visibleBiscuitsParsed(): Record<string, number> {
+  override visibleBiscuitsParsed(): Record<string, number> {
     return this.game.util.parseBiscuits(this.visibleBiscuits())
   }
 
-  visibleBiscuits(): string {
+  override visibleBiscuits(): string {
     const splay = this.getSplay()
 
     // If this is a top card, return all of its biscuits
@@ -292,7 +259,7 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
   }
 
-  getBonuses(): number[] {
+  override getBonuses(): number[] {
     const rx = /([abt1-9])/g
     const matches = this
       .visibleBiscuits()
@@ -323,11 +290,11 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
   }
 
-  getKarmaInfo(trigger: string): KarmaInfo[] {
+  override getKarmaInfo(trigger: string): KarmaInfo[] {
     const matches: KarmaInfo[] = []
     for (let i = 0; i < this.karma.length; i++) {
       const impl = this.karmaImpl[i]
-      const triggers = util.getAsArray(impl, 'trigger')
+      const triggers = util.getAsArray(impl as unknown as Record<string, string | string[]>, 'trigger')
       if (triggers.includes(trigger)) {
         matches.push({
           card: this,
@@ -360,11 +327,11 @@ class UltimateAgeCard extends UltimateBaseCard {
     }
   }
 
-  inHand(player: Player): boolean {
+  override inHand(player: Player): boolean {
     return this.owner === player && this.zone.id.endsWith('hand')
   }
 
-  visibleEffects(kind: string, opts: { selfExecutor?: boolean } = {}): VisibleEffectsResult | undefined {
+  override visibleEffects(kind: string, opts: { selfExecutor?: boolean } = {}): VisibleEffectsResult | undefined {
     const isTop = this.isTopCardLoose() || this.zone.id.endsWith('.artifact')
 
     if (kind === 'dogma') {
@@ -382,10 +349,11 @@ class UltimateAgeCard extends UltimateBaseCard {
       const impls: Array<(game: unknown, player: Player) => void> = []
 
       if (this.checkEchoIsVisible()) {
-        for (const text of util.getAsArray(this, 'echo')) {
+        for (const text of util.getAsArray<string>(this as unknown as Record<string, string | string[]>, 'echo')) {
           texts.push(text)
         }
-        for (const impl of util.getAsArray(this, 'echoImpl')) {
+        type ImplFn = (game: unknown, player: Player) => void
+        for (const impl of util.getAsArray<ImplFn>(this as unknown as Record<string, ImplFn | ImplFn[]>, 'echoImpl')) {
           impls.push(impl)
         }
       }
