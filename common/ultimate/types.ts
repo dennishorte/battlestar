@@ -27,12 +27,24 @@ export interface CardEffectCard {
   checkHasBonus(): boolean
   checkIsArtifact(): boolean
   checkIsEchoes(): boolean
+  checkIsStandardAchievement(): boolean
+  checkIsExpansion(expansion: string): boolean
   checkHasBiscuit(biscuit: string): boolean
+  checkHasDemand(): boolean
   checkBiscuitIsVisible(biscuit: string): boolean
+  checkSharesBiscuit(card: CardEffectCard): boolean
   getBonuses(): number[]
+  getBiscuitCount(biscuit: string): number
   getAge(): number
+  visibleBiscuits(): string
+  visibleBiscuitsParsed(): Record<string, number>
   moveTo(zone: CardEffectZone | string, position?: number): CardEffectCard
   reveal(): void
+  inHand(): boolean
+  isTopCardStrict(): boolean
+  isTopCard(): boolean
+  isDistinct(cards: CardEffectCard[]): boolean
+  home?: CardEffectZone
   // Allow additional properties for less common card methods
   [key: string]: unknown
 }
@@ -78,26 +90,51 @@ export interface CardEffectActions {
   splay(player: CardEffectPlayer, color: string, direction: string): void
   transfer(player: CardEffectPlayer, card: CardEffectCard, zone: CardEffectZone): void
   return(player: CardEffectPlayer, card: CardEffectCard): void
-  returnMany(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): void
-  reveal(player: CardEffectPlayer, card: CardEffectCard): void
-  revealMany(player: CardEffectPlayer, cards: CardEffectCard[]): void
-  safeguard(player: CardEffectPlayer, card: CardEffectCard): void
-  junkMany(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): void
-  junkDeck(age: number, opts?: Record<string, unknown>): void
+  returnMany(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard[]
+  reveal(player: CardEffectPlayer, card: CardEffectCard): CardEffectCard
+  revealMany(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard[]
+  safeguard(player: CardEffectPlayer, card: CardEffectCard): CardEffectCard
+  junkMany(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard[]
+  junkDeck(player: CardEffectPlayer, age: number, opts?: Record<string, unknown>): boolean
   junkAvailableAchievement(player: CardEffectPlayer, name: string): void
   choose(player: CardEffectPlayer, options: unknown[], opts?: Record<string, unknown>): unknown
   chooseCard(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard
   choosePlayer(player: CardEffectPlayer, players: CardEffectPlayer[], opts?: Record<string, unknown>): CardEffectPlayer | undefined
   chooseAge(player: CardEffectPlayer, ages: number[], opts?: Record<string, unknown>): number
-  chooseAndTransfer(player: CardEffectPlayer, cards: CardEffectCard[], zone: CardEffectZone, opts?: Record<string, unknown>): void
-  chooseAndScore(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): void
-  chooseAndMeld(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard | undefined
-  chooseAndTuck(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard | undefined
-  chooseAndReturn(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard | undefined
+  chooseAndTransfer(player: CardEffectPlayer, cards: CardEffectCard[], zone: CardEffectZone, opts?: Record<string, unknown>): CardEffectCard[]
+  chooseAndScore(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard[]
+  chooseAndMeld(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard[]
+  chooseAndTuck(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard[]
+  chooseAndReturn(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard[]
   chooseAndSplay(player: CardEffectPlayer, colors: string[], direction: string, opts?: Record<string, unknown>): void
-  chooseAndAchieve(player: CardEffectPlayer, achievements: CardEffectCard[], opts?: Record<string, unknown>): void
-  claimAchievement(player: CardEffectPlayer, opts: Record<string, unknown>): void
+  chooseAndAchieve(player: CardEffectPlayer, achievements: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard[]
+  claimAchievement(player: CardEffectPlayer, opts: CardEffectCard | Record<string, unknown>): CardEffectCard | undefined
   acted(player: CardEffectPlayer): void
+  unsplay(player: CardEffectPlayer, color: string): void
+  chooseYesNo(player: CardEffectPlayer, question: string, opts?: Record<string, unknown>): boolean
+  chooseHighest(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard
+  chooseLowest(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard
+  chooseColor(player: CardEffectPlayer, colors: string[], opts?: Record<string, unknown>): string
+  chooseBiscuit(player: CardEffectPlayer, biscuits: string[], opts?: Record<string, unknown>): string
+  chooseZone(player: CardEffectPlayer, zones: CardEffectZone[], opts?: Record<string, unknown>): CardEffectZone
+  chooseCards(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard[]
+  meldMany(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard[]
+  tuckMany(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard[]
+  transferMany(player: CardEffectPlayer, cards: CardEffectCard[], zone: CardEffectZone, opts?: Record<string, unknown>): CardEffectCard[]
+  foreshadow(player: CardEffectPlayer, card: CardEffectCard, opts?: Record<string, unknown>): CardEffectCard
+  foreshadowMany(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard[]
+  safeguardMany(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard[]
+  safeguardAvailableAchievement(player: CardEffectPlayer, name: string): void
+  junk(player: CardEffectPlayer, card: CardEffectCard, opts?: Record<string, unknown>): CardEffectCard | undefined
+  flipCoin(player: CardEffectPlayer, opts?: Record<string, unknown>): boolean
+  drawAndJunk(player: CardEffectPlayer, age: number, opts?: Record<string, unknown>): CardEffectCard
+  drawAndSafeguard(player: CardEffectPlayer, age: number, opts?: Record<string, unknown>): CardEffectCard
+  chooseAndJunk(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard[]
+  chooseAndForeshadow(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard[]
+  chooseAndSafeguard(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard[]
+  chooseAndReveal(player: CardEffectPlayer, cards: CardEffectCard[], opts?: Record<string, unknown>): CardEffectCard[]
+  chooseAndJunkDeck(player: CardEffectPlayer, ages: number[], opts?: Record<string, unknown>): void
+  chooseAndUnsplay(player: CardEffectPlayer, colors: string[], opts?: Record<string, unknown>): void
   // Allow additional action methods
   [key: string]: AnyFunction
 }
@@ -125,9 +162,14 @@ export interface CardEffectGame {
   }
   cards: {
     tops(player: CardEffectPlayer): CardEffectCard[]
+    topsAll(): CardEffectCard[]
     top(player: CardEffectPlayer, color: string): CardEffectCard | undefined
+    bottom(player: CardEffectPlayer, color: string): CardEffectCard | undefined
+    bottoms(player: CardEffectPlayer): CardEffectCard[]
+    fullBoard(player: CardEffectPlayer): CardEffectCard[]
     byPlayer(player: CardEffectPlayer, zone: string): CardEffectCard[]
     byZone(zone: string): CardEffectCard[]
+    byDeck(exp: string, age: number): CardEffectCard[]
     byId(id: string): CardEffectCard
     [key: string]: unknown
   }
