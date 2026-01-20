@@ -1,6 +1,6 @@
 <template>
   <div class="waiting-choice">
-    <template v-if="request && request.choices === '__UNSPECIFIED__'">
+    <template v-if="request && selector.getSelectorType(request) === 'action'">
       <div class="alert alert-info mt-3">
         <div>This is a special action: {{ request.title }}.</div>
         <div>You cannot use this selector pane for it.</div>

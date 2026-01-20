@@ -2,8 +2,22 @@ const util = require('./util.js')
 
 
 module.exports = {
+  getSelectorType,
   minMax,
   validate,
+}
+
+// Returns the selector type: 'select' or 'action'
+// Backward compatible: treats __UNSPECIFIED__ as 'action'
+function getSelectorType(selector) {
+  if (selector.type) {
+    return selector.type
+  }
+  // Backward compatibility: __UNSPECIFIED__ means action type
+  if (selector.choices === '__UNSPECIFIED__') {
+    return 'action'
+  }
+  return 'select'
 }
 
 
@@ -54,6 +68,14 @@ function _validate(selector, selection, opts) {
       valid: false,
       mismatch: `${selector.title} !== ${selection.title}`
     }
+  }
+
+  // Action-type selectors have freeform input, just check title matched
+  if (getSelectorType(selector) === 'action') {
+    if (opts.annotate) {
+      selection.annotation.isValid = true
+    }
+    return { valid: true }
   }
 
   const { min, max } = minMax(selector)
@@ -133,6 +155,11 @@ function _validate(selector, selection, opts) {
 }
 
 function minMax(selector) {
+  // Action-type selectors don't have enumerated choices
+  if (getSelectorType(selector) === 'action') {
+    return { min: 0, max: Infinity }
+  }
+
   let min
   let max
 

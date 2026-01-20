@@ -167,9 +167,9 @@ Magic.prototype.chooseDecks = function() {
   const requests = this
     .players.all()
     .map(player => ({
+      type: 'action',
       actor: this.utilSerializeObject(player),
       title: 'Choose Deck',
-      choices: '__UNSPECIFIED__',
     }))
 
   const responses = this.requestInputMany(requests)
@@ -414,9 +414,9 @@ Magic.prototype.aConcede = function(player) {
 
 Magic.prototype.aChooseAction = function(player) {
   const actions = this.requestInputSingle({
+    type: 'action',
     actor: player.name,
     title: 'Do Something',
-    choices: '__UNSPECIFIED__',
   })
 
   for (const action of actions) {

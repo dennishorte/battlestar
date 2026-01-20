@@ -508,10 +508,8 @@ Game.prototype._reset = function() {
 
 Game.prototype._tryToAutomaticallyRespond = function(selectors) {
   for (const sel of selectors) {
-    // This is a special key to say that there is no fixed response expected
-    // so cannot automatically respond. Used in games like Magic where the
-    // user input is very freeform.
-    if (sel.choices === '__UNSPECIFIED__') {
+    // Action-type selectors have freeform input, cannot auto-respond
+    if (selector.getSelectorType(sel) === 'action') {
       return undefined
     }
 
