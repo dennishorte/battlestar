@@ -4,12 +4,19 @@ import DeckWrapper from './util/DeckWrapper.js'
 
 import TestCards from './test_card_data.js'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyGame = any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyOptions = any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyState = any
 
-const TestUtil = { ...TestCommon }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const TestUtil: Record<string, any> = { ...TestCommon }
 export default TestUtil
 
 
-TestUtil.fixture = function(options) {
+TestUtil.fixture = function(options: AnyOptions = {}) {
   options = Object.assign({
     name: 'test_game',
     seed: 'test_seed',
@@ -44,7 +51,7 @@ TestUtil.fixture = function(options) {
   return game
 }
 
-function _juiceDeck(data) {
+function _juiceDeck(data: AnyState) {
   for (const zone of ['main', 'side', 'command']) {
     data.cardIdsByZone[zone] = data.cardIdsByZone[zone].map(name => {
       return TestCards.byName[name.toLowerCase()][0].sourceId
@@ -57,7 +64,7 @@ function _juiceDeck(data) {
       throw new Error('Test card not found with id: ' + id)
     }
     return card
-  }))
+  }) as AnyState)
   return deck
 }
 
@@ -101,7 +108,7 @@ const MicahDeck = _juiceDeck({
   },
 })
 
-TestUtil.fixtureDecksSelected = function(options) {
+TestUtil.fixtureDecksSelected = function(options: AnyOptions = {}) {
   const game = this.fixture(options)
   const request1 = game.run()
 
@@ -121,7 +128,7 @@ TestUtil.fixtureDecksSelected = function(options) {
     throw new Error('Deck selection is not set up for 3+ players')
   }
 
-  game.testSetBreakpoint('decks-selected', (game) => {
+  game.testSetBreakpoint('decks-selected', (game: AnyGame) => {
     const dennis = game.players.byName('dennis')
     const deck = game.zones.byPlayer(dennis, 'library')
     const cards = deck.cardlist()
@@ -140,8 +147,8 @@ TestUtil.fixtureDecksSelected = function(options) {
 }
 
 /* eslint-disable */
-TestUtil.setBoard = function(game, state) {
-  game.testSetBreakpoint('before-first-player', (game) => {
+TestUtil.setBoard = function(game: AnyGame, state: AnyState) {
+  game.testSetBreakpoint('before-first-player', (game: AnyGame) => {
     for (const name of ['dennis', 'micah', 'scott', 'eliya']) {
       // do nothing
     }
@@ -174,9 +181,9 @@ const playerZones = [
   'stack',
 ]
 
-TestUtil.testBoard = function(game, state) {
-  const expected = {}
-  const real = {}
+TestUtil.testBoard = function(game: AnyGame, state: AnyState) {
+  const expected: AnyState = {}
+  const real: AnyState = {}
 
   // Fill in base values for everything to be tested.
   for (const player of game.players.all()) {
@@ -216,7 +223,7 @@ TestUtil.testBoard = function(game, state) {
   expect(real).toEqual(expected)
 }
 
-TestUtil.testVisibility = function(card, ...names) {
+TestUtil.testVisibility = function(card: AnyGame, ...names: string[]) {
   const actual = card
     .visibility
     .map(player => player.name.toLowerCase())
@@ -228,7 +235,7 @@ TestUtil.testVisibility = function(card, ...names) {
   expect(expected).toEqual(actual)
 }
 
-TestUtil.do = function(game, request, action) {
+TestUtil.do = function(game: AnyGame, request: AnyState, action: unknown) {
   const selector = request.selectors[0]
 
   return game.respondToInputRequest({

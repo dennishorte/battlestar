@@ -1,9 +1,16 @@
 import { GameOverEvent } from '../lib/game.js'
-import { InnovationFactory } from './innovation.js'
+import { InnovationFactory, Innovation } from './innovation.js'
 import TestCommon from '../lib/test_common.js'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyGame = any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyOptions = any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyState = any
 
-const TestUtil = { ...TestCommon }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const TestUtil: Record<string, any> = { ...TestCommon }
 
 TestUtil.fixture = function(options) {
   options = Object.assign({
@@ -38,7 +45,7 @@ TestUtil.fixture = function(options) {
 
   const game = InnovationFactory(options, 'dennis')
 
-  game.testSetBreakpoint('initialization-complete', (game) => {
+  game.testSetBreakpoint('initialization-complete', (game: AnyGame) => {
     // Set initial cards in hand
     TestUtil.clearHands(game)
     TestUtil.setHand(game, 'dennis', ['Archery', 'Domestication'])
@@ -70,16 +77,16 @@ TestUtil.fixture = function(options) {
   return game
 }
 
-TestUtil.fixtureDecrees = function(options={}) {
+TestUtil.fixtureDecrees = function(options: AnyOptions = {}) {
   options.expansions = options.expansions || ['base', 'figs']
   const game = TestUtil.fixtureFirstPlayer(options)
-  game.testSetBreakpoint('before-first-player', (game) => {
+  game.testSetBreakpoint('before-first-player', (game: AnyGame) => {
     TestUtil.setHand(game, 'dennis', ['Homer', 'Ptolemy', 'Yi Sun-Sin', 'Daedalus', 'Ximen Bao'])
   })
   return game
 }
 
-TestUtil.fixtureFirstPlayer = function(options={}) {
+TestUtil.fixtureFirstPlayer = function(options: AnyOptions = {}) {
   const game = TestUtil.fixture(options)
   const request1 = game.run()
   game.respondToInputRequest({
@@ -107,7 +114,7 @@ TestUtil.fixtureFirstPlayer = function(options={}) {
     })
   }
 
-  game.testSetBreakpoint('before-first-player', (game) => {
+  game.testSetBreakpoint('before-first-player', (game: AnyGame) => {
     TestUtil.clearBoards(game)
     TestUtil.clearHands(game)
     if (options.useAgeZero) {
@@ -120,7 +127,7 @@ TestUtil.fixtureFirstPlayer = function(options={}) {
 
 TestUtil.fixtureTopCard = function(cardName, options) {
   const game = TestUtil.fixtureFirstPlayer(options)
-  game.testSetBreakpoint('before-first-player', (game) => {
+  game.testSetBreakpoint('before-first-player', (game: AnyGame) => {
     game
       .players.all()
       .forEach(player => TestUtil.clearBoard(game, player.name))
@@ -180,7 +187,7 @@ TestUtil.testDeckIsJunked = function(game, age) {
 
 TestUtil.testDecreeForTwo = function(figureName, decreeName) {
   const game = TestUtil.fixtureTopCard(figureName, { expansions: ['base', 'figs'] })
-  game.testSetBreakpoint('before-first-player', (game) => {
+  game.testSetBreakpoint('before-first-player', (game: AnyGame) => {
     TestUtil.setHand(game, 'dennis', ['Homer', 'Ptahhotep'])
   })
   const request1 = game.run()
@@ -189,7 +196,7 @@ TestUtil.testDecreeForTwo = function(figureName, decreeName) {
 
 TestUtil.testNoFade = function(cardName) {
   const game = TestUtil.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-  game.testSetBreakpoint('before-first-player', (game) => {
+  game.testSetBreakpoint('before-first-player', (game: AnyGame) => {
     TestUtil.setColor(game, 'dennis', 'blue', ['Albert Einstein'])
     TestUtil.setColor(game, 'dennis', 'purple', ['Al-Kindi'])
     TestUtil.setColor(game, 'dennis', 'green', ['Adam Smith'])
@@ -204,7 +211,7 @@ TestUtil.testNoFade = function(cardName) {
   TestUtil.testIsSecondPlayer(request2)
 }
 
-TestUtil.testZone = function(game, zoneName, expectedCards, opts={}) {
+TestUtil.testZone = function(game: AnyGame, zoneName: string, expectedCards: string[], opts: AnyOptions = {}) {
   const zoneCards = TestUtil.cards(game, zoneName, opts.player)
   if (opts.sort || !game.util.colors().includes(zoneName)) {
     zoneCards.sort()
@@ -214,7 +221,7 @@ TestUtil.testZone = function(game, zoneName, expectedCards, opts={}) {
 }
 
 // Helper function to validate that no card is declared in multiple locations
-function _validateNoDuplicateCards(game, state) {
+function _validateNoDuplicateCards(game: AnyGame, state: AnyState) {
   const cardLocations = new Map() // cardName -> array of location strings
 
   // Helper to add a card location
@@ -267,7 +274,7 @@ function _validateNoDuplicateCards(game, state) {
   // Check decks
   const decks = state.decks || {}
   for (const exp of Object.keys(decks)) {
-    for (const [age, cards] of Object.entries(decks[exp])) {
+    for (const [age, cards] of Object.entries(decks[exp]) as [string, string[]][]) {
       for (const cardName of cards) {
         addCardLocation(cardName, `decks.${exp}.${age}`)
       }
@@ -277,7 +284,7 @@ function _validateNoDuplicateCards(game, state) {
   // Check decksExact
   const decksExact = state.decksExact || {}
   for (const exp of Object.keys(decksExact)) {
-    for (const [age, cards] of Object.entries(decksExact[exp])) {
+    for (const [age, cards] of Object.entries(decksExact[exp]) as [string, string[]][]) {
       for (const cardName of cards) {
         addCardLocation(cardName, `decksExact.${exp}.${age}`)
       }
@@ -306,11 +313,11 @@ function _validateNoDuplicateCards(game, state) {
   }
 }
 
-TestUtil.setBoard = function(game, state) {
+TestUtil.setBoard = function(game: AnyGame, state: AnyState) {
   // Validate that no card is declared in multiple locations
   _validateNoDuplicateCards(game, state)
 
-  game.testSetBreakpoint('before-first-player', (game) => {
+  game.testSetBreakpoint('before-first-player', (game: AnyGame) => {
     if (state.achievements) {
       TestUtil.setAvailableAchievements(game, state.achievements)
     }
@@ -393,9 +400,9 @@ function _buildPlayerBoard(game, opts) {
   return playerBoard
 }
 
-TestUtil.testBoard = function(game, state) {
-  const expected = {}
-  const real = {}
+TestUtil.testBoard = function(game: AnyGame, state: AnyState) {
+  const expected: AnyState = {}
+  const real: AnyState = {}
 
   for (const player of game.players.all()) {
     const expectedBoard = _buildPlayerBoard(game, state[player.name])
@@ -448,8 +455,8 @@ TestUtil.testBoard = function(game, state) {
 
 // Print out a representation of the current board state that can be used
 // in TestUtil.setBoard.
-TestUtil.dumpBoard = function(game) {
-  const real = {}
+TestUtil.dumpBoard = function(game: AnyGame) {
+  const real: AnyState = {}
 
   for (const player of game.players.all()) {
     const realBoard = _blankTableau()

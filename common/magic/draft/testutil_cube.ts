@@ -1,11 +1,19 @@
 import { CubeDraftFactory } from './cube_draft.js'
 import TestCommon from '../../lib/test_common.js'
 
-const TestUtil = { ...TestCommon }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyGame = any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyOptions = any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyState = any
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const TestUtil: Record<string, any> = { ...TestCommon }
 export default TestUtil
 
 
-TestUtil.fixture = function(options) {
+TestUtil.fixture = function(options: AnyOptions = {}) {
   options = Object.assign({
     name: 'test_game',
     seed: 'test_seed',
@@ -158,7 +166,7 @@ TestUtil.fixture = function(options) {
   return game
 }
 
-TestUtil.choose = function(game, request, actor, option) {
+TestUtil.choose = function(game: AnyGame, request: AnyState, actor: string, option: unknown) {
   const selector = request.selectors.find(s => s.actor === actor)
 
   return game.respondToInputRequest({
@@ -168,7 +176,7 @@ TestUtil.choose = function(game, request, actor, option) {
   })
 }
 
-TestUtil.testBoard = function(game, expected) {
+TestUtil.testBoard = function(game: AnyGame, expected: AnyState) {
   for (const player of game.players.all()) {
     this.testPicks(game, player.name, expected[player.name].picked)
     this.testWaitingPacks(game, player.name, expected[player.name].waiting)
@@ -176,25 +184,25 @@ TestUtil.testBoard = function(game, expected) {
   }
 }
 
-TestUtil.testPicks = function(game, playerName, cardNames) {
+TestUtil.testPicks = function(game: AnyGame, playerName: string, cardNames: string[]) {
   const player = game.players.byName(playerName)
   const picks = game.getPicksByPlayer(player).map(c => c.name)
   expect(picks).toStrictEqual(cardNames)
 }
 
-TestUtil.testWaitingPacks = function(game, playerName, packIds) {
+TestUtil.testWaitingPacks = function(game: AnyGame, playerName: string, packIds: string[]) {
   const player = game.players.byName(playerName)
   const waiting = game.getWaitingPacksForPlayer(player).map(p => p.id)
   expect(packIds).toStrictEqual(waiting)
 }
 
-TestUtil.testNextRoundPacks = function(game, playerName, packIds) {
+TestUtil.testNextRoundPacks = function(game: AnyGame, playerName: string, packIds: string[]) {
   const player = game.players.byName(playerName)
   const waiting = player.nextRoundPacks.map(p => p.id)
   expect(packIds).toStrictEqual(waiting)
 }
 
-TestUtil.testVisibility = function(game, playerName, expected) {
+TestUtil.testVisibility = function(game: AnyGame, playerName: string, expected: AnyState) {
   const player = game.players.byName(playerName)
   const pack = game.getNextPackForPlayer(player)
 
