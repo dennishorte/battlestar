@@ -14,7 +14,7 @@ module.exports = {
       trigger: 'no-share',
       triggerAll: true,
       kind: 'would-first',
-      matches: (game, player, { owner, self }) => {
+      matches: (game, player, { owner }) => {
         return player.isOpponent(owner)
       },
       func: (game, player, { owner, self }) => {

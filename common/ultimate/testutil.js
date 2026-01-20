@@ -157,7 +157,7 @@ TestUtil.testDeckIsJunked = function(game, age) {
   expect(cards.length).toBe(0)
 
   const junk = game.cards.byZone('junk')
-  expect(cards.length).toBeGreaterThan(4)
+  expect(junk.length).toBeGreaterThan(4)
 }
 
 TestUtil.testIsFirstAction = function(request) {

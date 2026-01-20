@@ -17,7 +17,7 @@ module.exports = {
     },
     {
       trigger: 'dogma',
-      matches: (game, player) => {
+      matches: (game) => {
         return game.state.dogmaInfo.featuredBiscuit === 'l'
       },
       func: (game, player, { self }) => {

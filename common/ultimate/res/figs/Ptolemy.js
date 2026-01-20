@@ -17,10 +17,10 @@ module.exports = {
     },
     {
       trigger: 'list-effects',
-      func(game, player) {
+      func(game) {
         return game
           .players.all()
-          .map(player => game.cards.top(player, 'blue'))
+          .map(p => game.cards.top(p, 'blue'))
           .filter(card => card !== undefined)
       }
     }

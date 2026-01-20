@@ -10,7 +10,7 @@ module.exports = {
     `Draw three {4}. Meld a green card from your hand. Junk all cards in the deck of value equal to your top green card.`
   ],
   dogmaImpl: [
-    (game, player, { self }) => {
+    (game, player) => {
       game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
     },
 
