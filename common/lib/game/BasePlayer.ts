@@ -1,26 +1,6 @@
 import type { Game } from './GameProxy.js'
+import type { ILogManager, IPlayerManager, IPlayer, PlayerData } from './interfaces.js'
 import { GameProxy } from './GameProxy.js'
-
-interface PlayerData {
-  _id: string
-  name: string
-  team?: string
-  [key: string]: unknown
-}
-
-interface LogEntry {
-  template: string
-  args: Record<string, unknown>
-  classes?: string[]
-}
-
-interface LogManager {
-  add(entry: LogEntry): void
-}
-
-interface PlayerManager {
-  current(): BasePlayer
-}
 
 interface CounterOptions {
   silent?: boolean
@@ -42,8 +22,8 @@ class BasePlayer<TGame extends Game = Game> {
   counters: Record<string, number>
 
   // Proxied properties from game
-  declare log: LogManager
-  declare players: PlayerManager
+  declare log: ILogManager
+  declare players: IPlayerManager
 
   constructor(game: TGame, data: PlayerData) {
     this.game = game
@@ -98,7 +78,7 @@ class BasePlayer<TGame extends Game = Game> {
     return this.players.current().id === this.id
   }
 
-  isOpponent(other: BasePlayer): boolean {
+  isOpponent(other: IPlayer): boolean {
     return this.team !== other.team
   }
 
@@ -119,9 +99,11 @@ class BasePlayer<TGame extends Game = Game> {
     this.counters[name] = value
   }
 
-  static isActive(player: BasePlayer): boolean {
+  static isActive(player: IPlayer): boolean {
     return !player.eliminated
   }
 }
 
-export { BasePlayer, PlayerData, CounterOptions }
+export { BasePlayer, CounterOptions }
+// Re-export from interfaces for backwards compatibility
+export { PlayerData } from './interfaces.js'

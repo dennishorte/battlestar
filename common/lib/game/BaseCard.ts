@@ -1,38 +1,19 @@
 import type { Game } from './GameProxy.js'
+import type {
+  ICard,
+  IZone,
+  IPlayer,
+  IPlayerManager,
+  CardData,
+  BeforeMoveResult,
+} from './interfaces.js'
 import { GameProxy } from './GameProxy.js'
 import util from '../util.js'
 
-// Forward declarations for circular dependencies
-// Using 'unknown' for card types to avoid circular type dependencies
-interface BaseZone {
-  id: string
-  cardlist(): unknown[]
-  nextIndex(): number
-  push(card: unknown, index: number): void
-}
-
-interface BasePlayer {
-  name: string
-}
-
-interface BasePlayerManager {
-  all(): BasePlayer[]
-}
-
-interface CardData {
-  id?: string | null
-  [key: string]: unknown
-}
-
-interface BeforeMoveResult {
-  preventDefault?: boolean
-  [key: string]: unknown
-}
-
 class BaseCard<
   TGame extends Game = Game,
-  TZone extends BaseZone = BaseZone,
-  TOwner extends BasePlayer = BasePlayer
+  TZone extends IZone = IZone,
+  TOwner extends IPlayer = IPlayer
 > {
   game: TGame
   data: CardData
@@ -42,10 +23,10 @@ class BaseCard<
 
   home: TZone | null   // Home location (where it returns to)
   zone: TZone | null   // Current location
-  visibility: BasePlayer[]
+  visibility: IPlayer[]
 
   // Proxied properties from game
-  declare players: BasePlayerManager
+  declare players: IPlayerManager
 
   constructor(game: TGame, data: CardData) {
     this.game = game
@@ -65,11 +46,11 @@ class BaseCard<
     return this.id === other.id
   }
 
-  setHome(zone: BaseZone): void {
+  setHome(zone: IZone): void {
     this.home = zone as TZone
   }
 
-  setZone(zone: BaseZone): void {
+  setZone(zone: IZone): void {
     this.zone = zone as TZone
   }
 
@@ -77,9 +58,9 @@ class BaseCard<
     this.moveTo(this.home!)
   }
 
-  moveTo(zone: BaseZone, index: number | null = null): this | null {
+  moveTo(zone: IZone, index: number | null = null): this | null {
     const prevZone = this.zone!
-    const prevIndex = this.zone!.cardlist().findIndex(card => (card as BaseCard).id === this.id)
+    const prevIndex = this.zone!.cardlist().findIndex(card => (card as ICard).id === this.id)
 
     let newIndex = index
 
@@ -114,7 +95,7 @@ class BaseCard<
     return this
   }
 
-  moveToTop(zone: BaseZone): void {
+  moveToTop(zone: IZone): void {
     this.moveTo(zone, 0)
   }
 
@@ -133,12 +114,12 @@ class BaseCard<
     return this.visibility.length === this.players.all().length
   }
 
-  show(player: BasePlayer): void {
+  show(player: IPlayer): void {
     util.array.pushUnique(this.visibility, player)
   }
 
-  visible(player: BasePlayer): boolean {
-    return this.visibility.some((other: BasePlayer) => other.name === player.name)
+  visible(player: IPlayer): boolean {
+    return this.visibility.some((other: IPlayer) => other.name === player.name)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

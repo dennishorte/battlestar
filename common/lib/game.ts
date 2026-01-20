@@ -10,6 +10,7 @@ import {
   BasePlayerInterface,
   BaseZoneManager,
   BaseZoneInterface,
+  ICard,
 } from './game/index.js'
 
 interface PlayerData {
@@ -115,7 +116,7 @@ class Game<
   TState extends GameState = GameState,
   TSettings extends GameSettings = GameSettings,
   TGameOverData extends GameOverData = GameOverData,
-  TCard extends BaseCard = BaseCard,
+  TCard extends ICard = ICard,
   TZone extends BaseZoneInterface = BaseZoneInterface,
   TPlayer extends BasePlayerInterface = BasePlayerInterface
 > {
@@ -131,11 +132,18 @@ class Game<
   gameOverData: TGameOverData | null
   random: () => number
   viewerName: string | undefined
-  log: InstanceType<typeof BaseLogManager>
-  actions: InstanceType<typeof BaseActionManager>
-  cards: BaseCardManager<this, TCard>
-  players: BasePlayerManager<this, TPlayer>
-  zones: BaseZoneManager<this, TZone>
+  // Manager types use 'any' for TGame to avoid circular type issues
+  // Subclasses should redeclare these with specific types if needed
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  log!: BaseLogManager<any>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  actions!: BaseActionManager<any>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  cards!: BaseCardManager<any, TCard>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  players!: BasePlayerManager<any, TPlayer>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  zones!: BaseZoneManager<any, TZone>
   util: typeof util | unknown = util;
   [key: string]: unknown
 
@@ -178,11 +186,13 @@ class Game<
     this.viewerName = viewerName
 
     // Add log first so that when the later managers are loaded, they can initialize the log internally.
-    this.log = new opts.LogManager!(this, serialized_data.chat, viewerName)
-    this.actions = new opts.ActionManager!(this)
-    this.cards = new opts.CardManager!(this)
-    this.players = new opts.PlayerManager!(this, this.settings.players, this.settings.playerOptions || {})
-    this.zones = new opts.ZoneManager!(this)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const game = this as any
+    this.log = new opts.LogManager!(game, serialized_data.chat, viewerName)
+    this.actions = new opts.ActionManager!(game)
+    this.cards = new opts.CardManager!(game)
+    this.players = new opts.PlayerManager!(game, this.settings.players, this.settings.playerOptions || {})
+    this.zones = new opts.ZoneManager!(game)
   }
 
   serialize(): SerializedGame {

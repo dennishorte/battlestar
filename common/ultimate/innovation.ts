@@ -9,6 +9,8 @@ import {
 import {
   BasePlayerInterface,
   BaseZoneInterface,
+  ICard,
+  IZone,
 } from '../lib/game/index.js'
 import res from './res/index.js'
 import selector from '../lib/selector.js'
@@ -29,7 +31,7 @@ import type { DogmaInfo } from './actions/Dogma.js'
 
 const SUPPORTED_EXPANSIONS = ['base', 'echo', 'figs', 'city', 'arti', 'usee']
 
-interface Card {
+interface Card extends ICard {
   id: string
   name: string
   age: number

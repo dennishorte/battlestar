@@ -1,32 +1,8 @@
 import type { Game } from './GameProxy.js'
+import type { ICard, IPlayer, ILogManager, IChooseOptions } from './interfaces.js'
 import { GameProxy } from './GameProxy.js'
 import * as selector from '../selector.js'
 import util from '../util.js'
-
-// Forward declarations for circular dependencies
-interface BasePlayer {
-  name: string
-}
-
-interface BaseCard {
-  id: string | null
-  name?: string | (() => string)
-}
-
-interface LogManager {
-  add(entry: { template: string; args?: Record<string, unknown>; classes?: string[] }): void
-  addNoEffect(): void
-  addDoNothing(player: BasePlayer): void
-}
-
-interface ChooseOptions {
-  title?: string
-  min?: number
-  max?: number
-  count?: number
-  guard?: (cards: BaseCard[]) => boolean
-  [key: string]: unknown
-}
 
 interface ChooseSelector {
   actor: string
@@ -47,14 +23,14 @@ class BaseActionManager<TGame extends Game = Game> {
   game: TGame
 
   // Proxied property from game
-  declare log: LogManager
+  declare log: ILogManager
 
   constructor(game: TGame) {
     this.game = game
     return GameProxy.create(this)
   }
 
-  choose(player: BasePlayer, choices: unknown[], opts: ChooseOptions = {}): unknown[] {
+  choose(player: IPlayer, choices: unknown[], opts: IChooseOptions = {}): unknown[] {
     if (choices.length === 0) {
       this.log.addNoEffect()
       return []
@@ -124,20 +100,20 @@ class BaseActionManager<TGame extends Game = Game> {
     }
   }
 
-  chooseCard(player: BasePlayer, choices: unknown[], opts: ChooseOptions = {}): BaseCard | undefined {
+  chooseCard(player: IPlayer, choices: unknown[], opts: IChooseOptions = {}): ICard | undefined {
     return this.chooseCards(player, choices, opts)[0]
   }
 
-  chooseCards(player: BasePlayer, choices: unknown[], opts: ChooseOptions = {}): BaseCard[] {
+  chooseCards(player: IPlayer, choices: unknown[], opts: IChooseOptions = {}): ICard[] {
     while (true) {
       // Filter out strings and only use card objects for base implementation
-      const cards = choices.filter((c): c is BaseCard => typeof c !== 'string' && c !== null && typeof c === 'object')
-      const choiceNames = cards.map(c => (c as BaseCard & { name?: string | (() => string) }).name).sort()
+      const cards = choices.filter((c): c is ICard => typeof c !== 'string' && c !== null && typeof c === 'object')
+      const choiceNames = cards.map(c => (c as ICard & { name?: string | (() => string) }).name).sort()
       const selection = this.choose(player, choiceNames, opts) as string[]
-      const used: BaseCard[] = []
+      const used: ICard[] = []
 
       const selectedCards = selection.map(s => {
-        const card = cards.find(c => (c as BaseCard & { name?: string | (() => string) }).name === s && !used.some(u => u.id === c.id))!
+        const card = cards.find(c => (c as ICard & { name?: string | (() => string) }).name === s && !used.some(u => u.id === c.id))!
         used.push(card)
         return card
       })
@@ -152,7 +128,7 @@ class BaseActionManager<TGame extends Game = Game> {
     }
   }
 
-  choosePlayer(player: BasePlayer, choices: BasePlayer[], opts: ChooseOptions = {}): BasePlayer | undefined {
+  choosePlayer(player: IPlayer, choices: IPlayer[], opts: IChooseOptions = {}): IPlayer | undefined {
     const playerNames = this.choose(
       player,
       choices.map(player => player.name),
@@ -161,12 +137,12 @@ class BaseActionManager<TGame extends Game = Game> {
     return choices.find(p => p.name === playerNames[0])
   }
 
-  chooseYesNo(player: BasePlayer, title: string): boolean {
+  chooseYesNo(player: IPlayer, title: string): boolean {
     const choice = this.choose(player, ['yes', 'no'], { title, count: 1 }) as string[]
     return choice[0] === 'yes'
   }
 
-  flipCoin(player: BasePlayer): boolean {
+  flipCoin(player: IPlayer): boolean {
     const choice = (this.choose(player, ['heads', 'tails'], {
       title: 'Call it...'
     }) as string[])[0]
@@ -184,7 +160,7 @@ class BaseActionManager<TGame extends Game = Game> {
     return value === choice
   }
 
-  rollDie(player: BasePlayer, faces: number): void {
+  rollDie(player: IPlayer, faces: number): void {
     const result = Math.floor(this.game.random() * faces) + 1
 
     const extra = faces === 2
@@ -199,4 +175,6 @@ class BaseActionManager<TGame extends Game = Game> {
   }
 }
 
-export { BaseActionManager, ChooseOptions, ChooseSelector }
+export { BaseActionManager, ChooseSelector }
+// Re-export from interfaces for backwards compatibility
+export { IChooseOptions as ChooseOptions } from './interfaces.js'

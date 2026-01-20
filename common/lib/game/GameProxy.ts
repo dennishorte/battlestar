@@ -1,3 +1,11 @@
+import type {
+  ILogManager,
+  IActionManager,
+  ICardManager,
+  IPlayerManager,
+  IZoneManager,
+} from './interfaces.js'
+
 const PROXY_ITEMS = [
   'log',
   'actions',
@@ -17,13 +25,13 @@ interface GameHolder<TGame extends Game = Game> {
 
 // Interface for the Game object that holds the proxied properties
 interface Game {
-  log: unknown
-  actions: unknown
-  cards: unknown
-  players: unknown
-  state: unknown
-  util: unknown
-  zones: unknown
+  log: ILogManager
+  actions: IActionManager
+  cards: ICardManager
+  players: IPlayerManager
+  state: Record<string, unknown>
+  util: Record<string, unknown>
+  zones: IZoneManager
   random: () => number
   requestInputSingle: (...args: unknown[]) => unknown[]
   [key: string]: unknown

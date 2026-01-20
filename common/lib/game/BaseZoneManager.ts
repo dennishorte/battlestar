@@ -1,26 +1,16 @@
 import type { Game } from './GameProxy.js'
-import { BaseZone, ZoneKind } from './BaseZone.js'
+import type { ICard, IPlayer, IZone, ZoneKind } from './interfaces.js'
+import { BaseZone } from './BaseZone.js'
 import { GameProxy } from './GameProxy.js'
 
-// Forward declarations for circular dependencies
-interface BasePlayer {
-  name: string
-}
+// For backwards compatibility, alias IZone as BaseZoneInterface
+type BaseZoneInterface = IZone
 
-interface BaseCard {
-  zone: BaseZoneInterface | null
-}
-
-interface BaseZoneInterface {
-  id: string
-  cardlist(): BaseCard[]
-}
-
-type ZoneConstructor<TZone extends BaseZoneInterface = BaseZoneInterface> = new (game: Game, id: string, name: string, kind: ZoneKind, owner?: BasePlayer | null) => TZone
+type ZoneConstructor<TZone extends IZone = IZone> = new (game: Game, id: string, name: string, kind: ZoneKind, owner?: IPlayer | null) => TZone
 
 class BaseZoneManager<
   TGame extends Game = Game,
-  TZone extends BaseZoneInterface = BaseZoneInterface
+  TZone extends IZone = IZone
 > {
   game: TGame
   protected _zoneConstructor: ZoneConstructor<TZone>
@@ -34,7 +24,7 @@ class BaseZoneManager<
     return GameProxy.create(this)
   }
 
-  create(...args: [Game, string, string, ZoneKind, (BasePlayer | null)?]): TZone {
+  create(...args: [Game, string, string, ZoneKind, (IPlayer | null)?]): TZone {
     const zone = new this._zoneConstructor(...args)
     this.register(zone)
     return zone
@@ -58,7 +48,7 @@ class BaseZoneManager<
     return Object.values(this._zones)
   }
 
-  byCard(card: BaseCard): TZone | null {
+  byCard(card: ICard): TZone | null {
     return card.zone as TZone | null
   }
 
@@ -66,7 +56,7 @@ class BaseZoneManager<
     return this._zones[id]
   }
 
-  byPlayer(player: BasePlayer, zoneName: string): TZone {
+  byPlayer(player: IPlayer, zoneName: string): TZone {
     const id = `players.${player.name}.${zoneName}`
     return this.byId(id)
   }

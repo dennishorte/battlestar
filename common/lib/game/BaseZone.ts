@@ -1,36 +1,13 @@
 import type { Game } from './GameProxy.js'
+import type { ICard, IPlayer, ZoneKind } from './interfaces.js'
+import { ZONE_KIND } from './interfaces.js'
 import { GameProxy } from './GameProxy.js'
 import util from '../util.js'
 
-const ZONE_KIND = {
-  public: 'public',
-  private: 'private',
-  hidden: 'hidden'
-} as const
-
-type ZoneKind = typeof ZONE_KIND[keyof typeof ZONE_KIND]
-
-// Forward declarations for circular dependencies
-interface BaseCard {
-  id: string | null
-  zone: BaseZone | null
-  setHome(zone: BaseZone): void
-  setZone(zone: BaseZone): void
-  hide(): void
-  reveal(): void
-  revealed(): boolean
-  show(player: BasePlayer): void
-  visible(player: BasePlayer): boolean
-}
-
-interface BasePlayer {
-  name: string
-}
-
 class BaseZone<
   TGame extends Game = Game,
-  TCard extends BaseCard = BaseCard,
-  TOwner extends BasePlayer = BasePlayer
+  TCard extends ICard = ICard,
+  TOwner extends IPlayer = IPlayer
 > {
   id: string
   game: TGame
@@ -72,7 +49,7 @@ class BaseZone<
     return this._owner
   }
 
-  initializeCards(cards: BaseCard[]): void {
+  initializeCards(cards: ICard[]): void {
     if (this._initialized) {
       throw new Error('Zone already initialized')
     }
@@ -82,7 +59,7 @@ class BaseZone<
     for (const card of this._cards) {
       card.setHome(this)
       card.setZone(this)
-      this._updateCardVisibility(card)
+      this._updateCardVisibility(card as TCard)
     }
   }
 
@@ -94,7 +71,7 @@ class BaseZone<
   /**
    * Negative indices push from the back of the cards array, the same as with array.splice.
    */
-  push(card: BaseCard, index: number): void {
+  push(card: ICard, index: number): void {
     if (card.zone) {
       (card.zone as BaseZone).remove(card)
     }
@@ -112,7 +89,7 @@ class BaseZone<
     return this._cards.at(index)
   }
 
-  remove(card: BaseCard): void {
+  remove(card: ICard): void {
     const index = this._cards.findIndex(c => c.id === card.id)
     if (index === -1) {
       throw new Error(`Card (${card.id}) not found in zone (${this.id})`)
@@ -167,7 +144,7 @@ class BaseZone<
     throw new Error('not implemented')
   }
 
-  sort(fn: (l: BaseCard, r: BaseCard) => number): void {
+  sort(fn: (l: ICard, r: ICard) => number): void {
     this._cards.sort((l, r) => fn(l, r))
   }
 
@@ -205,11 +182,11 @@ class BaseZone<
     card.reveal()
   }
 
-  show(player: BasePlayer): void {
+  show(player: IPlayer): void {
     this._cards.forEach(card => card.show(player))
   }
 
-  showNext(player: BasePlayer): void {
+  showNext(player: IPlayer): void {
     for (let i = 0; i < this._cards.length; i++) {
       const card = this._cards[i]
       if (!card.visible(player)) {
@@ -219,7 +196,7 @@ class BaseZone<
     }
   }
 
-  showRandom(player: BasePlayer): void {
+  showRandom(player: IPlayer): void {
     const card = util.array.select(this._cards, this.game.random)
     card.show(player)
   }
@@ -246,4 +223,6 @@ class BaseZone<
   }
 }
 
-export { BaseZone, ZONE_KIND, ZoneKind }
+export { BaseZone }
+// Re-export from interfaces for backwards compatibility
+export { ZONE_KIND, ZoneKind } from './interfaces.js'

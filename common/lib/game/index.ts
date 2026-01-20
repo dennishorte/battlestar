@@ -1,4 +1,5 @@
 // Re-export all classes and types from game folder files
+export * from './interfaces.js'
 export * from './BaseActionManager.js'
 export * from './BaseCard.js'
 export * from './BaseCardManager.js'

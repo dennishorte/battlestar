@@ -1,15 +1,13 @@
-import { BaseZone, ZONE_KIND } from '../lib/game/index.js'
+import { BaseZone, ZONE_KIND, ICard, IPlayer } from '../lib/game/index.js'
 import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 
-interface MagicZoneCard {
+// Extended card interface for MagicZone visibility handling
+interface MagicZoneCard extends ICard {
   morph: boolean
   secret: boolean
-  show(owner: unknown): void
-  reveal(): void
-  hide(): void
 }
 
-class MagicZone extends BaseZone<BaseGame, MagicZoneCard> {
+class MagicZone extends BaseZone<BaseGame, MagicZoneCard, IPlayer> {
   override _updateCardVisibility(card: MagicZoneCard): void {
     if (this._kind === ZONE_KIND.public) {
       if (card.morph || card.secret) {

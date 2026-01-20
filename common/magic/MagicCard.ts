@@ -1,4 +1,4 @@
-import { BaseCard, BeforeMoveResult } from '../lib/game/index.js'
+import { BaseCard, BeforeMoveResult, IZone } from '../lib/game/index.js'
 import type { Game as BaseGame } from '../lib/game/GameProxy.js'
 import { Serializer } from './util/Serializer.js'
 import CardFilter from './util/CardFilter.js'
@@ -17,23 +17,11 @@ interface MagicGame extends BaseGame {
   mUntap(card: MagicCard): void
   mTap(card: MagicCard): void
   mDetach(card: MagicCard): void
-  log: {
-    indent(): void
-    outdent(): void
-    add(entry: LogEntry): void
-  }
   viewerName: string
   [key: string]: unknown
 }
 
-interface LogEntry {
-  template: string
-  args: Record<string, unknown>
-  classes?: string[]
-}
-
-interface MagicZone {
-  id: string
+interface MagicZone extends IZone {
   name(): string
   owner(): { name: string } | null
   kind(): string

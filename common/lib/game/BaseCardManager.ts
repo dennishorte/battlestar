@@ -1,33 +1,16 @@
 import type { Game } from './GameProxy.js'
+import type { ICard, IPlayer, IZoneManager } from './interfaces.js'
 import { GameProxy } from './GameProxy.js'
-
-// Forward declarations for circular dependencies
-interface BasePlayer {
-  name: string
-}
-
-interface BaseCard {
-  id: string | null
-}
-
-interface BaseZone {
-  cardlist(): BaseCard[]
-}
-
-interface BaseZoneManager {
-  byPlayer(player: BasePlayer, zoneName: string): BaseZone
-  byId(zoneId: string): BaseZone
-}
 
 class BaseCardManager<
   TGame extends Game = Game,
-  TCard extends BaseCard = BaseCard
+  TCard extends ICard = ICard
 > {
   game: TGame
   protected _cards: Record<string, TCard>
 
   // Proxied property from game
-  declare zones: BaseZoneManager
+  declare zones: IZoneManager
 
   constructor(game: TGame) {
     this.game = game
@@ -55,7 +38,7 @@ class BaseCardManager<
     return this._cards[id]
   }
 
-  byPlayer(player: BasePlayer, zoneName: string): TCard[] {
+  byPlayer(player: IPlayer, zoneName: string): TCard[] {
     return this.zones.byPlayer(player, zoneName).cardlist() as TCard[]
   }
 

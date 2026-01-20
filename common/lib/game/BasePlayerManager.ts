@@ -1,22 +1,12 @@
 import type { Game } from './GameProxy.js'
+import type { IPlayer, ILogManager, PlayerData } from './interfaces.js'
 import { BasePlayer } from './BasePlayer.js'
 import { GameProxy } from './GameProxy.js'
 import util from '../util.js'
 
-interface PlayerData {
-  _id: string
-  name: string
-  team?: string
-  [key: string]: unknown
-}
-
-interface LogManager {
-  add(entry: { template: string; args?: Record<string, unknown> }): void
-}
-
-interface BasePlayerInterface {
+// Extended interface for player manager with required properties
+interface BasePlayerInterface extends IPlayer {
   id: string
-  name: string
   team: string
   index: number | undefined
   seatNumber: number | undefined
@@ -53,7 +43,7 @@ class BasePlayerManager<
   protected _opts: Required<PlayerManagerOptions<TPlayer>>
 
   // Proxied property from game
-  declare log: LogManager
+  declare log: ILogManager
 
   constructor(game: TGame, users: PlayerData[], opts: PlayerManagerOptions<TPlayer> = {}) {
     this.game = game
