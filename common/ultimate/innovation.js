@@ -19,6 +19,7 @@ const { getDogmaShareInfo } = require('./actions/Dogma.js')
 const { ActionChoicesMixin } = require('./ActionChoicesMixin.js')
 const { EffectMixin } = require('./EffectMixin.js')
 const { KarmaMixin } = require('./KarmaMixin.js')
+const { QueryMixin } = require('./QueryMixin.js')
 
 const SUPPORTED_EXPANSIONS = ['base', 'echo', 'figs', 'city', 'arti', 'usee']
 
@@ -600,28 +601,6 @@ Innovation.prototype.checkAchievementEligibility = function(player, card, opts={
   return ageRequirement && scoreRequirement
 }
 
-Innovation.prototype.checkAgeZeroInPlay = function() {
-  return false
-}
-
-Innovation.prototype.checkColorIsSplayed = function(player, color) {
-  return this.zones.byPlayer(player, color).splay !== 'none'
-}
-
-Innovation.prototype.checkIsFirstBaseDraw = function(player) {
-  return !this.state.drawInfo[player.name].drewFirstBaseCard
-}
-
-Innovation.prototype.checkScoreRequirement = function(player, card, opts={}) {
-  return this.getScoreCost(player, card) <= this.getScore(player, opts)
-}
-
-Innovation.prototype.checkZoneHasVisibleDogmaOrEcho = function(player, zone) {
-  return (
-    this.getVisibleEffectsByColor(player, zone.color, 'dogma').length > 0
-    || this.getVisibleEffectsByColor(player, zone.color, 'echo').length > 0
-  )
-}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -685,78 +664,6 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
   return ach
 }
 
-Innovation.prototype.getAges = function() {
-  if (this.state.useAgeZero) {
-    return [0,1,2,3,4,5,6,7,8,9,10,11]
-  }
-  else {
-    return [1,2,3,4,5,6,7,8,9,10,11]
-  }
-}
-
-Innovation.prototype.getMinAge = function() {
-  return this.getAges()[0]
-}
-
-Innovation.prototype.getMaxAge = function() {
-  return this.getAges().slice(-1)[0]
-}
-
-Innovation.prototype.getBiscuits = function() {
-  const biscuits = this
-    .players
-    .all()
-    .map(player => [player.name, player.biscuits()])
-  return Object.fromEntries(biscuits)
-}
-
-Innovation.prototype.getBonuses = function(player) {
-  const bonuses = this
-    .util.colors()
-    .flatMap(color => this.zones.byPlayer(player, color))
-    .flatMap(zone => zone.cardlist().flatMap(card => card.getBonuses()))
-
-  const karmaBonuses = this
-    .findKarmasByTrigger(player, 'list-bonuses')
-    .flatMap(info => info.impl.func(this, player))
-
-  return bonuses
-    .concat(karmaBonuses)
-    .sort((l, r) => r - l)
-}
-
-Innovation.prototype.getAgesByZone = function(player, zoneName) {
-  const ages = this.cards.byPlayer(player, zoneName).map(c => c.getAge())
-  return util.array.distinct(ages).sort()
-}
-
-Innovation.prototype.getExpansionList = function() {
-  return this.settings.expansions
-}
-
-Innovation.prototype.getHighestTopAge = function(player, opts={}) {
-  const card = this.getHighestTopCard(player)
-  const baseAge = card ? card.getAge() : 0
-
-  const karmaAdjustment = this
-    .findKarmasByTrigger(player, 'add-highest-top-age')
-    .filter(info => info.impl.reason !== undefined)
-    .filter(info => info.impl.reason === 'all' || info.impl.reason === opts.reason)
-    .reduce((l, r) => l + r.impl.func(this, player), 0)
-
-  return baseAge + karmaAdjustment
-}
-
-Innovation.prototype.getHighestTopCard = function(player) {
-  return this.util.highestCards(this.cards.tops(player), { visible: true })[0]
-}
-
-Innovation.prototype.getNonEmptyAges = function() {
-  return this
-    .getAges()
-    .filter(age => this.zones.byDeck('base', age).cardlist().length > 0)
-}
-
 Innovation.prototype.getNumAchievementsToWin = function() {
   const base = 6
   const numPlayerAdjustment = 2 - this.players.all().length
@@ -765,108 +672,6 @@ Innovation.prototype.getNumAchievementsToWin = function() {
   return base + numPlayerAdjustment + numExpansionAdjustment
 }
 
-Innovation.prototype.getScore = function(player, opts={}) {
-  return this.getScoreDetails(player, opts).total * (opts.doubleScore ? 2 : 1)
-}
-
-Innovation.prototype.getScoreDetails = function(player, opts={}) {
-  const details = {
-    score: [],
-    bonuses: [],
-    karma: [],
-
-    scorePoints: 0,
-    bonusPoints: 0,
-    karmaPoints: 0,
-    total: 0
-  }
-
-  details.score = this
-    .cards
-    .byPlayer(player, 'score')
-    .filter(card => !opts.excludeCards || opts.excludeCards.findIndex(x => x.id !== card.id) === -1)
-    .map(card => card.getAge())
-    .sort()
-  details.bonuses = this.getBonuses(player)
-  details.karma = this
-    .findKarmasByTrigger(player, 'calculate-score')
-    .map(info => ({ name: info.card.name, points: this.executeEffect(player, info) }))
-
-  details.scorePoints = details.score.reduce((l, r) => l + r, 0)
-  details.bonusPoints = (details.bonuses[0] || 0) + Math.max(details.bonuses.length - 1, 0)
-  details.karmaPoints = details.karma.reduce((l, r) => l + r.points, 0)
-  details.total = details.scorePoints + details.bonusPoints + details.karmaPoints
-
-  return details
-}
-
-Innovation.prototype.getSplayedZones = function(player) {
-  return this
-    .util.colors()
-    .map(color => this.zones.byPlayer(player, color))
-    .filter(zone => zone.splay !== 'none')
-}
-
-Innovation.prototype.getUniquePlayerWithMostBiscuits = function(biscuit) {
-  const biscuits = this.getBiscuits()
-
-  let most = 0
-  let mostPlayerNames = []
-  for (const [playerName, bis] of Object.entries(biscuits)) {
-    const count = bis[biscuit]
-    if (count > most) {
-      most = count
-      mostPlayerNames = [playerName]
-    }
-    else if (count === most) {
-      mostPlayerNames.push(playerName)
-    }
-  }
-
-  if (most > 0 && mostPlayerNames.length === 1) {
-    return this.players.byName(mostPlayerNames[0])
-  }
-}
-
-Innovation.prototype.getColorZonesByPlayer = function(player) {
-  return this
-    .utilColor()
-    .map(color => this.zones.byPlayer(player, color))
-}
-
-Innovation.prototype.getSafeOpenings = function(player) {
-  return Math.max(0, this.getSafeLimit(player) - this.cards.byPlayer(player, 'safe').length)
-}
-
-Innovation.prototype.getSafeLimit = function(player) {
-  return this.getZoneLimit(player)
-}
-
-Innovation.prototype.getForecastLimit = function(player) {
-  return this.getZoneLimit(player)
-}
-
-Innovation.prototype.getZoneLimit = function(player) {
-  const splays = this
-    .util.colors()
-    .map(color => this.zones.byPlayer(player, color).splay)
-
-  if (splays.includes('aslant')) {
-    return 1
-  }
-  else if (splays.includes('up')) {
-    return 2
-  }
-  else if (splays.includes('right')) {
-    return 3
-  }
-  else if (splays.includes('left')) {
-    return 4
-  }
-  else {
-    return 5
-  }
-}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1040,20 +845,6 @@ Innovation.prototype.mTake = function(player, card) {
 ////////////////////////////////////////////////////////////////////////////////
 // Private functions
 
-Innovation.prototype.getScoreCost = function(player, card) {
-  const sameAge = this
-    .zones.byPlayer(player, 'achievements')
-    .cardlist()
-    .filter(c => c.getAge() === card.getAge())
-
-  const karmaAdjustment = this
-    .findKarmasByTrigger(player, 'achievement-cost-discount')
-    .map(info => info.impl.func(this, player, { card }))
-    .reduce((l, r) => l + r, 0)
-
-  return card.getAge() * 5 * (sameAge.length + 1) - karmaAdjustment
-}
-
 /**
    This one gets special achievements as well.
  */
@@ -1156,3 +947,4 @@ Innovation.prototype._walkZones = function(root, fn, path=[]) {
 Object.assign(Innovation.prototype, ActionChoicesMixin)
 Object.assign(Innovation.prototype, EffectMixin)
 Object.assign(Innovation.prototype, KarmaMixin)
+Object.assign(Innovation.prototype, QueryMixin)
