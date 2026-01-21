@@ -508,10 +508,10 @@ describe('BaseActionManager', () => {
     test('should throw meaningful error for invalid selection count', () => {
       const { fixture, actionManager, player1 } = createUniqueFixture()
 
-      // Queue invalid selection
-      fixture.queueResponse(player1, ['too', 'many'])
+      // Queue a selection with too many valid options
+      fixture.queueResponse(player1, ['option1', 'option2'])
 
-      // Expect specific error message
+      // Expect specific error message about count
       expect(() => {
         actionManager.choose(player1, ['option1', 'option2'], { max: 1 })
       }).toThrow('Invalid number of options selected')

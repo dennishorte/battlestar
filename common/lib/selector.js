@@ -149,7 +149,7 @@ function _validate(selector, selection, opts) {
     }
     return {
       valid: false,
-      mismatch: `Some selections didn't match with any choices in the selector`,
+      mismatch: `Invalid number of options selected: expected ${min}-${max}, got ${count}`,
     }
   }
 }
