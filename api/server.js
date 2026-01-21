@@ -53,10 +53,21 @@ app.use(middleware.errors.errorHandler)
 
 // Function to start the server
 const startServer = () => {
-  return app.listen(port, () => {
+  const server = app.listen(port, () => {
     logger.info(`Server listening on port ${port}`)
-
   })
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      logger.error(`Port ${port} is already in use. Please stop the other process or use a different port.`)
+      process.exit(1)
+    }
+    else {
+      throw err
+    }
+  })
+
+  return server
 }
 
 // Only start the server if this file is run directly (not required/imported)
