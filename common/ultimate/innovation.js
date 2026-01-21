@@ -17,6 +17,7 @@ const { UltimateZoneManager } = require('./UltimateZoneManager.js')
 
 const { getDogmaShareInfo } = require('./actions/Dogma.js')
 const { ActionChoicesMixin } = require('./ActionChoicesMixin.js')
+const { EffectMixin } = require('./EffectMixin.js')
 const { KarmaMixin } = require('./KarmaMixin.js')
 
 const SUPPORTED_EXPANSIONS = ['base', 'echo', 'figs', 'city', 'arti', 'usee']
@@ -532,200 +533,6 @@ Innovation.prototype.endTurn = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Actions
 
-Innovation.prototype.aCardEffect = function(player, info, opts={}) {
-  const prevLeader = this.state.dogmaInfo.effectLeader
-  if (opts.leader) {
-    this.state.dogmaInfo.effectLeader = opts.leader
-  }
-
-  const fn = typeof info.impl === 'function' ? info.impl : info.impl.func
-  const result = fn(this, player, { self: info.card, ...opts })
-
-  if (opts.leader) {
-    this.state.dogmaInfo.effectLeader = prevLeader
-  }
-
-  return result
-}
-
-Innovation.prototype.aOneEffect = function(
-  player,
-  card,
-  text,
-  impl,
-  opts={},
-) {
-
-  // Default opts
-  opts = Object.assign({
-    sharing: [],
-    demanding: [],
-    leader: player,
-    endorsed: false,
-    foreseen: false,
-  }, opts)
-
-  const repeatCount = opts.endorsed ? 2 : 1
-
-  const actors = [player]
-    .concat(opts.sharing)
-    .concat(opts.demanding)
-
-  const actorsOrdered = this
-    .players
-    .endingWith(player)
-    .filter(player => actors.some(actor => actor.id === player.id))
-
-  for (const actor of actorsOrdered) {
-    this.state.dogmaInfo.acting = actor
-
-    for (let z = 0; z < repeatCount; z++) {
-
-      const isDemand = text.toLowerCase().startsWith('i demand')
-      const isCompel = text.toLowerCase().startsWith('i compel')
-
-      const demand = isDemand && opts.demanding.some(target => target.id === actor.id)
-      const compel = isCompel && opts.sharing.some(target => target.id === actor.id) && actor !== player
-      const share = !isDemand && !isCompel && !opts.noShare && opts.sharing.some(target => target.id === actor.id) && z === 0
-      const owner = !isDemand && !isCompel && actor.id === player.id
-
-      if (compel || demand || share || owner) {
-        this.log.add({
-          template: `{player}, {card}: ${text}`,
-          classes: ['card-effect'],
-          args: { player: actor, card }
-        })
-        this.log.indent()
-
-        const effectInfo = {
-          card,
-          text,
-          impl,
-        }
-
-        if (demand || compel) {
-          this.state.dogmaInfo.isDemandEffect = true
-
-          const karmaKind = this.triggerKarma(actor, 'demand-success', {
-            card,
-            effectInfo,
-            leader: opts.leader
-          })
-          if (karmaKind === 'would-instead') {
-            this.state.dogmaInfo.isDemandEffect = false
-            this.actions.acted(player)
-            this.log.outdent()
-            continue
-          }
-        }
-
-        const dogmaEffectKarmaKind = this.triggerKarma(actor, 'dogma-effect', {
-          ...opts,
-          card,
-          effect: function() {
-            this.game.aCardEffect(actor, effectInfo, {
-              leader: opts.leader,
-              self: card,
-              foreseen: opts.foreseen,
-            })
-          }
-        })
-        if (dogmaEffectKarmaKind === 'would-instead') {
-          this.acted(player)
-          continue
-        }
-
-        const result = this.aCardEffect(actor, effectInfo, {
-          leader: opts.leader,
-          self: card,
-          foreseen: opts.foreseen,
-        })
-
-        if (demand || compel) {
-          this.state.dogmaInfo.isDemandEffect = false
-        }
-
-        this.log.outdent()
-
-        if (this.state.dogmaInfo.earlyTerminate) {
-          this.log.add({
-            template: 'Dogma action is complete'
-          })
-          this.state.dogmaInfo.acting = undefined
-          return
-        }
-      }
-    }
-    this.state.dogmaInfo.acting = undefined
-  }
-}
-
-Innovation.prototype.aCardEffects = function(
-  player,
-  card,
-  kind,
-  opts={}
-) {
-  const effects = card.visibleEffects(kind, opts)
-  if (!effects) {
-    return
-  }
-
-  const { texts, impls } = effects
-
-  for (let i = 0; i < texts.length; i++) {
-    const result = this.aOneEffect(player, card, texts[i], impls[i], opts)
-    if (this.state.dogmaInfo.earlyTerminate) {
-      return
-    }
-  }
-}
-
-Innovation.prototype.aTrackChainRule = function(player, card) {
-  if (!this.state.dogmaInfo.chainRule) {
-    this.state.dogmaInfo.chainRule = {}
-  }
-  if (!this.state.dogmaInfo.chainRule[player.name]) {
-    this.state.dogmaInfo.chainRule[player.name] = {}
-  }
-
-  const data = this.state.dogmaInfo.chainRule[player.name]
-
-  // This is the first card in a potential chain event.
-  if (!data.cardName) {
-    data.cardName = card.name
-  }
-
-  // A second card is calling self-execute. Award the chain achievement.
-  else if (data.cardName !== card.name) {
-    this.log.add({
-      template: '{player} achieves a Chain Achievement because {card} is recursively self-executing',
-      args: { player, card }
-    })
-    const achievement = this.zones.byDeck('base', 11).cardlist()[0]
-    if (achievement) {
-      this.actions.claimAchievement(player, achievement)
-    }
-    else {
-      this.log.add({ template: 'There are no cards left in the 11 deck to achieve.' })
-    }
-  }
-}
-
-Innovation.prototype.aFinishChainEvent = function(player, card) {
-  const data = this.state.dogmaInfo.chainRule[player.name]
-
-  // Got to the end of the dogma action for the original chain card.
-  if (data.cardName === card.name) {
-    delete this.state.dogmaInfo.chainRule[player.name]
-  }
-
-  // This card is finished, but some earlier card is still executing.
-  else {
-    // do nothing
-  }
-}
-
 Innovation.prototype.aDecree = function(player, name) {
   const card = this.cards.byId(name)
   const hand = this.zones.byPlayer(player, 'hand')
@@ -799,10 +606,6 @@ Innovation.prototype.checkAgeZeroInPlay = function() {
 
 Innovation.prototype.checkColorIsSplayed = function(player, color) {
   return this.zones.byPlayer(player, color).splay !== 'none'
-}
-
-Innovation.prototype.checkEffectIsVisible = function(card) {
-  return card.visibleEffects('dogma') || card.visibleEffects('echo')
 }
 
 Innovation.prototype.checkIsFirstBaseDraw = function(player) {
@@ -927,45 +730,6 @@ Innovation.prototype.getAgesByZone = function(player, zoneName) {
   return util.array.distinct(ages).sort()
 }
 
-Innovation.prototype.getEffectAge = function(card, age) {
-  const player = this.players.byOwner(card)
-
-  if (player) {
-    const karmaInfos = this.findKarmasByTrigger(player, 'effect-age')
-    if (karmaInfos.length === 0) {
-      // No karma, so use age as is
-    }
-    else if (karmaInfos.length > 1) {
-      throw new Error('Multiple effect-age karmas not supported')
-    }
-    else {
-      age = karmaInfos[0].impl.func(this, player, card, age)
-    }
-  }
-
-  if (this.state.dogmaInfo.globalAgeIncrease) {
-    age += this.state.dogmaInfo.globalAgeIncrease
-  }
-
-  return age
-}
-
-Innovation.prototype.getEffectByText = function(card, text) {
-  for (const kind of ['dogma', 'echo']) {
-    const effects = card.visibleEffects(kind)
-    if (!effects) {
-      continue
-    }
-    const { texts, impls } = effects
-    const index = texts.indexOf(text)
-    if (index !== -1) {
-      return impls[index]
-    }
-  }
-
-  throw new Error(`Effect not found on ${card.name} for text ${text}`)
-}
-
 Innovation.prototype.getExpansionList = function() {
   return this.settings.expansions
 }
@@ -1061,31 +825,6 @@ Innovation.prototype.getUniquePlayerWithMostBiscuits = function(biscuit) {
 
   if (most > 0 && mostPlayerNames.length === 1) {
     return this.players.byName(mostPlayerNames[0])
-  }
-}
-
-Innovation.prototype.getVisibleEffectsByColor = function(player, color, kind) {
-  const karma = this
-    .findKarmasByTrigger(player, `list-${kind}-effects`)
-
-  if (karma.length === 1) {
-    this.state.karmaDepth += 1
-    const result = karma.flatMap(info => info.impl.func(this, player, { color, kind }))
-    this.state.karmaDepth -= 1
-    return result
-  }
-
-  else if (karma.length === 2) {
-    throw new Error(`Too many list-effect karmas`)
-  }
-
-  else {
-    return this
-      .cards
-      .byPlayer(player, color)
-      .reverse()
-      .map(card => card.visibleEffects(kind))
-      .filter(effect => effect !== undefined)
   }
 }
 
@@ -1415,4 +1154,5 @@ Innovation.prototype._walkZones = function(root, fn, path=[]) {
 
 // Apply mixins
 Object.assign(Innovation.prototype, ActionChoicesMixin)
+Object.assign(Innovation.prototype, EffectMixin)
 Object.assign(Innovation.prototype, KarmaMixin)
