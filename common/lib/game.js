@@ -539,15 +539,23 @@ Game.prototype._tryToAutomaticallyRespond = function(selectors) {
     const { min } = selector.minMax(sel)
 
     if (min >= sel.choices.length) {
+      // Build selection from choices, extracting titles from objects
+      const selection = sel.choices.map(choice => {
+        if (typeof choice === 'object' && choice.title) {
+          return choice.title
+        }
+        return choice
+      })
+
       const response = {
         actor: sel.actor,
         title: sel.title,
-        selection: [...sel.choices],
+        selection,
       }
 
       // Rename choices to selection down to one lower level.
       for (const x of response.selection) {
-        if (x.choices) {
+        if (x && typeof x === 'object' && x.choices) {
           x.selection = x.choices
           delete x.choices
         }

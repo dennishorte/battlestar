@@ -1100,11 +1100,14 @@ Tyrants.prototype.aChooseAndPlaceSpy = function(player) {
 }
 
 Tyrants.prototype.aChooseAndPromote = function(player, cardsToChoose, opts={}) {
-  const choiceNames = cardsToChoose
-    .map(c => c.name)
-    .sort()
+  const choiceObjects = cardsToChoose
+    .map(c => ({
+      title: c.name,
+      subtitles: [`${c.points} / ${c.innerPoints}`],
+    }))
+    .sort((a, b) => a.title.localeCompare(b.title))
 
-  const choices = this.actions.choose(player, choiceNames, { ...opts, title: 'Choose cards to promote' })
+  const choices = this.actions.choose(player, choiceObjects, { ...opts, title: 'Choose cards to promote' })
 
   const done = []
   for (const choice of choices) {

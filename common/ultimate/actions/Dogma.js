@@ -255,6 +255,6 @@ module.exports = {
   EndorseAction,
 
   getDogmaShareInfo(player, card) {
-    return _getSharingAndDemanding(player, card.dogmaBiscuit, this.getBiscuits())
+    return _getSharingAndDemanding.call(this, player, card.dogmaBiscuit, this.game.getBiscuits())
   },
 }

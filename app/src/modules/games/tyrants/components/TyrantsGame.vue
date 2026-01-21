@@ -223,20 +223,8 @@ export default {
       }
     },
 
-    insertSelectorSubtitles: function(selector) {
-      if (selector.title === 'Choose cards to promote') {
-        const updated = []
-        for (const option of selector.choices) {
-          const card = tyr.res.cards.byName[option][0]
-          updated.push({
-            title: option,
-            subtitles: [`${card.points} / ${card.innerPoints}`],
-          })
-        }
-
-        selector.choices = updated
-      }
-    },
+    // Subtitles are now provided by the game engine directly
+    insertSelectorSubtitles: function() {},
 
     openRules() {
       window.open("https://tesera.ru/images/items/783812/Tyrants_Of_The_Underdark_Rulebook.pdf")

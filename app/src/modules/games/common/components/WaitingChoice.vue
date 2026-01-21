@@ -1,6 +1,6 @@
 <template>
   <div class="waiting-choice">
-    <template v-if="request && selector.getSelectorType(request) === 'action'">
+    <template v-if="isActionType">
       <div class="alert alert-info mt-3">
         <div>This is a special action: {{ request.title }}.</div>
         <div>You cannot use this selector pane for it.</div>
@@ -62,6 +62,9 @@ export default {
     },
     isValid() {
       return this.request && selector.validate(this.request, this.selection).valid
+    },
+    isActionType() {
+      return this.request && selector.getSelectorType(this.request) === 'action'
     },
   },
 

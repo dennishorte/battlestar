@@ -98,56 +98,8 @@ export default {
     uiFactory() {
       const self = this
 
-      const insertSelectorSubtitles = (selector) => {
-        if (selector.title === 'Dogma') {
-          const player = this.game.players.byName(this.actor.name)
-          const updated = []
-          for (const option of selector.choices) {
-            const cardName = option.title || option
-            const card = this.game.cards.byId(cardName)
-            const shareInfo = this.game.getDogmaShareInfo(player, card)
-
-            const subtitles = []
-
-            if (card.checkHasShare() && shareInfo.sharing.length > 0) {
-              const shareNames = shareInfo.sharing.map(p => p.name).join(', ')
-              subtitles.push(`share with ${shareNames}`)
-            }
-
-            if (card.checkHasCompelExplicit() && shareInfo.sharing.length > 0) {
-              const compelNames = shareInfo.sharing.map(p => p.name).join(', ')
-              subtitles.push(`compel ${compelNames}`)
-            }
-
-            if (card.checkHadDemandExplicit() && shareInfo.demanding.length > 0) {
-              const demandNames = shareInfo.demanding.map(p => p.name).join(', ')
-              subtitles.push(`demand ${demandNames}`)
-            }
-
-            updated.push({
-              title: cardName,
-              subtitles,
-            })
-          }
-
-          selector.choices = updated
-        }
-
-        else if (selector.title === 'Free Artifact Action') {
-          const player = this.game.players.current()
-          const card = this.game.cards.byPlayer(player, 'artifact')[0]
-          const effects = this.game.getVisibleEffectsByColor(player, card.color, 'echo')
-          const subtitles = this.game.version < 4
-            ? [`${effects.length} echo effects will trigger`]
-            : undefined
-          if (effects.length > 0) {
-            selector.choices[0] = {
-              title: 'dogma',
-              subtitles
-            }
-          }
-        }
-      }
+      // Subtitles are now provided by the game engine directly
+      const insertSelectorSubtitles = () => {}
 
       const selectorOptionComponent = (option) => {
         const name = option.title ? option.title : option

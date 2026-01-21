@@ -133,7 +133,9 @@ TestUtil.fixtureTopCard = function(cardName, options) {
 
 TestUtil.testActionChoices = function(request, action, expected) {
   const actionChoices = request.selectors[0].choices.find(c => c.title === action).choices
-  expect(actionChoices.sort()).toEqual(expected.sort())
+  // Handle both string choices and object choices with title property
+  const choiceNames = actionChoices.map(c => typeof c === 'object' ? c.title : c)
+  expect(choiceNames.sort()).toEqual(expected.sort())
 }
 
 TestUtil.testChoices = function(request, expected, expectedMin, expectedMax) {

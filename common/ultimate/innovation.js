@@ -350,10 +350,20 @@ Innovation.prototype.artifact = function() {
     })
     this.log.indent()
 
+    // Build choices with subtitles for echo effects (version < 4 only)
+    const choices = ['dogma', 'skip']
+    const effects = this.getVisibleEffectsByColor(player, artifact.color, 'echo')
+    if (effects.length > 0 && this.settings.version < 4) {
+      choices[0] = {
+        title: 'dogma',
+        subtitles: [`${effects.length} echo effects will trigger`],
+      }
+    }
+
     const action = this.requestInputSingle({
       actor: player.name,
       title: 'Free Artifact Action',
-      choices: ['dogma', 'skip']
+      choices,
     })[0]
 
     switch (action) {
@@ -1640,7 +1650,30 @@ Innovation.prototype._generateActionChoicesDogma = function() {
   const allTargets = util
     .array
     .distinct([...dogmaTargets, ...extraEffects])
-    .map(card => card.name)
+    .map(card => {
+      const shareInfo = this.getDogmaShareInfo(player, card)
+      const subtitles = []
+
+      if (card.checkHasShare() && shareInfo.sharing.length > 0) {
+        const shareNames = shareInfo.sharing.map(p => p.name).join(', ')
+        subtitles.push(`share with ${shareNames}`)
+      }
+
+      if (card.checkHasCompelExplicit() && shareInfo.sharing.length > 0) {
+        const compelNames = shareInfo.sharing.map(p => p.name).join(', ')
+        subtitles.push(`compel ${compelNames}`)
+      }
+
+      if (card.checkHasDemandExplicit() && shareInfo.demanding.length > 0) {
+        const demandNames = shareInfo.demanding.map(p => p.name).join(', ')
+        subtitles.push(`demand ${demandNames}`)
+      }
+
+      return {
+        title: card.name,
+        subtitles,
+      }
+    })
 
   return {
     title: 'Dogma',
