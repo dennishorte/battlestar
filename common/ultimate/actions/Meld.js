@@ -3,7 +3,7 @@ const util = require('../../lib/util.js')
 
 function MeldAction(player, card, opts={}) {
   // TODO: Figure out how to convert this to use UltimateActionManager.insteadKarmaWrapper
-  const karmaKind = this.game.aKarma(player, 'meld', { ...opts, card })
+  const karmaKind = this.game.triggerKarma(player, 'meld', { ...opts, card })
   if (karmaKind === 'would-instead') {
     this.acted(player)
     return
@@ -21,7 +21,7 @@ function MeldAction(player, card, opts={}) {
     args: { player, card }
   })
 
-  this.game.aKarma(player, 'when-meld', { ...opts, card })
+  this.game.triggerKarma(player, 'when-meld', { ...opts, card })
 
   if (fromMuseum) {
     const museum = this.cards.byPlayer(player, 'museum').filter(card => card.isMuseum)[0]

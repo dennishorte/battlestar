@@ -64,7 +64,7 @@ function DogmaHelper(player, card, opts={}) {
     },
   }
 
-  const karmaKind = this.game.aKarma(player, 'dogma', { ...opts, card })
+  const karmaKind = this.game.triggerKarma(player, 'dogma', { ...opts, card })
   if (karmaKind === 'would-instead') {
     this.acted(player)
     return
@@ -72,7 +72,7 @@ function DogmaHelper(player, card, opts={}) {
 
   // Sargon of Akkad, for example, modifies who can share.
   for (const player2 of this.game.players.all()) {
-    this.game.aKarma(player2, 'share-eligibility', { ...opts, card, leader: player })
+    this.game.triggerKarma(player2, 'share-eligibility', { ...opts, card, leader: player })
   }
 
   _logSharing.call(this)
@@ -170,7 +170,7 @@ function _statsRecordDogmaActions(player, card) {
 function _shareBonus(player, card) {
   // Share bonus
   if (this.state.dogmaInfo.shared) {
-    const shareKarmaKind = this.game.aKarma(player, 'share', { card })
+    const shareKarmaKind = this.game.triggerKarma(player, 'share', { card })
     if (shareKarmaKind === 'would-instead') {
       this.acted(player)
       return
@@ -193,7 +193,7 @@ function _shareBonus(player, card) {
   // Grace Hopper and Susan Blackmore have "if your opponent didn't share" karma effects
   else if (card.checkHasShare()) {
     this.players.opponents(player).forEach(() => {
-      this.game.aKarma(player, 'no-share', { card })
+      this.game.triggerKarma(player, 'no-share', { card })
     })
   }
 }

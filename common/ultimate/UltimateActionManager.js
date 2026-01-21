@@ -33,7 +33,7 @@ class UltimateActionManager extends BaseActionManager {
         throw new Error(`${card.name} has already been claimed`)
       }
       if (card.checkPlayerIsEligible) {
-        const reduceCost = this.game.getInfoByKarmaTrigger(
+        const reduceCost = this.game.findKarmasByTrigger(
           player,
           'reduce-special-achievement-requirements'
         ).length > 0
@@ -459,7 +459,7 @@ class UltimateActionManager extends BaseActionManager {
     }
 
     // Handle karma
-    const karmaKind = this.game.aKarma(player, 'achieve', { ...opts, card })
+    const karmaKind = this.game.triggerKarma(player, 'achieve', { ...opts, card })
     if (karmaKind === 'would-instead') {
       this.acted(player)
       return
@@ -845,7 +845,7 @@ class UltimateActionManager extends BaseActionManager {
 
     // Karmas don't trigger if someone else is splaying your cards.
     if (owner.name === player.name) {
-      const karmaKind = this.game.aKarma(player, 'splay', { ...opts, color, direction })
+      const karmaKind = this.game.triggerKarma(player, 'splay', { ...opts, color, direction })
       if (karmaKind === 'would-instead') {
         this.acted(player)
         return
@@ -891,7 +891,7 @@ class UltimateActionManager extends BaseActionManager {
     }
 
     // TODO: Figure out how to make insteadKarmaWrapper work with this
-    const karmaKind = this.game.aKarma(player, 'transfer', { ...opts, card, target })
+    const karmaKind = this.game.triggerKarma(player, 'transfer', { ...opts, card, target })
     if (karmaKind === 'would-instead') {
       this.acted(player)
       return
@@ -942,7 +942,7 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   exchangeCards(player, cards1, cards2, zone1, zone2) {
-    const karmaKind = this.game.aKarma(player, 'exchange', { cards1, cards2, zone1, zone2 })
+    const karmaKind = this.game.triggerKarma(player, 'exchange', { cards1, cards2, zone1, zone2 })
     if (karmaKind === 'would-instead') {
       this.acted(player)
       return 'would-instead'
@@ -1161,7 +1161,7 @@ class UltimateActionManager extends BaseActionManager {
 
   static insteadKarmaWrapper(actionName, impl) {
     return function(player, card, opts={}) {
-      const karmaKind = this.game.aKarma(player, actionName, { ...opts, card })
+      const karmaKind = this.game.triggerKarma(player, actionName, { ...opts, card })
       if (karmaKind === 'would-instead') {
         this.acted(player)
         return

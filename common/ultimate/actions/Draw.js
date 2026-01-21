@@ -2,7 +2,7 @@ function DrawAction(player, opts={}) {
   const { age, isAction } = opts
 
   if (isAction) {
-    const karmaKind = this.game.aKarma(player, 'draw-action', opts)
+    const karmaKind = this.game.triggerKarma(player, 'draw-action', opts)
     if (karmaKind === 'would-instead') {
       this.acted(player)
       return
@@ -20,7 +20,7 @@ function DrawAction(player, opts={}) {
   // Adjust age based on empty decks.
   let [ adjustedAge, adjustedExp ] = _adjustedDrawDeck.call(this, baseAge, baseExp)
 
-  const karmaKind = this.game.aKarma(player, 'draw', { ...opts, age: adjustedAge, exp: adjustedExp })
+  const karmaKind = this.game.triggerKarma(player, 'draw', { ...opts, age: adjustedAge, exp: adjustedExp })
   if (karmaKind === 'would-instead') {
     this.acted(player)
     return
@@ -158,7 +158,7 @@ function _determineBaseDrawExpansion(player) {
 }
 
 function _getAgeForDrawAction(player, isAction) {
-  const karmaInfos = this.game.getInfoByKarmaTrigger(player, 'top-card-value', { isAction })
+  const karmaInfos = this.game.findKarmasByTrigger(player, 'top-card-value', { isAction })
 
   if (karmaInfos.length > 1) {
     throw new Error('Too many karma infos for top-card-value. I do not know what to do.')
@@ -175,15 +175,14 @@ function _getAgeForDrawAction(player, isAction) {
 
       const actionType = isAction ? 'draw' : 'other'
       const karmaMatches = (
-        !this.game.checkInKarma()
+        !this.game.isExecutingKarma()
         && karmaInfos.length === 1
         && karmaInfos[0].impl.matches(this, player, { action: actionType, color, isAction })
       )
       if (karmaMatches) {
-        this._karmaIn()
-        const result = karmaInfos[0].impl.func(this, player, { color })
-        this._karmaOut()
-        return result
+        return this.game.withKarmaDepth(() => {
+          return karmaInfos[0].impl.func(this, player, { color })
+        })
       }
       else {
         return zone.cardlist()[0].getAge()

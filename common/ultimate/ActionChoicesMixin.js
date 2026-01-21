@@ -46,7 +46,7 @@ const ActionChoicesMixin = {
 
     const availableDecrees = []
 
-    if (this.getInfoByKarmaTrigger(player, 'decree-for-any-three').length > 0 && figuresInHand.length >= 3) {
+    if (this.findKarmasByTrigger(player, 'decree-for-any-three').length > 0 && figuresInHand.length >= 3) {
       for (const color of this.util.colors()) {
         availableDecrees.push(this.util.colorToDecree(color))
       }
@@ -61,7 +61,7 @@ const ActionChoicesMixin = {
 
     if (figuresInHand.length >= 2) {
       this
-        .getInfoByKarmaTrigger(player, 'decree-for-two')
+        .findKarmasByTrigger(player, 'decree-for-two')
         .map(info => info.impl.decree)
         .forEach(decree => util.array.pushUnique(availableDecrees, decree))
     }
@@ -87,7 +87,7 @@ const ActionChoicesMixin = {
     const dogmaTargets = this.cards.tops(player).filter(card => card.dogma.length > 0)
 
     const extraEffects = this
-      .getInfoByKarmaTrigger(player, 'list-effects')
+      .findKarmasByTrigger(player, 'list-effects')
       .flatMap(info => info.impl.func(this, player))
 
     const allTargets = util

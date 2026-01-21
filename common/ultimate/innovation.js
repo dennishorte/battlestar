@@ -75,7 +75,7 @@ Innovation.prototype._mainProgram = function() {
 Innovation.prototype._gameOver = function(event) {
   // Check for 'would-win' karmas.
   this.state.wouldWinKarma = true
-  const result = this.aKarma(event.data.player, 'would-win', { event })
+  const result = this.triggerKarma(event.data.player, 'would-win', { event })
   this.state.wouldWinKarma = false
 
   if (result) {
@@ -490,7 +490,7 @@ Innovation.prototype.fadeFiguresCheck = function() {
       this.log.indent()
 
       while (topFiguresFn().length > 1) {
-        const karmaInfos = this.getInfoByKarmaTrigger(player, 'no-fade')
+        const karmaInfos = this.findKarmasByTrigger(player, 'no-fade')
         if (karmaInfos.length > 0) {
           this.log.add({
             template: '{player} fades nothing due to {card}',
@@ -606,7 +606,7 @@ Innovation.prototype.aOneEffect = function(
         if (demand || compel) {
           this.state.dogmaInfo.isDemandEffect = true
 
-          const karmaKind = this.aKarma(actor, 'demand-success', {
+          const karmaKind = this.triggerKarma(actor, 'demand-success', {
             card,
             effectInfo,
             leader: opts.leader
@@ -619,7 +619,7 @@ Innovation.prototype.aOneEffect = function(
           }
         }
 
-        const dogmaEffectKarmaKind = this.aKarma(actor, 'dogma-effect', {
+        const dogmaEffectKarmaKind = this.triggerKarma(actor, 'dogma-effect', {
           ...opts,
           card,
           effect: function() {
@@ -737,7 +737,7 @@ Innovation.prototype.aDecree = function(player, name) {
   this.log.indent()
 
   // Handle karma
-  const karmaKind = this.aKarma(player, 'decree')
+  const karmaKind = this.triggerKarma(player, 'decree')
   if (karmaKind === 'would-instead') {
     this.actions.acted(player)
     return
@@ -841,7 +841,7 @@ Innovation.prototype.getAchievementsByPlayer = function(player) {
     }
   }
 
-  const karmaInfos = this.getInfoByKarmaTrigger(player, 'extra-achievements')
+  const karmaInfos = this.findKarmasByTrigger(player, 'extra-achievements')
   for (const info of karmaInfos) {
     const count = info.impl.func(this, player)
     for (let i = 0; i < count; i++) {
@@ -914,7 +914,7 @@ Innovation.prototype.getBonuses = function(player) {
     .flatMap(zone => zone.cardlist().flatMap(card => card.getBonuses()))
 
   const karmaBonuses = this
-    .getInfoByKarmaTrigger(player, 'list-bonuses')
+    .findKarmasByTrigger(player, 'list-bonuses')
     .flatMap(info => info.impl.func(this, player))
 
   return bonuses
@@ -931,7 +931,7 @@ Innovation.prototype.getEffectAge = function(card, age) {
   const player = this.players.byOwner(card)
 
   if (player) {
-    const karmaInfos = this.getInfoByKarmaTrigger(player, 'effect-age')
+    const karmaInfos = this.findKarmasByTrigger(player, 'effect-age')
     if (karmaInfos.length === 0) {
       // No karma, so use age as is
     }
@@ -975,7 +975,7 @@ Innovation.prototype.getHighestTopAge = function(player, opts={}) {
   const baseAge = card ? card.getAge() : 0
 
   const karmaAdjustment = this
-    .getInfoByKarmaTrigger(player, 'add-highest-top-age')
+    .findKarmasByTrigger(player, 'add-highest-top-age')
     .filter(info => info.impl.reason !== undefined)
     .filter(info => info.impl.reason === 'all' || info.impl.reason === opts.reason)
     .reduce((l, r) => l + r.impl.func(this, player), 0)
@@ -1025,7 +1025,7 @@ Innovation.prototype.getScoreDetails = function(player, opts={}) {
     .sort()
   details.bonuses = this.getBonuses(player)
   details.karma = this
-    .getInfoByKarmaTrigger(player, 'calculate-score')
+    .findKarmasByTrigger(player, 'calculate-score')
     .map(info => ({ name: info.card.name, points: this.aCardEffect(player, info) }))
 
   details.scorePoints = details.score.reduce((l, r) => l + r, 0)
@@ -1066,7 +1066,7 @@ Innovation.prototype.getUniquePlayerWithMostBiscuits = function(biscuit) {
 
 Innovation.prototype.getVisibleEffectsByColor = function(player, color, kind) {
   const karma = this
-    .getInfoByKarmaTrigger(player, `list-${kind}-effects`)
+    .findKarmasByTrigger(player, `list-${kind}-effects`)
 
   if (karma.length === 1) {
     this.state.karmaDepth += 1
@@ -1136,7 +1136,7 @@ Innovation.prototype.getZoneLimit = function(player) {
 Innovation.prototype.mAchievementCheck = function() {
   const available = this.zones.byId('achievements').cardlist()
   for (const player of this.players.startingWithCurrent()) {
-    const reduceCost = this.getInfoByKarmaTrigger(
+    const reduceCost = this.findKarmasByTrigger(
       player,
       'reduce-special-achievement-requirements'
     ).length > 0
@@ -1308,7 +1308,7 @@ Innovation.prototype.getScoreCost = function(player, card) {
     .filter(c => c.getAge() === card.getAge())
 
   const karmaAdjustment = this
-    .getInfoByKarmaTrigger(player, 'achievement-cost-discount')
+    .findKarmasByTrigger(player, 'achievement-cost-discount')
     .map(info => info.impl.func(this, player, { card }))
     .reduce((l, r) => l + r, 0)
 
@@ -1346,7 +1346,7 @@ Innovation.prototype.getAvailableStandardAchievements = function(player) {
     .filter(c => !c.isSpecialAchievement && !c.isDecree && !c.isMuseum)
 
   const fromKarma = this
-    .getInfoByKarmaTrigger(player, 'list-achievements')
+    .findKarmasByTrigger(player, 'list-achievements')
     .flatMap(info => info.impl.func(this, player))
 
   return [achievementsZone, fromKarma].flat()
