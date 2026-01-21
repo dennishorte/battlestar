@@ -77,7 +77,17 @@ class UltimateZone extends BaseZone {
     else {
       return this.cardlist()
     }
+  }
 
+  /**
+   * Check if this zone has visible dogma or echo effects.
+   */
+  hasVisibleDogmaOrEcho() {
+    const player = this.player()
+    return (
+      this.game.getVisibleEffectsByColor(player, this.color, 'dogma').length > 0
+      || this.game.getVisibleEffectsByColor(player, this.color, 'echo').length > 0
+    )
   }
 }
 

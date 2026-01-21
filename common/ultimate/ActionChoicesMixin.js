@@ -77,7 +77,7 @@ const ActionChoicesMixin = {
     return this
       .util.colors()
       .map(color => this.zones.byPlayer(player, color))
-      .filter(zone => this.checkZoneHasVisibleDogmaOrEcho(player, zone))
+      .filter(zone => zone.hasVisibleDogmaOrEcho())
       .map(zone => zone.cardlist()[0])
   },
 

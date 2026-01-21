@@ -22,16 +22,6 @@ const QueryMixin = {
     return false
   },
 
-  /**
-   * Check if a zone has visible dogma or echo effects.
-   */
-  checkZoneHasVisibleDogmaOrEcho(player, zone) {
-    return (
-      this.getVisibleEffectsByColor(player, zone.color, 'dogma').length > 0
-      || this.getVisibleEffectsByColor(player, zone.color, 'echo').length > 0
-    )
-  },
-
   // ---------------------------------------------------------------------------
   // Age-related getters
   // ---------------------------------------------------------------------------
