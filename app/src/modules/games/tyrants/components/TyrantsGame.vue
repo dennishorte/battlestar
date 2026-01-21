@@ -43,7 +43,7 @@
 
 
 <script>
-import { util, tyr } from 'battlestar-common'
+import { util } from 'battlestar-common'
 
 import maps from '../res/maps.js'
 
