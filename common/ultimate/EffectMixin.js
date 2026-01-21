@@ -5,11 +5,11 @@
  * including the sharing/demanding logic and chain rule achievement tracking.
  *
  * Public API:
- *   - aCardEffect(player, info, opts) - Execute a single card effect
- *   - aOneEffect(player, card, text, impl, opts) - Execute one effect text with sharing/demanding
- *   - aCardEffects(player, card, kind, opts) - Execute all effects of a kind on a card
- *   - aTrackChainRule(player, card) - Track chain rule for achievement
- *   - aFinishChainEvent(player, card) - Finish chain event tracking
+ *   - executeEffect(player, info, opts) - Execute a single card effect
+ *   - executeDogmaEffect(player, card, text, impl, opts) - Execute one effect with sharing/demanding
+ *   - executeAllEffects(player, card, kind, opts) - Execute all effects of a kind on a card
+ *   - trackChainRule(player, card) - Track chain rule for achievement
+ *   - finishChainEvent(player, card) - Finish chain event tracking
  *   - checkEffectIsVisible(card) - Check if card has visible dogma/echo effects
  *   - getEffectAge(card, age) - Get age for effect with karma adjustments
  *   - getEffectByText(card, text) - Find effect implementation by text
@@ -28,7 +28,7 @@ const EffectMixin = {
    * @param {Object} opts - Additional options (leader, self, etc.)
    * @returns {*} Result of the effect function
    */
-  aCardEffect(player, info, opts = {}) {
+  executeEffect(player, info, opts = {}) {
     const prevLeader = this.state.dogmaInfo.effectLeader
     if (opts.leader) {
       this.state.dogmaInfo.effectLeader = opts.leader
@@ -54,7 +54,7 @@ const EffectMixin = {
    * @param {Function|Object} impl - The effect implementation
    * @param {Object} opts - Options including sharing, demanding, leader, endorsed, foreseen
    */
-  aOneEffect(player, card, text, impl, opts = {}) {
+  executeDogmaEffect(player, card, text, impl, opts = {}) {
     opts = {
       sharing: [],
       demanding: [],
@@ -95,7 +95,7 @@ const EffectMixin = {
    * @param {string} kind - The kind of effects ('dogma' or 'echo')
    * @param {Object} opts - Additional options
    */
-  aCardEffects(player, card, kind, opts = {}) {
+  executeAllEffects(player, card, kind, opts = {}) {
     const effects = card.visibleEffects(kind, opts)
     if (!effects) {
       return
@@ -104,7 +104,7 @@ const EffectMixin = {
     const { texts, impls } = effects
 
     for (let i = 0; i < texts.length; i++) {
-      this.aOneEffect(player, card, texts[i], impls[i], opts)
+      this.executeDogmaEffect(player, card, texts[i], impls[i], opts)
       if (this.state.dogmaInfo.earlyTerminate) {
         return
       }
@@ -118,7 +118,7 @@ const EffectMixin = {
    * @param {Object} player - The player
    * @param {Object} card - The card being tracked
    */
-  aTrackChainRule(player, card) {
+  trackChainRule(player, card) {
     if (!this.state.dogmaInfo.chainRule) {
       this.state.dogmaInfo.chainRule = {}
     }
@@ -155,7 +155,7 @@ const EffectMixin = {
    * @param {Object} player - The player
    * @param {Object} card - The card
    */
-  aFinishChainEvent(player, card) {
+  finishChainEvent(player, card) {
     const data = this.state.dogmaInfo.chainRule[player.name]
 
     // Got to the end of the dogma action for the original chain card.
@@ -332,7 +332,7 @@ const EffectMixin = {
       ...opts,
       card,
       effect: function() {
-        this.game.aCardEffect(actor, effectInfo, {
+        this.game.executeEffect(actor, effectInfo, {
           leader: opts.leader,
           self: card,
           foreseen: opts.foreseen,
@@ -346,7 +346,7 @@ const EffectMixin = {
     }
 
     // Execute the actual effect
-    this.aCardEffect(actor, effectInfo, {
+    this.executeEffect(actor, effectInfo, {
       leader: opts.leader,
       self: card,
       foreseen: opts.foreseen,

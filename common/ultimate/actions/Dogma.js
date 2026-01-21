@@ -144,7 +144,7 @@ function _executeEffects(player, card, opts) {
 
   for (const e of effects) {
     for (let i = 0; i < e.texts.length; i++) {
-      this.game.aOneEffect(player, e.card, e.texts[i], e.impls[i], {
+      this.game.executeDogmaEffect(player, e.card, e.texts[i], e.impls[i], {
         sharing: this.state.dogmaInfo.sharing,
         demanding: this.state.dogmaInfo.demanding,
         endorsed: opts.endorsed,

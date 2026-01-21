@@ -790,7 +790,7 @@ Innovation.prototype.getScoreDetails = function(player, opts={}) {
   details.bonuses = this.getBonuses(player)
   details.karma = this
     .findKarmasByTrigger(player, 'calculate-score')
-    .map(info => ({ name: info.card.name, points: this.aCardEffect(player, info) }))
+    .map(info => ({ name: info.card.name, points: this.executeEffect(player, info) }))
 
   details.scorePoints = details.score.reduce((l, r) => l + r, 0)
   details.bonusPoints = (details.bonuses[0] || 0) + Math.max(details.bonuses.length - 1, 0)

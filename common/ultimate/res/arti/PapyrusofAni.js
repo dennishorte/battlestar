@@ -24,7 +24,7 @@ module.exports = {
 
         if (drawn && drawn.color === 'purple') {
           game.actions.meld(player, drawn)
-          game.aCardEffects(player, drawn, 'dogma')
+          game.executeAllEffects(player, drawn, 'dogma')
         }
       }
       else {

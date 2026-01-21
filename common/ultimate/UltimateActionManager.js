@@ -990,7 +990,7 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   selfExecute(executingCard, player, card, opts={}) {
-    this.game.aTrackChainRule(player, executingCard)
+    this.game.trackChainRule(player, executingCard)
 
     const topCard = this.cards.top(player, card.color)
     const isTopCard = topCard && topCard.name === card.name
@@ -1013,21 +1013,21 @@ class UltimateActionManager extends BaseActionManager {
         .filter(other => other.id !== card.id)
         .reverse()
       for (const other of cards) {
-        this.game.aCardEffects(player, other, 'echo', opts)
+        this.game.executeAllEffects(player, other, 'echo', opts)
       }
     }
 
     // Do the card's echo effects.
-    this.game.aCardEffects(player, card, 'echo', opts)
+    this.game.executeAllEffects(player, card, 'echo', opts)
 
     // Do the card's dogma effects.
     if (opts.superExecute) {
       // Demand all opponents
       opts.demanding = this.players.opponents(player)
     }
-    this.game.aCardEffects(player, card, 'dogma', opts)
+    this.game.executeAllEffects(player, card, 'dogma', opts)
 
-    this.game.aFinishChainEvent(player, card)
+    this.game.finishChainEvent(player, card)
   }
 
   superExecute(executingCard, player, card) {

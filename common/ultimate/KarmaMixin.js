@@ -208,7 +208,7 @@ const KarmaMixin = {
   _runKarmaWithDepthTracking(player, karma, opts) {
     this.state.karmaDepth += 1
     try {
-      return this.aCardEffect(player, karma, opts)
+      return this.executeEffect(player, karma, opts)
     }
     finally {
       util.assert(this.state.karmaDepth > 0, 'Karma depth underflow')
