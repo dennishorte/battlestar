@@ -95,14 +95,14 @@ export default {
     countWithLimitHeader(player, zoneName) {
       return () => {
         const count = this.game.zones.byPlayer(player, zoneName).cardlist().length
-        const maximum = this.game.getZoneLimit(player)
+        const maximum = player.zoneLimit()
         return `${zoneName} ${count}/${maximum}`
       }
     },
 
     achievementsHeader(player) {
       return () => {
-        const achievements = this.game.getAchievementsByPlayer(player)
+        const achievements = player.achievementCount()
         const count = achievements.total
         const target = this.game.getNumAchievementsToWin()
         return `achievements ${count}/${target}`
@@ -112,7 +112,7 @@ export default {
     scoreHeader(player) {
       return () => {
         const count = this.game.zones.byPlayer(player, 'score').cardlist().length
-        const total = this.game.getScore(player)
+        const total = player.score()
         return `score ${count} [${total}]`
       }
     }

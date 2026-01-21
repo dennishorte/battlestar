@@ -26,7 +26,7 @@ export default {
 
   computed: {
     cards() {
-      return this.game.getAchievementsByPlayer(this.player).other.map(card => card.name)
+      return this.player.achievementCount().other.map(card => card.name)
     },
   },
 }
