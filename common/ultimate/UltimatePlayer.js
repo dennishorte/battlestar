@@ -132,7 +132,7 @@ class UltimatePlayer extends BasePlayer {
   /**
    * Get the score cost for this player to achieve a card.
    */
-  scoreCost(card) {
+  achievementCost(card) {
     const sameAge = this.game.zones
       .byPlayer(this, 'achievements')
       .cardlist()
@@ -149,8 +149,8 @@ class UltimatePlayer extends BasePlayer {
   /**
    * Check if this player meets the score requirement for an achievement.
    */
-  meetsScoreRequirement(card, opts = {}) {
-    return this.scoreCost(card) <= this.score(opts)
+  canAffordAchievement(card, opts = {}) {
+    return this.achievementCost(card) <= this.score(opts)
   }
 
   // ---------------------------------------------------------------------------
@@ -247,17 +247,17 @@ class UltimatePlayer extends BasePlayer {
   /**
    * Check if this player is eligible for an achievement.
    */
-  isEligibleForAchievement(card, opts = {}) {
+  canClaimAchievement(card, opts = {}) {
     const topCardAge = this.highestTopAge({ reason: 'achieve' })
     const ageRequirement = opts.ignoreAge || card.getAge() <= topCardAge
-    const scoreRequirement = opts.ignoreScore || this.meetsScoreRequirement(card, opts)
+    const scoreRequirement = opts.ignoreScore || this.canAffordAchievement(card, opts)
     return ageRequirement && scoreRequirement
   }
 
   /**
    * Get breakdown of this player's achievements (standard, special, other).
    */
-  achievements() {
+  achievementCount() {
     const ach = {
       standard: [],
       special: [],
@@ -351,19 +351,19 @@ class UltimatePlayer extends BasePlayer {
   }
 
   /**
-   * Get achievements this player is eligible to claim (raw card objects).
+   * Get achievements this player is eligible to claim (card objects).
    */
-  eligibleAchievementsRaw(opts = {}) {
+  eligibleAchievementCards(opts = {}) {
     return this
       .availableStandardAchievements()
-      .filter(card => this.isEligibleForAchievement(card, opts))
+      .filter(card => this.canClaimAchievement(card, opts))
   }
 
   /**
    * Get formatted list of achievements this player is eligible to claim.
    */
-  eligibleAchievements(opts = {}) {
-    const formatted = this.game.formatAchievements(this.eligibleAchievementsRaw(opts))
+  eligibleAchievementChoices(opts = {}) {
+    const formatted = this.game.formatAchievements(this.eligibleAchievementCards(opts))
     const standard = util.array.distinct(formatted).sort((l, r) => {
       if (l.exp === r.exp) {
         return l.age < r.age
@@ -375,7 +375,7 @@ class UltimatePlayer extends BasePlayer {
 
     const secrets = this.game
       .cards.byPlayer(this, 'safe')
-      .filter(card => this.isEligibleForAchievement(card))
+      .filter(card => this.canClaimAchievement(card))
       .map(card => `safe: ${card.getHiddenName()}`)
       .sort()
 

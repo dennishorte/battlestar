@@ -13,10 +13,10 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const mine = player.achievements().total
+      const mine = player.achievementCount().total
       const others = game
         .players.opponents(player)
-        .map(p => p.achievements().total * 2)
+        .map(p => p.achievementCount().total * 2)
 
       if (mine > 0 && others.every(count => count <= mine)) {
         game.youWin(player, self.name)

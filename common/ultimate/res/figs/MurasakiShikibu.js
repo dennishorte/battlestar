@@ -23,17 +23,17 @@ module.exports = {
         const choices = game
           .cards
           .byPlayer(player, 'score')
-          .filter(card => player.isEligibleForAchievement(card, {
+          .filter(card => player.canClaimAchievement(card, {
             excludeCards: [card],
           }))
 
         const junked = game.actions.chooseAndJunk(player, choices, { min: 0 })[0]
 
-        if (player.isEligibleForAchievement(card)) {
+        if (player.canClaimAchievement(card)) {
           game.actions.claimAchievement(player, { card, isStandard: true, nonAction: true })
         }
 
-        if (junked && player.isEligibleForAchievement(junked)) {
+        if (junked && player.canClaimAchievement(junked)) {
           game.actions.claimAchievement(player, { card: junked, nonAction: true })
         }
       }

@@ -17,7 +17,7 @@ describe('Marie Curie', () => {
       request = game.run()
 
       // Ages above 6: 9 (Computers) and 7 (Lighting) = 2 distinct values
-      expect(t.dennis(game).achievements().other.length).toBe(2)
+      expect(t.dennis(game).achievementCount().other.length).toBe(2)
     })
 
     test('karma: duplicate ages above 6 only count once', () => {
@@ -33,7 +33,7 @@ describe('Marie Curie', () => {
       request = game.run()
 
       // Ages above 6: 9 (Computers, Services - same age, counts once), 7 (Lighting) = 2 distinct values
-      expect(t.dennis(game).achievements().other.length).toBe(2)
+      expect(t.dennis(game).achievementCount().other.length).toBe(2)
     })
 
     test('karma: no cards above 6, no extra achievements', () => {
@@ -49,7 +49,7 @@ describe('Marie Curie', () => {
       request = game.run()
 
       // No ages above 6, so no extra achievements
-      expect(t.dennis(game).achievements().other.length).toBe(0)
+      expect(t.dennis(game).achievementCount().other.length).toBe(0)
     })
 
     test('karma: age 6 does not count', () => {
@@ -65,7 +65,7 @@ describe('Marie Curie', () => {
       request = game.run()
 
       // Only age 7 (Lighting) counts, age 6 (Canning) does not
-      expect(t.dennis(game).achievements().other.length).toBe(1)
+      expect(t.dennis(game).achievementCount().other.length).toBe(1)
     })
   })
 

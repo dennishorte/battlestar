@@ -24,7 +24,7 @@ describe('Robert E. Lee', () => {
     let request
     request = game.run()
 
-    const achs = t.dennis(game).achievements()
+    const achs = t.dennis(game).achievementCount()
     expect(achs.other.length).toBe(2)
   })
 

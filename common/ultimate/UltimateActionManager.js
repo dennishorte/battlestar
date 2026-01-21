@@ -45,9 +45,9 @@ class UltimateActionManager extends BaseActionManager {
     }
 
     // Standard achievements check age and score requirements
-    if (!player.isEligibleForAchievement(card, opts)) {
+    if (!player.canClaimAchievement(card, opts)) {
       const topCardAge = player.highestTopAge({ reason: 'achieve' })
-      const scoreCost = player.scoreCost(card)
+      const scoreCost = player.achievementCost(card)
       const currentScore = player.score(opts)
 
       const issues = []
@@ -150,7 +150,7 @@ class UltimateActionManager extends BaseActionManager {
     // Some karmas create special handling for win conditions
     if (!this.state.wouldWinKarma) {
       for (const player of this.players.all()) {
-        if (player.achievements().total >= this.game.getNumAchievementsToWin()) {
+        if (player.achievementCount().total >= this.game.getNumAchievementsToWin()) {
           this.game.youWin(player, 'achievements')
         }
       }

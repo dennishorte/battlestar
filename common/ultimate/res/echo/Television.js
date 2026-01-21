@@ -32,7 +32,7 @@ module.exports = {
             .cards
             .byPlayer(opponent, 'score')
             .filter(card => card.getAge() === age)
-            .filter(card => player.isEligibleForAchievement(card))
+            .filter(card => player.canClaimAchievement(card))
           game.actions.chooseAndAchieve(player, achieveChoices)
         }
       }

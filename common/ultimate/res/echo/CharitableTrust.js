@@ -30,7 +30,7 @@ module.exports = {
           game.log.add({ template: 'no top green card' })
         }
         else if (melded.getAge() === game.getEffectAge(self, 3)) {
-          if (player.isEligibleForAchievement(greenCard)) {
+          if (player.canClaimAchievement(greenCard)) {
             game.actions.claimAchievement(player, { card: greenCard })
           }
         }

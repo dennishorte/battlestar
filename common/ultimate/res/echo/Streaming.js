@@ -26,7 +26,7 @@ module.exports = {
         }
 
         const options = ['score']
-        const canAchieve = player.isEligibleForAchievement(card)
+        const canAchieve = player.canClaimAchievement(card)
         if (canAchieve) {
           options.push('achieve')
         }

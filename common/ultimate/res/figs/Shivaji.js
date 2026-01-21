@@ -19,7 +19,7 @@ module.exports = {
       func: (game, player, { card, owner }) => {
         const choices = owner
           .availableStandardAchievements()
-          .filter(achievement => owner.isEligibleForAchievement(achievement))
+          .filter(achievement => owner.canClaimAchievement(achievement))
           .filter(achievement => achievement.id !== card.id)
 
         game.actions.chooseAndAchieve(owner, choices)

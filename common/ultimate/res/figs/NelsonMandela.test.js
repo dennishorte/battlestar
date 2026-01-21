@@ -64,7 +64,7 @@ describe('Nelson Mandela', () => {
       })
       // dennis has 1 {p} biscuit (from Nelson Mandela), so 0 extra achievements (need 2 for 1 achievement)
 
-      expect(t.dennis(game).achievements().other.length).toBe(0)
+      expect(t.dennis(game).achievementCount().other.length).toBe(0)
     })
 
     test('karma: two {p} biscuits, one extra achievement', () => {
@@ -80,7 +80,7 @@ describe('Nelson Mandela', () => {
       let request
       request = game.run()
 
-      expect(t.dennis(game).achievements().other.length).toBe(1)
+      expect(t.dennis(game).achievementCount().other.length).toBe(1)
     })
 
     test('karma: four {p} biscuits, two extra achievements', () => {
@@ -97,7 +97,7 @@ describe('Nelson Mandela', () => {
       let request
       request = game.run()
 
-      expect(t.dennis(game).achievements().other.length).toBe(2)
+      expect(t.dennis(game).achievementCount().other.length).toBe(2)
     })
   })
 })
