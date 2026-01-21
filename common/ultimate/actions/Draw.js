@@ -42,7 +42,7 @@ function _doDraw(player, exp, age, opts={}) {
       .all()
       .map(player => ({
         player,
-        score: this.game.getScore(player),
+        score: player.score(),
         achs: this.game.getAchievementsByPlayer(player).total,
       }))
       .sort((l, r) => {
@@ -108,7 +108,7 @@ function _adjustedDrawDeck(age, exp) {
 function _determineBaseDrawExpansion(player) {
   // Whether the player ends up drawing echoes, unseen, or base, this counts as their
   // first base draw, and so following draws won't draw unseen cards.
-  const isFirstBaseDraw = this.game.checkIsFirstBaseDraw(player)
+  const isFirstBaseDraw = player.isFirstBaseDraw()
   if (isFirstBaseDraw){
     this.game.mSetFirstBaseDraw(player)
   }

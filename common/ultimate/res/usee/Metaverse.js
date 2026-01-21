@@ -12,7 +12,7 @@ module.exports = {
     (game, player, { self }) => {
       const topSplayedCards = game
         .cards.tops(player)
-        .filter(c => game.checkColorIsSplayed(player, c.color))
+        .filter(c => player.isColorSplayed(c.color))
 
       const scored = game.actions.scoreMany(player, topSplayedCards)
 

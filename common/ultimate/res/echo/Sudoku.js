@@ -16,7 +16,7 @@ module.exports = {
       const age = game.actions.chooseAge(player)
       const card = game.actions.drawAndMeld(player, age)
 
-      const bonuses = util.array.distinct(game.getBonuses(player))
+      const bonuses = util.array.distinct(player.bonuses())
       if (bonuses.length >= 9) {
         game.youWin(player, self.name)
       }

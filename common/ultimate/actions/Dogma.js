@@ -201,7 +201,7 @@ function _shareBonus(player, card) {
 function _getBiscuitComparator(player, featuredBiscuit, biscuits) {
   return (other) => {
     if (featuredBiscuit === 'score') {
-      return this.game.getScore(other) >= this.game.getScore(player)
+      return other.score() >= player.score()
     }
     else if (this.state.dogmaInfo.soleMajorityPlayerId === other.id) {
       return true

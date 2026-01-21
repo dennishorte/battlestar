@@ -40,8 +40,8 @@ module.exports = {
         game.actions.splay(player, color, 'aslant')
 
         // Check if player doesn't have highest score
-        const playerScore = game.getScore(player)
-        const highestScore = Math.max(...game.players.all().map(p => game.getScore(p)))
+        const playerScore = player.score()
+        const highestScore = Math.max(...game.players.all().map(p => p.score()))
 
         return playerScore < highestScore
       }

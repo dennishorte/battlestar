@@ -16,6 +16,6 @@ describe('Sinuhe', () => {
     })
     let request
     request = game.run()
-    expect(game.getScore(t.dennis(game))).toBe(5)
+    expect(t.dennis(game).score()).toBe(5)
   })
 })

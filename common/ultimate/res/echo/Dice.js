@@ -29,11 +29,11 @@ module.exports = {
       game.log.addForeseen(foreseen, self)
       if (foreseen) {
         const card = game.actions.draw(player, { age: game.getEffectAge(self, 4) })
-        const playerBonusPoints = game.getBonuses(player).reduce((l, r) => l + r, 0)
+        const playerBonusPoints = player.bonuses().reduce((l, r) => l + r, 0)
         const otherBonusPoints = game
           .players.opponents(player)
           .map(opp => {
-            const points = game.getBonuses(opp).reduce((l, r) => l + r, 0)
+            const points = opp.bonuses().reduce((l, r) => l + r, 0)
             return { opp, points }
           })
 

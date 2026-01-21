@@ -15,7 +15,7 @@ module.exports = {
     (game, player, { foreseen, self }) => {
       const boardBonuses = game
         .players.all()
-        .flatMap(p => game.getBonuses(p))
+        .flatMap(p => p.bonuses())
       const bonuses = util.array.distinct(boardBonuses).sort()
       const age = game.actions.chooseAge(player, bonuses, { title: 'Choose an age to draw from' })
       if (age) {

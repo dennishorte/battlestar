@@ -52,7 +52,7 @@ module.exports = {
         // Safeguard achievements
         const available = game.getAvailableStandardAchievements(player)
 
-        const max = Math.min(available.length, game.getSafeOpenings(player))
+        const max = Math.min(available.length, player.safeOpenings())
         game.actions.chooseAndSafeguard(player, available, {
           title: 'Choose achievements to safeguard',
           min: 0,

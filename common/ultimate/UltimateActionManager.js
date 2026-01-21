@@ -46,9 +46,9 @@ class UltimateActionManager extends BaseActionManager {
 
     // Standard achievements check age and score requirements
     if (!this.game.checkAchievementEligibility(player, card, opts)) {
-      const topCardAge = this.game.getHighestTopAge(player, { reason: 'achieve' })
-      const scoreCost = this.game.getScoreCost(player, card)
-      const currentScore = this.game.getScore(player, opts)
+      const topCardAge = player.highestTopAge({ reason: 'achieve' })
+      const scoreCost = player.scoreCost(card)
+      const currentScore = player.score(opts)
 
       const issues = []
       if (card.getAge() > topCardAge) {
@@ -570,7 +570,7 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   foreshadow = UltimateActionManager.insteadKarmaWrapper('foreshadow', (player, card) => {
-    const zoneLimit = this.game.getForecastLimit(player)
+    const zoneLimit = player.forecastLimit()
     const target = this.zones.byPlayer(player, 'forecast')
 
     if (target.cardlist().length >= zoneLimit) {
@@ -773,7 +773,7 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   safeguard = UltimateActionManager.insteadKarmaWrapper('safeguard', (player, card) => {
-    const safeLimit = this.game.getSafeLimit(player)
+    const safeLimit = player.safeLimit()
     const safeZone = this.zones.byPlayer(player, 'safe')
 
     if (safeZone.cardlist().length >= safeLimit) {

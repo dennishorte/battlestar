@@ -19,6 +19,6 @@ describe('Tigernmas', () => {
     let request
     request = game.run()
 
-    expect(game.getScore(t.dennis(game))).toBe(2)
+    expect(t.dennis(game).score()).toBe(2)
   })
 })

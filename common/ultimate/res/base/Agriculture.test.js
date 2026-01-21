@@ -17,7 +17,7 @@ describe('Agriculture', () => {
     t.choose(game, request, 'Domestication')
 
     const dennis = game.players.byName('dennis')
-    expect(game.getScore(dennis)).toBe(2)
+    expect(dennis.score()).toBe(2)
   })
 
   test('do not return a card', () => {
@@ -31,6 +31,6 @@ describe('Agriculture', () => {
     t.choose(game, request)
 
     const dennis = game.players.byName('dennis')
-    expect(game.getScore(dennis)).toBe(0)
+    expect(dennis.score()).toBe(0)
   })
 })

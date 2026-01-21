@@ -14,7 +14,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const bonuses = util.array.distinct(game.getBonuses(player)).sort((l, r) => l - r)
+      const bonuses = util.array.distinct(player.bonuses()).sort((l, r) => l - r)
 
       if (bonuses.length > 0) {
         const age = game.actions.chooseAge(player, bonuses)

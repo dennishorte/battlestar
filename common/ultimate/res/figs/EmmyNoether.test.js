@@ -16,7 +16,7 @@ describe('Emmy Noether', () => {
     let request
     request = game.run()
 
-    expect(game.getScore(t.dennis(game))).toBe(18)
+    expect(t.dennis(game).score()).toBe(18)
   })
 
   describe('If a player would score a card, first junk a card from that player\'s score pile.', () => {

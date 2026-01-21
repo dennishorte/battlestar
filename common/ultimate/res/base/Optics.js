@@ -24,10 +24,10 @@ module.exports = {
             template: '{card} does not have a {c} biscuit',
             args: { card }
           })
-          const playerScore = game.getScore(player)
+          const playerScore = player.score()
           const targets = game
             .players.opponents(player)
-            .filter(other => game.getScore(other) < playerScore)
+            .filter(other => other.score() < playerScore)
 
           if (targets.length > 0) {
             const targetPlayer = game.actions.choosePlayer(player, targets)

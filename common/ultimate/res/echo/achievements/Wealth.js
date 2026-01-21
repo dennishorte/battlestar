@@ -7,6 +7,6 @@ module.exports = {
   isSpecialAchievement: true,
   checkPlayerIsEligible: function(game, player, reduceCost) {
     const targetCount = reduceCost ? 7 : 8
-    return game.getBonuses(player).length >= targetCount
+    return player.bonuses().length >= targetCount
   },
 }

@@ -22,8 +22,8 @@ describe('Gilgamesh', () => {
 
     expect(t.dennis(game).biscuits().k).toBe(8)
     expect(t.dennis(game).biscuits().f).toBe(4)
-    expect(game.getScore(t.dennis(game))).toBe(1)
-    expect(game.getScore(game.players.byName('micah'))).toBe(-3)
+    expect(t.dennis(game).score()).toBe(1)
+    expect(game.players.byName('micah').score()).toBe(-3)
   })
 
 })

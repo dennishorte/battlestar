@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const card = game.actions.drawAndMeld(player, game.getHighestTopAge(player) + 1)
+      const card = game.actions.drawAndMeld(player, player.highestTopAge() + 1)
       const junked = game.actions.junkAvailableAchievement(player, game.getAges())
 
       if (!junked && card.biscuits.split('i').length - 1 >= 3) {

@@ -25,7 +25,7 @@ module.exports = {
     },
 
     (game, player) => {
-      const bonuses = game.getBonuses(player)
+      const bonuses = player.bonuses()
       const ages = game.getAges().filter(age => bonuses.includes(age))
       for (const age of ages) {
         game.actions.drawAndMeld(player, age)

@@ -12,8 +12,8 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { foreseen, self }) => {
-      const remaining = game
-        .getBonuses(player)
+      const remaining = player
+        .bonuses()
         .filter(bonus => bonus % 2 === 0)
         .sort()
 
@@ -34,8 +34,8 @@ module.exports = {
     },
 
     (game, player) => {
-      const count = game
-        .getBonuses(player)
+      const count = player
+        .bonuses()
         .filter(bonus => bonus % 2 === 1)
         .length
 

@@ -19,6 +19,6 @@ describe('Michaelangelo', () => {
       'Sailing',
       'Tools',
     ])
-    expect(game.getScore(t.dennis(game))).toBe(7)
+    expect(t.dennis(game).score()).toBe(7)
   })
 })

@@ -26,11 +26,11 @@ module.exports = {
     }
   ],
   echoImpl: (game, player, { self }) => {
-    const playerScore = game.getScore(player)
+    const playerScore = player.score()
     const otherScores = game
       .players.all()
       .filter(other => other !== player)
-      .map(other => game.getScore(other))
+      .map(other => other.score())
 
     const isLowest = otherScores.every(score => score >= playerScore)
     if (isLowest) {

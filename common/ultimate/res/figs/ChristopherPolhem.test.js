@@ -22,7 +22,7 @@ describe('Christopher Polhem', () => {
     let request
     request = game.run()
 
-    expect(game.getScore(t.dennis(game))).toBe(0)
+    expect(t.dennis(game).score()).toBe(0)
   })
 
   test('karma: score with one achievement', () => {
@@ -38,7 +38,7 @@ describe('Christopher Polhem', () => {
     let request
     request = game.run()
 
-    expect(game.getScore(t.dennis(game))).toBe(5)
+    expect(t.dennis(game).score()).toBe(5)
   })
 
   test('karma: score with two achievements', () => {
@@ -54,6 +54,6 @@ describe('Christopher Polhem', () => {
     let request
     request = game.run()
 
-    expect(game.getScore(t.dennis(game))).toBe(10)
+    expect(t.dennis(game).score()).toBe(10)
   })
 })

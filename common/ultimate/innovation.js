@@ -594,10 +594,10 @@ Innovation.prototype.checkAchievementAvailable = function(name) {
 }
 
 Innovation.prototype.checkAchievementEligibility = function(player, card, opts={}) {
-  const topCardAge = this.getHighestTopAge(player, { reason: 'achieve' })
+  const topCardAge = player.highestTopAge({ reason: 'achieve' })
 
   const ageRequirement = opts.ignoreAge || card.getAge() <= topCardAge
-  const scoreRequirement = opts.ignoreScore || this.checkScoreRequirement(player, card, opts)
+  const scoreRequirement = opts.ignoreScore || player.meetsScoreRequirement(card, opts)
   return ageRequirement && scoreRequirement
 }
 
