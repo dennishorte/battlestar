@@ -13,7 +13,7 @@
  * Usage: Object.assign(Innovation.prototype, KarmaMixin)
  */
 
-const util = require('../lib/util.js')
+const util = require('../../lib/util.js')
 
 // Log message templates for "would" karma triggers
 const WOULD_TRIGGER_MESSAGES = {

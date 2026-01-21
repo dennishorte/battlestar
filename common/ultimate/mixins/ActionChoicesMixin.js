@@ -7,7 +7,7 @@
  * Usage: Object.assign(Innovation.prototype, ActionChoicesMixin)
  */
 
-const util = require('../lib/util.js')
+const util = require('../../lib/util.js')
 
 const ActionChoicesMixin = {
 

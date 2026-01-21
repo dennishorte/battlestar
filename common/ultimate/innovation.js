@@ -16,10 +16,10 @@ const { UltimateZone } = require('./UltimateZone.js')
 const { UltimateZoneManager } = require('./UltimateZoneManager.js')
 
 const { getDogmaShareInfo } = require('./actions/Dogma.js')
-const { ActionChoicesMixin } = require('./ActionChoicesMixin.js')
-const { EffectMixin } = require('./EffectMixin.js')
-const { KarmaMixin } = require('./KarmaMixin.js')
-const { QueryMixin } = require('./QueryMixin.js')
+const { ActionChoicesMixin } = require('./mixins/ActionChoicesMixin.js')
+const { EffectMixin } = require('./mixins/EffectMixin.js')
+const { KarmaMixin } = require('./mixins/KarmaMixin.js')
+const { QueryMixin } = require('./mixins/QueryMixin.js')
 
 const SUPPORTED_EXPANSIONS = ['base', 'echo', 'figs', 'city', 'arti', 'usee']
 
