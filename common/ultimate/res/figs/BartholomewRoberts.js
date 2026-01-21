@@ -28,8 +28,8 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func: (game, player, { age }) => {
-        const canAchieve = game
-          .getAvailableStandardAchievements(player)
+        const canAchieve = player
+          .availableStandardAchievements()
           .filter(card => card.getAge() === age)
         game.actions.chooseAndAchieve(player, canAchieve, { nonAction: true })
       }

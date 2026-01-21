@@ -32,8 +32,8 @@ module.exports = {
           .filter(card => card.color === color)
         game.actions.returnMany(player, toReturn)
         const toClaim = toReturn.map(card => card.getAge())
-        game
-          .getAvailableAchievements(player)
+        player
+          .availableAchievements()
           .filter(card => toClaim.includes(card.getAge()))
           .forEach(card => game.actions.claimAchievement(player, { card }))
       }

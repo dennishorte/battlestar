@@ -13,7 +13,7 @@ module.exports = {
       const safeguarded = game.actions.chooseAndSafeguard(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1 })
 
       if (safeguarded && safeguarded.length > 0) {
-        const availableAchievements = game.getAvailableStandardAchievements(player)
+        const availableAchievements = player.availableStandardAchievements()
         const achievements = game.actions.chooseCards(player, availableAchievements, {
           title: 'Choose two available achievements to reveal',
           hidden: true,

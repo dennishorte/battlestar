@@ -28,7 +28,7 @@ const ActionChoicesMixin = {
 
     return {
       title: 'Achieve',
-      choices: this.getEligibleAchievements(player),
+      choices: player.eligibleAchievements(),
       min: 0,
     }
   },

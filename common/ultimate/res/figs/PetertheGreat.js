@@ -26,7 +26,7 @@ module.exports = {
           if (card.checkHasBiscuit('c')) {
             const toAchieve = game.cards.bottom(player, 'green')
             if (toAchieve) {
-              if (game.checkAchievementEligibility(player, toAchieve)) {
+              if (player.isEligibleForAchievement(toAchieve)) {
                 game.actions.claimAchievement(player, toAchieve)
               }
               else {

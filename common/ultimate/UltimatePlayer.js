@@ -239,6 +239,151 @@ class UltimatePlayer extends BasePlayer {
   isFirstBaseDraw() {
     return !this.game.state.drawInfo[this.name].drewFirstBaseCard
   }
+
+  // ---------------------------------------------------------------------------
+  // Achievement methods
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Check if this player is eligible for an achievement.
+   */
+  isEligibleForAchievement(card, opts = {}) {
+    const topCardAge = this.highestTopAge({ reason: 'achieve' })
+    const ageRequirement = opts.ignoreAge || card.getAge() <= topCardAge
+    const scoreRequirement = opts.ignoreScore || this.meetsScoreRequirement(card, opts)
+    return ageRequirement && scoreRequirement
+  }
+
+  /**
+   * Get breakdown of this player's achievements (standard, special, other).
+   */
+  achievements() {
+    const ach = {
+      standard: [],
+      special: [],
+      other: [],
+      total: 0
+    }
+
+    for (const card of this.game.zones.byPlayer(this, 'achievements').cardlist()) {
+      if (card.isSpecialAchievement || card.isDecree) {
+        ach.special.push(card)
+      }
+      else {
+        ach.standard.push(card)
+      }
+    }
+
+    const karmaInfos = this.game.findKarmasByTrigger(this, 'extra-achievements')
+    for (const info of karmaInfos) {
+      const count = info.impl.func(this.game, this)
+      for (let i = 0; i < count; i++) {
+        ach.other.push(info.card)
+      }
+    }
+
+    // Flags and Fountains
+    const cards = this.game.zones.colorStacks(this).flatMap(zone => zone.cardlist())
+    const flags = cards.filter(card => card.checkBiscuitIsVisible(';'))
+    const fountains = cards.filter(card => card.checkBiscuitIsVisible(':'))
+
+    for (const card of flags) {
+      // Player must have the most or tied for the most visible cards of that color to get the achievement.
+      const myCount = card.zone.numVisibleCards()
+      const otherCounts = this.game
+        .players
+        .other(this)
+        .map(other => this.game.zones.byPlayer(other, card.color).numVisibleCards())
+
+      if (otherCounts.every(otherCount => otherCount <= myCount)) {
+        const count = card.visibleBiscuits().split(';').length - 1
+        for (let i = 0; i < count; i++) {
+          ach.other.push(card)
+        }
+      }
+    }
+
+    for (const card of fountains) {
+      const count = card.visibleBiscuits().split(':').length - 1
+      for (let i = 0; i < count; i++) {
+        ach.other.push(card)
+      }
+    }
+
+    ach.total = ach.standard.length + ach.special.length + ach.other.length
+
+    return ach
+  }
+
+  /**
+   * Get all available achievements (special + standard) for this player.
+   */
+  availableAchievements() {
+    return [
+      ...this.game.getAvailableSpecialAchievements(),
+      ...this.availableStandardAchievements(),
+    ]
+  }
+
+  /**
+   * Get available standard achievements of a specific age.
+   */
+  availableAchievementsByAge(age) {
+    age = parseInt(age)
+    return this.availableStandardAchievements().filter(c => c.getAge() === age)
+  }
+
+  /**
+   * Get available standard achievements for this player.
+   */
+  availableStandardAchievements() {
+    const achievementsZone = this.game
+      .zones
+      .byId('achievements')
+      .cardlist()
+      .filter(c => !c.isSpecialAchievement && !c.isDecree && !c.isMuseum)
+
+    const fromKarma = this.game
+      .findKarmasByTrigger(this, 'list-achievements')
+      .flatMap(info => info.impl.func(this.game, this))
+
+    return [achievementsZone, fromKarma].flat()
+  }
+
+  /**
+   * Get achievements this player is eligible to claim (raw card objects).
+   */
+  eligibleAchievementsRaw(opts = {}) {
+    return this
+      .availableStandardAchievements()
+      .filter(card => this.isEligibleForAchievement(card, opts))
+  }
+
+  /**
+   * Get formatted list of achievements this player is eligible to claim.
+   */
+  eligibleAchievements(opts = {}) {
+    const formatted = this.game.formatAchievements(this.eligibleAchievementsRaw(opts))
+    const standard = util.array.distinct(formatted).sort((l, r) => {
+      if (l.exp === r.exp) {
+        return l.age < r.age
+      }
+      else {
+        return l.exp.localeCompare(r.exp)
+      }
+    })
+
+    const secrets = this.game
+      .cards.byPlayer(this, 'safe')
+      .filter(card => this.isEligibleForAchievement(card))
+      .map(card => `safe: ${card.getHiddenName()}`)
+      .sort()
+
+    return [
+      ...standard,
+      ...secrets,
+    ]
+  }
 }
 
 module.exports = {

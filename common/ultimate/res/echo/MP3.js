@@ -27,7 +27,7 @@ module.exports = {
       if (returned) {
         const toAchieve = returned.length * 2
         for (let i = 0; i < toAchieve; i++) {
-          const choices = game.getEligibleAchievementsRaw(player)
+          const choices = player.eligibleAchievementsRaw()
           if (choices) {
             game.actions.chooseAndAchieve(player, choices)
           }

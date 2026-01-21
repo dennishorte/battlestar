@@ -23,7 +23,7 @@ module.exports = {
           return
         }
 
-        const availableAchievements = game.getAvailableStandardAchievements(player)
+        const availableAchievements = player.availableStandardAchievements()
         const higherAchievement = availableAchievements.find(a => a.getAge() === safeGuarded.getAge() + 1)
 
         if (higherAchievement) {

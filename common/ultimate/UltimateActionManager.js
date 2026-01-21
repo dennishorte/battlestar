@@ -45,7 +45,7 @@ class UltimateActionManager extends BaseActionManager {
     }
 
     // Standard achievements check age and score requirements
-    if (!this.game.checkAchievementEligibility(player, card, opts)) {
+    if (!player.isEligibleForAchievement(card, opts)) {
       const topCardAge = player.highestTopAge({ reason: 'achieve' })
       const scoreCost = player.scoreCost(card)
       const currentScore = player.score(opts)
@@ -150,7 +150,7 @@ class UltimateActionManager extends BaseActionManager {
     // Some karmas create special handling for win conditions
     if (!this.state.wouldWinKarma) {
       for (const player of this.players.all()) {
-        if (this.game.getAchievementsByPlayer(player).total >= this.game.getNumAchievementsToWin()) {
+        if (player.achievements().total >= this.game.getNumAchievementsToWin()) {
           this.game.youWin(player, 'achievements')
         }
       }
@@ -623,7 +623,7 @@ class UltimateActionManager extends BaseActionManager {
       ages = [ages]
     }
 
-    const eligible = ages.flatMap(age => this.game.getAvailableAchievementsByAge(player, age))
+    const eligible = ages.flatMap(age => player.availableAchievementsByAge(age))
 
     const card = this.chooseCards(player, eligible, {
       title: 'Choose an achievement to junk',
@@ -799,7 +799,7 @@ class UltimateActionManager extends BaseActionManager {
   })
 
   safeguardAvailableAchievement(player, age) {
-    const availableAchievements = this.game.getAvailableAchievementsByAge(player, age)
+    const availableAchievements = player.availableAchievementsByAge(age)
 
     if (availableAchievements.length === 0) {
       this.log.add({ template: 'No available achievements of age ' + age })

@@ -12,8 +12,8 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const numAchievements = game.cards.byPlayer(player, 'achievements').length
-      const choices = game
-        .getAvailableStandardAchievements(player)
+      const choices = player
+        .availableStandardAchievements()
         .filter(card => card.age === numAchievements + 1)
         .filter(card => card.checkIsStandardAchievement())
 
@@ -26,7 +26,7 @@ module.exports = {
     },
 
     (game, player) => {
-      const achievements = game.getAvailableStandardAchievements(player)
+      const achievements = player.availableStandardAchievements()
 
       if (achievements.length === 0) {
         game.log.addNoEffect()

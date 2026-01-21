@@ -25,7 +25,7 @@ module.exports = {
           .players
           .all()
           .flatMap(p => game.cards.byPlayer(p, 'hand'))
-          .filter(card => game.checkAchievementEligibility(player, card))
+          .filter(card => player.isEligibleForAchievement(card))
 
         const achieved = game.actions.chooseAndAchieve(player, mayAchieve)
 

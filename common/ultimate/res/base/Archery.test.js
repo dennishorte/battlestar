@@ -81,8 +81,8 @@ describe('Archery', () => {
     request = t.choose(game, request, 'Dogma.Archery')
     request = t.choose(game, request, '**base-1*')
 
-    expect(game.getAvailableAchievementsByAge(t.dennis(game), 1)).toHaveLength(0)
-    expect(game.getAvailableAchievementsByAge(t.dennis(game), 2)).toHaveLength(1)
+    expect(t.dennis(game).availableAchievementsByAge( 1)).toHaveLength(0)
+    expect(t.dennis(game).availableAchievementsByAge( 2)).toHaveLength(1)
   })
 
   test('dogma: junking age 2 achievement', () => {
@@ -100,8 +100,8 @@ describe('Archery', () => {
     request = t.choose(game, request, 'Dogma.Archery')
     request = t.choose(game, request, '**base-2*')
 
-    expect(game.getAvailableAchievementsByAge(t.dennis(game), 1)).toHaveLength(1)
-    expect(game.getAvailableAchievementsByAge(t.dennis(game), 2)).toHaveLength(0)
+    expect(t.dennis(game).availableAchievementsByAge( 1)).toHaveLength(1)
+    expect(t.dennis(game).availableAchievementsByAge( 2)).toHaveLength(0)
   })
 
   test('dogma: no eligible achievements', () => {
@@ -118,7 +118,7 @@ describe('Archery', () => {
     request = game.run()
     request = t.choose(game, request, 'Dogma.Archery')
 
-    expect(game.getAvailableAchievementsByAge(t.dennis(game), 3)).toHaveLength(1)
+    expect(t.dennis(game).availableAchievementsByAge( 3)).toHaveLength(1)
   })
 
   test('dogma: choosing between equal highest values', () => {

@@ -13,7 +13,7 @@ module.exports = {
     (game, player, { foreseen, self }) => {
       game.log.addForeseen(foreseen, self)
       while (true) {
-        const choices = game.getEligibleAchievementsRaw(player, { doubleScore: true })
+        const choices = player.eligibleAchievementsRaw({ doubleScore: true })
         const achieved = game.actions.chooseAndAchieve(player, choices)
 
         if (!foreseen || achieved.length === 0) {

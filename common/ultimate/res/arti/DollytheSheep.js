@@ -57,7 +57,7 @@ module.exports = {
     },
 
     (game, player) => {
-      game.actions.junkMany(player, game.getAvailableAchievements(player))
+      game.actions.junkMany(player, player.availableAchievements())
     }
   ],
 }

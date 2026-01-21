@@ -29,7 +29,7 @@ module.exports = {
         if (opponentValues.every(value => value < topValue)) {
           const eligible = game
             .cards.byPlayer(player, 'hand')
-            .filter(card => game.checkAchievementEligibility(player, card))
+            .filter(card => player.isEligibleForAchievement(card))
           game.actions.chooseAndAchieve(player, eligible, { min: 0, max: 1 })
         }
       }

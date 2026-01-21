@@ -16,8 +16,8 @@ module.exports = {
       kind: 'would-first',
       matches: (game, player) => game.cards.byPlayer(player, 'hand').length === 4,
       func: (game, player, { age }) => {
-        const choices = game
-          .getAvailableAchievements(player)
+        const choices = player
+          .availableAchievements()
           .filter(ach => ach.getAge() <= age)
         game.actions.chooseAndAchieve(player, choices, { nonAction: true })
       }

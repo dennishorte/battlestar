@@ -23,7 +23,7 @@ module.exports = {
             .flatMap(player2 => game.cards.byPlayer(player2, 'score'))
           game.actions.junkMany(player, allScoreCards)
 
-          const allAvailableAchievements = game.getAvailableStandardAchievements(player)
+          const allAvailableAchievements = player.availableStandardAchievements()
           game.actions.junkMany(player, allAvailableAchievements)
         }
       }

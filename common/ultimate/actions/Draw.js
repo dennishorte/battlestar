@@ -43,7 +43,7 @@ function _doDraw(player, exp, age, opts={}) {
       .map(player => ({
         player,
         score: player.score(),
-        achs: this.game.getAchievementsByPlayer(player).total,
+        achs: player.achievements().total,
       }))
       .sort((l, r) => {
         if (r.score !== l.score) {

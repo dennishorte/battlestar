@@ -34,7 +34,7 @@ module.exports = {
     },
 
     (game, player) => {
-      const achievements = game.getAvailableStandardAchievements(player)
+      const achievements = player.availableStandardAchievements()
       game.actions.chooseAndAchieve(player, achievements)
     }
   ],

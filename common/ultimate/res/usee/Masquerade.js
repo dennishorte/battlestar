@@ -12,7 +12,7 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const handSize = game.zones.byPlayer(player, 'hand').cardlist().length
-      const availableAchievement = game.getAvailableAchievementsByAge(player, handSize)[0]
+      const availableAchievement = player.availableAchievementsByAge(handSize)[0]
 
       if (availableAchievement) {
         game.actions.safeguard(player, availableAchievement)

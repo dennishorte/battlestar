@@ -1013,7 +1013,7 @@ describe('Innovation', () => {
 
         const request1 = game.run()
 
-        const achievements = game.getAchievementsByPlayer(t.dennis(game))
+        const achievements = t.dennis(game).achievements()
         expect(achievements.total).toBe(0)
       })
 
@@ -1033,7 +1033,7 @@ describe('Innovation', () => {
 
         const request1 = game.run()
 
-        const achievements = game.getAchievementsByPlayer(t.dennis(game))
+        const achievements = t.dennis(game).achievements()
         expect(achievements.total).toBe(1)
       })
 
@@ -1050,7 +1050,7 @@ describe('Innovation', () => {
 
         const request1 = game.run()
 
-        const achievements = game.getAchievementsByPlayer(t.dennis(game))
+        const achievements = t.dennis(game).achievements()
         expect(achievements.total).toBe(1)
       })
 
@@ -1070,7 +1070,7 @@ describe('Innovation', () => {
 
         const request1 = game.run()
 
-        const achievements = game.getAchievementsByPlayer(t.dennis(game))
+        const achievements = t.dennis(game).achievements()
         expect(achievements.total).toBe(0)
       })
 
@@ -1084,7 +1084,7 @@ describe('Innovation', () => {
 
         const request1 = game.run()
 
-        const achievements = game.getAchievementsByPlayer(t.dennis(game))
+        const achievements = t.dennis(game).achievements()
         expect(achievements.total).toBe(2)
       })
 
@@ -1101,7 +1101,7 @@ describe('Innovation', () => {
 
         const request1 = game.run()
 
-        const achievements = game.getAchievementsByPlayer(t.dennis(game))
+        const achievements = t.dennis(game).achievements()
         expect(achievements.total).toBe(1)
       })
 
@@ -1115,7 +1115,7 @@ describe('Innovation', () => {
 
         const request1 = game.run()
 
-        const achievements = game.getAchievementsByPlayer(t.dennis(game))
+        const achievements = t.dennis(game).achievements()
         expect(achievements.total).toBe(0)
 
       })

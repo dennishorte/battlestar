@@ -13,7 +13,7 @@ module.exports = {
       const scoreCards = game.cards.byPlayer(player, 'score')
       const melded = game.actions.chooseAndMeld(player, scoreCards)[0]
 
-      const lowestAchievement = game.util.lowestCards(game.getAvailableStandardAchievements(player))[0]
+      const lowestAchievement = game.util.lowestCards(player.availableStandardAchievements())[0]
       let safeguarded
       if (lowestAchievement) {
         safeguarded = game.actions.safeguard(player, lowestAchievement)

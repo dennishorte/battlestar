@@ -17,7 +17,7 @@ module.exports = {
         if (card.color === 'yellow' || card.color === 'purple') {
           const handAges = game.cards.byPlayer(player, 'hand').map(c => c.getAge())
           const maxAge = Math.max(...handAges)
-          const achievement = game.getAvailableAchievementsByAge(player, maxAge)[0]
+          const achievement = player.availableAchievementsByAge(maxAge)[0]
 
           if (achievement) {
             game.actions.safeguard(player, achievement)

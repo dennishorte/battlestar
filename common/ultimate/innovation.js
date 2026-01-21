@@ -593,76 +593,8 @@ Innovation.prototype.checkAchievementAvailable = function(name) {
   return !!this.zones.byId('achievements').cardlist().find(ach => ach.name === name)
 }
 
-Innovation.prototype.checkAchievementEligibility = function(player, card, opts={}) {
-  const topCardAge = player.highestTopAge({ reason: 'achieve' })
-
-  const ageRequirement = opts.ignoreAge || card.getAge() <= topCardAge
-  const scoreRequirement = opts.ignoreScore || player.meetsScoreRequirement(card, opts)
-  return ageRequirement && scoreRequirement
-}
-
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // Getters
-
-Innovation.prototype.getAchievementsByPlayer = function(player) {
-  const ach = {
-    standard: [],
-    special: [],
-    other: [],
-    total: 0
-  }
-
-  for (const card of this.zones.byPlayer(player, 'achievements').cardlist()) {
-    if (card.isSpecialAchievement || card.isDecree) {
-      ach.special.push(card)
-    }
-    else {
-      ach.standard.push(card)
-    }
-  }
-
-  const karmaInfos = this.findKarmasByTrigger(player, 'extra-achievements')
-  for (const info of karmaInfos) {
-    const count = info.impl.func(this, player)
-    for (let i = 0; i < count; i++) {
-      ach.other.push(info.card)
-    }
-  }
-
-  // Flags and Fountains
-  const cards = this.zones.colorStacks(player).flatMap(zone => zone.cardlist())
-  const flags = cards.filter(card => card.checkBiscuitIsVisible(';'))
-  const fountains = cards.filter(card => card.checkBiscuitIsVisible(':'))
-
-  for (const card of flags) {
-    // Player must have the most or tied for the most visible cards of that color to get the achievement.
-    const myCount = card.zone.numVisibleCards()
-    const otherCounts = this
-      .players
-      .other(player)
-      .map(other => this.zones.byPlayer(other, card.color).numVisibleCards())
-
-    if (otherCounts.every(otherCount => otherCount <= myCount)) {
-      const count = card.visibleBiscuits().split(';').length - 1
-      for (let i = 0; i < count; i++) {
-        ach.other.push(card)
-      }
-    }
-  }
-
-  for (const card of fountains) {
-    const count = card.visibleBiscuits().split(':').length - 1
-    for (let i = 0; i < count; i++) {
-      ach.other.push(card)
-    }
-  }
-
-  ach.total = ach.standard.length + ach.special.length + ach.other.length
-
-  return ach
-}
 
 Innovation.prototype.getNumAchievementsToWin = function() {
   const base = 6
@@ -845,21 +777,6 @@ Innovation.prototype.mTake = function(player, card) {
 ////////////////////////////////////////////////////////////////////////////////
 // Private functions
 
-/**
-   This one gets special achievements as well.
- */
-Innovation.prototype.getAvailableAchievements = function(player) {
-  return [
-    ...this.getAvailableSpecialAchievements(player),
-    ...this.getAvailableStandardAchievements(player),
-  ]
-}
-
-Innovation.prototype.getAvailableAchievementsByAge = function(player, age) {
-  age = parseInt(age)
-  return this.getAvailableStandardAchievements(player).filter(c => c.getAge() === age)
-}
-
 Innovation.prototype.getAvailableMuseums = function() {
   return this
     .cards
@@ -868,31 +785,11 @@ Innovation.prototype.getAvailableMuseums = function() {
     .sort((l, r) => l.name.localeCompare(r.name))
 }
 
-Innovation.prototype.getAvailableStandardAchievements = function(player) {
-  const achievementsZone = this
-    .zones
-    .byId('achievements')
-    .cardlist()
-    .filter(c => !c.isSpecialAchievement && !c.isDecree && !c.isMuseum)
-
-  const fromKarma = this
-    .findKarmasByTrigger(player, 'list-achievements')
-    .flatMap(info => info.impl.func(this, player))
-
-  return [achievementsZone, fromKarma].flat()
-}
-
 Innovation.prototype.getAvailableSpecialAchievements = function() {
   return this
     .cards
     .byZone('achievements')
     .filter(c => c.isSpecialAchievement)
-}
-
-Innovation.prototype.getEligibleAchievementsRaw = function(player, opts={}) {
-  return this
-    .getAvailableStandardAchievements(player, opts)
-    .filter(card => this.checkAchievementEligibility(player, card, opts))
 }
 
 Innovation.prototype.formatAchievements = function(array) {
@@ -906,29 +803,6 @@ Innovation.prototype.formatAchievements = function(array) {
       }
     })
     .sort()
-}
-
-Innovation.prototype.getEligibleAchievements = function(player, opts={}) {
-  const formatted = this.formatAchievements(this.getEligibleAchievementsRaw(player, opts))
-  const standard = util.array.distinct(formatted).sort((l, r) => {
-    if (l.exp === r.exp) {
-      return l.age < r.age
-    }
-    else {
-      return l.exp.localeCompare(r.exp)
-    }
-  })
-
-  const secrets = this
-    .cards.byPlayer(player, 'safe')
-    .filter(card => this.checkAchievementEligibility(player, card))
-    .map(card => `safe: ${card.getHiddenName()}`)
-    .sort()
-
-  return [
-    ...standard,
-    ...secrets,
-  ]
 }
 
 Innovation.prototype._walkZones = function(root, fn, path=[]) {

@@ -27,7 +27,7 @@ module.exports = {
         game
           .cards.tops(other)
           .filter(card => ages.includes(card.getAge()))
-          .filter(card => game.checkAchievementEligibility(player, card))
+          .filter(card => player.isEligibleForAchievement(card))
           .forEach(card => candidates.push(card))
       }
 

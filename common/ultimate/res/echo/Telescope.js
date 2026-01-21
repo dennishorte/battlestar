@@ -27,7 +27,7 @@ module.exports = {
 
         const canAchieve = game
           .cards.byPlayer(player, 'forecast')
-          .filter(card => game.checkAchievementEligibility(player, card))
+          .filter(card => player.isEligibleForAchievement(card))
         game.actions.chooseAndAchieve(player, canAchieve)
       }
     }

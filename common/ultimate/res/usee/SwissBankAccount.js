@@ -12,8 +12,8 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const scoreCount = game.cards.byPlayer(player, 'score').length
-      const achievement = game
-        .getAvailableStandardAchievements(player)
+      const achievement = player
+        .availableStandardAchievements()
         .filter(a => a.age === scoreCount)[0]
 
       if (achievement) {

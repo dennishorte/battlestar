@@ -141,7 +141,7 @@ describe('Galileo Galilei', () => {
         junk: ['Navigation'], // Navigation was junked
       })
       // Verify other achievements are still available (not junked)
-      expect(game.getAvailableAchievementsByAge(t.dennis(game), 3)).toHaveLength(1) // Machinery still available
+      expect(t.dennis(game).availableAchievementsByAge(3)).toHaveLength(1) // Machinery still available
       // Note: Reformation (age 5) may not be available if it was already claimed or doesn't exist
     })
 
