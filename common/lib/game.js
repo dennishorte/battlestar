@@ -92,11 +92,14 @@ function GameOverEvent(data) {
   this.data = data
 }
 
-function InputRequestEvent(selectors) {
+function InputRequestEvent(selectors, opts = {}) {
   if (!Array.isArray(selectors)) {
     selectors = [selectors]
   }
   this.selectors = selectors
+  // concurrent: true means multiple players can respond independently (e.g., drafting)
+  // concurrent: false means responses are sequential or must all be collected (e.g., turns)
+  this.concurrent = opts.concurrent ?? false
 }
 
 Game.prototype.serialize = function() {
@@ -159,6 +162,17 @@ Game.prototype.getPlayerNamesWaiting = function() {
   }
 }
 
+// Returns the full waiting state including concurrency info for server-side branchId logic
+Game.prototype.getWaitingState = function() {
+  if (!this.waiting) {
+    return null
+  }
+  return {
+    players: this.waiting.selectors.map(s => s.actor),
+    concurrent: this.waiting.concurrent ?? false,
+  }
+}
+
 Game.prototype.getPlayerViewer = function() {
   return this.players.byName(this.viewerName)
 }
@@ -176,6 +190,7 @@ Game.prototype.getWaiting = function(player) {
 }
 
 // Intended for use in Magic Drafts, this allows any player to send an input request.
+// Responses are independent and don't interfere with each other.
 Game.prototype.requestInputAny = function(array) {
   if (!Array.isArray(array)) {
     array = [array]
@@ -190,7 +205,7 @@ Game.prototype.requestInputAny = function(array) {
     return resp
   }
   else {
-    throw new InputRequestEvent(array)
+    throw new InputRequestEvent(array, { concurrent: true })
   }
 }
 
@@ -313,7 +328,8 @@ Game.prototype.requestInputMany = function(array) {
         __prepareInput(answer)
       }
       else {
-        throw new InputRequestEvent(unanswered)
+        // concurrent: false - all players must respond before game advances
+        throw new InputRequestEvent(unanswered, { concurrent: false })
       }
     }
   }

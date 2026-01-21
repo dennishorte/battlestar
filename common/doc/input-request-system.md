@@ -6,6 +6,19 @@ This document describes the input request system used across all games in the ga
 
 The game engine uses an exception-driven control flow for handling user input. When a game needs input from a player, it throws an `InputRequestEvent`. The game state is deterministically replayed from stored responses each time `game.run()` is called.
 
+### InputRequestEvent
+
+```javascript
+function InputRequestEvent(selectors, opts = {}) {
+  this.selectors = selectors        // Array of selector objects
+  this.concurrent = opts.concurrent // Whether responses are independent
+}
+```
+
+The `concurrent` flag indicates whether multiple players' responses can be processed independently:
+- `concurrent: false` (default) - Responses are sequential or must be collected together
+- `concurrent: true` - Responses are independent and don't interfere with each other
+
 ## Request Methods
 
 ### `requestInputSingle(selector)`
@@ -233,7 +246,7 @@ Dogma action
 ### Server-Side Protection
 
 1. **AsyncLock per game:** All requests for a game are serialized server-side
-2. **branchId validation:** Optimistic locking detects stale writes
+2. **Smart branchId validation:** Optimistic locking with awareness of response modes
 3. **Game killed check:** Prevents saves after game termination
 
 ### Client-Side Protection
@@ -242,31 +255,91 @@ Dogma action
 2. **State verification:** Client compares serialized state after each save
 3. **Conflict alerts:** User prompted to reload on branchId mismatch
 
+### Concurrent Response Mode
+
+Each `InputRequestEvent` includes a `concurrent` flag that indicates whether responses are independent:
+
+| Request Method | `concurrent` | Meaning |
+|---------------|--------------|---------|
+| `requestInputSingle` | `false` | Sequential - responses may affect game state |
+| `requestInputMany` | `false` | Simultaneous - all must respond, but collected together |
+| `requestInputAny` | `true` | Independent - responses don't interfere with each other |
+
+The server uses this flag to determine branchId behavior:
+
+**When `concurrent: true` (drafting):**
+- branchId check is skipped entirely
+- Multiple players can submit responses without conflicts
+- branchId only updates when leaving concurrent mode (e.g., draft ends)
+
+**When `concurrent: false` (turns, simultaneous selection):**
+- branchId updates only when waiting players change significantly
+- Collecting responses (players removed from waiting) keeps same branchId
+- New players being added triggers branchId update
+
 ### When Race Conditions Matter
 
-| Scenario | Race Condition Risk | Mitigation |
-|----------|---------------------|------------|
-| Turn-based (one player acts) | High - wrong player might submit | branchId + server validation |
-| Simultaneous selection | None - all must respond | requestInputMany blocks |
-| Drafting | Intentional - first wins | requestInputAny semantics |
-| Undo during opponent's turn | Medium - state divergence | branchId + full state sync |
+| Scenario | `concurrent` | Race Condition Risk | Mitigation |
+|----------|--------------|---------------------|------------|
+| Turn-based (one player acts) | `false` | High - wrong player might submit | branchId + server validation |
+| Simultaneous selection | `false` | Low - all must respond | branchId stays same until all respond |
+| Drafting | `true` | None - intentionally independent | branchId check skipped |
+| Undo during opponent's turn | `false` | Medium - state divergence | branchId + full state sync |
 
-### branchId Flow
+### branchId Update Rules
 
+The server determines whether to update branchId based on waiting state changes:
+
+```javascript
+function shouldUpdateBranchId(previousWaiting, currentWaiting) {
+  // No previous state - always update
+  if (!previousWaiting) return true
+
+  // Game over or no longer waiting - checkpoint reached
+  if (!currentWaiting) return true
+
+  // Concurrent mode (drafting) - only update if leaving concurrent mode
+  if (previousWaiting.concurrent) {
+    return !currentWaiting.concurrent
+  }
+
+  // Non-concurrent - update only if new players added
+  // (Players being removed = still collecting responses)
+  return hasNewPlayers(previousWaiting.players, currentWaiting.players)
+}
 ```
-1. Client loads game with branchId=100
-2. Client submits action with branchId=100
-3. Server validates branchId matches
-4. Server saves, generates new branchId=101
-5. Server returns branchId=101 to client
-6. Client updates local branchId to 101
 
-If another client submits with stale branchId:
-1. Client B loads game with branchId=100
-2. Client A submits, branchId becomes 101
-3. Client B submits with branchId=100
-4. Server rejects: 100 !== 101
-5. Client B receives 409 Conflict, must reload
+### branchId Flow Examples
+
+**Turn-based game (Innovation):**
+```
+1. Game waiting for [player1], branchId=100
+2. Player1 submits action
+3. Game now waiting for [player2] (new player)
+4. branchId updates to 101
+```
+
+**Simultaneous selection (first picks):**
+```
+1. Game waiting for [player1, player2], branchId=100
+2. Player1 submits first pick
+3. Game still waiting for [player2] (subset - still collecting)
+4. branchId stays 100
+5. Player2 submits first pick (branchId=100 still valid!)
+6. All collected, game advances to turns
+7. branchId updates to 101
+```
+
+**Concurrent drafting (Magic):**
+```
+1. Game waiting for [player1, player2, player3], concurrent=true, branchId=100
+2. Player2 drafts a card
+3. Still concurrent, branchId stays 100
+4. Player1 drafts a card (branchId=100 still valid!)
+5. Player3 drafts a card (branchId=100 still valid!)
+6. ... entire draft proceeds with branchId=100
+7. Draft ends, game transitions to deck building
+8. branchId updates to 101
 ```
 
 ---
