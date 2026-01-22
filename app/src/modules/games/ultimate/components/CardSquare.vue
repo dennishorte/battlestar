@@ -1,5 +1,5 @@
 <template>
-  <div @click="closeup">
+  <div @click="closeup($event)">
     <CardSquareDetails
       :name="displayName"
       :expansion="card.expansion"
@@ -57,16 +57,13 @@ export default {
   },
 
   methods: {
-    closeup() {
+    closeup(event) {
       if (!this.game) {
         return
       }
 
-      if (this.card.isSpecialAchievement) {
-        this.game.ui.modals.achievement.card = this.card
-        this.$modal('achievement-modal').show()
-      }
-      else if (this.card.isDecree) {
+      if (this.card.isSpecialAchievement || this.card.isDecree) {
+        event.stopPropagation()
         this.game.ui.modals.achievement.card = this.card
         this.$modal('achievement-modal').show()
       }

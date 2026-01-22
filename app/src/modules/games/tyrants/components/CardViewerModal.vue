@@ -30,6 +30,9 @@ export default {
   computed: {
     card() {
       const cardId = this.ui.modals.cardViewer.cardId
+      if (!cardId) {
+        return null
+      }
       return this.game.cards.byId(cardId)
     },
   }
