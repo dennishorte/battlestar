@@ -4,7 +4,7 @@ const t = require('../../testutil.js')
 
 describe('Code of Laws', () => {
   test('dogma, with splay', () => {
-    const game = t.fixtureTopCard('Code of Laws')
+    const game = t.fixtureFirstPlayer()
     t.setBoard(game, {
       dennis: {
         purple: ['Code of Laws'],

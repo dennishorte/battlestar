@@ -5,11 +5,16 @@ const { GameOverEvent, InputRequestEvent } = require('../../../lib/game.js')
 
 describe('Bioengineering', () => {
   test('score a card', () => {
-    const game = t.fixtureTopCard('Bioengineering')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'micah', 'yellow', ['Agriculture'])
-      t.setColor(game, 'micah', 'green', ['Sailing'])
-      t.setColor(game, 'dennis', 'green', ['Clothing'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Bioengineering'],
+        green: ['Clothing'],
+      },
+      micah: {
+        yellow: ['Agriculture'],
+        green: ['Sailing'],
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Bioengineering')
@@ -22,9 +27,10 @@ describe('Bioengineering', () => {
   })
 
   test('win condition yes', () => {
-    const game = t.fixtureTopCard('Bioengineering')
+    const game = t.fixtureFirstPlayer()
     t.setBoard(game, {
       dennis: {
+        blue: ['Bioengineering'],
         yellow: ['Agriculture'],
         green: ['Clothing'],
       },
@@ -42,11 +48,16 @@ describe('Bioengineering', () => {
   })
 
   test('win condition tied', () => {
-    const game = t.fixtureTopCard('Bioengineering')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'purple', ['Code of Laws'])
-      t.setColor(game, 'micah', 'green', ['Sailing'])
-      t.setColor(game, 'micah', 'blue', ['Pottery'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Bioengineering'],
+        purple: ['Code of Laws'],
+      },
+      micah: {
+        green: ['Sailing'],
+        blue: ['Pottery'],
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Bioengineering')
@@ -58,12 +69,17 @@ describe('Bioengineering', () => {
   })
 
   test('win condition no', () => {
-    const game = t.fixtureTopCard('Bioengineering')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'yellow', ['Agriculture'])
-      t.setColor(game, 'dennis', 'purple', ['Code of Laws'])
-      t.setColor(game, 'micah', 'green', ['Sailing'])
-      t.setColor(game, 'micah', 'blue', ['Pottery'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Bioengineering'],
+        yellow: ['Agriculture'],
+        purple: ['Code of Laws'],
+      },
+      micah: {
+        green: ['Sailing'],
+        blue: ['Pottery'],
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Bioengineering')

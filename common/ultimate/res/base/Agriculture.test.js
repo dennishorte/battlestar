@@ -21,9 +21,12 @@ describe('Agriculture', () => {
   })
 
   test('do not return a card', () => {
-    const game = t.fixtureTopCard('Agriculture')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Domestication'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Agriculture'],
+        hand: ['Domestication'],
+      },
     })
     let request
     request = game.run()

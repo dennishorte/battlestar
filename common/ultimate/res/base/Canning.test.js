@@ -4,14 +4,20 @@ const t = require('../../testutil.js')
 
 describe('Canning', () => {
   test('draw and tuck a 6, yes', () => {
-    const game = t.fixtureTopCard('Canning')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'red', ['Industrialization'])
-      t.setColor(game, 'dennis', 'green', ['The Wheel'])
-      t.setColor(game, 'dennis', 'blue', ['Chemistry'])
-      t.setColor(game, 'dennis', 'purple', ['The Internet'])
-
-      t.setDeckTop(game, 'base', 6, ['Vaccination'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Canning'],
+        red: ['Industrialization'],
+        green: ['The Wheel'],
+        blue: ['Chemistry'],
+        purple: ['The Internet'],
+      },
+      decks: {
+        base: {
+          6: ['Vaccination'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Canning')
@@ -25,12 +31,15 @@ describe('Canning', () => {
   })
 
   test('draw and tuck a 6, no', () => {
-    const game = t.fixtureTopCard('Canning')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'red', ['Industrialization'])
-      t.setColor(game, 'dennis', 'green', ['The Wheel'])
-      t.setColor(game, 'dennis', 'blue', ['Chemistry'])
-      t.setColor(game, 'dennis', 'purple', ['The Internet'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Canning'],
+        red: ['Industrialization'],
+        green: ['The Wheel'],
+        blue: ['Chemistry'],
+        purple: ['The Internet'],
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Canning')

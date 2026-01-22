@@ -4,10 +4,13 @@ const t = require('../../testutil.js')
 
 describe('Bicycle', () => {
   test('yes', () => {
-    const game = t.fixtureTopCard('Bicycle')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Industrialization', 'Tools'])
-      t.setScore(game, 'dennis', ['Chemistry'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        green: ['Bicycle'],
+        hand: ['Industrialization', 'Tools'],
+        score: ['Chemistry'],
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Bicycle')
@@ -18,10 +21,13 @@ describe('Bicycle', () => {
   })
 
   test('no', () => {
-    const game = t.fixtureTopCard('Bicycle')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Industrialization', 'Tools'])
-      t.setScore(game, 'dennis', ['Chemistry'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        green: ['Bicycle'],
+        hand: ['Industrialization', 'Tools'],
+        score: ['Chemistry'],
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Bicycle')

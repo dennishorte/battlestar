@@ -117,19 +117,6 @@ TestUtil.fixtureFirstPlayer = function(options={}) {
   return game
 }
 
-TestUtil.fixtureTopCard = function(cardName, options) {
-  const game = TestUtil.fixtureFirstPlayer(options)
-  game.testSetBreakpoint('before-first-player', (game) => {
-    game
-      .players.all()
-      .forEach(player => TestUtil.clearBoard(game, player.name))
-
-    const card = game.cards.byId(cardName)
-    TestUtil.setColor(game, game.players.current().name, card.color, [cardName])
-  })
-  return game
-}
-
 TestUtil.testDeckIsJunked = function(game, age) {
   const cards = game.cards.byDeck('base', age)
   expect(cards.length).toBe(0)
@@ -157,8 +144,10 @@ TestUtil.testDeckIsJunked = function(game, age) {
 }
 
 TestUtil.testDecreeForTwo = function(figureName, decreeName) {
-  const game = TestUtil.fixtureTopCard(figureName, { expansions: ['base', 'figs'] })
+  const game = TestUtil.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
   game.testSetBreakpoint('before-first-player', (game) => {
+    const card = game.cards.byId(figureName)
+    TestUtil.setColor(game, 'dennis', card.color, [figureName])
     TestUtil.setHand(game, 'dennis', ['Homer', 'Ptahhotep'])
   })
   const request1 = game.run()

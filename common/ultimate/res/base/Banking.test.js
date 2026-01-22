@@ -4,11 +4,20 @@ const t = require('../../testutil.js')
 
 describe('Banking', () => {
   test('card with a factory', () => {
-    const game = t.fixtureTopCard('Banking')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'micah', 'red', ['Industrialization'])
-      t.setColor(game, 'micah', 'blue', ['Chemistry'])
-      t.setDeckTop(game, 'base', 5, ['Statistics'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        green: ['Banking'],
+      },
+      micah: {
+        red: ['Industrialization'],
+        blue: ['Chemistry'],
+      },
+      decks: {
+        base: {
+          5: ['Statistics'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Banking')
@@ -25,16 +34,23 @@ describe('Banking', () => {
   })
 
   test('no draw and score if no card', () => {
-    const game = t.fixtureTopCard('Banking')
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        green: ['Banking'],
+      },
+    })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Banking')
     expect(t.cards(game, 'score', 'micah')).toEqual([])
   })
 
   test('splay', () => {
-    const game = t.fixtureTopCard('Banking')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'green', ['Banking', 'The Wheel', 'Mapmaking'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        green: ['Banking', 'The Wheel', 'Mapmaking'],
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Banking')

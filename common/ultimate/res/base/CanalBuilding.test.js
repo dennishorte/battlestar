@@ -4,10 +4,13 @@ const t = require('../../testutil.js')
 
 describe('Canal Building', () => {
   test('exchange cards', () => {
-    const game = t.fixtureTopCard('Canal Building')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Industrialization', 'Tools'])
-      t.setScore(game, 'dennis', ['Chemistry', 'Steam Engine', 'Colonialism'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Canal Building'],
+        hand: ['Industrialization', 'Tools'],
+        score: ['Chemistry', 'Steam Engine', 'Colonialism'],
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Canal Building')
@@ -18,10 +21,13 @@ describe('Canal Building', () => {
   })
 
   test('junk deck', () => {
-    const game = t.fixtureTopCard('Canal Building')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Industrialization', 'Tools'])
-      t.setScore(game, 'dennis', ['Chemistry', 'Steam Engine', 'Colonialism'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Canal Building'],
+        hand: ['Industrialization', 'Tools'],
+        score: ['Chemistry', 'Steam Engine', 'Colonialism'],
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Canal Building')

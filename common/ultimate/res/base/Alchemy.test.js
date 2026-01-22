@@ -4,12 +4,19 @@ const t = require('../../testutil.js')
 
 describe('Alchemy', () => {
   test('draw and reveal (no red)', () => {
-    const game = t.fixtureTopCard('Alchemy')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setDeckTop(game, 'base', 4, ['Printing Press', 'Invention', 'Experimentation'])
-      t.setColor(game, 'dennis', 'green', ['The Wheel'])
-      t.setColor(game, 'dennis', 'yellow', ['Masonry'])
-      t.setColor(game, 'dennis', 'red', ['Metalworking'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Alchemy'],
+        green: ['The Wheel'],
+        yellow: ['Masonry'],
+        red: ['Metalworking'],
+      },
+      decks: {
+        base: {
+          4: ['Printing Press', 'Invention', 'Experimentation'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Alchemy')
@@ -21,12 +28,19 @@ describe('Alchemy', () => {
   })
 
   test('draw and reveal (red)', () => {
-    const game = t.fixtureTopCard('Alchemy')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setDeckTop(game, 'base', 4, ['Printing Press', 'Gunpowder', 'Experimentation'])
-      t.setColor(game, 'dennis', 'green', ['The Wheel'])
-      t.setColor(game, 'dennis', 'yellow', ['Masonry'])
-      t.setColor(game, 'dennis', 'red', ['Metalworking'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Alchemy'],
+        green: ['The Wheel'],
+        yellow: ['Masonry'],
+        red: ['Metalworking'],
+      },
+      decks: {
+        base: {
+          4: ['Printing Press', 'Gunpowder', 'Experimentation'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Alchemy')

@@ -4,9 +4,16 @@ const t = require('../../testutil.js')
 
 describe('Collaboration', () => {
   test('demand', () => {
-    const game = t.fixtureTopCard('Collaboration')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setDeckTop(game, 'base', 9, ['Computers', 'Services'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        green: ['Collaboration'],
+      },
+      decks: {
+        base: {
+          9: ['Computers', 'Services'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Collaboration')
@@ -17,22 +24,16 @@ describe('Collaboration', () => {
   })
 
   test('win condition (10)', () => {
-    const game = t.fixtureTopCard('Collaboration')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setDeckTop(game, 'base', 9, ['Computers', 'Services'])
-      t.setColor(game, 'dennis', 'green', [
-        'Collaboration',
-        'Mapmaking',
-        'Banking',
-        'Navigation',
-        'Databases',
-
-        'Sailing',
-        'Paper',
-        'Satellites',
-        'Clothing',
-        'Currency',
-      ])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        green: ['Collaboration', 'Mapmaking', 'Banking', 'Navigation', 'Databases', 'Sailing', 'Paper', 'Satellites', 'Clothing', 'Currency'],
+      },
+      decks: {
+        base: {
+          9: ['Computers', 'Services'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Collaboration')

@@ -4,10 +4,16 @@ const t = require('../../testutil.js')
 
 describe('Astronomy', () => {
   test('draw blue, green, other', () => {
-    const game = t.fixtureTopCard('Astronomy')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.clearHand(game, 'dennis')
-      t.setDeckTop(game, 'base', 6, ['Atomic Theory', 'Classification', 'Industrialization'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Astronomy'],
+      },
+      decks: {
+        base: {
+          6: ['Atomic Theory', 'Classification', 'Industrialization'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Astronomy')
@@ -18,10 +24,16 @@ describe('Astronomy', () => {
   })
 
   test('win condition, yes', () => {
-    const game = t.fixtureTopCard('Astronomy')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.clearHand(game, 'dennis')
-      t.setDeckTop(game, 'base', 6, ['Atomic Theory', 'Classification', 'Industrialization'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Astronomy'],
+      },
+      decks: {
+        base: {
+          6: ['Atomic Theory', 'Classification', 'Industrialization'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Astronomy')
@@ -30,11 +42,17 @@ describe('Astronomy', () => {
   })
 
   test('win condition, no', () => {
-    const game = t.fixtureTopCard('Astronomy')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.clearHand(game, 'dennis')
-      t.setDeckTop(game, 'base', 6, ['Atomic Theory', 'Classification', 'Industrialization'])
-      t.setColor(game, 'dennis', 'yellow', ['Steam Engine'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Astronomy'],
+        yellow: ['Steam Engine'],
+      },
+      decks: {
+        base: {
+          6: ['Atomic Theory', 'Classification', 'Industrialization'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Astronomy')

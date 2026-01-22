@@ -4,9 +4,11 @@ const t = require('../../testutil.js')
 
 describe('Stem Cells', () => {
   test('no cards in hand', () => {
-    const game = t.fixtureTopCard('Stem Cells')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', [])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Stem Cells'],
+      },
     })
     let request
     request = game.run()
@@ -15,9 +17,12 @@ describe('Stem Cells', () => {
   })
 
   test('cards in hand, yes', () => {
-    const game = t.fixtureTopCard('Stem Cells')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Reformation', 'Experimentation'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Stem Cells'],
+        hand: ['Reformation', 'Experimentation'],
+      },
     })
     let request
     request = game.run()
@@ -29,9 +34,12 @@ describe('Stem Cells', () => {
   })
 
   test('cards in hand, no', () => {
-    const game = t.fixtureTopCard('Stem Cells')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Reformation', 'Experimentation'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Stem Cells'],
+        hand: ['Reformation', 'Experimentation'],
+      },
     })
     let request
     request = game.run()

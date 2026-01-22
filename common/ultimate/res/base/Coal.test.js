@@ -4,10 +4,17 @@ const t = require('../../testutil.js')
 
 describe('Coal', () => {
   test('dogma, with splay', () => {
-    const game = t.fixtureTopCard('Coal')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'blue', ['Alchemy', 'Calendar', 'Tools'])
-      t.setDeckTop(game, 'base', 5, ['The Pirate Code'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        red: ['Coal'],
+        blue: ['Alchemy', 'Calendar', 'Tools'],
+      },
+      decks: {
+        base: {
+          5: ['The Pirate Code'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Coal')
@@ -21,10 +28,17 @@ describe('Coal', () => {
   })
 
   test('dogma: choose not to score', () => {
-    const game = t.fixtureTopCard('Coal')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'blue', ['Alchemy', 'Calendar', 'Tools'])
-      t.setDeckTop(game, 'base', 5, ['The Pirate Code'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        red: ['Coal'],
+        blue: ['Alchemy', 'Calendar', 'Tools'],
+      },
+      decks: {
+        base: {
+          5: ['The Pirate Code'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Coal')

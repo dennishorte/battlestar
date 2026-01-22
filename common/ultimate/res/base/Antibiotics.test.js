@@ -4,9 +4,12 @@ const t = require('../../testutil.js')
 
 describe('Antibiotics', () => {
   test('returned none', () => {
-    const game = t.fixtureTopCard('Antibiotics')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Archery', 'Calendar', 'Mathematics'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Antibiotics'],
+        hand: ['Archery', 'Calendar', 'Mathematics'],
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Antibiotics')
@@ -16,13 +19,17 @@ describe('Antibiotics', () => {
   })
 
   test('returned one', () => {
-    const game = t.fixtureTopCard('Antibiotics')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Archery', 'Calendar', 'Mathematics'])
-      t.setDeckTop(game, 'base', 8, [
-        'Socialism',
-        'Mass Media',
-      ])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Antibiotics'],
+        hand: ['Archery', 'Calendar', 'Mathematics'],
+      },
+      decks: {
+        base: {
+          8: ['Socialism', 'Mass Media'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Antibiotics')
@@ -37,15 +44,17 @@ describe('Antibiotics', () => {
   })
 
   test('returned three (two with same value)', () => {
-    const game = t.fixtureTopCard('Antibiotics')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Archery', 'Calendar', 'Mathematics'])
-      t.setDeckTop(game, 'base', 8, [
-        'Socialism',
-        'Mass Media',
-        'Empiricism',
-        'Quantum Theory',
-      ])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Antibiotics'],
+        hand: ['Archery', 'Calendar', 'Mathematics'],
+      },
+      decks: {
+        base: {
+          8: ['Socialism', 'Mass Media', 'Empiricism', 'Quantum Theory'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Antibiotics')
@@ -61,15 +70,17 @@ describe('Antibiotics', () => {
   })
 
   test('four is too many', () => {
-    const game = t.fixtureTopCard('Antibiotics')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Archery', 'Calendar', 'Mathematics', 'Tools'])
-      t.setDeckTop(game, 'base', 8, [
-        'Socialism',
-        'Mass Media',
-        'Empiricism',
-        'Quantum Theory',
-      ])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Antibiotics'],
+        hand: ['Archery', 'Calendar', 'Mathematics', 'Tools'],
+      },
+      decks: {
+        base: {
+          8: ['Socialism', 'Mass Media', 'Empiricism', 'Quantum Theory'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Antibiotics')

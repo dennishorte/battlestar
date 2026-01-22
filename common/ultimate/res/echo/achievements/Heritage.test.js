@@ -4,19 +4,21 @@ const t = require('../../../testutil.js')
 
 describe('Heritage', () => {
   test('eight hexes in one color', () => {
-    const game = t.fixtureTopCard('Specialization', { expansions: ['base', 'echo'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', [])
-      t.setColor(game, 'dennis', 'blue', [
-        'Bioengineering',
-        'Software',
-        'Computers',
-        'Genetics',
-        'Quantum Theory',
-        'Rocketry',
-        'Evolution',
-        'Atomic Theory',
-      ])
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Specialization'],
+        blue: [
+          'Bioengineering',
+          'Software',
+          'Computers',
+          'Genetics',
+          'Quantum Theory',
+          'Rocketry',
+          'Evolution',
+          'Atomic Theory',
+        ],
+      },
     })
     let request
     request = game.run()
@@ -27,19 +29,21 @@ describe('Heritage', () => {
   })
 
   test('eight hexes total, but different colors', () => {
-    const game = t.fixtureTopCard('Specialization', { expansions: ['base', 'echo'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', [])
-      t.setColor(game, 'dennis', 'blue', [
-        'Bioengineering',
-        'Software',
-        'Computers',
-        'Quantum Theory',
-        'Rocketry',
-        'Evolution',
-        'Atomic Theory',
-      ])
-      t.setColor(game, 'dennis', 'red', ['Metalworking'])
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Specialization'],
+        blue: [
+          'Bioengineering',
+          'Software',
+          'Computers',
+          'Quantum Theory',
+          'Rocketry',
+          'Evolution',
+          'Atomic Theory',
+        ],
+        red: ['Metalworking'],
+      },
     })
     let request
     request = game.run()
@@ -50,18 +54,20 @@ describe('Heritage', () => {
   })
 
   test('seven hexes in one color', () => {
-    const game = t.fixtureTopCard('Specialization', { expansions: ['base', 'echo'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', [])
-      t.setColor(game, 'dennis', 'blue', [
-        'Bioengineering',
-        'Software',
-        'Computers',
-        'Genetics',
-        'Quantum Theory',
-        'Evolution',
-        'Atomic Theory',
-      ])
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Specialization'],
+        blue: [
+          'Bioengineering',
+          'Software',
+          'Computers',
+          'Genetics',
+          'Quantum Theory',
+          'Evolution',
+          'Atomic Theory',
+        ],
+      },
     })
     let request
     request = game.run()

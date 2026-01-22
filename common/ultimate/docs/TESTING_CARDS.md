@@ -10,7 +10,7 @@ const t = require('../../testutil.js')
 
 describe('Philosophy', () => {
   test('dogma: choose a color', () => {
-    const game = t.fixtureTopCard('Philosophy')
+    const game = t.fixtureFirstPlayer()
     t.setBoard(game, {
       dennis: {
         purple: ['Philosophy'],
@@ -55,7 +55,6 @@ describe('CardName', () => {
 
 ### Game Setup
 - **`t.fixtureFirstPlayer(options)`** - Creates game, advances to first player's turn (most common)
-- **`t.fixtureTopCard(cardName, options)`** - Creates game with card as top card
 - **`t.fixture(options)`** - Basic game fixture
 - **`t.setBoard(game, state)`** - **ONLY way to set up game state** (see below)
 

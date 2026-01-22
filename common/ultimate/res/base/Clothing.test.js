@@ -4,12 +4,21 @@ const t = require('../../testutil.js')
 
 describe('Clothing', () => {
   test('transfer a card', () => {
-    const game = t.fixtureTopCard('Clothing')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Mathematics', 'Code of Laws'])
-      t.setColor(game, 'dennis', 'blue', ['Tools'])
-      t.setColor(game, 'micah', 'purple', ['Mysticism'])
-      t.setDeckTop(game, 'base', 1, ['Writing', 'Archery'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        green: ['Clothing'],
+        blue: ['Tools'],
+        hand: ['Mathematics', 'Code of Laws'],
+      },
+      micah: {
+        purple: ['Mysticism'],
+      },
+      decks: {
+        base: {
+          1: ['Writing', 'Archery'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Clothing')

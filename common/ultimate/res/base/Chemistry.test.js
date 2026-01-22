@@ -4,12 +4,17 @@ const t = require('../../testutil.js')
 
 describe('Chemistry', () => {
   test('no splay, yes score', () => {
-    const game = t.fixtureTopCard('Chemistry')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'blue', ['Chemistry', 'Tools'])
-
-      t.setDeckTop(game, 'base', 6, ['Vaccination'])
-      t.setScore(game, 'dennis', ['The Wheel'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Chemistry', 'Tools'],
+        score: ['The Wheel'],
+      },
+      decks: {
+        base: {
+          6: ['Vaccination'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Chemistry')
@@ -21,11 +26,16 @@ describe('Chemistry', () => {
   })
 
   test('yes splay, no score', () => {
-    const game = t.fixtureTopCard('Chemistry')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'blue', ['Chemistry', 'Tools'])
-
-      t.setDeckTop(game, 'base', 6, ['Vaccination'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Chemistry', 'Tools'],
+      },
+      decks: {
+        base: {
+          6: ['Vaccination'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Chemistry')

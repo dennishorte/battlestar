@@ -4,12 +4,18 @@ const t = require('../../testutil.js')
 
 describe('Printing Press', () => {
   test('return and draw', () => {
-    const game = t.fixtureTopCard('Printing Press')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', [])
-      t.setScore(game, 'dennis', ['Coal', 'Mathematics'])
-      t.setColor(game, 'dennis', 'purple', ['Enterprise'])
-      t.setDeckTop(game, 'base', 6, ['Canning'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Printing Press'],
+        purple: ['Enterprise'],
+        score: ['Coal', 'Mathematics'],
+      },
+      decks: {
+        base: {
+          6: ['Canning'],
+        },
+      },
     })
     let request
     request = game.run()
@@ -21,12 +27,18 @@ describe('Printing Press', () => {
   })
 
   test('do not return', () => {
-    const game = t.fixtureTopCard('Printing Press')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', [])
-      t.setScore(game, 'dennis', ['Coal', 'Mathematics'])
-      t.setColor(game, 'dennis', 'purple', ['Enterprise'])
-      t.setDeckTop(game, 'base', 6, ['Canning'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Printing Press'],
+        purple: ['Enterprise'],
+        score: ['Coal', 'Mathematics'],
+      },
+      decks: {
+        base: {
+          6: ['Canning'],
+        },
+      },
     })
     let request
     request = game.run()
@@ -38,12 +50,12 @@ describe('Printing Press', () => {
   })
 
   test('splay', () => {
-    const game = t.fixtureTopCard('Printing Press')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', [])
-      t.setColor(game, 'dennis', 'purple', ['Enterprise'])
-      t.setColor(game, 'dennis', 'blue', ['Printing Press', 'Tools'])
-      t.setDeckTop(game, 'base', 6, [])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Printing Press', 'Tools'],
+        purple: ['Enterprise'],
+      },
     })
     let request
     request = game.run()

@@ -4,12 +4,20 @@ const t = require('../../testutil.js')
 
 describe('City States', () => {
   test('transfer a card', () => {
-    const game = t.fixtureTopCard('City States')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'micah', 'yellow', ['Masonry'])
-      t.setColor(game, 'micah', 'red', ['Archery'])
-      t.setHand(game, 'micah', [])
-      t.setDeckTop(game, 'base', 1, ['Tools'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        purple: ['City States'],
+      },
+      micah: {
+        yellow: ['Masonry'],
+        red: ['Archery'],
+      },
+      decks: {
+        base: {
+          1: ['Tools'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.City States')
@@ -20,9 +28,14 @@ describe('City States', () => {
   })
 
   test('not enough castles', () => {
-    const game = t.fixtureTopCard('City States')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'micah', 'yellow', ['Masonry'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        purple: ['City States'],
+      },
+      micah: {
+        yellow: ['Masonry'],
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.City States')

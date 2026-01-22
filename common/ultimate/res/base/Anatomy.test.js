@@ -4,11 +4,16 @@ const t = require('../../testutil.js')
 
 describe('Anatomy', () => {
   test('returned, matching top card', () => {
-    const game = t.fixtureTopCard('Anatomy')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setScore(game, 'micah', ['Mathematics', 'The Wheel'])
-      t.setColor(game, 'micah', 'red', ['Archery'])
-      t.setColor(game, 'micah', 'blue', ['Calendar'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Anatomy'],
+      },
+      micah: {
+        score: ['Mathematics', 'The Wheel'],
+        red: ['Archery'],
+        blue: ['Calendar'],
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Anatomy')
@@ -20,11 +25,16 @@ describe('Anatomy', () => {
   })
 
   test('returned, no matching top card', () => {
-    const game = t.fixtureTopCard('Anatomy')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setScore(game, 'micah', ['Mathematics', 'The Wheel'])
-      t.setColor(game, 'micah', 'red', ['Gunpowder', 'Archery'])
-      t.setColor(game, 'micah', 'blue', ['Calendar'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Anatomy'],
+      },
+      micah: {
+        score: ['Mathematics', 'The Wheel'],
+        red: ['Gunpowder', 'Archery'],
+        blue: ['Calendar'],
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Anatomy')
@@ -36,10 +46,15 @@ describe('Anatomy', () => {
   })
 
   test('did not return', () => {
-    const game = t.fixtureTopCard('Anatomy')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'micah', 'red', ['Archery'])
-      t.setColor(game, 'micah', 'blue', ['Calendar'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Anatomy'],
+      },
+      micah: {
+        red: ['Archery'],
+        blue: ['Calendar'],
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Anatomy')

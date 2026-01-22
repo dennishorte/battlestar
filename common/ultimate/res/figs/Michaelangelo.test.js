@@ -5,10 +5,13 @@ const t = require('../../testutil.js')
 describe('Michaelangelo', () => {
 
   test('karma', () => {
-    const game = t.fixtureTopCard('Michaelangelo', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setScore(game, 'dennis', ['Tools', 'Construction'])
-      t.setHand(game, 'dennis', ['Sailing', 'Al-Kindi'])
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Michaelangelo'],
+        score: ['Tools', 'Construction'],
+        hand: ['Sailing', 'Al-Kindi'],
+      },
     })
     let request
     request = game.run()

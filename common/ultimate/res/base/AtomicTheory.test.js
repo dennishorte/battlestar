@@ -4,9 +4,11 @@ const t = require('../../testutil.js')
 
 describe('Atomic Theory', () => {
   test('splay blue right', () => {
-    const game = t.fixtureTopCard('Atomic Theory')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'blue', ['Atomic Theory', 'Mathematics'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Atomic Theory', 'Mathematics'],
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Atomic Theory')
@@ -16,9 +18,16 @@ describe('Atomic Theory', () => {
   })
 
   test('draw and meld', () => {
-    const game = t.fixtureTopCard('Atomic Theory')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setDeckTop(game, 'base', 7, ['Explosives'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Atomic Theory'],
+      },
+      decks: {
+        base: {
+          7: ['Explosives'],
+        },
+      },
     })
     const result1 = game.run()
     const result2 = t.choose(game, result1, 'Dogma.Atomic Theory')

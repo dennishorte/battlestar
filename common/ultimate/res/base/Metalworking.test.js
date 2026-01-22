@@ -4,10 +4,16 @@ const t = require('../../testutil.js')
 
 describe('Metalworking', () => {
   test('dogma', () => {
-    const game = t.fixtureTopCard('Metalworking')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setDeckTop(game, 'base', 1, ['Mysticism', 'Masonry', 'Clothing'])
-      t.setHand(game, 'dennis', [])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        red: ['Metalworking'],
+      },
+      decks: {
+        base: {
+          1: ['Mysticism', 'Masonry', 'Clothing'],
+        },
+      },
     })
 
     let request

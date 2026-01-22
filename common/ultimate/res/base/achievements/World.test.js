@@ -4,18 +4,20 @@ const t = require('../../../testutil.js')
 
 describe('World achievement', () => {
   test('12 biscuits', () => {
-    const game = t.fixtureTopCard('Specialization')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'green', ['Databases'])
-      t.setColor(game, 'dennis', 'blue', [
-        'Software',
-        'Bioengineering',
-        'Computers',
-        'Publications',
-        'Rocketry',
-        'Quantum Theory'
-      ])
-      t.setHand(game, 'dennis', [])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Specialization'],
+        green: ['Databases'],
+        blue: [
+          'Software',
+          'Bioengineering',
+          'Computers',
+          'Publications',
+          'Rocketry',
+          'Quantum Theory'
+        ],
+      },
     })
     let request
     request = game.run()

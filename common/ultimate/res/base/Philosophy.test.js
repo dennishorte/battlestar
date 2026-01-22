@@ -6,9 +6,12 @@ describe('Philosophy', () => {
 
   describe('You may splay left any one color of your cards.', () => {
     test('choose a color', () => {
-      const game = t.fixtureTopCard('Philosophy')
-      game.testSetBreakpoint('before-first-player', (game) => {
-        t.setColor(game, 'dennis', 'red', ['Construction', 'Industrialization'])
+      const game = t.fixtureFirstPlayer()
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Philosophy'],
+          red: ['Construction', 'Industrialization'],
+        },
       })
       let request
       request = game.run()
@@ -20,9 +23,12 @@ describe('Philosophy', () => {
     })
 
     test('do not choose a color', () => {
-      const game = t.fixtureTopCard('Philosophy')
-      game.testSetBreakpoint('before-first-player', (game) => {
-        t.setColor(game, 'dennis', 'red', ['Construction', 'Industrialization'])
+      const game = t.fixtureFirstPlayer()
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Philosophy'],
+          red: ['Construction', 'Industrialization'],
+        },
       })
       let request
       request = game.run()
@@ -36,9 +42,12 @@ describe('Philosophy', () => {
 
   describe('You may score a card from your hand', () => {
     test('return a card', () => {
-      const game = t.fixtureTopCard('Philosophy')
-      game.testSetBreakpoint('before-first-player', (game) => {
-        t.setHand(game, 'dennis', ['Construction', 'Industrialization'])
+      const game = t.fixtureFirstPlayer()
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Philosophy'],
+          hand: ['Construction', 'Industrialization'],
+        },
       })
       let request
       request = game.run()
@@ -50,9 +59,12 @@ describe('Philosophy', () => {
     })
 
     test('do not return a card', () => {
-      const game = t.fixtureTopCard('Philosophy')
-      game.testSetBreakpoint('before-first-player', (game) => {
-        t.setHand(game, 'dennis', ['Construction', 'Industrialization'])
+      const game = t.fixtureFirstPlayer()
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Philosophy'],
+          hand: ['Construction', 'Industrialization'],
+        },
       })
       let request
       request = game.run()

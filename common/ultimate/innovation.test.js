@@ -29,8 +29,10 @@ describe('fixture', () => {
 
   test('setColor', () => {
     const game = t.fixtureFirstPlayer()
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'red', ['Gunpowder', 'Industrialization'])
+    t.setBoard(game, {
+      dennis: {
+        red: ['Gunpowder', 'Industrialization'],
+      },
     })
     game.run()
     const dennis = game.players.byName('dennis')
@@ -129,12 +131,20 @@ describe('Innovation', () => {
 
   describe('triggers', () => {
     test('unsplay colors with one or fewer cards', () => {
-      const game = t.fixtureTopCard('Globalization')
-      game.testSetBreakpoint('before-first-player', (game) => {
-        t.setColor(game, 'dennis', 'yellow', ['Globalization', 'Stem Cells', 'Fermenting'])
-        t.setSplay(game, 'dennis', 'yellow', 'up')
-        t.setColor(game, 'micah', 'yellow', ['Agriculture', 'Statistics'])
-        t.setSplay(game, 'micah', 'yellow', 'left')
+      const game = t.fixtureFirstPlayer()
+      t.setBoard(game, {
+        dennis: {
+          yellow: {
+            cards: ['Globalization', 'Stem Cells', 'Fermenting'],
+            splay: 'up',
+          },
+        },
+        micah: {
+          yellow: {
+            cards: ['Agriculture', 'Statistics'],
+            splay: 'left',
+          },
+        },
       })
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Dogma.Globalization')
@@ -204,10 +214,12 @@ describe('Innovation', () => {
   describe.skip('figures fade at end of each action', () => {
     test('choose and fade, repeatedly', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-      game.testSetBreakpoint('before-first-player', (game) => {
-        t.setColor(game, 'dennis', 'red', ['Alexander the Great'])
-        t.setColor(game, 'dennis', 'green', ['Alfred Nobel', 'Adam Smith'])
-        t.setColor(game, 'dennis', 'yellow', ['Shennong', 'Alex Trebek'])
+      t.setBoard(game, {
+        dennis: {
+          red: ['Alexander the Great'],
+          green: ['Alfred Nobel', 'Adam Smith'],
+          yellow: ['Shennong', 'Alex Trebek'],
+        },
       })
       const request1 = game.run()
       const request2 = t.choose(game, request1, 'Draw.draw a card')
@@ -247,10 +259,12 @@ describe('Innovation', () => {
     describe('achieve action', () => {
       test('do not need to achieve in order', () => {
         const game = t.fixtureFirstPlayer()
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setScore(game, 'dennis', ['Canning', 'Experimentation', 'Coal'])
-          t.setColor(game, 'dennis', 'red', ['Industrialization'])
-          t.setAvailableAchievements(game, ['Writing', 'Mathematics', 'Machinery', 'Reformation'])
+        t.setBoard(game, {
+          dennis: {
+            score: ['Canning', 'Experimentation', 'Coal'],
+            red: ['Industrialization'],
+          },
+          achievements: ['Writing', 'Mathematics', 'Machinery', 'Reformation'],
         })
         const request1 = game.run()
 
@@ -259,10 +273,12 @@ describe('Innovation', () => {
 
       test('duplicate achievements are deduped', () => {
         const game = t.fixtureFirstPlayer()
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setScore(game, 'dennis', ['Canning', 'Experimentation', 'Coal'])
-          t.setColor(game, 'dennis', 'red', ['Industrialization'])
-          t.setAvailableAchievements(game, ['Writing', 'The Wheel', 'Construction', 'Mathematics', 'Machinery'])
+        t.setBoard(game, {
+          dennis: {
+            score: ['Canning', 'Experimentation', 'Coal'],
+            red: ['Industrialization'],
+          },
+          achievements: ['Writing', 'The Wheel', 'Construction', 'Mathematics', 'Machinery'],
         })
         const request1 = game.run()
 
@@ -271,11 +287,13 @@ describe('Innovation', () => {
 
       test.skip('cost for second of same age is double (part 1)', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setScore(game, 'dennis', ['Canning', 'Experimentation', 'Coal', 'Enterprise']) // 19
-          t.setColor(game, 'dennis', 'red', ['Industrialization'])
-          t.setAchievements(game, 'dennis', ['Monotheism'])
-          t.setAvailableAchievements(game, ['Construction', 'Machinery'])
+        t.setBoard(game, {
+          dennis: {
+            score: ['Canning', 'Experimentation', 'Coal', 'Enterprise'], // 19
+            red: ['Industrialization'],
+            achievements: ['Monotheism'],
+          },
+          achievements: ['Construction', 'Machinery'],
         })
         const request1 = game.run()
 
@@ -284,11 +302,13 @@ describe('Innovation', () => {
 
       test.skip('cost for second of same age is double (part 2)', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setScore(game, 'dennis', ['Canning', 'Experimentation', 'Coal', 'Statistics']) // 20
-          t.setColor(game, 'dennis', 'red', ['Industrialization'])
-          t.setAchievements(game, 'dennis', ['Monotheism'])
-          t.setAvailableAchievements(game, ['Construction', 'Machinery'])
+        t.setBoard(game, {
+          dennis: {
+            score: ['Canning', 'Experimentation', 'Coal', 'Statistics'], // 20
+            red: ['Industrialization'],
+            achievements: ['Monotheism'],
+          },
+          achievements: ['Construction', 'Machinery'],
         })
         const request1 = game.run()
 
@@ -297,11 +317,13 @@ describe('Innovation', () => {
 
       test.skip('cost for third of same age is triple (part 1)', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setScore(game, 'dennis', ['Canning', 'Experimentation', 'Enterprise']) // 14
-          t.setColor(game, 'dennis', 'red', ['Industrialization'])
-          t.setAchievements(game, 'dennis', ['The Wheel', 'Code of Laws'])
-          t.setAvailableAchievements(game, ['Mysticism'])
+        t.setBoard(game, {
+          dennis: {
+            score: ['Canning', 'Experimentation', 'Enterprise'], // 14
+            red: ['Industrialization'],
+            achievements: ['The Wheel', 'Code of Laws'],
+          },
+          achievements: ['Mysticism'],
         })
         const request1 = game.run()
 
@@ -310,11 +332,13 @@ describe('Innovation', () => {
 
       test.skip('cost for third of same age is triple (part 2)', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setScore(game, 'dennis', ['Canning', 'Experimentation', 'Statistics']) // 15
-          t.setColor(game, 'dennis', 'red', ['Industrialization'])
-          t.setAchievements(game, 'dennis', ['The Wheel', 'Code of Laws'])
-          t.setAvailableAchievements(game, ['Mysticism'])
+        t.setBoard(game, {
+          dennis: {
+            score: ['Canning', 'Experimentation', 'Statistics'], // 15
+            red: ['Industrialization'],
+            achievements: ['The Wheel', 'Code of Laws'],
+          },
+          achievements: ['Mysticism'],
         })
         const request1 = game.run()
 
@@ -323,10 +347,12 @@ describe('Innovation', () => {
 
       test('age restriction', () => {
         const game = t.fixtureFirstPlayer()
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setScore(game, 'dennis', ['Canning', 'Experimentation', 'Coal'])
-          t.setColor(game, 'dennis', 'red', ['Construction'])
-          t.setAvailableAchievements(game, ['Writing', 'Mathematics', 'Machinery', 'Reformation'])
+        t.setBoard(game, {
+          dennis: {
+            score: ['Canning', 'Experimentation', 'Coal'],
+            red: ['Construction'],
+          },
+          achievements: ['Writing', 'Mathematics', 'Machinery', 'Reformation'],
         })
         const request1 = game.run()
 
@@ -335,10 +361,12 @@ describe('Innovation', () => {
 
       test('achieved cards are moved to achievements', () => {
         const game = t.fixtureFirstPlayer()
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setScore(game, 'dennis', ['Canning', 'Experimentation', 'Coal'])
-          t.setColor(game, 'dennis', 'red', ['Construction'])
-          t.setAvailableAchievements(game, ['The Wheel', 'Monotheism', 'Machinery'])
+        t.setBoard(game, {
+          dennis: {
+            score: ['Canning', 'Experimentation', 'Coal'],
+            red: ['Construction'],
+          },
+          achievements: ['The Wheel', 'Monotheism', 'Machinery'],
         })
         const request1 = game.run()
         const request2 = t.choose(game, request1, 'Achieve.*base-2*')
@@ -348,13 +376,20 @@ describe('Innovation', () => {
 
       test.skip('in figures, opponents get a figure', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setScore(game, 'dennis', ['Canning', 'Experimentation', 'Coal'])
-          t.setColor(game, 'dennis', 'red', ['Construction'])
-          t.setAvailableAchievements(game, ['The Wheel', 'Monotheism', 'Machinery'])
-
-          t.setDeckTop(game, 'figs', 1, ['Imhotep'])
-          t.setHand(game, 'micah', [])
+        t.setBoard(game, {
+          dennis: {
+            score: ['Canning', 'Experimentation', 'Coal'],
+            red: ['Construction'],
+          },
+          micah: {
+            hand: [],
+          },
+          achievements: ['The Wheel', 'Monotheism', 'Machinery'],
+          decks: {
+            figs: {
+              1: ['Imhotep'],
+            },
+          },
         })
         const request1 = game.run()
         const request2 = t.choose(game, request1, 'Achieve.*base-2*')
@@ -364,13 +399,20 @@ describe('Innovation', () => {
 
       test.skip('in figures, opponents do not get a figure for non-standard', () => {
         const game = t.fixtureFirstPlayer()
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setScore(game, 'dennis', ['Canning', 'Experimentation', 'Coal'])
-          t.setColor(game, 'dennis', 'red', ['Construction'])
-          t.setAvailableAchievements(game, ['The Wheel', 'Monotheism', 'Machinery'])
-
-          t.setDeckTop(game, 'figs', 1, ['Imhotep'])
-          t.setHand(game, 'micah', [])
+        t.setBoard(game, {
+          dennis: {
+            score: ['Canning', 'Experimentation', 'Coal'],
+            red: ['Construction'],
+          },
+          micah: {
+            hand: [],
+          },
+          achievements: ['The Wheel', 'Monotheism', 'Machinery'],
+          decks: {
+            figs: {
+              1: ['Imhotep'],
+            },
+          },
         })
         const request1 = game.run()
         const request2 = t.choose(game, request1, 'Achieve.*base-2*')
@@ -379,12 +421,15 @@ describe('Innovation', () => {
       })
 
       test.skip('can achieve cards made available by karma', () => {
-        const game = t.fixtureTopCard('Amina Sukhera', { expansions: ['base', 'figs'] })
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setAvailableAchievements(game, ['Code of Laws'])
-          t.setColor(game, 'dennis', 'green', ['The Wheel'])
-          t.setColor(game, 'dennis', 'yellow', ['Fermenting'])
-          t.setScore(game, 'dennis', ['Statistics'])
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+        t.setBoard(game, {
+          dennis: {
+            purple: ['Amina Sukhera'],
+            green: ['The Wheel'],
+            yellow: ['Fermenting'],
+            score: ['Statistics'],
+          },
+          achievements: ['Code of Laws'],
         })
         const request1 = game.run()
         const request2 = t.choose(game, request1, 'Achieve.The Wheel')
@@ -453,8 +498,10 @@ describe('Innovation', () => {
     describe.skip('decree action', () => {
       test('from three figure cards', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setHand(game, 'dennis', ['Homer', 'Ptolemy', 'Al-Kindi'])
+        t.setBoard(game, {
+          dennis: {
+            hand: ['Homer', 'Ptolemy', 'Al-Kindi'],
+          },
         })
         const request1 = game.run()
 
@@ -466,8 +513,10 @@ describe('Innovation', () => {
 
       test('from three figure cards (same age does not work)', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setHand(game, 'dennis', ['Homer', 'Sinuhe', 'Ptolemy'])
+        t.setBoard(game, {
+          dennis: {
+            hand: ['Homer', 'Sinuhe', 'Ptolemy'],
+          },
         })
         const request1 = game.run()
 
@@ -476,8 +525,10 @@ describe('Innovation', () => {
 
       test('all colors work', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setHand(game, 'dennis', ['Homer', 'Ptolemy', 'Yi Sun-Sin', 'Daedalus', 'Shennong'])
+        t.setBoard(game, {
+          dennis: {
+            hand: ['Homer', 'Ptolemy', 'Yi Sun-Sin', 'Daedalus', 'Shennong'],
+          },
         })
         const request1 = game.run()
 
@@ -492,9 +543,11 @@ describe('Innovation', () => {
 
       test.skip('from two figures and a karma (same age)', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setColor(game, 'dennis', 'purple', ['Sinuhe'])
-          t.setHand(game, 'dennis', ['Homer', 'Fu Xi'])
+        t.setBoard(game, {
+          dennis: {
+            purple: ['Sinuhe'],
+            hand: ['Homer', 'Fu Xi'],
+          },
         })
         const request1 = game.run()
 
@@ -503,9 +556,11 @@ describe('Innovation', () => {
 
       test.skip('karma for two figures, but only one in hand', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setColor(game, 'dennis', 'purple', ['Sinuhe'])
-          t.setHand(game, 'dennis', ['Homer', 'Mathematics'])
+        t.setBoard(game, {
+          dennis: {
+            purple: ['Sinuhe'],
+            hand: ['Homer', 'Mathematics'],
+          },
         })
         const request1 = game.run()
 
@@ -584,11 +639,19 @@ describe('Innovation', () => {
     describe('dogma action', () => {
       test.skip('echo', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setColor(game, 'dennis', 'red', ['Metalworking', 'Bangle'])
-          t.setSplay(game, 'dennis', 'red', 'up')
-          t.setHand(game, 'dennis', ['Archery'])
-          t.setDeckTop(game, 'echo', 1, ['Ruler'])
+        t.setBoard(game, {
+          dennis: {
+            red: {
+              cards: ['Metalworking', 'Bangle'],
+              splay: 'up',
+            },
+            hand: ['Archery'],
+          },
+          decks: {
+            echo: {
+              1: ['Ruler'],
+            },
+          },
         })
         const request1 = game.run()
         const request2 = t.choose(game, request1, 'Dogma.Metalworking')
@@ -630,11 +693,11 @@ describe('Innovation', () => {
       })
 
       test('no share', () => {
-        const game = t.fixtureTopCard('Writing')
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.clearBoard(game, 'dennis')
-          t.clearBoard(game, 'micah')
-          t.setColor(game, 'dennis', 'blue', ['Writing'])
+        const game = t.fixtureFirstPlayer()
+        t.setBoard(game, {
+          dennis: {
+            blue: ['Writing'],
+          },
         })
         const request = game.run()
         t.choose(game, request, 'Dogma.Writing')
@@ -653,11 +716,19 @@ describe('Innovation', () => {
       })
 
       test('no share bonus on demand', () => {
-        const game = t.fixtureTopCard('Archery')
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.clearHand(game, 'dennis')
-          t.setHand(game, 'micah', ['Gunpowder'])
-          t.setDeckTop(game, 'base', 1, ['Tools'])
+        const game = t.fixtureFirstPlayer()
+        t.setBoard(game, {
+          dennis: {
+            red: ['Archery'],
+          },
+          micah: {
+            hand: ['Gunpowder'],
+          },
+          decks: {
+            base: {
+              1: ['Tools'],
+            },
+          },
         })
         const result1 = game.run()
         const result2 = t.choose(game, result1, 'Dogma.Archery')
@@ -692,8 +763,10 @@ describe('Innovation', () => {
 
       test('player draws a card based on top card age (test 2)', () => {
         const game = t.fixtureFirstPlayer()
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setColor(game, 'dennis', 'purple', ['Specialization'])
+        t.setBoard(game, {
+          dennis: {
+            purple: ['Specialization'],
+          },
         })
 
         const request = game.run()
@@ -749,10 +822,12 @@ describe('Innovation', () => {
     describe('endorse action', () => {
       test('need a card of equal or lower age to tuck', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setColor(game, 'dennis', 'green', ['The Wheel'])
-          t.setColor(game, 'dennis', 'red', ['Tikal'])
-          t.setHand(game, 'dennis', ['Cordoba'])
+        t.setBoard(game, {
+          dennis: {
+            green: ['The Wheel'],
+            red: ['Tikal'],
+            hand: ['Cordoba'],
+          },
         })
         const result1 = game.run()
         expect(t.getChoices(result1, 'Endorse')).toStrictEqual([])
@@ -760,10 +835,12 @@ describe('Innovation', () => {
 
       test('can choose which card to tuck', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setColor(game, 'dennis', 'green', ['The Wheel'])
-          t.setColor(game, 'dennis', 'red', ['Tikal'])
-          t.setHand(game, 'dennis', ['Mathematics', 'Tools', 'Cordoba'])
+        t.setBoard(game, {
+          dennis: {
+            green: ['The Wheel'],
+            red: ['Tikal'],
+            hand: ['Mathematics', 'Tools', 'Cordoba'],
+          },
         })
         const result1 = game.run()
         const result2 = t.choose(game, result1, 'Endorse.green')
@@ -772,20 +849,26 @@ describe('Innovation', () => {
       })
 
       test('leader goes twice, shares once, demands twice', () => {
-        const game = t.fixtureTopCard('Mapmaking', { numPlayers: 3 })
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setColor(game, 'dennis', 'red', ['Barcelona'])
-          t.setColor(game, 'scott', 'green', ['Venice'])
-          t.setColor(game, 'scott', 'purple', ['Ephesus'])
-
-          t.clearBoard(game, 'micah')
-
-          t.setScore(game, 'micah', ['The Wheel', 'Clothing'])
-          t.setScore(game, 'scott', [])
-
-          t.setDeckTop(game, 'base', 1, ['Mysticism', 'Tools', 'Code of Laws'])
-
-          t.setHand(game, 'dennis', ['Masonry'])
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'], numPlayers: 3 })
+        t.setBoard(game, {
+          dennis: {
+            green: ['Mapmaking'],
+            red: ['Barcelona'],
+            hand: ['Masonry'],
+          },
+          micah: {
+            score: ['The Wheel', 'Clothing'],
+          },
+          scott: {
+            green: ['Venice'],
+            purple: ['Ephesus'],
+            score: [],
+          },
+          decks: {
+            base: {
+              1: ['Mysticism', 'Tools', 'Code of Laws'],
+            },
+          },
         })
         const request1 = game.run()
         const request2 = t.choose(game, request1, 'Endorse.green')
@@ -802,10 +885,12 @@ describe('Innovation', () => {
 
       test('city biscuits must match featured biscuit; cities match themselves', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'city'] })
-        game.testSetBreakpoint('before-first-player', (game) => {
-          t.setColor(game, 'dennis', 'green', ['The Wheel'])
-          t.setColor(game, 'dennis', 'blue', ['Cordoba'])
-          t.setHand(game, 'dennis', ['Mathematics', 'Tools'])
+        t.setBoard(game, {
+          dennis: {
+            green: ['The Wheel'],
+            blue: ['Cordoba'],
+            hand: ['Mathematics', 'Tools'],
+          },
         })
         const result1 = game.run()
         expect(t.getChoices(result1, 'Endorse')).toStrictEqual(['blue'])

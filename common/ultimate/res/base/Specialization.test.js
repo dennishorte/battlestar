@@ -5,12 +5,19 @@ const t = require('../../testutil.js')
 describe('Specialization', () => {
   describe('Reveal and take', () => {
     test('take opponent top cards of matching color', () => {
-      const game = t.fixtureTopCard('Specialization', { numPlayers: 3 })
-      game.testSetBreakpoint('before-first-player', (game) => {
-        t.setColor(game, 'dennis', 'red', ['Flight'])
-        t.setColor(game, 'scott', 'red', ['Archery'])
-        t.setColor(game, 'micah', 'red', ['Metalworking', 'Optics'])
-        t.setHand(game, 'dennis', ['Oars'])
+      const game = t.fixtureFirstPlayer({ numPlayers: 3 })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Specialization'],
+          red: ['Flight'],
+          hand: ['Oars'],
+        },
+        scott: {
+          red: ['Archery'],
+        },
+        micah: {
+          red: ['Metalworking', 'Optics'],
+        },
       })
       let request
       request = game.run()
@@ -27,10 +34,12 @@ describe('Specialization', () => {
 
   describe('splay', () => {
     test('can splay', () => {
-      const game = t.fixtureTopCard('Specialization', { numPlayers: 3 })
-      game.testSetBreakpoint('before-first-player', (game) => {
-        t.setColor(game, 'dennis', 'blue', ['Mathematics', 'Experimentation'])
-        t.setHand(game, 'dennis', [])
+      const game = t.fixtureFirstPlayer({ numPlayers: 3 })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Specialization'],
+          blue: ['Mathematics', 'Experimentation'],
+        },
       })
       let request
       request = game.run()

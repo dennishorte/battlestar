@@ -5,9 +5,12 @@ const t = require('../../testutil.js')
 describe('Adam Smith', () => {
 
   test('karma: calculate-biscuits - Each {c} provides two additional {c}', () => {
-    const game = t.fixtureTopCard('Adam Smith', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'blue', ['Writing'])
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        green: ['Adam Smith'],
+        blue: ['Writing'],
+      },
     })
     let request
     request = game.run()
