@@ -18,6 +18,15 @@ describe('Universe Achievement', () => {
     request = game.run()
     request = t.choose(game, 'Meld.Empiricism')
 
-    expect(t.cards(game, 'achievements')).toEqual(['Universe'])
+    t.testBoard(game, {
+      dennis: {
+        red: ['Flight'],
+        yellow: ['Skyscrapers'],
+        green: ['Corporations'],
+        blue: ['Rocketry'],
+        purple: ['Empiricism'],
+        achievements: ['Universe'],
+      },
+    })
   })
 })

@@ -18,13 +18,22 @@ describe('Alchemy', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Alchemy')
-    const result3 = t.choose(game, 'Invention')
-    const result4 = t.choose(game, 'Printing Press')
+    game.run()
+    t.choose(game, 'Dogma.Alchemy')
+    t.choose(game, 'Invention')  // Meld
+    t.choose(game, 'Printing Press')  // Score
 
-    expect(t.cards(game, 'green')).toEqual(['Invention', 'The Wheel'])
-    expect(t.cards(game, 'score')).toEqual(['Printing Press'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Alchemy'],
+        green: ['Invention', 'The Wheel'],
+        yellow: ['Masonry'],
+        red: ['Metalworking'],
+        hand: ['Experimentation'],  // Remaining from draw
+        score: ['Printing Press'],
+      },
+    })
   })
 
   test('draw and reveal (red)', () => {
@@ -42,10 +51,19 @@ describe('Alchemy', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Alchemy')
-    const result3 = t.choose(game, 'auto')
+    game.run()
+    t.choose(game, 'Dogma.Alchemy')
+    t.choose(game, 'auto')  // No cards to meld/score after return
 
-    expect(t.cards(game, 'hand')).toEqual([])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Alchemy'],
+        green: ['The Wheel'],
+        yellow: ['Masonry'],
+        red: ['Metalworking'],
+        // Drew red (Gunpowder), so all drawn cards and hand returned
+      },
+    })
   })
 })

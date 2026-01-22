@@ -19,12 +19,21 @@ describe('City States', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.City States')
-    const result3 = t.choose(game, 'Archery')
+    game.run()
+    t.choose(game, 'Dogma.City States')
+    t.choose(game, 'Archery')
 
-    expect(t.cards(game, 'red')).toEqual(['Archery'])
-    expect(t.cards(game, 'hand', 'micah')).toEqual(['Tools'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['City States'],
+        red: ['Archery'],
+      },
+      micah: {
+        yellow: ['Masonry'],
+        hand: ['Tools'],
+      },
+    })
   })
 
   test('not enough castles', () => {
@@ -37,9 +46,19 @@ describe('City States', () => {
         yellow: ['Masonry'],
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.City States')
+    game.run()
+    const result = t.choose(game, 'Dogma.City States')
 
-    expect(result2.selectors[0].title).toBe('Choose First Action')
+    expect(result.selectors[0].title).toBe('Choose First Action')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['City States'],
+      },
+      micah: {
+        yellow: ['Masonry'],
+      },
+    })
   })
 })

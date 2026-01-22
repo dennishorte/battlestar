@@ -19,7 +19,7 @@ describe('Banking', () => {
         },
       },
     })
-    const result1 = game.run()
+    game.run()
     const result2 = t.choose(game, 'Dogma.Banking')
 
     expect(result2.selectors[0]).toEqual(expect.objectContaining({
@@ -27,10 +27,19 @@ describe('Banking', () => {
       choices: expect.arrayContaining(['Industrialization', 'Chemistry'])
     }))
 
-    const result3 = t.choose(game, 'Chemistry')
+    t.choose(game, 'Chemistry')
 
-    expect(t.cards(game, 'blue')).toEqual(['Chemistry'])
-    expect(t.cards(game, 'score', 'micah')).toEqual(['Statistics'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: ['Banking'],
+        blue: ['Chemistry'],
+      },
+      micah: {
+        red: ['Industrialization'],
+        score: ['Statistics'],
+      },
+    })
   })
 
   test('no draw and score if no card', () => {
@@ -40,9 +49,15 @@ describe('Banking', () => {
         green: ['Banking'],
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Banking')
-    expect(t.cards(game, 'score', 'micah')).toEqual([])
+    game.run()
+    t.choose(game, 'Dogma.Banking')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: ['Banking'],
+      },
+    })
   })
 
   test('splay', () => {
@@ -52,7 +67,7 @@ describe('Banking', () => {
         green: ['Banking', 'The Wheel', 'Mapmaking'],
       },
     })
-    const result1 = game.run()
+    game.run()
     const result2 = t.choose(game, 'Dogma.Banking')
 
     expect(result2.selectors[0].choices).toEqual(['green'])

@@ -16,15 +16,21 @@ describe('Coal', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Coal')
-    const result3 = t.choose(game, 'red')
-    const result4 = t.choose(game, 'blue')
+    game.run()
+    t.choose(game, 'Dogma.Coal')
+    t.choose(game, 'red')
+    t.choose(game, 'blue')
 
-    expect(t.cards(game, 'blue')).toEqual(['Tools'])
-    expect(t.cards(game, 'score').sort()).toEqual(['Alchemy', 'Calendar'])
-    expect(t.cards(game, 'red')).toEqual(['Coal', 'The Pirate Code'])
-    expect(t.zone(game, 'red').splay).toEqual('right')
+    t.testBoard(game, {
+      dennis: {
+        red: {
+          cards: ['Coal', 'The Pirate Code'],
+          splay: 'right',
+        },
+        blue: ['Tools'],
+        score: ['Alchemy', 'Calendar'],
+      },
+    })
   })
 
   test('dogma: choose not to score', () => {
@@ -40,14 +46,20 @@ describe('Coal', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Coal')
-    const result3 = t.choose(game, 'red')
-    const result4 = t.choose(game)
+    game.run()
+    t.choose(game, 'Dogma.Coal')
+    t.choose(game, 'red')
+    t.choose(game)
 
-    expect(t.cards(game, 'blue')).toEqual(['Alchemy', 'Calendar', 'Tools'])
-    expect(t.cards(game, 'red')).toEqual(['Coal', 'The Pirate Code'])
-    expect(t.zone(game, 'red').splay).toEqual('right')
+    t.testBoard(game, {
+      dennis: {
+        red: {
+          cards: ['Coal', 'The Pirate Code'],
+          splay: 'right',
+        },
+        blue: ['Alchemy', 'Calendar', 'Tools'],
+      },
+    })
   })
 
 })

@@ -24,6 +24,23 @@ describe('World achievement', () => {
     request = t.choose(game, 'Dogma.Specialization')
     request = t.choose(game, 'blue')
 
-    expect(t.cards(game, 'achievements')).toEqual(['World'])
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Specialization'],
+        green: ['Databases'],
+        blue: {
+          cards: [
+            'Software',
+            'Bioengineering',
+            'Computers',
+            'Publications',
+            'Rocketry',
+            'Quantum Theory'
+          ],
+          splay: 'up',
+        },
+        achievements: ['World'],
+      },
+    })
   })
 })

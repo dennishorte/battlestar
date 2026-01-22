@@ -19,16 +19,23 @@ describe('Specialization', () => {
           red: ['Metalworking', 'Optics'],
         },
       })
-      let request
-      request = game.run()
-      request = t.choose(game, 'Dogma.Specialization')
-      request = t.choose(game, 'auto')
 
-      expect(t.cards(game, 'hand').sort()).toEqual([
-        'Archery',
-        'Metalworking',
-        'Oars',
-      ].sort())
+      game.run()
+      t.choose(game, 'Dogma.Specialization')
+      t.choose(game, 'auto')
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          purple: ['Specialization'],
+          red: ['Flight'],
+          hand: ['Oars', 'Archery', 'Metalworking'],
+        },
+        scott: {},
+        micah: {
+          red: ['Optics'],
+        },
+      })
     })
   })
 
@@ -41,12 +48,21 @@ describe('Specialization', () => {
           blue: ['Mathematics', 'Experimentation'],
         },
       })
-      let request
-      request = game.run()
-      request = t.choose(game, 'Dogma.Specialization')
-      request = t.choose(game, 'blue')
 
-      expect(t.zone(game, 'blue').splay).toBe('up')
+      game.run()
+      t.choose(game, 'Dogma.Specialization')
+      t.choose(game, 'blue')
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          purple: ['Specialization'],
+          blue: {
+            cards: ['Mathematics', 'Experimentation'],
+            splay: 'up',
+          },
+        },
+      })
     })
   })
 })

@@ -20,11 +20,21 @@ describe('Clothing', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Clothing')
+    game.run()
+    t.choose(game, 'Dogma.Clothing')
 
-    expect(t.cards(game, 'purple')).toEqual(['Code of Laws'])
-    expect(t.cards(game, 'score').sort()).toEqual(['Archery', 'Writing'])
+    t.testBoard(game, {
+      dennis: {
+        green: ['Clothing'],
+        blue: ['Tools'],
+        purple: ['Code of Laws'],
+        hand: ['Mathematics'],
+        score: ['Writing', 'Archery'],
+      },
+      micah: {
+        purple: ['Mysticism'],
+      },
+    })
   })
 
 })

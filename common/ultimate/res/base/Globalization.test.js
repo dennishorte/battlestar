@@ -1,9 +1,6 @@
-const t = require('../../testutil.js')
-const {
-  GameOverEvent,
-  InputRequestEvent,
-} = require('../../../lib/game.js')
+Error.stackTraceLimit = 100
 
+const t = require('../../testutil.js')
 
 describe('Globalization', () => {
   test('demand', () => {
@@ -21,12 +18,29 @@ describe('Globalization', () => {
           splay: 'left',
         },
       },
+      decks: {
+        base: {
+          11: ['Hypersonics'],
+        },
+      },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Dogma.Globalization')
 
-    expect(t.cards(game, 'yellow', 'micah')).toEqual(['Statistics'])
+    game.run()
+    t.choose(game, 'Dogma.Globalization')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: {
+          cards: ['Globalization', 'Stem Cells', 'Fermenting'],
+          splay: 'up',
+        },
+        green: ['Hypersonics'],
+      },
+      micah: {
+        yellow: ['Statistics'],
+      },
+    })
   })
 
   test('draw and score', () => {
@@ -44,11 +58,20 @@ describe('Globalization', () => {
         },
       },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Dogma.Globalization')
 
-    expect(t.cards(game, 'green')).toEqual(['Hypersonics'])
+    game.run()
+    t.choose(game, 'Dogma.Globalization')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: {
+          cards: ['Globalization', 'Stem Cells', 'Fermenting'],
+          splay: 'up',
+        },
+        green: ['Hypersonics'],
+      },
+    })
   })
 
   test('win condition (yes)', () => {
@@ -62,11 +85,11 @@ describe('Globalization', () => {
         score: ['Metalworking'],
       },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Dogma.Globalization')
 
-    expect(request).toEqual(expect.any(GameOverEvent))
+    game.run()
+    const result = t.choose(game, 'Dogma.Globalization')
+
+    t.testGameOver(result, 'dennis', 'Globalization')
   })
 
   test('win condition (no)', () => {
@@ -85,10 +108,10 @@ describe('Globalization', () => {
         },
       },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Dogma.Globalization')
 
-    expect(request).toEqual(expect.any(InputRequestEvent))
+    game.run()
+    t.choose(game, 'Dogma.Globalization')
+
+    t.testIsSecondPlayer(game)
   })
 })

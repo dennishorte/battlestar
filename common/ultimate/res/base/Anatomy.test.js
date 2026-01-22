@@ -15,13 +15,22 @@ describe('Anatomy', () => {
         blue: ['Calendar'],
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Anatomy')
-    const result3 = t.choose(game, 'The Wheel') // Micah's choice
+    game.run()
+    t.choose(game, 'Dogma.Anatomy')
+    t.choose(game, 'The Wheel')  // Micah returns from score
+    // Archery (age 1) matches The Wheel's age, so it's also returned
 
-    expect(t.cards(game, 'score', 'micah')).toEqual(['Mathematics'])
-    expect(t.cards(game, 'red', 'micah')).toEqual([])
-    expect(t.cards(game, 'blue', 'micah')).toEqual(['Calendar'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Anatomy'],
+      },
+      micah: {
+        score: ['Mathematics'],
+        blue: ['Calendar'],
+        // red: empty (Archery returned)
+      },
+    })
   })
 
   test('returned, no matching top card', () => {
@@ -32,17 +41,26 @@ describe('Anatomy', () => {
       },
       micah: {
         score: ['Mathematics', 'The Wheel'],
-        red: ['Gunpowder', 'Archery'],
+        red: ['Gunpowder', 'Archery'],  // Gunpowder is top, age 4
         blue: ['Calendar'],
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Anatomy')
-    const result3 = t.choose(game, 'The Wheel') // Micah's choice
+    game.run()
+    t.choose(game, 'Dogma.Anatomy')
+    t.choose(game, 'The Wheel')  // Micah returns from score
+    // No top card matches age 1, so nothing else returned
 
-    expect(t.cards(game, 'score', 'micah')).toEqual(['Mathematics'])
-    expect(t.cards(game, 'red', 'micah')).toEqual(['Gunpowder', 'Archery'])
-    expect(t.cards(game, 'blue', 'micah')).toEqual(['Calendar'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Anatomy'],
+      },
+      micah: {
+        score: ['Mathematics'],
+        red: ['Gunpowder', 'Archery'],  // Unchanged
+        blue: ['Calendar'],
+      },
+    })
   })
 
   test('did not return', () => {
@@ -54,13 +72,21 @@ describe('Anatomy', () => {
       micah: {
         red: ['Archery'],
         blue: ['Calendar'],
+        // No score cards, so nothing to return
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Anatomy')
+    game.run()
+    t.choose(game, 'Dogma.Anatomy')
 
-    expect(t.cards(game, 'red', 'micah')).toEqual(['Archery'])
-    expect(t.cards(game, 'blue', 'micah')).toEqual(['Calendar'])
-    expect(result2.selectors[0].title).toBe('Choose First Action')
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Anatomy'],
+      },
+      micah: {
+        red: ['Archery'],
+        blue: ['Calendar'],
+      },
+    })
   })
 })

@@ -11,11 +11,17 @@ describe('Antibiotics', () => {
         hand: ['Archery', 'Calendar', 'Mathematics'],
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Antibiotics')
-    const result3 = t.choose(game)
+    game.run()
+    t.choose(game, 'Dogma.Antibiotics')
+    t.choose(game)  // Return nothing
 
-    expect(t.cards(game, 'hand', 'dennis').sort()).toEqual(['Archery', 'Calendar', 'Mathematics'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Antibiotics'],
+        hand: ['Archery', 'Calendar', 'Mathematics'],
+      },
+    })
   })
 
   test('returned one', () => {
@@ -31,16 +37,17 @@ describe('Antibiotics', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Antibiotics')
-    const result3 = t.choose(game, 'Archery')
+    game.run()
+    t.choose(game, 'Dogma.Antibiotics')
+    t.choose(game, 'Archery')  // Return 1 card (age 1) -> draw 2
 
-    expect(t.cards(game, 'hand', 'dennis').sort()).toEqual([
-      'Calendar',
-      'Mass Media',
-      'Mathematics',
-      'Socialism',
-    ])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Antibiotics'],
+        hand: ['Calendar', 'Mass Media', 'Mathematics', 'Socialism'],
+      },
+    })
   })
 
   test('returned three (two with same value)', () => {
@@ -56,17 +63,18 @@ describe('Antibiotics', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Antibiotics')
-    const result3 = t.choose(game, 'Archery', 'Calendar', 'Mathematics')
-    const result4 = t.choose(game, 'auto')
+    game.run()
+    t.choose(game, 'Dogma.Antibiotics')
+    t.choose(game, 'Archery', 'Calendar', 'Mathematics')  // 2 distinct ages -> draw 4
+    t.choose(game, 'auto')
 
-    expect(t.cards(game, 'hand', 'dennis').sort()).toEqual([
-      'Empiricism',
-      'Mass Media',
-      'Quantum Theory',
-      'Socialism',
-    ])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Antibiotics'],
+        hand: ['Empiricism', 'Mass Media', 'Quantum Theory', 'Socialism'],
+      },
+    })
   })
 
   test('four is too many', () => {
@@ -82,8 +90,8 @@ describe('Antibiotics', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Antibiotics')
+    game.run()
+    t.choose(game, 'Dogma.Antibiotics')
 
     const bad = () => t.choose(game, 'Archery', 'Calendar', 'Mathematics', 'Tools')
 

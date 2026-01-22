@@ -15,7 +15,7 @@ describe('Code of Laws', () => {
       }
     })
 
-    const result1 = game.run()
+    game.run()
     const result2 = t.choose(game, 'Dogma.Code of Laws')
 
     expect(result2.selectors[0].choices.sort()).toEqual(['Metalworking', 'Writing'])
@@ -24,10 +24,20 @@ describe('Code of Laws', () => {
 
     expect(result3.selectors[0].choices.sort()).toEqual(['blue'])
 
-    const result4 = t.choose(game, 'blue')
+    t.choose(game, 'blue')
 
-    expect(t.cards(game, 'blue')).toEqual(['Tools', 'Writing'])
-    expect(t.zone(game, 'blue').splay).toBe('left')
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Code of Laws'],
+        blue: {
+          cards: ['Tools', 'Writing'],
+          splay: 'left',
+        },
+        green: ['The Wheel'],
+        red: ['Archery'],
+        hand: ['Agriculture', 'Metalworking'],
+      },
+    })
   })
 
 })

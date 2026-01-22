@@ -15,12 +15,19 @@ describe('Collaboration', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Collaboration')
-    const result3 = t.choose(game, 'Computers')
+    game.run()
+    t.choose(game, 'Dogma.Collaboration')
+    t.choose(game, 'Computers')
 
-    expect(t.cards(game, 'blue')).toEqual(['Computers'])
-    expect(t.cards(game, 'purple', 'micah')).toEqual(['Services'])
+    t.testBoard(game, {
+      dennis: {
+        green: ['Collaboration'],
+        blue: ['Computers'],
+      },
+      micah: {
+        purple: ['Services'],
+      },
+    })
   })
 
   test('win condition (10)', () => {
@@ -35,10 +42,10 @@ describe('Collaboration', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Collaboration')
-    const result3 = t.choose(game, 'Computers')
+    game.run()
+    t.choose(game, 'Dogma.Collaboration')
+    const result = t.choose(game, 'Computers')
 
-    t.testGameOver(result3, 'dennis', 'Collaboration')
+    t.testGameOver(result, 'dennis', 'Collaboration')
   })
 })

@@ -16,10 +16,17 @@ describe('Calendar', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Calendar')
+    game.run()
+    t.choose(game, 'Dogma.Calendar')
 
-    expect(t.cards(game, 'hand')).toEqual(['Engineering', 'Paper'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Calendar'],
+        score: ['Printing Press', 'Invention', 'Experimentation'],
+        hand: ['Engineering', 'Paper'],
+      },
+    })
   })
 
   test('have less', () => {
@@ -30,9 +37,15 @@ describe('Calendar', () => {
         hand: ['Printing Press'],
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Calendar')
+    game.run()
+    t.choose(game, 'Dogma.Calendar')
 
-    expect(t.cards(game, 'hand')).toEqual(['Printing Press'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Calendar'],
+        hand: ['Printing Press'],
+      },
+    })
   })
 })

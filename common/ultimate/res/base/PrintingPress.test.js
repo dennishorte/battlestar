@@ -17,13 +17,20 @@ describe('Printing Press', () => {
         },
       },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Dogma.Printing Press')
-    request = t.choose(game, 'Coal')
 
-    expect(t.cards(game, 'score')).toEqual(['Mathematics'])
-    expect(t.cards(game, 'hand')).toEqual(['Canning'])
+    game.run()
+    t.choose(game, 'Dogma.Printing Press')
+    t.choose(game, 'Coal')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Printing Press'],
+        purple: ['Enterprise'],
+        score: ['Mathematics'],
+        hand: ['Canning'],
+      },
+    })
   })
 
   test('do not return', () => {
@@ -40,13 +47,19 @@ describe('Printing Press', () => {
         },
       },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Dogma.Printing Press')
-    request = t.choose(game)
 
-    expect(t.cards(game, 'score')).toEqual(['Coal', 'Mathematics'])
-    expect(t.cards(game, 'hand')).toEqual([])
+    game.run()
+    t.choose(game, 'Dogma.Printing Press')
+    t.choose(game)
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Printing Press'],
+        purple: ['Enterprise'],
+        score: ['Coal', 'Mathematics'],
+      },
+    })
   })
 
   test('splay', () => {
@@ -57,11 +70,20 @@ describe('Printing Press', () => {
         purple: ['Enterprise'],
       },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Dogma.Printing Press')
-    request = t.choose(game, 'blue')
 
-    expect(t.zone(game, 'blue').splay).toBe('right')
+    game.run()
+    t.choose(game, 'Dogma.Printing Press')
+    t.choose(game, 'blue')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: {
+          cards: ['Printing Press', 'Tools'],
+          splay: 'right',
+        },
+        purple: ['Enterprise'],
+      },
+    })
   })
 })

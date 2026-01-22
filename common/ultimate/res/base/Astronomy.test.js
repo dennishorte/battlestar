@@ -15,12 +15,19 @@ describe('Astronomy', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Astronomy')
+    game.run()
+    t.choose(game, 'Dogma.Astronomy')
 
-    expect(t.cards(game, 'blue')).toEqual(['Atomic Theory'])
-    expect(t.cards(game, 'green')).toEqual(['Classification'])
-    expect(t.cards(game, 'hand')).toEqual(['Industrialization'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Astronomy'],
+        blue: ['Atomic Theory'],
+        green: ['Classification'],
+        hand: ['Industrialization'],
+        achievements: ['Universe'],
+      },
+    })
   })
 
   test('win condition, yes', () => {
@@ -35,10 +42,19 @@ describe('Astronomy', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Astronomy')
+    game.run()
+    t.choose(game, 'Dogma.Astronomy')
 
-    expect(t.cards(game, 'achievements')).toEqual(['Universe'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Astronomy'],
+        blue: ['Atomic Theory'],
+        green: ['Classification'],
+        hand: ['Industrialization'],
+        achievements: ['Universe'],
+      },
+    })
   })
 
   test('win condition, no', () => {
@@ -54,9 +70,18 @@ describe('Astronomy', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Astronomy')
+    game.run()
+    t.choose(game, 'Dogma.Astronomy')
 
-    expect(t.cards(game, 'achievements')).toEqual([])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Astronomy'],
+        yellow: ['Steam Engine'],
+        blue: ['Atomic Theory'],
+        green: ['Classification'],
+        hand: ['Industrialization'],
+      },
+    })
   })
 })

@@ -9,11 +9,23 @@ describe('Stem Cells', () => {
       dennis: {
         yellow: ['Stem Cells'],
       },
+      decks: {
+        base: {
+          11: ['Hypersonics'],
+        },
+      },
     })
-    let request
-    request = game.run()
+
+    game.run()
     t.choose(game, 'Dogma.Stem Cells')
-    // Just looking for no errors.
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Stem Cells'],
+        hand: ['Hypersonics'],
+      },
+    })
   })
 
   test('cards in hand, yes', () => {
@@ -23,14 +35,26 @@ describe('Stem Cells', () => {
         yellow: ['Stem Cells'],
         hand: ['Reformation', 'Experimentation'],
       },
+      decks: {
+        base: {
+          11: ['Hypersonics'],
+        },
+      },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Dogma.Stem Cells')
-    request = t.choose(game, 'yes')
-    request = t.choose(game, 'auto')
 
-    expect(t.cards(game, 'score').sort()).toEqual(['Experimentation', 'Reformation'])
+    game.run()
+    t.choose(game, 'Dogma.Stem Cells')
+    t.choose(game, 'yes')
+    t.choose(game, 'auto')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Stem Cells'],
+        score: ['Reformation', 'Experimentation'],
+        hand: ['Hypersonics'],
+      },
+    })
   })
 
   test('cards in hand, no', () => {
@@ -40,12 +64,23 @@ describe('Stem Cells', () => {
         yellow: ['Stem Cells'],
         hand: ['Reformation', 'Experimentation'],
       },
+      decks: {
+        base: {
+          11: ['Hypersonics'],
+        },
+      },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Dogma.Stem Cells')
+
+    game.run()
+    t.choose(game, 'Dogma.Stem Cells')
     t.choose(game, 'no')
 
-    expect(t.cards(game, 'score')).toEqual([])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Stem Cells'],
+        hand: ['Reformation', 'Experimentation', 'Hypersonics'],
+      },
+    })
   })
 })

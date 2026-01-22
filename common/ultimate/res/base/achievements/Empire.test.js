@@ -20,19 +20,20 @@ describe('Empire Achievement', () => {
 
     let request
     request = game.run()
-
-    // Test preconditions
-    const biscuits = t.dennis(game).biscuits()
-    expect(biscuits.c).toBe(3)
-    expect(biscuits.f).toBe(3)
-    expect(biscuits.k).toBe(3)
-    expect(biscuits.l).toBe(3)
-    expect(biscuits.s).toBe(3)
-    expect(biscuits.i).toBe(0)
-
     request = t.choose(game, 'Meld.Databases')
 
-    expect(t.cards(game, 'achievements')).toEqual(['Empire'])
+    t.testBoard(game, {
+      dennis: {
+        red: ['Coal'],
+        blue: ['Experimentation'],
+        purple: ['Reformation'],
+        green: {
+          cards: ['Databases', 'The Wheel', 'Navigation'],
+          splay: 'up',
+        },
+        achievements: ['Empire'],
+      },
+    })
   })
 
   test('person biscuits do not count', () => {
@@ -52,17 +53,23 @@ describe('Empire Achievement', () => {
 
     let request
     request = game.run()
-    const biscuits = t.dennis(game).biscuits()
-    expect(biscuits.c).toBe(3)
-    expect(biscuits.f).toBe(3)
-    expect(biscuits.k).toBe(3)
-    expect(biscuits.l).toBe(3)
-    expect(biscuits.s).toBe(3)
-    expect(biscuits.i).toBe(0)
-
     request = t.choose(game, 'Meld.Escapism')
 
-    expect(t.cards(game, 'achievements')).toEqual([])
+    t.testBoard(game, {
+      dennis: {
+        red: ['Coal'],
+        blue: ['Experimentation'],
+        purple: {
+          cards: ['Escapism', 'Reformation'],
+          splay: 'none',
+        },
+        green: {
+          cards: ['The Wheel', 'Navigation'],
+          splay: 'up',
+        },
+        achievements: [],
+      },
+    })
   })
 
   test('not quite', () => {
@@ -82,16 +89,22 @@ describe('Empire Achievement', () => {
 
     let request
     request = game.run()
-    const biscuits = t.dennis(game).biscuits()
-    expect(biscuits.c).toBe(3)
-    expect(biscuits.f).toBe(3)
-    expect(biscuits.k).toBe(3)
-    expect(biscuits.l).toBe(3)
-    expect(biscuits.s).toBe(3)
-    expect(biscuits.i).toBe(0)
-
     request = t.choose(game, 'Meld.Bioengineering')
 
-    expect(t.cards(game, 'achievements')).toEqual([])
+    t.testBoard(game, {
+      dennis: {
+        red: ['Coal'],
+        blue: {
+          cards: ['Bioengineering', 'Experimentation'],
+          splay: 'none',
+        },
+        purple: ['Reformation'],
+        green: {
+          cards: ['The Wheel', 'Navigation'],
+          splay: 'up',
+        },
+        achievements: [],
+      },
+    })
   })
 })

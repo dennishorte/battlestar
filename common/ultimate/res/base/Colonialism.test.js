@@ -16,10 +16,15 @@ describe('Colonialism', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Colonialism')
+    game.run()
+    t.choose(game, 'Dogma.Colonialism')
 
-    expect(t.cards(game, 'blue')).toEqual(['Tools', 'Translation'])
-    expect(t.cards(game, 'purple')).toEqual(['Education'])
+    t.testBoard(game, {
+      dennis: {
+        red: ['Colonialism'],
+        blue: ['Tools', 'Translation'],
+        purple: ['Education'],
+      },
+    })
   })
 })

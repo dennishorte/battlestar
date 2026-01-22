@@ -16,13 +16,18 @@ describe('Chemistry', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Chemistry')
-    const result3 = t.choose(game)
-    const result4 = t.choose(game, 'The Wheel')
+    game.run()
+    t.choose(game, 'Dogma.Chemistry')
+    t.choose(game)
+    t.choose(game, 'The Wheel')
 
-    expect(t.cards(game, 'score').sort()).toEqual(['Vaccination'])
-    expect(t.zone(game, 'blue').splay).toBe('none')
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Chemistry', 'Tools'],
+        score: ['Vaccination'],
+      },
+    })
   })
 
   test('yes splay, no score', () => {
@@ -37,12 +42,20 @@ describe('Chemistry', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Chemistry')
-    const result3 = t.choose(game, 'blue')
+    game.run()
+    t.choose(game, 'Dogma.Chemistry')
+    const result = t.choose(game, 'blue')
 
-    expect(t.cards(game, 'score').sort()).toEqual([])
-    expect(t.zone(game, 'blue').splay).toBe('right')
-    expect(result3.selectors[0].actor).toBe('micah')
+    expect(result.selectors[0].actor).toBe('micah')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: {
+          cards: ['Chemistry', 'Tools'],
+          splay: 'right',
+        },
+      },
+    })
   })
 })

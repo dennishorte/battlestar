@@ -31,6 +31,30 @@ describe('Wonder Achievement', () => {
     request = t.choose(game, 'Dogma.Flight')
     request = t.choose(game, 'red')
 
-    expect(t.cards(game, 'achievements')).toEqual(['Wonder'])
+    t.testBoard(game, {
+      dennis: {
+        red: {
+          cards: ['Flight', 'Archery'],
+          splay: 'up',
+        },
+        yellow: {
+          cards: ['Skyscrapers', 'Masonry'],
+          splay: 'right',
+        },
+        green: {
+          cards: ['Corporations', 'Sailing'],
+          splay: 'right',
+        },
+        blue: {
+          cards: ['Rocketry', 'Writing'],
+          splay: 'up',
+        },
+        purple: {
+          cards: ['Mysticism', 'Empiricism'],
+          splay: 'right',
+        },
+        achievements: ['Wonder'],
+      },
+    })
   })
 })

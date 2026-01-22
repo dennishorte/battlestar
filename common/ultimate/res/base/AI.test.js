@@ -15,18 +15,16 @@ describe('A.I.', () => {
         },
       },
     })
-    let request
-    request = game.run()
-    request = game.respondToInputRequest({
-      actor: 'dennis',
-      title: 'Choose First Action',
-      selection: [{
-        title: 'Dogma',
-        selection: ['A.I.']
-      }],
-    })
+    game.run()
+    t.choose(game, { title: 'Dogma', selection: ['A.I.'] })
 
-    expect(t.cards(game, 'score')).toEqual(['Globalization'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['A.I.'],
+        score: ['Globalization'],
+      },
+    })
   })
 
   test('win condition', () => {
@@ -45,17 +43,9 @@ describe('A.I.', () => {
         },
       },
     })
-    let request
-    request = game.run()
-    request = game.respondToInputRequest({
-      actor: 'dennis',
-      title: 'Choose First Action',
-      selection: [{
-        title: 'Dogma',
-        selection: ['A.I.']
-      }],
-    })
+    game.run()
+    const result = t.choose(game, { title: 'Dogma', selection: ['A.I.'] })
 
-    t.testGameOver(request, 'micah', 'A.I.')
+    t.testGameOver(result, 'micah', 'A.I.')
   })
 })

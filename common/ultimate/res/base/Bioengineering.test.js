@@ -16,14 +16,24 @@ describe('Bioengineering', () => {
         green: ['Sailing'],
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Bioengineering')
+    game.run()
+    const request = t.choose(game, 'Dogma.Bioengineering')
 
-    expect(result2.selectors[0].choices.sort()).toEqual(['Agriculture', 'Clothing', 'Sailing'])
+    expect(request.selectors[0].choices.sort()).toEqual(['Agriculture', 'Clothing', 'Sailing'])
 
-    const result3 = t.choose(game, 'Sailing')
+    t.choose(game, 'Sailing')
 
-    expect(t.cards(game, 'score')).toEqual(['Sailing'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Bioengineering'],
+        green: ['Clothing'],
+        score: ['Sailing'],
+      },
+      micah: {
+        yellow: ['Agriculture'],
+      },
+    })
   })
 
   test('win condition yes', () => {
@@ -39,12 +49,12 @@ describe('Bioengineering', () => {
       },
     })
 
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Bioengineering')
-    const result3 = t.choose(game, 'Clothing')
+    game.run()
+    t.choose(game, 'Dogma.Bioengineering')
+    const result = t.choose(game, 'Clothing')
 
-    expect(result3).toEqual(expect.any(GameOverEvent))
-    t.testGameOver(result3, 'dennis', 'Bioengineering')
+    expect(result).toEqual(expect.any(GameOverEvent))
+    t.testGameOver(result, 'dennis', 'Bioengineering')
   })
 
   test('win condition tied', () => {
@@ -59,13 +69,13 @@ describe('Bioengineering', () => {
         blue: ['Pottery'],
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Bioengineering')
-    const result3 = t.choose(game, 'Pottery')
+    game.run()
+    t.choose(game, 'Dogma.Bioengineering')
+    const result = t.choose(game, 'Pottery')
 
-    expect(result3).toEqual(expect.any(InputRequestEvent))
-    expect(result3.selectors[0].actor).toBe('micah')
-    expect(result3.selectors[0].title).toBe('Choose First Action')
+    expect(result).toEqual(expect.any(InputRequestEvent))
+    expect(result.selectors[0].actor).toBe('micah')
+    expect(result.selectors[0].title).toBe('Choose First Action')
   })
 
   test('win condition no', () => {
@@ -81,12 +91,12 @@ describe('Bioengineering', () => {
         blue: ['Pottery'],
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Bioengineering')
-    const result3 = t.choose(game, 'Sailing')
+    game.run()
+    t.choose(game, 'Dogma.Bioengineering')
+    const result = t.choose(game, 'Sailing')
 
-    expect(result3).toEqual(expect.any(InputRequestEvent))
-    expect(result3.selectors[0].actor).toBe('micah')
-    expect(result3.selectors[0].title).toBe('Choose First Action')
+    expect(result).toEqual(expect.any(InputRequestEvent))
+    expect(result.selectors[0].actor).toBe('micah')
+    expect(result.selectors[0].title).toBe('Choose First Action')
   })
 })

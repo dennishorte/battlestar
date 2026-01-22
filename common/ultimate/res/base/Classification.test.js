@@ -14,15 +14,24 @@ describe('Classification', () => {
         hand: ['Experimentation', 'Metric System', 'Tools'],
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Classification')
-    const result3 = t.choose(game, 'Mathematics')
+    game.run()
+    t.choose(game, 'Dogma.Classification')
+    t.choose(game, 'Mathematics')
 
-    const result4 = t.choose(game, 'Tools')
-    const result5 = t.choose(game, 'Alchemy')
-    const result6 = t.choose(game, 'Mathematics')
+    t.choose(game, 'Tools')
+    t.choose(game, 'Alchemy')
+    t.choose(game, 'Mathematics')
 
-    expect(t.cards(game, 'blue')).toEqual(['Experimentation', 'Mathematics', 'Alchemy', 'Tools'])
+    t.testBoard(game, {
+      dennis: {
+        green: ['Classification'],
+        blue: ['Experimentation', 'Mathematics', 'Alchemy', 'Tools'],
+        hand: ['Code of Laws'],
+      },
+      micah: {
+        hand: ['Metric System'],
+      },
+    })
   })
 
 })

@@ -10,11 +10,20 @@ describe('Atomic Theory', () => {
         blue: ['Atomic Theory', 'Mathematics'],
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Atomic Theory')
-    const result3 = t.choose(game, 'blue')
+    game.run()
+    t.choose(game, 'Dogma.Atomic Theory')
+    t.choose(game, 'blue')
 
-    expect(t.zone(game, 'blue').splay).toBe('right')
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: {
+          cards: ['Atomic Theory', 'Mathematics'],
+          splay: 'right',
+        },
+        purple: ['Railroad'],
+      },
+    })
   })
 
   test('draw and meld', () => {
@@ -29,9 +38,15 @@ describe('Atomic Theory', () => {
         },
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Dogma.Atomic Theory')
+    game.run()
+    t.choose(game, 'Dogma.Atomic Theory')
 
-    expect(t.cards(game, 'red')).toEqual(['Explosives'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Atomic Theory'],
+        red: ['Explosives'],
+      },
+    })
   })
 })

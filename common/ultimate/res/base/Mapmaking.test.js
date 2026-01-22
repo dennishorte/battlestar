@@ -1,3 +1,5 @@
+Error.stackTraceLimit = 100
+
 const t = require('../../testutil.js')
 
 describe('Mapmaking', () => {
@@ -19,11 +21,23 @@ describe('Mapmaking', () => {
         },
       },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Dogma.Mapmaking')
 
-    expect(t.cards(game, 'score').sort()).toEqual(['Mysticism', 'The Wheel'])
+    game.run()
+    t.choose(game, 'Dogma.Mapmaking')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: ['Mapmaking'],
+        score: ['The Wheel', 'Mysticism'],
+      },
+      micah: {
+        score: ['Mathematics'],
+      },
+      scott: {
+        score: ['Navigation'],
+      },
+    })
   })
 
   test('if a card was not transferred', () => {
@@ -39,10 +53,21 @@ describe('Mapmaking', () => {
         score: ['Navigation'],
       },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Dogma.Mapmaking')
 
-    expect(t.cards(game, 'score').sort()).toEqual([])
+    game.run()
+    t.choose(game, 'Dogma.Mapmaking')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: ['Mapmaking'],
+      },
+      micah: {
+        score: ['Mathematics'],
+      },
+      scott: {
+        score: ['Navigation'],
+      },
+    })
   })
 })
