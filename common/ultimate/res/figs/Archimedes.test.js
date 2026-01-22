@@ -21,11 +21,18 @@ describe('Archimedes', () => {
         }
       }
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Dogma.The Wheel')
 
-    expect(t.cards(game, 'hand').sort()).toStrictEqual(['Calendar', 'Construction'])
+    game.run()
+    t.choose(game, 'Dogma.The Wheel')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Archimedes'],
+        green: ['The Wheel'],
+        hand: ['Calendar', 'Construction'], // Drawn from {2} due to karma
+      },
+    })
   })
 
   test('karma: effect age only triggers at start of action', () => {

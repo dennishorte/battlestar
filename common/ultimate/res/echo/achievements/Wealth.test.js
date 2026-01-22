@@ -21,10 +21,27 @@ describe('Wealth', () => {
         hand: ['Pencil'],
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Meld.Pencil')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['Wealth'])
+    game.run()
+    t.choose(game, 'Meld.Pencil')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Plumbing'],
+        green: ['Scissors'],
+        blue: ['Perfume'],
+        purple: {
+          cards: ['Flute', 'Puppet'],
+          splay: 'up',
+        },
+        yellow: {
+          cards: ['Pencil', 'Soap', 'Stove'],
+          splay: 'up',
+        },
+        achievements: ['Wealth'],
+      },
+    })
   })
 
   test('seven visible bonuses', () => {
@@ -44,9 +61,24 @@ describe('Wealth', () => {
         hand: ['Pencil'],
       },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, 'Meld.Pencil')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    game.run()
+    t.choose(game, 'Meld.Pencil')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Plumbing'],
+        green: ['Scissors'],
+        purple: {
+          cards: ['Flute', 'Puppet'],
+          splay: 'up',
+        },
+        yellow: {
+          cards: ['Pencil', 'Soap', 'Stove'],
+          splay: 'up',
+        },
+      },
+    })
   })
 })

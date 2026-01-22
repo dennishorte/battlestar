@@ -9,9 +9,17 @@ test('Advancement', () => {
     t.setColor(game, 'dennis', 'purple', ['Monotheism'])
     t.setDeckTop(game, 'base', 8, ['Flight'])
   })
-  let request
-  request = game.run()
-  request = t.choose(game, 'Decree.Advancement')
 
-  expect(t.cards(game, 'hand')).toStrictEqual(['Flight'])
+  game.run()
+  t.choose(game, 'Decree.Advancement')
+
+  t.testIsSecondPlayer(game)
+  t.testBoard(game, {
+    dennis: {
+      red: ['Industrialization'],
+      purple: ['Monotheism'],
+      hand: ['Flight'], // Drew Flight from age 8 (highest top card age 6 + 2)
+      achievements: ['Advancement'], // Decree claimed as achievement
+    },
+  })
 })

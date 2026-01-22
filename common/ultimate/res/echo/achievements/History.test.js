@@ -14,11 +14,20 @@ describe('History', () => {
         hand: ['Barometer'],
       },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Meld.Barometer')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['History'])
+    game.run()
+    t.choose(game, 'Meld.Barometer')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: {
+          cards: ['Barometer', 'Chopsticks', 'Toothbrush', 'Deodorant'],
+          splay: 'up',
+        },
+        achievements: ['History'],
+      },
+    })
   })
 
   test('three effects in one color', () => {
@@ -32,11 +41,19 @@ describe('History', () => {
         hand: ['Barometer'],
       },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Meld.Barometer')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    game.run()
+    t.choose(game, 'Meld.Barometer')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: {
+          cards: ['Barometer', 'Chopsticks', 'Toothbrush'],
+          splay: 'up',
+        },
+      },
+    })
   })
 
   test('four effects spread across two colors', () => {
@@ -50,11 +67,20 @@ describe('History', () => {
         hand: ['Toilet'],
       },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Meld.Toilet')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    game.run()
+    t.choose(game, 'Meld.Toilet')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: {
+          cards: ['Chopsticks', 'Toothbrush', 'Deodorant'],
+          splay: 'up',
+        },
+        purple: ['Toilet'],
+      },
+    })
   })
 
   test.skip('Hawking w/3 turtles', () => {

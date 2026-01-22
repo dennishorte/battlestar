@@ -20,12 +20,31 @@ describe('Heritage', () => {
         ],
       },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Dogma.Specialization')
-    request = t.choose(game, 'blue')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['Heritage'])
+    game.run()
+    t.choose(game, 'Dogma.Specialization')
+    t.choose(game, 'blue')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Specialization'],
+        blue: {
+          cards: [
+            'Bioengineering',
+            'Software',
+            'Computers',
+            'Genetics',
+            'Quantum Theory',
+            'Rocketry',
+            'Evolution',
+            'Atomic Theory',
+          ],
+          splay: 'up',
+        },
+        achievements: ['Heritage'],
+      },
+    })
   })
 
   test('eight hexes total, but different colors', () => {
@@ -45,12 +64,30 @@ describe('Heritage', () => {
         red: ['Metalworking'],
       },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Dogma.Specialization')
-    request = t.choose(game, 'blue')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    game.run()
+    t.choose(game, 'Dogma.Specialization')
+    t.choose(game, 'blue')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Specialization'],
+        blue: {
+          cards: [
+            'Bioengineering',
+            'Software',
+            'Computers',
+            'Quantum Theory',
+            'Rocketry',
+            'Evolution',
+            'Atomic Theory',
+          ],
+          splay: 'up',
+        },
+        red: ['Metalworking'],
+      },
+    })
   })
 
   test('seven hexes in one color', () => {
@@ -69,11 +106,28 @@ describe('Heritage', () => {
         ],
       },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, 'Dogma.Specialization')
-    request = t.choose(game, 'blue')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    game.run()
+    t.choose(game, 'Dogma.Specialization')
+    t.choose(game, 'blue')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Specialization'],
+        blue: {
+          cards: [
+            'Bioengineering',
+            'Software',
+            'Computers',
+            'Genetics',
+            'Quantum Theory',
+            'Evolution',
+            'Atomic Theory',
+          ],
+          splay: 'up',
+        },
+      },
+    })
   })
 })

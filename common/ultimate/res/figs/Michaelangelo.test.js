@@ -13,15 +13,16 @@ describe('Michaelangelo', () => {
         hand: ['Sailing', 'Al-Kindi'],
       },
     })
-    let request
-    request = game.run()
 
-    expect(t.cards(game, 'score').sort()).toStrictEqual([
-      'Al-Kindi',
-      'Construction',
-      'Sailing',
-      'Tools',
-    ])
+    game.run()
+
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Michaelangelo'],
+        score: ['Tools', 'Construction', 'Sailing', 'Al-Kindi'],
+        hand: ['Sailing', 'Al-Kindi'],
+      },
+    })
     expect(t.dennis(game).score()).toBe(7)
   })
 })
