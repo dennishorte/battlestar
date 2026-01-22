@@ -993,9 +993,9 @@ describe('Dragons Expansion Cards', () => {
 
       let request = game.run()
       request = t.choose(game, request, 'Play Card.Blue Wyrmling')
-      request = t.choose(game, request, 'Recruit.House Guard')
+      t.choose(game, request, 'Recruit.House Guard')
 
-      t.testIsSecondPlayer(request)
+      t.testIsSecondPlayer(game)
       t.testBoard(game, {
         'ched-llace a': {
           troops: ['neutral'],

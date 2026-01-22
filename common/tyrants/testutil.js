@@ -320,10 +320,8 @@ TestUtil.setSpies = function(game, locId, playerNames) {
 ////////////////////////////////////////////////////////////////////////////////
 // Tests
 
-TestUtil.testIsSecondPlayer = function(request) {
-  const selector = request.selectors[0]
-  expect(selector.actor).toBe('micah')
-  expect(selector.title).toBe('Choose Action')
+TestUtil.testIsSecondPlayer = function(game) {
+  TestCommon.testIsSecondPlayer(game, 'Choose Action')
 }
 
 TestUtil.testTroops = function(game, locationName, expected) {

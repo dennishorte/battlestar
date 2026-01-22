@@ -150,5 +150,12 @@ TestCommon.testNotGameOver = function(request) {
   expect(request).not.toEqual(expect.any(GameOverEvent))
 }
 
+TestCommon.testIsSecondPlayer = function(game, expectedTitle = 'Choose First Action') {
+  const request = game.waiting
+  const selector = request.selectors[0]
+  expect(selector.actor).toBe('micah')
+  expect(selector.title).toBe(expectedTitle)
+}
+
 
 module.exports = TestCommon

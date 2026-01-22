@@ -131,12 +131,6 @@ TestUtil.testIsFirstAction = function(request) {
   expect(selector.title).toBe('Choose First Action')
 }
 
-TestUtil.testIsSecondPlayer = function(game) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  expect(selector.actor).toBe('micah')
-  expect(selector.title).toBe('Choose First Action')
-}
 
 TestUtil.testDeckIsJunked = function(game, age) {
   const cardsInDeck = game.zones.byDeck('base', age).cardlist()
@@ -166,9 +160,9 @@ TestUtil.testNoFade = function(cardName) {
   })
 
   const request1 = game.run()
-  const request2 = TestUtil.choose(game, request1, 'Draw.draw a card')
+  TestUtil.choose(game, request1, 'Draw.draw a card')
 
-  TestUtil.testIsSecondPlayer(request2)
+  TestUtil.testIsSecondPlayer(game)
 }
 
 TestUtil.testZone = function(game, zoneName, expectedCards, opts={}) {
