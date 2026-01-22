@@ -20,9 +20,9 @@ describe('Currency', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Currency')
-    request = t.choose(game, request, 'Gunpowder', 'Reformation', 'The Wheel')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Currency')
+    request = t.choose(game, 'Gunpowder', 'Reformation', 'The Wheel')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

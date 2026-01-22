@@ -16,8 +16,8 @@ describe('Perspective', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Perspective')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Dogma.Perspective')
+    request = t.choose(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -41,13 +41,13 @@ describe('Perspective', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Perspective')
-    request = t.choose(game, request, 'Tools')
+    request = t.choose(game, 'Dogma.Perspective')
+    request = t.choose(game, 'Tools')
 
     t.testChoices(request, ['Calendar', 'Mathematics', 'The Wheel'], 2)
 
-    request = t.choose(game, request, 'Mathematics', 'The Wheel')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Mathematics', 'The Wheel')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

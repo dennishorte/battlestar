@@ -24,8 +24,8 @@ describe('Konstantin Novoselov', () => {
     let request
     request = game.run()
     // First action: Dogma Archery - karma should NOT trigger (actionNumber === 1)
-    request = t.choose(game, request, 'Dogma.Archery')
-    request = t.choose(game, request, '**base-2*')
+    request = t.choose(game, 'Dogma.Archery')
+    request = t.choose(game, '**base-2*')
     // Archery's dogma executes normally: "I demand you draw a {1}, then transfer the highest card in your hand to my hand!"
     // dennis (owner) draws Tools, transfers highest (Tools) to himself (no change)
     // micah (opponent, demanded) draws nothing (no cards left), transfers highest (Gunpowder) to dennis
@@ -71,10 +71,10 @@ describe('Konstantin Novoselov', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'Dogma.Sailing') // Dogma Sailing (green) instead of Konstantin Novoselov
-      request = t.choose(game, request, 'Clothing') // Card drawn by Archery's super-execution
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Dogma.Sailing') // Dogma Sailing (green) instead of Konstantin Novoselov
+      request = t.choose(game, 'Clothing') // Card drawn by Archery's super-execution
 
       t.testBoard(game, {
         dennis: {
@@ -114,17 +114,17 @@ describe('Konstantin Novoselov', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'Dogma.Archery') // Dogma Archery (red) instead of Konstantin Novoselov
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Dogma.Archery') // Dogma Archery (red) instead of Konstantin Novoselov
       // Karma triggers: super-execute each top card in order (red, blue, green, yellow, purple)
       // Super-execute Archery (red) - draws a {1}, demands transfer, junks achievement
-      request = t.choose(game, request, 'Tools') // Card drawn by Archery's super-execution
-      request = t.choose(game, request, '**base-1*') // Achievement choice from Archery's second effect
+      request = t.choose(game, 'Tools') // Card drawn by Archery's super-execution
+      request = t.choose(game, '**base-1*') // Achievement choice from Archery's second effect
       // Super-execute Konstantin Novoselov (blue) - no dogma, skip
       // Super-execute Agriculture (yellow) - returns card, draws and scores one higher
       // At this point, micah has Tools, Philosophy, Hypersonics in hand
-      request = t.choose(game, request, 'Philosophy') // Card to return from Agriculture's super-execution
+      request = t.choose(game, 'Philosophy') // Card to return from Agriculture's super-execution
 
       t.testBoard(game, {
         dennis: {
@@ -164,13 +164,13 @@ describe('Konstantin Novoselov', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'Dogma.Archery') // Dogma Archery (red) instead of Konstantin Novoselov
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Dogma.Archery') // Dogma Archery (red) instead of Konstantin Novoselov
       // Karma triggers: super-execute each top card in order (red, blue, green, yellow, purple)
       // Super-execute Archery (red) - draws a {1}, demands transfer, junks achievement
-      request = t.choose(game, request, 'Clothing') // Card drawn by Archery's super-execution (owner)
-      request = t.choose(game, request, '**base-1*') // Achievement choice from Archery's second effect
+      request = t.choose(game, 'Clothing') // Card drawn by Archery's super-execution (owner)
+      request = t.choose(game, '**base-1*') // Achievement choice from Archery's second effect
       // Super-execute Konstantin Novoselov (blue) - no dogma, skip
       // Super-execute Sailing (green) - draws and melds a {1} (auto-melds, no choice needed)
 
@@ -211,18 +211,18 @@ describe('Konstantin Novoselov', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'Dogma.Archery') // Dogma Archery (red) instead of Konstantin Novoselov
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Dogma.Archery') // Dogma Archery (red) instead of Konstantin Novoselov
       // Karma triggers: super-execute each top card in order (red, blue, green, yellow, purple)
       // Super-execute Archery (red) - draws a {1}, demands transfer, junks achievement
-      request = t.choose(game, request, 'Tools') // Card drawn by Archery's super-execution (owner)
+      request = t.choose(game, 'Tools') // Card drawn by Archery's super-execution (owner)
       // Achievement choice from Archery's second effect is auto-selected (only one valid choice)
       // Super-execute Konstantin Novoselov (blue) - no dogma, skip
       // Super-execute Code of Laws (purple) - tuck and splay
       // At this point, micah has Tools and Philosophy in hand (Tools was drawn by demand, Philosophy was in hand)
-      request = t.choose(game, request, 'Philosophy') // Card to tuck from Code of Laws' super-execution
-      request = t.choose(game, request, 'purple') // Color to splay from Code of Laws' super-execution
+      request = t.choose(game, 'Philosophy') // Card to tuck from Code of Laws' super-execution
+      request = t.choose(game, 'purple') // Color to splay from Code of Laws' super-execution
 
       t.testBoard(game, {
         dennis: {
@@ -263,14 +263,14 @@ describe('Konstantin Novoselov', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'Dogma.Archery')
-      request = t.choose(game, request, 'Tools') // Archery
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Dogma.Archery')
+      request = t.choose(game, 'Tools') // Archery
       // Sailing
-      request = t.choose(game, request, 'Mathematics') // Agriculture
-      request = t.choose(game, request, 'Philosophy') // Code of Laws
-      request = t.choose(game, request, 'purple') // Code of Laws
+      request = t.choose(game, 'Mathematics') // Agriculture
+      request = t.choose(game, 'Philosophy') // Code of Laws
+      request = t.choose(game, 'purple') // Code of Laws
 
 
 

@@ -15,8 +15,8 @@ describe('Philosophy', () => {
       })
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Philosophy')
-      t.choose(game, request, 'red')
+      request = t.choose(game, 'Dogma.Philosophy')
+      t.choose(game, 'red')
 
       const red = game.zones.byPlayer(t.dennis(game), 'red')
       expect(red.splay).toBe('left')
@@ -32,8 +32,8 @@ describe('Philosophy', () => {
       })
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Philosophy')
-      t.choose(game, request)
+      request = t.choose(game, 'Dogma.Philosophy')
+      t.choose(game)
 
       const red = game.zones.byPlayer(t.dennis(game), 'red')
       expect(red.splay).toBe('none')
@@ -51,8 +51,8 @@ describe('Philosophy', () => {
       })
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Philosophy')
-      t.choose(game, request, 'Industrialization')
+      request = t.choose(game, 'Dogma.Philosophy')
+      t.choose(game, 'Industrialization')
 
       const score = game.zones.byPlayer(t.dennis(game), 'score').cardlist().map(c => c.name)
       expect(score).toEqual(['Industrialization'])
@@ -68,8 +68,8 @@ describe('Philosophy', () => {
       })
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Philosophy')
-      t.choose(game, request)
+      request = t.choose(game, 'Dogma.Philosophy')
+      t.choose(game)
 
       const score = game.zones.byPlayer(t.dennis(game), 'score').cardlist().map(c => c.name)
       expect(score).toEqual([])

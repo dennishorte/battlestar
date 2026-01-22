@@ -24,9 +24,9 @@ describe("Elevator", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Elevator')
-    request = t.choose(game, request, 6)
-    request = t.choose(game, request, 'from scores')
+    request = t.choose(game, 'Dogma.Elevator')
+    request = t.choose(game, 6)
+    request = t.choose(game, 'from scores')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -62,9 +62,9 @@ describe("Elevator", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Elevator')
-    request = t.choose(game, request, 6)
-    request = t.choose(game, request, 'from hands')
+    request = t.choose(game, 'Dogma.Elevator')
+    request = t.choose(game, 6)
+    request = t.choose(game, 'from hands')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -91,7 +91,7 @@ describe("Elevator", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Elevator')
+    request = t.choose(game, 'Dogma.Elevator')
 
     t.testBoard(game, {
       dennis: {
@@ -112,8 +112,8 @@ describe("Elevator", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Elevator')
-    request = t.choose(game, request, 'score top green')
+    request = t.choose(game, 'Dogma.Elevator')
+    request = t.choose(game, 'score top green')
 
     t.testBoard(game, {
       dennis: {
@@ -135,8 +135,8 @@ describe("Elevator", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Elevator')
-    request = t.choose(game, request, 'score bottom green')
+    request = t.choose(game, 'Dogma.Elevator')
+    request = t.choose(game, 'score bottom green')
 
     t.testBoard(game, {
       dennis: {

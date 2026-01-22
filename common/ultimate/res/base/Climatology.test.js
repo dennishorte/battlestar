@@ -21,9 +21,9 @@ describe('Climatology', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Climatology')
-    request = t.choose(game, request, 'lightbulb')
-    request = t.choose(game, request, 'Writing', 'Astronomy')
+    request = t.choose(game, 'Dogma.Climatology')
+    request = t.choose(game, 'lightbulb')
+    request = t.choose(game, 'Writing', 'Astronomy')
 
 
     t.testIsSecondPlayer(game)

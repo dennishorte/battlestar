@@ -20,8 +20,8 @@ describe('Buttonwood Agreement', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'green', 'blue', 'red')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'green', 'blue', 'red')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -56,8 +56,8 @@ describe('Buttonwood Agreement', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'green', 'blue', 'yellow')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'green', 'blue', 'yellow')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

@@ -25,7 +25,8 @@ TestCommon.dennis = function(game) {
 }
 
 // Select an option from the input request. (Game.requestInputMany)
-TestCommon.choose = function(game, request, ...selections) {
+TestCommon.choose = function(game, ...selections) {
+  const request = game.waiting
   const selector = request.selectors[0]
   selections = selections.map(string => {
     if (typeof string === 'string' && string.startsWith('*')) {
@@ -64,7 +65,8 @@ TestCommon.choose = function(game, request, ...selections) {
 }
 
 // Perform the specified action, which is from an "any" input request. (Game.requestInputAny)
-TestCommon.do = function(game, request, action) {
+TestCommon.do = function(game, action) {
+  const request = game.waiting
   const selector = request.selectors[0]
 
   return game.respondToInputRequest({

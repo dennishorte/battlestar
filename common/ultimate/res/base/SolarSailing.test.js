@@ -23,7 +23,7 @@ describe('Solar Sailing', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Solar Sailing')
+    request = t.choose(game, 'Dogma.Solar Sailing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -56,7 +56,7 @@ describe('Solar Sailing', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Solar Sailing')
+    request = t.choose(game, 'Dogma.Solar Sailing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -86,7 +86,7 @@ describe('Solar Sailing', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Solar Sailing')
+    request = t.choose(game, 'Dogma.Solar Sailing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -119,7 +119,7 @@ describe('Solar Sailing', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Solar Sailing')
+    request = t.choose(game, 'Dogma.Solar Sailing')
 
     t.testGameOver(request, 'dennis', 'Solar Sailing')
   })

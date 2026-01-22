@@ -22,7 +22,7 @@ describe('Stone Knives', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Stone Knives')
+    request = t.choose(game, 'Dogma.Stone Knives')
     // Demand effect: Micah draws, reveals, and returns Fire (age 0, red)
     // Micah transfers top red card (Gunpowder) to dennis's board
 
@@ -57,7 +57,7 @@ describe('Stone Knives', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Stone Knives')
+    request = t.choose(game, 'Dogma.Stone Knives')
     // First effect: demand - micah draws, reveals, returns Curing (blue)
     // No blue card to transfer (micah has no blue cards)
     // Second effect: Skinning is a top card, so draw age 1 (Tools)
@@ -95,7 +95,7 @@ describe('Stone Knives', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Stone Knives')
+    request = t.choose(game, 'Dogma.Stone Knives')
     // First effect: demand - micah draws, reveals, returns Curing (blue)
     // No blue card to transfer
     // Second effect: Skinning is not a top card, so no age 1 draw
@@ -132,7 +132,7 @@ describe('Stone Knives', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Stone Knives')
+    request = t.choose(game, 'Dogma.Stone Knives')
     // Demand effect: Micah draws, reveals, and returns Curing (age 0, blue)
     // Micah has no blue cards, so nothing to transfer
 

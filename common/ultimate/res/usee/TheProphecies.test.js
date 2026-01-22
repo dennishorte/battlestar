@@ -18,8 +18,8 @@ describe('The Prophecies', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.The Prophecies')
-    request = t.choose(game, request, 'Draw and safeguard a 4')
+    request = t.choose(game, 'Dogma.The Prophecies')
+    request = t.choose(game, 'Draw and safeguard a 4')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -46,8 +46,8 @@ describe('The Prophecies', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.The Prophecies')
-    request = t.choose(game, request, 'Draw and reveal.2')
+    request = t.choose(game, 'Dogma.The Prophecies')
+    request = t.choose(game, 'Draw and reveal.2')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -75,8 +75,8 @@ describe('The Prophecies', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.The Prophecies')
-    request = t.choose(game, request, 'Draw and reveal.2')
+    request = t.choose(game, 'Dogma.The Prophecies')
+    request = t.choose(game, 'Draw and reveal.2')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

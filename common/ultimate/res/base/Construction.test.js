@@ -17,7 +17,7 @@ describe('Construction', () => {
       })
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Construction')
+      request = t.choose(game, 'Dogma.Construction')
 
       const selector = request.selectors[0]
       expect(selector.actor).toBe('micah')
@@ -38,9 +38,9 @@ describe('Construction', () => {
       })
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Construction')
-      request = t.choose(game, request, 'Experimentation', 'Statistics')
-      request = t.choose(game, request, 'auto')
+      request = t.choose(game, 'Dogma.Construction')
+      request = t.choose(game, 'Experimentation', 'Statistics')
+      request = t.choose(game, 'auto')
 
       const micah = game.players.byName('micah')
       const micahHandAges = game.zones.byPlayer(micah, 'hand').cardlist().map(c => c.age).sort()
@@ -62,7 +62,7 @@ describe('Construction', () => {
       })
       let request
       request = game.run()
-      t.choose(game, request, 'Dogma.Construction')
+      t.choose(game, 'Dogma.Construction')
 
       const dennis = game.players.byName('dennis')
       const dennisAchievements = game.zones.byPlayer(dennis, 'achievements').cardlist().map(c => c.name)
@@ -91,7 +91,7 @@ describe('Construction', () => {
 
       let request
       request = game.run()
-      t.choose(game, request, 'Dogma.Construction')
+      t.choose(game, 'Dogma.Construction')
 
       const dennis = game.players.byName('dennis')
       const dennisAchievements = game.zones.byPlayer(dennis, 'achievements').cardlist().map(c => c.name)
@@ -111,7 +111,7 @@ describe('Construction', () => {
       })
       let request
       request = game.run()
-      t.choose(game, request, 'Dogma.Construction')
+      t.choose(game, 'Dogma.Construction')
 
       const dennis = game.players.byName('dennis')
       const dennisAchievements = game.zones.byPlayer(dennis, 'achievements').cardlist().map(c => c.name)

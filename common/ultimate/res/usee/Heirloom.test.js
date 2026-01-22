@@ -19,7 +19,7 @@ describe('Heirloom', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Heirloom')
+    request = t.choose(game, 'Dogma.Heirloom')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -42,7 +42,7 @@ describe('Heirloom', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Heirloom')
+    request = t.choose(game, 'Dogma.Heirloom')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -21,8 +21,8 @@ describe('Secret Santa', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Secret Santa')
-    request = t.choose(game, request, '**base-3* (dennis)')
+    request = t.choose(game, 'Dogma.Secret Santa')
+    request = t.choose(game, '**base-3* (dennis)')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

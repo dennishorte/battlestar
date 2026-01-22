@@ -19,9 +19,9 @@ describe("Chopsticks", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Chopsticks')
-    request = t.choose(game, request, 'yes')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Chopsticks')
+    request = t.choose(game, 'yes')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -50,9 +50,9 @@ describe("Chopsticks", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Chopsticks')
-    request = t.choose(game, request, 'yes')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Chopsticks')
+    request = t.choose(game, 'yes')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

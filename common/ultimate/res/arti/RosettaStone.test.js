@@ -19,9 +19,9 @@ describe("Rosetta Stone", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'arti')
-    request = t.choose(game, request, 'Baghdad Battery')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'arti')
+    request = t.choose(game, 'Baghdad Battery')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

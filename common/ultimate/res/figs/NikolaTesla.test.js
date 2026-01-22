@@ -28,7 +28,7 @@ describe('Nikola Tesla', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Tools') // Meld Tools
+      request = t.choose(game, 'Meld.Tools') // Meld Tools
       // Karma triggers: score opponent's top card without s or i
       // Only The Wheel is available, so auto-selected
       // No card in score pile has higher age than The Wheel (age 1), so draw age 9
@@ -62,7 +62,7 @@ describe('Nikola Tesla', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Tools') // Meld Tools
+      request = t.choose(game, 'Meld.Tools') // Meld Tools
       // Karma triggers: score opponent's top card without s or i
       // Only The Wheel is available, so auto-selected
       // Score pile has Mathematics (age 2) which is higher than The Wheel (age 1), so no draw
@@ -101,9 +101,9 @@ describe('Nikola Tesla', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Tools') // Meld Tools
+      request = t.choose(game, 'Meld.Tools') // Meld Tools
       // Karma triggers: score opponent's top card without s or i
-      request = t.choose(game, request, 'Oars') // Choose Oars to score
+      request = t.choose(game, 'Oars') // Choose Oars to score
       // No card in score pile has higher age than Oars (age 1), so draw age 9
 
       t.testIsSecondPlayer(game)

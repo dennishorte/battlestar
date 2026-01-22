@@ -15,13 +15,13 @@ describe('Skinning', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Skinning')
+    request = t.choose(game, 'Dogma.Skinning')
     // Choose which card with {r} to score (Fire or Skinning)
-    request = t.choose(game, request, 'Fire') // Choose Fire to score
+    request = t.choose(game, 'Fire') // Choose Fire to score
     // Fire has 1 {r}, so meld 1 card from hand
     // Tools or Curing will be melded (auto-selects if count matches)
     // If a request is returned, handle it
-    request = t.choose(game, request, 'Tools')
+    request = t.choose(game, 'Tools')
 
 
     t.testIsSecondPlayer(game)
@@ -46,9 +46,9 @@ describe('Skinning', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Skinning')
+    request = t.choose(game, 'Dogma.Skinning')
     // Choose which card with {r} to score (Fire or Skinning)
-    request = t.choose(game, request, 'Fire') // Choose Fire to score
+    request = t.choose(game, 'Fire') // Choose Fire to score
     // Fire has {r}, try to meld cards, but hand is empty
 
     t.testIsSecondPlayer(game)
@@ -73,14 +73,14 @@ describe('Skinning', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Skinning')
+    request = t.choose(game, 'Dogma.Skinning')
     // Choose which card with {r} to score (Fire or Skinning)
-    request = t.choose(game, request, 'Fire') // Choose Fire to score
+    request = t.choose(game, 'Fire') // Choose Fire to score
     // Fire has 1 {r}, so meld 1 card from hand
     // Tools, Curing, or Mathematics will be melded (auto-selects or player chooses)
     // If a request is returned, handle it
-    request = t.choose(game, request, 'Curing', 'Mathematics')
-    request = t.choose(game, request, 'Curing')
+    request = t.choose(game, 'Curing', 'Mathematics')
+    request = t.choose(game, 'Curing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -20,14 +20,14 @@ describe('Banking', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Banking')
+    const result2 = t.choose(game, 'Dogma.Banking')
 
     expect(result2.selectors[0]).toEqual(expect.objectContaining({
       actor: 'micah',
       choices: expect.arrayContaining(['Industrialization', 'Chemistry'])
     }))
 
-    const result3 = t.choose(game, result2, 'Chemistry')
+    const result3 = t.choose(game, 'Chemistry')
 
     expect(t.cards(game, 'blue')).toEqual(['Chemistry'])
     expect(t.cards(game, 'score', 'micah')).toEqual(['Statistics'])
@@ -41,7 +41,7 @@ describe('Banking', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Banking')
+    const result2 = t.choose(game, 'Dogma.Banking')
     expect(t.cards(game, 'score', 'micah')).toEqual([])
   })
 
@@ -53,7 +53,7 @@ describe('Banking', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Banking')
+    const result2 = t.choose(game, 'Dogma.Banking')
 
     expect(result2.selectors[0].choices).toEqual(['green'])
     expect(result2.selectors[0].min).toBe(0)

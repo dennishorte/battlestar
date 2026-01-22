@@ -30,7 +30,7 @@ describe("Perfume", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Perfume')
+    request = t.choose(game, 'Dogma.Perfume')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

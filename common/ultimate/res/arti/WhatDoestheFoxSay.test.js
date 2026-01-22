@@ -23,8 +23,8 @@ describe("What Does the Fox Say", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Astrogeology')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Astrogeology')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

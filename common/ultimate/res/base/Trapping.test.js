@@ -17,7 +17,7 @@ describe('Trapping', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Trapping')
+    request = t.choose(game, 'Dogma.Trapping')
     // Demand effect: Micah reveals hand (Archery, Curing, Tools) and dennis's score pile (Fire)
     // Transfer all cards in micah's hand matching colors in dennis's score pile
     // Fire is red, so transfer Archery (red) to dennis's hand
@@ -49,11 +49,11 @@ describe('Trapping', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Trapping')
+    request = t.choose(game, 'Dogma.Trapping')
     // Demand effect: Micah reveals hand and dennis's score pile
     // Transfer all cards matching colors: Archery (red matches Fire), Tools (blue matches Curing)
     // Fishing (green) doesn't match, so not transferred
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -82,7 +82,7 @@ describe('Trapping', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Trapping')
+    request = t.choose(game, 'Dogma.Trapping')
     // Demand effect: Micah reveals hand and dennis's score pile
     // No cards in micah's hand match red (Fire), so nothing transferred
 
@@ -113,7 +113,7 @@ describe('Trapping', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Trapping')
+    request = t.choose(game, 'Dogma.Trapping')
     // Demand effect: Micah reveals empty hand and dennis's score pile
     // No cards to transfer
 
@@ -144,7 +144,7 @@ describe('Trapping', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Trapping')
+    request = t.choose(game, 'Dogma.Trapping')
     // Demand effect: Micah reveals hand and dennis's empty score pile
     // No colors in score pile to match, so nothing transferred
 

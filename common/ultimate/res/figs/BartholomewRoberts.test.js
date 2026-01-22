@@ -15,9 +15,9 @@ describe('Bartholomew Roberts', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Karma triggers: instead of drawing, score a top card with {c}
-      request = t.choose(game, request, 'Optics')
+      request = t.choose(game, 'Optics')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -43,9 +43,9 @@ describe('Bartholomew Roberts', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Karma triggers: choose which card with {c} to score
-      request = t.choose(game, request, 'Translation')
+      request = t.choose(game, 'Translation')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -73,9 +73,9 @@ describe('Bartholomew Roberts', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Karma triggers: score a top card with {c} from anywhere (including opponent)
-      request = t.choose(game, request, 'Skyscrapers')
+      request = t.choose(game, 'Skyscrapers')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -105,7 +105,7 @@ describe('Bartholomew Roberts', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Karma triggers: score a top card with {c}
       // Only Bartholomew Roberts has {c}, so it gets scored
 
@@ -140,7 +140,7 @@ describe('Bartholomew Roberts', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Writing')
+      request = t.choose(game, 'Dogma.Writing')
       // Writing's  dogma draws cards, but karma should NOT trigger
       // (only triggers on Draw action, not on draws from dogma effects)
 

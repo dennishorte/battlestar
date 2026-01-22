@@ -17,9 +17,9 @@ describe('Quantum Computers', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Quantum Computers')
-    request = t.choose(game, request, 'heads') // Micah doesn't lose
-    request = t.choose(game, request, 'heads') // Dennis ends the effect
+    request = t.choose(game, 'Dogma.Quantum Computers')
+    request = t.choose(game, 'heads') // Micah doesn't lose
+    request = t.choose(game, 'heads') // Dennis ends the effect
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -45,8 +45,8 @@ describe('Quantum Computers', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Quantum Computers')
-    request = t.choose(game, request, 'tails')
+    request = t.choose(game, 'Dogma.Quantum Computers')
+    request = t.choose(game, 'tails')
 
     t.testGameOver(request, 'dennis', 'Quantum Computers')
   })
@@ -66,10 +66,10 @@ describe('Quantum Computers', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Quantum Computers')
-    request = t.choose(game, request, 'heads') // Micah doesn't lose
-    request = t.choose(game, request, 'tails')
-    request = t.choose(game, request, 'tails')
+    request = t.choose(game, 'Dogma.Quantum Computers')
+    request = t.choose(game, 'heads') // Micah doesn't lose
+    request = t.choose(game, 'tails')
+    request = t.choose(game, 'tails')
 
     t.testGameOver(request, 'micah', 'Quantum Computers')
   })

@@ -22,7 +22,7 @@ describe("Saxophone", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Saxophone')
+    request = t.choose(game, 'Dogma.Saxophone')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -49,8 +49,8 @@ describe("Saxophone", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Saxophone')
-    request = t.choose(game, request, 'purple')
+    request = t.choose(game, 'Dogma.Saxophone')
+    request = t.choose(game, 'purple')
 
     t.testGameOver(request, 'dennis', 'Saxophone')
   })

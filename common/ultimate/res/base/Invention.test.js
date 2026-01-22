@@ -27,11 +27,11 @@ describe('Invention', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Invention')
+    request = t.choose(game, 'Dogma.Invention')
 
     t.testChoices(request, ['blue'])
 
-    request = t.choose(game, request, 'blue')
+    request = t.choose(game, 'blue')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -73,11 +73,11 @@ describe('Invention', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Invention')
+    request = t.choose(game, 'Dogma.Invention')
 
     t.testChoices(request, ['blue'])
 
-    request = t.choose(game, request)
+    request = t.choose(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -124,8 +124,8 @@ describe('Invention', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Invention')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Dogma.Invention')
+    request = t.choose(game)
 
     t.testBoard(game, {
       dennis: {

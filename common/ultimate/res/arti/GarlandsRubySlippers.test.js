@@ -15,8 +15,8 @@ describe("Garland's Ruby Slippers", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Domestication')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Domestication')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -38,7 +38,7 @@ describe("Garland's Ruby Slippers", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testGameOver(request, 'dennis', "Garland's Ruby Slippers")
   })

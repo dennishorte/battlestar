@@ -16,10 +16,10 @@ describe('Socialism', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Socialism')
-    request = t.choose(game, request, 'Invention')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Dogma.Socialism')
+    request = t.choose(game, 'Invention')
+    request = t.choose(game, 'auto')
+    request = t.choose(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

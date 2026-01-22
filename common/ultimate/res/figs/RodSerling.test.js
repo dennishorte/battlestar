@@ -19,8 +19,8 @@ describe('Rod Serling', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Near-Field Comm')
-      request = t.choose(game, request, 1) // Choose age 1 (Tools is age 1)
+      request = t.choose(game, 'Dogma.Near-Field Comm')
+      request = t.choose(game, 1) // Choose age 1 (Tools is age 1)
       // Near-Field Comm demands: transfer all cards of chosen age from score pile
       // micah transfers Tools (age 1, < 4)
       // Karma triggers: micah loses
@@ -51,8 +51,8 @@ describe('Rod Serling', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Near-Field Comm')
-      request = t.choose(game, request, 4) // Choose age 4 (Gunpowder is age 4)
+      request = t.choose(game, 'Dogma.Near-Field Comm')
+      request = t.choose(game, 4) // Choose age 4 (Gunpowder is age 4)
       // Near-Field Comm demands: transfer all cards of chosen age from score pile
       // micah transfers Gunpowder (age 4, >= 4)
       // Karma does NOT trigger
@@ -89,8 +89,8 @@ describe('Rod Serling', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'Tools') // Return Tools to score age 2
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'Tools') // Return Tools to score age 2
       // Agriculture scores Mathematics (age 2, < 4)
       // Karma triggers: dennis loses
 
@@ -121,8 +121,8 @@ describe('Rod Serling', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'Gunpowder') // Return Gunpowder (age 4, >= 4) to score age 5
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'Gunpowder') // Return Gunpowder (age 4, >= 4) to score age 5
       // Agriculture scores Chemistry (age 5, >= 4)
       // Karma does NOT trigger (neither return nor score triggers it)
 
@@ -155,7 +155,7 @@ describe('Rod Serling', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
       // The Wheel's dogma: draw two {1}
       // dennis draws Tools and Sailing (age 1, < 4)
       // Karma triggers on first draw: dennis loses
@@ -186,7 +186,7 @@ describe('Rod Serling', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // dennis has Rod Serling (age 9) and Gunpowder (age 4), so highest is 9
       // This will draw age 9, not age 4
       // We need to force age 4 draw
@@ -227,10 +227,10 @@ describe('Rod Serling', () => {
       let request
       request = game.run()
       // First player (dennis) gets one action, then turn advances to micah
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Now it's micah's turn
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'Tools') // Return Tools to score age 2
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'Tools') // Return Tools to score age 2
       // Agriculture scores Mathematics (age 2, < 4)
       // Rod Serling's karma (on dennis's board) triggers: micah loses
 

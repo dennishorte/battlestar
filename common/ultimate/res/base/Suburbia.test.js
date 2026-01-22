@@ -21,10 +21,10 @@ describe('Suburbia', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Suburbia')
-    request = t.choose(game, request, 'Agriculture', 'Mapmaking')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Suburbia')
+    request = t.choose(game, 'Agriculture', 'Mapmaking')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testDeckIsJunked(game, 9)

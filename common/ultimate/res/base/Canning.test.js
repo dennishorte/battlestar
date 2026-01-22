@@ -20,10 +20,10 @@ describe('Canning', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Canning')
-    const result3 = t.choose(game, result2, 'yes')
-    const result4 = t.choose(game, result3, 'auto')
-    const result5 = t.choose(game, result4, 'yellow')
+    const result2 = t.choose(game, 'Dogma.Canning')
+    const result3 = t.choose(game, 'yes')
+    const result4 = t.choose(game, 'auto')
+    const result5 = t.choose(game, 'yellow')
 
     expect(t.cards(game, 'score').sort()).toEqual(['The Internet', 'The Wheel'])
     expect(t.cards(game, 'yellow').sort()).toEqual(['Canning', 'Vaccination'])
@@ -42,8 +42,8 @@ describe('Canning', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Canning')
-    const result3 = t.choose(game, result2, 'no')
+    const result2 = t.choose(game, 'Dogma.Canning')
+    const result3 = t.choose(game, 'no')
 
     expect(t.cards(game, 'score').sort()).toEqual([])
     expect(t.cards(game, 'yellow').sort()).toEqual(['Canning'])

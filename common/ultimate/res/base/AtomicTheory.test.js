@@ -11,8 +11,8 @@ describe('Atomic Theory', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Atomic Theory')
-    const result3 = t.choose(game, result2, 'blue')
+    const result2 = t.choose(game, 'Dogma.Atomic Theory')
+    const result3 = t.choose(game, 'blue')
 
     expect(t.zone(game, 'blue').splay).toBe('right')
   })
@@ -30,7 +30,7 @@ describe('Atomic Theory', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Atomic Theory')
+    const result2 = t.choose(game, 'Dogma.Atomic Theory')
 
     expect(t.cards(game, 'red')).toEqual(['Explosives'])
   })

@@ -20,8 +20,8 @@ describe('First Aid', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.First Aid')
-    request = t.choose(game, request, 'Archery') // Return Archery (red)
+    request = t.choose(game, 'Dogma.First Aid')
+    request = t.choose(game, 'Archery') // Return Archery (red)
     // Draws Fresh Water (age 0, yellow)
     // Hand now has: Gunpowder (red), Fresh Water (yellow)
     // Exactly one red card matches returned card's color, so meld Gunpowder
@@ -53,8 +53,8 @@ describe('First Aid', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.First Aid')
-    request = t.choose(game, request, 'Archery') // Return Archery (red)
+    request = t.choose(game, 'Dogma.First Aid')
+    request = t.choose(game, 'Archery') // Return Archery (red)
     // Draws Fresh Water (age 0, yellow)
     // Hand now has: Fishing (green), Fresh Water (yellow)
     // Zero red cards match returned card's color, so player loses
@@ -79,8 +79,8 @@ describe('First Aid', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.First Aid')
-    request = t.choose(game, request, 'Archery') // Return Archery (red)
+    request = t.choose(game, 'Dogma.First Aid')
+    request = t.choose(game, 'Archery') // Return Archery (red)
     // Draws Fishing (age 0, green)
     // Hand now has: Gunpowder (red), Construction (red), Fishing (green)
     // Two red cards match returned card's color, so player loses
@@ -105,8 +105,8 @@ describe('First Aid', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.First Aid')
-    request = t.choose(game, request, 'Archery') // Return Archery (red)
+    request = t.choose(game, 'Dogma.First Aid')
+    request = t.choose(game, 'Archery') // Return Archery (red)
     // Draws Fire (age 0, red)
     // Hand now has: Fire (red)
     // Exactly one red card matches returned card's color, so meld Fire
@@ -138,8 +138,8 @@ describe('First Aid', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.First Aid')
-    request = t.choose(game, request, 'Archery') // Return Archery (red)
+    request = t.choose(game, 'Dogma.First Aid')
+    request = t.choose(game, 'Archery') // Return Archery (red)
     // Draws Fire (age 0, red)
     // Hand now has: Gunpowder (red), Fire (red)
     // Two red cards match returned card's color, so player loses

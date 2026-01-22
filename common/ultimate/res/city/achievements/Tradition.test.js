@@ -17,7 +17,7 @@ describe('Tradition achievement', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Beijing')
+    request = t.choose(game, 'Meld.Beijing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -47,7 +47,7 @@ describe('Tradition achievement', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Beijing')
+    request = t.choose(game, 'Meld.Beijing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -78,7 +78,7 @@ describe('Tradition achievement', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Beijing')
+    request = t.choose(game, 'Meld.Beijing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

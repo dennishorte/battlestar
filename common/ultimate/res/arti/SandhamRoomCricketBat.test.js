@@ -20,7 +20,7 @@ describe("Sandham Room Cricket Bat", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -48,8 +48,8 @@ describe("Sandham Room Cricket Bat", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, '**base-6*')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, '**base-6*')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

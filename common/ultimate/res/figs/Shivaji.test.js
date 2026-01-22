@@ -30,9 +30,9 @@ describe('Shivaji', () => {
       let request
       request = game.run()
       // Skip dennis's turn by drawing a card (first round only has one action)
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Now micah's turn starts
-      request = t.choose(game, request, 'Achieve.*base-1*')
+      request = t.choose(game, 'Achieve.*base-1*')
       // Karma triggers: dennis claims another achievement first
       // Since only one other achievement is avaiable, dennis takes that one
 
@@ -79,9 +79,9 @@ describe('Shivaji', () => {
       let request
       request = game.run()
       // Skip dennis's turn by drawing a card (first round only has one action)
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Now micah's turn starts
-      request = t.choose(game, request, 'Achieve.*base-3*') // micah claims Machinery
+      request = t.choose(game, 'Achieve.*base-3*') // micah claims Machinery
       // Karma triggers: dennis claims another achievement first (via karma, no figure drawing)
       // Only The Wheel is available (and different from Machinery), so auto-selects
       // micah claims Machinery via Achieve action, so dennis (opponent) draws age 3 figures
@@ -130,9 +130,9 @@ describe('Shivaji', () => {
       let request
       request = game.run()
       // Skip dennis's turn by drawing a card (first round only has one action)
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Now micah's turn starts
-      request = t.choose(game, request, 'Achieve.*base-3*') // micah claims Machinery
+      request = t.choose(game, 'Achieve.*base-3*') // micah claims Machinery
       // Karma triggers but dennis is not eligible, so no achievement claimed
       // micah claims Machinery via Achieve action, so dennis (opponent) draws age 3 figures
 
@@ -179,9 +179,9 @@ describe('Shivaji', () => {
       let request
       request = game.run()
       // Skip dennis's turn by drawing a card (first round only has one action)
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Now micah's turn starts
-      request = t.choose(game, request, 'Achieve.*base-3*') // micah claims Machinery
+      request = t.choose(game, 'Achieve.*base-3*') // micah claims Machinery
       // Karma triggers but no other achievements available, so dennis cannot claim
       // micah claims Machinery via Achieve action, so dennis (opponent) draws age 3 figures
 
@@ -220,7 +220,7 @@ describe('Shivaji', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Achieve.*base-1*') // dennis claims The Wheel
+      request = t.choose(game, 'Achieve.*base-1*') // dennis claims The Wheel
       // Karma does not trigger because owner is claiming, not opponent
       // dennis claims The Wheel via Achieve action, so micah (opponent) draws age 1 figures
 
@@ -251,10 +251,10 @@ describe('Shivaji', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Canal Building')
+      request = t.choose(game, 'Dogma.Canal Building')
       // Karma triggers: transfer all purple cards to achievements first
       // Canal Building dogma requires a choice - choose to junk the deck (simpler)
-      request = t.choose(game, request, 'Junk all cards in the 3 deck')
+      request = t.choose(game, 'Junk all cards in the 3 deck')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -282,10 +282,10 @@ describe('Shivaji', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Canal Building')
+      request = t.choose(game, 'Dogma.Canal Building')
       // Karma triggers: transfer purple card to achievements first
       // Canal Building dogma requires a choice - choose to junk the deck (simpler)
-      request = t.choose(game, request, 'Junk all cards in the 3 deck')
+      request = t.choose(game, 'Junk all cards in the 3 deck')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -312,10 +312,10 @@ describe('Shivaji', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Canal Building')
+      request = t.choose(game, 'Dogma.Canal Building')
       // Karma triggers but no purple cards to transfer
       // Canal Building dogma requires a choice - choose to junk the deck (simpler)
-      request = t.choose(game, request, 'Junk all cards in the 3 deck')
+      request = t.choose(game, 'Junk all cards in the 3 deck')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -344,7 +344,7 @@ describe('Shivaji', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Sailing')
+      request = t.choose(game, 'Dogma.Sailing')
       // Karma does not trigger because Archery is red, not yellow
 
       t.testIsSecondPlayer(game)
@@ -370,10 +370,10 @@ describe('Shivaji', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Canal Building')
+      request = t.choose(game, 'Dogma.Canal Building')
       // Karma triggers: transfer all purple cards to achievements (ordered: true)
       // Canal Building dogma requires a choice - choose to junk the deck (simpler)
-      request = t.choose(game, request, 'Junk all cards in the 3 deck')
+      request = t.choose(game, 'Junk all cards in the 3 deck')
 
       t.testIsSecondPlayer(game)
       const achievements = game.zones.byId('achievements').cardlist().map(c => c.name)

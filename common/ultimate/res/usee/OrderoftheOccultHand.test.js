@@ -14,7 +14,7 @@ describe('Order of the Occult Hand', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Order of the Occult Hand')
+    request = t.choose(game, 'Dogma.Order of the Occult Hand')
 
     t.testGameOver(request, 'micah', 'Order of the Occult Hand')
   })
@@ -32,7 +32,7 @@ describe('Order of the Occult Hand', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Order of the Occult Hand')
+    request = t.choose(game, 'Dogma.Order of the Occult Hand')
 
     t.testGameOver(request, 'dennis', 'Order of the Occult Hand')
   })
@@ -59,11 +59,11 @@ describe('Order of the Occult Hand', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Order of the Occult Hand')
-    request = t.choose(game, request, 'Software', 'Mapmaking')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'Optics', 'Atomic Theory', 'Flight', 'Coal')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Order of the Occult Hand')
+    request = t.choose(game, 'Software', 'Mapmaking')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'Optics', 'Atomic Theory', 'Flight', 'Coal')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

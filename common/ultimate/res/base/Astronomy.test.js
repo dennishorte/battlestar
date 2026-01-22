@@ -16,7 +16,7 @@ describe('Astronomy', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Astronomy')
+    const result2 = t.choose(game, 'Dogma.Astronomy')
 
     expect(t.cards(game, 'blue')).toEqual(['Atomic Theory'])
     expect(t.cards(game, 'green')).toEqual(['Classification'])
@@ -36,7 +36,7 @@ describe('Astronomy', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Astronomy')
+    const result2 = t.choose(game, 'Dogma.Astronomy')
 
     expect(t.cards(game, 'achievements')).toEqual(['Universe'])
   })
@@ -55,7 +55,7 @@ describe('Astronomy', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Astronomy')
+    const result2 = t.choose(game, 'Dogma.Astronomy')
 
     expect(t.cards(game, 'achievements')).toEqual([])
   })

@@ -21,8 +21,8 @@ describe("Dentures", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Dentures')
-    request = t.choose(game, request, 'blue')
+    request = t.choose(game, 'Dogma.Dentures')
+    request = t.choose(game, 'blue')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

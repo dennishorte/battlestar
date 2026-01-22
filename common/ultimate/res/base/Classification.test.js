@@ -15,12 +15,12 @@ describe('Classification', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Classification')
-    const result3 = t.choose(game, result2, 'Mathematics')
+    const result2 = t.choose(game, 'Dogma.Classification')
+    const result3 = t.choose(game, 'Mathematics')
 
-    const result4 = t.choose(game, result3, 'Tools')
-    const result5 = t.choose(game, result4, 'Alchemy')
-    const result6 = t.choose(game, result5, 'Mathematics')
+    const result4 = t.choose(game, 'Tools')
+    const result5 = t.choose(game, 'Alchemy')
+    const result6 = t.choose(game, 'Mathematics')
 
     expect(t.cards(game, 'blue')).toEqual(['Experimentation', 'Mathematics', 'Alchemy', 'Tools'])
   })

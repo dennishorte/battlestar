@@ -20,7 +20,7 @@ describe('Giuseppe Scionti', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Sailing')
+    request = t.choose(game, 'Dogma.Sailing')
     // Karma triggers: first draw and score a {9} (Services)
     // Then Sailing's dogma effect executes: draw and meld a {1} (Agriculture)
 
@@ -53,7 +53,7 @@ describe('Giuseppe Scionti', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Clothing')
+    request = t.choose(game, 'Dogma.Clothing')
     // Karma triggers before first effect: draw and score a {9} (Services)
     // First effect executes: meld a card from hand of different color
     // Karma triggers before second effect: draw and score a {9} (Computers)
@@ -95,7 +95,7 @@ describe('Giuseppe Scionti', () => {
     let request
     request = game.run()
     // dennis is first player
-    request = t.choose(game, request, 'Dogma.Sailing')
+    request = t.choose(game, 'Dogma.Sailing')
     // dennis dogmas Sailing, micah shares (has 'c' icon from Code of Laws)
     // Karma triggers before effect micah executes: draw and score a {9} (Services)
     // Effect executes for micah: draw and meld a {1} (The Wheel - auto-melded, no choice)

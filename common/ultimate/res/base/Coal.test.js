@@ -17,9 +17,9 @@ describe('Coal', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Coal')
-    const result3 = t.choose(game, result2, 'red')
-    const result4 = t.choose(game, result3, 'blue')
+    const result2 = t.choose(game, 'Dogma.Coal')
+    const result3 = t.choose(game, 'red')
+    const result4 = t.choose(game, 'blue')
 
     expect(t.cards(game, 'blue')).toEqual(['Tools'])
     expect(t.cards(game, 'score').sort()).toEqual(['Alchemy', 'Calendar'])
@@ -41,9 +41,9 @@ describe('Coal', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Coal')
-    const result3 = t.choose(game, result2, 'red')
-    const result4 = t.choose(game, result3)
+    const result2 = t.choose(game, 'Dogma.Coal')
+    const result3 = t.choose(game, 'red')
+    const result4 = t.choose(game)
 
     expect(t.cards(game, 'blue')).toEqual(['Alchemy', 'Calendar', 'Tools'])
     expect(t.cards(game, 'red')).toEqual(['Coal', 'The Pirate Code'])

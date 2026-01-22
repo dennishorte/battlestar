@@ -15,11 +15,11 @@ describe("Artificial Heart", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Artificial Heart')
+    request = t.choose(game, 'Dogma.Artificial Heart')
 
     t.testChoices(request, ['*base-3*', '*base-4*'])
 
-    request = t.choose(game, request, '**base-4*')
+    request = t.choose(game, '**base-4*')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -42,8 +42,8 @@ describe("Artificial Heart", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Sudoku')
-    request = t.choose(game, request, '**base-4*')
+    request = t.choose(game, 'Meld.Sudoku')
+    request = t.choose(game, '**base-4*')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

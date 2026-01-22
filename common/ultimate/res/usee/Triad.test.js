@@ -13,7 +13,7 @@ describe('Triad', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Triad')
+    request = t.choose(game, 'Dogma.Triad')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -36,9 +36,9 @@ describe('Triad', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Triad')
-    request = t.choose(game, request, 'Monotheism')
-    request = t.choose(game, request, 'Tools')
+    request = t.choose(game, 'Dogma.Triad')
+    request = t.choose(game, 'Monotheism')
+    request = t.choose(game, 'Tools')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

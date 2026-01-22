@@ -22,11 +22,11 @@ describe('Dark Web', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Dark Web')
-    request = t.choose(game, request, 'micah.green')
-    request = t.choose(game, request, 'Safeguard achievements')
-    request = t.choose(game, request, '**base-1*', '**base-1*')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Dark Web')
+    request = t.choose(game, 'micah.green')
+    request = t.choose(game, 'Safeguard achievements')
+    request = t.choose(game, '**base-1*', '**base-1*')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -63,10 +63,10 @@ describe('Dark Web', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Dark Web')
-    request = t.choose(game, request, 'micah.green')
-    request = t.choose(game, request, 'Achieve secrets')
-    request = t.choose(game, request, '**base-1* (dennis)', '**base-1* (dennis)')
+    request = t.choose(game, 'Dogma.Dark Web')
+    request = t.choose(game, 'micah.green')
+    request = t.choose(game, 'Achieve secrets')
+    request = t.choose(game, '**base-1* (dennis)', '**base-1* (dennis)')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

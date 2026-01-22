@@ -17,9 +17,9 @@ describe("Marilyn Diptych", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Software')
-    request = t.choose(game, request, 'Astronomy')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Software')
+    request = t.choose(game, 'Astronomy')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -44,9 +44,9 @@ describe("Marilyn Diptych", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Software')
-    request = t.choose(game, request, 'Canning')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Software')
+    request = t.choose(game, 'Canning')
 
     t.testGameOver(request, 'dennis', 'Marilyn Diptych')
   })

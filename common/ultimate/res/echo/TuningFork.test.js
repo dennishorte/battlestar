@@ -22,9 +22,9 @@ describe("Tuning Fork", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Tuning Fork')
-    request = t.choose(game, request, 'Candles')
-    request = t.choose(game, request, 'no')
+    request = t.choose(game, 'Dogma.Tuning Fork')
+    request = t.choose(game, 'Candles')
+    request = t.choose(game, 'no')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -56,9 +56,9 @@ describe("Tuning Fork", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Tuning Fork')
-    request = t.choose(game, request, 'Candles')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Tuning Fork')
+    request = t.choose(game, 'Candles')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -90,8 +90,8 @@ describe("Tuning Fork", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Tuning Fork')
-    request = t.choose(game, request, 4)
+    request = t.choose(game, 'Dogma.Tuning Fork')
+    request = t.choose(game, 4)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

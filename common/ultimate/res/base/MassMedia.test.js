@@ -19,10 +19,10 @@ describe('Mass Media', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Mass Media')
-    request = t.choose(game, request, 'Tools')
-    request = t.choose(game, request, 6)
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Mass Media')
+    request = t.choose(game, 'Tools')
+    request = t.choose(game, 6)
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

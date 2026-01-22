@@ -20,8 +20,8 @@ describe('Sunshu Ao', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Domestication')
-    request = t.choose(game, request, 'Clothing')
+    request = t.choose(game, 'Meld.Domestication')
+    request = t.choose(game, 'Clothing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -49,7 +49,7 @@ describe('Sunshu Ao', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Experimentation')
+    request = t.choose(game, 'Dogma.Experimentation')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -72,7 +72,7 @@ describe('Sunshu Ao', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Shennong')
+    request = t.choose(game, 'Meld.Shennong')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -110,14 +110,14 @@ describe('Sunshu Ao', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Draw.draw a card')
-    request = t.choose(game, request, 'Dogma.Reformation')
-    request = t.choose(game, request, 'yes')
-    request = t.choose(game, request, 'Tools', 'Coal', 'Databases')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'Dogma.Reformation')
-    request = t.choose(game, request, 'yes')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Draw.draw a card')
+    request = t.choose(game, 'Dogma.Reformation')
+    request = t.choose(game, 'yes')
+    request = t.choose(game, 'Tools', 'Coal', 'Databases')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'Dogma.Reformation')
+    request = t.choose(game, 'yes')
+    request = t.choose(game, 'auto')
 
     t.testBoard(game, {
       dennis: {
@@ -161,7 +161,7 @@ describe('Sunshu Ao', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Genetics')
+    request = t.choose(game, 'Dogma.Genetics')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

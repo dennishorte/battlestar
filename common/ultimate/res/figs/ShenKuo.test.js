@@ -22,8 +22,8 @@ describe('Shen Kuo', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'The Wheel') // Return The Wheel (age 1) to trigger scoring
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'The Wheel') // Return The Wheel (age 1) to trigger scoring
       // Agriculture draws and "scores" Construction (age 2, red)
       // Karma intercepts and splays red right instead
 
@@ -53,8 +53,8 @@ describe('Shen Kuo', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Philosophy')
-      request = t.choose(game, request, 'Peter the Great') // Score Peter the Great (figure)
+      request = t.choose(game, 'Dogma.Philosophy')
+      request = t.choose(game, 'Peter the Great') // Score Peter the Great (figure)
       // No fade check needed - only have 1 figure on board
 
       t.testIsSecondPlayer(game)
@@ -81,8 +81,8 @@ describe('Shen Kuo', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Philosophy')
-      request = t.choose(game, request, 'red') // Choose to splay red left
+      request = t.choose(game, 'Dogma.Philosophy')
+      request = t.choose(game, 'red') // Choose to splay red left
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -112,8 +112,8 @@ describe('Shen Kuo', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Flight')
-      request = t.choose(game, request, 'blue') // Splay blue up (not left)
+      request = t.choose(game, 'Dogma.Flight')
+      request = t.choose(game, 'blue') // Splay blue up (not left)
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

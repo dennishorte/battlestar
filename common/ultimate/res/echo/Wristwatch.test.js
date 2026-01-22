@@ -25,8 +25,8 @@ describe("Wristwatch", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Wristwatch')
-    request = t.choose(game, request, 'Coal')
+    request = t.choose(game, 'Dogma.Wristwatch')
+    request = t.choose(game, 'Coal')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -58,8 +58,8 @@ describe("Wristwatch", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Credit Card')
-    request = t.choose(game, request, 'Coal')
+    request = t.choose(game, 'Meld.Credit Card')
+    request = t.choose(game, 'Coal')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

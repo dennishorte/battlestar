@@ -12,8 +12,8 @@ describe('Antibiotics', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Antibiotics')
-    const result3 = t.choose(game, result2)
+    const result2 = t.choose(game, 'Dogma.Antibiotics')
+    const result3 = t.choose(game)
 
     expect(t.cards(game, 'hand', 'dennis').sort()).toEqual(['Archery', 'Calendar', 'Mathematics'])
   })
@@ -32,8 +32,8 @@ describe('Antibiotics', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Antibiotics')
-    const result3 = t.choose(game, result2, 'Archery')
+    const result2 = t.choose(game, 'Dogma.Antibiotics')
+    const result3 = t.choose(game, 'Archery')
 
     expect(t.cards(game, 'hand', 'dennis').sort()).toEqual([
       'Calendar',
@@ -57,9 +57,9 @@ describe('Antibiotics', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Antibiotics')
-    const result3 = t.choose(game, result2, 'Archery', 'Calendar', 'Mathematics')
-    const result4 = t.choose(game, result3, 'auto')
+    const result2 = t.choose(game, 'Dogma.Antibiotics')
+    const result3 = t.choose(game, 'Archery', 'Calendar', 'Mathematics')
+    const result4 = t.choose(game, 'auto')
 
     expect(t.cards(game, 'hand', 'dennis').sort()).toEqual([
       'Empiricism',
@@ -83,9 +83,9 @@ describe('Antibiotics', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Antibiotics')
+    const result2 = t.choose(game, 'Dogma.Antibiotics')
 
-    const bad = () => t.choose(game, result2, 'Archery', 'Calendar', 'Mathematics', 'Tools')
+    const bad = () => t.choose(game, 'Archery', 'Calendar', 'Mathematics', 'Tools')
 
     expect(bad).toThrow(Error)
   })

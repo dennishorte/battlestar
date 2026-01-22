@@ -23,7 +23,7 @@ describe('Johannes Vermeer', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Achieve.*base-1*') // Claim age 1 achievement (Sailing)
+      request = t.choose(game, 'Achieve.*base-1*') // Claim age 1 achievement (Sailing)
       // Karma triggers: first claim age 2 achievement (Fermenting)
 
       t.testIsSecondPlayer(game)
@@ -58,9 +58,9 @@ describe('Johannes Vermeer', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Achieve.*base-1*') // Claim age 1 achievement (Sailing)
+      request = t.choose(game, 'Achieve.*base-1*') // Claim age 1 achievement (Sailing)
       // Karma triggers: choose which age 2 achievement to claim
-      request = t.choose(game, request, '**base-2*') // Choose Fermenting (age 2)
+      request = t.choose(game, '**base-2*') // Choose Fermenting (age 2)
       // After claiming achievements, game asks for second action
       // Continue until turn completes
 
@@ -96,7 +96,7 @@ describe('Johannes Vermeer', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Achieve.*base-1*') // Claim age 1 achievement (Sailing)
+      request = t.choose(game, 'Achieve.*base-1*') // Claim age 1 achievement (Sailing)
       // Karma triggers: claim age 2 achievement (Fermenting) regardless of eligibility
       // dennis has no score, but can still claim Fermenting (karma bypasses eligibility)
 
@@ -131,7 +131,7 @@ describe('Johannes Vermeer', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Achieve.*base-1*') // Claim age 1 achievement (Sailing)
+      request = t.choose(game, 'Achieve.*base-1*') // Claim age 1 achievement (Sailing)
       // Karma triggers but no age 2 achievement available, so chooseAndAchieve is called with empty array
 
       t.testIsSecondPlayer(game)
@@ -170,7 +170,7 @@ describe('Johannes Vermeer', () => {
       request = game.run()
       // Try to claim a special achievement (if available) - karma should not trigger
       // Since there are no special achievements in this setup, just verify normal achievement claim works
-      request = t.choose(game, request, 'Achieve.*base-1*') // Claim age 1 achievement (The Wheel)
+      request = t.choose(game, 'Achieve.*base-1*') // Claim age 1 achievement (The Wheel)
       // Karma should trigger for standard achievement
 
       t.testIsSecondPlayer(game)
@@ -201,10 +201,10 @@ describe('Johannes Vermeer', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Tools')
+      request = t.choose(game, 'Meld.Tools')
       // Karma triggers: choose a color and score all cards of that color
-      request = t.choose(game, request, 'green') // Choose green color
-      request = t.choose(game, request, 'auto')
+      request = t.choose(game, 'green') // Choose green color
+      request = t.choose(game, 'auto')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -231,10 +231,10 @@ describe('Johannes Vermeer', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Tools')
+      request = t.choose(game, 'Meld.Tools')
       // Karma triggers: choose a color and score all cards of that color
-      request = t.choose(game, request, 'red') // Choose red color
-      request = t.choose(game, request, 'auto')
+      request = t.choose(game, 'red') // Choose red color
+      request = t.choose(game, 'auto')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -259,7 +259,7 @@ describe('Johannes Vermeer', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Tools')
+      request = t.choose(game, 'Meld.Tools')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

@@ -27,8 +27,8 @@ describe('Monotheism', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Monotheism')
-    request = t.choose(game, request, 'Tools')
+    request = t.choose(game, 'Dogma.Monotheism')
+    request = t.choose(game, 'Tools')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

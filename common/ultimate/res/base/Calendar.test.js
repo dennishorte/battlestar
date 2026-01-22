@@ -17,7 +17,7 @@ describe('Calendar', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Calendar')
+    const result2 = t.choose(game, 'Dogma.Calendar')
 
     expect(t.cards(game, 'hand')).toEqual(['Engineering', 'Paper'])
   })
@@ -31,7 +31,7 @@ describe('Calendar', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Calendar')
+    const result2 = t.choose(game, 'Dogma.Calendar')
 
     expect(t.cards(game, 'hand')).toEqual(['Printing Press'])
   })

@@ -15,11 +15,11 @@ describe('Metric System', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Metric System')
+    request = t.choose(game, 'Dogma.Metric System')
 
     t.testChoices(request, ['green'], 0, 1)
 
-    request = t.choose(game, request, 'green')
+    request = t.choose(game, 'green')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -47,11 +47,11 @@ describe('Metric System', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Metric System')
+    request = t.choose(game, 'Dogma.Metric System')
 
     t.testChoices(request, ['red'], 0, 1)
 
-    request = t.choose(game, request, 'red')
+    request = t.choose(game, 'red')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

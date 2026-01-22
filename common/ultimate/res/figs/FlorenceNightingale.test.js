@@ -22,8 +22,8 @@ describe('Florence Nightingale', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Vaccination')
-    request = t.choose(game, request, 2)
+    request = t.choose(game, 'Dogma.Vaccination')
+    request = t.choose(game, 2)
 
     t.testIsSecondPlayer(game)
     t.setBoard(game, {
@@ -49,8 +49,8 @@ describe('Florence Nightingale', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Education')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Education')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.setBoard(game, {
@@ -76,9 +76,9 @@ describe('Florence Nightingale', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Combustion')
-    request = t.choose(game, request, 'Printing Press', 'Carl Friedrich Gauss')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Combustion')
+    request = t.choose(game, 'Printing Press', 'Carl Friedrich Gauss')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.setBoard(game, {
@@ -114,9 +114,9 @@ describe('Florence Nightingale', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 2)
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 2)
+    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -146,8 +146,8 @@ describe('Florence Nightingale', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Near-Field Comm')
-      request = t.choose(game, request, 2) // Choose age 2 (Mathematics is age 2)
+      request = t.choose(game, 'Dogma.Near-Field Comm')
+      request = t.choose(game, 2) // Choose age 2 (Mathematics is age 2)
       // Near Field Comm demands: transfer all age 2 cards from micah's score pile
       // Karma intercepts: Mathematics stays in micah's score pile
 
@@ -178,7 +178,7 @@ describe('Florence Nightingale', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Sanskrit')
+      request = t.choose(game, 'Dogma.Sanskrit')
       // Sanskrit junks all cards in all score piles
       // Karma intercepts: Enterprise stays in micah's score pile (protected by Florence Nightingale)
       // Sanskrit's second effect may trigger, but we just need to verify the score pile state

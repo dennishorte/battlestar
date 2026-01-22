@@ -49,8 +49,8 @@ describe('James Clerk Maxwell', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Mathematics')
-      request = t.choose(game, request, 'Tools') // dennis returns Tools (age 1)
+      request = t.choose(game, 'Dogma.Mathematics')
+      request = t.choose(game, 'Tools') // dennis returns Tools (age 1)
       // Karma triggers: micah (owner) draws age 8 first (Skyscrapers) because triggerAll: true
       // Then Mathematics's dogma continues: dennis draws and melds age 2 (Calendar)
 
@@ -85,8 +85,8 @@ describe('James Clerk Maxwell', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'Tools') // dennis returns Tools (age 1)
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'Tools') // dennis returns Tools (age 1)
       // Karma triggers: dennis (owner) draws age 8 first (Rocketry) because triggerAll: true
       // Then Agriculture's dogma continues: micah draws and scores age 2 (Calendar)
 
@@ -120,8 +120,8 @@ describe('James Clerk Maxwell', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'Skyscrapers') // Return Skyscrapers (age 8)
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'Skyscrapers') // Return Skyscrapers (age 8)
       // Karma should NOT trigger (card is age 8, not < 8)
       // Agriculture's dogma continues: draw and score age 9 (Services)
 
@@ -158,7 +158,7 @@ describe('James Clerk Maxwell', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
       // Karma should NOT trigger (The Wheel does not return cards)
 
       t.testIsSecondPlayer(game)

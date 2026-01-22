@@ -19,8 +19,8 @@ describe('Medicine', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Medicine')
-    request = t.choose(game, request, 'Reformation') // Highest from micah's score
+    request = t.choose(game, 'Dogma.Medicine')
+    request = t.choose(game, 'Reformation') // Highest from micah's score
     // The Wheel (lowest from dennis's score) is auto-selected when there's only one
     // Machinery (only age 3 achievement) is auto-selected when there's only one
 
@@ -51,8 +51,8 @@ describe('Medicine', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Medicine')
-    request = t.choose(game, request, 'Reformation') // Highest from micah's score
+    request = t.choose(game, 'Dogma.Medicine')
+    request = t.choose(game, 'Reformation') // Highest from micah's score
     // No lowest card from dennis's score (dennis has no score cards)
     // Machinery (only age 3 achievement) is auto-selected when there's only one
 

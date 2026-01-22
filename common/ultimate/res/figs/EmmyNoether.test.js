@@ -33,10 +33,10 @@ describe('Emmy Noether', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Philosophy')
-      request = t.choose(game, request, 'Tools') // Score Tools
+      request = t.choose(game, 'Dogma.Philosophy')
+      request = t.choose(game, 'Tools') // Score Tools
       // Karma triggers: first junk a card from score pile
-      request = t.choose(game, request, 'The Wheel') // Choose The Wheel to junk
+      request = t.choose(game, 'The Wheel') // Choose The Wheel to junk
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -65,8 +65,8 @@ describe('Emmy Noether', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Philosophy')
-      request = t.choose(game, request, 'Tools') // Dennis scores Tools
+      request = t.choose(game, 'Dogma.Philosophy')
+      request = t.choose(game, 'Tools') // Dennis scores Tools
       // Karma triggers: first junk a card from dennis's score pile
       // Only The Wheel is available, so auto-selected
 
@@ -97,8 +97,8 @@ describe('Emmy Noether', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Philosophy')
-      request = t.choose(game, request, 'Tools') // Score Tools
+      request = t.choose(game, 'Dogma.Philosophy')
+      request = t.choose(game, 'Tools') // Score Tools
       // Karma triggers: try to junk a card from score pile, but it's empty so nothing happens
 
       t.testIsSecondPlayer(game)

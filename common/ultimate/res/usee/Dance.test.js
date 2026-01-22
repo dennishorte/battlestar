@@ -18,11 +18,11 @@ describe('Dance', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Dance')
+    request = t.choose(game, 'Dogma.Dance')
 
     t.testChoices(request, ['Gunpowder', 'Navigation'])
 
-    request = t.choose(game, request, 'Gunpowder')
+    request = t.choose(game, 'Gunpowder')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -54,7 +54,7 @@ describe('Dance', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Dance')
+    request = t.choose(game, 'Dogma.Dance')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

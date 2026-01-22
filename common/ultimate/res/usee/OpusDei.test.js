@@ -18,7 +18,7 @@ describe('Opus Dei', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Opus Dei')
+    request = t.choose(game, 'Dogma.Opus Dei')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -18,7 +18,7 @@ describe('Metalworking', () => {
 
     let request
     request = game.run()
-    t.choose(game, request, 'Dogma.Metalworking')
+    t.choose(game, 'Dogma.Metalworking')
 
     const dennis = game.players.byName('dennis')
     const score = game.zones.byPlayer(dennis, 'score').cardlist().map(c => c.name).sort()

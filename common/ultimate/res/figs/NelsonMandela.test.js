@@ -26,12 +26,12 @@ describe('Nelson Mandela', () => {
       let request
       request = game.run()
       // First round: dennis takes first action (Draw) - first player only gets one action
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // micah's turn (first round, gets two actions)
       // First action: Draw
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Second action: Dogma The Wheel (on micah's board)
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
       // Karma triggers: instead of normal dogma, super-execute The Wheel
       // The Wheel's dogma: "Draw two {1}."
       // Super-execute means all opponents are demanded (not just the owner)

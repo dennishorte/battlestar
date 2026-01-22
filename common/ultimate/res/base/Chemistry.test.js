@@ -17,9 +17,9 @@ describe('Chemistry', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Chemistry')
-    const result3 = t.choose(game, result2)
-    const result4 = t.choose(game, result3, 'The Wheel')
+    const result2 = t.choose(game, 'Dogma.Chemistry')
+    const result3 = t.choose(game)
+    const result4 = t.choose(game, 'The Wheel')
 
     expect(t.cards(game, 'score').sort()).toEqual(['Vaccination'])
     expect(t.zone(game, 'blue').splay).toBe('none')
@@ -38,8 +38,8 @@ describe('Chemistry', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Chemistry')
-    const result3 = t.choose(game, result2, 'blue')
+    const result2 = t.choose(game, 'Dogma.Chemistry')
+    const result3 = t.choose(game, 'blue')
 
     expect(t.cards(game, 'score').sort()).toEqual([])
     expect(t.zone(game, 'blue').splay).toBe('right')

@@ -19,8 +19,8 @@ describe("Seed Drill", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Seed Drill')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Dogma.Seed Drill')
+    request = t.choose(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -50,8 +50,8 @@ describe("Seed Drill", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Seed Drill')
-    request = t.choose(game, request, 3)
+    request = t.choose(game, 'Dogma.Seed Drill')
+    request = t.choose(game, 3)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -83,8 +83,8 @@ describe("Seed Drill", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Seed Drill')
-    request = t.choose(game, request, 3)
+    request = t.choose(game, 'Dogma.Seed Drill')
+    request = t.choose(game, 3)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

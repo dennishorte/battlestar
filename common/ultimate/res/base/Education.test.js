@@ -20,8 +20,8 @@ describe('Education', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Education')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Education')
+    request = t.choose(game, 'yes')
 
     t.testBoard(game, {
       dennis: {
@@ -43,8 +43,8 @@ describe('Education', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Education')
-    request = t.choose(game, request, 'no')
+    request = t.choose(game, 'Dogma.Education')
+    request = t.choose(game, 'no')
 
     t.testBoard(game, {
       dennis: {

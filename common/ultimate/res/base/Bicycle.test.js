@@ -13,8 +13,8 @@ describe('Bicycle', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Bicycle')
-    const result3 = t.choose(game, result2, 'yes')
+    const result2 = t.choose(game, 'Dogma.Bicycle')
+    const result3 = t.choose(game, 'yes')
 
     expect(t.cards(game, 'hand')).toEqual(['Chemistry'])
     expect(t.cards(game, 'score').sort()).toEqual(['Industrialization', 'Tools'])
@@ -30,8 +30,8 @@ describe('Bicycle', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Bicycle')
-    const result3 = t.choose(game, result2, 'no')
+    const result2 = t.choose(game, 'Dogma.Bicycle')
+    const result3 = t.choose(game, 'no')
 
     expect(t.cards(game, 'score')).toEqual(['Chemistry'])
     expect(t.cards(game, 'hand').sort()).toEqual(['Industrialization', 'Tools'])

@@ -12,7 +12,7 @@ describe('Stem Cells', () => {
     })
     let request
     request = game.run()
-    t.choose(game, request, 'Dogma.Stem Cells')
+    t.choose(game, 'Dogma.Stem Cells')
     // Just looking for no errors.
   })
 
@@ -26,9 +26,9 @@ describe('Stem Cells', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Stem Cells')
-    request = t.choose(game, request, 'yes')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Stem Cells')
+    request = t.choose(game, 'yes')
+    request = t.choose(game, 'auto')
 
     expect(t.cards(game, 'score').sort()).toEqual(['Experimentation', 'Reformation'])
   })
@@ -43,8 +43,8 @@ describe('Stem Cells', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Stem Cells')
-    t.choose(game, request, 'no')
+    request = t.choose(game, 'Dogma.Stem Cells')
+    t.choose(game, 'no')
 
     expect(t.cards(game, 'score')).toEqual([])
   })

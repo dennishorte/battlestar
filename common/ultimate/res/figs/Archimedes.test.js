@@ -23,7 +23,7 @@ describe('Archimedes', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.The Wheel')
+    request = t.choose(game, 'Dogma.The Wheel')
 
     expect(t.cards(game, 'hand').sort()).toStrictEqual(['Calendar', 'Construction'])
   })
@@ -47,7 +47,7 @@ describe('Archimedes', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma') // Choose to activate artifact dogma
+    request = t.choose(game, 'dogma') // Choose to activate artifact dogma
     // Kilogram's dogma asks to return cards - when there's only one option in each category, it auto-selects
     // Sum is 10 (Engineering age 3 + Lighting age 7), so draws and scores a {10} (Databases)
     // Since karma only triggers at START of action (not during), the {10} stays {10}, not {11}

@@ -19,8 +19,8 @@ describe("Martian Internet", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 4)
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 4)
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -49,8 +49,8 @@ describe("Martian Internet", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 4)
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 4)
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -79,8 +79,8 @@ describe("Martian Internet", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 4)
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 4)
 
     t.testGameOver(request, 'dennis', 'Martian Internet')
   })

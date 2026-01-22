@@ -24,7 +24,7 @@ describe('Globalization', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Globalization')
+    request = t.choose(game, 'Dogma.Globalization')
 
     expect(t.cards(game, 'yellow', 'micah')).toEqual(['Statistics'])
   })
@@ -46,7 +46,7 @@ describe('Globalization', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Globalization')
+    request = t.choose(game, 'Dogma.Globalization')
 
     expect(t.cards(game, 'green')).toEqual(['Hypersonics'])
   })
@@ -64,7 +64,7 @@ describe('Globalization', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Globalization')
+    request = t.choose(game, 'Dogma.Globalization')
 
     expect(request).toEqual(expect.any(GameOverEvent))
   })
@@ -87,7 +87,7 @@ describe('Globalization', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Globalization')
+    request = t.choose(game, 'Dogma.Globalization')
 
     expect(request).toEqual(expect.any(InputRequestEvent))
   })

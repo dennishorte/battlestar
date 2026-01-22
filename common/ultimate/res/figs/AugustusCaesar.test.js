@@ -24,7 +24,7 @@ describe('Augustus Caesar', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, 'Dogma.Archery')
 
     t.testBoard(game, {
       dennis: {
@@ -60,7 +60,7 @@ describe('Augustus Caesar', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, 'Dogma.Archery')
 
     t.testBoard(game, {
       dennis: {
@@ -97,8 +97,8 @@ describe('Augustus Caesar', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
-    request = t.choose(game, request, '**base-1*') // Choose achievement to junk
+    request = t.choose(game, 'Dogma.Archery')
+    request = t.choose(game, '**base-1*') // Choose achievement to junk
 
     t.testBoard(game, {
       dennis: {
@@ -132,7 +132,7 @@ describe('Augustus Caesar', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, 'Dogma.Archery')
 
     t.testBoard(game, {
       dennis: {
@@ -166,7 +166,7 @@ describe('Augustus Caesar', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, 'Dogma.Archery')
 
     t.testBoard(game, {
       dennis: {
@@ -202,8 +202,8 @@ describe('Augustus Caesar', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
-    request = t.choose(game, request, '**base-1*') // Choose achievement to junk
+    request = t.choose(game, 'Dogma.Archery')
+    request = t.choose(game, '**base-1*') // Choose achievement to junk
 
     t.testBoard(game, {
       dennis: {
@@ -231,9 +231,9 @@ describe('Augustus Caesar', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Code of Laws')
-    request = t.choose(game, request, 'Writing')
-    request = t.choose(game, request, 'blue')
+    request = t.choose(game, 'Dogma.Code of Laws')
+    request = t.choose(game, 'Writing')
+    request = t.choose(game, 'blue')
 
     t.testBoard(game, {
       dennis: {
@@ -270,7 +270,7 @@ describe('Augustus Caesar', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Road Building')
+    request = t.choose(game, 'Dogma.Road Building')
 
     t.testBoard(game, {
       dennis: {

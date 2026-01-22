@@ -16,11 +16,11 @@ describe('Hacking', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Hacking')
-    request = t.choose(game, request, '**base-6* (micah)')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Hacking')
+    request = t.choose(game, '**base-6* (micah)')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

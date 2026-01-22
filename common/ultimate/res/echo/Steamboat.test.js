@@ -23,8 +23,8 @@ describe("Steamboat", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Steamboat')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Steamboat')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -57,7 +57,7 @@ describe("Steamboat", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Steamboat')
+    request = t.choose(game, 'Dogma.Steamboat')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -90,7 +90,7 @@ describe("Steamboat", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Steamboat')
+    request = t.choose(game, 'Dogma.Steamboat')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

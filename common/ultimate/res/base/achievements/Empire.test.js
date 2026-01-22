@@ -30,7 +30,7 @@ describe('Empire Achievement', () => {
     expect(biscuits.s).toBe(3)
     expect(biscuits.i).toBe(0)
 
-    request = t.choose(game, request, 'Meld.Databases')
+    request = t.choose(game, 'Meld.Databases')
 
     expect(t.cards(game, 'achievements')).toEqual(['Empire'])
   })
@@ -60,7 +60,7 @@ describe('Empire Achievement', () => {
     expect(biscuits.s).toBe(3)
     expect(biscuits.i).toBe(0)
 
-    request = t.choose(game, request, 'Meld.Escapism')
+    request = t.choose(game, 'Meld.Escapism')
 
     expect(t.cards(game, 'achievements')).toEqual([])
   })
@@ -90,7 +90,7 @@ describe('Empire Achievement', () => {
     expect(biscuits.s).toBe(3)
     expect(biscuits.i).toBe(0)
 
-    request = t.choose(game, request, 'Meld.Bioengineering')
+    request = t.choose(game, 'Meld.Bioengineering')
 
     expect(t.cards(game, 'achievements')).toEqual([])
   })

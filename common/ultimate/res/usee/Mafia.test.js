@@ -15,8 +15,8 @@ describe('Mafia', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Mafia')
-    request = t.choose(game, request, 'yellow')
+    request = t.choose(game, 'Dogma.Mafia')
+    request = t.choose(game, 'yellow')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -44,13 +44,13 @@ describe('Mafia', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Mafia')
+    request = t.choose(game, 'Dogma.Mafia')
 
     // Ensure card options are visible.
     t.testChoices(request, ['Canning', 'Tools'])
 
-    request = t.choose(game, request, 'Canning')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Canning')
+    request = t.choose(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -74,9 +74,9 @@ describe('Mafia', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Mafia')
-    request = t.choose(game, request, '**base-6* (micah)') // Extra star due to test utils
-    request = t.choose(game, request)
+    request = t.choose(game, 'Dogma.Mafia')
+    request = t.choose(game, '**base-6* (micah)') // Extra star due to test utils
+    request = t.choose(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

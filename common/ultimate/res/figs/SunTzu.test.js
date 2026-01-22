@@ -33,12 +33,12 @@ describe('Sun Tzu', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.The Wheel')
+    request = t.choose(game, 'Dogma.The Wheel')
 
     t.testChoices(request, ['Fermenting', 'Archery'])
 
-    request = t.choose(game, request, 'Fermenting', 'Archery')
-    request = t.choose(game, request, 'Archery')
+    request = t.choose(game, 'Fermenting', 'Archery')
+    request = t.choose(game, 'Archery')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

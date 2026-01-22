@@ -18,7 +18,7 @@ describe('Fire', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Fire')
+    request = t.choose(game, 'Dogma.Fire')
     // Demand effect: Micah must reveal Fishing (age 0, green, not on dennis's board)
     // If only one valid choice, it auto-selects; otherwise micah chooses
     // After demand, second effect (meld) runs for dennis
@@ -50,7 +50,7 @@ describe('Fire', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Fire')
+    request = t.choose(game, 'Dogma.Fire')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -77,7 +77,7 @@ describe('Fire', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Fire')
+    request = t.choose(game, 'Dogma.Fire')
     // Micah has no valid age 0 cards to reveal (empty hand)
     // So micah loses, then second effect (meld) runs for dennis
 
@@ -99,7 +99,7 @@ describe('Fire', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Fire')
+    request = t.choose(game, 'Dogma.Fire')
     // First effect: demand - micah reveals Agriculture (auto-selects if only one choice)
     // Second effect: meld - no blue card in hand, so player loses
 

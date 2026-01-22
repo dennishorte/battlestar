@@ -17,9 +17,9 @@ describe('Carl Friedrich Gauss', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Quantum Theory')
-      request = t.choose(game, request, 1)
-      request = t.choose(game, request, 'Sailing')
+      request = t.choose(game, 'Meld.Quantum Theory')
+      request = t.choose(game, 1)
+      request = t.choose(game, 'Sailing')
 
       t.testBoard(game, {
         dennis: {
@@ -43,8 +43,8 @@ describe('Carl Friedrich Gauss', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Quantum Theory')
-      request = t.choose(game, request, 8)
+      request = t.choose(game, 'Meld.Quantum Theory')
+      request = t.choose(game, 8)
 
       t.testBoard(game, {
         dennis: {
@@ -67,8 +67,8 @@ describe('Carl Friedrich Gauss', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Quantum Theory')
-      request = t.choose(game, request, 1)
+      request = t.choose(game, 'Meld.Quantum Theory')
+      request = t.choose(game, 1)
       // Should meld Sailing (age 1) from hand only
 
       t.testBoard(game, {
@@ -93,8 +93,8 @@ describe('Carl Friedrich Gauss', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Quantum Theory')
-      request = t.choose(game, request, 1)
+      request = t.choose(game, 'Meld.Quantum Theory')
+      request = t.choose(game, 1)
       // Should meld The Wheel (age 1) from score
 
       t.testBoard(game, {
@@ -119,8 +119,8 @@ describe('Carl Friedrich Gauss', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Quantum Theory')
-      request = t.choose(game, request, 3)
+      request = t.choose(game, 'Meld.Quantum Theory')
+      request = t.choose(game, 3)
       // No other age 3 cards, should log "no effect" but still meld Quantum Theory
 
       t.testBoard(game, {
@@ -150,7 +150,7 @@ describe('Carl Friedrich Gauss', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Karma triggers: draw age 7 first (Lighting)
       // Then normal draw: draw age 6 (Industrialization)
 
@@ -179,7 +179,7 @@ describe('Carl Friedrich Gauss', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
       // The Wheel's dogma draws two age 1 cards, but Carl Friedrich Gauss's karma should not trigger
       // (only triggers on Draw action, not on draws from dogma effects)
 

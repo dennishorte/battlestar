@@ -24,7 +24,7 @@ describe('Plato', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.The Wheel')
+    request = t.choose(game, 'Dogma.The Wheel')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -58,13 +58,13 @@ describe('Plato', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.The Wheel')
+    request = t.choose(game, 'Dogma.The Wheel')
     // Karma junks achievement - choose Mathematics (age 2)
     // The request should be for choosing an achievement to junk
     if (request && request.selectors && request.selectors.length > 0) {
       const selector = request.selectors[0]
       if (selector.title && selector.title.includes('achievement')) {
-        request = t.choose(game, request, '**base-2*')
+        request = t.choose(game, '**base-2*')
       }
     }
 

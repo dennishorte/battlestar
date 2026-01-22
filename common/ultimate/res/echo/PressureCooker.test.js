@@ -23,9 +23,9 @@ describe("Pressure Cooker", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Pressure Cooker')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 2)
+    request = t.choose(game, 'Dogma.Pressure Cooker')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 2)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -57,9 +57,9 @@ describe("Pressure Cooker", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Astronomy')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 2)
+    request = t.choose(game, 'Meld.Astronomy')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 2)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

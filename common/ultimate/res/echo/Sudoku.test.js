@@ -22,9 +22,9 @@ describe("Sudoku", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Sudoku')
-    request = t.choose(game, request, 'Monotheism')
-    request = t.choose(game, request, 4)
+    request = t.choose(game, 'Dogma.Sudoku')
+    request = t.choose(game, 'Monotheism')
+    request = t.choose(game, 4)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -60,8 +60,8 @@ describe("Sudoku", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Sudoku')
-    request = t.choose(game, request, 4)
+    request = t.choose(game, 'Dogma.Sudoku')
+    request = t.choose(game, 4)
 
     t.testGameOver(request, 'dennis', 'Sudoku')
   })

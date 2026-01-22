@@ -21,7 +21,7 @@ describe('Mapmaking', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Mapmaking')
+    request = t.choose(game, 'Dogma.Mapmaking')
 
     expect(t.cards(game, 'score').sort()).toEqual(['Mysticism', 'The Wheel'])
   })
@@ -41,7 +41,7 @@ describe('Mapmaking', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Mapmaking')
+    request = t.choose(game, 'Dogma.Mapmaking')
 
     expect(t.cards(game, 'score').sort()).toEqual([])
   })

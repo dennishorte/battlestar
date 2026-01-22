@@ -23,8 +23,8 @@ describe("Ruler", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Ruler')
-    request = t.choose(game, request, 'Noodles')
+    request = t.choose(game, 'Dogma.Ruler')
+    request = t.choose(game, 'Noodles')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

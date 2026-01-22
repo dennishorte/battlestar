@@ -15,8 +15,8 @@ describe("Watermill", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Watermill')
-    request = t.choose(game, request, 'Fermenting')
+    request = t.choose(game, 'Dogma.Watermill')
+    request = t.choose(game, 'Fermenting')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -44,8 +44,8 @@ describe("Watermill", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Watermill')
-    request = t.choose(game, request, 'Fermenting')
+    request = t.choose(game, 'Dogma.Watermill')
+    request = t.choose(game, 'Fermenting')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -74,8 +74,8 @@ describe("Watermill", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Crossbow')
-    request = t.choose(game, request, 'Fermenting')
+    request = t.choose(game, 'Meld.Crossbow')
+    request = t.choose(game, 'Fermenting')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

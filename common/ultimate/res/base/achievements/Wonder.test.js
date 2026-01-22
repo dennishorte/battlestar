@@ -28,8 +28,8 @@ describe('Wonder Achievement', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Flight')
-    request = t.choose(game, request, 'red')
+    request = t.choose(game, 'Dogma.Flight')
+    request = t.choose(game, 'red')
 
     expect(t.cards(game, 'achievements')).toEqual(['Wonder'])
   })

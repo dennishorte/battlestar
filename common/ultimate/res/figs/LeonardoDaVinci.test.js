@@ -25,8 +25,8 @@ describe('Leonardo Da Vinci', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Construction')
-      request = t.choose(game, request, 'Yi Sun-Sin')
+      request = t.choose(game, 'Meld.Construction')
+      request = t.choose(game, 'Yi Sun-Sin')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -57,7 +57,7 @@ describe('Leonardo Da Vinci', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Construction')
+      request = t.choose(game, 'Meld.Construction')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -85,7 +85,7 @@ describe('Leonardo Da Vinci', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Construction')
+      request = t.choose(game, 'Meld.Construction')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

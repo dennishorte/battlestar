@@ -22,7 +22,7 @@ describe("Action Comics #1", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -54,7 +54,7 @@ describe("Action Comics #1", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Action Comics #1')
+    request = t.choose(game, 'Dogma.Action Comics #1')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -86,7 +86,7 @@ describe("Action Comics #1", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -119,7 +119,7 @@ describe("Action Comics #1", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -152,7 +152,7 @@ describe("Action Comics #1", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

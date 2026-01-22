@@ -25,7 +25,7 @@ describe('Hammurabi', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, 'Dogma.Archery')
 
     t.testBoard(game, {
       dennis: {
@@ -38,7 +38,7 @@ describe('Hammurabi', () => {
       },
     })
 
-    request = t.choose(game, request, 'Currency')
+    request = t.choose(game, 'Currency')
 
     t.testBoard(game, {
       dennis: {

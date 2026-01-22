@@ -15,8 +15,8 @@ describe("Globe", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Globe')
-    request = t.choose(game, request, 'no')
+    request = t.choose(game, 'Dogma.Globe')
+    request = t.choose(game, 'no')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -45,10 +45,10 @@ describe("Globe", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Globe')
-    request = t.choose(game, request, 'yes')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, '**base-3*', '**base-2*', '**base-1*')
+    request = t.choose(game, 'Dogma.Globe')
+    request = t.choose(game, 'yes')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, '**base-3*', '**base-2*', '**base-1*')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -80,9 +80,9 @@ describe("Globe", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Globe')
-    request = t.choose(game, request, 'yes')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Globe')
+    request = t.choose(game, 'yes')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -104,9 +104,9 @@ describe("Globe", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Perspective')
-    request = t.choose(game, request, 'no')
-    request = t.choose(game, request, 'Perspective')
+    request = t.choose(game, 'Meld.Perspective')
+    request = t.choose(game, 'no')
+    request = t.choose(game, 'Perspective')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

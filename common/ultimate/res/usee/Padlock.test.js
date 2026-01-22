@@ -17,7 +17,7 @@ describe('Padlock', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Padlock')
+    request = t.choose(game, 'Dogma.Padlock')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -47,10 +47,10 @@ describe('Padlock', () => {
 
     const numberOfAchievements = game.zones.byId('achievements').cardlist().length
 
-    request = t.choose(game, request, 'Dogma.Padlock')
-    request = t.choose(game, request, 'Tools', 'Myth')  // Choose invalid items on purpose.
-    request = t.choose(game, request, 'Tools', 'Construction', 'Optics')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Padlock')
+    request = t.choose(game, 'Tools', 'Myth')  // Choose invalid items on purpose.
+    request = t.choose(game, 'Tools', 'Construction', 'Optics')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

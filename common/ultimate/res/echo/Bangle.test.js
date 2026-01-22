@@ -21,8 +21,8 @@ describe('Bangle', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Bangle')
-    request = t.choose(game, request, 'Draw and foreshadow')
+    request = t.choose(game, 'Dogma.Bangle')
+    request = t.choose(game, 'Draw and foreshadow')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -46,8 +46,8 @@ describe('Bangle', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Bangle')
-    request = t.choose(game, request, 'Tuck from forecast')
+    request = t.choose(game, 'Dogma.Bangle')
+    request = t.choose(game, 'Tuck from forecast')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -76,8 +76,8 @@ describe('Bangle', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Bangle')
-    request = t.choose(game, request, 'Tuck from forecast')
+    request = t.choose(game, 'Dogma.Bangle')
+    request = t.choose(game, 'Tuck from forecast')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -106,7 +106,7 @@ describe('Bangle', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Bangle')
+    request = t.choose(game, 'Dogma.Bangle')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

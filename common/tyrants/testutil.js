@@ -260,9 +260,9 @@ TestUtil.gameFixture = function(options) {
   })
 
 
-  let request = game.run()
-  request = this.choose(game, request, 'Ched Nasad')
-  request = this.choose(game, request, 'Eryndlyn')
+  game.run()
+  this.choose(game, 'Ched Nasad')
+  this.choose(game, 'Eryndlyn')
   return game
 }
 

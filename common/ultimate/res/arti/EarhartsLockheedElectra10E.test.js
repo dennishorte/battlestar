@@ -18,7 +18,7 @@ describe("Earhart's Lockheed Electra 10E", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testGameOver(request, 'dennis', "Earhart's Lockheed Electra 10E")
   })
@@ -38,7 +38,7 @@ describe("Earhart's Lockheed Electra 10E", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

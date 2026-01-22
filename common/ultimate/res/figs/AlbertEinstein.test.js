@@ -28,12 +28,12 @@ describe('Albert Einstein', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card') // Draw action
+      request = t.choose(game, 'Draw.draw a card') // Draw action
       // Karma triggers: meld all cards with {s} or {i} from all hands
       // Tools (s), Writing (s), Mathematics (s) get melded
       // Choose melding order: Tools first (goes to bottom), then Mathematics, then Writing last (goes to top, index 0)
-      request = t.choose(game, request, 'Tools')
-      request = t.choose(game, request, 'Mathematics')
+      request = t.choose(game, 'Tools')
+      request = t.choose(game, 'Mathematics')
       // Writing is auto-selected as the last card
       // Draw action completes automatically after melding
       // Pottery and Clothing remain in hand
@@ -69,7 +69,7 @@ describe('Albert Einstein', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card') // Draw action
+      request = t.choose(game, 'Draw.draw a card') // Draw action
       // Karma triggers but no cards with {s} or {i}, so nothing melded
 
       t.testIsSecondPlayer(game)
@@ -100,11 +100,11 @@ describe('Albert Einstein', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card') // Draw action
+      request = t.choose(game, 'Draw.draw a card') // Draw action
       // Karma triggers: meld all cards with {s} or {i}
       // Tools ({s}) and Software ({i}) get melded
       // Choose melding order: Tools first (goes to bottom), then Software last (goes to top, index 0)
-      request = t.choose(game, request, 'Tools')
+      request = t.choose(game, 'Tools')
       // Software is auto-selected as the last card
       // Draw action completes automatically after melding
 

@@ -21,11 +21,11 @@ describe('Freemasons', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Freemasons')
-    request = t.choose(game, request, 'Masonry', 'Optics', 'Metalworking')
-    request = t.choose(game, request, 'Masonry', 'Optics')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'yellow')
+    request = t.choose(game, 'Dogma.Freemasons')
+    request = t.choose(game, 'Masonry', 'Optics', 'Metalworking')
+    request = t.choose(game, 'Masonry', 'Optics')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'yellow')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -59,8 +59,8 @@ describe('Freemasons', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Freemasons')
-    request = t.choose(game, request, 'Myth')
+    request = t.choose(game, 'Dogma.Freemasons')
+    request = t.choose(game, 'Myth')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -83,8 +83,8 @@ describe('Freemasons', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Freemasons')
-    request = t.choose(game, request, 'Optics')
+    request = t.choose(game, 'Dogma.Freemasons')
+    request = t.choose(game, 'Optics')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

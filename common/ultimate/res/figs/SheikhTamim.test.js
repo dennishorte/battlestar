@@ -26,13 +26,13 @@ describe('Sheikh Tamim', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Mysticism')
+    request = t.choose(game, 'Dogma.Mysticism')
     // Karma triggers: first return a card from hand with featured icon 'k'
     // Metalworking has 'k' biscuit and is red
-    request = t.choose(game, request, 'Metalworking') // Return Metalworking
+    request = t.choose(game, 'Metalworking') // Return Metalworking
     // War decree is issued (red card returned)
     // War decree: choose a value, return all top cards of that value from all other players' boards
-    request = t.choose(game, request, 1) // Choose age 1
+    request = t.choose(game, 1) // Choose age 1
     // Masonry (age 1) is returned from micah's board
 
     t.testIsSecondPlayer(game)
@@ -67,10 +67,10 @@ describe('Sheikh Tamim', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Mysticism')
+    request = t.choose(game, 'Dogma.Mysticism')
     // Karma triggers: first return a card from hand with featured icon 'k'
     // Choose not to return Metalworking (min: 0)
-    request = t.choose(game, request) // Return nothing
+    request = t.choose(game) // Return nothing
     // No decree is issued
 
     t.testIsSecondPlayer(game)
@@ -100,7 +100,7 @@ describe('Sheikh Tamim', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Mysticism')
+    request = t.choose(game, 'Dogma.Mysticism')
     // Karma triggers: first return a card from hand with featured icon 'k'
     // Mathematics doesn't have 'k', so no cards available to return
     // No choice is presented (empty choices), so no decree is issued
@@ -142,13 +142,13 @@ describe('Sheikh Tamim', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Mysticism')
+    request = t.choose(game, 'Dogma.Mysticism')
     // Karma triggers: first return a card from hand with featured icon 'k'
     // Both Metalworking and Archery have 'k' biscuit and are red
     // Choose Metalworking to return
-    request = t.choose(game, request, 'Metalworking') // Return Metalworking
+    request = t.choose(game, 'Metalworking') // Return Metalworking
     // War decree is issued (red card returned)
-    request = t.choose(game, request, 1) // Choose age 1 for War decree
+    request = t.choose(game, 1) // Choose age 1 for War decree
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

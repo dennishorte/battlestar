@@ -20,9 +20,9 @@ describe('Evolution', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Evolution')
-    request = t.choose(game, request, 'Draw and Score and Return')
-    request = t.choose(game, request, 'Mapmaking')
+    request = t.choose(game, 'Dogma.Evolution')
+    request = t.choose(game, 'Draw and Score and Return')
+    request = t.choose(game, 'Mapmaking')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -49,8 +49,8 @@ describe('Evolution', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Evolution')
-    request = t.choose(game, request, 'Draw a Higher Card')
+    request = t.choose(game, 'Dogma.Evolution')
+    request = t.choose(game, 'Draw a Higher Card')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

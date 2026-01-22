@@ -24,8 +24,8 @@ describe("Piano", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Piano')
-    request = t.choose(game, request, 6)
+    request = t.choose(game, 'Dogma.Piano')
+    request = t.choose(game, 6)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -51,7 +51,7 @@ describe("Piano", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Piano')
+    request = t.choose(game, 'Dogma.Piano')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -86,8 +86,8 @@ describe("Piano", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Piano')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Piano')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -117,7 +117,7 @@ describe("Piano", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Piano')
+    request = t.choose(game, 'Dogma.Piano')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

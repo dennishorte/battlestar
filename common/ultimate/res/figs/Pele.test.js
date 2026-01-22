@@ -28,9 +28,9 @@ describe('Pele', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Pottery')
-    request = t.choose(game, request, 'Tools', 'Writing') // Return two cards
-    request = t.choose(game, request, 'auto') // Confirm selection
+    request = t.choose(game, 'Dogma.Pottery')
+    request = t.choose(game, 'Tools', 'Writing') // Return two cards
+    request = t.choose(game, 'auto') // Confirm selection
 
     t.testGameOver(request, 'dennis', 'Pele')
     t.testBoard(game, {
@@ -65,9 +65,9 @@ describe('Pele', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Pottery')
-    request = t.choose(game, request, 'Tools', 'Writing') // Return two cards
-    request = t.choose(game, request, 'auto') // Confirm selection
+    request = t.choose(game, 'Dogma.Pottery')
+    request = t.choose(game, 'Tools', 'Writing') // Return two cards
+    request = t.choose(game, 'auto') // Confirm selection
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -103,9 +103,9 @@ describe('Pele', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Pottery')
-    request = t.choose(game, request, 'Tools', 'Writing') // Return two cards
-    request = t.choose(game, request, 'auto') // Confirm selection
+    request = t.choose(game, 'Dogma.Pottery')
+    request = t.choose(game, 'Tools', 'Writing') // Return two cards
+    request = t.choose(game, 'auto') // Confirm selection
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -142,9 +142,9 @@ describe('Pele', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Pottery')
-    request = t.choose(game, request, 'Tools', 'Writing') // Return two cards
-    request = t.choose(game, request, 'auto') // Confirm selection
+    request = t.choose(game, 'Dogma.Pottery')
+    request = t.choose(game, 'Tools', 'Writing') // Return two cards
+    request = t.choose(game, 'auto') // Confirm selection
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

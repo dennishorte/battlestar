@@ -18,9 +18,9 @@ describe("Homing Pigeons", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Homing Pigeons')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'green')
+    request = t.choose(game, 'Dogma.Homing Pigeons')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'green')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -53,8 +53,8 @@ describe("Homing Pigeons", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Paper')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Meld.Paper')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

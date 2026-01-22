@@ -15,7 +15,7 @@ describe('Supremacy Achievement', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Mysticism')
+    request = t.choose(game, 'Meld.Mysticism')
 
     expect(t.cards(game, 'achievements')).toStrictEqual(['Supremacy'])
   })

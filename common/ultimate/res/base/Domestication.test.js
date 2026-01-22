@@ -19,7 +19,7 @@ describe('Domestication', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Domestication')
+    request = t.choose(game, 'Dogma.Domestication')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -40,7 +40,7 @@ describe('Domestication', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Domestication')
+    request = t.choose(game, 'Dogma.Domestication')
 
     const dennis = game.players.byName('dennis')
     const dennisHand = game.zones.byPlayer(dennis, 'hand').cardlist().map(c => c.age).sort()

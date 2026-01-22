@@ -20,7 +20,7 @@ describe('Escape Room', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Escape Room')
+    request = t.choose(game, 'Dogma.Escape Room')
 
     t.testGameOver(request, 'dennis', 'Escape Room')
   })
@@ -46,8 +46,8 @@ describe('Escape Room', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Escape Room')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Escape Room')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

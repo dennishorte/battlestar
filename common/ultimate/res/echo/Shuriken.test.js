@@ -23,9 +23,9 @@ describe("Shuriken", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Shuriken')
-    request = t.choose(game, request, 'Tools')
-    request = t.choose(game, request, 'purple')
+    request = t.choose(game, 'Dogma.Shuriken')
+    request = t.choose(game, 'Tools')
+    request = t.choose(game, 'purple')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -64,9 +64,9 @@ describe("Shuriken", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Encyclopedia')
-    request = t.choose(game, request, 'Tools')
-    request = t.choose(game, request, 'purple')
+    request = t.choose(game, 'Meld.Encyclopedia')
+    request = t.choose(game, 'Tools')
+    request = t.choose(game, 'purple')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -105,8 +105,8 @@ describe("Shuriken", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Encyclopedia')
-    request = t.choose(game, request, 'purple')
+    request = t.choose(game, 'Meld.Encyclopedia')
+    request = t.choose(game, 'purple')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

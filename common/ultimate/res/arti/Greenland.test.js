@@ -28,8 +28,8 @@ describe("Greenland", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Computers')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Computers')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

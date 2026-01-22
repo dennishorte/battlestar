@@ -21,7 +21,7 @@ describe('Archery', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, 'Dogma.Archery')
 
     t.testBoard(game, {
       dennis: {
@@ -53,7 +53,7 @@ describe('Archery', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, 'Dogma.Archery')
 
     t.testBoard(game, {
       dennis: {
@@ -78,8 +78,8 @@ describe('Archery', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
-    request = t.choose(game, request, '**base-1*')
+    request = t.choose(game, 'Dogma.Archery')
+    request = t.choose(game, '**base-1*')
 
     expect(t.dennis(game).availableAchievementsByAge( 1)).toHaveLength(0)
     expect(t.dennis(game).availableAchievementsByAge( 2)).toHaveLength(1)
@@ -97,8 +97,8 @@ describe('Archery', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
-    request = t.choose(game, request, '**base-2*')
+    request = t.choose(game, 'Dogma.Archery')
+    request = t.choose(game, '**base-2*')
 
     expect(t.dennis(game).availableAchievementsByAge( 1)).toHaveLength(1)
     expect(t.dennis(game).availableAchievementsByAge( 2)).toHaveLength(0)
@@ -116,7 +116,7 @@ describe('Archery', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, 'Dogma.Archery')
 
     expect(t.dennis(game).availableAchievementsByAge( 3)).toHaveLength(1)
   })
@@ -140,8 +140,8 @@ describe('Archery', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
-    request = t.choose(game, request, 'Mathematics')
+    request = t.choose(game, 'Dogma.Archery')
+    request = t.choose(game, 'Mathematics')
 
     t.testBoard(game, {
       dennis: {

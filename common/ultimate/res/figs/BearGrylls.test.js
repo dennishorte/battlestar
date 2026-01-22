@@ -22,7 +22,7 @@ describe('Bear Grylls', () => {
     })
 
     let request = game.run()
-    request = t.choose(game, request, 'Meld.Bear Grylls')
+    request = t.choose(game, 'Meld.Bear Grylls')
 
     t.testBoard(game, {
       dennis: {

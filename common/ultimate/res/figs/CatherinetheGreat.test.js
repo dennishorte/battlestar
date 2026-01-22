@@ -33,7 +33,7 @@ describe('Catherine the Great', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Code of Laws')
+      request = t.choose(game, 'Meld.Code of Laws')
       // Karma should trigger: transfer Philosophy (top purple card) to hand
       // NOTE: Currently the transfer doesn't seem to be working - Philosophy remains on board
       // This may indicate a bug in the implementation
@@ -67,9 +67,9 @@ describe('Catherine the Great', () => {
       let request
       request = game.run()
       // Skip dennis's turn by drawing a card (first round only has one action)
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Now micah's turn starts - first action completes the round
-      request = t.choose(game, request, 'Meld.Writing')
+      request = t.choose(game, 'Meld.Writing')
       // Karma triggers: transfer Tools (top blue card) to micah's hand
 
       t.testBoard(game, {
@@ -98,7 +98,7 @@ describe('Catherine the Great', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Code of Laws')
+      request = t.choose(game, 'Meld.Code of Laws')
       // Karma triggers: transfer Catherine the Great (top purple card) to hand
 
       t.testIsSecondPlayer(game)

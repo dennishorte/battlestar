@@ -20,7 +20,7 @@ describe('Ptahhotep', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.The Wheel')
+    request = t.choose(game, 'Dogma.The Wheel')
 
     t.testBoard(game, {
       dennis: {
@@ -45,9 +45,9 @@ describe('Ptahhotep', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.The Wheel')
-    request = t.choose(game, request, 'Meld.Fermenting')
-    request = t.choose(game, request, 'Dogma.Fermenting')
+    request = t.choose(game, 'Meld.The Wheel')
+    request = t.choose(game, 'Meld.Fermenting')
+    request = t.choose(game, 'Dogma.Fermenting')
 
     t.testBoard(game, {
       dennis: {
@@ -80,9 +80,9 @@ describe('Ptahhotep', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Fermenting')
-    request = t.choose(game, request, 'Meld.Sailing')
-    request = t.choose(game, request, 'Dogma.Sailing')
+    request = t.choose(game, 'Meld.Fermenting')
+    request = t.choose(game, 'Meld.Sailing')
+    request = t.choose(game, 'Dogma.Sailing')
 
 
     t.testBoard(game, {

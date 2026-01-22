@@ -21,7 +21,7 @@ describe('Caresse Crosby', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Writing')
+      request = t.choose(game, 'Dogma.Writing')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -55,7 +55,7 @@ describe('Caresse Crosby', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Writing') // dennis dogmas Mathematics (blue)
+      request = t.choose(game, 'Dogma.Writing') // dennis dogmas Mathematics (blue)
       // Karma does NOT trigger: dennis already has blue splayed left
 
       t.testIsSecondPlayer(game)
@@ -102,7 +102,7 @@ describe('Caresse Crosby', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Navigation')
+      request = t.choose(game, 'Dogma.Navigation')
       // Karma triggers: dennis doesn't have green splayed left
       // Only dennis can be chosen (only player with green cards), so auto-selected
       // This is the fifth color splayed left on dennis's board, so dennis wins
@@ -173,8 +173,8 @@ describe('Caresse Crosby', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel')
-      request = t.choose(game, request, 'dennis')
+      request = t.choose(game, 'Dogma.The Wheel')
+      request = t.choose(game, 'dennis')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

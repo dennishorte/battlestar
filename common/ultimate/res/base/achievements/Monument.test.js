@@ -15,7 +15,7 @@ describe('Monument achievement', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Statistics')
+    request = t.choose(game, 'Meld.Statistics')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -41,7 +41,7 @@ describe('Monument achievement', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Statistics')
+    request = t.choose(game, 'Meld.Statistics')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

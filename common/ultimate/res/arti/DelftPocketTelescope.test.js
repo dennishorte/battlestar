@@ -21,8 +21,8 @@ describe('Delft Pocket Telescope', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Coal')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Coal')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -50,7 +50,7 @@ describe('Delft Pocket Telescope', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -78,8 +78,8 @@ describe('Delft Pocket Telescope', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Enterprise')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Enterprise')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

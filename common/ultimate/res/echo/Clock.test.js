@@ -21,10 +21,10 @@ describe("Clock", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Clock')
-    request = t.choose(game, request, 'purple')
-    request = t.choose(game, request, 'purple (5)')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Clock')
+    request = t.choose(game, 'purple')
+    request = t.choose(game, 'purple (5)')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

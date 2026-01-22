@@ -29,9 +29,9 @@ describe('J.P. Morgan', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card') // dennis draws (first action)
+      request = t.choose(game, 'Draw.draw a card') // dennis draws (first action)
       // Now micah's turn
-      request = t.choose(game, request, 'Dogma.Mathematics') // Micah dogmas Mathematics (blue)
+      request = t.choose(game, 'Dogma.Mathematics') // Micah dogmas Mathematics (blue)
       // Karma triggers: splay blue up on dennis's board
       // Mathematics dogma effect: no card in hand to return, so nothing happens
 
@@ -66,7 +66,7 @@ describe('J.P. Morgan', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Writing') // dennis dogmas Writing (blue)
+      request = t.choose(game, 'Dogma.Writing') // dennis dogmas Writing (blue)
       // Karma triggers: splay blue up on dennis's board
       // Writing dogma effect: draw age 2
 

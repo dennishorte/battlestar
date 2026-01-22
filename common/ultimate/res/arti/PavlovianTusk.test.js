@@ -21,15 +21,15 @@ describe("Pavlovian Tusk", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testChoices(request, ['Experimentation', 'Perspective', 'Gunpowder'])
 
-    request = t.choose(game, request, 'Perspective')
+    request = t.choose(game, 'Perspective')
 
     t.testChoices(request, ['Experimentation', 'Gunpowder'])
 
-    request = t.choose(game, request, 'Experimentation')
+    request = t.choose(game, 'Experimentation')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -58,15 +58,15 @@ describe("Pavlovian Tusk", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testChoices(request, ['Sailing', 'Tools', 'Archery'])
 
-    request = t.choose(game, request, 'Archery')
+    request = t.choose(game, 'Archery')
 
     t.testChoices(request, ['Sailing', 'Tools'])
 
-    request = t.choose(game, request, 'Tools')
+    request = t.choose(game, 'Tools')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

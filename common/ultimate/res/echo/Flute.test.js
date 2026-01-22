@@ -23,8 +23,8 @@ describe("Flute", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Flute')
-    request = t.choose(game, request, 'purple')
+    request = t.choose(game, 'Dogma.Flute')
+    request = t.choose(game, 'purple')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

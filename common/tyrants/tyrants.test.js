@@ -14,8 +14,8 @@ describe('Tyrants', () => {
     const game = t.fixture({ chooseColors: true })
 
     const request1 = game.run()
-    const request2 = t.choose(game, request1, 'green')
-    const request3 = t.choose(game, request2, 'Ched Nasad')
+    const request2 = t.choose(game, 'green')
+    const request3 = t.choose(game, 'Ched Nasad')
 
     expect(request3.selectors[0].choices).toStrictEqual(['red', 'orange', 'yellow', 'lime', 'blue', 'indigo', 'pink'])
     expect(t.dennis(game).color).toBe('#70fa73')
@@ -65,8 +65,8 @@ describe('Tyrants', () => {
         }
       })
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Use Power.Deploy a Troop')
-      const request3 = t.choose(game, request2, 'ched-llace a')
+      const request2 = t.choose(game, 'Use Power.Deploy a Troop')
+      const request3 = t.choose(game, 'ched-llace a')
 
       t.testBoard(game, {
         dennis: {
@@ -89,7 +89,7 @@ describe('Tyrants', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Use Power.Deploy a Troop')
+      const request2 = t.choose(game, 'Use Power.Deploy a Troop')
 
       expect(request2.selectors[0].choices).toStrictEqual([
         "ched-halls a",
@@ -132,7 +132,7 @@ describe('Tyrants', () => {
     })
 
     const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Use Power.Assassinate a Troop')
+    const request2 = t.choose(game, 'Use Power.Assassinate a Troop')
 
     t.testBoard(game, {
       dennis: {
@@ -158,8 +158,8 @@ describe('Tyrants', () => {
     })
 
     const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Use Power.Return an Enemy Spy')
-    const request3 = t.choose(game, request2, 'spy.Ched Nasad, micah')
+    const request2 = t.choose(game, 'Use Power.Return an Enemy Spy')
+    const request3 = t.choose(game, 'spy.Ched Nasad, micah')
 
     t.testBoard(game, {
       dennis: {
@@ -218,7 +218,7 @@ test('recruit a minion', () => {
   })
 
   const request1 = game.run()
-  const request2 = t.choose(game, request1, 'Recruit.Spellspinner')
+  const request2 = t.choose(game, 'Recruit.Spellspinner')
 
   t.testBoard(game, {
     dennis: {
@@ -259,8 +259,8 @@ describe('control tokens', () => {
     })
 
     const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Use Power.Deploy a Troop')
-    const request3 = t.choose(game, request2, 'Menzoberranzan')
+    const request2 = t.choose(game, 'Use Power.Deploy a Troop')
+    const request3 = t.choose(game, 'Menzoberranzan')
 
     t.testBoard(game, {
       dennis: {
@@ -379,7 +379,7 @@ describe('score', () => {
     })
 
     const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Auto-play Cards')
+    const request2 = t.choose(game, 'Auto-play Cards')
 
     t.testBoard(game, {
       dennis: {

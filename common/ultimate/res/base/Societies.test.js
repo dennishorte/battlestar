@@ -25,7 +25,7 @@ describe('Societies', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Societies')
+    request = t.choose(game, 'Dogma.Societies')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -61,7 +61,7 @@ describe('Societies', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Societies')
+    request = t.choose(game, 'Dogma.Societies')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

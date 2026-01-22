@@ -25,11 +25,11 @@ describe('Alhazen', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // After Draw action, karma should trigger and create a request to choose which card to tuck
-      request = t.choose(game, request, 'Metalworking')
+      request = t.choose(game, 'Metalworking')
       // Should choose age to draw (3, from red zone's {k} count)
-      request = t.choose(game, request, 3)
+      request = t.choose(game, 3)
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -61,8 +61,8 @@ describe('Alhazen', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'Tools')
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Tools')
 
       t.testBoard(game, {
         dennis: {
@@ -93,7 +93,7 @@ describe('Alhazen', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
       // The Wheel's dogma draws cards, but Alhazen's karma should not trigger
       // (only triggers on Draw action, not on draws from dogma effects)
 
@@ -124,8 +124,8 @@ describe('Alhazen', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 2) // Choose an available age
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 2) // Choose an available age
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

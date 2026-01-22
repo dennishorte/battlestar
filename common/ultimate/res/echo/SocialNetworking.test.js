@@ -20,9 +20,9 @@ describe("Social Networking", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Social Networking')
-    request = t.choose(game, request, '{f}')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Social Networking')
+    request = t.choose(game, '{f}')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -51,9 +51,9 @@ describe("Social Networking", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Social Networking')
-    request = t.choose(game, request, '{f}')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Social Networking')
+    request = t.choose(game, '{f}')
+    request = t.choose(game, 'auto')
 
     t.testGameOver(request, 'dennis', 'Social Networking')
   })

@@ -20,8 +20,8 @@ describe('Isaac Newton', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'micah')
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'micah')
 
       t.testBoard(game, {
         dennis: {
@@ -50,7 +50,7 @@ describe('Isaac Newton', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
 
       t.testBoard(game, {
         dennis: {
@@ -78,8 +78,8 @@ describe('Isaac Newton', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'dennis') // Transfer to self
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'dennis') // Transfer to self
 
       t.testBoard(game, {
         dennis: {
@@ -109,8 +109,8 @@ describe('Isaac Newton', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'micah')
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'micah')
 
       t.testBoard(game, {
         dennis: {
@@ -143,7 +143,7 @@ describe('Isaac Newton', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel') // Dogma age 1 card
+      request = t.choose(game, 'Dogma.The Wheel') // Dogma age 1 card
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -183,7 +183,7 @@ describe('Isaac Newton', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel') // Dogma age 1 card
+      request = t.choose(game, 'Dogma.The Wheel') // Dogma age 1 card
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -225,7 +225,7 @@ describe('Isaac Newton', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel') // Dogma age 1 card
+      request = t.choose(game, 'Dogma.The Wheel') // Dogma age 1 card
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -258,8 +258,8 @@ describe('Isaac Newton', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Philosophy') // Dogma age 2 card
-      request = t.choose(game, request)
+      request = t.choose(game, 'Dogma.Philosophy') // Dogma age 2 card
+      request = t.choose(game)
       // Mathematics's dogma: optionally return a card and draw/meld one higher
       // Skip returning (min: 0)
 
@@ -302,7 +302,7 @@ describe('Isaac Newton', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel') // Dogma age 1 card
+      request = t.choose(game, 'Dogma.The Wheel') // Dogma age 1 card
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

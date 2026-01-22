@@ -24,8 +24,8 @@ describe("Ice Cream", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Ice Cream')
-    request = t.choose(game, request, 7)
+    request = t.choose(game, 'Dogma.Ice Cream')
+    request = t.choose(game, 7)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -60,8 +60,8 @@ describe("Ice Cream", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Ice Cream')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Dogma.Ice Cream')
+    request = t.choose(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -99,9 +99,9 @@ describe("Ice Cream", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Ice Cream')
-    request = t.choose(game, request, 'Agriculture')
-    request = t.choose(game, request, 7)
+    request = t.choose(game, 'Dogma.Ice Cream')
+    request = t.choose(game, 'Agriculture')
+    request = t.choose(game, 7)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

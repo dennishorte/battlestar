@@ -17,7 +17,7 @@ describe("Where's Waldo", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testGameOver(request, 'micah', "Where's Waldo")
   })

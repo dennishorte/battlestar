@@ -18,8 +18,8 @@ describe('Edward Jenner', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
-    request = t.choose(game, request, 'Enterprise')
+    request = t.choose(game, 'Dogma.Archery')
+    request = t.choose(game, 'Enterprise')
 
     t.testBoard(game, {
       dennis: {
@@ -55,8 +55,8 @@ describe('Edward Jenner', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
-    request = t.choose(game, request, 'Enterprise')
+    request = t.choose(game, 'Dogma.Archery')
+    request = t.choose(game, 'Enterprise')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -94,9 +94,9 @@ describe('Edward Jenner', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Pottery')
-      request = t.choose(game, request, 'Tools', 'Writing', 'Sailing') // Return 3 cards, will score age 3
-      request = t.choose(game, request, 'auto') // Auto-order returned cards
+      request = t.choose(game, 'Dogma.Pottery')
+      request = t.choose(game, 'Tools', 'Writing', 'Sailing') // Return 3 cards, will score age 3
+      request = t.choose(game, 'auto') // Auto-order returned cards
       // Karma triggers: junk achievement of age 3 first (Machinery)
       // Achievement auto-selects when only one option
       // Pottery's second dogma effect: Draw a {1}
@@ -135,10 +135,10 @@ describe('Edward Jenner', () => {
       let request
       request = game.run()
       // Skip dennis's turn
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Now micah's turn
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'Enterprise') // Return age 4, will score age 5 (Statistics)
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'Enterprise') // Return age 4, will score age 5 (Statistics)
       // Karma triggers: dennis (owner) junks achievement of age 5 first (Coal)
       // Achievement auto-selects when only one option
 
@@ -173,7 +173,7 @@ describe('Edward Jenner', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Optics')
+      request = t.choose(game, 'Dogma.Optics')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -205,9 +205,9 @@ describe('Edward Jenner', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Pottery')
-      request = t.choose(game, request, 'Tools', 'Writing', 'Sailing') // Return 3 cards, will score age 3
-      request = t.choose(game, request, 'auto') // Auto-order returned cards
+      request = t.choose(game, 'Dogma.Pottery')
+      request = t.choose(game, 'Tools', 'Writing', 'Sailing') // Return 3 cards, will score age 3
+      request = t.choose(game, 'auto') // Auto-order returned cards
       // Karma triggers: choose which age 3 achievement to junk (only Machinery is age 3)
       // Actually, only Machinery is age 3, Navigation is age 4, so it auto-selects
 

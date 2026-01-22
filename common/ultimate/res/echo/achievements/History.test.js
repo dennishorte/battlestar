@@ -16,7 +16,7 @@ describe('History', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Barometer')
+    request = t.choose(game, 'Meld.Barometer')
 
     expect(t.cards(game, 'achievements')).toStrictEqual(['History'])
   })
@@ -34,7 +34,7 @@ describe('History', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Barometer')
+    request = t.choose(game, 'Meld.Barometer')
 
     expect(t.cards(game, 'achievements')).toStrictEqual([])
   })
@@ -52,7 +52,7 @@ describe('History', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Toilet')
+    request = t.choose(game, 'Meld.Toilet')
 
     expect(t.cards(game, 'achievements')).toStrictEqual([])
   })

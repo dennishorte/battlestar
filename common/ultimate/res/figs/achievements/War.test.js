@@ -11,9 +11,9 @@ test('War', () => {
   })
   let request
   request = game.run()
-  request = t.choose(game, request, 'Decree.War')
-  request = t.choose(game, request, 3)
-  request = t.choose(game, request, 'auto')
+  request = t.choose(game, 'Decree.War')
+  request = t.choose(game, 3)
+  request = t.choose(game, 'auto')
 
   expect(t.cards(game, 'purple', 'dennis')).toStrictEqual(['Education'])
   expect(t.cards(game, 'yellow', 'micah')).toStrictEqual(['Medicine'])

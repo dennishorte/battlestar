@@ -16,8 +16,8 @@ describe('Anatomy', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Anatomy')
-    const result3 = t.choose(game, result2, 'The Wheel') // Micah's choice
+    const result2 = t.choose(game, 'Dogma.Anatomy')
+    const result3 = t.choose(game, 'The Wheel') // Micah's choice
 
     expect(t.cards(game, 'score', 'micah')).toEqual(['Mathematics'])
     expect(t.cards(game, 'red', 'micah')).toEqual([])
@@ -37,8 +37,8 @@ describe('Anatomy', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Anatomy')
-    const result3 = t.choose(game, result2, 'The Wheel') // Micah's choice
+    const result2 = t.choose(game, 'Dogma.Anatomy')
+    const result3 = t.choose(game, 'The Wheel') // Micah's choice
 
     expect(t.cards(game, 'score', 'micah')).toEqual(['Mathematics'])
     expect(t.cards(game, 'red', 'micah')).toEqual(['Gunpowder', 'Archery'])
@@ -57,7 +57,7 @@ describe('Anatomy', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Anatomy')
+    const result2 = t.choose(game, 'Dogma.Anatomy')
 
     expect(t.cards(game, 'red', 'micah')).toEqual(['Archery'])
     expect(t.cards(game, 'blue', 'micah')).toEqual(['Calendar'])

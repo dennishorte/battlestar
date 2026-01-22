@@ -23,8 +23,8 @@ describe("Barometer", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Barometer')
-    request = t.choose(game, request, 'no')
+    request = t.choose(game, 'Dogma.Barometer')
+    request = t.choose(game, 'no')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

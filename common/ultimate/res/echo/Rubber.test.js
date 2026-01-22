@@ -19,8 +19,8 @@ describe("Rubber", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Rubber')
-    request = t.choose(game, request, 'red')
+    request = t.choose(game, 'Dogma.Rubber')
+    request = t.choose(game, 'red')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -51,9 +51,9 @@ describe("Rubber", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Credit Card')
-    request = t.choose(game, request, 'red')
-    request = t.choose(game, request, 'Rubber')
+    request = t.choose(game, 'Meld.Credit Card')
+    request = t.choose(game, 'red')
+    request = t.choose(game, 'Rubber')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

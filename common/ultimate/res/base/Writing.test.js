@@ -14,7 +14,7 @@ describe('Writing', () => {
       },
     })
     const request = game.run()
-    t.choose(game, request, 'Dogma.Writing')
+    t.choose(game, 'Dogma.Writing')
     t.testZone(game, 'hand', ['Mathematics'])
   })
 })

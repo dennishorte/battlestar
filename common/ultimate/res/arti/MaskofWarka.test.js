@@ -16,9 +16,9 @@ describe("Mask of Warka", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'blue')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'blue')
+    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -44,8 +44,8 @@ describe("Mask of Warka", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'blue')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'blue')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

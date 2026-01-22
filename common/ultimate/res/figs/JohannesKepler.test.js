@@ -24,7 +24,7 @@ describe('Johannes Kepler', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
       // The Wheel draws two {1}, which become {3} (1 + 2 increase)
 
       t.testIsSecondPlayer(game)
@@ -56,7 +56,7 @@ describe('Johannes Kepler', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -87,7 +87,7 @@ describe('Johannes Kepler', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -120,7 +120,7 @@ describe('Johannes Kepler', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

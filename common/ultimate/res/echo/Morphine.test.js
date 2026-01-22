@@ -25,9 +25,9 @@ describe("Morphine", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Morphine')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'red')
+    request = t.choose(game, 'Dogma.Morphine')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'red')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

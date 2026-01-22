@@ -18,8 +18,8 @@ describe('Myth', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Myth')
-    request = t.choose(game, request, 'Writing')
+    request = t.choose(game, 'Dogma.Myth')
+    request = t.choose(game, 'Writing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -50,9 +50,9 @@ describe('Myth', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Myth')
-    request = t.choose(game, request, 'Agriculture', 'Masonry')
-    request = t.choose(game, request, 'Agriculture')
+    request = t.choose(game, 'Dogma.Myth')
+    request = t.choose(game, 'Agriculture', 'Masonry')
+    request = t.choose(game, 'Agriculture')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -84,10 +84,10 @@ describe('Myth', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Myth')
-    request = t.choose(game, request, 'Agriculture', 'Writing')  // This will just send back the same request
-    request = t.choose(game, request, 'Agriculture', 'Masonry')
-    request = t.choose(game, request, 'Agriculture')
+    request = t.choose(game, 'Dogma.Myth')
+    request = t.choose(game, 'Agriculture', 'Writing')  // This will just send back the same request
+    request = t.choose(game, 'Agriculture', 'Masonry')
+    request = t.choose(game, 'Agriculture')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -114,7 +114,7 @@ describe('Myth', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Myth')
+    request = t.choose(game, 'Dogma.Myth')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

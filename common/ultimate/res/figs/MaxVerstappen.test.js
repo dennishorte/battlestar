@@ -20,10 +20,10 @@ describe('Max Verstappen', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Sailing')
+    request = t.choose(game, 'Dogma.Sailing')
     // Karma triggers: return cards from hand (0 cards returned)
     // chooseAndReturn with min: 0 - when returning nothing, just call t.choose with no arguments
-    request = t.choose(game, request) // Return nothing (empty selection when min: 0)
+    request = t.choose(game) // Return nothing (empty selection when min: 0)
     // Sailing's dogma effect executes once: draw and meld Agriculture
 
     t.testIsSecondPlayer(game)
@@ -55,9 +55,9 @@ describe('Max Verstappen', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Sailing')
+    request = t.choose(game, 'Dogma.Sailing')
     // Karma triggers: return cards from hand (1 card returned)
-    request = t.choose(game, request, 'Tools') // Return Tools
+    request = t.choose(game, 'Tools') // Return Tools
     // Sailing's dogma effect executes twice:
     // First: draw and meld Agriculture
     // Second (repeated): draw and meld Pottery
@@ -93,11 +93,11 @@ describe('Max Verstappen', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Sailing')
+    request = t.choose(game, 'Dogma.Sailing')
     // Karma triggers: return cards from hand (2 cards returned)
     // chooseAndReturn allows selecting multiple cards at once
-    request = t.choose(game, request, 'Tools', 'Mathematics') // Return both cards
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Tools', 'Mathematics') // Return both cards
+    request = t.choose(game, 'auto')
     // Sailing's dogma effect executes 3 times (1 normal + 2 repeats):
     // First: draw and meld Agriculture
     // Second (repeated): draw and meld Pottery
@@ -138,13 +138,13 @@ describe('Max Verstappen', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Clothing')
+    request = t.choose(game, 'Dogma.Clothing')
     // Pottery's first effect: return up to 3 cards, then draw and score equal to count
     // Karma triggers for first effect: return cards from hand
-    request = t.choose(game, request, 'Metalworking') // Return Metalworking
+    request = t.choose(game, 'Metalworking') // Return Metalworking
     // First effect executes twice (1 normal + 1 repeat):
     // First: meld Mysticism
-    request = t.choose(game, request, 'Mysticism')
+    request = t.choose(game, 'Mysticism')
     // Second (repeated): meld Tools (automatically)
     // Then draw {11}: Fusion
 
@@ -163,7 +163,7 @@ describe('Max Verstappen', () => {
       },
     })
 
-    request = t.choose(game, request, 'Navigation')
+    request = t.choose(game, 'Navigation')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

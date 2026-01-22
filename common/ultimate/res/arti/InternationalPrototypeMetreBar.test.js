@@ -21,9 +21,9 @@ describe('International Prototype Metre Bar', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 5)
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 5)
+    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -56,8 +56,8 @@ describe('International Prototype Metre Bar', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 1)
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 1)
 
     t.testGameOver(request, 'dennis', 'International Prototype Metre Bar')
   })

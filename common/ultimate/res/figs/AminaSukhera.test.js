@@ -26,9 +26,9 @@ describe('Amina Sukhera', () => {
       let request
       request = game.run()
       // First action of first round: Draw (first round only has one action)
-      request = t.choose(game, request, 'Draw.draw a card')  // Tools
-      request = t.choose(game, request, 'Dogma.Writing')
-      request = t.choose(game, request, 'Dogma.Writing')
+      request = t.choose(game, 'Draw.draw a card')  // Tools
+      request = t.choose(game, 'Dogma.Writing')
+      request = t.choose(game, 'Dogma.Writing')
 
       t.testBoard(game, {
         dennis: {
@@ -62,9 +62,9 @@ describe('Amina Sukhera', () => {
       let request
       request = game.run()
       // First action of first round: Draw (first round only has one action)
-      request = t.choose(game, request, 'Draw.draw a card')  // Tools
-      request = t.choose(game, request, 'Dogma.Writing')
-      request = t.choose(game, request, 'Dogma.Writing')
+      request = t.choose(game, 'Draw.draw a card')  // Tools
+      request = t.choose(game, 'Dogma.Writing')
+      request = t.choose(game, 'Dogma.Writing')
 
       t.testBoard(game, {
         dennis: {

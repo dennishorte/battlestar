@@ -21,7 +21,7 @@ describe("Periodic Table", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -53,8 +53,8 @@ describe("Periodic Table", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Machine Tools, Atomic Theory')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Machine Tools, Atomic Theory')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

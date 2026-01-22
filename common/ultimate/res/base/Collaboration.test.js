@@ -16,8 +16,8 @@ describe('Collaboration', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Collaboration')
-    const result3 = t.choose(game, result2, 'Computers')
+    const result2 = t.choose(game, 'Dogma.Collaboration')
+    const result3 = t.choose(game, 'Computers')
 
     expect(t.cards(game, 'blue')).toEqual(['Computers'])
     expect(t.cards(game, 'purple', 'micah')).toEqual(['Services'])
@@ -36,8 +36,8 @@ describe('Collaboration', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Collaboration')
-    const result3 = t.choose(game, result2, 'Computers')
+    const result2 = t.choose(game, 'Dogma.Collaboration')
+    const result3 = t.choose(game, 'Computers')
 
     t.testGameOver(result3, 'dennis', 'Collaboration')
   })

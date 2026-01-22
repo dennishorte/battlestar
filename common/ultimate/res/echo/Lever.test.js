@@ -21,10 +21,10 @@ describe("Lever", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Lever')
-    request = t.choose(game, request, 'Tools', 'Sailing', 'Domestication', 'Machinery', 'Novel', 'Scissors')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 2)
+    request = t.choose(game, 'Dogma.Lever')
+    request = t.choose(game, 'Tools', 'Sailing', 'Domestication', 'Machinery', 'Novel', 'Scissors')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 2)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

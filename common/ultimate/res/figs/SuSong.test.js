@@ -24,7 +24,7 @@ describe('Su Song', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Construction')
+      request = t.choose(game, 'Meld.Construction')
       // Karma triggers first: draws and melds Machinery (has {l}, kept)
       // Then Construction is melded
 
@@ -54,7 +54,7 @@ describe('Su Song', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Construction')
+      request = t.choose(game, 'Meld.Construction')
       // Karma triggers first: draws and melds Engineering (no {l}, returned)
       // Then Construction is melded
 

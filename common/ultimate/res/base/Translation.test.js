@@ -15,10 +15,10 @@ describe('Translation', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Translation')
-    request = t.choose(game, request, 'yes')
-    request = t.choose(game, request, 'Machinery')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Translation')
+    request = t.choose(game, 'yes')
+    request = t.choose(game, 'Machinery')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -44,7 +44,7 @@ describe('Translation', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Translation')
+    request = t.choose(game, 'Dogma.Translation')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -30,9 +30,9 @@ describe("Kobukson", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Kobukson')
-    request = t.choose(game, request, 'dennis red')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Kobukson')
+    request = t.choose(game, 'dennis red')
+    request = t.choose(game, 'auto')
 
 
     t.testIsSecondPlayer(game)
@@ -84,9 +84,9 @@ describe("Kobukson", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Atomic Theory')
-    request = t.choose(game, request, 'dennis red')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Meld.Atomic Theory')
+    request = t.choose(game, 'dennis red')
+    request = t.choose(game, 'auto')
 
 
     t.testIsSecondPlayer(game)

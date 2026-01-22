@@ -14,9 +14,9 @@ describe('Curing', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Curing')
+    request = t.choose(game, 'Dogma.Curing')
     // Fire is auto-selected (only card with {r})
-    request = t.choose(game, request, 'no') // Don't exchange
+    request = t.choose(game, 'no') // Don't exchange
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -42,9 +42,9 @@ describe('Curing', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Curing')
+    request = t.choose(game, 'Dogma.Curing')
     // Fire is auto-selected (only card with {r})
-    request = t.choose(game, request, 'yes') // Exchange
+    request = t.choose(game, 'yes') // Exchange
     // micah is auto-selected (only opponent in 2-player game)
     // Optics is highest (age 3), so it gets exchanged with both hand cards
 
@@ -76,9 +76,9 @@ describe('Curing', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Curing')
+    request = t.choose(game, 'Dogma.Curing')
     // Fire is auto-selected (only card with {r})
-    request = t.choose(game, request, 'no') // Don't exchange
+    request = t.choose(game, 'no') // Don't exchange
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -105,9 +105,9 @@ describe('Curing', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Curing')
-    request = t.choose(game, request, 'Fishing') // Choose Fishing to score (multiple options)
-    request = t.choose(game, request, 'no') // Don't exchange
+    request = t.choose(game, 'Dogma.Curing')
+    request = t.choose(game, 'Fishing') // Choose Fishing to score (multiple options)
+    request = t.choose(game, 'no') // Don't exchange
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -134,9 +134,9 @@ describe('Curing', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Curing')
+    request = t.choose(game, 'Dogma.Curing')
     // Fire is auto-selected (only card with {r})
-    request = t.choose(game, request, 'yes') // Exchange
+    request = t.choose(game, 'yes') // Exchange
     // micah is auto-selected (only opponent in 2-player game)
     // Both Mathematics and Engineering are highest (age 3), so both get exchanged
 
@@ -164,7 +164,7 @@ describe('Curing', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Curing')
+    request = t.choose(game, 'Dogma.Curing')
     // No cards with {r} to score (Curing itself is excluded), so player loses
 
     t.testGameOver(request, 'micah', 'Curing') // Micah wins when Dennis loses

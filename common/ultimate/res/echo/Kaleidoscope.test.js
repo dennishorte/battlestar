@@ -21,8 +21,8 @@ describe("Kaleidoscope", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Kaleidoscope')
-    request = t.choose(game, request, 'green')
+    request = t.choose(game, 'Dogma.Kaleidoscope')
+    request = t.choose(game, 'green')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -55,9 +55,9 @@ describe("Kaleidoscope", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Lighting')
-    request = t.choose(game, request, 'green')
-    request = t.choose(game, request, '**base-2*')
+    request = t.choose(game, 'Meld.Lighting')
+    request = t.choose(game, 'green')
+    request = t.choose(game, '**base-2*')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

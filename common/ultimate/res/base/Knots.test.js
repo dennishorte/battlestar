@@ -20,7 +20,7 @@ describe('Knots', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Knots')
+    request = t.choose(game, 'Dogma.Knots')
     // Reveal Archery (red, matches color on board)
     // Draw age 1 (Tools)
 
@@ -47,7 +47,7 @@ describe('Knots', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Knots')
+    request = t.choose(game, 'Dogma.Knots')
     // Mathematics is blue, and blue is on board (Knots), so it should be a valid choice
     // Actually, let me reconsider - the card needs to match a color on the board
     // Blue is on board (Knots), so Mathematics (blue) should be valid
@@ -79,9 +79,9 @@ describe('Knots', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Knots')
+    request = t.choose(game, 'Dogma.Knots')
     // Choose which red card to reveal (multiple options)
-    request = t.choose(game, request, 'Gunpowder') // Choose Gunpowder
+    request = t.choose(game, 'Gunpowder') // Choose Gunpowder
     // Draw age 1 (Tools)
 
     t.testIsSecondPlayer(game)

@@ -14,9 +14,9 @@ describe('Denver Airport', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Denver Airport')
-    request = t.choose(game, request, '**base-10* (dennis)')
-    request = t.choose(game, request, 'purple')
+    request = t.choose(game, 'Dogma.Denver Airport')
+    request = t.choose(game, '**base-10* (dennis)')
+    request = t.choose(game, 'purple')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

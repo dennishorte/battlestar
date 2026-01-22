@@ -20,7 +20,7 @@ describe('Emperor Meiji', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Software')
+    request = t.choose(game, 'Meld.Software')
 
     t.testGameOver(request, 'dennis', 'Emperor Meiji')
 
@@ -51,7 +51,7 @@ describe('Emperor Meiji', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Software')
+    request = t.choose(game, 'Meld.Software')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -115,7 +115,7 @@ describe('Emperor Meiji', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
 
       t.testBoard(game, {
         dennis: {
@@ -150,8 +150,8 @@ describe('Emperor Meiji', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
 
       t.testBoard(game, {
         dennis: {

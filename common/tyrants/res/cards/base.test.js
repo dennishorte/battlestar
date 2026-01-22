@@ -12,7 +12,7 @@ describe('Core Cards', () => {
       }
     })
     const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Play Card.House Guard')
+    const request2 = t.choose(game, 'Play Card.House Guard')
 
     t.testBoard(game, {
       dennis: {
@@ -30,7 +30,7 @@ describe('Core Cards', () => {
       }
     })
     const request1 = game.run()
-    const request2 = t.choose(game, request1, 'Play Card.Priestess of Lolth')
+    const request2 = t.choose(game, 'Play Card.Priestess of Lolth')
 
     t.testBoard(game, {
       dennis: {
@@ -50,8 +50,8 @@ describe('Core Cards', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Insane Outcast')
-      const request3 = t.choose(game, request2, 'House Guard')
+      const request2 = t.choose(game, 'Play Card.Insane Outcast')
+      const request3 = t.choose(game, 'House Guard')
 
       t.testBoard(game, {
         dennis: {
@@ -73,9 +73,9 @@ describe('Core Cards', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Insane Outcast')
-      const request3 = t.choose(game, request2)
-      const request4 = t.choose(game, request3, 'Play Card.Drow Negotiator')
+      const request2 = t.choose(game, 'Play Card.Insane Outcast')
+      const request3 = t.choose(game)
+      const request4 = t.choose(game, 'Play Card.Drow Negotiator')
 
       t.testBoard(game, {
         dennis: {

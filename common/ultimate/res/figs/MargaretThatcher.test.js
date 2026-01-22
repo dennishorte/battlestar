@@ -20,10 +20,10 @@ describe('Margaret Thatcher', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Agriculture')
+    request = t.choose(game, 'Dogma.Agriculture')
     // Karma triggers: first score any top card with {c} or {f} from anywhere
     // Banking has {f} and {c}, so it should be scored
-    request = t.choose(game, request, 'Banking') // Choose Banking to score
+    request = t.choose(game, 'Banking') // Choose Banking to score
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -49,10 +49,10 @@ describe('Margaret Thatcher', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Agriculture')
+    request = t.choose(game, 'Dogma.Agriculture')
     // Karma triggers: first score any top card with {c} or {f} from anywhere
     // Self Service has {c}, so it should be available to score
-    request = t.choose(game, request, 'Self Service') // Choose Self Service to score
+    request = t.choose(game, 'Self Service') // Choose Self Service to score
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -82,7 +82,7 @@ describe('Margaret Thatcher', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Agriculture')
+    request = t.choose(game, 'Dogma.Agriculture')
     // Karma triggers: first score any top card with {c} or {f} from anywhere
     // Only Margaret Thatcher has {f}, so she's the only choice
     // Since min is likely 0, we can skip, but let's verify the behavior

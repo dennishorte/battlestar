@@ -17,11 +17,11 @@ describe('Bioengineering', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Bioengineering')
+    const result2 = t.choose(game, 'Dogma.Bioengineering')
 
     expect(result2.selectors[0].choices.sort()).toEqual(['Agriculture', 'Clothing', 'Sailing'])
 
-    const result3 = t.choose(game, result2, 'Sailing')
+    const result3 = t.choose(game, 'Sailing')
 
     expect(t.cards(game, 'score')).toEqual(['Sailing'])
   })
@@ -40,8 +40,8 @@ describe('Bioengineering', () => {
     })
 
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Bioengineering')
-    const result3 = t.choose(game, result2, 'Clothing')
+    const result2 = t.choose(game, 'Dogma.Bioengineering')
+    const result3 = t.choose(game, 'Clothing')
 
     expect(result3).toEqual(expect.any(GameOverEvent))
     t.testGameOver(result3, 'dennis', 'Bioengineering')
@@ -60,8 +60,8 @@ describe('Bioengineering', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Bioengineering')
-    const result3 = t.choose(game, result2, 'Pottery')
+    const result2 = t.choose(game, 'Dogma.Bioengineering')
+    const result3 = t.choose(game, 'Pottery')
 
     expect(result3).toEqual(expect.any(InputRequestEvent))
     expect(result3.selectors[0].actor).toBe('micah')
@@ -82,8 +82,8 @@ describe('Bioengineering', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Bioengineering')
-    const result3 = t.choose(game, result2, 'Sailing')
+    const result2 = t.choose(game, 'Dogma.Bioengineering')
+    const result3 = t.choose(game, 'Sailing')
 
     expect(result3).toEqual(expect.any(InputRequestEvent))
     expect(result3.selectors[0].actor).toBe('micah')

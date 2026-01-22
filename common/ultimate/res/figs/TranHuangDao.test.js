@@ -21,7 +21,7 @@ describe('Tran Huang Dao', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -51,8 +51,8 @@ describe('Tran Huang Dao', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'Construction') // Score Construction from micah
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Construction') // Score Construction from micah
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -83,7 +83,7 @@ describe('Tran Huang Dao', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

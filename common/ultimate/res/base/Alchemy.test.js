@@ -19,9 +19,9 @@ describe('Alchemy', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Alchemy')
-    const result3 = t.choose(game, result2, 'Invention')
-    const result4 = t.choose(game, result3, 'Printing Press')
+    const result2 = t.choose(game, 'Dogma.Alchemy')
+    const result3 = t.choose(game, 'Invention')
+    const result4 = t.choose(game, 'Printing Press')
 
     expect(t.cards(game, 'green')).toEqual(['Invention', 'The Wheel'])
     expect(t.cards(game, 'score')).toEqual(['Printing Press'])
@@ -43,8 +43,8 @@ describe('Alchemy', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Alchemy')
-    const result3 = t.choose(game, result2, 'auto')
+    const result2 = t.choose(game, 'Dogma.Alchemy')
+    const result3 = t.choose(game, 'auto')
 
     expect(t.cards(game, 'hand')).toEqual([])
   })

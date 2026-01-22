@@ -28,12 +28,12 @@ describe('Railroad', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Railroad')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Railroad')
+    request = t.choose(game, 'auto')
 
     t.testChoices(request, ['green'])
 
-    request = t.choose(game, request, 'green')
+    request = t.choose(game, 'green')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

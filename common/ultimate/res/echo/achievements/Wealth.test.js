@@ -22,7 +22,7 @@ describe('Wealth', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Meld.Pencil')
+    const result2 = t.choose(game, 'Meld.Pencil')
 
     expect(t.cards(game, 'achievements')).toStrictEqual(['Wealth'])
   })
@@ -45,7 +45,7 @@ describe('Wealth', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Meld.Pencil')
+    const result2 = t.choose(game, 'Meld.Pencil')
 
     expect(t.cards(game, 'achievements')).toStrictEqual([])
   })

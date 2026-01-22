@@ -20,8 +20,8 @@ describe("Linguistics", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Linguistics')
-    request = t.choose(game, request, 'Draw a 3')
+    request = t.choose(game, 'Dogma.Linguistics')
+    request = t.choose(game, 'Draw a 3')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -51,8 +51,8 @@ describe("Linguistics", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Linguistics')
-    request = t.choose(game, request, 'Draw and foreshadow a 4')
+    request = t.choose(game, 'Dogma.Linguistics')
+    request = t.choose(game, 'Draw and foreshadow a 4')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -85,8 +85,8 @@ describe("Linguistics", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Fermenting')
-    request = t.choose(game, request, 'Draw and foreshadow a 4')
+    request = t.choose(game, 'Meld.Fermenting')
+    request = t.choose(game, 'Draw and foreshadow a 4')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

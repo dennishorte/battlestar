@@ -24,7 +24,7 @@ describe('Taki ad-Din', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -54,7 +54,7 @@ describe('Taki ad-Din', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -85,7 +85,7 @@ describe('Taki ad-Din', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
       // The Wheel's dogma draws cards, but Taki ad-Din's karma should not trigger
       // (only triggers on Draw action, not on draws from dogma effects)
 

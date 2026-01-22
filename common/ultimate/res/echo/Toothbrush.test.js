@@ -16,13 +16,13 @@ describe("Toothbrush", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Toothbrush')
+    request = t.choose(game, 'Dogma.Toothbrush')
 
     t.testChoices(request, [1, 3])
 
-    request = t.choose(game, request, 3)
-    request = t.choose(game, request, 'yellow')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 3)
+    request = t.choose(game, 'yellow')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -62,13 +62,13 @@ describe("Toothbrush", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Toothbrush')
+    request = t.choose(game, 'Dogma.Toothbrush')
 
     t.testChoices(request, [1, 3])
 
-    request = t.choose(game, request, 3)
-    request = t.choose(game, request, 'yellow')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 3)
+    request = t.choose(game, 'yellow')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

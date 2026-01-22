@@ -23,9 +23,9 @@ describe("Tasmanian Tiger", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Coal')
-    request = t.choose(game, request, 'Flight')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Coal')
+    request = t.choose(game, 'Flight')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

@@ -16,11 +16,11 @@ describe("Soap", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Soap')
-    request = t.choose(game, request, 'yellow')
-    request = t.choose(game, request, 'Agriculture', 'Masonry', 'Domestication')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'Sailing')
+    request = t.choose(game, 'Dogma.Soap')
+    request = t.choose(game, 'yellow')
+    request = t.choose(game, 'Agriculture', 'Masonry', 'Domestication')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'Sailing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -44,11 +44,11 @@ describe("Soap", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Soap')
-    request = t.choose(game, request, 'yellow')
-    request = t.choose(game, request, 'Agriculture', 'Masonry', 'Domestication')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Dogma.Soap')
+    request = t.choose(game, 'yellow')
+    request = t.choose(game, 'Agriculture', 'Masonry', 'Domestication')
+    request = t.choose(game, 'auto')
+    request = t.choose(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

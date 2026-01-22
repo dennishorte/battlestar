@@ -121,8 +121,8 @@ describe('Niccolo Machiavelli', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Paper')
-      request = t.choose(game, request, 'green')
+      request = t.choose(game, 'Dogma.Paper')
+      request = t.choose(game, 'green')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

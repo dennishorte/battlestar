@@ -14,7 +14,7 @@ describe('Illuminati', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Illuminati')
+    request = t.choose(game, 'Dogma.Illuminati')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -42,7 +42,7 @@ describe('Illuminati', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Illuminati')
+    request = t.choose(game, 'Dogma.Illuminati')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -18,8 +18,8 @@ describe('Magic 8-Ball', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Magic 8-Ball')
-    request = t.choose(game, request, 'Draw two 10')
+    request = t.choose(game, 'Dogma.Magic 8-Ball')
+    request = t.choose(game, 'Draw two 10')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -48,9 +48,9 @@ describe('Magic 8-Ball', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Magic 8-Ball')
-    request = t.choose(game, request, 'Draw two 10')
-    request = t.choose(game, request, 'Draw two 10')
+    request = t.choose(game, 'Dogma.Magic 8-Ball')
+    request = t.choose(game, 'Draw two 10')
+    request = t.choose(game, 'Draw two 10')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -80,8 +80,8 @@ describe('Magic 8-Ball', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Magic 8-Ball')
-    request = t.choose(game, request, 'Draw two 10')
+    request = t.choose(game, 'Dogma.Magic 8-Ball')
+    request = t.choose(game, 'Draw two 10')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -111,8 +111,8 @@ describe('Magic 8-Ball', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Magic 8-Ball')
-    request = t.choose(game, request, 'Draw and score two 8')
+    request = t.choose(game, 'Dogma.Magic 8-Ball')
+    request = t.choose(game, 'Draw and score two 8')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -140,9 +140,9 @@ describe('Magic 8-Ball', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Magic 8-Ball')
-    request = t.choose(game, request, 'Safeguard two available standard achievements')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Magic 8-Ball')
+    request = t.choose(game, 'Safeguard two available standard achievements')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

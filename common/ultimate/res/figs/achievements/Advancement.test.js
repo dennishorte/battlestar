@@ -11,7 +11,7 @@ test('Advancement', () => {
   })
   let request
   request = game.run()
-  request = t.choose(game, request, 'Decree.Advancement')
+  request = t.choose(game, 'Decree.Advancement')
 
   expect(t.cards(game, 'hand')).toStrictEqual(['Flight'])
 })

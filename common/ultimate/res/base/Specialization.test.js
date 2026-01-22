@@ -21,8 +21,8 @@ describe('Specialization', () => {
       })
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Specialization')
-      request = t.choose(game, request, 'auto')
+      request = t.choose(game, 'Dogma.Specialization')
+      request = t.choose(game, 'auto')
 
       expect(t.cards(game, 'hand').sort()).toEqual([
         'Archery',
@@ -43,8 +43,8 @@ describe('Specialization', () => {
       })
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Specialization')
-      request = t.choose(game, request, 'blue')
+      request = t.choose(game, 'Dogma.Specialization')
+      request = t.choose(game, 'blue')
 
       expect(t.zone(game, 'blue').splay).toBe('up')
     })

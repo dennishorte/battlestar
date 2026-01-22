@@ -24,7 +24,7 @@ describe("Coke", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Coke')
+    request = t.choose(game, 'Dogma.Coke')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -59,8 +59,8 @@ describe("Coke", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Thermometer')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Meld.Thermometer')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

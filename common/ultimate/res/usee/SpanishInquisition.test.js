@@ -16,8 +16,8 @@ describe('Spanish Inquisition', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Spanish Inquisition')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Spanish Inquisition')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

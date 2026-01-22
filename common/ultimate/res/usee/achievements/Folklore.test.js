@@ -15,7 +15,7 @@ describe('Folklore', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Empiricism')
+    request = t.choose(game, 'Meld.Empiricism')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -39,7 +39,7 @@ describe('Folklore', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Empiricism')
+    request = t.choose(game, 'Meld.Empiricism')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -63,7 +63,7 @@ describe('Folklore', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Sanitation')
+    request = t.choose(game, 'Meld.Sanitation')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

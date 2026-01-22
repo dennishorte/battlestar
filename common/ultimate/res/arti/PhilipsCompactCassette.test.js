@@ -34,9 +34,9 @@ describe("Philips Compact Cassette", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'red', 'green')
-    request = t.choose(game, request, 'red', 'blue')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'red', 'green')
+    request = t.choose(game, 'red', 'blue')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

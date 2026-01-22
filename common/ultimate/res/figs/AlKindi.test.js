@@ -28,7 +28,7 @@ describe('Al-Kindi', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Writing')
+      request = t.choose(game, 'Dogma.Writing')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -75,9 +75,9 @@ describe('Al-Kindi', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'Dogma.Writing')
-      request = t.choose(game, request, 'The Wheel')
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Dogma.Writing')
+      request = t.choose(game, 'The Wheel')
 
       t.testBoard(game, {
         dennis: {

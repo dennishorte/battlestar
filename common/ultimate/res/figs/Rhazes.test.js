@@ -20,7 +20,7 @@ describe('Rhazes', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Draw.draw a card')
+    request = t.choose(game, 'Draw.draw a card')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -50,8 +50,8 @@ describe('Rhazes', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Draw.draw a card')
-    request = t.choose(game, request, '**base-3* (micah)')
+    request = t.choose(game, 'Draw.draw a card')
+    request = t.choose(game, '**base-3* (micah)')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -85,9 +85,9 @@ describe('Rhazes', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Draw.draw a card')
+    request = t.choose(game, 'Draw.draw a card')
     // Karma triggers: can choose from hand or opponent score
-    request = t.choose(game, request, 'Machinery') // Choose from hand
+    request = t.choose(game, 'Machinery') // Choose from hand
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -118,11 +118,11 @@ describe('Rhazes', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.The Wheel')
+    request = t.choose(game, 'Dogma.The Wheel')
     // Karma triggers on first draw: must tuck age 1 card from hand
-    request = t.choose(game, request, 'Archery')
+    request = t.choose(game, 'Archery')
     // Karma triggers on second draw: must tuck age 1 card from hand
-    request = t.choose(game, request, 'Tools')
+    request = t.choose(game, 'Tools')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -155,7 +155,7 @@ describe('Rhazes', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Draw.draw a card')
+    request = t.choose(game, 'Draw.draw a card')
     // Karma triggers but no valid cards to tuck - draw proceeds normally
 
     t.testIsSecondPlayer(game)

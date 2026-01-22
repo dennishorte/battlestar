@@ -24,11 +24,11 @@ describe('Wernher Von Braun', () => {
     let request
     request = game.run()
     // dennis (owner) claims an achievement
-    request = t.choose(game, request, 'Achieve.*base-1*')
+    request = t.choose(game, 'Achieve.*base-1*')
     // When dennis claims achievement, micah (opponent) draws a figure
     // Karma triggers: first junk all cards in {9} or {0} deck
     // Owner (dennis) chooses which deck to junk
-    request = t.choose(game, request, 9) // Choose to junk age 9 deck
+    request = t.choose(game, 9) // Choose to junk age 9 deck
     // Then figure is drawn for micah
 
     t.testIsSecondPlayer(game)
@@ -79,11 +79,11 @@ describe('Wernher Von Braun', () => {
     let request
     request = game.run()
     // dennis claims an achievement
-    request = t.choose(game, request, 'Achieve.*base-1*')
+    request = t.choose(game, 'Achieve.*base-1*')
     // When dennis claims achievement, micah (opponent) draws a figure
     // Karma triggers: first junk all cards in {9} or {0} deck
     // Owner (micah) chooses which deck to junk
-    request = t.choose(game, request, 10) // Choose to junk age 10 deck
+    request = t.choose(game, 10) // Choose to junk age 10 deck
     // Then figure is drawn for micah
 
     t.testIsSecondPlayer(game)

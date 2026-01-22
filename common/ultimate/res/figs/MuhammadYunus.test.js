@@ -20,8 +20,8 @@ describe('Muhammad Yunus', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Code of Laws')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Dogma.Code of Laws')
+    request = t.choose(game)
 
     t.testChoices(request, ['Invention']) // Micah's choice for Code of Laws
   })
@@ -43,8 +43,8 @@ describe('Muhammad Yunus', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Code of Laws')
-    request = t.choose(game, request, 'Sailing')
+    request = t.choose(game, 'Dogma.Code of Laws')
+    request = t.choose(game, 'Sailing')
 
     t.testChoices(request, ['The Wheel']) // Dennis's choice for Code of Laws
   })
@@ -65,8 +65,8 @@ describe('Muhammad Yunus', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Code of Laws')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Dogma.Code of Laws')
+    request = t.choose(game)
 
     t.testChoices(request, ['Invention']) // Dennis's choice for Code of Laws
   })
@@ -87,8 +87,8 @@ describe('Muhammad Yunus', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Code of Laws')
-    request = t.choose(game, request, 'Sailing')
+    request = t.choose(game, 'Dogma.Code of Laws')
+    request = t.choose(game, 'Sailing')
 
     t.testChoices(request, ['The Wheel']) // Micah's choice for Code of Laws
   })
@@ -112,8 +112,8 @@ describe('Muhammad Yunus', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Code of Laws')
-    request = t.choose(game, request, 'Paper')
+    request = t.choose(game, 'Dogma.Code of Laws')
+    request = t.choose(game, 'Paper')
 
     t.testChoices(request, ['The Wheel']) // Micah's choice for Code of Laws
   })

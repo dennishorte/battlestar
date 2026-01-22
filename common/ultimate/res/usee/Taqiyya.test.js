@@ -18,8 +18,8 @@ describe('Taqiyya', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Taqiyya')
-    request = t.choose(game, request, 'blue')
+    request = t.choose(game, 'Dogma.Taqiyya')
+    request = t.choose(game, 'blue')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -47,9 +47,9 @@ describe('Taqiyya', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Taqiyya')
-    request = t.choose(game, request, 'blue')
-    request = t.choose(game, request, 'Optics')
+    request = t.choose(game, 'Dogma.Taqiyya')
+    request = t.choose(game, 'blue')
+    request = t.choose(game, 'Optics')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

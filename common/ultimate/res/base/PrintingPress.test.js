@@ -19,8 +19,8 @@ describe('Printing Press', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Printing Press')
-    request = t.choose(game, request, 'Coal')
+    request = t.choose(game, 'Dogma.Printing Press')
+    request = t.choose(game, 'Coal')
 
     expect(t.cards(game, 'score')).toEqual(['Mathematics'])
     expect(t.cards(game, 'hand')).toEqual(['Canning'])
@@ -42,8 +42,8 @@ describe('Printing Press', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Printing Press')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Dogma.Printing Press')
+    request = t.choose(game)
 
     expect(t.cards(game, 'score')).toEqual(['Coal', 'Mathematics'])
     expect(t.cards(game, 'hand')).toEqual([])
@@ -59,8 +59,8 @@ describe('Printing Press', () => {
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Printing Press')
-    request = t.choose(game, request, 'blue')
+    request = t.choose(game, 'Dogma.Printing Press')
+    request = t.choose(game, 'blue')
 
     expect(t.zone(game, 'blue').splay).toBe('right')
   })

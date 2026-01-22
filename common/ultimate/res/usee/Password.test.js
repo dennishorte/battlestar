@@ -18,8 +18,8 @@ describe('Password', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Password')
-    request = t.choose(game, request, 'Metalworking')
+    request = t.choose(game, 'Dogma.Password')
+    request = t.choose(game, 'Metalworking')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -47,8 +47,8 @@ describe('Password', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Password')
-    request = t.choose(game, request, )
+    request = t.choose(game, 'Dogma.Password')
+    request = t.choose(game, )
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

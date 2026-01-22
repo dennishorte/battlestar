@@ -15,8 +15,8 @@ describe('Baghdad Battery', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Paper')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Paper')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -41,8 +41,8 @@ describe('Baghdad Battery', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Paper')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Paper')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

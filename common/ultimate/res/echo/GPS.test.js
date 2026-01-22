@@ -23,8 +23,8 @@ describe("GPS", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.GPS')
-    request = t.choose(game, request, 'yellow')
+    request = t.choose(game, 'Dogma.GPS')
+    request = t.choose(game, 'yellow')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -59,10 +59,10 @@ describe("GPS", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Astrogeology')
-    request = t.choose(game, request, 'yellow')
-    request = t.choose(game, request, 'Esports')
-    request = t.choose(game, request, 'Streaming')
+    request = t.choose(game, 'Meld.Astrogeology')
+    request = t.choose(game, 'yellow')
+    request = t.choose(game, 'Esports')
+    request = t.choose(game, 'Streaming')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

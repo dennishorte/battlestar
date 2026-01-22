@@ -20,8 +20,8 @@ describe('Scouting', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Scouting')
-    request = t.choose(game, request, 'Teleprompter')
+    request = t.choose(game, 'Dogma.Scouting')
+    request = t.choose(game, 'Teleprompter')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -51,9 +51,9 @@ describe('Scouting', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Scouting')
-    request = t.choose(game, request, 'Teleprompter', 'Computers')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Scouting')
+    request = t.choose(game, 'Teleprompter', 'Computers')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -84,9 +84,9 @@ describe('Scouting', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Scouting')
-    request = t.choose(game, request, 'Teleprompter', 'Computers')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Scouting')
+    request = t.choose(game, 'Teleprompter', 'Computers')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -22,7 +22,7 @@ describe('Shennong', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Draw.draw a card')
+    request = t.choose(game, 'Draw.draw a card')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

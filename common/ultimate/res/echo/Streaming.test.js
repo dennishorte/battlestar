@@ -16,9 +16,9 @@ describe("Streaming", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Streaming')
-    request = t.choose(game, request, 'yellow')
-    request = t.choose(game, request, 'achieve')
+    request = t.choose(game, 'Dogma.Streaming')
+    request = t.choose(game, 'yellow')
+    request = t.choose(game, 'achieve')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -44,10 +44,10 @@ describe("Streaming", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Astrobiology')
-    request = t.choose(game, request, 'yellow')
-    request = t.choose(game, request, 'achieve')
-    request = t.choose(game, request, 'achieve')
+    request = t.choose(game, 'Meld.Astrobiology')
+    request = t.choose(game, 'yellow')
+    request = t.choose(game, 'achieve')
+    request = t.choose(game, 'achieve')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

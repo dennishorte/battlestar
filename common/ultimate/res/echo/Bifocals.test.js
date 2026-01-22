@@ -24,9 +24,9 @@ describe("Bifocals", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Bifocals')
-    request = t.choose(game, request, 'green')
-    request = t.choose(game, request, 'blue')
+    request = t.choose(game, 'Dogma.Bifocals')
+    request = t.choose(game, 'green')
+    request = t.choose(game, 'blue')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -65,10 +65,10 @@ describe("Bifocals", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Industrialization')
-    request = t.choose(game, request, 'Bifocals')
-    request = t.choose(game, request, 'green')
-    request = t.choose(game, request, 'blue')
+    request = t.choose(game, 'Meld.Industrialization')
+    request = t.choose(game, 'Bifocals')
+    request = t.choose(game, 'green')
+    request = t.choose(game, 'blue')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

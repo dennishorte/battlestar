@@ -20,8 +20,8 @@ describe('Dancing Girl', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Dancing Girl')
-    request = t.choose(game, request, 'Construction')
+    request = t.choose(game, 'Dogma.Dancing Girl')
+    request = t.choose(game, 'Construction')
 
     //    t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -52,8 +52,8 @@ describe('Dancing Girl', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Dancing Girl')
-    request = t.choose(game, request, 'Construction')
+    request = t.choose(game, 'Dogma.Dancing Girl')
+    request = t.choose(game, 'Construction')
 
     //    t.testIsFirstAction(request)
     t.testBoard(game, {

@@ -147,7 +147,7 @@ describe('Innovation', () => {
         },
       })
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Dogma.Globalization')
+      const request2 = t.choose(game, 'Dogma.Globalization')
 
       expect(t.zone(game, 'yellow', 'micah').splay).toBe('none')
     })
@@ -179,8 +179,8 @@ describe('Innovation', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Dogma.Mathematics')
-      const request3 = t.choose(game, request2, 'Fusion')
+      const request2 = t.choose(game, 'Dogma.Mathematics')
+      const request3 = t.choose(game, 'Fusion')
 
       t.testGameOver(request3, 'dennis', 'high draw')
     })
@@ -200,8 +200,8 @@ describe('Innovation', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Dogma.Mathematics')
-      const request3 = t.choose(game, request2, 'Fusion')
+      const request2 = t.choose(game, 'Dogma.Mathematics')
+      const request3 = t.choose(game, 'Fusion')
 
       t.testGameOver(request3, 'micah', 'high draw - tie breaker (achievements)')
     })
@@ -222,10 +222,10 @@ describe('Innovation', () => {
         },
       })
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Draw.draw a card')
-      const request3 = t.choose(game, request2, 'Shennong')
-      const request4 = t.choose(game, request3, 'Alexander the Great')
-      const request5 = t.choose(game, request4, 'Alex Trebek')
+      const request2 = t.choose(game, 'Draw.draw a card')
+      const request3 = t.choose(game, 'Shennong')
+      const request4 = t.choose(game, 'Alexander the Great')
+      const request5 = t.choose(game, 'Alex Trebek')
 
       t.testIsSecondPlayer(game)
     })
@@ -369,7 +369,7 @@ describe('Innovation', () => {
           achievements: ['The Wheel', 'Monotheism', 'Machinery'],
         })
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Achieve.*base-2*')
+        const request2 = t.choose(game, 'Achieve.*base-2*')
 
         expect(t.cards(game, 'achievements')).toStrictEqual(['Monotheism'])
       })
@@ -392,7 +392,7 @@ describe('Innovation', () => {
           },
         })
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Achieve.*base-2*')
+        const request2 = t.choose(game, 'Achieve.*base-2*')
 
         expect(t.cards(game, 'hand', 'micah')).toStrictEqual(['Imhotep'])
       })
@@ -415,7 +415,7 @@ describe('Innovation', () => {
           },
         })
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Achieve.*base-2*')
+        const request2 = t.choose(game, 'Achieve.*base-2*')
 
         expect(t.cards(game, 'hand', 'micah')).toStrictEqual([])
       })
@@ -432,7 +432,7 @@ describe('Innovation', () => {
           achievements: ['Code of Laws'],
         })
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Achieve.The Wheel')
+        const request2 = t.choose(game, 'Achieve.The Wheel')
 
         t.testZone(game, 'achievements', ['The Wheel'])
       })
@@ -482,7 +482,7 @@ describe('Innovation', () => {
         const achieveOptions = request.selectors[0].choices.find(x => x.title === 'Achieve').choices
         expect(achieveOptions).toStrictEqual(['*base-1*', 'safe: *base-1*'])
 
-        request = t.choose(game, request, 'Achieve.safe: *base-1*')
+        request = t.choose(game, 'Achieve.safe: *base-1*')
 
         t.testBoard(game, {
           dennis: {
@@ -588,7 +588,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Decree.Expansion')
+        const request2 = t.choose(game, 'Decree.Expansion')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {
@@ -620,7 +620,7 @@ describe('Innovation', () => {
 
         let request
         request = game.run()
-        request = t.choose(game, request, 'Auspice.Astronomy')
+        request = t.choose(game, 'Auspice.Astronomy')
 
         t.setBoard(game, {
           dennis: {
@@ -654,7 +654,7 @@ describe('Innovation', () => {
           },
         })
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Dogma.Metalworking')
+        const request2 = t.choose(game, 'Dogma.Metalworking')
 
         expect(t.cards(game, 'red')).toStrictEqual(['Metalworking', 'Bangle', 'Archery'])
       })
@@ -678,7 +678,7 @@ describe('Innovation', () => {
 
         let request
         request = game.run()
-        request = t.choose(game, request, 'Dogma.Writing')
+        request = t.choose(game, 'Dogma.Writing')
 
         t.testBoard(game, {
           dennis: {
@@ -700,7 +700,7 @@ describe('Innovation', () => {
           },
         })
         const request = game.run()
-        t.choose(game, request, 'Dogma.Writing')
+        t.choose(game, 'Dogma.Writing')
 
         const dennis = game.players.byName('dennis')
         const dennisHandAges = game.zones.byPlayer(dennis, 'hand').cardlist().map(c => c.age).sort()
@@ -731,7 +731,7 @@ describe('Innovation', () => {
           },
         })
         const result1 = game.run()
-        const result2 = t.choose(game, result1, 'Dogma.Archery')
+        const result2 = t.choose(game, 'Dogma.Archery')
 
         expect(t.cards(game, 'hand')).toStrictEqual(['Gunpowder'])
         expect(t.cards(game, 'hand', 'micah')).toStrictEqual(['Tools'])
@@ -754,7 +754,7 @@ describe('Innovation', () => {
 
         expect(game.zones.byPlayer(dennis, 'hand').cardlist().length).toBe(0)
 
-        t.choose(game, request, 'Draw.draw a card')
+        t.choose(game, 'Draw.draw a card')
 
         const dennisCards = game.zones.byPlayer(dennis, 'hand').cardlist()
         expect(dennisCards.length).toBe(1)
@@ -772,7 +772,7 @@ describe('Innovation', () => {
         const request = game.run()
         const dennis = game.players.byName('dennis')
 
-        t.choose(game, request, 'Draw.draw a card')
+        t.choose(game, 'Draw.draw a card')
 
         const dennisCards = game.zones.byPlayer(dennis, 'hand').cardlist()
         expect(dennisCards.length).toBe(1)
@@ -843,7 +843,7 @@ describe('Innovation', () => {
           },
         })
         const result1 = game.run()
-        const result2 = t.choose(game, result1, 'Endorse.green')
+        const result2 = t.choose(game, 'Endorse.green')
 
         expect(result2.selectors[0].choices).toStrictEqual(['Mathematics', 'Tools'])
       })
@@ -871,8 +871,8 @@ describe('Innovation', () => {
           },
         })
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Endorse.green')
-        const request3 = t.choose(game, request2, 'Clothing') // Micah's choice
+        const request2 = t.choose(game, 'Endorse.green')
+        const request3 = t.choose(game, 'Clothing') // Micah's choice
 
         expect(t.cards(game, 'score').sort()).toStrictEqual([
           'Clothing',
@@ -917,8 +917,8 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Endorse.yellow')
-        const request3 = t.choose(game, request2, 'Sailing')
+        const request2 = t.choose(game, 'Endorse.yellow')
+        const request3 = t.choose(game, 'Sailing')
 
         t.testBoard(game, {
           dennis: {
@@ -955,7 +955,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Reformation')
+        const request2 = t.choose(game, 'Meld.Reformation')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {
@@ -987,7 +987,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Athens')
+        const request2 = t.choose(game, 'Meld.Athens')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {
@@ -1014,7 +1014,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Vienna')
+        const request2 = t.choose(game, 'Meld.Vienna')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {
@@ -1044,7 +1044,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Athens')
+        const request2 = t.choose(game, 'Meld.Athens')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {
@@ -1071,7 +1071,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Athens')
+        const request2 = t.choose(game, 'Meld.Athens')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {
@@ -1220,7 +1220,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Delhi')
+        const request2 = t.choose(game, 'Meld.Delhi')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {
@@ -1249,7 +1249,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Tehran')
+        const request2 = t.choose(game, 'Meld.Tehran')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {
@@ -1278,7 +1278,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Seoul')
+        const request2 = t.choose(game, 'Meld.Seoul')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {
@@ -1307,7 +1307,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Mecca')
+        const request2 = t.choose(game, 'Meld.Mecca')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {
@@ -1342,7 +1342,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Mecca')
+        const request2 = t.choose(game, 'Meld.Mecca')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {
@@ -1369,7 +1369,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Mecca')
+        const request2 = t.choose(game, 'Meld.Mecca')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {
@@ -1392,7 +1392,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Seville')
+        const request2 = t.choose(game, 'Meld.Seville')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {
@@ -1419,7 +1419,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Luoyang')
+        const request2 = t.choose(game, 'Meld.Luoyang')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {
@@ -1465,7 +1465,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Warsaw')
+        const request2 = t.choose(game, 'Meld.Warsaw')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {
@@ -1502,7 +1502,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Road Building')
+        const request2 = t.choose(game, 'Meld.Road Building')
 
         t.testBoard(game, {
           dennis: {
@@ -1527,7 +1527,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Sailing')
+        const request2 = t.choose(game, 'Meld.Sailing')
 
         t.testBoard(game, {
           dennis: {
@@ -1552,7 +1552,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Sailing')
+        const request2 = t.choose(game, 'Meld.Sailing')
 
         t.testBoard(game, {
           dennis: {
@@ -1573,7 +1573,7 @@ describe('Innovation', () => {
         })
 
         const request1 = game.run()
-        const request2 = t.choose(game, request1, 'Meld.Currency')
+        const request2 = t.choose(game, 'Meld.Currency')
 
         t.testBoard(game, {
           dennis: {
@@ -1617,7 +1617,7 @@ describe('Innovation', () => {
           })
 
           let request = game.run()
-          request = t.choose(game, request, 'dogma')
+          request = t.choose(game, 'dogma')
 
           t.testBoard(game, {
             dennis: {
@@ -1636,7 +1636,7 @@ describe('Innovation', () => {
           })
 
           let request = game.run()
-          request = t.choose(game, request, 'skip')
+          request = t.choose(game, 'skip')
 
           t.testBoard(game, {
             dennis: {
@@ -1654,7 +1654,7 @@ describe('Innovation', () => {
           })
 
           let request = game.run()
-          request = t.choose(game, request, 'Meld.Holmegaard Bows')
+          request = t.choose(game, 'Meld.Holmegaard Bows')
 
           t.testBoard(game, {
             dennis: {
@@ -1677,8 +1677,8 @@ describe('Innovation', () => {
             })
 
             let request = game.run()
-            request = t.choose(game, request, 'skip')
-            request = t.choose(game, request, 'auto')
+            request = t.choose(game, 'skip')
+            request = t.choose(game, 'auto')
 
             t.testIsFirstAction(request)
             t.testBoard(game, {
@@ -1702,7 +1702,7 @@ describe('Innovation', () => {
             })
 
             let request = game.run()
-            request = t.choose(game, request, 'skip')
+            request = t.choose(game, 'skip')
 
             t.testIsFirstAction(request)
             t.testBoard(game, {
@@ -1731,8 +1731,8 @@ describe('Innovation', () => {
             })
 
             let request = game.run()
-            request = t.choose(game, request, 'Meld.Pottery')
-            request = t.choose(game, request, 'seize.Dancing Girl')
+            request = t.choose(game, 'Meld.Pottery')
+            request = t.choose(game, 'seize.Dancing Girl')
 
             t.testIsSecondPlayer(game)
             t.testBoard(game, {
@@ -1762,7 +1762,7 @@ describe('Innovation', () => {
             })
 
             let request = game.run()
-            request = t.choose(game, request, 'Meld.Pottery')
+            request = t.choose(game, 'Meld.Pottery')
 
             t.testIsSecondPlayer(game)
             t.testBoard(game, {
@@ -1787,7 +1787,7 @@ describe('Innovation', () => {
           })
 
           let request = game.run()
-          request = t.choose(game, request, 'skip')
+          request = t.choose(game, 'skip')
 
           t.testBoard(game, {
             dennis: {
@@ -1803,7 +1803,7 @@ describe('Innovation', () => {
     test('card not visible', () => {
       const game = t.fixtureFirstPlayer()
       const request = game.run()
-      t.choose(game, request, 'Draw.draw a card')
+      t.choose(game, 'Draw.draw a card')
     })
   })
 
@@ -1824,7 +1824,7 @@ describe('Innovation', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Dogma.Computers')
+      const request2 = t.choose(game, 'Dogma.Computers')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -1857,8 +1857,8 @@ describe('zone size limits', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Tomb')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Tomb')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -1886,8 +1886,8 @@ describe('zone size limits', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Tomb')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Tomb')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -1918,8 +1918,8 @@ describe('zone size limits', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Tomb')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Tomb')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -1953,8 +1953,8 @@ describe('zone size limits', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Tomb')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Tomb')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -1988,8 +1988,8 @@ describe('zone size limits', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Tomb')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Tomb')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -2023,8 +2023,8 @@ describe('zone size limits', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Tomb')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Tomb')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -2058,8 +2058,8 @@ describe('zone size limits', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Tomb')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Tomb')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -2093,8 +2093,8 @@ describe('zone size limits', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Tomb')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Tomb')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -2128,8 +2128,8 @@ describe('zone size limits', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Tomb')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Tomb')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -2163,8 +2163,8 @@ describe('zone size limits', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Tomb')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Tomb')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

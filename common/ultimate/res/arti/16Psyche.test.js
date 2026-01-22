@@ -16,11 +16,11 @@ describe("16 Psyche", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testChoices(request, [1,2,3,4,5,6,7,8,9,11])
 
-    request = t.choose(game, request, 11)
+    request = t.choose(game, 11)
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

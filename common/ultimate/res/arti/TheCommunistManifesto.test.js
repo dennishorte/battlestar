@@ -20,8 +20,8 @@ describe("The Communist Manifesto", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Railroad')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Railroad')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

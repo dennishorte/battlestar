@@ -12,8 +12,8 @@ describe('Astrobiology', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Astrobiology')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Astrobiology')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

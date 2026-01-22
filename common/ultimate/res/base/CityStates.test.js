@@ -20,8 +20,8 @@ describe('City States', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.City States')
-    const result3 = t.choose(game, result2, 'Archery')
+    const result2 = t.choose(game, 'Dogma.City States')
+    const result3 = t.choose(game, 'Archery')
 
     expect(t.cards(game, 'red')).toEqual(['Archery'])
     expect(t.cards(game, 'hand', 'micah')).toEqual(['Tools'])
@@ -38,7 +38,7 @@ describe('City States', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.City States')
+    const result2 = t.choose(game, 'Dogma.City States')
 
     expect(result2.selectors[0].title).toBe('Choose First Action')
   })

@@ -40,7 +40,7 @@ describe('Avicenna', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Archery')
+      request = t.choose(game, 'Dogma.Archery')
       // Karma triggers: The Wheel (lowest age) should be junked and super-executed
       // Archery's dogma should NOT execute (no cards transferred from micah)
       // The Wheel's dogma should execute and draw two {1}
@@ -84,7 +84,7 @@ describe('Avicenna', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Archery')
+      request = t.choose(game, 'Dogma.Archery')
       // Karma triggers but no achievements available - logs message and does nothing
       // Archery's dogma should NOT execute
 
@@ -128,13 +128,13 @@ describe('Avicenna', () => {
       let request
       request = game.run()
       // First action: Draw a card (first round only has one action)
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Micah's turn - do one action to complete the round
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // First action of second round: Draw a card (to set up for second action)
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Second action: Dogma The Wheel - karma should NOT trigger (actionNumber === 2)
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
 
       // Verify the key point: Avicenna's karma did not trigger
       // If it had triggered, it would have junked the lowest available achievement (The Wheel, age 1)

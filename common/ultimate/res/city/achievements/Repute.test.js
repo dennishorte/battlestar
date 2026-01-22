@@ -17,7 +17,7 @@ describe('Repute achievement', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Washington')
+    request = t.choose(game, 'Meld.Washington')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -47,7 +47,7 @@ describe('Repute achievement', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Washington')
+    request = t.choose(game, 'Meld.Washington')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -78,7 +78,7 @@ describe('Repute achievement', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Washington')
+    request = t.choose(game, 'Meld.Washington')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

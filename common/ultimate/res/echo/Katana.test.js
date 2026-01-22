@@ -24,12 +24,12 @@ describe("Katana", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Katana')
+    request = t.choose(game, 'Dogma.Katana')
 
     t.testChoices(request, ['Archery', 'Fermenting', 'Mysticism'])
 
-    request = t.choose(game, request, 'Fermenting', 'Mysticism')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Fermenting', 'Mysticism')
+    request = t.choose(game, 'auto')
 
 
     t.testIsSecondPlayer(game)
@@ -80,7 +80,7 @@ describe("Katana", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Engineering')
+    request = t.choose(game, 'Meld.Engineering')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

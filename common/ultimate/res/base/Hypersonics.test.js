@@ -23,9 +23,9 @@ describe('Hypersonics', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Hypersonics')
-    request = t.choose(game, request, 6)
-    request = t.choose(game, request, 'Democracy', 'Canning')
+    request = t.choose(game, 'Dogma.Hypersonics')
+    request = t.choose(game, 6)
+    request = t.choose(game, 'Democracy', 'Canning')
 
 
     t.testIsSecondPlayer(game)

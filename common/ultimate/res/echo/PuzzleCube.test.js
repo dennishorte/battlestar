@@ -23,8 +23,8 @@ describe("Puzzle Cube", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Puzzle Cube')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Dogma.Puzzle Cube')
+    request = t.choose(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -58,9 +58,9 @@ describe("Puzzle Cube", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Puzzle Cube')
-    request = t.choose(game, request, 'Coal')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Dogma.Puzzle Cube')
+    request = t.choose(game, 'Coal')
+    request = t.choose(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -89,9 +89,9 @@ describe("Puzzle Cube", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Puzzle Cube')
-    request = t.choose(game, request, 'red')
-    request = t.choose(game, request, 1)
+    request = t.choose(game, 'Dogma.Puzzle Cube')
+    request = t.choose(game, 'red')
+    request = t.choose(game, 1)
 
     t.testGameOver(request, 'dennis', 'Puzzle Cube')
   })

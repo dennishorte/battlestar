@@ -16,7 +16,7 @@ describe('Shigeru Miyamoto', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Databases')
+    request = t.choose(game, 'Dogma.Databases')
 
     t.testGameOver(request, 'dennis', 'Shigeru Miyamoto')
   })
@@ -32,7 +32,7 @@ describe('Shigeru Miyamoto', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Databases')
+    request = t.choose(game, 'Dogma.Databases')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

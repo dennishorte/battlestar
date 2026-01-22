@@ -34,8 +34,8 @@ describe('Ludwig Van Beethoven', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'Sailing')
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'Sailing')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -88,8 +88,8 @@ describe('Ludwig Van Beethoven', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'Sailing')
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'Sailing')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

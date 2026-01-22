@@ -21,10 +21,10 @@ describe('Zhang Heng', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Masonry')
-    request = t.choose(game, request, 'Engineering', 'The Wheel', 'Fermenting') // Meld 3 cards with {k}
-    request = t.choose(game, request, 'auto') // Auto-order melds
-    request = t.choose(game, request, 'auto') // Auto-order scores
+    request = t.choose(game, 'Dogma.Masonry')
+    request = t.choose(game, 'Engineering', 'The Wheel', 'Fermenting') // Meld 3 cards with {k}
+    request = t.choose(game, 'auto') // Auto-order melds
+    request = t.choose(game, 'auto') // Auto-order scores
 
     // Masonry's second effect claims Monument (3 red cards on board: Engineering, Archery, Oars)
     // Zhang Heng's karma: draws and tucks Translation (age 3) to blue pile
@@ -64,11 +64,11 @@ describe('Zhang Heng', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Mysticism') // Micah activates Masonry on her board
-    request = t.choose(game, request, 'Dogma.Masonry') // Micah activates Masonry on her board
-    request = t.choose(game, request, 'Engineering', 'The Wheel', 'Fermenting') // Meld 3 cards with {k}
-    request = t.choose(game, request, 'auto') // Auto-order melds
-    request = t.choose(game, request, 'auto') // Auto-order scores
+    request = t.choose(game, 'Meld.Mysticism') // Micah activates Masonry on her board
+    request = t.choose(game, 'Dogma.Masonry') // Micah activates Masonry on her board
+    request = t.choose(game, 'Engineering', 'The Wheel', 'Fermenting') // Meld 3 cards with {k}
+    request = t.choose(game, 'auto') // Auto-order melds
+    request = t.choose(game, 'auto') // Auto-order scores
 
     // Micah claims Monument via Masonry (3 red cards: Engineering, Oars, Road Building)
     // Zhang Heng's karma (owned by dennis): draws and tucks Translation to dennis's blue pile

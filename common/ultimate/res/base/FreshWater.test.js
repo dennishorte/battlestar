@@ -14,7 +14,7 @@ describe('Fresh Water', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Fresh Water')
+    request = t.choose(game, 'Dogma.Fresh Water')
     // Red is the only unsplayed color, so it gets splayed left
 
     t.testIsSecondPlayer(game)
@@ -41,8 +41,8 @@ describe('Fresh Water', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Fresh Water')
-    request = t.choose(game, request, 'blue') // Choose blue to splay
+    request = t.choose(game, 'Dogma.Fresh Water')
+    request = t.choose(game, 'blue') // Choose blue to splay
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -82,7 +82,7 @@ describe('Fresh Water', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Fresh Water')
+    request = t.choose(game, 'Dogma.Fresh Water')
     // All colors are already splayed, so no unsplayed color to splay
     // Player loses
 
@@ -105,8 +105,8 @@ describe('Fresh Water', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Fresh Water')
-    request = t.choose(game, request, 'green') // Choose green to splay (blue and green are both unsplayed)
+    request = t.choose(game, 'Dogma.Fresh Water')
+    request = t.choose(game, 'green') // Choose green to splay (blue and green are both unsplayed)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -15,7 +15,7 @@ describe('Confidence', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Astronomy')
+    request = t.choose(game, 'Meld.Astronomy')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -39,7 +39,7 @@ describe('Confidence', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Astronomy')
+    request = t.choose(game, 'Meld.Astronomy')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -61,7 +61,7 @@ describe('Confidence', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Perspective')
+    request = t.choose(game, 'Meld.Perspective')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

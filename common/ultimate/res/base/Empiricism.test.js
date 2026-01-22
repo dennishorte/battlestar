@@ -19,8 +19,8 @@ describe('Empiricism', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Empiricism')
-    request = t.choose(game, request, 'purple', 'blue')
+    request = t.choose(game, 'Dogma.Empiricism')
+    request = t.choose(game, 'purple', 'blue')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -48,8 +48,8 @@ describe('Empiricism', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Empiricism')
-    request = t.choose(game, request, 'purple', 'blue')
+    request = t.choose(game, 'Dogma.Empiricism')
+    request = t.choose(game, 'purple', 'blue')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -95,8 +95,8 @@ describe('Empiricism', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Empiricism')
-    request = t.choose(game, request, 'purple', 'blue')
+    request = t.choose(game, 'Dogma.Empiricism')
+    request = t.choose(game, 'purple', 'blue')
 
     t.testGameOver(request, 'dennis', 'Empiricism')
   })
@@ -129,8 +129,8 @@ describe('Empiricism', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Empiricism')
-    request = t.choose(game, request, 'purple', 'green')
+    request = t.choose(game, 'Dogma.Empiricism')
+    request = t.choose(game, 'purple', 'green')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -183,8 +183,8 @@ describe('Empiricism', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Empiricism')
-    request = t.choose(game, request, 'purple', 'blue')
+    request = t.choose(game, 'Dogma.Empiricism')
+    request = t.choose(game, 'purple', 'blue')
 
     t.testIsSecondPlayer(game)
   })

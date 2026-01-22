@@ -20,9 +20,9 @@ describe('Teleprompter', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Teleprompter')
-    request = t.choose(game, request, 'base')
-    request = t.choose(game, request, 2)
+    request = t.choose(game, 'Dogma.Teleprompter')
+    request = t.choose(game, 'base')
+    request = t.choose(game, 2)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -52,13 +52,13 @@ describe('Teleprompter', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Teleprompter')
-    request = t.choose(game, request, 'base')
-    request = t.choose(game, request, 1)
-    request = t.choose(game, request, 'base') // can't choose the same deck again
-    request = t.choose(game, request, 1)
-    request = t.choose(game, request, 'base')
-    request = t.choose(game, request, 2)
+    request = t.choose(game, 'Dogma.Teleprompter')
+    request = t.choose(game, 'base')
+    request = t.choose(game, 1)
+    request = t.choose(game, 'base') // can't choose the same deck again
+    request = t.choose(game, 1)
+    request = t.choose(game, 'base')
+    request = t.choose(game, 2)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

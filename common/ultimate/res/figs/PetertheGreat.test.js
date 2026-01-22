@@ -28,8 +28,8 @@ describe('Peter the Great', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'Tools') // Return Tools from hand
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'Tools') // Return Tools from hand
       // Karma triggers: score bottom green card (Mapmaking)
       // Mapmaking has {c}, so try to achieve bottom green card (The Wheel)
       // The Wheel is age 1, dennis has age 1 top card and 7 points, eligible
@@ -64,8 +64,8 @@ describe('Peter the Great', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'Tools') // Return Tools
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'Tools') // Return Tools
       // Karma triggers: score Navigation (has {c}), but no other green cards to achieve
 
       t.testIsSecondPlayer(game)
@@ -99,8 +99,8 @@ describe('Peter the Great', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'Tools') // Return Tools
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'Tools') // Return Tools
       // Karma triggers: score Navigation (has {c}), try to achieve The Wheel (bottom green card)
       // After Navigation (age 4) is scored, dennis has score 9
       // The Wheel requires score >= 5, but the eligibility check might be happening after Mathematics is also scored
@@ -134,8 +134,8 @@ describe('Peter the Great', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'Tools') // Return Tools
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'Tools') // Return Tools
       // Karma triggers but no green cards to score
 
       t.testIsSecondPlayer(game)
@@ -166,8 +166,8 @@ describe('Peter the Great', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'Tools') // Return Tools
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'Tools') // Return Tools
       // Karma triggers: score The Wheel (no {c}), so no achievement attempt
 
       t.testIsSecondPlayer(game)

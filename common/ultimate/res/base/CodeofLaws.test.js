@@ -16,15 +16,15 @@ describe('Code of Laws', () => {
     })
 
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Code of Laws')
+    const result2 = t.choose(game, 'Dogma.Code of Laws')
 
     expect(result2.selectors[0].choices.sort()).toEqual(['Metalworking', 'Writing'])
 
-    const result3 = t.choose(game, result2, 'Writing')
+    const result3 = t.choose(game, 'Writing')
 
     expect(result3.selectors[0].choices.sort()).toEqual(['blue'])
 
-    const result4 = t.choose(game, result3, 'blue')
+    const result4 = t.choose(game, 'blue')
 
     expect(t.cards(game, 'blue')).toEqual(['Tools', 'Writing'])
     expect(t.zone(game, 'blue').splay).toBe('left')

@@ -17,7 +17,7 @@ describe('Machine Tools', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Machine Tools')
+    const result2 = t.choose(game, 'Dogma.Machine Tools')
 
     t.testZone(game, 'score', ['Engineering', 'Machinery'], { sort: true })
   })
@@ -35,7 +35,7 @@ describe('Machine Tools', () => {
       },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Machine Tools')
+    const result2 = t.choose(game, 'Dogma.Machine Tools')
 
     t.testZone(game, 'score', ['Metalworking'])
   })

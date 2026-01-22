@@ -21,9 +21,9 @@ describe('Galileo Galilei', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Karma triggers: choose which deck to junk ({4} or {5})
-      request = t.choose(game, request, 4)
+      request = t.choose(game, 4)
       // Draw completes automatically after karma
 
       t.testIsSecondPlayer(game)
@@ -50,7 +50,7 @@ describe('Galileo Galilei', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Construction')
+      request = t.choose(game, 'Meld.Construction')
       // Karma triggers: choose achievement to junk (age 3, 4, or 5) - only Machinery is eligible
       // Since only one is eligible, it auto-selects, no choice needed
 
@@ -76,7 +76,7 @@ describe('Galileo Galilei', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Construction')
+      request = t.choose(game, 'Meld.Construction')
       // Karma triggers: choose achievement to junk (age 3, 4, or 5) - only Navigation is eligible
       // Since only one is eligible, it auto-selects, no choice needed
 
@@ -102,7 +102,7 @@ describe('Galileo Galilei', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Construction')
+      request = t.choose(game, 'Meld.Construction')
       // Karma triggers: choose achievement to junk (age 3, 4, or 5) - only Reformation is eligible
       // Since only one is eligible, it auto-selects, no choice needed
 
@@ -128,9 +128,9 @@ describe('Galileo Galilei', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Construction')
+      request = t.choose(game, 'Meld.Construction')
       // Karma triggers: choose which achievement to junk (age 3, 4, or 5)
-      request = t.choose(game, request, '**base-4*') // Choose Navigation
+      request = t.choose(game, '**base-4*') // Choose Navigation
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -157,7 +157,7 @@ describe('Galileo Galilei', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Construction')
+      request = t.choose(game, 'Meld.Construction')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
