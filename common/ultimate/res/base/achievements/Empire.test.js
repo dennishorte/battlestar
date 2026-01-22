@@ -37,14 +37,17 @@ describe('Empire Achievement', () => {
 
   test('person biscuits do not count', () => {
     const game = t.fixtureFirstPlayer()
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Escapism'])
-      t.setColor(game, 'dennis', 'yellow', [])
-      t.setColor(game, 'dennis', 'red', ['Coal'])
-      t.setColor(game, 'dennis', 'blue', ['Experimentation'])
-      t.setColor(game, 'dennis', 'purple', ['Reformation'])
-      t.setColor(game, 'dennis', 'green', ['The Wheel', 'Navigation'])
-      t.setSplay(game, 'dennis', 'green', 'up')
+    t.setBoard(game, {
+      dennis: {
+        hand: ['Escapism'],
+        red: ['Coal'],
+        blue: ['Experimentation'],
+        purple: ['Reformation'],
+        green: {
+          cards: ['The Wheel', 'Navigation'],
+          splay: 'up',
+        },
+      },
     })
 
     let request
@@ -64,14 +67,17 @@ describe('Empire Achievement', () => {
 
   test('not quite', () => {
     const game = t.fixtureFirstPlayer()
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Bioengineering'])
-      t.setColor(game, 'dennis', 'yellow', [])
-      t.setColor(game, 'dennis', 'red', ['Coal'])
-      t.setColor(game, 'dennis', 'blue', ['Experimentation'])
-      t.setColor(game, 'dennis', 'purple', ['Reformation'])
-      t.setColor(game, 'dennis', 'green', ['The Wheel', 'Navigation'])
-      t.setSplay(game, 'dennis', 'green', 'up')
+    t.setBoard(game, {
+      dennis: {
+        hand: ['Bioengineering'],
+        red: ['Coal'],
+        blue: ['Experimentation'],
+        purple: ['Reformation'],
+        green: {
+          cards: ['The Wheel', 'Navigation'],
+          splay: 'up',
+        },
+      },
     })
 
     let request
