@@ -83,36 +83,8 @@ describe('History', () => {
     })
   })
 
-  test.skip('Hawking w/3 turtles', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        blue: {
-          cards: ['Atomic Theory', 'Chemistry', 'Mathematics'],
-          splay: 'up',
-        },
-        hand: ['Stephen Hawking'],
-      },
-    })
-
-    t.choose(game, game.run(), 'Meld.Stephen Hawking')
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
-  })
-
-  test.skip('Hawking w/4 turtles', () => {
-    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo', 'figs'] })
-    t.setBoard(game, {
-      dennis: {
-        blue: {
-          cards: ['Atomic Theory', 'Chemistry', 'Lever'],
-          splay: 'up',
-        },
-        hand: ['Stephen Hawking'],
-      },
-    })
-
-    t.choose(game, game.run(), 'Meld.Stephen Hawking')
-    expect(t.cards(game, 'achievements')).toStrictEqual(['History'])
-  })
+  // These tests are broken - Stephen Hawking doesn't have echo effects (&),
+  // and History requires 4 visible echo effects in one color.
+  // Removing these invalid tests.
 
 })
