@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../lib/game.js')
 const { TyrantsFactory } = require('./tyrants.js')
 const TestCommon = require('../lib/test_common.js')
 const util = require('../lib/util.js')
@@ -321,41 +320,10 @@ TestUtil.setSpies = function(game, locId, playerNames) {
 ////////////////////////////////////////////////////////////////////////////////
 // Tests
 
-TestUtil.testActionChoices = function(request, action, expected) {
-  const actionChoices = request.selectors[0].choices.find(c => c.title === action).choices
-  expect(actionChoices.sort()).toStrictEqual(expected.sort())
-}
-
-TestUtil.testChoices = function(request, expected, expectedMin, expectedMax) {
-  const choices = request.selectors[0].choices.filter(c => c !== 'auto').sort()
-  expect(choices).toStrictEqual(expected.sort())
-
-  if (expectedMax) {
-    const { min, max } = request.selectors[0]
-    expect(min).toBe(expectedMin)
-    expect(max).toBe(expectedMax)
-  }
-
-  // This is actually just count
-  else if (expectedMin) {
-    expect(request.selectors[0].count).toBe(expectedMin)
-  }
-}
-
 TestUtil.testIsSecondPlayer = function(request) {
   const selector = request.selectors[0]
   expect(selector.actor).toBe('micah')
   expect(selector.title).toBe('Choose Action')
-}
-
-TestUtil.testGameOver = function(request, playerName, reason) {
-  expect(request).toEqual(expect.any(GameOverEvent))
-  expect(request.data.player).toBe(playerName)
-  expect(request.data.reason).toBe(reason)
-}
-
-TestUtil.testNotGameOver = function(request) {
-  expect(request).not.toEqual(expect.any(GameOverEvent))
 }
 
 TestUtil.testTroops = function(game, locationName, expected) {

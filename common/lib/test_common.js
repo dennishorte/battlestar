@@ -1,3 +1,4 @@
+const { GameOverEvent } = require('./game.js')
 const log = require('./log.js')
 const util = require('./util.js')
 
@@ -111,5 +112,43 @@ function _dumpZonesRecursive(root, indent=0) {
 TestCommon.dumpZones = function(root) {
   console.log(_dumpZonesRecursive(root))
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Common test assertions
+
+TestCommon.testActionChoices = function(request, action, expected) {
+  const actionChoices = request.selectors[0].choices.find(c => c.title === action).choices
+  // Handle both string choices and object choices with title property
+  const choiceNames = actionChoices.map(c => typeof c === 'object' ? c.title : c)
+  expect(choiceNames.sort()).toEqual(expected.sort())
+}
+
+TestCommon.testChoices = function(request, expected, expectedMin, expectedMax) {
+  const choices = request.selectors[0].choices.filter(c => c !== 'auto').sort()
+  expect(choices).toEqual(expected.sort())
+
+  if (expectedMax) {
+    const { min, max } = request.selectors[0]
+    expect(min).toBe(expectedMin)
+    expect(max).toBe(expectedMax)
+  }
+
+  // This is actually just count
+  else if (expectedMin) {
+    expect(request.selectors[0].count).toBe(expectedMin)
+  }
+}
+
+TestCommon.testGameOver = function(request, playerName, reason) {
+  expect(request).toEqual(expect.any(GameOverEvent))
+  expect(request.data.player).toBe(playerName)
+  expect(request.data.reason).toBe(reason)
+}
+
+TestCommon.testNotGameOver = function(request) {
+  expect(request).not.toEqual(expect.any(GameOverEvent))
+}
+
 
 module.exports = TestCommon

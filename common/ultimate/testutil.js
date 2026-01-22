@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../lib/game.js')
 const { InnovationFactory } = require('./innovation.js')
 const TestCommon = require('../lib/test_common.js')
 
@@ -129,29 +128,6 @@ TestUtil.fixtureTopCard = function(cardName, options) {
     TestUtil.setColor(game, game.players.current().name, card.color, [cardName])
   })
   return game
-}
-
-TestUtil.testActionChoices = function(request, action, expected) {
-  const actionChoices = request.selectors[0].choices.find(c => c.title === action).choices
-  // Handle both string choices and object choices with title property
-  const choiceNames = actionChoices.map(c => typeof c === 'object' ? c.title : c)
-  expect(choiceNames.sort()).toEqual(expected.sort())
-}
-
-TestUtil.testChoices = function(request, expected, expectedMin, expectedMax) {
-  const choices = request.selectors[0].choices.filter(c => c !== 'auto').sort()
-  expect(choices).toEqual(expected.sort())
-
-  if (expectedMax) {
-    const { min, max } = request.selectors[0]
-    expect(min).toBe(expectedMin)
-    expect(max).toBe(expectedMax)
-  }
-
-  // This is actually just count
-  else if (expectedMin) {
-    expect(request.selectors[0].count).toBe(expectedMin)
-  }
 }
 
 TestUtil.testDeckIsJunked = function(game, age) {
@@ -476,16 +452,6 @@ TestUtil.dumpBoard = function(game) {
   real.achievements = game.zones.byId('achievements').cardlist().map(c => c.name).sort()
 
   return real
-}
-
-TestUtil.testGameOver = function(request, playerName, reason) {
-  expect(request).toEqual(expect.any(GameOverEvent))
-  expect(request.data.player).toBe(playerName)
-  expect(request.data.reason).toBe(reason)
-}
-
-TestUtil.testNotGameOver = function(request) {
-  expect(request).not.toEqual(expect.any(GameOverEvent))
 }
 
 
