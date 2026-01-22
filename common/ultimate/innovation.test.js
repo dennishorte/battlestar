@@ -69,29 +69,28 @@ describe('Innovation', () => {
 
     test('after picking, selected cards are played', () => {
       const game = t.fixture()
-      const request1 = game.run()
-      const request2 = game.respondToInputRequest({
+      game.run()
+      game.respondToInputRequest({
         actor: 'micah',
         title: 'Choose First Card',
         selection: ['Code of Laws'],
       })
-      const request3 = game.respondToInputRequest({
+      game.respondToInputRequest({
         actor: 'dennis',
         title: 'Choose First Card',
         selection: ['Archery'],
       })
 
-      const dennisRed = game
-        .zones.byPlayer(game.players.byName('dennis'), 'red')
-        .cardlist()
-        .map(c => c.name)
-      expect(dennisRed).toStrictEqual(['Archery'])
-
-      const micahPurple = game
-        .zones.byPlayer(game.players.byName('micah'), 'purple')
-        .cardlist()
-        .map(c => c.name)
-      expect(micahPurple).toStrictEqual(['Code of Laws'])
+      t.testBoard(game, {
+        dennis: {
+          red: ['Archery'],
+          hand: ['Domestication'],
+        },
+        micah: {
+          purple: ['Code of Laws'],
+          hand: ['Mysticism'],
+        },
+      })
     })
 
     test('player closest to start of alphabet goes first (test a)', () => {
@@ -146,10 +145,22 @@ describe('Innovation', () => {
           },
         },
       })
-      const request1 = game.run()
-      const request2 = t.choose(game, 'Dogma.Globalization')
+      game.run()
+      t.choose(game, 'Dogma.Globalization')
 
-      expect(t.zone(game, 'yellow', 'micah').splay).toBe('none')
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          yellow: {
+            cards: ['Globalization', 'Stem Cells', 'Fermenting'],
+            splay: 'up',
+          },
+          blue: ['Climatology'],  // Drew and melded age 10 (no age 11 available)
+        },
+        micah: {
+          yellow: ['Statistics'],  // Only one card, so unsplayed
+        },
+      })
     })
   })
 
@@ -368,10 +379,17 @@ describe('Innovation', () => {
           },
           achievements: ['The Wheel', 'Monotheism', 'Machinery'],
         })
-        const request1 = game.run()
-        const request2 = t.choose(game, 'Achieve.*base-2*')
+        game.run()
+        t.choose(game, 'Achieve.*base-2*')
 
-        expect(t.cards(game, 'achievements')).toStrictEqual(['Monotheism'])
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
+          dennis: {
+            score: ['Canning', 'Experimentation', 'Coal'],
+            red: ['Construction'],
+            achievements: ['Monotheism'],
+          },
+        })
       })
 
       test.skip('in figures, opponents get a figure', () => {
@@ -618,11 +636,11 @@ describe('Innovation', () => {
           },
         })
 
-        let request
-        request = game.run()
-        request = t.choose(game, 'Auspice.Astronomy')
+        game.run()
+        t.choose(game, 'Auspice.Astronomy')
 
-        t.setBoard(game, {
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
           dennis: {
             blue: ['Archimedes'],
             purple: ['Astronomy'],
@@ -698,17 +716,22 @@ describe('Innovation', () => {
           dennis: {
             blue: ['Writing'],
           },
+          decks: {
+            base: {
+              2: ['Calendar'],
+            },
+          },
         })
-        const request = game.run()
+        game.run()
         t.choose(game, 'Dogma.Writing')
 
-        const dennis = game.players.byName('dennis')
-        const dennisHandAges = game.zones.byPlayer(dennis, 'hand').cardlist().map(c => c.age).sort()
-        expect(dennisHandAges).toStrictEqual([2])
-
-        const micah = game.players.byName('micah')
-        const micahHandAges = game.zones.byPlayer(micah, 'hand').cardlist().map(c => c.age).sort()
-        expect(micahHandAges).toStrictEqual([])
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
+          dennis: {
+            blue: ['Writing'],
+            hand: ['Calendar'],
+          },
+        })
       })
 
       test('demand', () => {
@@ -729,12 +752,22 @@ describe('Innovation', () => {
               1: ['Tools'],
             },
           },
+          // Clear achievements so Archery's junk effect is skipped
+          achievements: [],
         })
-        const result1 = game.run()
-        const result2 = t.choose(game, 'Dogma.Archery')
+        game.run()
+        t.choose(game, 'Dogma.Archery')
 
-        expect(t.cards(game, 'hand')).toStrictEqual(['Gunpowder'])
-        expect(t.cards(game, 'hand', 'micah')).toStrictEqual(['Tools'])
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
+          dennis: {
+            red: ['Archery'],
+            hand: ['Gunpowder'],
+          },
+          micah: {
+            hand: ['Tools'],
+          },
+        })
       })
 
       test.skip('compel', () => {
@@ -749,16 +782,22 @@ describe('Innovation', () => {
     describe('draw action', () => {
       test('player draws a card based on top card age (test 1)', () => {
         const game = t.fixtureFirstPlayer()
-        const request = game.run()
-        const dennis = game.players.byName('dennis')
-
-        expect(game.zones.byPlayer(dennis, 'hand').cardlist().length).toBe(0)
-
+        t.setBoard(game, {
+          decks: {
+            base: {
+              1: ['Sailing'],
+            },
+          },
+        })
+        game.run()
         t.choose(game, 'Draw.draw a card')
 
-        const dennisCards = game.zones.byPlayer(dennis, 'hand').cardlist()
-        expect(dennisCards.length).toBe(1)
-        expect(dennisCards.map(c => c.age).sort()).toStrictEqual([1])
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
+          dennis: {
+            hand: ['Sailing'],
+          },
+        })
       })
 
       test('player draws a card based on top card age (test 2)', () => {
@@ -767,16 +806,22 @@ describe('Innovation', () => {
           dennis: {
             purple: ['Specialization'],
           },
+          decks: {
+            base: {
+              9: ['Genetics'],
+            },
+          },
         })
-
-        const request = game.run()
-        const dennis = game.players.byName('dennis')
-
+        game.run()
         t.choose(game, 'Draw.draw a card')
 
-        const dennisCards = game.zones.byPlayer(dennis, 'hand').cardlist()
-        expect(dennisCards.length).toBe(1)
-        expect(dennisCards.map(c => c.age).sort()).toStrictEqual([9])
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
+          dennis: {
+            purple: ['Specialization'],
+            hand: ['Genetics'],
+          },
+        })
       })
 
       test('draw an 11 ends the game', () => {
@@ -870,17 +915,28 @@ describe('Innovation', () => {
             },
           },
         })
-        const request1 = game.run()
-        const request2 = t.choose(game, 'Endorse.green')
-        const request3 = t.choose(game, 'Clothing') // Micah's choice
+        game.run()
+        t.choose(game, 'Endorse.green')
+        t.choose(game, 'Clothing') // Micah's choice for demand
 
-        expect(t.cards(game, 'score').sort()).toStrictEqual([
-          'Clothing',
-          'Code of Laws',
-          'The Wheel',
-          'Tools',
-        ])
-        expect(t.cards(game, 'score', 'scott').sort()).toStrictEqual(['Mysticism'])
+        t.testIsSecondPlayer(game)
+        t.testBoard(game, {
+          dennis: {
+            green: ['Mapmaking'],
+            red: ['Barcelona'],
+            hand: ['Engineering'],  // Endorse share bonus (city draw)
+            score: ['Clothing', 'Code of Laws', 'The Wheel', 'Tools'],
+          },
+          micah: {
+            score: [],  // Transferred all to Dennis
+          },
+          scott: {
+            green: ['Venice'],
+            purple: ['Ephesus'],
+            score: ['Mysticism'],  // Got from share
+          },
+          junk: ['Masonry'],  // Tucked card gets junked in endorse
+        })
       })
 
       test('city biscuits must match featured biscuit; cities match themselves', () => {
