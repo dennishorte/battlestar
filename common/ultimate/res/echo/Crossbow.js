@@ -7,7 +7,7 @@ module.exports = {
   dogmaBiscuit: `k`,
   echo: [],
   dogma: [
-    `I demand you transfer an expansion from your hand to my score pile!`,
+    `I demand you transfer an expansion card from your hand to my score pile!`,
     `Transfer a card from your hand to any other player's board.`
   ],
   dogmaImpl: [
