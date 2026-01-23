@@ -36,7 +36,7 @@ module.exports = {
         }
       }
       else {
-        game.log.addDoNothing(player)
+        game.log.addDoNothing(player, 'score')
       }
     },
   ],

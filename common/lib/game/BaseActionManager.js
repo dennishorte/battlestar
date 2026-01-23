@@ -30,7 +30,7 @@ class BaseActionManager {
     this._validateChooseResponse(selected, chooseSelector)
 
     if (selected.length === 0) {
-      this.log.addDoNothing(player)
+      this.log.addDoNothing(player, 'choose')
       return []
     }
     else {

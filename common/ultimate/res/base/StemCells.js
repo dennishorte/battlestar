@@ -23,7 +23,7 @@ module.exports = {
         game.actions.scoreMany(player, hand.cardlist())
       }
       else {
-        game.log.addDoNothing(player)
+        game.log.addDoNothing(player, 'score')
       }
     },
 

@@ -1332,7 +1332,7 @@ Tyrants.prototype.aDevourThisAnd = function(player, card, title, fn) {
     fn(this, player)
   }
   else {
-    this.log.addDoNothing(player)
+    this.log.addDoNothing(player, 'devour')
   }
   this.log.outdent()
 }

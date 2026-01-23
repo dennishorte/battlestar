@@ -21,7 +21,7 @@ module.exports = {
         game.actions.draw(player, { age: game.cards.byPlayer(player, card.color).length })
       }
       else {
-        game.log.addDoNothing(player)
+        game.log.addDoNothing(player, 'return a card')
       }
     }
   ],

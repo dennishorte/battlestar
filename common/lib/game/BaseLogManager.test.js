@@ -92,25 +92,19 @@ describe('BaseLogManager', () => {
     test('addDoNothing should add appropriate log entry', () => {
       const { logManager } = createLogManager()
 
-      // Mock the add method to capture what's passed to it
       const addSpy = jest.spyOn(logManager, 'add')
 
-      // Call addDoNothing
-      logManager.addDoNothing('Player1')
+      logManager.addDoNothing('Player1', 'return a card')
 
-      // Verify add was called
       expect(addSpy).toHaveBeenCalled()
 
-      // Check the template was correct
       const addCallArgs = addSpy.mock.calls[0][0]
-      expect(addCallArgs.template).toBe('{player} does nothing')
+      expect(addCallArgs.template).toBe('{player} does not return a card')
 
-      // Check a log entry was added
       expect(logManager.getLog()).toHaveLength(1)
 
-      // Verify the log entry content
       const logEntry = logManager.getLog()[0]
-      expect(logEntry.template).toBe('{player} does nothing')
+      expect(logEntry.template).toBe('{player} does not return a card')
 
       // Verify player was enriched
       const playerArg = logEntry.args.player

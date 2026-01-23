@@ -21,7 +21,7 @@ module.exports = {
           game.actions.meldMany(player, game.cards.byPlayer(player, 'score'))
         }
         else {
-          game.log.addDoNothing(player)
+          game.log.addDoNothing(player, 'meld')
         }
       }
     },

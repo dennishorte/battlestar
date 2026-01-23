@@ -35,7 +35,7 @@ module.exports = {
           }
         }
         else {
-          game.log.addDoNothing(player)
+          game.log.addDoNothing(player, 'meld or score')
           break
         }
       }

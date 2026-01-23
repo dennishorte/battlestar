@@ -22,7 +22,7 @@ module.exports = {
         game.actions.scoreMany(player, toReturn)
       }
       else {
-        game.log.addDoNothing(player)
+        game.log.addDoNothing(player, 'draw and tuck')
       }
     },
 

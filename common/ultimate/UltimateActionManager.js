@@ -264,7 +264,7 @@ class UltimateActionManager extends BaseActionManager {
       { ...opts, title: `Choose a color to splay ${direction}` }
     )
     if (colors.length === 0) {
-      this.log.addDoNothing(player)
+      this.log.addDoNothing(player, 'splay')
       return []
     }
     else {
@@ -369,7 +369,7 @@ class UltimateActionManager extends BaseActionManager {
       )
 
       if (cardNames.length === 0) {
-        this.log.addDoNothing(player)
+        this.log.addDoNothing(player, 'choose')
         return []
       }
 

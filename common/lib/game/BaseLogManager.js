@@ -61,9 +61,9 @@ class BaseLogManager {
     this._log.push(entry)
   }
 
-  addDoNothing(player) {
+  addDoNothing(player, action) {
     this.add({
-      template: '{player} does nothing',
+      template: `{player} does not ${action}`,
       args: { player },
     })
   }

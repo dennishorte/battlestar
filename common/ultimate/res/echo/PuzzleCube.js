@@ -21,7 +21,7 @@ module.exports = {
       })
 
       if (!color || color.length === 0) {
-        game.log.addDoNothing(player)
+        game.log.addDoNothing(player, 'score')
         return
       }
 

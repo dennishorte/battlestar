@@ -24,7 +24,7 @@ module.exports = {
         const lowestScoreCards = game.util.lowestCards(game.cards.byPlayer(player, 'score'))
 
         if (!lowestScoreCards) {
-          game.log.addDoNothing()
+          game.log.addNoEffect()
           return
         }
 

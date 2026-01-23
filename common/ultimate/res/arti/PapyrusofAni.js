@@ -28,7 +28,7 @@ module.exports = {
         }
       }
       else {
-        game.log.addDoNothing(player)
+        game.log.addDoNothing(player, 'return a card')
       }
     }
   ],
