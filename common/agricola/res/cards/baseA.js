@@ -266,7 +266,7 @@ const minorImprovements = [
           args: { player: cardOwner },
         })
         for (const player of game.players.all()) {
-          if (player !== cardOwner) {
+          if (player.name !== cardOwner.name) {
             player.addResource('food', 1)
             game.log.add({
               template: '{player} gets 1 food from Milk Jug',
@@ -946,7 +946,7 @@ const occupations = [
     category: 'Crop Provider',
     text: 'Each time another player uses the "Traveling Players" accumulation space, you get 1 food and 1 wood. Immediately after, you can buy exactly 1 vegetable for 2 food.',
     onAnyAction(game, actingPlayer, actionId, cardOwner) {
-      if (actionId === 'traveling-players' && actingPlayer !== cardOwner) {
+      if (actionId === 'traveling-players' && actingPlayer.name !== cardOwner.name) {
         cardOwner.addResource('food', 1)
         cardOwner.addResource('wood', 1)
         game.log.add({
