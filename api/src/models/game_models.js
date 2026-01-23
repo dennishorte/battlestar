@@ -1,5 +1,6 @@
 import { fromData, fromLobby } from 'battlestar-common'
 import { client as databaseClient } from '../utils/mongo.js'
+import { shouldUpdateBranchId } from '../utils/branchId.js'
 
 // Database and collection
 const database = databaseClient.db('games')
@@ -113,8 +114,12 @@ Game.linkGameToDraft = async function(game, draft) {
   )
 }
 
-Game.save = async function(game) {
-  const branchId = Date.now()
+Game.save = async function(game, previousWaitingState = null) {
+  const currentWaitingState = game.getWaitingState ? game.getWaitingState() : null
+
+  // Determine if branchId should update based on waiting state changes
+  const branchIdShouldUpdate = shouldUpdateBranchId(previousWaitingState, currentWaitingState)
+  const branchId = branchIdShouldUpdate ? Date.now() : game.branchId
   game.branchId = branchId
 
   await gameCollection.updateOne(

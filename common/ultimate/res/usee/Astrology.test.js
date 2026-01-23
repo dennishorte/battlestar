@@ -19,8 +19,8 @@ describe('Astrology', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Astrology')
-    request = t.choose(game, request, 'yellow')
+    request = t.choose(game, 'Dogma.Astrology')
+    request = t.choose(game, 'yellow')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -52,8 +52,8 @@ describe('Astrology', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Astrology')
-    request = t.choose(game, request, 'yellow')
+    request = t.choose(game, 'Dogma.Astrology')
+    request = t.choose(game, 'yellow')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -15,9 +15,9 @@ describe('Publications', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Publications')
-    request = t.choose(game, request, 'blue')
-    request = t.choose(game, request, 'Monument')
+    request = t.choose(game, 'Dogma.Publications')
+    request = t.choose(game, 'blue')
+    request = t.choose(game, 'Monument')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -47,10 +47,10 @@ describe('Publications', () => {
 
     expect(game.cards.byId('Monument').zone.id).toEqual('junk')
 
-    request = t.choose(game, request, 'Dogma.Publications')
-    request = t.choose(game, request, 'blue')
-    request = t.choose(game, request)
-    request = t.choose(game, request, 'Monument')
+    request = t.choose(game, 'Dogma.Publications')
+    request = t.choose(game, 'blue')
+    request = t.choose(game)
+    request = t.choose(game, 'Monument')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -14,7 +14,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const choices = util.array.distinct(game.getBonuses(player)).sort()
+      const choices = util.array.distinct(player.bonuses()).sort()
       const age = game.actions.chooseAge(player, choices, { title: 'Choose an age to draw and score' })
       if (age) {
         game.actions.drawAndScore(player, age)
@@ -27,7 +27,7 @@ module.exports = {
       if (returned) {
         const toAchieve = returned.length * 2
         for (let i = 0; i < toAchieve; i++) {
-          const choices = game.getEligibleAchievementsRaw(player)
+          const choices = player.eligibleAchievementCards()
           if (choices) {
             game.actions.chooseAndAchieve(player, choices)
           }

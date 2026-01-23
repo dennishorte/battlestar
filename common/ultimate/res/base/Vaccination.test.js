@@ -23,9 +23,9 @@ describe('Vaccination', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Vaccination')
-    request = t.choose(game, request, 1)
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Vaccination')
+    request = t.choose(game, 1)
+    request = t.choose(game, 'auto')
 
     t.testBoard(game, {
       dennis: {
@@ -49,7 +49,7 @@ describe('Vaccination', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Vaccination')
+    request = t.choose(game, 'Dogma.Vaccination')
 
     t.testIsSecondPlayer(game)
 

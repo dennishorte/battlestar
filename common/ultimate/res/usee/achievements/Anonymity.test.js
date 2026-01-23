@@ -15,7 +15,7 @@ describe('Anonymity', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Evolution')
+    request = t.choose(game, 'Meld.Evolution')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -38,7 +38,7 @@ describe('Anonymity', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Evolution')
+    request = t.choose(game, 'Meld.Evolution')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -61,7 +61,7 @@ describe('Anonymity', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Canning')
+    request = t.choose(game, 'Meld.Canning')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

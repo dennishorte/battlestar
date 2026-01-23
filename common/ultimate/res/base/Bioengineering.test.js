@@ -5,26 +5,42 @@ const { GameOverEvent, InputRequestEvent } = require('../../../lib/game.js')
 
 describe('Bioengineering', () => {
   test('score a card', () => {
-    const game = t.fixtureTopCard('Bioengineering')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'micah', 'yellow', ['Agriculture'])
-      t.setColor(game, 'micah', 'green', ['Sailing'])
-      t.setColor(game, 'dennis', 'green', ['Clothing'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Bioengineering'],
+        green: ['Clothing'],
+      },
+      micah: {
+        yellow: ['Agriculture'],
+        green: ['Sailing'],
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Bioengineering')
+    game.run()
+    const request = t.choose(game, 'Dogma.Bioengineering')
 
-    expect(result2.selectors[0].choices.sort()).toEqual(['Agriculture', 'Clothing', 'Sailing'])
+    expect(request.selectors[0].choices.sort()).toEqual(['Agriculture', 'Clothing', 'Sailing'])
 
-    const result3 = t.choose(game, result2, 'Sailing')
+    t.choose(game, 'Sailing')
 
-    expect(t.cards(game, 'score')).toEqual(['Sailing'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Bioengineering'],
+        green: ['Clothing'],
+        score: ['Sailing'],
+      },
+      micah: {
+        yellow: ['Agriculture'],
+      },
+    })
   })
 
   test('win condition yes', () => {
-    const game = t.fixtureTopCard('Bioengineering')
+    const game = t.fixtureFirstPlayer()
     t.setBoard(game, {
       dennis: {
+        blue: ['Bioengineering'],
         yellow: ['Agriculture'],
         green: ['Clothing'],
       },
@@ -33,44 +49,54 @@ describe('Bioengineering', () => {
       },
     })
 
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Bioengineering')
-    const result3 = t.choose(game, result2, 'Clothing')
+    game.run()
+    t.choose(game, 'Dogma.Bioengineering')
+    const result = t.choose(game, 'Clothing')
 
-    expect(result3).toEqual(expect.any(GameOverEvent))
-    t.testGameOver(result3, 'dennis', 'Bioengineering')
+    expect(result).toEqual(expect.any(GameOverEvent))
+    t.testGameOver(result, 'dennis', 'Bioengineering')
   })
 
   test('win condition tied', () => {
-    const game = t.fixtureTopCard('Bioengineering')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'purple', ['Code of Laws'])
-      t.setColor(game, 'micah', 'green', ['Sailing'])
-      t.setColor(game, 'micah', 'blue', ['Pottery'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Bioengineering'],
+        purple: ['Code of Laws'],
+      },
+      micah: {
+        green: ['Sailing'],
+        blue: ['Pottery'],
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Bioengineering')
-    const result3 = t.choose(game, result2, 'Pottery')
+    game.run()
+    t.choose(game, 'Dogma.Bioengineering')
+    const result = t.choose(game, 'Pottery')
 
-    expect(result3).toEqual(expect.any(InputRequestEvent))
-    expect(result3.selectors[0].actor).toBe('micah')
-    expect(result3.selectors[0].title).toBe('Choose First Action')
+    expect(result).toEqual(expect.any(InputRequestEvent))
+    expect(result.selectors[0].actor).toBe('micah')
+    expect(result.selectors[0].title).toBe('Choose First Action')
   })
 
   test('win condition no', () => {
-    const game = t.fixtureTopCard('Bioengineering')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'yellow', ['Agriculture'])
-      t.setColor(game, 'dennis', 'purple', ['Code of Laws'])
-      t.setColor(game, 'micah', 'green', ['Sailing'])
-      t.setColor(game, 'micah', 'blue', ['Pottery'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Bioengineering'],
+        yellow: ['Agriculture'],
+        purple: ['Code of Laws'],
+      },
+      micah: {
+        green: ['Sailing'],
+        blue: ['Pottery'],
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Bioengineering')
-    const result3 = t.choose(game, result2, 'Sailing')
+    game.run()
+    t.choose(game, 'Dogma.Bioengineering')
+    const result = t.choose(game, 'Sailing')
 
-    expect(result3).toEqual(expect.any(InputRequestEvent))
-    expect(result3.selectors[0].actor).toBe('micah')
-    expect(result3.selectors[0].title).toBe('Choose First Action')
+    expect(result).toEqual(expect.any(InputRequestEvent))
+    expect(result.selectors[0].actor).toBe('micah')
+    expect(result.selectors[0].title).toBe('Choose First Action')
   })
 })

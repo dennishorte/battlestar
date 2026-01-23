@@ -14,7 +14,7 @@ module.exports = {
       game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), { min: 0, max: 1 })
       game.actions.chooseAndTransfer(player, game.cards.byPlayer(player, 'score'), game.zones.byPlayer(player, 'hand'), { min: 0, max: 1 })
 
-      if (game.getScore(player) === 25) {
+      if (player.score() === 25) {
         game.youWin(player, self.name)
       }
     },

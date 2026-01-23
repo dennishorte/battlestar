@@ -26,7 +26,7 @@ module.exports = {
           .cardlist()
           .filter(card => card.age !== undefined)
 
-        game.aExchangeCards(
+        game.actions.exchangeCards(
           player,
           scoreCards,
           valuedJunkCards,

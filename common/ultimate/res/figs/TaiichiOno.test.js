@@ -22,10 +22,10 @@ describe('Taiichi Ono', () => {
       let request
       request = game.run()
       // dennis (owner) dogmas Metalworking
-      request = t.choose(game, request, 'Dogma.Metalworking')
+      request = t.choose(game, 'Dogma.Metalworking')
       // Karma triggers: may achieve a card from hand with matching featured biscuit
       // Archery has featured biscuit 'k' (matches Metalworking's 'k')
-      request = t.choose(game, request, 'Archery') // Choose to achieve Archery
+      request = t.choose(game, 'Archery') // Choose to achieve Archery
       // Metalworking's dogma: draw and reveal {1}, if it has {k}, score it and repeat
       // Continue until a card without {k} is drawn
 
@@ -60,10 +60,10 @@ describe('Taiichi Ono', () => {
       let request
       request = game.run()
       // dennis (owner) dogmas Metalworking
-      request = t.choose(game, request, 'Dogma.Metalworking')
+      request = t.choose(game, 'Dogma.Metalworking')
       // Karma triggers: may achieve a card from hand with matching featured biscuit
       // Choose not to achieve (skip)
-      request = t.choose(game, request) // Skip achieving (min: 0)
+      request = t.choose(game) // Skip achieving (min: 0)
       // Since no card was achieved, draw an {e} (age 11)
       // Metalworking's dogma continues
 
@@ -97,7 +97,7 @@ describe('Taiichi Ono', () => {
       let request
       request = game.run()
       // dennis (owner) dogmas Metalworking
-      request = t.choose(game, request, 'Dogma.Metalworking')
+      request = t.choose(game, 'Dogma.Metalworking')
       // Karma triggers: may achieve a card from hand with matching featured biscuit
       // Tools has featured biscuit 's' (does not match Metalworking's 'k')
       // No cards match, so chooseAndAchieve returns [] (min: 0)

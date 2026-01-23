@@ -30,7 +30,7 @@ module.exports = {
         args: { player }
       })
 
-      game.aYouLose(player, self)
+      game.youLose(player, self.name)
     }
   ],
 }

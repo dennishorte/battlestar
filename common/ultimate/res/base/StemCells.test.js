@@ -4,40 +4,83 @@ const t = require('../../testutil.js')
 
 describe('Stem Cells', () => {
   test('no cards in hand', () => {
-    const game = t.fixtureTopCard('Stem Cells')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', [])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Stem Cells'],
+      },
+      decks: {
+        base: {
+          11: ['Hypersonics'],
+        },
+      },
     })
-    let request
-    request = game.run()
-    t.choose(game, request, 'Dogma.Stem Cells')
-    // Just looking for no errors.
+
+    game.run()
+    t.choose(game, 'Dogma.Stem Cells')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Stem Cells'],
+        hand: ['Hypersonics'],
+      },
+    })
   })
 
   test('cards in hand, yes', () => {
-    const game = t.fixtureTopCard('Stem Cells')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Reformation', 'Experimentation'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Stem Cells'],
+        hand: ['Reformation', 'Experimentation'],
+      },
+      decks: {
+        base: {
+          11: ['Hypersonics'],
+        },
+      },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Stem Cells')
-    request = t.choose(game, request, 'yes')
-    request = t.choose(game, request, 'auto')
 
-    expect(t.cards(game, 'score').sort()).toEqual(['Experimentation', 'Reformation'])
+    game.run()
+    t.choose(game, 'Dogma.Stem Cells')
+    t.choose(game, 'yes')
+    t.choose(game, 'auto')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Stem Cells'],
+        score: ['Reformation', 'Experimentation'],
+        hand: ['Hypersonics'],
+      },
+    })
   })
 
   test('cards in hand, no', () => {
-    const game = t.fixtureTopCard('Stem Cells')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Reformation', 'Experimentation'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Stem Cells'],
+        hand: ['Reformation', 'Experimentation'],
+      },
+      decks: {
+        base: {
+          11: ['Hypersonics'],
+        },
+      },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Stem Cells')
-    t.choose(game, request, 'no')
 
-    expect(t.cards(game, 'score')).toEqual([])
+    game.run()
+    t.choose(game, 'Dogma.Stem Cells')
+    t.choose(game, 'no')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Stem Cells'],
+        hand: ['Reformation', 'Experimentation', 'Hypersonics'],
+      },
+    })
   })
 })

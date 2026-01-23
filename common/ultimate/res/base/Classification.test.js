@@ -4,20 +4,34 @@ const t = require('../../testutil.js')
 
 describe('Classification', () => {
   test('transfer a card', () => {
-    const game = t.fixtureTopCard('Classification')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Mathematics', 'Code of Laws', 'Alchemy'])
-      t.setHand(game, 'micah', ['Experimentation', 'Metric System', 'Tools'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        green: ['Classification'],
+        hand: ['Mathematics', 'Code of Laws', 'Alchemy'],
+      },
+      micah: {
+        hand: ['Experimentation', 'Metric System', 'Tools'],
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Classification')
-    const result3 = t.choose(game, result2, 'Mathematics')
+    game.run()
+    t.choose(game, 'Dogma.Classification')
+    t.choose(game, 'Mathematics')
 
-    const result4 = t.choose(game, result3, 'Tools')
-    const result5 = t.choose(game, result4, 'Alchemy')
-    const result6 = t.choose(game, result5, 'Mathematics')
+    t.choose(game, 'Tools')
+    t.choose(game, 'Alchemy')
+    t.choose(game, 'Mathematics')
 
-    expect(t.cards(game, 'blue')).toEqual(['Experimentation', 'Mathematics', 'Alchemy', 'Tools'])
+    t.testBoard(game, {
+      dennis: {
+        green: ['Classification'],
+        blue: ['Experimentation', 'Mathematics', 'Alchemy', 'Tools'],
+        hand: ['Code of Laws'],
+      },
+      micah: {
+        hand: ['Metric System'],
+      },
+    })
   })
 
 })

@@ -19,7 +19,7 @@ module.exports = {
       const transferred = game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'))
 
       if (transferred.length > 0) {
-        const achievements = game.getAvailableAchievements(player)
+        const achievements = player.availableAchievements()
         game.actions.chooseAndJunk(player, achievements, { count: 4 })
         game.actions.draw(player, { age: game.getEffectAge(self, 7) })
       }

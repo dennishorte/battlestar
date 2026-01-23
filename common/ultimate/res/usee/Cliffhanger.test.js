@@ -18,7 +18,7 @@ describe('Cliffhanger', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Cliffhanger')
+    request = t.choose(game, 'Dogma.Cliffhanger')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -40,7 +40,7 @@ describe('Cliffhanger', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Cliffhanger')
+    request = t.choose(game, 'Dogma.Cliffhanger')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -62,7 +62,7 @@ describe('Cliffhanger', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Cliffhanger')
+    request = t.choose(game, 'Dogma.Cliffhanger')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -84,7 +84,7 @@ describe('Cliffhanger', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Cliffhanger')
+    request = t.choose(game, 'Dogma.Cliffhanger')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -106,7 +106,7 @@ describe('Cliffhanger', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Cliffhanger')
+    request = t.choose(game, 'Dogma.Cliffhanger')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -133,7 +133,7 @@ describe('Cliffhanger', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Cliffhanger')
+    request = t.choose(game, 'Dogma.Cliffhanger')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

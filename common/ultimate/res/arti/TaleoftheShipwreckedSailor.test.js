@@ -22,8 +22,8 @@ describe("Tale of the Shipwrecked Sailor", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'purple')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'purple')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

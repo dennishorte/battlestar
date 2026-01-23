@@ -4,24 +4,43 @@ const t = require('../../../testutil.js')
 
 describe('World achievement', () => {
   test('12 biscuits', () => {
-    const game = t.fixtureTopCard('Specialization')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'green', ['Databases'])
-      t.setColor(game, 'dennis', 'blue', [
-        'Software',
-        'Bioengineering',
-        'Computers',
-        'Publications',
-        'Rocketry',
-        'Quantum Theory'
-      ])
-      t.setHand(game, 'dennis', [])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Specialization'],
+        green: ['Databases'],
+        blue: [
+          'Software',
+          'Bioengineering',
+          'Computers',
+          'Publications',
+          'Rocketry',
+          'Quantum Theory'
+        ],
+      },
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Specialization')
-    request = t.choose(game, request, 'blue')
+    request = t.choose(game, 'Dogma.Specialization')
+    request = t.choose(game, 'blue')
 
-    expect(t.cards(game, 'achievements')).toEqual(['World'])
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Specialization'],
+        green: ['Databases'],
+        blue: {
+          cards: [
+            'Software',
+            'Bioengineering',
+            'Computers',
+            'Publications',
+            'Rocketry',
+            'Quantum Theory'
+          ],
+          splay: 'up',
+        },
+        achievements: ['World'],
+      },
+    })
   })
 })

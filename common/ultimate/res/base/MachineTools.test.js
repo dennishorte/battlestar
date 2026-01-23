@@ -4,24 +4,38 @@ const t = require('../../testutil.js')
 
 describe('Machine Tools', () => {
   test('draw blue, green, other', () => {
-    const game = t.fixtureTopCard('Machine Tools')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setScore(game, 'dennis', ['Machinery'])
-      t.setDeckTop(game, 'base', 3, ['Engineering'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        red: ['Machine Tools'],
+        score: ['Machinery'],
+      },
+      decks: {
+        base: {
+          3: ['Engineering'],
+        },
+      },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Machine Tools')
+    const result2 = t.choose(game, 'Dogma.Machine Tools')
 
     t.testZone(game, 'score', ['Engineering', 'Machinery'], { sort: true })
   })
 
   test('nothing in score pile', () => {
-    const game = t.fixtureTopCard('Machine Tools')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setDeckTop(game, 'base', 1, ['Metalworking'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        red: ['Machine Tools'],
+      },
+      decks: {
+        base: {
+          1: ['Metalworking'],
+        },
+      },
     })
     const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Machine Tools')
+    const result2 = t.choose(game, 'Dogma.Machine Tools')
 
     t.testZone(game, 'score', ['Metalworking'])
   })

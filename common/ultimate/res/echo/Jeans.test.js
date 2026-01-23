@@ -21,10 +21,10 @@ describe("Jeans", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Jeans')
-    request = t.choose(game, request, 'Tractor')
-    request = t.choose(game, request, 'Loom')
-    request = t.choose(game, request, 8)
+    request = t.choose(game, 'Dogma.Jeans')
+    request = t.choose(game, 'Tractor')
+    request = t.choose(game, 'Loom')
+    request = t.choose(game, 8)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -56,11 +56,11 @@ describe("Jeans", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Flight')
-    request = t.choose(game, request, 'Tractor')
-    request = t.choose(game, request, 'Loom')
-    request = t.choose(game, request, 8)
-    request = t.choose(game, request, '**echo-6*')
+    request = t.choose(game, 'Meld.Flight')
+    request = t.choose(game, 'Tractor')
+    request = t.choose(game, 'Loom')
+    request = t.choose(game, 8)
+    request = t.choose(game, '**echo-6*')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

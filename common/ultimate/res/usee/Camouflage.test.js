@@ -21,7 +21,7 @@ describe('Camouflage', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Camouflage')
+    request = t.choose(game, 'Dogma.Camouflage')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -44,13 +44,13 @@ describe('Camouflage', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Camouflage')
-    request = t.choose(game, request, 'Score secrets')
+    request = t.choose(game, 'Dogma.Camouflage')
+    request = t.choose(game, 'Score secrets')
 
     t.testChoices(request, ['*base-1* (dennis)', '*base-1* (dennis)', '*usee-1* (dennis)'])
 
-    request = t.choose(game, request, '**base-1* (dennis)', '**base-1* (dennis)')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, '**base-1* (dennis)', '**base-1* (dennis)')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -74,10 +74,10 @@ describe('Camouflage', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Camouflage')
-    request = t.choose(game, request, 'Junk and safeguard')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Camouflage')
+    request = t.choose(game, 'Junk and safeguard')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

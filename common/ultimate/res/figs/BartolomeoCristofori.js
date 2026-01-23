@@ -18,7 +18,7 @@ module.exports = {
         return zone.splay !== 'none' && zone.cardlist().length === 4
       },
       func(game, player) {
-        const choices = game.getAvailableStandardAchievements(player)
+        const choices = player.availableStandardAchievements()
         game.actions.chooseAndAchieve(player, choices)
       }
     }

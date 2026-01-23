@@ -18,7 +18,7 @@ describe('Shelter', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Shelter')
+    request = t.choose(game, 'Dogma.Shelter')
     // Demand effect: Micah must score a card from hand
     // Fire auto-selects if only one choice
     // After scoring: micah has 2 cards, dennis has 3 cards
@@ -42,7 +42,7 @@ describe('Shelter', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Shelter')
+    request = t.choose(game, 'Dogma.Shelter')
     // Demand effect: Micah must score a card from hand
 
     t.testIsSecondPlayer(game)
@@ -72,7 +72,7 @@ describe('Shelter', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Shelter')
+    request = t.choose(game, 'Dogma.Shelter')
     // Demand effect: Micah has no cards in hand, so can't score
     // Micah has 1 card in score pile, dennis has 2 cards
     // Micah has fewer, so micah loses
@@ -95,9 +95,9 @@ describe('Shelter', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Shelter')
+    request = t.choose(game, 'Dogma.Shelter')
     // Demand effect: Micah must score a card from hand
-    request = t.choose(game, request, 'Fire') // Choose Fire to score
+    request = t.choose(game, 'Fire') // Choose Fire to score
     // After scoring: micah has 2 cards, dennis has 3 cards
     // Micah has fewer, so micah loses
 

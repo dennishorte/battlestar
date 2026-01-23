@@ -5,20 +5,24 @@ const t = require('../../testutil.js')
 describe('Michaelangelo', () => {
 
   test('karma', () => {
-    const game = t.fixtureTopCard('Michaelangelo', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setScore(game, 'dennis', ['Tools', 'Construction'])
-      t.setHand(game, 'dennis', ['Sailing', 'Al-Kindi'])
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Michaelangelo'],
+        score: ['Tools', 'Construction'],
+        hand: ['Sailing', 'Al-Kindi'],
+      },
     })
-    let request
-    request = game.run()
 
-    expect(t.cards(game, 'score').sort()).toStrictEqual([
-      'Al-Kindi',
-      'Construction',
-      'Sailing',
-      'Tools',
-    ])
-    expect(game.getScore(t.dennis(game))).toBe(7)
+    game.run()
+
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Michaelangelo'],
+        score: ['Tools', 'Construction', 'Sailing', 'Al-Kindi'],
+        hand: ['Sailing', 'Al-Kindi'],
+      },
+    })
+    expect(t.dennis(game).score()).toBe(7)
   })
 })

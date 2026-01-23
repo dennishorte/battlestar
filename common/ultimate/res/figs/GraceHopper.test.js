@@ -23,7 +23,7 @@ describe('Grace Hopper', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.The Wheel')
+    request = t.choose(game, 'Dogma.The Wheel')
 
     t.testBoard(game, {
       dennis: {
@@ -56,7 +56,7 @@ describe('Grace Hopper', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.The Wheel')
+    request = t.choose(game, 'Dogma.The Wheel')
 
     t.testGameOver(request, 'micah', 'Grace Hopper')
   })

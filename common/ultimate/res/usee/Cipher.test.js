@@ -18,7 +18,7 @@ describe('Cipher', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Cipher')
+    request = t.choose(game, 'Dogma.Cipher')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -49,9 +49,9 @@ describe('Cipher', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Cipher')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'blue')
+    request = t.choose(game, 'Dogma.Cipher')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'blue')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

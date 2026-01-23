@@ -21,7 +21,7 @@ describe('Che Guevara', () => {
       let request
       request = game.run()
       // dennis (owner) melds Tools
-      request = t.choose(game, request, 'Meld.Tools')
+      request = t.choose(game, 'Meld.Tools')
       // Karma triggers: draw and score a {9}
       // Computers (blue) is drawn and scored
       // Since Computers is not yellow, no additional effect
@@ -57,14 +57,14 @@ describe('Che Guevara', () => {
       let request
       request = game.run()
       // dennis (owner) melds Tools
-      request = t.choose(game, request, 'Meld.Tools')
+      request = t.choose(game, 'Meld.Tools')
       // Karma triggers: draw and score a {9}
       // Suburbia (yellow) is drawn and scored
       // Since Suburbia is yellow, junk all cards in all score piles and all available standard achievements
       // junkMany requires selections when there are multiple cards
       // Use 'auto' to auto-select all cards (order doesn't matter)
-      request = t.choose(game, request, 'auto')
-      request = t.choose(game, request, 'auto')
+      request = t.choose(game, 'auto')
+      request = t.choose(game, 'auto')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

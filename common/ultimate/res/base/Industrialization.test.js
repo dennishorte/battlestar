@@ -26,8 +26,8 @@ describe('Industrialization', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Industrialization')
-    request = t.choose(game, request, 'red')
+    request = t.choose(game, 'Dogma.Industrialization')
+    request = t.choose(game, 'red')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -68,8 +68,8 @@ describe('Industrialization', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Industrialization')
-    request = t.choose(game, request, 'red')
+    request = t.choose(game, 'Dogma.Industrialization')
+    request = t.choose(game, 'red')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

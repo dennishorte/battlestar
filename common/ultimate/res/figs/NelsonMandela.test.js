@@ -26,12 +26,12 @@ describe('Nelson Mandela', () => {
       let request
       request = game.run()
       // First round: dennis takes first action (Draw) - first player only gets one action
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // micah's turn (first round, gets two actions)
       // First action: Draw
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Second action: Dogma The Wheel (on micah's board)
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
       // Karma triggers: instead of normal dogma, super-execute The Wheel
       // The Wheel's dogma: "Draw two {1}."
       // Super-execute means all opponents are demanded (not just the owner)
@@ -64,7 +64,7 @@ describe('Nelson Mandela', () => {
       })
       // dennis has 1 {p} biscuit (from Nelson Mandela), so 0 extra achievements (need 2 for 1 achievement)
 
-      expect(game.getAchievementsByPlayer(t.dennis(game)).other.length).toBe(0)
+      expect(t.dennis(game).achievementCount().other.length).toBe(0)
     })
 
     test('karma: two {p} biscuits, one extra achievement', () => {
@@ -80,7 +80,7 @@ describe('Nelson Mandela', () => {
       let request
       request = game.run()
 
-      expect(game.getAchievementsByPlayer(t.dennis(game)).other.length).toBe(1)
+      expect(t.dennis(game).achievementCount().other.length).toBe(1)
     })
 
     test('karma: four {p} biscuits, two extra achievements', () => {
@@ -97,7 +97,7 @@ describe('Nelson Mandela', () => {
       let request
       request = game.run()
 
-      expect(game.getAchievementsByPlayer(t.dennis(game)).other.length).toBe(2)
+      expect(t.dennis(game).achievementCount().other.length).toBe(2)
     })
   })
 })

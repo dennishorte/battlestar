@@ -22,9 +22,9 @@ describe("Television", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Television')
-    request = t.choose(game, request, 1)
-    request = t.choose(game, request, '**echo-1* (micah)')
+    request = t.choose(game, 'Dogma.Television')
+    request = t.choose(game, 1)
+    request = t.choose(game, '**echo-1* (micah)')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -58,9 +58,9 @@ describe("Television", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Television')
-    request = t.choose(game, request, 1)
-    request = t.choose(game, request, '**echo-1* (micah)')
+    request = t.choose(game, 'Dogma.Television')
+    request = t.choose(game, 1)
+    request = t.choose(game, '**echo-1* (micah)')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

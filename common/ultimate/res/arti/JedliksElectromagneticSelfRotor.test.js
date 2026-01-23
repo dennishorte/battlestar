@@ -19,8 +19,8 @@ describe("Jedlik's Electromagnetic Self-Rotor", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 4)
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 4)
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -49,7 +49,7 @@ describe("Jedlik's Electromagnetic Self-Rotor", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

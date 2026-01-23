@@ -15,8 +15,8 @@ describe('Masquerade', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Masquerade')
-    request = t.choose(game, request, 'purple') // Splay purple left
+    request = t.choose(game, 'Dogma.Masquerade')
+    request = t.choose(game, 'purple') // Splay purple left
 
     t.testBoard(game, {
       dennis: {
@@ -43,7 +43,7 @@ describe('Masquerade', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Masquerade')
+    request = t.choose(game, 'Dogma.Masquerade')
 
     t.testBoard(game, {
       dennis: {
@@ -67,7 +67,7 @@ describe('Masquerade', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Masquerade')
+    request = t.choose(game, 'Dogma.Masquerade')
 
     t.testBoard(game, {
       dennis: {

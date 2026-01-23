@@ -24,8 +24,8 @@ describe("Almanac", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Almanac')
-    request = t.choose(game, request, 'Horseshoes')
+    request = t.choose(game, 'Dogma.Almanac')
+    request = t.choose(game, 'Horseshoes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -60,9 +60,9 @@ describe("Almanac", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Machinery')
-    request = t.choose(game, request, 'Almanac')
-    request = t.choose(game, request, 'Horseshoes')
+    request = t.choose(game, 'Meld.Machinery')
+    request = t.choose(game, 'Almanac')
+    request = t.choose(game, 'Horseshoes')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

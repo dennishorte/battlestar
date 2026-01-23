@@ -9,15 +9,25 @@ test('War', () => {
     t.setColor(game, 'scott', 'red', ['Optics'])
     t.setColor(game, 'scott', 'green', ['Databases'])
   })
-  let request
-  request = game.run()
-  request = t.choose(game, request, 'Decree.War')
-  request = t.choose(game, request, 3)
-  request = t.choose(game, request, 'auto')
 
-  expect(t.cards(game, 'purple', 'dennis')).toStrictEqual(['Education'])
-  expect(t.cards(game, 'yellow', 'micah')).toStrictEqual(['Medicine'])
-  expect(t.cards(game, 'blue', 'micah')).toStrictEqual(['Mathematics', 'Alchemy'])
-  expect(t.cards(game, 'red', 'scott')).toStrictEqual([])
-  expect(t.cards(game, 'green', 'scott')).toStrictEqual(['Databases'])
+  game.run()
+  t.choose(game, 'Decree.War')
+  t.choose(game, 3) // Choose age 3 - returns Machinery (micah's yellow) and Optics (scott's red)
+  t.choose(game, 'auto')
+
+  t.testIsSecondPlayer(game)
+  t.testBoard(game, {
+    dennis: {
+      purple: ['Education'],
+      achievements: ['War'], // Decree claimed as achievement
+    },
+    micah: {
+      yellow: ['Medicine'], // Machinery returned (was age 3)
+      blue: ['Mathematics', 'Alchemy'],
+    },
+    scott: {
+      red: [], // Optics returned (was age 3)
+      green: ['Databases'],
+    },
+  })
 })

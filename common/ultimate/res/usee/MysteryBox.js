@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const choices = game.getAvailableStandardAchievements(player)
+      const choices = player.availableStandardAchievements()
       const achievement = game.actions.chooseCards(player, choices, {
         title: 'Choose a standard achievement to claim',
         hidden: true,
@@ -19,7 +19,7 @@ module.exports = {
       if (achievement) {
         game.actions.claimAchievement(player, achievement)
         game.actions.reveal(player, achievement)
-        game.aSelfExecute(self, player, achievement)
+        game.actions.selfExecute(self, player, achievement)
       }
     },
   ],

@@ -1,34 +1,73 @@
+Error.stackTraceLimit = 100
+
 const t = require('../../testutil.js')
 
 describe('Mapmaking', () => {
   test('demand', () => {
-    const game = t.fixtureTopCard('Mapmaking', { numPlayers: 3 })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.clearBoard(game, 'micah')
-      t.clearBoard(game, 'scott')
-      t.setScore(game, 'micah', ['The Wheel', 'Mathematics'])
-      t.setScore(game, 'scott', ['Navigation'])
-      t.setDeckTop(game, 'base', 1, ['Mysticism'])
+    const game = t.fixtureFirstPlayer({ numPlayers: 3 })
+    t.setBoard(game, {
+      dennis: {
+        green: ['Mapmaking'],
+      },
+      micah: {
+        score: ['The Wheel', 'Mathematics'],
+      },
+      scott: {
+        score: ['Navigation'],
+      },
+      decks: {
+        base: {
+          1: ['Mysticism'],
+        },
+      },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Mapmaking')
 
-    expect(t.cards(game, 'score').sort()).toEqual(['Mysticism', 'The Wheel'])
+    game.run()
+    t.choose(game, 'Dogma.Mapmaking')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: ['Mapmaking'],
+        score: ['The Wheel', 'Mysticism'],
+      },
+      micah: {
+        score: ['Mathematics'],
+      },
+      scott: {
+        score: ['Navigation'],
+      },
+    })
   })
 
   test('if a card was not transferred', () => {
-    const game = t.fixtureTopCard('Mapmaking', { numPlayers: 3 })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.clearBoard(game, 'micah')
-      t.clearBoard(game, 'scott')
-      t.setScore(game, 'micah', ['Mathematics'])
-      t.setScore(game, 'scott', ['Navigation'])
+    const game = t.fixtureFirstPlayer({ numPlayers: 3 })
+    t.setBoard(game, {
+      dennis: {
+        green: ['Mapmaking'],
+      },
+      micah: {
+        score: ['Mathematics'],
+      },
+      scott: {
+        score: ['Navigation'],
+      },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Mapmaking')
 
-    expect(t.cards(game, 'score').sort()).toEqual([])
+    game.run()
+    t.choose(game, 'Dogma.Mapmaking')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: ['Mapmaking'],
+      },
+      micah: {
+        score: ['Mathematics'],
+      },
+      scott: {
+        score: ['Navigation'],
+      },
+    })
   })
 })

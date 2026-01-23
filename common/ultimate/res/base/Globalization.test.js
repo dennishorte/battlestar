@@ -1,66 +1,117 @@
-const t = require('../../testutil.js')
-const {
-  GameOverEvent,
-  InputRequestEvent,
-} = require('../../../lib/game.js')
+Error.stackTraceLimit = 100
 
+const t = require('../../testutil.js')
 
 describe('Globalization', () => {
   test('demand', () => {
-    const game = t.fixtureTopCard('Globalization')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'yellow', ['Globalization', 'Stem Cells', 'Fermenting'])
-      t.setSplay(game, 'dennis', 'yellow', 'up')
-      t.setColor(game, 'micah', 'yellow', ['Agriculture', 'Statistics'])
-      t.setSplay(game, 'micah', 'yellow', 'left')
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: {
+          cards: ['Globalization', 'Stem Cells', 'Fermenting'],
+          splay: 'up',
+        },
+      },
+      micah: {
+        yellow: {
+          cards: ['Agriculture', 'Statistics'],
+          splay: 'left',
+        },
+      },
+      decks: {
+        base: {
+          11: ['Hypersonics'],
+        },
+      },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Globalization')
 
-    expect(t.cards(game, 'yellow', 'micah')).toEqual(['Statistics'])
+    game.run()
+    t.choose(game, 'Dogma.Globalization')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: {
+          cards: ['Globalization', 'Stem Cells', 'Fermenting'],
+          splay: 'up',
+        },
+        green: ['Hypersonics'],
+      },
+      micah: {
+        yellow: ['Statistics'],
+      },
+    })
   })
 
   test('draw and score', () => {
-    const game = t.fixtureTopCard('Globalization')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'yellow', ['Globalization', 'Stem Cells', 'Fermenting'])
-      t.setSplay(game, 'dennis', 'yellow', 'up')
-      t.setDeckTop(game, 'base', 11, ['Hypersonics'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: {
+          cards: ['Globalization', 'Stem Cells', 'Fermenting'],
+          splay: 'up',
+        },
+      },
+      decks: {
+        base: {
+          11: ['Hypersonics'],
+        },
+      },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Globalization')
 
-    expect(t.cards(game, 'green')).toEqual(['Hypersonics'])
+    game.run()
+    t.choose(game, 'Dogma.Globalization')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: {
+          cards: ['Globalization', 'Stem Cells', 'Fermenting'],
+          splay: 'up',
+        },
+        green: ['Hypersonics'],
+      },
+    })
   })
 
   test('win condition (yes)', () => {
-    const game = t.fixtureTopCard('Globalization')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'yellow', ['Globalization'])
-      t.setScore(game, 'dennis', ['Metalworking'])
-      t.setSplay(game, 'dennis', 'yellow', 'up')
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: {
+          cards: ['Globalization'],
+          splay: 'up',
+        },
+        score: ['Metalworking'],
+      },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Globalization')
 
-    expect(request).toEqual(expect.any(GameOverEvent))
+    game.run()
+    const result = t.choose(game, 'Dogma.Globalization')
+
+    t.testGameOver(result, 'dennis', 'Globalization')
   })
 
   test('win condition (no)', () => {
-    const game = t.fixtureTopCard('Globalization')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'yellow', ['Globalization', 'Stem Cells', 'Fermenting'])
-      t.setSplay(game, 'dennis', 'yellow', 'up')
-      t.setColor(game, 'micah', 'yellow', ['Agriculture', 'Statistics'])
-      t.setSplay(game, 'micah', 'yellow', 'left')
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: {
+          cards: ['Globalization', 'Stem Cells', 'Fermenting'],
+          splay: 'up',
+        },
+      },
+      micah: {
+        yellow: {
+          cards: ['Agriculture', 'Statistics'],
+          splay: 'left',
+        },
+      },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Globalization')
 
-    expect(request).toEqual(expect.any(InputRequestEvent))
+    game.run()
+    t.choose(game, 'Dogma.Globalization')
+
+    t.testIsSecondPlayer(game)
   })
 })

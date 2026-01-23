@@ -20,8 +20,8 @@ describe("Radio Telescope", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Radio Telescope')
-    request = t.choose(game, request, 'Calculator')
+    request = t.choose(game, 'Dogma.Radio Telescope')
+    request = t.choose(game, 'Calculator')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -50,9 +50,9 @@ describe("Radio Telescope", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Software')
-    request = t.choose(game, request, 'MP3')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Meld.Software')
+    request = t.choose(game, 'MP3')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -80,8 +80,8 @@ describe("Radio Telescope", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Flight')
-    request = t.choose(game, request, '*A.I.')
+    request = t.choose(game, 'Meld.Flight')
+    request = t.choose(game, '*A.I.')
 
     t.testGameOver(request, 'dennis', 'Radio Telescope')
   })

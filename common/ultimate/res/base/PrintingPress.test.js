@@ -4,52 +4,86 @@ const t = require('../../testutil.js')
 
 describe('Printing Press', () => {
   test('return and draw', () => {
-    const game = t.fixtureTopCard('Printing Press')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', [])
-      t.setScore(game, 'dennis', ['Coal', 'Mathematics'])
-      t.setColor(game, 'dennis', 'purple', ['Enterprise'])
-      t.setDeckTop(game, 'base', 6, ['Canning'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Printing Press'],
+        purple: ['Enterprise'],
+        score: ['Coal', 'Mathematics'],
+      },
+      decks: {
+        base: {
+          6: ['Canning'],
+        },
+      },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Printing Press')
-    request = t.choose(game, request, 'Coal')
 
-    expect(t.cards(game, 'score')).toEqual(['Mathematics'])
-    expect(t.cards(game, 'hand')).toEqual(['Canning'])
+    game.run()
+    t.choose(game, 'Dogma.Printing Press')
+    t.choose(game, 'Coal')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Printing Press'],
+        purple: ['Enterprise'],
+        score: ['Mathematics'],
+        hand: ['Canning'],
+      },
+    })
   })
 
   test('do not return', () => {
-    const game = t.fixtureTopCard('Printing Press')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', [])
-      t.setScore(game, 'dennis', ['Coal', 'Mathematics'])
-      t.setColor(game, 'dennis', 'purple', ['Enterprise'])
-      t.setDeckTop(game, 'base', 6, ['Canning'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Printing Press'],
+        purple: ['Enterprise'],
+        score: ['Coal', 'Mathematics'],
+      },
+      decks: {
+        base: {
+          6: ['Canning'],
+        },
+      },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Printing Press')
-    request = t.choose(game, request)
 
-    expect(t.cards(game, 'score')).toEqual(['Coal', 'Mathematics'])
-    expect(t.cards(game, 'hand')).toEqual([])
+    game.run()
+    t.choose(game, 'Dogma.Printing Press')
+    t.choose(game)
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Printing Press'],
+        purple: ['Enterprise'],
+        score: ['Coal', 'Mathematics'],
+      },
+    })
   })
 
   test('splay', () => {
-    const game = t.fixtureTopCard('Printing Press')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', [])
-      t.setColor(game, 'dennis', 'purple', ['Enterprise'])
-      t.setColor(game, 'dennis', 'blue', ['Printing Press', 'Tools'])
-      t.setDeckTop(game, 'base', 6, [])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Printing Press', 'Tools'],
+        purple: ['Enterprise'],
+      },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Dogma.Printing Press')
-    request = t.choose(game, request, 'blue')
 
-    expect(t.zone(game, 'blue').splay).toBe('right')
+    game.run()
+    t.choose(game, 'Dogma.Printing Press')
+    t.choose(game, 'blue')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: {
+          cards: ['Printing Press', 'Tools'],
+          splay: 'right',
+        },
+        purple: ['Enterprise'],
+      },
+    })
   })
 })

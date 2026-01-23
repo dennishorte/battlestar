@@ -21,7 +21,7 @@ describe('Astrogeology', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Astrogeology')
+    request = t.choose(game, 'Dogma.Astrogeology')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -53,7 +53,7 @@ describe('Astrogeology', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Astrogeology')
+    request = t.choose(game, 'Dogma.Astrogeology')
 
     t.testBoard(game, {
       dennis: {

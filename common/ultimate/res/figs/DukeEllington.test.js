@@ -24,7 +24,7 @@ describe('Duke Ellington', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Draw.draw a card')
+    request = t.choose(game, 'Draw.draw a card')
     // After drawing, fade check happens - Duke Ellington prevents fading
     // All 4 figures should remain on the board (no fading occurred)
 
@@ -57,7 +57,7 @@ describe('Duke Ellington', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Alex Trebek')
+      request = t.choose(game, 'Meld.Alex Trebek')
       // Karma triggers: instead of melding Alex Trebek, player wins
 
       t.testGameOver(request, 'dennis', 'Duke Ellington')
@@ -89,7 +89,7 @@ describe('Duke Ellington', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Homer')
+      request = t.choose(game, 'Meld.Homer')
       // Karma triggers: instead of melding Homer, player wins
 
       t.testGameOver(request, 'dennis', 'Duke Ellington')
@@ -120,7 +120,7 @@ describe('Duke Ellington', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Fu Xi')
+      request = t.choose(game, 'Meld.Fu Xi')
       // Karma does NOT trigger (only 3 top figures, not 4+)
       // Fu Xi is melded normally
 
@@ -151,7 +151,7 @@ describe('Duke Ellington', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Tools')
+      request = t.choose(game, 'Meld.Tools')
       // Karma does NOT trigger (Tools is not a figure)
       // Tools is melded normally
 

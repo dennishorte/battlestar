@@ -27,7 +27,7 @@ describe('John Ericsson', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Sailing')
+      request = t.choose(game, 'Dogma.Sailing')
       // Karma triggers (would-first): unsplay green on micah's board
       // When only one opponent, choosePlayer auto-selects and unsplay happens immediately
       // Sailing's dogma executes: draw and meld a {1} (auto-melds, no choice needed)
@@ -67,7 +67,7 @@ describe('John Ericsson', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Sailing')
+      request = t.choose(game, 'Dogma.Sailing')
       // Karma should NOT trigger (green is splayed left, not right)
       // Sailing's dogma executes: draw and meld a {1} (auto-melds, no choice needed)
 
@@ -115,9 +115,9 @@ describe('John Ericsson', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Sailing')
+      request = t.choose(game, 'Dogma.Sailing')
       // Karma triggers (would-first): choose which opponent to unsplay
-      request = t.choose(game, request, 'micah') // Choose to unsplay micah's green
+      request = t.choose(game, 'micah') // Choose to unsplay micah's green
       // Sailing's dogma executes: draw and meld a {1} (auto-melds, no choice needed)
 
       t.testIsSecondPlayer(game)
@@ -168,7 +168,7 @@ describe('John Ericsson', () => {
       let request
       request = game.run()
       // Skip dennis's turn (first action)
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
 
       t.testBoard(game, {
         dennis: {
@@ -197,7 +197,7 @@ describe('John Ericsson', () => {
       let request
       request = game.run()
       // Skip dennis's turn (first action)
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
 
       t.testBoard(game, {
         dennis: {

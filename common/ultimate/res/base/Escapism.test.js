@@ -20,10 +20,10 @@ describe('Escapism', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Escapism')
-    request = t.choose(game, request, 'Code of Laws')
-    request = t.choose(game, request, 'Mysticism')
-    request = t.choose(game, request, 'purple')
+    request = t.choose(game, 'Dogma.Escapism')
+    request = t.choose(game, 'Code of Laws')
+    request = t.choose(game, 'Mysticism')
+    request = t.choose(game, 'purple')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

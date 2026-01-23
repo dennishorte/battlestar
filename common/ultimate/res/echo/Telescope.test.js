@@ -22,8 +22,8 @@ describe("Telescope", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Telescope')
-    request = t.choose(game, request, 'Lightning Rod')
+    request = t.choose(game, 'Dogma.Telescope')
+    request = t.choose(game, 'Lightning Rod')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

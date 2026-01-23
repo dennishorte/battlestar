@@ -32,7 +32,7 @@ module.exports = {
             game.actions.claimAchievement(player, secret)
           }
 
-          const standard = game.actions.chooseCards(player, game.getAvailableStandardAchievements(player), {
+          const standard = game.actions.chooseCards(player, player.availableStandardAchievements(), {
             title: 'Choose a standard achievement to safeguard',
             hidden: true
           })[0]

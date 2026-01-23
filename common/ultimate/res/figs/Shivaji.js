@@ -17,9 +17,9 @@ module.exports = {
       kind: 'would-first',
       matches: (game, player, { owner }) => player.id !== owner.id,
       func: (game, player, { card, owner }) => {
-        const choices = game
-          .getAvailableStandardAchievements(owner)
-          .filter(achievement => game.checkAchievementEligibility(owner, achievement))
+        const choices = owner
+          .availableStandardAchievements()
+          .filter(achievement => owner.canClaimAchievement(achievement))
           .filter(achievement => achievement.id !== card.id)
 
         game.actions.chooseAndAchieve(owner, choices)

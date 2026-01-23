@@ -22,7 +22,7 @@ describe("Esports", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Esports')
+    request = t.choose(game, 'Dogma.Esports')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -54,7 +54,7 @@ describe("Esports", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Reclamation')
+    request = t.choose(game, 'Meld.Reclamation')
 
     t.testGameOver(request, 'dennis', 'Esports')
   })

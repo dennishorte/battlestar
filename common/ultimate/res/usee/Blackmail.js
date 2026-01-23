@@ -32,7 +32,7 @@ module.exports = {
       if (toExecute) {
         game.log.add({ template: `Replacing 'may' with 'must' is almost certainly buggy. Tell Dennis what goes wrong.` })
         game.state.dogmaInfo.mayIsMust = true
-        game.aSelfExecute(self, player, toExecute)
+        game.actions.selfExecute(self, player, toExecute)
         game.state.dogmaInfo.mayIsMust = false
       }
     },

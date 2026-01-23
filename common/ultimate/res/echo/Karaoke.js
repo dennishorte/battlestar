@@ -26,14 +26,14 @@ module.exports = {
       }
 
       const card = game.state.dogmaInfo.karaoke[player.name]
-      const options = game
-        .getAvailableStandardAchievements(player)
+      const options = player
+        .availableStandardAchievements()
         .filter(ach => ach.getAge() === card.getAge())
 
       const achieved = game.actions.chooseAndAchieve(player, options)
 
       if (achieved) {
-        game.aSelfExecute(self, player, card)
+        game.actions.selfExecute(self, player, card)
       }
     },
   ],

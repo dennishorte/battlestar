@@ -64,7 +64,7 @@ function DogmaHelper(player, card, opts={}) {
     },
   }
 
-  const karmaKind = this.game.aKarma(player, 'dogma', { ...opts, card })
+  const karmaKind = this.game.triggerKarma(player, 'dogma', { ...opts, card })
   if (karmaKind === 'would-instead') {
     this.acted(player)
     return
@@ -72,7 +72,7 @@ function DogmaHelper(player, card, opts={}) {
 
   // Sargon of Akkad, for example, modifies who can share.
   for (const player2 of this.game.players.all()) {
-    this.game.aKarma(player2, 'share-eligibility', { ...opts, card, leader: player })
+    this.game.triggerKarma(player2, 'share-eligibility', { ...opts, card, leader: player })
   }
 
   _logSharing.call(this)
@@ -144,7 +144,7 @@ function _executeEffects(player, card, opts) {
 
   for (const e of effects) {
     for (let i = 0; i < e.texts.length; i++) {
-      this.game.aOneEffect(player, e.card, e.texts[i], e.impls[i], {
+      this.game.executeDogmaEffect(player, e.card, e.texts[i], e.impls[i], {
         sharing: this.state.dogmaInfo.sharing,
         demanding: this.state.dogmaInfo.demanding,
         endorsed: opts.endorsed,
@@ -170,7 +170,7 @@ function _statsRecordDogmaActions(player, card) {
 function _shareBonus(player, card) {
   // Share bonus
   if (this.state.dogmaInfo.shared) {
-    const shareKarmaKind = this.game.aKarma(player, 'share', { card })
+    const shareKarmaKind = this.game.triggerKarma(player, 'share', { card })
     if (shareKarmaKind === 'would-instead') {
       this.acted(player)
       return
@@ -192,16 +192,16 @@ function _shareBonus(player, card) {
 
   // Grace Hopper and Susan Blackmore have "if your opponent didn't share" karma effects
   else if (card.checkHasShare()) {
-    for (const other of this.players.opponents(player)) {
-      this.game.aKarma(player, 'no-share', { card })
-    }
+    this.players.opponents(player).forEach(() => {
+      this.game.triggerKarma(player, 'no-share', { card })
+    })
   }
 }
 
 function _getBiscuitComparator(player, featuredBiscuit, biscuits) {
   return (other) => {
     if (featuredBiscuit === 'score') {
-      return this.game.getScore(other) >= this.game.getScore(player)
+      return other.score() >= player.score()
     }
     else if (this.state.dogmaInfo.soleMajorityPlayerId === other.id) {
       return true
@@ -255,6 +255,6 @@ module.exports = {
   EndorseAction,
 
   getDogmaShareInfo(player, card) {
-    return _getSharingAndDemanding(player, card.dogmaBiscuit, this.getBiscuits())
+    return _getSharingAndDemanding.call(this, player, card.dogmaBiscuit, this.game.getBiscuits())
   },
 }

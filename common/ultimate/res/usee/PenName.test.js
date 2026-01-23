@@ -19,8 +19,8 @@ describe('Pen Name', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Pen Name')
-    request = t.choose(game, request, 'Splay left and self-execute.blue')
+    request = t.choose(game, 'Dogma.Pen Name')
+    request = t.choose(game, 'Splay left and self-execute.blue')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -53,8 +53,8 @@ describe('Pen Name', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Pen Name')
-    request = t.choose(game, request, 'Meld and splay right.Translation')
+    request = t.choose(game, 'Dogma.Pen Name')
+    request = t.choose(game, 'Meld and splay right.Translation')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

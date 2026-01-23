@@ -1,4 +1,3 @@
-const { GameOverEvent } = require('../lib/game.js')
 const { InnovationFactory } = require('./innovation.js')
 const TestCommon = require('../lib/test_common.js')
 
@@ -118,46 +117,12 @@ TestUtil.fixtureFirstPlayer = function(options={}) {
   return game
 }
 
-TestUtil.fixtureTopCard = function(cardName, options) {
-  const game = TestUtil.fixtureFirstPlayer(options)
-  game.testSetBreakpoint('before-first-player', (game) => {
-    game
-      .players.all()
-      .forEach(player => TestUtil.clearBoard(game, player.name))
-
-    const card = game.cards.byId(cardName)
-    TestUtil.setColor(game, game.players.current().name, card.color, [cardName])
-  })
-  return game
-}
-
-TestUtil.testActionChoices = function(request, action, expected) {
-  const actionChoices = request.selectors[0].choices.find(c => c.title === action).choices
-  expect(actionChoices.sort()).toEqual(expected.sort())
-}
-
-TestUtil.testChoices = function(request, expected, expectedMin, expectedMax) {
-  const choices = request.selectors[0].choices.filter(c => c !== 'auto').sort()
-  expect(choices).toEqual(expected.sort())
-
-  if (expectedMax) {
-    const { min, max } = request.selectors[0]
-    expect(min).toBe(expectedMin)
-    expect(max).toBe(expectedMax)
-  }
-
-  // This is actually just count
-  else if (expectedMin) {
-    expect(request.selectors[0].count).toBe(expectedMin)
-  }
-}
-
 TestUtil.testDeckIsJunked = function(game, age) {
   const cards = game.cards.byDeck('base', age)
   expect(cards.length).toBe(0)
 
   const junk = game.cards.byZone('junk')
-  expect(cards.length).toBeGreaterThan(4)
+  expect(junk.length).toBeGreaterThan(4)
 }
 
 TestUtil.testIsFirstAction = function(request) {
@@ -166,12 +131,6 @@ TestUtil.testIsFirstAction = function(request) {
   expect(selector.title).toBe('Choose First Action')
 }
 
-TestUtil.testIsSecondPlayer = function(game) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  expect(selector.actor).toBe('micah')
-  expect(selector.title).toBe('Choose First Action')
-}
 
 TestUtil.testDeckIsJunked = function(game, age) {
   const cardsInDeck = game.zones.byDeck('base', age).cardlist()
@@ -179,8 +138,10 @@ TestUtil.testDeckIsJunked = function(game, age) {
 }
 
 TestUtil.testDecreeForTwo = function(figureName, decreeName) {
-  const game = TestUtil.fixtureTopCard(figureName, { expansions: ['base', 'figs'] })
+  const game = TestUtil.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
   game.testSetBreakpoint('before-first-player', (game) => {
+    const card = game.cards.byId(figureName)
+    TestUtil.setColor(game, 'dennis', card.color, [figureName])
     TestUtil.setHand(game, 'dennis', ['Homer', 'Ptahhotep'])
   })
   const request1 = game.run()
@@ -199,9 +160,9 @@ TestUtil.testNoFade = function(cardName) {
   })
 
   const request1 = game.run()
-  const request2 = TestUtil.choose(game, request1, 'Draw.draw a card')
+  TestUtil.choose(game, request1, 'Draw.draw a card')
 
-  TestUtil.testIsSecondPlayer(request2)
+  TestUtil.testIsSecondPlayer(game)
 }
 
 TestUtil.testZone = function(game, zoneName, expectedCards, opts={}) {
@@ -474,16 +435,6 @@ TestUtil.dumpBoard = function(game) {
   real.achievements = game.zones.byId('achievements').cardlist().map(c => c.name).sort()
 
   return real
-}
-
-TestUtil.testGameOver = function(request, playerName, reason) {
-  expect(request).toEqual(expect.any(GameOverEvent))
-  expect(request.data.player).toBe(playerName)
-  expect(request.data.reason).toBe(reason)
-}
-
-TestUtil.testNotGameOver = function(request) {
-  expect(request).not.toEqual(expect.any(GameOverEvent))
 }
 
 

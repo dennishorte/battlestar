@@ -50,7 +50,7 @@ module.exports = {
           game.actions.score(owner, card)
         }
         else {
-          game.aSelfExecute(self, owner, card)
+          game.actions.selfExecute(self, owner, card)
         }
       }
     }

@@ -24,8 +24,8 @@ describe("DigitalPet", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Digital Pet')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Digital Pet')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

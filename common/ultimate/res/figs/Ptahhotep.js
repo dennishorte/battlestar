@@ -18,7 +18,7 @@ module.exports = {
         const scored = game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'))[0]
 
         if (scored) {
-          game.aSuperExecute(self, player, scored)
+          game.actions.superExecute(self, player, scored)
         }
       }
     }

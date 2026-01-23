@@ -14,7 +14,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const bonuses = game.getBonuses(player)
+      const bonuses = player.bonuses()
       while (bonuses.length > 0) {
         game.log.add({ template: bonuses.join(',') })
         const scoreCards = game

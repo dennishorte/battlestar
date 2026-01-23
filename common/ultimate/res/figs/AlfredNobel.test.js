@@ -29,11 +29,11 @@ describe('Alfred Nobel', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Construction')
+      request = t.choose(game, 'Dogma.Construction')
       // Construction demands: transfer two cards from micah's hand
       // System auto-selects both cards (exactly 2 cards, need to select 2)
       // Then asks for order - use 'auto' since order doesn't matter
-      request = t.choose(game, request, 'auto') // Auto-order the transfer
+      request = t.choose(game, 'auto') // Auto-order the transfer
       // Construction's second effect draws a {2}
       // Karma triggers: junk all cards in age 7 deck first
 
@@ -66,7 +66,7 @@ describe('Alfred Nobel', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
       // Karma should NOT trigger (The Wheel does not transfer cards)
 
       t.testIsSecondPlayer(game)
@@ -96,7 +96,7 @@ describe('Alfred Nobel', () => {
       let request
       request = game.run()
 
-      const achs = game.getAchievementsByPlayer(t.dennis(game))
+      const achs = t.dennis(game).achievementCount()
       expect(achs.other.length).toBe(3) // {p}, {s}, and {c} icon types count as achievements
     })
   })

@@ -27,13 +27,13 @@ describe("Touchscreen", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Touchscreen')
+    request = t.choose(game, 'Dogma.Touchscreen')
 
     t.testChoices(request, ['red left', 'yellow up', 'green right', 'blue aslant'])
 
-    request = t.choose(game, request, 'red left')
-    request = t.choose(game, request, 'yellow up')
-    request = t.choose(game, request, 'green right')
+    request = t.choose(game, 'red left')
+    request = t.choose(game, 'yellow up')
+    request = t.choose(game, 'green right')
 
 
     t.testIsSecondPlayer(game)
@@ -87,11 +87,11 @@ describe("Touchscreen", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Touchscreen')
-    request = t.choose(game, request, 'red left')
-    request = t.choose(game, request, 'yellow up')
-    request = t.choose(game, request, 'green right')
-    request = t.choose(game, request, 'purple aslant')
+    request = t.choose(game, 'Dogma.Touchscreen')
+    request = t.choose(game, 'red left')
+    request = t.choose(game, 'yellow up')
+    request = t.choose(game, 'green right')
+    request = t.choose(game, 'purple aslant')
 
     t.testGameOver(request, 'dennis', 'Touchscreen')
   })

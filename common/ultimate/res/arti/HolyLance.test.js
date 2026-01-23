@@ -18,7 +18,7 @@ describe('Holy Lance', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -48,7 +48,7 @@ describe('Holy Lance', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
 
     t.testIsFirstAction(request)
@@ -60,20 +60,4 @@ describe('Holy Lance', () => {
       },
     })
   })
-
-  /* test('dogma: you win', () => {
-   *   const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-   *   t.setBoard(game,  {
-   *     dennis: {
-   *       artifact: ['Holy Lance'],
-   *       yellow: ['Holy Grail'],
-   *     },
-   *   })
-
-   *   let request
-    request = game.run()
-   *   request = t.choose(game, request, 'dogma')
-
-   *   t.testGameOver(request, 'dennis', 'Holy Lance')
-   * }) */
 })

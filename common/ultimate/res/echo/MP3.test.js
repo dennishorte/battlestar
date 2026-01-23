@@ -23,12 +23,12 @@ describe("MP3", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.MP3')
-    request = t.choose(game, request, 'Sailing', 'Tools')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, '**base-1*')
-    request = t.choose(game, request, '**base-1*')
-    request = t.choose(game, request, '**base-2*')
+    request = t.choose(game, 'Dogma.MP3')
+    request = t.choose(game, 'Sailing', 'Tools')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, '**base-1*')
+    request = t.choose(game, '**base-1*')
+    request = t.choose(game, '**base-2*')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

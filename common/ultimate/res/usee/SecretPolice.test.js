@@ -22,12 +22,12 @@ describe('Secret Police', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Secret Police')
-    request = t.choose(game, request, 'Mathematics')
-    request = t.choose(game, request, 'Masonry')
-    request = t.choose(game, request, 'Agriculture', 'Writing')  // Test guard
-    request = t.choose(game, request, 'Tools', 'Writing')
-    request = t.choose(game, request, 'Tools')
+    request = t.choose(game, 'Dogma.Secret Police')
+    request = t.choose(game, 'Mathematics')
+    request = t.choose(game, 'Masonry')
+    request = t.choose(game, 'Agriculture', 'Writing')  // Test guard
+    request = t.choose(game, 'Tools', 'Writing')
+    request = t.choose(game, 'Tools')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

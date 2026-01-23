@@ -5,9 +5,12 @@ const t = require('../../testutil.js')
 describe('Adam Smith', () => {
 
   test('karma: calculate-biscuits - Each {c} provides two additional {c}', () => {
-    const game = t.fixtureTopCard('Adam Smith', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'blue', ['Writing'])
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        green: ['Adam Smith'],
+        blue: ['Writing'],
+      },
     })
     let request
     request = game.run()
@@ -36,7 +39,7 @@ describe('Adam Smith', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Writing')
+      request = t.choose(game, 'Dogma.Writing')
       // Karma triggers: junk age 6 deck first
 
       t.testIsSecondPlayer(game)
@@ -73,7 +76,7 @@ describe('Adam Smith', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Writing')
+      request = t.choose(game, 'Dogma.Writing')
       // Karma triggers: age 6 deck is empty, so splay a color right
 
       t.testIsSecondPlayer(game)
@@ -112,7 +115,7 @@ describe('Adam Smith', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Writing')
+      request = t.choose(game, 'Dogma.Writing')
       // Karma does NOT trigger because sharing is possible (micah can share if they have {s})
 
       t.testIsSecondPlayer(game)

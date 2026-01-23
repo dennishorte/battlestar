@@ -15,7 +15,7 @@ describe("Loom", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Loom')
+    request = t.choose(game, 'Dogma.Loom')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -38,7 +38,7 @@ describe("Loom", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Loom')
+    request = t.choose(game, 'Dogma.Loom')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -61,8 +61,8 @@ describe("Loom", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Loom')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Dogma.Loom')
+    request = t.choose(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -91,8 +91,8 @@ describe("Loom", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Loom')
-    request = t.choose(game, request, 'Sailing', 'Construction')
+    request = t.choose(game, 'Dogma.Loom')
+    request = t.choose(game, 'Sailing', 'Construction')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -126,8 +126,8 @@ describe("Loom", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Loom')
-    request = t.choose(game, request, 'Sailing', 'Translation')
+    request = t.choose(game, 'Dogma.Loom')
+    request = t.choose(game, 'Sailing', 'Translation')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

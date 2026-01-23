@@ -25,11 +25,11 @@ module.exports = {
         if (returned) {
           let decreeName
           switch (returned.color) {
-            case 'red': decreeName = 'War'; break;
-            case 'yellow': decreeName = 'Expansion'; break;
-            case 'green': decreeName = 'Trade'; break;
-            case 'blue': decreeName = 'Advancement'; break;
-            case 'purple': decreeName = 'Rivalry'; break;
+            case 'red': decreeName = 'War'; break
+            case 'yellow': decreeName = 'Expansion'; break
+            case 'green': decreeName = 'Trade'; break
+            case 'blue': decreeName = 'Advancement'; break
+            case 'purple': decreeName = 'Rivalry'; break
             default:
               throw new Error('Unknown card color: ' + card.color)
           }

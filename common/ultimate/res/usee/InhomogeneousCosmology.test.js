@@ -22,25 +22,25 @@ describe('Inhomogeneous Cosmology', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Inhomogeneous Cosmology')
+    request = t.choose(game, 'Dogma.Inhomogeneous Cosmology')
 
     // First loop
-    request = t.choose(game, request, 'Paper')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Paper')
+    request = t.choose(game)
 
     // Second loop
-    request = t.choose(game, request)
-    request = t.choose(game, request, 'Agriculture')
+    request = t.choose(game)
+    request = t.choose(game, 'Agriculture')
 
     // Third loop
-    request = t.choose(game, request, 'Reformation')
-    request = t.choose(game, request, 'Navigation')
+    request = t.choose(game, 'Reformation')
+    request = t.choose(game, 'Navigation')
 
     // Fourth loop
-    request = t.choose(game, request, 'Lighting')
+    request = t.choose(game, 'Lighting')
 
     // Fifth loop
-    request = t.choose(game, request)
+    request = t.choose(game)
 
 
     t.testIsSecondPlayer(game)

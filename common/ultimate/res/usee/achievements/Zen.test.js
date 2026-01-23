@@ -14,7 +14,7 @@ describe('Zen', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Democracy')
+    request = t.choose(game, 'Meld.Democracy')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -37,7 +37,7 @@ describe('Zen', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Democracy')
+    request = t.choose(game, 'Meld.Democracy')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -59,7 +59,7 @@ describe('Zen', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Perspective')
+    request = t.choose(game, 'Meld.Perspective')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

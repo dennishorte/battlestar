@@ -19,10 +19,10 @@ describe('Attic', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Attic')
-    request = t.choose(game, request, 'Paper')
-    request = t.choose(game, request, 'score')
-    request = t.choose(game, request, 'Paper')
+    request = t.choose(game, 'Dogma.Attic')
+    request = t.choose(game, 'Paper')
+    request = t.choose(game, 'score')
+    request = t.choose(game, 'Paper')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -50,9 +50,9 @@ describe('Attic', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Attic')
-    request = t.choose(game, request, 'Paper')
-    request = t.choose(game, request, 'safeguard')
+    request = t.choose(game, 'Dogma.Attic')
+    request = t.choose(game, 'Paper')
+    request = t.choose(game, 'safeguard')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

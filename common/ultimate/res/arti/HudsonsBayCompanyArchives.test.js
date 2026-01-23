@@ -18,9 +18,9 @@ describe("Hudson's Bay Company Archives", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'Gunpowder')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'Gunpowder')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

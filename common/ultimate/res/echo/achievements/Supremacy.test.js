@@ -5,16 +5,27 @@ const t = require('../../../testutil.js')
 describe('Supremacy Achievement', () => {
   test('achieved', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'green', ['The Wheel'])
-      t.setColor(game, 'dennis', 'yellow', ['Masonry'])
-      t.setColor(game, 'dennis', 'red', ['Metalworking'])
-      t.setHand(game, 'dennis', ['Mysticism'])
+    t.setBoard(game, {
+      dennis: {
+        green: ['The Wheel'],
+        yellow: ['Masonry'],
+        red: ['Metalworking'],
+        hand: ['Mysticism'],
+      },
     })
-    let request
-    request = game.run()
-    request = t.choose(game, request, 'Meld.Mysticism')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['Supremacy'])
+    game.run()
+    t.choose(game, 'Meld.Mysticism')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: ['The Wheel'],
+        yellow: ['Masonry'],
+        red: ['Metalworking'],
+        purple: ['Mysticism'],
+        achievements: ['Supremacy'],
+      },
+    })
   })
 })

@@ -26,7 +26,7 @@ describe('Sejong the Great', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Experimentation')
+      request = t.choose(game, 'Meld.Experimentation')
       // Karma should trigger: Experimentation (age 4) matches top red (Gunpowder, age 4)
       // Should return Experimentation to deck and draw/meld Banking (age 5, green)
 
@@ -53,7 +53,7 @@ describe('Sejong the Great', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.The Wheel')
+      request = t.choose(game, 'Meld.The Wheel')
       // Karma should not trigger - The Wheel (age 1) does not match Gunpowder (age 4)
 
       t.testIsSecondPlayer(game)
@@ -78,7 +78,7 @@ describe('Sejong the Great', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Experimentation')
+      request = t.choose(game, 'Meld.Experimentation')
       // Karma should not trigger - no top red card
 
       t.testIsSecondPlayer(game)
@@ -106,7 +106,7 @@ describe('Sejong the Great', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.The Wheel')
+      request = t.choose(game, 'Meld.The Wheel')
       // Karma triggers: The Wheel (age 1) matches top red (Archery, age 1)
       // Should return The Wheel and draw/meld Calendar (age 2, green)
 

@@ -29,8 +29,8 @@ module.exports = {
         .cards.tops(player)
         .map(card => card.getAge())
 
-      const availableAchievements = game
-        .getAvailableStandardAchievements(player)
+      const availableAchievements = player
+        .availableStandardAchievements()
         .filter(achievement => topCardAges.includes(achievement.getAge()))
 
       game.actions.chooseAndSafeguard(player, availableAchievements, { hidden: true })

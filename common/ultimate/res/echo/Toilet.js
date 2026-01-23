@@ -14,7 +14,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const ages = util.array.distinct(game.getBonuses(leader)).sort()
+      const ages = util.array.distinct(leader.bonuses()).sort()
 
       const scoreCards = game.cards.byPlayer(player, 'score')
 

@@ -24,8 +24,8 @@ describe('Yata No Kagami', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Experimentation')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Experimentation')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

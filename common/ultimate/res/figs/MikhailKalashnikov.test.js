@@ -19,10 +19,10 @@ describe('Mikhail Kalashnikov', () => {
       let request
       request = game.run()
       // dennis (opponent) melds Tools
-      request = t.choose(game, request, 'Meld.Tools')
+      request = t.choose(game, 'Meld.Tools')
       // Karma triggers: micah (owner) chooses a top red card on opponent's board
       // Only Archery is available (dennis's top red card)
-      request = t.choose(game, request, 'score.Archery')
+      request = t.choose(game, 'score.Archery')
       // Archery is scored
 
       t.testIsSecondPlayer(game)
@@ -58,10 +58,10 @@ describe('Mikhail Kalashnikov', () => {
       let request
       request = game.run()
       // dennis (opponent) melds Tools
-      request = t.choose(game, request, 'Meld.Tools')
+      request = t.choose(game, 'Meld.Tools')
       // Karma triggers: micah (owner) chooses a top red card on opponent's board
       // Only Metalworking is available (dennis's top red card)
-      request = t.choose(game, request, 'self-execute.Metalworking')
+      request = t.choose(game, 'self-execute.Metalworking')
       // Metalworking is self-executed: "Draw a {1}."
       // micah (owner) draws Sailing
 
@@ -93,7 +93,7 @@ describe('Mikhail Kalashnikov', () => {
       let request
       request = game.run()
       // dennis (opponent) melds Sailing
-      request = t.choose(game, request, 'Meld.Sailing')
+      request = t.choose(game, 'Meld.Sailing')
       // Karma triggers but no opponent has a top red card, so nothing happens
 
       t.testIsSecondPlayer(game)
@@ -123,7 +123,7 @@ describe('Mikhail Kalashnikov', () => {
       let request
       request = game.run()
       // dennis (owner) melds Tools - karma should NOT trigger
-      request = t.choose(game, request, 'Meld.Tools')
+      request = t.choose(game, 'Meld.Tools')
       // No karma trigger, meld proceeds normally
 
       t.testIsSecondPlayer(game)

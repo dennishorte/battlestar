@@ -17,7 +17,7 @@ describe('Speak with Bird', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Speak with Bird')
+    request = t.choose(game, 'Dogma.Speak with Bird')
     // Has exactly 5 top cards, all of value 0
     // Player wins
 
@@ -38,7 +38,7 @@ describe('Speak with Bird', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Speak with Bird')
+    request = t.choose(game, 'Dogma.Speak with Bird')
     // Has only 4 top cards, not 5
     // No win
 
@@ -67,7 +67,7 @@ describe('Speak with Bird', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Speak with Bird')
+    request = t.choose(game, 'Dogma.Speak with Bird')
     // Has 5 top cards, but Agriculture is age 1, not 0
     // No win
 

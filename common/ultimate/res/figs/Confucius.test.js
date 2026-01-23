@@ -19,9 +19,9 @@ describe('Confucius', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, 'Dogma.Archery')
     // After karma triggers, choose age 2 deck
-    request = t.choose(game, request, 2)
+    request = t.choose(game, 2)
 
     t.testIsSecondPlayer(game)
     t.testDeckIsJunked(game, 2) // Age 2 deck was junked
@@ -53,9 +53,9 @@ describe('Confucius', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, 'Dogma.Archery')
     // After karma triggers, choose age 3 deck
-    request = t.choose(game, request, 3)
+    request = t.choose(game, 3)
 
     t.testIsSecondPlayer(game)
     t.testDeckIsJunked(game, 3) // Age 3 deck was junked
@@ -88,7 +88,7 @@ describe('Confucius', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Experimentation')
+    request = t.choose(game, 'Dogma.Experimentation')
     // Experimentation has a simple effect that just draws cards - no choices needed
 
     t.testIsSecondPlayer(game)
@@ -119,8 +119,8 @@ describe('Confucius', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Road Building')
-    request = t.choose(game, request, 2) // Choose age 2 deck
+    request = t.choose(game, 'Dogma.Road Building')
+    request = t.choose(game, 2) // Choose age 2 deck
 
     t.testIsSecondPlayer(game)
     t.testDeckIsJunked(game, 2) // Age 2 deck was junked

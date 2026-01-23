@@ -20,8 +20,8 @@ describe('Safe Deposit Box', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Safe Deposit Box')
-    request = t.choose(game, request, 'Draw and junk')
+    request = t.choose(game, 'Dogma.Safe Deposit Box')
+    request = t.choose(game, 'Draw and junk')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -44,8 +44,8 @@ describe('Safe Deposit Box', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Safe Deposit Box')
-    request = t.choose(game, request, 'Exchange')
+    request = t.choose(game, 'Dogma.Safe Deposit Box')
+    request = t.choose(game, 'Exchange')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

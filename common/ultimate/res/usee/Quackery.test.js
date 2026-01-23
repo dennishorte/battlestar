@@ -13,8 +13,8 @@ describe('Quackery', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Quackery')
-    request = t.choose(game, request, 'Score.Tools')
+    request = t.choose(game, 'Dogma.Quackery')
+    request = t.choose(game, 'Score.Tools')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -44,9 +44,9 @@ describe('Quackery', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Quackery')
-    request = t.choose(game, request, 'Draw a 4')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Quackery')
+    request = t.choose(game, 'Draw a 4')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

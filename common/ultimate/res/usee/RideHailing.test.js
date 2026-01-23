@@ -25,9 +25,9 @@ describe('Ride-Hailing', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Ride-Hailing')
-    request = t.choose(game, request, 'green')
-    request = t.choose(game, request, 'Escape Room')
+    request = t.choose(game, 'Dogma.Ride-Hailing')
+    request = t.choose(game, 'green')
+    request = t.choose(game, 'Escape Room')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -69,8 +69,8 @@ describe('Ride-Hailing', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Ride-Hailing')
-    request = t.choose(game, request, 'green')
+    request = t.choose(game, 'Dogma.Ride-Hailing')
+    request = t.choose(game, 'green')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

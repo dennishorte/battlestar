@@ -18,7 +18,7 @@ describe('Meteorology', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Meteorology')
+    request = t.choose(game, 'Dogma.Meteorology')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

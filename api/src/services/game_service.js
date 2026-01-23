@@ -134,12 +134,24 @@ Game.rematch = async function(game) {
 }
 
 Game.saveFull = async function(game, { branchId, overwrite, chat, responses, waiting, gameOver, gameOverData }) {
-  // Test if the gameData is safe to write to based on this request
-  // If games don't have branchIds, they haven't been created in the new
-  // system. Once old games are wrapped up, this if clause can be removed.
+  // Capture waiting state before processing for smart branchId logic
+  const previousWaitingState = game.getWaitingState ? game.getWaitingState() : null
+
+  // Test if the gameData is safe to write to based on this request.
+  // Skip branchId check if:
+  // 1. Game has no branchId (old game, hasn't been saved in new system)
+  // 2. overwrite flag is set
+  // 3. Previous waiting state was concurrent (drafting) - multiple players can submit
+  // 4. Responding player is in the waiting list (expected response)
   if (game.branchId && !overwrite) {
-    if (!branchId || branchId !== game.branchId) {
-      throw new GameOverwriteError('game_overwrite')
+    const isConcurrent = previousWaitingState?.concurrent ?? false
+
+    // For concurrent responses (drafting), skip branchId check entirely
+    // For non-concurrent, check if branchId matches
+    if (!isConcurrent) {
+      if (!branchId || branchId !== game.branchId) {
+        throw new GameOverwriteError('game_overwrite')
+      }
     }
   }
 
@@ -159,12 +171,12 @@ Game.saveFull = async function(game, { branchId, overwrite, chat, responses, wai
     game.waiting = waiting
     game.gameOver = gameOver
     game.gameOverData = gameOverData
-    return await _testAndSave(game, () => {})
+    return await _testAndSave(game, () => {}, previousWaitingState)
   }
   else {
     return await _testAndSave(game, () => {
       game.run()
-    })
+    }, previousWaitingState)
   }
 }
 
@@ -173,9 +185,12 @@ Game.saveResponse = async function(game, response) {
     throw new Error('This game was killed')
   }
 
+  // Capture waiting state before processing response
+  const previousWaitingState = game.getWaitingState ? game.getWaitingState() : null
+
   return await _testAndSave(game, () => {
     game.respondToInputRequest(response)
-  })
+  }, previousWaitingState)
 }
 
 Game.undo = async function(game, count) {
@@ -190,7 +205,7 @@ Game.undo = async function(game, count) {
   return game.serialize()
 }
 
-async function _testAndSave(game, evalFunc) {
+async function _testAndSave(game, evalFunc, previousWaitingState = null) {
   // Test that the response is valid.
   try {
     evalFunc()
@@ -204,7 +219,7 @@ async function _testAndSave(game, evalFunc) {
     }
   }
 
-  await db.game.save(game)
+  await db.game.save(game, previousWaitingState)
   if (game.checkGameIsOver()) {
     await db.game.gameOver(game)
   }

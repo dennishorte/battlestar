@@ -15,7 +15,7 @@ describe("Plumbing", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Plumbing')
+    request = t.choose(game, 'Dogma.Plumbing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

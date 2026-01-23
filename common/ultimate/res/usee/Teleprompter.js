@@ -45,7 +45,7 @@ module.exports = {
             continue
           }
 
-          game.aOneEffect(
+          game.executeDogmaEffect(
             player,
             card,
             card.dogma[i],

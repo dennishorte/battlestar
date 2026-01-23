@@ -17,7 +17,7 @@ describe('Alexander the Great', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Alexander the Great')
+    request = t.choose(game, 'Meld.Alexander the Great')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -44,7 +44,7 @@ describe('Alexander the Great', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Agriculture')
+    request = t.choose(game, 'Dogma.Agriculture')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -73,7 +73,7 @@ describe('Alexander the Great', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Agriculture')
+    request = t.choose(game, 'Dogma.Agriculture')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

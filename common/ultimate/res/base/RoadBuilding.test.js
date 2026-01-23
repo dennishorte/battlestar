@@ -19,10 +19,10 @@ describe('Road Building', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Road Building')
-    request = t.choose(game, request, 'Tools', 'Computers')
-    request = t.choose(game, request, 'Tools')
-    request = t.choose(game, request, 'micah')
+    request = t.choose(game, 'Dogma.Road Building')
+    request = t.choose(game, 'Tools', 'Computers')
+    request = t.choose(game, 'Tools')
+    request = t.choose(game, 'micah')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -51,8 +51,8 @@ describe('Road Building', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Road Building')
-    request = t.choose(game, request, 'Computers')
+    request = t.choose(game, 'Dogma.Road Building')
+    request = t.choose(game, 'Computers')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

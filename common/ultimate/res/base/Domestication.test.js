@@ -19,7 +19,7 @@ describe('Domestication', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Domestication')
+    request = t.choose(game, 'Dogma.Domestication')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -32,13 +32,15 @@ describe('Domestication', () => {
   })
 
   test('even if no card to meld still draws a card', () => {
-    const game = t.fixtureTopCard('Domestication')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', [])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Domestication'],
+      },
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Domestication')
+    request = t.choose(game, 'Dogma.Domestication')
 
     const dennis = game.players.byName('dennis')
     const dennisHand = game.zones.byPlayer(dennis, 'hand').cardlist().map(c => c.age).sort()

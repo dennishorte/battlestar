@@ -19,7 +19,7 @@ describe('Alex Trebek', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Draw.draw a card')
+    request = t.choose(game, 'Draw.draw a card')
     // Karma should NOT trigger because dennis has a figure (Homer) in hand
 
     t.testIsSecondPlayer(game)
@@ -47,12 +47,12 @@ describe('Alex Trebek', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Draw.draw a card')
+    request = t.choose(game, 'Draw.draw a card')
     // Karma triggers: no figures in hand, so search for a figure
-    request = t.choose(game, request, 1) // Choose age 1
+    request = t.choose(game, 1) // Choose age 1
     // The choices are card IDs with asterisks like "*figs-1*"
     // We need to use the exact string format from the choices array
-    request = t.choose(game, request, 'Homer')
+    request = t.choose(game, 'Homer')
 
     t.testIsSecondPlayer(game)
     // Verify that Homer was taken into hand by the karma

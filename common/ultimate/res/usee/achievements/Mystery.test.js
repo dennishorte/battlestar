@@ -17,7 +17,7 @@ describe('Mystery', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Services')
+    request = t.choose(game, 'Meld.Services')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -46,7 +46,7 @@ describe('Mystery', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Services')
+    request = t.choose(game, 'Meld.Services')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -74,7 +74,7 @@ describe('Mystery', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Antibiotics')
+    request = t.choose(game, 'Meld.Antibiotics')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

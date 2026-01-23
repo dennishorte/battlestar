@@ -17,7 +17,7 @@ describe('Fame achievement', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Copenhagen')
+    request = t.choose(game, 'Meld.Copenhagen')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -47,7 +47,7 @@ describe('Fame achievement', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Copenhagen')
+    request = t.choose(game, 'Meld.Copenhagen')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -78,7 +78,7 @@ describe('Fame achievement', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Copenhagen')
+    request = t.choose(game, 'Meld.Copenhagen')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

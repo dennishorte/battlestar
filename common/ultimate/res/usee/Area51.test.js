@@ -27,9 +27,9 @@ describe('Area 51', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Area 51')
-    request = t.choose(game, request, 'green')
-    request = t.choose(game, request, 'Draw a 11')
+    request = t.choose(game, 'Dogma.Area 51')
+    request = t.choose(game, 'green')
+    request = t.choose(game, 'Draw a 11')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -67,9 +67,9 @@ describe('Area 51', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Area 51')
-    request = t.choose(game, request, 'green')
-    request = t.choose(game, request, 'Safeguard a standard achievement')
+    request = t.choose(game, 'Dogma.Area 51')
+    request = t.choose(game, 'green')
+    request = t.choose(game, 'Safeguard a standard achievement')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -18,7 +18,7 @@ describe('Pedro Alvarez Cabral', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Archery')
+      request = t.choose(game, 'Dogma.Archery')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -43,7 +43,7 @@ describe('Pedro Alvarez Cabral', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Archery')
+      request = t.choose(game, 'Dogma.Archery')
 
       t.testGameOver(request, 'dennis', 'Pedro Alvarez Cabral')
     })
@@ -60,7 +60,7 @@ describe('Pedro Alvarez Cabral', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Archery')
+      request = t.choose(game, 'Dogma.Archery')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -82,7 +82,7 @@ describe('Pedro Alvarez Cabral', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Mathematics')
+      request = t.choose(game, 'Dogma.Mathematics')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

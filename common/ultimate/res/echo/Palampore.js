@@ -17,7 +17,7 @@ module.exports = {
     (game, player) => {
       const groups = util
         .array
-        .groupBy(game.getBonuses(player), x => x)
+        .groupBy(player.bonuses(), x => x)
       const choices = Object
         .entries(groups)
         .filter(([, bonuses]) => bonuses.length >= 2)
@@ -34,7 +34,7 @@ module.exports = {
     },
 
     (game, player) => {
-      const bonuses = game.getBonuses(player)
+      const bonuses = player.bonuses()
       if (bonuses.length >= 6 && game.checkAchievementAvailable('Wealth')) {
         game.actions.claimAchievement(player, { name: 'Wealth' })
       }

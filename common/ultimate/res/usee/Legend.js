@@ -28,7 +28,7 @@ module.exports = {
           game.log.add({ template: 'No top card remaining in ' + firstCard.color })
           return
         }
-        game.aSelfExecute(self, player, card)
+        game.actions.selfExecute(self, player, card)
         const scored = game.actions.score(player, game.cards.top(player, firstCard.color))
         if (scored) {
           totals[player.name] += scored.getAge()

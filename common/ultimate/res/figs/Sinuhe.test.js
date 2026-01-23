@@ -8,14 +8,19 @@ describe('Sinuhe', () => {
   })
 
   test('score karma', () => {
-    const game = t.fixtureTopCard('Sinuhe', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'green', ['The Wheel', 'Mapmaking'])
-      t.setColor(game, 'dennis', 'blue', ['Tools',])
-      t.setSplay(game, 'dennis', 'green', 'up')
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Sinuhe'],
+        green: {
+          cards: ['The Wheel', 'Mapmaking'],
+          splay: 'up',
+        },
+        blue: ['Tools'],
+      },
     })
     let request
     request = game.run()
-    expect(game.getScore(t.dennis(game))).toBe(5)
+    expect(t.dennis(game).score()).toBe(5)
   })
 })

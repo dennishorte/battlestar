@@ -15,10 +15,10 @@ describe('Encyclopedia', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Encyclopedia')
-    request = t.choose(game, request, 3)
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Dogma.Encyclopedia')
+    request = t.choose(game, 3)
+    request = t.choose(game, 'auto')
+    request = t.choose(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -41,9 +41,9 @@ describe('Encyclopedia', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Encyclopedia')
-    request = t.choose(game, request)
-    request = t.choose(game, request, '**base-7*')
+    request = t.choose(game, 'Dogma.Encyclopedia')
+    request = t.choose(game)
+    request = t.choose(game, '**base-7*')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

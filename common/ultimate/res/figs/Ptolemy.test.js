@@ -32,7 +32,7 @@ describe('Ptolemy', () => {
 
     t.testActionChoices(request, 'Dogma', ['Domestication', 'Pottery', 'Writing'])
 
-    request = t.choose(game, request, 'Dogma.Writing')
+    request = t.choose(game, 'Dogma.Writing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

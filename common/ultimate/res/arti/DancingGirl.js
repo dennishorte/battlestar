@@ -15,7 +15,7 @@ module.exports = {
       const self = game.cards.byId('Dancing Girl')
       game.actions.transfer(player, self, game.zones.byPlayer(player, self.color))
 
-      const age = game.getHighestTopAge(player)
+      const age = player.highestTopAge()
       const toTransfer = game
         .cards
         .tops(player)

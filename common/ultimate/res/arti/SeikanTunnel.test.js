@@ -21,7 +21,7 @@ describe("Seikan Tunnel", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testGameOver(request, 'dennis', 'Seikan Tunnel')
   })
@@ -40,7 +40,7 @@ describe("Seikan Tunnel", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testIsFirstAction(request)
   })
@@ -59,7 +59,7 @@ describe("Seikan Tunnel", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

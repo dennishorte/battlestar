@@ -16,9 +16,9 @@ describe('Counterfeiting', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Counterfeiting')
-    request = t.choose(game, request, 'Software')
-    request = t.choose(game, request, 'purple')
+    request = t.choose(game, 'Dogma.Counterfeiting')
+    request = t.choose(game, 'Software')
+    request = t.choose(game, 'purple')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -16,7 +16,7 @@ module.exports = {
     {
       trigger: 'meld',
       kind: 'would-instead',
-      matches: (game, player, { self }) => {
+      matches: (game, player) => {
         const topValues = game.cards.tops(player).map(card => card.getAge())
         const uniqueValues = util.array.distinct(topValues)
         return uniqueValues.length === 5

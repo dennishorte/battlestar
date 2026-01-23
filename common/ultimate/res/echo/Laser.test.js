@@ -22,10 +22,10 @@ describe("Laser", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Laser')
-    request = t.choose(game, request, 'Tools', 'Sailing', 'Construction', 'Machinery')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Laser')
+    request = t.choose(game, 'Tools', 'Sailing', 'Construction', 'Machinery')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -59,7 +59,7 @@ describe("Laser", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Sudoku')
+    request = t.choose(game, 'Meld.Sudoku')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

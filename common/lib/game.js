@@ -92,11 +92,14 @@ function GameOverEvent(data) {
   this.data = data
 }
 
-function InputRequestEvent(selectors) {
+function InputRequestEvent(selectors, opts = {}) {
   if (!Array.isArray(selectors)) {
     selectors = [selectors]
   }
   this.selectors = selectors
+  // concurrent: true means multiple players can respond independently (e.g., drafting)
+  // concurrent: false means responses are sequential or must all be collected (e.g., turns)
+  this.concurrent = opts.concurrent ?? false
 }
 
 Game.prototype.serialize = function() {
@@ -159,6 +162,17 @@ Game.prototype.getPlayerNamesWaiting = function() {
   }
 }
 
+// Returns the full waiting state including concurrency info for server-side branchId logic
+Game.prototype.getWaitingState = function() {
+  if (!this.waiting) {
+    return null
+  }
+  return {
+    players: this.waiting.selectors.map(s => s.actor),
+    concurrent: this.waiting.concurrent ?? false,
+  }
+}
+
 Game.prototype.getPlayerViewer = function() {
   return this.players.byName(this.viewerName)
 }
@@ -176,6 +190,7 @@ Game.prototype.getWaiting = function(player) {
 }
 
 // Intended for use in Magic Drafts, this allows any player to send an input request.
+// Responses are independent and don't interfere with each other.
 Game.prototype.requestInputAny = function(array) {
   if (!Array.isArray(array)) {
     array = [array]
@@ -190,7 +205,7 @@ Game.prototype.requestInputAny = function(array) {
     return resp
   }
   else {
-    throw new InputRequestEvent(array)
+    throw new InputRequestEvent(array, { concurrent: true })
   }
 }
 
@@ -313,7 +328,8 @@ Game.prototype.requestInputMany = function(array) {
         __prepareInput(answer)
       }
       else {
-        throw new InputRequestEvent(unanswered)
+        // concurrent: false - all players must respond before game advances
+        throw new InputRequestEvent(unanswered, { concurrent: false })
       }
     }
   }
@@ -413,6 +429,20 @@ Game.prototype.youWin = function(player, reason) {
   })
 }
 
+Game.prototype.youLose = function(player, reason) {
+  this.log.add({
+    template: '{player} is eliminated due to {reason}',
+    args: { player, reason },
+  })
+  player.eliminated = true
+
+  const activePlayers = this.players.active()
+
+  if (activePlayers.length === 1) {
+    this.youWin(activePlayers[0], reason)
+  }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Chat and Logging
@@ -494,10 +524,8 @@ Game.prototype._reset = function() {
 
 Game.prototype._tryToAutomaticallyRespond = function(selectors) {
   for (const sel of selectors) {
-    // This is a special key to say that there is no fixed response expected
-    // so cannot automatically respond. Used in games like Magic where the
-    // user input is very freeform.
-    if (sel.choices === '__UNSPECIFIED__') {
+    // Action-type selectors have freeform input, cannot auto-respond
+    if (selector.getSelectorType(sel) === 'action') {
       return undefined
     }
 
@@ -511,15 +539,23 @@ Game.prototype._tryToAutomaticallyRespond = function(selectors) {
     const { min } = selector.minMax(sel)
 
     if (min >= sel.choices.length) {
+      // Build selection from choices, extracting titles from objects
+      const selection = sel.choices.map(choice => {
+        if (typeof choice === 'object' && choice.title) {
+          return choice.title
+        }
+        return choice
+      })
+
       const response = {
         actor: sel.actor,
         title: sel.title,
-        selection: [...sel.choices],
+        selection,
       }
 
       // Rename choices to selection down to one lower level.
       for (const x of response.selection) {
-        if (x.choices) {
+        if (x && typeof x === 'object' && x.choices) {
           x.selection = x.choices
           delete x.choices
         }

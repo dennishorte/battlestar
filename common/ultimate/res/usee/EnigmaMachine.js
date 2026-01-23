@@ -19,7 +19,7 @@ module.exports = {
       const choice = game.actions.choose(player, choices)[0]
 
       if (choice === choices[0]) {
-        const achievements = game.getAvailableStandardAchievements(player)
+        const achievements = player.availableStandardAchievements()
         game.actions.safeguardMany(player, achievements)
       }
       else if (choice === choices[1]) {

@@ -20,8 +20,8 @@ describe('Dancing Girl', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Dancing Girl')
-    request = t.choose(game, request, 'Construction')
+    request = t.choose(game, 'Dogma.Dancing Girl')
+    request = t.choose(game, 'Construction')
 
     //    t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -52,8 +52,8 @@ describe('Dancing Girl', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Dancing Girl')
-    request = t.choose(game, request, 'Construction')
+    request = t.choose(game, 'Dogma.Dancing Girl')
+    request = t.choose(game, 'Construction')
 
     //    t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -68,47 +68,4 @@ describe('Dancing Girl', () => {
       },
     })
   })
-
-
-  /* test('dogma', () => {
-   *   const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-   *   t.setBoard(game,  {
-   *     dennis: {
-   *       yellow: ['Dancing Girl'],
-   *     },
-   *     micah: {
-   *       purple: ['Philosophy'],
-   *     },
-   *   })
-
-   *   let request
-    request = game.run()
-   *   request = t.choose(game, request, 'Dogma.Dancing Girl')
-
-   *   t.testGameOver(request, 'dennis', 'Dancing Girl')
-   * })
-
-   * test('dogma: free artifact action does not win', () => {
-   *   const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-   *   t.setBoard(game,  {
-   *     dennis: {
-   *       artifact: ['Dancing Girl'],
-   *     },
-   *     micah: {
-   *       purple: ['Philosophy'],
-   *     },
-   *   })
-
-   *   let request
-    request = game.run()
-   *   request = t.choose(game, request, 'dogma')
-
-   *   t.testIsFirstAction(request)
-   *   t.testBoard(game, {
-   *     micah: {
-   *       yellow: ['Dancing Girl'],
-   *       purple: ['Philosophy'],
-   *     },
-   *   })
-   * }) */
 })

@@ -20,7 +20,7 @@ describe('Greta Thunberg', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Robotics')
+    request = t.choose(game, 'Dogma.Robotics')
     // Karma triggers: first junk another top card with 'f' from any board
     // Robotics is being dogmatized, so we can't junk it
     // Corporations is auto-selected (only valid choice)
@@ -51,7 +51,7 @@ describe('Greta Thunberg', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, 'Dogma.Archery')
     // Karma triggers: first junk another top card with 'f' from any board
     // Owner (dennis) chooses to junk Corporations from dennis's board
     // Corporations is auto-selected (only valid choice)
@@ -81,7 +81,7 @@ describe('Greta Thunberg', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, 'Dogma.Archery')
     // Karma triggers: first junk another top card with 'f' from any board
     // No cards with 'f' available (excluding Archery which doesn't have 'f' anyway)
     // chooseAndJunk is called with empty array, returns immediately (no request)
@@ -117,7 +117,7 @@ describe('Greta Thunberg', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Robotics')
+    request = t.choose(game, 'Dogma.Robotics')
     // Karma triggers: first junk another top card with 'f' from any board
     // Robotics is being dogmatized, so we can't junk it
     // Owner (dennis) chooses to junk Corporations from dennis's board
@@ -151,7 +151,7 @@ describe('Greta Thunberg', () => {
     let request
     request = game.run()
     // dennis is first player
-    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, 'Dogma.Archery')
     // Karma triggers (triggerAll: true) - dennis dogmas, but micah's karma triggers
     // First junk another top card with 'f' from any board
     // Archery is being dogmatized but doesn't have 'f', so Corporations is available

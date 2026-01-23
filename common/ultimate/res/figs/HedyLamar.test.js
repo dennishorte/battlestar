@@ -26,8 +26,8 @@ describe('Hedy Lamar', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Hedy Lamar')
-      request = t.choose(game, request, 'red')
+      request = t.choose(game, 'Meld.Hedy Lamar')
+      request = t.choose(game, 'red')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -68,8 +68,8 @@ describe('Hedy Lamar', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Hedy Lamar')
-      request = t.choose(game, request, 'yellow')
+      request = t.choose(game, 'Meld.Hedy Lamar')
+      request = t.choose(game, 'yellow')
 
       t.testBoard(game, {
         dennis: {
@@ -111,10 +111,10 @@ describe('Hedy Lamar', () => {
       request = game.run()
       // dennis (owner) claims an achievement
       // Use nested format: 'Achieve.AchievementName'
-      request = t.choose(game, request, 'Achieve.*base-4*')
+      request = t.choose(game, 'Achieve.*base-4*')
       // Karma triggers: first splay a color up (would-first)
       // chooseAndSplay is optional (min: 0), so we can choose a color or skip
-      request = t.choose(game, request, 'red') // Choose red to splay up
+      request = t.choose(game, 'red') // Choose red to splay up
       // Then achievement is claimed automatically
 
       t.testIsSecondPlayer(game)
@@ -155,9 +155,9 @@ describe('Hedy Lamar', () => {
       let request
       request = game.run()
       // dennis (owner) claims an achievement
-      request = t.choose(game, request, 'Achieve.*base-4*')
+      request = t.choose(game, 'Achieve.*base-4*')
       // Karma triggers: first splay a color up (would-first)
-      request = t.choose(game, request, 'blue') // Choose blue to splay up
+      request = t.choose(game, 'blue') // Choose blue to splay up
       // Then achievement is claimed automatically
 
       t.testIsSecondPlayer(game)

@@ -20,7 +20,7 @@ module.exports = {
       kind: 'would-instead',
       matches: (game) => game.state.actionNumber === 1,
       func: (game, player, { self }) => {
-        const availableAchievements = game.getAvailableStandardAchievements(player)
+        const availableAchievements = player.availableStandardAchievements()
         if (availableAchievements.length === 0) {
           game.log.add({
             template: 'There are no available standard achievements',
@@ -31,7 +31,7 @@ module.exports = {
         const lowest = availableAchievements.sort((l, r) => l.getAge() - r.getAge())[0].getAge()
         const junked = game.actions.junkAvailableAchievement(player, lowest)
 
-        game.aSuperExecute(self, player, junked)
+        game.actions.superExecute(self, player, junked)
       }
     }
   ]

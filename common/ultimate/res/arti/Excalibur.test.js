@@ -21,11 +21,11 @@ describe('Excalibur', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testChoices(request, ['The Wheel', 'Enterprise'])
 
-    request = t.choose(game, request, 'The Wheel')
+    request = t.choose(game, 'The Wheel')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

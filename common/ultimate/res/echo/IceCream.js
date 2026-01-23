@@ -28,7 +28,7 @@ module.exports = {
         const options = game
           .util
           .highestCards(game.cards.byZone('junk'))
-          .filter(card => game.checkAchievementEligibility(player, card))
+          .filter(card => player.canClaimAchievement(card))
         game.actions.chooseAndAchieve(player, options)
       }
     }

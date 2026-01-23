@@ -5,40 +5,80 @@ const t = require('../../../testutil.js')
 describe('Wealth', () => {
   test('eight visible bonuses', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'red', ['Plumbing'])
-      t.setColor(game, 'dennis', 'green', ['Scissors'])
-      t.setColor(game, 'dennis', 'blue', ['Perfume'])
-      t.setColor(game, 'dennis', 'purple', ['Flute', 'Puppet'])
-      t.setSplay(game, 'dennis', 'purple', 'up')
-
-      t.setColor(game, 'dennis', 'yellow', ['Soap', 'Stove'])
-      t.setSplay(game, 'dennis', 'yellow', 'up')
-
-      t.setHand(game, 'dennis', ['Pencil'])
+    t.setBoard(game, {
+      dennis: {
+        red: ['Plumbing'],
+        green: ['Scissors'],
+        blue: ['Perfume'],
+        purple: {
+          cards: ['Flute', 'Puppet'],
+          splay: 'up',
+        },
+        yellow: {
+          cards: ['Soap', 'Stove'],
+          splay: 'up',
+        },
+        hand: ['Pencil'],
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Meld.Pencil')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual(['Wealth'])
+    game.run()
+    t.choose(game, 'Meld.Pencil')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Plumbing'],
+        green: ['Scissors'],
+        blue: ['Perfume'],
+        purple: {
+          cards: ['Flute', 'Puppet'],
+          splay: 'up',
+        },
+        yellow: {
+          cards: ['Pencil', 'Soap', 'Stove'],
+          splay: 'up',
+        },
+        achievements: ['Wealth'],
+      },
+    })
   })
 
   test('seven visible bonuses', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'red', ['Plumbing'])
-      t.setColor(game, 'dennis', 'green', ['Scissors'])
-      t.setColor(game, 'dennis', 'purple', ['Flute', 'Puppet'])
-      t.setSplay(game, 'dennis', 'purple', 'up')
-
-      t.setColor(game, 'dennis', 'yellow', ['Soap', 'Stove'])
-      t.setSplay(game, 'dennis', 'yellow', 'up')
-
-      t.setHand(game, 'dennis', ['Pencil'])
+    t.setBoard(game, {
+      dennis: {
+        red: ['Plumbing'],
+        green: ['Scissors'],
+        purple: {
+          cards: ['Flute', 'Puppet'],
+          splay: 'up',
+        },
+        yellow: {
+          cards: ['Soap', 'Stove'],
+          splay: 'up',
+        },
+        hand: ['Pencil'],
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Meld.Pencil')
 
-    expect(t.cards(game, 'achievements')).toStrictEqual([])
+    game.run()
+    t.choose(game, 'Meld.Pencil')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Plumbing'],
+        green: ['Scissors'],
+        purple: {
+          cards: ['Flute', 'Puppet'],
+          splay: 'up',
+        },
+        yellow: {
+          cards: ['Pencil', 'Soap', 'Stove'],
+          splay: 'up',
+        },
+      },
+    })
   })
 })

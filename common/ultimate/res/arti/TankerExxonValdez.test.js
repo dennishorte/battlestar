@@ -21,8 +21,8 @@ describe('Exxon Valdez', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'auto')
 
     t.testGameOver(request, 'dennis', 'Exxon Valdez')
   })
@@ -47,8 +47,8 @@ describe('Exxon Valdez', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'auto')
 
     t.testBoard(game, {
       dennis: {

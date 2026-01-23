@@ -31,7 +31,7 @@ describe('Stephen Hawking', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Sailing')
+    request = t.choose(game, 'Dogma.Sailing')
     // Karma triggers: score bottom green card (Mapmaking) once (1 {h} visible from Mapmaking)
 
     t.testIsSecondPlayer(game)
@@ -70,7 +70,7 @@ describe('Stephen Hawking', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Agriculture')
+    request = t.choose(game, 'Dogma.Agriculture')
     // Karma triggers: score bottom yellow card twice (2 {h} visible)
     // First iteration: score Canning (bottom card)
     // Second iteration: score Domestication (new bottom card)
@@ -97,7 +97,7 @@ describe('Stephen Hawking', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Agriculture')
+    request = t.choose(game, 'Dogma.Agriculture')
     // Karma triggers: count {h} visible in yellow
     // Agriculture (top): hlll - {h} at index 0, visible (top card shows all biscuits)
     // So 1 {h} visible, should try to score bottom yellow card
@@ -129,7 +129,7 @@ describe('Stephen Hawking', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Draw.draw a card')
+    request = t.choose(game, 'Draw.draw a card')
     // Karma triggers: first draw and tuck a card of the same age (age 10)
     // Draws Robotics (age 10) and tucks it
     // Then normal draw: draws Software (age 10)

@@ -23,7 +23,7 @@ module.exports = {
       trigger: 'meld',
       kind: 'would-first',
       matches: () => true,
-      func: (game, player, { self }) => {
+      func: (game, player) => {
         game.actions.junkAvailableAchievement(player, [3, 4, 5])
       },
     }

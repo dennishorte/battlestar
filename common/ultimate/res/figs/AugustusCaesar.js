@@ -21,7 +21,7 @@ module.exports = {
           game.actions.meld(owner, drawn)
         }
         else {
-          game.aSuperExecute(self, player, card)
+          game.actions.superExecute(self, player, card)
         }
       },
     }

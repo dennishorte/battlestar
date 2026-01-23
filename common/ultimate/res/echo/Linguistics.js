@@ -15,7 +15,7 @@ module.exports = {
     (game, player, { foreseen, self }) => {
       const boardBonuses = game
         .players.all()
-        .flatMap(p => game.getBonuses(p))
+        .flatMap(p => p.bonuses())
       const bonuses = util.array.distinct(boardBonuses).sort()
       const age = game.actions.chooseAge(player, bonuses, { title: 'Choose an age to draw from' })
       if (age) {
@@ -23,8 +23,8 @@ module.exports = {
 
         game.log.addForeseen(foreseen, self)
         if (foreseen) {
-          const achievements = game
-            .getAvailableStandardAchievements(player)
+          const achievements = player
+            .availableStandardAchievements()
             .filter(x => x.getAge() === age)
           game.actions.junkMany(player, achievements, { ordered: true })
         }

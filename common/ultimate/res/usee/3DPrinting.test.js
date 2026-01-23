@@ -14,10 +14,10 @@ describe('3D Printing', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.3D Printing')
-    request = t.choose(game, request, 'Lighting')
-    request = t.choose(game, request, '**base-3*')
-    request = t.choose(game, request, 'Reformation')
+    request = t.choose(game, 'Dogma.3D Printing')
+    request = t.choose(game, 'Lighting')
+    request = t.choose(game, '**base-3*')
+    request = t.choose(game, 'Reformation')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

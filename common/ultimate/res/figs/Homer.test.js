@@ -22,7 +22,7 @@ describe('Homer', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Endorse.yellow')
+    request = t.choose(game, 'Endorse.yellow')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -52,7 +52,7 @@ describe('Homer', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Endorse.yellow')
+    request = t.choose(game, 'Endorse.yellow')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -83,8 +83,8 @@ describe('Homer', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Agriculture')
-    request = t.choose(game, request, 'Shennong')
+    request = t.choose(game, 'Dogma.Agriculture')
+    request = t.choose(game, 'Shennong')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

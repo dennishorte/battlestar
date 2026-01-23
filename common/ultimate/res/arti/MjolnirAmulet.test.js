@@ -18,8 +18,8 @@ describe("Mjolnir Amulet", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Coal')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Coal')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

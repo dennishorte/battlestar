@@ -21,10 +21,10 @@ describe('Hunting', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Hunting')
+    request = t.choose(game, 'Dogma.Hunting')
     // Demand effect: Micah draws and reveals Fire and Stone Knives
     // Dennis (leader) chooses which card to transfer to his board
-    request = t.choose(game, request, 'Fire') // Choose Fire to transfer
+    request = t.choose(game, 'Fire') // Choose Fire to transfer
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -57,10 +57,10 @@ describe('Hunting', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Hunting')
+    request = t.choose(game, 'Dogma.Hunting')
     // Demand effect: Micah draws and reveals Fire and Stone Knives (both red)
     // Dennis (leader) chooses which card to transfer to his board
-    request = t.choose(game, request, 'Fire') // Choose Fire to transfer
+    request = t.choose(game, 'Fire') // Choose Fire to transfer
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

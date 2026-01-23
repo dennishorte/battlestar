@@ -39,7 +39,7 @@ module.exports = {
         .filter(card => card.name !== 'Deepfake')
 
       const cardToExecute = game.actions.chooseCard(player, executeOptions)
-      game.aSuperExecute(self, player, cardToExecute)
+      game.actions.superExecute(self, player, cardToExecute)
 
       // If the transferred card is still a top card...
       const topCardOfTransferredColor = game.cards.top(player, cardToTransfer.color)

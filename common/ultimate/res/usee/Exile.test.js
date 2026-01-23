@@ -12,7 +12,7 @@ describe('Exile', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Exile')
+    request = t.choose(game, 'Dogma.Exile')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -42,7 +42,7 @@ describe('Exile', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Exile')
+    request = t.choose(game, 'Dogma.Exile')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -77,7 +77,7 @@ describe('Exile', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Exile')
+    request = t.choose(game, 'Dogma.Exile')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

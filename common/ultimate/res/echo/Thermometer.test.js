@@ -26,7 +26,7 @@ describe("Thermometer", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Thermometer')
+    request = t.choose(game, 'Dogma.Thermometer')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -65,7 +65,7 @@ describe("Thermometer", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Astronomy')
+    request = t.choose(game, 'Meld.Astronomy')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -102,7 +102,7 @@ describe("Thermometer", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Thermometer')
+    request = t.choose(game, 'Dogma.Thermometer')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

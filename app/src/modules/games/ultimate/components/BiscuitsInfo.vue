@@ -43,7 +43,7 @@ export default {
   computed: {
     achievements() {
       const achievements = {}
-      this.players.forEach(p => achievements[p.name] = this.game.getAchievementsByPlayer(p).total)
+      this.players.forEach(p => achievements[p.name] = p.achievementCount().total)
       return achievements
     },
 
@@ -53,7 +53,7 @@ export default {
 
     scores() {
       const scores = {}
-      this.players.forEach(p => scores[p.name] = this.game.getScore(p))
+      this.players.forEach(p => scores[p.name] = p.score())
       return scores
     },
 

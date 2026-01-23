@@ -19,10 +19,10 @@ describe('Tecumseh', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Tools')
-    request = t.choose(game, request, 5) // Choose age 5
-    request = t.choose(game, request, 'dennis.Banking', 'micah.Coal')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Meld.Tools')
+    request = t.choose(game, 5) // Choose age 5
+    request = t.choose(game, 'dennis.Banking', 'micah.Coal')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -54,8 +54,8 @@ describe('Tecumseh', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Tools')
-    request = t.choose(game, request, 1) // Choose age 1 - no cards with {f} at age 1
+    request = t.choose(game, 'Meld.Tools')
+    request = t.choose(game, 1) // Choose age 1 - no cards with {f} at age 1
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -87,10 +87,10 @@ describe('Tecumseh', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Tools')
-    request = t.choose(game, request, 5) // Choose age 5
-    request = t.choose(game, request, 'dennis.Banking', 'micah.Coal')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Meld.Tools')
+    request = t.choose(game, 5) // Choose age 5
+    request = t.choose(game, 'dennis.Banking', 'micah.Coal')
+    request = t.choose(game, 'auto')
     // No achievement to junk, so no additional request
 
     t.testIsSecondPlayer(game)
@@ -123,9 +123,9 @@ describe('Tecumseh', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Tools')
-    request = t.choose(game, request, 5) // Choose age 5
-    request = t.choose(game, request, 'dennis.Banking') // Only dennis has a card with {f} at age 5
+    request = t.choose(game, 'Meld.Tools')
+    request = t.choose(game, 5) // Choose age 5
+    request = t.choose(game, 'dennis.Banking') // Only dennis has a card with {f} at age 5
     // Achievement selection happens automatically when only one option
 
     t.testIsSecondPlayer(game)
@@ -161,10 +161,10 @@ describe('Tecumseh', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Tools')
-    request = t.choose(game, request, 5) // Choose age 5
-    request = t.choose(game, request, 'dennis.Banking', 'micah.Coal', 'scott.Physics')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Meld.Tools')
+    request = t.choose(game, 5) // Choose age 5
+    request = t.choose(game, 'dennis.Banking', 'micah.Coal', 'scott.Physics')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

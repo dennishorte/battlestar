@@ -20,7 +20,7 @@ describe('McCarthyism', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.McCarthyism')
+    request = t.choose(game, 'Dogma.McCarthyism')
 
     t.testGameOver(request, 'dennis', 'McCarthyism')
   })
@@ -43,8 +43,8 @@ describe('McCarthyism', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.McCarthyism')
-    request = t.choose(game, request, 'red')
+    request = t.choose(game, 'Dogma.McCarthyism')
+    request = t.choose(game, 'red')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

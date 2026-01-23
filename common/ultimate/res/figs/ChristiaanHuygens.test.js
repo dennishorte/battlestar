@@ -21,9 +21,9 @@ describe('Christiaan Huygens', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
       // Karma triggers: junk age 6 deck, then choose to draw
-      request = t.choose(game, request, 'draw one 7') // Choose to draw one age 7
+      request = t.choose(game, 'draw one 7') // Choose to draw one age 7
 
       t.testIsSecondPlayer(game)
       t.testDeckIsJunked(game, 6) // Age 6 deck was junked
@@ -53,9 +53,9 @@ describe('Christiaan Huygens', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Databases')
+      request = t.choose(game, 'Dogma.Databases')
       // Karma triggers: junk age 6 deck, then choose to draw
-      request = t.choose(game, request, 'draw two 8') // Choose to draw two age 8
+      request = t.choose(game, 'draw two 8') // Choose to draw two age 8
 
       t.testIsSecondPlayer(game)
       t.testDeckIsJunked(game, 6) // Age 6 deck was junked
@@ -85,9 +85,9 @@ describe('Christiaan Huygens', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
       // Karma triggers: junk age 6 deck, then choose to draw
-      request = t.choose(game, request, 'draw three 9') // Choose to draw three age 9
+      request = t.choose(game, 'draw three 9') // Choose to draw three age 9
 
       t.testIsSecondPlayer(game)
       t.testDeckIsJunked(game, 6) // Age 6 deck was junked
@@ -118,11 +118,11 @@ describe('Christiaan Huygens', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
       // Karma triggers: junk age 6 deck, then choose to draw
-      request = t.choose(game, request, 'draw two 8') // Choose to draw two age 8
+      request = t.choose(game, 'draw two 8') // Choose to draw two age 8
       // Rocketry (3 {i}) + Skyscrapers (0 {i}) = 3 {i} total, dennis has 0, so return both
-      request = t.choose(game, request, 'auto')
+      request = t.choose(game, 'auto')
 
       t.testIsSecondPlayer(game)
       t.testDeckIsJunked(game, 6) // Age 6 deck was junked
@@ -153,11 +153,11 @@ describe('Christiaan Huygens', () => {
       let request
       request = game.run()
       // First action: Draw a card (first round only has one action)
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Micah's turn - do one action to complete the round
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Second action: Dogma The Wheel - karma should NOT trigger (actionNumber === 2)
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
 
       // Verify the key point: Christiaan Huygens's karma did not trigger
       // If it had triggered, The Wheel's dogma would NOT have executed (would-instead)

@@ -21,11 +21,11 @@ describe('Placebo', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Placebo')
-    request = t.choose(game, request, 'Combustion')
-    request = t.choose(game, request, 'Optics')
-    request = t.choose(game, request, 'Explosives')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Dogma.Placebo')
+    request = t.choose(game, 'Combustion')
+    request = t.choose(game, 'Optics')
+    request = t.choose(game, 'Explosives')
+    request = t.choose(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -57,10 +57,10 @@ describe('Placebo', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Placebo')
-    request = t.choose(game, request, 'Combustion')
-    request = t.choose(game, request, 'Optics')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Dogma.Placebo')
+    request = t.choose(game, 'Combustion')
+    request = t.choose(game, 'Optics')
+    request = t.choose(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -88,8 +88,8 @@ describe('Placebo', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Placebo')
-    request = t.choose(game, request, 'Gunpowder')
+    request = t.choose(game, 'Dogma.Placebo')
+    request = t.choose(game, 'Gunpowder')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

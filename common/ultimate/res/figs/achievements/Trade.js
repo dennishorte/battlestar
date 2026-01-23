@@ -8,7 +8,7 @@ module.exports = {
   isSpecialAchievement: false,
   isDecree: true,
   decreeImpl: (game, player) => {
-    const age = game.getHighestTopAge(player) + 1
+    const age = player.highestTopAge() + 1
     game.actions.drawAndForeshadow(player, age)
     game.actions.drawAndForeshadow(player, age)
     game.actions.drawAndForeshadow(player, age)

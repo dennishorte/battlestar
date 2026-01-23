@@ -18,10 +18,10 @@ describe('Refrigeration', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Refrigeration')
-    request = t.choose(game, request, 'Domestication', 'Sailing', 'Experimentation')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'Computers')
+    request = t.choose(game, 'Dogma.Refrigeration')
+    request = t.choose(game, 'Domestication', 'Sailing', 'Experimentation')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'Computers')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

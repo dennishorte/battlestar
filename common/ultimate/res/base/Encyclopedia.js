@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const values = game.getAgesByZone(player, 'score')
+      const values = player.agesByZone('score')
 
       if (values.length === 0) {
         game.log.add({ template: 'no cards in score' })

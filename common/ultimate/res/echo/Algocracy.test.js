@@ -21,9 +21,9 @@ describe("Algocracy", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Algocracy')
-    request = t.choose(game, request, 'castle')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Algocracy')
+    request = t.choose(game, 'castle')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -11,7 +11,7 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const card = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))[0]
-      const achievements = game.getAvailableStandardAchievements(player)
+      const achievements = player.availableStandardAchievements()
 
       if (card) {
         const choices = achievements.filter(c => c.getAge() === card.getAge())

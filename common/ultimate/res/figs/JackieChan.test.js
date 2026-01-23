@@ -21,7 +21,7 @@ describe('Jackie Chan', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Achieve.*base-6*')
+    request = t.choose(game, 'Achieve.*base-6*')
 
     t.testGameOver(request, 'micah', 'Jackie Chan')
     t.testBoard(game, {
@@ -53,7 +53,7 @@ describe('Jackie Chan', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Achieve.*base-6*')
+    request = t.choose(game, 'Achieve.*base-6*')
 
     t.testBoard(game, {
       dennis: {

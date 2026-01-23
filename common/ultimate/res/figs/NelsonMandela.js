@@ -16,7 +16,7 @@ module.exports = {
       kind: 'would-instead',
       matches: (game) => game.state.actionNumber === 2,
       func: (game, player, { card, self }) => {
-        game.aSuperExecute(self, player, card)
+        game.actions.superExecute(self, player, card)
       },
     },
     {

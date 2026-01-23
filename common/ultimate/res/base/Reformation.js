@@ -14,8 +14,8 @@ module.exports = {
       game.actions.chooseAndSplay(player, ['yellow', 'purple'], 'right')
     },
     (game, player) => {
-      const count = game
-        .getSplayedZones(player)
+      const count = player
+        .splayedZones()
         .length
 
       if (count === 0) {

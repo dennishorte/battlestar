@@ -33,7 +33,7 @@ module.exports = {
 
       const card = game.actions.chooseCard(player, choices)
       if (card) {
-        game.aCardEffects(player, card, 'dogma')
+        game.executeAllEffects(player, card, 'dogma')
       }
     },
   ],

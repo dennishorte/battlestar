@@ -23,8 +23,8 @@ describe('Near-Field Comm', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Near-Field Comm')
-    request = t.choose(game, request, 6)
+    request = t.choose(game, 'Dogma.Near-Field Comm')
+    request = t.choose(game, 6)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

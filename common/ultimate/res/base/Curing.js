@@ -20,7 +20,7 @@ module.exports = {
       const scored = game.actions.chooseAndScore(player, scoreChoices)[0]
 
       if (!scored) {
-        game.aYouLose(player, self)
+        game.youLose(player, self.name)
       }
     },
     (game, player) => {
@@ -31,7 +31,7 @@ module.exports = {
         const handCards = handZone.cardlist()
         const scoreZone = game.zones.byPlayer(opponent, 'score')
         const scoreCards = game.util.highestCards(scoreZone.cardlist())
-        game.aExchangeCards(player, handCards, scoreCards, handZone, scoreZone)
+        game.actions.exchangeCards(player, handCards, scoreCards, handZone, scoreZone)
       }
     },
   ],

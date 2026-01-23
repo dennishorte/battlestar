@@ -5,17 +5,28 @@ const t = require('../../../testutil.js')
 describe('Universe Achievement', () => {
   test('achieved', () => {
     const game = t.fixtureFirstPlayer()
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'red', ['Flight'])
-      t.setColor(game, 'dennis', 'yellow', ['Skyscrapers'])
-      t.setColor(game, 'dennis', 'green', ['Corporations'])
-      t.setColor(game, 'dennis', 'blue', ['Rocketry'])
-      t.setHand(game, 'dennis', ['Empiricism'])
+    t.setBoard(game, {
+      dennis: {
+        red: ['Flight'],
+        yellow: ['Skyscrapers'],
+        green: ['Corporations'],
+        blue: ['Rocketry'],
+        hand: ['Empiricism'],
+      },
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Empiricism')
+    request = t.choose(game, 'Meld.Empiricism')
 
-    expect(t.cards(game, 'achievements')).toEqual(['Universe'])
+    t.testBoard(game, {
+      dennis: {
+        red: ['Flight'],
+        yellow: ['Skyscrapers'],
+        green: ['Corporations'],
+        blue: ['Rocketry'],
+        purple: ['Empiricism'],
+        achievements: ['Universe'],
+      },
+    })
   })
 })

@@ -12,7 +12,7 @@ describe('Symbology', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Symbology')
+    request = t.choose(game, 'Dogma.Symbology')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -38,7 +38,7 @@ describe('Symbology', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Symbology')
+    request = t.choose(game, 'Dogma.Symbology')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -68,7 +68,7 @@ describe('Symbology', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Symbology')
+    request = t.choose(game, 'Dogma.Symbology')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -103,7 +103,7 @@ describe('Symbology', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Symbology')
+    request = t.choose(game, 'Dogma.Symbology')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -145,7 +145,7 @@ describe('Symbology', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Symbology')
+    request = t.choose(game, 'Dogma.Symbology')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -191,7 +191,7 @@ describe('Symbology', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Symbology')
+    request = t.choose(game, 'Dogma.Symbology')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -26,9 +26,9 @@ describe('Murasaki Shikibu', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Achieve.*base-1*')
+      request = t.choose(game, 'Achieve.*base-1*')
       // Karma triggers: choose to junk a card from score
-      request = t.choose(game, request, 'The Wheel') // Junk The Wheel
+      request = t.choose(game, 'The Wheel') // Junk The Wheel
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -61,9 +61,9 @@ describe('Murasaki Shikibu', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Achieve.*base-3*')
+      request = t.choose(game, 'Achieve.*base-3*')
       // Karma triggers: choose to skip junking (min: 0)
-      request = t.choose(game, request) // Empty selection = skip
+      request = t.choose(game) // Empty selection = skip
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -95,7 +95,7 @@ describe('Murasaki Shikibu', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Achieve.*base-1*')
+      request = t.choose(game, 'Achieve.*base-1*')
       // Karma triggers but no eligible cards in score, so no choice needed
 
       t.testIsSecondPlayer(game)
@@ -123,9 +123,9 @@ describe('Murasaki Shikibu', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Achieve.*base-1*')
+      request = t.choose(game, 'Achieve.*base-1*')
       // Karma triggers: choose to junk The Wheel
-      request = t.choose(game, request, 'The Wheel')
+      request = t.choose(game, 'The Wheel')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -154,9 +154,9 @@ describe('Murasaki Shikibu', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Achieve.*base-1*')
+      request = t.choose(game, 'Achieve.*base-1*')
       // Karma triggers: choose to junk Tools
-      request = t.choose(game, request, 'Tools')
+      request = t.choose(game, 'Tools')
 
       t.testIsSecondPlayer(game)
       // Navigation (age 4) might not be eligible if we don't have the right icons

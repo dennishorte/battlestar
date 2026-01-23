@@ -16,7 +16,7 @@ module.exports = {
     (game, player) => {
       const bonuses = game
         .players.all()
-        .flatMap(player => game.getBonuses(player))
+        .flatMap(player => player.bonuses())
         .map(bonus => bonus + 2)
         .sort((l, r) => l - r)
       const distinct = util.array.distinct(bonuses)

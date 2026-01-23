@@ -21,7 +21,7 @@ describe('Charles Darwin', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Achieve.*base-1*')
+    request = t.choose(game, 'Achieve.*base-1*')
 
     t.testGameOver(request, 'dennis', 'Charles Darwin')
   })
@@ -43,7 +43,7 @@ describe('Charles Darwin', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Achieve.*base-1*')
+    request = t.choose(game, 'Achieve.*base-1*')
 
     t.testGameOver(request, 'dennis', 'Charles Darwin')
   })
@@ -71,7 +71,7 @@ describe('Charles Darwin', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Achieve.*base-1*') // dennis tries to claim Sailing
+    request = t.choose(game, 'Achieve.*base-1*') // dennis tries to claim Sailing
     // Karma triggers: micah has 1 achievement, dennis has 0
     // Since micah has more, dennis draws an age 8 card instead of winning
     // Then the achievement claim proceeds normally

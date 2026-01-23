@@ -21,8 +21,8 @@ describe('Yuna Kim', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Pottery')
-    request = t.choose(game, request, 'Gunpowder') // Return Gunpowder (1 card)
+    request = t.choose(game, 'Dogma.Pottery')
+    request = t.choose(game, 'Gunpowder') // Return Gunpowder (1 card)
     // Pottery's first effect: return 1 card, then draw and score age 1
     // Draws and scores Archery (age 1, red)
     // Karma triggers: check if top red card (Metalworking) has {k}
@@ -49,8 +49,8 @@ describe('Yuna Kim', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Pottery')
-    request = t.choose(game, request, 'Construction') // Return Construction (1 card)
+    request = t.choose(game, 'Dogma.Pottery')
+    request = t.choose(game, 'Construction') // Return Construction (1 card)
     // Pottery's first effect: return 1 card, then draw and score age 1
     // Draws and scores Archery (age 1, red)
     // Karma triggers (would-first): check if top red card (Gunpowder) has {k}
@@ -84,12 +84,12 @@ describe('Yuna Kim', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Experimentation')
+    request = t.choose(game, 'Meld.Experimentation')
     // Karma triggers: return top 3 blue cards from all boards
     // From dennis: Tools, Mathematics, Writing (top 3)
     // From micah: Software, Computers (both, less than 3)
     // returnMany will ask owner (dennis) to choose order of returning cards
-    request = t.choose(game, request, 'auto') // Auto-order for returning cards
+    request = t.choose(game, 'auto') // Auto-order for returning cards
     // Then tuck Experimentation instead of melding it
 
     t.testIsSecondPlayer(game)
@@ -126,14 +126,14 @@ describe('Yuna Kim', () => {
     let request
     request = game.run()
     // Skip dennis's turn (first action) - dennis takes one action
-    request = t.choose(game, request, 'Draw.draw a card') // dennis draws
+    request = t.choose(game, 'Draw.draw a card') // dennis draws
     // Now it's micah's turn
-    request = t.choose(game, request, 'Meld.Software') // micah melds Software
+    request = t.choose(game, 'Meld.Software') // micah melds Software
     // Karma triggers (triggerAll: true): return top 3 blue cards from all boards
     // From dennis: Tools, Mathematics (both, less than 3)
     // From micah: Writing, Printing Press, Experimentation (top 3)
     // returnMany will ask owner (dennis) to choose order of returning cards
-    request = t.choose(game, request, 'auto') // Auto-order for returning cards
+    request = t.choose(game, 'auto') // Auto-order for returning cards
     // Then tuck Software instead of melding it
 
     t.testBoard(game, {

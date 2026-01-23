@@ -21,10 +21,10 @@ describe('Samuel de Champlain', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Karma triggers: claim achievement of age 5 or below
       // Domestication (age 1) is available
-      request = t.choose(game, request, '**base-1*')
+      request = t.choose(game, '**base-1*')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -53,10 +53,10 @@ describe('Samuel de Champlain', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Karma triggers: claim achievement of age 5 or below
       // Multiple available, choose Machinery (age 3)
-      request = t.choose(game, request, '**base-3*')
+      request = t.choose(game, '**base-3*')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -85,7 +85,7 @@ describe('Samuel de Champlain', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Karma triggers: claim achievement regardless of eligibility
       // dennis has no score, but can still claim Machinery (karma bypasses eligibility)
 
@@ -116,7 +116,7 @@ describe('Samuel de Champlain', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Karma should NOT trigger (hand has 3 cards, not 4)
 
       t.testIsSecondPlayer(game)
@@ -146,7 +146,7 @@ describe('Samuel de Champlain', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Karma should NOT trigger (hand has 5 cards, not 4)
 
       t.testIsSecondPlayer(game)
@@ -178,7 +178,7 @@ describe('Samuel de Champlain', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Karma triggers: draw age 6 first (Industrialization)
       // Then normal draw: draw age 5 (Astronomy)
 
@@ -208,7 +208,7 @@ describe('Samuel de Champlain', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Karma should NOT trigger (hand is not empty)
 
       t.testIsSecondPlayer(game)
@@ -237,7 +237,7 @@ describe('Samuel de Champlain', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Writing')
+      request = t.choose(game, 'Dogma.Writing')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

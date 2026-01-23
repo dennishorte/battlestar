@@ -4,30 +4,48 @@ const t = require('../../testutil.js')
 
 describe('Bicycle', () => {
   test('yes', () => {
-    const game = t.fixtureTopCard('Bicycle')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Industrialization', 'Tools'])
-      t.setScore(game, 'dennis', ['Chemistry'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        green: ['Bicycle'],
+        hand: ['Industrialization', 'Tools'],
+        score: ['Chemistry'],
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Bicycle')
-    const result3 = t.choose(game, result2, 'yes')
+    game.run()
+    t.choose(game, 'Dogma.Bicycle')
+    t.choose(game, 'yes')
 
-    expect(t.cards(game, 'hand')).toEqual(['Chemistry'])
-    expect(t.cards(game, 'score').sort()).toEqual(['Industrialization', 'Tools'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: ['Bicycle'],
+        hand: ['Chemistry'],
+        score: ['Industrialization', 'Tools'],
+      },
+    })
   })
 
   test('no', () => {
-    const game = t.fixtureTopCard('Bicycle')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Industrialization', 'Tools'])
-      t.setScore(game, 'dennis', ['Chemistry'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        green: ['Bicycle'],
+        hand: ['Industrialization', 'Tools'],
+        score: ['Chemistry'],
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Bicycle')
-    const result3 = t.choose(game, result2, 'no')
+    game.run()
+    t.choose(game, 'Dogma.Bicycle')
+    t.choose(game, 'no')
 
-    expect(t.cards(game, 'score')).toEqual(['Chemistry'])
-    expect(t.cards(game, 'hand').sort()).toEqual(['Industrialization', 'Tools'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: ['Bicycle'],
+        hand: ['Industrialization', 'Tools'],
+        score: ['Chemistry'],
+      },
+    })
   })
 })

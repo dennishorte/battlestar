@@ -21,8 +21,8 @@ describe("Papyrus of Ani", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'no')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'no')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -45,7 +45,7 @@ describe("Papyrus of Ani", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

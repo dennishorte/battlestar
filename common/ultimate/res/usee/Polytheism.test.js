@@ -19,10 +19,10 @@ describe('Polytheism', () => {
     let request
     request = game.run()
 
-    request = t.choose(game, request, 'Dogma.Polytheism')
+    request = t.choose(game, 'Dogma.Polytheism')
     t.testChoices(request, ['Maze', 'Pilgrimage', 'Tomb', 'Woodworking', 'Symbology'])
 
-    request = t.choose(game, request, 'Symbology')
+    request = t.choose(game, 'Symbology')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

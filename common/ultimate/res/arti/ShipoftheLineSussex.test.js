@@ -15,7 +15,7 @@ describe("Ship of the Line Sussex", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -36,9 +36,9 @@ describe("Ship of the Line Sussex", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'blue')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'blue')
+    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

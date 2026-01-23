@@ -32,7 +32,7 @@ describe('El Dorado', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.El Dorado')
+    request = t.choose(game, 'Dogma.El Dorado')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -77,7 +77,7 @@ describe('El Dorado', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.El Dorado')
+    request = t.choose(game, 'Dogma.El Dorado')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -110,7 +110,7 @@ describe('El Dorado', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.El Dorado')
+    request = t.choose(game, 'Dogma.El Dorado')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

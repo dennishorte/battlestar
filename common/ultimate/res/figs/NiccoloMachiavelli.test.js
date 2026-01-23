@@ -40,7 +40,7 @@ describe('Niccolo Machiavelli', () => {
       request = game.run()
 
       // Purple, blue, and red are splayed right only on dennis's board = 3 achievements
-      expect(game.getAchievementsByPlayer(t.dennis(game)).other.length).toBe(3)
+      expect(t.dennis(game).achievementCount().other.length).toBe(3)
     })
 
     test('karma: colors splayed right on both boards do not count', () => {
@@ -68,7 +68,7 @@ describe('Niccolo Machiavelli', () => {
       request = game.run()
 
       // Only purple is splayed right only on dennis's board = 1 achievement
-      expect(game.getAchievementsByPlayer(t.dennis(game)).other.length).toBe(1)
+      expect(t.dennis(game).achievementCount().other.length).toBe(1)
     })
 
     test('karma: colors not splayed right do not count', () => {
@@ -94,7 +94,7 @@ describe('Niccolo Machiavelli', () => {
       request = game.run()
 
       // No colors splayed right only on dennis's board = 0 achievements
-      expect(game.getAchievementsByPlayer(t.dennis(game)).other.length).toBe(0)
+      expect(t.dennis(game).achievementCount().other.length).toBe(0)
     })
   })
 
@@ -121,8 +121,8 @@ describe('Niccolo Machiavelli', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Paper')
-      request = t.choose(game, request, 'green')
+      request = t.choose(game, 'Dogma.Paper')
+      request = t.choose(game, 'green')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

@@ -21,8 +21,8 @@ describe("Pagoda", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Pagoda')
-    request = t.choose(game, request, 'Plumbing')
+    request = t.choose(game, 'Dogma.Pagoda')
+    request = t.choose(game, 'Plumbing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -54,9 +54,9 @@ describe("Pagoda", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Construction')
-    request = t.choose(game, request, 'Plumbing')
-    request = t.choose(game, request, 'Optics')
+    request = t.choose(game, 'Meld.Construction')
+    request = t.choose(game, 'Plumbing')
+    request = t.choose(game, 'Optics')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -88,7 +88,7 @@ describe("Pagoda", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Pagoda')
+    request = t.choose(game, 'Dogma.Pagoda')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

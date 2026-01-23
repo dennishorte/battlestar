@@ -33,7 +33,7 @@ class UltimateActionManager extends BaseActionManager {
         throw new Error(`${card.name} has already been claimed`)
       }
       if (card.checkPlayerIsEligible) {
-        const reduceCost = this.game.getInfoByKarmaTrigger(
+        const reduceCost = this.game.findKarmasByTrigger(
           player,
           'reduce-special-achievement-requirements'
         ).length > 0
@@ -45,10 +45,10 @@ class UltimateActionManager extends BaseActionManager {
     }
 
     // Standard achievements check age and score requirements
-    if (!this.game.checkAchievementEligibility(player, card, opts)) {
-      const topCardAge = this.game.getHighestTopAge(player, { reason: 'achieve' })
-      const scoreCost = this.game.getScoreCost(player, card)
-      const currentScore = this.game.getScore(player, opts)
+    if (!player.canClaimAchievement(card, opts)) {
+      const topCardAge = player.highestTopAge({ reason: 'achieve' })
+      const scoreCost = player.achievementCost(card)
+      const currentScore = player.score(opts)
 
       const issues = []
       if (card.getAge() > topCardAge) {
@@ -150,7 +150,7 @@ class UltimateActionManager extends BaseActionManager {
     // Some karmas create special handling for win conditions
     if (!this.state.wouldWinKarma) {
       for (const player of this.players.all()) {
-        if (this.game.getAchievementsByPlayer(player).total >= this.game.getNumAchievementsToWin()) {
+        if (player.achievementCount().total >= this.game.getNumAchievementsToWin()) {
           this.game.youWin(player, 'achievements')
         }
       }
@@ -459,7 +459,7 @@ class UltimateActionManager extends BaseActionManager {
     }
 
     // Handle karma
-    const karmaKind = this.game.aKarma(player, 'achieve', { ...opts, card })
+    const karmaKind = this.game.triggerKarma(player, 'achieve', { ...opts, card })
     if (karmaKind === 'would-instead') {
       this.acted(player)
       return
@@ -570,7 +570,7 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   foreshadow = UltimateActionManager.insteadKarmaWrapper('foreshadow', (player, card) => {
-    const zoneLimit = this.game.getForecastLimit(player)
+    const zoneLimit = player.forecastLimit()
     const target = this.zones.byPlayer(player, 'forecast')
 
     if (target.cardlist().length >= zoneLimit) {
@@ -623,7 +623,7 @@ class UltimateActionManager extends BaseActionManager {
       ages = [ages]
     }
 
-    const eligible = ages.flatMap(age => this.game.getAvailableAchievementsByAge(player, age))
+    const eligible = ages.flatMap(age => player.availableAchievementsByAge(age))
 
     const card = this.chooseCards(player, eligible, {
       title: 'Choose an achievement to junk',
@@ -638,7 +638,7 @@ class UltimateActionManager extends BaseActionManager {
 
   junkDeck(player, age, opts={}) {
     if (age < this.game.getMinAge() || age > this.game.getMaxAge()) {
-      game.log.add({
+      this.log.add({
         template: 'No deck of age {age}',
         args: { age }
       })
@@ -773,7 +773,7 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   safeguard = UltimateActionManager.insteadKarmaWrapper('safeguard', (player, card) => {
-    const safeLimit = this.game.getSafeLimit(player)
+    const safeLimit = player.safeLimit()
     const safeZone = this.zones.byPlayer(player, 'safe')
 
     if (safeZone.cardlist().length >= safeLimit) {
@@ -799,7 +799,7 @@ class UltimateActionManager extends BaseActionManager {
   })
 
   safeguardAvailableAchievement(player, age) {
-    const availableAchievements = this.game.getAvailableAchievementsByAge(player, age)
+    const availableAchievements = player.availableAchievementsByAge(age)
 
     if (availableAchievements.length === 0) {
       this.log.add({ template: 'No available achievements of age ' + age })
@@ -845,7 +845,7 @@ class UltimateActionManager extends BaseActionManager {
 
     // Karmas don't trigger if someone else is splaying your cards.
     if (owner.name === player.name) {
-      const karmaKind = this.game.aKarma(player, 'splay', { ...opts, color, direction })
+      const karmaKind = this.game.triggerKarma(player, 'splay', { ...opts, color, direction })
       if (karmaKind === 'would-instead') {
         this.acted(player)
         return
@@ -891,7 +891,7 @@ class UltimateActionManager extends BaseActionManager {
     }
 
     // TODO: Figure out how to make insteadKarmaWrapper work with this
-    const karmaKind = this.game.aKarma(player, 'transfer', { ...opts, card, target })
+    const karmaKind = this.game.triggerKarma(player, 'transfer', { ...opts, card, target })
     if (karmaKind === 'would-instead') {
       this.acted(player)
       return
@@ -939,6 +939,99 @@ class UltimateActionManager extends BaseActionManager {
       zone.splay = 'none'
       return colorOrZone
     }
+  }
+
+  exchangeCards(player, cards1, cards2, zone1, zone2) {
+    const karmaKind = this.game.triggerKarma(player, 'exchange', { cards1, cards2, zone1, zone2 })
+    if (karmaKind === 'would-instead') {
+      this.acted(player)
+      return 'would-instead'
+    }
+
+    this.log.add({
+      template: '{player} exchanges {count1} cards for {count2} cards',
+      args: {
+        player,
+        count1: cards1.length,
+        count2: cards2.length,
+      }
+    })
+
+    let acted = false
+
+    for (const card of cards1) {
+      acted = Boolean(card.moveTo(zone2)) || acted
+    }
+    for (const card of cards2) {
+      acted = Boolean(card.moveTo(zone1)) || acted
+    }
+
+    if (acted) {
+      this.acted(player)
+    }
+  }
+
+  exchangeZones(player, zone1, zone2) {
+    const cards1 = zone1.cardlist()
+    const cards2 = zone2.cardlist()
+
+    const result = this.exchangeCards(player, cards1, cards2, zone1, zone2)
+
+    if (result === 'would-instead') {
+      return
+    }
+
+    this.log.add({
+      template: '{player} exchanges {count1} cards from {zone1} for {count2} cards from {zone2}',
+      args: { player, zone1, zone2, count1: cards1.length, count2: cards2.length }
+    })
+
+    this.acted(player)
+  }
+
+  selfExecute(executingCard, player, card, opts={}) {
+    this.game.trackChainRule(player, executingCard)
+
+    const topCard = this.cards.top(player, card.color)
+    const isTopCard = topCard && topCard.name === card.name
+
+    opts.selfExecutor = player
+
+    this.log.add({
+      template: '{player} will {kind}-execute {card}',
+      args: {
+        player,
+        card,
+        kind: (opts.superExecute ? 'super' : 'self'),
+      }
+    })
+
+    // Do all visible echo effects in this color.
+    if (isTopCard) {
+      const cards = this
+        .cards.byPlayer(player, card.color)
+        .filter(other => other.id !== card.id)
+        .reverse()
+      for (const other of cards) {
+        this.game.executeAllEffects(player, other, 'echo', opts)
+      }
+    }
+
+    // Do the card's echo effects.
+    this.game.executeAllEffects(player, card, 'echo', opts)
+
+    // Do the card's dogma effects.
+    if (opts.superExecute) {
+      // Demand all opponents
+      opts.demanding = this.players.opponents(player)
+    }
+    this.game.executeAllEffects(player, card, 'dogma', opts)
+
+    this.game.finishChainEvent(player, card)
+  }
+
+  superExecute(executingCard, player, card) {
+    this.selfExecute(executingCard, player, card, { superExecute: true })
   }
 
   foreshadowMany = UltimateActionManager.createManyMethod('foreshadow', 2)
@@ -1068,7 +1161,7 @@ class UltimateActionManager extends BaseActionManager {
 
   static insteadKarmaWrapper(actionName, impl) {
     return function(player, card, opts={}) {
-      const karmaKind = this.game.aKarma(player, actionName, { ...opts, card })
+      const karmaKind = this.game.triggerKarma(player, actionName, { ...opts, card })
       if (karmaKind === 'would-instead') {
         this.acted(player)
         return

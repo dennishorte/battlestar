@@ -11,14 +11,14 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const highestTopAge = game.getHighestTopCard(player).getAge()
+      const highestTopAge = player.highestTopCard().getAge()
       game.actions.draw(player, { age: highestTopAge, exp: 'arti' })
       game.actions.junkDeck(player, highestTopAge, { exp: 'arti' })
     },
 
     (game, player) => {
       const chosenPlayer = game.actions.choosePlayer(player, game.players.active())
-      const highestTopAge = game.getHighestTopCard(chosenPlayer).getAge()
+      const highestTopAge = chosenPlayer.highestTopCard().getAge()
       game.actions.junkAvailableAchievement(player, [highestTopAge])
     },
   ],

@@ -23,11 +23,11 @@ describe('Hansen Writing Ball', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testChoices(request, ['Evolution', 'Experimentation'])
 
-    request = t.choose(game, request, 'Evolution')
+    request = t.choose(game, 'Evolution')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

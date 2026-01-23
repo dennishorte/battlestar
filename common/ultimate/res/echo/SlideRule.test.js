@@ -21,8 +21,8 @@ describe("Slide Rule", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Slide Rule')
-    request = t.choose(game, request, 'yellow')
+    request = t.choose(game, 'Dogma.Slide Rule')
+    request = t.choose(game, 'yellow')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

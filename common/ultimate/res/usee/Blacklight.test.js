@@ -16,8 +16,8 @@ describe('Blacklight', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Blacklight')
-    request = t.choose(game, request, 'Unsplay.blue')
+    request = t.choose(game, 'Dogma.Blacklight')
+    request = t.choose(game, 'Unsplay.blue')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -47,8 +47,8 @@ describe('Blacklight', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Blacklight')
-    request = t.choose(game, request, 'Splay up and draw.red')
+    request = t.choose(game, 'Dogma.Blacklight')
+    request = t.choose(game, 'Splay up and draw.red')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

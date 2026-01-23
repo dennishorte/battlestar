@@ -20,9 +20,9 @@ describe("Comb", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Comb')
-    request = t.choose(game, request, 'green')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Comb')
+    request = t.choose(game, 'green')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -54,10 +54,10 @@ describe("Comb", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Metalworking')
-    request = t.choose(game, request, 'green')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Meld.Metalworking')
+    request = t.choose(game, 'green')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

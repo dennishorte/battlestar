@@ -25,7 +25,7 @@ module.exports = {
         game.actions.draw(player, { age: game.getEffectAge(self, 11) })
       }
       else {
-        const available = game.getAvailableStandardAchievements(player)
+        const available = player.availableStandardAchievements()
         const achievement = game.actions.chooseCards(player, available, { hidden: true })[0]
 
         if (achievement) {
@@ -44,7 +44,7 @@ module.exports = {
         game.actions.reveal(player, secret)
 
         if (game.players.current() === player) {
-          game.aSuperExecute(self, player, secret)
+          game.actions.superExecute(self, player, secret)
         }
       }
     }

@@ -18,7 +18,7 @@ describe('Foraging', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Foraging')
+    request = t.choose(game, 'Dogma.Foraging')
     // Draws Fire (age 0, has {r} biscuit)
     // No reveal/score option since it has {r}
 
@@ -46,9 +46,9 @@ describe('Foraging', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Foraging')
+    request = t.choose(game, 'Dogma.Foraging')
     // Draws Stone Knives (age 0, no {r} biscuit)
-    request = t.choose(game, request, 'yes') // Choose to reveal and score
+    request = t.choose(game, 'yes') // Choose to reveal and score
     // Reveals, scores Stone Knives, then draws another {z} (Curing)
 
     t.testIsSecondPlayer(game)
@@ -76,9 +76,9 @@ describe('Foraging', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Foraging')
+    request = t.choose(game, 'Dogma.Foraging')
     // Draws Stone Knives (age 0, no {r} biscuit)
-    request = t.choose(game, request, 'no') // Choose not to reveal and score
+    request = t.choose(game, 'no') // Choose not to reveal and score
     // Stone Knives stays in hand, no second draw
 
     t.testIsSecondPlayer(game)
@@ -106,9 +106,9 @@ describe('Foraging', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Foraging')
+    request = t.choose(game, 'Dogma.Foraging')
     // Draws Stone Knives (age 0, no {r} biscuit)
-    request = t.choose(game, request, 'yes') // Choose to reveal and score
+    request = t.choose(game, 'yes') // Choose to reveal and score
     // Reveals, scores Stone Knives, then draws Fire (has {r}, so no second reveal/score option)
 
     t.testIsSecondPlayer(game)
@@ -136,9 +136,9 @@ describe('Foraging', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Foraging')
+    request = t.choose(game, 'Dogma.Foraging')
     // Draws Stone Knives (age 0, no {r} biscuit)
-    request = t.choose(game, request, 'yes') // Choose to reveal and score
+    request = t.choose(game, 'yes') // Choose to reveal and score
     // Reveals, scores Stone Knives, then draws Curing
     // Note: The second draw doesn't get the reveal/score option (it's only for the first draw)
 
@@ -167,9 +167,9 @@ describe('Foraging', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Foraging')
+    request = t.choose(game, 'Dogma.Foraging')
     // Draws Stone Knives (age 0, no {r} biscuit)
-    request = t.choose(game, request, 'yes') // Choose to reveal and score
+    request = t.choose(game, 'yes') // Choose to reveal and score
     // Reveals, scores Stone Knives, then draws Fire (has {r})
     // Note: The second draw doesn't get the reveal/score option regardless
 

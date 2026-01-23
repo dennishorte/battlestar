@@ -17,11 +17,11 @@ describe('Martin Scorsese', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Fu Xi')
+    request = t.choose(game, 'Meld.Fu Xi')
 
     t.testChoices(request, ['*base-1*', '*base-6*', '*base-10*'])
 
-    request = t.choose(game, request, '**base-6*')
+    request = t.choose(game, '**base-6*')
 
     t.testIsSecondPlayer(game)
     t.setBoard(game, {

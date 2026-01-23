@@ -7,7 +7,7 @@
               :show-cost="true"
               :expandedIn="true" />
     <template v-else>
-      Card not found: {{ ui.modals.cardViewer.cardName }}
+      Card not found: {{ ui.modals.cardViewer.cardId }}
     </template>
   </ModalBase>
 </template>
@@ -30,7 +30,10 @@ export default {
   computed: {
     card() {
       const cardId = this.ui.modals.cardViewer.cardId
-      return this.game.cards.byId[cardId]
+      if (!cardId) {
+        return null
+      }
+      return this.game.cards.byId(cardId)
     },
   }
 }

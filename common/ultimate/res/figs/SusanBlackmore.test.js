@@ -21,7 +21,7 @@ describe('Susan Blackmore', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Experimentation')
+    request = t.choose(game, 'Dogma.Experimentation')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -62,10 +62,10 @@ describe('Susan Blackmore', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Agriculture')
-    request = t.choose(game, request, 'Sailing')
-    request = t.choose(game, request, 'Canning')
-    request = t.choose(game, request, 'Societies')
+    request = t.choose(game, 'Dogma.Agriculture')
+    request = t.choose(game, 'Sailing')
+    request = t.choose(game, 'Canning')
+    request = t.choose(game, 'Societies')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

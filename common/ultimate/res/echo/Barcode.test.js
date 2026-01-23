@@ -21,11 +21,11 @@ describe("Barcode", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Barcode')
-    request = t.choose(game, request, 'Construction')
-    request = t.choose(game, request, 'Robotics')
-    request = t.choose(game, request, 'Databases')
-    request = t.choose(game, request, 'yellow')
+    request = t.choose(game, 'Dogma.Barcode')
+    request = t.choose(game, 'Construction')
+    request = t.choose(game, 'Robotics')
+    request = t.choose(game, 'Databases')
+    request = t.choose(game, 'yellow')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -63,10 +63,10 @@ describe("Barcode", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Self Service')
-    request = t.choose(game, request, 'Construction')
-    request = t.choose(game, request, 'Robotics')
-    request = t.choose(game, request, 'Databases')
+    request = t.choose(game, 'Meld.Self Service')
+    request = t.choose(game, 'Construction')
+    request = t.choose(game, 'Robotics')
+    request = t.choose(game, 'Databases')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

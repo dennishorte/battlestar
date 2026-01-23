@@ -24,11 +24,11 @@ describe("Charitable Trust", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Charitable Trust')
-    request = t.choose(game, request, 3)  // micah
-    request = t.choose(game, request, 4)  // dennis
-    request = t.choose(game, request, 'Homing Pigeons')  // micah
-    request = t.choose(game, request) // dennis
+    request = t.choose(game, 'Dogma.Charitable Trust')
+    request = t.choose(game, 3)  // micah
+    request = t.choose(game, 4)  // dennis
+    request = t.choose(game, 'Homing Pigeons')  // micah
+    request = t.choose(game) // dennis
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -59,9 +59,9 @@ describe("Charitable Trust", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Charitable Trust')
-    request = t.choose(game, request, 4)
-    request = t.choose(game, request, 'Pencil')
+    request = t.choose(game, 'Dogma.Charitable Trust')
+    request = t.choose(game, 4)
+    request = t.choose(game, 'Pencil')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

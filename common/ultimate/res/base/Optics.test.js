@@ -27,7 +27,7 @@ describe('Optics', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Optics')
+    request = t.choose(game, 'Dogma.Optics')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -61,9 +61,9 @@ describe('Optics', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Optics')
-    request = t.choose(game, request, 'micah')
-    request = t.choose(game, request, 'The Wheel')
+    request = t.choose(game, 'Dogma.Optics')
+    request = t.choose(game, 'micah')
+    request = t.choose(game, 'The Wheel')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -101,7 +101,7 @@ describe('Optics', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Optics')
+    request = t.choose(game, 'Dogma.Optics')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -142,7 +142,7 @@ describe('Optics', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Optics')
+    request = t.choose(game, 'Dogma.Optics')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -21,7 +21,7 @@ describe("Tractor", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Tractor')
+    request = t.choose(game, 'Dogma.Tractor')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -61,7 +61,7 @@ describe("Tractor", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Flight')
+    request = t.choose(game, 'Meld.Flight')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

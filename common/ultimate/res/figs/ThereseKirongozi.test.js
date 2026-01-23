@@ -22,10 +22,10 @@ describe('Therese Kirongozi', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, 'Dogma.Archery')
     // Karma triggers (triggerAll: true, would-instead): dennis would dogma, but karma replaces it
     // Opponent (dennis) draws, reveals, and returns a card of any value
-    request = t.choose(game, request, 1) // Choose age 1
+    request = t.choose(game, 1) // Choose age 1
     // The Wheel (green, age 1) is drawn, revealed, and returned
     // Opponent (dennis) super-executes their top card of the revealed card's color (green)
     // Sailing (green) is super-executed by dennis (the player who tried to dogma)
@@ -64,10 +64,10 @@ describe('Therese Kirongozi', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, 'Dogma.Archery')
     // Karma triggers (triggerAll: true, would-instead): dennis would dogma, but karma replaces it
     // Opponent (dennis) draws, reveals, and returns a card of any value
-    request = t.choose(game, request, 1) // Choose age 1
+    request = t.choose(game, 1) // Choose age 1
     // Code of Laws (blue, age 1) is drawn, revealed, and returned
     // Opponent (dennis) has no top card of blue color, so no super-execute
     t.testBoard(game, {
@@ -96,7 +96,7 @@ describe('Therese Kirongozi', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Archery')
+    request = t.choose(game, 'Dogma.Archery')
     // Karma does NOT trigger (owner dogmas, not opponent)
     // Archery's dogma executes normally: "Draw a {1}"
     t.testBoard(game, {

@@ -28,8 +28,8 @@ describe("Hot Air Balloon", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Hot Air Balloon')
-    request = t.choose(game, request, 'Agriculture')
+    request = t.choose(game, 'Dogma.Hot Air Balloon')
+    request = t.choose(game, 'Agriculture')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -71,8 +71,8 @@ describe("Hot Air Balloon", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Hot Air Balloon')
-    request = t.choose(game, request)
+    request = t.choose(game, 'Dogma.Hot Air Balloon')
+    request = t.choose(game)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -113,7 +113,7 @@ describe("Hot Air Balloon", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Hot Air Balloon')
+    request = t.choose(game, 'Dogma.Hot Air Balloon')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -158,8 +158,8 @@ describe("Hot Air Balloon", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Hot Air Balloon')
-    request = t.choose(game, request, 'Philosophy')
+    request = t.choose(game, 'Dogma.Hot Air Balloon')
+    request = t.choose(game, 'Philosophy')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

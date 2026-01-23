@@ -25,7 +25,7 @@ module.exports = {
         const choices = game
           .util
           .highestCards(junk)
-          .filter(card => game.checkAchievementEligibility(player, card))
+          .filter(card => player.canClaimAchievement(card))
         game.actions.chooseAndAchieve(player, choices, { hidden: true })
       }
     }

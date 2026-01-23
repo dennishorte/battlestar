@@ -15,10 +15,10 @@ describe("Umbrella", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Umbrella')
-    request = t.choose(game, request, 'Tools')
-    request = t.choose(game, request, 'Sailing')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Umbrella')
+    request = t.choose(game, 'Tools')
+    request = t.choose(game, 'Sailing')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

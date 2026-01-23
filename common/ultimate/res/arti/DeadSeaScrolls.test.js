@@ -21,8 +21,8 @@ describe('Dead Sea Scrolls', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'dennis')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'dennis')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

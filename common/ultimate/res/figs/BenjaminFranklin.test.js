@@ -22,7 +22,7 @@ describe('Benjamin Franklin', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Quantum Theory')
+      request = t.choose(game, 'Meld.Quantum Theory')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -50,7 +50,7 @@ describe('Benjamin Franklin', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Quantum Theory')
+      request = t.choose(game, 'Meld.Quantum Theory')
       // No transfer option available (figure is different color)
 
       t.testIsSecondPlayer(game)
@@ -79,7 +79,7 @@ describe('Benjamin Franklin', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Quantum Theory')
+      request = t.choose(game, 'Meld.Quantum Theory')
       // No transfer option available (card is not a figure)
 
       t.testIsSecondPlayer(game)
@@ -108,7 +108,7 @@ describe('Benjamin Franklin', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Quantum Theory')
+      request = t.choose(game, 'Meld.Quantum Theory')
       // No transfer option available (no matching figures)
 
       t.testIsSecondPlayer(game)

@@ -4,36 +4,62 @@ const t = require('../../testutil.js')
 
 describe('Coal', () => {
   test('dogma, with splay', () => {
-    const game = t.fixtureTopCard('Coal')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'blue', ['Alchemy', 'Calendar', 'Tools'])
-      t.setDeckTop(game, 'base', 5, ['The Pirate Code'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        red: ['Coal'],
+        blue: ['Alchemy', 'Calendar', 'Tools'],
+      },
+      decks: {
+        base: {
+          5: ['The Pirate Code'],
+        },
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Coal')
-    const result3 = t.choose(game, result2, 'red')
-    const result4 = t.choose(game, result3, 'blue')
+    game.run()
+    t.choose(game, 'Dogma.Coal')
+    t.choose(game, 'red')
+    t.choose(game, 'blue')
 
-    expect(t.cards(game, 'blue')).toEqual(['Tools'])
-    expect(t.cards(game, 'score').sort()).toEqual(['Alchemy', 'Calendar'])
-    expect(t.cards(game, 'red')).toEqual(['Coal', 'The Pirate Code'])
-    expect(t.zone(game, 'red').splay).toEqual('right')
+    t.testBoard(game, {
+      dennis: {
+        red: {
+          cards: ['Coal', 'The Pirate Code'],
+          splay: 'right',
+        },
+        blue: ['Tools'],
+        score: ['Alchemy', 'Calendar'],
+      },
+    })
   })
 
   test('dogma: choose not to score', () => {
-    const game = t.fixtureTopCard('Coal')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'blue', ['Alchemy', 'Calendar', 'Tools'])
-      t.setDeckTop(game, 'base', 5, ['The Pirate Code'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        red: ['Coal'],
+        blue: ['Alchemy', 'Calendar', 'Tools'],
+      },
+      decks: {
+        base: {
+          5: ['The Pirate Code'],
+        },
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Coal')
-    const result3 = t.choose(game, result2, 'red')
-    const result4 = t.choose(game, result3)
+    game.run()
+    t.choose(game, 'Dogma.Coal')
+    t.choose(game, 'red')
+    t.choose(game)
 
-    expect(t.cards(game, 'blue')).toEqual(['Alchemy', 'Calendar', 'Tools'])
-    expect(t.cards(game, 'red')).toEqual(['Coal', 'The Pirate Code'])
-    expect(t.zone(game, 'red').splay).toEqual('right')
+    t.testBoard(game, {
+      dennis: {
+        red: {
+          cards: ['Coal', 'The Pirate Code'],
+          splay: 'right',
+        },
+        blue: ['Alchemy', 'Calendar', 'Tools'],
+      },
+    })
   })
 
 })

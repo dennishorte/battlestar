@@ -22,8 +22,8 @@ describe("Human Genome", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Human Genome')
-    request = t.choose(game, request, 10)
+    request = t.choose(game, 'Dogma.Human Genome')
+    request = t.choose(game, 10)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -52,7 +52,7 @@ describe("Human Genome", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Human Genome')
-    request = t.choose(game, request, 10)
+    request = t.choose(game, 'Dogma.Human Genome')
+    request = t.choose(game, 10)
   })
 })

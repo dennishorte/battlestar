@@ -4,25 +4,49 @@ const t = require('../../testutil.js')
 
 describe('Atomic Theory', () => {
   test('splay blue right', () => {
-    const game = t.fixtureTopCard('Atomic Theory')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'blue', ['Atomic Theory', 'Mathematics'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Atomic Theory', 'Mathematics'],
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Atomic Theory')
-    const result3 = t.choose(game, result2, 'blue')
+    game.run()
+    t.choose(game, 'Dogma.Atomic Theory')
+    t.choose(game, 'blue')
 
-    expect(t.zone(game, 'blue').splay).toBe('right')
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: {
+          cards: ['Atomic Theory', 'Mathematics'],
+          splay: 'right',
+        },
+        purple: ['Railroad'],
+      },
+    })
   })
 
   test('draw and meld', () => {
-    const game = t.fixtureTopCard('Atomic Theory')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setDeckTop(game, 'base', 7, ['Explosives'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Atomic Theory'],
+      },
+      decks: {
+        base: {
+          7: ['Explosives'],
+        },
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Atomic Theory')
+    game.run()
+    t.choose(game, 'Dogma.Atomic Theory')
 
-    expect(t.cards(game, 'red')).toEqual(['Explosives'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Atomic Theory'],
+        red: ['Explosives'],
+      },
+    })
   })
 })

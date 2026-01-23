@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const age = Math.max(...game.getBonuses(player))
+      const age = Math.max(...player.bonuses())
       if (age && age > 0) {
         const card = game.actions.drawAndReveal(player, age)
         if (card) {

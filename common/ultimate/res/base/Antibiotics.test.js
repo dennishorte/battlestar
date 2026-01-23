@@ -4,77 +4,96 @@ const t = require('../../testutil.js')
 
 describe('Antibiotics', () => {
   test('returned none', () => {
-    const game = t.fixtureTopCard('Antibiotics')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Archery', 'Calendar', 'Mathematics'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Antibiotics'],
+        hand: ['Archery', 'Calendar', 'Mathematics'],
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Antibiotics')
-    const result3 = t.choose(game, result2)
+    game.run()
+    t.choose(game, 'Dogma.Antibiotics')
+    t.choose(game)  // Return nothing
 
-    expect(t.cards(game, 'hand', 'dennis').sort()).toEqual(['Archery', 'Calendar', 'Mathematics'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Antibiotics'],
+        hand: ['Archery', 'Calendar', 'Mathematics'],
+      },
+    })
   })
 
   test('returned one', () => {
-    const game = t.fixtureTopCard('Antibiotics')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Archery', 'Calendar', 'Mathematics'])
-      t.setDeckTop(game, 'base', 8, [
-        'Socialism',
-        'Mass Media',
-      ])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Antibiotics'],
+        hand: ['Archery', 'Calendar', 'Mathematics'],
+      },
+      decks: {
+        base: {
+          8: ['Socialism', 'Mass Media'],
+        },
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Antibiotics')
-    const result3 = t.choose(game, result2, 'Archery')
+    game.run()
+    t.choose(game, 'Dogma.Antibiotics')
+    t.choose(game, 'Archery')  // Return 1 card (age 1) -> draw 2
 
-    expect(t.cards(game, 'hand', 'dennis').sort()).toEqual([
-      'Calendar',
-      'Mass Media',
-      'Mathematics',
-      'Socialism',
-    ])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Antibiotics'],
+        hand: ['Calendar', 'Mass Media', 'Mathematics', 'Socialism'],
+      },
+    })
   })
 
   test('returned three (two with same value)', () => {
-    const game = t.fixtureTopCard('Antibiotics')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Archery', 'Calendar', 'Mathematics'])
-      t.setDeckTop(game, 'base', 8, [
-        'Socialism',
-        'Mass Media',
-        'Empiricism',
-        'Quantum Theory',
-      ])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Antibiotics'],
+        hand: ['Archery', 'Calendar', 'Mathematics'],
+      },
+      decks: {
+        base: {
+          8: ['Socialism', 'Mass Media', 'Empiricism', 'Quantum Theory'],
+        },
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Antibiotics')
-    const result3 = t.choose(game, result2, 'Archery', 'Calendar', 'Mathematics')
-    const result4 = t.choose(game, result3, 'auto')
+    game.run()
+    t.choose(game, 'Dogma.Antibiotics')
+    t.choose(game, 'Archery', 'Calendar', 'Mathematics')  // 2 distinct ages -> draw 4
+    t.choose(game, 'auto')
 
-    expect(t.cards(game, 'hand', 'dennis').sort()).toEqual([
-      'Empiricism',
-      'Mass Media',
-      'Quantum Theory',
-      'Socialism',
-    ])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Antibiotics'],
+        hand: ['Empiricism', 'Mass Media', 'Quantum Theory', 'Socialism'],
+      },
+    })
   })
 
   test('four is too many', () => {
-    const game = t.fixtureTopCard('Antibiotics')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Archery', 'Calendar', 'Mathematics', 'Tools'])
-      t.setDeckTop(game, 'base', 8, [
-        'Socialism',
-        'Mass Media',
-        'Empiricism',
-        'Quantum Theory',
-      ])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Antibiotics'],
+        hand: ['Archery', 'Calendar', 'Mathematics', 'Tools'],
+      },
+      decks: {
+        base: {
+          8: ['Socialism', 'Mass Media', 'Empiricism', 'Quantum Theory'],
+        },
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Antibiotics')
+    game.run()
+    t.choose(game, 'Dogma.Antibiotics')
 
-    const bad = () => t.choose(game, result2, 'Archery', 'Calendar', 'Mathematics', 'Tools')
+    const bad = () => t.choose(game, 'Archery', 'Calendar', 'Mathematics', 'Tools')
 
     expect(bad).toThrow(Error)
   })

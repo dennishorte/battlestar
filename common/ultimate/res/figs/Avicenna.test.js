@@ -40,7 +40,7 @@ describe('Avicenna', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Archery')
+      request = t.choose(game, 'Dogma.Archery')
       // Karma triggers: The Wheel (lowest age) should be junked and super-executed
       // Archery's dogma should NOT execute (no cards transferred from micah)
       // The Wheel's dogma should execute and draw two {1}
@@ -84,7 +84,7 @@ describe('Avicenna', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Archery')
+      request = t.choose(game, 'Dogma.Archery')
       // Karma triggers but no achievements available - logs message and does nothing
       // Archery's dogma should NOT execute
 
@@ -120,32 +120,36 @@ describe('Avicenna', () => {
         achievements: ['Sailing', 'Mathematics'],
         decks: {
           base: {
-            1: ['Tools', 'Agriculture'],
+            1: ['Tools', 'Agriculture', 'Metalworking', 'Archery', 'Oars', 'Domestication'],
           }
         }
       })
 
       let request
       request = game.run()
-      // First action: Draw a card (first round only has one action)
-      request = t.choose(game, request, 'Draw.draw a card')
-      // Micah's turn - do one action to complete the round
-      request = t.choose(game, request, 'Draw.draw a card')
-      // First action of second round: Draw a card (to set up for second action)
-      request = t.choose(game, request, 'Draw.draw a card')
-      // Second action: Dogma The Wheel - karma should NOT trigger (actionNumber === 2)
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      // Round 1: Dennis gets 1 action (first player gets 1 action in round 1)
+      request = t.choose(game, 'Draw.draw a card') // Dennis draws Tools
+      // Round 1: Micah gets 2 actions
+      request = t.choose(game, 'Draw.draw a card') // Micah draws Agriculture
+      request = t.choose(game, 'Draw.draw a card') // Micah draws Metalworking
+      // Round 2: Dennis gets 2 actions
+      request = t.choose(game, 'Draw.draw a card') // Dennis draws Archery (first action - karma would trigger if dogma)
+      request = t.choose(game, 'Dogma.The Wheel') // Dennis dogmas The Wheel (second action - karma should NOT trigger)
 
-      // Verify the key point: Avicenna's karma did not trigger
-      // If it had triggered, it would have junked the lowest available achievement (The Wheel, age 1)
-      // and super-executed it. Since The Wheel card is still on dennis's board and the dogma
-      // executed normally (dennis drew cards), the karma did not trigger.
-      const junkCards = game.zones.byId('junk').cardlist().map(c => c.name)
-      // The Wheel achievement should not be junked by Avicenna's karma
-      expect(junkCards).not.toContain('The Wheel')
-
-      // Verify The Wheel card is still on dennis's board (dogma executed normally)
-      expect(t.cards(game, 'green', 'dennis')).toContain('The Wheel')
+      // Verify the key point: Avicenna's karma did not trigger on the second action dogma
+      // The Wheel dogma executed normally (dennis drew two {1} cards)
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          yellow: ['Avicenna'],
+          green: ['The Wheel'], // Still on board
+          hand: ['Archery', 'Metalworking', 'Engineering', 'Paper'], // Draws from deck (deck order may vary)
+        },
+        micah: {
+          hand: ['Agriculture', 'Tools'], // From Micah's draws
+        },
+        junk: [], // Nothing junked - karma did not trigger on second action
+      })
     })
   })
 

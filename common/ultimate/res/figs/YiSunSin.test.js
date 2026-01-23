@@ -27,8 +27,8 @@ describe('Yi Sun-Sin', () => {
 
         let request
         request = game.run()
-        request = t.choose(game, request, 'Dogma.Mapmaking')
-        request = t.choose(game, request, 'Masonry')
+        request = t.choose(game, 'Dogma.Mapmaking')
+        request = t.choose(game, 'Masonry')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {
@@ -60,9 +60,9 @@ describe('Yi Sun-Sin', () => {
         let request
         request = game.run()
         // Skip dennis's turn by drawing a card (first round only has one action)
-        request = t.choose(game, request, 'Draw.draw a card')
+        request = t.choose(game, 'Draw.draw a card')
         // Now micah's turn starts
-        request = t.choose(game, request, 'Dogma.Mapmaking')
+        request = t.choose(game, 'Dogma.Mapmaking')
 
         t.testBoard(game, {
           dennis: {
@@ -98,12 +98,12 @@ describe('Yi Sun-Sin', () => {
 
         let request
         request = game.run()
-        request = t.choose(game, request, 'Dogma.Canal Building')
-        request = t.choose(game, request, 'Exchange highest cards between hand and score pile')
+        request = t.choose(game, 'Dogma.Canal Building')
+        request = t.choose(game, 'Exchange highest cards between hand and score pile')
         // TuckMany asks to choose which cards to tuck (or use 'auto' to tuck all)
-        request = t.choose(game, request, 'auto')
+        request = t.choose(game, 'auto')
         // Choose which top card with {k} to score (Masonry on micah's board)
-        request = t.choose(game, request, 'Masonry')
+        request = t.choose(game, 'Masonry')
 
         t.testBoard(game, {
           dennis: {
@@ -139,14 +139,14 @@ describe('Yi Sun-Sin', () => {
         let request
         request = game.run()
         // Skip dennis's turn by drawing a card (first round only has one action)
-        request = t.choose(game, request, 'Draw.draw a card')
+        request = t.choose(game, 'Draw.draw a card')
         // Now micah's turn starts
-        request = t.choose(game, request, 'Dogma.Canal Building')
-        request = t.choose(game, request, 'Exchange highest cards between hand and score pile')
+        request = t.choose(game, 'Dogma.Canal Building')
+        request = t.choose(game, 'Exchange highest cards between hand and score pile')
         // TuckMany asks to choose which cards to tuck (or use 'auto' to tuck all)
-        request = t.choose(game, request, 'auto')
+        request = t.choose(game, 'auto')
         // Choose which top card with {k} to score (Masonry on dennis's board)
-        request = t.choose(game, request, 'Masonry')
+        request = t.choose(game, 'Masonry')
 
         t.testBoard(game, {
           dennis: {

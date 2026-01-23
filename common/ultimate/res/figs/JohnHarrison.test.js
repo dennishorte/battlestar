@@ -29,8 +29,8 @@ describe('John Harrison', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
-      request = t.choose(game, request, 'figs')
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'figs')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -58,7 +58,7 @@ describe('John Harrison', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Karma triggers but no cards to return, so draw normally
 
       t.testIsSecondPlayer(game)
@@ -86,7 +86,7 @@ describe('John Harrison', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
       // The Wheel's dogma draws two age 1 cards, but John Harrison's karma should not trigger
       // (only triggers on Draw action, not on draws from dogma effects)
 

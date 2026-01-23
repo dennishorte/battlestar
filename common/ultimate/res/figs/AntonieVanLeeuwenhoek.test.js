@@ -64,10 +64,10 @@ describe('Antonie Van Leeuwenhoek', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Karma triggers: choose to return Statistics (age 5)
       // t.choose should automatically find the right selector
-      request = t.choose(game, request, 'Statistics')
+      request = t.choose(game, 'Statistics')
       // Then karma draws age 6 card (Industrialization), then normal draw draws age 5 (Measurement)
 
       t.testIsSecondPlayer(game)
@@ -96,10 +96,10 @@ describe('Antonie Van Leeuwenhoek', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Karma triggers: choose not to return Statistics (min: 0 allows skipping)
       // Skip by calling t.choose without arguments (like PrintingPress test)
-      request = t.choose(game, request)
+      request = t.choose(game)
       // Then draw normally (age 5) - the draw should complete and then ask for second action
 
       t.testIsSecondPlayer(game)
@@ -128,7 +128,7 @@ describe('Antonie Van Leeuwenhoek', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
       // Karma does not trigger (no age 5 cards in hand)
       // Draw normally
 
@@ -159,9 +159,9 @@ describe('Antonie Van Leeuwenhoek', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.The Wheel')
+      request = t.choose(game, 'Dogma.The Wheel')
       // The Wheel's dogma draws two age 1 cards
-      request = t.choose(game, request, 'Statistics')
+      request = t.choose(game, 'Statistics')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

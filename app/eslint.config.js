@@ -4,6 +4,10 @@ const js = require("@eslint/js")
 const vue = require("eslint-plugin-vue")
 
 module.exports = defineConfig([
+  // Global ignores
+  {
+    ignores: ["dist/**", "node_modules/**", "*.min.js"],
+  },
   // Main app and Vue files
   {
     files: ["**/*.{js,vue}"],

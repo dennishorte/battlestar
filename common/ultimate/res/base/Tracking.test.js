@@ -18,10 +18,10 @@ describe('Tracking', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Tracking')
+    request = t.choose(game, 'Dogma.Tracking')
     // Draws two age 0 cards (Fire and Curing)
     // Choose which one to return
-    request = t.choose(game, request, 'Fire') // Return Fire
+    request = t.choose(game, 'Fire') // Return Fire
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

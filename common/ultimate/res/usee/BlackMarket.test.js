@@ -14,10 +14,10 @@ describe('Black Market', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Black Market')
-    request = t.choose(game, request, 'Optics')
-    request = t.choose(game, request, '**base-7*', '**base-11*')
-    request = t.choose(game, request, 'Lighting')
+    request = t.choose(game, 'Dogma.Black Market')
+    request = t.choose(game, 'Optics')
+    request = t.choose(game, '**base-7*', '**base-11*')
+    request = t.choose(game, 'Lighting')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -40,10 +40,10 @@ describe('Black Market', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Black Market')
-    request = t.choose(game, request, 'Optics')
-    request = t.choose(game, request, '**base-7*', '**base-6*')
-    request = t.choose(game, request, 'Canning')
+    request = t.choose(game, 'Dogma.Black Market')
+    request = t.choose(game, 'Optics')
+    request = t.choose(game, '**base-7*', '**base-6*')
+    request = t.choose(game, 'Canning')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

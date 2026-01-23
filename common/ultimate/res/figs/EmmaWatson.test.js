@@ -31,7 +31,7 @@ describe('Emma Watson', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Emma Watson')
+    request = t.choose(game, 'Meld.Emma Watson')
     // Karma triggers: unsplay all colors on all boards
 
     // Note: The unsplay may not be working as expected, or the test setup may need adjustment
@@ -67,10 +67,10 @@ describe('Emma Watson', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Computers')
+      request = t.choose(game, 'Meld.Computers')
       // Karma triggers: return top 6 blue cards (Tools, Mathematics, Experimentation, Printing Press, Writing, Software)
       // All 6 cards are returned, so no scoring happens
-      request = t.choose(game, request, 'auto') // Auto-order for returning cards
+      request = t.choose(game, 'auto') // Auto-order for returning cards
 
       t.testBoard(game, {
         dennis: {
@@ -101,13 +101,13 @@ describe('Emma Watson', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Experimentation')
+      request = t.choose(game, 'Meld.Experimentation')
       // Karma triggers: return top 6 blue cards, but only 2 exist (Tools, Mathematics)
       // Fewer than 6 cards were returned, so score all blue cards from all boards
       // dennis: Tools, Mathematics, Experimentation (meld target)
       // micah: Printing Press, Writing
-      request = t.choose(game, request, 'auto') // Auto-order for returning cards
-      request = t.choose(game, request, 'auto') // Auto-order for scoring cards
+      request = t.choose(game, 'auto') // Auto-order for returning cards
+      request = t.choose(game, 'auto') // Auto-order for scoring cards
 
       t.testBoard(game, {
         dennis: {
@@ -137,11 +137,11 @@ describe('Emma Watson', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card') // dennis takes first action
-      request = t.choose(game, request, 'Meld.Computers') // micah melds Computers
+      request = t.choose(game, 'Draw.draw a card') // dennis takes first action
+      request = t.choose(game, 'Meld.Computers') // micah melds Computers
       // Karma triggers (triggerAll: true): return top 6 blue cards from micah's board
       // Owner (dennis) chooses which cards to return
-      request = t.choose(game, request, 'auto') // Auto-order for returning cards
+      request = t.choose(game, 'auto') // Auto-order for returning cards
 
       t.testBoard(game, {
         dennis: {
@@ -175,13 +175,13 @@ describe('Emma Watson', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Draw.draw a card') // dennis takes first action
-      request = t.choose(game, request, 'Meld.Printing Press') // micah melds Printing Press
+      request = t.choose(game, 'Draw.draw a card') // dennis takes first action
+      request = t.choose(game, 'Meld.Printing Press') // micah melds Printing Press
       // Karma triggers (triggerAll: true): return top 6 blue cards from micah's board, but only 1 exists (Experimentation)
       // Fewer than 6 cards were returned, so score all blue cards from all boards
       // dennis: Tools, Mathematics
       // micah: Experimentation, Printing Press (meld target)
-      request = t.choose(game, request, 'auto') // Auto-order for returning cards
+      request = t.choose(game, 'auto') // Auto-order for returning cards
 
       t.testBoard(game, {
         dennis: {

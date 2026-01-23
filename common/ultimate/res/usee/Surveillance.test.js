@@ -17,7 +17,7 @@ describe('Surveillance', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Surveillance')
+    request = t.choose(game, 'Dogma.Surveillance')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -47,7 +47,7 @@ describe('Surveillance', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Surveillance')
+    request = t.choose(game, 'Dogma.Surveillance')
 
     t.testGameOver(request, 'dennis', 'Surveillance')
   })
@@ -71,7 +71,7 @@ describe('Surveillance', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Surveillance')
+    request = t.choose(game, 'Dogma.Surveillance')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -20,7 +20,7 @@ describe('Space Traffic', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Space Traffic')
+    request = t.choose(game, 'Dogma.Space Traffic')
 
 
     t.testIsSecondPlayer(game)
@@ -55,7 +55,7 @@ describe('Space Traffic', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Space Traffic')
+    request = t.choose(game, 'Dogma.Space Traffic')
 
     t.testGameOver(request, 'micah', 'Space Traffic')
   })
@@ -75,7 +75,7 @@ describe('Space Traffic', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Space Traffic')
+    request = t.choose(game, 'Dogma.Space Traffic')
 
     t.testGameOver(request, 'micah', 'Space Traffic')
   })

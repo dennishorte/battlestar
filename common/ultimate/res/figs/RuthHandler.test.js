@@ -24,9 +24,9 @@ describe('Ruth Handler', () => {
       let request
       request = game.run()
       // dennis (owner) melds Tools (blue)
-      request = t.choose(game, request, 'Meld.Tools')
+      request = t.choose(game, 'Meld.Tools')
       // Karma triggers: meld all other blue cards from all players' hands
-      request = t.choose(game, request, 'Experimentation')
+      request = t.choose(game, 'Experimentation')
       // Then draw and achieve a {9} for each card melded (1 card = Satellites)
       // The card is drawn and automatically achieved (no selection needed)
 
@@ -59,7 +59,7 @@ describe('Ruth Handler', () => {
       let request
       request = game.run()
       // dennis (owner) melds Tools (blue)
-      request = t.choose(game, request, 'Meld.Tools')
+      request = t.choose(game, 'Meld.Tools')
       // Karma triggers but no other blue cards in hands, so nothing happens
 
       t.testIsSecondPlayer(game)

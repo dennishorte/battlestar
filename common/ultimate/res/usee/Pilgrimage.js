@@ -21,7 +21,7 @@ module.exports = {
           break
         }
 
-        const availableAchievements = game.getAvailableAchievementsByAge(player, value)
+        const availableAchievements = player.availableAchievementsByAge(value)
 
         if (availableAchievements.length > 0) {
           game.actions.safeguard(player, availableAchievements[0])

@@ -4,34 +4,66 @@ const t = require('../../testutil.js')
 
 describe('Alchemy', () => {
   test('draw and reveal (no red)', () => {
-    const game = t.fixtureTopCard('Alchemy')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setDeckTop(game, 'base', 4, ['Printing Press', 'Invention', 'Experimentation'])
-      t.setColor(game, 'dennis', 'green', ['The Wheel'])
-      t.setColor(game, 'dennis', 'yellow', ['Masonry'])
-      t.setColor(game, 'dennis', 'red', ['Metalworking'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Alchemy'],
+        green: ['The Wheel'],
+        yellow: ['Masonry'],
+        red: ['Metalworking'],
+      },
+      decks: {
+        base: {
+          4: ['Printing Press', 'Invention', 'Experimentation'],
+        },
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Alchemy')
-    const result3 = t.choose(game, result2, 'Invention')
-    const result4 = t.choose(game, result3, 'Printing Press')
+    game.run()
+    t.choose(game, 'Dogma.Alchemy')
+    t.choose(game, 'Invention')  // Meld
+    t.choose(game, 'Printing Press')  // Score
 
-    expect(t.cards(game, 'green')).toEqual(['Invention', 'The Wheel'])
-    expect(t.cards(game, 'score')).toEqual(['Printing Press'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Alchemy'],
+        green: ['Invention', 'The Wheel'],
+        yellow: ['Masonry'],
+        red: ['Metalworking'],
+        hand: ['Experimentation'],  // Remaining from draw
+        score: ['Printing Press'],
+      },
+    })
   })
 
   test('draw and reveal (red)', () => {
-    const game = t.fixtureTopCard('Alchemy')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setDeckTop(game, 'base', 4, ['Printing Press', 'Gunpowder', 'Experimentation'])
-      t.setColor(game, 'dennis', 'green', ['The Wheel'])
-      t.setColor(game, 'dennis', 'yellow', ['Masonry'])
-      t.setColor(game, 'dennis', 'red', ['Metalworking'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Alchemy'],
+        green: ['The Wheel'],
+        yellow: ['Masonry'],
+        red: ['Metalworking'],
+      },
+      decks: {
+        base: {
+          4: ['Printing Press', 'Gunpowder', 'Experimentation'],
+        },
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Alchemy')
-    const result3 = t.choose(game, result2, 'auto')
+    game.run()
+    t.choose(game, 'Dogma.Alchemy')
+    t.choose(game, 'auto')  // No cards to meld/score after return
 
-    expect(t.cards(game, 'hand')).toEqual([])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Alchemy'],
+        green: ['The Wheel'],
+        yellow: ['Masonry'],
+        red: ['Metalworking'],
+        // Drew red (Gunpowder), so all drawn cards and hand returned
+      },
+    })
   })
 })

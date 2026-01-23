@@ -25,8 +25,8 @@ describe("Camcorder", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Camcorder')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Camcorder')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -63,7 +63,7 @@ describe("Camcorder", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Touchscreen')
+    request = t.choose(game, 'Meld.Touchscreen')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

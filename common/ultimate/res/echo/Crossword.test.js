@@ -21,8 +21,8 @@ describe("Crossword", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Crossword')
-    request = t.choose(game, request, 8)
+    request = t.choose(game, 'Dogma.Crossword')
+    request = t.choose(game, 8)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -52,8 +52,8 @@ describe("Crossword", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Crossword')
-    request = t.choose(game, request, 8)
+    request = t.choose(game, 'Dogma.Crossword')
+    request = t.choose(game, 8)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -85,8 +85,8 @@ describe("Crossword", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Laser')
-    request = t.choose(game, request, 8)
+    request = t.choose(game, 'Meld.Laser')
+    request = t.choose(game, 8)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

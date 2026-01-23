@@ -21,7 +21,7 @@ module.exports = {
 
       const splayed = game.actions.chooseAndSplay(player, choices, 'left', { count: 1 })[0]
       if (!splayed) {
-        game.aYouLose(player, self)
+        game.youLose(player, self.name)
       }
     }
   ],

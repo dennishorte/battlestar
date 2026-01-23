@@ -22,7 +22,7 @@ module.exports = {
 
         const topCard = game.cards.top(player, card.color)
         if (topCard) {
-          game.aSuperExecute(self, player, topCard)
+          game.actions.superExecute(self, player, topCard)
         }
       }
     }

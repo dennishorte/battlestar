@@ -24,9 +24,9 @@ describe('Sargon of Akkad', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Agriculture')
-    request = t.choose(game, request, 'Construction')
-    request = t.choose(game, request, 'Tools')
+    request = t.choose(game, 'Dogma.Agriculture')
+    request = t.choose(game, 'Construction')
+    request = t.choose(game, 'Tools')
 
     t.setBoard(game, {
       dennis: {

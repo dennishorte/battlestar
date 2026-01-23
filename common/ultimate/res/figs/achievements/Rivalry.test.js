@@ -16,11 +16,11 @@ test('Rivalry', () => {
 
   let request
   request = game.run()
-  request = t.choose(game, request, 'Decree.Rivalry')
+  request = t.choose(game, 'Decree.Rivalry')
   // choosePlayer creates a request to choose between micah and scott
-  request = t.choose(game, request, 'micah')
-  request = t.choose(game, request, 'Software', 'Coal', 'Mathematics')
-  request = t.choose(game, request, 'auto')
+  request = t.choose(game, 'micah')
+  request = t.choose(game, 'Software', 'Coal', 'Mathematics')
+  request = t.choose(game, 'auto')
 
   t.testBoard(game, {
     dennis: {

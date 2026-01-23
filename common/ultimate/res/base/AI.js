@@ -25,7 +25,7 @@ module.exports = {
       if (conditionMet) {
         const playerScores = game
           .players.all()
-          .map(player => ({ player, score: game.getScore(player) }))
+          .map(player => ({ player, score: player.score() }))
           .sort((l, r) => l.score - r.score)
 
         if (playerScores[0].score < playerScores[1].score) {

@@ -23,7 +23,7 @@ describe('Slot Machine', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Slot Machine')
+    request = t.choose(game, 'Dogma.Slot Machine')
 
     t.testGameOver(request, 'dennis', 'Slot Machine')
   })
@@ -49,8 +49,8 @@ describe('Slot Machine', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Slot Machine')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Slot Machine')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -85,8 +85,8 @@ describe('Slot Machine', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Slot Machine')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Slot Machine')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

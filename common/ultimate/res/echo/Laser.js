@@ -16,7 +16,7 @@ module.exports = {
       const scoreCards = game.cards.byPlayer(player, 'score')
       game.actions.chooseAndReturn(player, scoreCards, { count: 4 })
 
-      const toReturn = game.getAvailableStandardAchievements(player)
+      const toReturn = player.availableStandardAchievements()
       game.actions.returnMany(player, toReturn)
     },
 

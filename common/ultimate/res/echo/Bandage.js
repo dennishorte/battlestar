@@ -25,7 +25,7 @@ module.exports = {
 
       if (fromScore && fromHand) {
         const count = game.cards.byPlayer(player, 'achievements').length
-        const availableAchievements = game.getAvailableAchievements(player)
+        const availableAchievements = player.availableAchievements()
         game.actions.chooseAndJunk(player, availableAchievements, { count })
       }
     }

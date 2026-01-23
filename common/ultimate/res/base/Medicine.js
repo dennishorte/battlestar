@@ -17,7 +17,7 @@ module.exports = {
       const highestCards = game.actions.chooseCards(player, highest)
       const lowestCards = game.actions.chooseCards(player, lowest)
 
-      game.aExchangeCards(
+      game.actions.exchangeCards(
         player,
         highestCards,
         lowestCards,

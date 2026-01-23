@@ -25,7 +25,7 @@ module.exports = {
       }
 
       if (transferred) {
-        game.aExchangeZones(player, game.zones.byPlayer(player, 'score'), game.zones.byPlayer(leader, 'score'))
+        game.actions.exchangeZones(player, game.zones.byPlayer(player, 'score'), game.zones.byPlayer(leader, 'score'))
       }
     }
   ],

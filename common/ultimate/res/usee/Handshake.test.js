@@ -16,8 +16,8 @@ describe('Handshake', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Handshake')
-    request = t.choose(game, request, 'blue', 'green')
+    request = t.choose(game, 'Dogma.Handshake')
+    request = t.choose(game, 'blue', 'green')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

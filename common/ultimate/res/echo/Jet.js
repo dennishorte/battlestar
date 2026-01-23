@@ -46,7 +46,7 @@ module.exports = {
       const toJunk = util
         .array
         .distinct(valuesToJunk)
-        .flatMap(age => game.getAvailableAchievementsByAge(player, age))
+        .flatMap(age => player.availableAchievementsByAge(age))
 
       game.actions.junkMany(player, toJunk, { ordered: true })
     },

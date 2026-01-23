@@ -20,7 +20,7 @@ describe('Basur Hoyuk Tokens', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -49,8 +49,8 @@ describe('Basur Hoyuk Tokens', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

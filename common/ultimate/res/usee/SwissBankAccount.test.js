@@ -20,7 +20,7 @@ describe('Swiss Bank Account', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Swiss Bank Account')
+    request = t.choose(game, 'Dogma.Swiss Bank Account')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

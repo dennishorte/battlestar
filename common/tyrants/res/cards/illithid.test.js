@@ -14,10 +14,10 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Aboleth')
-      const request3 = t.choose(game, request2, 'Place 2 spies')
-      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
-      const request5 = t.choose(game, request4, 'Menzoberranzan')
+      const request2 = t.choose(game, 'Play Card.Aboleth')
+      const request3 = t.choose(game, 'Place 2 spies')
+      const request4 = t.choose(game, 'Chasmleap Bridge')
+      const request5 = t.choose(game, 'Menzoberranzan')
 
       t.testBoard(game, {
         dennis: {
@@ -50,8 +50,8 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Aboleth')
-      const request3 = t.choose(game, request2, 'Draw a card for each spy you have on the board')
+      const request2 = t.choose(game, 'Play Card.Aboleth')
+      const request3 = t.choose(game, 'Draw a card for each spy you have on the board')
 
       t.testBoard(game, {
         dennis: {
@@ -72,9 +72,9 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.House Guard')
-      const request3 = t.choose(game, request2, 'Play Card.Ambassador')
-      const request4 = t.choose(game, request3, 'Pass')
+      const request2 = t.choose(game, 'Play Card.House Guard')
+      const request3 = t.choose(game, 'Play Card.Ambassador')
+      const request4 = t.choose(game, 'Pass')
 
       t.testBoard(game, {
         dennis: {
@@ -96,10 +96,10 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Gauth')
-      const request3 = t.choose(game, request2, '*Draw a card. Choose one opponent with more than 3 cards to discard a card')
-      const request4 = t.choose(game, request3, 'Ambassador')
-      const request5 = t.choose(game, request4, 'yes')
+      const request2 = t.choose(game, 'Play Card.Gauth')
+      const request3 = t.choose(game, '*Draw a card. Choose one opponent with more than 3 cards to discard a card')
+      const request4 = t.choose(game, 'Ambassador')
+      const request5 = t.choose(game, 'yes')
 
 
       t.testBoard(game, {
@@ -126,7 +126,7 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Beholder')
+      const request2 = t.choose(game, 'Play Card.Beholder')
 
       t.testBoard(game, {
         dennis: {
@@ -149,9 +149,9 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Brainwashed Slave')
-      const request3 = t.choose(game, request2, 'Place a spy')
-      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+      const request2 = t.choose(game, 'Play Card.Brainwashed Slave')
+      const request3 = t.choose(game, 'Place a spy')
+      const request4 = t.choose(game, 'Chasmleap Bridge')
 
       t.testBoard(game, {
         dennis: {
@@ -176,9 +176,9 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Brainwashed Slave')
-      const request3 = t.choose(game, request2, 'Return one of your spies > +2 power, + 2 influence')
-      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+      const request2 = t.choose(game, 'Play Card.Brainwashed Slave')
+      const request3 = t.choose(game, 'Return one of your spies > +2 power, + 2 influence')
+      const request4 = t.choose(game, 'Chasmleap Bridge')
 
       t.testBoard(game, {
         dennis: {
@@ -211,9 +211,9 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Chuul')
-      const request3 = t.choose(game, request2, 'Chasmleap Bridge')
-      const request4 = t.choose(game, request3, 'House Guard')
+      const request2 = t.choose(game, 'Play Card.Chuul')
+      const request3 = t.choose(game, 'Chasmleap Bridge')
+      const request4 = t.choose(game, 'House Guard')
 
       t.testBoard(game, {
         dennis: {
@@ -246,8 +246,8 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Chuul')
-      const request3 = t.choose(game, request2, 'Chasmleap Bridge')
+      const request2 = t.choose(game, 'Play Card.Chuul')
+      const request3 = t.choose(game, 'Chasmleap Bridge')
 
       t.testBoard(game, {
         dennis: {
@@ -276,9 +276,9 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Cloaker')
-      const request3 = t.choose(game, request2, 'Place a spy')
-      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+      const request2 = t.choose(game, 'Play Card.Cloaker')
+      const request3 = t.choose(game, 'Place a spy')
+      const request4 = t.choose(game, 'Chasmleap Bridge')
 
       t.testBoard(game, {
         dennis: {
@@ -304,9 +304,9 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Cloaker')
-      const request3 = t.choose(game, request2, "Return one of your spies > Assassinate a troop at that spy's site")
-      const request4 = t.choose(game, request3, 'Menzoberranzan')
+      const request2 = t.choose(game, 'Play Card.Cloaker')
+      const request3 = t.choose(game, "Return one of your spies > Assassinate a troop at that spy's site")
+      const request4 = t.choose(game, 'Menzoberranzan')
 
       t.testBoard(game, {
         dennis: {
@@ -336,9 +336,9 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Cloaker')
-      const request3 = t.choose(game, request2, "Return one of your spies > Assassinate a troop at that spy's site")
-      const request4 = t.choose(game, request3, 'Menzoberranzan')
+      const request2 = t.choose(game, 'Play Card.Cloaker')
+      const request3 = t.choose(game, "Return one of your spies > Assassinate a troop at that spy's site")
+      const request4 = t.choose(game, 'Menzoberranzan')
 
       t.testBoard(game, {
         dennis: {
@@ -367,10 +367,10 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Cranium Rats')
-      const request3 = t.choose(game, request2, 'ched-halls a')
-      const request4 = t.choose(game, request3, 'ched-halls b')
-      const request5 = t.choose(game, request4, 'House Guard')
+      const request2 = t.choose(game, 'Play Card.Cranium Rats')
+      const request3 = t.choose(game, 'ched-halls a')
+      const request4 = t.choose(game, 'ched-halls b')
+      const request5 = t.choose(game, 'House Guard')
 
       t.testBoard(game, {
         dennis: {
@@ -405,9 +405,9 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Death Tyrant')
-      const request3 = t.choose(game, request2, 'Menzoberranzan')
-      const request4 = t.choose(game, request3, 'neutral', 'neutral', 'micah')
+      const request2 = t.choose(game, 'Play Card.Death Tyrant')
+      const request3 = t.choose(game, 'Menzoberranzan')
+      const request4 = t.choose(game, 'neutral', 'neutral', 'micah')
 
       t.testBoard(game, {
         dennis: {
@@ -435,7 +435,7 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Elder Brain')
+      const request2 = t.choose(game, 'Play Card.Elder Brain')
 
       t.testBoard(game, {
         dennis: {
@@ -457,7 +457,7 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Elder Brain')
+      const request2 = t.choose(game, 'Play Card.Elder Brain')
 
       t.testBoard(game, {
         dennis: {
@@ -478,8 +478,8 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Gauth')
-      const request3 = t.choose(game, request2, '+2 influence')
+      const request2 = t.choose(game, 'Play Card.Gauth')
+      const request3 = t.choose(game, '+2 influence')
 
       t.testBoard(game, {
         dennis: {
@@ -502,9 +502,9 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Gauth')
-      const request3 = t.choose(game, request2, '*Draw a card. Choose one opponent with more than 3 cards to discard a card')
-      const request4 = t.choose(game, request3, 'House Guard')
+      const request2 = t.choose(game, 'Play Card.Gauth')
+      const request3 = t.choose(game, '*Draw a card. Choose one opponent with more than 3 cards to discard a card')
+      const request4 = t.choose(game, 'House Guard')
 
       t.testBoard(game, {
         dennis: {
@@ -529,8 +529,8 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Grimlock')
-      const request3 = t.choose(game, request2, 'ched-halls a')
+      const request2 = t.choose(game, 'Play Card.Grimlock')
+      const request3 = t.choose(game, 'ched-halls a')
 
       t.testBoard(game, {
         dennis: {
@@ -556,9 +556,9 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Gauth')
-      const request3 = t.choose(game, request2, '*Draw a card. Choose one opponent with more than 3 cards to discard a card')
-      const request4 = t.choose(game, request3, 'Grimlock')
+      const request2 = t.choose(game, 'Play Card.Gauth')
+      const request3 = t.choose(game, '*Draw a card. Choose one opponent with more than 3 cards to discard a card')
+      const request4 = t.choose(game, 'Grimlock')
 
 
       t.testBoard(game, {
@@ -584,8 +584,8 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Intellect Devourer')
-      const request3 = t.choose(game, request2, '+3 influence')
+      const request2 = t.choose(game, 'Play Card.Intellect Devourer')
+      const request3 = t.choose(game, '+3 influence')
 
 
       t.testBoard(game, {
@@ -609,10 +609,10 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Intellect Devourer')
-      const request3 = t.choose(game, request2, 'Return up to two troops or spies')
-      const request4 = t.choose(game, request3, 'spy.Ched Nasad, micah')
-      const request5 = t.choose(game, request4, 'troop.araum-ched, neutral')
+      const request2 = t.choose(game, 'Play Card.Intellect Devourer')
+      const request3 = t.choose(game, 'Return up to two troops or spies')
+      const request4 = t.choose(game, 'spy.Ched Nasad, micah')
+      const request5 = t.choose(game, 'troop.araum-ched, neutral')
 
       t.testBoard(game, {
         dennis: {
@@ -646,9 +646,9 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Mindwitness')
-      const request3 = t.choose(game, request2, 'ched-halls a, micah')
-      const request4 = t.choose(game, request3, 'House Guard')
+      const request2 = t.choose(game, 'Play Card.Mindwitness')
+      const request3 = t.choose(game, 'ched-halls a, micah')
+      const request4 = t.choose(game, 'House Guard')
 
       t.testBoard(game, {
         dennis: {
@@ -681,12 +681,12 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Neogi')
-      const request3 = t.choose(game, request2, 'ched-halls a')
-      const request4 = t.choose(game, request3, 'ched-halls b')
-      const request5 = t.choose(game, request4, 'ched-llace a')
-      const request6 = t.choose(game, request5, 'ched-llace b')
-      const request7 = t.choose(game, request6, 'House Guard')
+      const request2 = t.choose(game, 'Play Card.Neogi')
+      const request3 = t.choose(game, 'ched-halls a')
+      const request4 = t.choose(game, 'ched-halls b')
+      const request5 = t.choose(game, 'ched-llace a')
+      const request6 = t.choose(game, 'ched-llace b')
+      const request7 = t.choose(game, 'House Guard')
 
       t.testBoard(game, {
         dennis: {
@@ -722,9 +722,9 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Nothic')
-      const request3 = t.choose(game, request2, 'Place a spy')
-      const request4 = t.choose(game, request3, 'Chasmleap Bridge')
+      const request2 = t.choose(game, 'Play Card.Nothic')
+      const request3 = t.choose(game, 'Place a spy')
+      const request4 = t.choose(game, 'Chasmleap Bridge')
 
       t.testBoard(game, {
         dennis: {
@@ -753,10 +753,10 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Nothic')
-      const request3 = t.choose(game, request2, '*Return one of your spies > Draw a card. Each opponent with more than 3 cards must discard a card')
-      const request4 = t.choose(game, request3, 'Menzoberranzan')
-      const request5 = t.choose(game, request4, 'Spellspinner')
+      const request2 = t.choose(game, 'Play Card.Nothic')
+      const request3 = t.choose(game, '*Return one of your spies > Draw a card. Each opponent with more than 3 cards must discard a card')
+      const request4 = t.choose(game, 'Menzoberranzan')
+      const request5 = t.choose(game, 'Spellspinner')
 
       t.testBoard(game, {
         dennis: {
@@ -781,8 +781,8 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.House Guard')
-      const request3 = t.choose(game, request2, 'Play Card.Puppeteer')
+      const request2 = t.choose(game, 'Play Card.House Guard')
+      const request3 = t.choose(game, 'Play Card.Puppeteer')
 
       t.testBoard(game, {
         dennis: {
@@ -803,9 +803,9 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.House Guard')
-      const request3 = t.choose(game, request2, 'Play Card.Puppeteer')
-      const request4 = t.choose(game, request3, 'Pass')
+      const request2 = t.choose(game, 'Play Card.House Guard')
+      const request3 = t.choose(game, 'Play Card.Puppeteer')
+      const request4 = t.choose(game, 'Pass')
 
       t.testBoard(game, {
         dennis: {
@@ -826,7 +826,7 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Quaggoth')
+      const request2 = t.choose(game, 'Play Card.Quaggoth')
 
       t.testBoard(game, {
         dennis: {
@@ -852,8 +852,8 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Quaggoth')
-      const request3 = t.choose(game, request2, 'araum-chasm, neutral')
+      const request2 = t.choose(game, 'Play Card.Quaggoth')
+      const request3 = t.choose(game, 'araum-chasm, neutral')
 
       t.testBoard(game, {
         dennis: {
@@ -881,8 +881,8 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Spectator')
-      const request3 = t.choose(game, request2, '+2 power and +1 influence')
+      const request2 = t.choose(game, 'Play Card.Spectator')
+      const request3 = t.choose(game, '+2 power and +1 influence')
 
       t.testBoard(game, {
         dennis: {
@@ -905,10 +905,10 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Ulitharid')
-      const request3 = t.choose(game, request2, 'Spellspinner')
-      const request4 = t.choose(game, request3, 'Place a spy')
-      const request5 = t.choose(game, request4, 'Chasmleap Bridge')
+      const request2 = t.choose(game, 'Play Card.Ulitharid')
+      const request3 = t.choose(game, 'Spellspinner')
+      const request4 = t.choose(game, 'Place a spy')
+      const request5 = t.choose(game, 'Chasmleap Bridge')
 
       t.testBoard(game, {
         dennis: {
@@ -935,10 +935,10 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Umber Hulk')
-      const request3 = t.choose(game, request2, 'ched-halls a')
-      const request4 = t.choose(game, request3, 'ched-halls b')
-      const request5 = t.choose(game, request4, 'ched-llace a')
+      const request2 = t.choose(game, 'Play Card.Umber Hulk')
+      const request3 = t.choose(game, 'ched-halls a')
+      const request4 = t.choose(game, 'ched-halls b')
+      const request5 = t.choose(game, 'ched-llace a')
 
       t.testBoard(game, {
         dennis: {
@@ -969,12 +969,12 @@ describe('Illithids expansion', () => {
       })
 
       const request1 = game.run()
-      const request2 = t.choose(game, request1, 'Play Card.Gauth')
-      const request3 = t.choose(game, request2, '*Draw a card. Choose one opponent with more than 3 cards to discard a card')
-      const request4 = t.choose(game, request3, 'Umber Hulk')
-      const request5 = t.choose(game, request4, 'Play Card.House Guard')
-      const request6 = t.choose(game, request5, 'Play Card.Soldier')
-      const request7 = t.choose(game, request6, 'Pass')
+      const request2 = t.choose(game, 'Play Card.Gauth')
+      const request3 = t.choose(game, '*Draw a card. Choose one opponent with more than 3 cards to discard a card')
+      const request4 = t.choose(game, 'Umber Hulk')
+      const request5 = t.choose(game, 'Play Card.House Guard')
+      const request6 = t.choose(game, 'Play Card.Soldier')
+      const request7 = t.choose(game, 'Pass')
 
       t.testBoard(game, {
         dennis: {

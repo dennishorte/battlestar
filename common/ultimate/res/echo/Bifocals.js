@@ -16,8 +16,8 @@ module.exports = {
 
       game.log.addForeseen(foreseen, self)
       if (foreseen) {
-        const age = game
-          .getAvailableStandardAchievements(player)
+        const age = player
+          .availableStandardAchievements()
           .map(achievement => achievement.age)
           .sort((l, r) => l - r)[0] || 0
 

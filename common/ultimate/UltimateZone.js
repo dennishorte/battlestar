@@ -19,7 +19,7 @@ class UltimateZone extends BaseZone {
   cardlist(opts={}) {
     for (const zoneName of ['hand', 'forecast', 'score']) {
       if (this.name().endsWith('.' + zoneName) && !opts.noKarma) {
-        const karmaInfos = this.game.getInfoByKarmaTrigger(this.player(), `list-${zoneName}`)
+        const karmaInfos = this.game.findKarmasByTrigger(this.player(), `list-${zoneName}`)
         if (karmaInfos.length === 1) {
           return karmaInfos[0].impl.func(this.game, this.player())
         }
@@ -77,7 +77,17 @@ class UltimateZone extends BaseZone {
     else {
       return this.cardlist()
     }
+  }
 
+  /**
+   * Check if this zone has visible dogma or echo effects.
+   */
+  hasVisibleDogmaOrEcho() {
+    const player = this.player()
+    return (
+      this.game.getVisibleEffectsByColor(player, this.color, 'dogma').length > 0
+      || this.game.getVisibleEffectsByColor(player, this.color, 'echo').length > 0
+    )
   }
 }
 

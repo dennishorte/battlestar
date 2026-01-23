@@ -20,12 +20,12 @@ describe('Quantum Theory', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Quantum Theory')
+    request = t.choose(game, 'Dogma.Quantum Theory')
 
     t.testChoices(request, ['Tools', 'Calendar', 'Domestication'], 0, 2)
 
-    request = t.choose(game, request, 'Tools', 'Calendar')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Tools', 'Calendar')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -53,11 +53,11 @@ describe('Quantum Theory', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Quantum Theory')
+    request = t.choose(game, 'Dogma.Quantum Theory')
 
     t.testChoices(request, ['Tools', 'Calendar', 'Domestication'], 0, 2)
 
-    request = t.choose(game, request, 'Tools')
+    request = t.choose(game, 'Tools')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

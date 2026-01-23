@@ -17,7 +17,7 @@ describe('Woodworking', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Woodworking')
+    request = t.choose(game, 'Dogma.Woodworking')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -44,7 +44,7 @@ describe('Woodworking', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Woodworking')
+    request = t.choose(game, 'Dogma.Woodworking')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

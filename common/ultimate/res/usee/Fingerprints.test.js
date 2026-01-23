@@ -18,9 +18,9 @@ describe('Fingerprints', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Fingerprints')
-    request = t.choose(game, request, 'yellow')
-    request = t.choose(game, request, 'dennis')
+    request = t.choose(game, 'Dogma.Fingerprints')
+    request = t.choose(game, 'yellow')
+    request = t.choose(game, 'dennis')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

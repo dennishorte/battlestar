@@ -21,11 +21,11 @@ describe('Miniaturization', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Miniaturization')
+    request = t.choose(game, 'Dogma.Miniaturization')
 
     t.testChoices(request, ['Software', 'Services'], 1, 1)
 
-    request = t.choose(game, request, 'Software')
+    request = t.choose(game, 'Software')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -48,7 +48,7 @@ describe('Miniaturization', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Miniaturization')
+    request = t.choose(game, 'Dogma.Miniaturization')
 
     t.testIsSecondPlayer(game)
     t.testDeckIsJunked(game, 11)

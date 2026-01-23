@@ -22,8 +22,8 @@ describe('Urban Legend', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Urban Legend')
-    request = t.choose(game, request, 'purple')
+    request = t.choose(game, 'Dogma.Urban Legend')
+    request = t.choose(game, 'purple')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -53,7 +53,7 @@ describe('Urban Legend', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Urban Legend')
+    request = t.choose(game, 'Dogma.Urban Legend')
 
     t.testGameOver(request, 'dennis', 'Urban Legend')
   })

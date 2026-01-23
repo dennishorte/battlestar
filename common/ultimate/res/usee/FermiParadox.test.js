@@ -19,8 +19,8 @@ describe('Fermi Paradox', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Fermi Paradox')
-    request = t.choose(game, request, 'Software')
+    request = t.choose(game, 'Dogma.Fermi Paradox')
+    request = t.choose(game, 'Software')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -49,8 +49,8 @@ describe('Fermi Paradox', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Software')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Software')
 
     t.testGameOver(request, 'dennis', 'Fermi Paradox')
   })

@@ -27,8 +27,8 @@ export default {
   computed: {
     biscuits() {
       return this
-        .game
-        .getBonuses(this.player)
+        .player
+        .bonuses()
         .map(bonus => {
           switch (bonus) {
             case 10: return 'a'

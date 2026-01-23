@@ -26,11 +26,11 @@ describe('Self Service', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Self Service')
+    request = t.choose(game, 'Dogma.Self Service')
 
     t.testChoices(request, ['Computers', 'Domestication'])
 
-    request = t.choose(game, request, 'Domestication')
+    request = t.choose(game, 'Domestication')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -66,7 +66,7 @@ describe('Self Service', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Self Service')
+    request = t.choose(game, 'Dogma.Self Service')
 
     t.testGameOver(request, 'dennis', 'Self Service')
   })
@@ -93,7 +93,7 @@ describe('Self Service', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Self Service')
+    request = t.choose(game, 'Dogma.Self Service')
 
     t.testGameOver(request, 'dennis', 'Self Service')
   })

@@ -22,8 +22,8 @@ describe('Shen Kuo', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'The Wheel') // Return The Wheel (age 1) to trigger scoring
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'The Wheel') // Return The Wheel (age 1) to trigger scoring
       // Agriculture draws and "scores" Construction (age 2, red)
       // Karma intercepts and splays red right instead
 
@@ -53,8 +53,8 @@ describe('Shen Kuo', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Philosophy')
-      request = t.choose(game, request, 'Peter the Great') // Score Peter the Great (figure)
+      request = t.choose(game, 'Dogma.Philosophy')
+      request = t.choose(game, 'Peter the Great') // Score Peter the Great (figure)
       // No fade check needed - only have 1 figure on board
 
       t.testIsSecondPlayer(game)
@@ -81,8 +81,8 @@ describe('Shen Kuo', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Philosophy')
-      request = t.choose(game, request, 'red') // Choose to splay red left
+      request = t.choose(game, 'Dogma.Philosophy')
+      request = t.choose(game, 'red') // Choose to splay red left
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -112,8 +112,8 @@ describe('Shen Kuo', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Flight')
-      request = t.choose(game, request, 'blue') // Splay blue up (not left)
+      request = t.choose(game, 'Dogma.Flight')
+      request = t.choose(game, 'blue') // Splay blue up (not left)
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -156,7 +156,7 @@ describe('Shen Kuo', () => {
       // With splay up on red: 2 visible cards
       // With no splay on green: 1 visible card (only top card counts)
       // Total: 2 + 2 + 1 = 5 points
-      expect(game.getScore(t.dennis(game))).toBe(5)
+      expect(t.dennis(game).score()).toBe(5)
     })
 
     test('karma: calculate score with no splay', () => {
@@ -174,7 +174,7 @@ describe('Shen Kuo', () => {
 
       // With no splay: only top card counts
       // green: 1, blue: 1, red: 1 = 3 points
-      expect(game.getScore(t.dennis(game))).toBe(3)
+      expect(t.dennis(game).score()).toBe(3)
     })
   })
 })

@@ -18,7 +18,7 @@ describe("Puppet", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Puppet')
+    request = t.choose(game, 'Dogma.Puppet')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -26,9 +26,9 @@ describe('Amina Sukhera', () => {
       let request
       request = game.run()
       // First action of first round: Draw (first round only has one action)
-      request = t.choose(game, request, 'Draw.draw a card')  // Tools
-      request = t.choose(game, request, 'Dogma.Writing')
-      request = t.choose(game, request, 'Dogma.Writing')
+      request = t.choose(game, 'Draw.draw a card')  // Tools
+      request = t.choose(game, 'Dogma.Writing')
+      request = t.choose(game, 'Dogma.Writing')
 
       t.testBoard(game, {
         dennis: {
@@ -62,9 +62,9 @@ describe('Amina Sukhera', () => {
       let request
       request = game.run()
       // First action of first round: Draw (first round only has one action)
-      request = t.choose(game, request, 'Draw.draw a card')  // Tools
-      request = t.choose(game, request, 'Dogma.Writing')
-      request = t.choose(game, request, 'Dogma.Writing')
+      request = t.choose(game, 'Draw.draw a card')  // Tools
+      request = t.choose(game, 'Dogma.Writing')
+      request = t.choose(game, 'Dogma.Writing')
 
       t.testBoard(game, {
         dennis: {
@@ -80,12 +80,15 @@ describe('Amina Sukhera', () => {
   })
 
   test('karma: list-achievements', () => {
-    const game = t.fixtureTopCard('Amina Sukhera', { expansions: ['base', 'figs'] })
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setAvailableAchievements(game, ['Code of Laws'])
-      t.setColor(game, 'dennis', 'green', ['The Wheel'])
-      t.setColor(game, 'dennis', 'yellow', ['Fermenting'])
-      t.setScore(game, 'dennis', ['Statistics'])
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        red: ['Amina Sukhera'],
+        green: ['The Wheel'],
+        yellow: ['Fermenting'],
+        score: ['Statistics'],
+      },
+      achievements: ['Code of Laws'],
     })
     let request
     request = game.run()

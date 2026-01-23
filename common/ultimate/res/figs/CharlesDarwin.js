@@ -23,10 +23,10 @@ module.exports = {
         const sorted = game
           .players
           .all()
-          .map(player => ({ player, count: game.getAchievementsByPlayer(player).total }))
+          .map(player => ({ player, count: player.achievementCount().total }))
           .sort((l, r) => r.count - l.count)
 
-        const playerCount = game.getAchievementsByPlayer(player).total
+        const playerCount = player.achievementCount().total
         const nobodyHasMoreCondition = sorted[0].count <= playerCount
 
         if (nobodyHasMoreCondition) {

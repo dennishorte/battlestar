@@ -13,8 +13,8 @@ module.exports = {
       const cards = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'))
       if (cards && cards.length > 0) {
         const card = cards[0]
-        const choices = game
-          .getAvailableAchievements(player)
+        const choices = player
+          .availableAchievements()
           .filter(ach => ach.getAge() === card.age)
         game.actions.chooseAndAchieve(player, choices)
       }

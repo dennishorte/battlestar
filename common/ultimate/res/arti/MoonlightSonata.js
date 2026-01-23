@@ -24,10 +24,10 @@ module.exports = {
     },
 
     (game, player) => {
-      const achieveChoices = game.getAvailableStandardAchievements(player)
+      const achieveChoices = player.availableStandardAchievements()
       game.actions.chooseAndAchieve(player, achieveChoices)
 
-      const junkChoices = game.getAvailableStandardAchievements(player)
+      const junkChoices = player.availableStandardAchievements()
       game.actions.chooseAndJunk(player, junkChoices)
     },
   ],

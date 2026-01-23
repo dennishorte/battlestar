@@ -20,9 +20,9 @@ describe('Dolly the Sheep', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'no')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'no')
+    request = t.choose(game, 'yes')
 
     t.testGameOver(request, 'dennis', 'Dolly the Sheep')
   })
@@ -45,10 +45,10 @@ describe('Dolly the Sheep', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'no')
-    request = t.choose(game, request, 'yes')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'no')
+    request = t.choose(game, 'yes')
+    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

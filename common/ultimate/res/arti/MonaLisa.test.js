@@ -21,10 +21,10 @@ describe("Mona Lisa", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 2)
-    request = t.choose(game, request, 'red')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 2)
+    request = t.choose(game, 'red')
+    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -57,10 +57,10 @@ describe("Mona Lisa", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 1)
-    request = t.choose(game, request, 'red')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 1)
+    request = t.choose(game, 'red')
+    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

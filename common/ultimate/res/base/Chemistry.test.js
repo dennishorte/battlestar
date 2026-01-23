@@ -4,35 +4,58 @@ const t = require('../../testutil.js')
 
 describe('Chemistry', () => {
   test('no splay, yes score', () => {
-    const game = t.fixtureTopCard('Chemistry')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'blue', ['Chemistry', 'Tools'])
-
-      t.setDeckTop(game, 'base', 6, ['Vaccination'])
-      t.setScore(game, 'dennis', ['The Wheel'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Chemistry', 'Tools'],
+        score: ['The Wheel'],
+      },
+      decks: {
+        base: {
+          6: ['Vaccination'],
+        },
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Chemistry')
-    const result3 = t.choose(game, result2)
-    const result4 = t.choose(game, result3, 'The Wheel')
+    game.run()
+    t.choose(game, 'Dogma.Chemistry')
+    t.choose(game)
+    t.choose(game, 'The Wheel')
 
-    expect(t.cards(game, 'score').sort()).toEqual(['Vaccination'])
-    expect(t.zone(game, 'blue').splay).toBe('none')
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Chemistry', 'Tools'],
+        score: ['Vaccination'],
+      },
+    })
   })
 
   test('yes splay, no score', () => {
-    const game = t.fixtureTopCard('Chemistry')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setColor(game, 'dennis', 'blue', ['Chemistry', 'Tools'])
-
-      t.setDeckTop(game, 'base', 6, ['Vaccination'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Chemistry', 'Tools'],
+      },
+      decks: {
+        base: {
+          6: ['Vaccination'],
+        },
+      },
     })
-    const result1 = game.run()
-    const result2 = t.choose(game, result1, 'Dogma.Chemistry')
-    const result3 = t.choose(game, result2, 'blue')
+    game.run()
+    t.choose(game, 'Dogma.Chemistry')
+    const result = t.choose(game, 'blue')
 
-    expect(t.cards(game, 'score').sort()).toEqual([])
-    expect(t.zone(game, 'blue').splay).toBe('right')
-    expect(result3.selectors[0].actor).toBe('micah')
+    expect(result.selectors[0].actor).toBe('micah')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: {
+          cards: ['Chemistry', 'Tools'],
+          splay: 'right',
+        },
+      },
+    })
   })
 })

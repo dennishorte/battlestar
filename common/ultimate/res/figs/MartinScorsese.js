@@ -16,7 +16,7 @@ module.exports = {
       matches: (game, player, { card }) => card.checkIsFigure(),
       func: (game, player, { card }) => {
         game.actions.tuck(player, card)
-        const choices = game.getAvailableStandardAchievements(player)
+        const choices = player.availableStandardAchievements()
         game.actions.chooseAndAchieve(player, choices)
       }
     }

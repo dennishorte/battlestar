@@ -16,7 +16,7 @@ module.exports = {
       trigger: 'dogma',
       kind: 'would-first',
       matches: () => true,
-      func: (game, player, { card }) => {
+      func: (game, player) => {
         const topAgesGreaterThanThree = game
           .cards
           .tops(player)

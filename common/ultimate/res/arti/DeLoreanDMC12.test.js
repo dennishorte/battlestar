@@ -20,8 +20,8 @@ describe('DeLorean DMC-12', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.DeLorean DMC-12')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.DeLorean DMC-12')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -50,7 +50,7 @@ describe('DeLorean DMC-12', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

@@ -25,9 +25,9 @@ describe('Democracy', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Democracy')
-    request = t.choose(game, request, 'Coal')
-    request = t.choose(game, request, 'The Wheel')
+    request = t.choose(game, 'Dogma.Democracy')
+    request = t.choose(game, 'Coal')
+    request = t.choose(game, 'The Wheel')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -65,11 +65,11 @@ describe('Democracy', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Endorse.purple')
-    request = t.choose(game, request, 'Sailing')
-    request = t.choose(game, request, 'Coal')
-    request = t.choose(game, request, 'The Wheel', 'Masonry')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Endorse.purple')
+    request = t.choose(game, 'Sailing')
+    request = t.choose(game, 'Coal')
+    request = t.choose(game, 'The Wheel', 'Masonry')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

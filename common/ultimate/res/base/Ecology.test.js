@@ -20,9 +20,9 @@ describe('Ecology', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Ecology')
-    request = t.choose(game, request, 'The Wheel')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Ecology')
+    request = t.choose(game, 'The Wheel')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testDeckIsJunked(game, 10)
@@ -46,9 +46,9 @@ describe('Ecology', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Ecology')
-    request = t.choose(game, request)
-    request = t.choose(game, request, 'no')
+    request = t.choose(game, 'Dogma.Ecology')
+    request = t.choose(game)
+    request = t.choose(game, 'no')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

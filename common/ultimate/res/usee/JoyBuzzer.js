@@ -17,7 +17,7 @@ module.exports = {
       const playerCards = playerHand.cardlist()
       const leaderLowest = game.util.lowestCards(leaderHand.cardlist())
 
-      game.aExchangeCards(player, playerCards, leaderLowest, playerHand, leaderHand)
+      game.actions.exchangeCards(player, playerCards, leaderLowest, playerHand, leaderHand)
     },
     (game, player) => {
       const age = game.actions.chooseAge(player, null, { min: 0 })

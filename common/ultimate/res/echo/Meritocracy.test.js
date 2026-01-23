@@ -25,12 +25,12 @@ describe("Meritocracy", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Meritocracy')
+    request = t.choose(game, 'Dogma.Meritocracy')
 
     t.testChoices(request, ['factory', 'leaf'])
 
-    request = t.choose(game, request, 'leaf')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'leaf')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -70,12 +70,12 @@ describe("Meritocracy", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Deepfake')
+    request = t.choose(game, 'Meld.Deepfake')
 
     t.testChoices(request, ['factory', 'leaf'])
 
-    request = t.choose(game, request, 'leaf')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'leaf')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

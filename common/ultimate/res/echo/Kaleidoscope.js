@@ -24,8 +24,8 @@ module.exports = {
 
       game.log.addForeseen(foreseen, self)
       if (foreseen) {
-        const achievements = game
-          .getAvailableStandardAchievements(player)
+        const achievements = player
+          .availableStandardAchievements()
           .filter(card => card.getAge() < count)
         game.actions.junkMany(player, achievements)
       }

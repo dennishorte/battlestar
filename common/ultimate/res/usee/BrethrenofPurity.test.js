@@ -21,8 +21,8 @@ describe('Brethren of Purity', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Brethren of Purity')
-    request = t.choose(game, request, 4)
+    request = t.choose(game, 'Dogma.Brethren of Purity')
+    request = t.choose(game, 4)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -54,8 +54,8 @@ describe('Brethren of Purity', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Endorse.blue')
-    request = t.choose(game, request, 4)
+    request = t.choose(game, 'Endorse.blue')
+    request = t.choose(game, 4)
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

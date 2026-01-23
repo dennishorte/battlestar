@@ -13,24 +13,27 @@ describe('Agriculture', () => {
     })
 
     let request = game.run()
-    request = t.choose(game, request, 'Dogma.Agriculture')
-    t.choose(game, request, 'Domestication')
+    request = t.choose(game, 'Dogma.Agriculture')
+    t.choose(game, 'Domestication')
 
     const dennis = game.players.byName('dennis')
-    expect(game.getScore(dennis)).toBe(2)
+    expect(dennis.score()).toBe(2)
   })
 
   test('do not return a card', () => {
-    const game = t.fixtureTopCard('Agriculture')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setHand(game, 'dennis', ['Domestication'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Agriculture'],
+        hand: ['Domestication'],
+      },
     })
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Agriculture')
-    t.choose(game, request)
+    request = t.choose(game, 'Dogma.Agriculture')
+    t.choose(game)
 
     const dennis = game.players.byName('dennis')
-    expect(game.getScore(dennis)).toBe(0)
+    expect(dennis.score()).toBe(0)
   })
 })

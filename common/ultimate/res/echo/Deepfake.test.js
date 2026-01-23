@@ -19,9 +19,9 @@ describe("Deepfake", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Deepfake')
-    request = t.choose(game, request, 'Flight')
-    request = t.choose(game, request, 'red')
+    request = t.choose(game, 'Dogma.Deepfake')
+    request = t.choose(game, 'Flight')
+    request = t.choose(game, 'red')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -59,9 +59,9 @@ describe("Deepfake", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Deepfake')
-    request = t.choose(game, request, 'Experimentation')
-    request = t.choose(game, request, 'Experimentation')
+    request = t.choose(game, 'Dogma.Deepfake')
+    request = t.choose(game, 'Experimentation')
+    request = t.choose(game, 'Experimentation')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

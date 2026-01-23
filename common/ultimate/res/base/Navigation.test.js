@@ -17,11 +17,11 @@ describe('Navigation', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Navigation')
+    request = t.choose(game, 'Dogma.Navigation')
 
     t.testChoices(request, ['Calendar', 'Machinery'])
 
-    request = t.choose(game, request, 'Calendar')
+    request = t.choose(game, 'Calendar')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

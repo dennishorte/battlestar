@@ -8,7 +8,7 @@ test('Trade', () => {
   })
   let request
   request = game.run()
-  request = t.choose(game, request, 'Decree.Trade')
+  request = t.choose(game, 'Decree.Trade')
 
   const ages = t.zone(game, 'forecast').cardlist().map(c => c.age).sort()
   expect(ages).toStrictEqual([5, 5, 5])

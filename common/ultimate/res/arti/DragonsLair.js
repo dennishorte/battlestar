@@ -43,7 +43,7 @@ module.exports = {
             game.log.add({
               template: 'Only one card was melded'
             })
-            game.aYouLose(player, self)
+            game.youLose(player, self.name)
           }
         }
       }

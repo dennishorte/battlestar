@@ -24,7 +24,7 @@ describe('Robert E. Lee', () => {
     let request
     request = game.run()
 
-    const achs = game.getAchievementsByPlayer(t.dennis(game))
+    const achs = t.dennis(game).achievementCount()
     expect(achs.other.length).toBe(2)
   })
 
@@ -49,7 +49,7 @@ describe('Robert E. Lee', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Archery')
+      request = t.choose(game, 'Dogma.Archery')
       // Karma triggers: transfer a top card with {l} of another color
 
       t.testIsSecondPlayer(game)
@@ -87,7 +87,7 @@ describe('Robert E. Lee', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Archery')
+      request = t.choose(game, 'Dogma.Archery')
       // Karma triggers: transfer a top card with {l} of another color
 
       t.testIsSecondPlayer(game)
@@ -118,7 +118,7 @@ describe('Robert E. Lee', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
+      request = t.choose(game, 'Dogma.Agriculture')
       // Karma should NOT trigger (Agriculture has no demand effect)
 
       t.testIsSecondPlayer(game)
@@ -154,10 +154,10 @@ describe('Robert E. Lee', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Archery')
+      request = t.choose(game, 'Dogma.Archery')
       // Karma triggers: transfer a top card with {l} of another color
       // Available: Agriculture (yellow), Pottery (blue)
-      request = t.choose(game, request, 'Pottery') // Choose Pottery (blue, has {l})
+      request = t.choose(game, 'Pottery') // Choose Pottery (blue, has {l})
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

@@ -4,42 +4,48 @@ const t = require('../../testutil.js')
 
 describe('A.I.', () => {
   test('draw and score', () => {
-    const game = t.fixtureTopCard('A.I.')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setDeckTop(game, 'base', 10, ['Globalization'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        purple: ['A.I.'],
+      },
+      decks: {
+        base: {
+          10: ['Globalization'],
+        },
+      },
     })
-    let request
-    request = game.run()
-    request = game.respondToInputRequest({
-      actor: 'dennis',
-      title: 'Choose First Action',
-      selection: [{
-        title: 'Dogma',
-        selection: ['A.I.']
-      }],
-    })
+    game.run()
+    t.choose(game, { title: 'Dogma', selection: ['A.I.'] })
 
-    expect(t.cards(game, 'score')).toEqual(['Globalization'])
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['A.I.'],
+        score: ['Globalization'],
+      },
+    })
   })
 
   test('win condition', () => {
-    const game = t.fixtureTopCard('A.I.')
-    game.testSetBreakpoint('before-first-player', (game) => {
-      t.setDeckTop(game, 'base', 10, ['Globalization'])
-      t.setColor(game, 'dennis', 'blue', ['Software'])
-      t.setColor(game, 'micah', 'red', ['Robotics'])
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        purple: ['A.I.'],
+        blue: ['Software'],
+      },
+      micah: {
+        red: ['Robotics'],
+      },
+      decks: {
+        base: {
+          10: ['Globalization'],
+        },
+      },
     })
-    let request
-    request = game.run()
-    request = game.respondToInputRequest({
-      actor: 'dennis',
-      title: 'Choose First Action',
-      selection: [{
-        title: 'Dogma',
-        selection: ['A.I.']
-      }],
-    })
+    game.run()
+    const result = t.choose(game, { title: 'Dogma', selection: ['A.I.'] })
 
-    t.testGameOver(request, 'micah', 'A.I.')
+    t.testGameOver(result, 'micah', 'A.I.')
   })
 })

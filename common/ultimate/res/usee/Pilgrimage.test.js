@@ -14,11 +14,11 @@ describe('Pilgrimage', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Pilgrimage')
-    request = t.choose(game, request, 'Agriculture')
-    request = t.choose(game, request, 'Construction')
-    request = t.choose(game, request, 'Machinery')
-    request = t.choose(game, request, 'yes')
+    request = t.choose(game, 'Dogma.Pilgrimage')
+    request = t.choose(game, 'Agriculture')
+    request = t.choose(game, 'Construction')
+    request = t.choose(game, 'Machinery')
+    request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)
     t.testDeckIsJunked(game, 1)

@@ -22,7 +22,7 @@ describe('Counterintelligence', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Counterintelligence')
+    request = t.choose(game, 'Dogma.Counterintelligence')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

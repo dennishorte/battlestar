@@ -19,9 +19,9 @@ describe('Boyan Slat', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Draw.draw a card')
+    request = t.choose(game, 'Draw.draw a card')
     // Karma triggers: choose a value and return all cards of that value from all score piles
-    request = t.choose(game, request, 1) // Choose age 1
+    request = t.choose(game, 1) // Choose age 1
     // The Wheel (age 1) is returned from score
     // Exactly one card returned, so achieve it (regardless of eligibility)
 
@@ -52,9 +52,9 @@ describe('Boyan Slat', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Draw.draw a card')
+    request = t.choose(game, 'Draw.draw a card')
     // Karma triggers: choose a value and return all cards of that value from all score piles
-    request = t.choose(game, request, 2) // Choose age 2 (no cards of this value in score)
+    request = t.choose(game, 2) // Choose age 2 (no cards of this value in score)
     // No cards of age 2 in score, so nothing returned
     // No achievement claimed
 
@@ -85,10 +85,10 @@ describe('Boyan Slat', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Draw.draw a card')
+    request = t.choose(game, 'Draw.draw a card')
     // Karma triggers: choose a value and return all cards of that value from all score piles
-    request = t.choose(game, request, 1) // Choose age 1
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 1) // Choose age 1
+    request = t.choose(game, 'auto')
     // The Wheel and Tools (both age 1) are returned from score
     // More than one card returned, so no achievement
 
@@ -122,12 +122,12 @@ describe('Boyan Slat', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Draw.draw a card')
+    request = t.choose(game, 'Draw.draw a card')
     // Karma triggers: choose a value and return all cards of that value from all score piles
-    request = t.choose(game, request, 1) // Choose age 1
+    request = t.choose(game, 1) // Choose age 1
     // The Wheel (from dennis) and Mathematics (from micah) are returned from score
     // returnMany processes cards one at a time, asking which card to return next
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'auto')
     // More than one card returned, so no achievement
 
     t.testIsSecondPlayer(game)

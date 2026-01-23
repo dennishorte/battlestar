@@ -22,9 +22,9 @@ describe("The Big Bang", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Societies')
-    request = t.choose(game, request)
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Societies')
+    request = t.choose(game)
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

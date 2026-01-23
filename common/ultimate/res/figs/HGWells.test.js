@@ -25,7 +25,7 @@ describe('H.G. Wells', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Tools')
+      request = t.choose(game, 'Dogma.Tools')
       // Karma triggers: instead of dogmatizing Tools, draw and junk A.I. (age 10), then super-execute it
       // A.I.'s dogma: "Draw and score a {0}" and "If Robotics and Software are top cards on any board, the single player with the lowest score wins."
       // Super-execute means all opponents are demanded
@@ -67,7 +67,7 @@ describe('H.G. Wells', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
+      request = t.choose(game, 'Dogma.Agriculture')
       // Karma does NOT trigger (Agriculture doesn't have {s} as featured icon)
       // Agriculture's dogma executes normally: "You may return a card from your hand. If you do, draw and score a card of value one higher than the card you returned."
       // Since dennis has no cards in hand, the effect has no effect
@@ -108,7 +108,7 @@ describe('H.G. Wells', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Tools')
+      request = t.choose(game, 'Dogma.Tools')
       // Karma triggers: instead of dogmatizing Tools, draw and junk Globalization (age 10), then super-execute it
       // Globalization's first dogma: "I demand you return a top card with a {l} from your board!"
       // Super-execute means all opponents are demanded (not just the owner)

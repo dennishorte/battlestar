@@ -23,7 +23,7 @@ describe('Ximen Bao', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Decree.Expansion')
+    request = t.choose(game, 'Decree.Expansion')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

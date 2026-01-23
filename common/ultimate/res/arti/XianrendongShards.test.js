@@ -21,10 +21,10 @@ describe("Xianrendong Shards", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'Calendar', 'Tools')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'Calendar', 'Tools')
+    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -54,9 +54,9 @@ describe("Xianrendong Shards", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -81,10 +81,10 @@ describe("Xianrendong Shards", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'Calendar', 'Archery')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'Calendar', 'Archery')
+    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

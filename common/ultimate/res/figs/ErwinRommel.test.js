@@ -21,8 +21,8 @@ describe('Erwin Rommel', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Philosophy')
-      request = t.choose(game, request, 'Carl Friedrich Gauss') // Score figure
+      request = t.choose(game, 'Dogma.Philosophy')
+      request = t.choose(game, 'Carl Friedrich Gauss') // Score figure
       // Karma does NOT trigger (only triggers for non-figures)
 
       t.testIsSecondPlayer(game)
@@ -54,10 +54,10 @@ describe('Erwin Rommel', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Philosophy')
-      request = t.choose(game, request, 'Tools') // Score Tools (blue, age 1, non-figure)
+      request = t.choose(game, 'Dogma.Philosophy')
+      request = t.choose(game, 'Tools') // Score Tools (blue, age 1, non-figure)
       // Karma triggers: instead of scoring Tools, score top blue cards from all boards
-      request = t.choose(game, request, 'auto') // Auto-order/score all top blue cards
+      request = t.choose(game, 'auto') // Auto-order/score all top blue cards
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

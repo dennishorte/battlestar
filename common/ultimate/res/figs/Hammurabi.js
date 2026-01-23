@@ -15,7 +15,7 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func: (game, player, { effectInfo, leader }) => {
-        game.aCardEffect(leader, effectInfo, {
+        game.executeEffect(leader, effectInfo, {
           biscuits: game.getBiscuits(),
           leader: player,
           self: effectInfo.card,

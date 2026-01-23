@@ -17,7 +17,7 @@ describe('Sergey Brin', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Tools')
+    request = t.choose(game, 'Dogma.Tools')
   })
 
   test('karma: dogma own card, no splay', () => {
@@ -32,7 +32,7 @@ describe('Sergey Brin', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Agriculture')
+    request = t.choose(game, 'Dogma.Agriculture')
     // Karma should NOT trigger splay because Agriculture is on dennis's own board
 
     t.testIsSecondPlayer(game)

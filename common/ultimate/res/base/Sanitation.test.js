@@ -18,10 +18,10 @@ describe('Sanitation', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Sanitation')
-    request = t.choose(game, request, 'Services')
-    request = t.choose(game, request, 'Tools')
-    request = t.choose(game, request, 7)
+    request = t.choose(game, 'Dogma.Sanitation')
+    request = t.choose(game, 'Services')
+    request = t.choose(game, 'Tools')
+    request = t.choose(game, 7)
 
     t.testIsSecondPlayer(game)
     t.testDeckIsJunked(game, 7)

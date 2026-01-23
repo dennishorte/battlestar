@@ -19,10 +19,10 @@ describe("Indian Clubs", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Indian Clubs')
-    request = t.choose(game, request, 'Tools', 'Sailing')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Dogma.Indian Clubs')
+    request = t.choose(game, 'Tools', 'Sailing')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -52,9 +52,9 @@ describe("Indian Clubs", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Meld.Lighting')
-    request = t.choose(game, request, 'auto')
-    request = t.choose(game, request, 'auto')
+    request = t.choose(game, 'Meld.Lighting')
+    request = t.choose(game, 'auto')
+    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

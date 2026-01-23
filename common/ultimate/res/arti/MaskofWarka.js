@@ -17,7 +17,7 @@ module.exports = {
         const toReveal = game
           .cards
           .byPlayer(plyr, 'hand')
-        const revealed = game.actions.revealMany(plyr, toReveal, { ordered: true })
+        game.actions.revealMany(plyr, toReveal, { ordered: true })
 
         const matchingColor = toReveal.filter(card => card.color === color)
         if (matchingColor.length > 0) {
@@ -30,10 +30,10 @@ module.exports = {
           .cards
           .byPlayer(player, 'hand')
           .filter(card => card.color === color)
-        const returned = game.actions.returnMany(player, toReturn)
+        game.actions.returnMany(player, toReturn)
         const toClaim = toReturn.map(card => card.getAge())
-        const available = game
-          .getAvailableAchievements(player)
+        player
+          .availableAchievements()
           .filter(card => toClaim.includes(card.getAge()))
           .forEach(card => game.actions.claimAchievement(player, { card }))
       }

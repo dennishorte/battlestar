@@ -18,8 +18,8 @@ describe("Moylough Belt Shrine", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
-    request = t.choose(game, request, 'Code of Laws')
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Code of Laws')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -49,7 +49,7 @@ describe("Moylough Belt Shrine", () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'dogma')
+    request = t.choose(game, 'dogma')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

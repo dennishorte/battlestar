@@ -19,7 +19,7 @@ module.exports = {
         return !opts.card.checkIsFigure() && opts.asAction
       },
       func: (game, player, { card, self }) => {
-        game.aSelfExecute(self, player, card)
+        game.actions.selfExecute(self, player, card)
       },
     },
     {

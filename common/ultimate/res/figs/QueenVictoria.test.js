@@ -27,11 +27,11 @@ describe('Queen Victoria', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'Tools') // Return Tools
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'Tools') // Return Tools
       // Karma triggers: choose figure from score pile (before scoring Mathematics)
-      request = t.choose(game, request, 'Carl Friedrich Gauss')
-      request = t.choose(game, request, 'score it')
+      request = t.choose(game, 'Carl Friedrich Gauss')
+      request = t.choose(game, 'score it')
       // Now Mathematics is scored (from Agriculture effect)
 
       t.testIsSecondPlayer(game)
@@ -66,12 +66,12 @@ describe('Queen Victoria', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'Tools') // Return Tools
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'Tools') // Return Tools
       // Karma triggers: choose figure from any score pile (both dennis and micah have figures)
       // Opponent's figure is shown as "**figs-6* (micah)" where 6 is the age
-      request = t.choose(game, request, '**figs-6* (micah)')
-      request = t.choose(game, request, 'score it')
+      request = t.choose(game, '**figs-6* (micah)')
+      request = t.choose(game, 'score it')
       // Now Mathematics is scored (from Agriculture effect)
 
       t.testIsSecondPlayer(game)
@@ -109,8 +109,8 @@ describe('Queen Victoria', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Agriculture')
-      request = t.choose(game, request, 'Tools') // Return Tools
+      request = t.choose(game, 'Dogma.Agriculture')
+      request = t.choose(game, 'Tools') // Return Tools
       // Karma triggers but no figures available, so proceeds normally
       // Mathematics is scored (from Agriculture effect)
 

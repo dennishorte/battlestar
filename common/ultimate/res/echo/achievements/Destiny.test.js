@@ -24,7 +24,7 @@ describe('Destiny', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Bangle')
+    request = t.choose(game, 'Dogma.Bangle')
 
     t.testBoard(game, {
       dennis: {
@@ -61,7 +61,7 @@ describe('Destiny', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Bangle')
+    request = t.choose(game, 'Dogma.Bangle')
 
     t.testBoard(game, {
       dennis: {

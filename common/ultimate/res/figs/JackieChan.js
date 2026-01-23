@@ -27,11 +27,11 @@ module.exports = {
           .filter(card => card.id !== self.id)
         game.actions.scoreMany(owner, topFigures)
 
-        const score = game.getScore(owner)
+        const score = owner.score()
         const others = game
           .players
           .opponents(owner)
-          .map(other => game.getScore(other))
+          .map(other => other.score())
         const mostPointsCondition = others.every(otherScore => otherScore < score)
         if (mostPointsCondition) {
           game.log.add({

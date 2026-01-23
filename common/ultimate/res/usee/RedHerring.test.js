@@ -24,12 +24,12 @@ describe('Red Herring', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Red Herring')
+    request = t.choose(game, 'Dogma.Red Herring')
 
     // Can't splay in the direction it is already splayed. (pg 14)
     t.testChoices(request, ['right', 'up'])
 
-    request = t.choose(game, request, 'up')
+    request = t.choose(game, 'up')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -68,8 +68,8 @@ describe('Red Herring', () => {
 
     let request
     request = game.run()
-    request = t.choose(game, request, 'Dogma.Red Herring')
-    request = t.choose(game, request, 'left')
+    request = t.choose(game, 'Dogma.Red Herring')
+    request = t.choose(game, 'left')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

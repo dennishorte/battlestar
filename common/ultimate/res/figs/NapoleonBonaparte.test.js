@@ -22,9 +22,9 @@ describe('Napoleon Bonaparte', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Archery')
+      request = t.choose(game, 'Meld.Archery')
       // Karma triggers: meld Archery, then tuck it (red), then score Statistics (age 5)
-      request = t.choose(game, request, 'Statistics')
+      request = t.choose(game, 'Statistics')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -52,9 +52,9 @@ describe('Napoleon Bonaparte', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Tools')
+      request = t.choose(game, 'Meld.Tools')
       // Karma triggers: meld Tools, then tuck it (blue), then score Industrialization (age 6)
-      request = t.choose(game, request, 'Industrialization')
+      request = t.choose(game, 'Industrialization')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -83,10 +83,10 @@ describe('Napoleon Bonaparte', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.The Wheel')
+      request = t.choose(game, 'Meld.The Wheel')
       // Karma triggers: meld The Wheel, then score Statistics (age 5)
       // The Wheel is green, so no tuck
-      request = t.choose(game, request, 'Statistics')
+      request = t.choose(game, 'Statistics')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -116,10 +116,10 @@ describe('Napoleon Bonaparte', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Code of Laws')
-      request = t.choose(game, request, 'Archery') // Choose to tuck Archery
+      request = t.choose(game, 'Dogma.Code of Laws')
+      request = t.choose(game, 'Archery') // Choose to tuck Archery
       // Karma triggers: meld Archery instead, then tuck it (red), then score Statistics (age 5)
-      request = t.choose(game, request, 'Statistics')
+      request = t.choose(game, 'Statistics')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -154,10 +154,10 @@ describe('Napoleon Bonaparte', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Dogma.Mathematics')
-      request = t.choose(game, request, 'Tools') // Choose to return Tools
+      request = t.choose(game, 'Dogma.Mathematics')
+      request = t.choose(game, 'Tools') // Choose to return Tools
       // Karma triggers: meld Tools instead, then tuck it (blue), then score Statistics (age 5)
-      request = t.choose(game, request, 'Statistics')
+      request = t.choose(game, 'Statistics')
       // Mathematics's dogma continues: meld one higher (age 2), but that will also be intercepted by karma
       // So Engineering gets melded, then if red/blue tucked, then score another 5/6
       // But Engineering is red, so it gets melded and tucked, then we score another 5/6
@@ -191,7 +191,7 @@ describe('Napoleon Bonaparte', () => {
 
       let request
       request = game.run()
-      request = t.choose(game, request, 'Meld.Archery')
+      request = t.choose(game, 'Meld.Archery')
       // Karma triggers: meld Archery, then tuck it (red), then score age 5/6
       // Napoleon Bonaparte is age 6, so it gets scored
 
