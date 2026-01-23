@@ -750,10 +750,10 @@ class AgricolaActionManager extends BaseActionManager {
 
   takeStartingPlayer(player) {
     this.game.state.startingPlayer = player.name
-    player.food += 1
+    // Note: Food is given separately by action.gives, not here
 
     this.log.add({
-      template: '{player} becomes starting player and takes 1 food',
+      template: '{player} becomes starting player',
       args: { player },
     })
 
