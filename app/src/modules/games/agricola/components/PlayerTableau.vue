@@ -2,95 +2,99 @@
   <div class="player-tableau">
     <div class="player-header" :style="headerStyle">
       <span class="player-name">{{ player.name }}</span>
-      <span class="worker-count">{{ player.getAvailableWorkers() }}/{{ player.getFamilySize() }}</span>
+      <span class="worker-info">
+        <span class="worker-icon">👤</span>
+        <span class="worker-count">{{ player.getAvailableWorkers() }}/{{ player.getFamilySize() }}</span>
+      </span>
     </div>
 
     <div class="player-content">
-      <!-- Resources Section -->
-      <div class="section resources-section">
-        <div class="section-header">Resources</div>
-        <div class="resource-grid">
-          <div class="resource-item">
-            <span class="resource-label">Food</span>
-            <span class="resource-value">{{ player.food }}</span>
+      <!-- Resources -->
+      <ResourceBar :player="player" />
+
+      <!-- Animals -->
+      <AnimalDisplay :player="player" />
+
+      <!-- Farmyard Summary -->
+      <div class="farmyard-summary">
+        <div class="farmyard-title">Farmyard</div>
+        <div class="farmyard-stats">
+          <div class="stat-item">
+            <span class="stat-icon">🏠</span>
+            <span class="stat-value">{{ player.getRoomCount() }}</span>
+            <span class="stat-label">{{ player.roomType }} rooms</span>
           </div>
-          <div class="resource-item">
-            <span class="resource-label">Wood</span>
-            <span class="resource-value">{{ player.wood }}</span>
+          <div class="stat-item">
+            <span class="stat-icon">🌾</span>
+            <span class="stat-value">{{ player.getFieldCount() }}</span>
+            <span class="stat-label">fields</span>
           </div>
-          <div class="resource-item">
-            <span class="resource-label">Clay</span>
-            <span class="resource-value">{{ player.clay }}</span>
+          <div class="stat-item">
+            <span class="stat-icon">🌿</span>
+            <span class="stat-value">{{ player.getPastureCount() }}</span>
+            <span class="stat-label">pastures</span>
           </div>
-          <div class="resource-item">
-            <span class="resource-label">Stone</span>
-            <span class="resource-value">{{ player.stone }}</span>
+          <div class="stat-item">
+            <span class="stat-icon">⌂</span>
+            <span class="stat-value">{{ player.getStableCount() }}</span>
+            <span class="stat-label">stables</span>
           </div>
-          <div class="resource-item">
-            <span class="resource-label">Reed</span>
-            <span class="resource-value">{{ player.reed }}</span>
-          </div>
-          <div class="resource-item">
-            <span class="resource-label">Grain</span>
-            <span class="resource-value">{{ player.grain }}</span>
-          </div>
-          <div class="resource-item">
-            <span class="resource-label">Vegetables</span>
-            <span class="resource-value">{{ player.vegetables }}</span>
+          <div class="stat-item unused" v-if="unusedSpaces > 0">
+            <span class="stat-icon">◻</span>
+            <span class="stat-value">{{ unusedSpaces }}</span>
+            <span class="stat-label">unused</span>
           </div>
         </div>
       </div>
 
-      <!-- Animals Section -->
-      <div class="section animals-section">
-        <div class="section-header">Animals</div>
-        <div class="animal-grid">
-          <div class="animal-item">
-            <span class="animal-label">Sheep</span>
-            <span class="animal-value">{{ player.sheep }}</span>
-          </div>
-          <div class="animal-item">
-            <span class="animal-label">Boar</span>
-            <span class="animal-value">{{ player.boar }}</span>
-          </div>
-          <div class="animal-item">
-            <span class="animal-label">Cattle</span>
-            <span class="animal-value">{{ player.cattle }}</span>
-          </div>
-        </div>
+      <!-- Cards -->
+      <CardSection
+        title="Occupations"
+        :cards="player.playedOccupations"
+        cardType="occupation"
+      />
+
+      <CardSection
+        title="Minor Improvements"
+        :cards="player.playedMinorImprovements"
+        cardType="minor"
+      />
+
+      <CardSection
+        title="Major Improvements"
+        :cards="player.majorImprovements"
+        cardType="major"
+      />
+
+      <!-- Score -->
+      <div class="score-section">
+        <span class="score-label">Score:</span>
+        <span class="score-value">{{ player.calculateScore() }}</span>
+        <span class="score-unit">pts</span>
       </div>
 
-      <!-- Farmyard Section (placeholder) -->
-      <div class="section farmyard-section">
-        <div class="section-header">Farmyard</div>
-        <div class="farmyard-placeholder">
-          <div class="farmyard-info">
-            {{ player.getRoomCount() }} rooms ({{ player.roomType }})
-          </div>
-          <div class="farmyard-info">
-            {{ player.getFieldCount() }} fields
-          </div>
-          <div class="farmyard-info">
-            {{ player.getPastureCount() }} pastures
-          </div>
-          <div class="farmyard-info">
-            {{ player.getStableCount() }} stables
-          </div>
-        </div>
-      </div>
-
-      <!-- Score Section -->
-      <div class="section score-section">
-        <div class="section-header">Score</div>
-        <div class="score-value">{{ player.calculateScore() }} points</div>
+      <!-- Begging Cards -->
+      <div class="begging-section" v-if="player.beggingCards > 0">
+        <span class="begging-icon">😢</span>
+        <span class="begging-count">{{ player.beggingCards }} begging cards</span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import AnimalDisplay from './AnimalDisplay'
+import CardSection from './CardSection'
+import ResourceBar from './ResourceBar'
+
 export default {
   name: 'PlayerTableau',
+
+  components: {
+    AnimalDisplay,
+    CardSection,
+    ResourceBar,
+  },
 
   inject: ['actor', 'game'],
 
@@ -107,6 +111,28 @@ export default {
         backgroundColor: this.player.color || '#666',
         color: this.getContrastColor(this.player.color),
       }
+    },
+
+    unusedSpaces() {
+      // Total farmyard is 15 spaces (3x5)
+      // Used spaces = rooms + fields + pasture spaces + unfenced stables
+      const totalSpaces = 15
+      const rooms = this.player.getRoomCount()
+      const fields = this.player.getFieldCount()
+
+      // Get pasture info
+      let pastureSpaces = 0
+      const pastures = this.player.farmyard?.pastures || []
+      for (const pasture of pastures) {
+        pastureSpaces += pasture.spaces?.length || 0
+      }
+
+      // Stables not in pastures count as used
+      const stables = this.player.getStableCount()
+      const stablesInPastures = pastures.reduce((sum, p) => sum + (p.hasStable ? 1 : 0), 0)
+      const freeStandingStables = stables - stablesInPastures
+
+      return totalSpaces - rooms - fields - pastureSpaces - freeStandingStables
     },
   },
 
@@ -150,71 +176,117 @@ export default {
   font-size: 1.1em;
 }
 
+.worker-info {
+  display: flex;
+  align-items: center;
+  gap: .25em;
+  opacity: 0.9;
+}
+
+.worker-icon {
+  font-size: .9em;
+}
+
 .worker-count {
   font-size: .9em;
-  opacity: 0.9;
 }
 
 .player-content {
   padding: .5em;
 }
 
-.section {
-  margin-bottom: .75em;
+/* Farmyard Summary */
+.farmyard-summary {
+  background-color: #f5f5dc;
+  border-radius: .25em;
+  padding: .5em;
+  margin-bottom: .5em;
 }
 
-.section-header {
-  font-weight: bold;
+.farmyard-title {
+  font-weight: 600;
   font-size: .85em;
   color: #666;
-  margin-bottom: .25em;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: .15em;
+  margin-bottom: .35em;
 }
 
-.resource-grid,
-.animal-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: .25em;
-}
-
-.resource-item,
-.animal-item {
+.farmyard-stats {
   display: flex;
-  justify-content: space-between;
-  padding: .15em .35em;
-  background-color: #f9f9f9;
-  border-radius: .2em;
+  flex-wrap: wrap;
+  gap: .5em;
 }
 
-.resource-label,
-.animal-label {
-  color: #555;
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: .2em;
   font-size: .85em;
 }
 
-.resource-value,
-.animal-value {
-  font-weight: bold;
-}
-
-.farmyard-placeholder {
-  background-color: #f5f5dc;
-  padding: .5em;
-  border-radius: .25em;
-}
-
-.farmyard-info {
+.stat-icon {
   font-size: .9em;
-  color: #555;
 }
 
-.score-section .score-value {
-  font-size: 1.2em;
+.stat-value {
   font-weight: bold;
-  color: #2a5a1a;
-  text-align: center;
-  padding: .25em;
+}
+
+.stat-label {
+  color: #666;
+}
+
+.stat-item.unused {
+  color: #c62828;
+}
+
+.stat-item.unused .stat-value {
+  color: #c62828;
+}
+
+/* Score Section */
+.score-section {
+  display: flex;
+  align-items: center;
+  gap: .35em;
+  padding: .5em;
+  background-color: #e8f5e9;
+  border-radius: .25em;
+  margin-top: .5em;
+}
+
+.score-label {
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+.score-value {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #1b5e20;
+}
+
+.score-unit {
+  color: #66bb6a;
+  font-size: .85em;
+}
+
+/* Begging Section */
+.begging-section {
+  display: flex;
+  align-items: center;
+  gap: .35em;
+  padding: .5em;
+  background-color: #ffebee;
+  border-radius: .25em;
+  margin-top: .5em;
+  color: #c62828;
+}
+
+.begging-icon {
+  font-size: 1em;
+}
+
+.begging-count {
+  font-weight: 600;
 }
 </style>
