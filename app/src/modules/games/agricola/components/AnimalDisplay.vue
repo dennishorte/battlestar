@@ -55,6 +55,12 @@ export default {
   border-radius: .25em;
   background-color: #fff;
   border: 1px solid #c8e6c9;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.animal-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
 
 .animal-icon {

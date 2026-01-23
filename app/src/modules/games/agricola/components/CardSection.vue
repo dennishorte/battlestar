@@ -26,6 +26,8 @@
 export default {
   name: 'CardSection',
 
+  inject: ['ui'],
+
   props: {
     title: {
       type: String,
@@ -75,8 +77,9 @@ export default {
     },
 
     showCardDetails(cardId) {
-      // Could emit event to show card modal
-      console.log('Show card:', cardId)
+      if (this.ui?.fn?.showCard) {
+        this.ui.fn.showCard(cardId, this.cardType)
+      }
     },
   },
 }

@@ -189,6 +189,11 @@ export default {
   justify-content: center;
   border-radius: 3px;
   font-size: .75em;
+  transition: filter 0.1s ease;
+}
+
+.farmyard-cell:hover {
+  filter: brightness(1.1);
 }
 
 .cell-content {
