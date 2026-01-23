@@ -369,7 +369,7 @@ class UltimateActionManager extends BaseActionManager {
       )
 
       if (cardNames.length === 0) {
-        this.log.addDoNothing(player, 'choose')
+        this.log.addDoNothing(player, 'select a card')
         return []
       }
 

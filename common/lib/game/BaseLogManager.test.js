@@ -99,12 +99,12 @@ describe('BaseLogManager', () => {
       expect(addSpy).toHaveBeenCalled()
 
       const addCallArgs = addSpy.mock.calls[0][0]
-      expect(addCallArgs.template).toBe('{player} does not return a card')
+      expect(addCallArgs.template).toBe('{player} chooses not to return a card')
 
       expect(logManager.getLog()).toHaveLength(1)
 
       const logEntry = logManager.getLog()[0]
-      expect(logEntry.template).toBe('{player} does not return a card')
+      expect(logEntry.template).toBe('{player} chooses not to return a card')
 
       // Verify player was enriched
       const playerArg = logEntry.args.player

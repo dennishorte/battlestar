@@ -63,7 +63,7 @@ class BaseLogManager {
 
   addDoNothing(player, action) {
     this.add({
-      template: `{player} does not ${action}`,
+      template: `{player} chooses not to ${action}`,
       args: { player },
     })
   }
