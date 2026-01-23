@@ -107,6 +107,72 @@ class AgricolaActionManager extends BaseActionManager {
     }
   }
 
+  // Handle action that lets player choose from resource options
+  chooseResources(player, action) {
+    const options = action.allowsResourceChoice
+    const count = action.choiceCount || 1
+    const mustBeDifferent = action.choiceMustBeDifferent || false
+
+    if (count === 1) {
+      // Single choice
+      const selection = this.choose(player, options, {
+        title: 'Choose a resource',
+        min: 1,
+        max: 1,
+      })
+
+      player.addResource(selection[0], 1)
+      this.log.add({
+        template: '{player} takes 1 {resource}',
+        args: { player, resource: selection[0] },
+      })
+    }
+    else if (count === 2 && mustBeDifferent) {
+      // Two different choices (Resource Market)
+      const firstSelection = this.choose(player, options, {
+        title: 'Choose first resource',
+        min: 1,
+        max: 1,
+      })
+
+      const firstResource = firstSelection[0]
+      player.addResource(firstResource, 1)
+
+      const remainingOptions = options.filter(r => r !== firstResource)
+      const secondSelection = this.choose(player, remainingOptions, {
+        title: 'Choose second resource (must be different)',
+        min: 1,
+        max: 1,
+      })
+
+      const secondResource = secondSelection[0]
+      player.addResource(secondResource, 1)
+
+      this.log.add({
+        template: '{player} takes 1 {first} and 1 {second}',
+        args: { player, first: firstResource, second: secondResource },
+      })
+    }
+    else {
+      // Multiple same choices allowed
+      for (let i = 0; i < count; i++) {
+        const selection = this.choose(player, options, {
+          title: `Choose resource ${i + 1} of ${count}`,
+          min: 1,
+          max: 1,
+        })
+
+        player.addResource(selection[0], 1)
+        this.log.add({
+          template: '{player} takes 1 {resource}',
+          args: { player, resource: selection[0] },
+        })
+      }
+    }
+
+    return true
+  }
+
   // ---------------------------------------------------------------------------
   // Building actions
   // ---------------------------------------------------------------------------
@@ -825,6 +891,10 @@ class AgricolaActionManager extends BaseActionManager {
     // Handle instant actions based on their properties
     if (action.gives) {
       this.giveResources(player, action.gives)
+    }
+
+    if (action.allowsResourceChoice) {
+      this.chooseResources(player, action)
     }
 
     if (action.startsPlayer) {

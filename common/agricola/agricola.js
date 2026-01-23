@@ -121,20 +121,40 @@ Agricola.prototype.initializeActionSpaces = function() {
   this.state.actionSpaces = {}
   this.state.activeActions = []
 
-  for (const action of res.getBaseActions()) {
-    this.state.activeActions.push(action.id)
+  const playerCount = this.players.all().length
 
-    if (action.type === 'accumulating' && action.accumulates) {
-      // Initialize accumulating actions with 0
-      this.state.actionSpaces[action.id] = {
-        accumulated: 0,
-        occupiedBy: null,
-      }
+  // Add base actions
+  for (const action of res.getBaseActions()) {
+    this.addActionSpace(action)
+  }
+
+  // Add player-count specific actions
+  const additionalActions = res.getAdditionalActionsForPlayerCount(playerCount)
+  for (const action of additionalActions) {
+    this.addActionSpace(action)
+  }
+
+  if (additionalActions.length > 0) {
+    this.log.add({
+      template: 'Added {count} additional action spaces for {playerCount} players',
+      args: { count: additionalActions.length, playerCount },
+    })
+  }
+}
+
+Agricola.prototype.addActionSpace = function(action) {
+  this.state.activeActions.push(action.id)
+
+  if (action.type === 'accumulating' && action.accumulates) {
+    // Initialize accumulating actions with 0
+    this.state.actionSpaces[action.id] = {
+      accumulated: 0,
+      occupiedBy: null,
     }
-    else {
-      this.state.actionSpaces[action.id] = {
-        occupiedBy: null,
-      }
+  }
+  else {
+    this.state.actionSpaces[action.id] = {
+      occupiedBy: null,
     }
   }
 }

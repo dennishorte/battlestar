@@ -56,13 +56,24 @@ describe('Agricola', () => {
       expect(game.state.activeActions).toContain('plow-field')
     })
 
-    test('supports 2-4 players', () => {
-      for (const numPlayers of [2, 3, 4]) {
+    test('supports 2-5 players', () => {
+      for (const numPlayers of [2, 3, 4, 5]) {
         const game = t.fixture({ numPlayers })
         game.run()
 
         expect(game.players.all()).toHaveLength(numPlayers)
       }
+    })
+
+    test('starting food varies by player position', () => {
+      const game = t.fixture({ numPlayers: 4 })
+      game.run()
+
+      const players = game.players.all()
+      expect(players[0].food).toBe(2) // First player: 2 food
+      expect(players[1].food).toBe(3) // Others: 3 food
+      expect(players[2].food).toBe(3)
+      expect(players[3].food).toBe(3)
     })
   })
 
@@ -863,6 +874,82 @@ describe('Agricola', () => {
       const stage1Cards = res.getRoundCardsByStage(1)
       expect(stage1Cards.length).toBe(4)
       expect(stage1Cards.some(c => c.id === 'sow-bake')).toBe(true)
+    })
+  })
+
+  describe('player count actions', () => {
+    test('2 player game has no additional actions', () => {
+      const game = t.fixture({ numPlayers: 2 })
+      game.run()
+
+      // Base actions only (10)
+      expect(game.state.activeActions).not.toContain('clay-pit')
+      expect(game.state.activeActions).not.toContain('copse')
+    })
+
+    test('3 player game has 4 additional actions', () => {
+      const game = t.fixture({ numPlayers: 3 })
+      game.run()
+
+      // Should have 3-player actions
+      expect(game.state.activeActions).toContain('clay-pit')
+      expect(game.state.activeActions).toContain('take-1-building-resource')
+      expect(game.state.activeActions).toContain('take-3-wood')
+      expect(game.state.activeActions).toContain('resource-market')
+
+      // Should NOT have 4-5 player actions
+      expect(game.state.activeActions).not.toContain('copse')
+      expect(game.state.activeActions).not.toContain('take-2-wood')
+    })
+
+    test('4 player game has 6 additional actions', () => {
+      const game = t.fixture({ numPlayers: 4 })
+      game.run()
+
+      // Should have all 3-player actions
+      expect(game.state.activeActions).toContain('clay-pit')
+      expect(game.state.activeActions).toContain('take-1-building-resource')
+
+      // Should also have 4-5 player actions
+      expect(game.state.activeActions).toContain('copse')
+      expect(game.state.activeActions).toContain('take-2-wood')
+    })
+
+    test('5 player game has 6 additional actions', () => {
+      const game = t.fixture({ numPlayers: 5 })
+      game.run()
+
+      // Should have all actions
+      expect(game.state.activeActions).toContain('clay-pit')
+      expect(game.state.activeActions).toContain('copse')
+      expect(game.state.activeActions).toContain('take-2-wood')
+      expect(game.state.activeActions).toContain('resource-market')
+    })
+
+    test('getAdditionalActionsForPlayerCount returns correct actions', () => {
+      expect(res.getAdditionalActionsForPlayerCount(2)).toHaveLength(0)
+      expect(res.getAdditionalActionsForPlayerCount(3)).toHaveLength(4)
+      expect(res.getAdditionalActionsForPlayerCount(4)).toHaveLength(6)
+      expect(res.getAdditionalActionsForPlayerCount(5)).toHaveLength(6)
+    })
+
+    test('clay-pit accumulates 2 clay per round', () => {
+      const action = res.getActionById('clay-pit')
+      expect(action.type).toBe('accumulating')
+      expect(action.accumulates.clay).toBe(2)
+    })
+
+    test('copse accumulates 1 wood per round', () => {
+      const action = res.getActionById('copse')
+      expect(action.type).toBe('accumulating')
+      expect(action.accumulates.wood).toBe(1)
+    })
+
+    test('resource-market allows choosing 2 different resources', () => {
+      const action = res.getActionById('resource-market')
+      expect(action.allowsResourceChoice).toEqual(['wood', 'clay', 'reed', 'stone'])
+      expect(action.choiceCount).toBe(2)
+      expect(action.choiceMustBeDifferent).toBe(true)
     })
   })
 

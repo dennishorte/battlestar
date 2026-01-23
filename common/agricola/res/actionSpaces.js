@@ -233,9 +233,16 @@ function getRoundCards() {
   return roundCards
 }
 
-// Get action by ID
+// Get action by ID (includes player-count specific actions)
 function getActionById(id) {
-  return getAllActionSpaces().find(action => action.id === id)
+  // Search base and round actions first
+  const baseOrRound = getAllActionSpaces().find(action => action.id === id)
+  if (baseOrRound) {
+    return baseOrRound
+  }
+  // Search player-count specific actions
+  const playerCountAction = [...threePlayerActions, ...fourPlusPlayerActions].find(action => action.id === id)
+  return playerCountAction
 }
 
 // Create initial action space state for the game
@@ -258,10 +265,82 @@ function createActionSpaceState(actionIds) {
   return state
 }
 
+// Additional action spaces for 3+ player games
+// These are placed on the board in addition to the base actions
+const threePlayerActions = [
+  {
+    id: 'take-1-building-resource',
+    name: 'Take 1 Building Resource',
+    description: 'Take 1 wood, clay, reed, or stone',
+    type: 'instant',
+    allowsResourceChoice: ['wood', 'clay', 'reed', 'stone'],
+    choiceCount: 1,
+  },
+  {
+    id: 'clay-pit',
+    name: 'Clay Pit',
+    description: 'Take accumulated clay (2 per round)',
+    type: 'accumulating',
+    accumulates: { clay: 2 },
+  },
+  {
+    id: 'take-3-wood',
+    name: 'Take 3 Wood',
+    description: 'Take 3 wood',
+    type: 'instant',
+    gives: { wood: 3 },
+  },
+  {
+    id: 'resource-market',
+    name: 'Resource Market',
+    description: 'Take 1 each of 2 different building resources',
+    type: 'instant',
+    allowsResourceChoice: ['wood', 'clay', 'reed', 'stone'],
+    choiceCount: 2,
+    choiceMustBeDifferent: true,
+  },
+]
+
+// Additional action spaces for 4-5 player games (in addition to 3-player actions)
+const fourPlusPlayerActions = [
+  {
+    id: 'copse',
+    name: 'Copse',
+    description: 'Take accumulated wood (1 per round)',
+    type: 'accumulating',
+    accumulates: { wood: 1 },
+  },
+  {
+    id: 'take-2-wood',
+    name: 'Take 2 Wood',
+    description: 'Take 2 wood',
+    type: 'instant',
+    gives: { wood: 2 },
+  },
+]
+
+// Get additional actions for a specific player count
+function getAdditionalActionsForPlayerCount(playerCount) {
+  if (playerCount <= 2) {
+    return []
+  }
+  if (playerCount === 3) {
+    return threePlayerActions
+  }
+  // 4 or 5 players
+  return [...threePlayerActions, ...fourPlusPlayerActions]
+}
+
 // Get accumulation rates for all accumulating actions
 function getAccumulationRates() {
   const rates = {}
   for (const action of getAllActionSpaces()) {
+    if (action.type === 'accumulating' && action.accumulates) {
+      rates[action.id] = action.accumulates
+    }
+  }
+  // Also include player-count specific actions
+  for (const action of [...threePlayerActions, ...fourPlusPlayerActions]) {
     if (action.type === 'accumulating' && action.accumulates) {
       rates[action.id] = action.accumulates
     }
@@ -272,6 +351,8 @@ function getAccumulationRates() {
 module.exports = {
   baseActions,
   roundCards,
+  threePlayerActions,
+  fourPlusPlayerActions,
   getRoundCardsByStage,
   getAllActionSpaces,
   getBaseActions,
@@ -279,4 +360,5 @@ module.exports = {
   getActionById,
   createActionSpaceState,
   getAccumulationRates,
+  getAdditionalActionsForPlayerCount,
 }

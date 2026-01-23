@@ -27,6 +27,10 @@ TestUtil.fixture = function(options) {
         _id: 'eliya_id',
         name: 'eliya',
       },
+      {
+        _id: 'tom_id',
+        name: 'tom',
+      },
     ],
     playerOptions: {
       shuffleSeats: false,
@@ -59,6 +63,9 @@ TestUtil.gameFixture = function(state) {
     }
     if (state.eliya) {
       this.setPlayerState(game, 'eliya', state.eliya)
+    }
+    if (state.tom) {
+      this.setPlayerState(game, 'tom', state.tom)
     }
     if (state.round) {
       game.state.round = state.round
@@ -282,7 +289,7 @@ TestUtil.buildStables = function(player, positions) {
 
 TestUtil.testBoard = function(game, expected) {
   for (const [key, value] of Object.entries(expected)) {
-    if (key === 'dennis' || key === 'micah' || key === 'scott' || key === 'eliya') {
+    if (key === 'dennis' || key === 'micah' || key === 'scott' || key === 'eliya' || key === 'tom') {
       this.testPlayerState(game, key, value)
     }
     else if (key === 'round') {
