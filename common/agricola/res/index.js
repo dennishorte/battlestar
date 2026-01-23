@@ -3,6 +3,7 @@
 const actionSpaces = require('./actionSpaces.js')
 const majorImprovements = require('./majorImprovements.js')
 const scoringTables = require('./scoringTables.js')
+const baseA = require('./cards/baseA.js')
 
 // Re-export everything from sub-modules
 module.exports = {
@@ -80,4 +81,14 @@ module.exports = {
 
   // Accumulation rates (convenience accessor)
   accumulation: actionSpaces.getAccumulationRates(),
+
+  // Cards
+  cards: {
+    baseA,
+  },
+  getCardById: baseA.getCardById,
+  getMinorImprovements: baseA.getMinorImprovements,
+  getOccupations: baseA.getOccupations,
+  getAllCards: baseA.getAllCards,
+  getCardsByPlayerCount: baseA.getCardsByPlayerCount,
 }

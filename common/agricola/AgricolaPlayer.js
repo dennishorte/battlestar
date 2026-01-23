@@ -31,6 +31,14 @@ class AgricolaPlayer extends BasePlayer {
     // Major improvements owned
     this.majorImprovements = []
 
+    // Cards
+    this.hand = [] // Card IDs in hand
+    this.playedOccupations = [] // Card IDs of played occupations
+    this.playedMinorImprovements = [] // Card IDs of played minor improvements
+
+    // Bonus points from cards
+    this.bonusPoints = 0
+
     // Initialize farmyard grid (3 rows x 5 columns)
     this.initializeFarmyard()
   }
@@ -1189,7 +1197,7 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   getBonusPoints() {
-    let points = 0
+    let points = this.bonusPoints || 0
 
     // Bonus from crafting improvements (joinery, pottery, basketmaker's)
     for (const id of this.majorImprovements) {
@@ -1201,7 +1209,230 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
 
+    // Bonus from minor improvements
+    for (const id of this.playedMinorImprovements) {
+      const card = res.getCardById(id)
+      if (card && card.getEndGamePoints) {
+        points += card.getEndGamePoints(this)
+      }
+      if (card && card.vps) {
+        points += card.vps
+      }
+    }
+
+    // Bonus from occupations
+    for (const id of this.playedOccupations) {
+      const card = res.getCardById(id)
+      if (card && card.getEndGamePoints) {
+        points += card.getEndGamePoints(this)
+      }
+    }
+
     return points
+  }
+
+  // ---------------------------------------------------------------------------
+  // Card methods
+  // ---------------------------------------------------------------------------
+
+  getPlayedCards() {
+    return [...this.playedOccupations, ...this.playedMinorImprovements]
+  }
+
+  getPlayedCard(cardId) {
+    if (this.playedOccupations.includes(cardId) || this.playedMinorImprovements.includes(cardId)) {
+      return res.getCardById(cardId)
+    }
+    return null
+  }
+
+  hasCard(cardId) {
+    return this.hand.includes(cardId)
+  }
+
+  hasPlayedCard(cardId) {
+    return this.playedOccupations.includes(cardId) || this.playedMinorImprovements.includes(cardId)
+  }
+
+  canAffordCard(cardId) {
+    const card = res.getCardById(cardId)
+    if (!card) {
+      return false
+    }
+
+    // Check cost
+    if (card.cost) {
+      for (const [resource, amount] of Object.entries(card.cost)) {
+        if (resource === 'sheep' || resource === 'boar' || resource === 'cattle') {
+          if (this.getTotalAnimals(resource) < amount) {
+            return false
+          }
+        }
+        else if ((this[resource] || 0) < amount) {
+          return false
+        }
+      }
+    }
+
+    return true
+  }
+
+  meetsCardPrereqs(cardId) {
+    const card = res.getCardById(cardId)
+    if (!card || !card.prereqs) {
+      return true
+    }
+
+    const prereqs = card.prereqs
+
+    // Check occupation count
+    if (prereqs.occupations !== undefined) {
+      if (prereqs.occupationsExact) {
+        if (this.playedOccupations.length !== prereqs.occupations) {
+          return false
+        }
+      }
+      else if (prereqs.occupationsAtMost) {
+        if (this.playedOccupations.length > prereqs.occupations) {
+          return false
+        }
+      }
+      else {
+        if (this.playedOccupations.length < prereqs.occupations) {
+          return false
+        }
+      }
+    }
+
+    // Check grain fields
+    if (prereqs.grainFields !== undefined) {
+      if (this.getGrainFieldCount() < prereqs.grainFields) {
+        return false
+      }
+    }
+
+    // Check sheep
+    if (prereqs.sheep !== undefined) {
+      if (this.getTotalAnimals('sheep') < prereqs.sheep) {
+        return false
+      }
+    }
+
+    // Check all farmyard used
+    if (prereqs.allFarmyardUsed) {
+      if (this.getUnusedSpaceCount() > 0) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  canPlayCard(cardId) {
+    if (!this.hasCard(cardId)) {
+      return false
+    }
+    if (!this.canAffordCard(cardId)) {
+      return false
+    }
+    if (!this.meetsCardPrereqs(cardId)) {
+      return false
+    }
+    return true
+  }
+
+  payCardCost(cardId) {
+    const card = res.getCardById(cardId)
+    if (!card || !card.cost) {
+      return true
+    }
+
+    for (const [resource, amount] of Object.entries(card.cost)) {
+      if (resource === 'sheep' || resource === 'boar' || resource === 'cattle') {
+        this.removeAnimals(resource, amount)
+      }
+      else {
+        this[resource] -= amount
+      }
+    }
+    return true
+  }
+
+  playCard(cardId) {
+    if (!this.canPlayCard(cardId)) {
+      return false
+    }
+
+    const card = res.getCardById(cardId)
+    this.payCardCost(cardId)
+
+    // Remove from hand
+    this.hand = this.hand.filter(id => id !== cardId)
+
+    // Add to appropriate played pile
+    if (card.type === 'occupation') {
+      this.playedOccupations.push(cardId)
+      this.occupationsPlayed++
+    }
+    else {
+      this.playedMinorImprovements.push(cardId)
+    }
+
+    return true
+  }
+
+  // Get count of all improvements (major + minor)
+  getImprovementCount() {
+    return this.majorImprovements.length + this.playedMinorImprovements.length
+  }
+
+  // Get count of grain fields (fields with grain planted)
+  getGrainFieldCount() {
+    let count = 0
+    for (let row = 0; row < res.constants.farmyardRows; row++) {
+      for (let col = 0; col < res.constants.farmyardCols; col++) {
+        const space = this.farmyard.grid[row][col]
+        if (space.type === 'field' && space.crop === 'grain') {
+          count++
+        }
+      }
+    }
+    return count
+  }
+
+  // Get total pasture spaces
+  getPastureSpaceCount() {
+    let count = 0
+    for (const pasture of this.farmyard.pastures) {
+      count += pasture.spaces.length
+    }
+    return count
+  }
+
+  // Get count of unfenced stables
+  getUnfencedStableCount() {
+    let count = 0
+    for (let row = 0; row < res.constants.farmyardRows; row++) {
+      for (let col = 0; col < res.constants.farmyardCols; col++) {
+        const space = this.farmyard.grid[row][col]
+        if (space.hasStable && !this.getPastureAtSpace(row, col)) {
+          count++
+        }
+      }
+    }
+    return count
+  }
+
+  // Get cards that trigger on specific hooks
+  getCardsWithHook(hookName) {
+    const cards = []
+    for (const id of this.getPlayedCards()) {
+      const card = res.getCardById(id)
+      if (card && card[hookName]) {
+        cards.push(card)
+      }
+    }
+    return cards
   }
 
   calculateScore() {
