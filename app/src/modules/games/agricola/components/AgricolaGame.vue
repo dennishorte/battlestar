@@ -16,6 +16,7 @@
         <!-- Actions Column -->
         <div class="col game-column actions-column">
           <RoundInfo />
+          <ActionsColumn />
           <WaitingPanel />
         </div>
 
@@ -46,6 +47,7 @@ import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
 import ModalBase from '@/components/ModalBase'
 
 // Agricola Components
+import ActionsColumn from './ActionsColumn'
 import GameLogAgricola from './GameLogAgricola'
 import PlayerTableau from './PlayerTableau'
 import RoundInfo from './RoundInfo'
@@ -59,6 +61,7 @@ export default {
   name: 'AgricolaGame',
 
   components: {
+    ActionsColumn,
     DropdownButton,
     DropdownDivider,
     GameLogAgricola,
