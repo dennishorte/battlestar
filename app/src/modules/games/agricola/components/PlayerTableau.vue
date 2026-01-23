@@ -15,36 +15,16 @@
       <!-- Animals -->
       <AnimalDisplay :player="player" />
 
-      <!-- Farmyard Summary -->
-      <div class="farmyard-summary">
-        <div class="farmyard-title">Farmyard</div>
-        <div class="farmyard-stats">
-          <div class="stat-item">
-            <span class="stat-icon">🏠</span>
-            <span class="stat-value">{{ player.getRoomCount() }}</span>
-            <span class="stat-label">{{ player.roomType }} rooms</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-icon">🌾</span>
-            <span class="stat-value">{{ player.getFieldCount() }}</span>
-            <span class="stat-label">fields</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-icon">🌿</span>
-            <span class="stat-value">{{ player.getPastureCount() }}</span>
-            <span class="stat-label">pastures</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-icon">⌂</span>
-            <span class="stat-value">{{ player.getStableCount() }}</span>
-            <span class="stat-label">stables</span>
-          </div>
-          <div class="stat-item unused" v-if="unusedSpaces > 0">
-            <span class="stat-icon">◻</span>
-            <span class="stat-value">{{ unusedSpaces }}</span>
-            <span class="stat-label">unused</span>
-          </div>
-        </div>
+      <!-- Farmyard Grid -->
+      <FarmyardGrid :player="player" />
+
+      <!-- Farmyard Stats -->
+      <div class="farmyard-stats">
+        <span class="stat">🏠 {{ player.getRoomCount() }} {{ player.roomType }}</span>
+        <span class="stat">🌾 {{ player.getFieldCount() }} fields</span>
+        <span class="stat">🌿 {{ player.getPastureCount() }} pastures</span>
+        <span class="stat">⌂ {{ player.getStableCount() }} stables</span>
+        <span class="stat unused" v-if="unusedSpaces > 0">◻ {{ unusedSpaces }} unused</span>
       </div>
 
       <!-- Cards -->
@@ -85,6 +65,7 @@
 <script>
 import AnimalDisplay from './AnimalDisplay'
 import CardSection from './CardSection'
+import FarmyardGrid from './FarmyardGrid'
 import ResourceBar from './ResourceBar'
 
 export default {
@@ -93,6 +74,7 @@ export default {
   components: {
     AnimalDisplay,
     CardSection,
+    FarmyardGrid,
     ResourceBar,
   },
 
@@ -195,52 +177,25 @@ export default {
   padding: .5em;
 }
 
-/* Farmyard Summary */
-.farmyard-summary {
-  background-color: #f5f5dc;
-  border-radius: .25em;
-  padding: .5em;
-  margin-bottom: .5em;
-}
-
-.farmyard-title {
-  font-weight: 600;
-  font-size: .85em;
-  color: #666;
-  margin-bottom: .35em;
-}
-
+/* Farmyard Stats */
 .farmyard-stats {
   display: flex;
   flex-wrap: wrap;
   gap: .5em;
+  padding: .35em .5em;
+  background-color: #f5f5dc;
+  border-radius: .25em;
+  margin-bottom: .5em;
+  font-size: .8em;
 }
 
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: .2em;
-  font-size: .85em;
+.farmyard-stats .stat {
+  color: #555;
 }
 
-.stat-icon {
-  font-size: .9em;
-}
-
-.stat-value {
-  font-weight: bold;
-}
-
-.stat-label {
-  color: #666;
-}
-
-.stat-item.unused {
+.farmyard-stats .stat.unused {
   color: #c62828;
-}
-
-.stat-item.unused .stat-value {
-  color: #c62828;
+  font-weight: 600;
 }
 
 /* Score Section */
