@@ -208,6 +208,7 @@ Agricola.prototype.mainLoop = function() {
       template: '=== Round {round} (Stage {stage}) ===',
       args: { round: this.state.round, stage: this.state.stage },
     })
+    this.log.indent()
 
     this.revealRoundAction()
     this.replenishPhase()
@@ -219,6 +220,8 @@ Agricola.prototype.mainLoop = function() {
     if (res.constants.harvestRounds.includes(this.state.round)) {
       this.harvestPhase()
     }
+
+    this.log.outdent()
   }
 }
 
@@ -252,6 +255,7 @@ Agricola.prototype.revealRoundAction = function() {
 
 Agricola.prototype.replenishPhase = function() {
   this.log.add({ template: 'Replenishing action spaces' })
+  this.log.indent()
 
   for (const actionId of this.state.activeActions) {
     const action = res.getActionById(actionId)
@@ -270,6 +274,8 @@ Agricola.prototype.replenishPhase = function() {
       }
     }
   }
+
+  this.log.outdent()
 }
 
 Agricola.prototype.collectWellFood = function() {
@@ -321,7 +327,15 @@ Agricola.prototype.workPhase = function() {
       const player = playerList[currentPlayerIndex]
 
       if (player.getAvailableWorkers() > 0) {
+        const workersUsed = player.getFamilySize() - player.getAvailableWorkers() + 1
+        const totalWorkerCount = player.getFamilySize()
+        this.log.add({
+          template: "{player}'s turn ({workersUsed}/{totalWorkers})",
+          args: { player, workersUsed, totalWorkers: totalWorkerCount },
+        })
+        this.log.indent()
         this.playerTurn(player)
+        this.log.outdent()
         workersPlaced++
         break
       }

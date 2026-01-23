@@ -514,6 +514,7 @@ Game.prototype._getResponse = function() {
 
 // When overriding, always call super before doing any additional state updates.
 Game.prototype._reset = function() {
+  this.log.setIndent(0)
   this.random = seedrandom(this.settings.seed)
   this.state = this._blankState()
   this.log.reset()

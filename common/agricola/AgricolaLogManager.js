@@ -5,11 +5,16 @@ class AgricolaLogManager extends BaseLogManager {
   _registerDefaultHandlers() {
     super._registerDefaultHandlers()
 
-    // Handler for resource amounts
-    this.registerHandler('resource*', (resource) => ({
-      value: `${resource.amount} ${resource.type}`,
-      classes: ['resource'],
-    }))
+    // Handler for resource amounts - handles both string type and {amount, type} object
+    this.registerHandler('resource*', (resource) => {
+      if (typeof resource === 'string') {
+        return { value: resource, classes: ['resource'] }
+      }
+      return {
+        value: `${resource.amount} ${resource.type}`,
+        classes: ['resource'],
+      }
+    })
 
     // Handler for action spaces
     this.registerHandler('action*', (action) => ({
