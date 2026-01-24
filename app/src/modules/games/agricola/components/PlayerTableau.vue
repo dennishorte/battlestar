@@ -24,6 +24,7 @@
         <span class="stat">🌾 {{ player.getFieldCount() }} fields</span>
         <span class="stat">🌿 {{ player.getPastureCount() }} pastures</span>
         <span class="stat">⌂ {{ player.getStableCount() }} stables</span>
+        <span class="stat">┼ {{ unusedFences }} fences</span>
         <span class="stat unused" v-if="unusedSpaces > 0">◻ {{ unusedSpaces }} unused</span>
       </div>
 
@@ -128,6 +129,12 @@ export default {
       const freeStandingStables = stables - stablesInPastures
 
       return totalSpaces - rooms - fields - pastureSpaces - freeStandingStables
+    },
+
+    unusedFences() {
+      const maxFences = 15
+      const usedFences = this.player.getFenceCount()
+      return maxFences - usedFences
     },
   },
 
