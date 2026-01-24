@@ -75,6 +75,37 @@ describe('Agricola', () => {
       expect(players[2].food).toBe(3)
       expect(players[3].food).toBe(3)
     })
+
+    test('players receive cards when not drafting', () => {
+      const game = t.fixture({ useDrafting: false })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hand.length).toBe(14) // 7 occupations + 7 minor improvements
+
+      const micah = game.players.byName('micah')
+      expect(micah.hand.length).toBe(14)
+    })
+
+    test('drafting sets up draft pools', () => {
+      const game = t.fixture({ useDrafting: true })
+
+      // Set up a breakpoint after initialization to check draft state
+      game.testSetBreakpoint('initialization-complete', () => {
+        // Draft pools should be set up
+        expect(game.state.draftPools).toBeDefined()
+        expect(game.state.draftPools.occupations).toHaveLength(2) // 2 players
+        expect(game.state.draftPools.minors).toHaveLength(2)
+        expect(game.state.draftPools.occupations[0]).toHaveLength(7)
+        expect(game.state.draftPools.minors[0]).toHaveLength(7)
+
+        // Players should start with empty hands
+        const dennis = game.players.byName('dennis')
+        expect(dennis.hand.length).toBe(0)
+      })
+
+      game.run()
+    })
   })
 
   describe('player resources', () => {

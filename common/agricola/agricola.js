@@ -35,6 +35,8 @@ util.inherit(Game, Agricola)
 
 function AgricolaFactory(settings, viewerName) {
   const data = GameFactory(settings)
+  data.settings = data.settings || {}
+  data.settings.useDrafting = settings.useDrafting || false
   return new Agricola(data, viewerName)
 }
 
@@ -45,6 +47,7 @@ function factoryFromLobby(lobby) {
     players: lobby.users,
     seed: lobby.seed,
     numPlayers: lobby.users.length,
+    useDrafting: lobby.options?.useDrafting || false,
   })
 }
 
@@ -54,6 +57,11 @@ function factoryFromLobby(lobby) {
 
 Agricola.prototype._mainProgram = function() {
   this.initialize()
+
+  if (this.settings.useDrafting) {
+    this.draftPhase()
+  }
+
   this.mainLoop()
 }
 
@@ -202,27 +210,174 @@ Agricola.prototype.initializePlayerCards = function() {
   const shuffledOccupations = this.shuffleArray([...occupations])
   const shuffledMinors = this.shuffleArray([...minorImprovements])
 
-  // Deal cards to each player
-  for (let i = 0; i < this.players.all().length; i++) {
-    const player = this.players.all()[i]
+  if (this.settings.useDrafting) {
+    // Set up draft pools - each player gets a starting hand to draft from
+    this.state.draftPools = {
+      occupations: [],
+      minors: [],
+    }
 
-    // Deal 7 occupations
-    const playerOccupations = shuffledOccupations
-      .splice(0, cardsPerPlayer)
-      .map(c => c.id)
+    for (let i = 0; i < playerCount; i++) {
+      // Create pools of cards that will be passed around
+      const occPool = shuffledOccupations
+        .splice(0, cardsPerPlayer)
+        .map(c => c.id)
+      const minorPool = shuffledMinors
+        .splice(0, cardsPerPlayer)
+        .map(c => c.id)
 
-    // Deal 7 minor improvements
-    const playerMinors = shuffledMinors
-      .splice(0, cardsPerPlayer)
-      .map(c => c.id)
+      this.state.draftPools.occupations.push(occPool)
+      this.state.draftPools.minors.push(minorPool)
+    }
 
-    // Add to player's hand
-    player.hand = [...playerOccupations, ...playerMinors]
+    // Initialize empty hands
+    for (const player of this.players.all()) {
+      player.hand = []
+    }
 
     this.log.add({
-      template: '{player} receives {occ} occupations and {minor} minor improvements',
-      args: { player, occ: playerOccupations.length, minor: playerMinors.length },
+      template: 'Card drafting will begin',
     })
+  }
+  else {
+    // Deal cards directly to each player (no drafting)
+    for (let i = 0; i < playerCount; i++) {
+      const player = this.players.all()[i]
+
+      // Deal 7 occupations
+      const playerOccupations = shuffledOccupations
+        .splice(0, cardsPerPlayer)
+        .map(c => c.id)
+
+      // Deal 7 minor improvements
+      const playerMinors = shuffledMinors
+        .splice(0, cardsPerPlayer)
+        .map(c => c.id)
+
+      // Add to player's hand
+      player.hand = [...playerOccupations, ...playerMinors]
+
+      this.log.add({
+        template: '{player} receives {occ} occupations and {minor} minor improvements',
+        args: { player, occ: playerOccupations.length, minor: playerMinors.length },
+      })
+    }
+  }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Card Drafting Phase
+
+Agricola.prototype.draftPhase = function() {
+  this.log.add({ template: '=== Card Drafting ===' })
+  this.log.indent()
+
+  // Draft occupations first (pass left)
+  this.log.add({ template: 'Drafting Occupations' })
+  this.log.indent()
+  this.draftCardType('occupations', 1) // 1 = pass left
+  this.log.outdent()
+
+  // Draft minor improvements (pass right)
+  this.log.add({ template: 'Drafting Minor Improvements' })
+  this.log.indent()
+  this.draftCardType('minors', -1) // -1 = pass right
+  this.log.outdent()
+
+  this.log.outdent()
+
+  // Log final hands
+  for (const player of this.players.all()) {
+    const occupations = player.hand.filter(id => {
+      const card = res.getCardById(id)
+      return card && card.type === 'occupation'
+    })
+    const minors = player.hand.filter(id => {
+      const card = res.getCardById(id)
+      return card && card.type === 'minor'
+    })
+
+    this.log.add({
+      template: '{player} drafted {occ} occupations and {minor} minor improvements',
+      args: { player, occ: occupations.length, minor: minors.length },
+    })
+  }
+
+  // Clean up draft state
+  delete this.state.draftPools
+}
+
+Agricola.prototype.draftCardType = function(cardType, passDirection) {
+  const players = this.players.all()
+  const playerCount = players.length
+  const pools = this.state.draftPools[cardType]
+  const cardsPerPlayer = pools[0].length
+
+  // Track which pool each player is currently looking at
+  // Player i starts with pool i
+  const poolAssignments = players.map((_, i) => i)
+
+  for (let round = 0; round < cardsPerPlayer; round++) {
+    this.log.add({
+      template: 'Draft round {round}',
+      args: { round: round + 1 },
+    })
+    this.log.indent()
+
+    // Each player picks in order
+    for (let i = 0; i < playerCount; i++) {
+      const player = players[i]
+      const poolIndex = poolAssignments[i]
+      const pool = pools[poolIndex]
+
+      if (pool.length === 0) {
+        continue
+      }
+
+      // Build choice list with card names
+      const choices = pool.map(cardId => {
+        const card = res.getCardById(cardId)
+        return card ? card.name : cardId
+      })
+
+      const cardTypeName = cardType === 'occupations' ? 'Occupation' : 'Minor Improvement'
+      const selection = this.actions.choose(player, choices, {
+        title: `Draft ${cardTypeName}`,
+        min: 1,
+        max: 1,
+      })
+
+      const selectedName = selection[0]
+
+      // Find the card id by name
+      const cardId = pool.find(id => {
+        const card = res.getCardById(id)
+        return card && card.name === selectedName
+      })
+
+      if (cardId) {
+        // Remove from pool and add to hand
+        const cardIndex = pool.indexOf(cardId)
+        pool.splice(cardIndex, 1)
+        player.hand.push(cardId)
+
+        this.log.add({
+          template: '{player} drafts {card}',
+          args: { player, card: selectedName },
+        })
+      }
+    }
+
+    this.log.outdent()
+
+    // Pass pools to neighbor (if not last round)
+    if (round < cardsPerPlayer - 1) {
+      for (let i = 0; i < playerCount; i++) {
+        // Move pool assignment in the pass direction
+        poolAssignments[i] = (poolAssignments[i] + passDirection + playerCount) % playerCount
+      }
+    }
   }
 }
 

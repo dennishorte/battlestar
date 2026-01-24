@@ -10,6 +10,7 @@ TestUtil.fixture = function(options) {
     name: 'test_game',
     seed: 'test_seed',
     numPlayers: 2,
+    useDrafting: false,
     players: [
       {
         _id: 'dennis_id',
