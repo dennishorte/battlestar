@@ -70,6 +70,7 @@ Agricola.prototype.initialize = function() {
   this.initializeActionSpaces()
   this.initializeRoundCards()
   this.initializeMajorImprovements()
+  this.initializePlayerCards()
 
   this.log.outdent()
 
@@ -186,6 +187,43 @@ Agricola.prototype.shuffleArray = function(array) {
 Agricola.prototype.initializeMajorImprovements = function() {
   // All 10 major improvements are available at game start
   this.state.availableMajorImprovements = res.getAllMajorImprovements().map(imp => imp.id)
+}
+
+Agricola.prototype.initializePlayerCards = function() {
+  const playerCount = this.players.all().length
+  const cardsPerPlayer = 7
+
+  // Get cards appropriate for this player count
+  const allCards = res.getCardsByPlayerCount(playerCount)
+  const occupations = allCards.filter(c => c.type === 'occupation')
+  const minorImprovements = allCards.filter(c => c.type === 'minor')
+
+  // Shuffle both decks
+  const shuffledOccupations = this.shuffleArray([...occupations])
+  const shuffledMinors = this.shuffleArray([...minorImprovements])
+
+  // Deal cards to each player
+  for (let i = 0; i < this.players.all().length; i++) {
+    const player = this.players.all()[i]
+
+    // Deal 7 occupations
+    const playerOccupations = shuffledOccupations
+      .splice(0, cardsPerPlayer)
+      .map(c => c.id)
+
+    // Deal 7 minor improvements
+    const playerMinors = shuffledMinors
+      .splice(0, cardsPerPlayer)
+      .map(c => c.id)
+
+    // Add to player's hand
+    player.hand = [...playerOccupations, ...playerMinors]
+
+    this.log.add({
+      template: '{player} receives {occ} occupations and {minor} minor improvements',
+      args: { player, occ: playerOccupations.length, minor: playerMinors.length },
+    })
+  }
 }
 
 

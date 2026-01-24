@@ -159,6 +159,11 @@ export default {
   border-left: 3px solid #9e9e9e;
 }
 
+.card-item.card-type-hand {
+  background-color: #e8f5e9;
+  border-left: 3px solid #4caf50;
+}
+
 .empty-message {
   padding: .25em .5em;
   color: #999;

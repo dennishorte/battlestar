@@ -27,7 +27,16 @@
         <span class="stat unused" v-if="unusedSpaces > 0">◻ {{ unusedSpaces }} unused</span>
       </div>
 
-      <!-- Cards -->
+      <!-- Hand (only visible to the player) -->
+      <CardSection
+        v-if="isViewingPlayer"
+        title="Hand"
+        :cards="player.hand"
+        cardType="hand"
+        :startExpanded="true"
+      />
+
+      <!-- Played Cards -->
       <CardSection
         title="Occupations"
         :cards="player.playedOccupations"
@@ -88,6 +97,10 @@ export default {
   },
 
   computed: {
+    isViewingPlayer() {
+      return this.player.name === this.actor.name
+    },
+
     headerStyle() {
       return {
         backgroundColor: this.player.color || '#666',
