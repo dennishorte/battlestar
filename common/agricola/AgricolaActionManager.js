@@ -718,28 +718,94 @@ class AgricolaActionManager extends BaseActionManager {
   // ---------------------------------------------------------------------------
 
   playOccupation(player) {
-    // Occupations will be implemented separately
-    // For now, just track that one was played
-    const cost = player.occupationsPlayed === 0 ? 0 : 1
+    // Get occupations from player's hand
+    const occupationsInHand = player.hand.filter(cardId => {
+      const card = res.getCardById(cardId)
+      return card && card.type === 'occupation'
+    })
 
-    if (cost > 0 && player.food < cost) {
+    if (occupationsInHand.length === 0) {
       this.log.add({
-        template: '{player} cannot afford to play an occupation',
+        template: '{player} has no occupations in hand',
         args: { player },
       })
       return false
     }
 
+    // Occupation cost: first is free, subsequent cost 1 food each
+    const cost = player.occupationsPlayed === 0 ? 0 : 1
+
+    if (cost > 0 && player.food < cost) {
+      this.log.add({
+        template: '{player} cannot afford to play an occupation (needs {cost} food)',
+        args: { player, cost },
+      })
+      return false
+    }
+
+    // Filter to playable occupations (meet prerequisites)
+    const playableOccupations = occupationsInHand.filter(cardId => {
+      return player.meetsCardPrereqs(cardId)
+    })
+
+    if (playableOccupations.length === 0) {
+      this.log.add({
+        template: '{player} has no occupations that meet prerequisites',
+        args: { player },
+      })
+      return false
+    }
+
+    // Build choices with card names
+    const choices = playableOccupations.map(cardId => {
+      const card = res.getCardById(cardId)
+      return card ? card.name : cardId
+    })
+
+    // Add option to not play
+    choices.push('Do not play an occupation')
+
+    const selection = this.choose(player, choices, {
+      title: cost > 0 ? `Play an Occupation (costs ${cost} food)` : 'Play an Occupation (free)',
+      min: 1,
+      max: 1,
+    })
+
+    const selectedName = selection[0]
+
+    if (selectedName === 'Do not play an occupation') {
+      this.log.addDoNothing(player, 'play an occupation')
+      return false
+    }
+
+    // Find the card id by name
+    const cardId = playableOccupations.find(id => {
+      const card = res.getCardById(id)
+      return card && card.name === selectedName
+    })
+
+    if (!cardId) {
+      return false
+    }
+
+    // Pay the food cost
     if (cost > 0) {
       player.food -= cost
     }
 
-    player.occupationsPlayed++
+    // Play the card (moves from hand to playedOccupations)
+    const card = res.getCardById(cardId)
+    player.playCard(cardId)
 
     this.log.add({
-      template: '{player} plays an occupation',
-      args: { player },
+      template: '{player} plays {card}',
+      args: { player, card: card.name },
     })
+
+    // Execute onPlay effect if present
+    if (card.onPlay) {
+      card.onPlay(this.game, player)
+    }
 
     return true
   }
