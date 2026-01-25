@@ -798,8 +798,8 @@ class AgricolaActionManager extends BaseActionManager {
     player.playCard(cardId)
 
     this.log.add({
-      template: '{player} plays {card}',
-      args: { player, card: card.name },
+      template: '{player} plays {occupation}',
+      args: { player, occupation: card.name },
     })
 
     // Execute onPlay effect if present
@@ -879,8 +879,8 @@ class AgricolaActionManager extends BaseActionManager {
     player.playCard(cardId)
 
     this.log.add({
-      template: '{player} plays {card}',
-      args: { player, card: card.name },
+      template: '{player} plays {improvement}',
+      args: { player, improvement: card.name },
     })
 
     // Execute onPlay effect if present

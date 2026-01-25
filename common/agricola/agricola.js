@@ -363,8 +363,8 @@ Agricola.prototype.draftCardType = function(cardType, passDirection) {
         player.hand.push(cardId)
 
         this.log.add({
-          template: '{player} drafts {card}',
-          args: { player, card: selectedName },
+          template: '{player} drafts {draftedCard}',
+          args: { player, draftedCard: selectedName },
         })
       }
     }
