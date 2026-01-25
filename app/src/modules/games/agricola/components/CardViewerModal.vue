@@ -28,9 +28,15 @@
         <span class="vp-label">Victory Points</span>
       </div>
 
-      <!-- Description -->
-      <div class="card-description" v-if="card.description">
-        {{ card.description }}
+      <!-- Category -->
+      <div class="card-category" v-if="card.category">
+        <span class="category-label">Category:</span>
+        <span class="category-value">{{ card.category }}</span>
+      </div>
+
+      <!-- Card Text -->
+      <div class="card-text" v-if="card.text">
+        {{ card.text }}
       </div>
 
       <!-- Abilities -->
@@ -259,13 +265,29 @@ export default {
   color: #388e3c;
 }
 
-.card-description {
+.card-category {
+  margin-bottom: .5em;
+  font-size: .9em;
+}
+
+.category-label {
+  font-weight: 600;
+  color: #555;
+  margin-right: .35em;
+}
+
+.category-value {
+  color: #666;
+  font-style: italic;
+}
+
+.card-text {
   background-color: #f5f5f5;
   padding: .75em;
   border-radius: .25em;
   margin-bottom: .75em;
-  font-style: italic;
-  color: #444;
+  color: #333;
+  line-height: 1.4;
 }
 
 .card-abilities {

@@ -10,10 +10,11 @@
         v-for="cardId in cards"
         :key="cardId"
         class="card-item"
-        :class="cardTypeClass"
+        :class="getCardClass(cardId)"
         @click="showCardDetails(cardId)"
       >
-        {{ formatCardName(cardId) }}
+        <span class="card-name">{{ formatCardName(cardId) }}</span>
+        <span class="card-type-badge" v-if="cardType === 'hand'">{{ getCardTypeBadge(cardId) }}</span>
       </div>
     </div>
     <div class="empty-message" v-else-if="expanded && cards.length === 0">
@@ -26,7 +27,7 @@
 export default {
   name: 'CardSection',
 
-  inject: ['ui'],
+  inject: ['ui', 'game'],
 
   props: {
     title: {
@@ -57,12 +58,6 @@ export default {
     }
   },
 
-  computed: {
-    cardTypeClass() {
-      return `card-type-${this.cardType}`
-    },
-  },
-
   methods: {
     toggleExpand() {
       this.expanded = !this.expanded
@@ -76,9 +71,37 @@ export default {
         .join(' ')
     },
 
+    getActualCardType(cardId) {
+      // For hand cards, determine the actual type from the card data
+      if (this.cardType === 'hand' && this.game?.res?.getCardById) {
+        const card = this.game.res.getCardById(cardId)
+        if (card && card.type) {
+          return card.type // 'occupation' or 'minor'
+        }
+      }
+      return this.cardType
+    },
+
+    getCardClass(cardId) {
+      const actualType = this.getActualCardType(cardId)
+      return `card-type-${actualType}`
+    },
+
+    getCardTypeBadge(cardId) {
+      const actualType = this.getActualCardType(cardId)
+      if (actualType === 'occupation') {
+        return 'OCC'
+      }
+      if (actualType === 'minor') {
+        return 'MIN'
+      }
+      return ''
+    },
+
     showCardDetails(cardId) {
       if (this.ui?.fn?.showCard) {
-        this.ui.fn.showCard(cardId, this.cardType)
+        const actualType = this.getActualCardType(cardId)
+        this.ui.fn.showCard(cardId, actualType)
       }
     },
   },
@@ -126,6 +149,9 @@ export default {
 }
 
 .card-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: .25em .5em;
   margin-bottom: .15em;
   border-radius: .2em;
@@ -136,6 +162,28 @@ export default {
 
 .card-item:hover {
   filter: brightness(0.95);
+}
+
+.card-name {
+  flex: 1;
+}
+
+.card-type-badge {
+  font-size: .7em;
+  font-weight: 600;
+  padding: .1em .3em;
+  border-radius: .2em;
+  opacity: 0.7;
+}
+
+.card-type-occupation .card-type-badge {
+  background-color: #ff9800;
+  color: white;
+}
+
+.card-type-minor .card-type-badge {
+  background-color: #2196f3;
+  color: white;
 }
 
 /* Card type specific colors */
@@ -157,11 +205,6 @@ export default {
 .card-item.card-type-default {
   background-color: #f5f5f5;
   border-left: 3px solid #9e9e9e;
-}
-
-.card-item.card-type-hand {
-  background-color: #e8f5e9;
-  border-left: 3px solid #4caf50;
 }
 
 .empty-message {
