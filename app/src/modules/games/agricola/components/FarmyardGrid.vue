@@ -127,13 +127,15 @@ export default {
 
 <style scoped>
 .farmyard-grid {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   gap: 2px;
   padding: .5em;
   background-color: #8B4513;
   border-radius: .35em;
   margin-bottom: .5em;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .farmyard-row {

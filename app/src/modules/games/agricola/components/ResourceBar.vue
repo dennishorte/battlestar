@@ -26,6 +26,9 @@ export default {
 
   computed: {
     resources() {
+      const maxFences = 15
+      const maxStables = 4
+
       return [
         { type: 'food', icon: '🍞', count: this.player.food, label: 'Food' },
         { type: 'wood', icon: '🪵', count: this.player.wood, label: 'Wood' },
@@ -34,6 +37,8 @@ export default {
         { type: 'reed', icon: '🌿', count: this.player.reed, label: 'Reed' },
         { type: 'grain', icon: '🌾', count: this.player.grain, label: 'Grain' },
         { type: 'vegetables', icon: '🥕', count: this.player.vegetables, label: 'Vegetables' },
+        { type: 'fences', icon: '┼', count: maxFences - this.player.getFenceCount(), label: 'Available Fences' },
+        { type: 'stables', icon: '⌂', count: maxStables - this.player.getStableCount(), label: 'Available Stables' },
       ]
     },
   },
@@ -110,5 +115,15 @@ export default {
 .resource-item.vegetables {
   background-color: #f1f8e9;
   border: 1px solid #aed581;
+}
+
+.resource-item.fences {
+  background-color: #d7ccc8;
+  border: 1px solid #8d6e63;
+}
+
+.resource-item.stables {
+  background-color: #d7ccc8;
+  border: 1px solid #8d6e63;
 }
 </style>

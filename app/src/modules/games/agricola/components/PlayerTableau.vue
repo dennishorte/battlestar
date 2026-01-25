@@ -16,15 +16,15 @@
       <AnimalDisplay :player="player" />
 
       <!-- Farmyard Grid -->
-      <FarmyardGrid :player="player" />
+      <div class="farmyard-container">
+        <FarmyardGrid :player="player" />
+      </div>
 
       <!-- Farmyard Stats -->
       <div class="farmyard-stats">
         <span class="stat">🏠 {{ player.getRoomCount() }} {{ player.roomType }}</span>
         <span class="stat">🌾 {{ player.getFieldCount() }} fields</span>
         <span class="stat">🌿 {{ player.getPastureCount() }} pastures</span>
-        <span class="stat">⌂ {{ player.getStableCount() }} stables</span>
-        <span class="stat">┼ {{ unusedFences }} fences</span>
         <span class="stat unused" v-if="unusedSpaces > 0">◻ {{ unusedSpaces }} unused</span>
       </div>
 
@@ -131,11 +131,6 @@ export default {
       return totalSpaces - rooms - fields - pastureSpaces - freeStandingStables
     },
 
-    unusedFences() {
-      const maxFences = 15
-      const usedFences = this.player.getFenceCount()
-      return maxFences - usedFences
-    },
   },
 
   methods: {
@@ -195,6 +190,11 @@ export default {
 
 .player-content {
   padding: .5em;
+}
+
+.farmyard-container {
+  display: flex;
+  justify-content: center;
 }
 
 /* Farmyard Stats */
