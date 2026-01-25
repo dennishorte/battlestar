@@ -14,7 +14,7 @@
         @click="showCardDetails(cardId)"
       >
         <span class="card-name">{{ formatCardName(cardId) }}</span>
-        <span class="card-type-badge" v-if="cardType === 'hand'">{{ getCardTypeBadge(cardId) }}</span>
+        <span class="card-cost" v-if="showCost(cardId)">{{ formatCost(cardId) }}</span>
       </div>
     </div>
     <div class="empty-message" v-else-if="expanded && cards.length === 0">
@@ -91,15 +91,39 @@ export default {
       return `card-type-${actualType}`
     },
 
-    getCardTypeBadge(cardId) {
+    showCost(cardId) {
+      // Only show cost for minor improvements
       const actualType = this.getActualCardType(cardId)
-      if (actualType === 'occupation') {
-        return 'OCC'
+      return actualType === 'minor'
+    },
+
+    formatCost(cardId) {
+      const card = res.getCardById(cardId)
+      if (!card || !card.cost) {
+        return ''
       }
-      if (actualType === 'minor') {
-        return 'MIN'
+
+      const entries = Object.entries(card.cost)
+      if (entries.length === 0) {
+        return 'Free'
       }
-      return ''
+
+      const ICONS = {
+        food: '🍞',
+        wood: '🪵',
+        clay: '🧱',
+        stone: '🪨',
+        reed: '🌿',
+        grain: '🌾',
+        vegetables: '🥕',
+        sheep: '🐑',
+        boar: '🐗',
+        cattle: '🐄',
+      }
+
+      return entries
+        .map(([resource, amount]) => `${amount}${ICONS[resource] || resource}`)
+        .join(' ')
     },
 
     showCardDetails(cardId) {
@@ -172,22 +196,10 @@ export default {
   flex: 1;
 }
 
-.card-type-badge {
-  font-size: .7em;
-  font-weight: 600;
-  padding: .1em .3em;
-  border-radius: .2em;
-  opacity: 0.7;
-}
-
-.card-type-occupation .card-type-badge {
-  background-color: #ff9800;
-  color: white;
-}
-
-.card-type-minor .card-type-badge {
-  background-color: #2196f3;
-  color: white;
+.card-cost {
+  font-size: .75em;
+  color: #555;
+  white-space: nowrap;
 }
 
 /* Card type specific colors */
