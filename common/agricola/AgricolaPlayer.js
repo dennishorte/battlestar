@@ -635,6 +635,185 @@ class AgricolaPlayer extends BasePlayer {
     return neighbors
   }
 
+  // Calculate fences needed to enclose a given set of spaces as a pasture
+  calculateFencesForPasture(spaces) {
+    const fences = []
+    const spaceSet = new Set(spaces.map(s => `${s.row},${s.col}`))
+
+    for (const coord of spaces) {
+      const { row, col } = coord
+
+      // Check each direction for needed fences
+      // Top edge
+      if (row === 0) {
+        // Board edge - counts as fence, no wood needed
+      }
+      else {
+        const neighborKey = `${row - 1},${col}`
+        if (!spaceSet.has(neighborKey)) {
+          // Need fence between this space and neighbor
+          if (!this.hasFenceBetween(row, col, row - 1, col)) {
+            fences.push({ row1: row, col1: col, row2: row - 1, col2: col })
+          }
+        }
+      }
+
+      // Bottom edge
+      if (row === res.constants.farmyardRows - 1) {
+        // Board edge
+      }
+      else {
+        const neighborKey = `${row + 1},${col}`
+        if (!spaceSet.has(neighborKey)) {
+          if (!this.hasFenceBetween(row, col, row + 1, col)) {
+            fences.push({ row1: row, col1: col, row2: row + 1, col2: col })
+          }
+        }
+      }
+
+      // Left edge
+      if (col === 0) {
+        // Board edge
+      }
+      else {
+        const neighborKey = `${row},${col - 1}`
+        if (!spaceSet.has(neighborKey)) {
+          if (!this.hasFenceBetween(row, col, row, col - 1)) {
+            fences.push({ row1: row, col1: col, row2: row, col2: col - 1 })
+          }
+        }
+      }
+
+      // Right edge
+      if (col === res.constants.farmyardCols - 1) {
+        // Board edge
+      }
+      else {
+        const neighborKey = `${row},${col + 1}`
+        if (!spaceSet.has(neighborKey)) {
+          if (!this.hasFenceBetween(row, col, row, col + 1)) {
+            fences.push({ row1: row, col1: col, row2: row, col2: col + 1 })
+          }
+        }
+      }
+    }
+
+    return fences
+  }
+
+  // Validate a pasture selection
+  validatePastureSelection(spaces) {
+    if (!spaces || spaces.length === 0) {
+      return { valid: false, error: 'No spaces selected' }
+    }
+
+    // Check all spaces are valid (empty or existing pasture, not room/field)
+    for (const coord of spaces) {
+      const space = this.getSpace(coord.row, coord.col)
+      if (!space) {
+        return { valid: false, error: 'Invalid space' }
+      }
+      if (space.type === 'room' || space.type === 'field') {
+        return { valid: false, error: 'Cannot fence rooms or fields' }
+      }
+    }
+
+    // Check spaces are orthogonally connected
+    if (!this.areSpacesConnected(spaces)) {
+      return { valid: false, error: 'Spaces must be connected' }
+    }
+
+    // Calculate fences needed
+    const fences = this.calculateFencesForPasture(spaces)
+
+    // Check if player has enough wood
+    if (fences.length > this.wood) {
+      return {
+        valid: false,
+        error: `Need ${fences.length} wood, have ${this.wood}`,
+        fencesNeeded: fences.length,
+      }
+    }
+
+    // Check if player has enough fences remaining
+    const remainingFences = res.constants.maxFences - this.getFenceCount()
+    if (fences.length > remainingFences) {
+      return {
+        valid: false,
+        error: `Need ${fences.length} fences, only ${remainingFences} remaining`,
+        fencesNeeded: fences.length,
+      }
+    }
+
+    return {
+      valid: true,
+      fencesNeeded: fences.length,
+      fences,
+    }
+  }
+
+  // Check if spaces are orthogonally connected
+  areSpacesConnected(spaces) {
+    if (spaces.length <= 1) {
+      return true
+    }
+
+    const spaceSet = new Set(spaces.map(s => `${s.row},${s.col}`))
+    const visited = new Set()
+    const queue = [spaces[0]]
+    visited.add(`${spaces[0].row},${spaces[0].col}`)
+
+    while (queue.length > 0) {
+      const current = queue.shift()
+      const neighbors = this.getOrthogonalNeighbors(current.row, current.col)
+
+      for (const n of neighbors) {
+        const key = `${n.row},${n.col}`
+        if (spaceSet.has(key) && !visited.has(key)) {
+          visited.add(key)
+          queue.push(n)
+        }
+      }
+    }
+
+    return visited.size === spaces.length
+  }
+
+  // Build a pasture from selected spaces
+  buildPasture(spaces) {
+    const validation = this.validatePastureSelection(spaces)
+    if (!validation.valid) {
+      return { success: false, error: validation.error }
+    }
+
+    // Pay wood cost
+    this.wood -= validation.fencesNeeded
+
+    // Add fences
+    for (const fence of validation.fences) {
+      this.farmyard.fences.push(fence)
+    }
+
+    // Recalculate pastures
+    this.recalculatePastures()
+
+    return { success: true, fencesBuilt: validation.fencesNeeded }
+  }
+
+  // Get spaces available for fencing (empty or already pasture, not room/field)
+  getFenceableSpaces() {
+    const spaces = []
+    for (let row = 0; row < res.constants.farmyardRows; row++) {
+      for (let col = 0; col < res.constants.farmyardCols; col++) {
+        const space = this.farmyard.grid[row][col]
+        if (space.type !== 'room' && space.type !== 'field') {
+          spaces.push({ row, col })
+        }
+      }
+    }
+    return spaces
+  }
+
   // ---------------------------------------------------------------------------
   // Animal methods
   // ---------------------------------------------------------------------------
