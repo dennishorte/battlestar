@@ -28,15 +28,6 @@
         <span class="stat unused" v-if="unusedSpaces > 0">◻ {{ unusedSpaces }} unused</span>
       </div>
 
-      <!-- Hand (only visible to the player) -->
-      <CardSection
-        v-if="isViewingPlayer"
-        title="Hand"
-        :cards="player.hand"
-        cardType="hand"
-        :startExpanded="true"
-      />
-
       <!-- Played Cards -->
       <CardSection
         title="Occupations"
@@ -54,6 +45,16 @@
         title="Major Improvements"
         :cards="player.majorImprovements"
         cardType="major"
+      />
+
+      <!-- Hand (only visible to the player) -->
+      <CardSection
+        v-if="isViewingPlayer"
+        title="Hand"
+        :cards="player.hand"
+        cardType="hand"
+        :startExpanded="true"
+        persistKey="agricola-hand-expanded"
       />
 
       <!-- Score -->

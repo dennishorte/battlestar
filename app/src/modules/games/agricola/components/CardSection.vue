@@ -54,17 +54,34 @@ export default {
       type: Boolean,
       default: true,
     },
+    persistKey: {
+      type: String,
+      default: null,
+    },
   },
 
   data() {
     return {
-      expanded: this.startExpanded,
+      expanded: this.getInitialExpanded(),
     }
   },
 
   methods: {
+    getInitialExpanded() {
+      if (this.persistKey) {
+        const stored = window.localStorage.getItem(this.persistKey)
+        if (stored !== null) {
+          return stored === 'true'
+        }
+      }
+      return this.startExpanded
+    },
+
     toggleExpand() {
       this.expanded = !this.expanded
+      if (this.persistKey) {
+        window.localStorage.setItem(this.persistKey, this.expanded.toString())
+      }
     },
 
     formatCardName(cardId) {
