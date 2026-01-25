@@ -70,8 +70,10 @@
 
 <script>
 import ModalBase from '@/components/ModalBase'
+import { agricola } from 'battlestar-common'
 
-// Card definitions (these would ideally come from the game res)
+const res = agricola.res
+
 const RESOURCE_ICONS = {
   food: '🍞',
   wood: '🪵',
@@ -108,9 +110,10 @@ export default {
         return null
       }
 
-      // Try to get card from game's res
-      if (this.game.res && this.game.res.getCardById) {
-        return this.game.res.getCardById(this.cardId)
+      // Get card from res module
+      const card = res.getCardById(this.cardId)
+      if (card) {
+        return card
       }
 
       // Fallback - return minimal card info

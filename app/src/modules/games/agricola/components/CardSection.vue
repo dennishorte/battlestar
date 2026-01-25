@@ -24,10 +24,14 @@
 </template>
 
 <script>
+import { agricola } from 'battlestar-common'
+
+const res = agricola.res
+
 export default {
   name: 'CardSection',
 
-  inject: ['ui', 'game'],
+  inject: ['ui'],
 
   props: {
     title: {
@@ -73,8 +77,8 @@ export default {
 
     getActualCardType(cardId) {
       // For hand cards, determine the actual type from the card data
-      if (this.cardType === 'hand' && this.game?.res?.getCardById) {
-        const card = this.game.res.getCardById(cardId)
+      if (this.cardType === 'hand') {
+        const card = res.getCardById(cardId)
         if (card && card.type) {
           return card.type // 'occupation' or 'minor'
         }
