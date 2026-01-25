@@ -18,7 +18,7 @@ module.exports = {
     {
       trigger: 'dogma',
       kind: 'would-instead',
-      matches: (game, player, { card }) => card.checkHasBiscuit('k'),
+      matches: (game, player, { card }) => card.checkHasDemand(),
       func: (game, player) => {
         const toScore = game
           .players
