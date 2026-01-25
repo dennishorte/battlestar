@@ -548,8 +548,7 @@ describe('Innovation', () => {
         expect(t.getChoices(request1, 'Decree')).toStrictEqual([])
       })
 
-      // 'opponent has' test is skipped due to code bug: zone.nextIndex is not a function
-      test.skip('opponent has', () => {
+      test('opponent has', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
         t.setBoard(game, {
           dennis: {

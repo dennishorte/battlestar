@@ -562,7 +562,7 @@ Innovation.prototype.aDecree = function(player, name) {
     doImpl = true
   }
   else {
-    card.moveTo('achievements')
+    card.moveTo(this.zones.byId('achievements'))
     this.log.add({
       template: '{player} returns {card} to the achievements',
       args: { player, card }
