@@ -14,7 +14,8 @@
 
       <!-- Field -->
       <template v-else-if="cell.type === 'field'">
-        <span class="cell-icon">{{ fieldIcon }}</span>
+        <span class="cell-icon" v-if="fieldIcon">{{ fieldIcon }}</span>
+        <span class="field-empty" v-else>plowed</span>
         <span class="crop-count" v-if="cell.cropCount > 0">{{ cell.cropCount }}</span>
       </template>
 
@@ -129,8 +130,8 @@ export default {
     },
 
     showLabel() {
-      // Only show room type label for first room
-      return this.row === 0 && this.col === 0
+      // Show room type label on all rooms
+      return this.cell.type === 'room'
     },
 
     fieldIcon() {
@@ -140,7 +141,7 @@ export default {
       if (this.cell.crop === 'vegetables') {
         return '🥕'
       }
-      return '▭' // Empty field
+      return '' // Empty field - rely on background color
     },
 
     pastureAnimals() {
@@ -234,6 +235,12 @@ export default {
 .empty-marker {
   color: #a0826d;
   font-size: 1.5em;
+}
+
+.field-empty {
+  font-size: .65em;
+  color: #5a4a3a;
+  font-style: italic;
 }
 
 /* Cell type backgrounds */
