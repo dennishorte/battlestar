@@ -1017,6 +1017,11 @@ class UltimateActionManager extends BaseActionManager {
       }
     }
 
+    // Make sure everyone can see the card being executed.
+    else {
+      this.reveal(player, card)
+    }
+
     // Do the card's echo effects.
     this.game.executeAllEffects(player, card, 'echo', opts)
 
