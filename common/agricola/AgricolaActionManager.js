@@ -811,6 +811,151 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   // ---------------------------------------------------------------------------
+  // Minor Improvement action
+  // ---------------------------------------------------------------------------
+
+  buyMinorImprovement(player) {
+    // Get minor improvements from player's hand
+    const minorInHand = player.hand.filter(cardId => {
+      const card = res.getCardById(cardId)
+      return card && card.type === 'minor'
+    })
+
+    if (minorInHand.length === 0) {
+      this.log.add({
+        template: '{player} has no minor improvements in hand',
+        args: { player },
+      })
+      return false
+    }
+
+    // Filter to playable minor improvements (can afford and meet prerequisites)
+    const playableMinor = minorInHand.filter(cardId => {
+      return player.canPlayCard(cardId)
+    })
+
+    if (playableMinor.length === 0) {
+      this.log.add({
+        template: '{player} cannot afford any minor improvements',
+        args: { player },
+      })
+      return false
+    }
+
+    // Build choices with card names and costs
+    const choices = playableMinor.map(cardId => {
+      const card = res.getCardById(cardId)
+      return card ? card.name : cardId
+    })
+
+    // Add option to not play
+    choices.push('Do not play a minor improvement')
+
+    const selection = this.choose(player, choices, {
+      title: 'Play a Minor Improvement',
+      min: 1,
+      max: 1,
+    })
+
+    const selectedName = selection[0]
+
+    if (selectedName === 'Do not play a minor improvement') {
+      this.log.addDoNothing(player, 'play a minor improvement')
+      return false
+    }
+
+    // Find the card id by name
+    const cardId = playableMinor.find(id => {
+      const card = res.getCardById(id)
+      return card && card.name === selectedName
+    })
+
+    if (!cardId) {
+      return false
+    }
+
+    // Play the card (handles cost payment and moves from hand)
+    const card = res.getCardById(cardId)
+    player.playCard(cardId)
+
+    this.log.add({
+      template: '{player} plays {card}',
+      args: { player, card: card.name },
+    })
+
+    // Execute onPlay effect if present
+    if (card.onPlay) {
+      card.onPlay(this.game, player)
+    }
+
+    return true
+  }
+
+  // ---------------------------------------------------------------------------
+  // Major or Minor Improvement action
+  // ---------------------------------------------------------------------------
+
+  buyImprovement(player, allowMajor, allowMinor) {
+    // Build list of options
+    const options = []
+
+    // Check for affordable major improvements
+    if (allowMajor) {
+      const availableImprovements = this.game.getAvailableMajorImprovements()
+      const affordableMajor = availableImprovements.filter(id => player.canBuyMajorImprovement(id))
+      if (affordableMajor.length > 0) {
+        options.push('Major Improvement')
+      }
+    }
+
+    // Check for playable minor improvements
+    if (allowMinor) {
+      const minorInHand = player.hand.filter(cardId => {
+        const card = res.getCardById(cardId)
+        return card && card.type === 'minor' && player.canPlayCard(cardId)
+      })
+      if (minorInHand.length > 0) {
+        options.push('Minor Improvement')
+      }
+    }
+
+    if (options.length === 0) {
+      this.log.add({
+        template: '{player} has no affordable improvements',
+        args: { player },
+      })
+      return false
+    }
+
+    // Add option to not play
+    options.push('Do not play an improvement')
+
+    // If only one real option, still offer choice to pass
+    const selection = this.choose(player, options, {
+      title: 'Choose Improvement Type',
+      min: 1,
+      max: 1,
+    })
+
+    const choice = selection[0]
+
+    if (choice === 'Do not play an improvement') {
+      this.log.addDoNothing(player, 'play an improvement')
+      return false
+    }
+
+    if (choice === 'Major Improvement') {
+      return this.buyMajorImprovement(player, this.game.getAvailableMajorImprovements())
+    }
+
+    if (choice === 'Minor Improvement') {
+      return this.buyMinorImprovement(player)
+    }
+
+    return false
+  }
+
+  // ---------------------------------------------------------------------------
   // Starting player action
   // ---------------------------------------------------------------------------
 
@@ -830,17 +975,32 @@ class AgricolaActionManager extends BaseActionManager {
   // Renovation + Improvement action
   // ---------------------------------------------------------------------------
 
-  renovationAndImprovement(player, availableImprovements) {
+  renovationAndImprovement(player, availableImprovements, allowMinor = false) {
     const choices = []
+
+    // Check for affordable major improvements
+    const hasAffordableMajor = availableImprovements.some(id =>
+      player.canBuyMajorImprovement(id)
+    )
+
+    // Check for playable minor improvements
+    let hasAffordableMinor = false
+    if (allowMinor) {
+      hasAffordableMinor = player.hand.some(cardId => {
+        const card = res.getCardById(cardId)
+        return card && card.type === 'minor' && player.canPlayCard(cardId)
+      })
+    }
+
+    const hasAffordableImprovement = hasAffordableMajor || hasAffordableMinor
 
     if (player.canRenovate()) {
       choices.push('Renovate')
-      choices.push('Renovate then Improvement')
+      if (hasAffordableImprovement) {
+        choices.push('Renovate then Improvement')
+      }
     }
 
-    const hasAffordableImprovement = availableImprovements.some(id =>
-      player.canBuyMajorImprovement(id)
-    )
     if (hasAffordableImprovement) {
       choices.push('Improvement Only')
     }
@@ -873,7 +1033,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     if (choice === 'Improvement Only' || choice === 'Renovate then Improvement') {
-      this.buyMajorImprovement(player, availableImprovements)
+      this.buyImprovement(player, true, allowMinor)
     }
 
     return true
@@ -997,14 +1157,20 @@ class AgricolaActionManager extends BaseActionManager {
       this.renovationAndOrFencing(player)
     }
     else if (action.allowsRenovation && (action.allowsMajorImprovement || action.allowsMinorImprovement)) {
-      this.renovationAndImprovement(player, this.game.getAvailableMajorImprovements())
+      this.renovationAndImprovement(player, this.game.getAvailableMajorImprovements(), action.allowsMinorImprovement)
     }
     else if (action.allowsRenovation) {
       this.renovate(player)
     }
 
-    if (action.allowsMajorImprovement && !action.allowsRenovation) {
-      this.buyMajorImprovement(player, this.game.getAvailableMajorImprovements())
+    // Major or Minor Improvement action (without renovation)
+    if ((action.allowsMajorImprovement || action.allowsMinorImprovement) && !action.allowsRenovation && !action.allowsFamilyGrowth) {
+      this.buyImprovement(player, action.allowsMajorImprovement, action.allowsMinorImprovement)
+    }
+
+    // Minor improvement after family growth
+    if (action.allowsMinorImprovement && action.allowsFamilyGrowth) {
+      this.buyMinorImprovement(player)
     }
 
     if (action.allowsOccupation) {
