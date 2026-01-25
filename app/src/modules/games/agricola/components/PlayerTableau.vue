@@ -58,10 +58,11 @@
       />
 
       <!-- Score -->
-      <div class="score-section">
+      <div class="score-section" @click="showScoreBreakdown">
         <span class="score-label">Score:</span>
         <span class="score-value">{{ player.calculateScore() }}</span>
         <span class="score-unit">pts</span>
+        <span class="score-hint">click for details</span>
       </div>
 
       <!-- Begging Cards -->
@@ -89,7 +90,7 @@ export default {
     ResourceBar,
   },
 
-  inject: ['actor', 'game'],
+  inject: ['actor', 'game', 'ui'],
 
   props: {
     player: {
@@ -145,6 +146,12 @@ export default {
       const b = parseInt(hex.substr(4, 2), 16)
       const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
       return luminance > 0.5 ? 'black' : 'white'
+    },
+
+    showScoreBreakdown() {
+      if (this.ui?.fn?.showScoreBreakdown) {
+        this.ui.fn.showScoreBreakdown(this.player.name)
+      }
     },
   },
 }
@@ -228,6 +235,12 @@ export default {
   background-color: #e8f5e9;
   border-radius: .25em;
   margin-top: .5em;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.score-section:hover {
+  background-color: #c8e6c9;
 }
 
 .score-label {
@@ -244,6 +257,13 @@ export default {
 .score-unit {
   color: #66bb6a;
   font-size: .85em;
+}
+
+.score-hint {
+  margin-left: auto;
+  font-size: .7em;
+  color: #81c784;
+  font-style: italic;
 }
 
 /* Begging Section */

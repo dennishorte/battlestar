@@ -35,6 +35,7 @@
     </ModalBase>
 
     <CardViewerModal />
+    <ScoreBreakdownModal />
     <DebugModal />
   </div>
 </template>
@@ -58,6 +59,7 @@ import ScoreTable from './ScoreTable'
 
 // Modals
 import CardViewerModal from './CardViewerModal'
+import ScoreBreakdownModal from './ScoreBreakdownModal'
 import DebugModal from '@/modules/games/common/components/DebugModal'
 
 
@@ -78,6 +80,7 @@ export default {
     WaitingPanel,
 
     CardViewerModal,
+    ScoreBreakdownModal,
     DebugModal,
   },
 
@@ -87,11 +90,15 @@ export default {
         fn: {
           insertSelectorSubtitles: this.insertSelectorSubtitles,
           showCard: this.showCard,
+          showScoreBreakdown: this.showScoreBreakdown,
         },
         modals: {
           cardViewer: {
             cardId: '',
             cardType: '',
+          },
+          scoreBreakdown: {
+            playerName: '',
           },
         },
         selectable: [],
@@ -130,6 +137,11 @@ export default {
       this.ui.modals.cardViewer.cardId = cardId
       this.ui.modals.cardViewer.cardType = cardType || 'unknown'
       this.$modal('agricola-card-viewer').show()
+    },
+
+    showScoreBreakdown(playerName) {
+      this.ui.modals.scoreBreakdown.playerName = playerName
+      this.$modal('agricola-score-breakdown').show()
     },
   },
 
