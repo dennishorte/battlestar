@@ -3,6 +3,7 @@
     Loading...
   </div>
 
+  <AgricolaGame v-else-if="gameType === 'Agricola'" />
   <CubeDraft v-else-if="gameType === 'Cube Draft' || gameType === 'Set Draft'" />
   <MtgGame v-else-if="gameType === 'Magic'" />
   <UltimateGame v-else-if="gameType === 'Innovation: Ultimate'" />
@@ -20,6 +21,7 @@ import { computed } from 'vue'
 import { mapState } from 'vuex'
 import mitt from 'mitt'
 
+import AgricolaGame from '@/modules/games/agricola/components/AgricolaGame'
 import CubeDraft from '@/modules/games/cube_draft/components/CubeDraft'
 import UltimateGame from '@/modules/games/ultimate/components/UltimateGame'
 import MtgGame from '@/modules/games/magic/components/MtgGame'
@@ -32,6 +34,7 @@ export default {
   name: 'GameBase',
 
   components: {
+    AgricolaGame,
     CubeDraft,
     MtgGame,
     TyrantsGame,

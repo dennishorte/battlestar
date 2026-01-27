@@ -11,6 +11,7 @@
     </div>
 
     <div class="game-options mt-2">
+      <SettingsAgricola v-if="lobby.game === 'Agricola'" />
       <SettingsUltimate v-if="lobby.game === 'Innovation: Ultimate'" />
       <SettingsTyrants v-if="lobby.game === 'Tyrants of the Underdark'" />
 
@@ -23,6 +24,7 @@
 
 
 <script>
+import SettingsAgricola from './SettingsAgricola'
 import SettingsCubeDraft from './SettingsCubeDraft'
 import SettingsMagic from './SettingsMagic'
 import SettingsSetDraft from './SettingsSetDraft'
@@ -34,6 +36,7 @@ export default {
   name: 'LobbySettings',
 
   components: {
+    SettingsAgricola,
     SettingsCubeDraft,
     SettingsMagic,
     SettingsSetDraft,
@@ -47,6 +50,7 @@ export default {
     return {
       gameNames: [
         '',
+        'Agricola',
         'Innovation: Ultimate',
         'Tyrants of the Underdark',
 

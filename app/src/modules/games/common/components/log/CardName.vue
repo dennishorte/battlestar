@@ -1,5 +1,5 @@
 <template>
-  <div
+  <span
     class="card-name"
     @click="click"
     @mouseover="mouseover"
@@ -7,9 +7,7 @@
     @mousemove="mousemove"
     :class="classes"
     :style="styles"
-  >
-    {{ displayName }}
-  </div>
+  >{{ displayName }}</span>
 </template>
 
 
@@ -85,6 +83,6 @@ export default {
 
 <style scoped>
 .card-name {
-  display: inline-block;
+  display: inline;
 }
 </style>
