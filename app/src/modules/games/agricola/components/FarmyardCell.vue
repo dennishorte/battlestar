@@ -76,6 +76,11 @@ export default {
       return this.ui.fencing?.active && this.player.name === this.actor.name
     },
 
+    // Check if plowing mode is active and this is the viewing player's board
+    isPlowingActive() {
+      return this.ui.plowing?.active && this.player.name === this.actor.name
+    },
+
     // Check if this cell is currently selected for fencing
     isSelected() {
       if (!this.isFencingActive) {
@@ -92,6 +97,15 @@ export default {
       }
       // Can fence empty spaces and existing pastures, not rooms or fields
       return this.cell.type !== 'room' && this.cell.type !== 'field'
+    },
+
+    // Check if this cell can be plowed
+    canPlow() {
+      if (!this.isPlowingActive) {
+        return false
+      }
+      const validSpaces = this.ui.plowing?.validSpaces || []
+      return validSpaces.some(s => s.row === this.row && s.col === this.col)
     },
 
     cellClasses() {
@@ -126,6 +140,11 @@ export default {
       }
       else if (this.canFence) {
         classes.push('fence-selectable')
+      }
+
+      // Plowing states
+      if (this.canPlow) {
+        classes.push('plow-selectable')
       }
 
       return classes
@@ -208,7 +227,19 @@ export default {
 
   methods: {
     handleClick() {
-      // Only handle clicks during fencing mode for fenceable spaces
+      // Handle plowing clicks
+      if (this.canPlow) {
+        // Send a plow action directly to the game
+        this.bus.emit('submit-action', {
+          actor: this.actor.name,
+          action: 'plow-space',
+          row: this.row,
+          col: this.col,
+        })
+        return
+      }
+
+      // Handle fencing clicks
       if (!this.canFence) {
         return
       }
@@ -362,5 +393,16 @@ export default {
   cursor: pointer;
   background-color: #81d4fa !important;
   box-shadow: inset 0 0 0 2px #0288d1;
+}
+
+/* Plowing states */
+.farmyard-cell.plow-selectable {
+  cursor: pointer;
+  box-shadow: inset 0 0 0 2px rgba(139, 69, 19, 0.7);
+}
+
+.farmyard-cell.plow-selectable:hover {
+  filter: brightness(1.2);
+  box-shadow: inset 0 0 0 3px #8b4513;
 }
 </style>

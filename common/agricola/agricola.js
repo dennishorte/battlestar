@@ -321,10 +321,14 @@ Agricola.prototype.draftCardType = function(cardType, passDirection) {
   const playerCount = players.length
   const pools = this.state.draftPools[cardType]
   const cardsPerPlayer = pools[0].length
+  const cardTypeName = cardType === 'occupations' ? 'Occupation' : 'Minor Improvement'
 
   // Track which pool each player is currently looking at
   // Player i starts with pool i
   const poolAssignments = players.map((_, i) => i)
+
+  // Track how many cards each player has picked in this draft
+  const pickCounts = players.map(() => 0)
 
   for (let round = 0; round < cardsPerPlayer; round++) {
     this.log.add({
@@ -333,30 +337,53 @@ Agricola.prototype.draftCardType = function(cardType, passDirection) {
     })
     this.log.indent()
 
-    // Each player picks in order
+    // Reset pick counts for this round
     for (let i = 0; i < playerCount; i++) {
-      const player = players[i]
-      const poolIndex = poolAssignments[i]
-      const pool = pools[poolIndex]
+      pickCounts[i] = 0
+    }
 
-      if (pool.length === 0) {
-        continue
+    // All players draft in parallel until everyone has picked once this round
+    while (pickCounts.some((count, i) => count === 0 && pools[poolAssignments[i]].length > 0)) {
+      // Build options for all players who haven't picked yet this round
+      const playerOptions = []
+
+      for (let i = 0; i < playerCount; i++) {
+        if (pickCounts[i] > 0) {
+          continue // Already picked this round
+        }
+
+        const player = players[i]
+        const poolIndex = poolAssignments[i]
+        const pool = pools[poolIndex]
+
+        if (pool.length === 0) {
+          continue
+        }
+
+        // Build choice list with card names
+        const choices = pool.map(cardId => {
+          const card = res.getCardById(cardId)
+          return card ? card.name : cardId
+        })
+
+        playerOptions.push({
+          actor: player.name,
+          title: `Draft ${cardTypeName}`,
+          choices,
+        })
       }
 
-      // Build choice list with card names
-      const choices = pool.map(cardId => {
-        const card = res.getCardById(cardId)
-        return card ? card.name : cardId
-      })
+      if (playerOptions.length === 0) {
+        break
+      }
 
-      const cardTypeName = cardType === 'occupations' ? 'Occupation' : 'Minor Improvement'
-      const selection = this.actions.choose(player, choices, {
-        title: `Draft ${cardTypeName}`,
-        min: 1,
-        max: 1,
-      })
-
-      const selectedName = selection[0]
+      // Allow any player to draft
+      const response = this.requestInputAny(playerOptions)
+      const player = this.players.byName(response.actor)
+      const playerIndex = players.indexOf(player)
+      const poolIndex = poolAssignments[playerIndex]
+      const pool = pools[poolIndex]
+      const selectedName = response.selection[0]
 
       // Find the card id by name
       const cardId = pool.find(id => {
@@ -369,6 +396,7 @@ Agricola.prototype.draftCardType = function(cardType, passDirection) {
         const cardIndex = pool.indexOf(cardId)
         pool.splice(cardIndex, 1)
         player.hand.push(cardId)
+        pickCounts[playerIndex]++
 
         this.log.add({
           template: '{player} drafts {draftedCard}',

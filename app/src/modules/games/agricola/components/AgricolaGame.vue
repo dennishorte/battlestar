@@ -112,6 +112,11 @@ export default {
           fenceEdges: {},
           validation: null,
         },
+        // Plowing UI state
+        plowing: {
+          active: false,
+          validSpaces: [],
+        },
       },
     }
   },
@@ -162,7 +167,19 @@ export default {
       handler(request) {
         if (!request || !request.choices) {
           this.clearFencingState()
+          this.clearPlowingState()
           return
+        }
+
+        // Check if this is a plowing action
+        if (request.allowsAction === 'plow-space') {
+          this.ui.plowing.active = true
+          this.ui.plowing.validSpaces = request.validSpaces || []
+          this.clearFencingState()
+          return
+        }
+        else {
+          this.clearPlowingState()
         }
 
         // Check if this is a fencing action by looking at the title or choices
@@ -251,6 +268,11 @@ export default {
       this.ui.fencing.validation = null
     },
 
+    clearPlowingState() {
+      this.ui.plowing.active = false
+      this.ui.plowing.validSpaces = []
+    },
+
     syncFencingStateFromChoices(request) {
       // Sync our local selection with the choices from the backend
       // Selected spaces are indicated by "Deselect (row,col)" choices
@@ -274,10 +296,50 @@ export default {
 
       this.ui.fencing.selectedSpaces = selectedFromChoices
     },
+
+    async handleSubmitAction(actionPayload) {
+      // Verify the action is for the current waiting request
+      const waiting = this.waitingRequest
+      if (!waiting) {
+        console.warn('No waiting request for action:', actionPayload)
+        return
+      }
+
+      // Verify the action matches what's expected
+      if (waiting.allowsAction && waiting.allowsAction !== actionPayload.action) {
+        console.warn('Action type mismatch:', actionPayload.action, 'expected:', waiting.allowsAction)
+        return
+      }
+
+      // Build the response payload
+      const response = {
+        actor: actionPayload.actor,
+        title: waiting.title,
+        selection: actionPayload,
+      }
+
+      try {
+        // Submit the action to the game
+        this.game.respondToInputRequest(response)
+        // Save to the server
+        await this.$store.dispatch('game/save')
+      }
+      catch (e) {
+        console.error('Error submitting action:', e)
+        alert('Error: ' + e.message)
+      }
+    },
   },
 
   mounted() {
     document.title = this.game.settings.name || 'Agricola'
+
+    // Listen for action submissions from the farm board
+    this.bus.on('submit-action', this.handleSubmitAction)
+  },
+
+  beforeUnmount() {
+    this.bus.off('submit-action', this.handleSubmitAction)
   },
 }
 </script>

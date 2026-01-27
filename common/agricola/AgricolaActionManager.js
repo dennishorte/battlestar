@@ -320,14 +320,43 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
+    // Build choices as coordinate strings for dropdown fallback
     const spaceChoices = validSpaces.map(s => `${s.row},${s.col}`)
-    const selection = this.choose(player, spaceChoices, {
+
+    // Request input - supports both dropdown selection and direct farm board clicks
+    // UI can send either:
+    //   - A selection like "0,1" from the dropdown
+    //   - An action like { action: 'plow-space', row: 0, col: 1 } from clicking the board
+    const selector = {
+      type: 'select',
+      actor: player.name,
       title: 'Choose where to plow a field',
+      choices: spaceChoices,
       min: 1,
       max: 1,
-    })
+      // Mark this as accepting action-based input for plowing
+      allowsAction: 'plow-space',
+      validSpaces: validSpaces,
+    }
 
-    const [row, col] = selection[0].split(',').map(Number)
+    const result = this.game.requestInputSingle(selector)
+
+    // Handle action-based response (from clicking the farm board)
+    let row, col
+    if (result.action === 'plow-space') {
+      row = result.row
+      col = result.col
+      // Validate that the selected space is valid
+      const isValid = validSpaces.some(s => s.row === row && s.col === col)
+      if (!isValid) {
+        throw new Error(`Invalid plow space: (${row}, ${col}) is not a valid space to plow`)
+      }
+    }
+    else {
+      // Handle standard selection response
+      [row, col] = result[0].split(',').map(Number)
+    }
+
     player.plowField(row, col)
 
     this.log.add({
