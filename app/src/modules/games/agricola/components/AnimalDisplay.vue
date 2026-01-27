@@ -27,9 +27,9 @@ export default {
   computed: {
     animals() {
       return [
-        { type: 'sheep', icon: '🐑', count: this.player.sheep, label: 'Sheep' },
-        { type: 'boar', icon: '🐗', count: this.player.boar, label: 'Wild Boar' },
-        { type: 'cattle', icon: '🐄', count: this.player.cattle, label: 'Cattle' },
+        { type: 'sheep', icon: '🐑', count: this.player.getTotalAnimals('sheep'), label: 'Sheep' },
+        { type: 'boar', icon: '🐗', count: this.player.getTotalAnimals('boar'), label: 'Wild Boar' },
+        { type: 'cattle', icon: '🐄', count: this.player.getTotalAnimals('cattle'), label: 'Cattle' },
       ]
     },
   },
