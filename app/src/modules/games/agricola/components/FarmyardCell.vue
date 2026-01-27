@@ -3,6 +3,7 @@
     class="farmyard-cell"
     :class="cellClasses"
     :title="cellTooltip"
+    @click="handleClick"
   >
     <!-- Cell content -->
     <div class="cell-content">
@@ -33,18 +34,18 @@
       <!-- Stable indicator (overlay) -->
       <span class="stable-marker" v-if="cell.hasStable">⌂</span>
     </div>
-
-    <!-- Fence borders -->
-    <div class="fence fence-top" v-if="fences.top" />
-    <div class="fence fence-right" v-if="fences.right" />
-    <div class="fence fence-bottom" v-if="fences.bottom" />
-    <div class="fence fence-left" v-if="fences.left" />
   </div>
 </template>
 
 <script>
 export default {
   name: 'FarmyardCell',
+
+  inject: {
+    actor: { from: 'actor' },
+    bus: { from: 'bus' },
+    ui: { from: 'ui' },
+  },
 
   props: {
     cell: {
@@ -59,10 +60,6 @@ export default {
       type: Number,
       required: true,
     },
-    fences: {
-      type: Object,
-      default: () => ({ top: false, right: false, bottom: false, left: false }),
-    },
     pasture: {
       type: Object,
       default: null,
@@ -74,6 +71,29 @@ export default {
   },
 
   computed: {
+    // Check if fencing mode is active and this is the viewing player's board
+    isFencingActive() {
+      return this.ui.fencing?.active && this.player.name === this.actor.name
+    },
+
+    // Check if this cell is currently selected for fencing
+    isSelected() {
+      if (!this.isFencingActive) {
+        return false
+      }
+      const spaces = this.ui.fencing.selectedSpaces || []
+      return spaces.some(s => s.row === this.row && s.col === this.col)
+    },
+
+    // Check if this cell can be clicked during fencing
+    canFence() {
+      if (!this.isFencingActive) {
+        return false
+      }
+      // Can fence empty spaces and existing pastures, not rooms or fields
+      return this.cell.type !== 'room' && this.cell.type !== 'field'
+    },
+
     cellClasses() {
       const classes = []
 
@@ -98,6 +118,14 @@ export default {
       // Stable
       if (this.cell.hasStable) {
         classes.push('has-stable')
+      }
+
+      // Fencing states
+      if (this.isSelected) {
+        classes.push('fence-selected')
+      }
+      else if (this.canFence) {
+        classes.push('fence-selectable')
       }
 
       return classes
@@ -175,6 +203,33 @@ export default {
         case 'cattle': return '🐄'
         default: return ''
       }
+    },
+  },
+
+  methods: {
+    handleClick() {
+      // Only handle clicks during fencing mode for fenceable spaces
+      if (!this.canFence) {
+        return
+      }
+
+      // Determine the correct choice to emit based on current selection state
+      // If selected, emit "Deselect (row,col)", else emit "Space (row,col)"
+      const choiceName = this.isSelected
+        ? `Deselect (${this.row},${this.col})`
+        : `Space (${this.row},${this.col})`
+
+      // Emit the event to select this option in the WaitingPanel
+      this.bus.emit('user-select-option', {
+        actor: this.actor,
+        optionName: choiceName,
+        opts: {},
+      })
+
+      // Auto-submit the selection after a brief delay to let the checkbox update
+      setTimeout(() => {
+        this.bus.emit('click-choose-selected-option')
+      }, 50)
     },
   },
 }
@@ -277,7 +332,7 @@ export default {
 }
 
 .farmyard-cell.pasture {
-  background-color: #90EE90;
+  background-color: #7CCD7C;
 }
 
 /* Stable marker */
@@ -293,42 +348,19 @@ export default {
   box-shadow: inset 0 0 0 2px #654321;
 }
 
-/* Fences */
-.fence {
-  position: absolute;
-  background-color: #4a3728;
-  z-index: 2;
+/* Fencing states */
+.farmyard-cell.fence-selectable {
+  cursor: pointer;
 }
 
-.fence-top {
-  top: -1px;
-  left: 0;
-  right: 0;
-  height: 3px;
-  border-radius: 1px 1px 0 0;
+.farmyard-cell.fence-selectable:hover {
+  filter: brightness(1.2);
+  box-shadow: inset 0 0 0 2px rgba(102, 51, 153, 0.5);
 }
 
-.fence-right {
-  top: 0;
-  right: -1px;
-  bottom: 0;
-  width: 3px;
-  border-radius: 0 1px 1px 0;
-}
-
-.fence-bottom {
-  bottom: -1px;
-  left: 0;
-  right: 0;
-  height: 3px;
-  border-radius: 0 0 1px 1px;
-}
-
-.fence-left {
-  top: 0;
-  left: -1px;
-  bottom: 0;
-  width: 3px;
-  border-radius: 1px 0 0 1px;
+.farmyard-cell.fence-selected {
+  cursor: pointer;
+  background-color: #81d4fa !important;
+  box-shadow: inset 0 0 0 2px #0288d1;
 }
 </style>

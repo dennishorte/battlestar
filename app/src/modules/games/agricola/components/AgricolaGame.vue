@@ -62,6 +62,10 @@ import CardViewerModal from './CardViewerModal'
 import ScoreBreakdownModal from './ScoreBreakdownModal'
 import DebugModal from '@/modules/games/common/components/DebugModal'
 
+// Utilities
+import { agricola } from 'battlestar-common'
+const { fenceUtil } = agricola
+
 
 export default {
   name: 'AgricolaGame',
@@ -101,7 +105,13 @@ export default {
             playerName: '',
           },
         },
-        selectable: [],
+        // Fencing UI state
+        fencing: {
+          active: false,
+          selectedSpaces: [],
+          fenceEdges: {},
+          validation: null,
+        },
       },
     }
   },
@@ -118,6 +128,68 @@ export default {
     orderedPlayers() {
       const viewingPlayer = this.game.players.byName(this.actor.name)
       return this.game.players.startingWith(viewingPlayer)
+    },
+
+    // Get the current waiting request for the viewing player
+    waitingRequest() {
+      const viewingPlayer = this.game.players.byName(this.actor.name)
+      if (!viewingPlayer) {
+        return null
+      }
+      return this.game.getWaiting(viewingPlayer)
+    },
+
+    // Check if we're in a fencing action
+    isFencingAction() {
+      if (!this.waitingRequest) {
+        return false
+      }
+      // Check if choices contain fencing-related options
+      const title = this.waitingRequest.title || ''
+      return title.includes('pasture') || title.includes('spaces selected')
+    },
+
+    // Get current player for validation
+    currentPlayer() {
+      return this.game.players.byName(this.actor.name)
+    },
+  },
+
+  watch: {
+    // Watch for changes to waiting request
+    waitingRequest: {
+      immediate: true,
+      handler(request) {
+        if (!request || !request.choices) {
+          this.clearFencingState()
+          return
+        }
+
+        // Check if this is a fencing action by looking at the title or choices
+        const title = request.title || ''
+        const isFencing = title.includes('pasture') || title.includes('spaces selected') ||
+          request.choices.some(c => {
+            const text = c.title || c
+            return text.startsWith('Space (') || text.startsWith('Deselect (')
+          })
+
+        if (!isFencing) {
+          this.clearFencingState()
+          return
+        }
+
+        // Fencing is active - sync state from backend choices
+        this.ui.fencing.active = true
+        this.syncFencingStateFromChoices(request)
+      },
+    },
+
+    // Watch selected spaces to update validation
+    'ui.fencing.selectedSpaces': {
+      deep: true,
+      handler() {
+        this.updateFenceValidation()
+      },
     },
   },
 
@@ -142,6 +214,65 @@ export default {
     showScoreBreakdown(playerName) {
       this.ui.modals.scoreBreakdown.playerName = playerName
       this.$modal('agricola-score-breakdown').show()
+    },
+
+    // Fencing methods
+    updateFenceValidation() {
+      const spaces = this.ui.fencing.selectedSpaces
+      const player = this.currentPlayer
+
+      if (!spaces || spaces.length === 0 || !player) {
+        this.ui.fencing.fenceEdges = {}
+        this.ui.fencing.validation = null
+        return
+      }
+
+      // Get validation params from player
+      const params = {
+        wood: player.wood,
+        currentFenceCount: player.getFenceCount(),
+        maxFences: agricola.res.constants.maxFences,
+        existingFences: player.farmyard?.fences || [],
+        isSpaceValid: (row, col) => {
+          const space = player.getSpace(row, col)
+          return space && space.type !== 'room' && space.type !== 'field'
+        },
+      }
+
+      const validation = fenceUtil.validatePastureSelection(spaces, params)
+      this.ui.fencing.validation = validation
+      this.ui.fencing.fenceEdges = validation.fenceEdges || {}
+    },
+
+    clearFencingState() {
+      this.ui.fencing.active = false
+      this.ui.fencing.selectedSpaces = []
+      this.ui.fencing.fenceEdges = {}
+      this.ui.fencing.validation = null
+    },
+
+    syncFencingStateFromChoices(request) {
+      // Sync our local selection with the choices from the backend
+      // Selected spaces are indicated by "Deselect (row,col)" choices
+      if (!request || !request.choices) {
+        return
+      }
+
+      const selectedFromChoices = []
+      const deselectPattern = /Deselect \((\d+),(\d+)\)/
+
+      for (const choice of request.choices) {
+        const choiceText = choice.title || choice
+        const match = choiceText.match(deselectPattern)
+        if (match) {
+          selectedFromChoices.push({
+            row: parseInt(match[1]),
+            col: parseInt(match[2]),
+          })
+        }
+      }
+
+      this.ui.fencing.selectedSpaces = selectedFromChoices
     },
   },
 

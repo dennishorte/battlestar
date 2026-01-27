@@ -15,6 +15,27 @@
       <!-- Animals -->
       <AnimalDisplay :player="player" />
 
+      <!-- Fencing Status (shown during fencing mode) -->
+      <div v-if="showFencingStatus" class="fencing-status" :class="fencingStatusClass">
+        <div class="fencing-header">
+          <span class="fencing-icon">🪵</span>
+          <span class="fencing-title">Building Pasture</span>
+        </div>
+        <div class="fencing-info">
+          <template v-if="fencingValidation">
+            <span v-if="fencingValidation.valid" class="fencing-valid">
+              {{ selectedSpaceCount }} spaces, {{ fencingValidation.fencesNeeded }} wood needed
+            </span>
+            <span v-else class="fencing-error">
+              {{ fencingValidation.error }}
+            </span>
+          </template>
+          <template v-else>
+            <span class="fencing-hint">Click spaces to select</span>
+          </template>
+        </div>
+      </div>
+
       <!-- Farmyard Grid -->
       <div class="farmyard-container">
         <FarmyardGrid :player="player" />
@@ -109,6 +130,26 @@ export default {
         backgroundColor: this.player.color || '#666',
         color: this.getContrastColor(this.player.color),
       }
+    },
+
+    // Fencing status computed properties
+    showFencingStatus() {
+      return this.isViewingPlayer && this.ui.fencing?.active
+    },
+
+    fencingValidation() {
+      return this.ui.fencing?.validation
+    },
+
+    selectedSpaceCount() {
+      return this.ui.fencing?.selectedSpaces?.length || 0
+    },
+
+    fencingStatusClass() {
+      if (!this.fencingValidation) {
+        return 'status-empty'
+      }
+      return this.fencingValidation.valid ? 'status-valid' : 'status-invalid'
     },
 
     unusedSpaces() {
@@ -284,5 +325,61 @@ export default {
 
 .begging-count {
   font-weight: 600;
+}
+
+/* Fencing Status */
+.fencing-status {
+  padding: .5em;
+  border-radius: .25em;
+  margin-bottom: .5em;
+  text-align: center;
+}
+
+.fencing-status.status-empty {
+  background-color: #fff3e0;
+  border: 1px solid #ffb74d;
+}
+
+.fencing-status.status-valid {
+  background-color: #e8f5e9;
+  border: 1px solid #66bb6a;
+}
+
+.fencing-status.status-invalid {
+  background-color: #ffebee;
+  border: 1px solid #ef5350;
+}
+
+.fencing-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35em;
+  font-weight: 600;
+  margin-bottom: .25em;
+}
+
+.fencing-icon {
+  font-size: 1em;
+}
+
+.fencing-title {
+  color: #8B4513;
+}
+
+.fencing-info {
+  font-size: .85em;
+}
+
+.fencing-hint {
+  color: #f57c00;
+}
+
+.fencing-valid {
+  color: #2e7d32;
+}
+
+.fencing-error {
+  color: #c62828;
 }
 </style>

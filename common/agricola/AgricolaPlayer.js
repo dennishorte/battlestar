@@ -597,14 +597,41 @@ class AgricolaPlayer extends BasePlayer {
     return false
   }
 
+  hasBoardEdgeFence(row, col, edge) {
+    // Check if there's a fence on a board edge
+    // Board edge fences are stored with row2/col2 = -1 and edge property
+    for (const fence of this.farmyard.fences) {
+      if (fence.row1 === row && fence.col1 === col && fence.edge === edge) {
+        return true
+      }
+    }
+    return false
+  }
+
   isPastureFullyEnclosed(spaces) {
     // Check if all border edges of the space group have fences
+    // This includes both internal fences (between spaces) and board edge fences
     for (const coord of spaces) {
+      // Check board edges - spaces at the edge need board edge fences
+      if (coord.row === 0 && !this.hasBoardEdgeFence(coord.row, coord.col, 'top')) {
+        return false
+      }
+      if (coord.row === res.constants.farmyardRows - 1 && !this.hasBoardEdgeFence(coord.row, coord.col, 'bottom')) {
+        return false
+      }
+      if (coord.col === 0 && !this.hasBoardEdgeFence(coord.row, coord.col, 'left')) {
+        return false
+      }
+      if (coord.col === res.constants.farmyardCols - 1 && !this.hasBoardEdgeFence(coord.row, coord.col, 'right')) {
+        return false
+      }
+
+      // Check internal borders with neighboring spaces
       const neighbors = this.getOrthogonalNeighbors(coord.row, coord.col)
       for (const n of neighbors) {
         const neighborInPasture = spaces.some(s => s.row === n.row && s.col === n.col)
         if (!neighborInPasture) {
-          // This is a border - must have fence or be edge of board
+          // This is an internal border - must have fence
           const neighborSpace = this.getSpace(n.row, n.col)
           if (neighborSpace && neighborSpace.type !== 'room' && neighborSpace.type !== 'field') {
             // Neighbor is empty/pasture outside our group - need fence
@@ -646,7 +673,10 @@ class AgricolaPlayer extends BasePlayer {
       // Check each direction for needed fences
       // Top edge
       if (row === 0) {
-        // Board edge - counts as fence, no wood needed
+        // Board edge - needs fence too
+        if (!this.hasBoardEdgeFence(row, col, 'top')) {
+          fences.push({ row1: row, col1: col, row2: -1, col2: col, edge: 'top' })
+        }
       }
       else {
         const neighborKey = `${row - 1},${col}`
@@ -660,7 +690,10 @@ class AgricolaPlayer extends BasePlayer {
 
       // Bottom edge
       if (row === res.constants.farmyardRows - 1) {
-        // Board edge
+        // Board edge - needs fence too
+        if (!this.hasBoardEdgeFence(row, col, 'bottom')) {
+          fences.push({ row1: row, col1: col, row2: -1, col2: col, edge: 'bottom' })
+        }
       }
       else {
         const neighborKey = `${row + 1},${col}`
@@ -673,7 +706,10 @@ class AgricolaPlayer extends BasePlayer {
 
       // Left edge
       if (col === 0) {
-        // Board edge
+        // Board edge - needs fence too
+        if (!this.hasBoardEdgeFence(row, col, 'left')) {
+          fences.push({ row1: row, col1: col, row2: row, col2: -1, edge: 'left' })
+        }
       }
       else {
         const neighborKey = `${row},${col - 1}`
@@ -686,7 +722,10 @@ class AgricolaPlayer extends BasePlayer {
 
       // Right edge
       if (col === res.constants.farmyardCols - 1) {
-        // Board edge
+        // Board edge - needs fence too
+        if (!this.hasBoardEdgeFence(row, col, 'right')) {
+          fences.push({ row1: row, col1: col, row2: row, col2: -1, edge: 'right' })
+        }
       }
       else {
         const neighborKey = `${row},${col + 1}`
