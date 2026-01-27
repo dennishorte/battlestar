@@ -13,7 +13,7 @@
         class="improvement-card"
         :class="{ taken: imp.taken, selectable: isSelectable(imp) }"
         :title="imp.description"
-        @click="selectImprovement(imp)"
+        @click="handleClick(imp)"
       >
         <div class="improvement-header">
           <span class="improvement-name">{{ imp.name }}</span>
@@ -57,7 +57,7 @@ const RESOURCE_ICONS = {
 export default {
   name: 'MajorImprovements',
 
-  inject: ['actor', 'bus', 'game'],
+  inject: ['actor', 'bus', 'game', 'ui'],
 
   data() {
     return {
@@ -136,6 +136,23 @@ export default {
         })
       }
     },
+
+    showCardDetails(imp) {
+      if (this.ui?.fn?.showCard) {
+        this.ui.fn.showCard(imp.id, 'major')
+      }
+    },
+
+    handleClick(imp) {
+      if (this.isSelectable(imp)) {
+        // If selectable, select it
+        this.selectImprovement(imp)
+      }
+      else {
+        // Otherwise, show details
+        this.showCardDetails(imp)
+      }
+    },
   },
 }
 </script>
@@ -186,12 +203,19 @@ export default {
 
 .improvement-card {
   padding: .35em .5em;
-  background-color: #fff;
-  border: 1px solid #f8bbd9;
+  background-color: #fce4ec;
+  border-left: 3px solid #e91e63;
+  border-top: 1px solid #f8bbd9;
+  border-right: 1px solid #f8bbd9;
+  border-bottom: 1px solid #f8bbd9;
   border-radius: .25em;
   font-size: .8em;
-  cursor: default;
+  cursor: pointer;
   transition: all 0.15s ease;
+}
+
+.improvement-card:hover {
+  filter: brightness(0.95);
 }
 
 .improvement-card.taken {

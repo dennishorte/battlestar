@@ -87,6 +87,7 @@ module.exports = {
     baseA,
   },
   getCardById: baseA.getCardById,
+  getCardByName: baseA.getCardByName,
   getMinorImprovements: baseA.getMinorImprovements,
   getOccupations: baseA.getOccupations,
   getAllCards: baseA.getAllCards,

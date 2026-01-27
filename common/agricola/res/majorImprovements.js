@@ -188,6 +188,11 @@ function getMajorImprovementById(id) {
   return majorImprovements.find(imp => imp.id === id)
 }
 
+// Get improvement by name (may return first match for duplicate names like "Fireplace")
+function getMajorImprovementByName(name) {
+  return majorImprovements.find(imp => imp.name === name)
+}
+
 // Get available improvements (not yet purchased)
 function getAvailableImprovements(purchasedIds) {
   return majorImprovements.filter(imp => !purchasedIds.includes(imp.id))
@@ -265,6 +270,7 @@ module.exports = {
   majorImprovements,
   getAllMajorImprovements,
   getMajorImprovementById,
+  getMajorImprovementByName,
   getAvailableImprovements,
   canAffordImprovement,
   canUpgradeTo,

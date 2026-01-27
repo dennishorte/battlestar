@@ -69,6 +69,7 @@ import ModalBase from '@/components/ModalBase'
 
 // Agricola Components
 import ActionsColumn from './ActionsColumn'
+import AgricolaCardChip from './AgricolaCardChip'
 import GameLogAgricola from './GameLogAgricola'
 import MajorImprovements from './MajorImprovements'
 import PlayerTableau from './PlayerTableau'
@@ -82,7 +83,7 @@ import DebugModal from '@/modules/games/common/components/DebugModal'
 
 // Utilities
 import { agricola } from 'battlestar-common'
-const { fenceUtil } = agricola
+const { fenceUtil, res } = agricola
 
 
 export default {
@@ -113,6 +114,7 @@ export default {
           insertSelectorSubtitles: this.insertSelectorSubtitles,
           showCard: this.showCard,
           showScoreBreakdown: this.showScoreBreakdown,
+          selectorOptionComponent: this.selectorOptionComponent,
         },
         modals: {
           cardViewer: {
@@ -296,6 +298,78 @@ export default {
     showScoreBreakdown(playerName) {
       this.ui.modals.scoreBreakdown.playerName = playerName
       this.$modal('agricola-score-breakdown').show()
+    },
+
+    // Custom option component for cards in selectors
+    selectorOptionComponent(option) {
+      const name = option.title ? option.title : option
+
+      // Check if this is a card ID (occupation or minor improvement)
+      let card = res.getCardById(name)
+      if (card) {
+        return {
+          component: AgricolaCardChip,
+          props: {
+            cardId: card.id,
+            cardType: card.type,
+          },
+        }
+      }
+
+      // Check if this is a card by name (e.g., "Shepherd" instead of "shepherd")
+      card = res.getCardByName(name)
+      if (card) {
+        return {
+          component: AgricolaCardChip,
+          props: {
+            cardId: card.id,
+            cardType: card.type,
+          },
+        }
+      }
+
+      // Check if this is a major improvement by ID
+      let majorImp = res.getMajorImprovementById(name)
+      if (majorImp) {
+        return {
+          component: AgricolaCardChip,
+          props: {
+            cardId: majorImp.id,
+            cardType: 'major',
+          },
+        }
+      }
+
+      // Check if this is a major improvement by name
+      majorImp = res.getMajorImprovementByName(name)
+      if (majorImp) {
+        return {
+          component: AgricolaCardChip,
+          props: {
+            cardId: majorImp.id,
+            cardType: 'major',
+          },
+        }
+      }
+
+      // Check if it's in the format "Name (id)" - used for major improvements
+      const match = name.match(/^(.+?)\s*\(([^)]+)\)$/)
+      if (match) {
+        const impId = match[2]
+        majorImp = res.getMajorImprovementById(impId)
+        if (majorImp) {
+          return {
+            component: AgricolaCardChip,
+            props: {
+              cardId: majorImp.id,
+              cardType: 'major',
+            },
+          }
+        }
+      }
+
+      // Not a card - use default rendering
+      return undefined
     },
 
     // Fencing methods

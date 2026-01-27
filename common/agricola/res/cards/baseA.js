@@ -996,6 +996,10 @@ function getCardById(id) {
   return [...minorImprovements, ...occupations].find(c => c.id === id)
 }
 
+function getCardByName(name) {
+  return [...minorImprovements, ...occupations].find(c => c.name === name)
+}
+
 function getMinorImprovements() {
   return minorImprovements
 }
@@ -1022,6 +1026,7 @@ module.exports = {
   minorImprovements,
   occupations,
   getCardById,
+  getCardByName,
   getMinorImprovements,
   getOccupations,
   getAllCards,

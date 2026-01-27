@@ -1,5 +1,5 @@
 <template>
-  <span class="option-name">
+  <span class="option-name" :class="{ 'has-component': !!componentAndProps }">
     <component
       v-if="!!componentAndProps"
       :is="componentAndProps.c"
@@ -53,5 +53,10 @@ export default {
 <style scoped>
 .option-name {
   font-size: 1.1em;
+}
+
+.option-name.has-component {
+  display: block;
+  width: 100%;
 }
 </style>
