@@ -125,9 +125,7 @@ export default {
 }
 
 #gamelog:deep() .player-name {
-  display: inline-block;
-  padding: 0 .4em;
-  border-radius: .1em;
+  display: inline;
 }
 
 /* Indentation levels */

@@ -1,7 +1,5 @@
 <template>
-  <div class="loc-name">
-    {{ name }}
-  </div>
+  <span class="loc-name">{{ name }}</span>
 </template>
 
 

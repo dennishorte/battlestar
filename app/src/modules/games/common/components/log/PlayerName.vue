@@ -1,7 +1,5 @@
 <template>
-  <div class="player-name" :class="classes" :style="styles">
-    {{ name }}
-  </div>
+  <span class="player-name" :class="classes" :style="styles">{{ name }}</span>
 </template>
 
 
@@ -37,6 +35,6 @@ export default {
 
 <style scoped>
 .player-name {
-  display: inline-block;
+  display: inline;
 }
 </style>
