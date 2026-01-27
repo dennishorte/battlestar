@@ -95,13 +95,13 @@ export default {
 }
 
 #gamelog:deep() .player-turn {
-  padding: .15em .5em;
+  padding: .15em .5em .15em 0;
   border-radius: .15em;
   margin-top: .25em;
 }
 
 #gamelog:deep() .player-action {
-  padding: .1em .5em;
+  padding: .1em .5em .1em 0;
   background-color: #f5f5dc;
   border-radius: .15em;
 }
@@ -128,5 +128,22 @@ export default {
   display: inline-block;
   padding: 0 .4em;
   border-radius: .1em;
+}
+
+/* Indentation levels */
+#gamelog:deep() .indent-1 {
+  margin-left: 1em;
+}
+
+#gamelog:deep() .indent-2 {
+  margin-left: 2em;
+}
+
+#gamelog:deep() .indent-3 {
+  margin-left: 3em;
+}
+
+#gamelog:deep() .indent-4 {
+  margin-left: 4em;
 }
 </style>
