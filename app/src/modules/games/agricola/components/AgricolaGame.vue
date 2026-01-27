@@ -117,6 +117,11 @@ export default {
           active: false,
           validSpaces: [],
         },
+        // Room building UI state
+        buildingRoom: {
+          active: false,
+          validSpaces: [],
+        },
       },
     }
   },
@@ -168,6 +173,7 @@ export default {
         if (!request || !request.choices) {
           this.clearFencingState()
           this.clearPlowingState()
+          this.clearBuildingRoomState()
           return
         }
 
@@ -176,10 +182,22 @@ export default {
           this.ui.plowing.active = true
           this.ui.plowing.validSpaces = request.validSpaces || []
           this.clearFencingState()
+          this.clearBuildingRoomState()
           return
         }
         else {
           this.clearPlowingState()
+        }
+
+        // Check if this is a room building action
+        if (request.allowsAction === 'build-room') {
+          this.ui.buildingRoom.active = true
+          this.ui.buildingRoom.validSpaces = request.validSpaces || []
+          this.clearFencingState()
+          return
+        }
+        else {
+          this.clearBuildingRoomState()
         }
 
         // Check if this is a fencing action by looking at the title or choices
@@ -271,6 +289,11 @@ export default {
     clearPlowingState() {
       this.ui.plowing.active = false
       this.ui.plowing.validSpaces = []
+    },
+
+    clearBuildingRoomState() {
+      this.ui.buildingRoom.active = false
+      this.ui.buildingRoom.validSpaces = []
     },
 
     syncFencingStateFromChoices(request) {

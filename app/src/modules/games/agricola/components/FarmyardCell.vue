@@ -81,6 +81,11 @@ export default {
       return this.ui.plowing?.active && this.player.name === this.actor.name
     },
 
+    // Check if room building mode is active and this is the viewing player's board
+    isBuildingRoomActive() {
+      return this.ui.buildingRoom?.active && this.player.name === this.actor.name
+    },
+
     // Check if this cell is currently selected for fencing
     isSelected() {
       if (!this.isFencingActive) {
@@ -105,6 +110,15 @@ export default {
         return false
       }
       const validSpaces = this.ui.plowing?.validSpaces || []
+      return validSpaces.some(s => s.row === this.row && s.col === this.col)
+    },
+
+    // Check if this cell can have a room built on it
+    canBuildRoom() {
+      if (!this.isBuildingRoomActive) {
+        return false
+      }
+      const validSpaces = this.ui.buildingRoom?.validSpaces || []
       return validSpaces.some(s => s.row === this.row && s.col === this.col)
     },
 
@@ -145,6 +159,11 @@ export default {
       // Plowing states
       if (this.canPlow) {
         classes.push('plow-selectable')
+      }
+
+      // Room building states
+      if (this.canBuildRoom) {
+        classes.push('build-room-selectable')
       }
 
       return classes
@@ -233,6 +252,18 @@ export default {
         this.bus.emit('submit-action', {
           actor: this.actor.name,
           action: 'plow-space',
+          row: this.row,
+          col: this.col,
+        })
+        return
+      }
+
+      // Handle room building clicks
+      if (this.canBuildRoom) {
+        // Send a build-room action directly to the game
+        this.bus.emit('submit-action', {
+          actor: this.actor.name,
+          action: 'build-room',
           row: this.row,
           col: this.col,
         })
@@ -404,5 +435,16 @@ export default {
 .farmyard-cell.plow-selectable:hover {
   filter: brightness(1.2);
   box-shadow: inset 0 0 0 3px #8b4513;
+}
+
+/* Room building states */
+.farmyard-cell.build-room-selectable {
+  cursor: pointer;
+  box-shadow: inset 0 0 0 2px rgba(222, 184, 135, 0.9);
+}
+
+.farmyard-cell.build-room-selectable:hover {
+  filter: brightness(1.2);
+  box-shadow: inset 0 0 0 3px #deb887;
 }
 </style>
