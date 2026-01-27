@@ -36,7 +36,18 @@
 
       <!-- Card Text -->
       <div class="card-text" v-if="card.text">
-        {{ card.text }}
+        <template v-if="Array.isArray(card.text)">
+          <p v-for="(line, index) in card.text" :key="index" class="text-line">{{ line }}</p>
+        </template>
+        <template v-else>
+          {{ card.text }}
+        </template>
+      </div>
+
+      <!-- Alternate Cost (for upgrades like Cooking Hearth) -->
+      <div class="card-alternate-cost" v-if="card.alternateCost">
+        <span class="alternate-cost-label">Or:</span>
+        <span class="alternate-cost-value">{{ card.alternateCost }}</span>
       </div>
 
       <!-- Abilities -->
@@ -110,10 +121,16 @@ export default {
         return null
       }
 
-      // Get card from res module
+      // Get card from res module (occupations and minor improvements)
       const card = res.getCardById(this.cardId)
       if (card) {
         return card
+      }
+
+      // Try major improvements
+      const majorImp = res.getMajorImprovementById(this.cardId)
+      if (majorImp) {
+        return majorImp
       }
 
       // Fallback - return minimal card info
@@ -291,6 +308,30 @@ export default {
   margin-bottom: .75em;
   color: #333;
   line-height: 1.4;
+}
+
+.card-text .text-line {
+  margin: 0 0 .5em 0;
+}
+
+.card-text .text-line:last-child {
+  margin-bottom: 0;
+}
+
+.card-alternate-cost {
+  margin-bottom: .5em;
+  font-size: .95em;
+}
+
+.alternate-cost-label {
+  font-weight: 600;
+  color: #555;
+  margin-right: .35em;
+}
+
+.alternate-cost-value {
+  color: #666;
+  font-style: italic;
 }
 
 .card-abilities {

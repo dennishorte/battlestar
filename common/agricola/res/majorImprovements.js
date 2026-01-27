@@ -5,9 +5,14 @@ const majorImprovements = [
   {
     id: 'fireplace-2',
     name: 'Fireplace',
+    type: 'major',
     cost: { clay: 2 },
     victoryPoints: 1,
     upgradesTo: ['cooking-hearth-4', 'cooking-hearth-5'],
+    text: [
+      'At any time: Vegetable \u2192 2 Food; Sheep \u2192 2 Food; Wild boar \u2192 2 Food; Cattle \u2192 3 Food',
+      '"Bake Bread" action: Grain \u2192 2 Food',
+    ],
     abilities: {
       canCook: true,
       canBake: true,
@@ -19,14 +24,18 @@ const majorImprovements = [
       },
       bakingRate: 2, // 1 grain -> 2 food
     },
-    description: 'Convert animals/vegetables to food anytime. Bake: 1 grain -> 2 food.',
   },
   {
     id: 'fireplace-3',
     name: 'Fireplace',
+    type: 'major',
     cost: { clay: 3 },
     victoryPoints: 1,
     upgradesTo: ['cooking-hearth-4', 'cooking-hearth-5'],
+    text: [
+      'At any time: Vegetable \u2192 2 Food; Sheep \u2192 2 Food; Wild boar \u2192 2 Food; Cattle \u2192 3 Food',
+      '"Bake Bread" action: Grain \u2192 2 Food',
+    ],
     abilities: {
       canCook: true,
       canBake: true,
@@ -38,17 +47,22 @@ const majorImprovements = [
       },
       bakingRate: 2,
     },
-    description: 'Convert animals/vegetables to food anytime. Bake: 1 grain -> 2 food.',
   },
 
   // Cooking Hearths - upgraded cooking
   {
     id: 'cooking-hearth-4',
     name: 'Cooking Hearth',
+    type: 'major',
     cost: { clay: 4 },
     victoryPoints: 1,
     upgradesFrom: ['fireplace-2', 'fireplace-3'],
     upgradesTo: [],
+    text: [
+      'At any time: Vegetable \u2192 3 Food; Sheep \u2192 2 Food; Wild boar \u2192 3 Food; Cattle \u2192 4 Food',
+      '"Bake Bread" action: Grain \u2192 3 Food',
+    ],
+    alternateCost: 'Return a Fireplace',
     abilities: {
       canCook: true,
       canBake: true,
@@ -60,15 +74,20 @@ const majorImprovements = [
       },
       bakingRate: 3, // 1 grain -> 3 food
     },
-    description: 'Better conversion rates. Bake: 1 grain -> 3 food.',
   },
   {
     id: 'cooking-hearth-5',
     name: 'Cooking Hearth',
+    type: 'major',
     cost: { clay: 5 },
     victoryPoints: 1,
     upgradesFrom: ['fireplace-2', 'fireplace-3'],
     upgradesTo: [],
+    text: [
+      'At any time: Vegetable \u2192 3 Food; Sheep \u2192 2 Food; Wild boar \u2192 3 Food; Cattle \u2192 4 Food',
+      '"Bake Bread" action: Grain \u2192 3 Food',
+    ],
+    alternateCost: 'Return a Fireplace',
     abilities: {
       canCook: true,
       canBake: true,
@@ -80,41 +99,55 @@ const majorImprovements = [
       },
       bakingRate: 3,
     },
-    description: 'Better conversion rates. Bake: 1 grain -> 3 food.',
   },
 
   // Ovens - specialized baking
   {
     id: 'clay-oven',
     name: 'Clay Oven',
+    type: 'major',
     cost: { clay: 3, stone: 1 },
     victoryPoints: 2,
+    text: [
+      '"Bake Bread" action: At most 1 time Grain \u2192 5 Food',
+      'When you build this improvement, you can immediately take a "Bake Bread" action.',
+    ],
     abilities: {
       canBake: true,
       bakingRate: 5, // 1 grain -> 5 food
       bakingLimit: 1, // Only 1 grain per bake action
+      bakeBreadOnBuild: true,
     },
-    description: 'Bake: 1 grain -> 5 food (once per bake action).',
   },
   {
     id: 'stone-oven',
     name: 'Stone Oven',
+    type: 'major',
     cost: { clay: 1, stone: 3 },
     victoryPoints: 3,
+    text: [
+      '"Bake Bread" action: Up to 2 times Grain \u2192 4 Food',
+      'When you build this improvement, you can immediately take a "Bake Bread" action.',
+    ],
     abilities: {
       canBake: true,
       bakingRate: 4, // up to 2 grain -> 4 food each
       bakingLimit: 2,
+      bakeBreadOnBuild: true,
     },
-    description: 'Bake: up to 2 grain -> 4 food each.',
   },
 
   // Crafting improvements - harvest bonuses
   {
     id: 'joinery',
     name: 'Joinery',
+    type: 'major',
     cost: { wood: 2, stone: 2 },
     victoryPoints: 2,
+    text: [
+      'Harvest: At most 1 time Wood \u2192 2 Food',
+      'Scoring: 3/5/7 Wood \u2192 1/2/3 bonus points',
+    ],
     abilities: {
       harvestConversion: {
         resource: 'wood',
@@ -123,16 +156,20 @@ const majorImprovements = [
       },
       endGameBonus: {
         resource: 'wood',
-        thresholds: [0, 0, 1, 2, 3], // 0, 1-2, 3-4, 5-6, 7+ wood
+        thresholds: [0, 0, 1, 2, 3], // 0-2, 3-4, 5-6, 7+ wood
       },
     },
-    description: 'Harvest: convert 1 wood -> 2 food. End game: bonus points for wood (up to 3).',
   },
   {
     id: 'pottery',
     name: 'Pottery',
+    type: 'major',
     cost: { clay: 2, stone: 2 },
     victoryPoints: 2,
+    text: [
+      'Harvest: At most 1 time Clay \u2192 2 Food',
+      'Scoring: 3/5/7 Clay \u2192 1/2/3 bonus points',
+    ],
     abilities: {
       harvestConversion: {
         resource: 'clay',
@@ -144,13 +181,17 @@ const majorImprovements = [
         thresholds: [0, 0, 1, 2, 3],
       },
     },
-    description: 'Harvest: convert 1 clay -> 2 food. End game: bonus points for clay (up to 3).',
   },
   {
     id: 'basketmakers-workshop',
     name: "Basketmaker's Workshop",
+    type: 'major',
     cost: { reed: 2, stone: 2 },
     victoryPoints: 2,
+    text: [
+      'Harvest: At most 1 time Reed \u2192 3 Food',
+      'Scoring: 2/4/5 Reed \u2192 1/2/3 bonus points',
+    ],
     abilities: {
       harvestConversion: {
         resource: 'reed',
@@ -159,22 +200,24 @@ const majorImprovements = [
       },
       endGameBonus: {
         resource: 'reed',
-        thresholds: [0, 0, 1, 2, 3],
+        thresholds: [0, 1, 2, 3], // 0-1, 2-3, 4, 5+ reed (different from others)
       },
     },
-    description: 'Harvest: convert 1 reed -> 3 food. End game: bonus points for reed (up to 3).',
   },
 
   // Well - food over time
   {
     id: 'well',
     name: 'Well',
+    type: 'major',
     cost: { wood: 1, stone: 3 },
     victoryPoints: 4,
+    text: [
+      'Place 1 food on each of the next 5 round spaces. At the start of these rounds, you get the food.',
+    ],
     abilities: {
       wellEffect: true, // Places 1 food on next 5 round spaces
     },
-    description: 'Place 1 food on each of the next 5 round spaces. Receive when those rounds begin.',
   },
 ]
 
