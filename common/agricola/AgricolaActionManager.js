@@ -1099,30 +1099,51 @@ class AgricolaActionManager extends BaseActionManager {
   // ---------------------------------------------------------------------------
 
   buyImprovement(player, allowMajor, allowMinor) {
-    // Build list of options
-    const options = []
+    // Build nested choices for improvements
+    const nestedChoices = []
 
-    // Check for affordable major improvements
+    // Get affordable major improvements
+    let affordableMajorIds = []
     if (allowMajor) {
       const availableImprovements = this.game.getAvailableMajorImprovements()
-      const affordableMajor = availableImprovements.filter(id => player.canBuyMajorImprovement(id))
-      if (affordableMajor.length > 0) {
-        options.push('Major Improvement')
+      affordableMajorIds = availableImprovements.filter(id => player.canBuyMajorImprovement(id))
+      if (affordableMajorIds.length > 0) {
+        const majorChoices = affordableMajorIds.map(id => {
+          const imp = res.getMajorImprovementById(id)
+          return imp.name + ` (${id})`
+        })
+        nestedChoices.push({
+          title: 'Major Improvement',
+          choices: majorChoices,
+          min: 0,
+          max: 1,
+        })
       }
     }
 
-    // Check for playable minor improvements
+    // Get playable minor improvements
+    let playableMinorIds = []
     if (allowMinor) {
       const minorInHand = player.hand.filter(cardId => {
         const card = res.getCardById(cardId)
-        return card && card.type === 'minor' && player.canPlayCard(cardId)
+        return card && card.type === 'minor'
       })
-      if (minorInHand.length > 0) {
-        options.push('Minor Improvement')
+      playableMinorIds = minorInHand.filter(cardId => player.canPlayCard(cardId))
+      if (playableMinorIds.length > 0) {
+        const minorChoices = playableMinorIds.map(cardId => {
+          const card = res.getCardById(cardId)
+          return card ? card.name : cardId
+        })
+        nestedChoices.push({
+          title: 'Minor Improvement',
+          choices: minorChoices,
+          min: 0,
+          max: 1,
+        })
       }
     }
 
-    if (options.length === 0) {
+    if (nestedChoices.length === 0) {
       this.log.add({
         template: '{player} has no affordable improvements',
         args: { player },
@@ -1131,28 +1152,73 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     // Add option to not play
-    options.push('Do not play an improvement')
+    nestedChoices.push('Do not play an improvement')
 
-    // If only one real option, still offer choice to pass
-    const selection = this.choose(player, options, {
-      title: 'Choose Improvement Type',
+    const selection = this.choose(player, nestedChoices, {
+      title: 'Choose an Improvement',
       min: 1,
       max: 1,
     })
 
     const choice = selection[0]
 
+    // Handle "do not play" choice
     if (choice === 'Do not play an improvement') {
       this.log.addDoNothing(player, 'play an improvement')
       return false
     }
 
-    if (choice === 'Major Improvement') {
-      return this.buyMajorImprovement(player, this.game.getAvailableMajorImprovements())
-    }
+    // Handle nested selection (object with title and selection)
+    if (typeof choice === 'object' && choice.title) {
+      const selectedName = choice.selection[0]
 
-    if (choice === 'Minor Improvement') {
-      return this.buyMinorImprovement(player)
+      if (choice.title === 'Major Improvement') {
+        // Extract ID from selection (format: "Name (id)")
+        const idMatch = selectedName.match(/\(([^)]+)\)/)
+        const improvementId = idMatch ? idMatch[1] : null
+
+        if (improvementId) {
+          const imp = res.getMajorImprovementById(improvementId)
+          player.buyMajorImprovement(improvementId)
+
+          this.log.add({
+            template: '{player} buys {improvement}',
+            args: { player, improvement: imp.name },
+          })
+
+          // Handle Well special effect
+          if (improvementId === 'well') {
+            this.activateWell(player)
+          }
+
+          return improvementId
+        }
+      }
+
+      if (choice.title === 'Minor Improvement') {
+        // Find the card id by name
+        const cardId = playableMinorIds.find(id => {
+          const card = res.getCardById(id)
+          return card && card.name === selectedName
+        })
+
+        if (cardId) {
+          const card = res.getCardById(cardId)
+          player.playCard(cardId)
+
+          this.log.add({
+            template: '{player} plays {improvement}',
+            args: { player, improvement: card.name },
+          })
+
+          // Execute onPlay effect if present
+          if (card.onPlay) {
+            card.onPlay(this.game, player)
+          }
+
+          return true
+        }
+      }
     }
 
     return false
