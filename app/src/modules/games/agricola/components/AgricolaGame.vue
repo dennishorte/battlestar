@@ -37,6 +37,24 @@
     <CardViewerModal />
     <ScoreBreakdownModal />
     <DebugModal />
+
+    <!-- Crop Picker for Sowing -->
+    <div v-if="cropPicker.active" class="crop-picker-overlay" @click.self="closeCropPicker">
+      <div class="crop-picker">
+        <div class="crop-picker-title">Choose crop to sow</div>
+        <div class="crop-picker-options">
+          <button class="crop-option grain" @click="selectCrop('grain')">
+            <span class="crop-icon">🌾</span>
+            <span class="crop-label">Grain</span>
+          </button>
+          <button class="crop-option vegetables" @click="selectCrop('vegetables')">
+            <span class="crop-icon">🥕</span>
+            <span class="crop-label">Vegetables</span>
+          </button>
+        </div>
+        <button class="crop-picker-cancel" @click="closeCropPicker">Cancel</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -122,6 +140,19 @@ export default {
           active: false,
           validSpaces: [],
         },
+        // Sowing UI state
+        sowing: {
+          active: false,
+          validSpaces: [],
+          canSowGrain: false,
+          canSowVeg: false,
+        },
+      },
+      // Crop picker state
+      cropPicker: {
+        active: false,
+        row: null,
+        col: null,
       },
     }
   },
@@ -174,6 +205,7 @@ export default {
           this.clearFencingState()
           this.clearPlowingState()
           this.clearBuildingRoomState()
+          this.clearSowingState()
           return
         }
 
@@ -183,6 +215,7 @@ export default {
           this.ui.plowing.validSpaces = request.validSpaces || []
           this.clearFencingState()
           this.clearBuildingRoomState()
+          this.clearSowingState()
           return
         }
         else {
@@ -194,10 +227,24 @@ export default {
           this.ui.buildingRoom.active = true
           this.ui.buildingRoom.validSpaces = request.validSpaces || []
           this.clearFencingState()
+          this.clearSowingState()
           return
         }
         else {
           this.clearBuildingRoomState()
+        }
+
+        // Check if this is a sowing action
+        if (request.allowsAction === 'sow-field') {
+          this.ui.sowing.active = true
+          this.ui.sowing.validSpaces = request.validSpaces || []
+          this.ui.sowing.canSowGrain = request.canSowGrain || false
+          this.ui.sowing.canSowVeg = request.canSowVeg || false
+          this.clearFencingState()
+          return
+        }
+        else {
+          this.clearSowingState()
         }
 
         // Check if this is a fencing action by looking at the title or choices
@@ -296,6 +343,13 @@ export default {
       this.ui.buildingRoom.validSpaces = []
     },
 
+    clearSowingState() {
+      this.ui.sowing.active = false
+      this.ui.sowing.validSpaces = []
+      this.ui.sowing.canSowGrain = false
+      this.ui.sowing.canSowVeg = false
+    },
+
     syncFencingStateFromChoices(request) {
       // Sync our local selection with the choices from the backend
       // Selected spaces are indicated by "Deselect (row,col)" choices
@@ -318,6 +372,30 @@ export default {
       }
 
       this.ui.fencing.selectedSpaces = selectedFromChoices
+    },
+
+    showCropPicker(payload) {
+      this.cropPicker.active = true
+      this.cropPicker.row = payload.row
+      this.cropPicker.col = payload.col
+    },
+
+    closeCropPicker() {
+      this.cropPicker.active = false
+      this.cropPicker.row = null
+      this.cropPicker.col = null
+    },
+
+    selectCrop(cropType) {
+      // Submit the sow action with the selected crop
+      this.bus.emit('submit-action', {
+        actor: this.actor.name,
+        action: 'sow-field',
+        row: this.cropPicker.row,
+        col: this.cropPicker.col,
+        cropType: cropType,
+      })
+      this.closeCropPicker()
     },
 
     async handleSubmitAction(actionPayload) {
@@ -359,10 +437,13 @@ export default {
 
     // Listen for action submissions from the farm board
     this.bus.on('submit-action', this.handleSubmitAction)
+    // Listen for crop picker requests
+    this.bus.on('show-crop-picker', this.showCropPicker)
   },
 
   beforeUnmount() {
     this.bus.off('submit-action', this.handleSubmitAction)
+    this.bus.off('show-crop-picker', this.showCropPicker)
   },
 }
 </script>
@@ -397,5 +478,98 @@ export default {
   min-width: 400px;
   max-width: 400px;
   overflow: hidden;
+}
+
+/* Crop Picker Overlay */
+.crop-picker-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.crop-picker {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5em;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.crop-picker-title {
+  font-size: 1.1em;
+  font-weight: 600;
+  margin-bottom: 1em;
+  color: #333;
+}
+
+.crop-picker-options {
+  display: flex;
+  gap: 1em;
+  margin-bottom: 1em;
+}
+
+.crop-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1em 1.5em;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.crop-option:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.crop-option.grain {
+  border-color: #daa520;
+}
+
+.crop-option.grain:hover {
+  background-color: #fff8dc;
+  border-color: #b8860b;
+}
+
+.crop-option.vegetables {
+  border-color: #228b22;
+}
+
+.crop-option.vegetables:hover {
+  background-color: #f0fff0;
+  border-color: #006400;
+}
+
+.crop-icon {
+  font-size: 2em;
+  margin-bottom: 0.25em;
+}
+
+.crop-label {
+  font-weight: 500;
+  color: #555;
+}
+
+.crop-picker-cancel {
+  padding: 0.5em 1.5em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  color: #666;
+}
+
+.crop-picker-cancel:hover {
+  background-color: #e5e5e5;
 }
 </style>

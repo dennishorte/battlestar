@@ -418,44 +418,104 @@ class AgricolaActionManager extends BaseActionManager {
         break
       }
 
-      const choices = []
-      if (canSowGrain) {
-        choices.push('Sow Grain')
-      }
-      if (canSowVeg) {
-        choices.push('Sow Vegetables')
-      }
-      choices.push('Done Sowing')
+      // Build nested choices showing crop types with their available fields
+      const nestedChoices = []
 
-      const selection = this.choose(player, choices, {
-        title: 'Choose what to sow',
+      if (canSowGrain) {
+        const grainFields = currentEmptyFields.map(f => `Field (${f.row},${f.col})`)
+        nestedChoices.push({
+          title: `Grain (${player.grain} available)`,
+          choices: grainFields,
+          min: 0,
+          max: 1,
+        })
+      }
+
+      if (canSowVeg) {
+        const vegFields = currentEmptyFields.map(f => `Field (${f.row},${f.col})`)
+        nestedChoices.push({
+          title: `Vegetables (${player.vegetables} available)`,
+          choices: vegFields,
+          min: 0,
+          max: 1,
+        })
+      }
+
+      nestedChoices.push('Done Sowing')
+
+      // Request input - supports both nested selector and direct farm board clicks
+      const selector = {
+        type: 'select',
+        actor: player.name,
+        title: 'Choose field to sow',
+        choices: nestedChoices,
         min: 1,
         max: 1,
-      })
+        // Mark this as accepting action-based input for sowing
+        allowsAction: 'sow-field',
+        validSpaces: currentEmptyFields,
+        canSowGrain,
+        canSowVeg,
+      }
 
-      if (selection[0] === 'Done Sowing') {
+      const result = this.game.requestInputSingle(selector)
+
+      // Handle action-based response (from clicking the farm board)
+      if (result.action === 'sow-field') {
+        const { row, col, cropType } = result
+
+        // Validate the space is a valid empty field
+        const isValidField = currentEmptyFields.some(f => f.row === row && f.col === col)
+        if (!isValidField) {
+          throw new Error(`Invalid sow space: (${row}, ${col}) is not an empty field`)
+        }
+
+        // Validate player has the crop
+        if (cropType === 'grain' && !canSowGrain) {
+          throw new Error('No grain available to sow')
+        }
+        if (cropType === 'vegetables' && !canSowVeg) {
+          throw new Error('No vegetables available to sow')
+        }
+
+        player.sowField(row, col, cropType)
+        sowedAny = true
+
+        const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
+        this.log.add({
+          template: '{player} sows {crop} at ({row},{col}) - {amount} total',
+          args: { player, crop: cropType, row, col, amount },
+        })
+        continue
+      }
+
+      // Handle standard selection response
+      const choice = result[0]
+
+      if (choice === 'Done Sowing') {
         break
       }
 
-      const cropType = selection[0] === 'Sow Grain' ? 'grain' : 'vegetables'
+      // Handle nested selection (object with title and selection)
+      if (typeof choice === 'object' && choice.title && choice.selection && choice.selection.length > 0) {
+        const selectedField = choice.selection[0]
+        const coordMatch = selectedField.match(/Field \((\d+),(\d+)\)/)
 
-      // Choose field
-      const fieldChoices = currentEmptyFields.map(f => `${f.row},${f.col}`)
-      const fieldSelection = this.choose(player, fieldChoices, {
-        title: 'Choose field to sow',
-        min: 1,
-        max: 1,
-      })
+        if (coordMatch) {
+          const row = parseInt(coordMatch[1])
+          const col = parseInt(coordMatch[2])
+          const cropType = choice.title.startsWith('Grain') ? 'grain' : 'vegetables'
 
-      const [row, col] = fieldSelection[0].split(',').map(Number)
-      player.sowField(row, col, cropType)
-      sowedAny = true
+          player.sowField(row, col, cropType)
+          sowedAny = true
 
-      const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
-      this.log.add({
-        template: '{player} sows {crop} at ({row},{col}) - {amount} total',
-        args: { player, crop: cropType, row, col, amount },
-      })
+          const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
+          this.log.add({
+            template: '{player} sows {crop} at ({row},{col}) - {amount} total',
+            args: { player, crop: cropType, row, col, amount },
+          })
+        }
+      }
     }
 
     if (!sowedAny) {
@@ -515,40 +575,23 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   sowAndOrBake(player) {
-    const choices = []
-
     const canSow = player.getEmptyFields().length > 0 && (player.grain >= 1 || player.vegetables >= 1)
     const canBake = player.hasBakingAbility() && player.grain >= 1
 
-    if (canSow) {
-      choices.push('Sow')
-    }
-    if (canBake) {
-      choices.push('Bake Bread')
-    }
-    if (canSow && canBake) {
-      choices.push('Sow then Bake')
-    }
-    choices.push('Do Nothing')
-
-    const selection = this.choose(player, choices, {
-      title: 'Choose action',
-      min: 1,
-      max: 1,
-    })
-
-    const choice = selection[0]
-
-    if (choice === 'Do Nothing') {
+    if (!canSow && !canBake) {
       this.log.addDoNothing(player, 'sow or bake')
       return true
     }
 
-    if (choice === 'Sow' || choice === 'Sow then Bake') {
+    // Sow first (player can select "Done Sowing" to skip)
+    if (canSow) {
       this.sow(player)
     }
 
-    if (choice === 'Bake Bread' || choice === 'Sow then Bake') {
+    // Then bake (player can select "Do not bake" to skip)
+    // Re-check canBake since sowing might have used grain
+    const canBakeNow = player.hasBakingAbility() && player.grain >= 1
+    if (canBakeNow) {
       this.bakeBread(player)
     }
 
@@ -556,40 +599,32 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   plowAndOrSow(player) {
-    const choices = []
-
     const canPlow = player.getValidPlowSpaces().length > 0
     const canSow = player.getEmptyFields().length > 0 && (player.grain >= 1 || player.vegetables >= 1)
 
-    if (canPlow) {
-      choices.push('Plow')
-    }
-    if (canSow) {
-      choices.push('Sow')
-    }
-    if (canPlow) {
-      choices.push('Plow then Sow')
-    }
-    choices.push('Do Nothing')
-
-    const selection = this.choose(player, choices, {
-      title: 'Choose action',
-      min: 1,
-      max: 1,
-    })
-
-    const choice = selection[0]
-
-    if (choice === 'Do Nothing') {
+    if (!canPlow && !canSow) {
       this.log.addDoNothing(player, 'plow or sow')
       return true
     }
 
-    if (choice === 'Plow' || choice === 'Plow then Sow') {
-      this.plowField(player)
+    // Ask if player wants to plow (if possible)
+    if (canPlow) {
+      const plowChoices = ['Plow a field', 'Skip plowing']
+      const plowSelection = this.choose(player, plowChoices, {
+        title: 'Plow a field?',
+        min: 1,
+        max: 1,
+      })
+
+      if (plowSelection[0] === 'Plow a field') {
+        this.plowField(player)
+      }
     }
 
-    if (choice === 'Sow' || choice === 'Plow then Sow') {
+    // Then sow (player can select "Done Sowing" to skip)
+    // Re-check canSow since plowing might have created a new field
+    const canSowNow = player.getEmptyFields().length > 0 && (player.grain >= 1 || player.vegetables >= 1)
+    if (canSowNow) {
       this.sow(player)
     }
 

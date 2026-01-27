@@ -86,6 +86,11 @@ export default {
       return this.ui.buildingRoom?.active && this.player.name === this.actor.name
     },
 
+    // Check if sowing mode is active and this is the viewing player's board
+    isSowingActive() {
+      return this.ui.sowing?.active && this.player.name === this.actor.name
+    },
+
     // Check if this cell is currently selected for fencing
     isSelected() {
       if (!this.isFencingActive) {
@@ -119,6 +124,15 @@ export default {
         return false
       }
       const validSpaces = this.ui.buildingRoom?.validSpaces || []
+      return validSpaces.some(s => s.row === this.row && s.col === this.col)
+    },
+
+    // Check if this cell can be sown
+    canSow() {
+      if (!this.isSowingActive) {
+        return false
+      }
+      const validSpaces = this.ui.sowing?.validSpaces || []
       return validSpaces.some(s => s.row === this.row && s.col === this.col)
     },
 
@@ -164,6 +178,11 @@ export default {
       // Room building states
       if (this.canBuildRoom) {
         classes.push('build-room-selectable')
+      }
+
+      // Sowing states
+      if (this.canSow) {
+        classes.push('sow-selectable')
       }
 
       return classes
@@ -264,6 +283,42 @@ export default {
         this.bus.emit('submit-action', {
           actor: this.actor.name,
           action: 'build-room',
+          row: this.row,
+          col: this.col,
+        })
+        return
+      }
+
+      // Handle sowing clicks
+      if (this.canSow) {
+        const canSowGrain = this.ui.sowing?.canSowGrain
+        const canSowVeg = this.ui.sowing?.canSowVeg
+
+        // If only one option available, sow directly
+        if (canSowGrain && !canSowVeg) {
+          this.bus.emit('submit-action', {
+            actor: this.actor.name,
+            action: 'sow-field',
+            row: this.row,
+            col: this.col,
+            cropType: 'grain',
+          })
+          return
+        }
+
+        if (canSowVeg && !canSowGrain) {
+          this.bus.emit('submit-action', {
+            actor: this.actor.name,
+            action: 'sow-field',
+            row: this.row,
+            col: this.col,
+            cropType: 'vegetables',
+          })
+          return
+        }
+
+        // Both options available - emit event to show crop picker
+        this.bus.emit('show-crop-picker', {
           row: this.row,
           col: this.col,
         })
@@ -446,5 +501,16 @@ export default {
 .farmyard-cell.build-room-selectable:hover {
   filter: brightness(1.2);
   box-shadow: inset 0 0 0 3px #deb887;
+}
+
+/* Sowing states */
+.farmyard-cell.sow-selectable {
+  cursor: pointer;
+  box-shadow: inset 0 0 0 2px rgba(34, 139, 34, 0.7);
+}
+
+.farmyard-cell.sow-selectable:hover {
+  filter: brightness(1.2);
+  box-shadow: inset 0 0 0 3px #228b22;
 }
 </style>
