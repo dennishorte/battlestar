@@ -63,7 +63,7 @@
           </button>
         </div>
 
-        <PlayerDecks @deck-clicked="loadDeck" />
+        <PlayerDecks @deck-clicked="loadDeck" @decks-loaded="onDecksLoaded" />
       </div>
 
       <div class="content-column deck-list-column">
@@ -155,6 +155,18 @@ export default {
 
     waiting(player) {
       return this.game.checkPlayerHasActionWaiting(player)
+    },
+
+    onDecksLoaded(decks) {
+      // If there's a linked draft and the player hasn't selected a deck yet,
+      // auto-select the deck with the same name as the draft
+      if (this.linkedDraft && !this.ready && !this.selectedDeck) {
+        const draftName = this.linkedDraft.settings.name
+        const matchingDeck = decks.find(deck => deck.name === draftName)
+        if (matchingDeck) {
+          this.loadDeck(matchingDeck._id)
+        }
+      }
     },
   },
 

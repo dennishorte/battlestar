@@ -54,7 +54,7 @@ export default {
     DropdownItem,
   },
 
-  emits: ['deck-clicked'],
+  emits: ['deck-clicked', 'decks-loaded'],
 
   data() {
     return {
@@ -86,8 +86,10 @@ export default {
         })
 
         if (status === 'success') {
-          this.decks = decks
+          // Reverse to show oldest first (decks are returned newest first from API)
+          this.decks = decks.reverse()
           this.error = null
+          this.$emit('decks-loaded', this.decks)
         }
         else {
           this.error = 'Failed to load decks'
