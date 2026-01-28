@@ -34,6 +34,21 @@
             <span class="fencing-hint">Click spaces to select</span>
           </template>
         </div>
+        <div class="fencing-actions">
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            @click="ui.fn.cancelFencing"
+          >
+            Cancel
+          </button>
+          <button
+            class="btn btn-sm btn-success"
+            :disabled="!canConfirmFencing"
+            @click="ui.fn.confirmFencing"
+          >
+            Confirm Pasture
+          </button>
+        </div>
       </div>
 
       <!-- Farmyard Grid -->
@@ -150,6 +165,10 @@ export default {
         return 'status-empty'
       }
       return this.fencingValidation.valid ? 'status-valid' : 'status-invalid'
+    },
+
+    canConfirmFencing() {
+      return this.fencingValidation?.valid === true
     },
 
     unusedSpaces() {
@@ -381,5 +400,16 @@ export default {
 
 .fencing-error {
   color: #c62828;
+}
+
+.fencing-actions {
+  display: flex;
+  justify-content: center;
+  gap: .5em;
+  margin-top: .5em;
+}
+
+.fencing-actions .btn {
+  min-width: 80px;
 }
 </style>

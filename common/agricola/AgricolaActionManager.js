@@ -703,111 +703,53 @@ class AgricolaActionManager extends BaseActionManager {
       return { built: false }
     }
 
-    // Let player select spaces for the pasture
-    // Format: "row,col" for each space
-    const spaceChoices = fenceableSpaces.map(s => `Space (${s.row},${s.col})`)
-    spaceChoices.push('Cancel fencing')
+    // Use action-type selector - client manages selection locally and sends final result
+    const response = this.choose(player, ['Cancel fencing'], {
+      title: 'Select spaces for pasture',
+      min: 1,
+      max: 1,
+      allowsAction: 'build-pasture',
+      fenceableSpaces,
+    })
 
-    const selectedSpaces = []
-    let selecting = true
+    // Check if response is an action (spaces array) or a choice
+    if (response.action === 'build-pasture' && response.spaces) {
+      const selectedSpaces = response.spaces
 
-    while (selecting) {
-      // Filter to only connected spaces if we have selections
-      let validChoices = [...spaceChoices]
-
-      if (selectedSpaces.length > 0) {
-        // Only allow adjacent spaces to current selection or deselection
-        validChoices = []
-
-        // Add currently selected spaces for deselection
-        for (const s of selectedSpaces) {
-          validChoices.push(`Deselect (${s.row},${s.col})`)
-        }
-
-        // Add adjacent unselected spaces
-        const adjacent = this.getAdjacentUnselectedSpaces(selectedSpaces, fenceableSpaces)
-        for (const s of adjacent) {
-          validChoices.push(`Space (${s.row},${s.col})`)
-        }
-
-        validChoices.push('Confirm pasture')
-        validChoices.push('Cancel fencing')
-      }
-
-      // Show current selection and fence cost
-      let title = 'Select spaces for pasture'
-      if (selectedSpaces.length > 0) {
-        const validation = player.validatePastureSelection(selectedSpaces)
-        if (validation.valid) {
-          title = `${selectedSpaces.length} spaces selected (${validation.fencesNeeded} fences needed)`
-        }
-        else {
-          title = `${selectedSpaces.length} spaces selected - ${validation.error}`
-        }
-      }
-
-      const selection = this.choose(player, validChoices, {
-        title,
-        min: 1,
-        max: 1,
-      })
-
-      const choice = selection[0]
-
-      if (choice === 'Cancel fencing') {
+      if (selectedSpaces.length === 0) {
         return { built: false, skipped: true }
       }
 
-      if (choice === 'Confirm pasture') {
-        // Validate and build
-        const validation = player.validatePastureSelection(selectedSpaces)
-        if (!validation.valid) {
-          this.log.add({
-            template: 'Invalid pasture selection: {error}',
-            args: { error: validation.error },
-          })
-          continue
-        }
-
-        // Build the pasture
-        const result = player.buildPasture(selectedSpaces)
-        if (result.success) {
-          this.log.add({
-            template: '{player} builds a pasture with {spaces} spaces using {fences} fences',
-            args: { player, spaces: selectedSpaces.length, fences: result.fencesBuilt },
-          })
-          return { built: true, fencesBuilt: result.fencesBuilt }
-        }
-        else {
-          this.log.add({
-            template: 'Failed to build pasture: {error}',
-            args: { error: result.error },
-          })
-          return { built: false }
-        }
+      // Validate the selection
+      const validation = player.validatePastureSelection(selectedSpaces)
+      if (!validation.valid) {
+        this.log.add({
+          template: 'Invalid pasture selection: {error}',
+          args: { error: validation.error },
+        })
+        return { built: false }
       }
 
-      // Parse coordinate from choice
-      const coordMatch = choice.match(/\((\d),(\d)\)/)
-      if (coordMatch) {
-        const row = parseInt(coordMatch[1])
-        const col = parseInt(coordMatch[2])
-
-        if (choice.startsWith('Deselect')) {
-          // Remove from selection
-          const idx = selectedSpaces.findIndex(s => s.row === row && s.col === col)
-          if (idx >= 0) {
-            selectedSpaces.splice(idx, 1)
-          }
-        }
-        else {
-          // Add to selection
-          selectedSpaces.push({ row, col })
-        }
+      // Build the pasture
+      const result = player.buildPasture(selectedSpaces)
+      if (result.success) {
+        this.log.add({
+          template: '{player} builds a pasture with {spaces} spaces using {fences} fences',
+          args: { player, spaces: selectedSpaces.length, fences: result.fencesBuilt },
+        })
+        return { built: true, fencesBuilt: result.fencesBuilt }
+      }
+      else {
+        this.log.add({
+          template: 'Failed to build pasture: {error}',
+          args: { error: result.error },
+        })
+        return { built: false }
       }
     }
 
-    return { built: false }
+    // User cancelled
+    return { built: false, skipped: true }
   }
 
   getAdjacentUnselectedSpaces(selectedSpaces, allFenceableSpaces) {

@@ -119,6 +119,8 @@ export default {
           showCard: this.showCard,
           showScoreBreakdown: this.showScoreBreakdown,
           selectorOptionComponent: this.selectorOptionComponent,
+          confirmFencing: this.confirmFencing,
+          cancelFencing: this.cancelFencing,
         },
         modals: {
           actionSpace: {
@@ -138,6 +140,7 @@ export default {
           selectedSpaces: [],
           fenceEdges: {},
           validation: null,
+          fenceableSpaces: [],
         },
         // Plowing UI state
         plowing: {
@@ -256,22 +259,16 @@ export default {
           this.clearSowingState()
         }
 
-        // Check if this is a fencing action by looking at the title or choices
-        const title = request.title || ''
-        const isFencing = title.includes('pasture') || title.includes('spaces selected') ||
-          request.choices.some(c => {
-            const text = c.title || c
-            return text.startsWith('Space (') || text.startsWith('Deselect (')
-          })
-
-        if (!isFencing) {
-          this.clearFencingState()
+        // Check if this is a fencing action
+        if (request.allowsAction === 'build-pasture') {
+          this.ui.fencing.active = true
+          this.ui.fencing.fenceableSpaces = request.fenceableSpaces || []
+          // Don't clear selectedSpaces - keep local state
           return
         }
-
-        // Fencing is active - sync state from backend choices
-        this.ui.fencing.active = true
-        this.syncFencingStateFromChoices(request)
+        else {
+          this.clearFencingState()
+        }
       },
     },
 
@@ -417,6 +414,7 @@ export default {
       this.ui.fencing.selectedSpaces = []
       this.ui.fencing.fenceEdges = {}
       this.ui.fencing.validation = null
+      this.ui.fencing.fenceableSpaces = []
     },
 
     clearPlowingState() {
@@ -436,28 +434,55 @@ export default {
       this.ui.sowing.canSowVeg = false
     },
 
-    syncFencingStateFromChoices(request) {
-      // Sync our local selection with the choices from the backend
-      // Selected spaces are indicated by "Deselect (row,col)" choices
-      if (!request || !request.choices) {
+    toggleFenceSpace({ row, col }) {
+      // Check if space is already selected
+      const idx = this.ui.fencing.selectedSpaces.findIndex(
+        s => s.row === row && s.col === col
+      )
+
+      if (idx >= 0) {
+        // Deselect
+        this.ui.fencing.selectedSpaces.splice(idx, 1)
+      }
+      else {
+        // Select - check if it's a valid fenceable space
+        const isFenceable = this.ui.fencing.fenceableSpaces.some(
+          s => s.row === row && s.col === col
+        )
+        if (isFenceable) {
+          this.ui.fencing.selectedSpaces.push({ row, col })
+        }
+      }
+    },
+
+    confirmFencing() {
+      const spaces = this.ui.fencing.selectedSpaces
+      const validation = this.ui.fencing.validation
+
+      if (!validation || !validation.valid) {
         return
       }
 
-      const selectedFromChoices = []
-      const deselectPattern = /Deselect \((\d+),(\d+)\)/
+      // Submit the pasture selection
+      this.bus.emit('submit-action', {
+        actor: this.actor.name,
+        action: 'build-pasture',
+        spaces: [...spaces],
+      })
 
-      for (const choice of request.choices) {
-        const choiceText = choice.title || choice
-        const match = choiceText.match(deselectPattern)
-        if (match) {
-          selectedFromChoices.push({
-            row: parseInt(match[1]),
-            col: parseInt(match[2]),
-          })
-        }
-      }
+      // Clear selection after submitting
+      this.ui.fencing.selectedSpaces = []
+    },
 
-      this.ui.fencing.selectedSpaces = selectedFromChoices
+    cancelFencing() {
+      // Submit empty selection to cancel
+      this.bus.emit('submit-action', {
+        actor: this.actor.name,
+        action: 'build-pasture',
+        spaces: [],
+      })
+
+      this.ui.fencing.selectedSpaces = []
     },
 
     showCropPicker(payload) {
@@ -525,11 +550,14 @@ export default {
     this.bus.on('submit-action', this.handleSubmitAction)
     // Listen for crop picker requests
     this.bus.on('show-crop-picker', this.showCropPicker)
+    // Listen for fence space toggles
+    this.bus.on('toggle-fence-space', this.toggleFenceSpace)
   },
 
   beforeUnmount() {
     this.bus.off('submit-action', this.handleSubmitAction)
     this.bus.off('show-crop-picker', this.showCropPicker)
+    this.bus.off('toggle-fence-space', this.toggleFenceSpace)
   },
 }
 </script>

@@ -107,8 +107,29 @@ export default {
       if (!this.isFencingActive) {
         return false
       }
-      // Can fence empty spaces and existing pastures, not rooms or fields
-      return this.cell.type !== 'room' && this.cell.type !== 'field'
+
+      // If already selected, can always click to deselect
+      if (this.isSelected) {
+        return true
+      }
+
+      // Check if this is in the fenceable spaces list
+      const fenceableSpaces = this.ui.fencing?.fenceableSpaces || []
+      const isFenceable = fenceableSpaces.some(
+        s => s.row === this.row && s.col === this.col
+      )
+      if (!isFenceable) {
+        return false
+      }
+
+      // If no spaces selected yet, all fenceable spaces are valid
+      const selectedSpaces = this.ui.fencing?.selectedSpaces || []
+      if (selectedSpaces.length === 0) {
+        return true
+      }
+
+      // Otherwise, only adjacent to current selection
+      return this.isAdjacentToSelection(selectedSpaces)
     },
 
     // Check if this cell can be plowed
@@ -286,6 +307,18 @@ export default {
   },
 
   methods: {
+    isAdjacentToSelection(selectedSpaces) {
+      for (const selected of selectedSpaces) {
+        const rowDiff = Math.abs(this.row - selected.row)
+        const colDiff = Math.abs(this.col - selected.col)
+        // Adjacent means exactly one step in one direction
+        if ((rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1)) {
+          return true
+        }
+      }
+      return false
+    },
+
     handleClick() {
       // Handle plowing clicks
       if (this.canPlow) {
@@ -347,28 +380,16 @@ export default {
         return
       }
 
-      // Handle fencing clicks
+      // Handle fencing clicks - toggle local selection
       if (!this.canFence) {
         return
       }
 
-      // Determine the correct choice to emit based on current selection state
-      // If selected, emit "Deselect (row,col)", else emit "Space (row,col)"
-      const choiceName = this.isSelected
-        ? `Deselect (${this.row},${this.col})`
-        : `Space (${this.row},${this.col})`
-
-      // Emit the event to select this option in the WaitingPanel
-      this.bus.emit('user-select-option', {
-        actor: this.actor,
-        optionName: choiceName,
-        opts: {},
+      // Emit event to toggle this space in the local fencing selection
+      this.bus.emit('toggle-fence-space', {
+        row: this.row,
+        col: this.col,
       })
-
-      // Auto-submit the selection after a brief delay to let the checkbox update
-      setTimeout(() => {
-        this.bus.emit('click-choose-selected-option')
-      }, 50)
     },
   },
 }
