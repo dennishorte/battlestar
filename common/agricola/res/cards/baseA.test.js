@@ -1922,8 +1922,8 @@ describe('BaseA Cards', () => {
         dennis: {
           farmyard: {
             rooms: 3,
-            fields: [{ row: 1, col: 0, crop: 'grain', cropCount: 2 }],
-            stables: [{ row: 1, col: 1 }],
+            fields: [{ row: 0, col: 2, crop: 'grain', cropCount: 2 }],
+            stables: [{ row: 2, col: 1 }],
           },
         },
       })

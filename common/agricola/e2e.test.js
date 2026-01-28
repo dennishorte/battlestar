@@ -337,9 +337,9 @@ describe('Agricola End-to-End', () => {
         farmyard: {
           rooms: 3, // 3 points for clay rooms
           fields: [
-            { row: 1, col: 0 },
-            { row: 1, col: 1 },
-            { row: 2, col: 0 },
+            { row: 0, col: 2 },
+            { row: 0, col: 3 },
+            { row: 0, col: 4 },
           ], // 3 fields = 2 points
         },
       },

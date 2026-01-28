@@ -64,9 +64,9 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
 
-    // Place starting rooms (top-left 2 spaces)
+    // Place starting rooms (top-left, vertically stacked)
     this.farmyard.grid[0][0] = { type: 'room', roomType: 'wood' }
-    this.farmyard.grid[0][1] = { type: 'room', roomType: 'wood' }
+    this.farmyard.grid[1][0] = { type: 'room', roomType: 'wood' }
 
     // Pet animal (one animal can live in the house)
     this.pet = null

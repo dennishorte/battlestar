@@ -43,8 +43,8 @@ describe('Agricola', () => {
 
       const dennis = game.players.byName('dennis')
       expect(dennis.getSpace(0, 0).type).toBe('room')
-      expect(dennis.getSpace(0, 1).type).toBe('room')
-      expect(dennis.getSpace(0, 2).type).toBe('empty')
+      expect(dennis.getSpace(1, 0).type).toBe('room')
+      expect(dennis.getSpace(0, 1).type).toBe('empty')
     })
 
     test('base action spaces are initialized', () => {
@@ -228,7 +228,7 @@ describe('Agricola', () => {
       expect(dennis.canGrowFamily(true)).toBe(false)
 
       // Add a room
-      dennis.buildRoom(0, 2)
+      dennis.buildRoom(0, 1)
       expect(dennis.canGrowFamily(true)).toBe(true)
     })
 
@@ -318,10 +318,10 @@ describe('Agricola', () => {
 
       const dennis = game.players.byName('dennis')
 
-      // Adjacent to room at (0,1)
-      expect(dennis.canBuildRoom(0, 2)).toBe(true)
-      expect(dennis.canBuildRoom(1, 0)).toBe(true)
+      // Adjacent to rooms at (0,0) and (1,0)
+      expect(dennis.canBuildRoom(0, 1)).toBe(true)
       expect(dennis.canBuildRoom(1, 1)).toBe(true)
+      expect(dennis.canBuildRoom(2, 0)).toBe(true)
 
       // Not adjacent to any room
       expect(dennis.canBuildRoom(2, 4)).toBe(false)
@@ -332,10 +332,10 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      dennis.buildRoom(0, 2)
+      dennis.buildRoom(0, 1)
 
-      expect(dennis.getSpace(0, 2).type).toBe('room')
-      expect(dennis.getSpace(0, 2).roomType).toBe('wood')
+      expect(dennis.getSpace(0, 1).type).toBe('room')
+      expect(dennis.getSpace(0, 1).roomType).toBe('wood')
       expect(dennis.getRoomCount()).toBe(3)
     })
 
@@ -348,8 +348,8 @@ describe('Agricola', () => {
 
       // Should be adjacent to existing rooms
       expect(validSpaces.length).toBeGreaterThan(0)
-      expect(validSpaces.some(s => s.row === 0 && s.col === 2)).toBe(true)
-      expect(validSpaces.some(s => s.row === 1 && s.col === 0)).toBe(true)
+      expect(validSpaces.some(s => s.row === 0 && s.col === 1)).toBe(true)
+      expect(validSpaces.some(s => s.row === 2 && s.col === 0)).toBe(true)
     })
 
     test('canAffordRoom checks resources', () => {
@@ -411,9 +411,9 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      expect(dennis.plowField(1, 0)).toBe(true)
+      expect(dennis.plowField(0, 1)).toBe(true)
 
-      expect(dennis.getSpace(1, 0).type).toBe('field')
+      expect(dennis.getSpace(0, 1).type).toBe('field')
       expect(dennis.getFieldCount()).toBe(1)
     })
 
@@ -430,9 +430,9 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      dennis.plowField(1, 0)
+      dennis.plowField(0, 1)
 
-      expect(dennis.canPlowField(1, 1)).toBe(true)  // Adjacent
+      expect(dennis.canPlowField(0, 2)).toBe(true)  // Adjacent
       expect(dennis.canPlowField(2, 4)).toBe(false) // Not adjacent
     })
 
@@ -441,12 +441,12 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      dennis.plowField(1, 0)
+      dennis.plowField(0, 1)
       dennis.grain = 1
 
-      expect(dennis.sowField(1, 0, 'grain')).toBe(true)
+      expect(dennis.sowField(0, 1, 'grain')).toBe(true)
 
-      const space = dennis.getSpace(1, 0)
+      const space = dennis.getSpace(0, 1)
       expect(space.crop).toBe('grain')
       expect(space.cropCount).toBe(3) // 1 + 2 bonus
       expect(dennis.grain).toBe(0)
@@ -457,14 +457,14 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      t.plowFields(dennis, [{ row: 1, col: 0 }])
-      t.sowFields(dennis, [{ row: 1, col: 0, crop: 'grain', cropCount: 3 }])
+      t.plowFields(dennis, [{ row: 0, col: 1 }])
+      t.sowFields(dennis, [{ row: 0, col: 1, crop: 'grain', cropCount: 3 }])
 
       const harvested = dennis.harvestFields()
 
       expect(harvested.grain).toBe(1)
       expect(dennis.grain).toBe(1)
-      expect(dennis.getSpace(1, 0).cropCount).toBe(2)
+      expect(dennis.getSpace(0, 1).cropCount).toBe(2)
     })
   })
 
@@ -474,9 +474,9 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      expect(dennis.buildStable(1, 0)).toBe(true)
+      expect(dennis.buildStable(2, 0)).toBe(true)
 
-      expect(dennis.getSpace(1, 0).hasStable).toBe(true)
+      expect(dennis.getSpace(2, 0).hasStable).toBe(true)
       expect(dennis.getStableCount()).toBe(1)
     })
 
@@ -485,10 +485,10 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      dennis.plowField(1, 0)
+      dennis.plowField(2, 0)
 
       expect(dennis.canBuildStable(0, 0)).toBe(false) // Room
-      expect(dennis.canBuildStable(1, 0)).toBe(false) // Field
+      expect(dennis.canBuildStable(2, 0)).toBe(false) // Field
     })
 
     test('max 4 stables per player', () => {
@@ -524,7 +524,7 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      dennis.buildStable(1, 0)
+      dennis.buildStable(2, 0)
 
       expect(dennis.addAnimals('sheep', 2)).toBe(true)
       expect(dennis.getTotalAnimals('sheep')).toBe(2)
@@ -535,7 +535,7 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      t.addPasture(dennis, [{ row: 1, col: 0 }, { row: 1, col: 1 }])
+      t.addPasture(dennis, [{ row: 2, col: 0 }, { row: 2, col: 1 }])
 
       // 2 spaces * 2 = 4 capacity, plus 1 pet = 5 total
       expect(dennis.addAnimals('sheep', 5)).toBe(true)
@@ -547,8 +547,8 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      dennis.buildStable(1, 0)
-      t.addPasture(dennis, [{ row: 1, col: 0 }])
+      dennis.buildStable(2, 0)
+      t.addPasture(dennis, [{ row: 2, col: 0 }])
 
       // 1 space * 2 * 2 (stable) = 4, plus 1 pet = 5
       expect(dennis.canPlaceAnimals('sheep', 5)).toBe(true)
