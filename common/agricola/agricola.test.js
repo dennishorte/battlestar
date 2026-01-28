@@ -891,7 +891,7 @@ describe('Agricola', () => {
   describe('action spaces', () => {
     test('getActionById returns correct action', () => {
       const action = res.getActionById('take-wood')
-      expect(action.name).toBe('Take Wood')
+      expect(action.name).toBe('Forest') // Revised Edition name
       expect(action.type).toBe('accumulating')
     })
 
@@ -918,56 +918,72 @@ describe('Agricola', () => {
       expect(game.state.activeActions).not.toContain('copse')
     })
 
+    // Revised Edition: 3-player and 4+ player have different action sets (not cumulative)
     test('3 player game has 4 additional actions', () => {
       const game = t.fixture({ numPlayers: 3 })
       game.run()
 
-      // Should have 3-player actions
-      expect(game.state.activeActions).toContain('clay-pit')
-      expect(game.state.activeActions).toContain('take-1-building-resource')
-      expect(game.state.activeActions).toContain('take-3-wood')
+      // Should have 3-player actions (Revised Edition names)
+      expect(game.state.activeActions).toContain('grove')
+      expect(game.state.activeActions).toContain('hollow')
       expect(game.state.activeActions).toContain('resource-market')
+      expect(game.state.activeActions).toContain('lessons-3')
 
-      // Should NOT have 4-5 player actions
+      // Should NOT have 4+ player actions
       expect(game.state.activeActions).not.toContain('copse')
-      expect(game.state.activeActions).not.toContain('take-2-wood')
+      expect(game.state.activeActions).not.toContain('lessons-4')
+      expect(game.state.activeActions).not.toContain('traveling-players')
     })
 
     test('4 player game has 6 additional actions', () => {
       const game = t.fixture({ numPlayers: 4 })
       game.run()
 
-      // Should have all 3-player actions
-      expect(game.state.activeActions).toContain('clay-pit')
-      expect(game.state.activeActions).toContain('take-1-building-resource')
-
-      // Should also have 4-5 player actions
+      // 4+ player games have their own set (Revised Edition)
       expect(game.state.activeActions).toContain('copse')
-      expect(game.state.activeActions).toContain('take-2-wood')
+      expect(game.state.activeActions).toContain('grove')
+      expect(game.state.activeActions).toContain('hollow')
+      expect(game.state.activeActions).toContain('resource-market')
+      expect(game.state.activeActions).toContain('lessons-4')
+      expect(game.state.activeActions).toContain('traveling-players')
+
+      // Should NOT have 3-player specific actions
+      expect(game.state.activeActions).not.toContain('lessons-3')
     })
 
     test('5 player game has 6 additional actions', () => {
       const game = t.fixture({ numPlayers: 5 })
       game.run()
 
-      // Should have all actions
-      expect(game.state.activeActions).toContain('clay-pit')
+      // Same as 4-player (Revised Edition)
       expect(game.state.activeActions).toContain('copse')
-      expect(game.state.activeActions).toContain('take-2-wood')
+      expect(game.state.activeActions).toContain('grove')
+      expect(game.state.activeActions).toContain('hollow')
       expect(game.state.activeActions).toContain('resource-market')
+      expect(game.state.activeActions).toContain('lessons-4')
+      expect(game.state.activeActions).toContain('traveling-players')
     })
 
     test('getAdditionalActionsForPlayerCount returns correct actions', () => {
       expect(res.getAdditionalActionsForPlayerCount(2)).toHaveLength(0)
-      expect(res.getAdditionalActionsForPlayerCount(3)).toHaveLength(4)
-      expect(res.getAdditionalActionsForPlayerCount(4)).toHaveLength(6)
+      expect(res.getAdditionalActionsForPlayerCount(3)).toHaveLength(4) // Revised Edition: grove, hollow, resource-market, lessons-3
+      expect(res.getAdditionalActionsForPlayerCount(4)).toHaveLength(6) // Revised Edition: copse, grove, hollow, resource-market, lessons-4, traveling-players
       expect(res.getAdditionalActionsForPlayerCount(5)).toHaveLength(6)
     })
 
-    test('clay-pit accumulates 2 clay per round', () => {
-      const action = res.getActionById('clay-pit')
-      expect(action.type).toBe('accumulating')
-      expect(action.accumulates.clay).toBe(2)
+    // Revised Edition: Hollow replaces Clay Pit for additional players
+    test('hollow accumulates clay per round', () => {
+      // 3-player Hollow accumulates 1 clay
+      const threePlayerActions = res.getAdditionalActionsForPlayerCount(3)
+      const hollow3 = threePlayerActions.find(a => a.id === 'hollow')
+      expect(hollow3.type).toBe('accumulating')
+      expect(hollow3.accumulates.clay).toBe(1)
+
+      // 4+ player Hollow accumulates 2 clay
+      const fourPlayerActions = res.getAdditionalActionsForPlayerCount(4)
+      const hollow4 = fourPlayerActions.find(a => a.id === 'hollow')
+      expect(hollow4.type).toBe('accumulating')
+      expect(hollow4.accumulates.clay).toBe(2)
     })
 
     test('copse accumulates 1 wood per round', () => {
@@ -976,11 +992,25 @@ describe('Agricola', () => {
       expect(action.accumulates.wood).toBe(1)
     })
 
-    test('resource-market allows choosing 2 different resources', () => {
-      const action = res.getActionById('resource-market')
-      expect(action.allowsResourceChoice).toEqual(['wood', 'clay', 'reed', 'stone'])
-      expect(action.choiceCount).toBe(2)
-      expect(action.choiceMustBeDifferent).toBe(true)
+    test('grove accumulates 2 wood per round', () => {
+      const action = res.getActionById('grove')
+      expect(action.type).toBe('accumulating')
+      expect(action.accumulates.wood).toBe(2)
+    })
+
+    // Revised Edition: Resource Market is different for 3-player vs 4+ player
+    test('resource-market (3-player) gives 1 food and choice of reed or stone', () => {
+      const threePlayerActions = res.getAdditionalActionsForPlayerCount(3)
+      const action = threePlayerActions.find(a => a.id === 'resource-market')
+      expect(action.gives.food).toBe(1)
+      expect(action.allowsResourceChoice).toEqual(['reed', 'stone'])
+      expect(action.choiceCount).toBe(1)
+    })
+
+    test('resource-market (4+ player) gives food, reed, and stone', () => {
+      const fourPlayerActions = res.getAdditionalActionsForPlayerCount(4)
+      const action = fourPlayerActions.find(a => a.id === 'resource-market')
+      expect(action.gives).toEqual({ food: 1, reed: 1, stone: 1 })
     })
   })
 

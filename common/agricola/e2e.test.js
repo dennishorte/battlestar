@@ -97,12 +97,12 @@ describe('Agricola End-to-End', () => {
 
       // Handle different types of input requests
       if (title === 'Choose an action') {
-        // Pick a simple resource-gathering action if available
+        // Pick a simple resource-gathering action if available (Revised Edition names)
         const preferredActions = [
-          'day laborer', 'take wood', 'take clay', 'take reed', 'fishing',
-          'take grain', 'take 1 grain', 'take stone', 'take sheep',
-          'starting player', 'take vegetable', 'take 1 vegetable',
-          'take 3 wood', 'take 1 building', 'clay pit', 'resource market'
+          'day laborer', 'forest', 'clay pit', 'reed bank', 'fishing',
+          'grain seeds', 'western quarry', 'eastern quarry', 'sheep market',
+          'meeting place', 'vegetable seeds', 'copse', 'grove', 'hollow',
+          'resource market', 'traveling players', 'pig market', 'cattle market'
         ]
 
         let picked = false
@@ -148,9 +148,29 @@ describe('Agricola End-to-End', () => {
         // Resource choice - pick first
         result = respond(game, choices[0])
       }
+      else if (title.includes('improvement') || title.includes('Improvement')) {
+        // Improvement selection - look for "Do not play" option first, then pick any valid choice
+        const skipOpt = choices.find(c => typeof c === 'string' && (c.includes('Do not') || c.includes('Skip') || c.includes('Cancel')))
+        if (skipOpt) {
+          result = respond(game, skipOpt)
+        }
+        else {
+          // Find the first string choice (non-nested)
+          const stringChoice = choices.find(c => typeof c === 'string')
+          result = respond(game, stringChoice || choices[0])
+        }
+      }
       else {
-        // Default: pick first choice
-        result = respond(game, choices[0])
+        // Default: Look for skip options first, then pick first valid choice
+        const skipOpt = choices.find(c => typeof c === 'string' && (c.includes('Do not') || c.includes('Done') || c.includes('Skip') || c.includes('Cancel')))
+        if (skipOpt) {
+          result = respond(game, skipOpt)
+        }
+        else {
+          // Find the first string choice (non-nested) or fall back to first choice
+          const stringChoice = choices.find(c => typeof c === 'string')
+          result = respond(game, stringChoice || choices[0])
+        }
       }
     }
 
@@ -173,17 +193,17 @@ describe('Agricola End-to-End', () => {
     // Round 1 starts - wood has accumulated 3
     expect(game.state.actionSpaces['take-wood'].accumulated).toBe(3)
 
-    // Dennis takes wood (first action choice)
+    // Dennis takes wood (first action choice) - Revised Edition: "Forest"
     expect(getCurrentActor(game)).toBe('dennis')
-    result = selectMatch(game, 'take wood')
+    result = selectMatch(game, 'forest')
 
     // After the action executes, dennis should have wood (get fresh reference)
     expect(getPlayer('dennis').wood).toBe(3)
     expect(game.state.actionSpaces['take-wood'].accumulated).toBe(0)
 
-    // Now it's Micah's turn
+    // Now it's Micah's turn - Revised Edition: "Clay Pit"
     expect(getCurrentActor(game)).toBe('micah')
-    result = selectMatch(game, 'take clay')
+    result = selectMatch(game, 'clay pit')
     expect(getPlayer('micah').clay).toBe(1)
 
     // Scott's turn
@@ -237,7 +257,15 @@ describe('Agricola End-to-End', () => {
         }
       }
       else {
-        result = respond(game, choices[0])
+        // Default: Look for skip options first (handles improvement prompts)
+        const skipOpt = choices.find(c => typeof c === 'string' && (c.includes('Do not') || c.includes('Done') || c.includes('Skip')))
+        if (skipOpt) {
+          result = respond(game, skipOpt)
+        }
+        else {
+          const stringChoice = choices.find(c => typeof c === 'string')
+          result = respond(game, stringChoice || choices[0])
+        }
       }
     }
 
@@ -253,8 +281,8 @@ describe('Agricola End-to-End', () => {
     // Round 1: Wood should have 3 accumulated
     expect(game.state.actionSpaces['take-wood'].accumulated).toBe(3)
 
-    // Take the wood
-    result = selectMatch(game, 'take wood')
+    // Take the wood (Revised Edition: "Forest")
+    result = selectMatch(game, 'forest')
     expect(game.state.actionSpaces['take-wood'].accumulated).toBe(0)
 
     // Complete round 1 by making all other choices
@@ -336,11 +364,11 @@ describe('Agricola End-to-End', () => {
     const game = t.fixture({ numPlayers: 3 })
     game.run()
 
-    // 3-player games should have: clay-pit, take-1-building-resource, take-3-wood, resource-market
-    expect(game.state.activeActions).toContain('clay-pit')
-    expect(game.state.activeActions).toContain('take-1-building-resource')
-    expect(game.state.activeActions).toContain('take-3-wood')
+    // 3-player games should have (Revised Edition): grove, hollow, resource-market, lessons-3
+    expect(game.state.activeActions).toContain('grove')
+    expect(game.state.activeActions).toContain('hollow')
     expect(game.state.activeActions).toContain('resource-market')
+    expect(game.state.activeActions).toContain('lessons-3')
   })
 
 
@@ -354,12 +382,12 @@ describe('Agricola End-to-End', () => {
     // Each player starts with 2 workers
     expect(getPlayer('dennis').getAvailableWorkers()).toBe(2)
 
-    // Dennis uses first worker
-    result = selectMatch(game, 'take wood')
+    // Dennis uses first worker (Revised Edition: "Forest")
+    result = selectMatch(game, 'forest')
     expect(getPlayer('dennis').getAvailableWorkers()).toBe(1)
 
-    // Micah and Scott take their turns
-    result = selectMatch(game, 'take clay')
+    // Micah and Scott take their turns (Revised Edition names)
+    result = selectMatch(game, 'clay pit')
     result = selectMatch(game, 'fishing')
 
     // Dennis uses second worker
@@ -380,13 +408,13 @@ describe('Agricola End-to-End', () => {
     // Dennis is starting player initially
     expect(game.state.startingPlayer).toBe('dennis')
 
-    // Dennis takes wood (not starting player action)
-    result = selectMatch(game, 'take wood')
+    // Dennis takes wood (not starting player action) - Revised Edition: "Forest"
+    result = selectMatch(game, 'forest')
 
-    // Micah takes "Starting Player" action
+    // Micah takes "Meeting Place" action (Revised Edition name for Starting Player)
     expect(getCurrentActor(game)).toBe('micah')
     const micahFoodBefore = getPlayer('micah').food
-    result = selectMatch(game, 'starting player')
+    result = selectMatch(game, 'meeting place')
 
     // Micah should now be starting player
     expect(game.state.startingPlayer).toBe('micah')
@@ -419,7 +447,15 @@ describe('Agricola End-to-End', () => {
       }
 
       const choices = selector.choices || []
-      result = respond(game, choices[0])
+      // Look for skip options first (handles improvement prompts with nested choices)
+      const skipOpt = choices.find(c => typeof c === 'string' && (c.includes('Do not') || c.includes('Done') || c.includes('Skip')))
+      if (skipOpt) {
+        result = respond(game, skipOpt)
+      }
+      else {
+        const stringChoice = choices.find(c => typeof c === 'string')
+        result = respond(game, stringChoice || choices[0])
+      }
     }
 
     expect(result).toBeInstanceOf(GameOverEvent)

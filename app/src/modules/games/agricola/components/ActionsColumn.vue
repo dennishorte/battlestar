@@ -38,29 +38,36 @@
 import ActionSpace from './ActionSpace'
 
 // Action IDs grouped by category (hardcoded to match actionSpaces.js)
+// Revised Edition names
 const BASE_ACTION_IDS = [
-  'build-room-stable',
-  'starting-player',
-  'take-grain',
-  'plow-field',
-  'occupation',
-  'day-laborer',
-  'take-wood',
-  'take-clay',
-  'take-reed',
-  'fishing',
+  'build-room-stable',  // Farm Expansion
+  'starting-player',    // Meeting Place
+  'take-grain',         // Grain Seeds
+  'plow-field',         // Farmland
+  'occupation',         // Lessons
+  'day-laborer',        // Day Laborer
+  'take-wood',          // Forest
+  'take-clay',          // Clay Pit
+  'take-reed',          // Reed Bank
+  'fishing',            // Fishing
 ]
 
+// 3-player additional actions (Revised Edition)
 const THREE_PLAYER_ACTION_IDS = [
-  'take-1-building-resource',
-  'clay-pit',
-  'take-3-wood',
-  'resource-market',
+  'grove',              // Grove: +2 Wood accumulating
+  'hollow',             // Hollow: +1 Clay accumulating
+  'resource-market',    // Resource Market: 1 Food + choice of Reed/Stone
+  'lessons-3',          // Lessons: occupation cost 2 food
 ]
 
+// 4+ player actions (Revised Edition - replaces 3-player actions, not cumulative)
 const FOUR_PLUS_PLAYER_ACTION_IDS = [
-  'copse',
-  'take-2-wood',
+  'copse',              // Copse: +1 Wood accumulating
+  'grove',              // Grove: +2 Wood accumulating
+  'hollow',             // Hollow: +2 Clay accumulating
+  'resource-market',    // Resource Market: 1 Reed + 1 Stone + 1 Food
+  'lessons-4',          // Lessons: occupation cost varies
+  'traveling-players',  // Traveling Players: +1 Food accumulating
 ]
 
 const ROUND_CARDS_BY_STAGE = {

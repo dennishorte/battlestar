@@ -25,46 +25,9 @@
 </template>
 
 <script>
-// Action definitions (matching actionSpaces.js)
-const ACTION_DEFINITIONS = {
-  // Base actions
-  'build-room-stable': { name: 'Build Room/Stable', description: 'Build 1 room and/or 1 stable', type: 'instant' },
-  'starting-player': { name: 'Starting Player', description: 'Become starting player + 1 food', type: 'instant' },
-  'take-grain': { name: 'Take 1 Grain', description: 'Take 1 grain', type: 'instant' },
-  'plow-field': { name: 'Plow 1 Field', description: 'Plow 1 field', type: 'instant' },
-  'occupation': { name: '1 Occupation', description: 'Play 1 occupation card', type: 'instant' },
-  'day-laborer': { name: 'Day Laborer', description: 'Take 2 food', type: 'instant' },
-  'take-wood': { name: 'Take Wood', description: 'Take accumulated wood', type: 'accumulating', resource: 'wood' },
-  'take-clay': { name: 'Take Clay', description: 'Take accumulated clay', type: 'accumulating', resource: 'clay' },
-  'take-reed': { name: 'Take Reed', description: 'Take accumulated reed', type: 'accumulating', resource: 'reed' },
-  'fishing': { name: 'Fishing', description: 'Take accumulated food', type: 'accumulating', resource: 'food' },
+import { agricola } from 'battlestar-common'
 
-  // Round cards
-  'sow-bake': { name: 'Sow/Bake Bread', description: 'Sow seeds and/or bake bread', type: 'instant' },
-  'take-sheep': { name: 'Take Sheep', description: 'Take accumulated sheep', type: 'accumulating', resource: 'sheep' },
-  'fencing': { name: 'Fencing', description: 'Build fences', type: 'instant' },
-  'major-minor-improvement': { name: 'Major/Minor Improvement', description: 'Build improvement', type: 'instant' },
-  'family-growth-minor': { name: 'Family Growth + Minor', description: 'Grow family + optional improvement', type: 'instant' },
-  'take-stone-1': { name: 'Take Stone', description: 'Take accumulated stone', type: 'accumulating', resource: 'stone' },
-  'renovation-improvement': { name: 'Renovation + Improvement', description: 'Renovate + optional improvement', type: 'instant' },
-  'take-vegetable': { name: 'Take 1 Vegetable', description: 'Take 1 vegetable', type: 'instant' },
-  'take-boar': { name: 'Take Wild Boar', description: 'Take accumulated boar', type: 'accumulating', resource: 'boar' },
-  'take-cattle': { name: 'Take Cattle', description: 'Take accumulated cattle', type: 'accumulating', resource: 'cattle' },
-  'take-stone-2': { name: 'Take Stone', description: 'Take accumulated stone', type: 'accumulating', resource: 'stone' },
-  'family-growth-urgent': { name: 'Family Growth (No Room)', description: 'Grow family without room', type: 'instant' },
-  'plow-sow': { name: 'Plow and/or Sow', description: 'Plow field and/or sow', type: 'instant' },
-  'renovation-fencing': { name: 'Renovation/Fencing', description: 'Renovate and/or fence', type: 'instant' },
-
-  // 3+ player actions
-  'take-1-building-resource': { name: '1 Building Resource', description: 'Take 1 wood, clay, reed, or stone', type: 'instant' },
-  'clay-pit': { name: 'Clay Pit', description: 'Take accumulated clay', type: 'accumulating', resource: 'clay' },
-  'take-3-wood': { name: 'Take 3 Wood', description: 'Take 3 wood', type: 'instant' },
-  'resource-market': { name: 'Resource Market', description: 'Take 2 different building resources', type: 'instant' },
-
-  // 4+ player actions
-  'copse': { name: 'Copse', description: 'Take accumulated wood', type: 'accumulating', resource: 'wood' },
-  'take-2-wood': { name: 'Take 2 Wood', description: 'Take 2 wood', type: 'instant' },
-}
+const res = agricola.res
 
 const RESOURCE_ICONS = {
   wood: '🪵',
@@ -93,7 +56,15 @@ export default {
 
   computed: {
     action() {
-      return ACTION_DEFINITIONS[this.actionId] || { name: this.actionId, description: '', type: 'instant' }
+      return res.getActionById(this.actionId) || { name: this.actionId, description: '', type: 'instant' }
+    },
+
+    accumulatedResource() {
+      // Extract resource type from the accumulates object
+      if (this.action?.accumulates) {
+        return Object.keys(this.action.accumulates)[0]
+      }
+      return null
     },
 
     actionState() {
@@ -131,7 +102,7 @@ export default {
     },
 
     accumulatedIcon() {
-      return RESOURCE_ICONS[this.action.resource] || '📦'
+      return RESOURCE_ICONS[this.accumulatedResource] || '📦'
     },
 
     isSelectable() {

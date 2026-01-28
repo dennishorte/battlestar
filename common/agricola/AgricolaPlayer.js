@@ -239,6 +239,9 @@ class AgricolaPlayer extends BasePlayer {
   // Field methods
   // ---------------------------------------------------------------------------
 
+  // Revised Edition rule: Only field TILES count for scoring.
+  // Field cards (like Beanfield) count for prerequisites but NOT for scoring points.
+  // This method counts field tiles only (for scoring).
   getFieldCount() {
     let count = 0
     for (let row = 0; row < res.constants.farmyardRows; row++) {
@@ -246,6 +249,20 @@ class AgricolaPlayer extends BasePlayer {
         if (this.farmyard.grid[row][col].type === 'field') {
           count++
         }
+      }
+    }
+    return count
+  }
+
+  // For prerequisites, field cards should also be counted.
+  // Returns total fields including both field tiles and field cards.
+  getFieldCountForPrereqs() {
+    let count = this.getFieldCount()
+    // Add field cards (cards with isField: true property)
+    for (const cardId of this.playedMinorImprovements) {
+      const card = res.getCardById(cardId)
+      if (card && card.isField) {
+        count++
       }
     }
     return count
@@ -891,6 +908,12 @@ class AgricolaPlayer extends BasePlayer {
     }
   }
 
+  // Get total count of building resources (for tie-breaker)
+  // Revised Edition: wood + clay + reed + stone remaining in supply
+  getBuildingResourcesCount() {
+    return this.wood + this.clay + this.reed + this.stone
+  }
+
   getPastureAtSpace(row, col) {
     for (const pasture of this.farmyard.pastures) {
       if (pasture.spaces.some(s => s.row === row && s.col === col)) {
@@ -1418,6 +1441,8 @@ class AgricolaPlayer extends BasePlayer {
     let points = this.bonusPoints || 0
 
     // Bonus from crafting improvements (joinery, pottery, basketmaker's)
+    // Note: Resources are actually spent in spendResourcesForCraftingBonus()
+    // This method just calculates the points
     for (const id of this.majorImprovements) {
       const imp = res.getMajorImprovementById(id)
       if (imp && imp.abilities && imp.abilities.endGameBonus) {
@@ -1447,6 +1472,58 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     return points
+  }
+
+  // Spend resources for crafting improvement bonus points
+  // Revised Edition: Resources are spent from supply to earn bonus points
+  // This affects tie-breaker calculation (remaining resources)
+  spendResourcesForCraftingBonus() {
+    const spent = { wood: 0, clay: 0, reed: 0, stone: 0 }
+
+    for (const id of this.majorImprovements) {
+      const imp = res.getMajorImprovementById(id)
+      if (imp && imp.abilities && imp.abilities.endGameBonus) {
+        const resource = imp.abilities.endGameBonus.resource
+        const count = this[resource] || 0
+        const bonusPoints = res.calculateCraftingBonus(imp, count)
+
+        // Calculate how many resources were spent for these bonus points
+        // Joinery/Pottery: 3/5/7 for 1/2/3 points
+        // Basketmaker's: 2/4/5 for 1/2/3 points
+        if (bonusPoints > 0) {
+          let resourcesSpent = 0
+          if (imp.id === 'basketmakers-workshop') {
+            // 2/4/5 reed for 1/2/3 points
+            if (bonusPoints >= 3) {
+              resourcesSpent = 5
+            }
+            else if (bonusPoints >= 2) {
+              resourcesSpent = 4
+            }
+            else {
+              resourcesSpent = 2
+            }
+          }
+          else {
+            // Joinery/Pottery: 3/5/7 for 1/2/3 points
+            if (bonusPoints >= 3) {
+              resourcesSpent = 7
+            }
+            else if (bonusPoints >= 2) {
+              resourcesSpent = 5
+            }
+            else {
+              resourcesSpent = 3
+            }
+          }
+          resourcesSpent = Math.min(resourcesSpent, count)
+          this[resource] -= resourcesSpent
+          spent[resource] = resourcesSpent
+        }
+      }
+    }
+
+    return spent
   }
 
   // ---------------------------------------------------------------------------

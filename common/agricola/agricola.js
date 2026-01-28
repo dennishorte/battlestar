@@ -699,6 +699,20 @@ Agricola.prototype.harvestPhase = function() {
   this.feedingPhase()
   this.breedingPhase()
 
+  // Revised Edition rule:
+  // - During breeding phase, you cannot eat/exchange animals
+  // - After breeding in rounds 4, 7, 9, 11, 13: eating/exchanging IS allowed before next round
+  // - After breeding in round 14: game ends IMMEDIATELY, no cooking allowed
+  const isFinalHarvest = this.state.round === res.constants.totalRounds
+
+  if (!isFinalHarvest) {
+    // Allow optional cooking/exchanging after breeding (non-final harvest only)
+    this.postBreedingPhase()
+  }
+  else {
+    this.log.add({ template: 'Final harvest complete - game ends immediately' })
+  }
+
   this.log.outdent()
 }
 
@@ -728,10 +742,14 @@ Agricola.prototype.feedingPhase = function() {
       args: { player, food: required },
     })
 
-    // Allow player to convert resources to food
+    // Allow player to convert resources to food (optional)
+    // Revised Edition rule: Players can withhold other goods (grain, vegetables, animals)
+    // but cannot withhold food tokens. feedFamily() automatically uses all food tokens.
     this.allowFoodConversion(player, required)
 
     // Feed the family
+    // Revised Edition rule: All food tokens are automatically used before taking begging cards.
+    // Players cannot intentionally withhold food tokens to beg more than necessary.
     const result = player.feedFamily()
 
     if (result.beggingCards > 0) {
@@ -874,6 +892,79 @@ Agricola.prototype.breedingPhase = function() {
   }
 }
 
+// Revised Edition: After breeding (non-final harvest only), players may cook/exchange animals
+Agricola.prototype.postBreedingPhase = function() {
+  for (const player of this.players.all()) {
+    // Only offer cooking if player has cooking ability and animals
+    if (!player.hasCookingAbility()) {
+      continue
+    }
+
+    const animals = player.getAllAnimals()
+    const hasAnimals = animals.sheep > 0 || animals.boar > 0 || animals.cattle > 0
+
+    if (!hasAnimals) {
+      continue
+    }
+
+    // Offer optional cooking
+    let wantsToCook = true
+    while (wantsToCook) {
+      const options = []
+
+      const currentAnimals = player.getAllAnimals()
+      if (currentAnimals.sheep > 0) {
+        options.push('Cook 1 sheep')
+      }
+      if (currentAnimals.boar > 0) {
+        options.push('Cook 1 boar')
+      }
+      if (currentAnimals.cattle > 0) {
+        options.push('Cook 1 cattle')
+      }
+
+      if (options.length === 0) {
+        break
+      }
+
+      options.push('Done cooking')
+
+      const selection = this.actions.choose(player, options, {
+        title: 'Cook animals after breeding? (optional)',
+        min: 1,
+        max: 1,
+      })
+
+      const choice = selection[0]
+
+      if (choice === 'Done cooking') {
+        wantsToCook = false
+      }
+      else if (choice === 'Cook 1 sheep') {
+        const food = player.cookAnimal('sheep', 1)
+        this.log.add({
+          template: '{player} cooks 1 sheep for {food} food',
+          args: { player, food },
+        })
+      }
+      else if (choice === 'Cook 1 boar') {
+        const food = player.cookAnimal('boar', 1)
+        this.log.add({
+          template: '{player} cooks 1 boar for {food} food',
+          args: { player, food },
+        })
+      }
+      else if (choice === 'Cook 1 cattle') {
+        const food = player.cookAnimal('cattle', 1)
+        this.log.add({
+          template: '{player} cooks 1 cattle for {food} food',
+          args: { player, food },
+        })
+      }
+    }
+  }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper Methods
@@ -899,11 +990,18 @@ Agricola.prototype.endGame = function() {
   this.log.add({ template: 'Calculating final scores' })
   this.log.indent()
 
-  let highestScore = -Infinity
-  let winner = null
+  // First, spend resources for crafting bonuses (affects tie-breaker)
+  // Revised Edition: Resources spent for Joinery/Pottery/Basketmaker bonus don't count for tie-breaker
+  for (const player of this.players.all()) {
+    player.spendResourcesForCraftingBonus()
+  }
+
+  // Collect scores and remaining resources for all players
+  const playerResults = []
 
   for (const player of this.players.all()) {
     const breakdown = player.getScoreBreakdown()
+    const buildingResources = player.getBuildingResourcesCount()
 
     this.log.add({
       template: '{player} score breakdown:',
@@ -926,19 +1024,53 @@ Agricola.prototype.endGame = function() {
     this.log.add({ template: `Card points: ${breakdown.cardPoints} pts` })
     this.log.add({ template: `Bonus points: ${breakdown.bonusPoints} pts` })
     this.log.add({ template: `TOTAL: ${breakdown.total} points` })
+    this.log.add({ template: `Building resources remaining: ${buildingResources}` })
 
     this.log.outdent()
 
-    if (breakdown.total > highestScore) {
-      highestScore = breakdown.total
-      winner = player
-    }
+    playerResults.push({
+      player,
+      score: breakdown.total,
+      buildingResources,
+    })
   }
 
   this.log.outdent()
 
-  if (winner) {
-    this.youWin(winner, 'highest score')
+  // Determine winner with tie-breaker
+  // Revised Edition: Tie-breaker is building resources (wood + clay + reed + stone) remaining in supply
+  playerResults.sort((a, b) => {
+    // First compare by score (higher is better)
+    if (b.score !== a.score) {
+      return b.score - a.score
+    }
+    // Tie-breaker: more building resources wins
+    return b.buildingResources - a.buildingResources
+  })
+
+  const winner = playerResults[0]
+
+  // Check for unbreakable tie
+  const tiedPlayers = playerResults.filter(
+    p => p.score === winner.score && p.buildingResources === winner.buildingResources
+  )
+
+  if (tiedPlayers.length > 1) {
+    // True tie - multiple winners
+    const names = tiedPlayers.map(p => p.player.name).join(' and ')
+    this.log.add({ template: `Tie between ${names}!` })
+    this.youWin(winner.player, 'tied for highest score')
+  }
+  else if (playerResults[1] && playerResults[1].score === winner.score) {
+    // Won by tie-breaker
+    this.log.add({
+      template: '{player} wins the tie-breaker with {resources} building resources',
+      args: { player: winner.player, resources: winner.buildingResources },
+    })
+    this.youWin(winner.player, 'tie-breaker (more building resources)')
+  }
+  else {
+    this.youWin(winner.player, 'highest score')
   }
 }
 
