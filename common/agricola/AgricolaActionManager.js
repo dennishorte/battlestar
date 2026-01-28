@@ -272,13 +272,17 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     const cost = player.getRoomCost()
+    const roomType = player.roomType
     player.payCost(cost)
     player.buildRoom(row, col)
 
     this.log.add({
       template: '{player} builds a {type} room at ({row},{col})',
-      args: { player, type: player.roomType, row, col },
+      args: { player, type: roomType, row, col },
     })
+
+    // Call onBuildRoom hooks (Roughcaster, Wall Builder)
+    this.callOnBuildRoomHooks(player, roomType)
 
     return true
   }
@@ -323,11 +327,15 @@ class AgricolaActionManager extends BaseActionManager {
 
     const oldType = player.roomType
     player.renovate()
+    const newType = player.roomType
 
     this.log.add({
       template: '{player} renovates from {old} to {new}',
-      args: { player, old: oldType, new: player.roomType },
+      args: { player, old: oldType, new: newType },
     })
+
+    // Call onRenovate hooks (Roughcaster)
+    this.callOnRenovateHooks(player, oldType, newType)
 
     return true
   }
@@ -571,6 +579,9 @@ class AgricolaActionManager extends BaseActionManager {
       args: { player, grain: amount, food },
     })
 
+    // Call onBake hooks (Dutch Windmill gives bonus food after harvest)
+    this.callOnBakeHooks(player)
+
     return true
   }
 
@@ -737,6 +748,10 @@ class AgricolaActionManager extends BaseActionManager {
           template: '{player} builds a pasture with {spaces} spaces using {fences} fences',
           args: { player, spaces: selectedSpaces.length, fences: result.fencesBuilt },
         })
+
+        // Call onBuildPasture hooks (Shepherd's Crook)
+        this.callOnBuildPastureHooks(player, { spaces: selectedSpaces })
+
         return { built: true, fencesBuilt: result.fencesBuilt }
       }
       else {
@@ -863,6 +878,9 @@ class AgricolaActionManager extends BaseActionManager {
       if (improvementId === 'well') {
         this.activateWell(player)
       }
+
+      // Call onBuildImprovement hooks (Junk Room gives food)
+      this.callOnBuildImprovementHooks(player)
 
       return improvementId
     }
@@ -1068,6 +1086,9 @@ class AgricolaActionManager extends BaseActionManager {
       card.onPlay(this.game, player)
     }
 
+    // Call onBuildImprovement hooks (Junk Room gives food)
+    this.callOnBuildImprovementHooks(player)
+
     return true
   }
 
@@ -1168,6 +1189,9 @@ class AgricolaActionManager extends BaseActionManager {
             this.activateWell(player)
           }
 
+          // Call onBuildImprovement hooks (Junk Room gives food)
+          this.callOnBuildImprovementHooks(player)
+
           return improvementId
         }
       }
@@ -1192,6 +1216,9 @@ class AgricolaActionManager extends BaseActionManager {
           if (card.onPlay) {
             card.onPlay(this.game, player)
           }
+
+          // Call onBuildImprovement hooks (Junk Room gives food)
+          this.callOnBuildImprovementHooks(player)
 
           return true
         }
@@ -1357,7 +1384,13 @@ class AgricolaActionManager extends BaseActionManager {
 
     // Handle accumulating actions
     if (action.type === 'accumulating') {
-      return this.takeAccumulatedResource(player, actionId)
+      const result = this.takeAccumulatedResource(player, actionId)
+      if (result) {
+        // Call hooks even for accumulating actions
+        this.callOnActionHooks(player, actionId)
+        this.callOnAnyActionHooks(player, actionId)
+      }
+      return result
     }
 
     // Handle instant actions based on their properties
@@ -1423,7 +1456,211 @@ class AgricolaActionManager extends BaseActionManager {
       this.playOccupation(player)
     }
 
+    // Call onAction hooks for this player's cards
+    this.callOnActionHooks(player, actionId)
+
+    // Call onAnyAction hooks for ALL players' cards
+    this.callOnAnyActionHooks(player, actionId)
+
     return true
+  }
+
+  // ---------------------------------------------------------------------------
+  // Card Hook Helpers
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Call onAction hook on player's active cards
+   */
+  callOnActionHooks(player, actionId) {
+    const results = this.game.callPlayerCardHook(player, 'onAction', actionId)
+    for (const { card, result } of results) {
+      // Handle special return values from onAction
+      if (result.additionalBake) {
+        // Threshing Board: extra bake action
+        this.log.add({
+          template: '{player} gets an additional Bake Bread action from {card}',
+          args: { player, card: card.name },
+        })
+        this.bake(player)
+      }
+      if (result.mayExchangeWoodForFood) {
+        // Basket, Mushroom Collector: offer to exchange wood for food
+        this.offerWoodForFoodExchange(player, card, result.mayExchangeWoodForFood)
+      }
+      if (result.mayBuyAnimal) {
+        // Animal Dealer: offer to buy additional animal
+        this.offerBuyAnimal(player, card, result.mayBuyAnimal)
+      }
+      if (result.mayPayWoodForBonus) {
+        // Harpooner: offer to pay wood for food bonus
+        this.offerHarpoonerBonus(player, card)
+      }
+      if (result.chooseResource) {
+        // Seasonal Worker: choose grain or vegetable
+        this.offerResourceChoice(player, card, result.chooseResource)
+      }
+    }
+  }
+
+  /**
+   * Call onAnyAction hook on ALL players' cards
+   */
+  callOnAnyActionHooks(actingPlayer, actionId) {
+    for (const player of this.game.players.all()) {
+      const cards = this.game.getPlayerActiveCards(player)
+      for (const card of cards) {
+        if (typeof card.onAnyAction === 'function') {
+          card.onAnyAction(this.game, actingPlayer, actionId, player)
+        }
+      }
+    }
+  }
+
+  /**
+   * Offer wood for food exchange (Basket, Mushroom Collector)
+   */
+  offerWoodForFoodExchange(player, card, exchange) {
+    const choices = [
+      `Exchange ${exchange.wood} wood for ${exchange.food} food`,
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Exchange wood for food?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.spendResource('wood', exchange.wood)
+      player.addResource('food', exchange.food)
+      this.log.add({
+        template: '{player} exchanges {wood} wood for {food} food using {card}',
+        args: { player, wood: exchange.wood, food: exchange.food, card: card.name },
+      })
+      // Put wood back on accumulation space (per card text)
+      const actionSpace = this.game.state.actionSpaces['take-wood']
+      if (actionSpace) {
+        actionSpace.accumulated += exchange.wood
+      }
+    }
+  }
+
+  /**
+   * Offer to buy additional animal (Animal Dealer)
+   */
+  offerBuyAnimal(player, card, animalType) {
+    if (player.food < 1) {
+      return
+    }
+    if (!player.canPlaceAnimals(animalType, 1)) {
+      return
+    }
+
+    const choices = [
+      `Buy 1 ${animalType} for 1 food`,
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Buy additional animal?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.spendResource('food', 1)
+      player.addAnimals(animalType, 1)
+      this.log.add({
+        template: '{player} buys 1 {animal} for 1 food using {card}',
+        args: { player, animal: animalType, card: card.name },
+      })
+    }
+  }
+
+  /**
+   * Offer Harpooner bonus (pay 1 wood for food per person + 1 reed)
+   */
+  offerHarpoonerBonus(player, card) {
+    if (player.wood < 1) {
+      return
+    }
+
+    const foodBonus = player.familyMembers
+    const choices = [
+      `Pay 1 wood for ${foodBonus} food and 1 reed`,
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Pay wood for bonus?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.spendResource('wood', 1)
+      player.addResource('food', foodBonus)
+      player.addResource('reed', 1)
+      this.log.add({
+        template: '{player} pays 1 wood for {food} food and 1 reed using {card}',
+        args: { player, food: foodBonus, card: card.name },
+      })
+    }
+  }
+
+  /**
+   * Offer resource choice (Seasonal Worker, Animal Tamer)
+   */
+  offerResourceChoice(player, card, resources) {
+    const choices = resources.map(r => `Take 1 ${r}`)
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Choose resource`,
+      min: 1,
+      max: 1,
+    })
+
+    const chosen = resources.find(r => selection[0].includes(r))
+    if (chosen) {
+      player.addResource(chosen, 1)
+      this.log.add({
+        template: '{player} chooses 1 {resource} from {card}',
+        args: { player, resource: chosen, card: card.name },
+      })
+    }
+  }
+
+  /**
+   * Call onBake hook when player bakes bread
+   */
+  callOnBakeHooks(player) {
+    this.game.callPlayerCardHook(player, 'onBake')
+  }
+
+  /**
+   * Call onBuildRoom hook when player builds a room
+   */
+  callOnBuildRoomHooks(player, roomType) {
+    this.game.callPlayerCardHook(player, 'onBuildRoom', roomType)
+  }
+
+  /**
+   * Call onBuildPasture hook when player builds a pasture
+   */
+  callOnBuildPastureHooks(player, pasture) {
+    this.game.callPlayerCardHook(player, 'onBuildPasture', pasture)
+  }
+
+  /**
+   * Call onRenovate hook when player renovates
+   */
+  callOnRenovateHooks(player, fromType, toType) {
+    this.game.callPlayerCardHook(player, 'onRenovate', fromType, toType)
+  }
+
+  /**
+   * Call onBuildImprovement hook when player builds an improvement
+   */
+  callOnBuildImprovementHooks(player) {
+    this.game.callPlayerCardHook(player, 'onBuildImprovement')
   }
 }
 

@@ -941,6 +941,9 @@ class AgricolaPlayer extends BasePlayer {
       capacity *= 2
     }
 
+    // Apply card modifiers (Drinking Trough: +2 per pasture)
+    capacity = this.applyPastureCapacityModifiers(pasture, capacity)
+
     return capacity
   }
 
@@ -956,8 +959,8 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   getTotalAnimalCapacity(animalType) {
-    // 1 pet in house
-    let capacity = 1
+    // Pet in house (default 1, Animal Tamer: 1 per room)
+    let capacity = this.applyHouseAnimalCapacityModifiers(1)
 
     // Pastures that are empty or already have this type
     for (const pasture of this.farmyard.pastures) {
@@ -1738,6 +1741,120 @@ class AgricolaPlayer extends BasePlayer {
   getScoreBreakdown() {
     const state = this.getScoreState()
     return res.getScoreBreakdown(state)
+  }
+
+  // ---------------------------------------------------------------------------
+  // Card Modifier Hook Helpers
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get all active cards (played occupations + minor improvements)
+   */
+  getActiveCards() {
+    const cards = []
+    for (const cardId of this.playedOccupations) {
+      const card = res.getCardById(cardId)
+      if (card) {
+        cards.push(card)
+      }
+    }
+    for (const cardId of this.playedMinorImprovements) {
+      const card = res.getCardById(cardId)
+      if (card) {
+        cards.push(card)
+      }
+    }
+    return cards
+  }
+
+  /**
+   * Apply modifyPastureCapacity hooks from cards
+   */
+  applyPastureCapacityModifiers(pasture, baseCapacity) {
+    let capacity = baseCapacity
+    for (const card of this.getActiveCards()) {
+      if (typeof card.modifyPastureCapacity === 'function') {
+        capacity = card.modifyPastureCapacity(this, pasture, capacity)
+      }
+    }
+    return capacity
+  }
+
+  /**
+   * Apply modifyHouseAnimalCapacity hooks from cards
+   */
+  applyHouseAnimalCapacityModifiers(baseCapacity) {
+    for (const card of this.getActiveCards()) {
+      if (typeof card.modifyHouseAnimalCapacity === 'function') {
+        return card.modifyHouseAnimalCapacity(this)
+      }
+    }
+    return baseCapacity
+  }
+
+  /**
+   * Apply modifyFenceCost hooks from cards
+   */
+  applyFenceCostModifiers(fenceCount) {
+    for (const card of this.getActiveCards()) {
+      if (typeof card.modifyFenceCost === 'function') {
+        fenceCount = card.modifyFenceCost(this, fenceCount)
+      }
+    }
+    return fenceCount
+  }
+
+  /**
+   * Apply modifyImprovementCost hooks from cards
+   */
+  applyImprovementCostModifiers(cost) {
+    let modifiedCost = { ...cost }
+    for (const card of this.getActiveCards()) {
+      if (typeof card.modifyImprovementCost === 'function') {
+        modifiedCost = card.modifyImprovementCost(this, modifiedCost)
+      }
+    }
+    return modifiedCost
+  }
+
+  /**
+   * Apply modifyAnyCost hooks from cards
+   */
+  applyAnyCostModifiers(cost) {
+    let modifiedCost = { ...cost }
+    for (const card of this.getActiveCards()) {
+      if (typeof card.modifyAnyCost === 'function') {
+        modifiedCost = card.modifyAnyCost(this, modifiedCost)
+      }
+    }
+    return modifiedCost
+  }
+
+  /**
+   * Check if player can use alternate fence resource (Rammed Clay)
+   */
+  canUseAlternateFenceResource() {
+    for (const card of this.getActiveCards()) {
+      if (card.modifyFenceCost) {
+        const result = card.modifyFenceCost()
+        if (result && result.alternateResource) {
+          return result.alternateResource
+        }
+      }
+    }
+    return null
+  }
+
+  /**
+   * Check if player can renovate directly to stone (Conservator)
+   */
+  canRenovateDirectlyToStone() {
+    for (const card of this.getActiveCards()) {
+      if (card.allowDirectStoneRenovation) {
+        return true
+      }
+    }
+    return false
   }
 }
 

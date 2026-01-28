@@ -275,6 +275,215 @@ Agricola.prototype.initializePlayerCards = function() {
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// Card Hook System
+// These methods call hooks on players' cards at appropriate times
+
+/**
+ * Get all active cards for a player (played occupations + minor improvements)
+ */
+Agricola.prototype.getPlayerActiveCards = function(player) {
+  const cards = []
+  for (const cardId of player.playedOccupations) {
+    const card = res.getCardById(cardId)
+    if (card) {
+      cards.push(card)
+    }
+  }
+  for (const cardId of player.playedMinorImprovements) {
+    const card = res.getCardById(cardId)
+    if (card) {
+      cards.push(card)
+    }
+  }
+  return cards
+}
+
+/**
+ * Call a hook on all of a player's active cards
+ * Returns array of results from cards that returned something
+ */
+Agricola.prototype.callPlayerCardHook = function(player, hookName, ...args) {
+  const results = []
+  const cards = this.getPlayerActiveCards(player)
+  for (const card of cards) {
+    if (typeof card[hookName] === 'function') {
+      const result = card[hookName](this, player, ...args)
+      if (result !== undefined) {
+        results.push({ card, result })
+      }
+    }
+  }
+  return results
+}
+
+/**
+ * Call a hook on ALL players' cards (for onAnyAction type hooks)
+ * actingPlayer is the player who triggered the action
+ */
+Agricola.prototype.callAllPlayersCardHook = function(hookName, actingPlayer, ...args) {
+  const results = []
+  for (const player of this.players.all()) {
+    const cards = this.getPlayerActiveCards(player)
+    for (const card of cards) {
+      if (typeof card[hookName] === 'function') {
+        const result = card[hookName](this, actingPlayer, ...args, player)
+        if (result !== undefined) {
+          results.push({ card, player, result })
+        }
+      }
+    }
+  }
+  return results
+}
+
+/**
+ * Call checkTrigger on all cards for a player to see if any trigger conditions are met
+ */
+Agricola.prototype.checkCardTriggers = function(player) {
+  const cards = this.getPlayerActiveCards(player)
+  for (const card of cards) {
+    if (typeof card.checkTrigger === 'function') {
+      card.checkTrigger(this, player)
+    }
+  }
+}
+
+/**
+ * Call onRoundStart for all players
+ */
+Agricola.prototype.callRoundStartHooks = function() {
+  for (const player of this.players.all()) {
+    // Collect scheduled resources from cards
+    this.collectScheduledResources(player)
+
+    // Call onRoundStart hooks
+    const results = this.callPlayerCardHook(player, 'onRoundStart')
+    for (const { card, result } of results) {
+      if (result.mayPlowForFood) {
+        // Plow Driver: offer to plow for 1 food
+        this.offerPlowForFood(player, card)
+      }
+    }
+
+    // Check triggers
+    this.checkCardTriggers(player)
+  }
+}
+
+/**
+ * Collect scheduled resources from cards (food, vegetables, clay, etc.)
+ */
+Agricola.prototype.collectScheduledResources = function(player) {
+  const round = this.state.round
+
+  // Scheduled food (Pond Hut, Wall Builder)
+  if (this.state.scheduledFood?.[player.name]?.[round]) {
+    const amount = this.state.scheduledFood[player.name][round]
+    player.addResource('food', amount)
+    this.log.add({
+      template: '{player} receives {amount} scheduled food',
+      args: { player, amount },
+    })
+    delete this.state.scheduledFood[player.name][round]
+  }
+
+  // Scheduled vegetables (Large Greenhouse)
+  if (this.state.scheduledVegetables?.[player.name]?.[round]) {
+    const amount = this.state.scheduledVegetables[player.name][round]
+    player.addResource('vegetables', amount)
+    this.log.add({
+      template: '{player} receives {amount} scheduled vegetables',
+      args: { player, amount },
+    })
+    delete this.state.scheduledVegetables[player.name][round]
+  }
+
+  // Scheduled clay (Clay Hut Builder)
+  if (this.state.scheduledClay?.[player.name]?.[round]) {
+    const amount = this.state.scheduledClay[player.name][round]
+    player.addResource('clay', amount)
+    this.log.add({
+      template: '{player} receives {amount} scheduled clay',
+      args: { player, amount },
+    })
+    delete this.state.scheduledClay[player.name][round]
+  }
+
+  // Scheduled plows (Handplow)
+  if (this.state.scheduledPlows?.[player.name]?.includes(round)) {
+    this.offerScheduledPlow(player)
+    this.state.scheduledPlows[player.name] = this.state.scheduledPlows[player.name].filter(r => r !== round)
+  }
+}
+
+/**
+ * Offer player the option to plow a field for 1 food (Plow Driver)
+ */
+Agricola.prototype.offerPlowForFood = function(player, card) {
+  if (player.food < 1) {
+    return
+  }
+
+  const choices = ['Plow 1 field for 1 food', 'Skip']
+  const selection = this.actions.choose(player, choices, {
+    title: `${card.name}: Plow for food?`,
+    min: 1,
+    max: 1,
+  })
+
+  if (selection[0] === 'Plow 1 field for 1 food') {
+    player.spendResource('food', 1)
+    this.actions.plowField(player, { immediate: true })
+  }
+}
+
+/**
+ * Offer player a scheduled plow (Handplow)
+ */
+Agricola.prototype.offerScheduledPlow = function(player) {
+  const choices = ['Plow 1 field (Handplow)', 'Skip']
+  const selection = this.actions.choose(player, choices, {
+    title: 'Handplow: Plow scheduled field?',
+    min: 1,
+    max: 1,
+  })
+
+  if (selection[0] === 'Plow 1 field (Handplow)') {
+    this.actions.plowField(player, { immediate: true })
+  }
+}
+
+/**
+ * Call onRoundEnd for all players
+ */
+Agricola.prototype.callRoundEndHooks = function() {
+  const round = this.state.round
+  for (const player of this.players.all()) {
+    this.callPlayerCardHook(player, 'onRoundEnd', round)
+    this.checkCardTriggers(player)
+  }
+}
+
+/**
+ * Call onReturnHome for all players
+ */
+Agricola.prototype.callReturnHomeHooks = function() {
+  for (const player of this.players.all()) {
+    this.callPlayerCardHook(player, 'onReturnHome')
+  }
+}
+
+/**
+ * Call onHarvest for all players (during field phase)
+ */
+Agricola.prototype.callHarvestHooks = function() {
+  for (const player of this.players.all()) {
+    this.callPlayerCardHook(player, 'onHarvest')
+  }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 // Card Drafting Phase
 
 Agricola.prototype.draftPhase = function() {
@@ -442,6 +651,10 @@ Agricola.prototype.mainLoop = function() {
     this.revealRoundAction()
     this.replenishPhase()
     this.collectWellFood()
+
+    // Call round start hooks (collect scheduled resources, check triggers)
+    this.callRoundStartHooks()
+
     this.workPhase()
     this.returnHomePhase()
 
@@ -449,6 +662,9 @@ Agricola.prototype.mainLoop = function() {
     if (res.constants.harvestRounds.includes(this.state.round)) {
       this.harvestPhase()
     }
+
+    // Call round end hooks
+    this.callRoundEndHooks()
 
     this.log.outdent()
   }
@@ -682,6 +898,9 @@ Agricola.prototype.canTakeAction = function(player, actionId) {
 Agricola.prototype.returnHomePhase = function() {
   this.log.add({ template: 'Workers return home' })
 
+  // Call onReturnHome hooks before resetting workers
+  this.callReturnHomeHooks()
+
   for (const player of this.players.all()) {
     player.resetWorkers()
   }
@@ -719,6 +938,9 @@ Agricola.prototype.harvestPhase = function() {
 Agricola.prototype.fieldPhase = function() {
   this.log.add({ template: 'Field Phase: Harvesting crops' })
 
+  // Record last harvest round for Dutch Windmill
+  this.state.lastHarvestRound = this.state.round
+
   for (const player of this.players.all()) {
     const harvested = player.harvestFields()
 
@@ -729,6 +951,9 @@ Agricola.prototype.fieldPhase = function() {
       })
     }
   }
+
+  // Call onHarvest hooks (e.g., Scythe Worker gives bonus grain)
+  this.callHarvestHooks()
 }
 
 Agricola.prototype.feedingPhase = function() {
