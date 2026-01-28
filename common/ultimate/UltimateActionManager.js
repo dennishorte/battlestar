@@ -989,8 +989,8 @@ class UltimateActionManager extends BaseActionManager {
     this.acted(player)
   }
 
-  selfExecute(player, card, opts={}) {
-    this.game.trackChainRule(player, card)
+  selfExecute(executingCard, player, card, opts={}) {
+    this.game.trackChainRule(player, executingCard)
 
     const topCard = this.cards.top(player, card.color)
     const isTopCard = topCard && topCard.name === card.name
@@ -1035,8 +1035,8 @@ class UltimateActionManager extends BaseActionManager {
     this.game.finishChainEvent(player, card)
   }
 
-  superExecute(player, card) {
-    this.selfExecute(player, card, { superExecute: true })
+  superExecute(executingCard, player, card) {
+    this.selfExecute(executingCard, player, card, { superExecute: true })
   }
 
   foreshadowMany = UltimateActionManager.createManyMethod('foreshadow', 2)

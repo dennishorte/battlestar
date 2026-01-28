@@ -14,12 +14,12 @@ module.exports = {
       trigger: 'dogma',
       kind: 'would-instead',
       matches: (game) => game.state.actionNumber === 2,
-      func: (game, player) => {
+      func: (game, player, { self }) => {
         const colorOrder = ['red', 'blue', 'green', 'yellow', 'purple']
         for (const color of colorOrder) {
           const topCard = game.cards.top(player, color)
           if (topCard) {
-            game.actions.superExecute(player, topCard)
+            game.actions.superExecute(self, player, topCard)
           }
         }
       }

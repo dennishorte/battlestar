@@ -9,7 +9,7 @@ module.exports = {
     `I demand you reveal your hand! Meld a revealed card of my choice! Reveal your score pile! Self-execute a card revealed due to this effect of my choice, replacing 'may' with 'must'!`
   ],
   dogmaImpl: [
-    (game, player, { leader }) => {
+    (game, player, { leader, self }) => {
       // Reveal opponent's hand
       const hand = game.cards.byPlayer(player, 'hand')
       game.actions.revealMany(player, hand)
@@ -32,7 +32,7 @@ module.exports = {
       if (toExecute) {
         game.log.add({ template: `Replacing 'may' with 'must' is almost certainly buggy. Tell Dennis what goes wrong.` })
         game.state.dogmaInfo.mayIsMust = true
-        game.actions.selfExecute(player, toExecute)
+        game.actions.selfExecute(self, player, toExecute)
         game.state.dogmaInfo.mayIsMust = false
       }
     },

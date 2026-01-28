@@ -15,7 +15,7 @@ module.exports = {
       triggerAll: true,
       kind: 'would-first',
       matches: (game, player, { owner }) => player.isOpponent(owner),
-      func: (game, player, { owner }) => {
+      func: (game, player, { self, owner }) => {
         const choices = game
           .players
           .opponents(owner)
@@ -50,7 +50,7 @@ module.exports = {
           game.actions.score(owner, card)
         }
         else {
-          game.actions.selfExecute(owner, card)
+          game.actions.selfExecute(self, owner, card)
         }
       }
     }

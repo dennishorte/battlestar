@@ -20,10 +20,10 @@ module.exports = {
     (game, player) => {
       game.actions.chooseAndSplay(player, ['purple'], 'up')
     },
-    (game, player) => {
+    (game, player, { self }) => {
       const cards = game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'))
       if (cards && cards.length > 0) {
-        game.actions.selfExecute(player, cards[0])
+        game.actions.selfExecute(self, player, cards[0])
       }
     }
   ],

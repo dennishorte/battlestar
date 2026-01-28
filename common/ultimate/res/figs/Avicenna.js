@@ -19,7 +19,7 @@ module.exports = {
       trigger: 'dogma',
       kind: 'would-instead',
       matches: (game) => game.state.actionNumber === 1,
-      func: (game, player) => {
+      func: (game, player, { self }) => {
         const availableAchievements = player.availableStandardAchievements()
         if (availableAchievements.length === 0) {
           game.log.add({
@@ -31,7 +31,7 @@ module.exports = {
         const lowest = availableAchievements.sort((l, r) => l.getAge() - r.getAge())[0].getAge()
         const junked = game.actions.junkAvailableAchievement(player, lowest)
 
-        game.actions.superExecute(player, junked)
+        game.actions.superExecute(self, player, junked)
       }
     }
   ]

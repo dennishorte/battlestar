@@ -33,7 +33,7 @@ module.exports = {
         }
       }
     },
-    (game, player) => {
+    (game, player, { self }) => {
       const secrets = game.cards.byPlayer(player, 'safe')
       const secret = game.actions.chooseCards(player, secrets, {
         title: 'Choose a secret to reveal and execute',
@@ -44,7 +44,7 @@ module.exports = {
         game.actions.reveal(player, secret)
 
         if (game.players.current() === player) {
-          game.actions.superExecute(player, secret)
+          game.actions.superExecute(self, player, secret)
         }
       }
     }

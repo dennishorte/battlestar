@@ -22,7 +22,7 @@ module.exports = {
       }
 
       else if (card) {
-        game.actions.selfExecute(player, card)
+        game.actions.selfExecute(self, player, card)
       }
     }
   ],

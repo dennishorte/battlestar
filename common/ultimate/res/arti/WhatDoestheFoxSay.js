@@ -24,10 +24,10 @@ module.exports = {
       game.actions.meld(player, other)
 
       if (player.isCurrentPlayer()) {
-        game.actions.superExecute(player, other)
+        game.actions.superExecute(self, player, other)
       }
       else {
-        game.actions.selfExecute(player, other)
+        game.actions.selfExecute(self, player, other)
       }
     },
   ],

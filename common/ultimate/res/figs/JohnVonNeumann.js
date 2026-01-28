@@ -23,9 +23,9 @@ module.exports = {
       trigger: 'meld',
       kind: 'would-instead',
       matches: () => true,
-      func: (game, player, { card }) => {
+      func: (game, player, { card, self }) => {
         game.actions.meld(player, card)
-        game.actions.selfExecute(player, card)
+        game.actions.selfExecute(self, player, card)
       }
     }
   ]

@@ -15,14 +15,14 @@ module.exports = {
       triggerAll: true,
       kind: 'would-instead',
       matches: (game, player, { owner }) => player.isOpponent(owner),
-      func: (game, player) => {
+      func: (game, player, { self }) => {
         const age = game.actions.chooseAge(player, game.getAges())
         const card = game.actions.drawAndReveal(player, age)
         game.actions.return(player, card)
 
         const topCard = game.cards.top(player, card.color)
         if (topCard) {
-          game.actions.superExecute(player, topCard)
+          game.actions.superExecute(self, player, topCard)
         }
       }
     }

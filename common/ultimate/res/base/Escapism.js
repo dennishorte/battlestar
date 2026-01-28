@@ -9,7 +9,7 @@ module.exports = {
     `Reveal and junk a card in your hand. Return from your hand all cards of value equal to the value of the junked card. Draw three cards of that value. Self-execute the junked card.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const hand = game.zones.byPlayer(player, 'hand').cardlist()
       if (hand.length === 0) {
         game.log.addNoEffect()
@@ -36,7 +36,7 @@ module.exports = {
           game.actions.draw(player, { age: cardValue })
         }
 
-        game.actions.selfExecute(player, card)
+        game.actions.selfExecute(self, player, card)
       }
     }
   ],

@@ -18,8 +18,8 @@ module.exports = {
       matches: (game, player, opts) => {
         return !opts.card.checkIsFigure() && opts.asAction
       },
-      func: (game, player, { card }) => {
-        game.actions.selfExecute(player, card)
+      func: (game, player, { card, self }) => {
+        game.actions.selfExecute(self, player, card)
       },
     },
     {

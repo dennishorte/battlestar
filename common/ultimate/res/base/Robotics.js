@@ -19,7 +19,7 @@ module.exports = {
     (game, player, { self }) => {
       const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 10))
       if (card.checkHasBiscuit('f') || card.checkHasBiscuit('i')) {
-        game.actions.selfExecute(player, card)
+        game.actions.selfExecute(self, player, card)
       }
     },
   ],

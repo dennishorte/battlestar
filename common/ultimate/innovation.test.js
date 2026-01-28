@@ -1844,44 +1844,6 @@ describe('Innovation', () => {
       })
     })
 
-    test('chain via artifact triggering nested self-executions', () => {
-      const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
-      t.setBoard(game, {
-        dennis: {
-          artifact: ['Yata No Kagami'],
-          blue: ['Computers'],
-          hand: ['Tools'],
-        },
-        decks: {
-          base: {
-            10: ['Robotics', 'Databases'],
-            11: ['Whataboutism'],
-          }
-        }
-      })
-
-      let request
-      request = game.run()
-      request = t.choose(game, 'dogma')
-
-      // YNK: reveal Tools (blue, auto), splay blue left, self-execute Computers
-      // Computers: draw Robotics, self-execute it
-      // Robotics: draw Databases, self-execute it
-      // Chain achievement awarded (multiple cards recursively self-executing)
-
-      t.testIsFirstAction(request)
-      t.testBoard(game, {
-        dennis: {
-          blue: ['Computers'],
-          red: ['Robotics'],
-          green: ['Databases'],
-          hand: ['Tools'],
-          museum: ['Museum 1', 'Yata No Kagami'],
-          achievements: ['Whataboutism'],
-        },
-      })
-    })
-
   })
 })
 

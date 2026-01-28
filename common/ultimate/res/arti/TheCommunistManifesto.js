@@ -27,7 +27,7 @@ module.exports = {
       }
 
       if (mine) {
-        game.actions.selfExecute(player, mine)
+        game.actions.selfExecute(self, player, mine)
       }
     }
   ],

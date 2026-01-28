@@ -20,7 +20,7 @@ module.exports = {
         template: '{player} will execute {card}',
         args: { player, card }
       })
-      game.actions.selfExecute(player, card)
+      game.actions.selfExecute(self, player, card)
     },
   ],
 }
