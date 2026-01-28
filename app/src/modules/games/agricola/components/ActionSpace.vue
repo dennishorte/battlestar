@@ -1,11 +1,10 @@
 <template>
   <div
     class="action-space"
-    :class="{ occupied, selectable: isSelectable, selected: isSelected }"
+    :class="{ occupied, selectable: isSelectable, selected: isSelected, clickable: true }"
     @click="handleClick"
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
-    :title="action.description"
   >
     <div class="action-content">
       <div class="action-name">{{ action.name }}</div>
@@ -83,7 +82,7 @@ const RESOURCE_ICONS = {
 export default {
   name: 'ActionSpace',
 
-  inject: ['actor', 'bus', 'game'],
+  inject: ['actor', 'bus', 'game', 'ui'],
 
   props: {
     actionId: {
@@ -163,13 +162,8 @@ export default {
 
   methods: {
     handleClick() {
-      if (this.isSelectable) {
-        this.bus.emit('user-select-option', {
-          actor: this.actor,
-          optionName: this.action.name,
-          opts: { prefix: true },
-        })
-      }
+      // Always show the action space modal on click
+      this.ui.fn.showActionSpace(this.actionId)
     },
 
     handleMouseEnter() {
@@ -200,8 +194,13 @@ export default {
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: .25em;
-  cursor: default;
+  cursor: pointer;
   transition: all 0.15s ease;
+}
+
+.action-space.clickable:hover {
+  border-color: #aaa;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
 .action-space.selectable {

@@ -34,6 +34,7 @@
       <ScoreTable />
     </ModalBase>
 
+    <ActionSpaceModal />
     <CardViewerModal />
     <ScoreBreakdownModal />
     <DebugModal />
@@ -77,6 +78,7 @@ import RoundInfo from './RoundInfo'
 import ScoreTable from './ScoreTable'
 
 // Modals
+import ActionSpaceModal from './ActionSpaceModal'
 import CardViewerModal from './CardViewerModal'
 import ScoreBreakdownModal from './ScoreBreakdownModal'
 import DebugModal from '@/modules/games/common/components/DebugModal'
@@ -102,6 +104,7 @@ export default {
     ScoreTable,
     WaitingPanel,
 
+    ActionSpaceModal,
     CardViewerModal,
     ScoreBreakdownModal,
     DebugModal,
@@ -112,11 +115,15 @@ export default {
       ui: {
         fn: {
           insertSelectorSubtitles: this.insertSelectorSubtitles,
+          showActionSpace: this.showActionSpace,
           showCard: this.showCard,
           showScoreBreakdown: this.showScoreBreakdown,
           selectorOptionComponent: this.selectorOptionComponent,
         },
         modals: {
+          actionSpace: {
+            actionId: '',
+          },
           cardViewer: {
             cardId: '',
             cardType: '',
@@ -287,6 +294,11 @@ export default {
 
     showScores() {
       this.$modal('agricola-scores').show()
+    },
+
+    showActionSpace(actionId) {
+      this.ui.modals.actionSpace.actionId = actionId
+      this.$modal('agricola-action-space').show()
     },
 
     showCard(cardId, cardType) {
