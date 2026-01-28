@@ -112,7 +112,11 @@ export default {
   methods: {
     stageActionIds(stage) {
       const stageCards = ROUND_CARDS_BY_STAGE[stage] || []
-      return stageCards.filter(id => this.activeActions.includes(id))
+      // Filter to only active cards, then sort by their position in activeActions
+      // (which reflects the order they were revealed)
+      return stageCards
+        .filter(id => this.activeActions.includes(id))
+        .sort((a, b) => this.activeActions.indexOf(a) - this.activeActions.indexOf(b))
     },
   },
 }
