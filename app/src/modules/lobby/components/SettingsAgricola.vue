@@ -5,7 +5,28 @@
       <span class="player-range">(1-5 players supported)</span>
     </div>
 
-    <div class="draft-option">
+    <div class="setting-group">
+      <div class="setting-label">Card Sets</div>
+      <div class="card-sets">
+        <label
+          v-for="set in availableCardSets"
+          :key="set.id"
+          class="checkbox-label"
+        >
+          <input
+            type="checkbox"
+            :value="set.id"
+            v-model="selectedCardSets"
+            @change="onCardSetsChanged"
+          />
+          <span>{{ set.name }}</span>
+          <span class="set-count">({{ set.minorCount }} minor, {{ set.occupationCount }} occupations)</span>
+        </label>
+      </div>
+      <div v-if="cardSetError" class="validation-error">{{ cardSetError }}</div>
+    </div>
+
+    <div class="setting-group">
       <label class="checkbox-label">
         <input type="checkbox" v-model="useDrafting" @change="save" />
         <span>Card Drafting</span>
@@ -17,14 +38,40 @@
 
 
 <script>
+import { agricola } from 'battlestar-common'
+
+const res = agricola.res
+
 export default {
   name: 'SettingsAgricola',
 
   inject: ['lobby', 'save'],
 
+  data() {
+    return {
+      cardSetError: '',
+    }
+  },
+
   computed: {
     playerCount() {
       return this.lobby.users.length
+    },
+
+    availableCardSets() {
+      return Object.values(res.cardSets)
+    },
+
+    selectedCardSets: {
+      get() {
+        return this.lobby.options?.cardSets || res.getCardSetIds()
+      },
+      set(value) {
+        if (!this.lobby.options) {
+          this.lobby.options = {}
+        }
+        this.lobby.options.cardSets = [...value]
+      },
     },
 
     useDrafting: {
@@ -50,11 +97,30 @@ export default {
   },
 
   methods: {
+    onCardSetsChanged() {
+      this.updateValid()
+      this.save()
+    },
+
     updateValid() {
-      // Agricola supports 1-5 players
       const numPlayers = this.lobby.users.length
       const playersCondition = 1 <= numPlayers && numPlayers <= 5
 
+      const setIds = this.selectedCardSets
+      if (setIds.length === 0) {
+        this.cardSetError = 'At least one card set must be selected'
+        this.lobby.valid = false
+        return
+      }
+
+      const validation = res.validateCardSets(setIds, numPlayers)
+      if (!validation.valid) {
+        this.cardSetError = validation.errors[0]
+        this.lobby.valid = false
+        return
+      }
+
+      this.cardSetError = ''
       this.lobby.valid = playersCondition
     },
   },
@@ -62,6 +128,9 @@ export default {
   created() {
     if (!this.lobby.options) {
       this.lobby.options = {}
+    }
+    if (!this.lobby.options.cardSets) {
+      this.lobby.options.cardSets = res.getCardSetIds()
     }
     this.updateValid()
   },
@@ -90,10 +159,20 @@ export default {
   font-size: .9em;
 }
 
-.draft-option {
+.setting-group {
+  margin-bottom: .75em;
+}
+
+.setting-label {
+  font-weight: 500;
+  margin-bottom: .35em;
+}
+
+.card-sets {
   display: flex;
   flex-direction: column;
   gap: .25em;
+  margin-left: .25em;
 }
 
 .checkbox-label {
@@ -107,9 +186,21 @@ export default {
   cursor: pointer;
 }
 
+.set-count {
+  color: #888;
+  font-size: .85em;
+}
+
 .option-description {
   color: #666;
   font-size: .85em;
   margin-left: 1.5em;
+}
+
+.validation-error {
+  color: #d32f2f;
+  font-size: .85em;
+  margin-top: .25em;
+  margin-left: .25em;
 }
 </style>

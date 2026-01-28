@@ -45,6 +45,7 @@ function AgricolaFactory(settings, viewerName) {
   const data = GameFactory(settings)
   data.settings = data.settings || {}
   data.settings.useDrafting = settings.useDrafting || false
+  data.settings.cardSets = settings.cardSets || res.getCardSetIds()
   return new Agricola(data, viewerName)
 }
 
@@ -56,6 +57,7 @@ function factoryFromLobby(lobby) {
     seed: lobby.seed,
     numPlayers: lobby.users.length,
     useDrafting: lobby.options?.useDrafting || false,
+    cardSets: lobby.options?.cardSets || res.getCardSetIds(),
   })
 }
 
@@ -208,9 +210,16 @@ Agricola.prototype.initializeMajorImprovements = function() {
 Agricola.prototype.initializePlayerCards = function() {
   const playerCount = this.players.all().length
   const cardsPerPlayer = 7
+  const setIds = this.settings.cardSets || res.getCardSetIds()
 
-  // Get cards appropriate for this player count
-  const allCards = res.getCardsByPlayerCount(playerCount)
+  // Log which card sets are in use
+  const setNames = setIds.map(id => res.cardSets[id]?.name || id).join(', ')
+  this.log.add({
+    template: `Card sets: ${setNames}`,
+  })
+
+  // Get cards appropriate for this player count from the selected sets
+  const allCards = res.getCardsByPlayerCount(playerCount, setIds)
   const occupations = allCards.filter(c => c.type === 'occupation')
   const minorImprovements = allCards.filter(c => c.type === 'minor')
 

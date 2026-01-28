@@ -83,17 +83,74 @@ module.exports = {
   // Accumulation rates (convenience accessor)
   accumulation: actionSpaces.getAccumulationRates(),
 
-  // Cards
-  cards: {
-    baseA,
-    baseB,
+  // Card sets
+  cardSets: {
+    baseA: {
+      id: 'baseA',
+      name: 'Base A',
+      module: baseA,
+      minorCount: baseA.getMinorImprovements().length,
+      occupationCount: baseA.getOccupations().length,
+    },
+    baseB: {
+      id: 'baseB',
+      name: 'Base B',
+      module: baseB,
+      minorCount: baseB.getMinorImprovements().length,
+      occupationCount: baseB.getOccupations().length,
+    },
   },
+
+  // Get available card set IDs
+  getCardSetIds() {
+    return Object.keys(this.cardSets)
+  },
+
+  // Cards - always searches all sets (for getCardById used by hooks, scoring, etc.)
   getCardById(id) {
     return baseA.getCardById(id) || baseB.getCardById(id)
   },
   getCardByName(name) {
     return baseA.getCardByName(name) || baseB.getCardByName(name)
   },
+
+  // Functions that filter by selected card sets
+  getCardsBySet(setIds) {
+    const modules = (setIds || this.getCardSetIds()).map(id => this.cardSets[id]?.module).filter(Boolean)
+    const cards = []
+    for (const mod of modules) {
+      cards.push(...mod.getAllCards())
+    }
+    return cards
+  },
+  getCardsByPlayerCount(playerCount, setIds) {
+    const modules = (setIds || this.getCardSetIds()).map(id => this.cardSets[id]?.module).filter(Boolean)
+    const cards = []
+    for (const mod of modules) {
+      cards.push(...mod.getCardsByPlayerCount(playerCount))
+    }
+    return cards
+  },
+
+  // Validate that selected sets have enough cards for the player count
+  validateCardSets(setIds, playerCount) {
+    const cardsPerPlayer = 7
+    const cards = this.getCardsByPlayerCount(playerCount, setIds)
+    const occupations = cards.filter(c => c.type === 'occupation')
+    const minors = cards.filter(c => c.type === 'minor')
+    const neededPerType = cardsPerPlayer * playerCount
+
+    const errors = []
+    if (occupations.length < neededPerType) {
+      errors.push(`Not enough occupations: need ${neededPerType}, have ${occupations.length}`)
+    }
+    if (minors.length < neededPerType) {
+      errors.push(`Not enough minor improvements: need ${neededPerType}, have ${minors.length}`)
+    }
+    return { valid: errors.length === 0, errors }
+  },
+
+  // Convenience accessors (return all cards across all sets)
   getMinorImprovements() {
     return [...baseA.getMinorImprovements(), ...baseB.getMinorImprovements()]
   },
@@ -102,11 +159,5 @@ module.exports = {
   },
   getAllCards() {
     return [...baseA.getAllCards(), ...baseB.getAllCards()]
-  },
-  getCardsByPlayerCount(playerCount) {
-    return [
-      ...baseA.getCardsByPlayerCount(playerCount),
-      ...baseB.getCardsByPlayerCount(playerCount),
-    ]
   },
 }
