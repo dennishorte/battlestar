@@ -36,6 +36,8 @@ const KarmaMixin = {
    * @param {Object} player - The player triggering the karma
    * @param {string} trigger - The type of event (e.g., 'draw', 'meld', 'splay')
    * @param {Object} opts - Additional context for the karma
+   * @param {Object} [opts.sourceCard] - If set, only karmas from this card are considered.
+   *   Used by "when-meld" to ensure a card's karma only fires when that card itself is melded.
    * @returns {string|*} The karma kind ('would-instead', etc.) or effect result
    */
   triggerKarma(player, trigger, opts = {}) {
@@ -106,9 +108,14 @@ const KarmaMixin = {
 
   /**
    * Find karmas and filter to those whose conditions match.
+   * When opts.sourceCard is set, only karmas belonging to that card are considered.
    */
   _findAndFilterKarmas(player, trigger, opts) {
-    return this.findKarmasByTrigger(player, trigger)
+    let karmas = this.findKarmasByTrigger(player, trigger)
+    if (opts.sourceCard) {
+      karmas = karmas.filter(info => info.card === opts.sourceCard)
+    }
+    return karmas
       .filter(info => info.impl.matches)
       .filter(info => info.impl.matches(this, player, {
         ...opts,

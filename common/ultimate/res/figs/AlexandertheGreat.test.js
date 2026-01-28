@@ -28,6 +28,35 @@ describe('Alexander the Great', () => {
     })
   })
 
+  test('karma: when-meld does not trigger when melding a different card', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        red: ['Alexander the Great'],
+        hand: ['Archery'],
+      },
+      micah: {
+        purple: ['Homer'],
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, 'Meld.Archery')
+
+    // Homer should NOT be scored because melding Archery should not trigger
+    // Alexander the Great's when-meld karma
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Archery', 'Alexander the Great'],
+      },
+      micah: {
+        purple: ['Homer'],
+      },
+    })
+  })
+
   test('karma: dogma', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {

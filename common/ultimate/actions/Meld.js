@@ -21,7 +21,9 @@ function MeldAction(player, card, opts={}) {
     args: { player, card }
   })
 
-  this.game.triggerKarma(player, 'when-meld', { ...opts, card })
+  // sourceCard restricts when-meld karma to only the melded card's own karmas,
+  // preventing other top cards' when-meld karmas from firing incorrectly.
+  this.game.triggerKarma(player, 'when-meld', { ...opts, card, sourceCard: card })
 
   if (fromMuseum) {
     const museum = this.cards.byPlayer(player, 'museum').filter(card => card.isMuseum)[0]
