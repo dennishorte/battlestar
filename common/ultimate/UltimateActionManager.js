@@ -990,8 +990,6 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   selfExecute(executingCard, player, card, opts={}) {
-    this.game.trackChainRule(player, executingCard)
-
     const topCard = this.cards.top(player, card.color)
     const isTopCard = topCard && topCard.name === card.name
 
@@ -1005,6 +1003,8 @@ class UltimateActionManager extends BaseActionManager {
         kind: (opts.superExecute ? 'super' : 'self'),
       }
     })
+
+    this.game.trackChainRule(player, executingCard)
 
     // Do all visible echo effects in this color.
     if (isTopCard) {
@@ -1032,7 +1032,7 @@ class UltimateActionManager extends BaseActionManager {
     }
     this.game.executeAllEffects(player, card, 'dogma', opts)
 
-    this.game.finishChainEvent(player, card)
+    this.game.finishChainEvent(player, executingCard)
   }
 
   superExecute(executingCard, player, card) {

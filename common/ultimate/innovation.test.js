@@ -1815,7 +1815,6 @@ describe('Innovation', () => {
   })
 
   describe('chain achievement', () => {
-
     test('basic case', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
       t.setBoard(game, {
@@ -1844,6 +1843,33 @@ describe('Innovation', () => {
       })
     })
 
+    test('recursive case', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+      t.setBoard(game, {
+        dennis: {
+          blue: ['Yata No Kagami'],
+          green: ['Priest-King'],
+          hand: ['Tools', 'Sailing', 'Metalworking']
+        },
+      })
+
+      game.run()
+      t.choose(game, 'Dogma.Yata No Kagami')
+      t.choose(game, 'Sailing')
+      t.choose(game, 'Sailing')
+      t.choose(game, 'Tools')
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          blue: ['Yata No Kagami'],
+          green: ['Priest-King'],
+          hand: ['Metalworking'],
+          score: ['Sailing', 'Tools'],
+          achievements: ['Climatology', 'Hypersonics'],
+        },
+      })
+    })
   })
 })
 
