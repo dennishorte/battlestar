@@ -4,6 +4,7 @@ const actionSpaces = require('./actionSpaces.js')
 const majorImprovements = require('./majorImprovements.js')
 const scoringTables = require('./scoringTables.js')
 const baseA = require('./cards/baseA.js')
+const baseB = require('./cards/baseB.js')
 
 // Re-export everything from sub-modules
 module.exports = {
@@ -85,11 +86,27 @@ module.exports = {
   // Cards
   cards: {
     baseA,
+    baseB,
   },
-  getCardById: baseA.getCardById,
-  getCardByName: baseA.getCardByName,
-  getMinorImprovements: baseA.getMinorImprovements,
-  getOccupations: baseA.getOccupations,
-  getAllCards: baseA.getAllCards,
-  getCardsByPlayerCount: baseA.getCardsByPlayerCount,
+  getCardById(id) {
+    return baseA.getCardById(id) || baseB.getCardById(id)
+  },
+  getCardByName(name) {
+    return baseA.getCardByName(name) || baseB.getCardByName(name)
+  },
+  getMinorImprovements() {
+    return [...baseA.getMinorImprovements(), ...baseB.getMinorImprovements()]
+  },
+  getOccupations() {
+    return [...baseA.getOccupations(), ...baseB.getOccupations()]
+  },
+  getAllCards() {
+    return [...baseA.getAllCards(), ...baseB.getAllCards()]
+  },
+  getCardsByPlayerCount(playerCount) {
+    return [
+      ...baseA.getCardsByPlayerCount(playerCount),
+      ...baseB.getCardsByPlayerCount(playerCount),
+    ]
+  },
 }

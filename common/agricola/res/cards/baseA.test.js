@@ -1,17 +1,18 @@
 const t = require('../../testutil.js')
 const res = require('../index.js')
+const baseA = require('./baseA.js')
 
 
 describe('BaseA Cards', () => {
 
   describe('card data', () => {
     test('all minor improvements are defined', () => {
-      const minors = res.getMinorImprovements()
+      const minors = baseA.getMinorImprovements()
       expect(minors.length).toBe(24)
     })
 
     test('all occupations are defined', () => {
-      const occupations = res.getOccupations()
+      const occupations = baseA.getOccupations()
       expect(occupations.length).toBe(24)
     })
 

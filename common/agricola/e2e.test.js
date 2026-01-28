@@ -289,7 +289,15 @@ describe('Agricola End-to-End', () => {
     while (game.state.round === 1 && result instanceof InputRequestEvent) {
       const selector = result.selectors[0]
       const choices = selector.choices || []
-      result = respond(game, choices[0])
+      // Look for skip options first (handles improvement prompts with nested choices)
+      const skipOpt = choices.find(c => typeof c === 'string' && (c.includes('Do not') || c.includes('Done') || c.includes('Skip')))
+      if (skipOpt) {
+        result = respond(game, skipOpt)
+      }
+      else {
+        const stringChoice = choices.find(c => typeof c === 'string')
+        result = respond(game, stringChoice || choices[0])
+      }
     }
 
     // Continue to round 2
