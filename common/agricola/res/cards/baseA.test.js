@@ -607,6 +607,408 @@ describe('BaseA Cards', () => {
         expect(game.state.scheduledVegetables[dennis.name][17]).toBeUndefined()
       })
     })
+
+    describe('Handplow', () => {
+      test('schedules a plow for current round + 5', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            wood: 5,
+            hand: ['handplow'],
+          },
+          round: 3,
+        })
+        game.run()
+
+        game.state.round = 3
+        t.playCard(game, 'dennis', 'handplow')
+
+        const dennis = t.player(game)
+        // Should schedule a plow for round 8
+        expect(game.state.scheduledPlows[dennis.name]).toContain(8)
+      })
+
+      test('does not schedule beyond round 14', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            wood: 5,
+            hand: ['handplow'],
+          },
+          round: 10,
+        })
+        game.run()
+
+        game.state.round = 10
+        t.playCard(game, 'dennis', 'handplow')
+
+        // Round 10+5=15, which is beyond 14 so nothing scheduled
+        expect(game.state.scheduledPlows).toBeUndefined()
+      })
+    })
+
+    describe('Threshing Board', () => {
+      test('returns additionalBake when using plow-field action', () => {
+        const card = res.getCardById('threshing-board')
+        const game = t.fixture()
+        game.run()
+        const dennis = t.player(game)
+
+        const result = card.onAction(game, dennis, 'plow-field')
+        expect(result.additionalBake).toBe(true)
+      })
+
+      test('returns additionalBake when using plow-sow action', () => {
+        const card = res.getCardById('threshing-board')
+        const game = t.fixture()
+        game.run()
+        const dennis = t.player(game)
+
+        const result = card.onAction(game, dennis, 'plow-sow')
+        expect(result.additionalBake).toBe(true)
+      })
+
+      test('does not trigger for other actions', () => {
+        const card = res.getCardById('threshing-board')
+        const game = t.fixture()
+        game.run()
+        const dennis = t.player(game)
+
+        const result = card.onAction(game, dennis, 'take-wood')
+        expect(result).toBeUndefined()
+      })
+    })
+
+    describe('Sleeping Corner', () => {
+      test('has allowOccupiedFamilyGrowth flag', () => {
+        const card = res.getCardById('sleeping-corner')
+        expect(card.allowOccupiedFamilyGrowth).toBe(true)
+      })
+
+      test('has grainFields prerequisite', () => {
+        const card = res.getCardById('sleeping-corner')
+        expect(card.prereqs.grainFields).toBe(2)
+      })
+
+      test('costs 1 wood and gives 1 VP', () => {
+        const card = res.getCardById('sleeping-corner')
+        expect(card.cost).toEqual({ wood: 1 })
+        expect(card.vps).toBe(1)
+      })
+    })
+
+    describe('Big Country', () => {
+      test('gives bonus points and food based on rounds left', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            food: 0,
+            hand: ['big-country'],
+          },
+          round: 10,
+        })
+        game.run()
+
+        game.state.round = 10
+        t.playCard(game, 'dennis', 'big-country')
+
+        const dennis = t.player(game)
+        // 14 - 10 = 4 rounds left
+        expect(dennis.bonusPoints).toBe(4)
+        expect(dennis.food).toBe(8) // 4 rounds * 2 food
+      })
+
+      test('gives nothing when played in round 14', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            food: 0,
+            hand: ['big-country'],
+          },
+          round: 14,
+        })
+        game.run()
+
+        game.state.round = 14
+        t.playCard(game, 'dennis', 'big-country')
+
+        const dennis = t.player(game)
+        // 14 - 14 = 0 rounds left
+        expect(dennis.bonusPoints || 0).toBe(0)
+        expect(dennis.food).toBe(0)
+      })
+    })
+
+    describe('Claypipe', () => {
+      test('gives 2 food when 7+ building resources gained this round', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            food: 0,
+            minorImprovements: ['claypipe'],
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const card = res.getCardById('claypipe')
+
+        // Simulate gaining building resources this round
+        dennis.resourcesGainedThisRound = { wood: 3, clay: 2, stone: 1, reed: 1 } // total = 7
+
+        card.onReturnHome(game, dennis)
+
+        expect(dennis.food).toBe(2)
+      })
+
+      test('gives nothing when fewer than 7 building resources gained', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            food: 0,
+            minorImprovements: ['claypipe'],
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const card = res.getCardById('claypipe')
+
+        // Only 6 building resources
+        dennis.resourcesGainedThisRound = { wood: 3, clay: 2, stone: 1 }
+
+        card.onReturnHome(game, dennis)
+
+        expect(dennis.food).toBe(0)
+      })
+    })
+
+    describe('Junk Room', () => {
+      test('gives 1 food when played (including itself)', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            food: 0,
+            wood: 5,
+            clay: 5,
+            hand: ['junk-room'],
+          },
+        })
+        game.run()
+
+        t.playCard(game, 'dennis', 'junk-room')
+
+        t.testBoard(game, {
+          dennis: {
+            food: 1, // 1 from onPlay
+          },
+        })
+      })
+
+      test('gives 1 food on subsequent improvement builds', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            food: 0,
+            minorImprovements: ['junk-room'],
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const card = res.getCardById('junk-room')
+
+        card.onBuildImprovement(game, dennis)
+        expect(dennis.food).toBe(1)
+
+        card.onBuildImprovement(game, dennis)
+        expect(dennis.food).toBe(2)
+      })
+    })
+
+    describe('Basket', () => {
+      test('returns wood-for-food exchange option on take-wood', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            wood: 5,
+            minorImprovements: ['basket'],
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const card = res.getCardById('basket')
+
+        const result = card.onAction(game, dennis, 'take-wood')
+        expect(result.mayExchangeWoodForFood).toEqual({ wood: 2, food: 3 })
+      })
+
+      test('returns exchange option on copse action too', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            wood: 5,
+            minorImprovements: ['basket'],
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const card = res.getCardById('basket')
+
+        const result = card.onAction(game, dennis, 'copse')
+        expect(result.mayExchangeWoodForFood).toEqual({ wood: 2, food: 3 })
+      })
+
+      test('does not offer exchange with fewer than 2 wood', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            wood: 1,
+            minorImprovements: ['basket'],
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const card = res.getCardById('basket')
+
+        const result = card.onAction(game, dennis, 'take-wood')
+        expect(result).toBeUndefined()
+      })
+    })
+
+    describe('Dutch Windmill', () => {
+      test('gives 3 extra food when baking in round after harvest', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            food: 0,
+            minorImprovements: ['dutch-windmill'],
+          },
+          round: 5,
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const card = res.getCardById('dutch-windmill')
+
+        // Simulate: last harvest was round 4, now it's round 5
+        game.state.lastHarvestRound = 4
+        game.state.round = 5
+
+        card.onBake(game, dennis)
+        expect(dennis.food).toBe(3)
+      })
+
+      test('gives nothing when baking in a non-post-harvest round', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            food: 0,
+            minorImprovements: ['dutch-windmill'],
+          },
+          round: 6,
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const card = res.getCardById('dutch-windmill')
+
+        // Last harvest was round 4, now it's round 6 (not immediately after)
+        game.state.lastHarvestRound = 4
+        game.state.round = 6
+
+        card.onBake(game, dennis)
+        expect(dennis.food).toBe(0)
+      })
+    })
+
+    describe('Clearing Spade', () => {
+      test('has allowsAnytimeCropMove flag', () => {
+        const card = res.getCardById('clearing-spade')
+        expect(card.allowsAnytimeCropMove).toBe(true)
+      })
+
+      test('costs 1 wood', () => {
+        const card = res.getCardById('clearing-spade')
+        expect(card.cost).toEqual({ wood: 1 })
+      })
+    })
+
+    describe('Lumber Mill', () => {
+      test('reduces wood cost of improvements by 1', () => {
+        const card = res.getCardById('lumber-mill')
+        const modified = card.modifyImprovementCost(null, { wood: 3, clay: 2 })
+        expect(modified.wood).toBe(2)
+        expect(modified.clay).toBe(2)
+      })
+
+      test('does not reduce wood below 0', () => {
+        const card = res.getCardById('lumber-mill')
+        const modified = card.modifyImprovementCost(null, { clay: 2 })
+        // No wood key, so cost unchanged
+        expect(modified.clay).toBe(2)
+        expect(modified.wood).toBeUndefined()
+      })
+
+      test('gives 2 VPs', () => {
+        const card = res.getCardById('lumber-mill')
+        expect(card.vps).toBe(2)
+      })
+    })
+
+    describe("Shepherd's Crook", () => {
+      test('gives 2 sheep when fencing a pasture of 4+ spaces', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            wood: 5,
+            minorImprovements: ['shepherds-crook'],
+            farmyard: {
+              pastures: [
+                { spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }, { row: 2, col: 0 }, { row: 2, col: 1 }] },
+              ],
+            },
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const card = res.getCardById('shepherds-crook')
+
+        // Hook is called with the newly-built pasture
+        const pasture = dennis.farmyard.pastures[0]
+        card.onBuildPasture(game, dennis, pasture)
+
+        expect(dennis.getTotalAnimals('sheep')).toBe(2)
+      })
+
+      test('does not give sheep for pastures smaller than 4 spaces', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            wood: 5,
+            minorImprovements: ['shepherds-crook'],
+            farmyard: {
+              pastures: [
+                { spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }, { row: 2, col: 0 }] },
+              ],
+            },
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const card = res.getCardById('shepherds-crook')
+
+        const pasture = dennis.farmyard.pastures[0]
+        card.onBuildPasture(game, dennis, pasture)
+
+        expect(dennis.getTotalAnimals('sheep')).toBe(0)
+      })
+    })
   })
 
   describe('Occupations', () => {
@@ -638,6 +1040,28 @@ describe('BaseA Cards', () => {
       test('allows direct stone renovation', () => {
         const card = res.getCardById('conservator')
         expect(card.allowDirectStoneRenovation).toBe(true)
+      })
+
+      test('player with conservator canRenovateDirectlyToStone returns true', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['conservator'],
+            roomType: 'wood',
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        expect(dennis.canRenovateDirectlyToStone()).toBe(true)
+      })
+
+      test('player without conservator canRenovateDirectlyToStone returns false', () => {
+        const game = t.fixture()
+        game.run()
+
+        const dennis = t.player(game)
+        expect(dennis.canRenovateDirectlyToStone()).toBe(false)
       })
     })
 
@@ -1030,6 +1454,254 @@ describe('BaseA Cards', () => {
       })
     })
 
+    describe('Mushroom Collector', () => {
+      test('returns wood-for-food exchange option on take-wood', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            wood: 3,
+            occupations: ['mushroom-collector'],
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const card = res.getCardById('mushroom-collector')
+
+        const result = card.onAction(game, dennis, 'take-wood')
+        expect(result.mayExchangeWoodForFood).toEqual({ wood: 1, food: 2 })
+      })
+
+      test('returns exchange option on copse action', () => {
+        const card = res.getCardById('mushroom-collector')
+        const game = t.fixture()
+        game.run()
+        const dennis = t.player(game)
+        dennis.wood = 2
+
+        const result = card.onAction(game, dennis, 'copse')
+        expect(result.mayExchangeWoodForFood).toEqual({ wood: 1, food: 2 })
+      })
+
+      test('does not offer exchange with 0 wood', () => {
+        const card = res.getCardById('mushroom-collector')
+        const game = t.fixture()
+        game.run()
+        const dennis = t.player(game)
+        dennis.wood = 0
+
+        const result = card.onAction(game, dennis, 'take-wood')
+        expect(result).toBeUndefined()
+      })
+
+      test('does not trigger for non-wood actions', () => {
+        const card = res.getCardById('mushroom-collector')
+        const game = t.fixture()
+        game.run()
+        const dennis = t.player(game)
+        dennis.wood = 5
+
+        const result = card.onAction(game, dennis, 'take-grain')
+        expect(result).toBeUndefined()
+      })
+    })
+
+    describe('Plow Driver', () => {
+      test('offers plow-for-food when in stone house with food', () => {
+        const card = res.getCardById('plow-driver')
+        const game = t.fixture()
+        game.run()
+        const dennis = t.player(game)
+        dennis.roomType = 'stone'
+        dennis.food = 3
+
+        const result = card.onRoundStart(game, dennis)
+        expect(result.mayPlowForFood).toBe(true)
+      })
+
+      test('does not trigger when not in stone house', () => {
+        const card = res.getCardById('plow-driver')
+        const game = t.fixture()
+        game.run()
+        const dennis = t.player(game)
+        dennis.roomType = 'clay'
+        dennis.food = 3
+
+        const result = card.onRoundStart(game, dennis)
+        expect(result).toBeUndefined()
+      })
+
+      test('does not trigger when no food', () => {
+        const card = res.getCardById('plow-driver')
+        const game = t.fixture()
+        game.run()
+        const dennis = t.player(game)
+        dennis.roomType = 'stone'
+        dennis.food = 0
+
+        const result = card.onRoundStart(game, dennis)
+        expect(result).toBeUndefined()
+      })
+    })
+
+    describe('Adoptive Parents', () => {
+      test('has allowImmediateOffspringAction flag', () => {
+        const card = res.getCardById('adoptive-parents')
+        expect(card.allowImmediateOffspringAction).toBe(true)
+      })
+    })
+
+    describe('Grocer', () => {
+      test('initializes goods stack on play', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            hand: ['grocer'],
+          },
+        })
+        game.run()
+
+        t.playCard(game, 'dennis', 'grocer')
+
+        const dennis = t.player(game)
+        expect(dennis.grocerGoods).toEqual([
+          'wood', 'grain', 'reed', 'stone', 'vegetables', 'clay', 'reed', 'vegetables',
+        ])
+      })
+
+      test('has allowsAnytimePurchase flag', () => {
+        const card = res.getCardById('grocer')
+        expect(card.allowsAnytimePurchase).toBe(true)
+      })
+    })
+
+    describe('Clay Hut Builder', () => {
+      test('schedules 2 clay for 5 rounds when room type is not wood', () => {
+        const game = t.fixture()
+        game.run()
+
+        const dennis = t.player(game)
+        const card = res.getCardById('clay-hut-builder')
+
+        // Set up: player has clay room, round is 4
+        dennis.roomType = 'clay'
+        game.state.round = 4
+
+        card.checkTrigger(game, dennis)
+
+        // Should schedule 2 clay for rounds 5-9
+        expect(game.state.scheduledClay[dennis.name][5]).toBe(2)
+        expect(game.state.scheduledClay[dennis.name][6]).toBe(2)
+        expect(game.state.scheduledClay[dennis.name][7]).toBe(2)
+        expect(game.state.scheduledClay[dennis.name][8]).toBe(2)
+        expect(game.state.scheduledClay[dennis.name][9]).toBe(2)
+      })
+
+      test('does not trigger when still in wood house', () => {
+        const game = t.fixture()
+        game.run()
+
+        const dennis = t.player(game)
+        const card = res.getCardById('clay-hut-builder')
+
+        dennis.roomType = 'wood'
+        game.state.round = 4
+
+        card.checkTrigger(game, dennis)
+
+        expect(game.state.scheduledClay).toBeUndefined()
+      })
+
+      test('only triggers once', () => {
+        const game = t.fixture()
+        game.run()
+
+        const dennis = t.player(game)
+        const card = res.getCardById('clay-hut-builder')
+
+        dennis.roomType = 'clay'
+        game.state.round = 4
+
+        card.checkTrigger(game, dennis)
+        card.checkTrigger(game, dennis) // second call should be ignored
+
+        // Still only 2 clay per round (not 4)
+        expect(game.state.scheduledClay[dennis.name][5]).toBe(2)
+      })
+    })
+
+    describe('Frame Builder', () => {
+      test('modifies build cost to allow wood substitution', () => {
+        const card = res.getCardById('frame-builder')
+        const modified = card.modifyBuildCost(null, { clay: 5, reed: 2 }, 1)
+        expect(modified.allowWoodSubstitution).toBe(1)
+      })
+
+      test('substitution count matches room count', () => {
+        const card = res.getCardById('frame-builder')
+        const modified = card.modifyBuildCost(null, { stone: 5, reed: 2 }, 3)
+        expect(modified.allowWoodSubstitution).toBe(3)
+      })
+    })
+
+    describe('Stonecutter (3+ players)', () => {
+      test('reduces stone cost by 1', () => {
+        const card = res.getCardById('stonecutter')
+        const modified = card.modifyAnyCost(null, { stone: 3, reed: 1 })
+        expect(modified.stone).toBe(2)
+        expect(modified.reed).toBe(1)
+      })
+
+      test('does not reduce stone below 0', () => {
+        const card = res.getCardById('stonecutter')
+        const modified = card.modifyAnyCost(null, { wood: 3 })
+        // No stone key, so cost unchanged
+        expect(modified.wood).toBe(3)
+      })
+
+      test('does not affect items without stone cost', () => {
+        const card = res.getCardById('stonecutter')
+        const modified = card.modifyAnyCost(null, { clay: 5, reed: 2 })
+        expect(modified.clay).toBe(5)
+        expect(modified.reed).toBe(2)
+      })
+    })
+
+    describe('Harpooner (3+ players)', () => {
+      test('returns mayPayWoodForBonus when using fishing with wood', () => {
+        const card = res.getCardById('harpooner')
+        const game = t.fixture({ numPlayers: 3 })
+        game.run()
+        const dennis = t.player(game)
+        dennis.wood = 3
+
+        const result = card.onAction(game, dennis, 'fishing')
+        expect(result.mayPayWoodForBonus).toBe(true)
+      })
+
+      test('does not trigger without wood', () => {
+        const card = res.getCardById('harpooner')
+        const game = t.fixture({ numPlayers: 3 })
+        game.run()
+        const dennis = t.player(game)
+        dennis.wood = 0
+
+        const result = card.onAction(game, dennis, 'fishing')
+        expect(result).toBeUndefined()
+      })
+
+      test('does not trigger for non-fishing actions', () => {
+        const card = res.getCardById('harpooner')
+        const game = t.fixture({ numPlayers: 3 })
+        game.run()
+        const dennis = t.player(game)
+        dennis.wood = 3
+
+        const result = card.onAction(game, dennis, 'take-wood')
+        expect(result).toBeUndefined()
+      })
+    })
+
     describe('Animal Dealer (3+ players)', () => {
       test('onAction returns mayBuyAnimal for animal market actions', () => {
         const card = res.getCardById('animal-dealer')
@@ -1042,6 +1714,29 @@ describe('BaseA Cards', () => {
         // Test onAction returns mayBuyAnimal
         const result = card.onAction(game, dennis, 'take-sheep')
         expect(result.mayBuyAnimal).toBe('sheep')
+      })
+
+      test('returns correct animal type for each market', () => {
+        const card = res.getCardById('animal-dealer')
+        const game = t.fixture({ numPlayers: 3 })
+        game.run()
+        const dennis = t.player(game)
+        dennis.food = 5
+
+        expect(card.onAction(game, dennis, 'take-sheep').mayBuyAnimal).toBe('sheep')
+        expect(card.onAction(game, dennis, 'take-boar').mayBuyAnimal).toBe('boar')
+        expect(card.onAction(game, dennis, 'take-cattle').mayBuyAnimal).toBe('cattle')
+      })
+
+      test('does not trigger without food', () => {
+        const card = res.getCardById('animal-dealer')
+        const game = t.fixture({ numPlayers: 3 })
+        game.run()
+        const dennis = t.player(game)
+        dennis.food = 0
+
+        const result = card.onAction(game, dennis, 'take-sheep')
+        expect(result).toBeUndefined()
       })
     })
 
