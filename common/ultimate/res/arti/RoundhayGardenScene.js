@@ -9,14 +9,14 @@ module.exports = {
     `Meld the highest card from your score pile. Draw and score two cards of value equal to the melded card. Self-execute the melded card.`
   ],
   dogmaImpl: [
-    (game, player, { self }) => {
+    (game, player) => {
       const choices = game.util.highestCards(game.cards.byPlayer(player, 'score'))
       const cards = game.actions.chooseAndMeld(player, choices)
       if (cards && cards.length > 0) {
         const card = cards[0]
         game.actions.drawAndScore(player, card.getAge())
         game.actions.drawAndScore(player, card.getAge())
-        game.actions.selfExecute(self, player, card)
+        game.actions.selfExecute(player, card)
       }
     }
   ],

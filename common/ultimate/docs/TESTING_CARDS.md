@@ -388,7 +388,7 @@ See **Optics** tests for examples with multiple players.
 14. **Simplifying Test Setup**: Instead of complex turn management (e.g., having one player draw cards to advance to another player's turn), simplify by putting the karma card on the opponent's board and having the owner perform the action.
 15. **Junk Contents**: Test junk contents directly in `testBoard` using `junk: ['CardName']` - no need for separate `expect` statements.
 16. **Multiple Card Effects**: When a card has multiple dogma effects, all effects execute in sequence. Ensure your test handles all effects.
-17. **Super-Execute Parameters**: `game.actions.superExecute(executingCard, player, card)` - the first parameter is the card executing the super-execute, not the player.
+17. **Super-Execute Parameters**: `game.actions.superExecute(player, card)` - super-executes the card, demanding all opponents.
 
 ## Common Mistakes to Avoid
 

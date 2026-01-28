@@ -9,7 +9,7 @@ module.exports = {
     `Meld a card from your score pile. Safeguard the lowest available standard achievement. If you do, super-execute the melded card if it is your turn, or if it is not your turn self-execute it.`
   ],
   dogmaImpl: [
-    (game, player, { self }) => {
+    (game, player) => {
       const scoreCards = game.cards.byPlayer(player, 'score')
       const melded = game.actions.chooseAndMeld(player, scoreCards)[0]
 
@@ -21,10 +21,10 @@ module.exports = {
 
       if (safeguarded && melded) {
         if (game.players.current().name === player.name) {
-          game.actions.superExecute(self, player, melded)
+          game.actions.superExecute(player, melded)
         }
         else {
-          game.actions.selfExecute(self, player, melded)
+          game.actions.selfExecute(player, melded)
         }
       }
     },

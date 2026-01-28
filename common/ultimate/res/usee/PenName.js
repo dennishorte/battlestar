@@ -9,7 +9,7 @@ module.exports = {
     `Choose to either splay an unsplayed non-purple color on your board left and self-execute its top card, or meld a card from your hand and splay its color on your board right.`
   ],
   dogmaImpl: [
-    (game, player, { self }) => {
+    (game, player) => {
       const choices = []
 
       const unsplayed = game
@@ -46,7 +46,7 @@ module.exports = {
         game.actions.splay(player, color, 'left')
         const topCard = game.cards.top(player, color)
         if (topCard) {
-          game.actions.selfExecute(self, player, topCard)
+          game.actions.selfExecute(player, topCard)
         }
       }
       else if (selected.title === 'Meld and splay right') {

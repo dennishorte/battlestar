@@ -16,7 +16,7 @@ module.exports = {
       game.actions.transferMany(player, toTransfer, game.zones.byPlayer(player, 'hand'), { ordered: true })
     },
 
-    (game, player, { self }) => {
+    (game, player) => {
       if (!game.state.dogmaInfo.karaoke) {
         game.log.add({
           template: '{player} did not meld any cards during the echo effect',
@@ -33,7 +33,7 @@ module.exports = {
       const achieved = game.actions.chooseAndAchieve(player, options)
 
       if (achieved) {
-        game.actions.selfExecute(self, player, card)
+        game.actions.selfExecute(player, card)
       }
     },
   ],

@@ -13,7 +13,7 @@ module.exports = {
       while (true) {
         const card = game.actions.drawAndMeld(player, game.getEffectAge(self, 9))
         if (card) {
-          game.actions.selfExecute(self, player, card)
+          game.actions.selfExecute(player, card)
 
           if (card.checkHasBiscuit('i')) {
             game.log.add({ template: 'Card had an {i}.' })

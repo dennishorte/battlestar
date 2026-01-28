@@ -24,7 +24,7 @@ module.exports = {
       game.actions.transferMany(player, cardsToTransfer, game.zones.byPlayer(leader, 'score'))
     },
 
-    (game, player, { self }) => {
+    (game, player) => {
       const scoreCards = game.cards.byPlayer(player, 'score')
       if (scoreCards.length === 0) {
         game.log.addNoEffect()
@@ -38,7 +38,7 @@ module.exports = {
       const card = game.actions.chooseCard(player, highestCards)
       if (card) {
         game.actions.reveal(player, card)
-        game.actions.selfExecute(self, player, card)
+        game.actions.selfExecute(player, card)
       }
     }
   ],

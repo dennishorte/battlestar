@@ -14,11 +14,11 @@ module.exports = {
       trigger: 'dogma',
       kind: 'would-instead',
       matches: (game) => game.state.actionNumber === 2,
-      func: (game, player, { self }) => {
+      func: (game, player) => {
         const scored = game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'))[0]
 
         if (scored) {
-          game.actions.superExecute(self, player, scored)
+          game.actions.superExecute(player, scored)
         }
       }
     }

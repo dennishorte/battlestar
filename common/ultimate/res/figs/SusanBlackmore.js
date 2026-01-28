@@ -16,16 +16,16 @@ module.exports = {
       triggerAll: true,
       kind: 'would-first',
       matches: (game, player, { owner }) => player.id !== owner.id,
-      func: (game, player, { card, self, owner }) => {
-        game.actions.selfExecute(self, owner, card)
+      func: (game, player, { card, owner }) => {
+        game.actions.selfExecute(owner, card)
       }
     },
     {
       trigger: 'share',
       kind: 'would-first',
       matches: () => true,
-      func: (game, player, { card, self }) => {
-        game.actions.selfExecute(self, player, card)
+      func: (game, player, { card }) => {
+        game.actions.selfExecute(player, card)
       }
     }
   ]

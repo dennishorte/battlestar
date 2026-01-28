@@ -23,7 +23,7 @@ module.exports = {
         args: { opponent, player, card }
       })
 
-      game.actions.superExecute(self, player, card)
+      game.actions.superExecute(player, card)
     },
   ],
 }

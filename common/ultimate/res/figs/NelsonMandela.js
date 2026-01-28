@@ -15,8 +15,8 @@ module.exports = {
       trigger: 'dogma',
       kind: 'would-instead',
       matches: (game) => game.state.actionNumber === 2,
-      func: (game, player, { card, self }) => {
-        game.actions.superExecute(self, player, card)
+      func: (game, player, { card }) => {
+        game.actions.superExecute(player, card)
       },
     },
     {

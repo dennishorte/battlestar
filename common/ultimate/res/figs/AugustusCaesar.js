@@ -15,13 +15,13 @@ module.exports = {
       triggerAll: true,
       kind: 'would-instead',
       matches: (game, player, { card }) => card.checkHasBiscuit('k'),
-      func(game, player, { card, owner, self }) {
+      func(game, player, { card, owner }) {
         const drawn = game.actions.drawAndReveal(owner, card.getAge())
         if (drawn.checkHasBiscuit('k') || drawn.checkHasBiscuit('s')) {
           game.actions.meld(owner, drawn)
         }
         else {
-          game.actions.superExecute(self, player, card)
+          game.actions.superExecute(player, card)
         }
       },
     }

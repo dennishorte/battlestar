@@ -9,7 +9,7 @@ module.exports = {
     `If it is your turn, choose any top card on any other board and super-execute it.`
   ],
   dogmaImpl: [
-    (game, player, { self }) => {
+    (game, player) => {
       if (player.id !== game.players.current().id) {
         game.log.add({
           template: 'It is not {player} turn',
@@ -24,7 +24,7 @@ module.exports = {
         .flatMap(player => game.cards.tops(player))
       const card = game.actions.chooseCard(player, choices)
       if (card) {
-        game.actions.superExecute(self, player, card)
+        game.actions.superExecute(player, card)
       }
     }
   ],

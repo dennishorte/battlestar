@@ -16,7 +16,7 @@ module.exports = {
       matches: (game) => game.state.dogmaInfo.featuredBiscuit === 's',
       func: (game, player, { self }) => {
         const junkedCard = game.actions.drawAndJunk(player, game.getEffectAge(self, 10))
-        game.actions.superExecute(self, player, junkedCard)
+        game.actions.superExecute(player, junkedCard)
       }
     }
   ]

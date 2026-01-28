@@ -132,8 +132,9 @@ const EffectMixin = {
     if (!data.cardName) {
       data.cardName = card.name
     }
-    // A second card is calling self-execute. Award the chain achievement.
-    else if (data.cardName !== card.name) {
+    // A second card is calling self-execute. Award the chain achievement (once per chain).
+    else if (data.cardName !== card.name && !data.awarded) {
+      data.awarded = true
       this.log.add({
         template: '{player} achieves a Chain Achievement because {card} is recursively self-executing',
         args: { player, card }
@@ -156,7 +157,10 @@ const EffectMixin = {
    * @param {Object} card - The card
    */
   finishChainEvent(player, card) {
-    const data = this.state.dogmaInfo.chainRule[player.name]
+    const data = this.state.dogmaInfo.chainRule?.[player.name]
+    if (!data) {
+      return
+    }
 
     // Got to the end of the dogma action for the original chain card.
     if (data.cardName === card.name) {
