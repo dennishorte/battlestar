@@ -65,6 +65,7 @@ export default {
   },
 
   inject: {
+    actor: { from: 'actor' },
     ui: { from: 'ui' },
   },
 
@@ -110,9 +111,9 @@ export default {
       return segments
     },
 
-    // New fence indicators during fencing mode
+    // New fence indicators during fencing mode (only on viewing player's board)
     newFenceSegments() {
-      if (!this.ui.fencing?.active) {
+      if (!this.ui.fencing?.active || this.player.name !== this.actor.name) {
         return []
       }
 
