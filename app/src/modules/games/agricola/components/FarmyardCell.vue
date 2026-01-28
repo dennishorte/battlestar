@@ -11,6 +11,8 @@
       <template v-if="cell.type === 'room'">
         <span class="cell-icon">🏠</span>
         <span class="cell-label" v-if="showLabel">{{ cell.roomType }}</span>
+        <!-- Pet indicator -->
+        <span class="pet-indicator" v-if="showPet">{{ petIcon }}</span>
       </template>
 
       <!-- Field -->
@@ -190,6 +192,9 @@ export default {
 
     cellTooltip() {
       if (this.cell.type === 'room') {
+        if (this.showPet) {
+          return `${this.cell.roomType} room (pet ${this.player.pet})`
+        }
         return `${this.cell.roomType} room`
       }
       if (this.cell.type === 'field') {
@@ -255,6 +260,23 @@ export default {
         return ''
       }
       switch (this.pasture.animalType) {
+        case 'sheep': return '🐑'
+        case 'boar': return '🐗'
+        case 'cattle': return '🐄'
+        default: return ''
+      }
+    },
+
+    // Show pet in the first room cell (0,0)
+    showPet() {
+      return this.cell.type === 'room' &&
+             this.row === 0 &&
+             this.col === 0 &&
+             this.player.pet
+    },
+
+    petIcon() {
+      switch (this.player.pet) {
         case 'sheep': return '🐑'
         case 'boar': return '🐗'
         case 'cattle': return '🐄'
@@ -463,6 +485,14 @@ export default {
 
 .farmyard-cell.has-stable {
   box-shadow: inset 0 0 0 2px #654321;
+}
+
+/* Pet indicator in room */
+.pet-indicator {
+  position: absolute;
+  bottom: 1px;
+  left: 2px;
+  font-size: .9em;
 }
 
 /* Fencing states */
