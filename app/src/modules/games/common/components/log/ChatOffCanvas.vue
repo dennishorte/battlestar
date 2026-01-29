@@ -99,7 +99,7 @@ export default {
 
 
 <style scoped>
-#chat-off-canvas:deep() .offcanvas-body {
+#chat-off-canvas :deep(.offcanvas-body) {
   display: flex;
   flex-direction: column;
   align-items: flex-end;

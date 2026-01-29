@@ -305,7 +305,7 @@ export default {
   overflow: hidden;
 }
 
-.tyrants:deep() .troop-space {
+.tyrants :deep(.troop-space) {
   height: 1.2em;
   width: 1.2em;
   border-radius: 50%;

@@ -109,51 +109,51 @@ export default {
 </script>
 
 <style scoped>
-#gamelog:deep() .indent-0 {
+#gamelog :deep(.indent-0) {
   color: black;
 }
 
-#gamelog:deep() .indent-0.generic {
+#gamelog :deep(.indent-0.generic) {
   color: #eee;
   background-color: purple;
 }
 
-#gamelog:deep() .player-action {
+#gamelog :deep(.player-action) {
   padding: 5px 10px;
   border-radius: 3px;
 }
 
-#gamelog:deep() .player-action.recruit-action {
+#gamelog :deep(.player-action.recruit-action) {
   background-color: #e8b687;
 }
 
-#gamelog:deep() .player-action.play-a-card {
+#gamelog :deep(.player-action.play-a-card) {
   background-color: #e8d987;
 }
 
-#gamelog:deep() .player-action.power-action {
+#gamelog :deep(.player-action.power-action) {
   background-color: #e8c887;
 }
 
-#gamelog:deep() .player-action.pass-action {
+#gamelog :deep(.player-action.pass-action) {
   background-color: #c96d2c;
 }
 
-#gamelog:deep() .card-name {
+#gamelog :deep(.card-name) {
   display: inline-block;
   color: #2a1247;
   font-weight: bold;
   text-decoration: underline;
 }
 
-#gamelog:deep() .loc-name {
+#gamelog :deep(.loc-name) {
   display: inline-block;
   background-color: var(--tyr-location-background);
   border-radius: .1em;
   padding: 0 .4em;
 }
 
-#gamelog:deep() .player-name {
+#gamelog :deep(.player-name) {
   display: inline-block;
   padding: 0 .4em;
   border-radius: .1em;

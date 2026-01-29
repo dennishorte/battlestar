@@ -84,7 +84,7 @@ export default {
 </script>
 
 <style scoped>
-#gamelog:deep() .round-header {
+#gamelog :deep(.round-header) {
   font-weight: bold;
   text-align: center;
   background-color: #8B4513;
@@ -94,19 +94,19 @@ export default {
   border-radius: .25em;
 }
 
-#gamelog:deep() .player-turn {
+#gamelog :deep(.player-turn) {
   padding: .15em .5em .15em 0;
   border-radius: .15em;
   margin-top: .25em;
 }
 
-#gamelog:deep() .player-action {
+#gamelog :deep(.player-action) {
   padding: .1em .5em .1em 0;
   background-color: #f5f5dc;
   border-radius: .15em;
 }
 
-#gamelog:deep() .harvest-phase {
+#gamelog :deep(.harvest-phase) {
   font-weight: bold;
   background-color: #DAA520;
   color: white;
@@ -114,34 +114,34 @@ export default {
   border-radius: .15em;
 }
 
-#gamelog:deep() .resource {
+#gamelog :deep(.resource) {
   font-weight: bold;
   color: #8B4513;
 }
 
-#gamelog:deep() .action-space {
+#gamelog :deep(.action-space) {
   font-style: italic;
   color: #2a5a1a;
 }
 
-#gamelog:deep() .player-name {
+#gamelog :deep(.player-name) {
   display: inline;
 }
 
 /* Indentation levels */
-#gamelog:deep() .indent-1 {
+#gamelog :deep(.indent-1) {
   margin-left: 1em;
 }
 
-#gamelog:deep() .indent-2 {
+#gamelog :deep(.indent-2) {
   margin-left: 2em;
 }
 
-#gamelog:deep() .indent-3 {
+#gamelog :deep(.indent-3) {
   margin-left: 3em;
 }
 
-#gamelog:deep() .indent-4 {
+#gamelog :deep(.indent-4) {
   margin-left: 4em;
 }
 </style>
