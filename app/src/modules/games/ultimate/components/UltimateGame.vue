@@ -29,7 +29,7 @@
     </div>
 
     <AchievementModal :card="achievementCard" />
-    <CardsViewerModal :title="cardsViewerTitle" :cards="cardsViewerCards" />
+    <CardsViewerModal :title="cardsViewerTitle" :cards="cardsViewerCards" :zone="cardsViewerZone" />
     <DebugModal />
   </div>
 </template>
@@ -80,6 +80,7 @@ export default {
       achievementCard: null,
       cardsViewerTitle: '',
       cardsViewerCards: [],
+      cardsViewerZone: null,
     }
   },
 
@@ -108,6 +109,7 @@ export default {
       else if (name === 'cardsViewer') {
         this.cardsViewerTitle = data.title
         this.cardsViewerCards = data.cards
+        this.cardsViewerZone = data.zone || null
         this.$modal('cards-viewer-modal').show()
       }
     },

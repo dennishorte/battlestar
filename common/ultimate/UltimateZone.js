@@ -8,10 +8,10 @@ class UltimateZone extends BaseZone {
     this.splay = undefined
   }
 
-  biscuits() {
+  biscuits(splay=null) {
     return this
       .cardlist()
-      .map(card => card.visibleBiscuits())
+      .map(card => card.visibleBiscuits(splay))
       .map(biscuitString => this.game.util.parseBiscuits(biscuitString))
       .reduce((l, r) => this.game.util.combineBiscuits(l, r), this.util.emptyBiscuits())
   }

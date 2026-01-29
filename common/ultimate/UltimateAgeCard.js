@@ -198,8 +198,8 @@ class UltimateAgeCard extends UltimateBaseCard {
     return this.game.util.parseBiscuits(this.visibleBiscuits())
   }
 
-  visibleBiscuits() {
-    const splay = this.getSplay()
+  visibleBiscuits(splay=null) {
+    splay = splay || this.getSplay()
 
     // If this is a top card, return all of its biscuits
     if (splay === 'top') {

@@ -94,7 +94,7 @@ export default {
   methods: {
     openCardsViewerModal() {
       const cards = this.game.cards.byPlayer(this.player, this.color)
-      this.openModal('cardsViewer', { title: this.color, cards })
+      this.openModal('cardsViewer', { title: this.color, cards, zone: this.zone })
     },
   },
 }
