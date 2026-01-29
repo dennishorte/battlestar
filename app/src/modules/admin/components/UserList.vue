@@ -8,6 +8,7 @@
           <th>_id</th>
           <th>name</th>
           <th>slack</th>
+          <th>last seen</th>
           <th/>
         </tr>
       </thead>
@@ -21,6 +22,7 @@
           </td>
           <td>{{ user.name }}</td>
           <td>{{ user.slack }}</td>
+          <td>{{ timeAgo(user.lastSeen) }}</td>
           <td>
             <DropdownMenu :notitle="true">
               <DropdownItem v-if="!isImpersonating && user.name !== currentUserName">
@@ -80,6 +82,26 @@ export default {
   },
 
   methods: {
+    timeAgo(date) {
+      if (!date) {
+        return ''
+      }
+      const seconds = Math.floor((Date.now() - new Date(date)) / 1000)
+      if (seconds < 60) {
+        return 'just now'
+      }
+      const minutes = Math.floor(seconds / 60)
+      if (minutes < 60) {
+        return `${minutes}m ago`
+      }
+      const hours = Math.floor(minutes / 60)
+      if (hours < 24) {
+        return `${hours}h ago`
+      }
+      const days = Math.floor(hours / 24)
+      return `${days}d ago`
+    },
+
     async deactivate(id) {
       await this.$post('/api/user/deactivate', { id })
       this.$emit('users-updated')

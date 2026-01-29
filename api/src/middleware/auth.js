@@ -33,6 +33,9 @@ passport.use(new JwtStrategy(
       }
     }
 
+    // Fire-and-forget: update lastSeen timestamp
+    db.user.updateLastSeen(user._id)
+
     return cb(null, user)
   }
 ))

@@ -16,6 +16,7 @@ User.all = async function(projection) {
     projection = {
       name: 1,
       slack: 1,
+      lastSeen: 1,
     }
   }
 
@@ -95,6 +96,10 @@ User.setTokenForUserById = async function(object_id) {
   const filter = { _id: object_id }
   const updater = { $set: { token: User.util.generateToken(object_id) } }
   return await userCollection.updateOne(filter, updater)
+}
+
+User.updateLastSeen = function(id) {
+  userCollection.updateOne({ _id: id }, { $set: { lastSeen: new Date() } })
 }
 
 User.update = async function({ userId, name, slack }) {
