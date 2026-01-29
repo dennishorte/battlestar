@@ -56,7 +56,7 @@ export default {
     CardStacked,
   },
 
-  inject: ['game'],
+  inject: ['game', 'openModal'],
 
   props: {
     player: {
@@ -94,9 +94,7 @@ export default {
   methods: {
     openCardsViewerModal() {
       const cards = this.game.cards.byPlayer(this.player, this.color)
-      this.game.ui.modals.cardsViewer.title = this.color
-      this.game.ui.modals.cardsViewer.cards = cards
-      this.$modal('cards-viewer-modal').show()
+      this.openModal('cardsViewer', { title: this.color, cards })
     },
   },
 }

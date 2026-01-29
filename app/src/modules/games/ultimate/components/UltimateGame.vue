@@ -28,8 +28,8 @@
       </div>
     </div>
 
-    <AchievementModal />
-    <CardsViewerModal />
+    <AchievementModal :card="achievementCard" />
+    <CardsViewerModal :title="cardsViewerTitle" :cards="cardsViewerCards" />
     <DebugModal />
   </div>
 </template>
@@ -75,9 +75,18 @@ export default {
 
   inject: ['actor', 'game'],
 
+  data() {
+    return {
+      achievementCard: null,
+      cardsViewerTitle: '',
+      cardsViewerCards: [],
+    }
+  },
+
   provide() {
     return {
       ui: this.uiFactory(),
+      openModal: this.openModal,
     }
   },
 
@@ -91,6 +100,18 @@ export default {
   },
 
   methods: {
+    openModal(name, data) {
+      if (name === 'achievement') {
+        this.achievementCard = data.card
+        this.$modal('achievement-modal').show()
+      }
+      else if (name === 'cardsViewer') {
+        this.cardsViewerTitle = data.title
+        this.cardsViewerCards = data.cards
+        this.$modal('cards-viewer-modal').show()
+      }
+    },
+
     openRules() {
       window.open("https://www.asmadigames.com/innovation/InnoUlt_Rulebook_v0_9.pdf")
     },
@@ -122,20 +143,6 @@ export default {
         }
       }
     },
-  },
-
-  created() {
-    this.game.ui = {
-      modals: {
-        achievement: {
-          card: '',
-        },
-        cardsViewer: {
-          cards: [],
-          title: '',
-        },
-      },
-    }
   },
 
   mounted() {

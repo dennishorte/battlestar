@@ -18,15 +18,20 @@ export default {
     ModalBase,
   },
 
-  inject: ['game'],
+  props: {
+    card: {
+      type: Object,
+      default: null,
+    },
+  },
 
   computed: {
     text() {
-      return this.game.ui.modals.achievement.card.text
+      return this.card?.text
     },
 
     title() {
-      return this.game.ui.modals.achievement.card.name
+      return this.card?.name
     },
   },
 }

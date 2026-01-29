@@ -18,7 +18,7 @@ export default {
     CardSquare,
   },
 
-  inject: ['game'],
+  inject: ['game', 'openModal'],
 
   props: {
     name: {
@@ -36,9 +36,10 @@ export default {
   methods: {
     closeup(event) {
       event.stopPropagation()
-      this.game.ui.modals.cardsViewer.title = ''
-      this.game.ui.modals.cardsViewer.cards = [this.game.cards.byId(this.name)]
-      this.$modal('cards-viewer-modal').show()
+      this.openModal('cardsViewer', {
+        title: '',
+        cards: [this.game.cards.byId(this.name)],
+      })
     },
   },
 }

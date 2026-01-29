@@ -3,7 +3,7 @@
     <template #header>{{ title }}</template>
     <div class="card-viewer-list">
       <CardFull
-        v-for="card in cards"
+        v-for="card in filteredCards"
         :key="card.id"
         :card="card"
         class="viewer-card"
@@ -25,15 +25,20 @@ export default {
     ModalBase,
   },
 
-  inject: ['game'],
+  props: {
+    title: {
+      type: String,
+      default: '',
+    },
+    cards: {
+      type: Array,
+      default: () => [],
+    },
+  },
 
   computed: {
-    cards() {
-      return this.game.ui.modals.cardsViewer.cards.filter(card => !card.isMuseum)
-    },
-
-    title() {
-      return this.game.ui.modals.cardsViewer.title
+    filteredCards() {
+      return this.cards.filter(card => !card.isMuseum)
     },
   },
 }

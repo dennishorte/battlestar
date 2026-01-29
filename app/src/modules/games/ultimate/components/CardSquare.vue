@@ -22,7 +22,11 @@ export default {
   inject: {
     game: {
       from: 'game',
-      default: null
+      default: null,
+    },
+    openModal: {
+      from: 'openModal',
+      default: null,
     },
   },
 
@@ -64,8 +68,7 @@ export default {
 
       if (this.card.isSpecialAchievement || this.card.isDecree) {
         event.stopPropagation()
-        this.game.ui.modals.achievement.card = this.card
-        this.$modal('achievement-modal').show()
+        this.openModal('achievement', { card: this.card })
       }
     }
   }
