@@ -65,7 +65,7 @@ export default {
 
     async getAllUsers() {
       const { users } = await this.$post('/api/user/all')
-      this.users = users
+      this.users = users.sort((a, b) => a.name.localeCompare(b.name))
     },
   },
 
