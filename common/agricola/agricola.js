@@ -618,6 +618,8 @@ Agricola.prototype.draftCardType = function(cardType, passDirection) {
 
         this.log.add({
           template: '{player} drafts {draftedCard}',
+          redacted: '{player} drafts a card',
+          visibility: [player.name],
           args: { player, draftedCard: selectedName },
         })
       }

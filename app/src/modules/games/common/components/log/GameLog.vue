@@ -183,12 +183,13 @@ export default {
           output.push(entry)
         }
         else {
-          const text = this.convertLogMessage(entry)
+          const displayEntry = this.applyVisibility(entry)
+          const text = this.convertLogMessage(displayEntry)
           const line = {
             text,
-            classes: entry.classes || [],
-            args: entry.args,
-            indent: entry.indent,
+            classes: displayEntry.classes || [],
+            args: displayEntry.args,
+            indent: displayEntry.indent,
           }
 
           if (line.classes.includes('stack-push')) {
@@ -215,6 +216,16 @@ export default {
         }
       }
       return { output, consumed: count }
+    },
+
+    applyVisibility(entry) {
+      if (entry.visibility && !entry.visibility.includes(this.game.viewerName)) {
+        return {
+          ...entry,
+          template: entry.redacted || entry.template,
+        }
+      }
+      return entry
     },
 
     classes(line) {
