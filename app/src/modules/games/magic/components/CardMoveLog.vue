@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import CardName from '@/modules/games/common/components/log/CardName'
+import CardName from '@/modules/games/common/components/log/CardName.vue'
 
 export default {
   name: 'CardMoveLog',

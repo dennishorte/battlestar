@@ -22,7 +22,7 @@
 <script>
 import { util } from 'battlestar-common'
 
-import CardListItem from '../CardListItem'
+import CardListItem from '../CardListItem.vue'
 
 export default {
   name: 'CardList',

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import GameLog from '@/modules/games/common/components/log/GameLog'
+import GameLog from '@/modules/games/common/components/log/GameLog.vue'
 
 export default {
   name: 'GameLogAgricola',

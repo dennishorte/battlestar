@@ -10,7 +10,7 @@
 
 
 <script>
-import CardSquareDetails from './CardSquareDetails'
+import CardSquareDetails from './CardSquareDetails.vue'
 
 export default {
   name: 'CardSquare',

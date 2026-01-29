@@ -18,9 +18,9 @@
 </template>
 
 <script>
-import GameHeader from './GameHeader'
-import MyGames from './MyGames'
-import MyLobbies from './MyLobbies'
+import GameHeader from './GameHeader.vue'
+import MyGames from './MyGames.vue'
+import MyLobbies from './MyLobbies.vue'
 
 export default {
   name: 'HomePage',

@@ -9,8 +9,8 @@
 <script>
 import { util } from 'battlestar-common'
 
-import CurveLayer from '@/modules/mapmaker/components/CurveLayer'
-import DivLayer from './DivLayer'
+import CurveLayer from '@/modules/mapmaker/components/CurveLayer.vue'
+import DivLayer from './DivLayer.vue'
 
 import maps from '../../res/maps.js'
 

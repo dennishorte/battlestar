@@ -21,13 +21,13 @@ import { computed } from 'vue'
 import { mapState } from 'vuex'
 import mitt from 'mitt'
 
-import AgricolaGame from '@/modules/games/agricola/components/AgricolaGame'
-import CubeDraft from '@/modules/games/cube_draft/components/CubeDraft'
-import UltimateGame from '@/modules/games/ultimate/components/UltimateGame'
-import MtgGame from '@/modules/games/magic/components/MtgGame'
-import TyrantsGame from '@/modules/games/tyrants/components/TyrantsGame'
+import AgricolaGame from '@/modules/games/agricola/components/AgricolaGame.vue'
+import CubeDraft from '@/modules/games/cube_draft/components/CubeDraft.vue'
+import UltimateGame from '@/modules/games/ultimate/components/UltimateGame.vue'
+import MtgGame from '@/modules/games/magic/components/MtgGame.vue'
+import TyrantsGame from '@/modules/games/tyrants/components/TyrantsGame.vue'
 
-import SavingOverlay from '@/modules/games/common/components/SavingOverlay'
+import SavingOverlay from '@/modules/games/common/components/SavingOverlay.vue'
 
 
 export default {

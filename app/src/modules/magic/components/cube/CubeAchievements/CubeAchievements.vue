@@ -53,7 +53,7 @@ import { inject, ref } from 'vue'
 import { useStore } from 'vuex'
 import { magic } from 'battlestar-common'
 
-import CubeAchievement from './CubeAchievement'
+import CubeAchievement from './CubeAchievement.vue'
 
 const props = defineProps({
   cube: {

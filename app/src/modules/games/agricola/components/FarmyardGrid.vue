@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import FarmyardCell from './FarmyardCell'
+import FarmyardCell from './FarmyardCell.vue'
 
 // Grid constants
 const CELL_SIZE = 44

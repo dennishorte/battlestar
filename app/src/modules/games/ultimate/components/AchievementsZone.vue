@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import CardPile from './CardPile'
+import CardPile from './CardPile.vue'
 
 export default {
   name: 'AchievementsZone',

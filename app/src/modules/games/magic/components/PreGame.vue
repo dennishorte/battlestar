@@ -78,12 +78,12 @@
 <script>
 import { mapState } from 'vuex'
 
-import PlayerDecks from '@/modules/magic/components/deck/PlayerDecks'
-import DeckList from '@/modules/magic/components/deck/DeckList'
-import DropdownDivider from '@/components/DropdownDivider'
-import DropdownButton from '@/components/DropdownButton'
-import GameLogMagic from './GameLogMagic'
-import GameMenu from '@/modules/games/common/components/GameMenu'
+import PlayerDecks from '@/modules/magic/components/deck/PlayerDecks.vue'
+import DeckList from '@/modules/magic/components/deck/DeckList/index.vue'
+import DropdownDivider from '@/components/DropdownDivider.vue'
+import DropdownButton from '@/components/DropdownButton.vue'
+import GameLogMagic from './GameLogMagic.vue'
+import GameMenu from '@/modules/games/common/components/GameMenu.vue'
 
 import UICardWrapper from '@/modules/magic/util/card.wrapper.js'
 

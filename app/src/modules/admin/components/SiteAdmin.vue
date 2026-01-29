@@ -34,12 +34,12 @@
 </template>
 
 <script>
-import GameHeader from '../../../../src/components/GameHeader'
+import GameHeader from '../../../../src/components/GameHeader.vue'
 
-import AdminActions from './AdminActions'
-import CreateUser from './CreateUser'
-import UserList from './UserList'
-import ImpersonationStatus from './ImpersonationStatus'
+import AdminActions from './AdminActions.vue'
+import CreateUser from './CreateUser.vue'
+import UserList from './UserList.vue'
+import ImpersonationStatus from './ImpersonationStatus.vue'
 
 export default {
   name: 'SiteAdmin',

@@ -34,7 +34,7 @@
 
 
 <script>
-import WaitingChoice from './WaitingChoice'
+import WaitingChoice from './WaitingChoice.vue'
 
 export default {
   name: 'WaitingPanel',

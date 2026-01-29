@@ -29,7 +29,7 @@
 <script>
 import { mapState } from 'vuex'
 
-import ModalBase from '@/components/ModalBase'
+import ModalBase from '@/components/ModalBase.vue'
 
 
 export default {

@@ -103,9 +103,9 @@
 import { nextTick } from 'vue'
 import mitt from 'mitt'
 
-import ConnectorLayer from '../hexmap/ConnectorLayer'
-import SiteLayer from '../hexmap/SiteLayer'
-import TileLayer from '../hexmap/TileLayer'
+import ConnectorLayer from '../hexmap/ConnectorLayer.vue'
+import SiteLayer from '../hexmap/SiteLayer.vue'
+import TileLayer from '../hexmap/TileLayer.vue'
 
 import tile from '../hexmap/tile.js'
 

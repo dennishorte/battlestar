@@ -18,7 +18,7 @@
 import { util } from 'battlestar-common'
 import { v4 as uuidv4 } from 'uuid'
 
-import SetPickerModal from '@/modules/magic/components/SetPickerModal'
+import SetPickerModal from '@/modules/magic/components/SetPickerModal.vue'
 
 
 export default {

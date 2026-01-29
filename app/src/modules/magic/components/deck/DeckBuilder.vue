@@ -29,11 +29,11 @@ import { mapState } from 'vuex'
 
 import mitt from 'mitt'
 
-import CardFilters from '../CardFilters'
-import CardList from './CardList'
-import DeckList from './DeckList'
-import MagicMenu from '../MagicMenu'
-import MagicWrapper from '../MagicWrapper'
+import CardFilters from '../CardFilters.vue'
+import CardList from './CardList.vue'
+import DeckList from './DeckList/index.vue'
+import MagicMenu from '../MagicMenu.vue'
+import MagicWrapper from '../MagicWrapper.vue'
 
 export default {
   name: 'DeckBuilder',

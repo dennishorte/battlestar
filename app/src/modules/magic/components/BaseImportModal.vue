@@ -34,7 +34,7 @@ import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { mag, util } from 'battlestar-common'
 
-import ModalBase from '@/components/ModalBase'
+import ModalBase from '@/components/ModalBase.vue'
 
 const props = defineProps({
   modalId: {

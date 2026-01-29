@@ -15,7 +15,7 @@
 <script>
 import { mag, util } from 'battlestar-common'
 
-import CubeBreakdownColumn from './CubeBreakdownColumn'
+import CubeBreakdownColumn from './CubeBreakdownColumn.vue'
 
 
 export default {

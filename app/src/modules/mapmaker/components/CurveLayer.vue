@@ -16,7 +16,7 @@
 
 
 <script>
-import CubicBezier from './CubicBezier'
+import CubicBezier from './CubicBezier.vue'
 
 export default {
   name: 'CurveLayer',

@@ -70,8 +70,8 @@
 <script>
 import { util } from 'battlestar-common'
 
-import GameCard from './GameCard'
-import ModalBase from '@/components/ModalBase'
+import GameCard from './GameCard.vue'
+import ModalBase from '@/components/ModalBase.vue'
 
 
 export default {

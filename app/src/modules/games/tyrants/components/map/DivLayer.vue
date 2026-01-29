@@ -8,9 +8,9 @@
 
 
 <script>
-import MajorSiteDiv from './MajorSiteDiv'
-import PathDiv from './PathDiv'
-import SiteDiv from './SiteDiv'
+import MajorSiteDiv from './MajorSiteDiv.vue'
+import PathDiv from './PathDiv.vue'
+import SiteDiv from './SiteDiv.vue'
 
 export default {
   name: 'DivLayer',

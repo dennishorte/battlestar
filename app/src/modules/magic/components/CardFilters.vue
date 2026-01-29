@@ -193,9 +193,9 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { util } from 'battlestar-common'
 
-import CardFilterList from './CardFilterList'
-import SectionHeader from '@/components/SectionHeader'
-import SetPickerModal from './SetPickerModal'
+import CardFilterList from './CardFilterList.vue'
+import SectionHeader from '@/components/SectionHeader.vue'
+import SetPickerModal from './SetPickerModal.vue'
 
 
 export default {

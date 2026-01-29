@@ -19,7 +19,7 @@
 <script>
 import { mag, util } from 'battlestar-common'
 
-import CubeBreakdownSection from './CubeBreakdownSection'
+import CubeBreakdownSection from './CubeBreakdownSection.vue'
 
 
 export default {

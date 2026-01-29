@@ -15,7 +15,7 @@
 
 
 <script>
-import ModalBase from '@/components/ModalBase'
+import ModalBase from '@/components/ModalBase.vue'
 
 export default {
   name: 'DebugModal',

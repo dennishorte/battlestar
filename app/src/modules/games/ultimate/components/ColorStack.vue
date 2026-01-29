@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import CardStacked from './CardStacked'
+import CardStacked from './CardStacked.vue'
 
 export default {
   name: 'ColorStack',

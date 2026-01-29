@@ -31,8 +31,8 @@
 
 
 <script>
-import ModalBase from '@/components/ModalBase'
-import PlayerCounter from './PlayerCounter'
+import ModalBase from '@/components/ModalBase.vue'
+import PlayerCounter from './PlayerCounter.vue'
 
 
 export default {

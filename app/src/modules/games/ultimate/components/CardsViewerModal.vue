@@ -14,8 +14,8 @@
 
 
 <script>
-import CardFull from './CardFull'
-import ModalBase from '@/components/ModalBase'
+import CardFull from './CardFull.vue'
+import ModalBase from '@/components/ModalBase.vue'
 
 export default {
   name: 'CardsViewerModal',

@@ -20,8 +20,8 @@
 
 
 <script>
-import CardListItem from '../CardListItem'
-import CubeBreakdownManaCostDivider from './CubeBreakdownManaCostDivider'
+import CardListItem from '../CardListItem.vue'
+import CubeBreakdownManaCostDivider from './CubeBreakdownManaCostDivider.vue'
 
 
 export default {

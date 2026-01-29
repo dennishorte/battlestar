@@ -55,7 +55,7 @@
 
 
 <script>
-import PhaseButton from './PhaseButton'
+import PhaseButton from './PhaseButton.vue'
 
 
 export default {

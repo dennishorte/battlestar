@@ -8,7 +8,7 @@
 
 
 <script>
-import TyrantsCardSet from './TyrantsCardSet'
+import TyrantsCardSet from './TyrantsCardSet.vue'
 
 export default {
   name: 'TyrantsCards',

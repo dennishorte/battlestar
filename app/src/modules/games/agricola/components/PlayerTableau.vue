@@ -111,10 +111,10 @@
 </template>
 
 <script>
-import AnimalDisplay from './AnimalDisplay'
-import CardSection from './CardSection'
-import FarmyardGrid from './FarmyardGrid'
-import ResourceBar from './ResourceBar'
+import AnimalDisplay from './AnimalDisplay.vue'
+import CardSection from './CardSection.vue'
+import FarmyardGrid from './FarmyardGrid.vue'
+import ResourceBar from './ResourceBar.vue'
 
 export default {
   name: 'PlayerTableau',

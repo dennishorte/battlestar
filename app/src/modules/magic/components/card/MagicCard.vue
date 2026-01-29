@@ -32,8 +32,8 @@
 <script>
 import { util } from 'battlestar-common'
 
-import CardFace from './CardFace'
-import ColorPickerModal from './ColorPickerModal'
+import CardFace from './CardFace.vue'
+import ColorPickerModal from './ColorPickerModal.vue'
 
 export default {
   name: 'MagicCard',

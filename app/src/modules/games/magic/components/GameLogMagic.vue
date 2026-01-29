@@ -3,8 +3,8 @@
 </template>
 
 <script>
-import CardMoveLog from './CardMoveLog'
-import GameLog from '@/modules/games/common/components/log/GameLog'
+import CardMoveLog from './CardMoveLog.vue'
+import GameLog from '@/modules/games/common/components/log/GameLog.vue'
 
 
 export default {

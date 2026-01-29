@@ -8,7 +8,7 @@
 
 
 <script>
-import InnovationCardSet from './InnovationCardSet'
+import InnovationCardSet from './InnovationCardSet.vue'
 
 import { ultimate } from 'battlestar-common'
 

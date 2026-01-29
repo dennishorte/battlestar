@@ -38,8 +38,8 @@
 </template>
 
 <script>
-import DropdownMenu from '@/components/DropdownMenu'
-import DropdownItem from '@/components/DropdownItem'
+import DropdownMenu from '@/components/DropdownMenu.vue'
+import DropdownItem from '@/components/DropdownItem.vue'
 
 
 export default {

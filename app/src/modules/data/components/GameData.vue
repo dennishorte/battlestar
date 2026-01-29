@@ -18,7 +18,7 @@
 
 
 <script>
-import GameHeader from '../../../components/GameHeader'
+import GameHeader from '../../../components/GameHeader.vue'
 
 export default {
   name: 'GameData',

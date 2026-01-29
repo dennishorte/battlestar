@@ -1,7 +1,7 @@
-import GameData from './components/GameData'
-import InnovationCards from './components/InnovationCards'
-import InnovationResults from './components/InnovationResults'
-import TyrantsCards from './components/TyrantsCards'
+import GameData from './components/GameData.vue'
+import InnovationCards from './components/InnovationCards.vue'
+import InnovationResults from './components/InnovationResults.vue'
+import TyrantsCards from './components/TyrantsCards.vue'
 
 export default [
   {

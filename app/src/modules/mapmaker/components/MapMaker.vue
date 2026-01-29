@@ -69,11 +69,11 @@ import { highlight, languages } from 'prismjs/components/prism-core'
 import 'prismjs/components/prism-json'
 import 'prismjs/themes/prism-tomorrow.css'
 
-import CurveLayer from './CurveLayer'
-import DivLayer from './DivLayer'
-import HandleLayer from './HandleLayer'
-import MapMakerToolbar from './MapMakerToolbar'
-import UploadModal from './UploadModal'
+import CurveLayer from './CurveLayer.vue'
+import DivLayer from './DivLayer.vue'
+import HandleLayer from './HandleLayer.vue'
+import MapMakerToolbar from './MapMakerToolbar.vue'
+import UploadModal from './UploadModal.vue'
 
 
 const testNodes = [

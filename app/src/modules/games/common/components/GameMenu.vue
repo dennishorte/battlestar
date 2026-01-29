@@ -17,9 +17,9 @@
 
 
 <script>
-import DropdownMenu from '@/components/DropdownMenu'
-import DropdownDivider from '@/components/DropdownDivider'
-import DropdownButton from '@/components/DropdownButton'
+import DropdownMenu from '@/components/DropdownMenu.vue'
+import DropdownDivider from '@/components/DropdownDivider.vue'
+import DropdownButton from '@/components/DropdownButton.vue'
 
 export default {
   name: 'GameMenu',

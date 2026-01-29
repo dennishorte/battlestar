@@ -191,10 +191,12 @@ Util.array.shuffle = function(array, rng) {
 
     // Pick a remaining element...
     randomIndex = Math.floor(rng() * currentIndex)
-    currentIndex--
+    currentIndex -= 1
 
     // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]]
+    const tmp = array[currentIndex]
+    array[currentIndex] = array[randomIndex]
+    array[randomIndex] = tmp
   }
 
   return array

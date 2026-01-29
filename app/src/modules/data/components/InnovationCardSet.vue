@@ -15,7 +15,7 @@
 <script>
 import { ultimate } from 'battlestar-common'
 
-import CardFull from '@/modules/games/ultimate/components/CardFull'
+import CardFull from '@/modules/games/ultimate/components/CardFull.vue'
 
 export default {
   name: 'InnovationCardSet',

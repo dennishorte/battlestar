@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import HomePage from '@/components/HomePage'
-import GameBase from '@/components/GameBase'
-import GameEditor from '@/modules/games/common/components/GameEditor'
+import HomePage from '@/components/HomePage.vue'
+import GameBase from '@/components/GameBase.vue'
+import GameEditor from '@/modules/games/common/components/GameEditor.vue'
 
-import TyrantsTileEditor from '@/modules/games/tyrants/components/tileEditor/TileEditor'
-import TyrantsTest from '@/modules/games/tyrants/components/hexmap/HexMap'
+import TyrantsTileEditor from '@/modules/games/tyrants/components/tileEditor/TileEditor.vue'
+import TyrantsTest from '@/modules/games/tyrants/components/hexmap/HexMap.vue'
 
 import adminRoutes from '@/modules/admin/router.js'
 import authRoutes from '@/modules/auth/router.js'

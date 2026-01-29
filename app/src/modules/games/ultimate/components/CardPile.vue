@@ -34,9 +34,9 @@
 </template>
 
 <script>
-import CardFull from './CardFull'
-import CardFullMuseum from './CardFullMuseum'
-import CardSquare from './CardSquare'
+import CardFull from './CardFull.vue'
+import CardFullMuseum from './CardFullMuseum.vue'
+import CardSquare from './CardSquare.vue'
 
 const orderedExpansions = ['base', 'echo', 'figs', 'city', 'arti']
 

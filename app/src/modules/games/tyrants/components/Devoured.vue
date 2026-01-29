@@ -13,7 +13,7 @@
 
 
 <script>
-import GameCard from './GameCard'
+import GameCard from './GameCard.vue'
 
 
 export default {

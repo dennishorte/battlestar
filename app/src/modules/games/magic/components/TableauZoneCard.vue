@@ -98,11 +98,11 @@
 <script>
 import { Dropdown as bsDropdown } from 'bootstrap'
 
-import CardListItem from '@/modules/magic/components/CardListItem'
-import CounterButtons from './CounterButtons'
-import DropdownMenu from '@/components/DropdownMenu'
-import DropdownButton from '@/components/DropdownButton'
-import DropdownDivider from '@/components/DropdownDivider'
+import CardListItem from '@/modules/magic/components/CardListItem.vue'
+import CounterButtons from './CounterButtons.vue'
+import DropdownMenu from '@/components/DropdownMenu.vue'
+import DropdownButton from '@/components/DropdownButton.vue'
+import DropdownDivider from '@/components/DropdownDivider.vue'
 
 
 export default {

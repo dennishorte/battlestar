@@ -14,8 +14,8 @@
 
 
 <script>
-import GameCard from './GameCard'
-import ModalBase from '@/components/ModalBase'
+import GameCard from './GameCard.vue'
+import ModalBase from '@/components/ModalBase.vue'
 
 export default {
   name: 'CardViewerModal',
