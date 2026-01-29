@@ -55,16 +55,22 @@ export default {
     ok() {
       this.$emit('ok')
     },
-  },
 
-  created() {
-    window.addEventListener('keydown', (e) => {
-      if (e.key == 'Escape') {
+    handleKeydown(e) {
+      if (e.key === 'Escape') {
         if (this.$refs.closeButton) {
           this.$refs.closeButton.click()
         }
       }
-    })
+    },
+  },
+
+  created() {
+    window.addEventListener('keydown', this.handleKeydown)
+  },
+
+  beforeUnmount() {
+    window.removeEventListener('keydown', this.handleKeydown)
   },
 }
 </script>
