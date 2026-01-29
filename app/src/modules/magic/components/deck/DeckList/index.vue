@@ -5,7 +5,7 @@
       <DropdownMenu :notitle="true">
         <DropdownButton @click="openDeckSettings">settings</DropdownButton>
         <DropdownButton @click="goToDeckBuilder">deck builder</DropdownButton>
-        <DropdownButton @click="openImportModal" :disabled="true">load decklist</DropdownButton>
+        <DropdownButton @click="openImportModal">load decklist</DropdownButton>
         <DropdownButton @click="downloadDecklist" :disabled="true">export</DropdownButton>
         <DropdownDivider />
         <DropdownButton @click="sort('card-type')">sort: card type</DropdownButton>
@@ -180,9 +180,19 @@ export default {
       this.deck.markModified()
     },
 
-    // eslint-disable-next-line
     importDecklist(update) {
-      throw new Error('Not implemented')
+      // Clear existing cards from all zones
+      for (const zone of this.deck.zones()) {
+        const cards = [...this.deck.cardlist(zone)]
+        for (const card of cards) {
+          this.deck.removeCard(card, zone)
+        }
+      }
+
+      // Add imported cards (already expanded by parseCardlist, one item per copy)
+      for (const item of update.insert) {
+        this.deck.addCard(item.card, item.zone || 'main')
+      }
     },
 
     openDeckSettings() {
