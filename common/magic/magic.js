@@ -660,46 +660,44 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
   }
 
   else if (startingZone !== dest || dest.id.endsWith('library')) {
+    const logArgs = {
+      player,
+      card,
+      zone1: startingZone,
+      zone2: dest,
+    }
+
+    let template
+
     if (dest.id.endsWith('library') && destIndex !== undefined) {
       const librarySize = dest.cardlist().length
       const position = destIndex === null ? librarySize - 1 : destIndex
       const fromBottom = librarySize - 1 - position
 
-      let placement
       if (position === 0) {
-        placement = 'on top of'
+        logArgs.placement = 'on top of'
       }
       else if (fromBottom === 0) {
-        placement = 'on the bottom of'
+        logArgs.placement = 'on the bottom of'
       }
       else if (position <= fromBottom) {
-        placement = `${position} from the top of`
+        logArgs.placement = `${position} from the top of`
       }
       else {
-        placement = `${fromBottom} from the bottom of`
+        logArgs.placement = `${fromBottom} from the bottom of`
       }
 
-      this.log.add({
-        template: `{player} moves {card} from {zone1} to ${placement} {zone2}`,
-        args: {
-          player,
-          card,
-          zone1: startingZone,
-          zone2: dest,
-        }
-      })
+      template = `{player} moves {card} from {zone1} to {placement} {zone2}`
     }
     else {
-      this.log.add({
-        template: '{player} moves {card} from {zone1} to {zone2}',
-        args: {
-          player,
-          card,
-          zone1: startingZone,
-          zone2: dest,
-        }
-      })
+      template = '{player} moves {card} from {zone1} to {zone2}'
     }
+
+    this.log.add({
+      event: 'move-card',
+      template,
+      args: logArgs,
+    })
   }
 
 

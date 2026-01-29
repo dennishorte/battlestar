@@ -24,8 +24,11 @@
         </template>
 
         <template v-else>
-          <div v-for="n in indentSpacers(line)" :key="n" class="indent-spacer" />
-          <GameLogText :text="line.text" :class="classes(line)" :style="styles(line)" />
+          <component v-if="getLineComponent(line)" :is="getLineComponent(line)" :line="line" />
+          <template v-else>
+            <div v-for="n in indentSpacers(line)" :key="n" class="indent-spacer" />
+            <GameLogText :text="line.text" :class="classes(line)" :style="styles(line)" />
+          </template>
         </template>
       </div>
 
@@ -190,6 +193,7 @@ export default {
             classes: displayEntry.classes || [],
             args: displayEntry.args,
             indent: displayEntry.indent,
+            event: displayEntry.event,
           }
 
           if (line.classes.includes('stack-push')) {
@@ -237,6 +241,13 @@ export default {
     deleteChat(line) {
       this.game.log.deleteChat(line.id)
       this.$store.dispatch('game/save')
+    },
+
+    getLineComponent(line) {
+      if (this.funcs.lineComponent) {
+        return this.funcs.lineComponent(line)
+      }
+      return null
     },
 
     indentSpacers() {

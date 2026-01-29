@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import CardMoveLog from './CardMoveLog'
 import GameLog from '@/modules/games/common/components/log/GameLog'
 
 
@@ -21,6 +22,7 @@ export default {
         cardMouseleave: this.cardMouseleave,
         cardMousemove: this.cardMousemove,
         convertCard: this.convertCard,
+        lineComponent: this.lineComponent,
         lineClasses: this.lineClasses,
         lineIndent: this.lineIndent,
         saveOnChat: this.saveOnChat,
@@ -48,6 +50,13 @@ export default {
         x: event.clientX,
         y: event.clientY,
       })
+    },
+
+    lineComponent(line) {
+      if (line.event === 'move-card') {
+        return CardMoveLog
+      }
+      return null
     },
 
     convertCard(cardArg) {

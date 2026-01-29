@@ -10,7 +10,7 @@ class Chat {
 }
 
 class LogEntry {
-  constructor(id, indent, template, args, classes, visibility, redacted) {
+  constructor(id, indent, template, args, classes, visibility, redacted, event) {
     this.id = id
     this.indent = indent
     this.template = template
@@ -21,6 +21,10 @@ class LogEntry {
     if (visibility) {
       this.visibility = visibility
       this.redacted = redacted
+    }
+
+    if (event) {
+      this.event = event
     }
   }
 }
@@ -60,6 +64,7 @@ class BaseLogManager {
       msg.classes || [],
       msg.visibility,
       msg.redacted,
+      msg.event,
     )
     this._enrichLogArgs(entry)
     if (this._postEnrichArgs(entry)) {
