@@ -121,11 +121,12 @@ export default {
   },
 
   watch: {
-    selectedCard(newValue) {
+    selectedCardId(newValue) {
       if (newValue) {
-        this.activeFaceIndex = newValue.activeFaceIndex
-        this.annotation = newValue.annotation
-        this.annotationEOT = newValue.annotationEOT
+        const card = this.game.cards.byId(newValue)
+        this.activeFaceIndex = card.activeFaceIndex
+        this.annotation = card.annotation
+        this.annotationEOT = card.annotationEOT
       }
     },
   },
