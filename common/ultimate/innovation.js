@@ -596,6 +596,97 @@ Innovation.prototype.checkAchievementAvailable = function(name) {
 ////////////////////////////////////////////////////////////////////////////////
 // Getters
 
+// Determine which expansion a player would draw from, without side effects.
+// If playing with more than one of Figures, Echoes, and The Unseen, the draw
+// rule for Figures is checked first, then Echoes, then Unseen.
+Innovation.prototype.getBaseDrawExpansion = function(player) {
+  const isFirstBaseDraw = player.isFirstBaseDraw()
+
+  if (this.settings.version < 5) {
+    if (this.getExpansionList().includes('echo')) {
+      const topAges = this
+        .cards.tops(player)
+        .map(c => c.getAge())
+        .sort((l, r) => l - r)
+        .reverse()
+
+      if (topAges.length === 1 || (topAges.length > 1 && topAges[0] != topAges[1])) {
+        return 'echo'
+      }
+    }
+    if (this.getExpansionList().includes('usee')) {
+      if (isFirstBaseDraw) {
+        return 'usee'
+      }
+    }
+    return 'base'
+  }
+  else {
+    let exp = 'base'
+
+    if (this.getExpansionList().includes('echo')) {
+      const topAges = this
+        .cards.tops(player)
+        .map(c => c.getAge())
+        .sort((l, r) => l - r)
+        .reverse()
+
+      if (topAges.length === 1 || (topAges.length > 1 && topAges[0] != topAges[1])) {
+        exp = 'echo'
+      }
+    }
+    if (this.getExpansionList().includes('usee')) {
+      if (isFirstBaseDraw) {
+        exp = 'usee'
+      }
+    }
+    return exp
+  }
+}
+
+// Given a target age and expansion, cascade through empty decks to find
+// the actual deck to draw from. Returns [age, exp].
+Innovation.prototype.getAdjustedDrawDeck = function(age, exp) {
+  if (age > this.getMaxAge()) {
+    return [age, 'base']
+  }
+
+  const baseDeck = this.zones.byDeck('base', age)
+  if (baseDeck.cardlist().length === 0) {
+    return this.getAdjustedDrawDeck(age + 1, exp)
+  }
+
+  if (exp === 'base') {
+    return [age, 'base']
+  }
+
+  const expDeck = this.zones.byDeck(exp, age)
+  if (expDeck.cardlist().length === 0) {
+    return [age, 'base']
+  }
+
+  return [age, exp]
+}
+
+// Read-only query: what deck would this player draw from next?
+Innovation.prototype.getNextDrawDeck = function(player) {
+  const minAge = this.getMinAge()
+
+  // Highest top card age across all colors (without karma)
+  const ageValues = this.util.colors().map(color => {
+    const zone = this.zones.byPlayer(player, color)
+    if (zone.cardlist().length === 0) {
+      return minAge
+    }
+    return zone.cardlist()[0].getAge()
+  })
+  const baseAge = Math.max(...ageValues) || minAge
+
+  const baseExp = this.getBaseDrawExpansion(player)
+  const [age, exp] = this.getAdjustedDrawDeck(baseAge, baseExp)
+  return { age, exp }
+}
+
 Innovation.prototype.getNumAchievementsToWin = function() {
   const base = 6
   const numPlayerAdjustment = 2 - this.players.all().length

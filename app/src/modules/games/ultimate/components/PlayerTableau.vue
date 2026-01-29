@@ -2,6 +2,9 @@
   <div class="player-tableau">
     <div class="player-name">
       {{ player.name }}
+      <span class="draw-info" :class="`draw-${nextDraw.exp}`">
+        {{ nextDraw.age }} {{ nextDraw.exp }}
+      </span>
     </div>
 
     <ColorStack
@@ -77,6 +80,12 @@ export default {
 
   inject: ['actor', 'game'],
 
+  computed: {
+    nextDraw() {
+      return this.game.getNextDrawDeck(this.player)
+    },
+  },
+
   props: {
     player: {
       type: Object,
@@ -125,13 +134,13 @@ export default {
 .player-name {
   display: flex;
   justify-content: center;
-  align-content: center;
-  flex-direction: column;
+  align-items: center;
+  position: relative;
 
   position: sticky;
   top: 0;
   height: 2em;
-  padding: 0, .25em;
+  padding: 0 .25em;
   text-align: center;
 
   background-color: gray;
@@ -141,4 +150,16 @@ export default {
   max-width: 300px;
   border-radius: 0 0 .25em .25em;
 }
+
+.draw-info {
+  position: absolute;
+  right: 0.4em;
+  font-size: 0.7em;
+}
+
+.draw-base { color: #ffe0a0; }
+.draw-echo { color: #a0c0ff; }
+.draw-figs { color: #80d060; }
+.draw-arti { color: #d090f0; }
+.draw-usee { color: #d0d0d0; }
 </style>
