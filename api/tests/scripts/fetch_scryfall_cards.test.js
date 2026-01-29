@@ -211,10 +211,37 @@ describe('Card Processing', () => {
       expect(result).toBeNull()
     })
 
-    test('filters out full_art cards', () => {
+    test('allows full_art cards when no normal version exists', () => {
       const input = loadRaw('full_art')
+      const expected = loadExpected('full_art')
       const result = processSingleCard(input)
-      expect(result).toBeNull()
+      expect(result).toEqual(expected)
+    })
+
+    test('filters out full_art cards when a normal version exists in the batch', () => {
+      const fullArt = loadRaw('full_art')
+      fullArt.collector_number = '380'
+      const normalVersion = {
+        ...JSON.parse(JSON.stringify(fullArt)),
+        id: 'normal-forest-id',
+        full_art: false,
+        collector_number: '381',
+      }
+
+      const results = processCards([fullArt, normalVersion])
+      // Only the normal version should remain
+      expect(results).toHaveLength(1)
+      expect(results[0].data.card_faces[0].name).toBe('Forest')
+      expect(results[0].data.collector_number).toBe('381')
+    })
+
+    test('keeps full_art card when it is the only version in the batch', () => {
+      const fullArt = loadRaw('full_art')
+      fullArt.collector_number = '382'
+      const results = processCards([fullArt])
+      expect(results).toHaveLength(1)
+      expect(results[0].data.card_faces[0].name).toBe('Forest')
+      expect(results[0].data.collector_number).toBe('382')
     })
   })
 

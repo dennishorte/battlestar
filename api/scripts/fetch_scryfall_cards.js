@@ -190,6 +190,21 @@ function cleanScryfallCards(cards) {
 }
 
 function prefilterVersions(cards) {
+  // Collect names of cards that have a normal (non-full-art, non-textless) version
+  const hasNormalVersion = new Set()
+  for (const card of cards) {
+    if (card.lang !== 'en') {
+      continue
+    }
+    if (card.textless || card.full_art) {
+      continue
+    }
+    if (['art_series', 'vanguard', 'double_faced_token', 'scheme'].includes(card.layout)) {
+      continue
+    }
+    hasNormalVersion.add(card.name)
+  }
+
   const filteredCards = []
 
   for (let i = 0; i < cards.length; i++) {
@@ -211,7 +226,7 @@ function prefilterVersions(cards) {
       delete card.lang
     }
 
-    if (card.textless || card.full_art) {
+    if (card.textless || (card.full_art && hasNormalVersion.has(card.name))) {
       continue
     }
     else {

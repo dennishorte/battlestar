@@ -1,0 +1,46 @@
+{
+  "_id": "scryfall-md5-d637a820bffa38a71b2be9f0af638462",
+  "source": "scryfall",
+  "data": {
+    "layout": "normal",
+    "set": "blb",
+    "collector_number": "280",
+    "digital": false,
+    "rarity": "common",
+    "card_faces": [
+      {
+        "artist": "David Robert Hovey",
+        "name": "Forest",
+        "oracle_text": "({T}: Add {G}.)",
+        "type_line": "Basic Land — Forest",
+        "produced_mana": [
+          "G"
+        ],
+        "image_uri": "https://cards.scryfall.io/art_crop/front/0/0/0000419b-0bba-4488-8f7a-6194544ce91e.jpg?1721427487"
+      }
+    ],
+    "legal": [
+      "standard",
+      "future",
+      "historic",
+      "timeless",
+      "gladiator",
+      "pioneer",
+      "modern",
+      "legacy",
+      "pauper",
+      "vintage",
+      "penny",
+      "commander",
+      "oathbreaker",
+      "standardbrawl",
+      "brawl",
+      "alchemy",
+      "paupercommander",
+      "duel",
+      "premodern",
+      "predh"
+    ],
+    "_id": "scryfall-md5-d637a820bffa38a71b2be9f0af638462"
+  }
+}
