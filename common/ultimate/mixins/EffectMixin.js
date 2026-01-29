@@ -9,7 +9,7 @@
  *   - executeDogmaEffect(player, card, text, impl, opts) - Execute one effect with sharing/demanding
  *   - executeAllEffects(player, card, kind, opts) - Execute all effects of a kind on a card
  *   - trackChainRule(player, card) - Track chain rule for achievement
- *   - finishChainEvent(player, card) - Finish chain event tracking
+ *   - finishChainEvent(player) - Finish chain event tracking
  *   - checkEffectIsVisible(card) - Check if card has visible dogma/echo effects
  *   - getEffectAge(card, age) - Get age for effect with karma adjustments
  *   - getEffectByText(card, text) - Find effect implementation by text
@@ -123,17 +123,13 @@ const EffectMixin = {
       this.state.dogmaInfo.chainRule = {}
     }
     if (!this.state.dogmaInfo.chainRule[player.name]) {
-      this.state.dogmaInfo.chainRule[player.name] = {}
+      this.state.dogmaInfo.chainRule[player.name] = 0
     }
 
-    const data = this.state.dogmaInfo.chainRule[player.name]
+    const depth = this.state.dogmaInfo.chainRule[player.name]++
 
-    // This is the first card in a potential chain event.
-    if (!data.cardName) {
-      data.cardName = card.name
-    }
-    // A second card is calling self-execute. Award the chain achievement.
-    else if (data.cardName !== card.name) {
+    // depth > 0 means we're already inside a self/super-execute
+    if (depth > 0) {
       this.log.add({
         template: '{player} achieves a Chain Achievement because {card} is recursively self-executing',
         args: { player, card }
@@ -153,13 +149,12 @@ const EffectMixin = {
    * Called when a card's dogma action completes.
    *
    * @param {Object} player - The player
-   * @param {Object} card - The card
    */
-  finishChainEvent(player, card) {
-    const data = this.state.dogmaInfo.chainRule[player.name]
-
-    // Got to the end of the dogma action for the original chain card.
-    if (data.cardName === card.name) {
+  finishChainEvent(player) {
+    if (this.state.dogmaInfo.chainRule?.[player.name] > 0) {
+      this.state.dogmaInfo.chainRule[player.name]--
+    }
+    if (this.state.dogmaInfo.chainRule?.[player.name] === 0) {
       delete this.state.dogmaInfo.chainRule[player.name]
     }
   },

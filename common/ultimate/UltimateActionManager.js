@@ -1032,7 +1032,7 @@ class UltimateActionManager extends BaseActionManager {
     }
     this.game.executeAllEffects(player, card, 'dogma', opts)
 
-    this.game.finishChainEvent(player, executingCard)
+    this.game.finishChainEvent(player)
   }
 
   superExecute(executingCard, player, card) {

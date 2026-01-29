@@ -1870,6 +1870,137 @@ describe('Innovation', () => {
         },
       })
     })
+
+    test('self-executing self awards chain', () => {
+      // Priest-King scores green cards, causing it to super-execute itself.
+      // The nested super-execute (during the first super-execute) triggers a chain.
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+      t.setBoard(game, {
+        dennis: {
+          green: ['Priest-King'],
+          hand: ['Sailing', 'Clothing', 'Metalworking'],
+        },
+        decks: {
+          base: {
+            11: ['Whataboutism'],
+          }
+        }
+      })
+
+      game.run()
+      t.choose(game, 'Dogma.Priest-King')
+      t.choose(game, 'Sailing')    // Score Sailing (green) → super-execute PK
+      t.choose(game, 'Clothing')   // PK (super-executed): score Clothing (green) → super-execute PK again (CHAIN)
+      // PK (super-executed): Metalworking auto-scored (only card), no red top → done
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          green: ['Priest-King'],
+          score: ['Sailing', 'Clothing', 'Metalworking'],
+          achievements: ['Whataboutism'],
+        },
+      })
+    })
+
+    test('self-executing self multiple times awards multiple chains', () => {
+      // Each nested super-execute of Priest-King awards a separate chain.
+      // Per rules: "There is no limit to the number of Chain Achievements
+      // that can be awarded during an action."
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+      t.setBoard(game, {
+        dennis: {
+          green: ['Priest-King'],
+          hand: ['Sailing', 'Clothing', 'The Wheel', 'Metalworking'],
+        },
+        decks: {
+          base: {
+            11: ['Whataboutism', 'Climatology'],
+          }
+        }
+      })
+
+      game.run()
+      t.choose(game, 'Dogma.Priest-King')
+      t.choose(game, 'Sailing')      // Score green → super-execute PK
+      t.choose(game, 'Clothing')     // Score green → super-execute PK (CHAIN 1)
+      t.choose(game, 'The Wheel')    // Score green → super-execute PK (CHAIN 2)
+      // Metalworking auto-scored, no red top → done
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          green: ['Priest-King'],
+          score: ['Sailing', 'Clothing', 'The Wheel', 'Metalworking'],
+          achievements: ['Whataboutism', 'Climatology'],
+        },
+      })
+    })
+
+    test('no chain for single level of self-execute', () => {
+      // Computers self-executes Databases, but Databases does not
+      // self-execute further. Only one level of nesting, so no chain.
+      const game = t.fixtureFirstPlayer({ expansions: ['base'] })
+      t.setBoard(game, {
+        dennis: {
+          blue: ['Computers'],
+        },
+        decks: {
+          base: {
+            10: ['Databases'],
+            11: ['Whataboutism'],
+          }
+        }
+      })
+
+      game.run()
+      t.choose(game, 'Dogma.Computers')
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          blue: ['Computers'],
+          green: ['Databases'],
+        },
+      })
+    })
+
+    test('trampoline between Priest-King and Yata No Kagami', () => {
+      // PK initiates a trampoline: PK → super-execute PK → super-execute YNK
+      // → YNK self-executes PK. Each nested self/super-execute after the
+      // first awards a chain.
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+      t.setBoard(game, {
+        dennis: {
+          green: ['Priest-King'],
+          blue: ['Yata No Kagami'],
+          hand: ['Sailing', 'Tools', 'Clothing', 'Metalworking'],
+        },
+        decks: {
+          base: {
+            11: ['Whataboutism', 'Climatology', 'Hypersonics'],
+          }
+        }
+      })
+
+      game.run()
+      t.choose(game, 'Dogma.Priest-King')
+      t.choose(game, 'Sailing')     // PK: score Sailing (green) → super-execute PK
+      t.choose(game, 'Tools')       // PK: score Tools (blue) → super-execute YNK (CHAIN 1)
+      t.choose(game, 'Clothing')    // YNK: reveal Clothing (green), splay green left, self-execute PK (CHAIN 2)
+      t.choose(game, 'Metalworking') // PK (innermost): score Metalworking (red), no red top → done
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          green: ['Priest-King'],
+          blue: ['Yata No Kagami'],
+          hand: ['Clothing'],
+          score: ['Sailing', 'Tools', 'Metalworking'],
+          achievements: ['Whataboutism', 'Climatology'],
+        },
+      })
+    })
   })
 })
 
