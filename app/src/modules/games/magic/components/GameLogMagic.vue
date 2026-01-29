@@ -69,15 +69,21 @@ export default {
     },
 
     lineClasses(line) {
-      if (line.indent === 0 && line.text.endsWith(' turn')) {
+      if (line.event === 'start-turn') {
         return 'player-turn-start'
+      }
+      if (line.event === 'set-phase') {
+        return 'set-phase'
+      }
+      if (line.event === 'pass-priority') {
+        return 'pass-priority'
       }
     },
 
     lineIndent(line) {
       if (
-        line.classes.includes('set-phase')
-        || line.classes.includes('pass-priority')
+        line.event === 'set-phase'
+        || line.event === 'pass-priority'
       ) {
         return 0
       }
@@ -146,14 +152,18 @@ export default {
   padding-left: 1em;
 }
 
-#gamelog:deep() .player-turn-start {
+#gamelog:deep() .log-line.player-turn-start {
+  display: block;
   font-weight: bold;
   font-size: 1.2em;
   margin-top: 1em;
   background-color: lightgreen;
   border-radius: .2em;
-  width: 100%;
   text-align: center;
+  width: auto;
+  padding-left: 0;
+  margin-left: 1em;
+  margin-right: 1em;
 }
 #gamelog:deep() .player-turn-start::before {
   content: "—";

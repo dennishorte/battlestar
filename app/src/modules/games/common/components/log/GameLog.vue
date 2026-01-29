@@ -8,7 +8,7 @@
         <GameLog :entries="line.entries" :depth="line.depth" :funcs="funcs" />
       </div>
 
-      <div v-else class="log-line" :class="line.classes">
+      <div v-else class="log-line" :class="[line.classes, classes(line)]">
         <template v-if="line.type === 'chat'">
           <div class="chat-container">
             <div class="chat-message">
@@ -27,7 +27,7 @@
           <component v-if="getLineComponent(line)" :is="getLineComponent(line)" :line="line" />
           <template v-else>
             <div v-for="n in indentSpacers(line)" :key="n" class="indent-spacer" />
-            <GameLogText :text="line.text" :class="classes(line)" :style="styles(line)" />
+            <GameLogText :text="line.text" :style="styles(line)" />
           </template>
         </template>
       </div>
@@ -196,7 +196,7 @@ export default {
             event: displayEntry.event,
           }
 
-          if (line.classes.includes('stack-push')) {
+          if (line.event === 'stack-push') {
             const result = this.nestLog(entries.slice(i + 1), depth + 1)
             const nested = result.output
 
@@ -210,7 +210,7 @@ export default {
               entries: nested
             })
           }
-          else if (line.classes.includes('stack-pop')) {
+          else if (line.event === 'stack-pop') {
             output.push(line)
             break
           }

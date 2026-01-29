@@ -6,7 +6,7 @@ class MagicLogManager extends BaseLogManager {
     this.add({
       template: '{player} puts {card} on the stack',
       args: { player, card },
-      classes: ['stack-push']
+      event: 'stack-push',
     })
   }
 

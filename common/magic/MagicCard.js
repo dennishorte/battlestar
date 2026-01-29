@@ -449,7 +449,7 @@ class MagicCard extends BaseCard {
       this.game.log.add({
         template: '{card} resolves',
         args: { card: this },
-        classes: ['stack-pop'],
+        event: 'stack-pop',
       })
       this.game.log.outdent()
     }

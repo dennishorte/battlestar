@@ -91,16 +91,14 @@ Magic.prototype._mainProgram = function() {
   this.log.setIndent(0)
   this.log.add({
     template: "{player}'s turn",
-    args: {
-      player: this.players.current(),
-      classes: ['start-turn'],
-    }
+    args: { player: this.players.current() },
+    event: 'start-turn',
   })
   this.log.indent()
   this.log.add({
     template: '{player} gets priority',
     args: { player: this.players.current() },
-    classes: ['pass-priority'],
+    event: 'pass-priority',
   })
 
   this.mainLoop()
@@ -387,7 +385,7 @@ Magic.prototype.aConcede = function(player) {
   this.log.add({
     template: '{player} concedes',
     args: { player },
-    classes: ['player-concedes']
+    event: 'player-concedes',
   })
   player.eliminated = true
 
@@ -554,7 +552,7 @@ Magic.prototype.aDrawGame = function(player) {
   this.log.add({
     template: '{player} declares a draw',
     args: { player },
-    classes: ['draw-game']
+    event: 'draw-game',
   })
   throw new GameOverEvent({
     player: 'nobody',
@@ -791,7 +789,7 @@ Magic.prototype.aPassPriority = function(actor, targetName) {
   this.log.add({
     template: '{player} gets priority',
     args: { player },
-    classes: ['pass-priority'],
+    event: 'pass-priority',
   })
   this.log.setIndent(indent)
 }
@@ -846,10 +844,8 @@ Magic.prototype.aSelectPhase = function(player, phase) {
     this.log.setIndent(0)
     this.log.add({
       template: "{player}'s turn",
-      args: {
-        player: this.players.current(),
-        classes: ['start-turn'],
-      }
+      args: { player: this.players.current() },
+      event: 'start-turn',
     })
     this.log.indent()
     this.state.turnPlayer = this.players.current()
@@ -858,7 +854,7 @@ Magic.prototype.aSelectPhase = function(player, phase) {
     this.log.setIndent(1)
     this.log.add({
       template: `phase: ${phase}`,
-      classes: ['set-phase'],
+      event: 'set-phase',
     })
     this.log.indent()
   }
