@@ -113,12 +113,9 @@ module.exports = defineConfig([
       'vue/comment-directive': 'off',
     },
   },
-  // Node.js config files
+  // Node.js config files (CJS)
   {
     files: [
-      "*.config.js",
-      "babel.config.js",
-      "vue.config.js",
       "eslint.config.js"
     ],
     languageOptions: {
@@ -130,6 +127,20 @@ module.exports = defineConfig([
         __dirname: "readonly",
         __filename: "readonly",
         exports: "writable",
+        process: "readonly"
+      }
+    }
+  },
+  // Vite config (ESM)
+  {
+    files: [
+      "vite.config.js"
+    ],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: "module",
+      globals: {
+        __dirname: "readonly",
         process: "readonly"
       }
     }
