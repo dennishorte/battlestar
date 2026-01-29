@@ -538,100 +538,73 @@ Agricola.prototype.draftCardType = function(cardType, passDirection) {
   const players = this.players.all()
   const playerCount = players.length
   const pools = this.state.draftPools[cardType]
-  const cardsPerPlayer = pools[0].length
   const cardTypeName = cardType === 'occupations' ? 'Occupation' : 'Minor Improvement'
 
-  // Track which pool each player is currently looking at
-  // Player i starts with pool i
-  const poolAssignments = players.map((_, i) => i)
+  // Each player starts with one pool in their queue.
+  // As they pick, remaining cards pass to the next player immediately.
+  const playerQueues = players.map((_, i) => [pools[i]])
+  const totalPicks = pools.reduce((sum, pool) => sum + pool.length, 0)
+  let picksMade = 0
 
-  // Track how many cards each player has picked in this draft
-  const pickCounts = players.map(() => 0)
+  while (picksMade < totalPicks) {
+    const playerOptions = []
 
-  for (let round = 0; round < cardsPerPlayer; round++) {
-    this.log.add({
-      template: 'Draft round {round}',
-      args: { round: round + 1 },
-    })
-    this.log.indent()
-
-    // Reset pick counts for this round
     for (let i = 0; i < playerCount; i++) {
-      pickCounts[i] = 0
-    }
-
-    // All players draft in parallel until everyone has picked once this round
-    while (pickCounts.some((count, i) => count === 0 && pools[poolAssignments[i]].length > 0)) {
-      // Build options for all players who haven't picked yet this round
-      const playerOptions = []
-
-      for (let i = 0; i < playerCount; i++) {
-        if (pickCounts[i] > 0) {
-          continue // Already picked this round
-        }
-
-        const player = players[i]
-        const poolIndex = poolAssignments[i]
-        const pool = pools[poolIndex]
-
-        if (pool.length === 0) {
-          continue
-        }
-
-        // Build choice list with card names
-        const choices = pool.map(cardId => {
-          const card = res.getCardById(cardId)
-          return card ? card.name : cardId
-        })
-
-        playerOptions.push({
-          actor: player.name,
-          title: `Draft ${cardTypeName}`,
-          choices,
-        })
+      if (playerQueues[i].length === 0) {
+        continue
+      }
+      const pool = playerQueues[i][0]
+      if (pool.length === 0) {
+        continue
       }
 
-      if (playerOptions.length === 0) {
-        break
-      }
-
-      // Allow any player to draft
-      const response = this.requestInputAny(playerOptions)
-      const player = this.players.byName(response.actor)
-      const playerIndex = players.indexOf(player)
-      const poolIndex = poolAssignments[playerIndex]
-      const pool = pools[poolIndex]
-      const selectedName = response.selection[0]
-
-      // Find the card id by name
-      const cardId = pool.find(id => {
-        const card = res.getCardById(id)
-        return card && card.name === selectedName
+      const player = players[i]
+      const choices = pool.map(cardId => {
+        const card = res.getCardById(cardId)
+        return card ? card.name : cardId
       })
 
-      if (cardId) {
-        // Remove from pool and add to hand
-        const cardIndex = pool.indexOf(cardId)
-        pool.splice(cardIndex, 1)
-        player.hand.push(cardId)
-        pickCounts[playerIndex]++
-
-        this.log.add({
-          template: '{player} drafts {draftedCard}',
-          redacted: '{player} drafts a card',
-          visibility: [player.name],
-          args: { player, draftedCard: selectedName },
-        })
-      }
+      playerOptions.push({
+        actor: player.name,
+        title: `Draft ${cardTypeName}`,
+        choices,
+      })
     }
 
-    this.log.outdent()
+    if (playerOptions.length === 0) {
+      break
+    }
 
-    // Pass pools to neighbor (if not last round)
-    if (round < cardsPerPlayer - 1) {
-      for (let i = 0; i < playerCount; i++) {
-        // Move pool assignment in the pass direction
-        poolAssignments[i] = (poolAssignments[i] + passDirection + playerCount) % playerCount
+    const response = this.requestInputAny(playerOptions)
+    const player = this.players.byName(response.actor)
+    const playerIndex = players.indexOf(player)
+    const pool = playerQueues[playerIndex][0]
+    const selectedName = response.selection[0]
+
+    const cardId = pool.find(id => {
+      const card = res.getCardById(id)
+      return card && card.name === selectedName
+    })
+
+    if (cardId) {
+      pool.splice(pool.indexOf(cardId), 1)
+      player.hand.push(cardId)
+      picksMade++
+
+      this.log.add({
+        template: '{player} drafts {draftedCard}',
+        redacted: '{player} drafts a card',
+        visibility: [player.name],
+        args: { player, draftedCard: selectedName },
+      })
+
+      // Remove this pool from the player's queue
+      playerQueues[playerIndex].shift()
+
+      // Pass remaining cards to next player (if any)
+      if (pool.length > 0) {
+        const nextIndex = (playerIndex + passDirection + playerCount) % playerCount
+        playerQueues[nextIndex].push(pool)
       }
     }
   }
