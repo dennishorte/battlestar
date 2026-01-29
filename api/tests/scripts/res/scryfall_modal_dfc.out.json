@@ -1,0 +1,48 @@
+{
+  "_id": "scryfall-md5-c0d52ae8e18f4c9e27e8dec1845191e2",
+  "source": "scryfall",
+  "data": {
+    "layout": "modal_dfc",
+    "card_faces": [
+      {
+        "name": "Shaile, Dean of Radiance",
+        "mana_cost": "{1}{W}",
+        "type_line": "Legendary Creature — Bird Cleric",
+        "oracle_text": "Flying, vigilance\n{T}: Put a +1/+1 counter on each creature that entered the battlefield under your control this turn.",
+        "power": "1",
+        "toughness": "1",
+        "artist": "Yongjae Choi",
+        "image_uri": "https://cards.scryfall.io/art_crop/front/0/0/00538777-8230-42bf-a6ea-adbe430d6b18.jpg?1681081029"
+      },
+      {
+        "name": "Embrose, Dean of Shadow",
+        "mana_cost": "{2}{B}{B}",
+        "type_line": "Legendary Creature — Human Warlock",
+        "oracle_text": "{T}: Put a +1/+1 counter on another target creature, then Embrose deals 2 damage to that creature.\nWhenever a creature you control with a +1/+1 counter on it dies, draw a card.",
+        "power": "4",
+        "toughness": "4",
+        "artist": "Yongjae Choi",
+        "image_uri": "https://cards.scryfall.io/art_crop/back/0/0/00538777-8230-42bf-a6ea-adbe430d6b18.jpg?1681081029"
+      }
+    ],
+    "set": "prm",
+    "collector_number": "90228",
+    "digital": true,
+    "rarity": "rare",
+    "legal": [
+      "historic",
+      "timeless",
+      "gladiator",
+      "pioneer",
+      "modern",
+      "legacy",
+      "vintage",
+      "penny",
+      "commander",
+      "oathbreaker",
+      "brawl",
+      "duel"
+    ],
+    "_id": "scryfall-md5-c0d52ae8e18f4c9e27e8dec1845191e2"
+  }
+}

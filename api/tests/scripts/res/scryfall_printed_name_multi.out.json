@@ -1,0 +1,51 @@
+{
+  "_id": "scryfall-md5-0465a3015e2cc89737ffda4280f7ff78",
+  "source": "scryfall",
+  "data": {
+    "layout": "modal_dfc",
+    "card_faces": [
+      {
+        "name": "Peter Parker",
+        "mana_cost": "{1}{W}",
+        "type_line": "Legendary Creature — Human Scientist Hero",
+        "oracle_text": "When Peter Parker enters, create a 2/1 green Spider creature token with reach.\n{1}{G}{W}{U}: Transform Peter Parker. Activate only as a sorcery.",
+        "power": "0",
+        "toughness": "1",
+        "artist": "Chris Mangum",
+        "image_uri": "https://cards.scryfall.io/art_crop/front/2/e/2ec821c3-3e5c-4af8-a6ef-e2e77aa8668c.jpg?1757548525"
+      },
+      {
+        "name": "Amazing Spider-Man",
+        "mana_cost": "{1}{G}{W}{U}",
+        "type_line": "Legendary Creature — Spider Human Hero",
+        "oracle_text": "Vigilance, reach\nEach legendary spell you cast that's one or more colors has web-slinging {G}{W}{U}. (You may cast a spell for its web-slinging cost if you also return a tapped creature you control to its owner's hand.)",
+        "power": "4",
+        "toughness": "4",
+        "artist": "Chris Mangum",
+        "image_uri": "https://cards.scryfall.io/art_crop/back/2/e/2ec821c3-3e5c-4af8-a6ef-e2e77aa8668c.jpg?1757548525"
+      }
+    ],
+    "set": "om1",
+    "collector_number": "21",
+    "digital": true,
+    "rarity": "mythic",
+    "legal": [
+      "standard",
+      "future",
+      "historic",
+      "timeless",
+      "gladiator",
+      "pioneer",
+      "modern",
+      "legacy",
+      "vintage",
+      "commander",
+      "oathbreaker",
+      "standardbrawl",
+      "brawl",
+      "alchemy",
+      "duel"
+    ],
+    "_id": "scryfall-md5-0465a3015e2cc89737ffda4280f7ff78"
+  }
+}

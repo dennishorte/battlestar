@@ -1,0 +1,169 @@
+{
+  "object": "card",
+  "id": "001e9f20-5b15-41cb-bf82-46172decc235",
+  "oracle_id": "8b84fec5-617c-4088-8250-2ba1f1f9479a",
+  "multiverse_ids": [],
+  "resource_id": "C92C4E13E3340F3594F515DE39A78D2D448AC0DFBC530AEADCE4B192DEB258CC",
+  "mtgo_id": 141511,
+  "tcgplayer_id": 634012,
+  "cardmarket_id": 827001,
+  "name": "Balamb Garden, SeeD Academy // Balamb Garden, Airborne",
+  "lang": "en",
+  "released_at": "2025-06-13",
+  "uri": "https://api.scryfall.com/cards/001e9f20-5b15-41cb-bf82-46172decc235",
+  "scryfall_uri": "https://scryfall.com/card/fin/272/balamb-garden-seed-academy-balamb-garden-airborne?utm_source=api",
+  "layout": "transform",
+  "highres_image": true,
+  "image_status": "highres_scan",
+  "cmc": 0,
+  "type_line": "Land — Town // Legendary Artifact — Vehicle",
+  "color_identity": [
+    "G",
+    "U"
+  ],
+  "keywords": [
+    "Flying",
+    "Transform",
+    "Crew"
+  ],
+  "produced_mana": [
+    "G",
+    "U"
+  ],
+  "card_faces": [
+    {
+      "object": "card_face",
+      "name": "Balamb Garden, SeeD Academy",
+      "mana_cost": "",
+      "type_line": "Land — Town",
+      "oracle_text": "This land enters tapped.\n{T}: Add {G} or {U}.\n{5}{G}{U}, {T}: Transform this land. This ability costs {1} less to activate for each other Town you control.",
+      "colors": [],
+      "artist": "Jonas De Ro",
+      "artist_id": "561ebf9e-8d93-4b57-8156-8826d0c19601",
+      "illustration_id": "83559f92-ec25-4f3e-8f67-a66970c1e01e",
+      "image_uris": {
+        "small": "https://cards.scryfall.io/small/front/0/0/001e9f20-5b15-41cb-bf82-46172decc235.jpg?1748707838",
+        "normal": "https://cards.scryfall.io/normal/front/0/0/001e9f20-5b15-41cb-bf82-46172decc235.jpg?1748707838",
+        "large": "https://cards.scryfall.io/large/front/0/0/001e9f20-5b15-41cb-bf82-46172decc235.jpg?1748707838",
+        "png": "https://cards.scryfall.io/png/front/0/0/001e9f20-5b15-41cb-bf82-46172decc235.png?1748707838",
+        "art_crop": "https://cards.scryfall.io/art_crop/front/0/0/001e9f20-5b15-41cb-bf82-46172decc235.jpg?1748707838",
+        "border_crop": "https://cards.scryfall.io/border_crop/front/0/0/001e9f20-5b15-41cb-bf82-46172decc235.jpg?1748707838"
+      }
+    },
+    {
+      "object": "card_face",
+      "name": "Balamb Garden, Airborne",
+      "mana_cost": "",
+      "type_line": "Legendary Artifact — Vehicle",
+      "oracle_text": "Flying\nWhenever Balamb Garden attacks, draw a card.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "colors": [],
+      "power": "5",
+      "toughness": "4",
+      "artist": "Jonas De Ro",
+      "artist_id": "561ebf9e-8d93-4b57-8156-8826d0c19601",
+      "illustration_id": "dd3fc1d7-6e7c-4b10-a4b5-8dc0804061e1",
+      "image_uris": {
+        "small": "https://cards.scryfall.io/small/back/0/0/001e9f20-5b15-41cb-bf82-46172decc235.jpg?1748707838",
+        "normal": "https://cards.scryfall.io/normal/back/0/0/001e9f20-5b15-41cb-bf82-46172decc235.jpg?1748707838",
+        "large": "https://cards.scryfall.io/large/back/0/0/001e9f20-5b15-41cb-bf82-46172decc235.jpg?1748707838",
+        "png": "https://cards.scryfall.io/png/back/0/0/001e9f20-5b15-41cb-bf82-46172decc235.png?1748707838",
+        "art_crop": "https://cards.scryfall.io/art_crop/back/0/0/001e9f20-5b15-41cb-bf82-46172decc235.jpg?1748707838",
+        "border_crop": "https://cards.scryfall.io/border_crop/back/0/0/001e9f20-5b15-41cb-bf82-46172decc235.jpg?1748707838"
+      }
+    }
+  ],
+  "legalities": {
+    "standard": "legal",
+    "future": "legal",
+    "historic": "legal",
+    "timeless": "legal",
+    "gladiator": "legal",
+    "pioneer": "legal",
+    "modern": "legal",
+    "legacy": "legal",
+    "pauper": "not_legal",
+    "vintage": "legal",
+    "penny": "legal",
+    "commander": "legal",
+    "oathbreaker": "legal",
+    "standardbrawl": "legal",
+    "brawl": "legal",
+    "alchemy": "legal",
+    "paupercommander": "not_legal",
+    "duel": "legal",
+    "oldschool": "not_legal",
+    "premodern": "not_legal",
+    "predh": "not_legal"
+  },
+  "games": [
+    "paper",
+    "arena",
+    "mtgo"
+  ],
+  "reserved": false,
+  "game_changer": false,
+  "foil": true,
+  "nonfoil": true,
+  "finishes": [
+    "nonfoil",
+    "foil"
+  ],
+  "oversized": false,
+  "promo": false,
+  "reprint": false,
+  "variation": false,
+  "set_id": "d7beb4b7-e1ff-4d35-ab07-5700f17ea1ea",
+  "set": "fin",
+  "set_name": "Final Fantasy",
+  "set_type": "expansion",
+  "set_uri": "https://api.scryfall.com/sets/d7beb4b7-e1ff-4d35-ab07-5700f17ea1ea",
+  "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Afin&unique=prints",
+  "scryfall_set_uri": "https://scryfall.com/sets/fin?utm_source=api",
+  "rulings_uri": "https://api.scryfall.com/cards/001e9f20-5b15-41cb-bf82-46172decc235/rulings",
+  "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A8b84fec5-617c-4088-8250-2ba1f1f9479a&unique=prints",
+  "collector_number": "272",
+  "digital": false,
+  "rarity": "rare",
+  "artist": "Jonas De Ro",
+  "artist_ids": [
+    "561ebf9e-8d93-4b57-8156-8826d0c19601"
+  ],
+  "border_color": "black",
+  "frame": "2015",
+  "frame_effects": [
+    "legendary"
+  ],
+  "security_stamp": "triangle",
+  "full_art": false,
+  "textless": false,
+  "booster": true,
+  "story_spotlight": false,
+  "promo_types": [
+    "universesbeyond",
+    "ffviii"
+  ],
+  "edhrec_rank": 7547,
+  "preview": {
+    "source": "CGMagazine",
+    "source_uri": "https://www.cgmagonline.com/articles/previews/mtg-final-fantasy-homebases/",
+    "previewed_at": "2025-05-23"
+  },
+  "prices": {
+    "usd": "0.35",
+    "usd_foil": "0.60",
+    "usd_etched": null,
+    "eur": "0.21",
+    "eur_foil": "0.37",
+    "tix": "0.02"
+  },
+  "related_uris": {
+    "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBalamb%2BGarden%252C%2BSeeD%2BAcademy%2B%252F%252F%2BBalamb%2BGarden%252C%2BAirborne",
+    "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBalamb%2BGarden%252C%2BSeeD%2BAcademy%2B%252F%252F%2BBalamb%2BGarden%252C%2BAirborne",
+    "edhrec": "https://edhrec.com/route/?cc=Balamb+Garden%2C+SeeD+Academy"
+  },
+  "purchase_uris": {
+    "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F634012%3Fpage%3D1",
+    "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=827001&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+    "cardhoarder": "https://www.cardhoarder.com/cards/141511?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+  }
+}

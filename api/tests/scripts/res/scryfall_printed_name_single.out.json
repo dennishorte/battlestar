@@ -1,0 +1,42 @@
+{
+  "_id": "scryfall-md5-d600ffb25c4da9fe00d9596d37911c66",
+  "source": "scryfall",
+  "data": {
+    "layout": "normal",
+    "set": "om1",
+    "collector_number": "166",
+    "digital": true,
+    "rarity": "rare",
+    "card_faces": [
+      {
+        "artist": "Joshua Cairos",
+        "mana_cost": "{3}",
+        "name": "Iron Spider, Stark Upgrade",
+        "oracle_text": "Vigilance\n{T}: Put a +1/+1 counter on each artifact creature and/or Vehicle you control.\n{2}, Remove two +1/+1 counters from among artifacts you control: Draw a card.",
+        "power": "2",
+        "toughness": "3",
+        "type_line": "Legendary Artifact Creature — Spider Hero",
+        "image_uri": "https://cards.scryfall.io/art_crop/front/0/2/0229a5a9-eb7f-4eba-8b1e-f2271e312d4a.jpg?1757544378"
+      }
+    ],
+    "legal": [
+      "standard",
+      "future",
+      "historic",
+      "timeless",
+      "gladiator",
+      "pioneer",
+      "modern",
+      "legacy",
+      "vintage",
+      "penny",
+      "commander",
+      "oathbreaker",
+      "standardbrawl",
+      "brawl",
+      "alchemy",
+      "duel"
+    ],
+    "_id": "scryfall-md5-d600ffb25c4da9fe00d9596d37911c66"
+  }
+}

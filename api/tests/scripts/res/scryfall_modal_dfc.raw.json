@@ -1,0 +1,157 @@
+{
+  "object": "card",
+  "id": "00538777-8230-42bf-a6ea-adbe430d6b18",
+  "oracle_id": "b0907441-30fe-436a-b29c-585b57eabfc3",
+  "multiverse_ids": [],
+  "mtgo_id": 90228,
+  "name": "Shaile, Dean of Radiance // Embrose, Dean of Shadow",
+  "lang": "en",
+  "released_at": "2021-05-01",
+  "uri": "https://api.scryfall.com/cards/00538777-8230-42bf-a6ea-adbe430d6b18",
+  "scryfall_uri": "https://scryfall.com/card/prm/90228/shaile-dean-of-radiance-embrose-dean-of-shadow?utm_source=api",
+  "layout": "modal_dfc",
+  "highres_image": true,
+  "image_status": "highres_scan",
+  "cmc": 2,
+  "type_line": "Legendary Creature — Bird Cleric // Legendary Creature — Human Warlock",
+  "color_identity": [
+    "B",
+    "W"
+  ],
+  "keywords": [
+    "Flying",
+    "Vigilance"
+  ],
+  "card_faces": [
+    {
+      "object": "card_face",
+      "name": "Shaile, Dean of Radiance",
+      "mana_cost": "{1}{W}",
+      "type_line": "Legendary Creature — Bird Cleric",
+      "oracle_text": "Flying, vigilance\n{T}: Put a +1/+1 counter on each creature that entered the battlefield under your control this turn.",
+      "colors": [
+        "W"
+      ],
+      "power": "1",
+      "toughness": "1",
+      "artist": "Yongjae Choi",
+      "artist_id": "5ab91c3b-a6da-4751-a56e-81d0f61a67ab",
+      "illustration_id": "6f1dedd5-99ab-43ab-8a9c-9d095a5d18c4",
+      "image_uris": {
+        "small": "https://cards.scryfall.io/small/front/0/0/00538777-8230-42bf-a6ea-adbe430d6b18.jpg?1681081029",
+        "normal": "https://cards.scryfall.io/normal/front/0/0/00538777-8230-42bf-a6ea-adbe430d6b18.jpg?1681081029",
+        "large": "https://cards.scryfall.io/large/front/0/0/00538777-8230-42bf-a6ea-adbe430d6b18.jpg?1681081029",
+        "png": "https://cards.scryfall.io/png/front/0/0/00538777-8230-42bf-a6ea-adbe430d6b18.png?1681081029",
+        "art_crop": "https://cards.scryfall.io/art_crop/front/0/0/00538777-8230-42bf-a6ea-adbe430d6b18.jpg?1681081029",
+        "border_crop": "https://cards.scryfall.io/border_crop/front/0/0/00538777-8230-42bf-a6ea-adbe430d6b18.jpg?1681081029"
+      }
+    },
+    {
+      "object": "card_face",
+      "name": "Embrose, Dean of Shadow",
+      "mana_cost": "{2}{B}{B}",
+      "type_line": "Legendary Creature — Human Warlock",
+      "oracle_text": "{T}: Put a +1/+1 counter on another target creature, then Embrose deals 2 damage to that creature.\nWhenever a creature you control with a +1/+1 counter on it dies, draw a card.",
+      "colors": [
+        "B"
+      ],
+      "power": "4",
+      "toughness": "4",
+      "artist": "Yongjae Choi",
+      "artist_id": "5ab91c3b-a6da-4751-a56e-81d0f61a67ab",
+      "illustration_id": "fff88913-8706-4e92-be06-65d069990655",
+      "image_uris": {
+        "small": "https://cards.scryfall.io/small/back/0/0/00538777-8230-42bf-a6ea-adbe430d6b18.jpg?1681081029",
+        "normal": "https://cards.scryfall.io/normal/back/0/0/00538777-8230-42bf-a6ea-adbe430d6b18.jpg?1681081029",
+        "large": "https://cards.scryfall.io/large/back/0/0/00538777-8230-42bf-a6ea-adbe430d6b18.jpg?1681081029",
+        "png": "https://cards.scryfall.io/png/back/0/0/00538777-8230-42bf-a6ea-adbe430d6b18.png?1681081029",
+        "art_crop": "https://cards.scryfall.io/art_crop/back/0/0/00538777-8230-42bf-a6ea-adbe430d6b18.jpg?1681081029",
+        "border_crop": "https://cards.scryfall.io/border_crop/back/0/0/00538777-8230-42bf-a6ea-adbe430d6b18.jpg?1681081029"
+      }
+    }
+  ],
+  "legalities": {
+    "standard": "not_legal",
+    "future": "not_legal",
+    "historic": "legal",
+    "timeless": "legal",
+    "gladiator": "legal",
+    "pioneer": "legal",
+    "modern": "legal",
+    "legacy": "legal",
+    "pauper": "not_legal",
+    "vintage": "legal",
+    "penny": "legal",
+    "commander": "legal",
+    "oathbreaker": "legal",
+    "standardbrawl": "not_legal",
+    "brawl": "legal",
+    "alchemy": "not_legal",
+    "paupercommander": "not_legal",
+    "duel": "legal",
+    "oldschool": "not_legal",
+    "premodern": "not_legal",
+    "predh": "not_legal"
+  },
+  "games": [
+    "mtgo"
+  ],
+  "reserved": false,
+  "game_changer": false,
+  "foil": true,
+  "nonfoil": true,
+  "finishes": [
+    "nonfoil",
+    "foil"
+  ],
+  "oversized": false,
+  "promo": true,
+  "reprint": true,
+  "variation": false,
+  "set_id": "638940fb-6be9-4be3-b83f-68d3902fbbe5",
+  "set": "prm",
+  "set_name": "Magic Online Promos",
+  "set_type": "promo",
+  "set_uri": "https://api.scryfall.com/sets/638940fb-6be9-4be3-b83f-68d3902fbbe5",
+  "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Aprm&unique=prints",
+  "scryfall_set_uri": "https://scryfall.com/sets/prm?utm_source=api",
+  "rulings_uri": "https://api.scryfall.com/cards/00538777-8230-42bf-a6ea-adbe430d6b18/rulings",
+  "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ab0907441-30fe-436a-b29c-585b57eabfc3&unique=prints",
+  "collector_number": "90228",
+  "digital": true,
+  "rarity": "rare",
+  "artist": "Yongjae Choi",
+  "artist_ids": [
+    "5ab91c3b-a6da-4751-a56e-81d0f61a67ab"
+  ],
+  "border_color": "black",
+  "frame": "2015",
+  "frame_effects": [
+    "legendary"
+  ],
+  "security_stamp": "oval",
+  "full_art": false,
+  "textless": false,
+  "booster": false,
+  "story_spotlight": false,
+  "edhrec_rank": 10648,
+  "penny_rank": 5562,
+  "prices": {
+    "usd": null,
+    "usd_foil": null,
+    "usd_etched": null,
+    "eur": null,
+    "eur_foil": null,
+    "tix": "0.03"
+  },
+  "related_uris": {
+    "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DShaile%252C%2BDean%2Bof%2BRadiance%2B%252F%252F%2BEmbrose%252C%2BDean%2Bof%2BShadow",
+    "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DShaile%252C%2BDean%2Bof%2BRadiance%2B%252F%252F%2BEmbrose%252C%2BDean%2Bof%2BShadow",
+    "edhrec": "https://edhrec.com/route/?cc=Shaile%2C+Dean+of+Radiance"
+  },
+  "purchase_uris": {
+    "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fmagic%2Fproduct%3FproductLineName%3Dmagic%26q%3DShaile%252C%2BDean%2Bof%2BRadiance%26view%3Dgrid",
+    "cardmarket": "https://www.cardmarket.com/en/Magic/Products/Search?referrer=scryfall&searchString=Shaile%2C+Dean+of+Radiance&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+    "cardhoarder": "https://www.cardhoarder.com/cards/90228?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+  }
+}

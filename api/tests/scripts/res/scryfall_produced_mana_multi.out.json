@@ -1,0 +1,54 @@
+{
+  "_id": "scryfall-md5-f4ad00e648e2443c85ca587317895f1a",
+  "source": "scryfall",
+  "data": {
+    "layout": "transform",
+    "card_faces": [
+      {
+        "name": "Balamb Garden, SeeD Academy",
+        "mana_cost": "",
+        "type_line": "Land — Town",
+        "oracle_text": "This land enters tapped.\n{T}: Add {G} or {U}.\n{5}{G}{U}, {T}: Transform this land. This ability costs {1} less to activate for each other Town you control.",
+        "artist": "Jonas De Ro",
+        "produced_mana": [
+          "G",
+          "U"
+        ],
+        "image_uri": "https://cards.scryfall.io/art_crop/front/0/0/001e9f20-5b15-41cb-bf82-46172decc235.jpg?1748707838"
+      },
+      {
+        "name": "Balamb Garden, Airborne",
+        "mana_cost": "",
+        "type_line": "Legendary Artifact — Vehicle",
+        "oracle_text": "Flying\nWhenever Balamb Garden attacks, draw a card.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+        "power": "5",
+        "toughness": "4",
+        "artist": "Jonas De Ro",
+        "image_uri": "https://cards.scryfall.io/art_crop/back/0/0/001e9f20-5b15-41cb-bf82-46172decc235.jpg?1748707838"
+      }
+    ],
+    "set": "fin",
+    "collector_number": "272",
+    "digital": false,
+    "rarity": "rare",
+    "legal": [
+      "standard",
+      "future",
+      "historic",
+      "timeless",
+      "gladiator",
+      "pioneer",
+      "modern",
+      "legacy",
+      "vintage",
+      "penny",
+      "commander",
+      "oathbreaker",
+      "standardbrawl",
+      "brawl",
+      "alchemy",
+      "duel"
+    ],
+    "_id": "scryfall-md5-f4ad00e648e2443c85ca587317895f1a"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "_id": "scryfall-md5-87bdeee1b19f2f68ba89e76ccb1db5f5",
+  "source": "scryfall",
+  "data": {
+    "layout": "saga",
+    "set": "who",
+    "collector_number": "704",
+    "digital": false,
+    "rarity": "rare",
+    "card_faces": [
+      {
+        "artist": "Miklós Ligeti",
+        "mana_cost": "{2}{G}",
+        "name": "City of Death",
+        "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after VI.)\nI — Create a Treasure token.\nII, III, IV, V, VI — Create a token that's a copy of target non-Saga token you control.",
+        "type_line": "Enchantment — Saga",
+        "image_uri": "https://cards.scryfall.io/art_crop/front/0/2/02242155-5612-4be7-b4db-c94f3ff34383.jpg?1696638045"
+      }
+    ],
+    "legal": [
+      "legacy",
+      "vintage",
+      "commander",
+      "oathbreaker",
+      "duel"
+    ],
+    "_id": "scryfall-md5-87bdeee1b19f2f68ba89e76ccb1db5f5"
+  }
+}
