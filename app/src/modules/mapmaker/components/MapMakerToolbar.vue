@@ -58,7 +58,7 @@
 
 
 <script>
-import OffCanvas from '@/components/OffCanvas'
+import OffCanvas from '@/components/OffCanvas.vue'
 
 
 export default {

@@ -19,8 +19,8 @@
 <script>
 import { util } from 'battlestar-common'
 
-import CardListItem from '@/modules/magic/components/CardListItem'
-import SectionHeader from '@/components/SectionHeader'
+import CardListItem from '@/modules/magic/components/CardListItem.vue'
+import SectionHeader from '@/components/SectionHeader.vue'
 
 export default {
   name: 'DecklistSection',

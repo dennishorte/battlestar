@@ -9,7 +9,7 @@
 
 
 <script>
-import CardSquare from './CardSquare'
+import CardSquare from './CardSquare.vue'
 
 export default {
   name: 'CardNameFull',

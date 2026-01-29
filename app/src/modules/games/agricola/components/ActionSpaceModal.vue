@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import ModalBase from '@/components/ModalBase'
+import ModalBase from '@/components/ModalBase.vue'
 import { agricola } from 'battlestar-common'
 
 const res = agricola.res

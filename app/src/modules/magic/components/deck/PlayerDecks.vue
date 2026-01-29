@@ -41,9 +41,9 @@
 </template>
 
 <script>
-import SectionHeader from '@/components/SectionHeader'
-import DropdownMenu from '@/components/DropdownMenu'
-import DropdownItem from '@/components/DropdownItem'
+import SectionHeader from '@/components/SectionHeader.vue'
+import DropdownMenu from '@/components/DropdownMenu.vue'
+import DropdownItem from '@/components/DropdownItem.vue'
 
 export default {
   name: 'PlayerDecks',

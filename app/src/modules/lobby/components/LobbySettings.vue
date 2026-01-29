@@ -24,12 +24,12 @@
 
 
 <script>
-import SettingsAgricola from './SettingsAgricola'
-import SettingsCubeDraft from './SettingsCubeDraft'
-import SettingsMagic from './SettingsMagic'
-import SettingsSetDraft from './SettingsSetDraft'
-import SettingsTyrants from './SettingsTyrants'
-import SettingsUltimate from './SettingsUltimate'
+import SettingsAgricola from './SettingsAgricola.vue'
+import SettingsCubeDraft from './SettingsCubeDraft.vue'
+import SettingsMagic from './SettingsMagic.vue'
+import SettingsSetDraft from './SettingsSetDraft.vue'
+import SettingsTyrants from './SettingsTyrants.vue'
+import SettingsUltimate from './SettingsUltimate.vue'
 
 
 export default {

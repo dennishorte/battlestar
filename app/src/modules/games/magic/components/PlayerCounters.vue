@@ -9,7 +9,7 @@
 
 
 <script>
-import PlayerCounter from './PlayerCounter'
+import PlayerCounter from './PlayerCounter.vue'
 
 
 export default {

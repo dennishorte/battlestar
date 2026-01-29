@@ -34,10 +34,10 @@
 </template>
 
 <script>
-import DropdownMenu from '@/components/DropdownMenu'
-import DropdownDivider from '@/components/DropdownDivider'
-import DropdownButton from '@/components/DropdownButton'
-import DropdownRouterLink from '@/components/DropdownRouterLink'
+import DropdownMenu from '@/components/DropdownMenu.vue'
+import DropdownDivider from '@/components/DropdownDivider.vue'
+import DropdownButton from '@/components/DropdownButton.vue'
+import DropdownRouterLink from '@/components/DropdownRouterLink.vue'
 
 export default {
   name: 'GameHeader',

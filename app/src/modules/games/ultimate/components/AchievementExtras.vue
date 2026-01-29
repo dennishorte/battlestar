@@ -6,7 +6,7 @@
 
 
 <script>
-import CardNameFull from './CardNameFull'
+import CardNameFull from './CardNameFull.vue'
 
 export default {
   name: 'AchievementExtras',

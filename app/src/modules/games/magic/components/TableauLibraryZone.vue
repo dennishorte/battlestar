@@ -18,8 +18,8 @@
 
 
 <script>
-import TableauZoneCard from './TableauZoneCard'
-import TableauZoneMenu from './TableauZoneMenu'
+import TableauZoneCard from './TableauZoneCard.vue'
+import TableauZoneMenu from './TableauZoneMenu.vue'
 
 
 export default {

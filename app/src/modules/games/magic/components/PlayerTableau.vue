@@ -176,13 +176,13 @@ import { Toast } from 'bootstrap'
 import { computed } from 'vue'
 import { mapGetters } from 'vuex'
 
-import DropdownButton from '@/components/DropdownButton'
-import DropdownDivider from '@/components/DropdownDivider'
-import ImportCardModal from './ImportCardModal'
-import ModalBase from '@/components/ModalBase'
-import PlayerCounters from './PlayerCounters'
-import TableauZone from './TableauZone'
-import TableauZoneMenu from './TableauZoneMenu'
+import DropdownButton from '@/components/DropdownButton.vue'
+import DropdownDivider from '@/components/DropdownDivider.vue'
+import ImportCardModal from './ImportCardModal.vue'
+import ModalBase from '@/components/ModalBase.vue'
+import PlayerCounters from './PlayerCounters.vue'
+import TableauZone from './TableauZone.vue'
+import TableauZoneMenu from './TableauZoneMenu.vue'
 
 
 export default {

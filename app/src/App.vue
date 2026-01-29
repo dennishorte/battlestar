@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import ErrorModal from '@/components/ErrorModal'
+import ErrorModal from '@/components/ErrorModal.vue'
 
 
 export default {

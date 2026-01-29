@@ -22,8 +22,8 @@
 
 
 <script>
-import ModalBase from '@/components/ModalBase'
-import SetPicker from './SetPicker'
+import ModalBase from '@/components/ModalBase.vue'
+import SetPicker from './SetPicker.vue'
 
 
 export default {

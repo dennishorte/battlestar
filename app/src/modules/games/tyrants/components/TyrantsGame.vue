@@ -48,26 +48,26 @@ import { util } from 'battlestar-common'
 import maps from '../res/maps.js'
 
 // Common Components
-import DropdownButton from '@/components/DropdownButton'
-import DropdownDivider from '@/components/DropdownDivider'
-import GameMenu from '@/modules/games/common/components/GameMenu'
-import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
+import DropdownButton from '@/components/DropdownButton.vue'
+import DropdownDivider from '@/components/DropdownDivider.vue'
+import GameMenu from '@/modules/games/common/components/GameMenu.vue'
+import WaitingPanel from '@/modules/games/common/components/WaitingPanel.vue'
 
 // Tyrants Components
-import DevouredZone from './DevouredZone'
-import GameLogTyrants from './GameLogTyrants'
-import GameMap from './map/GameMap'
-import MarketZone from './MarketZone'
-import PlayerTableau from './PlayerTableau'
-import ScoreTable from './ScoreTable'
+import DevouredZone from './DevouredZone.vue'
+import GameLogTyrants from './GameLogTyrants.vue'
+import GameMap from './map/GameMap.vue'
+import MarketZone from './MarketZone.vue'
+import PlayerTableau from './PlayerTableau.vue'
+import ScoreTable from './ScoreTable.vue'
 
 
 // Modals
-import CardViewerModal from './CardViewerModal'
-import DebugModal from '@/modules/games/common/components/DebugModal'
-import TableauModal from './TableauModal'
+import CardViewerModal from './CardViewerModal.vue'
+import DebugModal from '@/modules/games/common/components/DebugModal.vue'
+import TableauModal from './TableauModal.vue'
 
-import ModalBase from '@/components/ModalBase'
+import ModalBase from '@/components/ModalBase.vue'
 
 
 export default {

@@ -24,7 +24,7 @@
 
 <script>
 import { selector } from 'battlestar-common'
-import OptionSelector from './OptionSelector'
+import OptionSelector from './OptionSelector.vue'
 
 export default {
   name: 'WaitingChoice',

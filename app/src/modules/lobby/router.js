@@ -1,4 +1,4 @@
-import GameLobby from './components/GameLobby'
+import GameLobby from './components/GameLobby.vue'
 import lobbyUtil from './util'
 
 export default [

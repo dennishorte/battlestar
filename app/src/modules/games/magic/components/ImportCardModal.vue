@@ -23,7 +23,7 @@
 import { mapGetters } from 'vuex'
 import { mag } from 'battlestar-common'
 
-import CardSearchModal from '@/modules/magic/components/CardSearchModal'
+import CardSearchModal from '@/modules/magic/components/CardSearchModal.vue'
 
 export default {
   name: 'ImportCardModal',

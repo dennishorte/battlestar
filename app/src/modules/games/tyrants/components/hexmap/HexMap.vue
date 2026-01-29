@@ -17,9 +17,9 @@
 <script>
 import { util } from 'battlestar-common'
 
-import ConnectorLayer from './ConnectorLayer'
-import SiteLayer from './SiteLayer'
-import TileLayer from './TileLayer'
+import ConnectorLayer from './ConnectorLayer.vue'
+import SiteLayer from './SiteLayer.vue'
+import TileLayer from './TileLayer.vue'
 import data from './data.js'
 import tile from './tile.js'
 

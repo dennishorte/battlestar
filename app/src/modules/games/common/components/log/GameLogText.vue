@@ -3,9 +3,9 @@
 </template>
 
 <script>
-import CardName from './CardName'
-import LocName from './LocName'
-import PlayerName from './PlayerName'
+import CardName from './CardName.vue'
+import LocName from './LocName.vue'
+import PlayerName from './PlayerName.vue'
 
 const cardNameMatcher = /card[(]([^()]+)[)]/g
 const locNameMatcher = /loc[(]([^()]+)[)]/g

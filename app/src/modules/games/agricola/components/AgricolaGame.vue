@@ -62,26 +62,26 @@
 
 <script>
 // Common Components
-import DropdownButton from '@/components/DropdownButton'
-import DropdownDivider from '@/components/DropdownDivider'
-import GameMenu from '@/modules/games/common/components/GameMenu'
-import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
-import ModalBase from '@/components/ModalBase'
+import DropdownButton from '@/components/DropdownButton.vue'
+import DropdownDivider from '@/components/DropdownDivider.vue'
+import GameMenu from '@/modules/games/common/components/GameMenu.vue'
+import WaitingPanel from '@/modules/games/common/components/WaitingPanel.vue'
+import ModalBase from '@/components/ModalBase.vue'
 
 // Agricola Components
-import ActionsColumn from './ActionsColumn'
-import AgricolaCardChip from './AgricolaCardChip'
-import GameLogAgricola from './GameLogAgricola'
-import MajorImprovements from './MajorImprovements'
-import PlayerTableau from './PlayerTableau'
-import RoundInfo from './RoundInfo'
-import ScoreTable from './ScoreTable'
+import ActionsColumn from './ActionsColumn.vue'
+import AgricolaCardChip from './AgricolaCardChip.vue'
+import GameLogAgricola from './GameLogAgricola.vue'
+import MajorImprovements from './MajorImprovements.vue'
+import PlayerTableau from './PlayerTableau.vue'
+import RoundInfo from './RoundInfo.vue'
+import ScoreTable from './ScoreTable.vue'
 
 // Modals
-import ActionSpaceModal from './ActionSpaceModal'
-import CardViewerModal from './CardViewerModal'
-import ScoreBreakdownModal from './ScoreBreakdownModal'
-import DebugModal from '@/modules/games/common/components/DebugModal'
+import ActionSpaceModal from './ActionSpaceModal.vue'
+import CardViewerModal from './CardViewerModal.vue'
+import ScoreBreakdownModal from './ScoreBreakdownModal.vue'
+import DebugModal from '@/modules/games/common/components/DebugModal.vue'
 
 // Utilities
 import { agricola } from 'battlestar-common'

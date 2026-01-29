@@ -25,7 +25,7 @@ import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { util } from 'battlestar-common'
 
-import CardEditor from './CardEditor'
+import CardEditor from './CardEditor.vue'
 
 
 const props = defineProps({

@@ -54,16 +54,16 @@
 <script>
 import { mapState } from 'vuex'
 
-import CardCloseupModal from './CardCloseupModal'
-import CounterCloseupModal from './CounterCloseupModal'
-import DropdownDivider from '@/components/DropdownDivider'
-import DropdownButton from '@/components/DropdownButton'
-import DropdownRouterLink from '@/components/DropdownRouterLink'
-import GameLogMagic from './GameLogMagic'
-import GameMenu from '@/modules/games/common/components/GameMenu'
-import MatchStats from './MatchStats'
-import PhaseSelector from './PhaseSelector'
-import PlayerTableau from './PlayerTableau'
+import CardCloseupModal from './CardCloseupModal.vue'
+import CounterCloseupModal from './CounterCloseupModal.vue'
+import DropdownDivider from '@/components/DropdownDivider.vue'
+import DropdownButton from '@/components/DropdownButton.vue'
+import DropdownRouterLink from '@/components/DropdownRouterLink.vue'
+import GameLogMagic from './GameLogMagic.vue'
+import GameMenu from '@/modules/games/common/components/GameMenu.vue'
+import MatchStats from './MatchStats.vue'
+import PhaseSelector from './PhaseSelector.vue'
+import PlayerTableau from './PlayerTableau.vue'
 
 export default {
   name: 'MagicGame',

@@ -13,10 +13,10 @@
 
 
 <script>
-import DropdownMenu from '@/components/DropdownMenu'
-import DropdownButton from '@/components/DropdownButton'
-import DropdownDivider from '@/components/DropdownDivider'
-import DropdownRouterLink from '@/components/DropdownRouterLink'
+import DropdownMenu from '@/components/DropdownMenu.vue'
+import DropdownButton from '@/components/DropdownButton.vue'
+import DropdownDivider from '@/components/DropdownDivider.vue'
+import DropdownRouterLink from '@/components/DropdownRouterLink.vue'
 
 export default {
   name: 'MagicMenu',

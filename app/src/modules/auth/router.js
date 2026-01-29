@@ -1,5 +1,5 @@
 import store from '@/store'
-import SiteLogin from './components/SiteLogin'
+import SiteLogin from './components/SiteLogin.vue'
 
 export default [
   {

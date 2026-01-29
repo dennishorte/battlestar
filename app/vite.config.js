@@ -17,7 +17,6 @@ export default defineConfig({
       // Runtime compiler needed — two components use dynamic `template:` strings
       vue: 'vue/dist/vue.esm-bundler.js',
     },
-    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
     preserveSymlinks: true,
   },
   css: {

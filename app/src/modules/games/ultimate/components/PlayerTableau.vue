@@ -60,10 +60,10 @@
 </template>
 
 <script>
-import AchievementExtras from './AchievementExtras'
-import CardPile from './CardPile'
-import ColorStack from './ColorStack'
-import ScoreExtras from './ScoreExtras'
+import AchievementExtras from './AchievementExtras.vue'
+import CardPile from './CardPile.vue'
+import ColorStack from './ColorStack.vue'
+import ScoreExtras from './ScoreExtras.vue'
 
 export default {
   name: 'PlayerTableau',

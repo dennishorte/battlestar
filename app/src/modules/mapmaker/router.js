@@ -1,4 +1,4 @@
-import MapMaker from './components/MapMaker'
+import MapMaker from './components/MapMaker.vue'
 
 export default [
   {

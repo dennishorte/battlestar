@@ -1,4 +1,4 @@
-import SiteAdmin from './components/SiteAdmin'
+import SiteAdmin from './components/SiteAdmin.vue'
 
 export default [
   {

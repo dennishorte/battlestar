@@ -41,13 +41,13 @@
 <script>
 // import { saveAs } from 'file-saver'
 
-import DecklistSection from './DecklistSection'
-import DropdownMenu from '@/components/DropdownMenu'
-import DropdownButton from '@/components/DropdownButton'
+import DecklistSection from './DecklistSection.vue'
+import DropdownMenu from '@/components/DropdownMenu.vue'
+import DropdownButton from '@/components/DropdownButton.vue'
 
-import CardManagerModal from './CardManagerModal'
-import DeckImportModal from './DeckImportModal'
-import DeckSettingsModal from './DeckSettingsModal'
+import CardManagerModal from './CardManagerModal.vue'
+import DeckImportModal from './DeckImportModal.vue'
+import DeckSettingsModal from './DeckSettingsModal.vue'
 
 
 export default {

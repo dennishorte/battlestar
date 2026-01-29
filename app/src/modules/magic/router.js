@@ -1,7 +1,7 @@
-import CardViewer from './components/CardViewer'
-import CubeViewer from './components/cube/CubeViewer'
-import DeckBuilder from './components/deck/DeckBuilder'
-import Profile from'./components/Profile'
+import CardViewer from './components/CardViewer.vue'
+import CubeViewer from './components/cube/CubeViewer.vue'
+import DeckBuilder from './components/deck/DeckBuilder.vue'
+import Profile from './components/Profile.vue'
 
 
 export default [

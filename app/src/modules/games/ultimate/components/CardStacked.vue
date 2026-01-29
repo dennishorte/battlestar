@@ -9,8 +9,8 @@
 
 
 <script>
-import CardCollapsed from './CardCollapsed'
-import CardFull from './CardFull'
+import CardCollapsed from './CardCollapsed.vue'
+import CardFull from './CardFull.vue'
 
 export default {
   name: 'CardStacked',

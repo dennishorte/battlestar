@@ -10,7 +10,7 @@
 
 
 <script>
-import MapConnector from './MapConnector'
+import MapConnector from './MapConnector.vue'
 
 
 export default {

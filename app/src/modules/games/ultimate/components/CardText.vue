@@ -3,10 +3,10 @@
 </template>
 
 <script>
-import CardBiscuit from './CardBiscuit'
-import CardNameFull from './CardNameFull'
-import CardSquareDetails from './CardSquareDetails'
-import PlayerName from './PlayerName'
+import CardBiscuit from './CardBiscuit.vue'
+import CardNameFull from './CardNameFull.vue'
+import CardSquareDetails from './CardSquareDetails.vue'
+import PlayerName from './PlayerName.vue'
 
 const biscuitMatcher = /[{](.)[}]/g
 const cardMatcher = /[*]([^-]+)-([0-9]+)[*]/g

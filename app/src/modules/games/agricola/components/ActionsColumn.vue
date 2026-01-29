@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import ActionSpace from './ActionSpace'
+import ActionSpace from './ActionSpace.vue'
 
 // Action IDs grouped by category (hardcoded to match actionSpaces.js)
 // Revised Edition names

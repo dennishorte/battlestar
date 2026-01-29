@@ -6,7 +6,7 @@
 
 
 <script>
-import CardBiscuit from './CardBiscuit'
+import CardBiscuit from './CardBiscuit.vue'
 
 export default {
   name: 'ScoreExtras',

@@ -7,8 +7,8 @@
 
 
 <script>
-import CardText from './CardText'
-import ModalBase from '@/components/ModalBase'
+import CardText from './CardText.vue'
+import ModalBase from '@/components/ModalBase.vue'
 
 export default {
   name: 'CardsViewerModal',

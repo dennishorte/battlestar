@@ -37,10 +37,10 @@
 <script>
 import { mapState } from 'vuex'
 
-import PlayerDecks from './deck/PlayerDecks'
-import DraftList from './DraftList'
-import MagicMenu from './MagicMenu'
-import SectionHeader from '@/components/SectionHeader'
+import PlayerDecks from './deck/PlayerDecks.vue'
+import DraftList from './DraftList.vue'
+import MagicMenu from './MagicMenu.vue'
+import SectionHeader from '@/components/SectionHeader.vue'
 
 export default {
   name: 'MagicProfile',

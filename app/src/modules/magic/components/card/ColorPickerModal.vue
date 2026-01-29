@@ -69,7 +69,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { magic, util } from 'battlestar-common'
-import ManaSymbol from './ManaSymbol'
+import ManaSymbol from './ManaSymbol.vue'
 
 const props = defineProps({
   card: {

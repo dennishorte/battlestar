@@ -43,10 +43,10 @@
 </template>
 
 <script>
-import ChatInput from '@/modules/games/common/components/ChatInput'
-import ChatOffCanvas from '@/modules/games/common/components/log/ChatOffCanvas'
-import GameLogText from '@/modules/games/common/components/log/GameLogText'
-import RematchButton from '@/modules/games/common/components/RematchButton'
+import ChatInput from '@/modules/games/common/components/ChatInput.vue'
+import ChatOffCanvas from '@/modules/games/common/components/log/ChatOffCanvas.vue'
+import GameLogText from '@/modules/games/common/components/log/GameLogText.vue'
+import RematchButton from '@/modules/games/common/components/RematchButton.vue'
 
 
 export default {

@@ -11,8 +11,8 @@
 
 
 <script>
-import CardBiscuit from './CardBiscuit'
-import CardText from './CardText'
+import CardBiscuit from './CardBiscuit.vue'
+import CardText from './CardText.vue'
 
 export default {
   name: 'CardStacked',

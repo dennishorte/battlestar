@@ -13,11 +13,11 @@
 <script>
 import { mapState } from 'vuex'
 
-import DebugModal from '@/modules/games/common/components/DebugModal'
-import LinkToDraftModal from './LinkToDraftModal'
-import MagicGame from './MagicGame'
-import MagicWrapper from '@/modules/magic/components/MagicWrapper'
-import PreGame from './PreGame'
+import DebugModal from '@/modules/games/common/components/DebugModal.vue'
+import LinkToDraftModal from './LinkToDraftModal.vue'
+import MagicGame from './MagicGame.vue'
+import MagicWrapper from '@/modules/magic/components/MagicWrapper.vue'
+import PreGame from './PreGame.vue'
 
 import UICardWrapper from '@/modules/magic/util/card.wrapper'
 

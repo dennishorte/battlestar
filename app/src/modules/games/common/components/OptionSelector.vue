@@ -47,7 +47,7 @@
 <script>
 import { selector, util } from 'battlestar-common'
 
-import OptionName from './OptionName'
+import OptionName from './OptionName.vue'
 
 export default {
   name: 'OptionSelector',

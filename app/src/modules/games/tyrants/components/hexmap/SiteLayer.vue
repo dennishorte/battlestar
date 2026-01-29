@@ -45,8 +45,8 @@
 
 
 <script>
-import MapSite from './MapSite'
-import MapSpot from './MapSpot'
+import MapSite from './MapSite.vue'
+import MapSpot from './MapSpot.vue'
 
 
 export default {

@@ -36,22 +36,22 @@
 
 
 <script>
-import GameMenu from '@/modules/games/common/components/GameMenu'
-import WaitingPanel from '@/modules/games/common/components/WaitingPanel'
+import GameMenu from '@/modules/games/common/components/GameMenu.vue'
+import WaitingPanel from '@/modules/games/common/components/WaitingPanel.vue'
 
-import AchievementsZone from './AchievementsZone'
-import BiscuitsInfo from './BiscuitsInfo'
-import CardNameFull from './CardNameFull'
-import CardPile from './CardPile'
-import DecksInfo from './DecksInfo'
-import DropdownItem from '@/components/DropdownItem'
-import GameLogInnovation from './GameLogInnovation'
-import PlayerTableau from './PlayerTableau'
+import AchievementsZone from './AchievementsZone.vue'
+import BiscuitsInfo from './BiscuitsInfo.vue'
+import CardNameFull from './CardNameFull.vue'
+import CardPile from './CardPile.vue'
+import DecksInfo from './DecksInfo.vue'
+import DropdownItem from '@/components/DropdownItem.vue'
+import GameLogInnovation from './GameLogInnovation.vue'
+import PlayerTableau from './PlayerTableau.vue'
 
 // Modals
-import AchievementModal from './AchievementModal'
-import CardsViewerModal from './CardsViewerModal'
-import DebugModal from '@/modules/games/common/components/DebugModal'
+import AchievementModal from './AchievementModal.vue'
+import CardsViewerModal from './CardsViewerModal.vue'
+import DebugModal from '@/modules/games/common/components/DebugModal.vue'
 
 export default {
   name: 'UltimateGame',

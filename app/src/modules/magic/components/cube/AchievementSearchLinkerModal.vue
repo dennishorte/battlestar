@@ -40,8 +40,8 @@
 import { mapState } from 'vuex'
 
 import CubeAchievement from './CubeAchievement'
-import CardFilterList from '../CardFilterList'
-import ModalBase from '@/components/ModalBase'
+import CardFilterList from '../CardFilterList.vue'
+import ModalBase from '@/components/ModalBase.vue'
 
 
 export default {

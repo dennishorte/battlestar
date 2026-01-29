@@ -21,8 +21,8 @@
 
 
 <script>
-import SitePoints from './SitePoints'
-import SiteTroopSpaces from './SiteTroopSpaces'
+import SitePoints from './SitePoints.vue'
+import SiteTroopSpaces from './SiteTroopSpaces.vue'
 
 export default {
   name: 'MapSite',

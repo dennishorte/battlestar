@@ -42,9 +42,9 @@
 
 
 <script>
-import CardBiscuit from './CardBiscuit'
-import CardSquare from './CardSquare'
-import CardText from './CardText'
+import CardBiscuit from './CardBiscuit.vue'
+import CardSquare from './CardSquare.vue'
+import CardText from './CardText.vue'
 
 import { util } from 'battlestar-common'
 
