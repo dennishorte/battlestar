@@ -1,7 +1,8 @@
 <template>
   <div class="agricola-card-chip" :class="cardTypeClass" @click.stop="showDetails">
     <span class="card-name">{{ displayName }}</span>
-    <span class="card-cost" v-if="costText">{{ costText }}<span v-if="hasPrereqs" class="prereqs-marker">*</span></span>
+    <span class="card-cost" v-if="costText">{{ costText }}</span>
+    <span v-if="hasPrereqs" class="prereqs-marker">*</span>
     <span class="card-vp" v-if="victoryPoints">{{ victoryPoints }}VP</span>
   </div>
 </template>
