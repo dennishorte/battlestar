@@ -35,13 +35,14 @@
       </div>
 
       <!-- Card Text -->
-      <div class="card-text" v-if="card.text">
+      <div class="card-text" v-if="card.text || card.passLeft">
         <template v-if="Array.isArray(card.text)">
           <p v-for="(line, index) in card.text" :key="index" class="text-line">{{ line }}</p>
         </template>
-        <template v-else>
-          {{ card.text }}
+        <template v-else-if="card.text">
+          <p class="text-line">{{ card.text }}</p>
         </template>
+        <p v-if="card.passLeft" class="text-line pass-left">(Pass this card to the player on your left after you play it.)</p>
       </div>
 
       <!-- Alternate Cost (for upgrades like Cooking Hearth) -->
@@ -350,6 +351,11 @@ export default {
 
 .card-text .text-line:last-child {
   margin-bottom: 0;
+}
+
+.card-text .pass-left {
+  font-style: italic;
+  color: #666;
 }
 
 .card-alternate-cost {
