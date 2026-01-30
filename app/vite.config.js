@@ -49,6 +49,11 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    commonjsOptions: {
+      include: [/common/, /node_modules/],
+    },
+  },
   server: {
     proxy: {
       '/api': {
