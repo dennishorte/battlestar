@@ -357,7 +357,9 @@ export default {
       return false
     },
 
-    // Check if the current waiting selector has a flat choice matching this location name
+    // Check if the current waiting selector has a flat choice matching this location name.
+    // Also handles "Place a spy" vs "Return spy" choices by inferring the right option
+    // based on whether the current player has a spy at the clicked location.
     matchLocationInSelector(loc) {
       const waiting = this.game.getWaiting()
       if (!waiting) {
@@ -366,11 +368,37 @@ export default {
       const selector = waiting.selectors[0]
       const locName = loc.name()
 
+      // Direct location name match
       if (selector.choices.some(c => typeof c === 'string' && c === locName)) {
         return {
           actor: this.actor.name,
           title: selector.title,
           selection: [locName],
+        }
+      }
+
+      // Spy place/return choice: pick the right option based on board state
+      const placeSpyChoice = selector.choices.find(c => c === 'Place a spy')
+      const returnSpyChoice = selector.choices.find(c =>
+        typeof c === 'string' && c.startsWith('Return one of your spies')
+      )
+      if (placeSpyChoice || returnSpyChoice) {
+        const player = this.game.players.current()
+        const hasOwnSpy = loc.getSpies(player).length > 0
+
+        if (hasOwnSpy && returnSpyChoice) {
+          return {
+            actor: this.actor.name,
+            title: selector.title,
+            selection: [returnSpyChoice],
+          }
+        }
+        else if (!hasOwnSpy && placeSpyChoice) {
+          return {
+            actor: this.actor.name,
+            title: selector.title,
+            selection: [placeSpyChoice],
+          }
         }
       }
 
