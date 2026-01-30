@@ -7,12 +7,22 @@
       <input
         class="form-check-input"
         type="checkbox"
-        :value="expansion.value"
-        :disabled="expansion.disabled"
+        :value="models.randomizeExpansions ? false : expansion.value"
+        :disabled="models.randomizeExpansions ? true : expansion.disabled"
         v-model="models.expansions"
         @change="optionsChanged"
       />
       <label class="form-check-label">{{ expansion.text }}</label>
+    </div>
+
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        v-model="models.randomizeExpansions"
+        @change="optionsChanged"
+      />
+      <label class="form-check-label">randomize expansions</label>
     </div>
 
     Map
@@ -116,6 +126,7 @@ export default {
         expansions: [],
         map: '',
         menzoExtraNeutral: true,
+        randomizeExpansions: false,
       },
     }
   },
@@ -140,17 +151,18 @@ export default {
         && map.maxPlayers >= numPlayers
       )
 
-      // Exactly two expansions must be selected
-      const expansionCondition = this.models.expansions.length === 2
+      // Exactly two expansions must be selected (or randomize is enabled)
+      const expansionCondition = this.models.randomizeExpansions || this.models.expansions.length === 2
 
       this.lobby.valid = mapAndPlayersCondition && expansionCondition
     },
 
     optionsChanged() {
       this.lobby.options = {
-        expansions: [...this.models.expansions],
+        expansions: this.models.randomizeExpansions ? [] : [...this.models.expansions],
         map: this.models.map,
-        menzoExtraNeutral: this.models.menzoExtraNeutral
+        menzoExtraNeutral: this.models.menzoExtraNeutral,
+        randomizeExpansions: this.models.randomizeExpansions,
       }
       this.updateValid()
       this.save()
@@ -161,6 +173,7 @@ export default {
     if (this.lobby.options) {
       this.models.expansions = [...this.lobby.options.expansions]
       this.models.map = this.lobby.options.map
+      this.models.randomizeExpansions = Boolean(this.lobby.options.randomizeExpansions)
       if (this.lobby.options.menzoExtraNeutral === undefined) {
         this.models.menzoExtraNeutral = true
       }

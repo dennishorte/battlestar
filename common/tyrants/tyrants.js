@@ -41,6 +41,7 @@ function factoryFromLobby(lobby) {
     game: 'Tyrants of the Underdark',
     name: lobby.name,
     expansions: lobby.options.expansions,
+    randomizeExpansions: lobby.options.randomizeExpansions,
     map: lobby.options.map,
     menzoExtraNeutral: lobby.options.menzoExtraNeutral,
     players: lobby.users,
@@ -63,6 +64,7 @@ Tyrants.prototype.initialize = function() {
   this.log.add({ template: 'Initializing' })
   this.log.indent()
 
+  this.initializeExpansions()
   this.initializePlayers()
   this.initializeZones()
   this.initializeCards()
@@ -77,6 +79,29 @@ Tyrants.prototype.initialize = function() {
   this.doingSetup = true
   this._breakpoint('initialization-complete')
   this.doingSetup = false
+}
+
+Tyrants.prototype.initializeExpansions = function() {
+  if (!this.settings.randomizeExpansions) {
+    return
+  }
+
+  const allExpansions = ['demons', 'dragons', 'drow', 'elementals', 'illithid', 'undead']
+
+  // Randomly pick 2 expansions using Fisher-Yates partial shuffle
+  const shuffled = [...allExpansions]
+  for (let i = shuffled.length - 1; i > shuffled.length - 3; i--) {
+    const j = Math.floor(this.random() * (i + 1))
+    const temp = shuffled[i]
+    shuffled[i] = shuffled[j]
+    shuffled[j] = temp
+  }
+
+  this.settings.expansions = [shuffled[shuffled.length - 2], shuffled[shuffled.length - 1]].sort()
+
+  this.log.add({
+    template: 'Randomly selected expansions: ' + this.settings.expansions.join(', '),
+  })
 }
 
 Tyrants.prototype.initializeZones = function() {
