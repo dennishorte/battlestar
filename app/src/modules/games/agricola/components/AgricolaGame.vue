@@ -32,6 +32,9 @@
     <ModalBase id="agricola-scores">
       <template #header>Score Overview</template>
       <ScoreTable />
+      <template #footer>
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </template>
     </ModalBase>
 
     <ActionSpaceModal />

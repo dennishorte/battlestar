@@ -94,6 +94,10 @@
         <span class="total-value">{{ breakdown.total }}</span>
       </div>
     </div>
+
+    <template #footer>
+      <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    </template>
   </ModalBase>
 </template>
 

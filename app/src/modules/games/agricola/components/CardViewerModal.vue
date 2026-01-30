@@ -76,6 +76,10 @@
     <div v-else class="card-not-found">
       Card not found: {{ cardId }}
     </div>
+
+    <template #footer>
+      <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    </template>
   </ModalBase>
 </template>
 
