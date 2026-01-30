@@ -68,19 +68,16 @@
       <CardSection
         title="Occupations"
         :cards="player.playedOccupations"
-        cardType="occupation"
       />
 
       <CardSection
         title="Minor Improvements"
         :cards="player.playedMinorImprovements"
-        cardType="minor"
       />
 
       <CardSection
         title="Major Improvements"
         :cards="player.majorImprovements"
-        cardType="major"
       />
 
       <!-- Hand (only visible to the player) -->
@@ -88,7 +85,6 @@
         v-if="isViewingPlayer"
         title="Hand"
         :cards="player.hand"
-        cardType="hand"
         :startExpanded="true"
         persistKey="agricola-hand-expanded"
       />

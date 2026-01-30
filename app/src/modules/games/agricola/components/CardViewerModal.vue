@@ -17,9 +17,9 @@
       </div>
 
       <!-- Prerequisites -->
-      <div class="card-prereqs" v-if="card.prerequisites">
+      <div class="card-prereqs" v-if="card.prereqs">
         <span class="prereqs-label">Requires:</span>
-        <span class="prereqs-text">{{ formatPrereqs(card.prerequisites) }}</span>
+        <span class="prereqs-text">{{ formatPrereqs(card.prereqs) }}</span>
       </div>
 
       <!-- Victory Points -->
@@ -180,12 +180,42 @@ export default {
         if (prereqs.occupations === 0) {
           parts.push('No occupations played')
         }
+        else if (prereqs.occupationsExact) {
+          parts.push(`Exactly ${prereqs.occupations} occupations`)
+        }
+        else if (prereqs.occupationsAtMost) {
+          parts.push(`At most ${prereqs.occupations} occupations`)
+        }
         else {
           parts.push(`${prereqs.occupations}+ occupations`)
         }
       }
       if (prereqs.minorImprovements !== undefined) {
         parts.push(`${prereqs.minorImprovements}+ minor improvements`)
+      }
+      if (prereqs.grainFields !== undefined) {
+        parts.push(`${prereqs.grainFields}+ grain fields`)
+      }
+      if (prereqs.vegetableFields !== undefined) {
+        parts.push(`${prereqs.vegetableFields}+ vegetable fields`)
+      }
+      if (prereqs.sheep !== undefined) {
+        parts.push(`${prereqs.sheep}+ sheep`)
+      }
+      if (prereqs.clay !== undefined) {
+        parts.push(`${prereqs.clay}+ clay`)
+      }
+      if (prereqs.houseType !== undefined) {
+        const types = Array.isArray(prereqs.houseType)
+          ? prereqs.houseType.join(' or ')
+          : prereqs.houseType
+        parts.push(`${types} house`)
+      }
+      if (prereqs.allFarmyardUsed) {
+        parts.push('All farmyard spaces used')
+      }
+      if (prereqs.personOnFishing) {
+        parts.push('Person on fishing space')
       }
       return parts.join(', ') || 'None'
     },

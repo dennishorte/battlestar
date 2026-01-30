@@ -1,7 +1,7 @@
 <template>
   <div class="agricola-card-chip" :class="cardTypeClass" @click.stop="showDetails">
     <span class="card-name">{{ displayName }}</span>
-    <span class="card-cost" v-if="costText">{{ costText }}</span>
+    <span class="card-cost" v-if="costText">{{ costText }}<span v-if="hasPrereqs" class="prereqs-marker">*</span></span>
     <span class="card-vp" v-if="victoryPoints">{{ victoryPoints }}VP</span>
   </div>
 </template>
@@ -87,6 +87,10 @@ export default {
       return this.card?.victoryPoints || null
     },
 
+    hasPrereqs() {
+      return !!this.card?.prereqs
+    },
+
     costText() {
       const cost = this.card?.cost
       if (!cost) {
@@ -147,6 +151,12 @@ export default {
   font-size: .8em;
   color: #555;
   margin-left: auto;
+}
+
+.prereqs-marker {
+  color: #c62828;
+  font-weight: bold;
+  margin-left: .1em;
 }
 
 .card-vp {
