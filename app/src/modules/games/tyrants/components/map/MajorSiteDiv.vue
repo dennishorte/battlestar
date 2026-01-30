@@ -13,6 +13,7 @@
         :key="troop.id"
         class="troop-space"
         :style="ui.fn.troopStyle(troop)"
+        @click="ui.fn.clickTroop(troop, loc, $event)"
       />
 
       <div
@@ -28,6 +29,7 @@
         :key="spy.id"
         class="spy troop-space"
         :style="ui.fn.troopStyle(spy)"
+        @click="ui.fn.clickSpy(spy, loc, $event)"
       />
     </div>
 

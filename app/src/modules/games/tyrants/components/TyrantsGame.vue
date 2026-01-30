@@ -7,6 +7,10 @@
             <DropdownButton @click="openRules">rules</DropdownButton>
             <DropdownDivider />
             <DropdownButton @click="showScores">scores</DropdownButton>
+            <DropdownDivider />
+            <DropdownButton @click="toggleMapActions">
+              map actions: {{ ui.mapActions ? 'on' : 'off' }}
+            </DropdownButton>
           </GameMenu>
 
           <GameLogTyrants />
@@ -96,9 +100,12 @@ export default {
       ui: {
         fn: {
           clickLocation: this.clickLocation,
+          clickTroop: this.clickTroop,
+          clickSpy: this.clickSpy,
           insertSelectorSubtitles: this.insertSelectorSubtitles,
           troopStyle: this.troopStyle,
         },
+        mapActions: window.localStorage.getItem('tyrants-map-actions') === 'true',
         modals: {
           cardViewer: {
             cardId: '',
@@ -232,6 +239,98 @@ export default {
 
     showScores() {
       this.$modal('tyrants-scores').show()
+    },
+
+    toggleMapActions() {
+      this.ui.mapActions = !this.ui.mapActions
+      window.localStorage.setItem('tyrants-map-actions', this.ui.mapActions)
+    },
+
+    canAssassinateTroop() {
+      const waiting = this.game.getWaiting()
+      if (!waiting) {
+        return false
+      }
+      const usePowerOption = waiting.selectors[0].choices
+        .find(c => c.title === 'Use Power')
+      if (!usePowerOption) {
+        return false
+      }
+      return usePowerOption.choices
+        .some(c => c === 'Assassinate a Troop' || c.title === 'Assassinate a Troop')
+    },
+
+    canReturnSpy() {
+      const waiting = this.game.getWaiting()
+      if (!waiting) {
+        return false
+      }
+      const usePowerOption = waiting.selectors[0].choices
+        .find(c => c.title === 'Use Power')
+      if (!usePowerOption) {
+        return false
+      }
+      return usePowerOption.choices
+        .some(c => c === 'Return an Enemy Spy' || c.title === 'Return an Enemy Spy')
+    },
+
+    clickTroop(troop, loc, event) {
+      if (!this.ui.mapActions) {
+        return false
+      }
+
+      const currentPlayer = this.game.players.current()
+      const troopOwner = this.game.players.byOwner(troop)
+      if (troopOwner === currentPlayer) {
+        return false
+      }
+
+      if (!this.canAssassinateTroop()) {
+        return false
+      }
+
+      event.stopPropagation()
+      const ownerName = troopOwner ? troopOwner.name : 'neutral'
+      this.game.respondToInputRequest({
+        actor: this.actor.name,
+        title: '__ALT_ACTION__',
+        selection: [{
+          action: 'assassinate-with-power',
+          location: loc.name(),
+          owner: ownerName,
+        }]
+      })
+      this.$store.dispatch('game/save')
+      return true
+    },
+
+    clickSpy(spy, loc, event) {
+      if (!this.ui.mapActions) {
+        return false
+      }
+
+      const currentPlayer = this.game.players.current()
+      const spyOwner = this.game.players.byOwner(spy)
+      if (spyOwner === currentPlayer) {
+        return false
+      }
+
+      if (!this.canReturnSpy()) {
+        return false
+      }
+
+      event.stopPropagation()
+      this.game.respondToInputRequest({
+        actor: this.actor.name,
+        title: '__ALT_ACTION__',
+        selection: [{
+          action: 'return-spy-with-power',
+          location: loc.name(),
+          owner: spyOwner.name,
+        }]
+      })
+      this.$store.dispatch('game/save')
+      return true
     },
 
     troopStyle(troop) {

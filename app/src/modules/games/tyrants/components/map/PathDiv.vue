@@ -12,6 +12,7 @@
         :key="index"
         class="troop-space"
         :style="this.ui.fn.troopStyle(troop)"
+        @click="ui.fn.clickTroop(troop, loc, $event)"
       />
     </div>
 

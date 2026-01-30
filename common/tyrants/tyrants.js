@@ -373,6 +373,34 @@ Tyrants.prototype.doActions = function() {
       continue
     }
 
+    else if (chosenAction.action === 'assassinate-with-power') {
+      this.log.add({
+        template: '{player} power: Assassinate a Troop',
+        args: { player }
+      })
+      this.log.indent()
+      const loc = this.getLocationByName(chosenAction.location)
+      const owner = chosenAction.owner === 'neutral' ? 'neutral' : this.players.byName(chosenAction.owner)
+      this.aAssassinate(player, loc, owner)
+      player.incrementCounter('power', -3)
+      this.log.outdent()
+      continue
+    }
+
+    else if (chosenAction.action === 'return-spy-with-power') {
+      this.log.add({
+        template: '{player} power: Return an Enemy Spy',
+        args: { player }
+      })
+      this.log.indent()
+      const loc = this.getLocationByName(chosenAction.location)
+      const owner = this.players.byName(chosenAction.owner)
+      this.aReturnSpy(player, loc, owner)
+      player.incrementCounter('power', -3)
+      this.log.outdent()
+      continue
+    }
+
     const name = chosenAction.title
     const arg = chosenAction.selection[0]
 
