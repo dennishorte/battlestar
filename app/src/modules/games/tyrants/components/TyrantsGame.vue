@@ -221,6 +221,10 @@ export default {
         })
         this.$store.dispatch('game/save')
       }
+      else if (this.ui.mapActions && this.matchLocationInSelector(loc)) {
+        this.game.respondToInputRequest(this.matchLocationInSelector(loc))
+        this.$store.dispatch('game/save')
+      }
       else {
         this.bus.emit('user-select-option', {
           actor: this.actor,
@@ -285,23 +289,33 @@ export default {
         return false
       }
 
-      if (!this.canAssassinateTroop()) {
-        return false
+      // Top-level action menu: use power to assassinate
+      if (this.canAssassinateTroop()) {
+        event.stopPropagation()
+        const ownerName = troopOwner ? troopOwner.name : 'neutral'
+        this.game.respondToInputRequest({
+          actor: this.actor.name,
+          title: '__ALT_ACTION__',
+          selection: [{
+            action: 'assassinate-with-power',
+            location: loc.name(),
+            owner: ownerName,
+          }]
+        })
+        this.$store.dispatch('game/save')
+        return true
       }
 
-      event.stopPropagation()
-      const ownerName = troopOwner ? troopOwner.name : 'neutral'
-      this.game.respondToInputRequest({
-        actor: this.actor.name,
-        title: '__ALT_ACTION__',
-        selection: [{
-          action: 'assassinate-with-power',
-          location: loc.name(),
-          owner: ownerName,
-        }]
-      })
-      this.$store.dispatch('game/save')
-      return true
+      // Within-action selection: match against waiting selector choices
+      const match = this.matchTroopInSelector(troop, loc)
+      if (match) {
+        event.stopPropagation()
+        this.game.respondToInputRequest(match)
+        this.$store.dispatch('game/save')
+        return true
+      }
+
+      return false
     },
 
     clickSpy(spy, loc, event) {
@@ -315,22 +329,119 @@ export default {
         return false
       }
 
-      if (!this.canReturnSpy()) {
-        return false
+      // Top-level action menu: use power to return spy
+      if (this.canReturnSpy()) {
+        event.stopPropagation()
+        this.game.respondToInputRequest({
+          actor: this.actor.name,
+          title: '__ALT_ACTION__',
+          selection: [{
+            action: 'return-spy-with-power',
+            location: loc.name(),
+            owner: spyOwner.name,
+          }]
+        })
+        this.$store.dispatch('game/save')
+        return true
       }
 
-      event.stopPropagation()
-      this.game.respondToInputRequest({
-        actor: this.actor.name,
-        title: '__ALT_ACTION__',
-        selection: [{
-          action: 'return-spy-with-power',
-          location: loc.name(),
-          owner: spyOwner.name,
-        }]
-      })
-      this.$store.dispatch('game/save')
-      return true
+      // Within-action selection: match against waiting selector choices
+      const match = this.matchSpyInSelector(spy, loc)
+      if (match) {
+        event.stopPropagation()
+        this.game.respondToInputRequest(match)
+        this.$store.dispatch('game/save')
+        return true
+      }
+
+      return false
+    },
+
+    // Check if the current waiting selector has a flat choice matching this location name
+    matchLocationInSelector(loc) {
+      const waiting = this.game.getWaiting()
+      if (!waiting) {
+        return null
+      }
+      const selector = waiting.selectors[0]
+      const locName = loc.name()
+
+      if (selector.choices.some(c => typeof c === 'string' && c === locName)) {
+        return {
+          actor: this.actor.name,
+          title: selector.title,
+          selection: [locName],
+        }
+      }
+
+      return null
+    },
+
+    // Build a choice string matching the format used by _collectTargets / getAssassinateChoices
+    troopChoiceString(troop, loc) {
+      const owner = this.game.players.byOwner(troop)
+      const ownerName = owner ? owner.name : 'neutral'
+      return `${loc.name()}, ${ownerName}`
+    },
+
+    // Check if the current waiting selector has a flat or nested choice matching this troop
+    matchTroopInSelector(troop, loc) {
+      const waiting = this.game.getWaiting()
+      if (!waiting) {
+        return null
+      }
+      const selector = waiting.selectors[0]
+      const choiceStr = this.troopChoiceString(troop, loc)
+
+      // Flat choices (e.g. aChooseAndAssassinate, aChooseAndSupplant)
+      if (selector.choices.some(c => typeof c === 'string' && c === choiceStr)) {
+        return {
+          actor: this.actor.name,
+          title: selector.title,
+          selection: [choiceStr],
+        }
+      }
+
+      // Nested choices with a 'troop' group (e.g. aChooseAndReturn)
+      const troopGroup = selector.choices.find(c => c.title === 'troop')
+      if (troopGroup && troopGroup.choices.includes(choiceStr)) {
+        return {
+          actor: this.actor.name,
+          title: selector.title,
+          selection: [{
+            title: 'troop',
+            selection: [choiceStr],
+          }],
+        }
+      }
+
+      return null
+    },
+
+    // Check if the current waiting selector has a nested choice matching this spy
+    matchSpyInSelector(spy, loc) {
+      const waiting = this.game.getWaiting()
+      if (!waiting) {
+        return null
+      }
+      const selector = waiting.selectors[0]
+      const owner = this.game.players.byOwner(spy)
+      const choiceStr = `${loc.name()}, ${owner ? owner.name : 'neutral'}`
+
+      // Nested choices with a 'spy' group (e.g. aChooseAndReturn)
+      const spyGroup = selector.choices.find(c => c.title === 'spy')
+      if (spyGroup && spyGroup.choices.includes(choiceStr)) {
+        return {
+          actor: this.actor.name,
+          title: selector.title,
+          selection: [{
+            title: 'spy',
+            selection: [choiceStr],
+          }],
+        }
+      }
+
+      return null
     },
 
     troopStyle(troop) {
