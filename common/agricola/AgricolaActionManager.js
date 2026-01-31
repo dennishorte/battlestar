@@ -1385,7 +1385,7 @@ class AgricolaActionManager extends BaseActionManager {
 
     this.log.add({
       template: '{player} takes action: {action}',
-      args: { player, action: action.name },
+      args: { player, action: this.game.getActionDisplayName(action) },
     })
 
     // Handle accumulating actions

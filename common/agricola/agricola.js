@@ -60,7 +60,7 @@ function factoryFromLobby(lobby) {
     numPlayers: lobby.users.length,
     useDrafting: lobby.options?.useDrafting || false,
     cardSets: lobby.options?.cardSets || res.getCardSetIds(),
-    version: 2,
+    version: 3,
   })
 }
 
@@ -194,6 +194,20 @@ Agricola.prototype.addActionSpace = function(action) {
       occupiedBy: null,
     }
   }
+}
+
+// Version-aware display names for actions
+const LESSONS_DISPLAY_NAMES = {
+  'occupation': 'Lessons (1)',
+  'lessons-3': 'Lessons (2)',
+  'lessons-4': 'Lessons (2)',
+}
+
+Agricola.prototype.getActionDisplayName = function(action) {
+  if (this.settings.version >= 3 && action.id in LESSONS_DISPLAY_NAMES) {
+    return LESSONS_DISPLAY_NAMES[action.id]
+  }
+  return action.name
 }
 
 Agricola.prototype.initializeRoundCards = function() {
@@ -749,7 +763,7 @@ Agricola.prototype.replenishPhase = function() {
       if (state.accumulated > 0) {
         this.log.add({
           template: '{action}: {amount} accumulated',
-          args: { action: action.name, amount: state.accumulated },
+          args: { action: this.getActionDisplayName(action), amount: state.accumulated },
         })
       }
     }
@@ -852,7 +866,7 @@ Agricola.prototype.playerTurn = function(player) {
     const action = res.getActionById(actionId)
     const state = this.state.actionSpaces[actionId]
 
-    let label = action.name
+    let label = this.getActionDisplayName(action)
     if (action.type === 'accumulating' && state.accumulated > 0) {
       label += ` (${state.accumulated})`
     }

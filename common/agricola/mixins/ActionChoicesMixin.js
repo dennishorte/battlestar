@@ -30,9 +30,10 @@ const ActionChoicesMixin = {
       }
 
       // Build choice info
+      const displayName = this.getActionDisplayName(action)
       const choice = {
         id: actionId,
-        name: action.name,
+        name: displayName,
         description: action.description,
         type: action.type,
       }
@@ -40,10 +41,10 @@ const ActionChoicesMixin = {
       // Add accumulated amount for accumulating actions
       if (action.type === 'accumulating' && state.accumulated > 0) {
         choice.accumulated = state.accumulated
-        choice.displayName = `${action.name} (${state.accumulated})`
+        choice.displayName = `${displayName} (${state.accumulated})`
       }
       else {
-        choice.displayName = action.name
+        choice.displayName = displayName
       }
 
       // Add ability flags
