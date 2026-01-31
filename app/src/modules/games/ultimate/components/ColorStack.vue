@@ -145,7 +145,7 @@ export default {
   margin-right: 0.25rem;
 
   opacity: 0.4;
-  background-image: url("~@/assets/img/new/biscuit-hex.png");
+  background-image: url("@/assets/img/new/biscuit-hex.png");
   background-size: 1.2em 1.2em;
 
   align-items: center;
