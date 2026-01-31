@@ -66,9 +66,26 @@ const ActionChoicesMixin = {
         .forEach(decree => util.array.pushUnique(availableDecrees, decree))
     }
 
+    const choices = availableDecrees.sort().map(decree => {
+      const card = this.cards.byId(decree)
+      const subtitles = []
+
+      for (const p of this.players.all()) {
+        if (card.zone.id === `players.${p.name}.achievements`) {
+          subtitles.push(`claimed by ${p.name}`)
+          break
+        }
+      }
+
+      return {
+        title: decree,
+        subtitles,
+      }
+    })
+
     return {
       title: 'Decree',
-      choices: availableDecrees.sort(),
+      choices,
       min: 0,
     }
   },

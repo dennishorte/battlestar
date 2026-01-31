@@ -496,11 +496,12 @@ TestUtil.clearHands = function(game) {
 }
 
 TestUtil.getChoices = function(request, kind) {
-  return request
+  const choices = request
     .selectors[0]
     .choices
     .find(c => c.title === kind)
     .choices
+  return choices.map(c => typeof c === 'object' ? c.title : c)
 }
 
 TestUtil.setAchievements = function(game, playerName, cardNames) {
