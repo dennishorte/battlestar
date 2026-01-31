@@ -11,6 +11,7 @@
         v-for="(troop, index) in loc.getTroops()"
         :key="index"
         class="troop-space"
+        :class="{ 'unit-selected': ui.fn.isUnitSelectable(troop, loc) }"
         :style="this.ui.fn.troopStyle(troop)"
         @click="ui.fn.clickTroop(troop, loc, $event)"
       />

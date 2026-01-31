@@ -12,6 +12,7 @@
         v-for="troop in loc.getTroops()"
         :key="troop.id"
         class="troop-space"
+        :class="{ 'unit-selected': ui.fn.isUnitSelectable(troop, loc) }"
         :style="ui.fn.troopStyle(troop)"
         @click="ui.fn.clickTroop(troop, loc, $event)"
       />
@@ -28,6 +29,7 @@
         v-for="spy in loc.getSpies()"
         :key="spy.id"
         class="spy troop-space"
+        :class="{ 'unit-selected': ui.fn.isUnitSelectable(spy, loc) }"
         :style="ui.fn.troopStyle(spy)"
         @click="ui.fn.clickSpy(spy, loc, $event)"
       />

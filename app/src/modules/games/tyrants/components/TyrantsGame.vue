@@ -103,6 +103,7 @@ export default {
           clickTroop: this.clickTroop,
           clickSpy: this.clickSpy,
           insertSelectorSubtitles: this.insertSelectorSubtitles,
+          isUnitSelectable: this.isUnitSelectable,
           troopStyle: this.troopStyle,
         },
         mapActions: window.localStorage.getItem('tyrants-map-actions') === 'true',
@@ -115,6 +116,7 @@ export default {
           },
         },
         selectable: [],
+        selectableUnits: [],
       },
     }
   },
@@ -130,14 +132,38 @@ export default {
   watch: {
     optionSelector() {
       if (this.optionSelector) {
-        this.ui.selectable = this.optionSelector.choices.flatMap(c => {
+        const unitTargets = []
+        const locationTargets = []
+
+        for (const c of this.optionSelector.choices) {
           const name = c.title || c
           const tokens = name.split(',').map(t => t.trim())
-          return util.array.distinct([name, tokens[0]])
-        })
+
+          if (typeof c === 'string' && tokens.length === 2 && this.game.getLocationByName(tokens[0])) {
+            // "LocationName, OwnerName" — unit-level target only
+            unitTargets.push(name)
+          }
+          else if (c.title === 'troop' || c.title === 'spy') {
+            // Nested group with unit targets only
+            for (const sub of (c.choices || [])) {
+              unitTargets.push(sub)
+            }
+          }
+          else {
+            locationTargets.push(name)
+            const locPart = tokens[0]
+            if (locPart !== name) {
+              locationTargets.push(locPart)
+            }
+          }
+        }
+
+        this.ui.selectableUnits = util.array.distinct(unitTargets)
+        this.ui.selectable = util.array.distinct(locationTargets)
       }
       else {
         this.ui.selectable = []
+        this.ui.selectableUnits = []
       }
     },
   },
@@ -357,6 +383,12 @@ export default {
       return false
     },
 
+    isUnitSelectable(unit, loc) {
+      const owner = this.game.players.byOwner(unit)
+      const ownerName = owner ? owner.name : 'neutral'
+      return this.ui.selectableUnits.includes(`${loc.name()}, ${ownerName}`)
+    },
+
     // Check if the current waiting selector has a flat choice matching this location name.
     // Also handles "Place a spy" vs "Return spy" choices by inferring the right option
     // based on whether the current player has a spy at the clicked location.
@@ -562,5 +594,10 @@ export default {
   border-radius: 50%;
   border: 1px solid black;
   margin: 1px;
+}
+
+.tyrants :deep(.troop-space.unit-selected) {
+  box-shadow: 0 0 3px 3px #cc99ff;
+  cursor: pointer;
 }
 </style>
