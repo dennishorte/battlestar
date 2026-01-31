@@ -1089,6 +1089,9 @@ class AgricolaActionManager extends BaseActionManager {
     // Call onBuildImprovement hooks (Junk Room gives food)
     this.callOnBuildImprovementHooks(player)
 
+    // Pass to left player if applicable
+    this.maybePassLeft(player, cardId)
+
     return true
   }
 
@@ -1219,6 +1222,9 @@ class AgricolaActionManager extends BaseActionManager {
 
           // Call onBuildImprovement hooks (Junk Room gives food)
           this.callOnBuildImprovementHooks(player)
+
+          // Pass to left player if applicable
+          this.maybePassLeft(player, cardId)
 
           return true
         }
@@ -1661,6 +1667,34 @@ class AgricolaActionManager extends BaseActionManager {
    */
   callOnBuildImprovementHooks(player) {
     this.game.callPlayerCardHook(player, 'onBuildImprovement')
+  }
+
+  /**
+   * Pass a minor improvement card to the player on the left, if it has passLeft.
+   * Removes the card from the current player's played pile and adds it to
+   * the left player's hand.
+   */
+  maybePassLeft(player, cardId) {
+    const card = res.getCardById(cardId)
+    if (!card || !card.passLeft) {
+      return
+    }
+
+    const leftPlayer = this.game.players.leftOf(player)
+    if (!leftPlayer || leftPlayer === player) {
+      return
+    }
+
+    // Remove from current player's played pile
+    player.playedMinorImprovements = player.playedMinorImprovements.filter(id => id !== cardId)
+
+    // Add to left player's hand
+    leftPlayer.hand.push(cardId)
+
+    this.log.add({
+      template: '{card} is passed to {nextPlayer}',
+      args: { card: card.name, nextPlayer: leftPlayer },
+    })
   }
 }
 
