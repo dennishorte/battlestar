@@ -1692,8 +1692,8 @@ class AgricolaActionManager extends BaseActionManager {
     leftPlayer.hand.push(cardId)
 
     this.log.add({
-      template: '{card} is passed to {nextPlayer}',
-      args: { card: card.name, nextPlayer: leftPlayer },
+      template: '{improvement} is passed to {nextPlayer}',
+      args: { improvement: card.name, nextPlayer: leftPlayer },
     })
   }
 }
