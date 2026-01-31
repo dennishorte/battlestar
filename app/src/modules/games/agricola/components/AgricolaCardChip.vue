@@ -1,5 +1,5 @@
 <template>
-  <div class="agricola-card-chip" :class="cardTypeClass" @click.stop="showDetails">
+  <div class="agricola-card-chip" :class="[cardTypeClass, { unplayable }]" @click.stop="showDetails">
     <span class="card-name">{{ displayName }}</span>
     <span class="card-cost" v-if="costText">{{ costText }}</span>
     <span v-if="hasPrereqs" class="prereqs-marker">*</span>
@@ -38,6 +38,10 @@ export default {
     cardType: {
       type: String,
       default: null, // 'occupation', 'minor', 'major' - auto-detected if null
+    },
+    player: {
+      type: Object,
+      default: null,
     },
   },
 
@@ -90,6 +94,22 @@ export default {
 
     hasPrereqs() {
       return !!this.card?.prereqs
+    },
+
+    unplayable() {
+      if (!this.player) {
+        return false
+      }
+      // Only check playability for cards in the player's hand
+      if (!this.player.hand || !this.player.hand.includes(this.cardId)) {
+        return false
+      }
+      try {
+        return !this.player.canPlayCard(this.cardId)
+      }
+      catch {
+        return false
+      }
     },
 
     costText() {
@@ -188,5 +208,9 @@ export default {
 .agricola-card-chip.card-type-unknown {
   background-color: #f5f5f5;
   border-left: 3px solid #9e9e9e;
+}
+
+.agricola-card-chip.unplayable {
+  opacity: 0.5;
 }
 </style>

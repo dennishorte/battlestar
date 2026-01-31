@@ -10,6 +10,7 @@
         v-for="cardId in cards"
         :key="cardId"
         :cardId="cardId"
+        :player="player"
       />
     </div>
     <div class="empty-message" v-else-if="expanded && cards.length === 0">
@@ -44,6 +45,10 @@ export default {
     startExpanded: {
       type: Boolean,
       default: true,
+    },
+    player: {
+      type: Object,
+      default: null,
     },
     persistKey: {
       type: String,

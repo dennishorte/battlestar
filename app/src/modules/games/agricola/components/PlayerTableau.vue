@@ -85,6 +85,7 @@
         v-if="isViewingPlayer"
         title="Hand"
         :cards="player.hand"
+        :player="player"
         :startExpanded="true"
         persistKey="agricola-hand-expanded"
       />
