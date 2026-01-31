@@ -377,6 +377,19 @@ export default {
         }
       }
 
+      // Prefix match: choices like "LocationName, OwnerName" (assassinate/supplant/return targets)
+      // Auto-submit only if there's exactly one match at this location
+      const prefixMatches = selector.choices.filter(c =>
+        typeof c === 'string' && c.startsWith(locName + ', ')
+      )
+      if (prefixMatches.length === 1) {
+        return {
+          actor: this.actor.name,
+          title: selector.title,
+          selection: [prefixMatches[0]],
+        }
+      }
+
       // Spy place/return choice: pick the right option based on board state
       const placeSpyChoice = selector.choices.find(c => c === 'Place a spy')
       const returnSpyChoice = selector.choices.find(c =>
