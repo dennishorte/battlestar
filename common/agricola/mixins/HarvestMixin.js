@@ -86,7 +86,7 @@ const HarvestMixin = {
 
     // Crafting improvements (harvest conversion)
     for (const impId of player.majorImprovements) {
-      const imp = res.getMajorImprovementById(impId)
+      const imp = this.cards.byId(impId)
       if (imp && imp.abilities && imp.abilities.harvestConversion) {
         const conv = imp.abilities.harvestConversion
         if (player[conv.resource] > 0) {
@@ -183,7 +183,7 @@ const HarvestMixin = {
 
     // Add crafting improvement potential
     for (const impId of player.majorImprovements) {
-      const imp = res.getMajorImprovementById(impId)
+      const imp = this.cards.byId(impId)
       if (imp && imp.abilities && imp.abilities.harvestConversion) {
         const conv = imp.abilities.harvestConversion
         potentialFood += Math.min(player[conv.resource], conv.limit || 1) * conv.food

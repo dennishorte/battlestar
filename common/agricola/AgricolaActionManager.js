@@ -845,7 +845,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     const choices = affordableIds.map(id => {
-      const imp = res.getMajorImprovementById(id)
+      const imp = this.game.cards.byId(id)
       return imp.name + ` (${id})`
     })
     choices.push('Do not buy')
@@ -866,7 +866,7 @@ class AgricolaActionManager extends BaseActionManager {
     const improvementId = idMatch ? idMatch[1] : null
 
     if (improvementId) {
-      const imp = res.getMajorImprovementById(improvementId)
+      const imp = this.game.cards.byId(improvementId)
       player.buyMajorImprovement(improvementId)
 
       this.log.add({
@@ -918,7 +918,7 @@ class AgricolaActionManager extends BaseActionManager {
   playOccupation(player) {
     // Get occupations from player's hand
     const occupationsInHand = player.hand.filter(cardId => {
-      const card = res.getCardById(cardId)
+      const card = this.game.cards.byId(cardId)
       return card && card.type === 'occupation'
     })
 
@@ -956,7 +956,7 @@ class AgricolaActionManager extends BaseActionManager {
 
     // Build choices with card names
     const choices = playableOccupations.map(cardId => {
-      const card = res.getCardById(cardId)
+      const card = this.game.cards.byId(cardId)
       return card ? card.name : cardId
     })
 
@@ -978,7 +978,7 @@ class AgricolaActionManager extends BaseActionManager {
 
     // Find the card id by name
     const cardId = playableOccupations.find(id => {
-      const card = res.getCardById(id)
+      const card = this.game.cards.byId(id)
       return card && card.name === selectedName
     })
 
@@ -992,7 +992,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     // Play the card (moves from hand to playedOccupations)
-    const card = res.getCardById(cardId)
+    const card = this.game.cards.byId(cardId)
     player.playCard(cardId)
 
     this.log.add({
@@ -1001,8 +1001,8 @@ class AgricolaActionManager extends BaseActionManager {
     })
 
     // Execute onPlay effect if present
-    if (card.onPlay) {
-      card.onPlay(this.game, player)
+    if (card.hasHook('onPlay')) {
+      card.callHook('onPlay', this.game, player)
     }
 
     return true
@@ -1015,7 +1015,7 @@ class AgricolaActionManager extends BaseActionManager {
   buyMinorImprovement(player) {
     // Get minor improvements from player's hand
     const minorInHand = player.hand.filter(cardId => {
-      const card = res.getCardById(cardId)
+      const card = this.game.cards.byId(cardId)
       return card && card.type === 'minor'
     })
 
@@ -1042,7 +1042,7 @@ class AgricolaActionManager extends BaseActionManager {
 
     // Build choices with card names and costs
     const choices = playableMinor.map(cardId => {
-      const card = res.getCardById(cardId)
+      const card = this.game.cards.byId(cardId)
       return card ? card.name : cardId
     })
 
@@ -1064,7 +1064,7 @@ class AgricolaActionManager extends BaseActionManager {
 
     // Find the card id by name
     const cardId = playableMinor.find(id => {
-      const card = res.getCardById(id)
+      const card = this.game.cards.byId(id)
       return card && card.name === selectedName
     })
 
@@ -1073,7 +1073,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     // Play the card (handles cost payment and moves from hand)
-    const card = res.getCardById(cardId)
+    const card = this.game.cards.byId(cardId)
     player.playCard(cardId)
 
     this.log.add({
@@ -1082,8 +1082,8 @@ class AgricolaActionManager extends BaseActionManager {
     })
 
     // Execute onPlay effect if present
-    if (card.onPlay) {
-      card.onPlay(this.game, player)
+    if (card.hasHook('onPlay')) {
+      card.callHook('onPlay', this.game, player)
     }
 
     // Call onBuildImprovement hooks (Junk Room gives food)
@@ -1110,7 +1110,7 @@ class AgricolaActionManager extends BaseActionManager {
       affordableMajorIds = availableImprovements.filter(id => player.canBuyMajorImprovement(id))
       if (affordableMajorIds.length > 0) {
         const majorChoices = affordableMajorIds.map(id => {
-          const imp = res.getMajorImprovementById(id)
+          const imp = this.game.cards.byId(id)
           return imp.name + ` (${id})`
         })
         nestedChoices.push({
@@ -1126,13 +1126,13 @@ class AgricolaActionManager extends BaseActionManager {
     let playableMinorIds = []
     if (allowMinor) {
       const minorInHand = player.hand.filter(cardId => {
-        const card = res.getCardById(cardId)
+        const card = this.game.cards.byId(cardId)
         return card && card.type === 'minor'
       })
       playableMinorIds = minorInHand.filter(cardId => player.canPlayCard(cardId))
       if (playableMinorIds.length > 0) {
         const minorChoices = playableMinorIds.map(cardId => {
-          const card = res.getCardById(cardId)
+          const card = this.game.cards.byId(cardId)
           return card ? card.name : cardId
         })
         nestedChoices.push({
@@ -1179,7 +1179,7 @@ class AgricolaActionManager extends BaseActionManager {
         const improvementId = idMatch ? idMatch[1] : null
 
         if (improvementId) {
-          const imp = res.getMajorImprovementById(improvementId)
+          const imp = this.game.cards.byId(improvementId)
           player.buyMajorImprovement(improvementId)
 
           this.log.add({
@@ -1202,12 +1202,12 @@ class AgricolaActionManager extends BaseActionManager {
       if (choice.title === 'Minor Improvement') {
         // Find the card id by name
         const cardId = playableMinorIds.find(id => {
-          const card = res.getCardById(id)
+          const card = this.game.cards.byId(id)
           return card && card.name === selectedName
         })
 
         if (cardId) {
-          const card = res.getCardById(cardId)
+          const card = this.game.cards.byId(cardId)
           player.playCard(cardId)
 
           this.log.add({
@@ -1216,8 +1216,8 @@ class AgricolaActionManager extends BaseActionManager {
           })
 
           // Execute onPlay effect if present
-          if (card.onPlay) {
-            card.onPlay(this.game, player)
+          if (card.hasHook('onPlay')) {
+            card.callHook('onPlay', this.game, player)
           }
 
           // Call onBuildImprovement hooks (Junk Room gives food)
@@ -1266,7 +1266,7 @@ class AgricolaActionManager extends BaseActionManager {
     let hasAffordableMinor = false
     if (allowMinor) {
       hasAffordableMinor = player.hand.some(cardId => {
-        const card = res.getCardById(cardId)
+        const card = this.game.cards.byId(cardId)
         return card && card.type === 'minor' && player.canPlayCard(cardId)
       })
     }
@@ -1516,8 +1516,8 @@ class AgricolaActionManager extends BaseActionManager {
     for (const player of this.game.players.all()) {
       const cards = this.game.getPlayerActiveCards(player)
       for (const card of cards) {
-        if (typeof card.onAnyAction === 'function') {
-          card.onAnyAction(this.game, actingPlayer, actionId, player)
+        if (card.hasHook('onAnyAction')) {
+          card.callHook('onAnyAction', this.game, actingPlayer, actionId, player)
         }
       }
     }
@@ -1671,11 +1671,11 @@ class AgricolaActionManager extends BaseActionManager {
 
   /**
    * Pass a minor improvement card to the player on the left, if it has passLeft.
-   * Removes the card from the current player's played pile and adds it to
-   * the left player's hand.
+   * Moves the card from the current player's minorImprovements zone to
+   * the left player's hand zone.
    */
   maybePassLeft(player, cardId) {
-    const card = res.getCardById(cardId)
+    const card = this.game.cards.byId(cardId)
     if (!card || !card.passLeft) {
       return
     }
@@ -1685,11 +1685,9 @@ class AgricolaActionManager extends BaseActionManager {
       return
     }
 
-    // Remove from current player's played pile
-    player.playedMinorImprovements = player.playedMinorImprovements.filter(id => id !== cardId)
-
-    // Add to left player's hand
-    leftPlayer.hand.push(cardId)
+    // Move card from played zone to left player's hand zone
+    const leftHandZone = this.game.zones.byPlayer(leftPlayer, 'hand')
+    card.moveTo(leftHandZone)
 
     this.log.add({
       template: '{improvement} is passed to {nextPlayer}',

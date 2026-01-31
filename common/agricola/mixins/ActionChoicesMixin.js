@@ -161,7 +161,7 @@ const ActionChoicesMixin = {
     return available
       .filter(id => player.canBuyMajorImprovement(id))
       .map(id => {
-        const imp = res.getMajorImprovementById(id)
+        const imp = this.cards.byId(id)
         const costStr = Object.entries(imp.cost)
           .map(([r, a]) => `${a} ${r}`)
           .join(', ')

@@ -1,4 +1,5 @@
 const { AgricolaFactory } = require('./agricola.js')
+const { AgricolaCard } = require('./AgricolaCard.js')
 const TestCommon = require('../lib/test_common.js')
 const res = require('./res/index.js')
 
@@ -117,7 +118,7 @@ TestUtil.setPlayerState = function(game, playerName, state) {
 
   // Set major improvements
   if (state.majorImprovements !== undefined) {
-    player.majorImprovements = [...state.majorImprovements]
+    TestUtil.setPlayerMajorImprovements(game, player, state.majorImprovements)
   }
 
   // Set farmyard from description
@@ -411,10 +412,7 @@ TestUtil.setBoard = function(game, state) {
       }
     }
 
-    // Set available major improvements
-    if (state.availableMajorImprovements !== undefined) {
-      game.state.availableMajorImprovements = [...state.availableMajorImprovements]
-    }
+    // availableMajorImprovements is now zone-backed, no direct state manipulation needed
   })
 }
 
@@ -461,19 +459,19 @@ TestUtil.setPlayerBoard = function(game, playerName, playerState) {
     player.bonusPoints = playerState.bonusPoints
   }
 
-  // Set cards
+  // Set cards via zones and card manager
   if (playerState.hand !== undefined) {
-    player.hand = [...playerState.hand]
+    TestUtil.setPlayerCards(game, player, 'hand', playerState.hand)
   }
   if (playerState.occupations !== undefined) {
-    player.playedOccupations = [...playerState.occupations]
+    TestUtil.setPlayerCards(game, player, 'occupations', playerState.occupations)
     player.occupationsPlayed = playerState.occupations.length
   }
   if (playerState.minorImprovements !== undefined) {
-    player.playedMinorImprovements = [...playerState.minorImprovements]
+    TestUtil.setPlayerCards(game, player, 'minorImprovements', playerState.minorImprovements)
   }
   if (playerState.majorImprovements !== undefined) {
-    player.majorImprovements = [...playerState.majorImprovements]
+    TestUtil.setPlayerMajorImprovements(game, player, playerState.majorImprovements)
   }
 
   // Set farmyard
@@ -706,6 +704,69 @@ TestUtil.testPlayerBoard = function(game, playerName, expected) {
   return errors
 }
 
+/**
+ * Ensure a card exists in the card manager, creating it if needed.
+ */
+TestUtil.ensureCard = function(game, cardId) {
+  if (game.cards.hasId(cardId)) {
+    return game.cards.byId(cardId)
+  }
+  // Try to find the card definition from res
+  const cardDef = res.getCardById(cardId) || res.getMajorImprovementById(cardId)
+  if (!cardDef) {
+    throw new Error(`Card not found in res: ${cardId}`)
+  }
+  const card = new AgricolaCard(game, cardDef)
+  game.cards.register(card)
+
+  // Place in supply zone so it has a zone (required for moveTo)
+  const supplyZone = game.zones.byId('common.supply')
+  supplyZone.push(card, supplyZone.nextIndex())
+
+  return card
+}
+
+/**
+ * Set player's cards in a given zone, creating cards as needed.
+ */
+TestUtil.setPlayerCards = function(game, player, zoneName, cardIds) {
+  const zone = game.zones.byPlayer(player, zoneName)
+
+  // Clear existing cards from the zone
+  const existingCards = zone.cardlist()
+  for (const card of existingCards) {
+    // Move back to supply
+    const supplyZone = game.zones.byId('common.supply')
+    card.moveTo(supplyZone)
+  }
+
+  // Add specified cards to the zone
+  for (const cardId of cardIds) {
+    const card = TestUtil.ensureCard(game, cardId)
+    card.moveTo(zone)
+  }
+}
+
+/**
+ * Set player's major improvements, moving them from common zone.
+ */
+TestUtil.setPlayerMajorImprovements = function(game, player, cardIds) {
+  const playerZone = game.zones.byPlayer(player, 'majorImprovements')
+
+  // Clear existing major improvements from player zone
+  const existingCards = playerZone.cardlist()
+  const commonMajorZone = game.zones.byId('common.majorImprovements')
+  for (const card of existingCards) {
+    card.moveTo(commonMajorZone)
+  }
+
+  // Move specified cards to player zone
+  for (const cardId of cardIds) {
+    const card = TestUtil.ensureCard(game, cardId)
+    card.moveTo(playerZone)
+  }
+}
+
 // Shortcut to get a player
 TestUtil.player = function(game, name = 'dennis') {
   return game.players.byName(name)
@@ -714,23 +775,20 @@ TestUtil.player = function(game, name = 'dennis') {
 // Shortcut to play a card directly (bypasses normal game flow)
 TestUtil.playCard = function(game, playerName, cardId) {
   const player = game.players.byName(playerName)
-  const card = res.getCardById(cardId)
+  const card = TestUtil.ensureCard(game, cardId)
 
-  if (!card) {
-    throw new Error(`Card not found: ${cardId}`)
-  }
-
-  // Add to hand if not there
+  // Add to hand zone if not there
   if (!player.hand.includes(cardId)) {
-    player.hand.push(cardId)
+    const handZone = game.zones.byPlayer(player, 'hand')
+    card.moveTo(handZone)
   }
 
   // Play the card
   player.playCard(cardId)
 
   // Execute onPlay if present
-  if (card.onPlay) {
-    card.onPlay(game, player)
+  if (card.hasHook('onPlay')) {
+    card.callHook('onPlay', game, player)
   }
 
   return card

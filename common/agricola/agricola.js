@@ -7,6 +7,7 @@ const res = require('./res/index.js')
 const util = require('../lib/util.js')
 
 const { AgricolaActionManager } = require('./AgricolaActionManager.js')
+const { AgricolaCard } = require('./AgricolaCard.js')
 const { AgricolaLogManager } = require('./AgricolaLogManager.js')
 const { AgricolaPlayerManager } = require('./AgricolaPlayerManager.js')
 const { AgricolaZone } = require('./AgricolaZone.js')
@@ -140,11 +141,14 @@ Agricola.prototype.initializeZones = function() {
   this.zones.register(new AgricolaZone(this, 'common.actionSpaces', 'Action Spaces', 'public'))
   this.zones.register(new AgricolaZone(this, 'common.futureActions', 'Future Actions', 'public'))
   this.zones.register(new AgricolaZone(this, 'common.majorImprovements', 'Major Improvements', 'public'))
+  this.zones.register(new AgricolaZone(this, 'common.supply', 'Supply', 'hidden'))
 
   // Create player zones
   for (const player of this.players.all()) {
     this.zones.register(new AgricolaZone(this, `players.${player.name}.hand`, 'Hand', 'private', player))
-    this.zones.register(new AgricolaZone(this, `players.${player.name}.played`, 'Played', 'public', player))
+    this.zones.register(new AgricolaZone(this, `players.${player.name}.occupations`, 'Occupations', 'public', player))
+    this.zones.register(new AgricolaZone(this, `players.${player.name}.minorImprovements`, 'Minor Improvements', 'public', player))
+    this.zones.register(new AgricolaZone(this, `players.${player.name}.majorImprovements`, 'Major Improvements', 'public', player))
     this.zones.register(new AgricolaZone(this, `players.${player.name}.farmyard`, 'Farmyard', 'public', player))
   }
 }
@@ -217,8 +221,15 @@ Agricola.prototype.shuffleArray = function(array) {
 }
 
 Agricola.prototype.initializeMajorImprovements = function() {
-  // All 10 major improvements are available at game start
-  this.state.availableMajorImprovements = res.getAllMajorImprovements().map(imp => imp.id)
+  // Create AgricolaCard for each major improvement and place in common zone
+  const majorZone = this.zones.byId('common.majorImprovements')
+  const majorCards = []
+  for (const impDef of res.getAllMajorImprovements()) {
+    const card = new AgricolaCard(this, impDef)
+    this.cards.register(card)
+    majorCards.push(card)
+  }
+  majorZone.initializeCards(majorCards)
 }
 
 Agricola.prototype.initializePlayerCards = function() {
@@ -241,6 +252,20 @@ Agricola.prototype.initializePlayerCards = function() {
   const shuffledOccupations = this.shuffleArray([...occupations])
   const shuffledMinors = this.shuffleArray([...minorImprovements])
 
+  // Create AgricolaCard instances for all cards and place in supply zone
+  const supplyZone = this.zones.byId('common.supply')
+  const createCards = (cardDefs) => {
+    return cardDefs.map(def => {
+      const card = new AgricolaCard(this, def)
+      this.cards.register(card)
+      supplyZone.push(card, supplyZone.nextIndex())
+      return card
+    })
+  }
+
+  const occCards = createCards(shuffledOccupations)
+  const minorCards = createCards(shuffledMinors)
+
   if (this.settings.useDrafting) {
     // Set up draft pools - each player gets a starting hand to draft from
     this.state.draftPools = {
@@ -249,21 +274,16 @@ Agricola.prototype.initializePlayerCards = function() {
     }
 
     for (let i = 0; i < playerCount; i++) {
-      // Create pools of cards that will be passed around
-      const occPool = shuffledOccupations
+      // Create pools of card IDs that will be passed around
+      const occPool = occCards
         .splice(0, cardsPerPlayer)
         .map(c => c.id)
-      const minorPool = shuffledMinors
+      const minorPool = minorCards
         .splice(0, cardsPerPlayer)
         .map(c => c.id)
 
       this.state.draftPools.occupations.push(occPool)
       this.state.draftPools.minors.push(minorPool)
-    }
-
-    // Initialize empty hands
-    for (const player of this.players.all()) {
-      player.hand = []
     }
 
     this.log.add({
@@ -274,23 +294,22 @@ Agricola.prototype.initializePlayerCards = function() {
     // Deal cards directly to each player (no drafting)
     for (let i = 0; i < playerCount; i++) {
       const player = this.players.all()[i]
+      const handZone = this.zones.byPlayer(player, 'hand')
 
       // Deal 7 occupations
-      const playerOccupations = shuffledOccupations
-        .splice(0, cardsPerPlayer)
-        .map(c => c.id)
+      const playerOccCards = occCards.splice(0, cardsPerPlayer)
 
       // Deal 7 minor improvements
-      const playerMinors = shuffledMinors
-        .splice(0, cardsPerPlayer)
-        .map(c => c.id)
+      const playerMinorCards = minorCards.splice(0, cardsPerPlayer)
 
-      // Add to player's hand
-      player.hand = [...playerOccupations, ...playerMinors]
+      // Move cards to player's hand zone
+      for (const card of [...playerOccCards, ...playerMinorCards]) {
+        card.moveTo(handZone)
+      }
 
       this.log.add({
         template: '{player} receives {occ} occupations and {minor} minor improvements',
-        args: { player, occ: playerOccupations.length, minor: playerMinors.length },
+        args: { player, occ: playerOccCards.length, minor: playerMinorCards.length },
       })
     }
   }
@@ -306,17 +325,13 @@ Agricola.prototype.initializePlayerCards = function() {
  */
 Agricola.prototype.getPlayerActiveCards = function(player) {
   const cards = []
-  for (const cardId of player.playedOccupations) {
-    const card = res.getCardById(cardId)
-    if (card) {
-      cards.push(card)
-    }
+  const occZone = this.zones.byPlayer(player, 'occupations')
+  if (occZone) {
+    cards.push(...occZone.cardlist())
   }
-  for (const cardId of player.playedMinorImprovements) {
-    const card = res.getCardById(cardId)
-    if (card) {
-      cards.push(card)
-    }
+  const minorZone = this.zones.byPlayer(player, 'minorImprovements')
+  if (minorZone) {
+    cards.push(...minorZone.cardlist())
   }
   return cards
 }
@@ -329,8 +344,8 @@ Agricola.prototype.callPlayerCardHook = function(player, hookName, ...args) {
   const results = []
   const cards = this.getPlayerActiveCards(player)
   for (const card of cards) {
-    if (typeof card[hookName] === 'function') {
-      const result = card[hookName](this, player, ...args)
+    if (card.hasHook(hookName)) {
+      const result = card.callHook(hookName, this, player, ...args)
       if (result !== undefined) {
         results.push({ card, result })
       }
@@ -348,8 +363,8 @@ Agricola.prototype.callAllPlayersCardHook = function(hookName, actingPlayer, ...
   for (const player of this.players.all()) {
     const cards = this.getPlayerActiveCards(player)
     for (const card of cards) {
-      if (typeof card[hookName] === 'function') {
-        const result = card[hookName](this, actingPlayer, ...args, player)
+      if (card.hasHook(hookName)) {
+        const result = card.callHook(hookName, this, actingPlayer, ...args, player)
         if (result !== undefined) {
           results.push({ card, player, result })
         }
@@ -365,8 +380,8 @@ Agricola.prototype.callAllPlayersCardHook = function(hookName, actingPlayer, ...
 Agricola.prototype.checkCardTriggers = function(player) {
   const cards = this.getPlayerActiveCards(player)
   for (const card of cards) {
-    if (typeof card.checkTrigger === 'function') {
-      card.checkTrigger(this, player)
+    if (card.hasHook('checkTrigger')) {
+      card.callHook('checkTrigger', this, player)
     }
   }
 }
@@ -530,11 +545,11 @@ Agricola.prototype.draftPhase = function() {
   // Log final hands
   for (const player of this.players.all()) {
     const occupations = player.hand.filter(id => {
-      const card = res.getCardById(id)
+      const card = this.cards.byId(id)
       return card && card.type === 'occupation'
     })
     const minors = player.hand.filter(id => {
-      const card = res.getCardById(id)
+      const card = this.cards.byId(id)
       return card && card.type === 'minor'
     })
 
@@ -574,7 +589,7 @@ Agricola.prototype.draftCardType = function(cardType, passDirection) {
 
       const player = players[i]
       const choices = pool.map(cardId => {
-        const card = res.getCardById(cardId)
+        const card = this.cards.byId(cardId)
         return card ? card.name : cardId
       })
 
@@ -596,13 +611,18 @@ Agricola.prototype.draftCardType = function(cardType, passDirection) {
     const selectedName = response.selection[0]
 
     const cardId = pool.find(id => {
-      const card = res.getCardById(id)
+      const card = this.cards.byId(id)
       return card && card.name === selectedName
     })
 
     if (cardId) {
       pool.splice(pool.indexOf(cardId), 1)
-      player.hand.push(cardId)
+
+      // Move card from supply to player's hand zone
+      const card = this.cards.byId(cardId)
+      const handZone = this.zones.byPlayer(player, 'hand')
+      card.moveTo(handZone)
+
       picksMade++
 
       this.log.add({
@@ -1038,7 +1058,7 @@ Agricola.prototype.allowFoodConversion = function(player, required) {
 
     // Crafting improvements (harvest conversion)
     for (const impId of player.majorImprovements) {
-      const imp = res.getMajorImprovementById(impId)
+      const imp = this.cards.byId(impId)
       if (imp && imp.abilities && imp.abilities.harvestConversion) {
         const resource = imp.abilities.harvestConversion.resource
         if (player[resource] > 0) {
@@ -1086,7 +1106,7 @@ Agricola.prototype.allowFoodConversion = function(player, required) {
     else if (choice.startsWith('Use ')) {
       // Crafting improvement
       for (const impId of player.majorImprovements) {
-        const imp = res.getMajorImprovementById(impId)
+        const imp = this.cards.byId(impId)
         if (imp && choice === `Use ${imp.name}`) {
           const conv = imp.abilities.harvestConversion
           if (player[conv.resource] > 0) {
@@ -1210,15 +1230,8 @@ Agricola.prototype.postBreedingPhase = function() {
 // Helper Methods
 
 Agricola.prototype.getAvailableMajorImprovements = function() {
-  return this.state.availableMajorImprovements.filter(id => {
-    // Check that no player owns this improvement
-    for (const player of this.players.all()) {
-      if (player.majorImprovements.includes(id)) {
-        return false
-      }
-    }
-    return true
-  })
+  const majorZone = this.zones.byId('common.majorImprovements')
+  return majorZone.cardlist().map(c => c.id)
 }
 
 

@@ -47,7 +47,7 @@ describe('BaseA Cards', () => {
       // Needs 2 occupations, has 1
       expect(dennis.meetsCardPrereqs('threshing-board')).toBe(false)
 
-      dennis.playedOccupations.push('firewood-collector')
+      t.setPlayerCards(game, dennis, 'occupations', ['wood-cutter', 'firewood-collector'])
       expect(dennis.meetsCardPrereqs('threshing-board')).toBe(true)
     })
 
@@ -65,7 +65,7 @@ describe('BaseA Cards', () => {
       // Needs exactly 2 occupations
       expect(dennis.meetsCardPrereqs('pond-hut')).toBe(true)
 
-      dennis.playedOccupations.push('seasonal-worker')
+      t.setPlayerCards(game, dennis, 'occupations', ['wood-cutter', 'firewood-collector', 'seasonal-worker'])
       expect(dennis.meetsCardPrereqs('pond-hut')).toBe(false)
     })
 
@@ -83,7 +83,7 @@ describe('BaseA Cards', () => {
       // Needs at most 3 occupations
       expect(dennis.meetsCardPrereqs('lumber-mill')).toBe(true)
 
-      dennis.playedOccupations.push('mushroom-collector')
+      t.setPlayerCards(game, dennis, 'occupations', ['wood-cutter', 'firewood-collector', 'seasonal-worker', 'mushroom-collector'])
       expect(dennis.meetsCardPrereqs('lumber-mill')).toBe(false)
     })
 
@@ -1344,12 +1344,12 @@ describe('BaseA Cards', () => {
         expect(card.getEndGamePoints(dennis)).toBe(0)
 
         // 5 improvements = 2 points
-        dennis.majorImprovements = ['fireplace-2', 'well']
-        dennis.playedMinorImprovements = ['corn-scoop', 'stone-tongs', 'canoe']
+        t.setPlayerMajorImprovements(game, dennis, ['fireplace-2', 'well'])
+        t.setPlayerCards(game, dennis, 'minorImprovements', ['corn-scoop', 'stone-tongs', 'canoe'])
         expect(card.getEndGamePoints(dennis)).toBe(2)
 
         // 7 improvements = 4 points
-        dennis.playedMinorImprovements.push('drinking-trough', 'rammed-clay')
+        t.setPlayerCards(game, dennis, 'minorImprovements', ['corn-scoop', 'stone-tongs', 'canoe', 'drinking-trough', 'rammed-clay'])
         expect(card.getEndGamePoints(dennis)).toBe(4)
       })
     })

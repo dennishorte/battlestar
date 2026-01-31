@@ -4,6 +4,51 @@ const res = require('./res/index.js')
 
 class AgricolaPlayer extends BasePlayer {
 
+  _cardZone(zoneName) {
+    try {
+      return this.game.zones.byPlayer(this, zoneName)
+    }
+    catch {
+      return null
+    }
+  }
+
+  get hand() {
+    const zone = this._cardZone('hand')
+    return zone ? zone.cardlist().map(c => c.id) : (this._hand || [])
+  }
+
+  set hand(val) {
+    this._hand = val
+  }
+
+  get playedOccupations() {
+    const zone = this._cardZone('occupations')
+    return zone ? zone.cardlist().map(c => c.id) : (this._playedOccupations || [])
+  }
+
+  set playedOccupations(val) {
+    this._playedOccupations = val
+  }
+
+  get playedMinorImprovements() {
+    const zone = this._cardZone('minorImprovements')
+    return zone ? zone.cardlist().map(c => c.id) : (this._playedMinorImprovements || [])
+  }
+
+  set playedMinorImprovements(val) {
+    this._playedMinorImprovements = val
+  }
+
+  get majorImprovements() {
+    const zone = this._cardZone('majorImprovements')
+    return zone ? zone.cardlist().map(c => c.id) : (this._majorImprovements || [])
+  }
+
+  set majorImprovements(val) {
+    this._majorImprovements = val
+  }
+
   initializeResources() {
     // Starting resources
     this.food = 0
@@ -27,14 +72,6 @@ class AgricolaPlayer extends BasePlayer {
 
     // Occupations played
     this.occupationsPlayed = 0
-
-    // Major improvements owned
-    this.majorImprovements = []
-
-    // Cards
-    this.hand = [] // Card IDs in hand
-    this.playedOccupations = [] // Card IDs of played occupations
-    this.playedMinorImprovements = [] // Card IDs of played minor improvements
 
     // Bonus points from cards
     this.bonusPoints = 0
@@ -260,7 +297,7 @@ class AgricolaPlayer extends BasePlayer {
     let count = this.getFieldCount()
     // Add field cards (cards with isField: true property)
     for (const cardId of this.playedMinorImprovements) {
-      const card = res.getCardById(cardId)
+      const card = this.cards.byId(cardId)
       if (card && card.isField) {
         count++
       }
@@ -1230,21 +1267,21 @@ class AgricolaPlayer extends BasePlayer {
 
   hasCookingAbility() {
     return this.majorImprovements.some(id => {
-      const imp = res.getMajorImprovementById(id)
+      const imp = this.cards.byId(id)
       return imp && imp.abilities && imp.abilities.canCook
     })
   }
 
   hasBakingAbility() {
     return this.majorImprovements.some(id => {
-      const imp = res.getMajorImprovementById(id)
+      const imp = this.cards.byId(id)
       return imp && imp.abilities && imp.abilities.canBake
     })
   }
 
   getCookingImprovement() {
     for (const id of this.majorImprovements) {
-      const imp = res.getMajorImprovementById(id)
+      const imp = this.cards.byId(id)
       if (imp && imp.abilities && imp.abilities.canCook) {
         return imp
       }
@@ -1254,7 +1291,7 @@ class AgricolaPlayer extends BasePlayer {
 
   getBakingImprovement() {
     for (const id of this.majorImprovements) {
-      const imp = res.getMajorImprovementById(id)
+      const imp = this.cards.byId(id)
       if (imp && imp.abilities && imp.abilities.canBake) {
         return imp
       }
@@ -1332,7 +1369,7 @@ class AgricolaPlayer extends BasePlayer {
   // ---------------------------------------------------------------------------
 
   canBuyMajorImprovement(improvementId) {
-    const imp = res.getMajorImprovementById(improvementId)
+    const imp = this.cards.byId(improvementId)
     if (!imp) {
       return false
     }
@@ -1358,7 +1395,7 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   buyMajorImprovement(improvementId) {
-    const imp = res.getMajorImprovementById(improvementId)
+    const imp = this.cards.byId(improvementId)
     if (!imp) {
       return false
     }
@@ -1367,20 +1404,21 @@ class AgricolaPlayer extends BasePlayer {
       return false
     }
 
-    // Handle upgrade
+    // Handle upgrade - move old card back to common zone
+    const commonMajorZone = this.zones.byId('common.majorImprovements')
     if (imp.upgradesFrom && imp.upgradesFrom.length > 0) {
       for (const fromId of imp.upgradesFrom) {
         if (this.majorImprovements.includes(fromId)) {
-          // Remove the old improvement (it goes back to the board)
-          this.majorImprovements = this.majorImprovements.filter(id => id !== fromId)
+          const oldCard = this.cards.byId(fromId)
+          oldCard.moveTo(commonMajorZone)
           break
         }
       }
     }
 
-    // Pay cost and add improvement
+    // Pay cost and move improvement to player's zone
     this.payCost(imp.cost)
-    this.majorImprovements.push(improvementId)
+    imp.moveTo(this.zones.byPlayer(this, 'majorImprovements'))
 
     return true
   }
@@ -1432,7 +1470,7 @@ class AgricolaPlayer extends BasePlayer {
   getCardPoints() {
     let points = 0
     for (const id of this.majorImprovements) {
-      const imp = res.getMajorImprovementById(id)
+      const imp = this.cards.byId(id)
       if (imp) {
         points += imp.victoryPoints || 0
       }
@@ -1447,7 +1485,7 @@ class AgricolaPlayer extends BasePlayer {
     // Note: Resources are actually spent in spendResourcesForCraftingBonus()
     // This method just calculates the points
     for (const id of this.majorImprovements) {
-      const imp = res.getMajorImprovementById(id)
+      const imp = this.cards.byId(id)
       if (imp && imp.abilities && imp.abilities.endGameBonus) {
         const resource = imp.abilities.endGameBonus.resource
         const count = this[resource] || 0
@@ -1457,9 +1495,9 @@ class AgricolaPlayer extends BasePlayer {
 
     // Bonus from minor improvements
     for (const id of this.playedMinorImprovements) {
-      const card = res.getCardById(id)
-      if (card && card.getEndGamePoints) {
-        points += card.getEndGamePoints(this)
+      const card = this.cards.byId(id)
+      if (card && card.hasHook('getEndGamePoints')) {
+        points += card.callHook('getEndGamePoints', this)
       }
       if (card && card.vps) {
         points += card.vps
@@ -1468,9 +1506,9 @@ class AgricolaPlayer extends BasePlayer {
 
     // Bonus from occupations
     for (const id of this.playedOccupations) {
-      const card = res.getCardById(id)
-      if (card && card.getEndGamePoints) {
-        points += card.getEndGamePoints(this)
+      const card = this.cards.byId(id)
+      if (card && card.hasHook('getEndGamePoints')) {
+        points += card.callHook('getEndGamePoints', this)
       }
     }
 
@@ -1484,7 +1522,7 @@ class AgricolaPlayer extends BasePlayer {
     const spent = { wood: 0, clay: 0, reed: 0, stone: 0 }
 
     for (const id of this.majorImprovements) {
-      const imp = res.getMajorImprovementById(id)
+      const imp = this.cards.byId(id)
       if (imp && imp.abilities && imp.abilities.endGameBonus) {
         const resource = imp.abilities.endGameBonus.resource
         const count = this[resource] || 0
@@ -1539,7 +1577,7 @@ class AgricolaPlayer extends BasePlayer {
 
   getPlayedCard(cardId) {
     if (this.playedOccupations.includes(cardId) || this.playedMinorImprovements.includes(cardId)) {
-      return res.getCardById(cardId)
+      return this.cards.byId(cardId)
     }
     return null
   }
@@ -1553,7 +1591,7 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   canAffordCard(cardId) {
-    const card = res.getCardById(cardId)
+    const card = this.cards.byId(cardId)
     if (!card) {
       return false
     }
@@ -1576,7 +1614,7 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   meetsCardPrereqs(cardId) {
-    const card = res.getCardById(cardId)
+    const card = this.cards.byId(cardId)
     if (!card || !card.prereqs) {
       return true
     }
@@ -1640,7 +1678,7 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   payCardCost(cardId) {
-    const card = res.getCardById(cardId)
+    const card = this.cards.byId(cardId)
     if (!card || !card.cost) {
       return true
     }
@@ -1661,19 +1699,16 @@ class AgricolaPlayer extends BasePlayer {
       return false
     }
 
-    const card = res.getCardById(cardId)
+    const card = this.cards.byId(cardId)
     this.payCardCost(cardId)
 
-    // Remove from hand
-    this.hand = this.hand.filter(id => id !== cardId)
-
-    // Add to appropriate played pile
+    // Move card to appropriate played zone
     if (card.type === 'occupation') {
-      this.playedOccupations.push(cardId)
+      card.moveTo(this.zones.byPlayer(this, 'occupations'))
       this.occupationsPlayed++
     }
     else {
-      this.playedMinorImprovements.push(cardId)
+      card.moveTo(this.zones.byPlayer(this, 'minorImprovements'))
     }
 
     return true
@@ -1723,14 +1758,7 @@ class AgricolaPlayer extends BasePlayer {
 
   // Get cards that trigger on specific hooks
   getCardsWithHook(hookName) {
-    const cards = []
-    for (const id of this.getPlayedCards()) {
-      const card = res.getCardById(id)
-      if (card && card[hookName]) {
-        cards.push(card)
-      }
-    }
-    return cards
+    return this.getActiveCards().filter(card => card.hasHook(hookName))
   }
 
   calculateScore() {
@@ -1752,17 +1780,13 @@ class AgricolaPlayer extends BasePlayer {
    */
   getActiveCards() {
     const cards = []
-    for (const cardId of this.playedOccupations) {
-      const card = res.getCardById(cardId)
-      if (card) {
-        cards.push(card)
-      }
+    const occZone = this._cardZone('occupations')
+    if (occZone) {
+      cards.push(...occZone.cardlist())
     }
-    for (const cardId of this.playedMinorImprovements) {
-      const card = res.getCardById(cardId)
-      if (card) {
-        cards.push(card)
-      }
+    const minorZone = this._cardZone('minorImprovements')
+    if (minorZone) {
+      cards.push(...minorZone.cardlist())
     }
     return cards
   }
@@ -1773,8 +1797,8 @@ class AgricolaPlayer extends BasePlayer {
   applyPastureCapacityModifiers(pasture, baseCapacity) {
     let capacity = baseCapacity
     for (const card of this.getActiveCards()) {
-      if (typeof card.modifyPastureCapacity === 'function') {
-        capacity = card.modifyPastureCapacity(this, pasture, capacity)
+      if (card.hasHook('modifyPastureCapacity')) {
+        capacity = card.callHook('modifyPastureCapacity', this, pasture, capacity)
       }
     }
     return capacity
@@ -1785,8 +1809,8 @@ class AgricolaPlayer extends BasePlayer {
    */
   applyHouseAnimalCapacityModifiers(baseCapacity) {
     for (const card of this.getActiveCards()) {
-      if (typeof card.modifyHouseAnimalCapacity === 'function') {
-        return card.modifyHouseAnimalCapacity(this)
+      if (card.hasHook('modifyHouseAnimalCapacity')) {
+        return card.callHook('modifyHouseAnimalCapacity', this)
       }
     }
     return baseCapacity
@@ -1797,8 +1821,8 @@ class AgricolaPlayer extends BasePlayer {
    */
   applyFenceCostModifiers(fenceCount) {
     for (const card of this.getActiveCards()) {
-      if (typeof card.modifyFenceCost === 'function') {
-        fenceCount = card.modifyFenceCost(this, fenceCount)
+      if (card.hasHook('modifyFenceCost')) {
+        fenceCount = card.callHook('modifyFenceCost', this, fenceCount)
       }
     }
     return fenceCount
@@ -1810,8 +1834,8 @@ class AgricolaPlayer extends BasePlayer {
   applyImprovementCostModifiers(cost) {
     let modifiedCost = { ...cost }
     for (const card of this.getActiveCards()) {
-      if (typeof card.modifyImprovementCost === 'function') {
-        modifiedCost = card.modifyImprovementCost(this, modifiedCost)
+      if (card.hasHook('modifyImprovementCost')) {
+        modifiedCost = card.callHook('modifyImprovementCost', this, modifiedCost)
       }
     }
     return modifiedCost
@@ -1823,8 +1847,8 @@ class AgricolaPlayer extends BasePlayer {
   applyAnyCostModifiers(cost) {
     let modifiedCost = { ...cost }
     for (const card of this.getActiveCards()) {
-      if (typeof card.modifyAnyCost === 'function') {
-        modifiedCost = card.modifyAnyCost(this, modifiedCost)
+      if (card.hasHook('modifyAnyCost')) {
+        modifiedCost = card.callHook('modifyAnyCost', this, modifiedCost)
       }
     }
     return modifiedCost
@@ -1835,8 +1859,8 @@ class AgricolaPlayer extends BasePlayer {
    */
   canUseAlternateFenceResource() {
     for (const card of this.getActiveCards()) {
-      if (card.modifyFenceCost) {
-        const result = card.modifyFenceCost()
+      if (card.hasHook('modifyFenceCost')) {
+        const result = card.callHook('modifyFenceCost')
         if (result && result.alternateResource) {
           return result.alternateResource
         }
@@ -1850,7 +1874,7 @@ class AgricolaPlayer extends BasePlayer {
    */
   canRenovateDirectlyToStone() {
     for (const card of this.getActiveCards()) {
-      if (card.allowDirectStoneRenovation) {
+      if (card.definition.allowDirectStoneRenovation) {
         return true
       }
     }
