@@ -98,9 +98,8 @@ export default {
     },
 
     additionalActionIds() {
-      const threePlayer = THREE_PLAYER_ACTION_IDS.filter(id => this.activeActions.includes(id))
-      const fourPlus = FOUR_PLUS_PLAYER_ACTION_IDS.filter(id => this.activeActions.includes(id))
-      return [...threePlayer, ...fourPlus]
+      const allIds = [...new Set([...THREE_PLAYER_ACTION_IDS, ...FOUR_PLUS_PLAYER_ACTION_IDS])]
+      return allIds.filter(id => this.activeActions.includes(id))
     },
 
     visibleStages() {
