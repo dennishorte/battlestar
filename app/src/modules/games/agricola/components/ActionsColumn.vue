@@ -3,32 +3,38 @@
     <!-- Base Actions -->
     <div class="action-section">
       <div class="section-title">Base Actions</div>
-      <ActionSpace
-        v-for="actionId in baseActionIds"
-        :key="actionId"
-        :actionId="actionId"
-      />
+      <div class="action-grid">
+        <ActionSpace
+          v-for="actionId in baseActionIds"
+          :key="actionId"
+          :actionId="actionId"
+        />
+      </div>
     </div>
 
     <!-- Additional Actions (3+ players) -->
     <div class="action-section" v-if="additionalActionIds.length > 0">
       <div class="section-title">Additional Actions</div>
-      <ActionSpace
-        v-for="actionId in additionalActionIds"
-        :key="actionId"
-        :actionId="actionId"
-      />
+      <div class="action-grid">
+        <ActionSpace
+          v-for="actionId in additionalActionIds"
+          :key="actionId"
+          :actionId="actionId"
+        />
+      </div>
     </div>
 
     <!-- Round Cards by Stage -->
     <template v-for="stage in visibleStages" :key="stage">
       <div class="action-section round-cards">
         <div class="section-title">Stage {{ stage }}</div>
-        <ActionSpace
-          v-for="actionId in stageActionIds(stage)"
-          :key="actionId"
-          :actionId="actionId"
-        />
+        <div class="action-grid">
+          <ActionSpace
+            v-for="actionId in stageActionIds(stage)"
+            :key="actionId"
+            :actionId="actionId"
+          />
+        </div>
       </div>
     </template>
   </div>
@@ -134,7 +140,13 @@ export default {
 }
 
 .action-section {
-  margin-bottom: 1em;
+  margin-bottom: .75em;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: .35em;
 }
 
 .section-title {

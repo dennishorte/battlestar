@@ -584,8 +584,8 @@ export default {
 }
 
 .actions-column {
-  min-width: 300px;
-  max-width: 400px;
+  min-width: 280px;
+  max-width: 340px;
 }
 
 .history-column {

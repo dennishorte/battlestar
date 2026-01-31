@@ -7,6 +7,7 @@
     @mouseleave="handleMouseLeave"
   >
     <div class="action-content">
+      <span class="worker" v-if="occupied" :style="workerStyle" />
       <div class="action-name">{{ action.name }}</div>
 
       <!-- Accumulated resources -->
@@ -14,12 +15,6 @@
         <span class="accumulated-icon">{{ accumulatedIcon }}</span>
         <span class="accumulated-count">{{ accumulatedAmount }}</span>
       </div>
-    </div>
-
-    <!-- Occupied indicator -->
-    <div class="occupant" v-if="occupied">
-      <span class="worker" :style="workerStyle" />
-      <span class="occupant-name">{{ occupiedBy }}</span>
     </div>
   </div>
 </template>
@@ -160,8 +155,7 @@ export default {
 .action-space {
   display: flex;
   flex-direction: column;
-  padding: .5em;
-  margin-bottom: .35em;
+  padding: .3em .4em;
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: .25em;
@@ -193,23 +187,25 @@ export default {
 
 .action-content {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: .3em;
 }
 
 .action-name {
   font-weight: 500;
-  font-size: .9em;
+  font-size: .85em;
 }
 
 .accumulated {
   display: flex;
   align-items: center;
   gap: .25em;
+  margin-left: auto;
   background-color: #fff3e0;
-  padding: .15em .4em;
+  padding: 0 .35em;
   border-radius: .25em;
   border: 1px solid #ffcc80;
+  font-size: .85em;
 }
 
 .accumulated-icon {
@@ -221,26 +217,12 @@ export default {
   color: #e65100;
 }
 
-.occupant {
-  display: flex;
-  align-items: center;
-  gap: .35em;
-  margin-top: .35em;
-  padding-top: .35em;
-  border-top: 1px dashed #ddd;
-  font-size: .8em;
-  color: #666;
-}
-
 .worker {
   display: inline-block;
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   border: 1px solid #333;
-}
-
-.occupant-name {
-  font-style: italic;
+  flex-shrink: 0;
 }
 </style>

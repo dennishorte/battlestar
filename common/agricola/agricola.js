@@ -119,6 +119,12 @@ Agricola.prototype.initializePlayers = function() {
       args: { player, food: player.food },
     })
   }
+
+  // Assign deterministic colors based on seating order
+  const colors = ['#f77278', '#73bbfa', '#70fa73', '#fcfc6f', '#f772f7']
+  for (let i = 0; i < playerList.length; i++) {
+    playerList[i].color = colors[i]
+  }
 }
 
 Agricola.prototype.initializeZones = function() {
