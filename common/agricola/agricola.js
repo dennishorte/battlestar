@@ -46,6 +46,7 @@ function AgricolaFactory(settings, viewerName) {
   data.settings = data.settings || {}
   data.settings.useDrafting = settings.useDrafting || false
   data.settings.cardSets = settings.cardSets || res.getCardSetIds()
+  data.settings.version = settings.version || 1
   return new Agricola(data, viewerName)
 }
 
@@ -58,6 +59,7 @@ function factoryFromLobby(lobby) {
     numPlayers: lobby.users.length,
     useDrafting: lobby.options?.useDrafting || false,
     cardSets: lobby.options?.cardSets || res.getCardSetIds(),
+    version: 2,
   })
 }
 
@@ -70,6 +72,10 @@ Agricola.prototype._mainProgram = function() {
 
   if (this.settings.useDrafting) {
     this.draftPhase()
+  }
+
+  if (this.settings.version >= 2) {
+    this.chooseColors()
   }
 
   this.mainLoop()
@@ -120,10 +126,12 @@ Agricola.prototype.initializePlayers = function() {
     })
   }
 
-  // Assign deterministic colors based on seating order
-  const colors = ['#f77278', '#73bbfa', '#70fa73', '#fcfc6f', '#f772f7']
-  for (let i = 0; i < playerList.length; i++) {
-    playerList[i].color = colors[i]
+  // Assign deterministic colors based on seating order (version 1 / legacy games)
+  if (!this.settings.version || this.settings.version < 2) {
+    const defaultColors = ['#f77278', '#73bbfa', '#70fa73', '#fcfc6f', '#f772f7']
+    for (let i = 0; i < playerList.length; i++) {
+      playerList[i].color = defaultColors[i]
+    }
   }
 }
 
@@ -613,6 +621,23 @@ Agricola.prototype.draftCardType = function(cardType, passDirection) {
         playerQueues[nextIndex].push(pool)
       }
     }
+  }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Color Selection
+
+Agricola.prototype.chooseColors = function() {
+  for (const player of this.players.all()) {
+    const availableColors = Object.entries(res.colors)
+      .filter(([, hex]) => !this.players.all().some(p => p.color === hex))
+      .map(([name]) => name)
+
+    const chosen = this.actions.choose(player, availableColors, {
+      title: 'Choose a player color',
+    })
+    player.color = res.colors[chosen]
   }
 }
 
