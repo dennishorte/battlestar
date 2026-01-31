@@ -36,7 +36,7 @@ export default {
     lineClasses(line) {
       const classes = [`indent-${line.indent}`]
 
-      if (line.text.includes('=== Round')) {
+      if (line.text.includes('=== Round') || line.text.includes('Initializing game')) {
         classes.push('round-header')
       }
       else if (line.text.includes("'s turn")) {
@@ -48,12 +48,15 @@ export default {
       else if (line.text.includes('Harvest')) {
         classes.push('harvest-phase')
       }
+      else if (line.text.includes('Work phase begins')) {
+        classes.push('work-phase')
+      }
 
       return classes
     },
 
     lineStyles(line) {
-      if (line.classes && line.classes.includes('player-turn')) {
+      if (line.text.includes("'s turn")) {
         const playerName = line.args?.player?.value
         if (playerName) {
           const player = this.game.players.byName(playerName)
@@ -61,6 +64,9 @@ export default {
             return {
               'background-color': player.color,
               'color': this.getContrastColor(player.color),
+              'margin': '0 -.5em',
+              'padding': '0 .5em',
+              'border-radius': '.25em',
             }
           }
         }
@@ -91,7 +97,28 @@ export default {
   color: white;
   padding: .25em .5em;
   margin-top: 1em;
+  /* margin-left: 0 !important; */
   border-radius: .25em;
+  display: flex;
+  justify-content: center;
+}
+
+#gamelog :deep(.round-header > div) {
+  display: block;
+}
+
+#gamelog :deep(.work-phase) {
+  font-weight: bold;
+  text-align: center;
+  background-color: #5d7a3a;
+  color: white;
+  padding: .15em .5em;
+  margin-left: 0 !important;
+  border-radius: .15em;
+}
+
+#gamelog :deep(.work-phase > div) {
+  display: block;
 }
 
 #gamelog :deep(.player-turn) {
@@ -104,6 +131,8 @@ export default {
   padding: .1em .5em .1em 0;
   background-color: #f5f5dc;
   border-radius: .15em;
+  margin: 0 -.5em;
+  padding: 0 .5em;
 }
 
 #gamelog :deep(.harvest-phase) {
