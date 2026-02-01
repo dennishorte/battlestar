@@ -315,6 +315,27 @@ describe('BaseA Cards', () => {
           },
         })
       })
+
+      test('enables alternate fence resource via canUseAlternateFenceResource', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            minorImprovements: ['rammed-clay'],
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        expect(dennis.canUseAlternateFenceResource()).toBe('clay')
+      })
+
+      test('canUseAlternateFenceResource returns null without Rammed Clay', () => {
+        const game = t.fixture()
+        game.run()
+
+        const dennis = t.player(game)
+        expect(dennis.canUseAlternateFenceResource()).toBeNull()
+      })
     })
 
     describe('Manger', () => {
@@ -515,6 +536,35 @@ describe('BaseA Cards', () => {
         // Scott also gets 1 food (started with 0)
         expect(scott.food).toBe(1)
       })
+
+      test('triggers when another player takes Cattle Market via game flow', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            food: 0,
+            minorImprovements: ['milk-jug'],
+          },
+          micah: {
+            food: 0,
+          },
+        })
+        game.testSetBreakpoint('initialization-complete', (game) => {
+          game.state.activeActions.push('take-cattle')
+          game.state.actionSpaces['take-cattle'] = { occupiedBy: null, accumulated: 0 }
+        })
+        game.run()
+
+        // Dennis takes a non-interactive action first
+        t.choose(game, 'Grain Seeds')
+        // Micah takes Cattle Market (after replenish: accumulated = 1)
+        t.choose(game, 'Cattle Market (1)')
+
+        const dennis = t.player(game)
+        const micah = game.players.byName('micah')
+        // Dennis (card owner) gets 3 food, micah gets 1 food from Milk Jug
+        expect(dennis.food).toBe(3)
+        expect(micah.food).toBe(1)
+      })
     })
 
     describe('Corn Scoop', () => {
@@ -610,6 +660,27 @@ describe('BaseA Cards', () => {
         expect(game.state.scheduledFood[dennis.name][7]).toBe(1)
         expect(game.state.scheduledFood[dennis.name][8]).toBe(1)
       })
+
+      test('delivers scheduled food at round start', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            wood: 5,
+            food: 0,
+            minorImprovements: ['pond-hut'],
+            occupations: ['wood-cutter', 'firewood-collector'],
+          },
+        })
+        // Manually schedule food for round 2 (simulating card was played round 1)
+        game.testSetBreakpoint('initialization-complete', (game) => {
+          game.state.scheduledFood = { dennis: { 2: 1, 3: 1, 4: 1 } }
+        })
+        game.run()
+
+        // Round 2 start: scheduled food delivered
+        const dennis = t.player(game)
+        expect(dennis.food).toBe(1) // 1 scheduled food for round 2
+      })
     })
 
     describe('Large Greenhouse', () => {
@@ -655,6 +726,27 @@ describe('BaseA Cards', () => {
         expect(game.state.scheduledVegetables[dennis.name][12]).toBe(1)
         expect(game.state.scheduledVegetables[dennis.name][15]).toBeUndefined()
         expect(game.state.scheduledVegetables[dennis.name][17]).toBeUndefined()
+      })
+
+      test('delivers scheduled vegetables at round start', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            wood: 5,
+            vegetables: 0,
+            minorImprovements: ['large-greenhouse'],
+            occupations: ['wood-cutter', 'firewood-collector'],
+          },
+        })
+        // Manually schedule vegetables for round 2 (simulating earlier play)
+        game.testSetBreakpoint('initialization-complete', (game) => {
+          game.state.scheduledVegetables = { dennis: { 2: 1 } }
+        })
+        game.run()
+
+        // Round 2 start: scheduled vegetables delivered
+        const dennis = t.player(game)
+        expect(dennis.vegetables).toBe(1)
       })
     })
 
@@ -2078,6 +2170,21 @@ describe('BaseA Cards', () => {
         const card = res.getCardById('frame-builder')
         const modified = card.modifyBuildCost(null, { stone: 5, reed: 2 }, 3)
         expect(modified.allowWoodSubstitution).toBe(3)
+      })
+
+      test('getRoomCost includes allowWoodSubstitution when active', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['frame-builder'],
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const cost = dennis.getRoomCost()
+        // Frame Builder adds allowWoodSubstitution to the cost object
+        expect(cost.allowWoodSubstitution).toBeDefined()
       })
     })
 

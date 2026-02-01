@@ -1461,6 +1461,26 @@ describe('BaseB Cards', () => {
         const result = card.onRoundStart(game, dennis)
         expect(result).toBeUndefined()
       })
+
+      test('offers stable for 1 wood at round start in stone house', () => {
+        const game = t.fixture({ cardSets: ['baseB'] })
+        t.setBoard(game, {
+          dennis: {
+            roomType: 'stone',
+            wood: 2,
+            occupations: ['groom'],
+          },
+        })
+        game.run()
+
+        // Round 2 starts — Groom onRoundStart fires
+        // Accept: build stable for 1 wood
+        t.choose(game, game.waiting.selectors[0].choices[0])
+
+        const dennis = t.player(game)
+        expect(dennis.wood).toBe(1) // 2 - 1 paid for stable
+        expect(dennis.getStableCount()).toBe(1)
+      })
     })
 
     describe('Assistant Tiller', () => {
