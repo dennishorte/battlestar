@@ -408,14 +408,8 @@ Agricola.prototype.callRoundStartHooks = function() {
     // Collect scheduled resources from cards
     this.collectScheduledResources(player)
 
-    // Call onRoundStart hooks
-    const results = this.callPlayerCardHook(player, 'onRoundStart')
-    for (const { card, result } of results) {
-      if (result.mayPlowForFood) {
-        // Plow Driver: offer to plow for 1 food
-        this.offerPlowForFood(player, card)
-      }
-    }
+    // Call onRoundStart hooks (hooks handle their own actions directly)
+    this.callPlayerCardHook(player, 'onRoundStart')
 
     // Check triggers
     this.checkCardTriggers(player)
@@ -484,7 +478,7 @@ Agricola.prototype.offerPlowForFood = function(player, card) {
   })
 
   if (selection[0] === 'Plow 1 field for 1 food') {
-    player.spendResource('food', 1)
+    player.removeResource('food', 1)
     this.actions.plowField(player, { immediate: true })
   }
 }

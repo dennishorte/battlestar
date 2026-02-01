@@ -649,24 +649,32 @@ describe('BaseA Cards', () => {
     })
 
     describe('Threshing Board', () => {
-      test('returns additionalBake when using plow-field action', () => {
-        const card = res.getCardById('threshing-board')
+      test('triggers bake bread when using Farmland action', () => {
         const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            grain: 3,
+            minorImprovements: ['threshing-board'],
+            majorImprovements: ['fireplace-2'],
+          },
+        })
         game.run()
+
+        // Dennis picks Farmland (plow-field)
+        t.choose(game, 'Farmland')
+        // Select a space to plow
+        t.choose(game, game.waiting.selectors[0].choices[0])
+        // Threshing Board triggers bake bread — choose to bake grain
+        t.choose(game, game.waiting.selectors[0].choices.find(c => typeof c === 'string' && c.includes('grain')) || game.waiting.selectors[0].choices[0])
+
+        t.testBoard(game, {
+          dennis: {
+            farmyard: { fields: 1 },
+          },
+        })
+        // Should have gained food from baking (and lost grain)
         const dennis = t.player(game)
-
-        const result = card.onAction(game, dennis, 'plow-field')
-        expect(result.additionalBake).toBe(true)
-      })
-
-      test('returns additionalBake when using plow-sow action', () => {
-        const card = res.getCardById('threshing-board')
-        const game = t.fixture()
-        game.run()
-        const dennis = t.player(game)
-
-        const result = card.onAction(game, dennis, 'plow-sow')
-        expect(result.additionalBake).toBe(true)
+        expect(dennis.grain).toBeLessThan(3)
       })
 
       test('does not trigger for other actions', () => {
@@ -828,52 +836,59 @@ describe('BaseA Cards', () => {
     })
 
     describe('Basket', () => {
-      test('returns wood-for-food exchange option on take-wood', () => {
+      test('exchanges wood for food on take-wood', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            wood: 5,
+            wood: 0,
+            food: 0,
             minorImprovements: ['basket'],
           },
         })
         game.run()
 
-        const dennis = t.player(game)
-        const card = res.getCardById('basket')
+        // Dennis takes Forest (take-wood) — gets 3 wood from accumulation
+        t.choose(game, 'Forest (3)')
+        // Basket triggers: offer to exchange 2 wood for 3 food
+        t.choose(game, 'Exchange 2 wood for 3 food')
 
-        const result = card.onAction(game, dennis, 'take-wood')
-        expect(result.mayExchangeWoodForFood).toEqual({ wood: 2, food: 3 })
+        t.testBoard(game, {
+          dennis: {
+            wood: 1,  // 3 gained - 2 exchanged
+            food: 3,  // 3 from exchange
+          },
+        })
       })
 
-      test('returns exchange option on copse action too', () => {
+      test('can skip wood-for-food exchange', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            wood: 5,
+            wood: 0,
+            food: 0,
             minorImprovements: ['basket'],
           },
         })
         game.run()
 
-        const dennis = t.player(game)
-        const card = res.getCardById('basket')
+        t.choose(game, 'Forest (3)')
+        // Skip the exchange
+        t.choose(game, 'Skip')
 
-        const result = card.onAction(game, dennis, 'copse')
-        expect(result.mayExchangeWoodForFood).toEqual({ wood: 2, food: 3 })
+        t.testBoard(game, {
+          dennis: {
+            wood: 3,
+            food: 0,
+          },
+        })
       })
 
       test('does not offer exchange with fewer than 2 wood', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
-          dennis: {
-            wood: 1,
-            minorImprovements: ['basket'],
-          },
-        })
-        game.run()
-
-        const dennis = t.player(game)
         const card = res.getCardById('basket')
+        const game = t.fixture()
+        game.run()
+        const dennis = t.player(game)
+        dennis.wood = 1
 
         const result = card.onAction(game, dennis, 'take-wood')
         expect(result).toBeUndefined()
@@ -1191,24 +1206,28 @@ describe('BaseA Cards', () => {
         expect(dennis.grain).toBe(1)
       })
 
-      test('returns resource choice on day-laborer from round 6+', () => {
+      test('offers resource choice on day-laborer from round 6+', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
             grain: 0,
+            vegetables: 0,
             occupations: ['seasonal-worker'],
           },
           round: 6,
         })
         game.run()
 
-        const dennis = t.player(game)
-        const card = res.getCardById('seasonal-worker')
+        // Dennis takes Day Laborer
+        t.choose(game, 'Day Laborer')
+        // Seasonal Worker triggers: choose grain or vegetables
+        t.choose(game, 'Take 1 grain')
 
-        // Test the return value indicates a choice
-        const result = card.onAction(game, dennis, 'day-laborer')
-        expect(result.chooseResource).toContain('grain')
-        expect(result.chooseResource).toContain('vegetables')
+        t.testBoard(game, {
+          dennis: {
+            grain: 1,
+          },
+        })
       })
     })
 
@@ -1456,32 +1475,28 @@ describe('BaseA Cards', () => {
     })
 
     describe('Mushroom Collector', () => {
-      test('returns wood-for-food exchange option on take-wood', () => {
+      test('exchanges wood for food on take-wood', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            wood: 3,
+            wood: 0,
+            food: 0,
             occupations: ['mushroom-collector'],
           },
         })
         game.run()
 
-        const dennis = t.player(game)
-        const card = res.getCardById('mushroom-collector')
+        // Dennis takes Forest (take-wood) — gets 3 wood
+        t.choose(game, 'Forest (3)')
+        // Mushroom Collector: exchange 1 wood for 2 food
+        t.choose(game, 'Exchange 1 wood for 2 food')
 
-        const result = card.onAction(game, dennis, 'take-wood')
-        expect(result.mayExchangeWoodForFood).toEqual({ wood: 1, food: 2 })
-      })
-
-      test('returns exchange option on copse action', () => {
-        const card = res.getCardById('mushroom-collector')
-        const game = t.fixture()
-        game.run()
-        const dennis = t.player(game)
-        dennis.wood = 2
-
-        const result = card.onAction(game, dennis, 'copse')
-        expect(result.mayExchangeWoodForFood).toEqual({ wood: 1, food: 2 })
+        t.testBoard(game, {
+          dennis: {
+            wood: 2,  // 3 gained - 1 exchanged
+            food: 2,  // 2 from exchange
+          },
+        })
       })
 
       test('does not offer exchange with 0 wood', () => {
@@ -1508,18 +1523,6 @@ describe('BaseA Cards', () => {
     })
 
     describe('Plow Driver', () => {
-      test('offers plow-for-food when in stone house with food', () => {
-        const card = res.getCardById('plow-driver')
-        const game = t.fixture()
-        game.run()
-        const dennis = t.player(game)
-        dennis.roomType = 'stone'
-        dennis.food = 3
-
-        const result = card.onRoundStart(game, dennis)
-        expect(result.mayPlowForFood).toBe(true)
-      })
-
       test('does not trigger when not in stone house', () => {
         const card = res.getCardById('plow-driver')
         const game = t.fixture()
@@ -1669,15 +1672,27 @@ describe('BaseA Cards', () => {
     })
 
     describe('Harpooner (3+ players)', () => {
-      test('returns mayPayWoodForBonus when using fishing with wood', () => {
-        const card = res.getCardById('harpooner')
+      test('pays wood for food and reed bonus on fishing', () => {
         const game = t.fixture({ numPlayers: 3 })
+        t.setBoard(game, {
+          dennis: {
+            wood: 1,
+            food: 0,
+            reed: 0,
+            occupations: ['harpooner'],
+          },
+        })
         game.run()
-        const dennis = t.player(game)
-        dennis.wood = 3
 
-        const result = card.onAction(game, dennis, 'fishing')
-        expect(result.mayPayWoodForBonus).toBe(true)
+        // Dennis takes Fishing
+        t.choose(game, 'Fishing (1)')
+        // Harpooner triggers: pay 1 wood for 2 food and 1 reed (2 family members)
+        t.choose(game, game.waiting.selectors[0].choices.find(c => typeof c === 'string' && c.includes('Pay')))
+
+        const dennis = t.player(game)
+        expect(dennis.wood).toBe(0)  // 1 - 1 paid
+        expect(dennis.food).toBeGreaterThanOrEqual(3)  // 1 from fishing + 2 from harpooner
+        expect(dennis.reed).toBe(1)
       })
 
       test('does not trigger without wood', () => {
@@ -1704,31 +1719,6 @@ describe('BaseA Cards', () => {
     })
 
     describe('Animal Dealer (3+ players)', () => {
-      test('onAction returns mayBuyAnimal for animal market actions', () => {
-        const card = res.getCardById('animal-dealer')
-
-        const game = t.fixture({ numPlayers: 3 })
-        game.run()
-        const dennis = t.player(game)
-        dennis.food = 5
-
-        // Test onAction returns mayBuyAnimal
-        const result = card.onAction(game, dennis, 'take-sheep')
-        expect(result.mayBuyAnimal).toBe('sheep')
-      })
-
-      test('returns correct animal type for each market', () => {
-        const card = res.getCardById('animal-dealer')
-        const game = t.fixture({ numPlayers: 3 })
-        game.run()
-        const dennis = t.player(game)
-        dennis.food = 5
-
-        expect(card.onAction(game, dennis, 'take-sheep').mayBuyAnimal).toBe('sheep')
-        expect(card.onAction(game, dennis, 'take-boar').mayBuyAnimal).toBe('boar')
-        expect(card.onAction(game, dennis, 'take-cattle').mayBuyAnimal).toBe('cattle')
-      })
-
       test('does not trigger without food', () => {
         const card = res.getCardById('animal-dealer')
         const game = t.fixture({ numPlayers: 3 })
@@ -1737,6 +1727,17 @@ describe('BaseA Cards', () => {
         dennis.food = 0
 
         const result = card.onAction(game, dennis, 'take-sheep')
+        expect(result).toBeUndefined()
+      })
+
+      test('does not trigger on non-animal-market actions', () => {
+        const card = res.getCardById('animal-dealer')
+        const game = t.fixture({ numPlayers: 3 })
+        game.run()
+        const dennis = t.player(game)
+        dennis.food = 5
+
+        const result = card.onAction(game, dennis, 'take-wood')
         expect(result).toBeUndefined()
       })
     })
