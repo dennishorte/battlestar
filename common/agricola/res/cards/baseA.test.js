@@ -164,94 +164,113 @@ describe('BaseA Cards', () => {
   describe('Minor Improvements', () => {
 
     describe('Shifting Cultivation', () => {
-      test('has onPlay that triggers field plowing', () => {
-        const card = res.getCardById('shifting-cultivation')
-        expect(card.onPlay).toBeDefined()
-        expect(card.cost).toEqual({ food: 2 })
-      })
+      test('plows a field on play via Meeting Place', () => {
+        const game = t.fixtureMinorImprovement(
+          'shifting-cultivation',
+          {},
+          {
+            dennis: {
+              food: 2, // cost
+            },
+          },
+        )
 
-      test('card can be played and cost paid', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
+        // onPlay triggers plowField — choose a space
+        t.choose(game, game.waiting.selectors[0].choices[0])
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
           dennis: {
-            food: 5,
+            food: 1, // 2 + 1 MP - 2 cost
+            hand: [], // passed left
+            farmyard: { fields: 1 },
+            score: -13, // -14 base + 1 field
+          },
+          micah: {
             hand: ['shifting-cultivation'],
           },
         })
-        game.run()
-
-        const dennis = t.player(game)
-        expect(dennis.canPlayCard('shifting-cultivation')).toBe(true)
-        dennis.playCard('shifting-cultivation')
-
-        expect(dennis.food).toBe(3) // Paid 2 food
-        expect(dennis.playedMinorImprovements).toContain('shifting-cultivation')
       })
     })
 
     describe('Clay Embankment', () => {
-      test('gives 1 clay per 2 clay in supply', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
-          dennis: {
-            food: 5,
-            clay: 5,
-            hand: ['clay-embankment'],
+      test('gives bonus clay on play via Meeting Place', () => {
+        const game = t.fixtureMinorImprovement(
+          'clay-embankment',
+          {},
+          {
+            dennis: {
+              food: 1, // cost
+              clay: 5,
+            },
           },
-        })
-        game.run()
+        )
 
-        t.playCard(game, 'dennis', 'clay-embankment')
-
+        t.testIsSecondPlayer(game, 'Choose an action')
         t.testBoard(game, {
           dennis: {
-            food: 4, // Paid 1 food
+            food: 1, // 1 + 1 MP - 1 cost
             clay: 7, // 5 + floor(5/2) = 7
+            hand: [], // passed left
+          },
+          micah: {
+            hand: ['clay-embankment'],
           },
         })
       })
 
       test('gives nothing with 0-1 clay', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
-          dennis: {
-            food: 5,
-            clay: 1,
-            hand: ['clay-embankment'],
+        const game = t.fixtureMinorImprovement(
+          'clay-embankment',
+          {},
+          {
+            dennis: {
+              food: 1, // cost
+              clay: 1,
+            },
           },
-        })
-        game.run()
+        )
 
-        t.playCard(game, 'dennis', 'clay-embankment')
-
+        t.testIsSecondPlayer(game, 'Choose an action')
         t.testBoard(game, {
           dennis: {
-            clay: 1, // No bonus
+            food: 1, // 1 + 1 MP - 1 cost
+            clay: 1, // No bonus (floor(1/2) = 0)
+            hand: [],
+          },
+          micah: {
+            hand: ['clay-embankment'],
           },
         })
       })
     })
 
     describe('Young Animal Market', () => {
-      test('exchanges sheep for cattle', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
-          dennis: {
-            hand: ['young-animal-market'],
-            farmyard: {
-              pastures: [{ spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }], animals: { sheep: 2 } }],
+      test('exchanges sheep for cattle via Meeting Place', () => {
+        const game = t.fixtureMinorImprovement(
+          'young-animal-market',
+          {},
+          {
+            dennis: {
+              farmyard: {
+                pastures: [{ spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }], animals: { sheep: 2 } }],
+              },
             },
           },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
+          dennis: {
+            food: 1, // +1 MP
+            hand: [], // passed left
+            animals: { sheep: 1, cattle: 1 }, // 2 - 1 cost + 1 onPlay
+            score: -7, // -14 base + pasture/animals/fences bonuses
+          },
+          micah: {
+            hand: ['young-animal-market'],
+          },
         })
-        game.run()
-
-        const dennis = t.player(game)
-        t.playCard(game, 'dennis', 'young-animal-market')
-
-        // Should have lost 1 sheep (cost) and gained 1 cattle
-        // 2 sheep - 1 cost = 1 sheep remaining, +1 cattle
-        expect(dennis.getTotalAnimals('sheep')).toBe(1)
-        expect(dennis.getTotalAnimals('cattle')).toBe(1)
       })
     })
 
@@ -277,21 +296,22 @@ describe('BaseA Cards', () => {
     })
 
     describe('Rammed Clay', () => {
-      test('gives 1 clay on play', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
-          dennis: {
-            clay: 0,
-            hand: ['rammed-clay'],
+      test('gives 1 clay on play via Meeting Place', () => {
+        const game = t.fixtureMinorImprovement(
+          'rammed-clay',
+          {},
+          {
+            dennis: {},
           },
-        })
-        game.run()
+        )
 
-        t.playCard(game, 'dennis', 'rammed-clay')
-
+        t.testIsSecondPlayer(game, 'Choose an action')
         t.testBoard(game, {
           dennis: {
-            clay: 1,
+            food: 1, // +1 MP (free cost)
+            clay: 1, // +1 onPlay
+            hand: [],
+            minorImprovements: ['rammed-clay'],
           },
         })
       })
@@ -793,23 +813,26 @@ describe('BaseA Cards', () => {
     })
 
     describe('Junk Room', () => {
-      test('gives 1 food when played (including itself)', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
-          dennis: {
-            food: 0,
-            wood: 5,
-            clay: 5,
-            hand: ['junk-room'],
+      test('gives 1 food on play via Meeting Place', () => {
+        const game = t.fixtureMinorImprovement(
+          'junk-room',
+          {},
+          {
+            dennis: {
+              wood: 1,
+              clay: 1, // cost
+            },
           },
-        })
-        game.run()
+        )
 
-        t.playCard(game, 'dennis', 'junk-room')
-
+        t.testIsSecondPlayer(game, 'Choose an action')
         t.testBoard(game, {
           dennis: {
-            food: 1, // 1 from onPlay
+            wood: 0, // 1 - 1 cost
+            clay: 0, // 1 - 1 cost
+            food: 3, // +1 MP + 1 onPlay + 1 onBuildImprovement (self-triggers)
+            hand: [],
+            minorImprovements: ['junk-room'],
           },
         })
       })

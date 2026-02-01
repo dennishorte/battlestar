@@ -116,17 +116,66 @@ describe('BaseB Cards', () => {
     })
 
     describe('Caravan', () => {
+      test('can be played via Meeting Place', () => {
+        const game = t.fixtureMinorImprovement(
+          'caravan',
+          {
+            cardSets: ['baseB'],
+          },
+          {
+            dennis: {
+              wood: 3,
+              food: 3,
+            },
+          },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
+          dennis: {
+            wood: 0, // 3 - 3 cost
+            food: 1, // 3 + 1 MP - 3 cost
+            hand: [],
+            minorImprovements: ['caravan'],
+          },
+        })
+      })
+
       test('has providesRoom flag', () => {
         const card = baseB.getCardById('caravan')
         expect(card.providesRoom).toBe(true)
-        expect(card.cost).toEqual({ wood: 3, food: 3 })
       })
     })
 
     describe("Carpenter's Parlor", () => {
+      test('can be played via Meeting Place', () => {
+        const game = t.fixtureMinorImprovement(
+          'carpenters-parlor',
+          {
+            cardSets: ['baseB'],
+          },
+          {
+            dennis: {
+              wood: 1,
+              stone: 1,
+            },
+          },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
+          dennis: {
+            wood: 0, // 1 - 1 cost
+            stone: 0, // 1 - 1 cost
+            food: 1, // +1 MP
+            hand: [],
+            minorImprovements: ['carpenters-parlor'],
+          },
+        })
+      })
+
       test('reduces wooden room cost to 2 wood and 2 reed', () => {
         const card = baseB.getCardById('carpenters-parlor')
-        expect(card.modifyBuildCost).toBeDefined()
 
         const game = t.fixture()
         game.run()
@@ -152,21 +201,28 @@ describe('BaseB Cards', () => {
     })
 
     describe('Mining Hammer', () => {
-      test('gives 1 food on play', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
+      test('gives 1 food on play via Meeting Place', () => {
+        const game = t.fixtureMinorImprovement(
+          'mining-hammer',
+          {
+            cardSets: ['baseB'],
+          },
+          {
+            dennis: {
+              wood: 1, // cost
+            },
+          },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
           dennis: {
-            food: 0,
-            wood: 3,
-            hand: ['mining-hammer'],
+            wood: 0, // 1 - 1 cost
+            food: 2, // +1 MP + 1 onPlay
+            hand: [],
+            minorImprovements: ['mining-hammer'],
           },
         })
-        game.run()
-
-        t.playCard(game, 'dennis', 'mining-hammer')
-
-        const dennis = t.player(game)
-        expect(dennis.food).toBe(1)
       })
 
       test('has onRenovate hook', () => {
@@ -228,29 +284,59 @@ describe('BaseB Cards', () => {
     })
 
     describe('Lasso', () => {
+      test('can be played via Meeting Place', () => {
+        const game = t.fixtureMinorImprovement(
+          'lasso',
+          {
+            cardSets: ['baseB'],
+          },
+          {
+            dennis: {
+              reed: 1, // cost
+            },
+          },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
+          dennis: {
+            reed: 0, // 1 - 1 cost
+            food: 1, // +1 MP
+            hand: [],
+            minorImprovements: ['lasso'],
+          },
+        })
+      })
+
       test('has allowDoubleWorkerPlacement with animal market actions', () => {
         const card = baseB.getCardById('lasso')
         expect(card.allowDoubleWorkerPlacement).toEqual(['take-sheep', 'take-boar', 'take-cattle'])
-        expect(card.cost).toEqual({ reed: 1 })
       })
     })
 
     describe('Bread Paddle', () => {
-      test('gives 1 food on play', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
+      test('gives 1 food on play via Meeting Place', () => {
+        const game = t.fixtureMinorImprovement(
+          'bread-paddle',
+          {
+            cardSets: ['baseB'],
+          },
+          {
+            dennis: {
+              wood: 1, // cost
+            },
+          },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
           dennis: {
-            food: 0,
-            wood: 3,
-            hand: ['bread-paddle'],
+            wood: 0, // 1 - 1 cost
+            food: 2, // +1 MP + 1 onPlay
+            hand: [],
+            minorImprovements: ['bread-paddle'],
           },
         })
-        game.run()
-
-        t.playCard(game, 'dennis', 'bread-paddle')
-
-        const dennis = t.player(game)
-        expect(dennis.food).toBe(1)
       })
 
       test('has onPlayOccupation hook', () => {
@@ -260,26 +346,36 @@ describe('BaseB Cards', () => {
     })
 
     describe('Mantlepiece', () => {
-      test('gives bonus points based on rounds left and prevents renovation', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
+      test('gives bonus points and prevents renovation via Meeting Place', () => {
+        const game = t.fixtureMinorImprovement(
+          'mantlepiece',
+          {
+            cardSets: ['baseB'],
+          },
+          {
+            dennis: {
+              roomType: 'clay',
+              stone: 1, // cost
+            },
+          },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        const dennis = t.player(game)
+        // game.state.round is 2 during the first work phase, so 14 - 2 = 12
+        expect(dennis.bonusPoints).toBe(12)
+        expect(dennis.cannotRenovate).toBe(true)
+
+        t.testBoard(game, {
           dennis: {
-            stone: 3,
+            stone: 0, // 1 - 1 cost
+            food: 1, // +1 MP
+            hand: [],
             roomType: 'clay',
-            hand: ['mantlepiece'],
+            minorImprovements: ['mantlepiece'],
+            score: -3, // -14 base + clay house bonus + 12 bonus points - 3 mantlepiece vps
           },
         })
-        game.run()
-
-        const dennis = t.player(game)
-        game.state.round = 5
-
-        const card = baseB.getCardById('mantlepiece')
-        card.onPlay(game, dennis)
-
-        // 14 - 5 = 9 rounds left = 9 bonus points
-        expect(dennis.bonusPoints).toBe(9)
-        expect(dennis.cannotRenovate).toBe(true)
       })
 
       test('gives no bonus points in round 14', () => {
@@ -759,6 +855,30 @@ describe('BaseB Cards', () => {
     })
 
     describe('Hard Porcelain', () => {
+      test('can be played via Meeting Place', () => {
+        const game = t.fixtureMinorImprovement(
+          'hard-porcelain',
+          {
+            cardSets: ['baseB'],
+          },
+          {
+            dennis: {
+              clay: 1, // cost
+            },
+          },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
+          dennis: {
+            clay: 0, // 1 - 1 cost
+            food: 1, // +1 MP
+            hand: [],
+            minorImprovements: ['hard-porcelain'],
+          },
+        })
+      })
+
       test('has anytime exchange flag', () => {
         const card = baseB.getCardById('hard-porcelain')
         expect(card.allowsAnytimeExchange).toBe(true)
