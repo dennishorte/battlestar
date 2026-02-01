@@ -1262,26 +1262,47 @@ describe('BaseA Cards', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            grain: 0,
+            food: 4,
             occupations: ['scythe-worker'],
             farmyard: {
               fields: [
-                { row: 1, col: 0, crop: 'grain', cropCount: 3 },
-                { row: 1, col: 1, crop: 'grain', cropCount: 2 },
+                { row: 2, col: 0, crop: 'grain', cropCount: 3 },
+                { row: 2, col: 1, crop: 'grain', cropCount: 2 },
               ],
             },
           },
+          micah: { food: 4 },
+          round: 3,
         })
         game.run()
 
+        // Round 4: both players take non-interactive actions
+        t.choose(game, 'Day Laborer')   // dennis: +2 food
+        t.choose(game, 'Grain Seeds')   // micah: +1 grain
+        t.choose(game, 'Forest (3)')    // dennis: +3 wood
+        t.choose(game, 'Clay Pit (1)')  // micah: +1 clay
+
+        // Harvest fires: fieldPhase harvests 2 grain (1 per field),
+        // then scythe-worker gives 2 extra grain (1 per grain field)
+        // Feeding: 4 food required per player (2 members × 2 food each)
         const dennis = t.player(game)
-        const card = res.getCardById('scythe-worker')
-
-        // Call onHarvest directly
-        card.onHarvest(game, dennis)
-
-        // Should get 2 extra grain (one per grain field)
-        expect(dennis.grain).toBe(2)
+        const micah = t.player(game, 'micah')
+        t.testBoard(game, {
+          dennis: {
+            food: 2,   // 4 + 2 (day laborer) - 4 (feeding)
+            grain: 4,  // 2 (harvested) + 2 (scythe-worker bonus)
+            wood: 3,   // from Forest
+            occupations: ['scythe-worker'],
+            farmyard: { fields: 2 },
+            score: dennis.calculateScore(),
+          },
+          micah: {
+            grain: 1,  // from Grain Seeds
+            clay: 1,   // from Clay Pit
+            farmyard: {},
+            score: micah.calculateScore(),
+          },
+        })
       })
     })
 

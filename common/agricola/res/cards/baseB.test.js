@@ -422,62 +422,83 @@ describe('BaseB Cards', () => {
     })
 
     describe('Loom', () => {
-      test('gives food during harvest based on sheep count', () => {
-        const card = baseB.getCardById('loom')
+      test('gives food during harvest based on sheep count (1 sheep = 1 food)', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            food: 0,
-            farmyard: {
-              pastures: [{ spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }, { row: 1, col: 2 }, { row: 1, col: 3 }], animals: { sheep: 4 } }],
-            },
+            food: 4,
+            minorImprovements: ['loom'],
+            animals: { sheep: 1 },
           },
+          micah: { food: 4 },
+          round: 3,
         })
         game.run()
 
-        const dennis = t.player(game)
-        card.onHarvest(game, dennis)
+        // Round 4: both players take non-interactive actions
+        t.choose(game, 'Day Laborer')   // dennis: +2 food
+        t.choose(game, 'Grain Seeds')   // micah: +1 grain
+        t.choose(game, 'Forest (3)')    // dennis: +3 wood
+        t.choose(game, 'Clay Pit (1)')  // micah: +1 clay
 
-        // 4 sheep = 2 food
-        expect(dennis.food).toBe(2)
+        // Harvest: loom gives 1 food (1 sheep). No breeding (1 sheep, no pair).
+        // Feeding: 4 food required per player
+        const dennis = t.player(game)
+        const micah = t.player(game, 'micah')
+        t.testBoard(game, {
+          dennis: {
+            food: 3,   // 4 + 2 (day laborer) + 1 (loom) - 4 (feeding)
+            wood: 3,   // from Forest
+            sheep: 1,  // no breeding
+            minorImprovements: ['loom'],
+            score: dennis.calculateScore(),
+          },
+          micah: {
+            grain: 1,
+            clay: 1,
+            score: micah.calculateScore(),
+          },
+        })
       })
 
-      test('gives 1 food for 1-3 sheep during harvest', () => {
-        const card = baseB.getCardById('loom')
+      test('gives 2 food for 4-6 sheep during harvest', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            food: 0,
+            food: 4,
+            minorImprovements: ['loom'],
             farmyard: {
-              pastures: [{ spaces: [{ row: 1, col: 0 }], animals: { sheep: 1 } }],
+              pastures: [{ spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }, { row: 1, col: 2 }, { row: 1, col: 3 }], animals: { sheep: 5 } }],
             },
           },
+          micah: { food: 4 },
+          round: 3,
         })
         game.run()
 
-        const dennis = t.player(game)
-        card.onHarvest(game, dennis)
-        expect(dennis.food).toBe(1)
-      })
+        t.choose(game, 'Day Laborer')   // dennis: +2 food
+        t.choose(game, 'Grain Seeds')   // micah
+        t.choose(game, 'Forest (3)')    // dennis: +3 wood
+        t.choose(game, 'Clay Pit (1)')  // micah
 
-      test('gives 3 food for 7+ sheep during harvest', () => {
-        const card = baseB.getCardById('loom')
-        const game = t.fixture()
-        t.setBoard(game, {
+        // Harvest: loom gives 2 food (5 sheep). Breeding: +1 sheep (pair exists, 4-space pasture holds 8).
+        const dennis = t.player(game)
+        const micah = t.player(game, 'micah')
+        t.testBoard(game, {
           dennis: {
-            food: 0,
-            farmyard: {
-              pastures: [
-                { spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }, { row: 1, col: 2 }, { row: 1, col: 3 }], animals: { sheep: 7 } },
-              ],
-            },
+            food: 4,   // 4 + 2 + 2 (loom) - 4 (feeding)
+            wood: 3,
+            sheep: 6,  // 5 + 1 bred
+            minorImprovements: ['loom'],
+            farmyard: { pastures: 1 },
+            score: dennis.calculateScore(),
+          },
+          micah: {
+            grain: 1,
+            clay: 1,
+            score: micah.calculateScore(),
           },
         })
-        game.run()
-
-        const dennis = t.player(game)
-        card.onHarvest(game, dennis)
-        expect(dennis.food).toBe(3)
       })
 
       test('gives end game points: 1 per 3 sheep', () => {
@@ -572,46 +593,86 @@ describe('BaseB Cards', () => {
 
     describe('Butter Churn', () => {
       test('gives food during harvest based on sheep and cattle', () => {
-        const card = baseB.getCardById('butter-churn')
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            food: 0,
+            food: 4,
+            minorImprovements: ['butter-churn'],
             farmyard: {
               pastures: [
-                { spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }], animals: { sheep: 6 } },
-                { spaces: [{ row: 2, col: 0 }, { row: 2, col: 1 }], animals: { cattle: 4 } },
+                { spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }, { row: 1, col: 2 }, { row: 1, col: 3 }], animals: { sheep: 6 } },
+                { spaces: [{ row: 2, col: 0 }, { row: 2, col: 1 }], animals: { cattle: 3 } },
               ],
             },
           },
+          micah: { food: 4 },
+          round: 3,
         })
         game.run()
 
-        const dennis = t.player(game)
-        card.onHarvest(game, dennis)
+        // Round 4: both players take non-interactive actions
+        t.choose(game, 'Day Laborer')   // dennis: +2 food
+        t.choose(game, 'Grain Seeds')   // micah
+        t.choose(game, 'Forest (3)')    // dennis: +3 wood
+        t.choose(game, 'Clay Pit (1)')  // micah
 
-        // floor(6/3) + floor(4/2) = 2 + 2 = 4 food
-        expect(dennis.food).toBe(4)
+        // Harvest field phase: butter-churn gives floor(6/3) + floor(3/2) = 2 + 1 = 3 food
+        // Breeding: +1 sheep (6 → 7, pasture capacity 8), +1 cattle (3 → 4, pasture capacity 4)
+        const dennis = t.player(game)
+        const micah = t.player(game, 'micah')
+        t.testBoard(game, {
+          dennis: {
+            food: 5,   // 4 + 2 (day laborer) + 3 (butter-churn) - 4 (feeding)
+            wood: 3,
+            sheep: 7,  // 6 + 1 bred
+            cattle: 4, // 3 + 1 bred
+            minorImprovements: ['butter-churn'],
+            farmyard: { pastures: 2 },
+            score: dennis.calculateScore(),
+          },
+          micah: {
+            grain: 1,
+            clay: 1,
+            score: micah.calculateScore(),
+          },
+        })
       })
 
       test('gives no food with few animals', () => {
-        const card = baseB.getCardById('butter-churn')
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            food: 0,
-            farmyard: {
-              pastures: [{ spaces: [{ row: 1, col: 0 }], animals: { sheep: 2 } }],
-            },
+            food: 4,
+            minorImprovements: ['butter-churn'],
+            animals: { sheep: 1 },
           },
+          micah: { food: 4 },
+          round: 3,
         })
         game.run()
 
-        const dennis = t.player(game)
-        card.onHarvest(game, dennis)
+        t.choose(game, 'Day Laborer')   // dennis
+        t.choose(game, 'Grain Seeds')   // micah
+        t.choose(game, 'Forest (3)')    // dennis
+        t.choose(game, 'Clay Pit (1)')  // micah
 
-        // floor(2/3) = 0
-        expect(dennis.food).toBe(0)
+        // floor(1/3) + floor(0/2) = 0 food from butter-churn
+        const dennis = t.player(game)
+        const micah = t.player(game, 'micah')
+        t.testBoard(game, {
+          dennis: {
+            food: 2,   // 4 + 2 (day laborer) + 0 (butter-churn) - 4 (feeding)
+            wood: 3,
+            sheep: 1,  // no breeding (only 1)
+            minorImprovements: ['butter-churn'],
+            score: dennis.calculateScore(),
+          },
+          micah: {
+            grain: 1,
+            clay: 1,
+            score: micah.calculateScore(),
+          },
+        })
       })
     })
 
@@ -698,47 +759,96 @@ describe('BaseB Cards', () => {
     })
 
     describe('Three-Field Rotation', () => {
-      test('gives 3 food during harvest with correct field configuration', () => {
-        const card = baseB.getCardById('three-field-rotation')
+      test('gives 3 food during harvest with grain, vegetable, and empty fields', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            food: 0,
+            food: 4,
+            minorImprovements: ['three-field-rotation'],
             farmyard: {
               fields: [
-                { row: 1, col: 0, crop: 'grain', cropCount: 2 },
-                { row: 1, col: 1, crop: 'vegetables', cropCount: 1 },
-                { row: 1, col: 2 },  // empty field
+                { row: 2, col: 0, crop: 'grain', cropCount: 3 },
+                { row: 2, col: 1, crop: 'vegetables', cropCount: 2 },
+                { row: 2, col: 2 },  // empty field
               ],
             },
           },
+          micah: { food: 4 },
+          round: 3,
         })
         game.run()
 
+        // Round 4: both players take non-interactive actions
+        t.choose(game, 'Day Laborer')   // dennis: +2 food
+        t.choose(game, 'Grain Seeds')   // micah
+        t.choose(game, 'Forest (3)')    // dennis: +3 wood
+        t.choose(game, 'Clay Pit (1)')  // micah
+
+        // Harvest field phase: harvests 1 grain + 1 veg from fields.
+        // After harvest: grain field (cropCount 2), veg field (cropCount 1), empty field.
+        // Three-field-rotation: all 3 types present → 3 food.
+        // Feeding: 4 food required.
         const dennis = t.player(game)
-        card.onHarvest(game, dennis)
-        expect(dennis.food).toBe(3)
+        const micah = t.player(game, 'micah')
+        t.testBoard(game, {
+          dennis: {
+            food: 5,         // 4 + 2 (day laborer) + 3 (three-field-rotation) - 4 (feeding)
+            grain: 1,        // harvested from field
+            vegetables: 1,   // harvested from field
+            wood: 3,         // from Forest
+            minorImprovements: ['three-field-rotation'],
+            farmyard: { fields: 3 },
+            score: dennis.calculateScore(),
+          },
+          micah: {
+            grain: 1,
+            clay: 1,
+            score: micah.calculateScore(),
+          },
+        })
       })
 
       test('gives no food without all three field types', () => {
-        const card = baseB.getCardById('three-field-rotation')
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            food: 0,
+            food: 4,
+            minorImprovements: ['three-field-rotation'],
             farmyard: {
               fields: [
-                { row: 1, col: 0, crop: 'grain', cropCount: 2 },
-                { row: 1, col: 1 },  // empty field (no vegetable field)
+                { row: 2, col: 0, crop: 'grain', cropCount: 3 },
+                { row: 2, col: 1 },  // empty field (no vegetable field)
               ],
             },
           },
+          micah: { food: 4 },
+          round: 3,
         })
         game.run()
 
+        t.choose(game, 'Day Laborer')   // dennis
+        t.choose(game, 'Grain Seeds')   // micah
+        t.choose(game, 'Forest (3)')    // dennis
+        t.choose(game, 'Clay Pit (1)')  // micah
+
+        // No veg field → three-field-rotation gives 0 food
         const dennis = t.player(game)
-        card.onHarvest(game, dennis)
-        expect(dennis.food).toBe(0)
+        const micah = t.player(game, 'micah')
+        t.testBoard(game, {
+          dennis: {
+            food: 2,    // 4 + 2 (day laborer) + 0 - 4 (feeding)
+            grain: 1,   // harvested from field
+            wood: 3,
+            minorImprovements: ['three-field-rotation'],
+            farmyard: { fields: 2 },
+            score: dennis.calculateScore(),
+          },
+          micah: {
+            grain: 1,
+            clay: 1,
+            score: micah.calculateScore(),
+          },
+        })
       })
     })
 
