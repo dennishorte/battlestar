@@ -1518,7 +1518,7 @@ describe('BaseB Cards', () => {
     })
 
     describe('Oven Firing Boy', () => {
-      test('triggers bake offer on Forest action', () => {
+      test('offers bake bread on Forest action and bakes grain into food', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
@@ -1532,18 +1532,13 @@ describe('BaseB Cards', () => {
         t.choose(game, 'Forest (3)')
 
         // Oven Firing Boy triggers bake bread offer
-        const choices = game.waiting.selectors[0].choices
-        expect(choices.length).toBeGreaterThanOrEqual(1)
-
-        // Choose to bake or skip
-        t.choose(game, game.waiting.selectors[0].choices[0])
+        t.choose(game, 'Bake 2 grain')
 
         const dennis = t.player(game)
         t.testBoard(game, {
           dennis: {
-            wood: 3, // from Forest
-            food: dennis.food,
-            grain: dennis.grain,
+            wood: 3,
+            food: 4, // 2 grain × 2 food per grain (fireplace)
             occupations: ['oven-firing-boy'],
             majorImprovements: ['fireplace-2'],
             score: dennis.calculateScore(),
@@ -1551,17 +1546,79 @@ describe('BaseB Cards', () => {
         })
       })
 
-      test('does not trigger on non-wood actions', () => {
-        const card = baseB.getCardById('oven-firing-boy')
+      test('can skip baking', () => {
         const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            grain: 1,
+            occupations: ['oven-firing-boy'],
+            majorImprovements: ['fireplace-2'],
+          },
+        })
         game.run()
+
+        t.choose(game, 'Forest (3)')
+        t.choose(game, 'Do not bake')
+
         const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            wood: 3,
+            grain: 1,
+            occupations: ['oven-firing-boy'],
+            majorImprovements: ['fireplace-2'],
+            score: dennis.calculateScore(),
+          },
+        })
+      })
 
-        const result1 = card.onAction(game, dennis, 'take-clay')
-        expect(result1).toBeUndefined()
+      test('does not trigger without baking improvement', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            grain: 2,
+            occupations: ['oven-firing-boy'],
+          },
+        })
+        game.run()
 
-        const result2 = card.onAction(game, dennis, 'fishing')
-        expect(result2).toBeUndefined()
+        t.choose(game, 'Forest (3)')
+
+        // No bake interaction — goes straight to next player
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            wood: 3,
+            grain: 2,
+            occupations: ['oven-firing-boy'],
+            score: dennis.calculateScore(),
+          },
+        })
+      })
+
+      test('does not trigger on non-wood actions', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            grain: 2,
+            occupations: ['oven-firing-boy'],
+            majorImprovements: ['fireplace-2'],
+          },
+        })
+        game.run()
+
+        t.choose(game, 'Grain Seeds')
+
+        // No bake interaction
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            grain: 3,
+            occupations: ['oven-firing-boy'],
+            majorImprovements: ['fireplace-2'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
 
@@ -2095,7 +2152,7 @@ describe('BaseB Cards', () => {
     })
 
     describe('Cattle Feeder', () => {
-      test('offers cattle purchase on Grain Seeds action', () => {
+      test('buys cattle for 1 food on Grain Seeds action', () => {
         const game = t.fixture({ numPlayers: 4 })
         t.setBoard(game, {
           dennis: {
@@ -2106,38 +2163,88 @@ describe('BaseB Cards', () => {
         game.run()
 
         t.choose(game, 'Grain Seeds')
-
-        // Cattle Feeder triggers: offers to buy cattle for 1 food
-        const choices = game.waiting.selectors[0].choices
-        expect(choices.length).toBeGreaterThanOrEqual(1)
-        t.choose(game, choices[0])
+        t.choose(game, 'Buy 1 cattle for 1 food')
 
         const dennis = t.player(game)
-        // Either bought cattle (food: 2, cattle: 1) or skipped
-        expect(dennis.grain).toBe(1) // from Grain Seeds
-        expect(dennis.food + dennis.getTotalAnimals('cattle')).toBeGreaterThanOrEqual(3)
+        t.testBoard(game, {
+          dennis: {
+            food: 2,
+            grain: 1,
+            cattle: 1,
+            occupations: ['cattle-feeder'],
+            score: dennis.calculateScore(),
+          },
+        })
+      })
+
+      test('can skip buying cattle', () => {
+        const game = t.fixture({ numPlayers: 4 })
+        t.setBoard(game, {
+          dennis: {
+            food: 3,
+            occupations: ['cattle-feeder'],
+          },
+        })
+        game.run()
+
+        t.choose(game, 'Grain Seeds')
+        t.choose(game, 'Skip')
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            food: 3,
+            grain: 1,
+            occupations: ['cattle-feeder'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('does not trigger without food', () => {
-        const card = baseB.getCardById('cattle-feeder')
         const game = t.fixture({ numPlayers: 4 })
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['cattle-feeder'],
+          },
+        })
         game.run()
-        const dennis = t.player(game)
-        dennis.food = 0
 
-        const result = card.onAction(game, dennis, 'take-grain')
-        expect(result).toBeUndefined()
+        t.choose(game, 'Grain Seeds')
+
+        // No buy interaction — goes straight to next player
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            grain: 1,
+            occupations: ['cattle-feeder'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('does not trigger on other actions', () => {
-        const card = baseB.getCardById('cattle-feeder')
         const game = t.fixture({ numPlayers: 4 })
+        t.setBoard(game, {
+          dennis: {
+            food: 3,
+            occupations: ['cattle-feeder'],
+          },
+        })
         game.run()
-        const dennis = t.player(game)
-        dennis.food = 3
 
-        const result = card.onAction(game, dennis, 'take-wood')
-        expect(result).toBeUndefined()
+        t.choose(game, 'Forest (3)')
+
+        // No buy interaction
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            food: 3,
+            wood: 3,
+            occupations: ['cattle-feeder'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
   })
