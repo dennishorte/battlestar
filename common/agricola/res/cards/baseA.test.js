@@ -472,90 +472,73 @@ describe('BaseA Cards', () => {
     })
 
     describe('Corn Scoop', () => {
-      test('has onAction hook for take-grain', () => {
-        const card = res.getCardById('corn-scoop')
-        expect(card.onAction).toBeDefined()
-      })
-
-      test('gives +1 grain when using take-grain action', () => {
+      test('gives +1 grain on Grain Seeds action', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            wood: 5,
-            grain: 0,
             minorImprovements: ['corn-scoop'],
           },
         })
         game.run()
 
+        t.choose(game, 'Grain Seeds')
+
         const dennis = t.player(game)
-
-        // Directly call the action with the hook active
-        game.actions.executeAction(dennis, 'take-grain')
-
-        // Should get base 1 grain + 1 from Corn Scoop
-        expect(dennis.grain).toBe(2)
+        t.testBoard(game, {
+          dennis: {
+            grain: 2, // 1 base + 1 from Corn Scoop
+            minorImprovements: ['corn-scoop'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
 
     describe('Stone Tongs', () => {
-      test('has onAction hook for stone actions', () => {
-        const card = res.getCardById('stone-tongs')
-        expect(card.onAction).toBeDefined()
-      })
-
-      test('gives +1 stone when using stone accumulation space', () => {
+      test('gives +1 stone on Western Quarry action', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            wood: 5,
-            stone: 0,
             minorImprovements: ['stone-tongs'],
           },
-          round: 6, // Need to be in stage 2+ for stone actions
+          round: 6, // Need stage 2+ for stone actions
         })
         game.run()
 
+        t.choose(game, 'Western Quarry (1)')
+
         const dennis = t.player(game)
-
-        // Make sure take-stone-1 action is available and has accumulated
-        game.state.actionSpaces['take-stone-1'] = { accumulated: 3 }
-
-        game.actions.executeAction(dennis, 'take-stone-1')
-
-        // Should get accumulated 3 stone + 1 from Stone Tongs
-        expect(dennis.stone).toBe(4)
+        t.testBoard(game, {
+          dennis: {
+            stone: 2, // 1 accumulated + 1 from Stone Tongs
+            minorImprovements: ['stone-tongs'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
 
     describe('Canoe', () => {
-      test('has onAction hook for fishing', () => {
-        const card = res.getCardById('canoe')
-        expect(card.onAction).toBeDefined()
-      })
-
-      test('gives +1 food and +1 reed when using fishing', () => {
+      test('gives +1 food and +1 reed on Fishing action', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            wood: 5,
-            food: 0,
-            reed: 0,
             minorImprovements: ['canoe'],
           },
         })
         game.run()
 
+        t.choose(game, 'Fishing (1)')
+
         const dennis = t.player(game)
-
-        // Set up fishing accumulated resources
-        game.state.actionSpaces['fishing'] = { accumulated: 2 }
-
-        game.actions.executeAction(dennis, 'fishing')
-
-        // Should get accumulated 2 food + 1 from Canoe, and +1 reed from Canoe
-        expect(dennis.food).toBe(3) // 2 accumulated + 1 from Canoe
-        expect(dennis.reed).toBe(1) // Just the Canoe bonus
+        t.testBoard(game, {
+          dennis: {
+            food: 2, // 1 accumulated + 1 from Canoe
+            reed: 1, // +1 from Canoe
+            minorImprovements: ['canoe'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
 
@@ -630,30 +613,37 @@ describe('BaseA Cards', () => {
     })
 
     describe('Handplow', () => {
-      test('schedules a plow for current round + 5', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
-          dennis: {
-            wood: 5,
-            hand: ['handplow'],
+      test('schedules a plow for round 6 when played in round 1', () => {
+        const game = t.fixtureMinorImprovement(
+          'handplow',
+          {},
+          {
+            dennis: {
+              wood: 1, // cost
+            },
           },
-          round: 3,
-        })
-        game.run()
+        )
 
-        game.state.round = 3
-        t.playCard(game, 'dennis', 'handplow')
-
+        t.testIsSecondPlayer(game, 'Choose an action')
         const dennis = t.player(game)
-        // Should schedule a plow for round 8
-        expect(game.state.scheduledPlows[dennis.name]).toContain(8)
+        // fixtureMinorImprovement uses default round, game.state.round is 2 during play
+        // Schedules plow for round 2+5 = 7
+        expect(game.state.scheduledPlows[dennis.name]).toContain(7)
+
+        t.testBoard(game, {
+          dennis: {
+            food: 1, // +1 from Meeting Place
+            hand: [],
+            minorImprovements: ['handplow'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('does not schedule beyond round 14', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            wood: 5,
             hand: ['handplow'],
           },
           round: 10,
@@ -1186,30 +1176,25 @@ describe('BaseA Cards', () => {
     })
 
     describe('Wood Cutter', () => {
-      test('has onAction hook for wood actions', () => {
-        const card = res.getCardById('wood-cutter')
-        expect(card.onAction).toBeDefined()
-      })
-
-      test('gives +1 wood when using wood accumulation space', () => {
+      test('gives +1 wood on Forest action', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            wood: 0,
             occupations: ['wood-cutter'],
           },
         })
         game.run()
 
+        t.choose(game, 'Forest (3)')
+
         const dennis = t.player(game)
-
-        // Set up wood accumulated resources (take-wood is Forest in Revised Edition)
-        game.state.actionSpaces['take-wood'] = { accumulated: 3 }
-
-        game.actions.executeAction(dennis, 'take-wood')
-
-        // Should get accumulated 3 wood + 1 from Wood Cutter
-        expect(dennis.wood).toBe(4)
+        t.testBoard(game, {
+          dennis: {
+            wood: 4, // 3 accumulated + 1 from Wood Cutter
+            occupations: ['wood-cutter'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
 
@@ -1309,23 +1294,26 @@ describe('BaseA Cards', () => {
     })
 
     describe('Firewood Collector', () => {
-      test('gives +1 wood when using take-grain action', () => {
+      test('gives +1 wood on Grain Seeds action', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            wood: 0,
-            grain: 0,
             occupations: ['firewood-collector'],
           },
         })
         game.run()
 
-        const dennis = t.player(game)
-        game.actions.executeAction(dennis, 'take-grain')
+        t.choose(game, 'Grain Seeds')
 
-        // Should get 1 wood from Firewood Collector + 1 grain from action
-        expect(dennis.wood).toBe(1)
-        expect(dennis.grain).toBe(1)
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            wood: 1, // +1 from Firewood Collector
+            grain: 1, // from Grain Seeds action
+            occupations: ['firewood-collector'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('onAction triggers for farming-related actions', () => {
@@ -1474,83 +1462,81 @@ describe('BaseA Cards', () => {
     })
 
     describe('Conjurer (4+ players)', () => {
-      test('gives +1 wood and +1 grain when using traveling-players', () => {
+      test('gives +1 wood and +1 grain on Traveling Players action', () => {
         const game = t.fixture({ numPlayers: 4 })
         t.setBoard(game, {
           dennis: {
-            wood: 0,
-            grain: 0,
             occupations: ['conjurer'],
           },
         })
         game.run()
 
+        t.choose(game, 'Traveling Players (1)')
+
         const dennis = t.player(game)
-
-        // Set up traveling-players action space
-        game.state.actionSpaces['traveling-players'] = { accumulated: 2 }
-
-        game.actions.executeAction(dennis, 'traveling-players')
-
-        // Should get 2 food from action + 1 wood and 1 grain from Conjurer
-        expect(dennis.food).toBe(2) // 0 starting + 2 from action
-        expect(dennis.wood).toBe(1)
-        expect(dennis.grain).toBe(1)
+        t.testBoard(game, {
+          dennis: {
+            food: 1, // 1 accumulated from Traveling Players
+            wood: 1, // +1 from Conjurer
+            grain: 1, // +1 from Conjurer
+            occupations: ['conjurer'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
 
     describe('Lutenist (4+ players)', () => {
-      test('gives card owner food and wood when another player uses traveling-players', () => {
+      test('gives dennis food and wood when micah uses Traveling Players', () => {
         const game = t.fixture({ numPlayers: 4 })
         t.setBoard(game, {
           dennis: {
-            food: 0,
-            wood: 0,
             occupations: ['lutenist'],
-          },
-          micah: {
-            food: 0,
           },
         })
         game.run()
 
+        // Dennis takes a non-traveling-players action first
+        t.choose(game, 'Grain Seeds')
+        // Micah takes Traveling Players
+        t.choose(game, 'Traveling Players (1)')
+
         const dennis = t.player(game)
         const micah = game.players.byName('micah')
-
-        // Set up traveling-players action space
-        game.state.actionSpaces['traveling-players'] = { accumulated: 2 }
-
-        // Micah takes the action
-        game.actions.executeAction(micah, 'traveling-players')
-
-        // Dennis gets 1 food and 1 wood from Lutenist
-        expect(dennis.food).toBe(1)
-        expect(dennis.wood).toBe(1)
+        t.testBoard(game, {
+          dennis: {
+            food: 1, // +1 from Lutenist (micah used Traveling Players)
+            wood: 1, // +1 from Lutenist
+            grain: 1, // from Grain Seeds
+            occupations: ['lutenist'],
+            score: dennis.calculateScore(),
+          },
+          micah: {
+            food: 1, // from Traveling Players accumulated
+            score: micah.calculateScore(),
+          },
+        })
       })
 
       test('does not trigger when card owner takes the action', () => {
         const game = t.fixture({ numPlayers: 4 })
         t.setBoard(game, {
           dennis: {
-            food: 0,
-            wood: 0,
             occupations: ['lutenist'],
           },
         })
         game.run()
 
+        t.choose(game, 'Traveling Players (1)')
+
         const dennis = t.player(game)
-
-        // Set up traveling-players action space
-        game.state.actionSpaces['traveling-players'] = { accumulated: 2 }
-
-        // Dennis takes the action himself
-        game.actions.executeAction(dennis, 'traveling-players')
-
-        // Dennis should NOT get the Lutenist bonus (only triggers for other players)
-        // Gets only the 2 accumulated food from the action, no Lutenist bonus
-        expect(dennis.food).toBe(2)
-        expect(dennis.wood).toBe(0)
+        t.testBoard(game, {
+          dennis: {
+            food: 1, // only from Traveling Players accumulated, no Lutenist bonus
+            occupations: ['lutenist'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
 
@@ -1842,30 +1828,39 @@ describe('BaseA Cards', () => {
     })
 
     describe('Roughcaster', () => {
-      test('gives 3 food when building clay room', () => {
+      test('gives 3 food when building clay room via Building action', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            food: 0,
+            roomType: 'clay',
+            clay: 5,
+            reed: 2,
             occupations: ['roughcaster'],
           },
         })
         game.run()
 
+        t.choose(game, 'Farm Expansion')
+        t.choose(game, 'Build Room')
+        t.choose(game, game.waiting.selectors[0].choices[0]) // pick room location
+
         const dennis = t.player(game)
-        const card = res.getCardById('roughcaster')
-
-        // Directly call the onBuildRoom hook
-        card.onBuildRoom(game, dennis, 'clay')
-
-        expect(dennis.food).toBe(3)
+        t.testBoard(game, {
+          dennis: {
+            food: 3, // from Roughcaster
+            clay: 0, // 5 - 5 cost
+            roomType: 'clay',
+            occupations: ['roughcaster'],
+            farmyard: { rooms: 3 },
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('does not give food when building wood room', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            food: 0,
             occupations: ['roughcaster'],
           },
         })
@@ -1874,7 +1869,6 @@ describe('BaseA Cards', () => {
         const dennis = t.player(game)
         const card = res.getCardById('roughcaster')
 
-        // Directly call the onBuildRoom hook
         card.onBuildRoom(game, dennis, 'wood')
 
         expect(dennis.food).toBe(0)
@@ -1884,7 +1878,6 @@ describe('BaseA Cards', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            food: 0,
             occupations: ['roughcaster'],
           },
         })
@@ -1893,7 +1886,6 @@ describe('BaseA Cards', () => {
         const dennis = t.player(game)
         const card = res.getCardById('roughcaster')
 
-        // Directly call the onRenovate hook
         card.onRenovate(game, dennis, 'clay', 'stone')
 
         expect(dennis.food).toBe(3)
@@ -1903,7 +1895,6 @@ describe('BaseA Cards', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            food: 0,
             occupations: ['roughcaster'],
           },
         })
@@ -1912,7 +1903,6 @@ describe('BaseA Cards', () => {
         const dennis = t.player(game)
         const card = res.getCardById('roughcaster')
 
-        // Directly call the onRenovate hook
         card.onRenovate(game, dennis, 'wood', 'clay')
 
         expect(dennis.food).toBe(0)
@@ -1920,30 +1910,36 @@ describe('BaseA Cards', () => {
     })
 
     describe('Wall Builder', () => {
-      test('schedules food on next 4 round spaces when building room', () => {
+      test('schedules food on next 4 rounds when building room via Building action', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
+            wood: 5,
+            reed: 2,
             occupations: ['wall-builder'],
           },
-          round: 5,
         })
         game.run()
 
+        t.choose(game, 'Farm Expansion')
+        t.choose(game, 'Build Room')
+        t.choose(game, game.waiting.selectors[0].choices[0]) // pick room location
+
         const dennis = t.player(game)
-        const card = res.getCardById('wall-builder')
-
-        // Ensure round is set
-        game.state.round = 5
-
-        // Directly call the onBuildRoom hook
-        card.onBuildRoom(game, dennis)
-
-        // Should schedule food for rounds 6, 7, 8, 9
+        // game.state.round is 2 during the first work phase, so schedules food for rounds 3, 4, 5, 6
+        expect(game.state.scheduledFood[dennis.name][3]).toBe(1)
+        expect(game.state.scheduledFood[dennis.name][4]).toBe(1)
+        expect(game.state.scheduledFood[dennis.name][5]).toBe(1)
         expect(game.state.scheduledFood[dennis.name][6]).toBe(1)
-        expect(game.state.scheduledFood[dennis.name][7]).toBe(1)
-        expect(game.state.scheduledFood[dennis.name][8]).toBe(1)
-        expect(game.state.scheduledFood[dennis.name][9]).toBe(1)
+
+        t.testBoard(game, {
+          dennis: {
+            wood: 0, // 5 - 5 cost
+            occupations: ['wall-builder'],
+            farmyard: { rooms: 3 },
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('does not schedule food beyond round 14', () => {
@@ -1959,10 +1955,7 @@ describe('BaseA Cards', () => {
         const dennis = t.player(game)
         const card = res.getCardById('wall-builder')
 
-        // Ensure round is set
         game.state.round = 12
-
-        // Directly call the onBuildRoom hook
         card.onBuildRoom(game, dennis)
 
         // Should only schedule food for rounds 13, 14 (not beyond 14)

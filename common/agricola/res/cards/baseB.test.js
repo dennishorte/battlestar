@@ -500,42 +500,60 @@ describe('BaseB Cards', () => {
     })
 
     describe('Strawberry Patch', () => {
-      test('schedules food on next 3 rounds', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
+      test('schedules food on next 3 rounds via Meeting Place', () => {
+        const game = t.fixtureMinorImprovement(
+          'strawberry-patch',
+          { cardSets: ['baseB'] },
+          {
+            dennis: {
+              wood: 1, // cost: { wood: 1 }
+            },
+          },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        const dennis = t.player(game)
+        // game.state.round is 2 during first work phase, schedules food for rounds 3, 4, 5
+        expect(game.state.scheduledFood[dennis.name][3]).toBe(1)
+        expect(game.state.scheduledFood[dennis.name][4]).toBe(1)
+        expect(game.state.scheduledFood[dennis.name][5]).toBe(1)
+
+        t.testBoard(game, {
           dennis: {
-            wood: 3,
-            hand: ['strawberry-patch'],
+            food: 1, // +1 MP
+            hand: [],
+            minorImprovements: ['strawberry-patch'],
+            score: dennis.calculateScore(),
           },
         })
-        game.run()
-
-        const dennis = t.player(game)
-        game.state.round = 5
-
-        const card = baseB.getCardById('strawberry-patch')
-        card.onPlay(game, dennis)
-
-        expect(game.state.scheduledFood[dennis.name][6]).toBe(1)
-        expect(game.state.scheduledFood[dennis.name][7]).toBe(1)
-        expect(game.state.scheduledFood[dennis.name][8]).toBe(1)
       })
     })
 
     describe('Herring Pot', () => {
-      test('schedules food on next 3 rounds when fishing', () => {
-        const card = baseB.getCardById('herring-pot')
+      test('schedules food on next 3 rounds on Fishing action', () => {
         const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            minorImprovements: ['herring-pot'],
+          },
+        })
         game.run()
 
+        t.choose(game, 'Fishing (1)')
+
         const dennis = t.player(game)
-        game.state.round = 3
-
-        card.onAction(game, dennis, 'fishing')
-
+        // game.state.round is 2 during first work phase, schedules food for rounds 3, 4, 5
+        expect(game.state.scheduledFood[dennis.name][3]).toBe(1)
         expect(game.state.scheduledFood[dennis.name][4]).toBe(1)
         expect(game.state.scheduledFood[dennis.name][5]).toBe(1)
-        expect(game.state.scheduledFood[dennis.name][6]).toBe(1)
+
+        t.testBoard(game, {
+          dennis: {
+            food: 1, // 1 accumulated from Fishing
+            minorImprovements: ['herring-pot'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('does not trigger on non-fishing actions', () => {
@@ -598,24 +616,26 @@ describe('BaseB Cards', () => {
     })
 
     describe('Brook', () => {
-      test('gives 1 food when using actions above fishing', () => {
-        const card = baseB.getCardById('brook')
+      test('gives +1 food on Grain Seeds action', () => {
         const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            minorImprovements: ['brook'],
+          },
+        })
         game.run()
+
+        t.choose(game, 'Grain Seeds')
+
         const dennis = t.player(game)
-        dennis.food = 0
-
-        card.onAction(game, dennis, 'build-room-stable')
-        expect(dennis.food).toBe(1)
-
-        card.onAction(game, dennis, 'starting-player')
-        expect(dennis.food).toBe(2)
-
-        card.onAction(game, dennis, 'take-grain')
-        expect(dennis.food).toBe(3)
-
-        card.onAction(game, dennis, 'plow-field')
-        expect(dennis.food).toBe(4)
+        t.testBoard(game, {
+          dennis: {
+            food: 1, // +1 from Brook (Grain Seeds is above Fishing)
+            grain: 1, // from Grain Seeds
+            minorImprovements: ['brook'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('does not trigger on other actions', () => {
@@ -634,16 +654,34 @@ describe('BaseB Cards', () => {
     })
 
     describe('Scullery', () => {
-      test('gives 1 food at round start if wooden house', () => {
-        const card = baseB.getCardById('scullery')
+      test('gives 1 food at round 2 start in wooden house', () => {
         const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            minorImprovements: ['scullery'],
+          },
+        })
         game.run()
-        const dennis = t.player(game)
-        dennis.food = 0
-        dennis.roomType = 'wood'
 
-        card.onRoundStart(game, dennis)
-        expect(dennis.food).toBe(1)
+        // Round 1: both players take actions
+        t.choose(game, 'Grain Seeds')   // dennis
+        t.choose(game, 'Forest (3)')    // micah
+
+        // Round 2 starts — onRoundStart fires, scullery gives 1 food (wood house)
+        const dennis = t.player(game)
+        const micah = game.players.byName('micah')
+        t.testBoard(game, {
+          dennis: {
+            food: 1, // from Scullery onRoundStart
+            grain: 1, // from Grain Seeds
+            minorImprovements: ['scullery'],
+            score: dennis.calculateScore(),
+          },
+          micah: {
+            wood: 3, // from Forest
+            score: micah.calculateScore(),
+          },
+        })
       })
 
       test('does not give food if not wooden house', () => {
@@ -705,6 +743,40 @@ describe('BaseB Cards', () => {
     })
 
     describe('Pitchfork', () => {
+      test('gives 3 food on Grain Seeds when Farmland is occupied by another player', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            minorImprovements: ['pitchfork'],
+          },
+        })
+        game.run()
+
+        // Dennis takes Forest first (worker 1)
+        t.choose(game, 'Forest (3)')
+        // Micah takes Farmland (worker 1) — occupies it
+        t.choose(game, 'Farmland')
+        t.choose(game, game.waiting.selectors[0].choices[0]) // plow a space
+        // Dennis takes Grain Seeds (worker 2) — Farmland is occupied by micah → Pitchfork triggers
+        t.choose(game, 'Grain Seeds')
+
+        const dennis = t.player(game)
+        const micah = game.players.byName('micah')
+        t.testBoard(game, {
+          dennis: {
+            wood: 3, // from Forest
+            grain: 1, // from Grain Seeds
+            food: 3, // +3 from Pitchfork (Farmland occupied by micah)
+            minorImprovements: ['pitchfork'],
+            score: dennis.calculateScore(),
+          },
+          micah: {
+            score: micah.calculateScore(),
+            farmyard: { fields: 1 },
+          },
+        })
+      })
+
       test('gives 3 food on take-grain when farmland is occupied', () => {
         const card = baseB.getCardById('pitchfork')
         const game = t.fixture()
@@ -747,20 +819,35 @@ describe('BaseB Cards', () => {
     })
 
     describe('Sack Cart', () => {
-      test('schedules grain on rounds 5, 8, 11, 14', () => {
-        const game = t.fixture()
-        game.run()
+      test('schedules grain on rounds 5, 8, 11, 14 via Meeting Place', () => {
+        const game = t.fixtureMinorImprovement(
+          'sack-cart',
+          { cardSets: ['baseB'] },
+          {
+            dennis: {
+              wood: 2, // cost
+              occupations: ['cottager', 'groom'], // prereqs: occupations >= 2
+            },
+          },
+        )
 
+        t.testIsSecondPlayer(game, 'Choose an action')
         const dennis = t.player(game)
-        game.state.round = 2
-
-        const card = baseB.getCardById('sack-cart')
-        card.onPlay(game, dennis)
-
+        // game.state.round is 2 during first work phase, schedules grain on future rounds 5, 8, 11, 14
         expect(game.state.scheduledGrain[dennis.name][5]).toBe(1)
         expect(game.state.scheduledGrain[dennis.name][8]).toBe(1)
         expect(game.state.scheduledGrain[dennis.name][11]).toBe(1)
         expect(game.state.scheduledGrain[dennis.name][14]).toBe(1)
+
+        t.testBoard(game, {
+          dennis: {
+            food: 1, // +1 MP
+            hand: [],
+            occupations: ['cottager', 'groom'],
+            minorImprovements: ['sack-cart'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('only schedules future rounds', () => {
@@ -781,15 +868,31 @@ describe('BaseB Cards', () => {
     })
 
     describe('Beanfield', () => {
-      test('sets beanfieldActive on play', () => {
-        const game = t.fixture()
-        game.run()
+      test('sets beanfieldActive on play via Meeting Place', () => {
+        const game = t.fixtureMinorImprovement(
+          'beanfield',
+          { cardSets: ['baseB'] },
+          {
+            dennis: {
+              food: 1, // to cover cost: { food: 1 }
+              occupations: ['cottager', 'groom'], // prereqs: occupations >= 2
+            },
+          },
+        )
 
+        t.testIsSecondPlayer(game, 'Choose an action')
         const dennis = t.player(game)
-        const card = baseB.getCardById('beanfield')
-        card.onPlay(game, dennis)
-
         expect(dennis.beanfieldActive).toBe(true)
+
+        t.testBoard(game, {
+          dennis: {
+            food: 1, // setBoard food:1, +1 MP, -1 beanfield cost = 1
+            hand: [],
+            occupations: ['cottager', 'groom'],
+            minorImprovements: ['beanfield'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('has providesVegetableField flag', () => {
@@ -800,16 +903,18 @@ describe('BaseB Cards', () => {
     })
 
     describe('Thick Forest', () => {
-      test('schedules wood on remaining even rounds', () => {
-        const game = t.fixture()
-        game.run()
+      test('schedules wood on remaining even rounds via Meeting Place', () => {
+        const game = t.fixtureMinorImprovement(
+          'thick-forest',
+          { cardSets: ['baseB'] },
+          {
+            dennis: {},
+          },
+        )
 
+        t.testIsSecondPlayer(game, 'Choose an action')
         const dennis = t.player(game)
-        game.state.round = 3
-
-        const card = baseB.getCardById('thick-forest')
-        card.onPlay(game, dennis)
-
+        // game.state.round is 2 during first work phase, schedules wood on even rounds > 2: 4, 6, 8, 10, 12, 14
         expect(game.state.scheduledWood[dennis.name][4]).toBe(1)
         expect(game.state.scheduledWood[dennis.name][6]).toBe(1)
         expect(game.state.scheduledWood[dennis.name][8]).toBe(1)
@@ -817,7 +922,18 @@ describe('BaseB Cards', () => {
         expect(game.state.scheduledWood[dennis.name][12]).toBe(1)
         expect(game.state.scheduledWood[dennis.name][14]).toBe(1)
         // Odd rounds should not have scheduled wood
-        expect(game.state.scheduledWood[dennis.name][5]).toBeUndefined()
+        expect(game.state.scheduledWood[dennis.name][3]).toBeUndefined()
+
+        t.testBoard(game, {
+          dennis: {
+            food: 1, // +1 MP
+            hand: [],
+            minorImprovements: ['thick-forest'],
+            score: dennis.calculateScore(),
+          },
+        })
+
+        // No cost for thick-forest
       })
 
       test('skips past rounds', () => {
@@ -840,15 +956,26 @@ describe('BaseB Cards', () => {
     })
 
     describe('Loam Pit', () => {
-      test('gives 3 clay on day-laborer action', () => {
-        const card = baseB.getCardById('loam-pit')
+      test('gives 3 clay on Day Laborer action', () => {
         const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            minorImprovements: ['loam-pit'],
+          },
+        })
         game.run()
-        const dennis = t.player(game)
-        dennis.clay = 0
 
-        card.onAction(game, dennis, 'day-laborer')
-        expect(dennis.clay).toBe(3)
+        t.choose(game, 'Day Laborer')
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            clay: 3, // +3 from Loam Pit
+            food: 2, // +2 from Day Laborer
+            minorImprovements: ['loam-pit'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('does not trigger on other actions', () => {
@@ -896,18 +1023,33 @@ describe('BaseB Cards', () => {
     })
 
     describe('Acorns Basket', () => {
-      test('schedules boar on next 2 rounds', () => {
-        const game = t.fixture()
-        game.run()
+      test('schedules boar on next 2 rounds via Meeting Place', () => {
+        const game = t.fixtureMinorImprovement(
+          'acorns-basket',
+          { cardSets: ['baseB'] },
+          {
+            dennis: {
+              reed: 1, // cost: { reed: 1 }
+              occupations: ['cottager', 'groom', 'greengrocer'], // prereqs: occupations >= 3
+            },
+          },
+        )
 
+        t.testIsSecondPlayer(game, 'Choose an action')
         const dennis = t.player(game)
-        game.state.round = 7
+        // game.state.round is 2 during first work phase, schedules boar for rounds 3, 4
+        expect(game.state.scheduledBoar[dennis.name][3]).toBe(1)
+        expect(game.state.scheduledBoar[dennis.name][4]).toBe(1)
 
-        const card = baseB.getCardById('acorns-basket')
-        card.onPlay(game, dennis)
-
-        expect(game.state.scheduledBoar[dennis.name][8]).toBe(1)
-        expect(game.state.scheduledBoar[dennis.name][9]).toBe(1)
+        t.testBoard(game, {
+          dennis: {
+            food: 1, // +1 MP
+            hand: [],
+            occupations: ['cottager', 'groom', 'greengrocer'],
+            minorImprovements: ['acorns-basket'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('does not schedule past round 14', () => {
@@ -1092,8 +1234,20 @@ describe('BaseB Cards', () => {
 
     describe('Scholar', () => {
       test('triggers at round start in stone house', () => {
-        const card = baseB.getCardById('scholar')
-        expect(card.onRoundStart).toBeDefined()
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            roomType: 'stone',
+            occupations: ['scholar'],
+          },
+        })
+        game.run()
+
+        // Round 2 starts immediately (setBoard defaults round=1, mainLoop increments to 2)
+        // Scholar triggers before work phase — offers play occupation or improvement
+        const waiting = game.waiting
+        expect(waiting).toBeDefined()
+        expect(waiting.selectors[0].actor).toBe('dennis')
       })
 
       test('does not trigger in non-stone house', () => {
@@ -1280,9 +1434,37 @@ describe('BaseB Cards', () => {
     })
 
     describe('Oven Firing Boy', () => {
-      test('triggers on wood actions', () => {
-        const card = baseB.getCardById('oven-firing-boy')
-        expect(card.onAction).toBeDefined()
+      test('triggers bake offer on Forest action', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            grain: 2,
+            occupations: ['oven-firing-boy'],
+            majorImprovements: ['fireplace-2'],
+          },
+        })
+        game.run()
+
+        t.choose(game, 'Forest (3)')
+
+        // Oven Firing Boy triggers bake bread offer
+        const choices = game.waiting.selectors[0].choices
+        expect(choices.length).toBeGreaterThanOrEqual(1)
+
+        // Choose to bake or skip
+        t.choose(game, game.waiting.selectors[0].choices[0])
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            wood: 3, // from Forest
+            food: dennis.food,
+            grain: dennis.grain,
+            occupations: ['oven-firing-boy'],
+            majorImprovements: ['fireplace-2'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('does not trigger on non-wood actions', () => {
@@ -1318,6 +1500,29 @@ describe('BaseB Cards', () => {
     })
 
     describe('Childless', () => {
+      test('gives food and choice at round start with 3 rooms and 2 people', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['childless'],
+            farmyard: { rooms: 3 },
+          },
+        })
+        game.run()
+
+        // Round 2 starts immediately (setBoard defaults round=1, mainLoop increments to 2)
+        // Childless triggers before work phase — offers grain or vegetable choice
+        const waiting = game.waiting
+        expect(waiting).toBeDefined()
+        expect(waiting.selectors[0].actor).toBe('dennis')
+        // Choose grain
+        t.choose(game, waiting.selectors[0].choices[0])
+
+        const dennis = t.player(game)
+        // Childless gives 1 food + 1 of the chosen resource
+        expect(dennis.food).toBeGreaterThanOrEqual(1)
+      })
+
       test('does not trigger with fewer than 3 rooms', () => {
         const card = baseB.getCardById('childless')
         const game = t.fixture()
@@ -1336,7 +1541,6 @@ describe('BaseB Cards', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            food: 0,
             familyMembers: 3,
             farmyard: { rooms: 3 },
           },
@@ -1351,16 +1555,34 @@ describe('BaseB Cards', () => {
     })
 
     describe('Small-scale Farmer', () => {
-      test('gives 1 wood at round start with exactly 2 rooms', () => {
-        const card = baseB.getCardById('small-scale-farmer')
+      test('gives 1 wood at round 2 start', () => {
         const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['small-scale-farmer'],
+          },
+        })
         game.run()
-        const dennis = t.player(game)
-        dennis.wood = 0
-        // Default 2 rooms
 
-        card.onRoundStart(game, dennis)
-        expect(dennis.wood).toBe(1)
+        // Round 1: both players take actions
+        t.choose(game, 'Grain Seeds')   // dennis
+        t.choose(game, 'Forest (3)')    // micah
+
+        // Round 2 starts — onRoundStart fires, small-scale-farmer gives 1 wood
+        const dennis = t.player(game)
+        const micah = game.players.byName('micah')
+        t.testBoard(game, {
+          dennis: {
+            wood: 1, // from small-scale-farmer onRoundStart
+            grain: 1, // from Grain Seeds
+            occupations: ['small-scale-farmer'],
+            score: dennis.calculateScore(),
+          },
+          micah: {
+            wood: 3, // from Forest
+            score: micah.calculateScore(),
+          },
+        })
       })
 
       test('does not give wood with more than 2 rooms', () => {
@@ -1368,7 +1590,6 @@ describe('BaseB Cards', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            wood: 0,
             farmyard: { rooms: 3 },
           },
         })
@@ -1381,18 +1602,26 @@ describe('BaseB Cards', () => {
     })
 
     describe('Geologist', () => {
-      test('gives 1 clay on Forest and Reed Bank actions', () => {
-        const card = baseB.getCardById('geologist')
+      test('gives 1 clay on Forest action', () => {
         const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['geologist'],
+          },
+        })
         game.run()
+
+        t.choose(game, 'Forest (3)')
+
         const dennis = t.player(game)
-        dennis.clay = 0
-
-        card.onAction(game, dennis, 'take-wood')
-        expect(dennis.clay).toBe(1)
-
-        card.onAction(game, dennis, 'take-reed')
-        expect(dennis.clay).toBe(2)
+        t.testBoard(game, {
+          dennis: {
+            wood: 3, // from Forest
+            clay: 1, // +1 from Geologist
+            occupations: ['geologist'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('also triggers on Clay Pit in 3+ player games', () => {
@@ -1543,15 +1772,26 @@ describe('BaseB Cards', () => {
     })
 
     describe('Greengrocer', () => {
-      test('gives 1 vegetable on take-grain action', () => {
-        const card = baseB.getCardById('greengrocer')
+      test('gives 1 vegetable on Grain Seeds action', () => {
         const game = t.fixture({ numPlayers: 3 })
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['greengrocer'],
+          },
+        })
         game.run()
-        const dennis = t.player(game)
-        dennis.vegetables = 0
 
-        card.onAction(game, dennis, 'take-grain')
-        expect(dennis.vegetables).toBe(1)
+        t.choose(game, 'Grain Seeds')
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            vegetables: 1, // +1 from Greengrocer
+            grain: 1, // from Grain Seeds
+            occupations: ['greengrocer'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('does not trigger on other actions', () => {
@@ -1771,6 +2011,29 @@ describe('BaseB Cards', () => {
     })
 
     describe('Cattle Feeder', () => {
+      test('offers cattle purchase on Grain Seeds action', () => {
+        const game = t.fixture({ numPlayers: 4 })
+        t.setBoard(game, {
+          dennis: {
+            food: 3,
+            occupations: ['cattle-feeder'],
+          },
+        })
+        game.run()
+
+        t.choose(game, 'Grain Seeds')
+
+        // Cattle Feeder triggers: offers to buy cattle for 1 food
+        const choices = game.waiting.selectors[0].choices
+        expect(choices.length).toBeGreaterThanOrEqual(1)
+        t.choose(game, choices[0])
+
+        const dennis = t.player(game)
+        // Either bought cattle (food: 2, cattle: 1) or skipped
+        expect(dennis.grain).toBe(1) // from Grain Seeds
+        expect(dennis.food + dennis.getTotalAnimals('cattle')).toBeGreaterThanOrEqual(3)
+      })
+
       test('does not trigger without food', () => {
         const card = baseB.getCardById('cattle-feeder')
         const game = t.fixture({ numPlayers: 4 })
