@@ -633,6 +633,30 @@ describe('BaseB Cards', () => {
         const dennis = t.player(game)
         expect(card.getEndGamePoints(dennis)).toBe(2) // floor(7/3) = 2
       })
+
+      test('bonus points included in calculateScore', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            minorImprovements: ['loom'],
+            farmyard: {
+              pastures: [
+                { spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }, { row: 1, col: 2 }, { row: 1, col: 3 }], animals: { sheep: 6 } },
+              ],
+            },
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const scoreWith = dennis.calculateScore()
+
+        t.setPlayerCards(game, dennis, 'minorImprovements', [])
+        const scoreWithout = dennis.calculateScore()
+
+        // Loom: 1 vps + floor(6/3) = 3 total bonus points
+        expect(scoreWith - scoreWithout).toBe(3)
+      })
     })
 
     describe('Strawberry Patch', () => {
@@ -1618,6 +1642,31 @@ describe('BaseB Cards', () => {
 
         dennis.getPastureCapacity = origGetPastureCapacity
       })
+
+      test('bonus points included in calculateScore', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['organic-farmer'],
+            farmyard: {
+              // Large pasture: 4 spaces × 2 capacity = 8, with 1 animal → 7 spare ≥ 3
+              pastures: [
+                { spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }, { row: 1, col: 2 }, { row: 1, col: 3 }], animals: { sheep: 1 } },
+              ],
+            },
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const scoreWith = dennis.calculateScore()
+
+        t.setPlayerCards(game, dennis, 'occupations', [])
+        const scoreWithout = dennis.calculateScore()
+
+        // 1 qualifying pasture = 1 bonus point from Organic Farmer
+        expect(scoreWith - scoreWithout).toBe(1)
+      })
     })
 
     describe('Tutor', () => {
@@ -1650,6 +1699,30 @@ describe('BaseB Cards', () => {
 
         // 5 - 2 = 3 occupations after tutor
         expect(card.getEndGamePoints(dennis)).toBe(3)
+      })
+
+      test('bonus points included in calculateScore', () => {
+        const game = t.fixture({ cardSets: ['baseB'] })
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['tutor', 'consultant', 'greengrocer'],
+            occupationsPlayed: 3,
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        // Tutor was played when 1 occupation existed → tutorOccupationCount = 1
+        // Then 2 more occupations after Tutor → 2 bonus points
+        dennis.tutorOccupationCount = 1
+
+        const scoreWith = dennis.calculateScore()
+
+        t.setPlayerCards(game, dennis, 'occupations', ['consultant', 'greengrocer'])
+        const scoreWithout = dennis.calculateScore()
+
+        // 3 occupationsPlayed - 1 tutorOccupationCount = 2 bonus points from Tutor
+        expect(scoreWith - scoreWithout).toBe(2)
       })
     })
 
@@ -2231,10 +2304,12 @@ describe('BaseB Cards', () => {
         )
 
         t.testIsSecondPlayer(game, 'Choose an action')
+        const dennis = t.player(game)
         t.testBoard(game, {
           dennis: {
             wood: 4, // 14 - 1 = 13 rounds left -> 4 wood
             occupations: ['house-steward'],
+            score: dennis.calculateScore(),
           },
         })
       })
@@ -2278,6 +2353,29 @@ describe('BaseB Cards', () => {
       test('has 3+ player requirement', () => {
         const card = baseB.getCardById('house-steward')
         expect(card.players).toBe('3+')
+      })
+
+      test('bonus points included in calculateScore', () => {
+        const game = t.fixture({ numPlayers: 3 })
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['house-steward'],
+            farmyard: { rooms: 3 },
+          },
+          micah: {
+            farmyard: { rooms: 2 },
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const scoreWith = dennis.calculateScore()
+
+        t.setPlayerCards(game, dennis, 'occupations', [])
+        const scoreWithout = dennis.calculateScore()
+
+        // Dennis has 3 rooms (most) = 3 bonus points from House Steward
+        expect(scoreWith - scoreWithout).toBe(3)
       })
     })
 

@@ -358,6 +358,32 @@ describe('BaseA Cards', () => {
         })
         expect(card.getEndGamePoints(dennis)).toBe(3) // 8 spaces
       })
+
+      test('bonus points included in calculateScore', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            minorImprovements: ['manger'],
+            farmyard: {
+              pastures: [
+                { spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }, { row: 1, col: 2 }] },
+                { spaces: [{ row: 2, col: 0 }, { row: 2, col: 1 }, { row: 2, col: 2 }, { row: 2, col: 3 }] },
+              ],
+            },
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const scoreWith = dennis.calculateScore()
+
+        // Remove the card and recalculate
+        t.setPlayerCards(game, dennis, 'minorImprovements', [])
+        const scoreWithout = dennis.calculateScore()
+
+        // 7 pasture spaces = 2 bonus points from Manger
+        expect(scoreWith - scoreWithout).toBe(2)
+      })
     })
 
     describe('Wool Blankets', () => {
@@ -404,6 +430,26 @@ describe('BaseA Cards', () => {
         const dennis = t.player(game)
         const card = res.getCardById('wool-blankets')
         expect(card.getEndGamePoints(dennis)).toBe(0)
+      })
+
+      test('bonus points included in calculateScore', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            roomType: 'clay',
+            minorImprovements: ['wool-blankets'],
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const scoreWith = dennis.calculateScore()
+
+        t.setPlayerCards(game, dennis, 'minorImprovements', [])
+        const scoreWithout = dennis.calculateScore()
+
+        // Clay house = 2 bonus points from Wool Blankets
+        expect(scoreWith - scoreWithout).toBe(2)
       })
     })
 
@@ -1325,6 +1371,28 @@ describe('BaseA Cards', () => {
         const card = res.getCardById('stable-architect')
         expect(card.getEndGamePoints(dennis)).toBe(2)
       })
+
+      test('bonus points included in calculateScore', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['stable-architect'],
+            farmyard: {
+              stables: [{ row: 1, col: 0 }, { row: 1, col: 1 }, { row: 1, col: 2 }],
+            },
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const scoreWith = dennis.calculateScore()
+
+        t.setPlayerCards(game, dennis, 'occupations', [])
+        const scoreWithout = dennis.calculateScore()
+
+        // 3 unfenced stables = 3 bonus points from Stable Architect
+        expect(scoreWith - scoreWithout).toBe(3)
+      })
     })
 
     describe('Wood Cutter', () => {
@@ -1611,6 +1679,27 @@ describe('BaseA Cards', () => {
         // 7 improvements = 4 points
         t.setPlayerCards(game, dennis, 'minorImprovements', ['corn-scoop', 'stone-tongs', 'canoe', 'drinking-trough', 'rammed-clay'])
         expect(card.getEndGamePoints(dennis)).toBe(4)
+      })
+
+      test('bonus points included in calculateScore', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['braggart'],
+            minorImprovements: ['corn-scoop', 'stone-tongs', 'canoe'],
+            majorImprovements: ['fireplace-2', 'well'],
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        const scoreWith = dennis.calculateScore()
+
+        t.setPlayerCards(game, dennis, 'occupations', [])
+        const scoreWithout = dennis.calculateScore()
+
+        // 5 improvements (3 minor + 2 major) = 2 bonus points from Braggart
+        expect(scoreWith - scoreWithout).toBe(2)
       })
     })
 
