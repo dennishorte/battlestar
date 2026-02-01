@@ -87,22 +87,31 @@ describe('BaseB Cards', () => {
 
     describe('Market Stall', () => {
       test('gives 1 vegetable on play', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
+        const game = t.fixtureMinorImprovement(
+          'market-stall',
+          {
+            cardSets: ['baseB'],
+          },
+          {
+            dennis: {
+              grain: 1,  // cost of market stall
+            },
+          },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
           dennis: {
-            grain: 3,
-            vegetables: 0,
-            hand: ['market-stall'],
+            food: 1, // +1 from Meeting Place
+            grain: 0, // 1 - 1 card cost
+            vegetables: 1, // +1 from onPlay
+            hand: [], // Passed left
+            score: -12, // -14 base + 2 (has 1 vegetable instead of 0)
+          },
+          micah: {
+            hand: ['market-stall'], // Was passed left
           },
         })
-        game.run()
-
-        t.playCard(game, 'dennis', 'market-stall')
-
-        const dennis = t.player(game)
-        expect(dennis.vegetables).toBe(1)
-        // Cost is 1 grain
-        expect(dennis.grain).toBe(2)
       })
     })
 
