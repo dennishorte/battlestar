@@ -591,7 +591,31 @@ const occupations = [
     text: 'Each time you use the "Day Laborer" action space, you can also either build exactly 1 room or renovate your house. Either way, you have to pay the cost.',
     onAction(game, player, actionId) {
       if (actionId === 'day-laborer') {
-        game.actions.offerBuildRoomOrRenovate(player, this)
+        const choices = []
+        if (player.canAffordRoom() && player.getValidRoomBuildSpaces().length > 0) {
+          choices.push('Build Room')
+        }
+        if (player.canRenovate()) {
+          choices.push('Renovate')
+        }
+
+        if (choices.length === 0) {
+          return
+        }
+        choices.push('Do Nothing')
+
+        const selection = game.actions.choose(player, choices, {
+          title: `${this.name}: Build a room or renovate?`,
+          min: 1,
+          max: 1,
+        })
+
+        if (selection[0] === 'Build Room') {
+          game.actions.buildRoom(player)
+        }
+        else if (selection[0] === 'Renovate') {
+          game.actions.renovate(player)
+        }
       }
     },
   },

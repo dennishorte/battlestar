@@ -1678,37 +1678,6 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   /**
-   * Offer to build a room or renovate (Cottager)
-   */
-  offerBuildRoomOrRenovate(player, card) {
-    const choices = []
-    if (player.canBuildRoom()) {
-      choices.push('Build 1 room')
-    }
-    if (player.canRenovate()) {
-      choices.push('Renovate')
-    }
-    choices.push('Skip')
-
-    if (choices.length === 1) {
-      return // Only Skip available
-    }
-
-    const selection = this.choose(player, choices, {
-      title: `${card.name}: Build a room or renovate?`,
-      min: 1,
-      max: 1,
-    })
-
-    if (selection[0] === 'Build 1 room') {
-      this.buildRoom(player, 1)
-    }
-    else if (selection[0] === 'Renovate') {
-      this.renovate(player)
-    }
-  }
-
-  /**
    * Offer to build a stable for 1 wood (Groom)
    */
   offerBuildStableForWood(player, card) {

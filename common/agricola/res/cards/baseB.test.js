@@ -1072,19 +1072,103 @@ describe('BaseB Cards', () => {
   describe('Occupations', () => {
 
     describe('Cottager', () => {
-      test('triggers on day-laborer action', () => {
-        const card = baseB.getCardById('cottager')
-        expect(card.onAction).toBeDefined()
+      test('offers to build a room on Day Laborer', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            wood: 5,
+            reed: 2,
+            occupations: ['cottager'],
+          },
+        })
+        game.run()
+
+        t.choose(game, 'Day Laborer')
+        t.choose(game, 'Build Room')
+        t.choose(game, game.waiting.selectors[0].choices[0])
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            food: 2,
+            occupations: ['cottager'],
+            farmyard: { rooms: 3 },
+            score: dennis.calculateScore(),
+          },
+        })
+      })
+
+      test('offers to renovate on Day Laborer', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            clay: 2,
+            reed: 1,
+            occupations: ['cottager'],
+          },
+        })
+        game.run()
+
+        t.choose(game, 'Day Laborer')
+        t.choose(game, 'Renovate')
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            food: 2,
+            roomType: 'clay',
+            occupations: ['cottager'],
+            score: dennis.calculateScore(),
+          },
+        })
+      })
+
+      test('skips when player cannot afford either', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['cottager'],
+          },
+        })
+        game.run()
+
+        t.choose(game, 'Day Laborer')
+
+        // No interaction offered — goes straight to next player
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            food: 2,
+            occupations: ['cottager'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('does not trigger on other actions', () => {
-        const card = baseB.getCardById('cottager')
         const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            wood: 5,
+            reed: 2,
+            occupations: ['cottager'],
+          },
+        })
         game.run()
-        const dennis = t.player(game)
 
-        const result = card.onAction(game, dennis, 'take-wood')
-        expect(result).toBeUndefined()
+        t.choose(game, 'Grain Seeds')
+
+        // No build/renovate interaction — cottager only fires on day-laborer
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            wood: 5,
+            reed: 2,
+            grain: 1,
+            occupations: ['cottager'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
 
