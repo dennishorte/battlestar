@@ -899,6 +899,31 @@ describe('BaseA Cards', () => {
         expect(dennis.bonusPoints || 0).toBe(0)
         expect(dennis.food).toBe(0)
       })
+
+      test('can be played via Meeting Place when all farmyard spaces are used', () => {
+        // 3x5 grid = 15 spaces. 2 rooms at (0,0) and (1,0), fill rest with fields.
+        const fields = []
+        for (let row = 0; row < 3; row++) {
+          for (let col = 0; col < 5; col++) {
+            if (row === 0 && col === 0) continue // room
+            if (row === 1 && col === 0) continue // room
+            fields.push({ row, col })
+          }
+        }
+
+        const game = t.fixtureMinorImprovement('big-country', {}, {
+          dennis: {
+            food: 0,
+            farmyard: { fields },
+          },
+          round: 10,
+        })
+
+        const dennis = t.player(game)
+        // 14 - 11 = 3 rounds left (fixtureMinorImprovement starts at round+1)
+        expect(dennis.bonusPoints).toBe(3)
+        expect(dennis.food).toBe(7) // 1 from Meeting Place + 3 rounds * 2 food
+      })
     })
 
     describe('Claypipe', () => {
