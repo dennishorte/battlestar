@@ -1632,6 +1632,34 @@ describe('BaseA Cards', () => {
           },
         })
       })
+
+      test('breeds boar at end of round 12', () => {
+        const game = t.fixture({ numPlayers: 4 })
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['pig-breeder'],
+            farmyard: {
+              pastures: [{ spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }], animals: { boar: 2 } }],
+            },
+          },
+          round: 11,
+        })
+        game.run()
+
+        // Round 12: 8 actions (4 players × 2 workers), all non-interactive
+        t.choose(game, 'Day Laborer')            // dennis
+        t.choose(game, 'Grain Seeds')             // micah
+        t.choose(game, 'Forest (3)')              // scott
+        t.choose(game, 'Clay Pit (1)')            // eliya
+        t.choose(game, 'Fishing (1)')             // dennis
+        t.choose(game, 'Copse (1)')               // micah
+        t.choose(game, 'Grove (2)')               // scott
+        t.choose(game, 'Traveling Players (1)')   // eliya
+
+        // Round 12 end: Pig Breeder breeds 1 boar (2 boar → 3)
+        const dennis = t.player(game)
+        expect(dennis.getTotalAnimals('boar')).toBe(3) // 2 original + 1 bred
+      })
     })
 
     describe('Conjurer (4+ players)', () => {
@@ -1786,6 +1814,35 @@ describe('BaseA Cards', () => {
         const result = card.onRoundStart(game, dennis)
         expect(result).toBeUndefined()
       })
+
+      test('offers plow for food at round start in stone house', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            roomType: 'stone',
+            food: 3,
+            occupations: ['plow-driver'],
+          },
+        })
+        game.run()
+
+        // Round 2 starts (setBoard round=1, mainLoop increments to 2)
+        // Plow Driver onRoundStart fires immediately
+        t.choose(game, 'Plow 1 field for 1 food')
+        // Select a space to plow
+        t.choose(game, game.waiting.selectors[0].choices[0])
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            food: 2,   // 3 - 1 paid for plow
+            roomType: 'stone',
+            occupations: ['plow-driver'],
+            farmyard: { fields: 1 },
+            score: dennis.calculateScore(),
+          },
+        })
+      })
     })
 
     describe('Adoptive Parents', () => {
@@ -1889,6 +1946,35 @@ describe('BaseA Cards', () => {
 
         // Still only 2 clay per round (not 4)
         expect(game.state.scheduledClay[dennis.name][5]).toBe(2)
+      })
+
+      test('delivers clay after renovation via Cottager Day Laborer', () => {
+        const game = t.fixture({ cardSets: ['baseA', 'baseB'] })
+        t.setBoard(game, {
+          dennis: {
+            clay: 2,
+            reed: 1,
+            occupations: ['clay-hut-builder', 'cottager'],
+          },
+        })
+        game.run()
+
+        // Round 2 (setBoard round=1, mainLoop increments to 2)
+        // Dennis renovates wood→clay via Cottager Day Laborer
+        t.choose(game, 'Day Laborer')
+        t.choose(game, 'Renovate')
+
+        // Finish round 2: remaining 3 actions
+        t.choose(game, 'Grain Seeds')   // micah worker 1
+        t.choose(game, 'Forest (3)')    // dennis worker 2
+        t.choose(game, 'Clay Pit (1)')  // micah worker 2
+
+        // Round 2 end: checkTrigger fires — schedules 2 clay for rounds 3-7
+        // Round 3 start: scheduled clay delivered
+        const dennis = t.player(game)
+        expect(dennis.roomType).toBe('clay')
+        expect(dennis.clay).toBe(2) // 2 - 2 (renovation cost) + 2 (scheduled clay delivered round 3)
+        expect(dennis.clayHutBuilderTriggered).toBe(true)
       })
     })
 
@@ -2026,6 +2112,40 @@ describe('BaseA Cards', () => {
 
         const result = card.onAction(game, dennis, 'take-wood')
         expect(result).toBeUndefined()
+      })
+
+      test('offers to buy extra sheep on Sheep Market action', () => {
+        const game = t.fixture({ numPlayers: 3 })
+        t.setBoard(game, {
+          dennis: {
+            food: 1,
+            occupations: ['animal-dealer'],
+            farmyard: {
+              pastures: [{ spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }], animals: {} }],
+            },
+          },
+        })
+        game.testSetBreakpoint('initialization-complete', (game) => {
+          game.state.activeActions.push('take-sheep')
+          game.state.actionSpaces['take-sheep'] = { occupiedBy: null, accumulated: 0 }
+        })
+        game.run()
+
+        // After replenish, Sheep Market has 1 accumulated
+        t.choose(game, 'Sheep Market (1)')
+        // Animal Dealer triggers: buy 1 sheep for 1 food
+        t.choose(game, 'Buy 1 sheep for 1 food')
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            food: 0,   // 1 - 1 paid
+            sheep: 2,  // 1 from market + 1 from Animal Dealer
+            occupations: ['animal-dealer'],
+            farmyard: { pastures: 1 },
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
 

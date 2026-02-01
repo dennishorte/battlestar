@@ -1674,7 +1674,7 @@ class AgricolaActionManager extends BaseActionManager {
    * Build a free stable (Mining Hammer)
    */
   buildFreeStable(player) {
-    const validSpaces = player.getValidStableSpaces()
+    const validSpaces = player.getValidStableBuildSpaces()
     if (validSpaces.length === 0) {
       this.log.add({
         template: '{player} has no valid space for a stable',
@@ -1710,7 +1710,7 @@ class AgricolaActionManager extends BaseActionManager {
       return
     }
 
-    const validSpaces = player.getValidStableSpaces()
+    const validSpaces = player.getValidStableBuildSpaces()
     if (validSpaces.length === 0) {
       return
     }

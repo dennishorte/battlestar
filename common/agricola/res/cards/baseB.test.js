@@ -256,6 +256,36 @@ describe('BaseB Cards', () => {
         const card = baseB.getCardById('mining-hammer')
         expect(card.onRenovate).toBeDefined()
       })
+
+      test('offers free stable after renovation via Cottager Day Laborer', () => {
+        const game = t.fixture({ cardSets: ['baseA', 'baseB'] })
+        t.setBoard(game, {
+          dennis: {
+            clay: 2,
+            reed: 1,
+            minorImprovements: ['mining-hammer'],
+            occupations: ['cottager'],
+          },
+        })
+        game.run()
+
+        t.choose(game, 'Day Laborer')
+        t.choose(game, 'Renovate')
+        // Mining Hammer onRenovate fires: choose a stable location
+        t.choose(game, game.waiting.selectors[0].choices[0])
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            food: 2,
+            roomType: 'clay',
+            minorImprovements: ['mining-hammer'],
+            occupations: ['cottager'],
+            farmyard: { stables: 1 },
+            score: dennis.calculateScore(),
+          },
+        })
+      })
     })
 
     describe('Moldboard Plow', () => {
@@ -378,6 +408,37 @@ describe('BaseB Cards', () => {
       test('has onPlayOccupation hook', () => {
         const card = baseB.getCardById('bread-paddle')
         expect(card.onPlayOccupation).toBeDefined()
+      })
+
+      test('offers bake bread when playing an occupation', () => {
+        const game = t.fixture({ cardSets: ['baseB'] })
+        t.setBoard(game, {
+          dennis: {
+            grain: 1,
+            minorImprovements: ['bread-paddle'],
+            majorImprovements: ['fireplace-2'],
+            hand: ['seasonal-worker'],
+          },
+        })
+        game.run()
+
+        t.choose(game, 'Lessons')
+        t.choose(game, 'Seasonal Worker')
+
+        // Bread Paddle onPlayOccupation fires: bake bread
+        t.choose(game, 'Bake 1 grain')
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            grain: 0,
+            food: 2, // 1 grain × 2 food (fireplace)
+            minorImprovements: ['bread-paddle'],
+            majorImprovements: ['fireplace-2'],
+            occupations: ['seasonal-worker'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
 
@@ -1697,6 +1758,36 @@ describe('BaseB Cards', () => {
         // Should still be 3 for rounds 11-14 (from first trigger)
         expect(game.state.scheduledFood[dennis.name][12]).toBe(3)
       })
+
+      test('delivers food after renovation to stone via Cottager', () => {
+        const game = t.fixture({ cardSets: ['baseA', 'baseB'] })
+        t.setBoard(game, {
+          dennis: {
+            stone: 2,
+            reed: 1,
+            occupations: ['manservant', 'cottager', 'conservator'],
+          },
+        })
+        game.run()
+
+        // Round 2 (setBoard round=1, mainLoop increments to 2)
+        // Dennis renovates wood→stone via Cottager + Conservator
+        t.choose(game, 'Day Laborer')
+        t.choose(game, 'Renovate')
+        t.choose(game, 'Renovate to Stone')
+
+        // Finish round 2: remaining 3 actions
+        t.choose(game, 'Grain Seeds')   // micah worker 1
+        t.choose(game, 'Forest (3)')    // dennis worker 2
+        t.choose(game, 'Clay Pit (1)')  // micah worker 2
+
+        // Round 2 end: checkTrigger fires — schedules 3 food per remaining round
+        // Round 3 start: scheduled food delivered
+        const dennis = t.player(game)
+        expect(dennis.roomType).toBe('stone')
+        expect(dennis.manservantTriggered).toBe(true)
+        expect(dennis.food).toBe(5) // 2 (Day Laborer) + 3 (scheduled food for round 3)
+      })
     })
 
     describe('Oven Firing Boy', () => {
@@ -2032,6 +2123,28 @@ describe('BaseB Cards', () => {
 
         const result = card.onPlay(game, dennis)
         expect(result).toBeUndefined()
+      })
+
+      test('pays 1 food for stone equal to room count via Lessons', () => {
+        const game = t.fixtureOccupation(
+          'roof-ballaster',
+          { cardSets: ['baseB'] },
+          { dennis: { food: 1 } },
+        )
+
+        // onPlay fires: pay 1 food for 2 stone (2 rooms)
+        t.choose(game, 'Pay 1 food for 2 stone')
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            food: 0,  // 1 - 1 paid for stone
+            stone: 2, // 2 rooms × 1 stone
+            occupations: ['roof-ballaster'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
 
@@ -2394,6 +2507,42 @@ describe('BaseB Cards', () => {
         dennis.wood = 0
         card.checkTrigger(game, dennis)
         expect(dennis.wood).toBe(0) // Already triggered
+      })
+
+      test('delivers resources via e2e when only player with 2 rooms', () => {
+        const game = t.fixture({ numPlayers: 4, cardSets: ['baseB'] })
+        t.setBoard(game, {
+          dennis: {
+            hand: ['pastor'],
+            wood: 0,
+            clay: 0,
+            reed: 0,
+            stone: 0,
+          },
+          micah: { farmyard: { rooms: 3 } },
+          scott: { farmyard: { rooms: 3 } },
+          eliya: { farmyard: { rooms: 3 } },
+        })
+        game.run()
+
+        // Round: 8 actions (4 players × 2 workers)
+        t.choose(game, 'Lessons')              // dennis — play Pastor
+        t.choose(game, 'Pastor')
+        t.choose(game, 'Grain Seeds')           // micah
+        t.choose(game, 'Forest (3)')            // scott
+        t.choose(game, 'Clay Pit (1)')          // eliya
+        t.choose(game, 'Day Laborer')           // dennis
+        t.choose(game, 'Fishing (1)')           // micah
+        t.choose(game, 'Traveling Players (1)') // scott
+        t.choose(game, 'Copse (1)')             // eliya
+
+        // checkTrigger fires at round end — dennis is only player with 2 rooms
+        const dennis = t.player(game)
+        expect(dennis.pastorTriggered).toBe(true)
+        expect(dennis.wood).toBe(3)
+        expect(dennis.clay).toBe(2)
+        expect(dennis.reed).toBe(1)
+        expect(dennis.stone).toBe(1)
       })
     })
 
