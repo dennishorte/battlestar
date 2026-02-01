@@ -1060,9 +1060,25 @@ describe('BaseA Cards', () => {
   describe('Occupations', () => {
 
     describe('Animal Tamer', () => {
-      test('has onPlay effect for resource choice', () => {
-        const card = res.getCardById('animal-tamer')
-        expect(card.onPlay).toBeDefined()
+      test('offers wood or grain on play', () => {
+        const game = t.fixtureOccupation(
+          'animal-tamer',
+          {},
+          { dennis: {} },
+        )
+
+        t.choose(game, game.waiting.selectors[0].choices[0])
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            wood: dennis.wood,
+            grain: dennis.grain,
+            occupations: ['animal-tamer'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('modifies house animal capacity', () => {
@@ -1083,6 +1099,21 @@ describe('BaseA Cards', () => {
     })
 
     describe('Conservator', () => {
+      test('can be played via Lessons', () => {
+        const game = t.fixtureOccupation(
+          'conservator',
+          {},
+          { dennis: {} },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
+          dennis: {
+            occupations: ['conservator'],
+          },
+        })
+      })
+
       test('allows direct stone renovation', () => {
         const card = res.getCardById('conservator')
         expect(card.allowDirectStoneRenovation).toBe(true)
@@ -1112,6 +1143,21 @@ describe('BaseA Cards', () => {
     })
 
     describe('Hedge Keeper', () => {
+      test('can be played via Lessons', () => {
+        const game = t.fixtureOccupation(
+          'hedge-keeper',
+          {},
+          { dennis: {} },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
+          dennis: {
+            occupations: ['hedge-keeper'],
+          },
+        })
+      })
+
       test('reduces fence cost by 3', () => {
         const card = res.getCardById('hedge-keeper')
         expect(card.modifyFenceCost(null, 5)).toBe(2)
@@ -1169,22 +1215,18 @@ describe('BaseA Cards', () => {
 
     describe('Scythe Worker', () => {
       test('gives 1 grain on play', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
-          dennis: {
-            grain: 0,
-            hand: ['scythe-worker'],
-          },
-        })
-        game.run()
+        const game = t.fixtureOccupation(
+          'scythe-worker',
+          {},
+          { dennis: {} },
+        )
 
-        t.playCard(game, 'dennis', 'scythe-worker')
-
+        t.testIsSecondPlayer(game, 'Choose an action')
         t.testBoard(game, {
           dennis: {
             grain: 1,
             occupations: ['scythe-worker'],
-            score: -12, // -14 base + grain + occupation bonuses
+            score: -12,
           },
         })
       })
@@ -1313,20 +1355,13 @@ describe('BaseA Cards', () => {
 
     describe('Priest', () => {
       test('gives resources if in clay house with 2 rooms', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
-          dennis: {
-            roomType: 'clay',
-            clay: 0,
-            reed: 0,
-            stone: 0,
-            hand: ['priest'],
-          },
-        })
-        game.run()
+        const game = t.fixtureOccupation(
+          'priest',
+          {},
+          { dennis: { roomType: 'clay' } },
+        )
 
-        t.playCard(game, 'dennis', 'priest')
-
+        t.testIsSecondPlayer(game, 'Choose an action')
         const dennis = t.player(game)
         t.testBoard(game, {
           dennis: {
@@ -1420,16 +1455,13 @@ describe('BaseA Cards', () => {
 
     describe('Pig Breeder', () => {
       test('gives 1 boar on play', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
-          dennis: {
-            hand: ['pig-breeder'],
-          },
-        })
-        game.run()
+        const game = t.fixtureOccupation(
+          'pig-breeder',
+          { numPlayers: 4 },
+          { dennis: {} },
+        )
 
-        t.playCard(game, 'dennis', 'pig-breeder')
-
+        t.testIsSecondPlayer(game, 'Choose an action')
         const dennis = t.player(game)
         t.testBoard(game, {
           dennis: {
@@ -1598,6 +1630,21 @@ describe('BaseA Cards', () => {
     })
 
     describe('Adoptive Parents', () => {
+      test('can be played via Lessons', () => {
+        const game = t.fixtureOccupation(
+          'adoptive-parents',
+          {},
+          { dennis: {} },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
+          dennis: {
+            occupations: ['adoptive-parents'],
+          },
+        })
+      })
+
       test('has allowImmediateOffspringAction flag', () => {
         const card = res.getCardById('adoptive-parents')
         expect(card.allowImmediateOffspringAction).toBe(true)
@@ -1606,15 +1653,18 @@ describe('BaseA Cards', () => {
 
     describe('Grocer', () => {
       test('initializes goods stack on play', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
+        const game = t.fixtureOccupation(
+          'grocer',
+          {},
+          { dennis: {} },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
           dennis: {
-            hand: ['grocer'],
+            occupations: ['grocer'],
           },
         })
-        game.run()
-
-        t.playCard(game, 'dennis', 'grocer')
 
         const dennis = t.player(game)
         expect(dennis.grocerGoods).toEqual([

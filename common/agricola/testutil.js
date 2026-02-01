@@ -66,6 +66,17 @@ TestUtil.fixtureMinorImprovement = function(cardId, options, state) {
   return game
 }
 
+TestUtil.fixtureOccupation = function(cardId, options, state) {
+  const card = res.getCardById(cardId)
+  state.dennis.hand = [cardId]
+  const game = TestUtil.fixture(options)
+  TestUtil.setBoard(game, state)
+  game.run()
+  TestUtil.choose(game, 'Lessons')
+  TestUtil.choose(game, card.name)
+  return game
+}
+
 TestUtil.gameFixture = function(state) {
   const game = this.fixture(state)
 

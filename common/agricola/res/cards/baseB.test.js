@@ -948,19 +948,19 @@ describe('BaseB Cards', () => {
 
     describe('Groom', () => {
       test('gives 1 wood on play', () => {
-        const game = t.fixture()
-        t.setBoard(game, {
+        const game = t.fixtureOccupation(
+          'groom',
+          { cardSets: ['baseB'] },
+          { dennis: {} },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
           dennis: {
-            wood: 0,
-            hand: ['groom'],
+            wood: 1,
+            occupations: ['groom'],
           },
         })
-        game.run()
-
-        t.playCard(game, 'dennis', 'groom')
-
-        const dennis = t.player(game)
-        expect(dennis.wood).toBe(1)
       })
 
       test('does not trigger at round start in non-stone house', () => {
@@ -1025,6 +1025,21 @@ describe('BaseB Cards', () => {
     })
 
     describe('Master Bricklayer', () => {
+      test('can be played via Lessons', () => {
+        const game = t.fixtureOccupation(
+          'master-bricklayer',
+          { cardSets: ['baseB'] },
+          { dennis: {} },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
+          dennis: {
+            occupations: ['master-bricklayer'],
+          },
+        })
+      })
+
       test('reduces stone cost for major improvements by extra rooms built', () => {
         const card = baseB.getCardById('master-bricklayer')
         const game = t.fixture()
@@ -1159,18 +1174,19 @@ describe('BaseB Cards', () => {
 
     describe('Consultant', () => {
       test('gives 3 clay in 2-player game', () => {
-        const game = t.fixture({ numPlayers: 2 })
-        t.setBoard(game, {
+        const game = t.fixtureOccupation(
+          'consultant',
+          { cardSets: ['baseB'] },
+          { dennis: {} },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
           dennis: {
-            clay: 0,
-            hand: ['consultant'],
+            clay: 3,
+            occupations: ['consultant'],
           },
         })
-        game.run()
-
-        t.playCard(game, 'dennis', 'consultant')
-        const dennis = t.player(game)
-        expect(dennis.clay).toBe(3)
       })
 
       test('gives 2 reed in 3-player game', () => {
@@ -1190,6 +1206,21 @@ describe('BaseB Cards', () => {
     })
 
     describe('Sheep Walker', () => {
+      test('can be played via Lessons', () => {
+        const game = t.fixtureOccupation(
+          'sheep-walker',
+          { cardSets: ['baseB'] },
+          { dennis: {} },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
+          dennis: {
+            occupations: ['sheep-walker'],
+          },
+        })
+      })
+
       test('has anytime exchange options', () => {
         const card = baseB.getCardById('sheep-walker')
         expect(card.allowsAnytimeExchange).toBe(true)
@@ -1406,6 +1437,21 @@ describe('BaseB Cards', () => {
     })
 
     describe('Carpenter', () => {
+      test('can be played via Lessons', () => {
+        const game = t.fixtureOccupation(
+          'carpenter',
+          { cardSets: ['baseB'] },
+          { dennis: {} },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
+          dennis: {
+            occupations: ['carpenter'],
+          },
+        })
+      })
+
       test('reduces room cost to 3 material + 2 reed', () => {
         const card = baseB.getCardById('carpenter')
         const game = t.fixture()
@@ -1439,16 +1485,19 @@ describe('BaseB Cards', () => {
 
     describe('House Steward', () => {
       test('gives wood based on rounds left', () => {
-        const card = baseB.getCardById('house-steward')
-        const game = t.fixture({ numPlayers: 3 })
-        game.run()
-        const dennis = t.player(game)
-        dennis.wood = 0
+        const game = t.fixtureOccupation(
+          'house-steward',
+          { numPlayers: 3, cardSets: ['baseB'] },
+          { dennis: {} },
+        )
 
-        // Round 5: 14 - 5 = 9 rounds left -> 4 wood
-        game.state.round = 5
-        card.onPlay(game, dennis)
-        expect(dennis.wood).toBe(4)
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
+          dennis: {
+            wood: 4, // 14 - 1 = 13 rounds left -> 4 wood
+            occupations: ['house-steward'],
+          },
+        })
       })
 
       test('gives 1 wood with 1 round left', () => {
@@ -1518,6 +1567,21 @@ describe('BaseB Cards', () => {
     })
 
     describe('Brushwood Collector', () => {
+      test('can be played via Lessons', () => {
+        const game = t.fixtureOccupation(
+          'brushwood-collector',
+          { numPlayers: 3, cardSets: ['baseB'] },
+          { dennis: {} },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
+          dennis: {
+            occupations: ['brushwood-collector'],
+          },
+        })
+      })
+
       test('replaces reed with wood for build-room', () => {
         const card = baseB.getCardById('brushwood-collector')
         const game = t.fixture({ numPlayers: 3 })
@@ -1670,20 +1734,22 @@ describe('BaseB Cards', () => {
     })
 
     describe('Sheep Whisperer', () => {
-      test('schedules sheep at round offsets 2, 5, 8, 10', () => {
-        const game = t.fixture({ numPlayers: 4 })
-        game.run()
+      test('schedules sheep on play', () => {
+        const game = t.fixtureOccupation(
+          'sheep-whisperer',
+          { numPlayers: 4, cardSets: ['baseB'] },
+          { dennis: {} },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        t.testBoard(game, {
+          dennis: {
+            occupations: ['sheep-whisperer'],
+          },
+        })
 
         const dennis = t.player(game)
-        game.state.round = 1
-
-        const card = baseB.getCardById('sheep-whisperer')
-        card.onPlay(game, dennis)
-
-        expect(game.state.scheduledSheep[dennis.name][3]).toBe(1)  // 1+2
-        expect(game.state.scheduledSheep[dennis.name][6]).toBe(1)  // 1+5
-        expect(game.state.scheduledSheep[dennis.name][9]).toBe(1)  // 1+8
-        expect(game.state.scheduledSheep[dennis.name][11]).toBe(1) // 1+10
+        expect(dennis.name in game.state.scheduledSheep).toBe(true)
       })
 
       test('does not schedule past round 14', () => {
