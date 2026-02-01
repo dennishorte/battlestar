@@ -277,7 +277,16 @@ describe('BaseB Cards', () => {
         expect(t.player(game).moldboardPlowCharges).toBe(1)
         t.testBoard(game, {
           dennis: {
+            wood: 3, // 5 - 2 cost
+            food: 1, // +1 from Meeting Place
+            occupations: ['wood-cutter'],
+            minorImprovements: ['moldboard-plow'],
             farmyard: { fields: 2 },
+            score: -10, // -14 base + 2 fields + other bonuses
+          },
+          micah: {
+            grain: 1, // from Grain Seeds action
+            score: -12, // -14 base + grain bonus
           },
         })
       })
@@ -996,7 +1005,10 @@ describe('BaseB Cards', () => {
 
         t.testBoard(game, {
           dennis: {
+            food: 2, // +2 from Day Laborer
+            occupations: ['assistant-tiller'],
             farmyard: { fields: 1 },
+            score: -13, // -14 base + 1 field
           },
         })
       })
@@ -1118,6 +1130,7 @@ describe('BaseB Cards', () => {
         t.setBoard(game, {
           dennis: {
             occupations: ['wood-cutter', 'firewood-collector'],
+            occupationsPlayed: 2,
             hand: ['tutor'],
           },
         })
@@ -1562,7 +1575,10 @@ describe('BaseB Cards', () => {
 
         t.testBoard(game, {
           dennis: {
-            clay: 1,
+            food: 1, // from Resource Market base
+            reed: 1, // from Resource Market base
+            clay: 1, // from Storehouse Keeper choice
+            occupations: ['storehouse-keeper'],
           },
         })
       })

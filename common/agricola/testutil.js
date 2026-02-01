@@ -461,6 +461,11 @@ TestUtil.setPlayerBoard = function(game, playerName, playerState) {
   // Set begging cards
   player.beggingCards = playerState.beggingCards || 0
 
+  // Set occupations played count
+  if (playerState.occupationsPlayed !== undefined) {
+    player.occupationsPlayed = playerState.occupationsPlayed
+  }
+
   // Set bonus points
   player.bonusPoints = playerState.bonusPoints || 0
 

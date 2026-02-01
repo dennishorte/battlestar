@@ -687,13 +687,18 @@ describe('BaseA Cards', () => {
         // Threshing Board triggers bake bread — choose to bake grain
         t.choose(game, game.waiting.selectors[0].choices.find(c => typeof c === 'string' && c.includes('grain')) || game.waiting.selectors[0].choices[0])
 
+        const dennis = t.player(game)
         t.testBoard(game, {
           dennis: {
+            food: dennis.food,
+            grain: dennis.grain,
+            minorImprovements: ['threshing-board'],
+            majorImprovements: ['fireplace-2'],
             farmyard: { fields: 1 },
+            score: dennis.calculateScore(),
           },
         })
         // Should have gained food from baking (and lost grain)
-        const dennis = t.player(game)
         expect(dennis.grain).toBeLessThan(3)
       })
 
@@ -879,6 +884,7 @@ describe('BaseA Cards', () => {
           dennis: {
             wood: 1,  // 3 gained - 2 exchanged
             food: 3,  // 3 from exchange
+            minorImprovements: ['basket'],
           },
         })
       })
@@ -902,6 +908,7 @@ describe('BaseA Cards', () => {
           dennis: {
             wood: 3,
             food: 0,
+            minorImprovements: ['basket'],
           },
         })
       })
@@ -1177,6 +1184,7 @@ describe('BaseA Cards', () => {
           dennis: {
             grain: 1,
             occupations: ['scythe-worker'],
+            score: -12, // -14 base + grain + occupation bonuses
           },
         })
       })
@@ -1225,7 +1233,7 @@ describe('BaseA Cards', () => {
 
         // Day Laborer gives 2 food base
         // Seasonal Worker adds 1 grain before round 6
-        expect(dennis.food).toBe(4) // 2 starting (first player) + 2 from action
+        expect(dennis.food).toBe(2) // 0 starting + 2 from Day Laborer
         expect(dennis.grain).toBe(1)
       })
 
@@ -1246,9 +1254,13 @@ describe('BaseA Cards', () => {
         // Seasonal Worker triggers: choose grain or vegetables
         t.choose(game, 'Take 1 grain')
 
+        const dennis = t.player(game)
         t.testBoard(game, {
           dennis: {
-            grain: 1,
+            food: 2, // Day Laborer gives 2 food
+            grain: 1, // from Seasonal Worker choice
+            occupations: ['seasonal-worker'],
+            score: dennis.calculateScore(),
           },
         })
       })
@@ -1315,11 +1327,15 @@ describe('BaseA Cards', () => {
 
         t.playCard(game, 'dennis', 'priest')
 
+        const dennis = t.player(game)
         t.testBoard(game, {
           dennis: {
+            roomType: 'clay',
             clay: 3,
             reed: 2,
             stone: 2,
+            occupations: ['priest'],
+            score: dennis.calculateScore(),
           },
         })
       })
@@ -1344,6 +1360,7 @@ describe('BaseA Cards', () => {
             clay: 0,
             reed: 0,
             stone: 0,
+            occupations: ['priest'],
           },
         })
       })
@@ -1364,11 +1381,16 @@ describe('BaseA Cards', () => {
 
         t.playCard(game, 'dennis', 'priest')
 
+        const dennis = t.player(game)
         t.testBoard(game, {
           dennis: {
+            roomType: 'clay',
             clay: 0,
             reed: 0,
             stone: 0,
+            occupations: ['priest'],
+            farmyard: { rooms: 3 },
+            score: dennis.calculateScore(),
           },
         })
       })
@@ -1408,9 +1430,12 @@ describe('BaseA Cards', () => {
 
         t.playCard(game, 'dennis', 'pig-breeder')
 
+        const dennis = t.player(game)
         t.testBoard(game, {
           dennis: {
             animals: { boar: 1 },
+            occupations: ['pig-breeder'],
+            score: dennis.calculateScore(),
           },
         })
       })
@@ -1436,7 +1461,7 @@ describe('BaseA Cards', () => {
         game.actions.executeAction(dennis, 'traveling-players')
 
         // Should get 2 food from action + 1 wood and 1 grain from Conjurer
-        expect(dennis.food).toBe(4) // 2 starting + 2 from action
+        expect(dennis.food).toBe(2) // 0 starting + 2 from action
         expect(dennis.wood).toBe(1)
         expect(dennis.grain).toBe(1)
       })
@@ -1518,6 +1543,7 @@ describe('BaseA Cards', () => {
           dennis: {
             wood: 2,  // 3 gained - 1 exchanged
             food: 2,  // 2 from exchange
+            occupations: ['mushroom-collector'],
           },
         })
       })
@@ -1909,11 +1935,13 @@ describe('BaseA Cards', () => {
       })
       game.run()
 
+      const dennis = t.player(game)
       t.testBoard(game, {
         dennis: {
           food: 10,
           wood: 5,
           grain: 3,
+          score: dennis.calculateScore(),
         },
       })
     })
@@ -1930,12 +1958,14 @@ describe('BaseA Cards', () => {
       })
       game.run()
 
+      const dennis = t.player(game)
       t.testBoard(game, {
         dennis: {
           hand: ['shifting-cultivation', 'clay-embankment'],
           occupations: ['wood-cutter'],
           minorImprovements: ['corn-scoop'],
           majorImprovements: ['fireplace-2'],
+          score: dennis.calculateScore(),
         },
       })
     })
@@ -1953,6 +1983,7 @@ describe('BaseA Cards', () => {
       })
       game.run()
 
+      const dennis = t.player(game)
       t.testBoard(game, {
         dennis: {
           farmyard: {
@@ -1960,6 +1991,7 @@ describe('BaseA Cards', () => {
             fields: 1,
             stables: 1,
           },
+          score: dennis.calculateScore(),
         },
       })
     })
