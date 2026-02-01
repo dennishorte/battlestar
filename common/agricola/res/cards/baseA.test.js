@@ -1005,6 +1005,27 @@ describe('BaseA Cards', () => {
         const card = res.getCardById('lumber-mill')
         expect(card.vps).toBe(2)
       })
+
+      test('reduces wood cost when buying major improvement', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            minorImprovements: ['lumber-mill'],
+            occupations: ['wood-cutter', 'firewood-collector', 'seasonal-worker'], // prereq met
+            // Joinery costs wood:2, stone:2. With Lumber Mill, wood reduced by 1 → wood:1
+            wood: 1,
+            stone: 2,
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        expect(dennis.canBuyMajorImprovement('joinery')).toBe(true)
+
+        // Without lumber mill, would need 2 wood
+        dennis.wood = 0
+        expect(dennis.canBuyMajorImprovement('joinery')).toBe(false)
+      })
     })
 
     describe("Shepherd's Crook", () => {
@@ -1172,6 +1193,53 @@ describe('BaseA Cards', () => {
         const dennis = t.player(game)
         expect(dennis.canRenovateDirectlyToStone()).toBe(false)
       })
+
+      test('can renovate wood directly to stone via Cottager Day Laborer', () => {
+        const game = t.fixture({ cardSets: ['baseA', 'baseB'] })
+        t.setBoard(game, {
+          dennis: {
+            stone: 2,
+            reed: 1,
+            occupations: ['conservator', 'cottager'],
+          },
+        })
+        game.run()
+
+        t.choose(game, 'Day Laborer')
+        t.choose(game, 'Renovate')
+        t.choose(game, 'Renovate to Stone')
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            food: 2,  // +2 Day Laborer
+            stone: 0, // 2 - 2 (1 per room × 2 rooms)
+            reed: 0,  // 1 - 1
+            roomType: 'stone',
+            occupations: ['conservator', 'cottager'],
+            score: dennis.calculateScore(),
+          },
+        })
+      })
+
+      test('canRenovate returns true when only stone path is affordable', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['conservator'],
+            roomType: 'wood',
+            clay: 0,
+            stone: 2,
+            reed: 1,
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        // Can't afford wood→clay (need 2 clay + 1 reed), but can afford wood→stone (2 stone + 1 reed)
+        expect(dennis.canRenovate()).toBe(true)
+        expect(dennis.canRenovate('stone')).toBe(true)
+      })
     })
 
     describe('Hedge Keeper', () => {
@@ -1195,6 +1263,48 @@ describe('BaseA Cards', () => {
         expect(card.modifyFenceCost(null, 5)).toBe(2)
         expect(card.modifyFenceCost(null, 3)).toBe(0)
         expect(card.modifyFenceCost(null, 2)).toBe(0)
+      })
+
+      test('builds a pasture paying less wood via Fencing action', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            wood: 1,  // Only 1 wood, but 3 fences are free
+            occupations: ['hedge-keeper'],
+          },
+        })
+        game.testSetBreakpoint('initialization-complete', (game) => {
+          game.state.activeActions.push('fencing')
+          game.state.actionSpaces['fencing'] = { occupiedBy: null }
+        })
+        game.run()
+
+        t.choose(game, 'Fencing')
+
+        // Build a single-space pasture at corner (4 fences needed, 3 free → pay 1 wood)
+        const sel = game.waiting.selectors[0]
+        game.respondToInputRequest({
+          actor: sel.actor,
+          title: sel.title,
+          selection: {
+            action: 'build-pasture',
+            spaces: [{ row: 0, col: 4 }],
+          },
+        })
+        t.choose(game, 'Done building fences')
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            wood: 0,  // 1 - 1 (4 fences needed, 3 free)
+            occupations: ['hedge-keeper'],
+            farmyard: {
+              pastures: 1,
+              fences: 4,
+            },
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
 
@@ -1816,6 +1926,35 @@ describe('BaseA Cards', () => {
         const modified = card.modifyAnyCost(null, { clay: 5, reed: 2 })
         expect(modified.clay).toBe(5)
         expect(modified.reed).toBe(2)
+      })
+
+      test('reduces stone room cost when building via Farm Expansion', () => {
+        const game = t.fixture({ numPlayers: 3 })
+        t.setBoard(game, {
+          dennis: {
+            roomType: 'stone',
+            stone: 4,   // 5 - 1 (Stonecutter discount)
+            reed: 2,
+            occupations: ['stonecutter'],
+          },
+        })
+        game.run()
+
+        t.choose(game, 'Farm Expansion')
+        t.choose(game, 'Build Room')
+        t.choose(game, game.waiting.selectors[0].choices[0])
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            stone: 0,  // 4 - 4 (5 base - 1 Stonecutter)
+            reed: 0,   // 2 - 2
+            roomType: 'stone',
+            occupations: ['stonecutter'],
+            farmyard: { rooms: 3 },
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
 

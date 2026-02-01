@@ -198,6 +198,33 @@ describe('BaseB Cards', () => {
         const modified = card.modifyBuildCost(dennis, cost, 'build-room')
         expect(modified).toEqual(cost)
       })
+
+      test('reduces room cost when building via Farm Expansion', () => {
+        const game = t.fixture({ cardSets: ['baseB'] })
+        t.setBoard(game, {
+          dennis: {
+            wood: 2,
+            reed: 2,
+            minorImprovements: ['carpenters-parlor'],
+          },
+        })
+        game.run()
+
+        t.choose(game, 'Farm Expansion')
+        t.choose(game, 'Build Room')
+        t.choose(game, game.waiting.selectors[0].choices[0])
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            wood: 0,  // 2 - 2 (modified cost)
+            reed: 0,  // 2 - 2 (modified cost)
+            minorImprovements: ['carpenters-parlor'],
+            farmyard: { rooms: 3 },
+            score: dennis.calculateScore(),
+          },
+        })
+      })
     })
 
     describe('Mining Hammer', () => {
@@ -418,6 +445,33 @@ describe('BaseB Cards', () => {
 
         dennis.familyMembers = 4
         expect(card.getSpecialCost(dennis)).toEqual({ clay: 4, food: 4 })
+      })
+
+      test('can be played via Meeting Place paying special cost', () => {
+        const game = t.fixtureMinorImprovement(
+          'bottles',
+          {
+            cardSets: ['baseB'],
+          },
+          {
+            dennis: {
+              clay: 2,
+              food: 2,
+            },
+          },
+        )
+
+        t.testIsSecondPlayer(game, 'Choose an action')
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            clay: 0,  // 2 - 2 (2 family members × 1 clay)
+            food: 1,  // 2 + 1 (Meeting Place) - 2 (2 family members × 1 food)
+            hand: [],
+            minorImprovements: ['bottles'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
 
@@ -1424,6 +1478,24 @@ describe('BaseB Cards', () => {
         const modified = card.modifyAnyCost(dennis, cost, 'build-room')
         expect(modified).toEqual(cost)
       })
+
+      test('reduces stone cost when buying major improvement with extra rooms', () => {
+        const game = t.fixture({ cardSets: ['baseB'] })
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['master-bricklayer'],
+            farmyard: { rooms: 4 },
+            // Joinery costs wood:2, stone:2. With 2 extra rooms, stone reduced by 2 → stone:0
+            wood: 2,
+            stone: 0,
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        // Should be able to afford Joinery (wood:2, stone:2) with 0 stone due to Master Bricklayer
+        expect(dennis.canBuyMajorImprovement('joinery')).toBe(true)
+      })
     })
 
     describe('Scholar', () => {
@@ -2008,6 +2080,33 @@ describe('BaseB Cards', () => {
         const cost = { wood: 5, reed: 2 }
         expect(card.modifyBuildCost(dennis, cost, 'renovate')).toEqual(cost)
       })
+
+      test('reduces room cost to 3 wood + 2 reed when building via Farm Expansion', () => {
+        const game = t.fixture({ cardSets: ['baseB'] })
+        t.setBoard(game, {
+          dennis: {
+            wood: 3,
+            reed: 2,
+            occupations: ['carpenter'],
+          },
+        })
+        game.run()
+
+        t.choose(game, 'Farm Expansion')
+        t.choose(game, 'Build Room')
+        t.choose(game, game.waiting.selectors[0].choices[0])
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            wood: 0,  // 3 - 3 (modified cost)
+            reed: 0,  // 2 - 2 (modified cost)
+            occupations: ['carpenter'],
+            farmyard: { rooms: 3 },
+            score: dennis.calculateScore(),
+          },
+        })
+      })
     })
 
     describe('House Steward', () => {
@@ -2152,6 +2251,33 @@ describe('BaseB Cards', () => {
         const cost = { wood: 2 }
         const modified = card.modifyBuildCost(dennis, cost, 'stable')
         expect(modified).toEqual(cost)
+      })
+
+      test('replaces reed with 1 wood when building room via Farm Expansion', () => {
+        const game = t.fixture({ numPlayers: 3, cardSets: ['baseB'] })
+        t.setBoard(game, {
+          dennis: {
+            wood: 6,  // 5 + 1 (replaces 2 reed)
+            reed: 0,  // no reed needed
+            occupations: ['brushwood-collector'],
+          },
+        })
+        game.run()
+
+        t.choose(game, 'Farm Expansion')
+        t.choose(game, 'Build Room')
+        t.choose(game, game.waiting.selectors[0].choices[0])
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            wood: 0,  // 6 - 6 (5 wood + 1 replacing reed)
+            reed: 0,
+            occupations: ['brushwood-collector'],
+            farmyard: { rooms: 3 },
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
 

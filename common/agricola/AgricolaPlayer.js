@@ -202,62 +202,81 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   canAffordRoom() {
-    const cost = res.buildingCosts.room[this.roomType]
+    const cost = this.getRoomCost()
     return this.canAffordCost(cost)
   }
 
   getRoomCost() {
-    return res.buildingCosts.room[this.roomType]
+    let cost = { ...res.buildingCosts.room[this.roomType] }
+    cost = this.applyBuildCostModifiers(cost, 'build-room')
+    cost = this.applyAnyCostModifiers(cost, 'build-room')
+    return cost
   }
 
   // ---------------------------------------------------------------------------
   // Renovation methods
   // ---------------------------------------------------------------------------
 
-  canRenovate() {
-    const nextType = res.houseMaterialUpgrades[this.roomType]
-    if (!nextType) {
-      return false // Already stone
+  canRenovate(targetType) {
+    const cost = this.getRenovationCost(targetType)
+    if (!cost) {
+      return false
     }
-
-    const costKey = this.roomType === 'wood' ? 'woodToClay' : 'clayToStone'
-    const costPerRoom = res.buildingCosts.renovation[costKey]
-    const roomCount = this.getRoomCount()
-
-    // Cost is (material * roomCount) + 1 reed
-    const materialType = nextType // clay or stone
-    const totalMaterialNeeded = costPerRoom[materialType] * roomCount
-    const reedNeeded = costPerRoom.reed
-
-    return this[materialType] >= totalMaterialNeeded && this.reed >= reedNeeded
+    if (this.canAffordCost(cost)) {
+      return true
+    }
+    // If no target specified, also check direct stone path (Conservator)
+    if (!targetType && this.roomType === 'wood' && this.canRenovateDirectlyToStone()) {
+      return this.canRenovate('stone')
+    }
+    return false
   }
 
-  getRenovationCost() {
-    const nextType = res.houseMaterialUpgrades[this.roomType]
+  getRenovationCost(targetType) {
+    // If targetType specified, use it; otherwise use standard upgrade path
+    let nextType = targetType
+    if (!nextType) {
+      nextType = res.houseMaterialUpgrades[this.roomType]
+    }
     if (!nextType) {
       return null
     }
 
-    const costKey = this.roomType === 'wood' ? 'woodToClay' : 'clayToStone'
+    // Determine the cost key based on actual renovation path
+    let costKey
+    if (this.roomType === 'wood' && nextType === 'stone') {
+      // Direct wood→stone (Conservator): use clayToStone cost key
+      costKey = 'clayToStone'
+    }
+    else if (this.roomType === 'wood') {
+      costKey = 'woodToClay'
+    }
+    else {
+      costKey = 'clayToStone'
+    }
+
     const costPerRoom = res.buildingCosts.renovation[costKey]
     const roomCount = this.getRoomCount()
 
     const materialType = nextType
-    return {
+    let cost = {
       [materialType]: costPerRoom[materialType] * roomCount,
       reed: costPerRoom.reed,
     }
+    cost = this.applyBuildCostModifiers(cost, 'renovate')
+    cost = this.applyAnyCostModifiers(cost, 'renovate')
+    return cost
   }
 
-  renovate() {
-    if (!this.canRenovate()) {
+  renovate(targetType) {
+    if (!this.canRenovate(targetType)) {
       return false
     }
 
-    const cost = this.getRenovationCost()
+    const cost = this.getRenovationCost(targetType)
     this.payCost(cost)
 
-    const nextType = res.houseMaterialUpgrades[this.roomType]
+    const nextType = targetType || res.houseMaterialUpgrades[this.roomType]
     this.roomType = nextType
 
     // Update all room spaces
@@ -544,8 +563,9 @@ class AgricolaPlayer extends BasePlayer {
       this.farmyard.fences.push(fence)
     }
 
-    // Pay wood
-    this.wood -= fenceSegments.length
+    // Pay wood (accounting for fence cost modifiers)
+    const woodCost = this.applyFenceCostModifiers(fenceSegments.length)
+    this.wood -= woodCost
 
     // Recalculate pastures
     this.recalculatePastures()
@@ -819,11 +839,12 @@ class AgricolaPlayer extends BasePlayer {
     // Calculate fences needed
     const fences = this.calculateFencesForPasture(spaces)
 
-    // Check if player has enough wood
-    if (fences.length > this.wood) {
+    // Check if player has enough wood (accounting for fence cost modifiers)
+    const woodCost = this.applyFenceCostModifiers(fences.length)
+    if (woodCost > this.wood) {
       return {
         valid: false,
-        error: `Need ${fences.length} wood, have ${this.wood}`,
+        error: `Need ${woodCost} wood, have ${this.wood}`,
         fencesNeeded: fences.length,
       }
     }
@@ -879,8 +900,9 @@ class AgricolaPlayer extends BasePlayer {
       return { success: false, error: validation.error }
     }
 
-    // Pay wood cost
-    this.wood -= validation.fencesNeeded
+    // Pay wood cost (accounting for fence cost modifiers)
+    const woodCost = this.applyFenceCostModifiers(validation.fencesNeeded)
+    this.wood -= woodCost
 
     // Add fences
     for (const fence of validation.fences) {
@@ -1368,6 +1390,17 @@ class AgricolaPlayer extends BasePlayer {
   // Major Improvement methods
   // ---------------------------------------------------------------------------
 
+  getMajorImprovementCost(improvementId) {
+    const imp = this.cards.byId(improvementId)
+    if (!imp || !imp.cost) {
+      return {}
+    }
+    let cost = { ...imp.cost }
+    cost = this.applyImprovementCostModifiers(cost)
+    cost = this.applyAnyCostModifiers(cost, 'major-improvement')
+    return cost
+  }
+
   canBuyMajorImprovement(improvementId) {
     const imp = this.cards.byId(improvementId)
     if (!imp) {
@@ -1379,19 +1412,20 @@ class AgricolaPlayer extends BasePlayer {
       return false
     }
 
+    const cost = this.getMajorImprovementCost(improvementId)
+
     // Check upgrade path
     if (imp.upgradesFrom && imp.upgradesFrom.length > 0) {
       const canUpgrade = imp.upgradesFrom.some(fromId =>
         this.majorImprovements.includes(fromId)
       )
       if (canUpgrade) {
-        // Upgrading - just need to afford it
-        return this.canAffordCost(imp.cost)
+        return this.canAffordCost(cost)
       }
     }
 
     // Normal purchase
-    return this.canAffordCost(imp.cost)
+    return this.canAffordCost(cost)
   }
 
   buyMajorImprovement(improvementId) {
@@ -1417,7 +1451,8 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     // Pay cost and move improvement to player's zone
-    this.payCost(imp.cost)
+    const cost = this.getMajorImprovementCost(improvementId)
+    this.payCost(cost)
     imp.moveTo(this.zones.byPlayer(this, 'majorImprovements'))
 
     return true
@@ -1598,7 +1633,8 @@ class AgricolaPlayer extends BasePlayer {
 
     // Check cost
     if (card.cost) {
-      for (const [resource, amount] of Object.entries(card.cost)) {
+      const cost = this.getCardCost(card)
+      for (const [resource, amount] of Object.entries(cost)) {
         if (resource === 'sheep' || resource === 'boar' || resource === 'cattle') {
           if (this.getTotalAnimals(resource) < amount) {
             return false
@@ -1683,7 +1719,8 @@ class AgricolaPlayer extends BasePlayer {
       return true
     }
 
-    for (const [resource, amount] of Object.entries(card.cost)) {
+    const cost = this.getCardCost(card)
+    for (const [resource, amount] of Object.entries(cost)) {
       if (resource === 'sheep' || resource === 'boar' || resource === 'cattle') {
         this.removeAnimals(resource, amount)
       }
@@ -1692,6 +1729,26 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
     return true
+  }
+
+  getCardCost(card) {
+    if (!card.cost) {
+      return {}
+    }
+
+    // Handle special dynamic costs (e.g., Bottles)
+    if (card.cost.special === true && card.hasHook('getSpecialCost')) {
+      let cost = card.callHook('getSpecialCost', this)
+      cost = this.applyAnyCostModifiers(cost, 'minor-improvement')
+      return cost
+    }
+
+    let cost = { ...card.cost }
+    if (card.type === 'minor') {
+      cost = this.applyImprovementCostModifiers(cost)
+      cost = this.applyAnyCostModifiers(cost, 'minor-improvement')
+    }
+    return cost
   }
 
   playCard(cardId) {
@@ -1829,6 +1886,29 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   /**
+   * Check if player has free fences available (e.g., from Hedge Keeper)
+   */
+  getFreeFenceCount() {
+    // Calculate how many fences would be free by checking the difference
+    const testCount = 15  // max fences
+    const modifiedCount = this.applyFenceCostModifiers(testCount)
+    return testCount - modifiedCount
+  }
+
+  /**
+   * Apply modifyBuildCost hooks from cards (room building and renovation)
+   */
+  applyBuildCostModifiers(cost, action) {
+    let modifiedCost = { ...cost }
+    for (const card of this.getActiveCards()) {
+      if (card.hasHook('modifyBuildCost')) {
+        modifiedCost = card.callHook('modifyBuildCost', this, modifiedCost, action)
+      }
+    }
+    return modifiedCost
+  }
+
+  /**
    * Apply modifyImprovementCost hooks from cards
    */
   applyImprovementCostModifiers(cost) {
@@ -1844,11 +1924,11 @@ class AgricolaPlayer extends BasePlayer {
   /**
    * Apply modifyAnyCost hooks from cards
    */
-  applyAnyCostModifiers(cost) {
+  applyAnyCostModifiers(cost, action) {
     let modifiedCost = { ...cost }
     for (const card of this.getActiveCards()) {
       if (card.hasHook('modifyAnyCost')) {
-        modifiedCost = card.callHook('modifyAnyCost', this, modifiedCost)
+        modifiedCost = card.callHook('modifyAnyCost', this, modifiedCost, action)
       }
     }
     return modifiedCost

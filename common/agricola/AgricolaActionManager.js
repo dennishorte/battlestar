@@ -317,7 +317,32 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   renovate(player) {
-    if (!player.canRenovate()) {
+    // Check if Conservator allows direct wood→stone renovation
+    let targetType
+    if (player.roomType === 'wood' && player.canRenovateDirectlyToStone()) {
+      const canClay = player.canRenovate()       // standard wood→clay
+      const canStone = player.canRenovate('stone') // direct wood→stone
+
+      if (canClay && canStone) {
+        const selection = this.choose(player, ['Renovate to Clay', 'Renovate to Stone'], {
+          title: 'Choose renovation type',
+          min: 1,
+          max: 1,
+        })
+        targetType = selection[0] === 'Renovate to Stone' ? 'stone' : undefined
+      }
+      else if (canStone) {
+        targetType = 'stone'
+      }
+      else if (!canClay) {
+        this.log.add({
+          template: '{player} cannot afford to renovate',
+          args: { player },
+        })
+        return false
+      }
+    }
+    else if (!player.canRenovate()) {
       this.log.add({
         template: '{player} cannot afford to renovate',
         args: { player },
@@ -326,7 +351,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     const oldType = player.roomType
-    player.renovate()
+    player.renovate(targetType)
     const newType = player.roomType
 
     this.log.add({
@@ -651,8 +676,8 @@ class AgricolaActionManager extends BaseActionManager {
     let continueBuilding = true
 
     while (continueBuilding) {
-      // Check if player can build any fences
-      if (player.wood < 1) {
+      // Check if player can build any fences (accounting for free fences from cards)
+      if (player.wood < 1 && player.getFreeFenceCount() === 0) {
         if (totalFencesBuilt === 0) {
           this.log.add({
             template: '{player} has no wood for fences',
@@ -686,7 +711,7 @@ class AgricolaActionManager extends BaseActionManager {
       totalFencesBuilt += result.fencesBuilt
 
       // Ask if player wants to build another pasture
-      if (player.wood >= 1 && remainingFences - result.fencesBuilt > 0) {
+      if ((player.wood >= 1 || player.getFreeFenceCount() > 0) && remainingFences - result.fencesBuilt > 0) {
         const continueChoice = this.choose(player, ['Build another pasture', 'Done building fences'], {
           title: 'Continue fencing?',
           min: 1,
@@ -1331,10 +1356,10 @@ class AgricolaActionManager extends BaseActionManager {
     if (player.canRenovate()) {
       choices.push('Renovate')
     }
-    if (player.wood >= 1) {
+    if (player.wood >= 1 || player.getFreeFenceCount() > 0) {
       choices.push('Build Fences')
     }
-    if (player.canRenovate() && player.wood >= 1) {
+    if (player.canRenovate() && (player.wood >= 1 || player.getFreeFenceCount() > 0)) {
       choices.push('Renovate then Fences')
     }
 
