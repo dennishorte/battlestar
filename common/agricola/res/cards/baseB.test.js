@@ -1777,6 +1777,34 @@ describe('BaseB Cards', () => {
         const dennis = t.player(game)
         expect(dennis.reed).toBe(2)
       })
+
+      test('gives 2 grain in 1-player game via Lessons', () => {
+        const game = t.fixtureOccupation(
+          'consultant',
+          { numPlayers: 1, cardSets: ['baseB'] },
+          { dennis: {} },
+        )
+
+        const dennis = t.player(game)
+        expect(dennis.grain).toBe(2)
+      })
+
+      test('gives 2 sheep in 4-player game via Lessons', () => {
+        const game = t.fixtureOccupation(
+          'consultant',
+          { numPlayers: 4, cardSets: ['baseB'] },
+          {
+            dennis: {
+              farmyard: {
+                pastures: [{ spaces: [{ row: 2, col: 0 }] }],
+              },
+            },
+          },
+        )
+
+        const dennis = t.player(game)
+        expect(dennis.getTotalAnimals('sheep')).toBe(2)
+      })
     })
 
     describe('Sheep Walker', () => {
