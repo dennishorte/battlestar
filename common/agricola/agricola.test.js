@@ -1093,7 +1093,13 @@ describe('Agricola', () => {
     })
 
     test('game defaults to all card sets', () => {
-      const game = t.fixture()
+      const { AgricolaFactory } = require('./agricola.js')
+      const game = AgricolaFactory({
+        name: 'test',
+        seed: 'test',
+        numPlayers: 2,
+        players: [{ _id: '1', name: 'a' }, { _id: '2', name: 'b' }],
+      })
       expect(game.settings.cardSets).toEqual(['baseA', 'baseB'])
     })
   })
