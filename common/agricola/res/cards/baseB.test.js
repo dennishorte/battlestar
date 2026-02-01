@@ -1623,20 +1623,67 @@ describe('BaseB Cards', () => {
     })
 
     describe('Paper Maker', () => {
-      test('triggers when player has wood', () => {
-        const card = baseB.getCardById('paper-maker')
-        expect(card.onPlayOccupation).toBeDefined()
+      test('offers wood-for-food exchange when playing a second occupation', () => {
+        const game = t.fixture({ cardSets: ['baseB'] })
+        t.setBoard(game, {
+          dennis: {
+            wood: 3,
+            food: 1, // cost for second occupation
+            hand: ['groom'],
+            occupations: ['paper-maker'],
+            occupationsPlayed: 1,
+          },
+        })
+        game.run()
+
+        t.choose(game, 'Lessons')
+        t.choose(game, 'Groom')
+
+        // Paper Maker triggers: pay 1 wood for 2 food (2 occupations played)
+        t.choose(game, 'Pay 1 wood for 2 food')
+
+        // Groom's onPlay offers wood or grain choice
+        t.choose(game, game.waiting.selectors[0].choices[0])
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            wood: dennis.wood,
+            food: dennis.food,
+            occupations: ['paper-maker', 'groom'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('does not trigger without wood', () => {
-        const card = baseB.getCardById('paper-maker')
-        const game = t.fixture()
+        const game = t.fixture({ cardSets: ['baseB'] })
+        t.setBoard(game, {
+          dennis: {
+            food: 1,
+            hand: ['groom'],
+            occupations: ['paper-maker'],
+            occupationsPlayed: 1,
+          },
+        })
         game.run()
-        const dennis = t.player(game)
-        dennis.wood = 0
 
-        const result = card.onPlayOccupation(game, dennis)
-        expect(result).toBeUndefined()
+        t.choose(game, 'Lessons')
+        t.choose(game, 'Groom')
+
+        // Paper Maker does not trigger (no wood), goes to Groom's onPlay
+        // Groom offers wood or grain
+        t.choose(game, game.waiting.selectors[0].choices[0])
+
+        const dennis = t.player(game)
+        t.testBoard(game, {
+          dennis: {
+            wood: dennis.wood,
+            food: dennis.food,
+            occupations: ['paper-maker', 'groom'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
 

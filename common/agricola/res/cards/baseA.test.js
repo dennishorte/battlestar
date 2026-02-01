@@ -920,44 +920,56 @@ describe('BaseA Cards', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            food: 0,
+            grain: 2,
             minorImprovements: ['dutch-windmill'],
+            majorImprovements: ['fireplace-2'],
           },
-          round: 5,
+        })
+        // Set lastHarvestRound in breakpoint so it survives run() resets
+        game.testSetBreakpoint('initialization-complete', (game) => {
+          game.state.lastHarvestRound = 1
         })
         game.run()
 
+        t.choose(game, 'Grain Utilization')
+        // No fields to sow, so goes straight to baking
+        t.choose(game, 'Bake 2 grain')
+
         const dennis = t.player(game)
-        const card = res.getCardById('dutch-windmill')
-
-        // Simulate: last harvest was round 4, now it's round 5
-        game.state.lastHarvestRound = 4
-        game.state.round = 5
-
-        card.onBake(game, dennis)
-        expect(dennis.food).toBe(3)
+        t.testBoard(game, {
+          dennis: {
+            food: 7, // 2 grain × 2 food (fireplace) + 3 (dutch windmill)
+            minorImprovements: ['dutch-windmill'],
+            majorImprovements: ['fireplace-2'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('gives nothing when baking in a non-post-harvest round', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            food: 0,
+            grain: 1,
             minorImprovements: ['dutch-windmill'],
+            majorImprovements: ['fireplace-2'],
           },
-          round: 6,
         })
         game.run()
 
+        // lastHarvestRound defaults to 0, current round is 2 (not 0 + 1)
+        t.choose(game, 'Grain Utilization')
+        t.choose(game, 'Bake 1 grain')
+
         const dennis = t.player(game)
-        const card = res.getCardById('dutch-windmill')
-
-        // Last harvest was round 4, now it's round 6 (not immediately after)
-        game.state.lastHarvestRound = 4
-        game.state.round = 6
-
-        card.onBake(game, dennis)
-        expect(dennis.food).toBe(0)
+        t.testBoard(game, {
+          dennis: {
+            food: 2, // 1 grain × 2 food (fireplace), no dutch windmill bonus
+            minorImprovements: ['dutch-windmill'],
+            majorImprovements: ['fireplace-2'],
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
 
@@ -996,53 +1008,83 @@ describe('BaseA Cards', () => {
     })
 
     describe("Shepherd's Crook", () => {
-      test('gives 2 sheep when fencing a pasture of 4+ spaces', () => {
+      test('gives 2 sheep when fencing a 4-space pasture via Fencing action', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            wood: 5,
+            wood: 15,
             minorImprovements: ['shepherds-crook'],
-            farmyard: {
-              pastures: [
-                { spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }, { row: 2, col: 0 }, { row: 2, col: 1 }] },
-              ],
-            },
           },
+        })
+        game.testSetBreakpoint('initialization-complete', (game) => {
+          game.state.activeActions.push('fencing')
+          game.state.actionSpaces['fencing'] = { occupiedBy: null }
         })
         game.run()
 
+        t.choose(game, 'Fencing')
+
+        // Select 4 empty spaces for pasture via action response
+        const sel = game.waiting.selectors[0]
+        game.respondToInputRequest({
+          actor: sel.actor,
+          title: sel.title,
+          selection: {
+            action: 'build-pasture',
+            spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }, { row: 1, col: 1 }, { row: 1, col: 2 }],
+          },
+        })
+        t.choose(game, 'Done building fences')
+
         const dennis = t.player(game)
-        const card = res.getCardById('shepherds-crook')
-
-        // Hook is called with the newly-built pasture
-        const pasture = dennis.farmyard.pastures[0]
-        card.onBuildPasture(game, dennis, pasture)
-
-        expect(dennis.getTotalAnimals('sheep')).toBe(2)
+        t.testBoard(game, {
+          dennis: {
+            wood: 7, // 15 - 8 fences
+            sheep: 2,
+            minorImprovements: ['shepherds-crook'],
+            farmyard: { pastures: 1 },
+            score: dennis.calculateScore(),
+          },
+        })
       })
 
       test('does not give sheep for pastures smaller than 4 spaces', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
-            wood: 5,
+            wood: 15,
             minorImprovements: ['shepherds-crook'],
-            farmyard: {
-              pastures: [
-                { spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }, { row: 2, col: 0 }] },
-              ],
-            },
           },
+        })
+        game.testSetBreakpoint('initialization-complete', (game) => {
+          game.state.activeActions.push('fencing')
+          game.state.actionSpaces['fencing'] = { occupiedBy: null }
         })
         game.run()
 
+        t.choose(game, 'Fencing')
+
+        // Select 2 empty spaces for a small pasture
+        const sel = game.waiting.selectors[0]
+        game.respondToInputRequest({
+          actor: sel.actor,
+          title: sel.title,
+          selection: {
+            action: 'build-pasture',
+            spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }],
+          },
+        })
+        t.choose(game, 'Done building fences')
+
         const dennis = t.player(game)
-        const card = res.getCardById('shepherds-crook')
-
-        const pasture = dennis.farmyard.pastures[0]
-        card.onBuildPasture(game, dennis, pasture)
-
-        expect(dennis.getTotalAnimals('sheep')).toBe(0)
+        t.testBoard(game, {
+          dennis: {
+            wood: 9, // 15 - 6 fences
+            minorImprovements: ['shepherds-crook'],
+            farmyard: { pastures: 1 },
+            score: dennis.calculateScore(),
+          },
+        })
       })
     })
   })

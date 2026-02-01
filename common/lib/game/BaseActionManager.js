@@ -27,6 +27,11 @@ class BaseActionManager {
 
     const selected = this.game.requestInputSingle(chooseSelector)
 
+    // Action-based responses (e.g. board clicks) return an object, not an array
+    if (selected && selected.action) {
+      return selected
+    }
+
     this._validateChooseResponse(selected, chooseSelector)
 
     if (selected.length === 0) {
