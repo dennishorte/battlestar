@@ -11,7 +11,7 @@
         v-for="imp in improvements"
         :key="imp.id"
         class="improvement-card"
-        :class="{ taken: imp.taken, selectable: isSelectable(imp) }"
+        :class="{ unavailable: imp.unavailable, selectable: isSelectable(imp) }"
         :title="imp.description"
         @click="handleClick(imp)"
       >
@@ -75,12 +75,12 @@ export default {
 
     improvements() {
       return MAJOR_IMPROVEMENTS.map(imp => {
-        const taken = !this.availableIds.includes(imp.id)
+        const unavailable = !this.availableIds.includes(imp.id)
         let owner = null
 
         let ownerColor = null
 
-        if (taken) {
+        if (unavailable) {
           // Find who owns it
           for (const player of this.game.players.all()) {
             if (player.majorImprovements && player.majorImprovements.includes(imp.id)) {
@@ -91,12 +91,12 @@ export default {
           }
         }
 
-        return { ...imp, taken, owner, ownerColor }
+        return { ...imp, unavailable, owner, ownerColor }
       })
     },
 
     availableCount() {
-      return this.improvements.filter(imp => !imp.taken).length
+      return this.improvements.filter(imp => !imp.unavailable).length
     },
 
     totalCount() {
@@ -114,7 +114,7 @@ export default {
     },
 
     isSelectable(imp) {
-      if (imp.taken) {
+      if (imp.unavailable) {
         return false
       }
 
@@ -224,7 +224,7 @@ export default {
   filter: brightness(0.95);
 }
 
-.improvement-card.taken {
+.improvement-card.unavailable {
   background-color: #f5f5f5;
   opacity: 0.6;
 }
