@@ -1807,4 +1807,180 @@ describe('Agricola', () => {
       expect(scoreWith - scoreWithout).toBe(5)
     })
   })
+
+  describe('anytime food conversion', () => {
+
+    function respondConvertToFood(game, option) {
+      const request = game.waiting
+      const selector = request.selectors[0]
+      return game.respondToInputRequest({
+        actor: selector.actor,
+        title: selector.title,
+        selection: { action: 'convert-to-food', option },
+      })
+    }
+
+    test('getAnytimeFoodConversionOptions returns basic options for grain and vegetables', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: { grain: 2, vegetables: 1 },
+      })
+      game.run()
+
+      const dennis = t.player(game)
+      const options = game.getAnytimeFoodConversionOptions(dennis)
+
+      expect(options).toEqual(expect.arrayContaining([
+        expect.objectContaining({ type: 'basic', resource: 'grain', food: 1 }),
+        expect.objectContaining({ type: 'basic', resource: 'vegetables', food: 1 }),
+      ]))
+    })
+
+    test('getAnytimeFoodConversionOptions returns cooking options with Fireplace', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          majorImprovements: ['fireplace-2'],
+          farmyard: {
+            pastures: [{ spaces: [{ row: 1, col: 0 }], animals: { sheep: 2 } }],
+          },
+        },
+      })
+      game.run()
+
+      const dennis = t.player(game)
+      const options = game.getAnytimeFoodConversionOptions(dennis)
+
+      expect(options).toEqual(expect.arrayContaining([
+        expect.objectContaining({ type: 'cook', resource: 'sheep', food: 2 }),
+      ]))
+    })
+
+    test('getAnytimeFoodConversionOptions returns empty when no convertible resources', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: { food: 5 },
+      })
+      game.run()
+
+      const dennis = t.player(game)
+      const options = game.getAnytimeFoodConversionOptions(dennis)
+      expect(options).toEqual([])
+    })
+
+    test('executeAnytimeFoodConversion converts grain to food', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: { grain: 3, food: 0 },
+      })
+      game.run()
+
+      const dennis = t.player(game)
+      game.executeAnytimeFoodConversion(dennis, {
+        type: 'basic', resource: 'grain', count: 1, food: 1,
+      })
+      expect(dennis.grain).toBe(2)
+      expect(dennis.food).toBe(1)
+    })
+
+    test('executeAnytimeFoodConversion cooks animal', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          majorImprovements: ['fireplace-2'],
+          food: 0,
+          farmyard: {
+            pastures: [{ spaces: [{ row: 1, col: 0 }], animals: { sheep: 2 } }],
+          },
+        },
+      })
+      game.run()
+
+      const dennis = t.player(game)
+      game.executeAnytimeFoodConversion(dennis, {
+        type: 'cook', resource: 'sheep', count: 1, food: 2,
+      })
+      expect(dennis.getTotalAnimals('sheep')).toBe(1)
+      expect(dennis.food).toBe(2)
+    })
+
+    test('choose override intercepts convert-to-food and re-presents choices', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: { grain: 2, food: 0 },
+      })
+      game.run()
+
+      // First request: action space selection. Convert grain to food, then choose action.
+      const request = game.waiting
+      expect(request.selectors[0].foodConversionOptions).toBeDefined()
+      expect(request.selectors[0].foodConversionOptions.length).toBeGreaterThan(0)
+
+      // Send convert-to-food action
+      respondConvertToFood(game, {
+        type: 'basic', resource: 'grain', count: 1, food: 1,
+      })
+
+      // Should re-present the same selector (action space choice)
+      const dennis = t.player(game)
+      expect(dennis.grain).toBe(1)
+      expect(dennis.food).toBe(1)
+
+      // Game should still be waiting for action selection
+      const request2 = game.waiting
+      expect(request2).toBeInstanceOf(InputRequestEvent)
+    })
+
+    test('foodConversionOptions not present when no conversions available', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: { food: 5 },
+      })
+      game.run()
+
+      const request = game.waiting
+      expect(request.selectors[0].foodConversionOptions).toBeUndefined()
+    })
+
+    test('player with 0 food + grain can enter occupation flow via anytime conversion', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          food: 0,
+          grain: 2,
+          hand: ['wood-cutter'],
+          occupationsPlayed: 1,
+        },
+      })
+      game.run()
+
+      // Choose the Lessons action space
+      t.choose(game, 'Lessons')
+
+      // Should be at occupation selection (not blocked by food gate)
+      const request = game.waiting
+      expect(request.selectors[0].title).toMatch(/Occupation/)
+
+      // Convert grain to food first
+      respondConvertToFood(game, {
+        type: 'basic', resource: 'grain', count: 1, food: 1,
+      })
+
+      const dennis = t.player(game)
+      expect(dennis.food).toBe(1)
+      expect(dennis.grain).toBe(1)
+
+      // Now select the occupation
+      t.choose(game, 'Wood Cutter')
+
+      // Re-fetch dennis after full replay
+      const d = t.player(game)
+
+      // Occupation was played, food deducted, grain spent
+      expect(d.playedOccupations).toContain('wood-cutter')
+      expect(d.occupationsPlayed).toBeGreaterThanOrEqual(1)
+      expect(d.grain).toBe(1)  // 2 - 1 converted
+      expect(d.food).toBe(0)   // 0 + 1 converted - 1 occupation cost
+    })
+  })
 })

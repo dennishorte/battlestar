@@ -8,6 +8,29 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   // ---------------------------------------------------------------------------
+  // Anytime food conversion support
+  // ---------------------------------------------------------------------------
+
+  choose(player, choicesOrFn, opts = {}) {
+    while (true) {
+      const choices = typeof choicesOrFn === 'function' ? choicesOrFn() : choicesOrFn
+      const conversionOptions = this.game.getAnytimeFoodConversionOptions(player)
+
+      const result = super.choose(player, choices, {
+        ...opts,
+        foodConversionOptions: conversionOptions.length > 0 ? conversionOptions : undefined,
+      })
+
+      if (result && result.action === 'convert-to-food') {
+        this.game.executeAnytimeFoodConversion(player, result.option)
+        continue
+      }
+
+      return result
+    }
+  }
+
+  // ---------------------------------------------------------------------------
   // Resource collection actions
   // ---------------------------------------------------------------------------
 
@@ -576,16 +599,17 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     const imp = player.getBakingImprovement()
-    const maxBake = imp.abilities.bakingLimit || player.grain
 
-    // Ask how much to bake
-    const choices = []
-    for (let i = 1; i <= Math.min(maxBake, player.grain); i++) {
-      choices.push(`Bake ${i} grain`)
-    }
-    choices.push('Do not bake')
-
-    const selection = this.choose(player, choices, {
+    // Ask how much to bake (function wrapper: grain count may change via anytime conversion)
+    const selection = this.choose(player, () => {
+      const maxBake = imp.abilities.bakingLimit || player.grain
+      const choices = []
+      for (let i = 1; i <= Math.min(maxBake, player.grain); i++) {
+        choices.push(`Bake ${i} grain`)
+      }
+      choices.push('Do not bake')
+      return choices
+    }, {
       title: 'How much grain to bake?',
       min: 1,
       max: 1,
@@ -959,11 +983,15 @@ class AgricolaActionManager extends BaseActionManager {
     const cost = player.occupationsPlayed === 0 ? 0 : 1
 
     if (cost > 0 && player.food < cost) {
-      this.log.add({
-        template: '{player} cannot afford to play an occupation (needs {cost} food)',
-        args: { player, cost },
-      })
-      return false
+      // Relax gate: allow entry if anytime conversions can produce food
+      const canConvert = this.game.getAnytimeFoodConversionOptions(player).length > 0
+      if (!canConvert) {
+        this.log.add({
+          template: '{player} cannot afford to play an occupation (needs {cost} food)',
+          args: { player, cost },
+        })
+        return false
+      }
     }
 
     // Filter to playable occupations (meet prerequisites)
@@ -1056,28 +1084,32 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     // Filter to playable minor improvements (can afford and meet prerequisites)
+    // Relax gate: if conversions exist, enter choose anyway (function rebuilds list after conversion)
     const playableMinor = minorInHand.filter(cardId => {
       return player.canPlayCard(cardId)
     })
 
     if (playableMinor.length === 0) {
-      this.log.add({
-        template: '{player} cannot afford any minor improvements',
-        args: { player },
-      })
-      return false
+      const canConvert = this.game.getAnytimeFoodConversionOptions(player).length > 0
+      if (!canConvert) {
+        this.log.add({
+          template: '{player} cannot afford any minor improvements',
+          args: { player },
+        })
+        return false
+      }
     }
 
-    // Build choices with card names and costs
-    const choices = playableMinor.map(cardId => {
-      const card = this.game.cards.byId(cardId)
-      return card ? card.name : cardId
-    })
-
-    // Add option to not play
-    choices.push('Do not play a minor improvement')
-
-    const selection = this.choose(player, choices, {
+    // Build choices with function wrapper (minor affordability may change via anytime conversion)
+    const selection = this.choose(player, () => {
+      const currentPlayable = minorInHand.filter(cardId => player.canPlayCard(cardId))
+      const choices = currentPlayable.map(cardId => {
+        const card = this.game.cards.byId(cardId)
+        return card ? card.name : cardId
+      })
+      choices.push('Do not play a minor improvement')
+      return choices
+    }, {
       title: 'Play a Minor Improvement',
       min: 1,
       max: 1,
@@ -1090,8 +1122,9 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
-    // Find the card id by name
-    const cardId = playableMinor.find(id => {
+    // Find the card id by name (re-filter to get current playable list)
+    const currentPlayable = minorInHand.filter(cardId => player.canPlayCard(cardId))
+    const cardId = currentPlayable.find(id => {
       const card = this.game.cards.byId(id)
       return card && card.name === selectedName
     })
@@ -1128,62 +1161,85 @@ class AgricolaActionManager extends BaseActionManager {
   // ---------------------------------------------------------------------------
 
   buyImprovement(player, allowMajor, allowMinor) {
-    // Build nested choices for improvements
-    const nestedChoices = []
-
-    // Get affordable major improvements
-    let affordableMajorIds = []
-    if (allowMajor) {
-      const availableImprovements = this.game.getAvailableMajorImprovements()
-      affordableMajorIds = availableImprovements.filter(id => player.canBuyMajorImprovement(id))
-      if (affordableMajorIds.length > 0) {
-        const majorChoices = affordableMajorIds.map(id => {
-          const imp = this.game.cards.byId(id)
-          return imp.name + ` (${id})`
-        })
-        nestedChoices.push({
-          title: 'Major Improvement',
-          choices: majorChoices,
-          min: 0,
-          max: 1,
-        })
+    // Check if any improvements are available at all (relaxed gate for anytime conversions)
+    const hasAnyPossibility = () => {
+      if (allowMajor) {
+        const availableImprovements = this.game.getAvailableMajorImprovements()
+        if (availableImprovements.some(id => player.canBuyMajorImprovement(id))) {
+          return true
+        }
       }
-    }
-
-    // Get playable minor improvements
-    let playableMinorIds = []
-    if (allowMinor) {
-      const minorInHand = player.hand.filter(cardId => {
-        const card = this.game.cards.byId(cardId)
-        return card && card.type === 'minor'
-      })
-      playableMinorIds = minorInHand.filter(cardId => player.canPlayCard(cardId))
-      if (playableMinorIds.length > 0) {
-        const minorChoices = playableMinorIds.map(cardId => {
+      if (allowMinor) {
+        const minorInHand = player.hand.filter(cardId => {
           const card = this.game.cards.byId(cardId)
-          return card ? card.name : cardId
+          return card && card.type === 'minor'
         })
-        nestedChoices.push({
-          title: 'Minor Improvement',
-          choices: minorChoices,
-          min: 0,
-          max: 1,
-        })
+        if (minorInHand.some(cardId => player.canPlayCard(cardId))) {
+          return true
+        }
       }
-    }
-
-    if (nestedChoices.length === 0) {
-      this.log.add({
-        template: '{player} has no affordable improvements',
-        args: { player },
-      })
       return false
     }
 
-    // Add option to not play
-    nestedChoices.push('Do not play an improvement')
+    if (!hasAnyPossibility()) {
+      const canConvert = this.game.getAnytimeFoodConversionOptions(player).length > 0
+      if (!canConvert) {
+        this.log.add({
+          template: '{player} has no affordable improvements',
+          args: { player },
+        })
+        return false
+      }
+    }
 
-    const selection = this.choose(player, nestedChoices, {
+    // Build nested choices with function wrapper (minor affordability may change via anytime conversion)
+    const selection = this.choose(player, () => {
+      const nestedChoices = []
+
+      // Get affordable major improvements
+      if (allowMajor) {
+        const availableImprovements = this.game.getAvailableMajorImprovements()
+        const affordableMajorIds = availableImprovements.filter(id => player.canBuyMajorImprovement(id))
+        if (affordableMajorIds.length > 0) {
+          const majorChoices = affordableMajorIds.map(id => {
+            const imp = this.game.cards.byId(id)
+            return imp.name + ` (${id})`
+          })
+          nestedChoices.push({
+            title: 'Major Improvement',
+            choices: majorChoices,
+            min: 0,
+            max: 1,
+          })
+        }
+      }
+
+      // Get playable minor improvements
+      if (allowMinor) {
+        const minorInHand = player.hand.filter(cardId => {
+          const card = this.game.cards.byId(cardId)
+          return card && card.type === 'minor'
+        })
+        const playableMinorIds = minorInHand.filter(cardId => player.canPlayCard(cardId))
+        if (playableMinorIds.length > 0) {
+          const minorChoices = playableMinorIds.map(cardId => {
+            const card = this.game.cards.byId(cardId)
+            return card ? card.name : cardId
+          })
+          nestedChoices.push({
+            title: 'Minor Improvement',
+            choices: minorChoices,
+            min: 0,
+            max: 1,
+          })
+        }
+      }
+
+      // Add option to not play
+      nestedChoices.push('Do not play an improvement')
+
+      return nestedChoices
+    }, {
       title: 'Choose an Improvement',
       min: 1,
       max: 1,
@@ -1228,7 +1284,12 @@ class AgricolaActionManager extends BaseActionManager {
       }
 
       if (choice.title === 'Minor Improvement') {
-        // Find the card id by name
+        // Find the card id by name (re-filter for current state)
+        const minorInHand = player.hand.filter(cardId => {
+          const card = this.game.cards.byId(cardId)
+          return card && card.type === 'minor'
+        })
+        const playableMinorIds = minorInHand.filter(cardId => player.canPlayCard(cardId))
         const cardId = playableMinorIds.find(id => {
           const card = this.game.cards.byId(id)
           return card && card.name === selectedName
@@ -1283,46 +1344,48 @@ class AgricolaActionManager extends BaseActionManager {
   // ---------------------------------------------------------------------------
 
   renovationAndImprovement(player, availableImprovements, allowMinor = false) {
-    const choices = []
-
-    // Check for affordable major improvements
-    const hasAffordableMajor = availableImprovements.some(id =>
+    // Check if there are any options at all (relaxed gate for anytime conversions)
+    const hasAffordableMajor = () => availableImprovements.some(id =>
       player.canBuyMajorImprovement(id)
     )
+    const hasAffordableMinor = () => allowMinor && player.hand.some(cardId => {
+      const card = this.game.cards.byId(cardId)
+      return card && card.type === 'minor' && player.canPlayCard(cardId)
+    })
+    const canRenovate = player.canRenovate()
 
-    // Check for playable minor improvements
-    let hasAffordableMinor = false
-    if (allowMinor) {
-      hasAffordableMinor = player.hand.some(cardId => {
-        const card = this.game.cards.byId(cardId)
-        return card && card.type === 'minor' && player.canPlayCard(cardId)
-      })
-    }
-
-    const hasAffordableImprovement = hasAffordableMajor || hasAffordableMinor
-
-    if (player.canRenovate()) {
-      choices.push('Renovate')
-      if (hasAffordableImprovement) {
-        choices.push('Renovate then Improvement')
+    if (!canRenovate && !hasAffordableMajor() && !hasAffordableMinor()) {
+      const canConvert = this.game.getAnytimeFoodConversionOptions(player).length > 0
+      if (!canConvert) {
+        this.log.add({
+          template: '{player} cannot renovate or afford improvements',
+          args: { player },
+        })
+        return false
       }
     }
 
-    if (hasAffordableImprovement) {
-      choices.push('Improvement Only')
-    }
+    // Function wrapper: improvement affordability may change via anytime conversion
+    const selection = this.choose(player, () => {
+      const choices = []
+      const hasMajor = hasAffordableMajor()
+      const hasMinor = hasAffordableMinor()
+      const hasImprovement = hasMajor || hasMinor
 
-    if (choices.length === 0) {
-      this.log.add({
-        template: '{player} cannot renovate or afford improvements',
-        args: { player },
-      })
-      return false
-    }
+      if (player.canRenovate()) {
+        choices.push('Renovate')
+        if (hasImprovement) {
+          choices.push('Renovate then Improvement')
+        }
+      }
 
-    choices.push('Do Nothing')
+      if (hasImprovement) {
+        choices.push('Improvement Only')
+      }
 
-    const selection = this.choose(player, choices, {
+      choices.push('Do Nothing')
+      return choices
+    }, {
       title: 'Choose action',
       min: 1,
       max: 1,
@@ -1816,7 +1879,11 @@ class AgricolaActionManager extends BaseActionManager {
    */
   offerPayFoodForStone(player, card) {
     if (player.food < 1) {
-      return
+      // Relax gate: allow entry if anytime conversions can produce food
+      const canConvert = this.game.getAnytimeFoodConversionOptions(player).length > 0
+      if (!canConvert) {
+        return
+      }
     }
 
     const rooms = player.getRoomCount()

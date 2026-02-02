@@ -956,7 +956,8 @@ const occupations = [
           template: '{player} gets 1 food and 1 wood from Lutenist',
           args: { player: cardOwner },
         })
-        if (cardOwner.food >= 2) {
+        // Relax gate: allow entry if anytime conversions can produce food
+        if (cardOwner.food >= 2 || game.getAnytimeFoodConversionOptions(cardOwner).length > 0) {
           const choices = ['Buy 1 vegetable for 2 food', 'Skip']
           const selection = game.actions.choose(cardOwner, choices, {
             title: 'Lutenist: Buy a vegetable?',

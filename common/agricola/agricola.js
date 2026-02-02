@@ -1237,6 +1237,88 @@ Agricola.prototype.postBreedingPhase = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Helper Methods
 
+Agricola.prototype.getAnytimeFoodConversionOptions = function(player) {
+  const options = []
+
+  // Basic conversions (always available, 1:1 ratio)
+  if (player.grain > 0) {
+    options.push({
+      type: 'basic',
+      resource: 'grain',
+      count: 1,
+      food: 1,
+      description: 'Convert 1 grain to 1 food',
+    })
+  }
+  if (player.vegetables > 0) {
+    options.push({
+      type: 'basic',
+      resource: 'vegetables',
+      count: 1,
+      food: 1,
+      description: 'Convert 1 vegetable to 1 food',
+    })
+  }
+
+  // Cooking conversions (requires Fireplace or Cooking Hearth)
+  if (player.hasCookingAbility()) {
+    const imp = player.getCookingImprovement()
+    const rates = imp.abilities.cookingRates
+    const animals = player.getAllAnimals()
+
+    for (const [type, count] of Object.entries(animals)) {
+      if (count > 0) {
+        const food = rates[type]
+        options.push({
+          type: 'cook',
+          resource: type,
+          count: 1,
+          food,
+          description: `Cook 1 ${type} for ${food} food`,
+        })
+      }
+    }
+
+    // Cook vegetables at improvement rate (better than basic 1:1)
+    if (player.vegetables > 0) {
+      const food = rates.vegetables
+      options.push({
+        type: 'cook-vegetable',
+        resource: 'vegetables',
+        count: 1,
+        food,
+        description: `Cook 1 vegetable for ${food} food`,
+      })
+    }
+  }
+
+  return options
+}
+
+Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
+  if (option.type === 'basic') {
+    player.convertToFood(option.resource, option.count)
+    this.log.add({
+      template: '{player} converts {count} {resource} to {food} food',
+      args: { player, count: option.count, resource: option.resource, food: option.food },
+    })
+  }
+  else if (option.type === 'cook') {
+    const food = player.cookAnimal(option.resource, option.count)
+    this.log.add({
+      template: '{player} cooks {count} {resource} for {food} food',
+      args: { player, count: option.count, resource: option.resource, food },
+    })
+  }
+  else if (option.type === 'cook-vegetable') {
+    const food = player.cookVegetable(option.count)
+    this.log.add({
+      template: '{player} cooks {count} vegetable(s) for {food} food',
+      args: { player, count: option.count, food },
+    })
+  }
+}
+
 Agricola.prototype.getAvailableMajorImprovements = function() {
   const majorZone = this.zones.byId('common.majorImprovements')
   return majorZone.cardlist().map(c => c.id)
