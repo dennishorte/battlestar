@@ -166,6 +166,8 @@ export default {
 
 .card-name {
   flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card-cost {
