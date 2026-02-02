@@ -25,7 +25,7 @@
           </span>
           <span
             class="owner-dot"
-            v-if="imp.taken"
+            v-if="imp.owner"
             :style="{ backgroundColor: imp.ownerColor }"
             :title="imp.owner"
           />

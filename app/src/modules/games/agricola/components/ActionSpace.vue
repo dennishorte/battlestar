@@ -194,6 +194,9 @@ export default {
 .action-name {
   font-weight: 500;
   font-size: .85em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .accumulated {
