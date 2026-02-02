@@ -925,7 +925,7 @@ const occupations = [
     category: 'Building Resource Provider',
     text: 'When you play this card, you can immediately pay 1 food to get 1 stone for each room you have.',
     onPlay(game, player) {
-      if (player.food >= 1) {
+      if (player.food >= 1 || game.getAnytimeFoodConversionOptions(player).length > 0) {
         game.actions.offerPayFoodForStone(player, this)
       }
     },
@@ -1112,7 +1112,7 @@ const occupations = [
     category: 'Livestock Provider',
     text: 'Each time you use the "Grain Seeds" action space, you can also buy 1 cattle for 1 food.',
     onAction(game, player, actionId) {
-      if (actionId === 'take-grain' && player.food >= 1) {
+      if (actionId === 'take-grain' && (player.food >= 1 || game.getAnytimeFoodConversionOptions(player).length > 0)) {
         game.actions.offerBuyAnimal(player, this, 'cattle')
       }
     },

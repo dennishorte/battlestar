@@ -466,7 +466,7 @@ Agricola.prototype.collectScheduledResources = function(player) {
  * Offer player the option to plow a field for 1 food (Plow Driver)
  */
 Agricola.prototype.offerPlowForFood = function(player, card) {
-  if (player.food < 1) {
+  if (player.food < 1 && this.getAnytimeFoodConversionOptions(player).length === 0) {
     return
   }
 

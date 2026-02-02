@@ -561,7 +561,7 @@ const occupations = [
     category: 'Farm Planner',
     text: 'Once you live in a stone house, at the start of each round, you can pay 1 food to plow 1 field.',
     onRoundStart(game, player) {
-      if (player.roomType === 'stone' && player.food >= 1) {
+      if (player.roomType === 'stone' && (player.food >= 1 || game.getAnytimeFoodConversionOptions(player).length > 0)) {
         game.offerPlowForFood(player, this)
       }
     },
@@ -914,7 +914,7 @@ const occupations = [
         'take-boar': 'boar',
         'take-cattle': 'cattle',
       }
-      if (animalMarkets[actionId] && player.food >= 1) {
+      if (animalMarkets[actionId] && (player.food >= 1 || game.getAnytimeFoodConversionOptions(player).length > 0)) {
         game.actions.offerBuyAnimal(player, this, animalMarkets[actionId])
       }
     },

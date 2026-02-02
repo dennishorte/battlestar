@@ -1620,7 +1620,7 @@ class AgricolaActionManager extends BaseActionManager {
    * Offer to buy additional animal (Animal Dealer)
    */
   offerBuyAnimal(player, card, animalType) {
-    if (player.food < 1) {
+    if (player.food < 1 && this.game.getAnytimeFoodConversionOptions(player).length === 0) {
       return
     }
     if (!player.canPlaceAnimals(animalType, 1)) {
