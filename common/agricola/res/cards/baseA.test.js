@@ -905,8 +905,12 @@ describe('BaseA Cards', () => {
         const fields = []
         for (let row = 0; row < 3; row++) {
           for (let col = 0; col < 5; col++) {
-            if (row === 0 && col === 0) continue // room
-            if (row === 1 && col === 0) continue // room
+            if (row === 0 && col === 0) {
+              continue // room
+            }
+            if (row === 1 && col === 0) {
+              continue // room
+            }
             fields.push({ row, col })
           }
         }
