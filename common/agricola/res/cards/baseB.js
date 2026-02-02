@@ -14,8 +14,37 @@ const minorImprovements = [
     passLeft: true,
     category: 'Farm Planner',
     text: 'Immediately fence a farmyard space, without paying wood for the fences. (If you already have pastures, the new one must be adjacent to an existing one.)',
-    onPlay() {
-      return { fenceOneSpaceFree: true }
+    onPlay(game, player) {
+      const fenceableSpaces = player.getFenceableSpaces()
+      if (fenceableSpaces.length === 0) {
+        game.log.add({
+          template: '{player} has no valid space to fence',
+          args: { player },
+        })
+        return
+      }
+
+      const spaceChoices = fenceableSpaces.map(s => `${s.row},${s.col}`)
+      const selection = game.actions.choose(player, spaceChoices, {
+        title: 'Mini Pasture: Choose a space to fence (free)',
+        min: 1,
+        max: 1,
+      })
+
+      const [row, col] = selection[0].split(',').map(Number)
+
+      // Build pasture for free — temporarily give wood so buildPasture validation passes
+      const savedWood = player.wood
+      player.wood = 100
+      player.buildPasture([{ row, col }])
+      player.wood = savedWood
+
+      game.log.add({
+        template: '{player} fences a space for free using Mini Pasture',
+        args: { player },
+      })
+
+      game.actions.callOnBuildPastureHooks(player, player.farmyard.pastures[player.farmyard.pastures.length - 1])
     },
   },
   {
@@ -79,8 +108,8 @@ const minorImprovements = [
         args: { player },
       })
     },
-    onRenovate() {
-      return { freeStable: true }
+    onRenovate(game, player) {
+      game.actions.buildFreeStable(player)
     },
   },
   {
@@ -103,7 +132,7 @@ const minorImprovements = [
     onAction(game, player, actionId) {
       if (actionId === 'plow-field' && player.moldboardPlowCharges > 0) {
         player.moldboardPlowCharges--
-        return { additionalPlow: true }
+        game.actions.plowField(player)
       }
     },
   },
@@ -134,8 +163,12 @@ const minorImprovements = [
         args: { player },
       })
     },
-    onPlayOccupation() {
-      return { additionalBake: true }
+    onPlayOccupation(game, player) {
+      game.log.add({
+        template: '{player} gets an additional Bake Bread action from Bread Paddle',
+        args: { player },
+      })
+      game.actions.bakeBread(player)
     },
   },
   {
@@ -558,7 +591,31 @@ const occupations = [
     text: 'Each time you use the "Day Laborer" action space, you can also either build exactly 1 room or renovate your house. Either way, you have to pay the cost.',
     onAction(game, player, actionId) {
       if (actionId === 'day-laborer') {
-        return { mayBuildRoomOrRenovate: true }
+        const choices = []
+        if (player.canAffordRoom() && player.getValidRoomBuildSpaces().length > 0) {
+          choices.push('Build Room')
+        }
+        if (player.canRenovate()) {
+          choices.push('Renovate')
+        }
+
+        if (choices.length === 0) {
+          return
+        }
+        choices.push('Do Nothing')
+
+        const selection = game.actions.choose(player, choices, {
+          title: `${this.name}: Build a room or renovate?`,
+          min: 1,
+          max: 1,
+        })
+
+        if (selection[0] === 'Build Room') {
+          game.actions.buildRoom(player)
+        }
+        else if (selection[0] === 'Renovate') {
+          game.actions.renovate(player)
+        }
       }
     },
   },
@@ -580,7 +637,7 @@ const occupations = [
     },
     onRoundStart(game, player) {
       if (player.roomType === 'stone' && player.wood >= 1) {
-        return { mayBuildStableForWood: true }
+        game.actions.offerBuildStableForWood(player, this)
       }
     },
   },
@@ -595,7 +652,7 @@ const occupations = [
     text: 'Each time you use the "Day Laborer" action space, you can also plow 1 field.',
     onAction(game, player, actionId) {
       if (actionId === 'day-laborer') {
-        return { additionalPlow: true }
+        game.actions.plowField(player)
       }
     },
   },
@@ -629,7 +686,7 @@ const occupations = [
     text: 'Once you live in a stone house, at the start of each round, you can play an occupation for an occupation cost of 1 food, or a minor improvement (by paying its cost).',
     onRoundStart(game, player) {
       if (player.roomType === 'stone') {
-        return { mayPlayOccupationOrImprovement: true }
+        game.actions.offerPlayOccupationOrImprovement(player, this)
       }
     },
   },
@@ -772,7 +829,11 @@ const occupations = [
     text: 'Each time you use a wood accumulation space, you get an additional "Bake Bread" action.',
     onAction(game, player, actionId) {
       if (actionId === 'take-wood' || actionId === 'copse') {
-        return { additionalBake: true }
+        game.log.add({
+          template: '{player} gets an additional Bake Bread action from Oven Firing Boy',
+          args: { player },
+        })
+        game.actions.bakeBread(player)
       }
     },
   },
@@ -787,7 +848,7 @@ const occupations = [
     text: 'Immediately before playing each occupation after this one, you can pay 1 wood total to get 1 food for each occupation you have in front of you.',
     onPlayOccupation(game, player) {
       if (player.wood >= 1) {
-        return { mayPayWoodForOccupationFood: true }
+        game.actions.offerPayWoodForOccupationFood(player, this)
       }
     },
   },
@@ -807,7 +868,7 @@ const occupations = [
           template: '{player} gets 1 food from Childless',
           args: { player },
         })
-        return { chooseResource: ['grain', 'vegetables'] }
+        game.actions.offerResourceChoice(player, this, ['grain', 'vegetables'])
       }
     },
   },
@@ -865,7 +926,7 @@ const occupations = [
     text: 'When you play this card, you can immediately pay 1 food to get 1 stone for each room you have.',
     onPlay(game, player) {
       if (player.food >= 1) {
-        return { mayPayFoodForStone: true }
+        game.actions.offerPayFoodForStone(player, this)
       }
     },
   },
@@ -978,7 +1039,7 @@ const occupations = [
     text: 'Each time you use the "Resource Market" action space, you also get your choice of 1 clay or 1 grain.',
     onAction(game, player, actionId) {
       if (actionId === 'resource-market') {
-        return { chooseResource: ['clay', 'grain'] }
+        game.actions.offerResourceChoice(player, this, ['clay', 'grain'])
       }
     },
   },
@@ -1052,7 +1113,7 @@ const occupations = [
     text: 'Each time you use the "Grain Seeds" action space, you can also buy 1 cattle for 1 food.',
     onAction(game, player, actionId) {
       if (actionId === 'take-grain' && player.food >= 1) {
-        return { mayBuyAnimal: 'cattle' }
+        game.actions.offerBuyAnimal(player, this, 'cattle')
       }
     },
   },

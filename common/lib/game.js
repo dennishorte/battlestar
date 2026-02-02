@@ -530,6 +530,11 @@ Game.prototype._tryToAutomaticallyRespond = function(selectors) {
       return undefined
     }
 
+    // Selectors that accept action-based input (e.g. board clicks) cannot auto-respond
+    if (sel.allowsAction) {
+      return undefined
+    }
+
     // Don't try to understand nested structures.
     for (const choice of sel.choices) {
       if (choice.choices) {

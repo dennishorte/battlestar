@@ -37,6 +37,7 @@ TestUtil.fixture = function(options) {
     playerOptions: {
       shuffleSeats: false,
     },
+    cardSets: ['baseA'],
   }, options)
 
   options.players = options.players.slice(0, options.numPlayers)
@@ -44,9 +45,35 @@ TestUtil.fixture = function(options) {
   const game = AgricolaFactory(options, 'dennis')
 
   game.testSetBreakpoint('initialization-complete', () => {
-    // Test setup can go here
+
   })
 
+  return game
+}
+
+TestUtil.fixtureMinorImprovement = function(cardId, options, state) {
+  const card = res.getCardById(cardId)
+
+  // Make sure the player is holding the card.
+  state.dennis.hand = [cardId]
+
+  const game = TestUtil.fixture(options)
+  TestUtil.setBoard(game, state)
+
+  game.run()
+  const request = TestUtil.choose(game, 'Meeting Place')
+  TestUtil.choose(game, 'Minor Improvement.' + card.name)
+  return game
+}
+
+TestUtil.fixtureOccupation = function(cardId, options, state) {
+  const card = res.getCardById(cardId)
+  state.dennis.hand = [cardId]
+  const game = TestUtil.fixture(options)
+  TestUtil.setBoard(game, state)
+  game.run()
+  TestUtil.choose(game, 'Lessons')
+  TestUtil.choose(game, card.name)
   return game
 }
 
@@ -290,9 +317,15 @@ TestUtil.buildStables = function(player, positions) {
 }
 
 TestUtil.testBoard = function(game, expected) {
+  const playerNames = game.players.all().map(p => p.name)
+  for (const playerName of playerNames) {
+    const expectedPlayerState = expected[playerName] || {}
+    TestUtil.testPlayerState(playerName, expectedPlayerState)
+  }
+
   for (const [key, value] of Object.entries(expected)) {
-    if (key === 'dennis' || key === 'micah' || key === 'scott' || key === 'eliya' || key === 'tom') {
-      this.testPlayerState(game, key, value)
+    if (playerNames.includes(key)) {
+      continue // already tested
     }
     else if (key === 'round') {
       expect(game.state.round).toBe(value)
@@ -397,19 +430,12 @@ TestUtil.testScoring = function(player, expected) {
 TestUtil.setBoard = function(game, state) {
   game.testSetBreakpoint('initialization-complete', (game) => {
     // Set round/stage
-    if (state.round !== undefined) {
-      game.state.round = state.round
-      game.state.stage = res.constants.roundToStage[state.round] || 1
-    }
-    if (state.stage !== undefined) {
-      game.state.stage = state.stage
-    }
+    game.state.round = state.round || 1
+    game.state.stage = res.constants.roundToStage[state.round] || 1
 
     // Set player states
-    for (const playerName of ['dennis', 'micah', 'scott', 'eliya', 'tom']) {
-      if (state[playerName]) {
-        TestUtil.setPlayerBoard(game, playerName, state[playerName])
-      }
+    for (const playerName of game.players.all().map(p => p.name)) {
+      TestUtil.setPlayerBoard(game, playerName, state[playerName] || {})
     }
 
     // availableMajorImprovements is now zone-backed, no direct state manipulation needed
@@ -419,60 +445,46 @@ TestUtil.setBoard = function(game, state) {
 TestUtil.setPlayerBoard = function(game, playerName, playerState) {
   const player = game.players.byName(playerName)
   if (!player) {
-    return
+    throw new Error('Player not found: ' + playerName)
   }
 
   // Set resources
   const resources = ['food', 'wood', 'clay', 'stone', 'reed', 'grain', 'vegetables']
   for (const resource of resources) {
-    if (playerState[resource] !== undefined) {
-      player[resource] = playerState[resource]
-    }
+    player[resource] = playerState[resource] || 0
   }
 
   // Set family members
-  if (playerState.familyMembers !== undefined) {
-    player.familyMembers = playerState.familyMembers
-    player.availableWorkers = playerState.familyMembers
-  }
+  player.familyMembers = playerState.familyMembers || 2
+  player.availableWorkers = playerState.familyMembers || 2
 
   // Set room type
-  if (playerState.roomType !== undefined) {
-    player.roomType = playerState.roomType
-    // Update existing rooms
-    for (let row = 0; row < res.constants.farmyardRows; row++) {
-      for (let col = 0; col < res.constants.farmyardCols; col++) {
-        if (player.farmyard.grid[row][col].type === 'room') {
-          player.farmyard.grid[row][col].roomType = playerState.roomType
-        }
+  player.roomType = playerState.roomType || 'wood'
+  // Update existing rooms
+  for (let row = 0; row < res.constants.farmyardRows; row++) {
+    for (let col = 0; col < res.constants.farmyardCols; col++) {
+      if (player.farmyard.grid[row][col].type === 'room') {
+        player.farmyard.grid[row][col].roomType = playerState.roomType
       }
     }
   }
 
   // Set begging cards
-  if (playerState.beggingCards !== undefined) {
-    player.beggingCards = playerState.beggingCards
+  player.beggingCards = playerState.beggingCards || 0
+
+  // Set occupations played count
+  if (playerState.occupationsPlayed !== undefined) {
+    player.occupationsPlayed = playerState.occupationsPlayed
   }
 
   // Set bonus points
-  if (playerState.bonusPoints !== undefined) {
-    player.bonusPoints = playerState.bonusPoints
-  }
+  player.bonusPoints = playerState.bonusPoints || 0
 
   // Set cards via zones and card manager
-  if (playerState.hand !== undefined) {
-    TestUtil.setPlayerCards(game, player, 'hand', playerState.hand)
-  }
-  if (playerState.occupations !== undefined) {
-    TestUtil.setPlayerCards(game, player, 'occupations', playerState.occupations)
-    player.occupationsPlayed = playerState.occupations.length
-  }
-  if (playerState.minorImprovements !== undefined) {
-    TestUtil.setPlayerCards(game, player, 'minorImprovements', playerState.minorImprovements)
-  }
-  if (playerState.majorImprovements !== undefined) {
-    TestUtil.setPlayerMajorImprovements(game, player, playerState.majorImprovements)
-  }
+  TestUtil.setPlayerCards(game, player, 'hand', playerState.hand || [])
+  TestUtil.setPlayerCards(game, player, 'occupations', playerState.occupations || [])
+  TestUtil.setPlayerCards(game, player, 'minorImprovements', playerState.minorImprovements || [])
+  TestUtil.setPlayerMajorImprovements(game, player, playerState.majorImprovements || [])
 
   // Set farmyard
   if (playerState.farmyard) {
@@ -575,16 +587,12 @@ TestUtil.testBoard = function(game, expected) {
   if (expected.round !== undefined && game.state.round !== expected.round) {
     errors.push(`round: expected ${expected.round}, got ${game.state.round}`)
   }
-  if (expected.stage !== undefined && game.state.stage !== expected.stage) {
-    errors.push(`stage: expected ${expected.stage}, got ${game.state.stage}`)
-  }
 
   // Test player states
-  for (const playerName of ['dennis', 'micah', 'scott', 'eliya', 'tom']) {
-    if (expected[playerName]) {
-      const playerErrors = TestUtil.testPlayerBoard(game, playerName, expected[playerName])
-      errors.push(...playerErrors.map(e => `${playerName}.${e}`))
-    }
+  const playerNames = game.players.all().map(p => p.name)
+  for (const playerName of playerNames) {
+    const playerErrors = TestUtil.testPlayerBoard(game, playerName, expected[playerName] || {})
+    errors.push(...playerErrors.map(e => `${playerName}.${e}`))
   }
 
   if (errors.length > 0) {
@@ -596,60 +604,61 @@ TestUtil.testPlayerBoard = function(game, playerName, expected) {
   const player = game.players.byName(playerName)
   const errors = []
 
+  if (!player) {
+    errors.push(`Player does not exist: ${playerName}`)
+    return errors
+  }
+
   // Test resources
   const resources = ['food', 'wood', 'clay', 'stone', 'reed', 'grain', 'vegetables']
   for (const resource of resources) {
-    if (expected[resource] !== undefined && player[resource] !== expected[resource]) {
-      errors.push(`${resource}: expected ${expected[resource]}, got ${player[resource]}`)
+    const expectedResource = expected[resource] || 0
+    if (player[resource] !== expectedResource) {
+      errors.push(`${resource}: expected ${expectedResource}, got ${player[resource]}`)
     }
   }
 
   // Test family
-  if (expected.familyMembers !== undefined && player.familyMembers !== expected.familyMembers) {
-    errors.push(`familyMembers: expected ${expected.familyMembers}, got ${player.familyMembers}`)
+  const expectedFamilyMembers = expected.familyMembers || 2
+  if (player.familyMembers !== expectedFamilyMembers) {
+    errors.push(`familyMembers: expected ${expectedFamilyMembers}, got ${player.familyMembers}`)
   }
 
   // Test room type
-  if (expected.roomType !== undefined && player.roomType !== expected.roomType) {
-    errors.push(`roomType: expected ${expected.roomType}, got ${player.roomType}`)
+  const expectedRoomType = expected.roomType || 'wood'
+  if (player.roomType !== expectedRoomType) {
+    errors.push(`roomType: expected ${expectedRoomType}, got ${player.roomType}`)
   }
 
   // Test begging cards
-  if (expected.beggingCards !== undefined && player.beggingCards !== expected.beggingCards) {
-    errors.push(`beggingCards: expected ${expected.beggingCards}, got ${player.beggingCards}`)
+  const expectedBeggingCards = expected.beggingCards || 0
+  if (player.beggingCards !== expectedBeggingCards) {
+    errors.push(`beggingCards: expected ${expectedBeggingCards}, got ${player.beggingCards}`)
   }
 
   // Test cards
-  if (expected.hand !== undefined) {
-    const actualHand = [...player.hand].sort()
-    const expectedHand = [...expected.hand].sort()
-    if (JSON.stringify(actualHand) !== JSON.stringify(expectedHand)) {
-      errors.push(`hand: expected [${expectedHand}], got [${actualHand}]`)
-    }
+  const actualHand = [...player.hand].sort()
+  const expectedHand = expected.hand ? [...expected.hand].sort() : []
+  if (JSON.stringify(actualHand) !== JSON.stringify(expectedHand)) {
+    errors.push(`hand: expected [${expectedHand}], got [${actualHand}]`)
   }
 
-  if (expected.occupations !== undefined) {
-    const actual = [...player.playedOccupations].sort()
-    const exp = [...expected.occupations].sort()
-    if (JSON.stringify(actual) !== JSON.stringify(exp)) {
-      errors.push(`occupations: expected [${exp}], got [${actual}]`)
-    }
+  const actualOccupations = [...player.playedOccupations].sort()
+  const expectedOccupations = expected.occupations ? [...expected.occupations].sort() : []
+  if (JSON.stringify(actualOccupations) !== JSON.stringify(expectedOccupations)) {
+    errors.push(`occupations: expected [${expectedOccupations}], got [${actualOccupations}]`)
   }
 
-  if (expected.minorImprovements !== undefined) {
-    const actual = [...player.playedMinorImprovements].sort()
-    const exp = [...expected.minorImprovements].sort()
-    if (JSON.stringify(actual) !== JSON.stringify(exp)) {
-      errors.push(`minorImprovements: expected [${exp}], got [${actual}]`)
-    }
+  const actualMinorImprovements = [...player.playedMinorImprovements].sort()
+  const expectedMinorImprovements = expected.minorImprovements ? [...expected.minorImprovements].sort() : []
+  if (JSON.stringify(actualMinorImprovements) !== JSON.stringify(expectedMinorImprovements)) {
+    errors.push(`minorImprovements: expected [${expectedMinorImprovements}], got [${actualMinorImprovements}]`)
   }
 
-  if (expected.majorImprovements !== undefined) {
-    const actual = [...player.majorImprovements].sort()
-    const exp = [...expected.majorImprovements].sort()
-    if (JSON.stringify(actual) !== JSON.stringify(exp)) {
-      errors.push(`majorImprovements: expected [${exp}], got [${actual}]`)
-    }
+  const actualMajorImprovements = [...player.majorImprovements].sort()
+  const expectedMajorImprovements = expected.majorImprovements ? [...expected.majorImprovements].sort() : []
+  if (JSON.stringify(actualMajorImprovements) !== JSON.stringify(expectedMajorImprovements)) {
+    errors.push(`majorImprovements: expected [${expectedMajorImprovements}], got [${actualMajorImprovements}]`)
   }
 
   // Test animals
@@ -694,11 +703,10 @@ TestUtil.testPlayerBoard = function(game, playerName, expected) {
   }
 
   // Test score
-  if (expected.score !== undefined) {
-    const actual = player.calculateScore()
-    if (actual !== expected.score) {
-      errors.push(`score: expected ${expected.score}, got ${actual}`)
-    }
+  const actualScore = player.calculateScore()
+  const expectedScore = expected.score !== undefined ? expected.score : -14
+  if (actualScore !== expectedScore) {
+    errors.push(`score: expected ${expectedScore}, got ${actualScore}`)
   }
 
   return errors

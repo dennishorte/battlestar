@@ -317,7 +317,32 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   renovate(player) {
-    if (!player.canRenovate()) {
+    // Check if Conservator allows direct wood→stone renovation
+    let targetType
+    if (player.roomType === 'wood' && player.canRenovateDirectlyToStone()) {
+      const canClay = player.canRenovate()       // standard wood→clay
+      const canStone = player.canRenovate('stone') // direct wood→stone
+
+      if (canClay && canStone) {
+        const selection = this.choose(player, ['Renovate to Clay', 'Renovate to Stone'], {
+          title: 'Choose renovation type',
+          min: 1,
+          max: 1,
+        })
+        targetType = selection[0] === 'Renovate to Stone' ? 'stone' : undefined
+      }
+      else if (canStone) {
+        targetType = 'stone'
+      }
+      else if (!canClay) {
+        this.log.add({
+          template: '{player} cannot afford to renovate',
+          args: { player },
+        })
+        return false
+      }
+    }
+    else if (!player.canRenovate()) {
       this.log.add({
         template: '{player} cannot afford to renovate',
         args: { player },
@@ -326,7 +351,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     const oldType = player.roomType
-    player.renovate()
+    player.renovate(targetType)
     const newType = player.roomType
 
     this.log.add({
@@ -651,8 +676,8 @@ class AgricolaActionManager extends BaseActionManager {
     let continueBuilding = true
 
     while (continueBuilding) {
-      // Check if player can build any fences
-      if (player.wood < 1) {
+      // Check if player can build any fences (accounting for free fences from cards)
+      if (player.wood < 1 && player.getFreeFenceCount() === 0) {
         if (totalFencesBuilt === 0) {
           this.log.add({
             template: '{player} has no wood for fences',
@@ -686,7 +711,7 @@ class AgricolaActionManager extends BaseActionManager {
       totalFencesBuilt += result.fencesBuilt
 
       // Ask if player wants to build another pasture
-      if (player.wood >= 1 && remainingFences - result.fencesBuilt > 0) {
+      if ((player.wood >= 1 || player.getFreeFenceCount() > 0) && remainingFences - result.fencesBuilt > 0) {
         const continueChoice = this.choose(player, ['Build another pasture', 'Done building fences'], {
           title: 'Continue fencing?',
           min: 1,
@@ -1004,6 +1029,9 @@ class AgricolaActionManager extends BaseActionManager {
     if (card.hasHook('onPlay')) {
       card.callHook('onPlay', this.game, player)
     }
+
+    // Call onPlayOccupation hooks on all active cards
+    this.game.callPlayerCardHook(player, 'onPlayOccupation')
 
     return true
   }
@@ -1328,10 +1356,10 @@ class AgricolaActionManager extends BaseActionManager {
     if (player.canRenovate()) {
       choices.push('Renovate')
     }
-    if (player.wood >= 1) {
+    if (player.wood >= 1 || player.getFreeFenceCount() > 0) {
       choices.push('Build Fences')
     }
-    if (player.canRenovate() && player.wood >= 1) {
+    if (player.canRenovate() && (player.wood >= 1 || player.getFreeFenceCount() > 0)) {
       choices.push('Renovate then Fences')
     }
 
@@ -1479,34 +1507,7 @@ class AgricolaActionManager extends BaseActionManager {
    * Call onAction hook on player's active cards
    */
   callOnActionHooks(player, actionId) {
-    const results = this.game.callPlayerCardHook(player, 'onAction', actionId)
-    for (const { card, result } of results) {
-      // Handle special return values from onAction
-      if (result.additionalBake) {
-        // Threshing Board: extra bake action
-        this.log.add({
-          template: '{player} gets an additional Bake Bread action from {card}',
-          args: { player, card: card.name },
-        })
-        this.bake(player)
-      }
-      if (result.mayExchangeWoodForFood) {
-        // Basket, Mushroom Collector: offer to exchange wood for food
-        this.offerWoodForFoodExchange(player, card, result.mayExchangeWoodForFood)
-      }
-      if (result.mayBuyAnimal) {
-        // Animal Dealer: offer to buy additional animal
-        this.offerBuyAnimal(player, card, result.mayBuyAnimal)
-      }
-      if (result.mayPayWoodForBonus) {
-        // Harpooner: offer to pay wood for food bonus
-        this.offerHarpoonerBonus(player, card)
-      }
-      if (result.chooseResource) {
-        // Seasonal Worker: choose grain or vegetable
-        this.offerResourceChoice(player, card, result.chooseResource)
-      }
-    }
+    this.game.callPlayerCardHook(player, 'onAction', actionId)
   }
 
   /**
@@ -1538,7 +1539,7 @@ class AgricolaActionManager extends BaseActionManager {
     })
 
     if (selection[0] !== 'Skip') {
-      player.spendResource('wood', exchange.wood)
+      player.removeResource('wood', exchange.wood)
       player.addResource('food', exchange.food)
       this.log.add({
         template: '{player} exchanges {wood} wood for {food} food using {card}',
@@ -1574,7 +1575,7 @@ class AgricolaActionManager extends BaseActionManager {
     })
 
     if (selection[0] !== 'Skip') {
-      player.spendResource('food', 1)
+      player.removeResource('food', 1)
       player.addAnimals(animalType, 1)
       this.log.add({
         template: '{player} buys 1 {animal} for 1 food using {card}',
@@ -1603,7 +1604,7 @@ class AgricolaActionManager extends BaseActionManager {
     })
 
     if (selection[0] !== 'Skip') {
-      player.spendResource('wood', 1)
+      player.removeResource('wood', 1)
       player.addResource('food', foodBonus)
       player.addResource('reed', 1)
       this.log.add({
@@ -1667,6 +1668,176 @@ class AgricolaActionManager extends BaseActionManager {
    */
   callOnBuildImprovementHooks(player) {
     this.game.callPlayerCardHook(player, 'onBuildImprovement')
+  }
+
+  /**
+   * Build a free stable (Mining Hammer)
+   */
+  buildFreeStable(player) {
+    const validSpaces = player.getValidStableBuildSpaces()
+    if (validSpaces.length === 0) {
+      this.log.add({
+        template: '{player} has no valid space for a stable',
+        args: { player },
+      })
+      return
+    }
+
+    const spaceChoices = validSpaces.map(s => `${s.row},${s.col}`)
+    spaceChoices.push('Skip')
+    const selection = this.choose(player, spaceChoices, {
+      title: 'Mining Hammer: Build a free stable?',
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const [row, col] = selection[0].split(',').map(Number)
+      player.buildStable(row, col)
+
+      this.log.add({
+        template: '{player} builds a free stable using Mining Hammer',
+        args: { player },
+      })
+    }
+  }
+
+  /**
+   * Offer to build a stable for 1 wood (Groom)
+   */
+  offerBuildStableForWood(player, card) {
+    if (player.wood < 1) {
+      return
+    }
+
+    const validSpaces = player.getValidStableBuildSpaces()
+    if (validSpaces.length === 0) {
+      return
+    }
+
+    const spaceChoices = validSpaces.map(s => `Build stable at ${s.row},${s.col}`)
+    spaceChoices.push('Skip')
+    const selection = this.choose(player, spaceChoices, {
+      title: `${card.name}: Build a stable for 1 wood?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const match = selection[0].match(/(\d+),(\d+)/)
+      if (match) {
+        const row = parseInt(match[1])
+        const col = parseInt(match[2])
+        player.removeResource('wood', 1)
+        player.buildStable(row, col)
+        this.log.add({
+          template: '{player} builds a stable for 1 wood using {card}',
+          args: { player, card: card.name },
+        })
+      }
+    }
+  }
+
+  /**
+   * Offer to play an occupation or minor improvement (Scholar)
+   */
+  offerPlayOccupationOrImprovement(player, card) {
+    const choices = []
+    const hasOccupation = player.hand.some(cardId => {
+      const c = this.game.cards.byId(cardId)
+      return c && c.type === 'occupation'
+    })
+    const hasMinor = player.hand.some(cardId => {
+      const c = this.game.cards.byId(cardId)
+      return c && c.type === 'minor'
+    })
+
+    if (hasOccupation) {
+      choices.push('Play an occupation')
+    }
+    if (hasMinor) {
+      choices.push('Play a minor improvement')
+    }
+    choices.push('Skip')
+
+    if (choices.length === 1) {
+      return // Only Skip available
+    }
+
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Play a card?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] === 'Play an occupation') {
+      this.playOccupation(player)
+    }
+    else if (selection[0] === 'Play a minor improvement') {
+      this.buyMinorImprovement(player)
+    }
+  }
+
+  /**
+   * Offer to pay 1 wood to reduce occupation food cost (Paper Maker)
+   */
+  offerPayWoodForOccupationFood(player, card) {
+    if (player.wood < 1) {
+      return
+    }
+
+    const foodGain = player.occupationsPlayed
+    if (foodGain <= 0) {
+      return
+    }
+
+    const choices = [
+      `Pay 1 wood for ${foodGain} food`,
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Pay wood for food?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.removeResource('wood', 1)
+      player.addResource('food', foodGain)
+      this.log.add({
+        template: '{player} pays 1 wood for {food} food using {card}',
+        args: { player, food: foodGain, card: card.name },
+      })
+    }
+  }
+
+  /**
+   * Offer to pay food for stone (Roof Ballaster)
+   */
+  offerPayFoodForStone(player, card) {
+    if (player.food < 1) {
+      return
+    }
+
+    const rooms = player.getRoomCount()
+    const choices = [
+      `Pay 1 food for ${rooms} stone`,
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Pay food for stone?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.removeResource('food', 1)
+      player.addResource('stone', rooms)
+      this.log.add({
+        template: '{player} pays 1 food for {stone} stone using {card}',
+        args: { player, stone: rooms, card: card.name },
+      })
+    }
   }
 
   /**

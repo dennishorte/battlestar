@@ -132,7 +132,11 @@ const minorImprovements = [
     text: 'Each time you use the "Farmland" or "Cultivation" action space, you get an additional "Bake Bread" action.',
     onAction(game, player, actionId) {
       if (actionId === 'plow-field' || actionId === 'plow-sow') {
-        return { additionalBake: true }
+        game.log.add({
+          template: '{player} gets an additional Bake Bread action from Threshing Board',
+          args: { player },
+        })
+        game.actions.bakeBread(player)
       }
     },
   },
@@ -335,7 +339,7 @@ const minorImprovements = [
     onAction(game, player, actionId) {
       if (actionId === 'take-wood' || actionId === 'copse') {
         if (player.wood >= 2) {
-          return { mayExchangeWoodForFood: { wood: 2, food: 3 } }
+          game.actions.offerWoodForFoodExchange(player, this, { wood: 2, food: 3 })
         }
       }
     },
@@ -514,9 +518,8 @@ const occupations = [
     players: '1+',
     category: 'Farm Planner',
     text: 'When you play this card, you immediately get your choice of 1 wood or 1 grain. Instead of just 1 animal total, you can keep any 1 animal in each room of your house.',
-    onPlay() {
-      // Player chooses wood or grain
-      return { chooseResource: ['wood', 'grain'] }
+    onPlay(game, player) {
+      game.actions.offerResourceChoice(player, this, ['wood', 'grain'])
     },
     modifyHouseAnimalCapacity(player) {
       // Instead of 1 pet total, 1 per room
@@ -559,7 +562,7 @@ const occupations = [
     text: 'Once you live in a stone house, at the start of each round, you can pay 1 food to plow 1 field.',
     onRoundStart(game, player) {
       if (player.roomType === 'stone' && player.food >= 1) {
-        return { mayPlowForFood: true }
+        game.offerPlowForFood(player, this)
       }
     },
   },
@@ -613,7 +616,7 @@ const occupations = [
     onAction(game, player, actionId) {
       if (actionId === 'take-wood' || actionId === 'copse') {
         if (player.wood >= 1) {
-          return { mayExchangeWoodForFood: { wood: 1, food: 2 } }
+          game.actions.offerWoodForFoodExchange(player, this, { wood: 1, food: 2 })
         }
       }
     },
@@ -715,7 +718,7 @@ const occupations = [
     onAction(game, player, actionId) {
       if (actionId === 'day-laborer') {
         if (game.state.round >= 6) {
-          return { chooseResource: ['grain', 'vegetables'] }
+          game.actions.offerResourceChoice(player, this, ['grain', 'vegetables'])
         }
         else {
           player.addResource('grain', 1)
@@ -876,7 +879,7 @@ const occupations = [
     text: 'Each time you use the "Fishing" accumulation space you can also pay 1 wood to get 1 food for each person you have, and 1 reed.',
     onAction(game, player, actionId) {
       if (actionId === 'fishing' && player.wood >= 1) {
-        return { mayPayWoodForBonus: true }
+        game.actions.offerHarpoonerBonus(player, this)
       }
     },
   },
@@ -912,7 +915,7 @@ const occupations = [
         'take-cattle': 'cattle',
       }
       if (animalMarkets[actionId] && player.food >= 1) {
-        return { mayBuyAnimal: animalMarkets[actionId] }
+        game.actions.offerBuyAnimal(player, this, animalMarkets[actionId])
       }
     },
   },
@@ -954,7 +957,20 @@ const occupations = [
           args: { player: cardOwner },
         })
         if (cardOwner.food >= 2) {
-          return { mayBuyVegetable: true }
+          const choices = ['Buy 1 vegetable for 2 food', 'Skip']
+          const selection = game.actions.choose(cardOwner, choices, {
+            title: 'Lutenist: Buy a vegetable?',
+            min: 1,
+            max: 1,
+          })
+          if (selection[0] !== 'Skip') {
+            cardOwner.removeResource('food', 2)
+            cardOwner.addResource('vegetables', 1)
+            game.log.add({
+              template: '{player} buys 1 vegetable for 2 food using Lutenist',
+              args: { player: cardOwner },
+            })
+          }
         }
       }
     },
