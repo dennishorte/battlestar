@@ -500,7 +500,7 @@ export default {
   position: absolute;
   top: 1px;
   right: 2px;
-  font-size: .9em;
+  font-size: 1.4em;
   color: #654321;
 }
 
