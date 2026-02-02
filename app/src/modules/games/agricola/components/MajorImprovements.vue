@@ -23,9 +23,12 @@
           <span v-for="(amount, resource) in imp.cost" :key="resource" class="cost-item">
             {{ amount }} {{ resourceIcon(resource) }}
           </span>
-        </div>
-        <div class="improvement-owner" v-if="imp.taken">
-          {{ imp.owner }}
+          <span
+            class="owner-dot"
+            v-if="imp.taken"
+            :style="{ backgroundColor: imp.ownerColor }"
+            :title="imp.owner"
+          />
         </div>
       </div>
     </div>
@@ -75,17 +78,20 @@ export default {
         const taken = !this.availableIds.includes(imp.id)
         let owner = null
 
+        let ownerColor = null
+
         if (taken) {
           // Find who owns it
           for (const player of this.game.players.all()) {
             if (player.majorImprovements && player.majorImprovements.includes(imp.id)) {
               owner = player.name
+              ownerColor = player.color
               break
             }
           }
         }
 
-        return { ...imp, taken, owner }
+        return { ...imp, taken, owner, ownerColor }
       })
     },
 
@@ -264,10 +270,13 @@ export default {
   color: #666;
 }
 
-.improvement-owner {
-  margin-top: .25em;
-  font-size: .75em;
-  font-style: italic;
-  color: #888;
+.owner-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid #333;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 </style>
