@@ -1,5 +1,5 @@
 <template>
-  <div class="round-info">
+  <div class="round-info" @click="ui.fn.showGameOverview()">
     <div class="round-stage">
       <span class="round-label">Round</span>
       <span class="round-number">{{ game.state.round }}</span>
@@ -26,7 +26,7 @@
 export default {
   name: 'RoundInfo',
 
-  inject: ['game'],
+  inject: ['game', 'ui'],
 
   data() {
     return {
@@ -53,6 +53,7 @@ export default {
   border-radius: .5em;
   padding: .75em;
   margin-bottom: 1em;
+  cursor: pointer;
 }
 
 .round-stage {

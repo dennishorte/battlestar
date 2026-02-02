@@ -37,6 +37,7 @@
       </template>
     </ModalBase>
 
+    <GameOverviewModal />
     <ActionSpaceModal />
     <CardViewerModal />
     <ScoreBreakdownModal />
@@ -83,6 +84,7 @@ import ScoreTable from './ScoreTable.vue'
 // Modals
 import ActionSpaceModal from './ActionSpaceModal.vue'
 import CardViewerModal from './CardViewerModal.vue'
+import GameOverviewModal from './GameOverviewModal.vue'
 import ScoreBreakdownModal from './ScoreBreakdownModal.vue'
 import DebugModal from '@/modules/games/common/components/DebugModal.vue'
 
@@ -109,6 +111,7 @@ export default {
 
     ActionSpaceModal,
     CardViewerModal,
+    GameOverviewModal,
     ScoreBreakdownModal,
     DebugModal,
   },
@@ -120,6 +123,7 @@ export default {
           insertSelectorSubtitles: this.insertSelectorSubtitles,
           showActionSpace: this.showActionSpace,
           showCard: this.showCard,
+          showGameOverview: this.showGameOverview,
           showScoreBreakdown: this.showScoreBreakdown,
           selectorOptionComponent: this.selectorOptionComponent,
           confirmFencing: this.confirmFencing,
@@ -294,6 +298,10 @@ export default {
 
     showScores() {
       this.$modal('agricola-scores').show()
+    },
+
+    showGameOverview() {
+      this.$modal('agricola-game-overview').show()
     },
 
     showActionSpace(actionId) {
