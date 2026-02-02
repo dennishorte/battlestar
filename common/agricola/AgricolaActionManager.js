@@ -1806,7 +1806,7 @@ class AgricolaActionManager extends BaseActionManager {
       player.addResource('food', foodGain)
       this.log.add({
         template: '{player} pays 1 wood for {food} food using {card}',
-        args: { player, food: foodGain, card: card.name },
+        args: { player, food: foodGain, card: card },
       })
     }
   }
