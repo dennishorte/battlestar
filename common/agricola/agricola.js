@@ -980,6 +980,7 @@ Agricola.prototype.harvestPhase = function() {
 
 Agricola.prototype.fieldPhase = function() {
   this.log.add({ template: 'Field Phase: Harvesting crops' })
+  this.log.indent()
 
   // Record last harvest round for Dutch Windmill
   this.state.lastHarvestRound = this.state.round
@@ -997,10 +998,12 @@ Agricola.prototype.fieldPhase = function() {
 
   // Call onHarvest hooks (e.g., Scythe Worker gives bonus grain)
   this.callHarvestHooks()
+  this.log.outdent()
 }
 
 Agricola.prototype.feedingPhase = function() {
   this.log.add({ template: 'Feeding Phase' })
+  this.log.indent()
 
   for (const player of this.players.all()) {
     const required = player.getFoodRequired()
@@ -1033,6 +1036,8 @@ Agricola.prototype.feedingPhase = function() {
       })
     }
   }
+
+  this.log.outdent()
 }
 
 Agricola.prototype.allowFoodConversion = function(player, required) {
@@ -1135,6 +1140,7 @@ Agricola.prototype.allowFoodConversion = function(player, required) {
 
 Agricola.prototype.breedingPhase = function() {
   this.log.add({ template: 'Breeding Phase' })
+  this.log.indent()
 
   for (const player of this.players.all()) {
     const bred = player.breedAnimals()
@@ -1158,6 +1164,8 @@ Agricola.prototype.breedingPhase = function() {
       })
     }
   }
+
+  this.log.outdent()
 }
 
 // Revised Edition: After breeding (non-final harvest only), players may cook/exchange animals
