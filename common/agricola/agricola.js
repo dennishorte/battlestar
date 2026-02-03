@@ -1175,6 +1175,15 @@ Agricola.prototype.postBreedingPhase = function() {
       continue
     }
 
+    // Only offer cooking if the player has more animals than they can house
+    const hasOverflow = ['sheep', 'boar', 'cattle'].some(type => {
+      return player.getTotalAnimals(type) > player.getTotalAnimalCapacity(type)
+    })
+
+    if (!hasOverflow) {
+      continue
+    }
+
     // Offer optional cooking
     let wantsToCook = true
     while (wantsToCook) {
