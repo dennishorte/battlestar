@@ -945,8 +945,8 @@ class AgricolaActionManager extends BaseActionManager {
       player.buyMajorImprovement(improvementId)
 
       this.log.add({
-        template: '{player} buys {improvement}',
-        args: { player, improvement: imp.name },
+        template: '{player} buys {card}',
+        args: { player, card: imp },
       })
 
       // Handle Well special effect
@@ -1075,8 +1075,8 @@ class AgricolaActionManager extends BaseActionManager {
     player.playCard(cardId)
 
     this.log.add({
-      template: '{player} plays {occupation}',
-      args: { player, occupation: card.name },
+      template: '{player} plays {card}',
+      args: { player, card: card },
     })
 
     // Execute onPlay effect if present
@@ -1164,8 +1164,8 @@ class AgricolaActionManager extends BaseActionManager {
     player.playCard(cardId)
 
     this.log.add({
-      template: '{player} plays {improvement}',
-      args: { player, improvement: card.name },
+      template: '{player} plays {card}',
+      args: { player, card: card },
     })
 
     // Execute onPlay effect if present
@@ -1293,8 +1293,8 @@ class AgricolaActionManager extends BaseActionManager {
           player.buyMajorImprovement(improvementId)
 
           this.log.add({
-            template: '{player} buys {improvement}',
-            args: { player, improvement: imp.name },
+            template: '{player} buys {card}',
+            args: { player, card: imp },
           })
 
           // Handle Well special effect
@@ -1326,8 +1326,8 @@ class AgricolaActionManager extends BaseActionManager {
           player.playCard(cardId)
 
           this.log.add({
-            template: '{player} plays {improvement}',
-            args: { player, improvement: card.name },
+            template: '{player} plays {card}',
+            args: { player, card: card },
           })
 
           // Execute onPlay effect if present
@@ -1632,7 +1632,7 @@ class AgricolaActionManager extends BaseActionManager {
       player.addResource('food', exchange.food)
       this.log.add({
         template: '{player} exchanges {wood} wood for {food} food using {card}',
-        args: { player, wood: exchange.wood, food: exchange.food, card: card.name },
+        args: { player, wood: exchange.wood, food: exchange.food, card: card },
       })
       // Put wood back on accumulation space (per card text)
       const actionSpace = this.game.state.actionSpaces['take-wood']
@@ -1668,7 +1668,7 @@ class AgricolaActionManager extends BaseActionManager {
       player.addAnimals(animalType, 1)
       this.log.add({
         template: '{player} buys 1 {animal} for 1 food using {card}',
-        args: { player, animal: animalType, card: card.name },
+        args: { player, animal: animalType, card: card },
       })
     }
   }
@@ -1698,7 +1698,7 @@ class AgricolaActionManager extends BaseActionManager {
       player.addResource('reed', 1)
       this.log.add({
         template: '{player} pays 1 wood for {food} food and 1 reed using {card}',
-        args: { player, food: foodBonus, card: card.name },
+        args: { player, food: foodBonus, card: card },
       })
     }
   }
@@ -1719,7 +1719,7 @@ class AgricolaActionManager extends BaseActionManager {
       player.addResource(chosen, 1)
       this.log.add({
         template: '{player} chooses 1 {resource} from {card}',
-        args: { player, resource: chosen, card: card.name },
+        args: { player, resource: chosen, card: card },
       })
     }
   }
@@ -1821,7 +1821,7 @@ class AgricolaActionManager extends BaseActionManager {
         player.buildStable(row, col)
         this.log.add({
           template: '{player} builds a stable for 1 wood using {card}',
-          args: { player, card: card.name },
+          args: { player, card: card },
         })
       }
     }
@@ -1928,7 +1928,7 @@ class AgricolaActionManager extends BaseActionManager {
       player.addResource('stone', rooms)
       this.log.add({
         template: '{player} pays 1 food for {stone} stone using {card}',
-        args: { player, stone: rooms, card: card.name },
+        args: { player, stone: rooms, card: card },
       })
     }
   }
@@ -1954,8 +1954,8 @@ class AgricolaActionManager extends BaseActionManager {
     card.moveTo(leftHandZone)
 
     this.log.add({
-      template: '{improvement} is passed to {playerNext}',
-      args: { improvement: card.name, playerNext: leftPlayer },
+      template: '{card} is passed to {playerNext}',
+      args: { card: card, playerNext: leftPlayer },
     })
   }
 }

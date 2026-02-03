@@ -17,10 +17,25 @@ export default {
   methods: {
     propFuncs() {
       return {
+        cardClick: this.cardClick,
+        cardClasses: this.cardClasses,
         chatColors: this.chatColors,
         lineClasses: this.lineClasses,
         lineStyles: this.lineStyles,
       }
+    },
+
+    cardClick(card) {
+      if (card && this.ui?.fn?.showCard) {
+        this.ui.fn.showCard(card.id, card.type)
+      }
+    },
+
+    cardClasses(card) {
+      if (!card) {
+        return []
+      }
+      return ['agricola-card', `card-type-${card.type || 'unknown'}`]
     },
 
     chatColors() {
@@ -151,6 +166,33 @@ export default {
 #gamelog :deep(.action-space) {
   font-style: italic;
   color: #2a5a1a;
+}
+
+#gamelog :deep(.card-name) {
+  display: inline-block;
+  padding: 0 .4em;
+  border-radius: .2em;
+  cursor: pointer;
+  border-left: 3px solid;
+}
+
+#gamelog :deep(.card-name.card-type-occupation) {
+  background-color: #fff3e0;
+  border-left-color: #ff9800;
+}
+
+#gamelog :deep(.card-name.card-type-minor) {
+  background-color: #e3f2fd;
+  border-left-color: #2196f3;
+}
+
+#gamelog :deep(.card-name.card-type-major) {
+  background-color: #fce4ec;
+  border-left-color: #e91e63;
+}
+
+#gamelog :deep(.card-name:hover) {
+  filter: brightness(0.92);
 }
 
 #gamelog :deep(.player-name) {
