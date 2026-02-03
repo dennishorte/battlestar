@@ -320,14 +320,40 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
+    // Build choices as coordinate strings for dropdown fallback
     const spaceChoices = validSpaces.map(s => `${s.row},${s.col}`)
-    const selection = this.choose(player, spaceChoices, {
+
+    // Request input - supports both dropdown selection and direct farm board clicks
+    const selector = {
+      type: 'select',
+      actor: player.name,
       title: 'Choose where to build the stable',
+      choices: spaceChoices,
       min: 1,
       max: 1,
-    })
+      // Mark this as accepting action-based input for stable building
+      allowsAction: 'build-stable',
+      validSpaces: validSpaces,
+    }
 
-    const [row, col] = selection[0].split(',').map(Number)
+    const result = this.game.requestInputSingle(selector)
+
+    // Handle action-based response (from clicking the farm board)
+    let row, col
+    if (result.action === 'build-stable') {
+      row = result.row
+      col = result.col
+      // Validate that the selected space is valid
+      const isValid = validSpaces.some(s => s.row === row && s.col === col)
+      if (!isValid) {
+        throw new Error(`Invalid stable space: (${row}, ${col}) is not a valid space to build a stable`)
+      }
+    }
+    else {
+      // Handle standard selection response
+      [row, col] = result[0].split(',').map(Number)
+    }
+
     player.payCost(res.buildingCosts.stable)
     player.buildStable(row, col)
 

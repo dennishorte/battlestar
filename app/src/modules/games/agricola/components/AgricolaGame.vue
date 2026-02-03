@@ -159,6 +159,11 @@ export default {
           active: false,
           validSpaces: [],
         },
+        // Stable building UI state
+        buildingStable: {
+          active: false,
+          validSpaces: [],
+        },
         // Sowing UI state
         sowing: {
           active: false,
@@ -224,6 +229,7 @@ export default {
           this.clearFencingState()
           this.clearPlowingState()
           this.clearBuildingRoomState()
+          this.clearBuildingStableState()
           this.clearSowingState()
           return
         }
@@ -246,11 +252,24 @@ export default {
           this.ui.buildingRoom.active = true
           this.ui.buildingRoom.validSpaces = request.validSpaces || []
           this.clearFencingState()
+          this.clearBuildingStableState()
           this.clearSowingState()
           return
         }
         else {
           this.clearBuildingRoomState()
+        }
+
+        // Check if this is a stable building action
+        if (request.allowsAction === 'build-stable') {
+          this.ui.buildingStable.active = true
+          this.ui.buildingStable.validSpaces = request.validSpaces || []
+          this.clearFencingState()
+          this.clearSowingState()
+          return
+        }
+        else {
+          this.clearBuildingStableState()
         }
 
         // Check if this is a sowing action
@@ -436,6 +455,11 @@ export default {
     clearBuildingRoomState() {
       this.ui.buildingRoom.active = false
       this.ui.buildingRoom.validSpaces = []
+    },
+
+    clearBuildingStableState() {
+      this.ui.buildingStable.active = false
+      this.ui.buildingStable.validSpaces = []
     },
 
     clearSowingState() {

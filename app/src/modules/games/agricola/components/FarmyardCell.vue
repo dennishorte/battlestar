@@ -88,6 +88,11 @@ export default {
       return this.ui.buildingRoom?.active && this.player.name === this.actor.name
     },
 
+    // Check if stable building mode is active and this is the viewing player's board
+    isBuildingStableActive() {
+      return this.ui.buildingStable?.active && this.player.name === this.actor.name
+    },
+
     // Check if sowing mode is active and this is the viewing player's board
     isSowingActive() {
       return this.ui.sowing?.active && this.player.name === this.actor.name
@@ -150,6 +155,15 @@ export default {
       return validSpaces.some(s => s.row === this.row && s.col === this.col)
     },
 
+    // Check if this cell can have a stable built on it
+    canBuildStable() {
+      if (!this.isBuildingStableActive) {
+        return false
+      }
+      const validSpaces = this.ui.buildingStable?.validSpaces || []
+      return validSpaces.some(s => s.row === this.row && s.col === this.col)
+    },
+
     // Check if this cell can be sown
     canSow() {
       if (!this.isSowingActive) {
@@ -201,6 +215,11 @@ export default {
       // Room building states
       if (this.canBuildRoom) {
         classes.push('build-room-selectable')
+      }
+
+      // Stable building states
+      if (this.canBuildStable) {
+        classes.push('build-stable-selectable')
       }
 
       // Sowing states
@@ -338,6 +357,18 @@ export default {
         this.bus.emit('submit-action', {
           actor: this.actor.name,
           action: 'build-room',
+          row: this.row,
+          col: this.col,
+        })
+        return
+      }
+
+      // Handle stable building clicks
+      if (this.canBuildStable) {
+        // Send a build-stable action directly to the game
+        this.bus.emit('submit-action', {
+          actor: this.actor.name,
+          action: 'build-stable',
           row: this.row,
           col: this.col,
         })
@@ -552,6 +583,17 @@ export default {
 .farmyard-cell.build-room-selectable:hover {
   filter: brightness(1.2);
   box-shadow: inset 0 0 0 3px #deb887;
+}
+
+/* Stable building states */
+.farmyard-cell.build-stable-selectable {
+  cursor: pointer;
+  box-shadow: inset 0 0 0 2px rgba(101, 67, 33, 0.7);
+}
+
+.farmyard-cell.build-stable-selectable:hover {
+  filter: brightness(1.2);
+  box-shadow: inset 0 0 0 3px #654321;
 }
 
 /* Sowing states */
