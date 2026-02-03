@@ -75,10 +75,6 @@ Agricola.prototype._mainProgram = function() {
     this.draftPhase()
   }
 
-  if (this.settings.version >= 2) {
-    this.chooseColors()
-  }
-
   this.mainLoop()
 }
 
@@ -682,17 +678,25 @@ Agricola.prototype.draftCardType = function(cardType, passDirection) {
 ////////////////////////////////////////////////////////////////////////////////
 // Color Selection
 
-Agricola.prototype.chooseColors = function() {
-  for (const player of this.players.all()) {
-    const availableColors = Object.entries(res.colors)
-      .filter(([, hex]) => !this.players.all().some(p => p.color === hex))
-      .map(([name]) => name)
-
-    const chosen = this.actions.choose(player, availableColors, {
-      title: 'Choose a player color',
-    })
-    player.color = res.colors[chosen]
+Agricola.prototype.chooseColor = function(player) {
+  // Only choose colors for version 2+ games
+  if (!this.settings.version || this.settings.version < 2) {
+    return
   }
+
+  // Skip if player already has a color
+  if (player.color) {
+    return
+  }
+
+  const availableColors = Object.entries(res.colors)
+    .filter(([, hex]) => !this.players.all().some(p => p.color === hex))
+    .map(([name]) => name)
+
+  const chosen = this.actions.choose(player, availableColors, {
+    title: 'Choose a player color',
+  })
+  player.color = res.colors[chosen]
 }
 
 
@@ -871,6 +875,9 @@ Agricola.prototype.workPhase = function() {
 }
 
 Agricola.prototype.playerTurn = function(player) {
+  // Choose color on first turn if not already set
+  this.chooseColor(player)
+
   const availableActions = this.getAvailableActions(player)
 
   if (availableActions.length === 0) {
