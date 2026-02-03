@@ -2,7 +2,7 @@
   <div class="settings-agricola">
     <div class="player-info">
       <span class="player-count">{{ playerCount }} player{{ playerCount !== 1 ? 's' : '' }}</span>
-      <span class="player-range">(1-5 players supported)</span>
+      <span class="player-range">(1-6 players supported)</span>
     </div>
 
     <div class="setting-group">
@@ -104,7 +104,7 @@ export default {
 
     updateValid() {
       const numPlayers = this.lobby.users.length
-      const playersCondition = 1 <= numPlayers && numPlayers <= 5
+      const playersCondition = 1 <= numPlayers && numPlayers <= 6
 
       const setIds = this.selectedCardSets
       if (setIds.length === 0) {

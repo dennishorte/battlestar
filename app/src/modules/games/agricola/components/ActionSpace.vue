@@ -1,14 +1,27 @@
 <template>
   <div
     class="action-space"
-    :class="{ occupied, selectable: isSelectable, selected: isSelected, clickable: true }"
+    :class="{
+      occupied,
+      blocked: isBlocked,
+      'not-yet-available': notYetAvailable,
+      selectable: isSelectable,
+      selected: isSelected,
+      clickable: true
+    }"
     @click="handleClick"
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
   >
     <div class="action-content">
       <span class="worker" v-if="occupied" :style="workerStyle" />
+      <span class="blocked-icon" v-if="isBlocked" title="Blocked by linked space">⛔</span>
       <div class="action-name">{{ action.name }}</div>
+
+      <!-- Round restriction indicator -->
+      <span class="round-restriction" v-if="notYetAvailable" :title="'Available from round ' + action.minRound">
+        R{{ action.minRound }}+
+      </span>
 
       <!-- Accumulated resources -->
       <div class="accumulated" v-if="showAccumulated">
@@ -68,6 +81,41 @@ export default {
 
     occupied() {
       return Boolean(this.actionState.occupiedBy)
+    },
+
+    isBlocked() {
+      return Boolean(this.actionState.blockedBy)
+    },
+
+    currentRound() {
+      return this.game.state.round || 1
+    },
+
+    notYetAvailable() {
+      if (!this.action?.minRound) {
+        return false
+      }
+      return this.currentRound < this.action.minRound
+    },
+
+    blockedBy() {
+      return this.actionState.blockedBy || ''
+    },
+
+    hasLinkedSpace() {
+      return Boolean(this.action?.linkedWith)
+    },
+
+    linkedSpaceName() {
+      if (!this.action?.linkedWith) {
+        return ''
+      }
+      const linkedAction = res.getActionById(this.action.linkedWith)
+      return linkedAction ? linkedAction.name : this.action.linkedWith
+    },
+
+    linkedSpaceTooltip() {
+      return `Linked with: ${this.linkedSpaceName}`
     },
 
     occupiedBy() {
@@ -187,6 +235,22 @@ export default {
   opacity: 0.8;
 }
 
+.action-space.blocked {
+  background-color: #ffebee;
+  border-color: #ef9a9a;
+  opacity: 0.7;
+}
+
+.action-space.not-yet-available {
+  background-color: #f0f0f0;
+  border-color: #ccc;
+  opacity: 0.5;
+}
+
+.action-space.not-yet-available .action-name {
+  color: #999;
+}
+
 .action-content {
   display: flex;
   align-items: center;
@@ -231,6 +295,21 @@ export default {
   height: 10px;
   border-radius: 50%;
   border: 1px solid #333;
+  flex-shrink: 0;
+}
+
+.blocked-icon {
+  font-size: .75em;
+  flex-shrink: 0;
+}
+
+.round-restriction {
+  font-size: .7em;
+  color: #666;
+  background-color: #e0e0e0;
+  padding: .1em .3em;
+  border-radius: .2em;
+  margin-left: auto;
   flex-shrink: 0;
 }
 </style>

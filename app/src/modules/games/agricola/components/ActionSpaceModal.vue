@@ -65,7 +65,31 @@
           <li v-if="action.allowsOccupation">Play occupation card</li>
           <li v-if="action.startsPlayer">Become starting player</li>
           <li v-if="action.allowsResourceChoice">Choose from: {{ resourceChoiceText }}</li>
+          <li v-if="action.allowsHouseBuilding">Build rooms (5 building material + 2 reed each)</li>
+          <li v-if="action.allowsAnimalMarket">Choose: Sheep (+1 food) or Cattle (costs 1 food)</li>
+          <li v-if="action.allowsFarmSupplies">Optional: Take 1 grain (pay 1 food) and/or Plow 1 field (pay 1 food)</li>
+          <li v-if="action.allowsBuildingSupplies">Take 1 food + choose (1 reed or 1 stone) + choose (1 wood or 1 clay)</li>
+          <li v-if="action.allowsCorral">Take 1 animal you don't have (sheep → boar → cattle)</li>
+          <li v-if="action.allowsSideJob">Build 1 stable (1 wood) + optional bake bread</li>
         </ul>
+      </div>
+
+      <!-- Linked Space Info -->
+      <div class="linked-section" v-if="hasLinkedSpace">
+        <div class="linked-badge">
+          <span class="linked-icon">🔗</span>
+          <span>Linked with: <strong>{{ linkedSpaceName }}</strong></span>
+        </div>
+        <div class="linked-explanation">
+          When this action is used, {{ linkedSpaceName }} becomes blocked for the rest of the round.
+        </div>
+      </div>
+
+      <!-- Min Round Restriction -->
+      <div class="restriction-section" v-if="action.minRound">
+        <div class="restriction-badge">
+          Available from Round {{ action.minRound }}
+        </div>
       </div>
 
       <!-- Occupied Status -->
@@ -76,9 +100,20 @@
         </div>
       </div>
 
+      <!-- Blocked Status -->
+      <div class="blocked-section" v-if="isBlocked">
+        <div class="blocked-badge">
+          <span class="blocked-icon">⛔</span>
+          <span>Blocked by linked space: <strong>{{ blockedByName }}</strong></span>
+        </div>
+      </div>
+
       <!-- Cannot choose message -->
       <div class="cannot-choose" v-if="isOccupied && isPlayerTurn">
         <em>This action space is already occupied</em>
+      </div>
+      <div class="cannot-choose" v-else-if="isBlocked && isPlayerTurn">
+        <em>This action space is blocked because its linked partner was used this round</em>
       </div>
     </div>
 
@@ -229,7 +264,13 @@ export default {
              this.action.allowsMinorImprovement ||
              this.action.allowsOccupation ||
              this.action.startsPlayer ||
-             this.action.allowsResourceChoice
+             this.action.allowsResourceChoice ||
+             this.action.allowsHouseBuilding ||
+             this.action.allowsAnimalMarket ||
+             this.action.allowsFarmSupplies ||
+             this.action.allowsBuildingSupplies ||
+             this.action.allowsCorral ||
+             this.action.allowsSideJob
     },
 
     resourceChoiceText() {
@@ -245,6 +286,34 @@ export default {
 
     occupiedBy() {
       return this.actionState.occupiedBy || ''
+    },
+
+    isBlocked() {
+      return Boolean(this.actionState.blockedBy)
+    },
+
+    blockedBy() {
+      return this.actionState.blockedBy || ''
+    },
+
+    blockedByName() {
+      if (!this.blockedBy) {
+        return ''
+      }
+      const blockedByAction = res.getActionById(this.blockedBy)
+      return blockedByAction ? blockedByAction.name : this.blockedBy
+    },
+
+    hasLinkedSpace() {
+      return Boolean(this.action?.linkedWith)
+    },
+
+    linkedSpaceName() {
+      if (!this.action?.linkedWith) {
+        return ''
+      }
+      const linkedAction = res.getActionById(this.action.linkedWith)
+      return linkedAction ? linkedAction.name : this.action.linkedWith
     },
 
     occupiedByPlayer() {
@@ -276,7 +345,7 @@ export default {
     },
 
     canChooseAction() {
-      if (!this.action || !this.isPlayerTurn || this.isOccupied) {
+      if (!this.action || !this.isPlayerTurn || this.isOccupied || this.isBlocked) {
         return false
       }
 
@@ -433,6 +502,66 @@ export default {
 
 .abilities-list li {
   margin-bottom: .25em;
+}
+
+.linked-section {
+  background-color: #e8eaf6;
+  border: 1px solid #9fa8da;
+  border-radius: .5em;
+  padding: .75em;
+  margin-bottom: 1em;
+}
+
+.linked-badge {
+  display: flex;
+  align-items: center;
+  gap: .5em;
+  font-size: .95em;
+  color: #3949ab;
+}
+
+.linked-icon {
+  font-size: 1.1em;
+}
+
+.linked-explanation {
+  font-size: .85em;
+  color: #5c6bc0;
+  margin-top: .5em;
+  font-style: italic;
+}
+
+.restriction-section {
+  margin-bottom: 1em;
+}
+
+.restriction-badge {
+  display: inline-block;
+  padding: .25em .75em;
+  background-color: #fff3e0;
+  border: 1px solid #ffcc80;
+  border-radius: .5em;
+  color: #e65100;
+  font-size: .9em;
+}
+
+.blocked-section {
+  margin-bottom: 1em;
+}
+
+.blocked-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .5em;
+  background-color: #ffebee;
+  border: 1px solid #ef9a9a;
+  padding: .5em .75em;
+  border-radius: .5em;
+  color: #c62828;
+}
+
+.blocked-icon {
+  font-size: 1em;
 }
 
 .occupied-section {

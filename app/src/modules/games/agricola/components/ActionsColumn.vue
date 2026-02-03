@@ -13,11 +13,28 @@
     </div>
 
     <!-- Additional Actions (3+ players) -->
-    <div class="action-section" v-if="additionalActionIds.length > 0">
+    <div class="action-section" v-if="additionalActionIds.length > 0 || linkedPairs.length > 0">
       <div class="section-title">Additional Actions</div>
-      <div class="action-grid">
+
+      <!-- Linked Action Pairs -->
+      <div
+        v-for="pair in linkedPairs"
+        :key="pair[0]"
+        class="linked-pair"
+      >
+        <ActionSpace :actionId="pair[0]" class="linked-action" />
+        <div class="link-connector">
+          <div class="link-line" />
+          <span class="link-icon">🔗</span>
+          <div class="link-line" />
+        </div>
+        <ActionSpace :actionId="pair[1]" class="linked-action" />
+      </div>
+
+      <!-- Non-linked Additional Actions -->
+      <div class="action-grid" v-if="nonLinkedAdditionalIds.length > 0">
         <ActionSpace
-          v-for="actionId in additionalActionIds"
+          v-for="actionId in nonLinkedAdditionalIds"
           :key="actionId"
           :actionId="actionId"
         />
@@ -39,6 +56,7 @@
     </template>
   </div>
 </template>
+
 
 <script>
 import ActionSpace from './ActionSpace.vue'
@@ -76,6 +94,40 @@ const FOUR_PLUS_PLAYER_ACTION_IDS = [
   'traveling-players',  // Traveling Players: +1 Food accumulating
 ]
 
+// 5-6 player expansion actions (linked spaces)
+const FIVE_SIX_PLAYER_ACTION_IDS = [
+  'lessons-5',                  // Lessons (linked with Copse)
+  'copse-5',                    // Copse: +1 Wood (linked with Lessons)
+  'house-building',             // House Building (linked with Traveling Players)
+  'traveling-players-5',        // Traveling Players: +1 Food (linked with House Building)
+  'lessons-5b',                 // Lessons (linked with Modest Wish)
+  'modest-wish-for-children',   // Family Growth with Room (Round 5+)
+  'grove-5',                    // Grove: +2 Wood
+  'hollow-5',                   // Hollow: +2 Clay
+  'resource-market-5',          // Resource Market: 1 Reed + 1 Stone + 1 Food
+]
+
+// 6-player only actions
+const SIX_PLAYER_ACTION_IDS = [
+  'riverbank-forest',   // +1 Wood accumulating + 1 Reed instant
+  'grove-6',            // Grove: +2 Wood
+  'hollow-6',           // Hollow: +3 Clay
+  'resource-market-6',  // 1 Reed + 1 Stone + 1 Wood
+  'animal-market',      // Choose sheep or cattle
+  'farm-supplies',      // Grain/plow for food
+  'building-supplies',  // Food + resource choices
+  'corral',             // Get animal you don't have
+  'side-job',           // Stable + optional bake
+  'improvement-6',      // Minor improvement (Major from Round 5+)
+]
+
+// Linked action pairs (first action links to second)
+const LINKED_PAIRS = [
+  ['lessons-5', 'copse-5'],
+  ['house-building', 'traveling-players-5'],
+  ['lessons-5b', 'modest-wish-for-children'],
+]
+
 const ROUND_CARDS_BY_STAGE = {
   1: ['sow-bake', 'take-sheep', 'fencing', 'major-minor-improvement'],
   2: ['family-growth-minor', 'take-stone-1', 'renovation-improvement'],
@@ -103,8 +155,44 @@ export default {
       return BASE_ACTION_IDS.filter(id => this.activeActions.includes(id))
     },
 
+    // Get linked pairs where both actions are active
+    linkedPairs() {
+      return LINKED_PAIRS.filter(pair =>
+        this.activeActions.includes(pair[0]) && this.activeActions.includes(pair[1])
+      )
+    },
+
+    // Get IDs of all actions that are part of an active linked pair
+    linkedActionIds() {
+      const ids = new Set()
+      for (const pair of this.linkedPairs) {
+        ids.add(pair[0])
+        ids.add(pair[1])
+      }
+      return ids
+    },
+
+    // Additional actions that are NOT part of a linked pair
+    nonLinkedAdditionalIds() {
+      const allIds = [...new Set([
+        ...THREE_PLAYER_ACTION_IDS,
+        ...FOUR_PLUS_PLAYER_ACTION_IDS,
+        ...FIVE_SIX_PLAYER_ACTION_IDS,
+        ...SIX_PLAYER_ACTION_IDS,
+      ])]
+      return allIds.filter(id =>
+        this.activeActions.includes(id) && !this.linkedActionIds.has(id)
+      )
+    },
+
+    // Legacy: all additional action IDs (for backwards compatibility)
     additionalActionIds() {
-      const allIds = [...new Set([...THREE_PLAYER_ACTION_IDS, ...FOUR_PLUS_PLAYER_ACTION_IDS])]
+      const allIds = [...new Set([
+        ...THREE_PLAYER_ACTION_IDS,
+        ...FOUR_PLUS_PLAYER_ACTION_IDS,
+        ...FIVE_SIX_PLAYER_ACTION_IDS,
+        ...SIX_PLAYER_ACTION_IDS,
+      ])]
       return allIds.filter(id => this.activeActions.includes(id))
     },
 
@@ -133,6 +221,7 @@ export default {
   },
 }
 </script>
+
 
 <style scoped>
 .actions-column-content {
@@ -163,5 +252,42 @@ export default {
   padding: .25em .5em;
   border-radius: .25em;
   border-bottom: none;
+}
+
+/* Linked pair styling */
+.linked-pair {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: .5em;
+  background-color: #e8eaf6;
+  border: 1px solid #9fa8da;
+  border-radius: .35em;
+  padding: .35em;
+}
+
+.linked-pair .linked-action {
+  flex: 1;
+  min-width: 0;
+}
+
+.link-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 .25em;
+  min-width: 28px;
+}
+
+.link-line {
+  flex: 1;
+  width: 2px;
+  background-color: #7986cb;
+  min-height: 4px;
+}
+
+.link-icon {
+  font-size: .7em;
+  padding: .15em 0;
 }
 </style>
