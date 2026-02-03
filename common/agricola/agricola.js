@@ -211,16 +211,38 @@ Agricola.prototype.blockLinkedSpace = function(actionId) {
   }
 }
 
-// Version-aware display names for actions
-const LESSONS_DISPLAY_NAMES = {
-  'occupation': 'Lessons (1)',
-  'lessons-3': 'Lessons (2)',
-  'lessons-4': 'Lessons (2)',
+// Display names for actions with duplicate names (to distinguish them in UI)
+// Uses letters A, B, C to avoid confusion with accumulated amounts in parentheses
+const ACTION_DISPLAY_NAMES = {
+  // Lessons variants
+  'occupation': 'Lessons A',
+  'lessons-3': 'Lessons B',
+  'lessons-4': 'Lessons B',
+  'lessons-5': 'Lessons C',
+  'lessons-5b': 'Lessons D',
+  // Grove variants
+  'grove': 'Grove A',
+  'grove-5': 'Grove B',
+  'grove-6': 'Grove C',
+  // Hollow variants
+  'hollow': 'Hollow A',
+  'hollow-5': 'Hollow B',
+  'hollow-6': 'Hollow C',
+  // Resource Market variants
+  'resource-market': 'Resource Market A',
+  'resource-market-5': 'Resource Market B',
+  'resource-market-6': 'Resource Market C',
+  // Copse variants
+  'copse': 'Copse A',
+  'copse-5': 'Copse B',
+  // Traveling Players variants
+  'traveling-players': 'Traveling Players A',
+  'traveling-players-5': 'Traveling Players B',
 }
 
 Agricola.prototype.getActionDisplayName = function(action) {
-  if (this.settings.version >= 3 && action.id in LESSONS_DISPLAY_NAMES) {
-    return LESSONS_DISPLAY_NAMES[action.id]
+  if (this.settings.version >= 3 && action.id in ACTION_DISPLAY_NAMES) {
+    return ACTION_DISPLAY_NAMES[action.id]
   }
   return action.name
 }
@@ -899,6 +921,11 @@ Agricola.prototype.playerTurn = function(player) {
     }
     return { id: actionId, label }
   })
+
+  // Sort alphabetically by label (only for version 3+)
+  if (this.settings.version >= 3) {
+    choices.sort((a, b) => a.label.localeCompare(b.label))
+  }
 
   const selection = this.actions.choose(
     player,

@@ -74,6 +74,7 @@ import ModalBase from '@/components/ModalBase.vue'
 
 // Agricola Components
 import ActionsColumn from './ActionsColumn.vue'
+import ActionSpace from './ActionSpace.vue'
 import AgricolaCardChip from './AgricolaCardChip.vue'
 import GameLogAgricola from './GameLogAgricola.vue'
 import MajorImprovements from './MajorImprovements.vue'
@@ -407,8 +408,88 @@ export default {
         }
       }
 
-      // Not a card - use default rendering
+      // Check if this is an action space name (e.g., "Fishing" or "Grove (3)")
+      const actionResult = this.findActionByLabel(name)
+      if (actionResult) {
+        return {
+          component: ActionSpace,
+          props: {
+            actionId: actionResult.actionId,
+            accumulatedOverride: actionResult.accumulated || null,
+            compact: true,
+          },
+        }
+      }
+
+      // Not a card or action - use default rendering
       return undefined
+    },
+
+    // Find an action by its display label (handles formats like "Grove A (3)")
+    findActionByLabel(label) {
+      // Display name mapping (must match backend ACTION_DISPLAY_NAMES)
+      const displayNameToId = {
+        // Lessons variants
+        'Lessons A': 'occupation',
+        'Lessons B': ['lessons-3', 'lessons-4'],
+        'Lessons C': 'lessons-5',
+        'Lessons D': 'lessons-5b',
+        // Grove variants
+        'Grove A': 'grove',
+        'Grove B': 'grove-5',
+        'Grove C': 'grove-6',
+        // Hollow variants
+        'Hollow A': 'hollow',
+        'Hollow B': 'hollow-5',
+        'Hollow C': 'hollow-6',
+        // Resource Market variants
+        'Resource Market A': 'resource-market',
+        'Resource Market B': 'resource-market-5',
+        'Resource Market C': 'resource-market-6',
+        // Copse variants
+        'Copse A': 'copse',
+        'Copse B': 'copse-5',
+        // Traveling Players variants
+        'Traveling Players A': 'traveling-players',
+        'Traveling Players B': 'traveling-players-5',
+      }
+
+      // Parse label - might have accumulated amount like "Grove A (3)"
+      const accumulatedMatch = label.match(/^(.+?)\s*\((\d+)\)$/)
+      const baseName = accumulatedMatch ? accumulatedMatch[1].trim() : label
+      const accumulated = accumulatedMatch ? parseInt(accumulatedMatch[2], 10) : 0
+
+      const activeActions = this.game.state.activeActions || []
+
+      // Check if baseName matches a known display name
+      if (displayNameToId[baseName]) {
+        const candidates = Array.isArray(displayNameToId[baseName])
+          ? displayNameToId[baseName]
+          : [displayNameToId[baseName]]
+        for (const actionId of candidates) {
+          if (activeActions.includes(actionId)) {
+            return { actionId, accumulated }
+          }
+        }
+      }
+
+      // Search through all active actions by name
+      for (const actionId of activeActions) {
+        const action = res.getActionById(actionId)
+        if (action && action.name === baseName) {
+          return { actionId, accumulated }
+        }
+      }
+
+      // Also search all action spaces in case it's not active yet
+      const allActions = res.getAllActionSpaces()
+      for (const action of allActions) {
+        if (action.name === baseName) {
+          return { actionId: action.id, accumulated }
+        }
+      }
+
+      return null
     },
 
     // Fencing methods

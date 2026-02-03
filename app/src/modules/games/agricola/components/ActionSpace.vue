@@ -2,10 +2,11 @@
   <div
     class="action-space"
     :class="{
-      occupied,
-      blocked: isBlocked,
-      'not-yet-available': notYetAvailable,
-      selectable: isSelectable,
+      compact,
+      occupied: !compact && occupied,
+      blocked: !compact && isBlocked,
+      'not-yet-available': !compact && notYetAvailable,
+      selectable: !compact && isSelectable,
       selected: isSelected,
       clickable: true
     }"
@@ -14,12 +15,12 @@
     @mouseleave="handleMouseLeave"
   >
     <div class="action-content">
-      <span class="worker" v-if="occupied" :style="workerStyle" />
-      <span class="blocked-icon" v-if="isBlocked" title="Blocked by linked space">⛔</span>
+      <span class="worker" v-if="!compact && occupied" :style="workerStyle" />
+      <span class="blocked-icon" v-if="!compact && isBlocked" title="Blocked by linked space">⛔</span>
       <div class="action-name">{{ action.name }}</div>
 
       <!-- Round restriction indicator -->
-      <span class="round-restriction" v-if="notYetAvailable" :title="'Available from round ' + action.minRound">
+      <span class="round-restriction" v-if="!compact && notYetAvailable" :title="'Available from round ' + action.minRound">
         R{{ action.minRound }}+
       </span>
 
@@ -59,6 +60,14 @@ export default {
     actionId: {
       type: String,
       required: true,
+    },
+    compact: {
+      type: Boolean,
+      default: false,
+    },
+    accumulatedOverride: {
+      type: Number,
+      default: null,
     },
   },
 
@@ -141,6 +150,9 @@ export default {
     },
 
     accumulatedAmount() {
+      if (this.accumulatedOverride !== null) {
+        return this.accumulatedOverride
+      }
       return this.actionState.accumulated || 0
     },
 
@@ -311,5 +323,18 @@ export default {
   border-radius: .2em;
   margin-left: auto;
   flex-shrink: 0;
+}
+
+/* Compact mode (for selector chips) */
+.action-space.compact {
+  background-color: #efebe9;
+  border: none;
+  border-left: 3px solid #8d6e63;
+  padding: .15em .4em;
+}
+
+.action-space.compact:hover {
+  filter: brightness(0.92);
+  box-shadow: none;
 }
 </style>
