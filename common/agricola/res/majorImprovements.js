@@ -221,14 +221,196 @@ const majorImprovements = [
   },
 ]
 
+// Additional major improvements for 6-player games
+// More expensive versions of existing improvements
+const sixPlayerMajorImprovements = [
+  {
+    id: 'fireplace-4',
+    name: 'Fireplace',
+    type: 'major',
+    cost: { clay: 4 },
+    victoryPoints: 1,
+    expansion: '5-6',
+    upgradesTo: ['cooking-hearth-4', 'cooking-hearth-5', 'cooking-hearth-6'],
+    text: [
+      'At any time: Vegetable → 2 Food; Sheep → 2 Food; Wild boar → 2 Food; Cattle → 3 Food',
+      '"Bake Bread" action: Grain → 2 Food',
+    ],
+    abilities: {
+      canCook: true,
+      canBake: true,
+      cookingRates: {
+        sheep: 2,
+        boar: 2,
+        cattle: 3,
+        vegetables: 2,
+      },
+      bakingRate: 2,
+    },
+  },
+  {
+    id: 'cooking-hearth-6',
+    name: 'Cooking Hearth',
+    type: 'major',
+    cost: { clay: 6 },
+    victoryPoints: 1,
+    expansion: '5-6',
+    upgradesFrom: ['fireplace-2', 'fireplace-3', 'fireplace-4'],
+    upgradesTo: [],
+    text: [
+      'At any time: Vegetable → 3 Food; Sheep → 2 Food; Wild boar → 3 Food; Cattle → 4 Food',
+      '"Bake Bread" action: Grain → 3 Food',
+    ],
+    alternateCost: 'Return a Fireplace',
+    abilities: {
+      canCook: true,
+      canBake: true,
+      cookingRates: {
+        sheep: 2,
+        boar: 3,
+        cattle: 4,
+        vegetables: 3,
+      },
+      bakingRate: 3,
+    },
+  },
+  {
+    id: 'well-2',
+    name: 'Well',
+    type: 'major',
+    cost: { stone: 3, clay: 1 },
+    victoryPoints: 4,
+    expansion: '5-6',
+    text: [
+      'Place 1 food on each of the next 5 round spaces. At the start of these rounds, you get the food.',
+    ],
+    abilities: {
+      wellEffect: true,
+    },
+  },
+  {
+    id: 'clay-oven-2',
+    name: 'Clay Oven',
+    type: 'major',
+    cost: { clay: 4, stone: 1 },
+    victoryPoints: 2,
+    expansion: '5-6',
+    text: [
+      '"Bake Bread" action: At most 1 time Grain → 5 Food',
+      'When you build this improvement, you can immediately take a "Bake Bread" action.',
+    ],
+    abilities: {
+      canBake: true,
+      bakingRate: 5,
+      bakingLimit: 1,
+      bakeBreadOnBuild: true,
+    },
+  },
+  {
+    id: 'stone-oven-2',
+    name: 'Stone Oven',
+    type: 'major',
+    cost: { clay: 2, stone: 3 },
+    victoryPoints: 3,
+    expansion: '5-6',
+    text: [
+      '"Bake Bread" action: Up to 2 times Grain → 4 Food',
+      'When you build this improvement, you can immediately take a "Bake Bread" action.',
+    ],
+    abilities: {
+      canBake: true,
+      bakingRate: 4,
+      bakingLimit: 2,
+      bakeBreadOnBuild: true,
+    },
+  },
+  {
+    id: 'joinery-2',
+    name: 'Joinery',
+    type: 'major',
+    cost: { wood: 2, stone: 3 },
+    victoryPoints: 2,
+    expansion: '5-6',
+    text: [
+      'Harvest: At most 1 time Wood → 2 Food',
+      'Scoring: 3/5/7 Wood → 1/2/3 bonus points',
+    ],
+    abilities: {
+      harvestConversion: {
+        resource: 'wood',
+        food: 2,
+        limit: 1,
+      },
+      endGameBonus: {
+        resource: 'wood',
+        thresholds: [0, 0, 1, 2, 3],
+      },
+    },
+  },
+  {
+    id: 'pottery-2',
+    name: 'Pottery',
+    type: 'major',
+    cost: { clay: 2, stone: 3 },
+    victoryPoints: 2,
+    expansion: '5-6',
+    text: [
+      'Harvest: At most 1 time Clay → 2 Food',
+      'Scoring: 3/5/7 Clay → 1/2/3 bonus points',
+    ],
+    abilities: {
+      harvestConversion: {
+        resource: 'clay',
+        food: 2,
+        limit: 1,
+      },
+      endGameBonus: {
+        resource: 'clay',
+        thresholds: [0, 0, 1, 2, 3],
+      },
+    },
+  },
+  {
+    id: 'basketmakers-workshop-2',
+    name: "Basketmaker's Workshop",
+    type: 'major',
+    cost: { reed: 2, stone: 3 },
+    victoryPoints: 2,
+    expansion: '5-6',
+    text: [
+      'Harvest: At most 1 time Reed → 3 Food',
+      'Scoring: 2/4/5 Reed → 1/2/3 bonus points',
+    ],
+    abilities: {
+      harvestConversion: {
+        resource: 'reed',
+        food: 3,
+        limit: 1,
+      },
+      endGameBonus: {
+        resource: 'reed',
+        thresholds: [0, 1, 2, 3],
+      },
+    },
+  },
+]
+
 // Get all major improvements
-function getAllMajorImprovements() {
+// Pass playerCount to include 6-player expansion improvements
+function getAllMajorImprovements(playerCount = 4) {
+  if (playerCount >= 6) {
+    return [...majorImprovements, ...sixPlayerMajorImprovements]
+  }
   return majorImprovements
 }
 
 // Get improvement by ID
 function getMajorImprovementById(id) {
-  return majorImprovements.find(imp => imp.id === id)
+  const base = majorImprovements.find(imp => imp.id === id)
+  if (base) {
+    return base
+  }
+  return sixPlayerMajorImprovements.find(imp => imp.id === id)
 }
 
 // Get improvement by name (may return first match for duplicate names like "Fireplace")
@@ -311,6 +493,7 @@ function calculateCraftingBonus(improvement, resourceCount) {
 
 module.exports = {
   majorImprovements,
+  sixPlayerMajorImprovements,
   getAllMajorImprovements,
   getMajorImprovementById,
   getMajorImprovementByName,

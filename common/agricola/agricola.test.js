@@ -952,24 +952,55 @@ describe('Agricola', () => {
       expect(game.state.activeActions).not.toContain('lessons-3')
     })
 
-    test('5 player game has 6 additional actions', () => {
+    test('5 player game has 5-6 player expansion actions', () => {
       const game = t.fixture({ numPlayers: 5 })
       game.run()
 
-      // Same as 4-player (Revised Edition)
-      expect(game.state.activeActions).toContain('copse')
-      expect(game.state.activeActions).toContain('grove')
-      expect(game.state.activeActions).toContain('hollow')
-      expect(game.state.activeActions).toContain('resource-market')
-      expect(game.state.activeActions).toContain('lessons-4')
-      expect(game.state.activeActions).toContain('traveling-players')
+      // 5-6 player expansion actions with linked spaces
+      expect(game.state.activeActions).toContain('lessons-5')
+      expect(game.state.activeActions).toContain('copse-5')
+      expect(game.state.activeActions).toContain('house-building')
+      expect(game.state.activeActions).toContain('traveling-players-5')
+      expect(game.state.activeActions).toContain('lessons-5b')
+      expect(game.state.activeActions).toContain('modest-wish-for-children')
+      expect(game.state.activeActions).toContain('grove-5')
+      expect(game.state.activeActions).toContain('hollow-5')
+      expect(game.state.activeActions).toContain('resource-market-5')
+
+      // Should NOT have 4-player specific actions
+      expect(game.state.activeActions).not.toContain('lessons-4')
+      expect(game.state.activeActions).not.toContain('copse')
+    })
+
+    test('6 player game has 5-6 player actions plus 6-player only actions', () => {
+      const game = t.fixture({ numPlayers: 6 })
+      game.run()
+
+      // 5-6 player actions
+      expect(game.state.activeActions).toContain('lessons-5')
+      expect(game.state.activeActions).toContain('copse-5')
+      expect(game.state.activeActions).toContain('house-building')
+      expect(game.state.activeActions).toContain('traveling-players-5')
+
+      // 6-player only actions
+      expect(game.state.activeActions).toContain('riverbank-forest')
+      expect(game.state.activeActions).toContain('grove-6')
+      expect(game.state.activeActions).toContain('hollow-6')
+      expect(game.state.activeActions).toContain('resource-market-6')
+      expect(game.state.activeActions).toContain('animal-market')
+      expect(game.state.activeActions).toContain('farm-supplies')
+      expect(game.state.activeActions).toContain('building-supplies')
+      expect(game.state.activeActions).toContain('corral')
+      expect(game.state.activeActions).toContain('side-job')
+      expect(game.state.activeActions).toContain('improvement-6')
     })
 
     test('getAdditionalActionsForPlayerCount returns correct actions', () => {
       expect(res.getAdditionalActionsForPlayerCount(2)).toHaveLength(0)
       expect(res.getAdditionalActionsForPlayerCount(3)).toHaveLength(4) // Revised Edition: grove, hollow, resource-market, lessons-3
       expect(res.getAdditionalActionsForPlayerCount(4)).toHaveLength(6) // Revised Edition: copse, grove, hollow, resource-market, lessons-4, traveling-players
-      expect(res.getAdditionalActionsForPlayerCount(5)).toHaveLength(6)
+      expect(res.getAdditionalActionsForPlayerCount(5)).toHaveLength(9) // 5-6 player expansion actions
+      expect(res.getAdditionalActionsForPlayerCount(6)).toHaveLength(19) // 5-6 player + 6-player only
     })
 
     // Revised Edition: Hollow replaces Clay Pit for additional players
@@ -1030,6 +1061,19 @@ describe('Agricola', () => {
     test('major improvements are complete', () => {
       const improvements = res.getAllMajorImprovements()
       expect(improvements.length).toBe(10)
+    })
+
+    test('6-player major improvements are included for 6 players', () => {
+      const improvements = res.getAllMajorImprovements(6)
+      expect(improvements.length).toBe(18) // 10 base + 8 expansion
+      expect(improvements.find(i => i.id === 'fireplace-4')).toBeDefined()
+      expect(improvements.find(i => i.id === 'cooking-hearth-6')).toBeDefined()
+      expect(improvements.find(i => i.id === 'well-2')).toBeDefined()
+      expect(improvements.find(i => i.id === 'clay-oven-2')).toBeDefined()
+      expect(improvements.find(i => i.id === 'stone-oven-2')).toBeDefined()
+      expect(improvements.find(i => i.id === 'joinery-2')).toBeDefined()
+      expect(improvements.find(i => i.id === 'pottery-2')).toBeDefined()
+      expect(improvements.find(i => i.id === 'basketmakers-workshop-2')).toBeDefined()
     })
   })
 
@@ -1805,6 +1849,194 @@ describe('Agricola', () => {
 
       // basketmaker's: 2 VP + 3 bonus (5+ reed) = 5 point delta
       expect(scoreWith - scoreWithout).toBe(5)
+    })
+  })
+
+  describe('5-6 player expansion', () => {
+
+    describe('linked spaces', () => {
+      test('linked spaces are tracked in state', () => {
+        const game = t.fixture({ numPlayers: 5 })
+        game.run()
+
+        expect(game.state.linkedSpaces).toBeDefined()
+        expect(game.state.linkedSpaces['lessons-5']).toBe('copse-5')
+        expect(game.state.linkedSpaces['copse-5']).toBe('lessons-5')
+        expect(game.state.linkedSpaces['house-building']).toBe('traveling-players-5')
+        expect(game.state.linkedSpaces['traveling-players-5']).toBe('house-building')
+      })
+
+      test('blockLinkedSpace blocks the linked space', () => {
+        const game = t.fixture({ numPlayers: 5 })
+        game.run()
+
+        // Initially neither space is blocked
+        expect(game.state.actionSpaces['lessons-5'].blockedBy).toBeUndefined()
+        expect(game.state.actionSpaces['copse-5'].blockedBy).toBeUndefined()
+
+        // Block linked space when using lessons-5
+        game.blockLinkedSpace('lessons-5')
+
+        // copse-5 should now be blocked
+        expect(game.state.actionSpaces['copse-5'].blockedBy).toBe('lessons-5')
+        // lessons-5 should not be blocked
+        expect(game.state.actionSpaces['lessons-5'].blockedBy).toBeUndefined()
+      })
+
+      test('blocked spaces are not available for selection', () => {
+        const game = t.fixture({ numPlayers: 5 })
+        game.run()
+
+        const dennis = game.players.byName('dennis')
+
+        // Initially copse-5 is available
+        let availableActions = game.getAvailableActions(dennis)
+        expect(availableActions).toContain('copse-5')
+
+        // Block copse-5
+        game.state.actionSpaces['copse-5'].blockedBy = 'lessons-5'
+
+        // Now copse-5 is not available
+        availableActions = game.getAvailableActions(dennis)
+        expect(availableActions).not.toContain('copse-5')
+      })
+
+      test('blocked state is cleared at end of round', () => {
+        const game = t.fixture({ numPlayers: 5 })
+        game.run()
+
+        // Block a space
+        game.state.actionSpaces['copse-5'].blockedBy = 'lessons-5'
+        expect(game.state.actionSpaces['copse-5'].blockedBy).toBe('lessons-5')
+
+        // Simulate return home phase
+        game.returnHomePhase()
+
+        // Blocked state should be cleared
+        expect(game.state.actionSpaces['copse-5'].blockedBy).toBeUndefined()
+      })
+    })
+
+    describe('minRound restriction', () => {
+      test('modest-wish-for-children is not available before round 5', () => {
+        const game = t.fixture({ numPlayers: 5 })
+        game.run()
+
+        const dennis = game.players.byName('dennis')
+        // Add a room so player can grow family
+        dennis.buildRoom(0, 1)
+
+        // Round 1: action should not be available
+        expect(game.state.round).toBe(1)
+        expect(game.canTakeAction(dennis, 'modest-wish-for-children')).toBe(false)
+
+        // Set round to 5
+        game.state.round = 5
+        expect(game.canTakeAction(dennis, 'modest-wish-for-children')).toBe(true)
+      })
+    })
+
+    describe('6-player major improvements', () => {
+      test('6-player game initializes with expansion major improvements', () => {
+        const game = t.fixture({ numPlayers: 6 })
+        game.run()
+
+        const majorZone = game.zones.byId('common.majorImprovements')
+        const cardIds = majorZone.cardlist().map(c => c.id)
+
+        // Base improvements
+        expect(cardIds).toContain('fireplace-2')
+        expect(cardIds).toContain('fireplace-3')
+
+        // 6-player expansion improvements
+        expect(cardIds).toContain('fireplace-4')
+        expect(cardIds).toContain('cooking-hearth-6')
+        expect(cardIds).toContain('well-2')
+        expect(cardIds).toContain('clay-oven-2')
+        expect(cardIds).toContain('stone-oven-2')
+        expect(cardIds).toContain('joinery-2')
+        expect(cardIds).toContain('pottery-2')
+        expect(cardIds).toContain('basketmakers-workshop-2')
+      })
+
+      test('getMajorImprovementById finds expansion improvements', () => {
+        const fireplace4 = res.getMajorImprovementById('fireplace-4')
+        expect(fireplace4).toBeDefined()
+        expect(fireplace4.cost).toEqual({ clay: 4 })
+        expect(fireplace4.expansion).toBe('5-6')
+
+        const cookingHearth6 = res.getMajorImprovementById('cooking-hearth-6')
+        expect(cookingHearth6).toBeDefined()
+        expect(cookingHearth6.cost).toEqual({ clay: 6 })
+      })
+    })
+
+    describe('new action space definitions', () => {
+      test('copse-5 accumulates 1 wood', () => {
+        const action = res.getActionById('copse-5')
+        expect(action.type).toBe('accumulating')
+        expect(action.accumulates.wood).toBe(1)
+        expect(action.linkedWith).toBe('lessons-5')
+      })
+
+      test('lessons-5 costs 2 food and is linked with copse-5', () => {
+        const action = res.getActionById('lessons-5')
+        expect(action.allowsOccupation).toBe(true)
+        expect(action.occupationCost).toBe(2)
+        expect(action.linkedWith).toBe('copse-5')
+      })
+
+      test('house-building allows room building at special cost', () => {
+        const action = res.getActionById('house-building')
+        expect(action.allowsHouseBuilding).toBe(true)
+        expect(action.linkedWith).toBe('traveling-players-5')
+      })
+
+      test('modest-wish-for-children allows family growth from round 5', () => {
+        const action = res.getActionById('modest-wish-for-children')
+        expect(action.allowsFamilyGrowth).toBe(true)
+        expect(action.requiresRoom).toBe(true)
+        expect(action.minRound).toBe(5)
+        expect(action.linkedWith).toBe('lessons-5b')
+      })
+
+      test('riverbank-forest accumulates wood and gives instant reed', () => {
+        const action = res.getActionById('riverbank-forest')
+        expect(action.type).toBe('accumulating')
+        expect(action.accumulates.wood).toBe(1)
+        expect(action.gives.reed).toBe(1)
+      })
+
+      test('animal-market allows animal choice', () => {
+        const action = res.getActionById('animal-market')
+        expect(action.allowsAnimalMarket).toBe(true)
+      })
+
+      test('farm-supplies allows grain/plow for food', () => {
+        const action = res.getActionById('farm-supplies')
+        expect(action.allowsFarmSupplies).toBe(true)
+      })
+
+      test('building-supplies gives food and resource choices', () => {
+        const action = res.getActionById('building-supplies')
+        expect(action.allowsBuildingSupplies).toBe(true)
+      })
+
+      test('corral gives animal player doesn\'t have', () => {
+        const action = res.getActionById('corral')
+        expect(action.allowsCorral).toBe(true)
+      })
+
+      test('side-job allows stable building and baking', () => {
+        const action = res.getActionById('side-job')
+        expect(action.allowsSideJob).toBe(true)
+      })
+
+      test('improvement-6 allows minor, major from round 5', () => {
+        const action = res.getActionById('improvement-6')
+        expect(action.allowsMinorImprovement).toBe(true)
+        expect(action.allowsMajorFromRound5).toBe(true)
+      })
     })
   })
 

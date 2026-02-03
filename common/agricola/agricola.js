@@ -194,6 +194,25 @@ Agricola.prototype.addActionSpace = function(action) {
       occupiedBy: null,
     }
   }
+
+  // Track linked space relationships
+  if (action.linkedWith) {
+    if (!this.state.linkedSpaces) {
+      this.state.linkedSpaces = {}
+    }
+    this.state.linkedSpaces[action.id] = action.linkedWith
+  }
+}
+
+// Block the linked space when a linked action is used
+Agricola.prototype.blockLinkedSpace = function(actionId) {
+  const action = res.getActionById(actionId)
+  if (action && action.linkedWith) {
+    const linkedId = action.linkedWith
+    if (this.state.actionSpaces[linkedId]) {
+      this.state.actionSpaces[linkedId].blockedBy = actionId
+    }
+  }
 }
 
 // Version-aware display names for actions
@@ -236,14 +255,21 @@ Agricola.prototype.shuffleArray = function(array) {
 
 Agricola.prototype.initializeMajorImprovements = function() {
   // Create AgricolaCard for each major improvement and place in common zone
+  const playerCount = this.players.all().length
   const majorZone = this.zones.byId('common.majorImprovements')
   const majorCards = []
-  for (const impDef of res.getAllMajorImprovements()) {
+  for (const impDef of res.getAllMajorImprovements(playerCount)) {
     const card = new AgricolaCard(this, impDef)
     this.cards.register(card)
     majorCards.push(card)
   }
   majorZone.initializeCards(majorCards)
+
+  if (playerCount >= 6) {
+    this.log.add({
+      template: 'Added 6-player expansion major improvements',
+    })
+  }
 }
 
 Agricola.prototype.initializePlayerCards = function() {
@@ -902,6 +928,11 @@ Agricola.prototype.getAvailableActions = function(player) {
       continue
     }
 
+    // Action must not be blocked by linked space
+    if (state.blockedBy) {
+      continue
+    }
+
     // Check if player can meaningfully take this action
     // (some actions might have prerequisites)
     if (this.canTakeAction(player, actionId)) {
@@ -915,6 +946,11 @@ Agricola.prototype.getAvailableActions = function(player) {
 Agricola.prototype.canTakeAction = function(player, actionId) {
   const action = res.getActionById(actionId)
   if (!action) {
+    return false
+  }
+
+  // Check minimum round requirement (e.g., Modest Wish for Children)
+  if (action.minRound && this.state.round < action.minRound) {
     return false
   }
 
@@ -946,6 +982,13 @@ Agricola.prototype.returnHomePhase = function() {
 
   for (const player of this.players.all()) {
     player.resetWorkers()
+  }
+
+  // Clear all blocked states from linked spaces
+  for (const actionId of this.state.activeActions) {
+    if (this.state.actionSpaces[actionId].blockedBy) {
+      delete this.state.actionSpaces[actionId].blockedBy
+    }
   }
 }
 

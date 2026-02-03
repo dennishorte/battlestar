@@ -72,6 +72,12 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     actionState.accumulated = 0
+
+    // Some accumulating actions also give instant resources (e.g., Riverbank Forest)
+    if (action.gives) {
+      this.giveResources(player, action.gives)
+    }
+
     return true
   }
 
@@ -1505,6 +1511,9 @@ class AgricolaActionManager extends BaseActionManager {
       args: { player, action: this.game.getActionDisplayName(action) },
     })
 
+    // Block linked space if this action has one
+    this.game.blockLinkedSpace(actionId)
+
     // Handle accumulating actions
     if (action.type === 'accumulating') {
       const result = this.takeAccumulatedResource(player, actionId)
@@ -1577,6 +1586,35 @@ class AgricolaActionManager extends BaseActionManager {
 
     if (action.allowsOccupation) {
       this.playOccupation(player)
+    }
+
+    // 5-6 player expansion action handlers
+    if (action.allowsHouseBuilding) {
+      this.houseBuilding(player)
+    }
+
+    if (action.allowsAnimalMarket) {
+      this.animalMarket(player)
+    }
+
+    if (action.allowsFarmSupplies) {
+      this.farmSupplies(player)
+    }
+
+    if (action.allowsBuildingSupplies) {
+      this.buildingSupplies(player)
+    }
+
+    if (action.allowsCorral) {
+      this.corral(player)
+    }
+
+    if (action.allowsSideJob) {
+      this.sideJob(player)
+    }
+
+    if (action.allowsMajorFromRound5) {
+      this.improvementSix(player)
     }
 
     // Call onAction hooks for this player's cards
@@ -1957,6 +1995,350 @@ class AgricolaActionManager extends BaseActionManager {
       template: '{card} is passed to {playerNext}',
       args: { card: card, playerNext: leftPlayer },
     })
+  }
+
+  // ---------------------------------------------------------------------------
+  // 5-6 Player Expansion Action Handlers
+  // ---------------------------------------------------------------------------
+
+  /**
+   * House Building action: Build rooms at 5 resources + 2 reed each
+   */
+  houseBuilding(player) {
+    const validSpaces = player.getValidRoomBuildSpaces()
+    if (validSpaces.length === 0) {
+      this.log.addDoNothing(player, 'build rooms')
+      return false
+    }
+
+    // Check if player can afford at least one room
+    const roomType = player.roomType
+    const resourceCost = 5 // 5 of the room material
+    const reedCost = 2
+
+    const hasEnoughResource = roomType === 'wood'
+      ? player.wood >= resourceCost
+      : roomType === 'clay'
+        ? player.clay >= resourceCost
+        : player.stone >= resourceCost
+
+    if (!hasEnoughResource || player.reed < reedCost) {
+      this.log.add({
+        template: '{player} cannot afford house building (needs 5 {type} + 2 reed)',
+        args: { player, type: roomType },
+      })
+      return false
+    }
+
+    // Build rooms loop
+    let roomsBuilt = 0
+    while (true) {
+      const currentValidSpaces = player.getValidRoomBuildSpaces()
+      if (currentValidSpaces.length === 0) {
+        break
+      }
+
+      // Check affordability
+      const currentHasResource = roomType === 'wood'
+        ? player.wood >= resourceCost
+        : roomType === 'clay'
+          ? player.clay >= resourceCost
+          : player.stone >= resourceCost
+
+      if (!currentHasResource || player.reed < reedCost) {
+        break
+      }
+
+      const spaceChoices = currentValidSpaces.map(s => `${s.row},${s.col}`)
+      spaceChoices.push('Done building rooms')
+
+      const selection = this.choose(player, spaceChoices, {
+        title: `Build a room (5 ${roomType} + 2 reed)`,
+        min: 1,
+        max: 1,
+      })
+
+      if (selection[0] === 'Done building rooms') {
+        break
+      }
+
+      const [row, col] = selection[0].split(',').map(Number)
+
+      // Pay cost
+      if (roomType === 'wood') {
+        player.wood -= resourceCost
+      }
+      else if (roomType === 'clay') {
+        player.clay -= resourceCost
+      }
+      else {
+        player.stone -= resourceCost
+      }
+      player.reed -= reedCost
+
+      player.buildRoom(row, col)
+      roomsBuilt++
+
+      this.log.add({
+        template: '{player} builds a {type} room at ({row},{col})',
+        args: { player, type: roomType, row, col },
+      })
+
+      this.callOnBuildRoomHooks(player, roomType)
+    }
+
+    if (roomsBuilt === 0) {
+      this.log.addDoNothing(player, 'build rooms')
+    }
+
+    return roomsBuilt > 0
+  }
+
+  /**
+   * Animal Market action: Choose sheep (+1 food) or cattle (costs 1 food)
+   */
+  animalMarket(player) {
+    const choices = []
+
+    // Sheep option: get sheep + 1 food
+    if (player.canPlaceAnimals('sheep', 1)) {
+      choices.push('Take 1 sheep and 1 food')
+    }
+
+    // Cattle option: pay 1 food for cattle
+    const canPayFood = player.food >= 1 || this.game.getAnytimeFoodConversionOptions(player).length > 0
+    if (canPayFood && player.canPlaceAnimals('cattle', 1)) {
+      choices.push('Pay 1 food for 1 cattle')
+    }
+
+    if (choices.length === 0) {
+      this.log.add({
+        template: '{player} cannot take any animals from the market',
+        args: { player },
+      })
+      return false
+    }
+
+    choices.push('Do nothing')
+
+    const selection = this.choose(player, choices, {
+      title: 'Animal Market',
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] === 'Do nothing') {
+      this.log.addDoNothing(player, 'take animal')
+      return true
+    }
+
+    if (selection[0] === 'Take 1 sheep and 1 food') {
+      player.addAnimals('sheep', 1)
+      player.addResource('food', 1)
+      this.log.add({
+        template: '{player} takes 1 sheep and 1 food from the Animal Market',
+        args: { player },
+      })
+    }
+    else if (selection[0] === 'Pay 1 food for 1 cattle') {
+      player.removeResource('food', 1)
+      player.addAnimals('cattle', 1)
+      this.log.add({
+        template: '{player} pays 1 food for 1 cattle from the Animal Market',
+        args: { player },
+      })
+    }
+
+    return true
+  }
+
+  /**
+   * Farm Supplies action: 1 grain for 1 food, and/or plow 1 field for 1 food
+   */
+  farmSupplies(player) {
+    const canPayFood = player.food >= 1 || this.game.getAnytimeFoodConversionOptions(player).length > 0
+
+    if (!canPayFood) {
+      this.log.add({
+        template: '{player} cannot afford farm supplies',
+        args: { player },
+      })
+      return false
+    }
+
+    let didSomething = false
+
+    // Offer grain for food
+    if (canPayFood) {
+      const grainChoices = ['Buy 1 grain for 1 food', 'Skip grain']
+      const grainSelection = this.choose(player, grainChoices, {
+        title: 'Farm Supplies: Buy grain?',
+        min: 1,
+        max: 1,
+      })
+
+      if (grainSelection[0] === 'Buy 1 grain for 1 food') {
+        player.removeResource('food', 1)
+        player.addResource('grain', 1)
+        this.log.add({
+          template: '{player} buys 1 grain for 1 food',
+          args: { player },
+        })
+        didSomething = true
+      }
+    }
+
+    // Offer plow for food (check affordability again)
+    const canStillPayFood = player.food >= 1 || this.game.getAnytimeFoodConversionOptions(player).length > 0
+    const canPlow = player.getValidPlowSpaces().length > 0
+
+    if (canStillPayFood && canPlow) {
+      const plowChoices = ['Plow 1 field for 1 food', 'Skip plowing']
+      const plowSelection = this.choose(player, plowChoices, {
+        title: 'Farm Supplies: Plow field?',
+        min: 1,
+        max: 1,
+      })
+
+      if (plowSelection[0] === 'Plow 1 field for 1 food') {
+        player.removeResource('food', 1)
+        this.plowField(player)
+        didSomething = true
+      }
+    }
+
+    if (!didSomething) {
+      this.log.addDoNothing(player, 'use farm supplies')
+    }
+
+    return true
+  }
+
+  /**
+   * Building Supplies action: 1 food + (reed or stone) + (wood or clay)
+   */
+  buildingSupplies(player) {
+    // Give 1 food
+    player.addResource('food', 1)
+    this.log.add({
+      template: '{player} receives 1 food',
+      args: { player },
+    })
+
+    // Choose reed or stone
+    const choice1Selection = this.choose(player, ['Reed', 'Stone'], {
+      title: 'Building Supplies: Choose first resource',
+      min: 1,
+      max: 1,
+    })
+    const firstResource = choice1Selection[0].toLowerCase()
+    player.addResource(firstResource, 1)
+    this.log.add({
+      template: '{player} takes 1 {resource}',
+      args: { player, resource: firstResource },
+    })
+
+    // Choose wood or clay
+    const choice2Selection = this.choose(player, ['Wood', 'Clay'], {
+      title: 'Building Supplies: Choose second resource',
+      min: 1,
+      max: 1,
+    })
+    const secondResource = choice2Selection[0].toLowerCase()
+    player.addResource(secondResource, 1)
+    this.log.add({
+      template: '{player} takes 1 {resource}',
+      args: { player, resource: secondResource },
+    })
+
+    return true
+  }
+
+  /**
+   * Corral action: Get animal you don't have (sheep → boar → cattle order)
+   */
+  corral(player) {
+    const animals = player.getAllAnimals()
+
+    // Find first animal type player doesn't have
+    let animalToGet = null
+    if (animals.sheep === 0 && player.canPlaceAnimals('sheep', 1)) {
+      animalToGet = 'sheep'
+    }
+    else if (animals.boar === 0 && player.canPlaceAnimals('boar', 1)) {
+      animalToGet = 'boar'
+    }
+    else if (animals.cattle === 0 && player.canPlaceAnimals('cattle', 1)) {
+      animalToGet = 'cattle'
+    }
+
+    if (!animalToGet) {
+      this.log.add({
+        template: '{player} has all animal types or cannot house more animals',
+        args: { player },
+      })
+      return false
+    }
+
+    player.addAnimals(animalToGet, 1)
+    this.log.add({
+      template: '{player} takes 1 {animal} from the Corral',
+      args: { player, animal: animalToGet },
+    })
+
+    return true
+  }
+
+  /**
+   * Side Job action: Build 1 stable for 1 wood + optional bake bread
+   */
+  sideJob(player) {
+    let didSomething = false
+
+    // Build stable for 1 wood
+    const canBuildStable = player.wood >= 1 && player.getValidStableBuildSpaces().length > 0
+
+    if (canBuildStable) {
+      const stableChoices = ['Build stable for 1 wood', 'Skip stable']
+      const stableSelection = this.choose(player, stableChoices, {
+        title: 'Side Job: Build a stable?',
+        min: 1,
+        max: 1,
+      })
+
+      if (stableSelection[0] === 'Build stable for 1 wood') {
+        player.removeResource('wood', 1)
+        this.buildStable(player)
+        didSomething = true
+      }
+    }
+
+    // Optional bake bread
+    if (player.hasBakingAbility() && player.grain >= 1) {
+      this.bakeBread(player)
+      didSomething = true
+    }
+
+    if (!didSomething) {
+      this.log.addDoNothing(player, 'do side job')
+    }
+
+    return true
+  }
+
+  /**
+   * Improvement (6-player) action: Minor improvement, or Major from Round 5+
+   */
+  improvementSix(player) {
+    const currentRound = this.game.state.round
+    const allowMajor = currentRound >= 5
+
+    if (allowMajor) {
+      return this.buyImprovement(player, true, true)
+    }
+    else {
+      return this.buyMinorImprovement(player)
+    }
   }
 }
 

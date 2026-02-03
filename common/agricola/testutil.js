@@ -7,6 +7,11 @@ const res = require('./res/index.js')
 const TestUtil = { ...TestCommon }
 
 TestUtil.fixture = function(options) {
+  const numPlayers = options?.numPlayers || 2
+
+  // Default card sets depend on player count (need more cards for more players)
+  const defaultCardSets = numPlayers >= 4 ? ['baseA', 'baseB'] : ['baseA']
+
   options = Object.assign({
     name: 'test_game',
     seed: 'test_seed',
@@ -33,11 +38,15 @@ TestUtil.fixture = function(options) {
         _id: 'tom_id',
         name: 'tom',
       },
+      {
+        _id: 'alex_id',
+        name: 'alex',
+      },
     ],
     playerOptions: {
       shuffleSeats: false,
     },
-    cardSets: ['baseA'],
+    cardSets: defaultCardSets,
   }, options)
 
   options.players = options.players.slice(0, options.numPlayers)

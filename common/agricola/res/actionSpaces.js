@@ -242,7 +242,12 @@ function getActionById(id) {
     return baseOrRound
   }
   // Search player-count specific actions
-  const playerCountAction = [...threePlayerActions, ...fourPlusPlayerActions].find(action => action.id === id)
+  const playerCountAction = [
+    ...threePlayerActions,
+    ...fourPlayerActions,
+    ...fiveSixPlayerActions,
+    ...sixPlayerOnlyActions,
+  ].find(action => action.id === id)
   return playerCountAction
 }
 
@@ -302,9 +307,8 @@ const threePlayerActions = [
   },
 ]
 
-// Additional action spaces for 4-5 player games
-// Note: These REPLACE the 3-player actions, not add to them
-const fourPlusPlayerActions = [
+// Additional action spaces for 4-player games only
+const fourPlayerActions = [
   {
     id: 'copse',
     name: 'Copse',
@@ -351,8 +355,163 @@ const fourPlusPlayerActions = [
   },
 ]
 
+// Additional action spaces for 5-6 player games
+// These use the linked spaces mechanic from the expansion
+const fiveSixPlayerActions = [
+  {
+    id: 'lessons-5',
+    name: 'Lessons',
+    description: 'Play 1 Occupation (occupation cost: 2 food)',
+    type: 'instant',
+    allowsOccupation: true,
+    occupationCost: 2,
+    linkedWith: 'copse-5',
+  },
+  {
+    id: 'copse-5',
+    name: 'Copse',
+    description: 'Accumulation Space: +1 Wood',
+    type: 'accumulating',
+    accumulates: { wood: 1 },
+    linkedWith: 'lessons-5',
+  },
+  {
+    id: 'house-building',
+    name: 'House Building',
+    description: 'Build rooms (5 resources + 2 reed each)',
+    type: 'instant',
+    allowsHouseBuilding: true,
+    linkedWith: 'traveling-players-5',
+  },
+  {
+    id: 'traveling-players-5',
+    name: 'Traveling Players',
+    description: 'Accumulation Space: +1 Food',
+    type: 'accumulating',
+    accumulates: { food: 1 },
+    linkedWith: 'house-building',
+  },
+  {
+    id: 'lessons-5b',
+    name: 'Lessons',
+    description: 'Play 1 Occupation (occupation cost: 2 food, the first two only 1 food each)',
+    type: 'instant',
+    allowsOccupation: true,
+    occupationCost: 2,
+    firstTwoOccupationsCost: 1,
+    linkedWith: 'modest-wish-for-children',
+  },
+  {
+    id: 'modest-wish-for-children',
+    name: 'Modest Wish for Children',
+    description: 'Family Growth with Room Only (Round 5+)',
+    type: 'instant',
+    allowsFamilyGrowth: true,
+    requiresRoom: true,
+    minRound: 5,
+    linkedWith: 'lessons-5b',
+  },
+  {
+    id: 'grove-5',
+    name: 'Grove',
+    description: 'Accumulation Space: +2 Wood',
+    type: 'accumulating',
+    accumulates: { wood: 2 },
+  },
+  {
+    id: 'hollow-5',
+    name: 'Hollow',
+    description: 'Accumulation Space: +2 Clay',
+    type: 'accumulating',
+    accumulates: { clay: 2 },
+  },
+  {
+    id: 'resource-market-5',
+    name: 'Resource Market',
+    description: '1 Reed, 1 Stone, 1 Food',
+    type: 'instant',
+    gives: { food: 1, reed: 1, stone: 1 },
+  },
+]
+
+// Additional action spaces for 6-player games only
+const sixPlayerOnlyActions = [
+  {
+    id: 'riverbank-forest',
+    name: 'Riverbank Forest',
+    description: 'Accumulation Space: +1 Wood + 1 Reed instant',
+    type: 'accumulating',
+    accumulates: { wood: 1 },
+    gives: { reed: 1 },
+  },
+  {
+    id: 'grove-6',
+    name: 'Grove',
+    description: 'Accumulation Space: +2 Wood',
+    type: 'accumulating',
+    accumulates: { wood: 2 },
+  },
+  {
+    id: 'hollow-6',
+    name: 'Hollow',
+    description: 'Accumulation Space: +3 Clay',
+    type: 'accumulating',
+    accumulates: { clay: 3 },
+  },
+  {
+    id: 'resource-market-6',
+    name: 'Resource Market',
+    description: '1 Reed + 1 Stone + 1 Wood instant',
+    type: 'instant',
+    gives: { reed: 1, stone: 1, wood: 1 },
+  },
+  {
+    id: 'animal-market',
+    name: 'Animal Market',
+    description: 'Choose: Sheep (+1 food) or Cattle (costs 1 food)',
+    type: 'instant',
+    allowsAnimalMarket: true,
+  },
+  {
+    id: 'farm-supplies',
+    name: 'Farm Supplies',
+    description: '1 Grain for 1 Food, and/or Plow 1 Field for 1 Food',
+    type: 'instant',
+    allowsFarmSupplies: true,
+  },
+  {
+    id: 'building-supplies',
+    name: 'Building Supplies',
+    description: '1 Food + (Reed or Stone) + (Wood or Clay)',
+    type: 'instant',
+    allowsBuildingSupplies: true,
+  },
+  {
+    id: 'corral',
+    name: 'Corral',
+    description: 'Get animal you don\'t have (Sheep → Boar → Cattle order)',
+    type: 'instant',
+    allowsCorral: true,
+  },
+  {
+    id: 'side-job',
+    name: 'Side Job',
+    description: 'Build 1 Stable for 1 Wood + optional Bake Bread',
+    type: 'instant',
+    allowsSideJob: true,
+  },
+  {
+    id: 'improvement-6',
+    name: 'Improvement',
+    description: 'Minor Improvement (Major from Round 5+)',
+    type: 'instant',
+    allowsMinorImprovement: true,
+    allowsMajorFromRound5: true,
+  },
+]
+
 // Get additional actions for a specific player count
-// Revised Edition: 3-player and 4+ player have different action sets (not cumulative)
+// Revised Edition: Different player counts have different action sets (not cumulative)
 function getAdditionalActionsForPlayerCount(playerCount) {
   if (playerCount <= 2) {
     return []
@@ -360,8 +519,14 @@ function getAdditionalActionsForPlayerCount(playerCount) {
   if (playerCount === 3) {
     return threePlayerActions
   }
-  // 4 or 5 players get their own set of actions
-  return fourPlusPlayerActions
+  if (playerCount === 4) {
+    return fourPlayerActions
+  }
+  if (playerCount === 5) {
+    return fiveSixPlayerActions
+  }
+  // 6 players get both 5-6 player actions and 6-player only actions
+  return [...fiveSixPlayerActions, ...sixPlayerOnlyActions]
 }
 
 // Get accumulation rates for all accumulating actions
@@ -373,7 +538,12 @@ function getAccumulationRates() {
     }
   }
   // Also include player-count specific actions
-  for (const action of [...threePlayerActions, ...fourPlusPlayerActions]) {
+  for (const action of [
+    ...threePlayerActions,
+    ...fourPlayerActions,
+    ...fiveSixPlayerActions,
+    ...sixPlayerOnlyActions,
+  ]) {
     if (action.type === 'accumulating' && action.accumulates) {
       rates[action.id] = action.accumulates
     }
@@ -385,7 +555,9 @@ module.exports = {
   baseActions,
   roundCards,
   threePlayerActions,
-  fourPlusPlayerActions,
+  fourPlayerActions,
+  fiveSixPlayerActions,
+  sixPlayerOnlyActions,
   getRoundCardsByStage,
   getAllActionSpaces,
   getBaseActions,

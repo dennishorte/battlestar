@@ -1,0 +1,260 @@
+AGRICOLA: 5-6 PLAYER EXPANSION
+For 5-6 players | Ages 12+ | Playing time: ~120 minutes
+
+================================================================
+COMPONENTS
+================================================================
+
+Wooden Components (in 2 different colors):
+  2x15 fences
+  2x4 stables
+  2x5 workers
+
+Game Boards:
+  2 large farm boards (one for each new player)
+  1 game board extension (with action spaces on both sides and a
+    scoring overview on one side)
+
+Tiles:
+  6 wooden hut/field tiles
+  8 clay hut/stone house tiles
+
+60 Cards:
+  8 burgundy "Major Improvement" cards
+  48 yellow "Occupation" cards
+  4 orange "Minor Improvement" L-deck promo cards
+
+Other Accessories:
+  1 scoring pad
+  This 4-page rulebook
+  5 white sheep
+  3 brown cattle
+  10 brown "wood" resource tokens
+
+Markers:
+  4 "1 food" markers
+  10 "5 food" markers
+  8 multiplier tiles (with begging tokens on the reverse side)
+
+================================================================
+SETUP
+================================================================
+
+Set up the game according to the base game rules. Only a few things
+change when playing with 5 or 6 players.
+
+The 5th and 6th players take the components in their colors, along
+with a farm board. They start with two workers in their house, just
+like everyone else.
+
+Add the room tiles provided with this expansion to the base game
+tiles. They no longer need to be separated.
+
+Attach the new game board extension to the main game board with the
+correct side facing up, matching the number of players shown on it.
+(You will not need the base game's extensions.)
+
+The starting player receives 2 food. Every subsequent player
+(including the 5th and 6th players) receives 3 food.
+
+================================================================
+CARDS
+================================================================
+
+MAJOR IMPROVEMENTS
+------------------
+This expansion includes 8 additional Major Improvements, used only
+in the 6-player game. These are essentially extra copies of existing
+Major Improvement cards with higher building costs than their base
+game counterparts (except the Well).
+
+First, place the base game's 10 Major Improvements on the supply
+board. Then place all 8 new Major Improvements beneath their
+corresponding base game cards. For the Fireplace and Cooking Hearth,
+place the new card behind the more expensive base game card.
+
+Specifically:
+  - Place the 4-clay Fireplace behind the 3-clay Fireplace.
+  - Place the 6-clay Cooking Hearth behind the 5-clay Cooking Hearth.
+
+MINOR IMPROVEMENTS
+------------------
+Minor Improvements are not tied to player count; simply use the cards
+from the base game. They are sufficient for up to 6 players.
+Nevertheless, this expansion includes 4 Minor Improvements -- the
+L-deck promo cards from "Isle of Skye," winner of the Kennerspiel
+des Jahres 2016. You may add them to the base game cards if you wish.
+
+Note: If you use the "Drafting" variant (see the base game appendix,
+page 8) with 6 players, each player may choose from a maximum of 8
+Minor Improvements. Currently, only the "Young Artist" occupation
+allows a player to have more Minor Improvements.
+
+OCCUPATIONS
+-----------
+Add the 48 occupations from this expansion to the base game
+occupations and shuffle them together. Deal 7 occupations to each
+player as usual. If you prefer, you may use only the occupations
+from this expansion -- they work very well together.
+
+Some new occupations use the following terms:
+
+"Your lone occupation": An occupation with this label may only be
+played if you have not played any other occupation, and you may not
+play any other occupation after it. If you play it, it must be and
+remain your only occupation for the entire game. (Return all your
+other occupation cards to the box.) Currently, "Village Idiot" is
+the only such card in the game.
+
+"Turning a card face down": Some occupations only provide a benefit
+when you choose (at any time) to turn them face down. If you do,
+you receive the goods promised by the occupation. The face-down
+occupation still counts as a played occupation, but it no longer
+provides benefits for the remainder of the game.
+
+================================================================
+GAMEPLAY
+================================================================
+
+The flow of the game is fundamentally unchanged, but the new action
+spaces for 5 and 6 players have some unique features explained below.
+
+LINKED SPACES
+-------------
+The expansion contains three pairs of action spaces connected by a
+gray farmer symbol and surrounded by a shared stone wall. These are:
+
+  - Lessons / Copse
+  - Lessons / Modest Wish for Children
+  - House Building / Traveling Players
+
+These are called "linked spaces."
+
+When you place a worker on a linked space, the connected action space
+becomes blocked for the rest of the round. In other words, linked
+spaces are pairs of action spaces where only one of the two may be
+used per round. (The revised Hungarian base game already includes one
+linked space tile with 4 action spaces.)
+
+Two of the linked spaces are accumulation spaces ("Copse" and
+"Traveling Players"). If you use them, take all accumulated goods
+from that space as usual. If you use the action space linked to an
+accumulation space, the goods on the accumulation space remain there.
+
+A blocked action space cannot be used by any other player that round,
+but it does not count as occupied. If a card refers to an occupied
+action space, it only affects spaces that actually have a worker on
+them.
+
+Example: You place a worker on "House Building." The food on the
+linked "Traveling Players" space stays there. Neither you nor anyone
+else may send a worker to "Traveling Players" this round -- it is
+blocked.
+
+MAJOR IMPROVEMENT CARDS (6-PLAYER GAME)
+----------------------------------------
+During setup for a 6-player game, place the 8 additional Major
+Improvements behind the corresponding base game cards. Whenever you
+build a Major Improvement, you must build from the top of the stack.
+You cannot build one that is still covered by its own other copy.
+
+Note: Except for the new Well, all additional Major Improvements are
+more expensive than their base game counterparts. The new Well costs
+3 stone and 1 clay (which simply differs from the original Well).
+However, you must build the original (3 stone, 1 wood) before you
+can build the new one.
+
+As usual, you may build multiple copies of the same Major
+Improvement -- for example, to deny them to other players. With the
+exception of Fireplaces and Cooking Hearths, owning multiple copies
+of the same Major Improvement provides additional benefits.
+
+Example: You own both Joineries. At each harvest, you may convert
+wood to food twice (1 wood = 2 food, done twice). During scoring,
+you may spend up to 7 wood twice to earn up to 6 bonus points twice.
+
+For all Major Improvements:
+  - Apart from the building cost, they are identical in function to
+    their base game counterparts.
+  - A card behind another card can only be built once the card in
+    front of it has been built (by any player).
+
+THE NEW MAJOR IMPROVEMENT CARDS
+--------------------------------
+Fireplace (4 clay): Place this Fireplace behind the base game's
+3-clay Fireplace. This Fireplace may also be exchanged for a Cooking
+Hearth in the usual way. If exchanged, place it back behind the
+3-clay Fireplace. (If needed, it is on the board.)
+
+Cooking Hearth (6 clay): Place this Cooking Hearth behind the base
+game's 5-clay Cooking Hearth. Naturally, a Fireplace may also be
+exchanged for this Cooking Hearth.
+
+Well (3 stone, 1 clay): If you build both Wells, place 5 food on the
+round cards each time.
+
+Clay Oven (4 clay, 1 stone): If you build both Clay Ovens, you may
+also convert 2 grain into food when baking bread.
+
+Stone Oven (2 clay, 3 stone): If you build both Stone Ovens, you may
+convert up to 2x 2 grain into food when baking bread.
+
+Joinery (2 wood, 3 stone), Pottery (2 clay, 3 stone),
+Basketmaker's Workshop (2 reed, 3 stone): If you build both copies
+of a craft building, you may use both during harvest to convert up to
+two of the relevant resource into food. During scoring, you may also
+use both separately to generate bonus points (see example above).
+
+================================================================
+ACTION SPACES
+================================================================
+
+ACTION SPACES FOR 6 AND 5 PLAYERS:
+-----------------------------------
+Lessons (linked with Copse): Play an occupation. The tuition is
+  2 food.
+Copse (linked with Lessons): Accumulation space -- 1 wood per round.
+
+House Building (linked with Traveling Players): Build one or more
+  rooms onto your house. Each room costs 5 resources of the
+  appropriate type plus 2 reed. The house must be built from a
+  single material type.
+Traveling Players (linked with House Building): Accumulation space --
+  1 food per round.
+
+Lessons (linked with Modest Wish for Children): Play an occupation.
+  The tuition is 2 food; the cost for your first and second
+  occupations is reduced to 1 food each.
+Modest Wish for Children (linked with Lessons): This action space may
+  only be used from Round 5 onward. Family growth, but only if you
+  have a room available.
+
+ACTION SPACES FOR 6 PLAYERS ONLY:
+-----------------------------------
+Riverbank Forest: Accumulation space -- 1 wood per round; you also
+  receive 1 reed.
+Grove: Accumulation space -- 2 wood per round.
+Hollow: Accumulation space -- 3 clay per round.
+Resource Market: Receive 1 reed, 1 stone, and 1 wood.
+Animal Market: Receive one animal of your choice. If you choose
+  sheep, you also receive 1 food. If you choose cattle, pay 1 food.
+Farm Supplies: Receive 1 grain for 1 food, and/or plow 1 field for
+  1 food. You may do both, but you may not repeat the same action.
+Building Supplies: Receive 1 food and two building materials. You
+  must choose either reed or stone, and either wood or clay.
+Corral: Receive one animal of a type you do not yet own. You must
+  follow the order: you may only choose wild boar if you already have
+  sheep, and you may only choose cattle if you already have wild
+  boar. If you already own all three types, you may not use this
+  space.
+Side Job: Build exactly 1 stable for 1 wood. You may not build more
+  than one stable in a single action. You may also perform a "Bake
+  Bread" action.
+Improvement: Play a Minor Improvement. From Round 5 onward, you may
+  choose to play a Major Improvement instead.
+
+================================================================
+
+Translated by: DenZoZ (original Hungarian translation)
+
+© 2016 Lookout GmbH | Published by Mayfair Games, Inc.
