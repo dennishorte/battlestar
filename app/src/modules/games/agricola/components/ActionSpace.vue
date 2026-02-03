@@ -161,6 +161,8 @@ export default {
   border-radius: .25em;
   cursor: pointer;
   transition: all 0.15s ease;
+  overflow: hidden;
+  min-width: 0;
 }
 
 .action-space.clickable:hover {
@@ -189,6 +191,8 @@ export default {
   display: flex;
   align-items: center;
   gap: .3em;
+  overflow: hidden;
+  min-width: 0;
 }
 
 .action-name {
@@ -197,6 +201,7 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .accumulated {
