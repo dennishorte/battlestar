@@ -73,7 +73,7 @@ export default {
       const splays = ['none', 'left', 'right', 'up', 'aslant']
       return splays.map(splay => ({
         splay,
-        biscuits: this.zone.biscuits(splay),
+        biscuits: this.zone.biscuits(splay, { top: true }),
         isCurrent: this.zone.splay === splay,
       }))
     },

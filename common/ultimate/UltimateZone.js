@@ -8,10 +8,14 @@ class UltimateZone extends BaseZone {
     this.splay = undefined
   }
 
-  biscuits(splay=null) {
-    return this
-      .cardlist()
-      .map(card => card.visibleBiscuits(splay))
+  biscuits(splay=null, opts={}) {
+    const cards = this.cardlist()
+    return cards
+      .map((card, idx) => {
+        // If opts.top is true, the top card uses 'top' splay (all biscuits visible)
+        const effectiveSplay = (idx === 0 && opts.top) ? 'top' : splay
+        return card.visibleBiscuits(effectiveSplay)
+      })
       .map(biscuitString => this.game.util.parseBiscuits(biscuitString))
       .reduce((l, r) => this.game.util.combineBiscuits(l, r), this.util.emptyBiscuits())
   }
