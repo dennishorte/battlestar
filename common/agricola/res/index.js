@@ -6,6 +6,7 @@ const majorImprovements = require('./majorImprovements.js')
 const scoringTables = require('./scoringTables.js')
 const baseA = require('./cards/baseA.js')
 const baseB = require('./cards/baseB.js')
+const minorA = require('./cards/minorA.js')
 
 // Re-export everything from sub-modules
 module.exports = {
@@ -103,6 +104,13 @@ module.exports = {
       minorCount: baseB.getMinorImprovements().length,
       occupationCount: baseB.getOccupations().length,
     },
+    minorA: {
+      id: 'minorA',
+      name: 'Minor Improvements A',
+      module: minorA,
+      minorCount: minorA.getMinorImprovements().length,
+      occupationCount: minorA.getOccupations().length,
+    },
   },
 
   // Get available card set IDs
@@ -112,10 +120,10 @@ module.exports = {
 
   // Cards - always searches all sets (for getCardById used by hooks, scoring, etc.)
   getCardById(id) {
-    return baseA.getCardById(id) || baseB.getCardById(id)
+    return baseA.getCardById(id) || baseB.getCardById(id) || minorA.getCardById(id)
   },
   getCardByName(name) {
-    return baseA.getCardByName(name) || baseB.getCardByName(name)
+    return baseA.getCardByName(name) || baseB.getCardByName(name) || minorA.getCardByName(name)
   },
 
   // Functions that filter by selected card sets
@@ -156,12 +164,12 @@ module.exports = {
 
   // Convenience accessors (return all cards across all sets)
   getMinorImprovements() {
-    return [...baseA.getMinorImprovements(), ...baseB.getMinorImprovements()]
+    return [...baseA.getMinorImprovements(), ...baseB.getMinorImprovements(), ...minorA.getMinorImprovements()]
   },
   getOccupations() {
-    return [...baseA.getOccupations(), ...baseB.getOccupations()]
+    return [...baseA.getOccupations(), ...baseB.getOccupations(), ...minorA.getOccupations()]
   },
   getAllCards() {
-    return [...baseA.getAllCards(), ...baseB.getAllCards()]
+    return [...baseA.getAllCards(), ...baseB.getAllCards(), ...minorA.getAllCards()]
   },
 }
