@@ -1,0 +1,411 @@
+Farm Hand B085
+Once you have 4 field tiles arranged in a 2x2, you can
+use a "Build Stables" action to build a stable in the
+center of the 2x2. This stable provides room for a person
+but no animal.
+● You may only build one such stable.
+● 《You may build additional stables as normal with the
+same “Build Stables” action.》
+Truffle Searcher B086
+This card can hold a number of wild boar equal to the
+number of completed feeding phases.
+Cottager B087
+Each time you use the "Day Laborer" action space, you
+can also either build exactly 1 room or renovate your
+house. Either way, you have to pay the cost.
+Established Person B088
+If your house has exactly 2 rooms, immediately renovate
+it without paying any building resources. If you do, you
+can immediately afterward take a "Build Fences" action.
+● You may not play this card if you cannot renovate.
+Groom B089
+When you play this card, you immediately get 1 wood.
+Once you live in a stone house, at the start of each
+round, you can build exactly 1 stable for 1 wood.
+● If played by the Scholar B097, the effect can be
+used immediately.
+Cooperative Plower B090
+Each time you use the "Farmland" action space while
+the "Grain Seeds" action space is occupied, you can
+plow 1 additional field.
+Assistant Tiller B091
+Each time you use the "Day Laborer" action space, you
+can also plow 1 field.
+Little Stick Knitter B092
+From Round 5 on, each time you use the "Sheep
+Market" accumulation space, you can also take a
+"Family Growth with Room Only" action.
+Confidant B093
+Place 1 food from your supply on each of the next 2, 3,
+or 4 round spaces. At the start of these rounds, you get
+the food back and your choice of a "Sow" or "Build
+Fences" action.
+● For example, if played in Round 9, you must place 1
+food on each of Rounds 10-11, 10-12, or 10-13.
+Stock Protector B094
+Each time before you use the "Fencing" action space,
+you get 2 wood. Immediately after that "Fencing" action,
+you can place another person.
+Master Bricklayer B095
+Each time you build a major improvement, reduce the
+stone cost by the number of rooms you have built onto
+your initial house.
+● If you have 3 rooms total, the discount is 1 stone.
+Tree Farm Joiner B096
+Place 1 wood on each of the next 2 odd-numbered
+round spaces. At the start of these rounds, you get the
+wood and, immediately afterward, a "Minor
+Improvement" action.
+Scholar B097
+Once you live in a stone house, at the start of each
+round, you can play an occupation for an occupation
+cost of 1 food, or a minor improvement (by paying its
+cost).
+● Cards with text such as “remaining rounds” (e.g.
+Manservant B107) will NOT trigger in time for the
+current round.
+● The version found at Play-Agricola has wrong text!40
+Organic Farmer B098
+During scoring, you get 1 bonus point for each pasture
+containing at least 1 animal while having unused
+capacity for at least three more animals.
+● The Wildlife Reserve C011 is not a pasture.
+Tutor B099
+During scoring, you get 1 bonus point for each
+occupation played after this one.
+● This card only refers to cards played by the owner.
+Clutterer B100
+During scoring, you get 1 bonus point for each card
+played after this one that has "accumulation space(s)" in
+its text.
+● This card only refers to cards played by the owner.
+Furniture Carpenter B101
+Each harvest, if any player (including you) owns the
+Joinery or an upgrade thereof, you can buy exactly 1
+bonus point for 2 food.
+Consultant B102
+40 Ponton on BGG
+30
+Agricola Revised Edition Unofficial Compendium
+When you play this card in a 1-/2-/3-/4- player game, you
+immediately get 2 grain/3 clay/2 reed/2 sheep.
+● In a 5- or 6-player game, you receive 2 sheep.41
+Field Merchant B103
+When you play this card, you immediately get 1 wood
+and 1 reed. Each time you decline a "Minor/Major
+Improvement" action, you get 1 food/vegetable instead.
+● Merchant C096 does not double a decline.42
+● Stone Company A023 improvements are conditional
+on spending stone and can’t be declined.43
+● 《You can place onto the “Major Improvement” or
+“Improvement” (6p) action space just to decline it.》
+Sheep Walker B104
+At any time, you can exchange 1 sheep for either 1 wild
+boar, 1 vegetable, or 1 stone.
+● ERRATA: The sheep must be on your farmyard.44
+● You can exchange immediately after breeding (and
+before scoring or the next round.)
+Case Builder B105
+When you play this card, you immediately get 1 good of
+each of the following types, if you have at least 2 of that
+good already: food, grain, vegetable, reed, wood.
+Moral Crusader B106
+Immediately before the start of each round, if there are
+goods on remaining round spaces that are promised to
+you, you get 1 food.
+Manservant B107
+Once you live in a stone house, place 3 food on each
+remaining round space. At the start of these rounds, you
+get the food.
+● If played by the Scholar B097 at the start of Round
+X, food is placed on Rounds (X+1) to 14.
+Oven Firing Boy B108
+Each time you use a wood accumulation space, you get
+an additional "Bake Bread" action.
+Paper Maker B109
+Immediately before playing each occupation after this
+one, you can pay 1 wood total to get 1 food for each
+occupation you have in front of you.
+Pavior B110
+At the end of each preparation phase, if you have at
+least 1 stone in your supply, you get 1 food. In round 14,
+you get 1 vegetable instead.
+Rustic B111
+44 Uwe via Ponton on BGG
+43 Uwe via Ponton on BGG
+42 Ponton on BGG
+41 Ponton on BGG
+For each clay room you build, you get 2 food and 1
+bonus point. (This does not apply to stone rooms and
+renovated wood rooms).
+Silokeeper B112
+Each time you use the action space card that has been
+revealed right before the most recent harvest, you also
+get 1 grain.
+● The action space card is Round 4, 7, 9, 11, or 13.
+Patch Caregiver B113
+When you play this card, you can choose to buy 1 grain
+for 1 food, or 1 vegetable for 3 food. This card is a field.
+Childless B114
+At the start of each round, if you have at least 3 rooms
+but only 2 people, you get 1 food and 1 crop of your
+choice (grain or vegetable.)
+● Cards that provide room for a person do not count
+for this effect unless they self-identify as a room.
+Tinsmith Master B115
+You can hold 1 additional animal in each pasture without
+a stable. Each time you sow in a field, you can place 1
+additional crop of the respective type in that field.
+● This effect places one extra crop on top of the usual
+stack, not a second stack in each field.45
+● You may not add anything except grain or vegetable.
+● This does not add a condition to sowing.
+Shoreforester B116
+When you play this card, and each time 1 reed is placed
+on an empty "Reed Bank" accumulation space in the
+preparation phase, you get 1 wood.
+Informant B117
+After each work phase, if you have more stone than clay
+in your supply, you get 1 wood.
+Small-scale Farmer B118
+As long as you live in a house with exactly 2 rooms, at
+the start of each round, you get 1 wood.
+● Cards that provide room for a person do not count
+for this effect unless they self-identify as a room.
+Lumberjack B119
+Immediately place 1 wood on each of the next round
+spaces, up to the number of fences you built. At the start
+of these rounds, you get the wood.
+Sweep B120
+Each time before you use the action space card left of
+the card that has been most recently placed on a round
+space, you get 2 clay.
+● The action space must be Round 1-6 or 8-12.
+Geologist B121
+45 Ponton on BGG
+31
+Agricola Revised Edition Unofficial Compendium
+Each time you use the "Forest" or "Reed Bank"
+accumulation space, you also get 1 clay. In games with 3
+or more players, this also applies to the "Clay Pit".
+Mineralogist B122
+Each time you use a clay/stone accumulation space, you
+also get 1 of the other good, stone/clay.
+Roof Ballaster B123
+When you play this card, you can immediately pay 1
+food to get 1 stone for each room you have.
+● The 1 food (total, not per room ) is in addition to the46
+occupation cost.
+Trimmer B124
+Each time after you enclose at least one farmyard
+space, you get 2 stone. (Subdividing an existing pasture
+does not count.)
+Estate Worker B125
+Place 1 wood, 1 clay, 1 reed, and 1 stone in this order on
+the next 4 round spaces. At the start of these rounds,
+you get the respective building resource.
+Carpenter B126
+Every new room only costs you 3 of the appropriate
+building resource and 2 reed (e.g. if you live in a wooden
+house, 3 wood and 2 reed).
+Seducer B127
+When you play this card in Round 5 or later, you can
+immediately pay 1 stone, 1 grain, 1 vegetable, and 1
+sheep to take a "Family Growth Even without Room"
+action.
+Plumber B128
+Each time after you use the "Major Improvement" action
+space, you can take a "Renovation" action for 2 clay or 2
+stone less.
+Seatmate B129
+You can use the action space on round space 13 even if
+it is occupied by one or more people of the players to
+your immediate left and right.
+Full Peasant B130
+Each time after you use the "Grain Utilization" or
+"Fencing" action space while the other is unoccupied,
+you can pay 1 food to use that other space with the
+same person.
+● ERRATA: The “jump” to a second action space
+may only be done once per turn.47
+● The person ends on the second action space used.
+Equipper B131
+Immediately after each time you use a wood
+accumulation space, you can play a minor improvement.
+● 《This effect is not a “Minor Improvement” action.》
+47 Ponton on BGG
+46 Ponton on BGG
+Estate Master B132
+Once you have no unused farmyard spaces left, you get
+1 bonus point for each vegetable that you harvest.
+● If you have no unused spaces after playing this card
+and then later change your farmyard arrangement
+(e.g. with Overhaul C001,) you still receive bonus
+points for all future harvested vegetables.48
+Village Peasant B133
+At the start of scoring, you get a number of vegetables
+equal to the smallest of the numbers of major
+improvements, minor improvements, and occupations
+you have.
+Housebook Master B134
+After playing this card, if you renovate to stone in round
+13/12/11 or before, you immediately get 1/2/3 food and
+1/2/3 bonus points.
+Nutrition Expert B135
+At the start of each round, you can exchange a set
+comprised of 1 animal of any type, 1 grain, and 1
+vegetable for 5 food and 2 bonus points.
+House Steward B136
+If there are still 1/3/6/9 complete rounds left to play, you
+immediately get 1/2/3/4 wood. During scoring, each
+player with the most rooms gets 3 bonus points.
+Wholesaler B137
+Place 1 vegetable, 1 wild boar, 1 stone, and 1 cattle on
+this card. Each time you use an action space card on
+round spaces 8 to 11, you get the corresponding good
+from this card.
+Forest Guardian B138
+When you play this card, you immediately get 2 wood.
+Each time before another player takes at least 5 wood
+from an accumulation space, they must first pay you 1
+food.
+Forest Scientist B139
+In the returning home phase of each round, if there is no
+wood left on the game board, you get 1 food - from
+round 5 on, even 2 food.
+Farmyard Worker B140
+At the end of each work phase in which you placed at
+least 1 good on 1 of your farmyard spaces, you get 2
+food.
+● 《You may not trigger this card by only moving an
+existing good.》
+Field Caretaker B141
+When you play this card, you can immediately exchange
+0/1/3 clay for 1/2/3 grain. This card is a field.
+Greengrocer B142
+48 Ponton on BGG
+32
+Agricola Revised Edition Unofficial Compendium
+Each time you use the "Grain Seeds" action space, you
+also get 1 vegetable.
+Clay Warden B143
+Each time another player uses the "Hollow"
+accumulation space, you get 1 clay. In a 3-/4-player
+game, you also get 1 clay/food.
+Collier B144
+Each time after you use the "Clay Pit" accumulation
+space, you get 1 reed and 1 wood. With 3 or more
+players, you get 1 additional wood on the "Hollow"
+accumulation space.
+● Note that this card is a 3+ player card.
+Brushwood Collector B145
+Each time you renovate or build a room, you can replace
+the required 1 or 2 reed with a total of 1 wood.
+Illusionist B146
+Each time you use a building resource accumulation
+space, you can discard exactly 1 card from your hand to
+get 1 additional building resource of the accumulating
+type.
+Huntsman B147
+Each time after you use a wood accumulation space,
+you can pay 1 grain to get 1 wild boar.
+Pet Broker B148
+When you play this card, you immediately get 1 sheep.
+You can keep 1 sheep on each occupation in front of
+you.
+Open Air Farmer B149
+When you play this card, if you have at least 3 stables in
+your supply, remove 3 stables in your supply from play
+and build a pasture covering 2 farmyard spaces. You
+only need to pay a total of 2 wood for the fences.
+● You may not build those stables later.
+Large-Scale Farmer B150
+Each time after you use the "Farm Expansion" or "Major
+Improvement" action space while the other is
+unoccupied, you can pay 1 food to use that other space
+with the same person.
+● ERRATA: The “jump” to a second action space
+may only be done once per turn.49
+● The person ends on the second action space used.
+Little Peasant B151
+You immediately get 1 stone. As long as you live in a
+wooden house with exactly 2 rooms, action spaces -
+excluding Meeting Place - are not considered occupied
+for you.
+Junior Artist B152
+Each time after you use the "Day Laborer" action space,
+you can pay 1 food to use an unoccupied "Traveling
+49 Ponton on BGG
+Players" or "Lessons" action space with the same
+person.
+Housemaster B153
+During scoring, total the values of your major
+improvements. The smallest value counts double. If the
+total is at least 5/7/9/11, you get 1/2/3/4 bonus points.
+Sheep Keeper B154
+You can only play this card if you have less than 7
+sheep. Once this game, when you have 7 sheep in your
+farmyard, you immediately get 3 bonus points and 2
+food.
+Art Teacher B155
+When you play this card, you immediately get 1 wood
+and 1 reed. Each time you pay an occupation cost, you
+can use food from the "Traveling Players" accumulation
+space.
+Storehouse Keeper B156
+Each time you use the "Resource Market" action space,
+you also get your choice of 1 clay or 1 grain.
+Salter B157
+At any time, you can pay 1 sheep/wild boar/cattle from
+your farmyard. If you do, place 1 food on each of the
+next 3/5/7 round spaces. At the start of these rounds,
+you get the food.
+● You may not “split” acquisitions of multiple animals
+(or generally any groupings of goods.)50
+District Manager B158
+At the end of each work phase, if you used both the
+"Forest" and "Grove" accumulation spaces, you get 5
+food.
+Lieutenant General B159
+For each field tile that another player places next to an
+existing field tile, you get 1 food from the general supply.
+In round 14, you get 1 grain instead.
+Pub Owner B160
+Immediately, when you play this card, and at the end of
+each work phase, in which the "Forest", "Clay Pit", and
+"Reed Bank" accumulation spaces are all occupied, you
+get 1 grain.
+Weakling B161
+Each time it is your turn in the work phase, if there are 1
+or more accumulation spaces with 5+ goods on them
+and you do not use any of them, you get 1 vegetable.
+Forest Clearer B162
+Each time you obtain exactly 2/3/4 wood from a wood
+accumulation space, you get 1 additional wood and 1/0/1
+food.
+● This card’s effect triggers before deciding to leave
+wood on the action space (e.g. with Basket A056)
+50 Ponton on BGG
+33
+Agricola Revised Edition Unofficial Compendium
+Pastor B163
+Once you are the only player to live in a house with only
+2 rooms, you immediately get 3 wood, 2 clay, 1 reed,
+and 1 stone (only once).
+Sheep Whisperer B164
+Add 2, 5, 8, and 10 to the current round and place 1
+sheep on each corresponding round space. At the start
+of these rounds, you get the sheep.
+Game Provider B165
+Immediately before each harvest, you can discard 1/3/4
+grain from different fields to receive 1/2/3 wild boars.
+Cattle Feeder B166
+Each time you use the "Grain Seeds" action space, you
+can also buy 1 cattle for 1 food.
+Stable Sergeant B167
+When you play this card, you can pay 2 food to get 1
+sheep, 1 wild boar, and 1 cattle, but only if you can
+accommodate all three animals on your farm.
+Pasture Master B168
+Each time you renovate, you get 1 additional animal of
+the respective type in each of your pastures with stable.

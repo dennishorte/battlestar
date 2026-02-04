@@ -1,0 +1,375 @@
+Reader D085
+As soon as you have 6 occupations in front of you
+(including this one), this card provides room for one
+37
+Agricola Revised Edition Unofficial Compendium
+person. In the draft variant, you need 7 occupations to
+play this.
+Sheep Agent D086
+You can keep 1 sheep on each occupation card in front
+of you (including this one), unless it is already able to
+hold animals.
+Master Builder D087
+Once your house has at least 5 rooms, at any time, but
+only once this game, you can add another room at no
+cost.
+Millwright D088
+You immediately get 1 grain. Each time you build fences,
+stables, and rooms, or renovate your house, you can
+replace up to 2 building resources of any type with 1
+grain each.
+● Allows 1 or 2 substitutions per type of thing built.55
+● Common misread is to forget the last “each”.
+Stablehand D089
+Each time you build at least 1 fence, you can also build a
+stable without paying wood for the stable.
+Plow Maker D090
+Each time you use the "Farmland" or "Cultivation" action
+space, you can pay 1 food to plow 1 additional field.
+Plowman D091
+Add 4, 7, and 10 to the current round and place a field
+tile on each corresponding round space. At the start of
+these rounds, you can plow the field for 1 food.
+Child Ombudsman D092
+From round 5 on, if you have room in your house, at the
+end of each person action, you can take a "Family
+Growth" action with that person. If you do, you get 2
+negative points.
+Sheep Inspector D093
+Once per work phase, after you complete a person
+action, you can pay 1 sheep and 2 food to return another
+person you placed home.
+Henpecked Husband D094
+Each time you take a "Build Rooms" action with the
+second person you place, return the first person you
+placed home, unless it is on the "Meeting Place" action
+space.
+Site Manager D095
+When you play this card, immediately build a major
+improvement. When paying its cost, you can replace up
+to 1 building resource of each type with 1 food each.
+Furnisher D096
+When you play this card, you immediately get 2 wood.
+After each new room you build, you can build or play 1
+improvement for 1 wood less.
+55 Ponton on BGG
+● The improvement does not need to cost any wood.
+Begging Student D097
+When you play this card, you must immediately take 1
+begging marker. At the start of each harvest, you can
+play 1 occupation without paying an occupation cost.
+Transactor D098
+Immediately before the final harvest at the end of round
+14, you can take all the building resources that are left
+on the entire game board.
+Earthenware Potter D099
+If you play this card in round 4 or before, after the final
+harvest, you get 1 bonus point for each person for which
+you then pay 1 clay.
+Lord of the Manor D100
+During scoring, you get 1 bonus point for each scoring
+category in which you score the maximum 4 points. (The
+bonus point is also awarded for 4 fenced stables.)
+Sugar Baker D101
+Each time after you use the "Grain Utilization" action
+space, you can buy 1 bonus point for 1 food. Place the
+food on the action space (for the next visitor).
+● If this card is played by using the “Grain Utilization”
+space (e.g. with Freshman A097,) you may not
+immediately use this card.
+Sample Stable Maker D102
+At the start of each returning home phase, you can
+return a built stable to your supply to get 1 wood, 1 grain,
+1 food, and a "Minor Improvement" action.
+Canal Boatman D103
+Each time you use "Fishing" or "Reed Bank", you can
+pay 1 food to immediately place another person on this
+card. If you do, you get your choice of 3 stone or 1 grain
+plus 1 vegetable.
+● The choices are (3 stone) or (grain+vegetable).
+Cultivator D104
+For each new field tile you get, you also get 1 wood and
+1 food.
+Sculptor D105
+Each time you use a clay accumulation space, you also
+get 1 food. Each time you use a stone accumulation
+space, you also get 1 grain.
+Whisky Distiller D106
+At any time, you can pay 1 grain. If you do, add 2 to the
+current round and place 4 food on the corresponding
+round space. At the start of that round, you get the food.
+Bellfounder D107
+In the returning home phase of each round, if you have
+at least 1 clay, you can use this card to discard all of
+your clay and get your choice of 3 food or 1 bonus point.
+Stone Carver D108
+38
+Agricola Revised Edition Unofficial Compendium
+Each harvest, you can use this card to turn exactly 1
+stone into 3 food.
+Sowing Master D109
+When you play this card, you immediately get 1 wood.
+Each time after you use an action space with the "Sow"
+action, you get 2 food.
+Fish Farmer D110
+Each time there is 1/2/3+ food on the "Fishing"
+accumulation space, you get an additional 2 food on the
+"Reed Bank"/ "Clay Pit"/ "Grove" accumulation spaces.
+● ERRATA: “Grove” should be “Forest”.56
+Interior Decorator D111
+Each time you renovate, place 1 food on each of the
+next 6 round spaces. At the start of these rounds, you
+get the food.
+Young Farmer D112
+Each time you use the "Major Improvement" action
+space, you also get 1 grain and, afterward, you can take
+a "Sow" action.
+Food Merchant D113
+For each grain you harvest from a field, you can buy 1
+vegetable for 3 food. If you harvest the last grain from a
+field, the vegetable costs you only 2 food.
+Seed Trader D114
+Place 2 grain and 2 vegetables on this card. You can buy
+them at any time. Each grain costs 2 food; each
+vegetable costs 3 food.
+Fodder Planter D115
+In the breeding phase of each harvest, for each newborn
+animal you get, you can sow crops in exactly 1 field.
+● You must be able to accommodate each newborn in
+order to get it.
+● You may not plant onto Wood Field D075 this way.
+Tree Inspector D116
+This card is a "1 Wood" accumulation space for you only.
+Each time the newly revealed action space card is a
+"Quarry" accumulation space, you must discard all wood
+from this card.
+Wood Expert D117
+When you play this card, you immediately get 2 wood.
+Each improvement costs you up to 2 wood less, if you
+pay 1 food instead.
+Bonehead D118
+When you play this card, immediately place 6 wood on it.
+Immediately after each time you play a card from your
+hand, including this one, you get 1 wood from this card.
+Wood Barterer D119
+Each time before you use an action space with a "Build
+Fences" or "Build Rooms" action, you can choose to
+56 Ponton on BGG
+either get 2 wood or exchange up to 2 wood for 1 reed
+each.
+● This card does not trigger from actions given by
+cards, such as from Cottager B087.
+Clay Deliveryman D120
+Place 1 clay on each remaining space for rounds 6 to
+14. At the start of these rounds, you get the clay.
+Clay Plasterer D121
+Renovating to clay only costs you exactly 1 clay and 1
+reed. Each clay room only costs you 3 clay and 2 reed to
+build.
+Clay Carrier D122
+When you play this card, you immediately get 2 clay. At
+any time, but only once per round, you can buy 2 clay for
+2 food.
+● Name was Clay Seller in the Wizkids printing.
+Renovation Preparer D123
+For each new wood/clay room you build, you get 2 clay/2
+stone.
+Emissary D124
+At any time, you can place a good from your supply on
+this card to get 1 stone. You must place different goods
+on this card. (Food is also considered a good.)
+Forest Trader D125
+Each time you use a wood or clay accumulation space,
+you can also buy exactly 1 building resource. Wood,
+clay, and reed cost 1 food each; stone costs 2 food.
+Field Cultivator D126
+Pile 1 wood, 1 clay, 1 reed, 1 stone, 1 reed, 1 clay, and 1
+wood on this card. Each time you harvest a field tile, you
+can also take the top good from the pile.
+Hardworking Man D127
+This card is an action space for you only. If each other
+player has more rooms than you, it provides the "Day
+Laborer", "Build Rooms", and "Major Improvement"
+actions (all three).
+Building Tycoon D128
+Each time after another player builds 1 or more rooms,
+you can give them 1 food to build exactly 1 room
+yourself. (You must pay the building cost of the room.)
+Lumber Virtuoso D129
+Each harvest in which you have at least 5 wood in your
+supply, you can discard down to 5 wood to take a "Build
+Stables" or "Build Wood Rooms" action by paying the
+usual costs.
+Recreational Carpenter D130
+At the end of each work phase in which you did not use
+the "Meeting Place" action space, you can take a "Build
+Rooms" action without placing a person.
+Craftsmanship Promoter D131
+39
+Agricola Revised Edition Unofficial Compendium
+When you play this card, you immediately get 1 stone.
+You can build any of the major improvements in the
+bottom row of the supply board even when taking a
+"Minor Improvement" action.
+Hide Farmer D132
+During scoring, you can pay 1 food each for any number
+of unused farmyard spaces. You do not lose points for
+these spaces.
+Beer Tent Operator D133
+In the feeding phase of each harvest, you can use this
+card to turn 1 wood plus 1 grain into 1 bonus point and 2
+food.
+Oyster Eater D134
+Each time the "Fishing" accumulation space is used, you
+get 1 bonus point and must skip placing your next
+person that round. (You can place the person on a later
+turn.)
+Gardening Head Official D135
+If there are still 3/6/9 complete rounds left to play, you
+immediately get 2/3/4 wood. During scoring, each player
+with the most vegetables in their fields gets 2 bonus
+points.
+● Fields checked after the final harvest is completed.
+Animal Activist D136
+If there are still 3/6/9 complete rounds left to play, you
+immediately get 2/3/4 wood. During scoring, each player
+with the most fenced stables gets 2 bonus points.
+Trade Teacher D137
+Each time after you use a "Lesson" action space, you
+can buy up to 2 different goods: grain, stone, sheep, and
+wild boar for 1 food each; cattle and vegetable for 2 food
+each.
+● This effect may not be immediately triggered.
+Pet Lover D138
+Each time you use an accumulation space providing
+exactly 1 animal, you can leave it on the space and get
+one from the general supply instead, as well as 3 food
+and 1 grain.
+● You may use the Animal Dealer A147 to acquire a
+second animal of the taken type.
+Chairman D139
+Each time another player uses the "Meeting Place"
+action space, both they and you get 1 food (before
+taking the actions). If you use it, you get 1 food.
+Loudmouth D140
+Each time you take at least 4 building resources or 4
+animals from an accumulation space, you also get 1
+food.
+Seed Seller D141
+When you play this card, you immediately get 1 grain.
+Each time you use the "Grain Seeds" action space, you
+get 1 additional grain.
+Potato Planter D142
+At the end of each work phase in which you occupy the
+"Clay Pit" or "Reed Bank" accumulation space while the
+respective other is unoccupied, you get 1 vegetable.
+Tree Cutter D143
+Each time you use an accumulation space providing at
+least 3 goods of the same type except wood, you get an
+additional 1 wood. (Food is also considered a good.)
+Water Worker D144
+Each time after you use the "Fishing" accumulation
+space or one of the three orthogonally adjacent actions
+spaces, you get 1 additional reed.
+Roof Examiner D145
+When you play this card, if you have 1/2/3/4 major
+improvements, you immediately get 2/3/4/5 reed.
+Porter D146
+Each time you take at least 4 of the same building
+resource from an accumulation space, you get 1
+additional building resource of the accumulating type
+and 1 food.
+● 4 of the same building resource must already be on
+the accumulation space.
+Trap Builder D147
+Each time you use the "Day Laborer" action space,
+place 1 food, 1 food, and 1 wild boar on the next 3 round
+spaces, respectively. At the start of these rounds, you
+get the good.
+Domestician Expert D148
+You can keep 2 sheep on the border between each pair
+of orthogonally adjacent rooms.
+● Milking Place D012 negates this card’s effect.57
+Casual Worker D149
+Each time another player uses a "Quarry" accumulation
+space, you can choose to get 1 food or build a stable
+without paying wood.
+Godly Spouse D150
+Each time you take a "Family Growth" action with the
+second person you place in a round, return the first
+person you placed home.
+Spin Doctor D151
+Immediately after each time you use the "Traveling
+Players" accumulation space, you can place another
+person on an action space of your choice, regardless
+whether or not the action space is occupied.
+Patron D152
+57 Ponton on BGG
+40
+Agricola Revised Edition Unofficial Compendium
+Immediately before each time you play an occupation
+after this one (even before paying the occupation cost),
+you get 2 food.
+Wealthy Man D153
+At the start of each of the 1st/2nd/3rd/4th/5th/6th
+harvest, if you have at least 1/2/3/4/5/6 grain fields, you
+get 1 bonus point.
+Chimney Sweep D154
+Renovating to stone costs you 2 stone less. During
+scoring, you get 1 bonus point for each other player
+living in a stone house.
+Ebonist D155
+Each harvest, you can use this card to turn exactly 1
+wood into 1 food and 1 grain.
+Retail Dealer D156
+Place 3 grain and 3 food on this card. Each time you use
+the "Resource Market" action space, you also get 1 grain
+and 1 food from this card.
+Party Organizer D157
+As soon as the next player but you gains their 5th
+person, you immediately get 8 food (not retroactively).
+During scoring, if only you have 5 people, you get 3
+bonus points.
+Bean Counter D158
+Each time you use an action space on round spaces 1 to
+8, place 1 food on this card. Each time this card has 3
+food on it, move the food to your supply.
+Reed Seller D159
+At any time, you can turn 1 reed into 3 food. Any other
+player can prevent this by buying the reed for 2 food
+from you. If multiple players are interested, choose one.
+Midwife D160
+Each time another player uses the first person they
+place in a round to take a "Family Growth" action, you
+get 1 grain from the general supply.
+Cabbage Buyer D161
+Each time any player (including you) renovates and then
+builds no / 1 minor / 1 major improvement, you can buy 1
+vegetable for 3/2/1 food.
+Clay Firer D162
+When you play this card, you immediately get 2 clay. At
+any time, you can turn clay into stone: you get 1 stone
+for 2 clay, and 2 stone for 3 clay.
+Journeyman Bricklayer D163
+When you play this card, you immediately get 2 stone.
+Each time another player renovates to stone or builds a
+stone room, you get 1 stone.
+Pet Grower D164
+Each time you use an animal accumulation space, if
+afterward you have no animal in your house, you also
+get 1 sheep.
+Pig Stalker D165
+Each time you use an animal accumulation space, if you
+occupy either the action space immediately above or
+below that accumulation space, you also get 1 wild boar.
+Stable Milker D166
+Each time you build at least 2 stables on the same turn,
+you also get 1 cattle.
+Pure Breeder D167
+You immediately get 1 wood. After each round that does
+not end with a harvest, you can breed exactly one type
+of animal. (This is not considered a breeding phase.)
+Stockman D168
+When you build your 2nd/3rd/4th stable, you immediately
+get 1 cattle/wild boar/sheep, even if built on the same
+turn (but not retroactively).

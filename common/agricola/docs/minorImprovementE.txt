@@ -1,0 +1,330 @@
+Pole Barns (Req 15 Fences Built. Cost 2W.) E001
+You can immediately build up to 3 stables at no cost.
+(You must pay the cost of this card though.)
+Renovation Materials (Req Wooden House. Cost 3C+1R.) E002
+Immediately renovate to clay at no cost. (You must pay
+the cost of this card though.)
+34 Ponton on BGG
+33 Ponton on BGG
+32 Ponton on BGG
+31 Ponton on BGG
+21
+Agricola Revised Edition Unofficial Compendium
+Tea Time (Req Own Person on "Grain Utilization". Cost 1F.) E003
+Immediately return your person on the "Grain Utilization"
+action space home; you can place it again later this
+round.
+Thunderbolt (Req 1 Grain Field.) E004
+Immediately remove all grain from one of your fields to
+the general supply. Gain 2 wood for each grain you just
+removed.
+Night Loot (Cost 2F.) E005
+Immediately remove exactly 2 different building
+resources from accumulation spaces and place them in
+your supply.
+Recount E006
+You immediately get 1 building resource of each type of
+which you have 4 or more resources in your supply
+already.
+Pumpernickel (Cost 1G.) E007
+You immediately get 4 food. (Effectively, you are turning
+1 grain into 4 food.)
+Farmers Market (Cost 2F.) E008
+You immediately get 1 vegetable. (Effectively, you are
+buying 1 vegetable for 2 food.)
+Bartering Hut E009
+Up to two times: Immediately spend any 2/3/4 building
+resources for 1 sheep/wild boar/cattle from the general
+supply.
+Straw Hat (Cost 1R.) E010
+At the end of the work phases of rounds 3 and 6, you
+can move your person from the "Farmland" action space
+to an unoccupied action space and take that action, or
+get 1 food.
+Petting Zoo (Cost 1W.) E011
+As long as you have a pasture orthogonally adjacent to
+your house, you can keep animals of any type on this
+card, up to the number of rooms in your house.
+Animal Bedding (1VP. Req 1 Grain Field.) E012
+You can keep 1 additional animal (of the same type) in
+each of your unfenced stables, and 2 additional animals
+(of the same type) in each pasture with stable.
+Stone House Reconstruction (1VP. Cost 1S.) E013
+At any time, you can renovate your clay house to a stone
+house without placing a person. (You must pay the
+normal renovation cost.)
+Wood Saw (Cost 1W.) E014
+Each time all other players have more people than you,
+you can take a "Build Rooms" action without placing a
+person.
+Nail Basket (1VP. Cost 1R.) E015
+Each time after you use a wood accumulation space,
+you can place 1 stone from your supply on that space
+(for the next visitor) to take a “Build Fences” action.
+Briar Hedge (Req 1 Animal of Each Type.) E016
+You do not need to pay wood for fences that you build on
+the edge of your farmyard board.
+● You must still use your fence pieces.
+Skimmer Plow (Req 2 Occs. Cost 1W.) E017
+Each time you use the "Farmland" or "Cultivation" action
+space, you can plow 2 fields instead of 1. Each time you
+sow, you must place 1 fewer good on each field you sow.
+Seed Almanac (Req 4 Occs. Cost 1R.) E018
+Each time after you play a minor improvement after this
+one, you can pay 1 food to plow 1 field.
+Ox Goad (1VP. Req 3 Occs. Cost 1W.) E019
+Each time after you use the "Cattle Market"
+accumulation space, you can pay 2 food to plow 1 field.
+Iron Hoe (Cost 1W.) E020
+At the end of each work phase, if you occupy both the
+"Grain Seeds" and "Vegetable Seeds" action spaces,
+you can plow 1 field.
+Sheep Rug (1VP. Req 4 Sheep. Cost 1 Sheep.) E021
+You can use any "Wish for Children" action space, even
+if it is occupied by another player's person.
+Guest Room (Cost 4W+1R.) E022
+Immediately place any amount of food from your supply
+on this card. Once per round, you can discard 1 food
+from this card to place a person from your supply in that
+round.
+Apiary (Req 4 Occs.) E023
+At the end of each work phase, you can sow exactly 1
+crop on 1 field.
+Ambition (Req 2 Occs.) E024
+Each time you get a "Minor Improvement" action on an
+action space, you can build a major improvement
+instead of playing a minor one.
+Bumper Crop (1VP. Req 2 Grain Fields.) E025
+When you play this card, immediately play the field
+phase of the harvest on your farmyard only.
+Sundial (Cost 1W.) E026
+At the end of the work phases in rounds 7 and 9, you
+can take a "Sow" action without placing a person.
+Piggy Bank E027
+At the end of each work phase, you can place 1 food on
+this card, irretrievably. At any time, you can discard 6
+food from this card to build a major improvement at no
+cost.
+Bookmark (Cost 1W.) E028
+Add 3 to the current round and mark the corresponding
+round space. At the start of that round, you can play 1
+occupation without paying an occupation cost.
+Heirloom (2VP. Req Your Person on Day Laborer.) E029
+(This card has no additional effect.)
+Child's Toy (2VP. Req Exactly 2 Adults. Cost 1W/1C.) E030
+22
+Agricola Revised Edition Unofficial Compendium
+During the feeding phase of each harvest, your
+newborns require 2 food (instead of 1).
+Upholstery E031
+Each time you build or play an improvement after this
+one, you can place 1 reed on this card, irretrievably, to
+get 1 bonus point, up to the number of rooms in your
+house.
+Nave (Cost 2S+1R.) E032
+During scoring, you get 1 bonus point for each of the 5
+columns of your farmyard board containing at least one
+room.
+Beaver Colony (1VP. Req 1 Fenced Stable.) E033
+From now on, one of your pastures with stable cannot
+hold animals. Each time you get reed from an action
+space, you get 1 bonus point.
+Land Register (Cost 1W.) E034
+During scoring, if your farm has no unused spaces, you
+get 2 bonus points.
+Misanthropy (Cost 1W.) E035
+During scoring, if you have exactly 4/3/2 people, you get
+2/3/5 bonus points.
+Herbal Garden (2VP. Req 1 Pasture. Cost 1W.) E036
+From now on, at least one of your pastures must contain
+no animals.
+Ox Skull (Req 1 Cattle.) E037
+When you play this card, you immediately get 1 food.
+During scoring, if you have no cattle, you get 3 bonus
+points.
+Rod Collection (1VP. Req 3 Occs.) E038
+Each time you use "Fishing", you can place up to 2 wood
+on this card, irretrievably. During scoring, each such
+wood is worth 1 bonus point, except the 1st, 4th, 7th,
+and 10th.
+Paintbrush (Req 1 Wild Boar. Cost 1W.) E039
+Each harvest, you can exchange exactly 1 clay for your
+choice of 2 food or 1 bonus point.
+Bee Statue (Cost 2C.) E040
+Pile (from bottom to top) 1 vegetable, 1 stone, 1 grain, 1
+stone, 1 grain on this card. Each time you use the "Day
+Laborer" action space, you get the top good.
+Muddy Waters (1VP. Req 5 Cards in Play.) E041
+Alternate placing 1 food and 1 clay on each remaining
+even-numbered round space, starting with food. At the
+start of these rounds, you get the respective good.
+Water Gully (Req “Well” Major Improvement. Cost 1S.) E042
+Place 1 cattle, 1 grain, and 1 cattle on the next 3 round
+spaces (in that order). At the start of these rounds, you
+get the respective good.
+Barn Cats (1VP. Req 1 Stable.) E043
+If you have 1/2/3/4 stables, place 1 food on each of the
+next 2/3/4/5 round spaces. At the start of these rounds,
+you get the food.
+Fodder Beets (1VP. Req 3 Field Tiles.) E044
+Place 1 food on each remaining odd-numbered round
+space. At the start of these rounds, you get the food.
+Fruit Ladder (1VP. Cost 2W.) E045
+Place 1 food on each remaining even-numbered round
+space. At the start of these rounds, you get the food.
+Waterlily Pond (1VP. Req Exactly 2 Occs.) E046
+Place 1 food on each of the next 2 round spaces. At the
+start of these rounds, you get the food.
+Syrup Tap (1VP. Cost 1W+1S.) E047
+Each time you get at least 1 wood from an action space,
+place 1 food on the next round space. At the start of that
+round, you get the food.
+Town Hall (2VP. Cost 2W+2C.) E048
+In the feeding phase of each harvest, if you live in a clay
+or stone house, you get 1 or 2 food, respectively.
+Twibil (1VP. Cost 1S.) E049
+Each time after any player (including you) builds at least
+1 wood room, you get 1 food.
+Wild Greens E050
+Each time you sow, you get 1 food for every different
+type of good that you sow.
+Whale Oil (Cost 1W.) E051
+Each time you use "Fishing", place 1 food from the
+general supply on this card. Each time before you play
+an occupation, you get food equal to the amount on this
+card.
+Cubbyhole (1VP. Cost 1R+1W/1C.) E052
+For each room that you add to your house, place 1 food
+from the general supply on this card. At the start of each
+feeding phase, you get food equal to the amount on this
+card.
+Boar Spear (1VP. Cost 1W+1S.) E053
+Each time you get at least 1 wild boar outside of the
+breeding phase of a harvest, you can immediately turn
+them into 4 food each.
+Contraband (Cost 1F.) E054
+Each time you play or build an improvement after this,
+you can pay 1 additional building resource of a type in
+the printed cost to get 3 food.
+Stone Weir (1VP. Req 2 Occs. Cost 1S.) E055
+Each time you use the "Fishing" accumulation space, if
+there are 0/1/2/3 food on the space, you get an
+additional 4/3/2/1 food from the general supply.
+Roman Pot (1VP. Cost 1C.) E056
+Place 4 food from the general supply on this card. At the
+start of each work phase, if you are the last player in turn
+order, move 1 food from this card to your supply.
+23
+Agricola Revised Edition Unofficial Compendium
+Cheese Fondue (1VP. Cost 1C.) E057
+Each time you bake at least 1 grain into bread, you get 1
+additional food if you have at least 1 sheep and
+(another) 1 additional food if you have at least 1 cattle.
+Lunchtime Beer E058
+At the start of each harvest, you can choose to skip the
+field and breeding phase of that harvest and get exactly
+1 food instead.
+Comb and Cutter (Cost 1W.) E059
+Each time you use the "Day Laborer" action space, you
+get 1 additional food for each sheep on the "Sheep
+Market" accumulation space, up to a maximum of 4
+additional food.
+Working Gloves E060
+When you play this card, you get 1 food. Each time you
+pay an occupation cost, you can pay 1 building resource
+of your choice in place of (up to) 2 food.
+Raised Bed (1VP. Req 2 Grain Fields. Cost 2C+2S.) E061
+At the start of each harvest, you get 4 food.
+Sour Dough (1VP. Req 3 Occs and 1 Baking Improvement.) E062
+Once per round, if all players have at least 1 person left
+to place, you can skip placing a person and take a "Bake
+Bread" action instead.
+Iron Oven (2VP. Cost 3S.) E063
+For any “Bake Bread” action, you can convert exactly 1
+grain into 6 food. When you build this improvement, you
+can immediately take a “Bake Bread” action.
+Simple Oven (1VP. Cost 2C.) E064
+For any “Bake Bread” action, you can convert exactly 1
+grain into 3 food. When you build this improvement, you
+can immediately take a “Bake Bread” action.
+Almsbag (Req No Occs.) E065
+When you play this card, you immediately get 1 grain for
+every 2 completed rounds.
+Barn Shed (Req 3 Occs. Cost 2W.) E066
+Each time another player (or, in a solo game, you) uses
+the "Forest" accumulation space, you get 1 grain.
+Grain Bag (1VP. Cost 1R.) E067
+Each time you use the "Grain Seeds" action space, you
+get 1 additional grain for each baking improvement you
+have.
+Cherry Orchard E068
+This card is a field on which you can only sow and
+harvest wood as you would grain. Each time you harvest
+the last wood from this card, you also get 1 vegetable.
+Melon Patch (Req 2 Occs.) E069
+This card is a field that can only grow vegetables. Each
+time you harvest the last vegetable from this card, you
+can plow 1 field.
+Crop Rotation Field (Req 1 Occ.) E070
+This card is a field. Each time you remove the last grain
+or vegetable from this card, you can immediately sow
+vegetable or grain on this card, respectively.
+Cow Patty (1VP. Req 1 Cattle.) E071
+Each time you sow in a field that is orthogonally adjacent
+to a pasture, you can place 1 additional good of the
+planted type in it.
+Artichoke Field (1VP. Req 2 Occs. Cost 1W.) E072
+This card is a field. During the field phase of each
+harvest, if you harvest at least 1 good from this card, you
+also get 1 food.
+Scythe (Cost 1W.) E073
+During the field phase of each harvest, you can select
+exactly one of your fields and harvest all the crops
+planted in it.
+Ash Trees (Req 2 planted fields.) E074
+When you play this card, immediately place (up to) 5
+fences from your supply on it. When you build fences,
+fences taken from this card cost you nothing.
+Stone Axe (1VP. Req 2 Occs. Cost 1W+1C.) E075
+Each time you use a wood accumulation space, you can
+return 1 stone to the general supply to get an additional
+3 wood.
+Lumber Pile E076
+When you play this card, you can immediately return up
+to 3 stables from your farmyard board to your supply and
+get 3 wood for each.
+Mattock (Cost 1W.) E077
+Each time you get reed and/or stone from an action
+space, you get 1 additional clay.
+Sleight of Hand (Req 3 Occs.) E078
+When you play this card, you can immediately exchange
+up to 4 building resources for an equal number of other
+building resources.
+● It is a single exchange.
+● You can’t trade wood-for-wood, for example.
+Field Spade (Cost 1W.) E079
+Each time after you sow in at least 1 field, you get 1
+stone.
+Rock Garden E080
+You can only plant stone on this card. Plant as though it
+were 3 fields, but it is considered 1 field. Sow and
+harvest stone on this card as you would vegetables.
+Alchemists Lab (1VP. Req 3 Occs.) E081
+This card is an action space for all. A player who uses it
+gets 1 building resource of each type they already have.
+If another player uses it, they must first pay you 1 food.
+Profiteering E082
+When you play this card, you immediately get 1 food.
+Each time after you use the "Day Laborer" action space,
+24
+Agricola Revised Edition Unofficial Compendium
+you can exchange 1 building resource for another
+building resource.
+Shepherd's Whistle (Cost 1W.) E083
+At the start of the breeding phase of each harvest, if you
+have at least 1 unfenced stable without an animal, you
+get 1 sheep.
+Dolly's Mother (1VP. Req 1 Sheep.) E084
+You only require 1 sheep to breed sheep during the
+breeding phase of a harvest. This card can hold 1
+sheep.

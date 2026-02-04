@@ -1,0 +1,414 @@
+Shelter A001
+You can immediately build a stable at no cost, but only if
+you place it in a pasture covering exactly 1 farmyard
+space.
+     Shifting Cultivation (Cost 2F.) A002
+Immediately plow 1 field.
+Paper Knife (Cost 1W.) A003
+Select 3 occupations in your hand. Select one of them
+randomly, which you can play immediately without
+paying an occupation cost.
+                         ● May not be played if you have 2 or fewer
+occupations in your hand.12
+● If you select an occupation that has an additional
+cost you cannot pay, that occupation is removed
+from the game instead of played.
+                               Baseboards (Cost 2F/1G.) A004
+You immediately get 1 wood for each room you have. If
+you have more rooms than people, you get 1 additional
+wood.
+    Clay Embankment (Cost 1F.) A005
+You immediately get 1 clay for every 2 clay you already
+have in your supply.
+Storage Barn A006
+If you have the Well, Joinery, Pottery, and/or
+Basketmaker's Workshop, you immediately get 1 stone,
+1 wood, 1 clay, and/or 1 reed, respectively.
+● You may only get 1 of each resource, even in a
+6-player game with multiple copies of the same
+improvement.13
+● Applies to the 10 (or 18 in 6p) major improvements.
+Gardener's Knife (Cost 1W.) A007
+You immediately get 1 food for each grain field you have
+and 1 grain for each vegetable field you have.
+                                             Food Basket (Req 2 Occs, 2 Imps. Cost 1R.) A008
+You immediately get 1 grain and 1 vegetable.
+Young Animal Market (Cost 1 Sheep.) A009
+You immediately get 1 cattle. (Effectively, you are
+  exchanging 1 sheep for 1 cattle.)
+Wooden Shed (Req Still in Wooden House. Cost 2W 1R.) A010
+This card can only be played via a "Major Improvement"
+action. It provides room for one person. You may no
+longer renovate.
+● May not be played on the “House Redevelopment”
+action space, as the “Renovate” action is mandatory
+and comes before the improvement action.
+                                       13 Ponton on BGG
+12 Ponton on BGG
+● May be played through the effect of a card, such as
+Angler A095.
+           Mud Patch A011
+When you play this card, you immediately get 1 wild
+boar. You can hold 1 wild boar on each of your unplanted
+field tiles.
+    Drinking Trough (Cost 1C.) A012
+Each of your pastures (with or without a stable) can hold
+up to 2 more animals.
+    ● Cards holding animals are not pastures unless
+explicitly stated.
+    Renovation Company (Req Exactly 2 Wooden Rooms. Cost 4W.) A013
+When you play this card, you immediately get 3 clay.
+                                                   Immediately after, you can renovate without paying any
+building resources.
+                  ● The renovation can be declined, but the free cost
+cannot be applied later.
+                       Carpenter's Hammer (Cost 1W.) A014
+Each time you build at least 2 wood/clay/stone rooms at
+once, you get a total discount of 2 reed as well as 2
+wood/3 clay/4 stone.
+Carpenter's Axe (Cost 1W.) A015
+Each time after you use a wood accumulation space, if
+you then have at least 7 wood in your supply, you can
+build exactly 1 stable for 1 wood.
+                                 Rammed Clay A016
+When you play this card, you immediately get 1 clay. You
+can use clay instead of wood to build fences.
+                                                   ● You can use both wood and clay for the same “Build
+Fences” action.
+                                                   Reclamation Plow (Cost 1W.) A017
+After the next time you take animals from an
+accumulation space and accommodate all of them on
+your farm, you can plow 1 field.
+                               ● Taking, but not fully accommodating, the animals
+neither triggers nor voids the effect.
+                                     ● It is legal to avoid accommodating all animals even if
+you can, e.g. by eating them with a Fireplace.
+           Wheel Plow (Req 2 Occs. Cost 2W.) A018
+Once this game, when you use the "Farmland" or
+“Cultivation" action space with the first person you place
+in a round, you can plow 2 additional fields.
+Handplow (Cost 1W.) A019
+Add 5 to the current round and place 1 field tile on the
+corresponding round space. At the start of that round,
+you can plow the field.
+Double-Turn Plow (Play in Round 3/5 or Before. Cost 1G/1G 1F.) A020
+When you play this card, you can immediately plow up to
+2 fields.
+● The cost is 1 extra food if played in Round 4 or 5.
+Family Friendly Home (Req 1 Occ.) A021
+7
+Agricola Revised Edition Unofficial Compendium
+Each time you take a "Build Rooms" action while having
+more rooms than people already, you also get a "Family
+Growth" action and 1 food.
+● This card allows exactly 1 growth action regardless
+of how many rooms are built.
+Telegram (1VP. Req At Least 1 Fence in Supply. Cost 2F.) A022
+Add 1 to the current round for each fence in your supply
+and mark the corresponding round space. In that round
+only, you can place a person from your supply.
+● The person is returned to your supply in the
+“returning home” phase.
+Stone Company (1VP. Cost 2C 1R.) A023
+Immediately after each time you use a "Quarry"
+accumulation space, you get a "Major or Minor
+Improvement" action during which you must spend at
+least 1 stone.
+● You may not decline an automatic stone discount in
+order to trigger this card’s effect, e.g. from
+Stonecutter A143.
+● Improvement action is not declinable in order to use
+Field Merchant B103.
+Threshing Board (1VP. Req 2 Occs. Cost 1W.) A024
+Each time you use the "Farmland" or "Cultivation" action
+space, you get an additional "Bake Bread" action.
+Bassinet (Cost 1W 1R.) A025
+Each work phase, you can place a(nother) person on the
+first non-accumulating action space used by any player
+(including you), as long as there is only 1 person on that
+space.
+● This refers to 1 specific space, not 1 space for every
+player’s first non-accumulating action space.
+● Note that Family Growth usually leaves 2 people on
+the space.
+● The relevant space can be provided by another card,
+such as the one from Forest Tallyman A162.14
+● Meeting Place may never be used a second time,
+even if it is the relevant space.
+● 《Mark this space with a suggestion/claim marker.》
+Sleeping Corner (1VP. Req 2 Grain Fields. Cost 1W.) A026
+You can use any "Wish for Children" action space even if
+it is occupied by one other player's person.
+● But not if occupied by 2+ other player’s people.
+Oven Site (Req Both Fireplace and Cooking Hearth.) A027
+When you play this card, you get 2 wood and you can
+immediately build the "Clay Oven" or "Stone Oven"
+major improvement. Either way, it only costs you 1 clay
+and 1 stone.
+Forest School (1VP. Cost 1W 1C.) A028
+14 Ponton on BGG
+You can consider the "Lessons" action spaces not
+occupied. You can replace each food that an occupation
+costs with wood.
+Ale-Benches (Req 2 Occs. Cost 1W.) A029
+In the returning home phase of each round, you can pay
+exactly 1 grain from your supply to get 1 bonus point. If
+you do, each other player gets 1 food.
+Baking Sheet (Req No Grain Field.) A030
+Each time you take a "Bake Bread" action, you can use
+this card to exchange exactly 1 grain for 2 food and 1
+bonus point.
+● You must bake normally to make this exchange.
+Debt Security (Cost 2F.) A031
+During scoring, you get 1 bonus point for each major
+improvement you have, up to the number of your unused
+farmyard spaces.
+Manger (Cost 2W.) A032
+During scoring, if your pastures cover at least 6/7/8/10
+farmyard spaces, you get 1/2/3/4 bonus points.
+Big Country (Req All Farmyard Spaces Used.) A033
+For each complete round left to play, you immediately
+get 1 bonus point and 2 food.
+Loppers (Req 2 Occs. Cost 1W.) A034
+Each time you build 1 or more fences, you can also use
+this card to exchange 1 wood and 1 fence in your supply
+for 2 food and 1 bonus point.
+Swimming Class (Req 2 Occs. Cost 1F.) A035
+In the returning home phase of each round, if you return
+a person from the "Fishing" accumulation space, you get
+2 bonus points for each newborn that you return home.
+● If you used Adoptive Parents A092, there is no
+longer a newborn to return home.
+Facades Carving (Req Wood in Supply ≥ Current Round. Cost 2C 1R.) A036
+When you play this card, you can exchange any number
+of food for 1 bonus point each, up to the number of
+completed harvests.
+Bucksaw (Cost 1W.) A037
+Each time you renovate, you can also pay 1 wood to get
+1 bonus point and 1 grain.
+Wool Blankets (Req 5 Sheep.) A038
+During scoring, if you live in a wooden/clay/stone house
+by then, you get 3/2/0 bonus points.
+Chapel (3VP. Req 2 Occs. Cost 3W 2C.) A039
+This is an action space for all. A player who uses it gets
+3 bonus points. If another player uses it, they must first
+pay you 1 grain.
+Potter's Yard (Req At Most 7 Unused Farmyard Spaces. Cost 1W 1R.) A040
+Immediately place 1 clay on each unused space in your
+farmyard. Each time you turn a space into a used space,
+you get the clay and you can immediately exchange it for
+2 food.
+8
+Agricola Revised Edition Unofficial Compendium
+Vegetable Slicer (Cost 1W.) A041
+Each time you upgrade a Fireplace to a Cooking Hearth,
+you immediately get 2 wood and 1 vegetable (not
+retroactively).
+Forest Lake Hut (1VP. Cost 2C.) A042
+Each time you use the "Fishing"/"Forest" accumulation
+space, you also get 1 wood/food.
+Farmyard Manure (Req 1 Animal.) A043
+Each time you build 1 or more stables in one turn, you
+place 1 food on each of the next 3 round spaces. At the
+start of these rounds, you get the food.
+● Stables built off-turn, e.g. with Stable Planner A089
+or Groom B089, do not trigger this card.
+Pond Hut (1VP. Req Exactly 2 Occs. Cost 1W.) A044
+Place 1 food on each of the next 3 round spaces. At the
+start of these rounds, you get the food.
+Fire Protection Pond (Req Still in Wooden House. Cost 1F.) A045
+Once you no longer live in a wooden house, place 1 food
+on each of the next 6 round spaces. At the start of these
+rounds, you get the food.
+Claw Knife (Req Exactly 1 Pasture. Cost 1W.) A046
+Each time you use the "Sheep Market" accumulation
+space, place 1 food on each of the next 2 round spaces.
+At the start of these rounds, you get the food.
+Trellises (Cost 1W.) A047
+Immediately place 1 food on each of the next round
+spaces, up to the number of fences you have built. At
+the start of these rounds, you get the food.
+Shaving Horse (Cost 1W.) A048
+Each time after you obtain at least 1 wood, if you then
+have 5 or more wood in your supply, you can exchange
+1 wood for 3 food. With 7 or more wood, you must do so.
+● Food obtained from this effect is during a turn/action,
+and can be used to pay for Shifting Cultivator A091.
+● 《If you have multiple sources of wood obtained at
+the same time (e.g. in the preparation phase,) you
+can activate the Shaving Horse effect multiple times
+if (and only if) you perform an effect (e.g. playing a
+card with Scholar B097) or receive a non-wood good
+(e.g. food from Pond Hut A044) in-between the
+multiple wood (e.g. 2 uses of Stable Tree A074.)》
+Nest Site (Req 1 Occ. Cost 1F.) A049
+Each time 1 reed is placed on a non-empty "Reed Bank"
+accumulation space during the preparation phase, you
+get 1 food.
+Milk Jug (Cost 1C.) A050
+Each time any player (including you) uses the "Cattle
+Market" accumulation space, you get 3 food, and each
+other player gets 1 food.
+Drift-Net Boat (1VP. Cost 1W 1R.) A051
+Each time you use the "Fishing" accumulation space,
+you get an additional 2 food.
+Throwing Axe (Play in Round 7 or Later. Cost 1W.) A052
+Each time you use a wood accumulation space while
+there is at least 1 wild boar on the "Pig Market"
+accumulation space, you also get 2 food.
+Claypipe (Cost 1C.) A053
+In the returning home phase of each round, if you gained
+at least 7 building resources in the preceding work
+phase, you get 2 food.
+● Count the total of all gains during the work phase
+even if resources were lost in the process.15
+● Resources gained at the start of a round don’t count.
+Credit (Req At Most 3 Occs.) A054
+When you play this card, you immediately get 5 food. At
+the end of each round that does not end with a harvest,
+you must pay 1 food, or else take a begging marker.
+Junk Room (Cost 1W 1C.) A055
+Each time after you build an improvement, including this
+one, you get 1 food.
+Basket (Cost 1R.) A056
+Immediately after each time you use a wood
+accumulation space, you can exchange 2 wood for 3
+food. If you do, place those 2 wood on the accumulation
+space.
+● You may take less than 2 wood from a wood
+accumulation space and still use this effect.
+● Food obtained from this effect may not be used to
+pay for Shifting Cultivator A091.
+Milking Parlor (1VP. Req At Least 4 Unused Farmyard Spaces. Cost 2W.) A057
+When you play this card, if you have at least 1/3/4
+sheep, you immediately get 2/3/4 food. The same
+applies if you have at least 1/2/3 cattle.
+Asparagus Knife (Cost 1W.) A058
+In the returning home phase of rounds 8, 10, and 12,
+you can take 1 vegetable from exactly 1 vegetable field.
+You can immediately exchange it for 3 food and 1 bonus
+point.
+Potato Ridger (Cost 1W.) A059
+Each time after you harvest 1+ vegetables, if you then
+have 3+ vegetables in your supply, you can turn exactly
+1 vegetable into 6 food. With 4+ vegetables, you must
+do so.
+● 《”Harvest” is equivalent to the field phase, or any
+literal effect of a card saying “Harvest a
+[crop/vegetable].》
+Oriental Fireplace (1VP. Return Fireplace/Cooking Hearth.) A060
+At any time, you may convert goods to food as follows:
+Vegetable ➝ 4 food; Sheep ➝ 3 food; Cattle ➝ 5 food.
+15 Ponton on BGG
+9
+Agricola Revised Edition Unofficial Compendium
+Whenever you bake bread, you may convert: Grain ➝ 2
+food.
+● This card counts as either 1 minor improvement or 1
+major improvement, whichever is most convenient
+when considering another effect. But it never counts
+as 2 improvements at once.
+● If returned to pay for a Cooking Hearth 3 / 4, remove
+this card from the game.
+● 《You may bake bread and convert other goods to
+food at the same time, in order to activate the
+Gypsy’s Crock C053.》
+Winnowing Fan (Req Baking Imp. Cost 1R.) A061
+After the field phase of each harvest, you can use a
+baking improvement but only to turn exactly 1 grain into
+food. (This is not considered a "Bake Bread" action.)
+Beer Keg (Req 2 Grain in Your Supply. Cost 1W.) A062
+In the feeding phase of each harvest, you can use this
+card to exchange 1/2/3 grain for 0/1/2 bonus points and
+exactly 3 food.
+Dutch Windmill (2VP. Cost 2W 2S.) A063
+Each time you take a "Bake Bread" action in a round
+immediately following a harvest, you get 3 additional
+food.
+Barley Mill (1VP. Cost 1W 4C/2S.) A064
+In the field phase of each harvest, you get 1 food for
+each grain field that you harvest.
+Seed Pellets (Req 3 fields.) A065
+Each time before you take an unconditional "Sow"
+action, you get 1 grain.
+Feeding Dish (Cost 1W.) A066
+Each time you use an animal accumulation space while
+already having an animal of that type, you get 1 grain.
+● Animal Dealer A147‘s effect can be used before this.
+Corn Scoop (Cost 1W.) A067
+Each time you use the "Grain Seeds" action space, you
+get 1 additional grain.
+Asparagus Gift (Req 1 Unplanted Field.) A068
+Each time you build a number of fences equal to or
+greater than the current round, you immediately get 1
+vegetable.
+Large Greenhouse (Req 2 Occs. Cost 2W.) A069
+Add 4, 7, and 9 to the current round and place 1
+vegetable on each corresponding round space. At the
+start of these rounds, you get the vegetable.
+Lifting Machine (Req 3 fields. Cost 1W.) A070
+At the end of each round that does not end with a
+harvest, you can move 1 vegetable from one of your
+fields to your supply. (This is not considered a field
+phase.)
+Clearing Spade (Cost 1W.) A071
+At any time, you can move 1 crop from a planted field
+containing at least 2 crops to an empty field.
+Calcium Fertilizers (Req No Field Tiles.) A072
+Each time you use a "Quarry" accumulation space, add
+1 additional good of the respective type to each of your
+planted fields growing a single type of crop.
+Agricultural Fertilizers (Req 1 Pasture.) A073
+Each time after you turn at least 2 unused spaces into
+used spaces in one action, you get an additional "Sow"
+action.
+Stable Tree (Cost 1W.) A074
+Each time you build 1 or more stables on your turn,
+place 1 wood on each of the next 3 round spaces. At the
+start of these rounds, you get the wood.
+● Stables built off-turn, e.g. with Stable Planner A089
+or Groom B089, do not trigger this card.
+Lumber Mill (2VP. Req At Most 3 Occs. Cost 2S.) A075
+Every improvement costs you 1 wood less.
+Cob (Cost 1F.) A076
+At the start of each work phase, if you have at least 1
+clay in your supply, you can exchange exactly 1 grain for
+2 clay and 1 food.
+Hod (Cost 1W.) A077
+When you play this card, you immediately get 1 clay.
+Each time any player (including you) uses the "Pig
+Market" accumulation space, you immediately get 2 clay.
+Canoe (1VP. Req 1 Occ. Cost 2W.) A078
+Each time you use the "Fishing" accumulation space,
+you get an additional 1 food and 1 reed.
+Garden Hoe (Cost 1W.) A079
+Each time you take an unconditional "Sow" action
+planting vegetables in at least 1 field, you get 1 clay and
+1 stone.
+       Stone Tongs (Cost 1W.) A080
+Each time you use a stone accumulation space, you get
+1 additional stone.
+                  Interim Storage (Cost 2F.) A081
+Each time you use a clay/reed/stone accumulation
+space, place 1 wood/clay/reed on this card. At the start
+of rounds 7, 11, and 14, move all the goods on this card
+to your supply.
+              Work Certificate (Req 3 Occs.) A082
+Each time after you use an action space, you can take 1
+building resource from a building resource accumulation
+space with at least 4 building resources on it.
+                                              ● Can be immediately triggered.16
+Shepherd's Crook (Cost 1W.) A083
+16 Ponton on BGG (reversing ruling from previous
+  footnote)
+10
+Agricola Revised Edition Unofficial Compendium
+Each time you fence a new pasture covering at least 4
+farmyard spaces, you immediately get 2 sheep on this
+pasture.
+       ● To receive sheep, new pasture(s) can’t be divided.
+                                                          ● Building 2 such pastures at once gives you 4 sheep.
+Silage (Req 2 Fields.) A084
+In each returning home phase after which there is no
+harvest, you can pay exactly 1 grain - even from a field -
+to breed exactly one type of animal.

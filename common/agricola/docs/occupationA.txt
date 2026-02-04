@@ -1,0 +1,416 @@
+Homekeeper A085
+Exactly one clay or stone room in your house can hold
+an additional person if the room is adjacent to both a
+field and a pasture.
+● Field cards may not count as adjacent.
+● If the room later loses adjacency to the field and/or
+pasture, the capacity for an additional person is lost
+(e.g. after playing Overhaul C001)
+Animal Tamer A086
+When you play this card, you immediately get your
+choice of 1 wood or 1 grain. Instead of just 1 animal
+total, you can keep any 1 animal in each room of your
+house.
+● This effect is negated by the Milking Place D012.
+Conservator A087
+You can renovate your wooden house directly to stone
+without renovating it to clay first.
+● You may decline this ability.
+Hedge Keeper A088
+Each time you take a "Build Fences" action, you do not
+have to pay wood for 3 of the fences you build.
+● You may spend 0 wood to build 1-3 fences.
+● Mini Pasture B002, Overhaul C001, and other
+fencing effects that are not the literal “Build Fences”
+action, do not trigger this card.
+Stable Planner A089
+Add 3, 6, and 9 to the current round. You can place 1
+stable on each corresponding round space. At the start
+of these rounds (not earlier), you can build the stable at
+no cost.
+● Stables built this way are not built on your turn and
+do not trigger Stable Tree A074 or Farmyard Manure
+A043.
+Plow Driver A090
+Once you live in a stone house, at the start of each
+round, you can pay 1 food to plow 1 field.
+● If played by the Scholar B097, the effect can be
+used immediately.
+Shifting Cultivator A091
+Each time you use a wood accumulation space, you can
+also play 3 food to plow 1 field.
+● Food obtained via the Basket A056, or any other
+effect “after” using the space may not be used to
+pay for this effect.
+Adoptive Parents A092
+For 1 food, you can take an action with offspring in the
+same round you get it. If you do, the offspring does not
+count as "newborn".
+● This card may be played and triggered any time after
+growth in the same round’s work phase.
+● If this effect is used in a Harvest round, the person
+must be fed 2 food in the Harvest (3 for solo game.)
+Bed Maker A093
+Each time you add rooms to your house, you can also
+pay 1 wood and 1 grain to immediately get a "Family
+Growth with Room Only" action.
+● This card allows exactly 1 growth action regardless
+of how many rooms are built.
+Lazy Sowman A094
+Each time you decline an unconditional "Sow" action on
+your turn, you can immediately place another person on
+an action space of your choice (even if it is occupied).
+● ERRATA: “Meeting Place” may never be used
+again if occupied.
+● You may repeat this effect on action spaces that
+allow you to decline such a “Sow” action (e.g. only
+plowing on “Cultivation” multiple times.)35
+Angler A095
+Each time after you use the "Fishing" Accumulation
+space while there are at most 2 food on that space, you
+get a "Major or Minor Improvement" action.
+Task Artisan A096
+When you play this card and each time a stone
+accumulation space appears on a round space in the
+preparation phase, you get 1 wood and a "Minor
+Improvement" action.
+Freshman A097
+Each time you get a "Bake Bread" action, instead of
+taking the action, you can play an occupation without
+paying an occupation cost.
+● ERRATA: The effect is limited to once per turn.36
+● You may use the “Grain Utilization” space while
+being unable to Sow or Bake Bread, as this card
+substitutes the “Bake Bread” action.
+Stable Architect A098
+During scoring, you get 1 bonus point for each unfenced
+stable in your farmyard.
+Fellow Grazer A099
+During scoring, you get 2 bonus points for each pasture
+you have covering at least 3 farmyard spaces.
+Curator A100
+In the returning home phase of each round, if you return
+at least 3 people from accumulation spaces, you can buy
+1 bonus point for 1 food.
+Cookery Outfitter A101
+36 Ponton on BGG
+35 Uwe via Ponton on BGG
+26
+Agricola Revised Edition Unofficial Compendium
+During scoring, you get 1 bonus point for each cooking
+improvement you have.
+● Ovens do not count towards this card.
+Grocer A102
+Pile the following goods on this card (wood, grain, reed,
+stone, vegetable, clay, reed, vegetable). At any time, you
+can buy the top good for 1 food.
+● You may buy any amount of goods at once.
+Portmonger A103
+Each time you take 1/2/3+ food from a food
+accumulation space, you also get 1
+vegetable/grain/reed.
+Wood Harvester A104
+In the field phase of each harvest, you get 1 wood/1 food
+for each wood accumulation space with exactly 2
+wood/at least 3 wood.
+Barrow Pusher A105
+For each new field tile you get, you also get 1 clay and 1
+food.
+Slurry Spreader A106
+In the field phase of each harvest, each time you take
+the last grain/vegetable from a field, you also get 2
+food/1 food.
+Catcher A107
+Each time you place your 1st/2nd/3rd person in a round
+on a building resource accumulation space with exactly
+5/4/3 building resources, you get 1 food.
+Mushroom Collector A108
+Immediately after each time you use a wood
+accumulation space, you can exchange 1 wood for 2
+food. If you do, place the wood on the accumulation
+space.
+● You may take less than 1 wood from a wood
+accumulation space and still use this effect.
+● Food obtained from this effect may not be used to
+pay for Shifting Cultivator A091.
+Small Trader A109
+Each time you take a "Major or Minor Improvement"
+action to play an improvement from your hand, you also
+get 3 food.
+● Does not work unless you literally get that action.
+Roughcaster A110
+Each time you build at least 1 clay room or renovate
+your house from clay to stone, you also get 3 food.
+Wall Builder A111
+Each time you build at least 1 room, you can place 1
+food on each of the next 4 round spaces. At the start of
+these rounds, you get the food.
+Scythe Worker A112
+When you play this card, you immediately get 1 grain. In
+the field phase of each harvest, you can harvest 1
+additional grain from each of your grain fields.
+Heresy Teacher A113
+Each time you use a "Lessons" action space, you get 1
+vegetable in each of your fields with at least 3 grain and
+no vegetable. Place the vegetable below the grain.
+● Fields with both crops can count as a grain field or a
+vegetable field, but not both simultaneously.37
+Seasonal Worker A114
+Each time you use the "Day Laborer" action space, you
+get 1 additional grain. From Round 6 on, you can choose
+to get 1 vegetable instead.
+Chief Forester A115
+Each time you use a wood accumulation space, you also
+get a "Sow" action for exactly 1 field.
+● You may sow 2 wood onto the Wood Field D075.
+Wood Cutter A116
+Each time you use a wood accumulation space, you get
+1 additional wood.
+Wood Carrier A117
+When you play this card, you immediately get 1 wood for
+each improvement in front of you.
+Treegardener A118
+In the field phase of each harvest, you get 1 wood and
+you can buy up to 2 additional wood for 1 food each.
+● 《You may use this card to activate the Shaving
+Horse A048 twice if and only if you have another
+decision during the field phase to separate this
+card’s effect into two distinct parts, e.g. paying wood
+and food with Cube Cutter C098.》
+Firewood Collector A119
+Each time you use the "Farmland", "Grain Seeds",
+“Grain Utilization", or "Cultivation" action space, at the
+end of that turn, you get 1 wood.
+● Common misread: the effect is triggered every turn.
+Clay Hut Builder A120
+Once you no longer live in a wooden house, place 2 clay
+on each of the next 5 round spaces. At the start of these
+rounds, you get the clay.
+Clay Puncher A121
+When you play this card and each time after you use a
+"Lessons" action space or the "Clay Pit" accumulation
+space, you get 1 clay.
+● Gives 1+1=2 clay when played on Lessons.
+Pan Baker A122
+Each time you use the "Grain Utilization" action space,
+you also get 2 clay and 1 wood.
+Frame Builder A123
+37 Ponton on BGG
+27
+Agricola Revised Edition Unofficial Compendium
+Each time you build a room/renovate, but only once per
+room/action, you can replace exactly 2 clay or 2 stone
+with 1 wood.
+● The effect may be applied once for each room built.
+Knapper A124
+Each time before you use an action space card on round
+spaces 5 to 7, you get 1 stone.
+Priest A125
+When you play this card, if you live in a clay house with
+exactly 2 rooms, you immediately get 3 clay, 2 reed, and
+2 stone.
+● If played prior to having exactly 2 clay rooms, there
+is no effect.
+Master Workman A126
+Each time before you use an action space card on round
+spaces 1/2/3/4, you get 1 wood/clay/reed/stone.
+Lodger A127
+This card provides room for one person, but only until
+the returning home phase of round 9. If, by then, there is
+no room elsewhere for that person, remove it from play.
+● If you remove it from play, it can never grow back.
+● This card does not count as a room.
+Riparian Builder A128
+Each time another player uses the "Reed Bank"
+accumulation space, you can build a room: if you build a
+clay/stone room, you get a discount of 1 clay/2 stone.
+Swagman A129
+Immediately after each time you use the "Farm
+Expansion" or "Grain Seeds" action space, you can use
+the respective other space with the same person (even if
+it is occupied).
+● ERRATA: The “jump” to a second action space
+may only be done once per turn.38
+● The person ends on the second action space used.
+Mummy's Boy A130
+Once per round, when placing a person after your first
+two, you can place it on the action space with your 2nd
+person and use that space again. (Mark the action
+space).
+Craft Teacher A131
+Each time after you build the major improvement
+"Joinery", "Pottery", and "Basketmaker's Workshop", you
+can play up to 2 occupations without paying an
+occupation cost.
+● This card triggers every time you build one of the
+mentioned major improvements in any way.
+Publican A132
+38 Ponton on BGG
+Each time before another player takes an unconditional
+"Sow" action, you can give them 1 grain from your
+supply to get 1 bonus point.
+Braggart A133
+During the scoring, you get 2/3/4/5/7/9 bonus points for
+having at least 5/6/7/8/9/10 improvements in front of you.
+Full Farmer A134
+When you play this card, you immediately get 1 wood
+and 1 clay. During scoring, you get 1 bonus point for
+each pasture you have holding the maximum number of
+animals.
+Animal Reeve A135
+If there are still 1/3/6/9 complete rounds left to play, you
+immediately get 1/2/3/4 wood. During scoring, each
+player with 2+/3+/4+ animals of each type gets 1/3/5
+bonus points.
+Drudgery Reeve A136
+If there are still 3/6/9 complete rounds left to play, you
+immediately get 2/3/4 wood. During scoring, each player
+with 1+/2+/3+ building resources of each type gets 1/3/5
+bonus points.
+● The resources worth bonus points for the craft
+majors are spent and DO NOT count towards this
+card’s bonus effect.
+● These resources DO count towards the tiebreaker.
+Riverine Shepherd A137
+Each time you use the "Sheep Market" or "Reed Bank"
+accumulation space, you can also take 1 good from the
+respective other accumulation space, if possible.
+Harpooner A138
+Each time you use the "Fishing" accumulation space you
+can also pay 1 wood to get 1 food for each person you
+have, and 1 reed.
+Hollow Warden A139
+When you play this card, you immediately get a "Major
+Improvement" action to build a Fireplace. Each time you
+use the "Hollow" accumulation space, you also get 1
+food.
+Shovel Bearer A140
+Each time you use the "Clay Pit" or "Hollow"
+accumulation space, you also get a number of food
+equal to the amount of clay on the respective other
+accumulation space.
+Turnip Farmer A141
+At the start of the returning home phase of each round, if
+both the "Day Laborer" and "Grain Seeds" action spaces
+are occupied, you get 1 vegetable.
+Cordmaker A142
+Each time any player (including you) takes at least 2
+reed from the "Reed Bank" accumulation space, you can
+choose to take 1 grain or buy 1 vegetable for 2 food.
+28
+Agricola Revised Edition Unofficial Compendium
+Stonecutter A143
+Every improvement, room, and renovation costs you 1
+stone less.
+Sequestrator A144
+Place 3 reed and 4 clay on this card. The next player to
+have 3 pastures/5 field tiles get the 3 reed/4 clay (not
+retroactively).
+Ropemaker A145
+At the end of each harvest, you get 1 reed from the
+general supply.
+Storehouse Steward A146
+Each time you take exactly 2/3/4/5 food from a food
+accumulation space, you also get 1
+stone/reed/clay/wood. (If you take 6 or more food, you
+do not get a bonus good).
+Animal Dealer A147
+Each time you use the "Sheep Market", "Pig Market", "or
+"Cattle Market" accumulation space, you can buy 1
+additional animal of the respective type for 1 food.
+Woolgrower A148
+This card can hold a number of sheep equal to the
+number of completed feeding phases.
+House Artist A149
+Each time you use the "Traveling Players" accumulation
+space, you also get a "Build Rooms" action. Each room
+you build during the action costs you 1 reed less.
+Stagehand A150
+Each time another player uses the "Traveling Players"
+accumulation space, you can take your choice of a
+"Build Fences", "Build Stables", or "Build Rooms" action.
+Minstrel A151
+At the start of each returning home phase, if only one
+action space card on round space 1 to 4 is unoccupied,
+you can use that action space.
+● ERRATA: “...use the effect of that action space.”
+● The space is not considered used, e.g. for Master
+Workman A126.
+● Unrevealed action spaces are effectively occupied
+during rounds 1-3.39
+Night-School Student A152
+Each returning home phase in which no player returns a
+person from a "Lessons" action space, you can play an
+occupation for an occupation cost of 1 food.
+Pig Owner A153
+The first time after you play this card that you have 5
+wild boars on your farm, you immediately get 3 bonus
+points.
+Paymaster A154
+39 Ponton on BGG
+Each time another player uses a food accumulation
+space, you can give them 1 grain from your supply to get
+1 bonus point.
+Conjurer A155
+Each time you use the "Traveling Players" accumulation
+space, you get an additional 1 wood and 1 grain.
+Buyer A156
+Each time another player uses a reed, stone, sheep, or
+wild boar accumulation space, you can pay them 1 food
+to get 1 good of the respective type from the general
+supply.
+Bohemian A157
+At the start of each returning home phase, if at least one
+"Lessons" action space is unoccupied, you get 1 food.
+Culinary Artist A158
+Each time another player uses the "Traveling Players"
+accumulation space, you can exchange your choice of 1
+grain/sheep/vegetable for 4/5/7 food.
+Joiner of the Sea A159
+Each time another player uses the "Fishing"/"Reed
+Bank" accumulation space, you can give them 1 wood to
+get 2 food/3 food from the general supply.
+Lutenist A160
+Each time another player uses the "Traveling Players"
+accumulation space, you get 1 food and 1 wood.
+Immediately after, you can buy exactly 1 vegetable for 2
+food.
+Patch Caretaker A161
+Each time you use an accumulation space while already
+having used another accumulation space for the same
+type of good that work phase, you also get 1 vegetable.
+Forest Tallyman A162
+Each time both the "Forest" and "Clay Pit" accumulation
+spaces are occupied, you can use the gap between
+them as an action space to get 2 clay and 3 wood.
+Building Expert A163
+Each time you use the "Resource Market" action space
+with the 1st/2nd/3rd/4th/5th person you place, you also
+get 1 wood/clay/reed/stone/stone.
+Wood Worker A164
+Each time you take wood from an accumulation space,
+you can exchange 1 wood for 1 sheep. Place the wood
+on the accumulation space.
+● If you take less than 1 wood from a wood
+accumulation space, you may still use this card.
+● You may immediately convert the sheep to food in
+order to use the Shifting Cultivator A091.
+Pig Breeder A165
+When you play this card, you immediately get 1 wild
+boar. Your wild boar breed at the end of round 12 (if
+there is room for the new wild boar).
+29
+Agricola Revised Edition Unofficial Compendium
+Haydryer A166
+Immediately before each harvest, you can buy 1 cattle
+for 4 food minus 1 food for each pasture you have. (The
+minimum cost is 0).
+Breeder Buyer A167
+Each time you build at least 1 wood/clay/stone room and
+at least 1 stable on the same turn, you also get 1
+sheep/wild boar/cattle.
+Animal Teacher A168
+Immediately after each time you use a "Lessons" action
+space, you can also buy 1 sheep/wild boar/cattle for
+0/1/2 food.
+● This effect may not be immediately triggered.
