@@ -8,26 +8,26 @@ Stats.processInnovationStats = async function(cursor) {
     reasons: {},
   }
 
-
-
   for await (const datum of cursor) {
-    if (output.count === 0) {
-      console.log(datum)
-    }
+    const winner = datum.stats?.result?.player?.name
+    const inGame = datum.stats?.inGame || {}
 
-    const winner = datum.stats.result.player.name
+    // Skip games without proper stats
+    if (!winner || !inGame.melded) {
+      continue
+    }
 
     // Total games
     output.count += 1
 
     // Wins per reason
-    const reason = datum.stats.result.reason
+    const reason = datum.stats?.result?.reason || 'unknown'
     if (!(reason in output.reasons)) {
       output.reasons[reason] = 0
     }
     output.reasons[reason] += 1
 
-
+    // Player stats
     for (const player of datum.settings.players) {
       if (!(player.name in output.players)) {
         output.players[player.name] = {
@@ -44,18 +44,22 @@ Stats.processInnovationStats = async function(cursor) {
       }
     }
 
-    for (const card of datum.stats.inGame.melded) {
+    // Card meld stats
+    const cardDetails = inGame.cardDetails || {}
+    for (const card of inGame.melded || []) {
       if (!(card in output.cards)) {
         output.cards[card] = {
           melded: 0,
           wins: 0,
+          age: cardDetails[card]?.age,
+          expansion: cardDetails[card]?.expansion,
         }
       }
 
       const cd = output.cards[card]
       cd.melded += 1
 
-      if (datum.stats.inGame.meldedBy[card] === winner) {
+      if (inGame.meldedBy?.[card] === winner) {
         cd.wins += 1
       }
     }

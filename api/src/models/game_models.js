@@ -65,6 +65,17 @@ Game.gameOver = async function(game, killed=false) {
   if (killed) {
     setValues.killed = true
   }
+  else {
+    // Save stats when game ends normally (not killed)
+    setValues.stats = {
+      error: false,
+      result: {
+        player: { name: game.gameOverData?.player },
+        reason: game.gameOverData?.reason,
+      },
+      inGame: game.stats || {},
+    }
+  }
 
   await gameCollection.updateOne(
     { _id: game._id },

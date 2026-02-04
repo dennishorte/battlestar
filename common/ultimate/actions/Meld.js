@@ -181,6 +181,17 @@ function _maybePromote(player, card) {
 
 function _statsCardWasMelded(card) {
   util.array.pushUnique(this.game.stats.melded, card.name)
+
+  // Also track card details (age, expansion) for richer stats
+  if (!this.game.stats.cardDetails) {
+    this.game.stats.cardDetails = {}
+  }
+  if (!(card.name in this.game.stats.cardDetails)) {
+    this.game.stats.cardDetails[card.name] = {
+      age: card.age,
+      expansion: card.expansion,
+    }
+  }
 }
 
 function _statsCardWasMeldedBy(player, card) {
