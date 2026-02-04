@@ -225,7 +225,6 @@ export default {
         { key: 'scheduledSheep', icon: '🐑', label: 'sheep' },
         { key: 'scheduledBoar', icon: '🐗', label: 'boar' },
         { key: 'scheduledCattle', icon: '🐄', label: 'cattle' },
-        { key: 'wellFood', icon: '💧', label: 'well' },
       ]
 
       for (const { key, icon, label } of resourceTypes) {

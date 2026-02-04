@@ -1669,22 +1669,22 @@ describe('Agricola', () => {
       expect(dennis.stone).toBe(0)
 
       // Well should have scheduled food for next 5 rounds
-      expect(game.state.wellFood).toBeDefined()
-      expect(game.state.wellFood['dennis']).toBeDefined()
-      const scheduledRounds = Object.keys(game.state.wellFood['dennis']).map(Number).sort((a, b) => a - b)
+      expect(game.state.scheduledFood).toBeDefined()
+      expect(game.state.scheduledFood['dennis']).toBeDefined()
+      const scheduledRounds = Object.keys(game.state.scheduledFood['dennis']).map(Number).sort((a, b) => a - b)
       expect(scheduledRounds).toHaveLength(5)
       // Each scheduled round should have 1 food
       for (const round of scheduledRounds) {
-        expect(game.state.wellFood['dennis'][round]).toBe(1)
+        expect(game.state.scheduledFood['dennis'][round]).toBe(1)
       }
       const firstScheduledRound = scheduledRounds[0]
 
       // Play through to round 2 (well food delivered at start of round 2)
       playThroughRound(game, 2)
 
-      // Dennis should have received well food during round 2 start
-      // First scheduled round food should be consumed from wellFood
-      expect(game.state.wellFood['dennis'][firstScheduledRound]).toBeUndefined()
+      // Dennis should have received scheduled food during round 2 start
+      // First scheduled round food should be consumed from scheduledFood
+      expect(game.state.scheduledFood['dennis'][firstScheduledRound]).toBeUndefined()
     })
 
 

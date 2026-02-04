@@ -745,7 +745,6 @@ Agricola.prototype.mainLoop = function() {
 
     this.revealRoundAction()
     this.replenishPhase()
-    this.collectWellFood()
 
     // Call round start hooks (collect scheduled resources, check triggers)
     this.callRoundStartHooks()
@@ -816,27 +815,6 @@ Agricola.prototype.replenishPhase = function() {
   }
 
   this.log.outdent()
-}
-
-Agricola.prototype.collectWellFood = function() {
-  // Players with wells receive food at the start of each round
-  if (!this.state.wellFood) {
-    return
-  }
-
-  for (const player of this.players.all()) {
-    const wellFood = this.state.wellFood[player.name]
-    if (wellFood && wellFood[this.state.round]) {
-      const food = wellFood[this.state.round]
-      player.food += food
-      delete wellFood[this.state.round]
-
-      this.log.add({
-        template: '{player} receives {food} food from the Well',
-        args: { player, food },
-      })
-    }
-  }
 }
 
 Agricola.prototype.workPhase = function() {

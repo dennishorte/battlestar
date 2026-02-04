@@ -975,14 +975,14 @@ class AgricolaActionManager extends BaseActionManager {
     for (let i = 1; i <= 5; i++) {
       const round = currentRound + i
       if (round <= 14) {
-        if (!this.game.state.wellFood) {
-          this.game.state.wellFood = {}
+        if (!this.game.state.scheduledFood) {
+          this.game.state.scheduledFood = {}
         }
-        if (!this.game.state.wellFood[player.name]) {
-          this.game.state.wellFood[player.name] = {}
+        if (!this.game.state.scheduledFood[player.name]) {
+          this.game.state.scheduledFood[player.name] = {}
         }
-        this.game.state.wellFood[player.name][round] =
-          (this.game.state.wellFood[player.name][round] || 0) + 1
+        this.game.state.scheduledFood[player.name][round] =
+          (this.game.state.scheduledFood[player.name][round] || 0) + 1
       }
     }
 
