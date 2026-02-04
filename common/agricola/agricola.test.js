@@ -1088,7 +1088,7 @@ describe('Agricola', () => {
     })
 
     test('getCardSetIds returns all set IDs', () => {
-      expect(res.getCardSetIds()).toEqual(['baseA', 'baseB', 'minorA', 'minorB'])
+      expect(res.getCardSetIds()).toEqual(['baseA', 'baseB', 'minorA', 'minorB', 'minorC'])
     })
 
     test('getCardsByPlayerCount filters by set', () => {
@@ -1145,7 +1145,7 @@ describe('Agricola', () => {
         numPlayers: 2,
         players: [{ _id: '1', name: 'a' }, { _id: '2', name: 'b' }],
       })
-      expect(game.settings.cardSets).toEqual(['baseA', 'baseB', 'minorA', 'minorB'])
+      expect(game.settings.cardSets).toEqual(['baseA', 'baseB', 'minorA', 'minorB', 'minorC'])
     })
   })
 

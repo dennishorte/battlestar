@@ -8,6 +8,7 @@ const baseA = require('./cards/baseA.js')
 const baseB = require('./cards/baseB.js')
 const minorA = require('./cards/minorA.js')
 const minorB = require('./cards/minorB.js')
+const minorC = require('./cards/minorC.js')
 
 // Re-export everything from sub-modules
 module.exports = {
@@ -119,6 +120,13 @@ module.exports = {
       minorCount: minorB.getMinorImprovements().length,
       occupationCount: minorB.getOccupations().length,
     },
+    minorC: {
+      id: 'minorC',
+      name: 'Minor Improvements C',
+      module: minorC,
+      minorCount: minorC.getMinorImprovements().length,
+      occupationCount: minorC.getOccupations().length,
+    },
   },
 
   // Get available card set IDs
@@ -128,10 +136,10 @@ module.exports = {
 
   // Cards - always searches all sets (for getCardById used by hooks, scoring, etc.)
   getCardById(id) {
-    return baseA.getCardById(id) || baseB.getCardById(id) || minorA.getCardById(id) || minorB.getCardById(id)
+    return baseA.getCardById(id) || baseB.getCardById(id) || minorA.getCardById(id) || minorB.getCardById(id) || minorC.getCardById(id)
   },
   getCardByName(name) {
-    return baseA.getCardByName(name) || baseB.getCardByName(name) || minorA.getCardByName(name) || minorB.getCardByName(name)
+    return baseA.getCardByName(name) || baseB.getCardByName(name) || minorA.getCardByName(name) || minorB.getCardByName(name) || minorC.getCardByName(name)
   },
 
   // Functions that filter by selected card sets
@@ -172,12 +180,12 @@ module.exports = {
 
   // Convenience accessors (return all cards across all sets)
   getMinorImprovements() {
-    return [...baseA.getMinorImprovements(), ...baseB.getMinorImprovements(), ...minorA.getMinorImprovements(), ...minorB.getMinorImprovements()]
+    return [...baseA.getMinorImprovements(), ...baseB.getMinorImprovements(), ...minorA.getMinorImprovements(), ...minorB.getMinorImprovements(), ...minorC.getMinorImprovements()]
   },
   getOccupations() {
-    return [...baseA.getOccupations(), ...baseB.getOccupations(), ...minorA.getOccupations(), ...minorB.getOccupations()]
+    return [...baseA.getOccupations(), ...baseB.getOccupations(), ...minorA.getOccupations(), ...minorB.getOccupations(), ...minorC.getOccupations()]
   },
   getAllCards() {
-    return [...baseA.getAllCards(), ...baseB.getAllCards(), ...minorA.getAllCards(), ...minorB.getAllCards()]
+    return [...baseA.getAllCards(), ...baseB.getAllCards(), ...minorA.getAllCards(), ...minorB.getAllCards(), ...minorC.getAllCards()]
   },
 }
