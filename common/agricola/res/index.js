@@ -9,6 +9,7 @@ const baseB = require('./cards/baseB.js')
 const minorA = require('./cards/minorA.js')
 const minorB = require('./cards/minorB.js')
 const minorC = require('./cards/minorC.js')
+const minorD = require('./cards/minorD.js')
 
 // Re-export everything from sub-modules
 module.exports = {
@@ -127,6 +128,13 @@ module.exports = {
       minorCount: minorC.getMinorImprovements().length,
       occupationCount: minorC.getOccupations().length,
     },
+    minorD: {
+      id: 'minorD',
+      name: 'Minor Improvements D',
+      module: minorD,
+      minorCount: minorD.getMinorImprovements().length,
+      occupationCount: minorD.getOccupations().length,
+    },
   },
 
   // Get available card set IDs
@@ -136,10 +144,10 @@ module.exports = {
 
   // Cards - always searches all sets (for getCardById used by hooks, scoring, etc.)
   getCardById(id) {
-    return baseA.getCardById(id) || baseB.getCardById(id) || minorA.getCardById(id) || minorB.getCardById(id) || minorC.getCardById(id)
+    return baseA.getCardById(id) || baseB.getCardById(id) || minorA.getCardById(id) || minorB.getCardById(id) || minorC.getCardById(id) || minorD.getCardById(id)
   },
   getCardByName(name) {
-    return baseA.getCardByName(name) || baseB.getCardByName(name) || minorA.getCardByName(name) || minorB.getCardByName(name) || minorC.getCardByName(name)
+    return baseA.getCardByName(name) || baseB.getCardByName(name) || minorA.getCardByName(name) || minorB.getCardByName(name) || minorC.getCardByName(name) || minorD.getCardByName(name)
   },
 
   // Functions that filter by selected card sets
@@ -180,12 +188,12 @@ module.exports = {
 
   // Convenience accessors (return all cards across all sets)
   getMinorImprovements() {
-    return [...baseA.getMinorImprovements(), ...baseB.getMinorImprovements(), ...minorA.getMinorImprovements(), ...minorB.getMinorImprovements(), ...minorC.getMinorImprovements()]
+    return [...baseA.getMinorImprovements(), ...baseB.getMinorImprovements(), ...minorA.getMinorImprovements(), ...minorB.getMinorImprovements(), ...minorC.getMinorImprovements(), ...minorD.getMinorImprovements()]
   },
   getOccupations() {
-    return [...baseA.getOccupations(), ...baseB.getOccupations(), ...minorA.getOccupations(), ...minorB.getOccupations(), ...minorC.getOccupations()]
+    return [...baseA.getOccupations(), ...baseB.getOccupations(), ...minorA.getOccupations(), ...minorB.getOccupations(), ...minorC.getOccupations(), ...minorD.getOccupations()]
   },
   getAllCards() {
-    return [...baseA.getAllCards(), ...baseB.getAllCards(), ...minorA.getAllCards(), ...minorB.getAllCards(), ...minorC.getAllCards()]
+    return [...baseA.getAllCards(), ...baseB.getAllCards(), ...minorA.getAllCards(), ...minorB.getAllCards(), ...minorC.getAllCards(), ...minorD.getAllCards()]
   },
 }
