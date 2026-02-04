@@ -15,24 +15,6 @@
       <!-- Animals -->
       <AnimalDisplay :player="player" />
 
-      <!-- Scheduled Resources -->
-      <div v-if="hasScheduledItems" class="scheduled-section">
-        <div class="scheduled-header">
-          <span class="scheduled-icon">📅</span>
-          <span class="scheduled-title">Scheduled</span>
-        </div>
-        <div class="scheduled-items">
-          <div
-            v-for="item in scheduledItems"
-            :key="item.round + '-' + item.type"
-            class="scheduled-item"
-          >
-            <span class="scheduled-round">R{{ item.round }}</span>
-            <span class="scheduled-resource">{{ item.icon }} {{ item.amount }} {{ item.label }}</span>
-          </div>
-        </div>
-      </div>
-
       <!-- Fencing Status (shown during fencing mode) -->
       <div v-if="showFencingStatus" class="fencing-status" :class="fencingStatusClass">
         <div class="fencing-header">
@@ -72,6 +54,24 @@
       <!-- Farmyard Grid -->
       <div class="farmyard-container">
         <FarmyardGrid :player="player" />
+      </div>
+
+      <!-- Scheduled Resources -->
+      <div v-if="hasScheduledItems" class="scheduled-section">
+        <div class="scheduled-header">
+          <span class="scheduled-icon">📅</span>
+          <span class="scheduled-title">Scheduled</span>
+        </div>
+        <div class="scheduled-items">
+          <div
+            v-for="item in scheduledItems"
+            :key="item.round + '-' + item.type"
+            class="scheduled-item"
+          >
+            <span class="scheduled-round">R{{ item.round }}</span>
+            <span class="scheduled-resource">{{ item.icon }} {{ item.amount }} {{ item.label }}</span>
+          </div>
+        </div>
       </div>
 
       <!-- Farmyard Stats -->
