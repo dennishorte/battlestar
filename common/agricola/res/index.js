@@ -105,6 +105,7 @@ module.exports = {
       module: baseA,
       minorCount: baseA.getMinorImprovements().length,
       occupationCount: baseA.getOccupations().length,
+      hidden: true, // Hide from UI, keep functional for existing games
     },
     baseB: {
       id: 'baseB',
@@ -112,6 +113,7 @@ module.exports = {
       module: baseB,
       minorCount: baseB.getMinorImprovements().length,
       occupationCount: baseB.getOccupations().length,
+      hidden: true, // Hide from UI, keep functional for existing games
     },
     minorA: {
       id: 'minorA',
@@ -188,6 +190,11 @@ module.exports = {
   // Get available card set IDs
   getCardSetIds() {
     return Object.keys(this.cardSets)
+  },
+
+  // Get selectable card set IDs (excludes hidden sets like baseA/baseB)
+  getSelectableCardSetIds() {
+    return Object.keys(this.cardSets).filter(id => !this.cardSets[id].hidden)
   },
 
   // Cards - always searches all sets (for getCardById used by hooks, scoring, etc.)

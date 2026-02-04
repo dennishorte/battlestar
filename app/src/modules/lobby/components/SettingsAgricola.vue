@@ -59,12 +59,12 @@ export default {
     },
 
     availableCardSets() {
-      return Object.values(res.cardSets)
+      return Object.values(res.cardSets).filter(set => !set.hidden)
     },
 
     selectedCardSets: {
       get() {
-        return this.lobby.options?.cardSets || res.getCardSetIds()
+        return this.lobby.options?.cardSets || res.getSelectableCardSetIds()
       },
       set(value) {
         if (!this.lobby.options) {
@@ -130,7 +130,7 @@ export default {
       this.lobby.options = {}
     }
     if (!this.lobby.options.cardSets) {
-      this.lobby.options.cardSets = res.getCardSetIds()
+      this.lobby.options.cardSets = res.getSelectableCardSetIds()
     }
     this.updateValid()
   },

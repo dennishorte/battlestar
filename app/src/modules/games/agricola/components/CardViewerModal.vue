@@ -45,6 +45,34 @@
         <p v-if="card.passLeft" class="text-line pass-left">(Pass this card to the player on your left after you play it.)</p>
       </div>
 
+      <!-- Card Runtime State -->
+      <div v-if="hasCardState" class="card-state">
+        <div class="state-title">Current State:</div>
+
+        <!-- Resources on card -->
+        <div v-if="cardResources.length > 0" class="state-resources">
+          <span class="state-label">On card:</span>
+          <span v-for="res in cardResources" :key="res.type" class="state-resource">
+            {{ res.amount }} {{ res.icon }}
+          </span>
+        </div>
+
+        <!-- Pile contents -->
+        <div v-if="pileContents.length > 0" class="state-pile">
+          <span class="state-label">Pile (top first):</span>
+          <span class="pile-items">
+            <span v-for="(item, index) in [...pileContents].reverse()" :key="index" class="pile-item">
+              {{ resourceIcon(item) }}
+            </span>
+          </span>
+        </div>
+
+        <!-- Used status -->
+        <div v-if="isUsed" class="state-used">
+          <span class="used-indicator">✓ Already used this game</span>
+        </div>
+      </div>
+
       <!-- Alternate Cost (for upgrades like Cooking Hearth) -->
       <div class="card-alternate-cost" v-if="card.alternateCost">
         <span class="alternate-cost-label">Or:</span>
@@ -164,6 +192,53 @@ export default {
 
     hasAbilities() {
       return this.card && (this.card.gives || this.card.bonus || this.card.passiveEffect)
+    },
+
+    // Get card instance from game (has runtime state)
+    cardInstance() {
+      if (!this.game?.cards?.byId || !this.cardId) {
+        return null
+      }
+      try {
+        return this.game.cards.byId(this.cardId)
+      }
+      catch {
+        return null
+      }
+    },
+
+    // Get runtime definition
+    runtimeDefinition() {
+      return this.cardInstance?.definition || null
+    },
+
+    // Resources stored on card
+    cardResources() {
+      const def = this.runtimeDefinition
+      if (!def) {
+        return []
+      }
+
+      const resources = []
+      const types = ['food', 'wood', 'clay', 'stone', 'reed', 'grain', 'vegetables']
+      for (const type of types) {
+        if (typeof def[type] === 'number' && def[type] > 0) {
+          resources.push({ type, amount: def[type], icon: this.resourceIcon(type) })
+        }
+      }
+      return resources
+    },
+
+    isUsed() {
+      return this.runtimeDefinition?.used === true
+    },
+
+    pileContents() {
+      return this.runtimeDefinition?.pile || []
+    },
+
+    hasCardState() {
+      return this.cardResources.length > 0 || this.pileContents.length > 0 || this.isUsed
     },
   },
 
@@ -398,5 +473,52 @@ export default {
   color: #999;
   font-style: italic;
   text-align: center;
+}
+
+.card-state {
+  background-color: #fff8e1;
+  border: 1px solid #ffca28;
+  border-radius: .25em;
+  padding: .5em;
+  margin-bottom: .75em;
+}
+
+.state-title {
+  font-weight: 600;
+  color: #f57f17;
+  margin-bottom: .35em;
+  font-size: .9em;
+}
+
+.state-resources,
+.state-pile {
+  margin-bottom: .35em;
+}
+
+.state-label {
+  font-weight: 500;
+  color: #555;
+  margin-right: .35em;
+}
+
+.state-resource {
+  margin-right: .5em;
+}
+
+.pile-items {
+  display: inline-flex;
+  gap: .25em;
+}
+
+.pile-item {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: .1em .25em;
+  border-radius: .15em;
+}
+
+.state-used .used-indicator {
+  color: #666;
+  font-style: italic;
 }
 </style>

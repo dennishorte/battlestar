@@ -1,6 +1,22 @@
 <template>
-  <div class="agricola-card-chip" :class="[cardTypeClass, { unplayable }]" @click.stop="showDetails">
+  <div class="agricola-card-chip" :class="[cardTypeClass, { unplayable, used: isUsed }]" @click.stop="showDetails">
     <span class="card-name">{{ displayName }}</span>
+
+    <!-- Resources on card -->
+    <span v-if="cardResources.length > 0" class="card-resources">
+      <span v-for="res in cardResources" :key="res.type" class="resource-badge">
+        {{ res.amount }}{{ RESOURCE_ICONS[res.type] }}
+      </span>
+    </span>
+
+    <!-- Pile indicator -->
+    <span v-if="pileContents.length > 0" class="pile-badge" :title="pileTooltip">
+      📦{{ pileContents.length }}
+    </span>
+
+    <!-- Used indicator -->
+    <span v-if="isUsed" class="used-badge" title="Already used">✓</span>
+
     <span class="card-cost" v-if="costText">{{ costText }}</span>
     <span v-if="hasPrereqs" class="prereqs-marker">*</span>
     <span class="card-vp" v-if="victoryPoints">{{ victoryPoints }}VP</span>
@@ -12,23 +28,10 @@ import { agricola } from 'battlestar-common'
 
 const res = agricola.res
 
-const RESOURCE_ICONS = {
-  food: '🍞',
-  wood: '🪵',
-  clay: '🧱',
-  stone: '🪨',
-  reed: '🌿',
-  grain: '🌾',
-  vegetables: '🥕',
-  sheep: '🐑',
-  boar: '🐗',
-  cattle: '🐄',
-}
-
 export default {
   name: 'AgricolaCardChip',
 
-  inject: ['ui'],
+  inject: ['ui', 'game'],
 
   props: {
     cardId: {
@@ -43,6 +46,23 @@ export default {
       type: Object,
       default: null,
     },
+  },
+
+  data() {
+    return {
+      RESOURCE_ICONS: {
+        food: '🍞',
+        wood: '🪵',
+        clay: '🧱',
+        stone: '🪨',
+        reed: '🌿',
+        grain: '🌾',
+        vegetables: '🥕',
+        sheep: '🐑',
+        boar: '🐗',
+        cattle: '🐄',
+      },
+    }
   },
 
   computed: {
@@ -124,8 +144,64 @@ export default {
       }
 
       return entries
-        .map(([resource, amount]) => `${amount}${RESOURCE_ICONS[resource] || resource}`)
+        .map(([resource, amount]) => `${amount}${this.RESOURCE_ICONS[resource] || resource}`)
         .join(' ')
+    },
+
+    // Get card instance from game (has runtime state)
+    cardInstance() {
+      if (!this.game?.cards?.byId) {
+        return null
+      }
+      try {
+        return this.game.cards.byId(this.cardId)
+      }
+      catch {
+        return null
+      }
+    },
+
+    // Get runtime definition (with state like food, used, pile)
+    runtimeDefinition() {
+      return this.cardInstance?.definition || null
+    },
+
+    // Resources stored on this card
+    cardResources() {
+      const def = this.runtimeDefinition
+      if (!def) {
+        return []
+      }
+
+      const resources = []
+      const types = ['food', 'wood', 'clay', 'stone', 'reed', 'grain', 'vegetables']
+      for (const type of types) {
+        if (typeof def[type] === 'number' && def[type] > 0) {
+          resources.push({ type, amount: def[type] })
+        }
+      }
+      return resources
+    },
+
+    // Check if card has been used (one-time use)
+    isUsed() {
+      return this.runtimeDefinition?.used === true
+    },
+
+    // Get pile contents if card has a pile
+    pileContents() {
+      return this.runtimeDefinition?.pile || []
+    },
+
+    // Tooltip for pile contents
+    pileTooltip() {
+      if (this.pileContents.length === 0) {
+        return ''
+      }
+      const items = [...this.pileContents].reverse()
+        .map(item => this.RESOURCE_ICONS[item] || item)
+        .join(' ')
+      return `Pile (top first): ${items}`
     },
   },
 
@@ -214,5 +290,37 @@ export default {
 
 .agricola-card-chip.unplayable {
   opacity: 0.5;
+}
+
+.agricola-card-chip.used {
+  opacity: 0.7;
+}
+
+.card-resources {
+  display: flex;
+  gap: .1em;
+  font-size: .75em;
+}
+
+.resource-badge {
+  background-color: rgba(255, 215, 0, 0.3);
+  padding: 0 .15em;
+  border-radius: .15em;
+}
+
+.pile-badge {
+  font-size: .7em;
+  background-color: rgba(139, 69, 19, 0.2);
+  padding: 0 .2em;
+  border-radius: .15em;
+  cursor: help;
+}
+
+.used-badge {
+  font-size: .65em;
+  color: #888;
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 0 .15em;
+  border-radius: .15em;
 }
 </style>
