@@ -59,7 +59,7 @@
           <li v-if="action.allowsFencing">Build fences (1 wood each)</li>
           <li v-if="action.allowsFamilyGrowth && action.requiresRoom !== false">Grow family (requires empty room)</li>
           <li v-if="action.allowsFamilyGrowth && action.requiresRoom === false">Grow family (no room needed)</li>
-          <li v-if="action.allowsRenovation">Renovate house (upgrade material)</li>
+          <li v-if="action.allowsRenovation">Renovate house: costs 1 reed + 1 clay/stone per room</li>
           <li v-if="action.allowsMajorImprovement">Build major improvement</li>
           <li v-if="action.allowsMinorImprovement">Build minor improvement</li>
           <li v-if="action.allowsOccupation">Play occupation card</li>
