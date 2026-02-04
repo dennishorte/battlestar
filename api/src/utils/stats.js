@@ -17,6 +17,7 @@ Stats.processInnovationStats = async function(cursor) {
     count: 0,
     cards: {},
     players: {},
+    matchups: {},
     reasons: {},
   }
 
@@ -40,6 +41,7 @@ Stats.processInnovationStats = async function(cursor) {
     output.reasons[reason] += 1
 
     // Player stats
+    const playerNames = datum.settings.players.map(p => p.name)
     for (const player of datum.settings.players) {
       if (!(player.name in output.players)) {
         output.players[player.name] = {
@@ -54,6 +56,23 @@ Stats.processInnovationStats = async function(cursor) {
       if (player.name === winner) {
         pd.wins += 1
       }
+    }
+
+    // Head-to-head matchup stats (for 2-player games)
+    if (playerNames.length === 2) {
+      const [p1, p2] = playerNames.sort()
+      const matchupKey = `${p1} vs ${p2}`
+
+      if (!(matchupKey in output.matchups)) {
+        output.matchups[matchupKey] = {
+          players: [p1, p2],
+          games: 0,
+          wins: { [p1]: 0, [p2]: 0 },
+        }
+      }
+
+      output.matchups[matchupKey].games += 1
+      output.matchups[matchupKey].wins[winner] += 1
     }
 
     // Card draw stats
@@ -94,6 +113,14 @@ Stats.processInnovationStats = async function(cursor) {
   output.cards = Object
     .entries(output.cards)
     .sort((l, r) => r[1].drawn - l[1].drawn)
+
+  output.players = Object
+    .entries(output.players)
+    .sort((l, r) => r[1].count - l[1].count)
+
+  output.matchups = Object
+    .entries(output.matchups)
+    .sort((l, r) => r[1].games - l[1].games)
 
   output.reasons = Object
     .entries(output.reasons)

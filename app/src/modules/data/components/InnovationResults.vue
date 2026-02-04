@@ -8,11 +8,9 @@
         <div>Based on data from {{ data.count }} games.</div>
       </div>
 
-      <div class="row">
+      <div class="row mb-4">
         <div class="col-4">
-
           <h4>Win Conditions</h4>
-
           <table class="table table-sm table-striped">
             <thead>
               <tr>
@@ -27,10 +25,53 @@
               </tr>
             </tbody>
           </table>
-
         </div>
 
-        <div class="col-8">
+        <div class="col-4">
+          <h4>Player Stats</h4>
+          <table class="table table-sm table-striped">
+            <thead>
+              <tr>
+                <th>player</th>
+                <th>games</th>
+                <th>wins</th>
+                <th>win rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="([player, stats], index) in data.players" :key="index">
+                <td>{{ player }}</td>
+                <td>{{ stats.count }}</td>
+                <td>{{ stats.wins }}</td>
+                <td>{{ formatPercent(stats.wins, stats.count) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="col-4">
+          <h4>Head-to-Head (2P)</h4>
+          <table class="table table-sm table-striped">
+            <thead>
+              <tr>
+                <th>matchup</th>
+                <th>games</th>
+                <th>record</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="([key, matchup], index) in data.matchups" :key="index">
+                <td>{{ key }}</td>
+                <td>{{ matchup.games }}</td>
+                <td>{{ formatMatchupRecord(matchup) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
           <h4>Card Data</h4>
 
           <table class="table table-sm table-striped">
@@ -92,6 +133,11 @@ export default {
         return '0%'
       }
       return Math.floor(wins / melded * 100) + '%'
+    },
+
+    formatMatchupRecord(matchup) {
+      const [p1, p2] = matchup.players
+      return `${matchup.wins[p1]}-${matchup.wins[p2]}`
     },
 
     sortBy(field) {
