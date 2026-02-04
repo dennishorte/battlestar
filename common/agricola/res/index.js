@@ -11,6 +11,11 @@ const minorB = require('./cards/minorB.js')
 const minorC = require('./cards/minorC.js')
 const minorD = require('./cards/minorD.js')
 const minorE = require('./cards/minorE.js')
+const occupationA = require('./cards/occupationA.js')
+const occupationB = require('./cards/occupationB.js')
+const occupationC = require('./cards/occupationC.js')
+const occupationD = require('./cards/occupationD.js')
+const occupationE = require('./cards/occupationE.js')
 
 // Re-export everything from sub-modules
 module.exports = {
@@ -143,6 +148,41 @@ module.exports = {
       minorCount: minorE.getMinorImprovements().length,
       occupationCount: minorE.getOccupations().length,
     },
+    occupationA: {
+      id: 'occupationA',
+      name: 'Occupations A',
+      module: occupationA,
+      minorCount: occupationA.getMinorImprovements().length,
+      occupationCount: occupationA.getOccupations().length,
+    },
+    occupationB: {
+      id: 'occupationB',
+      name: 'Occupations B',
+      module: occupationB,
+      minorCount: occupationB.getMinorImprovements().length,
+      occupationCount: occupationB.getOccupations().length,
+    },
+    occupationC: {
+      id: 'occupationC',
+      name: 'Occupations C',
+      module: occupationC,
+      minorCount: occupationC.getMinorImprovements().length,
+      occupationCount: occupationC.getOccupations().length,
+    },
+    occupationD: {
+      id: 'occupationD',
+      name: 'Occupations D',
+      module: occupationD,
+      minorCount: occupationD.getMinorImprovements().length,
+      occupationCount: occupationD.getOccupations().length,
+    },
+    occupationE: {
+      id: 'occupationE',
+      name: 'Occupations E',
+      module: occupationE,
+      minorCount: occupationE.getMinorImprovements().length,
+      occupationCount: occupationE.getOccupations().length,
+    },
   },
 
   // Get available card set IDs
@@ -152,10 +192,10 @@ module.exports = {
 
   // Cards - always searches all sets (for getCardById used by hooks, scoring, etc.)
   getCardById(id) {
-    return baseA.getCardById(id) || baseB.getCardById(id) || minorA.getCardById(id) || minorB.getCardById(id) || minorC.getCardById(id) || minorD.getCardById(id) || minorE.getCardById(id)
+    return baseA.getCardById(id) || baseB.getCardById(id) || minorA.getCardById(id) || minorB.getCardById(id) || minorC.getCardById(id) || minorD.getCardById(id) || minorE.getCardById(id) || occupationA.getCardById(id) || occupationB.getCardById(id) || occupationC.getCardById(id) || occupationD.getCardById(id) || occupationE.getCardById(id)
   },
   getCardByName(name) {
-    return baseA.getCardByName(name) || baseB.getCardByName(name) || minorA.getCardByName(name) || minorB.getCardByName(name) || minorC.getCardByName(name) || minorD.getCardByName(name) || minorE.getCardByName(name)
+    return baseA.getCardByName(name) || baseB.getCardByName(name) || minorA.getCardByName(name) || minorB.getCardByName(name) || minorC.getCardByName(name) || minorD.getCardByName(name) || minorE.getCardByName(name) || occupationA.getCardByName(name) || occupationB.getCardByName(name) || occupationC.getCardByName(name) || occupationD.getCardByName(name) || occupationE.getCardByName(name)
   },
 
   // Functions that filter by selected card sets
@@ -196,12 +236,12 @@ module.exports = {
 
   // Convenience accessors (return all cards across all sets)
   getMinorImprovements() {
-    return [...baseA.getMinorImprovements(), ...baseB.getMinorImprovements(), ...minorA.getMinorImprovements(), ...minorB.getMinorImprovements(), ...minorC.getMinorImprovements(), ...minorD.getMinorImprovements(), ...minorE.getMinorImprovements()]
+    return [...baseA.getMinorImprovements(), ...baseB.getMinorImprovements(), ...minorA.getMinorImprovements(), ...minorB.getMinorImprovements(), ...minorC.getMinorImprovements(), ...minorD.getMinorImprovements(), ...minorE.getMinorImprovements(), ...occupationA.getMinorImprovements(), ...occupationB.getMinorImprovements(), ...occupationC.getMinorImprovements(), ...occupationD.getMinorImprovements(), ...occupationE.getMinorImprovements()]
   },
   getOccupations() {
-    return [...baseA.getOccupations(), ...baseB.getOccupations(), ...minorA.getOccupations(), ...minorB.getOccupations(), ...minorC.getOccupations(), ...minorD.getOccupations(), ...minorE.getOccupations()]
+    return [...baseA.getOccupations(), ...baseB.getOccupations(), ...minorA.getOccupations(), ...minorB.getOccupations(), ...minorC.getOccupations(), ...minorD.getOccupations(), ...minorE.getOccupations(), ...occupationA.getOccupations(), ...occupationB.getOccupations(), ...occupationC.getOccupations(), ...occupationD.getOccupations(), ...occupationE.getOccupations()]
   },
   getAllCards() {
-    return [...baseA.getAllCards(), ...baseB.getAllCards(), ...minorA.getAllCards(), ...minorB.getAllCards(), ...minorC.getAllCards(), ...minorD.getAllCards(), ...minorE.getAllCards()]
+    return [...baseA.getAllCards(), ...baseB.getAllCards(), ...minorA.getAllCards(), ...minorB.getAllCards(), ...minorC.getAllCards(), ...minorD.getAllCards(), ...minorE.getAllCards(), ...occupationA.getAllCards(), ...occupationB.getAllCards(), ...occupationC.getAllCards(), ...occupationD.getAllCards(), ...occupationE.getAllCards()]
   },
 }

@@ -106,7 +106,7 @@ module.exports = defineConfig([
 
       "no-undef": "warn",
       'no-unused-vars': ['warn', {
-        varsIgnorePattern: 'request|result[0-9]?',
+        varsIgnorePattern: '^_|request|result[0-9]?',
         argsIgnorePattern: '^_',
       }],
 
