@@ -1,3 +1,4 @@
+import AgricolaResults from './components/AgricolaResults.vue'
 import GameData from './components/GameData.vue'
 import InnovationCards from './components/InnovationCards.vue'
 import InnovationResults from './components/InnovationResults.vue'
@@ -9,6 +10,12 @@ export default [
     name: 'GameData',
     title: 'GameData',
     component: GameData,
+  },
+  {
+    path: '/data/agricola/results',
+    name: 'Agricola Results',
+    title: 'Agricola Results',
+    component: AgricolaResults,
   },
   {
     path: '/data/innovation/cards',

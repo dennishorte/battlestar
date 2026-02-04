@@ -72,4 +72,90 @@ Stats.processInnovationStats = async function(cursor) {
   return output
 }
 
+Stats.processAgricolaStats = async function(cursor) {
+  const output = {
+    count: 0,
+    byPlayerCount: {},
+    aggregate: { cards: {}, draft: {} },
+  }
+
+  for await (const datum of cursor) {
+    output.count += 1
+
+    const winner = datum.stats?.result?.player?.name
+    const playerCount = datum.stats?.inGame?.metadata?.playerCount || datum.settings?.players?.length || 0
+    const inGame = datum.stats?.inGame || {}
+
+    // Initialize player count bucket
+    if (!output.byPlayerCount[playerCount]) {
+      output.byPlayerCount[playerCount] = { count: 0, cards: {}, draft: {} }
+    }
+    const bucket = output.byPlayerCount[playerCount]
+    bucket.count += 1
+
+    // Process played cards
+    for (const [cardId, cardData] of Object.entries(inGame.cards?.played || {})) {
+      const cardKey = cardData.name
+
+      // Per-player-count
+      if (!bucket.cards[cardKey]) {
+        bucket.cards[cardKey] = { id: cardId, name: cardData.name, type: cardData.type, setId: cardData.setId, played: 0, wins: 0 }
+      }
+      bucket.cards[cardKey].played += 1
+      if (cardData.playedBy === winner) {
+        bucket.cards[cardKey].wins += 1
+      }
+
+      // Aggregate
+      if (!output.aggregate.cards[cardKey]) {
+        output.aggregate.cards[cardKey] = { id: cardId, name: cardData.name, type: cardData.type, setId: cardData.setId, played: 0, wins: 0 }
+      }
+      output.aggregate.cards[cardKey].played += 1
+      if (cardData.playedBy === winner) {
+        output.aggregate.cards[cardKey].wins += 1
+      }
+    }
+
+    // Process draft picks
+    for (const [cardId, pickData] of Object.entries(inGame.draft?.picks || {})) {
+      const cardKey = pickData.name
+
+      if (!bucket.draft[cardKey]) {
+        bucket.draft[cardKey] = { id: cardId, name: pickData.name, type: pickData.type, setId: pickData.setId, drafted: 0, pickOrders: [] }
+      }
+      bucket.draft[cardKey].drafted += 1
+      bucket.draft[cardKey].pickOrders.push(pickData.pickOrder)
+
+      if (!output.aggregate.draft[cardKey]) {
+        output.aggregate.draft[cardKey] = { id: cardId, name: pickData.name, type: pickData.type, setId: pickData.setId, drafted: 0, totalPickOrder: 0, pickCount: 0 }
+      }
+      output.aggregate.draft[cardKey].drafted += 1
+      output.aggregate.draft[cardKey].totalPickOrder += pickData.pickOrder
+      output.aggregate.draft[cardKey].pickCount += 1
+    }
+  }
+
+  // Post-process: calculate averages, convert to sorted arrays
+  for (const data of Object.values(output.aggregate.draft)) {
+    data.avgPickOrder = data.pickCount > 0 ? data.totalPickOrder / data.pickCount : 0
+    delete data.totalPickOrder
+    delete data.pickCount
+  }
+
+  output.aggregate.cards = Object.entries(output.aggregate.cards).sort((a, b) => b[1].played - a[1].played)
+  output.aggregate.draft = Object.entries(output.aggregate.draft).sort((a, b) => b[1].drafted - a[1].drafted)
+
+  for (const bucket of Object.values(output.byPlayerCount)) {
+    // Calculate avg pick order per bucket
+    for (const data of Object.values(bucket.draft)) {
+      data.avgPickOrder = data.pickOrders.length > 0 ? data.pickOrders.reduce((a, b) => a + b, 0) / data.pickOrders.length : 0
+      delete data.pickOrders
+    }
+    bucket.cards = Object.entries(bucket.cards).sort((a, b) => b[1].played - a[1].played)
+    bucket.draft = Object.entries(bucket.draft).sort((a, b) => b[1].drafted - a[1].drafted)
+  }
+
+  return output
+}
+
 export default Stats

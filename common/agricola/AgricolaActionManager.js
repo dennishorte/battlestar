@@ -8,6 +8,31 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   // ---------------------------------------------------------------------------
+  // Stats tracking
+  // ---------------------------------------------------------------------------
+
+  _recordCardPlayed(player, card) {
+    if (!this.game.stats) {
+      return
+    }
+
+    const cardId = card.id
+    const setId = card.definition?.deck || 'major'
+
+    this.game.stats.cards.played[cardId] = {
+      name: card.name,
+      type: card.type,
+      setId: setId,
+      playedBy: player.name,
+      roundPlayed: this.game.state.round,
+    }
+
+    if (this.game.stats.players[player.name]) {
+      this.game.stats.players[player.name].played.push(cardId)
+    }
+  }
+
+  // ---------------------------------------------------------------------------
   // Anytime food conversion support
   // ---------------------------------------------------------------------------
 
@@ -949,6 +974,7 @@ class AgricolaActionManager extends BaseActionManager {
     if (improvementId) {
       const imp = this.game.cards.byId(improvementId)
       player.buyMajorImprovement(improvementId)
+      this._recordCardPlayed(player, imp)
 
       this.log.add({
         template: '{player} buys {card}',
@@ -1079,6 +1105,7 @@ class AgricolaActionManager extends BaseActionManager {
     // Play the card (moves from hand to playedOccupations)
     const card = this.game.cards.byId(cardId)
     player.playCard(cardId)
+    this._recordCardPlayed(player, card)
 
     this.log.add({
       template: '{player} plays {card}',
@@ -1168,6 +1195,7 @@ class AgricolaActionManager extends BaseActionManager {
     // Play the card (handles cost payment and moves from hand)
     const card = this.game.cards.byId(cardId)
     player.playCard(cardId)
+    this._recordCardPlayed(player, card)
 
     this.log.add({
       template: '{player} plays {card}',
@@ -1297,6 +1325,7 @@ class AgricolaActionManager extends BaseActionManager {
         if (improvementId) {
           const imp = this.game.cards.byId(improvementId)
           player.buyMajorImprovement(improvementId)
+          this._recordCardPlayed(player, imp)
 
           this.log.add({
             template: '{player} buys {card}',
@@ -1330,6 +1359,7 @@ class AgricolaActionManager extends BaseActionManager {
         if (cardId) {
           const card = this.game.cards.byId(cardId)
           player.playCard(cardId)
+          this._recordCardPlayed(player, card)
 
           this.log.add({
             template: '{player} plays {card}',

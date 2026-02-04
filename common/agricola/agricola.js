@@ -99,6 +99,40 @@ Agricola.prototype.initialize = function() {
   this.state.stage = 0
   this.state.initializationComplete = true
   this._breakpoint('initialization-complete')
+
+  this.initializeStats()
+}
+
+Agricola.prototype.initializeStats = function() {
+  this.stats = {
+    schemaVersion: 1,
+
+    metadata: {
+      playerCount: this.players.all().length,
+      cardSets: this.settings.cardSets || [],
+      useDrafting: this.settings.useDrafting || false,
+    },
+
+    // Draft tracking: { cardId: { name, type, setId, pickOrder, pickedBy } }
+    draft: {
+      picks: {},
+    },
+
+    // Card play tracking: { cardId: { name, type, setId, playedBy, roundPlayed } }
+    cards: {
+      played: {},
+    },
+
+    // Per-player data: { playerName: { drafted: [], played: [] } }
+    players: {},
+  }
+
+  for (const player of this.players.all()) {
+    this.stats.players[player.name] = {
+      drafted: [],
+      played: [],
+    }
+  }
 }
 
 Agricola.prototype.initializePlayers = function() {
@@ -676,6 +710,16 @@ Agricola.prototype.draftCardType = function(cardType, passDirection) {
       card.moveTo(handZone)
 
       picksMade++
+
+      // Record draft pick for stats
+      this.stats.draft.picks[cardId] = {
+        name: card.name,
+        type: card.type,
+        setId: card.definition?.deck || 'unknown',
+        pickOrder: picksMade,
+        pickedBy: player.name,
+      }
+      this.stats.players[player.name].drafted.push(cardId)
 
       this.log.add({
         template: '{player} drafts {draftedCard}',
@@ -1470,6 +1514,9 @@ Agricola.prototype.endGame = function() {
     p => p.score === winner.score && p.buildingResources === winner.buildingResources
   )
 
+  // Finalize stats before game ends
+  this._finalizeStats(playerResults)
+
   if (tiedPlayers.length > 1) {
     // True tie - multiple winners
     const names = tiedPlayers.map(p => p.player.name).join(' and ')
@@ -1486,6 +1533,20 @@ Agricola.prototype.endGame = function() {
   }
   else {
     this.youWin(winner.player, 'highest score')
+  }
+}
+
+Agricola.prototype._finalizeStats = function(playerResults) {
+  for (const result of playerResults) {
+    const playerStats = this.stats.players[result.player.name]
+    if (playerStats) {
+      playerStats.score = result.score
+
+      // Calculate unplayed cards (drafted but not played)
+      const draftedSet = new Set(playerStats.drafted)
+      const playedSet = new Set(playerStats.played)
+      playerStats.unplayed = [...draftedSet].filter(id => !playedSet.has(id))
+    }
   }
 }
 

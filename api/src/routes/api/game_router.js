@@ -357,4 +357,29 @@ router.post('/undo', gameController.undo)
  */
 router.post('/stats/innovation', gameController.stats_innovation)
 
+/**
+ * @swagger
+ * /game/stats/agricola:
+ *   post:
+ *     summary: Get statistics for Agricola game
+ *     tags: [Games, Statistics]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Agricola game statistics
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/stats/agricola', gameController.stats_agricola)
+
 export default router

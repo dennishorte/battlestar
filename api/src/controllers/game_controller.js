@@ -208,3 +208,26 @@ export const stats_innovation = async (req, res, next) => {
     next(err)
   }
 }
+
+export const stats_agricola = async (req, res, next) => {
+  try {
+    const cursor = await db.game.find(
+      {
+        'settings.game': 'Agricola',
+        'stats.error': { $ne: true },
+        gameOver: true,
+        killed: { $ne: true },
+      },
+      { _id: 0, stats: 1, settings: 1 },
+    )
+
+    res.json({
+      status: 'success',
+      data: await stats.processAgricolaStats(cursor),
+    })
+  }
+  catch (err) {
+    logger.error(`Error fetching agricola stats: ${err.message}`)
+    next(err)
+  }
+}
