@@ -15,6 +15,24 @@
       <!-- Animals -->
       <AnimalDisplay :player="player" />
 
+      <!-- Scheduled Resources -->
+      <div v-if="hasScheduledItems" class="scheduled-section">
+        <div class="scheduled-header">
+          <span class="scheduled-icon">📅</span>
+          <span class="scheduled-title">Scheduled</span>
+        </div>
+        <div class="scheduled-items">
+          <div
+            v-for="item in scheduledItems"
+            :key="item.round + '-' + item.type"
+            class="scheduled-item"
+          >
+            <span class="scheduled-round">R{{ item.round }}</span>
+            <span class="scheduled-resource">{{ item.icon }} {{ item.amount }} {{ item.label }}</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Fencing Status (shown during fencing mode) -->
       <div v-if="showFencingStatus" class="fencing-status" :class="fencingStatusClass">
         <div class="fencing-header">
@@ -188,6 +206,69 @@ export default {
       const freeStandingStables = stables - stablesInPastures
 
       return totalSpaces - rooms - fields - pastureSpaces - freeStandingStables
+    },
+
+    scheduledItems() {
+      const items = []
+      const state = this.game.state
+      const playerName = this.player.name
+      const currentRound = state.round || 1
+
+      const resourceTypes = [
+        { key: 'scheduledFood', icon: '🍞', label: 'food' },
+        { key: 'scheduledVegetables', icon: '🥕', label: 'veg' },
+        { key: 'scheduledClay', icon: '🧱', label: 'clay' },
+        { key: 'scheduledWood', icon: '🪵', label: 'wood' },
+        { key: 'scheduledStone', icon: '🪨', label: 'stone' },
+        { key: 'scheduledReed', icon: '🌿', label: 'reed' },
+        { key: 'scheduledGrain', icon: '🌾', label: 'grain' },
+        { key: 'scheduledSheep', icon: '🐑', label: 'sheep' },
+        { key: 'scheduledBoar', icon: '🐗', label: 'boar' },
+        { key: 'scheduledCattle', icon: '🐄', label: 'cattle' },
+        { key: 'wellFood', icon: '💧', label: 'well' },
+      ]
+
+      for (const { key, icon, label } of resourceTypes) {
+        const scheduled = state[key]?.[playerName]
+        if (scheduled) {
+          for (const [round, amount] of Object.entries(scheduled)) {
+            const roundNum = parseInt(round)
+            if (amount > 0 && roundNum >= currentRound) {
+              items.push({
+                round: roundNum,
+                type: key,
+                icon,
+                label,
+                amount,
+              })
+            }
+          }
+        }
+      }
+
+      // Scheduled plows
+      const plows = state.scheduledPlows?.[playerName]
+      if (plows && plows.length > 0) {
+        for (const round of plows) {
+          if (round >= currentRound) {
+            items.push({
+              round,
+              type: 'plow',
+              icon: '🚜',
+              label: 'plow',
+              amount: 1,
+            })
+          }
+        }
+      }
+
+      // Sort by round
+      items.sort((a, b) => a.round - b.round)
+      return items
+    },
+
+    hasScheduledItems() {
+      return this.scheduledItems.length > 0
     },
 
   },
@@ -408,5 +489,58 @@ export default {
 
 .fencing-actions .btn {
   min-width: 80px;
+}
+
+/* Scheduled Resources Section */
+.scheduled-section {
+  background-color: #fff8e1;
+  border: 1px solid #ffca28;
+  border-radius: .25em;
+  padding: .5em;
+  margin-bottom: .5em;
+}
+
+.scheduled-header {
+  display: flex;
+  align-items: center;
+  gap: .35em;
+  margin-bottom: .35em;
+}
+
+.scheduled-icon {
+  font-size: .9em;
+}
+
+.scheduled-title {
+  font-weight: 600;
+  color: #f57f17;
+  font-size: .85em;
+}
+
+.scheduled-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35em;
+}
+
+.scheduled-item {
+  display: flex;
+  align-items: center;
+  gap: .25em;
+  background-color: #fff;
+  border: 1px solid #ffe082;
+  border-radius: .2em;
+  padding: .15em .35em;
+  font-size: .75em;
+}
+
+.scheduled-round {
+  font-weight: 600;
+  color: #ff8f00;
+  min-width: 1.8em;
+}
+
+.scheduled-resource {
+  color: #5d4037;
 }
 </style>
