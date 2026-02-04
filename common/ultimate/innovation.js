@@ -101,8 +101,8 @@ Innovation.prototype.initialize = function() {
   this.initializeExpansions()
   this.initializeTeams()
   this.initializeZones()
-  this.initializeStartingCards()
   this.initializeTransientState()
+  this.initializeStartingCards()
 
   this.log.outdent()
 
@@ -171,6 +171,7 @@ Innovation.prototype.initializeTransientState = function() {
   this.state.tuckCount = Object.fromEntries(this.players.all().map(p => [p.name, 0]))
   this.state.scoreCount = Object.fromEntries(this.players.all().map(p => [p.name, 0]))
   this.stats = {
+    drawn: [],
     melded: [],
     meldedBy: {},
     highestMelded: 1,

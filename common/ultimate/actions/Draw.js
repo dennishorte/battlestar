@@ -1,3 +1,6 @@
+const util = require('../../lib/util.js')
+
+
 function DrawAction(player, opts={}) {
   const { age, isAction } = opts
 
@@ -76,8 +79,15 @@ function _doDraw(player, exp, age, opts={}) {
     })
   }
 
+  // Stats
+  _statsCardWasDrawn.call(this, card)
+
   this.acted(player)
   return card
+}
+
+function _statsCardWasDrawn(card) {
+  util.array.pushUnique(this.game.stats.drawn, card.name)
 }
 
 function _determineBaseDrawExpansion(player) {

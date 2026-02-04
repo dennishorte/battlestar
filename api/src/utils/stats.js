@@ -56,16 +56,29 @@ Stats.processInnovationStats = async function(cursor) {
       }
     }
 
+    // Card draw stats
+    for (const card of inGame.drawn || []) {
+      if (!(card in output.cards)) {
+        output.cards[card] = {
+          drawn: 0,
+          melded: 0,
+          wins: 0,
+          age: getCardAge(card),
+        }
+      }
+      output.cards[card].drawn += 1
+    }
+
     // Card meld stats
     const cardDetails = inGame.cardDetails || {}
     for (const card of inGame.melded || []) {
       if (!(card in output.cards)) {
         output.cards[card] = {
+          drawn: 0,
           melded: 0,
           wins: 0,
           // Use cardDetails from game stats if available, otherwise look up from card definitions
           age: cardDetails[card]?.age ?? getCardAge(card),
-          expansion: cardDetails[card]?.expansion,
         }
       }
 
@@ -80,7 +93,7 @@ Stats.processInnovationStats = async function(cursor) {
 
   output.cards = Object
     .entries(output.cards)
-    .sort((l, r) => r[1].melded - l[1].melded)
+    .sort((l, r) => r[1].drawn - l[1].drawn)
 
   output.reasons = Object
     .entries(output.reasons)

@@ -38,7 +38,9 @@
               <tr>
                 <th @click="sortBy('name')" class="sortable">card</th>
                 <th @click="sortBy('age')" class="sortable">age</th>
+                <th @click="sortBy('drawn')" class="sortable">drawn</th>
                 <th @click="sortBy('melded')" class="sortable">melded</th>
+                <th @click="sortBy('meldRate')" class="sortable">meld rate</th>
                 <th @click="sortBy('wins')" class="sortable">wins</th>
                 <th @click="sortBy('winRate')" class="sortable">win rate</th>
               </tr>
@@ -47,7 +49,9 @@
               <tr v-for="([card, datum], index) in data.cards" :key="index">
                 <td>{{ card }}</td>
                 <td>{{ datum.age ?? '?' }}</td>
+                <td>{{ datum.drawn }}</td>
                 <td>{{ datum.melded }}</td>
+                <td>{{ formatPercent(datum.melded, datum.drawn) }}</td>
                 <td>{{ datum.wins }}</td>
                 <td>{{ formatPercent(datum.wins, datum.melded) }}</td>
               </tr>
@@ -112,8 +116,18 @@ export default {
           return lAge - rAge
         })
       }
+      else if (field === 'drawn') {
+        this.data.cards.sort((l, r) => r[1].drawn - l[1].drawn)
+      }
       else if (field === 'melded') {
         this.data.cards.sort((l, r) => r[1].melded - l[1].melded)
+      }
+      else if (field === 'meldRate') {
+        this.data.cards.sort((l, r) => {
+          const lRate = l[1].drawn > 0 ? l[1].melded / l[1].drawn : 0
+          const rRate = r[1].drawn > 0 ? r[1].melded / r[1].drawn : 0
+          return rRate - lRate
+        })
       }
       else if (field === 'wins') {
         this.data.cards.sort((l, r) => r[1].wins - l[1].wins)
