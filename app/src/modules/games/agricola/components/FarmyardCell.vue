@@ -28,6 +28,12 @@
         <span class="animal-count" v-if="showAnimalCount">{{ pastureAnimalCount }}</span>
       </template>
 
+      <!-- Unfenced stable with animal -->
+      <template v-else-if="unfencedStableAnimal">
+        <span class="cell-icon">{{ unfencedStableAnimalIcon }}</span>
+        <span class="animal-count">1</span>
+      </template>
+
       <!-- Empty -->
       <template v-else>
         <span class="empty-marker">·</span>
@@ -250,6 +256,9 @@ export default {
         return 'Empty pasture'
       }
       if (this.cell.hasStable) {
+        if (this.cell.animal) {
+          return `Unfenced stable with ${this.cell.animal}`
+        }
         return 'Unfenced stable'
       }
       return 'Empty space'
@@ -317,6 +326,20 @@ export default {
 
     petIcon() {
       switch (this.player.pet) {
+        case 'sheep': return '🐑'
+        case 'boar': return '🐗'
+        case 'cattle': return '🐄'
+        default: return ''
+      }
+    },
+
+    // Check if this is an unfenced stable with an animal
+    unfencedStableAnimal() {
+      return this.cell.hasStable && !this.isInPasture && this.cell.animal
+    },
+
+    unfencedStableAnimalIcon() {
+      switch (this.cell.animal) {
         case 'sheep': return '🐑'
         case 'boar': return '🐗'
         case 'cattle': return '🐄'
