@@ -1,4 +1,16 @@
+import { getInnovationCardAges } from 'battlestar-common'
+
 const Stats = {}
+
+// Lazily-loaded card age lookup for Innovation
+let innovationCardAges = null
+
+function getCardAge(cardName) {
+  if (!innovationCardAges) {
+    innovationCardAges = getInnovationCardAges()
+  }
+  return innovationCardAges[cardName]
+}
 
 Stats.processInnovationStats = async function(cursor) {
   const output = {
@@ -51,7 +63,8 @@ Stats.processInnovationStats = async function(cursor) {
         output.cards[card] = {
           melded: 0,
           wins: 0,
-          age: cardDetails[card]?.age,
+          // Use cardDetails from game stats if available, otherwise look up from card definitions
+          age: cardDetails[card]?.age ?? getCardAge(card),
           expansion: cardDetails[card]?.expansion,
         }
       }

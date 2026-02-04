@@ -15,6 +15,28 @@ module.exports.log = require('./lib/log.js')
 module.exports.selector = require('./lib/selector.js')
 module.exports.util = require('./lib/util.js')
 
+// Innovation card age lookup (for stats processing)
+module.exports.getInnovationCardAges = function() {
+  const sets = {
+    base: require('./ultimate/res/base'),
+    echo: require('./ultimate/res/echo'),
+    figs: require('./ultimate/res/figs'),
+    city: require('./ultimate/res/city'),
+    arti: require('./ultimate/res/arti'),
+    usee: require('./ultimate/res/usee'),
+  }
+
+  const lookup = {}
+  for (const set of Object.values(sets)) {
+    for (const card of set.cardData || []) {
+      if (card.name && card.age !== undefined) {
+        lookup[card.name] = card.age
+      }
+    }
+  }
+  return lookup
+}
+
 
 const Games = {
   'Agricola': module.exports.agricola,
