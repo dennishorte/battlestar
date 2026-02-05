@@ -169,4 +169,22 @@ Game.saveStats = async function(gameData) {
   )
 }
 
+Game.saveNotes = async function(gameId, playerName, noteText) {
+  // Limit note length to 10000 characters
+  const text = (noteText || '').slice(0, 10000)
+
+  await gameCollection.updateOne(
+    { _id: gameId },
+    { $set: { [`notes.${playerName}`]: text } }
+  )
+}
+
+Game.getNotes = async function(gameId, playerName) {
+  const game = await gameCollection.findOne(
+    { _id: gameId },
+    { projection: { [`notes.${playerName}`]: 1 } }
+  )
+  return game?.notes?.[playerName] || ''
+}
+
 export default Game

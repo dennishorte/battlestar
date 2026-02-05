@@ -231,3 +231,33 @@ export const stats_agricola = async (req, res, next) => {
     next(err)
   }
 }
+
+export const saveNotes = async (req, res, next) => {
+  try {
+    const { gameId, notes } = req.body
+    const playerName = req.user.name
+
+    await db.game.saveNotes(gameId, playerName, notes)
+
+    res.json({ status: 'success' })
+  }
+  catch (err) {
+    logger.error(`Error saving notes: ${err.message}`)
+    next(err)
+  }
+}
+
+export const fetchNotes = async (req, res, next) => {
+  try {
+    const { gameId } = req.body
+    const playerName = req.user.name
+
+    const notes = await db.game.getNotes(gameId, playerName)
+
+    res.json({ status: 'success', notes })
+  }
+  catch (err) {
+    logger.error(`Error fetching notes: ${err.message}`)
+    next(err)
+  }
+}

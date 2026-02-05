@@ -382,4 +382,7 @@ router.post('/stats/innovation', gameController.stats_innovation)
  */
 router.post('/stats/agricola', gameController.stats_agricola)
 
+router.post('/notes/save', gameController.saveNotes)
+router.post('/notes/fetch', gameController.fetchNotes)
+
 export default router

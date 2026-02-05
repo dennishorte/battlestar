@@ -13,7 +13,9 @@
       :class="hasNewChat ? 'notif' : ''"
       data-bs-toggle="offcanvas"
       data-bs-target="#chat-off-canvas"
-    />
+    >
+      <span class="toggle-label">Chat</span>
+    </div>
 
   </OffCanvas>
 </template>
@@ -129,12 +131,23 @@ export default {
   width: 20px;
   height: 100px;
   right: -20px;
-  bottom: 25px;
+  bottom: 135px;
   background-color: rgba(0, 0, 0, .5);
   border-radius: 0 8px 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .toggle.notif {
   background-color: rgba(255, 0, 0, .5);
+}
+
+.toggle-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 0.75em;
+  color: white;
+  padding: 0.25em 0;
 }
 </style>
