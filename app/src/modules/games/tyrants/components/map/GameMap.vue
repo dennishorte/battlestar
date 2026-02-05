@@ -1,5 +1,6 @@
 <template>
-  <div class="game-map" :style="mapStyle">
+  <HexMap v-if="isDemonwebMap" />
+  <div v-else class="game-map" :style="mapStyle">
     <CurveLayer :curves="elems.curves" :height="svgHeight" :width="svgWidth" />
     <DivLayer :styledDivs="styledDivs" />
   </div>
@@ -11,6 +12,7 @@ import { util } from 'battlestar-common'
 
 import CurveLayer from '@/modules/mapmaker/components/CurveLayer.vue'
 import DivLayer from './DivLayer.vue'
+import HexMap from './HexMap.vue'
 
 import maps from '../../res/maps.js'
 
@@ -20,6 +22,7 @@ export default {
   components: {
     CurveLayer,
     DivLayer,
+    HexMap,
   },
 
   inject: ['game'],
@@ -30,11 +33,21 @@ export default {
   },
 
   computed: {
+    isDemonwebMap() {
+      return this.mapName && this.mapName.startsWith('demonweb')
+    },
+
     elems() {
+      if (this.isDemonwebMap) {
+        return { curves: [], divs: [] }
+      }
       return maps[this.mapName].elems
     },
 
     elemMeta() {
+      if (this.isDemonwebMap) {
+        return { styles: { '.map': { width: '800px', height: '800px' } } }
+      }
       return maps[this.mapName].elemMeta
     },
 
@@ -47,6 +60,10 @@ export default {
     },
 
     styledDivs() {
+      if (this.isDemonwebMap) {
+        return []
+      }
+
       const output = this
         .elems
         .divs

@@ -173,7 +173,19 @@ export default {
       return this.game.zones.byId('devoured').cardlist().length
     },
 
+    isDemonwebMap() {
+      const mapName = this.game.settings.map
+      return mapName && mapName.startsWith('demonweb')
+    },
+
     mapStyle() {
+      if (this.isDemonwebMap) {
+        // Demonweb maps are dynamically sized
+        return {
+          minWidth: '600px',
+        }
+      }
+
       const parsePx = (px) => parseInt(px.substr(0, px.length - 2))
       const elemMeta = maps[this.game.settings.map].elemMeta
       const mapStyle = elemMeta.styles['.map']
