@@ -155,6 +155,28 @@ const RESOURCE_NAMES = {
   cattle: 'Cattle',
 }
 
+// Display names for actions with duplicate names (must match backend ACTION_DISPLAY_NAMES)
+const ACTION_DISPLAY_NAMES = {
+  'occupation': 'Lessons A',
+  'lessons-3': 'Lessons B',
+  'lessons-4': 'Lessons B',
+  'lessons-5': 'Lessons C',
+  'lessons-5b': 'Lessons D',
+  'grove': 'Grove A',
+  'grove-5': 'Grove B',
+  'grove-6': 'Grove C',
+  'hollow': 'Hollow A',
+  'hollow-5': 'Hollow B',
+  'hollow-6': 'Hollow C',
+  'resource-market': 'Resource Market A',
+  'resource-market-5': 'Resource Market B',
+  'resource-market-6': 'Resource Market C',
+  'copse': 'Copse A',
+  'copse-5': 'Copse B',
+  'traveling-players': 'Traveling Players A',
+  'traveling-players-5': 'Traveling Players B',
+}
+
 export default {
   name: 'ActionSpaceModal',
 
@@ -178,6 +200,14 @@ export default {
 
     actionName() {
       return this.action ? this.action.name : 'Action Details'
+    },
+
+    actionDisplayName() {
+      // Use display name mapping for actions with duplicate names
+      if (this.actionId && ACTION_DISPLAY_NAMES[this.actionId]) {
+        return ACTION_DISPLAY_NAMES[this.actionId]
+      }
+      return this.action ? this.action.name : ''
     },
 
     actionState() {
@@ -357,20 +387,24 @@ export default {
       // Get choices from waiting directly or from selectors[0]
       const choices = waiting.choices || (waiting.selectors && waiting.selectors[0]?.choices) || []
 
+      // Use display name for matching (handles duplicate action names like "Lessons A", "Lessons B")
+      const displayNameLower = this.actionDisplayName.toLowerCase()
+
       return choices.some(choice => {
         const choiceLower = (choice.title || choice).toLowerCase()
-        const actionLower = this.action.name.toLowerCase()
-        return choiceLower.includes(actionLower) || actionLower.includes(choiceLower)
+        // Match by display name (exact or prefix match for accumulated amounts like "Lessons A (3)")
+        return choiceLower === displayNameLower || choiceLower.startsWith(displayNameLower)
       })
     },
   },
 
   methods: {
     chooseAction() {
-      // Emit the selection (modal closes via data-bs-dismiss)
+      // Emit the selection using display name (handles duplicate action names)
+      // Use prefix matching to handle accumulated amounts like "Lessons A (3)"
       this.bus.emit('user-select-option', {
         actor: this.actor,
-        optionName: this.action.name,
+        optionName: this.actionDisplayName,
         opts: { prefix: true },
       })
 

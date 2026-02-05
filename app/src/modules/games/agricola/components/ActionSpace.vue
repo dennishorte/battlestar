@@ -51,6 +51,28 @@ const RESOURCE_ICONS = {
   cattle: '🐄',
 }
 
+// Display names for actions with duplicate names (must match backend ACTION_DISPLAY_NAMES)
+const ACTION_DISPLAY_NAMES = {
+  'occupation': 'Lessons A',
+  'lessons-3': 'Lessons B',
+  'lessons-4': 'Lessons B',
+  'lessons-5': 'Lessons C',
+  'lessons-5b': 'Lessons D',
+  'grove': 'Grove A',
+  'grove-5': 'Grove B',
+  'grove-6': 'Grove C',
+  'hollow': 'Hollow A',
+  'hollow-5': 'Hollow B',
+  'hollow-6': 'Hollow C',
+  'resource-market': 'Resource Market A',
+  'resource-market-5': 'Resource Market B',
+  'resource-market-6': 'Resource Market C',
+  'copse': 'Copse A',
+  'copse-5': 'Copse B',
+  'traveling-players': 'Traveling Players A',
+  'traveling-players-5': 'Traveling Players B',
+}
+
 export default {
   name: 'ActionSpace',
 
@@ -160,6 +182,14 @@ export default {
       return RESOURCE_ICONS[this.accumulatedResource] || '📦'
     },
 
+    actionDisplayName() {
+      // Use display name mapping for actions with duplicate names
+      if (this.actionId && ACTION_DISPLAY_NAMES[this.actionId]) {
+        return ACTION_DISPLAY_NAMES[this.actionId]
+      }
+      return this.action ? this.action.name : ''
+    },
+
     isSelectable() {
       // Check if this action is in the current player's available choices
       const waiting = this.game.getWaiting(this.game.players.byName(this.actor.name))
@@ -172,11 +202,14 @@ export default {
         return false
       }
 
+      // Use display name for matching (handles duplicate action names)
+      const displayNameLower = this.actionDisplayName.toLowerCase()
+
       const choices = selector.choices || []
       return choices.some(choice => {
         const choiceLower = (choice.title || choice).toLowerCase()
-        const actionLower = this.action.name.toLowerCase()
-        return choiceLower.includes(actionLower) || actionLower.includes(choiceLower)
+        // Match by display name (exact or prefix match for accumulated amounts)
+        return choiceLower === displayNameLower || choiceLower.startsWith(displayNameLower)
       })
     },
 
