@@ -120,6 +120,27 @@ export default {
           minPlayers: 4,
           maxPlayers: 4,
         },
+        {
+          text: 'demonweb-2',
+          value: 'demonweb-2',
+          disabled: false,
+          minPlayers: 2,
+          maxPlayers: 2,
+        },
+        {
+          text: 'demonweb-3',
+          value: 'demonweb-3',
+          disabled: false,
+          minPlayers: 3,
+          maxPlayers: 3,
+        },
+        {
+          text: 'demonweb-4',
+          value: 'demonweb-4',
+          disabled: false,
+          minPlayers: 4,
+          maxPlayers: 4,
+        },
       ],
 
       models: {
