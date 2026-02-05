@@ -132,7 +132,7 @@ const res = agricola.res
 const RESOURCE_ICONS = {
   wood: '🪵',
   clay: '🧱',
-  reed: '🌾',
+  reed: '🌿',
   stone: '🪨',
   food: '🍞',
   grain: '🌾',
