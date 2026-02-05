@@ -804,6 +804,11 @@ Agricola.prototype.mainLoop = function() {
     // Call round end hooks
     this.callRoundEndHooks()
 
+    // Clear newborn status at end of round (after harvest if there was one)
+    for (const player of this.players.all()) {
+      player.clearNewborns()
+    }
+
     this.log.outdent()
   }
 }

@@ -1222,7 +1222,10 @@ class AgricolaPlayer extends BasePlayer {
 
   resetWorkers() {
     this.availableWorkers = this.familyMembers
-    // Clear newborn status after one full round
+    // Note: newborns are cleared at end of round (after harvest), not here
+  }
+
+  clearNewborns() {
     this.newborns = []
   }
 

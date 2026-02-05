@@ -615,6 +615,43 @@ describe('Agricola', () => {
       expect(dennis.getFoodRequired()).toBe(5)
     })
 
+    test('newborns persist through returnHomePhase to harvest', () => {
+      const game = t.fixture({ seed: 'newborn-harvest-test' })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      // Setup: give player a room and grow family
+      dennis.buildRoom(0, 2)
+      dennis.growFamily()
+
+      expect(dennis.familyMembers).toBe(3)
+      expect(dennis.newborns).toContain(3)
+
+      // Simulate returnHomePhase (what happens at end of work phase)
+      game.returnHomePhase()
+
+      // Newborns should still be tracked after returnHomePhase
+      expect(dennis.newborns).toContain(3)
+      expect(dennis.getFoodRequired()).toBe(5) // 2*2 + 1*1 = 5
+    })
+
+    test('newborns are cleared after round ends', () => {
+      const game = t.fixture({ seed: 'newborn-clear-test' })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      dennis.buildRoom(0, 2)
+      dennis.growFamily()
+
+      expect(dennis.newborns).toContain(3)
+
+      // Clear newborns (happens at end of round)
+      dennis.clearNewborns()
+
+      expect(dennis.newborns).toEqual([])
+      expect(dennis.getFoodRequired()).toBe(6) // 3*2 = 6 (all adults now)
+    })
+
     test('feedFamily with enough food', () => {
       const game = t.fixture()
       game.run()
