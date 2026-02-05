@@ -40,7 +40,27 @@
             </button>
           </template>
         </CardFilters>
-        <CubeBreakdown :cardlist="filteredCards" />
+        <CubeBreakdown :cardlist="validFilteredCards" />
+
+        <div v-if="malformedCards.length > 0" class="malformed-section">
+          <h5 class="malformed-header">
+            Malformed Cards ({{ malformedCards.length }})
+          </h5>
+          <p class="malformed-description">
+            These cards have invalid data (e.g., missing faces) and need to be fixed or removed.
+          </p>
+          <div class="malformed-cards">
+            <div
+              v-for="card in malformedCards"
+              :key="card._id"
+              class="malformed-card"
+              @click="cardCloseup(card)"
+            >
+              <span class="malformed-card-id">{{ card._id }}</span>
+              <span class="malformed-card-reason">{{ getMalformedReason(card) }}</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <CubeScars
@@ -155,6 +175,18 @@ export default {
     filteredCards() {
       return this.cube.applyFilters(this.filters)
     },
+
+    malformedCards() {
+      return this.cards.filter(card => this.isCardMalformed(card))
+    },
+
+    validCards() {
+      return this.cards.filter(card => !this.isCardMalformed(card))
+    },
+
+    validFilteredCards() {
+      return this.filteredCards.filter(card => !this.isCardMalformed(card))
+    },
   },
 
   methods: {
@@ -249,6 +281,56 @@ export default {
         removeIds: update.remove.map(item => item.card._id),
       })
     },
+
+    isCardMalformed(card) {
+      try {
+        // Check if card has data
+        if (!card.data) {
+          return true
+        }
+
+        // Check if card has faces
+        const faces = card.data.card_faces
+        if (!faces || !Array.isArray(faces) || faces.length === 0) {
+          return true
+        }
+
+        // Check if at least one face has a name
+        const hasName = faces.some(face => face && face.name && face.name.trim())
+        if (!hasName) {
+          return true
+        }
+
+        return false
+      }
+      catch {
+        return true
+      }
+    },
+
+    getMalformedReason(card) {
+      if (!card.data) {
+        return 'Missing card data'
+      }
+
+      const faces = card.data.card_faces
+      if (!faces) {
+        return 'Missing card_faces'
+      }
+      if (!Array.isArray(faces)) {
+        return 'card_faces is not an array'
+      }
+      if (faces.length === 0) {
+        return 'No faces defined'
+      }
+
+      const hasName = faces.some(face => face && face.name && face.name.trim())
+      if (!hasName) {
+        return 'All faces have empty names'
+      }
+
+      return 'Unknown issue'
+    },
   },
 
   watch: {
@@ -275,5 +357,55 @@ export default {
 <style scoped>
 .container {
   margin-bottom: 2em;
+}
+
+.malformed-section {
+  margin-top: 2em;
+  padding: 1em;
+  background-color: #2a1a1a;
+  border: 1px solid #dc3545;
+  border-radius: 4px;
+}
+
+.malformed-header {
+  color: #dc3545;
+  margin-bottom: 0.5em;
+}
+
+.malformed-description {
+  color: #999;
+  font-size: 0.9em;
+  margin-bottom: 1em;
+}
+
+.malformed-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.malformed-card {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5em 1em;
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.malformed-card:hover {
+  background-color: #2a2a2a;
+  border-color: #666;
+}
+
+.malformed-card-id {
+  font-family: monospace;
+  color: #aaa;
+}
+
+.malformed-card-reason {
+  color: #dc3545;
+  font-size: 0.9em;
 }
 </style>
