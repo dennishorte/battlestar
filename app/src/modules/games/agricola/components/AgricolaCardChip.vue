@@ -109,7 +109,8 @@ export default {
     },
 
     victoryPoints() {
-      return this.card?.victoryPoints || null
+      // Cards use 'vps' field, major improvements use 'victoryPoints'
+      return this.card?.vps ?? this.card?.victoryPoints ?? null
     },
 
     hasPrereqs() {

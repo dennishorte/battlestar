@@ -23,8 +23,8 @@
       </div>
 
       <!-- Victory Points -->
-      <div class="card-vp" v-if="card.victoryPoints">
-        <span class="vp-value">{{ card.victoryPoints }}</span>
+      <div class="card-vp" v-if="cardVictoryPoints">
+        <span class="vp-value">{{ cardVictoryPoints }}</span>
         <span class="vp-label">Victory Points</span>
       </div>
 
@@ -192,6 +192,11 @@ export default {
 
     hasAbilities() {
       return this.card && (this.card.gives || this.card.bonus || this.card.passiveEffect)
+    },
+
+    cardVictoryPoints() {
+      // Minor improvements use 'vps', major improvements use 'victoryPoints'
+      return this.card?.vps ?? this.card?.victoryPoints ?? null
     },
 
     // Get card instance from game (has runtime state)
