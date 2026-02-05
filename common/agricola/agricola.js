@@ -1146,40 +1146,23 @@ Agricola.prototype.feedingPhase = function() {
 
 Agricola.prototype.allowFoodConversion = function(player, required) {
   while (player.food < required) {
-    const options = []
+    // Get standard conversion options (basic + cooking)
+    const options = this.getAnytimeFoodConversionOptions(player)
 
-    // Basic conversions (always available)
-    if (player.grain > 0) {
-      options.push('Convert 1 grain to 1 food')
-    }
-    if (player.vegetables > 0) {
-      options.push('Convert 1 vegetable to 1 food')
-    }
-
-    // Cooking (requires improvement)
-    if (player.hasCookingAbility()) {
-      const animals = player.getAllAnimals()
-      if (animals.sheep > 0) {
-        options.push('Cook 1 sheep')
-      }
-      if (animals.boar > 0) {
-        options.push('Cook 1 boar')
-      }
-      if (animals.cattle > 0) {
-        options.push('Cook 1 cattle')
-      }
-      if (player.vegetables > 0) {
-        options.push('Cook 1 vegetable')
-      }
-    }
-
-    // Crafting improvements (harvest conversion)
+    // Add crafting improvements (harvest-only conversions)
     for (const impId of player.majorImprovements) {
       const imp = this.cards.byId(impId)
       if (imp && imp.abilities && imp.abilities.harvestConversion) {
-        const resource = imp.abilities.harvestConversion.resource
-        if (player[resource] > 0) {
-          options.push(`Use ${imp.name}`)
+        const conv = imp.abilities.harvestConversion
+        if (player[conv.resource] > 0) {
+          options.push({
+            type: 'craft',
+            improvement: imp.name,
+            resource: conv.resource,
+            count: 1,
+            food: conv.food,
+            description: `Use ${imp.name}: convert ${conv.resource} to ${conv.food} food`,
+          })
         }
       }
     }
@@ -1188,9 +1171,11 @@ Agricola.prototype.allowFoodConversion = function(player, required) {
       break // No more conversion options
     }
 
-    options.push('Done converting')
+    // Build choice strings for UI
+    const choiceStrings = options.map(opt => opt.description)
+    choiceStrings.push('Done converting')
 
-    const selection = this.actions.choose(player, options, {
+    const selection = this.actions.choose(player, choiceStrings, {
       title: `Need ${required - player.food} more food`,
       min: 1,
       max: 1,
@@ -1202,42 +1187,10 @@ Agricola.prototype.allowFoodConversion = function(player, required) {
       break
     }
 
-    if (choice === 'Convert 1 grain to 1 food') {
-      player.convertToFood('grain', 1)
-    }
-    else if (choice === 'Convert 1 vegetable to 1 food') {
-      player.convertToFood('vegetables', 1)
-    }
-    else if (choice === 'Cook 1 sheep') {
-      player.cookAnimal('sheep', 1)
-    }
-    else if (choice === 'Cook 1 boar') {
-      player.cookAnimal('boar', 1)
-    }
-    else if (choice === 'Cook 1 cattle') {
-      player.cookAnimal('cattle', 1)
-    }
-    else if (choice === 'Cook 1 vegetable') {
-      player.cookVegetable(1)
-    }
-    else if (choice.startsWith('Use ')) {
-      // Crafting improvement
-      for (const impId of player.majorImprovements) {
-        const imp = this.cards.byId(impId)
-        if (imp && choice === `Use ${imp.name}`) {
-          const conv = imp.abilities.harvestConversion
-          if (player[conv.resource] > 0) {
-            player[conv.resource] -= 1
-            player.food += conv.food
-
-            this.log.add({
-              template: '{player} uses {imp} to convert {resource} to {food} food',
-              args: { player, imp: imp.name, resource: conv.resource, food: conv.food },
-            })
-          }
-          break
-        }
-      }
+    // Find the matching option and execute it
+    const selectedOption = options.find(opt => opt.description === choice)
+    if (selectedOption) {
+      this.executeAnytimeFoodConversion(player, selectedOption)
     }
   }
 }
@@ -1436,6 +1389,14 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
     this.log.add({
       template: '{player} cooks {count} vegetable(s) for {food} food',
       args: { player, count: option.count, food },
+    })
+  }
+  else if (option.type === 'craft') {
+    player[option.resource] -= option.count
+    player.food += option.food
+    this.log.add({
+      template: '{player} uses {improvement} to convert {resource} to {food} food',
+      args: { player, improvement: option.improvement, resource: option.resource, food: option.food },
     })
   }
 }

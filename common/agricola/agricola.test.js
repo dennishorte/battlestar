@@ -2205,6 +2205,51 @@ describe('Agricola', () => {
       expect(dennis.food).toBe(2)
     })
 
+    test('executeAnytimeFoodConversion handles craft type', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          majorImprovements: ['joinery'],
+          wood: 3,
+          food: 0,
+        },
+      })
+      game.run()
+
+      const dennis = t.player(game)
+      game.executeAnytimeFoodConversion(dennis, {
+        type: 'craft', improvement: 'Joinery', resource: 'wood', count: 1, food: 2,
+      })
+      expect(dennis.wood).toBe(2)
+      expect(dennis.food).toBe(2)
+    })
+
+    test('allowFoodConversion uses shared conversion method', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          majorImprovements: ['fireplace-2'],
+          food: 0,
+          farmyard: {
+            pastures: [{ spaces: [{ row: 1, col: 0 }], animals: { sheep: 3 } }],
+          },
+        },
+      })
+      game.run()
+
+      const dennis = t.player(game)
+
+      // Mock choose to select cooking sheep
+      game.actions.choose = () => ['Cook 1 sheep for 2 food']
+
+      // Call allowFoodConversion (used during harvest)
+      game.allowFoodConversion(dennis, 4)
+
+      // Should have cooked 2 sheep (4 food needed, 2 food per sheep)
+      expect(dennis.getTotalAnimals('sheep')).toBe(1)
+      expect(dennis.food).toBe(4)
+    })
+
     test('choose override intercepts convert-to-food and re-presents choices', () => {
       const game = t.fixture()
       t.setBoard(game, {
