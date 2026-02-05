@@ -12,7 +12,7 @@
         @update-face="updateFace"
       >
         <template #after-face="{ faceIndex }" v-if="props.editable">
-          <BButton variant="warning" class="mt-2" @click="removeFace(faceIndex)">remove</BButton>
+          <BButton variant="warning" class="mt-2" @click="removeFace(faceIndex)">remove face</BButton>
         </template>
       </MagicCard>
 
