@@ -1611,13 +1611,14 @@ describe('Agricola', () => {
     })
 
 
-    test('Clay Oven — purchase succeeds (bakeBreadOnBuild not wired)', () => {
+    test('Clay Oven — purchase triggers bake bread action', () => {
       const game = t.fixture()
       t.setBoard(game, {
         dennis: {
           clay: 3,
           stone: 1,
-          grain: 1,
+          grain: 2,
+          food: 0,
         },
       })
       game.testSetBreakpoint('initialization-complete', (game) => {
@@ -1630,14 +1631,45 @@ describe('Agricola', () => {
       t.choose(game, 'Major Improvement')
       // Select Clay Oven
       t.choose(game, 'Major Improvement.Clay Oven (clay-oven)')
+      // Bake bread prompt should appear - Clay Oven allows baking 1 grain for 5 food
+      t.choose(game, 'Bake 1 grain')
 
       const dennis = t.player(game)
       expect(dennis.majorImprovements).toContain('clay-oven')
       expect(dennis.clay).toBe(0)
       expect(dennis.stone).toBe(0)
-      // bakeBreadOnBuild is defined in card data but not wired in the action manager,
-      // so grain should remain unconverted
-      expect(dennis.grain).toBe(1)
+      // bakeBreadOnBuild converts 1 grain to 5 food
+      expect(dennis.grain).toBe(1) // Started with 2, baked 1
+      expect(dennis.food).toBe(5) // Started with 0, +5 from baking
+    })
+
+    test('Clay Oven — can decline bake bread on build', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          clay: 3,
+          stone: 1,
+          grain: 1,
+          food: 0,
+        },
+      })
+      game.testSetBreakpoint('initialization-complete', (game) => {
+        game.state.activeActions.push('major-minor-improvement')
+        game.state.actionSpaces['major-minor-improvement'] = { occupiedBy: null }
+      })
+      game.run()
+
+      // Dennis takes Major Improvement action
+      t.choose(game, 'Major Improvement')
+      // Select Clay Oven
+      t.choose(game, 'Major Improvement.Clay Oven (clay-oven)')
+      // Decline to bake
+      t.choose(game, 'Do not bake')
+
+      const dennis = t.player(game)
+      expect(dennis.majorImprovements).toContain('clay-oven')
+      expect(dennis.grain).toBe(1) // Unchanged
+      expect(dennis.food).toBe(0) // Unchanged
     })
 
 

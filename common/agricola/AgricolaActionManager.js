@@ -982,8 +982,13 @@ class AgricolaActionManager extends BaseActionManager {
       })
 
       // Handle Well special effect
-      if (improvementId === 'well') {
+      if (improvementId === 'well' || improvementId === 'well-2') {
         this.activateWell(player)
+      }
+
+      // Handle Bake Bread on Build (Clay Oven, Stone Oven)
+      if (imp.abilities?.bakeBreadOnBuild && player.grain >= 1) {
+        this.bakeBread(player)
       }
 
       // Call onBuildImprovement hooks (Junk Room gives food)
@@ -1333,8 +1338,13 @@ class AgricolaActionManager extends BaseActionManager {
           })
 
           // Handle Well special effect
-          if (improvementId === 'well') {
+          if (improvementId === 'well' || improvementId === 'well-2') {
             this.activateWell(player)
+          }
+
+          // Handle Bake Bread on Build (Clay Oven, Stone Oven)
+          if (imp.abilities?.bakeBreadOnBuild && player.grain >= 1) {
+            this.bakeBread(player)
           }
 
           // Call onBuildImprovement hooks (Junk Room gives food)
