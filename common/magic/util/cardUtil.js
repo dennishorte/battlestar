@@ -520,6 +520,12 @@ CardUtil.parseCardlist = function(cardlist) {
     }
     else {
       const card = parseCardListLine(line)
+
+      // Skip lines that result in empty card names (e.g., just "-" or "+")
+      if (!card.name || card.name.trim() === '') {
+        continue
+      }
+
       card.zone = zoneName
 
       const count = card.count
