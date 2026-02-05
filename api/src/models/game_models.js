@@ -90,6 +90,7 @@ Game.insert = async function(data) {
   delete game.settings.linkedDraftId
   delete game.settings.links
 
+  const waitingState = game.getWaitingState ? game.getWaitingState() : null
   const { insertedId } = await gameCollection.insertOne({
     branchId: game.branchId,
     chat: game.log.getChat(),
@@ -99,6 +100,7 @@ Game.insert = async function(data) {
     responses: game.responses,
     settings: game.settings,
     waiting: game.waiting.selectors.map(s => s.actor),
+    waitingConcurrent: waitingState?.concurrent ?? false,
   })
   return insertedId
 }
@@ -133,6 +135,7 @@ Game.save = async function(game, previousWaitingState = null) {
   const branchId = branchIdShouldUpdate ? Date.now() : game.branchId
   game.branchId = branchId
 
+  const waitingState = game.getWaitingState ? game.getWaitingState() : null
   await gameCollection.updateOne(
     { _id: game._id },
     {
@@ -144,6 +147,7 @@ Game.save = async function(game, previousWaitingState = null) {
         chat: game.log.getChat(),
         responses: game.responses,
         waiting: game.getPlayerNamesWaiting(),
+        waitingConcurrent: waitingState?.concurrent ?? false,
       }
     },
   )

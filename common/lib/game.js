@@ -47,6 +47,9 @@ function Game(serialized_data, viewerName, opts={}) {
   // This holds a reference to the latest input request
   this.waiting = null
 
+  // This is stored to/from the database for concurrent request handling
+  this.waitingConcurrent = serialized_data.waitingConcurrent ?? false
+
   // Places where extra code can be inserted for testing.
   this.breakpoints = {}
 

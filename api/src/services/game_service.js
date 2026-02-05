@@ -144,7 +144,9 @@ Game.saveFull = async function(game, { branchId, overwrite, chat, responses, wai
   // 3. Previous waiting state was concurrent (drafting) - multiple players can submit
   // 4. Responding player is in the waiting list (expected response)
   if (game.branchId && !overwrite) {
-    const isConcurrent = previousWaitingState?.concurrent ?? false
+    // Use stored waitingConcurrent from database (game.waitingConcurrent) as fallback
+    // since game.getWaitingState() returns null until game is run
+    const isConcurrent = previousWaitingState?.concurrent ?? game.waitingConcurrent ?? false
 
     // For concurrent responses (drafting), skip branchId check entirely
     // For non-concurrent, check if branchId matches
