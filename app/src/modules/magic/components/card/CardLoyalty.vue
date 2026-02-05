@@ -66,5 +66,6 @@ const scarrable = useScarrableContent(toRef(props, 'card'), props.index, 'loyalt
   color: white;
   z-index: 2;
   font-size: 1em;
+  text-align: center;
 }
 </style>
