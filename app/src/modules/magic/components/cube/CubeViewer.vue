@@ -54,10 +54,15 @@
               v-for="card in malformedCards"
               :key="card._id"
               class="malformed-card"
-              @click="cardCloseup(card)"
             >
-              <span class="malformed-card-id">{{ card._id }}</span>
+              <span class="malformed-card-id" @click="cardCloseup(card)">{{ card._id }}</span>
               <span class="malformed-card-reason">{{ getMalformedReason(card) }}</span>
+              <button
+                class="btn btn-sm btn-danger malformed-delete-btn"
+                @click="deleteMalformedCard(card)"
+              >
+                delete
+              </button>
             </div>
           </div>
         </div>
@@ -331,6 +336,18 @@ export default {
 
       return 'Unknown issue'
     },
+
+    async deleteMalformedCard(card) {
+      if (!confirm(`Delete malformed card ${card._id}?`)) {
+        return
+      }
+
+      await this.$store.dispatch('magic/cube/addRemoveCards', {
+        addIds: [],
+        removeIds: [card._id],
+        comment: 'Removed malformed card',
+      })
+    },
   },
 
   watch: {
@@ -407,5 +424,18 @@ export default {
 .malformed-card-reason {
   color: #dc3545;
   font-size: 0.9em;
+  flex: 1;
+}
+
+.malformed-card-id {
+  cursor: pointer;
+}
+
+.malformed-card-id:hover {
+  text-decoration: underline;
+}
+
+.malformed-delete-btn {
+  margin-left: 1em;
 }
 </style>
