@@ -1241,9 +1241,15 @@ const minorImprovements = [
     cost: {},
     prereqs: { personOnFishing: true },
     category: 'Food Provider',
-    text: 'Each time you use one of the four action spaces above the "Fishing" accumulation space, you get 1 additional food.',
+    text: 'Each time you use one of the four action spaces above the "Fishing" accumulation space (Reed Bank, Clay Pit, Forest, or the round 1 action card), you get 1 additional food.',
     onAction(game, player, actionId) {
-      const aboveFishing = ['build-room-stable', 'starting-player', 'take-grain', 'plow-field']
+      // The four action spaces above Fishing: Reed Bank, Clay Pit, Forest, and round 1 card
+      const aboveFishing = ['take-reed', 'take-clay', 'take-wood']
+      // Add the round 1 card (which varies based on shuffle)
+      const round1CardId = game.state.roundCardDeck[0]?.id
+      if (round1CardId) {
+        aboveFishing.push(round1CardId)
+      }
       if (aboveFishing.includes(actionId)) {
         player.addResource('food', 1)
         game.log.add({

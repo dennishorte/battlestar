@@ -816,26 +816,34 @@ describe('BaseB Cards', () => {
     })
 
     describe('Brook', () => {
-      test('gives +1 food on Grain Seeds action', () => {
+      test('triggers on Forest, Reed Bank, Clay Pit actions', () => {
+        const card = baseB.getCardById('brook')
         const game = t.fixture()
-        t.setBoard(game, {
-          dennis: {
-            minorImprovements: ['brook'],
-          },
-        })
         game.run()
-
-        t.choose(game, 'Grain Seeds')
-
         const dennis = t.player(game)
-        t.testBoard(game, {
-          dennis: {
-            food: 1, // +1 from Brook (Grain Seeds is above Fishing)
-            grain: 1, // from Grain Seeds
-            minorImprovements: ['brook'],
-            score: dennis.calculateScore(),
-          },
-        })
+        dennis.food = 0
+
+        card.onAction(game, dennis, 'take-wood')
+        expect(dennis.food).toBe(1)
+
+        card.onAction(game, dennis, 'take-reed')
+        expect(dennis.food).toBe(2)
+
+        card.onAction(game, dennis, 'take-clay')
+        expect(dennis.food).toBe(3)
+      })
+
+      test('triggers on round 1 card', () => {
+        const card = baseB.getCardById('brook')
+        const game = t.fixture()
+        game.run()
+        const dennis = t.player(game)
+        dennis.food = 0
+
+        // Round 1 card (varies based on shuffle, but should trigger)
+        const round1CardId = game.state.roundCardDeck[0].id
+        card.onAction(game, dennis, round1CardId)
+        expect(dennis.food).toBe(1)
       })
 
       test('does not trigger on other actions', () => {
@@ -845,10 +853,13 @@ describe('BaseB Cards', () => {
         const dennis = t.player(game)
         dennis.food = 0
 
-        card.onAction(game, dennis, 'take-wood')
+        card.onAction(game, dennis, 'take-grain')
         expect(dennis.food).toBe(0)
 
         card.onAction(game, dennis, 'fishing')
+        expect(dennis.food).toBe(0)
+
+        card.onAction(game, dennis, 'build-room-stable')
         expect(dennis.food).toBe(0)
       })
     })
