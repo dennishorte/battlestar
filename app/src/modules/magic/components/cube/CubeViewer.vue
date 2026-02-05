@@ -289,7 +289,12 @@ export default {
 
     isCardMalformed(card) {
       try {
-        // Check if card has data
+        // Use the card's isMalformed method if available
+        if (typeof card.isMalformed === 'function') {
+          return card.isMalformed()
+        }
+
+        // Fallback check if card has data
         if (!card.data) {
           return true
         }
@@ -300,9 +305,8 @@ export default {
           return true
         }
 
-        // Check if at least one face has a name
-        const hasName = faces.some(face => face && face.name && face.name.trim())
-        if (!hasName) {
+        // Check if any face is null/undefined or has no name
+        if (faces.some(face => !face || !face.name || !face.name.trim())) {
           return true
         }
 
@@ -329,9 +333,16 @@ export default {
         return 'No faces defined'
       }
 
-      const hasName = faces.some(face => face && face.name && face.name.trim())
-      if (!hasName) {
-        return 'All faces have empty names'
+      // Check for null/undefined faces
+      const nullFaceIndex = faces.findIndex(face => !face)
+      if (nullFaceIndex !== -1) {
+        return `Face ${nullFaceIndex} is null/undefined`
+      }
+
+      // Check for faces without names
+      const emptyNameIndex = faces.findIndex(face => !face.name || !face.name.trim())
+      if (emptyNameIndex !== -1) {
+        return `Face ${emptyNameIndex} has no name`
       }
 
       return 'Unknown issue'

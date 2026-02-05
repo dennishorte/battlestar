@@ -340,20 +340,33 @@ class MagicCard extends BaseCard {
   }
 
   face(index) {
-    if (!this.faces()) {
-      throw new Error('stop 0')
+    const faces = this.faces()
+    if (!faces || !faces[index]) {
+      // Return a blank face for malformed cards to prevent crashes
+      return MagicCard.blankFace()
     }
-
-    if (!this.faces()[index]) {
-      throw new Error('stop 1', index)
-    }
-    return this.faces()[index]
+    return faces[index]
   }
   faces() {
-    return this.data.card_faces
+    return this.data?.card_faces || []
   }
   numFaces() {
     return this.faces().length
+  }
+  isMalformed() {
+    // Check if card has valid data and faces
+    if (!this.data) {
+      return true
+    }
+    const faces = this.data.card_faces
+    if (!faces || !Array.isArray(faces) || faces.length === 0) {
+      return true
+    }
+    // Check if any face is null/undefined or has no name
+    if (faces.some(face => !face || !face.name || !face.name.trim())) {
+      return true
+    }
+    return false
   }
 
   ////////////////////////////////////////////////////////////////////////////////
