@@ -164,11 +164,17 @@ export default {
 .major-site {
   background-color: #c49a6c;
   border: 3px solid #5c3317;
+  border-radius: 50%;
+}
+
+.minor-site {
+  border-radius: 4px;
 }
 
 .tunnel {
   background-color: #4a3a2a;
   border: 1px solid #6b5344;
+  border-radius: 50%;
 }
 
 .start-location {

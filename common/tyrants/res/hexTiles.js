@@ -2,7 +2,7 @@
 // Edge labels (pointy-top orientation): N, NE, SE, S, SW, NW (vertices)
 // Mid-edge labels: NE-mid, E-mid, SE-mid, SW-mid, W-mid, NW-mid
 
-// Helper to create a site location
+// Helper to create a site location (minor site by default, no control token)
 function site(short, name, size, neutrals, points, start, position) {
   return {
     name,
@@ -11,8 +11,23 @@ function site(short, name, size, neutrals, points, start, position) {
     neutrals,
     points,
     start: start || false,
-    control: { influence: points > 0 ? 1 : 0, points: 0 },
-    totalControl: { influence: points > 0 ? 1 : 0, points: points > 2 ? 2 : 1 },
+    control: { influence: 0, points: 0 },
+    totalControl: { influence: 0, points: 0 },
+    position,
+  }
+}
+
+// Helper to create a major site with a control token
+function majorSite(short, name, size, neutrals, points, start, position, controlInfluence, controlPoints) {
+  return {
+    name,
+    short,
+    size,
+    neutrals,
+    points,
+    start: start || false,
+    control: { influence: controlInfluence, points: controlPoints },
+    totalControl: { influence: controlInfluence + 1, points: controlPoints + 2 },
     position,
   }
 }
@@ -42,7 +57,7 @@ const A1 = {
   region: 'Araumycos',
 
   locations: [
-    site('great-web', 'The Great Web', 6, 6, 8, false, { x: 0.5, y: 0.5 }),
+    majorSite('great-web', 'The Great Web', 6, 6, 8, false, { x: 0.5, y: 0.5 }, 1, 0),
     tunnel('a1-ring-n', { x: 0.5, y: 0.2 }),
     tunnel('a1-ring-ne', { x: 0.75, y: 0.35 }),
     tunnel('a1-ring-se', { x: 0.75, y: 0.65 }),
@@ -362,7 +377,7 @@ const B1 = {
   region: 'Menzoberranzan',
 
   locations: [
-    site('council-chamber', 'Council Chamber', 3, 2, 4, true, { x: 0.5, y: 0.7 }),
+    majorSite('council-chamber', 'Council Chamber', 3, 2, 4, true, { x: 0.5, y: 0.7 }, 1, 0),
     tunnel('b1-ring-n', { x: 0.5, y: 0.2 }),
     tunnel('b1-ring-ne', { x: 0.7, y: 0.35 }),
     tunnel('b1-ring-se', { x: 0.7, y: 0.55 }),
@@ -399,7 +414,7 @@ const B2 = {
 
   locations: [
     site('vrith', 'Vrith', 1, 1, 2, false, { x: 0.5, y: 0.25 }),
-    site('lolth-shrine', 'Lolth Shrine', 4, 2, 3, true, { x: 0.5, y: 0.7 }),
+    majorSite('lolth-shrine', 'Lolth Shrine', 4, 2, 3, true, { x: 0.5, y: 0.7 }, 1, 0),
     tunnel('b2-ring-ne', { x: 0.7, y: 0.35 }),
     tunnel('b2-ring-se', { x: 0.7, y: 0.55 }),
     tunnel('b2-ring-sw', { x: 0.3, y: 0.55 }),
@@ -433,7 +448,7 @@ const B3 = {
   region: 'Gauntlgrym',
 
   locations: [
-    site('xith-idrana', 'Xith Idrana', 3, 2, 2, true, { x: 0.5, y: 0.7 }),
+    majorSite('xith-idrana', 'Xith Idrana', 3, 2, 2, true, { x: 0.5, y: 0.7 }, 1, 0),
     tunnel('b3-ring-n', { x: 0.5, y: 0.2 }),
     tunnel('b3-ring-ne', { x: 0.7, y: 0.35 }),
     tunnel('b3-ring-nw', { x: 0.3, y: 0.35 }),
@@ -468,7 +483,7 @@ const B4 = {
   region: "Ch'Chitl",
 
   locations: [
-    site('faerholme', 'Faerholme', 3, 2, 2, true, { x: 0.5, y: 0.7 }),
+    majorSite('faerholme', 'Faerholme', 3, 2, 2, true, { x: 0.5, y: 0.7 }, 1, 0),
     tunnel('b4-ring-n', { x: 0.5, y: 0.25 }),
     tunnel('b4-ring-ne', { x: 0.7, y: 0.4 }),
     tunnel('b4-ring-nw', { x: 0.3, y: 0.4 }),
@@ -499,7 +514,7 @@ const B5 = {
   region: "Ss'Zuraass'Nee",
 
   locations: [
-    site('darklight-realm', 'Darklight Realm', 3, 2, 2, true, { x: 0.5, y: 0.7 }),
+    majorSite('darklight-realm', 'Darklight Realm', 3, 2, 2, true, { x: 0.5, y: 0.7 }, 1, 0),
     tunnel('b5-ring-n', { x: 0.5, y: 0.2 }),
     tunnel('b5-ring-ne', { x: 0.7, y: 0.35 }),
     tunnel('b5-ring-nw', { x: 0.3, y: 0.35 }),
@@ -534,7 +549,7 @@ const B6 = {
   region: 'The Phaerlin',
 
   locations: [
-    site('shedaklah', 'Shedaklah', 3, 2, 2, true, { x: 0.5, y: 0.7 }),
+    majorSite('shedaklah', 'Shedaklah', 3, 2, 2, true, { x: 0.5, y: 0.7 }, 1, 0),
     tunnel('b6-ring-n', { x: 0.5, y: 0.2 }),
     tunnel('b6-ring-ne', { x: 0.7, y: 0.35 }),
     tunnel('b6-ring-nw', { x: 0.3, y: 0.35 }),

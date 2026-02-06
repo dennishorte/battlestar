@@ -6,6 +6,18 @@
         class="hex-polygon"
         :class="{ rotated: hex.rotation > 0 }"
       />
+
+      <!-- Path connectors between locations -->
+      <line
+        v-for="(path, index) in pathLines"
+        :key="'path-' + index"
+        :x1="path.x1"
+        :y1="path.y1"
+        :x2="path.x2"
+        :y2="path.y2"
+        class="path-connector"
+      />
+
       <text
         class="hex-label"
         x="0"
@@ -91,6 +103,43 @@ export default {
       }
       return points.join(' ')
     },
+
+    pathLines() {
+      if (!this.hex.paths) {
+        return []
+      }
+
+      const width = this.hexSize * Math.sqrt(3)
+      const height = this.hexSize * 2
+
+      // Build a lookup of location positions by short name
+      // Paths use short names (e.g., 'great-web'), locations have full names (e.g., 'A1.great-web')
+      const locPositions = {}
+      for (const loc of this.hex.locations) {
+        const pos = loc.hexPosition || { x: 0.5, y: 0.5 }
+        // Convert from 0-1 range to SVG coordinates (centered at 0,0)
+        const coords = {
+          x: (pos.x - 0.5) * width,
+          y: (pos.y - 0.5) * height,
+        }
+        // Index by short name (the part after the dot in the full name)
+        locPositions[loc.short] = coords
+      }
+
+      return this.hex.paths.map(path => {
+        const from = locPositions[path[0]]
+        const to = locPositions[path[1]]
+        if (!from || !to) {
+          return null
+        }
+        return {
+          x1: from.x,
+          y1: from.y,
+          x2: to.x,
+          y2: to.y,
+        }
+      }).filter(p => p !== null)
+    },
   },
 }
 </script>
@@ -116,6 +165,13 @@ export default {
   fill: #666;
   font-size: 14px;
   font-weight: bold;
+  pointer-events: none;
+}
+
+.path-connector {
+  stroke: #8b6914;
+  stroke-width: 4;
+  stroke-linecap: round;
   pointer-events: none;
 }
 

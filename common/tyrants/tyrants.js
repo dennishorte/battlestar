@@ -171,6 +171,7 @@ Tyrants.prototype.initializeDemonwebMap = function() {
       tileId: tile.id,
       position: config.layout[i].position,
       rotation: tile.rotation,
+      paths: tile.paths || [],
     })),
   }
 
