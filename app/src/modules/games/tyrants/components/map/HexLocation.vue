@@ -6,6 +6,7 @@
     @click="click"
   >
     <div class="loc-name" v-if="isSite">{{ displayName }}</div>
+    <div class="tunnel-name" v-if="isTunnel">{{ loc.short }}</div>
 
     <div class="troop-spaces">
       <div
@@ -35,7 +36,11 @@
       />
     </div>
 
-    <div class="points" v-if="loc.points > 0">{{ loc.points }}</div>
+    <div
+      class="points"
+      :class="{ 'minor-site-points': isSite && !loc.checkIsMajorSite() }"
+      v-if="loc.points > 0"
+    >{{ loc.points }}</div>
 
     <div class="gemstone" v-if="hasGemstone" title="Gemstone">
       <span class="gem-icon">💎</span>
@@ -112,8 +117,9 @@ export default {
 
     locationStyle() {
       // Position based on hexPosition (0-1 relative coordinates within hex)
-      const hexWidth = this.hexSize * Math.sqrt(3)
-      const hexHeight = this.hexSize * 2
+      // Flat-top hex: width = 2 * size, height = sqrt(3) * size
+      const hexWidth = this.hexSize * 2
+      const hexHeight = this.hexSize * Math.sqrt(3)
 
       const pos = this.loc.hexPosition || { x: 0.5, y: 0.5 }
 
@@ -123,9 +129,9 @@ export default {
       let width, height
 
       if (!this.isSite) {
-        // Tunnels: small circles
-        width = 26
-        height = 26
+        // Tunnels: circles sized to fit name
+        width = 36
+        height = 36
       }
       else if (this.loc.checkIsMajorSite()) {
         // Major sites: large circles
@@ -195,6 +201,18 @@ export default {
   border-radius: 50%;
 }
 
+.tunnel-name {
+  font-size: 0.4em;
+  text-align: center;
+  line-height: 1;
+  color: #aaa;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
 .start-location {
   border-color: gold;
   border-width: 3px;
@@ -243,17 +261,23 @@ export default {
 
 .points {
   position: absolute;
-  top: -8px;
-  left: -8px;
-  background-color: white;
-  border-radius: 50%;
-  border: 2px solid black;
+  top: 0.2em;
+  left: 0.2em;
+  background-color: #d4a574;
+  border-radius: 50% 25%;
+  border: 1px solid #5c3317;
   text-align: center;
-  font-size: 0.65em;
+  font-size: 0.6em;
   font-weight: 600;
-  height: 1.6em;
-  width: 1.6em;
+  height: 1.5em;
+  width: 1.5em;
   line-height: 1.4em;
+  color: #333;
+}
+
+.points.minor-site-points {
+  top: -0.5em;
+  left: -0.5em;
 }
 
 .gemstone {

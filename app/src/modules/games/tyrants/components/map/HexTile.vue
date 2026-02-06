@@ -63,16 +63,22 @@ export default {
   },
 
   computed: {
-    tileStyle() {
-      const width = this.hexSize * Math.sqrt(3)
-      const height = this.hexSize * 2
+    // Flat-top hex: width = 2 * size, height = sqrt(3) * size
+    hexWidth() {
+      return this.hexSize * 2
+    },
 
+    hexHeight() {
+      return this.hexSize * Math.sqrt(3)
+    },
+
+    tileStyle() {
       return {
         position: 'absolute',
-        left: (this.hex.pixelX - width / 2) + 'px',
-        top: (this.hex.pixelY - height / 2) + 'px',
-        width: width + 'px',
-        height: height + 'px',
+        left: (this.hex.pixelX - this.hexWidth / 2) + 'px',
+        top: (this.hex.pixelY - this.hexHeight / 2) + 'px',
+        width: this.hexWidth + 'px',
+        height: this.hexHeight + 'px',
       }
     },
 
@@ -87,16 +93,14 @@ export default {
     },
 
     svgViewBox() {
-      const width = this.hexSize * Math.sqrt(3)
-      const height = this.hexSize * 2
-      return `${-width / 2} ${-height / 2} ${width} ${height}`
+      return `${-this.hexWidth / 2} ${-this.hexHeight / 2} ${this.hexWidth} ${this.hexHeight}`
     },
 
     hexPoints() {
-      // Pointy-top hex vertices
+      // Flat-top hex vertices (start from right, go counterclockwise)
       const points = []
       for (let i = 0; i < 6; i++) {
-        const angle = (Math.PI / 3) * i - Math.PI / 2  // Start from top
+        const angle = (Math.PI / 3) * i
         const x = this.hexSize * Math.cos(angle)
         const y = this.hexSize * Math.sin(angle)
         points.push(`${x},${y}`)
@@ -109,9 +113,6 @@ export default {
         return []
       }
 
-      const width = this.hexSize * Math.sqrt(3)
-      const height = this.hexSize * 2
-
       // Build a lookup of location positions by short name
       // Paths use short names (e.g., 'great-web'), locations have full names (e.g., 'A1.great-web')
       const locPositions = {}
@@ -119,8 +120,8 @@ export default {
         const pos = loc.hexPosition || { x: 0.5, y: 0.5 }
         // Convert from 0-1 range to SVG coordinates (centered at 0,0)
         const coords = {
-          x: (pos.x - 0.5) * width,
-          y: (pos.y - 0.5) * height,
+          x: (pos.x - 0.5) * this.hexWidth,
+          y: (pos.y - 0.5) * this.hexHeight,
         }
         // Index by short name (the part after the dot in the full name)
         locPositions[loc.short] = coords
