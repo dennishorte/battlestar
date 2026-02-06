@@ -352,8 +352,8 @@ export default {
 }
 
 .editor-right {
-  flex: 1;
-  min-width: 300px;
+  flex: 0 0 auto;
+  width: 280px;
 }
 
 .tile-container {
