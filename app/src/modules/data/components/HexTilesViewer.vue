@@ -101,8 +101,8 @@ export default {
 }
 
 .tile-container {
-  width: 160px;
-  height: 180px;
+  width: 190px;
+  height: 170px;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -58,7 +58,7 @@
       </text>
     </svg>
 
-    <div class="locations-layer">
+    <div class="locations-layer" :style="locationsLayerStyle">
       <ViewerHexLocation
         v-for="loc in mockLocations"
         :key="loc.short"
@@ -101,10 +101,15 @@ export default {
       return this.hexSize * Math.sqrt(3)
     },
 
+    // Padding for edge indicators that extend beyond hex boundary
+    edgePadding() {
+      return 12
+    },
+
     containerStyle() {
       return {
-        width: this.hexWidth + 'px',
-        height: this.hexHeight + 'px',
+        width: (this.hexWidth + this.edgePadding * 2) + 'px',
+        height: (this.hexHeight + this.edgePadding * 2) + 'px',
         position: 'relative',
       }
     },
@@ -120,7 +125,9 @@ export default {
     },
 
     svgViewBox() {
-      return `${-this.hexWidth / 2} ${-this.hexHeight / 2} ${this.hexWidth} ${this.hexHeight}`
+      const padW = this.hexWidth + this.edgePadding * 2
+      const padH = this.hexHeight + this.edgePadding * 2
+      return `${-padW / 2} ${-padH / 2} ${padW} ${padH}`
     },
 
     hexPoints() {
@@ -133,6 +140,16 @@ export default {
         points.push(`${x},${y}`)
       }
       return points.join(' ')
+    },
+
+    locationsLayerStyle() {
+      return {
+        position: 'absolute',
+        top: this.edgePadding + 'px',
+        left: this.edgePadding + 'px',
+        width: this.hexWidth + 'px',
+        height: this.hexHeight + 'px',
+      }
     },
 
     mockLocations() {
@@ -323,11 +340,6 @@ export default {
 }
 
 .locations-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
   z-index: 10;
 }
 </style>

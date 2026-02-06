@@ -232,8 +232,8 @@ export default {
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  min-width: 300px;
-  min-height: 350px;
+  min-width: 340px;
+  min-height: 300px;
 }
 
 .metadata-section {

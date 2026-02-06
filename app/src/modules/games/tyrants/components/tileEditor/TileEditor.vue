@@ -16,7 +16,7 @@
           />
 
           <!-- Editor overlay for interactions -->
-          <div class="editor-overlay">
+          <div class="editor-overlay" :style="editorOverlayStyle">
             <EditorLocation
               v-for="loc in workingTile.locations"
               :key="loc.short"
@@ -131,19 +131,37 @@ export default {
   },
 
   computed: {
+    // Flat-top hex: width = 2 * size, height = sqrt(3) * size
     hexWidth() {
-      return this.hexSize * Math.sqrt(3)
+      return this.hexSize * 2
     },
 
     hexHeight() {
-      return this.hexSize * 2
+      return this.hexSize * Math.sqrt(3)
+    },
+
+    // Padding for edge indicators that extend beyond hex boundary
+    edgePadding() {
+      return 12
     },
 
     tileContainerStyle() {
       return {
+        width: (this.hexWidth + this.edgePadding * 2) + 'px',
+        height: (this.hexHeight + this.edgePadding * 2) + 'px',
+        position: 'relative',
+      }
+    },
+
+    editorOverlayStyle() {
+      return {
+        position: 'absolute',
+        top: this.edgePadding + 'px',
+        left: this.edgePadding + 'px',
         width: this.hexWidth + 'px',
         height: this.hexHeight + 'px',
-        position: 'relative',
+        zIndex: 20,
+        pointerEvents: 'none',
       }
     },
 
@@ -345,13 +363,7 @@ export default {
 }
 
 .editor-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 20;
-  pointer-events: none;
+  /* Positioning set via inline style from editorOverlayStyle computed */
 }
 
 .panels {
