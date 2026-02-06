@@ -120,17 +120,35 @@ export default {
       const left = pos.x * hexWidth
       const top = pos.y * hexHeight
 
-      // Size based on whether it's a site or tunnel
-      const size = this.isSite
-        ? (this.loc.checkIsMajorSite() ? 80 : 60)
-        : 30
+      let width, height
+
+      if (!this.isSite) {
+        // Tunnels: small circles
+        width = 26
+        height = 26
+      }
+      else if (this.loc.checkIsMajorSite()) {
+        // Major sites: large circles
+        width = 90
+        height = 90
+      }
+      else {
+        // Minor sites: rectangles sized by number of spaces
+        // Width scales with spaces (up to 4 per row), height adds rows as needed
+        const spaces = this.loc.size || 1
+        const spacesPerRow = Math.min(spaces, 4)
+        const rows = Math.ceil(spaces / 4)
+
+        width = 25 + (spacesPerRow * 16)  // ~41, 57, 73, 89 for 1-4 spaces
+        height = 32 + (rows * 14)  // ~46 for 1 row, ~60 for 2 rows
+      }
 
       return {
         position: 'absolute',
-        left: (left - size / 2) + 'px',
-        top: (top - size / 2) + 'px',
-        width: size + 'px',
-        height: size + 'px',
+        left: (left - width / 2) + 'px',
+        top: (top - height / 2) + 'px',
+        width: width + 'px',
+        height: height + 'px',
       }
     },
   },
