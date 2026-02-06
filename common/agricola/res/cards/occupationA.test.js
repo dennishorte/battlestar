@@ -50,6 +50,13 @@ describe('OccupationA Cards', () => {
     })
   })
 
+  describe('Adoptive Parents', () => {
+    test('has allowImmediateOffspringAction flag', () => {
+      const card = res.getCardById('adoptive-parents-a092')
+      expect(card.allowImmediateOffspringAction).toBe(true)
+    })
+  })
+
   describe('card set registration', () => {
     test('occupationA is registered in cardSets', () => {
       expect(res.cardSets.occupationA).toBeDefined()
