@@ -58,12 +58,12 @@ const A1 = {
 
   locations: [
     majorSite('great-web', 'The Great Web', 6, 6, 8, false, { x: 0.5, y: 0.5 }, 1, 0),  // Araumycos control token
-    tunnel('a1-ring-n', { x: 0.5, y: 0.2 }),
-    tunnel('a1-ring-ne', { x: 0.75, y: 0.35 }),
-    tunnel('a1-ring-se', { x: 0.75, y: 0.65 }),
-    tunnel('a1-ring-s', { x: 0.5, y: 0.8 }),
-    tunnel('a1-ring-sw', { x: 0.25, y: 0.65 }),
-    tunnel('a1-ring-nw', { x: 0.25, y: 0.35 }),
+    tunnel('a1-ring-n', { x: 0.5, y: 0.12 }),
+    tunnel('a1-ring-ne', { x: 0.82, y: 0.28 }),
+    tunnel('a1-ring-se', { x: 0.82, y: 0.72 }),
+    tunnel('a1-ring-s', { x: 0.5, y: 0.88 }),
+    tunnel('a1-ring-sw', { x: 0.18, y: 0.72 }),
+    tunnel('a1-ring-nw', { x: 0.18, y: 0.28 }),
   ],
 
   paths: [
@@ -94,9 +94,9 @@ const A2 = {
   region: 'Zelatar',
 
   locations: [
-    site('fogtown', 'Fogtown', 3, 2, 4, false, { x: 0.5, y: 0.25 }),
-    site('gallenghast', 'Gallenghast', 3, 2, 4, false, { x: 0.75, y: 0.6 }),
-    site('darkflame', 'Darkflame', 3, 2, 4, false, { x: 0.25, y: 0.6 }),
+    site('fogtown', 'Fogtown', 3, 2, 4, false, { x: 0.5, y: 0.18 }),
+    site('gallenghast', 'Gallenghast', 3, 2, 4, false, { x: 0.78, y: 0.68 }),
+    site('darkflame', 'Darkflame', 3, 2, 4, false, { x: 0.22, y: 0.68 }),
     tunnel('a2-center', { x: 0.5, y: 0.5 }),
   ],
 
@@ -133,11 +133,11 @@ const A3 = {
 
   locations: [
     site('a3-great-web', 'Great Web', 2, 0, 2, false, { x: 0.5, y: 0.5 }),
-    site('a3-web-n', 'Web', 1, 1, 2, false, { x: 0.5, y: 0.2 }),
-    site('a3-web-ne', 'Web', 1, 1, 2, false, { x: 0.75, y: 0.35 }),
-    site('a3-web-se', 'Web', 1, 1, 2, false, { x: 0.75, y: 0.65 }),
-    site('a3-web-sw', 'Web', 1, 1, 2, false, { x: 0.25, y: 0.65 }),
-    site('a3-web-nw', 'Web', 1, 1, 2, false, { x: 0.25, y: 0.35 }),
+    site('a3-web-n', 'Web', 1, 1, 2, false, { x: 0.5, y: 0.15 }),
+    site('a3-web-ne', 'Web', 1, 1, 2, false, { x: 0.82, y: 0.32 }),
+    site('a3-web-se', 'Web', 1, 1, 2, false, { x: 0.82, y: 0.68 }),
+    site('a3-web-sw', 'Web', 1, 1, 2, false, { x: 0.18, y: 0.68 }),
+    site('a3-web-nw', 'Web', 1, 1, 2, false, { x: 0.18, y: 0.32 }),
   ],
 
   paths: [
@@ -171,14 +171,14 @@ const A4 = {
   region: 'Webbed Network',
 
   locations: [
-    tunnel('a4-t1', { x: 0.5, y: 0.2 }),
-    tunnel('a4-t2', { x: 0.7, y: 0.3 }),
-    tunnel('a4-t3', { x: 0.8, y: 0.5 }),
-    tunnel('a4-t4', { x: 0.7, y: 0.7 }),
-    tunnel('a4-t5', { x: 0.5, y: 0.8 }),
-    tunnel('a4-t6', { x: 0.3, y: 0.7 }),
-    tunnel('a4-t7', { x: 0.2, y: 0.5 }),
-    tunnel('a4-t8', { x: 0.3, y: 0.3 }),
+    tunnel('a4-t1', { x: 0.5, y: 0.12 }),
+    tunnel('a4-t2', { x: 0.78, y: 0.25 }),
+    tunnel('a4-t3', { x: 0.88, y: 0.5 }),
+    tunnel('a4-t4', { x: 0.78, y: 0.75 }),
+    tunnel('a4-t5', { x: 0.5, y: 0.88 }),
+    tunnel('a4-t6', { x: 0.22, y: 0.75 }),
+    tunnel('a4-t7', { x: 0.12, y: 0.5 }),
+    tunnel('a4-t8', { x: 0.22, y: 0.25 }),
     tunnel('a4-center', { x: 0.5, y: 0.5 }),
   ],
 
@@ -215,13 +215,13 @@ const A5 = {
   region: 'Branching Tunnels',
 
   locations: [
-    tunnel('a5-t1', { x: 0.5, y: 0.15 }),
-    tunnel('a5-t2', { x: 0.65, y: 0.35 }),
-    tunnel('a5-t3', { x: 0.8, y: 0.55 }),
+    tunnel('a5-t1', { x: 0.5, y: 0.12 }),
+    tunnel('a5-t2', { x: 0.72, y: 0.32 }),
+    tunnel('a5-t3', { x: 0.85, y: 0.55 }),
     tunnel('a5-t4', { x: 0.5, y: 0.5 }),
-    tunnel('a5-t5', { x: 0.35, y: 0.65 }),
-    tunnel('a5-t6', { x: 0.2, y: 0.45 }),
-    tunnel('a5-t7', { x: 0.5, y: 0.85 }),
+    tunnel('a5-t5', { x: 0.32, y: 0.68 }),
+    tunnel('a5-t6', { x: 0.15, y: 0.45 }),
+    tunnel('a5-t7', { x: 0.5, y: 0.88 }),
   ],
 
   paths: [
@@ -251,13 +251,13 @@ const A6 = {
   region: 'Sparse Network',
 
   locations: [
-    tunnel('a6-t1', { x: 0.5, y: 0.15 }),
-    tunnel('a6-t2', { x: 0.75, y: 0.25 }),
-    tunnel('a6-t3', { x: 0.85, y: 0.5 }),
-    tunnel('a6-t4', { x: 0.6, y: 0.6 }),
-    tunnel('a6-t5', { x: 0.4, y: 0.75 }),
-    tunnel('a6-t6', { x: 0.2, y: 0.6 }),
-    tunnel('a6-t7', { x: 0.3, y: 0.35 }),
+    tunnel('a6-t1', { x: 0.5, y: 0.12 }),
+    tunnel('a6-t2', { x: 0.82, y: 0.22 }),
+    tunnel('a6-t3', { x: 0.88, y: 0.5 }),
+    tunnel('a6-t4', { x: 0.65, y: 0.62 }),
+    tunnel('a6-t5', { x: 0.4, y: 0.82 }),
+    tunnel('a6-t6', { x: 0.15, y: 0.62 }),
+    tunnel('a6-t7', { x: 0.25, y: 0.32 }),
   ],
 
   paths: [
@@ -312,12 +312,12 @@ const A8 = {
   region: 'Moderate Network',
 
   locations: [
-    tunnel('a8-t1', { x: 0.5, y: 0.15 }),
-    tunnel('a8-t2', { x: 0.7, y: 0.35 }),
-    tunnel('a8-t3', { x: 0.7, y: 0.65 }),
-    tunnel('a8-t4', { x: 0.5, y: 0.85 }),
-    tunnel('a8-t5', { x: 0.3, y: 0.65 }),
-    tunnel('a8-t6', { x: 0.3, y: 0.35 }),
+    tunnel('a8-t1', { x: 0.5, y: 0.12 }),
+    tunnel('a8-t2', { x: 0.78, y: 0.32 }),
+    tunnel('a8-t3', { x: 0.78, y: 0.68 }),
+    tunnel('a8-t4', { x: 0.5, y: 0.88 }),
+    tunnel('a8-t5', { x: 0.22, y: 0.68 }),
+    tunnel('a8-t6', { x: 0.22, y: 0.32 }),
     tunnel('a8-center', { x: 0.5, y: 0.5 }),
   ],
 
@@ -377,12 +377,12 @@ const B1 = {
   region: 'Menzoberranzan',
 
   locations: [
-    majorSite('council-chamber', 'Council Chamber', 3, 2, 4, false, { x: 0.5, y: 0.7 }, 1, 0),  // Menzoberranzan control token
-    tunnel('b1-ring-n', { x: 0.5, y: 0.2 }),
-    tunnel('b1-ring-ne', { x: 0.7, y: 0.35 }),
-    tunnel('b1-ring-se', { x: 0.7, y: 0.55 }),
-    tunnel('b1-ring-sw', { x: 0.3, y: 0.55 }),
-    tunnel('b1-ring-nw', { x: 0.3, y: 0.35 }),
+    majorSite('council-chamber', 'Council Chamber', 3, 2, 4, false, { x: 0.5, y: 0.78 }, 1, 0),  // Menzoberranzan control token
+    tunnel('b1-ring-n', { x: 0.5, y: 0.15 }),
+    tunnel('b1-ring-ne', { x: 0.75, y: 0.28 }),
+    tunnel('b1-ring-se', { x: 0.75, y: 0.48 }),
+    tunnel('b1-ring-sw', { x: 0.25, y: 0.48 }),
+    tunnel('b1-ring-nw', { x: 0.25, y: 0.28 }),
   ],
 
   paths: [
@@ -413,12 +413,12 @@ const B2 = {
   region: 'Tsenviilyq',
 
   locations: [
-    site('vrith', 'Vrith', 1, 1, 2, false, { x: 0.5, y: 0.25 }),
-    majorSite('lolth-shrine', 'Lolth Shrine', 4, 2, 3, false, { x: 0.5, y: 0.7 }, 1, 0),  // Tsenviilyq control token
-    tunnel('b2-ring-ne', { x: 0.7, y: 0.35 }),
-    tunnel('b2-ring-se', { x: 0.7, y: 0.55 }),
-    tunnel('b2-ring-sw', { x: 0.3, y: 0.55 }),
-    tunnel('b2-ring-nw', { x: 0.3, y: 0.35 }),
+    site('vrith', 'Vrith', 1, 1, 2, false, { x: 0.5, y: 0.15 }),
+    majorSite('lolth-shrine', 'Lolth Shrine', 4, 2, 3, false, { x: 0.5, y: 0.78 }, 1, 0),  // Tsenviilyq control token
+    tunnel('b2-ring-ne', { x: 0.78, y: 0.28 }),
+    tunnel('b2-ring-se', { x: 0.78, y: 0.48 }),
+    tunnel('b2-ring-sw', { x: 0.22, y: 0.48 }),
+    tunnel('b2-ring-nw', { x: 0.22, y: 0.28 }),
   ],
 
   paths: [
@@ -448,12 +448,12 @@ const B3 = {
   region: 'Gauntlgrym',
 
   locations: [
-    majorSite('xith-idrana', 'Xith Idrana', 3, 2, 2, false, { x: 0.5, y: 0.7 }, 1, 0),  // Gauntlgrym control token
-    tunnel('b3-ring-n', { x: 0.5, y: 0.2 }),
-    tunnel('b3-ring-ne', { x: 0.7, y: 0.35 }),
-    tunnel('b3-ring-nw', { x: 0.3, y: 0.35 }),
-    tunnel('b3-ring-se', { x: 0.65, y: 0.55 }),
-    tunnel('b3-ring-sw', { x: 0.35, y: 0.55 }),
+    majorSite('xith-idrana', 'Xith Idrana', 3, 2, 2, false, { x: 0.5, y: 0.78 }, 1, 0),  // Gauntlgrym control token
+    tunnel('b3-ring-n', { x: 0.5, y: 0.15 }),
+    tunnel('b3-ring-ne', { x: 0.78, y: 0.28 }),
+    tunnel('b3-ring-nw', { x: 0.22, y: 0.28 }),
+    tunnel('b3-ring-se', { x: 0.72, y: 0.48 }),
+    tunnel('b3-ring-sw', { x: 0.28, y: 0.48 }),
   ],
 
   paths: [
@@ -483,10 +483,10 @@ const B4 = {
   region: "Ch'Chitl",
 
   locations: [
-    majorSite('faerholme', 'Faerholme', 3, 2, 2, false, { x: 0.5, y: 0.7 }, 1, 0),  // Ch'Chitl control token
-    tunnel('b4-ring-n', { x: 0.5, y: 0.25 }),
-    tunnel('b4-ring-ne', { x: 0.7, y: 0.4 }),
-    tunnel('b4-ring-nw', { x: 0.3, y: 0.4 }),
+    majorSite('faerholme', 'Faerholme', 3, 2, 2, false, { x: 0.5, y: 0.75 }, 1, 0),  // Ch'Chitl control token
+    tunnel('b4-ring-n', { x: 0.5, y: 0.18 }),
+    tunnel('b4-ring-ne', { x: 0.78, y: 0.35 }),
+    tunnel('b4-ring-nw', { x: 0.22, y: 0.35 }),
   ],
 
   paths: [
@@ -514,12 +514,12 @@ const B5 = {
   region: "Ss'Zuraass'Nee",
 
   locations: [
-    majorSite('darklight-realm', 'Darklight Realm', 3, 2, 2, false, { x: 0.5, y: 0.7 }, 1, 0),  // Ss'Zuraass'Nee control token
-    tunnel('b5-ring-n', { x: 0.5, y: 0.2 }),
-    tunnel('b5-ring-ne', { x: 0.7, y: 0.35 }),
-    tunnel('b5-ring-nw', { x: 0.3, y: 0.35 }),
-    tunnel('b5-ring-se', { x: 0.65, y: 0.55 }),
-    tunnel('b5-ring-sw', { x: 0.35, y: 0.55 }),
+    majorSite('darklight-realm', 'Darklight Realm', 3, 2, 2, false, { x: 0.5, y: 0.78 }, 1, 0),  // Ss'Zuraass'Nee control token
+    tunnel('b5-ring-n', { x: 0.5, y: 0.15 }),
+    tunnel('b5-ring-ne', { x: 0.78, y: 0.28 }),
+    tunnel('b5-ring-nw', { x: 0.22, y: 0.28 }),
+    tunnel('b5-ring-se', { x: 0.72, y: 0.48 }),
+    tunnel('b5-ring-sw', { x: 0.28, y: 0.48 }),
   ],
 
   paths: [
@@ -549,12 +549,12 @@ const B6 = {
   region: 'The Phaerlin',
 
   locations: [
-    majorSite('shedaklah', 'Shedaklah', 3, 2, 2, false, { x: 0.5, y: 0.7 }, 1, 0),  // The Phaerlin control token
-    tunnel('b6-ring-n', { x: 0.5, y: 0.2 }),
-    tunnel('b6-ring-ne', { x: 0.7, y: 0.35 }),
-    tunnel('b6-ring-nw', { x: 0.3, y: 0.35 }),
-    tunnel('b6-ring-se', { x: 0.65, y: 0.55 }),
-    tunnel('b6-ring-sw', { x: 0.35, y: 0.55 }),
+    majorSite('shedaklah', 'Shedaklah', 3, 2, 2, false, { x: 0.5, y: 0.78 }, 1, 0),  // The Phaerlin control token
+    tunnel('b6-ring-n', { x: 0.5, y: 0.15 }),
+    tunnel('b6-ring-ne', { x: 0.78, y: 0.28 }),
+    tunnel('b6-ring-nw', { x: 0.22, y: 0.28 }),
+    tunnel('b6-ring-se', { x: 0.72, y: 0.48 }),
+    tunnel('b6-ring-sw', { x: 0.28, y: 0.48 }),
   ],
 
   paths: [
@@ -588,10 +588,10 @@ const C1 = {
   region: 'Twilight Realm',
 
   locations: [
-    site('the-twilight', 'The Twilight', 3, 0, 3, false, { x: 0.4, y: 0.25 }),
-    site('spiral-desert', 'Spiral Desert', 3, 0, 3, false, { x: 0.25, y: 0.55 }),
-    site('magma-gate', 'Magma Gate', 2, 0, 2, true, { x: 0.7, y: 0.45 }),
-    tunnel('c1-t1', { x: 0.5, y: 0.75 }),
+    site('the-twilight', 'The Twilight', 3, 0, 3, false, { x: 0.35, y: 0.18 }),
+    site('spiral-desert', 'Spiral Desert', 3, 0, 3, false, { x: 0.18, y: 0.55 }),
+    site('magma-gate', 'Magma Gate', 2, 0, 2, true, { x: 0.75, y: 0.38 }),
+    tunnel('c1-t1', { x: 0.5, y: 0.82 }),
   ],
 
   paths: [
@@ -619,9 +619,9 @@ const C2 = {
   region: 'Araumycos',
 
   locations: [
-    site('c2-araumycos', 'Araumycos', 4, 2, 3, false, { x: 0.6, y: 0.3 }),
-    site('c2-menzoberranzan', 'Menzoberranzan', 6, 2, 5, true, { x: 0.55, y: 0.7 }),
-    tunnel('c2-t1', { x: 0.25, y: 0.5 }),
+    site('c2-araumycos', 'Araumycos', 4, 2, 3, false, { x: 0.65, y: 0.22 }),
+    site('c2-menzoberranzan', 'Menzoberranzan', 6, 2, 5, true, { x: 0.6, y: 0.75 }),
+    tunnel('c2-t1', { x: 0.18, y: 0.5 }),
   ],
 
   paths: [
@@ -648,10 +648,10 @@ const C3 = {
   region: 'Red Forest',
 
   locations: [
-    site('red-forest', 'Red Forest', 3, 1, 4, false, { x: 0.5, y: 0.2 }),
-    site('xal-veldrin', 'Xal Veldrin', 4, 0, 3, true, { x: 0.5, y: 0.5 }),
-    site('iron-wastes', 'Iron Wastes', 3, 1, 3, false, { x: 0.5, y: 0.8 }),
-    tunnel('c3-t1', { x: 0.75, y: 0.35 }),
+    site('red-forest', 'Red Forest', 3, 1, 4, false, { x: 0.4, y: 0.15 }),
+    site('xal-veldrin', 'Xal Veldrin', 4, 0, 3, true, { x: 0.4, y: 0.5 }),
+    site('iron-wastes', 'Iron Wastes', 3, 1, 3, false, { x: 0.4, y: 0.85 }),
+    tunnel('c3-t1', { x: 0.82, y: 0.32 }),
   ],
 
   paths: [
@@ -679,12 +679,12 @@ const C4 = {
   region: 'Kulggen',
 
   locations: [
-    site('kulggen', 'Kulggen', 2, 2, 4, false, { x: 0.65, y: 0.25 }),
-    site('red-gate', 'Red Gate', 2, 2, 4, false, { x: 0.35, y: 0.25 }),
-    site('iblith', 'Iblith', 1, 0, 1, false, { x: 0.5, y: 0.5 }),
-    site('caer-sidi', 'Caer Sidi', 3, 0, 3, true, { x: 0.5, y: 0.8 }),
-    tunnel('c4-t1', { x: 0.25, y: 0.6 }),
-    tunnel('c4-t2', { x: 0.75, y: 0.6 }),
+    site('kulggen', 'Kulggen', 2, 2, 4, false, { x: 0.72, y: 0.18 }),
+    site('red-gate', 'Red Gate', 2, 2, 4, false, { x: 0.28, y: 0.18 }),
+    site('iblith', 'Iblith', 1, 0, 1, false, { x: 0.5, y: 0.48 }),
+    site('caer-sidi', 'Caer Sidi', 3, 0, 3, true, { x: 0.5, y: 0.85 }),
+    tunnel('c4-t1', { x: 0.18, y: 0.62 }),
+    tunnel('c4-t2', { x: 0.82, y: 0.62 }),
   ],
 
   paths: [
@@ -715,11 +715,11 @@ const C5 = {
   region: 'Erelhei-Cinlu',
 
   locations: [
-    site('erelhei-cinlu', 'Erelhei-Cinlu', 6, 2, 4, false, { x: 0.35, y: 0.3 }),
-    site('ath-qua', 'Ath-Qua', 4, 0, 3, true, { x: 0.65, y: 0.55 }),
-    tunnel('c5-t1', { x: 0.5, y: 0.15 }),
-    tunnel('c5-t2', { x: 0.35, y: 0.7 }),
-    tunnel('c5-t3', { x: 0.7, y: 0.8 }),
+    site('erelhei-cinlu', 'Erelhei-Cinlu', 6, 2, 4, false, { x: 0.28, y: 0.35 }),
+    site('ath-qua', 'Ath-Qua', 4, 0, 3, true, { x: 0.72, y: 0.52 }),
+    tunnel('c5-t1', { x: 0.55, y: 0.12 }),
+    tunnel('c5-t2', { x: 0.25, y: 0.75 }),
+    tunnel('c5-t3', { x: 0.75, y: 0.85 }),
   ],
 
   paths: [
@@ -747,11 +747,11 @@ const C6 = {
   region: "Zi'Xzolca",
 
   locations: [
-    site('zixzolca', "Zi'Xzolca", 2, 0, 2, true, { x: 0.65, y: 0.3 }),
-    site('black-gate', 'Black Gate', 2, 2, 4, false, { x: 0.35, y: 0.65 }),
+    site('zixzolca', "Zi'Xzolca", 2, 0, 2, true, { x: 0.7, y: 0.22 }),
+    site('black-gate', 'Black Gate', 2, 2, 4, false, { x: 0.3, y: 0.72 }),
     tunnel('c6-t1', { x: 0.5, y: 0.45 }),
-    tunnel('c6-t2', { x: 0.25, y: 0.35 }),
-    tunnel('c6-t3', { x: 0.7, y: 0.7 }),
+    tunnel('c6-t2', { x: 0.18, y: 0.32 }),
+    tunnel('c6-t3', { x: 0.78, y: 0.75 }),
   ],
 
   paths: [
@@ -780,8 +780,8 @@ const C7 = {
   region: 'Spiderhome',
 
   locations: [
-    site('spiderhome', 'Spiderhome', 6, 2, 5, false, { x: 0.5, y: 0.25 }),
-    site('thanatos-gate', 'Thanatos Gate', 6, 2, 5, false, { x: 0.5, y: 0.75 }),
+    site('spiderhome', 'Spiderhome', 6, 2, 5, false, { x: 0.5, y: 0.18 }),
+    site('thanatos-gate', 'Thanatos Gate', 6, 2, 5, false, { x: 0.5, y: 0.82 }),
     tunnel('c7-t1', { x: 0.5, y: 0.5 }),
   ],
 
@@ -808,10 +808,10 @@ const C8 = {
   region: 'Enzithir',
 
   locations: [
-    site('enzithir', 'Enzithir', 2, 1, 3, false, { x: 0.5, y: 0.2 }),
-    site('xelathir', 'Xelathir', 2, 1, 3, false, { x: 0.75, y: 0.55 }),
-    site('venathir', 'Venathir', 2, 1, 3, false, { x: 0.35, y: 0.7 }),
-    tunnel('c8-center', { x: 0.5, y: 0.5 }),
+    site('enzithir', 'Enzithir', 2, 1, 3, false, { x: 0.5, y: 0.15 }),
+    site('xelathir', 'Xelathir', 2, 1, 3, false, { x: 0.8, y: 0.58 }),
+    site('venathir', 'Venathir', 2, 1, 3, false, { x: 0.28, y: 0.75 }),
+    tunnel('c8-center', { x: 0.5, y: 0.48 }),
   ],
 
   paths: [
@@ -842,10 +842,10 @@ const X1 = {
   region: 'The Barrens',
 
   locations: [
-    site('the-barrens', 'The Barrens', 5, 0, 3, false, { x: 0.5, y: 0.2 }),
-    site('heaving-hills', 'Heaving Hills', 3, 2, 3, false, { x: 0.7, y: 0.55 }),
-    site('rotting-plain', 'Rotting Plain', 3, 2, 3, false, { x: 0.3, y: 0.55 }),
-    tunnel('x1-t1', { x: 0.5, y: 0.8 }),
+    site('the-barrens', 'The Barrens', 5, 0, 3, false, { x: 0.5, y: 0.15 }),
+    site('heaving-hills', 'Heaving Hills', 3, 2, 3, false, { x: 0.78, y: 0.52 }),
+    site('rotting-plain', 'Rotting Plain', 3, 2, 3, false, { x: 0.22, y: 0.52 }),
+    tunnel('x1-t1', { x: 0.5, y: 0.85 }),
   ],
 
   paths: [
@@ -873,9 +873,9 @@ const X2 = {
   region: 'Indifference',
 
   locations: [
-    site('indifference', 'Indifference', 6, 0, 4, false, { x: 0.55, y: 0.5 }),
-    tunnel('x2-t1', { x: 0.2, y: 0.3 }),
-    tunnel('x2-t2', { x: 0.2, y: 0.7 }),
+    site('indifference', 'Indifference', 6, 0, 4, false, { x: 0.6, y: 0.5 }),
+    tunnel('x2-t1', { x: 0.15, y: 0.25 }),
+    tunnel('x2-t2', { x: 0.15, y: 0.75 }),
   ],
 
   paths: [
@@ -901,8 +901,8 @@ const X3 = {
   region: 'Dark Tunnels',
 
   locations: [
-    tunnel('x3-t1', { x: 0.5, y: 0.3 }),
-    tunnel('x3-t2', { x: 0.5, y: 0.7 }),
+    tunnel('x3-t1', { x: 0.5, y: 0.25 }),
+    tunnel('x3-t2', { x: 0.5, y: 0.75 }),
   ],
 
   paths: [
@@ -927,9 +927,9 @@ const X4 = {
   region: 'Fountain of Screams',
 
   locations: [
-    site('fountain-of-screams', 'Fountain of Screams', 4, 0, 5, false, { x: 0.5, y: 0.35 }),
-    tunnel('x4-t1', { x: 0.35, y: 0.65 }),
-    tunnel('x4-t2', { x: 0.65, y: 0.65 }),
+    site('fountain-of-screams', 'Fountain of Screams', 4, 0, 5, false, { x: 0.5, y: 0.28 }),
+    tunnel('x4-t1', { x: 0.28, y: 0.72 }),
+    tunnel('x4-t2', { x: 0.72, y: 0.72 }),
   ],
 
   paths: [
