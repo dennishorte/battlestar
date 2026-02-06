@@ -2075,6 +2075,168 @@ describe('BaseA Cards', () => {
         const card = res.getCardById('adoptive-parents')
         expect(card.allowImmediateOffspringAction).toBe(true)
       })
+
+      test('player.canAdoptNewborn returns true with newborn and food', () => {
+        const game = t.fixture()
+        game.run()
+
+        const dennis = t.player(game)
+        dennis.newborns = [3]
+        dennis.food = 1
+
+        expect(dennis.canAdoptNewborn()).toBe(true)
+      })
+
+      test('player.canAdoptNewborn returns false without food', () => {
+        const game = t.fixture()
+        game.run()
+
+        const dennis = t.player(game)
+        dennis.newborns = [3]
+        dennis.food = 0
+
+        expect(dennis.canAdoptNewborn()).toBe(false)
+      })
+
+      test('player.canAdoptNewborn returns false without newborn', () => {
+        const game = t.fixture()
+        game.run()
+
+        const dennis = t.player(game)
+        dennis.newborns = []
+        dennis.food = 5
+
+        expect(dennis.canAdoptNewborn()).toBe(false)
+      })
+
+      test('player.adoptNewborn deducts food and adds worker', () => {
+        const game = t.fixture()
+        game.run()
+
+        const dennis = t.player(game)
+        dennis.newborns = [3]
+        dennis.food = 5
+        dennis.availableWorkers = 0
+
+        const result = dennis.adoptNewborn()
+
+        expect(result).toBe(true)
+        expect(dennis.food).toBe(4)
+        expect(dennis.availableWorkers).toBe(1)
+        expect(dennis.newborns).toEqual([])
+      })
+
+      test('game.canUseAdoptiveParents returns true when conditions met', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            food: 1,
+            occupations: ['adoptive-parents'],
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        dennis.newborns = [3]
+        dennis.availableWorkers = 0
+
+        expect(game.canUseAdoptiveParents(dennis)).toBe(true)
+      })
+
+      test('game.canUseAdoptiveParents returns false without the card', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            food: 1,
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        dennis.newborns = [3]
+        dennis.availableWorkers = 0
+
+        expect(game.canUseAdoptiveParents(dennis)).toBe(false)
+      })
+
+      test('game.canUseAdoptiveParents returns false with available workers', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            food: 1,
+            occupations: ['adoptive-parents'],
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        dennis.newborns = [3]
+        dennis.availableWorkers = 1
+
+        expect(game.canUseAdoptiveParents(dennis)).toBe(false)
+      })
+
+      test('game.canUseAdoptiveParents returns false without food', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            food: 0,
+            occupations: ['adoptive-parents'],
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        dennis.newborns = [3]
+        dennis.availableWorkers = 0
+
+        expect(game.canUseAdoptiveParents(dennis)).toBe(false)
+      })
+
+      test('adopted newborn needs 2 food during harvest (not 1)', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            familyMembers: 3,
+            food: 10,
+            occupations: ['adoptive-parents'],
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        // Simulate newborn
+        dennis.newborns = [3]
+        dennis.availableWorkers = 0
+
+        // Adopt the newborn
+        const adopted = dennis.adoptNewborn()
+        expect(adopted).toBe(true)
+
+        // After adoption, newborns should be empty
+        expect(dennis.newborns).toEqual([])
+
+        // Calculate food required - should be 6 (3 adults × 2 food each)
+        // because the adopted child is no longer in newborns array
+        expect(dennis.getFoodRequired()).toBe(6)
+      })
+
+      test('non-adopted newborn only needs 1 food during harvest', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            familyMembers: 3,
+          },
+        })
+        game.run()
+
+        const dennis = t.player(game)
+        // Simulate newborn (not adopted)
+        dennis.newborns = [3]
+
+        // Calculate food required - should be 5 (2 adults × 2 food + 1 newborn × 1 food)
+        expect(dennis.getFoodRequired()).toBe(5)
+      })
     })
 
     describe('Grocer', () => {

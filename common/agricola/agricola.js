@@ -906,13 +906,37 @@ Agricola.prototype.workPhase = function() {
         workersPlaced++
         break
       }
+      else if (this.canUseAdoptiveParents(player)) {
+        // Player has no workers but can adopt a newborn (Adoptive Parents card)
+        const choices = ['Adopt newborn (1 food)', 'Pass']
+        const selection = this.actions.choose(player, choices, {
+          title: 'Adoptive Parents: Take action with newborn?',
+          min: 1,
+          max: 1,
+        })
+
+        if (selection[0] === 'Adopt newborn (1 food)') {
+          player.adoptNewborn()
+          this.log.add({
+            template: '{player} uses Adoptive Parents (pays 1 food)',
+            args: { player },
+          })
+          this.log.indent()
+          this.playerTurn(player)
+          this.log.outdent()
+          workersPlaced++
+          totalWorkers++ // Adjust total since we added a worker
+          break
+        }
+        // If they pass, continue to next player
+      }
 
       currentPlayerIndex = (currentPlayerIndex + 1) % playerList.length
       attempts++
     }
 
     if (attempts >= playerList.length) {
-      // No players have workers left
+      // No players have workers left (and none can adopt newborns)
       break
     }
 
@@ -1404,6 +1428,35 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
 Agricola.prototype.getAvailableMajorImprovements = function() {
   const majorZone = this.zones.byId('common.majorImprovements')
   return majorZone.cardlist().map(c => c.id)
+}
+
+/**
+ * Check if a player can use the Adoptive Parents card ability.
+ * Requirements:
+ * - Player has no available workers
+ * - Player has newborns from this round
+ * - Player has at least 1 food
+ * - Player has an occupation with allowImmediateOffspringAction flag
+ */
+Agricola.prototype.canUseAdoptiveParents = function(player) {
+  // Must have no available workers
+  if (player.getAvailableWorkers() > 0) {
+    return false
+  }
+
+  // Must have newborns
+  if (player.newborns.length === 0) {
+    return false
+  }
+
+  // Must be able to adopt (has food)
+  if (!player.canAdoptNewborn()) {
+    return false
+  }
+
+  // Must have a card with allowImmediateOffspringAction
+  const occupations = this.zones.byPlayer(player, 'occupations').cardlist()
+  return occupations.some(card => card.definition.allowImmediateOffspringAction === true)
 }
 
 

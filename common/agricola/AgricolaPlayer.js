@@ -1229,6 +1229,27 @@ class AgricolaPlayer extends BasePlayer {
     this.newborns = []
   }
 
+  canAdoptNewborn() {
+    return this.newborns.length > 0 && this.food >= 1
+  }
+
+  adoptNewborn() {
+    if (!this.canAdoptNewborn()) {
+      return false
+    }
+
+    // Pay 1 food
+    this.food -= 1
+
+    // Remove newborn status (they now need 2 food during harvest, not 1)
+    this.newborns.pop()
+
+    // Make them available as a worker
+    this.availableWorkers += 1
+
+    return true
+  }
+
   canGrowFamily(requiresRoom = true) {
     // Max 5 family members
     if (this.familyMembers >= res.constants.maxFamilyMembers) {
