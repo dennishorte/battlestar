@@ -333,6 +333,8 @@ const A7 = {
     { edge: 'NW', location: 'a7-hub' },
   ],
 
+  labelPosition: { x: 0.32, y: 0.92 },
+
   specialRules: null,
 }
 
@@ -342,13 +344,12 @@ const A8 = {
   region: 'Moderate Network',
 
   locations: [
-    tunnel('a8-t1', { x: 0.5, y: 0.12 }),
-    tunnel('a8-t2', { x: 0.78, y: 0.32 }),
-    tunnel('a8-t3', { x: 0.78, y: 0.68 }),
-    tunnel('a8-t4', { x: 0.5, y: 0.88 }),
-    tunnel('a8-t5', { x: 0.22, y: 0.68 }),
-    tunnel('a8-t6', { x: 0.22, y: 0.32 }),
-    tunnel('a8-center', { x: 0.5, y: 0.5 }),
+    tunnel('a8-t1', { x: 0.50, y: 0.18 }),
+    tunnel('a8-t2', { x: 0.73, y: 0.35 }),
+    tunnel('a8-t3', { x: 0.73, y: 0.64 }),
+    tunnel('a8-t4', { x: 0.50, y: 0.80 }),
+    tunnel('a8-t5', { x: 0.29, y: 0.63 }),
+    tunnel('a8-t6', { x: 0.29, y: 0.35 }),
   ],
 
   paths: [
@@ -358,8 +359,6 @@ const A8 = {
     ['a8-t4', 'a8-t5'],
     ['a8-t5', 'a8-t6'],
     ['a8-t6', 'a8-t1'],
-    ['a8-center', 'a8-t2'],
-    ['a8-center', 'a8-t5'],
   ],
 
   edgeConnections: [
@@ -370,6 +369,8 @@ const A8 = {
     { edge: 'SW', location: 'a8-t5' },
     { edge: 'NW', location: 'a8-t6' },
   ],
+
+  labelPosition: { x: 0.30, y: 0.94 },
 
   specialRules: null,
 }

@@ -23,7 +23,11 @@
       {{ loc.control.influence }} / {{ loc.control.points }}
     </div>
 
-    <div class="points-badge" v-if="loc.points > 0">{{ loc.points }}</div>
+    <div
+      class="points-badge"
+      :class="{ 'minor-site-badge': isSite && !isMajorSite }"
+      v-if="loc.points > 0"
+    >{{ loc.points }}</div>
   </div>
 </template>
 
@@ -280,5 +284,10 @@ export default {
   width: 1.5em;
   line-height: 1.4em;
   color: #333;
+}
+
+.points-badge.minor-site-badge {
+  top: -0.5em;
+  left: -0.5em;
 }
 </style>
