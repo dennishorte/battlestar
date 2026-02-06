@@ -41,22 +41,24 @@
         <div class="metadata-section">
           <h3>Tile Information</h3>
           <table class="metadata-table">
-            <tr>
-              <th>ID</th>
-              <td>{{ tile.id }}</td>
-            </tr>
-            <tr>
-              <th>Category</th>
-              <td>{{ tile.category }}</td>
-            </tr>
-            <tr>
-              <th>Region</th>
-              <td>{{ tile.region }}</td>
-            </tr>
-            <tr>
-              <th>Special Rules</th>
-              <td>{{ tile.specialRules ? JSON.stringify(tile.specialRules) : 'None' }}</td>
-            </tr>
+            <tbody>
+              <tr>
+                <th>ID</th>
+                <td>{{ tile.id }}</td>
+              </tr>
+              <tr>
+                <th>Category</th>
+                <td>{{ tile.category }}</td>
+              </tr>
+              <tr>
+                <th>Region</th>
+                <td>{{ tile.region }}</td>
+              </tr>
+              <tr>
+                <th>Special Rules</th>
+                <td>{{ tile.specialRules ? JSON.stringify(tile.specialRules) : 'None' }}</td>
+              </tr>
+            </tbody>
           </table>
 
           <h3>Locations ({{ tile.locations.length }})</h3>
