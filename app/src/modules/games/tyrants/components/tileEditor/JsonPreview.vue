@@ -123,6 +123,7 @@ export default {
   background: #1a1a1a;
   border-radius: 8px;
   overflow: hidden;
+  max-width: 100%;
 }
 
 .header {
@@ -161,13 +162,12 @@ export default {
 .code-output {
   margin: 0;
   padding: 1em;
-  overflow-x: auto;
+  overflow: auto;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.8em;
   line-height: 1.4;
   color: #b5cea8;
   max-height: 400px;
-  overflow-y: auto;
 }
 
 .code-output code {

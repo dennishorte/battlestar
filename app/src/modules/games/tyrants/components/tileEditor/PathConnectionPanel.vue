@@ -64,7 +64,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 0.25em;
-  max-height: 200px;
+  max-height: 400px;
   overflow-y: auto;
 }
 

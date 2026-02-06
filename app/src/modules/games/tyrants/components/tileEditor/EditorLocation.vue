@@ -106,8 +106,8 @@ export default {
 
       let width, height
       if (!this.isSite) {
-        width = 26
-        height = 26
+        width = 36
+        height = 36
       }
       else if (this.isMajorSite) {
         width = 90

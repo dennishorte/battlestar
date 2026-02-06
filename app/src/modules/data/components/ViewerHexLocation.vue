@@ -5,6 +5,7 @@
     :style="locationStyle"
   >
     <div class="loc-name" v-if="isSite">{{ displayName }}</div>
+    <div class="tunnel-name" v-if="isTunnel">{{ loc.short }}</div>
 
     <div class="troop-spaces">
       <!-- Neutral troops (grey circles) -->
@@ -109,8 +110,8 @@ export default {
       let width, height
 
       if (!this.isSite) {
-        width = 26
-        height = 26
+        width = 36
+        height = 36
       }
       else if (this.isMajorSite) {
         width = 90
@@ -168,6 +169,18 @@ export default {
   background-color: #4a3a2a;
   border: 1px solid #6b5344;
   border-radius: 50%;
+}
+
+.tunnel-name {
+  font-size: 0.4em;
+  text-align: center;
+  line-height: 1;
+  color: #aaa;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .start-location {
