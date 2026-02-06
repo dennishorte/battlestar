@@ -119,6 +119,8 @@ const A2 = {
     { edge: 'NW', location: 'fogtown' },
   ],
 
+  rulesPosition: { x: 0.21, y: 0.50 },
+
   specialRules: {
     "type": "triad",
     "sites": [
@@ -150,12 +152,13 @@ const A3 = {
   region: 'Araumycos',
 
   locations: [
-    site('a3-great-web', 'Great Web', 2, 0, 2, false, { x: 0.5, y: 0.5 }),
-    site('a3-web-n', 'Web', 1, 1, 2, false, { x: 0.5, y: 0.15 }),
-    site('a3-web-ne', 'Web', 1, 1, 2, false, { x: 0.82, y: 0.32 }),
-    site('a3-web-se', 'Web', 1, 1, 2, false, { x: 0.82, y: 0.68 }),
-    site('a3-web-sw', 'Web', 1, 1, 2, false, { x: 0.18, y: 0.68 }),
-    site('a3-web-nw', 'Web', 1, 1, 2, false, { x: 0.18, y: 0.32 }),
+    majorSite('a3-great-web', 'Great Web', 2, 0, 2, false, { x: 0.50, y: 0.50 }, 1, 4),
+    site('a3-web-n', 'Web', 1, 1, 2, false, { x: 0.50, y: 0.15 }),
+    site('a3-web-ne', 'Web', 1, 1, 2, false, { x: 0.76, y: 0.34 }),
+    site('a3-web-se', 'Web', 1, 1, 2, false, { x: 0.76, y: 0.69 }),
+    site('a3-web-sw', 'Web', 1, 1, 2, false, { x: 0.26, y: 0.69 }),
+    site('a3-web-nw', 'Web', 1, 1, 2, false, { x: 0.25, y: 0.34 }),
+    site('a3-web-s', 'Web', 1, 1, 2, false, { x: 0.50, y: 0.83 }),
   ],
 
   paths: [
@@ -166,19 +169,23 @@ const A3 = {
     ['a3-great-web', 'a3-web-nw'],
     ['a3-web-n', 'a3-web-ne'],
     ['a3-web-ne', 'a3-web-se'],
-    ['a3-web-se', 'a3-web-sw'],
     ['a3-web-sw', 'a3-web-nw'],
     ['a3-web-nw', 'a3-web-n'],
+    ['a3-web-sw', 'a3-web-s'],
+    ['a3-web-s', 'a3-web-se'],
+    ['a3-great-web', 'a3-web-s'],
   ],
 
   edgeConnections: [
     { edge: 'N', location: 'a3-web-n' },
     { edge: 'NE', location: 'a3-web-ne' },
     { edge: 'SE', location: 'a3-web-se' },
-    { edge: 'S', location: 'a3-web-sw' },
+    { edge: 'S', location: 'a3-web-s' },
     { edge: 'SW', location: 'a3-web-sw' },
     { edge: 'NW', location: 'a3-web-nw' },
   ],
+
+  labelPosition: { x: 0.29, y: 0.93 },
 
   specialRules: null,
 }
