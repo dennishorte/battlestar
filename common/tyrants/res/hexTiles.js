@@ -57,7 +57,7 @@ const A1 = {
   region: 'Araumycos',
 
   locations: [
-    majorSite('great-web', 'The Great Web', 6, 6, 8, false, { x: 0.5, y: 0.5 }, 1, 0),
+    majorSite('great-web', 'The Great Web', 6, 6, 8, false, { x: 0.5, y: 0.5 }, 1, 0),  // Araumycos control token
     tunnel('a1-ring-n', { x: 0.5, y: 0.2 }),
     tunnel('a1-ring-ne', { x: 0.75, y: 0.35 }),
     tunnel('a1-ring-se', { x: 0.75, y: 0.65 }),
@@ -350,7 +350,7 @@ const A9 = {
   region: 'Wells of Darkness',
 
   locations: [
-    site('wells-of-darkness', 'Wells of Darkness', 9, 0, 9, false, { x: 0.5, y: 0.5 }),
+    site('wells-of-darkness', 'Wells of Darkness', 9, 0, 9, true, { x: 0.5, y: 0.5 }),  // Starting location
   ],
 
   paths: [],
@@ -377,7 +377,7 @@ const B1 = {
   region: 'Menzoberranzan',
 
   locations: [
-    majorSite('council-chamber', 'Council Chamber', 3, 2, 4, true, { x: 0.5, y: 0.7 }, 1, 0),
+    majorSite('council-chamber', 'Council Chamber', 3, 2, 4, false, { x: 0.5, y: 0.7 }, 1, 0),  // Menzoberranzan control token
     tunnel('b1-ring-n', { x: 0.5, y: 0.2 }),
     tunnel('b1-ring-ne', { x: 0.7, y: 0.35 }),
     tunnel('b1-ring-se', { x: 0.7, y: 0.55 }),
@@ -414,7 +414,7 @@ const B2 = {
 
   locations: [
     site('vrith', 'Vrith', 1, 1, 2, false, { x: 0.5, y: 0.25 }),
-    majorSite('lolth-shrine', 'Lolth Shrine', 4, 2, 3, true, { x: 0.5, y: 0.7 }, 1, 0),
+    majorSite('lolth-shrine', 'Lolth Shrine', 4, 2, 3, false, { x: 0.5, y: 0.7 }, 1, 0),  // Tsenviilyq control token
     tunnel('b2-ring-ne', { x: 0.7, y: 0.35 }),
     tunnel('b2-ring-se', { x: 0.7, y: 0.55 }),
     tunnel('b2-ring-sw', { x: 0.3, y: 0.55 }),
@@ -448,7 +448,7 @@ const B3 = {
   region: 'Gauntlgrym',
 
   locations: [
-    majorSite('xith-idrana', 'Xith Idrana', 3, 2, 2, true, { x: 0.5, y: 0.7 }, 1, 0),
+    majorSite('xith-idrana', 'Xith Idrana', 3, 2, 2, false, { x: 0.5, y: 0.7 }, 1, 0),  // Gauntlgrym control token
     tunnel('b3-ring-n', { x: 0.5, y: 0.2 }),
     tunnel('b3-ring-ne', { x: 0.7, y: 0.35 }),
     tunnel('b3-ring-nw', { x: 0.3, y: 0.35 }),
@@ -483,7 +483,7 @@ const B4 = {
   region: "Ch'Chitl",
 
   locations: [
-    majorSite('faerholme', 'Faerholme', 3, 2, 2, true, { x: 0.5, y: 0.7 }, 1, 0),
+    majorSite('faerholme', 'Faerholme', 3, 2, 2, false, { x: 0.5, y: 0.7 }, 1, 0),  // Ch'Chitl control token
     tunnel('b4-ring-n', { x: 0.5, y: 0.25 }),
     tunnel('b4-ring-ne', { x: 0.7, y: 0.4 }),
     tunnel('b4-ring-nw', { x: 0.3, y: 0.4 }),
@@ -514,7 +514,7 @@ const B5 = {
   region: "Ss'Zuraass'Nee",
 
   locations: [
-    majorSite('darklight-realm', 'Darklight Realm', 3, 2, 2, true, { x: 0.5, y: 0.7 }, 1, 0),
+    majorSite('darklight-realm', 'Darklight Realm', 3, 2, 2, false, { x: 0.5, y: 0.7 }, 1, 0),  // Ss'Zuraass'Nee control token
     tunnel('b5-ring-n', { x: 0.5, y: 0.2 }),
     tunnel('b5-ring-ne', { x: 0.7, y: 0.35 }),
     tunnel('b5-ring-nw', { x: 0.3, y: 0.35 }),
@@ -549,7 +549,7 @@ const B6 = {
   region: 'The Phaerlin',
 
   locations: [
-    majorSite('shedaklah', 'Shedaklah', 3, 2, 2, true, { x: 0.5, y: 0.7 }, 1, 0),
+    majorSite('shedaklah', 'Shedaklah', 3, 2, 2, false, { x: 0.5, y: 0.7 }, 1, 0),  // The Phaerlin control token
     tunnel('b6-ring-n', { x: 0.5, y: 0.2 }),
     tunnel('b6-ring-ne', { x: 0.7, y: 0.35 }),
     tunnel('b6-ring-nw', { x: 0.3, y: 0.35 }),
