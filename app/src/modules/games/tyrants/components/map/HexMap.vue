@@ -51,7 +51,7 @@ export default {
 
   data() {
     return {
-      hexSize: 120,  // Size of hex (center to vertex)
+      hexSize: 150,  // Size of hex (center to vertex)
     }
   },
 
