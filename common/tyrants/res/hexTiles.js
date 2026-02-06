@@ -281,24 +281,22 @@ const A6 = {
   region: 'Sparse Network',
 
   locations: [
-    tunnel('a6-t1', { x: 0.5, y: 0.12 }),
-    tunnel('a6-t2', { x: 0.82, y: 0.22 }),
-    tunnel('a6-t3', { x: 0.88, y: 0.5 }),
-    tunnel('a6-t4', { x: 0.65, y: 0.62 }),
-    tunnel('a6-t5', { x: 0.4, y: 0.82 }),
-    tunnel('a6-t6', { x: 0.15, y: 0.62 }),
+    tunnel('a6-t1', { x: 0.50, y: 0.13 }),
+    tunnel('a6-t2', { x: 0.75, y: 0.31 }),
+    tunnel('a6-t3', { x: 0.75, y: 0.67 }),
+    tunnel('a6-t4', { x: 0.51, y: 0.50 }),
+    tunnel('a6-t5', { x: 0.50, y: 0.85 }),
+    tunnel('a6-t6', { x: 0.25, y: 0.66 }),
     tunnel('a6-t7', { x: 0.25, y: 0.32 }),
   ],
 
   paths: [
-    ['a6-t1', 'a6-t2'],
+    ['a6-t7', 'a6-t1'],
+    ['a6-t1', 'a6-t4'],
+    ['a6-t4', 'a6-t6'],
+    ['a6-t6', 'a6-t5'],
     ['a6-t2', 'a6-t3'],
     ['a6-t3', 'a6-t4'],
-    ['a6-t4', 'a6-t5'],
-    ['a6-t5', 'a6-t6'],
-    ['a6-t6', 'a6-t7'],
-    ['a6-t7', 'a6-t1'],
-    ['a6-t4', 'a6-t7'],
   ],
 
   edgeConnections: [
@@ -309,6 +307,8 @@ const A6 = {
     { edge: 'SW', location: 'a6-t6' },
     { edge: 'NW', location: 'a6-t7' },
   ],
+
+  labelPosition: { x: 0.30, y: 0.95 },
 
   specialRules: null,
 }
