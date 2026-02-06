@@ -21,10 +21,10 @@
           class="edge-connector"
         />
 
-        <!-- Off-map connectors -->
+        <!-- Edge tunnel connectors (lines to edge tunnel locations) -->
         <line
-          v-for="(conn, index) in offMapConnectors"
-          :key="'offmap-' + index"
+          v-for="(conn, index) in edgeTunnelConnectors"
+          :key="'edge-tunnel-' + index"
           :x1="conn.x1"
           :y1="conn.y1"
           :x2="conn.x2"
@@ -208,53 +208,29 @@ export default {
       return connectors
     },
 
-    // Off-map connectors: lines going off the edge for edge locations on map boundaries
-    offMapConnectors() {
+    // Edge tunnel connectors: lines from source locations to edge tunnel locations
+    edgeTunnelConnectors() {
       const connectors = []
-      const EDGE_DIRECTIONS = {
-        'N': { x: 0, y: -1 },
-        'NE': { x: 0.866, y: -0.5 },
-        'SE': { x: 0.866, y: 0.5 },
-        'S': { x: 0, y: 1 },
-        'SW': { x: -0.866, y: 0.5 },
-        'NW': { x: -0.866, y: -0.5 },
-      }
-      const ADJACENT_DELTAS = {
-        'N': { dq: 0, dr: -1 },
-        'NE': { dq: 1, dr: -1 },
-        'SE': { dq: 1, dr: 0 },
-        'S': { dq: 0, dr: 1 },
-        'SW': { dq: -1, dr: 1 },
-        'NW': { dq: -1, dr: 0 },
-      }
 
       for (const hex of this.assembledHexes) {
-        // Use the edgeConnections data from the tile
-        const edgeConns = hex.edgeConnections || []
+        // Find edge tunnel locations on this hex
+        for (const loc of hex.locations) {
+          if (loc.short && loc.short.startsWith('edge-')) {
+            // This is an edge tunnel - find its source location (its only neighbor)
+            const neighborName = loc.neighborNames?.[0]
+            if (!neighborName) {
+              continue
+            }
 
-        for (const conn of edgeConns) {
-          const edge = conn.edge
-          const locationShort = conn.location
+            const fromPos = this.locationPixelPositions[neighborName]
+            const toPos = this.locationPixelPositions[loc.name()]
 
-          // Check if there's an adjacent hex at this edge
-          const delta = ADJACENT_DELTAS[edge]
-          const adjKey = `${hex.position.q + delta.dq},${hex.position.r + delta.dr}`
-          const adjacentHex = this.hexByPosition[adjKey]
-
-          if (!adjacentHex) {
-            // No adjacent hex - this is an off-map edge
-            // Find the full location name
-            const fullLocName = `${hex.tileId}.${locationShort}`
-            const locPos = this.locationPixelPositions[fullLocName]
-
-            if (locPos) {
-              const dir = EDGE_DIRECTIONS[edge]
-              const offMapDist = 30  // How far off the edge to draw
+            if (fromPos && toPos) {
               connectors.push({
-                x1: locPos.x,
-                y1: locPos.y,
-                x2: locPos.x + dir.x * offMapDist,
-                y2: locPos.y + dir.y * offMapDist,
+                x1: fromPos.x,
+                y1: fromPos.y,
+                x2: toPos.x,
+                y2: toPos.y,
               })
             }
           }

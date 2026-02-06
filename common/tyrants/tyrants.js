@@ -358,6 +358,80 @@ Tyrants.prototype._assembleMapLocations = function(tiles, layout) {
     }
   }
 
+  // Step 4: Create edge tunnel locations for dead-end edges (edges with no adjacent hex)
+  const EDGE_OFFSETS = {
+    'N': { x: 0, y: -0.25 },
+    'NE': { x: 0.22, y: -0.12 },
+    'SE': { x: 0.22, y: 0.12 },
+    'S': { x: 0, y: 0.25 },
+    'SW': { x: -0.22, y: 0.12 },
+    'NW': { x: -0.22, y: -0.12 },
+  }
+
+  // Build a set of all hex positions for quick lookup
+  const hexPositions = new Set(layout.map(l => `${l.position.q},${l.position.r}`))
+
+  for (let i = 0; i < tiles.length; i++) {
+    const tile = tiles[i]
+    const gridPos = layout[i].position
+
+    // Get rotated edge connections
+    const edgeConns = hexTiles.getRotatedEdgeConnections(tile, tile.rotation)
+
+    for (const conn of edgeConns) {
+      // Check if there's an adjacent hex at this edge
+      const adjacentPos = mapConfigs.getAdjacentPosition(gridPos.q, gridPos.r, conn.edge)
+      const adjKey = `${adjacentPos.q},${adjacentPos.r}`
+
+      if (!hexPositions.has(adjKey)) {
+        // No adjacent hex - create an edge tunnel location
+        const sourceLocId = `${tile.id}.${conn.location}`
+        const sourceLoc = locationMap[sourceLocId]
+
+        if (!sourceLoc) {
+          continue
+        }
+
+        // Calculate position for edge tunnel (offset from source location towards edge)
+        const offset = EDGE_OFFSETS[conn.edge]
+        const edgeTunnelPos = {
+          x: sourceLoc.hexPosition.x + offset.x,
+          y: sourceLoc.hexPosition.y + offset.y,
+        }
+
+        const edgeTunnelId = `${tile.id}.edge-${conn.edge.toLowerCase()}`
+
+        // Skip if we already created this edge tunnel (multiple locations might share an edge)
+        if (locationMap[edgeTunnelId]) {
+          continue
+        }
+
+        const edgeTunnelData = {
+          name: edgeTunnelId,
+          short: `edge-${conn.edge.toLowerCase()}`,
+          region: tile.region,
+          size: 1,
+          neutrals: 0,
+          points: 0,
+          start: false,
+          control: { influence: 0, points: 0 },
+          totalControl: { influence: 0, points: 0 },
+          neighbors: [sourceLocId],
+          hexId: tile.id,
+          hexPosition: edgeTunnelPos,
+          hexGridPosition: gridPos,
+          displayName: 'Tunnel',
+        }
+
+        locations.push(edgeTunnelData)
+        locationMap[edgeTunnelId] = edgeTunnelData
+
+        // Add reverse neighbor connection
+        sourceLoc.neighbors.push(edgeTunnelId)
+      }
+    }
+  }
+
   return locations
 }
 

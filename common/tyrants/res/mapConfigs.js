@@ -106,6 +106,20 @@ function getAdjacentPositions(q, r) {
   ]
 }
 
+// Get the adjacent position in a specific edge direction
+function getAdjacentPosition(q, r, edge) {
+  const DELTAS = {
+    'N': { dq: 0, dr: -1 },
+    'NE': { dq: 1, dr: -1 },
+    'SE': { dq: 1, dr: 0 },
+    'S': { dq: 0, dr: 1 },
+    'SW': { dq: -1, dr: 1 },
+    'NW': { dq: -1, dr: 0 },
+  }
+  const delta = DELTAS[edge]
+  return { q: q + delta.dq, r: r + delta.dr }
+}
+
 // Get the edge direction from position1 to position2
 // Returns the edge label on position1 that faces position2
 function getEdgeDirection(pos1, pos2) {
@@ -144,6 +158,7 @@ function axialToPixel(q, r, hexSize) {
 module.exports = {
   mapConfigs,
   getAdjacentPositions,
+  getAdjacentPosition,
   getEdgeDirection,
   axialToPixel,
 }
