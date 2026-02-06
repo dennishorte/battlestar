@@ -12,6 +12,34 @@ const { TyrantsToken } = require('./TyrantsToken.js')
 const { TyrantsZone } = require('./TyrantsZone.js')
 
 
+// Rotate a position (x, y in 0-1 range) around the hex center (0.5, 0.5)
+// rotation is in 60-degree increments (0-5)
+function rotateHexPosition(pos, rotation) {
+  if (!pos || rotation === 0) {
+    return pos
+  }
+
+  // Convert to centered coordinates
+  const cx = pos.x - 0.5
+  const cy = pos.y - 0.5
+
+  // Rotation angle in radians (60 degrees per step)
+  const theta = rotation * (Math.PI / 3)
+  const cosTheta = Math.cos(theta)
+  const sinTheta = Math.sin(theta)
+
+  // Rotate around center
+  const rx = cx * cosTheta - cy * sinTheta
+  const ry = cx * sinTheta + cy * cosTheta
+
+  // Convert back to 0-1 coordinates
+  return {
+    x: rx + 0.5,
+    y: ry + 0.5,
+  }
+}
+
+
 module.exports = {
   GameOverEvent,
   Tyrants,
@@ -289,7 +317,7 @@ Tyrants.prototype._assembleMapLocations = function(tiles, layout) {
         totalControl: { ...loc.totalControl },
         neighbors: [],  // Will be populated below
         hexId: tile.id,
-        hexPosition: loc.position,
+        hexPosition: rotateHexPosition(loc.position, tile.rotation),
         hexGridPosition: gridPos,
         displayName: loc.name,  // Human-readable name
       }
