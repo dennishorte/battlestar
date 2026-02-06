@@ -301,6 +301,7 @@ export default {
   border-radius: 4px;
   font-family: monospace;
   font-size: 0.9em;
+  color: #ccc;
 }
 
 .not-found {
