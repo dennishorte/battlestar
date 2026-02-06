@@ -138,7 +138,7 @@ Tyrants.prototype.initializeMapZones = function() {
 }
 
 Tyrants.prototype.initializeDemonwebMap = function() {
-  const { mapConfigs } = res
+  const { hexTiles, mapConfigs } = res
   const config = mapConfigs.mapConfigs[this.settings.map]
 
   if (!config) {
@@ -172,6 +172,7 @@ Tyrants.prototype.initializeDemonwebMap = function() {
       position: config.layout[i].position,
       rotation: tile.rotation,
       paths: tile.paths || [],
+      edgeConnections: hexTiles.getRotatedEdgeConnections(tile, tile.rotation),
     })),
   }
 
