@@ -99,21 +99,20 @@ const A2 = {
   region: 'Zelatar',
 
   locations: [
-    site('fogtown', 'Fogtown', 3, 2, 4, false, { x: 0.5, y: 0.18 }),
-    site('gallenghast', 'Gallenghast', 3, 2, 4, false, { x: 0.78, y: 0.68 }),
-    site('darkflame', 'Darkflame', 3, 2, 4, false, { x: 0.22, y: 0.68 }),
-    tunnel('a2-center', { x: 0.5, y: 0.5 }),
+    site('fogtown', 'Fogtown', 3, 2, 4, false, { x: 0.42, y: 0.22 }),
+    site('gallenghast', 'Gallenghast', 3, 2, 4, false, { x: 0.76, y: 0.50 }),
+    site('darkflame', 'Darkflame', 3, 2, 4, false, { x: 0.39, y: 0.76 }),
   ],
 
   paths: [
-    ['fogtown', 'a2-center'],
-    ['gallenghast', 'a2-center'],
-    ['darkflame', 'a2-center'],
+    ['fogtown', 'gallenghast'],
+    ['gallenghast', 'darkflame'],
+    ['darkflame', 'fogtown'],
   ],
 
   edgeConnections: [
     { edge: 'N', location: 'fogtown' },
-    { edge: 'NE', location: 'fogtown' },
+    { edge: 'NE', location: 'gallenghast' },
     { edge: 'SE', location: 'gallenghast' },
     { edge: 'S', location: 'darkflame' },
     { edge: 'SW', location: 'darkflame' },
@@ -121,13 +120,27 @@ const A2 = {
   ],
 
   specialRules: {
-    type: 'triad',
-    sites: ['fogtown', 'gallenghast', 'darkflame'],
-    bonuses: {
-      presence: { influence: 1 },
-      control: { influence: 1, power: 1, vp: 1 },
-      totalControl: { influence: 2, power: 2, vp: 4 },
-    },
+    "type": "triad",
+    "sites": [
+      "fogtown",
+      "gallenghast",
+      "darkflame"
+    ],
+    "bonuses": {
+      "presence": {
+        "influence": 1
+      },
+      "control": {
+        "influence": 1,
+        "power": 1,
+        "vp": 1
+      },
+      "totalControl": {
+        "influence": 2,
+        "power": 2,
+        "vp": 4
+      }
+    }
   },
 }
 
