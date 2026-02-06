@@ -27,7 +27,9 @@
         </div>
 
         <div class="col map-column" :style="mapStyle">
-          <GameMap />
+          <div class="map-scroll-wrapper">
+            <GameMap />
+          </div>
         </div>
 
       </div>
@@ -181,20 +183,15 @@ export default {
     mapStyle() {
       if (this.isDemonwebMap) {
         // Demonweb maps are dynamically sized
-        return {
-          minWidth: '600px',
-        }
+        return {}
       }
 
       const parsePx = (px) => parseInt(px.substr(0, px.length - 2))
       const elemMeta = maps[this.game.settings.map].elemMeta
-      const mapStyle = elemMeta.styles['.map']
-
-      // const height = parsePx(mapStyle.height)
-      const width = parsePx(mapStyle.width)
+      const styles = elemMeta.styles['.map']
+      const width = parsePx(styles.width)
 
       return {
-        // minHeight: height + 'px',
         minWidth: width + 'px',
       }
     },
@@ -586,9 +583,12 @@ export default {
 }
 
 .map-column {
-  height: calc(100vh - 60px);
-  overflow: auto;
   padding: 0;
+}
+
+.map-scroll-wrapper {
+  height: calc(100vh - 60px);
+  overflow-y: auto;
 }
 
 .history-column {

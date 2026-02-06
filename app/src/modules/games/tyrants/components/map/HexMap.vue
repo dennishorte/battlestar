@@ -60,20 +60,61 @@ export default {
       return this.game.state.assembledMap
     },
 
+    // Calculate raw pixel positions first (before offset)
+    rawHexPositions() {
+      if (!this.assembledMap) {
+        return []
+      }
+      return this.assembledMap.hexes.map(hex => {
+        const pixel = this.axialToPixel(hex.position.q, hex.position.r)
+        return { ...hex, pixelX: pixel.x, pixelY: pixel.y }
+      })
+    },
+
+    // Calculate bounds from raw positions
+    rawBounds() {
+      if (this.rawHexPositions.length === 0) {
+        return { minX: 0, maxX: 0, minY: 0, maxY: 0 }
+      }
+
+      const hexWidth = this.hexSize * Math.sqrt(3)
+      const hexHeight = this.hexSize * 2
+
+      let minX = Infinity
+      let maxX = -Infinity
+      let minY = Infinity
+      let maxY = -Infinity
+
+      for (const hex of this.rawHexPositions) {
+        minX = Math.min(minX, hex.pixelX - hexWidth / 2)
+        maxX = Math.max(maxX, hex.pixelX + hexWidth / 2)
+        minY = Math.min(minY, hex.pixelY - hexHeight / 2)
+        maxY = Math.max(maxY, hex.pixelY + hexHeight / 2)
+      }
+
+      return { minX, maxX, minY, maxY }
+    },
+
+    // Offset to apply to all positions (moves content to start at padding,padding)
+    positionOffset() {
+      const padding = 40
+      return {
+        x: -this.rawBounds.minX + padding,
+        y: -this.rawBounds.minY + padding,
+      }
+    },
+
     assembledHexes() {
       if (!this.assembledMap) {
         return []
       }
 
-      return this.assembledMap.hexes.map(hex => {
-        const pixel = this.axialToPixel(hex.position.q, hex.position.r)
-        return {
-          ...hex,
-          pixelX: pixel.x,
-          pixelY: pixel.y,
-          locations: this.getLocationsForHex(hex.tileId),
-        }
-      })
+      return this.rawHexPositions.map(hex => ({
+        ...hex,
+        pixelX: hex.pixelX + this.positionOffset.x,
+        pixelY: hex.pixelY + this.positionOffset.y,
+        locations: this.getLocationsForHex(hex.tileId),
+      }))
     },
 
     // Build a map of hex positions to hex data for quick lookup
@@ -223,52 +264,27 @@ export default {
       return connectors
     },
 
-    bounds() {
-      if (this.assembledHexes.length === 0) {
-        return { minX: 0, maxX: 0, minY: 0, maxY: 0 }
-      }
-
-      const hexWidth = this.hexSize * Math.sqrt(3)
-      const hexHeight = this.hexSize * 2
-
-      let minX = Infinity
-      let maxX = -Infinity
-      let minY = Infinity
-      let maxY = -Infinity
-
-      for (const hex of this.assembledHexes) {
-        minX = Math.min(minX, hex.pixelX - hexWidth / 2)
-        maxX = Math.max(maxX, hex.pixelX + hexWidth / 2)
-        minY = Math.min(minY, hex.pixelY - hexHeight / 2)
-        maxY = Math.max(maxY, hex.pixelY + hexHeight / 2)
-      }
-
-      return { minX, maxX, minY, maxY }
+    mapDimensions() {
+      const padding = 40
+      const width = this.rawBounds.maxX - this.rawBounds.minX + padding * 2
+      const height = this.rawBounds.maxY - this.rawBounds.minY + padding * 2
+      return { width, height }
     },
 
     containerStyle() {
-      const padding = 40
-      const width = this.bounds.maxX - this.bounds.minX + padding * 2
-      const height = this.bounds.maxY - this.bounds.minY + padding * 2
-
       return {
-        width: width + 'px',
-        height: height + 'px',
+        width: this.mapDimensions.width + 'px',
+        height: this.mapDimensions.height + 'px',
         position: 'relative',
-        transform: `translate(${-this.bounds.minX + padding}px, ${-this.bounds.minY + padding}px)`,
       }
     },
 
     mapStyle() {
-      const padding = 40
-      const width = this.bounds.maxX - this.bounds.minX + padding * 2
-      const height = this.bounds.maxY - this.bounds.minY + padding * 2
-
       return {
-        width: width + 'px',
-        height: height + 'px',
-        minWidth: width + 'px',
-        minHeight: height + 'px',
+        width: this.mapDimensions.width + 'px',
+        height: this.mapDimensions.height + 'px',
+        minWidth: this.mapDimensions.width + 'px',
+        minHeight: this.mapDimensions.height + 'px',
         overflow: 'visible',
       }
     },
