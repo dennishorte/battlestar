@@ -57,7 +57,7 @@ const A1 = {
   region: 'Araumycos',
 
   locations: [
-    majorSite('great-web', 'The Great Web', 6, 6, 8, false, { x: 0.50, y: 0.50 }, 1, 4),
+    majorSite('great-web', 'The Great Web', 6, 6, 8, false, { x: 0.50, y: 0.50 }, 1, 3),
     tunnel('a1-ring-n', { x: 0.50, y: 0.17 }),
     tunnel('a1-ring-ne', { x: 0.76, y: 0.33 }),
     tunnel('a1-ring-se', { x: 0.76, y: 0.67 }),
@@ -152,7 +152,7 @@ const A3 = {
   region: 'Araumycos',
 
   locations: [
-    majorSite('a3-great-web', 'Great Web', 2, 0, 2, false, { x: 0.50, y: 0.50 }, 1, 4),
+    majorSite('a3-great-web', 'Great Web', 2, 0, 2, false, { x: 0.50, y: 0.50 }, 1, 3),
     site('a3-web-n', 'Web', 1, 1, 2, false, { x: 0.50, y: 0.15 }),
     site('a3-web-ne', 'Web', 1, 1, 2, false, { x: 0.76, y: 0.34 }),
     site('a3-web-se', 'Web', 1, 1, 2, false, { x: 0.76, y: 0.69 }),
@@ -408,32 +408,31 @@ const B1 = {
   region: 'Menzoberranzan',
 
   locations: [
-    majorSite('council-chamber', 'Council Chamber', 3, 2, 4, false, { x: 0.5, y: 0.78 }, 1, 0),  // Menzoberranzan control token
-    tunnel('b1-ring-n', { x: 0.5, y: 0.15 }),
-    tunnel('b1-ring-ne', { x: 0.75, y: 0.28 }),
-    tunnel('b1-ring-se', { x: 0.75, y: 0.48 }),
-    tunnel('b1-ring-sw', { x: 0.25, y: 0.48 }),
-    tunnel('b1-ring-nw', { x: 0.25, y: 0.28 }),
+    majorSite('council-chamber', 'Council Chamber', 3, 2, 4, false, { x: 0.50, y: 0.56 }, 1, 2),
+    tunnel('b1-ring-n', { x: 0.50, y: 0.15 }),
+    tunnel('b1-ring-ne', { x: 0.74, y: 0.35 }),
+    tunnel('b1-ring-se', { x: 0.74, y: 0.74 }),
+    tunnel('b1-ring-sw', { x: 0.26, y: 0.71 }),
+    tunnel('b1-ring-nw', { x: 0.26, y: 0.34 }),
   ],
 
   paths: [
     ['council-chamber', 'b1-ring-se'],
     ['council-chamber', 'b1-ring-sw'],
-    ['b1-ring-n', 'b1-ring-ne'],
-    ['b1-ring-ne', 'b1-ring-se'],
-    ['b1-ring-se', 'b1-ring-sw'],
-    ['b1-ring-sw', 'b1-ring-nw'],
-    ['b1-ring-nw', 'b1-ring-n'],
+    ['b1-ring-nw', 'council-chamber'],
+    ['b1-ring-n', 'council-chamber'],
+    ['b1-ring-ne', 'council-chamber'],
   ],
 
   edgeConnections: [
     { edge: 'N', location: 'b1-ring-n' },
     { edge: 'NE', location: 'b1-ring-ne' },
     { edge: 'SE', location: 'b1-ring-se' },
-    { edge: 'S', location: 'council-chamber' },
     { edge: 'SW', location: 'b1-ring-sw' },
     { edge: 'NW', location: 'b1-ring-nw' },
   ],
+
+  labelPosition: { x: 0.29, y: 0.94 },
 
   specialRules: null,
 }
@@ -444,31 +443,31 @@ const B2 = {
   region: 'Tsenviilyq',
 
   locations: [
-    site('vrith', 'Vrith', 1, 1, 2, false, { x: 0.5, y: 0.15 }),
-    majorSite('lolth-shrine', 'Lolth Shrine', 4, 2, 3, false, { x: 0.5, y: 0.78 }, 1, 0),  // Tsenviilyq control token
-    tunnel('b2-ring-ne', { x: 0.78, y: 0.28 }),
-    tunnel('b2-ring-se', { x: 0.78, y: 0.48 }),
-    tunnel('b2-ring-sw', { x: 0.22, y: 0.48 }),
-    tunnel('b2-ring-nw', { x: 0.22, y: 0.28 }),
+    site('vrith', 'Vrith', 1, 1, 2, false, { x: 0.50, y: 0.14 }),
+    majorSite('lolth-shrine', 'Lolth Shrine', 4, 2, 3, false, { x: 0.50, y: 0.63 }, 1, 1),
+    tunnel('b2-ring-ne', { x: 0.78, y: 0.37 }),
+    tunnel('b2-ring-se', { x: 0.78, y: 0.66 }),
+    tunnel('b2-ring-sw', { x: 0.23, y: 0.66 }),
+    tunnel('b2-ring-nw', { x: 0.23, y: 0.34 }),
   ],
 
   paths: [
-    ['vrith', 'b2-ring-ne'],
-    ['vrith', 'b2-ring-nw'],
     ['lolth-shrine', 'b2-ring-se'],
     ['lolth-shrine', 'b2-ring-sw'],
-    ['b2-ring-ne', 'b2-ring-se'],
-    ['b2-ring-sw', 'b2-ring-nw'],
+    ['b2-ring-nw', 'lolth-shrine'],
+    ['vrith', 'lolth-shrine'],
+    ['b2-ring-ne', 'lolth-shrine'],
   ],
 
   edgeConnections: [
     { edge: 'N', location: 'vrith' },
     { edge: 'NE', location: 'b2-ring-ne' },
     { edge: 'SE', location: 'b2-ring-se' },
-    { edge: 'S', location: 'lolth-shrine' },
     { edge: 'SW', location: 'b2-ring-sw' },
     { edge: 'NW', location: 'b2-ring-nw' },
   ],
+
+  labelPosition: { x: 0.29, y: 0.93 },
 
   specialRules: null,
 }
@@ -479,31 +478,31 @@ const B3 = {
   region: 'Gauntlgrym',
 
   locations: [
-    majorSite('xith-idrana', 'Xith Idrana', 3, 2, 2, false, { x: 0.5, y: 0.78 }, 1, 0),  // Gauntlgrym control token
-    tunnel('b3-ring-n', { x: 0.5, y: 0.15 }),
-    tunnel('b3-ring-ne', { x: 0.78, y: 0.28 }),
-    tunnel('b3-ring-nw', { x: 0.22, y: 0.28 }),
-    tunnel('b3-ring-se', { x: 0.72, y: 0.48 }),
-    tunnel('b3-ring-sw', { x: 0.28, y: 0.48 }),
+    majorSite('xith-idrana', 'Xith Idrana', 3, 2, 2, false, { x: 0.50, y: 0.62 }, 1, 1),
+    tunnel('b3-ring-n', { x: 0.50, y: 0.21 }),
+    tunnel('b3-ring-ne', { x: 0.73, y: 0.40 }),
+    tunnel('b3-ring-nw', { x: 0.27, y: 0.42 }),
+    tunnel('b3-ring-se', { x: 0.72, y: 0.77 }),
+    tunnel('b3-ring-sw', { x: 0.27, y: 0.76 }),
   ],
 
   paths: [
     ['xith-idrana', 'b3-ring-se'],
     ['xith-idrana', 'b3-ring-sw'],
-    ['b3-ring-n', 'b3-ring-ne'],
-    ['b3-ring-n', 'b3-ring-nw'],
-    ['b3-ring-ne', 'b3-ring-se'],
-    ['b3-ring-nw', 'b3-ring-sw'],
+    ['b3-ring-n', 'xith-idrana'],
+    ['b3-ring-ne', 'xith-idrana'],
+    ['b3-ring-nw', 'xith-idrana'],
   ],
 
   edgeConnections: [
     { edge: 'N', location: 'b3-ring-n' },
     { edge: 'NE', location: 'b3-ring-ne' },
     { edge: 'SE', location: 'b3-ring-se' },
-    { edge: 'S', location: 'xith-idrana' },
     { edge: 'SW', location: 'b3-ring-sw' },
     { edge: 'NW', location: 'b3-ring-nw' },
   ],
+
+  labelPosition: { x: 0.30, y: 0.94 },
 
   specialRules: null,
 }
@@ -511,30 +510,34 @@ const B3 = {
 const B4 = {
   id: 'B4',
   category: 'B',
-  region: "Ch'Chitl",
+  region: 'Ch\'Chitl',
 
   locations: [
-    majorSite('faerholme', 'Faerholme', 3, 2, 2, false, { x: 0.5, y: 0.75 }, 1, 0),  // Ch'Chitl control token
-    tunnel('b4-ring-n', { x: 0.5, y: 0.18 }),
+    majorSite('faerholme', 'Faerholme', 3, 2, 2, false, { x: 0.50, y: 0.59 }, 1, 1),
+    tunnel('b4-ring-n', { x: 0.50, y: 0.18 }),
     tunnel('b4-ring-ne', { x: 0.78, y: 0.35 }),
     tunnel('b4-ring-nw', { x: 0.22, y: 0.35 }),
+    tunnel('b4-ring-se', { x: 0.75, y: 0.70 }),
+    tunnel('b4-ring-sw', { x: 0.26, y: 0.70 }),
   ],
 
   paths: [
     ['faerholme', 'b4-ring-ne'],
     ['faerholme', 'b4-ring-nw'],
-    ['b4-ring-n', 'b4-ring-ne'],
-    ['b4-ring-n', 'b4-ring-nw'],
+    ['b4-ring-n', 'faerholme'],
+    ['faerholme', 'b4-ring-se'],
+    ['b4-ring-sw', 'faerholme'],
   ],
 
   edgeConnections: [
     { edge: 'N', location: 'b4-ring-n' },
     { edge: 'NE', location: 'b4-ring-ne' },
-    { edge: 'SE', location: 'faerholme' },
-    { edge: 'S', location: 'faerholme' },
-    { edge: 'SW', location: 'faerholme' },
+    { edge: 'SE', location: 'b4-ring-se' },
+    { edge: 'SW', location: 'b4-ring-sw' },
     { edge: 'NW', location: 'b4-ring-nw' },
   ],
+
+  labelPosition: { x: 0.31, y: 0.90 },
 
   specialRules: null,
 }
@@ -542,34 +545,34 @@ const B4 = {
 const B5 = {
   id: 'B5',
   category: 'B',
-  region: "Ss'Zuraass'Nee",
+  region: 'Ss\'Zuraass\'Nee',
 
   locations: [
-    majorSite('darklight-realm', 'Darklight Realm', 3, 2, 2, false, { x: 0.5, y: 0.78 }, 1, 0),  // Ss'Zuraass'Nee control token
-    tunnel('b5-ring-n', { x: 0.5, y: 0.15 }),
-    tunnel('b5-ring-ne', { x: 0.78, y: 0.28 }),
-    tunnel('b5-ring-nw', { x: 0.22, y: 0.28 }),
-    tunnel('b5-ring-se', { x: 0.72, y: 0.48 }),
-    tunnel('b5-ring-sw', { x: 0.28, y: 0.48 }),
+    majorSite('darklight-realm', 'Darklight Realm', 3, 2, 2, false, { x: 0.50, y: 0.60 }, 1, 1),
+    tunnel('b5-ring-n', { x: 0.50, y: 0.15 }),
+    tunnel('b5-ring-ne', { x: 0.74, y: 0.35 }),
+    tunnel('b5-ring-nw', { x: 0.26, y: 0.35 }),
+    tunnel('b5-ring-se', { x: 0.71, y: 0.68 }),
+    tunnel('b5-ring-sw', { x: 0.27, y: 0.69 }),
   ],
 
   paths: [
     ['darklight-realm', 'b5-ring-se'],
     ['darklight-realm', 'b5-ring-sw'],
-    ['b5-ring-n', 'b5-ring-ne'],
-    ['b5-ring-n', 'b5-ring-nw'],
-    ['b5-ring-ne', 'b5-ring-se'],
-    ['b5-ring-nw', 'b5-ring-sw'],
+    ['b5-ring-nw', 'darklight-realm'],
+    ['b5-ring-n', 'darklight-realm'],
+    ['b5-ring-ne', 'darklight-realm'],
   ],
 
   edgeConnections: [
     { edge: 'N', location: 'b5-ring-n' },
     { edge: 'NE', location: 'b5-ring-ne' },
     { edge: 'SE', location: 'b5-ring-se' },
-    { edge: 'S', location: 'darklight-realm' },
     { edge: 'SW', location: 'b5-ring-sw' },
     { edge: 'NW', location: 'b5-ring-nw' },
   ],
+
+  labelPosition: { x: 0.30, y: 0.89 },
 
   specialRules: null,
 }
@@ -580,31 +583,31 @@ const B6 = {
   region: 'The Phaerlin',
 
   locations: [
-    majorSite('shedaklah', 'Shedaklah', 3, 2, 2, false, { x: 0.5, y: 0.78 }, 1, 0),  // The Phaerlin control token
-    tunnel('b6-ring-n', { x: 0.5, y: 0.15 }),
-    tunnel('b6-ring-ne', { x: 0.78, y: 0.28 }),
-    tunnel('b6-ring-nw', { x: 0.22, y: 0.28 }),
-    tunnel('b6-ring-se', { x: 0.72, y: 0.48 }),
-    tunnel('b6-ring-sw', { x: 0.28, y: 0.48 }),
+    majorSite('shedaklah', 'Shedaklah', 3, 2, 2, false, { x: 0.51, y: 0.60 }, 1, 0),
+    tunnel('b6-ring-n', { x: 0.50, y: 0.16 }),
+    tunnel('b6-ring-ne', { x: 0.73, y: 0.35 }),
+    tunnel('b6-ring-nw', { x: 0.26, y: 0.35 }),
+    tunnel('b6-ring-se', { x: 0.72, y: 0.67 }),
+    tunnel('b6-ring-sw', { x: 0.28, y: 0.68 }),
   ],
 
   paths: [
     ['shedaklah', 'b6-ring-se'],
     ['shedaklah', 'b6-ring-sw'],
-    ['b6-ring-n', 'b6-ring-ne'],
-    ['b6-ring-n', 'b6-ring-nw'],
-    ['b6-ring-ne', 'b6-ring-se'],
-    ['b6-ring-nw', 'b6-ring-sw'],
+    ['b6-ring-nw', 'shedaklah'],
+    ['b6-ring-n', 'shedaklah'],
+    ['b6-ring-ne', 'shedaklah'],
   ],
 
   edgeConnections: [
     { edge: 'N', location: 'b6-ring-n' },
     { edge: 'NE', location: 'b6-ring-ne' },
     { edge: 'SE', location: 'b6-ring-se' },
-    { edge: 'S', location: 'shedaklah' },
     { edge: 'SW', location: 'b6-ring-sw' },
     { edge: 'NW', location: 'b6-ring-nw' },
   ],
+
+  labelPosition: { x: 0.30, y: 0.90 },
 
   specialRules: null,
 }
@@ -619,27 +622,33 @@ const C1 = {
   region: 'Twilight Realm',
 
   locations: [
-    site('the-twilight', 'The Twilight', 3, 0, 3, false, { x: 0.35, y: 0.18 }),
-    site('spiral-desert', 'Spiral Desert', 3, 0, 3, false, { x: 0.18, y: 0.55 }),
-    site('magma-gate', 'Magma Gate', 2, 0, 2, true, { x: 0.75, y: 0.38 }),
-    tunnel('c1-t1', { x: 0.5, y: 0.82 }),
+    site('the-twilight', 'The Twilight', 3, 0, 3, false, { x: 0.43, y: 0.17 }),
+    site('spiral-desert', 'Spiral Desert', 3, 0, 3, false, { x: 0.30, y: 0.71 }),
+    site('magma-gate', 'Magma Gate', 2, 0, 2, true, { x: 0.76, y: 0.50 }),
+    tunnel('c1-t1', { x: 0.56, y: 0.65 }),
+    tunnel('c1-t2', { x: 0.49, y: 0.86 }),
+    tunnel('c1-t3', { x: 0.26, y: 0.43 }),
+    tunnel('c1-t4', { x: 0.66, y: 0.28 }),
   ],
 
   paths: [
-    ['the-twilight', 'magma-gate'],
-    ['the-twilight', 'spiral-desert'],
     ['spiral-desert', 'c1-t1'],
     ['magma-gate', 'c1-t1'],
+    ['spiral-desert', 'c1-t2'],
+    ['the-twilight', 'c1-t3'],
+    ['c1-t3', 'spiral-desert'],
+    ['the-twilight', 'c1-t4'],
+    ['magma-gate', 'c1-t4'],
   ],
 
   edgeConnections: [
     { edge: 'N', location: 'the-twilight' },
     { edge: 'NE', location: 'magma-gate' },
-    { edge: 'SE', location: 'c1-t1' },
-    { edge: 'S', location: 'c1-t1' },
-    { edge: 'SW', location: 'spiral-desert' },
-    { edge: 'NW', location: 'the-twilight' },
+    { edge: 'SE', location: 'magma-gate' },
+    { edge: 'S', location: 'c1-t2' },
   ],
+
+  labelPosition: { x: 0.51, y: 0.50 },
 
   specialRules: null,
 }
@@ -650,25 +659,28 @@ const C2 = {
   region: 'Araumycos',
 
   locations: [
-    site('c2-araumycos', 'Araumycos', 4, 2, 3, false, { x: 0.65, y: 0.22 }),
-    site('c2-menzoberranzan', 'Menzoberranzan', 6, 2, 5, true, { x: 0.6, y: 0.75 }),
-    tunnel('c2-t1', { x: 0.18, y: 0.5 }),
+    site('c2-araumycos', 'Araumycos', 4, 2, 3, false, { x: 0.50, y: 0.14 }),
+    site('c2-menzoberranzan', 'Menzoberranzan', 6, 2, 5, true, { x: 0.51, y: 0.73 }),
+    tunnel('c2-t1', { x: 0.52, y: 0.45 }),
+    tunnel('c2-t2', { x: 0.27, y: 0.37 }),
+    tunnel('c2-t3', { x: 0.77, y: 0.64 }),
   ],
 
   paths: [
     ['c2-araumycos', 'c2-t1'],
     ['c2-menzoberranzan', 'c2-t1'],
-    ['c2-araumycos', 'c2-menzoberranzan'],
+    ['c2-t2', 'c2-araumycos'],
+    ['c2-menzoberranzan', 'c2-t3'],
   ],
 
   edgeConnections: [
-    { edge: 'N', location: 'c2-araumycos' },
     { edge: 'NE', location: 'c2-araumycos' },
-    { edge: 'SE', location: 'c2-menzoberranzan' },
-    { edge: 'S', location: 'c2-menzoberranzan' },
-    { edge: 'SW', location: 'c2-t1' },
-    { edge: 'NW', location: 'c2-t1' },
+    { edge: 'SE', location: 'c2-t3' },
+    { edge: 'SW', location: 'c2-menzoberranzan' },
+    { edge: 'NW', location: 'c2-t2' },
   ],
+
+  labelPosition: { x: 0.30, y: 0.91 },
 
   specialRules: null,
 }
@@ -679,27 +691,30 @@ const C3 = {
   region: 'Red Forest',
 
   locations: [
-    site('red-forest', 'Red Forest', 3, 1, 4, false, { x: 0.4, y: 0.15 }),
-    site('xal-veldrin', 'Xal Veldrin', 4, 0, 3, true, { x: 0.4, y: 0.5 }),
-    site('iron-wastes', 'Iron Wastes', 3, 1, 3, false, { x: 0.4, y: 0.85 }),
-    tunnel('c3-t1', { x: 0.82, y: 0.32 }),
+    site('red-forest', 'Red Forest', 3, 1, 4, false, { x: 0.49, y: 0.18 }),
+    site('xal-veldrin', 'Xal Veldrin', 4, 0, 3, true, { x: 0.50, y: 0.49 }),
+    site('iron-wastes', 'Iron Wastes', 3, 1, 3, false, { x: 0.50, y: 0.81 }),
+    tunnel('c3-t1', { x: 0.74, y: 0.34 }),
+    tunnel('c3-t2', { x: 0.26, y: 0.64 }),
   ],
 
   paths: [
     ['red-forest', 'xal-veldrin'],
     ['xal-veldrin', 'iron-wastes'],
-    ['red-forest', 'c3-t1'],
     ['xal-veldrin', 'c3-t1'],
+    ['xal-veldrin', 'c3-t2'],
   ],
 
   edgeConnections: [
     { edge: 'N', location: 'red-forest' },
     { edge: 'NE', location: 'c3-t1' },
-    { edge: 'SE', location: 'xal-veldrin' },
+    { edge: 'SE', location: 'iron-wastes' },
     { edge: 'S', location: 'iron-wastes' },
-    { edge: 'SW', location: 'iron-wastes' },
+    { edge: 'SW', location: 'c3-t2' },
     { edge: 'NW', location: 'red-forest' },
   ],
+
+  labelPosition: { x: 0.31, y: 0.93 },
 
   specialRules: null,
 }
@@ -710,32 +725,36 @@ const C4 = {
   region: 'Kulggen',
 
   locations: [
-    site('kulggen', 'Kulggen', 2, 2, 4, false, { x: 0.72, y: 0.18 }),
-    site('red-gate', 'Red Gate', 2, 2, 4, false, { x: 0.28, y: 0.18 }),
-    site('iblith', 'Iblith', 1, 0, 1, false, { x: 0.5, y: 0.48 }),
-    site('caer-sidi', 'Caer Sidi', 3, 0, 3, true, { x: 0.5, y: 0.85 }),
-    tunnel('c4-t1', { x: 0.18, y: 0.62 }),
-    tunnel('c4-t2', { x: 0.82, y: 0.62 }),
+    site('kulggen', 'Kulggen', 2, 2, 4, false, { x: 0.68, y: 0.20 }),
+    site('red-gate', 'Red Gate', 2, 2, 4, false, { x: 0.27, y: 0.43 }),
+    site('iblith', 'Iblith', 1, 0, 1, false, { x: 0.43, y: 0.19 }),
+    site('caer-sidi', 'Caer Sidi', 3, 0, 3, true, { x: 0.58, y: 0.62 }),
+    tunnel('c4-t1', { x: 0.32, y: 0.66 }),
+    tunnel('c4-t2', { x: 0.63, y: 0.41 }),
+    tunnel('c4-t3', { x: 0.82, y: 0.59 }),
+    tunnel('c4-t4', { x: 0.54, y: 0.86 }),
   ],
 
   paths: [
     ['red-gate', 'iblith'],
     ['kulggen', 'iblith'],
-    ['iblith', 'caer-sidi'],
     ['caer-sidi', 'c4-t1'],
     ['caer-sidi', 'c4-t2'],
     ['c4-t1', 'red-gate'],
     ['c4-t2', 'kulggen'],
+    ['caer-sidi', 'c4-t3'],
+    ['caer-sidi', 'c4-t4'],
   ],
 
   edgeConnections: [
-    { edge: 'N', location: 'red-gate' },
     { edge: 'NE', location: 'kulggen' },
-    { edge: 'SE', location: 'c4-t2' },
-    { edge: 'S', location: 'caer-sidi' },
-    { edge: 'SW', location: 'c4-t1' },
+    { edge: 'SE', location: 'c4-t3' },
+    { edge: 'S', location: 'c4-t4' },
+    { edge: 'SW', location: 'red-gate' },
     { edge: 'NW', location: 'red-gate' },
   ],
+
+  labelPosition: { x: 0.31, y: 0.91 },
 
   specialRules: null,
 }
@@ -746,28 +765,25 @@ const C5 = {
   region: 'Erelhei-Cinlu',
 
   locations: [
-    site('erelhei-cinlu', 'Erelhei-Cinlu', 6, 2, 4, false, { x: 0.28, y: 0.35 }),
-    site('ath-qua', 'Ath-Qua', 4, 0, 3, true, { x: 0.72, y: 0.52 }),
-    tunnel('c5-t1', { x: 0.55, y: 0.12 }),
-    tunnel('c5-t2', { x: 0.25, y: 0.75 }),
-    tunnel('c5-t3', { x: 0.75, y: 0.85 }),
+    site('erelhei-cinlu', 'Erelhei-Cinlu', 6, 2, 4, false, { x: 0.36, y: 0.45 }),
+    site('ath-qua', 'Ath-Qua', 4, 0, 3, true, { x: 0.72, y: 0.53 }),
+    tunnel('c5-t1', { x: 0.47, y: 0.17 }),
+    tunnel('c5-t2', { x: 0.39, y: 0.78 }),
   ],
 
   paths: [
     ['erelhei-cinlu', 'c5-t1'],
-    ['erelhei-cinlu', 'ath-qua'],
     ['erelhei-cinlu', 'c5-t2'],
-    ['ath-qua', 'c5-t3'],
   ],
 
   edgeConnections: [
     { edge: 'N', location: 'c5-t1' },
     { edge: 'NE', location: 'ath-qua' },
-    { edge: 'SE', location: 'c5-t3' },
+    { edge: 'SE', location: 'ath-qua' },
     { edge: 'S', location: 'c5-t2' },
-    { edge: 'SW', location: 'c5-t2' },
-    { edge: 'NW', location: 'erelhei-cinlu' },
   ],
+
+  labelPosition: { x: 0.31, y: 0.92 },
 
   specialRules: null,
 }
@@ -775,32 +791,36 @@ const C5 = {
 const C6 = {
   id: 'C6',
   category: 'C',
-  region: "Zi'Xzolca",
+  region: 'Zi\'Xzolca',
 
   locations: [
-    site('zixzolca', "Zi'Xzolca", 2, 0, 2, true, { x: 0.7, y: 0.22 }),
-    site('black-gate', 'Black Gate', 2, 2, 4, false, { x: 0.3, y: 0.72 }),
-    tunnel('c6-t1', { x: 0.5, y: 0.45 }),
-    tunnel('c6-t2', { x: 0.18, y: 0.32 }),
-    tunnel('c6-t3', { x: 0.78, y: 0.75 }),
+    site('zixzolca', 'Zi\'Xzolca', 2, 0, 2, true, { x: 0.74, y: 0.32 }),
+    site('black-gate', 'Black Gate', 2, 2, 4, false, { x: 0.30, y: 0.72 }),
+    tunnel('c6-t1', { x: 0.49, y: 0.51 }),
+    tunnel('c6-t2', { x: 0.26, y: 0.34 }),
+    tunnel('c6-t3', { x: 0.57, y: 0.82 }),
+    tunnel('c5-t4', { x: 0.51, y: 0.15 }),
+    tunnel('c5-t5', { x: 0.77, y: 0.59 }),
   ],
 
   paths: [
-    ['zixzolca', 'c6-t1'],
-    ['zixzolca', 'c6-t2'],
-    ['black-gate', 'c6-t1'],
+    ['c5-t4', 'c6-t1'],
+    ['c6-t1', 'c5-t5'],
+    ['c6-t1', 'zixzolca'],
+    ['c6-t1', 'black-gate'],
+    ['c6-t2', 'black-gate'],
     ['black-gate', 'c6-t3'],
-    ['c6-t2', 'c6-t1'],
   ],
 
   edgeConnections: [
-    { edge: 'N', location: 'zixzolca' },
-    { edge: 'NE', location: 'zixzolca' },
-    { edge: 'SE', location: 'c6-t3' },
-    { edge: 'S', location: 'black-gate' },
+    { edge: 'N', location: 'c5-t4' },
+    { edge: 'SE', location: 'c5-t5' },
+    { edge: 'S', location: 'c6-t3' },
     { edge: 'SW', location: 'black-gate' },
     { edge: 'NW', location: 'c6-t2' },
   ],
+
+  labelPosition: { x: 0.29, y: 0.92 },
 
   specialRules: null,
 }
@@ -822,7 +842,6 @@ const C7 = {
   ],
 
   edgeConnections: [
-    { edge: 'N', location: 'spiderhome' },
     { edge: 'NE', location: 'spiderhome' },
     { edge: 'SE', location: 'thanatos-gate' },
     { edge: 'S', location: 'thanatos-gate' },
@@ -839,26 +858,33 @@ const C8 = {
   region: 'Enzithir',
 
   locations: [
-    site('enzithir', 'Enzithir', 2, 1, 3, false, { x: 0.5, y: 0.15 }),
-    site('xelathir', 'Xelathir', 2, 1, 3, false, { x: 0.8, y: 0.58 }),
+    site('enzithir', 'Enzithir', 2, 1, 3, false, { x: 0.50, y: 0.15 }),
+    site('xelathir', 'Xelathir', 2, 1, 3, false, { x: 0.81, y: 0.46 }),
     site('venathir', 'Venathir', 2, 1, 3, false, { x: 0.28, y: 0.75 }),
-    tunnel('c8-center', { x: 0.5, y: 0.48 }),
+    tunnel('c8-center', { x: 0.50, y: 0.48 }),
+    tunnel('c8-ne', { x: 0.71, y: 0.24 }),
+    tunnel('c8-nw', { x: 0.27, y: 0.33 }),
+    tunnel('c8-s', { x: 0.54, y: 0.78 }),
   ],
 
   paths: [
     ['enzithir', 'c8-center'],
     ['xelathir', 'c8-center'],
     ['venathir', 'c8-center'],
+    ['c8-ne', 'xelathir'],
+    ['enzithir', 'c8-nw'],
+    ['venathir', 'c8-s'],
   ],
 
   edgeConnections: [
-    { edge: 'N', location: 'enzithir' },
-    { edge: 'NE', location: 'enzithir' },
-    { edge: 'SE', location: 'xelathir' },
-    { edge: 'S', location: 'venathir' },
+    { edge: 'NE', location: 'c8-ne' },
+    { edge: 'SE', location: 'c8-center' },
+    { edge: 'S', location: 'c8-s' },
     { edge: 'SW', location: 'venathir' },
-    { edge: 'NW', location: 'enzithir' },
+    { edge: 'NW', location: 'c8-nw' },
   ],
+
+  labelPosition: { x: 0.30, y: 0.93 },
 
   specialRules: null,
 }
@@ -873,26 +899,27 @@ const X1 = {
   region: 'The Barrens',
 
   locations: [
-    site('the-barrens', 'The Barrens', 5, 0, 3, false, { x: 0.5, y: 0.15 }),
-    site('heaving-hills', 'Heaving Hills', 3, 2, 3, false, { x: 0.78, y: 0.52 }),
-    site('rotting-plain', 'Rotting Plain', 3, 2, 3, false, { x: 0.22, y: 0.52 }),
-    tunnel('x1-t1', { x: 0.5, y: 0.85 }),
+    site('the-barrens', 'The Barrens', 5, 0, 3, false, { x: 0.51, y: 0.27 }),
+    site('heaving-hills', 'Heaving Hills', 3, 2, 3, false, { x: 0.72, y: 0.64 }),
+    site('rotting-plain', 'Rotting Plain', 3, 2, 3, false, { x: 0.31, y: 0.62 }),
+    tunnel('x1-t1', { x: 0.50, y: 0.85 }),
+    tunnel('x1-ne', { x: 0.76, y: 0.34 }),
+    tunnel('x1-nw', { x: 0.26, y: 0.34 }),
   ],
 
   paths: [
-    ['the-barrens', 'heaving-hills'],
-    ['the-barrens', 'rotting-plain'],
     ['heaving-hills', 'x1-t1'],
     ['rotting-plain', 'x1-t1'],
+    ['rotting-plain', 'x1-nw'],
+    ['heaving-hills', 'x1-ne'],
   ],
 
   edgeConnections: [
-    { edge: 'N', location: 'the-barrens' },
-    { edge: 'NE', location: 'heaving-hills' },
+    { edge: 'NE', location: 'x1-ne' },
     { edge: 'SE', location: 'heaving-hills' },
     { edge: 'S', location: 'x1-t1' },
     { edge: 'SW', location: 'rotting-plain' },
-    { edge: 'NW', location: 'rotting-plain' },
+    { edge: 'NW', location: 'x1-nw' },
   ],
 
   specialRules: null,
@@ -904,24 +931,30 @@ const X2 = {
   region: 'Indifference',
 
   locations: [
-    site('indifference', 'Indifference', 6, 0, 4, false, { x: 0.6, y: 0.5 }),
-    tunnel('x2-t1', { x: 0.15, y: 0.25 }),
-    tunnel('x2-t2', { x: 0.15, y: 0.75 }),
+    site('indifference', 'Indifference', 6, 0, 4, false, { x: 0.51, y: 0.47 }),
+    tunnel('x2-nw', { x: 0.33, y: 0.20 }),
+    tunnel('x2-sw', { x: 0.22, y: 0.59 }),
+    tunnel('x2-s', { x: 0.50, y: 0.82 }),
+    tunnel('x2-se', { x: 0.78, y: 0.62 }),
+    tunnel('x2-ne', { x: 0.69, y: 0.21 }),
   ],
 
   paths: [
-    ['indifference', 'x2-t1'],
-    ['indifference', 'x2-t2'],
+    ['x2-nw', 'x2-sw'],
+    ['x2-sw', 'x2-s'],
+    ['x2-s', 'x2-se'],
+    ['x2-se', 'x2-ne'],
   ],
 
   edgeConnections: [
-    { edge: 'N', location: 'x2-t1' },
-    { edge: 'NE', location: 'indifference' },
-    { edge: 'SE', location: 'indifference' },
-    { edge: 'S', location: 'x2-t2' },
-    { edge: 'SW', location: 'x2-t2' },
-    { edge: 'NW', location: 'x2-t1' },
+    { edge: 'NE', location: 'x2-ne' },
+    { edge: 'SE', location: 'x2-se' },
+    { edge: 'S', location: 'x2-s' },
+    { edge: 'SW', location: 'x2-sw' },
+    { edge: 'NW', location: 'x2-nw' },
   ],
+
+  labelPosition: { x: 0.30, y: 0.93 },
 
   specialRules: null,
 }
@@ -932,19 +965,17 @@ const X3 = {
   region: 'Dark Tunnels',
 
   locations: [
-    tunnel('x3-t1', { x: 0.5, y: 0.25 }),
-    tunnel('x3-t2', { x: 0.5, y: 0.75 }),
+    tunnel('x3-t1', { x: 0.63, y: 0.30 }),
+    tunnel('x3-t2', { x: 0.38, y: 0.65 }),
   ],
 
   paths: [
-    ['x3-t1', 'x3-t2'],
   ],
 
   edgeConnections: [
-    { edge: 'N', location: 'x3-t1' },
     { edge: 'NE', location: 'x3-t1' },
     { edge: 'SE', location: 'x3-t2' },
-    { edge: 'S', location: 'x3-t2' },
+    { edge: 'S', location: 'x3-t1' },
     { edge: 'SW', location: 'x3-t2' },
     { edge: 'NW', location: 'x3-t1' },
   ],
@@ -958,25 +989,23 @@ const X4 = {
   region: 'Fountain of Screams',
 
   locations: [
-    site('fountain-of-screams', 'Fountain of Screams', 4, 0, 5, false, { x: 0.5, y: 0.28 }),
-    tunnel('x4-t1', { x: 0.28, y: 0.72 }),
-    tunnel('x4-t2', { x: 0.72, y: 0.72 }),
+    site('fountain-of-screams', 'Fountain of Screams', 4, 0, 5, false, { x: 0.50, y: 0.28 }),
+    tunnel('x4-t1', { x: 0.28, y: 0.50 }),
+    tunnel('x4-t2', { x: 0.73, y: 0.50 }),
   ],
 
   paths: [
-    ['fountain-of-screams', 'x4-t1'],
-    ['fountain-of-screams', 'x4-t2'],
-    ['x4-t1', 'x4-t2'],
   ],
 
   edgeConnections: [
-    { edge: 'N', location: 'fountain-of-screams' },
-    { edge: 'NE', location: 'fountain-of-screams' },
+    { edge: 'NE', location: 'x4-t2' },
     { edge: 'SE', location: 'x4-t2' },
-    { edge: 'S', location: 'x4-t1' },
+    { edge: 'S', location: 'fountain-of-screams' },
     { edge: 'SW', location: 'x4-t1' },
-    { edge: 'NW', location: 'fountain-of-screams' },
+    { edge: 'NW', location: 'x4-t1' },
   ],
+
+  labelPosition: { x: 0.31, y: 0.92 },
 
   specialRules: null,
 }
