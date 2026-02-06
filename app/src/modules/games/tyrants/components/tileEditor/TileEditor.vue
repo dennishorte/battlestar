@@ -366,8 +366,10 @@ export default {
         const oldShort = this.workingTile.locations[index].short
         if (oldShort !== updatedLoc.short) {
           this.updateReferences(oldShort, updatedLoc.short)
+          this.editorState.selectedLocation = updatedLoc.short
         }
-        this.workingTile.locations[index] = updatedLoc
+        // Use splice for Vue reactivity
+        this.workingTile.locations.splice(index, 1, updatedLoc)
       }
     },
 
