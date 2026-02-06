@@ -17,12 +17,25 @@
         class="path-connector"
       />
 
+      <!-- Edge connection lines from location to edge -->
+      <line
+        v-for="(edge, index) in edgeConnectorLines"
+        :key="'edge-conn-' + index"
+        :x1="edge.x1"
+        :y1="edge.y1"
+        :x2="edge.x2"
+        :y2="edge.y2"
+        class="edge-connector-line"
+      />
+
       <!-- Edge connection indicators -->
       <g v-for="(edge, index) in edgeIndicators" :key="'edge-' + index">
-        <circle
-          :cx="edge.x"
-          :cy="edge.y"
-          r="6"
+        <rect
+          :x="edge.x - 10"
+          :y="edge.y - 6"
+          width="20"
+          height="12"
+          rx="3"
           class="edge-indicator"
         />
         <text
@@ -79,12 +92,13 @@ export default {
   },
 
   computed: {
+    // Flat-top hex: width = 2 * size, height = sqrt(3) * size
     hexWidth() {
-      return this.hexSize * Math.sqrt(3)
+      return this.hexSize * 2
     },
 
     hexHeight() {
-      return this.hexSize * 2
+      return this.hexSize * Math.sqrt(3)
     },
 
     containerStyle() {
@@ -110,9 +124,10 @@ export default {
     },
 
     hexPoints() {
+      // Flat-top hex vertices (start from right, go counterclockwise)
       const points = []
       for (let i = 0; i < 6; i++) {
-        const angle = (Math.PI / 3) * i - Math.PI / 2
+        const angle = (Math.PI / 3) * i
         const x = this.hexSize * Math.cos(angle)
         const y = this.hexSize * Math.sin(angle)
         points.push(`${x},${y}`)
@@ -153,31 +168,65 @@ export default {
       }).filter(p => p !== null)
     },
 
+    // Edge midpoint positions for flat-top hex
+    edgePositions() {
+      const h = this.hexHeight / 2
+      const w = this.hexWidth / 2
+      return {
+        N: { x: 0, y: -h },
+        NE: { x: w * 0.75, y: -h * 0.5 },
+        SE: { x: w * 0.75, y: h * 0.5 },
+        S: { x: 0, y: h },
+        SW: { x: -w * 0.75, y: h * 0.5 },
+        NW: { x: -w * 0.75, y: -h * 0.5 },
+      }
+    },
+
     edgeIndicators() {
       if (!this.tile.edgeConnections) {
         return []
       }
 
-      // Edge positions for pointy-top hex (at the edge midpoints)
-      const edgePositions = {
-        N: { x: 0, y: -this.hexSize * 0.92 },
-        NE: { x: this.hexWidth * 0.42, y: -this.hexSize * 0.46 },
-        SE: { x: this.hexWidth * 0.42, y: this.hexSize * 0.46 },
-        S: { x: 0, y: this.hexSize * 0.92 },
-        SW: { x: -this.hexWidth * 0.42, y: this.hexSize * 0.46 },
-        NW: { x: -this.hexWidth * 0.42, y: -this.hexSize * 0.46 },
-      }
-
       return this.tile.edgeConnections.map(conn => {
-        const pos = edgePositions[conn.edge]
+        const pos = this.edgePositions[conn.edge]
         if (!pos) {
           return null
         }
         return {
           x: pos.x,
           y: pos.y,
-          label: conn.edge.charAt(0),
+          label: conn.edge,
           edge: conn.edge,
+        }
+      }).filter(e => e !== null)
+    },
+
+    // Lines connecting locations to their edge indicators
+    edgeConnectorLines() {
+      if (!this.tile.edgeConnections) {
+        return []
+      }
+
+      const locPositions = {}
+      for (const loc of this.tile.locations) {
+        const pos = loc.position || { x: 0.5, y: 0.5 }
+        locPositions[loc.short] = {
+          x: (pos.x - 0.5) * this.hexWidth,
+          y: (pos.y - 0.5) * this.hexHeight,
+        }
+      }
+
+      return this.tile.edgeConnections.map(conn => {
+        const locPos = locPositions[conn.location]
+        const edgePos = this.edgePositions[conn.edge]
+        if (!locPos || !edgePos) {
+          return null
+        }
+        return {
+          x1: locPos.x,
+          y1: locPos.y,
+          x2: edgePos.x,
+          y2: edgePos.y,
         }
       }).filter(e => e !== null)
     },
@@ -254,15 +303,22 @@ export default {
   pointer-events: none;
 }
 
+.edge-connector-line {
+  stroke: #5a4a3a;
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}
+
 .edge-indicator {
-  fill: #6b5344;
-  stroke: #8b6914;
+  fill: #4a3a2a;
+  stroke: #6b5344;
   stroke-width: 1;
 }
 
 .edge-label {
-  fill: #ddd;
-  font-size: 8px;
+  fill: #aaa;
+  font-size: 7px;
   font-weight: bold;
 }
 

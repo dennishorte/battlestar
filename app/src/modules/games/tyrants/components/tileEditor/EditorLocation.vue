@@ -8,9 +8,6 @@
   >
     <!-- Transparent overlay for interactions - visuals rendered by ViewerHexLocation underneath -->
     <div class="location-overlay" :class="visualClasses" />
-    <div class="drag-handle" v-if="tool === 'drag'" title="Drag to move">
-      <span>&#9673;</span>
-    </div>
   </div>
 </template>
 
@@ -55,12 +52,13 @@ export default {
   },
 
   computed: {
+    // Flat-top hex dimensions
     hexWidth() {
-      return this.hexSize * Math.sqrt(3)
+      return this.hexSize * 2
     },
 
     hexHeight() {
-      return this.hexSize * 2
+      return this.hexSize * Math.sqrt(3)
     },
 
     isSite() {
@@ -218,21 +216,5 @@ export default {
 
 .location-overlay.minor-site {
   border-radius: 4px;
-}
-
-.drag-handle {
-  position: absolute;
-  top: -12px;
-  right: -12px;
-  width: 20px;
-  height: 20px;
-  background: #4a90d9;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 14px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 </style>

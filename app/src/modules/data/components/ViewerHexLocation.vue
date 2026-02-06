@@ -97,8 +97,9 @@ export default {
     },
 
     locationStyle() {
-      const hexWidth = this.hexSize * Math.sqrt(3)
-      const hexHeight = this.hexSize * 2
+      // Flat-top hex dimensions
+      const hexWidth = this.hexSize * 2
+      const hexHeight = this.hexSize * Math.sqrt(3)
 
       const pos = this.loc.hexPosition || { x: 0.5, y: 0.5 }
 
