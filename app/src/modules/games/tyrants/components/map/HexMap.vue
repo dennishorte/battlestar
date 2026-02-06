@@ -71,14 +71,20 @@ export default {
       })
     },
 
+    // Flat-top hex dimensions
+    hexWidth() {
+      return this.hexSize * 2
+    },
+
+    hexHeight() {
+      return this.hexSize * Math.sqrt(3)
+    },
+
     // Calculate bounds from raw positions
     rawBounds() {
       if (this.rawHexPositions.length === 0) {
         return { minX: 0, maxX: 0, minY: 0, maxY: 0 }
       }
-
-      const hexWidth = this.hexSize * Math.sqrt(3)
-      const hexHeight = this.hexSize * 2
 
       let minX = Infinity
       let maxX = -Infinity
@@ -86,10 +92,10 @@ export default {
       let maxY = -Infinity
 
       for (const hex of this.rawHexPositions) {
-        minX = Math.min(minX, hex.pixelX - hexWidth / 2)
-        maxX = Math.max(maxX, hex.pixelX + hexWidth / 2)
-        minY = Math.min(minY, hex.pixelY - hexHeight / 2)
-        maxY = Math.max(maxY, hex.pixelY + hexHeight / 2)
+        minX = Math.min(minX, hex.pixelX - this.hexWidth / 2)
+        maxX = Math.max(maxX, hex.pixelX + this.hexWidth / 2)
+        minY = Math.min(minY, hex.pixelY - this.hexHeight / 2)
+        maxY = Math.max(maxY, hex.pixelY + this.hexHeight / 2)
       }
 
       return { minX, maxX, minY, maxY }
@@ -130,15 +136,13 @@ export default {
     // Build a map of location names to their pixel positions
     locationPixelPositions() {
       const positions = {}
-      const hexWidth = this.hexSize * Math.sqrt(3)
-      const hexHeight = this.hexSize * 2
 
       for (const hex of this.assembledHexes) {
         for (const loc of hex.locations) {
           const pos = loc.hexPosition || { x: 0.5, y: 0.5 }
           positions[loc.name()] = {
-            x: hex.pixelX + (pos.x - 0.5) * hexWidth,
-            y: hex.pixelY + (pos.y - 0.5) * hexHeight,
+            x: hex.pixelX + (pos.x - 0.5) * this.hexWidth,
+            y: hex.pixelY + (pos.y - 0.5) * this.hexHeight,
           }
         }
       }
@@ -279,10 +283,10 @@ export default {
   },
 
   methods: {
-    // Convert axial coordinates to pixel coordinates (pointy-top orientation)
+    // Convert axial coordinates to pixel coordinates (flat-top orientation)
     axialToPixel(q, r) {
-      const x = this.hexSize * (Math.sqrt(3) * q + Math.sqrt(3) / 2 * r)
-      const y = this.hexSize * (3 / 2 * r)
+      const x = this.hexSize * (3 / 2 * q)
+      const y = this.hexSize * (Math.sqrt(3) / 2 * q + Math.sqrt(3) * r)
       return { x, y }
     },
 
