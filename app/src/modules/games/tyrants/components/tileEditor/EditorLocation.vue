@@ -10,12 +10,20 @@
       <div class="loc-name" v-if="isSite">{{ displayName }}</div>
       <div class="troop-spaces">
         <div
+          v-for="n in neutralCount"
+          :key="'neutral-' + n"
+          class="troop-space neutral"
+        />
+        <div
           v-for="count in emptySpaces"
           :key="'empty-' + count"
           class="troop-space"
         />
       </div>
-      <div class="points" v-if="location.points > 0">{{ location.points }}</div>
+      <div class="control-marker" v-if="isMajorSite">
+        {{ location.control.influence }} / {{ location.control.points }}
+      </div>
+      <div class="points-badge" v-if="location.points > 0">{{ location.points }}</div>
     </div>
     <div class="drag-handle" v-if="tool === 'drag'" title="Drag to move">
       <span>&#9673;</span>
@@ -84,8 +92,14 @@ export default {
       return this.location.name || this.location.short
     },
 
+    neutralCount() {
+      return this.location.neutrals || 0
+    },
+
     emptySpaces() {
-      return this.location.size || 0
+      const total = this.location.size || 0
+      const neutrals = this.location.neutrals || 0
+      return Math.max(0, total - neutrals)
     },
 
     locationClasses() {
@@ -287,21 +301,35 @@ export default {
   width: 0.9em;
   border-radius: 50%;
   border: 1px solid black;
+  background-color: transparent;
 }
 
-.points {
-  position: absolute;
-  top: -8px;
-  left: -8px;
-  background-color: white;
-  border-radius: 50%;
-  border: 2px solid black;
+.troop-space.neutral {
+  background-color: #555;
+}
+
+.control-marker {
+  font-size: 0.55em;
   text-align: center;
-  font-size: 0.65em;
+  color: #333;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.points-badge {
+  position: absolute;
+  top: 0.2em;
+  left: 0.2em;
+  background-color: #d4a574;
+  border-radius: 50% 25%;
+  border: 1px solid #5c3317;
+  text-align: center;
+  font-size: 0.6em;
   font-weight: 600;
-  height: 1.6em;
-  width: 1.6em;
+  height: 1.5em;
+  width: 1.5em;
   line-height: 1.4em;
+  color: #333;
 }
 
 .drag-handle {

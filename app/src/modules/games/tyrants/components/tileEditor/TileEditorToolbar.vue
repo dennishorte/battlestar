@@ -1,51 +1,53 @@
 <template>
   <div class="tile-editor-toolbar">
-    <div class="tool-group">
-      <button
-        class="tool-btn"
-        :class="{ active: tool === 'select' }"
-        @click="$emit('selectTool', 'select')"
-        title="Select (click to select location)"
-      >
-        <span class="tool-icon">&#9654;</span>
-        <span class="tool-label">Select</span>
-      </button>
+    <div class="toolbar-row">
+      <div class="tool-group">
+        <button
+          class="tool-btn"
+          :class="{ active: tool === 'select' }"
+          @click="$emit('selectTool', 'select')"
+          title="Select (click to select location)"
+        >
+          <span class="tool-icon">&#9654;</span>
+          <span class="tool-label">Select</span>
+        </button>
 
-      <button
-        class="tool-btn"
-        :class="{ active: tool === 'drag' }"
-        @click="$emit('selectTool', 'drag')"
-        title="Drag (move locations)"
-      >
-        <span class="tool-icon">&#9995;</span>
-        <span class="tool-label">Drag</span>
-      </button>
+        <button
+          class="tool-btn"
+          :class="{ active: tool === 'drag' }"
+          @click="$emit('selectTool', 'drag')"
+          title="Drag (move locations)"
+        >
+          <span class="tool-icon">&#9995;</span>
+          <span class="tool-label">Drag</span>
+        </button>
 
-      <button
-        class="tool-btn"
-        :class="{ active: tool === 'connect-path' }"
-        @click="$emit('selectTool', 'connect-path')"
-        title="Connect Path (click two locations)"
-      >
-        <span class="tool-icon">&#8644;</span>
-        <span class="tool-label">Path</span>
-      </button>
-    </div>
+        <button
+          class="tool-btn"
+          :class="{ active: tool === 'connect-path' }"
+          @click="$emit('selectTool', 'connect-path')"
+          title="Connect Path (click two locations)"
+        >
+          <span class="tool-icon">&#8644;</span>
+          <span class="tool-label">Path</span>
+        </button>
+      </div>
 
-    <div class="tool-group">
-      <button
-        class="tool-btn add-btn"
-        @click="$emit('addLocation')"
-        title="Add new location"
-      >
-        <span class="tool-icon">+</span>
-        <span class="tool-label">Add Location</span>
-      </button>
+      <div class="tool-group">
+        <button
+          class="tool-btn add-btn"
+          @click="$emit('addLocation')"
+          title="Add new location"
+        >
+          <span class="tool-icon">+</span>
+          <span class="tool-label">Add</span>
+        </button>
+      </div>
     </div>
 
     <div class="tool-status" v-if="pathStart">
       <span class="status-text">
-        Click another location to create path from <strong>{{ pathStart }}</strong>
+        Click location to connect from <strong>{{ pathStart }}</strong>
       </span>
       <button class="cancel-btn" @click="$emit('selectTool', 'select')">Cancel</button>
     </div>
@@ -76,12 +78,18 @@ export default {
 <style scoped>
 .tile-editor-toolbar {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 0.5em;
-  align-items: center;
   padding: 0.5em;
   background: #252525;
   border-radius: 8px;
+  min-width: 280px;
+}
+
+.toolbar-row {
+  display: flex;
+  gap: 0.5em;
+  align-items: center;
 }
 
 .tool-group {
@@ -136,15 +144,16 @@ export default {
 }
 
 .tool-status {
-  flex: 1;
   display: flex;
   align-items: center;
   gap: 0.5em;
-  padding-left: 1em;
+  padding: 0.3em 0.5em;
+  background: #3a2525;
+  border-radius: 4px;
 }
 
 .status-text {
-  font-size: 0.85em;
+  font-size: 0.8em;
   color: #d94a4a;
 }
 

@@ -17,6 +17,23 @@
         class="path-connector"
       />
 
+      <!-- Edge connection indicators -->
+      <g v-for="(edge, index) in edgeIndicators" :key="'edge-' + index">
+        <circle
+          :cx="edge.x"
+          :cy="edge.y"
+          r="6"
+          class="edge-indicator"
+        />
+        <text
+          :x="edge.x"
+          :y="edge.y"
+          class="edge-label"
+          text-anchor="middle"
+          dominant-baseline="middle"
+        >{{ edge.label }}</text>
+      </g>
+
       <text
         class="hex-label"
         x="0"
@@ -135,6 +152,35 @@ export default {
         }
       }).filter(p => p !== null)
     },
+
+    edgeIndicators() {
+      if (!this.tile.edgeConnections) {
+        return []
+      }
+
+      // Edge positions for pointy-top hex (at the edge midpoints)
+      const edgePositions = {
+        N: { x: 0, y: -this.hexSize * 0.92 },
+        NE: { x: this.hexWidth * 0.42, y: -this.hexSize * 0.46 },
+        SE: { x: this.hexWidth * 0.42, y: this.hexSize * 0.46 },
+        S: { x: 0, y: this.hexSize * 0.92 },
+        SW: { x: -this.hexWidth * 0.42, y: this.hexSize * 0.46 },
+        NW: { x: -this.hexWidth * 0.42, y: -this.hexSize * 0.46 },
+      }
+
+      return this.tile.edgeConnections.map(conn => {
+        const pos = edgePositions[conn.edge]
+        if (!pos) {
+          return null
+        }
+        return {
+          x: pos.x,
+          y: pos.y,
+          label: conn.edge.charAt(0),
+          edge: conn.edge,
+        }
+      }).filter(e => e !== null)
+    },
   },
 
   methods: {
@@ -146,11 +192,12 @@ export default {
         short: loc.short,
         displayName: loc.name,
         size: loc.size,
+        neutrals: loc.neutrals || 0,
         points: loc.points,
         start: loc.start,
         hexPosition: loc.position,
-        control: loc.control,
-        totalControl: loc.totalControl,
+        control: loc.control || { influence: 0, points: 0 },
+        totalControl: loc.totalControl || { influence: 0, points: 0 },
 
         name() {
           return loc.short
@@ -168,7 +215,7 @@ export default {
           return []
         },
         getEmptySpaces() {
-          return loc.size
+          return loc.size - (loc.neutrals || 0)
         },
       }
     },
@@ -205,6 +252,18 @@ export default {
   stroke-width: 4;
   stroke-linecap: round;
   pointer-events: none;
+}
+
+.edge-indicator {
+  fill: #6b5344;
+  stroke: #8b6914;
+  stroke-width: 1;
+}
+
+.edge-label {
+  fill: #ddd;
+  font-size: 8px;
+  font-weight: bold;
 }
 
 .locations-layer {

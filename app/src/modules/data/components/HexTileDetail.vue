@@ -230,8 +230,8 @@ export default {
   background: #1a1a1a;
   border-radius: 8px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   min-width: 300px;
   min-height: 350px;
 }

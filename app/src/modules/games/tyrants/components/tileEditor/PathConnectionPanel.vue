@@ -5,7 +5,7 @@
     <div class="paths-list" v-if="paths.length > 0">
       <div
         v-for="(path, index) in paths"
-        :key="index"
+        :key="path[0] + '-' + path[1]"
         class="path-item"
       >
         <span class="path-endpoints">
