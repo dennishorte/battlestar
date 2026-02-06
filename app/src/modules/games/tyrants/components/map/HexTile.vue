@@ -20,8 +20,8 @@
 
       <text
         class="hex-label"
-        x="0"
-        y="0"
+        :x="labelX"
+        :y="labelY"
         text-anchor="middle"
         dominant-baseline="middle"
       >
@@ -106,6 +106,16 @@ export default {
         points.push(`${x},${y}`)
       }
       return points.join(' ')
+    },
+
+    labelX() {
+      const pos = this.hex.labelPosition || { x: 0.5, y: 0.5 }
+      return (pos.x - 0.5) * this.hexWidth
+    },
+
+    labelY() {
+      const pos = this.hex.labelPosition || { x: 0.5, y: 0.5 }
+      return (pos.y - 0.5) * this.hexHeight
     },
 
     pathLines() {

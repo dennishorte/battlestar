@@ -201,6 +201,9 @@ Tyrants.prototype.initializeDemonwebMap = function() {
       rotation: tile.rotation,
       paths: tile.paths || [],
       edgeConnections: hexTiles.getRotatedEdgeConnections(tile, tile.rotation),
+      labelPosition: rotateHexPosition(tile.labelPosition, tile.rotation),
+      rulesPosition: rotateHexPosition(tile.rulesPosition, tile.rotation),
+      specialRules: tile.specialRules,
     })),
   }
 

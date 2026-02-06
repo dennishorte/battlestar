@@ -395,6 +395,9 @@ const A9 = {
     { edge: 'NW', location: 'wells-of-darkness' },
   ],
 
+
+  labelPosition: { x: 0.31, y: 0.90 },
+
   specialRules: null,
 }
 
