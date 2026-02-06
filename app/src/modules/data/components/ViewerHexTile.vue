@@ -58,7 +58,11 @@
       </text>
 
       <!-- Special rules indicator -->
-      <g v-if="tile.specialRules" class="special-rules-indicator">
+      <g
+        v-if="tile.specialRules"
+        class="special-rules-indicator"
+        @click="toggleRulesPopup"
+      >
         <circle
           :cx="rulesIndicatorX"
           :cy="rulesIndicatorY"
@@ -75,6 +79,22 @@
         <title>{{ specialRulesText }}</title>
       </g>
     </svg>
+
+    <!-- Special rules popup -->
+    <div
+      v-if="showRulesPopup && tile.specialRules"
+      class="rules-popup"
+      :style="rulesPopupStyle"
+      @click.stop
+    >
+      <div class="rules-popup-header">
+        <span>Special Rules</span>
+        <button class="rules-popup-close" @click="showRulesPopup = false">&times;</button>
+      </div>
+      <div class="rules-popup-content">
+        <pre>{{ specialRulesText }}</pre>
+      </div>
+    </div>
 
     <div class="locations-layer" :style="locationsLayerStyle">
       <ViewerHexLocation
@@ -107,6 +127,12 @@ export default {
       type: Number,
       default: 100,
     },
+  },
+
+  data() {
+    return {
+      showRulesPopup: false,
+    }
   },
 
   computed: {
@@ -222,6 +248,18 @@ export default {
         return lines.join('\n')
       }
       return JSON.stringify(rules)
+    },
+
+    rulesPopupStyle() {
+      const pos = this.tile.rulesPosition || { x: 0.5, y: 0.65 }
+      const left = this.edgePadding + (pos.x * this.hexWidth)
+      const top = this.edgePadding + (pos.y * this.hexHeight) + 15
+      return {
+        position: 'absolute',
+        left: left + 'px',
+        top: top + 'px',
+        transform: 'translateX(-50%)',
+      }
     },
 
     locationsLayerStyle() {
@@ -367,6 +405,10 @@ export default {
         },
       }
     },
+
+    toggleRulesPopup() {
+      this.showRulesPopup = !this.showRulesPopup
+    },
   },
 }
 </script>
@@ -439,6 +481,55 @@ export default {
 
 .special-rules-indicator {
   pointer-events: auto;
-  cursor: help;
+  cursor: pointer;
+}
+
+.rules-popup {
+  background: #2a2a2a;
+  border: 1px solid #8b6914;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  min-width: 150px;
+  pointer-events: auto;
+}
+
+.rules-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4em 0.6em;
+  background: #3a3a3a;
+  border-bottom: 1px solid #444;
+  border-radius: 6px 6px 0 0;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: #d4a574;
+}
+
+.rules-popup-close {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1.2em;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.rules-popup-close:hover {
+  color: #fff;
+}
+
+.rules-popup-content {
+  padding: 0.6em;
+}
+
+.rules-popup-content pre {
+  margin: 0;
+  font-family: inherit;
+  font-size: 0.75em;
+  color: #ccc;
+  white-space: pre-wrap;
 }
 </style>
