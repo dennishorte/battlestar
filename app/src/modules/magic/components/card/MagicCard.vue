@@ -13,7 +13,7 @@
         @show-color-picker="showColorPicker"
       />
 
-      <slot name="after-face" />
+      <slot name="after-face" :face="card.face(index)" :face-index="index" />
     </div>
 
     <ColorPickerModal
