@@ -6,25 +6,8 @@
     @mousedown="startDrag"
     @click="handleClick"
   >
-    <div class="location-visual" :class="visualClasses">
-      <div class="loc-name" v-if="isSite">{{ displayName }}</div>
-      <div class="troop-spaces">
-        <div
-          v-for="n in neutralCount"
-          :key="'neutral-' + n"
-          class="troop-space neutral"
-        />
-        <div
-          v-for="count in emptySpaces"
-          :key="'empty-' + count"
-          class="troop-space"
-        />
-      </div>
-      <div class="control-marker" v-if="isMajorSite">
-        {{ location.control.influence }} / {{ location.control.points }}
-      </div>
-      <div class="points-badge" v-if="location.points > 0">{{ location.points }}</div>
-    </div>
+    <!-- Transparent overlay for interactions - visuals rendered by ViewerHexLocation underneath -->
+    <div class="location-overlay" :class="visualClasses" />
     <div class="drag-handle" v-if="tool === 'drag'" title="Drag to move">
       <span>&#9673;</span>
     </div>
@@ -86,20 +69,6 @@ export default {
 
     isMajorSite() {
       return this.isSite && this.location.control && this.location.control.influence > 0
-    },
-
-    displayName() {
-      return this.location.name || this.location.short
-    },
-
-    neutralCount() {
-      return this.location.neutrals || 0
-    },
-
-    emptySpaces() {
-      const total = this.location.size || 0
-      const neutrals = this.location.neutrals || 0
-      return Math.max(0, total - neutrals)
     },
 
     locationClasses() {
@@ -228,11 +197,11 @@ export default {
   cursor: crosshair;
 }
 
-.editor-location.selected .location-visual {
+.editor-location.selected .location-overlay {
   box-shadow: 0 0 8px 4px #4a90d9;
 }
 
-.editor-location.path-start .location-visual {
+.editor-location.path-start .location-overlay {
   box-shadow: 0 0 8px 4px #d94a4a;
 }
 
@@ -240,96 +209,15 @@ export default {
   opacity: 0.8;
 }
 
-.location-visual {
+.location-overlay {
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   border-radius: 50%;
   box-sizing: border-box;
 }
 
-.location-visual.site {
-  background-color: #d4a574;
-  border: 2px solid #8b4513;
-}
-
-.location-visual.major-site {
-  background-color: #c49a6c;
-  border: 3px solid #5c3317;
-  border-radius: 50%;
-}
-
-.location-visual.minor-site {
+.location-overlay.minor-site {
   border-radius: 4px;
-}
-
-.location-visual.tunnel {
-  background-color: #4a3a2a;
-  border: 1px solid #6b5344;
-  border-radius: 50%;
-}
-
-.location-visual.start-location {
-  border-color: gold;
-  border-width: 3px;
-}
-
-.loc-name {
-  font-size: 0.5em;
-  text-align: center;
-  line-height: 1.1em;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: #333;
-  font-weight: 500;
-}
-
-.troop-spaces {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 1px;
-}
-
-.troop-space {
-  height: 0.9em;
-  width: 0.9em;
-  border-radius: 50%;
-  border: 1px solid black;
-  background-color: transparent;
-}
-
-.troop-space.neutral {
-  background-color: #555;
-}
-
-.control-marker {
-  font-size: 0.55em;
-  text-align: center;
-  color: #333;
-  font-weight: 500;
-  margin-top: 2px;
-}
-
-.points-badge {
-  position: absolute;
-  top: 0.2em;
-  left: 0.2em;
-  background-color: #d4a574;
-  border-radius: 50% 25%;
-  border: 1px solid #5c3317;
-  text-align: center;
-  font-size: 0.6em;
-  font-weight: 600;
-  height: 1.5em;
-  width: 1.5em;
-  line-height: 1.4em;
-  color: #333;
 }
 
 .drag-handle {
