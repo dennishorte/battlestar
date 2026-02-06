@@ -353,7 +353,7 @@ export default {
 
 .editor-right {
   flex: 0 0 auto;
-  width: 280px;
+  width: 360px;
 }
 
 .tile-container {
