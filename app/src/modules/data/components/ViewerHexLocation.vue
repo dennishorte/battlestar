@@ -8,18 +8,14 @@
     <div class="tunnel-name" v-if="isTunnel">{{ loc.short }}</div>
 
     <div class="troop-spaces">
-      <!-- Neutral troops (grey circles) -->
-      <div
-        v-for="n in neutralCount"
-        :key="'neutral-' + n"
-        class="troop-space neutral"
-      />
-      <!-- Empty spaces -->
-      <div
-        v-for="count in emptySpaces"
-        :key="'empty-' + count"
-        class="troop-space"
-      />
+      <div v-for="(row, rowIndex) in troopRows" :key="'row-' + rowIndex" class="troop-row">
+        <div
+          v-for="(space, spaceIndex) in row"
+          :key="'space-' + rowIndex + '-' + spaceIndex"
+          class="troop-space"
+          :class="{ neutral: space.neutral }"
+        />
+      </div>
     </div>
 
     <!-- Control marker for major sites -->
@@ -72,6 +68,43 @@ export default {
       const total = this.loc.size || 0
       const neutrals = this.loc.neutrals || 0
       return Math.max(0, total - neutrals)
+    },
+
+    troopRows() {
+      const total = this.loc.size || 0
+      const neutrals = this.loc.neutrals || 0
+      const maxPerRow = 4
+
+      if (total === 0) {
+        return []
+      }
+
+      // Build flat list of spaces (neutrals first, then empty)
+      const spaces = []
+      for (let i = 0; i < neutrals; i++) {
+        spaces.push({ neutral: true })
+      }
+      for (let i = 0; i < total - neutrals; i++) {
+        spaces.push({ neutral: false })
+      }
+
+      // Calculate number of rows needed
+      const numRows = Math.ceil(total / maxPerRow)
+
+      // Distribute evenly across rows
+      const rows = []
+      let index = 0
+      for (let r = 0; r < numRows; r++) {
+        // Calculate how many spaces this row should have
+        const remaining = total - index
+        const remainingRows = numRows - r
+        const spacesThisRow = Math.ceil(remaining / remainingRows)
+
+        rows.push(spaces.slice(index, index + spacesThisRow))
+        index += spacesThisRow
+      }
+
+      return rows
     },
 
     locationClasses() {
@@ -201,9 +234,15 @@ export default {
 
 .troop-spaces {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.troop-row {
+  display: flex;
   flex-direction: row;
   justify-content: center;
-  flex-wrap: wrap;
   gap: 1px;
 }
 
