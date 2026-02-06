@@ -49,13 +49,31 @@
 
       <text
         class="hex-label"
-        x="0"
-        y="0"
+        :x="labelX"
+        :y="labelY"
         text-anchor="middle"
         dominant-baseline="middle"
       >
         {{ tile.id }}
       </text>
+
+      <!-- Special rules indicator -->
+      <g v-if="tile.specialRules" class="special-rules-indicator">
+        <circle
+          :cx="rulesIndicatorX"
+          :cy="rulesIndicatorY"
+          r="8"
+          class="rules-circle"
+        />
+        <text
+          :x="rulesIndicatorX"
+          :y="rulesIndicatorY"
+          text-anchor="middle"
+          dominant-baseline="middle"
+          class="rules-icon"
+        >?</text>
+        <title>{{ specialRulesText }}</title>
+      </g>
     </svg>
 
     <div class="locations-layer" :style="locationsLayerStyle">
@@ -140,6 +158,70 @@ export default {
         points.push(`${x},${y}`)
       }
       return points.join(' ')
+    },
+
+    labelX() {
+      const pos = this.tile.labelPosition || { x: 0.5, y: 0.5 }
+      return (pos.x - 0.5) * this.hexWidth
+    },
+
+    labelY() {
+      const pos = this.tile.labelPosition || { x: 0.5, y: 0.5 }
+      return (pos.y - 0.5) * this.hexHeight
+    },
+
+    rulesIndicatorX() {
+      const pos = this.tile.rulesPosition || { x: 0.5, y: 0.65 }
+      return (pos.x - 0.5) * this.hexWidth
+    },
+
+    rulesIndicatorY() {
+      const pos = this.tile.rulesPosition || { x: 0.5, y: 0.65 }
+      return (pos.y - 0.5) * this.hexHeight
+    },
+
+    specialRulesText() {
+      if (!this.tile.specialRules) {
+        return ''
+      }
+      const rules = this.tile.specialRules
+      if (rules.type === 'triad') {
+        const lines = ['Triad Scoring:']
+        if (rules.bonuses.presence) {
+          const b = rules.bonuses.presence
+          lines.push(`Presence: +${b.influence || 0} Influence`)
+        }
+        if (rules.bonuses.control) {
+          const b = rules.bonuses.control
+          const parts = []
+          if (b.influence) {
+            parts.push(`+${b.influence} Inf`)
+          }
+          if (b.power) {
+            parts.push(`+${b.power} Pow`)
+          }
+          if (b.vp) {
+            parts.push(`+${b.vp} VP`)
+          }
+          lines.push(`Control: ${parts.join(', ')}`)
+        }
+        if (rules.bonuses.totalControl) {
+          const b = rules.bonuses.totalControl
+          const parts = []
+          if (b.influence) {
+            parts.push(`+${b.influence} Inf`)
+          }
+          if (b.power) {
+            parts.push(`+${b.power} Pow`)
+          }
+          if (b.vp) {
+            parts.push(`+${b.vp} VP`)
+          }
+          lines.push(`Total Control: ${parts.join(', ')}`)
+        }
+        return lines.join('\n')
+      }
+      return JSON.stringify(rules)
     },
 
     locationsLayerStyle() {
@@ -341,5 +423,22 @@ export default {
 
 .locations-layer {
   z-index: 10;
+}
+
+.rules-circle {
+  fill: #6a4a2a;
+  stroke: #8b6914;
+  stroke-width: 1.5;
+}
+
+.rules-icon {
+  fill: #d4a574;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.special-rules-indicator {
+  pointer-events: auto;
+  cursor: help;
 }
 </style>

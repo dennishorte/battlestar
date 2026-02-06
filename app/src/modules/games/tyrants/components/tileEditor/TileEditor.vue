@@ -28,6 +28,26 @@
               @select="selectLocation"
               @updatePosition="updateLocationPosition"
             />
+
+            <!-- Draggable label position marker -->
+            <div
+              v-if="editorState.tool === 'drag'"
+              class="position-marker label-marker"
+              :style="labelMarkerStyle"
+              @mousedown="startLabelDrag"
+            >
+              ID
+            </div>
+
+            <!-- Draggable rules position marker -->
+            <div
+              v-if="editorState.tool === 'drag' && workingTile.specialRules"
+              class="position-marker rules-marker"
+              :style="rulesMarkerStyle"
+              @mousedown="startRulesDrag"
+            >
+              ?
+            </div>
           </div>
         </div>
       </div>
@@ -127,6 +147,11 @@ export default {
         pathStart: null,
       },
       showNewLocationForm: false,
+      draggingMarker: null,
+      markerDragStartX: 0,
+      markerDragStartY: 0,
+      markerStartPosX: 0,
+      markerStartPosY: 0,
     }
   },
 
@@ -165,6 +190,30 @@ export default {
       }
     },
 
+    labelMarkerStyle() {
+      const pos = this.workingTile.labelPosition || { x: 0.5, y: 0.5 }
+      const left = pos.x * this.hexWidth
+      const top = pos.y * this.hexHeight
+      return {
+        position: 'absolute',
+        left: (left - 12) + 'px',
+        top: (top - 10) + 'px',
+        pointerEvents: 'auto',
+      }
+    },
+
+    rulesMarkerStyle() {
+      const pos = this.workingTile.rulesPosition || { x: 0.5, y: 0.65 }
+      const left = pos.x * this.hexWidth
+      const top = pos.y * this.hexHeight
+      return {
+        position: 'absolute',
+        left: (left - 10) + 'px',
+        top: (top - 10) + 'px',
+        pointerEvents: 'auto',
+      }
+    },
+
     selectedLocationData() {
       if (this.showNewLocationForm) {
         return {
@@ -199,6 +248,8 @@ export default {
         category: tile.category,
         region: tile.region,
         specialRules: tile.specialRules ? JSON.parse(JSON.stringify(tile.specialRules)) : null,
+        labelPosition: tile.labelPosition ? { ...tile.labelPosition } : { x: 0.5, y: 0.5 },
+        rulesPosition: tile.rulesPosition ? { ...tile.rulesPosition } : { x: 0.5, y: 0.65 },
         locations: tile.locations.map(loc => ({
           short: loc.short,
           name: loc.name,
@@ -267,6 +318,47 @@ export default {
       }
     },
 
+    startLabelDrag(event) {
+      this.startMarkerDrag(event, 'label')
+    },
+
+    startRulesDrag(event) {
+      this.startMarkerDrag(event, 'rules')
+    },
+
+    startMarkerDrag(event, markerType) {
+      event.preventDefault()
+      this.draggingMarker = markerType
+      this.markerDragStartX = event.clientX
+      this.markerDragStartY = event.clientY
+
+      const posKey = markerType === 'label' ? 'labelPosition' : 'rulesPosition'
+      const defaultPos = markerType === 'label' ? { x: 0.5, y: 0.5 } : { x: 0.5, y: 0.65 }
+      const pos = this.workingTile[posKey] || defaultPos
+      this.markerStartPosX = pos.x
+      this.markerStartPosY = pos.y
+
+      document.addEventListener('mousemove', this.onMarkerDrag)
+      document.addEventListener('mouseup', this.stopMarkerDrag)
+    },
+
+    onMarkerDrag(event) {
+      const deltaX = (event.clientX - this.markerDragStartX) / this.hexWidth
+      const deltaY = (event.clientY - this.markerDragStartY) / this.hexHeight
+
+      const newX = Math.max(0, Math.min(1, this.markerStartPosX + deltaX))
+      const newY = Math.max(0, Math.min(1, this.markerStartPosY + deltaY))
+
+      const posKey = this.draggingMarker === 'label' ? 'labelPosition' : 'rulesPosition'
+      this.workingTile[posKey] = { x: newX, y: newY }
+    },
+
+    stopMarkerDrag() {
+      this.draggingMarker = null
+      document.removeEventListener('mousemove', this.onMarkerDrag)
+      document.removeEventListener('mouseup', this.stopMarkerDrag)
+    },
+
     updateLocation(updatedLoc) {
       const index = this.workingTile.locations.findIndex(l => l.short === this.editorState.selectedLocation)
       if (index !== -1) {
@@ -332,6 +424,11 @@ export default {
     cancelLocationForm() {
       this.showNewLocationForm = false
     },
+  },
+
+  beforeUnmount() {
+    document.removeEventListener('mousemove', this.onMarkerDrag)
+    document.removeEventListener('mouseup', this.stopMarkerDrag)
   },
 }
 </script>
@@ -401,5 +498,32 @@ export default {
   border: 1px solid #444;
   border-radius: 4px;
   color: #eee;
+}
+
+.position-marker {
+  width: 24px;
+  height: 20px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: move;
+  user-select: none;
+}
+
+.label-marker {
+  background: #444;
+  border: 2px solid #666;
+  color: #aaa;
+}
+
+.rules-marker {
+  background: #6a4a2a;
+  border: 2px solid #8b6914;
+  color: #d4a574;
+  width: 20px;
+  border-radius: 50%;
 }
 </style>

@@ -64,6 +64,18 @@ export default {
       lines.push('  ],')
       lines.push('')
 
+      // Only output labelPosition if not at default center
+      if (t.labelPosition && (t.labelPosition.x !== 0.5 || t.labelPosition.y !== 0.5)) {
+        lines.push(`  labelPosition: { x: ${t.labelPosition.x.toFixed(2)}, y: ${t.labelPosition.y.toFixed(2)} },`)
+        lines.push('')
+      }
+
+      // Only output rulesPosition if tile has special rules and not at default
+      if (t.specialRules && t.rulesPosition && (t.rulesPosition.x !== 0.5 || t.rulesPosition.y !== 0.65)) {
+        lines.push(`  rulesPosition: { x: ${t.rulesPosition.x.toFixed(2)}, y: ${t.rulesPosition.y.toFixed(2)} },`)
+        lines.push('')
+      }
+
       if (t.specialRules) {
         lines.push(`  specialRules: ${JSON.stringify(t.specialRules, null, 2).split('\n').map((l, i) => i === 0 ? l : '  ' + l).join('\n')},`)
       }
