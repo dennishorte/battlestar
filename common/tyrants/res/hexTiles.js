@@ -57,13 +57,13 @@ const A1 = {
   region: 'Araumycos',
 
   locations: [
-    majorSite('great-web', 'The Great Web', 6, 6, 8, false, { x: 0.5, y: 0.5 }, 1, 0),  // Araumycos control token
-    tunnel('a1-ring-n', { x: 0.5, y: 0.12 }),
-    tunnel('a1-ring-ne', { x: 0.82, y: 0.28 }),
-    tunnel('a1-ring-se', { x: 0.82, y: 0.72 }),
-    tunnel('a1-ring-s', { x: 0.5, y: 0.88 }),
-    tunnel('a1-ring-sw', { x: 0.18, y: 0.72 }),
-    tunnel('a1-ring-nw', { x: 0.18, y: 0.28 }),
+    majorSite('great-web', 'The Great Web', 6, 6, 8, false, { x: 0.50, y: 0.50 }, 1, 4),
+    tunnel('a1-ring-n', { x: 0.50, y: 0.17 }),
+    tunnel('a1-ring-ne', { x: 0.76, y: 0.33 }),
+    tunnel('a1-ring-se', { x: 0.76, y: 0.67 }),
+    tunnel('a1-ring-s', { x: 0.50, y: 0.83 }),
+    tunnel('a1-ring-sw', { x: 0.25, y: 0.67 }),
+    tunnel('a1-ring-nw', { x: 0.26, y: 0.33 }),
   ],
 
   paths: [
@@ -74,6 +74,11 @@ const A1 = {
     ['a1-ring-s', 'a1-ring-sw'],
     ['a1-ring-sw', 'a1-ring-nw'],
     ['a1-ring-nw', 'a1-ring-n'],
+    ['a1-ring-nw', 'great-web'],
+    ['a1-ring-sw', 'great-web'],
+    ['a1-ring-s', 'great-web'],
+    ['a1-ring-se', 'great-web'],
+    ['a1-ring-ne', 'great-web'],
   ],
 
   edgeConnections: [
