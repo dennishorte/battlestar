@@ -72,15 +72,16 @@ class AgricolaActionManager extends BaseActionManager {
 
     // Give all accumulated resources
     for (const [resource] of Object.entries(action.accumulates)) {
+      this.log.add({
+        template: '{player} takes {amount} {resource}',
+        args: { player, amount: actionState.accumulated, resource },
+      })
+
       if (resource === 'sheep' || resource === 'boar' || resource === 'cattle') {
         // Animals need placement
         const count = actionState.accumulated
         if (player.canPlaceAnimals(resource, count)) {
           player.addAnimals(resource, count)
-          this.log.add({
-            template: '{player} takes {amount} {resource}',
-            args: { player, amount: count, resource },
-          })
         }
         else {
           // Must convert to food or release
@@ -89,10 +90,6 @@ class AgricolaActionManager extends BaseActionManager {
       }
       else {
         player.addResource(resource, actionState.accumulated)
-        this.log.add({
-          template: '{player} takes {amount} {resource}',
-          args: { player, amount: actionState.accumulated, resource },
-        })
       }
     }
 
@@ -117,8 +114,8 @@ class AgricolaActionManager extends BaseActionManager {
 
     if (remaining > 0) {
       this.log.add({
-        template: '{player} cannot house all {animal}',
-        args: { player, animal: animalType },
+        template: '{player} cannot house {count} {animal}',
+        args: { player, count: remaining, animal: animalType },
       })
 
       // Ask player what to do with excess
@@ -131,8 +128,8 @@ class AgricolaActionManager extends BaseActionManager {
         if (selection[0] === 'Cook') {
           const food = player.cookAnimal(animalType, remaining)
           this.log.add({
-            template: '{player} cooks {animal} for {food} food',
-            args: { player, animal: animalType, food },
+            template: '{player} cooks {count} {animal} for {food} food',
+            args: { player, count: remaining, animal: animalType, food },
           })
         }
         else {
