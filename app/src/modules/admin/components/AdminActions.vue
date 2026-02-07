@@ -89,6 +89,16 @@ export default {
     },
   },
 
+  watch: {
+    gameLoaderPlayerNames(names) {
+      // Auto-map players to matching user names
+      this.gameLoaderPlayerMap = names.map(playerName => {
+        const matchingUser = this.users.find(u => u.name === playerName)
+        return matchingUser ? matchingUser.name : ''
+      })
+    },
+  },
+
   methods: {
     async updateScryfall() {
       this.status = 'waiting'
