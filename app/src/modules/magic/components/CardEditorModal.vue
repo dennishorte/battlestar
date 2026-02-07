@@ -15,6 +15,13 @@
             size="sm"
             @click="confirmDelete"
           >delete</BButton>
+          <BButton
+            v-if="showDelete && isScarred"
+            variant="outline-warning"
+            size="sm"
+            class="ms-2"
+            @click="clearScar"
+          >clear scar</BButton>
         </div>
         <BButton variant="secondary" @click="cancel()">cancel</BButton>
         <BButton
@@ -155,6 +162,31 @@ const hasUpdates = computed(() => {
   }
   return !util.dict.strictEquals(cardInEdit.value, originalCard.value)
 })
+
+const isScarred = computed(() => {
+  if (!props.card) {
+    return false
+  }
+  return typeof props.card.isScarred === 'function' && props.card.isScarred()
+})
+
+async function clearScar() {
+  if (!props.card) {
+    return
+  }
+
+  // Clone the card and clear the changes array
+  const cardToClear = props.card.clone()
+  cardToClear.changes = []
+
+  await store.dispatch('magic/cards/update', {
+    card: cardToClear,
+    comment: 'Cleared scar history',
+  })
+
+  // Close the modal
+  emit('update:modelValue', false)
+}
 </script>
 
 
