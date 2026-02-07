@@ -7,6 +7,9 @@
       <button @click="save" class="btn btn-danger">save</button>
     </div>
 
+    <div v-if="status === 'success'" class="alert alert-success">{{ message }}</div>
+    <div v-if="status === 'error'" class="alert alert-danger">{{ message }}</div>
+
     <textarea class="form-control" v-model="gameData" />
 
   </div>
@@ -21,6 +24,8 @@ export default {
     return {
       id: this.$route.params.id,
       gameData: '',
+      status: '',
+      message: '',
     }
   },
 
@@ -39,23 +44,35 @@ export default {
     },
 
     async save() {
-      const gameJson = JSON.parse(this.gameData)
+      this.status = ''
+      this.message = ''
 
-      const payload = {
-        gameId: gameJson._id,
-        responses: gameJson.responses,
+      try {
+        const gameJson = JSON.parse(this.gameData)
 
-        // Include these because Magic doesn't run on the backend when saving,
-        // so can't calculate these values.
-        waiting: gameJson.waiting,
-        gameOver: gameJson.gameOver,
-        gameOverData: gameJson.gameOverData,
+        const payload = {
+          gameId: gameJson._id,
+          responses: gameJson.responses,
+          chat: gameJson.chat,
 
-        overwrite: true,
+          // Include these because Magic doesn't run on the backend when saving,
+          // so can't calculate these values.
+          waiting: gameJson.waiting,
+          gameOver: gameJson.gameOver,
+          gameOverData: gameJson.gameOverData,
+
+          overwrite: true,
+        }
+
+        await this.$post('/api/game/save_full', payload)
+        this.status = 'success'
+        this.message = 'Game saved successfully'
       }
-
-      const response = await this.$post('/api/game/save_full', payload)
-      console.log(response)
+      catch (e) {
+        this.status = 'error'
+        this.message = e.response?.data?.message || e.message || 'Failed to save game'
+        console.error(e)
+      }
     },
   },
 

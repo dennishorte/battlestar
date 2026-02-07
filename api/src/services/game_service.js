@@ -161,7 +161,9 @@ Game.saveFull = async function(game, { branchId, overwrite, chat, responses, wai
     throw new GameKilledError('game_killed')
   }
 
-  game.log.setChat(chat)
+  if (chat !== undefined) {
+    game.log.setChat(chat)
+  }
   game.responses = responses
 
   // Magic doesn't run when saving because that would require loading the card
