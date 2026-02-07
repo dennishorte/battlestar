@@ -47,7 +47,10 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
 
   // The text as it was on the card before any edits took place.
   // If there have been no edits, this is the same as display text.
-  const originalText = computed(() => card.value.oldVersions(faceIndex, f.name)[0] || displayText.value)
+  const originalText = computed(() => {
+    const oldVersions = card.value.oldVersions(faceIndex, f.name)
+    return oldVersions.length > 0 ? oldVersions[0] : displayText.value
+  })
 
   // True if the text for this field has been edited.
   const scarred = computed(() => originalText.value !== displayText.value)
