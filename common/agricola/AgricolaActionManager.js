@@ -84,7 +84,7 @@ class AgricolaActionManager extends BaseActionManager {
           player.addAnimals(resource, count)
         }
         else {
-          // Must convert to food or release
+          // Must convert to food or release - use unified handler
           this.handleAnimalOverflow(player, resource, count)
         }
       }
@@ -103,41 +103,88 @@ class AgricolaActionManager extends BaseActionManager {
     return true
   }
 
-  handleAnimalOverflow(player, animalType, count) {
-    let remaining = count
-
-    // Try to place as many as possible
-    while (remaining > 0 && player.canPlaceAnimals(animalType, 1)) {
-      player.addAnimals(animalType, 1)
-      remaining--
+  /**
+   * Handle placement of animals when they don't all fit.
+   * For version 4+: Uses new modal with full placement control.
+   * For version 3 and earlier: Uses legacy per-animal-type Cook/Release choices.
+   * @param {Object} player - The player receiving animals
+   * @param {Object} animals - Map of animal type to count, e.g. { sheep: 3, boar: 1 }
+   */
+  handleAnimalPlacement(player, animals) {
+    // Version 4+: New unified modal flow
+    // Try to place as many as possible first
+    const overflow = {}
+    for (const [animalType, count] of Object.entries(animals)) {
+      let remaining = count
+      while (remaining > 0 && player.canPlaceAnimals(animalType, 1)) {
+        player.addAnimals(animalType, 1)
+        remaining--
+      }
+      if (remaining > 0) {
+        overflow[animalType] = remaining
+      }
     }
 
-    if (remaining > 0) {
+    // If everything fit, we're done
+    if (Object.keys(overflow).length === 0) {
+      return
+    }
+
+
+    // There's overflow - show placement modal
+    const locations = player.getAnimalPlacementLocationsWithAvailability()
+    const cookingRates = this.getCookingRates(player)
+
+    const choices = ['Place Animals']
+    if (player.hasCookingAbility()) {
+      choices.push('Cook', 'Release')
+    }
+    else {
+      choices.push('Release')
+    }
+
+    const result = this.choose(player, choices, {
+      type: 'animal-placement',
+      incoming: overflow,
+      locations,
+      cookingRates,
+    })
+
+    // Check response format - new modal returns object with action/placements
+    if (result && result.action === 'animal-placement' && result.placements) {
+      const applyResult = player.applyAnimalPlacements({
+        placements: result.placements,
+        overflow: result.overflow,
+        incoming: overflow,
+      })
+
+      if (applyResult.success) {
+        this.logAnimalPlacements(player, result, applyResult)
+      }
+      else {
+        this.log.add({
+          template: 'Error placing animals: {error}',
+          args: { error: applyResult.error },
+        })
+      }
+      return
+    }
+
+    // Fallback for simple Cook/Release response
+    const selection = Array.isArray(result) ? result : [result]
+
+    for (const [animalType, remaining] of Object.entries(overflow)) {
       this.log.add({
         template: '{player} cannot house {count} {animal}',
         args: { player, count: remaining, animal: animalType },
       })
 
-      // Ask player what to do with excess
-      if (player.hasCookingAbility()) {
-        const choices = ['Cook', 'Release']
-        const selection = this.choose(player, choices, {
-          title: `What to do with ${remaining} ${animalType}?`,
+      if (selection.includes('Cook') && player.hasCookingAbility()) {
+        const food = player.cookAnimal(animalType, remaining)
+        this.log.add({
+          template: '{player} cooks {count} {animal} for {food} food',
+          args: { player, count: remaining, animal: animalType, food },
         })
-
-        if (selection[0] === 'Cook') {
-          const food = player.cookAnimal(animalType, remaining)
-          this.log.add({
-            template: '{player} cooks {count} {animal} for {food} food',
-            args: { player, count: remaining, animal: animalType, food },
-          })
-        }
-        else {
-          this.log.add({
-            template: '{player} releases {count} {animal}',
-            args: { player, count: remaining, animal: animalType },
-          })
-        }
       }
       else {
         this.log.add({
@@ -146,6 +193,80 @@ class AgricolaActionManager extends BaseActionManager {
         })
       }
     }
+  }
+
+  /**
+   * Get cooking rates for the player's cooking improvement.
+   * @param {Object} player
+   * @returns {Object|null} { improvementName, rates: { sheep: n, boar: n, cattle: n } }
+   */
+  getCookingRates(player) {
+    const imp = player.getCookingImprovement()
+    if (!imp || !imp.abilities || !imp.abilities.cookingRates) {
+      return null
+    }
+    return {
+      improvementName: imp.name,
+      rates: imp.abilities.cookingRates,
+    }
+  }
+
+  /**
+   * Log the results of animal placement.
+   */
+  logAnimalPlacements(player, result, applyResult) {
+    // Log placements by location
+    const placementsByLoc = {}
+    for (const p of result.placements) {
+      if (p.count > 0) {
+        if (!placementsByLoc[p.locationId]) {
+          placementsByLoc[p.locationId] = []
+        }
+        placementsByLoc[p.locationId].push(`${p.count} ${p.animalType}`)
+      }
+    }
+
+    for (const [locId, placed] of Object.entries(placementsByLoc)) {
+      this.log.add({
+        template: '{player} places {animals} at {location}',
+        args: { player, animals: placed.join(', '), location: locId },
+      })
+    }
+
+    // Log cooking
+    if (result.overflow?.cook) {
+      for (const [animalType, count] of Object.entries(result.overflow.cook)) {
+        if (count > 0) {
+          this.log.add({
+            template: '{player} cooks {count} {animal}',
+            args: { player, count, animal: animalType },
+          })
+        }
+      }
+    }
+    if (applyResult.cooked) {
+      this.log.add({
+        template: '{player} gains {food} food from cooking',
+        args: { player, food: applyResult.cooked.food },
+      })
+    }
+
+    // Log releases
+    if (result.overflow?.release) {
+      for (const [animalType, count] of Object.entries(result.overflow.release)) {
+        if (count > 0) {
+          this.log.add({
+            template: '{player} releases {count} {animal}',
+            args: { player, count, animal: animalType },
+          })
+        }
+      }
+    }
+  }
+
+  // Entry point for animal overflow - redirects to unified handler
+  handleAnimalOverflow(player, animalType, count) {
+    this.handleAnimalPlacement(player, { [animalType]: count })
   }
 
   giveResources(player, resources) {

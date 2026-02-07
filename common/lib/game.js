@@ -1,3 +1,4 @@
+const log = require('./log.js')
 const seedrandom = require('seedrandom')
 const selector = require('./selector.js')
 const util = require('./util.js')
@@ -381,6 +382,7 @@ Game.prototype.run = function() {
       return result
     }
     else {
+      this.dumpLog()
       throw e
     }
   }
@@ -449,6 +451,17 @@ Game.prototype.youLose = function(player, reason) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Chat and Logging
+
+Game.prototype.dumpLog = function() {
+  const output = []
+  for (const entry of this.log.getLog()) {
+    if (entry.type === 'response-received') {
+      continue
+    }
+    output.push(log.toString(entry))
+  }
+  console.log(output.join('\n'))
+}
 
 Game.prototype.getResultMessage = function() {
   if (this.checkGameIsOver()) {

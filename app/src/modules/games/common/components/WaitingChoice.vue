@@ -1,12 +1,23 @@
 <template>
   <div class="waiting-choice">
-    <template v-if="isActionType">
+    <!-- Custom action handler (game-specific, e.g., animal-placement modal) -->
+    <template v-if="actionTypeHandler">
+      <div class="alert alert-info mt-3">
+        <div class="mb-2">{{ actionTypeHandler.message }}</div>
+        <button class="btn btn-primary" @click="actionTypeHandler.handler()">
+          {{ actionTypeHandler.buttonLabel }}
+        </button>
+      </div>
+    </template>
+    <!-- Generic action type (freeform input) -->
+    <template v-else-if="isActionType">
       <div class="alert alert-info mt-3">
         <div>This is a special action: {{ request.title }}.</div>
         <div>You cannot use this selector pane for it.</div>
         <div>There should be an alternate UI for performing this action.</div>
       </div>
     </template>
+    <!-- Regular selector -->
     <template v-else-if="request">
       <OptionSelector
         :selector="processedRequest"
@@ -65,6 +76,12 @@ export default {
     },
     isActionType() {
       return this.request && selector.getSelectorType(this.request) === 'action'
+    },
+    actionTypeHandler() {
+      if (this.ui.fn?.getActionTypeHandler && this.request) {
+        return this.ui.fn.getActionTypeHandler(this.request)
+      }
+      return null
     },
   },
 

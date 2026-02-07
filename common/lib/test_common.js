@@ -1,5 +1,4 @@
 const { GameOverEvent } = require('./game.js')
-const log = require('./log.js')
 const util = require('./util.js')
 
 const TestCommon = {}
@@ -82,14 +81,7 @@ TestCommon.deepLog = function(obj) {
 }
 
 TestCommon.dumpLog = function(game) {
-  const output = []
-  for (const entry of game.log.getLog()) {
-    if (entry.type === 'response-received') {
-      continue
-    }
-    output.push(log.toString(entry))
-  }
-  console.log(output.join('\n'))
+  game.dumpLog()
 }
 
 function _dumpZonesRecursive(root, indent=0) {

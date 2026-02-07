@@ -39,6 +39,7 @@
 
     <GameOverviewModal />
     <ActionSpaceModal />
+    <AnimalPlacementModal />
     <CardViewerModal />
     <ScoreBreakdownModal />
     <DebugModal />
@@ -84,6 +85,7 @@ import ScoreTable from './ScoreTable.vue'
 
 // Modals
 import ActionSpaceModal from './ActionSpaceModal.vue'
+import AnimalPlacementModal from './AnimalPlacementModal.vue'
 import CardViewerModal from './CardViewerModal.vue'
 import GameOverviewModal from './GameOverviewModal.vue'
 import ScoreBreakdownModal from './ScoreBreakdownModal.vue'
@@ -111,6 +113,7 @@ export default {
     WaitingPanel,
 
     ActionSpaceModal,
+    AnimalPlacementModal,
     CardViewerModal,
     GameOverviewModal,
     ScoreBreakdownModal,
@@ -129,6 +132,7 @@ export default {
           selectorOptionComponent: this.selectorOptionComponent,
           confirmFencing: this.confirmFencing,
           cancelFencing: this.cancelFencing,
+          getActionTypeHandler: this.getActionTypeHandler,
         },
         modals: {
           actionSpace: {
@@ -311,6 +315,17 @@ export default {
   methods: {
     // Subtitles are now provided by the game engine directly
     insertSelectorSubtitles: function() {},
+
+    getActionTypeHandler(request) {
+      if (request.type === 'animal-placement') {
+        return {
+          message: 'Place animals in your farmyard.',
+          buttonLabel: 'Open Animal Placement',
+          handler: () => this.bus.emit('open-animal-placement-modal'),
+        }
+      }
+      return null
+    },
 
     openRules() {
       window.open("https://lookout-spiele.de/upload/en_agricola2016.html_Rules_Agricola_EN_2016.pdf")

@@ -1034,6 +1034,94 @@ class AgricolaPlayer extends BasePlayer {
     return capacity
   }
 
+  /**
+   * Get all locations where animals can be placed, with capacity info.
+   * Used by the animal placement modal.
+   * @returns {Array} Array of location objects with placement info
+   */
+  getAnimalPlacementLocations() {
+    const locations = []
+
+    // House (pet slot)
+    const houseCapacity = this.applyHouseAnimalCapacityModifiers(1)
+    locations.push({
+      id: 'house',
+      type: 'house',
+      name: 'House',
+      currentAnimalType: this.pet,
+      currentCount: this.pet ? 1 : 0,
+      maxCapacity: houseCapacity,
+    })
+
+    // Pastures
+    for (const pasture of this.farmyard.pastures) {
+      const hasStable = pasture.spaces.some(s => {
+        const space = this.getSpace(s.row, s.col)
+        return space && space.hasStable
+      })
+
+      locations.push({
+        id: `pasture-${pasture.id}`,
+        type: 'pasture',
+        name: `Pasture (${pasture.spaces.length} space${pasture.spaces.length > 1 ? 's' : ''})`,
+        spaces: pasture.spaces,
+        hasStable,
+        currentAnimalType: pasture.animalType,
+        currentCount: pasture.animalCount,
+        maxCapacity: this.getPastureCapacity(pasture),
+      })
+    }
+
+    // Unfenced stables
+    for (const stable of this.getStableSpaces()) {
+      if (!this.getPastureAtSpace(stable.row, stable.col)) {
+        const space = this.getSpace(stable.row, stable.col)
+        locations.push({
+          id: `stable-${stable.row}-${stable.col}`,
+          type: 'unfenced-stable',
+          name: 'Unfenced Stable',
+          space: { row: stable.row, col: stable.col },
+          currentAnimalType: space.animal || null,
+          currentCount: space.animal ? 1 : 0,
+          maxCapacity: 1,
+        })
+      }
+    }
+
+    return locations
+  }
+
+  /**
+   * Calculate available capacity at each location for each animal type.
+   * A location can only hold one type - if it has animals, only that type can be added.
+   * @returns {Array} Locations with availableFor map added
+   */
+  getAnimalPlacementLocationsWithAvailability() {
+    const locations = this.getAnimalPlacementLocations()
+
+    for (const loc of locations) {
+      const available = loc.maxCapacity - loc.currentCount
+      loc.availableFor = {}
+
+      for (const animalType of res.animalTypes) {
+        if (loc.currentAnimalType === null) {
+          // Empty location - can place any type
+          loc.availableFor[animalType] = available
+        }
+        else if (loc.currentAnimalType === animalType) {
+          // Same type - can add more
+          loc.availableFor[animalType] = available
+        }
+        else {
+          // Different type - can't mix
+          loc.availableFor[animalType] = 0
+        }
+      }
+    }
+
+    return locations
+  }
+
   canPlaceAnimals(animalType, count) {
     const currentCount = this.getTotalAnimals(animalType)
     const capacity = this.getTotalAnimalCapacity(animalType)
@@ -1134,6 +1222,148 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     return remaining === 0
+  }
+
+  /**
+   * Validate and apply a placement plan from the animal placement modal.
+   * @param {Object} plan - The placement plan
+   * @param {Array} plan.placements - Array of { locationId, animalType, count }
+   * @param {Object} plan.overflow - { cook: { sheep: n, ... }, release: { sheep: n, ... } }
+   * @param {Object} plan.incoming - { sheep: n, boar: n, cattle: n } - animals to place
+   * @returns {Object} { success: boolean, error?: string, cooked?: { food: n } }
+   */
+  applyAnimalPlacements(plan) {
+    const { placements, overflow, incoming } = plan
+
+    // Build a map of location id -> location data for validation
+    const locations = this.getAnimalPlacementLocationsWithAvailability()
+    const locationMap = {}
+    for (const loc of locations) {
+      locationMap[loc.id] = loc
+    }
+
+    // Track what we're placing at each location
+    const placementsByLocation = {}
+    for (const p of placements) {
+      if (!placementsByLocation[p.locationId]) {
+        placementsByLocation[p.locationId] = {}
+      }
+      if (!placementsByLocation[p.locationId][p.animalType]) {
+        placementsByLocation[p.locationId][p.animalType] = 0
+      }
+      placementsByLocation[p.locationId][p.animalType] += p.count
+    }
+
+    // Validate each placement
+    for (const [locId, animalCounts] of Object.entries(placementsByLocation)) {
+      const loc = locationMap[locId]
+      if (!loc) {
+        return { success: false, error: `Unknown location: ${locId}` }
+      }
+
+      for (const [animalType, count] of Object.entries(animalCounts)) {
+        if (count > loc.availableFor[animalType]) {
+          return {
+            success: false,
+            error: `Cannot place ${count} ${animalType} at ${loc.name} (only ${loc.availableFor[animalType]} available)`,
+          }
+        }
+      }
+
+      // Check that we're not mixing types at a location
+      const types = Object.keys(animalCounts).filter(t => animalCounts[t] > 0)
+      if (types.length > 1) {
+        return { success: false, error: `Cannot mix animal types at ${loc.name}` }
+      }
+
+      // Check that we're not placing a different type than what's already there
+      const placingType = types[0]
+      if (placingType && loc.currentAnimalType && loc.currentAnimalType !== placingType) {
+        return {
+          success: false,
+          error: `${loc.name} already has ${loc.currentAnimalType}, cannot add ${placingType}`,
+        }
+      }
+    }
+
+    // Validate that all incoming animals are accounted for
+    const totalPlaced = { sheep: 0, boar: 0, cattle: 0 }
+    for (const p of placements) {
+      totalPlaced[p.animalType] = (totalPlaced[p.animalType] || 0) + p.count
+    }
+
+    const totalCooked = overflow?.cook || {}
+    const totalReleased = overflow?.release || {}
+
+    for (const animalType of res.animalTypes) {
+      const incomingCount = incoming[animalType] || 0
+      const placed = totalPlaced[animalType] || 0
+      const cooked = totalCooked[animalType] || 0
+      const released = totalReleased[animalType] || 0
+
+      if (placed + cooked + released !== incomingCount) {
+        return {
+          success: false,
+          error: `Must account for all ${incomingCount} ${animalType} (placed: ${placed}, cooked: ${cooked}, released: ${released})`,
+        }
+      }
+    }
+
+    // All validation passed - apply the placements
+    for (const p of placements) {
+      if (p.count <= 0) {
+        continue
+      }
+
+      const loc = locationMap[p.locationId]
+
+      if (loc.type === 'house') {
+        // Pet placement
+        this.pet = p.animalType
+      }
+      else if (loc.type === 'pasture') {
+        // Find the pasture and add animals
+        const pastureId = parseInt(p.locationId.replace('pasture-', ''))
+        const pasture = this.farmyard.pastures.find(pa => pa.id === pastureId)
+        if (pasture) {
+          if (!pasture.animalType) {
+            pasture.animalType = p.animalType
+            pasture.animalCount = p.count
+          }
+          else {
+            pasture.animalCount += p.count
+          }
+        }
+      }
+      else if (loc.type === 'unfenced-stable') {
+        // Find the stable and set its animal
+        const [, row, col] = p.locationId.split('-').map(Number)
+        const space = this.getSpace(row, col)
+        if (space) {
+          space.animal = p.animalType
+        }
+      }
+    }
+
+    // Apply cooking
+    let totalFood = 0
+    const cookingImp = this.getCookingImprovement()
+    if (cookingImp) {
+      for (const [animalType, count] of Object.entries(totalCooked)) {
+        if (count > 0) {
+          const food = res.calculateCookingFood(cookingImp, animalType, count)
+          this.food += food
+          totalFood += food
+        }
+      }
+    }
+
+    // Released animals just disappear (no action needed)
+
+    return {
+      success: true,
+      cooked: totalFood > 0 ? { food: totalFood } : null,
+    }
   }
 
   breedAnimals() {

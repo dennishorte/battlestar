@@ -132,6 +132,10 @@ export default {
     if (!this.lobby.options.cardSets) {
       this.lobby.options.cardSets = res.getSelectableCardSetIds()
     }
+    // Set version 4 for new games (enables animal placement modal)
+    if (!this.lobby.options.version) {
+      this.lobby.options.version = 4
+    }
     this.updateValid()
   },
 }
