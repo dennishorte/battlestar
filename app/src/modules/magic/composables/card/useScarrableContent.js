@@ -49,7 +49,11 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
   // If there have been no edits, this is the same as display text.
   const originalText = computed(() => {
     const oldVersions = card.value.oldVersions(faceIndex, f.name)
-    return oldVersions.length > 0 ? oldVersions[0] : displayText.value
+    if (oldVersions.length > 0) {
+      // Use nullish coalescing to handle null/undefined but preserve empty string
+      return oldVersions[0] ?? ''
+    }
+    return displayText.value
   })
 
   // True if the text for this field has been edited.
