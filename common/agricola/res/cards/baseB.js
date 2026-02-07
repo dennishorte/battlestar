@@ -481,7 +481,11 @@ const minorImprovements = [
     providesVegetableField: true,
     onPlay(game, player) {
       // Add a virtual field that can only grow vegetables
-      player.beanfield = { crop: null, cropCount: 0 }
+      player.addVirtualField({
+        cardId: 'beanfield',
+        label: 'Beanfield',
+        cropRestriction: 'vegetables',
+      })
       game.log.add({
         template: '{player} plays Beanfield, gaining a vegetable-only field',
         args: { player },

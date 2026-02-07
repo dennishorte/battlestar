@@ -56,20 +56,26 @@
         <FarmyardGrid :player="player" />
       </div>
 
-      <!-- Beanfield (virtual field from Beanfield card) -->
-      <div v-if="player.beanfield" class="beanfield-container">
-        <div class="beanfield-label">Beanfield</div>
+      <!-- Virtual Fields (from cards like Beanfield, Lettuce Patch, etc.) -->
+      <div v-if="player.virtualFields && player.virtualFields.length > 0" class="virtual-fields-container">
         <div
-          class="beanfield-cell"
-          :class="beanfieldClasses"
-          :title="beanfieldTooltip"
-          @click="handleBeanfieldClick"
+          v-for="field in player.virtualFields"
+          :key="field.id"
+          class="virtual-field-wrapper"
         >
-          <span class="beanfield-icon" v-if="player.beanfield.crop">🥕</span>
-          <span class="beanfield-empty" v-else>veg only</span>
-          <span class="beanfield-count" v-if="player.beanfield.cropCount > 0">
-            {{ player.beanfield.cropCount }}
-          </span>
+          <div class="virtual-field-label">{{ field.label }}</div>
+          <div
+            class="virtual-field-cell"
+            :class="getVirtualFieldClasses(field)"
+            :title="getVirtualFieldTooltip(field)"
+            @click="handleVirtualFieldClick(field)"
+          >
+            <span class="virtual-field-icon" v-if="field.crop">{{ getCropIcon(field.crop) }}</span>
+            <span class="virtual-field-empty" v-else>{{ getCropRestrictionLabel(field) }}</span>
+            <span class="virtual-field-count" v-if="field.cropCount > 0">
+              {{ field.cropCount }}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -287,42 +293,6 @@ export default {
       return this.scheduledItems.length > 0
     },
 
-    // Beanfield computed properties
-    canSowBeanfield() {
-      if (!this.isViewingPlayer || !this.ui.sowing?.active) {
-        return false
-      }
-      if (!this.player.beanfield) {
-        return false
-      }
-      // Can only sow if empty and player has vegetables
-      if (this.player.beanfield.crop && this.player.beanfield.cropCount > 0) {
-        return false
-      }
-      return this.ui.sowing?.canSowVeg
-    },
-
-    beanfieldClasses() {
-      const classes = ['field']
-      if (this.player.beanfield?.crop === 'vegetables') {
-        classes.push('field-vegetables')
-      }
-      if (this.canSowBeanfield) {
-        classes.push('sow-selectable')
-      }
-      return classes
-    },
-
-    beanfieldTooltip() {
-      if (!this.player.beanfield) {
-        return ''
-      }
-      if (this.player.beanfield.crop) {
-        return `Beanfield with ${this.player.beanfield.cropCount} vegetables`
-      }
-      return 'Empty beanfield (vegetables only)'
-    },
-
   },
 
   methods: {
@@ -344,14 +314,103 @@ export default {
       }
     },
 
-    handleBeanfieldClick() {
-      if (!this.canSowBeanfield) {
+    // Virtual field methods
+    canSowVirtualField(field) {
+      if (!this.isViewingPlayer || !this.ui.sowing?.active) {
+        return false
+      }
+      if (field.crop && field.cropCount > 0) {
+        return false  // Already sown
+      }
+      // Check if player can sow the allowed crop type
+      if (field.cropRestriction === 'vegetables') {
+        return this.ui.sowing?.canSowVeg
+      }
+      if (field.cropRestriction === 'grain') {
+        return this.ui.sowing?.canSowGrain
+      }
+      // No restriction - can sow either
+      return this.ui.sowing?.canSowGrain || this.ui.sowing?.canSowVeg
+    },
+
+    getVirtualFieldClasses(field) {
+      const classes = ['field']
+      if (field.crop === 'vegetables') {
+        classes.push('field-vegetables')
+      }
+      else if (field.crop === 'grain') {
+        classes.push('field-grain')
+      }
+      if (this.canSowVirtualField(field)) {
+        classes.push('sow-selectable')
+      }
+      return classes
+    },
+
+    getVirtualFieldTooltip(field) {
+      if (field.crop) {
+        return `${field.label} with ${field.cropCount} ${field.crop}`
+      }
+      const restriction = field.cropRestriction
+        ? `(${field.cropRestriction} only)`
+        : ''
+      return `Empty ${field.label} ${restriction}`.trim()
+    },
+
+    getCropIcon(crop) {
+      switch (crop) {
+        case 'grain': return '🌾'
+        case 'vegetables': return '🥕'
+        case 'wood': return '🪵'
+        default: return ''
+      }
+    },
+
+    getCropRestrictionLabel(field) {
+      if (!field.cropRestriction) {
+        return 'empty'
+      }
+      switch (field.cropRestriction) {
+        case 'vegetables': return 'veg only'
+        case 'grain': return 'grain only'
+        case 'wood': return 'wood only'
+        default: return field.cropRestriction
+      }
+    },
+
+    handleVirtualFieldClick(field) {
+      if (!this.canSowVirtualField(field)) {
         return
       }
-      // Beanfield can only grow vegetables, so sow directly
-      this.bus.emit('submit-action', {
-        actor: this.actor.name,
-        action: 'sow-beanfield',
+
+      const canSowGrain = this.ui.sowing?.canSowGrain && (!field.cropRestriction || field.cropRestriction === 'grain')
+      const canSowVeg = this.ui.sowing?.canSowVeg && (!field.cropRestriction || field.cropRestriction === 'vegetables')
+
+      // If only one option, sow directly
+      if (canSowVeg && !canSowGrain) {
+        this.bus.emit('submit-action', {
+          actor: this.actor.name,
+          action: 'sow-virtual-field',
+          fieldId: field.id,
+          cropType: 'vegetables',
+        })
+        return
+      }
+
+      if (canSowGrain && !canSowVeg) {
+        this.bus.emit('submit-action', {
+          actor: this.actor.name,
+          action: 'sow-virtual-field',
+          fieldId: field.id,
+          cropType: 'grain',
+        })
+        return
+      }
+
+      // Both options - show picker (for now, just sow veg as default)
+      // TODO: Show crop picker modal
+      this.bus.emit('show-virtual-field-crop-picker', {
+        fieldId: field.id,
       })
     },
   },
@@ -607,22 +666,30 @@ export default {
   color: #5d4037;
 }
 
-/* Beanfield Section */
-.beanfield-container {
+/* Virtual Fields Section */
+.virtual-fields-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .5em;
   margin-bottom: .5em;
 }
 
-.beanfield-label {
+.virtual-field-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.virtual-field-label {
   font-size: .7em;
   color: #228B22;
   font-weight: 600;
   margin-bottom: .15em;
 }
 
-.beanfield-cell {
+.virtual-field-cell {
   width: 44px;
   height: 44px;
   position: relative;
@@ -636,36 +703,40 @@ export default {
   background-color: #8B7355;
 }
 
-.beanfield-cell:hover {
+.virtual-field-cell:hover {
   filter: brightness(1.1);
 }
 
-.beanfield-cell.field-vegetables {
+.virtual-field-cell.field-vegetables {
   background-color: #228B22;
 }
 
-.beanfield-cell.sow-selectable {
+.virtual-field-cell.field-grain {
+  background-color: #DAA520;
+}
+
+.virtual-field-cell.sow-selectable {
   cursor: pointer;
   box-shadow: inset 0 0 0 2px rgba(34, 139, 34, 0.7);
 }
 
-.beanfield-cell.sow-selectable:hover {
+.virtual-field-cell.sow-selectable:hover {
   filter: brightness(1.2);
   box-shadow: inset 0 0 0 3px #228b22;
 }
 
-.beanfield-icon {
+.virtual-field-icon {
   font-size: 1.4em;
   line-height: 1;
 }
 
-.beanfield-empty {
+.virtual-field-empty {
   font-size: .6em;
   color: #ddd;
   font-style: italic;
 }
 
-.beanfield-count {
+.virtual-field-count {
   position: absolute;
   bottom: 2px;
   right: 3px;

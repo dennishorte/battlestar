@@ -1128,7 +1128,7 @@ describe('BaseB Cards', () => {
     })
 
     describe('Beanfield', () => {
-      test('initializes beanfield on play via Meeting Place', () => {
+      test('adds virtual field on play via Meeting Place', () => {
         const game = t.fixtureMinorImprovement(
           'beanfield',
           { cardSets: ['baseB'] },
@@ -1142,7 +1142,15 @@ describe('BaseB Cards', () => {
 
         t.testIsSecondPlayer(game, 'Choose an action')
         const dennis = t.player(game)
-        expect(dennis.beanfield).toEqual({ crop: null, cropCount: 0 })
+        expect(dennis.virtualFields).toHaveLength(1)
+        expect(dennis.virtualFields[0]).toMatchObject({
+          id: 'beanfield',
+          cardId: 'beanfield',
+          label: 'Beanfield',
+          cropRestriction: 'vegetables',
+          crop: null,
+          cropCount: 0,
+        })
 
         t.testBoard(game, {
           dennis: {

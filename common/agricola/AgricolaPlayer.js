@@ -108,9 +108,73 @@ class AgricolaPlayer extends BasePlayer {
     // Pet animal (one animal can live in the house)
     this.pet = null
 
-    // Beanfield virtual field (from Beanfield card) - vegetables only
-    // null = not active, { crop: null, cropCount: 0 } = active but empty
-    this.beanfield = null
+    // Virtual fields from cards (Beanfield, Lettuce Patch, etc.)
+    // Each entry: { id, cardId, label, cropRestriction, crop, cropCount }
+    // cropRestriction: null = any, 'grain', 'vegetables', 'wood'
+    this.virtualFields = []
+  }
+
+  // ---------------------------------------------------------------------------
+  // Virtual field management
+  // ---------------------------------------------------------------------------
+
+  addVirtualField(config) {
+    const field = {
+      id: config.id || config.cardId,
+      cardId: config.cardId,
+      label: config.label || config.cardId,
+      cropRestriction: config.cropRestriction || null,  // null = any crop
+      crop: null,
+      cropCount: 0,
+    }
+    this.virtualFields.push(field)
+    return field
+  }
+
+  getVirtualField(fieldId) {
+    return this.virtualFields.find(f => f.id === fieldId)
+  }
+
+  getEmptyVirtualFields() {
+    return this.virtualFields.filter(f => !f.crop || f.cropCount === 0)
+  }
+
+  getSownVirtualFields() {
+    return this.virtualFields.filter(f => f.crop && f.cropCount > 0)
+  }
+
+  canSowVirtualField(fieldId, cropType) {
+    const field = this.getVirtualField(fieldId)
+    if (!field) {
+      return false
+    }
+    if (field.crop && field.cropCount > 0) {
+      return false  // Already sown
+    }
+    if (field.cropRestriction && field.cropRestriction !== cropType) {
+      return false
+    }
+    if (this[cropType] < 1) {
+      return false
+    }
+    return true
+  }
+
+  sowVirtualField(fieldId, cropType) {
+    const field = this.getVirtualField(fieldId)
+    if (!field) {
+      return false
+    }
+    if (!this.canSowVirtualField(fieldId, cropType)) {
+      return false
+    }
+
+    this[cropType] -= 1
+    field.crop = cropType
+    field.cropCount = cropType === 'grain'
+      ? res.constants.sowingGrain
+      : res.constants.sowingVegetables
+    return true
   }
 
   getSpace(row, col) {
@@ -342,18 +406,18 @@ class AgricolaPlayer extends BasePlayer {
 
   getEmptyFields() {
     const fields = this.getFieldSpaces().filter(f => !f.crop || f.cropCount === 0)
-    // Include beanfield if active and empty
-    if (this.beanfield && (!this.beanfield.crop || this.beanfield.cropCount === 0)) {
-      fields.push({ isBeanfield: true, ...this.beanfield })
+    // Include empty virtual fields
+    for (const vf of this.getEmptyVirtualFields()) {
+      fields.push({ isVirtualField: true, virtualFieldId: vf.id, ...vf })
     }
     return fields
   }
 
   getSownFields() {
     const fields = this.getFieldSpaces().filter(f => f.crop && f.cropCount > 0)
-    // Include beanfield if active and sown
-    if (this.beanfield && this.beanfield.crop && this.beanfield.cropCount > 0) {
-      fields.push({ isBeanfield: true, ...this.beanfield })
+    // Include sown virtual fields
+    for (const vf of this.getSownVirtualFields()) {
+      fields.push({ isVirtualField: true, virtualFieldId: vf.id, ...vf })
     }
     return fields
   }
@@ -408,9 +472,11 @@ class AgricolaPlayer extends BasePlayer {
       return true
     }
 
-    // Check beanfield (vegetables only)
-    if (cropType === 'vegetables' && this.beanfield && (!this.beanfield.crop || this.beanfield.cropCount === 0)) {
-      return true
+    // Check virtual fields that accept this crop type
+    for (const vf of this.getEmptyVirtualFields()) {
+      if (!vf.cropRestriction || vf.cropRestriction === cropType) {
+        return true
+      }
     }
 
     return false
@@ -438,23 +504,6 @@ class AgricolaPlayer extends BasePlayer {
     return true
   }
 
-  sowBeanfield() {
-    // Beanfield can only grow vegetables
-    if (!this.beanfield || (this.beanfield.crop && this.beanfield.cropCount > 0)) {
-      return false
-    }
-
-    if (this.vegetables < 1) {
-      return false
-    }
-
-    // Take 1 vegetable from supply, place on beanfield with bonus
-    this.vegetables -= 1
-    this.beanfield.crop = 'vegetables'
-    this.beanfield.cropCount = res.constants.sowingVegetables
-    return true
-  }
-
   harvestFields() {
     const harvested = { grain: 0, vegetables: 0 }
 
@@ -470,12 +519,12 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
 
-    // Harvest beanfield if active and sown
-    if (this.beanfield && this.beanfield.crop && this.beanfield.cropCount > 0) {
-      harvested[this.beanfield.crop] += 1
-      this.beanfield.cropCount -= 1
-      if (this.beanfield.cropCount === 0) {
-        this.beanfield.crop = null
+    // Harvest virtual fields
+    for (const vf of this.getSownVirtualFields()) {
+      harvested[vf.crop] += 1
+      vf.cropCount -= 1
+      if (vf.cropCount === 0) {
+        vf.crop = null
       }
     }
 

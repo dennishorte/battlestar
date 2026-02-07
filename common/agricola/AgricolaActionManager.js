@@ -638,9 +638,9 @@ class AgricolaActionManager extends BaseActionManager {
 
     while (true) {
       const currentEmptyFields = player.getEmptyFields()
-      // Separate regular fields from beanfield for UI handling
-      const regularEmptyFields = currentEmptyFields.filter(f => !f.isBeanfield)
-      const hasBeanfieldEmpty = currentEmptyFields.some(f => f.isBeanfield)
+      // Separate regular fields from virtual fields for UI handling
+      const regularEmptyFields = currentEmptyFields.filter(f => !f.isVirtualField)
+      const emptyVirtualFields = player.getEmptyVirtualFields()
 
       if (currentEmptyFields.length === 0) {
         break
@@ -687,11 +687,11 @@ class AgricolaActionManager extends BaseActionManager {
         min: 1,
         max: 1,
         // Mark this as accepting action-based input for sowing
-        allowsAction: ['sow-field', 'sow-beanfield'],
-        validSpaces: regularEmptyFields,  // Only regular fields, beanfield is handled separately in UI
+        allowsAction: ['sow-field', 'sow-virtual-field'],
+        validSpaces: regularEmptyFields,  // Only regular fields, virtual fields are handled separately in UI
         canSowGrain,
         canSowVeg,
-        hasBeanfieldEmpty,
+        emptyVirtualFields,  // Virtual fields that can be sown
       }
 
       const result = this.game.requestInputSingle(selector)
@@ -725,22 +725,25 @@ class AgricolaActionManager extends BaseActionManager {
         continue
       }
 
-      // Handle beanfield sowing (from clicking the beanfield cell)
-      if (result.action === 'sow-beanfield') {
-        if (!hasBeanfieldEmpty) {
-          throw new Error('Beanfield is not available or already sown')
+      // Handle virtual field sowing (from clicking a virtual field cell)
+      if (result.action === 'sow-virtual-field') {
+        const { fieldId, cropType } = result
+        const virtualField = player.getVirtualField(fieldId)
+
+        if (!virtualField) {
+          throw new Error(`Virtual field not found: ${fieldId}`)
         }
-        if (!canSowVeg) {
-          throw new Error('No vegetables available to sow in beanfield')
+        if (!player.canSowVirtualField(fieldId, cropType)) {
+          throw new Error(`Cannot sow ${cropType} in ${virtualField.label}`)
         }
 
-        player.sowBeanfield()
+        player.sowVirtualField(fieldId, cropType)
         sowedAny = true
 
-        const amount = res.constants.sowingVegetables
+        const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
         this.log.add({
-          template: '{player} sows vegetables in Beanfield - {amount} total',
-          args: { player, amount },
+          template: '{player} sows {crop} in {label} - {amount} total',
+          args: { player, crop: cropType, label: virtualField.label, amount },
         })
         continue
       }
