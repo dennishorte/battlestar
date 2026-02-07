@@ -179,13 +179,13 @@ async function clearScar() {
   const cardToClear = props.card.clone()
   cardToClear.changes = []
 
+  // Close the modal first to avoid stale state issues
+  emit('update:modelValue', false)
+
   await store.dispatch('magic/cards/update', {
     card: cardToClear,
     comment: 'Cleared scar history',
   })
-
-  // Close the modal
-  emit('update:modelValue', false)
 }
 </script>
 
