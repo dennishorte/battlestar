@@ -291,7 +291,27 @@ export default {
 
       const scar = this.availableScars[index]
 
+      // Update the card and the scar on the server FIRST
+      // If this fails, we don't want to advance the game state
+      let comment = this.scarComment
+      if (!comment) {
+        comment = `Applied scar: ${scar.text}`
+      }
 
+      try {
+        await this.$store.dispatch('magic/cards/update', {
+          scar,
+          card: this.scarredCard,
+          comment,
+        })
+      }
+      catch (e) {
+        console.error('Failed to update card:', e)
+        alert('Failed to update card. Please try again.')
+        return
+      }
+
+      // Only advance the game state if the card update succeeded
       await this.$store.dispatch('game/submitAction', {
         actor: this.actor.name,
         title: 'Apply Scar',
@@ -299,18 +319,6 @@ export default {
           scarId: scar.id,
           cardId: this.scarredCard.id,
         }],
-      })
-
-      // Update the card and the scar on the server
-      let comment = this.scarComment
-      if (!comment) {
-        comment = `Applied scar: ${scar.text}`
-      }
-
-      await this.$store.dispatch('magic/cards/update', {
-        scar,
-        card: this.scarredCard,
-        comment: this.scarComment,
       })
 
       this.scarredCard = null

@@ -89,14 +89,34 @@ export const update = async (req, res) => {
 
       const scar = req.body.scar
       const cube = await db.magic.cube.findById(req.body.cardData.cubeId)
+
+      if (!cube) {
+        return res.status(404).json({
+          status: 'error',
+          message: 'Cube not found',
+        })
+      }
+
+      if (!cube.scarlist) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Cube has no scarlist',
+        })
+      }
+
       const original = cube.scarlist.find(x => x.id === scar.id)
 
-      if (original) {
-        original.appliedTo = req.body.cardId
-        original.appliedBy = req.user._id
-        original.appliedAt = new Date()
-        await db.magic.cube.updateScarlist(cube)
+      if (!original) {
+        return res.status(404).json({
+          status: 'error',
+          message: 'Scar not found in cube scarlist',
+        })
       }
+
+      original.appliedTo = req.body.cardId
+      original.appliedBy = req.user._id
+      original.appliedAt = new Date()
+      await db.magic.cube.updateScarlist(cube)
 
       if (!comment) {
         comment = 'Applied scar:\n' + scar.text

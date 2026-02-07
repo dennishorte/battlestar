@@ -21,12 +21,13 @@
 
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, inject, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { util } from 'battlestar-common'
 
 import CardEditor from './CardEditor.vue'
 
+const bus = inject('bus')
 
 const props = defineProps({
   card: {
@@ -103,6 +104,16 @@ watch([() => props.card, () => props.modelValue], ([card, visible]) => {
     originalCard.value = card.clone()
   }
 })
+
+// Emit event when card is edited (for external listeners like scar applicator)
+watch(cardInEdit, (updated) => {
+  if (updated && originalCard.value && bus) {
+    bus.emit('card-editor:updated', {
+      updated,
+      original: originalCard.value,
+    })
+  }
+}, { deep: true })
 
 const hasUpdates = computed(() => {
   if (!cardInEdit.value || !originalCard.value) {
