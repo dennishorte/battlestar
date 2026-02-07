@@ -194,6 +194,9 @@ Card.update = async function(cardId, cardData, user, comment=null) {
     // Store the updated field information on the card.
     const prev = await Card.findById(cardId)
     const diff = magic.util.card.diff.calculateCardChanges(cardData.data, prev.data)
+    if (!cardData.changes) {
+      cardData.changes = []
+    }
     cardData.changes.push({
       ...diff,
       date: new Date(),
