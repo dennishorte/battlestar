@@ -9,6 +9,7 @@ export default {
   state: () => ({
     game: null,
     gameReady: false,
+    loadError: null, // Stores error that occurred during game loading (dev mode only)
 
     // These two values are used by the save action and SavingOverlay to tell the user they are acting faster
     // than the server is responding, and need to wait a moment.
@@ -25,6 +26,7 @@ export default {
   mutations: {
     setGame: (state, value) => state.game = value,
     setGameReady: (state, value) => state.gameReady = value,
+    setLoadError: (state, value) => state.loadError = value,
     setSaveQueued: (state, value) => state.saveQueued = value,
     setSaving: (state, value) => state.saving = value,
   },
@@ -32,13 +34,33 @@ export default {
   actions: {
     async load({ commit }, { gameId, actor }) {
       commit('setGameReady', false)
+      commit('setLoadError', null)
       await nextTick()
 
       const response = await this.$post('/api/game/fetch', { gameId })
       const game = fromData(response.game, actor.name)
-      game.run()
-      commit('setGame', game)
-      commit('setGameReady', true)
+
+      try {
+        game.run()
+        commit('setGame', game)
+        commit('setGameReady', true)
+      }
+      catch (e) {
+        // In development mode, load the game up to the error point and show an error banner
+        if (import.meta.env.DEV) {
+          console.error('Game loading error:', e)
+          commit('setGame', game)
+          commit('setLoadError', {
+            message: e.message,
+            stack: e.stack,
+          })
+          commit('setGameReady', true)
+        }
+        else {
+          // In production, re-throw the error
+          throw e
+        }
+      }
     },
 
     async next(_, { actor }) {
