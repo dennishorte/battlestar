@@ -75,7 +75,7 @@
           <li>It's funny to make a really broken card, but later on, when someone is playing against that card, and they're having a fun game of magic, and then suddenly lose to their opponent's uber-bomb, it's less funny.</li>
           <li>The same scar applied to a one drop might be broken but applied to a six drop might be boring.</li>
           <li>You don't have to apply the scar exactly as written; play around with it.</li>
-          <li>Some good flavor and a little spice go a long way.</li>
+          <li>Some good flavor and a little spice 🌶️ go a long way.</li>
         </ul>
       </BAlert>
     </BModal>
