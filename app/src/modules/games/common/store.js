@@ -9,7 +9,7 @@ export default {
   state: () => ({
     game: null,
     gameReady: false,
-    loadError: null, // Stores error that occurred during game loading (dev mode only)
+    loadError: null, // Stores error that occurred during game loading
 
     // These two values are used by the save action and SavingOverlay to tell the user they are acting faster
     // than the server is responding, and need to wait a moment.
@@ -46,20 +46,14 @@ export default {
         commit('setGameReady', true)
       }
       catch (e) {
-        // In development mode, load the game up to the error point and show an error banner
-        if (import.meta.env.DEV) {
-          console.error('Game loading error:', e)
-          commit('setGame', game)
-          commit('setLoadError', {
-            message: e.message,
-            stack: e.stack,
-          })
-          commit('setGameReady', true)
-        }
-        else {
-          // In production, re-throw the error
-          throw e
-        }
+        // Load the game up to the error point and show an error banner
+        console.error('Game loading error:', e)
+        commit('setGame', game)
+        commit('setLoadError', {
+          message: e.message,
+          stack: e.stack,
+        })
+        commit('setGameReady', true)
       }
     },
 
