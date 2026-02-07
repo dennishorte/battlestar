@@ -1114,13 +1114,33 @@ Agricola.prototype.fieldPhase = function() {
   this.state.lastHarvestRound = this.state.round
 
   for (const player of this.players.all()) {
-    const harvested = player.harvestFields()
+    const result = player.harvestFields()
+    const harvested = result.harvested
 
-    if (harvested.grain > 0 || harvested.vegetables > 0) {
+    if (harvested.grain > 0 || harvested.vegetables > 0 || harvested.wood > 0) {
       this.log.add({
-        template: '{player} harvests {grain} grain and {veg} vegetables',
-        args: { player, grain: harvested.grain, veg: harvested.vegetables },
+        template: '{player} harvests {grain} grain, {veg} vegetables, and {wood} wood',
+        args: { player, grain: harvested.grain, veg: harvested.vegetables, wood: harvested.wood },
       })
+    }
+
+    // Process virtual field callbacks
+    for (const vfh of result.virtualFieldHarvests) {
+      // onHarvest callback (e.g., Artichoke Field gives food per harvest)
+      if (vfh.onHarvest) {
+        const card = this.cards.byId(vfh.cardId)
+        if (card && card.definition.onHarvest) {
+          card.definition.onHarvest(this, player, vfh.amount)
+        }
+      }
+
+      // onHarvestLast callback (e.g., Cherry Orchard gives vegetable)
+      if (vfh.isLast && vfh.onHarvestLast) {
+        const card = this.cards.byId(vfh.cardId)
+        if (card && card.definition.onHarvestLast) {
+          card.definition.onHarvestLast(this, player, vfh.crop)
+        }
+      }
     }
   }
 

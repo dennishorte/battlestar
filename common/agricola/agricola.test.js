@@ -461,9 +461,9 @@ describe('Agricola', () => {
       t.plowFields(dennis, [{ row: 0, col: 1 }])
       t.sowFields(dennis, [{ row: 0, col: 1, crop: 'grain', cropCount: 3 }])
 
-      const harvested = dennis.harvestFields()
+      const result = dennis.harvestFields()
 
-      expect(harvested.grain).toBe(1)
+      expect(result.harvested.grain).toBe(1)
       expect(dennis.grain).toBe(1)
       expect(dennis.getSpace(0, 1).cropCount).toBe(2)
     })

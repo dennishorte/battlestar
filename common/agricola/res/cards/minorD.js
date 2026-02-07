@@ -433,6 +433,17 @@ const minorImprovements = [
       { from: 'vegetables', to: 'food', rate: 2 },
     ],
     bakingConversion: { from: 'grain', to: 'food', rate: 2 },
+    onPlay(game, player) {
+      player.addVirtualField({
+        cardId: 'witches-dance-floor-d025',
+        label: "Witches' Floor",
+        cropRestriction: null,  // Can grow any crop
+      })
+      game.log.add({
+        template: "{player} plays Witches' Dance Floor, gaining a field and Fireplace abilities",
+        args: { player },
+      })
+    },
   },
   {
     id: 'carpenters-yard-d026',

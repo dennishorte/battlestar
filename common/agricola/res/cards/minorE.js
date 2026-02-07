@@ -1222,6 +1222,18 @@ const minorImprovements = [
     text: 'This card is a field on which you can only sow and harvest wood as you would grain. Each time you harvest the last wood from this card, you also get 1 vegetable.',
     isField: true,
     fieldCrop: 'wood',
+    onPlay(game, player) {
+      player.addVirtualField({
+        cardId: 'cherry-orchard-e068',
+        label: 'Cherry Orchard',
+        cropRestriction: 'wood',
+        onHarvestLast: true,
+      })
+      game.log.add({
+        template: '{player} plays Cherry Orchard, gaining a wood-only field',
+        args: { player },
+      })
+    },
     onHarvestLast(game, player) {
       player.addResource('vegetables', 1)
       game.log.add({
@@ -1241,6 +1253,18 @@ const minorImprovements = [
     text: 'This card is a field that can only grow vegetables. Each time you harvest the last vegetable from this card, you can plow 1 field.',
     isField: true,
     fieldCrop: 'vegetables',
+    onPlay(game, player) {
+      player.addVirtualField({
+        cardId: 'melon-patch-e069',
+        label: 'Melon Patch',
+        cropRestriction: 'vegetables',
+        onHarvestLast: true,
+      })
+      game.log.add({
+        template: '{player} plays Melon Patch, gaining a vegetable-only field',
+        args: { player },
+      })
+    },
     onHarvestLast(game, player) {
       game.actions.offerFreePlow(player, this)
     },
@@ -1255,6 +1279,18 @@ const minorImprovements = [
     prereqs: { occupations: 1 },
     text: 'This card is a field. Each time you remove the last grain or vegetable from this card, you can immediately sow vegetable or grain on this card, respectively.',
     isField: true,
+    onPlay(game, player) {
+      player.addVirtualField({
+        cardId: 'crop-rotation-field-e070',
+        label: 'Crop Rotation',
+        cropRestriction: null,  // Can grow any crop
+        onHarvestLast: true,
+      })
+      game.log.add({
+        template: '{player} plays Crop Rotation Field',
+        args: { player },
+      })
+    },
     onHarvestLast(game, player, cropType) {
       const nextCrop = cropType === 'grain' ? 'vegetables' : 'grain'
       game.actions.offerSowOnCard(player, this, nextCrop)
@@ -1288,6 +1324,18 @@ const minorImprovements = [
     prereqs: { occupations: 2 },
     text: 'This card is a field. During the field phase of each harvest, if you harvest at least 1 good from this card, you also get 1 food.',
     isField: true,
+    onPlay(game, player) {
+      player.addVirtualField({
+        cardId: 'artichoke-field-e072',
+        label: 'Artichoke Field',
+        cropRestriction: null,  // Can grow any crop
+        onHarvest: true,
+      })
+      game.log.add({
+        template: '{player} plays Artichoke Field',
+        args: { player },
+      })
+    },
     onHarvest(game, player, amountHarvested) {
       if (amountHarvested > 0) {
         player.addResource('food', 1)
@@ -1423,6 +1471,18 @@ const minorImprovements = [
     isField: true,
     fieldCrop: 'stone',
     fieldSize: 3,
+    onPlay(game, player) {
+      player.addVirtualField({
+        cardId: 'rock-garden-e080',
+        label: 'Rock Garden',
+        cropRestriction: 'stone',
+        sowingAmount: 6,  // Counts as 3 fields × 2 vegetables = 6
+      })
+      game.log.add({
+        template: '{player} plays Rock Garden, gaining a stone-only field (counts as 3 fields)',
+        args: { player },
+      })
+    },
   },
   {
     id: 'alchemists-lab-e081',

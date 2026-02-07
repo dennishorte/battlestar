@@ -123,9 +123,13 @@ class AgricolaPlayer extends BasePlayer {
       id: config.id || config.cardId,
       cardId: config.cardId,
       label: config.label || config.cardId,
-      cropRestriction: config.cropRestriction || null,  // null = any crop
+      cropRestriction: config.cropRestriction || null,  // null = any crop, or 'grain', 'vegetables', 'wood'
       crop: null,
       cropCount: 0,
+      // Optional callbacks (card IDs to look up for hooks)
+      onHarvest: config.onHarvest || null,        // Called each harvest with amount
+      onHarvestLast: config.onHarvestLast || null, // Called when last crop removed
+      sowingAmount: config.sowingAmount || null,   // Custom sowing amount (default uses constants)
     }
     this.virtualFields.push(field)
     return field
@@ -171,9 +175,25 @@ class AgricolaPlayer extends BasePlayer {
 
     this[cropType] -= 1
     field.crop = cropType
-    field.cropCount = cropType === 'grain'
-      ? res.constants.sowingGrain
-      : res.constants.sowingVegetables
+
+    // Use custom sowing amount if specified, otherwise use defaults
+    if (field.sowingAmount) {
+      field.cropCount = field.sowingAmount
+    }
+    else if (cropType === 'grain') {
+      field.cropCount = res.constants.sowingGrain
+    }
+    else if (cropType === 'vegetables') {
+      field.cropCount = res.constants.sowingVegetables
+    }
+    else if (cropType === 'wood') {
+      // Wood uses grain sowing amount (like Cherry Orchard)
+      field.cropCount = res.constants.sowingGrain
+    }
+    else if (cropType === 'stone') {
+      // Stone uses vegetable sowing amount (like Rock Garden)
+      field.cropCount = res.constants.sowingVegetables
+    }
     return true
   }
 
@@ -505,7 +525,8 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   harvestFields() {
-    const harvested = { grain: 0, vegetables: 0 }
+    const harvested = { grain: 0, vegetables: 0, wood: 0 }
+    const virtualFieldHarvests = []  // Track virtual field harvests for callbacks
 
     // Harvest regular fields
     for (const field of this.getFieldSpaces().filter(f => f.crop && f.cropCount > 0)) {
@@ -521,17 +542,32 @@ class AgricolaPlayer extends BasePlayer {
 
     // Harvest virtual fields
     for (const vf of this.getSownVirtualFields()) {
-      harvested[vf.crop] += 1
+      const crop = vf.crop
+      harvested[crop] += 1
       vf.cropCount -= 1
-      if (vf.cropCount === 0) {
+
+      const isLast = vf.cropCount === 0
+      if (isLast) {
         vf.crop = null
       }
+
+      // Track for callbacks
+      virtualFieldHarvests.push({
+        fieldId: vf.id,
+        cardId: vf.cardId,
+        crop,
+        amount: 1,
+        isLast,
+        onHarvest: vf.onHarvest,
+        onHarvestLast: vf.onHarvestLast,
+      })
     }
 
     this.grain += harvested.grain
     this.vegetables += harvested.vegetables
+    this.wood += harvested.wood
 
-    return harvested
+    return { harvested, virtualFieldHarvests }
   }
 
   // ---------------------------------------------------------------------------
