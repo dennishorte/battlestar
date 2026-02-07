@@ -56,6 +56,23 @@
         <FarmyardGrid :player="player" />
       </div>
 
+      <!-- Beanfield (virtual field from Beanfield card) -->
+      <div v-if="player.beanfield" class="beanfield-container">
+        <div class="beanfield-label">Beanfield</div>
+        <div
+          class="beanfield-cell"
+          :class="beanfieldClasses"
+          :title="beanfieldTooltip"
+          @click="handleBeanfieldClick"
+        >
+          <span class="beanfield-icon" v-if="player.beanfield.crop">🥕</span>
+          <span class="beanfield-empty" v-else>veg only</span>
+          <span class="beanfield-count" v-if="player.beanfield.cropCount > 0">
+            {{ player.beanfield.cropCount }}
+          </span>
+        </div>
+      </div>
+
       <!-- Scheduled Resources -->
       <div v-if="hasScheduledItems" class="scheduled-section">
         <div class="scheduled-header">
@@ -141,7 +158,7 @@ export default {
     ResourceBar,
   },
 
-  inject: ['actor', 'game', 'ui'],
+  inject: ['actor', 'bus', 'game', 'ui'],
 
   props: {
     player: {
@@ -270,6 +287,42 @@ export default {
       return this.scheduledItems.length > 0
     },
 
+    // Beanfield computed properties
+    canSowBeanfield() {
+      if (!this.isViewingPlayer || !this.ui.sowing?.active) {
+        return false
+      }
+      if (!this.player.beanfield) {
+        return false
+      }
+      // Can only sow if empty and player has vegetables
+      if (this.player.beanfield.crop && this.player.beanfield.cropCount > 0) {
+        return false
+      }
+      return this.ui.sowing?.canSowVeg
+    },
+
+    beanfieldClasses() {
+      const classes = ['field']
+      if (this.player.beanfield?.crop === 'vegetables') {
+        classes.push('field-vegetables')
+      }
+      if (this.canSowBeanfield) {
+        classes.push('sow-selectable')
+      }
+      return classes
+    },
+
+    beanfieldTooltip() {
+      if (!this.player.beanfield) {
+        return ''
+      }
+      if (this.player.beanfield.crop) {
+        return `Beanfield with ${this.player.beanfield.cropCount} vegetables`
+      }
+      return 'Empty beanfield (vegetables only)'
+    },
+
   },
 
   methods: {
@@ -289,6 +342,17 @@ export default {
       if (this.ui?.fn?.showScoreBreakdown) {
         this.ui.fn.showScoreBreakdown(this.player.name)
       }
+    },
+
+    handleBeanfieldClick() {
+      if (!this.canSowBeanfield) {
+        return
+      }
+      // Beanfield can only grow vegetables, so sow directly
+      this.bus.emit('submit-action', {
+        actor: this.actor.name,
+        action: 'sow-beanfield',
+      })
     },
   },
 }
@@ -541,5 +605,78 @@ export default {
 
 .scheduled-resource {
   color: #5d4037;
+}
+
+/* Beanfield Section */
+.beanfield-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: .5em;
+}
+
+.beanfield-label {
+  font-size: .7em;
+  color: #228B22;
+  font-weight: 600;
+  margin-bottom: .15em;
+}
+
+.beanfield-cell {
+  width: 44px;
+  height: 44px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  font-size: .75em;
+  transition: filter 0.1s ease;
+  background-color: #8B7355;
+}
+
+.beanfield-cell:hover {
+  filter: brightness(1.1);
+}
+
+.beanfield-cell.field-vegetables {
+  background-color: #228B22;
+}
+
+.beanfield-cell.sow-selectable {
+  cursor: pointer;
+  box-shadow: inset 0 0 0 2px rgba(34, 139, 34, 0.7);
+}
+
+.beanfield-cell.sow-selectable:hover {
+  filter: brightness(1.2);
+  box-shadow: inset 0 0 0 3px #228b22;
+}
+
+.beanfield-icon {
+  font-size: 1.4em;
+  line-height: 1;
+}
+
+.beanfield-empty {
+  font-size: .6em;
+  color: #ddd;
+  font-style: italic;
+}
+
+.beanfield-count {
+  position: absolute;
+  bottom: 2px;
+  right: 3px;
+  font-size: .9em;
+  font-weight: bold;
+  background-color: rgba(255,255,255,0.8);
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

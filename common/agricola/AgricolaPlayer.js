@@ -107,6 +107,10 @@ class AgricolaPlayer extends BasePlayer {
 
     // Pet animal (one animal can live in the house)
     this.pet = null
+
+    // Beanfield virtual field (from Beanfield card) - vegetables only
+    // null = not active, { crop: null, cropCount: 0 } = active but empty
+    this.beanfield = null
   }
 
   getSpace(row, col) {
@@ -337,11 +341,21 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   getEmptyFields() {
-    return this.getFieldSpaces().filter(f => !f.crop || f.cropCount === 0)
+    const fields = this.getFieldSpaces().filter(f => !f.crop || f.cropCount === 0)
+    // Include beanfield if active and empty
+    if (this.beanfield && (!this.beanfield.crop || this.beanfield.cropCount === 0)) {
+      fields.push({ isBeanfield: true, ...this.beanfield })
+    }
+    return fields
   }
 
   getSownFields() {
-    return this.getFieldSpaces().filter(f => f.crop && f.cropCount > 0)
+    const fields = this.getFieldSpaces().filter(f => f.crop && f.cropCount > 0)
+    // Include beanfield if active and sown
+    if (this.beanfield && this.beanfield.crop && this.beanfield.cropCount > 0) {
+      fields.push({ isBeanfield: true, ...this.beanfield })
+    }
+    return fields
   }
 
   canPlowField(row, col) {
@@ -383,13 +397,23 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   canSow(cropType) {
-    // Must have an empty field
-    if (this.getEmptyFields().length === 0) {
+    // Must have the seed
+    if (this[cropType] < 1) {
       return false
     }
 
-    // Must have the seed
-    return this[cropType] >= 1
+    // Check regular empty fields
+    const emptyRegularFields = this.getFieldSpaces().filter(f => !f.crop || f.cropCount === 0)
+    if (emptyRegularFields.length > 0) {
+      return true
+    }
+
+    // Check beanfield (vegetables only)
+    if (cropType === 'vegetables' && this.beanfield && (!this.beanfield.crop || this.beanfield.cropCount === 0)) {
+      return true
+    }
+
+    return false
   }
 
   sowField(row, col, cropType) {
@@ -414,10 +438,28 @@ class AgricolaPlayer extends BasePlayer {
     return true
   }
 
+  sowBeanfield() {
+    // Beanfield can only grow vegetables
+    if (!this.beanfield || (this.beanfield.crop && this.beanfield.cropCount > 0)) {
+      return false
+    }
+
+    if (this.vegetables < 1) {
+      return false
+    }
+
+    // Take 1 vegetable from supply, place on beanfield with bonus
+    this.vegetables -= 1
+    this.beanfield.crop = 'vegetables'
+    this.beanfield.cropCount = res.constants.sowingVegetables
+    return true
+  }
+
   harvestFields() {
     const harvested = { grain: 0, vegetables: 0 }
 
-    for (const field of this.getSownFields()) {
+    // Harvest regular fields
+    for (const field of this.getFieldSpaces().filter(f => f.crop && f.cropCount > 0)) {
       if (field.cropCount > 0) {
         harvested[field.crop] += 1
         const space = this.getSpace(field.row, field.col)
@@ -425,6 +467,15 @@ class AgricolaPlayer extends BasePlayer {
         if (space.cropCount === 0) {
           space.crop = null
         }
+      }
+    }
+
+    // Harvest beanfield if active and sown
+    if (this.beanfield && this.beanfield.crop && this.beanfield.cropCount > 0) {
+      harvested[this.beanfield.crop] += 1
+      this.beanfield.cropCount -= 1
+      if (this.beanfield.cropCount === 0) {
+        this.beanfield.crop = null
       }
     }
 

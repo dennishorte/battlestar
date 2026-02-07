@@ -638,6 +638,10 @@ class AgricolaActionManager extends BaseActionManager {
 
     while (true) {
       const currentEmptyFields = player.getEmptyFields()
+      // Separate regular fields from beanfield for UI handling
+      const regularEmptyFields = currentEmptyFields.filter(f => !f.isBeanfield)
+      const hasBeanfieldEmpty = currentEmptyFields.some(f => f.isBeanfield)
+
       if (currentEmptyFields.length === 0) {
         break
       }
@@ -683,10 +687,11 @@ class AgricolaActionManager extends BaseActionManager {
         min: 1,
         max: 1,
         // Mark this as accepting action-based input for sowing
-        allowsAction: 'sow-field',
-        validSpaces: currentEmptyFields,
+        allowsAction: ['sow-field', 'sow-beanfield'],
+        validSpaces: regularEmptyFields,  // Only regular fields, beanfield is handled separately in UI
         canSowGrain,
         canSowVeg,
+        hasBeanfieldEmpty,
       }
 
       const result = this.game.requestInputSingle(selector)
@@ -696,7 +701,7 @@ class AgricolaActionManager extends BaseActionManager {
         const { row, col, cropType } = result
 
         // Validate the space is a valid empty field
-        const isValidField = currentEmptyFields.some(f => f.row === row && f.col === col)
+        const isValidField = regularEmptyFields.some(f => f.row === row && f.col === col)
         if (!isValidField) {
           throw new Error(`Invalid sow space: (${row}, ${col}) is not an empty field`)
         }
@@ -716,6 +721,26 @@ class AgricolaActionManager extends BaseActionManager {
         this.log.add({
           template: '{player} sows {crop} at ({row},{col}) - {amount} total',
           args: { player, crop: cropType, row, col, amount },
+        })
+        continue
+      }
+
+      // Handle beanfield sowing (from clicking the beanfield cell)
+      if (result.action === 'sow-beanfield') {
+        if (!hasBeanfieldEmpty) {
+          throw new Error('Beanfield is not available or already sown')
+        }
+        if (!canSowVeg) {
+          throw new Error('No vegetables available to sow in beanfield')
+        }
+
+        player.sowBeanfield()
+        sowedAny = true
+
+        const amount = res.constants.sowingVegetables
+        this.log.add({
+          template: '{player} sows vegetables in Beanfield - {amount} total',
+          args: { player, amount },
         })
         continue
       }

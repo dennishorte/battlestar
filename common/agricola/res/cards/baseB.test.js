@@ -1128,7 +1128,7 @@ describe('BaseB Cards', () => {
     })
 
     describe('Beanfield', () => {
-      test('sets beanfieldActive on play via Meeting Place', () => {
+      test('initializes beanfield on play via Meeting Place', () => {
         const game = t.fixtureMinorImprovement(
           'beanfield',
           { cardSets: ['baseB'] },
@@ -1142,7 +1142,7 @@ describe('BaseB Cards', () => {
 
         t.testIsSecondPlayer(game, 'Choose an action')
         const dennis = t.player(game)
-        expect(dennis.beanfieldActive).toBe(true)
+        expect(dennis.beanfield).toEqual({ crop: null, cropCount: 0 })
 
         t.testBoard(game, {
           dennis: {
