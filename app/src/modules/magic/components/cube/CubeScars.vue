@@ -22,12 +22,16 @@
         <div>{{ scar.text }}</div>
         <div class="scar-applied-info">
           <div
-            @mouseover="mouseover(scar.appliedTo)"
-            @mouseleave="mouseleave(scar.appliedTo)"
+            v-if="getCardById(scar.appliedTo)"
+            class="applied-card-link"
+            @mouseover="mouseover(getCardById(scar.appliedTo))"
+            @mouseleave="mouseleave(getCardById(scar.appliedTo))"
             @mousemove="mousemove"
+            @click="cardClicked(getCardById(scar.appliedTo))"
           >
-            card: {{ scar.appliedTo.name }}
+            card: {{ getCardById(scar.appliedTo).name() }}
           </div>
+          <div v-else>card: (unknown)</div>
           <div>user: {{ getUserNameById(scar.appliedBy) }}</div>
         </div>
       </div>
@@ -65,10 +69,38 @@ const props = defineProps({
 })
 
 const actor = inject('actor')
+const bus = inject('bus')
 const store = useStore()
 
 const editingScar = ref(null)
 const scarModalVis = ref(false)
+
+function getCardById(cardId) {
+  return props.cube.cards().find(c => c._id === cardId)
+}
+
+function mouseover(card) {
+  if (card) {
+    store.commit('magic/setMouseoverCard', card)
+  }
+}
+
+function mouseleave(card) {
+  if (card) {
+    store.commit('magic/unsetMouseoverCard', card)
+  }
+}
+
+function mousemove(event) {
+  store.commit('magic/setMouseoverPosition', {
+    x: event.clientX,
+    y: event.clientY,
+  })
+}
+
+function cardClicked(card) {
+  bus.emit('card-clicked', card)
+}
 
 function createScar() {
   editingScar.value = magic.util.wrapper.cube.blankScar()
@@ -142,5 +174,14 @@ async function save() {
 .scar-creator {
   font-size: .8em;
   color: #666;
+}
+
+.applied-card-link {
+  cursor: pointer;
+  color: #0d6efd;
+}
+
+.applied-card-link:hover {
+  text-decoration: underline;
 }
 </style>
