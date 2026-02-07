@@ -328,11 +328,18 @@ class MagicCard extends BaseCard {
     return this.data.legal && this.data.legal.includes(format)
   }
   isScarred(faceIndex) {
+    // Check if the card has any recorded changes (scars)
+    if (!this.changes || this.changes.length === 0) {
+      return false
+    }
+
+    const allFaceChanges = this.changes.flatMap(x => x.changes).filter(x => x.type === 'face_field')
+
     if (typeof faceIndex === 'number') {
-      return Boolean(this.face(faceIndex).scarred)  // Often is undefined for scryfall cards
+      return allFaceChanges.some(x => x.faceIndex === faceIndex)
     }
     else {
-      return this.faces().some(face => face.scarred)
+      return allFaceChanges.length > 0
     }
   }
   isVisible(player) {
