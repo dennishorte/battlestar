@@ -6,6 +6,9 @@
     </div>
 
     <template #footer>
+      <button class="btn btn-outline-secondary" @click="copyToClipboard">
+        {{ copyButtonText }}
+      </button>
       <button class="btn btn-outline-danger" @click="editResponses" data-bs-dismiss="modal">edit</button>
       <button class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
       <button class="btn btn-primary" data-bs-dismiss="modal">ok</button>
@@ -26,6 +29,12 @@ export default {
 
   inject: ['game'],
 
+  data() {
+    return {
+      copyButtonText: 'copy',
+    }
+  },
+
   computed: {
     gameData() {
       if (this.game) {
@@ -44,6 +53,23 @@ export default {
   methods: {
     editResponses() {
       this.$router.push('/game/editor/' + this.game._id)
+    },
+
+    async copyToClipboard() {
+      try {
+        await navigator.clipboard.writeText(this.gameData)
+        this.copyButtonText = 'copied!'
+        setTimeout(() => {
+          this.copyButtonText = 'copy'
+        }, 2000)
+      }
+      catch (e) {
+        console.error('Failed to copy:', e)
+        this.copyButtonText = 'failed'
+        setTimeout(() => {
+          this.copyButtonText = 'copy'
+        }, 2000)
+      }
     },
   },
 }
