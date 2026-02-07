@@ -83,7 +83,13 @@
 
       <CardSearchModal @card-selected="addOneCard" id="cube-add-modal" />
       <CubeImportModal @cube-updates="updateCube" />
-      <CardEditorModal v-model="editorVisible" :card="editorCard" :editable="cube.flags.editable" />
+      <CardEditorModal
+        v-model="editorVisible"
+        :card="editorCard"
+        :editable="cube.flags.editable"
+        :showDelete="true"
+        @delete="deleteCardFromCube"
+      />
       <CubeSettingsModal v-model="settingsVisible" :cube="cube" />
     </div>
   </MagicWrapper>
@@ -357,6 +363,14 @@ export default {
         addIds: [],
         removeIds: [card._id],
         comment: 'Removed malformed card',
+      })
+    },
+
+    async deleteCardFromCube(card) {
+      await this.$store.dispatch('magic/cube/addRemoveCards', {
+        addIds: [],
+        removeIds: [card._id],
+        comment: `Removed card: ${card.name()}`,
       })
     },
   },

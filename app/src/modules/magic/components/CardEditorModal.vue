@@ -8,6 +8,14 @@
 
     <template #footer="{ cancel }">
       <slot name="footer">
+        <div class="footer-left">
+          <BButton
+            v-if="showDelete"
+            variant="outline-danger"
+            size="sm"
+            @click="confirmDelete"
+          >delete</BButton>
+        </div>
         <BButton variant="secondary" @click="cancel()">cancel</BButton>
         <BButton
           variant="danger"
@@ -15,6 +23,16 @@
           :disabled="!hasUpdates"
         >save</BButton>
       </slot>
+    </template>
+  </BModal>
+
+  <BModal v-model="deleteConfirmVisible" title="Confirm Delete">
+    <p>Are you sure you want to delete this card from the cube?</p>
+    <p class="text-muted">This cannot be undone.</p>
+
+    <template #footer>
+      <BButton variant="secondary" @click="deleteConfirmVisible = false">Cancel</BButton>
+      <BButton variant="danger" @click="deleteCard">Delete</BButton>
     </template>
   </BModal>
 </template>
@@ -52,13 +70,19 @@ const props = defineProps({
     type: String,
     default: 'Card Editor',
   },
+
+  showDelete: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'delete'])
 const store = useStore()
 
 const originalCard = ref(null)
 const cardInEdit = ref(null)
+const deleteConfirmVisible = ref(false)
 
 const modalVisible = computed({
   get() {
@@ -97,6 +121,16 @@ async function save() {
   }
 }
 
+function confirmDelete() {
+  deleteConfirmVisible.value = true
+}
+
+function deleteCard() {
+  deleteConfirmVisible.value = false
+  emit('update:modelValue', false)
+  emit('delete', originalCard.value)
+}
+
 // Initialize cardInEdit when modal opens or card changes
 watch([() => props.card, () => props.modelValue], ([card, visible]) => {
   if (visible && card) {
@@ -125,4 +159,7 @@ const hasUpdates = computed(() => {
 
 
 <style scoped>
+.footer-left {
+  margin-right: auto;
+}
 </style>
