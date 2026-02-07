@@ -86,6 +86,7 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
 
   const editor = useEditableContent(editableText.value, {
     onUpdate: (value) => emit('value-updated', { field: f.name, value }),
+    onInput: (value) => emit('value-updated', { field: f.name, value }),
     ...options
   })
 

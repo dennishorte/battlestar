@@ -46,7 +46,7 @@
 
 
 <script setup>
-import { computed, inject, ref, watch } from 'vue'
+import { computed, inject, nextTick, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { util } from 'battlestar-common'
 
@@ -101,6 +101,10 @@ const modalVisible = computed({
 })
 
 async function save() {
+  // Blur any active element to commit pending edits before saving
+  document.activeElement?.blur()
+  await nextTick()
+
   // Hide this modal
   emit('update:modelValue', false)
 
