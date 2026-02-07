@@ -7,9 +7,10 @@
     <div class="col">
       <h5>Avaiable Scars</h5>
 
-      <div v-for="scar in cube.scarsUnused()" :key="scar.id" class="scar-container">
+      <div v-for="scar in cube.scarsUnused()" :key="scar.id" class="scar-container vertical">
         <div>{{ scar.text }}</div>
-        <div>
+        <div class="scar-info">
+          <span class="scar-creator">by {{ getUserNameById(scar.createdBy) }}</span>
           <button class="btn btn-link" @click="editScar(scar)">edit</button>
         </div>
       </div>
@@ -129,5 +130,17 @@ async function save() {
   font-size: .8em;
   color: #333;
   margin-left: .5em;
+}
+
+.scar-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: .5em;
+}
+
+.scar-creator {
+  font-size: .8em;
+  color: #666;
 }
 </style>
