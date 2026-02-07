@@ -1,0 +1,23 @@
+module.exports = {
+  id: "agricultural-labourer-c120",
+  name: "Agricultural Labourer",
+  deck: "occupationC",
+  number: 120,
+  type: "occupation",
+  players: "1+",
+  text: "Place 8 clay on this card. For each grain you obtain, you also get 1 clay from this card.",
+  onPlay(_game, _player) {
+    this.clay = 8
+  },
+  onObtainGrain(game, player, amount) {
+    const clayToGive = Math.min(amount, this.clay || 0)
+    if (clayToGive > 0) {
+      this.clay -= clayToGive
+      player.addResource('clay', clayToGive)
+      game.log.add({
+        template: '{player} gets {amount} clay from Agricultural Labourer',
+        args: { player, amount: clayToGive },
+      })
+    }
+  },
+}

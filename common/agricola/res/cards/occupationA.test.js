@@ -1,5 +1,5 @@
 const res = require('../index.js')
-const occupationA = require('./occupationA.js')
+const occupationA = require('./occupationA')
 
 
 describe('OccupationA Cards', () => {

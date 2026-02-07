@@ -1,6 +1,6 @@
 const t = require('../../testutil.js')
 const res = require('../index.js')
-const minorD = require('./minorD.js')
+const minorD = require('./minorD')
 
 
 describe('MinorD Cards', () => {
