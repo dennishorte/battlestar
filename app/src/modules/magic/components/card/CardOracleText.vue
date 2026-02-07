@@ -5,8 +5,8 @@
         v-for="part of scarredParts"
         :key="part.value"
         :class="{
-          'scar-tape': part.added,
-          'narrow-tape': part.added,
+          'scar-tape': part.scarred,
+          'narrow-tape': part.scarred,
         }"
       >
         <ParsedOracleText :text="part.value" />
@@ -67,7 +67,7 @@ function splitPartsWithNewlines(parts) {
         // Only add non-empty segments
         if (segments[i].length > 0) {
           result.push({
-            added: part.added,
+            scarred: part.scarred,
             value: segments[i]
           })
         }
@@ -75,7 +75,7 @@ function splitPartsWithNewlines(parts) {
         // Add newline separator after each segment except the last one
         if (i < segments.length - 1) {
           result.push({
-            added: false,
+            scarred: false,
             value: '\n'
           })
         }
