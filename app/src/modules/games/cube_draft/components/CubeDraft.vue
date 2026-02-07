@@ -62,24 +62,23 @@
         <BButton @click="scarApplied(0)">scar 1</BButton>
         <BButton @click="scarApplied(1)">scar 2</BButton>
       </template>
-
-
-      <BModal v-model="scarHelpModalVis" title="How to Scar a Card">
-        <div>To apply a scar, you just edit the card to make it match what the scar says. You can edit any part of the card by clicking on it and putting in the new values you want it to have.</div>
-
-        <div class="mt-4">When you're done, click on the button matching the scar you applied. This is important so that the scar will be marked as used and not given out again in future rounds.</div>
-
-        <BAlert :model-value="true" class="mt-4">
-          tips
-          <ul>
-            <li>It's funny to make a really broken card, but later on, when someone is playing against that card, and they're having a fun game of magic, and then suddenly lose to their opponent's uber-bomb, it's less funny.</li>
-            <li>The same scar applied to a one drop might be broken but applied to a six drop might be boring.</li>
-            <li>You don't have to apply the scar exactly as written; play around with it.</li>
-            <li>Some good flavor and a little spice go a long way.</li>
-          </ul>
-        </BAlert>
-      </BModal>
     </CardEditorModal>
+
+    <BModal v-model="scarHelpModalVis" title="How to Scar a Card">
+      <div>To apply a scar, you just edit the card to make it match what the scar says. You can edit any part of the card by clicking on it and putting in the new values you want it to have.</div>
+
+      <div class="mt-4">When you're done, click on the button matching the scar you applied. This is important so that the scar will be marked as used and not given out again in future rounds.</div>
+
+      <BAlert :model-value="true" class="mt-4">
+        tips
+        <ul>
+          <li>It's funny to make a really broken card, but later on, when someone is playing against that card, and they're having a fun game of magic, and then suddenly lose to their opponent's uber-bomb, it's less funny.</li>
+          <li>The same scar applied to a one drop might be broken but applied to a six drop might be boring.</li>
+          <li>You don't have to apply the scar exactly as written; play around with it.</li>
+          <li>Some good flavor and a little spice go a long way.</li>
+        </ul>
+      </BAlert>
+    </BModal>
 
   </MagicWrapper>
 </template>
