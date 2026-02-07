@@ -1558,71 +1558,26 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   // ---------------------------------------------------------------------------
-  // Renovation + Improvement action
+  // Renovation + Improvement action (House Redevelopment)
   // ---------------------------------------------------------------------------
 
   renovationAndImprovement(player, availableImprovements, allowMinor = false) {
-    // Check if there are any options at all (relaxed gate for anytime conversions)
-    const hasAffordableMajor = () => availableImprovements.some(id =>
-      player.canBuyMajorImprovement(id)
-    )
-    const hasAffordableMinor = () => allowMinor && player.hand.some(cardId => {
-      const card = this.game.cards.byId(cardId)
-      return card && card.type === 'minor' && player.canPlayCard(cardId)
-    })
-    const canRenovate = player.canRenovate()
+    // Step 1: Renovation is mandatory for this action
+    // The renovate() method handles the choice between renovation types (e.g., wood→clay vs wood→stone)
+    const didRenovate = this.renovate(player)
 
-    if (!canRenovate && !hasAffordableMajor() && !hasAffordableMinor()) {
-      const canConvert = this.game.getAnytimeFoodConversionOptions(player).length > 0
-      if (!canConvert) {
-        this.log.add({
-          template: '{player} cannot renovate or afford improvements',
-          args: { player },
-        })
-        return false
-      }
+    if (!didRenovate) {
+      // This shouldn't happen since we check canRenovate() in prerequisites,
+      // but handle gracefully just in case
+      this.log.add({
+        template: '{player} cannot renovate',
+        args: { player },
+      })
+      return false
     }
 
-    // Function wrapper: improvement affordability may change via anytime conversion
-    const selection = this.choose(player, () => {
-      const choices = []
-      const hasMajor = hasAffordableMajor()
-      const hasMinor = hasAffordableMinor()
-      const hasImprovement = hasMajor || hasMinor
-
-      if (player.canRenovate()) {
-        choices.push('Renovate')
-        if (hasImprovement) {
-          choices.push('Renovate then Improvement')
-        }
-      }
-
-      if (hasImprovement) {
-        choices.push('Improvement Only')
-      }
-
-      choices.push('Do Nothing')
-      return choices
-    }, {
-      title: 'Choose action',
-      min: 1,
-      max: 1,
-    })
-
-    const choice = selection[0]
-
-    if (choice === 'Do Nothing') {
-      this.log.addDoNothing(player, 'renovate or improve')
-      return true
-    }
-
-    if (choice === 'Renovate' || choice === 'Renovate then Improvement') {
-      this.renovate(player)
-    }
-
-    if (choice === 'Improvement Only' || choice === 'Renovate then Improvement') {
-      this.buyImprovement(player, true, allowMinor)
-    }
+    // Step 2: After renovation, offer optional major/minor improvement
+    this.buyImprovement(player, true, allowMinor)
 
     return true
   }

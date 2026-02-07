@@ -72,6 +72,14 @@ const ActionChoicesMixin = {
       }
     }
 
+    // House Redevelopment requires ability to renovate (mandatory renovation)
+    // Note: Farm Redevelopment (renovation-fencing) allows renovation OR fencing, so it's not blocked
+    if (action.allowsRenovation && action.allowsMajorImprovement) {
+      if (!player.canRenovate()) {
+        return false
+      }
+    }
+
     // All other actions can be taken
     return true
   },
