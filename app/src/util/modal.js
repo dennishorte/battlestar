@@ -15,5 +15,8 @@ function pleaseReload(message) {
 
 function getModal(elemId, opts={}) {
   const elem = document.getElementById(elemId)
-  return new Modal(elem, opts)
+  if (!elem) {
+    return null
+  }
+  return Modal.getOrCreateInstance(elem, opts)
 }
