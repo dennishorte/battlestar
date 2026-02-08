@@ -16,6 +16,9 @@ PROJ_DIR="$(dirname "$SCRIPT_DIR")"
 
 cd "$PROJ_DIR"
 
+echo "=== Pushing latest changes ==="
+git push
+
 echo "=== Updating version on server ==="
 ssh "$SSH_HOST" "cd $REMOTE_DIR && bash scripts/updateVersion.sh"
 
