@@ -218,11 +218,6 @@ export default {
       this.editorVisible = true
     },
 
-    editScar(scar) {
-      this.$store.commit('magic/cube/manageScar', scar)
-      this.$modal('scar-modal').show()
-    },
-
     linkFiltersToAchievement() {
       this.$modal('achievement-search-linker-modal').show()
     },

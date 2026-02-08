@@ -10,7 +10,7 @@
       <div v-else class="subtext">age: {{ ach.createdAt }}</div>
     </div>
 
-    <BDropdown>
+    <BDropdown v-if="!hideMenu">
       <BDropdownItem @click="viewerModalVis = true">reveal</BDropdownItem>
 
       <template v-if="!ach.claimedBy">
@@ -39,6 +39,10 @@ const props = defineProps({
   ach: {
     type: Object,
     required: true
+  },
+  hideMenu: {
+    type: Boolean,
+    default: false,
   },
 })
 
