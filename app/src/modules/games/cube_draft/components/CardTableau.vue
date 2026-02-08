@@ -11,7 +11,7 @@
           :scrollable="cardScroll"
           :disabled="cannotDraft(card)" />
       </div>
-      <div class="card-overlay">
+      <div class="card-overlay" v-if="cannotDraft(card)">
         <span class="card-overlay-text">You just scarred this card</span>
       </div>
     </div>

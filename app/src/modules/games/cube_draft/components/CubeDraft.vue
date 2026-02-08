@@ -138,6 +138,7 @@ export default {
       closeupCard: null,
       closeupDraftCard: null,
       scarredCard: null,
+      scarredCardId: null,
       scarComment: '',
 
       gameReady: false,
@@ -239,15 +240,15 @@ export default {
       if (this.doingScars) {
         this.scarModalVis = true
         this.scarModalCard = card
+        this.scarredCardId = card.id
       }
       else {
         this.showDraftModal(card)
       }
     },
 
-    cardUpdated({ updated, original }) {
+    cardUpdated({ updated }) {
       this.scarredCard = updated
-      this.scarredCard.id = original.id
     },
 
     async chooseCard(card) {
@@ -316,11 +317,12 @@ export default {
         title: 'Apply Scar',
         selection: [{
           scarId: scar.id,
-          cardId: this.scarredCard.id,
+          cardId: this.scarredCardId,
         }],
       })
 
       this.scarredCard = null
+      this.scarredCardId = null
       this.scarComment = ''
       this.scarModalVis = false
     },
