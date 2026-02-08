@@ -6,8 +6,8 @@
       <div class="subtext" v-if="ach.claimedBy">claimed by: {{ username(ach.claimedBy) }}</div>
       <div class="subtext">created by: {{ username(ach.createdBy) }}</div>
 
-      <div v-if="ach.claimedBy" class="subtext">claimed: {{ ach.claimedAt }}</div>
-      <div v-else class="subtext">age: {{ ach.createdAt }}</div>
+      <div v-if="ach.claimedBy" class="subtext">claimed: {{ daysAgo(ach.claimedAt) }}</div>
+      <div v-else class="subtext">age: {{ daysAgo(ach.createdAt) }}</div>
       <a
         v-if="hasFilters"
         href="#"
@@ -72,6 +72,18 @@ async function claimAchievement() {
     achievement: props.ach,
     user: actor,
   })
+}
+
+function daysAgo(date) {
+  const ms = Date.now() - new Date(date).getTime()
+  const days = Math.floor(ms / (1000 * 60 * 60 * 24))
+  if (days === 0) {
+    return 'today'
+  }
+  if (days === 1) {
+    return '1 day ago'
+  }
+  return `${days} days ago`
 }
 
 function username(id) {
