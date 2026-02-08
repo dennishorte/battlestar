@@ -11,7 +11,9 @@
           :scrollable="cardScroll"
           :disabled="cannotDraft(card)" />
       </div>
-      <div class="card-overlay" v-if="cannotDraft(card)"/>
+      <div class="card-overlay">
+        <span class="card-overlay-text">You just scarred this card</span>
+      </div>
     </div>
   </div>
 </template>
@@ -84,5 +86,19 @@ export default {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
   border-radius: .5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 11;
+}
+
+.card-overlay-text {
+  color: #fff;
+  font-size: .85em;
+  font-weight: 600;
+  text-align: center;
+  padding: .5em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 </style>
