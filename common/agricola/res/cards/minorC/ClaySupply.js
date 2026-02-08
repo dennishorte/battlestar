@@ -12,7 +12,7 @@ module.exports = {
     for (let i = 1; i <= 3; i++) {
       const round = currentRound + i
       if (round <= 14) {
-        if (!game.state.scheduledCite) {
+        if (!game.state.scheduledClay) {
           game.state.scheduledClay = {}
         }
         if (!game.state.scheduledClay[player.name]) {
