@@ -203,12 +203,9 @@ CubeDraft.prototype.aDraftCard = function(player, pack, cardId) {
 
   cardId = cardId.title ? cardId.title : cardId
 
-  if (cardId === player.scarredCardId) {
-    throw new Error('Player tried to draft the card they scarred')
-  }
+  util.assert(player.canDraft(cardId), "Player cannot draft this card")
 
   const card = pack.getCardById(cardId)
-  util.assert(pack.checkCardIsAvailable(card), "The selected card is not in the pack.")
 
   // Clear draft blocks caused by scarring
   player.scarredCardId = null
@@ -367,7 +364,7 @@ CubeDraft.prototype.getPlayerOptions = function(player) {
       title: 'Draft Card',
       choices: pack
         .getRemainingCards()
-        .filter(c => c.id !== player.scarredCardId)
+        .filter(c => player.canDraft(c))
         .map(c => c.id)
     }
   }

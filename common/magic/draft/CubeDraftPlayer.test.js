@@ -19,10 +19,8 @@ describe('CubeDraftPlayer.canDraft', () => {
     t.choose(game, request1, 'dennis', { cardId: 'agility', scarId: 'scar-1' })
 
     const dennis = game.players.byName('dennis')
-    const pack = game.getNextPackForPlayer(dennis)
-    const scarredCard = pack.cards.find(c => c.id === 'agility')
 
-    expect(dennis.canDraft(scarredCard)).toBe(false)
+    expect(dennis.canDraft('agility')).toBe(false)
   })
 
   test('returns true for a different card in the same pack', () => {
@@ -31,10 +29,8 @@ describe('CubeDraftPlayer.canDraft', () => {
     t.choose(game, request1, 'dennis', { cardId: 'agility', scarId: 'scar-1' })
 
     const dennis = game.players.byName('dennis')
-    const pack = game.getNextPackForPlayer(dennis)
-    const otherCard = pack.cards.find(c => c.id === 'advance scout')
 
-    expect(dennis.canDraft(otherCard)).toBe(true)
+    expect(dennis.canDraft('advance scout')).toBe(true)
   })
 
   test('returns true when no scar has been applied', () => {
@@ -42,13 +38,11 @@ describe('CubeDraftPlayer.canDraft', () => {
     const request1 = game.run()
 
     const dennis = game.players.byName('dennis')
-    const pack = game.getNextPackForPlayer(dennis)
-    const card = pack.cards[0]
 
-    expect(dennis.canDraft(card)).toBe(true)
+    expect(dennis.canDraft('advance scout')).toBe(true)
   })
 
-  test('returns true for the scarred card after drafting a different card', () => {
+  test('scar block is cleared after drafting a different card', () => {
     const game = fixtureWithScars()
     const request1 = game.run()
     const request2 = t.choose(game, request1, 'dennis', { cardId: 'agility', scarId: 'scar-1' })
@@ -56,7 +50,7 @@ describe('CubeDraftPlayer.canDraft', () => {
     t.choose(game, request2, 'dennis', 'advance scout')
 
     const dennis = game.players.byName('dennis')
-    expect(dennis.canDraft({ id: 'agility' })).toBe(true)
+    expect(dennis.scarredCardId).toBeNull()
   })
 
   test('accepts a string card id', () => {
@@ -67,5 +61,34 @@ describe('CubeDraftPlayer.canDraft', () => {
     const dennis = game.players.byName('dennis')
     expect(dennis.canDraft('agility')).toBe(false)
     expect(dennis.canDraft('advance scout')).toBe(true)
+  })
+
+  test('returns false for a card not in the pack', () => {
+    const game = t.fixture()
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+
+    expect(dennis.canDraft('nonexistent card')).toBe(false)
+  })
+
+  test('returns false for an already-picked card in the pack', () => {
+    const game = t.fixture()
+    const request1 = game.run()
+    t.choose(game, request1, 'dennis', 'advance scout')
+
+    // micah now has dennis's pack with 'advance scout' picked
+    const micah = game.players.byName('micah')
+
+    expect(micah.canDraft('advance scout')).toBe(false)
+  })
+
+  test('returns true for an available card in the pack', () => {
+    const game = t.fixture()
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+
+    expect(dennis.canDraft('agility')).toBe(true)
   })
 })

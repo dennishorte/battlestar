@@ -383,7 +383,7 @@ describe('CubeDraft', () => {
       // Try to draft the scarred card
       expect(() => {
         t.choose(game, request2, 'dennis', scarredCardId)
-      }).toThrow('Player tried to draft the card they scarred')
+      }).toThrow('Player cannot draft this card')
     })
 
     test('after playing a scar, the player then gets a draft action', () => {

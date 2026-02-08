@@ -49,7 +49,7 @@ export default {
   methods: {
     cannotDraft(card) {
       const player = this.game.players.byName(this.actor.name)
-      return card.id === player.scarredCardId
+      return !player.canDraft(card)
     },
 
     cardClicked(card) {

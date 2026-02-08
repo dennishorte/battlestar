@@ -18,7 +18,22 @@ class CubeDraftPlayer extends BasePlayer {
 
   canDraft(card) {
     const cardId = typeof card === 'string' ? card : card.id
-    return cardId !== this.scarredCardId
+
+    if (cardId === this.scarredCardId) {
+      return false
+    }
+
+    const pack = this.waitingPacks[0]
+    if (!pack) {
+      return false
+    }
+
+    const packCard = pack.getCardById(cardId)
+    if (!packCard || !pack.checkCardIsAvailable(packCard)) {
+      return false
+    }
+
+    return true
   }
 }
 
