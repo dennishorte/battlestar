@@ -32,3 +32,6 @@ echo "=== Running server deploy script ==="
 ssh "$SSH_HOST" "cd $REMOTE_DIR && ./scripts/server-deploy.sh"
 
 echo "=== Deploy complete ==="
+
+echo "=== Updating location versions ==="
+bash ./scripts/updateVersion.sh
