@@ -53,7 +53,14 @@ const scarrable = useScarrableContent(toRef(props, 'card'), props.index, fieldAc
   multiline: true,
 })
 
-const scarredParts = computed(() => splitPartsWithNewlines(scarrable.scarredParts.value))
+const scarredParts = computed(() => {
+  const parts = splitPartsWithNewlines(scarrable.scarredParts.value)
+  const name = props.card.name(props.index)
+  return parts.map(part => ({
+    ...part,
+    value: part.value.replaceAll('CARD_NAME', name),
+  }))
+})
 
 function splitPartsWithNewlines(parts) {
   const result = []

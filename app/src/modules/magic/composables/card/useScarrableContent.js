@@ -46,18 +46,20 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
   const editableText = computed(() => f.getEditable(card.value, faceIndex))
 
   // The text as it was on the card before any edits took place.
-  // If there have been no edits, this is the same as display text.
+  // If there have been no edits, this is the same as editable text.
+  // We compare against editableText (not displayText) so that fields like oracle_text,
+  // where displayText replaces CARD_NAME with the actual name, don't produce false diffs.
   const originalText = computed(() => {
     const oldVersions = card.value.oldVersions(faceIndex, f.name)
     if (oldVersions.length > 0) {
       // Use nullish coalescing to handle null/undefined but preserve empty string
       return oldVersions[0] ?? ''
     }
-    return displayText.value
+    return editableText.value
   })
 
   // True if the text for this field has been edited.
-  const scarred = computed(() => originalText.value !== displayText.value)
+  const scarred = computed(() => originalText.value !== editableText.value)
 
   // If true, the div containing this text will be extended to maximum width.
   // This is helpful when the div is empty, making it hard to click on it.
@@ -70,12 +72,12 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
   const scarredParts = computed(() => {
     if (scarred.value === false) {
       return [{
-        value: displayText.value,
+        value: editableText.value,
         scarred: false,
       }]
     }
 
-    const diff = diffWords(originalText.value, displayText.value, { intlSegmenter: intlSegmenterShapedObject })
+    const diff = diffWords(originalText.value, editableText.value, { intlSegmenter: intlSegmenterShapedObject })
     return diff
       .filter(x => x.added || !x.removed)
       .map(x => ({
