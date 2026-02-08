@@ -6,8 +6,8 @@
     <select class="form-select mb-3" v-model="selectedId">
       <option
         v-for="ach in sortedAchievements"
-        :key="ach._id"
-        :value="ach._id"
+        :key="ach.id"
+        :value="ach.id"
       >
         {{ ach.name }}
       </option>
@@ -37,9 +37,7 @@
 
 
 <script>
-import { mapState } from 'vuex'
-
-import CubeAchievement from './CubeAchievement'
+import CubeAchievement from './CubeAchievements/CubeAchievement.vue'
 import CardFilterList from '../CardFilterList.vue'
 import ModalBase from '@/components/ModalBase.vue'
 
@@ -58,6 +56,10 @@ export default {
       type: Array,
       required: true
     },
+    filters: {
+      type: Array,
+      required: true,
+    },
   },
 
   data: () => {
@@ -67,12 +69,8 @@ export default {
   },
 
   computed: {
-    ...mapState('magic/cube', {
-      filters: 'cardFilters',
-    }),
-
     selectedAch() {
-      return this.achievements.find(ach => ach._id === this.selectedId)
+      return this.achievements.find(ach => ach.id === this.selectedId)
     },
 
     selectedAchFilter() {
@@ -92,11 +90,9 @@ export default {
 
   methods: {
     async link() {
-      await this.$post('/api/magic/achievement/link_filters', {
-        achId: this.selectedId,
-        filters: this.filters,
-      })
-      await this.$store.dispatch('magic/cube/loadAchievements')
+      const achievement = { ...this.selectedAch, filters: this.filters }
+      const cubeId = this.$store.state.magic.cube.cube._id
+      await this.$store.dispatch('magic/cube/updateAchievement', { cubeId, achievement })
     },
 
     view() {

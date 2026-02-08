@@ -91,6 +91,7 @@
         @delete="deleteCardFromCube"
       />
       <CubeSettingsModal v-model="settingsVisible" :cube="cube" />
+      <AchievementSearchLinkerModal :achievements="cube.achievements()" :filters="filters" />
     </div>
   </MagicWrapper>
 </template>
@@ -105,6 +106,7 @@ import { nextTick } from 'vue'
 
 import UICardWrapper from '@/modules/magic/util/card.wrapper.js'
 
+import AchievementSearchLinkerModal from './AchievementSearchLinkerModal.vue'
 import CubeAchievements from './CubeAchievements/CubeAchievements.vue'
 import CardEditorModal from '../CardEditorModal.vue'
 import CubeBreakdown from './CubeBreakdown.vue'
@@ -122,6 +124,7 @@ export default {
   name: 'CubeViewer',
 
   components: {
+    AchievementSearchLinkerModal,
     CubeAchievements,
     CardEditorModal,
     CardFilters,
