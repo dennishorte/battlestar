@@ -16,6 +16,12 @@ PROJ_DIR="$(dirname "$SCRIPT_DIR")"
 
 cd "$PROJ_DIR"
 
+echo "=== Updating version on server ==="
+ssh "$SSH_HOST" "cd $REMOTE_DIR && bash scripts/updateVersion.sh"
+
+echo "=== Fetching version from server ==="
+scp "$SSH_HOST:$REMOTE_DIR/app/src/assets/version.js" "$PROJ_DIR/app/src/assets/version.js"
+
 echo "=== Building app locally ==="
 npm run build -w app
 

@@ -17,9 +17,6 @@ forever stopall || true
 echo "=== Pulling latest code ==="
 git pull
 
-echo "=== Updating version ==="
-bash "$PROJ_DIR/scripts/updateVersion.sh"
-
 echo "=== Installing dependencies ==="
 npm install
 
