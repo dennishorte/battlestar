@@ -92,6 +92,7 @@ export default {
     async link() {
       const achievement = { ...this.selectedAch, filters: this.filters }
       const cubeId = this.$store.state.magic.cube.cube._id
+      this.$modal('achievement-search-linker-modal').hide()
       await this.$store.dispatch('magic/cube/updateAchievement', { cubeId, achievement })
     },
 
