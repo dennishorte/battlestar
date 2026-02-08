@@ -4,22 +4,32 @@
       <button class="btn btn-success" @click="createAchievement">create</button>
     </div>
 
-    <div class="row">
-      <div class="col">
-        <h3>Unclaimed Achievements</h3>
+    <div class="achievement-columns">
+      <div class="achievement-column">
+        <h3>Unclaimed</h3>
         <CubeAchievement
-          v-for="ach in cube.achievementsUnclaimed()"
-          :key="ach._id"
+          v-for="ach in unlinkedAchievements"
+          :key="ach.id"
           :ach="ach"
           @edit-achievement="editAchievement"
         />
       </div>
 
-      <div class="col">
-        <h3>Claimed Achievements</h3>
+      <div class="achievement-column">
+        <h3>Linked</h3>
+        <CubeAchievement
+          v-for="ach in linkedAchievements"
+          :key="ach.id"
+          :ach="ach"
+          @edit-achievement="editAchievement"
+        />
+      </div>
+
+      <div class="achievement-column">
+        <h3>Claimed</h3>
         <CubeAchievement
           v-for="ach in cube.achievementsClaimed()"
-          :key="ach._id"
+          :key="ach.id"
           :ach="ach"
         />
       </div>
@@ -49,7 +59,7 @@
 
 
 <script setup>
-import { inject, ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 import { useStore } from 'vuex'
 import { magic } from 'battlestar-common'
 
@@ -68,6 +78,15 @@ const props = defineProps({
 
 const actor = inject('actor')
 const store = useStore()
+
+const hasFilters = (ach) => ach.filters && ach.filters.length > 0
+
+const unlinkedAchievements = computed(() =>
+  props.cube.achievementsUnclaimed().filter(ach => !hasFilters(ach))
+)
+const linkedAchievements = computed(() =>
+  props.cube.achievementsUnclaimed().filter(ach => hasFilters(ach))
+)
 
 const achievementModalVis = ref(false)
 const editingAchievement = ref(null)
@@ -114,5 +133,16 @@ async function saveAchievement() {
 <style scoped>
 .header {
   margin: .5em 0;
+}
+
+.achievement-columns {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+}
+
+.achievement-column {
+  flex: 1;
+  min-width: 300px;
 }
 </style>
