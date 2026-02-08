@@ -156,6 +156,7 @@ watch(cardInEdit, (updated) => {
     bus.emit('card-editor:updated', {
       updated,
       original: originalCard.value,
+      hasUpdates: hasUpdates.value,
     })
   }
 }, { deep: true })

@@ -59,8 +59,8 @@
 
       <template #footer>
         <BButton variant="warning" @click="scarHelpModalVis = true">help!?</BButton>
-        <BButton @click="scarApplied(0)">scar 1</BButton>
-        <BButton @click="scarApplied(1)">scar 2</BButton>
+        <BButton @click="scarApplied(0)" :disabled="!scarredCard">scar 1</BButton>
+        <BButton @click="scarApplied(1)" :disabled="!scarredCard">scar 2</BButton>
       </template>
     </CardEditorModal>
 
@@ -247,8 +247,8 @@ export default {
       }
     },
 
-    cardUpdated({ updated }) {
-      this.scarredCard = updated
+    cardUpdated({ updated, hasUpdates }) {
+      this.scarredCard = hasUpdates ? updated : null
     },
 
     async chooseCard(card) {
