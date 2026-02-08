@@ -15,6 +15,12 @@
     <label class="form-label">Scar Rounds</label>
     <input class="form-control" v-model="options.scarRounds" @input="optionsChanged" />
 
+    <div v-if="scarInfo" class="scar-info mt-2">
+      <small :class="scarInfo.sufficient ? 'text-muted' : 'text-danger'">
+        Scars needed: {{ scarInfo.needed }} / Available: {{ scarInfo.available }}
+      </small>
+    </div>
+
     <BAlert :model-value="warnings.length > 0" variant="danger">
       <div v-for="warning in warnings" :key="warning">
         {{ warning }}
@@ -41,6 +47,27 @@ export default {
       users: [],
       warnings: [],
     }
+  },
+
+  computed: {
+    scarInfo() {
+      const opts = this.lobby.options
+      const selectedCube = this.cubes.find(c => c._id === opts?.cubeId)
+      const scarRounds = _parseScarRounds(opts?.scarRounds)
+
+      if (!selectedCube || scarRounds.length === 0) {
+        return null
+      }
+
+      const needed = scarRounds.length * this.lobby.users.length * 2
+      const available = selectedCube.scarlist.filter(s => !s.appliedAt).length
+
+      return {
+        needed,
+        available,
+        sufficient: available >= needed,
+      }
+    },
   },
 
   watch: {
@@ -98,9 +125,10 @@ export default {
       const sufficientScarsCondition = {
         value: () => {
           const neededScars = scarRounds.length * this.lobby.users.length * 2
-          return selectedCube && selectedCube.scarlist.length >= neededScars
+          const unusedScars = selectedCube ? selectedCube.scarlist.filter(s => !s.appliedAt).length : 0
+          return unusedScars >= neededScars
         },
-        message: 'Not enough scars in the cube'
+        message: 'Not enough unused scars in the cube'
       }
       const scarRoundsCondition = {
         value: () => _validateScarRounds(scarRounds, opts.numPacks),

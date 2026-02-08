@@ -23,13 +23,14 @@ Game.create = async function(lobby, linkedDraftId) {
         })
 
         const numScars = game.settings.scarRounds.length * game.settings.players.length * 2
-        if (numScars > cube.scarlist.length) {
-          throw new Error('Insufficient scars for game')
+        const unusedScars = cube.scarlist.filter(s => !s.appliedAt)
+        if (numScars > unusedScars.length) {
+          throw new Error(`Insufficient unused scars for game (need ${numScars}, have ${unusedScars.length})`)
         }
         if (numScars > 0) {
           game.settings.scars = util
             .array
-            .shuffle([...cube.scarlist])
+            .shuffle([...unusedScars])
             .slice(0, numScars)
             .map(scar => scar.id)
         }
