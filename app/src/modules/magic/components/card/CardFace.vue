@@ -90,6 +90,8 @@
 
 
 <script>
+import { mapState } from 'vuex'
+
 import CardArt from './CardArt.vue'
 import CardArtist from './CardArtist.vue'
 import CardColorIndicator from './CardColorIndicator.vue'
@@ -146,8 +148,18 @@ export default {
   },
 
   computed: {
+    ...mapState('magic/cube', {
+      cube: 'cube',
+    }),
+
     achievements() {
-      return []
+      if (!this.cube) {
+        return []
+      }
+
+      return this.cube.achievements()
+        .filter(ach => ach.filters && ach.filters.length > 0)
+        .filter(ach => this.card.matchesFilters(ach.filters))
     },
 
     containerClasses() {

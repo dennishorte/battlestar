@@ -8,6 +8,12 @@
 
       <div v-if="ach.claimedBy" class="subtext">claimed: {{ ach.claimedAt }}</div>
       <div v-else class="subtext">age: {{ ach.createdAt }}</div>
+      <a
+        v-if="hasFilters"
+        href="#"
+        class="filter-link"
+        @click.prevent="showFilters"
+      >view matching cards</a>
     </div>
 
     <BDropdown v-if="!hideMenu">
@@ -32,7 +38,7 @@
 
 
 <script setup>
-import { inject, ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 import { useStore } from 'vuex'
 
 const props = defineProps({
@@ -49,10 +55,16 @@ const props = defineProps({
 defineEmits(['edit-achievement'])
 
 const actor = inject('actor')
+const bus = inject('bus')
 const cubeId = inject('cubeId')
 const store = useStore()
 
 const viewerModalVis = ref(false)
+const hasFilters = computed(() => props.ach.filters && props.ach.filters.length > 0)
+
+function showFilters() {
+  bus.emit('achievement-show-filters', props.ach.filters)
+}
 
 async function claimAchievement() {
   await store.dispatch('magic/cube/claimAchievement', {
@@ -97,5 +109,10 @@ function username(id) {
 
 .achievement-hidden {
   white-space: pre-wrap;
+}
+
+.filter-link {
+  font-size: .8em;
+  margin-left: .5em;
 }
 </style>
