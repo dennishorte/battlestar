@@ -58,11 +58,7 @@ describe('Craftsmanship Promoter (OccD 131)', () => {
       micah: {
         food: 10,
       },
-    })
-    // Add family-growth-minor action space so buyMinorImprovement is called
-    game.testSetBreakpoint('initialization-complete', (game) => {
-      game.state.activeActions.push('family-growth-minor')
-      game.state.actionSpaces['family-growth-minor'] = { occupiedBy: null }
+      actionSpaces: ['Basic Wish for Children'],
     })
     game.run()
 

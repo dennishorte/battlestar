@@ -547,10 +547,7 @@ describe('BaseA Cards', () => {
           micah: {
             food: 0,
           },
-        })
-        game.testSetBreakpoint('initialization-complete', (game) => {
-          game.state.activeActions.push('take-cattle')
-          game.state.actionSpaces['take-cattle'] = { occupiedBy: null, accumulated: 0 }
+          actionSpaces: ['Cattle Market'],
         })
         game.run()
 
@@ -1203,10 +1200,7 @@ describe('BaseA Cards', () => {
             wood: 15,
             minorImprovements: ['shepherds-crook'],
           },
-        })
-        game.testSetBreakpoint('initialization-complete', (game) => {
-          game.state.activeActions.push('fencing')
-          game.state.actionSpaces['fencing'] = { occupiedBy: null }
+          actionSpaces: ['Fencing'],
         })
         game.run()
 
@@ -1243,10 +1237,7 @@ describe('BaseA Cards', () => {
             wood: 15,
             minorImprovements: ['shepherds-crook'],
           },
-        })
-        game.testSetBreakpoint('initialization-complete', (game) => {
-          game.state.activeActions.push('fencing')
-          game.state.actionSpaces['fencing'] = { occupiedBy: null }
+          actionSpaces: ['Fencing'],
         })
         game.run()
 
@@ -1439,10 +1430,7 @@ describe('BaseA Cards', () => {
             wood: 1,  // Only 1 wood, but 3 fences are free
             occupations: ['hedge-keeper'],
           },
-        })
-        game.testSetBreakpoint('initialization-complete', (game) => {
-          game.state.activeActions.push('fencing')
-          game.state.actionSpaces['fencing'] = { occupiedBy: null }
+          actionSpaces: ['Fencing'],
         })
         game.run()
 
@@ -2511,10 +2499,7 @@ describe('BaseA Cards', () => {
               pastures: [{ spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }], animals: {} }],
             },
           },
-        })
-        game.testSetBreakpoint('initialization-complete', (game) => {
-          game.state.activeActions.push('take-sheep')
-          game.state.actionSpaces['take-sheep'] = { occupiedBy: null, accumulated: 0 }
+          actionSpaces: ['Sheep Market'],
         })
         game.run()
 

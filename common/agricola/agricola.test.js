@@ -1604,10 +1604,7 @@ describe('Agricola', () => {
           food: 10,
         },
         round: 3,
-      })
-      game.testSetBreakpoint('initialization-complete', (game) => {
-        game.state.activeActions.push('major-minor-improvement')
-        game.state.actionSpaces['major-minor-improvement'] = { occupiedBy: null }
+        actionSpaces: ['Major Improvement'],
       })
       game.run()
 
@@ -1648,10 +1645,7 @@ describe('Agricola', () => {
           clay: 4,
           majorImprovements: ['fireplace-2'],
         },
-      })
-      game.testSetBreakpoint('initialization-complete', (game) => {
-        game.state.activeActions.push('major-minor-improvement')
-        game.state.actionSpaces['major-minor-improvement'] = { occupiedBy: null }
+        actionSpaces: ['Major Improvement'],
       })
       game.run()
 
@@ -1681,10 +1675,7 @@ describe('Agricola', () => {
           grain: 2,
           food: 0,
         },
-      })
-      game.testSetBreakpoint('initialization-complete', (game) => {
-        game.state.activeActions.push('major-minor-improvement')
-        game.state.actionSpaces['major-minor-improvement'] = { occupiedBy: null }
+        actionSpaces: ['Major Improvement'],
       })
       game.run()
 
@@ -1713,10 +1704,7 @@ describe('Agricola', () => {
           grain: 1,
           food: 0,
         },
-      })
-      game.testSetBreakpoint('initialization-complete', (game) => {
-        game.state.activeActions.push('major-minor-improvement')
-        game.state.actionSpaces['major-minor-improvement'] = { occupiedBy: null }
+        actionSpaces: ['Major Improvement'],
       })
       game.run()
 
@@ -1745,10 +1733,8 @@ describe('Agricola', () => {
         micah: {
           food: 10,
         },
-      })
-      game.testSetBreakpoint('initialization-complete', (game) => {
-        game.state.activeActions.push('major-minor-improvement')
-        game.state.actionSpaces['major-minor-improvement'] = { occupiedBy: null }
+        round: 1,
+        actionSpaces: ['Major Improvement'],
       })
       game.run()
 

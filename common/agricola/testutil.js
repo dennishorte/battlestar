@@ -415,8 +415,47 @@ TestUtil.testScoring = function(player, expected) {
 // ---------------------------------------------------------------------------
 
 /**
- * Set up game state in a declarative way.
- * Usage:
+ * Set up game state in a declarative way. All fields are optional and
+ * default to sensible starting values (round 1, 2 wood rooms, 2 family
+ * members, 0 resources, etc.).
+ *
+ * Game-level fields:
+ *   round            - Number. Sets the current round (and stage auto-derives).
+ *                      Defaults to 1.
+ *   actionSpaces     - Array of action space display names (the names used by
+ *                      t.choose()). Adds round-card action spaces to the board.
+ *                      All round cards from stages 1 through the highest
+ *                      requested stage are added (matching real game behavior).
+ *                      If `round` is not set explicitly, round and stage are
+ *                      auto-set to the end of the highest requested stage.
+ *                      Examples: ['Major Improvement'], ['Fencing'],
+ *                                ['Basic Wish for Children'], ['Cattle Market']
+ *
+ * Per-player fields (keyed by player name, e.g. `dennis`, `micah`):
+ *   food, wood, clay, stone, reed, grain, vegetables
+ *                    - Number. Resource counts. Default to 0.
+ *   familyMembers    - Number. Also sets availableWorkers. Defaults to 2.
+ *   roomType         - 'wood' | 'clay' | 'stone'. Updates existing rooms.
+ *                      Defaults to 'wood'.
+ *   beggingCards     - Number. Defaults to 0.
+ *   bonusPoints      - Number. Defaults to 0.
+ *   occupationsPlayed - Number. Only set if explicitly provided.
+ *   hand             - Array of card IDs in the player's hand.
+ *   occupations      - Array of card IDs of played occupations.
+ *   minorImprovements - Array of card IDs of played minor improvements.
+ *   majorImprovements - Array of card IDs of played major improvements.
+ *                       Cards are created and moved to the correct zones.
+ *   pet              - Animal type string for the house pet.
+ *   animals          - { sheep, boar, cattle }. Adds animals via addAnimals().
+ *   farmyard         - Object with layout options:
+ *       rooms        - Number. Builds additional rooms in valid spaces if
+ *                      the count exceeds the current 2.
+ *       fields       - Array of { row, col, crop?, cropCount? }.
+ *       stables      - Array of { row, col }.
+ *       pastures     - Array of { spaces: [{row, col}], hasStable?, animals? }.
+ *                      `animals` is { sheep?, boar?, cattle? } counts.
+ *
+ * Example:
  *   t.setBoard(game, {
  *     dennis: {
  *       food: 5,
@@ -428,12 +467,13 @@ TestUtil.testScoring = function(player, expected) {
  *       farmyard: {
  *         rooms: 3,
  *         fields: [{ row: 1, col: 0, crop: 'grain', cropCount: 3 }],
- *         pastures: [{ spaces: [{row: 2, col: 0}], animals: { sheep: 2 }}],
+ *         pastures: [{ spaces: [{ row: 2, col: 0 }], animals: { sheep: 2 } }],
  *         stables: [{ row: 1, col: 1 }],
  *       },
  *       animals: { sheep: 2, boar: 1 },
  *     },
  *     round: 5,
+ *     actionSpaces: ['Major Improvement'],
  *   })
  */
 TestUtil.setBoard = function(game, state) {
@@ -441,6 +481,38 @@ TestUtil.setBoard = function(game, state) {
     // Set round/stage
     game.state.round = state.round || 1
     game.state.stage = res.constants.roundToStage[state.round] || 1
+
+    // Add requested action spaces (by name)
+    if (state.actionSpaces) {
+      const allActions = res.getAllActionSpaces()
+
+      // Look up each requested action by name
+      const requested = state.actionSpaces.map(name => {
+        const action = allActions.find(a => a.name === name)
+        if (!action) {
+          throw new Error(`Action space not found by name: "${name}"`)
+        }
+        return action
+      })
+
+      // Find the highest stage among requested round cards
+      const maxStage = Math.max(...requested.map(a => a.stage || 0))
+
+      // Add all round cards from stages 1 through maxStage
+      const roundCards = res.getRoundCards().filter(a => a.stage <= maxStage)
+      for (const action of roundCards) {
+        if (!game.state.activeActions.includes(action.id)) {
+          game.addActionSpace(action)
+        }
+      }
+
+      // Auto-set round/stage to be consistent if caller didn't provide round
+      if (!state.round && maxStage > 0) {
+        const stageEndRounds = res.constants.stagesEndRound
+        game.state.round = stageEndRounds[maxStage]
+        game.state.stage = maxStage
+      }
+    }
 
     // Set player states
     for (const playerName of game.players.all().map(p => p.name)) {
