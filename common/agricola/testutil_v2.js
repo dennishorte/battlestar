@@ -23,6 +23,22 @@ const FARMYARD_DEFAULTS = {
   stables: [],
 }
 
+/**
+ * Respond to an action-type input request (e.g. build-pasture, sow-field).
+ * Shorthand for grabbing selectors[0] and calling respondToInputRequest.
+ *
+ * Usage:
+ *   t.action(game, 'build-pasture', { spaces: [{row: 0, col: 1}] })
+ *   t.action(game, 'sow-field', { row: 2, col: 0, cropType: 'grain' })
+ */
+TestUtil.action = function(game, actionName, opts = {}) {
+  const selector = game.waiting.selectors[0]
+  return game.respondToInputRequest({
+    actor: selector.actor,
+    title: selector.title,
+    selection: { action: actionName, ...opts },
+  })
+}
 
 TestUtil.fixture = function(options = {}) {
   options = Object.assign({

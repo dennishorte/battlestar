@@ -19,30 +19,14 @@ describe('Agricultural Fertilizers', () => {
 
     t.choose(game, 'Fencing')
 
-    // Fence a 2-space pasture (turns 2 unused spaces into used spaces)
-    const sel = game.waiting.selectors[0]
-    game.respondToInputRequest({
-      actor: sel.actor,
-      title: sel.title,
-      selection: {
-        action: 'build-pasture',
-        spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }],
-      },
+    // Fence a 2-space pasture
+    t.action(game, 'build-pasture', {
+      spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }],
     })
     t.choose(game, 'Done building fences')
 
     // Agricultural Fertilizers triggers a sow action — sow grain on the field
-    const sowSel = game.waiting.selectors[0]
-    game.respondToInputRequest({
-      actor: sowSel.actor,
-      title: sowSel.title,
-      selection: {
-        action: 'sow-field',
-        row: 2,
-        col: 0,
-        cropType: 'grain',
-      },
-    })
+    t.action(game, 'sow-field', { row: 2, col: 0, cropType: 'grain' })
 
     t.testBoard(game, {
       dennis: {
