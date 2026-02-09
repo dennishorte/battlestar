@@ -286,6 +286,11 @@ TestUtil.setBoard = function(game, state) {
       game.state.stage = res.constants.roundToStage[game.state.round] || 1
     }
 
+    // Set starting player
+    if (state.firstPlayer) {
+      game.state.startingPlayer = state.firstPlayer
+    }
+
     // Resolve all card refs across all players and check for global duplicates
     const playerNames = game.players.all().map(p => p.name)
     const allCardIds = new Set()
@@ -580,6 +585,11 @@ TestUtil.testBoard = function(game, expected) {
   // Test round/stage
   if (expected.round !== undefined && game.state.round !== expected.round) {
     errors.push(`round: expected ${expected.round}, got ${game.state.round}`)
+  }
+
+  // Test first player
+  if (expected.firstPlayer !== undefined && game.state.startingPlayer !== expected.firstPlayer) {
+    errors.push(`firstPlayer: expected ${expected.firstPlayer}, got ${game.state.startingPlayer}`)
   }
 
   // Only test players explicitly mentioned in expected
