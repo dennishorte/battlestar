@@ -79,7 +79,9 @@ router.post('/create', userController.createUser)
  *       401:
  *         description: Unauthorized
  */
+router.post('/all_deactivated', userController.getDeactivatedUsers)
 router.post('/deactivate', userController.deactivateUser)
+router.post('/reactivate', userController.reactivateUser)
 
 /**
  * @swagger

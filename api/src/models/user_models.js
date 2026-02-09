@@ -40,9 +40,31 @@ User.checkPassword = async function(name, password) {
   return user
 }
 
+User.allDeactivated = async function(projection) {
+  const filter = {
+    deactivated: true
+  }
+
+  if (!projection) {
+    projection = {
+      name: 1,
+      slack: 1,
+      lastSeen: 1,
+    }
+  }
+
+  return userCollection.find(filter).project(projection).toArray()
+}
+
 User.deactivate = async function(id) {
   const filter = { _id: id }
   const updater = { $set: { deactivated: true } }
+  return await userCollection.updateOne(filter, updater)
+}
+
+User.reactivate = async function(id) {
+  const filter = { _id: id }
+  const updater = { $unset: { deactivated: 1 } }
   return await userCollection.updateOne(filter, updater)
 }
 

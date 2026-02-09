@@ -37,6 +37,45 @@
       </tbody>
     </table>
 
+    <div v-if="!showDeactivated" class="mb-3">
+      <a href="#" @click.prevent="toggleDeactivated">show deactivated</a>
+    </div>
+
+    <div v-if="showDeactivated">
+      <h3 class="text-muted">Deactivated Users</h3>
+      <a href="#" @click.prevent="toggleDeactivated" class="mb-2 d-inline-block">hide deactivated</a>
+
+      <table class="table table-sm deactivated-table">
+        <thead>
+          <tr class="table-light">
+            <th>_id</th>
+            <th>name</th>
+            <th>slack</th>
+            <th>last seen</th>
+            <th/>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr v-for="user in deactivatedUsers" :key="user._id" class="text-muted">
+            <td>
+              <span class="monospace">
+                <span class="text-secondary">{{ user._id.substr(0, user._id.length-3) }}</span>{{ user._id.substr(-3, 3) }}
+              </span>
+            </td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.slack }}</td>
+            <td>{{ timeAgo(user.lastSeen) }}</td>
+            <td>
+              <DropdownMenu :notitle="true">
+                <DropdownItem><button @click="reactivate(user._id)">reactivate</button></DropdownItem>
+              </DropdownMenu>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
 </template>
 
@@ -63,6 +102,8 @@ export default {
 
   data() {
     return {
+      showDeactivated: false,
+      deactivatedUsers: [],
       fields: [
         { key: '_id', label: 'ID', sortable: true },
         { key: 'name', sortable: true },
@@ -105,6 +146,27 @@ export default {
     async deactivate(id) {
       await this.$post('/api/user/deactivate', { id })
       this.$emit('users-updated')
+      if (this.showDeactivated) {
+        await this.fetchDeactivatedUsers()
+      }
+    },
+
+    async toggleDeactivated() {
+      this.showDeactivated = !this.showDeactivated
+      if (this.showDeactivated) {
+        await this.fetchDeactivatedUsers()
+      }
+    },
+
+    async fetchDeactivatedUsers() {
+      const { users } = await this.$post('/api/user/all_deactivated')
+      this.deactivatedUsers = users
+    },
+
+    async reactivate(id) {
+      await this.$post('/api/user/reactivate', { id })
+      this.$emit('users-updated')
+      await this.fetchDeactivatedUsers()
     },
 
     edit(user) {
@@ -162,5 +224,9 @@ export default {
 <style>
 .monospace {
   font-family: monospace;
+}
+
+.deactivated-table {
+  opacity: 0.6;
 }
 </style>

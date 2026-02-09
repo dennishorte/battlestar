@@ -48,6 +48,52 @@ export const createUser = async (req, res, next) => {
   }
 }
 
+export const getDeactivatedUsers = async (req, res, next) => {
+  try {
+    const users = await db.user.allDeactivated()
+    res.json({
+      status: 'success',
+      users
+    })
+  }
+  catch (err) {
+    logger.error(`Error fetching deactivated users: ${err.message}`)
+    next(err)
+  }
+}
+
+export const reactivateUser = async (req, res, next) => {
+  try {
+    const { id } = req.body
+
+    if (!id) {
+      return next(new BadRequestError('User ID is required'))
+    }
+
+    try {
+      const objectId = new ObjectId(id)
+      const result = await db.user.reactivate(objectId)
+
+      if (result.modifiedCount == 1) {
+        res.json({ status: 'success' })
+      }
+      else {
+        res.json({
+          status: 'error',
+          message: 'User not reactivated'
+        })
+      }
+    }
+    catch {
+      return next(new BadRequestError('Invalid user ID format'))
+    }
+  }
+  catch (err) {
+    logger.error(`Error reactivating user: ${err.message}`)
+    next(err)
+  }
+}
+
 export const deactivateUser = async (req, res, next) => {
   try {
     const { id } = req.body
