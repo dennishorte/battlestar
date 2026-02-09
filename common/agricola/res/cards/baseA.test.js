@@ -554,7 +554,7 @@ describe('BaseA Cards', () => {
         // Dennis takes a non-interactive action first
         t.choose(game, 'Grain Seeds')
         // Micah takes Cattle Market (after replenish: accumulated = 1)
-        t.choose(game, 'Cattle Market (1)')
+        t.choose(game, 'Cattle Market')
 
         const dennis = t.player(game)
         const micah = game.players.byName('micah')
@@ -598,7 +598,7 @@ describe('BaseA Cards', () => {
         })
         game.run()
 
-        t.choose(game, 'Western Quarry (1)')
+        t.choose(game, 'Western Quarry')
 
         const dennis = t.player(game)
         t.testBoard(game, {
@@ -621,7 +621,7 @@ describe('BaseA Cards', () => {
         })
         game.run()
 
-        t.choose(game, 'Fishing (1)')
+        t.choose(game, 'Fishing')
 
         const dennis = t.player(game)
         t.testBoard(game, {
@@ -1030,7 +1030,7 @@ describe('BaseA Cards', () => {
         game.run()
 
         // Dennis takes Forest (take-wood) — gets 3 wood from accumulation
-        t.choose(game, 'Forest (3)')
+        t.choose(game, 'Forest')
         // Basket triggers: offer to exchange 2 wood for 3 food
         t.choose(game, 'Exchange 2 wood for 3 food')
 
@@ -1054,7 +1054,7 @@ describe('BaseA Cards', () => {
         })
         game.run()
 
-        t.choose(game, 'Forest (3)')
+        t.choose(game, 'Forest')
         // Skip the exchange
         t.choose(game, 'Skip')
 
@@ -1514,7 +1514,7 @@ describe('BaseA Cards', () => {
         })
         game.run()
 
-        t.choose(game, 'Forest (3)')
+        t.choose(game, 'Forest')
 
         const dennis = t.player(game)
         t.testBoard(game, {
@@ -1566,8 +1566,8 @@ describe('BaseA Cards', () => {
         // Round 4: both players take non-interactive actions
         t.choose(game, 'Day Laborer')   // dennis: +2 food
         t.choose(game, 'Grain Seeds')   // micah: +1 grain
-        t.choose(game, 'Forest (3)')    // dennis: +3 wood
-        t.choose(game, 'Clay Pit (1)')  // micah: +1 clay
+        t.choose(game, 'Forest')    // dennis: +3 wood
+        t.choose(game, 'Clay Pit')  // micah: +1 clay
 
         // Harvest fires: fieldPhase harvests 2 grain (1 per field),
         // then scythe-worker gives 2 extra grain (1 per grain field)
@@ -1847,12 +1847,12 @@ describe('BaseA Cards', () => {
         // Round 12: 8 actions (4 players × 2 workers), all non-interactive
         t.choose(game, 'Day Laborer')            // dennis
         t.choose(game, 'Grain Seeds')             // micah
-        t.choose(game, 'Forest (3)')              // scott
-        t.choose(game, 'Clay Pit (1)')            // eliya
-        t.choose(game, 'Fishing (1)')             // dennis
-        t.choose(game, 'Copse (1)')               // micah
-        t.choose(game, 'Grove (2)')               // scott
-        t.choose(game, 'Traveling Players (1)')   // eliya
+        t.choose(game, 'Forest')              // scott
+        t.choose(game, 'Clay Pit')            // eliya
+        t.choose(game, 'Fishing')             // dennis
+        t.choose(game, 'Copse')               // micah
+        t.choose(game, 'Grove')               // scott
+        t.choose(game, 'Traveling Players')   // eliya
 
         // Round 12 end: Pig Breeder breeds 1 boar (2 boar → 3)
         const dennis = t.player(game)
@@ -1870,7 +1870,7 @@ describe('BaseA Cards', () => {
         })
         game.run()
 
-        t.choose(game, 'Traveling Players (1)')
+        t.choose(game, 'Traveling Players')
 
         const dennis = t.player(game)
         t.testBoard(game, {
@@ -1898,7 +1898,7 @@ describe('BaseA Cards', () => {
         // Dennis takes a non-traveling-players action first
         t.choose(game, 'Grain Seeds')
         // Micah takes Traveling Players
-        t.choose(game, 'Traveling Players (1)')
+        t.choose(game, 'Traveling Players')
 
         const dennis = t.player(game)
         const micah = game.players.byName('micah')
@@ -1926,7 +1926,7 @@ describe('BaseA Cards', () => {
         })
         game.run()
 
-        t.choose(game, 'Traveling Players (1)')
+        t.choose(game, 'Traveling Players')
 
         const dennis = t.player(game)
         t.testBoard(game, {
@@ -1952,7 +1952,7 @@ describe('BaseA Cards', () => {
         game.run()
 
         // Dennis takes Forest (take-wood) — gets 3 wood
-        t.choose(game, 'Forest (3)')
+        t.choose(game, 'Forest')
         // Mushroom Collector: exchange 1 wood for 2 food
         t.choose(game, 'Exchange 1 wood for 2 food')
 
@@ -2326,8 +2326,8 @@ describe('BaseA Cards', () => {
 
         // Finish round 2: remaining 3 actions
         t.choose(game, 'Grain Seeds')   // micah worker 1
-        t.choose(game, 'Forest (3)')    // dennis worker 2
-        t.choose(game, 'Clay Pit (1)')  // micah worker 2
+        t.choose(game, 'Forest')    // dennis worker 2
+        t.choose(game, 'Clay Pit')  // micah worker 2
 
         // Round 2 end: checkTrigger fires — schedules 2 clay for rounds 3-7
         // Round 3 start: scheduled clay delivered
@@ -2433,7 +2433,7 @@ describe('BaseA Cards', () => {
         game.run()
 
         // Dennis takes Fishing
-        t.choose(game, 'Fishing (1)')
+        t.choose(game, 'Fishing')
         // Harpooner triggers: pay 1 wood for 2 food and 1 reed (2 family members)
         t.choose(game, game.waiting.selectors[0].choices.find(c => typeof c === 'string' && c.includes('Pay')))
 
@@ -2504,7 +2504,7 @@ describe('BaseA Cards', () => {
         game.run()
 
         // After replenish, Sheep Market has 1 accumulated
-        t.choose(game, 'Sheep Market (1)')
+        t.choose(game, 'Sheep Market')
         // Animal Dealer triggers: buy 1 sheep for 1 food
         t.choose(game, 'Buy 1 sheep for 1 food')
 

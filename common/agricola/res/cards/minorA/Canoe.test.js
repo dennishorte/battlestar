@@ -10,7 +10,7 @@ describe('Canoe (A078)', () => {
     })
     game.run()
 
-    t.choose(game, 'Fishing (1)')
+    t.choose(game, 'Fishing')
 
     const dennis = t.player(game)
     expect(dennis.food).toBe(2) // 1 accumulated + 1 from Canoe

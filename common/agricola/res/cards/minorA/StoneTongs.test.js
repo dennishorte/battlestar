@@ -11,7 +11,7 @@ describe('Stone Tongs (A080)', () => {
     })
     game.run()
 
-    t.choose(game, 'Western Quarry (1)')
+    t.choose(game, 'Western Quarry')
 
     const dennis = t.player(game)
     expect(dennis.stone).toBe(2) // 1 accumulated + 1 from Stone Tongs

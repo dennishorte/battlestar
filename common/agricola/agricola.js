@@ -66,6 +66,21 @@ function factoryFromLobby(lobby) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// Input Processing
+
+// Backward compatibility: strip accumulated amounts from action space selections.
+// e.g. "Forest (3)" -> "Forest". Remove this once all clients send clean action names.
+Agricola.prototype.respondToInputRequest = function(response) {
+  if (response.selection && Array.isArray(response.selection)) {
+    response.selection = response.selection.map(s =>
+      typeof s === 'string' ? s.replace(/\s*\(\d+\)$/, '') : s
+    )
+  }
+  return Object.getPrototypeOf(Agricola.prototype).respondToInputRequest.call(this, response)
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 // Main Program
 
 Agricola.prototype._mainProgram = function() {
@@ -930,11 +945,11 @@ Agricola.prototype.playerTurn = function(player) {
     const action = res.getActionById(actionId)
     const state = this.state.actionSpaces[actionId]
 
-    let label = action.name
+    const choice = { id: actionId, label: action.name }
     if (action.type === 'accumulating' && state.accumulated > 0) {
-      label += ` (${state.accumulated})`
+      choice.detail = `${state.accumulated}`
     }
-    return { id: actionId, label }
+    return choice
   })
 
   // Sort alphabetically by label (only for version 3+)
@@ -942,9 +957,16 @@ Agricola.prototype.playerTurn = function(player) {
     choices.sort((a, b) => a.label.localeCompare(b.label))
   }
 
+  const selectorChoices = choices.map(c => {
+    if (c.detail) {
+      return { title: c.label, detail: c.detail }
+    }
+    return c.label
+  })
+
   const selection = this.actions.choose(
     player,
-    choices.map(c => c.label),
+    selectorChoices,
     { title: 'Choose an action', min: 1, max: 1 }
   )
 

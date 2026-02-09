@@ -15,9 +15,9 @@ describe('Ale-Benches', () => {
 
     // Work phase: 4 workers take simple actions
     t.choose(game, 'Day Laborer')   // dennis turn 1: +2 food
-    t.choose(game, 'Forest (3)')    // micah turn 1: +3 wood
+    t.choose(game, 'Forest')    // micah turn 1: +3 wood
     t.choose(game, 'Grain Seeds')   // dennis turn 2: +1 grain
-    t.choose(game, 'Clay Pit (1)')  // micah turn 2: +1 clay
+    t.choose(game, 'Clay Pit')  // micah turn 2: +1 clay
 
     // Return home phase: Ale-Benches triggers
     t.choose(game, 'Pay 1 grain for 1 bonus point')
@@ -51,9 +51,9 @@ describe('Ale-Benches', () => {
 
     // Work phase: 4 workers take simple actions
     t.choose(game, 'Day Laborer')     // dennis turn 1: +2 food
-    t.choose(game, 'Forest (3)')      // micah turn 1: +3 wood
-    t.choose(game, 'Reed Bank (1)')   // dennis turn 2: +1 reed
-    t.choose(game, 'Clay Pit (1)')    // micah turn 2: +1 clay
+    t.choose(game, 'Forest')      // micah turn 1: +3 wood
+    t.choose(game, 'Reed Bank')   // dennis turn 2: +1 reed
+    t.choose(game, 'Clay Pit')    // micah turn 2: +1 clay
 
     // Return home phase: Ale-Benches does NOT trigger (no grain)
     // Game proceeds directly to next round
