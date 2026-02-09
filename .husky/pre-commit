@@ -33,8 +33,26 @@ if echo "$STAGED_FILES" | grep -q "^common/"; then
   echo "Running lint for common..."
   npm run lint
 
-  echo "Running tests for common..."
-  npm run test
+  # Determine which sub-projects need testing.
+  # Changes in lib/ or root-level files trigger all tests.
+  COMMON_FILES=$(echo "$STAGED_FILES" | grep "^common/" | sed 's|^common/||')
+
+  if echo "$COMMON_FILES" | grep -qE "^(lib/|[^/]+$)"; then
+    echo "Running all tests for common (shared code changed)..."
+    npx jest
+  else
+    TEST_PATHS=""
+    for dir in agricola magic tyrants ultimate; do
+      if echo "$COMMON_FILES" | grep -q "^${dir}/"; then
+        TEST_PATHS="$TEST_PATHS $dir/"
+      fi
+    done
+
+    if [ -n "$TEST_PATHS" ]; then
+      echo "Running tests for:$TEST_PATHS"
+      npx jest $TEST_PATHS
+    fi
+  fi
 
   cd ..
 fi
