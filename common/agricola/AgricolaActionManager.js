@@ -2275,6 +2275,36 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   /**
+   * Offer to pay 1 grain for 1 bonus point (Ale-Benches).
+   * If accepted, each other player gets 1 food.
+   */
+  offerAleBenches(player, card) {
+    const choices = [
+      'Pay 1 grain for 1 bonus point',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Pay grain for bonus point?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ grain: 1 })
+      player.bonusPoints += 1
+      for (const other of this.game.players.all()) {
+        if (other !== player) {
+          other.addResource('food', 1)
+        }
+      }
+      this.log.add({
+        template: '{player} pays 1 grain for 1 bonus point using {card}. Each other player gets 1 food.',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
    * Pass a minor improvement card to the player on the left, if it has passLeft.
    * Moves the card from the current player's minorImprovements zone to
    * the left player's hand zone.
