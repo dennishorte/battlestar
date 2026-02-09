@@ -19,26 +19,24 @@ describe('Agricultural Fertilizers', () => {
 
     t.choose(game, 'Fencing')
 
-    // Fence a 2-space pasture
+    // Fence a 2-space pasture adjacent to the existing one
     t.action(game, 'build-pasture', {
-      spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }],
+      spaces: [{ row: 1, col: 3 }, { row: 1, col: 4 }],
     })
     t.choose(game, 'Done building fences')
 
     // Agricultural Fertilizers triggers a sow action — sow grain on the field
     t.action(game, 'sow-field', { row: 2, col: 0, cropType: 'grain' })
 
-    console.log(game.players.byName('dennis').drawFarmyard())
-
     t.testBoard(game, {
       dennis: {
-        wood: 4,
+        wood: 6,
         minorImprovements: ['agricultural-fertilizers-a073'],
         farmyard: {
           fields: [{ row: 2, col: 0, crop: 'grain', cropCount: 3 }],
           pastures: [
             { spaces: [{ row: 2, col: 3 }, { row: 2, col: 4 }] },
-            { spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }] },
+            { spaces: [{ row: 1, col: 3 }, { row: 1, col: 4 }] },
           ],
         },
       },

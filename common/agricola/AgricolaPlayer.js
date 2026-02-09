@@ -818,6 +818,32 @@ class AgricolaPlayer extends BasePlayer {
     return false
   }
 
+  // Get the two corner points of a fence segment as string keys
+  _getFenceCorners(fence) {
+    const { row1, col1 } = fence
+    let edge = fence.edge
+    if (!edge) {
+      if (fence.row2 < row1) {
+        edge = 'top'
+      }
+      else if (fence.row2 > row1) {
+        edge = 'bottom'
+      }
+      else if (fence.col2 < col1) {
+        edge = 'left'
+      }
+      else {
+        edge = 'right'
+      }
+    }
+    switch (edge) {
+      case 'top': return [`${row1},${col1}`, `${row1},${col1 + 1}`]
+      case 'bottom': return [`${row1 + 1},${col1}`, `${row1 + 1},${col1 + 1}`]
+      case 'left': return [`${row1},${col1}`, `${row1 + 1},${col1}`]
+      case 'right': return [`${row1},${col1 + 1}`, `${row1 + 1},${col1 + 1}`]
+    }
+  }
+
   isPastureFullyEnclosed(spaces) {
     // Check if all border edges of the space group have fences
     // This includes both internal fences (between spaces) and board edge fences
@@ -974,6 +1000,22 @@ class AgricolaPlayer extends BasePlayer {
 
     // Calculate fences needed
     const fences = this.calculateFencesForPasture(spaces)
+
+    // Check that new fences connect to existing fence network
+    if (this.farmyard.fences.length > 0 && fences.length > 0) {
+      const existingCorners = new Set()
+      for (const f of this.farmyard.fences) {
+        for (const c of this._getFenceCorners(f)) {
+          existingCorners.add(c)
+        }
+      }
+      const connects = fences.some(f =>
+        this._getFenceCorners(f).some(c => existingCorners.has(c))
+      )
+      if (!connects) {
+        return { valid: false, error: 'New pasture must connect to existing fences' }
+      }
+    }
 
     // Check if player has enough wood (accounting for fence cost modifiers)
     const woodCost = this.applyFenceCostModifiers(fences.length)
