@@ -1252,6 +1252,47 @@ class AgricolaActionManager extends BaseActionManager {
   // Minor Improvement action
   // ---------------------------------------------------------------------------
 
+  /**
+   * Scan the player's played cards for allowsMajorOnMinorAction / allowsMajorsOnMinorAction.
+   * Returns:
+   *   null      — at least one card allows ALL majors (e.g. Ambition)
+   *   Set<id>   — specific major IDs allowed
+   *   undefined — no played card grants this ability
+   */
+  getAllowedMajorsForMinorAction(player) {
+    let allowAll = false
+    const allowedIds = new Set()
+
+    for (const cardId of player.getPlayedCards()) {
+      const card = this.game.cards.byId(cardId)
+      if (!card) {
+        continue
+      }
+      const def = card.definition
+
+      if (def.allowsMajorOnMinorAction) {
+        if (def.allowedMajors) {
+          for (const id of def.allowedMajors) {
+            allowedIds.add(id)
+          }
+        }
+        else {
+          allowAll = true
+        }
+      }
+      if (Array.isArray(def.allowsMajorsOnMinorAction)) {
+        for (const id of def.allowsMajorsOnMinorAction) {
+          allowedIds.add(id)
+        }
+      }
+    }
+
+    if (allowAll) {
+      return null
+    }
+    return allowedIds.size > 0 ? allowedIds : undefined
+  }
+
   buyMinorImprovement(player) {
     // Get minor improvements from player's hand
     const minorInHand = player.hand.filter(cardId => {
@@ -1259,13 +1300,162 @@ class AgricolaActionManager extends BaseActionManager {
       return card && card.type === 'minor'
     })
 
-    if (minorInHand.length === 0) {
+    // Check if any played cards allow major improvements on minor action
+    const allowedMajors = this.getAllowedMajorsForMinorAction(player)
+    const hasMajorAbility = allowedMajors !== undefined
+
+    // Get affordable allowed majors
+    const getAffordableMajorIds = () => {
+      if (!hasMajorAbility) {
+        return []
+      }
+      const available = this.game.getAvailableMajorImprovements()
+      const filtered = allowedMajors === null
+        ? available
+        : available.filter(id => allowedMajors.has(id))
+      return filtered.filter(id => player.canBuyMajorImprovement(id))
+    }
+
+    // Check if there's anything to do at all
+    const hasAnyPossibility = () => {
+      if (getAffordableMajorIds().length > 0) {
+        return true
+      }
+      if (minorInHand.some(cardId => player.canPlayCard(cardId))) {
+        return true
+      }
+      return false
+    }
+
+    if (minorInHand.length === 0 && !hasMajorAbility) {
       this.log.add({
         template: '{player} has no minor improvements in hand',
         args: { player },
       })
       return false
     }
+
+    if (!hasAnyPossibility()) {
+      const canConvert = this.game.getAnytimeFoodConversionOptions(player).length > 0
+      if (!canConvert) {
+        this.log.add({
+          template: '{player} has no affordable improvements',
+          args: { player },
+        })
+        return false
+      }
+    }
+
+    // If majors are available, use nested choices (same pattern as buyImprovement)
+    if (hasMajorAbility) {
+      const selection = this.choose(player, () => {
+        const nestedChoices = []
+
+        // Get affordable allowed major improvements
+        const affordableMajorIds = getAffordableMajorIds()
+        if (affordableMajorIds.length > 0) {
+          const majorChoices = affordableMajorIds.map(id => {
+            const imp = this.game.cards.byId(id)
+            return imp.name + ` (${id})`
+          })
+          nestedChoices.push({
+            title: 'Major Improvement',
+            choices: majorChoices,
+            min: 0,
+            max: 1,
+          })
+        }
+
+        // Get playable minor improvements
+        const playableMinorIds = minorInHand.filter(cardId => player.canPlayCard(cardId))
+        if (playableMinorIds.length > 0) {
+          const minorChoices = playableMinorIds.map(cardId => {
+            const card = this.game.cards.byId(cardId)
+            return card ? card.name : cardId
+          })
+          nestedChoices.push({
+            title: 'Minor Improvement',
+            choices: minorChoices,
+            min: 0,
+            max: 1,
+          })
+        }
+
+        nestedChoices.push('Do not play an improvement')
+        return nestedChoices
+      }, {
+        title: 'Play a Minor Improvement',
+        min: 1,
+        max: 1,
+      })
+
+      const choice = selection[0]
+
+      if (choice === 'Do not play an improvement') {
+        this.log.addDoNothing(player, 'play an improvement')
+        return false
+      }
+
+      if (typeof choice === 'object' && choice.title) {
+        const selectedName = choice.selection[0]
+
+        if (choice.title === 'Major Improvement') {
+          const idMatch = selectedName.match(/\(([^)]+)\)/)
+          const improvementId = idMatch ? idMatch[1] : null
+
+          if (improvementId) {
+            const imp = this.game.cards.byId(improvementId)
+            player.buyMajorImprovement(improvementId)
+            this._recordCardPlayed(player, imp)
+
+            this.log.add({
+              template: '{player} buys {card}',
+              args: { player, card: imp },
+            })
+            player.payCost(player.getMajorImprovementCost(improvementId))
+
+            if (imp.hasHook('onBuy')) {
+              imp.callHook('onBuy', this.game, player)
+            }
+
+            this.callOnBuildImprovementHooks(player)
+            return improvementId
+          }
+        }
+
+        if (choice.title === 'Minor Improvement') {
+          const playableMinorIds = minorInHand.filter(cardId => player.canPlayCard(cardId))
+          const cardId = playableMinorIds.find(id => {
+            const card = this.game.cards.byId(id)
+            return card && card.name === selectedName
+          })
+
+          if (cardId) {
+            const card = this.game.cards.byId(cardId)
+            player.playCard(cardId)
+            this._recordCardPlayed(player, card)
+
+            this.log.add({
+              template: '{player} plays {card}',
+              args: { player, card: card },
+            })
+            player.payCardCost(cardId)
+
+            if (card.hasHook('onPlay')) {
+              card.callHook('onPlay', this.game, player)
+            }
+
+            this.callOnBuildImprovementHooks(player)
+            this.maybePassLeft(player, cardId)
+            return true
+          }
+        }
+      }
+
+      return false
+    }
+
+    // Original flow: no major ability, only minor improvements
 
     // Filter to playable minor improvements (can afford and meet prerequisites)
     // Relax gate: if conversions exist, enter choose anyway (function rebuilds list after conversion)

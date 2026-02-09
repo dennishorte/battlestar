@@ -44,4 +44,37 @@ describe('Craftsmanship Promoter (OccD 131)', () => {
     const card = res.getCardById('craftsmanship-promoter-d131')
     expect(card.allowedMajors).toContain('basketmakers-workshop')
   })
+
+  test('allows buying Joinery on Minor Improvement action', () => {
+    const game = t.fixture({ cardSets: ['occupationD'] })
+
+    t.setBoard(game, {
+      dennis: {
+        wood: 2,
+        stone: 2,
+        occupations: ['craftsmanship-promoter-d131'],
+        farmyard: { rooms: 3 },
+      },
+      micah: {
+        food: 10,
+      },
+    })
+    // Add family-growth-minor action space so buyMinorImprovement is called
+    game.testSetBreakpoint('initialization-complete', (game) => {
+      game.state.activeActions.push('family-growth-minor')
+      game.state.actionSpaces['family-growth-minor'] = { occupiedBy: null }
+    })
+    game.run()
+
+    // Dennis takes Basic Wish for Children (family growth + minor improvement)
+    t.choose(game, 'Basic Wish for Children')
+
+    // With Craftsmanship Promoter played, Joinery should appear as a major improvement choice
+    t.choose(game, 'Major Improvement.Joinery (joinery)')
+
+    const dennis = t.player(game)
+    expect(dennis.majorImprovements).toContain('joinery')
+    expect(dennis.wood).toBe(0)
+    expect(dennis.stone).toBe(0)
+  })
 })
