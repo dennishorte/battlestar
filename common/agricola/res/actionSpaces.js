@@ -35,7 +35,7 @@ const baseActions = [
   },
   {
     id: 'occupation',
-    name: 'Lessons',
+    name: 'Lessons A',
     description: 'Play 1 Occupation (first is free, then 1 food each)',
     type: 'instant',
     allowsOccupation: true,
@@ -299,7 +299,7 @@ const threePlayerActions = [
   },
   {
     id: 'lessons-3',
-    name: 'Lessons',
+    name: 'Lessons B',
     description: 'Play 1 Occupation (occupation cost: 2 food)',
     type: 'instant',
     allowsOccupation: true,
@@ -339,7 +339,7 @@ const fourPlayerActions = [
   },
   {
     id: 'lessons-4',
-    name: 'Lessons',
+    name: 'Lessons B',
     description: 'Play 1 Occupation (occupation cost: 2 food, the first two only 1 food each)',
     type: 'instant',
     allowsOccupation: true,
@@ -360,7 +360,7 @@ const fourPlayerActions = [
 const fiveSixPlayerActions = [
   {
     id: 'lessons-5',
-    name: 'Lessons',
+    name: 'Lessons C',
     description: 'Play 1 Occupation (occupation cost: 2 food)',
     type: 'instant',
     allowsOccupation: true,
@@ -393,7 +393,7 @@ const fiveSixPlayerActions = [
   },
   {
     id: 'lessons-5b',
-    name: 'Lessons',
+    name: 'Lessons D',
     description: 'Play 1 Occupation (occupation cost: 2 food, the first two only 1 food each)',
     type: 'instant',
     allowsOccupation: true,

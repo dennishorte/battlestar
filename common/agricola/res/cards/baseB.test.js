@@ -422,7 +422,7 @@ describe('BaseB Cards', () => {
         })
         game.run()
 
-        t.choose(game, 'Lessons')
+        t.choose(game, 'Lessons A')
         t.choose(game, 'Seasonal Worker')
 
         // Bread Paddle onPlayOccupation fires: bake bread
@@ -2049,7 +2049,7 @@ describe('BaseB Cards', () => {
         })
         game.run()
 
-        t.choose(game, 'Lessons')
+        t.choose(game, 'Lessons A')
         t.choose(game, 'Groom')
 
         // Paper Maker triggers: pay 1 wood for 2 food (2 occupations played)
@@ -2081,7 +2081,7 @@ describe('BaseB Cards', () => {
         })
         game.run()
 
-        t.choose(game, 'Lessons')
+        t.choose(game, 'Lessons A')
         t.choose(game, 'Groom')
 
         // Paper Maker does not trigger (no wood), goes to Groom's onPlay
@@ -2691,7 +2691,7 @@ describe('BaseB Cards', () => {
         game.run()
 
         // Round: 8 actions (4 players × 2 workers)
-        t.choose(game, 'Lessons')              // dennis — play Pastor
+        t.choose(game, 'Lessons A')              // dennis — play Pastor
         t.choose(game, 'Pastor')
         t.choose(game, 'Grain Seeds')           // micah
         t.choose(game, 'Forest (3)')            // scott

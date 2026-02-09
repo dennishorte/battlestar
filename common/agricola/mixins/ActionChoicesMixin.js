@@ -30,7 +30,7 @@ const ActionChoicesMixin = {
       }
 
       // Build choice info
-      const displayName = this.getActionDisplayName(action)
+      const displayName = action.name
       const choice = {
         id: actionId,
         name: displayName,

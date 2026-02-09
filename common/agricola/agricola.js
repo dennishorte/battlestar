@@ -245,42 +245,6 @@ Agricola.prototype.blockLinkedSpace = function(actionId) {
   }
 }
 
-// Display names for actions with duplicate names (to distinguish them in UI)
-// Uses letters A, B, C to avoid confusion with accumulated amounts in parentheses
-const ACTION_DISPLAY_NAMES = {
-  // Lessons variants
-  'occupation': 'Lessons A',
-  'lessons-3': 'Lessons B',
-  'lessons-4': 'Lessons B',
-  'lessons-5': 'Lessons C',
-  'lessons-5b': 'Lessons D',
-  // Grove variants
-  'grove': 'Grove A',
-  'grove-5': 'Grove B',
-  'grove-6': 'Grove C',
-  // Hollow variants
-  'hollow': 'Hollow A',
-  'hollow-5': 'Hollow B',
-  'hollow-6': 'Hollow C',
-  // Resource Market variants
-  'resource-market': 'Resource Market A',
-  'resource-market-5': 'Resource Market B',
-  'resource-market-6': 'Resource Market C',
-  // Copse variants
-  'copse': 'Copse A',
-  'copse-5': 'Copse B',
-  // Traveling Players variants
-  'traveling-players': 'Traveling Players A',
-  'traveling-players-5': 'Traveling Players B',
-}
-
-Agricola.prototype.getActionDisplayName = function(action) {
-  if (this.settings.version >= 3 && action.id in ACTION_DISPLAY_NAMES) {
-    return ACTION_DISPLAY_NAMES[action.id]
-  }
-  return action.name
-}
-
 Agricola.prototype.initializeRoundCards = function() {
   // Shuffle round cards within each stage
   this.state.roundCardDeck = []
@@ -857,7 +821,7 @@ Agricola.prototype.replenishPhase = function() {
       if (state.accumulated > 0) {
         this.log.add({
           template: '{action}: {amount} accumulated',
-          args: { action: this.getActionDisplayName(action), amount: state.accumulated },
+          args: { action: action.name, amount: state.accumulated },
         })
       }
     }
@@ -966,7 +930,7 @@ Agricola.prototype.playerTurn = function(player) {
     const action = res.getActionById(actionId)
     const state = this.state.actionSpaces[actionId]
 
-    let label = this.getActionDisplayName(action)
+    let label = action.name
     if (action.type === 'accumulating' && state.accumulated > 0) {
       label += ` (${state.accumulated})`
     }

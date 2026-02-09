@@ -81,7 +81,7 @@ TestUtil.fixtureOccupation = function(cardId, options, state) {
   const game = TestUtil.fixture(options)
   TestUtil.setBoard(game, state)
   game.run()
-  TestUtil.choose(game, 'Lessons')
+  TestUtil.choose(game, 'Lessons A')
   TestUtil.choose(game, card.name)
   return game
 }

@@ -155,28 +155,6 @@ const RESOURCE_NAMES = {
   cattle: 'Cattle',
 }
 
-// Display names for actions with duplicate names (must match backend ACTION_DISPLAY_NAMES)
-const ACTION_DISPLAY_NAMES = {
-  'occupation': 'Lessons A',
-  'lessons-3': 'Lessons B',
-  'lessons-4': 'Lessons B',
-  'lessons-5': 'Lessons C',
-  'lessons-5b': 'Lessons D',
-  'grove': 'Grove A',
-  'grove-5': 'Grove B',
-  'grove-6': 'Grove C',
-  'hollow': 'Hollow A',
-  'hollow-5': 'Hollow B',
-  'hollow-6': 'Hollow C',
-  'resource-market': 'Resource Market A',
-  'resource-market-5': 'Resource Market B',
-  'resource-market-6': 'Resource Market C',
-  'copse': 'Copse A',
-  'copse-5': 'Copse B',
-  'traveling-players': 'Traveling Players A',
-  'traveling-players-5': 'Traveling Players B',
-}
-
 export default {
   name: 'ActionSpaceModal',
 
@@ -203,10 +181,6 @@ export default {
     },
 
     actionDisplayName() {
-      // Use display name mapping for actions with duplicate names
-      if (this.actionId && ACTION_DISPLAY_NAMES[this.actionId]) {
-        return ACTION_DISPLAY_NAMES[this.actionId]
-      }
       return this.action ? this.action.name : ''
     },
 

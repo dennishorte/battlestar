@@ -440,53 +440,14 @@ export default {
       return undefined
     },
 
-    // Find an action by its display label (handles formats like "Grove A (3)")
+    // Find an action by its display label (handles formats like "Grove (3)")
     findActionByLabel(label) {
-      // Display name mapping (must match backend ACTION_DISPLAY_NAMES)
-      const displayNameToId = {
-        // Lessons variants
-        'Lessons A': 'occupation',
-        'Lessons B': ['lessons-3', 'lessons-4'],
-        'Lessons C': 'lessons-5',
-        'Lessons D': 'lessons-5b',
-        // Grove variants
-        'Grove A': 'grove',
-        'Grove B': 'grove-5',
-        'Grove C': 'grove-6',
-        // Hollow variants
-        'Hollow A': 'hollow',
-        'Hollow B': 'hollow-5',
-        'Hollow C': 'hollow-6',
-        // Resource Market variants
-        'Resource Market A': 'resource-market',
-        'Resource Market B': 'resource-market-5',
-        'Resource Market C': 'resource-market-6',
-        // Copse variants
-        'Copse A': 'copse',
-        'Copse B': 'copse-5',
-        // Traveling Players variants
-        'Traveling Players A': 'traveling-players',
-        'Traveling Players B': 'traveling-players-5',
-      }
-
-      // Parse label - might have accumulated amount like "Grove A (3)"
+      // Parse label - might have accumulated amount like "Forest (3)"
       const accumulatedMatch = label.match(/^(.+?)\s*\((\d+)\)$/)
       const baseName = accumulatedMatch ? accumulatedMatch[1].trim() : label
       const accumulated = accumulatedMatch ? parseInt(accumulatedMatch[2], 10) : 0
 
       const activeActions = this.game.state.activeActions || []
-
-      // Check if baseName matches a known display name
-      if (displayNameToId[baseName]) {
-        const candidates = Array.isArray(displayNameToId[baseName])
-          ? displayNameToId[baseName]
-          : [displayNameToId[baseName]]
-        for (const actionId of candidates) {
-          if (activeActions.includes(actionId)) {
-            return { actionId, accumulated }
-          }
-        }
-      }
 
       // Search through all active actions by name
       for (const actionId of activeActions) {

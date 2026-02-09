@@ -2325,7 +2325,7 @@ describe('Agricola', () => {
       game.run()
 
       // Choose the Lessons action space
-      t.choose(game, 'Lessons')
+      t.choose(game, 'Lessons A')
 
       // Should be at occupation selection (not blocked by food gate)
       const request = game.waiting
