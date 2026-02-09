@@ -9,7 +9,7 @@ describe('Game Catcher (C165)', () => {
 
     const dennis = t.player(game)
     dennis.food = 5
-    dennis.removeResource = jest.fn()
+    dennis.payCost = jest.fn()
     dennis.addAnimals = jest.fn()
     dennis.canPlaceAnimals = () => true
     game.getRemainingHarvestCount = () => 3
@@ -17,7 +17,7 @@ describe('Game Catcher (C165)', () => {
 
     card.onPlay(game, dennis)
 
-    expect(dennis.removeResource).toHaveBeenCalledWith('food', 3)
+    expect(dennis.payCost).toHaveBeenCalledWith({ food: 3 })
     expect(dennis.addAnimals).toHaveBeenCalledWith('cattle', 1)
     expect(dennis.addAnimals).toHaveBeenCalledWith('boar', 1)
   })
@@ -29,14 +29,14 @@ describe('Game Catcher (C165)', () => {
 
     const dennis = t.player(game)
     dennis.food = 2
-    dennis.removeResource = jest.fn()
+    dennis.payCost = jest.fn()
     dennis.addAnimals = jest.fn()
     dennis.canPlaceAnimals = () => true
     game.getRemainingHarvestCount = () => 3
 
     card.onPlay(game, dennis)
 
-    expect(dennis.removeResource).not.toHaveBeenCalled()
+    expect(dennis.payCost).not.toHaveBeenCalled()
     expect(dennis.addAnimals).not.toHaveBeenCalled()
   })
 
@@ -47,14 +47,14 @@ describe('Game Catcher (C165)', () => {
 
     const dennis = t.player(game)
     dennis.food = 5
-    dennis.removeResource = jest.fn()
+    dennis.payCost = jest.fn()
     dennis.addAnimals = jest.fn()
     dennis.canPlaceAnimals = (type) => type !== 'cattle'
     game.getRemainingHarvestCount = () => 3
 
     card.onPlay(game, dennis)
 
-    expect(dennis.removeResource).not.toHaveBeenCalled()
+    expect(dennis.payCost).not.toHaveBeenCalled()
     expect(dennis.addAnimals).not.toHaveBeenCalled()
   })
 
@@ -65,14 +65,14 @@ describe('Game Catcher (C165)', () => {
 
     const dennis = t.player(game)
     dennis.food = 5
-    dennis.removeResource = jest.fn()
+    dennis.payCost = jest.fn()
     dennis.addAnimals = jest.fn()
     dennis.canPlaceAnimals = (type) => type !== 'boar'
     game.getRemainingHarvestCount = () => 3
 
     card.onPlay(game, dennis)
 
-    expect(dennis.removeResource).not.toHaveBeenCalled()
+    expect(dennis.payCost).not.toHaveBeenCalled()
     expect(dennis.addAnimals).not.toHaveBeenCalled()
   })
 })

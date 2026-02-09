@@ -13,7 +13,7 @@ module.exports = {
   doExchange(game, player) {
     const unfencedStables = player.getUnfencedStableCount()
     const food = Math.min(5, unfencedStables + 1)
-    player.removeResource('grain', 2)
+    player.payCost({ grain: 2 })
     player.addResource('food', food)
     player.bonusPoints = (player.bonusPoints || 0) + 1
     game.log.add({

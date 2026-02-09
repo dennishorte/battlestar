@@ -43,16 +43,16 @@ describe('Pen Builder (E086)', () => {
 
     const dennis = t.player(game)
     dennis.wood = 5
-    dennis.removeResource = jest.fn((type, amount) => {
-      if (type === 'wood') {
-        dennis.wood -= amount
+    dennis.payCost = jest.fn((cost) => {
+      if (cost.wood) {
+        dennis.wood -= cost.wood
       }
     })
 
     card.placeWood(game, dennis, 3)
 
     expect(card.wood).toBe(5)
-    expect(dennis.removeResource).toHaveBeenCalledWith('wood', 3)
+    expect(dennis.payCost).toHaveBeenCalledWith({ wood: 3 })
   })
 
   test('has correct card properties for animal storage', () => {

@@ -19,7 +19,7 @@ module.exports = {
   onRoundEnd(game, player, round) {
     if (player.creditActive && !game.isHarvestRound(round)) {
       if (player.food >= 1) {
-        player.removeResource('food', 1)
+        player.payCost({ food: 1 })
         game.log.add({
           template: '{player} pays 1 food for Credit',
           args: { player },

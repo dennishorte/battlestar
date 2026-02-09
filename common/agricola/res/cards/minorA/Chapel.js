@@ -14,7 +14,7 @@ module.exports = {
   onActionSpaceUsed(game, actingPlayer, cardOwner) {
     if (actingPlayer.name !== cardOwner.name) {
       if (actingPlayer.grain >= 1) {
-        actingPlayer.removeResource('grain', 1)
+        actingPlayer.payCost({ grain: 1 })
         cardOwner.addResource('grain', 1)
         game.log.add({
           template: '{actingPlayer} pays 1 grain to {owner} to use Chapel',

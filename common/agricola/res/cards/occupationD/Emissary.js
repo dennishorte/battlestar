@@ -14,7 +14,7 @@ module.exports = {
     return !this.placedGoods?.includes(goodType) && player[goodType] >= 1
   },
   placeGood(game, player, goodType) {
-    player.removeResource(goodType, 1)
+    player.payCost({ [goodType]: 1 })
     player.addResource('stone', 1)
     this.placedGoods = this.placedGoods || []
     this.placedGoods.push(goodType)

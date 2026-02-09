@@ -16,7 +16,7 @@ module.exports = {
     return player.wood >= 1
   },
   placeWood(game, player, amount) {
-    player.removeResource('wood', amount)
+    player.payCost({ wood: amount })
     this.wood = (this.wood || 0) + amount
     game.log.add({
       template: '{player} places {amount} wood on Pen Builder',

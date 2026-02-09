@@ -14,7 +14,7 @@ module.exports = {
   onActionSpaceUsed(game, actingPlayer, cardOwner) {
     if (actingPlayer.name !== cardOwner.name) {
       if (actingPlayer.food >= 1) {
-        actingPlayer.removeResource('food', 1)
+        actingPlayer.payCost({ food: 1 })
         cardOwner.addResource('food', 1)
         game.log.add({
           template: '{actingPlayer} pays 1 food to {owner} to use Forest Inn',

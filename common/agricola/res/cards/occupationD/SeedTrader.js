@@ -19,7 +19,7 @@ module.exports = {
   },
   buyGrain(game, player) {
     if (player.food >= 2 && this.grain > 0) {
-      player.removeResource('food', 2)
+      player.payCost({ food: 2 })
       player.addResource('grain', 1)
       this.grain--
       game.log.add({
@@ -30,7 +30,7 @@ module.exports = {
   },
   buyVegetable(game, player) {
     if (player.food >= 3 && this.vegetables > 0) {
-      player.removeResource('food', 3)
+      player.payCost({ food: 3 })
       player.addResource('vegetables', 1)
       this.vegetables--
       game.log.add({

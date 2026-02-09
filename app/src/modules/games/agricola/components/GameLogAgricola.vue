@@ -215,4 +215,12 @@ export default {
 #gamelog :deep(.indent-4) {
   margin-left: 4em;
 }
+
+#gamelog :deep(.cost-spent) {
+  font-weight: 200;
+  color: #999;
+  font-size: 0.9em;
+  margin-top: -0.1em;
+  margin-bottom: -0.1em;
+}
 </style>

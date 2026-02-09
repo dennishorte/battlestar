@@ -12,8 +12,7 @@ module.exports = {
              player.grain >= 1 && player.food >= 2
   },
   activateRoom(game, player) {
-    player.removeResource('grain', 1)
-    player.removeResource('food', 2)
+    player.payCost({ grain: 1, food: 2 })
     this.providesRoom = true
     game.log.add({
       template: '{player} activates Den Builder room for 1 grain and 2 food',

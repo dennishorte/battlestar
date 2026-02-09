@@ -701,7 +701,7 @@ class AgricolaPlayer extends BasePlayer {
 
     // Pay wood (accounting for fence cost modifiers)
     const woodCost = this.applyFenceCostModifiers(fenceSegments.length)
-    this.wood -= woodCost
+    this.payCost({ wood: woodCost })
 
     // Recalculate pastures
     this.recalculatePastures()
@@ -1038,7 +1038,7 @@ class AgricolaPlayer extends BasePlayer {
 
     // Pay wood cost (accounting for fence cost modifiers)
     const woodCost = this.applyFenceCostModifiers(validation.fencesNeeded)
-    this.wood -= woodCost
+    this.payCost({ wood: woodCost })
 
     // Add fences
     for (const fence of validation.fences) {
@@ -1561,9 +1561,30 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   payCost(cost) {
-    for (const [resource, amount] of Object.entries(cost)) {
+    const entries = Object.entries(cost).filter(([, amount]) => amount > 0)
+    if (entries.length === 0) {
+      return
+    }
+
+    for (const [resource, amount] of entries) {
       this.removeResource(resource, amount)
     }
+
+    const parts = []
+    const args = {}
+    for (const [resource, amount] of entries) {
+      const key = `resource_${resource}`
+      args[key] = { amount, type: resource }
+      parts.push(`{${key}}`)
+    }
+
+    this.log.indent()
+    this.log.add({
+      template: `spent ${parts.join(', ')}`,
+      args,
+      classes: ['cost-spent'],
+    })
+    this.log.outdent()
   }
 
   // ---------------------------------------------------------------------------
@@ -1840,9 +1861,7 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
 
-    // Pay cost and move improvement to player's zone
-    const cost = this.getMajorImprovementCost(improvementId)
-    this.payCost(cost)
+    // Move improvement to player's zone (cost is paid by caller after logging)
     imp.moveTo(this.zones.byPlayer(this, 'majorImprovements'))
 
     return true
@@ -2110,14 +2129,22 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     const cost = this.getCardCost(card)
+    const animalCost = {}
+    const resourceCost = {}
     for (const [resource, amount] of Object.entries(cost)) {
       if (resource === 'sheep' || resource === 'boar' || resource === 'cattle') {
-        this.removeAnimals(resource, amount)
+        animalCost[resource] = amount
       }
       else {
-        this[resource] -= amount
+        resourceCost[resource] = amount
       }
     }
+
+    for (const [resource, amount] of Object.entries(animalCost)) {
+      this.removeAnimals(resource, amount)
+    }
+
+    this.payCost(resourceCost)
     return true
   }
 
@@ -2147,7 +2174,6 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     const card = this.cards.byId(cardId)
-    this.payCardCost(cardId)
 
     // Move card to appropriate played zone
     if (card.type === 'occupation') {

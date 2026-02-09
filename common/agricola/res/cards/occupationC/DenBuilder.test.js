@@ -77,13 +77,12 @@ describe('Den Builder (C085)', () => {
     dennis.grain = 3
     dennis.food = 5
     dennis.roomType = 'clay'
-    dennis.removeResource = jest.fn()
+    dennis.payCost = jest.fn()
     game.log = { add: jest.fn() }
 
     card.activateRoom(game, dennis)
 
-    expect(dennis.removeResource).toHaveBeenCalledWith('grain', 1)
-    expect(dennis.removeResource).toHaveBeenCalledWith('food', 2)
+    expect(dennis.payCost).toHaveBeenCalledWith({ grain: 1, food: 2 })
     expect(card.providesRoom).toBe(true)
   })
 })

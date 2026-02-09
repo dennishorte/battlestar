@@ -9,14 +9,14 @@ describe('Lover (C127)', () => {
 
     const dennis = t.player(game)
     dennis.food = 10
-    dennis.removeResource = jest.fn()
+    dennis.payCost = jest.fn()
     game.state = { round: 6 } // 14 - 6 = 8 rounds left
     game.actions = { familyGrowthWithoutRoom: jest.fn() }
     game.log = { add: jest.fn() }
 
     card.onPlay(game, dennis)
 
-    expect(dennis.removeResource).toHaveBeenCalledWith('food', 8)
+    expect(dennis.payCost).toHaveBeenCalledWith({ food: 8 })
     expect(game.actions.familyGrowthWithoutRoom).toHaveBeenCalledWith(dennis)
   })
 
@@ -27,13 +27,13 @@ describe('Lover (C127)', () => {
 
     const dennis = t.player(game)
     dennis.food = 3
-    dennis.removeResource = jest.fn()
+    dennis.payCost = jest.fn()
     game.state = { round: 6 } // 14 - 6 = 8 rounds left
     game.actions = { familyGrowthWithoutRoom: jest.fn() }
 
     card.onPlay(game, dennis)
 
-    expect(dennis.removeResource).not.toHaveBeenCalled()
+    expect(dennis.payCost).not.toHaveBeenCalled()
     expect(game.actions.familyGrowthWithoutRoom).not.toHaveBeenCalled()
   })
 
@@ -44,14 +44,14 @@ describe('Lover (C127)', () => {
 
     const dennis = t.player(game)
     dennis.food = 5
-    dennis.removeResource = jest.fn()
+    dennis.payCost = jest.fn()
     game.state = { round: 12 } // 14 - 12 = 2 rounds left
     game.actions = { familyGrowthWithoutRoom: jest.fn() }
     game.log = { add: jest.fn() }
 
     card.onPlay(game, dennis)
 
-    expect(dennis.removeResource).toHaveBeenCalledWith('food', 2)
+    expect(dennis.payCost).toHaveBeenCalledWith({ food: 2 })
     expect(game.actions.familyGrowthWithoutRoom).toHaveBeenCalledWith(dennis)
   })
 })

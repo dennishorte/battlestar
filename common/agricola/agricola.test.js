@@ -787,6 +787,7 @@ describe('Agricola', () => {
       dennis.clay = 2
 
       expect(dennis.buyMajorImprovement('fireplace-2')).toBe(true)
+      dennis.payCost(dennis.getMajorImprovementCost('fireplace-2'))
       expect(dennis.majorImprovements).toContain('fireplace-2')
       expect(dennis.clay).toBe(0)
     })

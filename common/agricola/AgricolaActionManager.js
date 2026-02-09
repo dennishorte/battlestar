@@ -1126,6 +1126,7 @@ class AgricolaActionManager extends BaseActionManager {
         template: '{player} buys {card}',
         args: { player, card: imp },
       })
+      player.payCost(player.getMajorImprovementCost(improvementId))
 
       // Handle Well special effect
       if (improvementId === 'well' || improvementId === 'well-2') {
@@ -1250,7 +1251,7 @@ class AgricolaActionManager extends BaseActionManager {
 
     // Pay the food cost
     if (cost > 0) {
-      player.food -= cost
+      player.payCost({ food: cost })
     }
 
     // Play the card (moves from hand to playedOccupations)
@@ -1262,6 +1263,7 @@ class AgricolaActionManager extends BaseActionManager {
       template: '{player} plays {card}',
       args: { player, card: card },
     })
+    player.payCardCost(cardId)
 
     // Execute onPlay effect if present
     if (card.hasHook('onPlay')) {
@@ -1343,7 +1345,7 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
-    // Play the card (handles cost payment and moves from hand)
+    // Play the card (moves from hand)
     const card = this.game.cards.byId(cardId)
     player.playCard(cardId)
     this._recordCardPlayed(player, card)
@@ -1352,6 +1354,7 @@ class AgricolaActionManager extends BaseActionManager {
       template: '{player} plays {card}',
       args: { player, card: card },
     })
+    player.payCardCost(cardId)
 
     // Execute onPlay effect if present
     if (card.hasHook('onPlay')) {
@@ -1482,6 +1485,7 @@ class AgricolaActionManager extends BaseActionManager {
             template: '{player} buys {card}',
             args: { player, card: imp },
           })
+          player.payCost(player.getMajorImprovementCost(improvementId))
 
           // Handle Well special effect
           if (improvementId === 'well' || improvementId === 'well-2') {
@@ -1521,6 +1525,7 @@ class AgricolaActionManager extends BaseActionManager {
             template: '{player} plays {card}',
             args: { player, card: card },
           })
+          player.payCardCost(cardId)
 
           // Execute onPlay effect if present
           if (card.hasHook('onPlay')) {
@@ -1807,7 +1812,7 @@ class AgricolaActionManager extends BaseActionManager {
     })
 
     if (selection[0] !== 'Skip') {
-      player.removeResource('wood', exchange.wood)
+      player.payCost({ wood: exchange.wood })
       player.addResource('food', exchange.food)
       this.log.add({
         template: '{player} exchanges {wood} wood for {food} food using {card}',
@@ -1843,7 +1848,7 @@ class AgricolaActionManager extends BaseActionManager {
     })
 
     if (selection[0] !== 'Skip') {
-      player.removeResource('food', 1)
+      player.payCost({ food: 1 })
       player.addAnimals(animalType, 1)
       this.log.add({
         template: '{player} buys 1 {animal} for 1 food using {card}',
@@ -1872,7 +1877,7 @@ class AgricolaActionManager extends BaseActionManager {
     })
 
     if (selection[0] !== 'Skip') {
-      player.removeResource('wood', 1)
+      player.payCost({ wood: 1 })
       player.addResource('food', foodBonus)
       player.addResource('reed', 1)
       this.log.add({
@@ -1996,7 +2001,7 @@ class AgricolaActionManager extends BaseActionManager {
       if (match) {
         const row = parseInt(match[1])
         const col = parseInt(match[2])
-        player.removeResource('wood', 1)
+        player.payCost({ wood: 1 })
         player.buildStable(row, col)
         this.log.add({
           template: '{player} builds a stable for 1 wood using {card}',
@@ -2070,7 +2075,7 @@ class AgricolaActionManager extends BaseActionManager {
     })
 
     if (selection[0] !== 'Skip') {
-      player.removeResource('wood', 1)
+      player.payCost({ wood: 1 })
       player.addResource('food', foodGain)
       this.log.add({
         template: '{player} pays 1 wood for {food} food using {card}',
@@ -2103,7 +2108,7 @@ class AgricolaActionManager extends BaseActionManager {
     })
 
     if (selection[0] !== 'Skip') {
-      player.removeResource('food', 1)
+      player.payCost({ food: 1 })
       player.addResource('stone', rooms)
       this.log.add({
         template: '{player} pays 1 food for {stone} stone using {card}',
@@ -2206,16 +2211,7 @@ class AgricolaActionManager extends BaseActionManager {
       const [row, col] = selection[0].split(',').map(Number)
 
       // Pay cost
-      if (roomType === 'wood') {
-        player.wood -= resourceCost
-      }
-      else if (roomType === 'clay') {
-        player.clay -= resourceCost
-      }
-      else {
-        player.stone -= resourceCost
-      }
-      player.reed -= reedCost
+      player.payCost({ [roomType]: resourceCost, reed: reedCost })
 
       player.buildRoom(row, col)
       roomsBuilt++
@@ -2282,7 +2278,7 @@ class AgricolaActionManager extends BaseActionManager {
       })
     }
     else if (selection[0] === 'Pay 1 food for 1 cattle') {
-      player.removeResource('food', 1)
+      player.payCost({ food: 1 })
       player.addAnimals('cattle', 1)
       this.log.add({
         template: '{player} pays 1 food for 1 cattle from the Animal Market',
@@ -2319,7 +2315,7 @@ class AgricolaActionManager extends BaseActionManager {
       })
 
       if (grainSelection[0] === 'Buy 1 grain for 1 food') {
-        player.removeResource('food', 1)
+        player.payCost({ food: 1 })
         player.addResource('grain', 1)
         this.log.add({
           template: '{player} buys 1 grain for 1 food',
@@ -2342,7 +2338,7 @@ class AgricolaActionManager extends BaseActionManager {
       })
 
       if (plowSelection[0] === 'Plow 1 field for 1 food') {
-        player.removeResource('food', 1)
+        player.payCost({ food: 1 })
         this.plowField(player)
         didSomething = true
       }
@@ -2448,7 +2444,7 @@ class AgricolaActionManager extends BaseActionManager {
       })
 
       if (stableSelection[0] === 'Build stable for 1 wood') {
-        player.removeResource('wood', 1)
+        player.payCost({ wood: 1 })
         this.buildStable(player)
         didSomething = true
       }

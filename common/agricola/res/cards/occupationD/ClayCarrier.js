@@ -19,7 +19,7 @@ module.exports = {
     return player.food >= 2 && this.lastUsedRound !== round
   },
   buyClay(game, player) {
-    player.removeResource('food', 2)
+    player.payCost({ food: 2 })
     player.addResource('clay', 2)
     this.lastUsedRound = game.state.round
     game.log.add({

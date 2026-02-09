@@ -9,7 +9,7 @@ module.exports = {
   onPlay(game, player) {
     const roundsLeft = 14 - game.state.round
     if (player.food >= roundsLeft) {
-      player.removeResource('food', roundsLeft)
+      player.payCost({ food: roundsLeft })
       game.actions.familyGrowthWithoutRoom(player)
       game.log.add({
         template: '{player} pays {amount} food for Family Growth via Lover',

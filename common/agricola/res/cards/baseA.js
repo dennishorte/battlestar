@@ -965,7 +965,7 @@ const occupations = [
             max: 1,
           })
           if (selection[0] !== 'Skip') {
-            cardOwner.removeResource('food', 2)
+            cardOwner.payCost({ food: 2 })
             cardOwner.addResource('vegetables', 1)
             game.log.add({
               template: '{player} buys 1 vegetable for 2 food using Lutenist',

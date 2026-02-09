@@ -11,7 +11,7 @@ module.exports = {
     return player.grain >= 1
   },
   activate(game, player) {
-    player.removeResource('grain', 1)
+    player.payCost({ grain: 1 })
     const targetRound = game.state.round + 2
     if (targetRound <= 14) {
       if (!game.state.scheduledFood) {

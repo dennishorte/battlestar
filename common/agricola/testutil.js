@@ -802,6 +802,7 @@ TestUtil.playCard = function(game, playerName, cardId) {
 
   // Play the card
   player.playCard(cardId)
+  player.payCardCost(cardId)
 
   // Execute onPlay if present
   if (card.hasHook('onPlay')) {

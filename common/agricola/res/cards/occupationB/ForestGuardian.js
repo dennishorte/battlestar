@@ -18,7 +18,7 @@ module.exports = {
     if (woodActions.includes(actionId) && actingPlayer.name !== cardOwner.name) {
       const woodOnSpace = game.getAccumulatedResources(actionId).wood || 0
       if (woodOnSpace >= 5 && actingPlayer.food >= 1) {
-        actingPlayer.removeResource('food', 1)
+        actingPlayer.payCost({ food: 1 })
         cardOwner.addResource('food', 1)
         game.log.add({
           template: '{actingPlayer} pays 1 food to {player} for Forest Guardian',

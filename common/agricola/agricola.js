@@ -556,7 +556,7 @@ Agricola.prototype.offerPlowForFood = function(player, card) {
   })
 
   if (selection[0] === 'Plow 1 field for 1 food') {
-    player.removeResource('food', 1)
+    player.payCost({ food: 1 })
     this.actions.plowField(player, { immediate: true })
   }
 }
