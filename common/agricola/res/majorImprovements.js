@@ -116,7 +116,11 @@ const majorImprovements = [
       canBake: true,
       bakingRate: 5, // 1 grain -> 5 food
       bakingLimit: 1, // Only 1 grain per bake action
-      bakeBreadOnBuild: true,
+    },
+    onBuy(game, player) {
+      if (player.grain >= 1) {
+        game.actions.bakeBread(player)
+      }
     },
   },
   {
@@ -133,7 +137,11 @@ const majorImprovements = [
       canBake: true,
       bakingRate: 4, // up to 2 grain -> 4 food each
       bakingLimit: 2,
-      bakeBreadOnBuild: true,
+    },
+    onBuy(game, player) {
+      if (player.grain >= 1) {
+        game.actions.bakeBread(player)
+      }
     },
   },
 
@@ -157,6 +165,7 @@ const majorImprovements = [
       endGameBonus: {
         resource: 'wood',
         thresholds: [0, 0, 1, 2, 3], // 0-2, 3-4, 5-6, 7+ wood
+        spendingCosts: [3, 5, 7], // resources spent for 1/2/3 points
       },
     },
   },
@@ -179,6 +188,7 @@ const majorImprovements = [
       endGameBonus: {
         resource: 'clay',
         thresholds: [0, 0, 1, 2, 3],
+        spendingCosts: [3, 5, 7],
       },
     },
   },
@@ -201,6 +211,7 @@ const majorImprovements = [
       endGameBonus: {
         resource: 'reed',
         thresholds: [0, 1, 2, 3], // 0-1, 2-3, 4, 5+ reed (different from others)
+        spendingCosts: [2, 4, 5],
       },
     },
   },
@@ -215,8 +226,25 @@ const majorImprovements = [
     text: [
       'Place 1 food on each of the next 5 round spaces. At the start of these rounds, you get the food.',
     ],
-    abilities: {
-      wellEffect: true, // Places 1 food on next 5 round spaces
+    onBuy(game, player) {
+      const currentRound = game.state.round
+      for (let i = 1; i <= 5; i++) {
+        const round = currentRound + i
+        if (round <= 14) {
+          if (!game.state.scheduledFood) {
+            game.state.scheduledFood = {}
+          }
+          if (!game.state.scheduledFood[player.name]) {
+            game.state.scheduledFood[player.name] = {}
+          }
+          game.state.scheduledFood[player.name][round] =
+            (game.state.scheduledFood[player.name][round] || 0) + 1
+        }
+      }
+      game.log.add({
+        template: '{player} places food on the next 5 round spaces',
+        args: { player },
+      })
     },
   },
 ]
@@ -284,8 +312,25 @@ const sixPlayerMajorImprovements = [
     text: [
       'Place 1 food on each of the next 5 round spaces. At the start of these rounds, you get the food.',
     ],
-    abilities: {
-      wellEffect: true,
+    onBuy(game, player) {
+      const currentRound = game.state.round
+      for (let i = 1; i <= 5; i++) {
+        const round = currentRound + i
+        if (round <= 14) {
+          if (!game.state.scheduledFood) {
+            game.state.scheduledFood = {}
+          }
+          if (!game.state.scheduledFood[player.name]) {
+            game.state.scheduledFood[player.name] = {}
+          }
+          game.state.scheduledFood[player.name][round] =
+            (game.state.scheduledFood[player.name][round] || 0) + 1
+        }
+      }
+      game.log.add({
+        template: '{player} places food on the next 5 round spaces',
+        args: { player },
+      })
     },
   },
   {
@@ -303,7 +348,11 @@ const sixPlayerMajorImprovements = [
       canBake: true,
       bakingRate: 5,
       bakingLimit: 1,
-      bakeBreadOnBuild: true,
+    },
+    onBuy(game, player) {
+      if (player.grain >= 1) {
+        game.actions.bakeBread(player)
+      }
     },
   },
   {
@@ -321,7 +370,11 @@ const sixPlayerMajorImprovements = [
       canBake: true,
       bakingRate: 4,
       bakingLimit: 2,
-      bakeBreadOnBuild: true,
+    },
+    onBuy(game, player) {
+      if (player.grain >= 1) {
+        game.actions.bakeBread(player)
+      }
     },
   },
   {
@@ -344,6 +397,7 @@ const sixPlayerMajorImprovements = [
       endGameBonus: {
         resource: 'wood',
         thresholds: [0, 0, 1, 2, 3],
+        spendingCosts: [3, 5, 7],
       },
     },
   },
@@ -367,6 +421,7 @@ const sixPlayerMajorImprovements = [
       endGameBonus: {
         resource: 'clay',
         thresholds: [0, 0, 1, 2, 3],
+        spendingCosts: [3, 5, 7],
       },
     },
   },
@@ -390,6 +445,7 @@ const sixPlayerMajorImprovements = [
       endGameBonus: {
         resource: 'reed',
         thresholds: [0, 1, 2, 3],
+        spendingCosts: [2, 4, 5],
       },
     },
   },

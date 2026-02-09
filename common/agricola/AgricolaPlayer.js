@@ -1972,35 +1972,9 @@ class AgricolaPlayer extends BasePlayer {
         const count = this[resource] || 0
         const bonusPoints = res.calculateCraftingBonus(imp, count)
 
-        // Calculate how many resources were spent for these bonus points
-        // Joinery/Pottery: 3/5/7 for 1/2/3 points
-        // Basketmaker's: 2/4/5 for 1/2/3 points
         if (bonusPoints > 0) {
-          let resourcesSpent = 0
-          if (imp.id === 'basketmakers-workshop') {
-            // 2/4/5 reed for 1/2/3 points
-            if (bonusPoints >= 3) {
-              resourcesSpent = 5
-            }
-            else if (bonusPoints >= 2) {
-              resourcesSpent = 4
-            }
-            else {
-              resourcesSpent = 2
-            }
-          }
-          else {
-            // Joinery/Pottery: 3/5/7 for 1/2/3 points
-            if (bonusPoints >= 3) {
-              resourcesSpent = 7
-            }
-            else if (bonusPoints >= 2) {
-              resourcesSpent = 5
-            }
-            else {
-              resourcesSpent = 3
-            }
-          }
+          const costs = imp.abilities.endGameBonus.spendingCosts
+          let resourcesSpent = costs[Math.min(bonusPoints, costs.length) - 1]
           resourcesSpent = Math.min(resourcesSpent, count)
           this[resource] -= resourcesSpent
           spent[resource] = resourcesSpent

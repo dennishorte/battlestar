@@ -1128,14 +1128,9 @@ class AgricolaActionManager extends BaseActionManager {
       })
       player.payCost(player.getMajorImprovementCost(improvementId))
 
-      // Handle Well special effect
-      if (improvementId === 'well' || improvementId === 'well-2') {
-        this.activateWell(player)
-      }
-
-      // Handle Bake Bread on Build (Clay Oven, Stone Oven)
-      if (imp.abilities?.bakeBreadOnBuild && player.grain >= 1) {
-        this.bakeBread(player)
+      // Execute onBuy effect if present (e.g., Well schedules food, Ovens bake bread)
+      if (imp.hasHook('onBuy')) {
+        imp.callHook('onBuy', this.game, player)
       }
 
       // Call onBuildImprovement hooks (Junk Room gives food)
@@ -1145,29 +1140,6 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     return false
-  }
-
-  activateWell(player) {
-    // Place 1 food on each of the next 5 round spaces
-    const currentRound = this.game.state.round
-    for (let i = 1; i <= 5; i++) {
-      const round = currentRound + i
-      if (round <= 14) {
-        if (!this.game.state.scheduledFood) {
-          this.game.state.scheduledFood = {}
-        }
-        if (!this.game.state.scheduledFood[player.name]) {
-          this.game.state.scheduledFood[player.name] = {}
-        }
-        this.game.state.scheduledFood[player.name][round] =
-          (this.game.state.scheduledFood[player.name][round] || 0) + 1
-      }
-    }
-
-    this.log.add({
-      template: '{player} places food on the next 5 round spaces',
-      args: { player },
-    })
   }
 
   // ---------------------------------------------------------------------------
@@ -1487,14 +1459,9 @@ class AgricolaActionManager extends BaseActionManager {
           })
           player.payCost(player.getMajorImprovementCost(improvementId))
 
-          // Handle Well special effect
-          if (improvementId === 'well' || improvementId === 'well-2') {
-            this.activateWell(player)
-          }
-
-          // Handle Bake Bread on Build (Clay Oven, Stone Oven)
-          if (imp.abilities?.bakeBreadOnBuild && player.grain >= 1) {
-            this.bakeBread(player)
+          // Execute onBuy effect if present (e.g., Well schedules food, Ovens bake bread)
+          if (imp.hasHook('onBuy')) {
+            imp.callHook('onBuy', this.game, player)
           }
 
           // Call onBuildImprovement hooks (Junk Room gives food)
