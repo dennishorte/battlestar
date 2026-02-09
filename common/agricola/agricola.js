@@ -961,8 +961,17 @@ Agricola.prototype.playerTurn = function(player) {
     // Use a worker
     player.useWorker()
 
+    // Record unused spaces before action for onUseMultipleSpaces hook
+    const unusedBefore = player.getUnusedSpaceCount()
+
     // Execute the action
     this.actions.executeAction(player, actionId)
+
+    // Check if 2+ unused spaces were converted to used spaces
+    const spacesUsed = unusedBefore - player.getUnusedSpaceCount()
+    if (spacesUsed >= 2) {
+      this.callPlayerCardHook(player, 'onUseMultipleSpaces', spacesUsed)
+    }
   }
 }
 

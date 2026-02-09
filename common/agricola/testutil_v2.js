@@ -7,12 +7,28 @@ const res = require('./res/index.js')
 const TestUtil = { ...TestCommon }
 module.exports = TestUtil
 
+const PLAYER_DEFAULTS = {
+  food: 0, wood: 0, clay: 0, stone: 0, reed: 0, grain: 0, vegetables: 0,
+  familyMembers: 2, roomType: 'wood', beggingCards: 0, bonusPoints: 0,
+  hand: [], occupations: [], minorImprovements: [], majorImprovements: [],
+  pet: null,
+}
 
-TestUtil.fixture = function(options) {
+const ANIMAL_DEFAULTS = { sheep: 0, boar: 0, cattle: 0 }
+
+const FARMYARD_DEFAULTS = {
+  rooms: [{ row: 0, col: 0 }, { row: 1, col: 0 }],
+  fields: [],
+  pastures: [],
+  stables: [],
+}
+
+
+TestUtil.fixture = function(options = {}) {
   options = Object.assign({
     name: 'test_game',
     seed: 'test_seed',
-    numPlayers: options?.numPlayers || 2,
+    numPlayers: options.numPlayers || 2,
     useDrafting: false,
     players: [
       {
@@ -280,6 +296,83 @@ TestUtil.setBoard = function(game, state) {
     for (const playerName of playerNames) {
       TestUtil.setPlayerBoard(game, playerName, state[playerName] || {})
     }
+
+    // Validate board state
+    const errors = []
+    for (const playerName of playerNames) {
+      const playerState = state[playerName]
+      if (!playerState) {
+        continue
+      }
+
+      const player = game.players.byName(playerName)
+
+      // Grid bounds — check all specified coordinates within 3x5
+      const allCoords = []
+      if (playerState.farmyard) {
+        const fy = playerState.farmyard
+        if (fy.rooms) {
+          allCoords.push(...fy.rooms.map(r => ({ ...r, label: 'room' })))
+        }
+        if (fy.fields) {
+          allCoords.push(...fy.fields.map(f => ({ ...f, label: 'field' })))
+        }
+        if (fy.stables) {
+          allCoords.push(...fy.stables.map(s => ({ ...s, label: 'stable' })))
+        }
+        if (fy.pastures) {
+          for (const p of fy.pastures) {
+            allCoords.push(...p.spaces.map(s => ({ ...s, label: 'pasture' })))
+          }
+        }
+      }
+      for (const coord of allCoords) {
+        if (coord.row < 0 || coord.row >= res.constants.farmyardRows ||
+            coord.col < 0 || coord.col >= res.constants.farmyardCols) {
+          errors.push(`${playerName}: ${coord.label} at (${coord.row},${coord.col}) is out of bounds`)
+        }
+      }
+
+      // Room adjacency
+      const roomSpaces = player.getRoomSpaces()
+      if (roomSpaces.length > 1 && !player.areSpacesConnected(roomSpaces)) {
+        errors.push(`${playerName}: rooms are not all orthogonally connected`)
+      }
+
+      // Field adjacency
+      const fieldSpaces = player.getFieldSpaces()
+      if (fieldSpaces.length > 1 && !player.areSpacesConnected(fieldSpaces)) {
+        errors.push(`${playerName}: fields are not all orthogonally connected`)
+      }
+
+      // Pasture connectivity and capacity
+      for (const pasture of player.farmyard.pastures) {
+        if (pasture.spaces.length > 1 && !player.areSpacesConnected(pasture.spaces)) {
+          const coords = pasture.spaces.map(s => `(${s.row},${s.col})`).join(', ')
+          errors.push(`${playerName}: pasture [${coords}] spaces are not orthogonally connected`)
+        }
+        if (pasture.animalCount > player.getPastureCapacity(pasture)) {
+          const coords = pasture.spaces.map(s => `(${s.row},${s.col})`).join(', ')
+          errors.push(`${playerName}: pasture [${coords}] has ${pasture.animalCount} animals but capacity is ${player.getPastureCapacity(pasture)}`)
+        }
+      }
+
+      // Card prereqs
+      const playedCardFields = ['occupations', 'minorImprovements', 'majorImprovements']
+      for (const field of playedCardFields) {
+        if (playerState[field]) {
+          for (const cardId of playerState[field]) {
+            if (!player.meetsCardPrereqs(cardId)) {
+              errors.push(`${playerName}: card "${cardId}" prereqs not met`)
+            }
+          }
+        }
+      }
+    }
+
+    if (errors.length > 0) {
+      throw new Error('setBoard validation failed:\n  ' + errors.join('\n  '))
+    }
   })
 }
 
@@ -380,46 +473,68 @@ TestUtil.setPlayerFarmyard = function(player, farmyardState) {
     }
   }
 
-  // Set pastures
+  // Set pastures — generate real fences so recalculatePastures works
   if (farmyardState.pastures) {
-    player.farmyard.pastures = []
+    // Collect desired animal assignments per pasture (by space set key)
+    const animalsBySpaceKey = []
+
     for (const pastureState of farmyardState.pastures) {
-      const pasture = {
-        id: player.farmyard.pastures.length,
-        spaces: pastureState.spaces,
-        animalType: null,
-        animalCount: 0,
-      }
-
-      // Mark spaces as pasture
-      for (const space of pastureState.spaces) {
-        player.farmyard.grid[space.row][space.col].type = 'pasture'
-        if (pastureState.hasStable) {
-          player.farmyard.grid[space.row][space.col].hasStable = true
+      // Calculate and add fence segments for this pasture
+      const fences = player.calculateFencesForPasture(pastureState.spaces)
+      for (const fence of fences) {
+        // Avoid duplicate fences
+        const exists = player.farmyard.fences.some(f =>
+          f.row1 === fence.row1 && f.col1 === fence.col1 &&
+          f.row2 === fence.row2 && f.col2 === fence.col2
+        )
+        if (!exists) {
+          player.farmyard.fences.push(fence)
         }
       }
 
-      // Add animals to pasture
-      if (pastureState.animals) {
-        for (const [type, count] of Object.entries(pastureState.animals)) {
-          if (count > 0) {
-            pasture.animalType = type
-            pasture.animalCount = count
-          }
+      // Parse animal config: support both flat { sheep: 2 } and { animals: { sheep: 2 } }
+      let animalType = null
+      let animalCount = 0
+      const animalSource = pastureState.animals || pastureState
+      for (const type of ['sheep', 'boar', 'cattle']) {
+        if (animalSource[type] && animalSource[type] > 0) {
+          animalType = type
+          animalCount = animalSource[type]
         }
       }
 
-      player.farmyard.pastures.push(pasture)
+      const spaceKey = pastureState.spaces
+        .map(s => `${s.row},${s.col}`)
+        .sort()
+        .join('|')
+      animalsBySpaceKey.push({ spaceKey, animalType, animalCount })
+    }
+
+    // Let the engine figure out enclosed areas from the fences
+    player.recalculatePastures()
+
+    // Match animals back to recalculated pastures by space-set comparison
+    for (const pasture of player.farmyard.pastures) {
+      const pKey = pasture.spaces
+        .map(s => `${s.row},${s.col}`)
+        .sort()
+        .join('|')
+      const match = animalsBySpaceKey.find(a => a.spaceKey === pKey)
+      if (match && match.animalType) {
+        pasture.animalType = match.animalType
+        pasture.animalCount = match.animalCount
+      }
     }
   }
 }
 
 /**
  * Test game state in a declarative way.
- * Only checks properties that are specified - unspecified properties are ignored.
+ * Checks all properties for players mentioned in `expected`, using defaults
+ * for any unspecified property. Players not mentioned are not checked.
  */
 TestUtil.testBoard = function(game, expected) {
-  // Resolve all card refs across all players and check for global duplicates
+  // Resolve all card refs across mentioned players
   const playerNames = game.players.all().map(p => p.name)
   const allCardIds = new Set()
   const cardFields = ['hand', 'occupations', 'minorImprovements', 'majorImprovements']
@@ -439,7 +554,6 @@ TestUtil.testBoard = function(game, expected) {
           }
           allCardIds.add(id)
         }
-        // Replace the refs with resolved IDs for downstream comparison
         playerExpected[field] = ids
       }
     }
@@ -452,9 +566,12 @@ TestUtil.testBoard = function(game, expected) {
     errors.push(`round: expected ${expected.round}, got ${game.state.round}`)
   }
 
-  // Test player states
+  // Only test players explicitly mentioned in expected
   for (const playerName of playerNames) {
-    const playerErrors = TestUtil.testPlayerBoard(game, playerName, expected[playerName] || {})
+    if (expected[playerName] === undefined) {
+      continue
+    }
+    const playerErrors = TestUtil.testPlayerBoard(game, playerName, expected[playerName])
     errors.push(...playerErrors.map(e => `${playerName}.${e}`))
   }
 
@@ -472,102 +589,153 @@ TestUtil.testPlayerBoard = function(game, playerName, expected) {
     return errors
   }
 
-  // Only check properties that are explicitly specified
+  // Use defaults for all unspecified properties
   const resources = ['food', 'wood', 'clay', 'stone', 'reed', 'grain', 'vegetables']
   for (const resource of resources) {
-    if (expected[resource] !== undefined && player[resource] !== expected[resource]) {
-      errors.push(`${resource}: expected ${expected[resource]}, got ${player[resource]}`)
+    const exp = expected[resource] ?? PLAYER_DEFAULTS[resource]
+    if (player[resource] !== exp) {
+      errors.push(`${resource}: expected ${exp}, got ${player[resource]}`)
     }
   }
 
-  if (expected.familyMembers !== undefined && player.familyMembers !== expected.familyMembers) {
-    errors.push(`familyMembers: expected ${expected.familyMembers}, got ${player.familyMembers}`)
+  const familyExp = expected.familyMembers ?? PLAYER_DEFAULTS.familyMembers
+  if (player.familyMembers !== familyExp) {
+    errors.push(`familyMembers: expected ${familyExp}, got ${player.familyMembers}`)
   }
 
-  if (expected.roomType !== undefined && player.roomType !== expected.roomType) {
-    errors.push(`roomType: expected ${expected.roomType}, got ${player.roomType}`)
+  const roomTypeExp = expected.roomType ?? PLAYER_DEFAULTS.roomType
+  if (player.roomType !== roomTypeExp) {
+    errors.push(`roomType: expected ${roomTypeExp}, got ${player.roomType}`)
   }
 
-  if (expected.beggingCards !== undefined && player.beggingCards !== expected.beggingCards) {
-    errors.push(`beggingCards: expected ${expected.beggingCards}, got ${player.beggingCards}`)
+  const beggingExp = expected.beggingCards ?? PLAYER_DEFAULTS.beggingCards
+  if (player.beggingCards !== beggingExp) {
+    errors.push(`beggingCards: expected ${beggingExp}, got ${player.beggingCards}`)
   }
 
-  if (expected.bonusPoints !== undefined && player.bonusPoints !== expected.bonusPoints) {
-    errors.push(`bonusPoints: expected ${expected.bonusPoints}, got ${player.bonusPoints}`)
+  const bonusExp = expected.bonusPoints ?? PLAYER_DEFAULTS.bonusPoints
+  if (player.bonusPoints !== bonusExp) {
+    errors.push(`bonusPoints: expected ${bonusExp}, got ${player.bonusPoints}`)
   }
 
-  // Test card arrays only if specified
-  if (expected.hand !== undefined) {
-    const actualHand = [...player.hand].sort()
-    const expectedHand = [...expected.hand].sort()
-    if (JSON.stringify(actualHand) !== JSON.stringify(expectedHand)) {
-      errors.push(`hand: expected [${expectedHand}], got [${actualHand}]`)
+  // Card arrays — always check, default to []
+  const handExp = [...(expected.hand ?? PLAYER_DEFAULTS.hand)].sort()
+  const handActual = [...player.hand].sort()
+  if (JSON.stringify(handActual) !== JSON.stringify(handExp)) {
+    errors.push(`hand: expected [${handExp}], got [${handActual}]`)
+  }
+
+  const occExp = [...(expected.occupations ?? PLAYER_DEFAULTS.occupations)].sort()
+  const occActual = [...player.playedOccupations].sort()
+  if (JSON.stringify(occActual) !== JSON.stringify(occExp)) {
+    errors.push(`occupations: expected [${occExp}], got [${occActual}]`)
+  }
+
+  const minorExp = [...(expected.minorImprovements ?? PLAYER_DEFAULTS.minorImprovements)].sort()
+  const minorActual = [...player.playedMinorImprovements].sort()
+  if (JSON.stringify(minorActual) !== JSON.stringify(minorExp)) {
+    errors.push(`minorImprovements: expected [${minorExp}], got [${minorActual}]`)
+  }
+
+  const majorExp = [...(expected.majorImprovements ?? PLAYER_DEFAULTS.majorImprovements)].sort()
+  const majorActual = [...player.majorImprovements].sort()
+  if (JSON.stringify(majorActual) !== JSON.stringify(majorExp)) {
+    errors.push(`majorImprovements: expected [${majorExp}], got [${majorActual}]`)
+  }
+
+  // Pet
+  const petExp = expected.pet !== undefined ? expected.pet : PLAYER_DEFAULTS.pet
+  if (player.pet !== petExp) {
+    errors.push(`pet: expected ${petExp}, got ${player.pet}`)
+  }
+
+  // Animals — always check all types
+  const animalsExp = { ...ANIMAL_DEFAULTS, ...(expected.animals || {}) }
+  for (const [type, count] of Object.entries(animalsExp)) {
+    const actual = player.getTotalAnimals(type)
+    if (actual !== count) {
+      errors.push(`animals.${type}: expected ${count}, got ${actual}`)
     }
   }
 
-  if (expected.occupations !== undefined) {
-    const actualOccupations = [...player.playedOccupations].sort()
-    const expectedOccupations = [...expected.occupations].sort()
-    if (JSON.stringify(actualOccupations) !== JSON.stringify(expectedOccupations)) {
-      errors.push(`occupations: expected [${expectedOccupations}], got [${actualOccupations}]`)
-    }
+  // Farmyard — detailed array-based checking
+  const farmyardExp = { ...FARMYARD_DEFAULTS, ...(expected.farmyard || {}) }
+
+  // Rooms: array of {row, col}
+  const expectedRooms = farmyardExp.rooms
+  const actualRoomSpaces = player.getRoomSpaces().map(r => ({ row: r.row, col: r.col }))
+  const expRoomKeys = expectedRooms.map(r => `${r.row},${r.col}`).sort()
+  const actRoomKeys = actualRoomSpaces.map(r => `${r.row},${r.col}`).sort()
+  if (JSON.stringify(expRoomKeys) !== JSON.stringify(actRoomKeys)) {
+    errors.push(`farmyard.rooms: expected [${expRoomKeys}] (${expRoomKeys.length}), got [${actRoomKeys}] (${actRoomKeys.length})`)
   }
 
-  if (expected.minorImprovements !== undefined) {
-    const actualMinorImprovements = [...player.playedMinorImprovements].sort()
-    const expectedMinorImprovements = [...expected.minorImprovements].sort()
-    if (JSON.stringify(actualMinorImprovements) !== JSON.stringify(expectedMinorImprovements)) {
-      errors.push(`minorImprovements: expected [${expectedMinorImprovements}], got [${actualMinorImprovements}]`)
-    }
+  // Fields: array of {row, col, crop?, cropCount?}
+  const expectedFields = farmyardExp.fields
+  const actualFieldSpaces = player.getFieldSpaces()
+  const expFieldKeys = expectedFields.map(f => `${f.row},${f.col}`).sort()
+  const actFieldKeys = actualFieldSpaces.map(f => `${f.row},${f.col}`).sort()
+  if (JSON.stringify(expFieldKeys) !== JSON.stringify(actFieldKeys)) {
+    errors.push(`farmyard.fields: expected [${expFieldKeys}] (${expFieldKeys.length}), got [${actFieldKeys}] (${actFieldKeys.length})`)
   }
-
-  if (expected.majorImprovements !== undefined) {
-    const actualMajorImprovements = [...player.majorImprovements].sort()
-    const expectedMajorImprovements = [...expected.majorImprovements].sort()
-    if (JSON.stringify(actualMajorImprovements) !== JSON.stringify(expectedMajorImprovements)) {
-      errors.push(`majorImprovements: expected [${expectedMajorImprovements}], got [${actualMajorImprovements}]`)
-    }
-  }
-
-  if (expected.animals) {
-    for (const [type, count] of Object.entries(expected.animals)) {
-      const actual = player.getTotalAnimals(type)
-      if (actual !== count) {
-        errors.push(`animals.${type}: expected ${count}, got ${actual}`)
+  // Check crop details for each expected field
+  for (const expField of expectedFields) {
+    const actual = actualFieldSpaces.find(f => f.row === expField.row && f.col === expField.col)
+    if (actual) {
+      const expCrop = expField.crop ?? null
+      const expCropCount = expField.cropCount ?? 0
+      if (actual.crop !== expCrop) {
+        errors.push(`farmyard.field(${expField.row},${expField.col}).crop: expected ${expCrop}, got ${actual.crop}`)
+      }
+      if (actual.cropCount !== expCropCount) {
+        errors.push(`farmyard.field(${expField.row},${expField.col}).cropCount: expected ${expCropCount}, got ${actual.cropCount}`)
       }
     }
   }
 
-  if (expected.farmyard) {
-    if (expected.farmyard.rooms !== undefined) {
-      const actual = player.getRoomCount()
-      if (actual !== expected.farmyard.rooms) {
-        errors.push(`farmyard.rooms: expected ${expected.farmyard.rooms}, got ${actual}`)
-      }
+  // Pastures: array of {spaces: [{row,col}], sheep?, boar?, cattle?}
+  const expectedPastures = farmyardExp.pastures
+  const actualPastures = player.farmyard.pastures
+  if (expectedPastures.length !== actualPastures.length) {
+    errors.push(`farmyard.pastures count: expected ${expectedPastures.length}, got ${actualPastures.length}`)
+  }
+  for (const expPasture of expectedPastures) {
+    const expKey = expPasture.spaces.map(s => `${s.row},${s.col}`).sort().join('|')
+    const match = actualPastures.find(p =>
+      p.spaces.map(s => `${s.row},${s.col}`).sort().join('|') === expKey
+    )
+    if (!match) {
+      errors.push(`farmyard.pasture [${expKey}]: not found in actual pastures`)
     }
-
-    if (expected.farmyard.fields !== undefined) {
-      const actual = player.getFieldCount()
-      if (actual !== expected.farmyard.fields) {
-        errors.push(`farmyard.fields: expected ${expected.farmyard.fields}, got ${actual}`)
-      }
-    }
-
-    if (expected.farmyard.pastures !== undefined) {
-      const actual = player.getPastureCount()
-      if (actual !== expected.farmyard.pastures) {
-        errors.push(`farmyard.pastures: expected ${expected.farmyard.pastures}, got ${actual}`)
-      }
-    }
-
-    if (expected.farmyard.stables !== undefined) {
-      const actual = player.getStableCount()
-      if (actual !== expected.farmyard.stables) {
-        errors.push(`farmyard.stables: expected ${expected.farmyard.stables}, got ${actual}`)
+    else {
+      for (const type of ['sheep', 'boar', 'cattle']) {
+        const expCount = expPasture[type] ?? 0
+        const actType = match.animalType
+        const actCount = (actType === type) ? match.animalCount : 0
+        if (actCount !== expCount) {
+          errors.push(`farmyard.pasture [${expKey}].${type}: expected ${expCount}, got ${actCount}`)
+        }
       }
     }
   }
 
+  // Stables: array of {row, col}
+  const expectedStables = farmyardExp.stables
+  const actualStableSpaces = []
+  for (let row = 0; row < res.constants.farmyardRows; row++) {
+    for (let col = 0; col < res.constants.farmyardCols; col++) {
+      if (player.farmyard.grid[row][col].hasStable) {
+        actualStableSpaces.push({ row, col })
+      }
+    }
+  }
+  const expStableKeys = expectedStables.map(s => `${s.row},${s.col}`).sort()
+  const actStableKeys = actualStableSpaces.map(s => `${s.row},${s.col}`).sort()
+  if (JSON.stringify(expStableKeys) !== JSON.stringify(actStableKeys)) {
+    errors.push(`farmyard.stables: expected [${expStableKeys}] (${expStableKeys.length}), got [${actStableKeys}] (${actStableKeys.length})`)
+  }
+
+  // Score (optional — only check if specified)
   if (expected.score !== undefined) {
     const actualScore = player.calculateScore()
     if (actualScore !== expected.score) {

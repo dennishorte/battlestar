@@ -667,6 +667,12 @@ describe('BaseB Cards', () => {
           {
             dennis: {
               wood: 1, // cost: { wood: 1 }
+              farmyard: {
+                fields: [
+                  { row: 2, col: 0, crop: 'vegetables', cropCount: 1 },
+                  { row: 2, col: 1, crop: 'vegetables', cropCount: 1 },
+                ],
+              },
             },
           },
         )
@@ -1176,7 +1182,7 @@ describe('BaseB Cards', () => {
           'thick-forest',
           { cardSets: ['baseB'] },
           {
-            dennis: {},
+            dennis: { clay: 5 },
           },
         )
 
@@ -1195,6 +1201,7 @@ describe('BaseB Cards', () => {
         t.testBoard(game, {
           dennis: {
             food: 1, // +1 MP
+            clay: 5,
             hand: [],
             minorImprovements: ['thick-forest'],
             score: dennis.calculateScore(),

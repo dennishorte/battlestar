@@ -2040,7 +2040,7 @@ class AgricolaPlayer extends BasePlayer {
 
     const prereqs = card.prereqs
 
-    // Check occupation count
+    // --- Occupation checks ---
     if (prereqs.occupations !== undefined) {
       if (prereqs.occupationsExact) {
         if (this.playedOccupations.length !== prereqs.occupations) {
@@ -2058,27 +2058,286 @@ class AgricolaPlayer extends BasePlayer {
         }
       }
     }
+    if (prereqs.exactlyOccupations !== undefined) {
+      if (this.playedOccupations.length !== prereqs.exactlyOccupations) {
+        return false
+      }
+    }
+    // Standalone occupationsAtMost (used by StableManure/SocialBenefits without occupations key)
+    if (prereqs.occupationsAtMost !== undefined && prereqs.occupations === undefined) {
+      if (this.playedOccupations.length > prereqs.occupationsAtMost) {
+        return false
+      }
+    }
+    if (prereqs.noOccupations) {
+      if (this.playedOccupations.length > 0) {
+        return false
+      }
+    }
+    if (prereqs.occupationsInHand !== undefined) {
+      const occInHand = this.hand.filter(id => {
+        const c = this.cards.byId(id)
+        return c && c.type === 'occupation'
+      })
+      if (occInHand.length < prereqs.occupationsInHand) {
+        return false
+      }
+    }
 
-    // Check grain fields
+    // --- Field checks ---
+    if (prereqs.fields !== undefined) {
+      if (this.getFieldCountForPrereqs() < prereqs.fields) {
+        return false
+      }
+    }
+    if (prereqs.fieldsExactly !== undefined) {
+      if (this.getFieldCountForPrereqs() !== prereqs.fieldsExactly) {
+        return false
+      }
+    }
     if (prereqs.grainFields !== undefined) {
       if (this.getGrainFieldCount() < prereqs.grainFields) {
         return false
       }
     }
+    if (prereqs.vegetableFields !== undefined) {
+      if (this.getVegetableFieldCount() < prereqs.vegetableFields) {
+        return false
+      }
+    }
+    if (prereqs.plantedFields !== undefined) {
+      if (this.getSownFields().length < prereqs.plantedFields) {
+        return false
+      }
+    }
+    if (prereqs.emptyFields !== undefined) {
+      if (this.getEmptyFields().length < prereqs.emptyFields) {
+        return false
+      }
+    }
+    if (prereqs.unplantedFields !== undefined) {
+      if (this.getEmptyFields().length < prereqs.unplantedFields) {
+        return false
+      }
+    }
+    if (prereqs.noFields) {
+      if (this.getFieldCountForPrereqs() > 0) {
+        return false
+      }
+    }
+    if (prereqs.noGrainFields) {
+      if (this.getGrainFieldCount() > 0) {
+        return false
+      }
+    }
 
-    // Check sheep
+    // --- Pasture and stable checks ---
+    if (prereqs.pastures !== undefined) {
+      if (prereqs.pasturesExact) {
+        if (this.getPastureCount() !== prereqs.pastures) {
+          return false
+        }
+      }
+      else {
+        if (this.getPastureCount() < prereqs.pastures) {
+          return false
+        }
+      }
+    }
+    if (prereqs.stables !== undefined) {
+      if (this.getStableCount() < prereqs.stables) {
+        return false
+      }
+    }
+    if (prereqs.fences !== undefined) {
+      if (this.getFenceCount() < prereqs.fences) {
+        return false
+      }
+    }
+    if (prereqs.fencesInSupply !== undefined) {
+      const remaining = res.constants.maxFences - this.getFenceCount()
+      if (remaining < prereqs.fencesInSupply) {
+        return false
+      }
+    }
+
+    // --- Room checks ---
+    if (prereqs.rooms !== undefined) {
+      if (this.getRoomCount() < prereqs.rooms) {
+        return false
+      }
+    }
+    if (prereqs.roomCount !== undefined) {
+      if (prereqs.roomCountExact) {
+        if (this.getRoomCount() !== prereqs.roomCount) {
+          return false
+        }
+      }
+      else {
+        if (this.getRoomCount() < prereqs.roomCount) {
+          return false
+        }
+      }
+    }
+    if (prereqs.houseType !== undefined) {
+      if (Array.isArray(prereqs.houseType)) {
+        if (!prereqs.houseType.includes(this.roomType)) {
+          return false
+        }
+      }
+      else {
+        if (this.roomType !== prereqs.houseType) {
+          return false
+        }
+      }
+    }
+
+    // --- Animal checks ---
     if (prereqs.sheep !== undefined) {
       if (this.getTotalAnimals('sheep') < prereqs.sheep) {
         return false
       }
     }
+    if (prereqs.sheepExactly !== undefined) {
+      if (this.getTotalAnimals('sheep') !== prereqs.sheepExactly) {
+        return false
+      }
+    }
+    if (prereqs.boar !== undefined) {
+      if (this.getTotalAnimals('boar') < prereqs.boar) {
+        return false
+      }
+    }
+    if (prereqs.cattle !== undefined) {
+      if (this.getTotalAnimals('cattle') < prereqs.cattle) {
+        return false
+      }
+    }
+    if (prereqs.animals !== undefined) {
+      const total = this.getTotalAnimals('sheep') + this.getTotalAnimals('boar') + this.getTotalAnimals('cattle')
+      if (total < prereqs.animals) {
+        return false
+      }
+    }
+    if (prereqs.animalTypes !== undefined) {
+      let types = 0
+      if (this.getTotalAnimals('sheep') > 0) {
+        types++
+      }
+      if (this.getTotalAnimals('boar') > 0) {
+        types++
+      }
+      if (this.getTotalAnimals('cattle') > 0) {
+        types++
+      }
+      if (types < prereqs.animalTypes) {
+        return false
+      }
+    }
+    if (prereqs.allAnimalTypes) {
+      if (this.getTotalAnimals('sheep') === 0 || this.getTotalAnimals('boar') === 0 || this.getTotalAnimals('cattle') === 0) {
+        return false
+      }
+    }
+    if (prereqs.noAnimals) {
+      const total = this.getTotalAnimals('sheep') + this.getTotalAnimals('boar') + this.getTotalAnimals('cattle')
+      if (total > 0) {
+        return false
+      }
+    }
+    if (prereqs.noSheep) {
+      if (this.getTotalAnimals('sheep') > 0) {
+        return false
+      }
+    }
 
-    // Check all farmyard used
+    // --- Resource checks ---
+    if (prereqs.grain !== undefined) {
+      if (this.grain < prereqs.grain) {
+        return false
+      }
+    }
+    if (prereqs.clay !== undefined) {
+      if (this.clay < prereqs.clay) {
+        return false
+      }
+    }
+    if (prereqs.reed !== undefined) {
+      if (this.reed < prereqs.reed) {
+        return false
+      }
+    }
+    if (prereqs.stone !== undefined) {
+      if (this.stone < prereqs.stone) {
+        return false
+      }
+    }
+    if (prereqs.noGrain) {
+      if (this.grain > 0) {
+        return false
+      }
+    }
+
+    // --- People checks ---
+    if (prereqs.maxPeople !== undefined) {
+      if (this.familyMembers > prereqs.maxPeople) {
+        return false
+      }
+    }
+
+    // --- Improvement checks ---
+    if (prereqs.improvements !== undefined) {
+      if (this.getImprovementCount() < prereqs.improvements) {
+        return false
+      }
+    }
+    if (prereqs.majorImprovements !== undefined) {
+      if (this.majorImprovements.length < prereqs.majorImprovements) {
+        return false
+      }
+    }
+
+    // --- Farmyard usage checks ---
     if (prereqs.allFarmyardUsed) {
       if (this.getUnusedSpaceCount() > 0) {
         return false
       }
     }
+    if (prereqs.unusedFarmyard !== undefined) {
+      if (this.getUnusedSpaceCount() < prereqs.unusedFarmyard) {
+        return false
+      }
+    }
+    if (prereqs.unusedFarmyardAtMost !== undefined) {
+      if (this.getUnusedSpaceCount() > prereqs.unusedFarmyardAtMost) {
+        return false
+      }
+    }
+
+    // --- Round checks ---
+    if (prereqs.maxRound !== undefined) {
+      if (this.game.state.round > prereqs.maxRound) {
+        return false
+      }
+    }
+    if (prereqs.minRound !== undefined) {
+      if (this.game.state.round < prereqs.minRound) {
+        return false
+      }
+    }
+    if (prereqs.roundIn !== undefined) {
+      if (!prereqs.roundIn.includes(this.game.state.round)) {
+        return false
+      }
+    }
+
+    // --- Deferred prereq checks (complex game-state checks not yet implemented) ---
+    // TODO: bakingImprovement, cookingImprovement, hasPotteryOrUpgrade,
+    //   hasFireplaceAndCookingHearth, returnFireplaceOrCookingHearth, returnMajor,
+    //   fieldsInLShape, personOnFishing, personOnAction, personYetToPlace,
+    //   noPeopleInHouse, fencedStables, woodGteRound, pastureSpacesGteRound,
+    //   cardsInPlay, maxCardsInPlay, exactlyAdults, majorImprovement (specific card),
+    //   roundsLeftGreaterThanUnusedSpaces, buildingResourcesInSupply
 
     return true
   }
@@ -2173,6 +2432,19 @@ class AgricolaPlayer extends BasePlayer {
       for (let col = 0; col < res.constants.farmyardCols; col++) {
         const space = this.farmyard.grid[row][col]
         if (space.type === 'field' && space.crop === 'grain') {
+          count++
+        }
+      }
+    }
+    return count
+  }
+
+  getVegetableFieldCount() {
+    let count = 0
+    for (let row = 0; row < res.constants.farmyardRows; row++) {
+      for (let col = 0; col < res.constants.farmyardCols; col++) {
+        const space = this.farmyard.grid[row][col]
+        if (space.type === 'field' && space.crop === 'vegetables') {
           count++
         }
       }

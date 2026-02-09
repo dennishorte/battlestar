@@ -1,0 +1,61 @@
+const t = require('../../../testutil_v2.js')
+
+describe('Agricultural Fertilizers', () => {
+  test('grants sow action after fencing 2+ spaces into a pasture', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        wood: 10,
+        grain: 1,
+        minorImprovements: ['agricultural-fertilizers-a073'],
+        farmyard: {
+          fields: [{ row: 2, col: 0 }],
+          pastures: [{ spaces: [{ row: 2, col: 3 }, { row: 2, col: 4 }] }],
+        },
+      },
+      actionSpaces: ['Fencing'],
+    })
+    game.run()
+
+    t.choose(game, 'Fencing')
+
+    // Fence a 2-space pasture (turns 2 unused spaces into used spaces)
+    const sel = game.waiting.selectors[0]
+    game.respondToInputRequest({
+      actor: sel.actor,
+      title: sel.title,
+      selection: {
+        action: 'build-pasture',
+        spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }],
+      },
+    })
+    t.choose(game, 'Done building fences')
+
+    // Agricultural Fertilizers triggers a sow action — sow grain on the field
+    const sowSel = game.waiting.selectors[0]
+    game.respondToInputRequest({
+      actor: sowSel.actor,
+      title: sowSel.title,
+      selection: {
+        action: 'sow-field',
+        row: 2,
+        col: 0,
+        cropType: 'grain',
+      },
+    })
+
+    t.testBoard(game, {
+      dennis: {
+        wood: 4,
+        minorImprovements: ['agricultural-fertilizers-a073'],
+        farmyard: {
+          fields: [{ row: 2, col: 0, crop: 'grain', cropCount: 3 }],
+          pastures: [
+            { spaces: [{ row: 2, col: 3 }, { row: 2, col: 4 }] },
+            { spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }] },
+          ],
+        },
+      },
+    })
+  })
+})
