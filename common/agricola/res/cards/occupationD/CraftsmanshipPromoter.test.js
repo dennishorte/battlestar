@@ -20,6 +20,16 @@ describe('Craftsmanship Promoter (OccD 131)', () => {
     expect(card.allowsMajorOnMinorAction).toBe(true)
   })
 
+  test('allows clay-oven as major on minor action', () => {
+    const card = res.getCardById('craftsmanship-promoter-d131')
+    expect(card.allowedMajors).toContain('clay-oven')
+  })
+
+  test('allows stone-oven as major on minor action', () => {
+    const card = res.getCardById('craftsmanship-promoter-d131')
+    expect(card.allowedMajors).toContain('stone-oven')
+  })
+
   test('allows joinery as major on minor action', () => {
     const card = res.getCardById('craftsmanship-promoter-d131')
     expect(card.allowedMajors).toContain('joinery')

@@ -5,9 +5,9 @@ module.exports = {
   number: 131,
   type: "occupation",
   players: "1+",
-  text: "When you play this card, you immediately get 1 stone. You can build any of the major improvements in the bottom row of the supply board even when taking a \"Minor Improvement\" action.",
+  text: "When you play this card, you immediately get 1 stone. You can build Clay Oven, Stone Oven, Joinery, Pottery, or Basketmaker's Workshop even when taking a \"Minor Improvement\" action.",
   allowsMajorOnMinorAction: true,
-  allowedMajors: ["joinery", "pottery", "basketmakers-workshop"],
+  allowedMajors: ["clay-oven", "stone-oven", "joinery", "pottery", "basketmakers-workshop"],
   onPlay(game, player) {
     player.addResource('stone', 1)
     game.log.add({
