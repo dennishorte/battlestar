@@ -28,6 +28,8 @@ describe('Agricultural Fertilizers', () => {
     // Agricultural Fertilizers triggers a sow action — sow grain on the field
     t.action(game, 'sow-field', { row: 2, col: 0, cropType: 'grain' })
 
+    console.log(game.players.byName('dennis').drawFarmyard())
+
     t.testBoard(game, {
       dennis: {
         wood: 4,

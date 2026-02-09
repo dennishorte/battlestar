@@ -2622,6 +2622,185 @@ class AgricolaPlayer extends BasePlayer {
     }
     return false
   }
+
+  // ---------------------------------------------------------------------------
+  // Farmyard drawing (for debugging / console output)
+  // ---------------------------------------------------------------------------
+
+  drawFarmyard() {
+    const rows = res.constants.farmyardRows
+    const cols = res.constants.farmyardCols
+    const cellW = 9
+    const numContentLines = 3
+
+    // Build fence lookup tables.
+    // hFence[rb][c] = true if horizontal fence at row boundary rb, column c
+    // vFence[r][cb] = true if vertical fence at row r, column boundary cb
+    const hFence = Array.from({ length: rows + 1 }, () => Array(cols).fill(false))
+    const vFence = Array.from({ length: rows }, () => Array(cols + 1).fill(false))
+
+    for (const f of this.farmyard.fences) {
+      if (f.edge) {
+        if (f.edge === 'top') {
+          hFence[0][f.col1] = true
+        }
+        else if (f.edge === 'bottom') {
+          hFence[rows][f.col1] = true
+        }
+        else if (f.edge === 'left') {
+          vFence[f.row1][0] = true
+        }
+        else if (f.edge === 'right') {
+          vFence[f.row1][cols] = true
+        }
+      }
+      else if (f.col1 === f.col2) {
+        // Vertical neighbors → horizontal fence between them
+        hFence[Math.max(f.row1, f.row2)][f.col1] = true
+      }
+      else {
+        // Horizontal neighbors → vertical fence between them
+        vFence[f.row1][Math.max(f.col1, f.col2)] = true
+      }
+    }
+
+    // Box-drawing intersection character lookup.
+    // Key encodes weight of each arm: up, right, down, left
+    // 0 = no arm, 1 = light, 2 = heavy (fence)
+    const BOX = {
+      '0110': '┌', '0210': '┍', '0120': '┎', '0220': '┏',
+      '0011': '┐', '0012': '┑', '0021': '┒', '0022': '┓',
+      '1100': '└', '1200': '┕', '2100': '┖', '2200': '┗',
+      '1001': '┘', '1002': '┙', '2001': '┚', '2002': '┛',
+      '1110': '├', '1210': '┝', '2110': '┞', '1120': '┟',
+      '2120': '┠', '2210': '┡', '1220': '┢', '2220': '┣',
+      '1011': '┤', '1012': '┥', '2011': '┦', '1021': '┧',
+      '2021': '┨', '2012': '┩', '1022': '┪', '2022': '┫',
+      '0111': '┬', '0112': '┭', '0211': '┮', '0212': '┯',
+      '0121': '┰', '0122': '┱', '0221': '┲', '0222': '┳',
+      '1101': '┴', '1102': '┵', '1201': '┶', '1202': '┷',
+      '2101': '┸', '2102': '┹', '2201': '┺', '2202': '┻',
+      '1111': '┼', '1112': '┽', '1211': '┾', '1212': '┿',
+      '2111': '╀', '1121': '╁', '2121': '╂', '2112': '╃',
+      '2211': '╄', '1122': '╅', '1221': '╆', '2212': '╇',
+      '1222': '╈', '2122': '╉', '2221': '╊', '2222': '╋',
+    }
+
+    function intersection(rb, cb) {
+      const u = rb > 0 ? (vFence[rb - 1][cb] ? 2 : 1) : 0
+      const d = rb < rows ? (vFence[rb][cb] ? 2 : 1) : 0
+      const l = cb > 0 ? (hFence[rb][cb - 1] ? 2 : 1) : 0
+      const r = cb < cols ? (hFence[rb][cb] ? 2 : 1) : 0
+      return BOX[`${u}${r}${d}${l}`] || '+'
+    }
+
+    function center(text, width) {
+      if (text.length >= width) {
+        return text.slice(0, width)
+      }
+      const left = Math.floor((width - text.length) / 2)
+      return ' '.repeat(left) + text + ' '.repeat(width - text.length - left)
+    }
+
+    // Precompute cell content (3 lines each)
+    const self = this
+    const cells = []
+    for (let r = 0; r < rows; r++) {
+      cells[r] = []
+      for (let c = 0; c < cols; c++) {
+        const space = self.getSpace(r, c)
+        const hasStable = space.hasStable
+        const pasture = self.getPastureAtSpace(r, c)
+        const lines = ['', '', '']
+
+        if (space.type === 'room') {
+          const type = space.roomType || self.roomType
+          lines[0] = 'Room'
+          lines[1] = type.charAt(0).toUpperCase() + type.slice(1)
+        }
+        else if (space.type === 'field') {
+          lines[0] = 'Field'
+          if (space.crop && space.cropCount > 0) {
+            lines[1] = space.crop.charAt(0).toUpperCase() + space.crop.slice(1) + ': ' + space.cropCount
+          }
+        }
+        else if (pasture) {
+          lines[0] = 'Pasture'
+          // Show animals on the first space of the pasture only
+          const first = pasture.spaces[0]
+          if (first.row === r && first.col === c && pasture.animalType && pasture.animalCount > 0) {
+            lines[1] = pasture.animalType.charAt(0).toUpperCase() + pasture.animalType.slice(1) + ': ' + pasture.animalCount
+          }
+        }
+
+        // Unfenced stable with animal
+        if (!pasture && space.animal) {
+          const type = space.animal.charAt(0).toUpperCase() + space.animal.slice(1)
+          lines[1] = type + ': 1'
+        }
+
+        // Stable marker on first empty line slot
+        if (hasStable) {
+          if (!lines[2]) {
+            lines[2] = 'Stable'
+          }
+          else if (!lines[1]) {
+            lines[1] = 'Stable'
+          }
+        }
+
+        cells[r][c] = lines
+      }
+    }
+
+    // Build output lines
+    const output = []
+
+    // Column headers
+    let header = '  '
+    for (let c = 0; c < cols; c++) {
+      header += ' ' + center(String(c), cellW)
+    }
+    output.push(header)
+
+    for (let rb = 0; rb <= rows; rb++) {
+      // Border row
+      let border = '  '
+      for (let cb = 0; cb <= cols; cb++) {
+        border += intersection(rb, cb)
+        if (cb < cols) {
+          border += (hFence[rb][cb] ? '━' : '─').repeat(cellW)
+        }
+      }
+      output.push(border)
+
+      // Content rows
+      if (rb < rows) {
+        for (let cl = 0; cl < numContentLines; cl++) {
+          // Row label on middle content line
+          let line = cl === 1 ? (rb + ' ') : '  '
+          for (let cb = 0; cb <= cols; cb++) {
+            line += vFence[rb][cb] ? '┃' : '│'
+            if (cb < cols) {
+              line += center(cells[rb][cb][cl], cellW)
+            }
+          }
+          output.push(line)
+        }
+      }
+    }
+
+    // Summary line
+    const parts = []
+    if (this.pet) {
+      parts.push('Pet: ' + this.pet)
+    }
+    parts.push('Fences: ' + this.getFenceCount() + '/' + res.constants.maxFences)
+    parts.push('Unused: ' + this.getUnusedSpaceCount())
+    output.push('  ' + parts.join('  '))
+
+    return output.join('\n')
+  }
 }
 
 module.exports = { AgricolaPlayer }
