@@ -623,10 +623,7 @@ export default {
       }
 
       try {
-        // Submit the action to the game
-        this.game.respondToInputRequest(response)
-        // Save to the server
-        await this.$store.dispatch('game/save')
+        await this.$store.dispatch('game/submitAction', response)
       }
       catch (e) {
         console.error('Error submitting action:', e)

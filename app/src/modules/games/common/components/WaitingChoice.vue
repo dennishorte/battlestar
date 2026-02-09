@@ -123,14 +123,13 @@ export default {
           selection: this.selection.selection,
         }
         try {
-          this.game.respondToInputRequest(payload)
           this.clearSelection()
+          await this.$store.dispatch('game/submitAction', payload)
         }
         catch (e) {
           alert('Error!\nCheck console for details.')
           throw e
         }
-        await this.$store.dispatch('game/save')
         if (options && options.callback) {
           await options.callback()
         }

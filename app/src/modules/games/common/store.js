@@ -105,21 +105,36 @@ export default {
     async submitAction(context, action) {
       await context.dispatch('_acquireLock')
 
-      // Run the action locally
       const game = context.state.game
+
+      // Handle pending undo (same logic as save())
+      if (game.undoCount > 0) {
+        const undoResponse = await this.$post('/api/game/undo', {
+          gameId: game._id,
+          count: game.undoCount,
+        })
+        game.branchId = undoResponse.serializedGame.branchId
+        game.undoCount = 0
+      }
+
       game.respondToInputRequest(action)
 
-      // Send the action to the server
       const response = await this.$post('/api/game/save_response', {
         gameId: game._id,
         response: action,
       })
 
-      // Make sure the local and remote games agree on the game state
       game.branchId = response.serializedGame.branchId
 
+      // In concurrent play (e.g., drafting), the server may have processed other
+      // players' responses too, so the states can legitimately differ.
+      // When they do, reload from the server's authoritative state.
       if (!action.ignoreBranch) {
-        _ensureServerAndClientAgreeOnGameState(game.serialize(), response.serializedGame)
+        if (JSON.stringify(game.serialize()) !== JSON.stringify(response.serializedGame)) {
+          const reloaded = fromData(response.serializedGame, game.viewerName)
+          reloaded.run()
+          context.commit('setGame', reloaded)
+        }
       }
 
       await context.dispatch('_releaseLock')
