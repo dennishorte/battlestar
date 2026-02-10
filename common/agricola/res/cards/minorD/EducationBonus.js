@@ -9,7 +9,7 @@ module.exports = {
   category: "Building Resource Provider",
   text: "After you play your 1st/2nd/3rd/4th/5th/6th occupation this game, you immediately get 1 grain/clay/reed/stone/vegetable/field (not retroactively).",
   onPlayOccupation(game, player) {
-    const occCount = player.occupationsPlayed || 0
+    const occCount = player.getOccupationCount()
     const rewards = {
       1: { type: 'grain', amount: 1 },
       2: { type: 'clay', amount: 1 },

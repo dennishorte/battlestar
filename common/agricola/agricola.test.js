@@ -1806,8 +1806,8 @@ describe('Agricola', () => {
         dennis: {
           food: 0,
           majorImprovements: ['fireplace-2'],
+          occupations: ['firewood-collector'],
           hand: ['wood-cutter'],
-          occupationsPlayed: 1,
           farmyard: {
             pastures: [{ spaces: [{ row: 1, col: 0 }], animals: { sheep: 2 } }],
           },

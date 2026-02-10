@@ -276,17 +276,17 @@ sow, goes straight to baking), baking choices appear automatically.
 Minor improvements with `anytimeConversions` appear during harvest feeding as
 conversion options (e.g. `'Oriental Fireplace: vegetables → 4 food'`).
 
-## Per-Player `occupationsPlayed`
+## Occupation Count and Costs
 
-The `occupationsPlayed` counter in `setBoard` is not auto-derived from the
-`occupations` array length. Set it explicitly when the occupation cost matters
-(first occupation is free, subsequent ones cost food).
+The occupation count is derived from `player.getOccupationCount()` which
+returns `playedOccupations.length` (the occupations zone). The first
+occupation is free; subsequent ones cost food. Set `occupations` in
+`setBoard` to control the count:
 
 ```js
 t.setBoard(game, {
   dennis: {
-    occupations: ['frame-builder-a123'],
-    occupationsPlayed: 1,  // next occupation will cost food
+    occupations: ['frame-builder-a123'],  // 1 played → next costs food
     hand: ['wall-builder-a111'],
   },
 })

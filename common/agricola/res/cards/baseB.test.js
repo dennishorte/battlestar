@@ -1721,7 +1721,6 @@ describe('BaseB Cards', () => {
         t.setBoard(game, {
           dennis: {
             occupations: ['wood-cutter', 'firewood-collector'],
-            occupationsPlayed: 2,
             hand: ['tutor'],
           },
         })
@@ -1730,18 +1729,22 @@ describe('BaseB Cards', () => {
         const dennis = t.player(game)
         t.playCard(game, 'dennis', 'tutor')
 
-        // playCard increments occupationsPlayed before onPlay runs, so tutor itself is counted
+        // playCard moves card to zone before onPlay runs, so tutor itself is counted
         expect(dennis.tutorOccupationCount).toBe(3)
       })
 
       test('gives end game points for occupations after tutor', () => {
         const card = baseB.getCardById('tutor')
-        const game = t.fixture()
+        const game = t.fixture({ cardSets: ['baseB'] })
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['tutor', 'consultant', 'greengrocer', 'wood-cutter', 'firewood-collector'],
+          },
+        })
         game.run()
         const dennis = t.player(game)
 
         dennis.tutorOccupationCount = 2
-        dennis.occupationsPlayed = 5
 
         // 5 - 2 = 3 occupations after tutor
         expect(card.getEndGamePoints(dennis)).toBe(3)
@@ -1752,7 +1755,6 @@ describe('BaseB Cards', () => {
         t.setBoard(game, {
           dennis: {
             occupations: ['tutor', 'consultant', 'greengrocer'],
-            occupationsPlayed: 3,
           },
         })
         game.run()
@@ -1767,7 +1769,7 @@ describe('BaseB Cards', () => {
         t.setPlayerCards(game, dennis, 'occupations', ['consultant', 'greengrocer'])
         const scoreWithout = dennis.calculateScore()
 
-        // 3 occupationsPlayed - 1 tutorOccupationCount = 2 bonus points from Tutor
+        // 3 occupations - 1 tutorOccupationCount = 2 bonus points from Tutor
         expect(scoreWith - scoreWithout).toBe(2)
       })
     })
@@ -2051,7 +2053,6 @@ describe('BaseB Cards', () => {
             food: 1, // cost for second occupation
             hand: ['groom'],
             occupations: ['paper-maker'],
-            occupationsPlayed: 1,
           },
         })
         game.run()
@@ -2083,7 +2084,6 @@ describe('BaseB Cards', () => {
             food: 1,
             hand: ['groom'],
             occupations: ['paper-maker'],
-            occupationsPlayed: 1,
           },
         })
         game.run()

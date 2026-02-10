@@ -688,10 +688,10 @@ const occupations = [
     category: 'Points Provider',
     text: 'During scoring, you get 1 bonus point for each occupation played after this one.',
     onPlay(game, player) {
-      player.tutorOccupationCount = player.occupationsPlayed
+      player.tutorOccupationCount = player.getOccupationCount()
     },
     getEndGamePoints(player) {
-      const afterTutor = player.occupationsPlayed - (player.tutorOccupationCount || 0)
+      const afterTutor = player.getOccupationCount() - (player.tutorOccupationCount || 0)
       return Math.max(0, afterTutor)
     },
   },

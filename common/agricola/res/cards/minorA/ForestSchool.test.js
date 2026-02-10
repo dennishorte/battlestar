@@ -39,8 +39,7 @@ describe('Forest School', () => {
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['forest-school-a028'],
-        occupations: ['frame-builder-a123'], // 1 already played
-        occupationsPlayed: 1, // next costs food
+        occupations: ['frame-builder-a123'], // 1 already played, next costs food
         hand: ['wall-builder-a111'], // another occupation to play
         wood: 1,
       },

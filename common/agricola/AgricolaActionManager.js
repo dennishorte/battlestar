@@ -1270,7 +1270,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     // Occupation cost: first is free, subsequent cost 1 food each
-    const baseFoodCost = player.occupationsPlayed === 0 ? 0 : 1
+    const baseFoodCost = player.getOccupationCount() === 0 ? 0 : 1
     let costObj = baseFoodCost > 0 ? { food: baseFoodCost } : {}
 
     // Apply modifyOccupationCost hooks (e.g., ForestSchool: food → woodOrFood)
@@ -2444,7 +2444,7 @@ class AgricolaActionManager extends BaseActionManager {
       return
     }
 
-    const foodGain = player.occupationsPlayed
+    const foodGain = player.getOccupationCount()
     if (foodGain <= 0) {
       return
     }

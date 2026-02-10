@@ -31,6 +31,10 @@ class AgricolaPlayer extends BasePlayer {
     this._playedOccupations = val
   }
 
+  getOccupationCount() {
+    return this.playedOccupations.length
+  }
+
   get playedMinorImprovements() {
     const zone = this._cardZone('minorImprovements')
     return zone ? zone.cardlist().map(c => c.id) : (this._playedMinorImprovements || [])
@@ -69,9 +73,6 @@ class AgricolaPlayer extends BasePlayer {
 
     // Begging cards
     this.beggingCards = 0
-
-    // Occupations played
-    this.occupationsPlayed = 0
 
     // Bonus points from cards
     this.bonusPoints = 0
@@ -2516,7 +2517,6 @@ class AgricolaPlayer extends BasePlayer {
     // Move card to appropriate played zone
     if (card.type === 'occupation') {
       card.moveTo(this.zones.byPlayer(this, 'occupations'))
-      this.occupationsPlayed++
     }
     else {
       card.moveTo(this.zones.byPlayer(this, 'minorImprovements'))
