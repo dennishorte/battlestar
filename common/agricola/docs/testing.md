@@ -85,6 +85,19 @@ t.choose(game, 'Done building fences')
 Action space names do NOT include accumulated amounts. Use `'Forest'`, not
 `'Forest (3)'`.
 
+## t.currentChoices
+
+Returns the current selector's choices as an array of plain strings. Useful for
+asserting that a specific option is or isn't available.
+
+```js
+expect(t.currentChoices(game)).toContain('Chapel')
+expect(t.currentChoices(game)).not.toContain('Chapel')
+```
+
+For accumulating actions, returns just the name (e.g. `'Forest'`) without the
+accumulated amount.
+
 ## t.action
 
 Responds to an action-type input request (board interactions like building
@@ -227,3 +240,28 @@ received clay.
 **Ale-Benches** (`res/cards/minorA/AleBenches.test.js`) — Offers to pay 1 grain
 for 1 bonus point during return home, giving other players 1 food. Plays
 through a complete round to reach the return home phase.
+
+### onActionSpaceUsed (card-provided action spaces)
+
+Cards with `providesActionSpace: true` register as action spaces when played.
+In `setBoard`, placing such a card in `minorImprovements` automatically
+registers the action space. The card's name becomes a choosable action.
+
+**Chapel** (`res/cards/minorA/Chapel.test.js`) — Provides an action space that
+grants 3 bonus points. Non-owners must pay 1 grain. Cards can also define
+`canUseActionSpace` to gate availability (e.g. Chapel excludes non-owners
+without grain). Use `t.currentChoices` to assert availability:
+
+```js
+t.setBoard(game, {
+  firstPlayer: 'micah',
+  dennis: {
+    occupations: ['test-occupation-1', 'test-occupation-2'],
+    minorImprovements: ['chapel-a039'],
+  },
+  micah: { grain: 0 },
+})
+game.run()
+
+expect(t.currentChoices(game)).not.toContain('Chapel')
+```
