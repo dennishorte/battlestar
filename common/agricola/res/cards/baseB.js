@@ -44,7 +44,7 @@ const minorImprovements = [
         args: { player },
       })
 
-      game.actions.callOnBuildPastureHooks(player, player.farmyard.pastures[player.farmyard.pastures.length - 1])
+      game.callPlayerCardHook(player, 'onBuildPasture', player.farmyard.pastures[player.farmyard.pastures.length - 1])
     },
   },
   {

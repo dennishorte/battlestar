@@ -425,24 +425,10 @@ Agricola.prototype.callPlayerCardHook = function(player, hookName, ...args) {
   return results
 }
 
-/**
- * Call a hook on ALL players' cards (for onAnyAction type hooks)
- * actingPlayer is the player who triggered the action
- */
-Agricola.prototype.callAllPlayersCardHook = function(hookName, actingPlayer, ...args) {
-  const results = []
+Agricola.prototype.callCardHook = function(hookName, ...args) {
   for (const player of this.players.all()) {
-    const cards = this.getPlayerActiveCards(player)
-    for (const card of cards) {
-      if (card.hasHook(hookName)) {
-        const result = card.callHook(hookName, this, actingPlayer, ...args, player)
-        if (result !== undefined) {
-          results.push({ card, player, result })
-        }
-      }
-    }
+    this.callPlayerCardHook(player, hookName, ...args)
   }
-  return results
 }
 
 /**
@@ -606,22 +592,12 @@ Agricola.prototype.callRoundEndHooks = function() {
   }
 }
 
-/**
- * Call onReturnHome for all players
- */
 Agricola.prototype.callReturnHomeHooks = function() {
-  for (const player of this.players.all()) {
-    this.callPlayerCardHook(player, 'onReturnHome')
-  }
+  this.callCardHook('onReturnHome')
 }
 
-/**
- * Call onHarvest for all players (during field phase)
- */
 Agricola.prototype.callHarvestHooks = function() {
-  for (const player of this.players.all()) {
-    this.callPlayerCardHook(player, 'onHarvest')
-  }
+  this.callCardHook('onHarvest')
 }
 
 Agricola.prototype.isHarvestRound = function(round) {
@@ -882,9 +858,7 @@ Agricola.prototype.replenishPhase = function() {
 
         if (actionId === 'take-reed') {
           const wasNonEmpty = prevAccumulated > 0
-          for (const player of this.players.all()) {
-            this.callPlayerCardHook(player, 'onReedBankReplenish', wasNonEmpty)
-          }
+          this.callCardHook('onReedBankReplenish', wasNonEmpty)
         }
       }
 
@@ -909,9 +883,7 @@ Agricola.prototype.workPhase = function() {
     this.state.actionSpaces[actionId].occupiedBy = null
   }
 
-  for (const player of this.players.all()) {
-    this.callPlayerCardHook(player, 'onWorkPhaseStart')
-  }
+  this.callCardHook('onWorkPhaseStart')
 
   // Reset per-round tracking
   for (const player of this.players.all()) {
@@ -1275,9 +1247,7 @@ Agricola.prototype.fieldPhase = function() {
   // Call onHarvest hooks (e.g., Scythe Worker gives bonus grain)
   this.callHarvestHooks()
 
-  for (const player of this.players.all()) {
-    this.callPlayerCardHook(player, 'onFieldPhaseEnd')
-  }
+  this.callCardHook('onFieldPhaseEnd')
 
   this.log.outdent()
 }

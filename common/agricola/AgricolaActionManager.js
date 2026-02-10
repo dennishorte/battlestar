@@ -475,7 +475,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     // Call onBuildRoom hooks for the multi-room build
-    this.callOnBuildRoomHooks(player, roomType)
+    this.game.callPlayerCardHook(player, 'onBuildRoom', roomType)
   }
 
   buildRoom(player) {
@@ -533,7 +533,7 @@ class AgricolaActionManager extends BaseActionManager {
     })
 
     // Call onBuildRoom hooks (Roughcaster, Wall Builder)
-    this.callOnBuildRoomHooks(player, roomType)
+    this.game.callPlayerCardHook(player, 'onBuildRoom', roomType)
 
     return true
   }
@@ -639,7 +639,7 @@ class AgricolaActionManager extends BaseActionManager {
     })
 
     // Call onRenovate hooks (Roughcaster)
-    this.callOnRenovateHooks(player, oldType, newType)
+    this.game.callPlayerCardHook(player, 'onRenovate', oldType, newType)
 
     return true
   }
@@ -929,7 +929,7 @@ class AgricolaActionManager extends BaseActionManager {
     })
 
     // Call onBake hooks (Dutch Windmill gives bonus food after harvest)
-    this.callOnBakeHooks(player)
+    this.game.callPlayerCardHook(player, 'onBake')
 
     return true
   }
@@ -1103,7 +1103,7 @@ class AgricolaActionManager extends BaseActionManager {
         })
 
         // Call onBuildPasture hooks (Shepherd's Crook)
-        this.callOnBuildPastureHooks(player, { spaces: selectedSpaces })
+        this.game.callPlayerCardHook(player, 'onBuildPasture', { spaces: selectedSpaces })
 
         return { built: true, fencesBuilt: result.fencesBuilt }
       }
@@ -1238,7 +1238,7 @@ class AgricolaActionManager extends BaseActionManager {
       }
 
       // Call onBuildImprovement hooks (Junk Room gives food)
-      this.callOnBuildImprovementHooks(player)
+      this.game.callPlayerCardHook(player, 'onBuildImprovement')
 
       if (imp.upgradesFrom && imp.upgradesFrom.some(id => id.startsWith('fireplace'))) {
         this.game.callPlayerCardHook(player, 'onUpgradeFireplace')
@@ -1590,7 +1590,7 @@ class AgricolaActionManager extends BaseActionManager {
               imp.callHook('onBuy', this.game, player)
             }
 
-            this.callOnBuildImprovementHooks(player)
+            this.game.callPlayerCardHook(player, 'onBuildImprovement')
             return improvementId
           }
         }
@@ -1618,7 +1618,7 @@ class AgricolaActionManager extends BaseActionManager {
             }
 
             this.game.registerCardActionSpace(player, card)
-            this.callOnBuildImprovementHooks(player)
+            this.game.callPlayerCardHook(player, 'onBuildImprovement')
             this.maybePassLeft(player, cardId)
             return true
           }
@@ -1699,7 +1699,7 @@ class AgricolaActionManager extends BaseActionManager {
     this.game.registerCardActionSpace(player, card)
 
     // Call onBuildImprovement hooks (Junk Room gives food)
-    this.callOnBuildImprovementHooks(player)
+    this.game.callPlayerCardHook(player, 'onBuildImprovement')
 
     // Pass to left player if applicable
     this.maybePassLeft(player, cardId)
@@ -1856,7 +1856,7 @@ class AgricolaActionManager extends BaseActionManager {
           }
 
           // Call onBuildImprovement hooks (Junk Room gives food)
-          this.callOnBuildImprovementHooks(player)
+          this.game.callPlayerCardHook(player, 'onBuildImprovement')
 
           if (imp.upgradesFrom && imp.upgradesFrom.some(id => id.startsWith('fireplace'))) {
             this.game.callPlayerCardHook(player, 'onUpgradeFireplace')
@@ -1897,7 +1897,7 @@ class AgricolaActionManager extends BaseActionManager {
           this.game.registerCardActionSpace(player, card)
 
           // Call onBuildImprovement hooks (Junk Room gives food)
-          this.callOnBuildImprovementHooks(player)
+          this.game.callPlayerCardHook(player, 'onBuildImprovement')
 
           // Pass to left player if applicable
           this.maybePassLeft(player, cardId)
@@ -2032,7 +2032,7 @@ class AgricolaActionManager extends BaseActionManager {
       const result = this.takeAccumulatedResource(player, actionId)
       if (result) {
         // Call hooks even for accumulating actions
-        this.callOnActionHooks(player, actionId)
+        this.game.callPlayerCardHook(player, 'onAction', actionId)
         this.callOnAnyActionHooks(player, actionId)
       }
       return result
@@ -2131,7 +2131,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     // Call onAction hooks for this player's cards
-    this.callOnActionHooks(player, actionId)
+    this.game.callPlayerCardHook(player, 'onAction', actionId)
 
     // Call onAnyAction hooks for ALL players' cards
     this.callOnAnyActionHooks(player, actionId)
@@ -2142,13 +2142,6 @@ class AgricolaActionManager extends BaseActionManager {
   // ---------------------------------------------------------------------------
   // Card Hook Helpers
   // ---------------------------------------------------------------------------
-
-  /**
-   * Call onAction hook on player's active cards
-   */
-  callOnActionHooks(player, actionId) {
-    this.game.callPlayerCardHook(player, 'onAction', actionId)
-  }
 
   executeCardActionSpace(player, actionId, state) {
     const card = this.game.cards.byId(state.cardId)
@@ -2163,7 +2156,7 @@ class AgricolaActionManager extends BaseActionManager {
       card.callHook('onActionSpaceUsed', this.game, player, owner)
     }
 
-    this.callOnActionHooks(player, actionId)
+    this.game.callPlayerCardHook(player, 'onAction', actionId)
     this.callOnAnyActionHooks(player, actionId)
     return true
   }
@@ -2291,41 +2284,6 @@ class AgricolaActionManager extends BaseActionManager {
         args: { player, resource: chosen, card: card },
       })
     }
-  }
-
-  /**
-   * Call onBake hook when player bakes bread
-   */
-  callOnBakeHooks(player) {
-    this.game.callPlayerCardHook(player, 'onBake')
-  }
-
-  /**
-   * Call onBuildRoom hook when player builds a room
-   */
-  callOnBuildRoomHooks(player, roomType) {
-    this.game.callPlayerCardHook(player, 'onBuildRoom', roomType)
-  }
-
-  /**
-   * Call onBuildPasture hook when player builds a pasture
-   */
-  callOnBuildPastureHooks(player, pasture) {
-    this.game.callPlayerCardHook(player, 'onBuildPasture', pasture)
-  }
-
-  /**
-   * Call onRenovate hook when player renovates
-   */
-  callOnRenovateHooks(player, fromType, toType) {
-    this.game.callPlayerCardHook(player, 'onRenovate', fromType, toType)
-  }
-
-  /**
-   * Call onBuildImprovement hook when player builds an improvement
-   */
-  callOnBuildImprovementHooks(player) {
-    this.game.callPlayerCardHook(player, 'onBuildImprovement')
   }
 
   /**
@@ -2895,7 +2853,7 @@ class AgricolaActionManager extends BaseActionManager {
         template: '{player} renovates from {from} to {to} for free using {card}',
         args: { player, from: fromType, to: toType, card },
       })
-      this.callOnRenovateHooks(player, fromType, toType)
+      this.game.callPlayerCardHook(player, 'onRenovate', fromType, toType)
     }
   }
 
@@ -3196,7 +3154,7 @@ class AgricolaActionManager extends BaseActionManager {
         args: { player, type: roomType, row, col },
       })
 
-      this.callOnBuildRoomHooks(player, roomType)
+      this.game.callPlayerCardHook(player, 'onBuildRoom', roomType)
     }
 
     if (roomsBuilt === 0) {
