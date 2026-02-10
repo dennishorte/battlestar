@@ -229,17 +229,7 @@ const majorImprovements = [
     onBuy(game, player) {
       const currentRound = game.state.round
       for (let i = 1; i <= 5; i++) {
-        const round = currentRound + i
-        if (round <= 14) {
-          if (!game.state.scheduledFood) {
-            game.state.scheduledFood = {}
-          }
-          if (!game.state.scheduledFood[player.name]) {
-            game.state.scheduledFood[player.name] = {}
-          }
-          game.state.scheduledFood[player.name][round] =
-            (game.state.scheduledFood[player.name][round] || 0) + 1
-        }
+        game.scheduleResource(player, 'food', currentRound + i, 1)
       }
       game.log.add({
         template: '{player} places food on the next 5 round spaces',
@@ -315,17 +305,7 @@ const sixPlayerMajorImprovements = [
     onBuy(game, player) {
       const currentRound = game.state.round
       for (let i = 1; i <= 5; i++) {
-        const round = currentRound + i
-        if (round <= 14) {
-          if (!game.state.scheduledFood) {
-            game.state.scheduledFood = {}
-          }
-          if (!game.state.scheduledFood[player.name]) {
-            game.state.scheduledFood[player.name] = {}
-          }
-          game.state.scheduledFood[player.name][round] =
-            (game.state.scheduledFood[player.name][round] || 0) + 1
-        }
+        game.scheduleResource(player, 'food', currentRound + i, 1)
       }
       game.log.add({
         template: '{player} places food on the next 5 round spaces',

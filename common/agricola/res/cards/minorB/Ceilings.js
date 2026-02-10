@@ -13,15 +13,7 @@ module.exports = {
     player.ceilingsRounds = []
     for (let i = 1; i <= 5; i++) {
       const round = currentRound + i
-      if (round <= 14) {
-        if (!game.state.scheduledWood) {
-          game.state.scheduledWood = {}
-        }
-        if (!game.state.scheduledWood[player.name]) {
-          game.state.scheduledWood[player.name] = {}
-        }
-        game.state.scheduledWood[player.name][round] =
-            (game.state.scheduledWood[player.name][round] || 0) + 1
+      if (game.scheduleResource(player, 'wood', round, 1)) {
         player.ceilingsRounds.push(round)
       }
     }

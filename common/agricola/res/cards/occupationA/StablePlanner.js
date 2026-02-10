@@ -10,15 +10,7 @@ module.exports = {
     const currentRound = game.state.round
     for (const offset of [3, 6, 9]) {
       const round = currentRound + offset
-      if (round <= 14) {
-        if (!game.state.scheduledFreeStables) {
-          game.state.scheduledFreeStables = {}
-        }
-        if (!game.state.scheduledFreeStables[player.name]) {
-          game.state.scheduledFreeStables[player.name] = []
-        }
-        game.state.scheduledFreeStables[player.name].push(round)
-      }
+      game.scheduleEvent(player, 'freeStables', round)
     }
     game.log.add({
       template: '{player} schedules free stables from Stable Planner',

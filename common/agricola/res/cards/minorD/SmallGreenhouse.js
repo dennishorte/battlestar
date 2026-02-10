@@ -13,16 +13,7 @@ module.exports = {
     const currentRound = game.state.round
     for (const offset of [4, 7]) {
       const round = currentRound + offset
-      if (round <= 14) {
-        if (!game.state.scheduledVegetablesPurchase) {
-          game.state.scheduledVegetablesPurchase = {}
-        }
-        if (!game.state.scheduledVegetablesPurchase[player.name]) {
-          game.state.scheduledVegetablesPurchase[player.name] = {}
-        }
-        game.state.scheduledVegetablesPurchase[player.name][round] =
-            (game.state.scheduledVegetablesPurchase[player.name][round] || 0) + 1
-      }
+      game.scheduleResource(player, 'vegetablesPurchase', round, 1)
     }
     game.log.add({
       template: '{player} schedules vegetables (purchasable for 1 food) from Small Greenhouse',

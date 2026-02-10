@@ -11,14 +11,7 @@ module.exports = {
       player.manservantTriggered = true
       const currentRound = game.state.round
       for (let round = currentRound + 1; round <= 14; round++) {
-        if (!game.state.scheduledFood) {
-          game.state.scheduledFood = {}
-        }
-        if (!game.state.scheduledFood[player.name]) {
-          game.state.scheduledFood[player.name] = {}
-        }
-        game.state.scheduledFood[player.name][round] =
-            (game.state.scheduledFood[player.name][round] || 0) + 3
+        game.scheduleResource(player, 'food', round, 3)
       }
       game.log.add({
         template: '{player} schedules 3 food per round from Manservant',

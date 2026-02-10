@@ -10,14 +10,7 @@ module.exports = {
     const currentRound = game.state.round
     let placedCount = 0
     for (let round = currentRound + 1; round <= 14 && placedCount < fenceCount; round++) {
-      if (!game.state.scheduledFood) {
-        game.state.scheduledFood = {}
-      }
-      if (!game.state.scheduledFood[player.name]) {
-        game.state.scheduledFood[player.name] = {}
-      }
-      game.state.scheduledFood[player.name][round] =
-          (game.state.scheduledFood[player.name][round] || 0) + 1
+      game.scheduleResource(player, 'food', round, 1)
       placedCount++
     }
     game.log.add({

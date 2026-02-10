@@ -10,16 +10,7 @@ module.exports = {
     const currentRound = game.state.round
     for (const offset of [2, 5, 8, 10]) {
       const round = currentRound + offset
-      if (round <= 14) {
-        if (!game.state.scheduledSheep) {
-          game.state.scheduledSheep = {}
-        }
-        if (!game.state.scheduledSheep[player.name]) {
-          game.state.scheduledSheep[player.name] = {}
-        }
-        game.state.scheduledSheep[player.name][round] =
-            (game.state.scheduledSheep[player.name][round] || 0) + 1
-      }
+      game.scheduleResource(player, 'sheep', round, 1)
     }
     game.log.add({
       template: '{player} schedules sheep from Sheep Whisperer',

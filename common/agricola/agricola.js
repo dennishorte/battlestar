@@ -474,6 +474,45 @@ Agricola.prototype.callRoundStartHooks = function() {
 }
 
 /**
+ * Schedule a resource delivery for a future round.
+ * Returns true if scheduled, false if round is past the game end.
+ */
+Agricola.prototype.scheduleResource = function(player, type, round, amount) {
+  if (round > 14) {
+    return false
+  }
+  const stateKey = `scheduled${type[0].toUpperCase()}${type.slice(1)}`
+  if (!this.state[stateKey]) {
+    this.state[stateKey] = {}
+  }
+  if (!this.state[stateKey][player.name]) {
+    this.state[stateKey][player.name] = {}
+  }
+  this.state[stateKey][player.name][round] =
+    (this.state[stateKey][player.name][round] || 0) + amount
+  return true
+}
+
+/**
+ * Schedule an event for a future round (plows, freeStables, freeOccupation).
+ * Returns true if scheduled, false if round is past the game end.
+ */
+Agricola.prototype.scheduleEvent = function(player, type, round) {
+  if (round > 14) {
+    return false
+  }
+  const stateKey = `scheduled${type[0].toUpperCase()}${type.slice(1)}`
+  if (!this.state[stateKey]) {
+    this.state[stateKey] = {}
+  }
+  if (!this.state[stateKey][player.name]) {
+    this.state[stateKey][player.name] = []
+  }
+  this.state[stateKey][player.name].push(round)
+  return true
+}
+
+/**
  * Collect scheduled resources from cards (food, vegetables, clay, etc.)
  */
 Agricola.prototype.collectScheduledResources = function(player) {

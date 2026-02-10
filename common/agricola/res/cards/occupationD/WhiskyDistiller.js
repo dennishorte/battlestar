@@ -13,19 +13,10 @@ module.exports = {
   activate(game, player) {
     player.payCost({ grain: 1 })
     const targetRound = game.state.round + 2
-    if (targetRound <= 14) {
-      if (!game.state.scheduledFood) {
-        game.state.scheduledFood = {}
-      }
-      if (!game.state.scheduledFood[player.name]) {
-        game.state.scheduledFood[player.name] = {}
-      }
-      game.state.scheduledFood[player.name][targetRound] =
-          (game.state.scheduledFood[player.name][targetRound] || 0) + 4
-      game.log.add({
-        template: '{player} schedules 4 food for round {round} via Whisky Distiller',
-        args: { player, round: targetRound },
-      })
-    }
+    game.scheduleResource(player, 'food', targetRound, 4)
+    game.log.add({
+      template: '{player} schedules 4 food for round {round} via Whisky Distiller',
+      args: { player, round: targetRound },
+    })
   },
 }

@@ -11,13 +11,7 @@ module.exports = {
     let count = 0
     for (let round = currentRound + 1; round <= 14 && count < 2; round++) {
       if (round % 2 === 1) {
-        if (!game.state.scheduledWoodWithMinor) {
-          game.state.scheduledWoodWithMinor = {}
-        }
-        if (!game.state.scheduledWoodWithMinor[player.name]) {
-          game.state.scheduledWoodWithMinor[player.name] = []
-        }
-        game.state.scheduledWoodWithMinor[player.name].push(round)
+        game.scheduleEvent(player, 'woodWithMinor', round)
         count++
       }
     }

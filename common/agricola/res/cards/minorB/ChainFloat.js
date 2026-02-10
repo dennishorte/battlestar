@@ -10,16 +10,7 @@ module.exports = {
   onPlay(game, player) {
     const currentRound = game.state.round
     for (const offset of [7, 8, 9]) {
-      const round = currentRound + offset
-      if (round <= 14) {
-        if (!game.state.scheduledPlows) {
-          game.state.scheduledPlows = {}
-        }
-        if (!game.state.scheduledPlows[player.name]) {
-          game.state.scheduledPlows[player.name] = []
-        }
-        game.state.scheduledPlows[player.name].push(round)
-      }
+      game.scheduleEvent(player, 'plows', currentRound + offset)
     }
     game.log.add({
       template: '{player} schedules fields to plow from Chain Float',

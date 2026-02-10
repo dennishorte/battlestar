@@ -10,16 +10,7 @@ module.exports = {
   onAction(game, player, actionId, resources) {
     if (resources && resources.wood > 0) {
       const nextRound = game.state.round + 1
-      if (nextRound <= 14) {
-        if (!game.state.scheduledFood) {
-          game.state.scheduledFood = {}
-        }
-        if (!game.state.scheduledFood[player.name]) {
-          game.state.scheduledFood[player.name] = {}
-        }
-        game.state.scheduledFood[player.name][nextRound] =
-            (game.state.scheduledFood[player.name][nextRound] || 0) + 1
-      }
+      game.scheduleResource(player, 'food', nextRound, 1)
     }
   },
 }

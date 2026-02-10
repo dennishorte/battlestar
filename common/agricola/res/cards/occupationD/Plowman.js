@@ -10,15 +10,7 @@ module.exports = {
     const currentRound = game.state.round
     for (const offset of [4, 7, 10]) {
       const round = currentRound + offset
-      if (round <= 14) {
-        if (!game.state.scheduledPlowman) {
-          game.state.scheduledPlowman = {}
-        }
-        if (!game.state.scheduledPlowman[player.name]) {
-          game.state.scheduledPlowman[player.name] = []
-        }
-        game.state.scheduledPlowman[player.name].push(round)
-      }
+      game.scheduleEvent(player, 'plowman', round)
     }
     game.log.add({
       template: '{player} schedules field tiles from Plowman',

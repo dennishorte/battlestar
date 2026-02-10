@@ -10,16 +10,9 @@ module.exports = {
   onPlay(game, player) {
     const fences = player.getBuiltFenceCount()
     const currentRound = game.state.round
-    for (let i = 1; i <= fences && currentRound + i <= 14; i++) {
+    for (let i = 1; i <= fences; i++) {
       const round = currentRound + i
-      if (!game.state.scheduledFood) {
-        game.state.scheduledFood = {}
-      }
-      if (!game.state.scheduledFood[player.name]) {
-        game.state.scheduledFood[player.name] = {}
-      }
-      game.state.scheduledFood[player.name][round] =
-          (game.state.scheduledFood[player.name][round] || 0) + 1
+      game.scheduleResource(player, 'food', round, 1)
     }
     if (fences > 0) {
       game.log.add({

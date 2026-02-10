@@ -14,24 +14,10 @@ module.exports = {
     let isClay = true
     for (let round = currentRound + 1; round <= 14; round++) {
       if (isClay) {
-        if (!game.state.scheduledClay) {
-          game.state.scheduledClay = {}
-        }
-        if (!game.state.scheduledClay[player.name]) {
-          game.state.scheduledClay[player.name] = {}
-        }
-        game.state.scheduledClay[player.name][round] =
-            (game.state.scheduledClay[player.name][round] || 0) + 1
+        game.scheduleResource(player, 'clay', round, 1)
       }
       else {
-        if (!game.state.scheduledBoar) {
-          game.state.scheduledBoar = {}
-        }
-        if (!game.state.scheduledBoar[player.name]) {
-          game.state.scheduledBoar[player.name] = {}
-        }
-        game.state.scheduledBoar[player.name][round] =
-            (game.state.scheduledBoar[player.name][round] || 0) + 1
+        game.scheduleResource(player, 'boar', round, 1)
       }
       isClay = !isClay
     }

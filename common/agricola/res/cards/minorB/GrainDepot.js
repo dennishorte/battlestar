@@ -21,16 +21,7 @@ module.exports = {
 
     for (let i = 1; i <= rounds; i++) {
       const round = currentRound + i
-      if (round <= 14) {
-        if (!game.state.scheduledGrain) {
-          game.state.scheduledGrain = {}
-        }
-        if (!game.state.scheduledGrain[player.name]) {
-          game.state.scheduledGrain[player.name] = {}
-        }
-        game.state.scheduledGrain[player.name][round] =
-            (game.state.scheduledGrain[player.name][round] || 0) + 1
-      }
+      game.scheduleResource(player, 'grain', round, 1)
     }
     game.log.add({
       template: '{player} schedules grain from Grain Depot',

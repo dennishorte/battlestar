@@ -13,24 +13,10 @@ module.exports = {
     let isFood = true
     for (let round = currentRound + 1; round <= 14; round++) {
       if (isFood) {
-        if (!game.state.scheduledFood) {
-          game.state.scheduledFood = {}
-        }
-        if (!game.state.scheduledFood[player.name]) {
-          game.state.scheduledFood[player.name] = {}
-        }
-        game.state.scheduledFood[player.name][round] =
-            (game.state.scheduledFood[player.name][round] || 0) + 1
+        game.scheduleResource(player, 'food', round, 1)
       }
       else {
-        if (!game.state.scheduledSheep) {
-          game.state.scheduledSheep = {}
-        }
-        if (!game.state.scheduledSheep[player.name]) {
-          game.state.scheduledSheep[player.name] = {}
-        }
-        game.state.scheduledSheep[player.name][round] =
-            (game.state.scheduledSheep[player.name][round] || 0) + 1
+        game.scheduleResource(player, 'sheep', round, 1)
       }
       isFood = !isFood
     }

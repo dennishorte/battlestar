@@ -22,16 +22,7 @@ module.exports = {
     if (rounds > 0) {
       for (let i = 1; i <= rounds; i++) {
         const round = currentRound + i
-        if (round <= 14) {
-          if (!game.state.scheduledFood) {
-            game.state.scheduledFood = {}
-          }
-          if (!game.state.scheduledFood[player.name]) {
-            game.state.scheduledFood[player.name] = {}
-          }
-          game.state.scheduledFood[player.name][round] =
-              (game.state.scheduledFood[player.name][round] || 0) + 1
-        }
+        game.scheduleResource(player, 'food', round, 1)
       }
       game.log.add({
         template: '{player} places food on the next {count} round spaces from Chophouse',
