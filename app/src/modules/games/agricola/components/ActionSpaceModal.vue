@@ -25,6 +25,12 @@
         {{ action.description }}
       </div>
 
+      <!-- Card Action Space Owner -->
+      <div class="owner-section" v-if="action.cardProvided && action.ownerName">
+        <span class="owner-label">Owned by:</span>
+        <span class="owner-name">{{ action.ownerName }}</span>
+      </div>
+
       <!-- Accumulated Resources (for accumulating actions) -->
       <div class="accumulated-section" v-if="isAccumulating && accumulatedAmount > 0">
         <div class="accumulated-label">Currently Available:</div>
@@ -173,7 +179,22 @@ export default {
       if (!this.actionId) {
         return null
       }
-      return res.getActionById(this.actionId)
+      const action = res.getActionById(this.actionId)
+      if (action) {
+        return action
+      }
+
+      const state = this.game.state.actionSpaces?.[this.actionId]
+      if (state?.cardProvided) {
+        return {
+          name: state.name,
+          description: state.description,
+          type: 'card-provided',
+          cardProvided: true,
+          ownerName: state.ownerName,
+        }
+      }
+      return null
     },
 
     actionName() {
@@ -193,6 +214,9 @@ export default {
     },
 
     actionTypeBadge() {
+      if (this.action?.cardProvided) {
+        return 'Card Action Space'
+      }
       if (this.isAccumulating) {
         return 'Accumulating'
       }
@@ -203,6 +227,9 @@ export default {
     },
 
     actionTypeBadgeClass() {
+      if (this.action?.cardProvided) {
+        return 'badge-card'
+      }
       if (this.isAccumulating) {
         return 'badge-accumulating'
       }
@@ -418,6 +445,27 @@ export default {
 .badge-stage {
   background-color: #f3e5f5;
   color: #7b1fa2;
+}
+
+.badge-card {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.owner-section {
+  margin-bottom: .75em;
+  font-size: .95em;
+}
+
+.owner-label {
+  font-weight: 600;
+  color: #555;
+  margin-right: .35em;
+}
+
+.owner-name {
+  color: #2e7d32;
+  font-weight: 500;
 }
 
 .action-description {

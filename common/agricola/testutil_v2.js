@@ -24,6 +24,15 @@ const FARMYARD_DEFAULTS = {
 }
 
 /**
+ * Return the current choice names from the waiting selector as plain strings.
+ * Handles both plain string choices and { title, detail } objects.
+ */
+TestUtil.currentChoices = function(game) {
+  const choices = game.waiting.selectors[0].choices
+  return choices.map(c => typeof c === 'object' ? c.title : c)
+}
+
+/**
  * Respond to an action-type input request (e.g. build-pasture, sow-field).
  * Shorthand for grabbing selectors[0] and calling respondToInputRequest.
  *
@@ -442,6 +451,14 @@ TestUtil.setPlayerBoard = function(game, playerName, playerState) {
   TestUtil.setPlayerCards(game, player, 'occupations', playerState.occupations || [])
   TestUtil.setPlayerCards(game, player, 'minorImprovements', playerState.minorImprovements || [])
   TestUtil.setPlayerMajorImprovements(game, player, playerState.majorImprovements || [])
+
+  // Register card-provided action spaces for played minor improvements
+  for (const cardId of playerState.minorImprovements || []) {
+    const card = game.cards.byId(cardId)
+    if (card.definition.providesActionSpace) {
+      game.registerCardActionSpace(player, card)
+    }
+  }
 
   // Set farmyard (may override player.roomType via farmyard.roomType)
   if (playerState.farmyard) {

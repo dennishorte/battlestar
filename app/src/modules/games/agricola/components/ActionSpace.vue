@@ -73,7 +73,16 @@ export default {
 
   computed: {
     action() {
-      return res.getActionById(this.actionId) || { name: this.actionId, description: '', type: 'instant' }
+      const action = res.getActionById(this.actionId)
+      if (action) {
+        return action
+      }
+
+      const state = this.game.state.actionSpaces?.[this.actionId]
+      if (state?.cardProvided) {
+        return { name: state.name, description: state.description, type: 'card-provided' }
+      }
+      return { name: this.actionId, description: '', type: 'instant' }
     },
 
     accumulatedResource() {

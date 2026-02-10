@@ -1273,6 +1273,8 @@ class AgricolaActionManager extends BaseActionManager {
       card.callHook('onPlay', this.game, player)
     }
 
+    this.game.registerCardActionSpace(player, card)
+
     // Call onPlayOccupation hooks on all active cards
     this.game.callPlayerCardHook(player, 'onPlayOccupation')
 
@@ -1476,6 +1478,7 @@ class AgricolaActionManager extends BaseActionManager {
               card.callHook('onPlay', this.game, player)
             }
 
+            this.game.registerCardActionSpace(player, card)
             this.callOnBuildImprovementHooks(player)
             this.maybePassLeft(player, cardId)
             return true
@@ -1553,6 +1556,8 @@ class AgricolaActionManager extends BaseActionManager {
     if (card.hasHook('onPlay')) {
       card.callHook('onPlay', this.game, player)
     }
+
+    this.game.registerCardActionSpace(player, card)
 
     // Call onBuildImprovement hooks (Junk Room gives food)
     this.callOnBuildImprovementHooks(player)
@@ -1724,6 +1729,8 @@ class AgricolaActionManager extends BaseActionManager {
             card.callHook('onPlay', this.game, player)
           }
 
+          this.game.registerCardActionSpace(player, card)
+
           // Call onBuildImprovement hooks (Junk Room gives food)
           this.callOnBuildImprovementHooks(player)
 
@@ -1837,6 +1844,10 @@ class AgricolaActionManager extends BaseActionManager {
   executeAction(player, actionId) {
     const action = res.getActionById(actionId)
     if (!action) {
+      const state = this.game.state.actionSpaces[actionId]
+      if (state?.cardProvided) {
+        return this.executeCardActionSpace(player, actionId, state)
+      }
       this.log.add({
         template: 'Unknown action: {actionId}',
         args: { actionId },
@@ -1973,6 +1984,24 @@ class AgricolaActionManager extends BaseActionManager {
    */
   callOnActionHooks(player, actionId) {
     this.game.callPlayerCardHook(player, 'onAction', actionId)
+  }
+
+  executeCardActionSpace(player, actionId, state) {
+    const card = this.game.cards.byId(state.cardId)
+    const owner = this.game.players.byName(state.ownerName)
+
+    this.log.add({
+      template: '{player} uses {card} action space',
+      args: { player, card },
+    })
+
+    if (card.hasHook('onActionSpaceUsed')) {
+      card.callHook('onActionSpaceUsed', this.game, player, owner)
+    }
+
+    this.callOnActionHooks(player, actionId)
+    this.callOnAnyActionHooks(player, actionId)
+    return true
   }
 
   /**

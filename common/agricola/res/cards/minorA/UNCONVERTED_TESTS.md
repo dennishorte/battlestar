@@ -10,16 +10,14 @@ already have passing E2E tests.
 These cards use hooks that aren't wired into the game loop, so there's no way
 to trigger them via normal gameplay.
 
-| Card | Hook | What It Does |
-|------|------|-------------|
-| Chapel | `onActionSpaceUsed` | 3 bonus points; non-owner pays 1 grain to owner |
+(none currently)
 
 Previously in this section (now connected and have E2E tests):
 FarmyardManure, StableTree (`onBuildStable`), GardenHoe (`onSowVegetables`),
 SeedPellets (`onSow`), VegetableSlicer (`onUpgradeFireplace`),
 NestSite (`onReedBankReplenish`), PotatoRidger (`onHarvestVegetables`),
 ReclamationPlow (`onTakeAnimals`), PottersYard (`onUseSpace`),
-FireProtectionPond (`onRenovate`).
+FireProtectionPond (`onRenovate`), Chapel (`onActionSpaceUsed`).
 
 ## Missing Player Methods or Game Actions
 

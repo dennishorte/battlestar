@@ -1004,8 +1004,9 @@ Agricola.prototype.playerTurn = function(player) {
     const action = res.getActionById(actionId)
     const state = this.state.actionSpaces[actionId]
 
-    const choice = { id: actionId, label: action.name }
-    if (action.type === 'accumulating' && state.accumulated > 0) {
+    const name = action ? action.name : state.name
+    const choice = { id: actionId, label: name }
+    if (action && action.type === 'accumulating' && state.accumulated > 0) {
       choice.detail = `${state.accumulated}`
     }
     return choice
@@ -1088,7 +1089,19 @@ Agricola.prototype.getAvailableActions = function(player) {
 Agricola.prototype.canTakeAction = function(player, actionId) {
   const action = res.getActionById(actionId)
   if (!action) {
-    return false
+    const state = this.state.actionSpaces[actionId]
+    if (!state?.cardProvided) {
+      return false
+    }
+    if (state.ownerOnly && state.ownerName !== player.name) {
+      return false
+    }
+    const card = this.cards.byId(state.cardId)
+    const owner = this.players.byName(state.ownerName)
+    if (card.hasHook('canUseActionSpace') && !card.callHook('canUseActionSpace', this, player, owner)) {
+      return false
+    }
+    return true
   }
 
   // Check minimum round requirement (e.g., Modest Wish for Children)
@@ -1114,6 +1127,30 @@ Agricola.prototype.canTakeAction = function(player, actionId) {
 
   // Most actions can always be taken (even if the player can't afford to do anything)
   return true
+}
+
+Agricola.prototype.registerCardActionSpace = function(player, card) {
+  const def = card.definition
+  if (!def.providesActionSpace || !def.actionSpaceId) {
+    return
+  }
+
+  const id = def.actionSpaceId
+  this.state.activeActions.push(id)
+  this.state.actionSpaces[id] = {
+    occupiedBy: null,
+    cardProvided: true,
+    cardId: def.id,
+    ownerName: player.name,
+    name: def.name,
+    description: def.text,
+    ownerOnly: def.ownerOnly || false,
+  }
+
+  this.log.add({
+    template: '{player} adds {card} as an action space',
+    args: { player, card },
+  })
 }
 
 Agricola.prototype.returnHomePhase = function() {
