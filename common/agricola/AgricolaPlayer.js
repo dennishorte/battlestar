@@ -1581,6 +1581,9 @@ class AgricolaPlayer extends BasePlayer {
   addResource(type, amount) {
     if (this[type] !== undefined) {
       this[type] += amount
+      if (this.resourcesGainedThisRound) {
+        this.resourcesGainedThisRound[type] = (this.resourcesGainedThisRound[type] || 0) + amount
+      }
     }
   }
 
@@ -1604,6 +1607,14 @@ class AgricolaPlayer extends BasePlayer {
       grain: this.grain,
       vegetables: this.vegetables,
     }
+  }
+
+  isFirstWorkerThisRound() {
+    return this.familyMembers - this.availableWorkers === 1
+  }
+
+  getNewbornsReturningHome() {
+    return this.newborns.length
   }
 
   canAffordCost(cost) {

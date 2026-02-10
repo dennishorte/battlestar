@@ -913,6 +913,12 @@ Agricola.prototype.workPhase = function() {
     this.callPlayerCardHook(player, 'onWorkPhaseStart')
   }
 
+  // Reset per-round tracking
+  for (const player of this.players.all()) {
+    player.usedFishingThisRound = false
+    player.resourcesGainedThisRound = {}
+  }
+
   // Calculate total workers available
   let totalWorkers = 0
   for (const player of this.players.all()) {
@@ -1039,6 +1045,11 @@ Agricola.prototype.playerTurn = function(player) {
 
     // Mark action as occupied
     this.state.actionSpaces[actionId].occupiedBy = player.name
+
+    // Track fishing for card hooks
+    if (actionId === 'fishing') {
+      player.usedFishingThisRound = true
+    }
 
     // Use a worker
     player.useWorker()

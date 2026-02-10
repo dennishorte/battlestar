@@ -16,8 +16,8 @@ module.exports = {
           template: '{player} plows 2 additional fields from Wheel Plow',
           args: { player },
         })
-        game.actions.plowField(player, { immediate: true })
-        game.actions.plowField(player, { immediate: true })
+        game.actions.plowField(player)
+        game.actions.plowField(player)
       }
     }
   },

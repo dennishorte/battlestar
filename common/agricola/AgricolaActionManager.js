@@ -1572,7 +1572,11 @@ class AgricolaActionManager extends BaseActionManager {
   // Major or Minor Improvement action
   // ---------------------------------------------------------------------------
 
-  buyImprovement(player, allowMajor, allowMinor) {
+  buildImprovement(player, options = {}) {
+    return this.buyImprovement(player, true, true, options)
+  }
+
+  buyImprovement(player, allowMajor, allowMinor, options = {}) {
     // Check if any improvements are available at all (relaxed gate for anytime conversions)
     const hasAnyPossibility = () => {
       if (allowMajor) {
@@ -1611,7 +1615,18 @@ class AgricolaActionManager extends BaseActionManager {
       // Get affordable major improvements
       if (allowMajor) {
         const availableImprovements = this.game.getAvailableMajorImprovements()
-        const affordableMajorIds = availableImprovements.filter(id => player.canBuyMajorImprovement(id))
+        const affordableMajorIds = availableImprovements.filter(id => {
+          if (!player.canBuyMajorImprovement(id)) {
+            return false
+          }
+          if (options.requireStone) {
+            const cost = player.getMajorImprovementCost(id)
+            if (!(cost.stone > 0)) {
+              return false
+            }
+          }
+          return true
+        })
         if (affordableMajorIds.length > 0) {
           const majorChoices = affordableMajorIds.map(id => {
             const imp = this.game.cards.byId(id)
@@ -1632,7 +1647,18 @@ class AgricolaActionManager extends BaseActionManager {
           const card = this.game.cards.byId(cardId)
           return card && card.type === 'minor'
         })
-        const playableMinorIds = minorInHand.filter(cardId => player.canPlayCard(cardId))
+        const playableMinorIds = minorInHand.filter(cardId => {
+          if (!player.canPlayCard(cardId)) {
+            return false
+          }
+          if (options.requireStone) {
+            const card = this.game.cards.byId(cardId)
+            if (!((card.definition.cost?.stone || 0) > 0)) {
+              return false
+            }
+          }
+          return true
+        })
         if (playableMinorIds.length > 0) {
           const minorChoices = playableMinorIds.map(cardId => {
             const card = this.game.cards.byId(cardId)

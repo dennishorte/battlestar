@@ -21,15 +21,10 @@ FireProtectionPond (`onRenovate`), Chapel (`onActionSpaceUsed`).
 
 ## Missing Player Methods or Game Actions
 
-These cards reference methods or actions that don't exist on the real player
-or game engine.
+(none currently)
 
-| Card | Hook | Missing Method/Action |
-|------|------|----------------------|
-| WheelPlow | `onAction(plow-field)` | `player.isFirstWorkerThisRound()` doesn't exist |
-| StoneCompany | `onAction(take-stone)` | `game.actions.buildImprovement()` doesn't exist |
-| SwimmingClass | `onReturnHome` | `player.usedFishingThisRound`, `player.getNewbornsReturningHome()` |
-| Claypipe | `onReturnHome` | `player.resourcesGainedThisRound` not tracked by engine |
+Previously in this section (now have methods and E2E tests):
+WheelPlow, StoneCompany, SwimmingClass, Claypipe.
 
 ## Complex Mechanics
 
