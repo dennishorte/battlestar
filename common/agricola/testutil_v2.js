@@ -378,12 +378,16 @@ TestUtil.setBoard = function(game, state) {
         }
       }
 
-      // Card prereqs
+      // Card prereqs — skip negative prereqs (noFields, noAnimals, etc.) since
+      // those are play-time conditions that may conflict with the test board state
+      const negativePrereqs = ['noFields', 'noGrainFields', 'noOccupations', 'noAnimals', 'noSheep', 'noGrain']
       const playedCardFields = ['occupations', 'minorImprovements', 'majorImprovements']
       for (const field of playedCardFields) {
         if (playerState[field]) {
           for (const cardId of playerState[field]) {
-            if (!player.meetsCardPrereqs(cardId)) {
+            const cardDef = res.getCardById(cardId) || res.getMajorImprovementById(cardId)
+            const hasNegativePrereq = cardDef?.prereqs && negativePrereqs.some(k => cardDef.prereqs[k])
+            if (!hasNegativePrereq && !player.meetsCardPrereqs(cardId)) {
               errors.push(`${playerName}: card "${cardId}" prereqs not met`)
             }
           }

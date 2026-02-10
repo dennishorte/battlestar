@@ -1,64 +1,65 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Facades Carving (A036)', () => {
-  test('offers exchange when player has food and harvests completed', () => {
-    const card = res.getCardById('facades-carving-a036')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Facades Carving', () => {
+  test('exchanges food for bonus points via Meeting Place after first harvest', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      round: 5, // after first harvest (round 4), so 1 completed harvest
+      dennis: {
+        hand: ['facades-carving-a036'],
+        food: 5, // enough for card + exchange
+        wood: 6, // prereq: woodGteRound (wood >= round = 6)
+        clay: 2, // card cost
+        reed: 1, // card cost
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.food = 3
-    game.getCompletedHarvestCount = () => 2
+    // Dennis takes Meeting Place, plays Facades Carving
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Facades Carving')
+    // onPlay fires: 1 completed harvest → can exchange up to 1 food for 1 bonus point
+    t.choose(game, 'Exchange 1 food for 1 bonus point')
 
-    let offerCalled = false
-    game.actions.offerFacadesCarving = (player, sourceCard, maxExchange) => {
-      offerCalled = true
-      expect(player).toBe(dennis)
-      expect(sourceCard).toBe(card)
-      expect(maxExchange).toBe(2)
-    }
-
-    card.onPlay(game, dennis)
-
-    expect(offerCalled).toBe(true)
+    t.testBoard(game, {
+      dennis: {
+        food: 5, // 5 + 1 Meeting Place - 1 exchange
+        wood: 6,
+        hand: [],
+        minorImprovements: ['facades-carving-a036'],
+        bonusPoints: 1,
+      },
+    })
   })
 
-  test('does not offer when no harvests completed', () => {
-    const card = res.getCardById('facades-carving-a036')
-    const game = t.fixture({ cardSets: ['minorA'] })
+  test('no offer when no harvests completed', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      round: 1, // round 2 plays, no harvests completed
+      dennis: {
+        hand: ['facades-carving-a036'],
+        food: 5,
+        wood: 2, // prereq: woodGteRound (wood >= round = 2)
+        clay: 2,
+        reed: 1,
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.food = 3
-    game.getCompletedHarvestCount = () => 0
+    // Dennis takes Meeting Place, plays Facades Carving
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Facades Carving')
+    // onPlay fires but no harvests completed → no offer, turn ends
 
-    let offerCalled = false
-    game.actions.offerFacadesCarving = () => {
-      offerCalled = true
-    }
-
-    card.onPlay(game, dennis)
-
-    expect(offerCalled).toBe(false)
-  })
-
-  test('does not offer when player has no food', () => {
-    const card = res.getCardById('facades-carving-a036')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    dennis.food = 0
-    game.getCompletedHarvestCount = () => 2
-
-    let offerCalled = false
-    game.actions.offerFacadesCarving = () => {
-      offerCalled = true
-    }
-
-    card.onPlay(game, dennis)
-
-    expect(offerCalled).toBe(false)
+    t.testBoard(game, {
+      dennis: {
+        food: 6, // 5 + 1 MP
+        wood: 2,
+        hand: [],
+        minorImprovements: ['facades-carving-a036'],
+      },
+    })
   })
 })

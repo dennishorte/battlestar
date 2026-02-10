@@ -1,39 +1,57 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Clay Embankment (A005)', () => {
-  test('gives bonus clay on play', () => {
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Clay Embankment', () => {
+  test('gives bonus clay on play via Meeting Place', () => {
+    const game = t.fixture()
     t.setBoard(game, {
+      firstPlayer: 'dennis',
       dennis: {
-        food: 1, // cost
-        clay: 5,
         hand: ['clay-embankment-a005'],
+        food: 1, // cost of Clay Embankment
+        clay: 5,
       },
     })
     game.run()
 
-    t.playCard(game, 'dennis', 'clay-embankment-a005')
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Clay Embankment')
 
-    const dennis = t.player(game)
-    // 5 + floor(5/2) = 7
-    expect(dennis.clay).toBe(7)
+    t.testBoard(game, {
+      dennis: {
+        food: 1, // +1 from Meeting Place, -1 cost
+        clay: 7, // 5 + floor(5/2) = 7
+        hand: [],
+      },
+      micah: {
+        hand: ['clay-embankment-a005'], // passLeft
+      },
+    })
   })
 
   test('gives nothing with 0-1 clay', () => {
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
     t.setBoard(game, {
+      firstPlayer: 'dennis',
       dennis: {
-        food: 1, // cost
-        clay: 1,
         hand: ['clay-embankment-a005'],
+        food: 1, // cost of Clay Embankment
+        clay: 1,
       },
     })
     game.run()
 
-    t.playCard(game, 'dennis', 'clay-embankment-a005')
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Clay Embankment')
 
-    const dennis = t.player(game)
-    // floor(1/2) = 0, so still 1
-    expect(dennis.clay).toBe(1)
+    t.testBoard(game, {
+      dennis: {
+        food: 1, // +1 from Meeting Place, -1 cost
+        clay: 1, // floor(1/2) = 0, so still 1
+        hand: [],
+      },
+      micah: {
+        hand: ['clay-embankment-a005'], // passLeft
+      },
+    })
   })
 })

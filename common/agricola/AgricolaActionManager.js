@@ -95,6 +95,10 @@ class AgricolaActionManager extends BaseActionManager {
 
     actionState.accumulated = 0
 
+    if (action.accumulates.wood) {
+      this.game.callPlayerCardHook(player, 'onGainWood')
+    }
+
     // Some accumulating actions also give instant resources (e.g., Riverbank Forest)
     if (action.gives) {
       this.giveResources(player, action.gives)
@@ -949,6 +953,10 @@ class AgricolaActionManager extends BaseActionManager {
       else {
         continueBuilding = false
       }
+    }
+
+    if (totalFencesBuilt > 0) {
+      this.game.callPlayerCardHook(player, 'onBuildFences', totalFencesBuilt)
     }
 
     return totalFencesBuilt > 0
@@ -2301,6 +2309,547 @@ class AgricolaActionManager extends BaseActionManager {
         template: '{player} pays 1 grain for 1 bonus point using {card}. Each other player gets 1 food.',
         args: { player, card },
       })
+    }
+  }
+
+  /**
+   * Offer to pay 1 wood for 1 grain and 1 bonus point (Bucksaw).
+   */
+  offerBucksaw(player, card) {
+    const choices = [
+      'Pay 1 wood for 1 grain and 1 bonus point',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Pay wood for grain and bonus point?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ wood: 1 })
+      player.addResource('grain', 1)
+      player.bonusPoints = (player.bonusPoints || 0) + 1
+      this.log.add({
+        template: '{player} pays 1 wood for 1 grain and 1 bonus point using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to exchange 1 grain for 2 food and 1 bonus point (Baking Sheet).
+   */
+  offerBakingSheet(player, card) {
+    const choices = [
+      'Exchange 1 grain for 2 food and 1 bonus point',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Exchange grain for food and bonus point?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ grain: 1 })
+      player.addResource('food', 2)
+      player.bonusPoints = (player.bonusPoints || 0) + 1
+      this.log.add({
+        template: '{player} exchanges 1 grain for 2 food and 1 bonus point using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to convert 1 vegetable to 6 food (Potato Ridger).
+   */
+  offerPotatoRidger(player, card) {
+    const choices = [
+      'Convert 1 vegetable to 6 food',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Convert vegetable to food?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ vegetables: 1 })
+      player.addResource('food', 6)
+      this.log.add({
+        template: '{player} converts 1 vegetable to 6 food using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to exchange 1 wood and 1 fence for 2 food and 1 bonus point (Loppers).
+   */
+  offerLoppers(player, card) {
+    const choices = [
+      'Exchange 1 wood and 1 fence for 2 food and 1 bonus point',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Exchange wood and fence for food and bonus point?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ wood: 1 })
+      player.useFenceFromSupply(1)
+      player.addResource('food', 2)
+      player.bonusPoints = (player.bonusPoints || 0) + 1
+      this.log.add({
+        template: '{player} exchanges 1 wood and 1 fence for 2 food and 1 bonus point using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to exchange 1 wood for 3 food (Shaving Horse).
+   */
+  offerShavingHorse(player, card) {
+    const choices = [
+      'Exchange 1 wood for 3 food',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Exchange wood for food?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ wood: 1 })
+      player.addResource('food', 3)
+      this.log.add({
+        template: '{player} exchanges 1 wood for 3 food using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to take 1 vegetable from a field for 3 food and 1 bonus point (Asparagus Knife).
+   */
+  offerAsparagusKnife(player, card) {
+    const hasVeg = player.getFieldSpaces().some(f => f.crop === 'vegetables' && f.cropCount > 0)
+    if (!hasVeg) {
+      return
+    }
+
+    const choices = [
+      'Take 1 vegetable from field for 3 food and 1 bonus point',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Harvest vegetable for food and bonus point?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const field = player.getFieldSpaces().find(f => f.crop === 'vegetables' && f.cropCount > 0)
+      const space = player.getSpace(field.row, field.col)
+      space.cropCount -= 1
+      if (space.cropCount === 0) {
+        space.crop = null
+      }
+      player.addResource('food', 3)
+      player.bonusPoints = (player.bonusPoints || 0) + 1
+      this.log.add({
+        template: '{player} takes 1 vegetable from a field for 3 food and 1 bonus point using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to exchange 1 grain for 2 clay and 1 food (Cob).
+   */
+  offerCob(player, card) {
+    const choices = [
+      'Exchange 1 grain for 2 clay and 1 food',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Exchange grain for clay and food?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ grain: 1 })
+      player.addResource('clay', 2)
+      player.addResource('food', 1)
+      this.log.add({
+        template: '{player} exchanges 1 grain for 2 clay and 1 food using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to exchange 1 clay for 2 food (Potter's Yard).
+   */
+  offerClayForFood(player, card) {
+    const choices = [
+      'Exchange 1 clay for 2 food',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Exchange clay for food?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ clay: 1 })
+      player.addResource('food', 2)
+      this.log.add({
+        template: '{player} exchanges 1 clay for 2 food using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to move 1 vegetable from field to supply (Lifting Machine).
+   */
+  offerLiftingMachine(player, card) {
+    const hasVeg = player.getFieldSpaces().some(f => f.crop === 'vegetables' && f.cropCount > 0)
+    if (!hasVeg) {
+      return
+    }
+
+    const choices = [
+      'Move 1 vegetable from field to supply',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Move vegetable from field?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const field = player.getFieldSpaces().find(f => f.crop === 'vegetables' && f.cropCount > 0)
+      const space = player.getSpace(field.row, field.col)
+      space.cropCount -= 1
+      if (space.cropCount === 0) {
+        space.crop = null
+      }
+      player.addResource('vegetables', 1)
+      this.log.add({
+        template: '{player} moves 1 vegetable from field to supply using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to take 1 building resource from an accumulation space with 4+ resources (Work Certificate).
+   */
+  offerWorkCertificate(player, card) {
+    const buildingSpaces = ['take-wood', 'take-clay', 'take-reed', 'take-stone']
+    const available = []
+    for (const spaceId of buildingSpaces) {
+      const space = this.game.state.actionSpaces[spaceId]
+      if (space && space.accumulated >= 4) {
+        const resource = spaceId.replace('take-', '')
+        available.push(`Take 1 ${resource} (${space.accumulated} available)`)
+      }
+    }
+
+    if (available.length === 0) {
+      return
+    }
+
+    available.push('Skip')
+    const selection = this.choose(player, available, {
+      title: `${card.name}: Take 1 building resource?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const match = selection[0].match(/Take 1 (\w+)/)
+      if (match) {
+        const resource = match[1]
+        const spaceId = `take-${resource}`
+        this.game.state.actionSpaces[spaceId].accumulated -= 1
+        player.addResource(resource, 1)
+        this.log.add({
+          template: '{player} takes 1 {resource} using {card}',
+          args: { player, resource, card },
+        })
+      }
+    }
+  }
+
+  /**
+   * Offer to build Clay Oven or Stone Oven at discounted cost (Oven Site).
+   */
+  offerDiscountedOven(player, card, cost) {
+    const choices = []
+    const availableMajors = this.game.getAvailableMajorImprovements()
+
+    if (availableMajors.includes('clay-oven') && player.canAffordCost(cost)) {
+      choices.push('Build Clay Oven')
+    }
+    if (availableMajors.includes('stone-oven') && player.canAffordCost(cost)) {
+      choices.push('Build Stone Oven')
+    }
+    choices.push('Skip')
+
+    if (choices.length === 1) {
+      return // Only Skip
+    }
+
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Build an oven for ${cost.clay} clay and ${cost.stone} stone?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] === 'Build Clay Oven') {
+      player.payCost(cost)
+      const imp = this.game.cards.byId('clay-oven')
+      imp.moveTo(this.game.zones.byPlayer(player, 'majorImprovements'))
+      this.log.add({
+        template: '{player} builds Clay Oven at discount using {card}',
+        args: { player, card },
+      })
+    }
+    else if (selection[0] === 'Build Stone Oven') {
+      player.payCost(cost)
+      const imp = this.game.cards.byId('stone-oven')
+      imp.moveTo(this.game.zones.byPlayer(player, 'majorImprovements'))
+      this.log.add({
+        template: '{player} builds Stone Oven at discount using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to renovate for free (Renovation Company).
+   */
+  offerFreeRenovation(player, card) {
+    const fromType = player.roomType
+    const toType = fromType === 'wood' ? 'clay' : (fromType === 'clay' ? 'stone' : null)
+    if (!toType) {
+      return // Already stone rooms, can't renovate
+    }
+
+    const choices = [
+      `Renovate from ${fromType} to ${toType} for free`,
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Renovate for free?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      // Free renovation — bypass cost check and payment
+      player.roomType = toType
+      for (let row = 0; row < res.constants.farmyardRows; row++) {
+        for (let col = 0; col < res.constants.farmyardCols; col++) {
+          if (player.farmyard.grid[row][col].type === 'room') {
+            player.farmyard.grid[row][col].roomType = toType
+          }
+        }
+      }
+      this.log.add({
+        template: '{player} renovates from {from} to {to} for free using {card}',
+        args: { player, from: fromType, to: toType, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to exchange food for bonus points, up to completed harvests (Facades Carving).
+   */
+  offerFacadesCarving(player, card, maxExchange) {
+    const maxAffordable = Math.min(maxExchange, player.food)
+    const choices = []
+    for (let i = 1; i <= maxAffordable; i++) {
+      choices.push(`Exchange ${i} food for ${i} bonus point${i > 1 ? 's' : ''}`)
+    }
+    choices.push('Skip')
+
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Exchange food for bonus points?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const match = selection[0].match(/Exchange (\d+) food/)
+      if (match) {
+        const amount = parseInt(match[1])
+        player.payCost({ food: amount })
+        player.bonusPoints = (player.bonusPoints || 0) + amount
+        this.log.add({
+          template: '{player} exchanges {amount} food for {amount} bonus points using {card}',
+          args: { player, amount, card },
+        })
+      }
+    }
+  }
+
+  /**
+   * Offer to build a free stable in a single-space pasture (Shelter).
+   */
+  offerBuildFreeStableInSinglePasture(player, card, pastures) {
+    const choices = pastures.map(p => `Build stable at ${p.spaces[0].row},${p.spaces[0].col}`)
+    choices.push('Skip')
+
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Build a free stable?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const match = selection[0].match(/(\d+),(\d+)/)
+      if (match) {
+        const row = parseInt(match[1])
+        const col = parseInt(match[2])
+        player.buildStable(row, col)
+        this.log.add({
+          template: '{player} builds a free stable using {card}',
+          args: { player, card },
+        })
+      }
+    }
+  }
+
+  /**
+   * Offer to exchange 1/2/3 grain for 3 food and 0/1/2 bonus points (Beer Keg).
+   */
+  offerBeerKeg(player, card) {
+    const choices = []
+    if (player.grain >= 1) {
+      choices.push('Exchange 1 grain for 3 food')
+    }
+    if (player.grain >= 2) {
+      choices.push('Exchange 2 grain for 3 food and 1 bonus point')
+    }
+    if (player.grain >= 3) {
+      choices.push('Exchange 3 grain for 3 food and 2 bonus points')
+    }
+    choices.push('Skip')
+
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Exchange grain for food?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const match = selection[0].match(/Exchange (\d+) grain/)
+      if (match) {
+        const grainCount = parseInt(match[1])
+        const bonusPoints = Math.max(0, grainCount - 1)
+        player.payCost({ grain: grainCount })
+        player.addResource('food', 3)
+        if (bonusPoints > 0) {
+          player.bonusPoints = (player.bonusPoints || 0) + bonusPoints
+        }
+        this.log.add({
+          template: '{player} exchanges {grain} grain for 3 food and {bp} bonus points using {card}',
+          args: { player, grain: grainCount, bp: bonusPoints, card },
+        })
+      }
+    }
+  }
+
+  /**
+   * Offer to use a baking improvement to turn 1 grain into food (Winnowing Fan).
+   */
+  offerWinnowingFan(player, card) {
+    const imp = player.getBakingImprovement()
+    if (!imp) {
+      return
+    }
+
+    const foodAmount = (imp.abilities && imp.abilities.bakingRate) || 2
+    const choices = [
+      `Bake 1 grain for ${foodAmount} food using ${imp.name}`,
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Bake 1 grain?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ grain: 1 })
+      player.addResource('food', foodAmount)
+      this.log.add({
+        template: '{player} bakes 1 grain for {food} food using {card}',
+        args: { player, food: foodAmount, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to pay 1 grain to breed one type of animal (Silage).
+   */
+  offerSilage(player, card) {
+    const choices = []
+    const animalTypes = ['sheep', 'boar', 'cattle']
+    for (const type of animalTypes) {
+      if (player.getTotalAnimals(type) >= 2 && player.canPlaceAnimals(type, 1)) {
+        choices.push(`Pay 1 grain to breed ${type}`)
+      }
+    }
+
+    if (choices.length === 0) {
+      return
+    }
+
+    choices.push('Skip')
+
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Pay grain to breed animals?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const match = selection[0].match(/breed (\w+)/)
+      if (match) {
+        const animalType = match[1]
+        // Pay grain from supply or field
+        if (player.grain >= 1) {
+          player.payCost({ grain: 1 })
+        }
+        else {
+          const field = player.getFieldSpaces().find(f => f.crop === 'grain' && f.cropCount > 0)
+          const space = player.getSpace(field.row, field.col)
+          space.cropCount -= 1
+          if (space.cropCount === 0) {
+            space.crop = null
+          }
+        }
+        player.addAnimals(animalType, 1)
+        this.log.add({
+          template: '{player} pays 1 grain to breed {animal} using {card}',
+          args: { player, animal: animalType, card },
+        })
+      }
     }
   }
 

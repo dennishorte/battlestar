@@ -1,13 +1,19 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 const res = require('../../index.js')
 
-describe('Trellises (A047)', () => {
+describe('Trellises', () => {
   test('schedules food based on built fences', () => {
     const card = res.getCardById('trellises-a047')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['trellises-a047'],
+      },
+      round: 5,
+    })
     game.run()
 
-    const dennis = t.player(game)
+    const dennis = t.dennis(game)
     dennis.getBuiltFenceCount = () => 4
     game.state.round = 5
 
@@ -21,10 +27,16 @@ describe('Trellises (A047)', () => {
 
   test('does not schedule past round 14', () => {
     const card = res.getCardById('trellises-a047')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['trellises-a047'],
+      },
+      round: 12,
+    })
     game.run()
 
-    const dennis = t.player(game)
+    const dennis = t.dennis(game)
     dennis.getBuiltFenceCount = () => 10
     game.state.round = 12
 
@@ -37,10 +49,16 @@ describe('Trellises (A047)', () => {
 
   test('does nothing with no fences', () => {
     const card = res.getCardById('trellises-a047')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['trellises-a047'],
+      },
+      round: 5,
+    })
     game.run()
 
-    const dennis = t.player(game)
+    const dennis = t.dennis(game)
     dennis.getBuiltFenceCount = () => 0
     game.state.round = 5
 

@@ -1,13 +1,19 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 const res = require('../../index.js')
 
-describe('Telegram (A022)', () => {
+describe('Telegram', () => {
   test('schedules temporary worker based on fences in supply', () => {
     const card = res.getCardById('telegram-a022')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['telegram-a022'],
+      },
+      round: 3,
+    })
     game.run()
 
-    const dennis = t.player(game)
+    const dennis = t.dennis(game)
     dennis.getFencesInSupply = () => 5
     game.state.round = 3
 
@@ -18,10 +24,16 @@ describe('Telegram (A022)', () => {
 
   test('does not schedule past round 14', () => {
     const card = res.getCardById('telegram-a022')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['telegram-a022'],
+      },
+      round: 10,
+    })
     game.run()
 
-    const dennis = t.player(game)
+    const dennis = t.dennis(game)
     dennis.getFencesInSupply = () => 10
     game.state.round = 10
 

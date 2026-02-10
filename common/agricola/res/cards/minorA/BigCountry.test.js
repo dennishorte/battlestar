@@ -1,37 +1,45 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Big Country (A033)', () => {
+describe('Big Country', () => {
   test('gives bonus points and food based on rounds left', () => {
-    const game = t.fixture({ cardSets: ['minorA'] })
-    // Fill all farmyard spaces to meet prereq
-    const fields = []
-    for (let row = 0; row < 3; row++) {
-      for (let col = 0; col < 5; col++) {
-        if (row === 0 && col === 0) {
-          continue
-        }
-        if (row === 1 && col === 0) {
-          continue
-        }
-        fields.push({ row, col })
-      }
-    }
+    const game = t.fixture()
     t.setBoard(game, {
+      firstPlayer: 'dennis',
       dennis: {
-        food: 0,
         hand: ['big-country-a033'],
-        farmyard: { fields },
+        farmyard: {
+          rooms: [{ row: 2, col: 0 }],
+          fields: [
+            { row: 0, col: 1 }, { row: 0, col: 2 }, { row: 0, col: 3 }, { row: 0, col: 4 },
+            { row: 1, col: 1 }, { row: 1, col: 2 }, { row: 1, col: 3 }, { row: 1, col: 4 },
+            { row: 2, col: 1 }, { row: 2, col: 2 }, { row: 2, col: 3 }, { row: 2, col: 4 },
+          ],
+        },
       },
       round: 10,
     })
     game.run()
 
-    game.state.round = 10
-    t.playCard(game, 'dennis', 'big-country-a033')
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Big Country')
 
-    const dennis = t.player(game)
-    // 14 - 10 = 4 rounds left
-    expect(dennis.bonusPoints).toBe(4)
-    expect(dennis.food).toBe(8) // 4 rounds * 2 food
+    // Round is 11 (setBoard round 10 → plays round 11)
+    // roundsLeft = 14 - 11 = 3, so 3 bonus points and 6 food
+    t.testBoard(game, {
+      dennis: {
+        food: 7, // +1 Meeting Place + 6 from Big Country
+        bonusPoints: 3,
+        hand: [],
+        minorImprovements: ['big-country-a033'],
+        farmyard: {
+          rooms: [{ row: 0, col: 0 }, { row: 1, col: 0 }, { row: 2, col: 0 }],
+          fields: [
+            { row: 0, col: 1 }, { row: 0, col: 2 }, { row: 0, col: 3 }, { row: 0, col: 4 },
+            { row: 1, col: 1 }, { row: 1, col: 2 }, { row: 1, col: 3 }, { row: 1, col: 4 },
+            { row: 2, col: 1 }, { row: 2, col: 2 }, { row: 2, col: 3 }, { row: 2, col: 4 },
+          ],
+        },
+      },
+    })
   })
 })

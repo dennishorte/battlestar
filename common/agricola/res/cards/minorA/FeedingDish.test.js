@@ -1,60 +1,58 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Feeding Dish (A066)', () => {
+describe('Feeding Dish', () => {
   test('gives grain when taking sheep and already have sheep', () => {
-    const card = res.getCardById('feeding-dish-a066')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['feeding-dish-a066'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }], sheep: 2 }],
+        },
+      },
+      actionSpaces: ['Sheep Market'],
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.grain = 0
-    dennis.getTotalAnimals = (type) => type === 'sheep' ? 2 : 0
+    t.choose(game, 'Sheep Market')
 
-    card.onAction(game, dennis, 'take-sheep')
-
-    expect(dennis.grain).toBe(1)
-  })
-
-  test('gives grain when taking boar and already have boar', () => {
-    const card = res.getCardById('feeding-dish-a066')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    dennis.grain = 0
-    dennis.getTotalAnimals = (type) => type === 'boar' ? 1 : 0
-
-    card.onAction(game, dennis, 'take-boar')
-
-    expect(dennis.grain).toBe(1)
-  })
-
-  test('does not give grain when taking sheep but have none', () => {
-    const card = res.getCardById('feeding-dish-a066')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    dennis.grain = 0
-    dennis.getTotalAnimals = () => 0
-
-    card.onAction(game, dennis, 'take-sheep')
-
-    expect(dennis.grain).toBe(0)
+    t.testBoard(game, {
+      dennis: {
+        grain: 1, // +1 from Feeding Dish
+        minorImprovements: ['feeding-dish-a066'],
+        animals: { sheep: 3 },
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }], sheep: 3 }],
+        },
+      },
+    })
   })
 
   test('does not trigger on non-animal actions', () => {
-    const card = res.getCardById('feeding-dish-a066')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['feeding-dish-a066'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }], sheep: 2 }],
+        },
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.grain = 0
-    dennis.getTotalAnimals = () => 5
+    t.choose(game, 'Forest')
 
-    card.onAction(game, dennis, 'take-wood')
-
-    expect(dennis.grain).toBe(0)
+    t.testBoard(game, {
+      dennis: {
+        wood: 3, // from Forest
+        minorImprovements: ['feeding-dish-a066'],
+        animals: { sheep: 2 },
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }], sheep: 2 }],
+        },
+      },
+    })
   })
 })

@@ -1,63 +1,81 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Loppers (A034)', () => {
-  test('offers exchange when building fences with wood and fences in supply', () => {
-    const card = res.getCardById('loppers-a034')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Loppers', () => {
+  test('exchanges wood and fence for food and bonus point after building fences', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['loppers-a034'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        wood: 10,
+      },
+      actionSpaces: ['Fencing'],
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.wood = 1
-    dennis.getFencesInSupply = () => 2
+    // Dennis takes Fencing action
+    t.choose(game, 'Fencing')
 
-    let offerCalled = false
-    game.actions.offerLoppers = (player, sourceCard) => {
-      offerCalled = true
-      expect(player).toBe(dennis)
-      expect(sourceCard).toBe(card)
-    }
+    // Build a 1-space pasture
+    t.action(game, 'build-pasture', { spaces: [{ row: 0, col: 2 }] })
+    t.choose(game, 'Done building fences')
 
-    card.onBuildFences(game, dennis)
+    // Loppers fires → offer exchange
+    t.choose(game, 'Exchange 1 wood and 1 fence for 2 food and 1 bonus point')
 
-    expect(offerCalled).toBe(true)
+    // Remaining workers
+    t.choose(game, 'Grain Seeds')     // micah
+    t.choose(game, 'Day Laborer')     // dennis
+    t.choose(game, 'Clay Pit')        // micah
+
+    t.testBoard(game, {
+      dennis: {
+        wood: 5, // 10 - 4 (fences) - 1 (Loppers exchange)
+        food: 4, // 2 (Loppers) + 2 (Day Laborer)
+        bonusPoints: 1,
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        minorImprovements: ['loppers-a034'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 2 }] }],
+        },
+      },
+    })
   })
 
-  test('does not offer when no wood', () => {
-    const card = res.getCardById('loppers-a034')
-    const game = t.fixture({ cardSets: ['minorA'] })
+  test('can skip the loppers offer', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['loppers-a034'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        wood: 10,
+      },
+      actionSpaces: ['Fencing'],
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.wood = 0
-    dennis.getFencesInSupply = () => 2
+    t.choose(game, 'Fencing')
+    t.action(game, 'build-pasture', { spaces: [{ row: 0, col: 2 }] })
+    t.choose(game, 'Done building fences')
 
-    let offerCalled = false
-    game.actions.offerLoppers = () => {
-      offerCalled = true
-    }
+    t.choose(game, 'Skip')
 
-    card.onBuildFences(game, dennis)
+    t.choose(game, 'Grain Seeds')
+    t.choose(game, 'Day Laborer')
+    t.choose(game, 'Clay Pit')
 
-    expect(offerCalled).toBe(false)
-  })
-
-  test('does not offer when no fences in supply', () => {
-    const card = res.getCardById('loppers-a034')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    dennis.wood = 1
-    dennis.getFencesInSupply = () => 0
-
-    let offerCalled = false
-    game.actions.offerLoppers = () => {
-      offerCalled = true
-    }
-
-    card.onBuildFences(game, dennis)
-
-    expect(offerCalled).toBe(false)
+    t.testBoard(game, {
+      dennis: {
+        wood: 6, // 10 - 4 (fences)
+        food: 2, // Day Laborer only
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        minorImprovements: ['loppers-a034'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 2 }] }],
+        },
+      },
+    })
   })
 })

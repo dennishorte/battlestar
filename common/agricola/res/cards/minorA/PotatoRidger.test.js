@@ -1,15 +1,19 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 const res = require('../../index.js')
 
-describe('Potato Ridger (A059)', () => {
+describe('Potato Ridger', () => {
   test('forces conversion when 4+ vegetables', () => {
     const card = res.getCardById('potato-ridger-a059')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['potato-ridger-a059'],
+        vegetables: 4,
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.vegetables = 4
-    dennis.food = 0
+    const dennis = t.dennis(game)
 
     card.onHarvestVegetables(game, dennis)
 
@@ -19,11 +23,16 @@ describe('Potato Ridger (A059)', () => {
 
   test('offers optional conversion with 3 vegetables', () => {
     const card = res.getCardById('potato-ridger-a059')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['potato-ridger-a059'],
+        vegetables: 3,
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.vegetables = 3
+    const dennis = t.dennis(game)
 
     let offerCalled = false
     game.actions.offerPotatoRidger = (player, sourceCard) => {
@@ -39,12 +48,16 @@ describe('Potato Ridger (A059)', () => {
 
   test('does nothing with less than 3 vegetables', () => {
     const card = res.getCardById('potato-ridger-a059')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['potato-ridger-a059'],
+        vegetables: 2,
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.vegetables = 2
-    dennis.food = 0
+    const dennis = t.dennis(game)
 
     let offerCalled = false
     game.actions.offerPotatoRidger = () => {

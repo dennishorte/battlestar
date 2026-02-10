@@ -1,42 +1,60 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Baking Sheet (A030)', () => {
-  test('offers baking sheet exchange when player has grain', () => {
-    const card = res.getCardById('baking-sheet-a030')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Baking Sheet', () => {
+  test('exchanges 1 grain for 2 food and 1 bonus point when baking', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      actionSpaces: ['Grain Utilization'],
+      dennis: {
+        minorImprovements: ['baking-sheet-a030'],
+        majorImprovements: ['fireplace-2'],
+        grain: 3,
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.grain = 1
+    // Dennis takes Grain Utilization → no fields so skip sow → bake bread
+    t.choose(game, 'Grain Utilization')
+    t.choose(game, 'Bake 1 grain')
+    // onBake fires → Baking Sheet offers exchange
+    t.choose(game, 'Exchange 1 grain for 2 food and 1 bonus point')
 
-    let offerCalled = false
-    game.actions.offerBakingSheet = (player, sourceCard) => {
-      offerCalled = true
-      expect(player).toBe(dennis)
-      expect(sourceCard).toBe(card)
-    }
-
-    card.onBake(game, dennis)
-
-    expect(offerCalled).toBe(true)
+    t.testBoard(game, {
+      dennis: {
+        grain: 1, // 3 - 1 baked - 1 Baking Sheet
+        food: 4, // 2 from baking + 2 from Baking Sheet
+        bonusPoints: 1,
+        minorImprovements: ['baking-sheet-a030'],
+        majorImprovements: ['fireplace-2'],
+      },
+    })
   })
 
-  test('does not offer exchange when player has no grain', () => {
-    const card = res.getCardById('baking-sheet-a030')
-    const game = t.fixture({ cardSets: ['minorA'] })
+  test('can skip the baking sheet exchange', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      actionSpaces: ['Grain Utilization'],
+      dennis: {
+        minorImprovements: ['baking-sheet-a030'],
+        majorImprovements: ['fireplace-2'],
+        grain: 3,
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.grain = 0
+    t.choose(game, 'Grain Utilization')
+    t.choose(game, 'Bake 1 grain')
+    t.choose(game, 'Skip')
 
-    let offerCalled = false
-    game.actions.offerBakingSheet = () => {
-      offerCalled = true
-    }
-
-    card.onBake(game, dennis)
-
-    expect(offerCalled).toBe(false)
+    t.testBoard(game, {
+      dennis: {
+        grain: 2, // 3 - 1 baked
+        food: 2, // 2 from baking
+        minorImprovements: ['baking-sheet-a030'],
+        majorImprovements: ['fireplace-2'],
+      },
+    })
   })
 })

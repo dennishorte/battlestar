@@ -1,10 +1,12 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Canoe (A078)', () => {
+describe('Canoe', () => {
   test('gives +1 food and +1 reed on Fishing action', () => {
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
     t.setBoard(game, {
+      firstPlayer: 'dennis',
       dennis: {
+        occupations: ['test-occupation-1'],
         minorImprovements: ['canoe-a078'],
       },
     })
@@ -12,8 +14,13 @@ describe('Canoe (A078)', () => {
 
     t.choose(game, 'Fishing')
 
-    const dennis = t.player(game)
-    expect(dennis.food).toBe(2) // 1 accumulated + 1 from Canoe
-    expect(dennis.reed).toBe(1) // +1 from Canoe
+    t.testBoard(game, {
+      dennis: {
+        food: 2, // 1 accumulated + 1 from Canoe
+        reed: 1, // +1 from Canoe
+        occupations: ['test-occupation-1'],
+        minorImprovements: ['canoe-a078'],
+      },
+    })
   })
 })

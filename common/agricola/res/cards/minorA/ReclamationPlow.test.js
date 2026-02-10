@@ -1,14 +1,18 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 const res = require('../../index.js')
 
-describe('Reclamation Plow (A017)', () => {
+describe('Reclamation Plow', () => {
   test('activates on play', () => {
     const card = res.getCardById('reclamation-plow-a017')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['reclamation-plow-a017'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-
+    const dennis = t.dennis(game)
     card.onPlay(game, dennis)
 
     expect(dennis.reclamationPlowActive).toBe(true)
@@ -16,10 +20,15 @@ describe('Reclamation Plow (A017)', () => {
 
   test('plows field when animals are accommodated', () => {
     const card = res.getCardById('reclamation-plow-a017')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['reclamation-plow-a017'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
+    const dennis = t.dennis(game)
     dennis.reclamationPlowActive = true
 
     let plowCalled = false
@@ -36,10 +45,15 @@ describe('Reclamation Plow (A017)', () => {
 
   test('does not plow if animals not accommodated', () => {
     const card = res.getCardById('reclamation-plow-a017')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['reclamation-plow-a017'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
+    const dennis = t.dennis(game)
     dennis.reclamationPlowActive = true
 
     let plowCalled = false
@@ -55,10 +69,15 @@ describe('Reclamation Plow (A017)', () => {
 
   test('does not plow if not active', () => {
     const card = res.getCardById('reclamation-plow-a017')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['reclamation-plow-a017'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
+    const dennis = t.dennis(game)
     dennis.reclamationPlowActive = false
 
     let plowCalled = false

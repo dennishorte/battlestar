@@ -154,6 +154,31 @@ t.choose(game, 'Clay Pit')      // micah turn 2
 The game then continues to the next round and pauses waiting for the first
 player's action. Call `t.testBoard` at that point to check state.
 
+## Animal Placement Prompts
+
+Actions that give animals (Sheep Market, Pig Market, Cattle Market) trigger an
+animal placement prompt before the action fully completes. Card hooks
+(`onAction`, `onAnyAction`) fire only after animal placement is resolved. Tests
+must respond to the placement prompt before asserting state:
+
+```js
+t.choose(game, 'Pig Market')    // take the action
+t.choose(game, 'Place Animals') // respond to animal placement
+// hooks have now fired — safe to assert
+```
+
+Remember to account for the animals in `t.testBoard` assertions. A single
+animal with no pastures becomes a house pet:
+
+```js
+t.testBoard(game, {
+  micah: {
+    pet: 'boar',
+    animals: { boar: 1 },
+  },
+})
+```
+
 ## Example Tests by Hook
 
 ### onUseMultipleSpaces (triggered when 2+ unused spaces become used)
@@ -162,6 +187,13 @@ player's action. Call `t.testBoard` at that point to check state.
 — Grants a sow action after fencing 2+ spaces into a pasture. Uses
 `actionSpaces: ['Fencing']` to make fencing available, then `t.action` to build
 a pasture and sow a field.
+
+### onAnyAction (triggered when any player takes a specific action)
+
+**Hod** (`res/cards/minorA/Hod.test.js`) — Gives 2 clay when any player
+(including the owner) uses Pig Market. Sets `firstPlayer: 'micah'` so micah
+acts first, responds to the animal placement prompt, then asserts dennis
+received clay.
 
 ### onReturnHome (triggered during the return home phase)
 

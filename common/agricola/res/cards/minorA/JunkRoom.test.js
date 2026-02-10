@@ -1,37 +1,49 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Junk Room (A055)', () => {
-  test('gives 1 food on play', () => {
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Junk Room', () => {
+  test('gives 1 food on play via Meeting Place', () => {
+    const game = t.fixture()
     t.setBoard(game, {
+      firstPlayer: 'dennis',
       dennis: {
-        wood: 1,
-        clay: 1,
-        food: 0,
         hand: ['junk-room-a055'],
+        wood: 1, clay: 1, // cost of Junk Room
       },
     })
     game.run()
 
-    t.playCard(game, 'dennis', 'junk-room-a055')
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Junk Room')
 
-    const dennis = t.player(game)
-    // Gets 1 food from onPlay
-    expect(dennis.food).toBe(1)
+    t.testBoard(game, {
+      dennis: {
+        food: 3, // +1 from Meeting Place + 1 from onPlay + 1 from onBuildImprovement
+        hand: [],
+        minorImprovements: ['junk-room-a055'],
+      },
+    })
   })
 
-  test('onBuildImprovement gives 1 food', () => {
-    const card = res.getCardById('junk-room-a055')
-    const game = t.fixture({ cardSets: ['minorA'] })
+  test('onBuildImprovement gives 1 food when building another improvement', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['test-minor-1'],
+        minorImprovements: ['junk-room-a055'],
+      },
+    })
     game.run()
-    const dennis = t.player(game)
-    dennis.food = 0
 
-    card.onBuildImprovement(game, dennis)
-    expect(dennis.food).toBe(1)
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Test Minor 1')
 
-    card.onBuildImprovement(game, dennis)
-    expect(dennis.food).toBe(2)
+    t.testBoard(game, {
+      dennis: {
+        food: 2, // +1 from Meeting Place + 1 from Junk Room onBuildImprovement
+        hand: [],
+        minorImprovements: ['junk-room-a055', 'test-minor-1'],
+      },
+    })
   })
 })

@@ -634,6 +634,11 @@ class AgricolaPlayer extends BasePlayer {
     return valid
   }
 
+  hasStableAt({ row, col }) {
+    const space = this.getSpace(row, col)
+    return space && space.hasStable === true
+  }
+
   buildStable(row, col) {
     if (!this.canBuildStable(row, col)) {
       return false
@@ -653,6 +658,14 @@ class AgricolaPlayer extends BasePlayer {
 
   getFenceCount() {
     return this.farmyard.fences.length
+  }
+
+  getFencesInSupply() {
+    return res.constants.maxFences - this.getFenceCount() - (this.usedFences || 0)
+  }
+
+  useFenceFromSupply(count = 1) {
+    this.usedFences = (this.usedFences || 0) + count
   }
 
   getPastureCount() {

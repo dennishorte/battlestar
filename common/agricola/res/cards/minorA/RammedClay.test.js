@@ -1,21 +1,26 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 const res = require('../../index.js')
 
-describe('Rammed Clay (A016)', () => {
+describe('Rammed Clay', () => {
   test('gives 1 clay on play', () => {
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const card = res.getCardById('rammed-clay-a016')
+    const game = t.fixture()
     t.setBoard(game, {
       dennis: {
-        clay: 0,
-        hand: ['rammed-clay-a016'],
+        minorImprovements: ['rammed-clay-a016'],
       },
     })
     game.run()
 
-    t.playCard(game, 'dennis', 'rammed-clay-a016')
+    const dennis = t.dennis(game)
+    card.onPlay(game, dennis)
 
-    const dennis = t.player(game)
-    expect(dennis.clay).toBe(1)
+    t.testBoard(game, {
+      dennis: {
+        clay: 1,
+        minorImprovements: ['rammed-clay-a016'],
+      },
+    })
   })
 
   test('has modifyFenceCost with alternateResource', () => {

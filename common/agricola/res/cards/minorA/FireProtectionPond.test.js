@@ -1,13 +1,19 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 const res = require('../../index.js')
 
-describe('Fire Protection Pond (A045)', () => {
+describe('Fire Protection Pond', () => {
   test('schedules food when player no longer has wood house', () => {
     const card = res.getCardById('fire-protection-pond-a045')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['fire-protection-pond-a045'],
+      },
+      round: 4,
+    })
     game.run()
 
-    const dennis = t.player(game)
+    const dennis = t.dennis(game)
     dennis.roomType = 'clay'
     game.state.round = 4
 
@@ -24,11 +30,16 @@ describe('Fire Protection Pond (A045)', () => {
 
   test('does not trigger if still in wood house', () => {
     const card = res.getCardById('fire-protection-pond-a045')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['fire-protection-pond-a045'],
+      },
+      round: 4,
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.roomType = 'wood'
+    const dennis = t.dennis(game)
     game.state.round = 4
 
     card.checkTrigger(game, dennis)
@@ -39,10 +50,16 @@ describe('Fire Protection Pond (A045)', () => {
 
   test('only triggers once', () => {
     const card = res.getCardById('fire-protection-pond-a045')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['fire-protection-pond-a045'],
+      },
+      round: 4,
+    })
     game.run()
 
-    const dennis = t.player(game)
+    const dennis = t.dennis(game)
     dennis.roomType = 'clay'
     dennis.fireProtectionPondTriggered = true
     game.state.round = 4

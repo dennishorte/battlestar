@@ -1,7 +1,7 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 const res = require('../../index.js')
 
-describe('Wooden Shed (A010)', () => {
+describe('Wooden Shed', () => {
   test('provides room', () => {
     const card = res.getCardById('wooden-shed-a010')
     expect(card.providesRoom).toBe(true)
@@ -14,11 +14,15 @@ describe('Wooden Shed (A010)', () => {
 
   test('prevents renovation on play', () => {
     const card = res.getCardById('wooden-shed-a010')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['wooden-shed-a010'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-
+    const dennis = t.dennis(game)
     card.onPlay(game, dennis)
 
     expect(dennis.cannotRenovate).toBe(true)

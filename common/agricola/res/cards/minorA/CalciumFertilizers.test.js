@@ -1,63 +1,97 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Calcium Fertilizers (A072)', () => {
+describe('Calcium Fertilizers', () => {
   test('adds crop to planted fields on quarry action', () => {
-    const card = res.getCardById('calcium-fertilizers-a072')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['calcium-fertilizers-a072'],
+        farmyard: {
+          fields: [
+            { row: 2, col: 0, crop: 'grain', cropCount: 2 },
+            { row: 2, col: 1, crop: 'vegetables', cropCount: 1 },
+          ],
+        },
+      },
+      actionSpaces: ['Western Quarry'],
+    })
     game.run()
 
-    const dennis = t.player(game)
-    const field1 = { crop: 'grain', cropCount: 2 }
-    const field2 = { crop: 'vegetables', cropCount: 1 }
-    dennis.getPlantedFields = () => [field1, field2]
+    t.choose(game, 'Western Quarry')
 
-    let addedCrops = []
-    dennis.addCropToField = (field, amount) => {
-      addedCrops.push({ field, amount })
-    }
-
-    card.onAction(game, dennis, 'take-stone-1')
-
-    expect(addedCrops.length).toBe(2)
-    expect(addedCrops[0]).toEqual({ field: field1, amount: 1 })
-    expect(addedCrops[1]).toEqual({ field: field2, amount: 1 })
+    t.testBoard(game, {
+      dennis: {
+        stone: 1, // 1 from Western Quarry
+        minorImprovements: ['calcium-fertilizers-a072'],
+        farmyard: {
+          fields: [
+            { row: 2, col: 0, crop: 'grain', cropCount: 3 },     // +1 from Calcium Fertilizers
+            { row: 2, col: 1, crop: 'vegetables', cropCount: 2 }, // +1 from Calcium Fertilizers
+          ],
+        },
+      },
+    })
   })
 
   test('does not add crop to empty fields', () => {
-    const card = res.getCardById('calcium-fertilizers-a072')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['calcium-fertilizers-a072'],
+        farmyard: {
+          fields: [
+            { row: 2, col: 0, crop: 'grain', cropCount: 0 },
+          ],
+        },
+      },
+      actionSpaces: ['Western Quarry'],
+    })
     game.run()
 
-    const dennis = t.player(game)
-    const emptyField = { crop: 'grain', cropCount: 0 }
-    dennis.getPlantedFields = () => [emptyField]
+    t.choose(game, 'Western Quarry')
 
-    let addCropCalled = false
-    dennis.addCropToField = () => {
-      addCropCalled = true
-    }
-
-    card.onAction(game, dennis, 'take-stone-1')
-
-    expect(addCropCalled).toBe(false)
+    t.testBoard(game, {
+      dennis: {
+        stone: 1,
+        minorImprovements: ['calcium-fertilizers-a072'],
+        farmyard: {
+          fields: [
+            { row: 2, col: 0, crop: 'grain', cropCount: 0 }, // unchanged
+          ],
+        },
+      },
+    })
   })
 
   test('does not trigger on non-quarry actions', () => {
-    const card = res.getCardById('calcium-fertilizers-a072')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['calcium-fertilizers-a072'],
+        farmyard: {
+          fields: [
+            { row: 2, col: 0, crop: 'grain', cropCount: 2 },
+          ],
+        },
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.getPlantedFields = () => [{ crop: 'grain', cropCount: 2 }]
+    t.choose(game, 'Forest')
 
-    let addCropCalled = false
-    dennis.addCropToField = () => {
-      addCropCalled = true
-    }
-
-    card.onAction(game, dennis, 'take-wood')
-
-    expect(addCropCalled).toBe(false)
+    t.testBoard(game, {
+      dennis: {
+        wood: 3,
+        minorImprovements: ['calcium-fertilizers-a072'],
+        farmyard: {
+          fields: [
+            { row: 2, col: 0, crop: 'grain', cropCount: 2 }, // unchanged
+          ],
+        },
+      },
+    })
   })
 })

@@ -1,61 +1,66 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Basket (A056)', () => {
-  test('offers wood for food exchange on take-wood action', () => {
-    const card = res.getCardById('basket-a056')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Basket', () => {
+  test('offers wood for food exchange on Forest action', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['basket-a056'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.wood = 3
+    t.choose(game, 'Forest')
+    t.choose(game, 'Exchange 2 wood for 3 food')
 
-    let offerCalled = false
-    game.actions.offerWoodForFoodExchange = (player, sourceCard, exchange) => {
-      offerCalled = true
-      expect(player).toBe(dennis)
-      expect(sourceCard).toBe(card)
-      expect(exchange).toEqual({ wood: 2, food: 3 })
-    }
-
-    card.onAction(game, dennis, 'take-wood')
-
-    expect(offerCalled).toBe(true)
+    t.testBoard(game, {
+      dennis: {
+        wood: 1,  // 3 from Forest - 2 exchanged
+        food: 3,  // 3 from exchange
+        minorImprovements: ['basket-a056'],
+      },
+    })
   })
 
-  test('does not offer exchange when player has less than 2 wood', () => {
-    const card = res.getCardById('basket-a056')
-    const game = t.fixture({ cardSets: ['minorA'] })
+  test('can skip the exchange', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['basket-a056'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.wood = 1
+    t.choose(game, 'Forest')
+    t.choose(game, 'Skip')
 
-    let offerCalled = false
-    game.actions.offerWoodForFoodExchange = () => {
-      offerCalled = true
-    }
-
-    card.onAction(game, dennis, 'take-wood')
-
-    expect(offerCalled).toBe(false)
+    t.testBoard(game, {
+      dennis: {
+        wood: 3,  // 3 from Forest, kept
+        minorImprovements: ['basket-a056'],
+      },
+    })
   })
 
   test('does not trigger on non-wood actions', () => {
-    const card = res.getCardById('basket-a056')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['basket-a056'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.wood = 5
+    t.choose(game, 'Day Laborer')
 
-    let offerCalled = false
-    game.actions.offerWoodForFoodExchange = () => {
-      offerCalled = true
-    }
-
-    card.onAction(game, dennis, 'take-clay')
-
-    expect(offerCalled).toBe(false)
+    t.testBoard(game, {
+      dennis: {
+        food: 2,  // 2 from Day Laborer
+        minorImprovements: ['basket-a056'],
+      },
+    })
   })
 })

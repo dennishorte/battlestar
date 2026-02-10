@@ -1,23 +1,30 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
+const res = require('../../index.js')
 
-describe('Baseboards (A004)', () => {
+describe('Baseboards', () => {
   test('gives wood for rooms and bonus if rooms > people', () => {
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const card = res.getCardById('baseboards-a004')
+    const game = t.fixture()
     t.setBoard(game, {
       dennis: {
-        food: 2,
-        grain: 1,
-        wood: 0,
-        hand: ['baseboards-a004'],
-        farmyard: { rooms: 3 },
+        minorImprovements: ['baseboards-a004'],
+        farmyard: { rooms: [{ row: 2, col: 0 }] }, // 3 total
       },
     })
     game.run()
 
-    t.playCard(game, 'dennis', 'baseboards-a004')
+    const dennis = t.dennis(game)
+    card.onPlay(game, dennis)
 
-    const dennis = t.player(game)
     // 3 rooms, 2 people -> 3 + 1 = 4 wood
-    expect(dennis.wood).toBe(4)
+    t.testBoard(game, {
+      dennis: {
+        wood: 4,
+        minorImprovements: ['baseboards-a004'],
+        farmyard: {
+          rooms: [{ row: 0, col: 0 }, { row: 1, col: 0 }, { row: 2, col: 0 }],
+        },
+      },
+    })
   })
 })

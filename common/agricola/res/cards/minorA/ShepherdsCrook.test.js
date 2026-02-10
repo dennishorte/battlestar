@@ -1,48 +1,56 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Shepherd\'s Crook (A083)', () => {
-  test('onBuildPasture gives sheep for 4+ space pastures', () => {
-    const card = res.getCardById('shepherds-crook-a083')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe("Shepherd's Crook", () => {
+  test('gives 2 sheep when building 4+ space pasture via Fencing', () => {
+    const game = t.fixture()
     t.setBoard(game, {
+      firstPlayer: 'dennis',
       dennis: {
-        farmyard: {
-          pastures: [{ spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }] }],
-        },
+        minorImprovements: ['shepherds-crook-a083'],
+        wood: 10, // 10 fences for a 4-space pasture in a row
       },
+      actionSpaces: ['Fencing'],
     })
     game.run()
 
-    const dennis = t.player(game)
-    const largePasture = {
-      spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }, { row: 0, col: 3 }, { row: 0, col: 4 }],
-    }
+    t.choose(game, 'Fencing')
+    t.action(game, 'build-pasture', { spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }, { row: 0, col: 3 }, { row: 0, col: 4 }] })
+    t.action(game, 'done-building-pastures')
 
-    card.onBuildPasture(game, dennis, largePasture)
-
-    expect(dennis.getTotalAnimals('sheep')).toBe(2)
+    t.testBoard(game, {
+      dennis: {
+        minorImprovements: ['shepherds-crook-a083'],
+        animals: { sheep: 2 },
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }, { row: 0, col: 3 }, { row: 0, col: 4 }], sheep: 2 }],
+        },
+      },
+    })
   })
 
   test('does not give sheep for pastures smaller than 4 spaces', () => {
-    const card = res.getCardById('shepherds-crook-a083')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
     t.setBoard(game, {
+      firstPlayer: 'dennis',
       dennis: {
-        farmyard: {
-          pastures: [{ spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }] }],
-        },
+        minorImprovements: ['shepherds-crook-a083'],
+        wood: 6, // 6 fences for a 2-space pasture in a row
       },
+      actionSpaces: ['Fencing'],
     })
     game.run()
 
-    const dennis = t.player(game)
-    const smallPasture = {
-      spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }],
-    }
+    t.choose(game, 'Fencing')
+    t.action(game, 'build-pasture', { spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }] })
+    t.action(game, 'done-building-pastures')
 
-    card.onBuildPasture(game, dennis, smallPasture)
-
-    expect(dennis.getTotalAnimals('sheep')).toBe(0)
+    t.testBoard(game, {
+      dennis: {
+        minorImprovements: ['shepherds-crook-a083'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }] }],
+        },
+      },
+    })
   })
 })

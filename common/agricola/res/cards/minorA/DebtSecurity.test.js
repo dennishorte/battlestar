@@ -1,20 +1,21 @@
 const res = require('../../index.js')
 
-describe('Debt Security (A031)', () => {
-  test('gives bonus points based on major improvements and unused spaces', () => {
+describe('Debt Security', () => {
+  test('gives bonus points = min(major improvements, unused spaces)', () => {
     const card = res.getCardById('debt-security-a031')
-    expect(card.getEndGamePoints).toBeDefined()
 
-    // Create mock player with specific setup
-    const mockPlayer = {
+    // 3 majors, 5 unused spaces -> 3 points
+    const player1 = {
       majorImprovements: ['fireplace-2', 'well', 'pottery'],
       getUnusedFarmyardSpaceCount: () => 5,
     }
-    // 3 major improvements, 5 unused spaces -> min(3, 5) = 3
-    expect(card.getEndGamePoints(mockPlayer)).toBe(3)
+    expect(card.getEndGamePoints(player1)).toBe(3)
 
-    // Test when unused spaces < majors
-    mockPlayer.getUnusedFarmyardSpaceCount = () => 2
-    expect(card.getEndGamePoints(mockPlayer)).toBe(2)
+    // 3 majors, 2 unused spaces -> 2 points
+    const player2 = {
+      majorImprovements: ['fireplace-2', 'well', 'pottery'],
+      getUnusedFarmyardSpaceCount: () => 2,
+    }
+    expect(card.getEndGamePoints(player2)).toBe(2)
   })
 })

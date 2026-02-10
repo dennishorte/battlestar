@@ -1,45 +1,34 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 const res = require('../../index.js')
 
-describe('Mud Patch (A011)', () => {
-  test('gives 1 boar on play', () => {
-    const card = res.getCardById('mud-patch-a011')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Mud Patch', () => {
+  test('gives 1 boar on play via Meeting Place with pasture', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['mud-patch-a011'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }] }],
+        },
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.canPlaceAnimals = () => true
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Mud Patch')
 
-    let boarAdded = 0
-    dennis.addAnimals = (type, count) => {
-      if (type === 'boar') {
-        boarAdded += count
-      }
-    }
-
-    card.onPlay(game, dennis)
-
-    expect(boarAdded).toBe(1)
-  })
-
-  test('does not give boar if cannot place', () => {
-    const card = res.getCardById('mud-patch-a011')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    dennis.canPlaceAnimals = () => false
-
-    let boarAdded = 0
-    dennis.addAnimals = (type, count) => {
-      if (type === 'boar') {
-        boarAdded += count
-      }
-    }
-
-    card.onPlay(game, dennis)
-
-    expect(boarAdded).toBe(0)
+    t.testBoard(game, {
+      dennis: {
+        food: 1, // +1 from Meeting Place
+        hand: [],
+        minorImprovements: ['mud-patch-a011'],
+        animals: { boar: 1 },
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }], boar: 1 }],
+        },
+      },
+    })
   })
 
   test('allows boar on fields', () => {

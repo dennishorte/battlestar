@@ -1,26 +1,63 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Oven Site (A027)', () => {
-  test('gives 2 wood and offers discounted oven on play', () => {
-    const card = res.getCardById('oven-site-a027')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Oven Site', () => {
+  test('gives 2 wood and offers discounted Clay Oven via Meeting Place', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['oven-site-a027'],
+        majorImprovements: ['fireplace-2'],
+        clay: 1, // discounted oven cost
+        stone: 1, // discounted oven cost
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.wood = 0
+    // Dennis takes Meeting Place, plays Oven Site
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Oven Site')
+    // onPlay fires: gets 2 wood, then offer discounted oven
+    t.choose(game, 'Build Clay Oven')
 
-    let offerCalled = false
-    game.actions.offerDiscountedOven = (player, sourceCard, cost) => {
-      offerCalled = true
-      expect(player).toBe(dennis)
-      expect(sourceCard).toBe(card)
-      expect(cost).toEqual({ clay: 1, stone: 1 })
-    }
+    t.testBoard(game, {
+      dennis: {
+        food: 1, // +1 from Meeting Place
+        wood: 2, // 2 from onPlay
+        hand: [],
+        minorImprovements: ['oven-site-a027'],
+        majorImprovements: ['fireplace-2', 'clay-oven'],
+      },
+    })
+  })
 
-    card.onPlay(game, dennis)
+  test('can skip the discounted oven', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['oven-site-a027'],
+        majorImprovements: ['fireplace-2'],
+        clay: 1,
+        stone: 1,
+      },
+    })
+    game.run()
 
-    expect(dennis.wood).toBe(2)
-    expect(offerCalled).toBe(true)
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Oven Site')
+    t.choose(game, 'Skip')
+
+    t.testBoard(game, {
+      dennis: {
+        food: 1,
+        wood: 2,
+        clay: 1,
+        stone: 1,
+        hand: [],
+        minorImprovements: ['oven-site-a027'],
+        majorImprovements: ['fireplace-2'],
+      },
+    })
   })
 })

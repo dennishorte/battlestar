@@ -585,6 +585,14 @@ Agricola.prototype.callHarvestHooks = function() {
   }
 }
 
+Agricola.prototype.isHarvestRound = function(round) {
+  return res.constants.harvestRounds.includes(round)
+}
+
+Agricola.prototype.getCompletedHarvestCount = function() {
+  return res.constants.harvestRounds.filter(r => r < this.state.round).length
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Card Drafting Phase
@@ -852,6 +860,10 @@ Agricola.prototype.workPhase = function() {
   // Reset all action space occupation
   for (const actionId of this.state.activeActions) {
     this.state.actionSpaces[actionId].occupiedBy = null
+  }
+
+  for (const player of this.players.all()) {
+    this.callPlayerCardHook(player, 'onWorkPhaseStart')
   }
 
   // Calculate total workers available
@@ -1141,6 +1153,11 @@ Agricola.prototype.fieldPhase = function() {
 
   // Call onHarvest hooks (e.g., Scythe Worker gives bonus grain)
   this.callHarvestHooks()
+
+  for (const player of this.players.all()) {
+    this.callPlayerCardHook(player, 'onFieldPhaseEnd')
+  }
+
   this.log.outdent()
 }
 
@@ -1155,6 +1172,8 @@ Agricola.prototype.feedingPhase = function() {
       template: '{player} needs {food} food',
       args: { player, food: required },
     })
+
+    this.callPlayerCardHook(player, 'onFeedingPhase')
 
     // Allow player to convert resources to food (optional)
     // Revised Edition rule: Players can withhold other goods (grain, vegetables, animals)

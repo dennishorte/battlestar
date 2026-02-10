@@ -1,7 +1,7 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 const res = require('../../index.js')
 
-describe('Chapel (A039)', () => {
+describe('Chapel', () => {
   test('provides action space', () => {
     const card = res.getCardById('chapel-a039')
     expect(card.providesActionSpace).toBe(true)
@@ -10,12 +10,16 @@ describe('Chapel (A039)', () => {
 
   test('gives 3 bonus points when owner uses it', () => {
     const card = res.getCardById('chapel-a039')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['chapel-a039'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.bonusPoints = 0
-
+    const dennis = t.dennis(game)
     card.onActionSpaceUsed(game, dennis, dennis)
 
     expect(dennis.bonusPoints).toBe(3)
@@ -23,15 +27,20 @@ describe('Chapel (A039)', () => {
 
   test('takes grain from other player and gives bonus points', () => {
     const card = res.getCardById('chapel-a039')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['chapel-a039'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+      },
+      micah: {
+        grain: 2,
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
+    const dennis = t.dennis(game)
     const micah = game.players.byName('micah')
-    dennis.grain = 0
-    micah.grain = 2
-    micah.bonusPoints = 0
-
     card.onActionSpaceUsed(game, micah, dennis)
 
     expect(micah.grain).toBe(1)
@@ -41,14 +50,17 @@ describe('Chapel (A039)', () => {
 
   test('still gives bonus points if other player has no grain', () => {
     const card = res.getCardById('chapel-a039')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['chapel-a039'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
+    const dennis = t.dennis(game)
     const micah = game.players.byName('micah')
-    micah.grain = 0
-    micah.bonusPoints = 0
-
     card.onActionSpaceUsed(game, micah, dennis)
 
     expect(micah.bonusPoints).toBe(3)

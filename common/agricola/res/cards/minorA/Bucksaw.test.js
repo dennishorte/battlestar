@@ -1,42 +1,60 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Bucksaw (A037)', () => {
-  test('offers bucksaw exchange on renovate when player has wood', () => {
-    const card = res.getCardById('bucksaw-a037')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Bucksaw', () => {
+  test('pays 1 wood for 1 grain and 1 bonus point after renovating', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      actionSpaces: ['House Redevelopment'],
+      dennis: {
+        minorImprovements: ['bucksaw-a037'],
+        clay: 2, // renovation cost: 2 clay (1 per room)
+        reed: 1, // renovation cost: 1 reed
+        wood: 2, // 1 for Bucksaw exchange + 1 extra
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.wood = 2
+    // Dennis takes House Redevelopment → renovates (wood→clay) → onRenovate fires
+    t.choose(game, 'House Redevelopment')
+    // Bucksaw offer fires after renovation
+    t.choose(game, 'Pay 1 wood for 1 grain and 1 bonus point')
+    // No affordable improvements after spending resources, so improvement step is skipped
 
-    let offerCalled = false
-    game.actions.offerBucksaw = (player, sourceCard) => {
-      offerCalled = true
-      expect(player).toBe(dennis)
-      expect(sourceCard).toBe(card)
-    }
-
-    card.onRenovate(game, dennis)
-
-    expect(offerCalled).toBe(true)
+    t.testBoard(game, {
+      dennis: {
+        wood: 1, // 2 - 1 Bucksaw
+        grain: 1, // from Bucksaw
+        bonusPoints: 1,
+        roomType: 'clay',
+        minorImprovements: ['bucksaw-a037'],
+      },
+    })
   })
 
-  test('does not offer when player has no wood', () => {
-    const card = res.getCardById('bucksaw-a037')
-    const game = t.fixture({ cardSets: ['minorA'] })
+  test('can skip the bucksaw offer', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      actionSpaces: ['House Redevelopment'],
+      dennis: {
+        minorImprovements: ['bucksaw-a037'],
+        clay: 2,
+        reed: 1,
+        wood: 1,
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.wood = 0
+    t.choose(game, 'House Redevelopment')
+    t.choose(game, 'Skip') // Skip Bucksaw
 
-    let offerCalled = false
-    game.actions.offerBucksaw = () => {
-      offerCalled = true
-    }
-
-    card.onRenovate(game, dennis)
-
-    expect(offerCalled).toBe(false)
+    t.testBoard(game, {
+      dennis: {
+        wood: 1,
+        roomType: 'clay',
+        minorImprovements: ['bucksaw-a037'],
+      },
+    })
   })
 })

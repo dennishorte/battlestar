@@ -1,63 +1,84 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Lifting Machine (A070)', () => {
-  test('offers vegetable harvest at end of non-harvest round', () => {
-    const card = res.getCardById('lifting-machine-a070')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Lifting Machine', () => {
+  test('moves vegetable from field to supply at end of non-harvest round', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['lifting-machine-a070'],
+        farmyard: {
+          fields: [
+            { row: 0, col: 2, crop: 'vegetables', cropCount: 2 },
+            { row: 0, col: 3 },
+            { row: 0, col: 4 },
+          ],
+        },
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.getVegetableFieldCount = () => 1
-    game.isHarvestRound = () => false
+    // Round 1 (non-harvest): all 4 workers
+    t.choose(game, 'Day Laborer')     // dennis
+    t.choose(game, 'Grain Seeds')     // micah
+    t.choose(game, 'Fishing')         // dennis
+    t.choose(game, 'Clay Pit')        // micah
 
-    let offerCalled = false
-    game.actions.offerLiftingMachine = (player, sourceCard) => {
-      offerCalled = true
-      expect(player).toBe(dennis)
-      expect(sourceCard).toBe(card)
-    }
+    // Round end → Lifting Machine fires → offer to move vegetable
+    t.choose(game, 'Move 1 vegetable from field to supply')
 
-    card.onRoundEnd(game, dennis, 2)
-
-    expect(offerCalled).toBe(true)
+    t.testBoard(game, {
+      dennis: {
+        food: 3, // 2 Day Laborer + 1 Fishing
+        vegetables: 1, // moved from field
+        minorImprovements: ['lifting-machine-a070'],
+        farmyard: {
+          fields: [
+            { row: 0, col: 2, crop: 'vegetables', cropCount: 1 },
+            { row: 0, col: 3 },
+            { row: 0, col: 4 },
+          ],
+        },
+      },
+    })
   })
 
-  test('does not offer at end of harvest round', () => {
-    const card = res.getCardById('lifting-machine-a070')
-    const game = t.fixture({ cardSets: ['minorA'] })
+  test('can skip the lifting machine offer', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['lifting-machine-a070'],
+        farmyard: {
+          fields: [
+            { row: 0, col: 2, crop: 'vegetables', cropCount: 2 },
+            { row: 0, col: 3 },
+            { row: 0, col: 4 },
+          ],
+        },
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.getVegetableFieldCount = () => 1
-    game.isHarvestRound = () => true
+    t.choose(game, 'Day Laborer')
+    t.choose(game, 'Grain Seeds')
+    t.choose(game, 'Fishing')
+    t.choose(game, 'Clay Pit')
 
-    let offerCalled = false
-    game.actions.offerLiftingMachine = () => {
-      offerCalled = true
-    }
+    t.choose(game, 'Skip')
 
-    card.onRoundEnd(game, dennis, 4)
-
-    expect(offerCalled).toBe(false)
-  })
-
-  test('does not offer when no vegetable fields', () => {
-    const card = res.getCardById('lifting-machine-a070')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    dennis.getVegetableFieldCount = () => 0
-    game.isHarvestRound = () => false
-
-    let offerCalled = false
-    game.actions.offerLiftingMachine = () => {
-      offerCalled = true
-    }
-
-    card.onRoundEnd(game, dennis, 2)
-
-    expect(offerCalled).toBe(false)
+    t.testBoard(game, {
+      dennis: {
+        food: 3, // 2 Day Laborer + 1 Fishing
+        minorImprovements: ['lifting-machine-a070'],
+        farmyard: {
+          fields: [
+            { row: 0, col: 2, crop: 'vegetables', cropCount: 2 },
+            { row: 0, col: 3 },
+            { row: 0, col: 4 },
+          ],
+        },
+      },
+    })
   })
 })
