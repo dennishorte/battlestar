@@ -2700,6 +2700,7 @@ class AgricolaActionManager extends BaseActionManager {
         template: '{player} renovates from {from} to {to} for free using {card}',
         args: { player, from: fromType, to: toType, card },
       })
+      this.callOnRenovateHooks(player, fromType, toType)
     }
   }
 
