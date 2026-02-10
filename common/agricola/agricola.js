@@ -841,7 +841,7 @@ Agricola.prototype.replenishPhase = function() {
         const prevAccumulated = state.accumulated
         state.accumulated += amount
 
-        if (actionId === 'reed-bank') {
+        if (actionId === 'take-reed') {
           const wasNonEmpty = prevAccumulated > 0
           for (const player of this.players.all()) {
             this.callPlayerCardHook(player, 'onReedBankReplenish', wasNonEmpty)

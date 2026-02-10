@@ -1,50 +1,74 @@
 const t = require('../../../testutil_v2.js')
-const res = require('../../index.js')
 
 describe('Farmyard Manure', () => {
-  test('schedules food on next 3 round spaces on stable build', () => {
-    const card = res.getCardById('farmyard-manure-a043')
+  test('schedules food on next 3 round spaces when building a stable', () => {
     const game = t.fixture()
     t.setBoard(game, {
+      firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['farmyard-manure-a043'],
+        wood: 2, // stable cost
         farmyard: {
           pastures: [{ spaces: [{ row: 0, col: 3 }, { row: 0, col: 4 }], sheep: 1 }],
         },
       },
-      round: 5,
     })
     game.run()
 
-    const dennis = t.dennis(game)
-    game.state.round = 5
-    card.onBuildStable(game, dennis)
+    // dennis: Farm Expansion → Build Stable
+    t.choose(game, 'Farm Expansion')
+    t.choose(game, 'Build Stable')
+    t.action(game, 'build-stable', { row: 1, col: 1 })
 
-    expect(game.state.scheduledFood[dennis.name][6]).toBe(1)
-    expect(game.state.scheduledFood[dennis.name][7]).toBe(1)
-    expect(game.state.scheduledFood[dennis.name][8]).toBe(1)
+    // Check scheduledFood immediately (still in round 2, before delivery)
+    expect(game.state.scheduledFood.dennis[3]).toBe(1)
+    expect(game.state.scheduledFood.dennis[4]).toBe(1)
+    expect(game.state.scheduledFood.dennis[5]).toBe(1)
+
+    // Remaining workers
+    t.choose(game, 'Forest')       // micah
+    t.choose(game, 'Day Laborer')  // dennis: +2 food
+    t.choose(game, 'Clay Pit')     // micah
+
+    // Now in round 3: scheduled food for round 3 was delivered (+1 food)
+    t.testBoard(game, {
+      dennis: {
+        food: 3, // 2 (DL) + 1 (scheduled food for round 3)
+        minorImprovements: ['farmyard-manure-a043'],
+        animals: { sheep: 1 },
+        farmyard: {
+          stables: [{ row: 1, col: 1 }],
+          pastures: [{ spaces: [{ row: 0, col: 3 }, { row: 0, col: 4 }], sheep: 1 }],
+        },
+      },
+    })
   })
 
   test('does not schedule food past round 14', () => {
-    const card = res.getCardById('farmyard-manure-a043')
     const game = t.fixture()
     t.setBoard(game, {
+      firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['farmyard-manure-a043'],
+        wood: 2,
+        food: 10,
         farmyard: {
           pastures: [{ spaces: [{ row: 0, col: 3 }, { row: 0, col: 4 }], sheep: 1 }],
         },
       },
-      round: 13,
+      micah: { food: 10 },
+      round: 12,
     })
     game.run()
 
-    const dennis = t.dennis(game)
-    game.state.round = 13
-    card.onBuildStable(game, dennis)
+    // Round 13: build stable → schedules food for 14, 15 (past end), 16 (past end)
+    t.choose(game, 'Farm Expansion')
+    t.choose(game, 'Build Stable')
+    t.action(game, 'build-stable', { row: 1, col: 1 })
 
-    expect(game.state.scheduledFood[dennis.name][14]).toBe(1)
-    expect(game.state.scheduledFood[dennis.name][15]).toBeUndefined()
-    expect(game.state.scheduledFood[dennis.name][16]).toBeUndefined()
+    // Check immediately: only round 14 should be scheduled
+    expect(game.state.scheduledFood.dennis[14]).toBe(1)
+    expect(game.state.scheduledFood.dennis[15]).toBeUndefined()
+    expect(game.state.scheduledFood.dennis[16]).toBeUndefined()
   })
 })

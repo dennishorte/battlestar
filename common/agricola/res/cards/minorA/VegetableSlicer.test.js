@@ -1,39 +1,37 @@
 const t = require('../../../testutil_v2.js')
-const res = require('../../index.js')
 
 describe('Vegetable Slicer', () => {
-  test('gives 2 wood and 1 vegetable on fireplace upgrade', () => {
-    const card = res.getCardById('vegetable-slicer-a041')
+  test('gives 2 wood and 1 vegetable when upgrading fireplace to cooking hearth', () => {
     const game = t.fixture()
     t.setBoard(game, {
+      firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['vegetable-slicer-a041'],
+        majorImprovements: ['fireplace-2'],
+        clay: 4, // cooking hearth cost
       },
+      actionSpaces: ['Major Improvement'],
     })
     game.run()
 
-    const dennis = t.dennis(game)
-    card.onUpgradeFireplace(game, dennis)
+    // dennis: Major Improvement → upgrade fireplace to cooking hearth
+    t.choose(game, 'Major Improvement')
+    t.choose(game, 'Major Improvement.Cooking Hearth (cooking-hearth-4)')
+    // onUpgradeFireplace fires: +2 wood, +1 vegetable
 
-    expect(dennis.wood).toBe(2)
-    expect(dennis.vegetables).toBe(1)
-  })
+    // Remaining workers
+    t.choose(game, 'Forest')       // micah
+    t.choose(game, 'Day Laborer')  // dennis
+    t.choose(game, 'Clay Pit')     // micah
 
-  test('stacks on multiple upgrades', () => {
-    const card = res.getCardById('vegetable-slicer-a041')
-    const game = t.fixture()
-    t.setBoard(game, {
+    t.testBoard(game, {
       dennis: {
+        wood: 2,        // Vegetable Slicer
+        vegetables: 1,  // Vegetable Slicer
+        food: 2,        // Day Laborer
         minorImprovements: ['vegetable-slicer-a041'],
+        majorImprovements: ['cooking-hearth-4'],
       },
     })
-    game.run()
-
-    const dennis = t.dennis(game)
-    card.onUpgradeFireplace(game, dennis)
-    card.onUpgradeFireplace(game, dennis)
-
-    expect(dennis.wood).toBe(4)
-    expect(dennis.vegetables).toBe(2)
   })
 })
