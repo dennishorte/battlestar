@@ -1552,8 +1552,8 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
     })
   }
   else if (option.type === 'craft') {
-    player[option.resource] -= option.count
-    player.food += option.food
+    player.removeResource(option.resource, option.count)
+    player.addResource('food', option.food)
     this.log.add({
       template: '{player} uses {improvement} to convert {resource} to {food} food',
       args: { player, improvement: option.improvement, resource: option.resource, food: option.food },

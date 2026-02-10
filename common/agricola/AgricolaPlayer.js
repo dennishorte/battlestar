@@ -563,9 +563,9 @@ class AgricolaPlayer extends BasePlayer {
       })
     }
 
-    this.grain += harvested.grain
-    this.vegetables += harvested.vegetables
-    this.wood += harvested.wood
+    this.addResource('grain', harvested.grain)
+    this.addResource('vegetables', harvested.vegetables)
+    this.addResource('wood', harvested.wood)
 
     return { harvested, virtualFieldHarvests }
   }
@@ -1543,7 +1543,7 @@ class AgricolaPlayer extends BasePlayer {
       for (const [animalType, count] of Object.entries(totalCooked)) {
         if (count > 0) {
           const food = res.calculateCookingFood(cookingImp, animalType, count)
-          this.food += food
+          this.addResource('food', food)
           totalFood += food
         }
       }
@@ -1692,7 +1692,7 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     // Pay 1 food
-    this.food -= 1
+    this.removeResource('food', 1)
 
     // Remove newborn status (they now need 2 food during harvest, not 1)
     this.newborns.pop()
@@ -1750,11 +1750,11 @@ class AgricolaPlayer extends BasePlayer {
     const shortage = Math.max(0, required - this.food)
 
     if (shortage > 0) {
-      this.food = 0
+      this.removeResource('food', this.food)
       this.beggingCards += shortage
     }
     else {
-      this.food -= required
+      this.removeResource('food', required)
     }
 
     return { required, fed: required - shortage, beggingCards: shortage }
@@ -1810,7 +1810,7 @@ class AgricolaPlayer extends BasePlayer {
     if (toCook > 0) {
       this.removeAnimals(animalType, toCook)
       const food = res.calculateCookingFood(imp, animalType, toCook)
-      this.food += food
+      this.addResource('food', food)
       return food
     }
     return 0
@@ -1824,9 +1824,9 @@ class AgricolaPlayer extends BasePlayer {
 
     const toCook = Math.min(count, this.vegetables)
     if (toCook > 0) {
-      this.vegetables -= toCook
+      this.removeResource('vegetables', toCook)
       const food = res.calculateCookingFood(imp, 'vegetables', toCook)
-      this.food += food
+      this.addResource('food', food)
       return food
     }
     return 0
@@ -1842,9 +1842,9 @@ class AgricolaPlayer extends BasePlayer {
     const toBake = Math.min(count, this.grain, limit)
 
     if (toBake > 0) {
-      this.grain -= toBake
+      this.removeResource('grain', toBake)
       const food = res.calculateBakingFood(imp, toBake)
-      this.food += food
+      this.addResource('food', food)
       return food
     }
     return 0
@@ -1856,8 +1856,8 @@ class AgricolaPlayer extends BasePlayer {
     const toConvert = Math.min(count, available)
 
     if (toConvert > 0) {
-      this[resourceType] -= toConvert
-      this.food += toConvert
+      this.removeResource(resourceType, toConvert)
+      this.addResource('food', toConvert)
       return toConvert
     }
     return 0

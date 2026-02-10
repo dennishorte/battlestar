@@ -108,8 +108,8 @@ const HarvestMixin = {
   // Execute a food conversion
   executeFoodConversion(player, option) {
     if (option.type === 'convert') {
-      player[option.resource] -= option.count
-      player.food += option.food
+      player.removeResource(option.resource, option.count)
+      player.addResource('food', option.food)
       return option.food
     }
 
@@ -118,15 +118,15 @@ const HarvestMixin = {
         player.removeAnimals(option.resource, option.count)
       }
       else {
-        player[option.resource] -= option.count
+        player.removeResource(option.resource, option.count)
       }
-      player.food += option.food
+      player.addResource('food', option.food)
       return option.food
     }
 
     if (option.type === 'craft') {
-      player[option.resource] -= option.count
-      player.food += option.food
+      player.removeResource(option.resource, option.count)
+      player.addResource('food', option.food)
       return option.food
     }
 
