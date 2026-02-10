@@ -125,6 +125,12 @@ TestUtil.fixture = function(options = {}) {
  *   majorImprovements - Array of card IDs of played major improvements. Default, none.
  *                       Cards are created and moved to the correct zones.
  *   pet              - Animal type string for the house pet.
+ *   scheduled        - Object of scheduled deliveries. Resources use { round: amount },
+ *                      events use [round, ...]. Only checked when specified.
+ *                      Resources: food, wood, clay, stone, reed, grain, vegetables,
+ *                        vegetablesPurchase, sheep, boar, cattle.
+ *                      Events: plows, freeStables, freeOccupation, woodWithMinor, plowman.
+ *                      Example: { food: { 5: 1, 6: 1 }, plows: [7] }
  *   farmyard         - Object with layout options:
  *       rooms        - Location of additional rooms beyond the default rooms.
  *       roomType     - One of 'wood', 'clay', 'stone'. Default: 'wood'
@@ -763,6 +769,36 @@ TestUtil.testPlayerBoard = function(game, playerName, expected) {
   const actStableKeys = actualStableSpaces.map(s => `${s.row},${s.col}`).sort()
   if (JSON.stringify(expStableKeys) !== JSON.stringify(actStableKeys)) {
     errors.push(`farmyard.stables: expected [${expStableKeys}] (${expStableKeys.length}), got [${actStableKeys}] (${actStableKeys.length})`)
+  }
+
+  // Scheduled deliveries (optional — only check if specified)
+  // Resources use { round: amount } format, events use [round, ...] format
+  const SCHEDULED_EVENT_TYPES = ['plows', 'freeStables', 'freeOccupation', 'woodWithMinor', 'plowman']
+  if (expected.scheduled !== undefined) {
+    for (const [type, expValue] of Object.entries(expected.scheduled)) {
+      const stateKey = `scheduled${type[0].toUpperCase()}${type.slice(1)}`
+      if (SCHEDULED_EVENT_TYPES.includes(type)) {
+        const exp = [...expValue].sort()
+        const actual = [...(game.state[stateKey]?.[playerName] ?? [])].sort()
+        if (JSON.stringify(exp) !== JSON.stringify(actual)) {
+          errors.push(`scheduled.${type}: expected [${exp}], got [${actual}]`)
+        }
+      }
+      else {
+        const actual = game.state[stateKey]?.[playerName] ?? {}
+        const allRounds = new Set([
+          ...Object.keys(expValue).map(String),
+          ...Object.keys(actual).map(String),
+        ])
+        for (const round of allRounds) {
+          const expAmount = expValue[round] ?? 0
+          const actAmount = actual[round] ?? 0
+          if (expAmount !== actAmount) {
+            errors.push(`scheduled.${type}[${round}]: expected ${expAmount}, got ${actAmount}`)
+          }
+        }
+      }
+    }
   }
 
   // Score (optional — only check if specified)

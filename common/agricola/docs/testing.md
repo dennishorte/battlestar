@@ -127,6 +127,33 @@ t.testBoard(game, {
 })
 ```
 
+### Scheduled delivery assertions
+
+Some cards schedule resources or events for future rounds (e.g. Farmyard Manure
+schedules food, Handplow schedules plows). These are opt-in — only checked when
+explicitly specified. Use `scheduled` with resource names (`{ round: amount }`)
+or event names (`[round, ...]`):
+
+```js
+t.testBoard(game, {
+  dennis: {
+    scheduled: {
+      food: { 5: 1, 6: 1, 7: 1 },
+      plows: [8],
+    },
+  },
+})
+```
+
+Resource types: `food`, `wood`, `clay`, `stone`, `reed`, `grain`, `vegetables`,
+`vegetablesPurchase`, `sheep`, `boar`, `cattle`.
+
+Event types: `plows`, `freeStables`, `freeOccupation`, `woodWithMinor`,
+`plowman`.
+
+When specified, all rounds are checked — any rounds not listed are asserted to
+be 0 (resources) or absent (events).
+
 ### Other assertions
 
 ```js

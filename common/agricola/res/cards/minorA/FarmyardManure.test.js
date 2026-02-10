@@ -51,24 +51,29 @@ describe('Farmyard Manure', () => {
       dennis: {
         minorImprovements: ['farmyard-manure-a043'],
         wood: 2,
-        food: 10,
         farmyard: {
           pastures: [{ spaces: [{ row: 0, col: 3 }, { row: 0, col: 4 }], sheep: 1 }],
         },
       },
-      micah: { food: 10 },
       round: 12,
     })
     game.run()
 
-    // Round 13: build stable → schedules food for 14, 15 (past end), 16 (past end)
+    // Round 13: build stable → schedules food for 14 only (15, 16 past end)
     t.choose(game, 'Farm Expansion')
     t.choose(game, 'Build Stable')
     t.action(game, 'build-stable', { row: 1, col: 1 })
 
-    // Check immediately: only round 14 should be scheduled
-    expect(game.state.scheduledFood.dennis[14]).toBe(1)
-    expect(game.state.scheduledFood.dennis[15]).toBeUndefined()
-    expect(game.state.scheduledFood.dennis[16]).toBeUndefined()
+    t.testBoard(game, {
+      dennis: {
+        minorImprovements: ['farmyard-manure-a043'],
+        animals: { sheep: 1 },
+        scheduled: { food: { 14: 1 } },
+        farmyard: {
+          stables: [{ row: 1, col: 1 }],
+          pastures: [{ spaces: [{ row: 0, col: 3 }, { row: 0, col: 4 }], sheep: 1 }],
+        },
+      },
+    })
   })
 })
