@@ -838,7 +838,15 @@ Agricola.prototype.replenishPhase = function() {
       const state = this.state.actionSpaces[actionId]
 
       for (const [, amount] of Object.entries(action.accumulates)) {
+        const prevAccumulated = state.accumulated
         state.accumulated += amount
+
+        if (actionId === 'reed-bank') {
+          const wasNonEmpty = prevAccumulated > 0
+          for (const player of this.players.all()) {
+            this.callPlayerCardHook(player, 'onReedBankReplenish', wasNonEmpty)
+          }
+        }
       }
 
       if (state.accumulated > 0) {
@@ -1001,8 +1009,11 @@ Agricola.prototype.playerTurn = function(player) {
     // Execute the action
     this.actions.executeAction(player, actionId)
 
-    // Check if 2+ unused spaces were converted to used spaces
+    // Check if unused spaces were converted to used spaces
     const spacesUsed = unusedBefore - player.getUnusedSpaceCount()
+    for (let i = 0; i < spacesUsed; i++) {
+      this.callPlayerCardHook(player, 'onUseSpace')
+    }
     if (spacesUsed >= 2) {
       this.callPlayerCardHook(player, 'onUseMultipleSpaces', spacesUsed)
     }
@@ -1129,6 +1140,10 @@ Agricola.prototype.fieldPhase = function() {
         template: '{player} harvests {grain} grain, {veg} vegetables, and {wood} wood',
         args: { player, grain: harvested.grain, veg: harvested.vegetables, wood: harvested.wood },
       })
+    }
+
+    if (harvested.vegetables > 0) {
+      this.callPlayerCardHook(player, 'onHarvestVegetables')
     }
 
     // Process virtual field callbacks

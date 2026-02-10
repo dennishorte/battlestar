@@ -87,6 +87,7 @@ class AgricolaActionManager extends BaseActionManager {
           // Must convert to food or release - use unified handler
           this.handleAnimalOverflow(player, resource, count)
         }
+        this.game.callPlayerCardHook(player, 'onTakeAnimals', resource, count)
       }
       else {
         player.addResource(resource, actionState.accumulated)
@@ -515,6 +516,8 @@ class AgricolaActionManager extends BaseActionManager {
       args: { player, row, col },
     })
 
+    this.game.callPlayerCardHook(player, 'onBuildStable')
+
     return true
   }
 
@@ -638,7 +641,10 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
+    this.game.callPlayerCardHook(player, 'onSow', true)
+
     let sowedAny = false
+    let sowedVegetables = false
 
     while (true) {
       const currentEmptyFields = player.getEmptyFields()
@@ -720,6 +726,9 @@ class AgricolaActionManager extends BaseActionManager {
 
         player.sowField(row, col, cropType)
         sowedAny = true
+        if (cropType === 'vegetables') {
+          sowedVegetables = true
+        }
 
         const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
         this.log.add({
@@ -743,6 +752,9 @@ class AgricolaActionManager extends BaseActionManager {
 
         player.sowVirtualField(fieldId, cropType)
         sowedAny = true
+        if (cropType === 'vegetables') {
+          sowedVegetables = true
+        }
 
         const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
         this.log.add({
@@ -771,6 +783,9 @@ class AgricolaActionManager extends BaseActionManager {
 
           player.sowField(row, col, cropType)
           sowedAny = true
+          if (cropType === 'vegetables') {
+            sowedVegetables = true
+          }
 
           const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
           this.log.add({
@@ -779,6 +794,10 @@ class AgricolaActionManager extends BaseActionManager {
           })
         }
       }
+    }
+
+    if (sowedVegetables) {
+      this.game.callPlayerCardHook(player, 'onSowVegetables', true)
     }
 
     if (!sowedAny) {
@@ -1143,6 +1162,10 @@ class AgricolaActionManager extends BaseActionManager {
 
       // Call onBuildImprovement hooks (Junk Room gives food)
       this.callOnBuildImprovementHooks(player)
+
+      if (imp.upgradesFrom && imp.upgradesFrom.some(id => id.startsWith('fireplace'))) {
+        this.game.callPlayerCardHook(player, 'onUpgradeFireplace')
+      }
 
       return improvementId
     }
@@ -1664,6 +1687,10 @@ class AgricolaActionManager extends BaseActionManager {
 
           // Call onBuildImprovement hooks (Junk Room gives food)
           this.callOnBuildImprovementHooks(player)
+
+          if (imp.upgradesFrom && imp.upgradesFrom.some(id => id.startsWith('fireplace'))) {
+            this.game.callPlayerCardHook(player, 'onUpgradeFireplace')
+          }
 
           return improvementId
         }
