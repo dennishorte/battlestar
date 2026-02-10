@@ -30,7 +30,6 @@ WheelPlow, StoneCompany, SwimmingClass, Claypipe.
 
 | Card | Hook | Issue |
 |------|------|-------|
-| Bassinet | `allowsBassinetPlacement` | Extra worker placement on first non-accumulating space; fundamentally changes action flow |
 | ClearingSpade | `allowsAnytimeCropMove` | "Anytime" crop move between fields; needs new interaction pattern |
 | DutchWindmill | `onBake` | Needs baking in the round after a harvest round (multi-round test) |
 | InterimStorage | `onPlay`, `onAction`, `onRoundStart` | Multi-round store/release cycle; `player.interimStorage` not in testBoard |
