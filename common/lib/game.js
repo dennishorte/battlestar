@@ -551,6 +551,11 @@ Game.prototype._tryToAutomaticallyRespond = function(selectors) {
       return undefined
     }
 
+    // Selectors explicitly marked to wait for user input
+    if (sel.noAutoRespond) {
+      return undefined
+    }
+
     // Don't try to understand nested structures.
     for (const choice of sel.choices) {
       if (choice.choices) {

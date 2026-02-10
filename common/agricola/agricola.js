@@ -1296,6 +1296,16 @@ Agricola.prototype.feedingPhase = function() {
 
     this.callPlayerCardHook(player, 'onFeedingPhase')
 
+    // If the player has anytime actions and already enough food,
+    // give them a chance to use anytime actions before feeding
+    const hasAnytimeActions = this.getAnytimeActions(player).length > 0
+    if (hasAnytimeActions && player.food >= required) {
+      this.actions.choose(player, ['Feed family'], {
+        title: `Feed family (${player.food}/${required} food)`,
+        min: 1, max: 1,
+      })
+    }
+
     // Allow player to convert resources to food (optional)
     // Revised Edition rule: Players can withhold other goods (grain, vegetables, animals)
     // but cannot withhold food tokens. feedFamily() automatically uses all food tokens.
@@ -1629,6 +1639,84 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
       args: { player, card: option.cardName, resource: option.resource, food: option.food },
     })
   }
+}
+
+Agricola.prototype.getAnytimeActions = function(player) {
+  const options = []
+
+  // Cooking conversions (requires Fireplace or Cooking Hearth)
+  if (player.hasCookingAbility()) {
+    const imp = player.getCookingImprovement()
+    const rates = imp.abilities.cookingRates
+    const animals = player.getAllAnimals()
+
+    for (const [type, count] of Object.entries(animals)) {
+      if (count > 0) {
+        const food = rates[type]
+        options.push({
+          type: 'cook',
+          resource: type,
+          count: 1,
+          food,
+          description: `Cook 1 ${type} for ${food} food`,
+        })
+      }
+    }
+
+    // Cook vegetables at improvement rate (better than basic 1:1)
+    if (player.vegetables > 0) {
+      const food = rates.vegetables
+      options.push({
+        type: 'cook-vegetable',
+        resource: 'vegetables',
+        count: 1,
+        food,
+        description: `Cook 1 vegetable for ${food} food`,
+      })
+    }
+  }
+
+  // Card-based anytime conversions (e.g., Oriental Fireplace)
+  for (const cardId of player.playedMinorImprovements) {
+    const card = this.cards.byId(cardId)
+    if (!card || !card.definition.anytimeConversions) {
+      continue
+    }
+    for (const conv of card.definition.anytimeConversions) {
+      if (['sheep', 'boar', 'cattle'].includes(conv.from)) {
+        if (player.getTotalAnimals(conv.from) > 0) {
+          options.push({
+            type: 'card-cook',
+            cardName: card.name,
+            resource: conv.from,
+            count: 1,
+            food: conv.rate,
+            description: `${card.name}: ${conv.from} → ${conv.rate} food`,
+          })
+        }
+      }
+      else {
+        const resourceKey = conv.from
+        if ((player[resourceKey] || 0) > 0) {
+          options.push({
+            type: 'card-convert',
+            cardName: card.name,
+            resource: resourceKey,
+            count: 1,
+            food: conv.rate,
+            description: `${card.name}: ${resourceKey} → ${conv.rate} food`,
+          })
+        }
+      }
+    }
+  }
+
+  return options
+}
+
+Agricola.prototype.executeAnytimeAction = function(player, action) {
+  // Delegate to executeAnytimeFoodConversion for all food-related types
+  this.executeAnytimeFoodConversion(player, action)
 }
 
 Agricola.prototype.getAvailableMajorImprovements = function() {

@@ -33,21 +33,23 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   // ---------------------------------------------------------------------------
-  // Anytime food conversion support
+  // Anytime actions support
   // ---------------------------------------------------------------------------
 
   choose(player, choicesOrFn, opts = {}) {
     while (true) {
       const choices = typeof choicesOrFn === 'function' ? choicesOrFn() : choicesOrFn
-      const conversionOptions = this.game.getAnytimeFoodConversionOptions(player)
+      const anytimeActions = this.game.getAnytimeActions(player)
+      const hasAnytime = anytimeActions.length > 0
 
       const result = super.choose(player, choices, {
         ...opts,
-        foodConversionOptions: conversionOptions.length > 0 ? conversionOptions : undefined,
+        anytimeActions: hasAnytime ? anytimeActions : undefined,
+        noAutoRespond: hasAnytime || undefined,
       })
 
-      if (result && result.action === 'convert-to-food') {
-        this.game.executeAnytimeFoodConversion(player, result.option)
+      if (result && result.action === 'anytime-action') {
+        this.game.executeAnytimeAction(player, result.anytimeAction)
         continue
       }
 
@@ -359,22 +361,6 @@ class AgricolaActionManager extends BaseActionManager {
     const canBuildRoom = player.canAffordRoom() && player.getValidRoomBuildSpaces().length > 0
     const canBuildStable = player.canAffordStable() && player.getValidStableBuildSpaces().length > 0
 
-    // Check for multi-room discount (e.g., Carpenter's Hammer)
-    const hasMultiRoom = canBuildRoom && player.hasMultiRoomDiscount()
-    const multiRoomOptions = []
-    if (hasMultiRoom) {
-      const availableSpaces = player.getValidRoomBuildSpaces().length
-      for (let count = 2; count <= availableSpaces; count++) {
-        const cost = player.getMultiRoomCost(count)
-        if (player.canAffordCost(cost)) {
-          multiRoomOptions.push(count)
-        }
-        else {
-          break
-        }
-      }
-    }
-
     if (!canBuildRoom && !canBuildStable) {
       this.log.add({
         template: '{player} cannot afford to build anything',
@@ -383,23 +369,41 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
-    // Let player choose what to build
-    const choices = []
-    if (canBuildRoom) {
-      choices.push('Build Room')
-    }
-    for (const count of multiRoomOptions) {
-      choices.push(`Build ${count} Rooms`)
-    }
-    if (canBuildStable) {
-      choices.push('Build Stable')
-    }
-    if (canBuildRoom && canBuildStable) {
-      choices.push('Build Room and Stable')
-    }
-    choices.push('Do Nothing')
+    const selection = this.choose(player, () => {
+      const curCanBuildRoom = player.canAffordRoom() && player.getValidRoomBuildSpaces().length > 0
+      const curCanBuildStable = player.canAffordStable() && player.getValidStableBuildSpaces().length > 0
 
-    const selection = this.choose(player, choices, {
+      const hasMultiRoom = curCanBuildRoom && player.hasMultiRoomDiscount()
+      const multiRoomOptions = []
+      if (hasMultiRoom) {
+        const availableSpaces = player.getValidRoomBuildSpaces().length
+        for (let count = 2; count <= availableSpaces; count++) {
+          const cost = player.getMultiRoomCost(count)
+          if (player.canAffordCost(cost)) {
+            multiRoomOptions.push(count)
+          }
+          else {
+            break
+          }
+        }
+      }
+
+      const choices = []
+      if (curCanBuildRoom) {
+        choices.push('Build Room')
+      }
+      for (const count of multiRoomOptions) {
+        choices.push(`Build ${count} Rooms`)
+      }
+      if (curCanBuildStable) {
+        choices.push('Build Stable')
+      }
+      if (curCanBuildRoom && curCanBuildStable) {
+        choices.push('Build Room and Stable')
+      }
+      choices.push('Do Nothing')
+      return choices
+    }, {
       title: 'Choose what to build',
       min: 1,
       max: 1,
@@ -1193,13 +1197,16 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
-    const choices = affordableIds.map(id => {
-      const imp = this.game.cards.byId(id)
-      return imp.name + ` (${id})`
-    })
-    choices.push('Do not buy')
-
-    const selection = this.choose(player, choices, {
+    const selection = this.choose(player, () => {
+      const curAffordable = availableImprovements
+        .filter(id => player.canBuyMajorImprovement(id))
+      const choices = curAffordable.map(id => {
+        const imp = this.game.cards.byId(id)
+        return imp.name + ` (${id})`
+      })
+      choices.push('Do not buy')
+      return choices
+    }, {
       title: 'Choose a major improvement',
       min: 1,
       max: 1,
@@ -1353,8 +1360,19 @@ class AgricolaActionManager extends BaseActionManager {
         const canPayWood = player.wood >= amount
 
         if (canPayFood && canPayWood) {
-          const payChoices = [`Pay ${amount} food`, `Pay ${amount} wood`]
-          const paySelection = this.choose(player, payChoices, {
+          const paySelection = this.choose(player, () => {
+            const payChoices = []
+            if (player.food >= amount) {
+              payChoices.push(`Pay ${amount} food`)
+            }
+            if (player.wood >= amount) {
+              payChoices.push(`Pay ${amount} wood`)
+            }
+            if (payChoices.length === 0) {
+              payChoices.push(`Pay ${amount} food`)
+            }
+            return payChoices
+          }, {
             title: 'Choose payment for occupation',
             min: 1,
             max: 1,
@@ -1938,19 +1956,7 @@ class AgricolaActionManager extends BaseActionManager {
   // ---------------------------------------------------------------------------
 
   renovationAndOrFencing(player) {
-    const choices = []
-
-    if (player.canRenovate()) {
-      choices.push('Renovate')
-    }
-    if (player.wood >= 1 || player.getFreeFenceCount() > 0) {
-      choices.push('Build Fences')
-    }
-    if (player.canRenovate() && (player.wood >= 1 || player.getFreeFenceCount() > 0)) {
-      choices.push('Renovate then Fences')
-    }
-
-    if (choices.length === 0) {
+    if (!player.canRenovate() && player.wood < 1 && player.getFreeFenceCount() <= 0) {
       this.log.add({
         template: '{player} cannot renovate or build fences',
         args: { player },
@@ -1958,9 +1964,20 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
-    choices.push('Do Nothing')
-
-    const selection = this.choose(player, choices, {
+    const selection = this.choose(player, () => {
+      const choices = []
+      if (player.canRenovate()) {
+        choices.push('Renovate')
+      }
+      if (player.wood >= 1 || player.getFreeFenceCount() > 0) {
+        choices.push('Build Fences')
+      }
+      if (player.canRenovate() && (player.wood >= 1 || player.getFreeFenceCount() > 0)) {
+        choices.push('Renovate then Fences')
+      }
+      choices.push('Do Nothing')
+      return choices
+    }, {
       title: 'Choose action',
       min: 1,
       max: 1,
@@ -2464,18 +2481,20 @@ class AgricolaActionManager extends BaseActionManager {
       }
     }
 
-    const rooms = player.getRoomCount()
-    const choices = [
-      `Pay 1 food for ${rooms} stone`,
-      'Skip',
-    ]
-    const selection = this.choose(player, choices, {
+    const selection = this.choose(player, () => {
+      const rooms = player.getRoomCount()
+      return [
+        `Pay 1 food for ${rooms} stone`,
+        'Skip',
+      ]
+    }, {
       title: `${card.name}: Pay food for stone?`,
       min: 1,
       max: 1,
     })
 
     if (selection[0] !== 'Skip') {
+      const rooms = player.getRoomCount()
       player.payCost({ food: 1 })
       player.addResource('stone', rooms)
       this.log.add({
@@ -2885,13 +2904,19 @@ class AgricolaActionManager extends BaseActionManager {
    */
   offerFacadesCarving(player, card, maxExchange) {
     const maxAffordable = Math.min(maxExchange, player.food)
-    const choices = []
-    for (let i = 1; i <= maxAffordable; i++) {
-      choices.push(`Exchange ${i} food for ${i} bonus point${i > 1 ? 's' : ''}`)
+    if (maxAffordable <= 0) {
+      return
     }
-    choices.push('Skip')
 
-    const selection = this.choose(player, choices, {
+    const selection = this.choose(player, () => {
+      const curMax = Math.min(maxExchange, player.food)
+      const choices = []
+      for (let i = 1; i <= curMax; i++) {
+        choices.push(`Exchange ${i} food for ${i} bonus point${i > 1 ? 's' : ''}`)
+      }
+      choices.push('Skip')
+      return choices
+    }, {
       title: `${card.name}: Exchange food for bonus points?`,
       min: 1,
       max: 1,
@@ -2942,19 +2967,24 @@ class AgricolaActionManager extends BaseActionManager {
    * Offer to exchange 1/2/3 grain for 3 food and 0/1/2 bonus points (Beer Keg).
    */
   offerBeerKeg(player, card) {
-    const choices = []
-    if (player.grain >= 1) {
-      choices.push('Exchange 1 grain for 3 food')
+    if (player.grain < 1) {
+      return
     }
-    if (player.grain >= 2) {
-      choices.push('Exchange 2 grain for 3 food and 1 bonus point')
-    }
-    if (player.grain >= 3) {
-      choices.push('Exchange 3 grain for 3 food and 2 bonus points')
-    }
-    choices.push('Skip')
 
-    const selection = this.choose(player, choices, {
+    const selection = this.choose(player, () => {
+      const choices = []
+      if (player.grain >= 1) {
+        choices.push('Exchange 1 grain for 3 food')
+      }
+      if (player.grain >= 2) {
+        choices.push('Exchange 2 grain for 3 food and 1 bonus point')
+      }
+      if (player.grain >= 3) {
+        choices.push('Exchange 3 grain for 3 food and 2 bonus points')
+      }
+      choices.push('Skip')
+      return choices
+    }, {
       title: `${card.name}: Exchange grain for food?`,
       min: 1,
       max: 1,
@@ -3012,21 +3042,24 @@ class AgricolaActionManager extends BaseActionManager {
    * Offer to pay 1 grain to breed one type of animal (Silage).
    */
   offerSilage(player, card) {
-    const choices = []
     const animalTypes = ['sheep', 'boar', 'cattle']
-    for (const type of animalTypes) {
-      if (player.getTotalAnimals(type) >= 2 && player.canPlaceAnimals(type, 1)) {
-        choices.push(`Pay 1 grain to breed ${type}`)
-      }
-    }
-
-    if (choices.length === 0) {
+    const hasBreedable = animalTypes.some(type =>
+      player.getTotalAnimals(type) >= 2 && player.canPlaceAnimals(type, 1)
+    )
+    if (!hasBreedable) {
       return
     }
 
-    choices.push('Skip')
-
-    const selection = this.choose(player, choices, {
+    const selection = this.choose(player, () => {
+      const choices = []
+      for (const type of animalTypes) {
+        if (player.getTotalAnimals(type) >= 2 && player.canPlaceAnimals(type, 1)) {
+          choices.push(`Pay 1 grain to breed ${type}`)
+        }
+      }
+      choices.push('Skip')
+      return choices
+    }, {
       title: `${card.name}: Pay grain to breed animals?`,
       min: 1,
       max: 1,
@@ -3135,10 +3168,12 @@ class AgricolaActionManager extends BaseActionManager {
         break
       }
 
-      const spaceChoices = currentValidSpaces.map(s => `${s.row},${s.col}`)
-      spaceChoices.push('Done building rooms')
-
-      const selection = this.choose(player, spaceChoices, {
+      const selection = this.choose(player, () => {
+        const curSpaces = player.getValidRoomBuildSpaces()
+        const spaceChoices = curSpaces.map(s => `${s.row},${s.col}`)
+        spaceChoices.push('Done building rooms')
+        return spaceChoices
+      }, {
         title: `Build a room (5 ${roomType} + 2 reed)`,
         min: 1,
         max: 1,
@@ -3175,20 +3210,11 @@ class AgricolaActionManager extends BaseActionManager {
    * Animal Market action: Choose sheep (+1 food) or cattle (costs 1 food)
    */
   animalMarket(player) {
-    const choices = []
-
-    // Sheep option: get sheep + 1 food
-    if (player.canPlaceAnimals('sheep', 1)) {
-      choices.push('Take 1 sheep and 1 food')
-    }
-
-    // Cattle option: pay 1 food for cattle
+    const canSheep = player.canPlaceAnimals('sheep', 1)
     const canPayFood = player.food >= 1 || this.game.getAnytimeFoodConversionOptions(player).length > 0
-    if (canPayFood && player.canPlaceAnimals('cattle', 1)) {
-      choices.push('Pay 1 food for 1 cattle')
-    }
+    const canCattle = canPayFood && player.canPlaceAnimals('cattle', 1)
 
-    if (choices.length === 0) {
+    if (!canSheep && !canCattle) {
       this.log.add({
         template: '{player} cannot take any animals from the market',
         args: { player },
@@ -3196,9 +3222,18 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
-    choices.push('Do nothing')
-
-    const selection = this.choose(player, choices, {
+    const selection = this.choose(player, () => {
+      const choices = []
+      if (player.canPlaceAnimals('sheep', 1)) {
+        choices.push('Take 1 sheep and 1 food')
+      }
+      const curCanPay = player.food >= 1 || this.game.getAnytimeFoodConversionOptions(player).length > 0
+      if (curCanPay && player.canPlaceAnimals('cattle', 1)) {
+        choices.push('Pay 1 food for 1 cattle')
+      }
+      choices.push('Do nothing')
+      return choices
+    }, {
       title: 'Animal Market',
       min: 1,
       max: 1,
