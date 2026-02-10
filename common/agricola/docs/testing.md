@@ -219,6 +219,79 @@ t.testBoard(game, {
 })
 ```
 
+## Score Assertions
+
+Use the `score` field in `testBoard` to assert a player's total score. This
+calls `player.calculateScore()` dynamically, including all bonus point hooks
+like `getEndGamePoints`. This is the right way to test scoring cards.
+
+```js
+t.testBoard(game, {
+  dennis: {
+    score: 12,
+    minorImprovements: ['debt-security-a046'],
+    majorImprovements: ['hearth-1', 'hearth-2'],
+  },
+})
+```
+
+Note: `bonusPoints` in `testBoard` checks the static property, not dynamic
+hooks. Use `score` for cards with `getEndGamePoints`.
+
+## Occupied Action Space Override
+
+Cards with `canUseOccupiedActionSpace` hooks let a player use an action space
+that another player has already occupied. In tests, have one player take the
+space first, then the card owner takes it despite it being occupied.
+
+```js
+// micah occupies Lessons A
+t.choose(game, 'Lessons A')
+t.choose(game, 'Frame Builder')
+
+// dennis takes Lessons A despite occupied (Forest School override)
+t.choose(game, 'Lessons A')
+t.choose(game, 'Wall Builder')
+```
+
+## Multi-Room Building
+
+Cards with `modifyMultiRoomCost` enable building multiple rooms at once. When
+the card is played, "Build 2 Rooms" / "Build 3 Rooms" options appear alongside
+"Build Room" in Farm Expansion. Each room location is chosen separately.
+
+```js
+t.choose(game, 'Farm Expansion')
+t.choose(game, 'Build 2 Rooms')
+t.choose(game, '0,1')  // first room location
+t.choose(game, '1,1')  // second room location
+```
+
+## Minor Improvement Conversions
+
+Minor improvements with `bakingConversion` integrate with the baking system.
+When a player has such a card and takes "Grain Utilization" (no fields → skips
+sow, goes straight to baking), baking choices appear automatically.
+
+Minor improvements with `anytimeConversions` appear during harvest feeding as
+conversion options (e.g. `'Oriental Fireplace: vegetables → 4 food'`).
+
+## Per-Player `occupationsPlayed`
+
+The `occupationsPlayed` counter in `setBoard` is not auto-derived from the
+`occupations` array length. Set it explicitly when the occupation cost matters
+(first occupation is free, subsequent ones cost food).
+
+```js
+t.setBoard(game, {
+  dennis: {
+    occupations: ['frame-builder-a123'],
+    occupationsPlayed: 1,  // next occupation will cost food
+    hand: ['wall-builder-a111'],
+  },
+})
+```
+
 ## Example Tests by Hook
 
 ### onUseMultipleSpaces (triggered when 2+ unused spaces become used)

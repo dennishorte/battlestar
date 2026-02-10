@@ -1077,9 +1077,11 @@ Agricola.prototype.getAvailableActions = function(player) {
   for (const actionId of this.state.activeActions) {
     const state = this.state.actionSpaces[actionId]
 
-    // Action must not be occupied
+    // Action must not be occupied (unless a card overrides this)
     if (state.occupiedBy) {
-      continue
+      if (!this.playerCanUseOccupiedSpace(player, actionId, state)) {
+        continue
+      }
     }
 
     // Action must not be blocked by linked space
@@ -1095,6 +1097,23 @@ Agricola.prototype.getAvailableActions = function(player) {
   }
 
   return available
+}
+
+Agricola.prototype.playerCanUseOccupiedSpace = function(player, actionId, state) {
+  const action = res.getActionById(actionId)
+  if (!action) {
+    return false
+  }
+
+  for (const card of player.getActiveCards()) {
+    if (card.hasHook('canUseOccupiedActionSpace')) {
+      if (card.callHook('canUseOccupiedActionSpace', this, player, actionId, action, state)) {
+        return true
+      }
+    }
+  }
+
+  return false
 }
 
 Agricola.prototype.canTakeAction = function(player, actionId) {
@@ -1526,6 +1545,41 @@ Agricola.prototype.getAnytimeFoodConversionOptions = function(player) {
     }
   }
 
+  // Card-based anytime conversions (e.g., Oriental Fireplace)
+  for (const cardId of player.playedMinorImprovements) {
+    const card = this.cards.byId(cardId)
+    if (!card || !card.definition.anytimeConversions) {
+      continue
+    }
+    for (const conv of card.definition.anytimeConversions) {
+      if (['sheep', 'boar', 'cattle'].includes(conv.from)) {
+        if (player.getTotalAnimals(conv.from) > 0) {
+          options.push({
+            type: 'card-cook',
+            cardName: card.name,
+            resource: conv.from,
+            count: 1,
+            food: conv.rate,
+            description: `${card.name}: ${conv.from} → ${conv.rate} food`,
+          })
+        }
+      }
+      else {
+        const resourceKey = conv.from
+        if ((player[resourceKey] || 0) > 0) {
+          options.push({
+            type: 'card-convert',
+            cardName: card.name,
+            resource: resourceKey,
+            count: 1,
+            food: conv.rate,
+            description: `${card.name}: ${resourceKey} → ${conv.rate} food`,
+          })
+        }
+      }
+    }
+  }
+
   return options
 }
 
@@ -1557,6 +1611,22 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
     this.log.add({
       template: '{player} uses {improvement} to convert {resource} to {food} food',
       args: { player, improvement: option.improvement, resource: option.resource, food: option.food },
+    })
+  }
+  else if (option.type === 'card-cook') {
+    player.removeAnimals(option.resource, option.count)
+    player.addResource('food', option.food)
+    this.log.add({
+      template: '{player} uses {card} to cook {count} {resource} for {food} food',
+      args: { player, card: option.cardName, count: option.count, resource: option.resource, food: option.food },
+    })
+  }
+  else if (option.type === 'card-convert') {
+    player.removeResource(option.resource, option.count)
+    player.addResource('food', option.food)
+    this.log.add({
+      template: '{player} uses {card} to convert {resource} to {food} food',
+      args: { player, card: option.cardName, resource: option.resource, food: option.food },
     })
   }
 }

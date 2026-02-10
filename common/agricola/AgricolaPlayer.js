@@ -301,6 +301,29 @@ class AgricolaPlayer extends BasePlayer {
     return cost
   }
 
+  getMultiRoomCost(count) {
+    const baseCost = this.getRoomCost()
+    const totalCost = {}
+    for (const [resource, amount] of Object.entries(baseCost)) {
+      totalCost[resource] = amount * count
+    }
+    return this.applyMultiRoomCostModifiers(totalCost, count, this.roomType)
+  }
+
+  applyMultiRoomCostModifiers(totalCost, roomCount, roomType) {
+    let cost = { ...totalCost }
+    for (const card of this.getActiveCards()) {
+      if (card.hasHook('modifyMultiRoomCost')) {
+        cost = card.callHook('modifyMultiRoomCost', this, cost, roomCount, roomType)
+      }
+    }
+    return cost
+  }
+
+  hasMultiRoomDiscount() {
+    return this.getActiveCards().some(card => card.hasHook('modifyMultiRoomCost'))
+  }
+
   // ---------------------------------------------------------------------------
   // Renovation methods
   // ---------------------------------------------------------------------------
@@ -1772,9 +1795,15 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   hasBakingAbility() {
-    return this.majorImprovements.some(id => {
+    if (this.majorImprovements.some(id => {
       const imp = this.cards.byId(id)
       return imp && imp.abilities && imp.abilities.canBake
+    })) {
+      return true
+    }
+    return this.playedMinorImprovements.some(id => {
+      const card = this.cards.byId(id)
+      return card && card.definition.bakingConversion
     })
   }
 
@@ -1793,6 +1822,16 @@ class AgricolaPlayer extends BasePlayer {
       const imp = this.cards.byId(id)
       if (imp && imp.abilities && imp.abilities.canBake) {
         return imp
+      }
+    }
+    // Fall back to minor improvement with bakingConversion
+    for (const id of this.playedMinorImprovements) {
+      const card = this.cards.byId(id)
+      if (card && card.definition.bakingConversion) {
+        return {
+          name: card.name,
+          abilities: { canBake: true, bakingRate: card.definition.bakingConversion.rate },
+        }
       }
     }
     return null

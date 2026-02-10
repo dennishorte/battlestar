@@ -30,6 +30,8 @@ WheelPlow, StoneCompany, SwimmingClass, Claypipe.
 
 | Card | Hook | Issue |
 |------|------|-------|
+| Bassinet | `allowsBassinetPlacement` | Extra worker placement on first non-accumulating space; fundamentally changes action flow |
+| ClearingSpade | `allowsAnytimeCropMove` | "Anytime" crop move between fields; needs new interaction pattern |
 | DutchWindmill | `onBake` | Needs baking in the round after a harvest round (multi-round test) |
 | InterimStorage | `onPlay`, `onAction`, `onRoundStart` | Multi-round store/release cycle; `player.interimStorage` not in testBoard |
 | PaperKnife | `onPlay` | Random occupation selection; non-deterministic |
@@ -37,18 +39,8 @@ WheelPlow, StoneCompany, SwimmingClass, Claypipe.
 
 ## Pure Function / Property Tests (no test file)
 
-These cards have no test file. They expose static properties or pure methods
-that would need game-flow E2E tests to exercise meaningfully.
+(none currently)
 
-| Card | What Needs Testing |
-|------|-------------------|
-| Bassinet | `allowsBassinetPlacement` flag — need E2E showing extra worker placement |
-| CarpentersHammer | `modifyMultiRoomCost` — need E2E building 2+ rooms at once |
-| ClearingSpade | `allowsAnytimeCropMove` flag — need E2E moving crops between fields |
-| DebtSecurity | `getEndGamePoints` — need E2E checking end-game scoring |
-| DrinkingTrough | `modifyPastureCapacity` — need E2E with animals exceeding base capacity |
-| ForestSchool | `modifyOccupationCost` + `allowIgnoreLessonsOccupied` — need E2E playing occupation with wood |
-| LumberMill | `modifyImprovementCost` — need E2E building improvement with wood discount |
-| Manger | `getEndGamePoints` — need E2E checking end-game scoring |
-| OrientalFireplace | `anytimeConversions`, `bakingConversion` — need E2E converting goods |
-| SleepingCorner | `allowOccupiedFamilyGrowth` — need E2E using occupied Wish for Children |
+Previously in this section (now have E2E tests):
+CarpentersHammer, DebtSecurity, DrinkingTrough, ForestSchool, LumberMill,
+Manger, OrientalFireplace, SleepingCorner.

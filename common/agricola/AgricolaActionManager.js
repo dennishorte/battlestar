@@ -359,6 +359,22 @@ class AgricolaActionManager extends BaseActionManager {
     const canBuildRoom = player.canAffordRoom() && player.getValidRoomBuildSpaces().length > 0
     const canBuildStable = player.canAffordStable() && player.getValidStableBuildSpaces().length > 0
 
+    // Check for multi-room discount (e.g., Carpenter's Hammer)
+    const hasMultiRoom = canBuildRoom && player.hasMultiRoomDiscount()
+    const multiRoomOptions = []
+    if (hasMultiRoom) {
+      const availableSpaces = player.getValidRoomBuildSpaces().length
+      for (let count = 2; count <= availableSpaces; count++) {
+        const cost = player.getMultiRoomCost(count)
+        if (player.canAffordCost(cost)) {
+          multiRoomOptions.push(count)
+        }
+        else {
+          break
+        }
+      }
+    }
+
     if (!canBuildRoom && !canBuildStable) {
       this.log.add({
         template: '{player} cannot afford to build anything',
@@ -371,6 +387,9 @@ class AgricolaActionManager extends BaseActionManager {
     const choices = []
     if (canBuildRoom) {
       choices.push('Build Room')
+    }
+    for (const count of multiRoomOptions) {
+      choices.push(`Build ${count} Rooms`)
     }
     if (canBuildStable) {
       choices.push('Build Stable')
@@ -393,6 +412,14 @@ class AgricolaActionManager extends BaseActionManager {
       return true
     }
 
+    // Handle multi-room building
+    const multiMatch = choice.match(/^Build (\d+) Rooms$/)
+    if (multiMatch) {
+      const count = parseInt(multiMatch[1])
+      this.buildMultipleRooms(player, count)
+      return true
+    }
+
     if (choice === 'Build Room' || choice === 'Build Room and Stable') {
       this.buildRoom(player)
     }
@@ -402,6 +429,49 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     return true
+  }
+
+  buildMultipleRooms(player, count) {
+    const cost = player.getMultiRoomCost(count)
+    player.payCost(cost)
+    const roomType = player.roomType
+
+    for (let i = 0; i < count; i++) {
+      const validSpaces = player.getValidRoomBuildSpaces()
+      if (validSpaces.length === 0) {
+        break
+      }
+
+      const spaceChoices = validSpaces.map(s => `${s.row},${s.col}`)
+      const result = this.game.requestInputSingle({
+        type: 'select',
+        actor: player.name,
+        title: `Choose where to build room ${i + 1} of ${count}`,
+        choices: spaceChoices,
+        min: 1,
+        max: 1,
+        allowsAction: 'build-room',
+        validSpaces: validSpaces,
+      })
+
+      let row, col
+      if (result.action === 'build-room') {
+        row = result.row
+        col = result.col
+      }
+      else {
+        [row, col] = result[0].split(',').map(Number)
+      }
+
+      player.buildRoom(row, col)
+      this.log.add({
+        template: '{player} builds a {type} room at ({row},{col})',
+        args: { player, type: roomType, row, col },
+      })
+    }
+
+    // Call onBuildRoom hooks for the multi-room build
+    this.callOnBuildRoomHooks(player, roomType)
   }
 
   buildRoom(player) {
@@ -1193,15 +1263,37 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     // Occupation cost: first is free, subsequent cost 1 food each
-    const cost = player.occupationsPlayed === 0 ? 0 : 1
+    const baseFoodCost = player.occupationsPlayed === 0 ? 0 : 1
+    let costObj = baseFoodCost > 0 ? { food: baseFoodCost } : {}
 
-    if (cost > 0 && player.food < cost) {
+    // Apply modifyOccupationCost hooks (e.g., ForestSchool: food → woodOrFood)
+    for (const card of player.getActiveCards()) {
+      if (card.hasHook('modifyOccupationCost')) {
+        costObj = card.callHook('modifyOccupationCost', player, costObj)
+      }
+    }
+
+    const cost = baseFoodCost // Keep for display/gating
+    const hasWoodOrFood = costObj.woodOrFood > 0
+
+    if (cost > 0 && !hasWoodOrFood && player.food < cost) {
       // Relax gate: allow entry if anytime conversions can produce food
       const canConvert = this.game.getAnytimeFoodConversionOptions(player).length > 0
       if (!canConvert) {
         this.log.add({
           template: '{player} cannot afford to play an occupation (needs {cost} food)',
           args: { player, cost },
+        })
+        return false
+      }
+    }
+
+    if (cost > 0 && hasWoodOrFood && player.food < costObj.woodOrFood && player.wood < costObj.woodOrFood) {
+      const canConvert = this.game.getAnytimeFoodConversionOptions(player).length > 0
+      if (!canConvert) {
+        this.log.add({
+          template: '{player} cannot afford to play an occupation',
+          args: { player },
         })
         return false
       }
@@ -1252,9 +1344,38 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
-    // Pay the food cost
+    // Pay the occupation cost
     if (cost > 0) {
-      player.payCost({ food: cost })
+      if (hasWoodOrFood) {
+        // Player can pay with wood or food (e.g., Forest School)
+        const amount = costObj.woodOrFood
+        const canPayFood = player.food >= amount
+        const canPayWood = player.wood >= amount
+
+        if (canPayFood && canPayWood) {
+          const payChoices = [`Pay ${amount} food`, `Pay ${amount} wood`]
+          const paySelection = this.choose(player, payChoices, {
+            title: 'Choose payment for occupation',
+            min: 1,
+            max: 1,
+          })
+          if (paySelection[0] === `Pay ${amount} wood`) {
+            player.payCost({ wood: amount })
+          }
+          else {
+            player.payCost({ food: amount })
+          }
+        }
+        else if (canPayWood) {
+          player.payCost({ wood: amount })
+        }
+        else {
+          player.payCost({ food: amount })
+        }
+      }
+      else {
+        player.payCost({ food: cost })
+      }
     }
 
     // Play the card (moves from hand to playedOccupations)
