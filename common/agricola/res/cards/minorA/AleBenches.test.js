@@ -7,7 +7,7 @@ describe('Ale-Benches', () => {
       firstPlayer: 'dennis',
       dennis: {
         grain: 2,
-        occupations: ['lodger-a127', 'freshman-a097'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
         minorImprovements: ['ale-benches-a029'],
       },
     })
@@ -27,7 +27,7 @@ describe('Ale-Benches', () => {
         grain: 2,       // 2 + 1 (grain seeds) - 1 (ale benches) = 2
         food: 2,        // 0 + 2 (day laborer) = 2
         bonusPoints: 1,
-        occupations: ['lodger-a127', 'freshman-a097'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
         minorImprovements: ['ale-benches-a029'],
       },
       micah: {
@@ -43,7 +43,7 @@ describe('Ale-Benches', () => {
     t.setBoard(game, {
       firstPlayer: 'dennis',
       dennis: {
-        occupations: ['lodger-a127', 'freshman-a097'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
         minorImprovements: ['ale-benches-a029'],
       },
     })
@@ -62,7 +62,7 @@ describe('Ale-Benches', () => {
       dennis: {
         food: 2,
         reed: 1,
-        occupations: ['lodger-a127', 'freshman-a097'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
         minorImprovements: ['ale-benches-a029'],
       },
       micah: {

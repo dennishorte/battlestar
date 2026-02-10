@@ -75,7 +75,7 @@ TestUtil.fixture = function(options = {}) {
     playerOptions: {
       shuffleSeats: false,
     },
-    cardSets: options.cardSets || ['minorImprovementA', 'occupationA'],
+    cardSets: options.cardSets || ['minorImprovementA', 'occupationA', 'test'],
   }, options)
 
   options.players = options.players.slice(0, options.numPlayers)
