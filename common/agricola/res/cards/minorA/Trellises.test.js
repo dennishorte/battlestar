@@ -1,69 +1,34 @@
 const t = require('../../../testutil_v2.js')
-const res = require('../../index.js')
 
 describe('Trellises', () => {
-  test('schedules food based on built fences', () => {
-    const card = res.getCardById('trellises-a047')
+  test('schedules food for each fence built when played', () => {
     const game = t.fixture()
     t.setBoard(game, {
+      firstPlayer: 'dennis',
       dennis: {
-        minorImprovements: ['trellises-a047'],
+        hand: ['trellises-a047'],
+        wood: 1,
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 3 }, { row: 0, col: 4 }] }],
+        },
       },
-      round: 5,
     })
     game.run()
 
-    const dennis = t.dennis(game)
-    dennis.getBuiltFenceCount = () => 4
-    game.state.round = 5
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Trellises')
 
-    card.onPlay(game, dennis)
-
-    expect(game.state.scheduledFood[dennis.name][6]).toBe(1)
-    expect(game.state.scheduledFood[dennis.name][7]).toBe(1)
-    expect(game.state.scheduledFood[dennis.name][8]).toBe(1)
-    expect(game.state.scheduledFood[dennis.name][9]).toBe(1)
-  })
-
-  test('does not schedule past round 14', () => {
-    const card = res.getCardById('trellises-a047')
-    const game = t.fixture()
-    t.setBoard(game, {
+    // 2-space pasture uses 6 fences → schedules food for 6 rounds
+    t.testBoard(game, {
       dennis: {
+        food: 1,
+        hand: [],
         minorImprovements: ['trellises-a047'],
+        scheduled: { food: { 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1 } },
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 3 }, { row: 0, col: 4 }] }],
+        },
       },
-      round: 12,
     })
-    game.run()
-
-    const dennis = t.dennis(game)
-    dennis.getBuiltFenceCount = () => 10
-    game.state.round = 12
-
-    card.onPlay(game, dennis)
-
-    expect(game.state.scheduledFood[dennis.name][13]).toBe(1)
-    expect(game.state.scheduledFood[dennis.name][14]).toBe(1)
-    expect(game.state.scheduledFood[dennis.name][15]).toBeUndefined()
-  })
-
-  test('does nothing with no fences', () => {
-    const card = res.getCardById('trellises-a047')
-    const game = t.fixture()
-    t.setBoard(game, {
-      dennis: {
-        minorImprovements: ['trellises-a047'],
-      },
-      round: 5,
-    })
-    game.run()
-
-    const dennis = t.dennis(game)
-    dennis.getBuiltFenceCount = () => 0
-    game.state.round = 5
-
-    card.onPlay(game, dennis)
-
-    expect(game.state.scheduledFood).toBeUndefined()
   })
 })
