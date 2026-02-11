@@ -1,5 +1,6 @@
 const { BaseActionManager } = require('../lib/game/index.js')
 const res = require('./res/index.js')
+const util = require('../lib/util')
 
 
 class AgricolaActionManager extends BaseActionManager {
@@ -3597,6 +3598,58 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     return true
+  }
+
+  /**
+   * Moonshine: randomly select an occupation from hand, then play it for 2 food or pass it left.
+   */
+  moonshineEffect(player, card) {
+    const occupationsInHand = player.hand.filter(cardId => {
+      const c = this.game.cards.byId(cardId)
+      return c && c.type === 'occupation'
+    })
+
+    if (occupationsInHand.length === 0) {
+      return
+    }
+
+    const chosenId = util.array.select(occupationsInHand, this.game.random)
+    const chosenCard = this.game.cards.byId(chosenId)
+
+    const choices = [`Play ${chosenCard.name} for 2 food`, `Give ${chosenCard.name} to left player`]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Play or pass the occupation?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0].startsWith('Play')) {
+      player.payCost({ food: 2 })
+      player.playCard(chosenId)
+      this._recordCardPlayed(player, chosenCard)
+
+      this.log.add({
+        template: '{player} plays {card} for 2 food (Moonshine)',
+        args: { player, card: chosenCard },
+      })
+
+      if (chosenCard.hasHook('onPlay')) {
+        chosenCard.callHook('onPlay', this.game, player)
+      }
+
+      this.game.registerCardActionSpace(player, chosenCard)
+      this.game.callPlayerCardHook(player, 'onPlayOccupation')
+    }
+    else {
+      const leftPlayer = this.game.players.leftOf(player)
+      const leftHandZone = this.game.zones.byPlayer(leftPlayer, 'hand')
+      chosenCard.moveTo(leftHandZone)
+
+      this.log.add({
+        template: '{player} gives {card} to {playerNext} (Moonshine)',
+        args: { player, card: chosenCard, playerNext: leftPlayer },
+      })
+    }
   }
 
   /**
