@@ -31,7 +31,6 @@ WheelPlow, StoneCompany, SwimmingClass, Claypipe.
 | Card | Hook | Issue |
 |------|------|-------|
 | ClearingSpade | `allowsAnytimeCropMove` | "Anytime" crop move between fields; needs new interaction pattern |
-| PaperKnife | `onPlay` | Random occupation selection; non-deterministic |
 
 ## Pure Function / Property Tests (no test file)
 
