@@ -400,7 +400,7 @@ TestUtil.setBoard = function(game, state) {
 
       // Card prereqs — skip negative prereqs (noFields, noAnimals, etc.) since
       // those are play-time conditions that may conflict with the test board state
-      const negativePrereqs = ['noFields', 'noGrainFields', 'noOccupations', 'noAnimals', 'noSheep', 'noGrain']
+      const negativePrereqs = ['noFields', 'noGrainFields', 'noOccupations', 'noAnimals', 'noSheep', 'noGrain', 'maxRound']
       const playedCardFields = ['occupations', 'minorImprovements', 'majorImprovements']
       for (const field of playedCardFields) {
         if (playerState[field]) {
@@ -486,6 +486,22 @@ TestUtil.setPlayerBoard = function(game, playerName, playerState) {
   // Set pet
   if (playerState.pet !== undefined) {
     player.pet = playerState.pet
+  }
+
+  // Set scheduled deliveries
+  if (playerState.scheduled) {
+    for (const [type, value] of Object.entries(playerState.scheduled)) {
+      const stateKey = `scheduled${type[0].toUpperCase()}${type.slice(1)}`
+      if (!game.state[stateKey]) {
+        game.state[stateKey] = {}
+      }
+      if (Array.isArray(value)) {
+        game.state[stateKey][playerName] = [...value]
+      }
+      else {
+        game.state[stateKey][playerName] = { ...value }
+      }
+    }
   }
 }
 
@@ -790,7 +806,7 @@ TestUtil.testPlayerBoard = function(game, playerName, expected) {
 
   // Scheduled deliveries (optional — only check if specified)
   // Resources use { round: amount } format, events use [round, ...] format
-  const SCHEDULED_EVENT_TYPES = ['plows', 'freeStables', 'freeOccupation', 'woodWithMinor', 'plowman']
+  const SCHEDULED_EVENT_TYPES = ['plows', 'freeStables', 'freeOccupation', 'woodWithMinor', 'plowman', 'stoneRooms']
   if (expected.scheduled !== undefined) {
     for (const [type, expValue] of Object.entries(expected.scheduled)) {
       const stateKey = `scheduled${type[0].toUpperCase()}${type.slice(1)}`

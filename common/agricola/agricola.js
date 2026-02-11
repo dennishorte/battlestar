@@ -609,6 +609,13 @@ Agricola.prototype.collectScheduledResources = function(player) {
     this.offerScheduledPlow(player)
     this.state.scheduledPlows[player.name] = this.state.scheduledPlows[player.name].filter(r => r !== round)
   }
+
+  // Scheduled stone rooms (Hawktower)
+  if (this.state.scheduledStoneRooms?.[player.name]?.includes(round)) {
+    this.offerScheduledStoneRoom(player)
+    this.state.scheduledStoneRooms[player.name] =
+      this.state.scheduledStoneRooms[player.name].filter(r => r !== round)
+  }
 }
 
 /**
@@ -645,6 +652,70 @@ Agricola.prototype.offerScheduledPlow = function(player) {
 
   if (selection[0] === 'Plow 1 field (Handplow)') {
     this.actions.plowField(player, { immediate: true })
+  }
+}
+
+/**
+ * Offer player a scheduled free stone room (Hawktower)
+ */
+Agricola.prototype.offerScheduledStoneRoom = function(player) {
+  if (player.roomType !== 'stone') {
+    this.log.add({
+      template: '{player} discards the Hawktower room (not in stone house)',
+      args: { player },
+    })
+    return
+  }
+
+  const validSpaces = player.getValidRoomBuildSpaces()
+  if (validSpaces.length === 0) {
+    this.log.add({
+      template: '{player} has no valid space for the Hawktower room',
+      args: { player },
+    })
+    return
+  }
+
+  const choices = ['Build free stone room (Hawktower)', 'Skip']
+  const selection = this.actions.choose(player, choices, {
+    title: 'Hawktower: Build free stone room?',
+    min: 1,
+    max: 1,
+  })
+
+  if (selection[0] === 'Build free stone room (Hawktower)') {
+    const spaceChoices = validSpaces.map(s => `${s.row},${s.col}`)
+
+    const selector = {
+      type: 'select',
+      actor: player.name,
+      title: 'Choose where to build the stone room (Hawktower)',
+      choices: spaceChoices,
+      min: 1,
+      max: 1,
+      allowsAction: 'build-room',
+      validSpaces: validSpaces,
+    }
+
+    const result = this.requestInputSingle(selector)
+
+    let row, col
+    if (result.action === 'build-room') {
+      row = result.row
+      col = result.col
+    }
+    else {
+      [row, col] = result[0].split(',').map(Number)
+    }
+
+    player.buildRoom(row, col)
+
+    this.log.add({
+      template: '{player} builds a free stone room at ({row},{col}) via Hawktower',
+      args: { player, row, col },
+    })
+
+    this.callPlayerCardHook(player, 'onBuildRoom', 'stone')
   }
 }
 

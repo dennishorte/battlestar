@@ -284,6 +284,22 @@ export default {
         }
       }
 
+      // Scheduled stone rooms (Hawktower)
+      const stoneRooms = state.scheduledStoneRooms?.[playerName]
+      if (stoneRooms && stoneRooms.length > 0) {
+        for (const round of stoneRooms) {
+          if (round >= currentRound) {
+            items.push({
+              round,
+              type: 'stoneRoom',
+              icon: '🏠',
+              label: 'stone room',
+              amount: 1,
+            })
+          }
+        }
+      }
+
       // Sort by round
       items.sort((a, b) => a.round - b.round)
       return items
