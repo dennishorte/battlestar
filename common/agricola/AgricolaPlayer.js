@@ -2545,13 +2545,21 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
 
+    // --- Building resource checks ---
+    if (prereqs.buildingResourcesInSupply !== undefined) {
+      const total = this.wood + this.clay + this.reed + this.stone
+      if (total < prereqs.buildingResourcesInSupply) {
+        return false
+      }
+    }
+
     // --- Deferred prereq checks (complex game-state checks not yet implemented) ---
     // TODO: bakingImprovement, cookingImprovement, hasPotteryOrUpgrade,
     //   hasFireplaceAndCookingHearth, returnFireplaceOrCookingHearth, returnMajor,
     //   fieldsInLShape, personOnAction, personYetToPlace,
     //   noPeopleInHouse, fencedStables, woodGteRound, pastureSpacesGteRound,
     //   cardsInPlay, maxCardsInPlay, exactlyAdults, majorImprovement (specific card),
-    //   roundsLeftGreaterThanUnusedSpaces, buildingResourcesInSupply
+    //   roundsLeftGreaterThanUnusedSpaces
 
     return true
   }

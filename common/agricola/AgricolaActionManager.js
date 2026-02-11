@@ -2256,6 +2256,116 @@ class AgricolaActionManager extends BaseActionManager {
     }
   }
 
+  offerNewPurchase(player, card) {
+    const choices = []
+    if (player.food >= 2) {
+      choices.push('Buy 1 grain for 2 food')
+    }
+    if (player.food >= 4) {
+      choices.push('Buy 1 vegetable for 4 food')
+    }
+    choices.push('Skip')
+
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Buy crops before harvest?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] === 'Buy 1 grain for 2 food') {
+      player.payCost({ food: 2 })
+      player.addResource('grain', 1)
+      this.log.add({
+        template: '{player} buys 1 grain for 2 food via {card}',
+        args: { player, card: card },
+      })
+      // After buying grain, offer vegetable if affordable
+      if (player.food >= 4) {
+        const selection2 = this.choose(player, ['Buy 1 vegetable for 4 food', 'Skip'], {
+          title: `${card.name}: Also buy vegetable?`,
+          min: 1,
+          max: 1,
+        })
+        if (selection2[0] !== 'Skip') {
+          player.payCost({ food: 4 })
+          player.addResource('vegetables', 1)
+          this.log.add({
+            template: '{player} buys 1 vegetable for 4 food via {card}',
+            args: { player, card: card },
+          })
+        }
+      }
+    }
+    else if (selection[0] === 'Buy 1 vegetable for 4 food') {
+      player.payCost({ food: 4 })
+      player.addResource('vegetables', 1)
+      this.log.add({
+        template: '{player} buys 1 vegetable for 4 food via {card}',
+        args: { player, card: card },
+      })
+      // After buying vegetable, offer grain if affordable
+      if (player.food >= 2) {
+        const selection2 = this.choose(player, ['Buy 1 grain for 2 food', 'Skip'], {
+          title: `${card.name}: Also buy grain?`,
+          min: 1,
+          max: 1,
+        })
+        if (selection2[0] !== 'Skip') {
+          player.payCost({ food: 2 })
+          player.addResource('grain', 1)
+          this.log.add({
+            template: '{player} buys 1 grain for 2 food via {card}',
+            args: { player, card: card },
+          })
+        }
+      }
+    }
+  }
+
+  offerValueAssets(player, card) {
+    const choices = []
+    if (player.food >= 1) {
+      choices.push('Buy 1 wood for 1 food')
+      choices.push('Buy 1 clay for 1 food')
+    }
+    if (player.food >= 2) {
+      choices.push('Buy 1 reed for 2 food')
+      choices.push('Buy 1 stone for 2 food')
+    }
+    choices.push('Skip')
+
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Buy building resource after harvest?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] === 'Buy 1 wood for 1 food') {
+      player.payCost({ food: 1 })
+      player.addResource('wood', 1)
+    }
+    else if (selection[0] === 'Buy 1 clay for 1 food') {
+      player.payCost({ food: 1 })
+      player.addResource('clay', 1)
+    }
+    else if (selection[0] === 'Buy 1 reed for 2 food') {
+      player.payCost({ food: 2 })
+      player.addResource('reed', 1)
+    }
+    else if (selection[0] === 'Buy 1 stone for 2 food') {
+      player.payCost({ food: 2 })
+      player.addResource('stone', 1)
+    }
+
+    if (selection[0] !== 'Skip') {
+      const resource = selection[0].match(/Buy 1 (\w+)/)[1]
+      this.log.add({
+        template: '{player} buys 1 {resource} via {card}',
+        args: { player, resource, card: card },
+      })
+    }
+  }
+
   /**
    * Offer to buy additional animal (Animal Dealer)
    */

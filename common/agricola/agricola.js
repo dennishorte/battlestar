@@ -1323,6 +1323,9 @@ Agricola.prototype.harvestPhase = function() {
   this.feedingPhase()
   this.breedingPhase()
 
+  // Call onHarvestEnd hooks (e.g., ValueAssets offers to buy building resources)
+  this.callCardHook('onHarvestEnd')
+
   // Revised Edition rule:
   // - During breeding phase, you cannot eat/exchange animals
   // - After breeding in rounds 4, 7, 9, 11, 13: eating/exchanging IS allowed before next round
