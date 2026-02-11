@@ -452,7 +452,7 @@ Agricola.prototype.callRoundStartHooks = function() {
     this.collectScheduledResources(player)
 
     // Call onRoundStart hooks (hooks handle their own actions directly)
-    this.callPlayerCardHook(player, 'onRoundStart')
+    this.callPlayerCardHook(player, 'onRoundStart', this.state.round)
 
     // Check triggers
     this.checkCardTriggers(player)

@@ -31,7 +31,6 @@ WheelPlow, StoneCompany, SwimmingClass, Claypipe.
 | Card | Hook | Issue |
 |------|------|-------|
 | ClearingSpade | `allowsAnytimeCropMove` | "Anytime" crop move between fields; needs new interaction pattern |
-| InterimStorage | `onPlay`, `onAction`, `onRoundStart` | Multi-round store/release cycle; `player.interimStorage` not in testBoard |
 | PaperKnife | `onPlay` | Random occupation selection; non-deterministic |
 | WoodenShed | `onPlay` | `requiresMajorImprovementAction`; can't play via Meeting Place |
 
