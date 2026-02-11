@@ -1210,6 +1210,16 @@ Agricola.prototype.fieldPhase = function() {
   this.state.lastHarvestRound = this.state.round
 
   for (const player of this.players.all()) {
+    // Give players with crop-move ability a chance to rearrange before harvest
+    const anytimeActions = this.getAnytimeActions(player)
+    const hasCropMove = anytimeActions.some(a => a.type === 'crop-move')
+    if (hasCropMove) {
+      this.actions.choose(player, ['Harvest crops'], {
+        title: 'Use anytime actions before harvest?',
+        min: 1, max: 1,
+      })
+    }
+
     const result = player.harvestFields()
     const harvested = result.harvested
 
@@ -1681,12 +1691,73 @@ Agricola.prototype.getAnytimeActions = function(player) {
     }
   }
 
+  // Non-food anytime actions (e.g., Clearing Spade crop move)
+  for (const cardId of player.playedMinorImprovements) {
+    const card = this.cards.byId(cardId)
+    if (!card || !card.definition.allowsAnytimeCropMove) {
+      continue
+    }
+    const fieldSpaces = player.getFieldSpaces()
+    const hasSource = fieldSpaces.some(f => f.crop && f.cropCount >= 2)
+    const hasTarget = fieldSpaces.some(f => !f.crop || f.cropCount === 0)
+    if (hasSource && hasTarget) {
+      options.push({
+        type: 'crop-move',
+        cardName: card.name,
+        description: `${card.name}: Move 1 crop to empty field`,
+      })
+    }
+  }
+
   return options
 }
 
 Agricola.prototype.executeAnytimeAction = function(player, action) {
+  if (action.type === 'crop-move') {
+    this.executeAnytimeCropMove(player, action)
+    return
+  }
   // Delegate to executeAnytimeFoodConversion for all food-related types
   this.executeAnytimeFoodConversion(player, action)
+}
+
+Agricola.prototype.executeAnytimeCropMove = function(player, action) {
+  const fieldSpaces = player.getFieldSpaces()
+
+  // Pick source field (has crop with count >= 2)
+  const sourceFields = fieldSpaces.filter(f => f.crop && f.cropCount >= 2)
+  const sourceChoices = sourceFields.map(f => `${f.row},${f.col} (${f.crop} x${f.cropCount})`)
+  const sourceSelection = this.actions.choose(player, sourceChoices, {
+    title: `${action.cardName}: Pick source field`,
+    min: 1, max: 1,
+  })
+
+  const sourceStr = Array.isArray(sourceSelection) ? sourceSelection[0] : sourceSelection
+  const [sourceRow, sourceCol] = sourceStr.split(' ')[0].split(',').map(Number)
+  const sourceCell = player.farmyard.grid[sourceRow][sourceCol]
+  const cropType = sourceCell.crop
+
+  // Pick target field (empty)
+  const targetFields = fieldSpaces.filter(f => (!f.crop || f.cropCount === 0) && !(f.row === sourceRow && f.col === sourceCol))
+  const targetChoices = targetFields.map(f => `${f.row},${f.col}`)
+  const targetSelection = this.actions.choose(player, targetChoices, {
+    title: `${action.cardName}: Pick target field`,
+    min: 1, max: 1,
+  })
+
+  const targetStr = Array.isArray(targetSelection) ? targetSelection[0] : targetSelection
+  const [targetRow, targetCol] = targetStr.split(',').map(Number)
+  const targetCell = player.farmyard.grid[targetRow][targetCol]
+
+  // Move 1 crop
+  sourceCell.cropCount -= 1
+  targetCell.crop = cropType
+  targetCell.cropCount = 1
+
+  this.log.add({
+    template: '{player} uses {card} to move 1 {crop} from ({sr},{sc}) to ({tr},{tc})',
+    args: { player, card: action.cardName, crop: cropType, sr: sourceRow, sc: sourceCol, tr: targetRow, tc: targetCol },
+  })
 }
 
 Agricola.prototype.getAvailableMajorImprovements = function() {

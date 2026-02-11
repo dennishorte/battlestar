@@ -28,9 +28,10 @@ WheelPlow, StoneCompany, SwimmingClass, Claypipe.
 
 ## Complex Mechanics
 
-| Card | Hook | Issue |
-|------|------|-------|
-| ClearingSpade | `allowsAnytimeCropMove` | "Anytime" crop move between fields; needs new interaction pattern |
+(none currently)
+
+Previously in this section (now have E2E tests):
+ClearingSpade (`allowsAnytimeCropMove`).
 
 ## Pure Function / Property Tests (no test file)
 
