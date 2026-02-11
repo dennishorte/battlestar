@@ -2537,10 +2537,18 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
 
+    // --- Person on action space checks ---
+    if (prereqs.personOnFishing) {
+      const fishingSpace = this.game.state.actionSpaces['fishing']
+      if (!fishingSpace || fishingSpace.occupiedBy !== this.name) {
+        return false
+      }
+    }
+
     // --- Deferred prereq checks (complex game-state checks not yet implemented) ---
     // TODO: bakingImprovement, cookingImprovement, hasPotteryOrUpgrade,
     //   hasFireplaceAndCookingHearth, returnFireplaceOrCookingHearth, returnMajor,
-    //   fieldsInLShape, personOnFishing, personOnAction, personYetToPlace,
+    //   fieldsInLShape, personOnAction, personYetToPlace,
     //   noPeopleInHouse, fencedStables, woodGteRound, pastureSpacesGteRound,
     //   cardsInPlay, maxCardsInPlay, exactlyAdults, majorImprovement (specific card),
     //   roundsLeftGreaterThanUnusedSpaces, buildingResourcesInSupply

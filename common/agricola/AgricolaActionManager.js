@@ -1302,7 +1302,7 @@ class AgricolaActionManager extends BaseActionManager {
   // Occupation action
   // ---------------------------------------------------------------------------
 
-  playOccupation(player) {
+  playOccupation(player, options = {}) {
     // Get occupations from player's hand
     const occupationsInHand = player.hand.filter(cardId => {
       const card = this.game.cards.byId(cardId)
@@ -1318,13 +1318,15 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     // Occupation cost: first is free, subsequent cost 1 food each
-    const baseFoodCost = player.getOccupationCount() === 0 ? 0 : 1
+    const baseFoodCost = options.free ? 0 : (player.getOccupationCount() === 0 ? 0 : 1)
     let costObj = baseFoodCost > 0 ? { food: baseFoodCost } : {}
 
     // Apply modifyOccupationCost hooks (e.g., ForestSchool: food → woodOrFood)
-    for (const card of player.getActiveCards()) {
-      if (card.hasHook('modifyOccupationCost')) {
-        costObj = card.callHook('modifyOccupationCost', player, costObj)
+    if (!options.free) {
+      for (const card of player.getActiveCards()) {
+        if (card.hasHook('modifyOccupationCost')) {
+          costObj = card.callHook('modifyOccupationCost', player, costObj)
+        }
       }
     }
 
@@ -1377,7 +1379,7 @@ class AgricolaActionManager extends BaseActionManager {
     choices.push('Do not play an occupation')
 
     const selection = this.choose(player, choices, {
-      title: cost > 0 ? `Play an Occupation (costs ${cost} food)` : 'Play an Occupation (free)',
+      title: options.free ? 'Play an Occupation (free)' : (cost > 0 ? `Play an Occupation (costs ${cost} food)` : 'Play an Occupation (free)'),
       min: 1,
       max: 1,
     })
@@ -2196,6 +2198,61 @@ class AgricolaActionManager extends BaseActionManager {
       if (actionSpace) {
         actionSpace.accumulated += exchange.wood
       }
+    }
+  }
+
+  offerForestPlow(player, card, actionId) {
+    const choices = [
+      'Pay 2 wood to plow 1 field',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Pay 2 wood to plow 1 field?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ wood: 2 })
+      const actionSpace = this.game.state.actionSpaces[actionId]
+      if (actionSpace) {
+        actionSpace.accumulated += 2
+      }
+      this.plowField(player)
+      this.log.add({
+        template: '{player} pays 2 wood to plow a field using {card}',
+        args: { player, card: card },
+      })
+    }
+  }
+
+  offerForestryStudies(player, card) {
+    // Check player has occupations in hand meeting prereqs
+    const occupationsInHand = player.hand.filter(cardId => {
+      const c = this.game.cards.byId(cardId)
+      return c && c.type === 'occupation' && player.meetsCardPrereqs(cardId)
+    })
+    if (occupationsInHand.length === 0) {
+      return
+    }
+
+    const choices = [
+      'Return 2 wood to play 1 occupation free',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Return 2 wood to play 1 occupation free?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ wood: 2 })
+      const actionSpace = this.game.state.actionSpaces['take-wood']
+      if (actionSpace) {
+        actionSpace.accumulated += 2
+      }
+      this.playOccupation(player, { free: true })
     }
   }
 
