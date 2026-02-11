@@ -67,6 +67,22 @@ Use `actionSpaces` when you need specific action spaces (e.g., Fencing,
 Grain Utilization) available for the test. Use `round` when you need a
 specific round number but can work with whatever actions are available.
 
+**Important**: Only round cards count toward `orderedCards.length`. Base
+actions like Farm Expansion, Grain Seeds, Farmland, Day Laborer, Forest,
+Clay Pit, Reed Bank, Fishing, Meeting Place, and Lessons A are always
+available and do **not** affect the round counter. If you need round 4
+(first harvest) via `actionSpaces`, you must list 3 stage-1 round cards:
+
+```js
+// Stage-1 round cards: Grain Utilization, Sheep Market, Fencing, Major Improvement
+// 3 round cards → orderedCards.length = 3 → game plays round 4 (first harvest)
+actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing']
+
+// WRONG: Farm Expansion and Grain Seeds are base actions, not round cards.
+// Only Grain Utilization counts → orderedCards.length = 1 → game plays round 2.
+actionSpaces: ['Grain Utilization', 'Farm Expansion', 'Grain Seeds']
+```
+
 ### Per-player fields (keyed by name, e.g. `dennis`)
 
 | Field | Description |
@@ -107,6 +123,50 @@ instead of real cards to avoid side effects:
 
 These are included in the fixture by default and have no hooks or effects.
 
+## Player Object Staleness
+
+After any `t.choose()` or `t.action()` call, the game replays all responses
+from scratch, creating **new player objects**. Any previously held reference
+is stale and reflects old state. Always re-obtain player references after
+game-state-changing calls:
+
+```js
+let dennis = game.players.byName('dennis')
+expect(dennis.virtualFields).toHaveLength(1)  // OK — before any choose/action
+
+t.choose(game, 'Grain Utilization')
+t.action(game, 'sow-field', { row: 2, col: 0, cropType: 'grain' })
+
+// dennis is now stale! Re-obtain:
+dennis = game.players.byName('dennis')
+expect(dennis.grain).toBe(0)  // reflects updated state
+```
+
+## `minorImprovements` vs Playing from Hand
+
+`setBoard` with `minorImprovements` places cards directly into the played
+zone **without calling `onPlay` hooks**. This is fine for cards whose effects
+come from other hooks (e.g., `modifyPastureCapacity`, `onAction`), but cards
+that create state in `onPlay` (like Beanfield creating a virtual field) won't
+work. For those cards, put them in `hand` and play them during the test:
+
+```js
+// WRONG for Beanfield — onPlay never fires, no virtual field created:
+t.setBoard(game, { dennis: { minorImprovements: ['beanfield-b068'] } })
+
+// RIGHT — play from hand so onPlay fires:
+t.setBoard(game, {
+  dennis: {
+    hand: ['beanfield-b068'],
+    occupations: ['test-occupation-1', 'test-occupation-2'], // prereqs
+    food: 1, // card cost
+  },
+})
+game.run()
+t.choose(game, 'Meeting Place')
+t.choose(game, 'Minor Improvement.Beanfield')
+```
+
 ## t.choose
 
 Selects a choice from the current input request.
@@ -142,7 +202,9 @@ pastures or sowing fields).
 t.action(game, 'build-pasture', {
   spaces: [{ row: 1, col: 3 }, { row: 1, col: 4 }],
 })
+t.action(game, 'done-building-pastures')  // finish fencing action
 t.action(game, 'sow-field', { row: 2, col: 0, cropType: 'grain' })
+t.action(game, 'sow-virtual-field', { fieldId: 'beanfield-b068', cropType: 'vegetables' })
 ```
 
 ## t.testBoard
