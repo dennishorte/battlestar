@@ -1029,17 +1029,10 @@ Agricola.prototype.workPhase = function() {
     player.resourcesGainedThisRound = {}
   }
 
-  // Calculate total workers available
-  let totalWorkers = 0
-  for (const player of this.players.all()) {
-    totalWorkers += player.getAvailableWorkers()
-  }
-
-  // Work phase continues until all workers are placed
-  let workersPlaced = 0
   let currentPlayerIndex = this.players.all().findIndex(p => p.name === this.state.startingPlayer)
 
-  while (workersPlaced < totalWorkers) {
+  // Work phase continues until no player has available workers
+  while (true) {
     // Find next player with available workers
     const playerList = this.players.all()
     let attempts = 0
@@ -1057,7 +1050,6 @@ Agricola.prototype.workPhase = function() {
         this.log.indent()
         this.playerTurn(player)
         this.log.outdent()
-        workersPlaced++
         break
       }
       else if (this.canUseAdoptiveParents(player)) {
@@ -1078,8 +1070,6 @@ Agricola.prototype.workPhase = function() {
           this.log.indent()
           this.playerTurn(player)
           this.log.outdent()
-          workersPlaced++
-          totalWorkers++ // Adjust total since we added a worker
           break
         }
         // If they pass, continue to next player

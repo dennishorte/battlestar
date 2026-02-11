@@ -3601,6 +3601,17 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   /**
+   * Walking Boots: grant a temporary extra worker for this round.
+   */
+  walkingBootsEffect(player, _card) {
+    player.availableWorkers += 1
+    this.log.add({
+      template: '{player} places a temporary worker from Walking Boots',
+      args: { player },
+    })
+  }
+
+  /**
    * Moonshine: randomly select an occupation from hand, then play it for 2 food or pass it left.
    */
   moonshineEffect(player, card) {
