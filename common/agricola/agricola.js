@@ -33,6 +33,18 @@ module.exports = {
 
 
 function Agricola(serialized_data, viewerName) {
+  // Backward compatibility: strip accumulated amounts from saved action space selections.
+  // e.g. "Forest (3)" -> "Forest"
+  if (serialized_data.responses) {
+    for (const response of serialized_data.responses) {
+      if (response.selection && Array.isArray(response.selection)) {
+        response.selection = response.selection.map(s =>
+          typeof s === 'string' ? s.replace(/\s*\(\d+\)$/, '') : s
+        )
+      }
+    }
+  }
+
   Game.call(this, serialized_data, viewerName, {
     ActionManager: AgricolaActionManager,
     LogManager: AgricolaLogManager,
