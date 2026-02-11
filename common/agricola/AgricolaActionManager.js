@@ -1466,10 +1466,10 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   buyMinorImprovement(player) {
-    // Get minor improvements from player's hand
+    // Get minor improvements from player's hand (exclude cards requiring major improvement action)
     const minorInHand = player.hand.filter(cardId => {
       const card = this.game.cards.byId(cardId)
-      return card && card.type === 'minor'
+      return card && card.type === 'minor' && !card.definition.requiresMajorImprovementAction
     })
 
     // Check if any played cards allow major improvements on minor action

@@ -243,6 +243,11 @@ class AgricolaPlayer extends BasePlayer {
         }
       }
     }
+    for (const card of this.getActiveCards()) {
+      if (card.definition.providesRoom) {
+        count++
+      }
+    }
     return count
   }
 
@@ -330,6 +335,9 @@ class AgricolaPlayer extends BasePlayer {
   // ---------------------------------------------------------------------------
 
   canRenovate(targetType) {
+    if (this.cannotRenovate) {
+      return false
+    }
     const cost = this.getRenovationCost(targetType)
     if (!cost) {
       return false

@@ -32,7 +32,6 @@ WheelPlow, StoneCompany, SwimmingClass, Claypipe.
 |------|------|-------|
 | ClearingSpade | `allowsAnytimeCropMove` | "Anytime" crop move between fields; needs new interaction pattern |
 | PaperKnife | `onPlay` | Random occupation selection; non-deterministic |
-| WoodenShed | `onPlay` | `requiresMajorImprovementAction`; can't play via Meeting Place |
 
 ## Pure Function / Property Tests (no test file)
 
