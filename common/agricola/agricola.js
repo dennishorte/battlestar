@@ -1243,7 +1243,7 @@ Agricola.prototype.fieldPhase = function() {
     }
 
     if (harvested.vegetables > 0) {
-      this.callPlayerCardHook(player, 'onHarvestVegetables')
+      this.callPlayerCardHook(player, 'onHarvestVegetables', harvested.vegetables)
     }
 
     // Process virtual field callbacks
