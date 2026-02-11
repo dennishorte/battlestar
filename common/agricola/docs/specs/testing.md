@@ -311,6 +311,37 @@ sow, goes straight to baking), baking choices appear automatically.
 Minor improvements with `anytimeConversions` appear during harvest feeding as
 conversion options (e.g. `'Oriental Fireplace: vegetables → 4 food'`).
 
+### Anytime Non-Food Actions (e.g., Crop Move)
+
+Non-food anytime actions (like Clearing Spade's crop move) appear in the
+anytime actions side panel, not as regular choices. To trigger them in tests,
+use `respondToInputRequest` directly with the `anytime-action` shape:
+
+```js
+function respondAnytimeAction(game, anytimeAction) {
+  const request = game.waiting
+  const selector = request.selectors[0]
+  return game.respondToInputRequest({
+    actor: selector.actor,
+    title: selector.title,
+    selection: { action: 'anytime-action', anytimeAction },
+  })
+}
+
+// Trigger during any choose() prompt (before choosing main action)
+respondAnytimeAction(game, {
+  type: 'crop-move',
+  cardName: 'Clearing Spade',
+  description: 'Clearing Spade: Move 1 crop to empty field',
+})
+t.choose(game, '2,0 (grain x3)')  // pick source field
+t.choose(game, '2,1')              // pick target field
+// Main action choice follows
+t.choose(game, 'Day Laborer')
+```
+
+See `docs/specs/anytime-actions.md` for the full anytime actions architecture.
+
 ## Occupation Count and Costs
 
 The occupation count is derived from `player.getOccupationCount()` which
