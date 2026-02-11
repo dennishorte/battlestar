@@ -553,8 +553,8 @@ describe('BaseB Cards', () => {
         // Round 4: both players take non-interactive actions
         t.choose(game, 'Day Laborer')   // dennis: +2 food
         t.choose(game, 'Grain Seeds')   // micah: +1 grain
-        t.choose(game, 'Forest (3)')    // dennis: +3 wood
-        t.choose(game, 'Clay Pit (1)')  // micah: +1 clay
+        t.choose(game, 'Forest')    // dennis: +3 wood
+        t.choose(game, 'Clay Pit')  // micah: +1 clay
 
         // Harvest: loom gives 1 food (1 sheep). No breeding (1 sheep, no pair).
         // Feeding: 4 food required per player
@@ -593,8 +593,8 @@ describe('BaseB Cards', () => {
 
         t.choose(game, 'Day Laborer')   // dennis: +2 food
         t.choose(game, 'Grain Seeds')   // micah
-        t.choose(game, 'Forest (3)')    // dennis: +3 wood
-        t.choose(game, 'Clay Pit (1)')  // micah
+        t.choose(game, 'Forest')    // dennis: +3 wood
+        t.choose(game, 'Clay Pit')  // micah
 
         // Harvest: loom gives 2 food (5 sheep). Breeding: +1 sheep (pair exists, 4-space pasture holds 8).
         const dennis = t.player(game)
@@ -667,6 +667,12 @@ describe('BaseB Cards', () => {
           {
             dennis: {
               wood: 1, // cost: { wood: 1 }
+              farmyard: {
+                fields: [
+                  { row: 2, col: 0, crop: 'vegetables', cropCount: 1 },
+                  { row: 2, col: 1, crop: 'vegetables', cropCount: 1 },
+                ],
+              },
             },
           },
         )
@@ -699,7 +705,7 @@ describe('BaseB Cards', () => {
         })
         game.run()
 
-        t.choose(game, 'Fishing (1)')
+        t.choose(game, 'Fishing')
 
         const dennis = t.player(game)
         // game.state.round is 2 during first work phase, schedules food for rounds 3, 4, 5
@@ -752,8 +758,8 @@ describe('BaseB Cards', () => {
         // Round 4: both players take non-interactive actions
         t.choose(game, 'Day Laborer')   // dennis: +2 food
         t.choose(game, 'Grain Seeds')   // micah
-        t.choose(game, 'Forest (3)')    // dennis: +3 wood
-        t.choose(game, 'Clay Pit (1)')  // micah
+        t.choose(game, 'Forest')    // dennis: +3 wood
+        t.choose(game, 'Clay Pit')  // micah
 
         // Harvest field phase: butter-churn gives floor(6/3) + floor(3/2) = 2 + 1 = 3 food
         // Breeding: +1 sheep (6 → 7, pasture capacity 8), +1 cattle (3 → 4, pasture capacity 4)
@@ -792,8 +798,8 @@ describe('BaseB Cards', () => {
 
         t.choose(game, 'Day Laborer')   // dennis
         t.choose(game, 'Grain Seeds')   // micah
-        t.choose(game, 'Forest (3)')    // dennis
-        t.choose(game, 'Clay Pit (1)')  // micah
+        t.choose(game, 'Forest')    // dennis
+        t.choose(game, 'Clay Pit')  // micah
 
         // floor(1/3) + floor(0/2) = 0 food from butter-churn
         const dennis = t.player(game)
@@ -876,7 +882,7 @@ describe('BaseB Cards', () => {
 
         // Round 1: both players take actions
         t.choose(game, 'Grain Seeds')   // dennis
-        t.choose(game, 'Forest (3)')    // micah
+        t.choose(game, 'Forest')    // micah
 
         // Round 2 starts — onRoundStart fires, scullery gives 1 food (wood house)
         const dennis = t.player(game)
@@ -931,8 +937,8 @@ describe('BaseB Cards', () => {
         // Round 4: both players take non-interactive actions
         t.choose(game, 'Day Laborer')   // dennis: +2 food
         t.choose(game, 'Grain Seeds')   // micah
-        t.choose(game, 'Forest (3)')    // dennis: +3 wood
-        t.choose(game, 'Clay Pit (1)')  // micah
+        t.choose(game, 'Forest')    // dennis: +3 wood
+        t.choose(game, 'Clay Pit')  // micah
 
         // Harvest field phase: harvests 1 grain + 1 veg from fields.
         // After harvest: grain field (cropCount 2), veg field (cropCount 1), empty field.
@@ -978,8 +984,8 @@ describe('BaseB Cards', () => {
 
         t.choose(game, 'Day Laborer')   // dennis
         t.choose(game, 'Grain Seeds')   // micah
-        t.choose(game, 'Forest (3)')    // dennis
-        t.choose(game, 'Clay Pit (1)')  // micah
+        t.choose(game, 'Forest')    // dennis
+        t.choose(game, 'Clay Pit')  // micah
 
         // No veg field → three-field-rotation gives 0 food
         const dennis = t.player(game)
@@ -1013,7 +1019,7 @@ describe('BaseB Cards', () => {
         game.run()
 
         // Dennis takes Forest first (worker 1)
-        t.choose(game, 'Forest (3)')
+        t.choose(game, 'Forest')
         // Micah takes Farmland (worker 1) — occupies it
         t.choose(game, 'Farmland')
         t.choose(game, game.waiting.selectors[0].choices[0]) // plow a space
@@ -1176,7 +1182,7 @@ describe('BaseB Cards', () => {
           'thick-forest',
           { cardSets: ['baseB'] },
           {
-            dennis: {},
+            dennis: { clay: 5 },
           },
         )
 
@@ -1195,6 +1201,7 @@ describe('BaseB Cards', () => {
         t.testBoard(game, {
           dennis: {
             food: 1, // +1 MP
+            clay: 5,
             hand: [],
             minorImprovements: ['thick-forest'],
             score: dennis.calculateScore(),
@@ -1714,7 +1721,6 @@ describe('BaseB Cards', () => {
         t.setBoard(game, {
           dennis: {
             occupations: ['wood-cutter', 'firewood-collector'],
-            occupationsPlayed: 2,
             hand: ['tutor'],
           },
         })
@@ -1723,18 +1729,22 @@ describe('BaseB Cards', () => {
         const dennis = t.player(game)
         t.playCard(game, 'dennis', 'tutor')
 
-        // playCard increments occupationsPlayed before onPlay runs, so tutor itself is counted
+        // playCard moves card to zone before onPlay runs, so tutor itself is counted
         expect(dennis.tutorOccupationCount).toBe(3)
       })
 
       test('gives end game points for occupations after tutor', () => {
         const card = baseB.getCardById('tutor')
-        const game = t.fixture()
+        const game = t.fixture({ cardSets: ['baseB'] })
+        t.setBoard(game, {
+          dennis: {
+            occupations: ['tutor', 'consultant', 'greengrocer', 'wood-cutter', 'firewood-collector'],
+          },
+        })
         game.run()
         const dennis = t.player(game)
 
         dennis.tutorOccupationCount = 2
-        dennis.occupationsPlayed = 5
 
         // 5 - 2 = 3 occupations after tutor
         expect(card.getEndGamePoints(dennis)).toBe(3)
@@ -1745,7 +1755,6 @@ describe('BaseB Cards', () => {
         t.setBoard(game, {
           dennis: {
             occupations: ['tutor', 'consultant', 'greengrocer'],
-            occupationsPlayed: 3,
           },
         })
         game.run()
@@ -1760,7 +1769,7 @@ describe('BaseB Cards', () => {
         t.setPlayerCards(game, dennis, 'occupations', ['consultant', 'greengrocer'])
         const scoreWithout = dennis.calculateScore()
 
-        // 3 occupationsPlayed - 1 tutorOccupationCount = 2 bonus points from Tutor
+        // 3 occupations - 1 tutorOccupationCount = 2 bonus points from Tutor
         expect(scoreWith - scoreWithout).toBe(2)
       })
     })
@@ -1918,8 +1927,8 @@ describe('BaseB Cards', () => {
 
         // Finish round 2: remaining 3 actions
         t.choose(game, 'Grain Seeds')   // micah worker 1
-        t.choose(game, 'Forest (3)')    // dennis worker 2
-        t.choose(game, 'Clay Pit (1)')  // micah worker 2
+        t.choose(game, 'Forest')    // dennis worker 2
+        t.choose(game, 'Clay Pit')  // micah worker 2
 
         // Round 2 end: checkTrigger fires — schedules 3 food per remaining round
         // Round 3 start: scheduled food delivered
@@ -1942,7 +1951,7 @@ describe('BaseB Cards', () => {
         })
         game.run()
 
-        t.choose(game, 'Forest (3)')
+        t.choose(game, 'Forest')
 
         // Oven Firing Boy triggers bake bread offer
         t.choose(game, 'Bake 2 grain')
@@ -1970,7 +1979,7 @@ describe('BaseB Cards', () => {
         })
         game.run()
 
-        t.choose(game, 'Forest (3)')
+        t.choose(game, 'Forest')
         t.choose(game, 'Do not bake')
 
         const dennis = t.player(game)
@@ -1995,7 +2004,7 @@ describe('BaseB Cards', () => {
         })
         game.run()
 
-        t.choose(game, 'Forest (3)')
+        t.choose(game, 'Forest')
 
         // No bake interaction — goes straight to next player
         const dennis = t.player(game)
@@ -2044,7 +2053,6 @@ describe('BaseB Cards', () => {
             food: 1, // cost for second occupation
             hand: ['groom'],
             occupations: ['paper-maker'],
-            occupationsPlayed: 1,
           },
         })
         game.run()
@@ -2076,7 +2084,6 @@ describe('BaseB Cards', () => {
             food: 1,
             hand: ['groom'],
             occupations: ['paper-maker'],
-            occupationsPlayed: 1,
           },
         })
         game.run()
@@ -2167,7 +2174,7 @@ describe('BaseB Cards', () => {
 
         // Round 1: both players take actions
         t.choose(game, 'Grain Seeds')   // dennis
-        t.choose(game, 'Forest (3)')    // micah
+        t.choose(game, 'Forest')    // micah
 
         // Round 2 starts — onRoundStart fires, small-scale-farmer gives 1 wood
         const dennis = t.player(game)
@@ -2212,7 +2219,7 @@ describe('BaseB Cards', () => {
         })
         game.run()
 
-        t.choose(game, 'Forest (3)')
+        t.choose(game, 'Forest')
 
         const dennis = t.player(game)
         t.testBoard(game, {
@@ -2694,12 +2701,12 @@ describe('BaseB Cards', () => {
         t.choose(game, 'Lessons A')              // dennis — play Pastor
         t.choose(game, 'Pastor')
         t.choose(game, 'Grain Seeds')           // micah
-        t.choose(game, 'Forest (3)')            // scott
-        t.choose(game, 'Clay Pit (1)')          // eliya
+        t.choose(game, 'Forest')            // scott
+        t.choose(game, 'Clay Pit')          // eliya
         t.choose(game, 'Day Laborer')           // dennis
-        t.choose(game, 'Fishing (1)')           // micah
-        t.choose(game, 'Traveling Players (1)') // scott
-        t.choose(game, 'Copse (1)')             // eliya
+        t.choose(game, 'Fishing')           // micah
+        t.choose(game, 'Traveling Players') // scott
+        t.choose(game, 'Copse')             // eliya
 
         // checkTrigger fires at round end — dennis is only player with 2 rooms
         const dennis = t.player(game)
@@ -2830,7 +2837,7 @@ describe('BaseB Cards', () => {
         })
         game.run()
 
-        t.choose(game, 'Forest (3)')
+        t.choose(game, 'Forest')
 
         // No buy interaction
         const dennis = t.player(game)

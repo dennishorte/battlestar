@@ -1,57 +1,73 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Hod (A077)', () => {
-  test('gives 1 clay on play', () => {
-    const card = res.getCardById('hod-a077')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Hod', () => {
+  test('gives 2 clay when another player uses Pig Market', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'micah',
+      dennis: {
+        minorImprovements: ['hod-a077'],
+      },
+      actionSpaces: ['Pig Market'],
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.clay = 0
+    t.choose(game, 'Pig Market')   // micah takes Pig Market
+    t.choose(game, 'Place Animals') // micah places boar
 
-    card.onPlay(game, dennis)
-
-    expect(dennis.clay).toBe(1)
+    t.testBoard(game, {
+      dennis: {
+        clay: 2, // 2 from Hod triggered by micah's Pig Market
+        minorImprovements: ['hod-a077'],
+      },
+      micah: {
+        pet: 'boar',
+        animals: { boar: 1 },
+      },
+    })
   })
 
-  test('gives 2 clay when any player uses pig market', () => {
-    const card = res.getCardById('hod-a077')
-    const game = t.fixture({ cardSets: ['minorA'] })
+  test('gives 2 clay when owner uses Pig Market', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['hod-a077'],
+      },
+      actionSpaces: ['Pig Market'],
+    })
     game.run()
 
-    const dennis = t.player(game)
-    const micah = game.players.byName('micah')
-    dennis.clay = 0
+    t.choose(game, 'Pig Market')   // dennis takes Pig Market
+    t.choose(game, 'Place Animals') // dennis places boar
 
-    card.onAnyAction(game, micah, 'take-boar', dennis)
-
-    expect(dennis.clay).toBe(2)
+    t.testBoard(game, {
+      dennis: {
+        clay: 2, // 2 from Hod
+        pet: 'boar',
+        animals: { boar: 1 },
+        minorImprovements: ['hod-a077'],
+      },
+    })
   })
 
-  test('gives 2 clay when owner uses pig market', () => {
-    const card = res.getCardById('hod-a077')
-    const game = t.fixture({ cardSets: ['minorA'] })
+  test('does not give clay for non-boar actions', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['hod-a077'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.clay = 0
+    t.choose(game, 'Forest')
 
-    card.onAnyAction(game, dennis, 'take-boar', dennis)
-
-    expect(dennis.clay).toBe(2)
-  })
-
-  test('does not give clay for non-pig actions', () => {
-    const card = res.getCardById('hod-a077')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    dennis.clay = 0
-
-    card.onAnyAction(game, dennis, 'take-sheep', dennis)
-
-    expect(dennis.clay).toBe(0)
+    t.testBoard(game, {
+      dennis: {
+        wood: 3, // from Forest
+        minorImprovements: ['hod-a077'],
+      },
+    })
   })
 })

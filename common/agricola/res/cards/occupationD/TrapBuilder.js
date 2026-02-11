@@ -12,29 +12,8 @@ module.exports = {
       const goods = ['food', 'food', 'boar']
       for (let i = 0; i < 3; i++) {
         const round = currentRound + i + 1
-        if (round <= 14) {
-          const good = goods[i]
-          if (good === 'boar') {
-            if (!game.state.scheduledBoar) {
-              game.state.scheduledBoar = {}
-            }
-            if (!game.state.scheduledBoar[player.name]) {
-              game.state.scheduledBoar[player.name] = {}
-            }
-            game.state.scheduledBoar[player.name][round] =
-                (game.state.scheduledBoar[player.name][round] || 0) + 1
-          }
-          else {
-            if (!game.state.scheduledFood) {
-              game.state.scheduledFood = {}
-            }
-            if (!game.state.scheduledFood[player.name]) {
-              game.state.scheduledFood[player.name] = {}
-            }
-            game.state.scheduledFood[player.name][round] =
-                (game.state.scheduledFood[player.name][round] || 0) + 1
-          }
-        }
+        const good = goods[i]
+        game.scheduleResource(player, good, round, 1)
       }
       game.log.add({
         template: '{player} schedules 1 food, 1 food, 1 wild boar from Trap Builder',

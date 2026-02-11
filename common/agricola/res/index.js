@@ -16,6 +16,7 @@ const occupationB = require('./cards/occupationB')
 const occupationC = require('./cards/occupationC')
 const occupationD = require('./cards/occupationD')
 const occupationE = require('./cards/occupationE')
+const testCards = require('./cards/test')
 
 // Re-export everything from sub-modules
 module.exports = {
@@ -185,24 +186,32 @@ module.exports = {
       minorCount: occupationE.getMinorImprovements().length,
       occupationCount: occupationE.getOccupations().length,
     },
+    test: {
+      id: 'test',
+      name: 'Test Cards',
+      module: testCards,
+      minorCount: testCards.getMinorImprovements().length,
+      occupationCount: testCards.getOccupations().length,
+      testOnly: true,
+    },
   },
 
-  // Get available card set IDs
+  // Get available card set IDs (excludes test-only sets)
   getCardSetIds() {
-    return Object.keys(this.cardSets)
+    return Object.keys(this.cardSets).filter(id => !this.cardSets[id].testOnly)
   },
 
-  // Get selectable card set IDs (excludes hidden sets like baseA/baseB)
+  // Get selectable card set IDs (excludes hidden sets like baseA/baseB and test-only sets)
   getSelectableCardSetIds() {
-    return Object.keys(this.cardSets).filter(id => !this.cardSets[id].hidden)
+    return Object.keys(this.cardSets).filter(id => !this.cardSets[id].hidden && !this.cardSets[id].testOnly)
   },
 
   // Cards - always searches all sets (for getCardById used by hooks, scoring, etc.)
   getCardById(id) {
-    return baseA.getCardById(id) || baseB.getCardById(id) || minorA.getCardById(id) || minorB.getCardById(id) || minorC.getCardById(id) || minorD.getCardById(id) || minorE.getCardById(id) || occupationA.getCardById(id) || occupationB.getCardById(id) || occupationC.getCardById(id) || occupationD.getCardById(id) || occupationE.getCardById(id)
+    return baseA.getCardById(id) || baseB.getCardById(id) || minorA.getCardById(id) || minorB.getCardById(id) || minorC.getCardById(id) || minorD.getCardById(id) || minorE.getCardById(id) || occupationA.getCardById(id) || occupationB.getCardById(id) || occupationC.getCardById(id) || occupationD.getCardById(id) || occupationE.getCardById(id) || testCards.getCardById(id)
   },
   getCardByName(name) {
-    return baseA.getCardByName(name) || baseB.getCardByName(name) || minorA.getCardByName(name) || minorB.getCardByName(name) || minorC.getCardByName(name) || minorD.getCardByName(name) || minorE.getCardByName(name) || occupationA.getCardByName(name) || occupationB.getCardByName(name) || occupationC.getCardByName(name) || occupationD.getCardByName(name) || occupationE.getCardByName(name)
+    return baseA.getCardByName(name) || baseB.getCardByName(name) || minorA.getCardByName(name) || minorB.getCardByName(name) || minorC.getCardByName(name) || minorD.getCardByName(name) || minorE.getCardByName(name) || occupationA.getCardByName(name) || occupationB.getCardByName(name) || occupationC.getCardByName(name) || occupationD.getCardByName(name) || occupationE.getCardByName(name) || testCards.getCardByName(name)
   },
 
   // Functions that filter by selected card sets

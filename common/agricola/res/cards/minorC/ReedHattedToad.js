@@ -11,16 +11,7 @@ module.exports = {
     const currentRound = game.state.round
     for (const offset of [5, 7, 9, 11, 13]) {
       const round = currentRound + offset
-      if (round <= 14) {
-        if (!game.state.scheduledReed) {
-          game.state.scheduledReed = {}
-        }
-        if (!game.state.scheduledReed[player.name]) {
-          game.state.scheduledReed[player.name] = {}
-        }
-        game.state.scheduledReed[player.name][round] =
-            (game.state.scheduledReed[player.name][round] || 0) + 1
-      }
+      game.scheduleResource(player, 'reed', round, 1)
     }
     game.log.add({
       template: '{player} schedules reed from Reed-Hatted Toad',

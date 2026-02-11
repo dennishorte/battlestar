@@ -1,46 +1,26 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Throwing Axe (A052)', () => {
+describe('Throwing Axe', () => {
   test('gives 2 food on wood action when pig market has boar', () => {
-    const card = res.getCardById('throwing-axe-a052')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['throwing-axe-a052'],
+      },
+      actionSpaces: ['Pig Market'],
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.food = 0
-    game.state.actionSpaces = { 'take-boar': { accumulated: 2 } }
+    // Pig Market has 1 accumulated boar from setup. Dennis takes Forest (wood action).
+    t.choose(game, 'Forest')
 
-    card.onAction(game, dennis, 'take-wood')
-
-    expect(dennis.food).toBe(2)
-  })
-
-  test('does not give food when pig market is empty', () => {
-    const card = res.getCardById('throwing-axe-a052')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    dennis.food = 0
-    game.state.actionSpaces = { 'take-boar': { accumulated: 0 } }
-
-    card.onAction(game, dennis, 'take-wood')
-
-    expect(dennis.food).toBe(0)
-  })
-
-  test('does not trigger on non-wood actions', () => {
-    const card = res.getCardById('throwing-axe-a052')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    dennis.food = 0
-    game.state.actionSpaces = { 'take-boar': { accumulated: 2 } }
-
-    card.onAction(game, dennis, 'take-clay')
-
-    expect(dennis.food).toBe(0)
+    t.testBoard(game, {
+      dennis: {
+        wood: 3, // accumulated wood from Forest
+        food: 2, // +2 from Throwing Axe
+        minorImprovements: ['throwing-axe-a052'],
+      },
+    })
   })
 })

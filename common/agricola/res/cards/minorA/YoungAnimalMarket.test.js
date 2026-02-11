@@ -1,22 +1,40 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Young Animal Market (A009)', () => {
-  test('exchanges sheep for cattle', () => {
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Young Animal Market', () => {
+  test('exchanges 1 sheep for 1 cattle on play via Meeting Place', () => {
+    const game = t.fixture()
     t.setBoard(game, {
+      firstPlayer: 'dennis',
       dennis: {
         hand: ['young-animal-market-a009'],
         farmyard: {
-          pastures: [{ spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }], animals: { sheep: 2 } }],
+          pastures: [
+            { spaces: [{ row: 0, col: 1 }], sheep: 2 },
+            { spaces: [{ row: 0, col: 2 }] },
+          ],
         },
       },
     })
     game.run()
 
-    t.playCard(game, 'dennis', 'young-animal-market-a009')
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Young Animal Market')
 
-    const dennis = t.player(game)
-    expect(dennis.getTotalAnimals('sheep')).toBe(1) // 2 - 1 cost
-    expect(dennis.getTotalAnimals('cattle')).toBe(1) // +1 from card
+    t.testBoard(game, {
+      dennis: {
+        food: 1, // +1 from Meeting Place
+        hand: [],
+        animals: { sheep: 1, cattle: 1 },
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 0, col: 1 }], sheep: 1 },
+            { spaces: [{ row: 0, col: 2 }], cattle: 1 },
+          ],
+        },
+      },
+      micah: {
+        hand: ['young-animal-market-a009'], // passLeft
+      },
+    })
   })
 })

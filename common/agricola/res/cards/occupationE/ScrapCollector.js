@@ -11,18 +11,7 @@ module.exports = {
     const resources = ['wood', 'clay', 'wood', 'clay', 'wood', 'clay']
     for (let i = 0; i < 6; i++) {
       const round = currentRound + i + 1
-      if (round <= 14) {
-        const resource = resources[i]
-        const stateKey = resource === 'wood' ? 'scheduledWood' : 'scheduledClay'
-        if (!game.state[stateKey]) {
-          game.state[stateKey] = {}
-        }
-        if (!game.state[stateKey][player.name]) {
-          game.state[stateKey][player.name] = {}
-        }
-        game.state[stateKey][player.name][round] =
-            (game.state[stateKey][player.name][round] || 0) + 1
-      }
+      game.scheduleResource(player, resources[i], round, 1)
     }
     game.log.add({
       template: '{player} schedules alternating wood and clay for next 6 rounds from Scrap Collector',

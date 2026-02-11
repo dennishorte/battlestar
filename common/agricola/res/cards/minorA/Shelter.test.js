@@ -1,70 +1,64 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Shelter (A001)', () => {
-  test('offers free stable in single space pasture on play', () => {
-    const card = res.getCardById('shelter-a001')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Shelter', () => {
+  test('builds free stable in single-space pasture via Meeting Place', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['shelter-a001'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 4 }] }],
+        },
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.farmyard.pastures = [
-      { spaces: [{ row: 1, col: 0 }] },
-    ]
-    dennis.hasStableAt = () => false
+    // Dennis takes Meeting Place, plays Shelter
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Shelter')
+    // onPlay fires: offer to build stable in single-space pasture
+    t.choose(game, 'Build stable at 0,4')
 
-    let offerCalled = false
-    game.actions.offerBuildFreeStableInSinglePasture = (player, sourceCard, pastures) => {
-      offerCalled = true
-      expect(player).toBe(dennis)
-      expect(sourceCard).toBe(card)
-      expect(pastures.length).toBe(1)
-    }
-
-    card.onPlay(game, dennis)
-
-    expect(offerCalled).toBe(true)
+    t.testBoard(game, {
+      dennis: {
+        food: 1, // +1 from Meeting Place
+        hand: [],
+        minorImprovements: ['shelter-a001'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 4 }] }],
+          stables: [{ row: 0, col: 4 }],
+        },
+      },
+    })
   })
 
-  test('does not offer when no single space pastures', () => {
-    const card = res.getCardById('shelter-a001')
-    const game = t.fixture({ cardSets: ['minorA'] })
+  test('can skip building stable', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['shelter-a001'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 4 }] }],
+        },
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.farmyard.pastures = [
-      { spaces: [{ row: 1, col: 0 }, { row: 1, col: 1 }] },
-    ]
-    dennis.hasStableAt = () => false
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Shelter')
+    t.choose(game, 'Skip')
 
-    let offerCalled = false
-    game.actions.offerBuildFreeStableInSinglePasture = () => {
-      offerCalled = true
-    }
-
-    card.onPlay(game, dennis)
-
-    expect(offerCalled).toBe(false)
-  })
-
-  test('does not offer when pasture already has stable', () => {
-    const card = res.getCardById('shelter-a001')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    dennis.farmyard.pastures = [
-      { spaces: [{ row: 1, col: 0 }] },
-    ]
-    dennis.hasStableAt = () => true
-
-    let offerCalled = false
-    game.actions.offerBuildFreeStableInSinglePasture = () => {
-      offerCalled = true
-    }
-
-    card.onPlay(game, dennis)
-
-    expect(offerCalled).toBe(false)
+    t.testBoard(game, {
+      dennis: {
+        food: 1,
+        hand: [],
+        minorImprovements: ['shelter-a001'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 4 }] }],
+        },
+      },
+    })
   })
 })

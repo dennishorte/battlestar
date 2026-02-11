@@ -12,14 +12,7 @@ module.exports = {
     const currentRound = game.state.round
     const targetRounds = [5, 8, 11, 14].filter(r => r > currentRound)
     for (const round of targetRounds) {
-      if (!game.state.scheduledGrain) {
-        game.state.scheduledGrain = {}
-      }
-      if (!game.state.scheduledGrain[player.name]) {
-        game.state.scheduledGrain[player.name] = {}
-      }
-      game.state.scheduledGrain[player.name][round] =
-          (game.state.scheduledGrain[player.name][round] || 0) + 1
+      game.scheduleResource(player, 'grain', round, 1)
     }
     game.log.add({
       template: '{player} schedules grain from Sack Cart',

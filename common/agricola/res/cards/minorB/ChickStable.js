@@ -12,16 +12,7 @@ module.exports = {
     const currentRound = game.state.round
     for (const offset of [3, 4]) {
       const round = currentRound + offset
-      if (round <= 14) {
-        if (!game.state.scheduledFood) {
-          game.state.scheduledFood = {}
-        }
-        if (!game.state.scheduledFood[player.name]) {
-          game.state.scheduledFood[player.name] = {}
-        }
-        game.state.scheduledFood[player.name][round] =
-            (game.state.scheduledFood[player.name][round] || 0) + 2
-      }
+      game.scheduleResource(player, 'food', round, 2)
     }
     game.log.add({
       template: '{player} schedules 2 food each for rounds from Chick Stable',

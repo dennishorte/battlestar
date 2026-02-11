@@ -1,30 +1,45 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Forest Lake Hut (A042)', () => {
+describe('Forest Lake Hut', () => {
   test('gives 1 wood on Fishing action', () => {
-    const card = res.getCardById('forest-lake-hut-a042')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['forest-lake-hut-a042'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.wood = 0
+    t.choose(game, 'Fishing')
 
-    card.onAction(game, dennis, 'fishing')
-
-    expect(dennis.wood).toBe(1)
+    t.testBoard(game, {
+      dennis: {
+        food: 1, // from Fishing
+        wood: 1, // from Forest Lake Hut
+        minorImprovements: ['forest-lake-hut-a042'],
+      },
+    })
   })
 
   test('gives 1 food on Forest action', () => {
-    const card = res.getCardById('forest-lake-hut-a042')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['forest-lake-hut-a042'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.food = 0
+    t.choose(game, 'Forest')
 
-    card.onAction(game, dennis, 'take-wood')
-
-    expect(dennis.food).toBe(1)
+    t.testBoard(game, {
+      dennis: {
+        wood: 3, // from Forest
+        food: 1, // from Forest Lake Hut
+        minorImprovements: ['forest-lake-hut-a042'],
+      },
+    })
   })
 })

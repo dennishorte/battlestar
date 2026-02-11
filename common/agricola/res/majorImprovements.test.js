@@ -21,7 +21,8 @@ describe('major improvements', () => {
     const dennis = game.players.byName('dennis')
     dennis.clay = 2
 
-    expect(dennis.buyMajorImprovement('fireplace-2')).toBe(true)
+    const result = dennis.buyMajorImprovement('fireplace-2')
+    expect(result.upgraded).toBe(false)
     dennis.payCost(dennis.getMajorImprovementCost('fireplace-2'))
     expect(dennis.majorImprovements).toContain('fireplace-2')
     expect(dennis.clay).toBe(0)
@@ -232,7 +233,7 @@ describe('major improvements e2e', () => {
     const dennis = t.player(game)
     expect(dennis.majorImprovements).toContain('cooking-hearth-4')
     expect(dennis.majorImprovements).not.toContain('fireplace-2')
-    expect(dennis.clay).toBe(0)
+    expect(dennis.clay).toBe(4)  // Upgrade is free (return old card)
 
     // Fireplace should be back in common zone
     const commonMajorZone = game.zones.byId('common.majorImprovements')

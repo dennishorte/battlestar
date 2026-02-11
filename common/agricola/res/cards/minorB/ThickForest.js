@@ -12,14 +12,7 @@ module.exports = {
     const currentRound = game.state.round
     for (let round = 2; round <= 14; round += 2) {
       if (round > currentRound) {
-        if (!game.state.scheduledWood) {
-          game.state.scheduledWood = {}
-        }
-        if (!game.state.scheduledWood[player.name]) {
-          game.state.scheduledWood[player.name] = {}
-        }
-        game.state.scheduledWood[player.name][round] =
-            (game.state.scheduledWood[player.name][round] || 0) + 1
+        game.scheduleResource(player, 'wood', round, 1)
       }
     }
     game.log.add({

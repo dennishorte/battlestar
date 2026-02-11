@@ -13,15 +13,8 @@ module.exports = {
     const foodAmounts = [0, 1, 2, 3]
     for (let i = 0; i < 4; i++) {
       const round = currentRound + 1 + i
-      if (round <= 14 && foodAmounts[i] > 0) {
-        if (!game.state.scheduledFood) {
-          game.state.scheduledFood = {}
-        }
-        if (!game.state.scheduledFood[player.name]) {
-          game.state.scheduledFood[player.name] = {}
-        }
-        game.state.scheduledFood[player.name][round] =
-            (game.state.scheduledFood[player.name][round] || 0) + foodAmounts[i]
+      if (foodAmounts[i] > 0) {
+        game.scheduleResource(player, 'food', round, foodAmounts[i])
       }
     }
     game.log.add({

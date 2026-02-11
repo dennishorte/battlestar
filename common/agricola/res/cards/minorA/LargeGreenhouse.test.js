@@ -1,25 +1,29 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Large Greenhouse (A069)', () => {
-  test('schedules vegetables for rounds current+4, +7, +9', () => {
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Large Greenhouse', () => {
+  test('schedules vegetables at offset rounds when played', () => {
+    const game = t.fixture()
     t.setBoard(game, {
+      firstPlayer: 'dennis',
       dennis: {
-        wood: 5,
         hand: ['large-greenhouse-a069'],
-        occupations: ['wood-cutter', 'firewood-collector'], // Need 2 occupations
+        wood: 2,
+        occupations: ['test-occupation-1', 'test-occupation-2'],
       },
-      round: 3,
     })
     game.run()
 
-    game.state.round = 3
-    t.playCard(game, 'dennis', 'large-greenhouse-a069')
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Large Greenhouse')
 
-    const dennis = t.player(game)
-    // Should schedule vegetables for rounds 7, 10, 12
-    expect(game.state.scheduledVegetables[dennis.name][7]).toBe(1)
-    expect(game.state.scheduledVegetables[dennis.name][10]).toBe(1)
-    expect(game.state.scheduledVegetables[dennis.name][12]).toBe(1)
+    t.testBoard(game, {
+      dennis: {
+        food: 1,
+        hand: [],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        minorImprovements: ['large-greenhouse-a069'],
+        scheduled: { vegetables: { 6: 1, 9: 1, 11: 1 } },
+      },
+    })
   })
 })

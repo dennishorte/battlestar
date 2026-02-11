@@ -1,9 +1,10 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Corn Scoop (A067)', () => {
+describe('Corn Scoop', () => {
   test('gives +1 grain on Grain Seeds action', () => {
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
     t.setBoard(game, {
+      firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['corn-scoop-a067'],
       },
@@ -12,7 +13,11 @@ describe('Corn Scoop (A067)', () => {
 
     t.choose(game, 'Grain Seeds')
 
-    const dennis = t.player(game)
-    expect(dennis.grain).toBe(2) // 1 base + 1 from Corn Scoop
+    t.testBoard(game, {
+      dennis: {
+        grain: 2, // 1 base + 1 from Corn Scoop
+        minorImprovements: ['corn-scoop-a067'],
+      },
+    })
   })
 })

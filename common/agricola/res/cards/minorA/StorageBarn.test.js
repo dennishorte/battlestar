@@ -1,65 +1,78 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Storage Barn (A006)', () => {
+describe('Storage Barn', () => {
   test('gives resources based on owned major improvements', () => {
-    const card = res.getCardById('storage-barn-a006')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['storage-barn-a006'],
+        majorImprovements: ['well', 'joinery', 'pottery', 'basketmakers-workshop'],
+      },
+    })
     game.run()
 
-    // Create mock player with controlled properties
-    const resources = { stone: 0, wood: 0, clay: 0, reed: 0 }
-    const mockPlayer = {
-      majorImprovements: ['well', 'joinery', 'pottery', 'basketmakers-workshop'],
-      addResource(type, amount) {
-        resources[type] = (resources[type] || 0) + amount
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Storage Barn')
+
+    t.testBoard(game, {
+      dennis: {
+        food: 1, // +1 Meeting Place
+        stone: 1, // from Well
+        wood: 1, // from Joinery
+        clay: 1, // from Pottery
+        reed: 1, // from Basketmaker's Workshop
+        hand: [],
+        minorImprovements: ['storage-barn-a006'],
+        majorImprovements: ['well', 'joinery', 'pottery', 'basketmakers-workshop'],
       },
-    }
-
-    card.onPlay(game, mockPlayer)
-
-    expect(resources.stone).toBe(1)
-    expect(resources.wood).toBe(1)
-    expect(resources.clay).toBe(1)
-    expect(resources.reed).toBe(1)
+    })
   })
 
   test('gives stone for Well only', () => {
-    const card = res.getCardById('storage-barn-a006')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['storage-barn-a006'],
+        majorImprovements: ['well'],
+      },
+    })
     game.run()
 
-    const resources = { stone: 0, wood: 0, clay: 0, reed: 0 }
-    const mockPlayer = {
-      majorImprovements: ['well'],
-      addResource(type, amount) {
-        resources[type] = (resources[type] || 0) + amount
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Storage Barn')
+
+    t.testBoard(game, {
+      dennis: {
+        food: 1, // +1 Meeting Place
+        stone: 1, // from Well
+        hand: [],
+        minorImprovements: ['storage-barn-a006'],
+        majorImprovements: ['well'],
       },
-    }
-
-    card.onPlay(game, mockPlayer)
-
-    expect(resources.stone).toBe(1)
-    expect(resources.wood).toBe(0)
-    expect(resources.clay).toBe(0)
-    expect(resources.reed).toBe(0)
+    })
   })
 
   test('gives nothing without matching improvements', () => {
-    const card = res.getCardById('storage-barn-a006')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['storage-barn-a006'],
+      },
+    })
     game.run()
 
-    const resources = { stone: 0 }
-    const mockPlayer = {
-      majorImprovements: [],
-      addResource(type, amount) {
-        resources[type] = (resources[type] || 0) + amount
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Storage Barn')
+
+    t.testBoard(game, {
+      dennis: {
+        food: 1, // +1 Meeting Place only
+        hand: [],
+        minorImprovements: ['storage-barn-a006'],
       },
-    }
-
-    card.onPlay(game, mockPlayer)
-
-    expect(resources.stone).toBe(0)
+    })
   })
 })

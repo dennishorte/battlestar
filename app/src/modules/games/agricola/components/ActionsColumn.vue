@@ -54,6 +54,18 @@
         </div>
       </div>
     </template>
+
+    <!-- Card Action Spaces -->
+    <div class="action-section" v-if="cardActionSpaceIds.length > 0">
+      <div class="section-title">Card Action Spaces</div>
+      <div class="action-grid">
+        <ActionSpace
+          v-for="actionId in cardActionSpaceIds"
+          :key="actionId"
+          :actionId="actionId"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -194,6 +206,18 @@ export default {
         ...SIX_PLAYER_ACTION_IDS,
       ])]
       return allIds.filter(id => this.activeActions.includes(id))
+    },
+
+    cardActionSpaceIds() {
+      const knownIds = new Set([
+        ...BASE_ACTION_IDS,
+        ...THREE_PLAYER_ACTION_IDS,
+        ...FOUR_PLUS_PLAYER_ACTION_IDS,
+        ...FIVE_SIX_PLAYER_ACTION_IDS,
+        ...SIX_PLAYER_ACTION_IDS,
+        ...Object.values(ROUND_CARDS_BY_STAGE).flat(),
+      ])
+      return this.activeActions.filter(id => !knownIds.has(id))
     },
 
     visibleStages() {

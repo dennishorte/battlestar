@@ -11,14 +11,7 @@ module.exports = {
     const currentRound = game.state.round
     for (let round = currentRound + 1; round <= 14; round++) {
       if (round % 2 === 0) {
-        if (!game.state.scheduledFood) {
-          game.state.scheduledFood = {}
-        }
-        if (!game.state.scheduledFood[player.name]) {
-          game.state.scheduledFood[player.name] = {}
-        }
-        game.state.scheduledFood[player.name][round] =
-            (game.state.scheduledFood[player.name][round] || 0) + 1
+        game.scheduleResource(player, 'food', round, 1)
       }
     }
   },

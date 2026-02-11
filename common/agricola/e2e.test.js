@@ -43,16 +43,17 @@ describe('Agricola End-to-End', () => {
     const choices = selector.choices || []
 
     const match = choices.find(choice => {
-      const label = typeof choice === 'string' ? choice : String(choice)
+      const label = typeof choice === 'string' ? choice : (choice.title || String(choice))
       return label.toLowerCase().includes(pattern.toLowerCase())
     })
 
     if (!match) {
-      const availableLabels = choices.slice(0, 15).map(c => typeof c === 'string' ? c : String(c))
+      const availableLabels = choices.slice(0, 15).map(c => typeof c === 'string' ? c : (c.title || String(c)))
       throw new Error(`No choice matching "${pattern}" for ${selector.actor}. Title: "${selector.title}". Available: ${availableLabels.join(', ')}`)
     }
 
-    return respond(game, match)
+    const label = typeof match === 'string' ? match : match.title
+    return respond(game, label)
   }
 
   /**
@@ -107,9 +108,13 @@ describe('Agricola End-to-End', () => {
 
         let picked = false
         for (const preferred of preferredActions) {
-          const match = choices.find(c => c.toLowerCase().includes(preferred))
+          const match = choices.find(c => {
+            const label = typeof c === 'string' ? c : (c.title || '')
+            return label.toLowerCase().includes(preferred)
+          })
           if (match) {
-            result = respond(game, match)
+            const label = typeof match === 'string' ? match : match.title
+            result = respond(game, label)
             picked = true
             break
           }
@@ -117,7 +122,8 @@ describe('Agricola End-to-End', () => {
 
         if (!picked) {
           // Just pick first available action
-          result = respond(game, choices[0])
+          const first = choices[0]
+          result = respond(game, typeof first === 'string' ? first : first.title)
         }
       }
       else if (title.includes('more food')) {

@@ -8,7 +8,7 @@ module.exports = {
   category: "Building Resource Provider",
   text: "You immediately get 1 wood for each occupation you have in front of you.",
   onPlay(game, player) {
-    const occs = player.occupationsPlayed || 0
+    const occs = player.getOccupationCount()
     if (occs > 0) {
       player.addResource('wood', occs)
       game.log.add({

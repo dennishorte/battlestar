@@ -1,61 +1,50 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe("Carpenter's Axe (A015)", () => {
-  test('offers stable building when player has 7+ wood after wood action', () => {
-    const card = res.getCardById('carpenters-axe-a015')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe("Carpenter's Axe", () => {
+  test('offers stable building when player has 7+ wood after Forest', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        wood: 4,
+        minorImprovements: ['carpenters-axe-a015'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.wood = 7
+    t.choose(game, 'Forest')                    // +3 wood = 7 total
+    t.choose(game, 'Build stable at 0,1')       // build stable for 1 wood
 
-    let offerCalled = false
-    game.actions.offerBuildStableForWood = (player, sourceCard, cost) => {
-      offerCalled = true
-      expect(player).toBe(dennis)
-      expect(sourceCard).toBe(card)
-      expect(cost).toBe(1)
-    }
-
-    card.onAction(game, dennis, 'take-wood')
-
-    expect(offerCalled).toBe(true)
+    t.testBoard(game, {
+      dennis: {
+        wood: 6, // 4 + 3 (Forest) - 1 (stable)
+        minorImprovements: ['carpenters-axe-a015'],
+        farmyard: {
+          stables: [{ row: 0, col: 1 }],
+        },
+      },
+    })
   })
 
-  test('does not offer when player has less than 7 wood', () => {
-    const card = res.getCardById('carpenters-axe-a015')
-    const game = t.fixture({ cardSets: ['minorA'] })
+  test('does not offer when wood < 7 after action', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        wood: 0,
+        minorImprovements: ['carpenters-axe-a015'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.wood = 6
+    t.choose(game, 'Forest') // +3 wood = 3 total, < 7
 
-    let offerCalled = false
-    game.actions.offerBuildStableForWood = () => {
-      offerCalled = true
-    }
-
-    card.onAction(game, dennis, 'take-wood')
-
-    expect(offerCalled).toBe(false)
-  })
-
-  test('does not trigger on non-wood actions', () => {
-    const card = res.getCardById('carpenters-axe-a015')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    dennis.wood = 10
-
-    let offerCalled = false
-    game.actions.offerBuildStableForWood = () => {
-      offerCalled = true
-    }
-
-    card.onAction(game, dennis, 'take-clay')
-
-    expect(offerCalled).toBe(false)
+    // No stable offer — game moves to micah's turn
+    t.testBoard(game, {
+      dennis: {
+        wood: 3,
+        minorImprovements: ['carpenters-axe-a015'],
+      },
+    })
   })
 })

@@ -33,21 +33,23 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   // ---------------------------------------------------------------------------
-  // Anytime food conversion support
+  // Anytime actions support
   // ---------------------------------------------------------------------------
 
   choose(player, choicesOrFn, opts = {}) {
     while (true) {
       const choices = typeof choicesOrFn === 'function' ? choicesOrFn() : choicesOrFn
-      const conversionOptions = this.game.getAnytimeFoodConversionOptions(player)
+      const anytimeActions = this.game.getAnytimeActions(player)
+      const hasAnytime = anytimeActions.length > 0
 
       const result = super.choose(player, choices, {
         ...opts,
-        foodConversionOptions: conversionOptions.length > 0 ? conversionOptions : undefined,
+        anytimeActions: hasAnytime ? anytimeActions : undefined,
+        noAutoRespond: hasAnytime || undefined,
       })
 
-      if (result && result.action === 'convert-to-food') {
-        this.game.executeAnytimeFoodConversion(player, result.option)
+      if (result && result.action === 'anytime-action') {
+        this.game.executeAnytimeAction(player, result.anytimeAction)
         continue
       }
 
@@ -87,6 +89,7 @@ class AgricolaActionManager extends BaseActionManager {
           // Must convert to food or release - use unified handler
           this.handleAnimalOverflow(player, resource, count)
         }
+        this.game.callPlayerCardHook(player, 'onTakeAnimals', resource, count)
       }
       else {
         player.addResource(resource, actionState.accumulated)
@@ -94,6 +97,10 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     actionState.accumulated = 0
+
+    if (action.accumulates.wood) {
+      this.game.callPlayerCardHook(player, 'onGainWood')
+    }
 
     // Some accumulating actions also give instant resources (e.g., Riverbank Forest)
     if (action.gives) {
@@ -362,20 +369,41 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
-    // Let player choose what to build
-    const choices = []
-    if (canBuildRoom) {
-      choices.push('Build Room')
-    }
-    if (canBuildStable) {
-      choices.push('Build Stable')
-    }
-    if (canBuildRoom && canBuildStable) {
-      choices.push('Build Room and Stable')
-    }
-    choices.push('Do Nothing')
+    const selection = this.choose(player, () => {
+      const curCanBuildRoom = player.canAffordRoom() && player.getValidRoomBuildSpaces().length > 0
+      const curCanBuildStable = player.canAffordStable() && player.getValidStableBuildSpaces().length > 0
 
-    const selection = this.choose(player, choices, {
+      const hasMultiRoom = curCanBuildRoom && player.hasMultiRoomDiscount()
+      const multiRoomOptions = []
+      if (hasMultiRoom) {
+        const availableSpaces = player.getValidRoomBuildSpaces().length
+        for (let count = 2; count <= availableSpaces; count++) {
+          const cost = player.getMultiRoomCost(count)
+          if (player.canAffordCost(cost)) {
+            multiRoomOptions.push(count)
+          }
+          else {
+            break
+          }
+        }
+      }
+
+      const choices = []
+      if (curCanBuildRoom) {
+        choices.push('Build Room')
+      }
+      for (const count of multiRoomOptions) {
+        choices.push(`Build ${count} Rooms`)
+      }
+      if (curCanBuildStable) {
+        choices.push('Build Stable')
+      }
+      if (curCanBuildRoom && curCanBuildStable) {
+        choices.push('Build Room and Stable')
+      }
+      choices.push('Do Nothing')
+      return choices
+    }, {
       title: 'Choose what to build',
       min: 1,
       max: 1,
@@ -388,6 +416,14 @@ class AgricolaActionManager extends BaseActionManager {
       return true
     }
 
+    // Handle multi-room building
+    const multiMatch = choice.match(/^Build (\d+) Rooms$/)
+    if (multiMatch) {
+      const count = parseInt(multiMatch[1])
+      this.buildMultipleRooms(player, count)
+      return true
+    }
+
     if (choice === 'Build Room' || choice === 'Build Room and Stable') {
       this.buildRoom(player)
     }
@@ -397,6 +433,49 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     return true
+  }
+
+  buildMultipleRooms(player, count) {
+    const cost = player.getMultiRoomCost(count)
+    player.payCost(cost)
+    const roomType = player.roomType
+
+    for (let i = 0; i < count; i++) {
+      const validSpaces = player.getValidRoomBuildSpaces()
+      if (validSpaces.length === 0) {
+        break
+      }
+
+      const spaceChoices = validSpaces.map(s => `${s.row},${s.col}`)
+      const result = this.game.requestInputSingle({
+        type: 'select',
+        actor: player.name,
+        title: `Choose where to build room ${i + 1} of ${count}`,
+        choices: spaceChoices,
+        min: 1,
+        max: 1,
+        allowsAction: 'build-room',
+        validSpaces: validSpaces,
+      })
+
+      let row, col
+      if (result.action === 'build-room') {
+        row = result.row
+        col = result.col
+      }
+      else {
+        [row, col] = result[0].split(',').map(Number)
+      }
+
+      player.buildRoom(row, col)
+      this.log.add({
+        template: '{player} builds a {type} room at ({row},{col})',
+        args: { player, type: roomType, row, col },
+      })
+    }
+
+    // Call onBuildRoom hooks for the multi-room build
+    this.game.callPlayerCardHook(player, 'onBuildRoom', roomType)
   }
 
   buildRoom(player) {
@@ -454,7 +533,7 @@ class AgricolaActionManager extends BaseActionManager {
     })
 
     // Call onBuildRoom hooks (Roughcaster, Wall Builder)
-    this.callOnBuildRoomHooks(player, roomType)
+    this.game.callPlayerCardHook(player, 'onBuildRoom', roomType)
 
     return true
   }
@@ -511,6 +590,8 @@ class AgricolaActionManager extends BaseActionManager {
       args: { player, row, col },
     })
 
+    this.game.callPlayerCardHook(player, 'onBuildStable')
+
     return true
   }
 
@@ -558,7 +639,7 @@ class AgricolaActionManager extends BaseActionManager {
     })
 
     // Call onRenovate hooks (Roughcaster)
-    this.callOnRenovateHooks(player, oldType, newType)
+    this.game.callPlayerCardHook(player, 'onRenovate', oldType, newType)
 
     return true
   }
@@ -634,7 +715,10 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
+    this.game.callPlayerCardHook(player, 'onSow', true)
+
     let sowedAny = false
+    let sowedVegetables = false
 
     while (true) {
       const currentEmptyFields = player.getEmptyFields()
@@ -716,6 +800,9 @@ class AgricolaActionManager extends BaseActionManager {
 
         player.sowField(row, col, cropType)
         sowedAny = true
+        if (cropType === 'vegetables') {
+          sowedVegetables = true
+        }
 
         const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
         this.log.add({
@@ -739,6 +826,9 @@ class AgricolaActionManager extends BaseActionManager {
 
         player.sowVirtualField(fieldId, cropType)
         sowedAny = true
+        if (cropType === 'vegetables') {
+          sowedVegetables = true
+        }
 
         const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
         this.log.add({
@@ -767,6 +857,9 @@ class AgricolaActionManager extends BaseActionManager {
 
           player.sowField(row, col, cropType)
           sowedAny = true
+          if (cropType === 'vegetables') {
+            sowedVegetables = true
+          }
 
           const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
           this.log.add({
@@ -775,6 +868,10 @@ class AgricolaActionManager extends BaseActionManager {
           })
         }
       }
+    }
+
+    if (sowedVegetables) {
+      this.game.callPlayerCardHook(player, 'onSowVegetables', true)
     }
 
     if (!sowedAny) {
@@ -832,7 +929,7 @@ class AgricolaActionManager extends BaseActionManager {
     })
 
     // Call onBake hooks (Dutch Windmill gives bonus food after harvest)
-    this.callOnBakeHooks(player)
+    this.game.callPlayerCardHook(player, 'onBake')
 
     return true
   }
@@ -951,6 +1048,10 @@ class AgricolaActionManager extends BaseActionManager {
       }
     }
 
+    if (totalFencesBuilt > 0) {
+      this.game.callPlayerCardHook(player, 'onBuildFences', totalFencesBuilt)
+    }
+
     return totalFencesBuilt > 0
   }
 
@@ -1002,7 +1103,7 @@ class AgricolaActionManager extends BaseActionManager {
         })
 
         // Call onBuildPasture hooks (Shepherd's Crook)
-        this.callOnBuildPastureHooks(player, { spaces: selectedSpaces })
+        this.game.callPlayerCardHook(player, 'onBuildPasture', { spaces: selectedSpaces })
 
         return { built: true, fencesBuilt: result.fencesBuilt }
       }
@@ -1096,13 +1197,16 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
-    const choices = affordableIds.map(id => {
-      const imp = this.game.cards.byId(id)
-      return imp.name + ` (${id})`
-    })
-    choices.push('Do not buy')
-
-    const selection = this.choose(player, choices, {
+    const selection = this.choose(player, () => {
+      const curAffordable = availableImprovements
+        .filter(id => player.canBuyMajorImprovement(id))
+      const choices = curAffordable.map(id => {
+        const imp = this.game.cards.byId(id)
+        return imp.name + ` (${id})`
+      })
+      choices.push('Do not buy')
+      return choices
+    }, {
       title: 'Choose a major improvement',
       min: 1,
       max: 1,
@@ -1119,14 +1223,16 @@ class AgricolaActionManager extends BaseActionManager {
 
     if (improvementId) {
       const imp = this.game.cards.byId(improvementId)
-      player.buyMajorImprovement(improvementId)
+      const result = player.buyMajorImprovement(improvementId)
       this._recordCardPlayed(player, imp)
 
       this.log.add({
         template: '{player} buys {card}',
         args: { player, card: imp },
       })
-      player.payCost(player.getMajorImprovementCost(improvementId))
+      if (!result.upgraded) {
+        player.payCost(player.getMajorImprovementCost(improvementId))
+      }
 
       // Execute onBuy effect if present (e.g., Well schedules food, Ovens bake bread)
       if (imp.hasHook('onBuy')) {
@@ -1134,7 +1240,11 @@ class AgricolaActionManager extends BaseActionManager {
       }
 
       // Call onBuildImprovement hooks (Junk Room gives food)
-      this.callOnBuildImprovementHooks(player)
+      this.game.callPlayerCardHook(player, 'onBuildImprovement')
+
+      if (imp.upgradesFrom && imp.upgradesFrom.some(id => id.startsWith('fireplace'))) {
+        this.game.callPlayerCardHook(player, 'onUpgradeFireplace')
+      }
 
       return improvementId
     }
@@ -1162,15 +1272,37 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     // Occupation cost: first is free, subsequent cost 1 food each
-    const cost = player.occupationsPlayed === 0 ? 0 : 1
+    const baseFoodCost = player.getOccupationCount() === 0 ? 0 : 1
+    let costObj = baseFoodCost > 0 ? { food: baseFoodCost } : {}
 
-    if (cost > 0 && player.food < cost) {
+    // Apply modifyOccupationCost hooks (e.g., ForestSchool: food → woodOrFood)
+    for (const card of player.getActiveCards()) {
+      if (card.hasHook('modifyOccupationCost')) {
+        costObj = card.callHook('modifyOccupationCost', player, costObj)
+      }
+    }
+
+    const cost = baseFoodCost // Keep for display/gating
+    const hasWoodOrFood = costObj.woodOrFood > 0
+
+    if (cost > 0 && !hasWoodOrFood && player.food < cost) {
       // Relax gate: allow entry if anytime conversions can produce food
       const canConvert = this.game.getAnytimeFoodConversionOptions(player).length > 0
       if (!canConvert) {
         this.log.add({
           template: '{player} cannot afford to play an occupation (needs {cost} food)',
           args: { player, cost },
+        })
+        return false
+      }
+    }
+
+    if (cost > 0 && hasWoodOrFood && player.food < costObj.woodOrFood && player.wood < costObj.woodOrFood) {
+      const canConvert = this.game.getAnytimeFoodConversionOptions(player).length > 0
+      if (!canConvert) {
+        this.log.add({
+          template: '{player} cannot afford to play an occupation',
+          args: { player },
         })
         return false
       }
@@ -1221,9 +1353,49 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
-    // Pay the food cost
+    // Pay the occupation cost
     if (cost > 0) {
-      player.payCost({ food: cost })
+      if (hasWoodOrFood) {
+        // Player can pay with wood or food (e.g., Forest School)
+        const amount = costObj.woodOrFood
+        const canPayFood = player.food >= amount
+        const canPayWood = player.wood >= amount
+
+        if (canPayFood && canPayWood) {
+          const paySelection = this.choose(player, () => {
+            const payChoices = []
+            if (player.food >= amount) {
+              payChoices.push(`Pay ${amount} food`)
+            }
+            if (player.wood >= amount) {
+              payChoices.push(`Pay ${amount} wood`)
+            }
+            if (payChoices.length === 0) {
+              payChoices.push(`Pay ${amount} food`)
+            }
+            return payChoices
+          }, {
+            title: 'Choose payment for occupation',
+            min: 1,
+            max: 1,
+          })
+          if (paySelection[0] === `Pay ${amount} wood`) {
+            player.payCost({ wood: amount })
+          }
+          else {
+            player.payCost({ food: amount })
+          }
+        }
+        else if (canPayWood) {
+          player.payCost({ wood: amount })
+        }
+        else {
+          player.payCost({ food: amount })
+        }
+      }
+      else {
+        player.payCost({ food: cost })
+      }
     }
 
     // Play the card (moves from hand to playedOccupations)
@@ -1241,6 +1413,8 @@ class AgricolaActionManager extends BaseActionManager {
     if (card.hasHook('onPlay')) {
       card.callHook('onPlay', this.game, player)
     }
+
+    this.game.registerCardActionSpace(player, card)
 
     // Call onPlayOccupation hooks on all active cards
     this.game.callPlayerCardHook(player, 'onPlayOccupation')
@@ -1294,10 +1468,10 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   buyMinorImprovement(player) {
-    // Get minor improvements from player's hand
+    // Get minor improvements from player's hand (exclude cards requiring major improvement action)
     const minorInHand = player.hand.filter(cardId => {
       const card = this.game.cards.byId(cardId)
-      return card && card.type === 'minor'
+      return card && card.type === 'minor' && !card.definition.requiresMajorImprovementAction
     })
 
     // Check if any played cards allow major improvements on minor action
@@ -1405,20 +1579,22 @@ class AgricolaActionManager extends BaseActionManager {
 
           if (improvementId) {
             const imp = this.game.cards.byId(improvementId)
-            player.buyMajorImprovement(improvementId)
+            const result = player.buyMajorImprovement(improvementId)
             this._recordCardPlayed(player, imp)
 
             this.log.add({
               template: '{player} buys {card}',
               args: { player, card: imp },
             })
-            player.payCost(player.getMajorImprovementCost(improvementId))
+            if (!result.upgraded) {
+              player.payCost(player.getMajorImprovementCost(improvementId))
+            }
 
             if (imp.hasHook('onBuy')) {
               imp.callHook('onBuy', this.game, player)
             }
 
-            this.callOnBuildImprovementHooks(player)
+            this.game.callPlayerCardHook(player, 'onBuildImprovement')
             return improvementId
           }
         }
@@ -1445,7 +1621,8 @@ class AgricolaActionManager extends BaseActionManager {
               card.callHook('onPlay', this.game, player)
             }
 
-            this.callOnBuildImprovementHooks(player)
+            this.game.registerCardActionSpace(player, card)
+            this.game.callPlayerCardHook(player, 'onBuildImprovement')
             this.maybePassLeft(player, cardId)
             return true
           }
@@ -1523,8 +1700,10 @@ class AgricolaActionManager extends BaseActionManager {
       card.callHook('onPlay', this.game, player)
     }
 
+    this.game.registerCardActionSpace(player, card)
+
     // Call onBuildImprovement hooks (Junk Room gives food)
-    this.callOnBuildImprovementHooks(player)
+    this.game.callPlayerCardHook(player, 'onBuildImprovement')
 
     // Pass to left player if applicable
     this.maybePassLeft(player, cardId)
@@ -1536,7 +1715,11 @@ class AgricolaActionManager extends BaseActionManager {
   // Major or Minor Improvement action
   // ---------------------------------------------------------------------------
 
-  buyImprovement(player, allowMajor, allowMinor) {
+  buildImprovement(player, options = {}) {
+    return this.buyImprovement(player, true, true, options)
+  }
+
+  buyImprovement(player, allowMajor, allowMinor, options = {}) {
     // Check if any improvements are available at all (relaxed gate for anytime conversions)
     const hasAnyPossibility = () => {
       if (allowMajor) {
@@ -1575,7 +1758,18 @@ class AgricolaActionManager extends BaseActionManager {
       // Get affordable major improvements
       if (allowMajor) {
         const availableImprovements = this.game.getAvailableMajorImprovements()
-        const affordableMajorIds = availableImprovements.filter(id => player.canBuyMajorImprovement(id))
+        const affordableMajorIds = availableImprovements.filter(id => {
+          if (!player.canBuyMajorImprovement(id)) {
+            return false
+          }
+          if (options.requireStone) {
+            const cost = player.getMajorImprovementCost(id)
+            if (!(cost.stone > 0)) {
+              return false
+            }
+          }
+          return true
+        })
         if (affordableMajorIds.length > 0) {
           const majorChoices = affordableMajorIds.map(id => {
             const imp = this.game.cards.byId(id)
@@ -1596,7 +1790,18 @@ class AgricolaActionManager extends BaseActionManager {
           const card = this.game.cards.byId(cardId)
           return card && card.type === 'minor'
         })
-        const playableMinorIds = minorInHand.filter(cardId => player.canPlayCard(cardId))
+        const playableMinorIds = minorInHand.filter(cardId => {
+          if (!player.canPlayCard(cardId)) {
+            return false
+          }
+          if (options.requireStone) {
+            const card = this.game.cards.byId(cardId)
+            if (!((card.definition.cost?.stone || 0) > 0)) {
+              return false
+            }
+          }
+          return true
+        })
         if (playableMinorIds.length > 0) {
           const minorChoices = playableMinorIds.map(cardId => {
             const card = this.game.cards.byId(cardId)
@@ -1640,14 +1845,16 @@ class AgricolaActionManager extends BaseActionManager {
 
         if (improvementId) {
           const imp = this.game.cards.byId(improvementId)
-          player.buyMajorImprovement(improvementId)
+          const result = player.buyMajorImprovement(improvementId)
           this._recordCardPlayed(player, imp)
 
           this.log.add({
             template: '{player} buys {card}',
             args: { player, card: imp },
           })
-          player.payCost(player.getMajorImprovementCost(improvementId))
+          if (!result.upgraded) {
+            player.payCost(player.getMajorImprovementCost(improvementId))
+          }
 
           // Execute onBuy effect if present (e.g., Well schedules food, Ovens bake bread)
           if (imp.hasHook('onBuy')) {
@@ -1655,7 +1862,11 @@ class AgricolaActionManager extends BaseActionManager {
           }
 
           // Call onBuildImprovement hooks (Junk Room gives food)
-          this.callOnBuildImprovementHooks(player)
+          this.game.callPlayerCardHook(player, 'onBuildImprovement')
+
+          if (imp.upgradesFrom && imp.upgradesFrom.some(id => id.startsWith('fireplace'))) {
+            this.game.callPlayerCardHook(player, 'onUpgradeFireplace')
+          }
 
           return improvementId
         }
@@ -1689,8 +1900,10 @@ class AgricolaActionManager extends BaseActionManager {
             card.callHook('onPlay', this.game, player)
           }
 
+          this.game.registerCardActionSpace(player, card)
+
           // Call onBuildImprovement hooks (Junk Room gives food)
-          this.callOnBuildImprovementHooks(player)
+          this.game.callPlayerCardHook(player, 'onBuildImprovement')
 
           // Pass to left player if applicable
           this.maybePassLeft(player, cardId)
@@ -1749,19 +1962,7 @@ class AgricolaActionManager extends BaseActionManager {
   // ---------------------------------------------------------------------------
 
   renovationAndOrFencing(player) {
-    const choices = []
-
-    if (player.canRenovate()) {
-      choices.push('Renovate')
-    }
-    if (player.wood >= 1 || player.getFreeFenceCount() > 0) {
-      choices.push('Build Fences')
-    }
-    if (player.canRenovate() && (player.wood >= 1 || player.getFreeFenceCount() > 0)) {
-      choices.push('Renovate then Fences')
-    }
-
-    if (choices.length === 0) {
+    if (!player.canRenovate() && player.wood < 1 && player.getFreeFenceCount() <= 0) {
       this.log.add({
         template: '{player} cannot renovate or build fences',
         args: { player },
@@ -1769,9 +1970,20 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
-    choices.push('Do Nothing')
-
-    const selection = this.choose(player, choices, {
+    const selection = this.choose(player, () => {
+      const choices = []
+      if (player.canRenovate()) {
+        choices.push('Renovate')
+      }
+      if (player.wood >= 1 || player.getFreeFenceCount() > 0) {
+        choices.push('Build Fences')
+      }
+      if (player.canRenovate() && (player.wood >= 1 || player.getFreeFenceCount() > 0)) {
+        choices.push('Renovate then Fences')
+      }
+      choices.push('Do Nothing')
+      return choices
+    }, {
       title: 'Choose action',
       min: 1,
       max: 1,
@@ -1802,6 +2014,10 @@ class AgricolaActionManager extends BaseActionManager {
   executeAction(player, actionId) {
     const action = res.getActionById(actionId)
     if (!action) {
+      const state = this.game.state.actionSpaces[actionId]
+      if (state?.cardProvided) {
+        return this.executeCardActionSpace(player, actionId, state)
+      }
       this.log.add({
         template: 'Unknown action: {actionId}',
         args: { actionId },
@@ -1822,7 +2038,7 @@ class AgricolaActionManager extends BaseActionManager {
       const result = this.takeAccumulatedResource(player, actionId)
       if (result) {
         // Call hooks even for accumulating actions
-        this.callOnActionHooks(player, actionId)
+        this.game.callPlayerCardHook(player, 'onAction', actionId)
         this.callOnAnyActionHooks(player, actionId)
       }
       return result
@@ -1921,7 +2137,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     // Call onAction hooks for this player's cards
-    this.callOnActionHooks(player, actionId)
+    this.game.callPlayerCardHook(player, 'onAction', actionId)
 
     // Call onAnyAction hooks for ALL players' cards
     this.callOnAnyActionHooks(player, actionId)
@@ -1933,11 +2149,22 @@ class AgricolaActionManager extends BaseActionManager {
   // Card Hook Helpers
   // ---------------------------------------------------------------------------
 
-  /**
-   * Call onAction hook on player's active cards
-   */
-  callOnActionHooks(player, actionId) {
+  executeCardActionSpace(player, actionId, state) {
+    const card = this.game.cards.byId(state.cardId)
+    const owner = this.game.players.byName(state.ownerName)
+
+    this.log.add({
+      template: '{player} uses {card} action space',
+      args: { player, card },
+    })
+
+    if (card.hasHook('onActionSpaceUsed')) {
+      card.callHook('onActionSpaceUsed', this.game, player, owner)
+    }
+
     this.game.callPlayerCardHook(player, 'onAction', actionId)
+    this.callOnAnyActionHooks(player, actionId)
+    return true
   }
 
   /**
@@ -2066,41 +2293,6 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   /**
-   * Call onBake hook when player bakes bread
-   */
-  callOnBakeHooks(player) {
-    this.game.callPlayerCardHook(player, 'onBake')
-  }
-
-  /**
-   * Call onBuildRoom hook when player builds a room
-   */
-  callOnBuildRoomHooks(player, roomType) {
-    this.game.callPlayerCardHook(player, 'onBuildRoom', roomType)
-  }
-
-  /**
-   * Call onBuildPasture hook when player builds a pasture
-   */
-  callOnBuildPastureHooks(player, pasture) {
-    this.game.callPlayerCardHook(player, 'onBuildPasture', pasture)
-  }
-
-  /**
-   * Call onRenovate hook when player renovates
-   */
-  callOnRenovateHooks(player, fromType, toType) {
-    this.game.callPlayerCardHook(player, 'onRenovate', fromType, toType)
-  }
-
-  /**
-   * Call onBuildImprovement hook when player builds an improvement
-   */
-  callOnBuildImprovementHooks(player) {
-    this.game.callPlayerCardHook(player, 'onBuildImprovement')
-  }
-
-  /**
    * Build a free stable (Mining Hammer)
    */
   buildFreeStable(player) {
@@ -2216,7 +2408,7 @@ class AgricolaActionManager extends BaseActionManager {
       return
     }
 
-    const foodGain = player.occupationsPlayed
+    const foodGain = player.getOccupationCount()
     if (foodGain <= 0) {
       return
     }
@@ -2253,24 +2445,612 @@ class AgricolaActionManager extends BaseActionManager {
       }
     }
 
-    const rooms = player.getRoomCount()
-    const choices = [
-      `Pay 1 food for ${rooms} stone`,
-      'Skip',
-    ]
-    const selection = this.choose(player, choices, {
+    const selection = this.choose(player, () => {
+      const rooms = player.getRoomCount()
+      return [
+        `Pay 1 food for ${rooms} stone`,
+        'Skip',
+      ]
+    }, {
       title: `${card.name}: Pay food for stone?`,
       min: 1,
       max: 1,
     })
 
     if (selection[0] !== 'Skip') {
+      const rooms = player.getRoomCount()
       player.payCost({ food: 1 })
       player.addResource('stone', rooms)
       this.log.add({
         template: '{player} pays 1 food for {stone} stone using {card}',
         args: { player, stone: rooms, card: card },
       })
+    }
+  }
+
+  /**
+   * Offer to pay 1 grain for 1 bonus point (Ale-Benches).
+   * If accepted, each other player gets 1 food.
+   */
+  offerAleBenches(player, card) {
+    const choices = [
+      'Pay 1 grain for 1 bonus point',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Pay grain for bonus point?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ grain: 1 })
+      player.bonusPoints += 1
+      for (const other of this.game.players.all()) {
+        if (other !== player) {
+          other.addResource('food', 1)
+        }
+      }
+      this.log.add({
+        template: '{player} pays 1 grain for 1 bonus point using {card}. Each other player gets 1 food.',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to pay 1 wood for 1 grain and 1 bonus point (Bucksaw).
+   */
+  offerBucksaw(player, card) {
+    const choices = [
+      'Pay 1 wood for 1 grain and 1 bonus point',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Pay wood for grain and bonus point?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ wood: 1 })
+      player.addResource('grain', 1)
+      player.bonusPoints = (player.bonusPoints || 0) + 1
+      this.log.add({
+        template: '{player} pays 1 wood for 1 grain and 1 bonus point using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to exchange 1 grain for 2 food and 1 bonus point (Baking Sheet).
+   */
+  offerBakingSheet(player, card) {
+    const choices = [
+      'Exchange 1 grain for 2 food and 1 bonus point',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Exchange grain for food and bonus point?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ grain: 1 })
+      player.addResource('food', 2)
+      player.bonusPoints = (player.bonusPoints || 0) + 1
+      this.log.add({
+        template: '{player} exchanges 1 grain for 2 food and 1 bonus point using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to convert 1 vegetable to 6 food (Potato Ridger).
+   */
+  offerPotatoRidger(player, card) {
+    const choices = [
+      'Convert 1 vegetable to 6 food',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Convert vegetable to food?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ vegetables: 1 })
+      player.addResource('food', 6)
+      this.log.add({
+        template: '{player} converts 1 vegetable to 6 food using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to exchange 1 wood and 1 fence for 2 food and 1 bonus point (Loppers).
+   */
+  offerLoppers(player, card) {
+    const choices = [
+      'Exchange 1 wood and 1 fence for 2 food and 1 bonus point',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Exchange wood and fence for food and bonus point?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ wood: 1 })
+      player.useFenceFromSupply(1)
+      player.addResource('food', 2)
+      player.bonusPoints = (player.bonusPoints || 0) + 1
+      this.log.add({
+        template: '{player} exchanges 1 wood and 1 fence for 2 food and 1 bonus point using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to exchange 1 wood for 3 food (Shaving Horse).
+   */
+  offerShavingHorse(player, card) {
+    const choices = [
+      'Exchange 1 wood for 3 food',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Exchange wood for food?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ wood: 1 })
+      player.addResource('food', 3)
+      this.log.add({
+        template: '{player} exchanges 1 wood for 3 food using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to take 1 vegetable from a field for 3 food and 1 bonus point (Asparagus Knife).
+   */
+  offerAsparagusKnife(player, card) {
+    const hasVeg = player.getFieldSpaces().some(f => f.crop === 'vegetables' && f.cropCount > 0)
+    if (!hasVeg) {
+      return
+    }
+
+    const choices = [
+      'Take 1 vegetable from field for 3 food and 1 bonus point',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Harvest vegetable for food and bonus point?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const field = player.getFieldSpaces().find(f => f.crop === 'vegetables' && f.cropCount > 0)
+      const space = player.getSpace(field.row, field.col)
+      space.cropCount -= 1
+      if (space.cropCount === 0) {
+        space.crop = null
+      }
+      player.addResource('food', 3)
+      player.bonusPoints = (player.bonusPoints || 0) + 1
+      this.log.add({
+        template: '{player} takes 1 vegetable from a field for 3 food and 1 bonus point using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to exchange 1 grain for 2 clay and 1 food (Cob).
+   */
+  offerCob(player, card) {
+    const choices = [
+      'Exchange 1 grain for 2 clay and 1 food',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Exchange grain for clay and food?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ grain: 1 })
+      player.addResource('clay', 2)
+      player.addResource('food', 1)
+      this.log.add({
+        template: '{player} exchanges 1 grain for 2 clay and 1 food using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to exchange 1 clay for 2 food (Potter's Yard).
+   */
+  offerClayForFood(player, card) {
+    const choices = [
+      'Exchange 1 clay for 2 food',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Exchange clay for food?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ clay: 1 })
+      player.addResource('food', 2)
+      this.log.add({
+        template: '{player} exchanges 1 clay for 2 food using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to move 1 vegetable from field to supply (Lifting Machine).
+   */
+  offerLiftingMachine(player, card) {
+    const hasVeg = player.getFieldSpaces().some(f => f.crop === 'vegetables' && f.cropCount > 0)
+    if (!hasVeg) {
+      return
+    }
+
+    const choices = [
+      'Move 1 vegetable from field to supply',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Move vegetable from field?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const field = player.getFieldSpaces().find(f => f.crop === 'vegetables' && f.cropCount > 0)
+      const space = player.getSpace(field.row, field.col)
+      space.cropCount -= 1
+      if (space.cropCount === 0) {
+        space.crop = null
+      }
+      player.addResource('vegetables', 1)
+      this.log.add({
+        template: '{player} moves 1 vegetable from field to supply using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to take 1 building resource from an accumulation space with 4+ resources (Work Certificate).
+   */
+  offerWorkCertificate(player, card) {
+    const buildingSpaces = ['take-wood', 'take-clay', 'take-reed', 'take-stone']
+    const available = []
+    for (const spaceId of buildingSpaces) {
+      const space = this.game.state.actionSpaces[spaceId]
+      if (space && space.accumulated >= 4) {
+        const resource = spaceId.replace('take-', '')
+        available.push(`Take 1 ${resource} (${space.accumulated} available)`)
+      }
+    }
+
+    if (available.length === 0) {
+      return
+    }
+
+    available.push('Skip')
+    const selection = this.choose(player, available, {
+      title: `${card.name}: Take 1 building resource?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const match = selection[0].match(/Take 1 (\w+)/)
+      if (match) {
+        const resource = match[1]
+        const spaceId = `take-${resource}`
+        this.game.state.actionSpaces[spaceId].accumulated -= 1
+        player.addResource(resource, 1)
+        this.log.add({
+          template: '{player} takes 1 {resource} using {card}',
+          args: { player, resource, card },
+        })
+      }
+    }
+  }
+
+  /**
+   * Offer to build Clay Oven or Stone Oven at discounted cost (Oven Site).
+   */
+  offerDiscountedOven(player, card, cost) {
+    const choices = []
+    const availableMajors = this.game.getAvailableMajorImprovements()
+
+    if (availableMajors.includes('clay-oven') && player.canAffordCost(cost)) {
+      choices.push('Build Clay Oven')
+    }
+    if (availableMajors.includes('stone-oven') && player.canAffordCost(cost)) {
+      choices.push('Build Stone Oven')
+    }
+    choices.push('Skip')
+
+    if (choices.length === 1) {
+      return // Only Skip
+    }
+
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Build an oven for ${cost.clay} clay and ${cost.stone} stone?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] === 'Build Clay Oven') {
+      player.payCost(cost)
+      const imp = this.game.cards.byId('clay-oven')
+      imp.moveTo(this.game.zones.byPlayer(player, 'majorImprovements'))
+      this.log.add({
+        template: '{player} builds Clay Oven at discount using {card}',
+        args: { player, card },
+      })
+    }
+    else if (selection[0] === 'Build Stone Oven') {
+      player.payCost(cost)
+      const imp = this.game.cards.byId('stone-oven')
+      imp.moveTo(this.game.zones.byPlayer(player, 'majorImprovements'))
+      this.log.add({
+        template: '{player} builds Stone Oven at discount using {card}',
+        args: { player, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to renovate for free (Renovation Company).
+   */
+  offerFreeRenovation(player, card) {
+    const fromType = player.roomType
+    const toType = fromType === 'wood' ? 'clay' : (fromType === 'clay' ? 'stone' : null)
+    if (!toType) {
+      return // Already stone rooms, can't renovate
+    }
+
+    const choices = [
+      `Renovate from ${fromType} to ${toType} for free`,
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Renovate for free?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      // Free renovation — bypass cost check and payment
+      player.roomType = toType
+      for (let row = 0; row < res.constants.farmyardRows; row++) {
+        for (let col = 0; col < res.constants.farmyardCols; col++) {
+          if (player.farmyard.grid[row][col].type === 'room') {
+            player.farmyard.grid[row][col].roomType = toType
+          }
+        }
+      }
+      this.log.add({
+        template: '{player} renovates from {from} to {to} for free using {card}',
+        args: { player, from: fromType, to: toType, card },
+      })
+      this.game.callPlayerCardHook(player, 'onRenovate', fromType, toType)
+    }
+  }
+
+  /**
+   * Offer to exchange food for bonus points, up to completed harvests (Facades Carving).
+   */
+  offerFacadesCarving(player, card, maxExchange) {
+    const maxAffordable = Math.min(maxExchange, player.food)
+    if (maxAffordable <= 0) {
+      return
+    }
+
+    const selection = this.choose(player, () => {
+      const curMax = Math.min(maxExchange, player.food)
+      const choices = []
+      for (let i = 1; i <= curMax; i++) {
+        choices.push(`Exchange ${i} food for ${i} bonus point${i > 1 ? 's' : ''}`)
+      }
+      choices.push('Skip')
+      return choices
+    }, {
+      title: `${card.name}: Exchange food for bonus points?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const match = selection[0].match(/Exchange (\d+) food/)
+      if (match) {
+        const amount = parseInt(match[1])
+        player.payCost({ food: amount })
+        player.bonusPoints = (player.bonusPoints || 0) + amount
+        this.log.add({
+          template: '{player} exchanges {amount} food for {amount} bonus points using {card}',
+          args: { player, amount, card },
+        })
+      }
+    }
+  }
+
+  /**
+   * Offer to build a free stable in a single-space pasture (Shelter).
+   */
+  offerBuildFreeStableInSinglePasture(player, card, pastures) {
+    const choices = pastures.map(p => `Build stable at ${p.spaces[0].row},${p.spaces[0].col}`)
+    choices.push('Skip')
+
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Build a free stable?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const match = selection[0].match(/(\d+),(\d+)/)
+      if (match) {
+        const row = parseInt(match[1])
+        const col = parseInt(match[2])
+        player.buildStable(row, col)
+        this.log.add({
+          template: '{player} builds a free stable using {card}',
+          args: { player, card },
+        })
+      }
+    }
+  }
+
+  /**
+   * Offer to exchange 1/2/3 grain for 3 food and 0/1/2 bonus points (Beer Keg).
+   */
+  offerBeerKeg(player, card) {
+    if (player.grain < 1) {
+      return
+    }
+
+    const selection = this.choose(player, () => {
+      const choices = []
+      if (player.grain >= 1) {
+        choices.push('Exchange 1 grain for 3 food')
+      }
+      if (player.grain >= 2) {
+        choices.push('Exchange 2 grain for 3 food and 1 bonus point')
+      }
+      if (player.grain >= 3) {
+        choices.push('Exchange 3 grain for 3 food and 2 bonus points')
+      }
+      choices.push('Skip')
+      return choices
+    }, {
+      title: `${card.name}: Exchange grain for food?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const match = selection[0].match(/Exchange (\d+) grain/)
+      if (match) {
+        const grainCount = parseInt(match[1])
+        const bonusPoints = Math.max(0, grainCount - 1)
+        player.payCost({ grain: grainCount })
+        player.addResource('food', 3)
+        if (bonusPoints > 0) {
+          player.bonusPoints = (player.bonusPoints || 0) + bonusPoints
+        }
+        this.log.add({
+          template: '{player} exchanges {grain} grain for 3 food and {bp} bonus points using {card}',
+          args: { player, grain: grainCount, bp: bonusPoints, card },
+        })
+      }
+    }
+  }
+
+  /**
+   * Offer to use a baking improvement to turn 1 grain into food (Winnowing Fan).
+   */
+  offerWinnowingFan(player, card) {
+    const imp = player.getBakingImprovement()
+    if (!imp) {
+      return
+    }
+
+    const foodAmount = (imp.abilities && imp.abilities.bakingRate) || 2
+    const choices = [
+      `Bake 1 grain for ${foodAmount} food using ${imp.name}`,
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Bake 1 grain?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ grain: 1 })
+      player.addResource('food', foodAmount)
+      this.log.add({
+        template: '{player} bakes 1 grain for {food} food using {card}',
+        args: { player, food: foodAmount, card },
+      })
+    }
+  }
+
+  /**
+   * Offer to pay 1 grain to breed one type of animal (Silage).
+   */
+  offerSilage(player, card) {
+    const animalTypes = ['sheep', 'boar', 'cattle']
+    const hasBreedable = animalTypes.some(type =>
+      player.getTotalAnimals(type) >= 2 && player.canPlaceAnimals(type, 1)
+    )
+    if (!hasBreedable) {
+      return
+    }
+
+    const selection = this.choose(player, () => {
+      const choices = []
+      for (const type of animalTypes) {
+        if (player.getTotalAnimals(type) >= 2 && player.canPlaceAnimals(type, 1)) {
+          choices.push(`Pay 1 grain to breed ${type}`)
+        }
+      }
+      choices.push('Skip')
+      return choices
+    }, {
+      title: `${card.name}: Pay grain to breed animals?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const match = selection[0].match(/breed (\w+)/)
+      if (match) {
+        const animalType = match[1]
+        // Pay grain from supply or field
+        if (player.grain >= 1) {
+          player.payCost({ grain: 1 })
+        }
+        else {
+          const field = player.getFieldSpaces().find(f => f.crop === 'grain' && f.cropCount > 0)
+          const space = player.getSpace(field.row, field.col)
+          space.cropCount -= 1
+          if (space.cropCount === 0) {
+            space.crop = null
+          }
+        }
+        player.addAnimals(animalType, 1)
+        this.log.add({
+          template: '{player} pays 1 grain to breed {animal} using {card}',
+          args: { player, animal: animalType, card },
+        })
+      }
     }
   }
 
@@ -2352,10 +3132,12 @@ class AgricolaActionManager extends BaseActionManager {
         break
       }
 
-      const spaceChoices = currentValidSpaces.map(s => `${s.row},${s.col}`)
-      spaceChoices.push('Done building rooms')
-
-      const selection = this.choose(player, spaceChoices, {
+      const selection = this.choose(player, () => {
+        const curSpaces = player.getValidRoomBuildSpaces()
+        const spaceChoices = curSpaces.map(s => `${s.row},${s.col}`)
+        spaceChoices.push('Done building rooms')
+        return spaceChoices
+      }, {
         title: `Build a room (5 ${roomType} + 2 reed)`,
         min: 1,
         max: 1,
@@ -2378,7 +3160,7 @@ class AgricolaActionManager extends BaseActionManager {
         args: { player, type: roomType, row, col },
       })
 
-      this.callOnBuildRoomHooks(player, roomType)
+      this.game.callPlayerCardHook(player, 'onBuildRoom', roomType)
     }
 
     if (roomsBuilt === 0) {
@@ -2392,20 +3174,11 @@ class AgricolaActionManager extends BaseActionManager {
    * Animal Market action: Choose sheep (+1 food) or cattle (costs 1 food)
    */
   animalMarket(player) {
-    const choices = []
-
-    // Sheep option: get sheep + 1 food
-    if (player.canPlaceAnimals('sheep', 1)) {
-      choices.push('Take 1 sheep and 1 food')
-    }
-
-    // Cattle option: pay 1 food for cattle
+    const canSheep = player.canPlaceAnimals('sheep', 1)
     const canPayFood = player.food >= 1 || this.game.getAnytimeFoodConversionOptions(player).length > 0
-    if (canPayFood && player.canPlaceAnimals('cattle', 1)) {
-      choices.push('Pay 1 food for 1 cattle')
-    }
+    const canCattle = canPayFood && player.canPlaceAnimals('cattle', 1)
 
-    if (choices.length === 0) {
+    if (!canSheep && !canCattle) {
       this.log.add({
         template: '{player} cannot take any animals from the market',
         args: { player },
@@ -2413,9 +3186,18 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
-    choices.push('Do nothing')
-
-    const selection = this.choose(player, choices, {
+    const selection = this.choose(player, () => {
+      const choices = []
+      if (player.canPlaceAnimals('sheep', 1)) {
+        choices.push('Take 1 sheep and 1 food')
+      }
+      const curCanPay = player.food >= 1 || this.game.getAnytimeFoodConversionOptions(player).length > 0
+      if (curCanPay && player.canPlaceAnimals('cattle', 1)) {
+        choices.push('Pay 1 food for 1 cattle')
+      }
+      choices.push('Do nothing')
+      return choices
+    }, {
       title: 'Animal Market',
       min: 1,
       max: 1,

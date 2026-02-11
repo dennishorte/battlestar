@@ -1,34 +1,57 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Dutch Windmill (A063)', () => {
-  test('gives 3 extra food when baking in round after harvest', () => {
-    const card = res.getCardById('dutch-windmill-a063')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Dutch Windmill', () => {
+  test('gives 3 extra food when baking in the round after a harvest', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      // 4 action spaces → round 4 → game plays round 5 (right after harvest round 4)
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['dutch-windmill-a063'],
+        majorImprovements: ['fireplace-2'],
+        grain: 1,
+      },
+      actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing', 'Major Improvement'],
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.food = 0
-    game.state.lastHarvestRound = 4
-    game.state.round = 5
+    // Dennis takes Grain Utilization (no fields so skip sow, goes to bake)
+    t.choose(game, 'Grain Utilization')
+    t.choose(game, 'Bake 1 grain')
 
-    card.onBake(game, dennis)
-
-    expect(dennis.food).toBe(3)
+    t.testBoard(game, {
+      dennis: {
+        grain: 0,
+        food: 5, // 2 from fireplace + 3 from Dutch Windmill
+        minorImprovements: ['dutch-windmill-a063'],
+        majorImprovements: ['fireplace-2'],
+      },
+    })
   })
 
-  test('gives nothing in non-post-harvest round', () => {
-    const card = res.getCardById('dutch-windmill-a063')
-    const game = t.fixture({ cardSets: ['minorA'] })
+  test('does not give extra food when baking in a non-post-harvest round', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['dutch-windmill-a063'],
+        majorImprovements: ['fireplace-2'],
+        grain: 1,
+      },
+      actionSpaces: ['Grain Utilization'],
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.food = 0
-    game.state.lastHarvestRound = 4
-    game.state.round = 6
+    t.choose(game, 'Grain Utilization')
+    t.choose(game, 'Bake 1 grain')
 
-    card.onBake(game, dennis)
-
-    expect(dennis.food).toBe(0)
+    t.testBoard(game, {
+      dennis: {
+        grain: 0,
+        food: 2, // only 2 from fireplace, no Dutch Windmill bonus
+        minorImprovements: ['dutch-windmill-a063'],
+        majorImprovements: ['fireplace-2'],
+      },
+    })
   })
 })

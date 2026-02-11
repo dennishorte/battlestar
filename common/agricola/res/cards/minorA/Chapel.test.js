@@ -1,62 +1,71 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Chapel (A039)', () => {
-  test('provides action space', () => {
-    const card = res.getCardById('chapel-a039')
-    expect(card.providesActionSpace).toBe(true)
-    expect(card.actionSpaceId).toBe('chapel')
-  })
-
-  test('gives 3 bonus points when owner uses it', () => {
-    const card = res.getCardById('chapel-a039')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Chapel', () => {
+  test('owner uses Chapel action space and gets 3 bonus points', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        minorImprovements: ['chapel-a039'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.bonusPoints = 0
+    t.choose(game, 'Chapel')
 
-    card.onActionSpaceUsed(game, dennis, dennis)
-
-    expect(dennis.bonusPoints).toBe(3)
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        minorImprovements: ['chapel-a039'],
+        bonusPoints: 3,
+      },
+    })
   })
 
-  test('takes grain from other player and gives bonus points', () => {
-    const card = res.getCardById('chapel-a039')
-    const game = t.fixture({ cardSets: ['minorA'] })
+  test('non-owner uses Chapel, pays 1 grain to owner, gets 3 bonus points', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'micah',
+      dennis: {
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        minorImprovements: ['chapel-a039'],
+      },
+      micah: {
+        grain: 2,
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    const micah = game.players.byName('micah')
-    dennis.grain = 0
-    micah.grain = 2
-    micah.bonusPoints = 0
+    t.choose(game, 'Chapel')
 
-    card.onActionSpaceUsed(game, micah, dennis)
-
-    expect(micah.grain).toBe(1)
-    expect(dennis.grain).toBe(1)
-    expect(micah.bonusPoints).toBe(3)
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        minorImprovements: ['chapel-a039'],
+        grain: 1,
+      },
+      micah: {
+        grain: 1,
+        bonusPoints: 3,
+      },
+    })
   })
 
-  test('still gives bonus points if other player has no grain', () => {
-    const card = res.getCardById('chapel-a039')
-    const game = t.fixture({ cardSets: ['minorA'] })
+  test('non-owner without grain cannot use Chapel', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'micah',
+      dennis: {
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        minorImprovements: ['chapel-a039'],
+      },
+      micah: {
+        grain: 0,
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    const micah = game.players.byName('micah')
-    micah.grain = 0
-    micah.bonusPoints = 0
-
-    card.onActionSpaceUsed(game, micah, dennis)
-
-    expect(micah.bonusPoints).toBe(3)
-  })
-
-  test('has correct cost and vps', () => {
-    const card = res.getCardById('chapel-a039')
-    expect(card.cost).toEqual({ wood: 3, clay: 2 })
-    expect(card.vps).toBe(3)
+    expect(t.currentChoices(game)).not.toContain('Chapel')
   })
 })

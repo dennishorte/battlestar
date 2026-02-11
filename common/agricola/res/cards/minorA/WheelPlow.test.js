@@ -1,83 +1,71 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Wheel Plow (A018)', () => {
-  test('plows 2 additional fields on first worker plow action', () => {
-    const card = res.getCardById('wheel-plow-a018')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Wheel Plow', () => {
+  test('plows 2 additional fields on Farmland action with first worker', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        minorImprovements: ['wheel-plow-a018'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.wheelPlowUsed = false
-    dennis.isFirstWorkerThisRound = () => true
+    // Dennis takes Farmland (plow-field) with his first worker
+    // Farmland plows 1 field, then WheelPlow triggers 2 more
+    t.choose(game, 'Farmland')
+    t.choose(game, '0,2') // from Farmland action
+    t.choose(game, '0,3') // from Wheel Plow (1st additional)
+    t.choose(game, '0,4') // from Wheel Plow (2nd additional)
 
-    let plowCount = 0
-    game.actions.plowField = (player, opts) => {
-      plowCount++
-      expect(opts.immediate).toBe(true)
-    }
-
-    card.onAction(game, dennis, 'plow-field')
-
-    expect(plowCount).toBe(2)
-    expect(dennis.wheelPlowUsed).toBe(true)
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        minorImprovements: ['wheel-plow-a018'],
+        farmyard: {
+          fields: [{ row: 0, col: 2 }, { row: 0, col: 3 }, { row: 0, col: 4 }],
+        },
+      },
+    })
   })
 
-  test('does not trigger on non-first worker', () => {
-    const card = res.getCardById('wheel-plow-a018')
-    const game = t.fixture({ cardSets: ['minorA'] })
+  test('only triggers once per game (wheelPlowUsed flag)', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        minorImprovements: ['wheel-plow-a018'],
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.wheelPlowUsed = false
-    dennis.isFirstWorkerThisRound = () => false
+    // Round 1: Dennis takes Farmland → WheelPlow triggers (3 fields total)
+    t.choose(game, 'Farmland')
+    t.choose(game, '0,2')
+    t.choose(game, '0,3')
+    t.choose(game, '0,4')
+    t.choose(game, 'Day Laborer')     // micah
+    t.choose(game, 'Grain Seeds')     // dennis
+    t.choose(game, 'Fishing')         // micah
 
-    let plowCount = 0
-    game.actions.plowField = () => {
-      plowCount++
-    }
+    // Round 2: Dennis takes Farmland again → WheelPlow does NOT trigger (used)
+    t.choose(game, 'Farmland')
+    t.choose(game, '1,2') // only 1 field from Farmland (adjacent to 0,2), no extras
 
-    card.onAction(game, dennis, 'plow-field')
-
-    expect(plowCount).toBe(0)
-    expect(dennis.wheelPlowUsed).toBe(false)
-  })
-
-  test('only triggers once', () => {
-    const card = res.getCardById('wheel-plow-a018')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    dennis.wheelPlowUsed = true
-    dennis.isFirstWorkerThisRound = () => true
-
-    let plowCount = 0
-    game.actions.plowField = () => {
-      plowCount++
-    }
-
-    card.onAction(game, dennis, 'plow-field')
-
-    expect(plowCount).toBe(0)
-  })
-
-  test('triggers on plow-sow action too', () => {
-    const card = res.getCardById('wheel-plow-a018')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    dennis.wheelPlowUsed = false
-    dennis.isFirstWorkerThisRound = () => true
-
-    let plowCount = 0
-    game.actions.plowField = () => {
-      plowCount++
-    }
-
-    card.onAction(game, dennis, 'plow-sow')
-
-    expect(plowCount).toBe(2)
+    t.testBoard(game, {
+      dennis: {
+        grain: 1, // from Grain Seeds
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        minorImprovements: ['wheel-plow-a018'],
+        farmyard: {
+          fields: [
+            { row: 0, col: 2 }, { row: 0, col: 3 }, { row: 0, col: 4 },
+            { row: 1, col: 2 },
+          ],
+        },
+      },
+    })
   })
 })

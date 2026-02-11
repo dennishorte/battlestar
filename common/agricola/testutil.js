@@ -148,10 +148,6 @@ TestUtil.setPlayerState = function(game, playerName, state) {
   if (state.beggingCards !== undefined) {
     player.beggingCards = state.beggingCards
   }
-  if (state.occupationsPlayed !== undefined) {
-    player.occupationsPlayed = state.occupationsPlayed
-  }
-
   // Set major improvements
   if (state.majorImprovements !== undefined) {
     TestUtil.setPlayerMajorImprovements(game, player, state.majorImprovements)
@@ -439,7 +435,6 @@ TestUtil.testScoring = function(player, expected) {
  *                      Defaults to 'wood'.
  *   beggingCards     - Number. Defaults to 0.
  *   bonusPoints      - Number. Defaults to 0.
- *   occupationsPlayed - Number. Only set if explicitly provided.
  *   hand             - Array of card IDs in the player's hand.
  *   occupations      - Array of card IDs of played occupations.
  *   minorImprovements - Array of card IDs of played minor improvements.
@@ -552,11 +547,6 @@ TestUtil.setPlayerBoard = function(game, playerName, playerState) {
 
   // Set begging cards
   player.beggingCards = playerState.beggingCards || 0
-
-  // Set occupations played count
-  if (playerState.occupationsPlayed !== undefined) {
-    player.occupationsPlayed = playerState.occupationsPlayed
-  }
 
   // Set bonus points
   player.bonusPoints = playerState.bonusPoints || 0

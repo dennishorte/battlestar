@@ -10,16 +10,7 @@ module.exports = {
     const currentRound = game.state.round
     for (const offset of [5, 8]) {
       const round = currentRound + offset
-      if (round <= 14) {
-        if (!game.state.scheduledCattle) {
-          game.state.scheduledCattle = {}
-        }
-        if (!game.state.scheduledCattle[player.name]) {
-          game.state.scheduledCattle[player.name] = {}
-        }
-        game.state.scheduledCattle[player.name][round] =
-            (game.state.scheduledCattle[player.name][round] || 0) + 1
-      }
+      game.scheduleResource(player, 'cattle', round, 1)
     }
     game.log.add({
       template: '{player} schedules cattle from Cattle Whisperer',

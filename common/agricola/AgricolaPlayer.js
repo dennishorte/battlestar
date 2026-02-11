@@ -31,6 +31,10 @@ class AgricolaPlayer extends BasePlayer {
     this._playedOccupations = val
   }
 
+  getOccupationCount() {
+    return this.playedOccupations.length
+  }
+
   get playedMinorImprovements() {
     const zone = this._cardZone('minorImprovements')
     return zone ? zone.cardlist().map(c => c.id) : (this._playedMinorImprovements || [])
@@ -69,9 +73,6 @@ class AgricolaPlayer extends BasePlayer {
 
     // Begging cards
     this.beggingCards = 0
-
-    // Occupations played
-    this.occupationsPlayed = 0
 
     // Bonus points from cards
     this.bonusPoints = 0
@@ -242,6 +243,11 @@ class AgricolaPlayer extends BasePlayer {
         }
       }
     }
+    for (const card of this.getActiveCards()) {
+      if (card.definition.providesRoom) {
+        count++
+      }
+    }
     return count
   }
 
@@ -301,11 +307,37 @@ class AgricolaPlayer extends BasePlayer {
     return cost
   }
 
+  getMultiRoomCost(count) {
+    const baseCost = this.getRoomCost()
+    const totalCost = {}
+    for (const [resource, amount] of Object.entries(baseCost)) {
+      totalCost[resource] = amount * count
+    }
+    return this.applyMultiRoomCostModifiers(totalCost, count, this.roomType)
+  }
+
+  applyMultiRoomCostModifiers(totalCost, roomCount, roomType) {
+    let cost = { ...totalCost }
+    for (const card of this.getActiveCards()) {
+      if (card.hasHook('modifyMultiRoomCost')) {
+        cost = card.callHook('modifyMultiRoomCost', this, cost, roomCount, roomType)
+      }
+    }
+    return cost
+  }
+
+  hasMultiRoomDiscount() {
+    return this.getActiveCards().some(card => card.hasHook('modifyMultiRoomCost'))
+  }
+
   // ---------------------------------------------------------------------------
   // Renovation methods
   // ---------------------------------------------------------------------------
 
   canRenovate(targetType) {
+    if (this.cannotRenovate) {
+      return false
+    }
     const cost = this.getRenovationCost(targetType)
     if (!cost) {
       return false
@@ -563,9 +595,9 @@ class AgricolaPlayer extends BasePlayer {
       })
     }
 
-    this.grain += harvested.grain
-    this.vegetables += harvested.vegetables
-    this.wood += harvested.wood
+    this.addResource('grain', harvested.grain)
+    this.addResource('vegetables', harvested.vegetables)
+    this.addResource('wood', harvested.wood)
 
     return { harvested, virtualFieldHarvests }
   }
@@ -634,6 +666,11 @@ class AgricolaPlayer extends BasePlayer {
     return valid
   }
 
+  hasStableAt({ row, col }) {
+    const space = this.getSpace(row, col)
+    return space && space.hasStable === true
+  }
+
   buildStable(row, col) {
     if (!this.canBuildStable(row, col)) {
       return false
@@ -653,6 +690,14 @@ class AgricolaPlayer extends BasePlayer {
 
   getFenceCount() {
     return this.farmyard.fences.length
+  }
+
+  getFencesInSupply() {
+    return res.constants.maxFences - this.getFenceCount() - (this.usedFences || 0)
+  }
+
+  useFenceFromSupply(count = 1) {
+    this.usedFences = (this.usedFences || 0) + count
   }
 
   getPastureCount() {
@@ -818,6 +863,32 @@ class AgricolaPlayer extends BasePlayer {
     return false
   }
 
+  // Get the two corner points of a fence segment as string keys
+  _getFenceCorners(fence) {
+    const { row1, col1 } = fence
+    let edge = fence.edge
+    if (!edge) {
+      if (fence.row2 < row1) {
+        edge = 'top'
+      }
+      else if (fence.row2 > row1) {
+        edge = 'bottom'
+      }
+      else if (fence.col2 < col1) {
+        edge = 'left'
+      }
+      else {
+        edge = 'right'
+      }
+    }
+    switch (edge) {
+      case 'top': return [`${row1},${col1}`, `${row1},${col1 + 1}`]
+      case 'bottom': return [`${row1 + 1},${col1}`, `${row1 + 1},${col1 + 1}`]
+      case 'left': return [`${row1},${col1}`, `${row1 + 1},${col1}`]
+      case 'right': return [`${row1},${col1 + 1}`, `${row1 + 1},${col1 + 1}`]
+    }
+  }
+
   isPastureFullyEnclosed(spaces) {
     // Check if all border edges of the space group have fences
     // This includes both internal fences (between spaces) and board edge fences
@@ -974,6 +1045,22 @@ class AgricolaPlayer extends BasePlayer {
 
     // Calculate fences needed
     const fences = this.calculateFencesForPasture(spaces)
+
+    // Check that new fences connect to existing fence network
+    if (this.farmyard.fences.length > 0 && fences.length > 0) {
+      const existingCorners = new Set()
+      for (const f of this.farmyard.fences) {
+        for (const c of this._getFenceCorners(f)) {
+          existingCorners.add(c)
+        }
+      }
+      const connects = fences.some(f =>
+        this._getFenceCorners(f).some(c => existingCorners.has(c))
+      )
+      if (!connects) {
+        return { valid: false, error: 'New pasture must connect to existing fences' }
+      }
+    }
 
     // Check if player has enough wood (accounting for fence cost modifiers)
     const woodCost = this.applyFenceCostModifiers(fences.length)
@@ -1488,7 +1575,7 @@ class AgricolaPlayer extends BasePlayer {
       for (const [animalType, count] of Object.entries(totalCooked)) {
         if (count > 0) {
           const food = res.calculateCookingFood(cookingImp, animalType, count)
-          this.food += food
+          this.addResource('food', food)
           totalFood += food
         }
       }
@@ -1526,6 +1613,9 @@ class AgricolaPlayer extends BasePlayer {
   addResource(type, amount) {
     if (this[type] !== undefined) {
       this[type] += amount
+      if (this.resourcesGainedThisRound) {
+        this.resourcesGainedThisRound[type] = (this.resourcesGainedThisRound[type] || 0) + amount
+      }
     }
   }
 
@@ -1549,6 +1639,14 @@ class AgricolaPlayer extends BasePlayer {
       grain: this.grain,
       vegetables: this.vegetables,
     }
+  }
+
+  isFirstWorkerThisRound() {
+    return this.familyMembers - this.availableWorkers === 1
+  }
+
+  getNewbornsReturningHome() {
+    return this.newborns.length
   }
 
   canAffordCost(cost) {
@@ -1626,7 +1724,7 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     // Pay 1 food
-    this.food -= 1
+    this.removeResource('food', 1)
 
     // Remove newborn status (they now need 2 food during harvest, not 1)
     this.newborns.pop()
@@ -1684,11 +1782,11 @@ class AgricolaPlayer extends BasePlayer {
     const shortage = Math.max(0, required - this.food)
 
     if (shortage > 0) {
-      this.food = 0
+      this.removeResource('food', this.food)
       this.beggingCards += shortage
     }
     else {
-      this.food -= required
+      this.removeResource('food', required)
     }
 
     return { required, fed: required - shortage, beggingCards: shortage }
@@ -1706,9 +1804,15 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   hasBakingAbility() {
-    return this.majorImprovements.some(id => {
+    if (this.majorImprovements.some(id => {
       const imp = this.cards.byId(id)
       return imp && imp.abilities && imp.abilities.canBake
+    })) {
+      return true
+    }
+    return this.playedMinorImprovements.some(id => {
+      const card = this.cards.byId(id)
+      return card && card.definition.bakingConversion
     })
   }
 
@@ -1729,6 +1833,16 @@ class AgricolaPlayer extends BasePlayer {
         return imp
       }
     }
+    // Fall back to minor improvement with bakingConversion
+    for (const id of this.playedMinorImprovements) {
+      const card = this.cards.byId(id)
+      if (card && card.definition.bakingConversion) {
+        return {
+          name: card.name,
+          abilities: { canBake: true, bakingRate: card.definition.bakingConversion.rate },
+        }
+      }
+    }
     return null
   }
 
@@ -1744,7 +1858,7 @@ class AgricolaPlayer extends BasePlayer {
     if (toCook > 0) {
       this.removeAnimals(animalType, toCook)
       const food = res.calculateCookingFood(imp, animalType, toCook)
-      this.food += food
+      this.addResource('food', food)
       return food
     }
     return 0
@@ -1758,9 +1872,9 @@ class AgricolaPlayer extends BasePlayer {
 
     const toCook = Math.min(count, this.vegetables)
     if (toCook > 0) {
-      this.vegetables -= toCook
+      this.removeResource('vegetables', toCook)
       const food = res.calculateCookingFood(imp, 'vegetables', toCook)
-      this.food += food
+      this.addResource('food', food)
       return food
     }
     return 0
@@ -1776,9 +1890,9 @@ class AgricolaPlayer extends BasePlayer {
     const toBake = Math.min(count, this.grain, limit)
 
     if (toBake > 0) {
-      this.grain -= toBake
+      this.removeResource('grain', toBake)
       const food = res.calculateBakingFood(imp, toBake)
-      this.food += food
+      this.addResource('food', food)
       return food
     }
     return 0
@@ -1790,8 +1904,8 @@ class AgricolaPlayer extends BasePlayer {
     const toConvert = Math.min(count, available)
 
     if (toConvert > 0) {
-      this[resourceType] -= toConvert
-      this.food += toConvert
+      this.removeResource(resourceType, toConvert)
+      this.addResource('food', toConvert)
       return toConvert
     }
     return 0
@@ -1812,6 +1926,17 @@ class AgricolaPlayer extends BasePlayer {
     return cost
   }
 
+  _getWildcardAsFireplace() {
+    for (const minorId of this.playedMinorImprovements) {
+      const card = this.cards.byId(minorId)
+      if (card && card.definition.wildcardRoles
+          && card.definition.wildcardRoles.includes('fireplace')) {
+        return minorId
+      }
+    }
+    return null
+  }
+
   canBuyMajorImprovement(improvementId) {
     const imp = this.cards.byId(improvementId)
     if (!imp) {
@@ -1823,40 +1948,58 @@ class AgricolaPlayer extends BasePlayer {
       return false
     }
 
-    const cost = this.getMajorImprovementCost(improvementId)
-
     // Check upgrade path
     if (imp.upgradesFrom && imp.upgradesFrom.length > 0) {
       const canUpgrade = imp.upgradesFrom.some(fromId =>
         this.majorImprovements.includes(fromId)
       )
       if (canUpgrade) {
-        return this.canAffordCost(cost)
+        return true
+      }  // Upgrade = return old card, free
+
+      const needsFireplace = imp.upgradesFrom.some(id => id.startsWith('fireplace'))
+      if (needsFireplace && this._getWildcardAsFireplace()) {
+        return true  // Wildcard as fireplace trade-in, also free
       }
     }
 
     // Normal purchase
+    const cost = this.getMajorImprovementCost(improvementId)
     return this.canAffordCost(cost)
   }
 
   buyMajorImprovement(improvementId) {
     const imp = this.cards.byId(improvementId)
     if (!imp) {
-      return false
+      return { upgraded: false }
     }
 
     if (!this.canBuyMajorImprovement(improvementId)) {
-      return false
+      return { upgraded: false }
     }
+
+    let upgraded = false
 
     // Handle upgrade - move old card back to common zone
     const commonMajorZone = this.zones.byId('common.majorImprovements')
     if (imp.upgradesFrom && imp.upgradesFrom.length > 0) {
+      // Try normal upgrade first
       for (const fromId of imp.upgradesFrom) {
         if (this.majorImprovements.includes(fromId)) {
           const oldCard = this.cards.byId(fromId)
           oldCard.moveTo(commonMajorZone)
+          upgraded = true
           break
+        }
+      }
+      // Try wildcard-as-fireplace trade-in
+      if (!upgraded) {
+        const needsFireplace = imp.upgradesFrom.some(id => id.startsWith('fireplace'))
+        const wildcardId = needsFireplace && this._getWildcardAsFireplace()
+        if (wildcardId) {
+          const wildcardCard = this.cards.byId(wildcardId)
+          wildcardCard.moveTo(this.zones.byId('common.supply'))
+          upgraded = true
         }
       }
     }
@@ -1864,7 +2007,7 @@ class AgricolaPlayer extends BasePlayer {
     // Move improvement to player's zone (cost is paid by caller after logging)
     imp.moveTo(this.zones.byPlayer(this, 'majorImprovements'))
 
-    return true
+    return { upgraded }
   }
 
   // ---------------------------------------------------------------------------
@@ -1892,8 +2035,16 @@ class AgricolaPlayer extends BasePlayer {
   // ---------------------------------------------------------------------------
 
   getScoreState() {
+    let fields = this.getFieldCount()
+    for (const cardId of this.playedMinorImprovements) {
+      const card = this.cards.byId(cardId)
+      if (card && card.definition.wildcardRoles
+          && card.definition.wildcardRoles.includes('field')) {
+        fields++
+      }
+    }
     return {
-      fields: this.getFieldCount(),
+      fields,
       pastures: this.getPastureCount(),
       grain: this.grain,
       vegetables: this.vegetables,
@@ -2033,52 +2184,336 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   meetsCardPrereqs(cardId) {
+    if (this._meetsCardPrereqsCore(cardId)) {
+      return true
+    }
+
+    for (const minorId of this.playedMinorImprovements) {
+      const card = this.cards.byId(minorId)
+      if (!card || !card.definition.wildcardRoles) {
+        continue
+      }
+      for (const role of card.definition.wildcardRoles) {
+        if (this._meetsCardPrereqsCore(cardId, role)) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
+  _meetsCardPrereqsCore(cardId, wildcardRole = null) {
     const card = this.cards.byId(cardId)
     if (!card || !card.prereqs) {
       return true
     }
 
+    const occBonus = wildcardRole === 'occupation' ? 1 : 0
+    const fieldBonus = wildcardRole === 'field' ? 1 : 0
+    const majorBonus = wildcardRole === 'fireplace' ? 1 : 0
+
     const prereqs = card.prereqs
 
-    // Check occupation count
+    // --- Occupation checks ---
+    const occCount = this.playedOccupations.length + occBonus
     if (prereqs.occupations !== undefined) {
       if (prereqs.occupationsExact) {
-        if (this.playedOccupations.length !== prereqs.occupations) {
+        if (occCount !== prereqs.occupations) {
           return false
         }
       }
       else if (prereqs.occupationsAtMost) {
-        if (this.playedOccupations.length > prereqs.occupations) {
+        if (occCount > prereqs.occupations) {
           return false
         }
       }
       else {
-        if (this.playedOccupations.length < prereqs.occupations) {
+        if (occCount < prereqs.occupations) {
           return false
         }
       }
     }
+    if (prereqs.exactlyOccupations !== undefined) {
+      if (occCount !== prereqs.exactlyOccupations) {
+        return false
+      }
+    }
+    // Standalone occupationsAtMost (used by StableManure/SocialBenefits without occupations key)
+    if (prereqs.occupationsAtMost !== undefined && prereqs.occupations === undefined) {
+      if (occCount > prereqs.occupationsAtMost) {
+        return false
+      }
+    }
+    if (prereqs.noOccupations) {
+      if (occCount > 0) {
+        return false
+      }
+    }
+    if (prereqs.occupationsInHand !== undefined) {
+      const occInHand = this.hand.filter(id => {
+        const c = this.cards.byId(id)
+        return c && c.type === 'occupation'
+      })
+      if (occInHand.length < prereqs.occupationsInHand) {
+        return false
+      }
+    }
 
-    // Check grain fields
+    // --- Field checks ---
+    const fieldCount = this.getFieldCountForPrereqs() + fieldBonus
+    if (prereqs.fields !== undefined) {
+      if (fieldCount < prereqs.fields) {
+        return false
+      }
+    }
+    if (prereqs.fieldsExactly !== undefined) {
+      if (fieldCount !== prereqs.fieldsExactly) {
+        return false
+      }
+    }
     if (prereqs.grainFields !== undefined) {
       if (this.getGrainFieldCount() < prereqs.grainFields) {
         return false
       }
     }
+    if (prereqs.vegetableFields !== undefined) {
+      if (this.getVegetableFieldCount() < prereqs.vegetableFields) {
+        return false
+      }
+    }
+    if (prereqs.plantedFields !== undefined) {
+      if (this.getSownFields().length < prereqs.plantedFields) {
+        return false
+      }
+    }
+    if (prereqs.emptyFields !== undefined) {
+      if (this.getEmptyFields().length < prereqs.emptyFields) {
+        return false
+      }
+    }
+    if (prereqs.unplantedFields !== undefined) {
+      if (this.getEmptyFields().length < prereqs.unplantedFields) {
+        return false
+      }
+    }
+    if (prereqs.noFields) {
+      if (fieldCount > 0) {
+        return false
+      }
+    }
+    if (prereqs.noGrainFields) {
+      if (this.getGrainFieldCount() > 0) {
+        return false
+      }
+    }
 
-    // Check sheep
+    // --- Pasture and stable checks ---
+    if (prereqs.pastures !== undefined) {
+      if (prereqs.pasturesExact) {
+        if (this.getPastureCount() !== prereqs.pastures) {
+          return false
+        }
+      }
+      else {
+        if (this.getPastureCount() < prereqs.pastures) {
+          return false
+        }
+      }
+    }
+    if (prereqs.stables !== undefined) {
+      if (this.getStableCount() < prereqs.stables) {
+        return false
+      }
+    }
+    if (prereqs.fences !== undefined) {
+      if (this.getFenceCount() < prereqs.fences) {
+        return false
+      }
+    }
+    if (prereqs.fencesInSupply !== undefined) {
+      const remaining = res.constants.maxFences - this.getFenceCount()
+      if (remaining < prereqs.fencesInSupply) {
+        return false
+      }
+    }
+
+    // --- Room checks ---
+    if (prereqs.rooms !== undefined) {
+      if (this.getRoomCount() < prereqs.rooms) {
+        return false
+      }
+    }
+    if (prereqs.roomCount !== undefined) {
+      if (prereqs.roomCountExact) {
+        if (this.getRoomCount() !== prereqs.roomCount) {
+          return false
+        }
+      }
+      else {
+        if (this.getRoomCount() < prereqs.roomCount) {
+          return false
+        }
+      }
+    }
+    if (prereqs.houseType !== undefined) {
+      if (Array.isArray(prereqs.houseType)) {
+        if (!prereqs.houseType.includes(this.roomType)) {
+          return false
+        }
+      }
+      else {
+        if (this.roomType !== prereqs.houseType) {
+          return false
+        }
+      }
+    }
+
+    // --- Animal checks ---
     if (prereqs.sheep !== undefined) {
       if (this.getTotalAnimals('sheep') < prereqs.sheep) {
         return false
       }
     }
+    if (prereqs.sheepExactly !== undefined) {
+      if (this.getTotalAnimals('sheep') !== prereqs.sheepExactly) {
+        return false
+      }
+    }
+    if (prereqs.boar !== undefined) {
+      if (this.getTotalAnimals('boar') < prereqs.boar) {
+        return false
+      }
+    }
+    if (prereqs.cattle !== undefined) {
+      if (this.getTotalAnimals('cattle') < prereqs.cattle) {
+        return false
+      }
+    }
+    if (prereqs.animals !== undefined) {
+      const total = this.getTotalAnimals('sheep') + this.getTotalAnimals('boar') + this.getTotalAnimals('cattle')
+      if (total < prereqs.animals) {
+        return false
+      }
+    }
+    if (prereqs.animalTypes !== undefined) {
+      let types = 0
+      if (this.getTotalAnimals('sheep') > 0) {
+        types++
+      }
+      if (this.getTotalAnimals('boar') > 0) {
+        types++
+      }
+      if (this.getTotalAnimals('cattle') > 0) {
+        types++
+      }
+      if (types < prereqs.animalTypes) {
+        return false
+      }
+    }
+    if (prereqs.allAnimalTypes) {
+      if (this.getTotalAnimals('sheep') === 0 || this.getTotalAnimals('boar') === 0 || this.getTotalAnimals('cattle') === 0) {
+        return false
+      }
+    }
+    if (prereqs.noAnimals) {
+      const total = this.getTotalAnimals('sheep') + this.getTotalAnimals('boar') + this.getTotalAnimals('cattle')
+      if (total > 0) {
+        return false
+      }
+    }
+    if (prereqs.noSheep) {
+      if (this.getTotalAnimals('sheep') > 0) {
+        return false
+      }
+    }
 
-    // Check all farmyard used
+    // --- Resource checks ---
+    if (prereqs.grain !== undefined) {
+      if (this.grain < prereqs.grain) {
+        return false
+      }
+    }
+    if (prereqs.clay !== undefined) {
+      if (this.clay < prereqs.clay) {
+        return false
+      }
+    }
+    if (prereqs.reed !== undefined) {
+      if (this.reed < prereqs.reed) {
+        return false
+      }
+    }
+    if (prereqs.stone !== undefined) {
+      if (this.stone < prereqs.stone) {
+        return false
+      }
+    }
+    if (prereqs.noGrain) {
+      if (this.grain > 0) {
+        return false
+      }
+    }
+
+    // --- People checks ---
+    if (prereqs.maxPeople !== undefined) {
+      if (this.familyMembers > prereqs.maxPeople) {
+        return false
+      }
+    }
+
+    // --- Improvement checks ---
+    if (prereqs.improvements !== undefined) {
+      if (this.getImprovementCount() < prereqs.improvements) {
+        return false
+      }
+    }
+    if (prereqs.majorImprovements !== undefined) {
+      if (this.majorImprovements.length + majorBonus < prereqs.majorImprovements) {
+        return false
+      }
+    }
+
+    // --- Farmyard usage checks ---
     if (prereqs.allFarmyardUsed) {
       if (this.getUnusedSpaceCount() > 0) {
         return false
       }
     }
+    if (prereqs.unusedFarmyard !== undefined) {
+      if (this.getUnusedSpaceCount() < prereqs.unusedFarmyard) {
+        return false
+      }
+    }
+    if (prereqs.unusedFarmyardAtMost !== undefined) {
+      if (this.getUnusedSpaceCount() > prereqs.unusedFarmyardAtMost) {
+        return false
+      }
+    }
+
+    // --- Round checks ---
+    if (prereqs.maxRound !== undefined) {
+      if (this.game.state.round > prereqs.maxRound) {
+        return false
+      }
+    }
+    if (prereqs.minRound !== undefined) {
+      if (this.game.state.round < prereqs.minRound) {
+        return false
+      }
+    }
+    if (prereqs.roundIn !== undefined) {
+      if (!prereqs.roundIn.includes(this.game.state.round)) {
+        return false
+      }
+    }
+
+    // --- Deferred prereq checks (complex game-state checks not yet implemented) ---
+    // TODO: bakingImprovement, cookingImprovement, hasPotteryOrUpgrade,
+    //   hasFireplaceAndCookingHearth, returnFireplaceOrCookingHearth, returnMajor,
+    //   fieldsInLShape, personOnFishing, personOnAction, personYetToPlace,
+    //   noPeopleInHouse, fencedStables, woodGteRound, pastureSpacesGteRound,
+    //   cardsInPlay, maxCardsInPlay, exactlyAdults, majorImprovement (specific card),
+    //   roundsLeftGreaterThanUnusedSpaces, buildingResourcesInSupply
 
     return true
   }
@@ -2152,7 +2587,6 @@ class AgricolaPlayer extends BasePlayer {
     // Move card to appropriate played zone
     if (card.type === 'occupation') {
       card.moveTo(this.zones.byPlayer(this, 'occupations'))
-      this.occupationsPlayed++
     }
     else {
       card.moveTo(this.zones.byPlayer(this, 'minorImprovements'))
@@ -2173,6 +2607,19 @@ class AgricolaPlayer extends BasePlayer {
       for (let col = 0; col < res.constants.farmyardCols; col++) {
         const space = this.farmyard.grid[row][col]
         if (space.type === 'field' && space.crop === 'grain') {
+          count++
+        }
+      }
+    }
+    return count
+  }
+
+  getVegetableFieldCount() {
+    let count = 0
+    for (let row = 0; row < res.constants.farmyardRows; row++) {
+      for (let col = 0; col < res.constants.farmyardCols; col++) {
+        const space = this.farmyard.grid[row][col]
+        if (space.type === 'field' && space.crop === 'vegetables') {
           count++
         }
       }
@@ -2349,6 +2796,185 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
     return false
+  }
+
+  // ---------------------------------------------------------------------------
+  // Farmyard drawing (for debugging / console output)
+  // ---------------------------------------------------------------------------
+
+  drawFarmyard() {
+    const rows = res.constants.farmyardRows
+    const cols = res.constants.farmyardCols
+    const cellW = 9
+    const numContentLines = 3
+
+    // Build fence lookup tables.
+    // hFence[rb][c] = true if horizontal fence at row boundary rb, column c
+    // vFence[r][cb] = true if vertical fence at row r, column boundary cb
+    const hFence = Array.from({ length: rows + 1 }, () => Array(cols).fill(false))
+    const vFence = Array.from({ length: rows }, () => Array(cols + 1).fill(false))
+
+    for (const f of this.farmyard.fences) {
+      if (f.edge) {
+        if (f.edge === 'top') {
+          hFence[0][f.col1] = true
+        }
+        else if (f.edge === 'bottom') {
+          hFence[rows][f.col1] = true
+        }
+        else if (f.edge === 'left') {
+          vFence[f.row1][0] = true
+        }
+        else if (f.edge === 'right') {
+          vFence[f.row1][cols] = true
+        }
+      }
+      else if (f.col1 === f.col2) {
+        // Vertical neighbors → horizontal fence between them
+        hFence[Math.max(f.row1, f.row2)][f.col1] = true
+      }
+      else {
+        // Horizontal neighbors → vertical fence between them
+        vFence[f.row1][Math.max(f.col1, f.col2)] = true
+      }
+    }
+
+    // Box-drawing intersection character lookup.
+    // Key encodes weight of each arm: up, right, down, left
+    // 0 = no arm, 1 = light, 2 = heavy (fence)
+    const BOX = {
+      '0110': '┌', '0210': '┍', '0120': '┎', '0220': '┏',
+      '0011': '┐', '0012': '┑', '0021': '┒', '0022': '┓',
+      '1100': '└', '1200': '┕', '2100': '┖', '2200': '┗',
+      '1001': '┘', '1002': '┙', '2001': '┚', '2002': '┛',
+      '1110': '├', '1210': '┝', '2110': '┞', '1120': '┟',
+      '2120': '┠', '2210': '┡', '1220': '┢', '2220': '┣',
+      '1011': '┤', '1012': '┥', '2011': '┦', '1021': '┧',
+      '2021': '┨', '2012': '┩', '1022': '┪', '2022': '┫',
+      '0111': '┬', '0112': '┭', '0211': '┮', '0212': '┯',
+      '0121': '┰', '0122': '┱', '0221': '┲', '0222': '┳',
+      '1101': '┴', '1102': '┵', '1201': '┶', '1202': '┷',
+      '2101': '┸', '2102': '┹', '2201': '┺', '2202': '┻',
+      '1111': '┼', '1112': '┽', '1211': '┾', '1212': '┿',
+      '2111': '╀', '1121': '╁', '2121': '╂', '2112': '╃',
+      '2211': '╄', '1122': '╅', '1221': '╆', '2212': '╇',
+      '1222': '╈', '2122': '╉', '2221': '╊', '2222': '╋',
+    }
+
+    function intersection(rb, cb) {
+      const u = rb > 0 ? (vFence[rb - 1][cb] ? 2 : 1) : 0
+      const d = rb < rows ? (vFence[rb][cb] ? 2 : 1) : 0
+      const l = cb > 0 ? (hFence[rb][cb - 1] ? 2 : 1) : 0
+      const r = cb < cols ? (hFence[rb][cb] ? 2 : 1) : 0
+      return BOX[`${u}${r}${d}${l}`] || '+'
+    }
+
+    function center(text, width) {
+      if (text.length >= width) {
+        return text.slice(0, width)
+      }
+      const left = Math.floor((width - text.length) / 2)
+      return ' '.repeat(left) + text + ' '.repeat(width - text.length - left)
+    }
+
+    // Precompute cell content (3 lines each)
+    const self = this
+    const cells = []
+    for (let r = 0; r < rows; r++) {
+      cells[r] = []
+      for (let c = 0; c < cols; c++) {
+        const space = self.getSpace(r, c)
+        const hasStable = space.hasStable
+        const pasture = self.getPastureAtSpace(r, c)
+        const lines = ['', '', '']
+
+        if (space.type === 'room') {
+          const type = space.roomType || self.roomType
+          lines[0] = 'Room'
+          lines[1] = type.charAt(0).toUpperCase() + type.slice(1)
+        }
+        else if (space.type === 'field') {
+          lines[0] = 'Field'
+          if (space.crop && space.cropCount > 0) {
+            lines[1] = space.crop.charAt(0).toUpperCase() + space.crop.slice(1) + ': ' + space.cropCount
+          }
+        }
+        else if (pasture) {
+          lines[0] = 'Pasture'
+          // Show animals on the first space of the pasture only
+          const first = pasture.spaces[0]
+          if (first.row === r && first.col === c && pasture.animalType && pasture.animalCount > 0) {
+            lines[1] = pasture.animalType.charAt(0).toUpperCase() + pasture.animalType.slice(1) + ': ' + pasture.animalCount
+          }
+        }
+
+        // Unfenced stable with animal
+        if (!pasture && space.animal) {
+          const type = space.animal.charAt(0).toUpperCase() + space.animal.slice(1)
+          lines[1] = type + ': 1'
+        }
+
+        // Stable marker on first empty line slot
+        if (hasStable) {
+          if (!lines[2]) {
+            lines[2] = 'Stable'
+          }
+          else if (!lines[1]) {
+            lines[1] = 'Stable'
+          }
+        }
+
+        cells[r][c] = lines
+      }
+    }
+
+    // Build output lines
+    const output = []
+
+    // Column headers
+    let header = '  '
+    for (let c = 0; c < cols; c++) {
+      header += ' ' + center(String(c), cellW)
+    }
+    output.push(header)
+
+    for (let rb = 0; rb <= rows; rb++) {
+      // Border row
+      let border = '  '
+      for (let cb = 0; cb <= cols; cb++) {
+        border += intersection(rb, cb)
+        if (cb < cols) {
+          border += (hFence[rb][cb] ? '━' : '─').repeat(cellW)
+        }
+      }
+      output.push(border)
+
+      // Content rows
+      if (rb < rows) {
+        for (let cl = 0; cl < numContentLines; cl++) {
+          // Row label on middle content line
+          let line = cl === 1 ? (rb + ' ') : '  '
+          for (let cb = 0; cb <= cols; cb++) {
+            line += vFence[rb][cb] ? '┃' : '│'
+            if (cb < cols) {
+              line += center(cells[rb][cb][cl], cellW)
+            }
+          }
+          output.push(line)
+        }
+      }
+    }
+
+    // Summary line
+    const parts = []
+    if (this.pet) {
+      parts.push('Pet: ' + this.pet)
+    }
+    parts.push('Fences: ' + this.getFenceCount() + '/' + res.constants.maxFences)
+    parts.push('Unused: ' + this.getUnusedSpaceCount())
+    output.push('  ' + parts.join('  '))
+
+    return output.join('\n')
   }
 }
 

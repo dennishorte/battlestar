@@ -1,63 +1,63 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Cob (A076)', () => {
-  test('offers exchange when player has clay and grain', () => {
-    const card = res.getCardById('cob-a076')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Cob', () => {
+  test('exchanges grain for clay and food at work phase start', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['cob-a076'],
+        clay: 1,
+        grain: 1,
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.clay = 1
-    dennis.grain = 1
+    // Work phase starts → Cob fires → offer exchange
+    t.choose(game, 'Exchange 1 grain for 2 clay and 1 food')
 
-    let offerCalled = false
-    game.actions.offerCob = (player, sourceCard) => {
-      offerCalled = true
-      expect(player).toBe(dennis)
-      expect(sourceCard).toBe(card)
-    }
+    // Round 1: all 4 workers take actions
+    t.choose(game, 'Day Laborer')     // dennis
+    t.choose(game, 'Grain Seeds')     // micah
+    t.choose(game, 'Fishing')         // dennis
+    t.choose(game, 'Clay Pit')        // micah
 
-    card.onWorkPhaseStart(game, dennis)
-
-    expect(offerCalled).toBe(true)
+    t.testBoard(game, {
+      dennis: {
+        food: 4, // 1 (Cob) + 2 (Day Laborer) + 1 (Fishing)
+        clay: 3, // 1 + 2 (Cob)
+        grain: 0, // spent on Cob
+        minorImprovements: ['cob-a076'],
+      },
+    })
   })
 
-  test('does not offer when player has no clay', () => {
-    const card = res.getCardById('cob-a076')
-    const game = t.fixture({ cardSets: ['minorA'] })
+  test('can skip the cob offer', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['cob-a076'],
+        clay: 1,
+        grain: 1,
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.clay = 0
-    dennis.grain = 1
+    t.choose(game, 'Skip')
 
-    let offerCalled = false
-    game.actions.offerCob = () => {
-      offerCalled = true
-    }
+    t.choose(game, 'Day Laborer')
+    t.choose(game, 'Grain Seeds')
+    t.choose(game, 'Fishing')
+    t.choose(game, 'Clay Pit')
 
-    card.onWorkPhaseStart(game, dennis)
-
-    expect(offerCalled).toBe(false)
-  })
-
-  test('does not offer when player has no grain', () => {
-    const card = res.getCardById('cob-a076')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    dennis.clay = 1
-    dennis.grain = 0
-
-    let offerCalled = false
-    game.actions.offerCob = () => {
-      offerCalled = true
-    }
-
-    card.onWorkPhaseStart(game, dennis)
-
-    expect(offerCalled).toBe(false)
+    t.testBoard(game, {
+      dennis: {
+        food: 3, // 2 (Day Laborer) + 1 (Fishing)
+        clay: 1, // unchanged
+        grain: 1, // not spent
+        minorImprovements: ['cob-a076'],
+      },
+    })
   })
 })

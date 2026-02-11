@@ -10,7 +10,7 @@ module.exports = {
   text: "Each time after you place an improvement or occupation in front of you, if you have the same number of improvements and occupations in play, you get 2 food.",
   onBuildImprovement(game, player) {
     const imps = player.getImprovementCount()
-    const occs = player.occupationsPlayed || 0
+    const occs = player.getOccupationCount()
     if (imps === occs) {
       player.addResource('food', 2)
       game.log.add({
@@ -21,7 +21,7 @@ module.exports = {
   },
   onPlayOccupation(game, player) {
     const imps = player.getImprovementCount()
-    const occs = player.occupationsPlayed || 0
+    const occs = player.getOccupationCount()
     if (imps === occs) {
       player.addResource('food', 2)
       game.log.add({

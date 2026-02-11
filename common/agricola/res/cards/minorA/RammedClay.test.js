@@ -1,26 +1,32 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 const res = require('../../index.js')
 
-describe('Rammed Clay (A016)', () => {
-  test('gives 1 clay on play', () => {
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Rammed Clay', () => {
+  test('gives 1 clay on play via Meeting Place', () => {
+    const game = t.fixture()
     t.setBoard(game, {
+      firstPlayer: 'dennis',
       dennis: {
-        clay: 0,
         hand: ['rammed-clay-a016'],
       },
     })
     game.run()
 
-    t.playCard(game, 'dennis', 'rammed-clay-a016')
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Rammed Clay')
 
-    const dennis = t.player(game)
-    expect(dennis.clay).toBe(1)
+    t.testBoard(game, {
+      dennis: {
+        food: 1,
+        clay: 1,
+        hand: [],
+        minorImprovements: ['rammed-clay-a016'],
+      },
+    })
   })
 
-  test('has modifyFenceCost with alternateResource', () => {
+  test('modifyFenceCost allows clay as alternate resource', () => {
     const card = res.getCardById('rammed-clay-a016')
-    const result = card.modifyFenceCost()
-    expect(result.alternateResource).toBe('clay')
+    expect(card.modifyFenceCost()).toEqual({ wood: 1, alternateResource: 'clay' })
   })
 })

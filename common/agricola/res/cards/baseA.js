@@ -104,14 +104,7 @@ const minorImprovements = [
     text: 'Add 5 to the current round and place 1 field tile on the corresponding round space. At the start of that round, you can plow the field.',
     onPlay(game, player) {
       const targetRound = game.state.round + 5
-      if (targetRound <= 14) {
-        if (!game.state.scheduledPlows) {
-          game.state.scheduledPlows = {}
-        }
-        if (!game.state.scheduledPlows[player.name]) {
-          game.state.scheduledPlows[player.name] = []
-        }
-        game.state.scheduledPlows[player.name].push(targetRound)
+      if (game.scheduleEvent(player, 'plows', targetRound)) {
         game.log.add({
           template: '{player} schedules a field to plow in round {round}',
           args: { player, round: targetRound },
@@ -235,17 +228,7 @@ const minorImprovements = [
     onPlay(game, player) {
       const currentRound = game.state.round
       for (let i = 1; i <= 3; i++) {
-        const round = currentRound + i
-        if (round <= 14) {
-          if (!game.state.scheduledFood) {
-            game.state.scheduledFood = {}
-          }
-          if (!game.state.scheduledFood[player.name]) {
-            game.state.scheduledFood[player.name] = {}
-          }
-          game.state.scheduledFood[player.name][round] =
-            (game.state.scheduledFood[player.name][round] || 0) + 1
-        }
+        game.scheduleResource(player, 'food', currentRound + i, 1)
       }
       game.log.add({
         template: '{player} places food on the next 3 round spaces',
@@ -397,17 +380,7 @@ const minorImprovements = [
     onPlay(game, player) {
       const currentRound = game.state.round
       for (const offset of [4, 7, 9]) {
-        const round = currentRound + offset
-        if (round <= 14) {
-          if (!game.state.scheduledVegetables) {
-            game.state.scheduledVegetables = {}
-          }
-          if (!game.state.scheduledVegetables[player.name]) {
-            game.state.scheduledVegetables[player.name] = {}
-          }
-          game.state.scheduledVegetables[player.name][round] =
-            (game.state.scheduledVegetables[player.name][round] || 0) + 1
-        }
+        game.scheduleResource(player, 'vegetables', currentRound + offset, 1)
       }
       game.log.add({
         template: '{player} schedules vegetables from Large Greenhouse',
@@ -661,17 +634,7 @@ const occupations = [
     onBuildRoom(game, player) {
       const currentRound = game.state.round
       for (let i = 1; i <= 4; i++) {
-        const round = currentRound + i
-        if (round <= 14) {
-          if (!game.state.scheduledFood) {
-            game.state.scheduledFood = {}
-          }
-          if (!game.state.scheduledFood[player.name]) {
-            game.state.scheduledFood[player.name] = {}
-          }
-          game.state.scheduledFood[player.name][round] =
-            (game.state.scheduledFood[player.name][round] || 0) + 1
-        }
+        game.scheduleResource(player, 'food', currentRound + i, 1)
       }
       game.log.add({
         template: '{player} places food on the next 4 round spaces from Wall Builder',
@@ -782,17 +745,7 @@ const occupations = [
         player.clayHutBuilderTriggered = true
         const currentRound = game.state.round
         for (let i = 1; i <= 5; i++) {
-          const round = currentRound + i
-          if (round <= 14) {
-            if (!game.state.scheduledClay) {
-              game.state.scheduledClay = {}
-            }
-            if (!game.state.scheduledClay[player.name]) {
-              game.state.scheduledClay[player.name] = {}
-            }
-            game.state.scheduledClay[player.name][round] =
-              (game.state.scheduledClay[player.name][round] || 0) + 2
-          }
+          game.scheduleResource(player, 'clay', currentRound + i, 2)
         }
         game.log.add({
           template: '{player} schedules clay from Clay Hut Builder',

@@ -1,25 +1,57 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Renovation Company (A013)', () => {
-  test('gives 3 clay and offers free renovation on play', () => {
-    const card = res.getCardById('renovation-company-a013')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Renovation Company', () => {
+  test('gives 3 clay and offers free renovation via Meeting Place', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['renovation-company-a013'],
+        wood: 4, // card cost
+      },
+    })
     game.run()
 
-    const dennis = t.player(game)
-    dennis.clay = 0
+    // Dennis takes Meeting Place, plays Renovation Company from hand
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Renovation Company')
+    // onPlay fires: gets 3 clay, then offer free renovation (wood→clay)
+    t.choose(game, 'Renovate from wood to clay for free')
 
-    let offerCalled = false
-    game.actions.offerFreeRenovation = (player, sourceCard) => {
-      offerCalled = true
-      expect(player).toBe(dennis)
-      expect(sourceCard).toBe(card)
-    }
+    t.testBoard(game, {
+      dennis: {
+        food: 1, // +1 from Meeting Place
+        clay: 3, // 3 from onPlay (spent 0 on free renovation)
+        roomType: 'clay',
+        hand: [],
+        minorImprovements: ['renovation-company-a013'],
+      },
+    })
+  })
 
-    card.onPlay(game, dennis)
+  test('can skip the free renovation', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['renovation-company-a013'],
+        wood: 4,
+      },
+    })
+    game.run()
 
-    expect(dennis.clay).toBe(3)
-    expect(offerCalled).toBe(true)
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Renovation Company')
+    t.choose(game, 'Skip')
+
+    t.testBoard(game, {
+      dennis: {
+        food: 1,
+        clay: 3,
+        roomType: 'wood',
+        hand: [],
+        minorImprovements: ['renovation-company-a013'],
+      },
+    })
   })
 })

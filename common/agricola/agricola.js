@@ -66,6 +66,21 @@ function factoryFromLobby(lobby) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// Input Processing
+
+// Backward compatibility: strip accumulated amounts from action space selections.
+// e.g. "Forest (3)" -> "Forest". Remove this once all clients send clean action names.
+Agricola.prototype.respondToInputRequest = function(response) {
+  if (response.selection && Array.isArray(response.selection)) {
+    response.selection = response.selection.map(s =>
+      typeof s === 'string' ? s.replace(/\s*\(\d+\)$/, '') : s
+    )
+  }
+  return Object.getPrototypeOf(Agricola.prototype).respondToInputRequest.call(this, response)
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 // Main Program
 
 Agricola.prototype._mainProgram = function() {
@@ -410,24 +425,10 @@ Agricola.prototype.callPlayerCardHook = function(player, hookName, ...args) {
   return results
 }
 
-/**
- * Call a hook on ALL players' cards (for onAnyAction type hooks)
- * actingPlayer is the player who triggered the action
- */
-Agricola.prototype.callAllPlayersCardHook = function(hookName, actingPlayer, ...args) {
-  const results = []
+Agricola.prototype.callCardHook = function(hookName, ...args) {
   for (const player of this.players.all()) {
-    const cards = this.getPlayerActiveCards(player)
-    for (const card of cards) {
-      if (card.hasHook(hookName)) {
-        const result = card.callHook(hookName, this, actingPlayer, ...args, player)
-        if (result !== undefined) {
-          results.push({ card, player, result })
-        }
-      }
-    }
+    this.callPlayerCardHook(player, hookName, ...args)
   }
-  return results
 }
 
 /**
@@ -451,11 +452,50 @@ Agricola.prototype.callRoundStartHooks = function() {
     this.collectScheduledResources(player)
 
     // Call onRoundStart hooks (hooks handle their own actions directly)
-    this.callPlayerCardHook(player, 'onRoundStart')
+    this.callPlayerCardHook(player, 'onRoundStart', this.state.round)
 
     // Check triggers
     this.checkCardTriggers(player)
   }
+}
+
+/**
+ * Schedule a resource delivery for a future round.
+ * Returns true if scheduled, false if round is past the game end.
+ */
+Agricola.prototype.scheduleResource = function(player, type, round, amount) {
+  if (round > 14) {
+    return false
+  }
+  const stateKey = `scheduled${type[0].toUpperCase()}${type.slice(1)}`
+  if (!this.state[stateKey]) {
+    this.state[stateKey] = {}
+  }
+  if (!this.state[stateKey][player.name]) {
+    this.state[stateKey][player.name] = {}
+  }
+  this.state[stateKey][player.name][round] =
+    (this.state[stateKey][player.name][round] || 0) + amount
+  return true
+}
+
+/**
+ * Schedule an event for a future round (plows, freeStables, freeOccupation).
+ * Returns true if scheduled, false if round is past the game end.
+ */
+Agricola.prototype.scheduleEvent = function(player, type, round) {
+  if (round > 14) {
+    return false
+  }
+  const stateKey = `scheduled${type[0].toUpperCase()}${type.slice(1)}`
+  if (!this.state[stateKey]) {
+    this.state[stateKey] = {}
+  }
+  if (!this.state[stateKey][player.name]) {
+    this.state[stateKey][player.name] = []
+  }
+  this.state[stateKey][player.name].push(round)
+  return true
 }
 
 /**
@@ -552,22 +592,20 @@ Agricola.prototype.callRoundEndHooks = function() {
   }
 }
 
-/**
- * Call onReturnHome for all players
- */
 Agricola.prototype.callReturnHomeHooks = function() {
-  for (const player of this.players.all()) {
-    this.callPlayerCardHook(player, 'onReturnHome')
-  }
+  this.callCardHook('onReturnHome')
 }
 
-/**
- * Call onHarvest for all players (during field phase)
- */
 Agricola.prototype.callHarvestHooks = function() {
-  for (const player of this.players.all()) {
-    this.callPlayerCardHook(player, 'onHarvest')
-  }
+  this.callCardHook('onHarvest')
+}
+
+Agricola.prototype.isHarvestRound = function(round) {
+  return res.constants.harvestRounds.includes(round)
+}
+
+Agricola.prototype.getCompletedHarvestCount = function() {
+  return res.constants.harvestRounds.filter(r => r < this.state.round).length
 }
 
 
@@ -815,7 +853,13 @@ Agricola.prototype.replenishPhase = function() {
       const state = this.state.actionSpaces[actionId]
 
       for (const [, amount] of Object.entries(action.accumulates)) {
+        const prevAccumulated = state.accumulated
         state.accumulated += amount
+
+        if (actionId === 'take-reed') {
+          const wasNonEmpty = prevAccumulated > 0
+          this.callCardHook('onReedBankReplenish', wasNonEmpty)
+        }
       }
 
       if (state.accumulated > 0) {
@@ -837,6 +881,14 @@ Agricola.prototype.workPhase = function() {
   // Reset all action space occupation
   for (const actionId of this.state.activeActions) {
     this.state.actionSpaces[actionId].occupiedBy = null
+  }
+
+  this.callCardHook('onWorkPhaseStart')
+
+  // Reset per-round tracking
+  for (const player of this.players.all()) {
+    player.usedFishingThisRound = false
+    player.resourcesGainedThisRound = {}
   }
 
   // Calculate total workers available
@@ -930,11 +982,12 @@ Agricola.prototype.playerTurn = function(player) {
     const action = res.getActionById(actionId)
     const state = this.state.actionSpaces[actionId]
 
-    let label = action.name
-    if (action.type === 'accumulating' && state.accumulated > 0) {
-      label += ` (${state.accumulated})`
+    const name = action ? action.name : state.name
+    const choice = { id: actionId, label: name }
+    if (action && action.type === 'accumulating' && state.accumulated > 0) {
+      choice.detail = `${state.accumulated}`
     }
-    return { id: actionId, label }
+    return choice
   })
 
   // Sort alphabetically by label (only for version 3+)
@@ -942,9 +995,16 @@ Agricola.prototype.playerTurn = function(player) {
     choices.sort((a, b) => a.label.localeCompare(b.label))
   }
 
+  const selectorChoices = choices.map(c => {
+    if (c.detail) {
+      return { title: c.label, detail: c.detail }
+    }
+    return c.label
+  })
+
   const selection = this.actions.choose(
     player,
-    choices.map(c => c.label),
+    selectorChoices,
     { title: 'Choose an action', min: 1, max: 1 }
   )
 
@@ -958,11 +1018,28 @@ Agricola.prototype.playerTurn = function(player) {
     // Mark action as occupied
     this.state.actionSpaces[actionId].occupiedBy = player.name
 
+    // Track fishing for card hooks
+    if (actionId === 'fishing') {
+      player.usedFishingThisRound = true
+    }
+
     // Use a worker
     player.useWorker()
 
+    // Record unused spaces before action for onUseMultipleSpaces hook
+    const unusedBefore = player.getUnusedSpaceCount()
+
     // Execute the action
     this.actions.executeAction(player, actionId)
+
+    // Check if unused spaces were converted to used spaces
+    const spacesUsed = unusedBefore - player.getUnusedSpaceCount()
+    for (let i = 0; i < spacesUsed; i++) {
+      this.callPlayerCardHook(player, 'onUseSpace')
+    }
+    if (spacesUsed >= 2) {
+      this.callPlayerCardHook(player, 'onUseMultipleSpaces', spacesUsed)
+    }
   }
 }
 
@@ -972,9 +1049,11 @@ Agricola.prototype.getAvailableActions = function(player) {
   for (const actionId of this.state.activeActions) {
     const state = this.state.actionSpaces[actionId]
 
-    // Action must not be occupied
+    // Action must not be occupied (unless a card overrides this)
     if (state.occupiedBy) {
-      continue
+      if (!this.playerCanUseOccupiedSpace(player, actionId, state)) {
+        continue
+      }
     }
 
     // Action must not be blocked by linked space
@@ -992,10 +1071,39 @@ Agricola.prototype.getAvailableActions = function(player) {
   return available
 }
 
-Agricola.prototype.canTakeAction = function(player, actionId) {
+Agricola.prototype.playerCanUseOccupiedSpace = function(player, actionId, state) {
   const action = res.getActionById(actionId)
   if (!action) {
     return false
+  }
+
+  for (const card of player.getActiveCards()) {
+    if (card.hasHook('canUseOccupiedActionSpace')) {
+      if (card.callHook('canUseOccupiedActionSpace', this, player, actionId, action, state)) {
+        return true
+      }
+    }
+  }
+
+  return false
+}
+
+Agricola.prototype.canTakeAction = function(player, actionId) {
+  const action = res.getActionById(actionId)
+  if (!action) {
+    const state = this.state.actionSpaces[actionId]
+    if (!state?.cardProvided) {
+      return false
+    }
+    if (state.ownerOnly && state.ownerName !== player.name) {
+      return false
+    }
+    const card = this.cards.byId(state.cardId)
+    const owner = this.players.byName(state.ownerName)
+    if (card.hasHook('canUseActionSpace') && !card.callHook('canUseActionSpace', this, player, owner)) {
+      return false
+    }
+    return true
   }
 
   // Check minimum round requirement (e.g., Modest Wish for Children)
@@ -1021,6 +1129,30 @@ Agricola.prototype.canTakeAction = function(player, actionId) {
 
   // Most actions can always be taken (even if the player can't afford to do anything)
   return true
+}
+
+Agricola.prototype.registerCardActionSpace = function(player, card) {
+  const def = card.definition
+  if (!def.providesActionSpace || !def.actionSpaceId) {
+    return
+  }
+
+  const id = def.actionSpaceId
+  this.state.activeActions.push(id)
+  this.state.actionSpaces[id] = {
+    occupiedBy: null,
+    cardProvided: true,
+    cardId: def.id,
+    ownerName: player.name,
+    name: def.name,
+    description: def.text,
+    ownerOnly: def.ownerOnly || false,
+  }
+
+  this.log.add({
+    template: '{player} adds {card} as an action space',
+    args: { player, card },
+  })
 }
 
 Agricola.prototype.returnHomePhase = function() {
@@ -1078,6 +1210,16 @@ Agricola.prototype.fieldPhase = function() {
   this.state.lastHarvestRound = this.state.round
 
   for (const player of this.players.all()) {
+    // Give players with crop-move ability a chance to rearrange before harvest
+    const anytimeActions = this.getAnytimeActions(player)
+    const hasCropMove = anytimeActions.some(a => a.type === 'crop-move')
+    if (hasCropMove) {
+      this.actions.choose(player, ['Harvest crops'], {
+        title: 'Use anytime actions before harvest?',
+        min: 1, max: 1,
+      })
+    }
+
     const result = player.harvestFields()
     const harvested = result.harvested
 
@@ -1086,6 +1228,10 @@ Agricola.prototype.fieldPhase = function() {
         template: '{player} harvests {grain} grain, {veg} vegetables, and {wood} wood',
         args: { player, grain: harvested.grain, veg: harvested.vegetables, wood: harvested.wood },
       })
+    }
+
+    if (harvested.vegetables > 0) {
+      this.callPlayerCardHook(player, 'onHarvestVegetables')
     }
 
     // Process virtual field callbacks
@@ -1110,6 +1256,9 @@ Agricola.prototype.fieldPhase = function() {
 
   // Call onHarvest hooks (e.g., Scythe Worker gives bonus grain)
   this.callHarvestHooks()
+
+  this.callCardHook('onFieldPhaseEnd')
+
   this.log.outdent()
 }
 
@@ -1124,6 +1273,18 @@ Agricola.prototype.feedingPhase = function() {
       template: '{player} needs {food} food',
       args: { player, food: required },
     })
+
+    this.callPlayerCardHook(player, 'onFeedingPhase')
+
+    // If the player has anytime actions and already enough food,
+    // give them a chance to use anytime actions before feeding
+    const hasAnytimeActions = this.getAnytimeActions(player).length > 0
+    if (hasAnytimeActions && player.food >= required) {
+      this.actions.choose(player, ['Feed family'], {
+        title: `Feed family (${player.food}/${required} food)`,
+        min: 1, max: 1,
+      })
+    }
 
     // Allow player to convert resources to food (optional)
     // Revised Edition rule: Players can withhold other goods (grain, vegetables, animals)
@@ -1374,6 +1535,41 @@ Agricola.prototype.getAnytimeFoodConversionOptions = function(player) {
     }
   }
 
+  // Card-based anytime conversions (e.g., Oriental Fireplace)
+  for (const cardId of player.playedMinorImprovements) {
+    const card = this.cards.byId(cardId)
+    if (!card || !card.definition.anytimeConversions) {
+      continue
+    }
+    for (const conv of card.definition.anytimeConversions) {
+      if (['sheep', 'boar', 'cattle'].includes(conv.from)) {
+        if (player.getTotalAnimals(conv.from) > 0) {
+          options.push({
+            type: 'card-cook',
+            cardName: card.name,
+            resource: conv.from,
+            count: 1,
+            food: conv.rate,
+            description: `${card.name}: ${conv.from} → ${conv.rate} food`,
+          })
+        }
+      }
+      else {
+        const resourceKey = conv.from
+        if ((player[resourceKey] || 0) > 0) {
+          options.push({
+            type: 'card-convert',
+            cardName: card.name,
+            resource: resourceKey,
+            count: 1,
+            food: conv.rate,
+            description: `${card.name}: ${resourceKey} → ${conv.rate} food`,
+          })
+        }
+      }
+    }
+  }
+
   return options
 }
 
@@ -1400,13 +1596,168 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
     })
   }
   else if (option.type === 'craft') {
-    player[option.resource] -= option.count
-    player.food += option.food
+    player.removeResource(option.resource, option.count)
+    player.addResource('food', option.food)
     this.log.add({
       template: '{player} uses {improvement} to convert {resource} to {food} food',
       args: { player, improvement: option.improvement, resource: option.resource, food: option.food },
     })
   }
+  else if (option.type === 'card-cook') {
+    player.removeAnimals(option.resource, option.count)
+    player.addResource('food', option.food)
+    this.log.add({
+      template: '{player} uses {card} to cook {count} {resource} for {food} food',
+      args: { player, card: option.cardName, count: option.count, resource: option.resource, food: option.food },
+    })
+  }
+  else if (option.type === 'card-convert') {
+    player.removeResource(option.resource, option.count)
+    player.addResource('food', option.food)
+    this.log.add({
+      template: '{player} uses {card} to convert {resource} to {food} food',
+      args: { player, card: option.cardName, resource: option.resource, food: option.food },
+    })
+  }
+}
+
+Agricola.prototype.getAnytimeActions = function(player) {
+  const options = []
+
+  // Cooking conversions (requires Fireplace or Cooking Hearth)
+  if (player.hasCookingAbility()) {
+    const imp = player.getCookingImprovement()
+    const rates = imp.abilities.cookingRates
+    const animals = player.getAllAnimals()
+
+    for (const [type, count] of Object.entries(animals)) {
+      if (count > 0) {
+        const food = rates[type]
+        options.push({
+          type: 'cook',
+          resource: type,
+          count: 1,
+          food,
+          description: `Cook 1 ${type} for ${food} food`,
+        })
+      }
+    }
+
+    // Cook vegetables at improvement rate (better than basic 1:1)
+    if (player.vegetables > 0) {
+      const food = rates.vegetables
+      options.push({
+        type: 'cook-vegetable',
+        resource: 'vegetables',
+        count: 1,
+        food,
+        description: `Cook 1 vegetable for ${food} food`,
+      })
+    }
+  }
+
+  // Card-based anytime conversions (e.g., Oriental Fireplace)
+  for (const cardId of player.playedMinorImprovements) {
+    const card = this.cards.byId(cardId)
+    if (!card || !card.definition.anytimeConversions) {
+      continue
+    }
+    for (const conv of card.definition.anytimeConversions) {
+      if (['sheep', 'boar', 'cattle'].includes(conv.from)) {
+        if (player.getTotalAnimals(conv.from) > 0) {
+          options.push({
+            type: 'card-cook',
+            cardName: card.name,
+            resource: conv.from,
+            count: 1,
+            food: conv.rate,
+            description: `${card.name}: ${conv.from} → ${conv.rate} food`,
+          })
+        }
+      }
+      else {
+        const resourceKey = conv.from
+        if ((player[resourceKey] || 0) > 0) {
+          options.push({
+            type: 'card-convert',
+            cardName: card.name,
+            resource: resourceKey,
+            count: 1,
+            food: conv.rate,
+            description: `${card.name}: ${resourceKey} → ${conv.rate} food`,
+          })
+        }
+      }
+    }
+  }
+
+  // Non-food anytime actions (e.g., Clearing Spade crop move)
+  for (const cardId of player.playedMinorImprovements) {
+    const card = this.cards.byId(cardId)
+    if (!card || !card.definition.allowsAnytimeCropMove) {
+      continue
+    }
+    const fieldSpaces = player.getFieldSpaces()
+    const hasSource = fieldSpaces.some(f => f.crop && f.cropCount >= 2)
+    const hasTarget = fieldSpaces.some(f => !f.crop || f.cropCount === 0)
+    if (hasSource && hasTarget) {
+      options.push({
+        type: 'crop-move',
+        cardName: card.name,
+        description: `${card.name}: Move 1 crop to empty field`,
+      })
+    }
+  }
+
+  return options
+}
+
+Agricola.prototype.executeAnytimeAction = function(player, action) {
+  if (action.type === 'crop-move') {
+    this.executeAnytimeCropMove(player, action)
+    return
+  }
+  // Delegate to executeAnytimeFoodConversion for all food-related types
+  this.executeAnytimeFoodConversion(player, action)
+}
+
+Agricola.prototype.executeAnytimeCropMove = function(player, action) {
+  const fieldSpaces = player.getFieldSpaces()
+
+  // Pick source field (has crop with count >= 2)
+  const sourceFields = fieldSpaces.filter(f => f.crop && f.cropCount >= 2)
+  const sourceChoices = sourceFields.map(f => `${f.row},${f.col} (${f.crop} x${f.cropCount})`)
+  const sourceSelection = this.actions.choose(player, sourceChoices, {
+    title: `${action.cardName}: Pick source field`,
+    min: 1, max: 1,
+  })
+
+  const sourceStr = Array.isArray(sourceSelection) ? sourceSelection[0] : sourceSelection
+  const [sourceRow, sourceCol] = sourceStr.split(' ')[0].split(',').map(Number)
+  const sourceCell = player.farmyard.grid[sourceRow][sourceCol]
+  const cropType = sourceCell.crop
+
+  // Pick target field (empty)
+  const targetFields = fieldSpaces.filter(f => (!f.crop || f.cropCount === 0) && !(f.row === sourceRow && f.col === sourceCol))
+  const targetChoices = targetFields.map(f => `${f.row},${f.col}`)
+  const targetSelection = this.actions.choose(player, targetChoices, {
+    title: `${action.cardName}: Pick target field`,
+    min: 1, max: 1,
+  })
+
+  const targetStr = Array.isArray(targetSelection) ? targetSelection[0] : targetSelection
+  const [targetRow, targetCol] = targetStr.split(',').map(Number)
+  const targetCell = player.farmyard.grid[targetRow][targetCol]
+
+  // Move 1 crop
+  sourceCell.cropCount -= 1
+  targetCell.crop = cropType
+  targetCell.cropCount = 1
+
+  this.log.add({
+    template: '{player} uses {card} to move 1 {crop} from ({sr},{sc}) to ({tr},{tc})',
+    args: { player, card: action.cardName, crop: cropType, sr: sourceRow, sc: sourceCol, tr: targetRow, tc: targetCol },
+  })
 }
 
 Agricola.prototype.getAvailableMajorImprovements = function() {

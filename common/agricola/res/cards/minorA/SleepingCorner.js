@@ -10,4 +10,7 @@ module.exports = {
   category: "Actions Booster",
   text: "You can use any \"Wish for Children\" action space even if it is occupied by one other player's person.",
   allowOccupiedFamilyGrowth: true,
+  canUseOccupiedActionSpace(game, player, actionId, action, state) {
+    return action.allowsFamilyGrowth && state.occupiedBy !== player.name
+  },
 }

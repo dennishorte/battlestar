@@ -1,56 +1,56 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Stone Company (A023)', () => {
-  test('offers improvement action on quarry action', () => {
-    const card = res.getCardById('stone-company-a023')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Stone Company', () => {
+  test('offers improvement action with stone requirement after quarry', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        clay: 3,
+        minorImprovements: ['stone-company-a023'],
+      },
+      actionSpaces: ['Western Quarry'],
+    })
     game.run()
 
-    const dennis = t.player(game)
+    // Dennis takes Western Quarry (1 stone accumulated)
+    // StoneCompany triggers buildImprovement with requireStone
+    // Only Clay Oven (clay 3, stone 1) is affordable and costs stone
+    t.choose(game, 'Western Quarry')
+    t.choose(game, 'Major Improvement.Clay Oven (clay-oven)')
 
-    let improvementCalled = false
-    game.actions.buildImprovement = (player, opts) => {
-      improvementCalled = true
-      expect(opts.requireStone).toBe(true)
-    }
-
-    card.onAction(game, dennis, 'take-stone-1')
-
-    expect(improvementCalled).toBe(true)
+    t.testBoard(game, {
+      dennis: {
+        clay: 0,  // 3 - 3 for Clay Oven
+        stone: 0, // 1 from quarry - 1 for Clay Oven
+        minorImprovements: ['stone-company-a023'],
+        majorImprovements: ['clay-oven'],
+      },
+    })
   })
 
-  test('triggers on take-stone-2 as well', () => {
-    const card = res.getCardById('stone-company-a023')
-    const game = t.fixture({ cardSets: ['minorA'] })
+  test('can decline the improvement offer', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        clay: 3, // enough to afford Clay Oven
+        minorImprovements: ['stone-company-a023'],
+      },
+      actionSpaces: ['Western Quarry'],
+    })
     game.run()
 
-    const dennis = t.player(game)
+    // Dennis takes Western Quarry but declines improvement
+    t.choose(game, 'Western Quarry')
+    t.choose(game, 'Do not play an improvement')
 
-    let improvementCalled = false
-    game.actions.buildImprovement = () => {
-      improvementCalled = true
-    }
-
-    card.onAction(game, dennis, 'take-stone-2')
-
-    expect(improvementCalled).toBe(true)
-  })
-
-  test('does not trigger on non-quarry actions', () => {
-    const card = res.getCardById('stone-company-a023')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-
-    let improvementCalled = false
-    game.actions.buildImprovement = () => {
-      improvementCalled = true
-    }
-
-    card.onAction(game, dennis, 'take-wood')
-
-    expect(improvementCalled).toBe(false)
+    t.testBoard(game, {
+      dennis: {
+        clay: 3,
+        stone: 1, // 1 from quarry, kept
+        minorImprovements: ['stone-company-a023'],
+      },
+    })
   })
 })

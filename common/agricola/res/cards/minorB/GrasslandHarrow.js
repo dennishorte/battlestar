@@ -11,14 +11,7 @@ module.exports = {
   onPlay(game, player) {
     const buildingResources = player.wood + player.clay + player.reed + player.stone
     const targetRound = game.state.round + buildingResources
-    if (targetRound <= 14) {
-      if (!game.state.scheduledPlows) {
-        game.state.scheduledPlows = {}
-      }
-      if (!game.state.scheduledPlows[player.name]) {
-        game.state.scheduledPlows[player.name] = []
-      }
-      game.state.scheduledPlows[player.name].push(targetRound)
+    if (game.scheduleEvent(player, 'plows', targetRound)) {
       game.log.add({
         template: '{player} schedules a field to plow in round {round} via Grassland Harrow',
         args: { player, round: targetRound },

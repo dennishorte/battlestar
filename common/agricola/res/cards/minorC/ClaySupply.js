@@ -11,16 +11,7 @@ module.exports = {
     const currentRound = game.state.round
     for (let i = 1; i <= 3; i++) {
       const round = currentRound + i
-      if (round <= 14) {
-        if (!game.state.scheduledClay) {
-          game.state.scheduledClay = {}
-        }
-        if (!game.state.scheduledClay[player.name]) {
-          game.state.scheduledClay[player.name] = {}
-        }
-        game.state.scheduledClay[player.name][round] =
-            (game.state.scheduledClay[player.name][round] || 0) + 1
-      }
+      game.scheduleResource(player, 'clay', round, 1)
     }
     game.log.add({
       template: '{player} schedules clay from Clay Supply',

@@ -9,6 +9,9 @@ module.exports = {
   category: "Actions Booster",
   text: "You can consider the \"Lessons\" action spaces not occupied. You can replace each food that an occupation costs with wood.",
   allowIgnoreLessonsOccupied: true,
+  canUseOccupiedActionSpace(game, player, actionId, action, state) {
+    return action.allowsOccupation && state.occupiedBy !== player.name
+  },
   modifyOccupationCost(player, cost) {
     if (cost.food) {
       return { ...cost, food: 0, woodOrFood: cost.food }

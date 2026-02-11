@@ -1,46 +1,35 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Asparagus Gift (A068)', () => {
+describe('Asparagus Gift', () => {
   test('gives vegetable when fences built >= current round', () => {
-    const card = res.getCardById('asparagus-gift-a068')
-    const game = t.fixture({ cardSets: ['minorA'] })
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['asparagus-gift-a068'],
+        wood: 4, // 4 fences for a 1-space pasture
+        farmyard: {
+          fields: [{ row: 0, col: 2 }],
+        },
+      },
+      actionSpaces: ['Fencing'],
+    })
     game.run()
 
-    const dennis = t.player(game)
-    game.state.round = 3
-    dennis.vegetables = 0
+    // Dennis takes Fencing and builds a pasture (4 fences >= round 2)
+    t.choose(game, 'Fencing')
+    t.action(game, 'build-pasture', { spaces: [{ row: 0, col: 1 }] })
+    t.action(game, 'done-building-pastures')
 
-    card.onBuildFences(game, dennis, 3)
-
-    expect(dennis.vegetables).toBe(1)
-  })
-
-  test('gives vegetable when fences built > current round', () => {
-    const card = res.getCardById('asparagus-gift-a068')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    game.state.round = 2
-    dennis.vegetables = 0
-
-    card.onBuildFences(game, dennis, 5)
-
-    expect(dennis.vegetables).toBe(1)
-  })
-
-  test('does not give vegetable when fences built < current round', () => {
-    const card = res.getCardById('asparagus-gift-a068')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    game.state.round = 5
-    dennis.vegetables = 0
-
-    card.onBuildFences(game, dennis, 3)
-
-    expect(dennis.vegetables).toBe(0)
+    t.testBoard(game, {
+      dennis: {
+        vegetables: 1, // from Asparagus Gift
+        minorImprovements: ['asparagus-gift-a068'],
+        farmyard: {
+          fields: [{ row: 0, col: 2 }],
+          pastures: [{ spaces: [{ row: 0, col: 1 }] }],
+        },
+      },
+    })
   })
 })

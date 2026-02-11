@@ -44,7 +44,7 @@ const minorImprovements = [
         args: { player },
       })
 
-      game.actions.callOnBuildPastureHooks(player, player.farmyard.pastures[player.farmyard.pastures.length - 1])
+      game.callPlayerCardHook(player, 'onBuildPasture', player.farmyard.pastures[player.farmyard.pastures.length - 1])
     },
   },
   {
@@ -260,17 +260,7 @@ const minorImprovements = [
     onPlay(game, player) {
       const currentRound = game.state.round
       for (let i = 1; i <= 3; i++) {
-        const round = currentRound + i
-        if (round <= 14) {
-          if (!game.state.scheduledFood) {
-            game.state.scheduledFood = {}
-          }
-          if (!game.state.scheduledFood[player.name]) {
-            game.state.scheduledFood[player.name] = {}
-          }
-          game.state.scheduledFood[player.name][round] =
-            (game.state.scheduledFood[player.name][round] || 0) + 1
-        }
+        game.scheduleResource(player, 'food', currentRound + i, 1)
       }
       game.log.add({
         template: '{player} places food on the next 3 round spaces from Strawberry Patch',
@@ -291,17 +281,7 @@ const minorImprovements = [
       if (actionId === 'fishing') {
         const currentRound = game.state.round
         for (let i = 1; i <= 3; i++) {
-          const round = currentRound + i
-          if (round <= 14) {
-            if (!game.state.scheduledFood) {
-              game.state.scheduledFood = {}
-            }
-            if (!game.state.scheduledFood[player.name]) {
-              game.state.scheduledFood[player.name] = {}
-            }
-            game.state.scheduledFood[player.name][round] =
-              (game.state.scheduledFood[player.name][round] || 0) + 1
-          }
+          game.scheduleResource(player, 'food', currentRound + i, 1)
         }
         game.log.add({
           template: '{player} places food on the next 3 round spaces from Herring Pot',
@@ -452,14 +432,7 @@ const minorImprovements = [
       const currentRound = game.state.round
       const targetRounds = [5, 8, 11, 14].filter(r => r > currentRound)
       for (const round of targetRounds) {
-        if (!game.state.scheduledGrain) {
-          game.state.scheduledGrain = {}
-        }
-        if (!game.state.scheduledGrain[player.name]) {
-          game.state.scheduledGrain[player.name] = {}
-        }
-        game.state.scheduledGrain[player.name][round] =
-          (game.state.scheduledGrain[player.name][round] || 0) + 1
+        game.scheduleResource(player, 'grain', round, 1)
       }
       game.log.add({
         template: '{player} schedules grain from Sack Cart',
@@ -506,14 +479,7 @@ const minorImprovements = [
       const currentRound = game.state.round
       for (let round = 2; round <= 14; round += 2) {
         if (round > currentRound) {
-          if (!game.state.scheduledWood) {
-            game.state.scheduledWood = {}
-          }
-          if (!game.state.scheduledWood[player.name]) {
-            game.state.scheduledWood[player.name] = {}
-          }
-          game.state.scheduledWood[player.name][round] =
-            (game.state.scheduledWood[player.name][round] || 0) + 1
+          game.scheduleResource(player, 'wood', round, 1)
         }
       }
       game.log.add({
@@ -568,17 +534,7 @@ const minorImprovements = [
     onPlay(game, player) {
       const currentRound = game.state.round
       for (let i = 1; i <= 2; i++) {
-        const round = currentRound + i
-        if (round <= 14) {
-          if (!game.state.scheduledBoar) {
-            game.state.scheduledBoar = {}
-          }
-          if (!game.state.scheduledBoar[player.name]) {
-            game.state.scheduledBoar[player.name] = {}
-          }
-          game.state.scheduledBoar[player.name][round] =
-            (game.state.scheduledBoar[player.name][round] || 0) + 1
-        }
+        game.scheduleResource(player, 'boar', currentRound + i, 1)
       }
       game.log.add({
         template: '{player} schedules wild boar from Acorns Basket',
@@ -732,10 +688,10 @@ const occupations = [
     category: 'Points Provider',
     text: 'During scoring, you get 1 bonus point for each occupation played after this one.',
     onPlay(game, player) {
-      player.tutorOccupationCount = player.occupationsPlayed
+      player.tutorOccupationCount = player.getOccupationCount()
     },
     getEndGamePoints(player) {
-      const afterTutor = player.occupationsPlayed - (player.tutorOccupationCount || 0)
+      const afterTutor = player.getOccupationCount() - (player.tutorOccupationCount || 0)
       return Math.max(0, afterTutor)
     },
   },
@@ -811,14 +767,7 @@ const occupations = [
         player.manservantTriggered = true
         const currentRound = game.state.round
         for (let round = currentRound + 1; round <= 14; round++) {
-          if (!game.state.scheduledFood) {
-            game.state.scheduledFood = {}
-          }
-          if (!game.state.scheduledFood[player.name]) {
-            game.state.scheduledFood[player.name] = {}
-          }
-          game.state.scheduledFood[player.name][round] =
-            (game.state.scheduledFood[player.name][round] || 0) + 3
+          game.scheduleResource(player, 'food', round, 3)
         }
         game.log.add({
           template: '{player} schedules food from Manservant',
@@ -1093,17 +1042,7 @@ const occupations = [
     onPlay(game, player) {
       const currentRound = game.state.round
       for (const offset of [2, 5, 8, 10]) {
-        const round = currentRound + offset
-        if (round <= 14) {
-          if (!game.state.scheduledSheep) {
-            game.state.scheduledSheep = {}
-          }
-          if (!game.state.scheduledSheep[player.name]) {
-            game.state.scheduledSheep[player.name] = {}
-          }
-          game.state.scheduledSheep[player.name][round] =
-            (game.state.scheduledSheep[player.name][round] || 0) + 1
-        }
+        game.scheduleResource(player, 'sheep', currentRound + offset, 1)
       }
       game.log.add({
         template: '{player} schedules sheep from Sheep Whisperer',

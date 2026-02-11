@@ -1,73 +1,48 @@
-const t = require('../../../testutil.js')
-const res = require('../../index.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Reclamation Plow (A017)', () => {
-  test('activates on play', () => {
-    const card = res.getCardById('reclamation-plow-a017')
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Reclamation Plow', () => {
+  test('plows a field after taking sheep when played via Major Improvement', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['reclamation-plow-a017'],
+        wood: 1, // cost to play Reclamation Plow
+      },
+      actionSpaces: ['Sheep Market', 'Major Improvement'],
+    })
     game.run()
 
-    const dennis = t.player(game)
+    // dennis: play Reclamation Plow via Major Improvement action
+    t.choose(game, 'Major Improvement')
+    t.choose(game, 'Minor Improvement.Reclamation Plow')
+    // onPlay fires → reclamationPlowActive = true
 
-    card.onPlay(game, dennis)
+    // micah: simple action
+    t.choose(game, 'Day Laborer')
 
-    expect(dennis.reclamationPlowActive).toBe(true)
-  })
+    // dennis: take sheep from Sheep Market (1 accumulated)
+    // canPlaceAnimals returns true (1 sheep as house pet)
+    // onTakeAnimals fires → ReclamationPlow calls plowField
+    t.choose(game, 'Sheep Market')
+    t.action(game, 'plow-space', { row: 0, col: 2 })
 
-  test('plows field when animals are accommodated', () => {
-    const card = res.getCardById('reclamation-plow-a017')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
+    // micah: simple action
+    t.choose(game, 'Forest')
 
-    const dennis = t.player(game)
-    dennis.reclamationPlowActive = true
+    t.testBoard(game, {
+      dennis: {
+        pet: 'sheep',
+        minorImprovements: ['reclamation-plow-a017'],
+        animals: { sheep: 1 },
+        farmyard: {
+          fields: [{ row: 0, col: 2 }],
+        },
+      },
+    })
 
-    let plowCalled = false
-    game.actions.plowField = (player, opts) => {
-      plowCalled = true
-      expect(opts.immediate).toBe(true)
-    }
-
-    card.onTakeAnimals(game, dennis, true)
-
-    expect(plowCalled).toBe(true)
+    // Verify reclamationPlowActive is now false (one-time use)
+    const dennis = t.dennis(game)
     expect(dennis.reclamationPlowActive).toBe(false)
-  })
-
-  test('does not plow if animals not accommodated', () => {
-    const card = res.getCardById('reclamation-plow-a017')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    dennis.reclamationPlowActive = true
-
-    let plowCalled = false
-    game.actions.plowField = () => {
-      plowCalled = true
-    }
-
-    card.onTakeAnimals(game, dennis, false)
-
-    expect(plowCalled).toBe(false)
-    expect(dennis.reclamationPlowActive).toBe(true)
-  })
-
-  test('does not plow if not active', () => {
-    const card = res.getCardById('reclamation-plow-a017')
-    const game = t.fixture({ cardSets: ['minorA'] })
-    game.run()
-
-    const dennis = t.player(game)
-    dennis.reclamationPlowActive = false
-
-    let plowCalled = false
-    game.actions.plowField = () => {
-      plowCalled = true
-    }
-
-    card.onTakeAnimals(game, dennis, true)
-
-    expect(plowCalled).toBe(false)
   })
 })

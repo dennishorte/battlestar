@@ -1,31 +1,29 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Milk Jug (A050)', () => {
-  test('gives card owner 3 food when any player uses cattle market', () => {
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Milk Jug', () => {
+  test('gives card owner 3 food and other players 1 food on Cattle Market', () => {
+    const game = t.fixture()
     t.setBoard(game, {
+      firstPlayer: 'micah',
       dennis: {
-        food: 0,
         minorImprovements: ['milk-jug-a050'],
       },
-      micah: {
-        food: 0,
-      },
+      actionSpaces: ['Cattle Market'],
     })
     game.run()
 
-    const dennis = t.player(game)
-    const micah = game.players.byName('micah')
+    t.choose(game, 'Cattle Market')   // micah takes Cattle Market (1 cattle auto-placed as pet)
 
-    // Set up cattle action space
-    game.state.actionSpaces['take-cattle'] = { accumulated: 1 }
-
-    // Micah takes cattle action
-    game.actions.executeAction(micah, 'take-cattle')
-
-    // Dennis (card owner) gets 3 food
-    expect(dennis.food).toBe(3)
-    // Micah gets 1 food from Milk Jug
-    expect(micah.food).toBe(1)
+    t.testBoard(game, {
+      dennis: {
+        food: 3, // from Milk Jug
+        minorImprovements: ['milk-jug-a050'],
+      },
+      micah: {
+        food: 1, // from Milk Jug (other player bonus)
+        pet: 'cattle',
+        animals: { cattle: 1 },
+      },
+    })
   })
 })

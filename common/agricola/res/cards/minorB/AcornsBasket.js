@@ -12,16 +12,7 @@ module.exports = {
     const currentRound = game.state.round
     for (let i = 1; i <= 2; i++) {
       const round = currentRound + i
-      if (round <= 14) {
-        if (!game.state.scheduledBoar) {
-          game.state.scheduledBoar = {}
-        }
-        if (!game.state.scheduledBoar[player.name]) {
-          game.state.scheduledBoar[player.name] = {}
-        }
-        game.state.scheduledBoar[player.name][round] =
-            (game.state.scheduledBoar[player.name][round] || 0) + 1
-      }
+      game.scheduleResource(player, 'boar', round, 1)
     }
     game.log.add({
       template: '{player} schedules wild boar from Acorns Basket',

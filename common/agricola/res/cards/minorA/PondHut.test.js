@@ -1,25 +1,29 @@
-const t = require('../../../testutil.js')
+const t = require('../../../testutil_v2.js')
 
-describe('Pond Hut (A044)', () => {
-  test('schedules 1 food for next 3 rounds', () => {
-    const game = t.fixture({ cardSets: ['minorA'] })
+describe('Pond Hut', () => {
+  test('schedules food on next 3 rounds when played', () => {
+    const game = t.fixture()
     t.setBoard(game, {
+      firstPlayer: 'dennis',
       dennis: {
-        wood: 5,
         hand: ['pond-hut-a044'],
-        occupations: ['wood-cutter', 'firewood-collector'], // Need exactly 2 occupations
+        wood: 1,
+        occupations: ['test-occupation-1', 'test-occupation-2'],
       },
-      round: 5,
     })
     game.run()
 
-    game.state.round = 5
-    t.playCard(game, 'dennis', 'pond-hut-a044')
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Pond Hut')
 
-    const dennis = t.player(game)
-    // Should schedule food for rounds 6, 7, 8
-    expect(game.state.scheduledFood[dennis.name][6]).toBe(1)
-    expect(game.state.scheduledFood[dennis.name][7]).toBe(1)
-    expect(game.state.scheduledFood[dennis.name][8]).toBe(1)
+    t.testBoard(game, {
+      dennis: {
+        food: 1,
+        hand: [],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        minorImprovements: ['pond-hut-a044'],
+        scheduled: { food: { 3: 1, 4: 1, 5: 1 } },
+      },
+    })
   })
 })

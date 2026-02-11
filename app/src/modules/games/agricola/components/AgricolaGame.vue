@@ -18,6 +18,7 @@
           <RoundInfo />
           <ActionsColumn />
           <MajorImprovements />
+          <AnytimeActionsPanel />
           <WaitingPanel />
         </div>
 
@@ -74,6 +75,7 @@ import WaitingPanel from '@/modules/games/common/components/WaitingPanel.vue'
 import ModalBase from '@/components/ModalBase.vue'
 
 // Agricola Components
+import AnytimeActionsPanel from './AnytimeActionsPanel.vue'
 import ActionsColumn from './ActionsColumn.vue'
 import ActionSpace from './ActionSpace.vue'
 import AgricolaCardChip from './AgricolaCardChip.vue'
@@ -101,6 +103,7 @@ export default {
 
   components: {
     ActionsColumn,
+    AnytimeActionsPanel,
     DropdownButton,
     DropdownDivider,
     GameLogAgricola,

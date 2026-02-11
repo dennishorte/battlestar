@@ -10,7 +10,7 @@ module.exports = {
   text: "When you play this card, if the number of completed harvests is equal to the number of occupations you played, you immediately get 1 food, 1 grain and 1 vegetable.",
   onPlay(game, player) {
     const harvests = game.getCompletedHarvestCount()
-    const occs = player.occupationsPlayed || 0
+    const occs = player.getOccupationCount()
     if (harvests === occs) {
       player.addResource('food', 1)
       player.addResource('grain', 1)
