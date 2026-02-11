@@ -12,10 +12,10 @@ module.exports = {
   onPlay(game, player, paidWith) {
     const currentRound = game.state.round
     let rounds = 2
-    if (paidWith === 'clay') {
+    if (paidWith?.clay) {
       rounds = 3
     }
-    else if (paidWith === 'stone') {
+    else if (paidWith?.stone) {
       rounds = 4
     }
 

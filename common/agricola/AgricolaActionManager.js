@@ -33,6 +33,52 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   // ---------------------------------------------------------------------------
+  // Cost choice helpers
+  // ---------------------------------------------------------------------------
+
+  _formatCostLabel(cost) {
+    const parts = Object.entries(cost).map(([resource, amount]) => `${amount} ${resource}`)
+    return parts.join(', ') || 'free'
+  }
+
+  _playMinorWithCostChoice(player, cardId) {
+    const card = this.game.cards.byId(cardId)
+    const affordableOptions = player.getAffordableCardCostOptions(cardId)
+
+    let chosenCost
+    if (affordableOptions.length > 1) {
+      const costChoices = affordableOptions.map(opt => this._formatCostLabel(opt.cost))
+      const selection = this.choose(player, costChoices, {
+        title: `Choose payment for ${card.name}`,
+        min: 1,
+        max: 1,
+      })
+      const selectedIdx = costChoices.indexOf(selection[0])
+      chosenCost = affordableOptions[selectedIdx].cost
+    }
+    else {
+      chosenCost = affordableOptions[0].cost
+    }
+
+    player.playCard(cardId)
+    this._recordCardPlayed(player, card)
+
+    this.log.add({
+      template: '{player} plays {card}',
+      args: { player, card: card },
+    })
+    player.payCardCost(cardId, chosenCost)
+
+    if (card.hasHook('onPlay')) {
+      card.callHook('onPlay', this.game, player, chosenCost)
+    }
+
+    this.game.registerCardActionSpace(player, card)
+    this.game.callPlayerCardHook(player, 'onBuildImprovement')
+    this.maybePassLeft(player, cardId)
+  }
+
+  // ---------------------------------------------------------------------------
   // Anytime actions support
   // ---------------------------------------------------------------------------
 
@@ -1607,23 +1653,7 @@ class AgricolaActionManager extends BaseActionManager {
           })
 
           if (cardId) {
-            const card = this.game.cards.byId(cardId)
-            player.playCard(cardId)
-            this._recordCardPlayed(player, card)
-
-            this.log.add({
-              template: '{player} plays {card}',
-              args: { player, card: card },
-            })
-            player.payCardCost(cardId)
-
-            if (card.hasHook('onPlay')) {
-              card.callHook('onPlay', this.game, player)
-            }
-
-            this.game.registerCardActionSpace(player, card)
-            this.game.callPlayerCardHook(player, 'onBuildImprovement')
-            this.maybePassLeft(player, cardId)
+            this._playMinorWithCostChoice(player, cardId)
             return true
           }
         }
@@ -1684,29 +1714,7 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
-    // Play the card (moves from hand)
-    const card = this.game.cards.byId(cardId)
-    player.playCard(cardId)
-    this._recordCardPlayed(player, card)
-
-    this.log.add({
-      template: '{player} plays {card}',
-      args: { player, card: card },
-    })
-    player.payCardCost(cardId)
-
-    // Execute onPlay effect if present
-    if (card.hasHook('onPlay')) {
-      card.callHook('onPlay', this.game, player)
-    }
-
-    this.game.registerCardActionSpace(player, card)
-
-    // Call onBuildImprovement hooks (Junk Room gives food)
-    this.game.callPlayerCardHook(player, 'onBuildImprovement')
-
-    // Pass to left player if applicable
-    this.maybePassLeft(player, cardId)
+    this._playMinorWithCostChoice(player, cardId)
 
     return true
   }
@@ -1885,29 +1893,7 @@ class AgricolaActionManager extends BaseActionManager {
         })
 
         if (cardId) {
-          const card = this.game.cards.byId(cardId)
-          player.playCard(cardId)
-          this._recordCardPlayed(player, card)
-
-          this.log.add({
-            template: '{player} plays {card}',
-            args: { player, card: card },
-          })
-          player.payCardCost(cardId)
-
-          // Execute onPlay effect if present
-          if (card.hasHook('onPlay')) {
-            card.callHook('onPlay', this.game, player)
-          }
-
-          this.game.registerCardActionSpace(player, card)
-
-          // Call onBuildImprovement hooks (Junk Room gives food)
-          this.game.callPlayerCardHook(player, 'onBuildImprovement')
-
-          // Pass to left player if applicable
-          this.maybePassLeft(player, cardId)
-
+          this._playMinorWithCostChoice(player, cardId)
           return true
         }
       }

@@ -2176,28 +2176,41 @@ class AgricolaPlayer extends BasePlayer {
     return this.playedOccupations.includes(cardId) || this.playedMinorImprovements.includes(cardId)
   }
 
+  canAffordSingleCost(cost) {
+    for (const [resource, amount] of Object.entries(cost)) {
+      if (resource === 'sheep' || resource === 'boar' || resource === 'cattle') {
+        if (this.getTotalAnimals(resource) < amount) {
+          return false
+        }
+      }
+      else if ((this[resource] || 0) < amount) {
+        return false
+      }
+    }
+    return true
+  }
+
   canAffordCard(cardId) {
     const card = this.cards.byId(cardId)
     if (!card) {
       return false
     }
 
-    // Check cost
-    if (card.cost) {
-      const cost = this.getCardCost(card)
-      for (const [resource, amount] of Object.entries(cost)) {
-        if (resource === 'sheep' || resource === 'boar' || resource === 'cattle') {
-          if (this.getTotalAnimals(resource) < amount) {
-            return false
-          }
-        }
-        else if ((this[resource] || 0) < amount) {
-          return false
-        }
-      }
+    if (!card.cost) {
+      return true
     }
 
-    return true
+    const options = this.getCardCostOptions(card)
+    return options.some(opt => this.canAffordSingleCost(opt.cost))
+  }
+
+  getAffordableCardCostOptions(cardId) {
+    const card = this.cards.byId(cardId)
+    if (!card || !card.cost) {
+      return [{ cost: {}, label: 'free' }]
+    }
+    const options = this.getCardCostOptions(card)
+    return options.filter(opt => this.canAffordSingleCost(opt.cost))
   }
 
   meetsCardPrereqs(cardId) {
@@ -2548,13 +2561,13 @@ class AgricolaPlayer extends BasePlayer {
     return true
   }
 
-  payCardCost(cardId) {
+  payCardCost(cardId, chosenCost) {
     const card = this.cards.byId(cardId)
     if (!card || !card.cost) {
       return true
     }
 
-    const cost = this.getCardCost(card)
+    const cost = chosenCost || this.getCardCost(card)
     const animalCost = {}
     const resourceCost = {}
     for (const [resource, amount] of Object.entries(cost)) {
@@ -2592,6 +2605,38 @@ class AgricolaPlayer extends BasePlayer {
       cost = this.applyAnyCostModifiers(cost, 'minor-improvement')
     }
     return cost
+  }
+
+  getCardCostOptions(card) {
+    const options = []
+
+    // Primary cost
+    const primaryCost = this.getCardCost(card)
+    options.push({ cost: primaryCost, label: 'primary' })
+
+    // costAlternative — skip special keys like cookBoar
+    const alt = card.definition.costAlternative
+    if (alt && !alt.cookBoar) {
+      let cost = { ...alt }
+      if (card.type === 'minor') {
+        cost = this.applyImprovementCostModifiers(cost)
+        cost = this.applyAnyCostModifiers(cost, 'minor-improvement')
+      }
+      options.push({ cost, label: 'alternative' })
+    }
+
+    // costAlternative2
+    const alt2 = card.definition.costAlternative2
+    if (alt2) {
+      let cost = { ...alt2 }
+      if (card.type === 'minor') {
+        cost = this.applyImprovementCostModifiers(cost)
+        cost = this.applyAnyCostModifiers(cost, 'minor-improvement')
+      }
+      options.push({ cost, label: 'alternative2' })
+    }
+
+    return options
   }
 
   playCard(cardId) {
