@@ -549,7 +549,62 @@ Agricola.prototype.collectScheduledResources = function(player) {
     delete this.state.scheduledClay[player.name][round]
   }
 
-  // Scheduled plows (Handplow)
+  // Scheduled wood (Ceilings, Thick Forest)
+  if (this.state.scheduledWood?.[player.name]?.[round]) {
+    const amount = this.state.scheduledWood[player.name][round]
+    player.addResource('wood', amount)
+    this.log.add({
+      template: '{player} receives {amount} scheduled wood',
+      args: { player, amount },
+    })
+    delete this.state.scheduledWood[player.name][round]
+  }
+
+  // Scheduled grain (Sack Cart, Grain Depot)
+  if (this.state.scheduledGrain?.[player.name]?.[round]) {
+    const amount = this.state.scheduledGrain[player.name][round]
+    player.addResource('grain', amount)
+    this.log.add({
+      template: '{player} receives {amount} scheduled grain',
+      args: { player, amount },
+    })
+    delete this.state.scheduledGrain[player.name][round]
+  }
+
+  // Scheduled reed (Reed Belt)
+  if (this.state.scheduledReed?.[player.name]?.[round]) {
+    const amount = this.state.scheduledReed[player.name][round]
+    player.addResource('reed', amount)
+    this.log.add({
+      template: '{player} receives {amount} scheduled reed',
+      args: { player, amount },
+    })
+    delete this.state.scheduledReed[player.name][round]
+  }
+
+  // Scheduled stone (Club House)
+  if (this.state.scheduledStone?.[player.name]?.[round]) {
+    const amount = this.state.scheduledStone[player.name][round]
+    player.addResource('stone', amount)
+    this.log.add({
+      template: '{player} receives {amount} scheduled stone',
+      args: { player, amount },
+    })
+    delete this.state.scheduledStone[player.name][round]
+  }
+
+  // Scheduled boar (Acorns Basket)
+  if (this.state.scheduledBoar?.[player.name]?.[round]) {
+    const amount = this.state.scheduledBoar[player.name][round]
+    player.addAnimals('boar', amount)
+    this.log.add({
+      template: '{player} receives {amount} scheduled wild boar',
+      args: { player, amount },
+    })
+    delete this.state.scheduledBoar[player.name][round]
+  }
+
+  // Scheduled plows (Handplow, Chain Float)
   if (this.state.scheduledPlows?.[player.name]?.includes(round)) {
     this.offerScheduledPlow(player)
     this.state.scheduledPlows[player.name] = this.state.scheduledPlows[player.name].filter(r => r !== round)
