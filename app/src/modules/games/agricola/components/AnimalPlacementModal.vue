@@ -54,6 +54,35 @@
         </div>
       </div>
 
+      <!-- Card Holdings -->
+      <div class="card-holdings-section" v-if="cardLocations.length > 0">
+        <h5>Card Holdings</h5>
+        <div class="card-holdings">
+          <div
+            v-for="loc in cardLocations"
+            :key="loc.id"
+            class="card-holding-box"
+            :class="{ full: loc.currentCount + getTotalPlacedAt(loc.id) >= loc.maxCapacity }"
+            @click="handleCardClick(loc)"
+          >
+            <div class="card-holding-name">{{ loc.name }}</div>
+            <div class="card-holding-animals">
+              <span v-for="type in ['sheep', 'boar', 'cattle']" :key="type">
+                <span v-if="getCardCurrentCount(loc, type) > 0">
+                  {{ getCardCurrentCount(loc, type) }}{{ getAnimalEmoji(type) }}
+                </span>
+                <span v-if="getCardPlacedCount(loc, type) > 0" class="card-adding">
+                  +{{ getCardPlacedCount(loc, type) }}{{ getAnimalEmoji(type) }}
+                </span>
+              </span>
+            </div>
+            <div class="card-holding-capacity">
+              {{ loc.currentCount + getTotalPlacedAt(loc.id) }} / {{ loc.maxCapacity }}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Placement Summary -->
       <div class="placement-section">
         <h5>Placements</h5>
@@ -269,6 +298,10 @@ export default {
     isValid() {
       // All animals must be accounted for (placed + overflow)
       return this.totalRemaining >= 0
+    },
+
+    cardLocations() {
+      return this.locations.filter(loc => loc.type === 'card')
     },
 
     locationsWithPlacements() {
@@ -597,6 +630,10 @@ export default {
     },
 
     canPlaceTypeAt(loc, animalType) {
+      // Mixed-type holders can always accept any type
+      if (loc.mixedTypes) {
+        return true
+      }
       // Check if location already has a different type
       if (loc.currentAnimalType && loc.currentAnimalType !== animalType) {
         return false
@@ -610,6 +647,38 @@ export default {
         }
       }
       return true
+    },
+
+    handleCardClick(loc) {
+      const totalAtLoc = loc.currentCount + this.getTotalPlacedAt(loc.id)
+      if (totalAtLoc >= loc.maxCapacity) {
+        return
+      }
+
+      const availableTypes = []
+      for (const type of Object.keys(this.incoming)) {
+        if (this.getRemainingOfType(type) > 0 && this.canPlaceTypeAt(loc, type)) {
+          availableTypes.push(type)
+        }
+      }
+
+      if (availableTypes.length === 0) {
+        return
+      }
+      else if (availableTypes.length === 1) {
+        this.addPlacement(loc.id, availableTypes[0])
+      }
+      else {
+        this.selectingLocation = loc
+      }
+    },
+
+    getCardCurrentCount(loc, type) {
+      return loc.currentAnimals?.[type] || 0
+    },
+
+    getCardPlacedCount(loc, type) {
+      return this.placements[loc.id]?.[type] || 0
     },
 
     getTotalPlacedAt(locationId) {
@@ -871,6 +940,56 @@ export default {
   top: 0;
   bottom: 0;
   width: 4px;
+}
+
+.card-holdings-section {
+  margin-bottom: 1rem;
+}
+
+.card-holdings {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.card-holding-box {
+  padding: 0.5rem;
+  background: #d4edda;
+  border: 2px solid #28a745;
+  border-radius: 4px;
+  cursor: pointer;
+  min-width: 120px;
+  text-align: center;
+}
+
+.card-holding-box:hover {
+  background: #c3e6cb;
+}
+
+.card-holding-box.full {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.card-holding-name {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.card-holding-animals {
+  font-size: 0.9rem;
+  min-height: 1.4em;
+}
+
+.card-adding {
+  color: #155724;
+  font-weight: 500;
+}
+
+.card-holding-capacity {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.25rem;
 }
 
 .placement-section {

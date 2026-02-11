@@ -130,6 +130,10 @@ class AgricolaPlayer extends BasePlayer {
     // Each entry: { id, cardId, label, cropRestriction, crop, cropCount }
     // cropRestriction: null = any, 'grain', 'vegetables', 'wood'
     this.virtualFields = []
+
+    // Card-based animal holdings (e.g., Feedyard)
+    // { cardId: { sheep: 0, boar: 0, cattle: 0 } }
+    this.cardAnimals = {}
   }
 
   // ---------------------------------------------------------------------------
@@ -1196,6 +1200,11 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
 
+    // Count on card-based holders
+    for (const holding of this.getAnimalHoldingCards()) {
+      count += holding.animals[type] || 0
+    }
+
     return count
   }
 
@@ -1271,6 +1280,14 @@ class AgricolaPlayer extends BasePlayer {
     // Unfenced stables
     capacity += this.getUnfencedStableCapacity()
 
+    // Card-based holders (mixed types share capacity pool)
+    for (const holding of this.getAnimalHoldingCards()) {
+      const otherCount = Object.entries(holding.animals)
+        .filter(([t]) => t !== animalType)
+        .reduce((sum, [, n]) => sum + n, 0)
+      capacity += Math.max(0, holding.capacity - otherCount)
+    }
+
     return capacity
   }
 
@@ -1328,6 +1345,20 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
 
+    // Card-based animal holders
+    for (const holding of this.getAnimalHoldingCards()) {
+      locations.push({
+        id: `card-${holding.cardId}`,
+        type: 'card',
+        name: holding.name,
+        cardId: holding.cardId,
+        mixedTypes: true,
+        currentAnimals: { ...holding.animals },
+        currentCount: this.getCardAnimalTotal(holding.cardId),
+        maxCapacity: holding.capacity,
+      })
+    }
+
     return locations
   }
 
@@ -1343,18 +1374,26 @@ class AgricolaPlayer extends BasePlayer {
       const available = loc.maxCapacity - loc.currentCount
       loc.availableFor = {}
 
-      for (const animalType of res.animalTypes) {
-        if (loc.currentAnimalType === null) {
-          // Empty location - can place any type
+      if (loc.mixedTypes) {
+        // Mixed-type holders share a capacity pool across all types
+        for (const animalType of res.animalTypes) {
           loc.availableFor[animalType] = available
         }
-        else if (loc.currentAnimalType === animalType) {
-          // Same type - can add more
-          loc.availableFor[animalType] = available
-        }
-        else {
-          // Different type - can't mix
-          loc.availableFor[animalType] = 0
+      }
+      else {
+        for (const animalType of res.animalTypes) {
+          if (loc.currentAnimalType === null) {
+            // Empty location - can place any type
+            loc.availableFor[animalType] = available
+          }
+          else if (loc.currentAnimalType === animalType) {
+            // Same type - can add more
+            loc.availableFor[animalType] = available
+          }
+          else {
+            // Different type - can't mix
+            loc.availableFor[animalType] = 0
+          }
         }
       }
     }
@@ -1420,6 +1459,20 @@ class AgricolaPlayer extends BasePlayer {
       remaining--
     }
 
+    // Then try card-based holders
+    for (const holding of this.getAnimalHoldingCards()) {
+      if (remaining <= 0) {
+        break
+      }
+      const totalOnCard = this.getCardAnimalTotal(holding.cardId)
+      const canAdd = holding.capacity - totalOnCard
+      const toAdd = Math.min(remaining, canAdd)
+      if (toAdd > 0) {
+        this.addCardAnimal(holding.cardId, animalType, toAdd)
+        remaining -= toAdd
+      }
+    }
+
     return remaining === 0
   }
 
@@ -1455,6 +1508,19 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
 
+    // Remove from card-based holders
+    for (const holding of this.getAnimalHoldingCards()) {
+      if (remaining <= 0) {
+        break
+      }
+      const onCard = holding.animals[animalType] || 0
+      const toRemove = Math.min(remaining, onCard)
+      if (toRemove > 0) {
+        this.removeCardAnimal(holding.cardId, animalType, toRemove)
+        remaining -= toRemove
+      }
+    }
+
     // Remove pet
     if (remaining > 0 && this.pet === animalType) {
       this.pet = null
@@ -1462,6 +1528,54 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     return remaining === 0
+  }
+
+  // ---------------------------------------------------------------------------
+  // Card-based animal holding
+  // ---------------------------------------------------------------------------
+
+  getCardAnimals(cardId) {
+    return this.cardAnimals[cardId] || { sheep: 0, boar: 0, cattle: 0 }
+  }
+
+  getCardAnimalTotal(cardId) {
+    const animals = this.getCardAnimals(cardId)
+    return animals.sheep + animals.boar + animals.cattle
+  }
+
+  addCardAnimal(cardId, type, count = 1) {
+    if (!this.cardAnimals[cardId]) {
+      this.cardAnimals[cardId] = { sheep: 0, boar: 0, cattle: 0 }
+    }
+    this.cardAnimals[cardId][type] += count
+  }
+
+  removeCardAnimal(cardId, type, count = 1) {
+    if (!this.cardAnimals[cardId]) {
+      return
+    }
+    this.cardAnimals[cardId][type] = Math.max(0, this.cardAnimals[cardId][type] - count)
+  }
+
+  getAnimalHoldingCards() {
+    const holdings = []
+    const cards = this.getActiveCards()
+    for (const card of cards) {
+      if (card.definition.holdsAnimalsPerPasture) {
+        const cardId = card.id
+        const capacity = this.getPastureCount()
+        const animals = this.getCardAnimals(cardId)
+        holdings.push({
+          card,
+          cardId,
+          name: card.name,
+          capacity,
+          mixedTypes: true,
+          animals: { ...animals },
+        })
+      }
+    }
+    return holdings
   }
 
   /**
@@ -1510,18 +1624,32 @@ class AgricolaPlayer extends BasePlayer {
         }
       }
 
-      // Check that we're not mixing types at a location
       const types = Object.keys(animalCounts).filter(t => animalCounts[t] > 0)
-      if (types.length > 1) {
-        return { success: false, error: `Cannot mix animal types at ${loc.name}` }
-      }
 
-      // Check that we're not placing a different type than what's already there
-      const placingType = types[0]
-      if (placingType && loc.currentAnimalType && loc.currentAnimalType !== placingType) {
-        return {
-          success: false,
-          error: `${loc.name} already has ${loc.currentAnimalType}, cannot add ${placingType}`,
+      if (loc.mixedTypes) {
+        // Mixed-type holders: check total across all types doesn't exceed capacity
+        const totalPlacing = Object.values(animalCounts).reduce((s, n) => s + n, 0)
+        const available = loc.maxCapacity - loc.currentCount
+        if (totalPlacing > available) {
+          return {
+            success: false,
+            error: `Cannot place ${totalPlacing} animals at ${loc.name} (only ${available} available)`,
+          }
+        }
+      }
+      else {
+        // Check that we're not mixing types at a location
+        if (types.length > 1) {
+          return { success: false, error: `Cannot mix animal types at ${loc.name}` }
+        }
+
+        // Check that we're not placing a different type than what's already there
+        const placingType = types[0]
+        if (placingType && loc.currentAnimalType && loc.currentAnimalType !== placingType) {
+          return {
+            success: false,
+            error: `${loc.name} already has ${loc.currentAnimalType}, cannot add ${placingType}`,
+          }
         }
       }
     }
@@ -1582,6 +1710,9 @@ class AgricolaPlayer extends BasePlayer {
         if (space) {
           space.animal = p.animalType
         }
+      }
+      else if (loc.type === 'card') {
+        this.addCardAnimal(loc.cardId, p.animalType, p.count)
       }
     }
 

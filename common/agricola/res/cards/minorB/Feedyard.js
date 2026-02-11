@@ -11,7 +11,7 @@ module.exports = {
   holdsAnimalsPerPasture: true,
   onBreedingPhaseEnd(game, player) {
     const capacity = player.getPastureCount()
-    const animalsOnCard = player.feedyardAnimals || 0
+    const animalsOnCard = player.getCardAnimalTotal(this.id)
     const unused = capacity - animalsOnCard
     if (unused > 0) {
       player.addResource('food', unused)

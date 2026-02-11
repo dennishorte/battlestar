@@ -1531,6 +1531,11 @@ Agricola.prototype.breedingPhase = function() {
     }
   }
 
+  // Call onBreedingPhaseEnd hooks (e.g., Feedyard food from unused spots)
+  for (const player of this.players.all()) {
+    this.callPlayerCardHook(player, 'onBreedingPhaseEnd')
+  }
+
   this.log.outdent()
 }
 
