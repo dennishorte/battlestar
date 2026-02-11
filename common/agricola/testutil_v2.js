@@ -108,17 +108,18 @@ TestUtil.fixture = function(options = {}) {
  * members, 0 resources, etc.).
  *
  * Game-level fields:
- *   round            - Number. Sets the current round (and stage auto-derives).
- *                      Defaults to 1. If both actionSpaces and round are specified,
- *                      throws an error.
- *   actionSpaces     - Array of action space display names (the names used by
- *                      t.choose()). Adds round-card action spaces to the board.
- *                      For each stage, if any cards a specified, first place those
- *                      cards in the specified order. Then, if any cards for a later
- *                      stage are specified, place any remaining cards for the current
- *                      stage in an arbitrary order. Repeat until all specified cards
- *                      are placed. The round will be set based on the number of
- *                      placed cards.
+ *   round            - Number. `round: N` plays round N. The game skips to that
+ *                      round directly — no earlier rounds are played, and round
+ *                      cards are revealed randomly as usual. Cannot combine with
+ *                      actionSpaces.
+ *   actionSpaces     - Array of action space names (as used by t.choose()).
+ *                      Controls which round cards are available. Earlier stages
+ *                      are auto-filled when a later-stage card is requested:
+ *                      e.g. ['Western Quarry'] (stage 2) auto-fills all 4 stage 1
+ *                      cards, producing 5 total → plays round 6. Requested cards
+ *                      within the same stage are placed in the given order; other
+ *                      cards for that stage are added in arbitrary order. The round
+ *                      is set to orderedCards.length + 1. Cannot combine with round.
  *
  * Per-player fields (keyed by player name, e.g. `dennis`, `micah`):
  *   food, wood, clay, stone, reed, grain, vegetables
@@ -169,7 +170,6 @@ TestUtil.fixture = function(options = {}) {
  *       },
  *       animals: { sheep: 2, boar: 1 },
  *     },
- *     round: 5,
  *     actionSpaces: ['Major Improvement'],
  *   })
  */

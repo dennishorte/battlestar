@@ -29,8 +29,43 @@ Declaratively sets up game state. All fields are optional.
 | Field | Description |
 |-------|-------------|
 | `firstPlayer` | Player name who goes first in the work phase |
-| `round` | Set the round number (cannot combine with `actionSpaces`) |
-| `actionSpaces` | Array of action space names to make available (e.g. `['Fencing']`) |
+| `round` | Round number to play (cannot combine with `actionSpaces`) |
+| `actionSpaces` | Array of action space names to make available (cannot combine with `round`) |
+
+#### `round`
+
+`round: N` plays round N. The game skips straight to that round — no earlier
+rounds are played, and round cards are revealed randomly as usual. Use this
+when you need a specific round (e.g., a harvest round) but don't care which
+action spaces are available.
+
+```js
+t.setBoard(game, { round: 4 })  // plays round 4 (first harvest)
+t.setBoard(game, { round: 8 })  // plays round 8
+```
+
+#### `actionSpaces`
+
+Controls which round cards are available by name. Earlier stages are
+auto-filled when needed. The round is set to `orderedCards.length + 1`
+(the first round after all listed cards have been revealed).
+
+```js
+// Just Grain Utilization (stage 1). Fills no extras. Round = 2.
+actionSpaces: ['Grain Utilization']
+
+// Grain Utilization is stage 1, Western Quarry is stage 2.
+// All 4 stage 1 cards are auto-filled, then Western Quarry is placed.
+// 5 cards total → round = 6.
+actionSpaces: ['Grain Utilization', 'Western Quarry']
+
+// All 4 stage 1 cards listed explicitly → round = 5.
+actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing', 'Major Improvement']
+```
+
+Use `actionSpaces` when you need specific action spaces (e.g., Fencing,
+Grain Utilization) available for the test. Use `round` when you need a
+specific round number but can work with whatever actions are available.
 
 ### Per-player fields (keyed by name, e.g. `dennis`)
 
