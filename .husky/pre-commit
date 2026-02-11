@@ -24,12 +24,6 @@ if echo "$STAGED_FILES" | grep -q "^app/"; then
   npm run lint:fix
   cd ..
   git add -u app/
-
-  cd app
-  echo "Running lint for app..."
-  npm run lint
-
-  cd ..
 fi
 
 # Check if common folder has changes
@@ -42,8 +36,6 @@ if echo "$STAGED_FILES" | grep -q "^common/"; then
   git add -u common/
 
   cd common
-  echo "Running lint for common..."
-  npm run lint
 
   # Determine which sub-projects need testing.
   # Changes in lib/ or root-level files trigger all tests.
