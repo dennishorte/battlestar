@@ -1926,6 +1926,17 @@ class AgricolaPlayer extends BasePlayer {
     return cost
   }
 
+  _getWildcardAsFireplace() {
+    for (const minorId of this.playedMinorImprovements) {
+      const card = this.cards.byId(minorId)
+      if (card && card.definition.wildcardRoles
+          && card.definition.wildcardRoles.includes('fireplace')) {
+        return minorId
+      }
+    }
+    return null
+  }
+
   canBuyMajorImprovement(improvementId) {
     const imp = this.cards.byId(improvementId)
     if (!imp) {
@@ -1937,40 +1948,58 @@ class AgricolaPlayer extends BasePlayer {
       return false
     }
 
-    const cost = this.getMajorImprovementCost(improvementId)
-
     // Check upgrade path
     if (imp.upgradesFrom && imp.upgradesFrom.length > 0) {
       const canUpgrade = imp.upgradesFrom.some(fromId =>
         this.majorImprovements.includes(fromId)
       )
       if (canUpgrade) {
-        return this.canAffordCost(cost)
+        return true
+      }  // Upgrade = return old card, free
+
+      const needsFireplace = imp.upgradesFrom.some(id => id.startsWith('fireplace'))
+      if (needsFireplace && this._getWildcardAsFireplace()) {
+        return true  // Wildcard as fireplace trade-in, also free
       }
     }
 
     // Normal purchase
+    const cost = this.getMajorImprovementCost(improvementId)
     return this.canAffordCost(cost)
   }
 
   buyMajorImprovement(improvementId) {
     const imp = this.cards.byId(improvementId)
     if (!imp) {
-      return false
+      return { upgraded: false }
     }
 
     if (!this.canBuyMajorImprovement(improvementId)) {
-      return false
+      return { upgraded: false }
     }
+
+    let upgraded = false
 
     // Handle upgrade - move old card back to common zone
     const commonMajorZone = this.zones.byId('common.majorImprovements')
     if (imp.upgradesFrom && imp.upgradesFrom.length > 0) {
+      // Try normal upgrade first
       for (const fromId of imp.upgradesFrom) {
         if (this.majorImprovements.includes(fromId)) {
           const oldCard = this.cards.byId(fromId)
           oldCard.moveTo(commonMajorZone)
+          upgraded = true
           break
+        }
+      }
+      // Try wildcard-as-fireplace trade-in
+      if (!upgraded) {
+        const needsFireplace = imp.upgradesFrom.some(id => id.startsWith('fireplace'))
+        const wildcardId = needsFireplace && this._getWildcardAsFireplace()
+        if (wildcardId) {
+          const wildcardCard = this.cards.byId(wildcardId)
+          wildcardCard.moveTo(this.zones.byId('common.supply'))
+          upgraded = true
         }
       }
     }
@@ -1978,7 +2007,7 @@ class AgricolaPlayer extends BasePlayer {
     // Move improvement to player's zone (cost is paid by caller after logging)
     imp.moveTo(this.zones.byPlayer(this, 'majorImprovements'))
 
-    return true
+    return { upgraded }
   }
 
   // ---------------------------------------------------------------------------
@@ -2006,8 +2035,16 @@ class AgricolaPlayer extends BasePlayer {
   // ---------------------------------------------------------------------------
 
   getScoreState() {
+    let fields = this.getFieldCount()
+    for (const cardId of this.playedMinorImprovements) {
+      const card = this.cards.byId(cardId)
+      if (card && card.definition.wildcardRoles
+          && card.definition.wildcardRoles.includes('field')) {
+        fields++
+      }
+    }
     return {
-      fields: this.getFieldCount(),
+      fields,
       pastures: this.getPastureCount(),
       grain: this.grain,
       vegetables: this.vegetables,
@@ -2147,44 +2184,68 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   meetsCardPrereqs(cardId) {
+    if (this._meetsCardPrereqsCore(cardId)) {
+      return true
+    }
+
+    for (const minorId of this.playedMinorImprovements) {
+      const card = this.cards.byId(minorId)
+      if (!card || !card.definition.wildcardRoles) {
+        continue
+      }
+      for (const role of card.definition.wildcardRoles) {
+        if (this._meetsCardPrereqsCore(cardId, role)) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
+  _meetsCardPrereqsCore(cardId, wildcardRole = null) {
     const card = this.cards.byId(cardId)
     if (!card || !card.prereqs) {
       return true
     }
 
+    const occBonus = wildcardRole === 'occupation' ? 1 : 0
+    const fieldBonus = wildcardRole === 'field' ? 1 : 0
+    const majorBonus = wildcardRole === 'fireplace' ? 1 : 0
+
     const prereqs = card.prereqs
 
     // --- Occupation checks ---
+    const occCount = this.playedOccupations.length + occBonus
     if (prereqs.occupations !== undefined) {
       if (prereqs.occupationsExact) {
-        if (this.playedOccupations.length !== prereqs.occupations) {
+        if (occCount !== prereqs.occupations) {
           return false
         }
       }
       else if (prereqs.occupationsAtMost) {
-        if (this.playedOccupations.length > prereqs.occupations) {
+        if (occCount > prereqs.occupations) {
           return false
         }
       }
       else {
-        if (this.playedOccupations.length < prereqs.occupations) {
+        if (occCount < prereqs.occupations) {
           return false
         }
       }
     }
     if (prereqs.exactlyOccupations !== undefined) {
-      if (this.playedOccupations.length !== prereqs.exactlyOccupations) {
+      if (occCount !== prereqs.exactlyOccupations) {
         return false
       }
     }
     // Standalone occupationsAtMost (used by StableManure/SocialBenefits without occupations key)
     if (prereqs.occupationsAtMost !== undefined && prereqs.occupations === undefined) {
-      if (this.playedOccupations.length > prereqs.occupationsAtMost) {
+      if (occCount > prereqs.occupationsAtMost) {
         return false
       }
     }
     if (prereqs.noOccupations) {
-      if (this.playedOccupations.length > 0) {
+      if (occCount > 0) {
         return false
       }
     }
@@ -2199,13 +2260,14 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     // --- Field checks ---
+    const fieldCount = this.getFieldCountForPrereqs() + fieldBonus
     if (prereqs.fields !== undefined) {
-      if (this.getFieldCountForPrereqs() < prereqs.fields) {
+      if (fieldCount < prereqs.fields) {
         return false
       }
     }
     if (prereqs.fieldsExactly !== undefined) {
-      if (this.getFieldCountForPrereqs() !== prereqs.fieldsExactly) {
+      if (fieldCount !== prereqs.fieldsExactly) {
         return false
       }
     }
@@ -2235,7 +2297,7 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
     if (prereqs.noFields) {
-      if (this.getFieldCountForPrereqs() > 0) {
+      if (fieldCount > 0) {
         return false
       }
     }
@@ -2406,7 +2468,7 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
     if (prereqs.majorImprovements !== undefined) {
-      if (this.majorImprovements.length < prereqs.majorImprovements) {
+      if (this.majorImprovements.length + majorBonus < prereqs.majorImprovements) {
         return false
       }
     }

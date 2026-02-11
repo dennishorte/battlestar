@@ -1223,14 +1223,16 @@ class AgricolaActionManager extends BaseActionManager {
 
     if (improvementId) {
       const imp = this.game.cards.byId(improvementId)
-      player.buyMajorImprovement(improvementId)
+      const result = player.buyMajorImprovement(improvementId)
       this._recordCardPlayed(player, imp)
 
       this.log.add({
         template: '{player} buys {card}',
         args: { player, card: imp },
       })
-      player.payCost(player.getMajorImprovementCost(improvementId))
+      if (!result.upgraded) {
+        player.payCost(player.getMajorImprovementCost(improvementId))
+      }
 
       // Execute onBuy effect if present (e.g., Well schedules food, Ovens bake bread)
       if (imp.hasHook('onBuy')) {
@@ -1577,14 +1579,16 @@ class AgricolaActionManager extends BaseActionManager {
 
           if (improvementId) {
             const imp = this.game.cards.byId(improvementId)
-            player.buyMajorImprovement(improvementId)
+            const result = player.buyMajorImprovement(improvementId)
             this._recordCardPlayed(player, imp)
 
             this.log.add({
               template: '{player} buys {card}',
               args: { player, card: imp },
             })
-            player.payCost(player.getMajorImprovementCost(improvementId))
+            if (!result.upgraded) {
+              player.payCost(player.getMajorImprovementCost(improvementId))
+            }
 
             if (imp.hasHook('onBuy')) {
               imp.callHook('onBuy', this.game, player)
@@ -1841,14 +1845,16 @@ class AgricolaActionManager extends BaseActionManager {
 
         if (improvementId) {
           const imp = this.game.cards.byId(improvementId)
-          player.buyMajorImprovement(improvementId)
+          const result = player.buyMajorImprovement(improvementId)
           this._recordCardPlayed(player, imp)
 
           this.log.add({
             template: '{player} buys {card}',
             args: { player, card: imp },
           })
-          player.payCost(player.getMajorImprovementCost(improvementId))
+          if (!result.upgraded) {
+            player.payCost(player.getMajorImprovementCost(improvementId))
+          }
 
           // Execute onBuy effect if present (e.g., Well schedules food, Ovens bake bread)
           if (imp.hasHook('onBuy')) {

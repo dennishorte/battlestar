@@ -29,6 +29,7 @@ describe('Vegetable Slicer', () => {
         wood: 2,        // Vegetable Slicer
         vegetables: 1,  // Vegetable Slicer
         food: 2,        // Day Laborer
+        clay: 4,        // Upgrade is free (return old card)
         minorImprovements: ['vegetable-slicer-a041'],
         majorImprovements: ['cooking-hearth-4'],
       },
