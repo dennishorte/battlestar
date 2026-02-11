@@ -1091,11 +1091,11 @@ Agricola.prototype.workPhase = function() {
   this.log.outdent()
 }
 
-Agricola.prototype.playerTurn = function(player) {
+Agricola.prototype.playerTurn = function(player, options) {
   // Choose color on first turn if not already set
   this.chooseColor(player)
 
-  const availableActions = this.getAvailableActions(player)
+  const availableActions = this.getAvailableActions(player, options)
 
   if (availableActions.length === 0) {
     this.log.add({
@@ -1168,10 +1168,15 @@ Agricola.prototype.playerTurn = function(player) {
     if (spacesUsed >= 2) {
       this.callPlayerCardHook(player, 'onUseMultipleSpaces', spacesUsed)
     }
+
+    // Fire afterPlayerAction hook (not during bonus turns to prevent recursion)
+    if (!options?.isBonusTurn) {
+      this.callPlayerCardHook(player, 'afterPlayerAction', actionId)
+    }
   }
 }
 
-Agricola.prototype.getAvailableActions = function(player) {
+Agricola.prototype.getAvailableActions = function(player, options) {
   const available = []
 
   for (const actionId of this.state.activeActions) {
@@ -1194,6 +1199,10 @@ Agricola.prototype.getAvailableActions = function(player) {
     if (this.canTakeAction(player, actionId)) {
       available.push(actionId)
     }
+  }
+
+  if (options?.allowedActions) {
+    return available.filter(id => options.allowedActions.includes(id))
   }
 
   return available
