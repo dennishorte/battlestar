@@ -2553,11 +2553,19 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
 
+    // --- Pasture space checks ---
+    if (prereqs.pastureSpacesGteRound) {
+      const totalPastureSpaces = this.farmyard.pastures.reduce((sum, p) => sum + p.spaces.length, 0)
+      if (totalPastureSpaces < this.game.state.round) {
+        return false
+      }
+    }
+
     // --- Deferred prereq checks (complex game-state checks not yet implemented) ---
     // TODO: bakingImprovement, cookingImprovement, hasPotteryOrUpgrade,
     //   hasFireplaceAndCookingHearth, returnFireplaceOrCookingHearth, returnMajor,
     //   fieldsInLShape, personOnAction, personYetToPlace,
-    //   noPeopleInHouse, fencedStables, woodGteRound, pastureSpacesGteRound,
+    //   noPeopleInHouse, fencedStables, woodGteRound,
     //   cardsInPlay, maxCardsInPlay, exactlyAdults, majorImprovement (specific card),
     //   roundsLeftGreaterThanUnusedSpaces
 

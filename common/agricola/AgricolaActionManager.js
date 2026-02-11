@@ -2026,11 +2026,20 @@ class AgricolaActionManager extends BaseActionManager {
 
     // Handle accumulating actions
     if (action.type === 'accumulating') {
+      // Capture accumulated amount before takeAccumulatedResource resets it
+      const actionState = this.game.state.actionSpaces[actionId]
+      const amountBefore = actionState ? actionState.accumulated : 0
       const result = this.takeAccumulatedResource(player, actionId)
       if (result) {
+        const details = {}
+        if (action.accumulates) {
+          for (const resource of Object.keys(action.accumulates)) {
+            details[`${resource}Taken`] = amountBefore
+          }
+        }
         // Call hooks even for accumulating actions
         this.game.callPlayerCardHook(player, 'onAction', actionId)
-        this.callOnAnyActionHooks(player, actionId)
+        this.callOnAnyActionHooks(player, actionId, details)
       }
       return result
     }
@@ -2161,12 +2170,12 @@ class AgricolaActionManager extends BaseActionManager {
   /**
    * Call onAnyAction hook on ALL players' cards
    */
-  callOnAnyActionHooks(actingPlayer, actionId) {
+  callOnAnyActionHooks(actingPlayer, actionId, details) {
     for (const player of this.game.players.all()) {
       const cards = this.game.getPlayerActiveCards(player)
       for (const card of cards) {
         if (card.hasHook('onAnyAction')) {
-          card.callHook('onAnyAction', this.game, actingPlayer, actionId, player)
+          card.callHook('onAnyAction', this.game, actingPlayer, actionId, player, details)
         }
       }
     }
@@ -3588,6 +3597,79 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     return true
+  }
+
+  /**
+   * Offer to pay 1 grain to schedule 1 food on next 6 rounds (Brewing Water).
+   */
+  offerBrewingWater(player, card) {
+    const choices = ['Accept', 'Skip']
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Pay 1 grain to schedule 1 food on next 6 rounds?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] === 'Accept') {
+      player.payCost({ grain: 1 })
+      const currentRound = this.game.state.round
+      let scheduled = 0
+      for (let i = 1; i <= 6; i++) {
+        const targetRound = currentRound + i
+        if (this.game.scheduleResource(player, 'food', targetRound, 1)) {
+          scheduled++
+        }
+      }
+      this.log.add({
+        template: '{player} pays 1 grain via {card}, scheduling 1 food on {count} rounds',
+        args: { player, card, count: scheduled },
+      })
+    }
+  }
+
+  /**
+   * Offer to take 1 building resource from an accumulation space meeting thresholds (Handcart).
+   * Thresholds: wood >= 6, clay >= 5, reed >= 4, stone >= 4.
+   */
+  offerHandcart(player, card) {
+    const thresholds = [
+      { spaceId: 'take-wood', resource: 'wood', threshold: 6 },
+      { spaceId: 'take-clay', resource: 'clay', threshold: 5 },
+      { spaceId: 'take-reed', resource: 'reed', threshold: 4 },
+      { spaceId: 'take-stone-1', resource: 'stone', threshold: 4 },
+      { spaceId: 'take-stone-2', resource: 'stone', threshold: 4 },
+    ]
+
+    const available = []
+    for (const { spaceId, resource, threshold } of thresholds) {
+      const space = this.game.state.actionSpaces[spaceId]
+      if (space && space.accumulated >= threshold) {
+        available.push({ spaceId, resource, accumulated: space.accumulated })
+      }
+    }
+
+    if (available.length === 0) {
+      return
+    }
+
+    const choices = available.map(a => `Take 1 ${a.resource}`)
+    choices.push('Skip')
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Take 1 building resource?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const idx = choices.indexOf(selection[0])
+      const chosen = available[idx]
+      this.game.state.actionSpaces[chosen.spaceId].accumulated -= 1
+      player.addResource(chosen.resource, 1)
+      this.log.add({
+        template: '{player} takes 1 {resource} via {card}',
+        args: { player, resource: chosen.resource, card },
+      })
+    }
   }
 
   /**
