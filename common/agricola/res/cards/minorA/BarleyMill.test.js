@@ -20,7 +20,7 @@ describe('Barley Mill', () => {
       micah: {
         food: 8, // enough to feed
       },
-      round: 3, // plays round 4 (first harvest)
+      round: 4, // first harvest
     })
     game.run()
 

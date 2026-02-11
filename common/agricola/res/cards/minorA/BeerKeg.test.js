@@ -4,7 +4,7 @@ describe('Beer Keg', () => {
   test('exchanges grain for food during harvest feeding phase', () => {
     const game = t.fixture()
     t.setBoard(game, {
-      round: 3, // game plays round 4 (first harvest)
+      round: 4, // first harvest
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['beer-keg-a062'],
@@ -39,7 +39,7 @@ describe('Beer Keg', () => {
   test('can skip beer keg offer', () => {
     const game = t.fixture()
     t.setBoard(game, {
-      round: 3,
+      round: 4,
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['beer-keg-a062'],

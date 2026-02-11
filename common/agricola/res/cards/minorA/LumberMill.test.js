@@ -30,7 +30,7 @@ describe('Lumber Mill', () => {
     const game = t.fixture()
     t.setBoard(game, {
       firstPlayer: 'dennis',
-      round: 10,
+      round: 11,
       dennis: {
         hand: ['hod-a077'], // Hod costs wood:1, player has 0 wood
       },

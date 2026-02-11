@@ -5,7 +5,7 @@ describe('Manger', () => {
     const game = t.fixture()
     t.setBoard(game, {
       firstPlayer: 'dennis',
-      round: 10,
+      round: 11,
       dennis: {
         minorImprovements: ['manger-a032'],
         farmyard: {
@@ -44,7 +44,7 @@ describe('Manger', () => {
     const game = t.fixture()
     t.setBoard(game, {
       firstPlayer: 'dennis',
-      round: 10,
+      round: 11,
       dennis: {
         minorImprovements: ['manger-a032'],
         farmyard: {
@@ -83,7 +83,7 @@ describe('Manger', () => {
     const game = t.fixture()
     t.setBoard(game, {
       firstPlayer: 'dennis',
-      round: 10,
+      round: 11,
       dennis: {
         minorImprovements: ['manger-a032'],
         farmyard: {

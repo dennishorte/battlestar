@@ -55,7 +55,7 @@ describe('Farmyard Manure', () => {
           pastures: [{ spaces: [{ row: 0, col: 3 }, { row: 0, col: 4 }], sheep: 1 }],
         },
       },
-      round: 12,
+      round: 13,
     })
     game.run()
 

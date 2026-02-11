@@ -5,7 +5,7 @@ describe('Facades Carving', () => {
     const game = t.fixture()
     t.setBoard(game, {
       firstPlayer: 'dennis',
-      round: 5, // after first harvest (round 4), so 1 completed harvest
+      round: 6, // after first harvest (round 4), so 1 completed harvest
       dennis: {
         hand: ['facades-carving-a036'],
         food: 5, // enough for card + exchange
@@ -37,7 +37,7 @@ describe('Facades Carving', () => {
     const game = t.fixture()
     t.setBoard(game, {
       firstPlayer: 'dennis',
-      round: 1, // round 2 plays, no harvests completed
+      round: 2, // no harvests completed
       dennis: {
         hand: ['facades-carving-a036'],
         food: 5,

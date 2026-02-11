@@ -30,7 +30,7 @@ describe('Oriental Fireplace', () => {
     const game = t.fixture()
     t.setBoard(game, {
       firstPlayer: 'dennis',
-      round: 3, // plays round 4 (first harvest)
+      round: 4, // first harvest
       dennis: {
         minorImprovements: ['oriental-fireplace-a060'],
         vegetables: 1,

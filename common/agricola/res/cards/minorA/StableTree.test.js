@@ -48,7 +48,7 @@ describe('Stable Tree', () => {
         food: 10,
       },
       micah: { food: 10 },
-      round: 12,
+      round: 13,
     })
     game.run()
 

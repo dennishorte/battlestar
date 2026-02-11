@@ -4,7 +4,7 @@ describe('Asparagus Knife', () => {
   test('harvests vegetable for food and bonus point in round 8', () => {
     const game = t.fixture()
     t.setBoard(game, {
-      round: 7, // game plays round 8
+      round: 8,
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['asparagus-knife-a058'],
@@ -44,7 +44,7 @@ describe('Asparagus Knife', () => {
   test('can skip the asparagus knife offer', () => {
     const game = t.fixture()
     t.setBoard(game, {
-      round: 7,
+      round: 8,
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['asparagus-knife-a058'],

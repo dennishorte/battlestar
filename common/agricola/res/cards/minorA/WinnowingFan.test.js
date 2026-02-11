@@ -4,7 +4,7 @@ describe('Winnowing Fan', () => {
   test('bakes 1 grain after field phase during harvest', () => {
     const game = t.fixture()
     t.setBoard(game, {
-      round: 3, // game plays round 4 (first harvest)
+      round: 4, // first harvest
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['winnowing-fan-a061'],
@@ -40,7 +40,7 @@ describe('Winnowing Fan', () => {
   test('can skip winnowing fan offer', () => {
     const game = t.fixture()
     t.setBoard(game, {
-      round: 3,
+      round: 4,
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['winnowing-fan-a061'],

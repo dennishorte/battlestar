@@ -5,7 +5,7 @@ describe('Debt Security', () => {
     const game = t.fixture()
     t.setBoard(game, {
       firstPlayer: 'dennis',
-      round: 10,
+      round: 11,
       dennis: {
         minorImprovements: ['debt-security-a031'],
         majorImprovements: ['fireplace-2', 'clay-oven'],
@@ -34,7 +34,7 @@ describe('Debt Security', () => {
     const game = t.fixture()
     t.setBoard(game, {
       firstPlayer: 'dennis',
-      round: 10,
+      round: 11,
       dennis: {
         minorImprovements: ['debt-security-a031'],
         majorImprovements: ['fireplace-2', 'clay-oven', 'stone-oven'],
@@ -80,7 +80,7 @@ describe('Debt Security', () => {
     const game = t.fixture()
     t.setBoard(game, {
       firstPlayer: 'dennis',
-      round: 10,
+      round: 11,
       dennis: {
         minorImprovements: ['debt-security-a031'],
       },

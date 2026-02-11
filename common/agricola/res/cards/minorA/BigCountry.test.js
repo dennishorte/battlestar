@@ -16,15 +16,14 @@ describe('Big Country', () => {
           ],
         },
       },
-      round: 10,
+      round: 11,
     })
     game.run()
 
     t.choose(game, 'Meeting Place')
     t.choose(game, 'Minor Improvement.Big Country')
 
-    // Round is 11 (setBoard round 10 → plays round 11)
-    // roundsLeft = 14 - 11 = 3, so 3 bonus points and 6 food
+    // Round 11: roundsLeft = 14 - 11 = 3, so 3 bonus points and 6 food
     t.testBoard(game, {
       dennis: {
         food: 7, // +1 Meeting Place + 6 from Big Country

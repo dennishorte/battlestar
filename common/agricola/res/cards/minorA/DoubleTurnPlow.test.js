@@ -34,7 +34,7 @@ describe('Double-Turn Plow', () => {
   test('has normal cost before round 4', () => {
     const card = res.getCardById('double-turn-plow-a020')
     const game = t.fixture()
-    t.setBoard(game, { round: 3 })
+    t.setBoard(game, { round: 4 })
     game.run()
 
     game.state.round = 3
@@ -45,7 +45,7 @@ describe('Double-Turn Plow', () => {
   test('has additional food cost from round 4', () => {
     const card = res.getCardById('double-turn-plow-a020')
     const game = t.fixture()
-    t.setBoard(game, { round: 4 })
+    t.setBoard(game, { round: 5 })
     game.run()
 
     game.state.round = 4

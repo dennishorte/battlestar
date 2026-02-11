@@ -296,9 +296,14 @@ TestUtil.setBoard = function(game, state) {
       game.state.round = orderedCards.length
       game.state.stage = res.constants.roundToStage[orderedCards.length] || 1
     }
+    else if (state.round) {
+      // round: N means "play round N" — subtract 1 because mainLoop increments before playing
+      game.state.round = state.round - 1
+      game.state.stage = res.constants.roundToStage[state.round] || 1
+    }
     else {
-      game.state.round = state.round || 1
-      game.state.stage = res.constants.roundToStage[game.state.round] || 1
+      game.state.round = 1
+      game.state.stage = 1
     }
 
     // Set starting player

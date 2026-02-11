@@ -14,7 +14,7 @@ describe('Potato Ridger', () => {
         },
       },
       micah: { food: 4 },
-      round: 3,
+      round: 4,
     })
     game.run()
 
@@ -55,7 +55,7 @@ describe('Potato Ridger', () => {
         },
       },
       micah: { food: 4 },
-      round: 3,
+      round: 4,
     })
     game.run()
 
@@ -98,7 +98,7 @@ describe('Potato Ridger', () => {
         },
       },
       micah: { food: 4 },
-      round: 3,
+      round: 4,
     })
     game.run()
 
