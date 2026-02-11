@@ -3739,6 +3739,46 @@ class AgricolaActionManager extends BaseActionManager {
   /**
    * Improvement (6-player) action: Minor improvement, or Major from Round 5+
    */
+  /**
+   * Forest Inn: exchange 5/7/9 wood for 8 wood and 2/4/7 food
+   */
+  forestInnExchange(player, card) {
+    const tiers = [
+      { cost: 5, food: 2 },
+      { cost: 7, food: 4 },
+      { cost: 9, food: 7 },
+    ]
+
+    const affordable = tiers.filter(t => player.wood >= t.cost)
+    if (affordable.length === 0) {
+      return
+    }
+
+    const choices = affordable.map(t =>
+      `Exchange ${t.cost} wood for 8 wood and ${t.food} food`
+    )
+    choices.push('Skip')
+
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Exchange wood?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      const tier = affordable.find(t =>
+        selection[0] === `Exchange ${t.cost} wood for 8 wood and ${t.food} food`
+      )
+      player.payCost({ wood: tier.cost })
+      player.addResource('wood', 8)
+      player.addResource('food', tier.food)
+      this.log.add({
+        template: '{player} exchanges {cost} wood for 8 wood and {food} food at Forest Inn',
+        args: { player, cost: tier.cost, food: tier.food },
+      })
+    }
+  }
+
   improvementSix(player) {
     const currentRound = this.game.state.round
     const allowMajor = currentRound >= 5
