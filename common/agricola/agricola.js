@@ -1843,8 +1843,14 @@ Agricola.prototype.getAnytimeActions = function(player) {
       continue
     }
     const fieldSpaces = player.getFieldSpaces()
-    const hasSource = fieldSpaces.some(f => f.crop && f.cropCount >= 2)
-    const hasTarget = fieldSpaces.some(f => !f.crop || f.cropCount === 0)
+    const hasGridSource = fieldSpaces.some(f => f.crop && f.cropCount >= 2)
+    const hasGridTarget = fieldSpaces.some(f => !f.crop || f.cropCount === 0)
+
+    const sownVFs = player.getSownVirtualFields().filter(vf => vf.cropCount >= 2)
+    const emptyVFs = player.getEmptyVirtualFields()
+
+    const hasSource = hasGridSource || sownVFs.length > 0
+    const hasTarget = hasGridTarget || emptyVFs.length > 0
     if (hasSource && hasTarget) {
       options.push({
         type: 'crop-move',
@@ -1869,39 +1875,112 @@ Agricola.prototype.executeAnytimeAction = function(player, action) {
 Agricola.prototype.executeAnytimeCropMove = function(player, action) {
   const fieldSpaces = player.getFieldSpaces()
 
-  // Pick source field (has crop with count >= 2)
-  const sourceFields = fieldSpaces.filter(f => f.crop && f.cropCount >= 2)
-  const sourceChoices = sourceFields.map(f => `${f.row},${f.col} (${f.crop} x${f.cropCount})`)
+  // Build source choices: grid fields + virtual fields with cropCount >= 2
+  const sourceGridFields = fieldSpaces.filter(f => f.crop && f.cropCount >= 2)
+  const sourceVFs = player.getSownVirtualFields().filter(vf => vf.cropCount >= 2)
+
+  const sourceChoices = [
+    ...sourceGridFields.map(f => `${f.row},${f.col} (${f.crop} x${f.cropCount})`),
+    ...sourceVFs.map(vf => `[${vf.label}] (${vf.crop} x${vf.cropCount})`),
+  ]
+
   const sourceSelection = this.actions.choose(player, sourceChoices, {
     title: `${action.cardName}: Pick source field`,
     min: 1, max: 1,
   })
 
   const sourceStr = Array.isArray(sourceSelection) ? sourceSelection[0] : sourceSelection
-  const [sourceRow, sourceCol] = sourceStr.split(' ')[0].split(',').map(Number)
-  const sourceCell = player.farmyard.grid[sourceRow][sourceCol]
-  const cropType = sourceCell.crop
 
-  // Pick target field (empty)
-  const targetFields = fieldSpaces.filter(f => (!f.crop || f.cropCount === 0) && !(f.row === sourceRow && f.col === sourceCol))
-  const targetChoices = targetFields.map(f => `${f.row},${f.col}`)
+  // Determine source type and get crop info
+  let cropType
+  let sourceIsVirtual = false
+  let sourceVF = null
+  let sourceCell = null
+  let sourceLabel
+
+  if (sourceStr.startsWith('[')) {
+    // Virtual field source
+    sourceIsVirtual = true
+    const labelMatch = sourceStr.match(/^\[(.+?)\]/)
+    sourceLabel = labelMatch[1]
+    sourceVF = [...sourceVFs].find(vf => vf.label === sourceLabel)
+    cropType = sourceVF.crop
+  }
+  else {
+    // Grid field source
+    const [sourceRow, sourceCol] = sourceStr.split(' ')[0].split(',').map(Number)
+    sourceCell = player.farmyard.grid[sourceRow][sourceCol]
+    cropType = sourceCell.crop
+    sourceLabel = `(${sourceRow},${sourceCol})`
+  }
+
+  // Build target choices: empty grid fields + empty virtual fields (respecting cropRestriction)
+  const targetGridFields = fieldSpaces.filter(f => {
+    if (f.crop && f.cropCount > 0) {
+      return false
+    }
+    if (!sourceIsVirtual && f.row === Number(sourceStr.split(' ')[0].split(',')[0]) && f.col === Number(sourceStr.split(' ')[0].split(',')[1])) {
+      return false
+    }
+    return true
+  })
+  const targetVFs = player.getEmptyVirtualFields().filter(vf => {
+    if (sourceIsVirtual && vf.id === sourceVF.id) {
+      return false
+    }
+    if (vf.cropRestriction && vf.cropRestriction !== cropType) {
+      return false
+    }
+    return true
+  })
+
+  const targetChoices = [
+    ...targetGridFields.map(f => `${f.row},${f.col}`),
+    ...targetVFs.map(vf => `[${vf.label}]`),
+  ]
+
   const targetSelection = this.actions.choose(player, targetChoices, {
     title: `${action.cardName}: Pick target field`,
     min: 1, max: 1,
   })
 
   const targetStr = Array.isArray(targetSelection) ? targetSelection[0] : targetSelection
-  const [targetRow, targetCol] = targetStr.split(',').map(Number)
-  const targetCell = player.farmyard.grid[targetRow][targetCol]
 
-  // Move 1 crop
-  sourceCell.cropCount -= 1
-  targetCell.crop = cropType
-  targetCell.cropCount = 1
+  let targetLabel
+  if (targetStr.startsWith('[')) {
+    // Virtual field target
+    const labelMatch = targetStr.match(/^\[(.+?)\]/)
+    targetLabel = labelMatch[1]
+    const targetVF = player.virtualFields.find(vf => vf.label === targetLabel)
+    targetVF.crop = cropType
+    targetVF.cropCount = 1
+  }
+  else {
+    // Grid field target
+    const [targetRow, targetCol] = targetStr.split(',').map(Number)
+    const targetCell = player.farmyard.grid[targetRow][targetCol]
+    targetCell.crop = cropType
+    targetCell.cropCount = 1
+    targetLabel = `(${targetRow},${targetCol})`
+  }
+
+  // Decrement source
+  if (sourceIsVirtual) {
+    sourceVF.cropCount -= 1
+    if (sourceVF.cropCount === 0) {
+      sourceVF.crop = null
+    }
+  }
+  else {
+    sourceCell.cropCount -= 1
+    if (sourceCell.cropCount === 0) {
+      sourceCell.crop = null
+    }
+  }
 
   this.log.add({
-    template: '{player} uses {card} to move 1 {crop} from ({sr},{sc}) to ({tr},{tc})',
-    args: { player, card: action.cardName, crop: cropType, sr: sourceRow, sc: sourceCol, tr: targetRow, tc: targetCol },
+    template: '{player} uses {card} to move 1 {crop} from {source} to {target}',
+    args: { player, card: action.cardName, crop: cropType, source: sourceLabel, target: targetLabel },
   })
 }
 

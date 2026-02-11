@@ -8,4 +8,26 @@ module.exports = {
   category: "Farm Planner",
   text: "You can sow crops in pastures covering 1 or 2 farmyard spaces. If you do, these pastures are also considered fields and hold 1 and 2 animals less, respectively.",
   allowSowInSmallPastures: true,
+
+  onPlay(game, player) {
+    player.syncPastureLinkedVirtualFields()
+    const count = player.virtualFields.filter(vf => vf.cardId === this.id).length
+    if (count > 0) {
+      game.log.add({
+        template: '{player} plays Love for Agriculture, creating {count} sowable pasture field(s)',
+        args: { player, count },
+      })
+    }
+  },
+
+  modifyPastureCapacity(player, pasture, capacity) {
+    const key = pasture.spaces.map(s => `${s.row},${s.col}`).sort().join('|')
+    const linkedField = player.virtualFields.find(vf =>
+      vf.cardId === this.id && vf.pastureSpaces === key
+    )
+    if (linkedField && linkedField.crop && linkedField.cropCount > 0) {
+      return Math.max(0, capacity - pasture.spaces.length)
+    }
+    return capacity
+  },
 }

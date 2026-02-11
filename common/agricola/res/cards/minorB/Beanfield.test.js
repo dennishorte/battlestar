@@ -39,4 +39,39 @@ describe('Beanfield', () => {
     expect(dennis.virtualFields[0].cropRestriction).toBe('vegetables')
     expect(dennis.virtualFields[0].cardId).toBe('beanfield-b068')
   })
+
+  test('sow vegetables into beanfield virtual field', () => {
+    const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['beanfield-b068'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        food: 1, // card cost
+        vegetables: 1,
+      },
+      actionSpaces: ['Grain Utilization'],
+    })
+    game.run()
+
+    // Dennis turn 1: play Beanfield via Meeting Place
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Beanfield')
+
+    // Micah turn 1
+    t.choose(game, 'Forest')
+
+    // Dennis turn 2: sow vegetables via Grain Utilization
+    t.choose(game, 'Grain Utilization')
+    t.action(game, 'sow-virtual-field', { fieldId: 'beanfield-b068', cropType: 'vegetables' })
+
+    // Micah turn 2
+    t.choose(game, 'Clay Pit')
+
+    const dennis = game.players.byName('dennis')
+    const vf = dennis.getVirtualField('beanfield-b068')
+    expect(vf.crop).toBe('vegetables')
+    expect(vf.cropCount).toBe(2)
+    expect(dennis.vegetables).toBe(0)
+  })
 })

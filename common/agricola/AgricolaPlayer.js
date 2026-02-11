@@ -152,6 +152,8 @@ class AgricolaPlayer extends BasePlayer {
       onHarvest: config.onHarvest || null,        // Called each harvest with amount
       onHarvestLast: config.onHarvestLast || null, // Called when last crop removed
       sowingAmount: config.sowingAmount || null,   // Custom sowing amount (default uses constants)
+      pastureSpaces: config.pastureSpaces || null,        // space-set key linking to a pasture
+      countsAsFieldForScoring: config.countsAsFieldForScoring || false,
     }
     this.virtualFields.push(field)
     return field
@@ -217,6 +219,49 @@ class AgricolaPlayer extends BasePlayer {
       field.cropCount = res.constants.sowingVegetables
     }
     return true
+  }
+
+  syncPastureLinkedVirtualFields() {
+    const cardId = 'love-for-agriculture-b072'
+    if (!this.getActiveCards().some(c => c.id === cardId)) {
+      return
+    }
+
+    const eligiblePastures = this.farmyard.pastures.filter(p => p.spaces.length <= 2)
+
+    // Build space-set keys for current eligible pastures
+    const pastureKeys = new Set()
+    for (const p of eligiblePastures) {
+      pastureKeys.add(p.spaces.map(s => `${s.row},${s.col}`).sort().join('|'))
+    }
+
+    // Remove virtual fields whose pasture no longer exists/eligible (lose crops)
+    this.virtualFields = this.virtualFields.filter(vf => {
+      if (vf.cardId !== cardId) {
+        return true
+      }
+      return pastureKeys.has(vf.pastureSpaces)
+    })
+
+    // Add virtual fields for eligible pastures that don't have one yet
+    const existingKeys = new Set(
+      this.virtualFields.filter(vf => vf.cardId === cardId).map(vf => vf.pastureSpaces)
+    )
+    for (const p of eligiblePastures) {
+      const key = p.spaces.map(s => `${s.row},${s.col}`).sort().join('|')
+      if (!existingKeys.has(key)) {
+        const label = p.spaces.length === 1
+          ? `Pasture (${p.spaces[0].row},${p.spaces[0].col})`
+          : `Pasture (${p.spaces[0].row},${p.spaces[0].col})-(${p.spaces[1].row},${p.spaces[1].col})`
+        this.addVirtualField({
+          id: `love-pasture-${key}`,
+          cardId,
+          label,
+          pastureSpaces: key,
+          countsAsFieldForScoring: true,
+        })
+      }
+    }
   }
 
   getSpace(row, col) {
@@ -446,6 +491,12 @@ class AgricolaPlayer extends BasePlayer {
         if (this.farmyard.grid[row][col].type === 'field') {
           count++
         }
+      }
+    }
+    // Sown pasture virtual fields (Love for Agriculture) count as fields for scoring
+    for (const vf of this.virtualFields) {
+      if (vf.countsAsFieldForScoring && vf.crop && vf.cropCount > 0) {
+        count++
       }
     }
     return count
@@ -824,6 +875,7 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     this.farmyard.pastures = pastures
+    this.syncPastureLinkedVirtualFields()
   }
 
   findEnclosedArea(startRow, startCol) {
