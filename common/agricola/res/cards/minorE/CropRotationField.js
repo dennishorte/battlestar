@@ -22,6 +22,19 @@ module.exports = {
   },
   onHarvestLast(game, player, cropType) {
     const nextCrop = cropType === 'grain' ? 'vegetables' : 'grain'
-    game.actions.offerSowOnCard(player, this, nextCrop)
+    const hasNextCrop = nextCrop === 'grain' ? player.grain >= 1 : player.vegetables >= 1
+    if (hasNextCrop) {
+      const selection = game.actions.choose(player, [
+        `Sow ${nextCrop} on Crop Rotation Field`,
+        'Skip',
+      ], { title: 'Crop Rotation Field', min: 1, max: 1 })
+      if (selection[0] !== 'Skip') {
+        player.sowVirtualField('crop-rotation-field-e070', nextCrop)
+        game.log.add({
+          template: '{player} sows {crop} on Crop Rotation Field',
+          args: { player, crop: nextCrop },
+        })
+      }
+    }
   },
 }

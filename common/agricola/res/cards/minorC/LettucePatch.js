@@ -9,6 +9,7 @@ module.exports = {
   prereqs: { occupations: 3 },
   category: "Crop Provider",
   text: "This card is a field that can only grow vegetables. You can immediately turn each vegetable you harvested from this card into 4 food.",
+  isField: true,
   providesVegetableField: true,
   onPlay(game, player) {
     player.addVirtualField({
@@ -23,9 +24,19 @@ module.exports = {
     })
   },
   onHarvest(game, player, amount) {
-    // Offer to convert harvested vegetables to food (4 food each)
     if (amount > 0) {
-      game.actions.offerLettucePatchConversion(player, amount)
+      const selection = game.actions.choose(player, [
+        `Convert ${amount} vegetable to ${amount * 4} food`,
+        'Keep vegetables',
+      ], { title: 'Lettuce Patch', min: 1, max: 1 })
+      if (selection[0] !== 'Keep vegetables') {
+        player.addResource('vegetables', -amount)
+        player.addResource('food', amount * 4)
+        game.log.add({
+          template: '{player} converts {amount} vegetable to {food} food via Lettuce Patch',
+          args: { player, amount, food: amount * 4 },
+        })
+      }
     }
   },
 }

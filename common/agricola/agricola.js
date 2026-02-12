@@ -1443,6 +1443,9 @@ Agricola.prototype.fieldPhase = function() {
   this.state.lastHarvestRound = this.state.round
 
   for (const player of this.players.all()) {
+    // Call onBeforeFieldPhase hooks (e.g., Straw Manure adds vegetables before harvest)
+    this.callPlayerCardHook(player, 'onBeforeFieldPhase')
+
     // Give players with crop-move ability a chance to rearrange before harvest
     const anytimeActions = this.getAnytimeActions(player)
     const hasCropMove = anytimeActions.some(a => a.type === 'crop-move')
@@ -1485,6 +1488,9 @@ Agricola.prototype.fieldPhase = function() {
         }
       }
     }
+
+    // Call onFieldPhase hooks (e.g., Scythe harvests all from one field)
+    this.callPlayerCardHook(player, 'onFieldPhase')
   }
 
   // Call onHarvest hooks (e.g., Scythe Worker gives bonus grain)
