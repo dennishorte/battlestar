@@ -19,6 +19,7 @@ describe('Patroness', () => {
     t.choose(game, 'Take 1 wood')
 
     t.testBoard(game, {
+      currentPlayer: 'micah',
       dennis: {
         wood: 1,
         occupations: ['patroness-e163', 'test-occupation-1'],
@@ -43,6 +44,7 @@ describe('Patroness', () => {
     t.choose(game, 'Take 1 reed')
 
     t.testBoard(game, {
+      currentPlayer: 'micah',
       dennis: {
         reed: 1,
         occupations: ['patroness-e163', 'test-occupation-1'],
@@ -110,6 +112,7 @@ describe('Patroness', () => {
 
     // No resource choice prompt — game moves to micah's turn
     t.testBoard(game, {
+      currentPlayer: 'micah',
       dennis: {
         wood: 0,
         clay: 0,

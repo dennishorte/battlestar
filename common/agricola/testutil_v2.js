@@ -635,6 +635,14 @@ TestUtil.testBoard = function(game, expected) {
     errors.push(`firstPlayer: expected ${expected.firstPlayer}, got ${game.state.startingPlayer}`)
   }
 
+  // Test current player (whose turn it is to act)
+  if (expected.currentPlayer !== undefined) {
+    const actual = game.waiting?.selectors?.[0]?.actor
+    if (actual !== expected.currentPlayer) {
+      errors.push(`currentPlayer: expected ${expected.currentPlayer}, got ${actual}`)
+    }
+  }
+
   // Only test players explicitly mentioned in expected
   for (const playerName of playerNames) {
     if (expected[playerName] === undefined) {

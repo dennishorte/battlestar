@@ -57,6 +57,6 @@ module.exports = {
     }
 
     game.registerCardActionSpace(player, card)
-    game.callPlayerCardHook(player, 'onPlayOccupation')
+    game.callPlayerCardHook(player, 'onPlayOccupation', card)
   },
 }

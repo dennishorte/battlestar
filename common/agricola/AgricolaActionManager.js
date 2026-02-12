@@ -1469,7 +1469,7 @@ class AgricolaActionManager extends BaseActionManager {
     this.game.registerCardActionSpace(player, card)
 
     // Call onPlayOccupation hooks on all active cards
-    this.game.callPlayerCardHook(player, 'onPlayOccupation')
+    this.game.callPlayerCardHook(player, 'onPlayOccupation', card)
 
     return true
   }
@@ -3652,7 +3652,7 @@ class AgricolaActionManager extends BaseActionManager {
       }
 
       this.game.registerCardActionSpace(player, chosenCard)
-      this.game.callPlayerCardHook(player, 'onPlayOccupation')
+      this.game.callPlayerCardHook(player, 'onPlayOccupation', chosenCard)
     }
     else {
       const leftPlayer = this.game.players.leftOf(player)
