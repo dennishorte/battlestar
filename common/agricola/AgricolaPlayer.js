@@ -2364,11 +2364,17 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   getBakingImprovement() {
+    let best = null
     for (const id of this.majorImprovements) {
       const imp = this.cards.byId(id)
       if (imp && imp.abilities && imp.abilities.canBake) {
-        return imp
+        if (!best || imp.abilities.bakingRate > best.abilities.bakingRate) {
+          best = imp
+        }
       }
+    }
+    if (best) {
+      return best
     }
     // Fall back to minor improvement with bakingConversion
     for (const id of this.playedMinorImprovements) {

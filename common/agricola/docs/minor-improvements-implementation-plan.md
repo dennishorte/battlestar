@@ -162,9 +162,11 @@ Cards that trigger at the start of rounds or returning home phase.
 
 **Status**: 4/8 tested. Fixed bugs: `getSheepInPastures()`→`getTotalAnimals('sheep')` (MineralFeeder). Added `getImprovementsInHand()` to AgricolaPlayer. All hooks (onRoundStart, onReturnHome, onRoundEnd) are wired.
 
+**Implemented in Batch 8 (inline)** — `onReturnHome` hook already wired:
+- Stork's Nest (d010) — `onReturnHome`: family growth if more rooms than people (pay 1 food) ✅
+
 **Deferred** (need missing infrastructure):
 - Roman Pot (e056) — needs `isLastInTurnOrder()` method
-- Stork's Nest (d010) — needs `canAddFamilyMember()` + `offerStorksNest()` methods
 - Steam Plow (d018) — needs `offerSteamPlow()` method
 - Tea House (d053) — needs `allowsSkipSecondPerson` flag processing in game engine
 
@@ -210,14 +212,16 @@ Cards that trigger when specific action spaces are used.
 
 **Status**: 11/31 tested (Stew, Flail previously; Woodcraft, Wood Cart, Mole Plow, Gritter, Mattock, Syrup Tap, Barn Shed, Comb and Cutter, Stone Weir new). Fixed bugs: `'sheep-market'`→`'take-sheep'` (CombAndCutter), wrong param order + `'forest'`→`'take-wood'` (BarnShed). Added `resources` parameter to `onAction` hook for Mattock/SyrupTap.
 
+**Implemented in Batch 8 (inline)** — `onBeforeAction` hook wired in workPhase before `executeAction`:
+- Trellis (c015) — `onBeforeAction`: build fences before Pig Market ✅
+- Wooden Whey Bucket (d016) — `onBeforeAction`: build 1 stable (1 wood / free) before Sheep/Cattle Market ✅
+
 **Deferred** (need missing infrastructure):
 - Hardware Store (c082) — needs `offerHardwareStore`
 - Rocky Terrain (c080) — needs `onPlowField` hook + `offerRockyTerrain`
-- Trellis (c015) — needs `onBeforeAction` hook wired
 - Studio Boat (c039) — `traveling-players` only in 4+ player games
 - Teacher's Desk (c028) — needs `offerOccupationForFood`
 - Ravenous Hunger (c042) — needs `offerRavenousHunger`
-- Wooden Whey Bucket (d016) — needs `onBeforeAction` hook wired
 - Drill Harrow (d017) — needs `onBeforeSow` hook + `offerDrillHarrow`
 - Pulverizer Plow (d019) — needs `offerPulverizerPlow`
 - Small Basket (d068) — needs `offerSmallBasket`
@@ -273,6 +277,10 @@ Cards that trigger during feeding, field phase, or breeding phase of harvest.
 
 **Status**: 4/27 tested (MilkingPlace, TownHall, MilkingStool, EternalRyeCultivation). Only cards using already-wired hooks with no missing methods were testable.
 
+**Implemented in Batch 7 (inline)** — hooks wired: `onBeforeFieldPhase`, `onFieldPhase` per-player in `fieldPhase()`:
+- Scythe (e073) — `onFieldPhase`: harvest ALL crops from 1 chosen field ✅
+- Straw Manure (d070) — `onBeforeFieldPhase`: pay 1 grain → +1 vegetable on 2 veg fields ✅
+
 **Deferred** (need missing hooks):
 - Lunchtime Beer (e058) — `onHarvestStart` not wired
 - Raised Bed (e061) — `onHarvestStart` not wired
@@ -280,9 +288,7 @@ Cards that trigger during feeding, field phase, or breeding phase of harvest.
 - Grain Sieve (d065) — `onHarvestGrain` not wired
 - Social Benefits (d076) — `onFeedingPhaseEnd` not wired
 - Shepherd's Whistle (e083) — `onBreedingPhaseStart` not wired
-- Scythe (e073) — `onFieldPhase` not wired
 - Slurry (c071) — `onBreedingPhaseEnd` doesn't pass `newbornTypes` parameter
-- Straw Manure (d070) — `onBeforeFieldPhase` not wired
 
 **Deferred** (need missing ActionManager methods):
 - Beer Tap (d062) — needs `offerBeerTap`
@@ -334,14 +340,18 @@ Cards that modify or trigger on building/renovation/fencing actions.
 
 **Status**: 7/20 tested (RoofLadder, BrickHammer, Pigswill, ClaySupports, Ambition, FeedFence, StrawThatchedRoof). Fixed `onBuildImprovement` hook to pass `cost` parameter (BrickHammer needs it). Note: `modifyRenovationCost` hook is NOT wired — RoofLadder cost reduction doesn't work, only `onRenovate` stone bonus tested.
 
+**Implemented in Batch 7 (inline)** — `onRenovate` hook already wired:
+- Retraining (d027) — `onRenovate`: exchange Joinery→Pottery or Pottery→Basketmaker ✅
+
+**Implemented in Batch 8 (inline)** — `onBeforeRenovateToStone` hook wired in `renovate()`:
+- HammerCrusher (d014) — `onBeforeRenovateToStone`: 2 clay + 1 reed + Build Rooms action ✅
+
 **Deferred** (need missing hooks):
 - RecycledBrick (d077) — `onAnyRenovateToStone` not wired
 - Twibil (e049) — `onAnyBuildRoom` not wired
-- HammerCrusher (d014) — `onBeforeRenovateToStone` not wired + `offerBuildRooms` missing
 
 **Deferred** (need missing methods/flags):
 - HuntingTrophy (d082) — `modifyHouseRedevelopmentCost` / `modifyFarmRedevelopmentFenceCost` never called
-- Retraining (d027) — `offerRetraining` missing
 - FieldFences (c016) — `fieldFencesAction` missing
 - Overhaul (c001) — `overhaulFences` missing
 - WoodSaw (e014) — `enablesFreeBuildRooms` flag not implemented
@@ -427,10 +437,12 @@ Cards that act as fields (isField) with custom sow/harvest behavior.
 - Added `virtualFields` support in `setBoard` for pre-sowing virtual fields in tests
 - Added `isField` card `onPlay` auto-invocation in `setBoard` for virtual field creation
 
+**Implemented in Batch 7 (inline)**:
+- Lettuce Patch (c070) — `onHarvest`: convert harvested vegetables to 4 food each. Added `isField: true` ✅
+- Crop Rotation Field (e070) — `onHarvestLast`: sow opposite crop type on card ✅
+
 **Deferred**:
-- Lettuce Patch (c070) — missing `offerLettucePatchConversion` method
 - Wood Field (d075) — no `onPlay` hook implementation
-- Crop Rotation Field (e070) — missing `offerSowOnCard` method
 - Melon Patch (e069) — missing `offerFreePlow` method
 - Swing Plow (c019) — `plowField` doesn't accept field-from-card options
 - Turnwrest Plow (d020) — same as Swing Plow
@@ -514,6 +526,13 @@ Cards with ongoing modifier effects or persistent state tracking.
 - Fishing Net (c051) — onAnyAction payment to owner (fishingNetBonus scheduling not yet wired)
 - Carrot Museum (d079) — onRoundEnd stone/wood bonus at rounds 8/10/12
 - Firewood (c075) — onReturnHome wood accumulation (onBeforeBuildCooking not yet wired)
+
+**Implemented in Batch 7 (inline)**:
+- Sundial (e026) — `onWorkPhaseEnd`: free sow in rounds 7/9 ✅
+
+**Implemented in Batch 8 (inline)**:
+- Boar Spear (e053) — `onTakeAnimals`: convert boar to 4 food each (changed from unimplemented `onGetBoar` to already-wired `onTakeAnimals`) ✅
+- Small Potter's Oven (c060) — `onBeforeBake`: offer to build Clay/Stone Oven major improvement ✅
 
 **Deferred**:
 - Bunk Beds (c010) — `modifyHouseCapacity` hook not wired in `canGrowFamily()`

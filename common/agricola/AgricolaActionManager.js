@@ -682,12 +682,25 @@ class AgricolaActionManager extends BaseActionManager {
         return false
       }
     }
-    else if (!player.canRenovate()) {
-      this.log.add({
-        template: '{player} cannot afford to renovate',
-        args: { player },
-      })
-      return false
+    else {
+      // Call onBeforeRenovateToStone hooks BEFORE affordability check
+      // (e.g., Hammer Crusher gives resources needed for renovation)
+      if (player.roomType === 'clay') {
+        this.game.callPlayerCardHook(player, 'onBeforeRenovateToStone')
+      }
+
+      if (!player.canRenovate()) {
+        this.log.add({
+          template: '{player} cannot afford to renovate',
+          args: { player },
+        })
+        return false
+      }
+    }
+
+    // For Conservator→stone path, fire hook after choice (affordability already verified)
+    if (targetType === 'stone') {
+      this.game.callPlayerCardHook(player, 'onBeforeRenovateToStone')
     }
 
     const oldType = player.roomType

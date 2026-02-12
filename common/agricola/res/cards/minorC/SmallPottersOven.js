@@ -20,6 +20,15 @@ module.exports = {
     })
   },
   onBeforeBake(game, player) {
-    game.actions.offerBuildOven(player, this)
+    const ovenIds = ['clay-oven', 'clay-oven-2', 'stone-oven', 'stone-oven-2']
+    const commonZone = player.zones.byId('common.majorImprovements')
+    const availableOvens = commonZone.cardlist()
+      .filter(c => ovenIds.includes(c.id))
+      .filter(c => player.canBuyMajorImprovement(c.id))
+      .map(c => c.id)
+
+    if (availableOvens.length > 0) {
+      game.actions.buyMajorImprovement(player, availableOvens)
+    }
   },
 }

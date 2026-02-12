@@ -14,6 +14,16 @@ module.exports = {
       template: '{player} gets 2 clay and 1 reed from Hammer Crusher',
       args: { player },
     })
-    game.actions.offerBuildRooms(player, this)
+
+    const validSpaces = player.getValidRoomBuildSpaces()
+    if (validSpaces.length > 0 && player.canAffordRoom()) {
+      const selection = game.actions.choose(player, [
+        'Build a Room',
+        'Skip',
+      ], { title: 'Hammer Crusher', min: 1, max: 1 })
+      if (selection[0] !== 'Skip') {
+        game.actions.buildRoom(player)
+      }
+    }
   },
 }

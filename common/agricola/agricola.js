@@ -1247,6 +1247,9 @@ Agricola.prototype.playerTurn = function(player, options) {
     // Use a worker
     player.useWorker()
 
+    // Call onBeforeAction hooks (e.g., Trellis builds fences before Pig Market)
+    this.callPlayerCardHook(player, 'onBeforeAction', actionId)
+
     // Record unused spaces before action for onUseMultipleSpaces hook
     const unusedBefore = player.getUnusedSpaceCount()
 
