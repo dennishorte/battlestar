@@ -1006,6 +1006,11 @@ class UltimateActionManager extends BaseActionManager {
 
     this.game.trackChainRule(player, executingCard)
 
+    // Save the outer acting player so nested executeDogmaEffect doesn't clobber it.
+    // Without this, the nested effect clears dogmaInfo.acting, causing acted() calls
+    // after the self-execute to fail the sharing check.
+    const savedActing = this.game.state.dogmaInfo.acting
+
     // Do all visible echo effects in this color.
     if (isTopCard) {
       const cards = this
@@ -1031,6 +1036,9 @@ class UltimateActionManager extends BaseActionManager {
       opts.demanding = this.players.opponents(player)
     }
     this.game.executeAllEffects(player, card, 'dogma', opts)
+
+    // Restore the outer acting player.
+    this.game.state.dogmaInfo.acting = savedActing
 
     this.game.finishChainEvent(player)
   }
