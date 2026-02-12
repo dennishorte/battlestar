@@ -2210,8 +2210,15 @@ class AgricolaActionManager extends BaseActionManager {
             details[`${resource}Taken`] = amountBefore
           }
         }
+        // Build resources object for onAction hooks (e.g. Mattock, Syrup Tap)
+        const resources = {}
+        if (action.accumulates) {
+          for (const resource of Object.keys(action.accumulates)) {
+            resources[resource] = amountBefore
+          }
+        }
         // Call hooks even for accumulating actions
-        this.game.callPlayerCardHook(player, 'onAction', actionId)
+        this.game.callPlayerCardHook(player, 'onAction', actionId, resources)
         this.callOnAnyActionHooks(player, actionId, details)
       }
 
@@ -2317,7 +2324,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     // Call onAction hooks for this player's cards
-    this.game.callPlayerCardHook(player, 'onAction', actionId)
+    this.game.callPlayerCardHook(player, 'onAction', actionId, action.gives || {})
 
     // Call onAnyAction hooks for ALL players' cards
     this.callOnAnyActionHooks(player, actionId)
@@ -2342,7 +2349,7 @@ class AgricolaActionManager extends BaseActionManager {
       card.callHook('onActionSpaceUsed', this.game, player, owner)
     }
 
-    this.game.callPlayerCardHook(player, 'onAction', actionId)
+    this.game.callPlayerCardHook(player, 'onAction', actionId, {})
     this.callOnAnyActionHooks(player, actionId)
     return true
   }

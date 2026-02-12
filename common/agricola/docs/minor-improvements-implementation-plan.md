@@ -208,7 +208,29 @@ Cards that trigger when specific action spaces are used.
 | Stone Weir (e055) | E | Fishing: get additional 4/3/2/1 food if 0/1/2/3 food on space |
 | Rod Collection (e038) | E | Fishing: place up to 2 wood on card (VP at scoring) |
 
-**Infrastructure needed**: `onAction` hook already wired. Cards use action name/id matching. Some need `onBeforeAction` for "before" timing.
+**Status**: 11/31 tested (Stew, Flail previously; Woodcraft, Wood Cart, Mole Plow, Gritter, Mattock, Syrup Tap, Barn Shed, Comb and Cutter, Stone Weir new). Fixed bugs: `'sheep-market'`→`'take-sheep'` (CombAndCutter), wrong param order + `'forest'`→`'take-wood'` (BarnShed). Added `resources` parameter to `onAction` hook for Mattock/SyrupTap.
+
+**Deferred** (need missing infrastructure):
+- Hardware Store (c082) — needs `offerHardwareStore`
+- Rocky Terrain (c080) — needs `onPlowField` hook + `offerRockyTerrain`
+- Trellis (c015) — needs `onBeforeAction` hook wired
+- Studio Boat (c039) — `traveling-players` only in 4+ player games
+- Teacher's Desk (c028) — needs `offerOccupationForFood`
+- Ravenous Hunger (c042) — needs `offerRavenousHunger`
+- Wooden Whey Bucket (d016) — needs `onBeforeAction` hook wired
+- Drill Harrow (d017) — needs `onBeforeSow` hook + `offerDrillHarrow`
+- Pulverizer Plow (d019) — needs `offerPulverizerPlow`
+- Small Basket (d068) — needs `offerSmallBasket`
+- Supply Boat (d073) — needs `offerSupplyBoat`
+- Truffle Slicer (d039) — needs `offerTruffleSlicer`
+- Writing Desk (d028) — needs `offerOccupationForFood`
+- New Market (d055) — needs `isRoundActionSpace` method
+- Nail Basket (e015) — needs `offerNailBasket`
+- Stone Axe (e075) — needs `offerStoneAxe`
+- Profiteering (e082) — needs `offerResourceExchange`
+- Grain Bag (e067) — needs `getBakingImprovementCount`
+- Ox Goad (e019) — needs `offerPlowForFood`
+- Rod Collection (e038) — needs `offerRodCollection`
 
 ---
 
