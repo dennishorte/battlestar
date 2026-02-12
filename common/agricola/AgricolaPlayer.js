@@ -339,6 +339,11 @@ class AgricolaPlayer extends BasePlayer {
       return false
     }
 
+    // Future Building Site restriction
+    if (this.isRestrictedByFutureBuildingSite(row, col)) {
+      return false
+    }
+
     // Must be adjacent to existing room
     const neighbors = this.getOrthogonalNeighbors(row, col)
     return neighbors.some(n => {
@@ -556,6 +561,11 @@ class AgricolaPlayer extends BasePlayer {
       return false
     }
 
+    // Future Building Site restriction
+    if (this.isRestrictedByFutureBuildingSite(row, col)) {
+      return false
+    }
+
     // First field can go anywhere
     const existingFields = this.getFieldSpaces()
     if (existingFields.length === 0) {
@@ -724,6 +734,11 @@ class AgricolaPlayer extends BasePlayer {
       return false
     }
     if (space.hasStable) {
+      return false
+    }
+
+    // Future Building Site restriction (only for empty spaces, not existing pastures)
+    if (space.type === 'empty' && this.isRestrictedByFutureBuildingSite(row, col)) {
       return false
     }
 
@@ -1054,6 +1069,51 @@ class AgricolaPlayer extends BasePlayer {
     return neighbors
   }
 
+  // Future Building Site: check if a space is restricted
+  isRestrictedByFutureBuildingSite(row, col) {
+    // Check if player has the card
+    const hasFBS = this.playedMinorImprovements.some(id => {
+      const card = this.cards.byId(id)
+      return card && card.definition.futureBuildingSiteRestriction
+    })
+    if (!hasFBS) {
+      return false
+    }
+
+    // Check if this space is adjacent to a room
+    const neighbors = this.getOrthogonalNeighbors(row, col)
+    const adjacentToRoom = neighbors.some(n => {
+      const space = this.getSpace(n.row, n.col)
+      return space && space.type === 'room'
+    })
+    if (!adjacentToRoom) {
+      return false
+    }
+
+    // Check if there are still unused non-adjacent-to-room spaces
+    // If all non-adjacent spaces are used, the restriction is lifted
+    for (let r = 0; r < res.constants.farmyardRows; r++) {
+      for (let c = 0; c < res.constants.farmyardCols; c++) {
+        const space = this.farmyard.grid[r][c]
+        if (space.type !== 'empty' || space.hasStable || this.getPastureAtSpace(r, c)) {
+          continue // This space is used
+        }
+        // This space is unused — check if it's NOT adjacent to a room
+        const isAdjacentToRoom = this.getOrthogonalNeighbors(r, c).some(n => {
+          const nSpace = this.getSpace(n.row, n.col)
+          return nSpace && nSpace.type === 'room'
+        })
+        if (!isAdjacentToRoom) {
+          // Found an unused non-adjacent space, so restriction is still active
+          return true
+        }
+      }
+    }
+
+    // All non-adjacent spaces are used, restriction lifted
+    return false
+  }
+
   // Calculate fences needed to enclose a given set of spaces as a pasture
   calculateFencesForPasture(spaces) {
     const fences = []
@@ -1146,6 +1206,11 @@ class AgricolaPlayer extends BasePlayer {
       }
       if (space.type === 'room' || space.type === 'field') {
         return { valid: false, error: 'Cannot fence rooms or fields' }
+      }
+      // Future Building Site restriction (only for empty unfenced spaces)
+      if (space.type === 'empty' && !this.getPastureAtSpace(coord.row, coord.col)
+          && this.isRestrictedByFutureBuildingSite(coord.row, coord.col)) {
+        return { valid: false, error: 'Future Building Site: space adjacent to house is restricted' }
       }
     }
 
