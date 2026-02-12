@@ -8,7 +8,7 @@ module.exports = {
   text: "As long as you have a pasture orthogonally adjacent to your house, you can keep animals of any type on this card, up to the number of rooms in your house.",
   holdsAnimals: true,
   mixedAnimals: true,
-  getAnimalCapacity(player) {
+  getAnimalCapacity(_game, player) {
     if (player.hasPastureAdjacentToHouse()) {
       return player.getRoomCount()
     }

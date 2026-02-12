@@ -15,7 +15,7 @@ module.exports = {
       args: { player },
     })
   },
-  getAnimalCapacity(player) {
+  getAnimalCapacity(_game, player) {
     return player.grain
   },
 }

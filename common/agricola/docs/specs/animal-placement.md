@@ -12,7 +12,7 @@ the placement modal, card-based holders, and breeding.
 | House (pet) | 1 (modifiable) | Single type | `player.pet` stores the type |
 | Pasture | 2 per space (doubled with stable) | Single type | Modified by Drinking Trough (+2/pasture) |
 | Unfenced stable | 1 | Single type | `space.animal` on grid cells with `hasStable` |
-| Card-based holder | Varies per card | Mixed types allowed | `player.cardAnimals[cardId]` storage |
+| Card-based holder | Varies per card | Configurable | `player.cardAnimals[cardId]` storage |
 
 ## Capacity Rules
 
@@ -35,9 +35,8 @@ cards like Animal Tamer to increase this (e.g., 1 per room).
 
 ### Card-Based Holders
 
-Cards with `holdsAnimalsPerPasture: true` hold 1 animal per pasture the player
-owns. Unlike pastures, card holders allow **mixed types** (sheep, boar, and
-cattle simultaneously). Storage is tracked in `player.cardAnimals`:
+Cards define animal-holding behavior via the `holdsAnimals` property. Storage
+is tracked in `player.cardAnimals`:
 
 ```js
 player.cardAnimals = {
@@ -45,12 +44,39 @@ player.cardAnimals = {
 }
 ```
 
-For capacity calculations, each type's available capacity on a mixed-type holder
-is the total capacity minus animals of other types already present:
+#### `holdsAnimals` Property Formats
 
-```
-availableFor[type] = totalCapacity - otherTypesOnCard
-```
+| Format | Example | Capacity | Type Restriction |
+|--------|---------|----------|-----------------|
+| `holdsAnimalsPerPasture: true` | Feedyard | 1 per pasture (dynamic) | Mixed types |
+| `holdsAnimals: N` | Stockyard (`3`) | Static number | `sameTypeOnly` flag controls mixing |
+| `holdsAnimals: { type: N }` | Wildlife Reserve `{sheep:1, boar:1, cattle:1}`, Dolly's Mother `{sheep:1}` | Per-type static limits | Only listed types |
+| `holdsAnimals: { type: true }` | Woolgrower `{sheep:true}`, Pet Broker `{sheep:true}` | Dynamic via `getAnimalCapacity(game, player)` | Only listed types |
+| `holdsAnimals: { any: true }` | Livestock Feeder, Pen Builder | Dynamic via `getAnimalCapacity(game, player)` | Any type |
+| `holdsAnimals: true` | Petting Zoo | Dynamic via `getAnimalCapacity(game, player)` | Any type (check `mixedAnimals`) |
+
+#### Capacity Calculation by Type
+
+- **Mixed-type holders** (`mixedTypes: true`): capacity shared across all types.
+  `availableFor[type] = totalCapacity - otherTypesOnCard`
+- **Per-type limits** (`perTypeLimits`): each type has its own independent limit.
+  `availableFor[type] = perTypeLimits[type] - currentAnimals[type]`
+- **Same-type-only** (`sameTypeOnly: true`): once a type is placed, only that
+  type can be added. Other types see 0 availability.
+- **Type-restricted** (`allowedTypes`): only listed types can be placed.
+  Non-listed types always see 0 availability.
+
+#### `getAnimalCapacity(game, player)` Convention
+
+Cards with dynamic capacity define `getAnimalCapacity(game, player)` which
+returns the current capacity as a number. All implementations use a uniform
+`(game, player)` signature. Examples:
+
+- Woolgrower: `game.getCompletedFeedingPhases()` (sheep count = feeding phases)
+- Pet Broker: `player.getOccupationCount()` (1 sheep per occupation)
+- Petting Zoo: `player.getRoomCount()` if `player.hasPastureAdjacentToHouse()`
+- Livestock Feeder: `player.grain` (1 animal per grain in supply)
+- Mud Wallower: `this.boar || 0` (tracks boar earned through clay conversion)
 
 ## Auto-Placement (`addAnimals`)
 
@@ -62,6 +88,11 @@ places them automatically in priority order:
 3. **Unfenced stables** - one animal per empty stable
 4. **Pet slot** - if house is empty
 5. **Card-based holders** - fill remaining capacity on holder cards
+
+Card-based holders respect type restrictions during auto-placement:
+- Cards with `allowedTypes` skip non-matching animal types
+- `sameTypeOnly` cards skip if they already hold a different type
+- `perTypeLimits` cards only add up to each type's individual limit
 
 If `addAnimals` returns `false`, not all animals could be placed and the
 placement modal is triggered.
@@ -81,13 +112,16 @@ presents the `AnimalPlacementModal`.
   id: 'pasture-0',        // or 'house', 'stable-1-2', 'card-feedyard-b011'
   type: 'pasture',        // 'house', 'unfenced-stable', or 'card'
   name: 'Pasture (2 spaces)',
-  currentAnimalType: 'sheep',  // null if empty (not used for card type)
+  currentAnimalType: 'sheep',  // null if empty
   currentCount: 2,
   maxCapacity: 4,
   // Card-specific fields:
-  mixedTypes: true,            // only on card locations
-  currentAnimals: { sheep: 1, boar: 0, cattle: 0 },  // only on card locations
-  cardId: 'feedyard-b011',     // only on card locations
+  mixedTypes: true,            // whether multiple types can coexist
+  sameTypeOnly: false,         // whether only one type allowed at a time
+  allowedTypes: null,          // null (any) or ['sheep'] etc.
+  perTypeLimits: null,         // null or { sheep: 1, boar: 1, cattle: 1 }
+  currentAnimals: { sheep: 1, boar: 0, cattle: 0 },
+  cardId: 'feedyard-b011',
 }
 ```
 
@@ -96,7 +130,10 @@ presents the `AnimalPlacementModal`.
 `getAnimalPlacementLocationsWithAvailability()` adds an `availableFor` map:
 
 - **Standard locations**: available only for matching type (or any if empty)
-- **Mixed-type locations**: available for all types (shared pool)
+- **Mixed-type locations**: available for all allowed types (shared pool)
+- **Per-type limit locations**: each type has independent availability
+- **Same-type-only locations**: only current type (or all if empty)
+- **Type-restricted locations**: non-allowed types always get 0
 
 ### Modal Response & Validation
 
@@ -115,7 +152,9 @@ Validation rules:
 2. Non-mixed locations cannot hold multiple types
 3. Non-mixed locations cannot receive a type different from current contents
 4. Mixed-type locations check total count across all types vs. capacity
-5. All incoming animals must be accounted for (placed + cooked + released)
+5. Per-type limit locations validate each type against its specific limit
+6. Same-type-only locations reject mixing different types
+7. All incoming animals must be accounted for (placed + cooked + released)
 
 Application order: place animals, then cook overflow (producing food), then
 release remaining.
@@ -130,23 +169,57 @@ release remaining.
   - `getCardAnimalTotal(cardId)` - sum of all types on card
   - `addCardAnimal(cardId, type, count)` - add animals to card
   - `removeCardAnimal(cardId, type, count)` - remove animals from card
-  - `getAnimalHoldingCards()` - returns all active cards with `holdsAnimalsPerPasture`
+  - `getAnimalHoldingCards()` - returns all active cards that hold animals
 
 ### Discovery
 
-`getAnimalHoldingCards()` iterates `getActiveCards()` looking for
-`holdsAnimalsPerPasture: true`. Returns:
+`getAnimalHoldingCards()` iterates `getActiveCards()` looking for cards with
+`holdsAnimalsPerPasture` or `holdsAnimals` properties. Returns:
 
 ```js
-{ card, cardId, name, capacity, mixedTypes: true, animals: { sheep, boar, cattle } }
+{
+  card,             // card object
+  cardId,           // card ID string
+  name,             // display name
+  capacity,         // total capacity (number)
+  mixedTypes,       // boolean — can hold multiple types simultaneously
+  sameTypeOnly,     // boolean — once a type is placed, only that type
+  allowedTypes,     // null (any) or ['sheep'] or ['sheep', 'boar', 'cattle']
+  perTypeLimits,    // null or { sheep: 1, boar: 1, cattle: 1 }
+  animals,          // { sheep: N, boar: N, cattle: N } current counts
+}
 ```
 
-### Example: Feedyard (b011)
+### Examples
 
-- Cost: 1 clay, 1 grain | VP: 1
+**Feedyard (b011)** — `holdsAnimalsPerPasture: true`
 - Capacity: 1 animal per pasture (dynamic)
 - Mixed types: yes
 - `onBreedingPhaseEnd`: +1 food per unused spot
+
+**Stockyard (b012)** — `holdsAnimals: 3`, `sameTypeOnly: true`
+- Capacity: 3 (static)
+- Same type only: once you place sheep, only sheep can go here
+
+**Wildlife Reserve (c011)** — `holdsAnimals: { sheep: 1, boar: 1, cattle: 1 }`
+- Per-type limits: 1 of each type
+- Mixed types: yes (can hold all three simultaneously)
+
+**Dolly's Mother (e084)** — `holdsAnimals: { sheep: 1 }`
+- Per-type limits: 1 sheep only
+- Boar and cattle cannot be placed here
+
+**Pet Broker (b148)** — `holdsAnimals: { sheep: true }`
+- Dynamic capacity: `player.getOccupationCount()` sheep
+- Only sheep allowed
+
+**Livestock Feeder (c086)** — `holdsAnimals: { any: true }`, `mixedAnimals: true`
+- Dynamic capacity: `player.grain` (1 per grain)
+- Any type, mixed
+
+**Petting Zoo (e011)** — `holdsAnimals: true`, `mixedAnimals: true`
+- Dynamic capacity: room count (if pasture adjacent to house)
+- Any type, mixed
 
 ## Breeding
 
@@ -183,5 +256,9 @@ stables, pet, and card holders). This feeds into end-game scoring.
 | `addCardAnimal(cardId, type, count)` | AgricolaPlayer.js | Add animal to card |
 | `removeCardAnimal(cardId, type, count)` | AgricolaPlayer.js | Remove animal from card |
 | `getAnimalHoldingCards()` | AgricolaPlayer.js | Active cards that hold animals |
+| `getPlayedOccupations()` | AgricolaPlayer.js | Card definitions for played occupations |
+| `hasPastureAdjacentToHouse()` | AgricolaPlayer.js | Check for pasture next to room |
+| `getAdjacentRoomPairCount()` | AgricolaPlayer.js | Count orthogonally adjacent room pairs |
+| `getCompletedFeedingPhases()` | agricola.js | Number of completed feeding phases |
 | `breedAnimals()` | AgricolaPlayer.js | Breed all eligible types |
 | `breedingPhase()` | agricola.js | Orchestrate breeding + hooks |

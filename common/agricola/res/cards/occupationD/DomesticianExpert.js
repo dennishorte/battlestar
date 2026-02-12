@@ -7,7 +7,7 @@ module.exports = {
   players: "1+",
   text: "You can keep 2 sheep on the border between each pair of orthogonally adjacent rooms.",
   holdsAnimals: { sheep: true },
-  getAnimalCapacity(player) {
+  getAnimalCapacity(_game, player) {
     return player.getAdjacentRoomPairCount() * 2
   },
 }

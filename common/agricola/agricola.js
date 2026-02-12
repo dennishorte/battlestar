@@ -746,6 +746,10 @@ Agricola.prototype.getCompletedHarvestCount = function() {
   return res.constants.harvestRounds.filter(r => r < this.state.round).length
 }
 
+Agricola.prototype.getCompletedFeedingPhases = function() {
+  return res.constants.harvestRounds.filter(r => r < this.state.round).length
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Card Drafting Phase

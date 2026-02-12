@@ -16,7 +16,7 @@ module.exports = {
       })
     }
   },
-  getAnimalCapacity(player) {
+  getAnimalCapacity(_game, player) {
     return player.getOccupationCount()
   },
 }

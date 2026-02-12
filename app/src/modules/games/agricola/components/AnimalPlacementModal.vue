@@ -630,10 +630,34 @@ export default {
     },
 
     canPlaceTypeAt(loc, animalType) {
-      // Mixed-type holders can always accept any type
+      // Check allowedTypes restriction
+      if (loc.allowedTypes && !loc.allowedTypes.includes(animalType)) {
+        return false
+      }
+
+      // Check per-type limits
+      if (loc.perTypeLimits) {
+        const limit = loc.perTypeLimits[animalType] || 0
+        const current = (loc.currentAnimals?.[animalType] || 0) + (this.placements[loc.id]?.[animalType] || 0)
+        return current < limit
+      }
+
+      // Mixed-type holders can accept any allowed type
       if (loc.mixedTypes) {
         return true
       }
+
+      // sameTypeOnly: check existing type on card
+      if (loc.sameTypeOnly) {
+        const placed = this.placements[loc.id]
+        const placedTypes = placed ? Object.keys(placed).filter(t => placed[t] > 0) : []
+        const existingType = loc.currentAnimalType || placedTypes[0] || null
+        if (existingType && existingType !== animalType) {
+          return false
+        }
+        return true
+      }
+
       // Check if location already has a different type
       if (loc.currentAnimalType && loc.currentAnimalType !== animalType) {
         return false
@@ -662,6 +686,7 @@ export default {
         }
       }
 
+      // For perTypeLimits, all per-type limits might be hit even if total isn't full
       if (availableTypes.length === 0) {
         return
       }
