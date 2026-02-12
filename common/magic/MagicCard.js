@@ -440,7 +440,7 @@ class MagicCard extends BaseCard {
   ////////////////////////////////////////////////////////////////////////////////
   // Card editing
   addFace() {
-    this.faces().push(cardUtil.blankFace())
+    this.faces().push(MagicCard.blankFace())
   }
 
   removeFace(index) {
