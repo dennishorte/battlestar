@@ -333,13 +333,27 @@ class MagicCard extends BaseCard {
       return false
     }
 
-    const allFaceChanges = this.changes.flatMap(x => x.changes).filter(x => x.type === 'face_field')
+    const allFaceChanges = this.changes.flatMap(x => x.changes).filter(x => ['face_field', 'face_added'].includes(x.type))
 
     if (typeof faceIndex === 'number') {
       return allFaceChanges.some(x => x.faceIndex === faceIndex)
     }
     else {
       return allFaceChanges.length > 0
+    }
+  }
+  isFaceAdded(faceIndex) {
+    if (!this.changes || this.changes.length === 0) {
+      return false
+    }
+
+    const addedFaces = this.changes.flatMap(x => x.changes).filter(x => x.type === 'face_added')
+
+    if (typeof faceIndex === 'number') {
+      return addedFaces.some(x => x.faceIndex === faceIndex)
+    }
+    else {
+      return addedFaces.length > 0
     }
   }
   isVisible(player) {

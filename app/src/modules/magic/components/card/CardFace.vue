@@ -171,6 +171,9 @@ export default {
       if (this.card.isScarred(this.index)) {
         classes.push('scarred')
       }
+      if (this.card.isFaceAdded && this.card.isFaceAdded(this.index)) {
+        classes.push('scar-face')
+      }
 
       const frameColor = this.card.frameColor(this.index)
       classes.push(`${frameColor}-card`)

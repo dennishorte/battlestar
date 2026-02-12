@@ -255,7 +255,7 @@ export default {
     },
 
     isScarred() {
-      return false
+      return this.card.isScarred()
     },
 
     showScarIcon() {

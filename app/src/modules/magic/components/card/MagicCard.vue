@@ -402,6 +402,52 @@ $gold: #d9631b;
       background-image: linear-gradient(142deg, rgba(245,151,29,1) 0%, rgba(133,50,36,1) 32%, rgba(159,172,180,1) 100%);
     }
   }
+  .card-container.scar-face {
+    .card-border {
+      position: relative;
+    }
+    .card-border::after {
+      content: 'SCAR';
+      position: absolute;
+      top: $unit * 12;
+      right: -$unit * 2;
+      background: linear-gradient(135deg, #f5f2e8 0%, #e8e0cc 50%, #ddd4b8 100%);
+      color: #333;
+      font-size: $unit * 3;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 0 $unit * 1.5;
+      border-radius: 2px;
+      border: 1px solid #ccc;
+      box-shadow:
+        0 2px 6px rgba(0,0,0,0.2),
+        0 1px 3px rgba(0,0,0,0.15);
+      transform: rotate(15deg);
+      z-index: 10;
+      pointer-events: none;
+    }
+    .frame-text-box {
+      position: relative;
+    }
+    .frame-text-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 4px,
+        rgba(245, 151, 29, 0.06) 4px,
+        rgba(245, 151, 29, 0.06) 8px
+      );
+      pointer-events: none;
+      z-index: 1;
+      border-radius: inherit;
+    }
+  }
 }
 
 @include card-face(160px);
