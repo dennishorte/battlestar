@@ -2,6 +2,14 @@
 
 This guide covers how to write card tests using `testutil_v2.js`.
 
+**All tests are integration tests.** Every test must exercise the card through
+the game engine — set up state with `t.setBoard`, run with `game.run()`, and
+assert with `t.testBoard`. Never call card methods directly (e.g.,
+`card.definition.getEndGamePoints()`, `card.definition.onReturnHome()`,
+`card.definition.modifyFieldCost()`). Never use mock objects. If a card effect
+can't be verified through `t.testBoard`, that's a sign the test setup needs
+adjustment, not that the test should bypass the framework.
+
 ## Setup
 
 ```js
@@ -320,20 +328,42 @@ t.testBoard(game, {
 
 Use the `score` field in `testBoard` to assert a player's total score. This
 calls `player.calculateScore()` dynamically, including all bonus point hooks
-like `getEndGamePoints`. This is the right way to test scoring cards.
+like `getEndGamePoints` and static `vps` on cards. This is the **only** way
+to test scoring — never call `getEndGamePoints()` or read `card.definition.vps`
+directly in tests.
+
+For cards whose only effect is endgame scoring, you don't need to take any
+actions. Just place the card in `minorImprovements`, call `game.run()`, and
+assert `score` in `testBoard`:
 
 ```js
-t.testBoard(game, {
-  dennis: {
-    score: 12,
-    minorImprovements: ['debt-security-a046'],
-    majorImprovements: ['hearth-1', 'hearth-2'],
-  },
+test('scores 3 VP for 3 stone rooms', () => {
+  const game = t.fixture({ cardSets: ['minorC', 'minorImprovementA', 'test'] })
+  t.setBoard(game, {
+    round: 1,
+    dennis: {
+      minorImprovements: ['half-timbered-house-c030'],
+      roomType: 'stone',
+      farmyard: {
+        rooms: [{ row: 0, col: 0 }, { row: 1, col: 0 }, { row: 2, col: 0 }],
+      },
+    },
+  })
+  game.run()
+  t.testBoard(game, {
+    dennis: {
+      score: -4,
+      minorImprovements: ['half-timbered-house-c030'],
+      farmyard: {
+        rooms: [{ row: 0, col: 0 }, { row: 1, col: 0 }, { row: 2, col: 0 }],
+      },
+    },
+  })
 })
 ```
 
 Note: `bonusPoints` in `testBoard` checks the static property, not dynamic
-hooks. Use `score` for cards with `getEndGamePoints`.
+hooks. Always use `score` for cards with `getEndGamePoints` or `vps`.
 
 ## Occupied Action Space Override
 

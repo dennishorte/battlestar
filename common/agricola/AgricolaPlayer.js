@@ -2608,7 +2608,7 @@ class AgricolaPlayer extends BasePlayer {
     for (const id of this.playedMinorImprovements) {
       const card = this.cards.byId(id)
       if (card && card.hasHook('getEndGamePoints')) {
-        points += card.callHook('getEndGamePoints', this)
+        points += card.callHook('getEndGamePoints', this, this.game)
       }
       if (card && card.vps) {
         points += card.vps

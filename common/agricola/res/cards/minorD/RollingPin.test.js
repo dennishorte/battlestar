@@ -4,7 +4,7 @@ describe('Rolling Pin', () => {
   test('gives 1 food on return home if clay > wood', () => {
     const game = t.fixture({ cardSets: ['minorD', 'minorImprovementA', 'test'] })
     t.setBoard(game, {
-      round: 5,
+      round: 1,
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['rolling-pin-d052'],
@@ -15,19 +15,29 @@ describe('Rolling Pin', () => {
     })
     game.run()
 
-    const dennis = game.players.byName('dennis')
-    const card = game.cards.byId('rolling-pin-d052')
+    // Play full round to reach return home phase
+    t.choose(game, 'Day Laborer')    // dennis turn 1
+    t.choose(game, 'Forest')         // micah turn 1
+    t.choose(game, 'Grain Seeds')    // dennis turn 2
+    t.choose(game, 'Clay Pit')       // micah turn 2
+    // Return home fires → Rolling Pin gives 1 food (clay 5 > wood 2)
 
-    // Directly test the hook
-    dennis.food = 0
-    card.definition.onReturnHome(game, dennis)
-    expect(dennis.food).toBe(1)
+    t.testBoard(game, {
+      dennis: {
+        food: 3, // 2 (Day Laborer) + 1 (Rolling Pin)
+        grain: 1,
+        clay: 5,
+        wood: 2,
+        occupations: ['test-occupation-1'],
+        minorImprovements: ['rolling-pin-d052'],
+      },
+    })
   })
 
   test('does not give food if clay <= wood', () => {
     const game = t.fixture({ cardSets: ['minorD', 'minorImprovementA', 'test'] })
     t.setBoard(game, {
-      round: 5,
+      round: 1,
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['rolling-pin-d052'],
@@ -38,11 +48,21 @@ describe('Rolling Pin', () => {
     })
     game.run()
 
-    const dennis = game.players.byName('dennis')
-    const card = game.cards.byId('rolling-pin-d052')
+    // Play full round
+    t.choose(game, 'Day Laborer')
+    t.choose(game, 'Forest')
+    t.choose(game, 'Grain Seeds')
+    t.choose(game, 'Clay Pit')
 
-    dennis.food = 0
-    card.definition.onReturnHome(game, dennis)
-    expect(dennis.food).toBe(0)
+    t.testBoard(game, {
+      dennis: {
+        food: 2, // 2 (Day Laborer) only, no Rolling Pin bonus
+        grain: 1,
+        clay: 3,
+        wood: 3,
+        occupations: ['test-occupation-1'],
+        minorImprovements: ['rolling-pin-d052'],
+      },
+    })
   })
 })

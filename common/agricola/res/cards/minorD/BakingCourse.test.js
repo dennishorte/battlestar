@@ -1,25 +1,35 @@
+const t = require('../../../testutil_v2.js')
+
 describe('Baking Course', () => {
-  test('has correct structure and baking conversion', () => {
-    const card = require('./BakingCourse.js')
-    expect(card.bakingConversion).toEqual({ from: 'grain', to: 'food', rate: 2 })
-    expect(card.onRoundEnd).toBeDefined()
-  })
+  test('bakes bread on non-harvest round end', () => {
+    const game = t.fixture({ cardSets: ['minorD', 'minorImprovementA', 'test'] })
+    t.setBoard(game, {
+      round: 1,
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['baking-course-d064'],
+        occupations: ['test-occupation-1'],
+        grain: 2,
+      },
+    })
+    game.run()
 
-  test('calls bakeBread on non-harvest rounds only', () => {
-    const card = require('./BakingCourse.js')
-    const harvestRounds = [4, 7, 9, 11, 13, 14]
-    const mockGame = { isHarvestRound: (round) => harvestRounds.includes(round) }
-    let bakeBreadCalled = false
-    mockGame.actions = { bakeBread: () => {
-      bakeBreadCalled = true
-    } }
+    // Play full round (non-harvest)
+    t.choose(game, 'Day Laborer')    // dennis turn 1
+    t.choose(game, 'Forest')         // micah turn 1
+    t.choose(game, 'Grain Seeds')    // dennis turn 2
+    t.choose(game, 'Clay Pit')       // micah turn 2
+    // Return home → onRoundEnd → bakeBread prompt
+    t.choose(game, 'Bake 1 grain')
 
-    // Harvest round → should NOT call bakeBread
-    card.onRoundEnd(mockGame, {}, 4)
-    expect(bakeBreadCalled).toBe(false)
-
-    // Non-harvest round → should call bakeBread
-    card.onRoundEnd(mockGame, {}, 5)
-    expect(bakeBreadCalled).toBe(true)
+    // Round 2 starts
+    t.testBoard(game, {
+      dennis: {
+        food: 4, // 2 (Day Laborer) + 2 (bake 1 grain at rate 2)
+        grain: 2, // 2 initial + 1 (Grain Seeds) - 1 (baked)
+        occupations: ['test-occupation-1'],
+        minorImprovements: ['baking-course-d064'],
+      },
+    })
   })
 })
