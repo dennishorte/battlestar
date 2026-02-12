@@ -7,6 +7,6 @@ module.exports = {
   players: "1+",
   text: "Each time after you play an occupation after this one, you get 1 building resource of your choice.",
   onPlayOccupation(game, player) {
-    game.actions.offerBuildingResourceChoice(player, this)
+    game.actions.offerResourceChoice(player, this, ['wood', 'clay', 'stone', 'reed'])
   },
 }
