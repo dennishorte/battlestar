@@ -271,6 +271,36 @@ Cards that trigger during feeding, field phase, or breeding phase of harvest.
 
 **Infrastructure needed**: `onFeedingPhase`, `onFieldPhase`, `onBreedingPhase`, `onHarvestStart`, `onHarvestEnd` hooks. Most should be wired already.
 
+**Status**: 4/27 tested (MilkingPlace, TownHall, MilkingStool, EternalRyeCultivation). Only cards using already-wired hooks with no missing methods were testable.
+
+**Deferred** (need missing hooks):
+- Lunchtime Beer (e058) — `onHarvestStart` not wired
+- Raised Bed (e061) — `onHarvestStart` not wired
+- Bale of Straw (d061) — `onHarvestStart` not wired
+- Grain Sieve (d065) — `onHarvestGrain` not wired
+- Social Benefits (d076) — `onFeedingPhaseEnd` not wired
+- Shepherd's Whistle (e083) — `onBreedingPhaseStart` not wired
+- Scythe (e073) — `onFieldPhase` not wired
+- Slurry (c071) — `onBreedingPhaseEnd` doesn't pass `newbornTypes` parameter
+- Straw Manure (d070) — `onBeforeFieldPhase` not wired
+
+**Deferred** (need missing ActionManager methods):
+- Beer Tap (d062) — needs `offerBeerTap`
+- Studio (c055) — needs `offerStudio`
+- Schnapps Distillery (c059) — needs `offerSchnappsDistillery`
+- Craft Brewery (c063) — needs `offerCraftBrewery` + `player.hasGrainField()`
+- Feed Pellets (d084) — needs `offerFeedPellets` + `player.hasAnyAnimals()`
+- Stable Manure (d072) — needs `harvestExtraGoods`
+- Perennial Rye (c084) — needs `offerPerennialRye`
+- Cooking Hearth Extension (c062) — needs `offerCookingHearthExtension`
+- Harvest Festival Planning (c072) — needs `harvestFieldPhase` + `majorOrMinorImprovement`
+- Seaweed Fertilizer (c073) — needs `offerSeaweedFertilizer`
+- Farm Store (c041) — needs `offerFarmStore` + `onFeedingPhaseEnd` not wired
+- Beer Stall (c049) — needs `offerBeerStall` + `player.getEmptyUnfencedStableCount()`
+- Lynchet (d063) — needs `getHarvestedFieldsAdjacentToHouse`
+- Paintbrush (e039) — needs `offerPaintbrush`
+- Elephantgrass Plant (c034) — needs `offerElephantgrassPlant`
+
 ---
 
 ## Batch 7 — Building, Renovation & Fencing
