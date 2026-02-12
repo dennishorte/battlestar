@@ -333,6 +333,18 @@ class AgricolaPlayer extends BasePlayer {
     return rooms
   }
 
+  getColumnsWithRooms() {
+    const cols = new Set()
+    for (let row = 0; row < res.constants.farmyardRows; row++) {
+      for (let col = 0; col < res.constants.farmyardCols; col++) {
+        if (this.farmyard.grid[row][col].type === 'room') {
+          cols.add(col)
+        }
+      }
+    }
+    return cols.size
+  }
+
   canBuildRoom(row, col) {
     // Must be empty
     if (!this.isSpaceEmpty(row, col)) {
@@ -553,6 +565,18 @@ class AgricolaPlayer extends BasePlayer {
       fields.push({ isVirtualField: true, virtualFieldId: vf.id, ...vf })
     }
     return fields
+  }
+
+  getGrainInFields() {
+    return this.getSownFields()
+      .filter(f => f.crop === 'grain')
+      .reduce((sum, f) => sum + f.cropCount, 0)
+  }
+
+  getVegetablesInFields() {
+    return this.getSownFields()
+      .filter(f => f.crop === 'vegetables')
+      .reduce((sum, f) => sum + f.cropCount, 0)
   }
 
   canPlowField(row, col) {

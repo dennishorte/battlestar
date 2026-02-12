@@ -11,7 +11,7 @@ module.exports = {
   text: "During scoring, you get 1 negative point for each card left in your hand. You cannot discard cards from your hand unplayed.",
   preventsDiscard: true,
   getEndGamePoints(player) {
-    const cardsInHand = player.getHandSize()
+    const cardsInHand = player.hand.length
     return -cardsInHand
   },
 }

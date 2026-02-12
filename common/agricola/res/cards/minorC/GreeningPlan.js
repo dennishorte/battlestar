@@ -8,7 +8,7 @@ module.exports = {
   category: "Points Provider",
   text: "During scoring, if you then have at least 2/4/5/6 unplanted fields, you get 1/2/3/5 bonus points.",
   getEndGamePoints(player) {
-    const emptyFields = player.getEmptyFieldCount()
+    const emptyFields = player.getEmptyFields().length
     if (emptyFields >= 6) {
       return 5
     }

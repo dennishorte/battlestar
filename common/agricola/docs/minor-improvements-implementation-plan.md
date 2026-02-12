@@ -134,7 +134,14 @@ Cards with no gameplay effect — only bonus/negative VP during scoring.
 | Heirloom (e029) | E | 2 VP (requires person on Day Laborer) |
 | Child's Toy (e030) | E | 2 VP, newborns need 2 food instead of 1 |
 
-**Infrastructure needed**: `calculateScore()` / `getScoreBreakdown()` integration. Most just need `vps` or `getBonusPoints(game, player)` method.
+**Status**: 15/20 tested. Fixed bugs: `getEmptyFieldCount()`→`getEmptyFields().length` (GreeningPlan), `getHandSize()`→`hand.length` (LanternHouse), `getUnusedSpaces()`→`getUnusedSpaceCount()` (LandRegister). Implemented `getGrainInFields()`, `getVegetablesInFields()`, `getColumnsWithRooms()` on AgricolaPlayer.
+
+**Deferred** (need missing infrastructure):
+- Writing Chamber (c031) — needs `calculateNegativePoints()` (complex scoring logic)
+- Muck Rake (d029) — needs `getUnfencedStablesWithAnimals()` method
+- Summer House (d033) — needs `getUnusedSpacesAdjacentToHouse()` method
+- Wood Rake (d032) — needs `goodsInFieldsBeforeFinalHarvest` tracking field
+- Breed Registry (d036) — tested onPlay/getEndGamePoints directly, but sheep source tracking hooks not wired
 
 ---
 
