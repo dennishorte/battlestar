@@ -41,6 +41,16 @@
         </div>
       </div>
 
+      <!-- Bonus Resources (e.g. from Outskirts Director) -->
+      <div class="bonus-section" v-if="hasBonusResources">
+        <div class="bonus-label">Bonus Resources:</div>
+        <div class="bonus-value" v-for="(amount, resource) in bonusResources" :key="resource">
+          <span class="bonus-icon">{{ resourceIcon(resource) }}</span>
+          <span class="bonus-count">{{ amount }}</span>
+          <span class="bonus-resource">{{ resourceName(resource) }}</span>
+        </div>
+      </div>
+
       <!-- Accumulation Rate -->
       <div class="accumulation-rate" v-if="isAccumulating && action.accumulates">
         <span class="rate-label">Accumulates:</span>
@@ -258,6 +268,24 @@ export default {
       return RESOURCE_NAMES[this.accumulatedResource] || this.accumulatedResource
     },
 
+    bonusResources() {
+      const bonus = this.actionState.bonusResources
+      if (!bonus) {
+        return null
+      }
+      const filtered = {}
+      for (const [resource, amount] of Object.entries(bonus)) {
+        if (amount > 0) {
+          filtered[resource] = amount
+        }
+      }
+      return Object.keys(filtered).length > 0 ? filtered : null
+    },
+
+    hasBonusResources() {
+      return this.bonusResources !== null
+    },
+
     accumulationRateText() {
       if (!this.action?.accumulates) {
         return ''
@@ -400,6 +428,14 @@ export default {
   },
 
   methods: {
+    resourceIcon(resource) {
+      return RESOURCE_ICONS[resource] || '📦'
+    },
+
+    resourceName(resource) {
+      return RESOURCE_NAMES[resource] || resource
+    },
+
     chooseAction() {
       // Emit the selection using display name (handles duplicate action names)
       // Use prefix matching to handle accumulated amounts like "Lessons A (3)"
@@ -507,6 +543,41 @@ export default {
 }
 
 .accumulated-resource {
+  color: #555;
+}
+
+.bonus-section {
+  background-color: #e8f5e9;
+  border: 1px solid #a5d6a7;
+  border-radius: .5em;
+  padding: .75em;
+  margin-bottom: 1em;
+}
+
+.bonus-label {
+  font-size: .85em;
+  color: #666;
+  margin-bottom: .25em;
+}
+
+.bonus-value {
+  display: flex;
+  align-items: center;
+  gap: .5em;
+  font-size: 1.2em;
+}
+
+.bonus-icon {
+  font-size: 1.5em;
+}
+
+.bonus-count {
+  font-weight: bold;
+  color: #2e7d32;
+  font-size: 1.3em;
+}
+
+.bonus-resource {
   color: #555;
 }
 

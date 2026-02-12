@@ -29,6 +29,12 @@
         <span class="accumulated-icon">{{ accumulatedIcon }}</span>
         <span class="accumulated-count">{{ accumulatedAmount }}</span>
       </div>
+
+      <!-- Bonus resources (e.g. from Outskirts Director) -->
+      <div class="bonus-resources" v-for="(amount, resource) in bonusResources" :key="resource">
+        <span class="bonus-icon">{{ resourceIcon(resource) }}</span>
+        <span class="bonus-count">+{{ amount }}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -169,6 +175,21 @@ export default {
       return RESOURCE_ICONS[this.accumulatedResource] || '📦'
     },
 
+    bonusResources() {
+      const bonus = this.actionState.bonusResources
+      if (!bonus) {
+        return null
+      }
+      // Filter out zero/falsy entries
+      const filtered = {}
+      for (const [resource, amount] of Object.entries(bonus)) {
+        if (amount > 0) {
+          filtered[resource] = amount
+        }
+      }
+      return Object.keys(filtered).length > 0 ? filtered : null
+    },
+
     actionDisplayName() {
       return this.action ? this.action.name : ''
     },
@@ -203,6 +224,10 @@ export default {
   },
 
   methods: {
+    resourceIcon(resource) {
+      return RESOURCE_ICONS[resource] || '📦'
+    },
+
     handleClick() {
       // Always show the action space modal on click
       this.ui.fn.showActionSpace(this.actionId)
@@ -315,6 +340,26 @@ export default {
 .accumulated-count {
   font-weight: bold;
   color: #e65100;
+}
+
+.bonus-resources {
+  display: flex;
+  align-items: center;
+  gap: .25em;
+  background-color: #e8f5e9;
+  padding: 0 .35em;
+  border-radius: .25em;
+  border: 1px solid #a5d6a7;
+  font-size: .85em;
+}
+
+.bonus-icon {
+  font-size: 1em;
+}
+
+.bonus-count {
+  font-weight: bold;
+  color: #2e7d32;
 }
 
 .worker {
