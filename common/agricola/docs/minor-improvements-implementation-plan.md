@@ -451,6 +451,15 @@ Cards that create new action spaces usable by the owner or all players.
 
 **Infrastructure needed**: `providesActionSpace` flag, action space creation, `onActionSpaceUsed()` hook. For all-player spaces, need to register in `game.state.activeActions`.
 
+**Status**: 1/5 tested (Pioneering Spirit round 3-5 renovation). Fixed `onActionSpaceUsed` to use `game.state.round` instead of parameter.
+
+**Deferred**:
+- Pioneering Spirit (d023) rounds 6-8 — missing `offerPioneeringSpiritChoice()` method
+- Archway (d051) — `archwayExtraAction` flag not processed in game engine
+- Alchemist's Lab (e081) — uses unsupported `isActionSpace`/`actionSpaceEffect` pattern
+- Job Contract (c023) — `allowsCombinedAction` system not implemented
+- Basket Chair (c022) — missing `basketChairEffect()` method
+
 ---
 
 ## Batch 11 — Ongoing State / Modifiers
@@ -498,6 +507,22 @@ Cards with ongoing modifier effects or persistent state tracking.
 | Field Spade (e079) | E | After sow 1+ field: +1 stone |
 
 **Infrastructure needed**: Various. Many need new hooks or modifiers. Categorize further when implementing.
+
+**Status**: 4/many tested (Fishing Net, Carrot Museum, Firewood onReturnHome, Pioneering Spirit).
+
+**Tested cards**:
+- Fishing Net (c051) — onAnyAction payment to owner (fishingNetBonus scheduling not yet wired)
+- Carrot Museum (d079) — onRoundEnd stone/wood bonus at rounds 8/10/12
+- Firewood (c075) — onReturnHome wood accumulation (onBeforeBuildCooking not yet wired)
+
+**Deferred**:
+- Bunk Beds (c010) — `modifyHouseCapacity` hook not wired in `canGrowFamily()`
+- Cattle Farm (c012) — `holdsCattlePerPasture` flag not processed
+- Gypsy's Crock (c053) — `onCook` hook not wired
+- Huntsman's Hat (c052) — `onGainBoar` hook not wired
+- Farmstead (c048) — `onUseFarmyardSpace` hook not wired
+- Material Hub (c081) — `onAnyAction` details parameter needs accumulating action with threshold amounts
+- Most D/E deck cards — missing offer methods or unwired hooks
 
 ---
 

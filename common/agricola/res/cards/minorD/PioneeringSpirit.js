@@ -10,7 +10,8 @@ module.exports = {
   providesActionSpace: true,
   ownerOnly: true,
   actionSpaceId: "pioneering-spirit",
-  onActionSpaceUsed(game, player, round) {
+  onActionSpaceUsed(game, player) {
+    const round = game.state.round
     if (round >= 3 && round <= 5) {
       game.actions.offerRenovation(player, this)
     }
