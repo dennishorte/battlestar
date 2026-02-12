@@ -9,7 +9,7 @@ module.exports = {
   category: "Building Resource Provider",
   text: "You immediately get 1 clay for each planted field you have.",
   onPlay(game, player) {
-    const plantedFields = player.getPlantedFields().length
+    const plantedFields = player.getSownFields().length
     if (plantedFields > 0) {
       player.addResource('clay', plantedFields)
       game.log.add({

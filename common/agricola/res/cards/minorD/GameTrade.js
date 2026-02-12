@@ -8,8 +8,8 @@ module.exports = {
   category: "Livestock Provider",
   text: "You immediately get 1 wild boar and 1 cattle. (Effectively, you are exchanging 2 sheep for 1 wild boar and 1 cattle.)",
   onPlay(game, player) {
-    player.addAnimal('boar', 1)
-    player.addAnimal('cattle', 1)
+    player.addAnimals('boar', 1)
+    player.addAnimals('cattle', 1)
     game.log.add({
       template: '{player} gets 1 wild boar and 1 cattle from Game Trade',
       args: { player },

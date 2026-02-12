@@ -15,6 +15,6 @@ module.exports = {
     })
   },
   getEndGamePoints(player) {
-    return player.getAnimalCount('cattle') === 0 ? 3 : 0
+    return player.getTotalAnimals('cattle') === 0 ? 3 : 0
   },
 }

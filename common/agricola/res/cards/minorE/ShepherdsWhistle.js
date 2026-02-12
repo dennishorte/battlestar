@@ -8,7 +8,7 @@ module.exports = {
   text: "At the start of the breeding phase of each harvest, if you have at least 1 unfenced stable without an animal, you get 1 sheep.",
   onBreedingPhaseStart(game, player) {
     if (player.hasEmptyUnfencedStable()) {
-      player.addAnimal('sheep', 1)
+      player.addAnimals('sheep', 1)
       game.log.add({
         template: "{player} gets 1 sheep from Shepherd's Whistle",
         args: { player },

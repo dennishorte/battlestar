@@ -705,6 +705,50 @@ class AgricolaActionManager extends BaseActionManager {
     return true
   }
 
+  offerRenovation(player, card) {
+    if (!player.canRenovate() && !(player.roomType === 'wood' && player.canRenovateDirectlyToStone())) {
+      this.log.add({
+        template: '{player} cannot renovate ({card})',
+        args: { player, card: card.name },
+      })
+      return false
+    }
+    return this.renovate(player)
+  }
+
+  petrifiedWoodExchange(player, _card) {
+    const maxExchange = Math.min(3, player.wood || 0)
+    if (maxExchange === 0) {
+      this.log.add({
+        template: '{player} has no wood to exchange (Petrified Wood)',
+        args: { player },
+      })
+      return
+    }
+
+    const choices = []
+    for (let i = 1; i <= maxExchange; i++) {
+      choices.push(`Exchange ${i} wood for ${i} stone`)
+    }
+    choices.push('Do not exchange')
+
+    const selection = this.choose(player, choices, {
+      title: 'Petrified Wood',
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Do not exchange') {
+      const amount = parseInt(selection[0].split(' ')[1])
+      player.removeResource('wood', amount)
+      player.addResource('stone', amount)
+      this.log.add({
+        template: '{player} exchanges {amount} wood for {amount} stone (Petrified Wood)',
+        args: { player, amount },
+      })
+    }
+  }
+
   // ---------------------------------------------------------------------------
   // Farming actions
   // ---------------------------------------------------------------------------
@@ -937,6 +981,100 @@ class AgricolaActionManager extends BaseActionManager {
 
     if (!sowedAny) {
       this.log.addDoNothing(player, 'sow')
+    }
+
+    return true
+  }
+
+  sowSingleField(player, card) {
+    const emptyFields = player.getEmptyFields()
+    if (emptyFields.length === 0) {
+      this.log.add({
+        template: '{player} has no empty fields to sow',
+        args: { player },
+      })
+      return false
+    }
+
+    const canSowGrain = player.grain >= 1
+    const canSowVeg = player.vegetables >= 1
+
+    if (!canSowGrain && !canSowVeg) {
+      this.log.add({
+        template: '{player} has no crops to sow',
+        args: { player },
+      })
+      return false
+    }
+
+    const regularEmptyFields = emptyFields.filter(f => !f.isVirtualField)
+    const emptyVirtualFields = player.getEmptyVirtualFields()
+
+    const selector = {
+      type: 'select',
+      actor: player.name,
+      title: `${card.name}: Choose field to sow`,
+      choices: emptyFields.map(f => `Field (${f.row},${f.col})`),
+      min: 1,
+      max: 1,
+      allowsAction: ['sow-field', 'sow-virtual-field'],
+      validSpaces: regularEmptyFields,
+      canSowGrain,
+      canSowVeg,
+      emptyVirtualFields,
+    }
+
+    const result = this.game.requestInputSingle(selector)
+
+    if (result.action === 'sow-field') {
+      const { row, col, cropType } = result
+      player.sowField(row, col, cropType)
+      const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
+      this.log.add({
+        template: '{player} sows {crop} at ({row},{col}) - {amount} total ({card})',
+        args: { player, crop: cropType, row, col, amount, card: card.name },
+      })
+    }
+    else if (result.action === 'sow-virtual-field') {
+      const { fieldId, cropType } = result
+      player.sowVirtualField(fieldId, cropType)
+      const virtualField = player.getVirtualField(fieldId)
+      const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
+      this.log.add({
+        template: '{player} sows {crop} in {label} - {amount} total ({card})',
+        args: { player, crop: cropType, label: virtualField.label, amount, card: card.name },
+      })
+    }
+    else {
+      const choice = result[0]
+      const coordMatch = choice.match(/Field \((\d+),(\d+)\)/)
+      if (coordMatch) {
+        const row = parseInt(coordMatch[1])
+        const col = parseInt(coordMatch[2])
+        // Need to determine crop type — if only one is available, use it
+        let cropType
+        if (canSowGrain && !canSowVeg) {
+          cropType = 'grain'
+        }
+        else if (!canSowGrain && canSowVeg) {
+          cropType = 'vegetables'
+        }
+        else {
+          // Both available — ask
+          const cropSelection = this.choose(player, ['Grain', 'Vegetables'], {
+            title: 'Choose crop type',
+            min: 1,
+            max: 1,
+          })
+          cropType = cropSelection[0].toLowerCase()
+        }
+        player.sowField(row, col, cropType)
+        const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
+        this.log.add({
+          template: '{player} sows {crop} at ({row},{col}) - {amount} total ({card})',
+          args: { player, crop: cropType, row, col, amount, card: card.name },
+        })
+      }
     }
 
     return true

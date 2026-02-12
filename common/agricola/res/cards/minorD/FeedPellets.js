@@ -8,7 +8,7 @@ module.exports = {
   category: "Livestock Provider",
   text: "When you play this card, you immediately get 1 sheep. In the feeding phase of each harvest, you can exchange exactly 1 vegetable for 1 animal of a type you already have.",
   onPlay(game, player) {
-    player.addAnimal('sheep', 1)
+    player.addAnimals('sheep', 1)
     game.log.add({
       template: '{player} gets 1 sheep from Feed Pellets',
       args: { player },
