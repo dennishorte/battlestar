@@ -2374,10 +2374,11 @@ class AgricolaPlayer extends BasePlayer {
     for (const id of this.playedMinorImprovements) {
       const card = this.cards.byId(id)
       if (card && card.definition.bakingConversion) {
-        return {
-          name: card.name,
-          abilities: { canBake: true, bakingRate: card.definition.bakingConversion.rate },
+        const abilities = { canBake: true, bakingRate: card.definition.bakingConversion.rate }
+        if (card.definition.bakingConversion.limit) {
+          abilities.bakingLimit = card.definition.bakingConversion.limit
         }
+        return { name: card.name, abilities }
       }
     }
     return null

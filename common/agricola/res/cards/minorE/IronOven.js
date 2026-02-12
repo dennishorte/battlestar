@@ -7,9 +7,10 @@ module.exports = {
   cost: { stone: 3 },
   vps: 2,
   text: "For any \"Bake Bread\" action, you can convert exactly 1 grain into 6 food. When you build this improvement, you can immediately take a \"Bake Bread\" action.",
-  bakingRate: 6,
-  maxBakePerAction: 1,
+  bakingConversion: { from: "grain", to: "food", rate: 6, limit: 1 },
   onPlay(game, player) {
-    game.actions.offerBakeBread(player, this)
+    if (player.hasBakingAbility() && player.grain >= 1) {
+      game.actions.bakeBread(player)
+    }
   },
 }

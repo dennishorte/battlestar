@@ -1541,6 +1541,8 @@ Agricola.prototype.feedingPhase = function() {
         args: { player },
       })
     }
+
+    this.callPlayerCardHook(player, 'onFeedingPhaseEnd')
   }
 
   this.log.outdent()

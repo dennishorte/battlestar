@@ -22,6 +22,23 @@ module.exports = {
     })
   },
   onHarvestLast(game, player) {
-    game.actions.offerFreePlow(player, this)
+    const validSpaces = player.getValidPlowSpaces()
+    if (validSpaces.length > 0) {
+      const selection = game.actions.choose(player, [
+        'Plow 1 field',
+        'Skip',
+      ], {
+        title: 'Melon Patch',
+        min: 1,
+        max: 1,
+      })
+      if (selection[0] !== 'Skip') {
+        game.actions.plowField(player)
+        game.log.add({
+          template: '{player} plows a field using {card}',
+          args: { player, card: this },
+        })
+      }
+    }
   },
 }
