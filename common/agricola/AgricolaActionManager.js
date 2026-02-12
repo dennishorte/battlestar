@@ -2141,6 +2141,8 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     if (action.allowsOccupation) {
+      // onLessons hook fires before occupation cost is paid (e.g. Tasting)
+      this.game.callPlayerCardHook(player, 'onLessons')
       this.playOccupation(player, {
         costOverride: action.occupationCost,
         firstTwoCost: action.firstTwoOccupationsCost,
