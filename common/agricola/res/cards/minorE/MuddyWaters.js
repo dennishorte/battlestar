@@ -13,17 +13,13 @@ module.exports = {
     let isFood = true
     for (let round = currentRound + 1; round <= 14; round++) {
       if (round % 2 === 0) {
-        const key = isFood ? 'scheduledFood' : 'scheduledClay'
-        if (!game.state[key]) {
-          game.state[key] = {}
-        }
-        if (!game.state[key][player.name]) {
-          game.state[key][player.name] = {}
-        }
-        game.state[key][player.name][round] =
-            (game.state[key][player.name][round] || 0) + 1
+        game.scheduleResource(player, isFood ? 'food' : 'clay', round, 1)
         isFood = !isFood
       }
     }
+    game.log.add({
+      template: '{player} schedules food and clay from Muddy Waters',
+      args: { player },
+    })
   },
 }

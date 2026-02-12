@@ -8,7 +8,7 @@ module.exports = {
   category: "Food Provider",
   text: "Place 1 food on each remaining round space, up to three times the number of planted fields you have. At the start of these rounds, you get the food.",
   onPlay(game, player) {
-    const plantedFields = player.getPlantedFields().length
+    const plantedFields = player.getSownFields().length
     const maxRounds = plantedFields * 3
     const currentRound = game.state.round
     let placed = 0

@@ -98,7 +98,12 @@ using `game.scheduleResource()`.
 | Waterlily Pond (e046) | E | 1 food on next 2 rounds |
 | Bookmark (e028) | E | Free occupation on round current+3 |
 
-**Infrastructure needed**: `game.scheduleResource()` already exists. Some need `scheduleAnimal()` variant or conditional scheduling.
+**Status**: 25/26 tested. Fixed bugs: `getPlantedFields`→`getSownFields` (GardenClaw), refactored MuddyWaters to use `scheduleResource()`.
+
+**Deferred**:
+- Farm Building (c043) — uses `onBuildMajor` hook which is not wired in AgricolaActionManager
+
+**Notes**: `cardsInPlay` and `majorImprovement` (specific card) prereqs are not yet enforced (in deferred TODO in AgricolaPlayer.js). Tests for Churchyard, MuddyWaters, and WaterGully still pass because the prereq check falls through.
 
 ---
 
