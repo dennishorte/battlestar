@@ -2033,6 +2033,10 @@ class AgricolaActionManager extends BaseActionManager {
       // Capture accumulated amount before takeAccumulatedResource resets it
       const actionState = this.game.state.actionSpaces[actionId]
       const amountBefore = actionState ? actionState.accumulated : 0
+
+      // Store pre-take amount so onAction hooks can query it via getAccumulatedResources
+      this.game.state.lastAccumulated = { actionId, amount: amountBefore }
+
       const result = this.takeAccumulatedResource(player, actionId)
       if (result) {
         const details = {}
@@ -2045,6 +2049,8 @@ class AgricolaActionManager extends BaseActionManager {
         this.game.callPlayerCardHook(player, 'onAction', actionId)
         this.callOnAnyActionHooks(player, actionId, details)
       }
+
+      this.game.state.lastAccumulated = null
       return result
     }
 

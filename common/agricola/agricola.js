@@ -272,6 +272,85 @@ Agricola.prototype.blockLinkedSpace = function(actionId) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Accumulation space helpers (used by card hooks like TreeCutter, Loudmouth)
+// ---------------------------------------------------------------------------
+
+Agricola.prototype.isAccumulationSpace = function(actionId) {
+  const action = res.getActionById(actionId)
+  return !!(action && action.type === 'accumulating')
+}
+
+Agricola.prototype.isBuildingResourceAccumulationSpace = function(actionId) {
+  const action = res.getActionById(actionId)
+  if (!action || action.type !== 'accumulating' || !action.accumulates) {
+    return false
+  }
+  return Object.keys(action.accumulates).some(r => ['wood', 'clay', 'stone', 'reed'].includes(r))
+}
+
+Agricola.prototype.getAccumulationSpaceGoodType = function(actionId) {
+  const action = res.getActionById(actionId)
+  if (!action || !action.accumulates) {
+    return null
+  }
+  return Object.keys(action.accumulates)[0]
+}
+
+/**
+ * Returns { resourceType: amount } for an accumulation space.
+ * During onAction hooks for the current action, returns the pre-take amount
+ * (since takeAccumulatedResource already reset it to 0).
+ * For other spaces, returns the current accumulated amount.
+ */
+Agricola.prototype.getAccumulatedResources = function(actionId) {
+  const action = res.getActionById(actionId)
+  if (!action || !action.accumulates) {
+    return {}
+  }
+
+  const actionState = this.state.actionSpaces[actionId]
+  if (!actionState) {
+    return {}
+  }
+
+  // If this is the action currently being taken, use the saved pre-take amount
+  const last = this.state.lastAccumulated
+  const amount = (last && last.actionId === actionId) ? last.amount : actionState.accumulated
+
+  const result = {}
+  for (const resource of Object.keys(action.accumulates)) {
+    result[resource] = amount
+  }
+  return result
+}
+
+Agricola.prototype.hasAccumulationSpaceWithGoods = function(minGoods) {
+  for (const actionId of this.state.activeActions) {
+    const action = res.getActionById(actionId)
+    if (action && action.type === 'accumulating') {
+      const actionState = this.state.actionSpaces[actionId]
+      if (actionState && actionState.accumulated >= minGoods) {
+        return true
+      }
+    }
+  }
+  return false
+}
+
+Agricola.prototype.isAccumulationSpaceWith5PlusGoods = function(actionId) {
+  const action = res.getActionById(actionId)
+  if (!action || action.type !== 'accumulating') {
+    return false
+  }
+  const actionState = this.state.actionSpaces[actionId]
+
+  // During onAction for this space, use the pre-take amount
+  const last = this.state.lastAccumulated
+  const amount = (last && last.actionId === actionId) ? last.amount : (actionState?.accumulated || 0)
+  return amount >= 5
+}
+
 Agricola.prototype.initializeRoundCards = function() {
   // Shuffle round cards within each stage
   this.state.roundCardDeck = []
