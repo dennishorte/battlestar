@@ -51,11 +51,13 @@ module.exports = {
         template: '{player} places 2 reed on {space} (Outskirts Director)',
         args: { player, space: otherName },
       })
-      player.availableWorkers += 1
-      game.log.add({
-        template: '{player} gets an extra action from Outskirts Director',
-        args: { player },
-      })
+      if (player.getAvailableWorkers() > 0) {
+        game.log.add({
+          template: '{player} immediately places another person (Outskirts Director)',
+          args: { player },
+        })
+        game.playerTurn(player, { isBonusTurn: true })
+      }
     }
   },
 }

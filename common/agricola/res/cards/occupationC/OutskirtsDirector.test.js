@@ -1,7 +1,7 @@
 const t = require('../../../testutil_v2.js')
 
 describe('Outskirts Director', () => {
-  test('places 2 reed on Hollow when using Grove and grants extra action', () => {
+  test('places 2 reed on Hollow when using Grove and grants immediate action', () => {
     const game = t.fixture({ numPlayers: 3, cardSets: ['occupationC', 'minorImprovementA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
@@ -15,26 +15,21 @@ describe('Outskirts Director', () => {
     t.choose(game, 'Grove')
     // Outskirts Director offers to place 2 reed on Hollow
     t.choose(game, 'Place 2 reed on Hollow')
+    // Dennis immediately places another person (uses remaining worker)
+    t.choose(game, 'Grain Seeds')
 
-    // micah + scott take their turns
+    // micah + scott (turn 1)
     t.choose(game, 'Day Laborer')
     t.choose(game, 'Clay Pit')
 
-    // Dennis gets extra action from Outskirts Director
-    t.choose(game, 'Grain Seeds')
-
-    // micah + scott take their second turns
+    // Dennis has no workers left — micah + scott (turn 2)
     t.choose(game, 'Forest')
     t.choose(game, 'Reed Bank')
 
-    // Dennis takes normal second action
-    t.choose(game, 'Fishing')
-
     t.testBoard(game, {
       dennis: {
-        wood: 2, // from Grove (accumulates 2 wood/round, round 2 = 2)
-        food: 1, // from Fishing
-        grain: 1, // from Grain Seeds
+        wood: 2, // from Grove
+        grain: 1, // from immediate action
         occupations: ['outskirts-director-c130'],
       },
     })
@@ -50,9 +45,10 @@ describe('Outskirts Director', () => {
     })
     game.run()
 
-    // Dennis uses Grove → places 2 reed on Hollow
+    // Dennis uses Grove → places 2 reed on Hollow → immediate action
     t.choose(game, 'Grove')
     t.choose(game, 'Place 2 reed on Hollow')
+    t.choose(game, 'Fishing') // immediate action
 
     // Micah takes Hollow (gets clay + 2 bonus reed)
     t.choose(game, 'Hollow')
@@ -60,15 +56,9 @@ describe('Outskirts Director', () => {
     // scott
     t.choose(game, 'Day Laborer')
 
-    // Dennis extra action
-    t.choose(game, 'Grain Seeds')
-
-    // micah + scott
+    // micah + scott (turn 2)
     t.choose(game, 'Forest')
     t.choose(game, 'Clay Pit')
-
-    // Dennis normal second action
-    t.choose(game, 'Reed Bank')
 
     t.testBoard(game, {
       micah: {
@@ -89,10 +79,10 @@ describe('Outskirts Director', () => {
     })
     game.run()
 
-    // Dennis uses Hollow (clay accumulation)
+    // Dennis uses Hollow → places 2 reed on Grove → immediate action
     t.choose(game, 'Hollow')
-    // Outskirts Director offers to place 2 reed on Grove
     t.choose(game, 'Place 2 reed on Grove')
+    t.choose(game, 'Forest') // immediate action
 
     // micah takes Grove (gets wood + 2 bonus reed)
     t.choose(game, 'Grove')
@@ -100,21 +90,14 @@ describe('Outskirts Director', () => {
     // scott
     t.choose(game, 'Day Laborer')
 
-    // Dennis extra action
-    t.choose(game, 'Forest')
-
-    // micah + scott
+    // micah + scott (turn 2)
     t.choose(game, 'Grain Seeds')
     t.choose(game, 'Clay Pit')
-
-    // Dennis normal second action
-    t.choose(game, 'Reed Bank')
 
     t.testBoard(game, {
       dennis: {
         clay: 1, // from Hollow
-        wood: 3, // from Forest
-        reed: 1, // from Reed Bank
+        wood: 3, // from immediate Forest action
         occupations: ['outskirts-director-c130'],
       },
       micah: {
@@ -138,7 +121,7 @@ describe('Outskirts Director', () => {
     t.choose(game, 'Grove')
     t.choose(game, 'Do not place reed')
 
-    // No extra action — micah goes next
+    // No immediate action — micah goes next
     t.testBoard(game, {
       currentPlayer: 'micah',
       dennis: {
