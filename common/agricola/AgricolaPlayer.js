@@ -46,6 +46,13 @@ class AgricolaPlayer extends BasePlayer {
     })
   }
 
+  getImprovementsInHand() {
+    return this.hand.filter(id => {
+      const c = this.cards.byId(id)
+      return c && c.type === 'minor'
+    })
+  }
+
   getPeopleOnAccumulationSpaces() {
     let count = 0
     for (const [, state] of Object.entries(this.game.state.actionSpaces)) {

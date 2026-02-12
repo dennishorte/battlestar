@@ -9,7 +9,7 @@ module.exports = {
   category: "Crop Provider",
   text: "At the start of each round that does not end with a harvest, if you have at least 1 sheep in a pasture, you get 1 grain.",
   onRoundStart(game, player, round) {
-    if (!game.isHarvestRound(round) && player.getSheepInPastures() >= 1) {
+    if (!game.isHarvestRound(round) && player.getTotalAnimals('sheep') >= 1) {
       player.addResource('grain', 1)
       game.log.add({
         template: '{player} gets 1 grain from Mineral Feeder',

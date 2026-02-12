@@ -160,7 +160,13 @@ Cards that trigger at the start of rounds or returning home phase.
 | Baking Course (d064) | D | Non-harvest round end: take Bake Bread action |
 | Tea House (d053) | D | Once per round: skip placing 2nd person → 1 food |
 
-**Infrastructure needed**: `onRoundStart`, `onReturningHome`, `onRoundEnd` hooks. Check which are wired.
+**Status**: 4/8 tested. Fixed bugs: `getSheepInPastures()`→`getTotalAnimals('sheep')` (MineralFeeder). Added `getImprovementsInHand()` to AgricolaPlayer. All hooks (onRoundStart, onReturnHome, onRoundEnd) are wired.
+
+**Deferred** (need missing infrastructure):
+- Roman Pot (e056) — needs `isLastInTurnOrder()` method
+- Stork's Nest (d010) — needs `canAddFamilyMember()` + `offerStorksNest()` methods
+- Steam Plow (d018) — needs `offerSteamPlow()` method
+- Tea House (d053) — needs `allowsSkipSecondPerson` flag processing in game engine
 
 ---
 
