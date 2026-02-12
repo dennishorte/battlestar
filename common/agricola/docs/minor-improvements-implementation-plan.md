@@ -47,20 +47,25 @@ Simplest to implement — just `onPlay()` logic.
 | Stone Clearing (c006) | C | Place 1 stone on each empty field (harvest as crop) |
 | Automatic Water Trough (c009) | C | Buy 1 sheep/boar/cattle for 0/1/2 food |
 
-**Status**: 21/31 tested. Implemented `sowSingleField`, `offerRenovation`, `petrifiedWoodExchange` in ActionManager. Fixed bugs: `addAnimal`→`addAnimals` (GameTrade, EarlyCattle, FeedPellets, Pigswill, ShepherdsWhistle), `getPlantedFields`→`getSownFields` (FieldClay), `getAnimalCount`→`getTotalAnimals` (OxSkull).
+**Status**: 27/31 tested (+ 3 unlisted cards: BladeShears, PlantFertilizer, FernSeeds). Implemented `sowSingleField`, `offerRenovation`, `petrifiedWoodExchange` in ActionManager. Fixed bugs: `addAnimal`→`addAnimals` (GameTrade, EarlyCattle, FeedPellets, Pigswill, ShepherdsWhistle), `getPlantedFields`→`getSownFields` (FieldClay), `getAnimalCount`→`getTotalAnimals` (OxSkull).
+
+**Implemented inline (Batch 9)**:
+- Blade Shears (c007) — `onPlay`: choose 3 food or 1 food per sheep ✅
+- Plant Fertilizer (c008) — `onPlay`: +1 good on fields with exactly 1 crop ✅
+- Fern Seeds (d008) — `onPlay`: 2 food + 1 grain, force sow grain ✅
+- Sleight of Hand (e078) — `onPlay`: exchange up to 4 building resources 1-for-1 ✅
+- Thunderbolt (e004) — `onPlay`: remove grain from field for 2 wood each ✅ (was already inline)
+- Night Loot (e005) — `onPlay`: take 2 different building resources from accumulation spaces ✅
+- Lumber Pile (e076) — `onPlay`: return up to 3 stables for 3 wood each ✅ (was already inline)
+- Bartering Hut (e009) — `onPlay`: spend 2/3/4 building resources for sheep/boar/cattle (up to 2x) ✅
+- Renovation Materials (e002) — `onPlay`: free renovation to clay ✅ (was already inline)
+- Automatic Water Trough (c009) — `onPlay`: buy 1 sheep/boar/cattle for 0/1/2 food ✅ (was already inline)
 
 **Deferred** (need missing infrastructure):
-- Sleight of Hand (e078) — needs `sleightOfHand` method
-- Thunderbolt (e004) — needs `thunderboltExchange` method
-- Night Loot (e005) — needs `nightLoot` method
 - Bumper Crop (e025) — needs `harvestFields` method
-- Lumber Pile (e076) — needs `lumberPileExchange` method
-- Bartering Hut (e009) — needs `barteringHut` method
-- Pole Barns (e001) — needs `buildFreeStables` (plural) method
-- Renovation Materials (e002) — needs `freeRenovation` method
+- Pole Barns (e001) — needs 15-fence prereq setup; `buildFreeStables` method
 - Newly-Plowed Field (c017) — needs `plowField` with `allowNonAdjacent` option
 - Stone Clearing (c006) — needs `stoneClearingEffect` method
-- Automatic Water Trough (c009) — needs `automaticWaterTroughPurchase` method
 
 ---
 
