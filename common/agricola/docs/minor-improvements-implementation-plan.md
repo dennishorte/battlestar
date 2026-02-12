@@ -332,6 +332,26 @@ Cards that modify or trigger on building/renovation/fencing actions.
 
 **Infrastructure needed**: `onBuildRoom`, `onRenovate`, `onBuildFences`, `onBuildStable` hooks. `modifyRoomCost`, `modifyRenovationCost`, `modifyFenceCost` modifiers. Some need `onBeforeRenovate`.
 
+**Status**: 7/20 tested (RoofLadder, BrickHammer, Pigswill, ClaySupports, Ambition, FeedFence, StrawThatchedRoof). Fixed `onBuildImprovement` hook to pass `cost` parameter (BrickHammer needs it). Note: `modifyRenovationCost` hook is NOT wired — RoofLadder cost reduction doesn't work, only `onRenovate` stone bonus tested.
+
+**Deferred** (need missing hooks):
+- RecycledBrick (d077) — `onAnyRenovateToStone` not wired
+- Twibil (e049) — `onAnyBuildRoom` not wired
+- HammerCrusher (d014) — `onBeforeRenovateToStone` not wired + `offerBuildRooms` missing
+
+**Deferred** (need missing methods/flags):
+- HuntingTrophy (d082) — `modifyHouseRedevelopmentCost` / `modifyFarmRedevelopmentFenceCost` never called
+- Retraining (d027) — `offerRetraining` missing
+- FieldFences (c016) — `fieldFencesAction` missing
+- Overhaul (c001) — `overhaulFences` missing
+- WoodSaw (e014) — `enablesFreeBuildRooms` flag not implemented
+- Recruitment (d021) — `modifyMinorImprovementAction` flag not implemented
+- WoodSlideHammer (c013) — `modifyRenovation` method not wired
+- AshTrees (e074) — `getFreeFences` / `fencesRemaining` integration untested
+- BriarHedge (e016) — complex prereqs (3 animal types) + edge fence cost verification difficult
+- Cubbyhole (e052) — needs room building + harvest, complex multi-step test
+- FeedFence (c056) — `allowsClayStable` flag not implemented (onBuildStable food works)
+
 ---
 
 ## Batch 8 — Anytime Actions

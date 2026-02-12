@@ -75,7 +75,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     this.game.registerCardActionSpace(player, card)
-    this.game.callPlayerCardHook(player, 'onBuildImprovement')
+    this.game.callPlayerCardHook(player, 'onBuildImprovement', chosenCost)
     this.maybePassLeft(player, cardId)
   }
 
@@ -1429,8 +1429,9 @@ class AgricolaActionManager extends BaseActionManager {
         template: '{player} buys {card}',
         args: { player, card: imp },
       })
+      const impCost = result.upgraded ? {} : player.getMajorImprovementCost(improvementId)
       if (!result.upgraded) {
-        player.payCost(player.getMajorImprovementCost(improvementId))
+        player.payCost(impCost)
       }
 
       // Execute onBuy effect if present (e.g., Well schedules food, Ovens bake bread)
@@ -1438,8 +1439,8 @@ class AgricolaActionManager extends BaseActionManager {
         imp.callHook('onBuy', this.game, player)
       }
 
-      // Call onBuildImprovement hooks (Junk Room gives food)
-      this.game.callPlayerCardHook(player, 'onBuildImprovement')
+      // Call onBuildImprovement hooks (BrickHammer checks clay cost)
+      this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost)
 
       if (imp.upgradesFrom && imp.upgradesFrom.some(id => id.startsWith('fireplace'))) {
         this.game.callPlayerCardHook(player, 'onUpgradeFireplace')
@@ -1803,15 +1804,16 @@ class AgricolaActionManager extends BaseActionManager {
               template: '{player} buys {card}',
               args: { player, card: imp },
             })
+            const impCost = result.upgraded ? {} : player.getMajorImprovementCost(improvementId)
             if (!result.upgraded) {
-              player.payCost(player.getMajorImprovementCost(improvementId))
+              player.payCost(impCost)
             }
 
             if (imp.hasHook('onBuy')) {
               imp.callHook('onBuy', this.game, player)
             }
 
-            this.game.callPlayerCardHook(player, 'onBuildImprovement')
+            this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost)
             return improvementId
           }
         }
@@ -2031,8 +2033,9 @@ class AgricolaActionManager extends BaseActionManager {
             template: '{player} buys {card}',
             args: { player, card: imp },
           })
+          const impCost = result.upgraded ? {} : player.getMajorImprovementCost(improvementId)
           if (!result.upgraded) {
-            player.payCost(player.getMajorImprovementCost(improvementId))
+            player.payCost(impCost)
           }
 
           // Execute onBuy effect if present (e.g., Well schedules food, Ovens bake bread)
@@ -2040,8 +2043,8 @@ class AgricolaActionManager extends BaseActionManager {
             imp.callHook('onBuy', this.game, player)
           }
 
-          // Call onBuildImprovement hooks (Junk Room gives food)
-          this.game.callPlayerCardHook(player, 'onBuildImprovement')
+          // Call onBuildImprovement hooks (BrickHammer checks clay cost)
+          this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost)
 
           if (imp.upgradesFrom && imp.upgradesFrom.some(id => id.startsWith('fireplace'))) {
             this.game.callPlayerCardHook(player, 'onUpgradeFireplace')
