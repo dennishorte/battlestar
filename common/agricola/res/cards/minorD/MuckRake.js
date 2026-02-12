@@ -9,11 +9,10 @@ module.exports = {
   text: "During scoring, you get 1 bonus point for exactly 1 unfenced stable holding exactly 1 sheep. The same applies to wild boar and cattle, if held in different unfenced stables.",
   getEndGamePoints(player) {
     let points = 0
-    const unfencedStables = player.getUnfencedStablesWithAnimals()
     const countByType = { sheep: 0, boar: 0, cattle: 0 }
-    for (const stable of unfencedStables) {
-      if (stable.animalCount === 1) {
-        countByType[stable.animalType]++
+    for (const stable of player.getStableSpaces()) {
+      if (!player.getPastureAtSpace(stable.row, stable.col) && stable.animal) {
+        countByType[stable.animal]++
       }
     }
     if (countByType.sheep === 1) {
