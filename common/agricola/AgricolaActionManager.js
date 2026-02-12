@@ -998,6 +998,9 @@ class AgricolaActionManager extends BaseActionManager {
     if (!sowedAny) {
       this.log.addDoNothing(player, 'sow')
     }
+    else {
+      this.game.callPlayerCardHook(player, 'onAfterSow')
+    }
 
     return true
   }
@@ -1165,6 +1168,8 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   sowAndOrBake(player) {
+    this.game.callPlayerCardHook(player, 'onBeforeSow')
+
     const canSow = player.canSowAnything()
     const canBake = player.hasBakingAbility() && player.grain >= 1
 
@@ -1211,8 +1216,11 @@ class AgricolaActionManager extends BaseActionManager {
       }
     }
 
+    // Fire onBeforeSow hook (e.g. Drill Harrow can plow before sowing)
+    this.game.callPlayerCardHook(player, 'onBeforeSow')
+
     // Then sow (player can select "Done Sowing" to skip)
-    // Re-check canSow since plowing might have created a new field
+    // Re-check canSow since plowing or hooks might have created a new field
     const canSowNow = player.getEmptyFields().length > 0 && (player.grain >= 1 || player.vegetables >= 1)
     if (canSowNow) {
       this.sow(player)
@@ -2292,6 +2300,7 @@ class AgricolaActionManager extends BaseActionManager {
       this.plowAndOrSow(player)
     }
     else if (action.allowsSowing) {
+      this.game.callPlayerCardHook(player, 'onBeforeSow')
       this.sow(player)
     }
 

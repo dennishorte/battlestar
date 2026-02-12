@@ -7,11 +7,26 @@ module.exports = {
   cost: {},
   text: "Each time you build or play an improvement after this one, you can place 1 reed on this card, irretrievably, to get 1 bonus point, up to the number of rooms in your house.",
   storedResource: "reed",
-  onPlayImprovement(game, player, card) {
-    if (card.id !== this.id) {
+  onBuildImprovement(game, player, cost, card) {
+    if (card && card.id !== this.id) {
       const stored = this.stored || 0
       if (stored < player.getRoomCount() && player.reed >= 1) {
-        game.actions.offerUpholstery(player, this)
+        const selection = game.actions.choose(player, [
+          'Store 1 reed for 1 bonus point',
+          'Skip',
+        ], {
+          title: 'Upholstery',
+          min: 1,
+          max: 1,
+        })
+        if (selection[0] !== 'Skip') {
+          player.payCost({ reed: 1 })
+          this.stored = (this.stored || 0) + 1
+          game.log.add({
+            template: '{player} stores 1 reed on {card} for 1 bonus point ({amount} total)',
+            args: { player, card: this, amount: this.stored },
+          })
+        }
       }
     }
   },
