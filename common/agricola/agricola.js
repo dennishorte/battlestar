@@ -273,6 +273,14 @@ Agricola.prototype.blockLinkedSpace = function(actionId) {
 }
 
 // ---------------------------------------------------------------------------
+// Action space helpers
+// ---------------------------------------------------------------------------
+
+Agricola.prototype.getActionById = function(actionId) {
+  return res.getActionById(actionId)
+}
+
+// ---------------------------------------------------------------------------
 // Accumulation space helpers (used by card hooks like TreeCutter, Loudmouth)
 // ---------------------------------------------------------------------------
 

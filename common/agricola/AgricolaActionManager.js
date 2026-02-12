@@ -149,6 +149,20 @@ class AgricolaActionManager extends BaseActionManager {
       this.game.callPlayerCardHook(player, 'onGainWood')
     }
 
+    // Give bonus resources placed on this space by card effects (e.g. Outskirts Director)
+    if (actionState.bonusResources) {
+      for (const [resource, amount] of Object.entries(actionState.bonusResources)) {
+        if (amount > 0) {
+          player.addResource(resource, amount)
+          this.log.add({
+            template: '{player} takes {amount} bonus {resource}',
+            args: { player, amount, resource },
+          })
+        }
+      }
+      actionState.bonusResources = null
+    }
+
     // Some accumulating actions also give instant resources (e.g., Riverbank Forest)
     if (action.gives) {
       this.giveResources(player, action.gives)
