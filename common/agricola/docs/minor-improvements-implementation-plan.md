@@ -420,6 +420,21 @@ Cards that act as fields (isField) with custom sow/harvest behavior.
 
 **Infrastructure needed**: `addVirtualField()` system. `onHarvestLast()` hook for end-of-harvest triggers. `cropRestriction` for type-limited fields. Stone/wood as "crop" types.
 
+**Status**: 3/9 tested (Cherry Orchard, Artichoke Field, Rock Garden). Infrastructure fixes applied:
+- Added `canSowAnything()` helper to account for wood/stone sowing in virtual fields
+- Fixed sow entry checks in `sow()`, `sowAndOrBake()`, `plowAndOrSow()` to allow sowing when only wood/stone available for virtual fields
+- Fixed `harvestFields()` to harvest stone (was missing from harvested resource types)
+- Added `virtualFields` support in `setBoard` for pre-sowing virtual fields in tests
+- Added `isField` card `onPlay` auto-invocation in `setBoard` for virtual field creation
+
+**Deferred**:
+- Lettuce Patch (c070) — missing `offerLettucePatchConversion` method
+- Wood Field (d075) — no `onPlay` hook implementation
+- Crop Rotation Field (e070) — missing `offerSowOnCard` method
+- Melon Patch (e069) — missing `offerFreePlow` method
+- Swing Plow (c019) — `plowField` doesn't accept field-from-card options
+- Turnwrest Plow (d020) — same as Swing Plow
+
 ---
 
 ## Batch 10 — Card-Provided Action Spaces

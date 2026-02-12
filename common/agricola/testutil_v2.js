@@ -141,6 +141,9 @@ TestUtil.fixture = function(options = {}) {
  *                        vegetablesPurchase, sheep, boar, cattle.
  *                      Events: plows, freeStables, freeOccupation, woodWithMinor, plowman.
  *                      Example: { food: { 5: 1, 6: 1 }, plows: [7] }
+ *   virtualFields    - Object mapping virtual field IDs to { crop, cropCount }.
+ *                      Pre-sows virtual fields created by isField cards.
+ *                      Example: { 'cherry-orchard-e068': { crop: 'wood', cropCount: 1 } }
  *   farmyard         - Object with layout options:
  *       rooms        - Location of additional rooms beyond the default rooms.
  *       roomType     - One of 'wood', 'clay', 'stone'. Default: 'wood'
@@ -453,10 +456,26 @@ TestUtil.setPlayerBoard = function(game, playerName, playerState) {
   TestUtil.setPlayerMajorImprovements(game, player, playerState.majorImprovements || [])
 
   // Register card-provided action spaces for played minor improvements
+  // and create virtual fields for isField cards
   for (const cardId of playerState.minorImprovements || []) {
     const card = game.cards.byId(cardId)
     if (card.definition.providesActionSpace) {
       game.registerCardActionSpace(player, card)
+    }
+    if (card.definition.isField && card.definition.onPlay) {
+      card.definition.onPlay(game, player)
+    }
+  }
+
+  // Pre-sow virtual fields if specified
+  if (playerState.virtualFields) {
+    for (const [fieldId, fieldState] of Object.entries(playerState.virtualFields)) {
+      const vf = player.getVirtualField(fieldId)
+      if (!vf) {
+        throw new Error(`Virtual field "${fieldId}" not found — is the card in minorImprovements?`)
+      }
+      vf.crop = fieldState.crop
+      vf.cropCount = fieldState.cropCount
     }
   }
 

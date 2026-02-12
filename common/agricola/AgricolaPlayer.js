@@ -182,6 +182,26 @@ class AgricolaPlayer extends BasePlayer {
     return this.virtualFields.filter(f => f.crop && f.cropCount > 0)
   }
 
+  canSowAnything() {
+    const emptyFields = this.getEmptyFields()
+    if (emptyFields.length === 0) {
+      return false
+    }
+    if (this.grain >= 1 || this.vegetables >= 1) {
+      return true
+    }
+    // Check if any virtual field accepts non-standard crops the player has
+    return this.getEmptyVirtualFields().some(vf => {
+      if (vf.cropRestriction === 'wood') {
+        return this.wood >= 1
+      }
+      if (vf.cropRestriction === 'stone') {
+        return this.stone >= 1
+      }
+      return false
+    })
+  }
+
   canSowVirtualField(fieldId, cropType) {
     const field = this.getVirtualField(fieldId)
     if (!field) {
@@ -674,7 +694,7 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   harvestFields() {
-    const harvested = { grain: 0, vegetables: 0, wood: 0 }
+    const harvested = { grain: 0, vegetables: 0, wood: 0, stone: 0 }
     const virtualFieldHarvests = []  // Track virtual field harvests for callbacks
 
     // Harvest regular fields
@@ -715,6 +735,7 @@ class AgricolaPlayer extends BasePlayer {
     this.addResource('grain', harvested.grain)
     this.addResource('vegetables', harvested.vegetables)
     this.addResource('wood', harvested.wood)
+    this.addResource('stone', harvested.stone)
 
     return { harvested, virtualFieldHarvests }
   }

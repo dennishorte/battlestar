@@ -838,7 +838,21 @@ class AgricolaActionManager extends BaseActionManager {
       const canSowGrain = player.grain >= 1
       const canSowVeg = player.vegetables >= 1
 
-      if (!canSowGrain && !canSowVeg) {
+      // Check if any virtual field can be sown with non-standard crops (wood, stone)
+      const canSowVirtualField = emptyVirtualFields.some(vf => {
+        if (!vf.cropRestriction) {
+          return canSowGrain || canSowVeg
+        }
+        if (vf.cropRestriction === 'wood') {
+          return player.wood >= 1
+        }
+        if (vf.cropRestriction === 'stone') {
+          return player.stone >= 1
+        }
+        return canSowGrain || canSowVeg
+      })
+
+      if (!canSowGrain && !canSowVeg && !canSowVirtualField) {
         break
       }
 
@@ -998,17 +1012,30 @@ class AgricolaActionManager extends BaseActionManager {
 
     const canSowGrain = player.grain >= 1
     const canSowVeg = player.vegetables >= 1
+    const regularEmptyFields = emptyFields.filter(f => !f.isVirtualField)
+    const emptyVirtualFields = player.getEmptyVirtualFields()
 
-    if (!canSowGrain && !canSowVeg) {
+    // Check if any virtual field can be sown with non-standard crops (wood, stone)
+    const canSowVirtualField = emptyVirtualFields.some(vf => {
+      if (!vf.cropRestriction) {
+        return canSowGrain || canSowVeg
+      }
+      if (vf.cropRestriction === 'wood') {
+        return player.wood >= 1
+      }
+      if (vf.cropRestriction === 'stone') {
+        return player.stone >= 1
+      }
+      return canSowGrain || canSowVeg
+    })
+
+    if (!canSowGrain && !canSowVeg && !canSowVirtualField) {
       this.log.add({
         template: '{player} has no crops to sow',
         args: { player },
       })
       return false
     }
-
-    const regularEmptyFields = emptyFields.filter(f => !f.isVirtualField)
-    const emptyVirtualFields = player.getEmptyVirtualFields()
 
     const selector = {
       type: 'select',
@@ -1134,7 +1161,7 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   sowAndOrBake(player) {
-    const canSow = player.getEmptyFields().length > 0 && (player.grain >= 1 || player.vegetables >= 1)
+    const canSow = player.canSowAnything()
     const canBake = player.hasBakingAbility() && player.grain >= 1
 
     if (!canSow && !canBake) {
@@ -1159,7 +1186,7 @@ class AgricolaActionManager extends BaseActionManager {
 
   plowAndOrSow(player) {
     const canPlow = player.getValidPlowSpaces().length > 0
-    const canSow = player.getEmptyFields().length > 0 && (player.grain >= 1 || player.vegetables >= 1)
+    const canSow = player.canSowAnything()
 
     if (!canPlow && !canSow) {
       this.log.addDoNothing(player, 'plow or sow')
