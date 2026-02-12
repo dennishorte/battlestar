@@ -1333,10 +1333,23 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     // Occupation cost: first is free, subsequent cost 1 food each
-    // Action spaces like Lessons B override with a fixed cost (e.g., 2 food always)
-    const baseFoodCost = options.free ? 0
-      : options.costOverride != null ? options.costOverride
-        : (player.getOccupationCount() === 0 ? 0 : 1)
+    // Action spaces like Lessons B/C override with a fixed cost (e.g., 2 food)
+    // but the first two occupations may use a reduced cost (firstTwoCost)
+    let baseFoodCost
+    if (options.free) {
+      baseFoodCost = 0
+    }
+    else if (options.costOverride != null) {
+      if (options.firstTwoCost != null && player.getOccupationCount() < 2) {
+        baseFoodCost = options.firstTwoCost
+      }
+      else {
+        baseFoodCost = options.costOverride
+      }
+    }
+    else {
+      baseFoodCost = player.getOccupationCount() === 0 ? 0 : 1
+    }
     let costObj = baseFoodCost > 0 ? { food: baseFoodCost } : {}
 
     // Apply modifyOccupationCost hooks (e.g., ForestSchool: food → woodOrFood)
@@ -2128,7 +2141,10 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     if (action.allowsOccupation) {
-      this.playOccupation(player, { costOverride: action.occupationCost })
+      this.playOccupation(player, {
+        costOverride: action.occupationCost,
+        firstTwoCost: action.firstTwoOccupationsCost,
+      })
     }
 
     // 5-6 player expansion action handlers
