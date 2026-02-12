@@ -13,10 +13,37 @@ module.exports = {
   onActionSpaceUsed(game, player) {
     const round = game.state.round
     if (round >= 3 && round <= 5) {
-      game.actions.offerRenovation(player, this)
+      if (player.canRenovate()) {
+        player.renovate()
+        game.log.add({
+          template: '{player} renovates using {card}',
+          args: { player, card: this },
+        })
+      }
     }
     else if (round >= 6 && round <= 8) {
-      game.actions.offerPioneeringSpiritChoice(player, this)
+      const selection = game.actions.choose(player, [
+        'Take 1 vegetable',
+        'Take 1 wild boar',
+        'Take 1 cattle',
+      ], {
+        title: 'Pioneering Spirit',
+        min: 1,
+        max: 1,
+      })
+      if (selection[0] === 'Take 1 vegetable') {
+        player.addResource('vegetables', 1)
+      }
+      else if (selection[0] === 'Take 1 wild boar') {
+        player.addAnimals('boar', 1)
+      }
+      else if (selection[0] === 'Take 1 cattle') {
+        player.addAnimals('cattle', 1)
+      }
+      game.log.add({
+        template: '{player} uses Pioneering Spirit to get {choice}',
+        args: { player, choice: selection[0].toLowerCase() },
+      })
     }
   },
 }

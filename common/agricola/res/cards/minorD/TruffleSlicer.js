@@ -11,7 +11,22 @@ module.exports = {
   onAction(game, player, actionId) {
     if ((actionId === 'take-wood' || actionId === 'copse' || actionId === 'take-3-wood' || actionId === 'take-2-wood') &&
           player.getTotalAnimals('boar') >= 1 && player.food >= 1) {
-      game.actions.offerTruffleSlicer(player, this)
+      const selection = game.actions.choose(player, [
+        'Pay 1 food for 1 bonus point',
+        'Skip',
+      ], {
+        title: 'Truffle Slicer',
+        min: 1,
+        max: 1,
+      })
+      if (selection[0] !== 'Skip') {
+        player.payCost({ food: 1 })
+        player.bonusPoints = (player.bonusPoints || 0) + 1
+        game.log.add({
+          template: '{player} pays 1 food for 1 bonus point using {card}',
+          args: { player, card: this },
+        })
+      }
     }
   },
 }

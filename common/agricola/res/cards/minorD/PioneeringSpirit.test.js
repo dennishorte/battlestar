@@ -23,4 +23,27 @@ describe('Pioneering Spirit', () => {
       },
     })
   })
+
+  test('provides choice of vegetable, boar, or cattle in rounds 6-8', () => {
+    const game = t.fixture({ cardSets: ['minorD', 'minorImprovementA', 'test'] })
+    t.setBoard(game, {
+      round: 6,
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['pioneering-spirit-d023'],
+      },
+    })
+    game.run()
+
+    // Dennis uses Pioneering Spirit → choose vegetable
+    t.choose(game, 'Pioneering Spirit')
+    t.choose(game, 'Take 1 vegetable')
+
+    t.testBoard(game, {
+      dennis: {
+        vegetables: 1,
+        minorImprovements: ['pioneering-spirit-d023'],
+      },
+    })
+  })
 })
