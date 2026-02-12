@@ -11,7 +11,22 @@ module.exports = {
   onAction(game, player, actionId) {
     if (actionId === 'take-clay' || actionId === 'take-clay-2') {
       if (player.clay >= 1) {
-        game.actions.offerClayDeposit(player, this, actionId)
+        const selection = game.actions.choose(player, [
+          'Exchange 1 clay for 1 bonus point',
+          'Skip',
+        ], {
+          title: 'Clay Deposit',
+          min: 1,
+          max: 1,
+        })
+        if (selection[0] !== 'Skip') {
+          player.payCost({ clay: 1 })
+          player.bonusPoints = (player.bonusPoints || 0) + 1
+          game.log.add({
+            template: '{player} exchanges 1 clay for 1 bonus point using {card}',
+            args: { player, card: this },
+          })
+        }
       }
     }
   },

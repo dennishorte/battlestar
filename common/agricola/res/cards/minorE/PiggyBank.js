@@ -9,6 +9,23 @@ module.exports = {
   storedResource: "food",
   enablesFreeMajor: { cost: 6 },
   onWorkPhaseEnd(game, player) {
-    game.actions.offerPiggyBankDeposit(player, this)
+    if (player.food >= 1) {
+      const selection = game.actions.choose(player, [
+        'Store 1 food on Piggy Bank',
+        'Skip',
+      ], {
+        title: 'Piggy Bank',
+        min: 1,
+        max: 1,
+      })
+      if (selection[0] !== 'Skip') {
+        player.payCost({ food: 1 })
+        this.stored = (this.stored || 0) + 1
+        game.log.add({
+          template: '{player} stores 1 food on {card} ({amount} total)',
+          args: { player, card: this, amount: this.stored },
+        })
+      }
+    }
   },
 }

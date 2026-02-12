@@ -11,7 +11,22 @@ module.exports = {
   cruditeEffect: true,
   onPlay(game, player) {
     if (player.food >= 3) {
-      game.actions.offerCruditePurchase(player, this)
+      const selection = game.actions.choose(player, [
+        'Buy 1 vegetable for 3 food',
+        'Skip',
+      ], {
+        title: 'Crudité',
+        min: 1,
+        max: 1,
+      })
+      if (selection[0] !== 'Skip') {
+        player.payCost({ food: 3 })
+        player.addResource('vegetables', 1)
+        game.log.add({
+          template: '{player} buys 1 vegetable using {card}',
+          args: { player, card: this },
+        })
+      }
     }
   },
 }

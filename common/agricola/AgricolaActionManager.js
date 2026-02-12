@@ -75,7 +75,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     this.game.registerCardActionSpace(player, card)
-    this.game.callPlayerCardHook(player, 'onBuildImprovement', chosenCost)
+    this.game.callPlayerCardHook(player, 'onBuildImprovement', chosenCost, card)
     this.maybePassLeft(player, cardId)
   }
 
@@ -807,6 +807,8 @@ class AgricolaActionManager extends BaseActionManager {
       args: { player, row, col },
     })
 
+    this.game.callPlayerCardHook(player, 'onPlowField')
+
     return true
   }
 
@@ -1108,6 +1110,8 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   bakeBread(player) {
+    this.game.callPlayerCardHook(player, 'onBeforeBake')
+
     if (!player.hasBakingAbility()) {
       this.log.add({
         template: '{player} has no baking improvement',
@@ -1467,7 +1471,7 @@ class AgricolaActionManager extends BaseActionManager {
       }
 
       // Call onBuildImprovement hooks (BrickHammer checks clay cost)
-      this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost)
+      this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost, imp)
 
       if (imp.upgradesFrom && imp.upgradesFrom.some(id => id.startsWith('fireplace'))) {
         this.game.callPlayerCardHook(player, 'onUpgradeFireplace')
@@ -1840,7 +1844,7 @@ class AgricolaActionManager extends BaseActionManager {
               imp.callHook('onBuy', this.game, player)
             }
 
-            this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost)
+            this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost, imp)
             return improvementId
           }
         }
@@ -2071,7 +2075,7 @@ class AgricolaActionManager extends BaseActionManager {
           }
 
           // Call onBuildImprovement hooks (BrickHammer checks clay cost)
-          this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost)
+          this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost, imp)
 
           if (imp.upgradesFrom && imp.upgradesFrom.some(id => id.startsWith('fireplace'))) {
             this.game.callPlayerCardHook(player, 'onUpgradeFireplace')

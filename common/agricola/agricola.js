@@ -1179,6 +1179,8 @@ Agricola.prototype.workPhase = function() {
     currentPlayerIndex = (currentPlayerIndex + 1) % playerList.length
   }
 
+  this.callCardHook('onWorkPhaseEnd')
+
   this.log.outdent()
 }
 
