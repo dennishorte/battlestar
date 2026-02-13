@@ -385,4 +385,7 @@ router.post('/stats/agricola', gameController.stats_agricola)
 router.post('/notes/save', gameController.saveNotes)
 router.post('/notes/fetch', gameController.fetchNotes)
 
+router.post('/card-order/save', gameController.saveCardOrder)
+router.post('/card-order/fetch', gameController.fetchCardOrder)
+
 export default router

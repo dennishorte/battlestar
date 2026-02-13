@@ -187,4 +187,22 @@ Game.getNotes = async function(gameId, playerName) {
   return game?.notes?.[playerName] || ''
 }
 
+Game.saveCardOrder = async function(gameId, playerName, cardOrder) {
+  // Limit to 500 entries
+  const order = (cardOrder || []).slice(0, 500)
+
+  await gameCollection.updateOne(
+    { _id: gameId },
+    { $set: { [`cardOrder.${playerName}`]: order } }
+  )
+}
+
+Game.getCardOrder = async function(gameId, playerName) {
+  const game = await gameCollection.findOne(
+    { _id: gameId },
+    { projection: { [`cardOrder.${playerName}`]: 1 } }
+  )
+  return game?.cardOrder?.[playerName] || []
+}
+
 export default Game
