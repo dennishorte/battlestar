@@ -261,3 +261,33 @@ export const fetchNotes = async (req, res, next) => {
     next(err)
   }
 }
+
+export const saveCardOrder = async (req, res, next) => {
+  try {
+    const { gameId, cardOrder } = req.body
+    const playerName = req.user.name
+
+    await db.game.saveCardOrder(gameId, playerName, cardOrder)
+
+    res.json({ status: 'success' })
+  }
+  catch (err) {
+    logger.error(`Error saving card order: ${err.message}`)
+    next(err)
+  }
+}
+
+export const fetchCardOrder = async (req, res, next) => {
+  try {
+    const { gameId } = req.body
+    const playerName = req.user.name
+
+    const cardOrder = await db.game.getCardOrder(gameId, playerName)
+
+    res.json({ status: 'success', cardOrder })
+  }
+  catch (err) {
+    logger.error(`Error fetching card order: ${err.message}`)
+    next(err)
+  }
+}

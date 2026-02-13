@@ -129,6 +129,9 @@
         :player="player"
         :startExpanded="true"
         persistKey="agricola-hand-expanded"
+        :sortable="true"
+        :cardOrder="handCardOrder"
+        @reorder="onHandReorder"
       />
 
       <!-- Score -->
@@ -153,6 +156,7 @@ import AnimalDisplay from './AnimalDisplay.vue'
 import CardSection from './CardSection.vue'
 import FarmyardGrid from './FarmyardGrid.vue'
 import ResourceBar from './ResourceBar.vue'
+import axiosWrapper from '@/util/axiosWrapper.js'
 
 export default {
   name: 'PlayerTableau',
@@ -171,6 +175,26 @@ export default {
       type: Object,
       required: true,
     },
+  },
+
+  data() {
+    return {
+      handCardOrder: [],
+      saveTimer: null,
+    }
+  },
+
+  mounted() {
+    if (this.player.name === this.actor.name) {
+      this.fetchCardOrder()
+    }
+  },
+
+  beforeUnmount() {
+    if (this.saveTimer) {
+      clearTimeout(this.saveTimer)
+      this.saveCardOrderNow()
+    }
   },
 
   computed: {
@@ -391,6 +415,41 @@ export default {
         case 'grain': return 'grain only'
         case 'wood': return 'wood only'
         default: return field.cropRestriction
+      }
+    },
+
+    async fetchCardOrder() {
+      try {
+        const response = await axiosWrapper.post('/api/game/card-order/fetch', {
+          gameId: this.game._id,
+        })
+        this.handCardOrder = response.cardOrder || []
+      }
+      catch (err) {
+        console.error('Error fetching card order:', err)
+      }
+    },
+
+    onHandReorder(newOrder) {
+      this.handCardOrder = newOrder
+      // Debounce save to server
+      if (this.saveTimer) {
+        clearTimeout(this.saveTimer)
+      }
+      this.saveTimer = setTimeout(() => {
+        this.saveCardOrderNow()
+      }, 1000)
+    },
+
+    async saveCardOrderNow() {
+      try {
+        await axiosWrapper.post('/api/game/card-order/save', {
+          gameId: this.game._id,
+          cardOrder: this.handCardOrder,
+        })
+      }
+      catch (err) {
+        console.error('Error saving card order:', err)
       }
     },
 
