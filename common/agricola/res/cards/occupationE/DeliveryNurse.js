@@ -6,13 +6,13 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Once this game, if you have all types of animals, use any \"Family Growth\" action space even without room.",
-  onPlay(_game, _player) {
-    this.used = false
+  onPlay(game, _player) {
+    game.cardState(this.id).used = false
   },
-  allowsFamilyGrowthWithoutRoom(player) {
-    return !this.used && player.hasAllAnimalTypes()
+  allowsFamilyGrowthWithoutRoom(game, player) {
+    return !game.cardState(this.id).used && player.hasAllAnimalTypes()
   },
-  onFamilyGrowthWithoutRoom(_game, _player) {
-    this.used = true
+  onFamilyGrowthWithoutRoom(game, _player) {
+    game.cardState(this.id).used = true
   },
 }

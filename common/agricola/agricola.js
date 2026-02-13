@@ -281,6 +281,20 @@ Agricola.prototype.getActionById = function(actionId) {
 }
 
 // ---------------------------------------------------------------------------
+// Per-game card state (avoids mutating singleton card definitions)
+// ---------------------------------------------------------------------------
+
+Agricola.prototype.cardState = function(id) {
+  if (!this.state._cardState) {
+    this.state._cardState = {}
+  }
+  if (!this.state._cardState[id]) {
+    this.state._cardState[id] = {}
+  }
+  return this.state._cardState[id]
+}
+
+// ---------------------------------------------------------------------------
 // Accumulation space helpers (used by card hooks like TreeCutter, Loudmouth)
 // ---------------------------------------------------------------------------
 
@@ -357,6 +371,26 @@ Agricola.prototype.isAccumulationSpaceWith5PlusGoods = function(actionId) {
   const last = this.state.lastAccumulated
   const amount = (last && last.actionId === actionId) ? last.amount : (actionState?.accumulated || 0)
   return amount >= 5
+}
+
+Agricola.prototype.isRoundActionSpace = function(actionId) {
+  const action = res.getActionById(actionId)
+  return !!(action && action.stage)
+}
+
+Agricola.prototype.actionGivesReed = function(actionId) {
+  const action = res.getActionById(actionId)
+  if (!action) {
+    return false
+  }
+  return !!(action.accumulates?.reed || action.gives?.reed)
+}
+
+Agricola.prototype.isLastInTurnOrder = function(player) {
+  const players = this.players.all()
+  const startIdx = players.findIndex(p => p.name === this.state.startingPlayer)
+  const lastIdx = (startIdx + players.length - 1) % players.length
+  return players[lastIdx].name === player.name
 }
 
 Agricola.prototype.initializeRoundCards = function() {
@@ -1414,9 +1448,18 @@ Agricola.prototype.harvestPhase = function() {
   this.log.add({ template: '=== Harvest ===' })
   this.log.indent()
 
+  // Call onHarvestStart hooks (e.g., Lunchtime Beer offers to skip phases)
+  this.state.skipFieldAndBreeding = []
+  for (const player of this.players.all()) {
+    this.callPlayerCardHook(player, 'onHarvestStart')
+  }
+
   this.fieldPhase()
   this.feedingPhase()
   this.breedingPhase()
+
+  // Clean up skip flags
+  delete this.state.skipFieldAndBreeding
 
   // Call onHarvestEnd hooks (e.g., ValueAssets offers to buy building resources)
   this.callCardHook('onHarvestEnd')
@@ -1446,6 +1489,10 @@ Agricola.prototype.fieldPhase = function() {
   this.state.lastHarvestRound = this.state.round
 
   for (const player of this.players.all()) {
+    if (this.state.skipFieldAndBreeding?.includes(player.name)) {
+      continue
+    }
+
     // Call onBeforeFieldPhase hooks (e.g., Straw Manure adds vegetables before harvest)
     this.callPlayerCardHook(player, 'onBeforeFieldPhase')
 
@@ -1469,6 +1516,9 @@ Agricola.prototype.fieldPhase = function() {
       })
     }
 
+    if (harvested.grain > 0) {
+      this.callPlayerCardHook(player, 'onHarvestGrain', harvested.grain)
+    }
     if (harvested.vegetables > 0) {
       this.callPlayerCardHook(player, 'onHarvestVegetables', harvested.vegetables)
     }
@@ -1613,6 +1663,10 @@ Agricola.prototype.breedingPhase = function() {
   this.log.indent()
 
   for (const player of this.players.all()) {
+    if (this.state.skipFieldAndBreeding?.includes(player.name)) {
+      continue
+    }
+
     const bred = player.breedAnimals()
 
     const totalBred = bred.sheep + bred.boar + bred.cattle

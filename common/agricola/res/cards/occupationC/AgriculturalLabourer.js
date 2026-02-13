@@ -6,13 +6,14 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Place 8 clay on this card. For each grain you obtain, you also get 1 clay from this card.",
-  onPlay(_game, _player) {
-    this.clay = 8
+  onPlay(game, _player) {
+    game.cardState(this.id).clay = 8
   },
   onObtainGrain(game, player, amount) {
-    const clayToGive = Math.min(amount, this.clay || 0)
+    const s = game.cardState(this.id)
+    const clayToGive = Math.min(amount, s.clay || 0)
     if (clayToGive > 0) {
-      this.clay -= clayToGive
+      s.clay -= clayToGive
       player.addResource('clay', clayToGive)
       game.log.add({
         template: '{player} gets {amount} clay from Agricultural Labourer',

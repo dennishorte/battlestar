@@ -30,6 +30,6 @@ describe('Upholstery', () => {
     // Check scoring: 1 stored reed = 1 bonus point
     const dennis = game.players.byName('dennis')
     const card = dennis.cards.byId('upholstery-e031')
-    expect(card.callHook('getEndGamePoints', dennis)).toBe(1)
+    expect(card.callHook('getEndGamePoints', dennis, game)).toBe(1)
   })
 })

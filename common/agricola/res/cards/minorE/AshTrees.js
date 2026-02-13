@@ -9,7 +9,7 @@ module.exports = {
   text: "When you play this card, immediately place (up to) 5 fences from your supply on it. When you build fences, fences taken from this card cost you nothing.",
   onPlay(game, player) {
     const fencesToPlace = Math.min(5, player.fencesRemaining || 0)
-    this.storedFences = fencesToPlace
+    game.cardState(this.id).storedFences = fencesToPlace
     if (fencesToPlace > 0) {
       player.fencesRemaining -= fencesToPlace
       game.log.add({
@@ -18,7 +18,7 @@ module.exports = {
       })
     }
   },
-  getFreeFences() {
-    return this.storedFences || 0
+  getFreeFences(game) {
+    return game.cardState(this.id).storedFences || 0
   },
 }

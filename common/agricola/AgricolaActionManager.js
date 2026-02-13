@@ -839,6 +839,7 @@ class AgricolaActionManager extends BaseActionManager {
 
     let sowedAny = false
     let sowedVegetables = false
+    const sowedTypes = []
 
     while (true) {
       const currentEmptyFields = player.getEmptyFields()
@@ -934,6 +935,7 @@ class AgricolaActionManager extends BaseActionManager {
 
         player.sowField(row, col, cropType)
         sowedAny = true
+        sowedTypes.push(cropType)
         if (cropType === 'vegetables') {
           sowedVegetables = true
         }
@@ -960,6 +962,7 @@ class AgricolaActionManager extends BaseActionManager {
 
         player.sowVirtualField(fieldId, cropType)
         sowedAny = true
+        sowedTypes.push(cropType)
         if (cropType === 'vegetables') {
           sowedVegetables = true
         }
@@ -991,6 +994,7 @@ class AgricolaActionManager extends BaseActionManager {
 
           player.sowField(row, col, cropType)
           sowedAny = true
+          sowedTypes.push(cropType)
           if (cropType === 'vegetables') {
             sowedVegetables = true
           }
@@ -1012,7 +1016,7 @@ class AgricolaActionManager extends BaseActionManager {
       this.log.addDoNothing(player, 'sow')
     }
     else {
-      this.game.callPlayerCardHook(player, 'onAfterSow')
+      this.game.callPlayerCardHook(player, 'onAfterSow', sowedTypes)
     }
 
     return true
@@ -1175,7 +1179,7 @@ class AgricolaActionManager extends BaseActionManager {
     })
 
     // Call onBake hooks (Dutch Windmill gives bonus food after harvest)
-    this.game.callPlayerCardHook(player, 'onBake')
+    this.game.callPlayerCardHook(player, 'onBake', amount)
 
     return true
   }
@@ -1622,6 +1626,9 @@ class AgricolaActionManager extends BaseActionManager {
     if (!cardId) {
       return false
     }
+
+    // Fire onBeforePlayOccupation hooks (e.g. WhaleOil: get stored food before paying)
+    this.game.callPlayerCardHook(player, 'onBeforePlayOccupation')
 
     // Pay the occupation cost
     if (cost > 0) {

@@ -8,6 +8,22 @@ module.exports = {
   prereqs: { personOnAction: "grain-utilization" },
   text: "Immediately return your person on the \"Grain Utilization\" action space home; you can place it again later this round.",
   onPlay(game, player) {
-    game.actions.returnWorkerFromAction(player, 'grain-utilization')
+    const actionId = 'sow-bake' // Grain Utilization
+    const state = game.state.actionSpaces[actionId]
+    if (!state || state.occupiedBy !== player.name) {
+      game.log.add({
+        template: '{player} has no person on Grain Utilization for {card}',
+        args: { player, card: this },
+      })
+      return
+    }
+
+    // Return worker from Grain Utilization
+    state.occupiedBy = null
+    player.availableWorkers += 1
+    game.log.add({
+      template: '{player} returns person from Grain Utilization using {card}',
+      args: { player, card: this },
+    })
   },
 }

@@ -9,7 +9,7 @@ module.exports = {
   storedResource: "reed",
   onBuildImprovement(game, player, cost, card) {
     if (card && card.id !== this.id) {
-      const stored = this.stored || 0
+      const stored = game.cardState(this.id).stored || 0
       if (stored < player.getRoomCount() && player.reed >= 1) {
         const selection = game.actions.choose(player, [
           'Store 1 reed for 1 bonus point',
@@ -21,16 +21,17 @@ module.exports = {
         })
         if (selection[0] !== 'Skip') {
           player.payCost({ reed: 1 })
-          this.stored = (this.stored || 0) + 1
+          const s = game.cardState(this.id)
+          s.stored = (s.stored || 0) + 1
           game.log.add({
             template: '{player} stores 1 reed on {card} for 1 bonus point ({amount} total)',
-            args: { player, card: this, amount: this.stored },
+            args: { player, card: this, amount: s.stored },
           })
         }
       }
     }
   },
-  getEndGamePoints() {
-    return this.stored || 0
+  getEndGamePoints(_player, game) {
+    return game.cardState(this.id).stored || 0
   },
 }

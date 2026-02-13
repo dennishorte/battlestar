@@ -9,21 +9,22 @@ module.exports = {
   allowsAnytimeAction: true,
   mixedAnimals: true,
   holdsAnimals: { any: true },
-  onPlay(_game, _player) {
-    this.wood = 0
+  onPlay(game, _player) {
+    game.cardState(this.id).wood = 0
   },
   canPlaceWood(player) {
     return player.wood >= 1
   },
   placeWood(game, player, amount) {
     player.payCost({ wood: amount })
-    this.wood = (this.wood || 0) + amount
+    const s = game.cardState(this.id)
+    s.wood = (s.wood || 0) + amount
     game.log.add({
       template: '{player} places {amount} wood on Pen Builder',
       args: { player, amount },
     })
   },
-  getAnimalCapacity() {
-    return (this.wood || 0) * 2
+  getAnimalCapacity(game) {
+    return (game.cardState(this.id).wood || 0) * 2
   },
 }

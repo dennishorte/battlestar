@@ -29,7 +29,7 @@ describe('Rod Collection', () => {
     // Check scoring: stored 2, points for 2nd (not 1st) = 1
     const dennis = game.players.byName('dennis')
     const card = dennis.cards.byId('rod-collection-e038')
-    expect(card.callHook('getEndGamePoints', dennis)).toBe(1)
+    expect(card.callHook('getEndGamePoints', dennis, game)).toBe(1)
   })
 
   test('skip storing wood', () => {

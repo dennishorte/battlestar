@@ -9,11 +9,12 @@ module.exports = {
   storedResource: "food",
   onAction(game, player, actionId) {
     if (actionId === 'fishing') {
-      this.stored = (this.stored || 0) + 1
+      const s = game.cardState(this.id)
+      s.stored = (s.stored || 0) + 1
     }
   },
   onBeforePlayOccupation(game, player) {
-    const stored = this.stored || 0
+    const stored = game.cardState(this.id).stored || 0
     if (stored > 0) {
       player.addResource('food', stored)
       game.log.add({

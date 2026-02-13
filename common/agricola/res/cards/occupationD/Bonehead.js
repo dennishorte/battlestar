@@ -7,9 +7,10 @@ module.exports = {
   players: "1+",
   text: "When you play this card, immediately place 6 wood on it. Immediately after each time you play a card from your hand, including this one, you get 1 wood from this card.",
   onPlay(game, player) {
-    this.wood = 6
-    if (this.wood > 0) {
-      this.wood--
+    const s = game.cardState(this.id)
+    s.wood = 6
+    if (s.wood > 0) {
+      s.wood--
       player.addResource('wood', 1)
       game.log.add({
         template: '{player} gets 1 wood from Bonehead',
@@ -18,8 +19,9 @@ module.exports = {
     }
   },
   onPlayCard(game, player) {
-    if ((this.wood || 0) > 0) {
-      this.wood--
+    const s = game.cardState(this.id)
+    if ((s.wood || 0) > 0) {
+      s.wood--
       player.addResource('wood', 1)
       game.log.add({
         template: '{player} gets 1 wood from Bonehead',

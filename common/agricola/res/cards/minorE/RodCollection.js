@@ -25,7 +25,8 @@ module.exports = {
       if (selection[0] !== 'Skip') {
         const amount = parseInt(selection[0].match(/\d+/)[0])
         player.payCost({ wood: amount })
-        this.stored = (this.stored || 0) + amount
+        const s = game.cardState(this.id)
+        s.stored = (s.stored || 0) + amount
         game.log.add({
           template: '{player} stores {amount} wood on {card}',
           args: { player, amount, card: this },
@@ -33,8 +34,8 @@ module.exports = {
       }
     }
   },
-  getEndGamePoints(_player) {
-    const stored = this.stored || 0
+  getEndGamePoints(_player, game) {
+    const stored = game.cardState(this.id).stored || 0
     // Exclude 1st, 4th, 7th, 10th (indices 0, 3, 6, 9)
     let points = 0
     for (let i = 1; i <= stored; i++) {

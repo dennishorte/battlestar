@@ -341,7 +341,7 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
     for (const card of this.getActiveCards()) {
-      if (card.definition.providesRoom) {
+      if (card.definition.providesRoom || this.game.cardState(card.definition.id).providesRoom) {
         count++
       }
     }

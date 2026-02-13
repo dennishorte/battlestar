@@ -6,7 +6,7 @@ module.exports = {
   type: "minor",
   cost: {},
   text: "Each time you sow, you get 1 food for every different type of good that you sow.",
-  onSow(game, player, types) {
+  onAfterSow(game, player, types) {
     const uniqueTypes = new Set(types).size
     if (uniqueTypes > 0) {
       player.addResource('food', uniqueTypes)

@@ -6,8 +6,8 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Place (up to) 1 stable each on \"Grain Seeds\", \"Farmland\", \"Day Laborer\", and \"Farm Expansion\". Build the stable at no cost when another player uses that action space.",
-  onPlay(_game, _player) {
-    this.stables = {
+  onPlay(game, _player) {
+    game.cardState(this.id).stables = {
       'take-grain': true,
       'plow-field': true,
       'day-laborer': true,
@@ -15,8 +15,9 @@ module.exports = {
     }
   },
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
-    if (actingPlayer.name !== cardOwner.name && this.stables && this.stables[actionId]) {
-      delete this.stables[actionId]
+    const s = game.cardState(this.id)
+    if (actingPlayer.name !== cardOwner.name && s.stables && s.stables[actionId]) {
+      delete s.stables[actionId]
       game.actions.buildFreeStable(cardOwner, this)
     }
   },

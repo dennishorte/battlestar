@@ -12,8 +12,9 @@ module.exports = {
     return player.getOccupationCount() >= required
   },
   onPlayOccupation(game, player) {
-    if (!this.providesRoom && this.checkRoomCondition(player, game.isDraftVariant)) {
-      this.providesRoom = true
+    const s = game.cardState(this.id)
+    if (!s.providesRoom && this.checkRoomCondition(player, game.isDraftVariant)) {
+      s.providesRoom = true
       game.log.add({
         template: '{player} activates Reader room',
         args: { player },

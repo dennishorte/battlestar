@@ -20,10 +20,11 @@ module.exports = {
       })
       if (selection[0] !== 'Skip') {
         player.payCost({ food: 1 })
-        this.stored = (this.stored || 0) + 1
+        const s = game.cardState(this.id)
+        s.stored = (s.stored || 0) + 1
         game.log.add({
           template: '{player} stores 1 food on {card} ({amount} total)',
-          args: { player, card: this, amount: this.stored },
+          args: { player, card: this, amount: s.stored },
         })
       }
     }

@@ -6,13 +6,14 @@ module.exports = {
   type: "occupation",
   players: "3+",
   text: "Place 1 vegetable, 1 wild boar, 1 stone, and 1 cattle on this card. Each time you use an action space card on round spaces 8 to 11, you get the corresponding good from this card.",
-  onPlay(_game, _player) {
-    this.goods = { 8: 'vegetables', 9: 'boar', 10: 'stone', 11: 'cattle' }
+  onPlay(game, _player) {
+    game.cardState(this.id).goods = { 8: 'vegetables', 9: 'boar', 10: 'stone', 11: 'cattle' }
   },
   onAction(game, player, actionId) {
+    const s = game.cardState(this.id)
     const round = game.getActionSpaceRound(actionId)
-    if (this.goods && this.goods[round]) {
-      const good = this.goods[round]
+    if (s.goods && s.goods[round]) {
+      const good = s.goods[round]
       if (good === 'boar' || good === 'cattle') {
         if (player.canPlaceAnimals(good, 1)) {
           player.addAnimals(good, 1)
@@ -29,7 +30,7 @@ module.exports = {
           args: { player, resource: good },
         })
       }
-      delete this.goods[round]
+      delete s.goods[round]
     }
   },
 }

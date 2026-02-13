@@ -13,7 +13,7 @@ module.exports = {
   },
   activateRoom(game, player) {
     player.payCost({ grain: 1, food: 2 })
-    this.providesRoom = true
+    game.cardState(this.id).providesRoom = true
     game.log.add({
       template: '{player} activates Den Builder room for 1 grain and 2 food',
       args: { player },

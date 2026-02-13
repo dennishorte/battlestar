@@ -10,10 +10,10 @@ module.exports = {
   onBake(game, player, grainBaked) {
     if (grainBaked > 0) {
       let bonus = 0
-      if (player.getAnimalCount('sheep') >= 1) {
+      if (player.getTotalAnimals('sheep') >= 1) {
         bonus++
       }
-      if (player.getAnimalCount('cattle') >= 1) {
+      if (player.getTotalAnimals('cattle') >= 1) {
         bonus++
       }
       if (bonus > 0) {

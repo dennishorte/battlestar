@@ -7,10 +7,10 @@ module.exports = {
   players: "1+",
   text: "Next round, each time you use a building resource accumulation space, you also get 1 food for each building resource that you take from the space.",
   onPlay(game, _player) {
-    this.activeRound = game.state.round + 1
+    game.cardState(this.id).activeRound = game.state.round + 1
   },
   onAction(game, player, actionId) {
-    if (game.state.round === this.activeRound && game.isBuildingResourceAccumulationSpace(actionId)) {
+    if (game.state.round === game.cardState(this.id).activeRound && game.isBuildingResourceAccumulationSpace(actionId)) {
       const resources = game.getAccumulatedResources(actionId)
       const total = (resources.wood || 0) + (resources.clay || 0) + (resources.reed || 0) + (resources.stone || 0)
       if (total > 0) {

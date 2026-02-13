@@ -6,19 +6,21 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Place 3 grain and 3 food on this card. Each time you use the \"Resource Market\" action space, you also get 1 grain and 1 food from this card.",
-  onPlay(_game, _player) {
-    this.grain = 3
-    this.food = 3
+  onPlay(game, _player) {
+    const s = game.cardState(this.id)
+    s.grain = 3
+    s.food = 3
   },
   onAction(game, player, actionId) {
-    if (actionId === 'resource-market' && ((this.grain || 0) > 0 || (this.food || 0) > 0)) {
-      if (this.grain > 0) {
+    const s = game.cardState(this.id)
+    if (actionId === 'resource-market' && ((s.grain || 0) > 0 || (s.food || 0) > 0)) {
+      if (s.grain > 0) {
         player.addResource('grain', 1)
-        this.grain--
+        s.grain--
       }
-      if (this.food > 0) {
+      if (s.food > 0) {
         player.addResource('food', 1)
-        this.food--
+        s.food--
       }
       game.log.add({
         template: '{player} gets resources from Retail Dealer',

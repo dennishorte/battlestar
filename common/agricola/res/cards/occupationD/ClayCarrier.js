@@ -15,13 +15,13 @@ module.exports = {
       args: { player },
     })
   },
-  canBuyClay(player, round) {
-    return player.food >= 2 && this.lastUsedRound !== round
+  canBuyClay(game, player, round) {
+    return player.food >= 2 && game.cardState(this.id).lastUsedRound !== round
   },
   buyClay(game, player) {
     player.payCost({ food: 2 })
     player.addResource('clay', 2)
-    this.lastUsedRound = game.state.round
+    game.cardState(this.id).lastUsedRound = game.state.round
     game.log.add({
       template: '{player} buys 2 clay from Clay Carrier',
       args: { player },
