@@ -26,6 +26,32 @@ describe("Seikan Tunnel", () => {
     t.testGameOver(request, 'dennis', 'Seikan Tunnel')
   })
 
+  test('dogma: win; multiple own stacks of same size', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+    t.setBoard(game,  {
+      dennis: {
+        artifact: ["Seikan Tunnel"],
+        red: {
+          cards: ['Archery', 'Construction'],
+          splay: 'left',
+        },
+        green: {
+          cards: ['Paper', 'Navigation'],
+          splay: 'up',
+        },
+      },
+      micah: {
+        green: ['Sailing'],
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, 'dogma')
+
+    t.testGameOver(request, 'dennis', 'Seikan Tunnel')
+  })
+
   test('dogma: unsplayed counts as 1', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {

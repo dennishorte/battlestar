@@ -10,24 +10,32 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const zones = game
-        .players.all()
-        .flatMap(player => game.util.colors().map(color => {
-          return {
-            player,
-            color,
-            count: game.zones.byPlayer(player, color).numVisibleCards(),
-          }
-        }))
-        .sort((l, r) => r.count - l.count)
+      const playersStackCounts = game
+        .zones
+        .colorStacks(player)
+        .map(zone => zone.numVisibleCards())
 
-      if (
-        zones[0].count > zones[1].count
-        && zones[0].player === player
-      ) {
+      const playersLargestStack = playersStackCounts
+        .sort((l, r) => r - l)
+        .slice(0)[0]
+
+      const otherPlayersStackCounts = game
+        .players
+        .other(player)
+        .flatMap(other => game
+          .zones
+          .colorStacks(other)
+          .map(zone => zone.numVisibleCards())
+        )
+
+      const otherPlayersLargestStack = otherPlayersStackCounts
+        .sort((l, r) => r - l)
+        .slice(0)[0]
+
+
+      if (playersLargestStack > otherPlayersLargestStack) {
         game.youWin(player, self.name)
       }
-
       else {
         game.log.addNoEffect()
       }
