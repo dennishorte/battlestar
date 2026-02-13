@@ -399,7 +399,7 @@ $gold: #d9631b;
   }
   .card-container.scarred {
     .card-border {
-      background-image: linear-gradient(142deg, rgba(245,151,29,1) 0%, rgba(133,50,36,1) 32%, rgba(159,172,180,1) 100%);
+      background-image: linear-gradient(142deg, rgba(245,151,29,1) 0%, rgba(0,0,0,1) 50%, rgba(245,151,29,1) 100%);
     }
   }
   .card-container.scar-face {
