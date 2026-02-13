@@ -73,9 +73,9 @@ with inline `game.actions.choose()` + direct resource manipulation, then tests w
 | CarriageTrip (c003) | C | ✅ | Inline + test |
 | TeaTime (e003) | E | ✅ | Inline + test |
 | LunchtimeBeer (e058) | E | ✅ | Inline + test (2 tests: skip or normal harvest) |
-| BasketChair (c022) | C | **STUB** | Complex worker manipulation |
-| GuestRoom (e022) | E | **STUB** | Stored food + extra person placement |
-| CookingHearthExtension (c062) | C | **STUB** | Double food from cooking conversion |
+| BasketChair (c022) | C | **BLOCKED** | Worker manipulation: move first worker, place extra person |
+| GuestRoom (e022) | E | **BLOCKED** | `enablesGuestWorker` flag not wired, `placeResourcesOnCard` not implemented |
+| CookingHearthExtension (c062) | C | **BLOCKED** | `offerCookingHearthExtension`: multi-choice doubled cooking during harvest |
 
 ### Batch 12 — Fence/Build/Complex Stubs
 
@@ -84,9 +84,9 @@ with inline `game.actions.choose()` + direct resource manipulation, then tests w
 | PoleBarns (e001) | E | ✅ | Inline + test |
 | HarvestFestivalPlanning (c072) | C | ✅ | Inline + test |
 | NailBasket (e015) | E | ✅ | Inline + test |
-| Overhaul (c001) | C | **STUB** | Raze all fences, rebuild |
-| FieldFences (c016) | C | **STUB** | Free fences adjacent to fields |
-| WorkPermit (d0??) | D | **STUB** | Schedule future worker placement |
+| Overhaul (c001) | C | **BLOCKED** | `removeAllFences` method + fence rebuild flow |
+| FieldFences (c016) | C | **BLOCKED** | Field-adjacent fence detection + cost modification |
+| WorkPermit (d022) | D | **BLOCKED** | Future-round worker scheduling infrastructure |
 
 ---
 
@@ -132,7 +132,7 @@ Some may need minor code fixes discovered during testing.
 
 | Card | Deck | Status | Notes |
 |------|------|--------|-------|
-| Cubbyhole (e052) | E | **TEST** | Hooks wired, but uses `this.stored` (needs card state fix first) |
+| Cubbyhole (e052) | E | ✅ | `onBuildRoom` fixed to pass count; feeding test written |
 | RecycledBrick (d077) | D | **BLOCKED** | `onAnyRenovateToStone` not wired |
 | Twibil (e049) | E | **BLOCKED** | `onAnyBuildRoom` not wired |
 | AshTrees (e074) | E | **BLOCKED** | `getFreeFences` not called by engine |
@@ -155,7 +155,7 @@ Some may need minor code fixes discovered during testing.
 | Card | Deck | Status | Notes |
 |------|------|--------|-------|
 | BeaverColony (e033) | E | ✅ | Test written (2 tests). `actionGivesReed` added |
-| LawnFertilizer (d011) | D | **TEST** | `modifyPastureCapacity` wired in player |
+| LawnFertilizer (d011) | D | ✅ | Signature fixed to match engine; 3 tests written |
 | AnimalBedding (e012) | E | **BLOCKED** | `modifyStableCapacity` not wired |
 | CattleFarm (c012) | C | **BLOCKED** | Card-based animal holding not supported |
 | BunkBeds (c010) | C | **BLOCKED** | `modifyHouseCapacity` not wired |
@@ -189,12 +189,12 @@ All **BLOCKED** — `plowField` ignores options, card-based fields not supported
 
 | Card | Deck | Status | Notes |
 |------|------|--------|-------|
-| Blueprint (c027) | C | **TEST** | `allowsMajorsOnMinorAction` is processed; `modifyMajorCost` is not |
+| Blueprint (c027) | C | ✅ | 6 tests written (flag + cost modifier) |
 | Recruitment (d021) | D | **BLOCKED** | `modifyMinorImprovementAction` not processed |
 | JobContract (c023) | C | **BLOCKED** | `allowsCombinedAction` not processed |
 | CarpentersYard (d0??) | D | **BLOCKED** | Flags not processed |
 | Bookcase (c0??) | C | **BLOCKED** | `onPlayOccupation` wired but needs testing |
-| Bookshelf (d0??) | D | **TEST** | `onBeforePlayOccupation` now wired |
+| Bookshelf (d049) | D | ✅ | Test written (3 food before occupation) |
 
 ### Batch 22 — Miscellaneous
 
@@ -279,11 +279,11 @@ Cards with anytime exchange, purchase, or conversion effects. Requires extending
 
 | Phase | Done | Blocked | Remaining Stubs | Total |
 |-------|------|---------|-----------------|-------|
-| 1: Stub Fixes | 11 | 1 | 6 | 18 |
-| 2: Test-Only | 17 | 37 | 2 | 60 |
+| 1: Stub Fixes | 11 | 7 | 0 | 18 |
+| 2: Test-Only | 21 | 37 | 0 | 60 |
 | 3: MinorB Infra | 0 | 11 | 0 | 11 |
 | 4: Anytime | 0 | 17 | 0 | 17 |
-| **Total** | **28** | **66** | **8** | **106** |
+| **Total** | **32** | **72** | **0** | **106** |
 
 ### Hook Wiring Status
 

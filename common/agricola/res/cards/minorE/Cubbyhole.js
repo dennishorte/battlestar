@@ -8,7 +8,7 @@ module.exports = {
   vps: 1,
   text: "For each room that you add to your house, place 1 food from the general supply on this card. At the start of each feeding phase, you get food equal to the amount on this card.",
   storedResource: "food",
-  onBuildRoom(game, player, count) {
+  onBuildRoom(game, player, _roomType, count = 1) {
     const s = game.cardState(this.id)
     s.stored = (s.stored || 0) + count
   },

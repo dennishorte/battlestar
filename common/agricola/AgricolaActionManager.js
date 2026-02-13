@@ -552,7 +552,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     // Call onBuildRoom hooks for the multi-room build
-    this.game.callPlayerCardHook(player, 'onBuildRoom', roomType)
+    this.game.callPlayerCardHook(player, 'onBuildRoom', roomType, count)
   }
 
   buildRoom(player) {
