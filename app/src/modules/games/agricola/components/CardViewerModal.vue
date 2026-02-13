@@ -261,6 +261,8 @@ export default {
 
     formatPrereqs(prereqs) {
       const parts = []
+
+      // --- Occupation checks ---
       if (prereqs.occupations !== undefined) {
         if (prereqs.occupations === 0) {
           parts.push('No occupations played')
@@ -275,8 +277,57 @@ export default {
           parts.push(`${prereqs.occupations}+ occupations`)
         }
       }
+      if (prereqs.exactlyOccupations !== undefined) {
+        parts.push(`Exactly ${prereqs.exactlyOccupations} occupations`)
+      }
+      if (prereqs.occupationsAtMost !== undefined && prereqs.occupations === undefined) {
+        parts.push(`At most ${prereqs.occupationsAtMost} occupations`)
+      }
+      if (prereqs.noOccupations) {
+        parts.push('No occupations played')
+      }
+      if (prereqs.occupationsInHand !== undefined) {
+        parts.push(`${prereqs.occupationsInHand}+ occupations in hand`)
+      }
+
+      // --- Improvement checks ---
       if (prereqs.minorImprovements !== undefined) {
         parts.push(`${prereqs.minorImprovements}+ minor improvements`)
+      }
+      if (prereqs.improvements !== undefined) {
+        parts.push(`${prereqs.improvements}+ improvements`)
+      }
+      if (prereqs.majorImprovements !== undefined) {
+        parts.push(`${prereqs.majorImprovements}+ major improvements`)
+      }
+      if (prereqs.bakingImprovement) {
+        parts.push('Baking improvement')
+      }
+      if (prereqs.cookingImprovement) {
+        parts.push('Cooking improvement')
+      }
+      if (prereqs.hasFireplaceAndCookingHearth) {
+        parts.push('Fireplace and Cooking Hearth')
+      }
+      if (prereqs.returnFireplaceOrCookingHearth) {
+        parts.push('Return Fireplace or Cooking Hearth')
+      }
+      if (prereqs.hasPotteryOrUpgrade) {
+        parts.push('Pottery or upgrade')
+      }
+      if (prereqs.majorImprovement !== undefined) {
+        parts.push(`Has ${prereqs.majorImprovement}`)
+      }
+
+      // --- Field checks ---
+      if (prereqs.fields !== undefined) {
+        parts.push(`${prereqs.fields}+ fields`)
+      }
+      if (prereqs.fieldsExactly !== undefined) {
+        parts.push(`Exactly ${prereqs.fieldsExactly} fields`)
+      }
+      if (prereqs.fieldsInLShape) {
+        parts.push('Fields in L-shape')
       }
       if (prereqs.grainFields !== undefined) {
         parts.push(`${prereqs.grainFields}+ grain fields`)
@@ -284,11 +335,55 @@ export default {
       if (prereqs.vegetableFields !== undefined) {
         parts.push(`${prereqs.vegetableFields}+ vegetable fields`)
       }
-      if (prereqs.sheep !== undefined) {
-        parts.push(`${prereqs.sheep}+ sheep`)
+      if (prereqs.plantedFields !== undefined) {
+        parts.push(`${prereqs.plantedFields}+ planted fields`)
       }
-      if (prereqs.clay !== undefined) {
-        parts.push(`${prereqs.clay}+ clay`)
+      if (prereqs.emptyFields !== undefined) {
+        parts.push(`${prereqs.emptyFields}+ empty fields`)
+      }
+      if (prereqs.unplantedFields !== undefined) {
+        parts.push(`${prereqs.unplantedFields}+ unplanted fields`)
+      }
+      if (prereqs.noFields) {
+        parts.push('No fields')
+      }
+      if (prereqs.noGrainFields) {
+        parts.push('No grain fields')
+      }
+
+      // --- Pasture and stable checks ---
+      if (prereqs.pastures !== undefined) {
+        if (prereqs.pasturesExact) {
+          parts.push(`Exactly ${prereqs.pastures} pastures`)
+        }
+        else {
+          parts.push(`${prereqs.pastures}+ pastures`)
+        }
+      }
+      if (prereqs.stables !== undefined) {
+        parts.push(`${prereqs.stables}+ stables`)
+      }
+      if (prereqs.fences !== undefined) {
+        parts.push(`${prereqs.fences}+ fences`)
+      }
+      if (prereqs.fencesInSupply !== undefined) {
+        parts.push(`${prereqs.fencesInSupply}+ fences in supply`)
+      }
+      if (prereqs.fencedStables !== undefined) {
+        parts.push(`${prereqs.fencedStables}+ fenced stables`)
+      }
+
+      // --- Room checks ---
+      if (prereqs.rooms !== undefined) {
+        parts.push(`${prereqs.rooms}+ rooms`)
+      }
+      if (prereqs.roomCount !== undefined) {
+        if (prereqs.roomCountExact) {
+          parts.push(`Exactly ${prereqs.roomCount} rooms`)
+        }
+        else {
+          parts.push(`${prereqs.roomCount}+ rooms`)
+        }
       }
       if (prereqs.houseType !== undefined) {
         const types = Array.isArray(prereqs.houseType)
@@ -296,12 +391,115 @@ export default {
           : prereqs.houseType
         parts.push(`${types} house`)
       }
+
+      // --- Animal checks ---
+      if (prereqs.sheep !== undefined) {
+        parts.push(`${prereqs.sheep}+ sheep`)
+      }
+      if (prereqs.sheepExactly !== undefined) {
+        parts.push(`Exactly ${prereqs.sheepExactly} sheep`)
+      }
+      if (prereqs.boar !== undefined) {
+        parts.push(`${prereqs.boar}+ boar`)
+      }
+      if (prereqs.cattle !== undefined) {
+        parts.push(`${prereqs.cattle}+ cattle`)
+      }
+      if (prereqs.animals !== undefined) {
+        parts.push(`${prereqs.animals}+ animals`)
+      }
+      if (prereqs.animalTypes !== undefined) {
+        parts.push(`${prereqs.animalTypes}+ animal types`)
+      }
+      if (prereqs.allAnimalTypes) {
+        parts.push('All animal types')
+      }
+      if (prereqs.noAnimals) {
+        parts.push('No animals')
+      }
+      if (prereqs.noSheep) {
+        parts.push('No sheep')
+      }
+
+      // --- Resource checks ---
+      if (prereqs.clay !== undefined) {
+        parts.push(`${prereqs.clay}+ clay`)
+      }
+      if (prereqs.grain !== undefined) {
+        parts.push(`${prereqs.grain}+ grain`)
+      }
+      if (prereqs.reed !== undefined) {
+        parts.push(`${prereqs.reed}+ reed`)
+      }
+      if (prereqs.stone !== undefined) {
+        parts.push(`${prereqs.stone}+ stone`)
+      }
+      if (prereqs.noGrain) {
+        parts.push('No grain')
+      }
+      if (prereqs.buildingResourcesInSupply !== undefined) {
+        parts.push(`${prereqs.buildingResourcesInSupply}+ building resources`)
+      }
+      if (prereqs.woodGteRound) {
+        parts.push('Wood \u2265 round')
+      }
+
+      // --- Farmyard checks ---
       if (prereqs.allFarmyardUsed) {
         parts.push('All farmyard spaces used')
+      }
+      if (prereqs.unusedFarmyard !== undefined) {
+        parts.push(`${prereqs.unusedFarmyard}+ unused farmyard spaces`)
+      }
+      if (prereqs.unusedFarmyardAtMost !== undefined) {
+        parts.push(`At most ${prereqs.unusedFarmyardAtMost} unused farmyard spaces`)
+      }
+      if (prereqs.pastureSpacesGteRound) {
+        parts.push('Pasture spaces \u2265 round')
+      }
+      if (prereqs.roundsLeftGreaterThanUnusedSpaces) {
+        parts.push('Rounds left > unused spaces')
+      }
+
+      // --- People checks ---
+      if (prereqs.maxPeople !== undefined) {
+        parts.push(`At most ${prereqs.maxPeople} people`)
+      }
+      if (prereqs.exactlyAdults !== undefined) {
+        parts.push(`Exactly ${prereqs.exactlyAdults} adults`)
+      }
+      if (prereqs.noPeopleInHouse) {
+        parts.push('No people in house')
       }
       if (prereqs.personOnFishing) {
         parts.push('Person on fishing space')
       }
+      if (prereqs.personOnAction !== undefined) {
+        parts.push(`Person on ${prereqs.personOnAction}`)
+      }
+      if (prereqs.personYetToPlace) {
+        parts.push('Person yet to place')
+      }
+
+      // --- Round checks ---
+      if (prereqs.maxRound !== undefined) {
+        parts.push(`Round ${prereqs.maxRound} or earlier`)
+      }
+      if (prereqs.minRound !== undefined) {
+        parts.push(`Round ${prereqs.minRound}+`)
+      }
+      if (prereqs.roundIn !== undefined) {
+        parts.push(`Round ${prereqs.roundIn.join(' or ')}`)
+      }
+
+      // --- Card count checks ---
+      if (prereqs.cardsInPlay !== undefined) {
+        parts.push(`${prereqs.cardsInPlay}+ cards in play`)
+      }
+      if (prereqs.maxCardsInPlay !== undefined) {
+        parts.push(`At most ${prereqs.maxCardsInPlay} cards in play`)
+      }
+
       return parts.join(', ') || 'None'
     },
 
