@@ -1132,6 +1132,12 @@ class AgricolaActionManager extends BaseActionManager {
   bakeBread(player) {
     this.game.callPlayerCardHook(player, 'onBeforeBake')
 
+    // onBakeBreadAction: cards can replace baking (e.g., Freshman plays occupation instead)
+    const replaceResults = this.game.callPlayerCardHook(player, 'onBakeBreadAction')
+    if (replaceResults.some(r => r.result === true)) {
+      return true
+    }
+
     if (!player.hasBakingAbility()) {
       this.log.add({
         template: '{player} has no baking improvement',
@@ -4026,6 +4032,75 @@ class AgricolaActionManager extends BaseActionManager {
         args: { player, cost: tier.cost, food: tier.food },
       })
     }
+  }
+
+  offerPlow(player, card) {
+    const validSpaces = player.getValidPlowSpaces()
+    if (validSpaces.length === 0) {
+      return
+    }
+
+    const choices = ['Plow 1 field', 'Skip']
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Plow 1 field?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      this.plowField(player)
+    }
+  }
+
+  offerBunnyBreederChoice(player, _card) {
+    const currentRound = this.game.state.round
+    const choices = []
+    for (let round = currentRound + 1; round <= 14; round++) {
+      const food = round - currentRound
+      choices.push(`Round ${round} (${food} food)`)
+    }
+
+    if (choices.length === 0) {
+      return
+    }
+
+    const selection = this.choose(player, choices, {
+      title: 'Bunny Breeder: Select a future round',
+      min: 1,
+      max: 1,
+    })
+
+    const round = parseInt(selection[0].split(' ')[1])
+    const food = round - currentRound
+
+    this.game.scheduleResource(player, 'food', round, food)
+    this.log.add({
+      template: '{player} places {food} food on round {round} using Bunny Breeder',
+      args: { player, food, round },
+    })
+  }
+
+  offerFreshmanChoice(player, _card) {
+    const occupationsInHand = player.hand.filter(cardId => {
+      const c = this.game.cards.byId(cardId)
+      return c && c.type === 'occupation' && player.meetsCardPrereqs(cardId)
+    })
+    if (occupationsInHand.length === 0) {
+      return false
+    }
+
+    const choices = ['Play an occupation free', 'Bake bread normally']
+    const selection = this.choose(player, choices, {
+      title: 'Freshman: Play occupation instead of baking?',
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] === 'Play an occupation free') {
+      this.playOccupation(player, { free: true })
+      return true
+    }
+    return false
   }
 
   improvementSix(player) {
