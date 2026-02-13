@@ -39,10 +39,26 @@ EarthenwarePotter, Dentist, Entrepreneur, Wholesaler
 Hooks wired in `agricola.js`:
 - `onHarvestStart` — in harvestPhase, before fieldPhase
 - `onHarvestGrain` — in fieldPhase, after grain harvest (passes amount)
+- `onFieldPhaseEnd` — in fieldPhase, after harvest (used by Changeover)
+- `onLessonsWithCooking` — in playerTurn, when Lessons + cooking same turn
 - `skipFieldAndBreeding` — per-player array, checked in fieldPhase and breedingPhase
+
+Anytime actions infrastructure in `agricola.js`:
+- `getAnytimeActions()` scans both minors AND occupations for all flag types
+- `getAnytimeFoodConversionOptions()` scans occupations for `allowsAnytimeConversion`
+- New action types in `executeAnytimeAction()`: `card-exchange`, `card-custom`, `card-scheduled`, `field-conversion`, `anytime-renovation`
+- `getUnusedOncePerRoundActions(player)` — filters once-per-round actions not yet used
+- End-of-turn reminder prompt for unused once-per-round actions
+- `formatExchange()` helper for description strings
+- `_usedCookingThisTurn` tracking on player during `executeAnytimeFoodConversion`
 
 Hooks wired in `AgricolaActionManager.js`:
 - `onBeforePlayOccupation` — in playOccupation, before cost payment
+
+Methods added to `AgricolaActionManager.js`:
+- `buildFreeRoom(player, card)` — build room at no cost (used by Mason, Master Builder)
+- `offerSculptureCourse(player, card)` — wood→food or stone→food exchange
+- `offerReedSellerConversion(player, card)` — sell reed with intercept opportunity
 
 Helper methods added to `agricola.js`:
 - `isRoundActionSpace(actionId)` — checks if action has a `stage` property
@@ -217,7 +233,7 @@ MinorB cards that need unique infrastructure beyond simple inline fixes.
 
 | Card | Deck | Blocker | Notes |
 |------|------|---------|-------|
-| UpscaleLifestyle (b001) | B | None — `offerRenovation` EXISTS | Just needs tests |
+| UpscaleLifestyle (b001) | B | None — anytime renovation infra exists | Just needs tests |
 | Caravan (b010) | B | `providesRoom` flag | Works but needs family growth E2E test |
 | PotteryYard (b031) | B | `hasAdjacentUnusedSpaces` | Needs new player method |
 | SpecialFood (b034) | B | `onTakeAnimals` + `allAccommodated` | Hook needs parameter added |
@@ -236,76 +252,110 @@ MinorB cards that need unique infrastructure beyond simple inline fixes.
 
 ---
 
-## Phase 4: Anytime Action Cards (FINAL — Batches 25-27)
+## Phase 4: Anytime Action Cards (DONE — Batches 25-27)
 
-Cards with anytime exchange, purchase, or conversion effects. Requires extending
-`getAnytimeActions()` / `executeAnytimeAction()` infrastructure.
+Anytime actions engine infrastructure implemented in `agricola.js`:
+- `getAnytimeActions()` extended to scan occupations (not just minors)
+- New action types: `card-exchange`, `card-custom`, `card-scheduled`, `field-conversion`, `anytime-renovation`
+- Once-per-round tracking via `game.cardState(cardId).lastUsedRound`
+- End-of-turn reminder for unused once-per-round actions
+- `formatExchange()` helper for description strings
+- `_usedCookingThisTurn` tracking + `onLessonsWithCooking` hook
+
+New methods in `AgricolaActionManager.js`:
+- `buildFreeRoom(player, card)` — build room at no cost
+- `offerSculptureCourse(player, card)` — wood→food or stone→food exchange
+- `offerReedSellerConversion(player, card)` — sell reed, other players can intercept
 
 ### Batch 25 — Anytime Exchanges
 
-| Card | Deck | Effect |
-|------|------|--------|
-| HardPorcelain (b080) | B | 2/3/4 clay → 1/2/3 stone |
-| Kettle (b032) | B | 1/3/5 grain → 3/4/5 food + 0/1/2 VP |
-| LargePottery (d060) | D | 1 clay → 2 food anytime; endgame VP from clay |
-| Trowel (d013) | D | Anytime renovate to stone (special cost) |
-| StoneHouseReconstruction (e013) | E | Anytime renovate clay→stone (normal cost, no person) |
-| EarthOven (d059) | D | Cooking conversions: veg→3, sheep→2, boar→3, cattle→3; bake: grain→2 |
+| Card | Deck | Status | Effect |
+|------|------|--------|--------|
+| HardPorcelain (b080) | B | ✅ | 2/3/4 clay → 1/2/3 stone |
+| Kettle (b032) | B | ✅ | 1/3/5 grain → 3/4/5 food + 0/1/2 VP |
+| LargePottery (d060) | D | ✅ | Already worked (anytimeConversions) |
+| Trowel (d013) | D | ✅ | Anytime renovate to stone (special cost) |
+| StoneHouseReconstruction (e013) | E | ✅ | Anytime renovate clay→stone (normal cost, no person) |
+| EarthOven (d059) | D | ✅ | Already worked (anytimeConversions) |
+| StableYard (c050) | C | ✅ | 1 sheep + 1 boar → 1 cattle |
 
 ### Batch 26 — Anytime Purchases & Scheduled
 
-| Card | Deck | Effect |
-|------|------|--------|
-| PottersMarket (b069) | B | 3 clay + 2 food → schedule 1 vegetable on next 2 rounds |
-| MuddyPuddles (b083) | B | 1 clay → take top from stack [boar, food, cattle, food, sheep] |
-| Mandoline (c046) | C | Once/round: 1 vegetable → 1 VP + schedule 1 food on next 2 rounds |
-| CornSchnappsDistillery (c064) | C | Once/round: 1 grain → schedule 1 food on next 4 rounds |
-| PelletPress (d046) | D | Once/round: 1 reed → schedule 1 food on next 4 rounds |
-| SourDough (e062) | E | Once/round: skip person placement → Bake Bread |
+| Card | Deck | Status | Effect |
+|------|------|--------|--------|
+| PottersMarket (b069) | B | ✅ | 3 clay + 2 food → schedule 1 vegetable on next 2 rounds |
+| MuddyPuddles (b083) | B | ✅ | 1 clay → take top from stack (state migrated to cardState) |
+| Mandoline (c046) | C | ✅ | Once/round: 1 vegetable → 1 VP + schedule 1 food on next 2 rounds |
+| CornSchnappsDistillery (c064) | C | ✅ | Once/round: 1 grain → schedule 1 food on next 4 rounds |
+| PelletPress (d046) | D | ✅ | Once/round: 1 reed → schedule 1 food on next 4 rounds |
+| Grocer (a102) | A (occ) | ✅ | Buy top good for 1 food (state migrated to cardState) |
+| SourDough (e062) | E | **DEFERRED** | Requires fundamental worker placement flow changes |
 
-### Batch 27 — Anytime Field/Special
+### Batch 27 — Anytime Field/Special/Occupations
 
-| Card | Deck | Effect |
-|------|------|--------|
-| SculptureCourse (b053) | B | Non-harvest rounds: 1 wood → 2 food OR 1 stone → 4 food (also STUB) |
-| CookeryLesson (b029) | B | Track anytime cooking in same round as Lessons |
-| LandConsolidation (c069) | C | 3 grain in field → 1 vegetable in that field |
-| RollOverPlow (c018) | C | With 3+ planted fields: discard from 1 field → plow 1 field |
-| Changeover (d071) | D | After harvest: field with 1 good → discard → sow that field |
+| Card | Deck | Status | Effect |
+|------|------|--------|--------|
+| SculptureCourse (b053) | B | ✅ | Non-harvest rounds: 1 wood → 2 food OR 1 stone → 4 food |
+| CookeryLesson (b029) | B | ✅ | Bonus point when cooking + Lessons on same turn |
+| LandConsolidation (c069) | C | ✅ | 3 grain in field → 1 vegetable in that field |
+| RollOverPlow (c018) | C | ✅ | With 3+ planted fields: discard from 1 field → plow 1 field |
+| Changeover (d071) | D | ✅ | After harvest (onFieldPhaseEnd hook): field with 1 good → sow |
+| BasketmakersWife (c139) | C (occ) | ✅ | 1 reed → 2 food (engine now scans occupations) |
+| ClayFirer (d162) | D (occ) | ✅ | 2 clay → 1 stone, 3 clay → 2 stone |
+| SheepWalker (b104) | B (occ) | ✅ | 1 sheep → 1 boar/vegetable/stone |
+| ClayCarrier (d122) | D (occ) | ✅ | Once/round: 2 food → 2 clay |
+| SeedTrader (d114) | D (occ) | ✅ | Buy grain (2 food) or vegetable (3 food) from card stock |
+| WhiskyDistiller (d106) | D (occ) | ✅ | 1 grain → schedule 4 food in 2 rounds |
+| Emissary (d124) | D (occ) | ✅ | Place unique good → get 1 stone |
+| Salter (b157) | B (occ) | ✅ | Pay animal → schedule food (3/5/7 rounds) |
+| Mason (c087) | C (occ) | ✅ | Free stone room (once, requires 4+ stone rooms) |
+| MasterBuilder (d087) | D (occ) | ✅ | Free room (once per game, requires 5+ rooms) |
+| ReedSeller (d159) | D (occ) | ✅ | 1 reed → 3 food (or 2 food if another player buys) |
+| PenBuilder (e086) | E (occ) | ✅ | Place wood on card → holds 2× animals |
+| StableCleaner (c094) | C (occ) | ✅ | Build stables at 1 wood + 1 food each |
+| Sower (c115) | C (occ) | **DEFERRED** | Needs `onBuildMajor` hook + reed-tracking system |
 
 ---
 
 ## Progress Summary
 
-| Phase | Done | Blocked | Remaining Stubs | Total |
-|-------|------|---------|-----------------|-------|
-| 1: Stub Fixes | 11 | 7 | 0 | 18 |
-| 2: Test-Only | 21 | 37 | 0 | 60 |
-| 3: MinorB Infra | 0 | 11 | 0 | 11 |
-| 4: Anytime | 0 | 17 | 0 | 17 |
-| **Total** | **32** | **72** | **0** | **106** |
+| Phase | Done | Blocked/Deferred | Total |
+|-------|------|------------------|-------|
+| 1: Stub Fixes | 11 | 7 | 18 |
+| 2: Test-Only | 21 | 37 | 60 |
+| 3: MinorB Infra | 0 | 11 | 11 |
+| 4: Anytime | 33 | 2 deferred | 35 |
+| **Total** | **65** | **57** | **124** |
 
 ### Hook Wiring Status
 
 ✅ = Wired and working. ❌ = Not wired.
 
 - ✅ `onAction` — in executeAction
-- ✅ `afterPlayerAction` — in workPhase
+- ✅ `afterPlayerAction` — in playerTurn
 - ✅ `onWorkPhaseStart` — in workPhase
 - ✅ `onWorkPhaseEnd` — in workPhase
-- ✅ `onHarvestStart` — in harvestPhase (newly wired)
+- ✅ `onHarvestStart` — in harvestPhase
 - ✅ `onHarvest` — in harvestPhase
-- ✅ `onHarvestGrain` — in fieldPhase (newly wired)
+- ✅ `onHarvestGrain` — in fieldPhase
 - ✅ `onFeedingPhase` — in feedingPhase
 - ✅ `onFeedingPhaseEnd` — in feedingPhase
 - ✅ `onBreedingPhaseEnd` — in breedingPhase
+- ✅ `onFieldPhaseEnd` — in fieldPhase (used by Changeover)
 - ✅ `onBake` — in bake action
+- ✅ `onBakeBreadAction` — in bake bread action space
 - ✅ `onAfterSow` — in sow action
 - ✅ `onBuildRoom` — in buildRoom action
+- ✅ `onBuildFences` — in buildFences action
 - ✅ `onPlayOccupation` — in playOccupation (after play)
-- ✅ `onBeforePlayOccupation` — in playOccupation (newly wired, before cost)
-- ✅ `isRoundActionSpace()` — helper method (newly added)
-- ✅ `actionGivesReed()` — helper method (newly added)
+- ✅ `onBeforePlayOccupation` — in playOccupation (before cost)
+- ✅ `onBeforeAction` — in playerTurn (before action execution)
+- ✅ `onUseSpace` / `onUseMultipleSpaces` — in playerTurn
+- ✅ `onLessonsWithCooking` — in playerTurn (Cookery Lesson)
+- ✅ `onRoundEnd` — in mainLoop (Sculpture Course)
+- ✅ `isRoundActionSpace()` — helper method
+- ✅ `actionGivesReed()` — helper method
+- ✅ `getUnusedOncePerRoundActions()` — helper for end-of-turn reminder
 - ❌ `onBreedingPhaseStart` — needed by ShepherdsWhistle
 - ❌ `onStageReveal` — needed by HeartOfStone
 - ❌ `onUseFarmyardSpace` — needed by Farmstead
