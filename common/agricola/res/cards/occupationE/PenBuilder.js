@@ -15,6 +15,39 @@ module.exports = {
   canPlaceWood(player) {
     return player.wood >= 1
   },
+  getAnytimeActions(game, player) {
+    if (!this.canPlaceWood(player)) {
+      return []
+    }
+    const woodOnCard = game.cardState(this.id).wood || 0
+    return [{
+      type: 'card-custom',
+      cardId: this.id,
+      cardName: this.name,
+      actionKey: 'activatePlaceWood',
+      description: `${this.name}: Place wood (${woodOnCard} wood → ${woodOnCard * 2} capacity)`,
+    }]
+  },
+  activatePlaceWood(game, player) {
+    const maxWood = player.wood
+    let amount = 1
+
+    if (maxWood > 1) {
+      const choices = []
+      for (let i = 1; i <= Math.min(maxWood, 10); i++) {
+        choices.push(`Place ${i} wood`)
+      }
+      const selection = game.actions.choose(player, choices, {
+        title: 'Pen Builder: How much wood to place?',
+        min: 1,
+        max: 1,
+      })
+      const sel = Array.isArray(selection) ? selection[0] : selection
+      amount = parseInt(sel.match(/\d+/)[0])
+    }
+
+    this.placeWood(game, player, amount)
+  },
   placeWood(game, player, amount) {
     player.payCost({ wood: amount })
     const s = game.cardState(this.id)

@@ -1231,6 +1231,9 @@ Agricola.prototype.playerTurn = function(player, options) {
   // Choose color on first turn if not already set
   this.chooseColor(player)
 
+  // Reset per-turn tracking for Cookery Lesson
+  player._usedCookingThisTurn = false
+
   const availableActions = this.getAvailableActions(player, options)
 
   if (availableActions.length === 0) {
@@ -1323,6 +1326,12 @@ Agricola.prototype.playerTurn = function(player, options) {
           noAutoRespond: true,
         })
       }
+    }
+
+    // Check for Cookery Lesson: Lessons action + cooking on same turn
+    const isLessonsAction = actionId === 'occupation' || actionId.startsWith('lessons-')
+    if (isLessonsAction && player._usedCookingThisTurn) {
+      this.callPlayerCardHook(player, 'onLessonsWithCooking')
     }
   }
 }
@@ -2020,6 +2029,7 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
     })
   }
   else if (option.type === 'cook') {
+    player._usedCookingThisTurn = true
     const food = player.cookAnimal(option.resource, option.count)
     this.log.add({
       template: '{player} cooks {count} {resource} for {food} food',
@@ -2027,6 +2037,7 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
     })
   }
   else if (option.type === 'cook-vegetable') {
+    player._usedCookingThisTurn = true
     const food = player.cookVegetable(option.count)
     this.log.add({
       template: '{player} cooks {count} vegetable(s) for {food} food',
@@ -2042,6 +2053,7 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
     })
   }
   else if (option.type === 'card-cook') {
+    player._usedCookingThisTurn = true
     player.removeAnimals(option.resource, option.count)
     player.addResource('food', option.food)
     this.log.add({
