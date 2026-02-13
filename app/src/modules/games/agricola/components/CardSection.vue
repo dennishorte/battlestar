@@ -3,6 +3,12 @@
     <div class="section-header" @click="toggleExpand">
       <span class="section-title">{{ title }}</span>
       <span class="section-count">({{ cards.length }})</span>
+      <span
+        v-if="expanded && cards.length > 0"
+        class="expand-all-toggle"
+        :title="lastExpandAll ? 'Collapse all descriptions' : 'Expand all descriptions'"
+        @click.stop="toggleAllCards"
+      >{{ lastExpandAll ? '⊟' : '⊞' }}</span>
       <span class="expand-icon">{{ expanded ? '▼' : '▶' }}</span>
     </div>
     <div class="card-list" v-if="expanded && cards.length > 0">
@@ -23,8 +29,11 @@
         @dragend="onDragEnd"
       >
         <AgricolaCardChip
+          ref="cardChips"
           :cardId="cardId"
           :player="player"
+          :initialExpanded="expandedCards.includes(cardId)"
+          @toggle-expand="onCardToggle"
         />
       </div>
     </div>
@@ -84,6 +93,8 @@ export default {
   data() {
     return {
       expanded: this.getInitialExpanded(),
+      expandedCards: this.loadExpandedCards(),
+      lastExpandAll: false,
       dragIndex: null,
       dragOverIndex: null,
       dragPosition: null,
@@ -129,6 +140,58 @@ export default {
       if (this.persistKey) {
         window.localStorage.setItem(this.persistKey, this.expanded.toString())
       }
+    },
+
+    loadExpandedCards() {
+      if (this.persistKey) {
+        try {
+          const stored = window.localStorage.getItem(`${this.persistKey}-cards`)
+          if (stored) {
+            const parsed = JSON.parse(stored)
+            if (Array.isArray(parsed)) {
+              return parsed
+            }
+          }
+        }
+        catch { /* ignore */ }
+      }
+      return []
+    },
+
+    saveExpandedCards() {
+      if (this.persistKey) {
+        window.localStorage.setItem(`${this.persistKey}-cards`, JSON.stringify(this.expandedCards))
+      }
+    },
+
+    onCardToggle(cardId, isExpanded) {
+      if (isExpanded) {
+        if (!this.expandedCards.includes(cardId)) {
+          this.expandedCards.push(cardId)
+        }
+      }
+      else {
+        const idx = this.expandedCards.indexOf(cardId)
+        if (idx >= 0) {
+          this.expandedCards.splice(idx, 1)
+        }
+      }
+      this.saveExpandedCards()
+    },
+
+    toggleAllCards() {
+      this.lastExpandAll = !this.lastExpandAll
+      const chips = this.$refs.cardChips || []
+      for (const chip of chips) {
+        chip.localExpanded = this.lastExpandAll
+      }
+      if (this.lastExpandAll) {
+        this.expandedCards = [...this.cards]
+      }
+      else {
+        this.expandedCards = []
+      }
+      this.saveExpandedCards()
     },
 
     onDragStart(event, index) {
@@ -227,8 +290,20 @@ export default {
   font-size: .85em;
 }
 
-.expand-icon {
+.expand-all-toggle {
   margin-left: auto;
+  font-size: .9em;
+  color: #888;
+  cursor: pointer;
+  padding: 0 .2em;
+  line-height: 1;
+}
+
+.expand-all-toggle:hover {
+  color: #444;
+}
+
+.expand-icon {
   font-size: .7em;
   color: #888;
 }
