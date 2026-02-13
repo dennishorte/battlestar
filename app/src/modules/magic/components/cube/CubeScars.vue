@@ -11,14 +11,15 @@
         <div>{{ scar.text }}</div>
         <div class="scar-info">
           <span class="scar-creator">by {{ getUserNameById(scar.createdBy) }}</span>
-          <button class="btn btn-link" @click="editScar(scar)">edit</button>
+          <span class="scar-creator">created: {{ timeAgo(scar.createdAt) }}</span>
+          <button class="btn btn-link scar-edit-link" @click="editScar(scar)">edit</button>
         </div>
       </div>
     </div>
 
     <div class="col">
       <h5>Used Scars</h5>
-      <div v-for="scar in cube.scarsUsed()" :key="scar.id" class="scar-container vertical">
+      <div v-for="scar in cube.scarsUsed().sort((a, b) => new Date(b.appliedAt) - new Date(a.appliedAt))" :key="scar.id" class="scar-container vertical">
         <div>{{ scar.text }}</div>
         <div class="scar-applied-info">
           <div
@@ -33,6 +34,7 @@
           </div>
           <div v-else>card: (unknown)</div>
           <div>user: {{ getUserNameById(scar.appliedBy) }}</div>
+          <div>used: {{ timeAgo(scar.appliedAt) }}</div>
         </div>
       </div>
     </div>
@@ -118,6 +120,26 @@ function getUserNameById(id) {
   return user ? user.name : id
 }
 
+function timeAgo(date) {
+  if (!date) {
+    return ''
+  }
+  const seconds = Math.floor((Date.now() - new Date(date)) / 1000)
+  if (seconds < 60) {
+    return 'just now'
+  }
+  const minutes = Math.floor(seconds / 60)
+  if (minutes < 60) {
+    return `${minutes}m ago`
+  }
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) {
+    return `${hours}h ago`
+  }
+  const days = Math.floor(hours / 24)
+  return `${days}d ago`
+}
+
 async function deleteScar() {
   await store.dispatch('magic/cube/deleteScar', {
     cubeId: props.cube._id,
@@ -179,6 +201,11 @@ async function save() {
 .applied-card-link {
   cursor: pointer;
   color: #0d6efd;
+}
+
+.scar-edit-link {
+  font-size: .8em;
+  padding: 0;
 }
 
 .applied-card-link:hover {
