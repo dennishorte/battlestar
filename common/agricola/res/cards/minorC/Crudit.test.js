@@ -1,5 +1,15 @@
 const t = require('../../../testutil_v2.js')
 
+function respondAnytimeAction(game, anytimeAction) {
+  const request = game.waiting
+  const selector = request.selectors[0]
+  return game.respondToInputRequest({
+    actor: selector.actor,
+    title: selector.title,
+    selection: { action: 'anytime-action', anytimeAction },
+  })
+}
+
 describe('Crudité', () => {
   test('buy 1 vegetable for 3 food when played', () => {
     const game = t.fixture({ cardSets: ['minorC', 'minorImprovementA', 'test'] })
@@ -24,5 +34,60 @@ describe('Crudité', () => {
         minorImprovements: ['crudite-c057'],
       },
     })
+  })
+
+  test('discard 1 vegetable from field for 4 food', () => {
+    const game = t.fixture({ cardSets: ['minorC'] })
+    t.setBoard(game, {
+      round: 2,
+      dennis: {
+        minorImprovements: ['crudite-c057'],
+        food: 2,
+        farmyard: {
+          fields: [
+            { row: 0, col: 2, crop: 'vegetables', cropCount: 2 },
+          ],
+        },
+      },
+    })
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    const actions = game.getAnytimeActions(dennis)
+    const action = actions.find(a => a.cardName === 'Crudité')
+    expect(action).toBeDefined()
+
+    respondAnytimeAction(game, action)
+
+    t.testBoard(game, {
+      dennis: {
+        food: 6,  // 2 + 4
+        minorImprovements: ['crudite-c057'],
+        farmyard: {
+          fields: [
+            { row: 0, col: 2, crop: 'vegetables', cropCount: 1 },
+          ],
+        },
+      },
+    })
+  })
+
+  test('not available without vegetable field with 2+ crops', () => {
+    const game = t.fixture({ cardSets: ['minorC'] })
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['crudite-c057'],
+        farmyard: {
+          fields: [
+            { row: 0, col: 2, crop: 'vegetables', cropCount: 1 },
+          ],
+        },
+      },
+    })
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    const actions = game.getAnytimeActions(dennis)
+    expect(actions.some(a => a.cardName === 'Crudité')).toBe(false)
   })
 })
