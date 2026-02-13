@@ -5,6 +5,7 @@
   >
     <ManaSymbol v-if="part.type === 'symbol'" :m="part.value" />
     <div v-else-if="part.value === '\n'" class="spacer" />
+    <span v-else-if="part.type === 'reminder'" class="reminder-text">{{ part.value }}</span>
     <template v-else>{{ part.value }}</template>
   </span>
 </template>
@@ -79,25 +80,55 @@ function extractSymbolsFromText(text) {
     tokens.push(currentToken)
   }
 
-  return tokens.map(t => {
+  return tokens.flatMap(t => {
     if (t.startsWith('{')) {
       return {
         type: 'symbol',
         value: t.slice(1, -1),
       }
     }
-    else {
-      return {
-        type: 'text',
-        value: t,
-      }
-    }
+
+    // Split text tokens to extract reminder text (parenthesized)
+    return splitReminderText(t)
   })
+}
+
+function splitReminderText(text) {
+  const parts = []
+  const regex = /(\([^)]*\))/g
+  let lastIndex = 0
+  let match
+
+  while ((match = regex.exec(text)) !== null) {
+    // Text before the match
+    if (match.index > lastIndex) {
+      parts.push({ type: 'text', value: text.slice(lastIndex, match.index) })
+    }
+    // The parenthesized reminder text
+    parts.push({ type: 'reminder', value: match[1] })
+    lastIndex = regex.lastIndex
+  }
+
+  // Remaining text after last match
+  if (lastIndex < text.length) {
+    parts.push({ type: 'text', value: text.slice(lastIndex) })
+  }
+
+  // No matches at all
+  if (parts.length === 0) {
+    parts.push({ type: 'text', value: text })
+  }
+
+  return parts
 }
 </script>
 
 <style scoped>
 .spacer {
   min-height: .5em;
+}
+
+.reminder-text {
+  font-style: italic;
 }
 </style>
