@@ -15,6 +15,19 @@ module.exports = {
       args: { player },
     })
   },
+  getAnytimeActions(game, player) {
+    if (this.canBuyClay(game, player, game.state.round)) {
+      return [{
+        type: 'card-custom',
+        cardId: this.id,
+        cardName: this.name,
+        actionKey: 'buyClay',
+        oncePerRound: true,
+        description: 'Clay Carrier: Buy 2 clay for 2 food',
+      }]
+    }
+    return []
+  },
   canBuyClay(game, player, round) {
     return player.food >= 2 && game.cardState(this.id).lastUsedRound !== round
   },

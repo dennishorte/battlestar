@@ -1312,6 +1312,18 @@ Agricola.prototype.playerTurn = function(player, options) {
     if (!options?.isBonusTurn) {
       this.callPlayerCardHook(player, 'afterPlayerAction', actionId)
     }
+
+    // Check for unused once-per-round anytime actions
+    if (!options?.isBonusTurn) {
+      const unusedActions = this.getUnusedOncePerRoundActions(player)
+      if (unusedActions.length > 0) {
+        this.actions.choose(player, ['End turn'], {
+          title: 'You have unused once-per-turn actions.',
+          anytimeActions: unusedActions,
+          noAutoRespond: true,
+        })
+      }
+    }
   }
 }
 
@@ -1792,6 +1804,21 @@ Agricola.prototype.postBreedingPhase = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Helper Methods
 
+function formatExchange(from, to) {
+  const fromStr = Object.entries(from).map(([r, a]) => `${a} ${r}`).join(' + ')
+  const toStr = Object.entries(to).map(([r, a]) => `${a} ${r}`).join(' + ')
+  return `${fromStr} → ${toStr}`
+}
+
+function canAffordCost(player, cost) {
+  return Object.entries(cost).every(([res, amt]) => {
+    if (['sheep', 'boar', 'cattle'].includes(res)) {
+      return player.getTotalAnimals(res) >= amt
+    }
+    return (player[res] || 0) >= amt
+  })
+}
+
 Agricola.prototype.getAnytimeFoodConversionOptions = function(player) {
   const options = []
 
@@ -1879,6 +1906,105 @@ Agricola.prototype.getAnytimeFoodConversionOptions = function(player) {
           })
         }
       }
+    }
+  }
+
+  // Scan occupations for anytimeConversions (old format) and allowsAnytimeConversion (new format)
+  for (const cardId of player.playedOccupations) {
+    const card = this.cards.byId(cardId)
+    if (!card) {
+      continue
+    }
+    const def = card.definition
+
+    if (def.anytimeConversions) {
+      for (const conv of def.anytimeConversions) {
+        if (['sheep', 'boar', 'cattle'].includes(conv.from)) {
+          if (player.getTotalAnimals(conv.from) > 0) {
+            options.push({
+              type: 'card-cook',
+              cardName: card.name,
+              resource: conv.from,
+              count: 1,
+              food: conv.rate,
+              description: `${card.name}: ${conv.from} → ${conv.rate} food`,
+            })
+          }
+        }
+        else {
+          const resourceKey = conv.from
+          if ((player[resourceKey] || 0) > 0) {
+            options.push({
+              type: 'card-convert',
+              cardName: card.name,
+              resource: resourceKey,
+              count: 1,
+              food: conv.rate,
+              description: `${card.name}: ${resourceKey} → ${conv.rate} food`,
+            })
+          }
+        }
+      }
+    }
+
+    if (def.allowsAnytimeConversion) {
+      const conversions = Array.isArray(def.allowsAnytimeConversion)
+        ? def.allowsAnytimeConversion
+        : [def.allowsAnytimeConversion]
+      for (const conv of conversions) {
+        if (!conv.to.food) {
+          continue
+        }
+        if (!canAffordCost(player, conv.from)) {
+          continue
+        }
+        const fromEntries = Object.entries(conv.from)
+        const resource = fromEntries[0][0]
+        const count = fromEntries[0][1]
+        options.push({
+          type: 'card-convert',
+          cardName: card.name,
+          resource,
+          count,
+          food: conv.to.food,
+          description: `${card.name}: ${formatExchange(conv.from, conv.to)}`,
+        })
+      }
+    }
+  }
+
+  // Scan minor improvements for allowsAnytimeConversion (new format, food output only)
+  for (const cardId of player.playedMinorImprovements) {
+    const card = this.cards.byId(cardId)
+    if (!card) {
+      continue
+    }
+    const def = card.definition
+    if (!def.allowsAnytimeConversion) {
+      continue
+    }
+
+    const conversions = Array.isArray(def.allowsAnytimeConversion)
+      ? def.allowsAnytimeConversion
+      : [def.allowsAnytimeConversion]
+    for (const conv of conversions) {
+      if (!conv.to.food) {
+        continue
+      }
+      if (!canAffordCost(player, conv.from)) {
+        continue
+      }
+      const fromEntries = Object.entries(conv.from)
+      const resource = fromEntries[0][0]
+      const count = fromEntries[0][1]
+      options.push({
+        type: 'card-convert',
+        cardName: card.name,
+        resource,
+        count,
+        food: conv.to.food,
+        description: `${card.name}: ${formatExchange(conv.from, conv.to)}`,
+      })
     }
   }
 
@@ -2027,6 +2153,103 @@ Agricola.prototype.getAnytimeActions = function(player) {
     }
   }
 
+  // Scan all cards for exchange, custom action, and purchase flags
+  const allCardIds = [...player.playedMinorImprovements, ...player.playedOccupations]
+  for (const cardId of allCardIds) {
+    const card = this.cards.byId(cardId)
+    if (!card) {
+      continue
+    }
+    const def = card.definition
+
+    // allowsAnytimeConversion (new structured format)
+    if (def.allowsAnytimeConversion) {
+      const conversions = Array.isArray(def.allowsAnytimeConversion)
+        ? def.allowsAnytimeConversion
+        : [def.allowsAnytimeConversion]
+      for (const conv of conversions) {
+        if (!canAffordCost(player, conv.from)) {
+          continue
+        }
+        const foodOnly = Object.keys(conv.to).length === 1 && conv.to.food
+        if (foodOnly) {
+          // Food-only conversion — use card-convert type (matches feeding-phase pattern)
+          const fromEntries = Object.entries(conv.from)
+          const resource = fromEntries[0][0]
+          const count = fromEntries[0][1]
+          if (['sheep', 'boar', 'cattle'].includes(resource)) {
+            options.push({
+              type: 'card-cook',
+              cardName: card.name,
+              resource,
+              count,
+              food: conv.to.food,
+              description: `${card.name}: ${formatExchange(conv.from, conv.to)}`,
+            })
+          }
+          else {
+            options.push({
+              type: 'card-convert',
+              cardName: card.name,
+              resource,
+              count,
+              food: conv.to.food,
+              description: `${card.name}: ${formatExchange(conv.from, conv.to)}`,
+            })
+          }
+        }
+        else {
+          // Non-food exchange
+          options.push({
+            type: 'card-exchange',
+            cardId: card.id,
+            cardName: card.name,
+            from: conv.from,
+            to: conv.to,
+            description: `${card.name}: ${formatExchange(conv.from, conv.to)}`,
+          })
+        }
+      }
+    }
+
+    // allowsAnytimeExchange + exchangeOptions (array format)
+    if (def.allowsAnytimeExchange && Array.isArray(def.exchangeOptions)) {
+      for (const opt of def.exchangeOptions) {
+        if (!canAffordCost(player, opt.from)) {
+          continue
+        }
+        const action = {
+          type: 'card-exchange',
+          cardId: card.id,
+          cardName: card.name,
+          from: opt.from,
+          to: opt.to,
+          description: `${card.name}: ${formatExchange(opt.from, opt.to)}`,
+        }
+        if (opt.bonusPoints) {
+          action.bonusPoints = opt.bonusPoints
+        }
+        options.push(action)
+      }
+    }
+
+    // allowsAnytimeAction (custom card methods)
+    if (def.allowsAnytimeAction && typeof def.getAnytimeActions === 'function') {
+      const cardActions = def.getAnytimeActions.call(def, this, player)
+      if (cardActions) {
+        options.push(...cardActions)
+      }
+    }
+
+    // allowsAnytimePurchase (custom purchase logic)
+    if (def.allowsAnytimePurchase && typeof def.getAnytimeActions === 'function') {
+      const cardActions = def.getAnytimeActions.call(def, this, player)
+      if (cardActions) {
+        options.push(...cardActions)
+      }
+    }
+  }
+
   return options
 }
 
@@ -2035,8 +2258,69 @@ Agricola.prototype.executeAnytimeAction = function(player, action) {
     this.executeAnytimeCropMove(player, action)
     return
   }
+  if (action.type === 'card-exchange') {
+    this.executeAnytimeCardExchange(player, action)
+    return
+  }
+  if (action.type === 'card-custom') {
+    this.executeAnytimeCardCustom(player, action)
+    return
+  }
   // Delegate to executeAnytimeFoodConversion for all food-related types
   this.executeAnytimeFoodConversion(player, action)
+}
+
+Agricola.prototype.executeAnytimeCardExchange = function(player, action) {
+  // Pay from resources
+  for (const [res, amt] of Object.entries(action.from)) {
+    if (['sheep', 'boar', 'cattle'].includes(res)) {
+      player.removeAnimals(res, amt)
+    }
+    else {
+      player.removeResource(res, amt)
+    }
+  }
+  // Gain to resources
+  for (const [res, amt] of Object.entries(action.to)) {
+    if (['sheep', 'boar', 'cattle'].includes(res)) {
+      player.addAnimals(res, amt)
+    }
+    else {
+      player.addResource(res, amt)
+    }
+  }
+  // Handle bonus points (e.g., Kettle)
+  if (action.bonusPoints) {
+    player.bonusPoints = (player.bonusPoints || 0) + action.bonusPoints
+  }
+  this.log.add({
+    template: '{player} uses {card}: {exchange}',
+    args: { player, card: action.cardName, exchange: formatExchange(action.from, action.to) },
+  })
+}
+
+Agricola.prototype.executeAnytimeCardCustom = function(player, action) {
+  const card = this.cards.byId(action.cardId)
+  if (!card) {
+    return
+  }
+  const def = card.definition
+  if (typeof def[action.actionKey] === 'function') {
+    def[action.actionKey](this, player, action.actionArg)
+  }
+}
+
+Agricola.prototype.getUnusedOncePerRoundActions = function(player) {
+  return this.getAnytimeActions(player).filter(action => {
+    if (!action.oncePerRound) {
+      return false
+    }
+    if (!action.cardId) {
+      return false
+    }
+    const state = this.cardState(action.cardId)
+    return state.lastUsedRound !== this.state.round
+  })
 }
 
 Agricola.prototype.executeAnytimeCropMove = function(player, action) {

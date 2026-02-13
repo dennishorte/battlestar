@@ -8,5 +8,9 @@ module.exports = {
   category: "Building Resource Provider",
   text: "At any time, you can exchange 2/3/4 clay for 1/2/3 stone.",
   allowsAnytimeExchange: true,
-  exchangeRates: { clay: 2, stone: 1 },
+  exchangeOptions: [
+    { from: { clay: 2 }, to: { stone: 1 } },
+    { from: { clay: 3 }, to: { stone: 2 } },
+    { from: { clay: 4 }, to: { stone: 3 } },
+  ],
 }
