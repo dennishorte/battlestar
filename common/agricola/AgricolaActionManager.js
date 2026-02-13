@@ -129,14 +129,15 @@ class AgricolaActionManager extends BaseActionManager {
       if (resource === 'sheep' || resource === 'boar' || resource === 'cattle') {
         // Animals need placement
         const count = actionState.accumulated
-        if (player.canPlaceAnimals(resource, count)) {
+        const allAccommodated = player.canPlaceAnimals(resource, count)
+        if (allAccommodated) {
           player.addAnimals(resource, count)
         }
         else {
           // Must convert to food or release - use unified handler
           this.handleAnimalOverflow(player, resource, count)
         }
-        this.game.callPlayerCardHook(player, 'onTakeAnimals', resource, count)
+        this.game.callPlayerCardHook(player, 'onTakeAnimals', resource, count, allAccommodated)
       }
       else {
         player.addResource(resource, actionState.accumulated)

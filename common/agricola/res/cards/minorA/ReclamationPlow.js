@@ -10,7 +10,7 @@ module.exports = {
   onPlay(game, player) {
     player.reclamationPlowActive = true
   },
-  onTakeAnimals(game, player, allAccommodated) {
+  onTakeAnimals(game, player, resource, count, allAccommodated) {
     if (player.reclamationPlowActive && allAccommodated) {
       player.reclamationPlowActive = false
       game.actions.plowField(player, { immediate: true })

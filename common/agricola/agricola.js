@@ -1222,7 +1222,10 @@ Agricola.prototype.workPhase = function() {
     currentPlayerIndex = (currentPlayerIndex + 1) % playerList.length
   }
 
-  this.callCardHook('onWorkPhaseEnd')
+  // Call onWorkPhaseEnd per-player with lastActionId (e.g., Steam Machine bake bread)
+  for (const player of this.players.all()) {
+    this.callPlayerCardHook(player, 'onWorkPhaseEnd', player._lastActionId)
+  }
 
   this.log.outdent()
 }
@@ -1284,6 +1287,9 @@ Agricola.prototype.playerTurn = function(player, options) {
 
     // Mark action as occupied
     this.state.actionSpaces[actionId].occupiedBy = player.name
+
+    // Track last action for onWorkPhaseEnd hooks (e.g., Steam Machine)
+    player._lastActionId = actionId
 
     // Track fishing for card hooks
     if (actionId === 'fishing') {
@@ -1692,12 +1698,17 @@ Agricola.prototype.breedingPhase = function() {
   this.log.add({ template: 'Breeding Phase' })
   this.log.indent()
 
+  const newbornTypesMap = new Map()
+
   for (const player of this.players.all()) {
     if (this.state.skipFieldAndBreeding?.includes(player.name)) {
       continue
     }
 
     const bred = player.breedAnimals()
+
+    const newbornTypes = (bred.sheep > 0 ? 1 : 0) + (bred.boar > 0 ? 1 : 0) + (bred.cattle > 0 ? 1 : 0)
+    newbornTypesMap.set(player.name, newbornTypes)
 
     const totalBred = bred.sheep + bred.boar + bred.cattle
     if (totalBred > 0) {
@@ -1719,9 +1730,10 @@ Agricola.prototype.breedingPhase = function() {
     }
   }
 
-  // Call onBreedingPhaseEnd hooks (e.g., Feedyard food from unused spots)
+  // Call onBreedingPhaseEnd hooks (e.g., Feedyard food from unused spots, Slurry sow action)
   for (const player of this.players.all()) {
-    this.callPlayerCardHook(player, 'onBreedingPhaseEnd')
+    const newbornTypes = newbornTypesMap.get(player.name) || 0
+    this.callPlayerCardHook(player, 'onBreedingPhaseEnd', newbornTypes)
   }
 
   this.log.outdent()

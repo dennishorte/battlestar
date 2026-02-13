@@ -11,13 +11,13 @@ module.exports = {
   onPlay(game, player) {
     player.specialFoodActive = true
   },
-  onTakeAnimals(game, player, animalCount, allAccommodated) {
-    if (player.specialFoodActive && allAccommodated && animalCount > 0) {
+  onTakeAnimals(game, player, resource, count, allAccommodated) {
+    if (player.specialFoodActive && allAccommodated && count > 0) {
       player.specialFoodActive = false
-      player.bonusPoints = (player.bonusPoints || 0) + animalCount
+      player.bonusPoints = (player.bonusPoints || 0) + count
       game.log.add({
         template: '{player} gets {points} bonus points from Special Food',
-        args: { player, points: animalCount },
+        args: { player, points: count },
       })
     }
   },
