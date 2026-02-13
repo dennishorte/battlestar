@@ -572,8 +572,9 @@ const occupations = [
     players: '1+',
     category: 'Goods Provider',
     text: 'Pile the following goods on this card (wood, grain, reed, stone, vegetable, clay, reed, vegetable). At any time, you can buy the top good for 1 food.',
-    onPlay(game, player) {
-      player.grocerGoods = ['wood', 'grain', 'reed', 'stone', 'vegetables', 'clay', 'reed', 'vegetables']
+    onPlay(game, _player) {
+      const state = game.cardState(this.id)
+      state.goods = ['wood', 'grain', 'reed', 'stone', 'vegetables', 'clay', 'reed', 'vegetables']
     },
     allowsAnytimePurchase: true,
   },

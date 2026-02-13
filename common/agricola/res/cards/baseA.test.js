@@ -2242,8 +2242,8 @@ describe('BaseA Cards', () => {
           },
         })
 
-        const dennis = t.player(game)
-        expect(dennis.grocerGoods).toEqual([
+        const state = game.cardState('grocer')
+        expect(state.goods).toEqual([
           'wood', 'grain', 'reed', 'stone', 'vegetables', 'clay', 'reed', 'vegetables',
         ])
       })
