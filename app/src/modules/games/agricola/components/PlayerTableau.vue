@@ -109,16 +109,19 @@
       <CardSection
         title="Occupations"
         :cards="player.playedOccupations"
+        persistKey="agricola-occupations-expanded"
       />
 
       <CardSection
         title="Minor Improvements"
         :cards="player.playedMinorImprovements"
+        persistKey="agricola-minor-expanded"
       />
 
       <CardSection
         title="Major Improvements"
         :cards="player.majorImprovements"
+        persistKey="agricola-major-expanded"
       />
 
       <!-- Hand (only visible to the player) -->

@@ -1,25 +1,36 @@
 <template>
-  <div class="agricola-card-chip" :class="[cardTypeClass, { unplayable, used: isUsed }]" @click.stop="showDetails">
-    <span class="card-name">{{ displayName }}</span>
+  <div class="agricola-card-chip-wrapper" :class="{ expanded: localExpanded }">
+    <div class="agricola-card-chip" :class="[cardTypeClass, { unplayable, used: isUsed }]" @click.stop="showDetails">
+      <span
+        v-if="cardText"
+        class="expand-chevron"
+        :class="{ open: localExpanded }"
+        @click.stop="toggleExpand"
+      >▶</span>
+      <span class="card-name">{{ displayName }}</span>
 
-    <!-- Resources on card -->
-    <span v-if="cardResources.length > 0" class="card-resources">
-      <span v-for="res in cardResources" :key="res.type" class="resource-badge">
-        {{ res.amount }}{{ RESOURCE_ICONS[res.type] }}
+      <!-- Resources on card -->
+      <span v-if="cardResources.length > 0" class="card-resources">
+        <span v-for="res in cardResources" :key="res.type" class="resource-badge">
+          {{ res.amount }}{{ RESOURCE_ICONS[res.type] }}
+        </span>
       </span>
-    </span>
 
-    <!-- Pile indicator -->
-    <span v-if="pileContents.length > 0" class="pile-badge" :title="pileTooltip">
-      📦{{ pileContents.length }}
-    </span>
+      <!-- Pile indicator -->
+      <span v-if="pileContents.length > 0" class="pile-badge" :title="pileTooltip">
+        📦{{ pileContents.length }}
+      </span>
 
-    <!-- Used indicator -->
-    <span v-if="isUsed" class="used-badge" title="Already used">✓</span>
+      <!-- Used indicator -->
+      <span v-if="isUsed" class="used-badge" title="Already used">✓</span>
 
-    <span class="card-cost" v-if="costText">{{ costText }}</span>
-    <span v-if="hasPrereqs" class="prereqs-marker">*</span>
-    <span class="card-vp" v-if="victoryPoints">{{ victoryPoints }}VP</span>
+      <span class="card-cost" v-if="costText">{{ costText }}</span>
+      <span v-if="hasPrereqs" class="prereqs-marker">*</span>
+      <span class="card-vp" v-if="victoryPoints">{{ victoryPoints }}VP</span>
+    </div>
+    <div v-if="localExpanded && cardText" class="card-description" :class="cardTypeClass">
+      <div v-for="(line, i) in cardTextLines" :key="i" class="card-text-line">{{ line }}</div>
+    </div>
   </div>
 </template>
 
@@ -46,10 +57,17 @@ export default {
       type: Object,
       default: null,
     },
+    initialExpanded: {
+      type: Boolean,
+      default: false,
+    },
   },
+
+  emits: ['toggle-expand'],
 
   data() {
     return {
+      localExpanded: this.initialExpanded,
       RESOURCE_ICONS: {
         food: '🍞',
         wood: '🪵',
@@ -115,6 +133,20 @@ export default {
 
     hasPrereqs() {
       return !!this.card?.prereqs
+    },
+
+    cardText() {
+      return this.card?.text || null
+    },
+
+    cardTextLines() {
+      if (!this.cardText) {
+        return []
+      }
+      if (Array.isArray(this.cardText)) {
+        return this.cardText
+      }
+      return [this.cardText]
     },
 
     unplayable() {
@@ -219,11 +251,20 @@ export default {
         this.ui.fn.showCard(this.cardId, this.actualCardType)
       }
     },
+
+    toggleExpand() {
+      this.localExpanded = !this.localExpanded
+      this.$emit('toggle-expand', this.cardId, this.localExpanded)
+    },
   },
 }
 </script>
 
 <style scoped>
+.agricola-card-chip-wrapper {
+  width: 100%;
+}
+
 .agricola-card-chip {
   display: flex;
   align-items: center;
@@ -239,6 +280,27 @@ export default {
 
 .agricola-card-chip:hover {
   filter: brightness(0.92);
+}
+
+.expand-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .55em;
+  color: #888;
+  transition: transform 0.15s;
+  flex-shrink: 0;
+  width: 1em;
+  cursor: pointer;
+  padding: .2em;
+}
+
+.expand-chevron:hover {
+  color: #444;
+}
+
+.expand-chevron.open {
+  transform: rotate(90deg);
 }
 
 .card-name {
@@ -323,5 +385,39 @@ export default {
   background-color: rgba(0, 0, 0, 0.1);
   padding: 0 .15em;
   border-radius: .15em;
+}
+
+/* Card description area */
+.card-description {
+  padding: .3em .5em .3em 1.6em;
+  font-size: .78em;
+  line-height: 1.35;
+  color: #444;
+  white-space: normal;
+  border-left: 3px solid transparent;
+}
+
+.card-description.card-type-occupation {
+  background-color: #fff8f0;
+  border-left-color: #ff9800;
+}
+
+.card-description.card-type-minor {
+  background-color: #f0f7fd;
+  border-left-color: #2196f3;
+}
+
+.card-description.card-type-major {
+  background-color: #fdf0f3;
+  border-left-color: #e91e63;
+}
+
+.card-description.card-type-unknown {
+  background-color: #fafafa;
+  border-left-color: #9e9e9e;
+}
+
+.card-text-line + .card-text-line {
+  margin-top: .3em;
 }
 </style>
