@@ -430,67 +430,83 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
-    const selection = this.choose(player, () => {
+    let builtAnything = false
+
+    // Loop: keep offering build choices until the player is done or can't afford more
+    while (true) {
       const curCanBuildRoom = player.canAffordRoom() && player.getValidRoomBuildSpaces().length > 0
       const curCanBuildStable = player.canAffordStable() && player.getValidStableBuildSpaces().length > 0
 
-      const hasMultiRoom = curCanBuildRoom && player.hasMultiRoomDiscount()
-      const multiRoomOptions = []
-      if (hasMultiRoom) {
-        const availableSpaces = player.getValidRoomBuildSpaces().length
-        for (let count = 2; count <= availableSpaces; count++) {
-          const cost = player.getMultiRoomCost(count)
-          if (player.canAffordCost(cost)) {
-            multiRoomOptions.push(count)
-          }
-          else {
-            break
+      if (!curCanBuildRoom && !curCanBuildStable) {
+        break
+      }
+
+      const selection = this.choose(player, () => {
+        // Re-evaluate inside function wrapper for anytime action support
+        const canRoom = player.canAffordRoom() && player.getValidRoomBuildSpaces().length > 0
+        const canStable = player.canAffordStable() && player.getValidStableBuildSpaces().length > 0
+
+        const hasMultiRoom = canRoom && player.hasMultiRoomDiscount()
+        const multiRoomOptions = []
+        if (hasMultiRoom) {
+          const availableSpaces = player.getValidRoomBuildSpaces().length
+          for (let count = 2; count <= availableSpaces; count++) {
+            const cost = player.getMultiRoomCost(count)
+            if (player.canAffordCost(cost)) {
+              multiRoomOptions.push(count)
+            }
+            else {
+              break
+            }
           }
         }
+
+        const choices = []
+        if (canRoom) {
+          choices.push('Build Room')
+        }
+        for (const count of multiRoomOptions) {
+          choices.push(`Build ${count} Rooms`)
+        }
+        if (canStable) {
+          choices.push('Build Stable')
+        }
+        choices.push('Done Building')
+        return choices
+      }, {
+        title: 'Choose what to build',
+        min: 1,
+        max: 1,
+      })
+
+      const choice = selection[0]
+
+      if (choice === 'Done Building') {
+        break
       }
 
-      const choices = []
-      if (curCanBuildRoom) {
-        choices.push('Build Room')
+      // Handle multi-room building
+      const multiMatch = choice.match(/^Build (\d+) Rooms$/)
+      if (multiMatch) {
+        const count = parseInt(multiMatch[1])
+        this.buildMultipleRooms(player, count)
+        builtAnything = true
+        continue
       }
-      for (const count of multiRoomOptions) {
-        choices.push(`Build ${count} Rooms`)
-      }
-      if (curCanBuildStable) {
-        choices.push('Build Stable')
-      }
-      if (curCanBuildRoom && curCanBuildStable) {
-        choices.push('Build Room and Stable')
-      }
-      choices.push('Do Nothing')
-      return choices
-    }, {
-      title: 'Choose what to build',
-      min: 1,
-      max: 1,
-    })
 
-    const choice = selection[0]
+      if (choice === 'Build Room') {
+        this.buildRoom(player)
+        builtAnything = true
+      }
 
-    if (choice === 'Do Nothing') {
+      if (choice === 'Build Stable') {
+        this.buildStable(player)
+        builtAnything = true
+      }
+    }
+
+    if (!builtAnything) {
       this.log.addDoNothing(player, 'build')
-      return true
-    }
-
-    // Handle multi-room building
-    const multiMatch = choice.match(/^Build (\d+) Rooms$/)
-    if (multiMatch) {
-      const count = parseInt(multiMatch[1])
-      this.buildMultipleRooms(player, count)
-      return true
-    }
-
-    if (choice === 'Build Room' || choice === 'Build Room and Stable') {
-      this.buildRoom(player)
-    }
-
-    if (choice === 'Build Stable' || choice === 'Build Room and Stable') {
-      this.buildStable(player)
     }
 
     return true
