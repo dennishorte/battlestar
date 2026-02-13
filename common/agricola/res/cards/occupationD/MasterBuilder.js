@@ -11,7 +11,21 @@ module.exports = {
     game.cardState(this.id).used = false
   },
   canUseFreeRoom(game, player) {
-    return !game.cardState(this.id).used && player.getRoomCount() >= 5
+    return !game.cardState(this.id).used
+      && player.getRoomCount() >= 5
+      && player.getValidRoomBuildSpaces().length > 0
+  },
+  getAnytimeActions(game, player) {
+    if (!this.canUseFreeRoom(game, player)) {
+      return []
+    }
+    return [{
+      type: 'card-custom',
+      cardId: this.id,
+      cardName: this.name,
+      actionKey: 'useFreeRoom',
+      description: `${this.name}: Build a free room (once per game)`,
+    }]
   },
   useFreeRoom(game, player) {
     game.cardState(this.id).used = true

@@ -4130,6 +4130,136 @@ class AgricolaActionManager extends BaseActionManager {
       return this.buyMinorImprovement(player)
     }
   }
+
+  buildFreeRoom(player, card) {
+    const validSpaces = player.getValidRoomBuildSpaces()
+    if (validSpaces.length === 0) {
+      this.log.add({
+        template: '{player} has no valid space for a room',
+        args: { player },
+      })
+      return false
+    }
+
+    const spaceChoices = validSpaces.map(s => `${s.row},${s.col}`)
+
+    const selector = {
+      type: 'select',
+      actor: player.name,
+      title: 'Choose where to build the free room',
+      choices: spaceChoices,
+      min: 1,
+      max: 1,
+      allowsAction: 'build-room',
+      validSpaces: validSpaces,
+    }
+
+    const result = this.game.requestInputSingle(selector)
+
+    let row, col
+    if (result.action === 'build-room') {
+      row = result.row
+      col = result.col
+      const isValid = validSpaces.some(s => s.row === row && s.col === col)
+      if (!isValid) {
+        throw new Error(`Invalid room space: (${row}, ${col})`)
+      }
+    }
+    else {
+      [row, col] = result[0].split(',').map(Number)
+    }
+
+    const roomType = player.roomType
+    player.buildRoom(row, col)
+
+    this.log.add({
+      template: '{player} uses {card} to build a free {type} room at ({row},{col})',
+      args: { player, card, type: roomType, row, col },
+    })
+
+    this.game.callPlayerCardHook(player, 'onBuildRoom', roomType)
+
+    return true
+  }
+
+  offerSculptureCourse(player, card) {
+    const choices = []
+    if (player.wood >= 1) {
+      choices.push('1 wood → 2 food')
+    }
+    if (player.stone >= 1) {
+      choices.push('1 stone → 4 food')
+    }
+    choices.push('Skip')
+
+    if (choices.length === 1) {
+      return
+    }
+
+    const selection = this.choose(player, choices, {
+      title: 'Sculpture Course: Choose an exchange',
+      min: 1,
+      max: 1,
+    })
+    const sel = Array.isArray(selection) ? selection[0] : selection
+
+    if (sel === '1 wood → 2 food') {
+      player.removeResource('wood', 1)
+      player.addResource('food', 2)
+      this.log.add({
+        template: '{player} uses {card} to exchange 1 wood for 2 food',
+        args: { player, card },
+      })
+    }
+    else if (sel === '1 stone → 4 food') {
+      player.removeResource('stone', 1)
+      player.addResource('food', 4)
+      this.log.add({
+        template: '{player} uses {card} to exchange 1 stone for 4 food',
+        args: { player, card },
+      })
+    }
+  }
+
+  offerReedSellerConversion(player, card) {
+    // Ask other players if they want to buy the reed for 2 food
+    const otherPlayers = this.game.players.all().filter(p => p !== player && p.food >= 2)
+    let buyer = null
+
+    if (otherPlayers.length > 0) {
+      for (const other of otherPlayers) {
+        const selection = this.choose(other, ['Buy reed for 2 food', 'Pass'], {
+          title: `${player.name} is selling 1 reed. Buy it for 2 food?`,
+          min: 1,
+          max: 1,
+        })
+        const sel = Array.isArray(selection) ? selection[0] : selection
+        if (sel === 'Buy reed for 2 food') {
+          buyer = other
+          break
+        }
+      }
+    }
+
+    player.removeResource('reed', 1)
+
+    if (buyer) {
+      buyer.removeResource('food', 2)
+      player.addResource('food', 2)
+      buyer.addResource('reed', 1)
+      this.log.add({
+        template: '{player} sells 1 reed to {buyer} for 2 food via {card}',
+        args: { player, buyer, card },
+      })
+    }
+    else {
+      player.addResource('food', 3)
+      this.log.add({
+        template: '{player} uses {card} to convert 1 reed into 3 food',
+        args: { player, card },
+      })
+    }
+  }
 }
 
 module.exports = { AgricolaActionManager }
