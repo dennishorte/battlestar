@@ -19,16 +19,16 @@ describe('Trellis', () => {
     t.choose(game, 'Build Fences')
     t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 4 }] })
     // wood = 0 after 4 fences → loop exits automatically
-    // Pig Market executes (2 boar) → auto-placed in new pasture (capacity 2)
+    // Pig Market executes (1 boar) → placed in new pasture
 
     t.testBoard(game, {
       dennis: {
         // wood: 0 (4 - 4 fences)
-        animals: { boar: 2 },
+        animals: { boar: 1 },
         occupations: ['test-occupation-1', 'test-occupation-2'],
         minorImprovements: ['trellis-c015'],
         farmyard: {
-          pastures: [{ spaces: [{ row: 2, col: 4 }], boar: 2 }],
+          pastures: [{ spaces: [{ row: 2, col: 4 }], boar: 1 }],
         },
       },
     })
@@ -49,8 +49,7 @@ describe('Trellis', () => {
 
     t.choose(game, 'Pig Market')
     t.choose(game, 'Skip')
-    // 2 boar arrive but pet slot holds only 1 → overflow
-    t.choose(game, 'Place Animals')
+    // 1 boar arrives → auto-placed as pet
 
     t.testBoard(game, {
       dennis: {

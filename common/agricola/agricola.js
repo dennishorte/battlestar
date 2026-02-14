@@ -1106,6 +1106,15 @@ Agricola.prototype.revealRoundAction = function() {
   }
 }
 
+Agricola.prototype.getActionSpaceRound = function(actionId) {
+  const index = this.state.roundCardDeck.findIndex(card => card.id === actionId)
+  return index === -1 ? undefined : index + 1
+}
+
+Agricola.prototype.getMostRecentlyRevealedRound = function() {
+  return this.state.round
+}
+
 Agricola.prototype.replenishPhase = function() {
   this.log.add({ template: 'Replenishing action spaces' })
   this.log.indent()

@@ -290,6 +290,10 @@ TestUtil.setBoard = function(game, state) {
         }
       }
 
+      // Sync roundCardDeck so getActionSpaceRound returns correct values
+      const remaining = game.state.roundCardDeck.filter(c => !placedIds.has(c.id))
+      game.state.roundCardDeck = [...orderedCards, ...remaining]
+
       for (const action of orderedCards) {
         if (!game.state.activeActions.includes(action.id)) {
           game.addActionSpace(action)

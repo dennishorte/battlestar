@@ -12,8 +12,7 @@ describe('Hod', () => {
     })
     game.run()
 
-    t.choose(game, 'Pig Market')   // micah takes Pig Market
-    t.choose(game, 'Place Animals') // micah places boar
+    t.choose(game, 'Pig Market')   // micah takes Pig Market (1 boar, auto-placed as pet)
 
     t.testBoard(game, {
       dennis: {
@@ -38,8 +37,7 @@ describe('Hod', () => {
     })
     game.run()
 
-    t.choose(game, 'Pig Market')   // dennis takes Pig Market
-    t.choose(game, 'Place Animals') // dennis places boar
+    t.choose(game, 'Pig Market')   // dennis takes Pig Market (1 boar, auto-placed as pet)
 
     t.testBoard(game, {
       dennis: {

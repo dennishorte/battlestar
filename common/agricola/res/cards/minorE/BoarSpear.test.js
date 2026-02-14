@@ -12,8 +12,7 @@ describe('Boar Spear', () => {
     })
     game.run()
 
-    t.choose(game, 'Pig Market')    // dennis takes Pig Market (1 boar)
-    t.choose(game, 'Place Animals') // placement prompt
+    t.choose(game, 'Pig Market')    // dennis takes Pig Market (1 boar, auto-placed as pet)
     // onTakeAnimals fires → Boar Spear triggers
     t.choose(game, 'Convert 1 boar to 4 food')
 
@@ -36,8 +35,7 @@ describe('Boar Spear', () => {
     })
     game.run()
 
-    t.choose(game, 'Pig Market')
-    t.choose(game, 'Place Animals')
+    t.choose(game, 'Pig Market')    // 1 boar, auto-placed as pet
     t.choose(game, 'Keep boar')
 
     t.testBoard(game, {
