@@ -2,16 +2,24 @@
   "lastUpdated": "2024-01-15",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 0,
-  "cardsCompleted": 0,
-  "cardsTested": 23,
-  "currentBatch": "Batch-001",
-  "batches": {},
+  "batchesCompleted": 1,
+  "cardsCompleted": 3,
+  "cardsTested": 26,
+  "currentBatch": "Batch-002",
+  "batches": {
+    "Batch-001": {
+      "status": "completed",
+      "cards": ["animal-tamer-a086", "wood-carrier-a117", "priest-a125"],
+      "testsCreated": 3,
+      "testsPassing": 8,
+      "completedDate": "2024-01-15"
+    }
+  },
   "bySet": {
     "occupationA": {
       "total": 84,
-      "implemented": 0,
-      "tested": 3,
+      "implemented": 3,
+      "tested": 6,
       "status": "in_progress"
     },
     "occupationB": {
