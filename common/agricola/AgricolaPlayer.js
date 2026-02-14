@@ -1473,6 +1473,18 @@ class AgricolaPlayer extends BasePlayer {
     return capacity
   }
 
+  hasEmptyUnfencedStable() {
+    for (const stable of this.getStableSpaces()) {
+      if (!this.getPastureAtSpace(stable.row, stable.col)) {
+        const space = this.getSpace(stable.row, stable.col)
+        if (!space.animal) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
   getTotalAnimalCapacity(animalType) {
     // Pet in house (default 1, Animal Tamer: 1 per room)
     let capacity = this.applyHouseAnimalCapacityModifiers(1)

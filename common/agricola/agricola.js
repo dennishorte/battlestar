@@ -1313,6 +1313,9 @@ Agricola.prototype.playerTurn = function(player, options) {
     for (let i = 0; i < spacesUsed; i++) {
       this.callPlayerCardHook(player, 'onUseSpace')
     }
+    if (spacesUsed >= 1) {
+      this.callPlayerCardHook(player, 'onUseFarmyardSpace')
+    }
     if (spacesUsed >= 2) {
       this.callPlayerCardHook(player, 'onUseMultipleSpaces', spacesUsed)
     }
@@ -1704,6 +1707,8 @@ Agricola.prototype.breedingPhase = function() {
     if (this.state.skipFieldAndBreeding?.includes(player.name)) {
       continue
     }
+
+    this.callPlayerCardHook(player, 'onBreedingPhaseStart')
 
     const bred = player.breedAnimals()
 
