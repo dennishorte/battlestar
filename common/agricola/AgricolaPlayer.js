@@ -767,6 +767,36 @@ class AgricolaPlayer extends BasePlayer {
     return total
   }
 
+  hasAdjacentUnusedSpaces(count) {
+    if (count <= 0) {
+      return true
+    }
+    const unused = []
+    for (let row = 0; row < res.constants.farmyardRows; row++) {
+      for (let col = 0; col < res.constants.farmyardCols; col++) {
+        const space = this.getSpace(row, col)
+        // Unused = empty, no stable, not in a pasture (same as scoring)
+        if (space.type === 'empty' && !space.hasStable && !this.getPastureAtSpace(row, col)) {
+          unused.push({ row, col })
+        }
+      }
+    }
+    if (count === 1) {
+      return unused.length >= 1
+    }
+    // Check for pairs of adjacent unused spaces
+    for (const space of unused) {
+      const neighbors = this.getOrthogonalNeighbors(space.row, space.col)
+      if (neighbors.some(n => {
+        const ns = this.getSpace(n.row, n.col)
+        return ns.type === 'empty' && !ns.hasStable && !this.getPastureAtSpace(n.row, n.col)
+      })) {
+        return true
+      }
+    }
+    return false
+  }
+
   // ---------------------------------------------------------------------------
   // Stable methods
   // ---------------------------------------------------------------------------

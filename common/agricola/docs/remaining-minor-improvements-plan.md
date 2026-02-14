@@ -235,7 +235,7 @@ MinorB cards that need unique infrastructure beyond simple inline fixes.
 |------|------|---------|-------|
 | UpscaleLifestyle (b001) | B | None — anytime renovation infra exists | Just needs tests |
 | Caravan (b010) | B | `providesRoom` flag | Works but needs family growth E2E test |
-| PotteryYard (b031) | B | `hasAdjacentUnusedSpaces` | Needs new player method |
+| ✅ PotteryYard (b031) | B | `hasAdjacentUnusedSpaces` | Done — player method added |
 | SpecialFood (b034) | B | `onTakeAnimals` + `allAccommodated` | Hook needs parameter added |
 | AgrarianFences (b026) | B | `modifyGrainUtilization` flag | Flag not processed in game engine |
 | WoodPalisades (b030) | B | `allowWoodPalisades` flag | Wood as fence material not supported |
@@ -244,11 +244,11 @@ MinorB cards that need unique infrastructure beyond simple inline fixes.
 
 | Card | Deck | Stub Method | Blocker |
 |------|------|-------------|---------|
-| CarpentersBench (b015) | B | `offerCarpentersBench` | Build pasture with taken wood, 1 free fence |
-| Hauberg (b041) | B | `offerHauberg` | Alternating wood/boar schedule system |
+| ✅ CarpentersBench (b015) | B | `offerCarpentersBench` | Done — custom validation, 1 free fence |
+| ✅ Hauberg (b041) | B | `offerHauberg` | Done — scheduleResource for wood/boar |
 | HayloftBarn (b021) | B | `familyGrowthWithoutRoom` | `onGainGrain` hook wired but family growth without room needed |
-| MiniPasture (b002) | B | `buildFreeSingleSpacePasture` | Single-space pasture building system |
-| Toolbox (b027) | B | `offerToolboxMajor` | Offer Joinery/Pottery/Basketmaker after build actions |
+| ✅ MiniPasture (b002) | B | `buildFreeSingleSpacePasture` | Done — free single-space pasture |
+| ✅ Toolbox (b027) | B | `offerToolboxMajor` | Done — offers Joinery/Pottery/Basketmaker |
 
 ---
 

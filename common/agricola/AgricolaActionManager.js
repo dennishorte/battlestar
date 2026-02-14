@@ -144,6 +144,9 @@ class AgricolaActionManager extends BaseActionManager {
       }
       else {
         player.addResource(resource, actionState.accumulated)
+        if (resource === 'wood') {
+          player._lastWoodTaken = actionState.accumulated
+        }
       }
     }
 
@@ -4338,6 +4341,260 @@ class AgricolaActionManager extends BaseActionManager {
         template: '{player} uses {card} to convert 1 reed into 3 food',
         args: { player, card },
       })
+    }
+  }
+
+  buildFreeSingleSpacePasture(player, card) {
+    const fenceableSpaces = player.getFenceableSpaces()
+    // Filter to spaces not already in a pasture
+    const available = fenceableSpaces.filter(s => !player.getPastureAtSpace(s.row, s.col))
+
+    if (available.length === 0) {
+      this.log.add({
+        template: '{player} has no available space for {card}',
+        args: { player, card },
+      })
+      return false
+    }
+
+    // If player already has pastures, the new one must be adjacent to an existing one
+    const hasPastures = player.farmyard.pastures.length > 0
+    let validSpaces = available
+    if (hasPastures) {
+      validSpaces = available.filter(space => {
+        const neighbors = player.getOrthogonalNeighbors(space.row, space.col)
+        return neighbors.some(n => player.getPastureAtSpace(n.row, n.col))
+      })
+    }
+
+    if (validSpaces.length === 0) {
+      this.log.add({
+        template: '{player} has no valid adjacent space for {card}',
+        args: { player, card },
+      })
+      return false
+    }
+
+    const spaceChoices = validSpaces.map(s => `${s.row},${s.col}`)
+    spaceChoices.push('Do not build')
+
+    const selection = this.choose(player, spaceChoices, {
+      title: 'Choose space for free single-space pasture',
+      min: 1,
+      max: 1,
+    })
+
+    const sel = Array.isArray(selection) ? selection[0] : selection
+    if (sel === 'Do not build') {
+      return false
+    }
+
+    const [row, col] = sel.split(',').map(Number)
+
+    // Calculate fences needed for single space
+    const fences = player.calculateFencesForPasture([{ row, col }])
+
+    // Add fences (free — no wood cost)
+    for (const fence of fences) {
+      player.farmyard.fences.push(fence)
+    }
+
+    // Use fences from supply
+    for (let i = 0; i < fences.length; i++) {
+      player.useFenceFromSupply()
+    }
+
+    // Recalculate pastures
+    player.recalculatePastures()
+
+    this.log.add({
+      template: '{player} uses {card} to build a free single-space pasture at ({row},{col}) with {fenceCount} fences',
+      args: { player, card, row, col, fenceCount: fences.length },
+    })
+
+    this.game.callPlayerCardHook(player, 'onBuildPasture', { spaces: [{ row, col }] })
+
+    return true
+  }
+
+  offerHauberg(player, card) {
+    const currentRound = this.game.state.round
+
+    const selection = this.choose(player, ['Start with wood', 'Start with boar'], {
+      title: 'Hauberg: Choose what to start with',
+      min: 1,
+      max: 1,
+    })
+
+    const sel = Array.isArray(selection) ? selection[0] : selection
+    const startWithWood = sel === 'Start with wood'
+
+    for (let i = 0; i < 4; i++) {
+      const round = currentRound + 1 + i
+      if (round > 14) {
+        break
+      }
+
+      const isWoodRound = startWithWood ? (i % 2 === 0) : (i % 2 === 1)
+      if (isWoodRound) {
+        this.game.scheduleResource(player, 'wood', round, 2)
+      }
+      else {
+        this.game.scheduleResource(player, 'boar', round, 1)
+      }
+    }
+
+    this.log.add({
+      template: '{player} uses {card} to schedule alternating wood and boar for 4 rounds (starting with {start})',
+      args: { player, card, start: startWithWood ? 'wood' : 'boar' },
+    })
+  }
+
+  offerToolboxMajor(player, card) {
+    const toolboxMajors = ['joinery', 'pottery', 'basketmakers-workshop']
+    const available = this.game.getAvailableMajorImprovements()
+      .filter(id => toolboxMajors.includes(id))
+      .filter(id => player.canBuyMajorImprovement(id))
+
+    if (available.length === 0) {
+      return
+    }
+
+    const choices = available.map(id => {
+      const imp = this.game.cards.byId(id)
+      return imp.name + ` (${id})`
+    })
+    choices.push('Do not build')
+
+    const selection = this.choose(player, choices, {
+      title: 'Toolbox: Build a major improvement?',
+      min: 1,
+      max: 1,
+    })
+
+    const sel = Array.isArray(selection) ? selection[0] : selection
+    if (sel === 'Do not build') {
+      return
+    }
+
+    const idMatch = sel.match(/\(([^)]+)\)/)
+    const improvementId = idMatch ? idMatch[1] : null
+
+    if (improvementId) {
+      const imp = this.game.cards.byId(improvementId)
+      const result = player.buyMajorImprovement(improvementId)
+      this._recordCardPlayed(player, imp)
+
+      if (!result.upgraded) {
+        player.payCost(player.getMajorImprovementCost(improvementId))
+      }
+
+      if (imp.hasHook('onBuy')) {
+        imp.callHook('onBuy', this.game, player)
+      }
+
+      this.game.callPlayerCardHook(player, 'onBuildImprovement', player.getMajorImprovementCost(improvementId), imp)
+      this.game.callPlayerCardHook(player, 'onBuildMajor')
+
+      this.log.add({
+        template: '{player} uses {card} to build {improvement}',
+        args: { player, card, improvement: imp },
+      })
+    }
+  }
+
+  offerCarpentersBench(player, card) {
+    const woodTaken = player._lastWoodTaken || 0
+    if (woodTaken <= 0) {
+      return
+    }
+
+    // Check if player has fenceable spaces not in a pasture
+    const fenceableSpaces = player.getFenceableSpaces()
+    const available = fenceableSpaces.filter(s => !player.getPastureAtSpace(s.row, s.col))
+    if (available.length === 0) {
+      return
+    }
+
+    const selection = this.choose(player, ['Build pasture', 'Skip'], {
+      title: `Carpenter's Bench: Build a pasture using ${woodTaken} wood (1 fence free)?`,
+      min: 1,
+      max: 1,
+    })
+
+    const sel = Array.isArray(selection) ? selection[0] : selection
+    if (sel === 'Skip') {
+      return
+    }
+
+    // Use the build-pasture action-type selector
+    const response = this.choose(player, ['Cancel fencing'], {
+      title: "Carpenter's Bench: Select spaces for pasture",
+      min: 1,
+      max: 1,
+      allowsAction: 'build-pasture',
+      fenceableSpaces,
+    })
+
+    if (response.action === 'build-pasture' && response.spaces) {
+      const selectedSpaces = response.spaces
+      if (selectedSpaces.length === 0) {
+        return
+      }
+
+      // Custom validation (bypass validatePastureSelection which checks full wood cost)
+      for (const coord of selectedSpaces) {
+        const space = player.getSpace(coord.row, coord.col)
+        if (!space || space.type === 'room' || space.type === 'field') {
+          return
+        }
+      }
+      if (!player.areSpacesConnected(selectedSpaces)) {
+        return
+      }
+
+      const fences = player.calculateFencesForPasture(selectedSpaces)
+      const fencesNeeded = fences.length
+
+      // Check fence supply
+      const remainingFences = res.constants.maxFences - player.getFenceCount()
+      if (fencesNeeded > remainingFences) {
+        return
+      }
+
+      // Cost: fences minus 1 free, using only taken wood
+      const woodCost = Math.max(0, fencesNeeded - 1)
+      if (woodCost > woodTaken) {
+        this.log.add({
+          template: "Carpenter's Bench: Need {needed} wood for fences (after 1 free), but only took {taken}",
+          args: { needed: woodCost, taken: woodTaken },
+        })
+        return
+      }
+
+      // Pay the wood cost
+      if (woodCost > 0) {
+        player.payCost({ wood: woodCost })
+      }
+
+      // Add fences
+      for (const fence of fences) {
+        player.farmyard.fences.push(fence)
+      }
+
+      for (let i = 0; i < fencesNeeded; i++) {
+        player.useFenceFromSupply()
+      }
+
+      player.recalculatePastures()
+
+      this.log.add({
+        template: "{player} uses {card} to build a pasture with {spaces} spaces ({fences} fences, 1 free)",
+        args: { player, card, spaces: selectedSpaces.length, fences: fencesNeeded },
+      })
+
+      this.game.callPlayerCardHook(player, 'onBuildPasture', { spaces: selectedSpaces })
+      this.game.callPlayerCardHook(player, 'onBuildFences', fencesNeeded)
     }
   }
 }
