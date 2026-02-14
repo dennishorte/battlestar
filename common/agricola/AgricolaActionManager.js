@@ -704,9 +704,17 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   renovate(player) {
-    // Check if Conservator allows direct wood→stone renovation
+    // Check card hooks for renovation modifications (e.g., WoodSlideHammer)
+    let renovationMods = {}
+    for (const card of this.game.getPlayerActiveCards(player)) {
+      if (card.hasHook('modifyRenovation')) {
+        renovationMods = card.callHook('modifyRenovation', player, renovationMods)
+      }
+    }
+
+    // Check if Conservator or card hooks allow direct wood→stone renovation
     let targetType
-    if (player.roomType === 'wood' && player.canRenovateDirectlyToStone()) {
+    if (player.roomType === 'wood' && (player.canRenovateDirectlyToStone() || renovationMods.canSkipToStone)) {
       const canClay = player.canRenovate()       // standard wood→clay
       const canStone = player.canRenovate('stone') // direct wood→stone
 
@@ -1339,7 +1347,17 @@ class AgricolaActionManager extends BaseActionManager {
       })
 
       if (plowSelection[0] === 'Plow a field') {
-        this.plowField(player)
+        let plowCount = 1
+        for (const card of this.game.getPlayerActiveCards(player)) {
+          if (card.hasHook('modifyPlowCount')) {
+            plowCount = card.callHook('modifyPlowCount', this.game, player, plowCount, 'plow-sow')
+          }
+        }
+        for (let i = 0; i < plowCount; i++) {
+          if (!this.plowField(player)) {
+            break
+          }
+        }
       }
     }
 
@@ -1368,7 +1386,8 @@ class AgricolaActionManager extends BaseActionManager {
       // Check if player can build any fences (accounting for free fences from cards)
       const hasFreeOverhaulFences = (player._overhaulFreeFences || 0) > 0
       const hasFieldFenceDiscount = !!player._fieldFencesActive
-      if (player.wood < 1 && player.getFreeFenceCount() === 0 && !hasFreeOverhaulFences && !hasFieldFenceDiscount) {
+      const hasCardFreeFences = player.getActiveCards().some(c => c.hasHook('getFreeFences') && c.callHook('getFreeFences', this.game) > 0)
+      if (player.wood < 1 && player.getFreeFenceCount() === 0 && !hasFreeOverhaulFences && !hasFieldFenceDiscount && !hasCardFreeFences) {
         if (totalFencesBuilt === 0) {
           this.log.add({
             template: '{player} has no wood for fences',
@@ -2425,7 +2444,17 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     if (action.allowsPlowing) {
-      this.plowField(player)
+      let plowCount = action.allowsPlowing
+      for (const card of this.game.getPlayerActiveCards(player)) {
+        if (card.hasHook('modifyPlowCount')) {
+          plowCount = card.callHook('modifyPlowCount', this.game, player, plowCount, action.id)
+        }
+      }
+      for (let i = 0; i < plowCount; i++) {
+        if (!this.plowField(player)) {
+          break
+        }
+      }
     }
 
     if (action.allowsRoomBuilding || action.allowsStableBuilding) {

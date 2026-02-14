@@ -1103,6 +1103,8 @@ Agricola.prototype.revealRoundAction = function() {
       template: 'Round card revealed: {action}',
       args: { action: card.name },
     })
+
+    this.callCardHook('onStageReveal', card.id)
   }
 }
 
@@ -2059,6 +2061,8 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
       template: '{player} cooks {count} {resource} for {food} food',
       args: { player, count: option.count, resource: option.resource, food },
     })
+    this.callPlayerCardHook(player, 'onCookAnimal', option.resource, option.count, food)
+    this.callPlayerCardHook(player, 'onCook', option.resource, option.count, food)
   }
   else if (option.type === 'cook-vegetable') {
     player._usedCookingThisTurn = true
@@ -2067,6 +2071,7 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
       template: '{player} cooks {count} vegetable(s) for {food} food',
       args: { player, count: option.count, food },
     })
+    this.callPlayerCardHook(player, 'onCook', 'vegetable', option.count, food)
   }
   else if (option.type === 'craft') {
     player.removeResource(option.resource, option.count)
@@ -2084,6 +2089,8 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
       template: '{player} uses {card} to cook {count} {resource} for {food} food',
       args: { player, card: option.cardName, count: option.count, resource: option.resource, food: option.food },
     })
+    this.callPlayerCardHook(player, 'onCookAnimal', option.resource, option.count, option.food)
+    this.callPlayerCardHook(player, 'onCook', option.resource, option.count, option.food)
   }
   else if (option.type === 'card-convert') {
     player.removeResource(option.resource, option.count)

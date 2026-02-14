@@ -21,4 +21,8 @@ module.exports = {
   getFreeFences(game) {
     return game.cardState(this.id).storedFences || 0
   },
+  useFreeFences(game, count) {
+    const state = game.cardState(this.id)
+    state.storedFences = Math.max(0, (state.storedFences || 0) - count)
+  },
 }

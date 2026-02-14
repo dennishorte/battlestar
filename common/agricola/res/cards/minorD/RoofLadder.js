@@ -7,7 +7,7 @@ module.exports = {
   cost: { wood: 1 },
   category: "Building Resource Provider",
   text: "Each time you renovate, you pay 1 fewer reed and, at the end of the action, you get 1 stone.",
-  modifyRenovationCost(player, cost) {
+  modifyRenovationCost(game, player, cost) {
     const newCost = { ...cost }
     if (newCost.reed) {
       newCost.reed = Math.max(0, newCost.reed - 1)

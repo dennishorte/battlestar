@@ -12,7 +12,7 @@ module.exports = {
     }
     return cost
   },
-  modifyRenovationCost(player, cost) {
+  modifyRenovationCost(game, player, cost) {
     if (cost.clay && cost.clay > 0) {
       return { ...cost, clay: cost.clay - 1 }
     }

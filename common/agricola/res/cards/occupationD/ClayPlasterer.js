@@ -6,7 +6,7 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Renovating to clay only costs you exactly 1 clay and 1 reed. Each clay room only costs you 3 clay and 2 reed to build.",
-  modifyRenovationCost(player, cost, toType) {
+  modifyRenovationCost(game, player, cost, { toType }) {
     if (toType === 'clay') {
       return { clay: 1, reed: 1 }
     }

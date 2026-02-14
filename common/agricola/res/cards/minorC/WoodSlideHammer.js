@@ -11,11 +11,18 @@ module.exports = {
     if (!player.hasRenovated && player.roomType === 'wood' && player.getRoomCount() >= 5) {
       return {
         ...options,
-        canSkipToClay: false,
         canSkipToStone: true,
-        stoneDiscount: 2,
       }
     }
     return options
+  },
+  modifyRenovationCost(game, player, cost, { fromType, toType }) {
+    if (!player.hasRenovated && fromType === 'wood' && toType === 'stone') {
+      return {
+        ...cost,
+        stone: Math.max(0, (cost.stone || 0) - 2),
+      }
+    }
+    return cost
   },
 }

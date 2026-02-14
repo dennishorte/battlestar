@@ -499,6 +499,14 @@ class AgricolaPlayer extends BasePlayer {
     }
     cost = this.applyBuildCostModifiers(cost, 'renovate')
     cost = this.applyAnyCostModifiers(cost, 'renovate')
+
+    // Apply card-specific renovation cost modifiers (e.g., WoodSlideHammer stone discount)
+    for (const card of this.getActiveCards()) {
+      if (card.hasHook('modifyRenovationCost')) {
+        cost = card.callHook('modifyRenovationCost', this.game, this, cost, { fromType: this.roomType, toType: nextType })
+      }
+    }
+
     return cost
   }
 
@@ -522,6 +530,7 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
 
+    this.hasRenovated = true
     return true
   }
 
@@ -671,6 +680,17 @@ class AgricolaPlayer extends BasePlayer {
     return false
   }
 
+  isFieldAdjacentToPasture({ row, col }) {
+    const pastureSpaces = new Set()
+    for (const pasture of this.farmyard.pastures) {
+      for (const s of pasture.spaces) {
+        pastureSpaces.add(`${s.row},${s.col}`)
+      }
+    }
+    const neighbors = [[row - 1, col], [row + 1, col], [row, col - 1], [row, col + 1]]
+    return neighbors.some(([r, c]) => pastureSpaces.has(`${r},${c}`))
+  }
+
   sowField(row, col, cropType) {
     const space = this.getSpace(row, col)
     if (!space || space.type !== 'field' || (space.crop && space.cropCount > 0)) {
@@ -684,9 +704,16 @@ class AgricolaPlayer extends BasePlayer {
     // Take 1 from supply, place on field with bonus
     this[cropType] -= 1
 
-    const totalCrops = cropType === 'grain'
+    let totalCrops = cropType === 'grain'
       ? res.constants.sowingGrain
       : res.constants.sowingVegetables
+
+    // Apply card modifications to sow amount
+    for (const card of this.getActiveCards()) {
+      if (card.hasHook('modifySowAmount')) {
+        totalCrops = card.callHook('modifySowAmount', this.game, this, totalCrops, { row, col, cropType })
+      }
+    }
 
     space.crop = cropType
     space.cropCount = totalCrops
@@ -1357,6 +1384,13 @@ class AgricolaPlayer extends BasePlayer {
     if (this._fieldFencesActive) {
       woodCost = Math.max(0, woodCost - this._countFieldAdjacentFences(fences))
     }
+    // Card-based free fences (e.g. Ash Trees) — validation only, don't decrement
+    for (const card of this.getActiveCards()) {
+      if (card.hasHook('getFreeFences')) {
+        const freeFences = card.callHook('getFreeFences', this.game)
+        woodCost = Math.max(0, woodCost - freeFences)
+      }
+    }
     if (woodCost > this.wood) {
       return {
         valid: false,
@@ -1427,6 +1461,17 @@ class AgricolaPlayer extends BasePlayer {
     // Field Fences discount: fences adjacent to fields are free
     if (this._fieldFencesActive) {
       woodCost = Math.max(0, woodCost - this._countFieldAdjacentFences(validation.fences))
+    }
+    // Card-based free fences (e.g. Ash Trees) — decrement stored fences
+    for (const card of this.getActiveCards()) {
+      if (card.hasHook('getFreeFences') && card.hasHook('useFreeFences')) {
+        const freeFences = card.callHook('getFreeFences', this.game)
+        const used = Math.min(woodCost, freeFences)
+        if (used > 0) {
+          woodCost -= used
+          card.callHook('useFreeFences', this.game, used)
+        }
+      }
     }
     this.payCost({ wood: woodCost })
 

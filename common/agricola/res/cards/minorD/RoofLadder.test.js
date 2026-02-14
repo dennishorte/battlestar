@@ -2,7 +2,7 @@ const t = require('../../../testutil_v2.js')
 
 describe('Roof Ladder', () => {
   test('gives 1 stone after renovating', () => {
-    const game = t.fixture({ cardSets: ['minorD', 'minorImprovementA', 'test'] })
+    const game = t.fixture({ cardSets: ['minorD', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
       actionSpaces: ['House Redevelopment'],
@@ -21,6 +21,7 @@ describe('Roof Ladder', () => {
     t.testBoard(game, {
       dennis: {
         stone: 1,
+        reed: 1,  // started with 1, paid 0 (card reduces reed cost by 1)
         roomType: 'clay',
         minorImprovements: ['roof-ladder-d081'],
       },
