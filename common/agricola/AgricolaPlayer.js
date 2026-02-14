@@ -1625,7 +1625,7 @@ class AgricolaPlayer extends BasePlayer {
     for (const stable of this.getStableSpaces()) {
       const pasture = this.getPastureAtSpace(stable.row, stable.col)
       if (!pasture && stable.animal === type) {
-        count++
+        count += stable.animalCount || 1
       }
     }
 
@@ -1681,15 +1681,34 @@ class AgricolaPlayer extends BasePlayer {
     // Apply card modifiers (Drinking Trough: +2 per pasture)
     capacity = this.applyPastureCapacityModifiers(pasture, capacity)
 
+    if (hasStable) {
+      for (const card of this.getActiveCards()) {
+        if (card.hasHook('modifyStableCapacity')) {
+          capacity = card.callHook('modifyStableCapacity', this.game, this, capacity, true)
+        }
+      }
+    }
+
+    return capacity
+  }
+
+  getModifiedUnfencedStableCapacity() {
+    let capacity = 1
+    for (const card of this.getActiveCards()) {
+      if (card.hasHook('modifyStableCapacity')) {
+        capacity = card.callHook('modifyStableCapacity', this.game, this, capacity, false)
+      }
+    }
     return capacity
   }
 
   getUnfencedStableCapacity() {
-    // Each unfenced stable can hold 1 animal
+    // Each unfenced stable can hold animals (base 1, modifiable by cards)
+    const perStable = this.getModifiedUnfencedStableCapacity()
     let capacity = 0
     for (const stable of this.getStableSpaces()) {
       if (!this.getPastureAtSpace(stable.row, stable.col)) {
-        capacity++
+        capacity += perStable
       }
     }
     return capacity
@@ -1799,6 +1818,7 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     // Unfenced stables
+    const stableMax = this.getModifiedUnfencedStableCapacity()
     for (const stable of this.getStableSpaces()) {
       if (!this.getPastureAtSpace(stable.row, stable.col)) {
         const space = this.getSpace(stable.row, stable.col)
@@ -1808,8 +1828,8 @@ class AgricolaPlayer extends BasePlayer {
           name: 'Unfenced Stable',
           space: { row: stable.row, col: stable.col },
           currentAnimalType: space.animal || null,
-          currentCount: space.animal ? 1 : 0,
-          maxCapacity: 1,
+          currentCount: space.animalCount || (space.animal ? 1 : 0),
+          maxCapacity: stableMax,
         })
       }
     }
@@ -1948,15 +1968,20 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     // Then try unfenced stables
+    const unfencedStableMax = this.getModifiedUnfencedStableCapacity()
     for (const stable of this.getStableSpaces()) {
       if (remaining <= 0) {
         break
       }
       if (!this.getPastureAtSpace(stable.row, stable.col)) {
         const space = this.getSpace(stable.row, stable.col)
-        if (!space.animal) {
+        const currentCount = space.animalCount || (space.animal ? 1 : 0)
+        const canAdd = unfencedStableMax - currentCount
+        if (canAdd > 0 && (!space.animal || space.animal === animalType)) {
+          const toAdd = Math.min(remaining, canAdd)
           space.animal = animalType
-          remaining--
+          space.animalCount = currentCount + toAdd
+          remaining -= toAdd
         }
       }
     }
@@ -2530,6 +2555,16 @@ class AgricolaPlayer extends BasePlayer {
     return true
   }
 
+  getHouseCapacity() {
+    let capacity = this.getRoomCount()
+    for (const card of this.getActiveCards()) {
+      if (card.hasHook('modifyHouseCapacity')) {
+        capacity = card.callHook('modifyHouseCapacity', this, capacity)
+      }
+    }
+    return Math.min(capacity, res.constants.maxFamilyMembers)
+  }
+
   canGrowFamily(requiresRoom = true) {
     // Max 5 family members
     if (this.familyMembers >= res.constants.maxFamilyMembers) {
@@ -2537,7 +2572,7 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     // Need more rooms than family members (if required)
-    if (requiresRoom && this.getRoomCount() <= this.familyMembers) {
+    if (requiresRoom && this.familyMembers >= this.getHouseCapacity()) {
       return false
     }
 

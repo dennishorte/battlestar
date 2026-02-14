@@ -219,6 +219,302 @@ Cards:
 
 ---
 
+### Batch-011: Simple onAction Resource Bonuses (Set A)
+**Pattern**: Cards that grant resources when taking specific actions  
+**Template**: `ClayPuncher.js`, `SeasonalWorker.js`  
+**Test Template**: Test action triggers and resource grants  
+**Complexity**: Simple (Tier 1)
+
+Cards:
+1. `seasonal-worker-a114` - Seasonal Worker (onAction: +1 grain from Day Laborer, +1 vegetable from Round 6+)
+2. `portmonger-a103` - Portmonger (onAction: +1 vegetable/grain/reed when taking 1/2/3+ food from accumulation space)
+3. `barrow-pusher-a105` - Barrow Pusher (onPlowField: +1 clay and +1 food per new field)
+
+**LLM Instructions:**
+1. Read each card file and verify implementation matches card text
+2. Create comprehensive test files following existing test patterns
+3. Test action triggers and resource grants
+4. For Seasonal Worker, test both pre-Round 6 (grain) and Round 6+ (choice)
+5. For Portmonger, test different food amounts (1, 2, 3+)
+6. For Barrow Pusher, test plowing new fields
+7. Run tests and ensure ALL pass before marking complete
+8. Update `occupation-cards-status.json` after completion
+
+---
+
+### Batch-012: End Game Scoring Cards (Set A)
+**Pattern**: Cards that score bonus points at end of game  
+**Template**: `StableArchitect.js`, `FellowGrazer.js`  
+**Test Template**: Test `getEndGamePoints` hook with various board states  
+**Complexity**: Simple (Tier 1)
+
+Cards:
+1. `stable-architect-a098` - Stable Architect (getEndGamePoints: +1 VP per unfenced stable)
+2. `fellow-grazer-a099` - Fellow Grazer (getEndGamePoints: +2 VP per pasture with 3+ spaces)
+3. `cookery-outfitter-a101` - Cookery Outfitter (getEndGamePoints: +1 VP per cooking improvement)
+
+**LLM Instructions:**
+1. Read each card file and verify `getEndGamePoints` implementation
+2. Create test files that set up various board states and assert scores
+3. Test multiple scenarios (0, 1, 2+ of the scoring items)
+4. Use `t.testBoard` with `score` field to verify end game points
+5. Run tests and ensure ALL pass before marking complete
+6. Update `occupation-cards-status.json` after completion
+
+---
+
+### Batch-013: Room Capacity and Renovation Modifiers (Set A)
+**Pattern**: Cards that modify room capacity, renovation rules, or building behavior  
+**Template**: `Homekeeper.js`, `Conservator.js`, `BedMaker.js`  
+**Test Template**: Test room capacity, renovation options, and build room hooks  
+**Complexity**: Medium (Tier 2)
+
+Cards:
+1. `homekeeper-a085` - Homekeeper (modifyRoomCapacity: +1 person if room adjacent to field and pasture)
+2. `conservator-a087` - Conservator (allowDirectStoneRenovation: can renovate wood → stone directly)
+3. `bed-maker-a093` - Bed Maker (onBuildRoom: can pay 1 wood + 1 grain for family growth)
+4. `lodger-a127` - Lodger (providesRoom: temporary room until Round 9)
+
+**LLM Instructions:**
+1. Read each card file and verify implementation
+2. For Homekeeper, test room adjacency to both field and pasture
+3. For Conservator, test direct wood → stone renovation (skipping clay)
+4. For Bed Maker, test optional family growth when building rooms
+5. For Lodger, test temporary room provision and removal at Round 9
+6. Create comprehensive test files
+7. Run tests and ensure ALL pass before marking complete
+8. Update `occupation-cards-status.json` after completion
+
+---
+
+### Batch-014: onBeforeAction Hooks (Set A)
+**Pattern**: Cards that grant resources before taking actions based on round number  
+**Template**: `Knapper.js`, `MasterWorkman.js`  
+**Test Template**: Test `onBeforeAction` hook with different round cards  
+**Complexity**: Medium (Tier 2)
+
+Cards:
+1. `knapper-a124` - Knapper (onBeforeAction: +1 stone when using round 5-7 action spaces)
+2. `master-workman-a126` - Master Workman (onBeforeAction: +1 wood/clay/reed/stone for rounds 1/2/3/4)
+
+**LLM Instructions:**
+1. Read each card file and verify `onBeforeAction` implementation
+2. Test with action spaces from different rounds
+3. For Knapper, test rounds 5, 6, 7 (should trigger) and other rounds (should not)
+4. For Master Workman, test rounds 1, 2, 3, 4 (different resources) and other rounds
+5. Create comprehensive test files
+6. Run tests and ensure ALL pass before marking complete
+7. Update `occupation-cards-status.json` after completion
+
+---
+
+### Batch-015: Phase Hooks (Set A)
+**Pattern**: Cards that trigger during specific game phases  
+**Template**: `Treegardener.js`, `Curator.js`  
+**Test Template**: Test phase hooks (onFieldPhase, onReturnHome)  
+**Complexity**: Medium (Tier 2)
+
+Cards:
+1. `treegardener-a118` - Treegardener (onFieldPhase: +1 wood, can buy up to 2 more for 1 food each)
+2. `curator-a100` - Curator (onReturnHome: can buy 1 bonus point for 1 food if 3+ workers from accumulation spaces)
+
+**LLM Instructions:**
+1. Read each card file and verify phase hook implementation
+2. For Treegardener, test field phase trigger and optional wood purchase
+3. For Curator, test return home phase with 3+ workers from accumulation spaces
+4. Create comprehensive test files
+5. Run tests and ensure ALL pass before marking complete
+6. Update `occupation-cards-status.json` after completion
+
+---
+
+### Batch-016: Special Action Modifiers and Flags (Set A)
+**Pattern**: Cards that modify action rules or provide special abilities  
+**Template**: `AdoptiveParents.js`, `StablePlanner.js`, `ShiftingCultivator.js`, `LazySowman.js`  
+**Test Template**: Test special action modifiers and flags  
+**Complexity**: Medium-High (Tier 2-3)
+
+Cards:
+1. `adoptive-parents-a092` - Adoptive Parents (allowImmediateOffspringAction: can use offspring same round)
+2. `stable-planner-a089` - Stable Planner (onPlay: schedule free stables on rounds +3, +6, +9)
+3. `shifting-cultivator-a091` - Shifting Cultivator (onAction: can pay 3 food to plow when using wood accumulation space)
+4. `lazy-sowman-a094` - Lazy Sowman (onDeclineSow: can place extra person on occupied space)
+
+**LLM Instructions:**
+1. Read each card file and verify implementation
+2. For Adoptive Parents, test immediate offspring action capability
+3. For Stable Planner, test scheduled free stables on correct rounds
+4. For Shifting Cultivator, test wood accumulation space trigger and optional plow
+5. For Lazy Sowman, test declining sow action and extra person placement
+6. Create comprehensive test files
+7. Run tests and ensure ALL pass before marking complete
+8. Update `occupation-cards-status.json` after completion
+
+---
+
+### Batch-017: onAnyAction Hooks (Set A)
+**Pattern**: Cards that trigger when other players take specific actions  
+**Template**: `RiparianBuilder.js`, `Publican.js`  
+**Test Template**: Test `onAnyAction` and `onAnyBeforeSow` hooks with other players' actions  
+**Complexity**: Medium (Tier 2)
+
+Cards:
+1. `riparian-builder-a128` - Riparian Builder (onAnyAction: can build room when other player uses Reed Bank, discount for clay/stone)
+2. `publican-a132` - Publican (onAnyBeforeSow: can give 1 grain to get 1 bonus point when other player sows)
+
+**LLM Instructions:**
+1. Read each card file and verify implementation
+2. For Riparian Builder, test with other player using Reed Bank action space
+3. For Publican, test with other player taking sow action
+4. Create comprehensive test files
+5. Run tests and ensure ALL pass before marking complete
+6. Update `occupation-cards-status.json` after completion
+
+---
+
+### Batch-018: Build Hooks and Complex onAction (Set A)
+**Pattern**: Cards that trigger on building improvements or have complex onAction logic  
+**Template**: `CraftTeacher.js`, `Swagman.js`, `RiverineShepherd.js`  
+**Test Template**: Test `onBuildMajor` and complex onAction behavior  
+**Complexity**: Medium-High (Tier 2-3)
+
+Cards:
+1. `craft-teacher-a131` - Craft Teacher (onBuildMajor: can play 2 free occupations after building Joinery/Pottery/Basketmaker's Workshop)
+2. `swagman-a129` - Swagman (onAction: can use Farm Expansion/Grain Seeds with same person after using the other)
+3. `riverine-shepherd-a137` - Riverine Shepherd (onAction: can take from other accumulation space when using Sheep Market/Reed Bank)
+
+**LLM Instructions:**
+1. Read each card file and verify implementation
+2. For Craft Teacher, test building each of the three major improvements
+3. For Swagman, test using Farm Expansion then Grain Seeds (and vice versa)
+4. For Riverine Shepherd, test taking from other accumulation space
+5. Create comprehensive test files
+6. Run tests and ensure ALL pass before marking complete
+7. Update `occupation-cards-status.json` after completion
+
+---
+
+### Batch-019: Special Flags and Modifiers (Set A)
+**Pattern**: Cards with special flags or modifiers  
+**Template**: `MummysBoy.js`  
+**Test Template**: Test special flags and modifiers  
+**Complexity**: Medium (Tier 2)
+
+Cards:
+1. `mummys-boy-a130` - Mummy's Boy (allowsDoubleAction: can reuse action space with 3rd+ person)
+
+**LLM Instructions:**
+1. Read card file and verify flag implementation
+2. Test double action capability with 3rd+ person
+3. Test action space marking/reuse
+4. Create comprehensive test file
+5. Run tests and ensure ALL pass before marking complete
+6. Update `occupation-cards-status.json` after completion
+
+---
+
+### Batch-020: onPlay + End Game Scoring (Set A)
+**Pattern**: Cards that grant resources on play and score at end of game  
+**Template**: `FullFarmer.js`, `AnimalReeve.js`, `DrudgeryReeve.js`  
+**Test Template**: Test `onPlay` resource grants and `getEndGamePoints`/`getEndGamePointsAllPlayers`  
+**Complexity**: Medium-High (Tier 2-3)
+
+Cards:
+1. `full-farmer-a134` - Full Farmer (onPlay: +1 wood +1 clay, getEndGamePoints: +1 VP per full pasture)
+2. `animal-reeve-a135` - Animal Reeve (onPlay: wood based on rounds left, getEndGamePointsAllPlayers: bonus for players with 2+/3+/4+ of each animal)
+3. `drudgery-reeve-a136` - Drudgery Reeve (onPlay: wood based on rounds left, getEndGamePointsAllPlayers: bonus for players with 1+/2+/3+ of each building resource)
+
+**LLM Instructions:**
+1. Read each card file and verify both `onPlay` and end game scoring
+2. For Full Farmer, test resource grant and full pasture scoring
+3. For Animal Reeve, test wood grant based on rounds left and all-player scoring
+4. For Drudgery Reeve, test wood grant and all-player scoring
+5. Create comprehensive test files
+6. Run tests and ensure ALL pass before marking complete
+7. Update `occupation-cards-status.json` after completion
+
+---
+
+### Batch-021: Complex End Game Scoring (Set A)
+**Pattern**: Cards with complex end game scoring logic  
+**Template**: `Braggart.js`  
+**Test Template**: Test complex `getEndGamePoints` with various thresholds  
+**Complexity**: Medium (Tier 2)
+
+Cards:
+1. `braggart-a133` - Braggart (getEndGamePoints: 2/3/4/5/7/9 VP for 5/6/7/8/9/10+ improvements)
+
+**LLM Instructions:**
+1. Read card file and verify `getEndGamePoints` implementation
+2. Test various improvement counts (5, 6, 7, 8, 9, 10+)
+3. Test that it only works in 3+ player games
+4. Create comprehensive test file
+5. Run tests and ensure ALL pass before marking complete
+6. Update `occupation-cards-status.json` after completion
+
+---
+
+### Batch-022: Accumulation Space onAction Hooks (Set A)
+**Pattern**: Cards that grant bonuses when using accumulation spaces  
+**Template**: `Harpooner.js`, `ShovelBearer.js`, `StorehouseSteward.js`  
+**Test Template**: Test onAction hooks with accumulation spaces  
+**Complexity**: Medium (Tier 2)
+
+Cards:
+1. `harpooner-a138` - Harpooner (onAction: can pay 1 wood when using Fishing to get food per person + 1 reed)
+2. `shovel-bearer-a140` - Shovel Bearer (onAction: +food equal to clay on other clay accumulation space)
+3. `storehouse-steward-a146` - Storehouse Steward (onAction: +1 stone/reed/clay/wood when taking 2/3/4/5 food)
+
+**LLM Instructions:**
+1. Read each card file and verify implementation
+2. For Harpooner, test Fishing action with wood payment
+3. For Shovel Bearer, test Clay Pit/Hollow with clay on other space
+4. For Storehouse Steward, test different food amounts (2, 3, 4, 5)
+5. Create comprehensive test files
+6. Run tests and ensure ALL pass before marking complete
+7. Update `occupation-cards-status.json` after completion
+
+---
+
+### Batch-023: Phase Hooks and checkTriggers (Set A)
+**Pattern**: Cards that trigger at phase start or use checkTriggers  
+**Template**: `TurnipFarmer.js`, `Sequestrator.js`  
+**Test Template**: Test phase hooks and checkTriggers  
+**Complexity**: Medium-High (Tier 2-3)
+
+Cards:
+1. `turnip-farmer-a141` - Turnip Farmer (onReturnHomeStart: +1 vegetable if Day Laborer and Grain Seeds both occupied)
+2. `sequestrator-a144` - Sequestrator (onPlay: place resources on card, checkTriggers: award when conditions met)
+
+**LLM Instructions:**
+1. Read each card file and verify implementation
+2. For Turnip Farmer, test return home phase with both spaces occupied
+3. For Sequestrator, test resource placement and trigger conditions (3 pastures, 5 fields)
+4. Create comprehensive test files
+5. Run tests and ensure ALL pass before marking complete
+6. Update `occupation-cards-status.json` after completion
+
+---
+
+### Batch-024: onAnyAction with Resource Conditions (Set A)
+**Pattern**: Cards that trigger on other players' actions with resource conditions  
+**Template**: `Cordmaker.js`  
+**Test Template**: Test onAnyAction with resource amount conditions  
+**Complexity**: Medium (Tier 2)
+
+Cards:
+1. `cordmaker-a142` - Cordmaker (onAnyAction: can take 1 grain or buy 1 vegetable when any player takes 2+ reed)
+
+**LLM Instructions:**
+1. Read card file and verify `onAnyAction` implementation
+2. Test with other player taking 2+ reed from Reed Bank
+3. Test choice between grain and vegetable purchase
+4. Create comprehensive test file
+5. Run tests and ensure ALL pass before marking complete
+6. Update `occupation-cards-status.json` after completion
+
+---
+
 ## Batch Creation Guidelines
 
 When creating new batches:
