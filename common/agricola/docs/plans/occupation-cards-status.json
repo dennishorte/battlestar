@@ -2,10 +2,10 @@
   "lastUpdated": "2024-01-15",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 3,
-  "cardsCompleted": 9,
-  "cardsTested": 32,
-  "currentBatch": "Batch-004",
+  "batchesCompleted": 4,
+  "cardsCompleted": 12,
+  "cardsTested": 20,
+  "currentBatch": "Batch-005",
   "batches": {
     "Batch-001": {
       "status": "completed",
