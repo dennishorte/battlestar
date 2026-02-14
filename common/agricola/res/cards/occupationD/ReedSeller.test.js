@@ -1,15 +1,5 @@
 const t = require('../../../testutil_v2.js')
 
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
-
 describe('Reed Seller', () => {
   test('convert 1 reed to 3 food when no buyer', () => {
     const game = t.fixture({ cardSets: ['occupationD'] })
@@ -30,7 +20,7 @@ describe('Reed Seller', () => {
     const action = actions.find(a => a.cardName === 'Reed Seller')
     expect(action).toBeDefined()
 
-    respondAnytimeAction(game, action)
+    t.anytimeAction(game, action)
 
     t.testBoard(game, {
       dennis: {
@@ -63,7 +53,7 @@ describe('Reed Seller', () => {
     const action = actions.find(a => a.cardName === 'Reed Seller')
     expect(action).toBeDefined()
 
-    respondAnytimeAction(game, action)
+    t.anytimeAction(game, action)
     t.choose(game, 'Buy reed for 2 food')
 
     t.testBoard(game, {
@@ -97,7 +87,7 @@ describe('Reed Seller', () => {
     const actions = game.getAnytimeActions(dennis)
     const action = actions.find(a => a.cardName === 'Reed Seller')
 
-    respondAnytimeAction(game, action)
+    t.anytimeAction(game, action)
     t.choose(game, 'Pass')
 
     t.testBoard(game, {

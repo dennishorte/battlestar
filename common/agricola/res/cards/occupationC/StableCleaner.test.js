@@ -1,15 +1,5 @@
 const t = require('../../../testutil_v2.js')
 
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
-
 describe('Stable Cleaner', () => {
   test('build one stable for 1 wood + 1 food', () => {
     const game = t.fixture({ cardSets: ['occupationC'] })
@@ -28,7 +18,7 @@ describe('Stable Cleaner', () => {
     const action = actions.find(a => a.cardName === 'Stable Cleaner')
     expect(action).toBeDefined()
 
-    respondAnytimeAction(game, action)
+    t.anytimeAction(game, action)
     t.choose(game, '0,1')  // build stable at (0,1)
     t.choose(game, 'Done')  // done building
 
@@ -59,7 +49,7 @@ describe('Stable Cleaner', () => {
     const dennis = game.players.byName('dennis')
     const action = game.getAnytimeActions(dennis).find(a => a.cardName === 'Stable Cleaner')
 
-    respondAnytimeAction(game, action)
+    t.anytimeAction(game, action)
     t.choose(game, '0,1')   // first stable
     t.choose(game, '1,1')   // second stable
     t.choose(game, 'Done')

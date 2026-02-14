@@ -1,15 +1,5 @@
 const t = require('../../../testutil_v2.js')
 
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
-
 describe('Land Consolidation', () => {
   test('exchange 3 grain in field for 1 vegetable', () => {
     const game = t.fixture({ cardSets: ['minorC'] })
@@ -31,7 +21,7 @@ describe('Land Consolidation', () => {
     const action = actions.find(a => a.cardName === 'Land Consolidation')
     expect(action).toBeDefined()
 
-    respondAnytimeAction(game, action)
+    t.anytimeAction(game, action)
 
     t.testBoard(game, {
       dennis: {

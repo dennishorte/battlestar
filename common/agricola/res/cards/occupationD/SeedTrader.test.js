@@ -1,14 +1,5 @@
 const t = require('../../../testutil_v2.js')
 
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
 
 describe('Seed Trader', () => {
   test('onPlay places 2 grain and 2 vegetables on card', () => {
@@ -51,7 +42,7 @@ describe('Seed Trader', () => {
     const buyGrain = actions.find(a => a.cardName === 'Seed Trader' && a.actionKey === 'buyGrain')
     expect(buyGrain).toBeDefined()
 
-    respondAnytimeAction(game, buyGrain)
+    t.anytimeAction(game, buyGrain)
 
     t.choose(game, 'Day Laborer')
     t.choose(game, 'Forest')
@@ -92,7 +83,7 @@ describe('Seed Trader', () => {
     const buyVeg = actions.find(a => a.cardName === 'Seed Trader' && a.actionKey === 'buyVegetable')
     expect(buyVeg).toBeDefined()
 
-    respondAnytimeAction(game, buyVeg)
+    t.anytimeAction(game, buyVeg)
 
     t.choose(game, 'Day Laborer')
     t.choose(game, 'Forest')

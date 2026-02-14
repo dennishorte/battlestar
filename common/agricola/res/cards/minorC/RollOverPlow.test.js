@@ -1,15 +1,5 @@
 const t = require('../../../testutil_v2.js')
 
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
-
 describe('Roll-Over Plow', () => {
   test('clear a planted field and plow a new one', () => {
     const game = t.fixture({ cardSets: ['minorC'] })
@@ -33,7 +23,7 @@ describe('Roll-Over Plow', () => {
     const action = actions.find(a => a.cardName === 'Roll-Over Plow')
     expect(action).toBeDefined()
 
-    respondAnytimeAction(game, action)
+    t.anytimeAction(game, action)
     // Choose field to clear
     t.choose(game, '0,4 (vegetables x1)')
     // Choose space to plow

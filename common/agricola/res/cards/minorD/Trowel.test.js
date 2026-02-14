@@ -1,15 +1,5 @@
 const t = require('../../../testutil_v2.js')
 
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
-
 describe('Trowel', () => {
   test('renovate from wood to stone (2 stone, 2 reed, 2 food)', () => {
     const game = t.fixture({ cardSets: ['minorD'] })
@@ -31,7 +21,7 @@ describe('Trowel', () => {
     expect(action).toBeDefined()
     expect(action.description).toContain('stone')
 
-    respondAnytimeAction(game, action)
+    t.anytimeAction(game, action)
 
     t.testBoard(game, {
       dennis: {
@@ -62,7 +52,7 @@ describe('Trowel', () => {
     const action = game.getAnytimeActions(dennis).find(a => a.cardName === 'Trowel')
     expect(action).toBeDefined()
 
-    respondAnytimeAction(game, action)
+    t.anytimeAction(game, action)
 
     t.testBoard(game, {
       dennis: {

@@ -1,15 +1,5 @@
 const t = require('../../../testutil_v2.js')
 
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
-
 describe('Fatstock Stretcher', () => {
   test('+1 food when cooking sheep', () => {
     const game = t.fixture({ cardSets: ['minorD', 'test'] })
@@ -29,7 +19,7 @@ describe('Fatstock Stretcher', () => {
     const dennis = game.players.byName('dennis')
     const actions = game.getAnytimeActions(dennis)
     const cookAction = actions.find(a => a.type === 'cook' && a.resource === 'sheep')
-    respondAnytimeAction(game, cookAction)
+    t.anytimeAction(game, cookAction)
     t.choose(game, 'Grain Seeds')
 
     t.testBoard(game, {
@@ -63,7 +53,7 @@ describe('Fatstock Stretcher', () => {
     const dennis = game.players.byName('dennis')
     const actions = game.getAnytimeActions(dennis)
     const cookAction = actions.find(a => a.type === 'cook' && a.resource === 'boar')
-    respondAnytimeAction(game, cookAction)
+    t.anytimeAction(game, cookAction)
     t.choose(game, 'Grain Seeds')
 
     t.testBoard(game, {
@@ -97,7 +87,7 @@ describe('Fatstock Stretcher', () => {
     const dennis = game.players.byName('dennis')
     const actions = game.getAnytimeActions(dennis)
     const cookAction = actions.find(a => a.type === 'cook' && a.resource === 'cattle')
-    respondAnytimeAction(game, cookAction)
+    t.anytimeAction(game, cookAction)
     t.choose(game, 'Grain Seeds')
 
     t.testBoard(game, {

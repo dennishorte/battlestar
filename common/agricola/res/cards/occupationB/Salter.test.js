@@ -1,14 +1,5 @@
 const t = require('../../../testutil_v2.js')
 
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
 
 describe('Salter', () => {
   test('pay 1 sheep → 1 food/round for 3 rounds', () => {
@@ -31,7 +22,7 @@ describe('Salter', () => {
     const sheepAction = actions.find(a => a.cardName === 'Salter' && a.actionArg === 'sheep')
     expect(sheepAction).toBeDefined()
 
-    respondAnytimeAction(game, sheepAction)
+    t.anytimeAction(game, sheepAction)
 
     t.testBoard(game, {
       dennis: {
@@ -68,7 +59,7 @@ describe('Salter', () => {
     const cattleAction = actions.find(a => a.cardName === 'Salter' && a.actionArg === 'cattle')
     expect(cattleAction).toBeDefined()
 
-    respondAnytimeAction(game, cattleAction)
+    t.anytimeAction(game, cattleAction)
 
     t.testBoard(game, {
       dennis: {

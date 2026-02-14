@@ -1,15 +1,5 @@
 const t = require('../../../testutil_v2.js')
 
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
-
 describe('Pen Builder', () => {
   test('place 1 wood when only 1 available', () => {
     const game = t.fixture({ cardSets: ['occupationE'] })
@@ -31,7 +21,7 @@ describe('Pen Builder', () => {
     expect(action).toBeDefined()
 
     // Only 1 wood → no amount prompt, places automatically
-    respondAnytimeAction(game, action)
+    t.anytimeAction(game, action)
 
     t.testBoard(game, {
       dennis: {
@@ -61,7 +51,7 @@ describe('Pen Builder', () => {
     const dennis = game.players.byName('dennis')
     const action = game.getAnytimeActions(dennis).find(a => a.cardName === 'Pen Builder')
 
-    respondAnytimeAction(game, action)
+    t.anytimeAction(game, action)
     t.choose(game, 'Place 3 wood')
 
     t.testBoard(game, {

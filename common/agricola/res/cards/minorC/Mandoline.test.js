@@ -1,14 +1,5 @@
 const t = require('../../../testutil_v2.js')
 
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
 
 describe('Mandoline', () => {
   test('pay 1 vegetable → 1 BP + schedule 1 food/round for 2 rounds', () => {
@@ -28,7 +19,7 @@ describe('Mandoline', () => {
     const action = actions.find(a => a.cardName === 'Mandoline')
     expect(action).toBeDefined()
 
-    respondAnytimeAction(game, action)
+    t.anytimeAction(game, action)
 
     t.testBoard(game, {
       dennis: {

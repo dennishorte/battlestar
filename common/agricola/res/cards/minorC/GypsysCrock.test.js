@@ -1,15 +1,5 @@
 const t = require('../../../testutil_v2.js')
 
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
-
 describe("Gypsy's Crock", () => {
   test('+1 food when cooking 2 goods on the same turn', () => {
     const game = t.fixture({ cardSets: ['minorC', 'test'] })
@@ -30,13 +20,13 @@ describe("Gypsy's Crock", () => {
     let dennis = game.players.byName('dennis')
     let actions = game.getAnytimeActions(dennis)
     let cookAction = actions.find(a => a.type === 'cook' && a.resource === 'sheep')
-    respondAnytimeAction(game, cookAction)
+    t.anytimeAction(game, cookAction)
 
     // Cook second sheep — triggers Gypsy's Crock (+1 food)
     dennis = game.players.byName('dennis')
     actions = game.getAnytimeActions(dennis)
     cookAction = actions.find(a => a.type === 'cook' && a.resource === 'sheep')
-    respondAnytimeAction(game, cookAction)
+    t.anytimeAction(game, cookAction)
 
     t.choose(game, 'Grain Seeds')
 
@@ -71,7 +61,7 @@ describe("Gypsy's Crock", () => {
     const dennis = game.players.byName('dennis')
     const actions = game.getAnytimeActions(dennis)
     const cookAction = actions.find(a => a.type === 'cook' && a.resource === 'sheep')
-    respondAnytimeAction(game, cookAction)
+    t.anytimeAction(game, cookAction)
     t.choose(game, 'Grain Seeds')
 
     t.testBoard(game, {
@@ -106,7 +96,7 @@ describe("Gypsy's Crock", () => {
     let dennis = game.players.byName('dennis')
     let actions = game.getAnytimeActions(dennis)
     let cookAction = actions.find(a => a.type === 'cook' && a.resource === 'sheep')
-    respondAnytimeAction(game, cookAction)
+    t.anytimeAction(game, cookAction)
     t.choose(game, 'Grain Seeds')      // dennis turn 1
 
     t.choose(game, 'Forest')           // micah turn 1
@@ -115,7 +105,7 @@ describe("Gypsy's Crock", () => {
     dennis = game.players.byName('dennis')
     actions = game.getAnytimeActions(dennis)
     cookAction = actions.find(a => a.type === 'cook' && a.resource === 'sheep')
-    respondAnytimeAction(game, cookAction)
+    t.anytimeAction(game, cookAction)
     t.choose(game, 'Day Laborer')      // dennis turn 2
 
     t.choose(game, 'Clay Pit')         // micah turn 2

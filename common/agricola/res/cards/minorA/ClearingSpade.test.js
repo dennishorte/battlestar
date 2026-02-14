@@ -1,16 +1,6 @@
 const t = require('../../../testutil_v2.js')
 
 describe('Clearing Spade', () => {
-  function respondAnytimeAction(game, anytimeAction) {
-    const request = game.waiting
-    const selector = request.selectors[0]
-    return game.respondToInputRequest({
-      actor: selector.actor,
-      title: selector.title,
-      selection: { action: 'anytime-action', anytimeAction },
-    })
-  }
-
   test('basic crop move during a turn', () => {
     const game = t.fixture()
     t.setBoard(game, {
@@ -33,7 +23,7 @@ describe('Clearing Spade', () => {
     game.run()
 
     // Dennis gets action prompt — use crop move anytime action first
-    respondAnytimeAction(game, {
+    t.anytimeAction(game, {
       type: 'crop-move',
       cardName: 'Clearing Spade',
       description: 'Clearing Spade: Move 1 crop to empty field',
@@ -94,7 +84,7 @@ describe('Clearing Spade', () => {
 
     // Harvest field phase: dennis gets pre-harvest prompt with anytime actions
     // Use crop move before harvest
-    respondAnytimeAction(game, {
+    t.anytimeAction(game, {
       type: 'crop-move',
       cardName: 'Clearing Spade',
       description: 'Clearing Spade: Move 1 crop to empty field',
@@ -169,7 +159,7 @@ describe('Clearing Spade', () => {
     t.choose(game, 'Forest')
 
     // Dennis turn 2: use Clearing Spade crop-move before choosing action
-    respondAnytimeAction(game, {
+    t.anytimeAction(game, {
       type: 'crop-move',
       cardName: 'Clearing Spade',
       description: 'Clearing Spade: Move 1 crop to empty field',
@@ -205,7 +195,7 @@ describe('Clearing Spade', () => {
     game.run()
 
     // Use Clearing Spade to move crop from grid field to empty virtual field
-    respondAnytimeAction(game, {
+    t.anytimeAction(game, {
       type: 'crop-move',
       cardName: 'Clearing Spade',
       description: 'Clearing Spade: Move 1 crop to empty field',
@@ -251,7 +241,7 @@ describe('Clearing Spade', () => {
     expect(actions.some(a => a.type === 'crop-move')).toBe(true)
 
     // Use crop move — Beanfield (vegetables only) should NOT appear as target for grain
-    respondAnytimeAction(game, {
+    t.anytimeAction(game, {
       type: 'crop-move',
       cardName: 'Clearing Spade',
       description: 'Clearing Spade: Move 1 crop to empty field',

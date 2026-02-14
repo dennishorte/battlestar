@@ -1,15 +1,5 @@
 const t = require('../../../testutil_v2.js')
 
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
-
 describe('Stone House Reconstruction', () => {
   test('renovate from clay to stone using normal cost', () => {
     const game = t.fixture({ cardSets: ['minorE'] })
@@ -29,7 +19,7 @@ describe('Stone House Reconstruction', () => {
     const action = actions.find(a => a.cardName === 'Stone House Reconstruction')
     expect(action).toBeDefined()
 
-    respondAnytimeAction(game, action)
+    t.anytimeAction(game, action)
 
     // Standard clay→stone cost: 2 stone (1/room × 2 rooms) + 1 reed
     t.testBoard(game, {

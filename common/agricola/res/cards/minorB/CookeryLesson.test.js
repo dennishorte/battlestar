@@ -1,15 +1,5 @@
 const t = require('../../../testutil_v2.js')
 
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
-
 describe('Cookery Lesson', () => {
   test('awards bonus point for cooking + Lessons on same turn', () => {
     const game = t.fixture({ cardSets: ['minorB', 'test'] })
@@ -30,7 +20,7 @@ describe('Cookery Lesson', () => {
     const cookAction = actions.find(a => a.type === 'cook-vegetable')
     expect(cookAction).toBeDefined()
 
-    respondAnytimeAction(game, cookAction)
+    t.anytimeAction(game, cookAction)
 
     // Take Lessons A to play an occupation
     t.choose(game, 'Lessons A')
@@ -93,7 +83,7 @@ describe('Cookery Lesson', () => {
     const actions = game.getAnytimeActions(dennis)
     const cookAction = actions.find(a => a.type === 'cook-vegetable')
 
-    respondAnytimeAction(game, cookAction)
+    t.anytimeAction(game, cookAction)
     t.choose(game, 'Day Laborer')
 
     t.testBoard(game, {

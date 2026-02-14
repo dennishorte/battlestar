@@ -1,15 +1,5 @@
 const t = require('../../../testutil_v2.js')
 
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
-
 describe('Master Builder', () => {
   test('add free room with 5+ rooms', () => {
     const game = t.fixture({ cardSets: ['occupationD'] })
@@ -32,7 +22,7 @@ describe('Master Builder', () => {
     const action = actions.find(a => a.cardName === 'Master Builder')
     expect(action).toBeDefined()
 
-    respondAnytimeAction(game, action)
+    t.anytimeAction(game, action)
     t.choose(game, '2,1')
 
     t.testBoard(game, {

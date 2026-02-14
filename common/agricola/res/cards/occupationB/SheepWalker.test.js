@@ -1,14 +1,5 @@
 const t = require('../../../testutil_v2.js')
 
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
 
 describe('Sheep Walker', () => {
   test('exchange 1 sheep → 1 stone', () => {
@@ -32,7 +23,7 @@ describe('Sheep Walker', () => {
     const toStone = actions.find(a => a.cardName === 'Sheep Walker' && a.to?.stone === 1)
     expect(toStone).toBeDefined()
 
-    respondAnytimeAction(game, toStone)
+    t.anytimeAction(game, toStone)
 
     t.choose(game, 'Day Laborer')
     t.choose(game, 'Forest')
@@ -74,7 +65,7 @@ describe('Sheep Walker', () => {
     const toVeg = actions.find(a => a.cardName === 'Sheep Walker' && a.to?.vegetables === 1)
     expect(toVeg).toBeDefined()
 
-    respondAnytimeAction(game, toVeg)
+    t.anytimeAction(game, toVeg)
 
     t.choose(game, 'Day Laborer')
     t.choose(game, 'Forest')

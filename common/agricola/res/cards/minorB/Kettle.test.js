@@ -1,14 +1,5 @@
 const t = require('../../../testutil_v2.js')
 
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
 
 describe('Kettle', () => {
   test('exchange 1 grain → 3 food (no bonus)', () => {
@@ -34,7 +25,7 @@ describe('Kettle', () => {
     expect(tier1).toBeDefined()
     expect(tier1.bonusPoints).toBeUndefined()
 
-    respondAnytimeAction(game, tier1)
+    t.anytimeAction(game, tier1)
 
     t.choose(game, 'Day Laborer')
     t.choose(game, 'Forest')
@@ -76,7 +67,7 @@ describe('Kettle', () => {
     expect(tier2).toBeDefined()
     expect(tier2.bonusPoints).toBe(1)
 
-    respondAnytimeAction(game, tier2)
+    t.anytimeAction(game, tier2)
 
     t.choose(game, 'Day Laborer')
     t.choose(game, 'Forest')
@@ -119,7 +110,7 @@ describe('Kettle', () => {
     expect(tier3).toBeDefined()
     expect(tier3.bonusPoints).toBe(2)
 
-    respondAnytimeAction(game, tier3)
+    t.anytimeAction(game, tier3)
 
     t.choose(game, 'Day Laborer')
     t.choose(game, 'Forest')
