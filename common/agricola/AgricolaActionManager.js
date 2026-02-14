@@ -620,9 +620,25 @@ class AgricolaActionManager extends BaseActionManager {
       [row, col] = result[0].split(',').map(Number)
     }
 
-    const cost = player.getRoomCost()
+    // Choose cost — present options if Frame Builder (or similar) offers alternatives
+    const affordableOptions = player.getAffordableRoomCostOptions()
+    let chosenCost
+    if (affordableOptions.length > 1) {
+      const costChoices = affordableOptions.map(opt => this._formatCostLabel(opt.cost))
+      const selection = this.choose(player, costChoices, {
+        title: 'Choose payment for room',
+        min: 1,
+        max: 1,
+      })
+      const selectedIdx = costChoices.indexOf(selection[0])
+      chosenCost = affordableOptions[selectedIdx].cost
+    }
+    else {
+      chosenCost = affordableOptions[0].cost
+    }
+
     const roomType = player.roomType
-    player.payCost(cost)
+    player.payCost(chosenCost)
     player.buildRoom(row, col)
 
     this.log.add({
@@ -758,8 +774,25 @@ class AgricolaActionManager extends BaseActionManager {
       this.game.callPlayerCardHook(player, 'onBeforeRenovateToStone')
     }
 
+    // Choose cost — present options if Frame Builder (or similar) offers alternatives
+    const affordableRenovationOptions = player.getAffordableRenovationCostOptions(targetType)
+    let chosenRenovationCost
+    if (affordableRenovationOptions.length > 1) {
+      const costChoices = affordableRenovationOptions.map(opt => this._formatCostLabel(opt.cost))
+      const selection = this.choose(player, costChoices, {
+        title: 'Choose payment for renovation',
+        min: 1,
+        max: 1,
+      })
+      const selectedIdx = costChoices.indexOf(selection[0])
+      chosenRenovationCost = affordableRenovationOptions[selectedIdx].cost
+    }
+    else if (affordableRenovationOptions.length === 1) {
+      chosenRenovationCost = affordableRenovationOptions[0].cost
+    }
+
     const oldType = player.roomType
-    player.renovate(targetType)
+    player.renovate(targetType, chosenRenovationCost)
     const newType = player.roomType
 
     this.log.add({

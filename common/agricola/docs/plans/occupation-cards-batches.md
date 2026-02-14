@@ -22,8 +22,8 @@ This frequent context refresh keeps important details in working memory.
 ## Batch Status
 
 - **Total Batches**: TBD (will be ~25-30 batches for Set A, ~80-140 total)
-- **Completed Batches**: 3
-- **Current Batch**: Batch-004
+- **Completed Batches**: 5
+- **Current Batch**: Batch-006
 
 ## Batch Queue
 
@@ -122,26 +122,18 @@ Cards:
 
 ---
 
-### Batch-005: Cost Modification Cards (Set A)
+### Batch-005: Cost Modification Cards (Set A) ✅ COMPLETED
 **Pattern**: Cards that modify building/improvement costs  
 **Template**: `Stonecutter.js`  
 **Test Template**: Test with Farm Expansion (build room) action  
 **Complexity**: Medium (Tier 2)
 
 Cards:
-1. `stonecutter-a143` - Stonecutter (modifyAnyCost: -1 stone for all costs)
-2. `frame-builder-a123` - Frame Builder (modifyBuildCost: allows wood substitution)
-3. `hedge-keeper-a088` - Hedge Keeper (modifyFenceCost: -3 wood for fences)
+1. `stonecutter-a143` - Stonecutter (modifyAnyCost: -1 stone for all costs) ✅
+2. `frame-builder-a123` - Frame Builder (modifyBuildCost: allows wood substitution) ✅
+3. `hedge-keeper-a088` - Hedge Keeper (modifyFenceCost: -3 wood for fences) ✅
 
-**LLM Instructions:**
-1. Read each card file and verify modifyCost hooks are implemented
-2. Create tests using Farm Expansion action to build rooms
-3. Verify cost modifications in test assertions
-4. For Frame Builder, test wood substitution logic
-5. For Hedge Keeper, test fence building with cost reduction
-6. Run tests and fix any failures
-7. Update status tracker
-8. Move to Batch-006
+**Status**: All cards implemented and tested. Frame Builder uses alternative cost pattern for wood substitution.
 
 ---
 

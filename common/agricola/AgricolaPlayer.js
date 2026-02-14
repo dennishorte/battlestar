@@ -410,8 +410,7 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   canAffordRoom() {
-    const cost = this.getRoomCost()
-    return this.canAffordCost(cost)
+    return this.getAffordableRoomCostOptions().length > 0
   }
 
   getRoomCost() {
@@ -421,10 +420,50 @@ class AgricolaPlayer extends BasePlayer {
     return cost
   }
 
+  // Strip non-resource metadata keys (e.g. allowWoodSubstitution) from a cost object
+  _cleanCost(cost) {
+    const clean = {}
+    for (const [key, value] of Object.entries(cost)) {
+      if (typeof value === 'number' && value > 0) {
+        clean[key] = value
+      }
+    }
+    return clean
+  }
+
+  getRoomCostOptions() {
+    const baseCost = this.getRoomCost()
+    const { allowWoodSubstitution, ...rawCost } = baseCost
+    const primaryCost = this._cleanCost(rawCost)
+    const options = [{ cost: primaryCost, label: 'standard' }]
+
+    if (allowWoodSubstitution) {
+      for (const resource of ['clay', 'stone']) {
+        if (primaryCost[resource] && primaryCost[resource] >= 2) {
+          const altCost = { ...primaryCost }
+          altCost[resource] -= 2
+          altCost.wood = (altCost.wood || 0) + 1
+          // Remove zero-value entries
+          if (altCost[resource] === 0) {
+            delete altCost[resource]
+          }
+          options.push({ cost: altCost, label: `substitute-${resource}` })
+        }
+      }
+    }
+
+    return options
+  }
+
+  getAffordableRoomCostOptions() {
+    return this.getRoomCostOptions().filter(opt => this.canAffordCost(opt.cost))
+  }
+
   getMultiRoomCost(count) {
     const baseCost = this.getRoomCost()
+    const cleanCost = this._cleanCost(baseCost)
     const totalCost = {}
-    for (const [resource, amount] of Object.entries(baseCost)) {
+    for (const [resource, amount] of Object.entries(cleanCost)) {
       totalCost[resource] = amount * count
     }
     return this.applyMultiRoomCostModifiers(totalCost, count, this.roomType)
@@ -452,11 +491,7 @@ class AgricolaPlayer extends BasePlayer {
     if (this.cannotRenovate) {
       return false
     }
-    const cost = this.getRenovationCost(targetType)
-    if (!cost) {
-      return false
-    }
-    if (this.canAffordCost(cost)) {
+    if (this.getAffordableRenovationCostOptions(targetType).length > 0) {
       return true
     }
     // If no target specified, also check direct stone path (Conservator)
@@ -510,12 +545,44 @@ class AgricolaPlayer extends BasePlayer {
     return cost
   }
 
-  renovate(targetType) {
+  getRenovationCostOptions(targetType) {
+    const baseCost = this.getRenovationCost(targetType)
+    if (!baseCost) {
+      return []
+    }
+
+    const { allowWoodSubstitution, ...rawCost } = baseCost
+    const primaryCost = this._cleanCost(rawCost)
+    const options = [{ cost: primaryCost, label: 'standard' }]
+
+    if (allowWoodSubstitution) {
+      // For renovation, only one substitution per action
+      for (const resource of ['clay', 'stone']) {
+        if (primaryCost[resource] && primaryCost[resource] >= 2) {
+          const altCost = { ...primaryCost }
+          altCost[resource] -= 2
+          altCost.wood = (altCost.wood || 0) + 1
+          if (altCost[resource] === 0) {
+            delete altCost[resource]
+          }
+          options.push({ cost: altCost, label: `substitute-${resource}` })
+        }
+      }
+    }
+
+    return options
+  }
+
+  getAffordableRenovationCostOptions(targetType) {
+    return this.getRenovationCostOptions(targetType).filter(opt => this.canAffordCost(opt.cost))
+  }
+
+  renovate(targetType, chosenCost) {
     if (!this.canRenovate(targetType)) {
       return false
     }
 
-    const cost = this.getRenovationCost(targetType)
+    const cost = chosenCost || this._cleanCost(this.getRenovationCost(targetType))
     this.payCost(cost)
 
     const nextType = targetType || res.houseMaterialUpgrades[this.roomType]

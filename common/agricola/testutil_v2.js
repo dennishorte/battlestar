@@ -307,6 +307,15 @@ TestUtil.setBoard = function(game, state) {
       // round: N means "play round N" — subtract 1 because mainLoop increments before playing
       game.state.round = state.round - 1
       game.state.stage = res.constants.roundToStage[state.round] || 1
+
+      // Reveal all round cards for rounds 1 through N-1 so that earlier-stage
+      // action spaces are available (e.g. House Redevelopment at round 11).
+      for (let r = 0; r < state.round - 1; r++) {
+        const card = game.state.roundCardDeck[r]
+        if (card && !game.state.activeActions.includes(card.id)) {
+          game.addActionSpace(card)
+        }
+      }
     }
     else {
       game.state.round = 1

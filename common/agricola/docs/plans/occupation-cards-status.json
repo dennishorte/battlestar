@@ -2,10 +2,10 @@
   "lastUpdated": "2024-01-15",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 4,
-  "cardsCompleted": 12,
-  "cardsTested": 20,
-  "currentBatch": "Batch-005",
+  "batchesCompleted": 5,
+  "cardsCompleted": 15,
+  "cardsTested": 23,
+  "currentBatch": "Batch-006",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -34,13 +34,20 @@
       "testsCreated": 3,
       "testsPassing": 8,
       "completedDate": "2024-01-15"
+    },
+    "Batch-005": {
+      "status": "completed",
+      "cards": ["stonecutter-a143", "frame-builder-a123", "hedge-keeper-a088"],
+      "testsCreated": 3,
+      "testsPassing": 11,
+      "completedDate": "2024-01-15"
     }
   },
   "bySet": {
     "occupationA": {
       "total": 84,
-      "implemented": 12,
-      "tested": 20,
+      "implemented": 15,
+      "tested": 23,
       "status": "in_progress"
     },
     "occupationB": {

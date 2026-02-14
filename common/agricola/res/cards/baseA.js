@@ -764,9 +764,11 @@ const occupations = [
     players: '1+',
     category: 'Building Resource Provider',
     text: 'Each time you build a room/renovate, but only once per room/action, you can replace exactly 2 clay or 2 stone with 1 wood.',
-    modifyBuildCost(player, cost, count) {
-      // Can replace 2 clay/stone with 1 wood for each room
-      return { ...cost, allowWoodSubstitution: count }
+    modifyBuildCost(player, cost, action) {
+      if (action === 'build-room' || action === 'renovate') {
+        return { ...cost, allowWoodSubstitution: true }
+      }
+      return cost
     },
   },
   {

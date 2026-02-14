@@ -2339,19 +2339,25 @@ describe('BaseA Cards', () => {
     })
 
     describe('Frame Builder', () => {
-      test('modifies build cost to allow wood substitution', () => {
+      test('modifies build cost to allow wood substitution for build-room', () => {
         const card = res.getCardById('frame-builder')
-        const modified = card.modifyBuildCost(null, { clay: 5, reed: 2 }, 1)
-        expect(modified.allowWoodSubstitution).toBe(1)
+        const modified = card.modifyBuildCost(null, { clay: 5, reed: 2 }, 'build-room')
+        expect(modified.allowWoodSubstitution).toBe(true)
       })
 
-      test('substitution count matches room count', () => {
+      test('modifies build cost to allow wood substitution for renovate', () => {
         const card = res.getCardById('frame-builder')
-        const modified = card.modifyBuildCost(null, { stone: 5, reed: 2 }, 3)
-        expect(modified.allowWoodSubstitution).toBe(3)
+        const modified = card.modifyBuildCost(null, { stone: 2, reed: 1 }, 'renovate')
+        expect(modified.allowWoodSubstitution).toBe(true)
       })
 
-      test('getRoomCost includes allowWoodSubstitution when active', () => {
+      test('does not modify cost for stable', () => {
+        const card = res.getCardById('frame-builder')
+        const modified = card.modifyBuildCost(null, { wood: 2 }, 'stable')
+        expect(modified.allowWoodSubstitution).toBeUndefined()
+      })
+
+      test('getRoomCostOptions includes substitution alternatives when active', () => {
         const game = t.fixture()
         t.setBoard(game, {
           dennis: {
@@ -2361,9 +2367,13 @@ describe('BaseA Cards', () => {
         game.run()
 
         const dennis = t.player(game)
-        const cost = dennis.getRoomCost()
-        // Frame Builder adds allowWoodSubstitution to the cost object
-        expect(cost.allowWoodSubstitution).toBeDefined()
+        const options = dennis.getRoomCostOptions()
+        // Standard cost + substitution alternative (wood rooms have no alternatives)
+        expect(options.length).toBeGreaterThanOrEqual(1)
+        const standard = options.find(o => o.label === 'standard')
+        expect(standard).toBeDefined()
+        // Standard cost should not have allowWoodSubstitution metadata
+        expect(standard.cost.allowWoodSubstitution).toBeUndefined()
       })
     })
 
