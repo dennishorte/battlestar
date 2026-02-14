@@ -185,9 +185,9 @@ Some may need minor code fixes discovered during testing.
 |------|------|--------|-------|
 | BeaverColony (e033) | E | ✅ | Test written (2 tests). `actionGivesReed` added |
 | LawnFertilizer (d011) | D | ✅ | Signature fixed to match engine; 3 tests written |
-| AnimalBedding (e012) | E | **TEST** | `modifyStableCapacity` wired; needs test |
+| AnimalBedding (e012) | E | ✅ | `modifyStableCapacity` wired in getPastureCapacity + getUnfencedStableCapacity; 2 tests |
 | CattleFarm (c012) | C | **TEST** | Card def refactor to use `holdsAnimals` + `getAnimalCapacity`; needs test |
-| BunkBeds (c010) | C | **TEST** | `modifyHouseAnimalCapacity` wired; needs test |
+| BunkBeds (c010) | C | ✅ | `modifyHouseCapacity` wired in canGrowFamily via getHouseCapacity; 3 tests |
 | BrotherlyLove (d024) | D | **BLOCKED** | `allowDoubleWorkerWith4People` not processed |
 
 ### Batch 19 — Virtual Fields & Plow Cards
@@ -379,8 +379,8 @@ New methods in `AgricolaActionManager.js`:
 - ✅ `onAnyBuildRoom` — in buildRoom() for all players (Twibil)
 - ✅ `onBuildMajor` — in buildMajorImprovement (FarmBuilding)
 - ✅ `onAnyAction` — in executeAction for all players (MaterialHub)
-- ✅ `modifyHouseAnimalCapacity` — in getHouseAnimalCapacity (BunkBeds)
-- ✅ `modifyStableCapacity` — in getStableCapacity (AnimalBedding)
+- ✅ `modifyHouseCapacity` — in getHouseCapacity, called by canGrowFamily (BunkBeds)
+- ✅ `modifyStableCapacity` — in getPastureCapacity + getUnfencedStableCapacity (AnimalBedding)
 - ✅ `modifyFenceCost` (with isEdge param) — applyFenceCostModifiers passes edgeFenceCount (BriarHedge)
 - ✅ `onStageReveal` — in revealRoundAction (HeartOfStone)
 - ✅ `onCook` / `onCookAnimal` — in executeAnytimeFoodConversion, 3 cooking paths (FatstockStretcher, GypsysCrock)
