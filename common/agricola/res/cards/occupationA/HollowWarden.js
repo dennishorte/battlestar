@@ -10,7 +10,7 @@ module.exports = {
     game.actions.offerBuildFireplace(player, this)
   },
   onAction(game, player, actionId) {
-    if (actionId === 'take-clay-2') {
+    if (actionId === 'hollow' || actionId === 'hollow-5' || actionId === 'hollow-6') {
       player.addResource('food', 1)
       game.log.add({
         template: '{player} gets 1 food from Hollow Warden',

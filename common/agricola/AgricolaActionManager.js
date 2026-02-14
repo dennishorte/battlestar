@@ -4617,6 +4617,59 @@ class AgricolaActionManager extends BaseActionManager {
     }
   }
 
+  offerBuildFireplace(player, card) {
+    const fireplaceIds = ['fireplace-2', 'fireplace-3']
+    const available = this.game.getAvailableMajorImprovements()
+      .filter(id => fireplaceIds.includes(id))
+      .filter(id => player.canBuyMajorImprovement(id))
+
+    if (available.length === 0) {
+      return
+    }
+
+    const choices = available.map(id => {
+      const imp = this.game.cards.byId(id)
+      return imp.name + ` (${id})`
+    })
+    choices.push('Do not build')
+
+    const selection = this.choose(player, choices, {
+      title: 'Hollow Warden: Build a Fireplace?',
+      min: 1,
+      max: 1,
+    })
+
+    const sel = Array.isArray(selection) ? selection[0] : selection
+    if (sel === 'Do not build') {
+      return
+    }
+
+    const idMatch = sel.match(/\(([^)]+)\)/)
+    const improvementId = idMatch ? idMatch[1] : null
+
+    if (improvementId) {
+      const imp = this.game.cards.byId(improvementId)
+      const result = player.buyMajorImprovement(improvementId)
+      this._recordCardPlayed(player, imp)
+
+      if (!result.upgraded) {
+        player.payCost(player.getMajorImprovementCost(improvementId))
+      }
+
+      if (imp.hasHook('onBuy')) {
+        imp.callHook('onBuy', this.game, player)
+      }
+
+      this.game.callPlayerCardHook(player, 'onBuildImprovement', player.getMajorImprovementCost(improvementId), imp)
+      this.game.callPlayerCardHook(player, 'onBuildMajor')
+
+      this.log.add({
+        template: '{player} uses {card} to build {improvement}',
+        args: { player, card, improvement: imp },
+      })
+    }
+  }
+
   offerCarpentersBench(player, card) {
     const woodTaken = player._lastWoodTaken || 0
     if (woodTaken <= 0) {
