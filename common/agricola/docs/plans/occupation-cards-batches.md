@@ -22,8 +22,8 @@ This frequent context refresh keeps important details in working memory.
 ## Batch Status
 
 - **Total Batches**: TBD (will be ~25-30 batches for Set A, ~80-140 total)
-- **Completed Batches**: 9
-- **Current Batch**: Batch-010
+- **Completed Batches**: 10
+- **Current Batch**: Batch-011
 
 ## Batch Queue
 
@@ -204,25 +204,18 @@ Cards:
 
 ---
 
-### Batch-010: onPlayMinorFromHand and Special Action Hooks (Set A)
+### Batch-010: onBuildImprovement and Special Action Hooks (Set A) ✅ COMPLETED
 **Pattern**: Cards that trigger when playing improvements or special actions  
 **Template**: `SmallTrader.js`, `Freshman.js`  
 **Test Template**: Test improvement playing and special action hooks  
 **Complexity**: Medium (Tier 2)
 
 Cards:
-1. `small-trader-a109` - Small Trader (onPlayMinorFromHand: +3 food when playing minor from hand)
-2. `freshman-a097` - Freshman (onBakeBreadAction: can play occupation instead of baking - already tested, verify completeness)
-3. `grocer-a102` - Grocer (onPlay: creates goods pile, anytime purchase - already tested, verify completeness)
+1. `small-trader-a109` - Small Trader (onBuildImprovement: +3 food when playing minor improvement) ✅
+2. `freshman-a097` - Freshman (onBakeBreadAction: can play occupation instead of baking) ✅
+3. `grocer-a102` - Grocer (onPlay: creates goods pile, anytime purchase) ✅
 
-**LLM Instructions:**
-1. Read each card file and verify hooks are implemented
-2. For Small Trader, test playing minor improvement from hand via action space
-3. For Freshman, test Bake Bread action offering occupation choice
-4. Verify hooks don't trigger inappropriately
-5. Run tests and fix any failures
-6. Update status tracker
-7. Move to Batch-011
+**Status**: All cards implemented and tested. Small Trader uses `onBuildImprovement` hook with `card.type === 'minor'` check instead of separate `onPlayMinorFromHand` hook.
 
 ---
 

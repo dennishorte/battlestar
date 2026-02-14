@@ -597,3 +597,149 @@ the game is in a particular state.
 
 **Important**: Remove all `console.log` debugging statements before
 committing. These are development-only aids.
+
+## Action Spaces Reference
+
+This section provides a complete reference of all action spaces available in the game, organized by type and player count.
+
+### Base Action Spaces (Always Available)
+
+These action spaces are available from the start of the game for all player counts:
+
+| Name | ID | Type | Description |
+|------|-----|------|-------------|
+| Farm Expansion | `build-room-stable` | instant | Build Rooms and/or Build Stables |
+| Meeting Place | `starting-player` | instant | Become the Starting Player and afterward Minor Improvement (+1 food) |
+| Grain Seeds | `take-grain` | instant | Receive 1 Grain |
+| Farmland | `plow-field` | instant | Plow 1 Field |
+| Lessons A | `occupation` | instant | Play 1 Occupation (first is free, then 1 food each) |
+| Day Laborer | `day-laborer` | instant | Receive 2 Food |
+| Forest | `take-wood` | accumulating | Accumulation Space: +3 Wood |
+| Clay Pit | `take-clay` | accumulating | Accumulation Space: +1 Clay |
+| Reed Bank | `take-reed` | accumulating | Accumulation Space: +1 Reed |
+| Fishing | `fishing` | accumulating | Accumulation Space: +1 Food |
+
+### Round Cards (Revealed Progressively)
+
+Round cards are revealed one per round, shuffled within each stage. They are **not** always available — they appear as they are revealed.
+
+#### Stage 1 (Rounds 1-4)
+
+| Name | ID | Type | Description |
+|------|-----|------|-------------|
+| Grain Utilization | `sow-bake` | instant | Sow and/or Bake Bread |
+| Sheep Market | `take-sheep` | accumulating | Accumulation Space: +1 Sheep |
+| Fencing | `fencing` | instant | Build Fences |
+| Major Improvement | `major-minor-improvement` | instant | Major or Minor Improvement |
+
+#### Stage 2 (Rounds 5-7)
+
+| Name | ID | Type | Description |
+|------|-----|------|-------------|
+| Basic Wish for Children | `family-growth-minor` | instant | Family Growth with Room Only and afterward Minor Improvement |
+| Western Quarry | `take-stone-1` | accumulating | Accumulation Space: +1 Stone |
+| House Redevelopment | `renovation-improvement` | instant | 1 Renovation and afterward Major or Minor Improvement |
+
+#### Stage 3 (Rounds 8-9)
+
+| Name | ID | Type | Description |
+|------|-----|------|-------------|
+| Vegetable Seeds | `take-vegetable` | instant | Receive 1 Vegetable |
+| Pig Market | `take-boar` | accumulating | Accumulation Space: +1 Wild Boar |
+
+#### Stage 4 (Rounds 10-11)
+
+| Name | ID | Type | Description |
+|------|-----|------|-------------|
+| Cattle Market | `take-cattle` | accumulating | Accumulation Space: +1 Cattle |
+| Eastern Quarry | `take-stone-2` | accumulating | Accumulation Space: +1 Stone |
+
+#### Stage 5 (Rounds 12-13)
+
+| Name | ID | Type | Description |
+|------|-----|------|-------------|
+| Urgent Wish for Children | `family-growth-urgent` | instant | Family Growth Even without Room |
+| Cultivation | `plow-sow` | instant | Plow 1 Field and/or Sow |
+
+#### Stage 6 (Round 14)
+
+| Name | ID | Type | Description |
+|------|-----|------|-------------|
+| Farm Redevelopment | `renovation-fencing` | instant | 1 Renovation and/or Build Fences |
+
+### Player-Count Specific Action Spaces
+
+These action spaces are **in addition to** the base actions and round cards, and are only available for games with the specified player count.
+
+#### 2 Players
+
+No additional action spaces. Only base actions and round cards are available.
+
+#### 3 Players
+
+| Name | ID | Type | Description |
+|------|-----|------|-------------|
+| Grove | `grove` | accumulating | Accumulation Space: +2 Wood |
+| Hollow | `hollow` | accumulating | Accumulation Space: +1 Clay |
+| Resource Market | `resource-market` | instant | 1 Food, and 1 Reed or 1 Stone |
+| Lessons B | `lessons-3` | instant | Play 1 Occupation (occupation cost: 2 food) |
+
+#### 4 Players
+
+| Name | ID | Type | Description |
+|------|-----|------|-------------|
+| Copse | `copse` | accumulating | Accumulation Space: +1 Wood |
+| Grove | `grove` | accumulating | Accumulation Space: +2 Wood |
+| Hollow | `hollow` | accumulating | Accumulation Space: +2 Clay |
+| Resource Market | `resource-market` | instant | 1 Reed, 1 Stone, 1 Food |
+| Lessons B | `lessons-4` | instant | Play 1 Occupation (occupation cost: 2 food, the first two only 1 food each) |
+| Traveling Players | `traveling-players` | accumulating | Accumulation Space: +1 Food |
+
+#### 5 Players
+
+| Name | ID | Type | Description |
+|------|-----|------|-------------|
+| Lessons C | `lessons-5` | instant | Play 1 Occupation (occupation cost: 2 food) — linked with Copse |
+| Copse | `copse-5` | accumulating | Accumulation Space: +1 Wood — linked with Lessons C |
+| House Building | `house-building` | instant | Build rooms (5 resources + 2 reed each) — linked with Traveling Players |
+| Traveling Players | `traveling-players-5` | accumulating | Accumulation Space: +1 Food — linked with House Building |
+| Lessons D | `lessons-5b` | instant | Play 1 Occupation (occupation cost: 2 food, the first two only 1 food each) — linked with Modest Wish for Children |
+| Modest Wish for Children | `modest-wish-for-children` | instant | Family Growth with Room Only (Round 5+) — linked with Lessons D |
+| Grove | `grove-5` | accumulating | Accumulation Space: +2 Wood |
+| Hollow | `hollow-5` | accumulating | Accumulation Space: +2 Clay |
+| Resource Market | `resource-market-5` | instant | 1 Reed, 1 Stone, 1 Food |
+
+**Note**: Linked spaces in 5-player games can be used by the same player in one turn.
+
+#### 6 Players
+
+All 5-player actions, plus:
+
+| Name | ID | Type | Description |
+|------|-----|------|-------------|
+| Riverbank Forest | `riverbank-forest` | accumulating | Accumulation Space: +1 Wood + 1 Reed instant |
+| Grove | `grove-6` | accumulating | Accumulation Space: +2 Wood |
+| Hollow | `hollow-6` | accumulating | Accumulation Space: +3 Clay |
+| Resource Market | `resource-market-6` | instant | 1 Reed + 1 Stone + 1 Wood instant |
+| Animal Market | `animal-market` | instant | Choose: Sheep (+1 food) or Cattle (costs 1 food) |
+| Farm Supplies | `farm-supplies` | instant | 1 Grain for 1 Food, and/or Plow 1 Field for 1 Food |
+| Building Supplies | `building-supplies` | instant | 1 Food + (Reed or Stone) + (Wood or Clay) |
+| Corral | `corral` | instant | Get animal you don't have (Sheep → Boar → Cattle order) |
+| Side Job | `side-job` | instant | Build 1 Stable for 1 Wood + optional Bake Bread |
+| Improvement | `improvement-6` | instant | Minor Improvement (Major from Round 5+) |
+
+### Using Action Spaces in Tests
+
+When using `actionSpaces` in `t.setBoard`, you can reference action spaces by their **name** (e.g., `'Forest'`, `'Grain Utilization'`) or by their **ID** (e.g., `'take-wood'`, `'sow-bake'`). The name is usually more readable.
+
+**Important Notes**:
+
+1. **Base actions are always available** — you don't need to list them in `actionSpaces`** unless you want to control their accumulated resources.
+
+2. **Round cards must be explicitly listed** if you want them available. They are revealed progressively, so if you want "Grain Utilization" available, you must include it in `actionSpaces`.
+
+3. **Player-count specific actions are automatically available** based on the number of players in the game. You don't need to list them in `actionSpaces`, but you can reference them by name if needed.
+
+4. **Accumulated resources**: For accumulating action spaces, use the object form: `{ ref: 'Forest', accumulated: 5 }` to set the accumulated amount.
+
+5. **Hollow is special**: Hollow is automatically available for 3+ player games and cannot be set with `actionSpaces`. It's not available in 2-player games.

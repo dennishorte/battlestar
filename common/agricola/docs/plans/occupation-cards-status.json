@@ -2,10 +2,10 @@
   "lastUpdated": "2024-01-15",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 9,
-  "cardsCompleted": 28,
-  "cardsTested": 53,
-  "currentBatch": "Batch-010",
+  "batchesCompleted": 10,
+  "cardsCompleted": 31,
+  "cardsTested": 56,
+  "currentBatch": "Batch-011",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -70,6 +70,13 @@
       "testsPassing": 8,
       "completedDate": "2024-01-15"
     },
+    "Batch-010": {
+      "status": "completed",
+      "cards": ["small-trader-a109", "freshman-a097", "grocer-a102"],
+      "testsCreated": 3,
+      "testsPassing": 8,
+      "completedDate": "2024-01-15"
+    },
     "Hollow-Warden": {
       "status": "completed",
       "cards": ["hollow-warden-a139"],
@@ -82,8 +89,8 @@
   "bySet": {
     "occupationA": {
       "total": 84,
-      "implemented": 28,
-      "tested": 53,
+      "implemented": 31,
+      "tested": 56,
       "status": "in_progress"
     },
     "occupationB": {
