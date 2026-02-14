@@ -3734,6 +3734,29 @@ class AgricolaPlayer extends BasePlayer {
     return count
   }
 
+  // Get count of pastures with at least min spaces (e.g. Fellow Grazer: 3+ spaces)
+  getPasturesWithMinSpaces(min) {
+    let count = 0
+    for (const pasture of this.farmyard.pastures) {
+      if (pasture.spaces && pasture.spaces.length >= min) {
+        count++
+      }
+    }
+    return count
+  }
+
+  // Get count of cooking improvements (majors with canCook) for Cookery Outfitter
+  getCookingImprovementCount() {
+    let count = 0
+    for (const id of this.majorImprovements) {
+      const imp = this.cards.byId(id)
+      if (imp && imp.abilities && imp.abilities.canCook) {
+        count++
+      }
+    }
+    return count
+  }
+
   // Get cards that trigger on specific hooks
   getCardsWithHook(hookName) {
     return this.getActiveCards().filter(card => card.hasHook(hookName))

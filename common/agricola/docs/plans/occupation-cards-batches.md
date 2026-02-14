@@ -22,8 +22,8 @@ This frequent context refresh keeps important details in working memory.
 ## Batch Status
 
 - **Total Batches**: TBD (will be ~25-30 batches for Set A, ~80-140 total)
-- **Completed Batches**: 11
-- **Current Batch**: Batch-012
+- **Completed Batches**: 12
+- **Current Batch**: Batch-013
 
 ## Batch Queue
 
@@ -234,24 +234,18 @@ Cards:
 
 ---
 
-### Batch-012: End Game Scoring Cards (Set A)
+### Batch-012: End Game Scoring Cards (Set A) ✅ COMPLETED
 **Pattern**: Cards that score bonus points at end of game  
 **Template**: `StableArchitect.js`, `FellowGrazer.js`  
 **Test Template**: Test `getEndGamePoints` hook with various board states  
 **Complexity**: Simple (Tier 1)
 
 Cards:
-1. `stable-architect-a098` - Stable Architect (getEndGamePoints: +1 VP per unfenced stable)
-2. `fellow-grazer-a099` - Fellow Grazer (getEndGamePoints: +2 VP per pasture with 3+ spaces)
-3. `cookery-outfitter-a101` - Cookery Outfitter (getEndGamePoints: +1 VP per cooking improvement)
+1. `stable-architect-a098` - Stable Architect (getEndGamePoints: +1 VP per unfenced stable) ✅
+2. `fellow-grazer-a099` - Fellow Grazer (getEndGamePoints: +2 VP per pasture with 3+ spaces) ✅
+3. `cookery-outfitter-a101` - Cookery Outfitter (getEndGamePoints: +1 VP per cooking improvement) ✅
 
-**LLM Instructions:**
-1. Read each card file and verify `getEndGamePoints` implementation
-2. Create test files that set up various board states and assert scores
-3. Test multiple scenarios (0, 1, 2+ of the scoring items)
-4. Use `t.testBoard` with `score` field to verify end game points
-5. Run tests and ensure ALL pass before marking complete
-6. Update `occupation-cards-status.json` after completion
+**Status**: All cards implemented and tested. Added `getPasturesWithMinSpaces` and `getCookingImprovementCount` to AgricolaPlayer.
 
 ---
 

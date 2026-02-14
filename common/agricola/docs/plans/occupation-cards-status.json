@@ -2,10 +2,10 @@
   "lastUpdated": "2025-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 11,
-  "cardsCompleted": 34,
-  "cardsTested": 59,
-  "currentBatch": "Batch-012",
+  "batchesCompleted": 12,
+  "cardsCompleted": 37,
+  "cardsTested": 62,
+  "currentBatch": "Batch-013",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -84,6 +84,13 @@
       "testsPassing": 11,
       "completedDate": "2025-02-14"
     },
+    "Batch-012": {
+      "status": "completed",
+      "cards": ["stable-architect-a098", "fellow-grazer-a099", "cookery-outfitter-a101"],
+      "testsCreated": 3,
+      "testsPassing": 11,
+      "completedDate": "2025-02-14"
+    },
     "Hollow-Warden": {
       "status": "completed",
       "cards": ["hollow-warden-a139"],
@@ -96,8 +103,8 @@
   "bySet": {
 "occupationA": {
     "total": 84,
-    "implemented": 34,
-    "tested": 59,
+    "implemented": 37,
+    "tested": 62,
     "status": "in_progress"
   },
     "occupationB": {
