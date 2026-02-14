@@ -112,7 +112,12 @@ TestUtil.fixture = function(options = {}) {
  *                      round directly — no earlier rounds are played, and round
  *                      cards are revealed randomly as usual. Cannot combine with
  *                      actionSpaces.
- *   actionSpaces     - Array of action space names (as used by t.choose()).
+ *   actionSpaces     - Array of action space references. Each element can be:
+ *                        - A string (action space name or ID), e.g. 'Fishing'
+ *                        - An object { ref, accumulated }, e.g. { ref: 'Fishing', accumulated: 2 }
+ *                          The `accumulated` value is the amount on the space AFTER
+ *                          replenish — i.e. what the player sees when they take their turn.
+ *                          For non-accumulating spaces, `accumulated` is ignored.
  *                      Controls which round cards are available. Earlier stages
  *                      are auto-filled when a later-stage card is requested:
  *                      e.g. ['Western Quarry'] (stage 2) auto-fills all 4 stage 1
@@ -244,6 +249,10 @@ TestUtil.resolveCardRefs = function(refs, label) {
 }
 
 TestUtil.setBoard = function(game, state) {
+  // Shared between initialization-complete and replenish-complete breakpoints.
+  // Populated during init, applied after the first replenish of the target round.
+  const accumulatedOverrides = {}
+
   game.testSetBreakpoint('initialization-complete', (game) => {
     if (state.round && state.actionSpaces) {
       throw new Error('Cannot specify both actionSpaces and round')
@@ -251,7 +260,15 @@ TestUtil.setBoard = function(game, state) {
 
     if (state.actionSpaces) {
       // Resolve and validate action space references
-      const requested = state.actionSpaces.map(ref => TestUtil.resolveActionSpaceRef(ref))
+      // Each element can be a string or { ref, accumulated }
+      const requested = state.actionSpaces.map(entry => {
+        const ref = typeof entry === 'string' ? entry : entry.ref
+        const action = TestUtil.resolveActionSpaceRef(ref)
+        if (typeof entry === 'object' && entry.accumulated !== undefined) {
+          accumulatedOverrides[action.id] = entry.accumulated
+        }
+        return action
+      })
       const seenActionIds = new Set()
       for (const action of requested) {
         if (seenActionIds.has(action.id)) {
@@ -302,11 +319,13 @@ TestUtil.setBoard = function(game, state) {
 
       game.state.round = orderedCards.length
       game.state.stage = res.constants.roundToStage[orderedCards.length] || 1
+      targetRound = orderedCards.length + 1  // mainLoop increments before playing
     }
     else if (state.round) {
       // round: N means "play round N" — subtract 1 because mainLoop increments before playing
       game.state.round = state.round - 1
       game.state.stage = res.constants.roundToStage[state.round] || 1
+      targetRound = state.round
 
       // Reveal all round cards for rounds 1 through N-1 so that earlier-stage
       // action spaces are available (e.g. House Redevelopment at round 11).
@@ -320,6 +339,7 @@ TestUtil.setBoard = function(game, state) {
     else {
       game.state.round = 1
       game.state.stage = 1
+      targetRound = 2  // mainLoop increments from 1 to 2
     }
 
     // Set starting player
@@ -433,6 +453,30 @@ TestUtil.setBoard = function(game, state) {
 
     if (errors.length > 0) {
       throw new Error('setBoard validation failed:\n  ' + errors.join('\n  '))
+    }
+  })
+
+  // Apply accumulated overrides after replenish on the target round.
+  // This fires AFTER replenishPhase(), so the value you specify in setBoard is
+  // exactly what ends up on the space — no mental math about replenish amounts.
+  // Uses round number (not a flag) so it works correctly across game replays.
+  // targetRound is set inside initialization-complete and captured via closure.
+  let targetRound = 0
+  game.testSetBreakpoint('replenish-complete', (game) => {
+    if (game.state.round !== targetRound) {
+      return
+    }
+
+    for (const [actionId, desiredAmount] of Object.entries(accumulatedOverrides)) {
+      const actionDef = res.getActionById(actionId)
+      if (!actionDef || actionDef.type !== 'accumulating' || !actionDef.accumulates) {
+        throw new Error(`Action space "${actionId}" is not an accumulating space — cannot set accumulated`)
+      }
+      const spaceState = game.state.actionSpaces[actionId]
+      if (!spaceState) {
+        throw new Error(`Action space "${actionId}" not found in game state — was it added?`)
+      }
+      spaceState.accumulated = desiredAmount
     }
   })
 }

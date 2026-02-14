@@ -65,7 +65,7 @@ Declaratively sets up game state. All fields are optional.
 |-------|-------------|
 | `firstPlayer` | Player name who goes first in the work phase |
 | `round` | Round number to play (cannot combine with `actionSpaces`) |
-| `actionSpaces` | Array of action space names to make available (cannot combine with `round`) |
+| `actionSpaces` | Array of action space refs to make available (cannot combine with `round`). Each element can be a string name/ID or `{ ref, accumulated }` for accumulating spaces. |
 
 #### `round`
 
@@ -523,3 +523,77 @@ game.run()
 
 expect(t.currentChoices(game)).not.toContain('Chapel')
 ```
+
+## Accumulated Resources on Action Spaces
+
+For accumulating action spaces (Fishing, Forest, Clay Pit, Reed Bank, etc.),
+you can control the accumulated amount using an object form in `actionSpaces`:
+
+```js
+actionSpaces: [
+  { ref: 'Fishing', accumulated: 2 },   // Fishing will have exactly 2 food
+  { ref: 'Forest', accumulated: 5 },     // Forest will have exactly 5 wood
+  'Grain Utilization',                    // plain string still works
+]
+```
+
+The `accumulated` value is the amount the player sees when they take their
+turn — i.e., the amount **after** the round's replenish phase. This is the
+intuitive value: if you say `accumulated: 3`, the player gets 3 resources
+when they use that space.
+
+For non-accumulating action spaces, `accumulated` is ignored.
+
+## Debugging Tests
+
+When a test fails because a choice string doesn't match, or the game flow
+is unexpected, use these techniques to inspect what's actually happening.
+
+### Inspect the current waiting state
+
+The most useful debugging tool. When the game is paused waiting for input,
+`game.waiting` contains the full input request with all available choices:
+
+```js
+// See what choices are currently being presented
+console.log(t.currentChoices(game))
+
+// See the full waiting structure (actor, title, choices, min, max)
+console.log(JSON.stringify(game.waiting, null, 2))
+```
+
+Use this whenever you get "Invalid selection" errors — it shows exactly what
+choices are available and what the expected format is.
+
+### Dump the game log
+
+To see the sequence of game events leading up to the current state:
+
+```js
+// Print all log entries with indentation
+game.log.getLog().forEach(entry => {
+  const indent = '  '.repeat(entry.indent)
+  console.log(`${indent}${entry.template}`)
+})
+```
+
+This shows the full game flow — which actions were taken, what resources
+were gained, what hooks fired, etc. Extremely useful for understanding why
+the game is in a particular state.
+
+### When to use these techniques
+
+- **"Invalid selection" errors**: Use `t.currentChoices(game)` or
+  `console.log(game.waiting)` right before the failing `t.choose` call to
+  see what choices are actually available.
+- **Unexpected resource counts**: Dump the log to trace where resources
+  were gained or spent.
+- **Hook not firing**: Dump the log to see if the expected action was taken
+  and whether the hook's log messages appear.
+- **buyImprovement skipping**: If `buyImprovement` finds no affordable
+  improvements and no anytime conversions, it returns immediately without
+  presenting choices. Check that the player has playable cards in hand and
+  the `test` card set is included in the fixture.
+
+**Important**: Remove all `console.log` debugging statements before
+committing. These are development-only aids.

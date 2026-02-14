@@ -27,15 +27,11 @@ describe('Clay Puncher', () => {
   test('onAction grants 1 clay when using Clay Pit accumulation space', () => {
     const game = t.fixture({ cardSets: ['occupationA'] })
     t.setBoard(game, {
-      actionSpaces: ['Clay Pit'], // Auto-sets to round 6 (end of Stage 2)
+      actionSpaces: [{ ref: 'Clay Pit', accumulated: 1 }],
       dennis: {
         occupations: ['clay-puncher-a121'],
         clay: 0,
       },
-    })
-    game.testSetBreakpoint('replenish-complete', (game) => {
-      // Set Clay Pit to have 0 accumulated clay (will be +1 from replenish = 1)
-      game.state.actionSpaces['take-clay'].accumulated = 0
     })
     game.run()
 
@@ -45,7 +41,7 @@ describe('Clay Puncher', () => {
     t.testBoard(game, {
       dennis: {
         occupations: ['clay-puncher-a121'],
-        clay: 2, // 1 from Clay Pit accumulation (0 + 1 replenish) + 1 from onAction
+        clay: 2, // 1 from Clay Pit accumulation + 1 from onAction
       },
     })
   })
@@ -75,15 +71,11 @@ describe('Clay Puncher', () => {
   test('onPlay and onAction both grant clay in same round', () => {
     const game = t.fixture({ cardSets: ['occupationA'] })
     t.setBoard(game, {
-      actionSpaces: ['Clay Pit'], // Auto-sets to round 6
+      actionSpaces: [{ ref: 'Clay Pit', accumulated: 1 }],
       dennis: {
         hand: ['clay-puncher-a121'],
         clay: 0,
       },
-    })
-    game.testSetBreakpoint('replenish-complete', (game) => {
-      // Set Clay Pit to have 1 accumulated clay (will be +1 from replenish = 2)
-      game.state.actionSpaces['take-clay'].accumulated = 1
     })
     game.run()
 
@@ -98,7 +90,7 @@ describe('Clay Puncher', () => {
     t.testBoard(game, {
       dennis: {
         occupations: ['clay-puncher-a121'],
-        clay: 4, // 1 from onPlay + 2 from Clay Pit (1 + 1 replenish) + 1 from onAction = 4 total
+        clay: 4, // 1 from onPlay + 1 from onAction(Lessons) + 1 from Clay Pit + 1 from onAction(Clay Pit)
       },
     })
   })

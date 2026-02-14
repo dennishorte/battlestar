@@ -10,7 +10,7 @@ module.exports = {
     if (actionId === 'fishing') {
       const foodOnSpace = game.getAccumulatedResources('fishing').food || 0
       if (foodOnSpace <= 2) {
-        game.actions.offerImprovementAction(player, this)
+        game.actions.buyImprovement(player, true, true)
       }
     }
   },

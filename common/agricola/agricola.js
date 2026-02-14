@@ -1054,6 +1054,7 @@ Agricola.prototype.mainLoop = function() {
 
     this.revealRoundAction()
     this.replenishPhase()
+    this._breakpoint('replenish-complete')
 
     // Call round start hooks (collect scheduled resources, check triggers)
     this.callRoundStartHooks()
