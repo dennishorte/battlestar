@@ -133,7 +133,7 @@ Some may need minor code fixes discovered during testing.
 | BeeStatue (e040) | E | ✅ | Test written (2 tests: pop + depletion) |
 | RomanPot (e056) | E | ✅ | Test written |
 | WoodRake (d032) | D | **BLOCKED** | `goodsInFieldsBeforeFinalHarvest` not tracked by engine |
-| BriarHedge (e016) | E | **TEST** | `modifyFenceCost` passes `edgeFenceCount`; needs test |
+| BriarHedge (e016) | E | ✅ | `modifyFenceCost` passes `edgeFenceCount`; test passing |
 
 ### Batch 14 — Food Bonus Hooks
 
@@ -141,9 +141,9 @@ Some may need minor code fixes discovered during testing.
 |------|------|--------|-------|
 | NewMarket (d055) | D | ✅ | Test written. `isRoundActionSpace` added to engine |
 | RaisedBed (e061) | E | ✅ | Test written. `onHarvestStart` already wired |
-| Farmstead (c048) | C | **TEST** | `onUseFarmyardSpace` wired; needs test |
-| HuntsmansHat (c052) | C | **TEST** | `onGainBoar` wired; needs test |
-| TroutPool (d054) | D | **TEST** | `onWorkPhaseStart` wired; use breakpoint to set fishing accumulated |
+| Farmstead (c048) | C | ✅ | `onUseFarmyardSpace` wired; test passing |
+| HuntsmansHat (c052) | C | ✅ | `onGainBoar` wired; test passing |
+| TroutPool (d054) | D | ✅ | `onWorkPhaseStart` wired; test passing |
 | Lynchet (d063) | D | **BLOCKED** | Needs `getHarvestedFieldsAdjacentToHouse` player method |
 
 ### Batch 15 — Harvest Phase Hooks
@@ -154,16 +154,16 @@ Some may need minor code fixes discovered during testing.
 | GrainSieve (d065) | D | ✅ | Test written (2 tests). `onHarvestGrain` wired |
 | SocialBenefits (d076) | D | ✅ | Test written (2 tests). `onFeedingPhaseEnd` already wired |
 | CheeseFondue (e057) | E | ✅ | Test written (2 tests) |
-| ShepherdsWhistle (e083) | E | **TEST** | `onBreedingPhaseStart` wired; needs test + `hasEmptyUnfencedStable` method |
-| Slurry (c071) | C | **STUB** | Calls `game.actions.sow(player)` — needs inline fix |
+| ShepherdsWhistle (e083) | E | ✅ | `onBreedingPhaseStart` wired; test passing |
+| Slurry (c071) | C | ✅ | `onBreedingPhaseEnd` wired; test passing |
 
 ### Batch 16 — Building & Renovation Hooks
 
 | Card | Deck | Status | Notes |
 |------|------|--------|-------|
 | Cubbyhole (e052) | E | ✅ | `onBuildRoom` fixed to pass count; feeding test written |
-| RecycledBrick (d077) | D | **TEST** | `onAnyRenovateToStone` wired; needs test |
-| Twibil (e049) | E | **TEST** | `onAnyBuildRoom` wired; needs test |
+| RecycledBrick (d077) | D | ✅ | `onAnyRenovateToStone` wired; test passing |
+| Twibil (e049) | E | ✅ | `onAnyBuildRoom` wired; test passing |
 | AshTrees (e074) | E | ✅ | `getFreeFences`/`useFreeFences` integrated into fence building |
 | WoodSaw (e014) | E | **BLOCKED** | `enablesFreeBuildRooms` flag not processed |
 | WoodSlideHammer (c013) | C | ✅ | `modifyRenovation`/`modifyRenovationCost` wired; wood→stone skip + 2 stone discount |
@@ -174,9 +174,9 @@ Some may need minor code fixes discovered during testing.
 |------|------|--------|-------|
 | FieldSpade (e079) | E | ✅ | Test written |
 | WildGreens (e050) | E | ✅ | Test written |
-| SteamMachine (c025) | C | **STUB** | Calls `game.actions.bakeBread()` stub |
-| StudioBoat (c039) | C | **TEST** | `onAction` wired; test bonus point via `traveling-players` action |
-| EducationBonus (d042) | D | **TEST** | `onPlayOccupation` wired; needs test |
+| SteamMachine (c025) | C | ✅ | `onWorkPhaseEnd` wired; test passing |
+| StudioBoat (c039) | C | ✅ | `onAction` wired; test passing |
+| EducationBonus (d042) | D | ✅ | `onPlayOccupation` wired; test passing |
 | FatstockStretcher (d056) | D | ✅ | `onCookAnimal` wired; +1 food for sheep/boar |
 
 ### Batch 18 — Capacity Modifiers & Flags
@@ -186,7 +186,7 @@ Some may need minor code fixes discovered during testing.
 | BeaverColony (e033) | E | ✅ | Test written (2 tests). `actionGivesReed` added |
 | LawnFertilizer (d011) | D | ✅ | Signature fixed to match engine; 3 tests written |
 | AnimalBedding (e012) | E | ✅ | `modifyStableCapacity` wired in getPastureCapacity + getUnfencedStableCapacity; 2 tests |
-| CattleFarm (c012) | C | **TEST** | Card def refactor to use `holdsAnimals` + `getAnimalCapacity`; needs test |
+| CattleFarm (c012) | C | ✅ | Card def refactor to use `holdsAnimals` + `getAnimalCapacity`; test passing |
 | BunkBeds (c010) | C | ✅ | `modifyHouseCapacity` wired in canGrowFamily via getHouseCapacity; 3 tests |
 | BrotherlyLove (d024) | D | **BLOCKED** | `allowDoubleWorkerWith4People` not processed |
 
@@ -208,10 +208,10 @@ All **BLOCKED** — `plowField` ignores options, card-based fields not supported
 | Card | Deck | Status | Notes |
 |------|------|--------|-------|
 | WhaleOil (e051) | E | ✅ | Test written. `onBeforePlayOccupation` wired. **Needs card state fix** |
-| PettingZoo (e011) | E | **TEST** | `holdsAnimals` + `getAnimalCapacity` already supported; needs test |
+| PettingZoo (e011) | E | ✅ | `holdsAnimals` + `getAnimalCapacity` already supported; test passing |
 | SkimmerPlow (e017) | E | ✅ | `modifySowAmount`/`modifyPlowCount` wired; plow 2, sow -1 |
 | AlchemistsLab (e081) | E | **BLOCKED** | Complex action space for all players |
-| MaterialHub (c081) | C | **TEST** | `onAnyAction` wired; needs test |
+| MaterialHub (c081) | C | ✅ | `onAnyAction` wired; test passing |
 | GypsysCrock (c053) | C | ✅ | `onCook` wired; +1 food per 2 goods cooked same turn |
 
 ### Batch 21 — Occupation & Improvement Interactions
@@ -222,14 +222,14 @@ All **BLOCKED** — `plowField` ignores options, card-based fields not supported
 | Recruitment (d021) | D | **BLOCKED** | `modifyMinorImprovementAction` not processed |
 | JobContract (c023) | C | **BLOCKED** | `allowsCombinedAction` not processed |
 | CarpentersYard (d0??) | D | **BLOCKED** | Flags not processed |
-| Bookcase (c068) | C | **TEST** | `onPlayOccupation` wired; needs test |
+| Bookcase (c068) | C | ✅ | `onPlayOccupation` wired; test passing |
 | Bookshelf (d049) | D | ✅ | Test written (3 food before occupation) |
 
 ### Batch 22 — Miscellaneous
 
 | Card | Deck | Status | Notes |
 |------|------|--------|-------|
-| FarmBuilding (c043) | C | **TEST** | `onBuildMajor` wired; needs test |
+| FarmBuilding (c043) | C | ✅ | `onBuildMajor` wired; test passing |
 | BedInTheGrainField (c024) | C | ✅ | `onHarvestStart` hook triggers family growth |
 | TeaHouse (d053) | D | **BLOCKED** | `allowsSkipSecondPerson` not processed |
 | RoyalWood (d074) | D | **BLOCKED** | `onBuildImprovement`/`onFarmExpansion` not wired |
@@ -246,10 +246,10 @@ MinorB cards that need unique infrastructure beyond simple inline fixes.
 
 | Card | Deck | Blocker | Notes |
 |------|------|---------|-------|
-| UpscaleLifestyle (b001) | B | **TEST** | Anytime renovation infra exists; needs tests |
-| Caravan (b010) | B | **TEST** | `providesRoom` flag works; needs family growth E2E test |
+| UpscaleLifestyle (b001) | B | ✅ | Anytime renovation infra exists; test passing |
+| Caravan (b010) | B | ✅ | `providesRoom` flag works; test passing |
 | ✅ PotteryYard (b031) | B | `hasAdjacentUnusedSpaces` | Done — player method added |
-| SpecialFood (b034) | B | **TEST** | `onTakeAnimals` wired with `allAccommodated` param; needs test |
+| SpecialFood (b034) | B | ✅ | `onTakeAnimals` wired with `allAccommodated` param; test passing |
 | AgrarianFences (b026) | B | ✅ | `modifyGrainUtilization` flag processed in sowAndOrBake |
 | WoodPalisades (b030) | B | `allowWoodPalisades` flag | Wood as fence material not supported |
 
@@ -335,10 +335,10 @@ New methods in `AgricolaActionManager.js`:
 | Phase | Done | Test | Blocked/Deferred | Total |
 |-------|------|------|------------------|-------|
 | 1: Stub Fixes | 14 | 0 | 4 | 18 |
-| 2: Test-Only | 27 | 16 | 15 | 60 |
-| 3: MinorB Infra | 7 | 4 | 0 | 11 |
+| 2: Test-Only | 41 | 0 | 19 | 60 |
+| 3: MinorB Infra | 10 | 0 | 1 | 11 |
 | 4: Anytime | 33 | 0 | 2 deferred | 35 |
-| **Total** | **78** | **20** | **26** | **124** |
+| **Total** | **98** | **0** | **26** | **124** |
 
 **Remaining BLOCKED cards** need deep infrastructure: worker placement mods, virtual fields, plow options, custom action spaces, etc.
 
