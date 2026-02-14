@@ -221,7 +221,7 @@ All **BLOCKED** — `plowField` ignores options, card-based fields not supported
 | Card | Deck | Status | Notes |
 |------|------|--------|-------|
 | FarmBuilding (c043) | C | **BLOCKED** | `onBuildMajor` not wired |
-| BedInTheGrainField (c0??) | C | **BLOCKED** | `bedInGrainFieldNextHarvest` flag not processed |
+| BedInTheGrainField (c024) | C | ✅ | `onHarvestStart` hook triggers family growth |
 | TeaHouse (d053) | D | **BLOCKED** | `allowsSkipSecondPerson` not processed |
 | RoyalWood (d074) | D | **BLOCKED** | `onBuildImprovement`/`onFarmExpansion` not wired |
 | HuntingTrophy (d082) | D | **BLOCKED** | `modifyHouseRedevelopmentCost` not wired |
@@ -241,7 +241,7 @@ MinorB cards that need unique infrastructure beyond simple inline fixes.
 | Caravan (b010) | B | `providesRoom` flag | Works but needs family growth E2E test |
 | ✅ PotteryYard (b031) | B | `hasAdjacentUnusedSpaces` | Done — player method added |
 | SpecialFood (b034) | B | `onTakeAnimals` + `allAccommodated` | Hook needs parameter added |
-| AgrarianFences (b026) | B | `modifyGrainUtilization` flag | Flag not processed in game engine |
+| AgrarianFences (b026) | B | ✅ | `modifyGrainUtilization` flag processed in sowAndOrBake |
 | WoodPalisades (b030) | B | `allowWoodPalisades` flag | Wood as fence material not supported |
 
 ### Batch 24 — MinorB Stubs Needing New Methods
@@ -326,10 +326,10 @@ New methods in `AgricolaActionManager.js`:
 | Phase | Done | Blocked/Deferred | Total |
 |-------|------|------------------|-------|
 | 1: Stub Fixes | 13 | 5 | 18 |
-| 2: Test-Only | 21 | 37 | 60 |
-| 3: MinorB Infra | 1 | 10 | 11 |
+| 2: Test-Only | 22 | 36 | 60 |
+| 3: MinorB Infra | 2 | 9 | 11 |
 | 4: Anytime | 33 | 2 deferred | 35 |
-| **Total** | **69** | **53** | **124** |
+| **Total** | **71** | **51** | **124** |
 
 ### Hook Wiring Status
 

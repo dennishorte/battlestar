@@ -1256,12 +1256,56 @@ class AgricolaActionManager extends BaseActionManager {
     const canSow = player.canSowAnything()
     const canBake = player.hasBakingAbility() && player.grain >= 1
 
-    if (!canSow && !canBake) {
+    // Check for Agrarian Fences
+    const hasAgrarianFences = player.playedMinorImprovements.some(cardId => {
+      const card = this.game.cards.byId(cardId)
+      return card && card.definition.modifyGrainUtilization
+    })
+    const canBuildFences = hasAgrarianFences && (player.wood >= 1 || player.getFreeFenceCount() > 0)
+
+    if (!canSow && !canBake && !canBuildFences) {
       this.log.addDoNothing(player, 'sow or bake')
       return true
     }
 
-    // Sow first (player can select "Done Sowing" to skip)
+    // Agrarian Fences: offer to replace one action with Build Fences
+    if (canBuildFences) {
+      if (!canSow && !canBake) {
+        // Can only build fences
+        this.buildFences(player)
+        return true
+      }
+
+      const choices = ['Sow and/or Bake Bread']
+      if (canSow) {
+        choices.push('Build Fences instead of Sowing')
+      }
+      if (canBake) {
+        choices.push('Build Fences instead of Baking')
+      }
+
+      const selection = this.choose(player, choices, { title: 'Agrarian Fences', min: 1, max: 1 })
+      const choice = selection[0]
+
+      if (choice === 'Build Fences instead of Sowing') {
+        this.buildFences(player)
+        const canBakeNow = player.hasBakingAbility() && player.grain >= 1
+        if (canBakeNow) {
+          this.bakeBread(player)
+        }
+        return true
+      }
+      if (choice === 'Build Fences instead of Baking') {
+        if (canSow) {
+          this.sow(player)
+        }
+        this.buildFences(player)
+        return true
+      }
+      // "Sow and/or Bake Bread" — fall through to normal flow
+    }
+
+    // Normal flow: Sow first (player can select "Done Sowing" to skip)
     if (canSow) {
       this.sow(player)
     }

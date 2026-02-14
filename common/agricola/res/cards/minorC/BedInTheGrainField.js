@@ -15,4 +15,10 @@ module.exports = {
       args: { player },
     })
   },
+  onHarvestStart(game, player) {
+    if (player.bedInGrainFieldNextHarvest) {
+      delete player.bedInGrainFieldNextHarvest
+      game.actions.familyGrowth(player, true)
+    }
+  },
 }
