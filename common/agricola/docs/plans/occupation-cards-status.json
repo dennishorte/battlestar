@@ -2,10 +2,10 @@
   "lastUpdated": "2025-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 13,
-  "cardsCompleted": 41,
-  "cardsTested": 66,
-  "currentBatch": "Batch-014",
+  "batchesCompleted": 14,
+  "cardsCompleted": 43,
+  "cardsTested": 68,
+  "currentBatch": "Batch-015",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -98,6 +98,13 @@
       "testsPassing": 10,
       "completedDate": "2025-02-14"
     },
+    "Batch-014": {
+      "status": "completed",
+      "cards": ["knapper-a124", "master-workman-a126"],
+      "testsCreated": 2,
+      "testsPassing": 10,
+      "completedDate": "2025-02-14"
+    },
     "Hollow-Warden": {
       "status": "completed",
       "cards": ["hollow-warden-a139"],
@@ -110,8 +117,8 @@
   "bySet": {
 "occupationA": {
     "total": 84,
-    "implemented": 41,
-    "tested": 66,
+    "implemented": 43,
+    "tested": 68,
     "status": "in_progress"
   },
     "occupationB": {

@@ -22,8 +22,8 @@ This frequent context refresh keeps important details in working memory.
 ## Batch Status
 
 - **Total Batches**: TBD (will be ~25-30 batches for Set A, ~80-140 total)
-- **Completed Batches**: 13
-- **Current Batch**: Batch-014
+- **Completed Batches**: 14
+- **Current Batch**: Batch-015
 
 ## Batch Queue
 
@@ -265,7 +265,7 @@ Cards:
 
 ---
 
-### Batch-014: onBeforeAction Hooks (Set A)
+### Batch-014: onBeforeAction Hooks (Set A) ✅ COMPLETED
 **Pattern**: Cards that grant resources before taking actions based on round number  
 **Template**: `Knapper.js`, `MasterWorkman.js`  
 **Test Template**: Test `onBeforeAction` hook with different round cards  
@@ -275,7 +275,7 @@ Cards:
 1. `knapper-a124` - Knapper (onBeforeAction: +1 stone when using round 5-7 action spaces)
 2. `master-workman-a126` - Master Workman (onBeforeAction: +1 wood/clay/reed/stone for rounds 1/2/3/4)
 
-**LLM Instructions:**
+**LLM Instructions:** (completed)
 1. Read each card file and verify `onBeforeAction` implementation
 2. Test with action spaces from different rounds
 3. For Knapper, test rounds 5, 6, 7 (should trigger) and other rounds (should not)
