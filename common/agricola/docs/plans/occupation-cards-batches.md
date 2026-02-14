@@ -22,8 +22,8 @@ This frequent context refresh keeps important details in working memory.
 ## Batch Status
 
 - **Total Batches**: TBD (will be ~25-30 batches for Set A, ~80-140 total)
-- **Completed Batches**: 10
-- **Current Batch**: Batch-011
+- **Completed Batches**: 11
+- **Current Batch**: Batch-012
 
 ## Batch Queue
 
@@ -219,26 +219,18 @@ Cards:
 
 ---
 
-### Batch-011: Simple onAction Resource Bonuses (Set A)
+### Batch-011: Simple onAction Resource Bonuses (Set A) ✅ COMPLETED
 **Pattern**: Cards that grant resources when taking specific actions  
 **Template**: `ClayPuncher.js`, `SeasonalWorker.js`  
 **Test Template**: Test action triggers and resource grants  
 **Complexity**: Simple (Tier 1)
 
 Cards:
-1. `seasonal-worker-a114` - Seasonal Worker (onAction: +1 grain from Day Laborer, +1 vegetable from Round 6+)
-2. `portmonger-a103` - Portmonger (onAction: +1 vegetable/grain/reed when taking 1/2/3+ food from accumulation space)
-3. `barrow-pusher-a105` - Barrow Pusher (onPlowField: +1 clay and +1 food per new field)
+1. `seasonal-worker-a114` - Seasonal Worker (onAction: +1 grain from Day Laborer, +1 vegetable from Round 6+) ✅
+2. `portmonger-a103` - Portmonger (onAction: +1 vegetable/grain/reed when taking 1/2/3+ food from accumulation space) ✅
+3. `barrow-pusher-a105` - Barrow Pusher (onPlowField: +1 clay and +1 food per new field) ✅
 
-**LLM Instructions:**
-1. Read each card file and verify implementation matches card text
-2. Create comprehensive test files following existing test patterns
-3. Test action triggers and resource grants
-4. For Seasonal Worker, test both pre-Round 6 (grain) and Round 6+ (choice)
-5. For Portmonger, test different food amounts (1, 2, 3+)
-6. For Barrow Pusher, test plowing new fields
-7. Run tests and ensure ALL pass before marking complete
-8. Update `occupation-cards-status.json` after completion
+**Status**: All cards implemented and tested. Tests use setBoard, game.run(), t.choose, t.testBoard per testing spec.
 
 ---
 

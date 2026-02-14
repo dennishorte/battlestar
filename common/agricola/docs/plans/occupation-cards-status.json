@@ -1,11 +1,11 @@
 {
-  "lastUpdated": "2024-01-15",
+  "lastUpdated": "2025-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 10,
-  "cardsCompleted": 31,
-  "cardsTested": 56,
-  "currentBatch": "Batch-011",
+  "batchesCompleted": 11,
+  "cardsCompleted": 34,
+  "cardsTested": 59,
+  "currentBatch": "Batch-012",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -77,6 +77,13 @@
       "testsPassing": 8,
       "completedDate": "2024-01-15"
     },
+    "Batch-011": {
+      "status": "completed",
+      "cards": ["seasonal-worker-a114", "portmonger-a103", "barrow-pusher-a105"],
+      "testsCreated": 3,
+      "testsPassing": 11,
+      "completedDate": "2025-02-14"
+    },
     "Hollow-Warden": {
       "status": "completed",
       "cards": ["hollow-warden-a139"],
@@ -87,12 +94,12 @@
     }
   },
   "bySet": {
-    "occupationA": {
-      "total": 84,
-      "implemented": 31,
-      "tested": 56,
-      "status": "in_progress"
-    },
+"occupationA": {
+    "total": 84,
+    "implemented": 34,
+    "tested": 59,
+    "status": "in_progress"
+  },
     "occupationB": {
       "total": 84,
       "implemented": 0,
