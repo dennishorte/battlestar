@@ -682,6 +682,28 @@ class AgricolaPlayer extends BasePlayer {
       .reduce((sum, f) => sum + f.cropCount, 0)
   }
 
+  // Get fields with at least 3 grain and no vegetable underneath (for Heresy Teacher)
+  getFieldsWithGrainNoVegetable() {
+    return this.getFieldSpaces().filter(f => {
+      const space = this.getSpace(f.row, f.col)
+      return f.crop === 'grain' && f.cropCount >= 3 && !space.underCrop
+    })
+  }
+
+  // Add a vegetable underneath the grain in a field (for Heresy Teacher)
+  addVegetableToField(row, col) {
+    const space = this.getSpace(row, col)
+    if (!space || space.type !== 'field') {
+      return false
+    }
+    if (space.crop !== 'grain' || space.cropCount < 3 || space.underCrop) {
+      return false
+    }
+    space.underCrop = 'vegetables'
+    space.underCropCount = 1
+    return true
+  }
+
   canPlowField(row, col) {
     // Must be empty
     if (!this.isSpaceEmpty(row, col)) {
@@ -800,7 +822,16 @@ class AgricolaPlayer extends BasePlayer {
         const space = this.getSpace(field.row, field.col)
         space.cropCount -= 1
         if (space.cropCount === 0) {
-          space.crop = null
+          // If there's an underCrop, promote it to the primary crop
+          if (space.underCrop) {
+            space.crop = space.underCrop
+            space.cropCount = space.underCropCount
+            delete space.underCrop
+            delete space.underCropCount
+          }
+          else {
+            space.crop = null
+          }
         }
       }
     }

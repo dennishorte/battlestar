@@ -20,6 +20,8 @@
         <span class="cell-icon" v-if="fieldIcon">{{ fieldIcon }}</span>
         <span class="field-empty" v-else>plowed</span>
         <span class="crop-count" v-if="cell.cropCount > 0">{{ cell.cropCount }}</span>
+        <!-- UnderCrop indicator (small icon in corner) -->
+        <span class="undercrop-indicator" v-if="underCropIcon">{{ underCropIcon }}</span>
       </template>
 
       <!-- Pasture (empty or with animals) -->
@@ -245,7 +247,11 @@ export default {
       }
       if (this.cell.type === 'field') {
         if (this.cell.crop) {
-          return `Field with ${this.cell.cropCount} ${this.cell.crop}`
+          let tooltip = `Field with ${this.cell.cropCount} ${this.cell.crop}`
+          if (this.cell.underCrop && this.cell.underCropCount > 0) {
+            tooltip += ` (${this.cell.underCropCount} ${this.cell.underCrop} underneath)`
+          }
+          return tooltip
         }
         return 'Empty field'
       }
@@ -281,6 +287,19 @@ export default {
         return '🥕'
       }
       return '' // Empty field - rely on background color
+    },
+
+    underCropIcon() {
+      if (!this.cell.underCrop || this.cell.underCropCount === 0) {
+        return ''
+      }
+      if (this.cell.underCrop === 'vegetables') {
+        return '🥕'
+      }
+      if (this.cell.underCrop === 'grain') {
+        return '🌾'
+      }
+      return ''
     },
 
     pastureAnimals() {
@@ -568,6 +587,16 @@ export default {
   bottom: 1px;
   left: 2px;
   font-size: .9em;
+}
+
+/* UnderCrop indicator (small icon showing crop underneath) */
+.undercrop-indicator {
+  position: absolute;
+  top: 1px;
+  left: 2px;
+  font-size: 0.7em;
+  opacity: 0.8;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.5));
 }
 
 /* Fencing states */

@@ -152,7 +152,9 @@ TestUtil.fixture = function(options = {}) {
  *   farmyard         - Object with layout options:
  *       rooms        - Location of additional rooms beyond the default rooms.
  *       roomType     - One of 'wood', 'clay', 'stone'. Default: 'wood'
- *       fields       - Array of { row, col, crop?, cropCount? }.
+ *       fields       - Array of { row, col, crop?, cropCount?, underCrop?, underCropCount? }.
+ *                      `underCrop` and `underCropCount` support placing a crop underneath
+ *                      the primary crop (e.g., Heresy Teacher places vegetables under grain).
  *       stables      - Array of { row, col }.
  *       pastures     - Array of { spaces: [{row, col}], sheep?, boar?, cows? }.
  *
@@ -597,11 +599,17 @@ TestUtil.setPlayerFarmyard = function(player, farmyardState) {
   // Set fields
   if (farmyardState.fields) {
     for (const field of farmyardState.fields) {
-      player.farmyard.grid[field.row][field.col] = {
+      const space = {
         type: 'field',
         crop: field.crop || null,
         cropCount: field.cropCount || 0,
       }
+      // Support underCrop for Heresy Teacher and similar cards
+      if (field.underCrop !== undefined) {
+        space.underCrop = field.underCrop || null
+        space.underCropCount = field.underCropCount || 0
+      }
+      player.farmyard.grid[field.row][field.col] = space
     }
   }
 
@@ -842,6 +850,20 @@ TestUtil.testPlayerBoard = function(game, playerName, expected) {
       }
       if (actual.cropCount !== expCropCount) {
         errors.push(`farmyard.field(${expField.row},${expField.col}).cropCount: expected ${expCropCount}, got ${actual.cropCount}`)
+      }
+      // Check underCrop if specified (for Heresy Teacher and similar cards)
+      if (expField.underCrop !== undefined) {
+        const expUnderCrop = expField.underCrop ?? null
+        const expUnderCropCount = expField.underCropCount ?? 0
+        const actualSpace = player.getSpace(expField.row, expField.col)
+        const actualUnderCrop = actualSpace.underCrop ?? null
+        const actualUnderCropCount = actualSpace.underCropCount ?? 0
+        if (actualUnderCrop !== expUnderCrop) {
+          errors.push(`farmyard.field(${expField.row},${expField.col}).underCrop: expected ${expUnderCrop}, got ${actualUnderCrop}`)
+        }
+        if (actualUnderCropCount !== expUnderCropCount) {
+          errors.push(`farmyard.field(${expField.row},${expField.col}).underCropCount: expected ${expUnderCropCount}, got ${actualUnderCropCount}`)
+        }
       }
     }
   }
