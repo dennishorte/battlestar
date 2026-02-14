@@ -22,8 +22,8 @@ This frequent context refresh keeps important details in working memory.
 ## Batch Status
 
 - **Total Batches**: TBD (will be ~25-30 batches for Set A, ~80-140 total)
-- **Completed Batches**: 12
-- **Current Batch**: Batch-013
+- **Completed Batches**: 13
+- **Current Batch**: Batch-014
 
 ## Batch Queue
 
@@ -249,27 +249,19 @@ Cards:
 
 ---
 
-### Batch-013: Room Capacity and Renovation Modifiers (Set A)
+### Batch-013: Room Capacity and Renovation Modifiers (Set A) ✅ COMPLETED
 **Pattern**: Cards that modify room capacity, renovation rules, or building behavior  
 **Template**: `Homekeeper.js`, `Conservator.js`, `BedMaker.js`  
 **Test Template**: Test room capacity, renovation options, and build room hooks  
 **Complexity**: Medium (Tier 2)
 
 Cards:
-1. `homekeeper-a085` - Homekeeper (modifyRoomCapacity: +1 person if room adjacent to field and pasture)
-2. `conservator-a087` - Conservator (allowDirectStoneRenovation: can renovate wood → stone directly)
-3. `bed-maker-a093` - Bed Maker (onBuildRoom: can pay 1 wood + 1 grain for family growth)
-4. `lodger-a127` - Lodger (providesRoom: temporary room until Round 9)
+1. `homekeeper-a085` - Homekeeper (modifyRoomCapacity: +1 person if room adjacent to field and pasture) ✅
+2. `conservator-a087` - Conservator (allowDirectStoneRenovation: can renovate wood → stone directly) ✅
+3. `bed-maker-a093` - Bed Maker (onBuildRoom: can pay 1 wood + 1 grain for family growth) ✅
+4. `lodger-a127` - Lodger (providesRoom: temporary room until Round 9) ✅
 
-**LLM Instructions:**
-1. Read each card file and verify implementation
-2. For Homekeeper, test room adjacency to both field and pasture
-3. For Conservator, test direct wood → stone renovation (skipping clay)
-4. For Bed Maker, test optional family growth when building rooms
-5. For Lodger, test temporary room provision and removal at Round 9
-6. Create comprehensive test files
-7. Run tests and ensure ALL pass before marking complete
-8. Update `occupation-cards-status.json` after completion
+**Status**: All cards implemented and tested. Added isRoomAdjacentToField, isRoomAdjacentToPasture, modifyRoomCapacity wiring in getHouseCapacity; offerBedMakerGrowth in ActionManager; getRoomCount respects providesRoomUntilRound.
 
 ---
 

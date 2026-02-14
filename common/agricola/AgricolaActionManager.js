@@ -3193,6 +3193,30 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   /**
+   * Offer Bed Maker: pay 1 wood + 1 grain for Family Growth with Room Only
+   */
+  offerBedMakerGrowth(player, card) {
+    const choices = [
+      'Pay 1 wood and 1 grain for Family Growth with Room Only',
+      'Skip',
+    ]
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Pay 1 wood and 1 grain for family growth?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] !== 'Skip') {
+      player.payCost({ wood: 1, grain: 1 })
+      this.familyGrowth(player, true)
+      this.log.add({
+        template: '{player} pays 1 wood and 1 grain for family growth using {card}',
+        args: { player, card: card },
+      })
+    }
+  }
+
+  /**
    * Build a free stable (Mining Hammer)
    */
   buildFreeStable(player) {

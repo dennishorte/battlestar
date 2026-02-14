@@ -2,10 +2,10 @@
   "lastUpdated": "2025-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 12,
-  "cardsCompleted": 37,
-  "cardsTested": 62,
-  "currentBatch": "Batch-013",
+  "batchesCompleted": 13,
+  "cardsCompleted": 41,
+  "cardsTested": 66,
+  "currentBatch": "Batch-014",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -91,6 +91,13 @@
       "testsPassing": 11,
       "completedDate": "2025-02-14"
     },
+    "Batch-013": {
+      "status": "completed",
+      "cards": ["homekeeper-a085", "conservator-a087", "bed-maker-a093", "lodger-a127"],
+      "testsCreated": 4,
+      "testsPassing": 10,
+      "completedDate": "2025-02-14"
+    },
     "Hollow-Warden": {
       "status": "completed",
       "cards": ["hollow-warden-a139"],
@@ -103,8 +110,8 @@
   "bySet": {
 "occupationA": {
     "total": 84,
-    "implemented": 37,
-    "tested": 62,
+    "implemented": 41,
+    "tested": 66,
     "status": "in_progress"
   },
     "occupationB": {

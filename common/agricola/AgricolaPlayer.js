@@ -362,6 +362,10 @@ class AgricolaPlayer extends BasePlayer {
     }
     for (const card of this.getActiveCards()) {
       if (card.definition.providesRoom || this.game.cardState(card.definition.id).providesRoom) {
+        const untilRound = card.definition.providesRoomUntilRound
+        if (untilRound !== undefined && this.game.state.round > untilRound) {
+          continue // Lodger etc.: room no longer provided after that round
+        }
         count++
       }
     }
@@ -1795,6 +1799,19 @@ class AgricolaPlayer extends BasePlayer {
     return null
   }
 
+  isRoomAdjacentToField(room) {
+    const neighbors = this.getOrthogonalNeighbors(room.row, room.col)
+    return neighbors.some(n => {
+      const space = this.getSpace(n.row, n.col)
+      return space && space.type === 'field'
+    })
+  }
+
+  isRoomAdjacentToPasture(room) {
+    const neighbors = this.getOrthogonalNeighbors(room.row, room.col)
+    return neighbors.some(n => this.getPastureAtSpace(n.row, n.col) !== null)
+  }
+
   getPastureCapacity(pasture) {
     // 2 animals per space
     let capacity = pasture.spaces.length * 2
@@ -2699,6 +2716,16 @@ class AgricolaPlayer extends BasePlayer {
     for (const card of this.getActiveCards()) {
       if (card.hasHook('modifyHouseCapacity')) {
         capacity = card.callHook('modifyHouseCapacity', this, capacity)
+      }
+    }
+    for (const room of this.getRoomSpaces()) {
+      for (const card of this.getActiveCards()) {
+        if (card.hasHook('modifyRoomCapacity')) {
+          const bonus = card.callHook('modifyRoomCapacity', this.game, this, room)
+          if (bonus > 0) {
+            capacity += bonus
+          }
+        }
       }
     }
     return Math.min(capacity, res.constants.maxFamilyMembers)

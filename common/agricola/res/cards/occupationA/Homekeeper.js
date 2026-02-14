@@ -10,7 +10,16 @@ module.exports = {
     if ((player.roomType === 'clay' || player.roomType === 'stone') &&
           player.isRoomAdjacentToField(room) &&
           player.isRoomAdjacentToPasture(room)) {
-      return 1 // One room can hold +1 person
+      // Exactly one room gets the bonus: the lexicographically first that qualifies
+      const rooms = player.getRoomSpaces()
+      for (const r of rooms) {
+        if (r.row < room.row || (r.row === room.row && r.col < room.col)) {
+          if (player.isRoomAdjacentToField(r) && player.isRoomAdjacentToPasture(r)) {
+            return 0 // an earlier room already qualifies
+          }
+        }
+      }
+      return 1
     }
     return 0
   },
