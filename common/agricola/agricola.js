@@ -401,6 +401,27 @@ Agricola.prototype.isRoundActionSpace = function(actionId) {
   return !!(action && action.stage)
 }
 
+/**
+ * Returns an array of action space states that accumulate wood.
+ * Used by cards like Wood Harvester to check wood accumulation spaces.
+ */
+Agricola.prototype.getWoodAccumulationSpaces = function() {
+  const woodSpaces = []
+  for (const actionId of this.state.activeActions) {
+    const action = res.getActionById(actionId)
+    if (action && action.type === 'accumulating' && action.accumulates && action.accumulates.wood) {
+      const actionState = this.state.actionSpaces[actionId]
+      if (actionState) {
+        woodSpaces.push({
+          actionId,
+          accumulated: actionState.accumulated || 0,
+        })
+      }
+    }
+  }
+  return woodSpaces
+}
+
 Agricola.prototype.actionGivesReed = function(actionId) {
   const action = res.getActionById(actionId)
   if (!action) {
@@ -1622,6 +1643,13 @@ Agricola.prototype.fieldPhase = function() {
         if (card && card.definition.onHarvestLast) {
           card.definition.onHarvestLast(this, player, vfh.crop)
         }
+      }
+    }
+
+    // Call onHarvestLastCrop hooks for fields that became empty (e.g., Slurry Spreader)
+    if (result.lastCropHarvests) {
+      for (const cropType of result.lastCropHarvests) {
+        this.callPlayerCardHook(player, 'onHarvestLastCrop', cropType)
       }
     }
 

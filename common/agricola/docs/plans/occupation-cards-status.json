@@ -2,10 +2,10 @@
   "lastUpdated": "2024-01-15",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 7,
-  "cardsCompleted": 22,
-  "cardsTested": 45,
-  "currentBatch": "Batch-008",
+  "batchesCompleted": 9,
+  "cardsCompleted": 28,
+  "cardsTested": 53,
+  "currentBatch": "Batch-010",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -56,6 +56,20 @@
       "testsPassing": 9,
       "completedDate": "2024-01-15"
     },
+    "Batch-008": {
+      "status": "completed",
+      "cards": ["plow-driver-a090", "bohemian-a157", "night-school-student-a152"],
+      "testsCreated": 3,
+      "testsPassing": 10,
+      "completedDate": "2024-01-15"
+    },
+    "Batch-009": {
+      "status": "completed",
+      "cards": ["slurry-spreader-a106", "ropemaker-a145", "wood-harvester-a104"],
+      "testsCreated": 3,
+      "testsPassing": 8,
+      "completedDate": "2024-01-15"
+    },
     "Hollow-Warden": {
       "status": "completed",
       "cards": ["hollow-warden-a139"],
@@ -68,8 +82,8 @@
   "bySet": {
     "occupationA": {
       "total": 84,
-      "implemented": 22,
-      "tested": 45,
+      "implemented": 28,
+      "tested": 53,
       "status": "in_progress"
     },
     "occupationB": {

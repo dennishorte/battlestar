@@ -22,8 +22,8 @@ This frequent context refresh keeps important details in working memory.
 ## Batch Status
 
 - **Total Batches**: TBD (will be ~25-30 batches for Set A, ~80-140 total)
-- **Completed Batches**: 7
-- **Current Batch**: Batch-008
+- **Completed Batches**: 9
+- **Current Batch**: Batch-010
 
 ## Batch Queue
 
@@ -189,26 +189,18 @@ Cards:
 
 ---
 
-### Batch-009: onHarvest and onHarvestEnd Hooks (Set A)
+### Batch-009: onHarvest and onHarvestEnd Hooks (Set A) ✅ COMPLETED
 **Pattern**: Cards that trigger during harvest phases  
 **Template**: `ScytheWorker.js`, `Ropemaker.js`  
 **Test Template**: Test harvest phase hooks  
 **Complexity**: Medium (Tier 2)
 
 Cards:
-1. `slurry-spreader-a106` - Slurry Spreader (onHarvestLastCrop: +2 food for grain, +1 for vegetables)
-2. `ropemaker-a145` - Ropemaker (onHarvestEnd: +1 reed at end of each harvest)
-3. TBD - Find third harvest-related card
+1. `slurry-spreader-a106` - Slurry Spreader (onHarvestLastCrop: +2 food for grain, +1 for vegetables) ✅
+2. `ropemaker-a145` - Ropemaker (onHarvestEnd: +1 reed at end of each harvest) ✅
+3. `wood-harvester-a104` - Wood Harvester (onFieldPhase: +1 wood/food per wood accumulation space with 2/3+ wood) ✅
 
-**LLM Instructions:**
-1. Read each card file and verify hooks are implemented
-2. Set up game state with fields and crops for harvest
-3. Play through rounds to reach harvest (rounds 4, 7, 9, 11, 13, 14)
-4. Test that hooks fire during appropriate harvest phase
-5. For Slurry Spreader, test both grain and vegetable cases
-6. Run tests and fix any failures
-7. Update status tracker
-8. Move to Batch-010
+**Status**: All cards implemented and tested. Implemented `onHarvestLastCrop` hook wiring and `getWoodAccumulationSpaces` helper method.
 
 ---
 

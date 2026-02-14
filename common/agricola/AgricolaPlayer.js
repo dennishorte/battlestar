@@ -812,12 +812,14 @@ class AgricolaPlayer extends BasePlayer {
   harvestFields() {
     const harvested = { grain: 0, vegetables: 0, wood: 0, stone: 0 }
     const virtualFieldHarvests = []  // Track virtual field harvests for callbacks
+    const lastCropHarvests = []  // Track fields that became empty (for onHarvestLastCrop)
     this._lastHarvestedFields = []
 
     // Harvest regular fields
     for (const field of this.getFieldSpaces().filter(f => f.crop && f.cropCount > 0)) {
       if (field.cropCount > 0) {
-        harvested[field.crop] += 1
+        const cropType = field.crop
+        harvested[cropType] += 1
         this._lastHarvestedFields.push({ row: field.row, col: field.col })
         const space = this.getSpace(field.row, field.col)
         space.cropCount -= 1
@@ -830,6 +832,8 @@ class AgricolaPlayer extends BasePlayer {
             delete space.underCropCount
           }
           else {
+            // Field became empty - track for onHarvestLastCrop hook
+            lastCropHarvests.push(cropType)
             space.crop = null
           }
         }
@@ -864,7 +868,7 @@ class AgricolaPlayer extends BasePlayer {
     this.addResource('wood', harvested.wood)
     this.addResource('stone', harvested.stone)
 
-    return { harvested, virtualFieldHarvests }
+    return { harvested, virtualFieldHarvests, lastCropHarvests }
   }
 
   getHarvestedFieldsAdjacentToHouse() {
