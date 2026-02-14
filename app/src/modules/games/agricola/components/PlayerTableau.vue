@@ -4,7 +4,7 @@
       <span class="player-name">{{ player.name }}</span>
       <span class="worker-info">
         <span class="worker-icon">👤</span>
-        <span class="worker-count">{{ player.getAvailableWorkers() }}/{{ player.getFamilySize() }}</span>
+        <span class="worker-count">{{ workerDisplay }}</span>
       </span>
     </div>
 
@@ -210,6 +210,21 @@ export default {
         backgroundColor: this.player.color || '#666',
         color: this.getContrastColor(this.player.color),
       }
+    },
+
+    workerDisplay() {
+      const available = this.player.getAvailableWorkers()
+      const familySize = this.player.getFamilySize()
+      const newbornCount = this.player.getNewbornsReturningHome()
+
+      if (newbornCount > 0) {
+        // Show available workers out of workers that can work, plus newborns
+        const workersThatCanWork = familySize - newbornCount
+        return `${available}/${workersThatCanWork} + ${newbornCount}`
+      }
+
+      // No newborns, show standard format
+      return `${available}/${familySize}`
     },
 
     // Fencing status computed properties

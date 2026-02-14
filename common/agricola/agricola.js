@@ -1177,8 +1177,11 @@ Agricola.prototype.workPhase = function() {
       const player = playerList[currentPlayerIndex]
 
       if (player.getAvailableWorkers() > 0) {
-        const workersUsed = player.getFamilySize() - player.getAvailableWorkers() + 1
-        const totalWorkerCount = player.getFamilySize()
+        // Exclude newborns from worker count (they can't work this round)
+        const newbornCount = player.getNewbornsReturningHome()
+        const workersThatCanWork = player.getFamilySize() - newbornCount
+        const workersUsed = workersThatCanWork - player.getAvailableWorkers() + 1
+        const totalWorkerCount = workersThatCanWork
         this.log.add({
           template: "{player}'s turn ({workersUsed}/{totalWorkers})",
           args: { player, workersUsed, totalWorkers: totalWorkerCount },
