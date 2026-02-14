@@ -16,23 +16,29 @@ This frequent context refresh keeps important details in working memory.
 ## Batch Queue
 
 ### Batch-001: Simple onPlay Resource Grants (Set A)
-**Pattern**: Cards that grant a single resource when played  
-**Template**: `AnimalTamer.js`  
-**Test Template**: `AnimalTamer.test.js` (needs to be created)  
+**Pattern**: Cards that grant resources when played (onPlay hook)  
+**Template**: `AnimalTamer.js` (has onPlay + modifyHouseAnimalCapacity)  
+**Test Template**: Create new tests following `Grocer.test.js` pattern  
 **Complexity**: Simple (Tier 1)
 
 Cards:
-1. `animal-tamer-a086` - Animal Tamer (grants wood OR grain choice)
-2. `bed-maker-a093` - Bed Maker (grants 1 reed)
-3. `wood-carrier-a117` - Wood Carrier (grants wood per improvement)
+1. `animal-tamer-a086` - Animal Tamer (onPlay: choice of wood OR grain, also modifies house animal capacity)
+2. `wood-carrier-a117` - Wood Carrier (onPlay: 1 wood per improvement)
+3. `priest-a125` - Priest (onPlay: conditional - 3 clay, 2 reed, 2 stone if clay house with 2 rooms)
 
 **LLM Instructions:**
-1. Read each card file
-2. Verify implementation matches card text
-3. Create test file for each card
-4. Run tests: `npm test -- occupationA/AnimalTamer.test.js occupationA/BedMaker.test.js occupationA/WoodCarrier.test.js`
-5. Update `occupation-cards-status.json` with completion status
-6. Move to Batch-002
+1. Read each card file: `common/agricola/res/cards/occupationA/{CardName}.js`
+2. Verify implementation matches card text exactly
+3. Check if test file exists, create if missing
+4. Create comprehensive test file for each card following `Grocer.test.js` pattern
+5. Run tests: `npm test -- occupationA/AnimalTamer.test.js occupationA/WoodCarrier.test.js occupationA/Priest.test.js`
+6. Fix any failures
+7. Update `occupation-cards-status.json`:
+   - Mark batch as completed
+   - Update cardsCompleted count
+   - Update cardsTested count
+   - Set currentBatch to "Batch-002"
+8. Re-read this file to get Batch-002 instructions
 
 ---
 
