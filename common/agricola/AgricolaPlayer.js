@@ -2390,6 +2390,14 @@ class AgricolaPlayer extends BasePlayer {
     return false
   }
 
+  getPersonPlacedThisRound() {
+    // Calculate how many people this player has placed this round
+    // This is the number of workers used = family size - available workers
+    const newbornCount = this.getNewbornsReturningHome()
+    const workersThatCanWork = this.getFamilySize() - newbornCount
+    return workersThatCanWork - this.availableWorkers
+  }
+
   resetWorkers() {
     this.availableWorkers = this.familyMembers
     // Note: newborns are cleared at end of round (after harvest), not here

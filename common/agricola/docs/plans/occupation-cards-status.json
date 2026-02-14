@@ -6,6 +6,7 @@
   "cardsCompleted": 3,
   "cardsTested": 26,
   "currentBatch": "Batch-002",
+  "notes": "Batch-002 in progress: Tests created but need fixes - Catcher's onPlacePerson hook may not be wired, Mushroom Collector exchange logic needs verification"
   "batches": {
     "Batch-001": {
       "status": "completed",

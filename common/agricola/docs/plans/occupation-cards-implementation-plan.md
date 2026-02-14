@@ -103,6 +103,16 @@ This plan outlines the strategy for implementing and testing all occupation card
 
 **Goal**: Write comprehensive integration tests for all cards
 
+## ⚠️ CRITICAL: Testing Requirements
+
+**NEVER consider a card finished if the tests "still need work".**
+
+- **All tests MUST pass** before marking a card as complete
+- **If you cannot figure out how to test a card properly, STOP and ask for assistance**
+- **Do NOT commit work with failing tests**
+- **Do NOT mark cards as complete if tests are incomplete or failing**
+- **Ask for help** rather than leaving tests in a broken state
+
 #### Testing Approach:
 
 1. **Test Template Creation**
@@ -115,6 +125,7 @@ This plan outlines the strategy for implementing and testing all occupation card
    - Cards with multiple hooks need tests for each hook
    - Edge cases (insufficient resources, invalid states) should be tested
    - Interaction tests for cards that work together
+   - **ALL tests must pass before moving to the next card**
 
 3. **Test Organization**
    - One test file per card: `CardName.test.js`

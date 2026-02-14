@@ -13,6 +13,15 @@ For prompt templates, see `llm-agent-prompt-template.md`.
 - **Current Tests**: 23 (5.5% coverage)
 - **Goal**: 100% implementation and testing
 
+## CRITICAL: Testing Requirements
+
+**NEVER consider a card finished if the tests "still need work".**
+
+- All tests MUST pass before marking a card as complete
+- If you cannot figure out how to test a card properly, **STOP and ask for assistance**
+- Do NOT commit work with failing tests
+- Do NOT mark cards as complete if tests are incomplete or failing
+
 ## Quick Workflow for LLM Agents
 
 ### 1. Choose a Card (or Batch)

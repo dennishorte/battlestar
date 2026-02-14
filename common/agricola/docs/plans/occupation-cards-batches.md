@@ -1,9 +1,21 @@
 # Occupation Cards Implementation Batches
 
-This file contains small batches (3-5 cards) for LLM agents to work on. **After completing each batch, agents must:**
-1. Update the status tracker (`occupation-cards-status.json`)
-2. Re-read this file to get the next batch
-3. Update progress metrics
+This file contains small batches (3-5 cards) for LLM agents to work on. 
+
+## CRITICAL: Testing Requirements
+
+**NEVER consider a card finished if the tests "still need work".** 
+
+- All tests MUST pass before marking a card as complete
+- If you cannot figure out how to test a card properly, **STOP and ask for assistance**
+- Do NOT commit work with failing tests
+- Do NOT mark cards as complete if tests are incomplete or failing
+
+**After completing each batch, agents must:**
+1. Ensure ALL tests pass for ALL cards in the batch
+2. Update the status tracker (`occupation-cards-status.json`)
+3. Re-read this file to get the next batch
+4. Update progress metrics
 
 This frequent context refresh keeps important details in working memory.
 
@@ -31,14 +43,19 @@ Cards:
 2. Verify implementation matches card text exactly
 3. Check if test file exists, create if missing
 4. Create comprehensive test file for each card following `Grocer.test.js` pattern
-5. Run tests: `npm test -- occupationA/AnimalTamer.test.js occupationA/WoodCarrier.test.js occupationA/Priest.test.js`
-6. Fix any failures
-7. Update `occupation-cards-status.json`:
+5. **IMPORTANT: Turn Order Rules**:
+   - Players alternate turns in the work phase
+   - Each action space can only be used ONCE per round
+   - If testing multiple actions by same player, use DIFFERENT action spaces
+   - If testing "2nd person" effects, account for other players' turns between actions
+6. Run tests: `npm test -- occupationA/AnimalTamer.test.js occupationA/WoodCarrier.test.js occupationA/Priest.test.js`
+7. Fix any failures - **ALL tests must pass before marking complete**
+8. Update `occupation-cards-status.json`:
    - Mark batch as completed
    - Update cardsCompleted count
    - Update cardsTested count
    - Set currentBatch to "Batch-002"
-8. Re-read this file to get Batch-002 instructions
+9. Re-read this file to get Batch-002 instructions
 
 ---
 
