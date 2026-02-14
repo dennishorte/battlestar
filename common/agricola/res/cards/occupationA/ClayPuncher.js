@@ -14,7 +14,9 @@ module.exports = {
     })
   },
   onAction(game, player, actionId) {
-    if (actionId === 'lessons-1' || actionId === 'lessons-2' || actionId === 'take-clay') {
+    // Lessons A uses 'occupation', Lessons B/C use 'lessons-3', 'lessons-4', etc.
+    const isLessonsAction = actionId === 'occupation' || actionId.startsWith('lessons-')
+    if (isLessonsAction || actionId === 'take-clay') {
       player.addResource('clay', 1)
       game.log.add({
         template: '{player} gets 1 clay from Clay Puncher',
