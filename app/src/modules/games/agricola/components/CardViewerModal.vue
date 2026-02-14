@@ -220,30 +220,75 @@ export default {
     // Resources stored on card
     cardResources() {
       const def = this.runtimeDefinition
-      if (!def) {
-        return []
-      }
-
       const resources = []
-      const types = ['food', 'wood', 'clay', 'stone', 'reed', 'grain', 'vegetables']
-      for (const type of types) {
-        if (typeof def[type] === 'number' && def[type] > 0) {
-          resources.push({ type, amount: def[type], icon: this.resourceIcon(type) })
+
+      // Check for storedResource pattern (e.g., Whale Oil, Cubbyhole)
+      // These cards have storedResource: "food" and store amount in game.cardState(id).stored
+      if (this.card?.storedResource) {
+        const cardState = this.getCardState()
+        const stored = cardState?.stored || 0
+        if (stored > 0) {
+          resources.push({
+            type: this.card.storedResource,
+            amount: stored,
+            icon: this.resourceIcon(this.card.storedResource),
+          })
         }
       }
+
+      // Check for resources stored directly on definition (legacy pattern)
+      if (def) {
+        const types = ['food', 'wood', 'clay', 'stone', 'reed', 'grain', 'vegetables']
+        for (const type of types) {
+          if (typeof def[type] === 'number' && def[type] > 0) {
+            resources.push({ type, amount: def[type], icon: this.resourceIcon(type) })
+          }
+        }
+      }
+
       return resources
     },
 
+    // Get card state from game.state._cardState
+    getCardState() {
+      if (!this.game?.state?._cardState || !this.cardId) {
+        return null
+      }
+      return this.game.state._cardState[this.cardId] || null
+    },
+
     isUsed() {
+      // Check cardState first (newer pattern)
+      const cardState = this.getCardState()
+      if (cardState?.used !== undefined) {
+        return cardState.used === true
+      }
+      // Fall back to definition (legacy pattern)
       return this.runtimeDefinition?.used === true
     },
 
     pileContents() {
+      // Check cardState first (newer pattern)
+      const cardState = this.getCardState()
+      if (cardState?.pile) {
+        return cardState.pile
+      }
+      // Fall back to definition (legacy pattern)
       return this.runtimeDefinition?.pile || []
     },
 
+    // Check if card has any state data in game.cardState
+    hasCardStateData() {
+      const cardState = this.getCardState()
+      if (!cardState) {
+        return false
+      }
+      // Check for common state properties
+      return cardState.stored !== undefined || cardState.pile !== undefined || cardState.used !== undefined
+    },
+
     hasCardState() {
-      return this.cardResources.length > 0 || this.pileContents.length > 0 || this.isUsed
+      return this.cardResources.length > 0 || this.pileContents.length > 0 || this.isUsed || this.hasCardStateData
     },
   },
 
