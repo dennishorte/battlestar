@@ -59,6 +59,10 @@ Methods added to `AgricolaActionManager.js`:
 - `buildFreeRoom(player, card)` — build room at no cost (used by Mason, Master Builder)
 - `offerSculptureCourse(player, card)` — wood→food or stone→food exchange
 - `offerReedSellerConversion(player, card)` — sell reed with intercept opportunity
+- `offerCookingHearthExtension(player, card)` — doubled cooking during harvest
+- `overhaulFences(player, card)` — raze all fences, 3 free for rebuild
+- `fieldFencesAction(player, card)` — build fences with field-adjacent discount
+- `familyGrowthWithoutRoom(player)` — family growth without room requirement
 
 Helper methods added to `agricola.js`:
 - `isRoundActionSpace(actionId)` — checks if action has a `stage` property
@@ -91,7 +95,7 @@ with inline `game.actions.choose()` + direct resource manipulation, then tests w
 | LunchtimeBeer (e058) | E | ✅ | Inline + test (2 tests: skip or normal harvest) |
 | BasketChair (c022) | C | **BLOCKED** | Worker manipulation: move first worker, place extra person |
 | GuestRoom (e022) | E | **BLOCKED** | `enablesGuestWorker` flag not wired, `placeResourcesOnCard` not implemented |
-| CookingHearthExtension (c062) | C | **BLOCKED** | `offerCookingHearthExtension`: multi-choice doubled cooking during harvest |
+| CookingHearthExtension (c062) | C | ✅ | `offerCookingHearthExtension`: doubled cooking during harvest |
 
 ### Batch 12 — Fence/Build/Complex Stubs
 
@@ -100,8 +104,8 @@ with inline `game.actions.choose()` + direct resource manipulation, then tests w
 | PoleBarns (e001) | E | ✅ | Inline + test |
 | HarvestFestivalPlanning (c072) | C | ✅ | Inline + test |
 | NailBasket (e015) | E | ✅ | Inline + test |
-| Overhaul (c001) | C | **BLOCKED** | `removeAllFences` method + fence rebuild flow |
-| FieldFences (c016) | C | **BLOCKED** | Field-adjacent fence detection + cost modification |
+| Overhaul (c001) | C | ✅ | `overhaulFences`: raze all fences + 3 free rebuild |
+| FieldFences (c016) | C | ✅ | `fieldFencesAction`: field-adjacent fences free |
 | WorkPermit (d022) | D | **BLOCKED** | Future-round worker scheduling infrastructure |
 
 ---
@@ -246,7 +250,7 @@ MinorB cards that need unique infrastructure beyond simple inline fixes.
 |------|------|-------------|---------|
 | ✅ CarpentersBench (b015) | B | `offerCarpentersBench` | Done — custom validation, 1 free fence |
 | ✅ Hauberg (b041) | B | `offerHauberg` | Done — scheduleResource for wood/boar |
-| HayloftBarn (b021) | B | `familyGrowthWithoutRoom` | `onGainGrain` hook wired but family growth without room needed |
+| HayloftBarn (b021) | B | ✅ | `onGainGrain` hook wired + `familyGrowthWithoutRoom` |
 | ✅ MiniPasture (b002) | B | `buildFreeSingleSpacePasture` | Done — free single-space pasture |
 | ✅ Toolbox (b027) | B | `offerToolboxMajor` | Done — offers Joinery/Pottery/Basketmaker |
 
@@ -321,11 +325,11 @@ New methods in `AgricolaActionManager.js`:
 
 | Phase | Done | Blocked/Deferred | Total |
 |-------|------|------------------|-------|
-| 1: Stub Fixes | 11 | 7 | 18 |
+| 1: Stub Fixes | 13 | 5 | 18 |
 | 2: Test-Only | 21 | 37 | 60 |
-| 3: MinorB Infra | 0 | 11 | 11 |
+| 3: MinorB Infra | 1 | 10 | 11 |
 | 4: Anytime | 33 | 2 deferred | 35 |
-| **Total** | **65** | **57** | **124** |
+| **Total** | **69** | **53** | **124** |
 
 ### Hook Wiring Status
 
@@ -352,6 +356,7 @@ New methods in `AgricolaActionManager.js`:
 - ✅ `onBeforeAction` — in playerTurn (before action execution)
 - ✅ `onUseSpace` / `onUseMultipleSpaces` — in playerTurn
 - ✅ `onLessonsWithCooking` — in playerTurn (Cookery Lesson)
+- ✅ `onGainGrain` — in giveResources (HayloftBarn)
 - ✅ `onRoundEnd` — in mainLoop (Sculpture Course)
 - ✅ `isRoundActionSpace()` — helper method
 - ✅ `actionGivesReed()` — helper method

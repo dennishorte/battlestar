@@ -1348,7 +1348,15 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     // Check if player has enough wood (accounting for fence cost modifiers)
-    const woodCost = this.applyFenceCostModifiers(fences.length, this._countEdgeFences(fences))
+    let woodCost = this.applyFenceCostModifiers(fences.length, this._countEdgeFences(fences))
+    // Overhaul free fence discount (validation only — don't decrement)
+    if (this._overhaulFreeFences > 0) {
+      woodCost = Math.max(0, woodCost - this._overhaulFreeFences)
+    }
+    // Field Fences discount: fences adjacent to fields are free
+    if (this._fieldFencesActive) {
+      woodCost = Math.max(0, woodCost - this._countFieldAdjacentFences(fences))
+    }
     if (woodCost > this.wood) {
       return {
         valid: false,
@@ -1409,7 +1417,17 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     // Pay wood cost (accounting for fence cost modifiers)
-    const woodCost = this.applyFenceCostModifiers(validation.fencesNeeded, this._countEdgeFences(validation.fences))
+    let woodCost = this.applyFenceCostModifiers(validation.fencesNeeded, this._countEdgeFences(validation.fences))
+    // Overhaul free fence discount — decrement the counter
+    if (this._overhaulFreeFences > 0) {
+      const discount = Math.min(woodCost, this._overhaulFreeFences)
+      woodCost -= discount
+      this._overhaulFreeFences -= discount
+    }
+    // Field Fences discount: fences adjacent to fields are free
+    if (this._fieldFencesActive) {
+      woodCost = Math.max(0, woodCost - this._countFieldAdjacentFences(validation.fences))
+    }
     this.payCost({ wood: woodCost })
 
     // Add fences
@@ -3422,6 +3440,18 @@ class AgricolaPlayer extends BasePlayer {
 
   _countEdgeFences(fences) {
     return fences.filter(f => f.edge).length
+  }
+
+  _countFieldAdjacentFences(fences) {
+    let count = 0
+    for (const f of fences) {
+      const space1 = (f.row1 >= 0 && f.col1 >= 0) ? this.getSpace(f.row1, f.col1) : null
+      const space2 = (f.row2 >= 0 && f.col2 >= 0) ? this.getSpace(f.row2, f.col2) : null
+      if ((space1 && space1.type === 'field') || (space2 && space2.type === 'field')) {
+        count++
+      }
+    }
+    return count
   }
 
   /**

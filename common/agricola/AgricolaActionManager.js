@@ -352,6 +352,10 @@ class AgricolaActionManager extends BaseActionManager {
         args: { player, amount, resource },
       })
     }
+
+    if (resources.grain) {
+      this.game.callPlayerCardHook(player, 'onGainGrain', resources.grain)
+    }
   }
 
   // Handle action that lets player choose from resource options
@@ -1318,7 +1322,9 @@ class AgricolaActionManager extends BaseActionManager {
 
     while (continueBuilding) {
       // Check if player can build any fences (accounting for free fences from cards)
-      if (player.wood < 1 && player.getFreeFenceCount() === 0) {
+      const hasFreeOverhaulFences = (player._overhaulFreeFences || 0) > 0
+      const hasFieldFenceDiscount = !!player._fieldFencesActive
+      if (player.wood < 1 && player.getFreeFenceCount() === 0 && !hasFreeOverhaulFences && !hasFieldFenceDiscount) {
         if (totalFencesBuilt === 0) {
           this.log.add({
             template: '{player} has no wood for fences',
@@ -1352,7 +1358,9 @@ class AgricolaActionManager extends BaseActionManager {
       totalFencesBuilt += result.fencesBuilt
 
       // Ask if player wants to build another pasture
-      if ((player.wood >= 1 || player.getFreeFenceCount() > 0) && remainingFences - result.fencesBuilt > 0) {
+      const canAffordMore = player.wood >= 1 || player.getFreeFenceCount() > 0
+        || (player._overhaulFreeFences || 0) > 0 || !!player._fieldFencesActive
+      if (canAffordMore && remainingFences - result.fencesBuilt > 0) {
         const continueChoice = this.choose(player, ['Build another pasture', 'Done building fences'], {
           title: 'Continue fencing?',
           min: 1,
@@ -4596,6 +4604,132 @@ class AgricolaActionManager extends BaseActionManager {
       this.game.callPlayerCardHook(player, 'onBuildPasture', { spaces: selectedSpaces })
       this.game.callPlayerCardHook(player, 'onBuildFences', fencesNeeded)
     }
+  }
+  familyGrowthWithoutRoom(player) {
+    return this.familyGrowth(player, false)
+  }
+
+  offerCookingHearthExtension(player, _card) {
+    // Find all cooking improvements the player has
+    const cookingImps = []
+    for (const id of player.majorImprovements) {
+      const imp = this.game.cards.byId(id)
+      if (imp && imp.abilities && imp.abilities.canCook && imp.abilities.cookingRates) {
+        cookingImps.push(imp)
+      }
+    }
+
+    if (cookingImps.length === 0) {
+      return
+    }
+
+    for (const imp of cookingImps) {
+      const rates = imp.abilities.cookingRates
+      const options = []
+      const animals = player.getAllAnimals()
+
+      for (const [type, count] of Object.entries(animals)) {
+        if (count > 0 && rates[type]) {
+          options.push(`Cook 1 ${type} for ${rates[type] * 2} food`)
+        }
+      }
+      if (player.vegetables > 0 && rates.vegetables) {
+        options.push(`Cook 1 vegetable for ${rates.vegetables * 2} food`)
+      }
+
+      if (options.length === 0) {
+        continue
+      }
+
+      options.push('Skip')
+
+      const selection = this.choose(player, options, {
+        title: `Cooking Hearth Extension: Use ${imp.name} for double food`,
+        min: 1, max: 1,
+      })
+
+      const choice = selection[0]
+      if (choice === 'Skip') {
+        continue
+      }
+
+      if (choice.includes('sheep')) {
+        player.removeAnimals('sheep', 1)
+        player.addResource('food', rates.sheep * 2)
+      }
+      else if (choice.includes('boar')) {
+        player.removeAnimals('boar', 1)
+        player.addResource('food', rates.boar * 2)
+      }
+      else if (choice.includes('cattle')) {
+        player.removeAnimals('cattle', 1)
+        player.addResource('food', rates.cattle * 2)
+      }
+      else if (choice.includes('vegetable')) {
+        player.removeResource('vegetables', 1)
+        player.addResource('food', rates.vegetables * 2)
+      }
+
+      this.log.add({
+        template: '{player} uses Cooking Hearth Extension with {imp} for double food',
+        args: { player, imp: imp.name },
+      })
+    }
+  }
+
+  overhaulFences(player, _card) {
+    // 1. Save all animals from pastures
+    const savedAnimals = { sheep: 0, boar: 0, cattle: 0 }
+    for (const pasture of player.farmyard.pastures) {
+      if (pasture.animalType && pasture.animalCount > 0) {
+        savedAnimals[pasture.animalType] += pasture.animalCount
+      }
+    }
+
+    // 2. Remove all fences
+    const fencesReturned = player.farmyard.fences.length
+    player.farmyard.fences = []
+
+    // 3. Reset pasture spaces to empty
+    for (let row = 0; row < res.constants.farmyardRows; row++) {
+      for (let col = 0; col < res.constants.farmyardCols; col++) {
+        const space = player.getSpace(row, col)
+        if (space.type === 'pasture') {
+          space.type = 'empty'
+        }
+      }
+    }
+    player.farmyard.pastures = []
+
+    this.log.add({
+      template: '{player} razes {count} fences with Overhaul',
+      args: { player, count: fencesReturned },
+    })
+
+    // 4. Set up 3 free fences for rebuild
+    player._overhaulFreeFences = 3
+
+    // 5. Rebuild fences
+    this.buildFences(player)
+
+    // 6. Clear free fence tracking
+    delete player._overhaulFreeFences
+
+    // 7. Place animals back into new pastures
+    for (const [type, count] of Object.entries(savedAnimals)) {
+      if (count > 0) {
+        player.addAnimals(type, count)
+      }
+    }
+  }
+
+  fieldFencesAction(player, _card) {
+    // Set flag so fence cost calculation discounts field-adjacent fences
+    player._fieldFencesActive = true
+
+    this.buildFences(player)
+
+    delete player._fieldFencesActive
   }
 }
 
