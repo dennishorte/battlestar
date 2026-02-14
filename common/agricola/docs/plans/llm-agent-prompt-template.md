@@ -1,5 +1,20 @@
 # LLM Agent Prompt Template for Occupation Card Implementation
 
+## Important Testing Rules
+
+**Before writing any tests, remember:**
+
+1. **Turn Order**: Players alternate turns in the work phase. After Player A takes an action, it becomes Player B's turn. If you need Player A to take multiple actions, Player B must take a turn in between.
+
+2. **Action Space Usage**: Each action space can only be used ONCE per round. Once occupied, it cannot be used again until the next round. Always use different action spaces for multiple actions.
+
+3. **Example for "2nd person" effects**:
+   ```js
+   t.choose(game, 'Day Laborer') // Player's 1st worker
+   t.choose(game, 'Forest')      // Other player's turn
+   t.choose(game, 'Western Quarry') // Player's 2nd worker - effect triggers
+   ```
+
 ## Standard Card Implementation Prompt
 
 Use this template when implementing a single occupation card:

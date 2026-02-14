@@ -28,6 +28,33 @@ Every test follows this structure:
 3. **Play** through turns with `t.choose` and `t.action`
 4. **Assert** the final state with `t.testBoard`
 
+## Turn Order and Action Space Rules
+
+**CRITICAL**: When writing tests that involve multiple players or multiple actions:
+
+1. **Turn Order**: The work phase alternates between players. After a player takes an action, the turn moves to the next player in turn order. If you need a player to take multiple actions, you must account for other players' turns in between.
+
+2. **Action Space Usage**: Each action space can only be used ONCE per round. Once a player takes an action on a space, that space is occupied and cannot be used again until the next round. If you need to test a player taking multiple actions, use DIFFERENT action spaces for each action.
+
+3. **Example Pattern for Multiple Actions by Same Player**:
+   ```js
+   // Player 1 takes action A
+   t.choose(game, 'Action A')
+   // Player 2 takes an action (turn order rotates)
+   t.choose(game, 'Action B')
+   // Player 1 takes action C (their second action)
+   t.choose(game, 'Action C')
+   ```
+
+4. **Example Pattern for Testing "2nd Person" Effects**:
+   ```js
+   // If testing a card that triggers on "2nd person placed this round"
+   // Player must place 2 workers, with another player's turn in between
+   t.choose(game, 'First Action') // Player's 1st worker
+   t.choose(game, 'Other Action') // Other player's turn
+   t.choose(game, 'Second Action') // Player's 2nd worker - triggers effect
+   ```
+
 ## t.setBoard
 
 Declaratively sets up game state. All fields are optional.
