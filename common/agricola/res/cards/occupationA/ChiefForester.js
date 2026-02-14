@@ -9,7 +9,7 @@ module.exports = {
   onAction(game, player, actionId) {
     const woodActions = ['take-wood', 'copse', 'take-3-wood', 'take-2-wood']
     if (woodActions.includes(actionId)) {
-      game.actions.offerSowSingleField(player, this)
+      game.actions.sowSingleField(player, this)
     }
   },
 }

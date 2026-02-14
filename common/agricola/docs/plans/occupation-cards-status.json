@@ -27,13 +27,20 @@
       "testsCreated": 2,
       "testsPassing": 10,
       "completedDate": "2024-01-15"
+    },
+    "Batch-004": {
+      "status": "completed",
+      "cards": ["wood-cutter-a116", "pan-baker-a122", "chief-forester-a115"],
+      "testsCreated": 3,
+      "testsPassing": 8,
+      "completedDate": "2024-01-15"
     }
   },
   "bySet": {
     "occupationA": {
       "total": 84,
-      "implemented": 9,
-      "tested": 12,
+      "implemented": 12,
+      "tested": 20,
       "status": "in_progress"
     },
     "occupationB": {
