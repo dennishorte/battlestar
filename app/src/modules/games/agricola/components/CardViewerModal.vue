@@ -249,14 +249,6 @@ export default {
       return resources
     },
 
-    // Get card state from game.state._cardState
-    getCardState() {
-      if (!this.game?.state?._cardState || !this.cardId) {
-        return null
-      }
-      return this.game.state._cardState[this.cardId] || null
-    },
-
     isUsed() {
       // Check cardState first (newer pattern)
       const cardState = this.getCardState()
@@ -293,6 +285,14 @@ export default {
   },
 
   methods: {
+    // Get card state from game.state._cardState
+    getCardState() {
+      if (!this.game?.state?._cardState || !this.cardId) {
+        return null
+      }
+      return this.game.state._cardState[this.cardId] || null
+    },
+
     resourceIcon(resource) {
       return RESOURCE_ICONS[resource] || resource
     },
