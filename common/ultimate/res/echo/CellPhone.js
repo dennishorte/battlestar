@@ -5,7 +5,7 @@ module.exports = {
   expansion: `echo`,
   biscuits: `iha&`,
   dogmaBiscuit: `i`,
-  echo: [`Draw and foreshadow an {b}`],
+  echo: [`Draw and foreshadow an {e}`],
   dogma: [
     `Draw a {0} for every color on your board with {i}.`,
     `You may splay your green cards up.`,

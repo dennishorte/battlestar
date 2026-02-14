@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `hlil`,
   dogmaBiscuit: `l`,
   dogma: [
-    `I demand you draw and reveal an {b}! Return all cards from your board and score pile of color matching the drawn card!`
+    `I demand you draw and reveal an {e}! Return all cards from your board and score pile of color matching the drawn card!`
   ],
   dogmaImpl: [
     (game, player, { self }) => {

@@ -9,7 +9,7 @@ module.exports = {
   dogma: [
     `I demand you return all cards from your forecast!`,
     `You may splay your yellow cards up.`,
-    `Draw three {b}. If GPS was foreseen, foreshadow them.`,
+    `Draw three {e}. If GPS was foreseen, foreshadow them.`,
   ],
   dogmaImpl: [
     (game, player) => {

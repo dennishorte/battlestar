@@ -1,4 +1,3 @@
-
 module.exports = {
   name: `Human Genome`,
   color: `blue`,
@@ -6,7 +5,7 @@ module.exports = {
   expansion: `echo`,
   biscuits: `s&ah`,
   dogmaBiscuit: `s`,
-  echo: [`Draw an {b}`],
+  echo: [`Draw an {e}`],
   dogma: [
     `You may draw and score a card of any value. Transfer your bottom red card to your hand. If the values of all the cards in your hand match the values of all the card in your score pile, exactly, you win.`
   ],

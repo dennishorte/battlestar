@@ -8,7 +8,7 @@ module.exports = {
   echo: ``,
   dogma: [
     `Return 4 cards from your score pile. Return all available standard achievements.`,
-    `Draw and foreshadow and {b}. Draw and meld a {0}. If Laser was foreseen, draw and meld an {b}.`,
+    `Draw and foreshadow and {e}. Draw and meld a {0}. If Laser was foreseen, draw and meld an {e}.`,
 
   ],
   dogmaImpl: [
