@@ -21,9 +21,9 @@ This frequent context refresh keeps important details in working memory.
 
 ## Batch Status
 
-- **Total Batches**: TBD (will be ~80-140 batches)
-- **Completed Batches**: 0
-- **Current Batch**: Batch-001
+- **Total Batches**: TBD (will be ~25-30 batches for Set A, ~80-140 total)
+- **Completed Batches**: 3
+- **Current Batch**: Batch-004
 
 ## Batch Queue
 
@@ -154,7 +154,7 @@ Cards:
 Cards:
 1. `roughcaster-a110` - Roughcaster (onBuildRoom + onRenovate: +3 food for clay rooms/renovations)
 2. `wall-builder-a111` - Wall Builder (onBuildRoom: schedules food on next 4 rounds)
-3. `clay-hut-builder-a119` - Clay Hut Builder (onBuildRoom: +1 clay per clay room built)
+3. `clay-hut-builder-a120` - Clay Hut Builder (checkTrigger: when not wood house → schedules clay on next 5 rounds)
 
 **LLM Instructions:**
 1. Read each card file and verify hooks are implemented
@@ -243,8 +243,8 @@ Cards:
 
 Cards:
 1. `small-trader-a109` - Small Trader (onPlayMinorFromHand: +3 food when playing minor from hand)
-2. `freshman-a097` - Freshman (onBakeBreadAction: can play occupation instead of baking)
-3. TBD - Find third card with similar pattern
+2. `freshman-a097` - Freshman (onBakeBreadAction: can play occupation instead of baking - already tested, verify completeness)
+3. `grocer-a102` - Grocer (onPlay: creates goods pile, anytime purchase - already tested, verify completeness)
 
 **LLM Instructions:**
 1. Read each card file and verify hooks are implemented
