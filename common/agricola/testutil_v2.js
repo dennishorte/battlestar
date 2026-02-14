@@ -49,6 +49,25 @@ TestUtil.action = function(game, actionName, opts = {}) {
   })
 }
 
+/**
+ * Respond to an anytime action (e.g. Grocer buy good, Clearing Spade crop move).
+ * Anytime actions appear in the side panel and can be triggered during any choice prompt.
+ *
+ * Usage:
+ *   const actions = game.getAnytimeActions(player)
+ *   const grocerAction = actions.find(a => a.cardName === 'Grocer')
+ *   t.anytimeAction(game, grocerAction)
+ */
+TestUtil.anytimeAction = function(game, anytimeAction) {
+  const request = game.waiting
+  const selector = request.selectors[0]
+  return game.respondToInputRequest({
+    actor: selector.actor,
+    title: selector.title,
+    selection: { action: 'anytime-action', anytimeAction },
+  })
+}
+
 TestUtil.fixture = function(options = {}) {
   options = Object.assign({
     name: 'test_game',

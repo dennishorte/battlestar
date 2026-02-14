@@ -242,6 +242,22 @@ t.action(game, 'sow-field', { row: 2, col: 0, cropType: 'grain' })
 t.action(game, 'sow-virtual-field', { fieldId: 'beanfield-b068', cropType: 'vegetables' })
 ```
 
+## t.anytimeAction
+
+Triggers an anytime action (e.g., Grocer buying a good, Clearing Spade moving crops).
+Anytime actions appear in the side panel and can be triggered during any choice prompt.
+
+```js
+// Get available anytime actions
+const actions = game.getAnytimeActions(player)
+const grocerAction = actions.find(a => a.cardName === 'Grocer')
+
+// Trigger the anytime action
+t.anytimeAction(game, grocerAction)
+```
+
+See the "Anytime Actions" section below for more examples.
+
 ## t.testBoard
 
 Declaratively asserts game state. Only checks players explicitly mentioned.
@@ -430,29 +446,36 @@ sow, goes straight to baking), baking choices appear automatically.
 Minor improvements with `anytimeConversions` appear during harvest feeding as
 conversion options (e.g. `'Oriental Fireplace: vegetables → 4 food'`).
 
-### Anytime Non-Food Actions (e.g., Crop Move)
+### Anytime Actions
 
-Non-food anytime actions (like Clearing Spade's crop move) appear in the
-anytime actions side panel, not as regular choices. To trigger them in tests,
-use `respondToInputRequest` directly with the `anytime-action` shape:
+Anytime actions (like Grocer's buy good, Clearing Spade's crop move) appear in the
+anytime actions side panel and can be triggered during any choice prompt. Use
+`t.anytimeAction` to trigger them:
 
 ```js
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
+// Get available anytime actions for a player
+const actions = game.getAnytimeActions(player)
+const grocerAction = actions.find(a => a.cardName === 'Grocer')
 
-// Trigger during any choose() prompt (before choosing main action)
-respondAnytimeAction(game, {
-  type: 'crop-move',
-  cardName: 'Clearing Spade',
-  description: 'Clearing Spade: Move 1 crop to empty field',
-})
+// Trigger the anytime action
+t.anytimeAction(game, grocerAction)
+```
+
+**Example: Grocer buying a good**
+
+```js
+const dennis = game.players.byName('dennis')
+const actions = game.getAnytimeActions(dennis)
+const grocerAction = actions.find(a => a.cardName === 'Grocer')
+t.anytimeAction(game, grocerAction)
+```
+
+**Example: Clearing Spade crop move**
+
+```js
+const actions = game.getAnytimeActions(player)
+const clearingSpadeAction = actions.find(a => a.cardName === 'Clearing Spade')
+t.anytimeAction(game, clearingSpadeAction)
 t.choose(game, '2,0 (grain x3)')  // pick source field
 t.choose(game, '2,1')              // pick target field
 // Main action choice follows

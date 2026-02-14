@@ -1,15 +1,5 @@
 const t = require('../../../testutil_v2.js')
 
-function respondAnytimeAction(game, anytimeAction) {
-  const request = game.waiting
-  const selector = request.selectors[0]
-  return game.respondToInputRequest({
-    actor: selector.actor,
-    title: selector.title,
-    selection: { action: 'anytime-action', anytimeAction },
-  })
-}
-
 describe('Grocer', () => {
   test('onPlay initializes goods stack', () => {
     const game = t.fixture({ cardSets: ['occupationA'] })
@@ -49,7 +39,7 @@ describe('Grocer', () => {
     expect(action).toBeDefined()
     expect(action.description).toContain('vegetables')
 
-    respondAnytimeAction(game, action)
+    t.anytimeAction(game, action)
 
     t.testBoard(game, {
       dennis: {
