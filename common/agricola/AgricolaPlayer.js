@@ -696,11 +696,13 @@ class AgricolaPlayer extends BasePlayer {
   harvestFields() {
     const harvested = { grain: 0, vegetables: 0, wood: 0, stone: 0 }
     const virtualFieldHarvests = []  // Track virtual field harvests for callbacks
+    this._lastHarvestedFields = []
 
     // Harvest regular fields
     for (const field of this.getFieldSpaces().filter(f => f.crop && f.cropCount > 0)) {
       if (field.cropCount > 0) {
         harvested[field.crop] += 1
+        this._lastHarvestedFields.push({ row: field.row, col: field.col })
         const space = this.getSpace(field.row, field.col)
         space.cropCount -= 1
         if (space.cropCount === 0) {
@@ -738,6 +740,31 @@ class AgricolaPlayer extends BasePlayer {
     this.addResource('stone', harvested.stone)
 
     return { harvested, virtualFieldHarvests }
+  }
+
+  getHarvestedFieldsAdjacentToHouse() {
+    if (!this._lastHarvestedFields || this._lastHarvestedFields.length === 0) {
+      return 0
+    }
+
+    let count = 0
+    for (const field of this._lastHarvestedFields) {
+      const neighbors = this.getOrthogonalNeighbors(field.row, field.col)
+      if (neighbors.some(n => this.getSpace(n.row, n.col).type === 'room')) {
+        count++
+      }
+    }
+    return count
+  }
+
+  getTotalGoodsInFields() {
+    let total = 0
+    for (const field of this.getFieldSpaces()) {
+      if (field.crop && field.cropCount > 0) {
+        total += field.cropCount
+      }
+    }
+    return total
   }
 
   // ---------------------------------------------------------------------------
@@ -922,7 +949,7 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     // Pay wood (accounting for fence cost modifiers)
-    const woodCost = this.applyFenceCostModifiers(fenceSegments.length)
+    const woodCost = this.applyFenceCostModifiers(fenceSegments.length, this._countEdgeFences(fenceSegments))
     this.payCost({ wood: woodCost })
 
     // Recalculate pastures
@@ -1291,7 +1318,7 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     // Check if player has enough wood (accounting for fence cost modifiers)
-    const woodCost = this.applyFenceCostModifiers(fences.length)
+    const woodCost = this.applyFenceCostModifiers(fences.length, this._countEdgeFences(fences))
     if (woodCost > this.wood) {
       return {
         valid: false,
@@ -1352,7 +1379,7 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     // Pay wood cost (accounting for fence cost modifiers)
-    const woodCost = this.applyFenceCostModifiers(validation.fencesNeeded)
+    const woodCost = this.applyFenceCostModifiers(validation.fencesNeeded, this._countEdgeFences(validation.fences))
     this.payCost({ wood: woodCost })
 
     // Add fences
@@ -1880,6 +1907,22 @@ class AgricolaPlayer extends BasePlayer {
           mixedTypes: true,
           sameTypeOnly: false,
           allowedTypes: null,
+          perTypeLimits: null,
+          animals: { ...this.getCardAnimals(card.id) },
+        })
+        continue
+      }
+
+      // holdsCattlePerPasture: capacity = number of pastures, cattle only
+      if (def.holdsCattlePerPasture) {
+        holdings.push({
+          card,
+          cardId: card.id,
+          name: card.name,
+          capacity: this.getPastureCount(),
+          mixedTypes: false,
+          sameTypeOnly: false,
+          allowedTypes: ['cattle'],
           perTypeLimits: null,
           animals: { ...this.getCardAnimals(card.id) },
         })
@@ -3338,13 +3381,17 @@ class AgricolaPlayer extends BasePlayer {
   /**
    * Apply modifyFenceCost hooks from cards
    */
-  applyFenceCostModifiers(fenceCount) {
+  applyFenceCostModifiers(fenceCount, edgeFenceCount = 0) {
     for (const card of this.getActiveCards()) {
       if (card.hasHook('modifyFenceCost')) {
-        fenceCount = card.callHook('modifyFenceCost', this, fenceCount)
+        fenceCount = card.callHook('modifyFenceCost', this, fenceCount, edgeFenceCount)
       }
     }
     return fenceCount
+  }
+
+  _countEdgeFences(fences) {
+    return fences.filter(f => f.edge).length
   }
 
   /**

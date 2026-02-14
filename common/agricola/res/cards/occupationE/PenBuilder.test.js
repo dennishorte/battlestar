@@ -87,9 +87,11 @@ describe('Pen Builder', () => {
     game.run()
 
     // 3 wood → capacity of 6
-    expect(game.cardState('pen-builder-e086').wood).toBe(3)
-    const card = game.cards.byId('pen-builder-e086')
-    expect(card.definition.getAnimalCapacity(game)).toBe(6)
+    const dennis = game.players.byName('dennis')
+    const holdings = dennis.getAnimalHoldingCards()
+    const penBuilder = holdings.find(h => h.cardId === 'pen-builder-e086')
+    expect(penBuilder).toBeTruthy()
+    expect(penBuilder.capacity).toBe(6)
   })
 
   test('not available without wood', () => {

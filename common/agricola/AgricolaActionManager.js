@@ -138,6 +138,9 @@ class AgricolaActionManager extends BaseActionManager {
           this.handleAnimalOverflow(player, resource, count)
         }
         this.game.callPlayerCardHook(player, 'onTakeAnimals', resource, count, allAccommodated)
+        if (resource === 'boar') {
+          this.game.callPlayerCardHook(player, 'onGainBoar', count, true)
+        }
       }
       else {
         player.addResource(resource, actionState.accumulated)

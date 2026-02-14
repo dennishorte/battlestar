@@ -7,10 +7,7 @@ module.exports = {
   cost: {},
   prereqs: { animalTypes: 3 },
   text: "You do not need to pay wood for fences that you build on the edge of your farmyard board.",
-  modifyFenceCost(game, player, cost, isEdge) {
-    if (isEdge) {
-      return { ...cost, wood: 0 }
-    }
-    return cost
+  modifyFenceCost(player, fenceCount, edgeFenceCount) {
+    return Math.max(0, fenceCount - edgeFenceCount)
   },
 }

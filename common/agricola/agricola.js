@@ -1527,6 +1527,13 @@ Agricola.prototype.fieldPhase = function() {
   // Record last harvest round for Dutch Windmill
   this.state.lastHarvestRound = this.state.round
 
+  // Snapshot goods in fields before final harvest (for Wood Rake)
+  if (this.state.round === 14) {
+    for (const player of this.players.all()) {
+      player.goodsInFieldsBeforeFinalHarvest = player.getTotalGoodsInFields()
+    }
+  }
+
   for (const player of this.players.all()) {
     if (this.state.skipFieldAndBreeding?.includes(player.name)) {
       continue
