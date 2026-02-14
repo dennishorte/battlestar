@@ -2,11 +2,10 @@
   "lastUpdated": "2024-01-15",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 1,
-  "cardsCompleted": 3,
-  "cardsTested": 26,
-  "currentBatch": "Batch-002",
-  "notes": "Batch-002 in progress: Tests created but need fixes - Catcher's onPlacePerson hook may not be wired, Mushroom Collector exchange logic needs verification"
+  "batchesCompleted": 2,
+  "cardsCompleted": 6,
+  "cardsTested": 29,
+  "currentBatch": "Batch-003",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -14,13 +13,20 @@
       "testsCreated": 3,
       "testsPassing": 8,
       "completedDate": "2024-01-15"
+    },
+    "Batch-002": {
+      "status": "completed",
+      "cards": ["catcher-a107", "firewood-collector-a118", "mushroom-collector-a115"],
+      "testsCreated": 3,
+      "testsPassing": 9,
+      "completedDate": "2024-01-15"
     }
   },
   "bySet": {
     "occupationA": {
       "total": 84,
-      "implemented": 3,
-      "tested": 6,
+      "implemented": 6,
+      "tested": 9,
       "status": "in_progress"
     },
     "occupationB": {
