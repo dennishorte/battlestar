@@ -22,8 +22,8 @@ This frequent context refresh keeps important details in working memory.
 ## Batch Status
 
 - **Total Batches**: TBD (will be ~25-30 batches for Set A, ~80-140 total)
-- **Completed Batches**: 5
-- **Current Batch**: Batch-006
+- **Completed Batches**: 7
+- **Current Batch**: Batch-008
 
 ## Batch Queue
 
@@ -137,48 +137,33 @@ Cards:
 
 ---
 
-### Batch-006: onBuildRoom and onRenovate Hooks (Set A)
+### Batch-006: onBuildRoom and onRenovate Hooks (Set A) ✅ COMPLETED
 **Pattern**: Cards that trigger on room building or renovation  
 **Template**: `Roughcaster.js`  
 **Test Template**: Test with Farm Expansion and Renovation actions  
 **Complexity**: Medium (Tier 2)
 
 Cards:
-1. `roughcaster-a110` - Roughcaster (onBuildRoom + onRenovate: +3 food for clay rooms/renovations)
-2. `wall-builder-a111` - Wall Builder (onBuildRoom: schedules food on next 4 rounds)
-3. `clay-hut-builder-a120` - Clay Hut Builder (checkTrigger: when not wood house → schedules clay on next 5 rounds)
+1. `roughcaster-a110` - Roughcaster (onBuildRoom + onRenovate: +3 food for clay rooms/renovations) ✅
+2. `wall-builder-a111` - Wall Builder (onBuildRoom: schedules food on next 4 rounds) ✅
+3. `clay-hut-builder-a120` - Clay Hut Builder (onRenovate: when renovating from wood → schedules clay on next 5 rounds) ✅
 
-**LLM Instructions:**
-1. Read each card file and verify hooks are implemented
-2. Create tests using Farm Expansion to build rooms
-3. For Roughcaster, also test renovation from clay to stone
-4. For Wall Builder, verify scheduled resources appear in future rounds
-5. Run tests and fix any failures
-6. Update status tracker
-7. Move to Batch-007
+**Status**: All cards implemented and tested. Clay Hut Builder uses onRenovate hook.
 
 ---
 
-### Batch-007: onAction with Conditional Checks (Set A)
+### Batch-007: onAction with Conditional Checks (Set A) ✅ COMPLETED
 **Pattern**: Cards with onAction that have conditional logic  
 **Template**: `Angler.js`, `BuildingExpert.js`  
 **Test Template**: Test conditional logic and edge cases  
 **Complexity**: Medium (Tier 2)
 
 Cards:
-1. `angler-a095` - Angler (onAction: Fishing with ≤2 food → improvement action)
-2. `building-expert-a163` - Building Expert (onAction: Resource Market → resource based on person number)
-3. `heresy-teacher-a113` - Heresy Teacher (onAction: Lessons → vegetables in fields with 3+ grain)
+1. `angler-a095` - Angler (onAction: Fishing with ≤2 food → improvement action) ✅
+2. `building-expert-a163` - Building Expert (onAction: Resource Market → resource based on person number) ✅
+3. `heresy-teacher-a113` - Heresy Teacher (onAction: Lessons → vegetables in fields with 3+ grain, uses underCrop mechanism) ✅
 
-**LLM Instructions:**
-1. Read each card file and verify conditional logic
-2. Create tests covering both true and false conditions
-3. For Angler, test with different food amounts on Fishing space
-4. For Building Expert, test different person numbers (requires turn order simulation)
-5. For Heresy Teacher, test fields with/without grain and vegetables
-6. Run tests and fix any failures
-7. Update status tracker
-8. Move to Batch-008
+**Status**: All cards implemented and tested. Heresy Teacher uses underCrop field model for layered crops.
 
 ---
 

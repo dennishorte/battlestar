@@ -3033,6 +3033,16 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   /**
+   * Offer to play an occupation with a custom cost (e.g., Night School Student, Market Master)
+   * Delegates to playOccupation with the specified cost override.
+   */
+  offerPlayOccupation(player, card, options = {}) {
+    const costObj = options.cost || {}
+    const foodCost = costObj.food || 0
+    return this.playOccupation(player, { costOverride: foodCost })
+  }
+
+  /**
    * Offer to pay 1 wood to reduce occupation food cost (Paper Maker)
    */
   offerPayWoodForOccupationFood(player, card) {

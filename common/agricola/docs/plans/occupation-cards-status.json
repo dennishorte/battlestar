@@ -2,10 +2,10 @@
   "lastUpdated": "2024-01-15",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 5,
-  "cardsCompleted": 15,
-  "cardsTested": 23,
-  "currentBatch": "Batch-006",
+  "batchesCompleted": 7,
+  "cardsCompleted": 22,
+  "cardsTested": 45,
+  "currentBatch": "Batch-008",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -41,13 +41,35 @@
       "testsCreated": 3,
       "testsPassing": 11,
       "completedDate": "2024-01-15"
+    },
+    "Batch-006": {
+      "status": "completed",
+      "cards": ["roughcaster-a110", "wall-builder-a111", "clay-hut-builder-a120"],
+      "testsCreated": 3,
+      "testsPassing": 10,
+      "completedDate": "2024-01-15"
+    },
+    "Batch-007": {
+      "status": "completed",
+      "cards": ["angler-a095", "building-expert-a163", "heresy-teacher-a113"],
+      "testsCreated": 3,
+      "testsPassing": 9,
+      "completedDate": "2024-01-15"
+    },
+    "Hollow-Warden": {
+      "status": "completed",
+      "cards": ["hollow-warden-a139"],
+      "testsCreated": 1,
+      "testsPassing": 3,
+      "completedDate": "2024-01-15",
+      "note": "Completed outside plan as special request"
     }
   },
   "bySet": {
     "occupationA": {
       "total": 84,
-      "implemented": 15,
-      "tested": 23,
+      "implemented": 22,
+      "tested": 45,
       "status": "in_progress"
     },
     "occupationB": {

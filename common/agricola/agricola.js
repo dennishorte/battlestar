@@ -280,6 +280,29 @@ Agricola.prototype.getActionById = function(actionId) {
   return res.getActionById(actionId)
 }
 
+/**
+ * Check if an action space is currently occupied
+ */
+Agricola.prototype.isActionOccupied = function(actionId) {
+  const state = this.state.actionSpaces[actionId]
+  return !!(state && state.occupiedBy)
+}
+
+/**
+ * Check if any player returned from a Lessons action space this round
+ * (called during return home phase, before workers are reset)
+ */
+Agricola.prototype.anyPlayerReturnedFromLessons = function() {
+  const lessonsActions = ['occupation', 'lessons-1', 'lessons-2', 'lessons-3', 'lessons-4', 'lessons-5', 'lessons-6']
+  for (const actionId of lessonsActions) {
+    const state = this.state.actionSpaces[actionId]
+    if (state && state.occupiedBy) {
+      return true
+    }
+  }
+  return false
+}
+
 // ---------------------------------------------------------------------------
 // Per-game card state (avoids mutating singleton card definitions)
 // ---------------------------------------------------------------------------
@@ -852,6 +875,9 @@ Agricola.prototype.callRoundEndHooks = function() {
 }
 
 Agricola.prototype.callReturnHomeHooks = function() {
+  // Call onReturnHomeStart hooks first (e.g., Bohemian)
+  this.callCardHook('onReturnHomeStart')
+  // Then call onReturnHome hooks (e.g., Night School Student)
   this.callCardHook('onReturnHome')
 }
 
