@@ -100,43 +100,160 @@ Cards:
 
 ---
 
-### Batch-004: Audit and Categorize Set A Cards
-**Pattern**: Assessment batch - categorize remaining Set A cards  
-**Template**: N/A - this is an audit batch  
-**Complexity**: Assessment
+### Batch-004: Simple onAction Resource Grants (Set A)
+**Pattern**: Cards that grant resources when taking specific actions (onAction hook only, no onPlay)  
+**Template**: `WoodCutter.js`  
+**Test Template**: Use `ClayPuncher.test.js` as reference  
+**Complexity**: Simple (Tier 1)
+
+Cards:
+1. `wood-cutter-a116` - Wood Cutter (onAction: +1 wood on wood accumulation spaces)
+2. `pan-baker-a122` - Pan Baker (onAction: Grain Utilization → +2 clay, +1 wood)
+3. `chief-forester-a115` - Chief Forester (onAction: wood accumulation → sow action)
 
 **LLM Instructions:**
-1. Read ALL remaining occupationA card files (not yet in batches)
-2. For each card, determine:
-   - Primary hook type (onPlay, onAction, onReturnHome, etc.)
-   - Complexity tier (Simple, Medium, Complex, Interdependent)
-   - Whether implementation exists and is complete
-   - Whether tests exist
-3. Create a categorization file: `occupation-cards-setA-categorized.json`
-4. Group cards by pattern for future batches
-5. Update status tracker with audit results
-6. Move to Batch-005 (will be created based on audit results)
+1. Read each card file and verify implementation
+2. Create comprehensive test files following `ClayPuncher.test.js` pattern
+3. Test onAction hook triggers for correct action spaces
+4. Test that hook doesn't trigger for other actions
+5. Run tests and fix any failures
+6. Update status tracker
+7. Move to Batch-005
 
 ---
 
 ### Batch-005: Cost Modification Cards (Set A)
 **Pattern**: Cards that modify building/improvement costs  
-**Template**: `Stonecutter.js` (in baseA.js)  
-**Test Template**: Test with Farm Expansion action  
+**Template**: `Stonecutter.js`  
+**Test Template**: Test with Farm Expansion (build room) action  
 **Complexity**: Medium (Tier 2)
 
 Cards:
-1. `stonecutter-a143` - Stonecutter (reduces stone costs by 1)
-2. TBD - Find other cost modification cards in Set A
-3. TBD
+1. `stonecutter-a143` - Stonecutter (modifyAnyCost: -1 stone for all costs)
+2. `frame-builder-a123` - Frame Builder (modifyBuildCost: allows wood substitution)
+3. `hedge-keeper-a088` - Hedge Keeper (modifyFenceCost: -3 wood for fences)
 
 **LLM Instructions:**
-1. Read card files
-2. Verify modifyCost hooks are implemented
-3. Create tests using Farm Expansion (build room) action
-4. Verify cost reduction in test assertions
-5. Update status tracker
-6. Move to Batch-006
+1. Read each card file and verify modifyCost hooks are implemented
+2. Create tests using Farm Expansion action to build rooms
+3. Verify cost modifications in test assertions
+4. For Frame Builder, test wood substitution logic
+5. For Hedge Keeper, test fence building with cost reduction
+6. Run tests and fix any failures
+7. Update status tracker
+8. Move to Batch-006
+
+---
+
+### Batch-006: onBuildRoom and onRenovate Hooks (Set A)
+**Pattern**: Cards that trigger on room building or renovation  
+**Template**: `Roughcaster.js`  
+**Test Template**: Test with Farm Expansion and Renovation actions  
+**Complexity**: Medium (Tier 2)
+
+Cards:
+1. `roughcaster-a110` - Roughcaster (onBuildRoom + onRenovate: +3 food for clay rooms/renovations)
+2. `wall-builder-a111` - Wall Builder (onBuildRoom: schedules food on next 4 rounds)
+3. `clay-hut-builder-a119` - Clay Hut Builder (onBuildRoom: +1 clay per clay room built)
+
+**LLM Instructions:**
+1. Read each card file and verify hooks are implemented
+2. Create tests using Farm Expansion to build rooms
+3. For Roughcaster, also test renovation from clay to stone
+4. For Wall Builder, verify scheduled resources appear in future rounds
+5. Run tests and fix any failures
+6. Update status tracker
+7. Move to Batch-007
+
+---
+
+### Batch-007: onAction with Conditional Checks (Set A)
+**Pattern**: Cards with onAction that have conditional logic  
+**Template**: `Angler.js`, `BuildingExpert.js`  
+**Test Template**: Test conditional logic and edge cases  
+**Complexity**: Medium (Tier 2)
+
+Cards:
+1. `angler-a095` - Angler (onAction: Fishing with ≤2 food → improvement action)
+2. `building-expert-a163` - Building Expert (onAction: Resource Market → resource based on person number)
+3. `heresy-teacher-a113` - Heresy Teacher (onAction: Lessons → vegetables in fields with 3+ grain)
+
+**LLM Instructions:**
+1. Read each card file and verify conditional logic
+2. Create tests covering both true and false conditions
+3. For Angler, test with different food amounts on Fishing space
+4. For Building Expert, test different person numbers (requires turn order simulation)
+5. For Heresy Teacher, test fields with/without grain and vegetables
+6. Run tests and fix any failures
+7. Update status tracker
+8. Move to Batch-008
+
+---
+
+### Batch-008: onRoundStart and onReturnHome Hooks (Set A)
+**Pattern**: Cards that trigger at round start or return home phase  
+**Template**: `PlowDriver.js`  
+**Test Template**: Test round start hooks and return home phase  
+**Complexity**: Medium (Tier 2)
+
+Cards:
+1. `plow-driver-a090` - Plow Driver (onRoundStart: stone house → pay 1 food to plow)
+2. `bohemian-a157` - Bohemian (onReturnHomeStart: unoccupied Lessons → +1 food)
+3. `night-school-student-a152` - Night School Student (onReturnHome: no Lessons returns → play occupation for 1 food)
+
+**LLM Instructions:**
+1. Read each card file and verify hooks are implemented
+2. For onRoundStart, test that hook fires at start of each round
+3. For onReturnHome/onReturnHomeStart, play through a complete round to reach return home phase
+4. Test conditional logic (e.g., Plow Driver requires stone house)
+5. Run tests and fix any failures
+6. Update status tracker
+7. Move to Batch-009
+
+---
+
+### Batch-009: onHarvest and onHarvestEnd Hooks (Set A)
+**Pattern**: Cards that trigger during harvest phases  
+**Template**: `ScytheWorker.js`, `Ropemaker.js`  
+**Test Template**: Test harvest phase hooks  
+**Complexity**: Medium (Tier 2)
+
+Cards:
+1. `slurry-spreader-a106` - Slurry Spreader (onHarvestLastCrop: +2 food for grain, +1 for vegetables)
+2. `ropemaker-a145` - Ropemaker (onHarvestEnd: +1 reed at end of each harvest)
+3. TBD - Find third harvest-related card
+
+**LLM Instructions:**
+1. Read each card file and verify hooks are implemented
+2. Set up game state with fields and crops for harvest
+3. Play through rounds to reach harvest (rounds 4, 7, 9, 11, 13, 14)
+4. Test that hooks fire during appropriate harvest phase
+5. For Slurry Spreader, test both grain and vegetable cases
+6. Run tests and fix any failures
+7. Update status tracker
+8. Move to Batch-010
+
+---
+
+### Batch-010: onPlayMinorFromHand and Special Action Hooks (Set A)
+**Pattern**: Cards that trigger when playing improvements or special actions  
+**Template**: `SmallTrader.js`, `Freshman.js`  
+**Test Template**: Test improvement playing and special action hooks  
+**Complexity**: Medium (Tier 2)
+
+Cards:
+1. `small-trader-a109` - Small Trader (onPlayMinorFromHand: +3 food when playing minor from hand)
+2. `freshman-a097` - Freshman (onBakeBreadAction: can play occupation instead of baking)
+3. TBD - Find third card with similar pattern
+
+**LLM Instructions:**
+1. Read each card file and verify hooks are implemented
+2. For Small Trader, test playing minor improvement from hand via action space
+3. For Freshman, test Bake Bread action offering occupation choice
+4. Verify hooks don't trigger inappropriately
+5. Run tests and fix any failures
+6. Update status tracker
+7. Move to Batch-011
 
 ---
 
