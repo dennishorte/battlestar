@@ -219,6 +219,9 @@ export default {
 
     // Resources stored on card
     cardResources() {
+      if (!this.card || !this.cardId) {
+        return []
+      }
       const def = this.runtimeDefinition
       const resources = []
 
@@ -271,6 +274,9 @@ export default {
 
     // Check if card has any state data in game.cardState
     hasCardStateData() {
+      if (!this.card || !this.cardId) {
+        return false
+      }
       const cardState = this.getCardState()
       if (!cardState) {
         return false
@@ -280,6 +286,9 @@ export default {
     },
 
     hasCardState() {
+      if (!this.card || !this.cardId) {
+        return false
+      }
       return this.cardResources.length > 0 || this.pileContents.length > 0 || this.isUsed || this.hasCardStateData
     },
   },
