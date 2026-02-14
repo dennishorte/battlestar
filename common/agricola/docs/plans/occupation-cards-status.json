@@ -2,10 +2,10 @@
   "lastUpdated": "2024-01-15",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 2,
-  "cardsCompleted": 6,
-  "cardsTested": 29,
-  "currentBatch": "Batch-003",
+  "batchesCompleted": 3,
+  "cardsCompleted": 9,
+  "cardsTested": 32,
+  "currentBatch": "Batch-004",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -20,13 +20,20 @@
       "testsCreated": 3,
       "testsPassing": 9,
       "completedDate": "2024-01-15"
+    },
+    "Batch-003": {
+      "status": "completed",
+      "cards": ["clay-puncher-a121", "task-artisan-a096", "scythe-worker-a112"],
+      "testsCreated": 2,
+      "testsPassing": 10,
+      "completedDate": "2024-01-15"
     }
   },
   "bySet": {
     "occupationA": {
       "total": 84,
-      "implemented": 6,
-      "tested": 9,
+      "implemented": 9,
+      "tested": 12,
       "status": "in_progress"
     },
     "occupationB": {

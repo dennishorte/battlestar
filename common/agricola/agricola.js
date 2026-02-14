@@ -1105,6 +1105,11 @@ Agricola.prototype.revealRoundAction = function() {
     })
 
     this.callCardHook('onStageReveal', card.id)
+
+    // Call onStoneActionRevealed if this is a stone accumulation space
+    if (card.type === 'accumulating' && card.accumulates && card.accumulates.stone) {
+      this.callCardHook('onStoneActionRevealed')
+    }
   }
 }
 

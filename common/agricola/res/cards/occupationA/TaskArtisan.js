@@ -12,7 +12,7 @@ module.exports = {
       template: '{player} gets 1 wood from Task Artisan',
       args: { player },
     })
-    game.actions.offerMinorImprovementAction(player, this)
+    game.actions.buyMinorImprovement(player)
   },
   onStoneActionRevealed(game, player) {
     player.addResource('wood', 1)
@@ -20,6 +20,6 @@ module.exports = {
       template: '{player} gets 1 wood from Task Artisan',
       args: { player },
     })
-    game.actions.offerMinorImprovementAction(player, this)
+    game.actions.buyMinorImprovement(player)
   },
 }
