@@ -781,18 +781,18 @@ Cards:
 
 ---
 
-### Batch-B09: onAction – build/major/fencing (Set B)
+### Batch-B09: onAction – build/major/fencing (Set B) ✅ COMPLETED
 **Pattern**: onAction when using Farm Expansion, Major Improvement, Grain Utilization, Fencing, or Day Laborer bonus  
 **Complexity**: Tier 2–3
 
 Cards:
-1. `illusionist-b146` - Illusionist (onAction: building resource accumulation → discard 1 card for 2 of that resource)
-2. `full-peasant-b130` - Full Peasant (onAction: after Grain Utilization or Fencing while other space used → bonus)
-3. `large-scale-farmer-b150` - Large Scale Farmer (onAction: after Farm Expansion or Major Improvement while other used → bonus)
-4. `junior-artist-b152` - Junior Artist (onAction: after Day Laborer → pay 1 food to use unoccupied action)
-5. `plumber-b128` - Plumber (onAction: after Major Improvement → take Renovation action)
+1. `illusionist-b146` - Illusionist (onAction: building resource accumulation → discard 1 card for +1 resource) ✅
+2. `full-peasant-b130` - Full Peasant (onAction: Grain Utilization/Fencing while other unoccupied → pay 1 food) ✅
+3. `large-scale-farmer-b150` - Large-Scale Farmer (onAction: Farm Expansion/Major Improvement while other unoccupied → pay 1 food) ✅
+4. `junior-artist-b152` - Junior Artist (onAction: Day Laborer → pay 1 food for Traveling Players/Lessons) ✅
+5. `plumber-b128` - Plumber (onAction: Major Improvement → discounted renovation) ✅
 
-**LLM Instructions:** Test build/major/fencing and Day Laborer bonus actions. Create tests; run; update status.
+**Status**: All cards tested. Illusionist inlined offer (offerIllusionistBonus didn't exist); uses zone moveTo for discard. JuniorArtist inlined offer (offerUseOtherSpaceChoice didn't exist); fixed TP/Lessons existence checks. Plumber inlined offer (offerDiscountedRenovation didn't exist); uses modifyRenovationCost hook with _plumberActive flag. LargeScaleFarmer fixed action IDs (farm-expansion→build-room-stable, major-improvement→major-minor-improvement). offerUseOtherSpace updated to handle cost option.
 
 ---
 

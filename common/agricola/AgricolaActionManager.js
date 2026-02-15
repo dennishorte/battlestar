@@ -1860,12 +1860,13 @@ class AgricolaActionManager extends BaseActionManager {
     }
   }
 
-  offerUseOtherSpace(player, card, otherActionId, _opts = {}) {
+  offerUseOtherSpace(player, card, otherActionId, opts = {}) {
     const action = res.getActionById(otherActionId)
     if (!action) {
       return
     }
-    const choices = [`Use ${action.name}`, 'Skip']
+    const costLabel = opts.cost ? ` (pay ${Object.entries(opts.cost).map(([r, n]) => `${n} ${r}`).join(', ')})` : ''
+    const choices = [`Use ${action.name}${costLabel}`, 'Skip']
     const selection = this.choose(player, choices, {
       title: `${card.name}: Use other space with same person?`,
       min: 1,
@@ -1873,6 +1874,9 @@ class AgricolaActionManager extends BaseActionManager {
     })
     if (selection[0] === 'Skip') {
       return
+    }
+    if (opts.cost) {
+      player.payCost(opts.cost)
     }
     this.executeAction(player, otherActionId)
   }

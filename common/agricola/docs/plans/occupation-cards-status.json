@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 38,
-  "cardsCompleted": 120,
-  "cardsTested": 215,
-  "currentBatch": "Batch-B09",
+  "batchesCompleted": 39,
+  "cardsCompleted": 125,
+  "cardsTested": 232,
+  "currentBatch": "Batch-B10",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -286,6 +286,14 @@
       "testsPassing": 17,
       "completedDate": "2026-02-14",
       "note": "Huntsman inlined offer (offerHuntsmanBoar didn't exist); ForestClearer/Huntsman wood action IDs updated; StorehouseKeeper uses offerResourceChoice"
+    },
+    "Batch-B09": {
+      "status": "completed",
+      "cards": ["illusionist-b146", "full-peasant-b130", "large-scale-farmer-b150", "junior-artist-b152", "plumber-b128"],
+      "testsCreated": 5,
+      "testsPassing": 17,
+      "completedDate": "2026-02-14",
+      "note": "Illusionist inlined discard offer; JuniorArtist inlined space choice + fixed TP/Lessons existence; Plumber uses modifyRenovationCost; LargeScaleFarmer fixed action IDs; offerUseOtherSpace updated for cost"
     }
   },
   "bySet": {
