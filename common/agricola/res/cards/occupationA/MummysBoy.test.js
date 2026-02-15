@@ -68,10 +68,14 @@ describe("Mummy's Boy", () => {
     // dennis 4th: Day Laborer should NOT appear again (already used double this round)
     t.choose(game, 'Grain Seeds')
 
-    const dennis = t.dennis(game)
-    // 4th worker took Grain Seeds (Day Laborer not available - once per round used)
-    expect(dennis.grain).toBe(1)
-    expect(dennis.food).toBeGreaterThanOrEqual(6) // 2 start + 2 (2nd) + 2 (3rd double)
-    expect(dennis.wood).toBe(3)
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['mummys-boy-a130'],
+        familyMembers: 4,
+        grain: 1,
+        food: 7,
+        wood: 3,
+      },
+    })
   })
 })

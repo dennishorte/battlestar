@@ -42,11 +42,20 @@ describe('Animal Reeve', () => {
     })
     game.run()
 
-    const micah = game.players.byName('micah')
-    const scoreWith = micah.calculateScore()
-    t.setPlayerCards(game, game.players.byName('dennis'), 'occupations', [])
-    const scoreWithout = micah.calculateScore()
-    expect(scoreWith - scoreWithout).toBe(1)
+    t.testBoard(game, {
+      dennis: { occupations: ['animal-reeve-a135'] },
+      micah: {
+        score: 1,
+        animals: { sheep: 2, boar: 2, cattle: 2 },
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 2, col: 0 }], sheep: 2 },
+            { spaces: [{ row: 2, col: 1 }], boar: 2 },
+            { spaces: [{ row: 2, col: 2 }], cattle: 2 },
+          ],
+        },
+      },
+    })
   })
 
   test('getEndGamePointsAllPlayers: 3 VP for 3+ of each animal type', () => {
@@ -66,11 +75,20 @@ describe('Animal Reeve', () => {
     })
     game.run()
 
-    const micah = game.players.byName('micah')
-    const scoreWith = micah.calculateScore()
-    t.setPlayerCards(game, game.players.byName('dennis'), 'occupations', [])
-    const scoreWithout = micah.calculateScore()
-    expect(scoreWith - scoreWithout).toBe(3)
+    t.testBoard(game, {
+      dennis: { occupations: ['animal-reeve-a135'] },
+      micah: {
+        score: 7,
+        animals: { sheep: 3, boar: 3, cattle: 3 },
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 2, col: 0 }, { row: 2, col: 1 }], sheep: 3 },
+            { spaces: [{ row: 0, col: 3 }, { row: 1, col: 3 }], boar: 3 },
+            { spaces: [{ row: 2, col: 2 }, { row: 2, col: 3 }], cattle: 3 },
+          ],
+        },
+      },
+    })
   })
 
   test('getEndGamePointsAllPlayers: 5 VP for 4+ of each animal type', () => {
@@ -90,10 +108,19 @@ describe('Animal Reeve', () => {
     })
     game.run()
 
-    const micah = game.players.byName('micah')
-    const scoreWith = micah.calculateScore()
-    t.setPlayerCards(game, game.players.byName('dennis'), 'occupations', [])
-    const scoreWithout = micah.calculateScore()
-    expect(scoreWith - scoreWithout).toBe(5)
+    t.testBoard(game, {
+      dennis: { occupations: ['animal-reeve-a135'] },
+      micah: {
+        score: 11,
+        animals: { sheep: 4, boar: 4, cattle: 4 },
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 2, col: 0 }, { row: 2, col: 1 }], sheep: 4 },
+            { spaces: [{ row: 0, col: 3 }, { row: 1, col: 3 }], boar: 4 },
+            { spaces: [{ row: 2, col: 2 }, { row: 2, col: 3 }], cattle: 4 },
+          ],
+        },
+      },
+    })
   })
 })

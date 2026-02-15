@@ -42,11 +42,18 @@ describe('Full Farmer', () => {
     })
     game.run()
 
-    const dennis = t.dennis(game)
-    const scoreWithout = dennis.calculateScore()
-    t.setPlayerCards(game, dennis, 'occupations', [])
-    const scoreWithoutCard = dennis.calculateScore()
-    expect(scoreWithout - scoreWithoutCard).toBe(0)
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['full-farmer-a134'],
+        score: -9,
+        animals: { sheep: 1 },
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 2, col: 0 }], sheep: 1 },
+          ],
+        },
+      },
+    })
   })
 
   test('getEndGamePoints: +1 VP per full pasture', () => {
@@ -64,11 +71,18 @@ describe('Full Farmer', () => {
     })
     game.run()
 
-    const dennis = t.dennis(game)
-    const scoreWith = dennis.calculateScore()
-    t.setPlayerCards(game, dennis, 'occupations', [])
-    const scoreWithout = dennis.calculateScore()
-    expect(scoreWith - scoreWithout).toBe(1)
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['full-farmer-a134'],
+        score: -8,
+        animals: { sheep: 2 },
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 2, col: 0 }], sheep: 2 },
+          ],
+        },
+      },
+    })
   })
 
   test('getEndGamePoints: +2 VP for two full pastures', () => {
@@ -87,10 +101,18 @@ describe('Full Farmer', () => {
     })
     game.run()
 
-    const dennis = t.dennis(game)
-    const scoreWith = dennis.calculateScore()
-    t.setPlayerCards(game, dennis, 'occupations', [])
-    const scoreWithout = dennis.calculateScore()
-    expect(scoreWith - scoreWithout).toBe(2)
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['full-farmer-a134'],
+        score: -3,
+        animals: { sheep: 2, boar: 2 },
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 2, col: 0 }], sheep: 2 },
+            { spaces: [{ row: 2, col: 1 }], boar: 2 },
+          ],
+        },
+      },
+    })
   })
 })

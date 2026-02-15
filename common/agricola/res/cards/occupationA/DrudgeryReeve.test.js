@@ -34,11 +34,10 @@ describe('Drudgery Reeve', () => {
     })
     game.run()
 
-    const micah = game.players.byName('micah')
-    const scoreWith = micah.calculateScore()
-    t.setPlayerCards(game, game.players.byName('dennis'), 'occupations', [])
-    const scoreWithout = micah.calculateScore()
-    expect(scoreWith - scoreWithout).toBe(1)
+    t.testBoard(game, {
+      dennis: { occupations: ['drudgery-reeve-a136'] },
+      micah: { score: -13, wood: 1, clay: 1, reed: 1, stone: 1 },
+    })
   })
 
   test('getEndGamePointsAllPlayers: 3 VP for 2+ of each building resource', () => {
@@ -50,11 +49,10 @@ describe('Drudgery Reeve', () => {
     })
     game.run()
 
-    const micah = game.players.byName('micah')
-    const scoreWith = micah.calculateScore()
-    t.setPlayerCards(game, game.players.byName('dennis'), 'occupations', [])
-    const scoreWithout = micah.calculateScore()
-    expect(scoreWith - scoreWithout).toBe(3)
+    t.testBoard(game, {
+      dennis: { occupations: ['drudgery-reeve-a136'] },
+      micah: { score: -11, wood: 2, clay: 2, reed: 2, stone: 2 },
+    })
   })
 
   test('getEndGamePointsAllPlayers: 5 VP for 3+ of each building resource', () => {
@@ -66,10 +64,9 @@ describe('Drudgery Reeve', () => {
     })
     game.run()
 
-    const micah = game.players.byName('micah')
-    const scoreWith = micah.calculateScore()
-    t.setPlayerCards(game, game.players.byName('dennis'), 'occupations', [])
-    const scoreWithout = micah.calculateScore()
-    expect(scoreWith - scoreWithout).toBe(5)
+    t.testBoard(game, {
+      dennis: { occupations: ['drudgery-reeve-a136'] },
+      micah: { score: -9, wood: 3, clay: 3, reed: 3, stone: 3 },
+    })
   })
 })
