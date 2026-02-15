@@ -2,10 +2,10 @@
   "lastUpdated": "2025-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 20,
-  "cardsCompleted": 58,
-  "cardsTested": 89,
-  "currentBatch": "Batch-021",
+  "batchesCompleted": 21,
+  "cardsCompleted": 59,
+  "cardsTested": 90,
+  "currentBatch": "Batch-022",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -147,6 +147,13 @@
       "testsPassing": 12,
       "completedDate": "2025-02-14"
     },
+    "Batch-021": {
+      "status": "completed",
+      "cards": ["braggart-a133"],
+      "testsCreated": 1,
+      "testsPassing": 7,
+      "completedDate": "2025-02-14"
+    },
     "Hollow-Warden": {
       "status": "completed",
       "cards": ["hollow-warden-a139"],
@@ -159,8 +166,8 @@
   "bySet": {
 "occupationA": {
     "total": 84,
-    "implemented": 54,
-    "tested": 81,
+    "implemented": 55,
+    "tested": 82,
     "status": "in_progress"
   },
     "occupationB": {
