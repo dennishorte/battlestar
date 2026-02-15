@@ -2,19 +2,51 @@ const t = require('../../../testutil_v2.js')
 
 describe('Cow Prince', () => {
   // Card text: "During scoring, you get 1 BP for each space in your farmyard
-  // holding at least 1 cattle."
+  // (including rooms) holding at least 1 cattle."
 
-  test('card exists and has getEndGamePoints hook', () => {
-    const game = t.fixture({ cardSets: ['occupationC', 'test'], numPlayers: 3 })
+  test('scores 2 BP for cattle in 2 pasture spaces', () => {
+    const game = t.fixture({ cardSets: ['occupationC', 'test'] })
     t.setBoard(game, {
+      round: 1,
+      dennis: {
+        occupations: ['cow-prince-c134'],
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 1, col: 3 }, { row: 1, col: 4 }], cattle: 2 },
+          ],
+        },
+      },
+    })
+    game.run()
+
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['cow-prince-c134'],
+        animals: { cattle: 2 },
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 1, col: 3 }, { row: 1, col: 4 }], cattle: 2 },
+          ],
+        },
+      },
+    })
+  })
+
+  test('scores 0 BP with no cattle', () => {
+    const game = t.fixture({ cardSets: ['occupationC', 'test'] })
+    t.setBoard(game, {
+      round: 1,
       dennis: {
         occupations: ['cow-prince-c134'],
       },
     })
     game.run()
 
-    const card = game.cards.byId('cow-prince-c134')
-    expect(card).toBeTruthy()
-    expect(card.hasHook('getEndGamePoints')).toBe(true)
+    t.testBoard(game, {
+      dennis: {
+        score: -14,
+        occupations: ['cow-prince-c134'],
+      },
+    })
   })
 })

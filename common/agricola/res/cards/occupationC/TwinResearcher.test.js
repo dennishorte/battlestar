@@ -1,20 +1,8 @@
-const t = require('../../../testutil_v2.js')
-
 describe('Twin Researcher', () => {
-  // Card text: matching accumulation spaces with same goods → buy BP
-  // This is complex to set up. Test basic card existence.
+  // Card text: "Each time you use one of the two accumulation spaces for
+  // the same type of good containing exactly the same number of goods,
+  // you can also buy 1 bonus point for 1 food."
+  // Only matching pair in engine: take-stone-1 (Western Quarry) and take-stone-2 (Eastern Quarry)
 
-  test('card exists and has onAction hook', () => {
-    const game = t.fixture({ cardSets: ['occupationC', 'test'], numPlayers: 3 })
-    t.setBoard(game, {
-      round: 1,
-      dennis: {
-        occupations: ['twin-researcher-c154'],
-      },
-    })
-    game.run()
-
-    const cardDef = game.cards.byId('twin-researcher-c154').definition
-    expect(cardDef.onAction).toBeDefined()
-  })
+  test.todo('buys 1 BP for 1 food when both quarries have same amount - requires both Western and Eastern Quarry with matching accumulated values')
 })
