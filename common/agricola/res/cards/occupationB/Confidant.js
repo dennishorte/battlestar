@@ -26,11 +26,46 @@ module.exports = {
       const round = currentRound + i
       if (round <= 14) {
         game.scheduleResource(player, 'food', round, 1)
+        game.scheduleEvent(player, 'confidantSowFences', round)
       }
     }
     game.log.add({
       template: '{player} places {num} food on the next {num} round spaces (Confidant)',
       args: { player, num },
     })
+  },
+  onRoundStart(game, player) {
+    const scheduled = game.state.scheduledConfidantSowFences?.[player.name] || []
+    const round = game.state.round
+    if (!scheduled.includes(round)) {
+      return
+    }
+    game.state.scheduledConfidantSowFences[player.name] =
+      game.state.scheduledConfidantSowFences[player.name].filter(r => r !== round)
+
+    const canSow = player.canSowAnything()
+    const canFence = player.wood >= 1 || player.getFreeFenceCount() > 0
+    if (!canSow && !canFence) {
+      return
+    }
+    const choices = []
+    if (canSow) {
+      choices.push('Sow')
+    }
+    if (canFence) {
+      choices.push('Build Fences')
+    }
+    choices.push('Skip')
+    const selection = game.actions.choose(player, choices, {
+      title: 'Confidant: Choose an action',
+      min: 1,
+      max: 1,
+    })
+    if (selection[0] === 'Sow') {
+      game.actions.sow(player)
+    }
+    else if (selection[0] === 'Build Fences') {
+      game.actions.buildFences(player)
+    }
   },
 }
