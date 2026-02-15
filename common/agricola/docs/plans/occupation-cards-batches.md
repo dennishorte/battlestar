@@ -22,8 +22,8 @@ This frequent context refresh keeps important details in working memory.
 ## Batch Status
 
 - **Total Batches**: TBD (will be ~25-30 batches for Set A, ~80-140 total)
-- **Completed Batches**: 19
-- **Current Batch**: Batch-020
+- **Completed Batches**: 20
+- **Current Batch**: Batch-021
 
 ## Batch Queue
 
@@ -391,7 +391,7 @@ Cards:
 
 ---
 
-### Batch-020: onPlay + End Game Scoring (Set A)
+### Batch-020: onPlay + End Game Scoring (Set A) ✅ COMPLETED
 **Pattern**: Cards that grant resources on play and score at end of game  
 **Template**: `FullFarmer.js`, `AnimalReeve.js`, `DrudgeryReeve.js`  
 **Test Template**: Test `onPlay` resource grants and `getEndGamePoints`/`getEndGamePointsAllPlayers`  

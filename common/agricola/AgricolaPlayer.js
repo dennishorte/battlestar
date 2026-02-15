@@ -1852,6 +1852,22 @@ class AgricolaPlayer extends BasePlayer {
     return capacity
   }
 
+  /**
+   * Number of pastures that are at capacity (holding the maximum number of animals).
+   * Used by Full Farmer occupation for getEndGamePoints.
+   */
+  getFullPastureCount() {
+    let count = 0
+    for (const pasture of this.farmyard.pastures) {
+      const capacity = this.getPastureCapacity(pasture)
+      const animals = pasture.animalCount || 0
+      if (animals >= capacity && capacity > 0) {
+        count++
+      }
+    }
+    return count
+  }
+
   getModifiedUnfencedStableCapacity() {
     let capacity = 1
     for (const card of this.getActiveCards()) {
@@ -3119,6 +3135,17 @@ class AgricolaPlayer extends BasePlayer {
       const card = this.cards.byId(id)
       if (card && card.hasHook('getEndGamePoints')) {
         points += card.callHook('getEndGamePoints', this, this.game)
+      }
+    }
+
+    // Bonuses from cards with getEndGamePointsAllPlayers (any player's card grants to qualifying players)
+    for (const player of this.game.players.all()) {
+      for (const id of [...player.playedOccupations, ...player.playedMinorImprovements]) {
+        const card = this.cards.byId(id)
+        if (card && card.hasHook('getEndGamePointsAllPlayers')) {
+          const bonuses = card.callHook('getEndGamePointsAllPlayers', this.game)
+          points += bonuses[this.name] || 0
+        }
       }
     }
 

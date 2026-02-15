@@ -2,10 +2,10 @@
   "lastUpdated": "2025-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 19,
-  "cardsCompleted": 55,
-  "cardsTested": 86,
-  "currentBatch": "Batch-020",
+  "batchesCompleted": 20,
+  "cardsCompleted": 58,
+  "cardsTested": 89,
+  "currentBatch": "Batch-021",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -140,6 +140,13 @@
       "testsPassing": 2,
       "completedDate": "2025-02-14"
     },
+    "Batch-020": {
+      "status": "completed",
+      "cards": ["full-farmer-a134", "animal-reeve-a135", "drudgery-reeve-a136"],
+      "testsCreated": 3,
+      "testsPassing": 12,
+      "completedDate": "2025-02-14"
+    },
     "Hollow-Warden": {
       "status": "completed",
       "cards": ["hollow-warden-a139"],
@@ -152,8 +159,8 @@
   "bySet": {
 "occupationA": {
     "total": 84,
-    "implemented": 51,
-    "tested": 78,
+    "implemented": 54,
+    "tested": 81,
     "status": "in_progress"
   },
     "occupationB": {
