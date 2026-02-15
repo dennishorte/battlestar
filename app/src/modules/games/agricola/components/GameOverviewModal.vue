@@ -31,7 +31,8 @@
               <span
                 v-for="card in stage.cards"
                 :key="card.id"
-                class="round-card-name"
+                class="round-card-name clickable"
+                @click="showActionSpace(card.id)"
               >{{ card.name }}</span>
             </td>
             <td class="harvest-cell">
@@ -93,7 +94,7 @@ export default {
     ModalBase,
   },
 
-  inject: ['game'],
+  inject: ['game', 'ui'],
 
   computed: {
     currentRound() {
@@ -125,6 +126,10 @@ export default {
   },
 
   methods: {
+    showActionSpace(actionId) {
+      this.ui.fn.showActionSpace(actionId)
+    },
+
     stageRowClass(stage) {
       if (stage.number < this.currentStage) {
         return 'stage-past'
@@ -211,6 +216,16 @@ export default {
   padding: .1em .4em;
   font-size: .85em;
   color: #555;
+}
+
+.round-card-name.clickable {
+  cursor: pointer;
+}
+
+.round-card-name.clickable:hover {
+  background-color: #ebe3cb;
+  border-color: #b8943a;
+  color: #333;
 }
 
 .harvest-cell {
