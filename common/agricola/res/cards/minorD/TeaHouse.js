@@ -9,5 +9,5 @@ module.exports = {
   prereqs: { minRound: 6 },
   category: "Actions Booster",
   text: "Once per round, you can skip placing your second person and get 1 food instead. (You can place the person later that round.)",
-  allowsSkipSecondPerson: true,
+  modifiesWorkerPlacement: 'teaHouse',
 }

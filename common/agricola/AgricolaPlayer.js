@@ -121,6 +121,7 @@ class AgricolaPlayer extends BasePlayer {
       grid: [],
       pastures: [], // Array of pasture objects
       fences: [], // Array of fence segments
+      palisades: [], // Array of wood palisade fence segments (edge fences from WoodPalisades card)
     }
 
     for (let row = 0; row < farmyardRows; row++) {
@@ -1241,6 +1242,12 @@ class AgricolaPlayer extends BasePlayer {
         return true
       }
     }
+    // Also check palisades (WoodPalisades card)
+    for (const fence of this.farmyard.palisades) {
+      if (fence.row1 === row && fence.col1 === col && fence.edge === edge) {
+        return true
+      }
+    }
     return false
   }
 
@@ -1478,9 +1485,10 @@ class AgricolaPlayer extends BasePlayer {
     const fences = this.calculateFencesForPasture(spaces)
 
     // Check that new fences connect to existing fence network
-    if (this.farmyard.fences.length > 0 && fences.length > 0) {
+    const allExistingFences = [...this.farmyard.fences, ...this.farmyard.palisades]
+    if (allExistingFences.length > 0 && fences.length > 0) {
       const existingCorners = new Set()
-      for (const f of this.farmyard.fences) {
+      for (const f of allExistingFences) {
         for (const c of this._getFenceCorners(f)) {
           existingCorners.add(c)
         }
@@ -1493,8 +1501,21 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
 
-    // Check if player has enough wood (accounting for fence cost modifiers)
-    let woodCost = this.applyFenceCostModifiers(fences.length, this._countEdgeFences(fences))
+    // WoodPalisades: edge fences become palisades (2 wood each, don't count against 15-fence limit)
+    const usesPalisades = this.hasWoodPalisadesCard()
+    const { edgeFences, internalFences } = this._splitEdgeAndInternalFences(fences)
+
+    // Check if player has enough wood
+    let woodCost
+    if (usesPalisades) {
+      // Internal fences: normal cost (1 wood each, with modifiers)
+      woodCost = this.applyFenceCostModifiers(internalFences.length, 0)
+      // Edge fences: 2 wood each as palisades
+      woodCost += edgeFences.length * 2
+    }
+    else {
+      woodCost = this.applyFenceCostModifiers(fences.length, this._countEdgeFences(fences))
+    }
     // Overhaul free fence discount (validation only — don't decrement)
     if (this._overhaulFreeFences > 0) {
       woodCost = Math.max(0, woodCost - this._overhaulFreeFences)
@@ -1522,12 +1543,13 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
 
-    // Check if player has enough fences remaining
+    // Check if player has enough fences remaining (palisades don't count against limit)
+    const fencesForLimit = usesPalisades ? internalFences.length : fences.length
     const remainingFences = res.constants.maxFences - this.getFenceCount()
-    if (fences.length > remainingFences) {
+    if (fencesForLimit > remainingFences) {
       return {
         valid: false,
-        error: `Need ${fences.length} fences, only ${remainingFences} remaining`,
+        error: `Need ${fencesForLimit} fences, only ${remainingFences} remaining`,
         fencesNeeded: fences.length,
       }
     }
@@ -1573,8 +1595,19 @@ class AgricolaPlayer extends BasePlayer {
       return { success: false, error: validation.error }
     }
 
+    // WoodPalisades: edge fences become palisades
+    const usesPalisades = this.hasWoodPalisadesCard()
+    const { edgeFences, internalFences } = this._splitEdgeAndInternalFences(validation.fences)
+
     // Pay wood cost (accounting for fence cost modifiers)
-    let woodCost = this.applyFenceCostModifiers(validation.fencesNeeded, this._countEdgeFences(validation.fences))
+    let woodCost
+    if (usesPalisades) {
+      woodCost = this.applyFenceCostModifiers(internalFences.length, 0)
+      woodCost += edgeFences.length * 2
+    }
+    else {
+      woodCost = this.applyFenceCostModifiers(validation.fencesNeeded, this._countEdgeFences(validation.fences))
+    }
     // Overhaul free fence discount — decrement the counter
     if (this._overhaulFreeFences > 0) {
       const discount = Math.min(woodCost, this._overhaulFreeFences)
@@ -1604,9 +1637,19 @@ class AgricolaPlayer extends BasePlayer {
     }
     this.payCost({ wood: woodCost })
 
-    // Add fences
-    for (const fence of validation.fences) {
-      this.farmyard.fences.push(fence)
+    // Add fences — edge fences to palisades if WoodPalisades active
+    if (usesPalisades) {
+      for (const fence of internalFences) {
+        this.farmyard.fences.push(fence)
+      }
+      for (const fence of edgeFences) {
+        this.farmyard.palisades.push(fence)
+      }
+    }
+    else {
+      for (const fence of validation.fences) {
+        this.farmyard.fences.push(fence)
+      }
     }
 
     // Recalculate pastures
@@ -2534,6 +2577,10 @@ class AgricolaPlayer extends BasePlayer {
 
   getAvailableWorkers() {
     return this.availableWorkers
+  }
+
+  hasPersonInSupply() {
+    return this.familyMembers < res.constants.maxFamilyMembers
   }
 
   useWorker() {
@@ -3696,6 +3743,16 @@ class AgricolaPlayer extends BasePlayer {
 
   _countEdgeFences(fences) {
     return fences.filter(f => f.edge).length
+  }
+
+  hasWoodPalisadesCard() {
+    return this.getActiveCards().some(c => c.definition.allowWoodPalisades)
+  }
+
+  _splitEdgeAndInternalFences(fences) {
+    const edgeFences = fences.filter(f => f.edge)
+    const internalFences = fences.filter(f => !f.edge)
+    return { edgeFences, internalFences }
   }
 
   _countFieldAdjacentFences(fences) {

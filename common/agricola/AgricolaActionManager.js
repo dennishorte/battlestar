@@ -5137,6 +5137,82 @@ class AgricolaActionManager extends BaseActionManager {
     }
   }
 
+  basketChairEffect(player, _card) {
+    const firstAction = player._firstActionThisRound
+    if (!firstAction) {
+      return
+    }
+
+    const choices = ['Move first person to Basket Chair', 'No']
+    const selection = this.choose(player, choices, {
+      title: 'Basket Chair: Move your first person?',
+      min: 1,
+      max: 1,
+    })
+
+    const sel = Array.isArray(selection) ? selection[0] : selection
+    if (sel === 'Move first person to Basket Chair') {
+      // Free the first action space
+      this.game.state.actionSpaces[firstAction].occupiedBy = null
+      this.game.state.basketChairBonusTurn = player.name
+      this.game.log.add({
+        template: '{player} moves first person to Basket Chair — frees {action}',
+        args: { player, action: firstAction },
+      })
+    }
+  }
+
+  placeResourcesOnCard(player, card, resource) {
+    const available = player[resource] || 0
+    if (available === 0) {
+      return
+    }
+
+    const cardName = card.definition?.name || card.name
+    const cardId = card.definition?.id || card.id
+
+    const choices = []
+    for (let i = 0; i <= available; i++) {
+      choices.push(`Place ${i} ${resource}`)
+    }
+
+    const selection = this.choose(player, choices, {
+      title: `${cardName}: Place ${resource} on card`,
+      min: 1,
+      max: 1,
+    })
+
+    const sel = Array.isArray(selection) ? selection[0] : selection
+    const match = sel.match(/Place (\d+)/)
+    if (match) {
+      const amount = parseInt(match[1])
+      if (amount > 0) {
+        player.removeResource(resource, amount)
+        const state = this.game.cardState(cardId)
+        state[resource] = (state[resource] || 0) + amount
+        this.game.log.add({
+          template: `{player} places ${amount} ${resource} on ${cardName}`,
+          args: { player },
+        })
+      }
+    }
+  }
+
+  scheduleWorkPermitPerson(player, card, targetRound) {
+    if (!this.game.state.workPermitWorkers) {
+      this.game.state.workPermitWorkers = []
+    }
+    this.game.state.workPermitWorkers.push({
+      round: targetRound,
+      playerName: player.name,
+      cardId: card.id,
+    })
+    this.game.log.add({
+      template: '{player} schedules a worker for round {round} (Work Permit)',
+      args: { player, round: targetRound },
+    })
+  }
+
   fieldFencesAction(player, _card) {
     // Set flag so fence cost calculation discounts field-adjacent fences
     player._fieldFencesActive = true

@@ -1216,6 +1216,7 @@ Agricola.prototype.workPhase = function() {
   for (const player of this.players.all()) {
     player.usedFishingThisRound = false
     player.resourcesGainedThisRound = {}
+    player._firstActionThisRound = null
   }
 
   let currentPlayerIndex = this.players.all().findIndex(p => p.name === this.state.startingPlayer)
@@ -1242,6 +1243,36 @@ Agricola.prototype.workPhase = function() {
         this.log.indent()
         this.playerTurn(player)
         this.log.outdent()
+
+        // BasketChair: if player moved first person, they get a bonus turn
+        if (this.state.basketChairBonusTurn === player.name) {
+          this.state.basketChairBonusTurn = null
+          this.log.add({
+            template: "{player}'s bonus turn (Basket Chair)",
+            args: { player },
+          })
+          this.log.indent()
+          this.playerTurn(player, { isBonusTurn: true })
+          this.log.outdent()
+        }
+
+        // BrotherlyLove: 4 people, after 2nd person → 3rd and 4th back-to-back
+        if (this.canUseBrotherlyLove(player)) {
+          this.log.add({
+            template: '{player} places 3rd and 4th person back-to-back (Brotherly Love)',
+            args: { player },
+          })
+          // 3rd person
+          this.log.indent()
+          this.playerTurn(player, { isBonusTurn: true })
+          this.log.outdent()
+          const lastActionId = player._lastActionId
+          // 4th person — can use same space as 3rd
+          this.log.indent()
+          this.playerTurn(player, { isBonusTurn: true, allowSameSpaceAs: lastActionId })
+          this.log.outdent()
+        }
+
         break
       }
       else if (this.canUseAdoptiveParents(player)) {
@@ -1265,6 +1296,43 @@ Agricola.prototype.workPhase = function() {
           break
         }
         // If they pass, continue to next player
+      }
+      else if (this.canUseGuestRoom(player)) {
+        const choices = ['Use Guest Room (1 food from card)', 'Pass']
+        const selection = this.actions.choose(player, choices, {
+          title: 'Guest Room: Place a guest worker?',
+          min: 1,
+          max: 1,
+        })
+
+        if (selection[0] === 'Use Guest Room (1 food from card)') {
+          const card = this._getGuestRoomCard(player)
+          const state = this.cardState(card.id)
+          state.food -= 1
+          state.lastUsedRound = this.state.round
+          this.log.add({
+            template: '{player} uses Guest Room (discards 1 food from card)',
+            args: { player },
+          })
+          this.log.indent()
+          this.playerTurn(player, { skipUseWorker: true })
+          this.log.outdent()
+          break
+        }
+      }
+      else if (this.canUseWorkPermit(player)) {
+        const entry = this.state.workPermitWorkers.find(
+          e => e.round === this.state.round && e.playerName === player.name
+        )
+        this.state.workPermitWorkers = this.state.workPermitWorkers.filter(e => e !== entry)
+        this.log.add({
+          template: '{player} uses scheduled worker (Work Permit)',
+          args: { player },
+        })
+        this.log.indent()
+        this.playerTurn(player, { skipUseWorker: true })
+        this.log.outdent()
+        break
       }
 
       currentPlayerIndex = (currentPlayerIndex + 1) % playerList.length
@@ -1397,13 +1465,20 @@ Agricola.prototype.playerTurn = function(player, options) {
     // Track last action for onWorkPhaseEnd hooks (e.g., Steam Machine)
     player._lastActionId = actionId
 
+    // Track first action for BasketChair
+    if (!player._firstActionThisRound) {
+      player._firstActionThisRound = actionId
+    }
+
     // Track fishing for card hooks
     if (actionId === 'fishing') {
       player.usedFishingThisRound = true
     }
 
-    // Use a worker
-    player.useWorker()
+    // Use a worker (skip for GuestRoom/WorkPermit bonus workers)
+    if (!options?.skipUseWorker) {
+      player.useWorker()
+    }
 
     // Call onBeforeAction hooks (e.g., Trellis builds fences before Pig Market)
     this.callPlayerCardHook(player, 'onBeforeAction', actionId)
@@ -1509,6 +1584,23 @@ Agricola.prototype._getSpecialPlacementChoices = function(player) {
       })
     }
 
+    if (mod === 'teaHouse') {
+      // TeaHouse: skip 2nd placement, get 1 food (once per round)
+      const state = this.cardState(card.id)
+      if (state.lastUsedRound === this.state.round) {
+        continue
+      }
+      if (player.getPersonPlacedThisRound() !== 1) {
+        continue
+      }
+      choices.push({
+        id: 'tea-house-skip',
+        label: 'Skip placement (Tea House)',
+        special: 'teaHouse',
+        cardId: card.id,
+      })
+    }
+
     if (mod === 'jobContract') {
       // JobContract: combine Day Laborer + Lessons when both unoccupied
       const dlState = this.state.actionSpaces['day-laborer']
@@ -1553,6 +1645,17 @@ Agricola.prototype._executeSpecialPlacement = function(player, choice) {
     return
   }
 
+  if (choice.special === 'teaHouse') {
+    // Skip placement, get 1 food — worker NOT used, placed later naturally
+    this.cardState(choice.cardId).lastUsedRound = this.state.round
+    player.addResource('food', 1)
+    this.log.add({
+      template: '{player} skips placement and gets 1 food (Tea House)',
+      args: { player },
+    })
+    return
+  }
+
   if (choice.special === 'jobContract') {
     // Combined Day Laborer + Lessons — one worker, both spaces occupied
     this.state.actionSpaces['day-laborer'].occupiedBy = player.name
@@ -1581,7 +1684,11 @@ Agricola.prototype.getAvailableActions = function(player, options) {
 
     // Action must not be occupied (unless a card overrides this)
     if (state.occupiedBy) {
-      if (!this.playerCanUseOccupiedSpace(player, actionId, state)) {
+      // BrotherlyLove: 4th person can use same space as 3rd
+      if (options?.allowSameSpaceAs === actionId && state.occupiedBy === player.name) {
+        // Allow through
+      }
+      else if (!this.playerCanUseOccupiedSpace(player, actionId, state)) {
         continue
       }
     }
@@ -2743,6 +2850,55 @@ Agricola.prototype.canUseAdoptiveParents = function(player) {
   // Must have a card with allowImmediateOffspringAction
   const occupations = this.zones.byPlayer(player, 'occupations').cardlist()
   return occupations.some(card => card.definition.allowImmediateOffspringAction === true)
+}
+
+Agricola.prototype.canUseGuestRoom = function(player) {
+  if (player.getAvailableWorkers() > 0) {
+    return false
+  }
+  const card = this._getGuestRoomCard(player)
+  if (!card) {
+    return false
+  }
+  const state = this.cardState(card.id)
+  if (!state.food || state.food <= 0) {
+    return false
+  }
+  if (state.lastUsedRound === this.state.round) {
+    return false
+  }
+  return true
+}
+
+Agricola.prototype._getGuestRoomCard = function(player) {
+  const cards = this.getPlayerActiveCards(player)
+  return cards.find(c => c.definition.enablesGuestWorker)
+}
+
+Agricola.prototype.canUseWorkPermit = function(player) {
+  if (player.getAvailableWorkers() > 0) {
+    return false
+  }
+  if (!this.state.workPermitWorkers || this.state.workPermitWorkers.length === 0) {
+    return false
+  }
+  return this.state.workPermitWorkers.some(
+    e => e.round === this.state.round && e.playerName === player.name
+  )
+}
+
+Agricola.prototype.canUseBrotherlyLove = function(player) {
+  if (player.getFamilySize() !== 4) {
+    return false
+  }
+  if (player.getPersonPlacedThisRound() !== 2) {
+    return false
+  }
+  if (player.getAvailableWorkers() < 2) {
+    return false
+  }
+  const cards = this.getPlayerActiveCards(player)
+  return cards.some(c => c.definition.modifiesWorkerPlacement === 'brotherlyLove')
 }
 
 
