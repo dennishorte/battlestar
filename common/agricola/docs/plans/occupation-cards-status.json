@@ -2,10 +2,10 @@
   "lastUpdated": "2025-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 26,
-  "cardsCompleted": 71,
-  "cardsTested": 102,
-  "currentBatch": "Batch-027",
+  "batchesCompleted": 27,
+  "cardsCompleted": 75,
+  "cardsTested": 106,
+  "currentBatch": "Batch-028",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -189,6 +189,13 @@
       "testsPassing": 7,
       "completedDate": "2025-02-14"
     },
+    "Batch-027": {
+      "status": "completed",
+      "cards": ["house-artist-a149", "stagehand-a150", "culinary-artist-a158", "lutenist-a160"],
+      "testsCreated": 4,
+      "testsPassing": 8,
+      "completedDate": "2025-02-14"
+    },
     "Hollow-Warden": {
       "status": "completed",
       "cards": ["hollow-warden-a139"],
@@ -202,7 +209,7 @@
 "occupationA": {
     "total": 84,
     "implemented": 61,
-    "tested": 94,
+    "tested": 98,
     "status": "in_progress"
   },
     "occupationB": {

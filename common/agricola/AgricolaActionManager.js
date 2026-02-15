@@ -627,6 +627,7 @@ class AgricolaActionManager extends BaseActionManager {
 
     const roomType = player.roomType
     const riparianDiscount = opts.riparianBuilderCard ? (roomType === 'clay' ? { clay: 1 } : roomType === 'stone' ? { stone: 2 } : null) : null
+    const resourceDiscount = opts.discount || null
 
     // Build choices as coordinate strings for dropdown fallback
     const spaceChoices = validSpaces.map(s => `${s.row},${s.col}`)
@@ -662,23 +663,32 @@ class AgricolaActionManager extends BaseActionManager {
       [row, col] = result[0].split(',').map(Number)
     }
 
-    // Choose cost — present options if Frame Builder (or similar) offers alternatives; apply Riparian Builder discount when building from that offer
+    // Choose cost — present options if Frame Builder (or similar) offers alternatives; apply Riparian Builder or generic resource discount when building from that offer
     let affordableOptions = player.getAffordableRoomCostOptions()
-    if (riparianDiscount) {
+    if (riparianDiscount || resourceDiscount) {
       const baseOptions = player.getRoomCostOptions()
       affordableOptions = baseOptions.map(opt => {
         const cost = { ...opt.cost }
-        if (riparianDiscount.clay) {
-          cost.clay = Math.max(0, (cost.clay || 0) - riparianDiscount.clay)
+        if (riparianDiscount) {
+          if (riparianDiscount.clay) {
+            cost.clay = Math.max(0, (cost.clay || 0) - riparianDiscount.clay)
+          }
+          if (riparianDiscount.stone) {
+            cost.stone = Math.max(0, (cost.stone || 0) - riparianDiscount.stone)
+          }
         }
-        if (riparianDiscount.stone) {
-          cost.stone = Math.max(0, (cost.stone || 0) - riparianDiscount.stone)
+        if (resourceDiscount) {
+          for (const [resource, amount] of Object.entries(resourceDiscount)) {
+            if (amount) {
+              cost[resource] = Math.max(0, (cost[resource] || 0) - amount)
+            }
+          }
         }
         return { cost, label: opt.label }
       }).filter(opt => player.canAffordCost(opt.cost))
       if (affordableOptions.length === 0) {
         this.log.add({
-          template: '{player} cannot afford a room even with Riparian Builder discount',
+          template: '{player} cannot afford a room even with discount',
           args: { player },
         })
         return false
