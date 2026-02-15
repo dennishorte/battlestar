@@ -848,18 +848,18 @@ Cards:
 
 ---
 
-### Batch-B14: onRoundStart, onBeforeRoundStart (Set B)
+### Batch-B14: onRoundStart, onBeforeRoundStart (Set B) ✅ COMPLETED
 **Pattern**: start of round or before round  
 **Complexity**: Tier 2
 
 Cards:
-1. `childless-b114` - Childless (onRoundStart: 3+ rooms and 2 people → 1 food, 1 grain or vegetable)
-2. `scholar-b097` - Scholar (onRoundStart)
-3. `nutrition-expert-b135` - Nutrition Expert (onRoundStart: exchange set of 1 animal, 1 grain, 1 vegetable for food)
-4. `small-scale-farmer-b118` - Small Scale Farmer (onRoundStart)
-5. `moral-crusader-b106` - Moral Crusader (onBeforeRoundStart: if goods on round spaces promised to you → 1 food)
+1. `childless-b114` - Childless (onRoundStart: 3+ rooms and 2 people → 1 food + choice) ✅
+2. `scholar-b097` - Scholar (onRoundStart: stone house → play occupation for 1 food or minor) ✅
+3. `nutrition-expert-b135` - Nutrition Expert (onRoundStart: exchange set for 5 food + 2 BP) ✅
+4. `small-scale-farmer-b118` - Small Scale Farmer (onRoundStart: 2 rooms → 1 wood) ✅
+5. `moral-crusader-b106` - Moral Crusader (onRoundStart: scheduled goods on future rounds → 1 food) ✅
 
-**LLM Instructions:** Test round-start and before-round-start hooks. Create tests; run; update status.
+**Status**: All cards tested. Fixed Scholar: used costOverride:1 for playOccupation (was double-charging). Fixed NutritionExpert: inlined offerNutritionExpertExchange, fixed getTotalAnimals() to use per-type checks. Fixed MoralCrusader: changed onBeforeRoundStart→onRoundStart (hook didn't exist), inlined hasScheduledGoodsForPlayer.
 
 ---
 

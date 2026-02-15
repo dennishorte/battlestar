@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 43,
-  "cardsCompleted": 136,
-  "cardsTested": 268,
-  "currentBatch": "Batch-B14",
+  "batchesCompleted": 44,
+  "cardsCompleted": 141,
+  "cardsTested": 281,
+  "currentBatch": "Batch-B15",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -326,6 +326,14 @@
       "testsPassing": 11,
       "completedDate": "2026-02-14",
       "note": "Fixed ClayWarden: hollowIds array (was take-clay-2), players.count()→players.all().length. Wholesaler played from hand for onPlay cardState."
+    },
+    "Batch-B14": {
+      "status": "completed",
+      "cards": ["childless-b114", "scholar-b097", "nutrition-expert-b135", "small-scale-farmer-b118", "moral-crusader-b106"],
+      "testsCreated": 5,
+      "testsPassing": 13,
+      "completedDate": "2026-02-14",
+      "note": "Fixed Scholar: costOverride:1 for playOccupation. Fixed NutritionExpert: inlined exchange, per-type getTotalAnimals. Fixed MoralCrusader: onBeforeRoundStart→onRoundStart, inlined hasScheduledGoodsForPlayer."
     }
   },
   "bySet": {
