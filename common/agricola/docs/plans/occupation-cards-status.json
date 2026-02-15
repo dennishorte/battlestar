@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 34,
-  "cardsCompleted": 103,
-  "cardsTested": 158,
-  "currentBatch": "Batch-B05",
+  "batchesCompleted": 35,
+  "cardsCompleted": 105,
+  "cardsTested": 165,
+  "currentBatch": "Batch-B06",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -254,6 +254,14 @@
       "testsPassing": 13,
       "completedDate": "2026-02-14",
       "note": "Fixed LittlePeasant to use canUseOccupiedActionSpace; rewrote OpenAirFarmer pasture logic; wired canUseTravelingPlayersFood"
+    },
+    "Batch-B05": {
+      "status": "completed",
+      "cards": ["sheep-whisperer-b164", "stable-sergeant-b167"],
+      "testsCreated": 2,
+      "testsPassing": 7,
+      "completedDate": "2026-02-14",
+      "note": "Added scheduledSheep delivery to collectScheduledResources; inlined StableSergeant offer logic"
     }
   },
   "bySet": {

@@ -769,6 +769,17 @@ Agricola.prototype.collectScheduledResources = function(player) {
     delete this.state.scheduledStone[player.name][round]
   }
 
+  // Scheduled sheep (Sheep Whisperer)
+  if (this.state.scheduledSheep?.[player.name]?.[round]) {
+    const amount = this.state.scheduledSheep[player.name][round]
+    player.addAnimals('sheep', amount)
+    this.log.add({
+      template: '{player} receives {amount} scheduled sheep',
+      args: { player, amount },
+    })
+    delete this.state.scheduledSheep[player.name][round]
+  }
+
   // Scheduled boar (Acorns Basket)
   if (this.state.scheduledBoar?.[player.name]?.[round]) {
     const amount = this.state.scheduledBoar[player.name][round]

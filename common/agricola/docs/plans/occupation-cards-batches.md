@@ -723,15 +723,15 @@ Cards:
 
 ---
 
-### Batch-B05: onPlay animal (Set B)
+### Batch-B05: onPlay animal (Set B) ✅ COMPLETED
 **Pattern**: onPlay – animal grants  
 **Complexity**: Tier 1
 
 Cards:
-1. `sheep-whisperer-b164` - Sheep Whisperer (onPlay)
-2. `stable-sergeant-b167` - Stable Sergeant (onPlay)
+1. `sheep-whisperer-b164` - Sheep Whisperer (onPlay: schedules sheep at round+2,+5,+8,+10) ✅
+2. `stable-sergeant-b167` - Stable Sergeant (onPlay: pay 2 food for 1 sheep, 1 boar, 1 cattle if capacity) ✅
 
-**LLM Instructions:** Verify onPlay animal grants. Create tests; run; update status.
+**Status**: All cards tested. Added scheduledSheep delivery to collectScheduledResources. Inlined StableSergeant offer logic (was using nonexistent offerStableSergeantAnimals).
 
 ---
 
