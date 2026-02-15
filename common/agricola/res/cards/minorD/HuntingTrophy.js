@@ -9,15 +9,6 @@ module.exports = {
   vps: 1,
   category: "Building Resource Provider",
   text: "Improvements built on \"House Redevelopment\" cost you 1 building resource of your choice less. Fences built on \"Farm Redevelopment\" cost you a total of 3 wood less.",
-  modifyHouseRedevelopmentCost(cost) {
-    // Player chooses which resource to reduce by 1
-    return { ...cost, buildingResourceDiscount: 1 }
-  },
-  modifyFarmRedevelopmentFenceCost(cost) {
-    const newCost = { ...cost }
-    if (newCost.wood) {
-      newCost.wood = Math.max(0, newCost.wood - 3)
-    }
-    return newCost
-  },
+  farmRedevelopmentFreeFences: 3,
+  houseRedevelopmentDiscount: 1,
 }

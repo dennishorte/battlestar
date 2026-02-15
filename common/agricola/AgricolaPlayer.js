@@ -1486,6 +1486,10 @@ class AgricolaPlayer extends BasePlayer {
     if (this._fieldFencesActive) {
       woodCost = Math.max(0, woodCost - this._countFieldAdjacentFences(fences))
     }
+    // Farm Redevelopment free fence discount (validation only — don't decrement)
+    if ((this._farmRedevelopmentFreeFences || 0) > 0) {
+      woodCost = Math.max(0, woodCost - this._farmRedevelopmentFreeFences)
+    }
     // Card-based free fences (e.g. Ash Trees) — validation only, don't decrement
     for (const card of this.getActiveCards()) {
       if (card.hasHook('getFreeFences')) {
@@ -1563,6 +1567,12 @@ class AgricolaPlayer extends BasePlayer {
     // Field Fences discount: fences adjacent to fields are free
     if (this._fieldFencesActive) {
       woodCost = Math.max(0, woodCost - this._countFieldAdjacentFences(validation.fences))
+    }
+    // Farm Redevelopment free fence discount — decrement the counter
+    if ((this._farmRedevelopmentFreeFences || 0) > 0) {
+      const discount = Math.min(woodCost, this._farmRedevelopmentFreeFences)
+      woodCost -= discount
+      this._farmRedevelopmentFreeFences -= discount
     }
     // Card-based free fences (e.g. Ash Trees) — decrement stored fences
     for (const card of this.getActiveCards()) {
@@ -2802,6 +2812,10 @@ class AgricolaPlayer extends BasePlayer {
 
     // Normal purchase
     const cost = this.getMajorImprovementCost(improvementId)
+    // Apply House Redevelopment discount for affordability check
+    if ((this._houseRedevelopmentDiscount || 0) > 0) {
+      return this._canAffordWithBuildingResourceDiscount(cost, this._houseRedevelopmentDiscount)
+    }
     return this.canAffordCost(cost)
   }
 
@@ -3010,6 +3024,22 @@ class AgricolaPlayer extends BasePlayer {
     return true
   }
 
+  _canAffordWithBuildingResourceDiscount(cost, discount) {
+    const buildingResources = ['wood', 'clay', 'stone', 'reed'].filter(r => (cost[r] || 0) > 0)
+    if (buildingResources.length === 0 || discount <= 0) {
+      return this.canAffordSingleCost(cost)
+    }
+    // Try each possible resource reduction and check if any is affordable
+    for (const resource of buildingResources) {
+      const modified = { ...cost }
+      modified[resource] = Math.max(0, modified[resource] - discount)
+      if (this.canAffordSingleCost(modified)) {
+        return true
+      }
+    }
+    return false
+  }
+
   canAffordCard(cardId) {
     const card = this.cards.byId(cardId)
     if (!card) {
@@ -3021,6 +3051,10 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     const options = this.getCardCostOptions(card)
+    // Apply House Redevelopment discount for affordability check
+    if ((this._houseRedevelopmentDiscount || 0) > 0) {
+      return options.some(opt => this._canAffordWithBuildingResourceDiscount(opt.cost, this._houseRedevelopmentDiscount))
+    }
     return options.some(opt => this.canAffordSingleCost(opt.cost))
   }
 
@@ -3030,6 +3064,9 @@ class AgricolaPlayer extends BasePlayer {
       return [{ cost: {}, label: 'free' }]
     }
     const options = this.getCardCostOptions(card)
+    if ((this._houseRedevelopmentDiscount || 0) > 0) {
+      return options.filter(opt => this._canAffordWithBuildingResourceDiscount(opt.cost, this._houseRedevelopmentDiscount))
+    }
     return options.filter(opt => this.canAffordSingleCost(opt.cost))
   }
 

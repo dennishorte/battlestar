@@ -42,6 +42,29 @@ class AgricolaActionManager extends BaseActionManager {
     return parts.join(', ') || 'free'
   }
 
+  _applyBuildingResourceDiscount(player, cost, discount) {
+    const buildingResources = ['wood', 'clay', 'stone', 'reed'].filter(r => (cost[r] || 0) > 0)
+    if (buildingResources.length === 0 || discount <= 0) {
+      return cost
+    }
+
+    const modified = { ...cost }
+    if (buildingResources.length === 1) {
+      modified[buildingResources[0]] = Math.max(0, modified[buildingResources[0]] - discount)
+    }
+    else {
+      const choices = buildingResources.map(r => `Reduce ${r} by 1`)
+      const selection = this.choose(player, choices, {
+        title: 'Choose building resource discount',
+        min: 1,
+        max: 1,
+      })
+      const chosenResource = buildingResources[choices.indexOf(selection[0])]
+      modified[chosenResource] = Math.max(0, modified[chosenResource] - discount)
+    }
+    return modified
+  }
+
   _playMinorWithCostChoice(player, cardId) {
     const card = this.game.cards.byId(cardId)
     const affordableOptions = player.getAffordableCardCostOptions(cardId)
@@ -59,6 +82,11 @@ class AgricolaActionManager extends BaseActionManager {
     }
     else {
       chosenCost = affordableOptions[0].cost
+    }
+
+    // Apply House Redevelopment discount (Hunting Trophy)
+    if ((player._houseRedevelopmentDiscount || 0) > 0) {
+      chosenCost = this._applyBuildingResourceDiscount(player, chosenCost, player._houseRedevelopmentDiscount)
     }
 
     player.playCard(cardId)
@@ -442,6 +470,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     let builtAnything = false
+    player._farmExpansionWoodPaid = 0
 
     // Loop: keep offering build choices until the player is done or can't afford more
     while (true) {
@@ -516,6 +545,12 @@ class AgricolaActionManager extends BaseActionManager {
       }
     }
 
+    const totalWoodPaid = player._farmExpansionWoodPaid
+    delete player._farmExpansionWoodPaid
+    if (totalWoodPaid > 0) {
+      this.game.callPlayerCardHook(player, 'onFarmExpansion', totalWoodPaid)
+    }
+
     if (!builtAnything) {
       this.log.addDoNothing(player, 'build')
     }
@@ -526,6 +561,7 @@ class AgricolaActionManager extends BaseActionManager {
   buildMultipleRooms(player, count) {
     const cost = player.getMultiRoomCost(count)
     player.payCost(cost)
+    player._farmExpansionWoodPaid = (player._farmExpansionWoodPaid || 0) + (cost.wood || 0)
     const roomType = player.roomType
 
     for (let i = 0; i < count; i++) {
@@ -639,6 +675,7 @@ class AgricolaActionManager extends BaseActionManager {
 
     const roomType = player.roomType
     player.payCost(chosenCost)
+    player._farmExpansionWoodPaid = (player._farmExpansionWoodPaid || 0) + (chosenCost.wood || 0)
     player.buildRoom(row, col)
 
     this.log.add({
@@ -707,6 +744,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     player.payCost(res.buildingCosts.stable)
+    player._farmExpansionWoodPaid = (player._farmExpansionWoodPaid || 0) + (res.buildingCosts.stable.wood || 0)
     player.buildStable(row, col)
 
     this.log.add({
@@ -867,8 +905,10 @@ class AgricolaActionManager extends BaseActionManager {
   // Farming actions
   // ---------------------------------------------------------------------------
 
-  plowField(player) {
-    const validSpaces = player.getValidPlowSpaces()
+  plowField(player, options = {}) {
+    const validSpaces = options.allowNonAdjacent
+      ? player.getEmptySpaces().filter(s => !player.isRestrictedByFutureBuildingSite(s.row, s.col))
+      : player.getValidPlowSpaces()
     if (validSpaces.length === 0) {
       this.log.add({
         template: '{player} has no valid space to plow',
@@ -914,7 +954,12 @@ class AgricolaActionManager extends BaseActionManager {
       [row, col] = result[0].split(',').map(Number)
     }
 
-    player.plowField(row, col)
+    if (options.allowNonAdjacent) {
+      player.setSpace(row, col, { type: 'field', crop: null, cropCount: 0 })
+    }
+    else {
+      player.plowField(row, col)
+    }
 
     this.log.add({
       template: '{player} plows a field at ({row},{col})',
@@ -1419,8 +1464,9 @@ class AgricolaActionManager extends BaseActionManager {
       // Check if player can build any fences (accounting for free fences from cards)
       const hasFreeOverhaulFences = (player._overhaulFreeFences || 0) > 0
       const hasFieldFenceDiscount = !!player._fieldFencesActive
+      const hasFarmRedevFreeFences = (player._farmRedevelopmentFreeFences || 0) > 0
       const hasCardFreeFences = player.getActiveCards().some(c => c.hasHook('getFreeFences') && c.callHook('getFreeFences', this.game) > 0)
-      if (player.wood < 1 && player.getFreeFenceCount() === 0 && !hasFreeOverhaulFences && !hasFieldFenceDiscount && !hasCardFreeFences) {
+      if (player.wood < 1 && player.getFreeFenceCount() === 0 && !hasFreeOverhaulFences && !hasFieldFenceDiscount && !hasFarmRedevFreeFences && !hasCardFreeFences) {
         if (totalFencesBuilt === 0) {
           this.log.add({
             template: '{player} has no wood for fences',
@@ -1456,6 +1502,7 @@ class AgricolaActionManager extends BaseActionManager {
       // Ask if player wants to build another pasture
       const canAffordMore = player.wood >= 1 || player.getFreeFenceCount() > 0
         || (player._overhaulFreeFences || 0) > 0 || !!player._fieldFencesActive
+        || (player._farmRedevelopmentFreeFences || 0) > 0
       if (canAffordMore && remainingFences - result.fencesBuilt > 0) {
         const continueChoice = this.choose(player, ['Build another pasture', 'Done building fences'], {
           title: 'Continue fencing?',
@@ -1651,7 +1698,10 @@ class AgricolaActionManager extends BaseActionManager {
         template: '{player} buys {card}',
         args: { player, card: imp },
       })
-      const impCost = result.upgraded ? {} : player.getMajorImprovementCost(improvementId)
+      let impCost = result.upgraded ? {} : player.getMajorImprovementCost(improvementId)
+      if (!result.upgraded && (player._houseRedevelopmentDiscount || 0) > 0) {
+        impCost = this._applyBuildingResourceDiscount(player, impCost, player._houseRedevelopmentDiscount)
+      }
       if (!result.upgraded) {
         player.payCost(impCost)
       }
@@ -2032,7 +2082,10 @@ class AgricolaActionManager extends BaseActionManager {
               template: '{player} buys {card}',
               args: { player, card: imp },
             })
-            const impCost = result.upgraded ? {} : player.getMajorImprovementCost(improvementId)
+            let impCost = result.upgraded ? {} : player.getMajorImprovementCost(improvementId)
+            if (!result.upgraded && (player._houseRedevelopmentDiscount || 0) > 0) {
+              impCost = this._applyBuildingResourceDiscount(player, impCost, player._houseRedevelopmentDiscount)
+            }
             if (!result.upgraded) {
               player.payCost(impCost)
             }
@@ -2264,7 +2317,10 @@ class AgricolaActionManager extends BaseActionManager {
             template: '{player} buys {card}',
             args: { player, card: imp },
           })
-          const impCost = result.upgraded ? {} : player.getMajorImprovementCost(improvementId)
+          let impCost = result.upgraded ? {} : player.getMajorImprovementCost(improvementId)
+          if (!result.upgraded && (player._houseRedevelopmentDiscount || 0) > 0) {
+            impCost = this._applyBuildingResourceDiscount(player, impCost, player._houseRedevelopmentDiscount)
+          }
           if (!result.upgraded) {
             player.payCost(impCost)
           }
@@ -2346,7 +2402,20 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     // Step 2: After renovation, offer optional major/minor improvement
+    // Check for House Redevelopment discount (Hunting Trophy)
+    let houseRedevDiscount = 0
+    for (const card of this.game.getPlayerActiveCards(player)) {
+      if (card.definition.houseRedevelopmentDiscount) {
+        houseRedevDiscount += card.definition.houseRedevelopmentDiscount
+      }
+    }
+    if (houseRedevDiscount > 0) {
+      player._houseRedevelopmentDiscount = houseRedevDiscount
+    }
+
     this.buyImprovement(player, true, allowMinor)
+
+    delete player._houseRedevelopmentDiscount
 
     return true
   }
@@ -2356,7 +2425,8 @@ class AgricolaActionManager extends BaseActionManager {
   // ---------------------------------------------------------------------------
 
   renovationAndOrFencing(player) {
-    if (!player.canRenovate() && player.wood < 1 && player.getFreeFenceCount() <= 0) {
+    const hasFarmRedevFreeFences = this.game.getPlayerActiveCards(player).some(c => c.definition.farmRedevelopmentFreeFences > 0)
+    if (!player.canRenovate() && player.wood < 1 && player.getFreeFenceCount() <= 0 && !hasFarmRedevFreeFences) {
       this.log.add({
         template: '{player} cannot renovate or build fences',
         args: { player },
@@ -2369,10 +2439,11 @@ class AgricolaActionManager extends BaseActionManager {
       if (player.canRenovate()) {
         choices.push('Renovate')
       }
-      if (player.wood >= 1 || player.getFreeFenceCount() > 0) {
+      const canFence = player.wood >= 1 || player.getFreeFenceCount() > 0 || hasFarmRedevFreeFences
+      if (canFence) {
         choices.push('Build Fences')
       }
-      if (player.canRenovate() && (player.wood >= 1 || player.getFreeFenceCount() > 0)) {
+      if (player.canRenovate() && canFence) {
         choices.push('Renovate then Fences')
       }
       choices.push('Do Nothing')
@@ -2395,7 +2466,17 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     if (choice === 'Build Fences' || choice === 'Renovate then Fences') {
+      let farmRedevFreeFences = 0
+      for (const card of this.game.getPlayerActiveCards(player)) {
+        if (card.definition.farmRedevelopmentFreeFences) {
+          farmRedevFreeFences += card.definition.farmRedevelopmentFreeFences
+        }
+      }
+      player._farmRedevelopmentFreeFences = farmRedevFreeFences
+
       this.buildFences(player)
+
+      delete player._farmRedevelopmentFreeFences
     }
 
     return true
@@ -2494,7 +2575,7 @@ class AgricolaActionManager extends BaseActionManager {
       this.buildRoomAndOrStable(player)
     }
 
-    if (action.allowsFencing) {
+    if (action.allowsFencing && !action.allowsRenovation) {
       this.buildFences(player)
     }
 
