@@ -907,18 +907,18 @@ Cards:
 
 ---
 
-### Batch-B18: Anytime, field-placement, before-harvest (Set B)
+### Batch-B18: Anytime, field-placement, before-harvest (Set B) ✅ COMPLETED
 **Pattern**: anytime action; onFieldPlaced; onBeforeHarvest; or similar  
 **Complexity**: Tier 2–3
 
 Cards:
-1. `lieutenant-general-b159` - Lieutenant General (for each field another places next to existing field → 1 food)
-2. `weakling-b161` - Weakling (per card text)
-3. `game-provider-b165` - Game Provider (onBeforeHarvest: discard 1/3/4 grain from different fields → receive goods)
-4. `pasture-master-b168` - Pasture Master (each renovation → 1 additional animal of type per pasture)
-5. `salter-b157` - Salter (anytime: pay 1 sheep/boar/cattle → place 1 food on round space)
+1. `lieutenant-general-b159` - Lieutenant General (for each field another places next to existing field → 1 food) ✅
+2. `weakling-b161` - Weakling (per card text) ✅
+3. `game-provider-b165` - Game Provider (onBeforeHarvest: discard 1/3/4 grain from different fields → receive goods) ✅
+4. `pasture-master-b168` - Pasture Master (each renovation → 1 additional animal of type per pasture) ✅
+5. `salter-b157` - Salter (anytime: pay 1 sheep/boar/cattle → place 1 food on round space) ✅
 
-**LLM Instructions:** Test anytime, field-placement, before-harvest, and renovation triggers. Salter already has tests. Create/extend tests; run; update status.
+**Status**: All cards tested. Fixed LieutenantGeneral: onAnyPlowField→onAnyAction (hook didn't exist), checks getFieldCount()>=2 for adjacency. Fixed Weakling: onTurnEnd→afterPlayerAction (hook didn't exist). Fixed GameProvider: inlined offerGameProviderExchange with field grain scanning and choose. Fixed PastureMaster: inlined getPasturesWithStable using farmyard.pastures + space.hasStable. Salter already had 3 tests.
 
 ---
 

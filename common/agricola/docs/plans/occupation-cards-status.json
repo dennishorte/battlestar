@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 47,
-  "cardsCompleted": 155,
-  "cardsTested": 313,
-  "currentBatch": "Batch-B18",
+  "batchesCompleted": 48,
+  "cardsCompleted": 160,
+  "cardsTested": 323,
+  "currentBatch": "Batch-B19",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -358,6 +358,14 @@
       "testsPassing": 13,
       "completedDate": "2026-02-14",
       "note": "Fixed OrganicFarmer: inlined getPasturesWithSpareCapacity. Fixed Clutterer: inlined getCardsWithTextPlayedAfter with onPlay cardState. Fixed Housemaster: inlined getMajorImprovementValues. Fixed Trimmer: removed unused isSubdivision param."
+    },
+    "Batch-B18": {
+      "status": "completed",
+      "cards": ["lieutenant-general-b159", "weakling-b161", "game-provider-b165", "pasture-master-b168", "salter-b157"],
+      "testsCreated": 4,
+      "testsPassing": 10,
+      "completedDate": "2026-02-14",
+      "note": "Fixed LieutenantGeneral: onAnyPlowField→onAnyAction (hook didn't exist). Fixed Weakling: onTurnEnd→afterPlayerAction. Fixed GameProvider: inlined offerGameProviderExchange. Fixed PastureMaster: inlined getPasturesWithStable. Salter pre-existing (3 tests)."
     }
   },
   "bySet": {
