@@ -15,13 +15,13 @@ module.exports = {
       args: { player },
     })
   },
-  onAnyAction(game, actingPlayer, actionId, cardOwner, details) {
+  onAnyAction(game, actingPlayer, actionId, cardOwner, resources) {
     if (!cardOwner.materialHubResources) {
       return
     }
     const thresholds = { wood: 5, clay: 4, reed: 3, stone: 3 }
     for (const [resource, threshold] of Object.entries(thresholds)) {
-      if (details && details[`${resource}Taken`] >= threshold && cardOwner.materialHubResources[resource] > 0) {
+      if (resources && (resources[resource] || 0) >= threshold && cardOwner.materialHubResources[resource] > 0) {
         cardOwner.materialHubResources[resource]--
         cardOwner.addResource(resource, 1)
         game.log.add({

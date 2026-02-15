@@ -2786,9 +2786,9 @@ class AgricolaActionManager extends BaseActionManager {
             resources[resource] = amountBefore
           }
         }
-        // Call hooks even for accumulating actions
+        // Call hooks even for accumulating actions (pass resources so cards can check amounts, e.g. Cordmaker, MaterialDeliveryman)
         this.game.callPlayerCardHook(player, 'onAction', actionId, resources)
-        this.callOnAnyActionHooks(player, actionId, details)
+        this.callOnAnyActionHooks(player, actionId, resources)
       }
 
       this.game.state.lastAccumulated = null
@@ -2942,12 +2942,12 @@ class AgricolaActionManager extends BaseActionManager {
   /**
    * Call onAnyAction hook on ALL players' cards
    */
-  callOnAnyActionHooks(actingPlayer, actionId, details) {
+  callOnAnyActionHooks(actingPlayer, actionId, detailsOrResources) {
     for (const player of this.game.players.all()) {
       const cards = this.game.getPlayerActiveCards(player)
       for (const card of cards) {
         if (card.hasHook('onAnyAction')) {
-          card.callHook('onAnyAction', this.game, actingPlayer, actionId, player, details)
+          card.callHook('onAnyAction', this.game, actingPlayer, actionId, player, detailsOrResources)
         }
       }
     }
@@ -3042,6 +3042,39 @@ class AgricolaActionManager extends BaseActionManager {
     })
     if (selection[0] === 'Build a room') {
       this.buildRoom(player, { riparianBuilderCard: card })
+    }
+  }
+
+  /**
+   * Cordmaker: when any player takes 2+ reed from Reed Bank, owner may take 1 grain or buy 1 vegetable for 2 food.
+   */
+  offerCordmakerChoice(player, card) {
+    const choices = ['Take 1 grain']
+    if (player.food >= 2) {
+      choices.push('Buy 1 vegetable for 2 food')
+    }
+    choices.push('Skip')
+
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Take 1 grain or buy 1 vegetable for 2 food?`,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] === 'Take 1 grain') {
+      player.addResource('grain', 1)
+      this.log.add({
+        template: '{player} takes 1 grain via {card}',
+        args: { player, card },
+      })
+    }
+    else if (selection[0] === 'Buy 1 vegetable for 2 food') {
+      player.payCost({ food: 2 })
+      player.addResource('vegetables', 1)
+      this.log.add({
+        template: '{player} buys 1 vegetable for 2 food via {card}',
+        args: { player, card },
+      })
     }
   }
 

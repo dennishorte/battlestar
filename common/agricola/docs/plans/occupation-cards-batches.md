@@ -23,7 +23,7 @@ This frequent context refresh keeps important details in working memory.
 
 - **Total Batches**: TBD (will be ~25-30 batches for Set A, ~80-140 total)
 - **Completed Batches**: 23
-- **Current Batch**: Batch-024
+- **Current Batch**: Batch-025
 
 ## Batch Queue
 
