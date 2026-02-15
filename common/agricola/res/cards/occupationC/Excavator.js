@@ -15,7 +15,18 @@ module.exports = {
         args: { player },
       })
       if (player.food >= 1) {
-        game.actions.offerBuyStone(player, this, 1, 1)
+        const selection = game.actions.choose(player, () => [
+          'Pay 1 food for 1 stone',
+          'Do not buy stone',
+        ], { title: 'Excavator', min: 1, max: 1 })
+        if (selection[0] === 'Pay 1 food for 1 stone') {
+          player.payCost({ food: 1 })
+          player.addResource('stone', 1)
+          game.log.add({
+            template: '{player} buys 1 stone for 1 food from Excavator',
+            args: { player },
+          })
+        }
       }
     }
   },
