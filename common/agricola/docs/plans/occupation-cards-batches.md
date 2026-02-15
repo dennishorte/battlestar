@@ -34,7 +34,7 @@ When implementing or revising cards, **do not add one-off methods to the action 
 | 025 | Simple onAction + capacity | Conjurer, Patch Caretaker, Woolgrower | 3 cards |
 | 026 | onAnyAction pay/give for bonus or good | Paymaster, Buyer, Joiner of the Sea | Engine: offerPaymasterBonus, offerBuyerPurchase, offerJoinerOfTheSeaTrade |
 | 027 | Traveling Players cluster | House Artist, Stagehand, Culinary Artist, Lutenist | 4 cards; engine: build discount/choice, culinary exchange, offerBuyVegetable |
-| 028 | checkTrigger + onReturnHomeStart | Pig Owner, Minstrel | 2 cards; engine: offerUseActionSpace |
+| 028 | checkTrigger + onReturnHomeStart | Pig Owner, Minstrel | 2 cards; engine: getUnoccupiedActionSpacesInRounds |
 | 029 | Animal purchase on action | Animal Dealer, Animal Teacher | offerBuyAnimalTeacher |
 | 030 | Created space, exchanges, build/round/harvest | Forest Tallyman, Wood Worker, Breeder Buyer, Pig Breeder, Haydryer | 5 cards; engine: gap space, offerWoodForSheepExchange, offerBuyCattle, onBuildRoomAndStable |
 
@@ -571,7 +571,7 @@ Cards:
 **Pattern**: checkTrigger (e.g. first-time condition); onReturnHomeStart with conditional use of action space  
 **Template**: `PigOwner.js`, `Minstrel.js`  
 **Test Template**: Braggart/Sequestrator for checkTrigger; custom for “use unoccupied space”  
-**Complexity**: Medium (Tier 2). **Engine**: Verify `offerUseActionSpace`, `getUnoccupiedActionSpacesInRounds`; ensure checkTrigger is called at appropriate times.
+**Complexity**: Medium (Tier 2). **Engine**: `getUnoccupiedActionSpacesInRounds(min, max)` added; Minstrel inlined (choose Use/Skip then executeAction).
 
 Cards:
 1. `pig-owner-a153` - Pig Owner (checkTrigger: first time you have 5 wild boar → 3 bonus points)
@@ -581,6 +581,8 @@ Cards:
 1. Pig Owner: test reaching 5 boar triggers 3 BP once; test no second trigger
 2. Minstrel: test round where only one space in 1–4 is unoccupied; owner gets offer to use it
 3. Create comprehensive test files; run tests and update status
+
+✅ COMPLETED
 
 ---
 

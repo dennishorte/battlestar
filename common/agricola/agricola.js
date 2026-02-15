@@ -1271,6 +1271,29 @@ Agricola.prototype.getActionSpaceRound = function(actionId) {
   return index === -1 ? undefined : index + 1
 }
 
+/**
+ * Return action space IDs in rounds minRound..maxRound (inclusive) that are unoccupied.
+ * Only includes rounds that have been revealed (round <= state.round).
+ */
+Agricola.prototype.getUnoccupiedActionSpacesInRounds = function(minRound, maxRound) {
+  const result = []
+  for (let r = minRound; r <= maxRound; r++) {
+    if (r > this.state.round) {
+      break
+    }
+    const card = this.state.roundCardDeck[r - 1]
+    if (!card) {
+      continue
+    }
+    const actionId = card.id
+    const state = this.state.actionSpaces[actionId]
+    if (state && !state.occupiedBy) {
+      result.push(actionId)
+    }
+  }
+  return result
+}
+
 Agricola.prototype.getMostRecentlyRevealedRound = function() {
   return this.state.round
 }
