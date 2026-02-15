@@ -1322,6 +1322,7 @@ Agricola.prototype.workPhase = function() {
     player.usedFishingThisRound = false
     player.resourcesGainedThisRound = {}
     player._firstActionThisRound = null
+    player._usedMummysBoyDoubleAction = false
   }
 
   let currentPlayerIndex = this.players.all().findIndex(p => p.name === this.state.startingPlayer)
@@ -1563,9 +1564,11 @@ Agricola.prototype.playerTurn = function(player, options) {
 
   if (selectedChoice) {
     const actionId = selectedChoice.id
+    const state = this.state.actionSpaces[actionId]
+    const wasAlreadyOccupiedByUs = state.occupiedBy === player.name
 
     // Mark action as occupied
-    this.state.actionSpaces[actionId].occupiedBy = player.name
+    state.occupiedBy = player.name
 
     // Track last action for onWorkPhaseEnd hooks (e.g., Steam Machine)
     player._lastActionId = actionId
@@ -1627,6 +1630,16 @@ Agricola.prototype.playerTurn = function(player, options) {
     const isLessonsAction = actionId === 'occupation' || actionId.startsWith('lessons-')
     if (isLessonsAction && player._usedCookingThisTurn) {
       this.callPlayerCardHook(player, 'onLessonsWithCooking')
+    }
+
+    // Mummy's Boy: mark once-per-round double action as used
+    if (wasAlreadyOccupiedByUs) {
+      for (const card of player.getActiveCards()) {
+        if (card.allowsDoubleAction) {
+          player._usedMummysBoyDoubleAction = true
+          break
+        }
+      }
     }
   }
 }
