@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 51,
-  "cardsCompleted": 172,
-  "cardsTested": 346,
-  "currentBatch": "Batch-C02",
+  "batchesCompleted": 66,
+  "cardsCompleted": 247,
+  "cardsTested": 425,
+  "currentBatch": "completed-set-C",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -390,6 +390,121 @@
       "testsPassing": 8,
       "completedDate": "2026-02-14",
       "note": "Fixed GameCatcher: getRemainingHarvestCount inlined with harvestRounds filter. Fixed PotatoDigger: getUnplantedFieldCount inlined with field grid scan. Fixed HoofCaregiver: addToAccumulationSpace inlined with direct actionSpaces state manipulation."
+    },
+    "Batch-C02": {
+      "status": "completed",
+      "cards": ["lover-c130", "layabout-c108", "basket-weaver-c126", "baker-c107", "food-distributor-c127"],
+      "testsCreated": 5,
+      "testsPassing": 6,
+      "completedDate": "2026-02-14"
+    },
+    "Batch-C03": {
+      "status": "completed",
+      "cards": ["agricultural-labourer-c120", "clay-kneader-c121", "furniture-maker-c116", "winter-caretaker-c113", "packaging-artist-c140"],
+      "testsCreated": 5,
+      "testsPassing": 8,
+      "completedDate": "2026-02-14"
+    },
+    "Batch-C04": {
+      "status": "completed",
+      "cards": ["cowherd-c147", "excavator-c131", "animal-feeder-c138", "animal-catcher-c168", "inner-districts-director-c093"],
+      "testsCreated": 5,
+      "testsPassing": 5,
+      "completedDate": "2026-02-14"
+    },
+    "Batch-C05": {
+      "status": "completed",
+      "cards": ["market-crier-c142", "thresher-c112", "private-teacher-c139", "plow-hero-c091", "soil-scientist-c114"],
+      "testsCreated": 5,
+      "testsPassing": 5,
+      "completedDate": "2026-02-14"
+    },
+    "Batch-C06": {
+      "status": "completed",
+      "cards": ["tree-guard-c102", "merchant-c096", "twin-researcher-c155", "outrider-c160", "legworker-c117"],
+      "testsCreated": 5,
+      "testsPassing": 5,
+      "completedDate": "2026-02-14"
+    },
+    "Batch-C07": {
+      "status": "completed",
+      "cards": ["german-heath-keeper-c164", "sheep-provider-c141", "forest-reviewer-c145", "material-deliveryman-c163", "charcoal-burner-c137"],
+      "testsCreated": 5,
+      "testsPassing": 5,
+      "completedDate": "2026-02-14",
+      "note": "Fixed ForestReviewer: copse→grove action ID. CharcoalBurner: onAnyBuildBakingImprovement hook not fired by engine."
+    },
+    "Batch-C08": {
+      "status": "completed",
+      "cards": ["cattle-buyer-c167", "sowing-director-c151", "puppeteer-c152", "reed-roof-renovator-c144", "pattern-maker-c153"],
+      "testsCreated": 5,
+      "testsPassing": 5,
+      "completedDate": "2026-02-14",
+      "note": "Inlined CattleBuyer choose. SowingDirector uses sow(). Puppeteer inlined. ReedRoofRenovator: fixed players.count()→players.all().length, onAnyRenovate not fired. PatternMaker: onAnyRenovate not fired."
+    },
+    "Batch-C09": {
+      "status": "completed",
+      "cards": ["fishermans-friend-c159", "stone-buyer-c143", "small-animal-breeder-c111", "resource-analyzer-c157", "forest-campaigner-c158"],
+      "testsCreated": 5,
+      "testsPassing": 5,
+      "completedDate": "2026-02-14",
+      "note": "StoneBuyer: inlined offerBuyStone. ResourceAnalyzer: inlined getBuildingResourceTypesPlayerLeads. ForestCampaigner: inlined getTotalWoodOnAccumulationSpaces. SmallAnimalBreeder/ResourceAnalyzer/ForestCampaigner: onBeforeRoundStart/onBeforePlacePerson not fired."
+    },
+    "Batch-C10": {
+      "status": "completed",
+      "cards": ["freemason-c123", "nightworker-c125", "skillful-renovator-c119", "stable-master-c089", "green-grocer-c103"],
+      "testsCreated": 5,
+      "testsPassing": 5,
+      "completedDate": "2026-02-14",
+      "note": "Freemason onWorkPhaseStart works. Nightworker: onBeforeWorkPhase not fired. StableMaster: offerBuildStable→offerBuildStableForWood. GreenGrocer: inlined exchange choices."
+    },
+    "Batch-C11": {
+      "status": "completed",
+      "cards": ["autumn-mother-c092", "basket-carrier-c105", "home-brewer-c110", "schnapps-distiller-c109", "stone-importer-c124"],
+      "testsCreated": 5,
+      "testsPassing": 5,
+      "completedDate": "2026-02-14",
+      "note": "AutumnMother: inlined hasRoomForFamilyGrowth+offerFamilyGrowthForFood. BasketCarrier: onHarvest→onFieldPhaseEnd, inlined offer. HomeBrewer/SchnappsDistiller: inlined conversion offers. StoneImporter: onBreedingPhase→onBreedingPhaseEnd, inlined getHarvestNumber."
+    },
+    "Batch-C12": {
+      "status": "completed",
+      "cards": ["bricklayer-c122", "carpenters-apprentice-c088", "wooden-hut-extender-c128", "cube-cutter-c098", "stall-holder-c101"],
+      "testsCreated": 5,
+      "testsPassing": 5,
+      "completedDate": "2026-02-14",
+      "note": "Bricklayer modifyImprovementCost/modifyRenovationCost work. modifyRoomCost/modifyStableCost not called by engine. CubeCutter: onFieldPhase works, inlined exchange. StallHolder: oncePerRound/canExchange/doExchange pattern not integrated."
+    },
+    "Batch-C13": {
+      "status": "completed",
+      "cards": ["butler-c100", "cow-prince-c134", "soldier-c133", "timber-shingle-maker-c132", "garden-designer-c099"],
+      "testsCreated": 5,
+      "testsPassing": 5,
+      "completedDate": "2026-02-14",
+      "note": "CowPrince: inlined getSpacesWithCattle. TimberShingleMaker: inlined offerTimberShingleMakerPlacement. GardenDesigner: onScoring not fired by engine."
+    },
+    "Batch-C14": {
+      "status": "completed",
+      "cards": ["constable-c135", "ranch-provost-c136", "potato-harvester-c106", "seed-researcher-c097"],
+      "testsCreated": 4,
+      "testsPassing": 4,
+      "completedDate": "2026-02-14",
+      "note": "Constable: inlined hasNegativePoints. RanchProvost: inlined getHighestPastureCapacity. PotatoHarvester: onHarvestVegetable→onHarvestVegetables. SeedResearcher: inlined workersReturnedFrom, offerFreeOccupation→offerFreeOccupations."
+    },
+    "Batch-C15": {
+      "status": "completed",
+      "cards": ["collector-c104", "forest-owner-c162", "den-builder-c085", "second-spouse-c129", "sower-c115"],
+      "testsCreated": 5,
+      "testsPassing": 5,
+      "completedDate": "2026-02-14",
+      "note": "isActionSpace/actionSpaceEffect/providesRoom/allowsAnytimeAction patterns defined but not integrated into engine action resolution."
+    },
+    "Batch-C16": {
+      "status": "completed",
+      "cards": ["mud-wallower-c148", "livestock-feeder-c086", "resource-recycler-c149", "workshop-assistant-c146", "parrot-breeder-c150"],
+      "testsCreated": 5,
+      "testsPassing": 5,
+      "completedDate": "2026-02-14",
+      "note": "MudWallower uses onAction+isAccumulationSpace. LivestockFeeder onPlay works. ResourceRecycler: onAnyRenovate→onAnyRenovateToStone. WorkshopAssistant: onAnyRenovate not fired. ParrotBreeder: onTurnStart not fired."
     }
   },
   "bySet": {
@@ -407,9 +522,9 @@
     },
     "occupationC": {
       "total": 84,
-      "implemented": 0,
-      "tested": 5,
-      "status": "pending"
+      "implemented": 79,
+      "tested": 84,
+      "status": "complete"
     },
     "occupationD": {
       "total": 84,

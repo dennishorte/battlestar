@@ -8,7 +8,7 @@ module.exports = {
   text: "Each time after another player uses the \"Grain Utilization\" action space, you get a \"Sow\" action.",
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
     if (actionId === 'sow-bake' && actingPlayer.name !== cardOwner.name) {
-      game.actions.offerSow(cardOwner, this)
+      game.actions.sow(cardOwner)
     }
   },
 }

@@ -15,7 +15,18 @@ module.exports = {
   },
   onFieldPhase(game, player) {
     if (player.wood >= 1 && player.food >= 1) {
-      game.actions.offerCubeCutterExchange(player, this)
+      const selection = game.actions.choose(player, () => [
+        'Exchange 1 wood and 1 food for 1 bonus point',
+        'Skip',
+      ], { title: 'Cube Cutter', min: 1, max: 1 })
+      if (selection[0] !== 'Skip') {
+        player.payCost({ wood: 1, food: 1 })
+        player.bonusPoints = (player.bonusPoints || 0) + 1
+        game.log.add({
+          template: '{player} exchanges 1 wood and 1 food for 1 BP via Cube Cutter',
+          args: { player },
+        })
+      }
     }
   },
 }

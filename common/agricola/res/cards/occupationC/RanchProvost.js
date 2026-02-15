@@ -30,11 +30,24 @@ module.exports = {
     const bonuses = {}
     let maxCapacity = 0
     for (const player of game.players.all()) {
-      maxCapacity = Math.max(maxCapacity, player.getHighestPastureCapacity())
+      const pastures = player.getPastures ? player.getPastures() : []
+      for (const p of pastures) {
+        const cap = p.spaces ? p.spaces.length * 2 : 0
+        if (cap > maxCapacity) {
+          maxCapacity = cap
+        }
+      }
     }
-    for (const player of game.players.all()) {
-      if (player.getHighestPastureCapacity() === maxCapacity) {
-        bonuses[player.name] = 3
+    if (maxCapacity > 0) {
+      for (const player of game.players.all()) {
+        const pastures = player.getPastures ? player.getPastures() : []
+        for (const p of pastures) {
+          const cap = p.spaces ? p.spaces.length * 2 : 0
+          if (cap === maxCapacity) {
+            bonuses[player.name] = 3
+            break
+          }
+        }
       }
     }
     return bonuses

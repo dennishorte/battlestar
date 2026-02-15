@@ -6,6 +6,7 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Before the start of each work phase, you can place a person on an accumulation space of a building resource not in your supply. (Then proceed with the start player.)",
+  // Note: onBeforeWorkPhase hook is not fired by the engine.
   onBeforeWorkPhase(game, player) {
     const missingResources = []
     if (player.wood === 0) {

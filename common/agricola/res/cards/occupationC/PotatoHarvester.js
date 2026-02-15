@@ -13,7 +13,7 @@ module.exports = {
       args: { player },
     })
   },
-  onHarvestVegetable(game, player, count) {
+  onHarvestVegetables(game, player, count) {
     player.addResource('food', count)
     game.log.add({
       template: '{player} gets {count} food from Potato Harvester',

@@ -6,11 +6,9 @@ module.exports = {
   type: "occupation",
   players: "3+",
   text: "On your turn, if you pay 1 grain to the general supply, you can use the same action space that the player to your right has just used on their turn.",
+  // Note: onTurnStart hook, getPlayerToRight, and isEmptyAccumulationSpace
+  // are not implemented in the engine.
   onTurnStart(game, player) {
-    const rightPlayer = game.getPlayerToRight(player)
-    const lastAction = rightPlayer.lastActionThisTurn
-    if (lastAction && player.grain >= 1 && !game.isEmptyAccumulationSpace(lastAction)) {
-      game.actions.offerParrotBreederCopy(player, this, lastAction)
-    }
+    void(game, player)
   },
 }

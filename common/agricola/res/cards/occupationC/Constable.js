@@ -32,7 +32,9 @@ module.exports = {
   getEndGamePointsAllPlayers(game) {
     const bonuses = {}
     for (const player of game.players.all()) {
-      if (!player.hasNegativePoints()) {
+      // No negative points means score >= 0 for all categories
+      const score = player.getScore ? player.getScore() : 0
+      if (score >= 0) {
         bonuses[player.name] = 3
       }
     }

@@ -6,14 +6,18 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time any people return from both the \"Grain Seeds\" and \"Vegetable Seeds\" action spaces, you get 2 food and you can play 1 occupation, without paying an occupation cost.",
-  onReturnHome(game, player) {
-    if (game.workersReturnedFrom('take-grain') && game.workersReturnedFrom('take-vegetables')) {
+  // Note: workersReturnedFrom method does not exist. onReturnHome hook may not fire.
+  // Using onReturnHomeStart as a supported hook.
+  onReturnHomeStart(game, player) {
+    const grainOccupied = game.isActionOccupied('take-grain')
+    const vegOccupied = game.isActionOccupied('take-vegetable')
+    if (grainOccupied && vegOccupied) {
       player.addResource('food', 2)
       game.log.add({
         template: '{player} gets 2 food from Seed Researcher',
         args: { player },
       })
-      game.actions.offerFreeOccupation(player, this)
+      game.actions.offerFreeOccupations(player, this, 1)
     }
   },
 }

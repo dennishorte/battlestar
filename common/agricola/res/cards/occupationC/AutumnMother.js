@@ -7,8 +7,20 @@ module.exports = {
   players: "1+",
   text: "Immediately before each harvest, if you have room in your house, you can take a \"Family Growth\" action for 3 food.",
   onBeforeHarvest(game, player) {
-    if (player.hasRoomForFamilyGrowth() && player.food >= 3) {
-      game.actions.offerFamilyGrowthForFood(player, this, 3)
+    const hasRoom = player.getRoomCount() > player.getFamilySize()
+    if (hasRoom && player.food >= 3) {
+      const selection = game.actions.choose(player, () => [
+        'Pay 3 food for family growth',
+        'Skip',
+      ], { title: 'Autumn Mother', min: 1, max: 1 })
+      if (selection[0] !== 'Skip') {
+        player.payCost({ food: 3 })
+        game.actions.familyGrowthWithoutRoom(player)
+        game.log.add({
+          template: '{player} grows family via Autumn Mother for 3 food',
+          args: { player },
+        })
+      }
     }
   },
 }

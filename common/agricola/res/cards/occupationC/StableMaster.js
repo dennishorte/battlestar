@@ -8,7 +8,7 @@ module.exports = {
   text: "When you play this card, you can immediately build exactly 1 stable for 1 wood. Exactly one of your unfenced stables can hold up to 3 animals of one type.",
   onPlay(game, player) {
     if (player.wood >= 1) {
-      game.actions.offerBuildStable(player, this, { cost: { wood: 1 } })
+      game.actions.offerBuildStableForWood(player, this)
     }
   },
   modifyUnfencedStableCapacity(player, stableIndex) {
