@@ -1,403 +1,138 @@
-# Remaining Minor Improvements Plan
+# Blocked Minor Improvements
 
-Comprehensive audit of all 107 untested minor improvement cards across decks B/C/D/E.
-Organized into implementable batches of ~6 cards each.
-
-**Legend:**
-- ✅ = Done (implemented + tests passing)
-- **STUB** = card calls a `game.actions.xxx()` method that doesn't exist; needs inline implementation + tests
-- **TEST** = card has working inline code but no test file; needs tests (and possibly minor fixes)
-- **BLOCKED** = needs unwired hook, missing method, or engine infrastructure
-- **INFRA** = card needs new infrastructure (hooks, flags, or engine changes)
+100 of 124 minor improvement cards (+ related occupations) are complete with passing tests.
+21 cards remain blocked on engine infrastructure, grouped by what they need.
 
 ---
 
-## Architecture Fix: Card State Storage (PREREQUISITE)
+## Group 1: Worker Placement Modifications (5 cards)
 
-**Problem:** Card definitions are singleton module exports (`require()` cache).
-Hook functions run with `this` bound to the singleton definition. Any `this.stored = 5`
-mutates the shared singleton, leaking state between games and between tests.
+Core turn loop changes in `agricola.js` — how/when workers get placed.
 
-**Fix:** Add `game.cardState(id)` helper that returns per-game state from
-`game.state._cardState[id]`. Update all card files that store mutable state on `this`
-to use `game.cardState(this.id)` instead.
+| Card | Deck | What it does |
+|------|------|-------------|
+| BasketChair (c022) | C | Move first-placed worker to card, immediately place another |
+| BrotherlyLove (d024) | D | With 4 people, place 3rd+4th back-to-back, same space allowed |
+| TeaHouse (d053) | D | Once/round skip placing 2nd person (get food), place later |
+| GuestRoom (e022) | E | Store food on card; spend 1 to place person from general supply |
+| WorkPermit (d022) | D | Schedule a person placement to a future round |
 
-**Affected minor improvement cards (8):** BeeStatue, Cubbyhole, RomanPot, WhaleOil,
-PiggyBank, RodCollection, Upholstery, AshTrees
+**Infrastructure needed:**
+- Worker placement flow in `playerTurn()` / `workPhase()` — skip, reorder, defer
+- Guest worker concept (place from general supply, not player's pool)
+- Scheduled future workers (place in a later round)
 
-**Affected occupation cards (~25):** AgriculturalLabourer, Collector, MudWallower,
-PenBuilder, WorkshopAssistant, Omnifarmer, MasterTanner, ResourceHoarder, Wolf,
-FieldCultivator, SeedTrader, TreeInspector, Emissary, Bonehead, RetailDealer,
-BeanCounter, Sequestrator, Mason, DenBuilder, FieldDoctor, Reseller, MasterBuilder,
-DeliveryNurse, Reader, PartyOrganizer, Carter, Lazybones, ClayCarrier, Butler,
-EarthenwarePotter, Dentist, Entrepreneur, Wholesaler
-
----
-
-## Engine Changes Made
-
-Hooks wired in `agricola.js`:
-- `onHarvestStart` — in harvestPhase, before fieldPhase
-- `onHarvestGrain` — in fieldPhase, after grain harvest (passes amount)
-- `onFieldPhaseEnd` — in fieldPhase, after harvest (used by Changeover)
-- `onLessonsWithCooking` — in playerTurn, when Lessons + cooking same turn
-- `skipFieldAndBreeding` — per-player array, checked in fieldPhase and breedingPhase
-
-Anytime actions infrastructure in `agricola.js`:
-- `getAnytimeActions()` scans both minors AND occupations for all flag types
-- `getAnytimeFoodConversionOptions()` scans occupations for `allowsAnytimeConversion`
-- New action types in `executeAnytimeAction()`: `card-exchange`, `card-custom`, `card-scheduled`, `field-conversion`, `anytime-renovation`
-- `getUnusedOncePerRoundActions(player)` — filters once-per-round actions not yet used
-- End-of-turn reminder prompt for unused once-per-round actions
-- `formatExchange()` helper for description strings
-- `_usedCookingThisTurn` tracking on player during `executeAnytimeFoodConversion`
-
-Hooks wired in `AgricolaActionManager.js`:
-- `onBeforePlayOccupation` — in playOccupation, before cost payment
-
-Methods added to `AgricolaActionManager.js`:
-- `buildFreeRoom(player, card)` — build room at no cost (used by Mason, Master Builder)
-- `offerSculptureCourse(player, card)` — wood→food or stone→food exchange
-- `offerReedSellerConversion(player, card)` — sell reed with intercept opportunity
-- `offerCookingHearthExtension(player, card)` — doubled cooking during harvest
-- `overhaulFences(player, card)` — raze all fences, 3 free for rebuild
-- `fieldFencesAction(player, card)` — build fences with field-adjacent discount
-- `familyGrowthWithoutRoom(player)` — family growth without room requirement
-- `modifyRenovation` hook loop in `renovate()` — card-based renovation modifications (WoodSlideHammer)
-- `modifyPlowCount` hook loop in `executeAction()` + `plowAndOrSow()` — card-based plow count (SkimmerPlow)
-
-Methods added to `AgricolaPlayer.js`:
-- `isFieldAdjacentToPasture({ row, col })` — checks if field is adjacent to any pasture space
-- `modifySowAmount` hook loop in `sowField()` — card-based sow amount modification
-- `modifyRenovationCost` hook loop in `getRenovationCost()` — card-based renovation cost
-- `getFreeFences`/`useFreeFences` integration in fence validation + build — card-based free fences
-- `hasRenovated` tracking in `renovate()` — set to true after first renovation
-
-Helper methods added to `agricola.js`:
-- `isRoundActionSpace(actionId)` — checks if action has a `stage` property
-- `actionGivesReed(actionId)` — checks if action accumulates or gives reed
+**Key files:** `agricola.js` (playerTurn, workPhase), `AgricolaPlayer.js`
+**Complexity:** Complex — touches the core game loop
 
 ---
 
-## Phase 1: Stub Fixes (Batches 10-12)
+## Group 2: Custom Action Spaces (2 cards)
 
-Cards calling non-existent `game.actions` methods. Each needs the stub replaced
-with inline `game.actions.choose()` + direct resource manipulation, then tests written.
+Cards that create new action spaces any player can use.
 
-### Batch 10 — Simple Stubs (resource/harvest effects)
+| Card | Deck | What it does |
+|------|------|-------------|
+| AlchemistsLab (e081) | E | Owner gets 1 of each building resource they have; others pay 1 food |
+| Archway (d051) | D | All players get 1 food, then use an unoccupied space before returning home |
 
-| Card | Deck | Status | Notes |
-|------|------|--------|-------|
-| BumperCrop (e025) | E | ✅ | Inline + test |
-| StoneClearing (c006) | C | ✅ | Inline + test |
-| StableManure (d072) | D | ✅ | Inline + test |
-| StrawHat (e010) | E | ✅ | Inline + test (2 tests: move or get food) |
-| RavenousHunger (c042) | C | ✅ | Inline + test (2 tests: bonus worker or skip) |
-| HeartOfStone (c021) | C | ✅ | `onStageReveal` wired; family growth on quarry reveal |
+**Infrastructure needed:**
+- Card-based action space registration (card becomes a usable space)
+- Owner vs. non-owner logic (different effects per player)
+- Extra-action-before-return-home phase (Archway)
 
-### Batch 11 — Worker/Action Stubs
-
-| Card | Deck | Status | Notes |
-|------|------|--------|-------|
-| CarriageTrip (c003) | C | ✅ | Inline + test |
-| TeaTime (e003) | E | ✅ | Inline + test |
-| LunchtimeBeer (e058) | E | ✅ | Inline + test (2 tests: skip or normal harvest) |
-| BasketChair (c022) | C | **BLOCKED** | Worker manipulation: move first worker, place extra person |
-| GuestRoom (e022) | E | **BLOCKED** | `enablesGuestWorker` flag not wired, `placeResourcesOnCard` not implemented |
-| CookingHearthExtension (c062) | C | ✅ | `offerCookingHearthExtension`: doubled cooking during harvest |
-
-### Batch 12 — Fence/Build/Complex Stubs
-
-| Card | Deck | Status | Notes |
-|------|------|--------|-------|
-| PoleBarns (e001) | E | ✅ | Inline + test |
-| HarvestFestivalPlanning (c072) | C | ✅ | Inline + test |
-| NailBasket (e015) | E | ✅ | Inline + test |
-| Overhaul (c001) | C | ✅ | `overhaulFences`: raze all fences + 3 free rebuild |
-| FieldFences (c016) | C | ✅ | `fieldFencesAction`: field-adjacent fences free |
-| WorkPermit (d022) | D | **BLOCKED** | Future-round worker scheduling infrastructure |
+**Key files:** `agricola.js` (action space setup, workPhase), `AgricolaActionManager.js`
+**Complexity:** Complex — new action space type + end-of-round phase
 
 ---
 
-## Phase 2: Tests for Inline Cards (Batches 13-22)
+## Group 3: Action Space Combination/Override (4 cards)
 
-Cards with working inline implementations that just need test files.
-Some may need minor code fixes discovered during testing.
+Cards that modify how existing action spaces work.
 
-### Batch 13 — Scoring & Passive Cards
+| Card | Deck | What it does |
+|------|------|-------------|
+| JobContract (c023) | C | Use Day Laborer + Lessons with single person, both marked occupied |
+| Recruitment (d021) | D | On Minor Improvement action, can take Family Growth instead (if room) |
+| WoodSaw (e014) | E | When all others have more workers, take Build Rooms without placing person |
+| CarpentersYard (d026) | D | Build Joinery+Well on Minor action, or both on single Major action |
 
-| Card | Deck | Status | Notes |
-|------|------|--------|-------|
-| HerbalGarden (e036) | E | ✅ | Test written |
-| SheepRug (e021) | E | ✅ | Test written |
-| BeeStatue (e040) | E | ✅ | Test written (2 tests: pop + depletion) |
-| RomanPot (e056) | E | ✅ | Test written |
-| WoodRake (d032) | D | **BLOCKED** | `goodsInFieldsBeforeFinalHarvest` not tracked by engine |
-| BriarHedge (e016) | E | ✅ | `modifyFenceCost` passes `edgeFenceCount`; test passing |
+**Infrastructure needed:**
+- Combined action space pairing (one person → two spaces occupied)
+- Action substitution hooks (minor improvement → family growth)
+- Conditional free-action-space usage (no person needed under conditions)
 
-### Batch 14 — Food Bonus Hooks
-
-| Card | Deck | Status | Notes |
-|------|------|--------|-------|
-| NewMarket (d055) | D | ✅ | Test written. `isRoundActionSpace` added to engine |
-| RaisedBed (e061) | E | ✅ | Test written. `onHarvestStart` already wired |
-| Farmstead (c048) | C | ✅ | `onUseFarmyardSpace` wired; test passing |
-| HuntsmansHat (c052) | C | ✅ | `onGainBoar` wired; test passing |
-| TroutPool (d054) | D | ✅ | `onWorkPhaseStart` wired; test passing |
-| Lynchet (d063) | D | **BLOCKED** | Needs `getHarvestedFieldsAdjacentToHouse` player method |
-
-### Batch 15 — Harvest Phase Hooks
-
-| Card | Deck | Status | Notes |
-|------|------|--------|-------|
-| BaleOfStraw (d061) | D | ✅ | Test written (2 tests) |
-| GrainSieve (d065) | D | ✅ | Test written (2 tests). `onHarvestGrain` wired |
-| SocialBenefits (d076) | D | ✅ | Test written (2 tests). `onFeedingPhaseEnd` already wired |
-| CheeseFondue (e057) | E | ✅ | Test written (2 tests) |
-| ShepherdsWhistle (e083) | E | ✅ | `onBreedingPhaseStart` wired; test passing |
-| Slurry (c071) | C | ✅ | `onBreedingPhaseEnd` wired; test passing |
-
-### Batch 16 — Building & Renovation Hooks
-
-| Card | Deck | Status | Notes |
-|------|------|--------|-------|
-| Cubbyhole (e052) | E | ✅ | `onBuildRoom` fixed to pass count; feeding test written |
-| RecycledBrick (d077) | D | ✅ | `onAnyRenovateToStone` wired; test passing |
-| Twibil (e049) | E | ✅ | `onAnyBuildRoom` wired; test passing |
-| AshTrees (e074) | E | ✅ | `getFreeFences`/`useFreeFences` integrated into fence building |
-| WoodSaw (e014) | E | **BLOCKED** | `enablesFreeBuildRooms` flag not processed |
-| WoodSlideHammer (c013) | C | ✅ | `modifyRenovation`/`modifyRenovationCost` wired; wood→stone skip + 2 stone discount |
-
-### Batch 17 — Action-Triggered Hooks
-
-| Card | Deck | Status | Notes |
-|------|------|--------|-------|
-| FieldSpade (e079) | E | ✅ | Test written |
-| WildGreens (e050) | E | ✅ | Test written |
-| SteamMachine (c025) | C | ✅ | `onWorkPhaseEnd` wired; test passing |
-| StudioBoat (c039) | C | ✅ | `onAction` wired; test passing |
-| EducationBonus (d042) | D | ✅ | `onPlayOccupation` wired; test passing |
-| FatstockStretcher (d056) | D | ✅ | `onCookAnimal` wired; +1 food for sheep/boar |
-
-### Batch 18 — Capacity Modifiers & Flags
-
-| Card | Deck | Status | Notes |
-|------|------|--------|-------|
-| BeaverColony (e033) | E | ✅ | Test written (2 tests). `actionGivesReed` added |
-| LawnFertilizer (d011) | D | ✅ | Signature fixed to match engine; 3 tests written |
-| AnimalBedding (e012) | E | ✅ | `modifyStableCapacity` wired in getPastureCapacity + getUnfencedStableCapacity; 2 tests |
-| CattleFarm (c012) | C | ✅ | Card def refactor to use `holdsAnimals` + `getAnimalCapacity`; test passing |
-| BunkBeds (c010) | C | ✅ | `modifyHouseCapacity` wired in canGrowFamily via getHouseCapacity; 3 tests |
-| BrotherlyLove (d024) | D | **BLOCKED** | `allowDoubleWorkerWith4People` not processed |
-
-### Batch 19 — Virtual Fields & Plow Cards
-
-All **BLOCKED** — `plowField` ignores options, card-based fields not supported.
-
-| Card | Deck | Status |
-|------|------|--------|
-| SwingPlow (c019) | C | **BLOCKED** |
-| TurnwrestPlow (d020) | D | **BLOCKED** |
-| ZigzagHarrow (d0??) | D | **BLOCKED** |
-| WoodField (d075) | D | **BLOCKED** |
-| NewlyPlowedField (c017) | C | **BLOCKED** |
-| CowPatty (e071) | E | ✅ | `modifySowAmount` wired; +1 crop adjacent to pasture |
-
-### Batch 20 — Card State & Storage
-
-| Card | Deck | Status | Notes |
-|------|------|--------|-------|
-| WhaleOil (e051) | E | ✅ | Test written. `onBeforePlayOccupation` wired. **Needs card state fix** |
-| PettingZoo (e011) | E | ✅ | `holdsAnimals` + `getAnimalCapacity` already supported; test passing |
-| SkimmerPlow (e017) | E | ✅ | `modifySowAmount`/`modifyPlowCount` wired; plow 2, sow -1 |
-| AlchemistsLab (e081) | E | **BLOCKED** | Complex action space for all players |
-| MaterialHub (c081) | C | ✅ | `onAnyAction` wired; test passing |
-| GypsysCrock (c053) | C | ✅ | `onCook` wired; +1 food per 2 goods cooked same turn |
-
-### Batch 21 — Occupation & Improvement Interactions
-
-| Card | Deck | Status | Notes |
-|------|------|--------|-------|
-| Blueprint (c027) | C | ✅ | 6 tests written (flag + cost modifier) |
-| Recruitment (d021) | D | **BLOCKED** | `modifyMinorImprovementAction` not processed |
-| JobContract (c023) | C | **BLOCKED** | `allowsCombinedAction` not processed |
-| CarpentersYard (d0??) | D | **BLOCKED** | Flags not processed |
-| Bookcase (c068) | C | ✅ | `onPlayOccupation` wired; test passing |
-| Bookshelf (d049) | D | ✅ | Test written (3 food before occupation) |
-
-### Batch 22 — Miscellaneous
-
-| Card | Deck | Status | Notes |
-|------|------|--------|-------|
-| FarmBuilding (c043) | C | ✅ | `onBuildMajor` wired; test passing |
-| BedInTheGrainField (c024) | C | ✅ | `onHarvestStart` hook triggers family growth |
-| TeaHouse (d053) | D | **BLOCKED** | `allowsSkipSecondPerson` not processed |
-| RoyalWood (d074) | D | **BLOCKED** | `onBuildImprovement`/`onFarmExpansion` not wired |
-| HuntingTrophy (d082) | D | **BLOCKED** | `modifyHouseRedevelopmentCost` not wired |
-| Archway (d051) | D | **BLOCKED** | `archwayExtraAction` flag not processed |
+**Key files:** `agricola.js` (executeAction, playerTurn), `AgricolaActionManager.js`
+**Complexity:** Moderate-Complex — each card is a different kind of override
 
 ---
 
-## Phase 3: MinorB Infrastructure (Batches 23-24)
+## Group 4: Field/Plow Mechanics (5 cards)
 
-MinorB cards that need unique infrastructure beyond simple inline fixes.
+Cards needing `plowField` options or card-based field tiles.
 
-### Batch 23 — MinorB with Existing Methods / Simple Flags
+| Card | Deck | What it does |
+|------|------|-------------|
+| NewlyPlowedField (c017) | C | On play, plow 1 field (non-adjacent allowed) |
+| ZigzagHarrow (d001) | D | On play, plow 1 field completing a zigzag pattern |
+| SwingPlow (c019) | C | Place 4 field tiles on card; each Farmland action, plow up to 2 from card |
+| TurnwrestPlow (d020) | D | Place 2 field tiles on card; each Farmland/Cultivation, plow up to 2 from card |
+| WoodField (d075) | D | Card-based "wood field" — sow wood like grain, harvest wood |
 
-| Card | Deck | Blocker | Notes |
-|------|------|---------|-------|
-| UpscaleLifestyle (b001) | B | ✅ | Anytime renovation infra exists; test passing |
-| Caravan (b010) | B | ✅ | `providesRoom` flag works; test passing |
-| ✅ PotteryYard (b031) | B | `hasAdjacentUnusedSpaces` | Done — player method added |
-| SpecialFood (b034) | B | ✅ | `onTakeAnimals` wired with `allAccommodated` param; test passing |
-| AgrarianFences (b026) | B | ✅ | `modifyGrainUtilization` flag processed in sowAndOrBake |
-| WoodPalisades (b030) | B | `allowWoodPalisades` flag | Wood as fence material not supported |
+**Infrastructure needed:**
+- `plowField()` options: `allowNonAdjacent`, `zigzagPattern` validation
+- Card-based field tile charges (store N tiles on card, spend on plow actions)
+- Wood-as-crop sowing/harvesting (new crop type in field system)
 
-### Batch 24 — MinorB Stubs Needing New Methods
-
-| Card | Deck | Stub Method | Blocker |
-|------|------|-------------|---------|
-| ✅ CarpentersBench (b015) | B | `offerCarpentersBench` | Done — custom validation, 1 free fence |
-| ✅ Hauberg (b041) | B | `offerHauberg` | Done — scheduleResource for wood/boar |
-| HayloftBarn (b021) | B | ✅ | `onGainGrain` hook wired + `familyGrowthWithoutRoom` |
-| ✅ MiniPasture (b002) | B | `buildFreeSingleSpacePasture` | Done — free single-space pasture |
-| ✅ Toolbox (b027) | B | `offerToolboxMajor` | Done — offers Joinery/Pottery/Basketmaker |
+**Key files:** `AgricolaActionManager.js` (plowField), `AgricolaPlayer.js` (sowField, fields)
+**Complexity:** Moderate — plowField options are straightforward; wood-as-crop is novel
 
 ---
 
-## Phase 4: Anytime Action Cards (DONE — Batches 25-27)
+## Group 5: Cost/Resource Hooks (2 cards)
 
-Anytime actions engine infrastructure implemented in `agricola.js`:
-- `getAnytimeActions()` extended to scan occupations (not just minors)
-- New action types: `card-exchange`, `card-custom`, `card-scheduled`, `field-conversion`, `anytime-renovation`
-- Once-per-round tracking via `game.cardState(cardId).lastUsedRound`
-- End-of-turn reminder for unused once-per-round actions
-- `formatExchange()` helper for description strings
-- `_usedCookingThisTurn` tracking + `onLessonsWithCooking` hook
+Cards needing hooks wired into build/redevelopment cost calculations.
 
-New methods in `AgricolaActionManager.js`:
-- `buildFreeRoom(player, card)` — build room at no cost
-- `offerSculptureCourse(player, card)` — wood→food or stone→food exchange
-- `offerReedSellerConversion(player, card)` — sell reed, other players can intercept
+| Card | Deck | What it does |
+|------|------|-------------|
+| RoyalWood (d074) | D | Get 1 wood back per 2 wood paid for Farm Expansion or improvement |
+| HuntingTrophy (d082) | D | House Redevelopment costs -1 resource; Farm Redevelopment fences -3 wood |
 
-### Batch 25 — Anytime Exchanges
+**Infrastructure needed:**
+- `onBuildImprovement` / `onFarmExpansion` hooks with wood-paid param
+- `modifyHouseRedevelopmentCost` / `modifyFarmRedevelopmentFenceCost` hooks
 
-| Card | Deck | Status | Effect |
-|------|------|--------|--------|
-| HardPorcelain (b080) | B | ✅ | 2/3/4 clay → 1/2/3 stone |
-| Kettle (b032) | B | ✅ | 1/3/5 grain → 3/4/5 food + 0/1/2 VP |
-| LargePottery (d060) | D | ✅ | Already worked (anytimeConversions) |
-| Trowel (d013) | D | ✅ | Anytime renovate to stone (special cost) |
-| StoneHouseReconstruction (e013) | E | ✅ | Anytime renovate clay→stone (normal cost, no person) |
-| EarthOven (d059) | D | ✅ | Already worked (anytimeConversions) |
-| StableYard (c050) | C | ✅ | 1 sheep + 1 boar → 1 cattle |
-
-### Batch 26 — Anytime Purchases & Scheduled
-
-| Card | Deck | Status | Effect |
-|------|------|--------|--------|
-| PottersMarket (b069) | B | ✅ | 3 clay + 2 food → schedule 1 vegetable on next 2 rounds |
-| MuddyPuddles (b083) | B | ✅ | 1 clay → take top from stack (state migrated to cardState) |
-| Mandoline (c046) | C | ✅ | Once/round: 1 vegetable → 1 VP + schedule 1 food on next 2 rounds |
-| CornSchnappsDistillery (c064) | C | ✅ | Once/round: 1 grain → schedule 1 food on next 4 rounds |
-| PelletPress (d046) | D | ✅ | Once/round: 1 reed → schedule 1 food on next 4 rounds |
-| Grocer (a102) | A (occ) | ✅ | Buy top good for 1 food (state migrated to cardState) |
-| SourDough (e062) | E | **DEFERRED** | Requires fundamental worker placement flow changes |
-
-### Batch 27 — Anytime Field/Special/Occupations
-
-| Card | Deck | Status | Effect |
-|------|------|--------|--------|
-| SculptureCourse (b053) | B | ✅ | Non-harvest rounds: 1 wood → 2 food OR 1 stone → 4 food |
-| CookeryLesson (b029) | B | ✅ | Bonus point when cooking + Lessons on same turn |
-| LandConsolidation (c069) | C | ✅ | 3 grain in field → 1 vegetable in that field |
-| RollOverPlow (c018) | C | ✅ | With 3+ planted fields: discard from 1 field → plow 1 field |
-| Changeover (d071) | D | ✅ | After harvest (onFieldPhaseEnd hook): field with 1 good → sow |
-| BasketmakersWife (c139) | C (occ) | ✅ | 1 reed → 2 food (engine now scans occupations) |
-| ClayFirer (d162) | D (occ) | ✅ | 2 clay → 1 stone, 3 clay → 2 stone |
-| SheepWalker (b104) | B (occ) | ✅ | 1 sheep → 1 boar/vegetable/stone |
-| ClayCarrier (d122) | D (occ) | ✅ | Once/round: 2 food → 2 clay |
-| SeedTrader (d114) | D (occ) | ✅ | Buy grain (2 food) or vegetable (3 food) from card stock |
-| WhiskyDistiller (d106) | D (occ) | ✅ | 1 grain → schedule 4 food in 2 rounds |
-| Emissary (d124) | D (occ) | ✅ | Place unique good → get 1 stone |
-| Salter (b157) | B (occ) | ✅ | Pay animal → schedule food (3/5/7 rounds) |
-| Mason (c087) | C (occ) | ✅ | Free stone room (once, requires 4+ stone rooms) |
-| MasterBuilder (d087) | D (occ) | ✅ | Free room (once per game, requires 5+ rooms) |
-| ReedSeller (d159) | D (occ) | ✅ | 1 reed → 3 food (or 2 food if another player buys) |
-| PenBuilder (e086) | E (occ) | ✅ | Place wood on card → holds 2× animals |
-| StableCleaner (c094) | C (occ) | ✅ | Build stables at 1 wood + 1 food each |
-| Sower (c115) | C (occ) | **DEFERRED** | `onBuildMajor` wired, but needs complex reed-tracking system on major improvements |
+**Key files:** `agricola.js` (redevelopment actions), `AgricolaActionManager.js`
+**Complexity:** Moderate — hook wiring pattern is well-established
 
 ---
 
-## Progress Summary
+## Group 6: Fencing Alternatives (1 card)
 
-| Phase | Done | Test | Blocked/Deferred | Total |
-|-------|------|------|------------------|-------|
-| 1: Stub Fixes | 14 | 0 | 4 | 18 |
-| 2: Test-Only | 41 | 0 | 19 | 60 |
-| 3: MinorB Infra | 10 | 0 | 1 | 11 |
-| 4: Anytime | 33 | 0 | 2 deferred | 35 |
-| **Total** | **98** | **0** | **26** | **124** |
+| Card | Deck | What it does |
+|------|------|-------------|
+| WoodPalisades (b030) | B | Place 2 wood on edge fence spaces instead of real fences; 1 bonus point each |
 
-**Remaining BLOCKED cards** need deep infrastructure: worker placement mods, virtual fields, plow options, custom action spaces, etc.
+**Infrastructure needed:**
+- Wood-as-fence-material system (wood placed on edges, not real fences)
+- Edge-only validation (palisades only on outer edges)
+- Palisade bonus scoring
 
-### Hook Wiring Status
+**Key files:** `AgricolaPlayer.js` (fence/pasture system), `AgricolaScoring.js`
+**Complexity:** Moderate — parallel fence system with different material + scoring
 
-✅ = Wired and working. ❌ = Not wired.
+---
 
-- ✅ `onAction` — in executeAction
-- ✅ `afterPlayerAction` — in playerTurn
-- ✅ `onWorkPhaseStart` — in workPhase
-- ✅ `onWorkPhaseEnd` — in workPhase
-- ✅ `onHarvestStart` — in harvestPhase
-- ✅ `onHarvest` — in harvestPhase
-- ✅ `onHarvestGrain` — in fieldPhase
-- ✅ `onFeedingPhase` — in feedingPhase
-- ✅ `onFeedingPhaseEnd` — in feedingPhase
-- ✅ `onBreedingPhaseEnd` — in breedingPhase
-- ✅ `onFieldPhaseEnd` — in fieldPhase (used by Changeover)
-- ✅ `onBake` — in bake action
-- ✅ `onBakeBreadAction` — in bake bread action space
-- ✅ `onAfterSow` — in sow action
-- ✅ `onBuildRoom` — in buildRoom action
-- ✅ `onBuildFences` — in buildFences action
-- ✅ `onPlayOccupation` — in playOccupation (after play)
-- ✅ `onBeforePlayOccupation` — in playOccupation (before cost)
-- ✅ `onBeforeAction` — in playerTurn (before action execution)
-- ✅ `onUseSpace` / `onUseMultipleSpaces` — in playerTurn
-- ✅ `onLessonsWithCooking` — in playerTurn (Cookery Lesson)
-- ✅ `onGainGrain` — in giveResources (HayloftBarn)
-- ✅ `onRoundEnd` — in mainLoop (Sculpture Course)
-- ✅ `isRoundActionSpace()` — helper method
-- ✅ `actionGivesReed()` — helper method
-- ✅ `getUnusedOncePerRoundActions()` — helper for end-of-turn reminder
-- ✅ `onBreedingPhaseStart` — in breedingPhase (ShepherdsWhistle)
-- ✅ `onUseFarmyardSpace` — in playerTurn (Farmstead)
-- ✅ `onGainBoar` — in takeAccumulatedResource (HuntsmansHat)
-- ✅ `onAnyRenovateToStone` — in renovate() for all players (RecycledBrick)
-- ✅ `onAnyBuildRoom` — in buildRoom() for all players (Twibil)
-- ✅ `onBuildMajor` — in buildMajorImprovement (FarmBuilding)
-- ✅ `onAnyAction` — in executeAction for all players (MaterialHub)
-- ✅ `modifyHouseCapacity` — in getHouseCapacity, called by canGrowFamily (BunkBeds)
-- ✅ `modifyStableCapacity` — in getPastureCapacity + getUnfencedStableCapacity (AnimalBedding)
-- ✅ `modifyFenceCost` (with isEdge param) — applyFenceCostModifiers passes edgeFenceCount (BriarHedge)
-- ✅ `onStageReveal` — in revealRoundAction (HeartOfStone)
-- ✅ `onCook` / `onCookAnimal` — in executeAnytimeFoodConversion, 3 cooking paths (FatstockStretcher, GypsysCrock)
-- ✅ `modifySowAmount` — in sowField (CowPatty, SkimmerPlow)
-- ✅ `modifyPlowCount` — in executeAction + plowAndOrSow (SkimmerPlow)
-- ✅ `modifyRenovationCost` — in getRenovationCost (WoodSlideHammer)
-- ✅ `modifyRenovation` — in renovate() (WoodSlideHammer)
-- ✅ `getFreeFences` / `useFreeFences` — in fence validation + build (AshTrees)
-- ✅ `isFieldAdjacentToPasture` — player method in AgricolaPlayer.js (CowPatty)
-- ❌ `getHarvestedFieldsAdjacentToHouse` — player method needed by Lynchet
-- ❌ `goodsInFieldsBeforeFinalHarvest` — tracking needed by WoodRake
+## Group 7: Turn Flow / Deferred (2 cards)
 
-### plowField Options Not Supported
+| Card | Deck | What it does |
+|------|------|-------------|
+| SourDough (e062) | E | Once/round, if all players have ≥1 person left, skip placement for Bake Bread |
+| Sower (c115, occ) | C | Place reed on card per major built; exchange reed for Sow action anytime |
 
-`plowField(player)` exists but ignores options. These cards call it with
-unsupported options that need to be either added to the method or inlined:
+**Infrastructure needed:**
+- Placement-skip conditionals (skip worker placement under game-state conditions)
+- Per-card resource tracking on major improvements (reed accumulates on card)
 
-- `{ allowNonAdjacent: true }` — NewlyPlowedField
-- `{ zigzagPattern: true }` — ZigzagHarrow
-- `{ immediate: true }` — SwingPlow, TurnwrestPlow (card-based field tiles)
+**Key files:** `agricola.js` (playerTurn, workPhase)
+**Complexity:** Moderate — SourDough needs placement-skip; Sower needs card-resource tracking
