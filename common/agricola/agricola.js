@@ -1847,6 +1847,35 @@ Agricola.prototype.getAvailableActions = function(player, options) {
     }
   }
 
+  // Created action spaces (e.g. Forest Tallyman gap when Forest and Clay Pit occupied)
+  for (const card of player.getActiveCards()) {
+    const def = card.definition
+    if (!def.createsActionSpace || typeof def.actionSpaceAvailable !== 'function') {
+      continue
+    }
+    if (!def.actionSpaceAvailable(this)) {
+      continue
+    }
+    const id = def.createsActionSpace
+    if (available.includes(id)) {
+      continue
+    }
+    if (!this.state.actionSpaces[id]) {
+      this.state.actionSpaces[id] = {
+        occupiedBy: null,
+        cardProvided: true,
+        cardId: def.id,
+        ownerName: player.name,
+        name: def.name + ' (gap)',
+        description: def.text,
+        ownerOnly: true,
+      }
+    }
+    if (!this.state.actionSpaces[id].occupiedBy) {
+      available.push(id)
+    }
+  }
+
   if (options?.allowedActions) {
     return available.filter(id => options.allowedActions.includes(id))
   }
@@ -1981,6 +2010,16 @@ Agricola.prototype.returnHomePhase = function() {
       delete this.state.actionSpaces[actionId].blockedBy
     }
   }
+
+  // Clear created action spaces (e.g. Forest Tallyman gap) so they can appear again next round
+  for (const player of this.players.all()) {
+    for (const card of player.getActiveCards()) {
+      const def = card.definition
+      if (def.createsActionSpace && this.state.actionSpaces[def.createsActionSpace]) {
+        this.state.actionSpaces[def.createsActionSpace].occupiedBy = null
+      }
+    }
+  }
 }
 
 
@@ -1991,10 +2030,11 @@ Agricola.prototype.harvestPhase = function() {
   this.log.add({ template: '=== Harvest ===' })
   this.log.indent()
 
-  // Call onHarvestStart hooks (e.g., Lunchtime Beer offers to skip phases)
+  // Call onHarvestStart and onBeforeHarvest hooks (e.g., Lunchtime Beer, Haydryer)
   this.state.skipFieldAndBreeding = []
   for (const player of this.players.all()) {
     this.callPlayerCardHook(player, 'onHarvestStart')
+    this.callPlayerCardHook(player, 'onBeforeHarvest')
   }
 
   this.fieldPhase()

@@ -474,6 +474,8 @@ class AgricolaActionManager extends BaseActionManager {
 
     let builtAnything = false
     player._farmExpansionWoodPaid = 0
+    let builtRoomType = null
+    let builtStable = false
 
     // Loop: keep offering build choices until the player is done or can't afford more
     while (true) {
@@ -540,11 +542,13 @@ class AgricolaActionManager extends BaseActionManager {
       if (choice === 'Build Room') {
         this.buildRoom(player)
         builtAnything = true
+        builtRoomType = player.roomType
       }
 
       if (choice === 'Build Stable') {
         this.buildStable(player)
         builtAnything = true
+        builtStable = true
       }
     }
 
@@ -552,6 +556,10 @@ class AgricolaActionManager extends BaseActionManager {
     delete player._farmExpansionWoodPaid
     if (totalWoodPaid > 0) {
       this.game.callPlayerCardHook(player, 'onFarmExpansion', totalWoodPaid)
+    }
+
+    if (builtRoomType && builtStable) {
+      this.game.callPlayerCardHook(player, 'onBuildRoomAndStable', builtRoomType)
     }
 
     if (!builtAnything) {
@@ -2934,6 +2942,13 @@ class AgricolaActionManager extends BaseActionManager {
   executeCardActionSpace(player, actionId, state) {
     const card = this.game.cards.byId(state.cardId)
     const owner = this.game.players.byName(state.ownerName)
+    const def = card.definition
+
+    if (def.onUseCreatedSpace) {
+      def.onUseCreatedSpace(this.game, player)
+      this.game.state.actionSpaces[actionId].occupiedBy = player.name
+      return true
+    }
 
     this.log.add({
       template: '{player} uses {card} action space',

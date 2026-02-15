@@ -2,10 +2,10 @@
   "lastUpdated": "2025-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 29,
-  "cardsCompleted": 79,
-  "cardsTested": 114,
-  "currentBatch": "Batch-030",
+  "batchesCompleted": 30,
+  "cardsCompleted": 84,
+  "cardsTested": 123,
+  "currentBatch": "Batch-031",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -208,6 +208,13 @@
       "cards": ["animal-dealer-a147", "animal-teacher-a168"],
       "testsCreated": 2,
       "testsPassing": 6,
+      "completedDate": "2025-02-14"
+    },
+    "Batch-030": {
+      "status": "completed",
+      "cards": ["forest-tallyman-a162", "wood-worker-a164", "breeder-buyer-a167", "pig-breeder-a165", "haydryer-a166"],
+      "testsCreated": 5,
+      "testsPassing": 9,
       "completedDate": "2025-02-14"
     },
     "Hollow-Warden": {
