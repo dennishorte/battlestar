@@ -1820,8 +1820,8 @@ class AgricolaActionManager extends BaseActionManager {
       this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost, imp)
       this.callOnAnyBuildImprovementHooks(player, impCost, imp)
 
-      // Call onBuildMajor hooks (Farm Building schedules food)
-      this.game.callPlayerCardHook(player, 'onBuildMajor')
+      // Call onBuildMajor hooks (Farm Building schedules food, Craft Teacher)
+      this.game.callPlayerCardHook(player, 'onBuildMajor', improvementId)
 
       if (imp.upgradesFrom && imp.upgradesFrom.some(id => id.startsWith('fireplace'))) {
         this.game.callPlayerCardHook(player, 'onUpgradeFireplace')
@@ -1831,6 +1831,32 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     return false
+  }
+
+  offerFreeOccupations(player, card, maxCount) {
+    for (let i = 0; i < maxCount; i++) {
+      const played = this.playOccupation(player, { free: true })
+      if (!played) {
+        break
+      }
+    }
+  }
+
+  offerUseOtherSpace(player, card, otherActionId, _opts = {}) {
+    const action = res.getActionById(otherActionId)
+    if (!action) {
+      return
+    }
+    const choices = [`Use ${action.name}`, 'Skip']
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Use other space with same person?`,
+      min: 1,
+      max: 1,
+    })
+    if (selection[0] === 'Skip') {
+      return
+    }
+    this.executeAction(player, otherActionId)
   }
 
   // ---------------------------------------------------------------------------
@@ -2211,8 +2237,8 @@ class AgricolaActionManager extends BaseActionManager {
             this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost, imp)
             this.callOnAnyBuildImprovementHooks(player, impCost, imp)
 
-            // Call onBuildMajor hooks (Farm Building schedules food)
-            this.game.callPlayerCardHook(player, 'onBuildMajor')
+            // Call onBuildMajor hooks (Farm Building schedules food, Craft Teacher)
+            this.game.callPlayerCardHook(player, 'onBuildMajor', improvementId)
             return improvementId
           }
         }
@@ -2449,8 +2475,8 @@ class AgricolaActionManager extends BaseActionManager {
           this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost, imp)
           this.callOnAnyBuildImprovementHooks(player, impCost, imp)
 
-          // Call onBuildMajor hooks (Farm Building schedules food)
-          this.game.callPlayerCardHook(player, 'onBuildMajor')
+          // Call onBuildMajor hooks (Farm Building schedules food, Craft Teacher)
+          this.game.callPlayerCardHook(player, 'onBuildMajor', improvementId)
 
           if (imp.upgradesFrom && imp.upgradesFrom.some(id => id.startsWith('fireplace'))) {
             this.game.callPlayerCardHook(player, 'onUpgradeFireplace')
@@ -5132,7 +5158,12 @@ class AgricolaActionManager extends BaseActionManager {
 
       this.game.callPlayerCardHook(player, 'onBuildImprovement', player.getMajorImprovementCost(improvementId), imp)
       this.callOnAnyBuildImprovementHooks(player, player.getMajorImprovementCost(improvementId), imp)
-      this.game.callPlayerCardHook(player, 'onBuildMajor')
+      this.game.callPlayerCardHook(player, 'onBuildMajor', improvementId)
+
+      this.log.add({
+        template: '{player} uses {card} to build {improvement}',
+        args: { player, card, improvement: imp },
+      })
     }
   }
 
@@ -5186,7 +5217,12 @@ class AgricolaActionManager extends BaseActionManager {
 
       this.game.callPlayerCardHook(player, 'onBuildImprovement', player.getMajorImprovementCost(improvementId), imp)
       this.callOnAnyBuildImprovementHooks(player, player.getMajorImprovementCost(improvementId), imp)
-      this.game.callPlayerCardHook(player, 'onBuildMajor')
+      this.game.callPlayerCardHook(player, 'onBuildMajor', improvementId)
+
+      this.log.add({
+        template: '{player} uses {card} to build {improvement}',
+        args: { player, card, improvement: imp },
+      })
     }
   }
 

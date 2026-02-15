@@ -370,6 +370,17 @@ Agricola.prototype.getAccumulatedResources = function(actionId) {
   return result
 }
 
+/**
+ * Remove resources from an accumulation space (e.g. Riverine Shepherd taking from the other space).
+ */
+Agricola.prototype.removeFromAccumulationSpace = function(actionId, resource, amount) {
+  const state = this.state.actionSpaces[actionId]
+  if (!state || state.accumulated == null) {
+    return
+  }
+  state.accumulated = Math.max(0, (state.accumulated || 0) - amount)
+}
+
 Agricola.prototype.hasAccumulationSpaceWithGoods = function(minGoods) {
   for (const actionId of this.state.activeActions) {
     const action = res.getActionById(actionId)

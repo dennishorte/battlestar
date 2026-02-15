@@ -22,8 +22,8 @@ This frequent context refresh keeps important details in working memory.
 ## Batch Status
 
 - **Total Batches**: TBD (will be ~25-30 batches for Set A, ~80-140 total)
-- **Completed Batches**: 17
-- **Current Batch**: Batch-018
+- **Completed Batches**: 18
+- **Current Batch**: Batch-019
 
 ## Batch Queue
 
@@ -350,7 +350,7 @@ Cards:
 
 ---
 
-### Batch-018: Build Hooks and Complex onAction (Set A)
+### Batch-018: Build Hooks and Complex onAction (Set A) ✅ COMPLETED
 **Pattern**: Cards that trigger on building improvements or have complex onAction logic  
 **Template**: `CraftTeacher.js`, `Swagman.js`, `RiverineShepherd.js`  
 **Test Template**: Test `onBuildMajor` and complex onAction behavior  

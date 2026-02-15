@@ -2,10 +2,10 @@
   "lastUpdated": "2025-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 17,
-  "cardsCompleted": 51,
-  "cardsTested": 78,
-  "currentBatch": "Batch-018",
+  "batchesCompleted": 18,
+  "cardsCompleted": 54,
+  "cardsTested": 84,
+  "currentBatch": "Batch-019",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -124,6 +124,13 @@
       "cards": ["riparian-builder-a128", "publican-a132"],
       "testsCreated": 2,
       "testsPassing": 4,
+      "completedDate": "2025-02-14"
+    },
+    "Batch-018": {
+      "status": "completed",
+      "cards": ["craft-teacher-a131", "swagman-a129", "riverine-shepherd-a137"],
+      "testsCreated": 3,
+      "testsPassing": 6,
       "completedDate": "2025-02-14"
     },
     "Hollow-Warden": {
