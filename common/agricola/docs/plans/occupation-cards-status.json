@@ -2,10 +2,10 @@
   "lastUpdated": "2025-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 24,
-  "cardsCompleted": 65,
-  "cardsTested": 96,
-  "currentBatch": "Batch-025",
+  "batchesCompleted": 25,
+  "cardsCompleted": 68,
+  "cardsTested": 99,
+  "currentBatch": "Batch-026",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -175,6 +175,13 @@
       "testsPassing": 5,
       "completedDate": "2025-02-14"
     },
+    "Batch-025": {
+      "status": "completed",
+      "cards": ["conjurer-a155", "patch-caretaker-a161", "woolgrower-a148"],
+      "testsCreated": 3,
+      "testsPassing": 7,
+      "completedDate": "2025-02-14"
+    },
     "Hollow-Warden": {
       "status": "completed",
       "cards": ["hollow-warden-a139"],
@@ -188,7 +195,7 @@
 "occupationA": {
     "total": 84,
     "implemented": 61,
-    "tested": 88,
+    "tested": 91,
     "status": "in_progress"
   },
     "occupationB": {

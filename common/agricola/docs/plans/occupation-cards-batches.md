@@ -19,11 +19,26 @@ This file contains small batches (3-5 cards) for LLM agents to work on.
 
 This frequent context refresh keeps important details in working memory.
 
+**Implementation rule – no one-off action manager methods:**  
+When implementing or revising cards, **do not add one-off methods to the action manager** (e.g. `offerCordmakerChoice`, `offerPaymasterBonus`) for card-specific behavior. Instead, **inline the implementation on the card** (e.g. in the card’s hook, call `player.addResource`, `game.log.add`, `game.actions.choose`, or existing shared helpers). Use action manager methods only for **shared** behavior used by multiple cards or core flow. This rule applies to all batches.
+
 ## Batch Status
 
 - **Total Batches**: TBD (will be ~25-30 batches for Set A, ~80-140 total)
-- **Completed Batches**: 23
-- **Current Batch**: Batch-025
+- **Completed Batches**: 25
+- **Current Batch**: Batch-026
+
+### Next Set of Batches (025–030) – Summary
+| Batch   | Theme | Cards | Notes |
+|---------|--------|-------|--------|
+| 025 | Simple onAction + capacity | Conjurer, Patch Caretaker, Woolgrower | 3 cards |
+| 026 | onAnyAction pay/give for bonus or good | Paymaster, Buyer, Joiner of the Sea | Engine: offerPaymasterBonus, offerBuyerPurchase, offerJoinerOfTheSeaTrade |
+| 027 | Traveling Players cluster | House Artist, Stagehand, Culinary Artist, Lutenist | 4 cards; engine: build discount/choice, culinary exchange, offerBuyVegetable |
+| 028 | checkTrigger + onReturnHomeStart | Pig Owner, Minstrel | 2 cards; engine: offerUseActionSpace |
+| 029 | Animal purchase on action | Animal Dealer, Animal Teacher | offerBuyAnimalTeacher |
+| 030 | Created space, exchanges, build/round/harvest | Forest Tallyman, Wood Worker, Breeder Buyer, Pig Breeder, Haydryer | 5 cards; engine: gap space, offerWoodForSheepExchange, offerBuyCattle, onBuildRoomAndStable |
+
+These six batches cover the remaining **19 occupationA cards** that are implemented but not yet tested. After Batch-030, Set A will have full test coverage for all implemented cards.
 
 ## Batch Queue
 
@@ -493,6 +508,123 @@ Cards:
 
 ---
 
+### Batch-025: Simple onAction and Capacity Modifiers (Set A)
+**Pattern**: Single-hook onAction resource grants; card that holds animals with dynamic capacity  
+**Template**: `Conjurer.js`, `PatchCaretaker.js`, `Woolgrower.js`  
+**Test Template**: Use accumulation-space tests (e.g. StorehouseSteward) for onAction; capacity tests for holdsAnimals  
+**Complexity**: Simple–Medium (Tier 1–2)
+
+Cards:
+1. `conjurer-a155` - Conjurer (onAction: Traveling Players → +1 wood, +1 grain)
+2. `patch-caretaker-a161` - Patch Caretaker (onAction: 2nd+ use of same good-type accumulation this phase → +1 vegetable)
+3. `woolgrower-a148` - Woolgrower (holdsAnimals: sheep; getAnimalCapacity = completed feeding phases)
+
+**LLM Instructions:**
+1. Read each card file and verify implementation
+2. Conjurer: test using Traveling Players gives wood and grain
+3. Patch Caretaker: test using two accumulation spaces of same good type in one work phase gives vegetable on second
+4. Woolgrower: test that sheep capacity on card equals completed feeding phases (may need multi-round setup)
+5. Create comprehensive test files; run tests and update status
+
+---
+
+### Batch-026: onAnyAction – Pay/Give for Bonus or Good (Set A)
+**Pattern**: When another player uses a space, card owner pays/gives something for a bonus or good  
+**Template**: `Paymaster.js`, `Buyer.js`, `JoinerOfTheSea.js`  
+**Test Template**: RiparianBuilder / Cordmaker style (other player takes action, owner gets offer)  
+**Complexity**: Medium (Tier 2). **Engine**: Verify/add `offerPaymasterBonus`, `offerBuyerPurchase`, `offerJoinerOfTheSeaTrade` in AgricolaActionManager.
+
+Cards:
+1. `paymaster-a154` - Paymaster (another uses food accumulation → give 1 grain for 1 bonus point)
+2. `buyer-a156` - Buyer (another uses reed/stone/sheep/boar space → pay them 1 food to get 1 good from supply)
+3. `joiner-of-the-sea-a159` - Joiner of the Sea (another uses Fishing/Reed Bank → give 1 wood to get 2/3 food)
+
+**LLM Instructions:**
+1. Locate or implement offerPaymasterBonus, offerBuyerPurchase, offerJoinerOfTheSeaTrade
+2. Test with 3–4 players; other player uses the trigger space, owner gets the offer
+3. Test choice/skip and resource/point outcomes
+4. Create comprehensive test files; run tests and update status
+
+---
+
+### Batch-027: Traveling Players – onAction and onAnyAction (Set A)
+**Pattern**: Cards that trigger on “Traveling Players” accumulation space (owner or another player)  
+**Template**: `HouseArtist.js`, `Stagehand.js`, `CulinaryArtist.js`, `Lutenist.js`  
+**Test Template**: Use Traveling Players in setBoard; test owner vs other-player triggers  
+**Complexity**: Medium (Tier 2). **Engine**: Verify/add `offerBuildRoomsWithDiscount`, `offerBuildChoice`, `offerCulinaryArtistExchange`; `offerBuyVegetable` may already exist or be similar to New Purchase.
+
+Cards:
+1. `house-artist-a149` - House Artist (onAction: you use Traveling Players → Build Rooms with 1 reed discount)
+2. `stagehand-a150` - Stagehand (onAnyAction: another uses Traveling Players → your choice: Build Fences / Stables / Rooms)
+3. `culinary-artist-a158` - Culinary Artist (onAnyAction: another uses Traveling Players → exchange 1 grain/sheep/vegetable for 4/5/7 food)
+4. `lutenist-a160` - Lutenist (onAnyAction: another uses Traveling Players → +1 food +1 wood, then optional buy 1 vegetable for 2 food)
+
+**LLM Instructions:**
+1. Ensure Traveling Players action space is available in tests (round/actionSpaces)
+2. Implement or verify engine methods for build-with-discount, build choice, culinary exchange, buy vegetable
+3. Test owner vs other-player triggers; test skip and resource outcomes
+4. Create comprehensive test files; run tests and update status
+
+---
+
+### Batch-028: checkTrigger and onReturnHomeStart (Set A)
+**Pattern**: checkTrigger (e.g. first-time condition); onReturnHomeStart with conditional use of action space  
+**Template**: `PigOwner.js`, `Minstrel.js`  
+**Test Template**: Braggart/Sequestrator for checkTrigger; custom for “use unoccupied space”  
+**Complexity**: Medium (Tier 2). **Engine**: Verify `offerUseActionSpace`, `getUnoccupiedActionSpacesInRounds`; ensure checkTrigger is called at appropriate times.
+
+Cards:
+1. `pig-owner-a153` - Pig Owner (checkTrigger: first time you have 5 wild boar → 3 bonus points)
+2. `minstrel-a151` - Minstrel (onReturnHomeStart: if exactly one action space in rounds 1–4 is unoccupied, you may use it)
+
+**LLM Instructions:**
+1. Pig Owner: test reaching 5 boar triggers 3 BP once; test no second trigger
+2. Minstrel: test round where only one space in 1–4 is unoccupied; owner gets offer to use it
+3. Create comprehensive test files; run tests and update status
+
+---
+
+### Batch-029: Animal Purchase on Action (Set A)
+**Pattern**: Buy animal(s) when using a specific action space (market or Lessons)  
+**Template**: `AnimalDealer.js`, `AnimalTeacher.js`  
+**Test Template**: Use offerBuyAnimal pattern; Lessons action space for Animal Teacher  
+**Complexity**: Medium (Tier 2). **Engine**: `offerBuyAnimal` exists; verify/add `offerBuyAnimalTeacher` (sheep/boar/cattle for 0/1/2 food).
+
+Cards:
+1. `animal-dealer-a147` - Animal Dealer (onAction: Sheep/Pig/Cattle Market → may buy 1 additional animal of that type for 1 food)
+2. `animal-teacher-a168` - Animal Teacher (onAction: after Lessons → may buy 1 sheep/boar/cattle for 0/1/2 food)
+
+**LLM Instructions:**
+1. Verify offerBuyAnimal supports “additional animal for 1 food” for Animal Dealer
+2. Implement or verify offerBuyAnimalTeacher with 0/1/2 food choice
+3. Test with appropriate accumulation/market and Lessons spaces
+4. Create comprehensive test files; run tests and update status
+
+---
+
+### Batch-030: Created Action Space, Exchanges, and Build/Round/Harvest Hooks (Set A)
+**Pattern**: createsActionSpace; onAction exchange; onBuildRoomAndStable; onPlay + onRoundEnd; onBeforeHarvest  
+**Template**: `ForestTallyman.js`, `WoodWorker.js`, `BreederBuyer.js`, `PigBreeder.js`, `Haydryer.js`  
+**Test Template**: Work Certificate / created-space tests; build + stable in one turn; round 12 / before-harvest hooks  
+**Complexity**: Medium–High (Tier 2–3). **Engine**: Verify created action space “gap”, `offerWoodForSheepExchange`, `offerBuyCattle`; ensure `onBuildRoomAndStable` and `onRoundEnd(12)` are invoked.
+
+Cards:
+1. `forest-tallyman-a162` - Forest Tallyman (createsActionSpace when Forest and Clay Pit occupied; use gap → 2 clay, 3 wood)
+2. `wood-worker-a164` - Wood Worker (onAction: take wood → may exchange 1 wood for 1 sheep, place wood on space)
+3. `breeder-buyer-a167` - Breeder Buyer (onBuildRoomAndStable: build room + stable same turn → 1 sheep/boar/cattle by room type)
+4. `pig-breeder-a165` - Pig Breeder (onPlay: 1 boar; onRoundEnd(12): boar breed if 2+ and room)
+5. `haydryer-a166` - Haydryer (onBeforeHarvest: may buy 1 cattle for 4 − pastures food, min 0)
+
+**LLM Instructions:**
+1. Forest Tallyman: test gap space appears when Forest and Clay Pit occupied; use it for 2 clay, 3 wood
+2. Wood Worker: test take-wood then exchange 1 wood for 1 sheep (wood on space)
+3. Breeder Buyer: test building room + stable in same turn grants correct animal
+4. Pig Breeder: test onPlay boar and round 12 breeding
+5. Haydryer: test before-harvest cattle purchase with pasture discount
+6. Create comprehensive test files; run tests and update status
+
+---
+
 ## Batch Creation Guidelines
 
 When creating new batches:
@@ -503,6 +635,7 @@ When creating new batches:
 4. **Use templates**: Reference existing implementations
 5. **Include instructions**: Clear LLM agent guidance
 6. **Require status updates**: Force context refresh after each batch
+7. **No one-off action manager methods**: Implement card-specific behavior on the card (inline in hooks); use action manager only for shared behavior used by multiple cards or core flow. See the rule in the "Implementation rule" section above.
 
 ## Status Update Format
 

@@ -1323,6 +1323,7 @@ Agricola.prototype.workPhase = function() {
     player.resourcesGainedThisRound = {}
     player._firstActionThisRound = null
     player._usedMummysBoyDoubleAction = false
+    player.usedAccumulationSpaceTypes = undefined // Patch Caretaker: same good-type tracking per work phase
   }
 
   let currentPlayerIndex = this.players.all().findIndex(p => p.name === this.state.startingPlayer)
