@@ -19,6 +19,24 @@ const t = require('../../../testutil_v2.js')
 The test fixture creates a 2-player game (dennis, micah) with shuffled seats
 disabled and the `test` card set included by default.
 
+## Test-First Stubs
+
+Before implementing or modifying a card, read the card text and write stubs
+for **every** test case needed to fully cover the card's functionality. Each
+stub should have a descriptive name and a `// TODO` comment summarizing what
+it will verify. This forces you to think through all behaviors, edge cases,
+and interactions before writing any implementation or test logic.
+
+```js
+test.todo('onPlay gives 1 wood per fence built')
+test.todo('onPlay with 0 fences schedules nothing')
+test.todo('scheduled wood is collected at round start')
+```
+
+Only after all stubs are written should you fill them in one by one. This
+prevents the common failure mode of implementing the happy path and forgetting
+edge cases.
+
 ## Core Pattern
 
 Every test follows this structure:

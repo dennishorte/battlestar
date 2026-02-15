@@ -13,11 +13,11 @@ module.exports = {
       args: { player },
     })
   },
-  onAnyBeforeAction(game, actingPlayer, actionId, cardOwner) {
-    const woodActions = ['take-wood', 'copse', 'take-3-wood', 'take-2-wood']
+  onAnyAction(game, actingPlayer, actionId, cardOwner, resources) {
+    const woodActions = ['take-wood', 'copse', 'copse-5', 'grove', 'grove-5', 'grove-6']
     if (woodActions.includes(actionId) && actingPlayer.name !== cardOwner.name) {
-      const woodOnSpace = game.getAccumulatedResources(actionId).wood || 0
-      if (woodOnSpace >= 5 && actingPlayer.food >= 1) {
+      const woodTaken = (resources && resources.wood) || 0
+      if (woodTaken >= 5 && actingPlayer.food >= 1) {
         actingPlayer.payCost({ food: 1 })
         cardOwner.addResource('food', 1)
         game.log.add({

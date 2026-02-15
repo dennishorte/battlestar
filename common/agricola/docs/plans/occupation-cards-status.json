@@ -1,11 +1,11 @@
 {
-  "lastUpdated": "2025-02-14",
+  "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 30,
-  "cardsCompleted": 84,
-  "cardsTested": 123,
-  "currentBatch": "Set-A-Complete",
+  "batchesCompleted": 33,
+  "cardsCompleted": 99,
+  "cardsTested": 145,
+  "currentBatch": "Batch-B04",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -224,6 +224,28 @@
       "testsPassing": 3,
       "completedDate": "2024-01-15",
       "note": "Completed outside plan as special request"
+    },
+    "Batch-B01": {
+      "status": "completed",
+      "cards": ["groom-b089", "established-person-b088", "consultant-b102", "field-merchant-b103", "case-builder-b105"],
+      "testsCreated": 5,
+      "testsPassing": 10,
+      "completedDate": "2026-02-14"
+    },
+    "Batch-B02": {
+      "status": "completed",
+      "cards": ["confidant-b093", "tree-farm-joiner-b096", "roof-ballaster-b123", "patch-caregiver-b113", "seducer-b127"],
+      "testsCreated": 5,
+      "testsPassing": 12,
+      "completedDate": "2026-02-14"
+    },
+    "Batch-B03": {
+      "status": "completed",
+      "cards": ["shoreforester-b116", "lumberjack-b119", "estate-worker-b125", "house-steward-b136", "forest-guardian-b138"],
+      "testsCreated": 5,
+      "testsPassing": 22,
+      "completedDate": "2026-02-14",
+      "note": "Fixed Shoreforester wasNonEmpty guard; fixed ForestGuardian to use onAnyAction"
     }
   },
   "bySet": {

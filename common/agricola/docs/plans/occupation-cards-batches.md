@@ -694,18 +694,18 @@ Cards:
 
 ---
 
-### Batch-B03: onPlay resources by game state (Set B)
+### Batch-B03: onPlay resources by game state (Set B) ✅ COMPLETED
 **Pattern**: onPlay – resources based on rounds, fences, or board state  
 **Complexity**: Tier 2
 
 Cards:
-1. `shoreforester-b116` - Shoreforester (onPlay)
-2. `lumberjack-b119` - Lumberjack (onPlay: place 1 wood on each of next N round spaces, N = fences)
-3. `estate-worker-b125` - Estate Worker (onPlay: place 1 wood, 1 clay, 1 reed, 1 stone on next 4 round spaces)
-4. `house-steward-b136` - House Steward (onPlay: if 1/3/6/9 complete rounds left, get 1/2/3/4 wood)
-5. `forest-guardian-b138` - Forest Guardian (onPlay: 2 wood; each time before another takes wood space, you may take 1 wood)
+1. `shoreforester-b116` - Shoreforester (onPlay + onReedBankReplenish) ✅
+2. `lumberjack-b119` - Lumberjack (onPlay: place 1 wood on each of next N round spaces, N = fences) ✅
+3. `estate-worker-b125` - Estate Worker (onPlay: place 1 wood, 1 clay, 1 reed, 1 stone on next 4 round spaces) ✅
+4. `house-steward-b136` - House Steward (onPlay: if 1/3/6/9 complete rounds left, get 1/2/3/4 wood; scoring: most rooms → 3 BP) ✅
+5. `forest-guardian-b138` - Forest Guardian (onPlay: 2 wood; onAnyAction: other player takes 5+ wood → pays 1 food) ✅
 
-**LLM Instructions:** Test round-based and state-based onPlay effects. Create tests; run; update status.
+**Status**: All cards tested. Fixed Shoreforester to only trigger on empty Reed Bank (was missing wasNonEmpty guard). Fixed Forest Guardian to use onAnyAction instead of nonexistent onAnyBeforeAction hook; expanded wood action ID list.
 
 ---
 

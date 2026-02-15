@@ -13,11 +13,13 @@ module.exports = {
       args: { player },
     })
   },
-  onReedBankReplenish(game, player) {
-    player.addResource('wood', 1)
-    game.log.add({
-      template: '{player} gets 1 wood from Shoreforester',
-      args: { player },
-    })
+  onReedBankReplenish(game, player, wasNonEmpty) {
+    if (!wasNonEmpty) {
+      player.addResource('wood', 1)
+      game.log.add({
+        template: '{player} gets 1 wood from Shoreforester',
+        args: { player },
+      })
+    }
   },
 }
