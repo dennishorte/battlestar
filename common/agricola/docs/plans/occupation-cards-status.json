@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 36,
-  "cardsCompleted": 110,
-  "cardsTested": 181,
-  "currentBatch": "Batch-B07",
+  "batchesCompleted": 37,
+  "cardsCompleted": 115,
+  "cardsTested": 198,
+  "currentBatch": "Batch-B08",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -270,6 +270,14 @@
       "testsPassing": 16,
       "completedDate": "2026-02-14",
       "note": "Inlined Cottager build/renovate offer; CooperativePlower uses offerPlow; LittleStickKnitter uses familyGrowth; Silokeeper pre-existing"
+    },
+    "Batch-B07": {
+      "status": "completed",
+      "cards": ["geologist-b121", "mineralogist-b122", "oven-firing-boy-b108", "collier-b144", "equipper-b131"],
+      "testsCreated": 5,
+      "testsPassing": 17,
+      "completedDate": "2026-02-14",
+      "note": "Fixed players.count() to players.all().length; OvenFiringBoy uses bakeBread; Equipper uses buyMinorImprovement; Collier fixed Hollow ID"
     }
   },
   "bySet": {

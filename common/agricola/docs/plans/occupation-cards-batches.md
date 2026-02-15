@@ -751,18 +751,18 @@ Cards:
 
 ---
 
-### Batch-B07: onAction – accumulation spaces (wood/clay/reed) (Set B)
+### Batch-B07: onAction – accumulation spaces (wood/clay/reed) (Set B) ✅ COMPLETED
 **Pattern**: onAction when taking wood, clay, reed, or stone from accumulation  
 **Complexity**: Tier 2
 
 Cards:
-1. `geologist-b121` - Geologist (onAction: Forest or Reed Bank → also 1 clay; 3p+ Clay Pit option)
-2. `mineralogist-b122` - Mineralogist (onAction: clay/stone accumulation → also 1 of the other)
-3. `oven-firing-boy-b108` - Oven Firing Boy (onAction: wood accumulation → additional Bake Bread action)
-4. `collier-b144` - Collier (onAction: after Clay Pit → 1 reed, 1 wood; with 2 clay add to take-clay-2)
-5. `equipper-b131` - Equipper (onAction: after wood accumulation → play minor improvement without placing person)
+1. `geologist-b121` - Geologist (onAction: Forest/Reed Bank → +1 clay; 3p+ Clay Pit too) ✅
+2. `mineralogist-b122` - Mineralogist (onAction: clay accumulation → +1 stone; stone → +1 clay) ✅
+3. `oven-firing-boy-b108` - Oven Firing Boy (onAction: wood accumulation → Bake Bread) ✅
+4. `collier-b144` - Collier (onAction: Clay Pit → +1 reed, +1 wood; 3p+ adds +1 to Hollow) ✅
+5. `equipper-b131` - Equipper (onAction: wood accumulation → play minor improvement) ✅
 
-**LLM Instructions:** Test accumulation-space triggers and bonus resources/actions. Create tests; run; update status.
+**Status**: All cards tested. Fixed game.players.count() → game.players.all().length in Geologist/Collier. OvenFiringBoy switched to existing bakeBread. Equipper switched to existing buyMinorImprovement. Collier fixed Hollow ID (was take-clay-2, corrected to hollow).
 
 ---
 

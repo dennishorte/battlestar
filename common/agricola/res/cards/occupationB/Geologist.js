@@ -14,7 +14,7 @@ module.exports = {
         args: { player },
       })
     }
-    else if (actionId === 'take-clay' && game.players.count() >= 3) {
+    else if (actionId === 'take-clay' && game.players.all().length >= 3) {
       player.addResource('clay', 1)
       game.log.add({
         template: '{player} gets 1 clay from Geologist',

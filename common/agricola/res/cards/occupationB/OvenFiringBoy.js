@@ -7,9 +7,9 @@ module.exports = {
   players: "1+",
   text: "Each time you use a wood accumulation space, you get an additional \"Bake Bread\" action.",
   onAction(game, player, actionId) {
-    const woodActions = ['take-wood', 'copse', 'take-3-wood', 'take-2-wood']
+    const woodActions = ['take-wood', 'copse', 'copse-5', 'grove', 'grove-5', 'grove-6']
     if (woodActions.includes(actionId)) {
-      game.actions.offerBakeBread(player, this)
+      game.actions.bakeBread(player)
     }
   },
 }
