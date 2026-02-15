@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 49,
-  "cardsCompleted": 165,
-  "cardsTested": 333,
-  "currentBatch": "Batch-B20",
+  "batchesCompleted": 50,
+  "cardsCompleted": 167,
+  "cardsTested": 338,
+  "currentBatch": "Set-B-Complete",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -374,6 +374,14 @@
       "testsPassing": 10,
       "completedDate": "2026-02-14",
       "note": "Fixed VillagePeasant: onScoring→getEndGamePoints with vegScore delta. Fixed Tutor: inlined getOccupationsPlayedAfter. Fixed PaperMaker: inlined offerPaperMakerBonus. Fixed Seatmate: passive flag→canUseOccupiedActionSpace with neighbor detection. SheepWalker pre-existing (3 tests)."
+    },
+    "Batch-B20": {
+      "status": "completed",
+      "cards": ["tinsmith-master-b115", "truffle-searcher-b086"],
+      "testsCreated": 2,
+      "testsPassing": 5,
+      "completedDate": "2026-02-14",
+      "note": "Fixed TinsmithMaster: pasture.hasStable doesn't exist on pasture objects, inlined space-level hasStable check. TruffleSearcher used existing hooks."
     }
   },
   "bySet": {

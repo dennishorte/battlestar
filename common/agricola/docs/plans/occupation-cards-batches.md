@@ -937,15 +937,15 @@ Cards:
 
 ---
 
-### Batch-B20: Tinsmith Master, Truffle Searcher (Set B)
+### Batch-B20: Tinsmith Master, Truffle Searcher (Set B) ✅ COMPLETED
 **Pattern**: remaining Set B – passive or special  
 **Complexity**: Tier 2
 
 Cards:
-1. `tinsmith-master-b115` - Tinsmith Master (per card text)
-2. `truffle-searcher-b086` - Truffle Searcher (per card text)
+1. `tinsmith-master-b115` - Tinsmith Master (modifyPastureCapacity +1 without stable; modifySowAmount +1) ✅
+2. `truffle-searcher-b086` - Truffle Searcher (holdsAnimals: boar; capacity = completed feeding phases) ✅
 
-**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
+**Status**: All cards tested. Fixed TinsmithMaster: pasture.hasStable doesn't exist on pasture objects, inlined space-level hasStable check via pasture.spaces iteration. TruffleSearcher used existing hooks (holdsAnimals/getAnimalCapacity/getCompletedFeedingPhases).
 
 ---
 
