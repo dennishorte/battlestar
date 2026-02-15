@@ -9,9 +9,10 @@ module.exports = {
   onAction(game, player, actionId) {
     let otherSpace = null
     if (actionId === 'take-clay') {
-      otherSpace = 'take-clay-2'
+      // Other clay space is Hollow (id varies by player count: hollow, hollow-5, hollow-6)
+      otherSpace = game.state.actionSpaces['hollow'] ? 'hollow' : game.state.actionSpaces['hollow-5'] ? 'hollow-5' : 'hollow-6'
     }
-    else if (actionId === 'take-clay-2') {
+    else if (actionId === 'hollow' || actionId === 'hollow-5' || actionId === 'hollow-6') {
       otherSpace = 'take-clay'
     }
     if (otherSpace) {

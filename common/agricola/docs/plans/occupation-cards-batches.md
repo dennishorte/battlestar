@@ -22,8 +22,8 @@ This frequent context refresh keeps important details in working memory.
 ## Batch Status
 
 - **Total Batches**: TBD (will be ~25-30 batches for Set A, ~80-140 total)
-- **Completed Batches**: 21
-- **Current Batch**: Batch-022
+- **Completed Batches**: 22
+- **Current Batch**: Batch-023
 
 ## Batch Queue
 
@@ -432,7 +432,7 @@ Cards:
 
 ---
 
-### Batch-022: Accumulation Space onAction Hooks (Set A)
+### Batch-022: Accumulation Space onAction Hooks (Set A) ✅ COMPLETED
 **Pattern**: Cards that grant bonuses when using accumulation spaces  
 **Template**: `Harpooner.js`, `ShovelBearer.js`, `StorehouseSteward.js`  
 **Test Template**: Test onAction hooks with accumulation spaces  

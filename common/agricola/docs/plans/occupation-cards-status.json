@@ -2,10 +2,10 @@
   "lastUpdated": "2025-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 21,
-  "cardsCompleted": 59,
-  "cardsTested": 90,
-  "currentBatch": "Batch-022",
+  "batchesCompleted": 22,
+  "cardsCompleted": 62,
+  "cardsTested": 93,
+  "currentBatch": "Batch-023",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -154,6 +154,13 @@
       "testsPassing": 7,
       "completedDate": "2025-02-14"
     },
+    "Batch-022": {
+      "status": "completed",
+      "cards": ["harpooner-a138", "shovel-bearer-a140", "storehouse-steward-a146"],
+      "testsCreated": 3,
+      "testsPassing": 11,
+      "completedDate": "2025-02-14"
+    },
     "Hollow-Warden": {
       "status": "completed",
       "cards": ["hollow-warden-a139"],
@@ -166,8 +173,8 @@
   "bySet": {
 "occupationA": {
     "total": 84,
-    "implemented": 55,
-    "tested": 82,
+    "implemented": 58,
+    "tested": 85,
     "status": "in_progress"
   },
     "occupationB": {
