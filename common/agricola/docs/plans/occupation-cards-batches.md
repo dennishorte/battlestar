@@ -878,17 +878,17 @@ Cards:
 
 ---
 
-### Batch-B16: Passive cost / ability modifiers (Set B)
+### Batch-B16: Passive cost / ability modifiers (Set B) ✅ COMPLETED
 **Pattern**: no hook or passive flag – cost reduction, special build  
 **Complexity**: Tier 2
 
 Cards:
-1. `carpenter-b126` - Carpenter (every new room: 3 of resource + 2 reed)
-2. `master-bricklayer-b095` - Master Bricklayer (each major improvement: stone cost − number of rooms)
-3. `brushwood-collector-b145` - Brushwood Collector (when renovate or build room: replace 1 or 2 reed with wood)
-4. `farm-hand-b085` - Farm Hand (once 2x2 fields: Build Stables can build center stable for person)
+1. `carpenter-b126` - Carpenter (modifyBuildCost: 3 resource + 2 reed per room) ✅
+2. `master-bricklayer-b095` - Master Bricklayer (modifyImprovementCost: stone − extra rooms) ✅
+3. `brushwood-collector-b145` - Brushwood Collector (modifyBuildCost: reed → 1 wood) ✅
+4. `farm-hand-b085` - Farm Hand (allowsCenterStable flag tested) ✅
 
-**LLM Instructions:** Test cost modifiers and Farm Hand center-stable build. Create tests; run; update status.
+**Status**: All cards tested. Fixed Carpenter: modifyRoomCost→modifyBuildCost. Fixed MasterBricklayer: modifyMajorImprovementCost→modifyImprovementCost. Fixed BrushwoodCollector: modifyReedCost→modifyBuildCost.
 
 ---
 

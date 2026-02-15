@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 45,
-  "cardsCompleted": 146,
-  "cardsTested": 294,
-  "currentBatch": "Batch-B16",
+  "batchesCompleted": 46,
+  "cardsCompleted": 150,
+  "cardsTested": 300,
+  "currentBatch": "Batch-B17",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -342,6 +342,14 @@
       "testsPassing": 13,
       "completedDate": "2026-02-14",
       "note": "No code changes needed. Tests handle auto-skipped choices, correct sow-field action format, 3-player wood spaces."
+    },
+    "Batch-B16": {
+      "status": "completed",
+      "cards": ["carpenter-b126", "master-bricklayer-b095", "brushwood-collector-b145", "farm-hand-b085"],
+      "testsCreated": 4,
+      "testsPassing": 6,
+      "completedDate": "2026-02-14",
+      "note": "Fixed Carpenter: modifyRoomCost→modifyBuildCost. Fixed MasterBricklayer: modifyMajorImprovementCost→modifyImprovementCost. Fixed BrushwoodCollector: modifyReedCost→modifyBuildCost."
     }
   },
   "bySet": {
