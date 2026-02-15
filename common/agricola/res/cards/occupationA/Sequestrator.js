@@ -11,7 +11,7 @@ module.exports = {
     s.reedAvailable = 3
     s.clayAvailable = 4
   },
-  checkTriggers(game) {
+  checkTrigger(game, _owner) {
     const s = game.cardState(this.id)
     if (s.reedAvailable > 0 || s.clayAvailable > 0) {
       for (const player of game.players.all()) {

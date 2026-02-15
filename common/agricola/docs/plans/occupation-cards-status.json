@@ -2,10 +2,10 @@
   "lastUpdated": "2025-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 22,
-  "cardsCompleted": 62,
-  "cardsTested": 93,
-  "currentBatch": "Batch-023",
+  "batchesCompleted": 23,
+  "cardsCompleted": 64,
+  "cardsTested": 95,
+  "currentBatch": "Batch-024",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -161,6 +161,13 @@
       "testsPassing": 11,
       "completedDate": "2025-02-14"
     },
+    "Batch-023": {
+      "status": "completed",
+      "cards": ["turnip-farmer-a141", "sequestrator-a144"],
+      "testsCreated": 2,
+      "testsPassing": 5,
+      "completedDate": "2025-02-14"
+    },
     "Hollow-Warden": {
       "status": "completed",
       "cards": ["hollow-warden-a139"],
@@ -173,8 +180,8 @@
   "bySet": {
 "occupationA": {
     "total": 84,
-    "implemented": 58,
-    "tested": 85,
+    "implemented": 60,
+    "tested": 87,
     "status": "in_progress"
   },
     "occupationB": {
