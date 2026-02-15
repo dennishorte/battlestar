@@ -3111,6 +3111,61 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   /**
+   * Offer to buy up to maxWood wood for foodPerWood food each (e.g. Treegardener).
+   */
+  offerBuyWood(player, card, maxWood, foodPerWood) {
+    const choices = ['Skip']
+    for (let n = 1; n <= maxWood && player.food >= n * foodPerWood; n++) {
+      choices.unshift(`Buy ${n} wood for ${n * foodPerWood} food`)
+    }
+    if (choices.length <= 1) {
+      return
+    }
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Buy wood for food?`,
+      min: 1,
+      max: 1,
+    })
+    if (selection[0] !== 'Skip') {
+      const match = selection[0].match(/Buy (\d+) wood for (\d+) food/)
+      if (match) {
+        const n = parseInt(match[1], 10)
+        player.payCost({ food: n * foodPerWood })
+        player.addResource('wood', n)
+        this.log.add({
+          template: '{player} buys {n} wood for {food} food via {card}',
+          args: { player, n, food: n * foodPerWood, card },
+        })
+      }
+    }
+  }
+
+  /**
+   * Offer to buy 1 bonus point for foodCost (e.g. Curator, Furniture Carpenter).
+   */
+  offerBuyBonusPoint(player, card, foodCost) {
+    if (player.food < foodCost) {
+      return
+    }
+    const selection = this.choose(player, [
+      `Buy 1 bonus point for ${foodCost} food`,
+      'Skip',
+    ], {
+      title: `${card.name}: Buy bonus point for food?`,
+      min: 1,
+      max: 1,
+    })
+    if (selection[0] !== 'Skip') {
+      player.payCost({ food: foodCost })
+      player.bonusPoints = (player.bonusPoints || 0) + 1
+      this.log.add({
+        template: '{player} buys 1 bonus point for {cost} food via {card}',
+        args: { player, cost: foodCost, card },
+      })
+    }
+  }
+
+  /**
    * Offer to buy additional animal (Animal Dealer)
    */
   offerBuyAnimal(player, card, animalType) {

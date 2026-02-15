@@ -2,10 +2,10 @@
   "lastUpdated": "2025-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 14,
-  "cardsCompleted": 43,
-  "cardsTested": 68,
-  "currentBatch": "Batch-015",
+  "batchesCompleted": 15,
+  "cardsCompleted": 45,
+  "cardsTested": 70,
+  "currentBatch": "Batch-016",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -105,6 +105,13 @@
       "testsPassing": 10,
       "completedDate": "2025-02-14"
     },
+    "Batch-015": {
+      "status": "completed",
+      "cards": ["treegardener-a118", "curator-a100"],
+      "testsCreated": 2,
+      "testsPassing": 8,
+      "completedDate": "2025-02-14"
+    },
     "Hollow-Warden": {
       "status": "completed",
       "cards": ["hollow-warden-a139"],
@@ -117,8 +124,8 @@
   "bySet": {
 "occupationA": {
     "total": 84,
-    "implemented": 43,
-    "tested": 68,
+    "implemented": 45,
+    "tested": 70,
     "status": "in_progress"
   },
     "occupationB": {

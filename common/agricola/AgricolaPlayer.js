@@ -68,6 +68,14 @@ class AgricolaPlayer extends BasePlayer {
     return state && state.occupiedBy === this.name
   }
 
+  /**
+   * Number of this player's workers on accumulation spaces (used at return home).
+   * Same as getPeopleOnAccumulationSpaces(); name matches card text.
+   */
+  getWorkersReturnedFromAccumulationSpaces() {
+    return this.getPeopleOnAccumulationSpaces()
+  }
+
   get playedMinorImprovements() {
     const zone = this._cardZone('minorImprovements')
     return zone ? zone.cardlist().map(c => c.id) : (this._playedMinorImprovements || [])

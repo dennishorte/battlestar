@@ -22,8 +22,8 @@ This frequent context refresh keeps important details in working memory.
 ## Batch Status
 
 - **Total Batches**: TBD (will be ~25-30 batches for Set A, ~80-140 total)
-- **Completed Batches**: 14
-- **Current Batch**: Batch-015
+- **Completed Batches**: 15
+- **Current Batch**: Batch-016
 
 ## Batch Queue
 
@@ -286,7 +286,7 @@ Cards:
 
 ---
 
-### Batch-015: Phase Hooks (Set A)
+### Batch-015: Phase Hooks (Set A) ✅ COMPLETED
 **Pattern**: Cards that trigger during specific game phases  
 **Template**: `Treegardener.js`, `Curator.js`  
 **Test Template**: Test phase hooks (onFieldPhase, onReturnHome)  
@@ -296,7 +296,7 @@ Cards:
 1. `treegardener-a118` - Treegardener (onFieldPhase: +1 wood, can buy up to 2 more for 1 food each)
 2. `curator-a100` - Curator (onReturnHome: can buy 1 bonus point for 1 food if 3+ workers from accumulation spaces)
 
-**LLM Instructions:**
+**LLM Instructions:** (completed)
 1. Read each card file and verify phase hook implementation
 2. For Treegardener, test field phase trigger and optional wood purchase
 3. For Curator, test return home phase with 3+ workers from accumulation spaces
