@@ -2,10 +2,10 @@
   "lastUpdated": "2025-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 28,
-  "cardsCompleted": 77,
-  "cardsTested": 108,
-  "currentBatch": "Batch-029",
+  "batchesCompleted": 29,
+  "cardsCompleted": 79,
+  "cardsTested": 114,
+  "currentBatch": "Batch-030",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -203,6 +203,13 @@
       "testsPassing": 6,
       "completedDate": "2025-02-14"
     },
+    "Batch-029": {
+      "status": "completed",
+      "cards": ["animal-dealer-a147", "animal-teacher-a168"],
+      "testsCreated": 2,
+      "testsPassing": 6,
+      "completedDate": "2025-02-14"
+    },
     "Hollow-Warden": {
       "status": "completed",
       "cards": ["hollow-warden-a139"],
@@ -216,7 +223,7 @@
 "occupationA": {
     "total": 84,
     "implemented": 61,
-    "tested": 98,
+    "tested": 100,
     "status": "in_progress"
   },
     "occupationB": {

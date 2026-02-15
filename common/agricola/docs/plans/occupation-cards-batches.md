@@ -35,7 +35,7 @@ When implementing or revising cards, **do not add one-off methods to the action 
 | 026 | onAnyAction pay/give for bonus or good | Paymaster, Buyer, Joiner of the Sea | Engine: offerPaymasterBonus, offerBuyerPurchase, offerJoinerOfTheSeaTrade |
 | 027 | Traveling Players cluster | House Artist, Stagehand, Culinary Artist, Lutenist | 4 cards; engine: build discount/choice, culinary exchange, offerBuyVegetable |
 | 028 | checkTrigger + onReturnHomeStart | Pig Owner, Minstrel | 2 cards; engine: getUnoccupiedActionSpacesInRounds |
-| 029 | Animal purchase on action | Animal Dealer, Animal Teacher | offerBuyAnimalTeacher |
+| 029 | Animal purchase on action | Animal Dealer, Animal Teacher | offerBuyAnimal; Animal Teacher inlined |
 | 030 | Created space, exchanges, build/round/harvest | Forest Tallyman, Wood Worker, Breeder Buyer, Pig Breeder, Haydryer | 5 cards; engine: gap space, offerWoodForSheepExchange, offerBuyCattle, onBuildRoomAndStable |
 
 These six batches cover the remaining **19 occupationA cards** that are implemented but not yet tested. After Batch-030, Set A will have full test coverage for all implemented cards.
@@ -586,11 +586,11 @@ Cards:
 
 ---
 
-### Batch-029: Animal Purchase on Action (Set A)
+### Batch-029: Animal Purchase on Action (Set A) ✅ COMPLETED
 **Pattern**: Buy animal(s) when using a specific action space (market or Lessons)  
 **Template**: `AnimalDealer.js`, `AnimalTeacher.js`  
 **Test Template**: Use offerBuyAnimal pattern; Lessons action space for Animal Teacher  
-**Complexity**: Medium (Tier 2). **Engine**: `offerBuyAnimal` exists; verify/add `offerBuyAnimalTeacher` (sheep/boar/cattle for 0/1/2 food).
+**Complexity**: Medium (Tier 2). **Engine**: `offerBuyAnimal` used for Animal Dealer; Animal Teacher inlined (0/1/2 food for sheep/boar/cattle, all Lessons).
 
 Cards:
 1. `animal-dealer-a147` - Animal Dealer (onAction: Sheep/Pig/Cattle Market → may buy 1 additional animal of that type for 1 food)
