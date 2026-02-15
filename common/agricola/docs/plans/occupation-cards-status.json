@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 46,
-  "cardsCompleted": 150,
-  "cardsTested": 300,
-  "currentBatch": "Batch-B17",
+  "batchesCompleted": 47,
+  "cardsCompleted": 155,
+  "cardsTested": 313,
+  "currentBatch": "Batch-B18",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -350,6 +350,14 @@
       "testsPassing": 6,
       "completedDate": "2026-02-14",
       "note": "Fixed Carpenter: modifyRoomCost→modifyBuildCost. Fixed MasterBricklayer: modifyMajorImprovementCost→modifyImprovementCost. Fixed BrushwoodCollector: modifyReedCost→modifyBuildCost."
+    },
+    "Batch-B17": {
+      "status": "completed",
+      "cards": ["organic-farmer-b098", "clutterer-b100", "housemaster-b153", "housebook-master-b134", "trimmer-b124"],
+      "testsCreated": 5,
+      "testsPassing": 13,
+      "completedDate": "2026-02-14",
+      "note": "Fixed OrganicFarmer: inlined getPasturesWithSpareCapacity. Fixed Clutterer: inlined getCardsWithTextPlayedAfter with onPlay cardState. Fixed Housemaster: inlined getMajorImprovementValues. Fixed Trimmer: removed unused isSubdivision param."
     }
   },
   "bySet": {

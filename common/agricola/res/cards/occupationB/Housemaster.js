@@ -7,7 +7,13 @@ module.exports = {
   players: "3+",
   text: "During scoring, total the values of your major improvements. The smallest value counts double. If the total is at least 5/7/9/11, you get 1/2/3/4 bonus points.",
   getEndGamePoints(player) {
-    const majorValues = player.getMajorImprovementValues()
+    const majorValues = []
+    for (const id of player.majorImprovements) {
+      const card = player.cards.byId(id)
+      if (card) {
+        majorValues.push(card.victoryPoints || 0)
+      }
+    }
     if (majorValues.length === 0) {
       return 0
     }

@@ -892,18 +892,18 @@ Cards:
 
 ---
 
-### Batch-B17: End-game scoring (Set B)
+### Batch-B17: End-game scoring (Set B) ✅ COMPLETED
 **Pattern**: getEndGamePoints or onScoring  
 **Complexity**: Tier 1–2
 
 Cards:
-1. `organic-farmer-b098` - Organic Farmer (scoring: 1 BP per pasture with ≥1 animal)
-2. `clutterer-b100` - Clutterer (scoring: 1 BP per accumulation card played after this)
-3. `housemaster-b153` - Housemaster (scoring: major improvement values, smallest counts double)
-4. `housebook-master-b134` - Housebook Master (scoring: renovate by round 13/12/11 → bonus)
-5. `trimmer-b124` - Trimmer (scoring per card text)
+1. `organic-farmer-b098` - Organic Farmer (scoring: 1 BP per pasture with ≥1 animal and 3+ spare capacity) ✅
+2. `clutterer-b100` - Clutterer (scoring: 1 BP per accumulation card played after this) ✅
+3. `housemaster-b153` - Housemaster (scoring: major improvement values, smallest counts double) ✅
+4. `housebook-master-b134` - Housebook Master (onRenovate: renovate to stone by round 11/12/13 → bonus) ✅
+5. `trimmer-b124` - Trimmer (onBuildPasture: 2 stone per pasture built) ✅
 
-**LLM Instructions:** Test scoring hooks and edge cases. Create tests; run; update status.
+**Status**: All cards tested. Fixed OrganicFarmer: inlined getPasturesWithSpareCapacity (used pasture.animalCount + getPastureCapacity). Fixed Clutterer: inlined getCardsWithTextPlayedAfter with onPlay cardState tracking. Fixed Housemaster: inlined getMajorImprovementValues (used card.victoryPoints). Fixed Trimmer: removed unused isSubdivision param from onBuildPasture hook.
 
 ---
 
