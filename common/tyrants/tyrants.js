@@ -915,14 +915,7 @@ Tyrants.prototype.aChooseColor = function(player) {
     return
   }
 
-  const availableColors = Object.entries(res.colors)
-    .filter(([, hex]) => !this.players.all().some(p => p.color === hex))
-    .map(([name]) => name)
-
-  const chosen = this.actions.choose(player, availableColors, {
-    title: 'Choose a player color',
-  })
-  player.color = res.colors[chosen]
+  this.chooseColor(player)
 }
 
 Tyrants.prototype.aChooseLocation = function(player, locations, opts={}) {

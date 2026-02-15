@@ -616,6 +616,32 @@ Game.prototype.checkSameTeam = function(p1, p2) {
   return p1.team === p2.team
 }
 
+const playerColors = {
+  red: '#f77278',
+  orange: '#f77278',
+  yellow: '#fcfc6f',
+  lime: '#d8f772',
+  green: '#70fa73',
+  blue: '#73bbfa',
+  indigo: '#7274f7',
+  pink: '#f772f7',
+}
+
+Game.prototype.chooseColor = function(player) {
+  if (player.color) {
+    return
+  }
+
+  const availableColors = Object.entries(playerColors)
+    .filter(([, hex]) => !this.players.all().some(p => p.color === hex))
+    .map(([name]) => name)
+
+  const chosen = this.actions.choose(player, availableColors, {
+    title: 'Choose a player color',
+  })
+  player.color = playerColors[chosen]
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Specialty functions

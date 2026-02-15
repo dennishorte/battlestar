@@ -1062,19 +1062,7 @@ Agricola.prototype.chooseColor = function(player) {
     return
   }
 
-  // Skip if player already has a color
-  if (player.color) {
-    return
-  }
-
-  const availableColors = Object.entries(res.colors)
-    .filter(([, hex]) => !this.players.all().some(p => p.color === hex))
-    .map(([name]) => name)
-
-  const chosen = this.actions.choose(player, availableColors, {
-    title: 'Choose a player color',
-  })
-  player.color = res.colors[chosen]
+  Game.prototype.chooseColor.call(this, player)
 }
 
 
