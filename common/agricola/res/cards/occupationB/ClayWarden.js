@@ -7,9 +7,10 @@ module.exports = {
   players: "3+",
   text: "Each time another player uses the \"Hollow\" accumulation space, you get 1 clay. In a 3-/4-player game, you also get 1 clay/food.",
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
-    if (actionId === 'take-clay-2' && actingPlayer.name !== cardOwner.name) {
+    const hollowIds = ['hollow', 'hollow-5', 'hollow-6']
+    if (hollowIds.includes(actionId) && actingPlayer.name !== cardOwner.name) {
       cardOwner.addResource('clay', 1)
-      const playerCount = game.players.count()
+      const playerCount = game.players.all().length
       if (playerCount === 3) {
         cardOwner.addResource('clay', 1)
         game.log.add({

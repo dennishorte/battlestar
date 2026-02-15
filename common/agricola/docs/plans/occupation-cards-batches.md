@@ -835,16 +835,16 @@ Cards:
 
 ---
 
-### Batch-B13: onAnyAction and onPlay + phase (Set B)
+### Batch-B13: onAnyAction and onPlay + phase (Set B) ✅ COMPLETED
 **Pattern**: onAnyAction; onPlay plus end-of-work-phase  
 **Complexity**: Tier 2–3
 
 Cards:
-1. `clay-warden-b143` - Clay Warden (onAnyAction: another uses Hollow → you get 1 clay; 3p/4p variant)
-2. `pub-owner-b160` - Pub Owner (onPlay + onWorkPhaseEnd: when Forest, Clay Pit, Reed Bank all occupied → 3 food)
-3. `wholesaler-b137` - Wholesaler (onPlay: place veg/boar/stone/cattle on card; onAction rounds 8–11: get good from card)
+1. `clay-warden-b143` - Clay Warden (onAnyAction: another uses Hollow → clay; 3p/4p variant) ✅
+2. `pub-owner-b160` - Pub Owner (onWorkPhaseEnd: Forest+Clay Pit+Reed Bank occupied → 1 grain) ✅
+3. `wholesaler-b137` - Wholesaler (onPlay: card state; onAction rounds 8-11 → corresponding good) ✅
 
-**LLM Instructions:** Test onAnyAction and work-phase-end conditions. Create tests; run; update status.
+**Status**: All cards tested. Fixed ClayWarden: hollowIds array (was take-clay-2), players.count()→players.all().length. Wholesaler played from hand to trigger onPlay cardState.
 
 ---
 

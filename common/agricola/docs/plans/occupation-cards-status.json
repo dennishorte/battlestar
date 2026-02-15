@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 42,
-  "cardsCompleted": 133,
-  "cardsTested": 257,
-  "currentBatch": "Batch-B13",
+  "batchesCompleted": 43,
+  "cardsCompleted": 136,
+  "cardsTested": 268,
+  "currentBatch": "Batch-B14",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -318,6 +318,14 @@
       "testsPassing": 8,
       "completedDate": "2026-02-14",
       "note": "Fixed FurnitureCarpenter: inlined anyPlayerOwnsJoinery. Fixed EstateMaster: getUnusedSpaces→getUnusedSpaceCount, onHarvestVegetable→onHarvestVegetables."
+    },
+    "Batch-B13": {
+      "status": "completed",
+      "cards": ["clay-warden-b143", "pub-owner-b160", "wholesaler-b137"],
+      "testsCreated": 3,
+      "testsPassing": 11,
+      "completedDate": "2026-02-14",
+      "note": "Fixed ClayWarden: hollowIds array (was take-clay-2), players.count()→players.all().length. Wholesaler played from hand for onPlay cardState."
     }
   },
   "bySet": {
