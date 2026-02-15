@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 35,
-  "cardsCompleted": 105,
-  "cardsTested": 165,
-  "currentBatch": "Batch-B06",
+  "batchesCompleted": 36,
+  "cardsCompleted": 110,
+  "cardsTested": 181,
+  "currentBatch": "Batch-B07",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -262,6 +262,14 @@
       "testsPassing": 7,
       "completedDate": "2026-02-14",
       "note": "Added scheduledSheep delivery to collectScheduledResources; inlined StableSergeant offer logic"
+    },
+    "Batch-B06": {
+      "status": "completed",
+      "cards": ["cottager-b087", "assistant-tiller-b091", "cooperative-plower-b090", "little-stick-knitter-b092", "silokeeper-b112"],
+      "testsCreated": 4,
+      "testsPassing": 16,
+      "completedDate": "2026-02-14",
+      "note": "Inlined Cottager build/renovate offer; CooperativePlower uses offerPlow; LittleStickKnitter uses familyGrowth; Silokeeper pre-existing"
     }
   },
   "bySet": {

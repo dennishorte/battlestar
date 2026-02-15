@@ -735,19 +735,19 @@ Cards:
 
 ---
 
-### Batch-B06: onAction – Day Laborer / single space (Set B)
+### Batch-B06: onAction – Day Laborer / single space (Set B) ✅ COMPLETED
 **Pattern**: onAction when using Day Laborer, Farmland, or Sheep Market  
 **Template**: Set A `Cottager`-style tests  
 **Complexity**: Tier 1–2
 
 Cards:
-1. `cottager-b087` - Cottager (onAction: Day Laborer → also build 1 room or 1 stable)
-2. `assistant-tiller-b091` - Assistant Tiller (onAction: Day Laborer → also plow 1 field)
-3. `cooperative-plower-b090` - Cooperative Plower (onAction: Farmland while Grain Seeds occupied → bonus)
-4. `little-stick-knitter-b092` - Little Stick Knitter (onAction: from Round 5, Sheep Market → also take 1 wood)
-5. `silokeeper-b112` - Silokeeper (onAction: when using specific space)
+1. `cottager-b087` - Cottager (onAction: Day Laborer → build 1 room or renovate) ✅
+2. `assistant-tiller-b091` - Assistant Tiller (onAction: Day Laborer → plow 1 field) ✅
+3. `cooperative-plower-b090` - Cooperative Plower (onAction: Farmland while Grain Seeds occupied → bonus plow) ✅
+4. `little-stick-knitter-b092` - Little Stick Knitter (onAction: from Round 5, Sheep Market → Family Growth with Room) ✅
+5. `silokeeper-b112` - Silokeeper (onAction: pre-harvest round action space → 1 grain) ✅ (pre-existing)
 
-**LLM Instructions:** Test Day Laborer and Farmland/Sheep Market triggers. Silokeeper already has tests; ensure passing. Create/extend tests; run; update status.
+**Status**: All cards tested. Inlined Cottager build/renovate offer (was calling nonexistent offerCottagerBuild). CooperativePlower switched to use existing offerPlow. LittleStickKnitter switched to use existing familyGrowth. Silokeeper already had 3 passing tests.
 
 ---
 

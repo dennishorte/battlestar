@@ -7,8 +7,8 @@ module.exports = {
   players: "1+",
   text: "From Round 5 on, each time you use the \"Sheep Market\" accumulation space, you can also take a \"Family Growth with Room Only\" action.",
   onAction(game, player, actionId) {
-    if (actionId === 'take-sheep' && game.state.round >= 5 && player.canGrowFamily()) {
-      game.actions.offerFamilyGrowthWithRoom(player, this)
+    if (actionId === 'take-sheep' && game.state.round >= 5 && player.canGrowFamily(true)) {
+      game.actions.familyGrowth(player, true)
     }
   },
 }
