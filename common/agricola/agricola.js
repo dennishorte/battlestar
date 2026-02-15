@@ -1997,36 +1997,45 @@ Agricola.prototype.feedingPhase = function() {
 
 Agricola.prototype.allowFoodConversion = function(player, required) {
   while (player.food < required) {
-    // Get standard conversion options (basic + cooking)
-    const options = this.getAnytimeFoodConversionOptions(player)
+    // Use function wrapper so options are recalculated after anytime actions
+    const getOptions = () => {
+      const options = this.getAnytimeFoodConversionOptions(player)
 
-    // Add crafting improvements (harvest-only conversions)
-    for (const impId of player.majorImprovements) {
-      const imp = this.cards.byId(impId)
-      if (imp && imp.abilities && imp.abilities.harvestConversion) {
-        const conv = imp.abilities.harvestConversion
-        if (player[conv.resource] > 0) {
-          options.push({
-            type: 'craft',
-            improvement: imp.name,
-            resource: conv.resource,
-            count: 1,
-            food: conv.food,
-            description: `Use ${imp.name}: convert ${conv.resource} to ${conv.food} food`,
-          })
+      // Add crafting improvements (harvest-only conversions)
+      for (const impId of player.majorImprovements) {
+        const imp = this.cards.byId(impId)
+        if (imp && imp.abilities && imp.abilities.harvestConversion) {
+          const conv = imp.abilities.harvestConversion
+          if (player[conv.resource] > 0) {
+            options.push({
+              type: 'craft',
+              improvement: imp.name,
+              resource: conv.resource,
+              count: 1,
+              food: conv.food,
+              description: `Use ${imp.name}: convert ${conv.resource} to ${conv.food} food`,
+            })
+          }
         }
       }
+
+      return options
     }
 
+    const options = getOptions()
     if (options.length === 0) {
       break // No more conversion options
     }
 
-    // Build choice strings for UI
-    const choiceStrings = options.map(opt => opt.description)
-    choiceStrings.push('Done converting')
+    // Build choice strings with function wrapper so they refresh after anytime actions
+    const choicesFn = () => {
+      const currentOptions = getOptions()
+      const choices = currentOptions.map(opt => opt.description)
+      choices.push('Done converting')
+      return choices
+    }
 
-    const selection = this.actions.choose(player, choiceStrings, {
+    const selection = this.actions.choose(player, choicesFn, {
       title: `Need ${required - player.food} more food`,
       min: 1,
       max: 1,
@@ -2039,7 +2048,8 @@ Agricola.prototype.allowFoodConversion = function(player, required) {
     }
 
     // Find the matching option and execute it
-    const selectedOption = options.find(opt => opt.description === choice)
+    const currentOptions = getOptions()
+    const selectedOption = currentOptions.find(opt => opt.description === choice)
     if (selectedOption) {
       this.executeAnytimeFoodConversion(player, selectedOption)
     }
