@@ -796,15 +796,15 @@ Cards:
 
 ---
 
-### Batch-B10: onBeforeAction and combined (Set B)
+### Batch-B10: onBeforeAction and combined (Set B) ✅ COMPLETED
 **Pattern**: onBeforeAction; onBeforeAction + onAction  
 **Complexity**: Tier 2
 
 Cards:
-1. `sweep-b120` - Sweep (onBeforeAction)
-2. `stock-protector-b094` - Stock Protector (onBeforeAction + onAction)
+1. `sweep-b120` - Sweep (onBeforeAction: round card left of most recent → 2 clay) ✅
+2. `stock-protector-b094` - Stock Protector (onBeforeAction: Fencing → 2 wood; onAction: Fencing → extra person) ✅
 
-**LLM Instructions:** Test onBeforeAction timing and combined hooks. Create tests; run; update status.
+**Status**: All cards tested. Both used existing engine methods (getMostRecentlyRevealedRound, getActionSpaceRound, offerExtraPerson). No code changes needed.
 
 ---
 

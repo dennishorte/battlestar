@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 39,
-  "cardsCompleted": 125,
-  "cardsTested": 232,
-  "currentBatch": "Batch-B10",
+  "batchesCompleted": 40,
+  "cardsCompleted": 127,
+  "cardsTested": 240,
+  "currentBatch": "Batch-B11",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -294,6 +294,14 @@
       "testsPassing": 17,
       "completedDate": "2026-02-14",
       "note": "Illusionist inlined discard offer; JuniorArtist inlined space choice + fixed TP/Lessons existence; Plumber uses modifyRenovationCost; LargeScaleFarmer fixed action IDs; offerUseOtherSpace updated for cost"
+    },
+    "Batch-B10": {
+      "status": "completed",
+      "cards": ["sweep-b120", "stock-protector-b094"],
+      "testsCreated": 2,
+      "testsPassing": 8,
+      "completedDate": "2026-02-14",
+      "note": "Both cards used existing engine methods. No code changes needed."
     }
   },
   "bySet": {
