@@ -7,7 +7,11 @@ module.exports = {
   players: "1+",
   text: "Each harvest, if any player (including you) owns the Joinery or an upgrade thereof, you can buy exactly 1 bonus point for 2 food.",
   onHarvest(game, player) {
-    if (game.anyPlayerOwnsJoinery() && player.food >= 2) {
+    const joineryIds = ['joinery', 'joinery-2']
+    const anyOwns = game.players.all().some(p =>
+      p.majorImprovements.some(id => joineryIds.includes(id))
+    )
+    if (anyOwns && player.food >= 2) {
       game.actions.offerBuyBonusPoint(player, this, 2)
     }
   },

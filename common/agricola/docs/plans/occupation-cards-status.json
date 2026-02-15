@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 41,
-  "cardsCompleted": 130,
-  "cardsTested": 249,
-  "currentBatch": "Batch-B12",
+  "batchesCompleted": 42,
+  "cardsCompleted": 133,
+  "cardsTested": 257,
+  "currentBatch": "Batch-B13",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -310,6 +310,14 @@
       "testsPassing": 9,
       "completedDate": "2026-02-14",
       "note": "All cards used existing engine methods. No code changes needed."
+    },
+    "Batch-B12": {
+      "status": "completed",
+      "cards": ["rustic-b111", "furniture-carpenter-b101", "estate-master-b132"],
+      "testsCreated": 3,
+      "testsPassing": 8,
+      "completedDate": "2026-02-14",
+      "note": "Fixed FurnitureCarpenter: inlined anyPlayerOwnsJoinery. Fixed EstateMaster: getUnusedSpaces→getUnusedSpaceCount, onHarvestVegetable→onHarvestVegetables."
     }
   },
   "bySet": {

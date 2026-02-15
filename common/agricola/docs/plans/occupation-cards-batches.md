@@ -822,16 +822,16 @@ Cards:
 
 ---
 
-### Batch-B12: onBuildRoom, onHarvest, onHarvestVegetable (Set B)
+### Batch-B12: onBuildRoom, onHarvest, onHarvestVegetable (Set B) ✅ COMPLETED
 **Pattern**: build/harvest hooks  
 **Complexity**: Tier 2
 
 Cards:
-1. `rustic-b111` - Rustic (onBuildRoom: each clay room → 2 food, 1 BP)
-2. `furniture-carpenter-b101` - Furniture Carpenter (onHarvest: if Joinery (or upgrade) owned by any, get grain)
-3. `estate-master-b132` - Estate Master (onHarvestVegetable: once no unused farmyard spaces, 1 BP per vegetable)
+1. `rustic-b111` - Rustic (onBuildRoom: each clay room → 2 food, 1 BP) ✅
+2. `furniture-carpenter-b101` - Furniture Carpenter (onHarvest: if Joinery owned → buy 1 BP for 2 food) ✅
+3. `estate-master-b132` - Estate Master (onHarvestVegetables: no unused spaces → 1 BP per vegetable) ✅
 
-**LLM Instructions:** Test build-room and harvest hooks. Create tests; run; update status.
+**Status**: All cards tested. Fixed FurnitureCarpenter: inlined anyPlayerOwnsJoinery (method didn't exist). Fixed EstateMaster: getUnusedSpaces→getUnusedSpaceCount, onHarvestVegetable→onHarvestVegetables.
 
 ---
 
