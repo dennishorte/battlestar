@@ -258,5 +258,5 @@
       "status": "pending"
     }
   },
-  "notes": "Status tracker for occupation cards implementation. LLM agents must update this after each batch."
+  "notes": "Status tracker for occupation cards implementation. Set A complete. Set B batches (B01–B20) defined in occupation-cards-batches.md; set currentBatch to Batch-B01 when starting Set B. LLM agents must update this after each batch."
 }

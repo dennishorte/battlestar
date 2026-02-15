@@ -24,9 +24,9 @@ When implementing or revising cards, **do not add one-off methods to the action 
 
 ## Batch Status
 
-- **Total Batches**: 30 for Set A
-- **Completed Batches**: 30
-- **Current Batch**: Set A complete (Batch-030 was final)
+- **Set A**: 30 batches, all complete (Batch-030 was final).
+- **Set B**: 20 batches (Batch-B01 through Batch-B20), 84 cards. Start with Batch-B01.
+- **Current Batch**: Set-A-Complete; when starting Set B, set to Batch-B01.
 
 ### Next Set of Batches (025–030) – Summary
 | Batch   | Theme | Cards | Notes |
@@ -629,10 +629,323 @@ Cards:
 
 ### After Batch-030 – Set A complete
 
-Set A (occupationA) now has full test coverage for all implemented cards. No Batch-031 is defined in this plan. Next steps (optional):
+Set A (occupationA) has full test coverage for all implemented cards. Set B (occupationB) batches are defined below. **Status**: Start with Batch-B01; update `occupation-cards-status.json` after each batch.
 
-- **Set B (occupationB)**: Create new batches following the same pattern; start with simple onPlay/onAction cards.
-- **Status**: In `occupation-cards-status.json`, `currentBatch` is set to `"Set-A-Complete"` until a Batch-031 (Set B) is added to this file.
+---
+
+## Set B (occupationB) – 84 cards in 20 batches
+
+**Note:** Some Set B cards already have tests (e.g. Sheep Walker, Salter, Silokeeper). Verify and extend tests per batch; ensure all tests pass before marking a batch complete. No one-off action-manager methods: keep card logic on the card.
+
+| Batch   | Theme | Cards | Notes |
+|---------|--------|-------|--------|
+| B01 | Simple onPlay | Groom, Established Person, Consultant, Field Merchant, Case Builder | 5 |
+| B02 | onPlay placement/choice | Confidant, Tree Farm Joiner, Roof Ballaster, Patch Caregiver, Seducer | 5 |
+| B03 | onPlay by state | Shoreforester, Lumberjack, Estate Worker, House Steward, Forest Guardian | 5 |
+| B04 | onPlay animal/special | Pet Broker, Open Air Farmer, Little Peasant, Art Teacher | 4 |
+| B05 | onPlay animal | Sheep Whisperer, Stable Sergeant | 2 |
+| B06 | onAction Day Laborer/single | Cottager, Assistant Tiller, Cooperative Plower, Little Stick Knitter, Silokeeper | 5 |
+| B07 | onAction accumulation | Geologist, Mineralogist, Oven Firing Boy, Collier, Equipper | 5 |
+| B08 | onAction Grain/wood | Greengrocer, Cattle Feeder, Forest Clearer, Storehouse Keeper, Huntsman | 5 |
+| B09 | onAction build/major | Illusionist, Full Peasant, Large Scale Farmer, Junior Artist, Plumber | 5 |
+| B10 | onBeforeAction | Sweep, Stock Protector | 2 |
+| B11 | checkTrigger | Manservant, Pastor, Sheep Keeper | 3 |
+| B12 | onBuildRoom/onHarvest | Rustic, Furniture Carpenter, Estate Master | 3 |
+| B13 | onAnyAction/phase | Clay Warden, Pub Owner, Wholesaler | 3 |
+| B14 | onRoundStart | Childless, Scholar, Nutrition Expert, Small Scale Farmer, Moral Crusader | 5 |
+| B15 | Phase end | Informant, District Manager, Farmyard Worker, Pavior, Forest Scientist | 5 |
+| B16 | Passive cost/ability | Carpenter, Master Bricklayer, Brushwood Collector, Farm Hand | 4 |
+| B17 | Scoring | Organic Farmer, Clutterer, Housemaster, Housebook Master, Trimmer | 5 |
+| B18 | Anytime/field/harvest | Lieutenant General, Weakling, Game Provider, Pasture Master, Salter | 5 |
+| B19 | Scoring/passive | Sheep Walker, Village Peasant, Seatmate, Tutor, Paper Maker | 5 |
+| B20 | Remaining | Tinsmith Master, Truffle Searcher | 2 |
+
+---
+
+### Batch-B01: Simple onPlay resource grants (Set B)
+**Pattern**: onPlay – immediate resources or renovate  
+**Template**: Set A `Grocer.test.js` / `AnimalTamer.test.js`  
+**Complexity**: Tier 1
+
+Cards:
+1. `groom-b089` - Groom (onPlay: 1 wood; once stone house, bonus)
+2. `established-person-b088` - Established Person (onPlay: if exactly 2 rooms, renovate free)
+3. `consultant-b102` - Consultant (onPlay: get 2 grain/3 clay/2 stone/1 reed by player count)
+4. `field-merchant-b103` - Field Merchant (onPlay: 1 wood, 1 reed; each decline "Market" → 1 food)
+5. `case-builder-b105` - Case Builder (onPlay: 1 good of each type if you have 0 of that type)
+
+**LLM Instructions:** Verify onPlay grants; test Field Merchant decline-Market trigger; Case Builder conditional goods. Create tests; run; update status.
+
+---
+
+### Batch-B02: onPlay with placement or choice (Set B)
+**Pattern**: onPlay – place on round spaces or choose bonus  
+**Template**: Set A placement/choice tests  
+**Complexity**: Tier 1–2
+
+Cards:
+1. `confidant-b093` - Confidant (onPlay: place 1 food on each of next 2/3/4 round spaces; at start of those rounds get food)
+2. `tree-farm-joiner-b096` - Tree Farm Joiner (onPlay: place wood on round spaces)
+3. `roof-ballaster-b123` - Roof Ballaster (onPlay: pay 1 food to get 1 stone per room)
+4. `patch-caregiver-b113` - Patch Caregiver (onPlay: buy 1 grain for 1 food OR 1 vegetable for 3 food)
+5. `seducer-b127` - Seducer (onPlay: immediate effect per card text)
+
+**LLM Instructions:** Test round-space placement and collection; Patch Caregiver choice. Create tests; run; update status.
+
+---
+
+### Batch-B03: onPlay resources by game state (Set B)
+**Pattern**: onPlay – resources based on rounds, fences, or board state  
+**Complexity**: Tier 2
+
+Cards:
+1. `shoreforester-b116` - Shoreforester (onPlay)
+2. `lumberjack-b119` - Lumberjack (onPlay: place 1 wood on each of next N round spaces, N = fences)
+3. `estate-worker-b125` - Estate Worker (onPlay: place 1 wood, 1 clay, 1 reed, 1 stone on next 4 round spaces)
+4. `house-steward-b136` - House Steward (onPlay: if 1/3/6/9 complete rounds left, get 1/2/3/4 wood)
+5. `forest-guardian-b138` - Forest Guardian (onPlay: 2 wood; each time before another takes wood space, you may take 1 wood)
+
+**LLM Instructions:** Test round-based and state-based onPlay effects. Create tests; run; update status.
+
+---
+
+### Batch-B04: onPlay animal or special (Set B)
+**Pattern**: onPlay – animals or unique effect  
+**Complexity**: Tier 2
+
+Cards:
+1. `pet-broker-b148` - Pet Broker (onPlay: 1 sheep; keep 1 sheep on each occupation)
+2. `open-air-farmer-b149` - Open Air Farmer (onPlay: if ≥3 stables, remove 3 for 3 wood)
+3. `little-peasant-b151` - Little Peasant (onPlay: 1 stone; while 2-room wood house, bonus)
+4. `art-teacher-b155` - Art Teacher (onPlay: 1 wood, 1 reed)
+
+**LLM Instructions:** Test animal placement and Open Air Farmer stable trade. Create tests; run; update status.
+
+---
+
+### Batch-B05: onPlay animal (Set B)
+**Pattern**: onPlay – animal grants  
+**Complexity**: Tier 1
+
+Cards:
+1. `sheep-whisperer-b164` - Sheep Whisperer (onPlay)
+2. `stable-sergeant-b167` - Stable Sergeant (onPlay)
+
+**LLM Instructions:** Verify onPlay animal grants. Create tests; run; update status.
+
+---
+
+### Batch-B06: onAction – Day Laborer / single space (Set B)
+**Pattern**: onAction when using Day Laborer, Farmland, or Sheep Market  
+**Template**: Set A `Cottager`-style tests  
+**Complexity**: Tier 1–2
+
+Cards:
+1. `cottager-b087` - Cottager (onAction: Day Laborer → also build 1 room or 1 stable)
+2. `assistant-tiller-b091` - Assistant Tiller (onAction: Day Laborer → also plow 1 field)
+3. `cooperative-plower-b090` - Cooperative Plower (onAction: Farmland while Grain Seeds occupied → bonus)
+4. `little-stick-knitter-b092` - Little Stick Knitter (onAction: from Round 5, Sheep Market → also take 1 wood)
+5. `silokeeper-b112` - Silokeeper (onAction: when using specific space)
+
+**LLM Instructions:** Test Day Laborer and Farmland/Sheep Market triggers. Silokeeper already has tests; ensure passing. Create/extend tests; run; update status.
+
+---
+
+### Batch-B07: onAction – accumulation spaces (wood/clay/reed) (Set B)
+**Pattern**: onAction when taking wood, clay, reed, or stone from accumulation  
+**Complexity**: Tier 2
+
+Cards:
+1. `geologist-b121` - Geologist (onAction: Forest or Reed Bank → also 1 clay; 3p+ Clay Pit option)
+2. `mineralogist-b122` - Mineralogist (onAction: clay/stone accumulation → also 1 of the other)
+3. `oven-firing-boy-b108` - Oven Firing Boy (onAction: wood accumulation → additional Bake Bread action)
+4. `collier-b144` - Collier (onAction: after Clay Pit → 1 reed, 1 wood; with 2 clay add to take-clay-2)
+5. `equipper-b131` - Equipper (onAction: after wood accumulation → play minor improvement without placing person)
+
+**LLM Instructions:** Test accumulation-space triggers and bonus resources/actions. Create tests; run; update status.
+
+---
+
+### Batch-B08: onAction – Grain Seeds, markets, wood (Set B)
+**Pattern**: onAction for Grain Seeds, markets, or wood amount  
+**Complexity**: Tier 2
+
+Cards:
+1. `greengrocer-b142` - Greengrocer (onAction: Grain Seeds → also 1 vegetable)
+2. `cattle-feeder-b166` - Cattle Feeder (onAction: Grain Seeds → also buy 1 cattle for 1 food)
+3. `forest-clearer-b162` - Forest Clearer (onAction: obtain exactly 2/3/4 wood from wood space → +1 wood)
+4. `storehouse-keeper-b156` - Storehouse Keeper (onAction)
+5. `huntsman-b147` - Huntsman (onAction: after wood accumulation → pay 1 grain for 1 boar)
+
+**LLM Instructions:** Test Grain Seeds and wood-accumulation triggers. Create tests; run; update status.
+
+---
+
+### Batch-B09: onAction – build/major/fencing (Set B)
+**Pattern**: onAction when using Farm Expansion, Major Improvement, Grain Utilization, Fencing, or Day Laborer bonus  
+**Complexity**: Tier 2–3
+
+Cards:
+1. `illusionist-b146` - Illusionist (onAction: building resource accumulation → discard 1 card for 2 of that resource)
+2. `full-peasant-b130` - Full Peasant (onAction: after Grain Utilization or Fencing while other space used → bonus)
+3. `large-scale-farmer-b150` - Large Scale Farmer (onAction: after Farm Expansion or Major Improvement while other used → bonus)
+4. `junior-artist-b152` - Junior Artist (onAction: after Day Laborer → pay 1 food to use unoccupied action)
+5. `plumber-b128` - Plumber (onAction: after Major Improvement → take Renovation action)
+
+**LLM Instructions:** Test build/major/fencing and Day Laborer bonus actions. Create tests; run; update status.
+
+---
+
+### Batch-B10: onBeforeAction and combined (Set B)
+**Pattern**: onBeforeAction; onBeforeAction + onAction  
+**Complexity**: Tier 2
+
+Cards:
+1. `sweep-b120` - Sweep (onBeforeAction)
+2. `stock-protector-b094` - Stock Protector (onBeforeAction + onAction)
+
+**LLM Instructions:** Test onBeforeAction timing and combined hooks. Create tests; run; update status.
+
+---
+
+### Batch-B11: checkTrigger (Set B)
+**Pattern**: checkTrigger – scheduled or conditional delivery  
+**Template**: Set A `Minstrel` / `PigOwner` style  
+**Complexity**: Tier 2–3
+
+Cards:
+1. `manservant-b107` - Manservant (checkTrigger: once stone house, 3 food on each remaining round)
+2. `pastor-b163` - Pastor (checkTrigger: once only player with 2 rooms, get 3 wood)
+3. `sheep-keeper-b154` - Sheep Keeper (checkTrigger)
+
+**LLM Instructions:** Test trigger conditions and scheduled goods. Create tests; run; update status.
+
+---
+
+### Batch-B12: onBuildRoom, onHarvest, onHarvestVegetable (Set B)
+**Pattern**: build/harvest hooks  
+**Complexity**: Tier 2
+
+Cards:
+1. `rustic-b111` - Rustic (onBuildRoom: each clay room → 2 food, 1 BP)
+2. `furniture-carpenter-b101` - Furniture Carpenter (onHarvest: if Joinery (or upgrade) owned by any, get grain)
+3. `estate-master-b132` - Estate Master (onHarvestVegetable: once no unused farmyard spaces, 1 BP per vegetable)
+
+**LLM Instructions:** Test build-room and harvest hooks. Create tests; run; update status.
+
+---
+
+### Batch-B13: onAnyAction and onPlay + phase (Set B)
+**Pattern**: onAnyAction; onPlay plus end-of-work-phase  
+**Complexity**: Tier 2–3
+
+Cards:
+1. `clay-warden-b143` - Clay Warden (onAnyAction: another uses Hollow → you get 1 clay; 3p/4p variant)
+2. `pub-owner-b160` - Pub Owner (onPlay + onWorkPhaseEnd: when Forest, Clay Pit, Reed Bank all occupied → 3 food)
+3. `wholesaler-b137` - Wholesaler (onPlay: place veg/boar/stone/cattle on card; onAction rounds 8–11: get good from card)
+
+**LLM Instructions:** Test onAnyAction and work-phase-end conditions. Create tests; run; update status.
+
+---
+
+### Batch-B14: onRoundStart, onBeforeRoundStart (Set B)
+**Pattern**: start of round or before round  
+**Complexity**: Tier 2
+
+Cards:
+1. `childless-b114` - Childless (onRoundStart: 3+ rooms and 2 people → 1 food, 1 grain or vegetable)
+2. `scholar-b097` - Scholar (onRoundStart)
+3. `nutrition-expert-b135` - Nutrition Expert (onRoundStart: exchange set of 1 animal, 1 grain, 1 vegetable for food)
+4. `small-scale-farmer-b118` - Small Scale Farmer (onRoundStart)
+5. `moral-crusader-b106` - Moral Crusader (onBeforeRoundStart: if goods on round spaces promised to you → 1 food)
+
+**LLM Instructions:** Test round-start and before-round-start hooks. Create tests; run; update status.
+
+---
+
+### Batch-B15: onWorkPhaseEnd, onPreparationEnd, onReturnHome (Set B)
+**Pattern**: end of work phase, preparation, or return home  
+**Complexity**: Tier 2–3
+
+Cards:
+1. `informant-b117` - Informant (onWorkPhaseEnd: more stone than clay → 1 wood)
+2. `district-manager-b158` - District Manager (onWorkPhaseEnd: used Forest and Grove → 5 food)
+3. `farmyard-worker-b140` - Farmyard Worker (onWorkPhaseEnd: placed good on farmyard this phase → 1 food)
+4. `pavior-b110` - Pavior (onPreparationEnd: 1+ stone → 1 food; round 14 → 1 vegetable)
+5. `forest-scientist-b139` - Forest Scientist (onReturnHome: no wood on board → bonus)
+
+**LLM Instructions:** Test phase-end hooks and round 14 variant. Create tests; run; update status.
+
+---
+
+### Batch-B16: Passive cost / ability modifiers (Set B)
+**Pattern**: no hook or passive flag – cost reduction, special build  
+**Complexity**: Tier 2
+
+Cards:
+1. `carpenter-b126` - Carpenter (every new room: 3 of resource + 2 reed)
+2. `master-bricklayer-b095` - Master Bricklayer (each major improvement: stone cost − number of rooms)
+3. `brushwood-collector-b145` - Brushwood Collector (when renovate or build room: replace 1 or 2 reed with wood)
+4. `farm-hand-b085` - Farm Hand (once 2x2 fields: Build Stables can build center stable for person)
+
+**LLM Instructions:** Test cost modifiers and Farm Hand center-stable build. Create tests; run; update status.
+
+---
+
+### Batch-B17: End-game scoring (Set B)
+**Pattern**: getEndGamePoints or onScoring  
+**Complexity**: Tier 1–2
+
+Cards:
+1. `organic-farmer-b098` - Organic Farmer (scoring: 1 BP per pasture with ≥1 animal)
+2. `clutterer-b100` - Clutterer (scoring: 1 BP per accumulation card played after this)
+3. `housemaster-b153` - Housemaster (scoring: major improvement values, smallest counts double)
+4. `housebook-master-b134` - Housebook Master (scoring: renovate by round 13/12/11 → bonus)
+5. `trimmer-b124` - Trimmer (scoring per card text)
+
+**LLM Instructions:** Test scoring hooks and edge cases. Create tests; run; update status.
+
+---
+
+### Batch-B18: Anytime, field-placement, before-harvest (Set B)
+**Pattern**: anytime action; onFieldPlaced; onBeforeHarvest; or similar  
+**Complexity**: Tier 2–3
+
+Cards:
+1. `lieutenant-general-b159` - Lieutenant General (for each field another places next to existing field → 1 food)
+2. `weakling-b161` - Weakling (per card text)
+3. `game-provider-b165` - Game Provider (onBeforeHarvest: discard 1/3/4 grain from different fields → receive goods)
+4. `pasture-master-b168` - Pasture Master (each renovation → 1 additional animal of type per pasture)
+5. `salter-b157` - Salter (anytime: pay 1 sheep/boar/cattle → place 1 food on round space)
+
+**LLM Instructions:** Test anytime, field-placement, before-harvest, and renovation triggers. Salter already has tests. Create/extend tests; run; update status.
+
+---
+
+### Batch-B19: Scoring, onScoring, passive flags (Set B)
+**Pattern**: onScoring; passive flags (no hook)  
+**Complexity**: Tier 1–2
+
+Cards:
+1. `sheep-walker-b104` - Sheep Walker (passive per card text)
+2. `village-peasant-b133` - Village Peasant (onScoring: vegetables = min(majors, minors, occupations))
+3. `seatmate-b129` - Seatmate (passive: use round 13 space even if occupied by left/right neighbors)
+4. `tutor-b099` - Tutor (getEndGamePoints: 1 BP per occupation played after this)
+5. `paper-maker-b109` - Paper Maker (onBeforePlayOccupation: pay 1 wood for 1 food per occupation in front of you)
+
+**LLM Instructions:** Test scoring and before-play-occupation. Sheep Walker already has tests. Create/extend tests; run; update status.
+
+---
+
+### Batch-B20: Tinsmith Master, Truffle Searcher (Set B)
+**Pattern**: remaining Set B – passive or special  
+**Complexity**: Tier 2
+
+Cards:
+1. `tinsmith-master-b115` - Tinsmith Master (per card text)
+2. `truffle-searcher-b086` - Truffle Searcher (per card text)
+
+**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
 
 ---
 
