@@ -1,7 +1,7 @@
 # Blocked Minor Improvements
 
-105 of 124 minor improvement cards (+ related occupations) are complete with passing tests.
-16 cards remain blocked on engine infrastructure, grouped by what they need.
+112 of 124 minor improvement cards (+ related occupations) are complete with passing tests.
+9 cards remain blocked on engine infrastructure, grouped by what they need.
 
 ---
 
@@ -27,56 +27,21 @@ Core turn loop changes in `agricola.js` — how/when workers get placed.
 
 ---
 
-## Group 2: Custom Action Spaces (2 cards)
+## ~~Group 2: Custom Action Spaces (2 cards)~~ — DONE
 
-Cards that create new action spaces any player can use.
-
-| Card | Deck | What it does |
-|------|------|-------------|
-| AlchemistsLab (e081) | E | Owner gets 1 of each building resource they have; others pay 1 food |
-| Archway (d051) | D | All players get 1 food, then use an unoccupied space before returning home |
-
-**Infrastructure needed:**
-- Card-based action space registration (card becomes a usable space)
-- Owner vs. non-owner logic (different effects per player)
-- Extra-action-before-return-home phase (Archway)
-
-**Key files:** `agricola.js` (action space setup, workPhase), `AgricolaActionManager.js`
-**Complexity:** Complex — new action space type + end-of-round phase
+All cards completed: AlchemistsLab, Archway
 
 ---
 
-## Group 3: Action Space Combination/Override (2 cards)
+## ~~Group 3: Action Space Combination/Override (2 cards)~~ — DONE
 
-Cards that modify how existing action spaces work.
-
-| Card | Deck | What it does |
-|------|------|-------------|
-| JobContract (c023) | C | Use Day Laborer + Lessons with single person, both marked occupied |
-| WoodSaw (e014) | E | When all others have more workers, take Build Rooms without placing person |
-
-**Infrastructure needed:**
-- Combined action space pairing (one person → two spaces occupied)
-- Conditional free-action-space usage (no person needed under conditions)
-
-**Key files:** `agricola.js` (executeAction, playerTurn), `AgricolaActionManager.js`
-**Complexity:** Moderate-Complex — each card is a different kind of override
+All cards completed: JobContract, WoodSaw
 
 ---
 
-## Group 4: Field/Plow Mechanics (1 card)
+## ~~Group 4: Field/Plow Mechanics (1 card)~~ — DONE
 
-Cards needing `plowField` options or card-based field tiles.
-
-| Card | Deck | What it does |
-|------|------|-------------|
-| WoodField (d075) | D | Card-based "wood field" — sow wood like grain, harvest wood |
-
-**Infrastructure needed:**
-- Wood-as-crop sowing/harvesting (new crop type in field system)
-
-**Key files:** `AgricolaActionManager.js` (plowField), `AgricolaPlayer.js` (sowField, fields)
-**Complexity:** Moderate — wood-as-crop is novel
+All cards completed: WoodField
 
 ---
 
@@ -102,23 +67,30 @@ All cards completed: RoyalWood, HuntingTrophy
 
 ---
 
-## Group 7: Turn Flow / Deferred (2 cards)
+## ~~Group 7: Turn Flow / Deferred (2 cards)~~ — DONE
 
-| Card | Deck | What it does |
-|------|------|-------------|
-| SourDough (e062) | E | Once/round, if all players have ≥1 person left, skip placement for Bake Bread |
-| Sower (c115, occ) | C | Place reed on card per major built; exchange reed for Sow action anytime |
+All cards completed: SourDough, Sower
 
-**Infrastructure needed:**
-- Placement-skip conditionals (skip worker placement under game-state conditions)
-- Per-card resource tracking on major improvements (reed accumulates on card)
+---
 
-**Key files:** `agricola.js` (playerTurn, workPhase)
-**Complexity:** Moderate — SourDough needs placement-skip; Sower needs card-resource tracking
+## Summary
+
+| Group | Status | Cards |
+|-------|--------|-------|
+| 1. Worker Placement Mods | Blocked | 5 cards |
+| 2. Custom Action Spaces | Done | AlchemistsLab, Archway |
+| 3. Action Combination | Done | JobContract, WoodSaw |
+| 4. Field/Plow Mechanics | Done | WoodField |
+| 5. Cost/Resource Hooks | Done | RoyalWood, HuntingTrophy |
+| 6. Fencing Alternatives | Blocked | 1 card (WoodPalisades) |
+| 7. Turn Flow / Deferred | Done | SourDough, Sower |
+
+**Remaining blocked:** 5 Group 1 + 1 Group 6 = **6 cards** (+ 3 related occupations from Group 1)
 
 ---
 
 ## Recently Completed
 
-- **Batch (Groups 4+5):** NewlyPlowedField, RoyalWood, HuntingTrophy
+- **Batch (Groups 2+3+4+7):** AlchemistsLab, WoodField, Sower, Archway, SourDough, WoodSaw, JobContract
 - **Batch (Groups 3+4):** ZigzagHarrow, SwingPlow, TurnwrestPlow, CarpentersYard, Recruitment
+- **Batch (Groups 4+5):** NewlyPlowedField, RoyalWood, HuntingTrophy

@@ -18,6 +18,6 @@ module.exports = {
       args: { player: actingPlayer },
     })
     // Schedule extra action before returning home
-    actingPlayer.archwayExtraAction = true
+    game.state.archwayPlayer = actingPlayer.name
   },
 }

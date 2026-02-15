@@ -8,7 +8,20 @@ module.exports = {
   vps: 1,
   prereqs: { occupations: 1 },
   category: "Crop Provider",
+  isField: true,
   text: "You can plant wood on this card as though it were 2 fields, but it is considered 1 field. Sow and harvest wood on this card as you would grain.",
-  providesWoodField: true,
-  fieldCapacity: 2,
+  onPlay(game, player) {
+    player.addVirtualField({
+      id: 'wood-field',
+      cardId: this.id,
+      label: 'Wood Field',
+      cropRestriction: 'wood',
+      sowingAmount: 2,
+      countsAsFieldForScoring: true,
+    })
+    game.log.add({
+      template: '{player} plays Wood Field, gaining a wood-only field',
+      args: { player },
+    })
+  },
 }

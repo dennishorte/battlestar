@@ -1285,6 +1285,42 @@ Agricola.prototype.workPhase = function() {
     this.callPlayerCardHook(player, 'onWorkPhaseEnd', player._lastActionId)
   }
 
+  // Archway: after all workers placed, the archway user gets an extra action
+  if (this.state.archwayPlayer) {
+    const archwayPlayer = this.players.byName(this.state.archwayPlayer)
+    this.state.archwayPlayer = null
+
+    // Get unoccupied action spaces (exclude card-provided action spaces)
+    const available = this.getAvailableActions(archwayPlayer, { excludeCardSpaces: true })
+    if (available.length > 0) {
+      const choices = available.map(actionId => {
+        const action = res.getActionById(actionId)
+        const state = this.state.actionSpaces[actionId]
+        const name = action ? action.name : state.name
+        return { id: actionId, label: name }
+      })
+      choices.push({ id: 'skip', label: 'Skip extra action' })
+
+      const selectorChoices = choices.map(c => c.label)
+      const selection = this.actions.choose(
+        archwayPlayer,
+        selectorChoices,
+        { title: 'Archway: Choose an unoccupied action space', min: 1, max: 1 }
+      )
+
+      const selectedChoice = choices.find(c => c.label === selection[0])
+      if (selectedChoice && selectedChoice.id !== 'skip') {
+        const actionId = selectedChoice.id
+        this.state.actionSpaces[actionId].occupiedBy = archwayPlayer.name
+        this.log.add({
+          template: '{player} uses Archway to take extra action: {action}',
+          args: { player: archwayPlayer, action: selectedChoice.label },
+        })
+        this.actions.executeAction(archwayPlayer, actionId)
+      }
+    }
+  }
+
   this.log.outdent()
 }
 
@@ -1323,6 +1359,12 @@ Agricola.prototype.playerTurn = function(player, options) {
     choices.sort((a, b) => a.label.localeCompare(b.label))
   }
 
+  // Check for cards that modify worker placement (SourDough, WoodSaw, JobContract)
+  const specialChoices = this._getSpecialPlacementChoices(player)
+  for (const special of specialChoices) {
+    choices.push(special)
+  }
+
   const selectorChoices = choices.map(c => {
     if (c.detail) {
       return { title: c.label, detail: c.detail }
@@ -1339,6 +1381,12 @@ Agricola.prototype.playerTurn = function(player, options) {
   // Find the selected action
   const selectedLabel = selection[0]
   const selectedChoice = choices.find(c => c.label === selectedLabel)
+
+  // Handle special placement choices (no worker used or combined actions)
+  if (selectedChoice && selectedChoice.special) {
+    this._executeSpecialPlacement(player, selectedChoice)
+    return
+  }
 
   if (selectedChoice) {
     const actionId = selectedChoice.id
@@ -1403,11 +1451,133 @@ Agricola.prototype.playerTurn = function(player, options) {
   }
 }
 
+Agricola.prototype._getSpecialPlacementChoices = function(player) {
+  const choices = []
+  const cards = this.getPlayerActiveCards(player)
+
+  for (const card of cards) {
+    const mod = card.definition.modifiesWorkerPlacement
+    if (!mod) {
+      continue
+    }
+
+    if (mod === 'sourDough') {
+      // SourDough: skip placement and bake bread instead (once per round)
+      const state = this.cardState(card.id)
+      if (state.lastUsedRound === this.state.round) {
+        continue
+      }
+      if (!player.hasBakingAbility()) {
+        continue
+      }
+      if (player.grain < 1) {
+        continue
+      }
+      // All players must have at least 1 worker remaining
+      const allHaveWorkers = this.players.all().every(p => p.getAvailableWorkers() >= 1)
+      if (!allHaveWorkers) {
+        continue
+      }
+      choices.push({
+        id: 'sour-dough-bake',
+        label: 'Bake Bread (Sour Dough)',
+        special: 'sourDough',
+        cardId: card.id,
+      })
+    }
+
+    if (mod === 'woodSaw') {
+      // WoodSaw: free Build Rooms when all others have more workers (family members)
+      const allOthersHaveMore = this.players.all()
+        .filter(p => p.name !== player.name)
+        .every(p => p.getFamilySize() > player.getFamilySize())
+      if (!allOthersHaveMore) {
+        continue
+      }
+      // Check player can actually build rooms
+      if (player.getValidRoomBuildSpaces().length === 0) {
+        continue
+      }
+      if (!player.canAffordRoom()) {
+        continue
+      }
+      choices.push({
+        id: 'wood-saw-build',
+        label: 'Build Rooms (Wood Saw)',
+        special: 'woodSaw',
+        cardId: card.id,
+      })
+    }
+
+    if (mod === 'jobContract') {
+      // JobContract: combine Day Laborer + Lessons when both unoccupied
+      const dlState = this.state.actionSpaces['day-laborer']
+      const lessonsState = this.state.actionSpaces['occupation']
+      if (!dlState || dlState.occupiedBy) {
+        continue
+      }
+      if (!lessonsState || lessonsState.occupiedBy) {
+        continue
+      }
+      choices.push({
+        id: 'job-contract-combined',
+        label: 'Day Laborer + Lessons (Job Contract)',
+        special: 'jobContract',
+        cardId: card.id,
+      })
+    }
+  }
+
+  return choices
+}
+
+Agricola.prototype._executeSpecialPlacement = function(player, choice) {
+  if (choice.special === 'sourDough') {
+    // Skip placement, bake bread instead
+    this.cardState(choice.cardId).lastUsedRound = this.state.round
+    this.log.add({
+      template: '{player} skips placement and bakes bread (Sour Dough)',
+      args: { player },
+    })
+    this.actions.bakeBread(player)
+    return
+  }
+
+  if (choice.special === 'woodSaw') {
+    // Free Build Rooms action — no worker used, no action space occupied
+    this.log.add({
+      template: '{player} takes Build Rooms without placing a person (Wood Saw)',
+      args: { player },
+    })
+    this.actions.buildRoom(player)
+    return
+  }
+
+  if (choice.special === 'jobContract') {
+    // Combined Day Laborer + Lessons — one worker, both spaces occupied
+    this.state.actionSpaces['day-laborer'].occupiedBy = player.name
+    this.state.actionSpaces['occupation'].occupiedBy = player.name
+    player.useWorker()
+    this.log.add({
+      template: '{player} uses Job Contract: Day Laborer + Lessons',
+      args: { player },
+    })
+    this.actions.executeAction(player, 'day-laborer')
+    this.actions.executeAction(player, 'occupation')
+    return
+  }
+}
+
 Agricola.prototype.getAvailableActions = function(player, options) {
   const available = []
 
   for (const actionId of this.state.activeActions) {
     const state = this.state.actionSpaces[actionId]
+
+    // Skip card-provided action spaces if requested (e.g., Archway extra action)
+    if (options?.excludeCardSpaces && state.cardProvided) {
+      continue
+    }
 
     // Action must not be occupied (unless a card overrides this)
     if (state.occupiedBy) {

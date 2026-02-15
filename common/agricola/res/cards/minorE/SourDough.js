@@ -8,5 +8,5 @@ module.exports = {
   vps: 1,
   prereqs: { occupations: 3, bakingImprovement: true },
   text: "Once per round, if all players have at least 1 person left to place, you can skip placing a person and take a \"Bake Bread\" action instead.",
-  enablesSkipPlacementForBake: true,
+  modifiesWorkerPlacement: 'sourDough',
 }
