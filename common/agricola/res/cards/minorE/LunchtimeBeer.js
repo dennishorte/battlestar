@@ -15,10 +15,8 @@ module.exports = {
     })
 
     if (selection[0].startsWith('Skip')) {
-      if (!game.state.skipFieldAndBreeding) {
-        game.state.skipFieldAndBreeding = []
-      }
-      game.state.skipFieldAndBreeding.push(player.name)
+      game.state.skipField.push(player.name)
+      game.state.skipBreeding.push(player.name)
       player.addResource('food', 1)
       game.log.add({
         template: '{player} skips field and breeding phases, gets 1 food from {card}',

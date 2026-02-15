@@ -6,10 +6,8 @@ module.exports = {
   type: "occupation",
   players: "3+",
   text: "Each time another player renovates to stone, if you live in a clay house, you can pay 2 food to build a clay room at no additional cost.",
-  // Note: onAnyRenovate hook is not fired by engine (only onAnyRenovateToStone).
-  // Using onAnyRenovateToStone instead.
-  onAnyRenovateToStone(game, actingPlayer, cardOwner) {
-    if (actingPlayer.name !== cardOwner.name && cardOwner.roomType === 'clay' && cardOwner.food >= 2) {
+  onAnyRenovate(game, actingPlayer, cardOwner, { newType }) {
+    if (newType === 'stone' && actingPlayer.name !== cardOwner.name && cardOwner.roomType === 'clay' && cardOwner.food >= 2) {
       const selection = game.actions.choose(cardOwner, () => [
         'Pay 2 food to build a free clay room',
         'Skip',

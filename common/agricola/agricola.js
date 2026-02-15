@@ -2042,10 +2042,24 @@ Agricola.prototype.harvestPhase = function() {
   this.log.indent()
 
   // Call onHarvestStart and onBeforeHarvest hooks (e.g., Lunchtime Beer, Haydryer)
-  this.state.skipFieldAndBreeding = []
+  this.state.skipField = []
+  this.state.skipFeeding = []
+  this.state.skipBreeding = []
   for (const player of this.players.all()) {
     this.callPlayerCardHook(player, 'onHarvestStart')
     this.callPlayerCardHook(player, 'onBeforeHarvest')
+
+    // Consume skipNextHarvest flag (Layabout: skip entire harvest)
+    if (player.skipNextHarvest) {
+      this.state.skipField.push(player.name)
+      this.state.skipFeeding.push(player.name)
+      this.state.skipBreeding.push(player.name)
+      delete player.skipNextHarvest
+      this.log.add({
+        template: '{player} skips the harvest',
+        args: { player },
+      })
+    }
   }
 
   this.fieldPhase()
@@ -2053,7 +2067,9 @@ Agricola.prototype.harvestPhase = function() {
   this.breedingPhase()
 
   // Clean up skip flags
-  delete this.state.skipFieldAndBreeding
+  delete this.state.skipField
+  delete this.state.skipFeeding
+  delete this.state.skipBreeding
 
   // Call onHarvestEnd hooks (e.g., ValueAssets offers to buy building resources)
   this.callCardHook('onHarvestEnd')
@@ -2090,7 +2106,7 @@ Agricola.prototype.fieldPhase = function() {
   }
 
   for (const player of this.players.all()) {
-    if (this.state.skipFieldAndBreeding?.includes(player.name)) {
+    if (this.state.skipField?.includes(player.name)) {
       continue
     }
 
@@ -2167,6 +2183,10 @@ Agricola.prototype.feedingPhase = function() {
   this.log.indent()
 
   for (const player of this.players.all()) {
+    if (this.state.skipFeeding?.includes(player.name)) {
+      continue
+    }
+
     const required = player.getFoodRequired()
 
     this.log.add({
@@ -2283,7 +2303,7 @@ Agricola.prototype.breedingPhase = function() {
   const newbornTypesMap = new Map()
 
   for (const player of this.players.all()) {
-    if (this.state.skipFieldAndBreeding?.includes(player.name)) {
+    if (this.state.skipBreeding?.includes(player.name)) {
       continue
     }
 

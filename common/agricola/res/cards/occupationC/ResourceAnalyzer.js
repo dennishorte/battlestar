@@ -6,8 +6,7 @@ module.exports = {
   type: "occupation",
   players: "4+",
   text: "Before the start of each round, if you have more building resources than all other players of at least two types, you get 1 food.",
-  // Note: onBeforeRoundStart hook is not fired by the engine.
-  onBeforeRoundStart(game, player) {
+  onRoundStart(game, player) {
     const buildingTypes = ['wood', 'clay', 'reed', 'stone']
     let typesLeading = 0
     for (const type of buildingTypes) {

@@ -10,8 +10,6 @@ module.exports = {
     const s = game.cardState(this.id)
     s.resourcePairs = []
   },
-  // Note: onAnyRenovate hook is not fired by engine. This card's renovation
-  // trigger cannot fire in the current implementation.
   onAnyRenovate(game, actingPlayer, cardOwner) {
     const s = game.cardState(this.id)
     if (actingPlayer.name !== cardOwner.name && s.resourcePairs && s.resourcePairs.length > 0) {

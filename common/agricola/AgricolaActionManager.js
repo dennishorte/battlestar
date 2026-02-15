@@ -884,19 +884,19 @@ class AgricolaActionManager extends BaseActionManager {
     // Call onRenovate hooks (Roughcaster)
     this.game.callPlayerCardHook(player, 'onRenovate', oldType, newType)
 
-    // Call onAnyRenovate hooks on all players' cards (Margrave)
+    // Call onAnyRenovate hooks on all players' cards (Margrave, RecycledBrick, PatternMaker, etc.)
+    const roomCount = player.getRoomCount()
     for (const otherPlayer of this.game.players.all()) {
       const cards = this.game.getPlayerActiveCards(otherPlayer)
       for (const card of cards) {
         if (card.hasHook('onAnyRenovate')) {
-          card.callHook('onAnyRenovate', this.game, player, otherPlayer)
+          card.callHook('onAnyRenovate', this.game, player, otherPlayer, { oldType, newType, roomCount })
         }
       }
     }
 
     // Call onAnyRenovateToStone hooks on all players' cards (Recycled Brick)
     if (newType === 'stone') {
-      const roomCount = player.getRoomCount()
       for (const otherPlayer of this.game.players.all()) {
         const cards = this.game.getPlayerActiveCards(otherPlayer)
         for (const card of cards) {
@@ -1840,6 +1840,7 @@ class AgricolaActionManager extends BaseActionManager {
 
       // Call onBuildMajor hooks (Farm Building schedules food, Craft Teacher)
       this.game.callPlayerCardHook(player, 'onBuildMajor', improvementId)
+      this.callOnAnyBuildMajorHooks(player, improvementId)
 
       if (imp.upgradesFrom && imp.upgradesFrom.some(id => id.startsWith('fireplace'))) {
         this.game.callPlayerCardHook(player, 'onUpgradeFireplace')
@@ -2293,6 +2294,7 @@ class AgricolaActionManager extends BaseActionManager {
 
             // Call onBuildMajor hooks (Farm Building schedules food, Craft Teacher)
             this.game.callPlayerCardHook(player, 'onBuildMajor', improvementId)
+            this.callOnAnyBuildMajorHooks(player, improvementId)
             return improvementId
           }
         }
@@ -2531,6 +2533,7 @@ class AgricolaActionManager extends BaseActionManager {
 
           // Call onBuildMajor hooks (Farm Building schedules food, Craft Teacher)
           this.game.callPlayerCardHook(player, 'onBuildMajor', improvementId)
+          this.callOnAnyBuildMajorHooks(player, improvementId)
 
           if (imp.upgradesFrom && imp.upgradesFrom.some(id => id.startsWith('fireplace'))) {
             this.game.callPlayerCardHook(player, 'onUpgradeFireplace')
@@ -3023,6 +3026,20 @@ class AgricolaActionManager extends BaseActionManager {
       for (const card of cards) {
         if (card.hasHook('onAnyPlayImprovement')) {
           card.callHook('onAnyPlayImprovement', this.game, actingPlayer, player, improvement)
+        }
+      }
+    }
+  }
+
+  /**
+   * Call onAnyBuildMajor hook on ALL players' cards
+   */
+  callOnAnyBuildMajorHooks(actingPlayer, improvementId) {
+    for (const player of this.game.players.all()) {
+      const cards = this.game.getPlayerActiveCards(player)
+      for (const card of cards) {
+        if (card.hasHook('onAnyBuildMajor')) {
+          card.callHook('onAnyBuildMajor', this.game, actingPlayer, player, improvementId)
         }
       }
     }
@@ -4131,15 +4148,13 @@ class AgricolaActionManager extends BaseActionManager {
       })
       this.game.callPlayerCardHook(player, 'onRenovate', fromType, toType)
 
-      // Call onAnyRenovateToStone hooks on all players' cards (Recycled Brick)
-      if (toType === 'stone') {
-        const roomCount = player.getRoomCount()
-        for (const otherPlayer of this.game.players.all()) {
-          const cards = this.game.getPlayerActiveCards(otherPlayer)
-          for (const card of cards) {
-            if (card.hasHook('onAnyRenovateToStone')) {
-              card.callHook('onAnyRenovateToStone', this.game, player, otherPlayer, roomCount)
-            }
+      // Call onAnyRenovate hooks on all players' cards (RecycledBrick, PatternMaker, etc.)
+      const roomCount = player.getRoomCount()
+      for (const otherPlayer of this.game.players.all()) {
+        const cards = this.game.getPlayerActiveCards(otherPlayer)
+        for (const card of cards) {
+          if (card.hasHook('onAnyRenovate')) {
+            card.callHook('onAnyRenovate', this.game, player, otherPlayer, { oldType: fromType, newType: toType, roomCount })
           }
         }
       }
@@ -5253,6 +5268,7 @@ class AgricolaActionManager extends BaseActionManager {
       this.game.callPlayerCardHook(player, 'onBuildImprovement', player.getMajorImprovementCost(improvementId), imp)
       this.callOnAnyBuildImprovementHooks(player, player.getMajorImprovementCost(improvementId), imp)
       this.game.callPlayerCardHook(player, 'onBuildMajor', improvementId)
+      this.callOnAnyBuildMajorHooks(player, improvementId)
 
       this.log.add({
         template: '{player} uses {card} to build {improvement}',
@@ -5312,6 +5328,7 @@ class AgricolaActionManager extends BaseActionManager {
       this.game.callPlayerCardHook(player, 'onBuildImprovement', player.getMajorImprovementCost(improvementId), imp)
       this.callOnAnyBuildImprovementHooks(player, player.getMajorImprovementCost(improvementId), imp)
       this.game.callPlayerCardHook(player, 'onBuildMajor', improvementId)
+      this.callOnAnyBuildMajorHooks(player, improvementId)
 
       this.log.add({
         template: '{player} uses {card} to build {improvement}',

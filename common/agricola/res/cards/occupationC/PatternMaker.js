@@ -6,8 +6,6 @@ module.exports = {
   type: "occupation",
   players: "3+",
   text: "Each time another player renovates, you can exchange exactly 2 wood for 1 grain, 1 food, and 1 bonus point.",
-  // Note: onAnyRenovate hook is not fired by engine (only onAnyRenovateToStone).
-  // This card's renovation trigger cannot fire in the current implementation.
   onAnyRenovate(game, actingPlayer, cardOwner) {
     if (actingPlayer.name !== cardOwner.name && cardOwner.wood >= 2) {
       const selection = game.actions.choose(cardOwner, () => [

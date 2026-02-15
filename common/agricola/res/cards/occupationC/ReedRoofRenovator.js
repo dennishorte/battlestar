@@ -15,8 +15,6 @@ module.exports = {
       })
     }
   },
-  // Note: onAnyRenovate hook is not fired by engine (only onAnyRenovateToStone).
-  // This card's renovation trigger cannot fire in the current implementation.
   onAnyRenovate(game, actingPlayer, cardOwner) {
     if (actingPlayer.name !== cardOwner.name) {
       cardOwner.addResource('reed', 1)

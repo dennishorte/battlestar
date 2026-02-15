@@ -6,8 +6,7 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Before the start of each round, if you have food equal to or higher than the current round number, you get 1 food.",
-  // Note: onBeforeRoundStart hook is not fired by the engine.
-  onBeforeRoundStart(game, player) {
+  onRoundStart(game, player) {
     if (player.food >= game.state.round) {
       player.addResource('food', 1)
       game.log.add({

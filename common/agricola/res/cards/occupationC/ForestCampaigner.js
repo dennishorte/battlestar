@@ -6,12 +6,12 @@ module.exports = {
   type: "occupation",
   players: "4+",
   text: "Each time before you place a person, if there are at least 8 wood total on accumulation spaces, you get 1 food.",
-  // Note: onBeforePlacePerson hook is not fired by the engine.
-  onBeforePlacePerson(game, player) {
+  onBeforeAction(game, player) {
     let totalWood = 0
-    for (const [actionId, state] of Object.entries(game.state.actionSpaces)) {
-      if (game.isAccumulationSpace(actionId) && state && state.wood) {
-        totalWood += state.wood
+    for (const actionId of Object.keys(game.state.actionSpaces)) {
+      if (game.isAccumulationSpace(actionId)) {
+        const resources = game.getAccumulatedResources(actionId)
+        totalWood += resources.wood || 0
       }
     }
     if (totalWood >= 8) {
