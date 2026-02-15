@@ -9,19 +9,36 @@ module.exports = {
   category: "Farm Planner",
   text: "Place 2 field tiles on this card. Each time you use the \"Farmland\" or \"Cultivation\" action space, you can also plow up to 2 fields from this card.",
   onPlay(game, player) {
-    player.turnwrestPlowCharges = 2
+    game.cardState(this.id).charges = 2
     game.log.add({
       template: '{player} places 2 field tiles on Turnwrest Plow',
       args: { player },
     })
   },
   onAction(game, player, actionId) {
-    if ((actionId === 'plow-field' || actionId === 'plow-sow') && player.turnwrestPlowCharges > 0) {
-      const fieldsToAdd = Math.min(2, player.turnwrestPlowCharges)
-      player.turnwrestPlowCharges -= fieldsToAdd
-      for (let i = 0; i < fieldsToAdd; i++) {
-        game.actions.plowField(player, { immediate: true })
+    const state = game.cardState(this.id)
+    if ((actionId !== 'plow-field' && actionId !== 'plow-sow') || state.charges <= 0) {
+      return
+    }
+
+    const maxPlows = Math.min(2, state.charges)
+    for (let i = 0; i < maxPlows; i++) {
+      if (player.getValidPlowSpaces().length === 0) {
+        break
       }
+      const selection = game.actions.choose(player, [
+        `Plow a field from Turnwrest Plow (${state.charges} remaining)`,
+        'Skip',
+      ], {
+        title: 'Turnwrest Plow',
+        min: 1,
+        max: 1,
+      })
+      if (selection[0] === 'Skip') {
+        break
+      }
+      game.actions.plowField(player)
+      state.charges--
     }
   },
 }

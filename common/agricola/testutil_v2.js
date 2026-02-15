@@ -457,7 +457,7 @@ TestUtil.setBoard = function(game, state) {
 
       // Card prereqs — skip negative prereqs (noFields, noAnimals, etc.) since
       // those are play-time conditions that may conflict with the test board state
-      const negativePrereqs = ['noFields', 'noGrainFields', 'noOccupations', 'noAnimals', 'noSheep', 'noGrain', 'maxRound', 'minRound', 'personOnFishing', 'pastureSpacesGteRound']
+      const negativePrereqs = ['noFields', 'noGrainFields', 'noOccupations', 'noAnimals', 'noSheep', 'noGrain', 'maxRound', 'minRound', 'personOnFishing', 'pastureSpacesGteRound', 'noPeopleInHouse']
       const playedCardFields = ['occupations', 'minorImprovements', 'majorImprovements']
       for (const field of playedCardFields) {
         if (playerState[field]) {

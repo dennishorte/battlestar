@@ -1,7 +1,7 @@
 # Blocked Minor Improvements
 
-100 of 124 minor improvement cards (+ related occupations) are complete with passing tests.
-21 cards remain blocked on engine infrastructure, grouped by what they need.
+105 of 124 minor improvement cards (+ related occupations) are complete with passing tests.
+16 cards remain blocked on engine infrastructure, grouped by what they need.
 
 ---
 
@@ -46,20 +46,17 @@ Cards that create new action spaces any player can use.
 
 ---
 
-## Group 3: Action Space Combination/Override (4 cards)
+## Group 3: Action Space Combination/Override (2 cards)
 
 Cards that modify how existing action spaces work.
 
 | Card | Deck | What it does |
 |------|------|-------------|
 | JobContract (c023) | C | Use Day Laborer + Lessons with single person, both marked occupied |
-| Recruitment (d021) | D | On Minor Improvement action, can take Family Growth instead (if room) |
 | WoodSaw (e014) | E | When all others have more workers, take Build Rooms without placing person |
-| CarpentersYard (d026) | D | Build Joinery+Well on Minor action, or both on single Major action |
 
 **Infrastructure needed:**
 - Combined action space pairing (one person → two spaces occupied)
-- Action substitution hooks (minor improvement → family growth)
 - Conditional free-action-space usage (no person needed under conditions)
 
 **Key files:** `agricola.js` (executeAction, playerTurn), `AgricolaActionManager.js`
@@ -67,43 +64,25 @@ Cards that modify how existing action spaces work.
 
 ---
 
-## Group 4: Field/Plow Mechanics (5 cards)
+## Group 4: Field/Plow Mechanics (1 card)
 
 Cards needing `plowField` options or card-based field tiles.
 
 | Card | Deck | What it does |
 |------|------|-------------|
-| NewlyPlowedField (c017) | C | On play, plow 1 field (non-adjacent allowed) |
-| ZigzagHarrow (d001) | D | On play, plow 1 field completing a zigzag pattern |
-| SwingPlow (c019) | C | Place 4 field tiles on card; each Farmland action, plow up to 2 from card |
-| TurnwrestPlow (d020) | D | Place 2 field tiles on card; each Farmland/Cultivation, plow up to 2 from card |
 | WoodField (d075) | D | Card-based "wood field" — sow wood like grain, harvest wood |
 
 **Infrastructure needed:**
-- `plowField()` options: `allowNonAdjacent`, `zigzagPattern` validation
-- Card-based field tile charges (store N tiles on card, spend on plow actions)
 - Wood-as-crop sowing/harvesting (new crop type in field system)
 
 **Key files:** `AgricolaActionManager.js` (plowField), `AgricolaPlayer.js` (sowField, fields)
-**Complexity:** Moderate — plowField options are straightforward; wood-as-crop is novel
+**Complexity:** Moderate — wood-as-crop is novel
 
 ---
 
-## Group 5: Cost/Resource Hooks (2 cards)
+## ~~Group 5: Cost/Resource Hooks (2 cards)~~ — DONE
 
-Cards needing hooks wired into build/redevelopment cost calculations.
-
-| Card | Deck | What it does |
-|------|------|-------------|
-| RoyalWood (d074) | D | Get 1 wood back per 2 wood paid for Farm Expansion or improvement |
-| HuntingTrophy (d082) | D | House Redevelopment costs -1 resource; Farm Redevelopment fences -3 wood |
-
-**Infrastructure needed:**
-- `onBuildImprovement` / `onFarmExpansion` hooks with wood-paid param
-- `modifyHouseRedevelopmentCost` / `modifyFarmRedevelopmentFenceCost` hooks
-
-**Key files:** `agricola.js` (redevelopment actions), `AgricolaActionManager.js`
-**Complexity:** Moderate — hook wiring pattern is well-established
+All cards completed: RoyalWood, HuntingTrophy
 
 ---
 
@@ -136,3 +115,10 @@ Cards needing hooks wired into build/redevelopment cost calculations.
 
 **Key files:** `agricola.js` (playerTurn, workPhase)
 **Complexity:** Moderate — SourDough needs placement-skip; Sower needs card-resource tracking
+
+---
+
+## Recently Completed
+
+- **Batch (Groups 4+5):** NewlyPlowedField, RoyalWood, HuntingTrophy
+- **Batch (Groups 3+4):** ZigzagHarrow, SwingPlow, TurnwrestPlow, CarpentersYard, Recruitment

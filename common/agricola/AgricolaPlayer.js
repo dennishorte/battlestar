@@ -739,6 +739,23 @@ class AgricolaPlayer extends BasePlayer {
     return valid
   }
 
+  hasFieldsInLShape() {
+    const fields = this.getFieldSpaces()
+    if (fields.length < 3) {
+      return false
+    }
+    const fieldSet = new Set(fields.map(f => `${f.row},${f.col}`))
+    for (const f of fields) {
+      // Check if this field has field neighbors in both horizontal AND vertical axes
+      const hasHorizontal = fieldSet.has(`${f.row},${f.col - 1}`) || fieldSet.has(`${f.row},${f.col + 1}`)
+      const hasVertical = fieldSet.has(`${f.row - 1},${f.col}`) || fieldSet.has(`${f.row + 1},${f.col}`)
+      if (hasHorizontal && hasVertical) {
+        return true
+      }
+    }
+    return false
+  }
+
   plowField(row, col) {
     if (!this.canPlowField(row, col)) {
       return false
@@ -3418,11 +3435,23 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
 
+    if (prereqs.fieldsInLShape) {
+      if (!this.hasFieldsInLShape()) {
+        return false
+      }
+    }
+
+    if (prereqs.noPeopleInHouse) {
+      if (this.familyMembers >= this.getRoomCount()) {
+        return false
+      }
+    }
+
     // --- Deferred prereq checks (complex game-state checks not yet implemented) ---
     // TODO: bakingImprovement, cookingImprovement, hasPotteryOrUpgrade,
     //   hasFireplaceAndCookingHearth, returnFireplaceOrCookingHearth, returnMajor,
-    //   fieldsInLShape, personOnAction, personYetToPlace,
-    //   noPeopleInHouse, fencedStables, woodGteRound,
+    //   personOnAction, personYetToPlace,
+    //   fencedStables, woodGteRound,
     //   cardsInPlay, maxCardsInPlay, exactlyAdults, majorImprovement (specific card),
     //   roundsLeftGreaterThanUnusedSpaces
 

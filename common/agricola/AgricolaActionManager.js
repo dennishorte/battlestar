@@ -906,9 +906,11 @@ class AgricolaActionManager extends BaseActionManager {
   // ---------------------------------------------------------------------------
 
   plowField(player, options = {}) {
-    const validSpaces = options.allowNonAdjacent
-      ? player.getEmptySpaces().filter(s => !player.isRestrictedByFutureBuildingSite(s.row, s.col))
-      : player.getValidPlowSpaces()
+    const validSpaces = options.zigzagPattern
+      ? this._getZigzagPlowSpaces(player)
+      : options.allowNonAdjacent
+        ? player.getEmptySpaces().filter(s => !player.isRestrictedByFutureBuildingSite(s.row, s.col))
+        : player.getValidPlowSpaces()
     if (validSpaces.length === 0) {
       this.log.add({
         template: '{player} has no valid space to plow',
@@ -954,7 +956,7 @@ class AgricolaActionManager extends BaseActionManager {
       [row, col] = result[0].split(',').map(Number)
     }
 
-    if (options.allowNonAdjacent) {
+    if (options.allowNonAdjacent || options.zigzagPattern) {
       player.setSpace(row, col, { type: 'field', crop: null, cropCount: 0 })
     }
     else {
@@ -969,6 +971,55 @@ class AgricolaActionManager extends BaseActionManager {
     this.game.callPlayerCardHook(player, 'onPlowField')
 
     return true
+  }
+
+  _getZigzagPlowSpaces(player) {
+    // S/Z tetromino orientations (4 offsets each)
+    const shapes = [
+      [[0,0],[1,0],[1,1],[2,1]], // S vertical
+      [[0,1],[1,1],[1,0],[2,0]], // Z vertical
+      [[0,0],[0,1],[1,1],[1,2]], // S horizontal
+      [[1,0],[1,1],[0,1],[0,2]], // Z horizontal
+    ]
+    const fields = player.getFieldSpaces()
+    const fieldSet = new Set(fields.map(f => `${f.row},${f.col}`))
+    const validSpaces = []
+    const seen = new Set()
+
+    for (const empty of player.getEmptySpaces()) {
+      if (player.isRestrictedByFutureBuildingSite(empty.row, empty.col)) {
+        continue
+      }
+      for (const shape of shapes) {
+        for (let pos = 0; pos < 4; pos++) {
+          // Translate so shape[pos] lands on the empty space
+          const dr = empty.row - shape[pos][0]
+          const dc = empty.col - shape[pos][1]
+          // Check that the other 3 positions are existing fields
+          let valid = true
+          for (let i = 0; i < 4; i++) {
+            if (i === pos) {
+              continue
+            }
+            const r = shape[i][0] + dr
+            const c = shape[i][1] + dc
+            if (!fieldSet.has(`${r},${c}`)) {
+              valid = false
+              break
+            }
+          }
+          if (valid) {
+            const key = `${empty.row},${empty.col}`
+            if (!seen.has(key)) {
+              seen.add(key)
+              validSpaces.push(empty)
+            }
+            break // No need to check other positions for this shape
+          }
+        }
+      }
+    }
+    return validSpaces
   }
 
   sow(player) {
@@ -2340,6 +2391,8 @@ class AgricolaActionManager extends BaseActionManager {
             this.game.callPlayerCardHook(player, 'onUpgradeFireplace')
           }
 
+          this._offerSecondMajorFromCard(player, improvementId)
+
           return improvementId
         }
       }
@@ -2364,6 +2417,107 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     return false
+  }
+
+  _offerSecondMajorFromCard(player, justBoughtId) {
+    // Only on Major/Minor Improvement action (not House Redevelopment)
+    if (this.game.state.currentActionId !== 'major-minor-improvement') {
+      return
+    }
+
+    for (const card of this.game.getPlayerActiveCards(player)) {
+      const list = card.definition.allowsBothMajorsOnMajorAction
+      if (!list || !list.includes(justBoughtId)) {
+        continue
+      }
+
+      // Find other majors in the list that are still available and affordable
+      const available = this.game.getAvailableMajorImprovements()
+      const otherIds = list.filter(id =>
+        id !== justBoughtId && available.includes(id) && player.canBuyMajorImprovement(id)
+      )
+      if (otherIds.length === 0) {
+        continue
+      }
+
+      const choices = otherIds.map(id => {
+        const imp = this.game.cards.byId(id)
+        return `Also build ${imp.name}`
+      })
+      choices.push('Skip')
+
+      const selection = this.choose(player, choices, {
+        title: card.name,
+        min: 1,
+        max: 1,
+      })
+
+      if (selection[0] === 'Skip') {
+        return
+      }
+
+      // Extract the chosen improvement
+      const chosenName = selection[0].replace('Also build ', '')
+      const chosenId = otherIds.find(id => this.game.cards.byId(id).name === chosenName)
+      if (!chosenId) {
+        return
+      }
+
+      const imp = this.game.cards.byId(chosenId)
+      const result = player.buyMajorImprovement(chosenId)
+      this._recordCardPlayed(player, imp)
+
+      this.log.add({
+        template: '{player} also buys {card} via {source}',
+        args: { player, card: imp, source: card },
+      })
+
+      const impCost = result.upgraded ? {} : player.getMajorImprovementCost(chosenId)
+      if (!result.upgraded) {
+        player.payCost(impCost)
+      }
+
+      if (imp.hasHook('onBuy')) {
+        imp.callHook('onBuy', this.game, player)
+      }
+
+      this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost, imp)
+      this.game.callPlayerCardHook(player, 'onBuildMajor')
+      return
+    }
+  }
+
+  _offerRecruitmentFamilyGrowth(player) {
+    // Check if player has a card with modifyMinorImprovementAction
+    const hasRecruitment = this.game.getPlayerActiveCards(player).some(
+      c => c.definition.modifyMinorImprovementAction
+    )
+    if (!hasRecruitment) {
+      return false
+    }
+    if (!player.canGrowFamily(true)) {
+      return false
+    }
+
+    const card = this.game.getPlayerActiveCards(player).find(
+      c => c.definition.modifyMinorImprovementAction
+    )
+
+    const selection = this.choose(player, [
+      `Family Growth (${card.name})`,
+      'Play an Improvement',
+    ], {
+      title: card.name,
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] === 'Play an Improvement') {
+      return false
+    }
+
+    this.familyGrowth(player, true)
+    return true
   }
 
   // ---------------------------------------------------------------------------
@@ -2413,7 +2567,12 @@ class AgricolaActionManager extends BaseActionManager {
       player._houseRedevelopmentDiscount = houseRedevDiscount
     }
 
-    this.buyImprovement(player, true, allowMinor)
+    if (allowMinor && this._offerRecruitmentFamilyGrowth(player)) {
+      // Player chose Family Growth via Recruitment instead of improvement
+    }
+    else {
+      this.buyImprovement(player, true, allowMinor)
+    }
 
     delete player._houseRedevelopmentDiscount
 
@@ -2606,7 +2765,12 @@ class AgricolaActionManager extends BaseActionManager {
 
     // Major or Minor Improvement action (without renovation)
     if ((action.allowsMajorImprovement || action.allowsMinorImprovement) && !action.allowsRenovation && !action.allowsFamilyGrowth) {
-      this.buyImprovement(player, action.allowsMajorImprovement, action.allowsMinorImprovement)
+      if (action.allowsMinorImprovement && this._offerRecruitmentFamilyGrowth(player)) {
+        // Player chose Family Growth via Recruitment instead of improvement
+      }
+      else {
+        this.buyImprovement(player, action.allowsMajorImprovement, action.allowsMinorImprovement)
+      }
     }
 
     // Minor improvement after family growth
