@@ -4854,6 +4854,11 @@ class AgricolaActionManager extends BaseActionManager {
       const result = player.buyMajorImprovement(improvementId)
       this._recordCardPlayed(player, imp)
 
+      this.log.add({
+        template: '{player} uses {card} to build {improvement}',
+        args: { player, card, improvement: imp.name },
+      })
+
       if (!result.upgraded) {
         player.payCost(player.getMajorImprovementCost(improvementId))
       }
@@ -4864,11 +4869,6 @@ class AgricolaActionManager extends BaseActionManager {
 
       this.game.callPlayerCardHook(player, 'onBuildImprovement', player.getMajorImprovementCost(improvementId), imp)
       this.game.callPlayerCardHook(player, 'onBuildMajor')
-
-      this.log.add({
-        template: '{player} uses {card} to build {improvement}',
-        args: { player, card, improvement: imp },
-      })
     }
   }
 
@@ -4907,6 +4907,11 @@ class AgricolaActionManager extends BaseActionManager {
       const result = player.buyMajorImprovement(improvementId)
       this._recordCardPlayed(player, imp)
 
+      this.log.add({
+        template: '{player} uses {card} to build {improvement}',
+        args: { player, card, improvement: imp.name },
+      })
+
       if (!result.upgraded) {
         player.payCost(player.getMajorImprovementCost(improvementId))
       }
@@ -4917,11 +4922,6 @@ class AgricolaActionManager extends BaseActionManager {
 
       this.game.callPlayerCardHook(player, 'onBuildImprovement', player.getMajorImprovementCost(improvementId), imp)
       this.game.callPlayerCardHook(player, 'onBuildMajor')
-
-      this.log.add({
-        template: '{player} uses {card} to build {improvement}',
-        args: { player, card, improvement: imp },
-      })
     }
   }
 
