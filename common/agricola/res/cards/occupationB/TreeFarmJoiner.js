@@ -20,4 +20,19 @@ module.exports = {
       args: { player },
     })
   },
+  onRoundStart(game, player) {
+    const scheduled = game.state.scheduledWoodWithMinor?.[player.name] || []
+    const round = game.state.round
+    if (!scheduled.includes(round)) {
+      return
+    }
+    player.addResource('wood', 1)
+    game.log.add({
+      template: '{player} receives 1 scheduled wood from Tree Farm Joiner',
+      args: { player },
+    })
+    game.state.scheduledWoodWithMinor[player.name] =
+      game.state.scheduledWoodWithMinor[player.name].filter(r => r !== round)
+    game.actions.buyMinorImprovement(player)
+  },
 }
