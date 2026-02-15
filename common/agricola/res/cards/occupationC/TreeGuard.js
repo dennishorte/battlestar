@@ -9,7 +9,21 @@ module.exports = {
   onAction(game, player, actionId) {
     const woodActions = ['take-wood', 'copse', 'take-3-wood', 'take-2-wood']
     if (woodActions.includes(actionId) && player.wood >= 4) {
-      game.actions.offerTreeGuardExchange(player, this, actionId)
+      const selection = game.actions.choose(player, () => [
+        'Place 4 wood for 2 stone, 1 clay, 1 reed, 1 grain',
+        'Skip',
+      ], { title: 'Tree Guard', min: 1, max: 1 })
+      if (selection[0] !== 'Skip') {
+        player.payCost({ wood: 4 })
+        player.addResource('stone', 2)
+        player.addResource('clay', 1)
+        player.addResource('reed', 1)
+        player.addResource('grain', 1)
+        game.log.add({
+          template: '{player} exchanges 4 wood for resources from Tree Guard',
+          args: { player },
+        })
+      }
     }
   },
 }
