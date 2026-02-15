@@ -7,7 +7,7 @@ module.exports = {
   players: "4+",
   text: "Each time you obtain exactly 2/3/4 wood from a wood accumulation space, you get 1 additional wood and 1/0/1 food.",
   onAction(game, player, actionId, resources) {
-    const woodActions = ['take-wood', 'copse', 'take-3-wood', 'take-2-wood']
+    const woodActions = ['take-wood', 'copse', 'copse-5', 'grove', 'grove-5', 'grove-6']
     if (woodActions.includes(actionId) && resources && resources.wood) {
       if (resources.wood === 2) {
         player.addResource('wood', 1)

@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 37,
-  "cardsCompleted": 115,
-  "cardsTested": 198,
-  "currentBatch": "Batch-B08",
+  "batchesCompleted": 38,
+  "cardsCompleted": 120,
+  "cardsTested": 215,
+  "currentBatch": "Batch-B09",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -278,6 +278,14 @@
       "testsPassing": 17,
       "completedDate": "2026-02-14",
       "note": "Fixed players.count() to players.all().length; OvenFiringBoy uses bakeBread; Equipper uses buyMinorImprovement; Collier fixed Hollow ID"
+    },
+    "Batch-B08": {
+      "status": "completed",
+      "cards": ["greengrocer-b142", "cattle-feeder-b166", "forest-clearer-b162", "storehouse-keeper-b156", "huntsman-b147"],
+      "testsCreated": 5,
+      "testsPassing": 17,
+      "completedDate": "2026-02-14",
+      "note": "Huntsman inlined offer (offerHuntsmanBoar didn't exist); ForestClearer/Huntsman wood action IDs updated; StorehouseKeeper uses offerResourceChoice"
     }
   },
   "bySet": {

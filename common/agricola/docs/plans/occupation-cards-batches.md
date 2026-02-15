@@ -766,18 +766,18 @@ Cards:
 
 ---
 
-### Batch-B08: onAction – Grain Seeds, markets, wood (Set B)
+### Batch-B08: onAction – Grain Seeds, markets, wood (Set B) ✅ COMPLETED
 **Pattern**: onAction for Grain Seeds, markets, or wood amount  
 **Complexity**: Tier 2
 
 Cards:
-1. `greengrocer-b142` - Greengrocer (onAction: Grain Seeds → also 1 vegetable)
-2. `cattle-feeder-b166` - Cattle Feeder (onAction: Grain Seeds → also buy 1 cattle for 1 food)
-3. `forest-clearer-b162` - Forest Clearer (onAction: obtain exactly 2/3/4 wood from wood space → +1 wood)
-4. `storehouse-keeper-b156` - Storehouse Keeper (onAction)
-5. `huntsman-b147` - Huntsman (onAction: after wood accumulation → pay 1 grain for 1 boar)
+1. `greengrocer-b142` - Greengrocer (onAction: Grain Seeds → also 1 vegetable) ✅
+2. `cattle-feeder-b166` - Cattle Feeder (onAction: Grain Seeds → also buy 1 cattle for 1 food) ✅
+3. `forest-clearer-b162` - Forest Clearer (onAction: obtain exactly 2/3/4 wood from wood space → +1 wood) ✅
+4. `storehouse-keeper-b156` - Storehouse Keeper (onAction: Resource Market → 1 clay or 1 grain) ✅
+5. `huntsman-b147` - Huntsman (onAction: after wood accumulation → pay 1 grain for 1 boar) ✅
 
-**LLM Instructions:** Test Grain Seeds and wood-accumulation triggers. Create tests; run; update status.
+**Status**: All cards tested. Huntsman inlined offer (offerHuntsmanBoar didn't exist). ForestClearer/Huntsman wood action IDs updated. StorehouseKeeper uses existing offerResourceChoice.
 
 ---
 
