@@ -709,17 +709,17 @@ Cards:
 
 ---
 
-### Batch-B04: onPlay animal or special (Set B)
+### Batch-B04: onPlay animal or special (Set B) ✅ COMPLETED
 **Pattern**: onPlay – animals or unique effect  
 **Complexity**: Tier 2
 
 Cards:
-1. `pet-broker-b148` - Pet Broker (onPlay: 1 sheep; keep 1 sheep on each occupation)
-2. `open-air-farmer-b149` - Open Air Farmer (onPlay: if ≥3 stables, remove 3 for 3 wood)
-3. `little-peasant-b151` - Little Peasant (onPlay: 1 stone; while 2-room wood house, bonus)
-4. `art-teacher-b155` - Art Teacher (onPlay: 1 wood, 1 reed)
+1. `pet-broker-b148` - Pet Broker (onPlay: 1 sheep; holdsAnimals capacity = occupation count) ✅
+2. `open-air-farmer-b149` - Open Air Farmer (onPlay: if ≥3 stables in supply, build 2-space pasture for 2 wood, remove 3 stables) ✅
+3. `little-peasant-b151` - Little Peasant (onPlay: 1 stone; canUseOccupiedActionSpace when 2 wood rooms, except Meeting Place) ✅
+4. `art-teacher-b155` - Art Teacher (onPlay: 1 wood + 1 reed; canUseTravelingPlayersFood for occupation costs) ✅
 
-**LLM Instructions:** Test animal placement and Open Air Farmer stable trade. Create tests; run; update status.
+**Status**: All cards tested. Fixed Little Peasant to use canUseOccupiedActionSpace hook (was using nonexistent ignoresOccupancy wiring). Fixed Open Air Farmer to inline pasture building (was calling nonexistent offerOpenAirFarmerPasture). Wired canUseTravelingPlayersFood in playOccupation for Art Teacher. Added skipCost/skipCostCheck options to buildPasture/validatePastureSelection.
 
 ---
 

@@ -1030,8 +1030,8 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   canBuildStable(row, col) {
-    // Cannot exceed max stables
-    if (this.getStableCount() >= res.constants.maxStables) {
+    // Cannot exceed max stables (accounting for stables removed by Open Air Farmer)
+    if (this.getStableCount() >= res.constants.maxStables - (this.removedStables || 0)) {
       return false
     }
 
@@ -1510,7 +1510,7 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   // Validate a pasture selection
-  validatePastureSelection(spaces) {
+  validatePastureSelection(spaces, options) {
     if (!spaces || spaces.length === 0) {
       return { valid: false, error: 'No spaces selected' }
     }
@@ -1560,41 +1560,43 @@ class AgricolaPlayer extends BasePlayer {
     const usesPalisades = this.hasWoodPalisadesCard()
     const { edgeFences, internalFences } = this._splitEdgeAndInternalFences(fences)
 
-    // Check if player has enough wood
-    let woodCost
-    if (usesPalisades) {
-      // Internal fences: normal cost (1 wood each, with modifiers)
-      woodCost = this.applyFenceCostModifiers(internalFences.length, 0)
-      // Edge fences: 2 wood each as palisades
-      woodCost += edgeFences.length * 2
-    }
-    else {
-      woodCost = this.applyFenceCostModifiers(fences.length, this._countEdgeFences(fences))
-    }
-    // Overhaul free fence discount (validation only — don't decrement)
-    if (this._overhaulFreeFences > 0) {
-      woodCost = Math.max(0, woodCost - this._overhaulFreeFences)
-    }
-    // Field Fences discount: fences adjacent to fields are free
-    if (this._fieldFencesActive) {
-      woodCost = Math.max(0, woodCost - this._countFieldAdjacentFences(fences))
-    }
-    // Farm Redevelopment free fence discount (validation only — don't decrement)
-    if ((this._farmRedevelopmentFreeFences || 0) > 0) {
-      woodCost = Math.max(0, woodCost - this._farmRedevelopmentFreeFences)
-    }
-    // Card-based free fences (e.g. Ash Trees) — validation only, don't decrement
-    for (const card of this.getActiveCards()) {
-      if (card.hasHook('getFreeFences')) {
-        const freeFences = card.callHook('getFreeFences', this.game)
-        woodCost = Math.max(0, woodCost - freeFences)
+    if (!options?.skipCostCheck) {
+      // Check if player has enough wood
+      let woodCost
+      if (usesPalisades) {
+        // Internal fences: normal cost (1 wood each, with modifiers)
+        woodCost = this.applyFenceCostModifiers(internalFences.length, 0)
+        // Edge fences: 2 wood each as palisades
+        woodCost += edgeFences.length * 2
       }
-    }
-    if (woodCost > this.wood) {
-      return {
-        valid: false,
-        error: `Need ${woodCost} wood, have ${this.wood}`,
-        fencesNeeded: fences.length,
+      else {
+        woodCost = this.applyFenceCostModifiers(fences.length, this._countEdgeFences(fences))
+      }
+      // Overhaul free fence discount (validation only — don't decrement)
+      if (this._overhaulFreeFences > 0) {
+        woodCost = Math.max(0, woodCost - this._overhaulFreeFences)
+      }
+      // Field Fences discount: fences adjacent to fields are free
+      if (this._fieldFencesActive) {
+        woodCost = Math.max(0, woodCost - this._countFieldAdjacentFences(fences))
+      }
+      // Farm Redevelopment free fence discount (validation only — don't decrement)
+      if ((this._farmRedevelopmentFreeFences || 0) > 0) {
+        woodCost = Math.max(0, woodCost - this._farmRedevelopmentFreeFences)
+      }
+      // Card-based free fences (e.g. Ash Trees) — validation only, don't decrement
+      for (const card of this.getActiveCards()) {
+        if (card.hasHook('getFreeFences')) {
+          const freeFences = card.callHook('getFreeFences', this.game)
+          woodCost = Math.max(0, woodCost - freeFences)
+        }
+      }
+      if (woodCost > this.wood) {
+        return {
+          valid: false,
+          error: `Need ${woodCost} wood, have ${this.wood}`,
+          fencesNeeded: fences.length,
+        }
       }
     }
 
@@ -1644,8 +1646,8 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   // Build a pasture from selected spaces
-  buildPasture(spaces) {
-    const validation = this.validatePastureSelection(spaces)
+  buildPasture(spaces, options) {
+    const validation = this.validatePastureSelection(spaces, options?.skipCost ? { skipCostCheck: true } : undefined)
     if (!validation.valid) {
       return { success: false, error: validation.error }
     }
@@ -1654,43 +1656,45 @@ class AgricolaPlayer extends BasePlayer {
     const usesPalisades = this.hasWoodPalisadesCard()
     const { edgeFences, internalFences } = this._splitEdgeAndInternalFences(validation.fences)
 
-    // Pay wood cost (accounting for fence cost modifiers)
-    let woodCost
-    if (usesPalisades) {
-      woodCost = this.applyFenceCostModifiers(internalFences.length, 0)
-      woodCost += edgeFences.length * 2
-    }
-    else {
-      woodCost = this.applyFenceCostModifiers(validation.fencesNeeded, this._countEdgeFences(validation.fences))
-    }
-    // Overhaul free fence discount — decrement the counter
-    if (this._overhaulFreeFences > 0) {
-      const discount = Math.min(woodCost, this._overhaulFreeFences)
-      woodCost -= discount
-      this._overhaulFreeFences -= discount
-    }
-    // Field Fences discount: fences adjacent to fields are free
-    if (this._fieldFencesActive) {
-      woodCost = Math.max(0, woodCost - this._countFieldAdjacentFences(validation.fences))
-    }
-    // Farm Redevelopment free fence discount — decrement the counter
-    if ((this._farmRedevelopmentFreeFences || 0) > 0) {
-      const discount = Math.min(woodCost, this._farmRedevelopmentFreeFences)
-      woodCost -= discount
-      this._farmRedevelopmentFreeFences -= discount
-    }
-    // Card-based free fences (e.g. Ash Trees) — decrement stored fences
-    for (const card of this.getActiveCards()) {
-      if (card.hasHook('getFreeFences') && card.hasHook('useFreeFences')) {
-        const freeFences = card.callHook('getFreeFences', this.game)
-        const used = Math.min(woodCost, freeFences)
-        if (used > 0) {
-          woodCost -= used
-          card.callHook('useFreeFences', this.game, used)
+    if (!options?.skipCost) {
+      // Pay wood cost (accounting for fence cost modifiers)
+      let woodCost
+      if (usesPalisades) {
+        woodCost = this.applyFenceCostModifiers(internalFences.length, 0)
+        woodCost += edgeFences.length * 2
+      }
+      else {
+        woodCost = this.applyFenceCostModifiers(validation.fencesNeeded, this._countEdgeFences(validation.fences))
+      }
+      // Overhaul free fence discount — decrement the counter
+      if (this._overhaulFreeFences > 0) {
+        const discount = Math.min(woodCost, this._overhaulFreeFences)
+        woodCost -= discount
+        this._overhaulFreeFences -= discount
+      }
+      // Field Fences discount: fences adjacent to fields are free
+      if (this._fieldFencesActive) {
+        woodCost = Math.max(0, woodCost - this._countFieldAdjacentFences(validation.fences))
+      }
+      // Farm Redevelopment free fence discount — decrement the counter
+      if ((this._farmRedevelopmentFreeFences || 0) > 0) {
+        const discount = Math.min(woodCost, this._farmRedevelopmentFreeFences)
+        woodCost -= discount
+        this._farmRedevelopmentFreeFences -= discount
+      }
+      // Card-based free fences (e.g. Ash Trees) — decrement stored fences
+      for (const card of this.getActiveCards()) {
+        if (card.hasHook('getFreeFences') && card.hasHook('useFreeFences')) {
+          const freeFences = card.callHook('getFreeFences', this.game)
+          const used = Math.min(woodCost, freeFences)
+          if (used > 0) {
+            woodCost -= used
+            card.callHook('useFreeFences', this.game, used)
+          }
         }
       }
+      this.payCost({ wood: woodCost })
     }
-    this.payCost({ wood: woodCost })
 
     // Add fences — edge fences to palisades if WoodPalisades active
     if (usesPalisades) {

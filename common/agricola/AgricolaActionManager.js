@@ -1937,14 +1937,26 @@ class AgricolaActionManager extends BaseActionManager {
     const hasWoodOrFood = costObj.woodOrFood > 0
 
     if (cost > 0 && !hasWoodOrFood && player.food < cost) {
-      // Relax gate: allow entry if anytime conversions can produce food
-      const canConvert = this.game.getAnytimeFoodConversionOptions(player).length > 0
-      if (!canConvert) {
-        this.log.add({
-          template: '{player} cannot afford to play an occupation (needs {cost} food)',
-          args: { player, cost },
-        })
-        return false
+      // Art Teacher: check if Traveling Players has food to supplement
+      let tpFood = 0
+      if (player.getActiveCards().some(c => c.definition.canUseTravelingPlayersFood)) {
+        for (const tpId of ['traveling-players', 'traveling-players-5']) {
+          const tpState = this.game.state.actionSpaces[tpId]
+          if (tpState) {
+            tpFood += tpState.accumulated || 0
+          }
+        }
+      }
+      if (player.food + tpFood < cost) {
+        // Relax gate: allow entry if anytime conversions can produce food
+        const canConvert = this.game.getAnytimeFoodConversionOptions(player).length > 0
+        if (!canConvert) {
+          this.log.add({
+            template: '{player} cannot afford to play an occupation (needs {cost} food)',
+            args: { player, cost },
+          })
+          return false
+        }
       }
     }
 
@@ -2048,7 +2060,27 @@ class AgricolaActionManager extends BaseActionManager {
         }
       }
       else {
-        player.payCost({ food: cost })
+        // Art Teacher: can use food from Traveling Players accumulation space
+        let remainingCost = cost
+        const hasTravelingPlayersFoodFlag = player.getActiveCards().some(c => c.definition.canUseTravelingPlayersFood)
+        if (hasTravelingPlayersFoodFlag) {
+          const tpIds = ['traveling-players', 'traveling-players-5']
+          for (const tpId of tpIds) {
+            const tpState = this.game.state.actionSpaces[tpId]
+            if (tpState && tpState.accumulated > 0 && remainingCost > 0) {
+              const take = Math.min(remainingCost, tpState.accumulated)
+              tpState.accumulated -= take
+              remainingCost -= take
+              this.log.add({
+                template: '{player} uses {amount} food from Traveling Players via Art Teacher',
+                args: { player, amount: take },
+              })
+            }
+          }
+        }
+        if (remainingCost > 0) {
+          player.payCost({ food: remainingCost })
+        }
       }
     }
 

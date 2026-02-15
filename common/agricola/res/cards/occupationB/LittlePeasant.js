@@ -6,7 +6,6 @@ module.exports = {
   type: "occupation",
   players: "3+",
   text: "You immediately get 1 stone. As long as you live in a wooden house with exactly 2 rooms, action spaces - excluding Meeting Place - are not considered occupied for you.",
-  excludeFromIgnore: ["meeting-place"],
   onPlay(game, player) {
     player.addResource('stone', 1)
     game.log.add({
@@ -14,7 +13,10 @@ module.exports = {
       args: { player },
     })
   },
-  ignoresOccupancy(player) {
+  canUseOccupiedActionSpace(_game, player, actionId) {
+    if (actionId === 'starting-player') {
+      return false
+    }  // Meeting Place excluded
     return player.roomType === 'wood' && player.getRoomCount() === 2
   },
 }

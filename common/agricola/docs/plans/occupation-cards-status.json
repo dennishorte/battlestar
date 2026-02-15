@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 33,
-  "cardsCompleted": 99,
-  "cardsTested": 145,
-  "currentBatch": "Batch-B04",
+  "batchesCompleted": 34,
+  "cardsCompleted": 103,
+  "cardsTested": 158,
+  "currentBatch": "Batch-B05",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -246,6 +246,14 @@
       "testsPassing": 22,
       "completedDate": "2026-02-14",
       "note": "Fixed Shoreforester wasNonEmpty guard; fixed ForestGuardian to use onAnyAction"
+    },
+    "Batch-B04": {
+      "status": "completed",
+      "cards": ["pet-broker-b148", "open-air-farmer-b149", "little-peasant-b151", "art-teacher-b155"],
+      "testsCreated": 4,
+      "testsPassing": 13,
+      "completedDate": "2026-02-14",
+      "note": "Fixed LittlePeasant to use canUseOccupiedActionSpace; rewrote OpenAirFarmer pasture logic; wired canUseTravelingPlayersFood"
     }
   },
   "bySet": {
