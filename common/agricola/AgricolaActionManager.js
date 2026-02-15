@@ -615,7 +615,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
   }
 
-  buildRoom(player) {
+  buildRoom(player, opts = {}) {
     const validSpaces = player.getValidRoomBuildSpaces()
     if (validSpaces.length === 0) {
       this.log.add({
@@ -624,6 +624,9 @@ class AgricolaActionManager extends BaseActionManager {
       })
       return false
     }
+
+    const roomType = player.roomType
+    const riparianDiscount = opts.riparianBuilderCard ? (roomType === 'clay' ? { clay: 1 } : roomType === 'stone' ? { stone: 2 } : null) : null
 
     // Build choices as coordinate strings for dropdown fallback
     const spaceChoices = validSpaces.map(s => `${s.row},${s.col}`)
@@ -659,8 +662,28 @@ class AgricolaActionManager extends BaseActionManager {
       [row, col] = result[0].split(',').map(Number)
     }
 
-    // Choose cost — present options if Frame Builder (or similar) offers alternatives
-    const affordableOptions = player.getAffordableRoomCostOptions()
+    // Choose cost — present options if Frame Builder (or similar) offers alternatives; apply Riparian Builder discount when building from that offer
+    let affordableOptions = player.getAffordableRoomCostOptions()
+    if (riparianDiscount) {
+      const baseOptions = player.getRoomCostOptions()
+      affordableOptions = baseOptions.map(opt => {
+        const cost = { ...opt.cost }
+        if (riparianDiscount.clay) {
+          cost.clay = Math.max(0, (cost.clay || 0) - riparianDiscount.clay)
+        }
+        if (riparianDiscount.stone) {
+          cost.stone = Math.max(0, (cost.stone || 0) - riparianDiscount.stone)
+        }
+        return { cost, label: opt.label }
+      }).filter(opt => player.canAffordCost(opt.cost))
+      if (affordableOptions.length === 0) {
+        this.log.add({
+          template: '{player} cannot afford a room even with Riparian Builder discount',
+          args: { player },
+        })
+        return false
+      }
+    }
     let chosenCost
     if (affordableOptions.length > 1) {
       const costChoices = affordableOptions.map(opt => this._formatCostLabel(opt.cost))
@@ -676,7 +699,6 @@ class AgricolaActionManager extends BaseActionManager {
       chosenCost = affordableOptions[0].cost
     }
 
-    const roomType = player.roomType
     player.payCost(chosenCost)
     player._farmExpansionWoodPaid = (player._farmExpansionWoodPaid || 0) + (chosenCost.wood || 0)
     player.buildRoom(row, col)
@@ -1046,6 +1068,8 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     this.game.callPlayerCardHook(player, 'onSow', true)
+
+    this.callOnAnyBeforeSowHooks(player)
 
     let sowedAny = false
     let sowedVegetables = false
@@ -2918,6 +2942,23 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   /**
+   * Call onAnyBeforeSow hook on all OTHER players' cards (before acting player sows)
+   */
+  callOnAnyBeforeSowHooks(actingPlayer) {
+    for (const other of this.game.players.all()) {
+      if (other === actingPlayer) {
+        continue
+      }
+      const cards = this.game.getPlayerActiveCards(other)
+      for (const card of cards) {
+        if (card.hasHook('onAnyBeforeSow')) {
+          card.callHook('onAnyBeforeSow', this.game, actingPlayer, other)
+        }
+      }
+    }
+  }
+
+  /**
    * Offer wood for food exchange (Basket, Mushroom Collector)
    */
   offerWoodForFoodExchange(player, card, exchange) {
@@ -2944,6 +2985,60 @@ class AgricolaActionManager extends BaseActionManager {
         actionSpace.accumulated += exchange.wood
       }
     }
+  }
+
+  offerRiparianBuilderRoom(player, card) {
+    if (player.getValidRoomBuildSpaces().length === 0) {
+      return
+    }
+    const roomType = player.roomType
+    const discount = roomType === 'clay' ? { clay: 1 } : roomType === 'stone' ? { stone: 2 } : null
+    const canAffordWithDiscount = discount
+      ? player.getRoomCostOptions().some(opt => {
+        const cost = { ...opt.cost }
+        if (discount.clay) {
+          cost.clay = Math.max(0, (cost.clay || 0) - 1)
+        }
+        if (discount.stone) {
+          cost.stone = Math.max(0, (cost.stone || 0) - 2)
+        }
+        return player.canAffordCost(cost)
+      })
+      : player.canAffordRoom()
+    if (!canAffordWithDiscount) {
+      return
+    }
+    const choices = ['Build a room', 'Skip']
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Build a room (clay/stone discount)?`,
+      min: 1,
+      max: 1,
+    })
+    if (selection[0] === 'Build a room') {
+      this.buildRoom(player, { riparianBuilderCard: card })
+    }
+  }
+
+  offerPublicanBonus(cardOwner, actingPlayer, card) {
+    const choices = [
+      `Give 1 grain to ${actingPlayer.name} for 1 bonus point`,
+      'Skip',
+    ]
+    const selection = this.choose(cardOwner, choices, {
+      title: `${card.name}: Give grain for bonus point?`,
+      min: 1,
+      max: 1,
+    })
+    if (selection[0] === 'Skip') {
+      return
+    }
+    cardOwner.payCost({ grain: 1 })
+    actingPlayer.addResource('grain', 1)
+    cardOwner.bonusPoints = (cardOwner.bonusPoints || 0) + 1
+    this.log.add({
+      template: '{cardOwner} gives 1 grain to {receiver} for 1 bonus point via {card}',
+      args: { cardOwner, receiver: actingPlayer.name, card },
+    })
   }
 
   offerForestPlow(player, card, actionId) {

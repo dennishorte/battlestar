@@ -2,10 +2,10 @@
   "lastUpdated": "2025-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 16,
-  "cardsCompleted": 49,
-  "cardsTested": 74,
-  "currentBatch": "Batch-017",
+  "batchesCompleted": 17,
+  "cardsCompleted": 51,
+  "cardsTested": 78,
+  "currentBatch": "Batch-018",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -119,6 +119,13 @@
       "testsPassing": 7,
       "completedDate": "2025-02-14"
     },
+    "Batch-017": {
+      "status": "completed",
+      "cards": ["riparian-builder-a128", "publican-a132"],
+      "testsCreated": 2,
+      "testsPassing": 4,
+      "completedDate": "2025-02-14"
+    },
     "Hollow-Warden": {
       "status": "completed",
       "cards": ["hollow-warden-a139"],
@@ -131,8 +138,8 @@
   "bySet": {
 "occupationA": {
     "total": 84,
-    "implemented": 49,
-    "tested": 74,
+    "implemented": 51,
+    "tested": 78,
     "status": "in_progress"
   },
     "occupationB": {
