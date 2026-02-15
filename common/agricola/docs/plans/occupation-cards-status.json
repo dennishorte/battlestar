@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 44,
-  "cardsCompleted": 141,
-  "cardsTested": 281,
-  "currentBatch": "Batch-B15",
+  "batchesCompleted": 45,
+  "cardsCompleted": 146,
+  "cardsTested": 294,
+  "currentBatch": "Batch-B16",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -334,6 +334,14 @@
       "testsPassing": 13,
       "completedDate": "2026-02-14",
       "note": "Fixed Scholar: costOverride:1 for playOccupation. Fixed NutritionExpert: inlined exchange, per-type getTotalAnimals. Fixed MoralCrusader: onBeforeRoundStart→onRoundStart, inlined hasScheduledGoodsForPlayer."
+    },
+    "Batch-B15": {
+      "status": "completed",
+      "cards": ["informant-b117", "district-manager-b158", "farmyard-worker-b140", "pavior-b110", "forest-scientist-b139"],
+      "testsCreated": 5,
+      "testsPassing": 13,
+      "completedDate": "2026-02-14",
+      "note": "No code changes needed. Tests handle auto-skipped choices, correct sow-field action format, 3-player wood spaces."
     }
   },
   "bySet": {

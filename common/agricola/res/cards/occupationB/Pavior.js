@@ -6,7 +6,7 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "At the end of each preparation phase, if you have at least 1 stone in your supply, you get 1 food. In round 14, you get 1 vegetable instead.",
-  onPreparationEnd(game, player) {
+  onRoundStart(game, player) {
     if (player.stone >= 1) {
       if (game.state.round === 14) {
         player.addResource('vegetables', 1)

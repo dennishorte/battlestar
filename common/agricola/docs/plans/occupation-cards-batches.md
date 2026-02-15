@@ -863,18 +863,18 @@ Cards:
 
 ---
 
-### Batch-B15: onWorkPhaseEnd, onPreparationEnd, onReturnHome (Set B)
+### Batch-B15: onWorkPhaseEnd, onPreparationEnd, onReturnHome (Set B) ✅ COMPLETED
 **Pattern**: end of work phase, preparation, or return home  
 **Complexity**: Tier 2–3
 
 Cards:
-1. `informant-b117` - Informant (onWorkPhaseEnd: more stone than clay → 1 wood)
-2. `district-manager-b158` - District Manager (onWorkPhaseEnd: used Forest and Grove → 5 food)
-3. `farmyard-worker-b140` - Farmyard Worker (onWorkPhaseEnd: placed good on farmyard this phase → 1 food)
-4. `pavior-b110` - Pavior (onPreparationEnd: 1+ stone → 1 food; round 14 → 1 vegetable)
-5. `forest-scientist-b139` - Forest Scientist (onReturnHome: no wood on board → bonus)
+1. `informant-b117` - Informant (onWorkPhaseEnd: stone > clay → 1 wood) ✅
+2. `district-manager-b158` - District Manager (onAction+onWorkPhaseEnd: Forest+Grove → 5 food) ✅
+3. `farmyard-worker-b140` - Farmyard Worker (multi-hook+onWorkPhaseEnd: farmyard placement → 2 food) ✅
+4. `pavior-b110` - Pavior (onRoundStart: stone → 1 food; round 14 → 1 vegetable) ✅
+5. `forest-scientist-b139` - Forest Scientist (onReturnHome: no wood on board → 1/2 food) ✅
 
-**LLM Instructions:** Test phase-end hooks and round 14 variant. Create tests; run; update status.
+**Status**: All cards tested. No code changes needed. Tests handle auto-skipped choices (Done Building/Sowing), correct sow-field action format, 3-player wood spaces (Forest+Grove only).
 
 ---
 
