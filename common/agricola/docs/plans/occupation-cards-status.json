@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 40,
-  "cardsCompleted": 127,
-  "cardsTested": 240,
-  "currentBatch": "Batch-B11",
+  "batchesCompleted": 41,
+  "cardsCompleted": 130,
+  "cardsTested": 249,
+  "currentBatch": "Batch-B12",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -302,6 +302,14 @@
       "testsPassing": 8,
       "completedDate": "2026-02-14",
       "note": "Both cards used existing engine methods. No code changes needed."
+    },
+    "Batch-B11": {
+      "status": "completed",
+      "cards": ["manservant-b107", "pastor-b163", "sheep-keeper-b154"],
+      "testsCreated": 3,
+      "testsPassing": 9,
+      "completedDate": "2026-02-14",
+      "note": "All cards used existing engine methods. No code changes needed."
     }
   },
   "bySet": {

@@ -808,17 +808,17 @@ Cards:
 
 ---
 
-### Batch-B11: checkTrigger (Set B)
+### Batch-B11: checkTrigger (Set B) ✅ COMPLETED
 **Pattern**: checkTrigger – scheduled or conditional delivery  
 **Template**: Set A `Minstrel` / `PigOwner` style  
 **Complexity**: Tier 2–3
 
 Cards:
-1. `manservant-b107` - Manservant (checkTrigger: once stone house, 3 food on each remaining round)
-2. `pastor-b163` - Pastor (checkTrigger: once only player with 2 rooms, get 3 wood)
-3. `sheep-keeper-b154` - Sheep Keeper (checkTrigger)
+1. `manservant-b107` - Manservant (checkTrigger: once stone house → schedule 3 food/round) ✅
+2. `pastor-b163` - Pastor (checkTrigger: once only player with 2 rooms → resources) ✅
+3. `sheep-keeper-b154` - Sheep Keeper (checkTrigger: once 7 sheep → 3 bonus + 2 food) ✅
 
-**LLM Instructions:** Test trigger conditions and scheduled goods. Create tests; run; update status.
+**Status**: All cards tested. No code changes needed. All used existing engine methods (scheduleResource, roomType, getTotalAnimals, bonusPoints).
 
 ---
 
