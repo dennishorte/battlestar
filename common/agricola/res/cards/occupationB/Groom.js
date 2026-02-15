@@ -15,7 +15,7 @@ module.exports = {
   },
   onRoundStart(game, player) {
     if (player.roomType === 'stone' && player.wood >= 1) {
-      game.actions.offerBuildStable(player, this, { cost: { wood: 1 } })
+      game.actions.offerBuildStableForWood(player, this)
     }
   },
 }

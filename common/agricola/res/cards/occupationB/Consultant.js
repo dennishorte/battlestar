@@ -7,7 +7,7 @@ module.exports = {
   players: "1+",
   text: "When you play this card in a 1-/2-/3-/4- player game, you immediately get 2 grain/3 clay/2 reed/2 sheep.",
   onPlay(game, player) {
-    const playerCount = game.players.count()
+    const playerCount = game.players.all().length
     if (playerCount === 1) {
       player.addResource('grain', 2)
       game.log.add({
