@@ -781,25 +781,33 @@ Agricola.prototype.collectScheduledResources = function(player) {
     this.state.scheduledStoneRooms[player.name] =
       this.state.scheduledStoneRooms[player.name].filter(r => r !== round)
   }
+
+  // Scheduled free stables (Stable Planner)
+  if (this.state.scheduledFreeStables?.[player.name]?.includes(round)) {
+    this.actions.buildFreeStable(player)
+    this.state.scheduledFreeStables[player.name] =
+      this.state.scheduledFreeStables[player.name].filter(r => r !== round)
+  }
 }
 
 /**
- * Offer player the option to plow a field for 1 food (Plow Driver)
+ * Offer player the option to plow a field for food (Plow Driver: 1 food; Shifting Cultivator: 3 food).
  */
-Agricola.prototype.offerPlowForFood = function(player, card) {
-  if (player.food < 1 && this.getAnytimeFoodConversionOptions(player).length === 0) {
+Agricola.prototype.offerPlowForFood = function(player, card, foodCost) {
+  const cost = foodCost ?? 1
+  if (player.food < cost && this.getAnytimeFoodConversionOptions(player).length === 0) {
     return
   }
 
-  const choices = ['Plow 1 field for 1 food', 'Skip']
+  const choices = [`Plow 1 field for ${cost} food`, 'Skip']
   const selection = this.actions.choose(player, choices, {
     title: `${card.name}: Plow for food?`,
     min: 1,
     max: 1,
   })
 
-  if (selection[0] === 'Plow 1 field for 1 food') {
-    player.payCost({ food: 1 })
+  if (selection[0] !== 'Skip') {
+    player.payCost({ food: cost })
     this.actions.plowField(player, { immediate: true })
   }
 }
@@ -1768,13 +1776,13 @@ Agricola.prototype.getAvailableActions = function(player, options) {
       continue
     }
 
-    // Action must not be occupied (unless a card overrides this)
+    // Action must not be occupied (unless a card overrides this or options.allowOccupied)
     if (state.occupiedBy) {
       // BrotherlyLove: 4th person can use same space as 3rd
       if (options?.allowSameSpaceAs === actionId && state.occupiedBy === player.name) {
         // Allow through
       }
-      else if (!this.playerCanUseOccupiedSpace(player, actionId, state)) {
+      else if (!options?.allowOccupied && !this.playerCanUseOccupiedSpace(player, actionId, state)) {
         continue
       }
     }
@@ -1793,6 +1801,10 @@ Agricola.prototype.getAvailableActions = function(player, options) {
 
   if (options?.allowedActions) {
     return available.filter(id => options.allowedActions.includes(id))
+  }
+
+  if (options?.excludeMeetingPlace) {
+    return available.filter(id => id !== 'starting-player')
   }
 
   return available

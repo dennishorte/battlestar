@@ -1223,6 +1223,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
 
     if (!sowedAny) {
+      this.game.callPlayerCardHook(player, 'onDeclineSow')
       this.log.addDoNothing(player, 'sow')
     }
     else {
@@ -3272,9 +3273,9 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   /**
-   * Build a free stable (Mining Hammer)
+   * Build a free stable (Mining Hammer, Stable Planner). Optional card for title/log.
    */
-  buildFreeStable(player) {
+  buildFreeStable(player, card) {
     const validSpaces = player.getValidStableBuildSpaces()
     if (validSpaces.length === 0) {
       this.log.add({
@@ -3284,10 +3285,11 @@ class AgricolaActionManager extends BaseActionManager {
       return
     }
 
+    const cardName = card?.name || 'Mining Hammer'
     const spaceChoices = validSpaces.map(s => `${s.row},${s.col}`)
     spaceChoices.push('Skip')
     const selection = this.choose(player, spaceChoices, {
-      title: 'Mining Hammer: Build a free stable?',
+      title: `${cardName}: Build a free stable?`,
       min: 1,
       max: 1,
     })
@@ -3297,9 +3299,41 @@ class AgricolaActionManager extends BaseActionManager {
       player.buildStable(row, col)
 
       this.log.add({
-        template: '{player} builds a free stable using Mining Hammer',
-        args: { player },
+        template: '{player} builds a free stable using {card}',
+        args: { player, card: card || { name: 'Mining Hammer' } },
       })
+    }
+  }
+
+  /**
+   * Offer to place another person immediately (Lazy Sowman, Stock Protector).
+   * opts: { allowOccupied?: boolean, excludeMeetingPlace?: boolean }
+   */
+  offerExtraPerson(player, card, opts = {}) {
+    const choices = ['Place another person', 'Skip']
+    const selection = this.choose(player, choices, {
+      title: `${card.name}: Place another person?`,
+      min: 1,
+      max: 1,
+    })
+    if (selection[0] === 'Skip') {
+      return
+    }
+    this.log.add({
+      template: '{player} uses {card} to place another person',
+      args: { player, card },
+    })
+    const beforeWorkers = player.availableWorkers
+    player.availableWorkers = (player.availableWorkers || 0) + 1
+    this.log.indent()
+    this.game.playerTurn(player, {
+      isBonusTurn: true,
+      allowOccupied: opts.allowOccupied || false,
+      excludeMeetingPlace: opts.excludeMeetingPlace || false,
+    })
+    this.log.outdent()
+    if (player.availableWorkers > beforeWorkers) {
+      player.availableWorkers = beforeWorkers
     }
   }
 

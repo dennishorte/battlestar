@@ -2,10 +2,10 @@
   "lastUpdated": "2025-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 15,
-  "cardsCompleted": 45,
-  "cardsTested": 70,
-  "currentBatch": "Batch-016",
+  "batchesCompleted": 16,
+  "cardsCompleted": 49,
+  "cardsTested": 74,
+  "currentBatch": "Batch-017",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -112,6 +112,13 @@
       "testsPassing": 8,
       "completedDate": "2025-02-14"
     },
+    "Batch-016": {
+      "status": "completed",
+      "cards": ["adoptive-parents-a092", "stable-planner-a089", "shifting-cultivator-a091", "lazy-sowman-a094"],
+      "testsCreated": 4,
+      "testsPassing": 7,
+      "completedDate": "2025-02-14"
+    },
     "Hollow-Warden": {
       "status": "completed",
       "cards": ["hollow-warden-a139"],
@@ -124,8 +131,8 @@
   "bySet": {
 "occupationA": {
     "total": 84,
-    "implemented": 45,
-    "tested": 70,
+    "implemented": 49,
+    "tested": 74,
     "status": "in_progress"
   },
     "occupationB": {
