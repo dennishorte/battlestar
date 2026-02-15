@@ -922,18 +922,18 @@ Cards:
 
 ---
 
-### Batch-B19: Scoring, onScoring, passive flags (Set B)
+### Batch-B19: Scoring, onScoring, passive flags (Set B) ✅ COMPLETED
 **Pattern**: onScoring; passive flags (no hook)  
 **Complexity**: Tier 1–2
 
 Cards:
-1. `sheep-walker-b104` - Sheep Walker (passive per card text)
-2. `village-peasant-b133` - Village Peasant (onScoring: vegetables = min(majors, minors, occupations))
-3. `seatmate-b129` - Seatmate (passive: use round 13 space even if occupied by left/right neighbors)
-4. `tutor-b099` - Tutor (getEndGamePoints: 1 BP per occupation played after this)
-5. `paper-maker-b109` - Paper Maker (onBeforePlayOccupation: pay 1 wood for 1 food per occupation in front of you)
+1. `sheep-walker-b104` - Sheep Walker (passive per card text) ✅
+2. `village-peasant-b133` - Village Peasant (onScoring: vegetables = min(majors, minors, occupations)) ✅
+3. `seatmate-b129` - Seatmate (passive: use round 13 space even if occupied by left/right neighbors) ✅
+4. `tutor-b099` - Tutor (getEndGamePoints: 1 BP per occupation played after this) ✅
+5. `paper-maker-b109` - Paper Maker (onBeforePlayOccupation: pay 1 wood for 1 food per occupation in front of you) ✅
 
-**LLM Instructions:** Test scoring and before-play-occupation. Sheep Walker already has tests. Create/extend tests; run; update status.
+**Status**: All cards tested. Fixed VillagePeasant: onScoring→getEndGamePoints (hook didn't exist), inlined vegScore delta calculation using majorImprovements.length/playedMinorImprovements.length/playedOccupations.length. Fixed Tutor: inlined getOccupationsPlayedAfter using playedOccupations.indexOf. Fixed PaperMaker: inlined offerPaperMakerBonus with choose dialog. Fixed Seatmate: passive flag→canUseOccupiedActionSpace hook with neighbor detection via players.all() indices. SheepWalker already had 3 tests.
 
 ---
 

@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 48,
-  "cardsCompleted": 160,
-  "cardsTested": 323,
-  "currentBatch": "Batch-B19",
+  "batchesCompleted": 49,
+  "cardsCompleted": 165,
+  "cardsTested": 333,
+  "currentBatch": "Batch-B20",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -366,6 +366,14 @@
       "testsPassing": 10,
       "completedDate": "2026-02-14",
       "note": "Fixed LieutenantGeneral: onAnyPlowField→onAnyAction (hook didn't exist). Fixed Weakling: onTurnEnd→afterPlayerAction. Fixed GameProvider: inlined offerGameProviderExchange. Fixed PastureMaster: inlined getPasturesWithStable. Salter pre-existing (3 tests)."
+    },
+    "Batch-B19": {
+      "status": "completed",
+      "cards": ["sheep-walker-b104", "village-peasant-b133", "seatmate-b129", "tutor-b099", "paper-maker-b109"],
+      "testsCreated": 4,
+      "testsPassing": 10,
+      "completedDate": "2026-02-14",
+      "note": "Fixed VillagePeasant: onScoring→getEndGamePoints with vegScore delta. Fixed Tutor: inlined getOccupationsPlayedAfter. Fixed PaperMaker: inlined offerPaperMakerBonus. Fixed Seatmate: passive flag→canUseOccupiedActionSpace with neighbor detection. SheepWalker pre-existing (3 tests)."
     }
   },
   "bySet": {

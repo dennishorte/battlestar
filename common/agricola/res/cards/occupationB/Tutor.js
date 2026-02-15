@@ -7,6 +7,10 @@ module.exports = {
   players: "1+",
   text: "During scoring, you get 1 bonus point for each occupation played after this one.",
   getEndGamePoints(player) {
-    return player.getOccupationsPlayedAfter(this.id)
+    const idx = player.playedOccupations.indexOf(this.id)
+    if (idx < 0) {
+      return 0
+    }
+    return player.playedOccupations.length - idx - 1
   },
 }
