@@ -7,7 +7,16 @@ module.exports = {
   players: "4+",
   text: "When you play this card, if you have at least 2/4/5 unplanted field tiles, you immediately get 1/2/3 vegetables.",
   onPlay(game, player) {
-    const unplantedFields = player.getUnplantedFieldCount()
+    // Count fields without crops (unplanted)
+    let unplantedFields = 0
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 5; col++) {
+        const space = player.getSpace(row, col)
+        if (space && space.type === 'field' && !space.crop) {
+          unplantedFields++
+        }
+      }
+    }
     let vegetables = 0
     if (unplantedFields >= 5) {
       vegetables = 3

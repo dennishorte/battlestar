@@ -2,10 +2,10 @@
   "lastUpdated": "2026-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 50,
-  "cardsCompleted": 167,
-  "cardsTested": 338,
-  "currentBatch": "Set-B-Complete",
+  "batchesCompleted": 51,
+  "cardsCompleted": 172,
+  "cardsTested": 346,
+  "currentBatch": "Batch-C02",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -382,6 +382,14 @@
       "testsPassing": 5,
       "completedDate": "2026-02-14",
       "note": "Fixed TinsmithMaster: pasture.hasStable doesn't exist on pasture objects, inlined space-level hasStable check. TruffleSearcher used existing hooks."
+    },
+    "Batch-C01": {
+      "status": "completed",
+      "cards": ["wood-collector-c118", "cattle-whisperer-c166", "hoof-caregiver-c156", "potato-digger-c161", "game-catcher-c165"],
+      "testsCreated": 5,
+      "testsPassing": 8,
+      "completedDate": "2026-02-14",
+      "note": "Fixed GameCatcher: getRemainingHarvestCount inlined with harvestRounds filter. Fixed PotatoDigger: getUnplantedFieldCount inlined with field grid scan. Fixed HoofCaregiver: addToAccumulationSpace inlined with direct actionSpaces state manipulation."
     }
   },
   "bySet": {

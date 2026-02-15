@@ -949,6 +949,247 @@ Cards:
 
 ---
 
+## Set C Occupation Batches
+
+### Batch-C01: Simple onPlay -- resource scheduling
+**Pattern**: onPlay with scheduleResource or immediate resources  
+**Complexity**: Tier 1
+
+Cards:
+1. `wood-collector-c118` - Wood Collector (onPlay: schedule 1 wood for next 5 rounds)
+2. `cattle-whisperer-c166` - Cattle Whisperer (onPlay: schedule cattle at round+5 and round+8)
+3. `hoof-caregiver-c156` - Hoof Caregiver (onPlay: add cattle to Cattle Market accum, get grain + food)
+4. `potato-digger-c161` - Potato Digger (onPlay: vegetables based on unplanted fields)
+5. `game-catcher-c165` - Game Catcher (onPlay: pay food per harvest, get cattle + boar)
+
+**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
+
+---
+
+### Batch-C02: onPlay -- special effects
+**Pattern**: onPlay triggering family growth, harvest skip, build, or deferred effect  
+**Complexity**: Tier 2
+
+Cards:
+1. `lover-c127` - Lover (onPlay: pay food for Family Growth without room)
+2. `layabout-c108` - Layabout (onPlay: skip next harvest flag)
+3. `basket-weaver-c095` - Basket Weaver (onPlay: build Basketmaker's Workshop)
+4. `baker-c107` - Baker (onPlay + onFeedingPhaseStart: offer bake bread)
+5. `food-distributor-c155` - Food Distributor (onPlay grain + onReturnHomeStart food)
+
+**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
+
+---
+
+### Batch-C03: onPlay + triggered hook
+**Pattern**: onPlay resources/state + secondary hook (onObtainGrain, onAction, onPlayOccupation, onHarvestEnd, onMinorImprovementAction)  
+**Complexity**: Tier 2
+
+Cards:
+1. `agricultural-labourer-c120` - Agricultural Labourer (onPlay: 8 clay on card; onObtainGrain: clay from card)
+2. `clay-kneader-c121` - Clay Kneader (onPlay: 1 wood + 2 clay; onAction: grain/veg seeds +1 clay)
+3. `furniture-maker-c116` - Furniture Maker (onPlay: 1 wood; onPlayOccupation: wood per food paid)
+4. `winter-caretaker-c113` - Winter Caretaker (onPlay: 1 grain; onHarvestEnd: buy vegetable)
+5. `packaging-artist-c140` - Packaging Artist (onPlay: 1 grain; onMinorImprovementAction: offer bake bread instead)
+
+**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
+
+---
+
+### Batch-C04: onAction -- day laborer, cattle, extra person
+**Pattern**: onAction triggered by specific action spaces  
+**Complexity**: Tier 2
+
+Cards:
+1. `cowherd-c147` - Cowherd (onAction: take-cattle +1 cattle)
+2. `excavator-c126` - Excavator (onAction: day-laborer +wood +clay, offer stone)
+3. `animal-feeder-c138` - Animal Feeder (onAction: day-laborer offer sheep/grain/boar/cattle)
+4. `animal-catcher-c168` - Animal Catcher (onAction: day-laborer 3 animals for food/harvest)
+5. `inner-districts-director-c093` - Inner Districts Director (onAction: forest/clay + stone on other + extra person)
+
+**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
+
+---
+
+### Batch-C05: onAction -- grain, sow, plow
+**Pattern**: onAction or onBeforeAction related to grain/sow/plow action spaces  
+**Complexity**: Tier 2
+
+Cards:
+1. `market-crier-c142` - Market Crier (onAction: take-grain offer bonus, others get grain)
+2. `thresher-c112` - Thresher (onBeforeAction: sow/plow spaces buy grain for food)
+3. `private-teacher-c131` - Private Teacher (onAction: take-grain when Lessons occupied, play occ)
+4. `plow-hero-c091` - Plow Hero (onAction: plow first person, extra plow for food)
+5. `soil-scientist-c114` - Soil Scientist (onAction: clay/stone space exchange)
+
+**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
+
+---
+
+### Batch-C06: onAction -- wood, improvement, special triggers
+**Pattern**: onAction or onBeforeAction on wood/improvement/misc spaces  
+**Complexity**: Tier 2
+
+Cards:
+1. `tree-guard-c102` - Tree Guard (onAction: wood space, exchange 4 wood for resources)
+2. `merchant-c096` - Merchant (onAction: improvement, repeat for 1 food)
+3. `twin-researcher-c154` - Twin Researcher (onAction: matching accum spaces, buy BP)
+4. `outrider-c160` - Outrider (onBeforeAction: most recently revealed round +grain)
+5. `legworker-c117` - Legworker (onAction: adjacent own worker +wood)
+
+**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
+
+---
+
+### Batch-C07: onAnyAction -- simple triggers
+**Pattern**: onAnyAction with direct resource gain  
+**Complexity**: Tier 1
+
+Cards:
+1. `german-heath-keeper-c164` - German Heath Keeper (onAnyAction: take-boar +1 sheep)
+2. `sheep-provider-c141` - Sheep Provider (onAnyAction: take-sheep +1 grain)
+3. `forest-reviewer-c145` - Forest Reviewer (onAnyAction: copse/take-wood when other occupied +reed)
+4. `material-deliveryman-c163` - Material Deliveryman (onAnyAction: accum 5/6/7/8+ goods, bonus resource)
+5. `charcoal-burner-c137` - Charcoal Burner (onAnyBuildBakingImprovement: +wood +food)
+
+**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
+
+---
+
+### Batch-C08: onAnyAction + onAnyRenovate -- multi-player
+**Pattern**: Triggers off other players' actions or renovations  
+**Complexity**: Tier 2
+
+Cards:
+1. `cattle-buyer-c167` - Cattle Buyer (onAnyAction: fencing by others, buy animals)
+2. `sowing-director-c151` - Sowing Director (onAnyAction: sow-bake by others, offer sow)
+3. `puppeteer-c152` - Puppeteer (onAnyAction: traveling-players by others, play occ for food)
+4. `reed-roof-renovator-c144` - Reed Roof Renovator (onAnyRenovate: others +reed)
+5. `pattern-maker-c153` - Pattern Maker (onAnyRenovate: others, exchange 2 wood for grain+food+BP)
+
+**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
+
+---
+
+### Batch-C09: Round start / periodic triggers
+**Pattern**: onRoundStart, onBeforeRoundStart, onBeforePlacePerson  
+**Complexity**: Tier 2
+
+Cards:
+1. `fishermans-friend-c159` - Fisherman's Friend (onRoundStart: TP vs fishing food difference)
+2. `stone-buyer-c143` - Stone Buyer (onPlay: buy 2 stone for 1 food; onRoundStart: buy 1 stone for 2 food)
+3. `small-animal-breeder-c111` - Small Animal Breeder (onBeforeRoundStart: food >= round +1 food)
+4. `resource-analyzer-c157` - Resource Analyzer (onBeforeRoundStart: leading 2+ resource types +food)
+5. `forest-campaigner-c158` - Forest Campaigner (onBeforePlacePerson: 8+ wood on accum +food)
+
+**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
+
+---
+
+### Batch-C10: Work phase, renovate, stable, exchange
+**Pattern**: onWorkPhaseStart, onBeforeWorkPhase, onRenovate, modifyCapacity, onRoundStart exchange  
+**Complexity**: Tier 2
+
+Cards:
+1. `freemason-c123` - Freemason (onWorkPhaseStart: 2 rooms clay/stone house +2 clay/stone)
+2. `nightworker-c125` - Nightworker (onBeforeWorkPhase: place person on accum space of missing resource)
+3. `skillful-renovator-c119` - Skillful Renovator (onPlay: resources; onRenovate: wood per people placed)
+4. `stable-master-c089` - Stable Master (onPlay: build 1 stable; modifyUnfencedStableCapacity: first = 3)
+5. `green-grocer-c103` - Green Grocer (onRoundStart: offer exchange options)
+
+**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
+
+---
+
+### Batch-C11: Harvest hooks
+**Pattern**: onBeforeHarvest, onHarvest, onFieldPhaseEnd, onFeedingPhase, onBreedingPhase  
+**Complexity**: Tier 2
+
+Cards:
+1. `autumn-mother-c092` - Autumn Mother (onBeforeHarvest: family growth for 3 food)
+2. `basket-carrier-c105` - Basket Carrier (onHarvest: buy wood+reed+grain for 2 food)
+3. `home-brewer-c110` - Home Brewer (onFieldPhaseEnd: 1 grain -> 3 food or 1 BP)
+4. `schnapps-distiller-c109` - Schnapps Distiller (onFeedingPhase: 1 vegetable -> 5 food)
+5. `stone-importer-c124` - Stone Importer (onBreedingPhase: buy 2 stone, cost varies by harvest)
+
+**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
+
+---
+
+### Batch-C12: Cost modifiers + field phase exchange
+**Pattern**: modifyImprovementCost, modifyRoomCost, modifyStableCost, modifyFenceCost, modifyRenovationCost, oncePerRound exchange  
+**Complexity**: Tier 1-2
+
+Cards:
+1. `bricklayer-c122` - Bricklayer (modifyImprovementCost/RenovationCost/RoomCost: clay reduction)
+2. `carpenters-apprentice-c088` - Carpenter's Apprentice (modifyRoomCost/StableCost/FenceCost: wood rooms, stables, fences)
+3. `wooden-hut-extender-c128` - Wooden Hut Extender (modifyRoomCost: wood rooms with reed, variable wood)
+4. `cube-cutter-c098` - Cube Cutter (onPlay: 1 wood; onFieldPhase: 1 wood+1 food -> 1 BP)
+5. `stall-holder-c101` - Stall Holder (oncePerRound: 2 grain -> BP + food based on unfenced stables)
+
+**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
+
+---
+
+### Batch-C13: Scoring / getEndGamePoints
+**Pattern**: getEndGamePoints, onScoring  
+**Complexity**: Tier 2
+
+Cards:
+1. `butler-c100` - Butler (onPlay: track round; getEndGamePoints: 4 BP if rooms > people)
+2. `cow-prince-c134` - Cow Prince (getEndGamePoints: spaces with cattle)
+3. `soldier-c133` - Soldier (getEndGamePoints: min(stone, wood) pairs)
+4. `timber-shingle-maker-c132` - Timber Shingle Maker (onRenovate: place wood; getEndGamePoints)
+5. `garden-designer-c099` - Garden Designer (onScoring: place food in fields for BP)
+
+**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
+
+---
+
+### Batch-C14: onPlay + multi-player scoring / return home
+**Pattern**: onPlay resources + getEndGamePointsAllPlayers, onReturnHome  
+**Complexity**: Tier 2-3
+
+Cards:
+1. `constable-c135` - Constable (onPlay: wood by rounds left; getEndGamePointsAllPlayers: no neg = 3 BP)
+2. `ranch-provost-c136` - Ranch Provost (onPlay: wood by rounds left; getEndGamePointsAllPlayers: best pasture = 3 BP)
+3. `potato-harvester-c106` - Potato Harvester (onPlay: 3 food; onHarvestVegetable: +food per veg)
+4. `seed-researcher-c097` - Seed Researcher (onReturnHome: both seed spaces used -> 2 food + free occ)
+
+**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
+
+---
+
+### Batch-C15: Special mechanics -- action spaces, room, anytime
+**Pattern**: isActionSpace, providesRoom, allowsAnytimeAction, passive flag  
+**Complexity**: Tier 3
+
+Cards:
+1. `collector-c104` - Collector (isActionSpace owner-only, begging + choose goods)
+2. `forest-owner-c162` - Forest Owner (isActionSpace for all, owner vs other bonus)
+3. `den-builder-c085` - Den Builder (providesRoom, activateRoom for grain + food)
+4. `second-spouse-c129` - Second Spouse (passive: allowsUrgentFamilyGrowthIfFirstPerson)
+5. `sower-c115` - Sower (allowsAnytimeAction, onBuildMajor: reed on card)
+
+**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
+
+---
+
+### Batch-C16: Animal holders, complex multi-player
+**Pattern**: holdsAnimals, onTurnStart copy, onAnyRenovate room offer, cardState resource pairs  
+**Complexity**: Tier 2-3
+
+Cards:
+1. `mud-wallower-c148` - Mud Wallower (holdsAnimals: boar, onAction accum +clay, 4 clay -> 1 boar)
+2. `livestock-feeder-c086` - Livestock Feeder (holdsAnimals: any, capacity = grain in supply)
+3. `resource-recycler-c149` - Resource Recycler (onAnyRenovate: to stone, clay house, offer free room)
+4. `workshop-assistant-c146` - Workshop Assistant (onPlay: resource pairs on improvements; onAnyRenovate: claim pair)
+5. `parrot-breeder-c150` - Parrot Breeder (onTurnStart: copy right player action for grain)
+
+**LLM Instructions:** Verify implementation and test. Create tests; run; update status.
+
+---
+
 ## Batch Creation Guidelines
 
 When creating new batches:

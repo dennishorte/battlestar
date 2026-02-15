@@ -7,7 +7,9 @@ module.exports = {
   players: "4+",
   text: "When you play this card, pay 1 food for each remaining harvest to immediately get 1 cattle and 1 wild boar.",
   onPlay(game, player) {
-    const harvestsLeft = game.getRemainingHarvestCount()
+    // Count remaining harvests (harvest rounds >= current round)
+    const harvestRounds = [4, 7, 9, 11, 13, 14]
+    const harvestsLeft = harvestRounds.filter(r => r >= game.state.round).length
     if (player.food >= harvestsLeft && player.canPlaceAnimals('cattle', 1) && player.canPlaceAnimals('boar', 1)) {
       player.payCost({ food: harvestsLeft })
       player.addAnimals('cattle', 1)
