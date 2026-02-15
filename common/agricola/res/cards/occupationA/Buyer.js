@@ -14,8 +14,27 @@ module.exports = {
       'take-sheep': 'sheep',
       'take-boar': 'boar',
     }
-    if (typeMap[actionId] && actingPlayer.name !== cardOwner.name && cardOwner.food >= 1) {
-      game.actions.offerBuyerPurchase(cardOwner, actingPlayer, this, typeMap[actionId])
+    const good = typeMap[actionId]
+    if (!good || actingPlayer.name === cardOwner.name || cardOwner.food < 1) {
+      return
     }
+    const cardName = 'Buyer'
+    const label = good === 'boar' ? 'wild boar' : good
+    const choices = [`Pay 1 food to ${actingPlayer.name} to get 1 ${label}`, 'Skip']
+    const selection = game.actions.choose(cardOwner, choices, {
+      title: `${cardName}: Pay 1 food to get 1 ${label}?`,
+      min: 1,
+      max: 1,
+    })
+    if (selection[0] === 'Skip') {
+      return
+    }
+    cardOwner.payCost({ food: 1 })
+    actingPlayer.addResource('food', 1)
+    cardOwner.addResource(good, 1)
+    game.log.add({
+      template: '{cardOwner} pays 1 food to {receiver} and gets 1 {good} via {card}',
+      args: { cardOwner, receiver: actingPlayer.name, good, card: cardName },
+    })
   },
 }

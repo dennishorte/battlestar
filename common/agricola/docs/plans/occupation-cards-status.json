@@ -2,10 +2,10 @@
   "lastUpdated": "2025-02-14",
   "totalCards": 420,
   "totalBatches": 0,
-  "batchesCompleted": 25,
-  "cardsCompleted": 68,
-  "cardsTested": 99,
-  "currentBatch": "Batch-026",
+  "batchesCompleted": 26,
+  "cardsCompleted": 71,
+  "cardsTested": 102,
+  "currentBatch": "Batch-027",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -182,6 +182,13 @@
       "testsPassing": 7,
       "completedDate": "2025-02-14"
     },
+    "Batch-026": {
+      "status": "completed",
+      "cards": ["paymaster-a154", "buyer-a156", "joiner-of-the-sea-a159"],
+      "testsCreated": 3,
+      "testsPassing": 7,
+      "completedDate": "2025-02-14"
+    },
     "Hollow-Warden": {
       "status": "completed",
       "cards": ["hollow-warden-a139"],
@@ -195,7 +202,7 @@
 "occupationA": {
     "total": 84,
     "implemented": 61,
-    "tested": 91,
+    "tested": 94,
     "status": "in_progress"
   },
     "occupationB": {

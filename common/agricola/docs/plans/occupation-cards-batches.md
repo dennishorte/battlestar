@@ -25,8 +25,8 @@ When implementing or revising cards, **do not add one-off methods to the action 
 ## Batch Status
 
 - **Total Batches**: TBD (will be ~25-30 batches for Set A, ~80-140 total)
-- **Completed Batches**: 25
-- **Current Batch**: Batch-026
+- **Completed Batches**: 26
+- **Current Batch**: Batch-027
 
 ### Next Set of Batches (025–030) – Summary
 | Batch   | Theme | Cards | Notes |
