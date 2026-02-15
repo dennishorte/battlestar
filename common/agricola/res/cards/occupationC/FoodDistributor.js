@@ -16,7 +16,13 @@ module.exports = {
   },
   onReturnHomeStart(game, player) {
     if (player.foodDistributorPending) {
-      const occupiedCount = game.getOccupiedActionSpaceCardCount()
+      // Count occupied action spaces (round cards only)
+      let occupiedCount = 0
+      for (const actionId of (game.state.activeActions || [])) {
+        if (game.isActionOccupied(actionId)) {
+          occupiedCount++
+        }
+      }
       player.addResource('food', occupiedCount)
       game.log.add({
         template: '{player} gets {amount} food from Food Distributor',

@@ -7,9 +7,13 @@ module.exports = {
   players: "1+",
   text: "When you play this card and at the start of each feeding phase, you can take a \"Bake Bread\" action.",
   onPlay(game, player) {
-    game.actions.offerBakeBread(player, this)
+    if (player.hasBakingAbility && player.hasBakingAbility() && player.grain >= 1) {
+      game.actions.bakeBread(player)
+    }
   },
   onFeedingPhaseStart(game, player) {
-    game.actions.offerBakeBread(player, this)
+    if (player.hasBakingAbility && player.hasBakingAbility() && player.grain >= 1) {
+      game.actions.bakeBread(player)
+    }
   },
 }
