@@ -5,7 +5,7 @@
   "batchesCompleted": 30,
   "cardsCompleted": 84,
   "cardsTested": 123,
-  "currentBatch": "Batch-031",
+  "currentBatch": "Set-A-Complete",
   "batches": {
     "Batch-001": {
       "status": "completed",
@@ -229,9 +229,9 @@
   "bySet": {
 "occupationA": {
     "total": 84,
-    "implemented": 61,
-    "tested": 100,
-    "status": "in_progress"
+    "implemented": 84,
+    "tested": 123,
+    "status": "complete"
   },
     "occupationB": {
       "total": 84,

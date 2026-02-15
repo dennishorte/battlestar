@@ -24,9 +24,9 @@ When implementing or revising cards, **do not add one-off methods to the action 
 
 ## Batch Status
 
-- **Total Batches**: TBD (will be ~25-30 batches for Set A, ~80-140 total)
-- **Completed Batches**: 27
-- **Current Batch**: Batch-028
+- **Total Batches**: 30 for Set A
+- **Completed Batches**: 30
+- **Current Batch**: Set A complete (Batch-030 was final)
 
 ### Next Set of Batches (025–030) – Summary
 | Batch   | Theme | Cards | Notes |
@@ -604,7 +604,7 @@ Cards:
 
 ---
 
-### Batch-030: Created Action Space, Exchanges, and Build/Round/Harvest Hooks (Set A)
+### Batch-030: Created Action Space, Exchanges, and Build/Round/Harvest Hooks (Set A) ✅ COMPLETED
 **Pattern**: createsActionSpace; onAction exchange; onBuildRoomAndStable; onPlay + onRoundEnd; onBeforeHarvest  
 **Template**: `ForestTallyman.js`, `WoodWorker.js`, `BreederBuyer.js`, `PigBreeder.js`, `Haydryer.js`  
 **Test Template**: Work Certificate / created-space tests; build + stable in one turn; round 12 / before-harvest hooks  
@@ -624,6 +624,15 @@ Cards:
 4. Pig Breeder: test onPlay boar and round 12 breeding
 5. Haydryer: test before-harvest cattle purchase with pasture discount
 6. Create comprehensive test files; run tests and update status
+
+---
+
+### After Batch-030 – Set A complete
+
+Set A (occupationA) now has full test coverage for all implemented cards. No Batch-031 is defined in this plan. Next steps (optional):
+
+- **Set B (occupationB)**: Create new batches following the same pattern; start with simple onPlay/onAction cards.
+- **Status**: In `occupation-cards-status.json`, `currentBatch` is set to `"Set-A-Complete"` until a Batch-031 (Set B) is added to this file.
 
 ---
 
