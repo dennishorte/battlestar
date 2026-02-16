@@ -1804,6 +1804,16 @@ class AgricolaActionManager extends BaseActionManager {
 
     this.game.callPlayerCardHook(player, 'afterFamilyGrowth')
 
+    // Call onAnyFamilyGrowth for all players (e.g., PartyOrganizer)
+    for (const other of this.game.players.all()) {
+      const cards = this.game.getPlayerActiveCards(other)
+      for (const card of cards) {
+        if (card.hasHook('onAnyFamilyGrowth')) {
+          card.callHook('onAnyFamilyGrowth', this.game, player, other)
+        }
+      }
+    }
+
     return true
   }
 

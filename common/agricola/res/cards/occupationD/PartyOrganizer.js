@@ -7,13 +7,19 @@ module.exports = {
   players: "1+",
   text: "As soon as the next player but you gains their 5th person, you immediately get 8 food (not retroactively). During scoring, if only you have 5 people, you get 3 bonus points.",
   onAnyFamilyGrowth(game, actingPlayer, cardOwner) {
+    if (actingPlayer.name === cardOwner.name) {
+      return
+    }
     const s = game.cardState(this.id)
-    if (actingPlayer.name !== cardOwner.name && actingPlayer.getFamilySize() === 5 && !s.triggered) {
+    if (s.triggered) {
+      return
+    }
+    if (actingPlayer.getFamilySize() === 5) {
       s.triggered = true
       cardOwner.addResource('food', 8)
       game.log.add({
-        template: '{player} gets 8 food from Party Organizer',
-        args: { player: cardOwner },
+        template: '{player} gets 8 food from Party Organizer ({other} reached 5 family members)',
+        args: { player: cardOwner, other: actingPlayer },
       })
     }
   },

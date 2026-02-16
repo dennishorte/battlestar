@@ -11,11 +11,21 @@ module.exports = {
   },
   onHarvestField(game, player) {
     const s = game.cardState(this.id)
-    if (s.pile && s.pile.length > 0) {
+    if (!s.pile || s.pile.length === 0) {
+      return
+    }
+    const nextGood = s.pile[0]
+    const choices = [`Take 1 ${nextGood} from pile`, 'Skip']
+    const selection = game.actions.choose(player, choices, {
+      title: 'Field Cultivator',
+      min: 1,
+      max: 1,
+    })
+    if (selection[0] !== 'Skip') {
       const good = s.pile.shift()
       player.addResource(good, 1)
       game.log.add({
-        template: '{player} gets 1 {good} from Field Cultivator',
+        template: '{player} takes 1 {good} from Field Cultivator pile',
         args: { player, good },
       })
     }

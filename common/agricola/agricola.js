@@ -1273,6 +1273,9 @@ Agricola.prototype.revealRoundAction = function() {
 
     this.callCardHook('onStageReveal', card.id)
 
+    // Call onRevealRoundCard for all players (e.g., TreeInspector)
+    this.callCardHook('onRevealRoundCard', card)
+
     // Call onStoneActionRevealed if this is a stone accumulation space
     if (card.type === 'accumulating' && card.accumulates && card.accumulates.stone) {
       this.callCardHook('onStoneActionRevealed')
@@ -1695,6 +1698,9 @@ Agricola.prototype.playerTurn = function(player, options) {
         }
       }
     }
+
+    // Call onPersonActionEnd hooks (fires on every person action including bonus turns)
+    this.callPlayerCardHook(player, 'onPersonActionEnd', actionId)
   }
 }
 
@@ -2081,6 +2087,13 @@ Agricola.prototype.harvestPhase = function() {
     }
   }
 
+  const isFinalHarvest = this.state.round === res.constants.totalRounds
+
+  // Call onBeforeFinalHarvest hooks (e.g., Transactor collects board resources)
+  if (isFinalHarvest) {
+    this.callCardHook('onBeforeFinalHarvest')
+  }
+
   this.fieldPhase()
   this.feedingPhase()
   this.breedingPhase()
@@ -2093,12 +2106,15 @@ Agricola.prototype.harvestPhase = function() {
   // Call onHarvestEnd hooks (e.g., ValueAssets offers to buy building resources)
   this.callCardHook('onHarvestEnd')
 
+  // Call onAfterFinalHarvest hooks (e.g., EarthenwarePotter bonus points)
+  if (isFinalHarvest) {
+    this.callCardHook('onAfterFinalHarvest')
+  }
+
   // Revised Edition rule:
   // - During breeding phase, you cannot eat/exchange animals
   // - After breeding in rounds 4, 7, 9, 11, 13: eating/exchanging IS allowed before next round
   // - After breeding in round 14: game ends IMMEDIATELY, no cooking allowed
-  const isFinalHarvest = this.state.round === res.constants.totalRounds
-
   if (!isFinalHarvest) {
     // Allow optional cooking/exchanging after breeding (non-final harvest only)
     this.postBreedingPhase()
@@ -2142,8 +2158,16 @@ Agricola.prototype.fieldPhase = function() {
       })
     }
 
+    // Count fields with crops before harvesting (for onHarvestField hook)
+    const fieldsWithCrops = player.getFieldSpaces().filter(f => f.crop && f.cropCount > 0).length
+
     const result = player.harvestFields()
     const harvested = result.harvested
+
+    // Fire onHarvestField once per field that was harvested
+    for (let i = 0; i < fieldsWithCrops; i++) {
+      this.callPlayerCardHook(player, 'onHarvestField')
+    }
 
     if (harvested.grain > 0 || harvested.vegetables > 0 || harvested.wood > 0) {
       this.log.add({
