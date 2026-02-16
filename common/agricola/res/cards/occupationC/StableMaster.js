@@ -11,10 +11,10 @@ module.exports = {
       game.actions.offerBuildStableForWood(player, this)
     }
   },
-  modifyUnfencedStableCapacity(player, stableIndex) {
-    if (stableIndex === 0) {
-      return 3
+  modifyStableCapacity(game, player, capacity, inPasture) {
+    if (inPasture) {
+      return capacity
     }
-    return 1
+    return 3
   },
 }

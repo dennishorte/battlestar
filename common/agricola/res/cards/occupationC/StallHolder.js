@@ -6,16 +6,29 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Once per round, if you have 0/1/2/3/4 unfenced stables on your farm, you can exchange 2 grain for 1 bonus point and 1/2/3/4/5 food.",
-  oncePerRound: true,
-  canExchange(player) {
-    return player.grain >= 2
+  allowsAnytimeAction: true,
+  getAnytimeActions(game, player) {
+    if (player.grain >= 2 && game.cardState(this.id).lastUsedRound !== game.state.round) {
+      const unfencedStables = player.getUnfencedStableCount()
+      const food = Math.min(5, unfencedStables + 1)
+      return [{
+        type: 'card-custom',
+        cardId: this.id,
+        cardName: this.name,
+        actionKey: 'exchange',
+        oncePerRound: true,
+        description: `Stall Holder: 2 grain \u2192 1 BP + ${food} food`,
+      }]
+    }
+    return []
   },
-  doExchange(game, player) {
+  exchange(game, player) {
     const unfencedStables = player.getUnfencedStableCount()
     const food = Math.min(5, unfencedStables + 1)
     player.payCost({ grain: 2 })
     player.addResource('food', food)
     player.bonusPoints = (player.bonusPoints || 0) + 1
+    game.cardState(this.id).lastUsedRound = game.state.round
     game.log.add({
       template: '{player} exchanges 2 grain for 1 bonus point and {food} food via Stall Holder',
       args: { player, food },

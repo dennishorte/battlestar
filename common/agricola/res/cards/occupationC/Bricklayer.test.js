@@ -63,5 +63,67 @@ describe('Bricklayer', () => {
     })
   })
 
-  test.todo('modifyRoomCost reduces clay for rooms - hook not fired by engine')
+  test('reduces clay room cost by 2 via modifyRoomCost', () => {
+    // Clay room normally costs 5 clay + 2 reed. With Bricklayer: 3 clay + 2 reed.
+    const game = t.fixture({ cardSets: ['occupationC', 'test'] })
+    t.setBoard(game, {
+      actionSpaces: ['Farm Expansion'],
+      firstPlayer: 'dennis',
+      dennis: {
+        occupations: ['bricklayer-c122'],
+        roomType: 'clay',
+        clay: 3,
+        reed: 2,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Farm Expansion')
+    t.choose(game, 'Build Room')
+    t.choose(game, '2,0')
+
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['bricklayer-c122'],
+        roomType: 'clay',
+        clay: 0,
+        reed: 0,
+        farmyard: {
+          rooms: [{ row: 0, col: 0 }, { row: 1, col: 0 }, { row: 2, col: 0 }],
+        },
+      },
+    })
+  })
+
+  test('does not reduce cost for wood rooms', () => {
+    // Wood room costs 5 wood + 2 reed. Bricklayer only affects clay.
+    const game = t.fixture({ cardSets: ['occupationC', 'test'] })
+    t.setBoard(game, {
+      actionSpaces: ['Farm Expansion'],
+      firstPlayer: 'dennis',
+      dennis: {
+        occupations: ['bricklayer-c122'],
+        roomType: 'wood',
+        wood: 5,
+        reed: 2,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Farm Expansion')
+    t.choose(game, 'Build Room')
+    t.choose(game, '2,0')
+
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['bricklayer-c122'],
+        roomType: 'wood',
+        wood: 0,
+        reed: 0,
+        farmyard: {
+          rooms: [{ row: 0, col: 0 }, { row: 1, col: 0 }, { row: 2, col: 0 }],
+        },
+      },
+    })
+  })
 })

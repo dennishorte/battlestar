@@ -546,6 +546,7 @@ class AgricolaActionManager extends BaseActionManager {
       }
 
       if (choice === 'Build Stable') {
+        player.payCost(player.getStableCost(res.buildingCosts.stable))
         this.buildStable(player)
         builtAnything = true
         builtStable = true
@@ -669,6 +670,26 @@ class AgricolaActionManager extends BaseActionManager {
     else {
       // Handle standard selection response
       [row, col] = result[0].split(',').map(Number)
+    }
+
+    // costOverride: skip normal cost calculation, pay only the override (e.g. free room from ResourceRecycler)
+    if (opts.costOverride) {
+      player.payCost(opts.costOverride)
+      player.buildRoom(row, col)
+      this.log.add({
+        template: '{player} builds a {type} room at ({row},{col})',
+        args: { player, type: roomType, row, col },
+      })
+      this.game.callPlayerCardHook(player, 'onBuildRoom', roomType)
+      for (const otherPlayer of this.game.players.all()) {
+        const cards = this.game.getPlayerActiveCards(otherPlayer)
+        for (const card of cards) {
+          if (card.hasHook('onAnyBuildRoom')) {
+            card.callHook('onAnyBuildRoom', this.game, otherPlayer, player, roomType)
+          }
+        }
+      }
+      return true
     }
 
     // Choose cost — present options if Frame Builder (or similar) offers alternatives; apply Riparian Builder or generic resource discount when building from that offer
@@ -3399,6 +3420,32 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   /**
+   * Choose N different goods from all resource types (Collector).
+   */
+  offerChooseGoods(player, card, count) {
+    const allGoods = ['wood', 'clay', 'reed', 'stone', 'grain', 'vegetables', 'food']
+    const remaining = [...allGoods]
+    const chosen = []
+
+    for (let i = 0; i < count && remaining.length > 0; i++) {
+      const selection = this.choose(player, remaining, {
+        title: `${card.name}: Choose good ${i + 1} of ${count}`,
+        min: 1,
+        max: 1,
+      })
+      const resource = selection[0]
+      chosen.push(resource)
+      remaining.splice(remaining.indexOf(resource), 1)
+      player.addResource(resource, 1)
+    }
+
+    this.log.add({
+      template: '{player} chooses {count} goods via {card}: {goods}',
+      args: { player, count: chosen.length, card, goods: chosen.join(', ') },
+    })
+  }
+
+  /**
    * Offer to buy additional animal (Animal Dealer)
    */
   offerBuyAnimal(player, card, animalType) {
@@ -3605,7 +3652,8 @@ class AgricolaActionManager extends BaseActionManager {
    * Offer to build a stable for 1 wood (Groom)
    */
   offerBuildStableForWood(player, card) {
-    if (player.wood < 1) {
+    const stableCost = player.getStableCost({ wood: 1 })
+    if (!player.canAffordCost(stableCost)) {
       return
     }
 
@@ -3617,7 +3665,7 @@ class AgricolaActionManager extends BaseActionManager {
     const spaceChoices = validSpaces.map(s => `Build stable at ${s.row},${s.col}`)
     spaceChoices.push('Skip')
     const selection = this.choose(player, spaceChoices, {
-      title: `${card.name}: Build a stable for 1 wood?`,
+      title: `${card.name}: Build a stable?`,
       min: 1,
       max: 1,
     })
@@ -3627,10 +3675,10 @@ class AgricolaActionManager extends BaseActionManager {
       if (match) {
         const row = parseInt(match[1])
         const col = parseInt(match[2])
-        player.payCost({ wood: 1 })
+        player.payCost(stableCost)
         player.buildStable(row, col)
         this.log.add({
-          template: '{player} builds a stable for 1 wood using {card}',
+          template: '{player} builds a stable using {card}',
           args: { player, card: card },
         })
       }
@@ -4383,7 +4431,7 @@ class AgricolaActionManager extends BaseActionManager {
   // ---------------------------------------------------------------------------
 
   /**
-   * House Building action: Build rooms at 5 resources + 2 reed each
+   * House Building action: Build rooms using standard room cost (with modifiers)
    */
   houseBuilding(player) {
     const validSpaces = player.getValidRoomBuildSpaces()
@@ -4392,24 +4440,15 @@ class AgricolaActionManager extends BaseActionManager {
       return false
     }
 
-    // Check if player can afford at least one room
-    const roomType = player.roomType
-    const resourceCost = 5 // 5 of the room material
-    const reedCost = 2
-
-    const hasEnoughResource = roomType === 'wood'
-      ? player.wood >= resourceCost
-      : roomType === 'clay'
-        ? player.clay >= resourceCost
-        : player.stone >= resourceCost
-
-    if (!hasEnoughResource || player.reed < reedCost) {
+    if (!player.canAffordRoom()) {
       this.log.add({
-        template: '{player} cannot afford house building (needs 5 {type} + 2 reed)',
-        args: { player, type: roomType },
+        template: '{player} cannot afford house building',
+        args: { player },
       })
       return false
     }
+
+    const roomType = player.roomType
 
     // Build rooms loop
     let roomsBuilt = 0
@@ -4419,14 +4458,7 @@ class AgricolaActionManager extends BaseActionManager {
         break
       }
 
-      // Check affordability
-      const currentHasResource = roomType === 'wood'
-        ? player.wood >= resourceCost
-        : roomType === 'clay'
-          ? player.clay >= resourceCost
-          : player.stone >= resourceCost
-
-      if (!currentHasResource || player.reed < reedCost) {
+      if (!player.canAffordRoom()) {
         break
       }
 
@@ -4436,7 +4468,7 @@ class AgricolaActionManager extends BaseActionManager {
         spaceChoices.push('Done building rooms')
         return spaceChoices
       }, {
-        title: `Build a room (5 ${roomType} + 2 reed)`,
+        title: 'Build a room',
         min: 1,
         max: 1,
       })
@@ -4447,9 +4479,24 @@ class AgricolaActionManager extends BaseActionManager {
 
       const [row, col] = selection[0].split(',').map(Number)
 
-      // Pay cost
-      player.payCost({ [roomType]: resourceCost, reed: reedCost })
+      // Choose cost option (handles wood substitution from Frame Builder, etc.)
+      const affordableOptions = player.getAffordableRoomCostOptions()
+      let chosenCost
+      if (affordableOptions.length > 1) {
+        const costChoices = affordableOptions.map(opt => this._formatCostLabel(opt.cost))
+        const costSelection = this.choose(player, costChoices, {
+          title: 'Choose payment for room',
+          min: 1,
+          max: 1,
+        })
+        const selectedIdx = costChoices.indexOf(costSelection[0])
+        chosenCost = affordableOptions[selectedIdx].cost
+      }
+      else {
+        chosenCost = affordableOptions[0].cost
+      }
 
+      player.payCost(chosenCost)
       player.buildRoom(row, col)
       roomsBuilt++
 
@@ -4680,19 +4727,20 @@ class AgricolaActionManager extends BaseActionManager {
   sideJob(player) {
     let didSomething = false
 
-    // Build stable for 1 wood
-    const canBuildStable = player.wood >= 1 && player.getValidStableBuildSpaces().length > 0
+    // Build stable for 1 wood (base cost, subject to modifiers)
+    const stableCost = player.getStableCost({ wood: 1 })
+    const canBuildStable = player.canAffordCost(stableCost) && player.getValidStableBuildSpaces().length > 0
 
     if (canBuildStable) {
-      const stableChoices = ['Build stable for 1 wood', 'Skip stable']
+      const stableChoices = ['Build stable', 'Skip stable']
       const stableSelection = this.choose(player, stableChoices, {
         title: 'Side Job: Build a stable?',
         min: 1,
         max: 1,
       })
 
-      if (stableSelection[0] === 'Build stable for 1 wood') {
-        player.payCost({ wood: 1 })
+      if (stableSelection[0] === 'Build stable') {
+        player.payCost(stableCost)
         this.buildStable(player)
         didSomething = true
       }

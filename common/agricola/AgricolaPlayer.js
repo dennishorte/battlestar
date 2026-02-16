@@ -473,6 +473,11 @@ class AgricolaPlayer extends BasePlayer {
     let cost = { ...res.buildingCosts.room[this.roomType] }
     cost = this.applyBuildCostModifiers(cost, 'build-room')
     cost = this.applyAnyCostModifiers(cost, 'build-room')
+    for (const card of this.getActiveCards()) {
+      if (card.hasHook('modifyRoomCost')) {
+        cost = card.callHook('modifyRoomCost', this, cost, this.game.state.round)
+      }
+    }
     return cost
   }
 
@@ -1082,8 +1087,19 @@ class AgricolaPlayer extends BasePlayer {
     return true
   }
 
-  canAffordStable() {
-    return this.canAffordCost(res.buildingCosts.stable)
+  getStableCost(baseCost) {
+    let cost = { ...baseCost }
+    const stableNumber = this.getStableCount() + 1
+    for (const card of this.getActiveCards()) {
+      if (card.hasHook('modifyStableCost')) {
+        cost = card.callHook('modifyStableCost', this, cost, stableNumber)
+      }
+    }
+    return cost
+  }
+
+  canAffordStable(baseCost = res.buildingCosts.stable) {
+    return this.canAffordCost(this.getStableCost(baseCost))
   }
 
   // ---------------------------------------------------------------------------

@@ -67,4 +67,58 @@ module.exports = {
     })
     game.actions.sow(player)
   },
+  _getTotalReed(game) {
+    const reed = game.state.sowerReed || {}
+    return Object.values(reed).reduce((sum, v) => sum + v, 0)
+  },
+  getAnytimeActions(game, player) {
+    const totalReed = this._getTotalReed(game)
+    if (totalReed === 0) {
+      return []
+    }
+    const actions = [{
+      type: 'card-custom',
+      cardId: this.id,
+      cardName: this.name,
+      actionKey: 'takeReed',
+      description: `Sower: Take ${totalReed} reed to supply`,
+    }]
+    const canSow = player.getEmptyFields().length > 0 && (player.grain >= 1 || player.vegetables >= 1)
+    if (canSow) {
+      actions.push({
+        type: 'card-custom',
+        cardId: this.id,
+        cardName: this.name,
+        actionKey: 'sowForReed',
+        description: 'Sower: Exchange 1 reed for Sow action',
+      })
+    }
+    return actions
+  },
+  takeReed(game, player) {
+    const totalReed = this._getTotalReed(game)
+    player.addResource('reed', totalReed)
+    game.state.sowerReed = {}
+    game.log.add({
+      template: '{player} takes {count} reed from Sower',
+      args: { player, count: totalReed },
+    })
+  },
+  sowForReed(game, player) {
+    const reed = game.state.sowerReed || {}
+    for (const majorId of Object.keys(reed)) {
+      if (reed[majorId] > 0) {
+        reed[majorId] -= 1
+        if (reed[majorId] === 0) {
+          delete reed[majorId]
+        }
+        break
+      }
+    }
+    game.log.add({
+      template: '{player} exchanges 1 reed from Sower for a Sow action',
+      args: { player },
+    })
+    game.actions.sow(player)
+  },
 }

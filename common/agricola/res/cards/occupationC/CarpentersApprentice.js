@@ -12,11 +12,11 @@ module.exports = {
     }
     return cost
   },
-  modifyStableCost(player, stableNumber) {
-    if (stableNumber === 3 || stableNumber === 4) {
-      return { wood: 1 }
+  modifyStableCost(player, cost, stableNumber) {
+    if ((stableNumber === 3 || stableNumber === 4) && cost.wood) {
+      return { ...cost, wood: Math.max(0, cost.wood - 1) }
     }
-    return { wood: 2 }
+    return cost
   },
   modifyFenceCost(player, fenceNumber) {
     if (fenceNumber >= 13 && fenceNumber <= 15) {

@@ -42,5 +42,41 @@ describe('Timber Shingle Maker', () => {
     })
   })
 
-  test.todo('scores 0 BP when skipping wood placement')
+  test('scores 0 BP when skipping wood placement', () => {
+    // Renovation clay→stone costs 2 stone + 1 reed (2 rooms)
+    // Skip wood placement → 0 bonus points from getEndGamePoints
+    const game = t.fixture({ cardSets: ['occupationC', 'test'] })
+    t.setBoard(game, {
+      actionSpaces: [
+        'Grain Utilization', 'Sheep Market', 'Fencing', 'Major Improvement',
+        'Basic Wish for Children', 'Western Quarry', 'House Redevelopment',
+      ],
+      firstPlayer: 'dennis',
+      dennis: {
+        occupations: ['timber-shingle-maker-c132'],
+        roomType: 'clay',
+        clay: 1,
+        reed: 1,
+        stone: 5,
+        wood: 2,
+      },
+      micah: { food: 10 },
+    })
+    game.run()
+
+    t.choose(game, 'House Redevelopment')
+    t.choose(game, 'Skip')
+
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['timber-shingle-maker-c132'],
+        roomType: 'stone',
+        wood: 2,   // unchanged — skipped placement
+        stone: 3,  // 5 - 2(renovation)
+        clay: 1,
+        reed: 0,   // 1 - 1(renovation)
+        bonusPoints: 0,
+      },
+    })
+  })
 })

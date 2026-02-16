@@ -14,14 +14,10 @@ module.exports = {
     }
     const otherSpace = matchingPairs[actionId]
     if (otherSpace && player.food >= 1) {
-      const thisState = game.state.actionSpaces[actionId]
-      const otherState = game.state.actionSpaces[otherSpace]
-      if (thisState && otherState) {
-        const thisCount = Object.values(thisState).reduce((sum, v) => typeof v === 'number' ? sum + v : sum, 0)
-        const otherCount = Object.values(otherState).reduce((sum, v) => typeof v === 'number' ? sum + v : sum, 0)
-        if (thisCount === otherCount) {
-          game.actions.offerBuyBonusPoint(player, this, 1)
-        }
+      const thisAmount = game.getAccumulatedResources(actionId).stone || 0
+      const otherAmount = game.getAccumulatedResources(otherSpace).stone || 0
+      if (thisAmount > 0 && thisAmount === otherAmount) {
+        game.actions.offerBuyBonusPoint(player, this, 1)
       }
     }
   },

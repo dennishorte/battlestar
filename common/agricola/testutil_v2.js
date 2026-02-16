@@ -545,6 +545,14 @@ TestUtil.setPlayerBoard = function(game, playerName, playerState) {
     }
   }
 
+  // Register card-provided action spaces for played occupations
+  for (const cardId of playerState.occupations || []) {
+    const card = game.cards.byId(cardId)
+    if (card.definition.providesActionSpace) {
+      game.registerCardActionSpace(player, card)
+    }
+  }
+
   // Pre-sow virtual fields if specified
   if (playerState.virtualFields) {
     for (const [fieldId, fieldState] of Object.entries(playerState.virtualFields)) {
