@@ -6,9 +6,42 @@ module.exports = {
   type: "occupation",
   players: "3+",
   text: "On your turn, if you pay 1 grain to the general supply, you can use the same action space that the player to your right has just used on their turn.",
-  // Note: onTurnStart hook, getPlayerToRight, and isEmptyAccumulationSpace
-  // are not implemented in the engine.
-  onTurnStart(game, player) {
-    void(game, player)
+  canUseOccupiedActionSpace(game, player, actionId, _action, state) {
+    if (player.grain < 1) {
+      return false
+    }
+
+    const rightPlayer = this._getPlayerToRight(game, player)
+    if (!rightPlayer) {
+      return false
+    }
+
+    return state.occupiedBy === rightPlayer.name && rightPlayer._lastActionId === actionId
+  },
+
+  onBeforeAction(game, player, actionId) {
+    const state = game.state.actionSpaces[actionId]
+    if (!state.previousOccupiedBy) {
+      return
+    }
+    const rightPlayer = this._getPlayerToRight(game, player)
+    if (rightPlayer && state.previousOccupiedBy === rightPlayer.name) {
+      player.payCost({ grain: 1 })
+      game.log.add({
+        template: '{player} pays 1 grain to copy {action} via Parrot Breeder',
+        args: { player, action: actionId },
+      })
+    }
+  },
+
+  _getPlayerToRight(game, player) {
+    const allPlayers = game.players.all()
+    const myIndex = allPlayers.findIndex(p => p.name === player.name)
+    if (myIndex < 0) {
+      return null
+    }
+    const n = allPlayers.length
+    const rightIndex = (myIndex + 1) % n
+    return allPlayers[rightIndex]
   },
 }

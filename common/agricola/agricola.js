@@ -1602,6 +1602,9 @@ Agricola.prototype.playerTurn = function(player, options) {
     const state = this.state.actionSpaces[actionId]
     const wasAlreadyOccupiedByUs = state.occupiedBy === player.name
 
+    // Track previous occupier before overwriting (used by ParrotBreeder)
+    state.previousOccupiedBy = state.occupiedBy
+
     // Mark action as occupied
     state.occupiedBy = player.name
 
@@ -1622,6 +1625,9 @@ Agricola.prototype.playerTurn = function(player, options) {
     if (!options?.skipUseWorker) {
       player.useWorker()
     }
+
+    // Track which person number was placed here (used by SecondSpouse)
+    state.personNumber = player.getPersonPlacedThisRound()
 
     // Call onBeforeAction hooks (e.g., Trellis builds fences before Pig Market)
     this.callPlayerCardHook(player, 'onBeforeAction', actionId)

@@ -225,7 +225,7 @@ module.exports = {
     for (const mod of modules) {
       cards.push(...mod.getCardsByPlayerCount(playerCount))
     }
-    return cards
+    return cards.filter(c => !c.excluded)
   },
 
   // Validate that selected sets have enough cards for the player count
