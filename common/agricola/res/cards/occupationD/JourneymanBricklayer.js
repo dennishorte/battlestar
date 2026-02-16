@@ -13,8 +13,8 @@ module.exports = {
       args: { player },
     })
   },
-  onAnyRenovate(game, actingPlayer, cardOwner, improvementBuilt, toType) {
-    if (actingPlayer.name !== cardOwner.name && toType === 'stone') {
+  onAnyRenovate(game, actingPlayer, cardOwner, { newType }) {
+    if (actingPlayer.name !== cardOwner.name && newType === 'stone') {
       cardOwner.addResource('stone', 1)
       game.log.add({
         template: '{player} gets 1 stone from Journeyman Bricklayer',

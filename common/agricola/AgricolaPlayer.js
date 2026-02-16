@@ -1797,16 +1797,37 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   getCategoriesWithMaxScore() {
-    const breakdown = this.getScoreBreakdown()
+    // Compute category scores directly to avoid infinite recursion when called
+    // from getEndGamePoints (which is called from getBonusPoints -> getScoreState -> getScoreBreakdown).
     let count = 0
-    const categories = ['fields', 'pastures', 'grain', 'vegetables', 'sheep', 'boar', 'cattle']
-    for (const cat of categories) {
-      if (breakdown[cat] && breakdown[cat].points >= 4) {
+
+    let fields = this.getFieldCount()
+    for (const cardId of this.playedMinorImprovements) {
+      const card = this.cards.byId(cardId)
+      if (card && card.definition.wildcardRoles
+          && card.definition.wildcardRoles.includes('field')) {
+        fields++
+      }
+    }
+
+    const categoryValues = {
+      fields,
+      pastures: this.getPastureCount(),
+      grain: this.grain,
+      vegetables: this.vegetables,
+      sheep: this.getTotalAnimals('sheep'),
+      boar: this.getTotalAnimals('boar'),
+      cattle: this.getTotalAnimals('cattle'),
+    }
+
+    for (const [cat, value] of Object.entries(categoryValues)) {
+      if (res.scoreCategory(cat, value) >= 4) {
         count++
       }
     }
+
     // Fenced stables: max is 4+ stables
-    if (breakdown.fencedStables && breakdown.fencedStables.count >= 4) {
+    if (this.getFencedStableCount() >= 4) {
       count++
     }
     return count

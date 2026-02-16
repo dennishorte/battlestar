@@ -2403,6 +2403,21 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   buyImprovement(player, allowMajor, allowMinor, options = {}) {
+    // Check if cards grant access to specific majors on minor improvement actions
+    const cardAllowedMajors = allowMinor ? this.getAllowedMajorsForMinorAction(player) : undefined
+    const hasCardMajorAbility = cardAllowedMajors !== undefined
+
+    const getCardAllowedAffordableMajors = () => {
+      if (!hasCardMajorAbility) {
+        return []
+      }
+      const available = this.game.getAvailableMajorImprovements()
+      const filtered = cardAllowedMajors === null
+        ? available
+        : available.filter(id => cardAllowedMajors.has(id))
+      return filtered.filter(id => player.canBuyMajorImprovement(id))
+    }
+
     // Check if any improvements are available at all (relaxed gate for anytime conversions)
     const hasAnyPossibility = () => {
       if (allowMajor) {
@@ -2410,6 +2425,9 @@ class AgricolaActionManager extends BaseActionManager {
         if (availableImprovements.some(id => player.canBuyMajorImprovement(id))) {
           return true
         }
+      }
+      if (hasCardMajorAbility && getCardAllowedAffordableMajors().length > 0) {
+        return true
       }
       if (allowMinor) {
         const minorInHand = player.hand.filter(cardId => {
@@ -2439,11 +2457,17 @@ class AgricolaActionManager extends BaseActionManager {
       const nestedChoices = []
 
       // Get affordable major improvements
-      if (allowMajor) {
+      if (allowMajor || hasCardMajorAbility) {
         const availableImprovements = this.game.getAvailableMajorImprovements()
         const affordableMajorIds = availableImprovements.filter(id => {
           if (!player.canBuyMajorImprovement(id)) {
             return false
+          }
+          // If only card-granted access (not full major action), filter to allowed IDs
+          if (!allowMajor && hasCardMajorAbility) {
+            if (cardAllowedMajors !== null && !cardAllowedMajors.has(id)) {
+              return false
+            }
           }
           if (options.requireStone) {
             const cost = player.getMajorImprovementCost(id)
