@@ -19,7 +19,7 @@ module.exports = {
         })
 
         game.log.indent()
-        const zones = ['red', 'yellow', 'green', 'blue', 'purple', 'hand', 'score', 'forecast', 'museum', 'safe']
+        const zones = ['red', 'yellow', 'green', 'blue', 'purple', 'hand', 'score', 'forecast', 'museum', 'safe', 'artifact']
         const toRemove = game
           .players
           .all()
