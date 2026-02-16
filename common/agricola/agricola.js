@@ -72,7 +72,7 @@ function factoryFromLobby(lobby) {
     numPlayers: lobby.users.length,
     useDrafting: lobby.options?.useDrafting || false,
     cardSets: lobby.options?.cardSets || res.getCardSetIds(),
-    version: 3,
+    version: 4,
   })
 }
 
@@ -503,7 +503,10 @@ Agricola.prototype.initializePlayerCards = function() {
   })
 
   // Get cards appropriate for this player count from the selected sets
-  const allCards = res.getCardsByPlayerCount(playerCount, setIds)
+  // Version 4+: exclude cards marked as excluded
+  // Older versions: include them as no-ops to preserve seeded shuffle order
+  const excludeCards = (this.settings.version || 1) >= 4
+  const allCards = res.getCardsByPlayerCount(playerCount, setIds, { excludeCards })
   const occupations = allCards.filter(c => c.type === 'occupation')
   const minorImprovements = allCards.filter(c => c.type === 'minor')
 
