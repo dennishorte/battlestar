@@ -136,7 +136,7 @@ export default {
     },
 
     isAgeBiscuit() {
-      return this.biscuit === 'e' || !isNaN(this.biscuit)
+      return this.biscuit === 'e' || this.biscuit === 'z' || !isNaN(this.biscuit)
     },
 
     kind() {
