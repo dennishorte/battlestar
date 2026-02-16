@@ -159,13 +159,22 @@ class AgricolaActionManager extends BaseActionManager {
         // Animals need placement
         const count = actionState.accumulated
         const allAccommodated = player.canPlaceAnimals(resource, count)
-        if (allAccommodated) {
+
+        // PetGrower (and similar cards) require manual placement so the player
+        // can choose to leave the house pet slot empty for their bonus
+        const forceModal = this.game.getPlayerActiveCards(player)
+          .some(c => c.definition.forceManualAnimalPlacement)
+
+        if (forceModal) {
+          this.handleAnimalPlacement(player, { [resource]: count }, { forceModal: true })
+        }
+        else if (allAccommodated) {
           player.addAnimals(resource, count)
         }
         else {
-          // Must convert to food or release - use unified handler
           this.handleAnimalOverflow(player, resource, count)
         }
+
         this.game.callPlayerCardHook(player, 'onTakeAnimals', resource, count, allAccommodated)
         if (resource === 'boar') {
           this.game.callPlayerCardHook(player, 'onGainBoar', count, true)
@@ -215,24 +224,29 @@ class AgricolaActionManager extends BaseActionManager {
    * @param {Object} player - The player receiving animals
    * @param {Object} animals - Map of animal type to count, e.g. { sheep: 3, boar: 1 }
    */
-  handleAnimalPlacement(player, animals) {
+  handleAnimalPlacement(player, animals, options = {}) {
     // Version 4+: New unified modal flow
-    // Try to place as many as possible first
+    // Try to place as many as possible first (unless forced to show modal)
     const overflow = {}
-    for (const [animalType, count] of Object.entries(animals)) {
-      let remaining = count
-      while (remaining > 0 && player.canPlaceAnimals(animalType, 1)) {
-        player.addAnimals(animalType, 1)
-        remaining--
-      }
-      if (remaining > 0) {
-        overflow[animalType] = remaining
-      }
+    if (options.forceModal) {
+      Object.assign(overflow, animals)
     }
+    else {
+      for (const [animalType, count] of Object.entries(animals)) {
+        let remaining = count
+        while (remaining > 0 && player.canPlaceAnimals(animalType, 1)) {
+          player.addAnimals(animalType, 1)
+          remaining--
+        }
+        if (remaining > 0) {
+          overflow[animalType] = remaining
+        }
+      }
 
-    // If everything fit, we're done
-    if (Object.keys(overflow).length === 0) {
-      return
+      // If everything fit, we're done
+      if (Object.keys(overflow).length === 0) {
+        return
+      }
     }
 
 

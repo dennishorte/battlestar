@@ -1794,6 +1794,10 @@ class AgricolaPlayer extends BasePlayer {
     }
   }
 
+  getAnimalsInHouse() {
+    return this.pet ? 1 : 0
+  }
+
   hasAllAnimalTypes() {
     return this.getTotalAnimals('sheep') > 0
       && this.getTotalAnimals('boar') > 0

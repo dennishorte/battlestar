@@ -97,6 +97,18 @@ Card-based holders respect type restrictions during auto-placement:
 If `addAnimals` returns `false`, not all animals could be placed and the
 placement modal is triggered.
 
+### Forced Manual Placement
+
+Cards with `forceManualAnimalPlacement: true` (e.g., Pet Grower) bypass
+auto-placement and always show the placement modal when the player takes
+animals from an accumulation space. This gives the player full control over
+where animals go — for example, leaving the house pet slot empty to trigger
+Pet Grower's bonus sheep.
+
+In `takeAccumulatedResource`, active cards are checked for this flag. When
+present, `handleAnimalPlacement` is called with `{ forceModal: true }` which
+skips the auto-place loop and goes directly to the modal.
+
 ## Overflow & Placement Modal
 
 When animals exceed total capacity (e.g., after gaining animals or breeding),
@@ -243,6 +255,7 @@ stables, pet, and card holders). This feeds into end-game scoring.
 
 | Method | File | Purpose |
 |--------|------|---------|
+| `getAnimalsInHouse()` | AgricolaPlayer.js | Count animals in house pet slot (0 or 1) |
 | `getTotalAnimals(type)` | AgricolaPlayer.js | Count all animals of a type |
 | `getTotalAnimalCapacity(type)` | AgricolaPlayer.js | Total capacity for a type |
 | `canPlaceAnimals(type, count)` | AgricolaPlayer.js | Check if animals fit |
