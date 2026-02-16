@@ -9,6 +9,7 @@
         :show-power="showPower"
         :separate-faces="!hidden"
         :can-view="canView"
+        :suppress-scar-icon="true"
       >
         <template v-slot:icons>
           <i class="bi bi-eye-fill" v-if="cardIsRevealed"/>

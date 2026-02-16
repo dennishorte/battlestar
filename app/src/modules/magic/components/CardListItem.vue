@@ -16,7 +16,7 @@
 
         <div class="name">
           <i class="bi bi-arrow-return-right" v-if="faceIndex !== card.activeFaceIndex"/>
-          <i class="bi bi-lightning-fill" v-if="card.isScarred(faceIndex)"/>
+          <i class="bi bi-lightning-fill" v-if="card.isScarred(faceIndex) && !suppressScarIcon"/>
           <slot name="icons" />
           <slot name="name" :face-index="faceIndex">{{ card.name(faceIndex) }}</slot>
         </div>
@@ -32,7 +32,7 @@
 
     <div v-else class="card-list-item-face" @click="$emit('card-clicked', card)">
       <div class="name">
-        <i class="bi bi-lightning-fill" v-if="card.isScarred()"/>
+        <i class="bi bi-lightning-fill" v-if="card.isScarred() && !suppressScarIcon"/>
         <slot name="name">{{ card.name() }}</slot>
       </div>
     </div>
@@ -79,6 +79,11 @@ export default {
     canView: {
       type: Function,
       default: () => true,
+    },
+
+    suppressScarIcon: {
+      type: Boolean,
+      default: false,
     },
   },
 
