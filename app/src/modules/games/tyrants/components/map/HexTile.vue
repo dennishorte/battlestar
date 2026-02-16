@@ -37,6 +37,23 @@
         :hexSize="hexSize"
       />
     </div>
+
+    <!-- Triad status indicator for A2 hex -->
+    <div
+      v-if="triadStatus"
+      class="triad-indicator"
+      :style="triadStyle"
+    >
+      <div class="triad-header">Triad</div>
+      <div
+        v-for="ps in triadStatus"
+        :key="ps.name"
+        class="triad-row"
+      >
+        <span class="triad-dot" :style="{ backgroundColor: ps.color }" />
+        <span class="triad-tier" :class="'tier-' + ps.tier">{{ ps.label }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -50,6 +67,8 @@ export default {
   components: {
     HexLocation,
   },
+
+  inject: ['game'],
 
   props: {
     hex: {
@@ -116,6 +135,56 @@ export default {
     labelY() {
       const pos = this.hex.labelPosition || { x: 0.5, y: 0.5 }
       return (pos.y - 0.5) * this.hexHeight
+    },
+
+    triadStatus() {
+      const rules = this.hex.specialRules
+      if (!rules || rules.type !== 'triad') {
+        return null
+      }
+
+      const sites = rules.sites.map(short => {
+        const fullId = `${this.hex.tileId}.${short}`
+        return this.hex.locations.find(loc => loc.name() === fullId)
+      }).filter(Boolean)
+
+      if (sites.length !== rules.sites.length) {
+        return null
+      }
+
+      return this.game.players.all().map(player => {
+        const hasTroopsInAll = sites.every(loc => loc.getTroops(player).length > 0)
+        const controlsAll = sites.every(loc => loc.getController() === player)
+        const totalControlsAll = sites.every(loc => loc.getTotalController() === player)
+
+        let tier, label
+        if (totalControlsAll) {
+          tier = 'total'
+          label = 'Total'
+        }
+        else if (controlsAll) {
+          tier = 'control'
+          label = 'Control'
+        }
+        else if (hasTroopsInAll) {
+          tier = 'presence'
+          label = 'Presence'
+        }
+        else {
+          tier = 'none'
+          label = '--'
+        }
+
+        return { name: player.name, color: player.color, tier, label }
+      })
+    },
+
+    triadStyle() {
+      const pos = this.hex.rulesPosition || { x: 0.5, y: 0.5 }
+      return {
+        left: (pos.x * this.hexWidth) + 'px',
+        top: (pos.y * this.hexHeight) + 'px',
+      }
     },
 
     pathLines() {
@@ -193,5 +262,61 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 10;
+}
+
+.triad-indicator {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: rgba(20, 12, 5, 0.9);
+  border: 1px solid #8b6914;
+  border-radius: 4px;
+  padding: 4px 6px;
+  z-index: 15;
+  pointer-events: none;
+  min-width: 60px;
+}
+
+.triad-header {
+  font-size: 8px;
+  font-weight: 600;
+  color: #c9a84c;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.triad-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 0;
+}
+
+.triad-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.triad-tier {
+  font-size: 8px;
+  color: #888;
+}
+
+.triad-tier.tier-presence {
+  color: #c9a84c;
+}
+
+.triad-tier.tier-control {
+  color: #e0c068;
+  font-weight: 600;
+}
+
+.triad-tier.tier-total {
+  color: #ffd700;
+  font-weight: 700;
 }
 </style>
