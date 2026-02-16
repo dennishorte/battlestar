@@ -2754,6 +2754,10 @@ class AgricolaPlayer extends BasePlayer {
     return workersThatCanWork - this.availableWorkers
   }
 
+  getFirstPersonActionThisRound() {
+    return this._firstActionThisRound
+  }
+
   resetWorkers() {
     this.availableWorkers = this.familyMembers
     // Note: newborns are cleared at end of round (after harvest), not here

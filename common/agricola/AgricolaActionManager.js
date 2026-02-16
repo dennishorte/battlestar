@@ -5067,6 +5067,17 @@ class AgricolaActionManager extends BaseActionManager {
     }
   }
 
+  returnWorkerHome(player, workerIndex) {
+    if (workerIndex === 0 && player._firstActionThisRound) {
+      const actionId = player._firstActionThisRound
+      const state = this.game.state.actionSpaces[actionId]
+      if (state && state.occupiedBy === player.name) {
+        state.occupiedBy = null
+      }
+      player.availableWorkers++
+    }
+  }
+
   buildFreeRoom(player, card) {
     const validSpaces = player.getValidRoomBuildSpaces()
     if (validSpaces.length === 0) {

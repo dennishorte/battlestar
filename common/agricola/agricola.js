@@ -1889,7 +1889,7 @@ Agricola.prototype.getAvailableActions = function(player, options) {
     if (!def.createsActionSpace || typeof def.actionSpaceAvailable !== 'function') {
       continue
     }
-    if (!def.actionSpaceAvailable(this)) {
+    if (!def.actionSpaceAvailable(this, player)) {
       continue
     }
     const id = def.createsActionSpace
