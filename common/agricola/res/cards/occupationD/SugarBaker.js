@@ -8,7 +8,20 @@ module.exports = {
   text: "Each time after you use the \"Grain Utilization\" action space, you can buy 1 bonus point for 1 food. Place the food on the action space (for the next visitor).",
   onAction(game, player, actionId) {
     if (actionId === 'sow-bake' && player.food >= 1) {
-      game.actions.offerSugarBakerBonus(player, this)
+      const choices = ['Buy 1 bonus point for 1 food', 'Skip']
+      const selection = game.actions.choose(player, choices, {
+        title: 'Sugar Baker',
+        min: 1,
+        max: 1,
+      })
+      if (selection[0] !== 'Skip') {
+        player.food -= 1
+        player.bonusPoints += 1
+        game.log.add({
+          template: '{player} buys 1 bonus point for 1 food (Sugar Baker)',
+          args: { player },
+        })
+      }
     }
   },
 }

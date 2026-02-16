@@ -14,8 +14,35 @@ module.exports = {
     })
   },
   onRoundEnd(game, player, round) {
-    if (!game.isHarvestRound(round)) {
-      game.actions.offerPureBreederBreeding(player, this)
+    if (game.isHarvestRound(round)) {
+      return
     }
+    // Check which animal types can breed (2+ of type and room for baby)
+    const breedable = []
+    for (const type of ['sheep', 'boar', 'cattle']) {
+      if (player.getTotalAnimals(type) >= 2 && player.canPlaceAnimals(type, 1)) {
+        breedable.push(type)
+      }
+    }
+    if (breedable.length === 0) {
+      return
+    }
+    const choices = breedable.map(type => `Breed ${type}`)
+    choices.push('Skip')
+    const selection = game.actions.choose(player, choices, {
+      title: 'Pure Breeder',
+      min: 1,
+      max: 1,
+    })
+    if (selection[0] === 'Skip') {
+      return
+    }
+    const match = selection[0].match(/Breed (\w+)/)
+    const animalType = match[1]
+    player.addAnimals(animalType, 1)
+    game.log.add({
+      template: '{player} breeds 1 {type} (Pure Breeder)',
+      args: { player, type: animalType },
+    })
   },
 }
