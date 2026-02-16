@@ -9,7 +9,7 @@ module.exports = {
   onPlay(game, player) {
     if (player.getOccupationCount() === 3) {
       game.actions.offerPlayOccupation(player, this, { cost: { food: 1 } })
-      game.actions.offerPlayMinorImprovement(player, this)
+      game.actions.buyMinorImprovement(player)
     }
   },
 }

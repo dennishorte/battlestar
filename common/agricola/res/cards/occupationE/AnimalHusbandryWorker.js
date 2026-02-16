@@ -24,7 +24,15 @@ module.exports = {
         template: '{player} gets {amount} wood from Animal Husbandry Worker',
         args: { player, amount: wood },
       })
-      game.actions.offerBuildFences(player, this)
+      // Offer optional fence building
+      const selection = game.actions.choose(player, ['Build Fences', 'Skip'], {
+        title: 'Animal Husbandry Worker: Build fences?',
+        min: 1,
+        max: 1,
+      })
+      if (selection[0] === 'Build Fences') {
+        game.actions.buildFences(player)
+      }
     }
   },
   getEndGamePointsAllPlayers(game) {

@@ -14,7 +14,7 @@ module.exports = {
         args: { player },
       })
     }
-    else if (actionId === 'take-vegetables') {
+    else if (actionId === 'take-vegetable') {
       player.addResource('clay', 3)
       game.log.add({
         template: '{player} gets 3 clay from Hill Cultivator',

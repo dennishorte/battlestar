@@ -8,8 +8,8 @@ module.exports = {
   text: "At the start of scoring, you get a number of vegetables equal to the smallest of the numbers of major improvements, minor improvements, and occupations you have.",
   onScoring(game, player) {
     const minCount = Math.min(
-      player.getMajorImprovementCount(),
-      player.getMinorImprovementCount(),
+      player.majorImprovements.length,
+      player.playedMinorImprovements.length,
       player.getOccupationCount()
     )
     if (minCount > 0) {

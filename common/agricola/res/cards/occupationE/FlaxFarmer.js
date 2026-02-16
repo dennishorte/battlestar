@@ -7,7 +7,7 @@ module.exports = {
   players: "1+",
   text: "Each time you use the \"Reed Bank\" accumulation space, you also get 1 grain. Each time you use the \"Grain Seeds\" action space, you also get 1 reed.",
   onAction(game, player, actionId) {
-    if (actionId === 'reed-bank') {
+    if (actionId === 'take-reed') {
       player.addResource('grain', 1)
       game.log.add({
         template: '{player} gets 1 grain from Flax Farmer',

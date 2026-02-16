@@ -63,6 +63,11 @@ class AgricolaPlayer extends BasePlayer {
     return count
   }
 
+  occupiesActionSpace(actionId) {
+    const state = this.game.state.actionSpaces[actionId]
+    return state && state.occupiedBy === this.name
+  }
+
   get playedMinorImprovements() {
     const zone = this._cardZone('minorImprovements')
     return zone ? zone.cardlist().map(c => c.id) : (this._playedMinorImprovements || [])
@@ -79,6 +84,20 @@ class AgricolaPlayer extends BasePlayer {
 
   set majorImprovements(val) {
     this._majorImprovements = val
+  }
+
+  getAllImprovements() {
+    return [...this.playedMinorImprovements, ...this.majorImprovements]
+  }
+
+  getTotalVegetables() {
+    let total = this.vegetables
+    for (const field of this.getFieldSpaces()) {
+      if (field.crop === 'vegetables' && field.cropCount > 0) {
+        total += field.cropCount
+      }
+    }
+    return total
   }
 
   initializeResources() {
@@ -359,6 +378,30 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
     return rooms
+  }
+
+  getUnoccupiedRoomsByType(type) {
+    if (this.roomType !== type) {
+      return 0
+    }
+    const rooms = this.getRoomCount()
+    return Math.max(0, rooms - this.familyMembers)
+  }
+
+  getFieldTilesAdjacentToRooms() {
+    const counted = new Set()
+    const rooms = this.getRoomSpaces()
+    for (const room of rooms) {
+      for (const [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
+        const nr = room.row + dr, nc = room.col + dc
+        if (nr >= 0 && nr < res.constants.farmyardRows
+          && nc >= 0 && nc < res.constants.farmyardCols
+          && this.farmyard.grid[nr][nc].type === 'field') {
+          counted.add(`${nr},${nc}`)
+        }
+      }
+    }
+    return counted.size
   }
 
   getColumnsWithRooms() {
@@ -1713,6 +1756,28 @@ class AgricolaPlayer extends BasePlayer {
       boar: this.getTotalAnimals('boar'),
       cattle: this.getTotalAnimals('cattle'),
     }
+  }
+
+  hasAllAnimalTypes() {
+    return this.getTotalAnimals('sheep') > 0
+      && this.getTotalAnimals('boar') > 0
+      && this.getTotalAnimals('cattle') > 0
+  }
+
+  getCategoriesWithMaxScore() {
+    const breakdown = this.getScoreBreakdown()
+    let count = 0
+    const categories = ['fields', 'pastures', 'grain', 'vegetables', 'sheep', 'boar', 'cattle']
+    for (const cat of categories) {
+      if (breakdown[cat] && breakdown[cat].points >= 4) {
+        count++
+      }
+    }
+    // Fenced stables: max is 4+ stables
+    if (breakdown.fencedStables && breakdown.fencedStables.count >= 4) {
+      count++
+    }
+    return count
   }
 
   // Get total count of building resources (for tie-breaker)

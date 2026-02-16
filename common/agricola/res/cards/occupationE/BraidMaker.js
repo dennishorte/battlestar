@@ -10,7 +10,19 @@ module.exports = {
   allowedMajors: ["basketmakers-workshop"],
   onHarvest(game, player) {
     if (player.reed >= 1) {
-      game.actions.offerBraidMakerConversion(player, this)
+      const selection = game.actions.choose(player, ['Convert 1 reed to 2 food', 'Skip'], {
+        title: 'Braid Maker: Convert?',
+        min: 1,
+        max: 1,
+      })
+      if (selection[0] !== 'Skip') {
+        player.removeResource('reed', 1)
+        player.addResource('food', 2)
+        game.log.add({
+          template: '{player} converts 1 reed to 2 food using Braid Maker',
+          args: { player },
+        })
+      }
     }
   },
   modifyMajorCost(player, majorId, cost) {

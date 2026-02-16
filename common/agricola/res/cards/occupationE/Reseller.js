@@ -9,14 +9,30 @@ module.exports = {
   onPlay(game, _player) {
     game.cardState(this.id).used = false
   },
-  onPlayImprovement(game, player, improvement) {
-    if (!game.cardState(this.id).used) {
-      game.actions.offerResellerRefund(player, this, improvement)
+  onBuildImprovement(game, player, _cost, improvement) {
+    if (game.cardState(this.id).used) {
+      return
     }
-  },
-  onBuildImprovement(game, player, improvement) {
-    if (!game.cardState(this.id).used) {
-      game.actions.offerResellerRefund(player, this, improvement)
+    const printedCost = improvement.cost
+    if (!printedCost) {
+      return
+    }
+
+    const costStr = Object.entries(printedCost).map(([r, n]) => `${n} ${r}`).join(', ')
+    const selection = game.actions.choose(player, [`Get ${costStr} from supply`, 'Skip'], {
+      title: 'Reseller: Refund improvement cost?',
+      min: 1,
+      max: 1,
+    })
+    if (selection[0] !== 'Skip') {
+      for (const [resource, amount] of Object.entries(printedCost)) {
+        player.addResource(resource, amount)
+      }
+      game.cardState(this.id).used = true
+      game.log.add({
+        template: '{player} gets {cost} from Reseller',
+        args: { player, cost: costStr },
+      })
     }
   },
 }

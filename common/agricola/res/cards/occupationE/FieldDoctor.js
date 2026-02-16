@@ -10,7 +10,7 @@ module.exports = {
     game.cardState(this.id).used = false
   },
   allowsFamilyGrowthWithoutRoom(game, player) {
-    return !game.cardState(this.id).used && player.getRoomCount() === 2 && player.getRoomsSurroundedByFields() >= 4
+    return !game.cardState(this.id).used && player.getRoomCount() === 2 && player.getFieldTilesAdjacentToRooms() >= 4
   },
   onFamilyGrowthWithoutRoom(game, _player) {
     game.cardState(this.id).used = true

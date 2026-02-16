@@ -6,12 +6,12 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you plow at least 1 field tile, you get 1 sheep for each field tile that you just plowed.",
-  onPlow(game, player, fieldCount) {
-    if (fieldCount >= 1 && player.canPlaceAnimals('sheep', fieldCount)) {
-      player.addAnimals('sheep', fieldCount)
+  onPlowField(game, player) {
+    if (player.canPlaceAnimals('sheep', 1)) {
+      player.addAnimals('sheep', 1)
       game.log.add({
-        template: '{player} gets {count} sheep from Mountain Plowman',
-        args: { player, count: fieldCount },
+        template: '{player} gets 1 sheep from Mountain Plowman',
+        args: { player },
       })
     }
   },

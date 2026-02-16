@@ -918,6 +918,104 @@ Agricola.prototype.getCompletedFeedingPhases = function() {
   return res.constants.harvestRounds.filter(r => r < this.state.round).length
 }
 
+Agricola.prototype.getHarvestNumber = function() {
+  return res.constants.harvestRounds.filter(r => r <= this.state.round).length
+}
+
+Agricola.prototype.isNonAccumulatingActionSpace = function(actionId) {
+  const action = res.getActionById(actionId)
+  if (!action) {
+    // Card-provided action spaces are non-accumulating
+    const state = this.state.actionSpaces[actionId]
+    return state && !state.accumulated
+  }
+  return action.type !== 'accumulating'
+}
+
+Agricola.prototype.actionSpaceProvidesStoneAndOther = function(actionId) {
+  const action = res.getActionById(actionId)
+  if (!action) {
+    return false
+  }
+  const gives = action.gives || {}
+  const accumulates = action.accumulates || {}
+  const hasStone = gives.stone > 0 || accumulates.stone > 0
+  const hasOtherBuilding = gives.wood > 0 || gives.clay > 0 || gives.reed > 0
+    || accumulates.wood > 0 || accumulates.clay > 0 || accumulates.reed > 0
+  // Also check allowsResourceChoice for spaces like Resource Market
+  const hasStoneChoice = action.allowsResourceChoice && action.allowsResourceChoice.includes('stone')
+  const hasOtherChoice = action.allowsResourceChoice && action.allowsResourceChoice.some(r => ['wood', 'clay', 'reed'].includes(r))
+  return (hasStone || hasStoneChoice) && (hasOtherBuilding || hasOtherChoice)
+}
+
+Agricola.prototype.getTotalOccupationsInPlay = function() {
+  let count = 0
+  for (const player of this.players.all()) {
+    count += player.getOccupationCount()
+  }
+  return count
+}
+
+Agricola.prototype.getCompleteStagesLeft = function() {
+  // Stages: 1(r1-4), 2(r5-7), 3(r8-9), 4(r10-11), 5(r12-13), 6(r14)
+  const stageStartRounds = [1, 5, 8, 10, 12, 14]
+  const currentRound = this.state.round
+  return stageStartRounds.filter(r => r > currentRound).length
+}
+
+Agricola.prototype.isAnimalAccumulationSpace = function(actionId) {
+  const action = res.getActionById(actionId)
+  if (!action || action.type !== 'accumulating') {
+    return false
+  }
+  const acc = action.accumulates || {}
+  return !!(acc.sheep || acc.boar || acc.cattle)
+}
+
+Agricola.prototype.actionSpaceGivesFood = function(actionId) {
+  const action = res.getActionById(actionId)
+  if (!action) {
+    return false
+  }
+  return !!(action.gives && action.gives.food) || !!(action.accumulates && action.accumulates.food)
+}
+
+Agricola.prototype.isBuildingResourceAccumulationSpace = function(actionId) {
+  const action = res.getActionById(actionId)
+  if (!action || action.type !== 'accumulating') {
+    return false
+  }
+  const acc = action.accumulates || {}
+  return !!(acc.wood || acc.clay || acc.reed || acc.stone)
+}
+
+// getAccumulatedResources already defined above (line 351) with pre-take amount support
+
+Agricola.prototype.allClayAccumulationSpacesUnoccupied = function() {
+  for (const actionId of this.state.activeActions) {
+    const action = res.getActionById(actionId)
+    if (action && action.type === 'accumulating' && action.accumulates && action.accumulates.clay) {
+      if (this.state.actionSpaces[actionId].occupiedBy) {
+        return false
+      }
+    }
+  }
+  return true
+}
+
+Agricola.prototype.getStoneAccumulationSpacesWithStone = function() {
+  let count = 0
+  for (const actionId of this.state.activeActions) {
+    const action = res.getActionById(actionId)
+    if (action && action.type === 'accumulating' && action.accumulates && action.accumulates.stone) {
+      if (this.state.actionSpaces[actionId].accumulated > 0) {
+        count++
+      }
+    }
+  }
+  return count
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Card Drafting Phase
@@ -1712,6 +1810,11 @@ Agricola.prototype.playerCanUseOccupiedSpace = function(player, actionId, state)
         return true
       }
     }
+    if (card.hasHook('allowsIgnoreOccupied')) {
+      if (card.callHook('allowsIgnoreOccupied', player, actionId, this)) {
+        return true
+      }
+    }
   }
 
   return false
@@ -1742,10 +1845,28 @@ Agricola.prototype.canTakeAction = function(player, actionId) {
 
   // Family growth actions have prerequisites
   if (action.allowsFamilyGrowth) {
+    // Check card-based growth restrictions (e.g., Visionary)
+    for (const card of this.getPlayerActiveCards(player)) {
+      if (card.hasHook('canGrowFamily') && !card.callHook('canGrowFamily', player, this)) {
+        return false
+      }
+    }
+
     if (action.requiresRoom !== false) {
       // Standard family growth - needs room
       if (!player.canGrowFamily(true)) {
-        return false
+        // Check if any card allows growth without room (e.g., FieldDoctor, DeliveryNurse)
+        let allowedByCard = false
+        for (const card of this.getPlayerActiveCards(player)) {
+          if (card.hasHook('allowsFamilyGrowthWithoutRoom') &&
+              card.callHook('allowsFamilyGrowthWithoutRoom', this, player)) {
+            allowedByCard = true
+            break
+          }
+        }
+        if (!allowedByCard) {
+          return false
+        }
       }
     }
     else {
@@ -2401,6 +2522,7 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
     })
     this.callPlayerCardHook(player, 'onCookAnimal', option.resource, option.count, food)
     this.callPlayerCardHook(player, 'onCook', option.resource, option.count, food)
+    this.callPlayerCardHook(player, 'onConvertAnimalToFood', option.resource, option.count, food)
   }
   else if (option.type === 'cook-vegetable') {
     player._usedCookingThisTurn = true
@@ -2418,6 +2540,8 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
       template: '{player} uses {improvement} to convert {resource} to {food} food',
       args: { player, improvement: option.improvement, resource: option.resource, food: option.food },
     })
+    // Call onUseCraftConversion hooks (e.g., PlowBuilder offers plow when using Joinery)
+    this.callPlayerCardHook(player, 'onUseCraftConversion', option.improvement, option.resource)
   }
   else if (option.type === 'card-cook') {
     player._usedCookingThisTurn = true
@@ -2429,6 +2553,7 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
     })
     this.callPlayerCardHook(player, 'onCookAnimal', option.resource, option.count, option.food)
     this.callPlayerCardHook(player, 'onCook', option.resource, option.count, option.food)
+    this.callPlayerCardHook(player, 'onConvertAnimalToFood', option.resource, option.count, option.food)
   }
   else if (option.type === 'card-convert') {
     player.removeResource(option.resource, option.count)
@@ -2912,6 +3037,24 @@ Agricola.prototype.endGame = function() {
   // Revised Edition: Resources spent for Joinery/Pottery/Basketmaker bonus don't count for tie-breaker
   for (const player of this.players.all()) {
     player.spendResourcesForCraftingBonus()
+  }
+
+  // Process getEndGamePointsAllPlayers hooks (comparative scoring cards)
+  for (const player of this.players.all()) {
+    const cards = this.getPlayerActiveCards(player)
+    for (const card of cards) {
+      if (card.hasHook('getEndGamePointsAllPlayers')) {
+        const bonuses = card.callHook('getEndGamePointsAllPlayers', this)
+        if (bonuses) {
+          for (const [playerName, points] of Object.entries(bonuses)) {
+            const p = this.players.byName(playerName)
+            if (p && points) {
+              p.bonusPoints = (p.bonusPoints || 0) + points
+            }
+          }
+        }
+      }
+    }
   }
 
   // Collect scores and remaining resources for all players

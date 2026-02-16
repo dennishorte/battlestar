@@ -6,9 +6,9 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you get 2 or more newborn animals, you can pay 1 food to plow 1 field.",
-  onBreeding(game, player, newbornCount) {
-    if (newbornCount >= 2 && player.food >= 1) {
-      game.actions.offerPlowForFood(player, this)
+  onBreedingPhaseEnd(game, player, newbornTypes) {
+    if (newbornTypes >= 2 && (player.food >= 1 || game.getAnytimeFoodConversionOptions(player).length > 0)) {
+      game.offerPlowForFood(player, this)
     }
   },
 }

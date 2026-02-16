@@ -6,7 +6,7 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you place 2 or 3+ newborn animals on your farm during the breeding phase of the harvest, you get 1 or 2 bonus points, respectively.",
-  onBreedingPhase(game, player, newbornCount) {
+  onBreedingPhaseEnd(game, player, newbornCount) {
     let points = 0
     if (newbornCount >= 3) {
       points = 2

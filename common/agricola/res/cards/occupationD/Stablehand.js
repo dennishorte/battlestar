@@ -6,7 +6,7 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you build at least 1 fence, you can also build a stable without paying wood for the stable.",
-  onBuildFence(game, player, fenceCount) {
+  onBuildFences(game, player, fenceCount) {
     if (fenceCount >= 1) {
       game.actions.offerBuildFreeStable(player, this)
     }

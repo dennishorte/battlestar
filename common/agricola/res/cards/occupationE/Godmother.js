@@ -6,13 +6,11 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you take a \"Family Growth\" action, you also get 1 vegetable.",
-  onAction(game, player, actionId) {
-    if (actionId === 'family-growth' || actionId === 'family-growth-urgent') {
-      player.addResource('vegetables', 1)
-      game.log.add({
-        template: '{player} gets 1 vegetable from Godmother',
-        args: { player },
-      })
-    }
+  afterFamilyGrowth(game, player) {
+    player.addResource('vegetables', 1)
+    game.log.add({
+      template: '{player} gets 1 vegetable from Godmother',
+      args: { player },
+    })
   },
 }
