@@ -3193,6 +3193,9 @@ Agricola.prototype.endGame = function() {
       }
     }
   }
+  for (const player of this.players.all()) {
+    player._endGameAllPlayersBonusApplied = true
+  }
 
   // Collect scores and remaining resources for all players
   const playerResults = []

@@ -546,7 +546,9 @@ class AgricolaActionManager extends BaseActionManager {
       }
 
       if (choice === 'Build Stable') {
-        player.payCost(player.getStableCost(res.buildingCosts.stable))
+        const stableCost = player.getStableCost(res.buildingCosts.stable)
+        player.payCost(stableCost)
+        player._farmExpansionWoodPaid = (player._farmExpansionWoodPaid || 0) + (stableCost.wood || 0)
         this.buildStable(player)
         builtAnything = true
         builtStable = true
@@ -807,8 +809,6 @@ class AgricolaActionManager extends BaseActionManager {
       [row, col] = result[0].split(',').map(Number)
     }
 
-    player.payCost(res.buildingCosts.stable)
-    player._farmExpansionWoodPaid = (player._farmExpansionWoodPaid || 0) + (res.buildingCosts.stable.wood || 0)
     player.buildStable(row, col)
 
     this.log.add({

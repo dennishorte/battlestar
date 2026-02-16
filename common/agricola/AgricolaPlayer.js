@@ -3159,15 +3159,19 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     // Bonuses from cards with getEndGamePointsAllPlayers (any player's card grants to qualifying players)
-    for (const player of this.game.players.all()) {
-      for (const id of [...player.playedOccupations, ...player.playedMinorImprovements]) {
-        const card = this.cards.byId(id)
-        if (card && card.hasHook('getEndGamePointsAllPlayers')) {
-          const bonuses = card.callHook('getEndGamePointsAllPlayers', this.game)
-          points += bonuses[this.name] || 0
+    // Skip if endGame() already applied these to this.bonusPoints to avoid double-counting
+    if (!this._endGameAllPlayersBonusApplied) {
+      for (const player of this.game.players.all()) {
+        for (const id of [...player.playedOccupations, ...player.playedMinorImprovements]) {
+          const card = this.cards.byId(id)
+          if (card && card.hasHook('getEndGamePointsAllPlayers')) {
+            const bonuses = card.callHook('getEndGamePointsAllPlayers', this.game)
+            points += bonuses[this.name] || 0
+          }
         }
       }
     }
+
 
     return points
   }
