@@ -816,7 +816,7 @@ class AgricolaActionManager extends BaseActionManager {
       args: { player, row, col },
     })
 
-    this.game.callPlayerCardHook(player, 'onBuildStable')
+    this.game.callPlayerCardHook(player, 'onBuildStable', player.getStableCount())
 
     return true
   }

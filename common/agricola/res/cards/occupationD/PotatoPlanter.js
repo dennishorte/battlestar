@@ -7,10 +7,10 @@ module.exports = {
   players: "1+",
   text: "At the end of each work phase in which you occupy the \"Clay Pit\" or \"Reed Bank\" accumulation space while the respective other is unoccupied, you get 1 vegetable.",
   onWorkPhaseEnd(game, player) {
-    const usedClayPit = player.usedActionThisRound('take-clay')
-    const usedReedBank = player.usedActionThisRound('reed-bank')
+    const usedClayPit = player.occupiesActionSpace('take-clay')
+    const usedReedBank = player.occupiesActionSpace('take-reed')
     const clayPitOccupied = game.isActionOccupied('take-clay')
-    const reedBankOccupied = game.isActionOccupied('reed-bank')
+    const reedBankOccupied = game.isActionOccupied('take-reed')
 
     if ((usedClayPit && !reedBankOccupied) || (usedReedBank && !clayPitOccupied)) {
       player.addResource('vegetables', 1)

@@ -1375,6 +1375,16 @@ Agricola.prototype.workPhase = function() {
       const player = playerList[currentPlayerIndex]
 
       if (player.getAvailableWorkers() > 0) {
+        // OysterEater: skip this person placement
+        if (player.skipNextPersonPlacement) {
+          player.skipNextPersonPlacement = false
+          this.log.add({
+            template: '{player} skips placement (Oyster Eater)',
+            args: { player },
+          })
+          break
+        }
+
         // Exclude newborns from worker count (they can't work this round)
         const newbornCount = player.getNewbornsReturningHome()
         const workersThatCanWork = player.getFamilySize() - newbornCount

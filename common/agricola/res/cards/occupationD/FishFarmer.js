@@ -5,17 +5,29 @@ module.exports = {
   number: 110,
   type: "occupation",
   players: "1+",
-  text: "Each time there is 1/2/3+ food on the \"Fishing\" accumulation space, you get an additional 2 food on the \"Reed Bank\"/ \"Clay Pit\"/ \"Forest\" accumulation spaces.",
-  modifyAccumulation(game, player) {
+  text: "When you use Reed Bank, Clay Pit, or Forest, if there is at least 1/2/3 food on the Fishing space, you also get 2 food.",
+  onAction(game, player, actionId) {
     const fishingFood = game.getAccumulatedResources('fishing').food || 0
-    if (fishingFood >= 3) {
-      game.addBonusAccumulation(player, 'take-wood', { food: 2 })
+    if (actionId === 'take-reed' && fishingFood >= 1) {
+      player.addResource('food', 2)
+      game.log.add({
+        template: '{player} gets 2 food from Fish Farmer',
+        args: { player },
+      })
     }
-    if (fishingFood >= 2) {
-      game.addBonusAccumulation(player, 'take-clay', { food: 2 })
+    else if (actionId === 'take-clay' && fishingFood >= 2) {
+      player.addResource('food', 2)
+      game.log.add({
+        template: '{player} gets 2 food from Fish Farmer',
+        args: { player },
+      })
     }
-    if (fishingFood >= 1) {
-      game.addBonusAccumulation(player, 'reed-bank', { food: 2 })
+    else if (actionId === 'take-wood' && fishingFood >= 3) {
+      player.addResource('food', 2)
+      game.log.add({
+        template: '{player} gets 2 food from Fish Farmer',
+        args: { player },
+      })
     }
   },
 }

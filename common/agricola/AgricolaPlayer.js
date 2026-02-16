@@ -35,6 +35,10 @@ class AgricolaPlayer extends BasePlayer {
     return this.playedOccupations.length
   }
 
+  getMajorImprovementCount() {
+    return this.majorImprovements.length
+  }
+
   getPlayedOccupations() {
     return this.playedOccupations.map(id => this.game.cards.byId(id).definition)
   }

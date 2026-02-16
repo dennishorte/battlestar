@@ -6,8 +6,14 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you build at least 2 stables on the same turn, you also get 1 cattle.",
-  onBuildStables(game, player, stableCount) {
-    if (stableCount >= 2 && player.canPlaceAnimals('cattle', 1)) {
+  onBuildStable(game, player) {
+    const s = game.cardState(this.id)
+    if (s.lastRound !== game.state.round) {
+      s.stablesBuilt = 0
+      s.lastRound = game.state.round
+    }
+    s.stablesBuilt++
+    if (s.stablesBuilt === 2 && player.canPlaceAnimals('cattle', 1)) {
       player.addAnimals('cattle', 1)
       game.log.add({
         template: '{player} gets 1 cattle from Stable Milker',
