@@ -9,23 +9,23 @@ module.exports = {
   onPlay(game, player) {
     const s = game.cardState(this.id)
     s.wood = 6
-    if (s.wood > 0) {
-      s.wood--
-      player.addResource('wood', 1)
-      game.log.add({
-        template: '{player} gets 1 wood from Bonehead',
-        args: { player },
-      })
-    }
+    // Give 1 wood for playing this card itself
+    this._giveWood(game, player)
   },
-  onPlayCard(game, player) {
+  onPlayOccupation(game, player) {
+    this._giveWood(game, player)
+  },
+  onBuildImprovement(game, player) {
+    this._giveWood(game, player)
+  },
+  _giveWood(game, player) {
     const s = game.cardState(this.id)
     if ((s.wood || 0) > 0) {
       s.wood--
       player.addResource('wood', 1)
       game.log.add({
-        template: '{player} gets 1 wood from Bonehead',
-        args: { player },
+        template: '{player} gets 1 wood from Bonehead ({remaining} left)',
+        args: { player, remaining: s.wood },
       })
     }
   },

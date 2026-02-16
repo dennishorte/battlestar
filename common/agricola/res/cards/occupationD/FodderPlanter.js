@@ -6,9 +6,21 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "In the breeding phase of each harvest, for each newborn animal you get, you can sow crops in exactly 1 field.",
-  onBreedingPhase(game, player, newbornCount) {
-    if (newbornCount > 0 && player.hasEmptyFields()) {
-      game.actions.offerSowMultiple(player, this, newbornCount)
+  onBreedingPhaseEnd(game, player, newbornCount) {
+    if (newbornCount > 0 && player.getEmptyFields().length > 0) {
+      game.log.add({
+        template: '{player} can sow {count} field(s) from Fodder Planter',
+        args: { player, count: newbornCount },
+      })
+      for (let i = 0; i < newbornCount; i++) {
+        if (player.getEmptyFields().length === 0) {
+          break
+        }
+        if (player.grain < 1 && player.vegetables < 1) {
+          break
+        }
+        game.actions.sow(player)
+      }
     }
   },
 }

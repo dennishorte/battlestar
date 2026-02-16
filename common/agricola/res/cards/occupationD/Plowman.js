@@ -20,7 +20,7 @@ module.exports = {
   onRoundStart(game, player) {
     const scheduled = game.state.scheduledPlowman?.[player.name] || []
     if (scheduled.includes(game.state.round) && player.food >= 1) {
-      game.actions.offerPlowForFood(player, this)
+      game.offerPlowForFood(player, this)
     }
   },
 }
