@@ -476,9 +476,9 @@ describe('Demonweb', () => {
 
         const request = game.waiting
         const choices = request.selectors[0].choices
-        const gemAction = choices.find(c => c.title === 'Gem')
+        const gemAction = choices.find(c => c.title && c.title.startsWith('Gem'))
         expect(gemAction).toBeDefined()
-        expect(gemAction.choices).toContain('Acquire Gem')
+        expect(gemAction.choices.some(c => c.title === 'Acquire Gem')).toBe(true)
       })
 
       test('gem action not available without power', () => {
@@ -487,8 +487,8 @@ describe('Demonweb', () => {
 
         const request = game.waiting
         const choices = request.selectors[0].choices
-        const gemAction = choices.find(c => c.title === 'Gem')
-        const acquireAvailable = gemAction && gemAction.choices.includes('Acquire Gem')
+        const gemAction = choices.find(c => c.title && c.title.startsWith('Gem'))
+        const acquireAvailable = gemAction && gemAction.choices.some(c => c.title === 'Acquire Gem')
         expect(acquireAvailable).toBeFalsy()
       })
 
@@ -498,8 +498,8 @@ describe('Demonweb', () => {
 
         const request = game.waiting
         const choices = request.selectors[0].choices
-        const gemAction = choices.find(c => c.title === 'Gem')
-        const acquireAvailable = gemAction && gemAction.choices.includes('Acquire Gem')
+        const gemAction = choices.find(c => c.title && c.title.startsWith('Gem'))
+        const acquireAvailable = gemAction && gemAction.choices.some(c => c.title === 'Acquire Gem')
         expect(acquireAvailable).toBeFalsy()
       })
 
@@ -538,8 +538,8 @@ describe('Demonweb', () => {
         // Acquire Gem should no longer be available
         const request = game.waiting
         const choices = request.selectors[0].choices
-        const gemAction = choices.find(c => c.title === 'Gem')
-        const acquireAvailable = gemAction && gemAction.choices.includes('Acquire Gem')
+        const gemAction = choices.find(c => c.title && c.title.startsWith('Gem'))
+        const acquireAvailable = gemAction && gemAction.choices.some(c => c.title === 'Acquire Gem')
         expect(acquireAvailable).toBeFalsy()
       })
 
@@ -591,7 +591,7 @@ describe('Demonweb', () => {
 
         const request = game.waiting
         const choices = request.selectors[0].choices
-        const gemAction = choices.find(c => c.title === 'Gem')
+        const gemAction = choices.find(c => c.title && c.title.startsWith('Gem'))
         expect(gemAction).toBeUndefined()
       })
 
@@ -608,9 +608,9 @@ describe('Demonweb', () => {
         // Spend gem should NOT be available (just acquired)
         const request = game.waiting
         const choices = request.selectors[0].choices
-        const gemAction = choices.find(c => c.title === 'Gem')
-        const spendPowerAvailable = gemAction && gemAction.choices.includes('Spend Gem for Power')
-        const spendInfluenceAvailable = gemAction && gemAction.choices.includes('Spend Gem for Influence')
+        const gemAction = choices.find(c => c.title && c.title.startsWith('Gem'))
+        const spendPowerAvailable = gemAction && gemAction.choices.some(c => c.title === 'Spend Gem for Power')
+        const spendInfluenceAvailable = gemAction && gemAction.choices.some(c => c.title === 'Spend Gem for Influence')
         expect(spendPowerAvailable).toBeFalsy()
         expect(spendInfluenceAvailable).toBeFalsy()
       })
@@ -628,9 +628,9 @@ describe('Demonweb', () => {
         // Should be able to spend the pre-existing gem (2 total - 1 acquired = 1 spendable)
         const request = game.waiting
         const choices = request.selectors[0].choices
-        const gemAction = choices.find(c => c.title === 'Gem')
+        const gemAction = choices.find(c => c.title && c.title.startsWith('Gem'))
         expect(gemAction).toBeDefined()
-        expect(gemAction.choices).toContain('Spend Gem for Power')
+        expect(gemAction.choices.some(c => c.title === 'Spend Gem for Power')).toBe(true)
       })
 
       test('can spend multiple gems in one turn if pre-existing', () => {
@@ -646,9 +646,9 @@ describe('Demonweb', () => {
         // Should still be able to spend the second gem
         const request = game.waiting
         const choices = request.selectors[0].choices
-        const gemAction = choices.find(c => c.title === 'Gem')
+        const gemAction = choices.find(c => c.title && c.title.startsWith('Gem'))
         expect(gemAction).toBeDefined()
-        expect(gemAction.choices).toContain('Spend Gem for Power')
+        expect(gemAction.choices.some(c => c.title === 'Spend Gem for Power')).toBe(true)
       })
     })
   })

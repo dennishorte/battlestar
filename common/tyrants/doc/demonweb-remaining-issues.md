@@ -24,4 +24,4 @@
 - [x] Neighbor relationships verified bidirectional in tests
 - [x] Cross-hex connections verified to exist between adjacent tiles in tests
 - [ ] Verify dead-end edge tunnel behavior in practice
-- [ ] Confirm dark banner site mechanic matches designer intent
+- [x] Confirm dark banner site mechanic matches designer intent — just starting locations, no special mechanic

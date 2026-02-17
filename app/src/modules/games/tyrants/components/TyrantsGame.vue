@@ -44,6 +44,11 @@
       <ScoreTable />
     </ModalBase>
 
+    <ModalBase id="gem-help">
+      <template #header>Gemstone Rules</template>
+      <GemHelp />
+    </ModalBase>
+
   </div>
 </template>
 
@@ -65,6 +70,7 @@ import GameLogTyrants from './GameLogTyrants.vue'
 import GameMap from './map/GameMap.vue'
 import MarketZone from './MarketZone.vue'
 import PlayerTableau from './PlayerTableau.vue'
+import GemHelp from './GemHelp.vue'
 import ScoreTable from './ScoreTable.vue'
 
 
@@ -83,6 +89,7 @@ export default {
     DevouredZone,
     DropdownButton,
     DropdownDivider,
+    GemHelp,
     GameLogTyrants,
     GameMap,
     GameMenu,
@@ -105,6 +112,7 @@ export default {
           clickTroop: this.clickTroop,
           clickSpy: this.clickSpy,
           insertSelectorSubtitles: this.insertSelectorSubtitles,
+          showGemHelp: this.showGemHelp,
           isUnitSelectable: this.isUnitSelectable,
           troopStyle: this.troopStyle,
           getActionTypeHandler: this.getActionTypeHandler,
@@ -333,6 +341,10 @@ export default {
 
     openRules() {
       window.open("https://tesera.ru/images/items/783812/Tyrants_Of_The_Underdark_Rulebook.pdf")
+    },
+
+    showGemHelp() {
+      this.$modal('gem-help').show()
     },
 
     showScores() {

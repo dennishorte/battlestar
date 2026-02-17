@@ -943,7 +943,7 @@ Tyrants.prototype.doActions = function() {
         throw new Error(`Unknown power action: ${arg}`)
       }
     }
-    else if (name === 'Gem') {
+    else if (name === 'Gem' || name.startsWith('Gem (')) {
       if (arg === 'Acquire Gem') {
         this.aAcquireGem(player)
         continue
@@ -1121,20 +1121,21 @@ Tyrants.prototype._generateGemActions = function() {
       return loc && loc.getTroops(player).length > 0
     })
     if (gemLocations.length > 0) {
-      choices.push('Acquire Gem')
+      choices.push({ title: 'Acquire Gem', subtitles: ['costs 1 power'] })
     }
   }
 
   // Spend gem action: need gem, gem not acquired this turn
   const spendableGems = gems - this.state.gemsAcquiredThisTurn.length
   if (spendableGems > 0) {
-    choices.push('Spend Gem for Power')
-    choices.push('Spend Gem for Influence')
+    choices.push({ title: 'Spend Gem for Power', subtitles: ['+3 power'] })
+    choices.push({ title: 'Spend Gem for Influence', subtitles: ['+3 influence'] })
   }
 
   if (choices.length > 0) {
+    const title = `Gem (💎×${gems})`
     return {
-      title: 'Gem',
+      title,
       choices,
       min: 0,
       max: 1,

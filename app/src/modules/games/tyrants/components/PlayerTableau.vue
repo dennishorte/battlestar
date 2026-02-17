@@ -20,6 +20,10 @@
         <div>
           <div>t: {{ troopCount }}</div>
           <div>s: {{ spyCount }}</div>
+          <div v-if="gemCount !== undefined">
+            💎: {{ gemCount }}
+            <i class="bi bi-question-circle gem-help" @click.stop="ui.fn.showGemHelp()" />
+          </div>
         </div>
       </div>
     </div>
@@ -65,6 +69,13 @@ export default {
   computed: {
     deckCount() {
       return this.game.cards.byPlayer(this.player, 'deck').length
+    },
+
+    gemCount() {
+      if (this.game.state.gemstones === undefined) {
+        return undefined
+      }
+      return this.player.getCounter('gems')
     },
 
     hand() {
@@ -138,5 +149,15 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+.gem-help {
+  cursor: pointer;
+  opacity: 0.6;
+  font-size: 0.75em;
+}
+
+.gem-help:hover {
+  opacity: 1;
 }
 </style>
