@@ -659,7 +659,18 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
     destIndex = 0
   }
 
+  // Save pre-move visibility so the move log can show the card name
+  // if it was visible in either the source or destination zone.
+  const preMoveVisibility = card.visibility.slice()
+
   card.moveTo(dest, destIndex)
+
+  const postMoveVisibility = card.visibility
+  for (const p of preMoveVisibility) {
+    if (!card.visibility.includes(p)) {
+      card.visibility.push(p)
+    }
+  }
 
   if (dest.id.endsWith('stack')) {
     this.log.addStackPush(player, card)
@@ -710,6 +721,7 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
     })
   }
 
+  card.visibility = postMoveVisibility
 
   // If the card moved from a non-battlefield zone to a battlefield zone,
   // add counters to it if appropriate.
