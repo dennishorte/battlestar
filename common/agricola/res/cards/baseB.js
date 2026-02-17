@@ -651,7 +651,41 @@ const occupations = [
     text: 'Once you live in a stone house, at the start of each round, you can play an occupation for an occupation cost of 1 food, or a minor improvement (by paying its cost).',
     onRoundStart(game, player) {
       if (player.roomType === 'stone') {
-        game.actions.offerPlayOccupationOrImprovement(player, this)
+        const card = this
+        const choices = []
+        const hasOccupation = player.hand.some(cardId => {
+          const c = game.cards.byId(cardId)
+          return c && c.type === 'occupation'
+        })
+        const hasMinor = player.hand.some(cardId => {
+          const c = game.cards.byId(cardId)
+          return c && c.type === 'minor'
+        })
+
+        if (hasOccupation) {
+          choices.push('Play an occupation')
+        }
+        if (hasMinor) {
+          choices.push('Play a minor improvement')
+        }
+        choices.push('Skip')
+
+        if (choices.length === 1) {
+          return
+        }
+
+        const selection = game.actions.choose(player, choices, {
+          title: `${card.name}: Play a card?`,
+          min: 1,
+          max: 1,
+        })
+
+        if (selection[0] === 'Play an occupation') {
+          game.actions.playOccupation(player)
+        }
+        else if (selection[0] === 'Play a minor improvement') {
+          game.actions.buyMinorImprovement(player)
+        }
       }
     },
   },
@@ -805,8 +839,27 @@ const occupations = [
     category: 'Food Provider',
     text: 'Immediately before playing each occupation after this one, you can pay 1 wood total to get 1 food for each occupation you have in front of you.',
     onPlayOccupation(game, player) {
-      if (player.wood >= 1) {
-        game.actions.offerPayWoodForOccupationFood(player, this)
+      if (player.wood < 1) {
+        return
+      }
+      const card = this
+      const foodGain = player.getOccupationCount()
+      if (foodGain <= 0) {
+        return
+      }
+      const choices = [`Pay 1 wood for ${foodGain} food`, 'Skip']
+      const selection = game.actions.choose(player, choices, {
+        title: `${card.name}: Pay wood for food?`,
+        min: 1,
+        max: 1,
+      })
+      if (selection[0] !== 'Skip') {
+        player.payCost({ wood: 1 })
+        player.addResource('food', foodGain)
+        game.log.add({
+          template: '{player} pays 1 wood for {food} food using {card}',
+          args: { player, food: foodGain, card: card },
+        })
       }
     },
   },
@@ -883,8 +936,29 @@ const occupations = [
     category: 'Building Resource Provider',
     text: 'When you play this card, you can immediately pay 1 food to get 1 stone for each room you have.',
     onPlay(game, player) {
-      if (player.food >= 1 || game.getAnytimeFoodConversionOptions(player).length > 0) {
-        game.actions.offerPayFoodForStone(player, this)
+      const card = this
+      if (player.food < 1) {
+        const canConvert = game.getAnytimeFoodConversionOptions(player).length > 0
+        if (!canConvert) {
+          return
+        }
+      }
+      const selection = game.actions.choose(player, () => {
+        const rooms = player.getRoomCount()
+        return [`Pay 1 food for ${rooms} stone`, 'Skip']
+      }, {
+        title: `${card.name}: Pay food for stone?`,
+        min: 1,
+        max: 1,
+      })
+      if (selection[0] !== 'Skip') {
+        const rooms = player.getRoomCount()
+        player.payCost({ food: 1 })
+        player.addResource('stone', rooms)
+        game.log.add({
+          template: '{player} pays 1 food for {stone} stone using {card}',
+          args: { player, stone: rooms, card: card },
+        })
       }
     },
   },

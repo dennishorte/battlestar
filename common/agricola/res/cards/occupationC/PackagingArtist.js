@@ -14,6 +14,17 @@ module.exports = {
     })
   },
   onMinorImprovementAction(game, player) {
-    game.actions.offerPackagingArtistChoice(player, this)
+    const choices = ['Bake bread instead', 'Play minor improvement normally']
+    const selection = game.actions.choose(player, choices, {
+      title: 'Packaging Artist: Bake bread instead of minor improvement?',
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] === 'Bake bread instead') {
+      game.actions.bakeBread(player)
+      return true // signal that we replaced the action
+    }
+    return false
   },
 }

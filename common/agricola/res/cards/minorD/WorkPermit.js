@@ -12,7 +12,18 @@ module.exports = {
     const buildingResources = player.wood + player.clay + player.reed + player.stone
     const targetRound = game.state.round + buildingResources
     if (targetRound <= 14 && player.hasPersonInSupply()) {
-      game.actions.scheduleWorkPermitPerson(player, this, targetRound)
+      if (!game.state.workPermitWorkers) {
+        game.state.workPermitWorkers = []
+      }
+      game.state.workPermitWorkers.push({
+        round: targetRound,
+        playerName: player.name,
+        cardId: this.id,
+      })
+      game.log.add({
+        template: '{player} schedules a worker for round {round} (Work Permit)',
+        args: { player, round: targetRound },
+      })
     }
   },
 }

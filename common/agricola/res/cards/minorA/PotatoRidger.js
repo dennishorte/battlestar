@@ -17,7 +17,25 @@ module.exports = {
       })
     }
     else if (player.vegetables >= 3) {
-      game.actions.offerPotatoRidger(player, this)
+      const card = this
+      const choices = [
+        'Convert 1 vegetable to 6 food',
+        'Skip',
+      ]
+      const selection = game.actions.choose(player, choices, {
+        title: `${card.name}: Convert vegetable to food?`,
+        min: 1,
+        max: 1,
+      })
+
+      if (selection[0] !== 'Skip') {
+        player.payCost({ vegetables: 1 })
+        player.addResource('food', 6)
+        game.log.add({
+          template: '{player} converts 1 vegetable to 6 food using {card}',
+          args: { player, card },
+        })
+      }
     }
   },
 }

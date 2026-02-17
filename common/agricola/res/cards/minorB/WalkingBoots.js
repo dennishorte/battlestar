@@ -14,6 +14,10 @@ module.exports = {
       template: '{player} gets 2 food from Walking Boots',
       args: { player },
     })
-    game.actions.walkingBootsEffect(player, this)
+    player.availableWorkers += 1
+    game.log.add({
+      template: '{player} places a temporary worker from Walking Boots',
+      args: { player },
+    })
   },
 }

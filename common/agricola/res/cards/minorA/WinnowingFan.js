@@ -10,7 +10,31 @@ module.exports = {
   text: "After the field phase of each harvest, you can use a baking improvement but only to turn exactly 1 grain into food. (This is not considered a \"Bake Bread\" action.)",
   onFieldPhaseEnd(game, player) {
     if (player.grain >= 1 && player.hasBakingAbility()) {
-      game.actions.offerWinnowingFan(player, this)
+      const card = this
+      const imp = player.getBakingImprovement()
+      if (!imp) {
+        return
+      }
+
+      const foodAmount = (imp.abilities && imp.abilities.bakingRate) || 2
+      const choices = [
+        `Bake 1 grain for ${foodAmount} food using ${imp.name}`,
+        'Skip',
+      ]
+      const selection = game.actions.choose(player, choices, {
+        title: `${card.name}: Bake 1 grain?`,
+        min: 1,
+        max: 1,
+      })
+
+      if (selection[0] !== 'Skip') {
+        player.payCost({ grain: 1 })
+        player.addResource('food', foodAmount)
+        game.log.add({
+          template: '{player} bakes 1 grain for {food} food using {card}',
+          args: { player, food: foodAmount, card },
+        })
+      }
     }
   },
 }

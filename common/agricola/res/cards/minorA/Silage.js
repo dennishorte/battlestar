@@ -13,7 +13,52 @@ module.exports = {
     if (!game.isHarvestRound(round)) {
       const canPayGrain = player.grain >= 1 || player.getGrainFieldCount() > 0
       if (canPayGrain) {
-        game.actions.offerSilage(player, this)
+        const card = this
+        const animalTypes = ['sheep', 'boar', 'cattle']
+        const hasBreedable = animalTypes.some(type =>
+          player.getTotalAnimals(type) >= 2 && player.canPlaceAnimals(type, 1)
+        )
+        if (!hasBreedable) {
+          return
+        }
+
+        const selection = game.actions.choose(player, () => {
+          const choices = []
+          for (const type of animalTypes) {
+            if (player.getTotalAnimals(type) >= 2 && player.canPlaceAnimals(type, 1)) {
+              choices.push(`Pay 1 grain to breed ${type}`)
+            }
+          }
+          choices.push('Skip')
+          return choices
+        }, {
+          title: `${card.name}: Pay grain to breed animals?`,
+          min: 1,
+          max: 1,
+        })
+
+        if (selection[0] !== 'Skip') {
+          const match = selection[0].match(/breed (\w+)/)
+          if (match) {
+            const animalType = match[1]
+            if (player.grain >= 1) {
+              player.payCost({ grain: 1 })
+            }
+            else {
+              const field = player.getFieldSpaces().find(f => f.crop === 'grain' && f.cropCount > 0)
+              const space = player.getSpace(field.row, field.col)
+              space.cropCount -= 1
+              if (space.cropCount === 0) {
+                space.crop = null
+              }
+            }
+            player.addAnimals(animalType, 1)
+            game.log.add({
+              template: '{player} pays 1 grain to breed {animal} using {card}',
+              args: { player, animal: animalType, card },
+            })
+          }
+        }
       }
     }
   },

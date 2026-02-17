@@ -8,6 +8,8 @@ module.exports = {
   category: "Farm Planner",
   text: "You can immediately take a \"Build Fences\" action, during which you do not have to pay wood for fences that you build next to field tiles.",
   onPlay(game, player) {
-    game.actions.fieldFencesAction(player, this)
+    player._fieldFencesActive = true
+    game.actions.buildFences(player)
+    delete player._fieldFencesActive
   },
 }

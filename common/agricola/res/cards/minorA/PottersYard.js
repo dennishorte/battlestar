@@ -26,7 +26,25 @@ module.exports = {
         template: '{player} gets 1 clay from Potter\'s Yard',
         args: { player },
       })
-      game.actions.offerClayForFood(player, this)
+      const card = this
+      const choices = [
+        'Exchange 1 clay for 2 food',
+        'Skip',
+      ]
+      const selection = game.actions.choose(player, choices, {
+        title: `${card.name}: Exchange clay for food?`,
+        min: 1,
+        max: 1,
+      })
+
+      if (selection[0] !== 'Skip') {
+        player.payCost({ clay: 1 })
+        player.addResource('food', 2)
+        game.log.add({
+          template: '{player} exchanges 1 clay for 2 food using {card}',
+          args: { player, card },
+        })
+      }
     }
   },
 }

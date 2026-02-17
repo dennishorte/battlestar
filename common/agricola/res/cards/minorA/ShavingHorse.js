@@ -17,7 +17,25 @@ module.exports = {
       })
     }
     else if (player.wood >= 5) {
-      game.actions.offerShavingHorse(player, this)
+      const card = this
+      const choices = [
+        'Exchange 1 wood for 3 food',
+        'Skip',
+      ]
+      const selection = game.actions.choose(player, choices, {
+        title: `${card.name}: Exchange wood for food?`,
+        min: 1,
+        max: 1,
+      })
+
+      if (selection[0] !== 'Skip') {
+        player.payCost({ wood: 1 })
+        player.addResource('food', 3)
+        game.log.add({
+          template: '{player} exchanges 1 wood for 3 food using {card}',
+          args: { player, card },
+        })
+      }
     }
   },
 }
