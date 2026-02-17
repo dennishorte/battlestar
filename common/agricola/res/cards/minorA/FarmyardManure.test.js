@@ -20,17 +20,17 @@ describe('Farmyard Manure', () => {
     t.choose(game, 'Build Stable')
     t.action(game, 'build-stable', { row: 1, col: 1 })
 
-    // Check scheduledFood immediately (still in round 2, before delivery)
+    // Check scheduledFood immediately (still in round 1, before delivery)
+    expect(game.state.scheduledFood.dennis[2]).toBe(1)
     expect(game.state.scheduledFood.dennis[3]).toBe(1)
     expect(game.state.scheduledFood.dennis[4]).toBe(1)
-    expect(game.state.scheduledFood.dennis[5]).toBe(1)
 
     // Remaining workers
     t.choose(game, 'Forest')       // micah
     t.choose(game, 'Day Laborer')  // dennis: +2 food
     t.choose(game, 'Clay Pit')     // micah
 
-    // Now in round 3: scheduled food for round 3 was delivered (+1 food)
+    // Now in round 2: scheduled food for round 2 was delivered (+1 food)
     t.testBoard(game, {
       dennis: {
         food: 3, // 2 (DL) + 1 (scheduled food for round 3)

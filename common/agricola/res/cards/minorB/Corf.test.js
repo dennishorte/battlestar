@@ -10,9 +10,9 @@ describe('Corf', () => {
         minorImprovements: ['corf-b079'],
       },
     })
-    // Set stone accumulation to 4 so after replenish (+1) it's 5 (>= 3)
-    game.testSetBreakpoint('initialization-complete', (game) => {
-      game.state.actionSpaces['take-stone-1'].accumulated = 4
+    // Set stone accumulation to 5 (after replenish) so Dennis takes 5 (>= 3)
+    game.testSetBreakpoint('replenish-complete', (game) => {
+      game.state.actionSpaces['take-stone-1'].accumulated = 5
     })
     game.run()
 
@@ -43,9 +43,9 @@ describe('Corf', () => {
         minorImprovements: ['corf-b079'],
       },
     })
-    // Set stone accumulation to 1 so after replenish (+1) it's 2 (< 3)
-    game.testSetBreakpoint('initialization-complete', (game) => {
-      game.state.actionSpaces['take-stone-1'].accumulated = 1
+    // Set stone accumulation to 2 (after replenish) so Dennis takes 2 (< 3)
+    game.testSetBreakpoint('replenish-complete', (game) => {
+      game.state.actionSpaces['take-stone-1'].accumulated = 2
     })
     game.run()
 

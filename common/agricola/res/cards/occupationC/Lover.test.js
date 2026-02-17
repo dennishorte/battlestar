@@ -23,13 +23,13 @@ describe('Lover', () => {
     })
     game.run()
 
-    // Round 12: rounds left = 14 - 12 = 2
+    // Round 11: rounds left = 14 - 11 = 3
     t.choose(game, 'Lessons A')
     t.choose(game, 'Lover')
 
     t.testBoard(game, {
       dennis: {
-        food: 8,  // 10 - 2 rounds left
+        food: 7,  // 10 - 3 rounds left
         familyMembers: 3,
         occupations: ['lover-c127'],
       },

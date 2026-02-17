@@ -17,11 +17,11 @@ describe('Stable Tree', () => {
     t.choose(game, 'Build Stable')
     t.action(game, 'build-stable', { row: 1, col: 1 })
 
-    // Verify scheduled wood on rounds 3, 4, 5 (current round is 2)
+    // Verify scheduled wood on rounds 2, 3, 4 (current round is 1)
     // Check mid-round before collection can happen
+    expect(game.state.scheduledWood.dennis[2]).toBe(1)
     expect(game.state.scheduledWood.dennis[3]).toBe(1)
     expect(game.state.scheduledWood.dennis[4]).toBe(1)
-    expect(game.state.scheduledWood.dennis[5]).toBe(1)
 
     // Remaining workers
     t.choose(game, 'Forest')       // micah
@@ -32,7 +32,7 @@ describe('Stable Tree', () => {
       dennis: {
         wood: 1, // round 3 scheduled wood collected
         food: 2, // Day Laborer
-        scheduled: { wood: { 4: 1, 5: 1 } },
+        scheduled: { wood: { 3: 1, 4: 1 } },
         minorImprovements: ['stable-tree-a074'],
         farmyard: {
           stables: [{ row: 1, col: 1 }],

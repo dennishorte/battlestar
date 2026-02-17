@@ -12,7 +12,7 @@ describe('Plowman', () => {
     game.run()
 
     // Play Plowman via Lessons A (first occupation is free)
-    // Default round is 2, so events at 6, 9, 12
+    // Default round is 1, so events at 5, 8, 11
     t.choose(game, 'Lessons A')
     t.choose(game, 'Plowman')
 
@@ -20,7 +20,7 @@ describe('Plowman', () => {
       currentPlayer: 'micah',
       dennis: {
         occupations: ['plowman-d091'],
-        scheduled: { plowman: [6, 9, 12] },
+        scheduled: { plowman: [5, 8, 11] },
       },
     })
   })

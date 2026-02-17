@@ -9,7 +9,7 @@ describe('Little Stick Knitter', () => {
   test('Sheep Market in round 5+ allows Family Growth with Room', () => {
     const game = t.fixture()
     t.setBoard(game, {
-      actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing', 'Major Improvement'],
+      actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing', 'Major Improvement', 'House Redevelopment'],
       firstPlayer: 'dennis',
       dennis: {
         occupations: ['little-stick-knitter-b092'],
@@ -20,7 +20,7 @@ describe('Little Stick Knitter', () => {
     })
     game.run()
 
-    // Round 5 (4 round cards + 1): take Sheep Market
+    // Round 5 (5 round cards): take Sheep Market
     t.choose(game, 'Sheep Market')
 
     t.testBoard(game, {
@@ -50,7 +50,7 @@ describe('Little Stick Knitter', () => {
     })
     game.run()
 
-    // Round 2 (only 1 round card): take Sheep Market
+    // Round 1 (only 1 round card): take Sheep Market
     t.choose(game, 'Sheep Market')
 
     t.testBoard(game, {
@@ -69,7 +69,7 @@ describe('Little Stick Knitter', () => {
   test('Sheep Market in round 5+ without extra room does not offer family growth', () => {
     const game = t.fixture()
     t.setBoard(game, {
-      actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing', 'Major Improvement'],
+      actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing', 'Major Improvement', 'House Redevelopment'],
       firstPlayer: 'dennis',
       dennis: {
         occupations: ['little-stick-knitter-b092'],

@@ -20,11 +20,11 @@ describe('Lumberjack', () => {
     t.choose(game, 'Lessons A')
     t.choose(game, 'Lumberjack')
 
-    // Round 2 when playing; fences = 4 → schedule wood on rounds 3, 4, 5, 6
+    // Round 1 when playing; fences = 4 → schedule wood on rounds 2, 3, 4, 5
     t.testBoard(game, {
       dennis: {
         occupations: ['lumberjack-b119'],
-        scheduled: { wood: { 3: 1, 4: 1, 5: 1, 6: 1 } },
+        scheduled: { wood: { 2: 1, 3: 1, 4: 1, 5: 1 } },
         farmyard: {
           pastures: [{ spaces: [{ row: 2, col: 0 }] }],
         },

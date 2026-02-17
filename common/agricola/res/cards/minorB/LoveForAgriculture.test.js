@@ -104,8 +104,8 @@ describe('Love for Agriculture', () => {
     const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
-      // 3 stage-1 round cards → orderedCards.length = 3, mainLoop plays round 4 (first harvest)
-      actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing'],
+      // round 4 is first harvest
+      round: 4,
       dennis: {
         minorImprovements: ['love-for-agriculture-b072'],
         grain: 1,

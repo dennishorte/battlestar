@@ -8,11 +8,11 @@ describe('Sweep', () => {
   // Card is 1+ players.
 
   test('using action space from round before current round gives 2 clay', () => {
-    // actionSpaces: GU = round 1, SM = round 2. Game plays round 3.
+    // actionSpaces: GU = round 1, SM = round 2, Fencing = round 3. Game plays round 3.
     // Left of round 3 = round 2 = Sheep Market.
     const game = t.fixture({ numPlayers: 2 })
     t.setBoard(game, {
-      actionSpaces: ['Grain Utilization', 'Sheep Market'],
+      actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing'],
       firstPlayer: 'dennis',
       dennis: {
         occupations: ['sweep-b120'],
@@ -34,12 +34,12 @@ describe('Sweep', () => {
   })
 
   test('using action from current round does not trigger', () => {
-    // actionSpaces: GU = round 1, SM = round 2, Fencing = round 3.
+    // actionSpaces: GU = round 1, SM = round 2, Fencing = round 3, MI = round 4.
     // Game plays round 4. Left of round 4 = round 3 = Fencing.
     // Using GU (round 1) should NOT trigger.
     const game = t.fixture({ numPlayers: 2 })
     t.setBoard(game, {
-      actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing'],
+      actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing', 'Major Improvement'],
       firstPlayer: 'dennis',
       dennis: {
         occupations: ['sweep-b120'],
@@ -60,11 +60,11 @@ describe('Sweep', () => {
   })
 
   test('using action from 2 rounds before does not trigger', () => {
-    // actionSpaces: GU = round 1, SM = round 2. Game plays round 3.
+    // actionSpaces: GU = round 1, SM = round 2, Fencing = round 3. Game plays round 3.
     // Left of round 3 = round 2. Using round 1 (GU) should NOT trigger.
     const game = t.fixture({ numPlayers: 2 })
     t.setBoard(game, {
-      actionSpaces: ['Grain Utilization', 'Sheep Market'],
+      actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing'],
       firstPlayer: 'dennis',
       dennis: {
         occupations: ['sweep-b120'],
@@ -86,7 +86,7 @@ describe('Sweep', () => {
   test('does not trigger on base actions', () => {
     const game = t.fixture({ numPlayers: 2 })
     t.setBoard(game, {
-      actionSpaces: ['Grain Utilization', 'Sheep Market'],
+      actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing'],
       firstPlayer: 'dennis',
       dennis: {
         occupations: ['sweep-b120'],

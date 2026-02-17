@@ -21,7 +21,7 @@ describe('Claw Knife', () => {
       dennis: {
         minorImprovements: ['claw-knife-a046'],
         animals: { sheep: 1 },
-        scheduled: { food: { 3: 1, 4: 1 } },
+        scheduled: { food: { 2: 1, 3: 1 } },
         farmyard: {
           pastures: [{ spaces: [{ row: 0, col: 3 }, { row: 0, col: 4 }], sheep: 1 }],
         },

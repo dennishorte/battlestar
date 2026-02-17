@@ -24,7 +24,7 @@ describe('Trellises', () => {
         food: 1,
         hand: [],
         minorImprovements: ['trellises-a047'],
-        scheduled: { food: { 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1 } },
+        scheduled: { food: { 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1 } },
         farmyard: {
           pastures: [{ spaces: [{ row: 0, col: 3 }, { row: 0, col: 4 }] }],
         },

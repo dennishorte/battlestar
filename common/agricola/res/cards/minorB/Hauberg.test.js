@@ -17,14 +17,14 @@ describe('Hauberg', () => {
     t.choose(game, 'Minor Improvement.Hauberg')
     t.choose(game, 'Start with wood')
 
-    // Default round is 2 with actionSpaces; schedules for rounds 3, 4, 5, 6
+    // actionSpaces plays round 1; schedules for rounds 2, 3, 4, 5
     t.testBoard(game, {
       dennis: {
         occupations: ['test-occupation-1', 'test-occupation-2', 'test-occupation-3'],
         minorImprovements: ['hauberg-b041'],
         scheduled: {
-          wood: { 3: 2, 5: 2 },
-          boar: { 4: 1, 6: 1 },
+          wood: { 2: 2, 4: 2 },
+          boar: { 3: 1, 5: 1 },
         },
       },
     })
@@ -51,8 +51,8 @@ describe('Hauberg', () => {
         occupations: ['test-occupation-1', 'test-occupation-2', 'test-occupation-3'],
         minorImprovements: ['hauberg-b041'],
         scheduled: {
-          wood: { 4: 2, 6: 2 },
-          boar: { 3: 1, 5: 1 },
+          wood: { 3: 2, 5: 2 },
+          boar: { 2: 1, 4: 1 },
         },
       },
     })
@@ -66,11 +66,7 @@ describe('Hauberg', () => {
         hand: ['hauberg-b041'],
         occupations: ['test-occupation-1', 'test-occupation-2', 'test-occupation-3'],
       },
-      actionSpaces: ['Major Improvement'],
-    })
-    // Force round to 12 so scheduling starts from round 13
-    game.testSetBreakpoint('initialization-complete', (game) => {
-      game.state.round = 12
+      round: 13,
     })
     game.run()
 
@@ -78,7 +74,7 @@ describe('Hauberg', () => {
     t.choose(game, 'Minor Improvement.Hauberg')
     t.choose(game, 'Start with wood')
 
-    // Round 13: schedules for rounds 14 only (15 and 16 exceed game end)
+    // Round 13: schedules for round 14 only (15 and 16 exceed game end)
     t.testBoard(game, {
       dennis: {
         occupations: ['test-occupation-1', 'test-occupation-2', 'test-occupation-3'],

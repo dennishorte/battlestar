@@ -4,14 +4,14 @@ describe('Dutch Windmill', () => {
   test('gives 3 extra food when baking in the round after a harvest', () => {
     const game = t.fixture()
     t.setBoard(game, {
-      // 4 action spaces → round 4 → game plays round 5 (right after harvest round 4)
+      // round 5 is right after harvest round 4
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['dutch-windmill-a063'],
         majorImprovements: ['fireplace-2'],
         grain: 1,
       },
-      actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing', 'Major Improvement'],
+      round: 5,
     })
     game.run()
 

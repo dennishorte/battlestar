@@ -22,7 +22,7 @@ describe('Pond Hut', () => {
         hand: [],
         occupations: ['test-occupation-1', 'test-occupation-2'],
         minorImprovements: ['pond-hut-a044'],
-        scheduled: { food: { 3: 1, 4: 1, 5: 1 } },
+        scheduled: { food: { 2: 1, 3: 1, 4: 1 } },
       },
     })
   })

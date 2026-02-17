@@ -17,7 +17,7 @@ describe('Cattle Whisperer', () => {
     })
     game.run()
 
-    // Round 2: play Cattle Whisperer (schedules cattle at round 7 and 10)
+    // Round 1: play Cattle Whisperer (schedules cattle at round 6 and 9)
     t.choose(game, 'Lessons A')
     t.choose(game, 'Cattle Whisperer')
 
@@ -26,7 +26,7 @@ describe('Cattle Whisperer', () => {
         food: 10,
         occupations: ['cattle-whisperer-c166'],
         scheduled: {
-          cattle: { 7: 1, 10: 1 },
+          cattle: { 6: 1, 9: 1 },
         },
       },
     })

@@ -14,13 +14,14 @@ describe('Outrider', () => {
     })
     game.run()
 
-    // Round 2: the most recently revealed round card is the one just revealed.
-    // Take that action — should get 1 grain from Outrider
+    // Round 1: the most recently revealed round card is Grain Utilization (round 1).
+    // Taking that action triggers Outrider — gets 1 grain
     t.choose(game, 'Grain Utilization')
 
     t.testBoard(game, {
       dennis: {
         food: 10,
+        grain: 1,
         occupations: ['outrider-c160'],
       },
     })

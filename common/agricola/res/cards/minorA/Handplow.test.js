@@ -20,7 +20,7 @@ describe('Handplow', () => {
         food: 1,
         hand: [],
         minorImprovements: ['handplow-a019'],
-        scheduled: { plows: [7] },
+        scheduled: { plows: [6] },
       },
     })
   })

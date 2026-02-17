@@ -11,18 +11,18 @@ describe('Bunny Breeder', () => {
     })
     game.run()
 
-    // Play Bunny Breeder in round 2
+    // Play Bunny Breeder in round 1
     t.choose(game, 'Lessons A')
     t.choose(game, 'Bunny Breeder')
-    // Select round 5 → food = 5 - 2 = 3
-    t.choose(game, 'Round 5 (3 food)')
+    // Select round 5 → food = 5 - 1 = 4
+    t.choose(game, 'Round 5 (4 food)')
 
     t.testBoard(game, {
       currentPlayer: 'micah',
       dennis: {
         occupations: ['bunny-breeder-e139'],
         scheduled: {
-          food: { 5: 3 },
+          food: { 5: 4 },
         },
       },
     })
@@ -38,17 +38,17 @@ describe('Bunny Breeder', () => {
     })
     game.run()
 
-    // Play in round 2, select round 10 → food = 10 - 2 = 8
+    // Play in round 1, select round 10 → food = 10 - 1 = 9
     t.choose(game, 'Lessons A')
     t.choose(game, 'Bunny Breeder')
-    t.choose(game, 'Round 10 (8 food)')
+    t.choose(game, 'Round 10 (9 food)')
 
     t.testBoard(game, {
       currentPlayer: 'micah',
       dennis: {
         occupations: ['bunny-breeder-e139'],
         scheduled: {
-          food: { 10: 8 },
+          food: { 10: 9 },
         },
       },
     })
@@ -64,19 +64,19 @@ describe('Bunny Breeder', () => {
     })
     game.run()
 
-    // Play in round 2, select round 3 → food = 3 - 2 = 1
+    // Play in round 1, select round 2 → food = 2 - 1 = 1
     t.choose(game, 'Lessons A')
     t.choose(game, 'Bunny Breeder')
-    t.choose(game, 'Round 3 (1 food)')
+    t.choose(game, 'Round 2 (1 food)')
 
-    // Finish round 2
+    // Finish round 1
     t.choose(game, 'Forest')       // micah
     t.choose(game, 'Day Laborer')  // dennis
     t.choose(game, 'Clay Pit')     // micah
 
-    // Round 3 starts — scheduled food delivered
+    // Round 2 starts — scheduled food delivered
     t.testBoard(game, {
-      round: 3,
+      round: 2,
       dennis: {
         food: 3, // 2 (Day Laborer) + 1 (scheduled Bunny Breeder)
         occupations: ['bunny-breeder-e139'],

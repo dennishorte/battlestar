@@ -19,8 +19,8 @@ describe('Telegram', () => {
     t.choose(game, 'Minor Improvement.Telegram')
 
     // 15 fences - 6 used for pasture = 9 in supply
-    // targetRound = 2 + 9 = 11
-    expect(game.state.telegramRounds.dennis).toBe(11)
+    // targetRound = 1 + 9 = 10
+    expect(game.state.telegramRounds.dennis).toBe(10)
 
     t.testBoard(game, {
       dennis: {

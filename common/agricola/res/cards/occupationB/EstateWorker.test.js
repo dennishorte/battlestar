@@ -18,15 +18,15 @@ describe('Estate Worker', () => {
     t.choose(game, 'Lessons A')
     t.choose(game, 'Estate Worker')
 
-    // Round 2 when playing; schedules on rounds 3, 4, 5, 6
+    // Round 1 when playing; schedules on rounds 2, 3, 4, 5
     t.testBoard(game, {
       dennis: {
         occupations: ['estate-worker-b125'],
         scheduled: {
-          wood: { 3: 1 },
-          clay: { 4: 1 },
-          reed: { 5: 1 },
-          stone: { 6: 1 },
+          wood: { 2: 1 },
+          clay: { 3: 1 },
+          reed: { 4: 1 },
+          stone: { 5: 1 },
         },
       },
     })

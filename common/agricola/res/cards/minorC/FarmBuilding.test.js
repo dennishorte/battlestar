@@ -13,7 +13,7 @@ describe('FarmBuilding', () => {
     })
     game.run()
 
-    // Dennis buys Fireplace (2 clay) → Farm Building triggers: schedule 1 food on rounds 3, 4, 5
+    // Dennis buys Fireplace (2 clay) → Farm Building triggers: schedule 1 food on rounds 2, 3, 4
     t.choose(game, 'Major Improvement')
     t.choose(game, 'Major Improvement.Fireplace (fireplace-2)')
 
@@ -21,7 +21,7 @@ describe('FarmBuilding', () => {
       dennis: {
         minorImprovements: ['farm-building-c043'],
         majorImprovements: ['fireplace-2'],
-        scheduled: { food: { 3: 1, 4: 1, 5: 1 } },
+        scheduled: { food: { 2: 1, 3: 1, 4: 1 } },
       },
     })
   })

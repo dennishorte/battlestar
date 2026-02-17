@@ -21,7 +21,7 @@ describe('Clay Hut Builder', () => {
       dennis: {
         occupations: ['clay-hut-builder-a120'],
         roomType: 'clay',
-        scheduled: { clay: { 7: 2, 8: 2, 9: 2, 10: 2, 11: 2 } },
+        scheduled: { clay: { 6: 2, 7: 2, 8: 2, 9: 2, 10: 2 } },
       },
     })
   })

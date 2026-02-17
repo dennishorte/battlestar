@@ -16,12 +16,12 @@ describe('Confidant', () => {
     t.choose(game, 'Confidant')
     t.choose(game, t.currentChoices(game)[0])  // e.g. '2 spaces'
 
-    // Round 2 when playing; next 2 rounds are 3, 4
+    // Round 1 when playing; next 2 rounds are 2, 3
     t.testBoard(game, {
       dennis: {
         occupations: ['confidant-b093'],
         food: 2,
-        scheduled: { food: { 3: 1, 4: 1 }, confidantSowFences: [3, 4] },
+        scheduled: { food: { 2: 1, 3: 1 }, confidantSowFences: [2, 3] },
       },
     })
   })

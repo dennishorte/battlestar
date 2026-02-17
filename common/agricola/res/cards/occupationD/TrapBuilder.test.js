@@ -19,8 +19,8 @@ describe('Trap Builder', () => {
         food: 2,
         occupations: ['trap-builder-d147'],
         scheduled: {
-          food: { 3: 1, 4: 1 },
-          boar: { 5: 1 },
+          food: { 2: 1, 3: 1 },
+          boar: { 4: 1 },
         },
       },
     })

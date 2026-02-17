@@ -14,8 +14,8 @@ describe('PetGrower', () => {
       micah: { food: 10 },
       actionSpaces: ['Sheep Market'],
     })
-    game.testSetBreakpoint('initialization-complete', (game) => {
-      game.state.actionSpaces['take-sheep'].accumulated = 2
+    game.testSetBreakpoint('replenish-complete', (game) => {
+      game.state.actionSpaces['take-sheep'].accumulated = 3
     })
     game.run()
 
@@ -52,8 +52,8 @@ describe('PetGrower', () => {
       micah: { food: 10 },
       actionSpaces: ['Sheep Market'],
     })
-    game.testSetBreakpoint('initialization-complete', (game) => {
-      game.state.actionSpaces['take-sheep'].accumulated = 2
+    game.testSetBreakpoint('replenish-complete', (game) => {
+      game.state.actionSpaces['take-sheep'].accumulated = 3
     })
     game.run()
 

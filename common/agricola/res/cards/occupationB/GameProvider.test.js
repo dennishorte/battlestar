@@ -8,7 +8,7 @@ describe('Game Provider', () => {
   test('discard 1 grain from 1 field for 1 wild boar at harvest', () => {
     const game = t.fixture({ cardSets: ['occupationB', 'test'], numPlayers: 4 })
     t.setBoard(game, {
-      actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing'],
+      actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing', 'Major Improvement'],
       firstPlayer: 'dennis',
       dennis: {
         occupations: ['game-provider-b165'],
@@ -57,7 +57,7 @@ describe('Game Provider', () => {
   test('skip exchange when offered', () => {
     const game = t.fixture({ cardSets: ['occupationB', 'test'], numPlayers: 4 })
     t.setBoard(game, {
-      actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing'],
+      actionSpaces: ['Grain Utilization', 'Sheep Market', 'Fencing', 'Major Improvement'],
       firstPlayer: 'dennis',
       dennis: {
         occupations: ['game-provider-b165'],

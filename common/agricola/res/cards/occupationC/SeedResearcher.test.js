@@ -5,14 +5,14 @@ describe('Seed Researcher', () => {
   // 'Vegetable Seeds' action spaces, you get 2 food and can play 1 occupation."
 
   test('gives 2 food when both Grain Seeds and Vegetable Seeds are occupied', () => {
-    // actionSpaces with 8 round cards → round 9 (a harvest round)
+    // actionSpaces with 9 round cards → round 9 (a harvest round)
     // food: 0 + 2(DL) + 2(SR) = 4 → harvest feeds 2 family = 4 → 0 food, no begging
     const game = t.fixture({ cardSets: ['occupationC', 'test'] })
     t.setBoard(game, {
       actionSpaces: [
         'Grain Utilization', 'Sheep Market', 'Fencing', 'Major Improvement',
         'Basic Wish for Children', 'Western Quarry', 'House Redevelopment',
-        'Vegetable Seeds',
+        'Vegetable Seeds', 'Pig Market',
       ],
       firstPlayer: 'dennis',
       dennis: {

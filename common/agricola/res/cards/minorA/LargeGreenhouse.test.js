@@ -22,7 +22,7 @@ describe('Large Greenhouse', () => {
         hand: [],
         occupations: ['test-occupation-1', 'test-occupation-2'],
         minorImprovements: ['large-greenhouse-a069'],
-        scheduled: { vegetables: { 6: 1, 9: 1, 11: 1 } },
+        scheduled: { vegetables: { 5: 1, 8: 1, 10: 1 } },
       },
     })
   })

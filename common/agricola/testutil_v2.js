@@ -332,15 +332,24 @@ TestUtil.setBoard = function(game, state) {
       const remaining = game.state.roundCardDeck.filter(c => !placedIds.has(c.id))
       game.state.roundCardDeck = [...orderedCards, ...remaining]
 
-      for (const action of orderedCards) {
-        if (!game.state.activeActions.includes(action.id)) {
-          game.addActionSpace(action)
-        }
+      if (orderedCards.length === 0) {
+        // All actionSpaces entries were starting actions (no stage) — use default
+        game.state.round = 0
+        game.state.stage = 1
+        targetRound = 1
       }
+      else {
+        // Pre-reveal all but the last card; mainLoop will reveal the last one
+        for (let i = 0; i < orderedCards.length - 1; i++) {
+          if (!game.state.activeActions.includes(orderedCards[i].id)) {
+            game.addActionSpace(orderedCards[i])
+          }
+        }
 
-      game.state.round = orderedCards.length
-      game.state.stage = res.constants.roundToStage[orderedCards.length] || 1
-      targetRound = orderedCards.length + 1  // mainLoop increments before playing
+        game.state.round = orderedCards.length - 1
+        game.state.stage = res.constants.roundToStage[orderedCards.length] || 1
+        targetRound = orderedCards.length
+      }
     }
     else if (state.round) {
       // round: N means "play round N" — subtract 1 because mainLoop increments before playing
@@ -358,9 +367,9 @@ TestUtil.setBoard = function(game, state) {
       }
     }
     else {
-      game.state.round = 1
+      game.state.round = 0
       game.state.stage = 1
-      targetRound = 2  // mainLoop increments from 1 to 2
+      targetRound = 1
     }
 
     // Set starting player

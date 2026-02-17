@@ -79,7 +79,7 @@ describe('Pioneer', () => {
     const game = t.fixture({ cardSets: ['occupationE', 'minorImprovementA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
-      actionSpaces: ['Sheep Market', 'Fencing', 'Grain Utilization'],
+      actionSpaces: ['Sheep Market', 'Fencing', 'Grain Utilization', 'Major Improvement'],
       dennis: {
         occupations: ['pioneer-e105'],
         food: 8, // enough for harvest
@@ -88,7 +88,7 @@ describe('Pioneer', () => {
     })
     game.run()
 
-    // Round 4: Major Improvement is revealed (only remaining stage 1 card)
+    // Round 4: Major Improvement is revealed (last specified action space)
     // getMostRecentlyRevealedRound() = 4
     // getActionSpaceRound('major-minor-improvement') = 4
     // Dennis uses Major Improvement — onBeforeAction fires Pioneer

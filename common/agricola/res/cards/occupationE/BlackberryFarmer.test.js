@@ -14,7 +14,7 @@ describe('Blackberry Farmer', () => {
     game.run()
 
     // Build a 1-space pasture at corner (0,4) → 4 fences
-    // Round 2: schedules food for rounds 3,4,5,6 (4 fences → 4 food)
+    // Round 1: schedules food for rounds 2,3,4,5 (4 fences → 4 food)
     t.choose(game, 'Fencing')
     t.action(game, 'build-pasture', { spaces: [{ row: 0, col: 4 }] })
     t.action(game, 'done-building-pastures')
@@ -28,7 +28,7 @@ describe('Blackberry Farmer', () => {
           fences: 4,
         },
         scheduled: {
-          food: { 3: 1, 4: 1, 5: 1, 6: 1 },
+          food: { 2: 1, 3: 1, 4: 1, 5: 1 },
         },
       },
     })

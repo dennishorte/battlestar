@@ -36,9 +36,6 @@ describe('Riverine Shepherd', () => {
         occupations: ['riverine-shepherd-a137'],
       },
     })
-    game.testSetBreakpoint('initialization-complete', (game) => {
-      game.state.actionSpaces['take-sheep'].accumulated = 2
-    })
     game.run()
 
     t.choose(game, 'Reed Bank')  // dennis: 1 reed + 1 sheep from Riverine Shepherd

@@ -14,14 +14,14 @@ describe('SpecialFood', () => {
       micah: { food: 10 },
       actionSpaces: ['Sheep Market'],
     })
-    game.testSetBreakpoint('initialization-complete', (game) => {
+    game.testSetBreakpoint('replenish-complete', (game) => {
       const player = game.players.byName('dennis')
       player.specialFoodActive = true
-      game.state.actionSpaces['take-sheep'].accumulated = 2
+      game.state.actionSpaces['take-sheep'].accumulated = 3
     })
     game.run()
 
-    // Dennis takes Sheep Market: 3 sheep (2+1). Pasture can hold 4 → all accommodated
+    // Dennis takes Sheep Market: 3 sheep. Pasture can hold 4 → all accommodated
     t.choose(game, 'Sheep Market')
 
     t.testBoard(game, {
@@ -47,10 +47,10 @@ describe('SpecialFood', () => {
       micah: { food: 10 },
       actionSpaces: ['Sheep Market'],
     })
-    game.testSetBreakpoint('initialization-complete', (game) => {
+    game.testSetBreakpoint('replenish-complete', (game) => {
       const player = game.players.byName('dennis')
       player.specialFoodActive = true
-      game.state.actionSpaces['take-sheep'].accumulated = 2
+      game.state.actionSpaces['take-sheep'].accumulated = 3
     })
     game.run()
 

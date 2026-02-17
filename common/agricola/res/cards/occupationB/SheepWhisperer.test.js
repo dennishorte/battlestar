@@ -19,12 +19,12 @@ describe('Sheep Whisperer', () => {
     t.choose(game, 'Lessons A')
     t.choose(game, 'Sheep Whisperer')
 
-    // Played in round 2 → schedules sheep at rounds 4, 7, 10, 12
+    // Played in round 1 → schedules sheep at rounds 3, 6, 9, 11
     t.testBoard(game, {
       dennis: {
         occupations: ['sheep-whisperer-b164'],
         scheduled: {
-          sheep: { 4: 1, 7: 1, 10: 1, 12: 1 },
+          sheep: { 3: 1, 6: 1, 9: 1, 11: 1 },
         },
       },
     })
