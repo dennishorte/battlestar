@@ -2,8 +2,8 @@
   <div class="card-oracle-text">
     <ScarrableContent v-bind="scarrable">
       <span
-        v-for="part of scarredParts"
-        :key="part.value"
+        v-for="(part, i) of scarredParts"
+        :key="i"
         :class="{
           'scar-tape': part.scarred,
           'narrow-tape': part.scarred,
