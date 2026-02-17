@@ -654,6 +654,166 @@ describe('Demonweb', () => {
     })
   })
 
+  describe('starting locations', () => {
+    // Starting locations have start: true on the tile definition.
+    // C1-C6 each have one starting location. A9 has one. B tiles and other A tiles have none.
+    // After a player deploys to a starting location, that location is removed from choices.
+
+    const STARTING_LAYOUT = [
+      { tileId: 'B1', rotation: 0 },
+      { tileId: 'C1', rotation: 0 },
+      { tileId: 'C2', rotation: 0 },
+      { tileId: 'C3', rotation: 0 },
+      { tileId: 'A1', rotation: 0 },
+      { tileId: 'C4', rotation: 0 },
+      { tileId: 'C5', rotation: 0 },
+      { tileId: 'C6', rotation: 0 },
+      { tileId: 'B2', rotation: 0 },
+    ]
+
+    // Expected starting locations for C1-C6
+    const EXPECTED_STARTS = [
+      'C1.magma-gate',
+      'C2.c2-menzoberranzan',
+      'C3.xal-veldrin',
+      'C4.caer-sidi',
+      'C5.ath-qua',
+      'C6.zixzolca',
+    ].sort()
+
+    test('starting location choices come from start:true sites', () => {
+      const game = demonwebFixture({ mapLayout: STARTING_LAYOUT })
+      submitRotations(game, {})
+
+      const request = game.waiting
+      expect(request.selectors[0].title).toBe('Choose starting location')
+      const choices = request.selectors[0].choices
+      expect(choices).toEqual(EXPECTED_STARTS)
+    })
+
+    test('each C tile contributes exactly one starting location', () => {
+      const game = demonwebFixture({ mapLayout: STARTING_LAYOUT })
+      submitRotations(game, {})
+
+      const request = game.waiting
+      const choices = request.selectors[0].choices
+
+      // Each choice maps to a different C tile
+      const tileIds = choices.map(c => c.split('.')[0])
+      expect(tileIds).toHaveLength(6)
+      expect(new Set(tileIds).size).toBe(6)
+    })
+
+    test('chosen location is removed from next player choices', () => {
+      const game = demonwebFixture({ mapLayout: STARTING_LAYOUT })
+      submitRotations(game, {})
+
+      const request1 = game.waiting
+      const choices1 = [...request1.selectors[0].choices]
+      const firstChoice = choices1[0]
+      t.choose(game, '*' + firstChoice)
+
+      const request2 = game.waiting
+      const choices2 = request2.selectors[0].choices
+      expect(choices2).not.toContain(firstChoice)
+      expect(choices2).toHaveLength(choices1.length - 1)
+    })
+
+    test('troop is deployed to the chosen starting location', () => {
+      const game = demonwebFixture({ mapLayout: STARTING_LAYOUT })
+      submitRotations(game, {})
+
+      const request1 = game.waiting
+      const chosenName = request1.selectors[0].choices[0]
+      t.choose(game, '*' + chosenName)
+
+      const loc = game.getLocationByName(chosenName)
+      const dennis = game.players.byName('dennis')
+      expect(loc.getTroops(dennis).length).toBe(1)
+    })
+
+    test('A9 tile provides wells-of-darkness as a starting location', () => {
+      const a9Layout = [
+        { tileId: 'B1', rotation: 0 },
+        { tileId: 'C1', rotation: 0 },
+        { tileId: 'C2', rotation: 0 },
+        { tileId: 'C3', rotation: 0 },
+        { tileId: 'A9', rotation: 0 },
+        { tileId: 'C4', rotation: 0 },
+        { tileId: 'C5', rotation: 0 },
+        { tileId: 'C6', rotation: 0 },
+        { tileId: 'B2', rotation: 0 },
+      ]
+      const game = demonwebFixture({ mapLayout: a9Layout })
+      submitRotations(game, {})
+
+      const request = game.waiting
+      const choices = request.selectors[0].choices
+      expect(choices).toContain('A9.wells-of-darkness')
+      expect(choices).toHaveLength(7)  // 6 from C tiles + 1 from A9
+    })
+
+    test('non-A9 A tiles do not provide starting locations', () => {
+      // A1 has no start:true sites
+      const game = demonwebFixture({ mapLayout: STARTING_LAYOUT })
+      submitRotations(game, {})
+
+      const request = game.waiting
+      const choices = request.selectors[0].choices
+      const a1Choices = choices.filter(c => c.startsWith('A1.'))
+      expect(a1Choices).toHaveLength(0)
+    })
+
+    test('B tiles do not provide starting locations', () => {
+      const game = demonwebFixture({ mapLayout: STARTING_LAYOUT })
+      submitRotations(game, {})
+
+      const request = game.waiting
+      const choices = request.selectors[0].choices
+      const bChoices = choices.filter(c => c.startsWith('B1.') || c.startsWith('B2.'))
+      expect(bChoices).toHaveLength(0)
+    })
+
+    test('starting location choices are sorted alphabetically', () => {
+      const game = demonwebFixture({ mapLayout: STARTING_LAYOUT })
+      submitRotations(game, {})
+
+      const request = game.waiting
+      const choices = request.selectors[0].choices
+      const sorted = [...choices].sort()
+      expect(choices).toEqual(sorted)
+    })
+
+    test('both players deploy before main loop begins', () => {
+      const game = demonwebGameFixture({ mapLayout: STARTING_LAYOUT })
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+
+      // Both players should have a troop on a starting location
+      const startLocs = game.getLocationAll().filter(loc => loc.start)
+      const dennisStarts = startLocs.filter(loc => loc.getTroops(dennis).length > 0)
+      const micahStarts = startLocs.filter(loc => loc.getTroops(micah).length > 0)
+
+      expect(dennisStarts).toHaveLength(1)
+      expect(micahStarts).toHaveLength(1)
+      expect(dennisStarts[0]).not.toBe(micahStarts[0])
+    })
+
+    test('players deploy to different starting locations', () => {
+      const game = demonwebGameFixture({ mapLayout: STARTING_LAYOUT })
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+
+      const allLocs = game.getLocationAll()
+      const dennisLoc = allLocs.find(loc => loc.start && loc.getTroops(dennis).length > 0)
+      const micahLoc = allLocs.find(loc => loc.start && loc.getTroops(micah).length > 0)
+
+      expect(dennisLoc).toBeDefined()
+      expect(micahLoc).toBeDefined()
+      expect(dennisLoc.name()).not.toBe(micahLoc.name())
+    })
+  })
+
   describe('A2 triad bonus', () => {
     // A2 (Zelatar) has a triad bonus for sites: fogtown, gallenghast, darkflame
     // Each site: size 3, 2 neutrals
