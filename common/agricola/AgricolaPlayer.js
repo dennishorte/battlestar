@@ -1285,11 +1285,24 @@ class AgricolaPlayer extends BasePlayer {
 
           // Check if all spaces are properly enclosed
           if (this.isPastureFullyEnclosed(enclosedSpaces)) {
+            // Migrate animals from unfenced stables into the new pasture
+            let animalType = null
+            let animalCount = 0
+            for (const coord of enclosedSpaces) {
+              const s = this.getSpace(coord.row, coord.col)
+              if (s.animal && s.hasStable) {
+                animalType = s.animal
+                animalCount += s.animalCount || 1
+                s.animal = null
+                s.animalCount = 0
+              }
+            }
+
             pastures.push({
               id: pastures.length,
               spaces: enclosedSpaces,
-              animalType: null,
-              animalCount: 0,
+              animalType,
+              animalCount,
             })
 
             // Mark spaces as pasture type
