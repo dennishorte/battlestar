@@ -26,7 +26,7 @@ module.exports = {
         args: { actingPlayer, owner: cardOwner },
       })
     }
-    actingPlayer.bonusPoints = (actingPlayer.bonusPoints || 0) + 3
+    actingPlayer.addBonusPoints(3)
     game.log.add({
       template: '{player} gets 3 bonus points from Chapel',
       args: { player: actingPlayer },

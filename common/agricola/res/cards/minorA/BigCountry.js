@@ -11,7 +11,7 @@ module.exports = {
   onPlay(game, player) {
     const roundsLeft = 14 - game.state.round
     if (roundsLeft > 0) {
-      player.bonusPoints = (player.bonusPoints || 0) + roundsLeft
+      player.addBonusPoints(roundsLeft)
       player.addResource('food', roundsLeft * 2)
       game.log.add({
         template: '{player} gets {points} bonus points and {food} food from Big Country',

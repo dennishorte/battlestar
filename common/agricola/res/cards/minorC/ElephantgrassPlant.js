@@ -20,7 +20,7 @@ module.exports = {
       })
       if (selection[0] !== 'Skip') {
         player.payCost({ reed: 1 })
-        player.bonusPoints = (player.bonusPoints || 0) + 1
+        player.addBonusPoints(1)
         game.log.add({
           template: '{player} exchanges 1 reed for 1 bonus point using {card}',
           args: { player, card: this },

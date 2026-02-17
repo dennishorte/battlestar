@@ -27,7 +27,7 @@ module.exports = {
   },
   activate(game, player) {
     player.removeResource('vegetables', 1)
-    player.bonusPoints = (player.bonusPoints || 0) + 1
+    player.addBonusPoints(1)
     game.cardState(this.id).lastUsedRound = game.state.round
     for (let i = 1; i <= 2; i++) {
       game.scheduleResource(player, 'food', game.state.round + i, 1)

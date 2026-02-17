@@ -22,7 +22,7 @@ module.exports = {
     // Discard wood down to 5
     const discarded = player.wood - 5
     if (discarded > 0) {
-      player.wood = 5
+      player.setResource('wood', 5)
       game.log.add({
         template: '{player} discards {count} wood down to 5 (Lumber Virtuoso)',
         args: { player, count: discarded },

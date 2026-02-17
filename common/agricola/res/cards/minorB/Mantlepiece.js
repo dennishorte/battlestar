@@ -14,7 +14,7 @@ module.exports = {
   onPlay(game, player) {
     const roundsLeft = 14 - game.state.round
     if (roundsLeft > 0) {
-      player.bonusPoints = (player.bonusPoints || 0) + roundsLeft
+      player.addBonusPoints(roundsLeft)
       game.log.add({
         template: '{player} gets {points} bonus points from Mantlepiece',
         args: { player, points: roundsLeft },

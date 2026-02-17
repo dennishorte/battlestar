@@ -15,7 +15,7 @@ module.exports = {
         max: 1,
       })
       if (selection[0] !== 'Skip') {
-        player.stone -= 1
+        player.removeResource('stone', 1)
         player.addResource('food', 3)
         game.log.add({
           template: '{player} converts 1 stone to 3 food (Stone Carver)',

@@ -11,7 +11,7 @@ module.exports = {
   disablesPastureWithStable: true,
   onAction(game, player, actionId) {
     if (game.actionGivesReed(actionId)) {
-      player.bonusPoints = (player.bonusPoints || 0) + 1
+      player.addBonusPoints(1)
       game.log.add({
         template: '{player} gets 1 bonus point from Beaver Colony',
         args: { player },

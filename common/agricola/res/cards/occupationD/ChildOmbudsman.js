@@ -21,7 +21,7 @@ module.exports = {
     })
     if (selection[0] !== 'Skip') {
       player.growFamily()
-      player.beggingCards += 2
+      player.addResource('beggingCards', 2)
       game.log.add({
         template: '{player} grows family via Child Ombudsman (2 begging cards)',
         args: { player },

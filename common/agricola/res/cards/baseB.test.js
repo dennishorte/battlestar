@@ -827,7 +827,7 @@ describe('BaseB Cards', () => {
         const game = t.fixture()
         game.run()
         const dennis = t.player(game)
-        dennis.food = 0
+        dennis.setResource('food', 0)
 
         card.onAction(game, dennis, 'take-wood')
         expect(dennis.food).toBe(1)
@@ -844,7 +844,7 @@ describe('BaseB Cards', () => {
         const game = t.fixture()
         game.run()
         const dennis = t.player(game)
-        dennis.food = 0
+        dennis.setResource('food', 0)
 
         // Round 1 card (varies based on shuffle, but should trigger)
         const round1CardId = game.state.roundCardDeck[0].id
@@ -857,7 +857,7 @@ describe('BaseB Cards', () => {
         const game = t.fixture()
         game.run()
         const dennis = t.player(game)
-        dennis.food = 0
+        dennis.setResource('food', 0)
 
         card.onAction(game, dennis, 'take-grain')
         expect(dennis.food).toBe(0)
@@ -906,7 +906,7 @@ describe('BaseB Cards', () => {
         const game = t.fixture()
         game.run()
         const dennis = t.player(game)
-        dennis.food = 0
+        dennis.setResource('food', 0)
         dennis.roomType = 'clay'
 
         card.onRoundStart(game, dennis)
@@ -1048,7 +1048,7 @@ describe('BaseB Cards', () => {
         const game = t.fixture()
         game.run()
         const dennis = t.player(game)
-        dennis.food = 0
+        dennis.setResource('food', 0)
 
         // Set plow-field as occupied
         game.state.actionSpaces['plow-field'] = { occupiedBy: 'micah' }
@@ -1062,7 +1062,7 @@ describe('BaseB Cards', () => {
         const game = t.fixture()
         game.run()
         const dennis = t.player(game)
-        dennis.food = 0
+        dennis.setResource('food', 0)
 
         game.state.actionSpaces['plow-field'] = { occupiedBy: null }
 
@@ -1075,7 +1075,7 @@ describe('BaseB Cards', () => {
         const game = t.fixture()
         game.run()
         const dennis = t.player(game)
-        dennis.food = 0
+        dennis.setResource('food', 0)
 
         game.state.actionSpaces['plow-field'] = { occupiedBy: 'micah' }
 
@@ -1258,7 +1258,7 @@ describe('BaseB Cards', () => {
         const game = t.fixture()
         game.run()
         const dennis = t.player(game)
-        dennis.clay = 0
+        dennis.setResource('clay', 0)
 
         card.onAction(game, dennis, 'take-wood')
         expect(dennis.clay).toBe(0)
@@ -1470,7 +1470,7 @@ describe('BaseB Cards', () => {
         game.run()
         const dennis = t.player(game)
         dennis.roomType = 'wood'
-        dennis.wood = 5
+        dennis.setResource('wood', 5)
 
         const result = card.onRoundStart(game, dennis)
         expect(result).toBeUndefined()
@@ -1482,7 +1482,7 @@ describe('BaseB Cards', () => {
         game.run()
         const dennis = t.player(game)
         dennis.roomType = 'stone'
-        dennis.wood = 0
+        dennis.setResource('wood', 0)
 
         const result = card.onRoundStart(game, dennis)
         expect(result).toBeUndefined()
@@ -2136,7 +2136,7 @@ describe('BaseB Cards', () => {
         const game = t.fixture()
         game.run()
         const dennis = t.player(game)
-        dennis.food = 0
+        dennis.setResource('food', 0)
         // Default 2 rooms, 2 family members
 
         const result = card.onRoundStart(game, dennis)
@@ -2237,7 +2237,7 @@ describe('BaseB Cards', () => {
         const game = t.fixture({ numPlayers: 3 })
         game.run()
         const dennis = t.player(game)
-        dennis.clay = 0
+        dennis.setResource('clay', 0)
 
         card.onAction(game, dennis, 'take-clay')
         expect(dennis.clay).toBe(1)
@@ -2248,7 +2248,7 @@ describe('BaseB Cards', () => {
         const game = t.fixture({ numPlayers: 2 })
         game.run()
         const dennis = t.player(game)
-        dennis.clay = 0
+        dennis.setResource('clay', 0)
 
         card.onAction(game, dennis, 'take-clay')
         expect(dennis.clay).toBe(0)
@@ -2266,7 +2266,7 @@ describe('BaseB Cards', () => {
         const game = t.fixture()
         game.run()
         const dennis = t.player(game)
-        dennis.food = 0
+        dennis.setResource('food', 0)
 
         const result = card.onPlay(game, dennis)
         expect(result).toBeUndefined()
@@ -2393,7 +2393,7 @@ describe('BaseB Cards', () => {
         const game = t.fixture({ numPlayers: 3 })
         game.run()
         const dennis = t.player(game)
-        dennis.wood = 0
+        dennis.setResource('wood', 0)
 
         game.state.round = 13
         card.onPlay(game, dennis)
@@ -2405,7 +2405,7 @@ describe('BaseB Cards', () => {
         const game = t.fixture({ numPlayers: 3 })
         game.run()
         const dennis = t.player(game)
-        dennis.wood = 0
+        dennis.setResource('wood', 0)
 
         game.state.round = 11 // 3 rounds left
         card.onPlay(game, dennis)
@@ -2417,7 +2417,7 @@ describe('BaseB Cards', () => {
         const game = t.fixture({ numPlayers: 3 })
         game.run()
         const dennis = t.player(game)
-        dennis.wood = 0
+        dennis.setResource('wood', 0)
 
         game.state.round = 8 // 6 rounds left
         card.onPlay(game, dennis)
@@ -2481,7 +2481,7 @@ describe('BaseB Cards', () => {
         const game = t.fixture({ numPlayers: 3 })
         game.run()
         const dennis = t.player(game)
-        dennis.vegetables = 0
+        dennis.setResource('vegetables', 0)
 
         card.onAction(game, dennis, 'take-wood')
         expect(dennis.vegetables).toBe(0)
@@ -2630,10 +2630,10 @@ describe('BaseB Cards', () => {
         game.run()
 
         const dennis = t.player(game)
-        dennis.wood = 0
-        dennis.clay = 0
-        dennis.reed = 0
-        dennis.stone = 0
+        dennis.setResource('wood', 0)
+        dennis.setResource('clay', 0)
+        dennis.setResource('reed', 0)
+        dennis.setResource('stone', 0)
 
         // Dennis has 2 rooms (default), everyone else has 3
         card.checkTrigger(game, dennis)
@@ -2651,7 +2651,7 @@ describe('BaseB Cards', () => {
         game.run()
 
         const dennis = t.player(game)
-        dennis.wood = 0
+        dennis.setResource('wood', 0)
         // Both dennis and micah have 2 rooms (default)
 
         card.checkTrigger(game, dennis)
@@ -2671,12 +2671,12 @@ describe('BaseB Cards', () => {
         game.run()
 
         const dennis = t.player(game)
-        dennis.wood = 0
+        dennis.setResource('wood', 0)
 
         card.checkTrigger(game, dennis)
         expect(dennis.wood).toBe(3)
 
-        dennis.wood = 0
+        dennis.setResource('wood', 0)
         card.checkTrigger(game, dennis)
         expect(dennis.wood).toBe(0) // Already triggered
       })

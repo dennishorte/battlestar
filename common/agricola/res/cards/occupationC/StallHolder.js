@@ -27,7 +27,7 @@ module.exports = {
     const food = Math.min(5, unfencedStables + 1)
     player.payCost({ grain: 2 })
     player.addResource('food', food)
-    player.bonusPoints = (player.bonusPoints || 0) + 1
+    player.addBonusPoints(1)
     game.cardState(this.id).lastUsedRound = game.state.round
     game.log.add({
       template: '{player} exchanges 2 grain for 1 bonus point and {food} food via Stall Holder',

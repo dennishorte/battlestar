@@ -21,7 +21,7 @@ module.exports = {
       })
       if (selection[0] !== 'Skip') {
         player.payCost({ food: 1 })
-        player.bonusPoints = (player.bonusPoints || 0) + 1
+        player.addBonusPoints(1)
         game.log.add({
           template: '{player} pays 1 food for 1 bonus point using {card}',
           args: { player, card: this },

@@ -7,7 +7,7 @@ module.exports = {
   players: "1+",
   text: "When you play this card, you must immediately take 1 begging marker. At the start of each harvest, you can play 1 occupation without paying an occupation cost.",
   onPlay(game, player) {
-    player.beggingCards++
+    player.addResource('beggingCards', 1)
     game.log.add({
       template: '{player} takes a begging card from Begging Student',
       args: { player },

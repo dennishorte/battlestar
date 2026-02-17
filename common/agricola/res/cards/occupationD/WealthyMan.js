@@ -10,7 +10,7 @@ module.exports = {
     const harvestNumber = game.getHarvestNumber()
     const grainFields = player.getGrainFieldCount()
     if (grainFields >= harvestNumber) {
-      player.bonusPoints = (player.bonusPoints || 0) + 1
+      player.addBonusPoints(1)
       game.log.add({
         template: '{player} gets 1 bonus point from Wealthy Man',
         args: { player },

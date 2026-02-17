@@ -22,7 +22,7 @@ module.exports = {
     if (selection[0] === 'Skip') {
       return
     }
-    player.food -= 1
+    player.removeResource('food', 1)
     player.availableWorkers -= 1
     if (selection[0].startsWith('Get 3 stone')) {
       player.addResource('stone', 3)

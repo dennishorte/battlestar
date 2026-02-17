@@ -13,7 +13,7 @@ module.exports = {
       const newborns = player.getNewbornsReturningHome()
       if (newborns > 0) {
         const points = newborns * 2
-        player.bonusPoints = (player.bonusPoints || 0) + points
+        player.addBonusPoints(points)
         game.log.add({
           template: '{player} gets {points} bonus points from Swimming Class',
           args: { player, points },

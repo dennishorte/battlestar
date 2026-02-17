@@ -35,9 +35,9 @@ const minorImprovements = [
 
       // Build pasture for free — temporarily give wood so buildPasture validation passes
       const savedWood = player.wood
-      player.wood = 100
+      player.setResource('wood', 100)
       player.buildPasture([{ row, col }])
-      player.wood = savedWood
+      player.setResource('wood', savedWood)
 
       game.log.add({
         template: '{player} fences a space for free using Mini Pasture',
@@ -185,7 +185,7 @@ const minorImprovements = [
     onPlay(game, player) {
       const roundsLeft = 14 - game.state.round
       if (roundsLeft > 0) {
-        player.bonusPoints = (player.bonusPoints || 0) + roundsLeft
+        player.addBonusPoints(roundsLeft)
         game.log.add({
           template: '{player} gets {points} bonus points from Mantlepiece',
           args: { player, points: roundsLeft },

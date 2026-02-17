@@ -24,7 +24,7 @@ module.exports = {
       })
       if (selection[0] !== 'Skip') {
         const cost = player.food >= 3 ? 3 : 2
-        player.food -= cost
+        player.removeResource('food', cost)
         player.addResource('vegetables', 1)
         game.log.add({
           template: '{player} buys 1 vegetable for {cost} food (Food Merchant)',

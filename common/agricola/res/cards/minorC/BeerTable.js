@@ -20,7 +20,7 @@ module.exports = {
       })
       if (selection[0] !== 'Skip') {
         player.payCost({ grain: 1 })
-        player.bonusPoints = (player.bonusPoints || 0) + 2
+        player.addBonusPoints(2)
         for (const other of game.players.all()) {
           if (other.name !== player.name) {
             other.addResource('food', 1)

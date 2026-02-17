@@ -13,7 +13,7 @@ module.exports = {
     }
     // Pay 1 food per unused space (always optimal: avoids -1 penalty for 1 food)
     const spacesPaidFor = Math.min(player.food, unusedSpaces)
-    player.food -= spacesPaidFor
+    player.removeResource('food', spacesPaidFor)
     game.log.add({
       template: '{player} pays {amount} food to Hide Farmer for {spaces} unused spaces',
       args: { player, amount: spacesPaidFor, spaces: spacesPaidFor },

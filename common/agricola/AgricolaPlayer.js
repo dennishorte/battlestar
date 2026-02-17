@@ -138,6 +138,52 @@ class AgricolaPlayer extends BasePlayer {
 
     // Initialize farmyard grid (3 rows x 5 columns)
     this.initializeFarmyard()
+
+    // Set up traps to catch direct writes to resource fields
+    this._setupResourceTraps()
+  }
+
+  _setupResourceTraps() {
+    const trapped = ['food', 'wood', 'clay', 'stone', 'reed', 'grain', 'vegetables', 'beggingCards', 'bonusPoints']
+    for (const field of trapped) {
+      const backingKey = `_${field}`
+      this[backingKey] = this[field]
+      Object.defineProperty(this, field, {
+        get() {
+          return this[backingKey]
+        },
+        set(value) {
+          if (!this._resourceWriteDepth) {
+            throw new Error(`Direct write to player.${field} not allowed. Use addResource/removeResource/setResource.`)
+          }
+          this[backingKey] = value
+        },
+        enumerable: true,
+        configurable: true,
+      })
+    }
+  }
+
+  _withResourceWrite(fn) {
+    this._resourceWriteDepth = (this._resourceWriteDepth || 0) + 1
+    try {
+      return fn()
+    }
+    finally {
+      this._resourceWriteDepth--
+    }
+  }
+
+  setResource(type, value) {
+    this._withResourceWrite(() => {
+      this[type] = value
+    })
+  }
+
+  addBonusPoints(amount) {
+    this._withResourceWrite(() => {
+      this.bonusPoints += amount
+    })
   }
 
   // ---------------------------------------------------------------------------
@@ -260,7 +306,7 @@ class AgricolaPlayer extends BasePlayer {
       return false
     }
 
-    this[cropType] -= 1
+    this.removeResource(cropType, 1)
     field.crop = cropType
 
     // Use custom sowing amount if specified, otherwise use defaults
@@ -873,7 +919,7 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     // Take 1 from supply, place on field with bonus
-    this[cropType] -= 1
+    this.removeResource(cropType, 1)
 
     let totalCrops = cropType === 'grain'
       ? res.constants.sowingGrain
@@ -2648,18 +2694,22 @@ class AgricolaPlayer extends BasePlayer {
   // ---------------------------------------------------------------------------
 
   addResource(type, amount) {
-    if (this[type] !== undefined) {
-      this[type] += amount
-      if (this.resourcesGainedThisRound) {
-        this.resourcesGainedThisRound[type] = (this.resourcesGainedThisRound[type] || 0) + amount
+    this._withResourceWrite(() => {
+      if (this[type] !== undefined) {
+        this[type] += amount
+        if (this.resourcesGainedThisRound) {
+          this.resourcesGainedThisRound[type] = (this.resourcesGainedThisRound[type] || 0) + amount
+        }
       }
-    }
+    })
   }
 
   removeResource(type, amount) {
-    if (this[type] !== undefined) {
-      this[type] = Math.max(0, this[type] - amount)
-    }
+    this._withResourceWrite(() => {
+      if (this[type] !== undefined) {
+        this[type] = Math.max(0, this[type] - amount)
+      }
+    })
   }
 
   hasResource(type, amount) {
@@ -2856,7 +2906,7 @@ class AgricolaPlayer extends BasePlayer {
 
     if (shortage > 0) {
       this.removeResource('food', this.food)
-      this.beggingCards += shortage
+      this.addResource('beggingCards', shortage)
     }
     else {
       this.removeResource('food', required)
@@ -3226,7 +3276,7 @@ class AgricolaPlayer extends BasePlayer {
           const costs = imp.abilities.endGameBonus.spendingCosts
           let resourcesSpent = costs[Math.min(bonusPoints, costs.length) - 1]
           resourcesSpent = Math.min(resourcesSpent, count)
-          this[resource] -= resourcesSpent
+          this.removeResource(resource, resourcesSpent)
           spent[resource] = resourcesSpent
         }
       }

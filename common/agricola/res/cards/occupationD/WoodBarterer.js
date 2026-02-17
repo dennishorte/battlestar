@@ -32,7 +32,7 @@ module.exports = {
       })
     }
     else if (selection[0] === 'Exchange 1 wood for 1 reed') {
-      player.wood -= 1
+      player.removeResource('wood', 1)
       player.addResource('reed', 1)
       game.log.add({
         template: '{player} exchanges 1 wood for 1 reed (Wood Barterer)',
@@ -40,7 +40,7 @@ module.exports = {
       })
     }
     else if (selection[0] === 'Exchange 2 wood for 2 reed') {
-      player.wood -= 2
+      player.removeResource('wood', 2)
       player.addResource('reed', 2)
       game.log.add({
         template: '{player} exchanges 2 wood for 2 reed (Wood Barterer)',

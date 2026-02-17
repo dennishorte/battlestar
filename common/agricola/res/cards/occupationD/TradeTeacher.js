@@ -41,7 +41,7 @@ module.exports = {
       const match = selection[0].match(/Buy 1 (\w+) for (\d+) food/)
       const resource = match[1]
       const cost = parseInt(match[2])
-      player.food -= cost
+      player.removeResource('food', cost)
       if (resource === 'sheep' || resource === 'boar' || resource === 'cattle') {
         player.addAnimals(resource, 1)
       }

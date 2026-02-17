@@ -44,7 +44,7 @@ module.exports = {
         player.removeAnimals(animalType, 1)
         player.payCost({ grain: 1, vegetables: 1 })
         player.addResource('food', 5)
-        player.bonusPoints = (player.bonusPoints || 0) + 2
+        player.addBonusPoints(2)
         game.log.add({
           template: '{player} exchanges 1 {animal}, 1 grain, 1 vegetable for 5 food and 2 BP from Nutrition Expert',
           args: { player, animal: animalType },

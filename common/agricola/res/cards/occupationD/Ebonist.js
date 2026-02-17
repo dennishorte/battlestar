@@ -15,7 +15,7 @@ module.exports = {
         max: 1,
       })
       if (selection[0] !== 'Skip') {
-        player.wood -= 1
+        player.removeResource('wood', 1)
         player.addResource('food', 1)
         player.addResource('grain', 1)
         game.log.add({

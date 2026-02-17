@@ -34,7 +34,7 @@ module.exports = {
     }
 
     // Pay 1 food to the acting player
-    cardOwner.food -= 1
+    cardOwner.removeResource('food', 1)
     actingPlayer.addResource('food', 1)
     game.log.add({
       template: '{player} pays 1 food to {other} (Building Tycoon)',

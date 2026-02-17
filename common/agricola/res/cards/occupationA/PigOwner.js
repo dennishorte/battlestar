@@ -9,7 +9,7 @@ module.exports = {
   checkTrigger(game, player) {
     if (!player.pigOwnerTriggered && player.getTotalAnimals('boar') >= 5) {
       player.pigOwnerTriggered = true
-      player.bonusPoints = (player.bonusPoints || 0) + 3
+      player.addBonusPoints(3)
       game.log.add({
         template: '{player} gets 3 bonus points from Pig Owner',
         args: { player },

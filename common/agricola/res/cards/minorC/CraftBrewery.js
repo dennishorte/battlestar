@@ -38,7 +38,7 @@ module.exports = {
           }
         }
         player.addResource('food', 4)
-        player.bonusPoints = (player.bonusPoints || 0) + 2
+        player.addBonusPoints(2)
         game.log.add({
           template: '{player} exchanges grain for 4 food and 2 bonus points using {card}',
           args: { player, card: this },

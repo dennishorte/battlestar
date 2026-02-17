@@ -20,7 +20,7 @@ module.exports = {
       if (selection[0] !== 'Skip') {
         player.payCost({ grain: 1 })
         player.addResource('food', 2)
-        player.bonusPoints = (player.bonusPoints || 0) + 1
+        player.addBonusPoints(1)
         game.log.add({
           template: '{player} turns 1 grain into 2 food and 1 bonus point using {card}',
           args: { player, card: this },

@@ -12,7 +12,7 @@ module.exports = {
   checkTrigger(game, player) {
     if (!player.sheepKeeperTriggered && player.getTotalAnimals('sheep') >= 7) {
       player.sheepKeeperTriggered = true
-      player.bonusPoints = (player.bonusPoints || 0) + 3
+      player.addBonusPoints(3)
       player.addResource('food', 2)
       game.log.add({
         template: '{player} gets 3 bonus points and 2 food from Sheep Keeper',

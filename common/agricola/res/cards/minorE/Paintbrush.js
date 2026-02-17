@@ -28,7 +28,7 @@ module.exports = {
       }
       else if (selection[0] === 'Pay 1 clay for 1 bonus point') {
         player.payCost({ clay: 1 })
-        player.bonusPoints = (player.bonusPoints || 0) + 1
+        player.addBonusPoints(1)
         game.log.add({
           template: '{player} exchanges 1 clay for 1 bonus point using {card}',
           args: { player, card: this },

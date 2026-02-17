@@ -18,7 +18,7 @@ module.exports = {
         return
       }
       const discarded = player.clay
-      player.clay = 0
+      player.removeResource('clay', player.clay)
       if (selection[0] === '3 food') {
         player.addResource('food', 3)
         game.log.add({
@@ -27,7 +27,7 @@ module.exports = {
         })
       }
       else {
-        player.bonusPoints = (player.bonusPoints || 0) + 1
+        player.addBonusPoints(1)
         game.log.add({
           template: '{player} discards {amount} clay for 1 bonus point (Bellfounder)',
           args: { player, amount: discarded },

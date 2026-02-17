@@ -16,7 +16,7 @@ module.exports = {
     const s = game.cardState(this.id)
     s.useCount = (s.useCount || 0) + 1
     const goodsCount = 5 + s.useCount
-    player.beggingCards = (player.beggingCards || 0) + 1
+    player.addResource('beggingCards', 1)
     game.actions.offerChooseGoods(player, this, goodsCount)
   },
 }

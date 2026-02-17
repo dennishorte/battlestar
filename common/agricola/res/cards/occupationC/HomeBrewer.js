@@ -23,7 +23,7 @@ module.exports = {
       }
       else if (selection[0] === 'Convert 1 grain to 1 bonus point') {
         player.payCost({ grain: 1 })
-        player.bonusPoints = (player.bonusPoints || 0) + 1
+        player.addBonusPoints(1)
         game.log.add({
           template: '{player} converts 1 grain to 1 BP via Home Brewer',
           args: { player },

@@ -80,7 +80,7 @@ module.exports = {
     const pointsMap = { 2: 3, 3: 5, 4: 7, 5: 9 }
     const points = pointsMap[Math.min(5, uniqueGoods)] || 0
     if (points > 0) {
-      player.bonusPoints = (player.bonusPoints || 0) + points
+      player.addBonusPoints(points)
       s.exchanged = true
       game.log.add({
         template: '{player} exchanges {count} goods for {points} bonus points via Omnifarmer',

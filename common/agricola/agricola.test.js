@@ -127,7 +127,7 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      dennis.wood = 5
+      dennis.setResource('wood', 5)
       dennis.removeResource('wood', 2)
       expect(dennis.wood).toBe(3)
     })
@@ -137,7 +137,7 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      dennis.wood = 2
+      dennis.setResource('wood', 2)
       dennis.removeResource('wood', 5)
       expect(dennis.wood).toBe(0)
     })
@@ -147,7 +147,7 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      dennis.wood = 3
+      dennis.setResource('wood', 3)
 
       expect(dennis.hasResource('wood', 2)).toBe(true)
       expect(dennis.hasResource('wood', 3)).toBe(true)
@@ -159,8 +159,8 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      dennis.wood = 5
-      dennis.reed = 2
+      dennis.setResource('wood', 5)
+      dennis.setResource('reed', 2)
 
       expect(dennis.canAffordCost({ wood: 5, reed: 2 })).toBe(true)
       expect(dennis.canAffordCost({ wood: 6, reed: 2 })).toBe(false)
@@ -172,8 +172,8 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      dennis.wood = 10
-      dennis.reed = 5
+      dennis.setResource('wood', 10)
+      dennis.setResource('reed', 5)
 
       dennis.payCost({ wood: 5, reed: 2 })
 
@@ -360,8 +360,8 @@ describe('Agricola', () => {
       const dennis = game.players.byName('dennis')
       expect(dennis.canAffordRoom()).toBe(false)
 
-      dennis.wood = 5
-      dennis.reed = 2
+      dennis.setResource('wood', 5)
+      dennis.setResource('reed', 2)
       expect(dennis.canAffordRoom()).toBe(true)
     })
   })
@@ -375,8 +375,8 @@ describe('Agricola', () => {
       expect(dennis.canRenovate()).toBe(false)
 
       // Need 2 clay (1 per room) + 1 reed
-      dennis.clay = 2
-      dennis.reed = 1
+      dennis.setResource('clay', 2)
+      dennis.setResource('reed', 1)
       expect(dennis.canRenovate()).toBe(true)
     })
 
@@ -385,8 +385,8 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      dennis.clay = 2
-      dennis.reed = 1
+      dennis.setResource('clay', 2)
+      dennis.setResource('reed', 1)
 
       expect(dennis.renovate()).toBe(true)
       expect(dennis.roomType).toBe('clay')
@@ -422,8 +422,8 @@ describe('Agricola', () => {
       expect(ActionChoicesMixin.checkActionPrerequisites.call(game, dennis, action)).toBe(false)
 
       // With resources, action should be allowed
-      dennis.clay = 2
-      dennis.reed = 1
+      dennis.setResource('clay', 2)
+      dennis.setResource('reed', 1)
       expect(dennis.canRenovate()).toBe(true)
       expect(ActionChoicesMixin.checkActionPrerequisites.call(game, dennis, action)).toBe(true)
     })
@@ -466,7 +466,7 @@ describe('Agricola', () => {
 
       const dennis = game.players.byName('dennis')
       dennis.plowField(0, 1)
-      dennis.grain = 1
+      dennis.setResource('grain', 1)
 
       expect(dennis.sowField(0, 1, 'grain')).toBe(true)
 
@@ -680,7 +680,7 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      dennis.food = 10
+      dennis.setResource('food', 10)
 
       const result = dennis.feedFamily()
 
@@ -694,7 +694,7 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      dennis.food = 1
+      dennis.setResource('food', 1)
 
       const result = dennis.feedFamily()
 
@@ -757,7 +757,7 @@ describe('Agricola', () => {
       game.run()
 
       const dennis = game.players.byName('dennis')
-      dennis.grain = 3
+      dennis.setResource('grain', 3)
 
       const converted = dennis.convertToFood('grain', 2)
 

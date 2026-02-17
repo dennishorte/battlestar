@@ -30,8 +30,8 @@ module.exports = {
     if (selection[0] !== 'Skip') {
       const match = selection[0].match(/Pay (\d+) clay/)
       const amount = parseInt(match[1])
-      player.clay -= amount
-      player.bonusPoints += amount
+      player.removeResource('clay', amount)
+      player.addBonusPoints(amount)
       game.log.add({
         template: '{player} pays {amount} clay for {amount} bonus points (Earthenware Potter)',
         args: { player, amount },

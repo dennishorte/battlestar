@@ -124,7 +124,7 @@ describe('BaseA Cards', () => {
       // Needs 2 food, has 1
       expect(dennis.canAffordCard('shifting-cultivation')).toBe(false)
 
-      dennis.food = 2
+      dennis.setResource('food', 2)
       expect(dennis.canAffordCard('shifting-cultivation')).toBe(true)
     })
 
@@ -1072,7 +1072,7 @@ describe('BaseA Cards', () => {
         const game = t.fixture()
         game.run()
         const dennis = t.player(game)
-        dennis.wood = 1
+        dennis.setResource('wood', 1)
 
         const result = card.onAction(game, dennis, 'take-wood')
         expect(result).toBeUndefined()
@@ -1187,7 +1187,7 @@ describe('BaseA Cards', () => {
         expect(dennis.canBuyMajorImprovement('joinery')).toBe(true)
 
         // Without lumber mill, would need 2 wood
-        dennis.wood = 0
+        dennis.setResource('wood', 0)
         expect(dennis.canBuyMajorImprovement('joinery')).toBe(false)
       })
     })
@@ -1970,7 +1970,7 @@ describe('BaseA Cards', () => {
         const game = t.fixture()
         game.run()
         const dennis = t.player(game)
-        dennis.wood = 0
+        dennis.setResource('wood', 0)
 
         const result = card.onAction(game, dennis, 'take-wood')
         expect(result).toBeUndefined()
@@ -1981,7 +1981,7 @@ describe('BaseA Cards', () => {
         const game = t.fixture()
         game.run()
         const dennis = t.player(game)
-        dennis.wood = 5
+        dennis.setResource('wood', 5)
 
         const result = card.onAction(game, dennis, 'take-grain')
         expect(result).toBeUndefined()
@@ -1995,7 +1995,7 @@ describe('BaseA Cards', () => {
         game.run()
         const dennis = t.player(game)
         dennis.roomType = 'clay'
-        dennis.food = 3
+        dennis.setResource('food', 3)
 
         const result = card.onRoundStart(game, dennis)
         expect(result).toBeUndefined()
@@ -2007,7 +2007,7 @@ describe('BaseA Cards', () => {
         game.run()
         const dennis = t.player(game)
         dennis.roomType = 'stone'
-        dennis.food = 0
+        dennis.setResource('food', 0)
 
         const result = card.onRoundStart(game, dennis)
         expect(result).toBeUndefined()
@@ -2070,7 +2070,7 @@ describe('BaseA Cards', () => {
 
         const dennis = t.player(game)
         dennis.newborns = [3]
-        dennis.food = 1
+        dennis.setResource('food', 1)
 
         expect(dennis.canAdoptNewborn()).toBe(true)
       })
@@ -2081,7 +2081,7 @@ describe('BaseA Cards', () => {
 
         const dennis = t.player(game)
         dennis.newborns = [3]
-        dennis.food = 0
+        dennis.setResource('food', 0)
 
         expect(dennis.canAdoptNewborn()).toBe(false)
       })
@@ -2092,7 +2092,7 @@ describe('BaseA Cards', () => {
 
         const dennis = t.player(game)
         dennis.newborns = []
-        dennis.food = 5
+        dennis.setResource('food', 5)
 
         expect(dennis.canAdoptNewborn()).toBe(false)
       })
@@ -2103,7 +2103,7 @@ describe('BaseA Cards', () => {
 
         const dennis = t.player(game)
         dennis.newborns = [3]
-        dennis.food = 5
+        dennis.setResource('food', 5)
         dennis.availableWorkers = 0
 
         const result = dennis.adoptNewborn()
@@ -2458,7 +2458,7 @@ describe('BaseA Cards', () => {
         const game = t.fixture({ numPlayers: 3 })
         game.run()
         const dennis = t.player(game)
-        dennis.wood = 0
+        dennis.setResource('wood', 0)
 
         const result = card.onAction(game, dennis, 'fishing')
         expect(result).toBeUndefined()
@@ -2469,7 +2469,7 @@ describe('BaseA Cards', () => {
         const game = t.fixture({ numPlayers: 3 })
         game.run()
         const dennis = t.player(game)
-        dennis.wood = 3
+        dennis.setResource('wood', 3)
 
         const result = card.onAction(game, dennis, 'take-wood')
         expect(result).toBeUndefined()
@@ -2482,7 +2482,7 @@ describe('BaseA Cards', () => {
         const game = t.fixture({ numPlayers: 3 })
         game.run()
         const dennis = t.player(game)
-        dennis.food = 0
+        dennis.setResource('food', 0)
 
         const result = card.onAction(game, dennis, 'take-sheep')
         expect(result).toBeUndefined()
@@ -2493,7 +2493,7 @@ describe('BaseA Cards', () => {
         const game = t.fixture({ numPlayers: 3 })
         game.run()
         const dennis = t.player(game)
-        dennis.food = 5
+        dennis.setResource('food', 5)
 
         const result = card.onAction(game, dennis, 'take-wood')
         expect(result).toBeUndefined()

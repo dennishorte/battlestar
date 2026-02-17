@@ -20,7 +20,7 @@ module.exports = {
       }
       if (bonus > 0) {
         player.addResource('food', bonus)
-        player.bonusPoints = (player.bonusPoints || 0) + bonus
+        player.addBonusPoints(bonus)
         game.log.add({
           template: '{player} gets {amount} food and {amount} bonus points from Housebook Master',
           args: { player, amount: bonus },

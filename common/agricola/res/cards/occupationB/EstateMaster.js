@@ -8,7 +8,7 @@ module.exports = {
   text: "Once you have no unused farmyard spaces left, you get 1 bonus point for each vegetable that you harvest.",
   onHarvestVegetables(game, player, count) {
     if (player.getUnusedSpaceCount() === 0) {
-      player.bonusPoints = (player.bonusPoints || 0) + count
+      player.addBonusPoints(count)
       game.log.add({
         template: '{player} gets {amount} bonus points from Estate Master',
         args: { player, amount: count },

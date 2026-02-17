@@ -511,7 +511,7 @@ TestUtil.setPlayerBoard = function(game, playerName, playerState) {
   // Set resources
   const resources = ['food', 'wood', 'clay', 'stone', 'reed', 'grain', 'vegetables']
   for (const resource of resources) {
-    player[resource] = playerState[resource] || 0
+    player.setResource(resource, playerState[resource] || 0)
   }
 
   // Set family members
@@ -522,10 +522,10 @@ TestUtil.setPlayerBoard = function(game, playerName, playerState) {
   player.roomType = playerState.roomType || 'wood'
 
   // Set begging cards
-  player.beggingCards = playerState.beggingCards || 0
+  player.setResource('beggingCards', playerState.beggingCards || 0)
 
   // Set bonus points
-  player.bonusPoints = playerState.bonusPoints || 0
+  player.setResource('bonusPoints', playerState.bonusPoints || 0)
 
   // Set cards via zones and card manager
   TestUtil.setPlayerCards(game, player, 'hand', playerState.hand || [])

@@ -13,7 +13,7 @@ module.exports = {
   actionSpaceForPlayerCount: [1, 2, 3],
   onAction(game, player, actionId) {
     if (actionId === 'traveling-players') {
-      player.bonusPoints = (player.bonusPoints || 0) + 1
+      player.addBonusPoints(1)
       game.log.add({
         template: '{player} gets 1 bonus point from Studio Boat',
         args: { player },

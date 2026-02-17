@@ -18,7 +18,7 @@ module.exports = {
         max: 1,
       })
       if (selection[0] !== 'Skip') {
-        cardOwner.food -= cost
+        cardOwner.removeResource('food', cost)
         cardOwner.addResource('vegetables', 1)
         game.log.add({
           template: '{player} buys 1 vegetable for {cost} food (Cabbage Buyer)',

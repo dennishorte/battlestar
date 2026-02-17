@@ -171,11 +171,11 @@ Agricola.prototype.initializePlayers = function() {
 
     // Give starting food
     if (i === 0) {
-      player.food = res.constants.startingFoodFirstPlayer
+      player.setResource('food', res.constants.startingFoodFirstPlayer)
       this.state.startingPlayer = player.name
     }
     else {
-      player.food = res.constants.startingFoodOtherPlayers
+      player.setResource('food', res.constants.startingFoodOtherPlayers)
     }
 
     this.log.add({
@@ -2971,7 +2971,7 @@ Agricola.prototype.executeAnytimeCardExchange = function(player, action) {
   }
   // Handle bonus points (e.g., Kettle)
   if (action.bonusPoints) {
-    player.bonusPoints = (player.bonusPoints || 0) + action.bonusPoints
+    player.addBonusPoints(action.bonusPoints)
   }
   this.log.add({
     template: '{player} uses {card}: {exchange}',
@@ -3223,7 +3223,7 @@ Agricola.prototype.endGame = function() {
           for (const [playerName, points] of Object.entries(bonuses)) {
             const p = this.players.byName(playerName)
             if (p && points) {
-              p.bonusPoints = (p.bonusPoints || 0) + points
+              p.addBonusPoints(points)
             }
           }
         }

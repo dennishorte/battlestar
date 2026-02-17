@@ -3240,7 +3240,7 @@ class AgricolaActionManager extends BaseActionManager {
     }
     cardOwner.payCost({ grain: 1 })
     actingPlayer.addResource('grain', 1)
-    cardOwner.bonusPoints = (cardOwner.bonusPoints || 0) + 1
+    cardOwner.addBonusPoints(1)
     this.log.add({
       template: '{cardOwner} gives 1 grain to {receiver} for 1 bonus point via {card}',
       args: { cardOwner, receiver: actingPlayer.name, card },
@@ -3459,7 +3459,7 @@ class AgricolaActionManager extends BaseActionManager {
     })
     if (selection[0] !== 'Skip') {
       player.payCost({ food: foodCost })
-      player.bonusPoints = (player.bonusPoints || 0) + 1
+      player.addBonusPoints(1)
       this.log.add({
         template: '{player} buys 1 bonus point for {cost} food via {card}',
         args: { player, cost: foodCost, card },
@@ -3868,7 +3868,7 @@ class AgricolaActionManager extends BaseActionManager {
 
     if (selection[0] !== 'Skip') {
       player.payCost({ grain: 1 })
-      player.bonusPoints += 1
+      player.addBonusPoints(1)
       for (const other of this.game.players.all()) {
         if (other !== player) {
           other.addResource('food', 1)
@@ -3898,7 +3898,7 @@ class AgricolaActionManager extends BaseActionManager {
     if (selection[0] !== 'Skip') {
       player.payCost({ wood: 1 })
       player.addResource('grain', 1)
-      player.bonusPoints = (player.bonusPoints || 0) + 1
+      player.addBonusPoints(1)
       this.log.add({
         template: '{player} pays 1 wood for 1 grain and 1 bonus point using {card}',
         args: { player, card },
@@ -3923,7 +3923,7 @@ class AgricolaActionManager extends BaseActionManager {
     if (selection[0] !== 'Skip') {
       player.payCost({ grain: 1 })
       player.addResource('food', 2)
-      player.bonusPoints = (player.bonusPoints || 0) + 1
+      player.addBonusPoints(1)
       this.log.add({
         template: '{player} exchanges 1 grain for 2 food and 1 bonus point using {card}',
         args: { player, card },
@@ -3973,7 +3973,7 @@ class AgricolaActionManager extends BaseActionManager {
       player.payCost({ wood: 1 })
       player.useFenceFromSupply(1)
       player.addResource('food', 2)
-      player.bonusPoints = (player.bonusPoints || 0) + 1
+      player.addBonusPoints(1)
       this.log.add({
         template: '{player} exchanges 1 wood and 1 fence for 2 food and 1 bonus point using {card}',
         args: { player, card },
@@ -4032,7 +4032,7 @@ class AgricolaActionManager extends BaseActionManager {
         space.crop = null
       }
       player.addResource('food', 3)
-      player.bonusPoints = (player.bonusPoints || 0) + 1
+      player.addBonusPoints(1)
       this.log.add({
         template: '{player} takes 1 vegetable from a field for 3 food and 1 bonus point using {card}',
         args: { player, card },
@@ -4285,7 +4285,7 @@ class AgricolaActionManager extends BaseActionManager {
       if (match) {
         const amount = parseInt(match[1])
         player.payCost({ food: amount })
-        player.bonusPoints = (player.bonusPoints || 0) + amount
+        player.addBonusPoints(amount)
         this.log.add({
           template: '{player} exchanges {amount} food for {amount} bonus points using {card}',
           args: { player, amount, card },
@@ -4356,7 +4356,7 @@ class AgricolaActionManager extends BaseActionManager {
         player.payCost({ grain: grainCount })
         player.addResource('food', 3)
         if (bonusPoints > 0) {
-          player.bonusPoints = (player.bonusPoints || 0) + bonusPoints
+          player.addBonusPoints(bonusPoints)
         }
         this.log.add({
           template: '{player} exchanges {grain} grain for 3 food and {bp} bonus points using {card}',

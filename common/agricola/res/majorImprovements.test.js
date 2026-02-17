@@ -10,7 +10,7 @@ describe('major improvements', () => {
     const dennis = game.players.byName('dennis')
     expect(dennis.canBuyMajorImprovement('fireplace-2')).toBe(false)
 
-    dennis.clay = 2
+    dennis.setResource('clay', 2)
     expect(dennis.canBuyMajorImprovement('fireplace-2')).toBe(true)
   })
 
@@ -19,7 +19,7 @@ describe('major improvements', () => {
     game.run()
 
     const dennis = game.players.byName('dennis')
-    dennis.clay = 2
+    dennis.setResource('clay', 2)
 
     const result = dennis.buyMajorImprovement('fireplace-2')
     expect(result.upgraded).toBe(false)

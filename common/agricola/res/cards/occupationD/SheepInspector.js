@@ -25,7 +25,7 @@ module.exports = {
     })
     if (selection[0] !== 'Skip') {
       s.usedThisWorkPhase = true
-      player.food -= 2
+      player.removeResource('food', 2)
       player.removeAnimals('sheep', 1)
       // Grant an extra worker placement
       player.availableWorkers += 1

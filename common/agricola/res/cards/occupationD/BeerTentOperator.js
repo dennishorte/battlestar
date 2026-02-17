@@ -15,9 +15,9 @@ module.exports = {
         max: 1,
       })
       if (selection[0] !== 'Skip') {
-        player.wood -= 1
-        player.grain -= 1
-        player.bonusPoints = (player.bonusPoints || 0) + 1
+        player.removeResource('wood', 1)
+        player.removeResource('grain', 1)
+        player.addBonusPoints(1)
         player.addResource('food', 2)
         game.log.add({
           template: '{player} converts 1 wood + 1 grain to 1 point + 2 food (Beer Tent Operator)',

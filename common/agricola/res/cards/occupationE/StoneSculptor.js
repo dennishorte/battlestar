@@ -15,7 +15,7 @@ module.exports = {
       })
       if (selection[0] !== 'Skip') {
         player.removeResource('stone', 1)
-        player.bonusPoints = (player.bonusPoints || 0) + 1
+        player.addBonusPoints(1)
         player.addResource('food', 1)
         game.log.add({
           template: '{player} converts 1 stone to 1 VP and 1 food using Stone Sculptor',

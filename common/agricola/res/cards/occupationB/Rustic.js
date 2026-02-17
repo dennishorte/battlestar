@@ -9,7 +9,7 @@ module.exports = {
   onBuildRoom(game, player, roomType, isRenovation) {
     if (roomType === 'clay' && !isRenovation) {
       player.addResource('food', 2)
-      player.bonusPoints = (player.bonusPoints || 0) + 1
+      player.addBonusPoints(1)
       game.log.add({
         template: '{player} gets 2 food and 1 bonus point from Rustic',
         args: { player },

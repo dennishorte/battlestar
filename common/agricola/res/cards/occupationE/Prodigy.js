@@ -9,7 +9,7 @@ module.exports = {
   onPlay(game, player) {
     if (player.getOccupationCount() === 1) {
       const improvementCount = player.getAllImprovements().length
-      player.bonusPoints = (player.bonusPoints || 0) + improvementCount
+      player.addBonusPoints(improvementCount)
       game.log.add({
         template: '{player} gets {amount} bonus points from Prodigy',
         args: { player, amount: improvementCount },

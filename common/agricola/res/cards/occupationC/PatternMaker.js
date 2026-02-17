@@ -16,7 +16,7 @@ module.exports = {
         cardOwner.payCost({ wood: 2 })
         cardOwner.addResource('grain', 1)
         cardOwner.addResource('food', 1)
-        cardOwner.bonusPoints = (cardOwner.bonusPoints || 0) + 1
+        cardOwner.addBonusPoints(1)
         game.log.add({
           template: '{player} exchanges 2 wood for 1 grain, 1 food, and 1 BP from Pattern Maker',
           args: { player: cardOwner },

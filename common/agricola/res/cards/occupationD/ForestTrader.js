@@ -33,7 +33,7 @@ module.exports = {
       return
     }
     if (selection[0] === 'Buy 1 stone for 2 food') {
-      player.food -= 2
+      player.removeResource('food', 2)
       player.addResource('stone', 1)
       game.log.add({
         template: '{player} buys 1 stone for 2 food (Forest Trader)',
@@ -42,7 +42,7 @@ module.exports = {
     }
     else {
       const resource = selection[0].match(/Buy 1 (\w+)/)[1]
-      player.food -= 1
+      player.removeResource('food', 1)
       player.addResource(resource, 1)
       game.log.add({
         template: '{player} buys 1 {resource} for 1 food (Forest Trader)',
