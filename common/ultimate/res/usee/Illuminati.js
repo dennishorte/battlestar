@@ -17,6 +17,11 @@ module.exports = {
         game.actions.splay(player, card.color, 'right')
 
         const topCard = game.cards.top(player, card.color)
+
+        if (!topCard) {
+          return
+        }
+
         const safeGuarded = game.actions.safeguard(player, topCard)
 
         if (!safeGuarded) {

@@ -29,6 +29,28 @@ describe('Illuminati', () => {
     })
   })
 
+  test('dogma - revealed color not on board', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Illuminati'],
+        hand: ['Mathematics'],  // yellow, not on board
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, 'Dogma.Illuminati')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Illuminati'],
+        hand: ['Mathematics'],
+      },
+    })
+  })
+
   test('dogma - full safe', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
     t.setBoard(game, {
