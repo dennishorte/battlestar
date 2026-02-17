@@ -48,7 +48,7 @@ describe("Globe", () => {
     request = t.choose(game, 'Dogma.Globe')
     request = t.choose(game, 'yes')
     request = t.choose(game, 'auto')
-    request = t.choose(game, '**base-3*', '**base-2*', '**base-1*')
+    request = t.choose(game, 'Paper', 'Mathematics', 'Agriculture')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

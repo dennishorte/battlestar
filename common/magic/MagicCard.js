@@ -467,6 +467,7 @@ class MagicCard extends BaseCard {
 
   _afterMoveTo(zone, _unused1, prevZone) {
     this.game.mAdjustCardVisibility(this)
+
     this.game.mMaybeClearAnnotations(this)
     this.game.mMaybeClearCounters(this)
     this.game.mMaybeRemoveTokens(this)

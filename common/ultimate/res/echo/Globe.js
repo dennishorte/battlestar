@@ -30,6 +30,7 @@ module.exports = {
           const toReveal = game.actions.chooseCards(player, toProve, {
             title: 'Choose a blue, green, and yellow card to reveal',
             count: 3,
+            visible: true,
             guard: (cards) => colorCheck(cards),
           })
           game.actions.revealMany(player, toReveal, { ordered: true })
