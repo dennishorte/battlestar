@@ -10,7 +10,7 @@ TestUtil.fixture = function(options) {
   const numPlayers = options?.numPlayers || 2
 
   // Default card sets depend on player count (need more cards for more players)
-  const defaultCardSets = numPlayers >= 4 ? ['baseA', 'baseB'] : ['baseA']
+  const defaultCardSets = numPlayers >= 4 ? ['occupationA', 'minorA', 'occupationB', 'minorB'] : ['occupationA', 'minorA']
 
   options = Object.assign({
     name: 'test_game',

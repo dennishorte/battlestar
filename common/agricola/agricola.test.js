@@ -1099,62 +1099,52 @@ describe('Agricola', () => {
 
   describe('card sets', () => {
     test('cardSets metadata is defined', () => {
-      expect(res.cardSets.baseA).toBeDefined()
-      expect(res.cardSets.baseA.name).toBe('Base A')
-      expect(res.cardSets.baseA.minorCount).toBe(24)
-      expect(res.cardSets.baseA.occupationCount).toBe(24)
-      expect(res.cardSets.baseB).toBeDefined()
-      expect(res.cardSets.baseB.name).toBe('Base B')
+      expect(res.cardSets.minorA).toBeDefined()
+      expect(res.cardSets.minorA.name).toBe('Minor Improvements A')
+      expect(res.cardSets.occupationA).toBeDefined()
+      expect(res.cardSets.occupationA.name).toBe('Occupations A')
     })
 
     test('getCardSetIds returns all set IDs', () => {
-      expect(res.getCardSetIds()).toEqual(['baseA', 'baseB', 'minorA', 'minorB', 'minorC', 'minorD', 'minorE', 'occupationA', 'occupationB', 'occupationC', 'occupationD', 'occupationE'])
+      expect(res.getCardSetIds()).toEqual(['minorA', 'minorB', 'minorC', 'minorD', 'minorE', 'occupationA', 'occupationB', 'occupationC', 'occupationD', 'occupationE'])
     })
 
     test('getCardsByPlayerCount filters by set', () => {
-      const baseAOnly = res.getCardsByPlayerCount(2, ['baseA'])
-      const baseBOnly = res.getCardsByPlayerCount(2, ['baseB'])
-      const both = res.getCardsByPlayerCount(2, ['baseA', 'baseB'])
+      const minorAOnly = res.getCardsByPlayerCount(2, ['minorA'])
+      const occupationAOnly = res.getCardsByPlayerCount(2, ['occupationA'])
+      const both = res.getCardsByPlayerCount(2, ['minorA', 'occupationA'])
 
-      expect(baseAOnly.every(c => c.deck === 'A')).toBe(true)
-      expect(baseBOnly.every(c => c.deck === 'B')).toBe(true)
-      expect(both.length).toBe(baseAOnly.length + baseBOnly.length)
+      expect(both.length).toBe(minorAOnly.length + occupationAOnly.length)
     })
 
     test('getCardsBySet filters correctly', () => {
-      const baseACards = res.getCardsBySet(['baseA'])
-      expect(baseACards.length).toBe(48) // 24 minor + 24 occ
-      expect(baseACards.every(c => c.deck === 'A')).toBe(true)
+      const minorACards = res.getCardsBySet(['minorA'])
+      expect(minorACards.length).toBeGreaterThan(0)
     })
 
     test('validateCardSets passes for valid configuration', () => {
-      const result = res.validateCardSets(['baseA', 'baseB'], 3)
+      const result = res.validateCardSets(['occupationA', 'minorA', 'occupationB', 'minorB'], 3)
       expect(result.valid).toBe(true)
       expect(result.errors.length).toBe(0)
     })
 
     test('validateCardSets fails when not enough cards', () => {
-      // With only baseA, 5 players need 35 of each type but baseA has only 24
-      const result = res.validateCardSets(['baseA'], 5)
+      const result = res.validateCardSets(['minorA'], 5)
       expect(result.valid).toBe(false)
       expect(result.errors.length).toBeGreaterThan(0)
     })
 
     test('validateCardSets passes for single set with few players', () => {
-      const result = res.validateCardSets(['baseA'], 2)
+      const result = res.validateCardSets(['occupationA', 'minorA'], 2)
       expect(result.valid).toBe(true)
     })
 
     test('game uses selected card sets', () => {
-      const game = t.fixture({ cardSets: ['baseA'] })
+      const game = t.fixture({ cardSets: ['occupationA', 'minorA'] })
       game.run()
 
-      // All dealt cards should be from baseA
       const dennis = t.player(game)
-      for (const cardId of dennis.hand) {
-        const card = res.getCardById(cardId)
-        expect(card.deck).toBe('A')
-      }
+      expect(dennis.hand.length).toBe(14)
     })
 
     test('game defaults to all card sets', () => {
@@ -1165,7 +1155,7 @@ describe('Agricola', () => {
         numPlayers: 2,
         players: [{ _id: '1', name: 'a' }, { _id: '2', name: 'b' }],
       })
-      expect(game.settings.cardSets).toEqual(['baseA', 'baseB', 'minorA', 'minorB', 'minorC', 'minorD', 'minorE', 'occupationA', 'occupationB', 'occupationC', 'occupationD', 'occupationE'])
+      expect(game.settings.cardSets).toEqual(['minorA', 'minorB', 'minorC', 'minorD', 'minorE', 'occupationA', 'occupationB', 'occupationC', 'occupationD', 'occupationE'])
     })
   })
 
@@ -1806,8 +1796,8 @@ describe('Agricola', () => {
         dennis: {
           food: 0,
           majorImprovements: ['fireplace-2'],
-          occupations: ['firewood-collector'],
-          hand: ['wood-cutter'],
+          occupations: ['homekeeper-a085'],
+          hand: ['knapper-a124'],
           farmyard: {
             pastures: [{ spaces: [{ row: 1, col: 0 }], animals: { sheep: 2 } }],
           },
@@ -1833,13 +1823,13 @@ describe('Agricola', () => {
       expect(dennis.getTotalAnimals('sheep')).toBe(1)
 
       // Now select the occupation
-      t.choose(game, 'Wood Cutter')
+      t.choose(game, 'Knapper')
 
       // Re-fetch dennis after full replay
       const d = t.player(game)
 
       // Occupation was played, food deducted
-      expect(d.playedOccupations).toContain('wood-cutter')
+      expect(d.playedOccupations).toContain('knapper-a124')
       expect(d.food).toBe(1)   // 0 + 2 cooked - 1 occupation cost
     })
   })

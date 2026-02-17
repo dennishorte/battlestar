@@ -3183,36 +3183,6 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   /**
-   * Offer Harpooner bonus (pay 1 wood for food per person + 1 reed)
-   */
-  offerHarpoonerBonus(player, card) {
-    if (player.wood < 1) {
-      return
-    }
-
-    const foodBonus = player.familyMembers
-    const choices = [
-      `Pay 1 wood for ${foodBonus} food and 1 reed`,
-      'Skip',
-    ]
-    const selection = this.choose(player, choices, {
-      title: `${card.name}: Pay wood for bonus?`,
-      min: 1,
-      max: 1,
-    })
-
-    if (selection[0] !== 'Skip') {
-      player.payCost({ wood: 1 })
-      player.addResource('food', foodBonus)
-      player.addResource('reed', 1)
-      this.log.add({
-        template: '{player} pays 1 wood for {food} food and 1 reed using {card}',
-        args: { player, food: foodBonus, card: card },
-      })
-    }
-  }
-
-  /**
    * Offer resource choice (Seasonal Worker, Animal Tamer)
    */
   offerResourceChoice(player, card, resources) {
