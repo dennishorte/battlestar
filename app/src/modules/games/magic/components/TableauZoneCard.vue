@@ -174,6 +174,10 @@ export default {
         parts.push('eot: ' + this.card.annotationEOT)
       }
 
+      if (this.card.annotationPerpetual && !this.hidden) {
+        parts.push('perpetual: ' + this.card.annotationPerpetual)
+      }
+
       return parts.join(', ')
     },
 

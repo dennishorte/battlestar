@@ -13,6 +13,7 @@ class GameData extends Serializer {
 
       annotation: '',
       annotationEOT: '',
+      annotationPerpetual: '',
 
       attached: [],
       attachedTo: null,

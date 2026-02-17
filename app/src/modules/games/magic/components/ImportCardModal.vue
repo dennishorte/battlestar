@@ -9,6 +9,7 @@
       <input class="form-control mt-2" v-model.number="count" placeholder="count" />
 
       <input class="form-control mt-2" v-model="annotation" placeholder="annotation" />
+      <input class="form-control mt-2" v-model="annotationPerpetual" placeholder="perpetual annotation" />
 
       <div class="form-check mt-2">
         <input class="form-check-input" type="checkbox" v-model="isToken" />
@@ -44,6 +45,7 @@ export default {
   data() {
     return {
       annotation: '',
+      annotationPerpetual: '',
       count: 1,
       isToken: true,
       name: '',
@@ -100,6 +102,7 @@ export default {
       this.$emit('import-card', {
         card: cardData,
         annotation: this.annotation,
+        annotationPerpetual: this.annotationPerpetual,
         count: this.count,
         zoneId: this.zoneId,
         isToken: this.isToken,

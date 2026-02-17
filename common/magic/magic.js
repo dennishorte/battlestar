@@ -316,6 +316,16 @@ Magic.prototype.aAnnotateEOT = function(player, cardId, annotation) {
   })
 }
 
+Magic.prototype.aAnnotatePerpetual = function(player, cardId, annotation) {
+  player = player || this.players.current()
+  const card = this.cards.byId(cardId)
+  card.annotationPerpetual = annotation
+  this.log.add({
+    template: '{player} sets perpetual annotation on {card} to {annotation}',
+    args: { player, card, annotation },
+  })
+}
+
 Magic.prototype.aAttach = function(player, cardId, targetId) {
   const source = this.cards.byId(cardId)
   const target = this.cards.byId(targetId)
@@ -430,6 +440,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'adjust counter'      : return actor.incrementCounter(action.counter, action.amount)
       case 'annotate'            : return this.aAnnotate(actor, action.cardId, action.annotation)
       case 'annotate eot'        : return this.aAnnotateEOT(actor, action.cardId, action.annotation)
+      case 'annotate perpetual'  : return this.aAnnotatePerpetual(actor, action.cardId, action.annotation)
       case 'attach'              : return this.aAttach(actor, action.cardId, action.targetId)
       case 'cascade'             : return this.aCascade(actor, action.x)
       case 'create token'        : return this.aCreateToken(actor, action.data)
@@ -586,6 +597,7 @@ Magic.prototype.aImportCard = function(player, data) {
   for (let i = 0; i < data.count; i++) {
     const card = this.mInitializeCard(data.card, player)
     card.annotation = data.annotation
+    card.annotationPerpetual = data.annotationPerpetual || ''
     card.token = data.isToken
     card.reveal()
 

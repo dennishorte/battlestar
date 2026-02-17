@@ -22,6 +22,7 @@
 
       <input class="form-control mt-2" v-model="annotation" placeholder="annotation" />
       <input class="form-control mt-2" v-model="annotationEOT" placeholder="end of turn" />
+      <input class="form-control mt-2" v-model="annotationPerpetual" placeholder="perpetual" />
 
       <div class="counters">
         <h5>Counters</h5>
@@ -92,6 +93,7 @@ export default {
       activeFaceIndex: 0,
       annotation: '',
       annotationEOT: '',
+      annotationPerpetual: '',
       newCounter: '',
       newTracker: '',
     }
@@ -127,6 +129,7 @@ export default {
         this.activeFaceIndex = card.activeFaceIndex
         this.annotation = card.annotation
         this.annotationEOT = card.annotationEOT
+        this.annotationPerpetual = card.annotationPerpetual
       }
     },
   },
@@ -183,6 +186,13 @@ export default {
           name: 'annotate eot',
           cardId: this.selectedCard.id,
           annotation: this.annotationEOT,
+        })
+      }
+      if (this.selectedCard.annotationPerpetual !== this.annotationPerpetual) {
+        this.do(null, {
+          name: 'annotate perpetual',
+          cardId: this.selectedCard.id,
+          annotation: this.annotationPerpetual,
         })
       }
       this.$store.dispatch('magic/game/unselectCard')
