@@ -1,17 +1,23 @@
 const t = require('../../../testutil_v2.js')
 
 describe('Briar Hedge', () => {
-  test('reduces fence cost by edge fence count', () => {
+  test('edge fences are free — bottom-row pasture pays only for internal fences', () => {
+    // Build a 2-space pasture at bottom row (2,3)+(2,4) adjacent to existing (1,3)+(1,4)
+    // 4 new fences: left (internal → 1 wood), bottom×2 + right (edge → free)
+    // Without Briar Hedge: 4 wood. With Briar Hedge: 1 wood.
     const game = t.fixture({ cardSets: ['minorImprovementE', 'occupationA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
+      actionSpaces: ['Fencing'],
       dennis: {
         minorImprovements: ['briar-hedge-e016'],
         pet: 'sheep',
+        wood: 4,
         farmyard: {
           pastures: [
             { spaces: [{ row: 0, col: 3 }], animals: { boar: 1 } },
             { spaces: [{ row: 0, col: 4 }], animals: { cattle: 1 } },
+            { spaces: [{ row: 1, col: 3 }, { row: 1, col: 4 }] },
           ],
         },
       },
@@ -19,13 +25,25 @@ describe('Briar Hedge', () => {
     })
     game.run()
 
-    const dennis = game.players.byName('dennis')
-    // 5 fences, 3 edge → cost = 5 - 3 = 2
-    expect(dennis.applyFenceCostModifiers(5, 3)).toBe(2)
-    // All edge → free
-    expect(dennis.applyFenceCostModifiers(4, 4)).toBe(0)
-    // No edge → no discount
-    expect(dennis.applyFenceCostModifiers(4, 0)).toBe(4)
+    t.choose(game, 'Fencing')
+    t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 3 }, { row: 2, col: 4 }] })
+
+    t.testBoard(game, {
+      dennis: {
+        minorImprovements: ['briar-hedge-e016'],
+        pet: 'sheep',
+        animals: { sheep: 1 },
+        wood: 3, // 4 - 1 internal fence (3 edge fences free)
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 0, col: 3 }] },
+            { spaces: [{ row: 0, col: 4 }] },
+            { spaces: [{ row: 1, col: 3 }, { row: 1, col: 4 }] },
+            { spaces: [{ row: 2, col: 3 }, { row: 2, col: 4 }] },
+          ],
+        },
+      },
+    })
   })
 
   test('edge pasture costs less wood', () => {
@@ -54,7 +72,20 @@ describe('Briar Hedge', () => {
     t.choose(game, 'Fencing')
     t.action(game, 'build-pasture', { spaces: [{ row: 1, col: 4 }] })
 
-    const dennis = game.players.byName('dennis')
-    expect(dennis.wood).toBe(1) // 3 - 2 = 1 (edge fence was free)
+    t.testBoard(game, {
+      dennis: {
+        minorImprovements: ['briar-hedge-e016'],
+        pet: 'sheep',
+        animals: { sheep: 1 },
+        wood: 1, // 3 - 2 = 1 (edge fence was free)
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 0, col: 3 }] },
+            { spaces: [{ row: 0, col: 4 }] },
+            { spaces: [{ row: 1, col: 4 }] },
+          ],
+        },
+      },
+    })
   })
 })

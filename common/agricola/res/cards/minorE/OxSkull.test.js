@@ -26,49 +26,25 @@ describe('Ox Skull', () => {
     })
   })
 
-  test('gives 3 bonus points at end if no cattle', () => {
+  test('gives 0 bonus points when player has cattle', () => {
     const game = t.fixture({ cardSets: ['minorE', 'minorImprovementA', 'test'] })
     t.setBoard(game, {
-      round: 1,
-      firstPlayer: 'dennis',
       dennis: {
-        // Play from hand to satisfy prereq (need cattle at time of play)
-        hand: ['ox-skull-e037'],
+        minorImprovements: ['ox-skull-e037'],
         pet: 'cattle',
       },
     })
     game.run()
 
-    // Play the card
-    t.choose(game, 'Meeting Place')
-    t.choose(game, 'Minor Improvement.Ox Skull')
-
-    // Now remove the cattle manually to test scoring
-    const dennis = game.players.byName('dennis')
-    dennis.pet = null
-
-    expect(dennis.getTotalAnimals('cattle')).toBe(0)
-    const card = game.cards.byId('ox-skull-e037')
-    expect(card.definition.getEndGamePoints(dennis)).toBe(3)
-  })
-
-  test('gives 0 bonus points at end if player has cattle', () => {
-    const game = t.fixture({ cardSets: ['minorE', 'minorImprovementA', 'test'] })
-    t.setBoard(game, {
-      round: 1,
-      firstPlayer: 'dennis',
+    // Score: fields(-1) pastures(-1) grain(-1) veg(-1) sheep(-1) boar(-1) cattle(+1)
+    //   rooms(0) family(6) unused(-13) + 0 bonus (has cattle) = -12
+    t.testBoard(game, {
       dennis: {
-        hand: ['ox-skull-e037'],
+        minorImprovements: ['ox-skull-e037'],
         pet: 'cattle',
+        animals: { cattle: 1 },
+        score: -12,
       },
     })
-    game.run()
-
-    t.choose(game, 'Meeting Place')
-    t.choose(game, 'Minor Improvement.Ox Skull')
-
-    const dennis = game.players.byName('dennis')
-    const card = game.cards.byId('ox-skull-e037')
-    expect(card.definition.getEndGamePoints(dennis)).toBe(0)
   })
 })

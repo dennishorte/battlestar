@@ -24,8 +24,12 @@ describe("Fisherman's Friend", () => {
     game.run()
 
     // onRoundStart: Traveling Players (4) - Fishing (1) = 3 food
-    const dennis = game.players.byName('dennis')
-    expect(dennis.food).toBe(3)
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['fishermans-friend-c159'],
+        food: 3,
+      },
+    })
   })
 
   test('gives nothing when Fishing has more food than Traveling Players', () => {
@@ -47,8 +51,12 @@ describe("Fisherman's Friend", () => {
     game.run()
 
     // Fishing (3) >= Traveling Players (1) → no food
-    const dennis = game.players.byName('dennis')
-    expect(dennis.food).toBe(0)
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['fishermans-friend-c159'],
+        food: 0,
+      },
+    })
   })
 
   test('gives nothing when both have equal food', () => {
@@ -70,7 +78,11 @@ describe("Fisherman's Friend", () => {
     game.run()
 
     // Equal → no food
-    const dennis = game.players.byName('dennis')
-    expect(dennis.food).toBe(0)
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['fishermans-friend-c159'],
+        food: 0,
+      },
+    })
   })
 })

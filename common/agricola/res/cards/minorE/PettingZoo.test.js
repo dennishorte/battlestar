@@ -1,32 +1,36 @@
 const t = require('../../../testutil_v2.js')
 
 describe('PettingZoo', () => {
-  test('holds mixed animals up to room count when pasture adjacent to house', () => {
+  test('holds overflow animals when pasture is adjacent to house', () => {
     const game = t.fixture({ cardSets: ['minorImprovementE', 'occupationA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['petting-zoo-e011'],
+        pet: 'sheep',
         farmyard: {
           // Pasture at (0,1) is adjacent to room at (0,0)
-          pastures: [{ spaces: [{ row: 0, col: 1 }] }],
+          pastures: [{ spaces: [{ row: 0, col: 1 }], sheep: 2 }],
         },
       },
-      micah: { food: 10 },
-      actionSpaces: ['Sheep Market'],
+      actionSpaces: [{ ref: 'Sheep Market', accumulated: 1 }],
     })
     game.run()
 
-    const player = game.players.byName('dennis')
+    // Pet full, pasture full (cap 2). Sheep Market gives 1 sheep.
+    // PettingZoo capacity = room count (2), pasture adjacent to house → overflow goes to card.
+    t.choose(game, 'Sheep Market')
 
-    // Verify animal holding card
-    const holdings = player.getAnimalHoldingCards()
-    expect(holdings).toHaveLength(1)
-    expect(holdings[0].name).toBe('Petting Zoo')
-    expect(holdings[0].mixedTypes).toBe(true)
-
-    // With pasture adjacent to house, capacity = room count (2)
-    expect(player.hasPastureAdjacentToHouse()).toBe(true)
+    t.testBoard(game, {
+      dennis: {
+        animals: { sheep: 4 }, // 2 pasture + 1 pet + 1 on card
+        pet: 'sheep',
+        minorImprovements: ['petting-zoo-e011'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 1 }], sheep: 2 }],
+        },
+      },
+    })
   })
 
   test('no capacity when no pasture adjacent to house', () => {
@@ -35,25 +39,37 @@ describe('PettingZoo', () => {
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['petting-zoo-e011'],
+        pet: 'sheep',
         farmyard: {
           // Pasture at (2,4) is NOT adjacent to rooms at (0,0) and (1,0)
-          pastures: [{ spaces: [{ row: 2, col: 4 }] }],
+          pastures: [{ spaces: [{ row: 2, col: 4 }], sheep: 2 }],
         },
       },
-      micah: { food: 10 },
-      actionSpaces: ['Sheep Market'],
+      actionSpaces: [{ ref: 'Sheep Market', accumulated: 1 }],
     })
     game.run()
 
-    const player = game.players.byName('dennis')
-    expect(player.hasPastureAdjacentToHouse()).toBe(false)
+    // Pet full, pasture full (cap 2). Sheep Market gives 1 sheep.
+    // PettingZoo has 0 capacity (no adjacent pasture) → overflow modal.
+    t.choose(game, 'Sheep Market')
+    t.action(game, 'animal-placement', {
+      placements: [],
+      overflow: { release: { sheep: 1 } },
+    })
 
-    // PettingZoo contributes 0 when no adjacent pasture
-    const holdings = player.getAnimalHoldingCards()
-    expect(holdings).toHaveLength(1)
+    t.testBoard(game, {
+      dennis: {
+        animals: { sheep: 3 }, // 2 pasture + 1 pet (1 released)
+        pet: 'sheep',
+        minorImprovements: ['petting-zoo-e011'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 2, col: 4 }], sheep: 2 }],
+        },
+      },
+    })
   })
 
-  test('auto-places animals to PettingZoo on overflow', () => {
+  test('capacity matches room count', () => {
     const game = t.fixture({ cardSets: ['minorImprovementE', 'occupationA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
@@ -61,19 +77,29 @@ describe('PettingZoo', () => {
         minorImprovements: ['petting-zoo-e011'],
         pet: 'sheep',
         farmyard: {
-          pastures: [{ spaces: [{ row: 0, col: 1 }], sheep: 2 }],
+          rooms: [{ row: 0, col: 0 }, { row: 1, col: 0 }, { row: 0, col: 1 }],
+          // Pasture at (1,1) is adjacent to room at (0,1) and (1,0)
+          pastures: [{ spaces: [{ row: 1, col: 1 }], sheep: 2 }],
         },
       },
-      micah: { food: 10 },
-      actionSpaces: ['Sheep Market'],
+      actionSpaces: [{ ref: 'Sheep Market', accumulated: 3 }],
     })
     game.run()
 
-    // Sheep Market gives 1 sheep. Pasture full (2), pet full.
-    // PettingZoo should hold the overflow.
+    // 3 rooms = PettingZoo capacity 3. Pasture adjacent to house.
+    // Pet full, pasture full (cap 2). Sheep Market gives 3 sheep → all 3 to card.
     t.choose(game, 'Sheep Market')
 
-    const player = game.players.byName('dennis')
-    expect(player.getTotalAnimals('sheep')).toBe(4) // 2 pasture + 1 pet + 1 on card
+    t.testBoard(game, {
+      dennis: {
+        animals: { sheep: 6 }, // 2 pasture + 1 pet + 3 on card
+        pet: 'sheep',
+        minorImprovements: ['petting-zoo-e011'],
+        farmyard: {
+          rooms: [{ row: 0, col: 0 }, { row: 1, col: 0 }, { row: 0, col: 1 }],
+          pastures: [{ spaces: [{ row: 1, col: 1 }], sheep: 2 }],
+        },
+      },
+    })
   })
 })

@@ -29,8 +29,19 @@ describe('Bed in the Grain Field', () => {
     t.choose(game, 'Grain Seeds')
 
     // Harvest: onHarvestStart fires → family growth
-    const dennis = game.players.byName('dennis')
-    expect(dennis.familyMembers).toBe(3) // 2 + 1 from family growth
+    t.testBoard(game, {
+      dennis: {
+        familyMembers: 3, // 2 + 1 from family growth
+        food: 17,
+        grain: 1, // from Grain Seeds
+        reed: 1, // from Reed Bank
+        minorImprovements: ['bed-in-the-grain-field-c024'],
+        farmyard: {
+          rooms: [{ row: 0, col: 0 }, { row: 1, col: 0 }, { row: 2, col: 0 }],
+          fields: [{ row: 2, col: 1 }], // harvested: crop cleared
+        },
+      },
+    })
   })
 
   test('does not trigger family growth without spare room', () => {
@@ -61,8 +72,20 @@ describe('Bed in the Grain Field', () => {
     t.choose(game, 'Grain Seeds')
 
     // Harvest: flag set, but no room → no family growth
+    t.testBoard(game, {
+      dennis: {
+        familyMembers: 2, // No change
+        food: 18,
+        grain: 1, // from Grain Seeds
+        reed: 1, // from Reed Bank
+        minorImprovements: ['bed-in-the-grain-field-c024'],
+        farmyard: {
+          fields: [{ row: 2, col: 0 }], // harvested: crop cleared
+        },
+      },
+    })
+    // Custom card state: bedInGrainFieldNextHarvest has no testBoard equivalent
     const dennis = game.players.byName('dennis')
-    expect(dennis.familyMembers).toBe(2) // No change
     expect(dennis.bedInGrainFieldNextHarvest).toBeUndefined() // Flag cleared
   })
 
@@ -83,6 +106,7 @@ describe('Bed in the Grain Field', () => {
     t.choose(game, 'Major Improvement')
     t.choose(game, 'Minor Improvement.Bed in the Grain Field')
 
+    // Custom card state: bedInGrainFieldNextHarvest has no testBoard equivalent
     const dennis = game.players.byName('dennis')
     expect(dennis.bedInGrainFieldNextHarvest).toBe(true)
   })

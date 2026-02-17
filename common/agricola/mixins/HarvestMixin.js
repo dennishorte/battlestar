@@ -139,11 +139,12 @@ const HarvestMixin = {
 
     for (const type of res.animalTypes) {
       const count = player.getTotalAnimals(type)
+      const required = player._getBreedingRequirement(type)
       potential[type] = {
         currentCount: count,
-        canBreed: count >= 2,
+        canBreed: count >= required,
         canHouse: player.canPlaceAnimals(type, 1),
-        willBreed: count >= 2 && player.canPlaceAnimals(type, 1),
+        willBreed: count >= required && player.canPlaceAnimals(type, 1),
       }
     }
 

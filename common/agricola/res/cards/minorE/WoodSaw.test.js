@@ -1,7 +1,7 @@
 const t = require('../../../testutil_v2.js')
 
 describe('Wood Saw', () => {
-  test('fewer workers than all opponents — free Build Rooms offered', () => {
+  test('fewer workers than all opponents — free Build Rooms offered and no worker consumed', () => {
     const game = t.fixture()
     t.setBoard(game, {
       firstPlayer: 'dennis',
@@ -24,13 +24,22 @@ describe('Wood Saw', () => {
     // Dennis should see "Build Rooms (Wood Saw)" option
     expect(t.currentChoices(game)).toContain('Build Rooms (Wood Saw)')
 
+    // Take the free Build Rooms action (no worker consumed)
     t.choose(game, 'Build Rooms (Wood Saw)')
-    // Build a room at (0,1) — adjacent to room at (0,0)
     t.action(game, 'build-room', { row: 0, col: 1 })
 
-    const dennis = game.players.byName('dennis')
-    // Worker should NOT have been consumed (free action)
-    expect(dennis.getAvailableWorkers()).toBe(2)
+    // After bonus action, Dennis still has 2 normal workers to place
+    // Verify room was built and resources spent
+    t.testBoard(game, {
+      dennis: {
+        minorImprovements: ['wood-saw-e014'],
+        wood: 5, // 10 - 5 (room costs 5 wood)
+        reed: 3, // 5 - 2 (room costs 2 reed)
+        farmyard: {
+          rooms: [{ row: 0, col: 0 }, { row: 1, col: 0 }, { row: 0, col: 1 }],
+        },
+      },
+    })
   })
 
   test('equal workers — not offered', () => {

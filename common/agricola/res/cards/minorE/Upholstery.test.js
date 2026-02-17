@@ -19,17 +19,15 @@ describe('Upholstery', () => {
     // Upholstery triggers after building minor
     t.choose(game, 'Store 1 reed for 1 bonus point')
 
+    // 1 stored reed = 1 bonus point
+    // Score: categories(-7) + rooms(0) + family(6) + unused(-13) + bonus(1) = -13
     t.testBoard(game, {
       dennis: {
         food: 1,  // Meeting Place
         reed: 0,  // 1 - 1 = 0
         minorImprovements: ['upholstery-e031', 'test-minor-1'],
+        score: -13,
       },
     })
-
-    // Check scoring: 1 stored reed = 1 bonus point
-    const dennis = game.players.byName('dennis')
-    const card = dennis.cards.byId('upholstery-e031')
-    expect(card.callHook('getEndGamePoints', dennis, game)).toBe(1)
   })
 })

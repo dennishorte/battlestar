@@ -30,11 +30,6 @@ describe('Feedyard', () => {
         },
       },
     })
-
-    // Verify the animal is tracked on the card
-    const player = game.players.byName('dennis')
-    expect(player.getCardAnimalTotal('feedyard-b011')).toBe(1)
-    expect(player.getCardAnimals('feedyard-b011').sheep).toBe(1)
   })
 
   test('food from unused spots after breeding phase', () => {
@@ -83,7 +78,7 @@ describe('Feedyard', () => {
     })
   })
 
-  test('capacity tracks pasture count', () => {
+  test('capacity scales with number of pastures', () => {
     const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
@@ -91,49 +86,38 @@ describe('Feedyard', () => {
         minorImprovements: ['feedyard-b011'],
         farmyard: {
           pastures: [
-            { spaces: [{ row: 0, col: 1 }] },
-            { spaces: [{ row: 0, col: 2 }] },
-            { spaces: [{ row: 0, col: 3 }] },
+            { spaces: [{ row: 0, col: 1 }], sheep: 2 },
+            { spaces: [{ row: 0, col: 2 }], sheep: 2 },
+            { spaces: [{ row: 0, col: 3 }], sheep: 2 },
+          ],
+        },
+        pet: 'sheep',
+      },
+      actionSpaces: [{ ref: 'Sheep Market', accumulated: 3 }],
+    })
+    game.run()
+
+    // 3 pastures = card capacity 3. Pastures full (2 each = 6), pet full.
+    // Sheep Market gives 3 sheep → all 3 overflow to Feedyard card.
+    t.choose(game, 'Sheep Market')
+
+    t.testBoard(game, {
+      dennis: {
+        animals: { sheep: 10 }, // 6 pasture + 1 pet + 3 on card
+        pet: 'sheep',
+        minorImprovements: ['feedyard-b011'],
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 0, col: 1 }], sheep: 2 },
+            { spaces: [{ row: 0, col: 2 }], sheep: 2 },
+            { spaces: [{ row: 0, col: 3 }], sheep: 2 },
           ],
         },
       },
-      actionSpaces: ['Sheep Market'],
     })
-    game.run()
-
-    const player = game.players.byName('dennis')
-    const holdings = player.getAnimalHoldingCards()
-    expect(holdings).toHaveLength(1)
-    expect(holdings[0].name).toBe('Feedyard')
-    expect(holdings[0].capacity).toBe(3)
-    expect(holdings[0].mixedTypes).toBe(true)
   })
 
-  test('appears in animal placement locations', () => {
-    const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
-    t.setBoard(game, {
-      firstPlayer: 'dennis',
-      dennis: {
-        minorImprovements: ['feedyard-b011'],
-        farmyard: {
-          pastures: [{ spaces: [{ row: 0, col: 1 }] }],
-        },
-      },
-      actionSpaces: ['Sheep Market'],
-    })
-    game.run()
-
-    const player = game.players.byName('dennis')
-    const locations = player.getAnimalPlacementLocations()
-    const cardLoc = locations.find(l => l.type === 'card')
-    expect(cardLoc).toBeDefined()
-    expect(cardLoc.id).toBe('card-feedyard-b011')
-    expect(cardLoc.name).toBe('Feedyard')
-    expect(cardLoc.mixedTypes).toBe(true)
-    expect(cardLoc.maxCapacity).toBe(1) // 1 pasture = capacity 1
-  })
-
-  test('holds mixed animal types', () => {
+  test('holds mixed animal types via overflow', () => {
     const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
@@ -147,22 +131,80 @@ describe('Feedyard', () => {
         },
         pet: 'cattle',
       },
-      actionSpaces: ['Sheep Market'],
+      actionSpaces: [{ ref: 'Sheep Market', accumulated: 1 }],
+    })
+    // Pre-fill card with 1 boar to simulate mixed types already on card
+    game.testSetBreakpoint('initialization-complete', (game) => {
+      const player = game.players.byName('dennis')
+      player.addCardAnimal('feedyard-b011', 'boar', 1)
     })
     game.run()
 
-    const player = game.players.byName('dennis')
-    // Feedyard capacity = 2 pastures. Manually add mixed types.
-    player.addCardAnimal('feedyard-b011', 'sheep', 1)
-    player.addCardAnimal('feedyard-b011', 'boar', 1)
+    // Feedyard capacity = 2 pastures. Card already has 1 boar (via breakpoint).
+    // Sheep Market gives 1 sheep → pastures full, pet full → overflow to card (1 slot left).
+    t.choose(game, 'Sheep Market')
 
-    expect(player.getCardAnimalTotal('feedyard-b011')).toBe(2)
-    expect(player.getCardAnimals('feedyard-b011').sheep).toBe(1)
-    expect(player.getCardAnimals('feedyard-b011').boar).toBe(1)
+    t.testBoard(game, {
+      dennis: {
+        // 4 pasture sheep + 1 pet cattle + 1 pasture boar + 1 card boar + 1 card sheep
+        animals: { sheep: 5, boar: 2, cattle: 1 },
+        pet: 'cattle',
+        minorImprovements: ['feedyard-b011'],
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 0, col: 1 }, { row: 0, col: 2 }], sheep: 4 },
+            { spaces: [{ row: 0, col: 3 }], boar: 1 },
+          ],
+        },
+      },
+    })
+  })
 
-    // Mixed types reflected in total counts
-    expect(player.getTotalAnimals('sheep')).toBe(5)  // 4 pasture + 1 card
-    expect(player.getTotalAnimals('boar')).toBe(2)   // 1 pasture + 1 card
-    expect(player.getTotalAnimals('cattle')).toBe(1)  // 1 pet
+  test('food bonus accounts for animals on card during harvest', () => {
+    const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
+    t.setBoard(game, {
+      round: 4, // First harvest
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['feedyard-b011'],
+        food: 10,
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 0, col: 1 }], sheep: 2 },
+            { spaces: [{ row: 0, col: 2 }] },
+          ],
+        },
+      },
+      micah: { food: 10 },
+    })
+    // Pre-fill card with 1 sheep (out of 2 capacity from 2 pastures) → 1 unused spot
+    game.testSetBreakpoint('initialization-complete', (game) => {
+      const player = game.players.byName('dennis')
+      player.addCardAnimal('feedyard-b011', 'sheep', 1)
+    })
+    game.run()
+
+    t.choose(game, 'Day Laborer')  // dennis
+    t.choose(game, 'Forest')       // micah
+    t.choose(game, 'Clay Pit')     // dennis
+    t.choose(game, 'Reed Bank')    // micah
+
+    // Breeding: sheep 2→3. Pasture 1 (0,1) is full (cap 2), baby goes to pasture 2 (0,2).
+    // Feedyard has 2 spots, 1 used (sheep) → 1 unused → +1 food
+    // food: 10 + 2(DL) + 1(Feedyard) - 4(feed) = 9
+    t.testBoard(game, {
+      dennis: {
+        food: 9,
+        clay: 1,
+        animals: { sheep: 4 }, // 2 in pasture1 + 1 in pasture2 + 1 on card
+        minorImprovements: ['feedyard-b011'],
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 0, col: 1 }], sheep: 2 },
+            { spaces: [{ row: 0, col: 2 }], sheep: 1 },
+          ],
+        },
+      },
+    })
   })
 })

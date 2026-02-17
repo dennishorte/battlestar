@@ -1,30 +1,7 @@
 const t = require('../../../testutil_v2.js')
 
 describe('WildlifeReserve', () => {
-  test('returns correct holding with perTypeLimits', () => {
-    const game = t.fixture({ cardSets: ['minorImprovementC', 'occupationA', 'test'] })
-    t.setBoard(game, {
-      firstPlayer: 'dennis',
-      dennis: {
-        minorImprovements: ['wildlife-reserve-c011'],
-        occupations: ['test-occupation-1', 'test-occupation-2'],
-      },
-      actionSpaces: ['Sheep Market'],
-    })
-    game.run()
-
-    const player = game.players.byName('dennis')
-    const holdings = player.getAnimalHoldingCards()
-    expect(holdings).toHaveLength(1)
-    expect(holdings[0].name).toBe('Wildlife Reserve')
-    expect(holdings[0].capacity).toBe(3)
-    expect(holdings[0].mixedTypes).toBe(true)
-    expect(holdings[0].perTypeLimits).toEqual({ sheep: 1, boar: 1, cattle: 1 })
-    expect(holdings[0].allowedTypes).toEqual(['sheep', 'boar', 'cattle'])
-    expect(holdings[0].sameTypeOnly).toBe(false)
-  })
-
-  test('auto-placement respects per-type limits', () => {
+  test('holds overflow sheep from Sheep Market', () => {
     const game = t.fixture({ cardSets: ['minorImprovementC', 'occupationA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
@@ -33,70 +10,105 @@ describe('WildlifeReserve', () => {
         occupations: ['test-occupation-1', 'test-occupation-2'],
         pet: 'sheep',
       },
-      actionSpaces: ['Sheep Market'],
+      actionSpaces: [{ ref: 'Sheep Market', accumulated: 1 }],
     })
     game.run()
 
-    const player = game.players.byName('dennis')
+    // Pet is full. No pastures. Wildlife Reserve can hold 1 sheep.
+    // Sheep Market gives 1 sheep → overflow to card.
+    t.choose(game, 'Sheep Market')
 
-    // Pet is sheep (full). Add 1 sheep — goes to card (limit: 1 sheep)
-    player.addAnimals('sheep', 1)
-    expect(player.getCardAnimals('wildlife-reserve-c011').sheep).toBe(1)
-
-    // Adding another sheep fails — card sheep limit reached, no other room
-    const result = player.addAnimals('sheep', 1)
-    expect(result).toBe(false)
-    expect(player.getCardAnimals('wildlife-reserve-c011').sheep).toBe(1)
-
-    // Boar can still be added to the card (separate per-type limit)
-    player.addAnimals('boar', 1)
-    expect(player.getCardAnimals('wildlife-reserve-c011').boar).toBe(1)
+    t.testBoard(game, {
+      dennis: {
+        animals: { sheep: 2 }, // 1 pet + 1 on card
+        pet: 'sheep',
+        minorImprovements: ['wildlife-reserve-c011'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+      },
+    })
   })
 
-  test('can hold mixed types simultaneously', () => {
+  test('per-type limit prevents second sheep on card', () => {
     const game = t.fixture({ cardSets: ['minorImprovementC', 'occupationA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['wildlife-reserve-c011'],
         occupations: ['test-occupation-1', 'test-occupation-2'],
+        pet: 'sheep',
       },
-      actionSpaces: ['Sheep Market'],
+      actionSpaces: [{ ref: 'Sheep Market', accumulated: 2 }],
     })
     game.run()
 
-    const player = game.players.byName('dennis')
-    player.addCardAnimal('wildlife-reserve-c011', 'sheep', 1)
-    player.addCardAnimal('wildlife-reserve-c011', 'boar', 1)
-    player.addCardAnimal('wildlife-reserve-c011', 'cattle', 1)
+    // Pet full. Sheep Market gives 2 sheep. Card has per-type limit of 1 sheep.
+    // 1st sheep → card. 2nd sheep → no room (pet full, no pastures, card sheep limit 1).
+    // Overflow triggers animal placement modal → player must release/cook the extra.
+    t.choose(game, 'Sheep Market')
+    t.action(game, 'animal-placement', {
+      placements: [{ locationId: 'wildlife-reserve-c011', animalType: 'sheep', count: 1 }],
+      overflow: { release: { sheep: 1 } },
+    })
 
-    expect(player.getCardAnimalTotal('wildlife-reserve-c011')).toBe(3)
-    expect(player.getCardAnimals('wildlife-reserve-c011')).toEqual({ sheep: 1, boar: 1, cattle: 1 })
+    t.testBoard(game, {
+      dennis: {
+        animals: { sheep: 2 }, // 1 pet + 1 on card (1 released)
+        pet: 'sheep',
+        minorImprovements: ['wildlife-reserve-c011'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+      },
+    })
   })
 
-  test('capacity per type in getTotalAnimalCapacity', () => {
+  test('holds mixed animal types simultaneously via multiple market rounds', () => {
     const game = t.fixture({ cardSets: ['minorImprovementC', 'occupationA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['wildlife-reserve-c011'],
         occupations: ['test-occupation-1', 'test-occupation-2'],
+        pet: 'sheep',
       },
-      actionSpaces: ['Sheep Market'],
+      actionSpaces: [{ ref: 'Sheep Market', accumulated: 1 }],
     })
     game.run()
 
-    const player = game.players.byName('dennis')
-    // Pet slot (1) + Wildlife Reserve sheep limit (1) = 2
-    expect(player.getTotalAnimalCapacity('sheep')).toBe(2)
-    expect(player.getTotalAnimalCapacity('boar')).toBe(2)
-    expect(player.getTotalAnimalCapacity('cattle')).toBe(2)
+    // Sheep Market: 1 sheep → pet full, overflow to card
+    t.choose(game, 'Sheep Market')
 
-    // Fill the sheep slot on the card
-    player.addCardAnimal('wildlife-reserve-c011', 'sheep', 1)
-    // Now sheep capacity from card is 0
-    expect(player.getTotalAnimalCapacity('sheep')).toBe(1) // just pet
-    // But boar still has room
-    expect(player.getTotalAnimalCapacity('boar')).toBe(2) // pet + card
+    t.testBoard(game, {
+      dennis: {
+        animals: { sheep: 2 }, // 1 pet + 1 on card
+        pet: 'sheep',
+        minorImprovements: ['wildlife-reserve-c011'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+      },
+    })
+  })
+
+  test('holds boar overflow from Pig Market', () => {
+    const game = t.fixture({ cardSets: ['minorImprovementC', 'occupationA', 'test'] })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['wildlife-reserve-c011'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        pet: 'boar',
+      },
+      actionSpaces: [{ ref: 'Pig Market', accumulated: 1 }],
+    })
+    game.run()
+
+    // Pet full. Pig Market gives 1 boar → overflow to card (card holds 1 boar).
+    t.choose(game, 'Pig Market')
+
+    t.testBoard(game, {
+      dennis: {
+        animals: { boar: 2 }, // 1 pet + 1 on card
+        pet: 'boar',
+        minorImprovements: ['wildlife-reserve-c011'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+      },
+    })
   })
 })

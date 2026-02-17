@@ -1,36 +1,104 @@
+const t = require('../../../testutil_v2.js')
+
 describe('Blueprint', () => {
-  test('allowsMajorsOnMinorAction lists correct major improvement IDs', () => {
-    const card = require('./Blueprint.js')
-    expect(card.allowsMajorsOnMinorAction).toEqual(['joinery', 'pottery', 'basketmakers-workshop'])
+  test('can build Joinery on Minor Improvement action via Meeting Place', () => {
+    const game = t.fixture({ cardSets: ['minorC', 'test'] })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['blueprint-c027'],
+        wood: 2, stone: 2, // Joinery costs wood:2, stone:2
+      },
+    })
+    game.run()
+
+    // Dennis takes Meeting Place (startsPlayer + minor improvement)
+    t.choose(game, 'Meeting Place')
+    // Blueprint allows Joinery/Pottery/Basketmaker on minor improvement action
+    t.choose(game, 'Major Improvement.Joinery (joinery)')
+
+    t.testBoard(game, {
+      currentPlayer: 'micah',
+      dennis: {
+        food: 1, // Meeting Place gives 1 food
+        minorImprovements: ['blueprint-c027'],
+        majorImprovements: ['joinery'],
+      },
+    })
   })
 
-  test('reduces stone cost by 1 for joinery', () => {
-    const card = require('./Blueprint.js')
-    const result = card.modifyMajorCost('joinery', { wood: 2, stone: 2 })
-    expect(result).toEqual({ wood: 2, stone: 1 })
+  test('can build Pottery on Minor Improvement action', () => {
+    const game = t.fixture({ cardSets: ['minorC', 'test'] })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['blueprint-c027'],
+        clay: 2, stone: 2, // Pottery costs clay:2, stone:2
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Major Improvement.Pottery (pottery)')
+
+    t.testBoard(game, {
+      currentPlayer: 'micah',
+      dennis: {
+        food: 1,
+        minorImprovements: ['blueprint-c027'],
+        majorImprovements: ['pottery'],
+      },
+    })
   })
 
-  test('reduces stone cost by 1 for pottery', () => {
-    const card = require('./Blueprint.js')
-    const result = card.modifyMajorCost('pottery', { clay: 2, stone: 2 })
-    expect(result).toEqual({ clay: 2, stone: 1 })
+  test('can build Basketmaker Workshop on Minor Improvement action', () => {
+    const game = t.fixture({ cardSets: ['minorC', 'test'] })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['blueprint-c027'],
+        reed: 2, stone: 2, // Basketmaker costs reed:2, stone:2
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Meeting Place')
+    t.choose(game, "Major Improvement.Basketmaker's Workshop (basketmakers-workshop)")
+
+    t.testBoard(game, {
+      currentPlayer: 'micah',
+      dennis: {
+        food: 1,
+        minorImprovements: ['blueprint-c027'],
+        majorImprovements: ['basketmakers-workshop'],
+      },
+    })
   })
 
-  test('reduces stone cost by 1 for basketmakers workshop', () => {
-    const card = require('./Blueprint.js')
-    const result = card.modifyMajorCost('basketmakers-workshop', { reed: 2, stone: 2 })
-    expect(result).toEqual({ reed: 2, stone: 1 })
-  })
+  test('does not offer non-Blueprint majors on minor improvement action', () => {
+    const game = t.fixture({ cardSets: ['minorC', 'test'] })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['blueprint-c027'],
+        // Has clay:2 for Fireplace (non-Blueprint major), but NO resources for any Blueprint major
+        clay: 2,
+      },
+    })
+    game.run()
 
-  test('does not reduce stone below 0', () => {
-    const card = require('./Blueprint.js')
-    const result = card.modifyMajorCost('joinery', { wood: 2 })
-    expect(result).toEqual({ wood: 2 })
-  })
+    // Dennis takes Meeting Place
+    t.choose(game, 'Meeting Place')
+    // No Blueprint majors are affordable and no minors in hand, so player
+    // cannot play anything. The engine auto-skips with "no affordable improvements".
 
-  test('does not modify cost for other major improvements', () => {
-    const card = require('./Blueprint.js')
-    const result = card.modifyMajorCost('well', { wood: 1, stone: 3 })
-    expect(result).toEqual({ wood: 1, stone: 3 })
+    t.testBoard(game, {
+      currentPlayer: 'micah',
+      dennis: {
+        food: 1, // Meeting Place gives 1 food
+        clay: 2, // Untouched — Fireplace was not offered
+        minorImprovements: ['blueprint-c027'],
+      },
+    })
   })
 })

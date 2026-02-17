@@ -25,9 +25,16 @@ describe('Field Fences', () => {
     t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 1 }] })
     t.choose(game, 'Done building fences')
 
-    const dennis = game.players.byName('dennis')
-    expect(dennis.farmyard.pastures.length).toBe(1)
-    expect(dennis.wood).toBe(0) // 3 - 3 = 0 (1 fence free from field adjacency)
+    t.testBoard(game, {
+      dennis: {
+        wood: 0, // 3 - 3 = 0 (1 fence free from field adjacency)
+        minorImprovements: ['field-fences-c016'],
+        farmyard: {
+          fields: [{ row: 2, col: 2 }],
+          pastures: [{ spaces: [{ row: 2, col: 1 }] }],
+        },
+      },
+    })
   })
 
   test('multiple field-adjacent fences all get discount', () => {
@@ -59,9 +66,20 @@ describe('Field Fences', () => {
     t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 1 }] })
     t.choose(game, 'Done building fences')
 
-    const dennis = game.players.byName('dennis')
-    expect(dennis.farmyard.pastures.length).toBe(1)
-    expect(dennis.wood).toBe(0) // 2 - 2 = 0 (2 fences free from field adjacency)
+    t.testBoard(game, {
+      dennis: {
+        wood: 0, // 2 - 2 = 0 (2 fences free from field adjacency)
+        minorImprovements: ['field-fences-c016'],
+        farmyard: {
+          fields: [
+            { row: 1, col: 1 },
+            { row: 1, col: 2 },
+            { row: 2, col: 2 },
+          ],
+          pastures: [{ spaces: [{ row: 2, col: 1 }] }],
+        },
+      },
+    })
   })
 
   test('can skip building fences', () => {
@@ -86,8 +104,15 @@ describe('Field Fences', () => {
     // Cancel fencing
     t.choose(game, 'Cancel fencing')
 
-    const dennis = game.players.byName('dennis')
-    expect(dennis.farmyard.pastures.length).toBe(0)
-    expect(dennis.wood).toBe(4) // No wood spent on fences
+    t.testBoard(game, {
+      dennis: {
+        wood: 4, // No wood spent on fences
+        minorImprovements: ['field-fences-c016'],
+        farmyard: {
+          fields: [{ row: 2, col: 2 }],
+          pastures: [], // no fences built
+        },
+      },
+    })
   })
 })

@@ -27,12 +27,19 @@ describe('Overhaul', () => {
     t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 0 }, { row: 2, col: 1 }] })
     t.choose(game, 'Done building fences')
 
-    const dennis = game.players.byName('dennis')
-    expect(dennis.farmyard.pastures.length).toBeGreaterThan(0)
-    expect(dennis.farmyard.fences.length).toBeGreaterThan(0)
     // 2-space pasture needs 6 fences, 3 free from overhaul → 3 wood cost
     // Started with 5, paid 1 for card cost, 3 for fences = 1 remaining
-    expect(dennis.wood).toBe(1)
+    t.testBoard(game, {
+      dennis: {
+        wood: 1,
+        food: 2,
+        minorImprovements: ['overhaul-c001'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 2, col: 0 }, { row: 2, col: 1 }] }],
+        },
+      },
+    })
   })
 
   test('preserves animals during fence rebuild', () => {
@@ -61,9 +68,19 @@ describe('Overhaul', () => {
     t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 0 }, { row: 2, col: 1 }] })
     t.choose(game, 'Done building fences')
 
-    const dennis = game.players.byName('dennis')
     // Animals should be preserved
-    expect(dennis.getTotalAnimals('sheep')).toBe(2)
+    t.testBoard(game, {
+      dennis: {
+        animals: { sheep: 2 },
+        food: 2,
+        wood: 6, // 10 - 1 (card cost) - 3 (6 fences, 3 free) = 6
+        minorImprovements: ['overhaul-c001'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 2, col: 0 }, { row: 2, col: 1 }], sheep: 2 }],
+        },
+      },
+    })
   })
 
   test('razes fences even with insufficient wood to rebuild', () => {
@@ -93,8 +110,16 @@ describe('Overhaul', () => {
     // After building, player has 0 wood and 0 free fences → buildFences exits automatically
     t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 0 }] })
 
-    const dennis = game.players.byName('dennis')
-    expect(dennis.farmyard.pastures.length).toBe(1)
-    expect(dennis.wood).toBe(0) // 1 - 1 = 0
+    t.testBoard(game, {
+      dennis: {
+        wood: 0, // 2 - 1 (card cost) - 1 (4 fences, 3 free) = 0
+        food: 2,
+        minorImprovements: ['overhaul-c001'],
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 2, col: 0 }] }],
+        },
+      },
+    })
   })
 })

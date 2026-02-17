@@ -1,7 +1,7 @@
 const t = require('../../../testutil_v2.js')
 
 describe('Wood Palisades', () => {
-  test('edge fences become palisades — bonus points via getEndGamePoints', () => {
+  test('edge fences become palisades with bonus points', () => {
     const game = t.fixture()
     t.setBoard(game, {
       firstPlayer: 'dennis',
@@ -16,11 +16,9 @@ describe('Wood Palisades', () => {
     // Dennis takes Fencing
     t.choose(game, 'Fencing')
 
-    // Build pasture at (0,2) — a corner space with 2 board edges (top, right)
-    // Edges: top (board edge), right (board edge = col 4? no, col 2 isn't edge)
-    // Actually farmyard is 3 rows x 5 cols. Space (0,2) needs fences on:
-    // top (board edge), left (neighbor), right (neighbor), bottom (neighbor)
-    // Only top is a board edge → 1 palisade, 3 internal fences
+    // Build pasture at (0,2). Farmyard is 3 rows x 5 cols.
+    // Fences needed: top (board edge → palisade), left, right, bottom (internal fences)
+    // = 1 palisade + 3 internal fences
     t.action(game, 'build-pasture', { spaces: [{ row: 0, col: 2 }] })
     t.choose(game, 'Done building fences')
 
@@ -29,13 +27,9 @@ describe('Wood Palisades', () => {
     t.choose(game, 'Day Laborer')     // dennis
     t.choose(game, 'Clay Pit')        // micah
 
-    const dennis = game.players.byName('dennis')
-
-    // 1 palisade (top edge of (0,2))
-    expect(dennis.farmyard.palisades.length).toBe(1)
-    // 3 internal fences
-    expect(dennis.farmyard.fences.length).toBe(3)
-
+    // 1 palisade = 1 bonus point from Wood Palisades
+    // Score: fields(-1) pastures(+1) grain(-1) veg(-1) sheep(-1) boar(-1) cattle(-1)
+    //   rooms(0) family(6) unused(-12) fencedStables(0) bonus(1) = -10
     t.testBoard(game, {
       dennis: {
         minorImprovements: ['wood-palisades-b030'],
@@ -44,12 +38,9 @@ describe('Wood Palisades', () => {
         farmyard: {
           pastures: [{ spaces: [{ row: 0, col: 2 }] }],
         },
+        score: -10,
       },
     })
-
-    // getEndGamePoints: 1 palisade = 1 VP
-    const card = game.cards.byId('wood-palisades-b030')
-    expect(card.definition.getEndGamePoints(dennis)).toBe(1)
   })
 
   test('palisades count as fences for enclosure', () => {

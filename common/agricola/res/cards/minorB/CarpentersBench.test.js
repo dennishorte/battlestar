@@ -27,11 +27,17 @@ describe("Carpenter's Bench", () => {
     t.choose(game, 'Reed Bank')
 
     // Verify pasture was built
-    const dennis = game.players.byName('dennis')
-    expect(dennis.farmyard.pastures.length).toBeGreaterThan(0)
-    expect(dennis.farmyard.pastures.some(p =>
-      p.spaces.some(s => s.row === 2 && s.col === 0)
-    )).toBe(true)
+    t.testBoard(game, {
+      dennis: {
+        wood: 1, // 1 + 3 (Forest) - 3 (4 fences, 1 free) = 1
+        food: 20,
+        clay: 1, // Clay Pit
+        minorImprovements: ['carpenters-bench-b015'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 2, col: 0 }] }],
+        },
+      },
+    })
   })
 
   test('can skip building a pasture', () => {
@@ -55,9 +61,16 @@ describe("Carpenter's Bench", () => {
     t.choose(game, 'Reed Bank')
 
     // Verify no pastures were built
-    const dennis = game.players.byName('dennis')
-    expect(dennis.farmyard.pastures.length).toBe(0)
-    // Verify player kept the wood from Forest (should have some wood)
-    expect(dennis.wood).toBeGreaterThan(0)
+    t.testBoard(game, {
+      dennis: {
+        wood: 3, // 0 + 3 (Forest at round 3)
+        food: 20,
+        clay: 1, // Clay Pit
+        minorImprovements: ['carpenters-bench-b015'],
+        farmyard: {
+          pastures: [],
+        },
+      },
+    })
   })
 })

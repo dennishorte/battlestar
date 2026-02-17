@@ -1,45 +1,51 @@
 const t = require('../../../testutil_v2.js')
 
 describe('Lodger', () => {
-  test('providesRoom: room count includes Lodger before round 10', () => {
+  test('providesRoom: can grow family before round 10 (extra room from Lodger)', () => {
     const game = t.fixture({ cardSets: ['occupationA', 'test'] })
     t.setBoard(game, {
       round: 8,
+      firstPlayer: 'dennis',
       dennis: {
         occupations: ['lodger-a127'],
       },
     })
     game.run()
 
-    const dennis = game.players.byName('dennis')
-    expect(dennis.getRoomCount()).toBe(3)
+    // Lodger provides 1 extra room until round 9
+    // Dennis has 2 rooms + 1 Lodger = 3 capacity, 2 family → can grow
+    expect(t.currentChoices(game)).toContain('Basic Wish for Children')
   })
 
-  test('providesRoomUntilRound: room no longer provided after round 9', () => {
+  test('providesRoomUntilRound: cannot grow family after round 9 (room expired)', () => {
     const game = t.fixture({ cardSets: ['occupationA', 'test'] })
     t.setBoard(game, {
       round: 10,
+      firstPlayer: 'dennis',
       dennis: {
         occupations: ['lodger-a127'],
       },
     })
     game.run()
 
-    const dennis = game.players.byName('dennis')
-    expect(dennis.getRoomCount()).toBe(2)
+    // After round 9, Lodger no longer provides the extra room
+    // Dennis has 2 rooms, 2 family → cannot grow
+    expect(t.currentChoices(game)).not.toContain('Basic Wish for Children')
   })
 
-  test('providesRoom: in round 9 still counts', () => {
+  test('providesRoom: in round 9 still provides room', () => {
     const game = t.fixture({ cardSets: ['occupationA', 'test'] })
     t.setBoard(game, {
       round: 9,
+      firstPlayer: 'dennis',
       dennis: {
         occupations: ['lodger-a127'],
       },
     })
     game.run()
 
-    const dennis = game.players.byName('dennis')
-    expect(dennis.getRoomCount()).toBe(3)
+    // Round 9 is the last round Lodger provides the room
+    // Dennis has 2 rooms + 1 Lodger = 3 capacity, 2 family → can grow
+    expect(t.currentChoices(game)).toContain('Basic Wish for Children')
   })
 })

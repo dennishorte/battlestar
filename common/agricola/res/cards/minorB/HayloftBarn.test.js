@@ -21,9 +21,16 @@ describe('Hayloft Barn', () => {
 
     t.choose(game, 'Grain Seeds')
 
+    t.testBoard(game, {
+      dennis: {
+        grain: 1,
+        food: 6, // 5 + 1 from Hayloft Barn
+        minorImprovements: ['hayloft-barn-b021'],
+        occupations: ['test-occupation-1'],
+      },
+    })
+    // Custom card state: hayloftBarnFood has no testBoard equivalent
     const dennis = game.players.byName('dennis')
-    expect(dennis.grain).toBe(1)
-    expect(dennis.food).toBe(6) // 5 + 1 from Hayloft Barn
     expect(dennis.hayloftBarnFood).toBe(3) // 4 - 1
   })
 
@@ -54,8 +61,17 @@ describe('Hayloft Barn', () => {
     // Micah's turn
     t.choose(game, 'Reed Bank')
 
+    t.testBoard(game, {
+      dennis: {
+        grain: 1, // 1 from Grain Seeds
+        food: 21, // 20 + 1 from Hayloft Barn
+        clay: 1, // Clay Pit
+        minorImprovements: ['hayloft-barn-b021'],
+        occupations: ['test-occupation-1'],
+      },
+    })
+    // Custom card state: hayloftBarnFood has no testBoard equivalent
     const dennis = game.players.byName('dennis')
-    expect(dennis.grain).toBe(1) // 1 from Grain Seeds
     expect(dennis.hayloftBarnFood).toBe(1) // 2 - 1
   })
 
@@ -78,10 +94,18 @@ describe('Hayloft Barn', () => {
 
     t.choose(game, 'Grain Seeds')
 
+    t.testBoard(game, {
+      dennis: {
+        grain: 1,
+        food: 6, // 5 + 1 from Hayloft Barn
+        familyMembers: 3, // 2 + 1 from family growth without room
+        minorImprovements: ['hayloft-barn-b021'],
+        occupations: ['test-occupation-1'],
+      },
+    })
+    // Custom card state: hayloftBarnFood has no testBoard equivalent
     const dennis = game.players.byName('dennis')
     expect(dennis.hayloftBarnFood).toBe(0)
-    // Family growth without room triggered
-    expect(dennis.familyMembers).toBe(3) // 2 + 1 from family growth
   })
 
   test('does not give food when counter is already 0', () => {
@@ -103,8 +127,13 @@ describe('Hayloft Barn', () => {
 
     t.choose(game, 'Grain Seeds')
 
-    const dennis = game.players.byName('dennis')
-    expect(dennis.grain).toBe(1)
-    expect(dennis.food).toBe(5) // No bonus food
+    t.testBoard(game, {
+      dennis: {
+        grain: 1,
+        food: 5, // No bonus food
+        minorImprovements: ['hayloft-barn-b021'],
+        occupations: ['test-occupation-1'],
+      },
+    })
   })
 })

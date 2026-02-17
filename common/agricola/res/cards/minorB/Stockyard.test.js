@@ -1,29 +1,7 @@
 const t = require('../../../testutil_v2.js')
 
 describe('Stockyard', () => {
-  test('returns correct holding with capacity 3 and sameTypeOnly', () => {
-    const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
-    t.setBoard(game, {
-      firstPlayer: 'dennis',
-      dennis: {
-        minorImprovements: ['stockyard-b012'],
-      },
-      actionSpaces: ['Sheep Market'],
-    })
-    game.run()
-
-    const player = game.players.byName('dennis')
-    const holdings = player.getAnimalHoldingCards()
-    expect(holdings).toHaveLength(1)
-    expect(holdings[0].name).toBe('Stockyard')
-    expect(holdings[0].capacity).toBe(3)
-    expect(holdings[0].sameTypeOnly).toBe(true)
-    expect(holdings[0].allowedTypes).toBeNull()
-    expect(holdings[0].perTypeLimits).toBeNull()
-    expect(holdings[0].mixedTypes).toBe(false)
-  })
-
-  test('auto-places overflow animals to Stockyard', () => {
+  test('auto-places overflow sheep from Sheep Market', () => {
     const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
@@ -39,12 +17,12 @@ describe('Stockyard', () => {
     game.run()
 
     // Pasture holds 2, pet slot full. Sheep Market gives 1 sheep.
-    // Overflow goes to Stockyard.
+    // Stockyard can hold 3 of same type. Overflow goes to Stockyard.
     t.choose(game, 'Sheep Market')
 
     t.testBoard(game, {
       dennis: {
-        animals: { sheep: 4 },
+        animals: { sheep: 4 }, // 2 pasture + 1 pet + 1 on card
         pet: 'sheep',
         minorImprovements: ['stockyard-b012'],
         farmyard: {
@@ -52,73 +30,130 @@ describe('Stockyard', () => {
         },
       },
     })
-
-    const player = game.players.byName('dennis')
-    expect(player.getCardAnimalTotal('stockyard-b012')).toBe(1)
-    expect(player.getCardAnimals('stockyard-b012').sheep).toBe(1)
   })
 
-  test('rejects different type when card already has one', () => {
+  test('holds up to 3 same-type animals via overflow', () => {
     const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['stockyard-b012'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 1 }], sheep: 2 }],
+        },
+        pet: 'sheep',
       },
-      actionSpaces: ['Sheep Market'],
+      actionSpaces: [{ ref: 'Sheep Market', accumulated: 3 }],
     })
     game.run()
 
-    const player = game.players.byName('dennis')
-    // Stockyard empty: boar capacity includes Stockyard (pet 1 + stockyard 3 = 4)
-    expect(player.getTotalAnimalCapacity('boar')).toBe(4)
+    // Pasture full (cap 2), pet full. Sheep Market gives 3 sheep.
+    // Stockyard holds all 3 (capacity 3, same type as first placed).
+    t.choose(game, 'Sheep Market')
 
-    // Place sheep on the card
-    player.addCardAnimal('stockyard-b012', 'sheep', 1)
-
-    // Now boar capacity should NOT include Stockyard (already has sheep)
-    expect(player.getTotalAnimalCapacity('boar')).toBe(1) // just pet
-
-    // Sheep capacity still includes remaining Stockyard room
-    expect(player.getTotalAnimalCapacity('sheep')).toBe(3) // pet(1) + stockyard(2 remaining)
+    t.testBoard(game, {
+      dennis: {
+        animals: { sheep: 6 }, // 2 pasture + 1 pet + 3 on card
+        pet: 'sheep',
+        minorImprovements: ['stockyard-b012'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 1 }], sheep: 2 }],
+        },
+      },
+    })
   })
 
-  test('capacity counted in getTotalAnimalCapacity', () => {
+  test('rejects different type when card already holds one type', () => {
     const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['stockyard-b012'],
+        pet: 'boar',
       },
-      actionSpaces: ['Sheep Market'],
+      actionSpaces: [{ ref: 'Pig Market', accumulated: 1 }],
+    })
+    // Pre-fill card with 1 sheep (so card is locked to sheep type)
+    game.testSetBreakpoint('initialization-complete', (game) => {
+      const player = game.players.byName('dennis')
+      player.addCardAnimal('stockyard-b012', 'sheep', 1)
     })
     game.run()
 
-    const player = game.players.byName('dennis')
-    // Pet slot (1) + Stockyard (3) = 4 for sheep
-    const sheepCapacity = player.getTotalAnimalCapacity('sheep')
-    expect(sheepCapacity).toBe(4)
+    // Pet full (boar). Pig Market gives 1 boar.
+    // Stockyard already has sheep → rejects boar (same-type-only).
+    // No pastures, pet full → boar has no room → overflow modal.
+    t.choose(game, 'Pig Market')
+    t.action(game, 'animal-placement', {
+      placements: [],
+      overflow: { release: { boar: 1 } },
+    })
+
+    t.testBoard(game, {
+      dennis: {
+        animals: { sheep: 1, boar: 1 }, // 1 sheep on card + 1 boar pet (released 1 boar)
+        pet: 'boar',
+        minorImprovements: ['stockyard-b012'],
+      },
+    })
   })
 
-  test('appears in animal placement locations with correct flags', () => {
+  test('accepts same type as existing animals on card', () => {
     const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['stockyard-b012'],
+        pet: 'sheep',
       },
-      actionSpaces: ['Sheep Market'],
+      actionSpaces: [{ ref: 'Sheep Market', accumulated: 1 }],
+    })
+    // Pre-fill card with 1 sheep (card locked to sheep)
+    game.testSetBreakpoint('initialization-complete', (game) => {
+      const player = game.players.byName('dennis')
+      player.addCardAnimal('stockyard-b012', 'sheep', 1)
     })
     game.run()
 
-    const player = game.players.byName('dennis')
-    const locations = player.getAnimalPlacementLocations()
-    const cardLoc = locations.find(l => l.id === 'card-stockyard-b012')
-    expect(cardLoc).toBeDefined()
-    expect(cardLoc.name).toBe('Stockyard')
-    expect(cardLoc.sameTypeOnly).toBe(true)
-    expect(cardLoc.mixedTypes).toBe(false)
-    expect(cardLoc.maxCapacity).toBe(3)
-    expect(cardLoc.allowedTypes).toBeNull()
+    // Pet full. Sheep Market gives 1 sheep.
+    // Stockyard has 1 sheep, can hold 2 more → auto-places.
+    t.choose(game, 'Sheep Market')
+
+    t.testBoard(game, {
+      dennis: {
+        animals: { sheep: 3 }, // 1 pet + 2 on card (1 pre-filled + 1 from market)
+        pet: 'sheep',
+        minorImprovements: ['stockyard-b012'],
+      },
+    })
+  })
+
+  test('scores 1 VP from card', () => {
+    const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
+    t.setBoard(game, {
+      round: 1,
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['stockyard-b012'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 1 }], sheep: 1 }],
+        },
+      },
+    })
+    game.run()
+
+    // Score: fields -1, pastures 1, grain -1, veg -1, sheep 1, boar -1, cattle -1
+    // rooms 0 (2 wood), family 6 (2x3), unused -12 (12 empty), fenced stables 0
+    // card vps 1 (Stockyard) = -8
+    t.testBoard(game, {
+      dennis: {
+        score: -8,
+        animals: { sheep: 1 },
+        minorImprovements: ['stockyard-b012'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 1 }], sheep: 1 }],
+        },
+      },
+    })
   })
 })

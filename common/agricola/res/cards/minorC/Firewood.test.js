@@ -19,6 +19,7 @@ describe('Firewood', () => {
     t.choose(game, 'Clay Pit')     // micah
 
     // After return home phase: 1 wood placed on Firewood card
+    // Custom card state: firewoodWood has no testBoard equivalent
     const dennis = game.players.byName('dennis')
     expect(dennis.firewoodWood).toBe(1)
   })

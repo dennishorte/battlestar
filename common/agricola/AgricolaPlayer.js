@@ -2677,7 +2677,8 @@ class AgricolaPlayer extends BasePlayer {
 
     for (const type of res.animalTypes) {
       const count = this.getTotalAnimals(type)
-      if (count >= 2) {
+      const required = this._getBreedingRequirement(type)
+      if (count >= required) {
         // Can breed - but only if we can house the baby
         if (this.canPlaceAnimals(type, 1)) {
           this.addAnimals(type, 1)
@@ -2687,6 +2688,17 @@ class AgricolaPlayer extends BasePlayer {
     }
 
     return bred
+  }
+
+  _getBreedingRequirement(type) {
+    if (type === 'sheep') {
+      for (const card of this.getActiveCards()) {
+        if (card.hasHook('modifySheepBreedingRequirement')) {
+          return card.callHook('modifySheepBreedingRequirement', this.game, this)
+        }
+      }
+    }
+    return 2
   }
 
   // ---------------------------------------------------------------------------

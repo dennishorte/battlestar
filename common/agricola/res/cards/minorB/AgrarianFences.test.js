@@ -25,10 +25,17 @@ describe('Agrarian Fences', () => {
     // After building, 0 wood → buildFences auto-exits
     t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 0 }] })
 
-    const dennis = game.players.byName('dennis')
-    expect(dennis.farmyard.pastures.length).toBe(1)
-    expect(dennis.wood).toBe(0) // 4 - 4 = 0
-    expect(dennis.grain).toBe(1) // didn't sow
+    t.testBoard(game, {
+      dennis: {
+        wood: 0, // 4 - 4 = 0
+        grain: 1, // didn't sow
+        minorImprovements: ['agrarian-fences-b026'],
+        farmyard: {
+          fields: [{ row: 2, col: 2 }],
+          pastures: [{ spaces: [{ row: 2, col: 0 }] }],
+        },
+      },
+    })
   })
 
   test('builds fences instead of baking, then sows', () => {
@@ -58,14 +65,18 @@ describe('Agrarian Fences', () => {
     // Build fences (0 wood after → auto-exits)
     t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 0 }] })
 
-    const dennis = game.players.byName('dennis')
-    expect(dennis.farmyard.pastures.length).toBe(1)
-    expect(dennis.wood).toBe(0) // 4 - 4 = 0
-    expect(dennis.grain).toBe(0) // 1 sown
-    // Field should be sown with grain
-    const fieldSpace = dennis.farmyard.grid[2][2]
-    expect(fieldSpace.crop).toBe('grain')
-    expect(fieldSpace.cropCount).toBe(3) // 1 grain sown → 3 on field
+    t.testBoard(game, {
+      dennis: {
+        wood: 0, // 4 - 4 = 0
+        grain: 0, // 1 sown
+        minorImprovements: ['agrarian-fences-b026'],
+        majorImprovements: ['fireplace-2'],
+        farmyard: {
+          fields: [{ row: 2, col: 2, crop: 'grain', cropCount: 3 }], // 1 grain sown → 3 on field
+          pastures: [{ spaces: [{ row: 2, col: 0 }] }],
+        },
+      },
+    })
   })
 
   test('can build fences when cannot sow or bake', () => {
@@ -86,9 +97,15 @@ describe('Agrarian Fences', () => {
     // After building, 0 wood → auto-exits
     t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 0 }] })
 
-    const dennis = game.players.byName('dennis')
-    expect(dennis.farmyard.pastures.length).toBe(1)
-    expect(dennis.wood).toBe(0)
+    t.testBoard(game, {
+      dennis: {
+        wood: 0,
+        minorImprovements: ['agrarian-fences-b026'],
+        farmyard: {
+          pastures: [{ spaces: [{ row: 2, col: 0 }] }],
+        },
+      },
+    })
   })
 
   test('can choose normal sow flow with Agrarian Fences', () => {
@@ -113,9 +130,16 @@ describe('Agrarian Fences', () => {
     // Normal sow flow: sow grain into field (only 1 field, auto-exits)
     t.action(game, 'sow-field', { row: 2, col: 2, cropType: 'grain' })
 
-    const dennis = game.players.byName('dennis')
-    expect(dennis.farmyard.pastures.length).toBe(0) // no fences built
-    expect(dennis.grain).toBe(0) // sown
-    expect(dennis.wood).toBe(4) // unchanged
+    t.testBoard(game, {
+      dennis: {
+        wood: 4, // unchanged
+        grain: 0, // sown
+        minorImprovements: ['agrarian-fences-b026'],
+        farmyard: {
+          fields: [{ row: 2, col: 2, crop: 'grain', cropCount: 3 }],
+          pastures: [], // no fences built
+        },
+      },
+    })
   })
 })
