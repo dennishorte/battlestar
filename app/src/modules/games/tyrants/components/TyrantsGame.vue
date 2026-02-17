@@ -11,6 +11,10 @@
             <DropdownButton @click="toggleMapActions">
               map actions: {{ ui.mapActions ? 'on' : 'off' }}
             </DropdownButton>
+            <template v-if="isDemonwebMap">
+              <DropdownDivider />
+              <DropdownButton @click="exportMap">export map layout</DropdownButton>
+            </template>
           </GameMenu>
 
           <GameLogTyrants />
@@ -54,7 +58,7 @@
 
 
 <script>
-import { util } from 'battlestar-common'
+import { util, tyrants } from 'battlestar-common'
 
 import maps from '../res/maps.js'
 
@@ -354,6 +358,20 @@ export default {
     toggleMapActions() {
       this.ui.mapActions = !this.ui.mapActions
       window.localStorage.setItem('tyrants-map-actions', this.ui.mapActions)
+    },
+
+    async exportMap() {
+      const { encodeMapLayout } = tyrants.res.mapLayoutCodec
+      const mapName = this.game.settings.map
+      const hexes = this.game.state.assembledMap.hexes
+      const layoutStr = encodeMapLayout(mapName, hexes)
+      try {
+        await navigator.clipboard.writeText(layoutStr)
+        alert('Map layout copied to clipboard')
+      }
+      catch {
+        window.prompt('Copy the map layout below:', layoutStr)
+      }
     },
 
     canAssassinateTroop() {

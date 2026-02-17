@@ -4,6 +4,7 @@ const t = require('./testutil.js')
 const res = require('./res/index.js')
 
 const { mapConfigs } = res
+const { encodeMapLayout, decodeMapLayout, validateMapLayout } = res.mapLayoutCodec
 
 
 // Helper: create a demonweb fixture and run up to the rotation request
@@ -650,6 +651,224 @@ describe('Demonweb', () => {
         expect(gemAction).toBeDefined()
         expect(gemAction.choices.some(c => c.title === 'Spend Gem for Power')).toBe(true)
       })
+    })
+  })
+
+  describe('map layout codec', () => {
+    test('encode produces expected format', () => {
+      const hexes = [
+        { tileId: 'B1', rotation: 3 },
+        { tileId: 'C4', rotation: 0 },
+        { tileId: 'C2', rotation: 1 },
+      ]
+      const result = encodeMapLayout('demonweb-2', hexes)
+      expect(result).toBe('demonweb-2:B1r3,C4r0,C2r1')
+    })
+
+    test('decode parses valid string', () => {
+      const result = decodeMapLayout('demonweb-2:B1r3,C4r0,C2r1')
+      expect(result.mapName).toBe('demonweb-2')
+      expect(result.entries).toEqual([
+        { tileId: 'B1', rotation: 3 },
+        { tileId: 'C4', rotation: 0 },
+        { tileId: 'C2', rotation: 1 },
+      ])
+    })
+
+    test('encode/decode round-trip', () => {
+      const game = demonwebFixture()
+      const hexes = game.state.assembledMap.hexes
+      const mapName = game.settings.map
+
+      const encoded = encodeMapLayout(mapName, hexes)
+      const decoded = decodeMapLayout(encoded)
+
+      expect(decoded.mapName).toBe(mapName)
+      expect(decoded.entries).toHaveLength(hexes.length)
+      for (let i = 0; i < hexes.length; i++) {
+        expect(decoded.entries[i].tileId).toBe(hexes[i].tileId)
+        expect(decoded.entries[i].rotation).toBe(hexes[i].rotation)
+      }
+      submitRotations(game)
+    })
+
+    test('decode rejects invalid strings', () => {
+      expect(() => decodeMapLayout('')).toThrow()
+      expect(() => decodeMapLayout('no-colon')).toThrow()
+      expect(() => decodeMapLayout('map:')).toThrow()
+      expect(() => decodeMapLayout('map:invalid')).toThrow()
+      expect(() => decodeMapLayout('map:B1rX')).toThrow()
+    })
+
+    test('decode rejects multi-digit rotations', () => {
+      expect(() => decodeMapLayout('map:B1r12')).toThrow()
+    })
+
+    test('validate accepts correct layout', () => {
+      const game = demonwebFixture()
+      const hexes = game.state.assembledMap.hexes
+      const entries = hexes.map(h => ({ tileId: h.tileId, rotation: h.rotation }))
+      const result = validateMapLayout('demonweb-2', entries)
+      expect(result.valid).toBe(true)
+      submitRotations(game)
+    })
+
+    test('validate rejects wrong tile count', () => {
+      const result = validateMapLayout('demonweb-2', [{ tileId: 'B1', rotation: 0 }])
+      expect(result.valid).toBe(false)
+      expect(result.error).toMatch(/Expected 9/)
+    })
+
+    test('validate rejects unknown tile', () => {
+      const entries = Array(9).fill(null).map((_, i) => ({ tileId: `Z${i+1}`, rotation: 0 }))
+      const result = validateMapLayout('demonweb-2', entries)
+      expect(result.valid).toBe(false)
+      expect(result.error).toMatch(/Unknown tile/)
+    })
+
+    test('validate rejects duplicate tiles', () => {
+      const entries = Array(9).fill(null).map(() => ({ tileId: 'B1', rotation: 0 }))
+      const result = validateMapLayout('demonweb-2', entries)
+      expect(result.valid).toBe(false)
+      expect(result.error).toMatch(/Duplicate/)
+    })
+
+    test('validate rejects unknown map', () => {
+      const result = validateMapLayout('unknown-map', [])
+      expect(result.valid).toBe(false)
+      expect(result.error).toMatch(/Unknown map/)
+    })
+
+    test('validate rejects invalid rotation', () => {
+      const entries = Array(9).fill(null).map((_, i) => ({
+        tileId: ['B1', 'C1', 'C2', 'C3', 'A1', 'C4', 'C5', 'C6', 'B2'][i],
+        rotation: i === 0 ? 6 : 0,
+      }))
+      const result = validateMapLayout('demonweb-2', entries)
+      expect(result.valid).toBe(false)
+      expect(result.error).toMatch(/Invalid rotation/)
+    })
+  })
+
+  describe('mapLayout setting', () => {
+    test('mapLayout produces exact tiles specified', () => {
+      const layout = [
+        { tileId: 'B2', rotation: 1 },
+        { tileId: 'C3', rotation: 2 },
+        { tileId: 'C1', rotation: 0 },
+        { tileId: 'C5', rotation: 3 },
+        { tileId: 'A2', rotation: 0 },
+        { tileId: 'C4', rotation: 4 },
+        { tileId: 'C6', rotation: 5 },
+        { tileId: 'C2', rotation: 1 },
+        { tileId: 'B1', rotation: 2 },
+      ]
+      const game = demonwebFixture({ mapLayout: layout })
+      const hexes = game.state.assembledMap.hexes
+
+      for (let i = 0; i < layout.length; i++) {
+        expect(hexes[i].tileId).toBe(layout[i].tileId)
+      }
+      submitRotations(game)
+    })
+
+    test('rotations from mapLayout are used as initial defaults', () => {
+      const layout = [
+        { tileId: 'B2', rotation: 3 },
+        { tileId: 'C3', rotation: 2 },
+        { tileId: 'C1', rotation: 1 },
+        { tileId: 'C5', rotation: 4 },
+        { tileId: 'A2', rotation: 5 },
+        { tileId: 'C4', rotation: 0 },
+        { tileId: 'C6', rotation: 2 },
+        { tileId: 'C2', rotation: 3 },
+        { tileId: 'B1', rotation: 1 },
+      ]
+      const game = demonwebFixture({ mapLayout: layout })
+      const hexes = game.state.assembledMap.hexes
+
+      for (let i = 0; i < layout.length; i++) {
+        expect(hexes[i].rotation).toBe(layout[i].rotation)
+      }
+      submitRotations(game)
+    })
+
+    test('rotation setup phase still runs after import', () => {
+      const layout = [
+        { tileId: 'B2', rotation: 0 },
+        { tileId: 'C3', rotation: 0 },
+        { tileId: 'C1', rotation: 0 },
+        { tileId: 'C5', rotation: 0 },
+        { tileId: 'A2', rotation: 0 },
+        { tileId: 'C4', rotation: 0 },
+        { tileId: 'C6', rotation: 0 },
+        { tileId: 'C2', rotation: 0 },
+        { tileId: 'B1', rotation: 0 },
+      ]
+      const game = demonwebFixture({ mapLayout: layout })
+
+      // Should be waiting for rotation input
+      const request = game.waiting
+      expect(request).toBeDefined()
+      expect(request.selectors[0].title).toBe('Rotate Hex Tiles')
+
+      // Player can still change rotations
+      const tileId = game.state.assembledMap.hexes[0].tileId
+      submitRotations(game, { [tileId]: 3 })
+
+      // After rotation, the tile should have the new rotation
+      const updatedHex = game.state.assembledMap.hexes.find(h => h.tileId === tileId)
+      expect(updatedHex.rotation).toBe(3)
+    })
+
+    test('partial mapLayout uses specified tiles for those slots', () => {
+      // Only specify first two slots; rest should be random
+      const layout = [
+        { tileId: 'B2', rotation: 1 },
+        { tileId: 'C3', rotation: 2 },
+      ]
+      const game = demonwebFixture({ mapLayout: layout })
+      const hexes = game.state.assembledMap.hexes
+
+      // First two should be exactly as specified
+      expect(hexes[0].tileId).toBe('B2')
+      expect(hexes[1].tileId).toBe('C3')
+
+      // Should still have 9 hexes total
+      expect(hexes).toHaveLength(9)
+      submitRotations(game)
+    })
+
+    test('existing games without mapLayout still work', () => {
+      // Default demonweb fixture (no mapLayout)
+      const game = demonwebFixture()
+      const hexes = game.state.assembledMap.hexes
+
+      expect(hexes).toHaveLength(9)
+      // Should use greedy rotation (not all zero)
+      submitRotations(game)
+    })
+
+    test('mapLayout round-trip: export then import produces same map', () => {
+      // Create a game, export its layout, create a new game with that layout
+      const game1 = demonwebFixture()
+      const hexes1 = game1.state.assembledMap.hexes
+      const encoded = encodeMapLayout('demonweb-2', hexes1)
+      submitRotations(game1)
+
+      // Decode to get layout entries
+      const { entries } = decodeMapLayout(encoded)
+
+      // Create a new game with this layout
+      const game2 = demonwebFixture({ mapLayout: entries })
+      const hexes2 = game2.state.assembledMap.hexes
+
+      // Same tiles and rotations
+      for (let i = 0; i < hexes1.length; i++) {
+        expect(hexes2[i].tileId).toBe(hexes1[i].tileId)
+        expect(hexes2[i].rotation).toBe(hexes1[i].rotation)
+      }
+      submitRotations(game2)
     })
   })
 })

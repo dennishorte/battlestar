@@ -72,6 +72,7 @@ function factoryFromLobby(lobby) {
     expansions: lobby.options.expansions,
     randomizeExpansions: lobby.options.randomizeExpansions,
     map: lobby.options.map,
+    mapLayout: lobby.options.mapLayout,
     menzoExtraNeutral: lobby.options.menzoExtraNeutral,
     players: lobby.users,
     seed: lobby.seed,
@@ -180,8 +181,22 @@ Tyrants.prototype.initializeDemonwebMap = function() {
   // Step 1: Select random tiles for each position
   const selectedTiles = this._selectTilesForLayout(config.layout)
 
-  // Step 2: Rotate tiles to maximize connections (greedy algorithm)
-  const rotatedTiles = this._rotateTilesGreedy(selectedTiles, config.layout)
+  // Step 2: Rotate tiles
+  const mapLayout = this.settings.mapLayout
+  let rotatedTiles
+  if (mapLayout && mapLayout.length === config.layout.length) {
+    // Apply rotations from the layout specification
+    for (let i = 0; i < selectedTiles.length; i++) {
+      if (mapLayout[i]) {
+        selectedTiles[i].rotation = mapLayout[i].rotation
+      }
+    }
+    rotatedTiles = selectedTiles
+  }
+  else {
+    // Greedy algorithm to maximize connections
+    rotatedTiles = this._rotateTilesGreedy(selectedTiles, config.layout)
+  }
 
   // Step 3: Compute neighbors from internal paths + edge connections
   const locationData = this._assembleMapLocations(rotatedTiles, config.layout)
@@ -217,18 +232,31 @@ Tyrants.prototype._selectTilesForLayout = function(layout) {
   const { hexTiles } = res
   const usedTiles = new Set()
   const selected = []
+  const mapLayout = this.settings.mapLayout
 
-  for (const slot of layout) {
-    // Filter pool to exclude already-used tiles
-    const available = slot.pool.filter(tileId => !usedTiles.has(tileId))
+  for (let i = 0; i < layout.length; i++) {
+    const slot = layout[i]
+    let tileId
 
-    if (available.length === 0) {
-      throw new Error(`No available tiles for slot at (${slot.position.q}, ${slot.position.r})`)
+    // Use mapLayout entry if specified for this slot
+    if (mapLayout && mapLayout[i]) {
+      tileId = mapLayout[i].tileId
+      if (!hexTiles.allTiles[tileId]) {
+        throw new Error(`Unknown tile in mapLayout: ${tileId}`)
+      }
     }
+    else {
+      // Filter pool to exclude already-used tiles
+      const available = slot.pool.filter(id => !usedTiles.has(id))
 
-    // Random selection
-    const randomIndex = Math.floor(this.random() * available.length)
-    const tileId = available[randomIndex]
+      if (available.length === 0) {
+        throw new Error(`No available tiles for slot at (${slot.position.q}, ${slot.position.r})`)
+      }
+
+      // Random selection
+      const randomIndex = Math.floor(this.random() * available.length)
+      tileId = available[randomIndex]
+    }
 
     usedTiles.add(tileId)
     selected.push({

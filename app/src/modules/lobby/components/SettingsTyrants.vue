@@ -37,6 +37,19 @@
       <label class="form-check-label">{{ map.text }}</label>
     </div>
 
+    <div v-if="isDemonwebMap" class="map-layout-import">
+      <label class="form-label">Import map layout</label>
+      <input
+        type="text"
+        class="form-control form-control-sm"
+        placeholder="paste layout string (e.g. demonweb-2:B1r3,C4r0,...)"
+        v-model="models.mapLayoutString"
+        @input="onMapLayoutInput"
+      />
+      <small v-if="mapLayoutError" class="text-danger">{{ mapLayoutError }}</small>
+      <small v-else-if="models.mapLayout" class="text-success">layout loaded</small>
+    </div>
+
     <hr />
 
     <div class="form-check">
@@ -51,6 +64,10 @@
 
 
 <script>
+import { tyrants } from 'battlestar-common'
+
+const { decodeMapLayout, validateMapLayout } = tyrants.res.mapLayoutCodec
+
 export default {
   name: 'TyrantsSettings',
 
@@ -143,13 +160,23 @@ export default {
         },
       ],
 
+      mapLayoutError: '',
+
       models: {
         expansions: [],
         map: '',
         menzoExtraNeutral: true,
         randomizeExpansions: false,
+        mapLayout: null,
+        mapLayoutString: '',
       },
     }
+  },
+
+  computed: {
+    isDemonwebMap() {
+      return this.models.map && this.models.map.startsWith('demonweb')
+    },
   },
 
   watch: {
@@ -182,11 +209,47 @@ export default {
       this.lobby.options = {
         expansions: this.models.randomizeExpansions ? [] : [...this.models.expansions],
         map: this.models.map,
+        mapLayout: this.models.mapLayout || undefined,
         menzoExtraNeutral: this.models.menzoExtraNeutral,
         randomizeExpansions: this.models.randomizeExpansions,
       }
       this.updateValid()
       this.save()
+    },
+
+    onMapLayoutInput() {
+      const str = this.models.mapLayoutString.trim()
+      if (!str) {
+        this.models.mapLayout = null
+        this.mapLayoutError = ''
+        this.optionsChanged()
+        return
+      }
+
+      try {
+        const { mapName, entries } = decodeMapLayout(str)
+        const result = validateMapLayout(mapName, entries)
+        if (!result.valid) {
+          this.mapLayoutError = result.error
+          this.models.mapLayout = null
+          this.optionsChanged()
+          return
+        }
+
+        // Auto-switch map if needed
+        if (mapName !== this.models.map) {
+          this.models.map = mapName
+        }
+
+        this.models.mapLayout = entries
+        this.mapLayoutError = ''
+        this.optionsChanged()
+      }
+      catch (e) {
+        this.mapLayoutError = e.message
+        this.models.mapLayout = null
+        this.optionsChanged()
+      }
     },
   },
 
@@ -200,6 +263,15 @@ export default {
       }
       else {
         this.models.menzoExtraNeutral = this.lobby.options.menzoExtraNeutral
+      }
+      if (this.lobby.options.mapLayout) {
+        this.models.mapLayout = this.lobby.options.mapLayout
+        // Reconstruct the display string from the stored layout
+        const { encodeMapLayout } = tyrants.res.mapLayoutCodec
+        this.models.mapLayoutString = encodeMapLayout(
+          this.models.map,
+          this.models.mapLayout.map(e => ({ tileId: e.tileId, rotation: e.rotation })),
+        )
       }
       this.updateValid()
     }
