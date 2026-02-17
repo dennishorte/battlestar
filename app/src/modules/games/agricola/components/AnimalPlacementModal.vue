@@ -406,6 +406,17 @@ export default {
     },
 
     formatCurrent(loc) {
+      if (loc.currentAnimals) {
+        const parts = []
+        for (const [type, count] of Object.entries(loc.currentAnimals)) {
+          if (count > 0) {
+            parts.push(`${count} ${type}`)
+          }
+        }
+        if (parts.length > 0) {
+          return parts.join(', ')
+        }
+      }
       if (!loc.currentAnimalType) {
         return '-'
       }

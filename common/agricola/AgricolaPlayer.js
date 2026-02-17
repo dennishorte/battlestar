@@ -2328,6 +2328,7 @@ class AgricolaPlayer extends BasePlayer {
         const space = this.getSpace(stable.row, stable.col)
         if (space.animal === animalType) {
           space.animal = null
+          space.animalCount = 0
           remaining--
         }
       }

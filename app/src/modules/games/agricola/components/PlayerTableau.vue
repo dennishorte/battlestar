@@ -109,18 +109,21 @@
       <CardSection
         title="Occupations"
         :cards="player.playedOccupations"
+        :player="player"
         persistKey="agricola-occupations-expanded"
       />
 
       <CardSection
         title="Minor Improvements"
         :cards="player.playedMinorImprovements"
+        :player="player"
         persistKey="agricola-minor-expanded"
       />
 
       <CardSection
         title="Major Improvements"
         :cards="player.majorImprovements"
+        :player="player"
         persistKey="agricola-major-expanded"
       />
 
