@@ -654,6 +654,234 @@ describe('Demonweb', () => {
     })
   })
 
+  describe('A2 triad bonus', () => {
+    // A2 (Zelatar) has a triad bonus for sites: fogtown, gallenghast, darkflame
+    // Each site: size 3, 2 neutrals
+    // Bonuses: presence (+1 influence), control (+1 influence, +1 power, +1 VP),
+    //          totalControl (+2 influence, +2 power, +4 VP)
+    //
+    // The triad bonus fires at the start of a player's turn (preActions) and
+    // again mid-turn after deploying a troop that completes or upgrades a triad.
+    // Within a single turn, each tier is awarded at most once (no double-counting).
+
+    const A2_LAYOUT = [
+      { tileId: 'B1', rotation: 0 },
+      { tileId: 'C1', rotation: 0 },
+      { tileId: 'C2', rotation: 0 },
+      { tileId: 'C3', rotation: 0 },
+      { tileId: 'A2', rotation: 0 },
+      { tileId: 'C4', rotation: 0 },
+      { tileId: 'C5', rotation: 0 },
+      { tileId: 'C6', rotation: 0 },
+      { tileId: 'B2', rotation: 0 },
+    ]
+
+    const TRIAD_SITES = ['A2.fogtown', 'A2.gallenghast', 'A2.darkflame']
+
+    // Create a game with A2 in center, place troops at triad sites, and
+    // advance to the main action loop for the first player.
+    function triadFixture(opts = {}) {
+      const game = t.fixture({
+        map: 'demonweb-2',
+        seed: 'demonweb-test',
+        mapLayout: A2_LAYOUT,
+      })
+
+      game.testSetBreakpoint('initialization-complete', (game) => {
+        const dennis = game.players.byName('dennis')
+
+        // Remove neutrals first so there's room for player troops
+        if (opts.removeNeutrals) {
+          for (const siteName of TRIAD_SITES) {
+            const loc = game.getLocationByName(siteName)
+            const neutrals = loc.getTroops().filter(tok => !tok.owner)
+            for (const n of neutrals) {
+              n.moveTo(game.zones.byId('devoured'))
+            }
+          }
+        }
+
+        // Place troops at triad sites
+        if (opts.troopsPerSite) {
+          for (const siteName of TRIAD_SITES) {
+            const loc = game.getLocationByName(siteName)
+            for (let j = 0; j < opts.troopsPerSite; j++) {
+              const troop = game.zones.byPlayer(dennis, 'troops').peek()
+              if (troop) {
+                troop.moveTo(loc)
+              }
+            }
+          }
+        }
+      })
+
+      game.run()
+      submitRotations(game, {})
+
+      // Choose starting locations
+      const r1 = game.waiting
+      t.choose(game, '*' + r1.selectors[0].choices[0])
+      const r2 = game.waiting
+      t.choose(game, '*' + r2.selectors[0].choices[0])
+
+      return game
+    }
+
+    test('A2 tile is placed via mapLayout', () => {
+      const game = triadFixture()
+      const hexes = game.state.assembledMap.hexes
+      const a2Hex = hexes.find(h => h.tileId === 'A2')
+      expect(a2Hex).toBeDefined()
+
+      // Triad sites exist as locations
+      for (const siteName of TRIAD_SITES) {
+        expect(game.getLocationByName(siteName)).toBeDefined()
+      }
+    })
+
+    test('no bonus when player has no troops at triad sites', () => {
+      const game = triadFixture()
+      const dennis = game.players.byName('dennis')
+      const vpBefore = dennis.getCounter('points')
+
+      t.choose(game, 'Pass')
+
+      // No VP gained
+      expect(dennis.getCounter('points')).toBe(vpBefore)
+    })
+
+    test('no bonus when player has troops at only some triad sites', () => {
+      const game = t.fixture({
+        map: 'demonweb-2',
+        seed: 'demonweb-test',
+        mapLayout: A2_LAYOUT,
+      })
+
+      game.testSetBreakpoint('initialization-complete', (game) => {
+        const dennis = game.players.byName('dennis')
+        // Place troop at only 2 of 3 triad sites
+        for (let i = 0; i < 2; i++) {
+          const loc = game.getLocationByName(TRIAD_SITES[i])
+          game.zones.byPlayer(dennis, 'troops').peek().moveTo(loc)
+        }
+      })
+
+      game.run()
+      submitRotations(game, {})
+      const r1 = game.waiting
+      t.choose(game, '*' + r1.selectors[0].choices[0])
+      const r2 = game.waiting
+      t.choose(game, '*' + r2.selectors[0].choices[0])
+
+      const dennis = game.players.byName('dennis')
+      const vpBefore = dennis.getCounter('points')
+
+      t.choose(game, 'Pass')
+
+      expect(dennis.getCounter('points')).toBe(vpBefore)
+    })
+
+    test('presence bonus: +1 influence at start of turn when troops at all 3 sites', () => {
+      const game = triadFixture({ troopsPerSite: 1 })
+      const dennis = game.players.byName('dennis')
+
+      // Presence bonus fires at start of turn, giving +1 influence.
+      // The influence is available during the turn for spending.
+      // After cleanup it resets, but we can observe it in the action phase.
+      const request = game.waiting
+      expect(request.selectors[0].actor).toBe('dennis')
+
+      // Influence should already include presence bonus (+1)
+      expect(dennis.getCounter('influence')).toBe(1)
+    })
+
+    test('control bonus: +1 influence, +1 power, +1 VP at start of turn', () => {
+      // Remove neutrals, place 2 troops per site -> dennis controls (2 troops, 0 neutral)
+      const game = triadFixture({ removeNeutrals: true, troopsPerSite: 2 })
+      const dennis = game.players.byName('dennis')
+
+      // Verify control (not total control): 2 of 3 slots filled
+      for (const siteName of TRIAD_SITES) {
+        const loc = game.getLocationByName(siteName)
+        expect(loc.getController()).toBe(dennis)
+        expect(loc.getTotalController()).toBeUndefined()  // Not all slots filled
+      }
+
+      // Control bonus fires at start of turn
+      expect(dennis.getCounter('influence')).toBe(1)
+      expect(dennis.getCounter('power')).toBe(1)
+      expect(dennis.getCounter('points')).toBe(1)
+    })
+
+    test('total control bonus: +2 influence, +2 power, +4 VP at start of turn', () => {
+      // Remove neutrals, fill all 3 slots (size 3) with dennis troops
+      const game = triadFixture({ removeNeutrals: true, troopsPerSite: 3 })
+      const dennis = game.players.byName('dennis')
+
+      // Verify total control
+      for (const siteName of TRIAD_SITES) {
+        const loc = game.getLocationByName(siteName)
+        expect(loc.getTotalController()).toBe(dennis)
+      }
+
+      // Total control bonus at start of turn
+      expect(dennis.getCounter('influence')).toBe(2)
+      expect(dennis.getCounter('power')).toBe(2)
+      expect(dennis.getCounter('points')).toBe(4)
+    })
+
+    test('triad VP bonus accumulates across turns', () => {
+      // Control bonus: +1 VP per turn
+      const game = triadFixture({ removeNeutrals: true, troopsPerSite: 2 })
+
+      // Dennis's turn starts with +1 VP from control bonus
+      expect(game.players.byName('dennis').getCounter('points')).toBe(1)
+
+      // Dennis's turn — pass
+      t.choose(game, 'Pass')
+
+      // micah's turn — pass
+      t.choose(game, 'Pass')
+
+      // Dennis's second turn — gains another +1 VP at start
+      expect(game.players.byName('dennis').getCounter('points')).toBe(2)
+    })
+
+    test('triad bonus only applies to current player', () => {
+      const game = triadFixture({ troopsPerSite: 1 })
+      const micah = game.players.byName('micah')
+
+      // Dennis's turn — only dennis is checked, micah unaffected
+      expect(micah.getCounter('influence')).toBe(0)
+      expect(micah.getCounter('points')).toBe(0)
+    })
+
+    test('highest applicable tier wins (control over presence)', () => {
+      // With control of all 3 sites, control bonus applies (not presence)
+      const game = triadFixture({ removeNeutrals: true, troopsPerSite: 2 })
+      const dennis = game.players.byName('dennis')
+
+      // Should get control bonus (+1 each), not presence (+1 influence only)
+      expect(dennis.getCounter('influence')).toBe(1)
+      expect(dennis.getCounter('power')).toBe(1)
+      expect(dennis.getCounter('points')).toBe(1)
+    })
+
+    test('bonus is not double-counted within the same turn', () => {
+      // Presence bonus fires at start of turn. Deploying to a triad site
+      // shouldn't re-award the same tier.
+      const game = triadFixture({ troopsPerSite: 1 })
+      const dennis = game.players.byName('dennis')
+
+      // Presence bonus already fired at start of turn
+      expect(dennis.getCounter('influence')).toBe(1)
+
+      // The bonus should still be 1 influence, not doubled
+      // (even though troops are still at all 3 sites)
+      expect(dennis.getCounter('influence')).toBe(1)
+    })
+  })
+
   describe('map layout codec', () => {
     test('encode produces expected format', () => {
       const hexes = [

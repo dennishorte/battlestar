@@ -845,6 +845,12 @@ Tyrants.prototype.mainLoop = function() {
 Tyrants.prototype.preActions = function() {
   const player = this.players.current()
 
+  // Reset triad tracking for this turn
+  this.state.triadBonusesThisTurn = {}
+
+  // Check for Demonweb special hex rules (e.g., A2 triad bonus)
+  this._checkSpecialHexRules(player)
+
   // Gain influence from site control tokens.
   const markers = this.getControlMarkers(player)
   for (const marker of markers) {
@@ -1284,9 +1290,6 @@ Tyrants.prototype.endOfTurn = function() {
       })
     }
   }
-
-  // Check for Demonweb special hex rules (e.g., A2 triad bonus)
-  this._checkSpecialHexRules(player)
 
   // Clear till end of turn flags
   this.state.ghostFlag = false
@@ -1997,6 +2000,11 @@ Tyrants.prototype.aDeploy = function(player, loc, opts={}) {
     template: '{player} deploys {card} to {loc}',
     args: { player, loc, card: deployed }
   })
+
+  // Re-check triad bonuses after deploying (may complete a triad mid-turn)
+  if (this.state.triadBonusesThisTurn) {
+    this._checkSpecialHexRules(player)
+  }
 }
 
 Tyrants.prototype.aDevour = function(player, card, opts={}) {
@@ -2739,15 +2747,33 @@ Tyrants.prototype._checkTriadBonus = function(player, tile, tileId) {
 
   const bonuses = tile.specialRules.bonuses
 
+  // Determine current tier (higher number = better)
+  const TIERS = { none: 0, presence: 1, control: 2, totalControl: 3 }
+  let currentTier = 'none'
   if (totalControlsAll && bonuses.totalControl) {
-    this._applyTriadBonus(player, bonuses.totalControl, 'total control', tile.region)
+    currentTier = 'totalControl'
   }
   else if (controlsAll && bonuses.control) {
-    this._applyTriadBonus(player, bonuses.control, 'control', tile.region)
+    currentTier = 'control'
   }
   else if (hasTroopsInAll && bonuses.presence) {
-    this._applyTriadBonus(player, bonuses.presence, 'presence', tile.region)
+    currentTier = 'presence'
   }
+
+  // Only award if tier improved since last check this turn
+  const prevTier = (this.state.triadBonusesThisTurn || {})[tileId] || 'none'
+  if (TIERS[currentTier] <= TIERS[prevTier]) {
+    return
+  }
+
+  // Track awarded tier
+  if (!this.state.triadBonusesThisTurn) {
+    this.state.triadBonusesThisTurn = {}
+  }
+  this.state.triadBonusesThisTurn[tileId] = currentTier
+
+  const TIER_LABELS = { presence: 'presence', control: 'control', totalControl: 'total control' }
+  this._applyTriadBonus(player, bonuses[currentTier], TIER_LABELS[currentTier], tile.region)
 }
 
 Tyrants.prototype._applyTriadBonus = function(player, bonus, level, region) {
