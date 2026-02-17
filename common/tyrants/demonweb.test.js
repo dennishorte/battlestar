@@ -29,6 +29,46 @@ function submitRotations(game, rotations = {}) {
   })
 }
 
+// Helper: create a demonweb game ready for the main loop with gem-related setup
+// Options: power, gems, troopAtGem (boolean)
+function gemFixture(opts = {}) {
+  const game = t.fixture({
+    map: 'demonweb-2',
+    seed: 'demonweb-test',
+  })
+
+  game.testSetBreakpoint('initialization-complete', (game) => {
+    const dennis = game.players.byName('dennis')
+
+    if (opts.power !== undefined) {
+      dennis.setCounter('power', opts.power)
+    }
+    if (opts.gems !== undefined) {
+      dennis.setCounter('gems', opts.gems)
+    }
+
+    // Place a dennis troop at the first gem location
+    if (opts.troopAtGem) {
+      const gemLoc = Object.keys(game.state.gemstones)[0]
+      if (gemLoc) {
+        const loc = game.getLocationByName(gemLoc)
+        game.zones.byPlayer(dennis, 'troops').peek().moveTo(loc)
+      }
+    }
+  })
+
+  game.run()
+  submitRotations(game, {})
+
+  // Choose starting locations
+  const r1 = game.waiting
+  t.choose(game, '*' + r1.selectors[0].choices[0])
+  const r2 = game.waiting
+  t.choose(game, '*' + r2.selectors[0].choices[0])
+
+  return game
+}
+
 // Helper: submit rotations then choose starting locations for 2 players
 function demonwebGameFixture(options = {}) {
   const game = demonwebFixture(options)
@@ -423,6 +463,193 @@ describe('Demonweb', () => {
       // A 9-hex map should have some cross-hex connections
       expect(crossHexConnections.length).toBeGreaterThan(0)
       submitRotations(game)
+    })
+  })
+
+
+  describe('gemstone rules', () => {
+
+    describe('acquire gem', () => {
+      test('gem action is available when player has troop at gem location and power', () => {
+        const game = gemFixture({ power: 1, troopAtGem: true })
+        game.run()
+
+        const request = game.waiting
+        const choices = request.selectors[0].choices
+        const gemAction = choices.find(c => c.title === 'Gem')
+        expect(gemAction).toBeDefined()
+        expect(gemAction.choices).toContain('Acquire Gem')
+      })
+
+      test('gem action not available without power', () => {
+        const game = gemFixture({ power: 0, troopAtGem: true })
+        game.run()
+
+        const request = game.waiting
+        const choices = request.selectors[0].choices
+        const gemAction = choices.find(c => c.title === 'Gem')
+        const acquireAvailable = gemAction && gemAction.choices.includes('Acquire Gem')
+        expect(acquireAvailable).toBeFalsy()
+      })
+
+      test('gem action not available without troop at gem location', () => {
+        const game = gemFixture({ power: 1, troopAtGem: false })
+        game.run()
+
+        const request = game.waiting
+        const choices = request.selectors[0].choices
+        const gemAction = choices.find(c => c.title === 'Gem')
+        const acquireAvailable = gemAction && gemAction.choices.includes('Acquire Gem')
+        expect(acquireAvailable).toBeFalsy()
+      })
+
+      test('acquiring a gem costs 1 power and adds gem to player', () => {
+        const game = gemFixture({ power: 2, troopAtGem: true })
+        game.run()
+
+        const boardGemsBefore = Object.keys(game.state.gemstones).length
+
+        t.choose(game, 'Gem.Acquire Gem')
+
+        // Re-fetch player after replay (reset creates new player objects)
+        const dennis = game.players.byName('dennis')
+        expect(dennis.getCounter('power')).toBe(1)
+        expect(dennis.getCounter('gems')).toBe(1)
+        expect(Object.keys(game.state.gemstones).length).toBe(boardGemsBefore - 1)
+      })
+
+      test('can only acquire one gem per turn', () => {
+        const game = gemFixture({ power: 3, troopAtGem: true })
+
+        // Place a second troop at another gem location
+        game.testSetBreakpoint('initialization-complete', (game) => {
+          const dennis = game.players.byName('dennis')
+          const gemLocs = Object.keys(game.state.gemstones)
+          if (gemLocs.length > 1) {
+            const loc = game.getLocationByName(gemLocs[1])
+            game.zones.byPlayer(dennis, 'troops').peek().moveTo(loc)
+          }
+        })
+        game.run()
+
+        // Acquire first gem
+        t.choose(game, 'Gem.Acquire Gem')
+
+        // Acquire Gem should no longer be available
+        const request = game.waiting
+        const choices = request.selectors[0].choices
+        const gemAction = choices.find(c => c.title === 'Gem')
+        const acquireAvailable = gemAction && gemAction.choices.includes('Acquire Gem')
+        expect(acquireAvailable).toBeFalsy()
+      })
+
+      test('acquired gem is removed from the board', () => {
+        const game = gemFixture({ power: 1, troopAtGem: true })
+        game.run()
+
+        // Find which gem location has the troop
+        const dennis = game.players.byName('dennis')
+        const gemLocName = Object.keys(game.state.gemstones).find(locName => {
+          const loc = game.getLocationByName(locName)
+          return loc.getTroops(dennis).length > 0
+        })
+
+        t.choose(game, 'Gem.Acquire Gem')
+
+        // That specific gem should be gone
+        expect(game.state.gemstones[gemLocName]).toBeUndefined()
+      })
+    })
+
+
+    describe('spend gem', () => {
+      test('spend gem for power gives 3 power', () => {
+        const game = gemFixture({ power: 0, gems: 1 })
+        game.run()
+
+        t.choose(game, 'Gem.Spend Gem for Power')
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.getCounter('power')).toBe(3)
+        expect(dennis.getCounter('gems')).toBe(0)
+      })
+
+      test('spend gem for influence gives 3 influence', () => {
+        const game = gemFixture({ power: 0, gems: 1 })
+        game.run()
+
+        t.choose(game, 'Gem.Spend Gem for Influence')
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.getCounter('influence')).toBe(3)
+        expect(dennis.getCounter('gems')).toBe(0)
+      })
+
+      test('spend gem action not available with zero gems', () => {
+        const game = gemFixture({ power: 0, gems: 0 })
+        game.run()
+
+        const request = game.waiting
+        const choices = request.selectors[0].choices
+        const gemAction = choices.find(c => c.title === 'Gem')
+        expect(gemAction).toBeUndefined()
+      })
+
+      test('cannot spend gem acquired this turn', () => {
+        const game = gemFixture({ power: 1, gems: 0, troopAtGem: true })
+        game.run()
+
+        // Acquire a gem
+        t.choose(game, 'Gem.Acquire Gem')
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.getCounter('gems')).toBe(1)
+
+        // Spend gem should NOT be available (just acquired)
+        const request = game.waiting
+        const choices = request.selectors[0].choices
+        const gemAction = choices.find(c => c.title === 'Gem')
+        const spendPowerAvailable = gemAction && gemAction.choices.includes('Spend Gem for Power')
+        const spendInfluenceAvailable = gemAction && gemAction.choices.includes('Spend Gem for Influence')
+        expect(spendPowerAvailable).toBeFalsy()
+        expect(spendInfluenceAvailable).toBeFalsy()
+      })
+
+      test('can spend pre-existing gem even after acquiring one this turn', () => {
+        const game = gemFixture({ power: 1, gems: 1, troopAtGem: true })
+        game.run()
+
+        // Acquire a gem (now have 2 gems total, 1 acquired this turn)
+        t.choose(game, 'Gem.Acquire Gem')
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.getCounter('gems')).toBe(2)
+
+        // Should be able to spend the pre-existing gem (2 total - 1 acquired = 1 spendable)
+        const request = game.waiting
+        const choices = request.selectors[0].choices
+        const gemAction = choices.find(c => c.title === 'Gem')
+        expect(gemAction).toBeDefined()
+        expect(gemAction.choices).toContain('Spend Gem for Power')
+      })
+
+      test('can spend multiple gems in one turn if pre-existing', () => {
+        const game = gemFixture({ power: 0, gems: 2 })
+        game.run()
+
+        // Spend first gem
+        t.choose(game, 'Gem.Spend Gem for Power')
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.getCounter('gems')).toBe(1)
+
+        // Should still be able to spend the second gem
+        const request = game.waiting
+        const choices = request.selectors[0].choices
+        const gemAction = choices.find(c => c.title === 'Gem')
+        expect(gemAction).toBeDefined()
+        expect(gemAction.choices).toContain('Spend Gem for Power')
+      })
     })
   })
 })

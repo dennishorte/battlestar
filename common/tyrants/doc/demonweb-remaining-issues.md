@@ -1,8 +1,8 @@
 # Demonweb Expansion — Remaining Issues
 
 ## Testing
-- [x] Dedicated demonweb unit tests (map assembly, rotation, neighbor computation) — `demonweb.test.js`, 27 tests
-- [ ] No tests for gemstone rules (acquire, spend, turn restrictions)
+- [x] Dedicated demonweb unit tests (map assembly, rotation, neighbor computation) — `demonweb.test.js`
+- [x] Gemstone rules tested (acquire, spend, turn restrictions) — 12 tests in `demonweb.test.js`
 - [ ] No tests for A2 triad bonus logic
 - [ ] No tests for dark banner start site selection
 - [ ] X hexes (experimental tiles) untested
