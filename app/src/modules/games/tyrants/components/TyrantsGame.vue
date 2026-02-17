@@ -107,6 +107,8 @@ export default {
           insertSelectorSubtitles: this.insertSelectorSubtitles,
           isUnitSelectable: this.isUnitSelectable,
           troopStyle: this.troopStyle,
+          getActionTypeHandler: this.getActionTypeHandler,
+          clickHexForRotation: this.clickHexForRotation,
         },
         mapActions: window.localStorage.getItem('tyrants-map-actions') === 'true',
         modals: {
@@ -119,6 +121,8 @@ export default {
         },
         selectable: [],
         selectableUnits: [],
+        rotationMode: false,
+        pendingRotations: {},
       },
     }
   },
@@ -132,41 +136,62 @@ export default {
   },
 
   watch: {
-    optionSelector() {
-      if (this.optionSelector) {
-        const unitTargets = []
-        const locationTargets = []
-
-        for (const c of this.optionSelector.choices) {
-          const name = c.title || c
-          const tokens = name.split(',').map(t => t.trim())
-
-          if (typeof c === 'string' && tokens.length === 2 && this.game.getLocationByName(tokens[0])) {
-            // "LocationName, OwnerName" — unit-level target only
-            unitTargets.push(name)
-          }
-          else if (c.title === 'troop' || c.title === 'spy') {
-            // Nested group with unit targets only
-            for (const sub of (c.choices || [])) {
-              unitTargets.push(sub)
+    optionSelector: {
+      immediate: true,
+      handler() {
+        // Check if we're entering rotation mode
+        if (this.optionSelector && this.optionSelector.title === 'Rotate Hex Tiles') {
+          if (!this.ui.rotationMode) {
+            this.ui.rotationMode = true
+            // Initialize pending rotations from current assembled map
+            const pending = {}
+            if (this.game.state.assembledMap) {
+              for (const hex of this.game.state.assembledMap.hexes) {
+                pending[hex.tileId] = hex.rotation
+              }
             }
+            this.ui.pendingRotations = pending
           }
-          else {
-            locationTargets.push(name)
-            const locPart = tokens[0]
-            if (locPart !== name) {
-              locationTargets.push(locPart)
-            }
-          }
+          return
         }
 
-        this.ui.selectableUnits = util.array.distinct(unitTargets)
-        this.ui.selectable = util.array.distinct(locationTargets)
-      }
-      else {
-        this.ui.selectable = []
-        this.ui.selectableUnits = []
-      }
+        this.ui.rotationMode = false
+
+        if (this.optionSelector) {
+          const unitTargets = []
+          const locationTargets = []
+
+          for (const c of this.optionSelector.choices) {
+            const name = c.title || c
+            const tokens = name.split(',').map(t => t.trim())
+
+            if (typeof c === 'string' && tokens.length === 2 && this.game.getLocationByName(tokens[0])) {
+              // "LocationName, OwnerName" — unit-level target only
+              unitTargets.push(name)
+            }
+            else if (c.title === 'troop' || c.title === 'spy') {
+              // Nested group with unit targets only
+              for (const sub of (c.choices || [])) {
+                unitTargets.push(sub)
+              }
+            }
+            else {
+              locationTargets.push(name)
+              const locPart = tokens[0]
+              if (locPart !== name) {
+                locationTargets.push(locPart)
+              }
+            }
+          }
+
+          this.ui.selectableUnits = util.array.distinct(unitTargets)
+          this.ui.selectable = util.array.distinct(locationTargets)
+        }
+        else {
+          this.ui.selectable = []
+          this.ui.selectableUnits = []
+        }
+      },
     },
   },
 
@@ -267,6 +292,40 @@ export default {
           opts: { prefix: true },
         })
       }
+    },
+
+    getActionTypeHandler(request) {
+      if (request.title === 'Rotate Hex Tiles') {
+        return {
+          message: 'Click hex tiles on the map to rotate them. Click Confirm when done.',
+          buttonLabel: 'Confirm Rotations',
+          handler: () => this.submitRotations(),
+        }
+      }
+      return null
+    },
+
+    clickHexForRotation(tileId) {
+      if (!this.ui.rotationMode) {
+        return
+      }
+      const current = this.ui.pendingRotations[tileId] || 0
+      // Create a new object to trigger Vue reactivity
+      this.ui.pendingRotations = {
+        ...this.ui.pendingRotations,
+        [tileId]: (current + 1) % 6,
+      }
+    },
+
+    submitRotations() {
+      this.game.respondToInputRequest({
+        actor: this.actor.name,
+        title: 'Rotate Hex Tiles',
+        selection: [{ rotations: this.ui.pendingRotations }],
+      })
+      this.ui.rotationMode = false
+      this.ui.pendingRotations = {}
+      this.$store.dispatch('game/save')
     },
 
     // Subtitles are now provided by the game engine directly

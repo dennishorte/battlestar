@@ -48,6 +48,7 @@ module.exports = {
   constructor: Tyrants,
   factory: factoryFromLobby,
   res,
+  rotateHexPosition,
 }
 
 
@@ -80,6 +81,7 @@ function factoryFromLobby(lobby) {
 
 Tyrants.prototype._mainProgram = function() {
   this.initialize()
+  this.setupDemonwebRotation()
   this.chooseInitialLocations()
   this.mainLoop()
 }
@@ -477,6 +479,140 @@ Tyrants.prototype._initializeGemstones = function() {
       this.log.add({ template: `Placed gemstone at dead end: ${loc.name()}` })
     }
   }
+}
+
+Tyrants.prototype.setupDemonwebRotation = function() {
+  // Only applies to demonweb maps
+  if (!this.settings.map || !this.settings.map.startsWith('demonweb')) {
+    return
+  }
+
+  // Pick a random player to be the map setter
+  const players = this.players.all()
+  const rotatorIndex = Math.floor(this.random() * players.length)
+  const rotator = players[rotatorIndex]
+  const nextPlayer = this.players.following(rotator)
+
+  this.log.add({
+    template: '{player} will set up the map',
+    args: { player: rotator },
+  })
+
+  // Build current rotations as defaults
+  const currentRotations = {}
+  for (const hex of this.state.assembledMap.hexes) {
+    currentRotations[hex.tileId] = hex.rotation
+  }
+
+  // Request rotation input from the rotator (action-type selector)
+  // Returns the selection array; first element contains { rotations: { tileId: rotation } }
+  const selection = this.requestInputSingle({
+    actor: rotator.name,
+    title: 'Rotate Hex Tiles',
+    choices: '__UNSPECIFIED__',
+  })
+
+  // Parse the response and normalize rotation values to 0-5 range
+  const rawRotations = (selection && selection[0] && selection[0].rotations) || {}
+  const rotations = {}
+  for (const [tileId, rotation] of Object.entries(rawRotations)) {
+    rotations[tileId] = ((rotation % 6) + 6) % 6  // Normalize to 0-5
+  }
+
+  // Check if any rotations differ from current defaults
+  let hasChanges = false
+  for (const [tileId, rotation] of Object.entries(rotations)) {
+    if (currentRotations[tileId] !== undefined && currentRotations[tileId] !== rotation) {
+      hasChanges = true
+      break
+    }
+  }
+
+  if (hasChanges) {
+    // Merge player rotations with defaults (player only sends changed ones)
+    const mergedRotations = { ...currentRotations, ...rotations }
+    this._rebuildDemonwebMap(mergedRotations)
+
+    this.log.add({ template: 'Map rotations updated' })
+  }
+  else {
+    this.log.add({ template: 'Map rotations confirmed (no changes)' })
+  }
+
+  // Set turn order: player after the rotator goes first
+  this.players.passToPlayer(nextPlayer)
+  this.log.add({
+    template: '{player} will go first',
+    args: { player: nextPlayer },
+  })
+}
+
+Tyrants.prototype._rebuildDemonwebMap = function(rotations) {
+  const { hexTiles, mapConfigs } = res
+  const config = mapConfigs.mapConfigs[this.settings.map]
+
+  // Step 1: Move all neutrals from map locations back to neutrals zone
+  const neutralZone = this.zones.byId('neutrals')
+  for (const loc of this.getLocationAll()) {
+    const neutralTroops = loc.getTroops().filter(t => t.name.startsWith('neutral'))
+    for (const troop of neutralTroops) {
+      troop.moveTo(neutralZone)
+    }
+  }
+
+  // Step 2: Remove all map zones
+  for (const loc of this.getLocationAll()) {
+    delete this.zones._zones[loc.id]
+  }
+
+  // Step 3: Build tile objects with new rotations
+  const tiles = this.state.assembledMap.hexes.map(hex => ({
+    ...hexTiles.allTiles[hex.tileId],
+    rotation: rotations[hex.tileId] !== undefined ? rotations[hex.tileId] : hex.rotation,
+  }))
+
+  // Step 4: Assemble map locations with new rotations
+  const locationData = this._assembleMapLocations(tiles, config.layout)
+
+  // Step 5: Create new zones
+  for (const data of locationData) {
+    const zone = new TyrantsMapZone(this, data)
+    zone.hexId = data.hexId
+    zone.hexPosition = data.hexPosition
+    zone.hexGridPosition = data.hexGridPosition
+    this.zones.register(zone)
+  }
+
+  // Step 6: Update assembled map state
+  this.state.assembledMap = {
+    hexes: tiles.map((tile, i) => ({
+      tileId: tile.id,
+      position: config.layout[i].position,
+      rotation: tile.rotation,
+      paths: tile.paths || [],
+      edgeConnections: hexTiles.getRotatedEdgeConnections(tile, tile.rotation),
+      labelPosition: rotateHexPosition(tile.labelPosition, tile.rotation),
+      rulesPosition: rotateHexPosition(tile.rulesPosition, tile.rotation),
+      specialRules: tile.specialRules,
+    })),
+  }
+
+  // Step 7: Re-place neutrals
+  for (const loc of this.getLocationAll()) {
+    for (let i = 0; i < loc.neutrals; i++) {
+      neutralZone.peek().moveTo(loc)
+    }
+  }
+
+  if (this.settings.menzoExtraNeutral) {
+    const menzo = this.getLocationByName('Menzoberranzan')
+    if (menzo) {
+      neutralZone.peek().moveTo(menzo)
+    }
+  }
+
+  // Step 8: Re-init gemstones
+  this._initializeGemstones()
 }
 
 Tyrants.prototype.initializeMarketZones = function() {

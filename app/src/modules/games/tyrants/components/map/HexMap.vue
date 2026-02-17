@@ -6,22 +6,25 @@
         :key="hex.tileId"
         :hex="hex"
         :hexSize="hexSize"
+        :rotationMode="rotationMode"
+        :rotationDelta="getRotationDelta(hex.tileId)"
       />
 
       <!-- Edge connectors layer (z-index places it above hex backgrounds, below locations) -->
       <svg class="edge-connectors-svg" :style="svgOverlayStyle">
-        <!-- Cross-hex connectors -->
+        <!-- Cross-hex connectors (use preview during rotation mode) -->
         <line
-          v-for="(conn, index) in crossHexConnectors"
+          v-for="(conn, index) in activeCrossHexConnectors"
           :key="'cross-' + index"
           :x1="conn.x1"
           :y1="conn.y1"
           :x2="conn.x2"
           :y2="conn.y2"
           class="edge-connector"
+          :class="{ preview: rotationMode }"
         />
 
-        <!-- Edge tunnel connectors (lines to edge tunnel locations) -->
+        <!-- Edge tunnel connectors (hidden during rotation mode) -->
         <line
           v-for="(conn, index) in edgeTunnelConnectors"
           :key="'edge-tunnel-' + index"
@@ -30,6 +33,7 @@
           :x2="conn.x2"
           :y2="conn.y2"
           class="edge-connector off-map"
+          v-show="!rotationMode"
         />
       </svg>
     </div>
@@ -38,7 +42,11 @@
 
 
 <script>
+import { tyrants } from 'battlestar-common'
 import HexTile from './HexTile.vue'
+
+const { hexTiles, mapConfigs } = tyrants.res
+const { rotateHexPosition } = tyrants
 
 export default {
   name: 'HexMap',
@@ -47,7 +55,7 @@ export default {
     HexTile,
   },
 
-  inject: ['game'],
+  inject: ['game', 'ui'],
 
   data() {
     return {
@@ -56,6 +64,14 @@ export default {
   },
 
   computed: {
+    rotationMode() {
+      return this.ui.rotationMode
+    },
+
+    pendingRotations() {
+      return this.ui.pendingRotations
+    },
+
     assembledMap() {
       return this.game.state.assembledMap
     },
@@ -212,6 +228,73 @@ export default {
       return connectors
     },
 
+    // Preview connectors during rotation mode — computed from tile data + pending rotations
+    previewCrossHexConnectors() {
+      if (!this.rotationMode || !this.assembledMap) {
+        return []
+      }
+
+      const connectors = []
+      const hexes = this.assembledHexes
+      const seen = new Set()
+
+      for (let i = 0; i < hexes.length; i++) {
+        const hex1 = hexes[i]
+        const tile1 = hexTiles.allTiles[hex1.tileId]
+        const rot1 = this.pendingRotations[hex1.tileId] ?? hex1.rotation
+
+        for (let j = i + 1; j < hexes.length; j++) {
+          const hex2 = hexes[j]
+          const tile2 = hexTiles.allTiles[hex2.tileId]
+          const rot2 = this.pendingRotations[hex2.tileId] ?? hex2.rotation
+
+          // Check if adjacent
+          const edgeDir = mapConfigs.getEdgeDirection(hex1.position, hex2.position)
+          if (!edgeDir) {
+            continue
+          }
+
+          const oppositeEdge = hexTiles.getOppositeEdge(edgeDir)
+          const conns1 = hexTiles.getRotatedEdgeConnections(tile1, rot1)
+          const conns2 = hexTiles.getRotatedEdgeConnections(tile2, rot2)
+          const conn1 = conns1.find(c => c.edge === edgeDir)
+          const conn2 = conns2.find(c => c.edge === oppositeEdge)
+
+          if (conn1 && conn2) {
+            // Compute positions using pending rotations
+            const loc1Orig = tile1.locations.find(l => l.short === conn1.location)
+            const loc2Orig = tile2.locations.find(l => l.short === conn2.location)
+            if (!loc1Orig || !loc2Orig) {
+              continue
+            }
+
+            const pos1 = rotateHexPosition(loc1Orig.position, rot1)
+            const pos2 = rotateHexPosition(loc2Orig.position, rot2)
+
+            const key = [hex1.tileId + '.' + conn1.location, hex2.tileId + '.' + conn2.location].sort().join('|')
+            if (seen.has(key)) {
+              continue
+            }
+            seen.add(key)
+
+            connectors.push({
+              x1: hex1.pixelX + (pos1.x - 0.5) * this.hexWidth,
+              y1: hex1.pixelY + (pos1.y - 0.5) * this.hexHeight,
+              x2: hex2.pixelX + (pos2.x - 0.5) * this.hexWidth,
+              y2: hex2.pixelY + (pos2.y - 0.5) * this.hexHeight,
+            })
+          }
+        }
+      }
+
+      return connectors
+    },
+
+    // Use preview connectors during rotation mode, normal connectors otherwise
+    activeCrossHexConnectors() {
+      return this.rotationMode ? this.previewCrossHexConnectors : this.crossHexConnectors
+    },
+
     // Edge tunnel connectors: lines from source locations to edge tunnel locations
     edgeTunnelConnectors() {
       const connectors = []
@@ -293,6 +376,15 @@ export default {
     getLocationsForHex(tileId) {
       return this.game.getLocationAll().filter(loc => loc.hexId === tileId)
     },
+
+    getRotationDelta(tileId) {
+      if (!this.rotationMode) {
+        return 0
+      }
+      const currentRotation = this.assembledMap?.hexes?.find(h => h.tileId === tileId)?.rotation ?? 0
+      const pendingRotation = this.pendingRotations[tileId] ?? currentRotation
+      return pendingRotation - currentRotation
+    },
   },
 }
 </script>
@@ -316,6 +408,11 @@ export default {
   stroke: #8b6914;
   stroke-width: 4;
   stroke-linecap: round;
+}
+
+.edge-connector.preview {
+  stroke: #4caf50;
+  stroke-width: 5;
 }
 
 .edge-connector.off-map {

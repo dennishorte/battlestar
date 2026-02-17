@@ -1,58 +1,70 @@
 <template>
-  <div class="hex-tile" :style="tileStyle">
-    <svg class="hex-svg" :viewBox="svgViewBox" :style="svgStyle">
-      <polygon
-        :points="hexPoints"
-        class="hex-polygon"
-        :class="{ rotated: hex.rotation > 0 }"
-      />
+  <div
+    class="hex-tile"
+    :class="{ 'rotation-mode': rotationMode }"
+    :style="tileStyle"
+    @click="handleClick"
+  >
+    <div class="hex-inner" :style="innerStyle">
+      <svg class="hex-svg" :viewBox="svgViewBox" :style="svgStyle">
+        <polygon
+          :points="hexPoints"
+          class="hex-polygon"
+          :class="{ rotated: hex.rotation > 0, 'rotation-mode': rotationMode }"
+        />
 
-      <!-- Path connectors between locations -->
-      <line
-        v-for="(path, index) in pathLines"
-        :key="'path-' + index"
-        :x1="path.x1"
-        :y1="path.y1"
-        :x2="path.x2"
-        :y2="path.y2"
-        class="path-connector"
-      />
+        <!-- Path connectors between locations -->
+        <line
+          v-for="(path, index) in pathLines"
+          :key="'path-' + index"
+          :x1="path.x1"
+          :y1="path.y1"
+          :x2="path.x2"
+          :y2="path.y2"
+          class="path-connector"
+        />
 
-      <text
-        class="hex-label"
-        :x="labelX"
-        :y="labelY"
-        text-anchor="middle"
-        dominant-baseline="middle"
+        <text
+          class="hex-label"
+          :x="labelX"
+          :y="labelY"
+          text-anchor="middle"
+          dominant-baseline="middle"
+        >
+          {{ hex.tileId }}
+        </text>
+      </svg>
+
+      <div class="locations-layer">
+        <HexLocation
+          v-for="loc in hex.locations"
+          :key="loc.id"
+          :loc="loc"
+          :hexSize="hexSize"
+        />
+      </div>
+
+      <!-- Triad status indicator for A2 hex -->
+      <div
+        v-if="triadStatus && !rotationMode"
+        class="triad-indicator"
+        :style="triadStyle"
       >
-        {{ hex.tileId }}
-      </text>
-    </svg>
-
-    <div class="locations-layer">
-      <HexLocation
-        v-for="loc in hex.locations"
-        :key="loc.id"
-        :loc="loc"
-        :hexSize="hexSize"
-      />
+        <div class="triad-header">Triad</div>
+        <div
+          v-for="ps in triadStatus"
+          :key="ps.name"
+          class="triad-row"
+        >
+          <span class="triad-dot" :style="{ backgroundColor: ps.color }" />
+          <span class="triad-tier" :class="'tier-' + ps.tier">{{ ps.label }}</span>
+        </div>
+      </div>
     </div>
 
-    <!-- Triad status indicator for A2 hex -->
-    <div
-      v-if="triadStatus"
-      class="triad-indicator"
-      :style="triadStyle"
-    >
-      <div class="triad-header">Triad</div>
-      <div
-        v-for="ps in triadStatus"
-        :key="ps.name"
-        class="triad-row"
-      >
-        <span class="triad-dot" :style="{ backgroundColor: ps.color }" />
-        <span class="triad-tier" :class="'tier-' + ps.tier">{{ ps.label }}</span>
-      </div>
+    <!-- Rotation indicator overlay (shown during rotation mode) -->
+    <div v-if="rotationMode" class="rotation-indicator">
+      {{ totalRotationDeg }}
     </div>
   </div>
 </template>
@@ -68,7 +80,7 @@ export default {
     HexLocation,
   },
 
-  inject: ['game'],
+  inject: ['game', 'ui'],
 
   props: {
     hex: {
@@ -78,6 +90,14 @@ export default {
     hexSize: {
       type: Number,
       required: true,
+    },
+    rotationMode: {
+      type: Boolean,
+      default: false,
+    },
+    rotationDelta: {
+      type: Number,
+      default: 0,
     },
   },
 
@@ -99,6 +119,21 @@ export default {
         width: this.hexWidth + 'px',
         height: this.hexHeight + 'px',
       }
+    },
+
+    innerStyle() {
+      if (this.rotationDelta === 0) {
+        return {}
+      }
+      const degrees = this.rotationDelta * 60
+      return {
+        transform: `rotate(${degrees}deg)`,
+      }
+    },
+
+    totalRotationDeg() {
+      const pending = this.ui.pendingRotations?.[this.hex.tileId] ?? this.hex.rotation
+      return pending * 60 + '\u00B0'
     },
 
     svgStyle() {
@@ -221,6 +256,14 @@ export default {
       }).filter(p => p !== null)
     },
   },
+
+  methods: {
+    handleClick() {
+      if (this.rotationMode) {
+        this.ui.fn.clickHexForRotation(this.hex.tileId)
+      }
+    },
+  },
 }
 </script>
 
@@ -228,6 +271,17 @@ export default {
 <style scoped>
 .hex-tile {
   pointer-events: none;
+}
+
+.hex-tile.rotation-mode {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.hex-inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.2s ease;
 }
 
 .hex-svg {
@@ -239,6 +293,11 @@ export default {
   stroke: #8b4513;
   stroke-width: 3;
   pointer-events: none;
+}
+
+.hex-polygon.rotation-mode {
+  stroke: #4caf50;
+  stroke-width: 4;
 }
 
 .hex-label {
@@ -262,6 +321,20 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 10;
+}
+
+.rotation-indicator {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  background: rgba(76, 175, 80, 0.9);
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 3px;
+  z-index: 20;
+  pointer-events: none;
 }
 
 .triad-indicator {
