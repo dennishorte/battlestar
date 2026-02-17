@@ -9,7 +9,10 @@
         </div>
 
         <div class="col column cards-column">
-          <CardList :cardlist="cardlist" :filters="filters" @card-clicked="cardlistClicked" />
+          <CardList :cardlist="cardlist"
+                    :filters="filters"
+                    @card-clicked="cardlistClicked"
+                    @random-card="randomCard" />
         </div>
 
         <div class="col column deck-column">
@@ -77,6 +80,10 @@ export default {
   methods: {
     cardlistClicked(card) {
       this.deck.addCard(card, 'main')
+    },
+
+    randomCard(card) {
+      this.bus.emit('card-manager:begin', { card, zone: 'main' })
     },
 
     async loadDeck() {

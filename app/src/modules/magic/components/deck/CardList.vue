@@ -1,6 +1,11 @@
 <template>
   <div>
-    <input v-model="searchPrefix" class="form-control" placeholder="search" />
+    <div class="search-row">
+      <input v-model="searchPrefix" class="form-control" placeholder="search" />
+      <button class="btn btn-outline-secondary" @click="randomCard" title="Random card">
+        <i class="bi bi-shuffle" />
+      </button>
+    </div>
     <div class="card-list">
       <div class="card-list-row" v-for="card in searchedCards.slice(0, 1000)" :key="card._id">
         <i class="bi bi-box" v-if="card.isCubeCard()" />
@@ -31,7 +36,7 @@ export default {
     CardListItem,
   },
 
-  emits: ['card-clicked'],
+  emits: ['card-clicked', 'random-card'],
 
   props: {
     cardlist: {
@@ -48,6 +53,16 @@ export default {
     return {
       searchPrefix: '',
     }
+  },
+
+  methods: {
+    randomCard() {
+      if (this.searchedCards.length === 0) {
+        return
+      }
+      const index = Math.floor(Math.random() * this.searchedCards.length)
+      this.$emit('random-card', this.searchedCards[index])
+    },
   },
 
   computed: {
@@ -102,6 +117,11 @@ export default {
 
 
 <style scoped>
+.search-row {
+  display: flex;
+  gap: 0.25em;
+}
+
 .card-list {
   display: flex;
   flex-direction: column;
