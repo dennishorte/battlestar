@@ -73,6 +73,40 @@ describe('Freshman', () => {
     })
   })
 
+  test('triggers after sowing even without a baking improvement', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      actionSpaces: ['Grain Utilization'],
+      dennis: {
+        occupations: ['freshman-a097'],
+        hand: ['test-occupation-1'],
+        grain: 2,
+        farmyard: {
+          fields: [{ row: 0, col: 2 }],
+        },
+      },
+    })
+    game.run()
+
+    // Grain Utilization: sow first, then Freshman should offer bake replacement
+    t.choose(game, 'Grain Utilization')
+    t.action(game, 'sow-field', { row: 0, col: 2, cropType: 'grain' })
+    t.choose(game, 'Play an occupation free')
+    t.choose(game, 'Test Occupation 1')
+
+    t.testBoard(game, {
+      currentPlayer: 'micah',
+      dennis: {
+        grain: 1, // 2 - 1 sown
+        occupations: ['freshman-a097', 'test-occupation-1'],
+        farmyard: {
+          fields: [{ row: 0, col: 2, crop: 'grain', cropCount: 3 }],
+        },
+      },
+    })
+  })
+
   test('does not trigger when no occupations in hand', () => {
     const game = t.fixture()
     t.setBoard(game, {

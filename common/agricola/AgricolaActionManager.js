@@ -1448,7 +1448,8 @@ class AgricolaActionManager extends BaseActionManager {
     this.game.callPlayerCardHook(player, 'onBeforeSow')
 
     const canSow = player.canSowAnything()
-    const canBake = player.hasBakingAbility() && player.grain >= 1
+    const hasBakeReplacement = this.game.getPlayerActiveCards(player).some(c => c.hasHook('onBakeBreadAction'))
+    const canBake = (player.hasBakingAbility() && player.grain >= 1) || hasBakeReplacement
 
     // Check for Agrarian Fences
     const hasAgrarianFences = player.playedMinorImprovements.some(cardId => {
@@ -1483,7 +1484,7 @@ class AgricolaActionManager extends BaseActionManager {
 
       if (choice === 'Build Fences instead of Sowing') {
         this.buildFences(player)
-        const canBakeNow = player.hasBakingAbility() && player.grain >= 1
+        const canBakeNow = (player.hasBakingAbility() && player.grain >= 1) || hasBakeReplacement
         if (canBakeNow) {
           this.bakeBread(player)
         }
@@ -1506,7 +1507,7 @@ class AgricolaActionManager extends BaseActionManager {
 
     // Then bake (player can select "Do not bake" to skip)
     // Re-check canBake since sowing might have used grain
-    const canBakeNow = player.hasBakingAbility() && player.grain >= 1
+    const canBakeNow = (player.hasBakingAbility() && player.grain >= 1) || hasBakeReplacement
     if (canBakeNow) {
       this.bakeBread(player)
     }
