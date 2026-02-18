@@ -1,5 +1,48 @@
 // Agricola Action Spaces Definitions (Revised Edition)
 
+// Shared canTake helpers
+
+function canTakeFamilyGrowth(game, player, requiresRoom) {
+  // Check card-based growth restrictions (e.g., Visionary)
+  for (const card of game.getPlayerActiveCards(player)) {
+    if (card.hasHook('canGrowFamily') && !card.callHook('canGrowFamily', player, game)) {
+      return false
+    }
+  }
+
+  if (requiresRoom) {
+    if (!player.canGrowFamily(true)) {
+      // Check if any card allows growth without room (e.g., FieldDoctor, DeliveryNurse)
+      let allowedByCard = false
+      for (const card of game.getPlayerActiveCards(player)) {
+        if (card.hasHook('allowsFamilyGrowthWithoutRoom') &&
+            card.callHook('allowsFamilyGrowthWithoutRoom', game, player)) {
+          allowedByCard = true
+          break
+        }
+      }
+      if (!allowedByCard) {
+        return false
+      }
+    }
+  }
+  else {
+    if (!player.canGrowFamily(false)) {
+      return false
+    }
+  }
+
+  return true
+}
+
+function canTakeOccupation(game, player) {
+  return !player.cannotPlayOccupations && player.getOccupationsInHand().length > 0
+}
+
+function canTakeFencing(game, player) {
+  return player.getFencesInSupply() > 0
+}
+
 // Base actions available from the start of the game
 const baseActions = [
   {
@@ -9,6 +52,7 @@ const baseActions = [
     type: 'instant',
     allowsRoomBuilding: true,
     allowsStableBuilding: true,
+    canTake: (game, player) => player.getValidRoomBuildSpaces().length > 0 || player.getValidStableBuildSpaces().length > 0,
   },
   {
     id: 'starting-player',
@@ -32,6 +76,7 @@ const baseActions = [
     description: 'Plow 1 Field',
     type: 'instant',
     allowsPlowing: 1,
+    canTake: (game, player) => player.getValidPlowSpaces().length > 0,
   },
   {
     id: 'occupation',
@@ -39,6 +84,7 @@ const baseActions = [
     description: 'Play 1 Occupation (first is free, then 1 food each)',
     type: 'instant',
     allowsOccupation: true,
+    canTake: canTakeOccupation,
   },
   {
     id: 'day-laborer',
@@ -105,6 +151,7 @@ const roundCards = [
     stage: 1,
     type: 'instant',
     allowsFencing: true,
+    canTake: canTakeFencing,
   },
   {
     id: 'major-minor-improvement',
@@ -126,6 +173,7 @@ const roundCards = [
     allowsFamilyGrowth: true,
     requiresRoom: true,
     allowsMinorImprovement: true,
+    canTake: (game, player) => canTakeFamilyGrowth(game, player, true),
   },
   {
     id: 'take-stone-1',
@@ -191,6 +239,7 @@ const roundCards = [
     type: 'instant',
     allowsFamilyGrowth: true,
     requiresRoom: false,
+    canTake: (game, player) => canTakeFamilyGrowth(game, player, false),
   },
   {
     id: 'plow-sow',
@@ -200,6 +249,7 @@ const roundCards = [
     type: 'instant',
     allowsPlowing: 1,
     allowsSowing: true,
+    canTake: (game, player) => player.getValidPlowSpaces().length > 0 || player.canSowAnything(),
   },
 
   // Stage 6: Round 14
@@ -211,6 +261,7 @@ const roundCards = [
     type: 'instant',
     allowsRenovation: true,
     allowsFencing: true,
+    canTake: (game, player) => (!player.cannotRenovate && player.roomType !== 'stone') || player.getFencesInSupply() > 0,
   },
 ]
 
@@ -304,6 +355,7 @@ const threePlayerActions = [
     type: 'instant',
     allowsOccupation: true,
     occupationCost: 2, // Always 2 food in 3-player
+    canTake: canTakeOccupation,
   },
 ]
 
@@ -345,6 +397,7 @@ const fourPlayerActions = [
     allowsOccupation: true,
     occupationCost: 2,
     firstTwoOccupationsCost: 1, // First two occupations cost 1 food each
+    canTake: canTakeOccupation,
   },
   {
     id: 'traveling-players',
@@ -366,6 +419,7 @@ const fiveSixPlayerActions = [
     allowsOccupation: true,
     occupationCost: 2,
     linkedWith: 'copse-5',
+    canTake: canTakeOccupation,
   },
   {
     id: 'copse-5',
@@ -382,6 +436,7 @@ const fiveSixPlayerActions = [
     type: 'instant',
     allowsHouseBuilding: true,
     linkedWith: 'traveling-players-5',
+    canTake: (game, player) => player.getValidRoomBuildSpaces().length > 0,
   },
   {
     id: 'traveling-players-5',
@@ -400,6 +455,7 @@ const fiveSixPlayerActions = [
     occupationCost: 2,
     firstTwoOccupationsCost: 1,
     linkedWith: 'modest-wish-for-children',
+    canTake: canTakeOccupation,
   },
   {
     id: 'modest-wish-for-children',
@@ -410,6 +466,7 @@ const fiveSixPlayerActions = [
     requiresRoom: true,
     minRound: 5,
     linkedWith: 'lessons-5b',
+    canTake: (game, player) => canTakeFamilyGrowth(game, player, true),
   },
   {
     id: 'grove-5',
@@ -471,6 +528,7 @@ const sixPlayerOnlyActions = [
     description: 'Choose: Sheep (+1 food) or Cattle (costs 1 food)',
     type: 'instant',
     allowsAnimalMarket: true,
+    canTake: (game, player) => player.canPlaceAnimals('sheep', 1) || player.canPlaceAnimals('cattle', 1),
   },
   {
     id: 'farm-supplies',
@@ -492,6 +550,15 @@ const sixPlayerOnlyActions = [
     description: 'Get animal you don\'t have (Sheep → Boar → Cattle order)',
     type: 'instant',
     allowsCorral: true,
+    canTake: (game, player) => {
+      const types = ['sheep', 'boar', 'cattle']
+      for (const type of types) {
+        if (player.getTotalAnimals(type) === 0 && player.canPlaceAnimals(type, 1)) {
+          return true
+        }
+      }
+      return false
+    },
   },
   {
     id: 'side-job',

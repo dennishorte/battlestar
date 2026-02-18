@@ -1960,46 +1960,14 @@ Agricola.prototype.canTakeAction = function(player, actionId) {
     return true
   }
 
-  // Check minimum round requirement (e.g., Modest Wish for Children)
   if (action.minRound && this.state.round < action.minRound) {
     return false
   }
 
-  // Family growth actions have prerequisites
-  if (action.allowsFamilyGrowth) {
-    // Check card-based growth restrictions (e.g., Visionary)
-    for (const card of this.getPlayerActiveCards(player)) {
-      if (card.hasHook('canGrowFamily') && !card.callHook('canGrowFamily', player, this)) {
-        return false
-      }
-    }
-
-    if (action.requiresRoom !== false) {
-      // Standard family growth - needs room
-      if (!player.canGrowFamily(true)) {
-        // Check if any card allows growth without room (e.g., FieldDoctor, DeliveryNurse)
-        let allowedByCard = false
-        for (const card of this.getPlayerActiveCards(player)) {
-          if (card.hasHook('allowsFamilyGrowthWithoutRoom') &&
-              card.callHook('allowsFamilyGrowthWithoutRoom', this, player)) {
-            allowedByCard = true
-            break
-          }
-        }
-        if (!allowedByCard) {
-          return false
-        }
-      }
-    }
-    else {
-      // Urgent family growth - no room needed
-      if (!player.canGrowFamily(false)) {
-        return false
-      }
-    }
+  if (action.canTake) {
+    return action.canTake(this, player)
   }
 
-  // Most actions can always be taken (even if the player can't afford to do anything)
   return true
 }
 

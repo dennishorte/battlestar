@@ -245,8 +245,9 @@ describe('Agricola End-to-End', () => {
       const choices = selector.choices || []
 
       if (title === 'Choose an action') {
-        // Pick any action
-        result = respond(game, choices[0])
+        // Pick any action (choices may be objects with title/detail for accumulating actions)
+        const choice = choices[0]
+        result = respond(game, typeof choice === 'string' ? choice : choice.title)
       }
       else if (title.includes('more food')) {
         // Feeding phase

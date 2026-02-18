@@ -43,13 +43,14 @@ describe('Night School Student', () => {
         hand: ['test-occupation-1'],
         food: 2,
       },
-      micah: { hand: [] },
+      micah: { hand: ['test-occupation-2'] },
     })
     game.run()
 
     // Round 2 work phase - micah uses Lessons A
     t.choose(game, 'Forest')          // dennis turn 1
-    t.choose(game, 'Lessons A')       // micah turn 1 (auto-skips, empty hand)
+    t.choose(game, 'Lessons A')       // micah turn 1
+    t.choose(game, 'Test Occupation 2')
     t.choose(game, 'Reed Bank')       // scott turn 1
     t.choose(game, 'Grain Seeds')     // dennis turn 2
     t.choose(game, 'Day Laborer')     // micah turn 2

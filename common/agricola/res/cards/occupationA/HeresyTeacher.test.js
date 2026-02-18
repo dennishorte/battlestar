@@ -2,11 +2,13 @@ const t = require('../../../testutil_v2.js')
 
 describe('Heresy Teacher', () => {
   test('onAction places vegetables under grain for fields with 3+ grain when using Lessons', () => {
-    const game = t.fixture({ cardSets: ['occupationA'] })
+    const game = t.fixture({ cardSets: ['occupationA', 'test'] })
     t.setBoard(game, {
       actionSpaces: ['Lessons A'],
       dennis: {
         occupations: ['heresy-teacher-a113'],
+        hand: ['test-occupation-1'],
+        food: 1,
         vegetables: 0,
         farmyard: {
           fields: [
@@ -19,12 +21,13 @@ describe('Heresy Teacher', () => {
     })
     game.run()
 
-    // Use Lessons A action (no occupations in hand, so no prompt)
     t.choose(game, 'Lessons A')
+    t.choose(game, 'Test Occupation 1')
 
     t.testBoard(game, {
       dennis: {
-        occupations: ['heresy-teacher-a113'],
+        occupations: ['heresy-teacher-a113', 'test-occupation-1'],
+        food: 0,
         vegetables: 0, // Vegetables are placed under grain, not in supply
         farmyard: {
           fields: [
@@ -38,11 +41,13 @@ describe('Heresy Teacher', () => {
   })
 
   test('onAction does not give vegetables for fields with < 3 grain', () => {
-    const game = t.fixture({ cardSets: ['occupationA'] })
+    const game = t.fixture({ cardSets: ['occupationA', 'test'] })
     t.setBoard(game, {
       actionSpaces: ['Lessons A'],
       dennis: {
         occupations: ['heresy-teacher-a113'],
+        hand: ['test-occupation-1'],
+        food: 1,
         vegetables: 0,
         farmyard: {
           fields: [
@@ -55,10 +60,12 @@ describe('Heresy Teacher', () => {
     game.run()
 
     t.choose(game, 'Lessons A')
+    t.choose(game, 'Test Occupation 1')
 
     t.testBoard(game, {
       dennis: {
-        occupations: ['heresy-teacher-a113'],
+        occupations: ['heresy-teacher-a113', 'test-occupation-1'],
+        food: 0,
         vegetables: 0, // No fields with 3+ grain, so no vegetables placed
         farmyard: {
           fields: [
@@ -71,11 +78,13 @@ describe('Heresy Teacher', () => {
   })
 
   test('onAction does not place vegetables for fields that already have vegetables underneath', () => {
-    const game = t.fixture({ cardSets: ['occupationA'] })
+    const game = t.fixture({ cardSets: ['occupationA', 'test'] })
     t.setBoard(game, {
       actionSpaces: ['Lessons A'],
       dennis: {
         occupations: ['heresy-teacher-a113'],
+        hand: ['test-occupation-1'],
+        food: 1,
         vegetables: 0,
         farmyard: {
           fields: [
@@ -88,10 +97,12 @@ describe('Heresy Teacher', () => {
     game.run()
 
     t.choose(game, 'Lessons A')
+    t.choose(game, 'Test Occupation 1')
 
     t.testBoard(game, {
       dennis: {
-        occupations: ['heresy-teacher-a113'],
+        occupations: ['heresy-teacher-a113', 'test-occupation-1'],
+        food: 0,
         vegetables: 0, // Vegetables are placed under grain, not in supply
         farmyard: {
           fields: [
@@ -104,12 +115,13 @@ describe('Heresy Teacher', () => {
   })
 
   test('vegetable placed under grain becomes primary crop when grain is exhausted', () => {
-    const game = t.fixture({ cardSets: ['occupationA'] })
+    const game = t.fixture({ cardSets: ['occupationA', 'test'] })
     t.setBoard(game, {
       round: 3, // Round 3, so round 4 (first harvest) is next
       firstPlayer: 'dennis',
       dennis: {
         occupations: ['heresy-teacher-a113'],
+        hand: ['test-occupation-1'],
         food: 10,
         farmyard: {
           fields: [
@@ -123,6 +135,7 @@ describe('Heresy Teacher', () => {
 
     // Round 3: Use Lessons A to trigger Heresy Teacher
     t.choose(game, 'Lessons A')
+    t.choose(game, 'Test Occupation 1')
 
     // Verify underCrop is set
     let dennis = game.players.byName('dennis')

@@ -8,6 +8,7 @@ describe('Tasting', () => {
       dennis: {
         grain: 1,
         minorImprovements: ['tasting-b063'],
+        hand: ['test-occupation-1'],
       },
     })
     game.run()
@@ -15,7 +16,7 @@ describe('Tasting', () => {
     // Use Lessons A — Tasting offers exchange before occupation cost
     t.choose(game, 'Lessons A')
     t.choose(game, 'Exchange 1 grain for 4 food')
-    // playOccupation auto-skips (no occupations in hand)
+    t.choose(game, 'Test Occupation 1')
 
     t.testBoard(game, {
       currentPlayer: 'micah',
@@ -23,6 +24,7 @@ describe('Tasting', () => {
         grain: 0,
         food: 4, // from Tasting exchange
         minorImprovements: ['tasting-b063'],
+        occupations: ['test-occupation-1'],
       },
     })
   })
@@ -34,12 +36,14 @@ describe('Tasting', () => {
       dennis: {
         grain: 1,
         minorImprovements: ['tasting-b063'],
+        hand: ['test-occupation-1'],
       },
     })
     game.run()
 
     t.choose(game, 'Lessons A')
     t.choose(game, 'Do not exchange')
+    t.choose(game, 'Test Occupation 1')
 
     t.testBoard(game, {
       currentPlayer: 'micah',
@@ -47,6 +51,7 @@ describe('Tasting', () => {
         grain: 1,
         food: 0,
         minorImprovements: ['tasting-b063'],
+        occupations: ['test-occupation-1'],
       },
     })
   })
@@ -58,12 +63,14 @@ describe('Tasting', () => {
       dennis: {
         grain: 0,
         minorImprovements: ['tasting-b063'],
+        hand: ['test-occupation-1'],
       },
     })
     game.run()
 
     // Use Lessons A — no Tasting offer since no grain
     t.choose(game, 'Lessons A')
+    t.choose(game, 'Test Occupation 1')
 
     t.testBoard(game, {
       currentPlayer: 'micah',
@@ -71,6 +78,7 @@ describe('Tasting', () => {
         grain: 0,
         food: 0,
         minorImprovements: ['tasting-b063'],
+        occupations: ['test-occupation-1'],
       },
     })
   })

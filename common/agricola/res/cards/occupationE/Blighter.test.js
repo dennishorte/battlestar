@@ -45,16 +45,16 @@ describe('Blighter', () => {
     t.choose(game, 'Forest')      // dennis
     t.choose(game, 'Clay Pit')    // micah
 
-    // Round 2: Dennis takes Lessons A — Blighter blocks occupation play
-    t.choose(game, 'Lessons A')
-    // Occupation is blocked, so it skips the play. Dennis still has test-occupation-1 in hand.
+    // Round 2: Blighter blocks occupation play — Lessons A is not available
+    t.choose(game, 'Grain Seeds')
 
     t.testBoard(game, {
       currentPlayer: 'micah',
       dennis: {
         occupations: ['blighter-e101'], // only Blighter, not test-occupation-1
-        hand: ['test-occupation-1'],    // still in hand (blocked)
-        food: 1, // unspent (blocked from paying occ cost)
+        hand: ['test-occupation-1'],    // still in hand (blocked by Blighter)
+        food: 1,
+        grain: 1, // from Grain Seeds
         wood: 3, // from Forest in round 1
         bonusPoints: 5,
       },

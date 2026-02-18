@@ -19,6 +19,7 @@ describe('Game Provider', () => {
         },
       },
       micah: { food: 10 },
+      scott: { hand: ['test-occupation-1'] },
     })
     game.run()
 
@@ -26,11 +27,12 @@ describe('Game Provider', () => {
     // Avoid Farmland for AI players.
     t.choose(game, 'Day Laborer')    // dennis
     t.choose(game, 'Forest')         // micah
-    t.choose(game, 'Clay Pit')       // scott
+    t.choose(game, 'Lessons A')      // scott
+    t.choose(game, 'Test Occupation 1')
     t.choose(game, 'Reed Bank')      // eliya
     t.choose(game, 'Grain Seeds')    // dennis
     t.choose(game, 'Fishing')        // micah
-    t.choose(game, 'Lessons A')      // scott
+    t.choose(game, 'Clay Pit')       // scott
     t.choose(game, 'Grain Utilization')  // eliya
 
     // Harvest: Game Provider offers exchange before field phase
@@ -67,16 +69,18 @@ describe('Game Provider', () => {
         },
       },
       micah: { food: 10 },
+      scott: { hand: ['test-occupation-1'] },
     })
     game.run()
 
     t.choose(game, 'Day Laborer')
     t.choose(game, 'Forest')
-    t.choose(game, 'Clay Pit')
+    t.choose(game, 'Lessons A')      // scott
+    t.choose(game, 'Test Occupation 1')
     t.choose(game, 'Reed Bank')
     t.choose(game, 'Grain Seeds')
     t.choose(game, 'Fishing')
-    t.choose(game, 'Lessons A')
+    t.choose(game, 'Clay Pit')
     t.choose(game, 'Grain Utilization')
 
     // Skip exchange

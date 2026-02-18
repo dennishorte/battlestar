@@ -11,12 +11,13 @@ describe('Private Teacher', () => {
         hand: ['test-occupation-1'],
         food: 10,
       },
-      micah: { food: 10 },
+      micah: { food: 10, hand: ['test-occupation-2'] },
     })
     game.run()
 
-    // Micah occupies Lessons A first (auto-resolves since micah has no hand)
+    // Micah occupies Lessons A first
     t.choose(game, 'Lessons A')
+    t.choose(game, 'Test Occupation 2')
 
     // Dennis takes Grain Seeds — Lessons is occupied, triggers Private Teacher
     t.choose(game, 'Grain Seeds')

@@ -35,23 +35,25 @@ describe('Bohemian', () => {
   })
 
   test('onReturnHomeStart does not trigger when all Lessons spaces are occupied', () => {
-    const game = t.fixture({ cardSets: ['occupationA'], numPlayers: 4 })
+    const game = t.fixture({ cardSets: ['occupationA', 'test'], numPlayers: 4 })
     t.setBoard(game, {
       dennis: {
         occupations: ['bohemian-a157'],
         food: 0,
         hand: [],
       },
-      micah: { hand: [] },
-      scott: { hand: [] },
+      micah: { hand: ['test-occupation-1'] },
+      scott: { hand: ['test-occupation-2'], food: 1 },
       eliya: { hand: [] },
     })
     game.run()
 
     // Round 2 work phase - 8 turns; micah & scott take both Lessons spaces
     t.choose(game, 'Forest')          // dennis turn 1
-    t.choose(game, 'Lessons A')       // micah turn 1 (auto-skips, empty hand)
-    t.choose(game, 'Lessons B')       // scott turn 1 (auto-skips, empty hand)
+    t.choose(game, 'Lessons A')       // micah turn 1
+    t.choose(game, 'Test Occupation 1')
+    t.choose(game, 'Lessons B')       // scott turn 1
+    t.choose(game, 'Test Occupation 2')
     t.choose(game, 'Fishing')         // eliya turn 1
     t.choose(game, 'Grain Seeds')     // dennis turn 2
     t.choose(game, 'Day Laborer')     // micah turn 2
@@ -71,20 +73,21 @@ describe('Bohemian', () => {
   })
 
   test('onReturnHomeStart triggers when only one Lessons space is occupied', () => {
-    const game = t.fixture({ cardSets: ['occupationA'], numPlayers: 4 })
+    const game = t.fixture({ cardSets: ['occupationA', 'test'], numPlayers: 4 })
     t.setBoard(game, {
       dennis: {
         occupations: ['bohemian-a157'],
         food: 0,
         hand: [],
       },
-      micah: { hand: [] },
+      micah: { hand: ['test-occupation-1'] },
     })
     game.run()
 
     // Round 2 work phase - 8 turns; only micah uses Lessons A
     t.choose(game, 'Forest')          // dennis turn 1
-    t.choose(game, 'Lessons A')       // micah turn 1 (auto-skips, empty hand)
+    t.choose(game, 'Lessons A')       // micah turn 1
+    t.choose(game, 'Test Occupation 1')
     t.choose(game, 'Reed Bank')       // scott turn 1
     t.choose(game, 'Fishing')         // eliya turn 1
     t.choose(game, 'Grain Seeds')     // dennis turn 2
