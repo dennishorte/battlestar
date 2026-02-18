@@ -1131,7 +1131,7 @@ class AgricolaActionManager extends BaseActionManager {
       if (canSowGrain) {
         const grainFields = currentEmptyFields.map(f => `Field (${f.row},${f.col})`)
         nestedChoices.push({
-          title: `Grain (${player.grain} available)`,
+          title: 'Grain',
           choices: grainFields,
           min: 0,
           max: 1,
@@ -1141,7 +1141,7 @@ class AgricolaActionManager extends BaseActionManager {
       if (canSowVeg) {
         const vegFields = currentEmptyFields.map(f => `Field (${f.row},${f.col})`)
         nestedChoices.push({
-          title: `Vegetables (${player.vegetables} available)`,
+          title: 'Vegetables',
           choices: vegFields,
           min: 0,
           max: 1,
