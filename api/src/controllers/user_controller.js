@@ -341,6 +341,33 @@ export const updateUser = async (req, res, next) => {
   }
 }
 
+export const changePassword = async (req, res, next) => {
+  try {
+    const { userId, currentPassword, newPassword } = req.body
+
+    if (!userId || !currentPassword || !newPassword) {
+      return next(new BadRequestError('userId, currentPassword, and newPassword are required'))
+    }
+
+    try {
+      const objectId = new ObjectId(userId)
+      await db.user.changePassword(objectId, currentPassword, newPassword)
+
+      res.json({
+        status: 'success',
+        message: 'Password changed'
+      })
+    }
+    catch (err) {
+      return next(new BadRequestError(err.message))
+    }
+  }
+  catch (err) {
+    logger.error(`Error changing password: ${err.message}`)
+    next(err)
+  }
+}
+
 // Magic related controllers
 export const magic_getCubes = async (req, res, next) => {
   try {

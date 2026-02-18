@@ -78,6 +78,8 @@ const user = {
     isImpersonated: false
   }),
 
+  changePassword: vi.fn().mockResolvedValue({ modifiedCount: 1 }),
+
   isAdmin: vi.fn().mockResolvedValue(false)
 }
 

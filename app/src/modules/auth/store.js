@@ -91,6 +91,11 @@ export default {
       axios.defaults.headers.common['Authorization'] = 'bearer ' + impersonationToken
     },
 
+    updateUser(state, fields) {
+      state.user = { ...state.user, ...fields }
+      setCachedUser(state.user)
+    },
+
     stop_impersonation(state, originalUser) {
       state.impersonation.isImpersonating = false
       state.impersonation.originalUser = null

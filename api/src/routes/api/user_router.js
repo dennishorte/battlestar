@@ -278,6 +278,41 @@ router.post('/next', userController.getNextGame)
  */
 router.post('/update', userController.updateUser)
 
+/**
+ * @swagger
+ * /user/change-password:
+ *   post:
+ *     summary: Change the current user's password
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - currentPassword
+ *               - newPassword
+ *             properties:
+ *               userId:
+ *                 type: string
+ *               currentPassword:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/change-password', userController.changePassword)
+
 // Magic related endpoints
 /**
  * @swagger

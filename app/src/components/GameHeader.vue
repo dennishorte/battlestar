@@ -14,6 +14,7 @@
             <DropdownRouterLink to="/magic">magic</DropdownRouterLink>
             <DropdownDivider/>
             <DropdownRouterLink to="/admin">admin</DropdownRouterLink>
+            <DropdownRouterLink to="/profile">profile</DropdownRouterLink>
             <DropdownRouterLink to="/logout">logout</DropdownRouterLink>
           </DropdownMenu>
 

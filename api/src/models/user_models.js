@@ -315,6 +315,23 @@ User.clearAllImpersonations = async function() {
   }
 }
 
+User.changePassword = async function(userId, currentPassword, newPassword) {
+  const user = await User.findById(userId)
+  if (!user) {
+    throw new Error('User not found')
+  }
+
+  const passwordMatches = await bcrypt.compare(currentPassword, user.passwordHash)
+  if (!passwordMatches) {
+    throw new Error('Current password is incorrect')
+  }
+
+  const passwordHash = await bcrypt.hash(newPassword, 10)
+  const filter = { _id: userId }
+  const updater = { $set: { passwordHash } }
+  return await userCollection.updateOne(filter, updater)
+}
+
 User.isAdmin = async function(userId) {
   const user = await User.findById(userId)
   return user ? user.name === 'dennis' : false

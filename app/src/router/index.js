@@ -13,6 +13,7 @@ import dataRoutes from '@/modules/data/router.js'
 import lobbyRoutes from '@/modules/lobby/router.js'
 import magicRoutes from '@/modules/magic/router.js'
 import mapmakerRoutes from '@/modules/mapmaker/router.js'
+import profileRoutes from '@/modules/profile/router.js'
 
 import authUtil from '@/modules/auth/util.js'
 
@@ -54,6 +55,7 @@ const router = createRouter({
     ...lobbyRoutes,
     ...magicRoutes,
     ...mapmakerRoutes,
+    ...profileRoutes,
   ]
 })
 
