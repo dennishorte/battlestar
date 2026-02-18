@@ -1185,19 +1185,6 @@ Agricola.prototype.draftCardType = function(cardType, passDirection) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Color Selection
-
-Agricola.prototype.chooseColor = function(player) {
-  // Only choose colors for version 2+ games
-  if (!this.settings.version || this.settings.version < 2) {
-    return
-  }
-
-  Game.prototype.chooseColor.call(this, player)
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
 // Main Loop
 
 Agricola.prototype.mainLoop = function() {
@@ -1551,7 +1538,7 @@ Agricola.prototype.workPhase = function() {
 
 Agricola.prototype.playerTurn = function(player, options) {
   // Choose color on first turn if not already set
-  this.chooseColor(player)
+  Game.prototype.chooseColor.call(this, player)
 
   // Reset per-turn tracking for Cookery Lesson
   player._usedCookingThisTurn = false
