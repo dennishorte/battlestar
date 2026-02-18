@@ -32,12 +32,12 @@ describe('Briar Hedge', () => {
       dennis: {
         minorImprovements: ['briar-hedge-e016'],
         pet: 'sheep',
-        animals: { sheep: 1 },
+        animals: { sheep: 1, boar: 1, cattle: 1 },
         wood: 3, // 4 - 1 internal fence (3 edge fences free)
         farmyard: {
           pastures: [
-            { spaces: [{ row: 0, col: 3 }] },
-            { spaces: [{ row: 0, col: 4 }] },
+            { spaces: [{ row: 0, col: 3 }], boar: 1 },
+            { spaces: [{ row: 0, col: 4 }], cattle: 1 },
             { spaces: [{ row: 1, col: 3 }, { row: 1, col: 4 }] },
             { spaces: [{ row: 2, col: 3 }, { row: 2, col: 4 }] },
           ],
@@ -76,12 +76,12 @@ describe('Briar Hedge', () => {
       dennis: {
         minorImprovements: ['briar-hedge-e016'],
         pet: 'sheep',
-        animals: { sheep: 1 },
+        animals: { sheep: 1, boar: 1, cattle: 1 },
         wood: 1, // 3 - 2 = 1 (edge fence was free)
         farmyard: {
           pastures: [
-            { spaces: [{ row: 0, col: 3 }] },
-            { spaces: [{ row: 0, col: 4 }] },
+            { spaces: [{ row: 0, col: 3 }], cattle: 1 },
+            { spaces: [{ row: 0, col: 4 }], boar: 1 },
             { spaces: [{ row: 1, col: 4 }] },
           ],
         },

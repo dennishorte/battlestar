@@ -1257,12 +1257,23 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   recalculatePastures() {
+    // Save old pasture animal data keyed by space coordinate
+    const oldAnimalsBySpace = {}
+    for (const pasture of this.farmyard.pastures) {
+      if (pasture.animalType && pasture.animalCount > 0) {
+        for (const coord of pasture.spaces) {
+          oldAnimalsBySpace[`${coord.row},${coord.col}`] = {
+            animalType: pasture.animalType,
+            animalCount: pasture.animalCount,
+          }
+        }
+      }
+    }
+
     // Find all enclosed areas created by fences
-    // This is a simplified implementation
     const pastures = []
     const visited = new Set()
 
-    // Check each space to see if it's in a fenced area
     for (let row = 0; row < res.constants.farmyardRows; row++) {
       for (let col = 0; col < res.constants.farmyardCols; col++) {
         const key = `${row},${col}`
@@ -1285,7 +1296,7 @@ class AgricolaPlayer extends BasePlayer {
 
           // Check if all spaces are properly enclosed
           if (this.isPastureFullyEnclosed(enclosedSpaces)) {
-            // Migrate animals from unfenced stables into the new pasture
+            // Migrate animals from unfenced stables on these spaces
             let animalType = null
             let animalCount = 0
             for (const coord of enclosedSpaces) {
@@ -1295,6 +1306,17 @@ class AgricolaPlayer extends BasePlayer {
                 animalCount += s.animalCount || 1
                 s.animal = null
                 s.animalCount = 0
+              }
+            }
+
+            // Carry over animals from old pastures that overlap these spaces
+            if (!animalType) {
+              const oldData = oldAnimalsBySpace[`${enclosedSpaces[0].row},${enclosedSpaces[0].col}`]
+              if (oldData) {
+                animalType = oldData.animalType
+                // Cap at new pasture capacity
+                const newCapacity = this.getPastureCapacity({ spaces: enclosedSpaces })
+                animalCount = Math.min(oldData.animalCount, newCapacity)
               }
             }
 
