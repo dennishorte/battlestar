@@ -288,6 +288,17 @@ export default {
   opacity: 0.8;
 }
 
+.action-space.occupied.selectable {
+  background-color: #e8f5e9;
+  border-color: #4CAF50;
+  opacity: 1;
+}
+
+.action-space.occupied.selectable:hover {
+  background-color: #c8e6c9;
+  border-color: #2E7D32;
+}
+
 .action-space.blocked {
   background-color: #ffebee;
   border-color: #ef9a9a;

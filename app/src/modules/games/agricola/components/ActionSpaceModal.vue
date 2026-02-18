@@ -125,7 +125,7 @@
       </div>
 
       <!-- Cannot choose message -->
-      <div class="cannot-choose" v-if="isOccupied && isPlayerTurn">
+      <div class="cannot-choose" v-if="isOccupied && isPlayerTurn && !canChooseAction">
         <em>This action space is already occupied</em>
       </div>
       <div class="cannot-choose" v-else-if="isBlocked && isPlayerTurn">
@@ -404,7 +404,7 @@ export default {
     },
 
     canChooseAction() {
-      if (!this.action || !this.isPlayerTurn || this.isOccupied || this.isBlocked) {
+      if (!this.action || !this.isPlayerTurn || this.isBlocked) {
         return false
       }
 
