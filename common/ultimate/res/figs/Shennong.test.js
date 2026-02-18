@@ -3,9 +3,7 @@ Error.stackTraceLimit = 100
 const t = require('../../testutil.js')
 
 describe('Shennong', () => {
-
-
-  test('karma: foreshadow', () => {
+  test('karma', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
       dennis: {
