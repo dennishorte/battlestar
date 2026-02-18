@@ -2861,6 +2861,14 @@ class AgricolaPlayer extends BasePlayer {
     // Note: newborns are cleared at end of round (after harvest), not here
   }
 
+  resetRoundState() {
+    this.usedFishingThisRound = false
+    this.resourcesGainedThisRound = {}
+    this._firstActionThisRound = null
+    this._usedMummysBoyDoubleAction = false
+    this.usedAccumulationSpaceTypes = undefined
+  }
+
   clearNewborns() {
     this.newborns = []
   }
