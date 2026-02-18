@@ -607,6 +607,7 @@ class AgricolaActionManager extends BaseActionManager {
         max: 1,
         allowsAction: 'build-room',
         validSpaces: validSpaces,
+        help: 'You can also click on the farmyard to select.',
       })
 
       let row, col
@@ -667,6 +668,7 @@ class AgricolaActionManager extends BaseActionManager {
       // Mark this as accepting action-based input for room building
       allowsAction: 'build-room',
       validSpaces: validSpaces,
+      help: 'You can also click on the farmyard to select.',
     }
 
     const result = this.game.requestInputSingle(selector)
@@ -802,6 +804,7 @@ class AgricolaActionManager extends BaseActionManager {
       // Mark this as accepting action-based input for stable building
       allowsAction: 'build-stable',
       validSpaces: validSpaces,
+      help: 'You can also click on the farmyard to select.',
     }
 
     const result = this.game.requestInputSingle(selector)
@@ -990,6 +993,7 @@ class AgricolaActionManager extends BaseActionManager {
       // Mark this as accepting action-based input for plowing
       allowsAction: 'plow-space',
       validSpaces: validSpaces,
+      help: 'You can also click on the farmyard to select.',
     }
 
     const result = this.game.requestInputSingle(selector)
@@ -1164,6 +1168,7 @@ class AgricolaActionManager extends BaseActionManager {
         canSowGrain,
         canSowVeg,
         emptyVirtualFields,  // Virtual fields that can be sown
+        help: 'You can also click on the farmyard to select.',
       }
 
       const result = this.game.requestInputSingle(selector)
@@ -1325,6 +1330,7 @@ class AgricolaActionManager extends BaseActionManager {
       canSowGrain,
       canSowVeg,
       emptyVirtualFields,
+      help: 'You can also click on the farmyard to select.',
     }
 
     const result = this.game.requestInputSingle(selector)
@@ -1651,6 +1657,7 @@ class AgricolaActionManager extends BaseActionManager {
       max: 1,
       allowsAction: 'build-pasture',
       fenceableSpaces,
+      help: 'You can also click on the farmyard to select.',
     })
 
     // Check if response is an action (spaces array) or a choice
@@ -3737,6 +3744,7 @@ class AgricolaActionManager extends BaseActionManager {
       max: 1,
       allowsAction: 'build-room',
       validSpaces: validSpaces,
+      help: 'You can also click on the farmyard to select.',
     }
 
     const result = this.game.requestInputSingle(selector)

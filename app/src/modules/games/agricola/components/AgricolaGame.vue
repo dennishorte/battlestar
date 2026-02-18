@@ -316,7 +316,6 @@ export default {
   },
 
   methods: {
-    // Subtitles are now provided by the game engine directly
     insertSelectorSubtitles: function() {},
 
     getActionTypeHandler(request) {

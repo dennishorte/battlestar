@@ -9,6 +9,8 @@
       {{ displayName }} {{ rangeString }}
     </div>
 
+    <div v-if="selector.help" class="selector-help">{{ selector.help }}</div>
+
     <div class="option-checkboxes">
       <div v-for="(option, index) in selector.choices" :key="index">
         <div v-if="!optionHasChildren(option)" class="input-row">
@@ -291,6 +293,13 @@ input[type='checkbox'] {
 .spacer {
   min-width: .3em;
   max-width: .3em;
+}
+
+.selector-help {
+  font-size: .85em;
+  color: gray;
+  font-style: italic;
+  margin-bottom: .3rem;
 }
 
 .subtitle {
