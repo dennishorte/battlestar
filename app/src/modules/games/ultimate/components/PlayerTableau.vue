@@ -40,7 +40,7 @@
       <ScoreExtras :player="player" />
     </CardPile>
 
-    <template v-if="game.getExpansionList().includes('echo')">
+    <template v-if="game.getExpansionList().includes('echo') || game.getExpansionList().includes('figs')">
       <CardPile
         :zone="game.zones.byPlayer(player, 'forecast')"
         :header="countWithLimitHeader(player, 'forecast')"
