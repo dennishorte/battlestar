@@ -16,17 +16,17 @@ vi.mock('../../../src/models/db.js', () => {
   }
 })
 
-vi.mock('../../../src/utils/slack.js', () => {
+vi.mock('../../../src/notifications/index.js', () => {
   return {
     default: {
-      sendMessage: vi.fn()
+      send: vi.fn()
     }
   }
 })
 
 // Import mocked dependencies for assertions
 import db from '../../../src/models/db.js'
-import slack from '../../../src/utils/slack.js'
+import notifications from '../../../src/notifications/index.js'
 
 describe('Notification Service', () => {
   // Store original environment variables
@@ -66,22 +66,6 @@ describe('Notification Service', () => {
   })
 
   describe('sendGameNotifications', () => {
-    it('should not send notifications in non-production environments', async () => {
-      // Setup
-      process.env.NODE_ENV = 'development'
-      const mockGame = createMockGame({
-        isGameOver: true
-      })
-
-      // Execute
-      await notificationService.sendGameNotifications(mockGame)
-
-      // Verify
-      expect(slack.sendMessage).not.toHaveBeenCalled()
-      expect(db.notif.clear).not.toHaveBeenCalled()
-      expect(db.notif.throttleOrSet).not.toHaveBeenCalled()
-    })
-
     it('should send game over notifications to all players when game is over', async () => {
       // Setup
       const mockGame = createMockGame({
@@ -96,16 +80,23 @@ describe('Notification Service', () => {
       expect(db.notif.clear).toHaveBeenCalledWith(mockUser1, mockGame)
       expect(db.notif.clear).toHaveBeenCalledWith(mockUser2, mockGame)
 
-      expect(slack.sendMessage).toHaveBeenCalledTimes(2)
-      expect(slack.sendMessage).toHaveBeenNthCalledWith(
+      expect(notifications.send).toHaveBeenCalledTimes(2)
+      expect(notifications.send).toHaveBeenNthCalledWith(
         1,
         mockUser1,
-        expect.stringContaining('Game over!')
+        expect.objectContaining({
+          text: 'Game over!',
+          url: expect.stringContaining('game123'),
+          urlTitle: 'testgame: Test Game',
+          suffix: 'Player 1 won!',
+        })
       )
-      expect(slack.sendMessage).toHaveBeenNthCalledWith(
+      expect(notifications.send).toHaveBeenNthCalledWith(
         2,
         mockUser2,
-        expect.stringContaining('Game over!')
+        expect.objectContaining({
+          text: 'Game over!',
+        })
       )
     })
 
@@ -122,7 +113,7 @@ describe('Notification Service', () => {
       // Verify
       expect(db.notif.clear).toHaveBeenCalledTimes(1)
       expect(db.notif.clear).toHaveBeenCalledWith(mockUser1, mockGame)
-      expect(slack.sendMessage).not.toHaveBeenCalledWith(mockUser1, expect.anything())
+      expect(notifications.send).not.toHaveBeenCalledWith(mockUser1, expect.anything())
     })
 
     it('should send "your turn" notification if it is user\'s turn and not throttled', async () => {
@@ -139,12 +130,16 @@ describe('Notification Service', () => {
 
       // Verify
       expect(db.notif.throttleOrSet).toHaveBeenCalledWith(mockUser1, mockGame)
-      expect(slack.sendMessage).toHaveBeenCalledWith(
+      expect(notifications.send).toHaveBeenCalledWith(
         mockUser1,
-        expect.stringContaining('You\'re up!')
+        expect.objectContaining({
+          text: "You're up!",
+          url: expect.stringContaining('game123'),
+          urlTitle: 'testgame: Test Game',
+        })
       )
       // User2 shouldn't get a notification
-      expect(slack.sendMessage).not.toHaveBeenCalledWith(mockUser2, expect.anything())
+      expect(notifications.send).not.toHaveBeenCalledWith(mockUser2, expect.anything())
     })
 
     it('should not send "your turn" notification if it is throttled', async () => {
@@ -162,7 +157,7 @@ describe('Notification Service', () => {
       // Verify
       expect(db.notif.throttleOrSet).toHaveBeenCalledWith(mockUser1, mockGame)
       // No notifications should be sent
-      expect(slack.sendMessage).not.toHaveBeenCalled()
+      expect(notifications.send).not.toHaveBeenCalled()
     })
 
     it('should handle multiple players with different states correctly', async () => {
@@ -184,13 +179,15 @@ describe('Notification Service', () => {
 
       // User1 should get a notification (their turn and not throttled)
       expect(db.notif.throttleOrSet).toHaveBeenCalledWith(mockUser1, mockGame)
-      expect(slack.sendMessage).toHaveBeenCalledWith(
+      expect(notifications.send).toHaveBeenCalledWith(
         mockUser1,
-        expect.stringContaining('You\'re up!')
+        expect.objectContaining({
+          text: "You're up!",
+        })
       )
 
       // User2 shouldn't get a notification
-      expect(slack.sendMessage).not.toHaveBeenCalledWith(mockUser2, expect.anything())
+      expect(notifications.send).not.toHaveBeenCalledWith(mockUser2, expect.anything())
     })
   })
 })

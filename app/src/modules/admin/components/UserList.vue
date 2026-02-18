@@ -8,6 +8,7 @@
           <th>_id</th>
           <th>name</th>
           <th>slack</th>
+          <th>telegram</th>
           <th>last seen</th>
           <th/>
         </tr>
@@ -20,19 +21,32 @@
               <span class="text-secondary">{{ user._id.substr(0, user._id.length-3) }}</span>{{ user._id.substr(-3, 3) }}
             </span>
           </td>
-          <td>{{ user.name }}</td>
-          <td>{{ user.slack }}</td>
-          <td>{{ timeAgo(user.lastSeen) }}</td>
-          <td>
-            <DropdownMenu :notitle="true">
-              <DropdownItem v-if="!isImpersonating && user.name !== currentUserName">
-                <button @click="impersonate(user)">impersonate</button>
-              </DropdownItem>
-              <DropdownItem><button @click="clearImpersonation(user)">clear impersonation</button></DropdownItem>
-              <DropdownItem><button @click="deactivate(user._id)">deactivate</button></DropdownItem>
-              <DropdownItem><button @click="edit(user)">edit</button></DropdownItem>
-            </DropdownMenu>
-          </td>
+          <template v-if="editingUserId === user._id">
+            <td><input v-model="editForm.name" class="form-control form-control-sm" /></td>
+            <td><input v-model="editForm.slack" class="form-control form-control-sm" /></td>
+            <td><input v-model="editForm.telegram" class="form-control form-control-sm" /></td>
+            <td>{{ timeAgo(user.lastSeen) }}</td>
+            <td>
+              <button @click="saveEdit(user)" class="btn btn-sm btn-primary me-1">save</button>
+              <button @click="cancelEdit" class="btn btn-sm btn-secondary">cancel</button>
+            </td>
+          </template>
+          <template v-else>
+            <td>{{ user.name }}</td>
+            <td>{{ user.slack }}</td>
+            <td>{{ user.telegram }}</td>
+            <td>{{ timeAgo(user.lastSeen) }}</td>
+            <td>
+              <DropdownMenu :notitle="true">
+                <DropdownItem v-if="!isImpersonating && user.name !== currentUserName">
+                  <button @click="impersonate(user)">impersonate</button>
+                </DropdownItem>
+                <DropdownItem><button @click="clearImpersonation(user)">clear impersonation</button></DropdownItem>
+                <DropdownItem><button @click="deactivate(user._id)">deactivate</button></DropdownItem>
+                <DropdownItem><button @click="edit(user)">edit</button></DropdownItem>
+              </DropdownMenu>
+            </td>
+          </template>
         </tr>
       </tbody>
     </table>
@@ -51,6 +65,7 @@
             <th>_id</th>
             <th>name</th>
             <th>slack</th>
+            <th>telegram</th>
             <th>last seen</th>
             <th/>
           </tr>
@@ -65,6 +80,7 @@
             </td>
             <td>{{ user.name }}</td>
             <td>{{ user.slack }}</td>
+            <td>{{ user.telegram }}</td>
             <td>{{ timeAgo(user.lastSeen) }}</td>
             <td>
               <DropdownMenu :notitle="true">
@@ -104,12 +120,8 @@ export default {
     return {
       showDeactivated: false,
       deactivatedUsers: [],
-      fields: [
-        { key: '_id', label: 'ID', sortable: true },
-        { key: 'name', sortable: true },
-        { key: 'slack', sortable: true },
-        { key: 'actions', label: 'Actions' },
-      ],
+      editingUserId: null,
+      editForm: { name: '', slack: '', telegram: '' },
     }
   },
 
@@ -170,7 +182,27 @@ export default {
     },
 
     edit(user) {
-      alert(`Not implemented: Would edit user ${user.name}`)
+      this.editingUserId = user._id
+      this.editForm = {
+        name: user.name || '',
+        slack: user.slack || '',
+        telegram: user.telegram || '',
+      }
+    },
+
+    cancelEdit() {
+      this.editingUserId = null
+    },
+
+    async saveEdit(user) {
+      await this.$post('/api/user/update', {
+        userId: user._id,
+        name: this.editForm.name,
+        slack: this.editForm.slack,
+        telegram: this.editForm.telegram,
+      })
+      this.editingUserId = null
+      this.$emit('users-updated')
     },
 
     async impersonate(user) {

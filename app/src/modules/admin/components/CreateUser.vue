@@ -5,6 +5,7 @@
     <input class="form-control" v-model="name" placeholder="name" />
     <input class="form-control" v-model="password" placeholder="password" />
     <input class="form-control" v-model="slack" placeholder="slack" />
+    <input class="form-control" v-model="telegram" placeholder="telegram" />
 
     <button @click="submit" class="btn btn-primary">create</button>
     <button @click="reset" class="btn btn-warning">reset</button>
@@ -24,6 +25,7 @@ export default {
       name: '',
       password: '',
       slack: '',
+      telegram: '',
     }
   },
   methods: {
@@ -34,6 +36,7 @@ export default {
         name: this.name,
         password: this.password,
         slack: this.slack,
+        telegram: this.telegram,
       })
 
       this.$emit('user-created')
@@ -46,6 +49,7 @@ export default {
       this.name = ''
       this.password = ''
       this.slack = ''
+      this.telegram = ''
     },
   }
 }

@@ -20,7 +20,7 @@ export const getAllUsers = async (req, res, next) => {
 
 export const createUser = async (req, res, next) => {
   try {
-    const { name, password, slack } = req.body
+    const { name, password, slack, telegram } = req.body
 
     if (!name || !password) {
       return next(new BadRequestError('Name and password are required'))
@@ -31,6 +31,7 @@ export const createUser = async (req, res, next) => {
         name,
         password,
         slack,
+        telegram,
       })
 
       res.json({
@@ -311,7 +312,7 @@ export const getNextGame = async (req, res, next) => {
 
 export const updateUser = async (req, res, next) => {
   try {
-    const { userId, name, slack } = req.body
+    const { userId, name, slack, telegram } = req.body
 
     if (!userId) {
       return next(new BadRequestError('userId is required'))
@@ -321,7 +322,8 @@ export const updateUser = async (req, res, next) => {
       await db.user.update({
         userId: new ObjectId(userId),
         name,
-        slack
+        slack,
+        telegram,
       })
 
       res.json({

@@ -1,33 +1,35 @@
 import db from '../models/db.js'
-import slack from '../utils/slack.js'
+import notifications from '../notifications/index.js'
 
 const NotificationService = {}
 
 NotificationService.sendGameNotifications = async function(game) {
-  // Skip notifications in non-production environments
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'production' && !process.env.NOTIFICATIONS_DEV) {
     return
   }
 
   const { settings } = game
 
-  // Ensure we have the slack IDs for all players
+  // Ensure we have the notification IDs for all players
   const players = await Promise.all((settings.players || []).map(p => db.user.findById(p._id)))
 
   const gameUrl = `http://${process.env.DOMAIN_HOST || 'localhost'}/game/${game._id}`
   const gameTitle = `${settings.game}: ${settings.name}`
-  const gameLink = `<${gameUrl}|${gameTitle}>`
 
   // If the game is over, notify all players
   if (game.checkGameIsOver()) {
     const resultMessage = game.getResultMessage ? game.getResultMessage() : ''
-    const gameOverMessage = `Game over! ${gameLink}\n${resultMessage}`
 
     for (const player of players) {
       // Clear any pending notifications
       await db.notif.clear(player, game)
       // Send game over notification
-      await _sendSlackMessage(player, gameOverMessage)
+      await notifications.send(player, {
+        text: 'Game over!',
+        url: gameUrl,
+        urlTitle: gameTitle,
+        suffix: resultMessage,
+      })
     }
     return
   }
@@ -46,15 +48,14 @@ NotificationService.sendGameNotifications = async function(game) {
       const isThrottled = await db.notif.throttleOrSet(player, game)
       if (!isThrottled) {
         // Send "your turn" notification
-        const turnMessage = `You're up! ${gameLink}`
-        await _sendSlackMessage(player, turnMessage)
+        await notifications.send(player, {
+          text: "You're up!",
+          url: gameUrl,
+          urlTitle: gameTitle,
+        })
       }
     }
   }
-}
-
-async function _sendSlackMessage(player, message) {
-  await slack.sendMessage(player, message)
 }
 
 export default NotificationService

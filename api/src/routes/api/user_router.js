@@ -42,6 +42,8 @@ router.post('/all', userController.getAllUsers)
  *                 type: string
  *               slack:
  *                 type: string
+ *               telegram:
+ *                 type: string
  *     responses:
  *       200:
  *         description: User created successfully
@@ -263,6 +265,8 @@ router.post('/next', userController.getNextGame)
  *               name:
  *                 type: string
  *               slack:
+ *                 type: string
+ *               telegram:
  *                 type: string
  *     responses:
  *       200:

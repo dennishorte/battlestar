@@ -16,6 +16,7 @@ User.all = async function(projection) {
     projection = {
       name: 1,
       slack: 1,
+      telegram: 1,
       lastSeen: 1,
     }
   }
@@ -49,6 +50,7 @@ User.allDeactivated = async function(projection) {
     projection = {
       name: 1,
       slack: 1,
+      telegram: 1,
       lastSeen: 1,
     }
   }
@@ -78,7 +80,7 @@ User.isEmpty = async function() {
   }
 }
 
-User.create = async function({ name, password, slack }) {
+User.create = async function({ name, password, slack, telegram }) {
   const existingUser = await User.findByName(name)
   if (existingUser) {
     throw `User with name (${name}) already exists`
@@ -88,6 +90,7 @@ User.create = async function({ name, password, slack }) {
   const insertResult = await userCollection.insertOne({
     name,
     slack,
+    telegram,
     passwordHash,
     createdTimestamp: Date.now(),
   })
@@ -124,11 +127,12 @@ User.updateLastSeen = function(id) {
   userCollection.updateOne({ _id: id }, { $set: { lastSeen: new Date() } })
 }
 
-User.update = async function({ userId, name, slack }) {
+User.update = async function({ userId, name, slack, telegram }) {
   const filter = { _id: userId }
   const updater = { $set: {
     name: name,
     slack: slack,
+    telegram: telegram,
   }}
   return await userCollection.updateOne(filter, updater)
 }
