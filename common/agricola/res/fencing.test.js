@@ -919,6 +919,144 @@ describe('Fencing', () => {
   })
 
   // ---------------------------------------------------------------------------
+  // Splitting pastures (animal duplication regression)
+  // ---------------------------------------------------------------------------
+
+  describe('splitting pastures does not duplicate animals', () => {
+    test('splitting a 2-space pasture with 1 boar does not duplicate it', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        actionSpaces: ['Fencing'],
+        firstPlayer: 'dennis',
+        dennis: {
+          wood: 10,
+          food: 20,
+          farmyard: {
+            pastures: [
+              { spaces: [{ row: 2, col: 3 }, { row: 2, col: 4 }], boar: 1 },
+            ],
+          },
+        },
+        micah: { food: 20 },
+      })
+      game.run()
+
+      // Split: fence (2,3) as its own pasture, separating it from (2,4)
+      t.choose(game, 'Fencing')
+      t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 3 }] })
+      t.choose(game, 'Done building fences')
+
+      t.choose(game, 'Day Laborer')
+      t.choose(game, 'Grain Seeds')
+      t.choose(game, 'Clay Pit')
+
+      // The 1 boar should end up in one pasture, not both
+      t.testBoard(game, {
+        dennis: {
+          wood: 9, // 10 - 1 (splitting fence)
+          food: 20,
+          grain: 1,
+          farmyard: {
+            pastures: [
+              { spaces: [{ row: 2, col: 3 }], boar: 1 },
+              { spaces: [{ row: 2, col: 4 }] },
+            ],
+          },
+          animals: { boar: 1 },
+        },
+      })
+    })
+
+    test('splitting a 3-space pasture with 2 sheep distributes without duplicating', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        actionSpaces: ['Fencing'],
+        firstPlayer: 'dennis',
+        dennis: {
+          wood: 10,
+          food: 20,
+          farmyard: {
+            pastures: [
+              { spaces: [{ row: 2, col: 2 }, { row: 2, col: 3 }, { row: 2, col: 4 }], sheep: 2 },
+            ],
+          },
+        },
+        micah: { food: 20 },
+      })
+      game.run()
+
+      // Split: fence (2,2) separately, leaving (2,3)+(2,4) together
+      t.choose(game, 'Fencing')
+      t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 2 }] })
+      t.choose(game, 'Done building fences')
+
+      t.choose(game, 'Day Laborer')
+      t.choose(game, 'Grain Seeds')
+      t.choose(game, 'Clay Pit')
+
+      // 2 sheep total: first sub-pasture (2,2) gets up to capacity 2, remainder goes to other
+      t.testBoard(game, {
+        dennis: {
+          wood: 9,
+          food: 20,
+          grain: 1,
+          farmyard: {
+            pastures: [
+              { spaces: [{ row: 2, col: 2 }], sheep: 2 },
+              { spaces: [{ row: 2, col: 3 }, { row: 2, col: 4 }] },
+            ],
+          },
+          animals: { sheep: 2 },
+        },
+      })
+    })
+
+    test('splitting pasture with more animals than one sub-pasture can hold distributes across both', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        actionSpaces: ['Fencing'],
+        firstPlayer: 'dennis',
+        dennis: {
+          wood: 10,
+          food: 20,
+          farmyard: {
+            pastures: [
+              { spaces: [{ row: 2, col: 3 }, { row: 2, col: 4 }], cattle: 3 },
+            ],
+          },
+        },
+        micah: { food: 20 },
+      })
+      game.run()
+
+      // Split into two 1-space pastures (each capacity 2)
+      t.choose(game, 'Fencing')
+      t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 3 }] })
+      t.choose(game, 'Done building fences')
+
+      t.choose(game, 'Day Laborer')
+      t.choose(game, 'Grain Seeds')
+      t.choose(game, 'Clay Pit')
+
+      // 3 cattle split: first gets 2 (capacity), second gets 1
+      t.testBoard(game, {
+        dennis: {
+          wood: 9,
+          food: 20,
+          grain: 1,
+          farmyard: {
+            pastures: [
+              { spaces: [{ row: 2, col: 3 }], cattle: 2 },
+              { spaces: [{ row: 2, col: 4 }], cattle: 1 },
+            ],
+          },
+          animals: { cattle: 3 },
+        },
+      })
+    })
+  })
+
+  // ---------------------------------------------------------------------------
   // Large pastures
   // ---------------------------------------------------------------------------
 

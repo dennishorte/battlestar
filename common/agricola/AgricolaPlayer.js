@@ -1257,18 +1257,14 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   recalculatePastures() {
-    // Save old pasture animal data keyed by space coordinate
-    const oldAnimalsBySpace = {}
-    for (const pasture of this.farmyard.pastures) {
-      if (pasture.animalType && pasture.animalCount > 0) {
-        for (const coord of pasture.spaces) {
-          oldAnimalsBySpace[`${coord.row},${coord.col}`] = {
-            animalType: pasture.animalType,
-            animalCount: pasture.animalCount,
-          }
-        }
-      }
-    }
+    // Save old pasture data with remaining animal counts (decremented as distributed)
+    const oldPastures = this.farmyard.pastures
+      .filter(p => p.animalType && p.animalCount > 0)
+      .map(p => ({
+        spaceKeys: new Set(p.spaces.map(s => `${s.row},${s.col}`)),
+        animalType: p.animalType,
+        remaining: p.animalCount,
+      }))
 
     // Find all enclosed areas created by fences
     const pastures = []
@@ -1311,12 +1307,13 @@ class AgricolaPlayer extends BasePlayer {
 
             // Carry over animals from old pastures that overlap these spaces
             if (!animalType) {
-              const oldData = oldAnimalsBySpace[`${enclosedSpaces[0].row},${enclosedSpaces[0].col}`]
-              if (oldData) {
-                animalType = oldData.animalType
-                // Cap at new pasture capacity
+              const spaceKey = `${enclosedSpaces[0].row},${enclosedSpaces[0].col}`
+              const oldP = oldPastures.find(p => p.remaining > 0 && p.spaceKeys.has(spaceKey))
+              if (oldP) {
+                animalType = oldP.animalType
                 const newCapacity = this.getPastureCapacity({ spaces: enclosedSpaces })
-                animalCount = Math.min(oldData.animalCount, newCapacity)
+                animalCount = Math.min(oldP.remaining, newCapacity)
+                oldP.remaining -= animalCount
               }
             }
 
