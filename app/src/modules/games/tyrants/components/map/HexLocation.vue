@@ -36,6 +36,10 @@
       />
     </div>
 
+    <div class="control-marker" v-if="loc.checkIsMajorSite()">
+      {{ loc.totalControl.influence }} / {{ loc.totalControl.points }}
+    </div>
+
     <div
       class="points"
       :class="{ 'minor-site-points': isSite && !loc.checkIsMajorSite() }"
@@ -261,6 +265,13 @@ export default {
   position: absolute;
   top: -4px;
   right: -4px;
+}
+
+.control-marker {
+  font-size: 0.5em;
+  text-align: center;
+  color: #333;
+  font-weight: 600;
 }
 
 .points {
