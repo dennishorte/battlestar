@@ -99,8 +99,8 @@
 
       <!-- Farmyard Stats -->
       <div class="farmyard-stats">
-        <span class="stat">🏠 {{ player.getRoomCount() }} {{ player.roomType }}</span>
-        <span class="stat">🌾 {{ player.getFieldCount() }} fields</span>
+        <span class="stat">🏠 {{ player.getRoomSpaces().length }} {{ player.roomType }}</span>
+        <span class="stat">🌾 {{ physicalFieldCount }} fields</span>
         <span class="stat">🌿 {{ player.getPastureCount() }} pastures</span>
         <span class="stat unused" v-if="unusedSpaces > 0">◻ {{ unusedSpaces }} unused</span>
       </div>
@@ -254,26 +254,12 @@ export default {
       return this.fencingValidation?.valid === true
     },
 
+    physicalFieldCount() {
+      return this.player.getFieldSpaces().length
+    },
+
     unusedSpaces() {
-      // Total farmyard is 15 spaces (3x5)
-      // Used spaces = rooms + fields + pasture spaces + unfenced stables
-      const totalSpaces = 15
-      const rooms = this.player.getRoomCount()
-      const fields = this.player.getFieldCount()
-
-      // Get pasture info
-      let pastureSpaces = 0
-      const pastures = this.player.farmyard?.pastures || []
-      for (const pasture of pastures) {
-        pastureSpaces += pasture.spaces?.length || 0
-      }
-
-      // Stables not in pastures count as used
-      const stables = this.player.getStableCount()
-      const stablesInPastures = pastures.reduce((sum, p) => sum + (p.hasStable ? 1 : 0), 0)
-      const freeStandingStables = stables - stablesInPastures
-
-      return totalSpaces - rooms - fields - pastureSpaces - freeStandingStables
+      return this.player.getUnusedSpaceCount()
     },
 
     scheduledItems() {
