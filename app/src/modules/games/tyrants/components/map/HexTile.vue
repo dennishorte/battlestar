@@ -54,12 +54,13 @@
     </div>
 
     <!-- Locations layer: outside hex-inner so its z-index isn't trapped by the transition stacking context -->
-    <div class="locations-layer" :style="innerStyle">
+    <div class="locations-layer">
       <HexLocation
         v-for="loc in filteredLocations"
         :key="loc.id"
         :loc="loc"
         :hexSize="hexSize"
+        :positionOverride="getRotatedPosition(loc)"
       />
     </div>
 
@@ -72,7 +73,10 @@
 
 
 <script>
+import { tyrants } from 'battlestar-common'
 import HexLocation from './HexLocation.vue'
+
+const { rotateHexPosition } = tyrants
 
 export default {
   name: 'HexTile',
@@ -271,6 +275,14 @@ export default {
         this.ui.fn.clickHexForRotation(this.hex.tileId)
       }
     },
+
+    getRotatedPosition(loc) {
+      if (this.rotationDelta === 0) {
+        return null
+      }
+      const pos = loc.hexPosition || { x: 0.5, y: 0.5 }
+      return rotateHexPosition(pos, this.rotationDelta)
+    },
   },
 }
 </script>
@@ -329,7 +341,6 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 10;
-  transition: transform 0.2s ease;
 }
 
 .rotation-indicator {

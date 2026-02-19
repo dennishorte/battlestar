@@ -64,6 +64,10 @@ export default {
       type: Number,
       required: true,
     },
+    positionOverride: {
+      type: Object,
+      default: null,
+    },
   },
 
   computed: {
@@ -121,7 +125,7 @@ export default {
       const hexWidth = this.hexSize * 2
       const hexHeight = this.hexSize * Math.sqrt(3)
 
-      const pos = this.loc.hexPosition || { x: 0.5, y: 0.5 }
+      const pos = this.positionOverride || this.loc.hexPosition || { x: 0.5, y: 0.5 }
 
       const left = pos.x * hexWidth
       const top = pos.y * hexHeight
