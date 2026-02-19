@@ -94,9 +94,25 @@ export default {
             return util.array.elementsEqual(otherPlayers, players)
           })
           .sort((l, r) => l.settings.createdTimestamp - r.settings.createdTimestamp)
+
+        this.patchCurrentGame()
       }
       else {
         console.log('no linked draft id')
+      }
+    },
+
+    // The games array is fetched from the server, but the current game's result
+    // may not be persisted yet (e.g., player concedes but hasn't clicked save).
+    // The injected `game` object has the live client-side state including gameOver
+    // and gameOverData, so we patch the server-fetched copy of the current game
+    // to reflect the live state. This ensures the match stats update immediately
+    // on concession or draw without waiting for a server round-trip.
+    patchCurrentGame() {
+      const current = this.games.find(g => g._id === this.game._id)
+      if (current && this.game.gameOver) {
+        current.gameOver = true
+        current.gameOverData = this.game.gameOverData
       }
     },
 
@@ -111,6 +127,14 @@ export default {
         return 'table-danger'
       }
     }
+  },
+
+  watch: {
+    // Re-patch when the live game ends (e.g., concession happens while the
+    // match stats modal is already open or the component is mounted).
+    'game.gameOver'() {
+      this.patchCurrentGame()
+    },
   },
 
   mounted() {
