@@ -65,13 +65,43 @@ function TyrantsFactory(settings, viewerName) {
   return new Tyrants(data, viewerName)
 }
 
+function _resolveMap(lobby) {
+  const map = lobby.options.map
+  const numPlayers = lobby.users.length
+
+  if (map === 'base') {
+    if (numPlayers === 2) {
+      return 'base-2'
+    }
+    if (numPlayers === 4) {
+      return 'base-4'
+    }
+    // 3 players: resolve variant (random picks between 3a/3b using lobby seed)
+    const variant = lobby.options.base3Variant || 'random'
+    if (variant === 'random') {
+      // Use lobby seed for deterministic random pick
+      const seed = typeof lobby.seed === 'number' ? lobby.seed : 0
+      return seed % 2 === 0 ? 'base-3a' : 'base-3b'
+    }
+    return variant
+  }
+
+  if (map === 'demonweb') {
+    return `demonweb-${numPlayers}`
+  }
+
+  // Backward compat: old lobbies may store specific map names like 'base-2', 'demonweb-3'.
+  // TODO: Remove this fallthrough once all old lobbies have been migrated.
+  return map
+}
+
 function factoryFromLobby(lobby) {
   return GameFactory({
     game: 'Tyrants of the Underdark',
     name: lobby.name,
     expansions: lobby.options.expansions,
     randomizeExpansions: lobby.options.randomizeExpansions,
-    map: lobby.options.map,
+    map: _resolveMap(lobby),
     mapLayout: lobby.options.mapLayout,
     menzoExtraNeutral: lobby.options.menzoExtraNeutral,
     players: lobby.users,
