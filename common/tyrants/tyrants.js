@@ -254,8 +254,6 @@ Tyrants.prototype.initializeDemonwebMap = function() {
     })),
   }
 
-  // Step 5: Identify dead ends and place gemstones
-  this._initializeGemstones()
 }
 
 Tyrants.prototype._selectTilesForLayout = function(layout) {
@@ -294,7 +292,6 @@ Tyrants.prototype._selectTilesForLayout = function(layout) {
       rotation: 0,
     })
 
-    this.log.add({ template: `Selected tile ${tileId} for position (${slot.position.q}, ${slot.position.r})` })
   }
 
   return selected
@@ -534,7 +531,6 @@ Tyrants.prototype._initializeGemstones = function() {
   for (const loc of this.getLocationAll()) {
     if (loc.points === 0 && loc.neighborNames.length === 1) {
       this.state.gemstones[loc.name()] = true
-      this.log.add({ template: `Placed gemstone at dead end: ${loc.name()}` })
     }
   }
 }
@@ -596,6 +592,9 @@ Tyrants.prototype.setupDemonwebRotation = function() {
   else {
     this.log.add({ template: 'Map rotations confirmed (no changes)' })
   }
+
+  // Place gemstones after rotation is finalized
+  this._initializeGemstones()
 
   // Set turn order: player after the rotator goes first
   this.players.passToPlayer(nextPlayer)
@@ -669,8 +668,6 @@ Tyrants.prototype._rebuildDemonwebMap = function(rotations) {
     }
   }
 
-  // Step 8: Re-init gemstones
-  this._initializeGemstones()
 }
 
 Tyrants.prototype.initializeMarketZones = function() {
@@ -805,7 +802,9 @@ Tyrants.prototype.initializeTokens = function() {
 
   if (this.settings.menzoExtraNeutral) {
     const menzo = this.getLocationByName('Menzoberranzan')
-    neutralZone.peek().moveTo(menzo)
+    if (menzo) {
+      neutralZone.peek().moveTo(menzo)
+    }
   }
 }
 
@@ -820,6 +819,8 @@ Tyrants.prototype.initializeTransientState = function() {
   this.state.endOfTurnActions = []
   this.state.gemAcquiredThisTurn = false
   this.state.gemsAcquiredThisTurn = []  // Track gems acquired this turn (can't be spent same turn)
+  this.state.gemstones = {}
+  this.state.playerGems = {}
 }
 
 Tyrants.prototype.chooseInitialLocations = function() {

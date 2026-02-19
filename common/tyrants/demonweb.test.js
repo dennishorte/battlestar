@@ -48,12 +48,13 @@ function gemFixture(opts = {}) {
       dennis.setCounter('gems', opts.gems)
     }
 
-    // Place a dennis troop at the first gem location
+    // Place a dennis troop at a dead end (will become a gem location after rotation)
     if (opts.troopAtGem) {
-      const gemLoc = Object.keys(game.state.gemstones)[0]
-      if (gemLoc) {
-        const loc = game.getLocationByName(gemLoc)
-        game.zones.byPlayer(dennis, 'troops').peek().moveTo(loc)
+      const deadEnd = game.getLocationAll().find(
+        loc => loc.points === 0 && loc.neighborNames.length === 1
+      )
+      if (deadEnd) {
+        game.zones.byPlayer(dennis, 'troops').peek().moveTo(deadEnd)
       }
     }
   })
@@ -161,15 +162,16 @@ describe('Demonweb', () => {
       submitRotations(game)
     })
 
-    test('gemstones are placed at dead ends', () => {
+    test('gemstones are placed at dead ends after rotation', () => {
       const game = demonwebFixture()
-      const gemstones = game.state.gemstones || {}
-      // Gemstones are placed at locations with 0 points and only 1 neighbor
+      // Gemstones should not be placed yet (before rotation)
+      expect(Object.keys(game.state.gemstones).length).toBe(0)
+      submitRotations(game)
+      // Now gemstones should be placed
       const deadEnds = game.getLocationAll().filter(
         loc => loc.points === 0 && loc.neighborNames.length === 1
       )
-      expect(Object.keys(gemstones).length).toBe(deadEnds.length)
-      submitRotations(game)
+      expect(Object.keys(game.state.gemstones).length).toBe(deadEnds.length)
     })
   })
 
