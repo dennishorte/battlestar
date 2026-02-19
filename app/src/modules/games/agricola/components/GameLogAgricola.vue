@@ -74,9 +74,6 @@ function lineStyles(line) {
         return {
           'background-color': player.color,
           'color': getContrastColor(player.color),
-          'margin': '0 -.5em',
-          'padding': '0 .5em',
-          'border-radius': '.25em',
         }
       }
     }
@@ -93,15 +90,23 @@ useGameLogProvider({
 </script>
 
 <style scoped>
-#gamelog :deep(.indent-0) {
-  font-weight: bold;
-  width: 100%;
-  text-align: center;
-  border-radius: .5em;
-  margin-top: 2em;
-  line-height: 2em;
+/* Indentation: server nests 0-4 deep, flatten visually.
+   Banners pin to margin 0; content indents from banners. */
+#gamelog :deep(.indent-0),
+#gamelog :deep(.indent-1),
+#gamelog :deep(.indent-2) {
+  margin-left: 0;
 }
 
+#gamelog :deep(.indent-3) {
+  margin-left: 1em;
+}
+
+#gamelog :deep(.indent-4) {
+  margin-left: 2em;
+}
+
+/* Round header banner */
 #gamelog :deep(.round-header) {
   font-weight: bold;
   text-align: center;
@@ -109,7 +114,6 @@ useGameLogProvider({
   color: white;
   padding: .25em .5em;
   margin-top: 1em;
-  /* margin-left: 0 !important; */
   border-radius: .25em;
   display: flex;
   justify-content: center;
@@ -119,13 +123,13 @@ useGameLogProvider({
   display: block;
 }
 
+/* Work phase banner */
 #gamelog :deep(.work-phase) {
   font-weight: bold;
   text-align: center;
   background-color: #5d7a3a;
   color: white;
   padding: .15em .5em;
-  margin-left: 0 !important;
   border-radius: .15em;
 }
 
@@ -133,20 +137,24 @@ useGameLogProvider({
   display: block;
 }
 
+/* Player turn banner */
 #gamelog :deep(.player-turn) {
-  padding: .15em .5em .15em 0;
-  border-radius: .15em;
-  margin-top: .25em;
+  padding-top: .3em;
+  padding-bottom: .3em;
+  border-radius: .2em;
+  margin-top: .5em;
+  font-weight: 600;
 }
 
+/* Action line */
 #gamelog :deep(.player-action) {
-  padding: .1em .5em .1em 0;
   background-color: #f5f5dc;
   border-radius: .15em;
-  margin: 0 -.5em;
+  margin-left: 1em;
   padding: 0 .5em;
 }
 
+/* Harvest banner */
 #gamelog :deep(.harvest-phase) {
   font-weight: bold;
   background-color: #DAA520;
