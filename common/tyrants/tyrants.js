@@ -12,6 +12,34 @@ const { TyrantsToken } = require('./TyrantsToken.js')
 const { TyrantsZone } = require('./TyrantsZone.js')
 
 
+// Rotate a position (x, y in 0-1 range) around the hex center (0.5, 0.5)
+// rotation is in 60-degree increments (0-5)
+function rotateHexPosition(pos, rotation) {
+  if (!pos || rotation === 0) {
+    return pos
+  }
+
+  // Convert to centered coordinates
+  const cx = pos.x - 0.5
+  const cy = pos.y - 0.5
+
+  // Rotation angle in radians (60 degrees per step)
+  const theta = rotation * (Math.PI / 3)
+  const cosTheta = Math.cos(theta)
+  const sinTheta = Math.sin(theta)
+
+  // Rotate around center
+  const rx = cx * cosTheta - cy * sinTheta
+  const ry = cx * sinTheta + cy * cosTheta
+
+  // Convert back to 0-1 coordinates
+  return {
+    x: rx + 0.5,
+    y: ry + 0.5,
+  }
+}
+
+
 module.exports = {
   GameOverEvent,
   Tyrants,
@@ -20,6 +48,7 @@ module.exports = {
   constructor: Tyrants,
   factory: factoryFromLobby,
   res,
+  rotateHexPosition,
 }
 
 
@@ -36,13 +65,44 @@ function TyrantsFactory(settings, viewerName) {
   return new Tyrants(data, viewerName)
 }
 
+function _resolveMap(lobby) {
+  const map = lobby.options.map
+  const numPlayers = lobby.users.length
+
+  if (map === 'base') {
+    if (numPlayers === 2) {
+      return 'base-2'
+    }
+    if (numPlayers === 4) {
+      return 'base-4'
+    }
+    // 3 players: resolve variant (random picks between 3a/3b using lobby seed)
+    const variant = lobby.options.base3Variant || 'random'
+    if (variant === 'random') {
+      // Use lobby seed for deterministic random pick
+      const seed = typeof lobby.seed === 'number' ? lobby.seed : 0
+      return seed % 2 === 0 ? 'base-3a' : 'base-3b'
+    }
+    return variant
+  }
+
+  if (map === 'demonweb') {
+    return `demonweb-${numPlayers}`
+  }
+
+  // Backward compat: old lobbies may store specific map names like 'base-2', 'demonweb-3'.
+  // TODO: Remove this fallthrough once all old lobbies have been migrated.
+  return map
+}
+
 function factoryFromLobby(lobby) {
   return GameFactory({
     game: 'Tyrants of the Underdark',
     name: lobby.name,
     expansions: lobby.options.expansions,
     randomizeExpansions: lobby.options.randomizeExpansions,
-    map: lobby.options.map,
+    map: _resolveMap(lobby),
+    mapLayout: lobby.options.mapLayout,
     menzoExtraNeutral: lobby.options.menzoExtraNeutral,
     players: lobby.users,
     seed: lobby.seed,
@@ -51,7 +111,14 @@ function factoryFromLobby(lobby) {
 }
 
 Tyrants.prototype._mainProgram = function() {
+  this.log.add({ template: 'Initializing' })
+  this.log.indent()
+
   this.initialize()
+  this.setupDemonwebRotation()
+
+  this.log.outdent()
+
   this.chooseInitialLocations()
   this.mainLoop()
 }
@@ -61,9 +128,6 @@ Tyrants.prototype._mainProgram = function() {
 // Initialization
 
 Tyrants.prototype.initialize = function() {
-  this.log.add({ template: 'Initializing' })
-  this.log.indent()
-
   this.initializeExpansions()
   this.initializePlayers()
   this.initializeZones()
@@ -71,8 +135,6 @@ Tyrants.prototype.initialize = function() {
   this.initializeTokens()
   this.initializeStartingHands()
   this.initializeTransientState()
-
-  this.log.outdent()
 
   this.state.ghostFlag = false
   this.state.initializationComplete = true
@@ -119,14 +181,494 @@ Tyrants.prototype.initializePlayers = function() {
     player.addCounter('influence')
     player.addCounter('power')
     player.addCounter('reduce-draw')
+    player.addCounter('gems')  // For Demonweb gemstone rules
   }
 }
 
 Tyrants.prototype.initializeMapZones = function() {
+  // Check if this is a Demonweb hex-based map
+  if (this.settings.map && this.settings.map.startsWith('demonweb')) {
+    this.initializeDemonwebMap()
+    return
+  }
+
+  // Standard static map
   for (const data of res.maps[this.settings.map]) {
     const zone = new TyrantsMapZone(this, data)
     this.zones.register(zone)
   }
+}
+
+Tyrants.prototype.initializeDemonwebMap = function() {
+  const { hexTiles, mapConfigs } = res
+  const config = mapConfigs.mapConfigs[this.settings.map]
+
+  if (!config) {
+    throw new Error(`Unknown demonweb map config: ${this.settings.map}`)
+  }
+
+  this.log.add({ template: `Assembling Demonweb map for ${config.playerCount} players` })
+
+  // Step 1: Select random tiles for each position
+  const selectedTiles = this._selectTilesForLayout(config.layout)
+
+  // Step 2: Rotate tiles
+  const mapLayout = this.settings.mapLayout
+  let rotatedTiles
+  if (mapLayout && mapLayout.length === config.layout.length) {
+    // Apply rotations from the layout specification
+    for (let i = 0; i < selectedTiles.length; i++) {
+      if (mapLayout[i]) {
+        selectedTiles[i].rotation = mapLayout[i].rotation
+      }
+    }
+    rotatedTiles = selectedTiles
+  }
+  else {
+    // Greedy algorithm to maximize connections
+    rotatedTiles = this._rotateTilesGreedy(selectedTiles, config.layout)
+  }
+
+  // Step 3: Compute neighbors from internal paths + edge connections
+  const locationData = this._assembleMapLocations(rotatedTiles, config.layout)
+
+  // Step 4: Create zones for each location
+  for (const data of locationData) {
+    const zone = new TyrantsMapZone(this, data)
+    zone.hexId = data.hexId
+    zone.hexPosition = data.hexPosition
+    zone.hexGridPosition = data.hexGridPosition
+    this.zones.register(zone)
+  }
+
+  // Store assembled map state for serialization/frontend
+  this.state.assembledMap = {
+    hexes: rotatedTiles.map((tile, i) => ({
+      tileId: tile.id,
+      position: config.layout[i].position,
+      rotation: tile.rotation,
+      paths: tile.paths || [],
+      edgeConnections: hexTiles.getRotatedEdgeConnections(tile, tile.rotation),
+      labelPosition: rotateHexPosition(tile.labelPosition, tile.rotation),
+      rulesPosition: rotateHexPosition(tile.rulesPosition, tile.rotation),
+      specialRules: tile.specialRules,
+    })),
+  }
+
+}
+
+Tyrants.prototype._selectTilesForLayout = function(layout) {
+  const { hexTiles } = res
+  const usedTiles = new Set()
+  const selected = []
+  const mapLayout = this.settings.mapLayout
+
+  for (let i = 0; i < layout.length; i++) {
+    const slot = layout[i]
+    let tileId
+
+    // Use mapLayout entry if specified for this slot
+    if (mapLayout && mapLayout[i]) {
+      tileId = mapLayout[i].tileId
+      if (!hexTiles.allTiles[tileId]) {
+        throw new Error(`Unknown tile in mapLayout: ${tileId}`)
+      }
+    }
+    else {
+      // Filter pool to exclude already-used tiles
+      const available = slot.pool.filter(id => !usedTiles.has(id))
+
+      if (available.length === 0) {
+        throw new Error(`No available tiles for slot at (${slot.position.q}, ${slot.position.r})`)
+      }
+
+      // Random selection
+      const randomIndex = Math.floor(this.random() * available.length)
+      tileId = available[randomIndex]
+    }
+
+    usedTiles.add(tileId)
+    selected.push({
+      ...hexTiles.allTiles[tileId],
+      rotation: 0,
+    })
+
+  }
+
+  return selected
+}
+
+Tyrants.prototype._rotateTilesGreedy = function(tiles, layout) {
+  const { hexTiles, mapConfigs } = res
+  const placedHexes = []  // { position, tile, rotation }
+
+  for (let i = 0; i < tiles.length; i++) {
+    const tile = tiles[i]
+    const position = layout[i].position
+
+    // Find adjacent already-placed hexes
+    const adjacentPositions = mapConfigs.getAdjacentPositions(position.q, position.r)
+    const adjacentPlaced = placedHexes.filter(ph =>
+      adjacentPositions.some(ap => ap.q === ph.position.q && ap.r === ph.position.r)
+    )
+
+    // Try each rotation and count connections
+    let bestRotation = 0
+    let bestConnections = 0
+
+    for (let rotation = 0; rotation < 6; rotation++) {
+      let connections = 0
+
+      for (const adjacent of adjacentPlaced) {
+        const edgeToAdjacent = mapConfigs.getEdgeDirection(position, adjacent.position)
+        const edgeFromAdjacent = hexTiles.getOppositeEdge(edgeToAdjacent)
+
+        // Get rotated edge connections for this tile
+        const myConnections = hexTiles.getRotatedEdgeConnections(tile, rotation)
+        const myEdgeConn = myConnections.find(c => c.edge === edgeToAdjacent)
+
+        // Get rotated edge connections for adjacent tile
+        const adjConnections = hexTiles.getRotatedEdgeConnections(adjacent.tile, adjacent.rotation)
+        const adjEdgeConn = adjConnections.find(c => c.edge === edgeFromAdjacent)
+
+        // Count as connection if both have connection points on that edge
+        if (myEdgeConn && adjEdgeConn) {
+          connections++
+        }
+      }
+
+      if (connections > bestConnections) {
+        bestConnections = connections
+        bestRotation = rotation
+      }
+    }
+
+    tile.rotation = bestRotation
+    placedHexes.push({ position, tile, rotation: bestRotation })
+
+    if (bestRotation > 0) {
+      this.log.add({ template: `Rotated tile ${tile.id} by ${bestRotation * 60}°` })
+    }
+  }
+
+  return tiles
+}
+
+Tyrants.prototype._assembleMapLocations = function(tiles, layout) {
+  const { hexTiles, mapConfigs } = res
+  const locations = []
+  const locationMap = {}  // fullId -> locationData
+
+  // Step 1: Create all locations from each tile
+  for (let i = 0; i < tiles.length; i++) {
+    const tile = tiles[i]
+    const gridPos = layout[i].position
+
+    for (const loc of tile.locations) {
+      const fullId = `${tile.id}.${loc.short}`
+      const locationData = {
+        name: fullId,
+        short: loc.short,
+        region: tile.region,
+        size: loc.size,
+        neutrals: loc.neutrals,
+        points: loc.points,
+        start: loc.start,
+        control: { ...loc.control },
+        totalControl: { ...loc.totalControl },
+        neighbors: [],  // Will be populated below
+        hexId: tile.id,
+        hexPosition: rotateHexPosition(loc.position, tile.rotation),
+        hexGridPosition: gridPos,
+        displayName: loc.name,  // Human-readable name
+      }
+      locations.push(locationData)
+      locationMap[fullId] = locationData
+    }
+  }
+
+  // Step 2: Add internal paths as neighbors
+  for (let i = 0; i < tiles.length; i++) {
+    const tile = tiles[i]
+
+    for (const path of tile.paths) {
+      const id1 = `${tile.id}.${path[0]}`
+      const id2 = `${tile.id}.${path[1]}`
+
+      if (locationMap[id1] && locationMap[id2]) {
+        if (!locationMap[id1].neighbors.includes(id2)) {
+          locationMap[id1].neighbors.push(id2)
+        }
+        if (!locationMap[id2].neighbors.includes(id1)) {
+          locationMap[id2].neighbors.push(id1)
+        }
+      }
+    }
+  }
+
+  // Step 3: Add cross-hex connections via edge connections
+  for (let i = 0; i < tiles.length; i++) {
+    const tile1 = tiles[i]
+    const pos1 = layout[i].position
+
+    for (let j = i + 1; j < tiles.length; j++) {
+      const tile2 = tiles[j]
+      const pos2 = layout[j].position
+
+      // Check if adjacent
+      const edgeDir = mapConfigs.getEdgeDirection(pos1, pos2)
+      if (!edgeDir) {
+        continue  // Not adjacent
+      }
+
+      const oppositeEdge = hexTiles.getOppositeEdge(edgeDir)
+
+      // Get rotated connections
+      const conns1 = hexTiles.getRotatedEdgeConnections(tile1, tile1.rotation)
+      const conns2 = hexTiles.getRotatedEdgeConnections(tile2, tile2.rotation)
+
+      // Find matching connection points
+      const conn1 = conns1.find(c => c.edge === edgeDir)
+      const conn2 = conns2.find(c => c.edge === oppositeEdge)
+
+      if (conn1 && conn2) {
+        const id1 = `${tile1.id}.${conn1.location}`
+        const id2 = `${tile2.id}.${conn2.location}`
+
+        if (locationMap[id1] && locationMap[id2]) {
+          if (!locationMap[id1].neighbors.includes(id2)) {
+            locationMap[id1].neighbors.push(id2)
+          }
+          if (!locationMap[id2].neighbors.includes(id1)) {
+            locationMap[id2].neighbors.push(id1)
+          }
+        }
+      }
+    }
+  }
+
+  // Step 4: Create edge tunnel locations for dead-end edges (edges with no adjacent hex)
+  const EDGE_OFFSETS = {
+    'N': { x: 0, y: -0.25 },
+    'NE': { x: 0.22, y: -0.12 },
+    'SE': { x: 0.22, y: 0.12 },
+    'S': { x: 0, y: 0.25 },
+    'SW': { x: -0.22, y: 0.12 },
+    'NW': { x: -0.22, y: -0.12 },
+  }
+
+  // Build a set of all hex positions for quick lookup
+  const hexPositions = new Set(layout.map(l => `${l.position.q},${l.position.r}`))
+
+  for (let i = 0; i < tiles.length; i++) {
+    const tile = tiles[i]
+    const gridPos = layout[i].position
+
+    // Get rotated edge connections
+    const edgeConns = hexTiles.getRotatedEdgeConnections(tile, tile.rotation)
+
+    for (const conn of edgeConns) {
+      // Check if there's an adjacent hex at this edge
+      const adjacentPos = mapConfigs.getAdjacentPosition(gridPos.q, gridPos.r, conn.edge)
+      const adjKey = `${adjacentPos.q},${adjacentPos.r}`
+
+      if (!hexPositions.has(adjKey)) {
+        // No adjacent hex - create an edge tunnel location
+        const sourceLocId = `${tile.id}.${conn.location}`
+        const sourceLoc = locationMap[sourceLocId]
+
+        if (!sourceLoc) {
+          continue
+        }
+
+        // Calculate position for edge tunnel (offset from source location towards edge)
+        const offset = EDGE_OFFSETS[conn.edge]
+        const edgeTunnelPos = {
+          x: sourceLoc.hexPosition.x + offset.x,
+          y: sourceLoc.hexPosition.y + offset.y,
+        }
+
+        const edgeTunnelId = `${tile.id}.edge-${conn.edge.toLowerCase()}`
+
+        // Skip if we already created this edge tunnel (multiple locations might share an edge)
+        if (locationMap[edgeTunnelId]) {
+          continue
+        }
+
+        const edgeTunnelData = {
+          name: edgeTunnelId,
+          short: `edge-${conn.edge.toLowerCase()}`,
+          region: tile.region,
+          size: 1,
+          neutrals: 0,
+          points: 0,
+          start: false,
+          control: { influence: 0, points: 0 },
+          totalControl: { influence: 0, points: 0 },
+          neighbors: [sourceLocId],
+          hexId: tile.id,
+          hexPosition: edgeTunnelPos,
+          hexGridPosition: gridPos,
+          displayName: 'Tunnel',
+        }
+
+        locations.push(edgeTunnelData)
+        locationMap[edgeTunnelId] = edgeTunnelData
+
+        // Add reverse neighbor connection
+        sourceLoc.neighbors.push(edgeTunnelId)
+      }
+    }
+  }
+
+  return locations
+}
+
+Tyrants.prototype._initializeGemstones = function() {
+  this.state.gemstones = {}
+  this.state.playerGems = {}
+
+  // Find dead ends (tunnel spaces with only one neighbor)
+  for (const loc of this.getLocationAll()) {
+    if (loc.points === 0 && loc.neighborNames.length === 1) {
+      this.state.gemstones[loc.name()] = true
+    }
+  }
+}
+
+Tyrants.prototype.setupDemonwebRotation = function() {
+  // Only applies to demonweb maps
+  if (!this.settings.map || !this.settings.map.startsWith('demonweb')) {
+    return
+  }
+
+  // Pick a random player to be the map setter
+  const players = this.players.all()
+  const rotatorIndex = Math.floor(this.random() * players.length)
+  const rotator = players[rotatorIndex]
+  const nextPlayer = this.players.following(rotator)
+
+  this.log.add({
+    template: '{player} will set up the map',
+    args: { player: rotator },
+  })
+
+  // Build current rotations as defaults
+  const currentRotations = {}
+  for (const hex of this.state.assembledMap.hexes) {
+    currentRotations[hex.tileId] = hex.rotation
+  }
+
+  // Request rotation input from the rotator (action-type selector)
+  // Returns the selection array; first element contains { rotations: { tileId: rotation } }
+  const selection = this.requestInputSingle({
+    actor: rotator.name,
+    title: 'Rotate Hex Tiles',
+    choices: '__UNSPECIFIED__',
+  })
+
+  // Parse the response and normalize rotation values to 0-5 range
+  const rawRotations = (selection && selection[0] && selection[0].rotations) || {}
+  const rotations = {}
+  for (const [tileId, rotation] of Object.entries(rawRotations)) {
+    rotations[tileId] = ((rotation % 6) + 6) % 6  // Normalize to 0-5
+  }
+
+  // Check if any rotations differ from current defaults
+  let hasChanges = false
+  for (const [tileId, rotation] of Object.entries(rotations)) {
+    if (currentRotations[tileId] !== undefined && currentRotations[tileId] !== rotation) {
+      hasChanges = true
+      break
+    }
+  }
+
+  if (hasChanges) {
+    // Merge player rotations with defaults (player only sends changed ones)
+    const mergedRotations = { ...currentRotations, ...rotations }
+    this._rebuildDemonwebMap(mergedRotations)
+
+    this.log.add({ template: 'Map rotations updated' })
+  }
+  else {
+    this.log.add({ template: 'Map rotations confirmed (no changes)' })
+  }
+
+  // Place gemstones after rotation is finalized
+  this._initializeGemstones()
+
+  // Set turn order: player after the rotator goes first
+  this.players.passToPlayer(nextPlayer)
+  this.log.add({
+    template: '{player} will go first',
+    args: { player: nextPlayer },
+  })
+}
+
+Tyrants.prototype._rebuildDemonwebMap = function(rotations) {
+  const { hexTiles, mapConfigs } = res
+  const config = mapConfigs.mapConfigs[this.settings.map]
+
+  // Step 1: Move all neutrals from map locations back to neutrals zone
+  const neutralZone = this.zones.byId('neutrals')
+  for (const loc of this.getLocationAll()) {
+    const neutralTroops = loc.getTroops().filter(t => t.name.startsWith('neutral'))
+    for (const troop of neutralTroops) {
+      troop.moveTo(neutralZone)
+    }
+  }
+
+  // Step 2: Remove all map zones
+  for (const loc of this.getLocationAll()) {
+    delete this.zones._zones[loc.id]
+  }
+
+  // Step 3: Build tile objects with new rotations
+  const tiles = this.state.assembledMap.hexes.map(hex => ({
+    ...hexTiles.allTiles[hex.tileId],
+    rotation: rotations[hex.tileId] !== undefined ? rotations[hex.tileId] : hex.rotation,
+  }))
+
+  // Step 4: Assemble map locations with new rotations
+  const locationData = this._assembleMapLocations(tiles, config.layout)
+
+  // Step 5: Create new zones
+  for (const data of locationData) {
+    const zone = new TyrantsMapZone(this, data)
+    zone.hexId = data.hexId
+    zone.hexPosition = data.hexPosition
+    zone.hexGridPosition = data.hexGridPosition
+    this.zones.register(zone)
+  }
+
+  // Step 6: Update assembled map state
+  this.state.assembledMap = {
+    hexes: tiles.map((tile, i) => ({
+      tileId: tile.id,
+      position: config.layout[i].position,
+      rotation: tile.rotation,
+      paths: tile.paths || [],
+      edgeConnections: hexTiles.getRotatedEdgeConnections(tile, tile.rotation),
+      labelPosition: rotateHexPosition(tile.labelPosition, tile.rotation),
+      rulesPosition: rotateHexPosition(tile.rulesPosition, tile.rotation),
+      specialRules: tile.specialRules,
+    })),
+  }
+
+  // Step 7: Re-place neutrals
+  for (const loc of this.getLocationAll()) {
+    for (let i = 0; i < loc.neutrals; i++) {
+      neutralZone.peek().moveTo(loc)
+    }
+  }
+
+  if (this.settings.menzoExtraNeutral) {
+    const menzo = this.getLocationByName('Menzoberranzan')
+    if (menzo) {
+      neutralZone.peek().moveTo(menzo)
+    }
+  }
+
 }
 
 Tyrants.prototype.initializeMarketZones = function() {
@@ -261,7 +803,9 @@ Tyrants.prototype.initializeTokens = function() {
 
   if (this.settings.menzoExtraNeutral) {
     const menzo = this.getLocationByName('Menzoberranzan')
-    neutralZone.peek().moveTo(menzo)
+    if (menzo) {
+      neutralZone.peek().moveTo(menzo)
+    }
   }
 }
 
@@ -274,6 +818,10 @@ Tyrants.prototype.initializeStartingHands = function() {
 Tyrants.prototype.initializeTransientState = function() {
   this.state.turn = 0
   this.state.endOfTurnActions = []
+  this.state.gemAcquiredThisTurn = false
+  this.state.gemsAcquiredThisTurn = []  // Track gems acquired this turn (can't be spent same turn)
+  this.state.gemstones = {}
+  this.state.playerGems = {}
 }
 
 Tyrants.prototype.chooseInitialLocations = function() {
@@ -328,6 +876,12 @@ Tyrants.prototype.mainLoop = function() {
 
 Tyrants.prototype.preActions = function() {
   const player = this.players.current()
+
+  // Reset triad tracking for this turn
+  this.state.triadBonusesThisTurn = {}
+
+  // Check for Demonweb special hex rules (e.g., A2 triad bonus)
+  this._checkSpecialHexRules(player)
 
   // Gain influence from site control tokens.
   const markers = this.getControlMarkers(player)
@@ -455,6 +1009,23 @@ Tyrants.prototype.doActions = function() {
         throw new Error(`Unknown power action: ${arg}`)
       }
     }
+    else if (name === 'Gem' || name.startsWith('Gem (')) {
+      if (arg === 'Acquire Gem') {
+        this.aAcquireGem(player)
+        continue
+      }
+      else if (arg === 'Spend Gem for Power') {
+        this.aSpendGem(player, 'power')
+        continue
+      }
+      else if (arg === 'Spend Gem for Influence') {
+        this.aSpendGem(player, 'influence')
+        continue
+      }
+      else {
+        throw new Error(`Unknown gem action: ${arg}`)
+      }
+    }
     else {
       throw new Error(`Unknown action: ${name}`)
     }
@@ -467,6 +1038,7 @@ Tyrants.prototype._generateActionChoices = function() {
   choices.push(this._generateAutoCardAction())
   choices.push(this._generateBuyActions())
   choices.push(this._generatePowerActions())
+  choices.push(this._generateGemActions())
   choices.push(this._generatePassAction())
   return choices.filter(action => Boolean(action))
 }
@@ -587,6 +1159,49 @@ Tyrants.prototype._generatePowerActions = function() {
   if (choices.length > 0) {
     return {
       title: 'Use Power',
+      choices,
+      min: 0,
+      max: 1,
+    }
+  }
+  else {
+    return undefined
+  }
+}
+
+Tyrants.prototype._generateGemActions = function() {
+  // Only for Demonweb maps with gemstones
+  if (!this.state.gemstones) {
+    return undefined
+  }
+
+  const player = this.players.current()
+  const power = player.getCounter('power')
+  const gems = player.getCounter('gems')
+  const choices = []
+
+  // Acquire gem action: need 1 power, not already acquired this turn, troop at gem location
+  if (power >= 1 && !this.state.gemAcquiredThisTurn) {
+    const gemLocations = Object.keys(this.state.gemstones).filter(locName => {
+      const loc = this.getLocationByName(locName)
+      return loc && loc.getTroops(player).length > 0
+    })
+    if (gemLocations.length > 0) {
+      choices.push({ title: 'Acquire Gem', subtitles: ['costs 1 power'] })
+    }
+  }
+
+  // Spend gem action: need gem, gem not acquired this turn
+  const spendableGems = gems - this.state.gemsAcquiredThisTurn.length
+  if (spendableGems > 0) {
+    choices.push({ title: 'Spend Gem for Power', subtitles: ['+3 power'] })
+    choices.push({ title: 'Spend Gem for Influence', subtitles: ['+3 influence'] })
+  }
+
+  if (choices.length > 0) {
+    const title = `Gem (💎×${gems})`
+    return {
+      title,
       choices,
       min: 0,
       max: 1,
@@ -743,6 +1358,10 @@ Tyrants.prototype.cleanup = function() {
   player.setCounter('power', 0)
   player.setCounter('influence', 0)
 
+  // Reset gem state for next turn
+  this.state.gemAcquiredThisTurn = false
+  this.state.gemsAcquiredThisTurn = []
+
   this.checkForEndGameTriggers()
 }
 
@@ -828,6 +1447,67 @@ Tyrants.prototype.checkForEndOfGame = function() {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Alt Actions
+
+Tyrants.prototype.aAcquireGem = function(player) {
+  // Find gem locations where player has a troop
+  const gemLocations = Object.keys(this.state.gemstones).filter(locName => {
+    const loc = this.getLocationByName(locName)
+    return loc && loc.getTroops(player).length > 0
+  })
+
+  if (gemLocations.length === 0) {
+    throw new Error('No valid gem locations')
+  }
+
+  let chosenLoc
+  if (gemLocations.length === 1) {
+    chosenLoc = this.getLocationByName(gemLocations[0])
+  }
+  else {
+    const choices = gemLocations.map(name => this.getLocationByName(name))
+    chosenLoc = this.aChooseLocation(player, choices, { title: 'Choose gem to acquire' })
+  }
+
+  this.log.add({
+    template: '{player} acquires gem at {loc} (1 power)',
+    args: { player, loc: chosenLoc }
+  })
+
+  delete this.state.gemstones[chosenLoc.name()]
+  player.incrementCounter('gems', 1)
+  player.incrementCounter('power', -1)
+  this.state.gemAcquiredThisTurn = true
+  this.state.gemsAcquiredThisTurn.push(chosenLoc.name())
+}
+
+Tyrants.prototype.aSpendGem = function(player, resource) {
+  const gems = player.getCounter('gems')
+  const spendableGems = gems - this.state.gemsAcquiredThisTurn.length
+
+  if (spendableGems < 1) {
+    throw new Error('No spendable gems (acquired this turn cannot be spent)')
+  }
+
+  player.incrementCounter('gems', -1)
+
+  if (resource === 'power') {
+    player.incrementCounter('power', 3)
+    this.log.add({
+      template: '{player} spends gem for 3 power',
+      args: { player }
+    })
+  }
+  else if (resource === 'influence') {
+    player.incrementCounter('influence', 3)
+    this.log.add({
+      template: '{player} spends gem for 3 influence',
+      args: { player }
+    })
+  }
+  else {
+    throw new Error(`Unknown gem resource: ${resource}`)
+  }
+}
 
 Tyrants.prototype.aDeployWithPowerAt = function(player, locId=null) {
   this.log.add({
@@ -1352,6 +2032,11 @@ Tyrants.prototype.aDeploy = function(player, loc, opts={}) {
     template: '{player} deploys {card} to {loc}',
     args: { player, loc, card: deployed }
   })
+
+  // Re-check triad bonuses after deploying (may complete a triad mid-turn)
+  if (this.state.triadBonusesThisTurn) {
+    this._checkSpecialHexRules(player)
+  }
 }
 
 Tyrants.prototype.aDevour = function(player, card, opts={}) {
@@ -2052,4 +2737,97 @@ Tyrants.prototype.mSetGhostFlag = function() {
 
 Tyrants.prototype._checkDoingSetup = function() {
   return this.doingSetup
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Demonweb Special Rules
+
+Tyrants.prototype._checkSpecialHexRules = function(player) {
+  // Only for Demonweb maps
+  if (!this.state.assembledMap) {
+    return
+  }
+
+  const { hexTiles } = res
+
+  for (const hexData of this.state.assembledMap.hexes) {
+    const tile = hexTiles.allTiles[hexData.tileId]
+    if (!tile || !tile.specialRules) {
+      continue
+    }
+
+    if (tile.specialRules.type === 'triad') {
+      this._checkTriadBonus(player, tile, hexData.tileId)
+    }
+  }
+}
+
+Tyrants.prototype._checkTriadBonus = function(player, tile, tileId) {
+  const sites = tile.specialRules.sites.map(short => {
+    const fullId = `${tileId}.${short}`
+    return this.getLocationByName(fullId)
+  }).filter(loc => loc)
+
+  if (sites.length !== tile.specialRules.sites.length) {
+    return  // Not all sites found
+  }
+
+  // Check presence level
+  const hasTroopsInAll = sites.every(loc => loc.getTroops(player).length > 0)
+  const controlsAll = sites.every(loc => loc.getController() === player)
+  const totalControlsAll = sites.every(loc => loc.getTotalController() === player)
+
+  const bonuses = tile.specialRules.bonuses
+
+  // Determine current tier (higher number = better)
+  const TIERS = { none: 0, presence: 1, control: 2, totalControl: 3 }
+  let currentTier = 'none'
+  if (totalControlsAll && bonuses.totalControl) {
+    currentTier = 'totalControl'
+  }
+  else if (controlsAll && bonuses.control) {
+    currentTier = 'control'
+  }
+  else if (hasTroopsInAll && bonuses.presence) {
+    currentTier = 'presence'
+  }
+
+  // Only award if tier improved since last check this turn
+  const prevTier = (this.state.triadBonusesThisTurn || {})[tileId] || 'none'
+  if (TIERS[currentTier] <= TIERS[prevTier]) {
+    return
+  }
+
+  // Track awarded tier
+  if (!this.state.triadBonusesThisTurn) {
+    this.state.triadBonusesThisTurn = {}
+  }
+  this.state.triadBonusesThisTurn[tileId] = currentTier
+
+  const TIER_LABELS = { presence: 'presence', control: 'control', totalControl: 'total control' }
+  this._applyTriadBonus(player, bonuses[currentTier], TIER_LABELS[currentTier], tile.region)
+}
+
+Tyrants.prototype._applyTriadBonus = function(player, bonus, level, region) {
+  const gains = []
+
+  if (bonus.influence) {
+    player.incrementCounter('influence', bonus.influence)
+    gains.push(`${bonus.influence} influence`)
+  }
+  if (bonus.power) {
+    player.incrementCounter('power', bonus.power)
+    gains.push(`${bonus.power} power`)
+  }
+  if (bonus.vp) {
+    player.incrementCounter('points', bonus.vp)
+    gains.push(`${bonus.vp} VP`)
+  }
+
+  if (gains.length > 0) {
+    this.log.add({
+      template: `{player} gains ${gains.join(', ')} for ${level} of ${region} triad`,
+      args: { player }
+    })
+  }
 }

@@ -6,6 +6,7 @@ class TyrantsMapZone extends TyrantsZone {
     super(game, `map.${data.name}`, data.name, 'location')
 
     this.short = data.short
+    this.displayName = data.displayName
     this.region = data.region
     this.size = data.size
     this.neutrals = data.neutrals

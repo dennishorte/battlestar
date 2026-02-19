@@ -1,5 +1,7 @@
 import AgricolaResults from './components/AgricolaResults.vue'
 import GameData from './components/GameData.vue'
+import HexTileDetail from './components/HexTileDetail.vue'
+import HexTilesViewer from './components/HexTilesViewer.vue'
 import InnovationCards from './components/InnovationCards.vue'
 import InnovationResults from './components/InnovationResults.vue'
 import TyrantsCards from './components/TyrantsCards.vue'
@@ -34,5 +36,18 @@ export default [
     name: 'Tyrants Cards',
     title: 'Tyrants Cards',
     component: TyrantsCards,
+  },
+  {
+    path: '/data/tyrants/hexTiles',
+    name: 'Hex Tiles',
+    title: 'Hex Tiles',
+    component: HexTilesViewer,
+  },
+  {
+    path: '/data/tyrants/hexTiles/:tileId',
+    name: 'Hex Tile Detail',
+    title: 'Hex Tile Detail',
+    component: HexTileDetail,
+    props: true,
   },
 ]

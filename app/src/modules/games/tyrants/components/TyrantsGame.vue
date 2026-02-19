@@ -11,6 +11,10 @@
             <DropdownButton @click="toggleMapActions">
               map actions: {{ ui.mapActions ? 'on' : 'off' }}
             </DropdownButton>
+            <template v-if="isDemonwebMap">
+              <DropdownDivider />
+              <DropdownButton @click="exportMap">export map layout</DropdownButton>
+            </template>
           </GameMenu>
 
           <GameLogTyrants />
@@ -27,7 +31,9 @@
         </div>
 
         <div class="col map-column" :style="mapStyle">
-          <GameMap />
+          <div class="map-scroll-wrapper">
+            <GameMap />
+          </div>
         </div>
 
       </div>
@@ -42,12 +48,17 @@
       <ScoreTable />
     </ModalBase>
 
+    <ModalBase id="gem-help">
+      <template #header>Gemstone Rules</template>
+      <GemHelp />
+    </ModalBase>
+
   </div>
 </template>
 
 
 <script>
-import { util } from 'battlestar-common'
+import { util, tyrants } from 'battlestar-common'
 
 import maps from '../res/maps.js'
 
@@ -63,6 +74,7 @@ import GameLogTyrants from './GameLogTyrants.vue'
 import GameMap from './map/GameMap.vue'
 import MarketZone from './MarketZone.vue'
 import PlayerTableau from './PlayerTableau.vue'
+import GemHelp from './GemHelp.vue'
 import ScoreTable from './ScoreTable.vue'
 
 
@@ -81,6 +93,7 @@ export default {
     DevouredZone,
     DropdownButton,
     DropdownDivider,
+    GemHelp,
     GameLogTyrants,
     GameMap,
     GameMenu,
@@ -103,8 +116,11 @@ export default {
           clickTroop: this.clickTroop,
           clickSpy: this.clickSpy,
           insertSelectorSubtitles: this.insertSelectorSubtitles,
+          showGemHelp: this.showGemHelp,
           isUnitSelectable: this.isUnitSelectable,
           troopStyle: this.troopStyle,
+          getActionTypeHandler: this.getActionTypeHandler,
+          clickHexForRotation: this.clickHexForRotation,
         },
         mapActions: window.localStorage.getItem('tyrants-map-actions') === 'true',
         modals: {
@@ -117,6 +133,8 @@ export default {
         },
         selectable: [],
         selectableUnits: [],
+        rotationMode: false,
+        pendingRotations: {},
       },
     }
   },
@@ -130,41 +148,62 @@ export default {
   },
 
   watch: {
-    optionSelector() {
-      if (this.optionSelector) {
-        const unitTargets = []
-        const locationTargets = []
-
-        for (const c of this.optionSelector.choices) {
-          const name = c.title || c
-          const tokens = name.split(',').map(t => t.trim())
-
-          if (typeof c === 'string' && tokens.length === 2 && this.game.getLocationByName(tokens[0])) {
-            // "LocationName, OwnerName" — unit-level target only
-            unitTargets.push(name)
-          }
-          else if (c.title === 'troop' || c.title === 'spy') {
-            // Nested group with unit targets only
-            for (const sub of (c.choices || [])) {
-              unitTargets.push(sub)
+    optionSelector: {
+      immediate: true,
+      handler() {
+        // Check if we're entering rotation mode
+        if (this.optionSelector && this.optionSelector.title === 'Rotate Hex Tiles') {
+          if (!this.ui.rotationMode) {
+            this.ui.rotationMode = true
+            // Initialize pending rotations from current assembled map
+            const pending = {}
+            if (this.game.state.assembledMap) {
+              for (const hex of this.game.state.assembledMap.hexes) {
+                pending[hex.tileId] = hex.rotation
+              }
             }
+            this.ui.pendingRotations = pending
           }
-          else {
-            locationTargets.push(name)
-            const locPart = tokens[0]
-            if (locPart !== name) {
-              locationTargets.push(locPart)
-            }
-          }
+          return
         }
 
-        this.ui.selectableUnits = util.array.distinct(unitTargets)
-        this.ui.selectable = util.array.distinct(locationTargets)
-      }
-      else {
-        this.ui.selectable = []
-        this.ui.selectableUnits = []
-      }
+        this.ui.rotationMode = false
+
+        if (this.optionSelector) {
+          const unitTargets = []
+          const locationTargets = []
+
+          for (const c of this.optionSelector.choices) {
+            const name = c.title || c
+            const tokens = name.split(',').map(t => t.trim())
+
+            if (typeof c === 'string' && tokens.length === 2 && this.game.getLocationByName(tokens[0])) {
+              // "LocationName, OwnerName" — unit-level target only
+              unitTargets.push(name)
+            }
+            else if (c.title === 'troop' || c.title === 'spy') {
+              // Nested group with unit targets only
+              for (const sub of (c.choices || [])) {
+                unitTargets.push(sub)
+              }
+            }
+            else {
+              locationTargets.push(name)
+              const locPart = tokens[0]
+              if (locPart !== name) {
+                locationTargets.push(locPart)
+              }
+            }
+          }
+
+          this.ui.selectableUnits = util.array.distinct(unitTargets)
+          this.ui.selectable = util.array.distinct(locationTargets)
+        }
+        else {
+          this.ui.selectable = []
+          this.ui.selectableUnits = []
+        }
+      },
     },
   },
 
@@ -173,16 +212,23 @@ export default {
       return this.game.zones.byId('devoured').cardlist().length
     },
 
+    isDemonwebMap() {
+      const mapName = this.game.settings.map
+      return mapName && mapName.startsWith('demonweb')
+    },
+
     mapStyle() {
+      if (this.isDemonwebMap) {
+        // Demonweb maps are dynamically sized
+        return {}
+      }
+
       const parsePx = (px) => parseInt(px.substr(0, px.length - 2))
       const elemMeta = maps[this.game.settings.map].elemMeta
-      const mapStyle = elemMeta.styles['.map']
-
-      // const height = parsePx(mapStyle.height)
-      const width = parsePx(mapStyle.width)
+      const styles = elemMeta.styles['.map']
+      const width = parsePx(styles.width)
 
       return {
-        // minHeight: height + 'px',
         minWidth: width + 'px',
       }
     },
@@ -260,11 +306,49 @@ export default {
       }
     },
 
+    getActionTypeHandler(request) {
+      if (request.title === 'Rotate Hex Tiles') {
+        return {
+          message: 'Click hex tiles on the map to rotate them. Click Confirm when done.',
+          buttonLabel: 'Confirm Rotations',
+          handler: () => this.submitRotations(),
+        }
+      }
+      return null
+    },
+
+    clickHexForRotation(tileId) {
+      if (!this.ui.rotationMode) {
+        return
+      }
+      const current = this.ui.pendingRotations[tileId] || 0
+      // Create a new object to trigger Vue reactivity
+      this.ui.pendingRotations = {
+        ...this.ui.pendingRotations,
+        [tileId]: (current + 1) % 6,
+      }
+    },
+
+    submitRotations() {
+      this.game.respondToInputRequest({
+        actor: this.actor.name,
+        title: 'Rotate Hex Tiles',
+        selection: [{ rotations: this.ui.pendingRotations }],
+      })
+      this.ui.rotationMode = false
+      this.ui.pendingRotations = {}
+      this.$store.dispatch('game/save')
+    },
+
     // Subtitles are now provided by the game engine directly
     insertSelectorSubtitles: function() {},
 
     openRules() {
       window.open("https://tesera.ru/images/items/783812/Tyrants_Of_The_Underdark_Rulebook.pdf")
+    },
+
+    showGemHelp() {
+      this.$modal('gem-help').show()
     },
 
     showScores() {
@@ -274,6 +358,20 @@ export default {
     toggleMapActions() {
       this.ui.mapActions = !this.ui.mapActions
       window.localStorage.setItem('tyrants-map-actions', this.ui.mapActions)
+    },
+
+    async exportMap() {
+      const { encodeMapLayout } = tyrants.res.mapLayoutCodec
+      const mapName = this.game.settings.map
+      const hexes = this.game.state.assembledMap.hexes
+      const layoutStr = encodeMapLayout(mapName, hexes)
+      try {
+        await navigator.clipboard.writeText(layoutStr)
+        alert('Map layout copied to clipboard')
+      }
+      catch {
+        window.prompt('Copy the map layout below:', layoutStr)
+      }
     },
 
     canAssassinateTroop() {
@@ -574,9 +672,12 @@ export default {
 }
 
 .map-column {
-  height: calc(100vh - 60px);
-  overflow: auto;
   padding: 0;
+}
+
+.map-scroll-wrapper {
+  height: calc(100vh - 60px);
+  overflow-y: auto;
 }
 
 .history-column {

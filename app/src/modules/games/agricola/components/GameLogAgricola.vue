@@ -105,6 +105,15 @@ export default {
 </script>
 
 <style scoped>
+#gamelog :deep(.indent-0) {
+  font-weight: bold;
+  width: 100%;
+  text-align: center;
+  border-radius: .5em;
+  margin-top: 2em;
+  line-height: 2em;
+}
+
 #gamelog :deep(.round-header) {
   font-weight: bold;
   text-align: center;

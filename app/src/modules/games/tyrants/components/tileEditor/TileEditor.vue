@@ -1,466 +1,436 @@
 <template>
   <div class="tile-editor">
+    <div class="editor-layout">
+      <div class="editor-left">
+        <TileEditorToolbar
+          :tool="editorState.tool"
+          :pathStart="editorState.pathStart"
+          @selectTool="selectTool"
+          @addLocation="showAddLocationForm"
+        />
 
-    <div class="sidebar">
-      <div class="menu-option" @click="newTile">
-        New Tile
-        <span class="badge bg-warning text-dark" v-if="unsavedChanges">unsaved changes</span>
-      </div>
-      <div class="menu-option" @click="duplicate">duplicate</div>
+        <div class="tile-container" :style="tileContainerStyle">
+          <ViewerHexTile
+            :tile="workingTile"
+            :hexSize="hexSize"
+          />
 
-      <hr />
+          <!-- Editor overlay for interactions -->
+          <div class="editor-overlay" :style="editorOverlayStyle">
+            <EditorLocation
+              v-for="loc in workingTile.locations"
+              :key="loc.short"
+              :location="loc"
+              :hexSize="hexSize"
+              :selected="editorState.selectedLocation === loc.short"
+              :isPathStart="editorState.pathStart === loc.short"
+              :tool="editorState.tool"
+              @select="selectLocation"
+              @updatePosition="updateLocationPosition"
+            />
 
-      <div class="menu-option" @click="addSite">Add Site</div>
-      <div class="menu-option" @click="addSpot">Add Spot</div>
-      <div class="menu-option" @click="connectBegin" :class="connecting ? 'highlight-button' : ''">Connect</div>
+            <!-- Draggable label position marker -->
+            <div
+              v-if="editorState.tool === 'drag'"
+              class="position-marker label-marker"
+              :style="labelMarkerStyle"
+              @mousedown="startLabelDrag"
+            >
+              ID
+            </div>
 
-      <hr />
-
-      <div class="menu-option" @click="save">Save</div>
-
-      <hr />
-
-      <div class="menu-option" @click="deleteTile">Delete</div>
-
-      <div class="site-details" v-if="tile">
-        <div>Tile Info</div>
-
-        <div class="info-label">name</div>
-        <input class="form-control" v-model="tile.data.name" />
-      </div>
-
-      <div class="site-details" v-if="siteIsSelected">
-        <div>Site Info</div>
-
-        <div class="info-label">name</div>
-        <input class="form-control" v-model="selectedSite.name" />
-
-        <div class="info-label">size</div>
-        <select class="form-control" v-model.number="selectedSite.size" >
-          <option v-for="num in [1,2,3,4,5,6,7,8,9]" :key="num" :value="num">{{ num }}</option>
-        </select>
-
-        <div class="info-label">neutrals</div>
-        <select class="form-control" v-model.number="selectedSite.neutrals" >
-          <option v-for="num in [0,1,2,3,4,5,6,7,8,9]" :key="num" :value="num">{{ num }}</option>
-        </select>
-
-        <div class="info-label">value</div>
-        <select class="form-control" v-model.number="selectedSite.value" >
-          <option v-for="num in [0,1,2,3,4,5,6,7,8,9]" :key="num" :value="num">{{ num }}</option>
-        </select>
-
-        <div class="checkbox-wrapper">
-          <input type="checkbox" v-model="selectedSite.start" />
-          <div class="info-label">start location</div>
-        </div>
-
-        <div class="checkbox-wrapper">
-          <input type="checkbox" v-model="selectedSite.major" />
-          <div class="info-label">major site</div>
+            <!-- Draggable rules position marker -->
+            <div
+              v-if="editorState.tool === 'drag' && workingTile.specialRules"
+              class="position-marker rules-marker"
+              :style="rulesMarkerStyle"
+              @mousedown="startRulesDrag"
+            >
+              ?
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="site-details" v-if="spotIsSelected">
-        <div>Spot Info</div>
+      <div class="editor-right">
+        <div class="panels">
+          <LocationForm
+            v-if="editorState.selectedLocation || showNewLocationForm"
+            :location="selectedLocationData"
+            :isNew="showNewLocationForm"
+            @update="updateLocation"
+            @create="createLocation"
+            @delete="deleteLocation"
+            @cancel="cancelLocationForm"
+          />
 
-        <div class="info-label">name</div>
-        <input class="form-control" v-model="selectedSite.name" />
+          <EdgeConnectionPanel
+            :edgeConnections="workingTile.edgeConnections"
+            :locations="workingTile.locations"
+            @update="updateEdgeConnections"
+          />
 
-        <div class="info-label">neutrals</div>
-        <select class="form-control" v-model.number="selectedSite.neutrals" >
-          <option v-for="num in [0,1]" :key="num" :value="num">{{ num }}</option>
-        </select>
-      </div>
+          <PathConnectionPanel
+            :paths="workingTile.paths"
+            :locations="workingTile.locations"
+            @delete="deletePath"
+          />
 
-      <hr />
+          <div class="tile-metadata">
+            <h4>Tile Metadata</h4>
+            <div class="form-group">
+              <label>ID</label>
+              <input type="text" v-model="workingTile.id" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <select v-model="workingTile.category" class="form-control">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="X">X</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Region</label>
+              <input type="text" v-model="workingTile.region" class="form-control" />
+            </div>
+          </div>
 
-      <div class="saved-tiles">
-        <h6>Saved Tiles</h6>
-
-        <div v-for="tile in savedTiles" :key="tile.name()" @click="loadTile(tile)">
-          {{ tile.name() }}
+          <JsonPreview :tile="workingTile" />
         </div>
       </div>
-
     </div>
-
-    <div class="viewer" ref="viewer">
-      <svg width="800" height="1000">
-
-        <TileLayer :tiles="tiles" />
-        <ConnectorLayer :tiles="tiles" />
-        <SiteLayer :tiles="tiles" :selected-in="selectedSite" />
-
-      </svg>
-    </div>
-
   </div>
 </template>
 
 
 <script>
-import { nextTick } from 'vue'
-import mitt from 'mitt'
-
-import ConnectorLayer from '../hexmap/ConnectorLayer.vue'
-import SiteLayer from '../hexmap/SiteLayer.vue'
-import TileLayer from '../hexmap/TileLayer.vue'
-
-import tile from '../hexmap/tile.js'
-
-import { util } from 'battlestar-common'
-
+import ViewerHexTile from '@/modules/data/components/ViewerHexTile.vue'
+import EditorLocation from './EditorLocation.vue'
+import TileEditorToolbar from './TileEditorToolbar.vue'
+import LocationForm from './LocationForm.vue'
+import EdgeConnectionPanel from './EdgeConnectionPanel.vue'
+import PathConnectionPanel from './PathConnectionPanel.vue'
+import JsonPreview from './JsonPreview.vue'
 
 export default {
   name: 'TileEditor',
 
   components: {
-    ConnectorLayer,
-    SiteLayer,
-    TileLayer,
+    ViewerHexTile,
+    EditorLocation,
+    TileEditorToolbar,
+    LocationForm,
+    EdgeConnectionPanel,
+    PathConnectionPanel,
+    JsonPreview,
+  },
+
+  props: {
+    tile: {
+      type: Object,
+      required: true,
+    },
+    hexSize: {
+      type: Number,
+      default: 200,
+    },
   },
 
   data() {
     return {
-      bus: mitt(),
-
-      connecting: false,
-      connectFirst: null,
-
-      dragging: false,
-      dragX: null,
-      dragY: null,
-
-      selectedSite: {},
-      unsavedChanges: false,
-
-      tiles: [],
-
-      savedTiles: [],
-    }
-  },
-
-  provide() {
-    return {
-      bus: this.bus,
+      workingTile: this.cloneTile(this.tile),
+      editorState: {
+        tool: 'select',
+        selectedLocation: null,
+        pathStart: null,
+      },
+      showNewLocationForm: false,
+      draggingMarker: null,
+      markerDragStartX: 0,
+      markerDragStartY: 0,
+      markerStartPosX: 0,
+      markerStartPosY: 0,
     }
   },
 
   computed: {
-    siteIsSelected() {
-      return this.selectedSite && this.selectedSite.kind === 'standard'
+    // Flat-top hex: width = 2 * size, height = sqrt(3) * size
+    hexWidth() {
+      return this.hexSize * 2
     },
 
-    spotIsSelected() {
-      return this.selectedSite && this.selectedSite.kind === 'troop-spot'
+    hexHeight() {
+      return this.hexSize * Math.sqrt(3)
     },
 
-    sites() {
-      return this.tile.data.sites
+    // Padding for edge indicators that extend beyond hex boundary
+    edgePadding() {
+      return 12
     },
 
-    tile() {
-      return this.tiles[0]
-    },
-  },
-
-  methods: {
-    newName(base) {
-      let name
-      for (let i = 0; i < 100000; i++) {
-        name = base + ' ' + i
-        if (this.tile.sites().some(s => s.name === name)) {
-          continue
-        }
-        else {
-          return name
-        }
-      }
-    },
-
-    addSite() {
-      const site = {
-        name: this.newName('site'),
-        kind: 'standard',
-        dx: 0,
-        dy: 0,
-        size: 1,
-        neutrals: 0,
-        value: 2,
-        start: false,
-        major: false,
-        token: null,
-      }
-
-      this.tile.data.sites.push(site)
-      this.select(site)
-    },
-
-    addSpot() {
-      const spot = this.createSpot()
-      spot.name = this.newName('spot')
-
-      this.tile.data.sites.push(spot)
-      this.select(spot)
-
-      return spot
-    },
-
-    connectBegin() {
-      if (this.connecting) {
-        this.connectClear()
-      }
-      else {
-        this.clearSelectedSite()
-        this.connecting = true
-      }
-    },
-
-    connectClear() {
-      this.connecting = false
-      this.connectFirst = null
-      this.clearSelectedSite()
-    },
-
-    connectFinalize(a, b) {
-      this.connectClear()
-
-      const connection = [a.name, b.name].sort()
-
-      // Prevent duplicates
-      if (this.tile.connectors().find(([a, b]) => a === connection[0] && b === connection[1])) {
-        console.log('duplicate')
-        return
-      }
-
-      this.tile.connectors().push([a.name, b.name].sort())
-    },
-
-    connectSelect(site) {
-      if (this.connectFirst) {
-        this.connectFinalize(this.connectFirst, site)
-      }
-      else {
-        this.connectFirst = site
-        this.selectedSite = site
-      }
-    },
-
-    clearSelectedSite() {
-      this.selectedSite = {}
-    },
-
-    createSpot() {
+    tileContainerStyle() {
       return {
-        name: 'spot',
-        kind: 'troop-spot',
-        dx: 0,
-        dy: 0,
-        neutrals: 0,
+        width: (this.hexWidth + this.edgePadding * 2) + 'px',
+        height: (this.hexHeight + this.edgePadding * 2) + 'px',
+        position: 'relative',
       }
     },
 
-    deleteTile() {
-      if (this.tile.id()) {
-        this.$post('/api/tyrants/hex/delete', {
-          id: this.tile.id(),
-        })
-      }
-
-      this.$router.go()
-    },
-
-    duplicate() {
-      const data = util.deepcopy(this.tile.data)
-      data.name = 'duplicate of ' + data.name
-      delete data._id
-      this.editTile(data)
-    },
-
-    editTile(base) {
-      this.clearSelectedSite()
-      this.insertTileEdgeSpots(base)
-
-      const tiles = [
-        new tile.Tile(base, null),
-        new tile.Tile(base, null),
-        new tile.Tile(base, null),
-        new tile.Tile(base, null),
-        new tile.Tile(base, null),
-        new tile.Tile(base, null),
-      ]
-      const positions = [
-        { cx: 200, cy: 170, rotation: 0 },
-        { cx: 550, cy: 170, rotation: 1 },
-        { cx: 200, cy: 480, rotation: 2 },
-        { cx: 550, cy: 480, rotation: 3 },
-        { cx: 200, cy: 790, rotation: 4 },
-        { cx: 550, cy: 790, rotation: 5 },
-      ]
-
-      for (let i = 0; i < 6; i++) {
-        tiles[i].setCenterPoint(positions[i].cx, positions[i].cy)
-        tiles[i].setRotation(positions[i].rotation)
-      }
-
-      this.tiles = tiles
-    },
-
-    async loadHexes() {
-      const requestResult = await this.$post('/api/tyrants/hex/all')
-      if (requestResult.status === 'success') {
-        this.savedTiles = requestResult
-          .hexes
-          .map(data => new tile.Tile(data, null))
-          .sort((l, r) => l.name().localeCompare(r.name()))
-      }
-      else {
-        console.log(requestResult)
-        alert('error: ' + requestResult.message)
+    editorOverlayStyle() {
+      return {
+        position: 'absolute',
+        top: this.edgePadding + 'px',
+        left: this.edgePadding + 'px',
+        width: this.hexWidth + 'px',
+        height: this.hexHeight + 'px',
+        zIndex: 20,
+        pointerEvents: 'none',
       }
     },
 
-    async loadTile(tile) {
-      this.editTile(tile.data)
-      await nextTick()
-      this.unsavedChanges = false
-    },
-
-    newTile() {
-      const base = {
-        name: 'new-tile',
-        connectors: [],
-        sites: [],
-      }
-      this.editTile(base)
-    },
-
-    async save() {
-      const hex = util.deepcopy(this.tile.data)
-      this.removeTileEdgeSpots(hex)
-
-      // Save the tile
-      const saveResult = await this.$post('/api/tyrants/hex/save', { hex })
-
-      if (saveResult.status !== 'success') {
-        console.log(saveResult)
-        alert('error saving tile')
-        throw new Error('save error')
-      }
-
-      this.unsavedChanges = false
-
-      // Update the tile list
-      await this.loadHexes()
-    },
-
-    select(site) {
-      const actual = this.tile.data.sites.find(s => s.name === site.name)
-      this.selectedSite = actual
-    },
-
-    siteClicked({ event, site }) {
-      if (this.connecting) {
-        this.connectSelect(site)
-      }
-      else {
-        this.startDragging({ event, site })
+    labelMarkerStyle() {
+      const pos = this.workingTile.labelPosition || { x: 0.5, y: 0.5 }
+      const left = pos.x * this.hexWidth
+      const top = pos.y * this.hexHeight
+      return {
+        position: 'absolute',
+        left: (left - 12) + 'px',
+        top: (top - 10) + 'px',
+        pointerEvents: 'auto',
       }
     },
 
-    startDragging({ event, site }) {
-      this.select(site)
-      this.dragging = true
-      this.dragX = event.offsetX
-      this.dragY = event.offsetY
+    rulesMarkerStyle() {
+      const pos = this.workingTile.rulesPosition || { x: 0.5, y: 0.65 }
+      const left = pos.x * this.hexWidth
+      const top = pos.y * this.hexHeight
+      return {
+        position: 'absolute',
+        left: (left - 10) + 'px',
+        top: (top - 10) + 'px',
+        pointerEvents: 'auto',
+      }
     },
 
-    insertTileEdgeSpots(data) {
-      const dx = 117
-      const dy = 67
-
-      for (let i = 0; i < 6; i++) {
-        const spot = this.createSpot()
-        spot.name = '_hex ' + i
-
-        switch (i) {
-          case tile.Direction.N:
-            spot.dy = -135
-            break
-          case tile.Direction.S:
-            spot.dy = 135
-            break
-          case tile.Direction.NE:
-            spot.dy = -dy
-            spot.dx = dx
-            break
-          case tile.Direction.NW:
-            spot.dy = -dy
-            spot.dx = -dx
-            break
-          case tile.Direction.SE:
-            spot.dy = dy
-            spot.dx = dx
-            break
-          case tile.Direction.SW:
-            spot.dy = dy
-            spot.dx = -dx
-            break
-          default:
-            break
+    selectedLocationData() {
+      if (this.showNewLocationForm) {
+        return {
+          short: '',
+          name: '',
+          size: 1,
+          neutrals: 0,
+          points: 0,
+          start: false,
+          control: { influence: 0, points: 0 },
+          totalControl: { influence: 0, points: 0 },
+          position: { x: 0.5, y: 0.5 },
         }
-
-        data.sites.push(spot)
       }
+      return this.workingTile.locations.find(l => l.short === this.editorState.selectedLocation)
     },
-
-    removeTileEdgeSpots(data) {
-      data.sites = data.sites.filter(x => !x.name.startsWith('_hex'))
-    },
-  },
-
-  mounted() {
-    this.loadHexes()
-
-    this.newTile()
-    this.addSite()
-
-    const viewer = this.$refs.viewer
-
-    this.bus.on('site-mousedown', this.siteClicked)
-
-    viewer.addEventListener('mouseleave', () => {
-
-    })
-
-    viewer.addEventListener('mousemove', (event) => {
-      if (this.dragging) {
-        const dx = event.offsetX - this.dragX
-        const dy = event.offsetY - this.dragY
-
-        this.dragX = event.offsetX
-        this.dragY = event.offsetY
-
-        this.selectedSite.dx += dx
-        this.selectedSite.dy += dy
-
-        this.updateKey += 1
-      }
-    })
-
-    viewer.addEventListener('mouseup', () => {
-      this.dragging = false
-    })
   },
 
   watch: {
     tile: {
-      handler() {
-        this.unsavedChanges = true
+      handler(newTile) {
+        this.workingTile = this.cloneTile(newTile)
       },
       deep: true,
     },
+  },
+
+  methods: {
+    cloneTile(tile) {
+      return {
+        id: tile.id,
+        category: tile.category,
+        region: tile.region,
+        specialRules: tile.specialRules ? JSON.parse(JSON.stringify(tile.specialRules)) : null,
+        labelPosition: tile.labelPosition ? { ...tile.labelPosition } : { x: 0.5, y: 0.5 },
+        rulesPosition: tile.rulesPosition ? { ...tile.rulesPosition } : { x: 0.5, y: 0.65 },
+        locations: tile.locations.map(loc => ({
+          short: loc.short,
+          name: loc.name,
+          size: loc.size,
+          neutrals: loc.neutrals,
+          points: loc.points,
+          start: loc.start || false,
+          control: { ...loc.control },
+          totalControl: { ...loc.totalControl },
+          position: loc.position ? { ...loc.position } : { x: 0.5, y: 0.5 },
+        })),
+        paths: tile.paths.map(p => [...p]),
+        edgeConnections: tile.edgeConnections.map(e => ({ ...e })),
+      }
+    },
+
+    selectTool(tool) {
+      this.editorState.tool = tool
+      if (tool !== 'connect-path') {
+        this.editorState.pathStart = null
+      }
+      if (tool !== 'select') {
+        this.showNewLocationForm = false
+      }
+    },
+
+    selectLocation(locationShort) {
+      if (this.editorState.tool === 'connect-path') {
+        this.handlePathConnection(locationShort)
+      }
+      else if (this.editorState.tool === 'select') {
+        this.editorState.selectedLocation = locationShort
+        this.showNewLocationForm = false
+      }
+    },
+
+    handlePathConnection(locationShort) {
+      if (!this.editorState.pathStart) {
+        this.editorState.pathStart = locationShort
+      }
+      else {
+        if (this.editorState.pathStart !== locationShort) {
+          this.addPath(this.editorState.pathStart, locationShort)
+        }
+        this.editorState.pathStart = null
+      }
+    },
+
+    addPath(from, to) {
+      const exists = this.workingTile.paths.some(
+        p => (p[0] === from && p[1] === to) || (p[0] === to && p[1] === from)
+      )
+      if (!exists) {
+        this.workingTile.paths.push([from, to])
+      }
+    },
+
+    deletePath(index) {
+      this.workingTile.paths.splice(index, 1)
+    },
+
+    updateLocationPosition(short, position) {
+      const loc = this.workingTile.locations.find(l => l.short === short)
+      if (loc) {
+        loc.position = position
+      }
+    },
+
+    startLabelDrag(event) {
+      this.startMarkerDrag(event, 'label')
+    },
+
+    startRulesDrag(event) {
+      this.startMarkerDrag(event, 'rules')
+    },
+
+    startMarkerDrag(event, markerType) {
+      event.preventDefault()
+      this.draggingMarker = markerType
+      this.markerDragStartX = event.clientX
+      this.markerDragStartY = event.clientY
+
+      const posKey = markerType === 'label' ? 'labelPosition' : 'rulesPosition'
+      const defaultPos = markerType === 'label' ? { x: 0.5, y: 0.5 } : { x: 0.5, y: 0.65 }
+      const pos = this.workingTile[posKey] || defaultPos
+      this.markerStartPosX = pos.x
+      this.markerStartPosY = pos.y
+
+      document.addEventListener('mousemove', this.onMarkerDrag)
+      document.addEventListener('mouseup', this.stopMarkerDrag)
+    },
+
+    onMarkerDrag(event) {
+      const deltaX = (event.clientX - this.markerDragStartX) / this.hexWidth
+      const deltaY = (event.clientY - this.markerDragStartY) / this.hexHeight
+
+      const newX = Math.max(0, Math.min(1, this.markerStartPosX + deltaX))
+      const newY = Math.max(0, Math.min(1, this.markerStartPosY + deltaY))
+
+      const posKey = this.draggingMarker === 'label' ? 'labelPosition' : 'rulesPosition'
+      this.workingTile[posKey] = { x: newX, y: newY }
+    },
+
+    stopMarkerDrag() {
+      this.draggingMarker = null
+      document.removeEventListener('mousemove', this.onMarkerDrag)
+      document.removeEventListener('mouseup', this.stopMarkerDrag)
+    },
+
+    updateLocation(updatedLoc) {
+      const index = this.workingTile.locations.findIndex(l => l.short === this.editorState.selectedLocation)
+      if (index !== -1) {
+        // If short name changed, update paths and edge connections
+        const oldShort = this.workingTile.locations[index].short
+        if (oldShort !== updatedLoc.short) {
+          this.updateReferences(oldShort, updatedLoc.short)
+          this.editorState.selectedLocation = updatedLoc.short
+        }
+        // Use splice for Vue reactivity
+        this.workingTile.locations.splice(index, 1, updatedLoc)
+      }
+    },
+
+    createLocation(newLoc) {
+      this.workingTile.locations.push(newLoc)
+      this.showNewLocationForm = false
+      this.editorState.selectedLocation = newLoc.short
+    },
+
+    deleteLocation(short) {
+      const index = this.workingTile.locations.findIndex(l => l.short === short)
+      if (index !== -1) {
+        this.workingTile.locations.splice(index, 1)
+        // Remove paths involving this location
+        this.workingTile.paths = this.workingTile.paths.filter(
+          p => p[0] !== short && p[1] !== short
+        )
+        // Remove edge connections to this location
+        this.workingTile.edgeConnections = this.workingTile.edgeConnections.filter(
+          e => e.location !== short
+        )
+        this.editorState.selectedLocation = null
+      }
+    },
+
+    updateReferences(oldShort, newShort) {
+      // Update paths
+      for (const path of this.workingTile.paths) {
+        if (path[0] === oldShort) {
+          path[0] = newShort
+        }
+        if (path[1] === oldShort) {
+          path[1] = newShort
+        }
+      }
+      // Update edge connections
+      for (const edge of this.workingTile.edgeConnections) {
+        if (edge.location === oldShort) {
+          edge.location = newShort
+        }
+      }
+    },
+
+    updateEdgeConnections(edgeConnections) {
+      this.workingTile.edgeConnections = edgeConnections
+    },
+
+    showAddLocationForm() {
+      this.showNewLocationForm = true
+      this.editorState.selectedLocation = null
+      this.editorState.tool = 'select'
+    },
+
+    cancelLocationForm() {
+      this.showNewLocationForm = false
+    },
+  },
+
+  beforeUnmount() {
+    document.removeEventListener('mousemove', this.onMarkerDrag)
+    document.removeEventListener('mouseup', this.stopMarkerDrag)
   },
 }
 </script>
@@ -468,46 +438,94 @@ export default {
 
 <style scoped>
 .tile-editor {
-  display: flex;
-  flex-direction: row;
-  height: 100vh;
-  width: 100vw;
-}
-
-.checkbox-wrapper {
-  display: flex;
-  flex-direction: row;
-}
-
-.highlight-button {
-  background-color: #a34ff7;
-  border-radius: .5em;
-  margin-left: -.25em;
-  padding-left: .25em;
-}
-
-.info-label {
-  margin-left: 1em;
-  font-size: .8em;
-}
-
-.sidebar {
-  background-color: lightgray;
-  padding: .5em;
-  height: 100%;
-  width: 300px;
-  overflow-y: auto;
-}
-
-.site-details {
-  border: 1px solid black;
-  border-radius: .25em;
-  padding: .25em;
-  margin-top: 2em;
-}
-
-.viewer {
   width: 100%;
-  overflow-y: auto;
+}
+
+.editor-layout {
+  display: flex;
+  gap: 1.5em;
+}
+
+.editor-left {
+  flex: 0 0 auto;
+}
+
+.editor-right {
+  flex: 0 0 auto;
+  width: 360px;
+}
+
+.tile-container {
+  background: #1a1a1a;
+  border-radius: 8px;
+  margin-top: 0.5em;
+}
+
+.editor-overlay {
+  /* Positioning set via inline style from editorOverlayStyle computed */
+}
+
+.panels {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.tile-metadata {
+  background: #252525;
+  padding: 1em;
+  border-radius: 8px;
+}
+
+.tile-metadata h4 {
+  margin: 0 0 0.75em 0;
+  color: #d4a574;
+}
+
+.form-group {
+  margin-bottom: 0.75em;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.25em;
+  font-size: 0.85em;
+  color: #888;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.4em 0.6em;
+  background: #333;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #eee;
+}
+
+.position-marker {
+  width: 24px;
+  height: 20px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: move;
+  user-select: none;
+}
+
+.label-marker {
+  background: #444;
+  border: 2px solid #666;
+  color: #aaa;
+}
+
+.rules-marker {
+  background: #6a4a2a;
+  border: 2px solid #8b6914;
+  color: #d4a574;
+  width: 20px;
+  border-radius: 50%;
 }
 </style>
