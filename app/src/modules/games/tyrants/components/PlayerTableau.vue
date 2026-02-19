@@ -13,17 +13,17 @@
         </div>
 
         <div>
-          <div>inf: {{ player.getCounter('influence') }}</div>
-          <div>pow: {{ player.getCounter('power') }}</div>
+          <div>🕸️: {{ player.getCounter('influence') }}</div>
+          <div>⚔️: {{ player.getCounter('power') }}</div>
+          <div v-if="gemCount !== undefined">
+            💎: {{ gemCount }}
+            <i class="bi bi-question-circle gem-help" @click.stop="ui.fn.showGemHelp()" />
+          </div>
         </div>
 
         <div>
           <div>t: {{ troopCount }}</div>
           <div>s: {{ spyCount }}</div>
-          <div v-if="gemCount !== undefined">
-            💎: {{ gemCount }}
-            <i class="bi bi-question-circle gem-help" @click.stop="ui.fn.showGemHelp()" />
-          </div>
         </div>
       </div>
     </div>
@@ -72,10 +72,12 @@ export default {
     },
 
     gemCount() {
-      if (this.game.state.gemstones === undefined) {
+      if (this.game.settings.map.startsWith('demonweb')) {
+        return this.player.getCounter('gems')
+      }
+      else {
         return undefined
       }
-      return this.player.getCounter('gems')
     },
 
     hand() {
