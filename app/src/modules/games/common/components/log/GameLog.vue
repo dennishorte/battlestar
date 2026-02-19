@@ -9,7 +9,10 @@
         <GameLog :entries="line.entries" :depth="line.depth" :funcs="funcs" />
       </div>
 
-      <div v-else class="log-line" :class="[line.classes, classes(line)]">
+      <div v-else
+           class="log-line"
+           :class="[line.classes, classes(line)]"
+           :style="styles(line)">
         <template v-if="line.type === 'chat'">
           <div class="chat-container">
             <div class="chat-message">
@@ -28,7 +31,7 @@
           <component v-if="getLineComponent(line)" :is="getLineComponent(line)" :line="line" />
           <template v-else>
             <div v-for="n in indentSpacers(line)" :key="n" class="indent-spacer" />
-            <GameLogText :text="line.text" :style="styles(line)" />
+            <GameLogText :text="line.text" />
           </template>
         </template>
       </div>
@@ -341,12 +344,4 @@ export default {
   content: "…\00A0";
 }
 
-.indent-0 {
-  font-weight: bold;
-  width: 100%;
-  text-align: center;
-  border-radius: .5em;
-  margin-top: 2em;
-  line-height: 2em;
-}
 </style>

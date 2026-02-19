@@ -111,8 +111,14 @@ function factoryFromLobby(lobby) {
 }
 
 Tyrants.prototype._mainProgram = function() {
+  this.log.add({ template: 'Initializing' })
+  this.log.indent()
+
   this.initialize()
   this.setupDemonwebRotation()
+
+  this.log.outdent()
+
   this.chooseInitialLocations()
   this.mainLoop()
 }
@@ -122,9 +128,6 @@ Tyrants.prototype._mainProgram = function() {
 // Initialization
 
 Tyrants.prototype.initialize = function() {
-  this.log.add({ template: 'Initializing' })
-  this.log.indent()
-
   this.initializeExpansions()
   this.initializePlayers()
   this.initializeZones()
@@ -132,8 +135,6 @@ Tyrants.prototype.initialize = function() {
   this.initializeTokens()
   this.initializeStartingHands()
   this.initializeTransientState()
-
-  this.log.outdent()
 
   this.state.ghostFlag = false
   this.state.initializationComplete = true

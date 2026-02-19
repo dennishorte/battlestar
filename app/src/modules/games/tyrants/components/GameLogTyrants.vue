@@ -63,7 +63,10 @@ export default {
     lineClasses(line) {
       const classes = [`indent-${line.indent}`]
 
-      if (line.text.includes(' plays ')) {
+      if (line.classes && line.classes.includes('player-turn')) {
+        classes.push('player-turn')
+      }
+      else if (line.text.includes(' plays ')) {
         classes.push('player-action')
         classes.push('play-a-card')
       }
@@ -79,11 +82,8 @@ export default {
         classes.push('player-action')
         classes.push('pass-action')
       }
-      else if (line.text.includes(' turn ')) {
-        // do nothing
-      }
-      else {
-        classes.push('generic')
+      else if (line.indent === 0) {
+        classes.push('phase-header')
       }
 
       return classes
@@ -109,17 +109,33 @@ export default {
 </script>
 
 <style scoped>
-#gamelog :deep(.indent-0) {
-  color: black;
+/* Turn headers — most prominent, full-width banners */
+#gamelog :deep(.player-turn) {
+  display: flex;
+  width: 100%;
+  font-size: 1.15em;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 4px;
+  margin-top: 14px;
 }
 
-#gamelog :deep(.indent-0.generic) {
+/* Section headers — banners */
+#gamelog :deep(.phase-header) {
+  display: flex;
+  width: 100%;
+  font-weight: 600;
+  font-size: 0.9em;
   color: #eee;
-  background-color: purple;
+  background-color: #4a2060;
+  padding: 4px 12px;
+  border-radius: 4px;
+  margin-top: 10px;
 }
 
+/* Player actions */
 #gamelog :deep(.player-action) {
-  padding: 5px 10px;
+  padding: 3px 10px;
   border-radius: 3px;
 }
 
@@ -139,11 +155,24 @@ export default {
   background-color: #c96d2c;
 }
 
+/* Indentation */
+#gamelog :deep(.indent-1) {
+  margin-left: 0em;
+}
+
+#gamelog :deep(.indent-2) {
+  margin-left: 1.5em;
+}
+
+#gamelog :deep(.indent-3) {
+  margin-left: 3em;
+}
+
+/* Inline entities */
 #gamelog :deep(.card-name) {
   display: inline-block;
   color: #2a1247;
   font-weight: bold;
-  text-decoration: underline;
 }
 
 #gamelog :deep(.loc-name) {
