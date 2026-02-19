@@ -35,15 +35,6 @@
         </text>
       </svg>
 
-      <div class="locations-layer">
-        <HexLocation
-          v-for="loc in hex.locations"
-          :key="loc.id"
-          :loc="loc"
-          :hexSize="hexSize"
-        />
-      </div>
-
       <!-- Triad status indicator for A2 hex -->
       <div
         v-if="triadStatus && !rotationMode"
@@ -60,6 +51,16 @@
           <span class="triad-tier" :class="'tier-' + ps.tier">{{ ps.label }}</span>
         </div>
       </div>
+    </div>
+
+    <!-- Locations layer: outside hex-inner so its z-index isn't trapped by the transition stacking context -->
+    <div class="locations-layer" :style="innerStyle">
+      <HexLocation
+        v-for="loc in filteredLocations"
+        :key="loc.id"
+        :loc="loc"
+        :hexSize="hexSize"
+      />
     </div>
 
     <!-- Rotation indicator overlay (shown during rotation mode) -->
@@ -222,6 +223,13 @@ export default {
       }
     },
 
+    filteredLocations() {
+      if (this.rotationMode) {
+        return this.hex.locations.filter(loc => !loc.short?.startsWith('edge-'))
+      }
+      return this.hex.locations
+    },
+
     pathLines() {
       if (!this.hex.paths) {
         return []
@@ -321,6 +329,7 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 10;
+  transition: transform 0.2s ease;
 }
 
 .rotation-indicator {

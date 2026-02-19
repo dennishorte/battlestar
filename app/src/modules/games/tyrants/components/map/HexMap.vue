@@ -24,16 +24,26 @@
           :class="{ preview: rotationMode }"
         />
 
-        <!-- Edge tunnel connectors (hidden during rotation mode) -->
+        <!-- Edge tunnel connectors (preview during rotation mode) -->
         <line
-          v-for="(conn, index) in edgeTunnelConnectors"
+          v-for="(conn, index) in activeEdgeTunnelConnectors"
           :key="'edge-tunnel-' + index"
           :x1="conn.x1"
           :y1="conn.y1"
           :x2="conn.x2"
           :y2="conn.y2"
           class="edge-connector off-map"
-          v-show="!rotationMode"
+          :class="{ preview: rotationMode }"
+        />
+
+        <!-- Dead-end markers during rotation mode -->
+        <circle
+          v-for="(marker, index) in previewDeadEndMarkers"
+          :key="'dead-end-' + index"
+          :cx="marker.cx"
+          :cy="marker.cy"
+          r="6"
+          class="dead-end-marker"
         />
       </svg>
     </div>
@@ -47,6 +57,16 @@ import HexTile from './HexTile.vue'
 
 const { hexTiles, mapConfigs } = tyrants.res
 const { rotateHexPosition } = tyrants
+const { getAdjacentPosition } = mapConfigs
+
+const EDGE_OFFSETS = {
+  'N': { x: 0, y: -0.25 },
+  'NE': { x: 0.22, y: -0.12 },
+  'SE': { x: 0.22, y: 0.12 },
+  'S': { x: 0, y: 0.25 },
+  'SW': { x: -0.22, y: 0.12 },
+  'NW': { x: -0.22, y: -0.12 },
+}
 
 export default {
   name: 'HexMap',
@@ -327,6 +347,74 @@ export default {
       return connectors
     },
 
+    // Preview edge tunnel connectors during rotation mode
+    previewEdgeTunnelConnectors() {
+      if (!this.rotationMode || !this.assembledMap) {
+        return { connectors: [], deadEnds: [] }
+      }
+
+      const connectors = []
+      const deadEnds = []
+
+      for (const hex of this.assembledHexes) {
+        const tile = hexTiles.allTiles[hex.tileId]
+        const rot = this.pendingRotations[hex.tileId] ?? hex.rotation
+        const edgeConns = hexTiles.getRotatedEdgeConnections(tile, rot)
+
+        for (const conn of edgeConns) {
+          // Check if adjacent hex exists
+          const adjPos = getAdjacentPosition(hex.position.q, hex.position.r, conn.edge)
+          const adjKey = `${adjPos.q},${adjPos.r}`
+          const adjHex = this.hexByPosition[adjKey]
+
+          let isDeadEnd = true
+          if (adjHex) {
+            const adjTile = hexTiles.allTiles[adjHex.tileId]
+            const adjRot = this.pendingRotations[adjHex.tileId] ?? adjHex.rotation
+            const adjEdgeConns = hexTiles.getRotatedEdgeConnections(adjTile, adjRot)
+            const oppositeEdge = hexTiles.getOppositeEdge(conn.edge)
+            if (adjEdgeConns.find(c => c.edge === oppositeEdge)) {
+              isDeadEnd = false
+            }
+          }
+
+          // Compute source location pixel position
+          const locOrig = tile.locations.find(l => l.short === conn.location)
+          if (!locOrig) {
+            continue
+          }
+
+          const pos = rotateHexPosition(locOrig.position, rot)
+          const srcX = hex.pixelX + (pos.x - 0.5) * this.hexWidth
+          const srcY = hex.pixelY + (pos.y - 0.5) * this.hexHeight
+
+          // Compute dead-end endpoint
+          const offset = EDGE_OFFSETS[conn.edge]
+          const endX = srcX + offset.x * this.hexWidth
+          const endY = srcY + offset.y * this.hexHeight
+
+          if (isDeadEnd) {
+            connectors.push({ x1: srcX, y1: srcY, x2: endX, y2: endY })
+            deadEnds.push({ cx: endX, cy: endY })
+          }
+        }
+      }
+
+      return { connectors, deadEnds }
+    },
+
+    activeEdgeTunnelConnectors() {
+      return this.rotationMode
+        ? this.previewEdgeTunnelConnectors.connectors
+        : this.edgeTunnelConnectors
+    },
+
+    previewDeadEndMarkers() {
+      return this.rotationMode
+        ? this.previewEdgeTunnelConnectors.deadEnds
+        : []
+    },
+
     mapDimensions() {
       const padding = 40
       const width = this.rawBounds.maxX - this.rawBounds.minX + padding * 2
@@ -418,5 +506,17 @@ export default {
 .edge-connector.off-map {
   stroke: #6b5910;
   stroke-width: 3;
+}
+
+.edge-connector.off-map.preview {
+  stroke: #4caf50;
+  stroke-width: 4;
+}
+
+.dead-end-marker {
+  fill: #ff5252;
+  stroke: #b71c1c;
+  stroke-width: 2;
+  opacity: 0.9;
 }
 </style>
