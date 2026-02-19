@@ -145,7 +145,7 @@ export default {
         map: 'base',
         base3Variant: 'random',
         menzoExtraNeutral: true,
-        randomizeExpansions: false,
+        randomizeExpansions: true,
         mapLayout: null,
         mapLayoutString: '',
       },
