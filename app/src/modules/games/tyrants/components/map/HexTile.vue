@@ -10,7 +10,7 @@
         <polygon
           :points="hexPoints"
           class="hex-polygon"
-          :class="{ rotated: hex.rotation > 0, 'rotation-mode': rotationMode }"
+          :class="{ rotated: hex.rotation > 0 }"
         />
 
         <!-- Path connectors between locations -->
@@ -62,11 +62,6 @@
         :hexSize="hexSize"
         :positionOverride="getRotatedPosition(loc)"
       />
-    </div>
-
-    <!-- Rotation indicator overlay (shown during rotation mode) -->
-    <div v-if="rotationMode" class="rotation-indicator">
-      {{ totalRotationDeg }}
     </div>
   </div>
 </template>
@@ -134,11 +129,6 @@ export default {
       return {
         transform: `rotate(${degrees}deg)`,
       }
-    },
-
-    totalRotationDeg() {
-      const pending = this.ui.pendingRotations?.[this.hex.tileId] ?? this.hex.rotation
-      return pending * 60 + '\u00B0'
     },
 
     svgStyle() {
@@ -315,11 +305,6 @@ export default {
   pointer-events: none;
 }
 
-.hex-polygon.rotation-mode {
-  stroke: #4caf50;
-  stroke-width: 4;
-}
-
 .hex-label {
   fill: #666;
   font-size: 14px;
@@ -341,20 +326,6 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 10;
-}
-
-.rotation-indicator {
-  position: absolute;
-  bottom: 4px;
-  right: 4px;
-  background: rgba(76, 175, 80, 0.9);
-  color: white;
-  font-size: 11px;
-  font-weight: bold;
-  padding: 2px 6px;
-  border-radius: 3px;
-  z-index: 20;
-  pointer-events: none;
 }
 
 .triad-indicator {
