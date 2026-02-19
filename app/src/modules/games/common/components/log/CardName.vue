@@ -11,72 +11,66 @@
 </template>
 
 
-<script>
-export default {
-  name: 'CardName',
+<script setup>
+import { computed, inject } from 'vue'
+import { useGameLog } from '../../composables/useGameLog'
 
-  inject: ['game', 'funcs'],
-
-  props: {
-    name: {
-      type: String,
-      default: ''
-    },
+const props = defineProps({
+  name: {
+    type: String,
+    default: ''
   },
+})
 
-  computed: {
-    card() {
-      return this.game.cards.byId(this.name)
-    },
+const game = inject('game')
+const funcs = useGameLog()
 
-    classes() {
-      return this.funcs.cardClasses ? this.funcs.cardClasses(this.card) : []
-    },
+const card = computed(() => game.value?.cards?.byId(props.name))
 
-    displayName() {
-      if (this.card) {
-        if (typeof this.card.name === 'function') {
-          return this.card.name()
-        }
-        else {
-          return this.card.name
-        }
-      }
-      else {
-        return this.name
-      }
-    },
+const classes = computed(() => {
+  return funcs.cardClasses ? funcs.cardClasses(card.value) : []
+})
 
-    styles() {
-      return this.funcs.cardStyles ? this.funcs.cardStyles(this.card) : []
-    },
-  },
+const displayName = computed(() => {
+  if (card.value) {
+    if (typeof card.value.name === 'function') {
+      return card.value.name()
+    }
+    else {
+      return card.value.name
+    }
+  }
+  else {
+    return props.name
+  }
+})
 
-  methods: {
-    click() {
-      if (this.funcs.cardClick) {
-        this.funcs.cardClick(this.card)
-      }
-    },
+const styles = computed(() => {
+  return funcs.cardStyles ? funcs.cardStyles(card.value) : []
+})
 
-    mouseover() {
-      if (this.funcs.cardMouseover) {
-        this.funcs.cardMouseover(this.card)
-      }
-    },
+function click() {
+  if (funcs.cardClick) {
+    funcs.cardClick(card.value)
+  }
+}
 
-    mouseleave() {
-      if (this.funcs.cardMouseleave) {
-        this.funcs.cardMouseleave(this.card)
-      }
-    },
+function mouseover() {
+  if (funcs.cardMouseover) {
+    funcs.cardMouseover(card.value)
+  }
+}
 
-    mousemove(event) {
-      if (this.funcs.cardMousemove) {
-        this.funcs.cardMousemove(event, this.card)
-      }
-    },
-  },
+function mouseleave() {
+  if (funcs.cardMouseleave) {
+    funcs.cardMouseleave(card.value)
+  }
+}
+
+function mousemove(event) {
+  if (funcs.cardMousemove) {
+    funcs.cardMousemove(event, card.value)
+  }
 }
 </script>
 

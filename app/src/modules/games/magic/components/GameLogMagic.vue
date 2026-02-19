@@ -1,102 +1,78 @@
 <template>
-  <GameLog id="gamelog" :funcs="propFuncs()" />
+  <GameLog id="gamelog" />
 </template>
 
-<script>
-import CardMoveLog from './CardMoveLog.vue'
+<script setup>
+import { useStore } from 'vuex'
 import GameLog from '@/modules/games/common/components/log/GameLog.vue'
+import { useGameLogProvider } from '@/modules/games/common/composables/useGameLog'
+import CardMoveLog from './CardMoveLog.vue'
 
+const store = useStore()
 
-export default {
-  name: 'GameLogMagic',
-
-  components: {
-    GameLog
-  },
-
-  methods: {
-    propFuncs() {
-      return {
-        cardClasses: this.cardClasses,
-        cardMouseover: this.cardMouseover,
-        cardMouseleave: this.cardMouseleave,
-        cardMousemove: this.cardMousemove,
-        convertCard: this.convertCard,
-        lineComponent: this.lineComponent,
-        lineClasses: this.lineClasses,
-        lineIndent: this.lineIndent,
-        saveOnChat: this.saveOnChat,
-      }
-    },
-
-    cardClasses() {
-      return 'card-name'
-    },
-
-    cardMouseover(card) {
-      if (card) {
-        this.$store.commit('magic/setMouseoverCard', card)
-      }
-    },
-
-    cardMouseleave(card) {
-      if (card) {
-        this.$store.commit('magic/unsetMouseoverCard', card)
-      }
-    },
-
-    cardMousemove(event) {
-      this.$store.commit('magic/setMouseoverPosition', {
-        x: event.clientX,
-        y: event.clientY,
-      })
-    },
-
-    lineComponent(line) {
-      if (line.event === 'move-card') {
-        return CardMoveLog
-      }
-      return null
-    },
-
-    convertCard(cardArg) {
-      if (!cardArg.classes.includes('card-hidden')) {
-        return `card(${cardArg.cardId})`
-      }
-      else {
-        return cardArg.value
-      }
-    },
-
-    lineClasses(line) {
-      if (line.event === 'start-turn') {
-        return 'player-turn-start'
-      }
-      if (line.event === 'set-phase') {
-        return 'set-phase'
-      }
-      if (line.event === 'pass-priority') {
-        return 'pass-priority'
-      }
-    },
-
-    lineIndent(line) {
-      if (
-        line.event === 'set-phase'
-        || line.event === 'pass-priority'
-      ) {
-        return 0
-      }
-      else {
-        return Math.max(0, line.indent - 1)
-      }
-    },
-
-    saveOnChat() {
-      return false
-    },
-  },
+function cardClasses() {
+  return 'card-name'
 }
+
+function cardMouseover(card) {
+  if (card) {
+    store.commit('magic/setMouseoverCard', card)
+  }
+}
+
+function cardMouseleave(card) {
+  if (card) {
+    store.commit('magic/unsetMouseoverCard', card)
+  }
+}
+
+function cardMousemove(event) {
+  store.commit('magic/setMouseoverPosition', {
+    x: event.clientX,
+    y: event.clientY,
+  })
+}
+
+function lineComponent(line) {
+  if (line.event === 'move-card') {
+    return CardMoveLog
+  }
+  return null
+}
+
+function lineClasses(line) {
+  if (line.event === 'start-turn') {
+    return 'player-turn-start'
+  }
+  if (line.event === 'set-phase') {
+    return 'set-phase'
+  }
+  if (line.event === 'pass-priority') {
+    return 'pass-priority'
+  }
+}
+
+function lineIndent(line) {
+  if (
+    line.event === 'set-phase'
+    || line.event === 'pass-priority'
+  ) {
+    return 0
+  }
+  else {
+    return Math.max(0, line.indent - 1)
+  }
+}
+
+useGameLogProvider({
+  cardClasses,
+  cardMouseover,
+  cardMouseleave,
+  cardMousemove,
+  lineComponent,
+  lineClasses,
+  lineIndent,
+})
 </script>
 
 <style scoped>

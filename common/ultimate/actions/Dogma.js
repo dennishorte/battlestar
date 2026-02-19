@@ -238,6 +238,7 @@ function _logSharing() {
     this.log.add({
       template: 'Effects will share with {players}.',
       args: { players: this.state.dogmaInfo.sharing },
+      classes: ['faded-text'],
     })
   }
 
@@ -245,6 +246,7 @@ function _logSharing() {
     this.log.add({
       template: 'Demands will be made of {players}.',
       args: { players: this.state.dogmaInfo.demanding },
+      classes: ['faded-text'],
     })
   }
 }

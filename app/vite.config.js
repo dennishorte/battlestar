@@ -3,10 +3,6 @@ import vue from '@vitejs/plugin-vue'
 import Components from 'unplugin-vue-components/vite'
 import { BootstrapVueNextResolver } from 'bootstrap-vue-next'
 import path from 'path'
-import { createRequire } from 'module'
-
-const require = createRequire(import.meta.url)
-const vueRuntimePath = require.resolve('vue/dist/vue.esm-bundler.js')
 
 const commonPath = path.resolve(__dirname, '../common')
 
@@ -29,7 +25,13 @@ export default defineConfig({
     include: ['battlestar-common'],
   },
   plugins: [
-    vue(),
+    vue({
+      template: {
+        compilerOptions: {
+          whitespace: 'preserve',
+        },
+      },
+    }),
     Components({
       resolvers: [BootstrapVueNextResolver()],
     }),
@@ -38,8 +40,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
-      // Runtime compiler needed — two components use dynamic `template:` strings
-      vue: vueRuntimePath,
     },
   },
   css: {

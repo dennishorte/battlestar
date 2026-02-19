@@ -1,70 +1,38 @@
 <template>
-  <component :is="processedText"/>
+  <div style="display:inline-block">
+    <template v-for="(token, i) in tokens" :key="i">
+      <template v-if="token.type === 'text'">{{ token.value }}</template>
+      <component v-else :is="componentMap[token.type]" v-bind="token.props" />
+    </template>
+  </div>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue'
+import { useGameLog } from '../../composables/useGameLog'
+import { tokenize, defaultMatchers } from '../../composables/useLogTokenizer'
 import CardName from './CardName.vue'
 import LocName from './LocName.vue'
 import PlayerName from './PlayerName.vue'
 
-const cardNameMatcher = /card[(]([^()]+)[)]/g
-const locNameMatcher = /loc[(]([^()]+)[)]/g
-const playerMatcher = /player[(]([^()]+)[)]/g
-
-export default {
-  name: 'CardText',
-
-  props: {
-    text: {
-      type: String,
-      default: ''
-    },
+const props = defineProps({
+  text: {
+    type: String,
+    default: ''
   },
+})
 
-  inject: ['funcs'],
+const funcs = useGameLog()
 
-  computed: {
-    html() {
-      if (this.funcs.componentMatchers) {
-        return this.funcs.componentMatchers(this.text)
-      }
-
-      // A set of default matchers that will be good enough for many games.
-      else {
-        return this
-          .text
-          .replaceAll(cardNameMatcher, (match, name) => {
-            return `<CardName name="${name}" />`
-          })
-          .replaceAll(locNameMatcher, (match, name) => {
-            return `<LocName name="${name}" />`
-          })
-          .replaceAll(playerMatcher, (match, name) => {
-            return `<PlayerName name="${name}" />`
-          })
-      }
-    },
-
-    processedText() {
-      const style = [
-        'display:inline-block',
-      ].join(';')
-
-
-      const defaultComponents = {
-        CardName,
-        LocName,
-        PlayerName,
-      }
-      const components = this.funcs.components ? this.funcs.components : defaultComponents
-
-      return {
-        template: `<div style="${style};">` + this.html + '</div>',
-        components,
-      }
-    },
-  },
+const defaultComponents = {
+  card: CardName,
+  player: PlayerName,
+  loc: LocName,
 }
+
+const matchers = computed(() => funcs.tokenMatchers || defaultMatchers)
+const componentMap = computed(() => funcs.tokenComponents || defaultComponents)
+const tokens = computed(() => tokenize(props.text, matchers.value))
 </script>
 
 

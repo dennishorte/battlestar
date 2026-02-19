@@ -3,33 +3,29 @@
 </template>
 
 
-<script>
-export default {
-  name: 'PlayerName',
+<script setup>
+import { computed, inject } from 'vue'
+import { useGameLog } from '../../composables/useGameLog'
 
-  inject: ['game', 'funcs'],
-
-  props: {
-    name: {
-      type: String,
-      default: 'missing-name',
-    },
+const props = defineProps({
+  name: {
+    type: String,
+    default: 'missing-name',
   },
+})
 
-  computed: {
-    classes() {
-      return this.funcs.playerClasses ? this.funcs.playerClasses(this.player) : []
-    },
+const game = inject('game')
+const funcs = useGameLog()
 
-    styles() {
-      return this.funcs.playerStyles ? this.funcs.playerStyles(this.player) : []
-    },
+const player = computed(() => game.value?.players?.byName(props.name))
 
-    player() {
-      return this.game.players.byName(this.name)
-    },
-  },
-}
+const classes = computed(() => {
+  return funcs.playerClasses ? funcs.playerClasses(player.value) : []
+})
+
+const styles = computed(() => {
+  return funcs.playerStyles ? funcs.playerStyles(player.value) : []
+})
 </script>
 
 

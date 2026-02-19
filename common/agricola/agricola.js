@@ -110,7 +110,7 @@ Agricola.prototype._mainProgram = function() {
 // Initialization
 
 Agricola.prototype.initialize = function() {
-  this.log.add({ template: 'Initializing game' })
+  this.log.add({ template: 'Initializing game', event: 'round-start' })
   this.log.indent()
 
   this.initializePlayers()
@@ -1202,6 +1202,7 @@ Agricola.prototype.mainLoop = function() {
     this.log.add({
       template: '=== Round {round} (Stage {stage}) ===',
       args: { round: this.state.round, stage: this.state.stage },
+      event: 'round-start',
     })
     this.log.indent()
 
@@ -1358,6 +1359,7 @@ Agricola.prototype._handleActivePlayer = function(player) {
   this.log.add({
     template: "{player}'s turn ({workersUsed}/{totalWorkers})",
     args: { player, workersUsed, totalWorkers: totalWorkerCount },
+    event: 'player-turn',
   })
   this.log.indent()
   this.playerTurn(player)
@@ -1369,6 +1371,7 @@ Agricola.prototype._handleActivePlayer = function(player) {
     this.log.add({
       template: "{player}'s bonus turn (Basket Chair)",
       args: { player },
+      event: 'player-turn',
     })
     this.log.indent()
     this.playerTurn(player, { isBonusTurn: true })
@@ -1503,7 +1506,7 @@ Agricola.prototype._executeArchwayAction = function() {
 }
 
 Agricola.prototype.workPhase = function() {
-  this.log.add({ template: 'Work phase begins' })
+  this.log.add({ template: 'Work phase begins', event: 'work-phase' })
   this.log.indent()
 
   this._resetActionSpaces()
@@ -2028,7 +2031,7 @@ Agricola.prototype.returnHomePhase = function() {
 // Harvest Phase
 
 Agricola.prototype.harvestPhase = function() {
-  this.log.add({ template: '=== Harvest ===' })
+  this.log.add({ template: '=== Harvest ===', event: 'harvest' })
   this.log.indent()
 
   // Call onHarvestStart and onBeforeHarvest hooks (e.g., Lunchtime Beer, Haydryer)

@@ -1,31 +1,16 @@
 <template>
-  <GameLog id="gamelog" :funcs="propFuncs()" :showRematchButton="false" />
+  <GameLog id="gamelog" :showRematchButton="false" />
 </template>
 
-<script>
+<script setup>
 import GameLog from '@/modules/games/common/components/log/GameLog.vue'
+import { useGameLogProvider } from '@/modules/games/common/composables/useGameLog'
 
-export default {
-  name: 'GameLogCubeDraft',
-
-  components: {
-    GameLog
+useGameLogProvider({
+  lineClasses(line) {
+    return [`indent-${line.indent}`]
   },
-
-  inject: ['game'],
-
-  methods: {
-    propFuncs() {
-      return {
-        lineClasses: this.lineClasses,
-      }
-    },
-
-    lineClasses(line) {
-      return [`indent-${line.indent}`]
-    },
-  },
-}
+})
 </script>
 
 <style>

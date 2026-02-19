@@ -2854,6 +2854,7 @@ class AgricolaActionManager extends BaseActionManager {
     this.log.add({
       template: '{player} takes action: {action}',
       args: { player, action: action.name },
+      event: 'player-action',
     })
 
     // Track current action for cards that need to know the context (e.g. Food Chest)

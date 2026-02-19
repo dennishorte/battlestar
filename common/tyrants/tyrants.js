@@ -912,7 +912,8 @@ Tyrants.prototype.doActions = function() {
     if (chosenAction === 'Pass') {
       this.log.add({
         template: '{player} passes',
-        args: { player }
+        args: { player },
+        event: 'pass',
       })
       break
     }
@@ -930,7 +931,8 @@ Tyrants.prototype.doActions = function() {
     else if (chosenAction.action === 'assassinate-with-power') {
       this.log.add({
         template: '{player} power: Assassinate a Troop',
-        args: { player }
+        args: { player },
+        event: 'use-power',
       })
       this.log.indent()
       const loc = this.getLocationByName(chosenAction.location)
@@ -944,7 +946,8 @@ Tyrants.prototype.doActions = function() {
     else if (chosenAction.action === 'return-spy-with-power') {
       this.log.add({
         template: '{player} power: Return an Enemy Spy',
-        args: { player }
+        args: { player },
+        event: 'use-power',
       })
       this.log.indent()
       const loc = this.getLocationByName(chosenAction.location)
@@ -968,7 +971,8 @@ Tyrants.prototype.doActions = function() {
     else if (name === 'Recruit') {
       this.log.add({
         template: '{player} recruit',
-        args: { player }
+        args: { player },
+        event: 'recruit',
       })
       this.log.indent()
       this.aRecruit(player, arg)
@@ -984,7 +988,8 @@ Tyrants.prototype.doActions = function() {
       else if (arg === 'Assassinate a Troop') {
         this.log.add({
           template: '{player} power: Assassinate a Troop',
-          args: { player }
+          args: { player },
+          event: 'use-power',
         })
         this.log.indent()
         this.aChooseAndAssassinate(player)
@@ -996,7 +1001,8 @@ Tyrants.prototype.doActions = function() {
       else if (arg === 'Return an Enemy Spy') {
         this.log.add({
           template: '{player} power: Return an Enemy Spy',
-          args: { player }
+          args: { player },
+          event: 'use-power',
         })
         this.log.indent()
         this.aChooseAndReturn(player, { noTroops: true })
@@ -1512,7 +1518,8 @@ Tyrants.prototype.aSpendGem = function(player, resource) {
 Tyrants.prototype.aDeployWithPowerAt = function(player, locId=null) {
   this.log.add({
     template: '{player} power: Deploy a Troop',
-    args: { player }
+    args: { player },
+    event: 'use-power',
   })
   this.log.indent()
 
@@ -2120,7 +2127,8 @@ Tyrants.prototype.aPlayCard = function(player, card) {
   card.moveTo(this.zones.byPlayer(player, 'played'))
   this.log.add({
     template: '{player} plays {card}',
-    args: { player, card }
+    args: { player, card },
+    event: 'play-card',
   })
 
   this.mExecuteCard(player, card)
@@ -2206,7 +2214,8 @@ Tyrants.prototype.aRecruit = function(player, cardName, opts={}) {
 
   this.log.add({
     template: '{player} recruits {card}',
-    args: { player, card }
+    args: { player, card },
+    event: 'recruit',
   })
 
   this.mRefillMarket()

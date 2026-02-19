@@ -1,33 +1,31 @@
 <template>
-  <span class="loc-name">{{ name }}</span>
+  <span class="loc-name" :class="classes" :style="styles">{{ name }}</span>
 </template>
 
 
-<script>
-export default {
-  name: 'LocName',
+<script setup>
+import { computed, inject } from 'vue'
+import { useGameLog } from '../../composables/useGameLog'
 
-  props: {
-    name: {
-      type: String,
-      required: true,
-    },
+const props = defineProps({
+  name: {
+    type: String,
+    required: true,
   },
+})
 
-  computed: {
-    classes() {
-      return this.funcs.locClasses ? this.funcs.locClasses(this.loc) : []
-    },
+const game = inject('game')
+const funcs = useGameLog()
 
-    styles() {
-      return this.funcs.locStyles ? this.funcs.locStyles(this.loc) : []
-    },
+const loc = computed(() => game.value?.zones?.byId(props.name))
 
-    loc() {
-      return this.game.zones.byId(this.name)
-    },
-  },
-}
+const classes = computed(() => {
+  return funcs.locClasses ? funcs.locClasses(loc.value) : []
+})
+
+const styles = computed(() => {
+  return funcs.locStyles ? funcs.locStyles(loc.value) : []
+})
 </script>
 
 

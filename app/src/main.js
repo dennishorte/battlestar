@@ -21,7 +21,6 @@ app.use(createBootstrap())
 app.use(router)
 app.use(store)
 
-app.config.compilerOptions.whitespace = 'preserve'
 app.config.unwrapInjectedRef = true
 
 // Global function imports

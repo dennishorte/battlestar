@@ -1,73 +1,57 @@
 <template>
-  <GameLog id="gamelog" :funcs="propFuncs()" />
+  <GameLog id="gamelog" />
 </template>
 
-<script>
+<script setup>
 import GameLog from '@/modules/games/common/components/log/GameLog.vue'
+import { useGameLogProvider } from '@/modules/games/common/composables/useGameLog'
 
 import CardBiscuit from './CardBiscuit.vue'
 import CardNameFull from './CardNameFull.vue'
 import CardSquareDetails from './CardSquareDetails.vue'
 import PlayerName from './PlayerName.vue'
 
-const biscuitMatcher = /[{](.)[}]/g
-const cardMatcher = /[*]([^-]+)-([0-9]+)[*]/g
-const cardNameMatcher = /card[(]([^()]+)[)]/g
-const playerMatcher = /player[(]([^()]+)[)]/g
-
-
-export default {
-  name: 'GameLogInnovation',
-
-  components: {
-    GameLog
-  },
-
-  methods: {
-    propFuncs() {
-      return {
-        components: {
-          CardBiscuit,
-          CardNameFull,
-          CardSquareDetails,
-          PlayerName,
-        },
-        componentMatchers: this.componentMatchers,
-        lineClasses: this.lineClasses,
-      }
-    },
-
-    componentMatchers(text) {
-      if (!text) {
-        return ''
-      }
-
-      return text
-        .replaceAll(biscuitMatcher, (match, biscuit) => {
-          return `<CardBiscuit biscuit="${biscuit}" :inline="true" />`
-        })
-        .replaceAll(cardNameMatcher, (match, name) => {
-          return `<CardNameFull name="${name}" />`
-        })
-        .replaceAll(cardMatcher, (match, expansion, age) => {
-          return `<CardSquareDetails name="${age}" expansion="${expansion}" />`
-        })
-        .replaceAll(playerMatcher, (match, name) => {
-          return `<PlayerName name="${name}" />`
-        })
-    },
-
-    lineClasses(line) {
-      if (
-        line.text.includes(' chooses ')
-        || line.text.startsWith('Demands will be made of')
-        || line.text.startsWith('Effects will share with')
-      ) {
-        return 'faded-text'
-      }
-    },
-  },
+function lineClasses(line) {
+  if (line.classes?.includes('faded-text')) {
+    return 'faded-text'
+  }
+  // Fallback: 'chooses' appears in many card files
+  if (line.text.includes(' chooses ')) {
+    return 'faded-text'
+  }
 }
+
+useGameLogProvider({
+  tokenMatchers: [
+    {
+      pattern: /\{(.)\}/,
+      type: 'biscuit',
+      props: (match) => ({ biscuit: match[1], inline: true }),
+    },
+    {
+      pattern: /card\(([^()]+)\)/,
+      type: 'card',
+      props: (match) => ({ name: match[1] }),
+    },
+    {
+      pattern: /\*([^-]+)-([0-9]+)\*/,
+      type: 'cardSquare',
+      props: (match) => ({ expansion: match[1], name: match[2] }),
+    },
+    {
+      pattern: /player\(([^()]+)\)/,
+      type: 'player',
+      props: (match) => ({ name: match[1] }),
+    },
+  ],
+  tokenComponents: {
+    biscuit: CardBiscuit,
+    card: CardNameFull,
+    cardSquare: CardSquareDetails,
+    player: PlayerName,
+  },
+  lineClasses,
+})
 </script>
 
 <style scoped>

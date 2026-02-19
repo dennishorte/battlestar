@@ -1,111 +1,99 @@
 <template>
-  <GameLog id="gamelog" :funcs="propFuncs()" />
+  <GameLog id="gamelog" />
 </template>
 
-<script>
+<script setup>
+import { getCurrentInstance, inject } from 'vue'
 import GameLog from '@/modules/games/common/components/log/GameLog.vue'
+import { useGameLogProvider } from '@/modules/games/common/composables/useGameLog'
 
-export default {
-  name: 'GameLogTyrants',
+const game = inject('game')
+const ui = inject('ui')
+const { proxy } = getCurrentInstance()
 
-  components: {
-    GameLog
-  },
-
-  inject: ['game', 'ui'],
-
-  methods: {
-    propFuncs() {
-      return {
-        cardClick: this.cardClick,
-        cardStyles: this.cardStyles,
-        chatColors: this.chatColors,
-        lineClasses: this.lineClasses,
-        lineStyles: this.lineStyles,
-        playerStyles: this.playerStyles,
-      }
-    },
-
-    cardClick(card) {
-      this.ui.modals.cardViewer.cardId = card.id
-      this.$modal('card-viewer-modal').show()
-    },
-
-    cardStyles(card) {
-      const output = {}
-
-      if (this.cardOwner(card)) {
-        output['background-color'] = this.cardOwner(card).color
-      }
-
-      return output
-    },
-
-    cardOwner(card) {
-      if (card) {
-        const nameBits = card.name.split('-')
-        if (nameBits.length > 1 && (nameBits[0] === 'troop' || nameBits[0] === 'spy')) {
-          return this.game.players.byName(nameBits[1])
-        }
-      }
-    },
-
-    chatColors() {
-      const output = {}
-
-      for (const player of this.game.players.all()) {
-        output[player.name] = player.color
-      }
-
-      return output
-    },
-
-    lineClasses(line) {
-      const classes = [`indent-${line.indent}`]
-
-      if (line.classes && line.classes.includes('player-turn')) {
-        classes.push('player-turn')
-      }
-      else if (line.text.includes(' plays ')) {
-        classes.push('player-action')
-        classes.push('play-a-card')
-      }
-      else if (line.text.endsWith(' recruit')) {
-        classes.push('player-action')
-        classes.push('recruit-action')
-      }
-      else if (line.text.includes(' power: ')) {
-        classes.push('player-action')
-        classes.push('power-action')
-      }
-      else if (line.text.endsWith(' passes')) {
-        classes.push('player-action')
-        classes.push('pass-action')
-      }
-      else if (line.indent === 0) {
-        classes.push('phase-header')
-      }
-
-      return classes
-    },
-
-    lineStyles(line) {
-      if (line.classes && line.classes.includes('player-turn')) {
-        const playerName = line.args.player.value
-        const player = this.game.players.byName(playerName)
-        return {
-          'background-color': player.color,
-        }
-      }
-    },
-
-    playerStyles(player) {
-      const output = {}
-      output['background-color'] = player.color
-      return output
-    },
-  },
+function cardClick(card) {
+  ui.modals.cardViewer.cardId = card.id
+  proxy.$modal('card-viewer-modal').show()
 }
+
+function cardOwner(card) {
+  if (card) {
+    const nameBits = card.name.split('-')
+    if (nameBits.length > 1 && (nameBits[0] === 'troop' || nameBits[0] === 'spy')) {
+      return game.value.players.byName(nameBits[1])
+    }
+  }
+}
+
+function cardStyles(card) {
+  const output = {}
+  if (cardOwner(card)) {
+    output['background-color'] = cardOwner(card).color
+  }
+  return output
+}
+
+function chatColors() {
+  const output = {}
+  for (const player of game.value.players.all()) {
+    output[player.name] = player.color
+  }
+  return output
+}
+
+function lineClasses(line) {
+  const classes = [`indent-${line.indent}`]
+
+  if (line.classes && line.classes.includes('player-turn')) {
+    classes.push('player-turn')
+  }
+  else if (line.event === 'play-card') {
+    classes.push('player-action')
+    classes.push('play-a-card')
+  }
+  else if (line.event === 'recruit') {
+    classes.push('player-action')
+    classes.push('recruit-action')
+  }
+  else if (line.event === 'use-power') {
+    classes.push('player-action')
+    classes.push('power-action')
+  }
+  else if (line.event === 'pass') {
+    classes.push('player-action')
+    classes.push('pass-action')
+  }
+  else if (line.indent === 0) {
+    classes.push('phase-header')
+  }
+
+  return classes
+}
+
+function lineStyles(line) {
+  if (line.classes && line.classes.includes('player-turn')) {
+    const playerName = line.args.player.value
+    const player = game.value.players.byName(playerName)
+    return {
+      'background-color': player.color,
+    }
+  }
+}
+
+function playerStyles(player) {
+  const output = {}
+  output['background-color'] = player.color
+  return output
+}
+
+useGameLogProvider({
+  cardClick,
+  cardStyles,
+  chatColors,
+  lineClasses,
+  lineStyles,
+  playerStyles,
+})
 </script>
 
 <style scoped>
