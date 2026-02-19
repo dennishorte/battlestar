@@ -26,8 +26,8 @@ function majorSite(short, name, size, neutrals, points, start, position, control
     neutrals,
     points,
     start: start || false,
-    control: { influence: controlInfluence, points: controlPoints },
-    totalControl: { influence: controlInfluence + 1, points: controlPoints + 2 },
+    control: { influence: controlInfluence, points: 0 },
+    totalControl: { influence: controlInfluence, points: controlPoints },
     position,
   }
 }
