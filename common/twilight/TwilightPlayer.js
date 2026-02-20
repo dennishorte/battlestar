@@ -24,9 +24,8 @@ class TwilightPlayer extends BasePlayer {
     // Scoring
     this.victoryPoints = 0
 
-    // Strategy card (picked during strategy phase)
-    this.strategyCardId = null
-    this.strategyCardUsed = false
+    // Strategy cards (picked during strategy phase)
+    this.strategyCards = []  // array of { id, used }
 
     // Passed during action phase
     this.passed = false
@@ -104,26 +103,51 @@ class TwilightPlayer extends BasePlayer {
   // Strategy card
   // ---------------------------------------------------------------------------
 
+  // Returns the lowest-numbered strategy card ID (used for initiative order)
   getStrategyCardId() {
-    return this.strategyCardId
+    if (this.strategyCards.length === 0) {
+      return null
+    }
+    const sorted = [...this.strategyCards].sort((a, b) => {
+      const cardA = res.getStrategyCard(a.id)
+      const cardB = res.getStrategyCard(b.id)
+      return cardA.number - cardB.number
+    })
+    return sorted[0].id
+  }
+
+  // Returns all strategy card IDs
+  getStrategyCards() {
+    return this.strategyCards.map(c => c.id)
   }
 
   pickStrategyCard(cardId) {
-    this.strategyCardId = cardId
-    this.strategyCardUsed = false
+    this.strategyCards.push({ id: cardId, used: false })
   }
 
-  useStrategyCard() {
-    this.strategyCardUsed = true
+  useStrategyCard(cardId) {
+    if (cardId) {
+      const card = this.strategyCards.find(c => c.id === cardId && !c.used)
+      if (card) {
+        card.used = true
+      }
+      return cardId
+    }
+    // Default: use first unused
+    const card = this.strategyCards.find(c => !c.used)
+    if (card) {
+      card.used = true
+      return card.id
+    }
+    return null
   }
 
   hasUsedStrategyCard() {
-    return this.strategyCardUsed
+    return this.strategyCards.length > 0 && this.strategyCards.every(c => c.used)
   }
 
   returnStrategyCard() {
-    this.strategyCardId = null
-    this.strategyCardUsed = false
+    this.strategyCards = []
   }
 
   // ---------------------------------------------------------------------------

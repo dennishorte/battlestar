@@ -441,39 +441,40 @@ Twilight.prototype.strategyPhase = function() {
   // Reset strategy cards
   this.state.availableStrategyCards = res.getAllStrategyCards().map(c => c.id)
 
-  // Speaker picks first, then clockwise
-  const pickOrder = this.players.all()
-    .sort((a, b) => {
-      if (a.name === this.state.speaker) {
-        return -1
+  // Clockwise from speaker
+  const speaker = this.players.byName(this.state.speaker)
+  const clockwiseOrder = this.players.startingWith(speaker)
+
+  // 3-4 players pick 2 cards each (snake draft), others pick 1
+  const numPlayers = this.players.all().length
+  const cardsPerPlayer = (numPlayers >= 3 && numPlayers <= 4) ? 2 : 1
+
+  for (let round = 0; round < cardsPerPlayer; round++) {
+    // Snake draft: first round clockwise, second round reverse
+    const pickOrder = round === 0 ? clockwiseOrder : [...clockwiseOrder].reverse()
+
+    for (const player of pickOrder) {
+      const available = this.state.availableStrategyCards
+      const selection = this.actions.choose(player, available, {
+        title: 'Choose Strategy Card',
+      })
+      const cardId = selection[0]
+
+      player.pickStrategyCard(cardId)
+      this.state.availableStrategyCards = this.state.availableStrategyCards.filter(id => id !== cardId)
+
+      // Add trade goods from card if any
+      const tradeGoodsOnCard = this.state.strategyCardTradeGoods[cardId] || 0
+      if (tradeGoodsOnCard > 0) {
+        player.addTradeGoods(tradeGoodsOnCard)
+        delete this.state.strategyCardTradeGoods[cardId]
       }
-      if (b.name === this.state.speaker) {
-        return 1
-      }
-      return 0
-    })
 
-  for (const player of pickOrder) {
-    const available = this.state.availableStrategyCards
-    const selection = this.actions.choose(player, available, {
-      title: 'Choose Strategy Card',
-    })
-    const cardId = selection[0]
-
-    player.pickStrategyCard(cardId)
-    this.state.availableStrategyCards = this.state.availableStrategyCards.filter(id => id !== cardId)
-
-    // Add trade goods from card if any
-    const tradeGoodsOnCard = this.state.strategyCardTradeGoods[cardId] || 0
-    if (tradeGoodsOnCard > 0) {
-      player.addTradeGoods(tradeGoodsOnCard)
-      delete this.state.strategyCardTradeGoods[cardId]
+      this.log.add({
+        template: '{player} chooses {card}',
+        args: { player, card: res.getStrategyCard(cardId).name },
+      })
     }
-
-    this.log.add({
-      template: '{player} chooses {card}',
-      args: { player, card: res.getStrategyCard(cardId).name },
-    })
   }
 
   // Place trade goods on unchosen strategy cards
@@ -679,11 +680,11 @@ Twilight.prototype._tacticalAction = function(player) {
 
 Twilight.prototype._strategicAction = function(player) {
   this.log.indent()
-  player.useStrategyCard()
+  const usedCardId = player.useStrategyCard()
 
   this.log.add({
     template: '{player} uses {card}',
-    args: { player, card: res.getStrategyCard(player.getStrategyCardId()).name },
+    args: { player, card: res.getStrategyCard(usedCardId).name },
   })
 
   // TODO: Resolve primary and secondary abilities
