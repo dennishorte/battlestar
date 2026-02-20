@@ -1,6 +1,7 @@
 const agendaCards = require('./agendaCards.js')
 const factions = require('./factions/index.js')
 const mapLayouts = require('./mapLayouts.js')
+const objectives = require('./objectives.js')
 const planets = require('./planets.js')
 const strategyCards = require('./strategyCards.js')
 const systemTiles = require('./systemTiles.js')
@@ -11,6 +12,7 @@ module.exports = {
   ...agendaCards,
   ...factions,
   ...mapLayouts,
+  ...objectives,
   ...planets,
   ...strategyCards,
   ...systemTiles,

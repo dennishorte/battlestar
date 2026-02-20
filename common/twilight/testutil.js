@@ -137,6 +137,9 @@ TestUtil.setBoard = function(game, state) {
     if (state.agendaDeck !== undefined) {
       game.state.agendaDeck = state.agendaDeck.map(id => res.getAgendaCard(id))
     }
+    if (state.revealedObjectives !== undefined) {
+      game.state.revealedObjectives = [...state.revealedObjectives]
+    }
 
     // Apply per-player state
     for (const player of game.players.all()) {
