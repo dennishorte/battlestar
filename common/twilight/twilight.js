@@ -105,6 +105,12 @@ Twilight.prototype._initializeState = function() {
   this.state.revealedObjectives = [] // currently revealed public objectives
   this.state.scoredObjectives = {}   // playerName → [objectiveId, ...]
 
+  // Action card deck (initialized lazily)
+  this.state.actionCardDeck = null
+
+  // Secret objectives deck (initialized lazily)
+  this.state.secretObjectiveDeck = null
+
   // Exploration decks (initialized lazily)
   this.state.explorationDecks = null
   this.state.exploredPlanets = {}    // planetId → true (tracks which planets have been explored)
@@ -594,8 +600,10 @@ Twilight.prototype.statusPhase = function() {
   // Step 2: Reveal public objective
   this._revealObjective()
 
-  // Step 3: Draw action cards
-  // TODO: Implement action card draw
+  // Step 3: Draw action cards (each player draws 1 in status phase)
+  for (const player of this._getPlayersInInitiativeOrder()) {
+    this._drawActionCards(player, 1)
+  }
 
   // Step 4: Remove command tokens from board
   for (const systemId of Object.keys(this.state.systems)) {
@@ -2010,8 +2018,8 @@ Twilight.prototype._politicsPrimary = function(player) {
   const newSpeaker = selection[0]
   this.state.speaker = newSpeaker
 
-  // Draw 2 action cards (simplified — just increment a counter for now)
-  // TODO: Implement action card deck
+  // Draw 2 action cards
+  this._drawActionCards(player, 2)
 
   this.log.add({
     template: '{player} uses Politics. {speaker} is the new speaker',
@@ -2179,11 +2187,7 @@ Twilight.prototype._resolveSecondary = function(player, cardId) {
       this._constructionSecondary(player)
       break
     case 'imperial':
-      // Draw 1 secret objective (TODO: implement when objective deck exists)
-      this.log.add({
-        template: '{player} draws a secret objective (Imperial secondary)',
-        args: { player },
-      })
+      this._drawSecretObjective(player)
       break
     default:
       break
@@ -2531,6 +2535,82 @@ Twilight.prototype._getPlayersInInitiativeOrder = function() {
     const numA = cardA ? cardA.number : 99
     const numB = cardB ? cardB.number : 99
     return numA - numB
+  })
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Action Cards
+
+Twilight.prototype._initActionCardDeck = function() {
+  if (this.state.actionCardDeck) {
+    return
+  }
+
+  const deck = res.buildActionDeck()
+  this._shuffle(deck)
+  this.state.actionCardDeck = deck
+}
+
+Twilight.prototype._drawActionCards = function(player, count) {
+  this._initActionCardDeck()
+
+  const drawn = []
+  for (let i = 0; i < count; i++) {
+    if (this.state.actionCardDeck.length === 0) {
+      break
+    }
+    const card = this.state.actionCardDeck.pop()
+    drawn.push(card)
+  }
+
+  if (drawn.length === 0) {
+    return
+  }
+
+  // Store in player's hand
+  if (!player.actionCards) {
+    player.actionCards = []
+  }
+  player.actionCards.push(...drawn)
+
+  this.log.add({
+    template: '{player} draws {count} action card(s)',
+    args: { player, count: drawn.length },
+  })
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Secret Objectives
+
+Twilight.prototype._initSecretObjectiveDeck = function() {
+  if (this.state.secretObjectiveDeck) {
+    return
+  }
+
+  const secrets = res.getSecretObjectives().map(o => o.id)
+  this._shuffle(secrets)
+  this.state.secretObjectiveDeck = secrets
+}
+
+Twilight.prototype._drawSecretObjective = function(player) {
+  this._initSecretObjectiveDeck()
+
+  if (this.state.secretObjectiveDeck.length === 0) {
+    return
+  }
+
+  const objectiveId = this.state.secretObjectiveDeck.pop()
+
+  if (!player.secretObjectives) {
+    player.secretObjectives = []
+  }
+  player.secretObjectives.push(objectiveId)
+
+  this.log.add({
+    template: '{player} draws a secret objective',
+    args: { player },
   })
 }
 

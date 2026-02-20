@@ -1,3 +1,4 @@
+const actionCards = require('./actionCards.js')
 const agendaCards = require('./agendaCards.js')
 const explorationCards = require('./explorationCards.js')
 const factions = require('./factions/index.js')
@@ -10,6 +11,7 @@ const technologies = require('./technologies.js')
 const units = require('./units.js')
 
 module.exports = {
+  ...actionCards,
   ...agendaCards,
   ...explorationCards,
   ...factions,
