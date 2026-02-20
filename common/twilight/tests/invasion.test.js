@@ -474,6 +474,8 @@ describe('Invasion', () => {
 
       t.setBoard(game, {
         dennis: {
+          // Give player enough influence to pay custodians cost (6)
+          planets: { meer: { exhausted: false } },
           units: {
             [mecatolAdjacent]: {
               space: ['carrier'],

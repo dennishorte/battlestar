@@ -124,9 +124,11 @@ class Galaxy {
           continue
         }
 
-        // Cannot move through supernova
+        // Cannot move through supernova (unless faction allows it)
         if (tile?.anomaly === 'supernova') {
-          continue
+          if (!this.game.factionAbilities?.canMoveThroughSupernovae(playerName)) {
+            continue
+          }
         }
 
         const newPath = [...path, neighborId]
