@@ -95,6 +95,52 @@ describe('Objectives', () => {
     })
   })
 
+  describe('Public Objectives', () => {
+    test('objective revealed during status phase', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Play through action phase
+      t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'hacan-home')
+      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')
+
+      // Status phase runs objective reveal
+      t.choose(game, 'Done')  // dennis redistribution
+      t.choose(game, 'Done')  // micah redistribution
+
+      // Should have 1 revealed objective
+      expect(game.state.revealedObjectives.length).toBe(1)
+    })
+
+    test('Diversify Research: checks tech color prerequisites', () => {
+      const game = t.fixture()
+      game.run()
+
+      // Sol starts with 1 green (neural-motivator) and 1 blue (antimass-deflectors)
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getTechPrerequisites().green).toBe(1)
+      expect(dennis.getTechPrerequisites().blue).toBe(1)
+
+      // Not enough for Diversify Research (need 2 in each of 2 colors)
+      const res = require('../res/index.js')
+      const obj = res.getObjective('diversify-research')
+      expect(obj.check(dennis)).toBe(false)
+    })
+  })
+
+  describe('Scored Objectives', () => {
+    test('scored objectives tracked in game state', () => {
+      const game = t.fixture()
+      game.run()
+
+      expect(game.state.scoredObjectives).toEqual({})
+    })
+  })
+
   describe('Planet Control', () => {
     test('getControlledPlanets returns controlled planet IDs', () => {
       const game = t.fixture()
