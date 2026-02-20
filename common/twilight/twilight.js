@@ -93,6 +93,11 @@ Twilight.prototype._initializeState = function() {
   // Track available strategy cards
   this.state.availableStrategyCards = res.getAllStrategyCards().map(c => c.id)
   this.state.strategyCardTradeGoods = {}  // cardId -> trade goods on unchosen cards
+
+  // Agenda deck (initialized lazily to preserve random seed order for galaxy)
+  this.state.agendaDeck = null
+  this.state.activeLaws = []
+  this.state.lastStrategyCard = null
 }
 
 Twilight.prototype._initializeZones = function() {
@@ -640,15 +645,214 @@ Twilight.prototype.agendaPhase = function() {
 
   // Resolve 2 agendas
   for (let i = 0; i < 2; i++) {
-    // For now, speaker clicks Done to skip each agenda
-    const speaker = this.players.byName(this.state.speaker)
-    this.actions.choose(speaker, ['Done'], {
-      title: `Agenda ${i + 1}`,
-      noAutoRespond: true,
-    })
+    this._resolveAgenda(i + 1)
+  }
+
+  // Ready all planets after agenda phase
+  for (const [, planetState] of Object.entries(this.state.planets)) {
+    planetState.exhausted = false
   }
 
   this.log.outdent()
+}
+
+Twilight.prototype._resolveAgenda = function(agendaNumber) {
+  // Draw agenda card from deck
+  const agenda = this._drawAgendaCard()
+  if (!agenda) {
+    return
+  }
+
+  this.log.add({
+    template: `Agenda ${agendaNumber}: {name}`,
+    args: { name: agenda.name },
+  })
+  this.log.indent()
+
+  // Determine outcomes based on agenda type
+  let outcomes
+  if (agenda.outcomeType === 'for-against') {
+    outcomes = ['For', 'Against']
+  }
+  else if (agenda.outcomeType === 'elect-player') {
+    outcomes = this.players.all().map(p => p.name)
+  }
+  else {
+    outcomes = ['For', 'Against']  // fallback
+  }
+
+  // Voting: each player votes sequentially, starting left of speaker
+  const speakerName = this.state.speaker
+  const allPlayers = this.players.all()
+  const speakerIndex = allPlayers.findIndex(p => p.name === speakerName)
+  const votingOrder = []
+  for (let j = 1; j <= allPlayers.length; j++) {
+    votingOrder.push(allPlayers[(speakerIndex + j) % allPlayers.length])
+  }
+
+  const votes = {}  // outcome → total votes
+  for (const outcome of outcomes) {
+    votes[outcome] = 0
+  }
+  const playerVotes = {}  // playerName → { outcome, count }
+
+  for (const player of votingOrder) {
+    const availableInfluence = player.getTotalInfluence()
+    const voteChoices = ['Abstain', ...outcomes]
+
+    const selection = this.actions.choose(player, voteChoices, {
+      title: `Vote on ${agenda.name} (${availableInfluence} influence available)`,
+      noAutoRespond: true,
+    })
+
+    const chosen = selection[0]
+    if (chosen === 'Abstain') {
+      this.log.add({
+        template: '{player} abstains',
+        args: { player },
+      })
+      continue
+    }
+
+    // Player chose an outcome — exhaust planets to cast votes
+    const readyPlanets = player.getReadyPlanets()
+    if (readyPlanets.length === 0) {
+      // No planets to exhaust, but still counts as 0 votes for outcome
+      this.log.add({
+        template: '{player} votes for {outcome} (0 votes)',
+        args: { player, outcome: chosen },
+      })
+      votes[chosen] = (votes[chosen] || 0)
+      playerVotes[player.name] = { outcome: chosen, count: 0 }
+      continue
+    }
+
+    // Choose which planets to exhaust for votes
+    const planetChoices = readyPlanets.map(pId => {
+      const planet = res.getPlanet(pId)
+      return `${pId} (${planet ? planet.influence : 0})`
+    })
+
+    const exhaustSelection = this.actions.choose(player, planetChoices, {
+      title: `Exhaust planets for votes`,
+      min: 0,
+      max: readyPlanets.length,
+    })
+
+    let totalInfluence = 0
+    for (const choice of exhaustSelection) {
+      const planetId = choice.split(' (')[0]
+      const planet = res.getPlanet(planetId)
+      if (planet) {
+        totalInfluence += planet.influence
+        this.state.planets[planetId].exhausted = true
+      }
+    }
+
+    votes[chosen] = (votes[chosen] || 0) + totalInfluence
+    playerVotes[player.name] = { outcome: chosen, count: totalInfluence }
+
+    this.log.add({
+      template: '{player} votes for {outcome} ({count} votes)',
+      args: { player, outcome: chosen, count: totalInfluence },
+    })
+  }
+
+  // Resolve outcome
+  let winningOutcome = null
+  let maxVotes = -1
+  const tiedOutcomes = []
+
+  for (const [outcome, count] of Object.entries(votes)) {
+    if (count > maxVotes) {
+      maxVotes = count
+      winningOutcome = outcome
+      tiedOutcomes.length = 0
+      tiedOutcomes.push(outcome)
+    }
+    else if (count === maxVotes) {
+      tiedOutcomes.push(outcome)
+    }
+  }
+
+  // Speaker breaks ties
+  if (tiedOutcomes.length > 1 || maxVotes === 0) {
+    const speaker = this.players.byName(speakerName)
+    const tieSelection = this.actions.choose(speaker, tiedOutcomes, {
+      title: 'Speaker breaks tie',
+      noAutoRespond: true,
+    })
+    winningOutcome = tieSelection[0]
+  }
+
+  this.log.add({
+    template: 'Outcome: {outcome} ({count} votes)',
+    args: { outcome: winningOutcome, count: maxVotes },
+  })
+
+  // Apply agenda effects
+  this._resolveAgendaOutcome(agenda, winningOutcome, playerVotes)
+
+  this.log.outdent()
+}
+
+Twilight.prototype._drawAgendaCard = function() {
+  // Lazily initialize agenda deck on first draw
+  if (!this.state.agendaDeck) {
+    const allAgendas = res.getAllAgendaCards()
+    const agendaDeck = [...allAgendas]
+    this._shuffle(agendaDeck)
+    this.state.agendaDeck = agendaDeck
+  }
+  if (this.state.agendaDeck.length === 0) {
+    return null
+  }
+  return this.state.agendaDeck.shift()
+}
+
+Twilight.prototype._resolveAgendaOutcome = function(agenda, outcome, playerVotes) {
+  // Resolve specific agenda effects
+  if (agenda.id === 'mutiny') {
+    if (outcome === 'For') {
+      for (const [playerName, vote] of Object.entries(playerVotes)) {
+        if (vote.outcome === 'For') {
+          const player = this.players.byName(playerName)
+          player.addVictoryPoints(1)
+          this._checkVictory()
+        }
+      }
+    }
+    else {
+      for (const [playerName, vote] of Object.entries(playerVotes)) {
+        if (vote.outcome === 'Against') {
+          const player = this.players.byName(playerName)
+          player.addVictoryPoints(1)
+          this._checkVictory()
+        }
+      }
+    }
+  }
+
+  if (agenda.id === 'committee-formation' && agenda.outcomeType === 'elect-player') {
+    this.state.speaker = outcome
+  }
+
+  if (agenda.id === 'economic-equality' && outcome === 'For') {
+    for (const player of this.players.all()) {
+      player.tradeGoods = 5
+    }
+  }
+
+  // Track active laws
+  if (agenda.type === 'law' && outcome !== 'Against') {
+    if (!this.state.activeLaws) {
+      this.state.activeLaws = []
+    }
+    this.state.activeLaws.push({
+      ...agenda,
+      resolvedOutcome: outcome,
+    })
+  }
 }
 
 
