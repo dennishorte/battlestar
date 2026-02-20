@@ -1592,8 +1592,20 @@ Twilight.prototype._strategicAction = function(player) {
     case 'leadership':
       this._leadershipPrimary(player)
       break
+    case 'diplomacy':
+      this._diplomacyPrimary(player)
+      break
+    case 'politics':
+      this._politicsPrimary(player)
+      break
+    case 'construction':
+      this._constructionPrimary(player)
+      break
     case 'trade':
       this._tradePrimary(player)
+      break
+    case 'warfare':
+      this._warfarePrimary(player)
       break
     case 'technology':
       this._technologyPrimary(player)
@@ -1601,10 +1613,11 @@ Twilight.prototype._strategicAction = function(player) {
     case 'imperial':
       this._imperialPrimary(player)
       break
-    // Other cards have interactive primaries resolved later
-    default:
-      break
   }
+
+  // Secondary abilities resolved separately (players opt-in during action phase)
+  // Tracked so secondaries can be offered later
+  this.state.lastStrategyCard = usedCardId
 
   this.log.outdent()
 }
@@ -1710,6 +1723,321 @@ Twilight.prototype._imperialPrimary = function(player) {
     })
     this._checkVictory()
   }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Strategy Card — Diplomacy (#2)
+
+Twilight.prototype._diplomacyPrimary = function(player) {
+  // Choose a system containing a planet you control
+  const controlledPlanets = player.getControlledPlanets()
+  const systemsWithControlledPlanets = []
+  for (const planetId of controlledPlanets) {
+    const systemId = this._findSystemForPlanet(planetId)
+    if (systemId && !systemsWithControlledPlanets.includes(systemId)) {
+      systemsWithControlledPlanets.push(systemId)
+    }
+  }
+
+  if (systemsWithControlledPlanets.length === 0) {
+    return
+  }
+
+  const selection = this.actions.choose(player, systemsWithControlledPlanets, {
+    title: 'Choose System (Diplomacy)',
+    noAutoRespond: true,
+  })
+  const chosenSystem = selection[0]
+
+  // Each other player places a command token from reinforcements in that system
+  const otherPlayers = this.players.all().filter(p => p.name !== player.name)
+  for (const other of otherPlayers) {
+    // Only if they have tokens to place
+    if (other.commandTokens.tactics > 0) {
+      if (!this.state.systems[chosenSystem].commandTokens.includes(other.name)) {
+        this.state.systems[chosenSystem].commandTokens.push(other.name)
+      }
+    }
+  }
+
+  this.log.add({
+    template: '{player} uses Diplomacy on {system}',
+    args: { player, system: chosenSystem },
+  })
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Strategy Card — Politics (#3)
+
+Twilight.prototype._politicsPrimary = function(player) {
+  // Choose a player to become the new speaker
+  const allPlayers = this.players.all()
+  const playerNames = allPlayers.map(p => p.name)
+
+  const selection = this.actions.choose(player, playerNames, {
+    title: 'Choose New Speaker (Politics)',
+  })
+  const newSpeaker = selection[0]
+  this.state.speaker = newSpeaker
+
+  // Draw 2 action cards (simplified — just increment a counter for now)
+  // TODO: Implement action card deck
+
+  this.log.add({
+    template: '{player} uses Politics. {speaker} is the new speaker',
+    args: { player, speaker: newSpeaker },
+  })
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Strategy Card — Construction (#4)
+
+Twilight.prototype._constructionPrimary = function(player) {
+  // Place 1 PDS or 1 Space Dock on a planet you control
+  // Then place 1 PDS on a planet you control
+  const controlledPlanets = player.getControlledPlanets()
+  if (controlledPlanets.length === 0) {
+    return
+  }
+
+  // First structure: PDS or Space Dock
+  const firstChoices = controlledPlanets.map(p => `pds:${p}`)
+    .concat(controlledPlanets.map(p => `space-dock:${p}`))
+
+  const firstSelection = this.actions.choose(player, firstChoices, {
+    title: 'Place Structure (Construction)',
+  })
+  const [firstType, firstPlanet] = firstSelection[0].split(':')
+  const firstSystemId = this._findSystemForPlanet(firstPlanet)
+  if (firstSystemId) {
+    this._addUnitToPlanet(firstSystemId, firstPlanet, firstType, player.name)
+  }
+
+  // Second structure: PDS only
+  const secondChoices = controlledPlanets.map(p => `pds:${p}`)
+  if (secondChoices.length > 0) {
+    const secondSelection = this.actions.choose(player, secondChoices, {
+      title: 'Place PDS (Construction)',
+      noAutoRespond: true,
+    })
+    const [, secondPlanet] = secondSelection[0].split(':')
+    const secondSystemId = this._findSystemForPlanet(secondPlanet)
+    if (secondSystemId) {
+      this._addUnitToPlanet(secondSystemId, secondPlanet, 'pds', player.name)
+    }
+  }
+
+  this.log.add({
+    template: '{player} uses Construction',
+    args: { player },
+  })
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Strategy Card — Warfare (#6)
+
+Twilight.prototype._warfarePrimary = function(player) {
+  // Remove 1 command token from the game board
+  const systemsWithTokens = []
+  for (const [systemId, system] of Object.entries(this.state.systems)) {
+    if (system.commandTokens.includes(player.name)) {
+      systemsWithTokens.push(systemId)
+    }
+  }
+
+  if (systemsWithTokens.length > 0) {
+    const selection = this.actions.choose(player, systemsWithTokens, {
+      title: 'Remove Command Token (Warfare)',
+      noAutoRespond: true,
+    })
+    const chosenSystem = selection[0]
+    const tokens = this.state.systems[chosenSystem].commandTokens
+    const idx = tokens.indexOf(player.name)
+    if (idx !== -1) {
+      tokens.splice(idx, 1)
+    }
+
+    this.log.add({
+      template: '{player} removes a command token from {system}',
+      args: { player, system: chosenSystem },
+    })
+  }
+
+  // Redistribute command tokens (same as status phase redistribution)
+  this._redistributeTokens(player)
+}
+
+Twilight.prototype._redistributeTokens = function(player) {
+  const totalTokens = player.commandTokens.tactics + player.commandTokens.strategy + player.commandTokens.fleet
+  this.actions.choose(player, ['Done'], {
+    title: `Redistribute Tokens (${totalTokens} total)`,
+    noAutoRespond: true,
+  })
+  // For now, keep current distribution when player clicks Done
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Secondary Abilities
+
+Twilight.prototype._resolveSecondaries = function(activePlayer, cardId) {
+  const otherPlayers = this.players.all().filter(p => p.name !== activePlayer.name)
+
+  for (const player of otherPlayers) {
+    // Skip if player has no strategy tokens to spend
+    if (player.commandTokens.strategy <= 0) {
+      continue
+    }
+
+    // Determine what secondary this card offers
+    const secondaryAvailable = this._getSecondaryDescription(cardId)
+    if (!secondaryAvailable) {
+      continue
+    }
+
+    const choice = this.actions.choose(player, ['Use Secondary', 'Pass'], {
+      title: `${secondaryAvailable} (costs 1 strategy token)`,
+    })
+
+    if (choice[0] === 'Use Secondary') {
+      player.spendStrategyToken()
+      this._resolveSecondary(player, cardId)
+    }
+  }
+}
+
+Twilight.prototype._getSecondaryDescription = function(cardId) {
+  switch (cardId) {
+    case 'leadership': return 'Spend influence to gain command tokens'
+    case 'diplomacy': return 'Ready exhausted planets'
+    case 'politics': return 'Draw 2 action cards'
+    case 'construction': return 'Place 1 structure'
+    case 'trade': return null  // Trade secondary is different (handled in primary)
+    case 'warfare': return 'Produce units in your home system'
+    case 'technology': return 'Research 1 technology'
+    case 'imperial': return 'Draw 1 secret objective'
+    default: return null
+  }
+}
+
+Twilight.prototype._resolveSecondary = function(player, cardId) {
+  switch (cardId) {
+    case 'leadership':
+      // Spend 3 influence to gain 1 command token
+      player.commandTokens.tactics += 1
+      this.log.add({
+        template: '{player} gains 1 command token (Leadership secondary)',
+        args: { player },
+      })
+      break
+    case 'diplomacy':
+      // Ready 2 exhausted planets (simplified)
+      this._diplomacySecondary(player)
+      break
+    case 'technology':
+      // Research 1 technology (same as primary but costs strategy token)
+      this._researchTech(player)
+      break
+    case 'warfare':
+      // Produce units in home system
+      this._warfareSecondary(player)
+      break
+    case 'construction':
+      // Place 1 PDS or 1 space dock on a planet you control
+      this._constructionSecondary(player)
+      break
+    case 'imperial':
+      // Draw 1 secret objective (TODO: implement when objective deck exists)
+      this.log.add({
+        template: '{player} draws a secret objective (Imperial secondary)',
+        args: { player },
+      })
+      break
+    default:
+      break
+  }
+}
+
+Twilight.prototype._diplomacySecondary = function(player) {
+  // Ready exhausted planets outside home system (simplified: ready any 2)
+  const exhaustedPlanets = player.getControlledPlanets()
+    .filter(pId => this.state.planets[pId].exhausted)
+
+  if (exhaustedPlanets.length === 0) {
+    return
+  }
+
+  // Choose up to 2 planets to ready (simplified — just ready them all if ≤ 2)
+  const toReady = exhaustedPlanets.slice(0, 2)
+  for (const planetId of toReady) {
+    this.state.planets[planetId].exhausted = false
+  }
+
+  this.log.add({
+    template: '{player} readies planets (Diplomacy secondary)',
+    args: { player },
+  })
+}
+
+Twilight.prototype._warfareSecondary = function(player) {
+  // Produce units in home system (simplified: use existing production)
+  const homeSystem = this._getHomeSystem(player)
+  if (homeSystem) {
+    this._productionStep(player, homeSystem)
+  }
+}
+
+Twilight.prototype._constructionSecondary = function(player) {
+  // Place 1 PDS or 1 space dock on a planet you control
+  const controlledPlanets = player.getControlledPlanets()
+  if (controlledPlanets.length === 0) {
+    return
+  }
+
+  const choices = controlledPlanets.map(p => `pds:${p}`)
+    .concat(controlledPlanets.map(p => `space-dock:${p}`))
+
+  const selection = this.actions.choose(player, choices, {
+    title: 'Place Structure (Construction Secondary)',
+  })
+  const [unitType, planetId] = selection[0].split(':')
+  const systemId = this._findSystemForPlanet(planetId)
+  if (systemId) {
+    this._addUnitToPlanet(systemId, planetId, unitType, player.name)
+  }
+
+  this.log.add({
+    template: '{player} places a {type} (Construction secondary)',
+    args: { player, type: unitType },
+  })
+}
+
+Twilight.prototype._getHomeSystem = function(player) {
+  const faction = player.faction
+  if (!faction) {
+    return null
+  }
+  return faction.homeSystem || `${faction.id}-home`
+}
+
+Twilight.prototype._addUnitToPlanet = function(systemId, planetId, unitType, ownerName) {
+  if (!this.state.units[systemId]) {
+    return
+  }
+  if (!this.state.units[systemId].planets[planetId]) {
+    return
+  }
+  const unitId = `u-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
+  this.state.units[systemId].planets[planetId].push({
+    id: unitId,
+    type: unitType,
+    owner: ownerName,
+    damaged: false,
+  })
 }
 
 
