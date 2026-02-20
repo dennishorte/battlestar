@@ -206,10 +206,7 @@ class TwilightPlayer extends BasePlayer {
     }
 
     // Jol-Nar Analytical: ignore 1 prerequisite for non-unit-upgrade techs
-    let skipCount = 0
-    if (this.faction?.abilities?.some(a => a.id === 'analytical') && !tech.unitUpgrade) {
-      skipCount = 1
-    }
+    const skipCount = this.game.factionAbilities?.getTechPrerequisiteSkips(this, tech) ?? 0
 
     let deficit = 0
     for (const [color, count] of Object.entries(needed)) {

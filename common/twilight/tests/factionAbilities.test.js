@@ -1,8 +1,14 @@
 const t = require('../testutil.js')
+const { Galaxy } = require('../model/Galaxy.js')
 
 function pickStrategyCards(game, dennisCard, micahCard) {
   t.choose(game, dennisCard)
   t.choose(game, micahCard)
+}
+
+function findAdjacent(game, systemId) {
+  const galaxy = new Galaxy(game)
+  return galaxy.getAdjacent(systemId)[0]
 }
 
 describe('Faction Abilities', () => {
@@ -85,30 +91,74 @@ describe('Faction Abilities', () => {
 
   describe('Barony of Letnev', () => {
     describe('Armada', () => {
-      test('fleet limit is fleet pool + 2', () => {
+      test('Letnev can move more non-fighter ships than base fleet pool', () => {
+        // Letnev: fleet pool 3 + Armada 2 = 5 non-fighter ships allowed
         const game = t.fixture({
-          numPlayers: 3,
-          factions: ['federation-of-sol', 'emirates-of-hacan', 'barony-of-letnev'],
+          factions: ['barony-of-letnev', 'emirates-of-hacan'],
+        })
+        const setupGame = t.fixture({ factions: ['barony-of-letnev', 'emirates-of-hacan'] })
+        setupGame.run()
+        const targetSystem = findAdjacent(setupGame, 'letnev-home')
+
+        t.setBoard(game, {
+          dennis: {
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'letnev-home': {
+                space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+                'arc-prime': ['space-dock'],
+              },
+            },
+          },
         })
         game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
 
-        const scott = game.players.byName('scott')  // Letnev
-        const fleetLimit = game._getFleetLimit(scott)
-        // Base fleet pool = 3, Armada bonus = +2
-        expect(fleetLimit).toBe(5)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: targetSystem })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'letnev-home', count: 6 }],
+        })
+
+        // Fleet pool 3 + Armada 2 = 5 non-fighter ships should arrive
+        const nonFighterShips = game.state.units[targetSystem].space
+          .filter(u => u.owner === 'dennis' && u.type !== 'fighter')
+        expect(nonFighterShips.length).toBe(5)
       })
 
-      test('non-Letnev factions do not get Armada bonus', () => {
+      test('non-Letnev faction limited to base fleet pool', () => {
+        // Sol: fleet pool 3, no Armada bonus
         const game = t.fixture({
-          numPlayers: 3,
-          factions: ['federation-of-sol', 'emirates-of-hacan', 'barony-of-letnev'],
+          factions: ['federation-of-sol', 'emirates-of-hacan'],
+        })
+        const setupGame = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+        setupGame.run()
+        const targetSystem = findAdjacent(setupGame, 'sol-home')
+
+        t.setBoard(game, {
+          dennis: {
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'sol-home': {
+                space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+                'jord': ['space-dock'],
+              },
+            },
+          },
         })
         game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
 
-        const dennis = game.players.byName('dennis')  // Sol
-        const fleetLimit = game._getFleetLimit(dennis)
-        // Base fleet pool = 3, no bonus
-        expect(fleetLimit).toBe(3)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: targetSystem })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'sol-home', count: 5 }],
+        })
+
+        // Fleet pool 3 = only 3 non-fighter ships should arrive
+        const nonFighterShips = game.state.units[targetSystem].space
+          .filter(u => u.owner === 'dennis' && u.type !== 'fighter')
+        expect(nonFighterShips.length).toBe(3)
       })
     })
   })
@@ -195,28 +245,116 @@ describe('Faction Abilities', () => {
 
   describe('Mentak Coalition', () => {
     describe('Ambush', () => {
-      test('Mentak has ambush ability', () => {
+      test('Mentak ambush fires before combat and can destroy ships', () => {
+        // Mentak (dennis) moves cruisers into system with enemy fighter
+        // Ambush rolls 2 dice at 9+ before combat begins
         const game = t.fixture({
-          numPlayers: 3,
-          factions: ['federation-of-sol', 'emirates-of-hacan', 'mentak-coalition'],
+          factions: ['mentak-coalition', 'emirates-of-hacan'],
+        })
+        const setupGame = t.fixture({ factions: ['mentak-coalition', 'emirates-of-hacan'] })
+        setupGame.run()
+        const targetSystem = findAdjacent(setupGame, 'mentak-home')
+
+        t.setBoard(game, {
+          dennis: {
+            units: {
+              'mentak-home': {
+                space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+                'moll-primus': ['space-dock'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              [targetSystem]: {
+                space: ['fighter'],
+              },
+            },
+          },
         })
         game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
 
-        const scottPlayer = game.players.byName('scott')  // Mentak
-        expect(scottPlayer.faction.abilities.some(a => a.id === 'ambush')).toBe(true)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: targetSystem })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'mentak-home', count: 5 }],
+        })
+
+        // 5 cruisers vs 1 fighter — Mentak should win (ambush + combat)
+        const micahShips = game.state.units[targetSystem].space
+          .filter(u => u.owner === 'micah')
+        expect(micahShips.length).toBe(0)
       })
     })
 
     describe('Pillage', () => {
-      test('Mentak has pillage ability', () => {
+      test('Mentak can steal trade good from neighbor after transaction', () => {
+        // 3 players: Sol (dennis), Hacan (micah), Mentak (scott)
+        // Sol and Hacan trade while adjacent to Mentak — Mentak pillages
         const game = t.fixture({
           numPlayers: 3,
           factions: ['federation-of-sol', 'emirates-of-hacan', 'mentak-coalition'],
         })
+        const setupGame = t.fixture({
+          numPlayers: 3,
+          factions: ['federation-of-sol', 'emirates-of-hacan', 'mentak-coalition'],
+        })
+        setupGame.run()
+        // Find a system adjacent to both sol-home and mentak-home
+        const solAdj = findAdjacent(setupGame, 'sol-home')
+
+        t.setBoard(game, {
+          dennis: {
+            tradeGoods: 5,
+            units: {
+              'sol-home': { space: ['cruiser'] },
+            },
+          },
+          micah: {
+            tradeGoods: 5,
+            units: {
+              // Place Hacan adjacent to Sol so they can trade
+              [solAdj]: { space: ['cruiser'] },
+            },
+          },
+          scott: {
+            tradeGoods: 0,
+            units: {
+              // Place Mentak adjacent to Sol so pillage triggers
+              [solAdj]: { space: ['cruiser'] },
+            },
+          },
+        })
         game.run()
 
-        const scottPlayer = game.players.byName('scott')  // Mentak
-        expect(scottPlayer.faction.abilities.some(a => a.id === 'pillage')).toBe(true)
+        // 3-player strategy: snake draft
+        t.choose(game, 'leadership')    // dennis
+        t.choose(game, 'diplomacy')     // micah
+        t.choose(game, 'trade')         // scott
+        t.choose(game, 'construction')  // scott (2nd pick)
+        t.choose(game, 'politics')      // micah (2nd pick)
+        t.choose(game, 'warfare')       // dennis (2nd pick)
+
+        // Dennis (leadership=1) goes first
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Pass')  // micah declines secondary
+        t.choose(game, 'Pass')  // scott declines secondary
+
+        // Dennis should get transaction window (adjacent to micah via solAdj)
+        t.choose(game, 'micah')
+        t.action(game, 'trade-offer', {
+          offering: { tradeGoods: 1 },
+          requesting: {},
+        })
+        t.choose(game, 'Accept')
+
+        // Mentak (scott) should be prompted to pillage micah (who received TG)
+        // Scott steals 1 trade good from micah
+        t.choose(game, 'Steal Trade Good')
+
+        const scott = game.players.byName('scott')
+        expect(scott.tradeGoods).toBe(1)
       })
     })
   })
