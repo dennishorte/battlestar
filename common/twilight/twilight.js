@@ -67,6 +67,9 @@ Twilight.prototype._mainProgram = function() {
 // Initialization
 
 Twilight.prototype.initialize = function() {
+  // Expose res module so objectives/abilities can access game data via game.res
+  this.res = res
+
   this._initializeState()
   this._initializeZones()
   this._initializeFactions()
