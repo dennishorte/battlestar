@@ -197,6 +197,117 @@ describe('Factions', () => {
     })
   })
 
+  describe('Naalu Collective', () => {
+    test('starts with Neural Motivator and Sarween Tools', () => {
+      const game = t.fixture({ factions: ['naalu-collective', 'emirates-of-hacan'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasTechnology('neural-motivator')).toBe(true)
+      expect(dennis.hasTechnology('sarween-tools')).toBe(true)
+    })
+
+    test('starts with correct units', () => {
+      const game = t.fixture({ factions: ['naalu-collective', 'emirates-of-hacan'] })
+      game.run()
+
+      const homeSystem = 'naalu-home'
+      const spaceUnits = game.state.units[homeSystem].space
+        .filter(u => u.owner === 'dennis')
+        .map(u => u.type)
+        .sort()
+
+      expect(spaceUnits).toEqual(['carrier', 'cruiser', 'destroyer', 'fighter', 'fighter', 'fighter'])
+    })
+
+    test('3 commodities', () => {
+      const faction = res.getFaction('naalu-collective')
+      expect(faction.commodities).toBe(3)
+    })
+
+    test('Telepathic ability defined', () => {
+      const faction = res.getFaction('naalu-collective')
+      const telepathic = faction.abilities.find(a => a.id === 'telepathic')
+      expect(telepathic).toBeTruthy()
+    })
+  })
+
+  describe('Mentak Coalition', () => {
+    test('starts with Sarween Tools and Plasma Scoring', () => {
+      const game = t.fixture({
+        numPlayers: 3,
+        factions: ['federation-of-sol', 'emirates-of-hacan', 'mentak-coalition'],
+      })
+      game.run()
+
+      const scott = game.players.byName('scott')
+      expect(scott.hasTechnology('sarween-tools')).toBe(true)
+      expect(scott.hasTechnology('plasma-scoring')).toBe(true)
+    })
+
+    test('starts with correct units including PDS', () => {
+      const game = t.fixture({
+        numPlayers: 3,
+        factions: ['federation-of-sol', 'emirates-of-hacan', 'mentak-coalition'],
+      })
+      game.run()
+
+      const homeSystem = 'mentak-home'
+      const spaceUnits = game.state.units[homeSystem].space
+        .filter(u => u.owner === 'scott')
+        .map(u => u.type)
+        .sort()
+
+      expect(spaceUnits).toEqual(['carrier', 'cruiser', 'cruiser', 'fighter', 'fighter', 'fighter'])
+
+      const mollPrimus = game.state.units[homeSystem].planets['moll-primus']
+        .filter(u => u.owner === 'scott')
+        .map(u => u.type)
+        .sort()
+
+      expect(mollPrimus).toEqual(['infantry', 'infantry', 'infantry', 'infantry', 'pds', 'space-dock'])
+    })
+
+    test('2 commodities', () => {
+      const faction = res.getFaction('mentak-coalition')
+      expect(faction.commodities).toBe(2)
+    })
+  })
+
+  describe('Yssaril Tribes', () => {
+    test('starts with Neural Motivator', () => {
+      const game = t.fixture({ factions: ['yssaril-tribes', 'emirates-of-hacan'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasTechnology('neural-motivator')).toBe(true)
+    })
+
+    test('starts with correct units', () => {
+      const game = t.fixture({ factions: ['yssaril-tribes', 'emirates-of-hacan'] })
+      game.run()
+
+      const homeSystem = 'yssaril-home'
+      const spaceUnits = game.state.units[homeSystem].space
+        .filter(u => u.owner === 'dennis')
+        .map(u => u.type)
+        .sort()
+
+      expect(spaceUnits).toEqual(['carrier', 'carrier', 'cruiser', 'fighter', 'fighter'])
+    })
+
+    test('3 commodities', () => {
+      const faction = res.getFaction('yssaril-tribes')
+      expect(faction.commodities).toBe(3)
+    })
+
+    test('Stall Tactics ability defined', () => {
+      const faction = res.getFaction('yssaril-tribes')
+      const stallTactics = faction.abilities.find(a => a.id === 'stall-tactics')
+      expect(stallTactics).toBeTruthy()
+    })
+  })
+
   describe('Leaders', () => {
     test('agent starts unlocked', () => {
       const game = t.fixture()
