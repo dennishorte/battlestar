@@ -14,6 +14,7 @@ describe('Strategic Actions', () => {
 
       // Dennis has leadership, uses it
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines leadership secondary
 
       const dennis = game.players.byName('dennis')
       // Started with tactics=3, gained 3 from Leadership
@@ -29,6 +30,7 @@ describe('Strategic Actions', () => {
 
       // Dennis has trade(5), micah has imperial(8). Dennis goes first.
       t.choose(game, 'Strategic Action')
+      // Trade has no secondary — no Pass needed
 
       const dennis = game.players.byName('dennis')
       expect(dennis.tradeGoods).toBe(3)
@@ -61,6 +63,7 @@ describe('Strategic Actions', () => {
       // Sol starts with neural-motivator (green) + antimass-deflectors (blue)
       // Sarween Tools has no prerequisites — should be available
       t.choose(game, 'sarween-tools')
+      t.choose(game, 'Pass')  // micah declines technology secondary
 
       const dennis = game.players.byName('dennis')
       expect(dennis.hasTechnology('sarween-tools')).toBe(true)
@@ -75,6 +78,7 @@ describe('Strategic Actions', () => {
 
       // Sol has 1 blue (antimass) — can research gravity-drive (needs 1 blue)
       t.choose(game, 'gravity-drive')
+      t.choose(game, 'Pass')  // micah declines technology secondary
 
       const dennis = game.players.byName('dennis')
       expect(dennis.hasTechnology('gravity-drive')).toBe(true)
@@ -110,8 +114,10 @@ describe('Strategic Actions', () => {
 
       // Micah has leadership(1), goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Pass')  // dennis declines leadership secondary
       // Dennis uses imperial
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines imperial secondary
 
       const dennis = game.players.byName('dennis')
       expect(dennis.victoryPoints).toBe(1)
@@ -124,8 +130,10 @@ describe('Strategic Actions', () => {
 
       // Micah has leadership(1), goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Pass')  // dennis declines leadership secondary
       // Dennis uses imperial
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines imperial secondary
 
       const dennis = game.players.byName('dennis')
       expect(dennis.victoryPoints).toBe(0)
@@ -144,6 +152,7 @@ describe('Strategic Actions', () => {
       // Dennis must choose a system with a planet he controls
       // Sol controls 'jord' in 'sol-home'
       t.choose(game, 'sol-home')
+      t.choose(game, 'Pass')  // micah declines diplomacy secondary
 
       // Micah should now have a command token in sol-home
       expect(game.state.systems['sol-home'].commandTokens).toContain('micah')
@@ -161,6 +170,7 @@ describe('Strategic Actions', () => {
 
       // Dennis picks new speaker — choose micah
       t.choose(game, 'micah')
+      t.choose(game, 'Pass')  // micah declines politics secondary
 
       expect(game.state.speaker).toBe('micah')
     })
@@ -172,6 +182,7 @@ describe('Strategic Actions', () => {
 
       t.choose(game, 'Strategic Action')
       t.choose(game, 'dennis')
+      t.choose(game, 'Pass')  // micah declines politics secondary
 
       expect(game.state.speaker).toBe('dennis')
     })
@@ -190,6 +201,7 @@ describe('Strategic Actions', () => {
       t.choose(game, 'pds:jord')
       // Second structure: place another PDS on jord
       t.choose(game, 'pds:jord')
+      t.choose(game, 'Pass')  // micah declines construction secondary
 
       const jord = game.state.units['sol-home'].planets['jord']
       const pdsCount = jord.filter(u => u.owner === 'dennis' && u.type === 'pds').length
@@ -207,6 +219,7 @@ describe('Strategic Actions', () => {
       t.choose(game, 'space-dock:jord')
       // Second structure: PDS on jord
       t.choose(game, 'pds:jord')
+      t.choose(game, 'Pass')  // micah declines construction secondary
 
       const jord = game.state.units['sol-home'].planets['jord']
       const spaceDockCount = jord.filter(u => u.owner === 'dennis' && u.type === 'space-dock').length
@@ -236,13 +249,15 @@ describe('Strategic Actions', () => {
       // Verify token was placed
       expect(game.state.systems[targetSystem].commandTokens).toContain('dennis')
 
-      // Micah uses imperial (no Mecatol = no VP, auto-resolves)
+      // Micah uses imperial (no Mecatol = no VP)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // dennis declines imperial secondary
 
       // Dennis uses warfare — should see the token to remove
       t.choose(game, 'Strategic Action')
       t.choose(game, '*' + targetSystem)  // remove token (* prefix keeps as string)
       t.choose(game, 'Done')  // redistribution
+      t.choose(game, 'Pass')  // micah declines warfare secondary
 
       // Token should be removed
       expect(game.state.systems[targetSystem].commandTokens).not.toContain('dennis')
@@ -256,8 +271,45 @@ describe('Strategic Actions', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Pass')  // micah declines secondary
 
       expect(game.state.lastStrategyCard).toBe('leadership')
+    })
+
+    test('other players can resolve secondary', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses leadership
+      t.choose(game, 'Strategic Action')
+      // Micah uses the leadership secondary (spend 1 strategy token, gain 1 tactic token)
+      t.choose(game, 'Use Secondary')
+
+      const micah = game.players.byName('micah')
+      // Strategy: 2 - 1 (spent) = 1
+      expect(micah.commandTokens.strategy).toBe(1)
+      // Tactics: 3 + 1 (secondary) = 4
+      expect(micah.commandTokens.tactics).toBe(4)
+    })
+
+    test('secondary costs strategy command token', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        micah: {
+          commandTokens: { tactics: 3, strategy: 0, fleet: 3 },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses leadership
+      t.choose(game, 'Strategic Action')
+      // Micah has 0 strategy tokens — should NOT be prompted for secondary
+
+      // Should go straight to micah's turn without secondary prompt
+      expect(game.waiting.selectors[0].actor).toBe('micah')
+      expect(game.waiting.selectors[0].title).toBe('Choose Action')
     })
   })
 
@@ -269,9 +321,11 @@ describe('Strategic Actions', () => {
 
       // Dennis uses leadership (gains 3 tactic tokens)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines leadership secondary
       // Micah uses diplomacy — must choose a system
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')  // micah picks their home system
+      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
       // Both pass
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
@@ -292,6 +346,7 @@ describe('Strategic Actions', () => {
 
       // Dennis (trade=5) goes first
       t.choose(game, 'Strategic Action')
+      // Trade has no secondary
 
       const dennis = game.players.byName('dennis')
       expect(dennis.tradeGoods).toBe(3)

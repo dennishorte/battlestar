@@ -140,6 +140,18 @@ TestUtil.setBoard = function(game, state) {
     if (state.revealedObjectives !== undefined) {
       game.state.revealedObjectives = [...state.revealedObjectives]
     }
+    if (state.explorationDecks !== undefined) {
+      game.state.explorationDecks = {}
+      for (const [trait, cardIds] of Object.entries(state.explorationDecks)) {
+        game.state.explorationDecks[trait] = cardIds.map(id => {
+          const card = res.getExplorationCard(id)
+          return card || { id, name: id, trait, type: 'action' }
+        })
+      }
+    }
+    if (state.exploredPlanets !== undefined) {
+      game.state.exploredPlanets = { ...state.exploredPlanets }
+    }
 
     // Apply per-player state
     for (const player of game.players.all()) {
