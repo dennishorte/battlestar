@@ -41,10 +41,11 @@ describe('Action Phase', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // dennis: use strategy card
+      // dennis: use strategy card (leadership — auto-resolves)
       t.choose(game, 'Strategic Action')
-      // micah: use strategy card
+      // micah: use strategy card (diplomacy — choose system)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'hacan-home')  // micah picks system for diplomacy
       // dennis: pass
       t.choose(game, 'Pass')
 
@@ -86,7 +87,7 @@ describe('Action Phase', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // dennis uses strategy card
+      // dennis uses strategy card (leadership — auto-resolves)
       t.choose(game, 'Strategic Action')
       // micah's turn (skip)
       t.choose(game, 'Tactical Action')
@@ -115,8 +116,9 @@ describe('Action Phase', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Both use strategy cards
-      t.choose(game, 'Strategic Action')  // dennis
-      t.choose(game, 'Strategic Action')  // micah
+      t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
+      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'hacan-home')        // micah picks system
       // dennis passes
       t.choose(game, 'Pass')
 
@@ -133,8 +135,9 @@ describe('Action Phase', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Both use strategy cards then pass
-      t.choose(game, 'Strategic Action')  // dennis
-      t.choose(game, 'Strategic Action')  // micah
+      t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
+      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'hacan-home')        // micah picks system
       t.choose(game, 'Pass')              // dennis
       t.choose(game, 'Pass')              // micah
 
@@ -148,8 +151,9 @@ describe('Action Phase', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Both use strategy cards then pass (ends action phase)
-      t.choose(game, 'Strategic Action')
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
+      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'hacan-home')        // micah picks system
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 
@@ -180,7 +184,7 @@ describe('Action Phase', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // dennis uses strategy card
+      // dennis uses strategy card (leadership — auto)
       t.choose(game, 'Strategic Action')
       // micah's turn (skip)
       t.choose(game, 'Tactical Action')

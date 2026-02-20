@@ -13,6 +13,16 @@ function findAdjacent(systemId) {
   return galaxy.getAdjacent(systemId)[0]
 }
 
+// Helper: play through action phase with leadership+diplomacy
+// Both use strategy cards then pass. Handles diplomacy system choice.
+function playThroughActionPhase(game) {
+  t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
+  t.choose(game, 'Strategic Action')  // micah: diplomacy (needs system choice)
+  t.choose(game, 'hacan-home')        // micah picks system
+  t.choose(game, 'Pass')
+  t.choose(game, 'Pass')
+}
+
 describe('Status Phase', () => {
   describe('Command Token Redistribution', () => {
     test('command tokens removed from board during status phase', () => {
@@ -41,9 +51,10 @@ describe('Status Phase', () => {
       // Verify token was placed
       expect(game.state.systems[target].commandTokens).toContain('dennis')
 
-      // Complete action phase: both use strategy cards then pass
-      t.choose(game, 'Strategic Action')  // micah
-      t.choose(game, 'Strategic Action')  // dennis
+      // Complete action phase
+      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'hacan-home')        // micah picks system
+      t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
       t.choose(game, 'Pass')              // micah
       t.choose(game, 'Pass')              // dennis
 
@@ -77,10 +88,7 @@ describe('Status Phase', () => {
       expect(game.state.planets['jord'].exhausted).toBe(true)
 
       // Both use strategy cards then pass
-      t.choose(game, 'Strategic Action')
-      t.choose(game, 'Strategic Action')
-      t.choose(game, 'Pass')
-      t.choose(game, 'Pass')
+      playThroughActionPhase(game)
 
       // Status phase
       t.choose(game, 'Done')
@@ -122,8 +130,9 @@ describe('Status Phase', () => {
       })
 
       // Complete action phase
-      t.choose(game, 'Strategic Action')  // micah
-      t.choose(game, 'Strategic Action')  // dennis
+      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'hacan-home')        // micah picks system
+      t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
       t.choose(game, 'Pass')              // micah
       t.choose(game, 'Pass')              // dennis
 
@@ -145,10 +154,7 @@ describe('Status Phase', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Both use strategy cards then pass
-      t.choose(game, 'Strategic Action')
-      t.choose(game, 'Strategic Action')
-      t.choose(game, 'Pass')
-      t.choose(game, 'Pass')
+      playThroughActionPhase(game)
 
       // Status phase
       t.choose(game, 'Done')
@@ -164,10 +170,7 @@ describe('Status Phase', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
-      t.choose(game, 'Strategic Action')
-      t.choose(game, 'Pass')
-      t.choose(game, 'Pass')
+      playThroughActionPhase(game)
 
       t.choose(game, 'Done')
       t.choose(game, 'Done')
