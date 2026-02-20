@@ -59,7 +59,7 @@ describe('Bumper Crop', () => {
     // Card gives 1 VP (vps: 1 in card definition)
     t.testBoard(game, {
       dennis: {
-        score: -9,  // 2 fields(+1) + 0 pastures/grain/veg/sheep/boar/cattle(−7) + 11 empty(−11) + 2 family(+6) + 1 VP card(+1)
+        score: -7,  // 2 fields(+1) + 0 pastures/veg/sheep/boar/cattle(−5) + grain in fields 2(+1) + 11 empty(−11) + 2 family(+6) + 1 VP card(+1)
         minorImprovements: ['bumper-crop-e025'],
         farmyard: {
           fields: [

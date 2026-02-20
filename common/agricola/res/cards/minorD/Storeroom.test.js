@@ -23,7 +23,7 @@ describe('Storeroom', () => {
     // Pairs: min(5,3) = 3, Points: ceil(3/2) = 2, plus vps: 1
     t.testBoard(game, {
       dennis: {
-        score: -2,
+        score: 0,  // grain(5):+2, veg(3):+3 (includes field crops)
         grain: 3,
         vegetables: 2,
         minorImprovements: ['storeroom-d031'],

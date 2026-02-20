@@ -78,7 +78,7 @@ describe('Greening Plan', () => {
 
     t.testBoard(game, {
       dennis: {
-        score: -13,
+        score: -11,  // grain in field(2) now scores +1 instead of -1
         minorImprovements: ['greening-plan-c033'],
         farmyard: {
           fields: [{ row: 2, col: 0, crop: 'grain', cropCount: 2 }],

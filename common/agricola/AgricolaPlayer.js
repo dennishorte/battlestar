@@ -102,6 +102,16 @@ class AgricolaPlayer extends BasePlayer {
     return [...this.playedMinorImprovements, ...this.majorImprovements]
   }
 
+  getTotalGrain() {
+    let total = this.grain
+    for (const field of this.getFieldSpaces()) {
+      if (field.crop === 'grain' && field.cropCount > 0) {
+        total += field.cropCount
+      }
+    }
+    return total
+  }
+
   getTotalVegetables() {
     let total = this.vegetables
     for (const field of this.getFieldSpaces()) {
@@ -1899,8 +1909,8 @@ class AgricolaPlayer extends BasePlayer {
     const categoryValues = {
       fields,
       pastures: this.getPastureCount(),
-      grain: this.grain,
-      vegetables: this.vegetables,
+      grain: this.getTotalGrain(),
+      vegetables: this.getTotalVegetables(),
       sheep: this.getTotalAnimals('sheep'),
       boar: this.getTotalAnimals('boar'),
       cattle: this.getTotalAnimals('cattle'),
@@ -3233,8 +3243,8 @@ class AgricolaPlayer extends BasePlayer {
     return {
       fields,
       pastures: this.getPastureCount(),
-      grain: this.grain,
-      vegetables: this.vegetables,
+      grain: this.getTotalGrain(),
+      vegetables: this.getTotalVegetables(),
       sheep: this.getTotalAnimals('sheep'),
       boar: this.getTotalAnimals('boar'),
       cattle: this.getTotalAnimals('cattle'),

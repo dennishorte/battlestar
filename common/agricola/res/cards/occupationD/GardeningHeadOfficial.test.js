@@ -103,10 +103,10 @@ describe('Gardening Head Official', () => {
     // rooms: 2 wood => 0, family: 2 * 3 = 6
     // unused: 15 - 2 rooms - 1 field = 12 => -12
     // GHO getEndGamePointsAllPlayers: +2 (dennis has 1 veg in field > micah's 0)
-    // Total: -5 + 0 + 6 - 12 + 2 = -9
+    // Total: -5 + 0 + 6 - 12 + 2 + 1 (veg in field) = -8
     t.testBoard(game, {
       dennis: {
-        score: -9,
+        score: -8,
         food: 8, // 10 + 2 (DL) - 4 (harvest feeding)
         vegetables: 1, // harvested from field during field phase
         clay: 1, // from Clay Pit

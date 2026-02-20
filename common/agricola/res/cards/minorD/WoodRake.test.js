@@ -71,7 +71,7 @@ describe('Wood Rake', () => {
     // fieldPhase snapshots 7 goods before harvest → 2 bonus points
     t.testBoard(game, {
       dennis: {
-        score: -2, // fields:+2, grain:+1, veg:+1, 5 categories:-5, unused(10):-10, family:+6, WoodRake:+2, rooms:+1
+        score: 0, // fields:+2, grain(5):+2, veg(2):+2, 4 categories:-4, unused(10):-10, family:+6, WoodRake:+2
         food: 18, // 20 + 2 DL - 4 feeding
         clay: 1,
         grain: 2, // 1 from each grain field

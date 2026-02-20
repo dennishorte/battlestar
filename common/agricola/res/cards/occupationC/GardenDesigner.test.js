@@ -61,7 +61,7 @@ describe('Garden Designer', () => {
       dennis: {
         occupations: ['garden-designer-c099'],
         food: 5,
-        score: -13,
+        score: -11,  // grain in field(3) now scores +1 instead of -1
         farmyard: {
           fields: [
             { row: 2, col: 0, crop: 'grain', cropCount: 3 },
