@@ -1,27 +1,196 @@
+const t = require('../testutil.js')
+
+// Helper: play through strategy phase with specific cards
+function pickStrategyCards(game, dennisCard, micahCard) {
+  t.choose(game, dennisCard)
+  t.choose(game, micahCard)
+}
+
 describe('Action Phase', () => {
   describe('Turn Order', () => {
-    test.todo('player with lowest strategy card number goes first')
-    test.todo('turns rotate through active players')
-    test.todo('skip passed players in turn rotation')
+    test('player with lowest strategy card number goes first', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'imperial', 'leadership')
+
+      // micah has leadership(1), dennis has imperial(8)
+      expect(game.waiting.selectors[0].actor).toBe('micah')
+    })
+
+    test('turns rotate through active players', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // dennis first (leadership=1)
+      expect(game.waiting.selectors[0].actor).toBe('dennis')
+      t.choose(game, 'Tactical Action')
+      t.choose(game, 'Done')
+
+      // micah next
+      expect(game.waiting.selectors[0].actor).toBe('micah')
+      t.choose(game, 'Tactical Action')
+      t.choose(game, 'Done')
+
+      // back to dennis
+      expect(game.waiting.selectors[0].actor).toBe('dennis')
+    })
+
+    test('skip passed players in turn rotation', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // dennis: use strategy card
+      t.choose(game, 'Strategic Action')
+      // micah: use strategy card
+      t.choose(game, 'Strategic Action')
+      // dennis: pass
+      t.choose(game, 'Pass')
+
+      // only micah left
+      expect(game.waiting.selectors[0].actor).toBe('micah')
+    })
   })
 
   describe('Action Types', () => {
-    test.todo('player can take tactical action')
-    test.todo('player can take strategic action')
-    test.todo('player can take component action')
-    test.todo('player can pass after using strategy card')
-    test.todo('player cannot pass until strategy card is used')
+    test('player can take tactical action', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      const choices = t.currentChoices(game)
+      expect(choices).toContain('Tactical Action')
+    })
+
+    test('player can take strategic action', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      const choices = t.currentChoices(game)
+      expect(choices).toContain('Strategic Action')
+    })
+
+    test('player can take component action', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      const choices = t.currentChoices(game)
+      expect(choices).toContain('Component Action')
+    })
+
+    test('player can pass after using strategy card', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // dennis uses strategy card
+      t.choose(game, 'Strategic Action')
+      // micah's turn (skip)
+      t.choose(game, 'Tactical Action')
+      t.choose(game, 'Done')
+
+      // dennis should now have Pass available
+      const choices = t.currentChoices(game)
+      expect(choices).toContain('Pass')
+    })
+
+    test('player cannot pass until strategy card is used', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // dennis has not used strategy card yet
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('Pass')
+    })
   })
 
   describe('Passing', () => {
-    test.todo('player who passes takes no more turns this phase')
-    test.todo('action phase ends when all players have passed')
-    test.todo('passed state resets at start of next action phase')
+    test('player who passes takes no more turns this phase', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Both use strategy cards
+      t.choose(game, 'Strategic Action')  // dennis
+      t.choose(game, 'Strategic Action')  // micah
+      // dennis passes
+      t.choose(game, 'Pass')
+
+      // micah is the only active player, all subsequent turns are micah
+      expect(game.waiting.selectors[0].actor).toBe('micah')
+      t.choose(game, 'Tactical Action')
+      t.choose(game, 'Done')
+      expect(game.waiting.selectors[0].actor).toBe('micah')
+    })
+
+    test('action phase ends when all players have passed', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Both use strategy cards then pass
+      t.choose(game, 'Strategic Action')  // dennis
+      t.choose(game, 'Strategic Action')  // micah
+      t.choose(game, 'Pass')              // dennis
+      t.choose(game, 'Pass')              // micah
+
+      // Should now be in status phase
+      expect(game.state.phase).toBe('status')
+    })
+
+    test('passed state resets for next round', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Both use strategy cards then pass (ends action phase)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')
+
+      // Status phase: redistribute tokens for each player
+      t.choose(game, 'Done')  // dennis
+      t.choose(game, 'Done')  // micah
+
+      // Round 2 strategy phase
+      expect(game.state.round).toBe(2)
+      expect(game.state.phase).toBe('strategy')
+      expect(game.waiting.selectors[0].title).toBe('Choose Strategy Card')
+    })
   })
 
   describe('Strategic Action', () => {
-    test.todo('using strategy card marks it as used')
-    test.todo('strategic action not available after card is used')
+    test('using strategy card marks it as used', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Strategic Action')  // dennis uses leadership
+
+      expect(game.players.byName('dennis').hasUsedStrategyCard()).toBe(true)
+    })
+
+    test('strategic action not available after card is used', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // dennis uses strategy card
+      t.choose(game, 'Strategic Action')
+      // micah's turn (skip)
+      t.choose(game, 'Tactical Action')
+      t.choose(game, 'Done')
+
+      // Back to dennis — Strategic Action should not be available
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('Strategic Action')
+    })
+
     test.todo('other players can resolve secondary')
     test.todo('secondary costs strategy command token')
   })
