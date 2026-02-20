@@ -854,6 +854,487 @@ describe('Faction Abilities', () => {
     })
   })
 
+  describe('Arborec', () => {
+    describe('Mitosis', () => {
+      test('places 1 infantry on controlled planet during status phase', () => {
+        const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Play through action phase
+        t.choose(game, 'Strategic Action')  // dennis: leadership
+        t.choose(game, 'Pass')  // micah declines secondary
+        t.choose(game, 'Strategic Action')  // micah: diplomacy
+        t.choose(game, 'hacan-home')
+        t.choose(game, 'Pass')  // dennis declines secondary
+        t.choose(game, 'Pass')
+        t.choose(game, 'Pass')
+
+        // Status phase — Arborec mitosis: choose planet
+        t.choose(game, 'nestphar')
+
+        // Token redistribution
+        t.choose(game, 'Done')  // dennis
+        t.choose(game, 'Done')  // micah
+
+        // Arborec should have 1 more infantry on nestphar
+        // Started with 4 infantry + 1 mitosis = 5
+        const nestphar = game.state.units['arborec-home'].planets['nestphar']
+          .filter(u => u.owner === 'dennis' && u.type === 'infantry')
+        expect(nestphar.length).toBe(5)
+      })
+    })
+  })
+
+  describe('Clan of Saar', () => {
+    describe('Scavenge', () => {
+      test('gains 1 trade good when gaining planet control', () => {
+        // Saar moves ground forces to an uncontrolled planet
+        const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            tradeGoods: 0,
+            units: {
+              'saar-home': {
+                space: ['carrier'],
+                'lisis-ii': ['infantry', 'infantry', 'space-dock'],
+              },
+              '27': {
+                space: ['carrier'],
+                'new-albion': ['infantry'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis takes tactical action to move into system 37 (has planets)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '37' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'carrier', from: '27', count: 1 }, { unitType: 'infantry', from: '27', count: 1 }],
+        })
+
+        // Infantry placed on planet → planet gained → scavenge triggers
+        const dennis = game.players.byName('dennis')
+        expect(dennis.tradeGoods).toBe(1)
+      })
+    })
+  })
+
+  describe('Embers of Muaat', () => {
+    describe('Star Forge', () => {
+      test('spends strategy token to place fighters in war sun system', () => {
+        const game = t.fixture({ factions: ['embers-of-muaat', 'emirates-of-hacan'] })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis uses Component Action → Star Forge
+        t.choose(game, 'Component Action')
+        t.choose(game, 'star-forge')
+
+        // Choose 2 Fighters
+        t.choose(game, '2 Fighters')
+
+        // War sun is in muaat-home, auto-selects system
+        const spaceUnits = game.state.units['muaat-home'].space
+          .filter(u => u.owner === 'dennis')
+          .map(u => u.type)
+          .sort()
+        // Started with war-sun + 2 fighters, now + 2 fighters = war-sun + 4 fighters
+        expect(spaceUnits).toEqual(['fighter', 'fighter', 'fighter', 'fighter', 'war-sun'])
+
+        // Should have spent 1 strategy token
+        const dennis = game.players.byName('dennis')
+        expect(dennis.commandTokens.strategy).toBe(1)
+      })
+
+      test('can place 1 destroyer instead of fighters', () => {
+        const game = t.fixture({ factions: ['embers-of-muaat', 'emirates-of-hacan'] })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Component Action')
+        t.choose(game, 'star-forge')
+        t.choose(game, '1 Destroyer')
+
+        const spaceUnits = game.state.units['muaat-home'].space
+          .filter(u => u.owner === 'dennis')
+          .map(u => u.type)
+          .sort()
+        expect(spaceUnits).toEqual(['destroyer', 'fighter', 'fighter', 'war-sun'])
+      })
+    })
+
+    describe('Gashlai Physiology', () => {
+      test('ships can move through supernova systems', () => {
+        const game = t.fixture({ factions: ['embers-of-muaat', 'emirates-of-hacan'] })
+        game.run()
+
+        // Test the canMoveThroughSupernovae method directly
+        expect(game.factionAbilities.canMoveThroughSupernovae('dennis')).toBe(true)
+        expect(game.factionAbilities.canMoveThroughSupernovae('micah')).toBe(false)
+      })
+    })
+  })
+
+  describe('Yin Brotherhood', () => {
+    describe('Devotion', () => {
+      test('destroys own ship to produce hit after space combat round', () => {
+        const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            units: {
+              'yin-home': {
+                space: ['cruiser', 'destroyer'],
+                'darien': ['space-dock'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              '27': {
+                space: ['fighter', 'fighter'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [
+            { unitType: 'cruiser', from: 'yin-home', count: 1 },
+            { unitType: 'destroyer', from: 'yin-home', count: 1 },
+          ],
+        })
+
+        // During combat, Yin gets Devotion prompt after each round
+        // Choose to destroy destroyer to produce a hit
+        t.choose(game, 'Destroy destroyer')
+
+        // Combat should resolve — Yin should win
+        const micahShips = game.state.units['27'].space
+          .filter(u => u.owner === 'micah')
+        expect(micahShips.length).toBe(0)
+
+        // Yin should have lost the destroyer (sacrificed) but cruiser survives
+        const dennisShips = game.state.units['27'].space
+          .filter(u => u.owner === 'dennis')
+        expect(dennisShips.some(u => u.type === 'cruiser')).toBe(true)
+        expect(dennisShips.every(u => u.type !== 'destroyer')).toBe(true)
+      })
+    })
+
+    describe('Indoctrination', () => {
+      test('replaces enemy infantry at ground combat start', () => {
+        const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
+        // Yin invades a planet controlled by Hacan
+        t.setBoard(game, {
+          dennis: {
+            units: {
+              'yin-home': {
+                space: ['carrier'],
+                'darien': ['infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+          micah: {
+            planets: {
+              'new-albion': { exhausted: false },
+            },
+            units: {
+              '27': {
+                'new-albion': ['infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis (Yin) moves carrier + infantry to system 27
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [
+            { unitType: 'carrier', from: 'yin-home', count: 1 },
+            { unitType: 'infantry', from: 'yin-home', count: 4 },
+          ],
+        })
+
+        // Indoctrination prompt: spend 2 influence to replace 1 enemy infantry
+        t.choose(game, 'Indoctrinate')
+
+        // Ground combat resolves. Yin should win (4+1 vs 2-1 infantry)
+        expect(game.state.planets['new-albion'].controller).toBe('dennis')
+      })
+    })
+  })
+
+  describe('L1Z1X Mindnet', () => {
+    describe('Assimilate', () => {
+      test('replaces enemy PDS and docks when gaining planet', () => {
+        const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+        // System 27 = New Albion + Starpoint — use 37 = Arinam + Meer for different planet
+        t.setBoard(game, {
+          dennis: {
+            units: {
+              'l1z1x-home': {
+                space: ['carrier', 'carrier'],
+                '0-0-0': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'space-dock', 'pds'],
+              },
+            },
+          },
+          micah: {
+            planets: {
+              'new-albion': { exhausted: false },
+            },
+            units: {
+              '27': {
+                'new-albion': ['infantry', 'pds', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis (L1Z1X) moves 2 carriers + 6 infantry to system 27
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [
+            { unitType: 'carrier', from: 'l1z1x-home', count: 2 },
+            { unitType: 'infantry', from: 'l1z1x-home', count: 6 },
+          ],
+        })
+
+        // After ground combat (dennis wins 6 infantry vs 1 + structures)
+        // L1Z1X assimilate should replace enemy PDS and space dock
+        expect(game.state.planets['new-albion'].controller).toBe('dennis')
+
+        // Check structures belong to dennis now
+        const newAlbion = game.state.units['27'].planets['new-albion']
+          .filter(u => u.owner === 'dennis')
+          .map(u => u.type)
+
+        // Should have assimilated PDS and space dock
+        expect(newAlbion).toContain('pds')
+        expect(newAlbion).toContain('space-dock')
+      })
+    })
+
+    describe('Harrow', () => {
+      test('non-fighter ships bombard during ground combat rounds', () => {
+        const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+        // L1Z1X invades with 2 dreadnoughts (bombardment) + carrier with infantry
+        t.setBoard(game, {
+          dennis: {
+            units: {
+              'l1z1x-home': {
+                space: ['dreadnought', 'dreadnought', 'carrier'],
+                '0-0-0': ['infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+          micah: {
+            planets: {
+              'new-albion': { exhausted: false },
+            },
+            units: {
+              '27': {
+                'new-albion': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [
+            { unitType: 'dreadnought', from: 'l1z1x-home', count: 2 },
+            { unitType: 'carrier', from: 'l1z1x-home', count: 1 },
+            { unitType: 'infantry', from: 'l1z1x-home', count: 4 },
+          ],
+        })
+
+        // Ground combat with Harrow: 2 dreadnoughts bombard (5x1 each) every round
+        // Plus regular bombardment before combat, plus 4 infantry in ground combat
+        // L1Z1X should overwhelm 5 defending infantry
+        const controller = game.state.planets['new-albion'].controller
+        expect(controller).toBe('dennis')
+      })
+    })
+  })
+
+  describe('Winnu', () => {
+    describe('Blood Ties', () => {
+      test('removes custodians without spending influence', () => {
+        const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+        const { Galaxy } = require('../model/Galaxy.js')
+        const setupGame = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+        setupGame.run()
+        const galaxy = new Galaxy(setupGame)
+        const mecatolAdjacent = galaxy.getAdjacent('18')[0]
+
+        t.setBoard(game, {
+          dennis: {
+            tradeGoods: 0,
+            units: {
+              'winnu-home': {
+                'winnu': ['space-dock'],
+              },
+              [mecatolAdjacent]: {
+                space: ['carrier'],
+                ...((() => {
+                  const tile = require('../res/index.js').getSystemTile(mecatolAdjacent) || require('../res/index.js').getSystemTile(Number(mecatolAdjacent))
+                  const p = tile?.planets[0]
+                  return p ? { [p]: ['infantry', 'infantry'] } : {}
+                })()),
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '18' })
+        t.action(game, 'move-ships', {
+          movements: [
+            { unitType: 'carrier', from: mecatolAdjacent, count: 1 },
+            { unitType: 'infantry', from: mecatolAdjacent, count: 2 },
+          ],
+        })
+
+        // Winnu removes custodians for free (Blood Ties)
+        expect(game.state.custodiansRemoved).toBe(true)
+        expect(game.players.byName('dennis').victoryPoints).toBe(1)
+      })
+    })
+
+    describe('Reclamation', () => {
+      test('places PDS and dock on Mecatol Rex after gaining control', () => {
+        const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+        const { Galaxy } = require('../model/Galaxy.js')
+        const setupGame = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+        setupGame.run()
+        const galaxy = new Galaxy(setupGame)
+        const mecatolAdjacent = galaxy.getAdjacent('18')[0]
+
+        t.setBoard(game, {
+          dennis: {
+            units: {
+              'winnu-home': {
+                'winnu': ['space-dock'],
+              },
+              [mecatolAdjacent]: {
+                space: ['carrier'],
+                ...((() => {
+                  const tile = require('../res/index.js').getSystemTile(mecatolAdjacent) || require('../res/index.js').getSystemTile(Number(mecatolAdjacent))
+                  const p = tile?.planets[0]
+                  return p ? { [p]: ['infantry', 'infantry'] } : {}
+                })()),
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '18' })
+        t.action(game, 'move-ships', {
+          movements: [
+            { unitType: 'carrier', from: mecatolAdjacent, count: 1 },
+            { unitType: 'infantry', from: mecatolAdjacent, count: 2 },
+          ],
+        })
+
+        // Check Mecatol has PDS and space dock from Reclamation
+        const mecatolUnits = game.state.units['18'].planets['mecatol-rex']
+          .filter(u => u.owner === 'dennis')
+          .map(u => u.type)
+          .sort()
+        expect(mecatolUnits).toContain('pds')
+        expect(mecatolUnits).toContain('space-dock')
+      })
+    })
+  })
+
+  describe('Xxcha Kingdom', () => {
+    describe('Peace Accords', () => {
+      test('gains unoccupied adjacent planet after diplomacy', () => {
+        const game = t.fixture({ factions: ['xxcha-kingdom', 'emirates-of-hacan'] })
+        game.run()
+        pickStrategyCards(game, 'diplomacy', 'leadership')
+
+        // Micah (leadership=1) goes first
+        t.choose(game, 'Strategic Action')  // micah: leadership
+        t.choose(game, 'Pass')  // dennis declines secondary
+
+        // Dennis (Xxcha, diplomacy=2) uses diplomacy
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'xxcha-home')  // Choose home system for Diplomacy
+
+        // Peace Accords: Xxcha can gain unoccupied planet adjacent to controlled planets
+        const choices = t.currentChoices(game)
+        expect(choices).toContain('Pass')
+        expect(choices.length).toBeGreaterThan(1)
+
+        // Choose first non-Pass option
+        const planetChoice = choices.find(c => c !== 'Pass')
+        t.choose(game, planetChoice)
+
+        // Micah gets diplomacy secondary prompt
+        t.choose(game, 'Pass')
+
+        // The chosen planet should now be controlled by dennis
+        expect(game.state.planets[planetChoice].controller).toBe('dennis')
+      })
+    })
+
+    describe('Quash', () => {
+      test('spends strategy token to discard and replace agenda', () => {
+        const game = t.fixture({ factions: ['xxcha-kingdom', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          custodiansRemoved: true,
+          agendaDeck: ['mutiny', 'anti-intellectual-revolution', 'incentive-program'],
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Play through action phase
+        t.choose(game, 'Strategic Action')  // dennis: leadership
+        t.choose(game, 'Pass')  // micah declines secondary
+        t.choose(game, 'Strategic Action')  // micah: diplomacy
+        t.choose(game, 'hacan-home')
+        t.choose(game, 'Pass')  // dennis declines secondary
+        t.choose(game, 'Pass')
+        t.choose(game, 'Pass')
+
+        // Status phase
+        t.choose(game, 'Done')  // dennis
+        t.choose(game, 'Done')  // micah
+
+        // Agenda phase — first agenda revealed: "mutiny"
+        // Xxcha (dennis) gets Quash prompt
+        t.choose(game, 'Quash')
+
+        // Strategy token spent (started with 2, spent 1)
+        const dennis = game.players.byName('dennis')
+        expect(dennis.commandTokens.strategy).toBe(1)
+      })
+    })
+  })
+
   describe('Starting Units', () => {
     test('Sol starts with correct home system units', () => {
       const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
