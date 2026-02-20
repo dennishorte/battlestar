@@ -161,6 +161,15 @@ Twilight.prototype._initializeFactions = function() {
     }
     const techZone = this.zones.byPlayer(player, 'technologies')
     techZone.initializeCards(techCards)
+
+    // Give player their generic promissory notes + faction note
+    const genericNotes = res.getGenericPromissoryNotes()
+    for (const note of genericNotes) {
+      player.addPromissoryNote(note.id, player.name)
+    }
+    if (player.faction.promissoryNote) {
+      player.addPromissoryNote(player.faction.promissoryNote.id, player.name)
+    }
   }
 }
 
@@ -2372,7 +2381,7 @@ Twilight.prototype._offerTransactions = function(player) {
       break
     }
 
-    // Check if player or any neighbor has resources to trade
+    // Check if player or any neighbor has trade goods or commodities
     const hasResources = player.tradeGoods > 0 || player.commodities > 0
     const neighborHasResources = neighbors.some(n => {
       const p = this.players.byName(n)
@@ -2489,6 +2498,23 @@ Twilight.prototype._executeTransaction = function(player, target, offering, requ
   if (requestedComm > 0) {
     target.commodities -= requestedComm
     player.addTradeGoods(requestedComm)  // commodities convert to trade goods on receipt
+  }
+
+  // Exchange promissory notes
+  const offeredNotes = offering.promissoryNotes || []
+  for (const noteSpec of offeredNotes) {
+    const note = player.removePromissoryNote(noteSpec.id, noteSpec.owner)
+    if (note) {
+      target.addPromissoryNote(note.id, note.owner)
+    }
+  }
+
+  const requestedNotes = requesting.promissoryNotes || []
+  for (const noteSpec of requestedNotes) {
+    const note = target.removePromissoryNote(noteSpec.id, noteSpec.owner)
+    if (note) {
+      player.addPromissoryNote(note.id, note.owner)
+    }
   }
 
   this.log.add({

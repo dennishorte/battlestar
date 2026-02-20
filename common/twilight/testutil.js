@@ -259,6 +259,21 @@ TestUtil.setBoard = function(game, state) {
           }
         }
       }
+
+      // Promissory notes
+      if (playerState.promissoryNotes !== undefined) {
+        player.promissoryNotes = []
+        for (const noteSpec of playerState.promissoryNotes) {
+          if (typeof noteSpec === 'string') {
+            // Simple ID — assume owned by this player
+            player.addPromissoryNote(noteSpec, player.name)
+          }
+          else {
+            // { id, owner } object
+            player.addPromissoryNote(noteSpec.id, noteSpec.owner)
+          }
+        }
+      }
     }
   })
 }
