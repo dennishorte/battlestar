@@ -36,7 +36,9 @@ Pure value queries — no mutation, no prompts. Return a number or boolean.
 | `getCombatModifier(player)` | Number (+1 fragile, -1 unrelenting) | Combat dice |
 | `getStatusPhaseTokenBonus(player)` | Number (0 or 1) | Versatile |
 | `canTradeWithNonNeighbors(player)` | Boolean | Guild Ships |
-| `getTechPrerequisiteSkips(player, tech)` | Number (0 or 1) | Analytical |
+| `getTechPrerequisiteSkips(player, tech)` | Number (0-2) | Analytical, Brilliant |
+| `canSkipTradeSecondaryCost(player)` | Boolean | Masters of Trade |
+| `getActionCardHandLimit(player)` | Number or Infinity | Crafty |
 
 **How to add a passive modifier:**
 1. Add method to `FactionAbilities` class
@@ -71,10 +73,11 @@ Event-driven methods called from the space combat flow.
 
 | Hook | Called From | When |
 |------|-----------|------|
-| `onSpaceCombatStart(systemId, attacker, defender)` | `_spaceCombat` | Before AFB |
+| `onSpaceCombatStart(systemId, attacker, defender)` | `_spaceCombat` | Before combat rounds (Mentak ambush) |
+| `onSpaceCombatRound(systemId, attacker, defender)` | `_spaceCombat` loop | Each round (Letnev munitions-reserves) |
 
 **How to add a combat trigger:**
-1. Add logic inside `onSpaceCombatStart` (or add new hook if timing differs)
+1. Add logic inside the appropriate hook (or add new hook if timing differs)
 2. Use `this.game.random()` for dice, `this.game._getUnitStats()` for unit data
 3. Write test: move ships into enemy system, verify combat outcome
 
@@ -84,12 +87,36 @@ Called after trade completes.
 
 | Hook | Called From | When |
 |------|-----------|------|
-| `onTransactionComplete(player)` | `_executeTransaction` | After exchange |
+| `onTransactionComplete(player)` | `_resolveTransaction` | After exchange (Mentak pillage) |
 
 **How to add a transaction trigger:**
 1. Add logic inside `onTransactionComplete`
 2. Use `this.game.areNeighbors()` for adjacency checks
 3. Write test: set up trade between neighbors, verify trigger effect
+
+### E. Draw Triggers
+
+Called when action cards are drawn.
+
+| Hook | Called From | When |
+|------|-----------|------|
+| `onActionCardDraw(player, drawn)` | `_drawActionCards` | After cards added to hand (Yssaril scheming) |
+
+### F. Movement Triggers
+
+Called after ships enter a system.
+
+| Hook | Called From | When |
+|------|-----------|------|
+| `onShipsEnterSystem(systemId, moverName)` | `_tacticalAction` | After movement step, before combat (Naalu foresight) |
+
+### G. Tech Triggers
+
+Called after a technology is researched.
+
+| Hook | Called From | When |
+|------|-----------|------|
+| `onTechResearched(player, tech)` | `_researchTech` | After tech added (Jol-Nar brilliant — exhaust 2 techs) |
 
 ---
 
