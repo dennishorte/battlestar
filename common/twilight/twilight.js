@@ -620,12 +620,13 @@ Twilight.prototype.actionPhase = function() {
   }
 
   // Turn order by strategy card initiative number
+  // Naalu Telepathic: always initiative 0 (goes first)
   const turnOrder = this.players.all()
     .filter(p => p.getStrategyCardId())
     .sort((a, b) => {
-      const cardA = res.getStrategyCard(a.getStrategyCardId())
-      const cardB = res.getStrategyCard(b.getStrategyCardId())
-      return cardA.number - cardB.number
+      const aInit = this._getInitiative(a)
+      const bInit = this._getInitiative(b)
+      return aInit - bInit
     })
 
   let activeIndex = 0
@@ -1264,6 +1265,9 @@ Twilight.prototype._spaceCombat = function(player, systemId) {
   })
   this.log.indent()
 
+  // Mentak Ambush (before AFB)
+  this._mentakAmbush(systemId, attacker, defender)
+
   // Anti-Fighter Barrage (before combat)
   this._antiFighterBarrage(systemId, attacker, defender)
 
@@ -1295,6 +1299,59 @@ Twilight.prototype._spaceCombat = function(player, systemId) {
   }
 
   this.log.outdent()
+}
+
+Twilight.prototype._mentakAmbush = function(systemId, attacker, defender) {
+  const systemUnits = this.state.units[systemId]
+
+  // Both sides can potentially be Mentak
+  for (const [shooter, target] of [[attacker, defender], [defender, attacker]]) {
+    const shooterPlayer = this.players.byName(shooter)
+    if (!shooterPlayer.faction?.abilities?.some(a => a.id === 'ambush')) {
+      continue
+    }
+
+    // Check that Mentak has non-fighter ships in this system
+    const hasShips = systemUnits.space.some(u => u.owner === shooter && u.type !== 'fighter')
+    if (!hasShips) {
+      continue
+    }
+
+    // Roll 2 dice, 9+ each destroy 1 non-fighter ship
+    let hits = 0
+    for (let i = 0; i < 2; i++) {
+      const roll = Math.floor(this.random() * 10) + 1
+      if (roll >= 9) {
+        hits++
+      }
+    }
+
+    if (hits > 0) {
+      this.log.add({
+        template: '{shooter} Ambush scores {hits} hits',
+        args: { shooter, hits },
+      })
+
+      // Destroy non-fighter ships (auto-assign: cheapest first)
+      for (let i = 0; i < hits; i++) {
+        const nonFighters = systemUnits.space
+          .filter(u => u.owner === target && u.type !== 'fighter')
+          .sort((a, b) => {
+            const defA = this._getUnitStats(a.owner, a.type)
+            const defB = this._getUnitStats(b.owner, b.type)
+            return (defA?.cost || 0) - (defB?.cost || 0)
+          })
+
+        if (nonFighters.length > 0) {
+          const toDestroy = nonFighters[0]
+          const idx = systemUnits.space.indexOf(toDestroy)
+          if (idx !== -1) {
+            systemUnits.space.splice(idx, 1)
+          }
+        }
+      }
+    }
+  }
 }
 
 Twilight.prototype._antiFighterBarrage = function(systemId, attacker, defender) {
@@ -2548,6 +2605,14 @@ Twilight.prototype._resolveSecondary = function(player, cardId) {
       // Ready 2 exhausted planets (simplified)
       this._diplomacySecondary(player)
       break
+    case 'politics':
+      // Draw 2 action cards
+      this._drawActionCards(player, 2)
+      this.log.add({
+        template: '{player} draws 2 action cards (Politics secondary)',
+        args: { player },
+      })
+      break
     case 'technology':
       // Research 1 technology (same as primary but costs strategy token)
       this._researchTech(player)
@@ -2729,9 +2794,11 @@ Twilight.prototype._offerTransactions = function(player) {
 
 Twilight.prototype._getAvailableTradePartners = function(player) {
   const traded = this.state.transactionsThisTurn || {}
+  // Hacan Guild Ships: can trade with non-neighbors
+  const hasGuildShips = player.faction?.abilities?.some(a => a.id === 'guild-ships')
   return this.players.all()
     .filter(p => p.name !== player.name)
-    .filter(p => this.areNeighbors(player.name, p.name))
+    .filter(p => hasGuildShips || this.areNeighbors(player.name, p.name))
     .filter(p => !traded[p.name])
     .map(p => p.name)
 }
@@ -2843,6 +2910,59 @@ Twilight.prototype._executeTransaction = function(player, target, offering, requ
     template: '{player} and {target} complete a transaction',
     args: { player, target },
   })
+
+  // Mentak Pillage: after transaction, Mentak neighbor can steal 1 TG/commodity
+  this._mentakPillage(player)
+  this._mentakPillage(target)
+}
+
+Twilight.prototype._mentakPillage = function(transactionPlayer) {
+  // Find any Mentak player who is a neighbor of the transaction player
+  for (const mentakCandidate of this.players.all()) {
+    if (mentakCandidate.name === transactionPlayer.name) {
+      continue
+    }
+    if (!mentakCandidate.faction?.abilities?.some(a => a.id === 'pillage')) {
+      continue
+    }
+    if (!this.areNeighbors(mentakCandidate.name, transactionPlayer.name)) {
+      continue
+    }
+
+    // Transaction player must have trade goods or commodities to steal
+    if (transactionPlayer.tradeGoods <= 0 && transactionPlayer.commodities <= 0) {
+      continue
+    }
+
+    const choices = ['Pass']
+    if (transactionPlayer.tradeGoods > 0) {
+      choices.unshift('Steal Trade Good')
+    }
+    if (transactionPlayer.commodities > 0) {
+      choices.unshift('Steal Commodity')
+    }
+
+    const selection = this.actions.choose(mentakCandidate, choices, {
+      title: `Pillage ${transactionPlayer.name}?`,
+    })
+
+    if (selection[0] === 'Steal Trade Good') {
+      transactionPlayer.spendTradeGoods(1)
+      mentakCandidate.addTradeGoods(1)
+      this.log.add({
+        template: '{mentak} pillages 1 trade good from {target}',
+        args: { mentak: mentakCandidate, target: transactionPlayer },
+      })
+    }
+    else if (selection[0] === 'Steal Commodity') {
+      transactionPlayer.commodities -= 1
+      mentakCandidate.addTradeGoods(1)  // commodities become TG
+      this.log.add({
+        template: '{mentak} pillages 1 commodity from {target}',
+        args: { mentak: mentakCandidate, target: transactionPlayer },
+      })
+    }
+  }
 }
 
 
@@ -2885,6 +3005,9 @@ Twilight.prototype._componentAction = function(player) {
     case 'orbital-drop':
       this._orbitalDrop(player)
       break
+    case 'stall-tactics':
+      this._stallTactics(player)
+      break
   }
 
   this.log.outdent()
@@ -2897,6 +3020,13 @@ Twilight.prototype._getAvailableComponentActions = function(player) {
   if (player.faction?.abilities?.some(a => a.id === 'orbital-drop')) {
     if (player.commandTokens.tactics >= 1) {
       actions.push({ id: 'orbital-drop', name: 'Orbital Drop' })
+    }
+  }
+
+  // Yssaril: Stall Tactics (discard 1 action card)
+  if (player.faction?.abilities?.some(a => a.id === 'stall-tactics')) {
+    if ((player.actionCards || []).length > 0) {
+      actions.push({ id: 'stall-tactics', name: 'Stall Tactics' })
     }
   }
 
@@ -2929,6 +3059,35 @@ Twilight.prototype._orbitalDrop = function(player) {
       args: { player, planet: targetPlanet },
     })
   }
+}
+
+Twilight.prototype._stallTactics = function(player) {
+  const cards = player.actionCards || []
+  if (cards.length === 0) {
+    return
+  }
+
+  const choices = cards.map(c => c.id)
+  const selection = this.actions.choose(player, choices, {
+    title: 'Discard Action Card (Stall Tactics)',
+  })
+
+  const cardId = selection[0]
+  player.actionCards = cards.filter(c => c.id !== cardId)
+
+  this.log.add({
+    template: '{player} uses Stall Tactics: discards an action card',
+    args: { player },
+  })
+}
+
+Twilight.prototype._getInitiative = function(player) {
+  // Naalu Telepathic: initiative 0 (always goes first)
+  if (player.faction?.abilities?.some(a => a.id === 'telepathic')) {
+    return 0
+  }
+  const card = res.getStrategyCard(player.getStrategyCardId())
+  return card ? card.number : 99
 }
 
 Twilight.prototype._getFleetLimit = function(player) {
@@ -3089,11 +3248,7 @@ Twilight.prototype._revealObjective = function() {
 Twilight.prototype._getPlayersInInitiativeOrder = function() {
   const players = this.players.all()
   return [...players].sort((a, b) => {
-    const cardA = res.getStrategyCard(a.getStrategyCardId())
-    const cardB = res.getStrategyCard(b.getStrategyCardId())
-    const numA = cardA ? cardA.number : 99
-    const numB = cardB ? cardB.number : 99
-    return numA - numB
+    return this._getInitiative(a) - this._getInitiative(b)
   })
 }
 

@@ -311,6 +311,153 @@ describe('Strategic Actions', () => {
       expect(game.waiting.selectors[0].actor).toBe('micah')
       expect(game.waiting.selectors[0].title).toBe('Choose Action')
     })
+
+    test('diplomacy secondary: ready 2 exhausted planets', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          planets: {
+            'jord': { exhausted: true },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis has leadership(1), micah has diplomacy(2). Dennis goes first.
+      t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Pass')  // micah declines leadership secondary
+      // Micah uses diplomacy
+      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'hacan-home')  // micah protects hacan-home
+      // Dennis uses diplomacy secondary — ready exhausted planet
+      t.choose(game, 'Use Secondary')
+
+      const dennis = game.players.byName('dennis')
+      expect(game.state.planets['jord'].exhausted).toBe(false)
+      // Spent 1 strategy token
+      expect(dennis.commandTokens.strategy).toBe(1)
+    })
+
+    test('technology secondary: research 1 technology', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'technology', 'leadership')
+
+      // Micah has leadership(1), goes first
+      t.choose(game, 'Strategic Action')  // micah: leadership
+      // Dennis uses leadership secondary
+      t.choose(game, 'Use Secondary')
+
+      // Dennis uses technology (primary: research 1 tech)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'sarween-tools')
+      // Micah uses technology secondary (costs 1 strategy token)
+      t.choose(game, 'Use Secondary')
+      // Micah picks a tech — Hacan starts with quantum-datahub-node and production-biomes
+      // Actually Hacan starts with sarween-tools and antimass-deflectors
+      const micahChoices = t.currentChoices(game)
+      t.choose(game, micahChoices[0])
+
+      const micah = game.players.byName('micah')
+      expect(micah.getTechIds().length).toBeGreaterThan(2)
+      // Spent 1 strategy token
+      expect(micah.commandTokens.strategy).toBe(1)
+    })
+
+    test('politics secondary: draw 2 action cards', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'politics', 'leadership')
+
+      // Micah has leadership(1), goes first
+      t.choose(game, 'Strategic Action')  // micah: leadership
+      // Dennis uses leadership secondary
+      t.choose(game, 'Use Secondary')
+
+      // Dennis uses politics (primary: choose speaker + draw 2 cards)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'dennis')  // keep dennis as speaker
+      // Micah uses politics secondary (draw 2 action cards)
+      t.choose(game, 'Use Secondary')
+
+      const micah = game.players.byName('micah')
+      // Micah should have drawn 2 action cards
+      expect(micah.actionCards.length).toBe(2)
+      // Spent 1 strategy token
+      expect(micah.commandTokens.strategy).toBe(1)
+    })
+
+    test('construction secondary: place 1 structure', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'construction', 'leadership')
+
+      // Micah has leadership(1), goes first
+      t.choose(game, 'Strategic Action')  // micah: leadership
+      // Dennis uses leadership secondary
+      t.choose(game, 'Use Secondary')
+
+      // Dennis uses construction (primary)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'pds:jord')   // first structure
+      t.choose(game, 'pds:jord')   // second structure (PDS only)
+      // Micah uses construction secondary (1 structure)
+      t.choose(game, 'Use Secondary')
+      // Micah places a PDS on one of their planets
+      const micahChoices = t.currentChoices(game)
+      t.choose(game, micahChoices[0])
+
+      const micah = game.players.byName('micah')
+      // Micah should have spent 1 strategy token
+      expect(micah.commandTokens.strategy).toBe(1)
+    })
+
+    test('warfare secondary: produce in home system', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'warfare', 'leadership')
+
+      // Micah has leadership(1), goes first
+      t.choose(game, 'Strategic Action')  // micah: leadership
+      // Dennis uses leadership secondary
+      t.choose(game, 'Use Secondary')
+
+      // Dennis uses warfare (primary: remove token + redistribute)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // no tokens to remove — just redistribute
+      // Micah uses warfare secondary (produce in home system)
+      t.choose(game, 'Use Secondary')
+
+      // Micah should be prompted for production in home system
+      const choices = t.currentChoices(game)
+      // Should have production choices or Done
+      expect(choices).toContain('Done')
+      t.choose(game, 'Done')  // skip production
+
+      const micah = game.players.byName('micah')
+      expect(micah.commandTokens.strategy).toBe(1)
+    })
+
+    test('imperial secondary: draw 1 secret objective', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'imperial', 'leadership')
+
+      // Micah has leadership(1), goes first
+      t.choose(game, 'Strategic Action')  // micah: leadership
+      // Dennis uses leadership secondary
+      t.choose(game, 'Use Secondary')
+
+      // Dennis uses imperial (primary)
+      t.choose(game, 'Strategic Action')
+      // Micah uses imperial secondary → draws secret objective
+      t.choose(game, 'Use Secondary')
+
+      const micah = game.players.byName('micah')
+      expect(micah.secretObjectives.length).toBe(1)
+      expect(micah.commandTokens.strategy).toBe(1)
+    })
   })
 
   describe('Card Effects', () => {
