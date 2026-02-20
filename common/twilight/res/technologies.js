@@ -308,7 +308,22 @@ const technologies = [
 ]
 
 function getTechnology(id) {
-  return technologies.find(t => t.id === id)
+  const generic = technologies.find(t => t.id === id)
+  if (generic) {
+    return generic
+  }
+
+  // Search faction technologies
+  const factions = require('./factions/index.js')
+  for (const faction of factions.getAllFactions()) {
+    if (faction.factionTechnologies) {
+      const factionTech = faction.factionTechnologies.find(t => t.id === id)
+      if (factionTech) {
+        return factionTech
+      }
+    }
+  }
+  return null
 }
 
 function getAllTechnologies() {

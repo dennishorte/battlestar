@@ -104,6 +104,10 @@ Twilight.prototype._initializeState = function() {
   this.state.objectiveDeckII = null  // initialized lazily
   this.state.revealedObjectives = [] // currently revealed public objectives
   this.state.scoredObjectives = {}   // playerName → [objectiveId, ...]
+
+  // Exploration decks (initialized lazily)
+  this.state.explorationDecks = null
+  this.state.exploredPlanets = {}    // planetId → true (tracks which planets have been explored)
 }
 
 Twilight.prototype._initializeZones = function() {
@@ -561,6 +565,7 @@ Twilight.prototype.actionPhase = function() {
         break
       case 'Strategic Action':
         this._strategicAction(player)
+        this._resolveSecondaries(player, this.state.lastStrategyCard)
         break
       case 'Component Action':
         this._componentAction(player)
@@ -979,7 +984,7 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
   }
 
   // Check fleet pool limit (non-fighter ships in target system)
-  const fleetLimit = player.commandTokens.fleet
+  const fleetLimit = this._getFleetLimit(player)
   const nonFighterShips = this.state.units[targetSystemId].space
     .filter(u => u.owner === player.name && u.type !== 'fighter')
   if (nonFighterShips.length > fleetLimit) {
@@ -1538,6 +1543,7 @@ Twilight.prototype._establishControl = function(systemId, planetId, attackerName
       }
     }
 
+    const previousController = this.state.planets[planetId].controller
     this.state.planets[planetId].controller = attackerName
     this.state.planets[planetId].exhausted = true  // newly gained planets are exhausted
 
@@ -1545,6 +1551,11 @@ Twilight.prototype._establishControl = function(systemId, planetId, attackerName
       template: '{player} takes control of {planet}',
       args: { player: attackerName, planet: planetId },
     })
+
+    // Explore planet if it wasn't controlled by another player
+    if (!previousController) {
+      this._explorePlanet(planetId, attackerName)
+    }
 
     // Check for Mecatol Rex custodians
     if (planetId === 'mecatol-rex' && !this.state.custodiansRemoved) {
@@ -1593,6 +1604,9 @@ Twilight.prototype._autoPlaceGroundForces = function(systemId, ownerName, tile) 
   if (!this.state.planets[targetPlanet]?.controller) {
     this.state.planets[targetPlanet].controller = ownerName
     this.state.planets[targetPlanet].exhausted = true
+
+    // Explore newly controlled planet
+    this._explorePlanet(targetPlanet, ownerName)
 
     // Check for Mecatol Rex custodians
     if (targetPlanet === 'mecatol-rex' && !this.state.custodiansRemoved) {
@@ -1702,7 +1716,7 @@ Twilight.prototype._productionStep = function(player, systemId) {
     .filter(u => u.owner === player.name && u.type !== 'fighter')
     .length
   let producedNonFighters = 0
-  const fleetLimit = player.commandTokens.fleet
+  const fleetLimit = this._getFleetLimit(player)
 
   for (const req of requestedUnits) {
     const unitDef = res.getUnit(req.type)
@@ -1878,8 +1892,12 @@ Twilight.prototype._technologyPrimary = function(player) {
 }
 
 Twilight.prototype._researchTech = function(player) {
-  // Get available technologies player can research
-  const available = res.getGenericTechnologies()
+  // Get available technologies player can research (generic + faction techs)
+  const allTechs = [...res.getGenericTechnologies()]
+  if (player.faction?.factionTechnologies) {
+    allTechs.push(...player.faction.factionTechnologies)
+  }
+  const available = allTechs
     .filter(t => player.canResearchTechnology(t.id))
     .map(t => t.id)
 
@@ -2308,10 +2326,86 @@ Twilight.prototype._findSystemForPlanet = function(planetId) {
   return null
 }
 
-Twilight.prototype._componentAction = function(_player) {
+Twilight.prototype._componentAction = function(player) {
   this.log.indent()
-  // TODO: Implement component actions
+
+  // Gather available component actions
+  const actions = this._getAvailableComponentActions(player)
+
+  if (actions.length === 0) {
+    this.log.add({
+      template: 'No component actions available',
+      args: {},
+    })
+    this.log.outdent()
+    return
+  }
+
+  const choices = actions.map(a => a.id)
+  const selection = this.actions.choose(player, choices, {
+    title: 'Choose Component Action',
+    noAutoRespond: true,
+  })
+
+  const actionId = selection[0]
+
+  switch (actionId) {
+    case 'orbital-drop':
+      this._orbitalDrop(player)
+      break
+  }
+
   this.log.outdent()
+}
+
+Twilight.prototype._getAvailableComponentActions = function(player) {
+  const actions = []
+
+  // Sol: Orbital Drop
+  if (player.faction?.abilities?.some(a => a.id === 'orbital-drop')) {
+    if (player.commandTokens.tactics >= 1) {
+      actions.push({ id: 'orbital-drop', name: 'Orbital Drop' })
+    }
+  }
+
+  return actions
+}
+
+Twilight.prototype._orbitalDrop = function(player) {
+  // Spend 1 command token from tactics
+  player.commandTokens.tactics -= 1
+
+  // Choose a planet you control
+  const controlledPlanets = player.getControlledPlanets()
+  if (controlledPlanets.length === 0) {
+    return
+  }
+
+  const selection = this.actions.choose(player, controlledPlanets, {
+    title: 'Choose planet for Orbital Drop',
+  })
+  const targetPlanet = selection[0]
+  const systemId = this._findSystemForPlanet(targetPlanet)
+
+  if (systemId) {
+    // Place 2 infantry
+    this._addUnitToPlanet(systemId, targetPlanet, 'infantry', player.name)
+    this._addUnitToPlanet(systemId, targetPlanet, 'infantry', player.name)
+
+    this.log.add({
+      template: '{player} uses Orbital Drop: 2 infantry on {planet}',
+      args: { player, planet: targetPlanet },
+    })
+  }
+}
+
+Twilight.prototype._getFleetLimit = function(player) {
+  let limit = player.commandTokens.fleet
+  // Letnev Armada: +2 to fleet pool for non-fighter ships
+  if (player.faction?.abilities?.some(a => a.id === 'armada')) {
+    limit += 2
+  }
+  return limit
 }
 
 
@@ -2448,6 +2542,98 @@ Twilight.prototype._checkVictory = function() {
   for (const player of this.players.all()) {
     if (player.getVictoryPoints() >= 10) {
       this.youWin(player, `${player.name} has reached 10 victory points!`)
+    }
+  }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Exploration
+
+Twilight.prototype._initExplorationDecks = function() {
+  if (this.state.explorationDecks) {
+    return
+  }
+
+  this.state.explorationDecks = {}
+  for (const trait of ['cultural', 'hazardous', 'industrial', 'frontier']) {
+    const cards = res.getExplorationCards(trait)
+    this._shuffle(cards)
+    this.state.explorationDecks[trait] = cards
+  }
+}
+
+Twilight.prototype._drawExplorationCard = function(trait) {
+  this._initExplorationDecks()
+
+  const deck = this.state.explorationDecks[trait]
+  if (!deck || deck.length === 0) {
+    return null
+  }
+
+  return deck.pop()
+}
+
+Twilight.prototype._explorePlanet = function(planetId, ownerName) {
+  // Only explore planets with traits (not home system planets or Mecatol Rex)
+  const planet = res.getPlanet(planetId)
+  if (!planet || !planet.trait) {
+    return
+  }
+
+  // Only explore once per planet
+  if (this.state.exploredPlanets[planetId]) {
+    return
+  }
+
+  this.state.exploredPlanets[planetId] = true
+
+  const card = this._drawExplorationCard(planet.trait)
+  if (!card) {
+    return
+  }
+
+  const player = this.players.byName(ownerName)
+
+  this.log.add({
+    template: '{player} explores {planet}: {card}',
+    args: { player: ownerName, planet: planetId, card: card.name },
+  })
+
+  // Ensure planet state exists
+  if (!this.state.planets[planetId]) {
+    this.state.planets[planetId] = { controller: null, exhausted: false, attachments: [] }
+  }
+
+  // Resolve based on card type
+  if (card.type === 'attach') {
+    // Attach to planet — apply bonuses
+    if (!this.state.planets[planetId].attachments) {
+      this.state.planets[planetId].attachments = []
+    }
+    this.state.planets[planetId].attachments.push(card.id)
+
+    this.log.add({
+      template: '{card} attached to {planet}',
+      args: { card: card.name, planet: planetId },
+    })
+  }
+  else if (card.type === 'fragment') {
+    // Give relic fragment to player
+    if (!player.relicFragments) {
+      player.relicFragments = []
+    }
+    player.relicFragments.push(card.fragmentType)
+
+    this.log.add({
+      template: '{player} gains a {type} relic fragment',
+      args: { player: ownerName, type: card.fragmentType },
+    })
+  }
+  else if (card.type === 'action') {
+    // Resolve immediate effect
+    if (card.resolve) {
+      card.resolve(player)
     }
   }
 }
