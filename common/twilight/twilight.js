@@ -1296,9 +1296,69 @@ Twilight.prototype._spaceCombat = function(player, systemId) {
     // Assign hits (auto-assign: sustain damage first, then cheapest units)
     this._assignHits(systemId, defender, attackerHits)
     this._assignHits(systemId, attacker, defenderHits)
+
+    // Check if either side wants to retreat (only after first round)
+    if (round >= 1) {
+      // Check for pending retreat announcements
+      const defenderRetreating = this.state.retreatAnnounced?.[defender]
+      const attackerRetreating = this.state.retreatAnnounced?.[attacker]
+
+      if (defenderRetreating) {
+        this._executeRetreat(systemId, defender, defenderRetreating)
+        delete this.state.retreatAnnounced[defender]
+        break
+      }
+      if (attackerRetreating) {
+        this._executeRetreat(systemId, attacker, attackerRetreating)
+        delete this.state.retreatAnnounced[attacker]
+        break
+      }
+    }
   }
 
   this.log.outdent()
+}
+
+// Announce retreat: called from action cards or before combat round
+Twilight.prototype.announceRetreat = function(playerName, targetSystemId) {
+  if (!this.state.retreatAnnounced) {
+    this.state.retreatAnnounced = {}
+  }
+  this.state.retreatAnnounced[playerName] = targetSystemId
+}
+
+Twilight.prototype._executeRetreat = function(fromSystemId, playerName, toSystemId) {
+  const fromUnits = this.state.units[fromSystemId]
+
+  // Ensure target system unit structure exists
+  if (!this.state.units[toSystemId]) {
+    this.state.units[toSystemId] = { space: [], planets: {} }
+  }
+
+  // Move all ships belonging to this player
+  const ships = fromUnits.space.filter(u => u.owner === playerName)
+  fromUnits.space = fromUnits.space.filter(u => u.owner !== playerName)
+
+  for (const ship of ships) {
+    this.state.units[toSystemId].space.push(ship)
+  }
+
+  this.log.add({
+    template: '{player} retreats to {system}',
+    args: { player: playerName, system: toSystemId },
+  })
+}
+
+Twilight.prototype._getRetreatTargets = function(systemId, playerName) {
+  const adjacentSystems = this._getAdjacentSystems(systemId)
+  return adjacentSystems.filter(adjId => {
+    const adjUnits = this.state.units[adjId]
+    if (!adjUnits) {
+      return true
+    }
+    // Cannot retreat into a system with enemy ships
+    return !adjUnits.space.some(u => u.owner !== playerName)
+  })
 }
 
 Twilight.prototype._mentakAmbush = function(systemId, attacker, defender) {
