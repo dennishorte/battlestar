@@ -177,16 +177,28 @@ TestUtil.setBoard = function(game, state) {
 
       // Technologies
       if (playerState.technologies) {
-        for (const techId of playerState.technologies) {
-          if (!player.hasTechnology(techId)) {
+        const techZone = game.zones.byPlayer(player, 'technologies')
+        if (techZone) {
+          // Reset zone and re-initialize with specified techs
+          techZone.reset()
+          const techCards = []
+          for (const techId of playerState.technologies) {
             const tech = res.getTechnology(techId)
             if (tech) {
-              const card = new BaseCard(game, { id: `${player.name}-${techId}`, ...tech })
-              game.cards.register(card)
-              const zone = game.zones.byPlayer(player, 'technologies')
-              card.moveTo(zone)
+              const cardId = `${player.name}-${techId}`
+              let card
+              try {
+                card = game.cards.byId(cardId)
+              }
+              catch { /* not registered yet */ }
+              if (!card) {
+                card = new BaseCard(game, { id: cardId, ...tech })
+                game.cards.register(card)
+              }
+              techCards.push(card)
             }
           }
+          techZone.initializeCards(techCards)
         }
       }
 

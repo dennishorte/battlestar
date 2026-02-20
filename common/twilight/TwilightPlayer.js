@@ -154,17 +154,28 @@ class TwilightPlayer extends BasePlayer {
   // Technologies
   // ---------------------------------------------------------------------------
 
+  // Strip the player prefix from a tech card ID (e.g. 'dennis-neural-motivator' → 'neural-motivator')
+  _rawTechId(cardId) {
+    return cardId.replace(`${this.name}-`, '')
+  }
+
   getTechnologies() {
     const zone = this._cardZone('technologies')
     return zone ? zone.cardlist().map(c => c.id) : []
   }
 
+  // Returns raw tech IDs (without player prefix)
+  getTechIds() {
+    return this.getTechnologies().map(id => this._rawTechId(id))
+  }
+
   hasTechnology(techId) {
-    return this.getTechnologies().includes(techId)
+    // Accept both prefixed and raw forms
+    return this.getTechIds().includes(techId)
   }
 
   getTechPrerequisites() {
-    const techs = this.getTechnologies()
+    const techs = this.getTechIds()
     const counts = { blue: 0, red: 0, yellow: 0, green: 0 }
     for (const techId of techs) {
       const tech = res.getTechnology(techId)
