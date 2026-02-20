@@ -8,6 +8,106 @@ const TestUtil = { ...TestCommon }
 module.exports = TestUtil
 
 
+// ---------------------------------------------------------------------------
+// Default deterministic galaxy layout for 2-player tests
+// ---------------------------------------------------------------------------
+//
+// All positions use axial hex coordinates {q, r} with Mecatol Rex at (0,0).
+// Home systems: P1 (dennis) at (0,-3), P2 (micah) at (0,3).
+//
+// Layout diagram (flat-top hexes, north up):
+//
+//               P1 home
+//            [27]  [37]
+//         [48]  [26]  [24]
+//      [41]  [35]  [18]  [39]
+//         [44]  [34]  [20]
+//            [42]  [25]  [40]
+//               [36]  [19]  [47]
+//                  [38]
+//               P2 home
+//
+// Key adjacencies:
+//   P1 home (0,-3) → [27]
+//   P2 home (0, 3) → [38, 36]
+//   Mecatol  (0, 0) → [26, 20, 19, 25, 34, 35]
+//
+const DEFAULT_2P_SYSTEMS = {
+  // Ring 1 — adjacent to Mecatol Rex (18)
+  26: { q: 0, r: -1 },   // Lodor (alpha wormhole, planet: lodor)
+  20: { q: 1, r: -1 },   // Vefut II (planet: vefut-ii)
+  19: { q: 1, r: 0 },    // Wellon (planet: wellon)
+  25: { q: 0, r: 1 },    // Quann (beta wormhole, planet: quann)
+  34: { q: -1, r: 1 },   // Centauri + Gral
+  35: { q: -1, r: 0 },   // Bereg + Lirta IV
+
+  // Ring 2 — north (adjacent to P1 home)
+  27: { q: 0, r: -2 },   // New Albion + Starpoint
+  37: { q: 1, r: -2 },   // Arinam + Meer
+
+  // Ring 2 — east
+  24: { q: 2, r: -2 },   // Mehar Xull
+  39: { q: 2, r: -1 },   // empty (alpha wormhole)
+  40: { q: 2, r: 0 },    // empty (beta wormhole)
+  47: { q: 1, r: 1 },    // empty
+
+  // Ring 2 — south (adjacent to P2 home)
+  38: { q: 0, r: 2 },    // Abyz + Fria
+  36: { q: -1, r: 2 },   // Arnor + Lor
+
+  // Ring 2 — west
+  42: { q: -2, r: 2 },   // nebula
+  44: { q: -2, r: 1 },   // asteroid field
+  41: { q: -2, r: 0 },   // gravity rift
+  48: { q: -1, r: -1 },  // empty
+}
+
+// Export for tests that need to reference the layout
+TestUtil.DEFAULT_2P_SYSTEMS = DEFAULT_2P_SYSTEMS
+
+
+/**
+ * Replace non-home, non-mecatol systems with a deterministic layout.
+ */
+function _applyTestLayout(game, layout) {
+  // Remove all non-home, non-mecatol systems
+  for (const systemId of Object.keys(game.state.systems)) {
+    const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+    if (tile && (tile.type === 'home' || tile.type === 'mecatol')) {
+      continue
+    }
+    if (tile) {
+      for (const planetId of tile.planets) {
+        delete game.state.planets[planetId]
+      }
+    }
+    delete game.state.systems[systemId]
+    delete game.state.units[systemId]
+  }
+
+  // Add layout systems
+  for (const [tileId, position] of Object.entries(layout)) {
+    game.state.systems[tileId] = {
+      tileId: Number(tileId),
+      position,
+      commandTokens: [],
+    }
+    game.state.units[tileId] = { space: [], planets: {} }
+    const tile = res.getSystemTile(tileId) || res.getSystemTile(Number(tileId))
+    if (tile) {
+      for (const planetId of tile.planets) {
+        game.state.units[tileId].planets[planetId] = []
+        game.state.planets[planetId] = {
+          controller: null,
+          exhausted: false,
+          attachments: [],
+        }
+      }
+    }
+  }
+}
+
+
 // Default starting values for testBoard assertions
 const _COMMAND_TOKEN_DEFAULTS = { tactics: 3, strategy: 2, fleet: 3 }
 
@@ -52,14 +152,17 @@ TestUtil.action = function(game, actionName, opts = {}) {
  * Create a standard test fixture for Twilight Imperium.
  *
  * Options:
- *   numPlayers  - Number of players (default: 2)
- *   factions    - Array of faction IDs (default: auto-assigned)
- *   players     - Player list (default: dennis, micah, scott, ...)
- *   seed        - Random seed (default: 'test_seed')
+ *   numPlayers          - Number of players (default: 2)
+ *   factions            - Array of faction IDs (default: auto-assigned)
+ *   players             - Player list (default: dennis, micah, scott, ...)
+ *   seed                - Random seed (default: 'test_seed')
+ *   deterministicLayout - Use fixed galaxy layout (default: true for 2p)
  *
  * Returns a game instance ready for setBoard + run.
  */
 TestUtil.fixture = function(options = {}) {
+  const deterministicLayout = options.deterministicLayout !== false
+
   const defaultFactions = [
     'federation-of-sol',
     'emirates-of-hacan',
@@ -85,9 +188,14 @@ TestUtil.fixture = function(options = {}) {
 
   const game = TwilightFactory(options, 'dennis')
 
-  // Set up empty breakpoint for initialization (skip initial draws by default)
+  // Set up breakpoint for initialization
   game.testSetBreakpoint('initialization-complete', (game) => {
     game.state.skipInitialDraws = true
+
+    // Apply deterministic galaxy layout for 2p tests
+    if (deterministicLayout && options.numPlayers === 2) {
+      _applyTestLayout(game, DEFAULT_2P_SYSTEMS)
+    }
   })
 
   return game
@@ -120,6 +228,9 @@ TestUtil.fixture = function(options = {}) {
  *   planets            - Object keyed by planet ID → { exhausted: bool }
  *   strategyCard       - Strategy card ID (for mid-action-phase tests)
  *   leaders            - { agent: 'ready'|'exhausted', commander: 'locked'|'unlocked', hero: 'locked'|'unlocked'|'purged' }
+ *
+ * Galaxy layout:
+ *   systems            - Object: tileId → { q, r } to override the galaxy layout
  */
 TestUtil.setBoard = function(game, state) {
   game.testSetBreakpoint('initialization-complete', (game) => {
@@ -158,6 +269,11 @@ TestUtil.setBoard = function(game, state) {
     }
     if (state.exploredPlanets !== undefined) {
       game.state.exploredPlanets = { ...state.exploredPlanets }
+    }
+
+    // Override galaxy layout (before unit placement)
+    if (state.systems) {
+      _applyTestLayout(game, state.systems)
     }
 
     // Apply per-player state

@@ -730,6 +730,20 @@ Twilight.prototype.statusPhase = function() {
     this._drawActionCards(player, 1)
   }
 
+  // Step 3b: Enforce action card hand limit
+  for (const player of this.players.all()) {
+    const limit = this.factionAbilities.getActionCardHandLimit(player)
+    const cards = player.actionCards || []
+    while (cards.length > limit) {
+      const choices = cards.map(c => c.id)
+      const selection = this.actions.choose(player, choices, {
+        title: `Discard to hand limit (${cards.length}/${limit})`,
+      })
+      const cardId = selection[0]
+      player.actionCards = player.actionCards.filter(c => c.id !== cardId)
+    }
+  }
+
   // Step 4: Remove command tokens from board
   for (const systemId of Object.keys(this.state.systems)) {
     this.state.systems[systemId].commandTokens = []
@@ -774,11 +788,12 @@ Twilight.prototype.statusPhase = function() {
     }
   }
 
-  // Step 8: Ready agents
+  // Step 8: Ready agents and exhausted technologies
   for (const player of this.players.all()) {
     if (player.leaders.agent === 'exhausted') {
       player.readyAgent()
     }
+    player.exhaustedTechs = []
   }
 
   // Step 9: Return strategy cards
@@ -1036,6 +1051,9 @@ Twilight.prototype._tacticalAction = function(player) {
   // Step 2: Move ships
   this._movementStep(player, systemId)
 
+  // Step 2b: Naalu Foresight (after ships enter, before combat)
+  this.factionAbilities.onShipsEnterSystem(systemId, player.name)
+
   // Step 3: Space Cannon Offense (PDS fire at ships)
   this._spaceCannonOffense(player, systemId)
 
@@ -1285,6 +1303,9 @@ Twilight.prototype._spaceCombat = function(player, systemId) {
     if (attackerShips.length === 0 || defenderShips.length === 0) {
       break
     }
+
+    // Start-of-round faction abilities (e.g., Letnev Munitions Reserves)
+    this.factionAbilities.onSpaceCombatRound(systemId, attacker, defender)
 
     // Both sides roll simultaneously
     const attackerHits = this._rollCombatDice(attackerShips)
@@ -2388,6 +2409,9 @@ Twilight.prototype._researchTech = function(player) {
     args: { player, tech: tech.name },
   })
 
+  // Jol-Nar Brilliant: exhaust 2 techs if this research required brilliant skip
+  this.factionAbilities.onTechResearched(player, tech)
+
   return techId
 }
 
@@ -2570,23 +2594,30 @@ Twilight.prototype._resolveSecondaries = function(activePlayer, cardId) {
   const otherPlayers = this.players.all().filter(p => p.name !== activePlayer.name)
 
   for (const player of otherPlayers) {
-    // Skip if player has no strategy tokens to spend
-    if (player.commandTokens.strategy <= 0) {
-      continue
-    }
-
     // Determine what secondary this card offers
     const secondaryAvailable = this._getSecondaryDescription(cardId)
     if (!secondaryAvailable) {
       continue
     }
 
+    // Hacan Masters of Trade: free Trade secondary (no strategy token cost)
+    const isFree = cardId === 'trade'
+      && this.factionAbilities.canSkipTradeSecondaryCost(player)
+
+    // Skip if player has no strategy tokens to spend (unless free)
+    if (!isFree && player.commandTokens.strategy <= 0) {
+      continue
+    }
+
+    const costLabel = isFree ? 'free' : 'costs 1 strategy token'
     const choice = this.actions.choose(player, ['Use Secondary', 'Pass'], {
-      title: `${secondaryAvailable} (costs 1 strategy token)`,
+      title: `${secondaryAvailable} (${costLabel})`,
     })
 
     if (choice[0] === 'Use Secondary') {
-      player.spendStrategyToken()
+      if (!isFree) {
+        player.spendStrategyToken()
+      }
       this._resolveSecondary(player, cardId)
     }
   }
@@ -2598,7 +2629,7 @@ Twilight.prototype._getSecondaryDescription = function(cardId) {
     case 'diplomacy': return 'Ready exhausted planets'
     case 'politics': return 'Draw 2 action cards'
     case 'construction': return 'Place 1 structure'
-    case 'trade': return null  // Trade secondary is different (handled in primary)
+    case 'trade': return 'Replenish commodities'
     case 'warfare': return 'Produce units in your home system'
     case 'technology': return 'Research 1 technology'
     case 'imperial': return 'Draw 1 secret objective'
@@ -2639,6 +2670,14 @@ Twilight.prototype._resolveSecondary = function(player, cardId) {
     case 'construction':
       // Place 1 PDS or 1 space dock on a planet you control
       this._constructionSecondary(player)
+      break
+    case 'trade':
+      // Replenish commodities
+      player.replenishCommodities()
+      this.log.add({
+        template: '{player} replenishes commodities (Trade secondary)',
+        args: { player },
+      })
       break
     case 'imperial':
       this._drawSecretObjective(player)
@@ -3182,6 +3221,9 @@ Twilight.prototype._drawActionCards = function(player, count) {
     template: '{player} draws {count} action card(s)',
     args: { player, count: drawn.length },
   })
+
+  // Yssaril Scheming: draw 1 extra, then discard 1
+  this.factionAbilities.onActionCardDraw(player, drawn)
 }
 
 
