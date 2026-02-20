@@ -132,6 +132,135 @@ describe('Strategic Actions', () => {
     })
   })
 
+  describe('Diplomacy (#2)', () => {
+    test('primary: choose system and place command tokens for other players', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'diplomacy', 'trade')
+
+      // Dennis has diplomacy(2), micah has trade(5). Dennis goes first.
+      t.choose(game, 'Strategic Action')
+
+      // Dennis must choose a system with a planet he controls
+      // Sol controls 'jord' in 'sol-home'
+      t.choose(game, 'sol-home')
+
+      // Micah should now have a command token in sol-home
+      expect(game.state.systems['sol-home'].commandTokens).toContain('micah')
+    })
+  })
+
+  describe('Politics (#3)', () => {
+    test('primary: choose new speaker', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'politics', 'trade')
+
+      // Dennis has politics(3), micah has trade(5). Dennis goes first.
+      t.choose(game, 'Strategic Action')
+
+      // Dennis picks new speaker — choose micah
+      t.choose(game, 'micah')
+
+      expect(game.state.speaker).toBe('micah')
+    })
+
+    test('primary: can choose yourself as speaker', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'politics', 'trade')
+
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'dennis')
+
+      expect(game.state.speaker).toBe('dennis')
+    })
+  })
+
+  describe('Construction (#4)', () => {
+    test('primary: place PDS and then another PDS', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'construction', 'trade')
+
+      // Dennis has construction(4), micah has trade(5). Dennis goes first.
+      t.choose(game, 'Strategic Action')
+
+      // First structure: place PDS on jord
+      t.choose(game, 'pds:jord')
+      // Second structure: place another PDS on jord
+      t.choose(game, 'pds:jord')
+
+      const jord = game.state.units['sol-home'].planets['jord']
+      const pdsCount = jord.filter(u => u.owner === 'dennis' && u.type === 'pds').length
+      expect(pdsCount).toBe(2)
+    })
+
+    test('primary: place space dock then PDS', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'construction', 'trade')
+
+      t.choose(game, 'Strategic Action')
+
+      // First structure: space dock on jord (already has one, but rules allow multiple in some cases)
+      t.choose(game, 'space-dock:jord')
+      // Second structure: PDS on jord
+      t.choose(game, 'pds:jord')
+
+      const jord = game.state.units['sol-home'].planets['jord']
+      const spaceDockCount = jord.filter(u => u.owner === 'dennis' && u.type === 'space-dock').length
+      const pdsCount = jord.filter(u => u.owner === 'dennis' && u.type === 'pds').length
+      // Started with 1 space dock, built another
+      expect(spaceDockCount).toBe(2)
+      expect(pdsCount).toBe(1)
+    })
+  })
+
+  describe('Warfare (#6)', () => {
+    test('primary: remove command token from board and redistribute', () => {
+      const game = t.fixture()
+      game.run()
+
+      // Find an adjacent system to sol-home
+      const targetSystem = game._getAdjacentSystems('sol-home')[0]
+
+      pickStrategyCards(game, 'warfare', 'imperial')
+
+      // Dennis has warfare(6), micah has imperial(8). Dennis goes first.
+      // First, use tactical action to place a token on target system
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: targetSystem })
+      t.choose(game, 'Done')  // skip movement (no production since no space dock)
+
+      // Verify token was placed
+      expect(game.state.systems[targetSystem].commandTokens).toContain('dennis')
+
+      // Micah uses imperial (no Mecatol = no VP, auto-resolves)
+      t.choose(game, 'Strategic Action')
+
+      // Dennis uses warfare — should see the token to remove
+      t.choose(game, 'Strategic Action')
+      t.choose(game, '*' + targetSystem)  // remove token (* prefix keeps as string)
+      t.choose(game, 'Done')  // redistribution
+
+      // Token should be removed
+      expect(game.state.systems[targetSystem].commandTokens).not.toContain('dennis')
+    })
+  })
+
+  describe('Secondaries', () => {
+    test('secondary system tracks last strategy card used', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Strategic Action')  // dennis: leadership
+
+      expect(game.state.lastStrategyCard).toBe('leadership')
+    })
+  })
+
   describe('Card Effects', () => {
     test('leadership tokens persist through status phase', () => {
       const game = t.fixture()
@@ -140,8 +269,9 @@ describe('Strategic Actions', () => {
 
       // Dennis uses leadership (gains 3 tactic tokens)
       t.choose(game, 'Strategic Action')
-      // Micah uses diplomacy
+      // Micah uses diplomacy — must choose a system
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'hacan-home')  // micah picks their home system
       // Both pass
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
