@@ -636,7 +636,19 @@ Twilight.prototype.statusPhase = function() {
 Twilight.prototype.agendaPhase = function() {
   this.state.phase = 'agenda'
   this.log.add({ template: 'Agenda Phase' })
-  // TODO: Implement agenda phase
+  this.log.indent()
+
+  // Resolve 2 agendas
+  for (let i = 0; i < 2; i++) {
+    // For now, speaker clicks Done to skip each agenda
+    const speaker = this.players.byName(this.state.speaker)
+    this.actions.choose(speaker, ['Done'], {
+      title: `Agenda ${i + 1}`,
+      noAutoRespond: true,
+    })
+  }
+
+  this.log.outdent()
 }
 
 
@@ -1540,7 +1552,7 @@ Twilight.prototype._productionStep = function(player, systemId) {
     }
   }
 
-  // Exhaust planets to pay cost
+  // Exhaust planets to pay cost, then spend trade goods for remainder
   let remainingCost = totalCost
   for (const pId of readyPlanets) {
     if (remainingCost <= 0) {
@@ -1551,6 +1563,10 @@ Twilight.prototype._productionStep = function(player, systemId) {
       this.state.planets[pId].exhausted = true
       remainingCost -= planet.resources
     }
+  }
+  if (remainingCost > 0 && player.tradeGoods >= remainingCost) {
+    player.spendTradeGoods(remainingCost)
+    remainingCost = 0
   }
 
   if (totalUnitCount > 0) {
@@ -1571,9 +1587,187 @@ Twilight.prototype._strategicAction = function(player) {
     args: { player, card: res.getStrategyCard(usedCardId).name },
   })
 
-  // TODO: Resolve primary and secondary abilities
+  // Resolve primary ability
+  switch (usedCardId) {
+    case 'leadership':
+      this._leadershipPrimary(player)
+      break
+    case 'trade':
+      this._tradePrimary(player)
+      break
+    case 'technology':
+      this._technologyPrimary(player)
+      break
+    case 'imperial':
+      this._imperialPrimary(player)
+      break
+    // Other cards have interactive primaries resolved later
+    default:
+      break
+  }
 
   this.log.outdent()
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Strategy Card — Leadership (#1)
+
+Twilight.prototype._leadershipPrimary = function(player) {
+  // Gain 3 command tokens (added to tactics by default)
+  player.commandTokens.tactics += 3
+
+  this.log.add({
+    template: '{player} gains 3 command tokens',
+    args: { player },
+  })
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Strategy Card — Trade (#5)
+
+Twilight.prototype._tradePrimary = function(player) {
+  // Gain 3 trade goods
+  player.addTradeGoods(3)
+
+  // Replenish commodities for active player
+  player.replenishCommodities()
+
+  // Replenish commodities for all other players
+  const otherPlayers = this.players.all().filter(p => p.name !== player.name)
+  for (const other of otherPlayers) {
+    other.replenishCommodities()
+  }
+
+  this.log.add({
+    template: '{player} gains 3 trade goods and replenishes commodities',
+    args: { player },
+  })
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Strategy Card — Technology (#7)
+
+Twilight.prototype._technologyPrimary = function(player) {
+  this._researchTech(player)
+}
+
+Twilight.prototype._researchTech = function(player) {
+  // Get available technologies player can research
+  const available = res.getGenericTechnologies()
+    .filter(t => player.canResearchTechnology(t.id))
+    .map(t => t.id)
+
+  if (available.length === 0) {
+    return null
+  }
+
+  const selection = this.actions.choose(player, available, {
+    title: 'Research Technology',
+  })
+
+  const techId = selection[0]
+  const tech = res.getTechnology(techId)
+  if (!tech) {
+    return null
+  }
+
+  // Create tech card and add to player's zone
+  const cardId = `${player.name}-${techId}`
+  let card
+  try {
+    card = this.cards.byId(cardId)
+  }
+  catch {
+    card = new BaseCard(this, { id: cardId, ...tech })
+    this.cards.register(card)
+  }
+
+  const techZone = this.zones.byPlayer(player, 'technologies')
+  techZone.push(card, techZone.nextIndex())
+
+  this.log.add({
+    template: '{player} researches {tech}',
+    args: { player, tech: tech.name },
+  })
+
+  return techId
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Strategy Card — Imperial (#8)
+
+Twilight.prototype._imperialPrimary = function(player) {
+  // If you control Mecatol Rex, gain 1 VP
+  if (this.state.planets['mecatol-rex']?.controller === player.name) {
+    player.addVictoryPoints(1)
+    this.log.add({
+      template: '{player} scores 1 VP from controlling Mecatol Rex (Imperial)',
+      args: { player },
+    })
+    this._checkVictory()
+  }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Neighbor detection (for trade)
+
+Twilight.prototype.areNeighbors = function(playerA, playerB) {
+  // Two players are neighbors if either:
+  // 1. They both have units (ships or ground forces) in the same system
+  // 2. They have units in adjacent systems
+  const systemsA = this._getSystemsWithUnits(playerA)
+  const systemsB = this._getSystemsWithUnits(playerB)
+
+  // Check same system
+  for (const sysId of systemsA) {
+    if (systemsB.includes(sysId)) {
+      return true
+    }
+  }
+
+  // Check adjacent systems
+  for (const sysA of systemsA) {
+    const adjacent = this._getAdjacentSystems(sysA)
+    for (const sysB of systemsB) {
+      if (adjacent.includes(sysB)) {
+        return true
+      }
+    }
+  }
+
+  return false
+}
+
+Twilight.prototype._getSystemsWithUnits = function(playerName) {
+  const systems = []
+  for (const [systemId, systemUnits] of Object.entries(this.state.units)) {
+    const hasSpaceUnits = systemUnits.space.some(u => u.owner === playerName)
+    const hasPlanetUnits = Object.values(systemUnits.planets).some(
+      units => units.some(u => u.owner === playerName)
+    )
+    if (hasSpaceUnits || hasPlanetUnits) {
+      systems.push(systemId)
+    }
+  }
+  return systems
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Helper: find system ID for a planet
+
+Twilight.prototype._findSystemForPlanet = function(planetId) {
+  for (const [systemId, systemUnits] of Object.entries(this.state.units)) {
+    if (systemUnits.planets[planetId] !== undefined) {
+      return systemId
+    }
+  }
+  return null
 }
 
 Twilight.prototype._componentAction = function(_player) {
