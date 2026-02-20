@@ -43,9 +43,11 @@ describe('Action Phase', () => {
 
       // dennis: use strategy card (leadership — auto-resolves)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines leadership secondary
       // micah: use strategy card (diplomacy — choose system)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')  // micah picks system for diplomacy
+      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
       // dennis: pass
       t.choose(game, 'Pass')
 
@@ -89,6 +91,7 @@ describe('Action Phase', () => {
 
       // dennis uses strategy card (leadership — auto-resolves)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines leadership secondary
       // micah's turn (skip)
       t.choose(game, 'Tactical Action')
       t.choose(game, 'Done')
@@ -117,8 +120,10 @@ describe('Action Phase', () => {
 
       // Both use strategy cards
       t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
+      t.choose(game, 'Pass')  // micah declines leadership secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')        // micah picks system
+      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
       // dennis passes
       t.choose(game, 'Pass')
 
@@ -136,8 +141,10 @@ describe('Action Phase', () => {
 
       // Both use strategy cards then pass
       t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
+      t.choose(game, 'Pass')  // micah declines leadership secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')        // micah picks system
+      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
       t.choose(game, 'Pass')              // dennis
       t.choose(game, 'Pass')              // micah
 
@@ -152,8 +159,10 @@ describe('Action Phase', () => {
 
       // Both use strategy cards then pass (ends action phase)
       t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
+      t.choose(game, 'Pass')  // micah declines leadership secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')        // micah picks system
+      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 
@@ -175,6 +184,7 @@ describe('Action Phase', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')  // dennis uses leadership
+      t.choose(game, 'Pass')  // micah declines secondary
 
       expect(game.players.byName('dennis').hasUsedStrategyCard()).toBe(true)
     })
@@ -186,6 +196,7 @@ describe('Action Phase', () => {
 
       // dennis uses strategy card (leadership — auto)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines leadership secondary
       // micah's turn (skip)
       t.choose(game, 'Tactical Action')
       t.choose(game, 'Done')
@@ -195,7 +206,38 @@ describe('Action Phase', () => {
       expect(choices).not.toContain('Strategic Action')
     })
 
-    test.todo('other players can resolve secondary')
-    test.todo('secondary costs strategy command token')
+    test('other players can resolve secondary', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses leadership
+      t.choose(game, 'Strategic Action')
+      // Micah uses the leadership secondary (spend 1 strategy token, gain 1 tactic token)
+      t.choose(game, 'Use Secondary')
+
+      const micah = game.players.byName('micah')
+      expect(micah.commandTokens.strategy).toBe(1)
+      expect(micah.commandTokens.tactics).toBe(4)
+    })
+
+    test('secondary costs strategy command token', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        micah: {
+          commandTokens: { tactics: 3, strategy: 0, fleet: 3 },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses leadership
+      t.choose(game, 'Strategic Action')
+      // Micah has 0 strategy tokens — should NOT be prompted for secondary
+
+      // Should go straight to micah's turn without secondary prompt
+      expect(game.waiting.selectors[0].actor).toBe('micah')
+      expect(game.waiting.selectors[0].title).toBe('Choose Action')
+    })
   })
 })

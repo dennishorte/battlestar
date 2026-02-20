@@ -38,9 +38,11 @@ describe('Objectives', () => {
       pickStrategyCards(game, 'imperial', 'leadership')
 
       // Micah (leadership=1) goes first
-      t.choose(game, 'Strategic Action')  // micah
+      t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Pass')  // dennis declines leadership secondary
       // Dennis uses imperial
-      t.choose(game, 'Strategic Action')  // dennis
+      t.choose(game, 'Strategic Action')  // dennis: imperial
+      t.choose(game, 'Pass')  // micah declines imperial secondary
 
       const dennis = game.players.byName('dennis')
       expect(dennis.getVictoryPoints()).toBe(1)
@@ -60,9 +62,11 @@ describe('Objectives', () => {
       pickStrategyCards(game, 'imperial', 'leadership')
 
       // Micah (leadership=1) goes first
-      t.choose(game, 'Strategic Action')  // micah
+      t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Pass')  // dennis declines leadership secondary
       // Dennis uses imperial (+1 VP for Mecatol)
-      t.choose(game, 'Strategic Action')  // dennis
+      t.choose(game, 'Strategic Action')  // dennis: imperial
+      t.choose(game, 'Pass')  // micah declines imperial secondary
 
       const dennis = game.players.byName('dennis')
       // 3 (starting) + 1 (Imperial Mecatol) = 4
@@ -85,7 +89,8 @@ describe('Objectives', () => {
       pickStrategyCards(game, 'imperial', 'leadership')
 
       // Micah (leadership=1) goes first
-      t.choose(game, 'Strategic Action')  // micah
+      t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Pass')  // dennis declines leadership secondary
       // Dennis uses imperial → goes to 10 VP → game should end
       t.choose(game, 'Strategic Action')  // dennis (imperial → 10 VP)
 
@@ -103,8 +108,10 @@ describe('Objectives', () => {
 
       // Play through action phase
       t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Pass')  // micah declines leadership secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
+      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 
