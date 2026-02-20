@@ -368,6 +368,36 @@ Twilight.prototype._getUnitsInSystem = function(systemId, ownerName) {
 }
 
 
+// Returns unit stats for a given player, applying any researched unit upgrades.
+// Falls back to base stats if no upgrade is available.
+Twilight.prototype._getUnitStats = function(playerName, unitType) {
+  const base = res.getUnit(unitType)
+  if (!base) {
+    return null
+  }
+
+  const player = this.players.byName(playerName)
+  if (!player) {
+    return base
+  }
+
+  // Check if player has researched a unit upgrade for this type
+  const techIds = player.getTechIds()
+  const allTechs = [...res.getGenericTechnologies()]
+  if (player.faction?.factionTechnologies) {
+    allTechs.push(...player.faction.factionTechnologies)
+  }
+
+  const upgrade = allTechs.find(t => t.unitUpgrade === unitType && techIds.includes(t.id))
+  if (!upgrade || !upgrade.stats) {
+    return base
+  }
+
+  // Merge upgrade stats over base stats
+  return { ...base, ...upgrade.stats }
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Galaxy helpers
 
@@ -568,6 +598,9 @@ Twilight.prototype.actionPhase = function() {
       args: { player, action },
     })
 
+    // Track which neighbors have been traded with this turn
+    this.state.transactionsThisTurn = {}
+
     switch (action) {
       case 'Tactical Action':
         this._tacticalAction(player)
@@ -586,6 +619,11 @@ Twilight.prototype.actionPhase = function() {
           args: { player },
         })
         break
+    }
+
+    // After action (except pass), offer transaction window
+    if (action !== 'Pass') {
+      this._offerTransactions(player)
     }
   }
 
@@ -945,7 +983,7 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
   const transportedUnits = []
 
   for (const m of movements) {
-    const unitDef = res.getUnit(m.unitType)
+    const unitDef = this._getUnitStats(player.name, m.unitType)
     if (!unitDef) {
       continue
     }
@@ -968,7 +1006,7 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
       continue
     }
 
-    const unitDef = res.getUnit(m.unitType)
+    const unitDef = this._getUnitStats(player.name, m.unitType)
     const path = galaxy.findPath(fromSystemId, targetSystemId, player.name, unitDef.move)
     if (!path) {
       continue  // Ship cannot reach the target
@@ -1021,7 +1059,7 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
   let totalCapacity = 0
   for (const unit of this.state.units[targetSystemId].space) {
     if (unit.owner === player.name) {
-      const unitDef = res.getUnit(unit.type)
+      const unitDef = this._getUnitStats(unit.owner, unit.type)
       if (unitDef) {
         totalCapacity += unitDef.capacity || 0
       }
@@ -1032,7 +1070,7 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
   let usedCapacity = 0
   for (const unit of this.state.units[targetSystemId].space) {
     if (unit.owner === player.name) {
-      const unitDef = res.getUnit(unit.type)
+      const unitDef = this._getUnitStats(unit.owner, unit.type)
       if (unitDef?.requiresCapacity) {
         usedCapacity++
       }
@@ -1042,7 +1080,7 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
   // Transport units (fighters and ground forces go to space area — in transit)
   for (const m of transportedUnits) {
     const fromSystemId = String(m.from)
-    const unitDef = res.getUnit(m.unitType)
+    const unitDef = this._getUnitStats(player.name, m.unitType)
     if (!unitDef) {
       continue
     }
@@ -1177,7 +1215,7 @@ Twilight.prototype._antiFighterBarrage = function(systemId, attacker, defender) 
     let totalAFBHits = 0
 
     for (const ship of ships) {
-      const unitDef = res.getUnit(ship.type)
+      const unitDef = this._getUnitStats(ship.owner, ship.type)
       if (!unitDef) {
         continue
       }
@@ -1222,7 +1260,7 @@ Twilight.prototype._antiFighterBarrage = function(systemId, attacker, defender) 
 Twilight.prototype._rollCombatDice = function(ships) {
   let hits = 0
   for (const ship of ships) {
-    const unitDef = res.getUnit(ship.type)
+    const unitDef = this._getUnitStats(ship.owner, ship.type)
     if (!unitDef || !unitDef.combat) {
       continue
     }
@@ -1251,13 +1289,13 @@ Twilight.prototype._assignHits = function(systemId, ownerName, hits) {
   const sustainableShips = systemUnits.space
     .filter(u => u.owner === ownerName && !u.damaged)
     .filter(u => {
-      const def = res.getUnit(u.type)
+      const def = this._getUnitStats(u.owner, u.type)
       return def && def.abilities.includes('sustain-damage')
     })
     // Prioritize most expensive ships for sustain
     .sort((a, b) => {
-      const defA = res.getUnit(a.type)
-      const defB = res.getUnit(b.type)
+      const defA = this._getUnitStats(a.owner, a.type)
+      const defB = this._getUnitStats(b.owner, b.type)
       return (defB?.cost || 0) - (defA?.cost || 0)
     })
 
@@ -1278,8 +1316,8 @@ Twilight.prototype._assignHits = function(systemId, ownerName, hits) {
 
     // Sort by cost ascending (destroy cheapest first)
     ships.sort((a, b) => {
-      const defA = res.getUnit(a.type)
-      const defB = res.getUnit(b.type)
+      const defA = this._getUnitStats(a.owner, a.type)
+      const defB = this._getUnitStats(b.owner, b.type)
       return (defA?.cost || 0) - (defB?.cost || 0)
     })
 
@@ -1355,7 +1393,7 @@ Twilight.prototype._bombardment = function(systemId, planetId, attackerName) {
     if (u.owner !== defenderName) {
       return false
     }
-    const def = res.getUnit(u.type)
+    const def = this._getUnitStats(u.owner, u.type)
     return def && def.abilities.includes('planetary-shield')
   })
 
@@ -1364,7 +1402,7 @@ Twilight.prototype._bombardment = function(systemId, planetId, attackerName) {
   let totalHits = 0
 
   for (const ship of attackerShips) {
-    const unitDef = res.getUnit(ship.type)
+    const unitDef = this._getUnitStats(ship.owner, ship.type)
     if (!unitDef) {
       continue
     }
@@ -1488,12 +1526,12 @@ Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, h
   const sustainableUnits = planetUnits
     .filter(u => u.owner === ownerName && !u.damaged)
     .filter(u => {
-      const def = res.getUnit(u.type)
+      const def = this._getUnitStats(u.owner, u.type)
       return def && def.abilities.includes('sustain-damage')
     })
     .sort((a, b) => {
-      const defA = res.getUnit(a.type)
-      const defB = res.getUnit(b.type)
+      const defA = this._getUnitStats(a.owner, a.type)
+      const defB = this._getUnitStats(b.owner, b.type)
       return (defB?.cost || 0) - (defA?.cost || 0)
     })
 
@@ -1513,8 +1551,8 @@ Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, h
     }
 
     units.sort((a, b) => {
-      const defA = res.getUnit(a.type)
-      const defB = res.getUnit(b.type)
+      const defA = this._getUnitStats(a.owner, a.type)
+      const defB = this._getUnitStats(b.owner, b.type)
       return (defA?.cost || 0) - (defB?.cost || 0)
     })
 
@@ -1674,7 +1712,9 @@ Twilight.prototype._productionStep = function(player, systemId) {
       hasSpaceDock = true
       const planet = res.getPlanet(planetId)
       const planetResources = planet ? planet.resources : 0
-      productionCapacity += planetResources + 2  // PRODUCTION = resources + 2
+      const dockDef = this._getUnitStats(player.name, 'space-dock')
+      const prodValue = dockDef?.productionValue || 2
+      productionCapacity += planetResources + prodValue
     }
   }
 
@@ -1730,7 +1770,7 @@ Twilight.prototype._productionStep = function(player, systemId) {
   const fleetLimit = this._getFleetLimit(player)
 
   for (const req of requestedUnits) {
-    const unitDef = res.getUnit(req.type)
+    const unitDef = this._getUnitStats(player.name, req.type)
     if (!unitDef) {
       continue
     }
@@ -2318,6 +2358,143 @@ Twilight.prototype._getSystemsWithUnits = function(playerName) {
     }
   }
   return systems
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Transactions
+
+Twilight.prototype._offerTransactions = function(player) {
+  // Find neighbors the player hasn't traded with this turn
+  while (true) {
+    const neighbors = this._getAvailableTradePartners(player)
+    if (neighbors.length === 0) {
+      break
+    }
+
+    // Check if player or any neighbor has resources to trade
+    const hasResources = player.tradeGoods > 0 || player.commodities > 0
+    const neighborHasResources = neighbors.some(n => {
+      const p = this.players.byName(n)
+      return p.tradeGoods > 0 || p.commodities > 0
+    })
+    if (!hasResources && !neighborHasResources) {
+      break
+    }
+
+    const choices = ['Skip Transaction', ...neighbors]
+    const selection = this.actions.choose(player, choices, {
+      title: 'Propose Transaction?',
+    })
+
+    const targetName = selection[0]
+    if (targetName === 'Skip Transaction') {
+      break
+    }
+
+    this._resolveTransaction(player, targetName)
+  }
+}
+
+Twilight.prototype._getAvailableTradePartners = function(player) {
+  const traded = this.state.transactionsThisTurn || {}
+  return this.players.all()
+    .filter(p => p.name !== player.name)
+    .filter(p => this.areNeighbors(player.name, p.name))
+    .filter(p => !traded[p.name])
+    .map(p => p.name)
+}
+
+Twilight.prototype._resolveTransaction = function(player, targetName) {
+  const target = this.players.byName(targetName)
+
+  // Mark this neighbor as traded with (one attempt per neighbor per turn)
+  if (!this.state.transactionsThisTurn) {
+    this.state.transactionsThisTurn = {}
+  }
+  this.state.transactionsThisTurn[targetName] = true
+
+  // Active player proposes: what they offer
+  const offerSelection = this.actions.choose(player, ['Done'], {
+    title: `Offer to ${targetName}`,
+    allowsAction: 'trade-offer',
+  })
+
+  if (offerSelection.action !== 'trade-offer') {
+    return
+  }
+
+  const offering = offerSelection.offering || {}
+  const requesting = offerSelection.requesting || {}
+
+  // Validate the active player can afford what they're offering
+  if ((offering.tradeGoods || 0) > player.tradeGoods) {
+    return
+  }
+  if ((offering.commodities || 0) > player.commodities) {
+    return
+  }
+
+  // Target player accepts or rejects
+  const response = this.actions.choose(target, ['Accept', 'Reject'], {
+    title: `Transaction from ${player.name}`,
+    context: {
+      offering,
+      requesting,
+    },
+  })
+
+  if (response[0] !== 'Accept') {
+    this.log.add({
+      template: '{target} rejects transaction from {player}',
+      args: { target: targetName, player },
+    })
+    return
+  }
+
+  // Validate the target can afford what's requested
+  if ((requesting.tradeGoods || 0) > target.tradeGoods) {
+    return
+  }
+  if ((requesting.commodities || 0) > target.commodities) {
+    return
+  }
+
+  // Execute the exchange
+  this._executeTransaction(player, target, offering, requesting)
+}
+
+Twilight.prototype._executeTransaction = function(player, target, offering, requesting) {
+  // Player gives offering to target
+  const offeredTG = offering.tradeGoods || 0
+  const offeredComm = offering.commodities || 0
+
+  if (offeredTG > 0) {
+    player.spendTradeGoods(offeredTG)
+    target.addTradeGoods(offeredTG)  // trade goods stay as trade goods
+  }
+  if (offeredComm > 0) {
+    player.commodities -= offeredComm
+    target.addTradeGoods(offeredComm)  // commodities convert to trade goods on receipt
+  }
+
+  // Target gives requesting to player
+  const requestedTG = requesting.tradeGoods || 0
+  const requestedComm = requesting.commodities || 0
+
+  if (requestedTG > 0) {
+    target.spendTradeGoods(requestedTG)
+    player.addTradeGoods(requestedTG)
+  }
+  if (requestedComm > 0) {
+    target.commodities -= requestedComm
+    player.addTradeGoods(requestedComm)  // commodities convert to trade goods on receipt
+  }
+
+  this.log.add({
+    template: '{player} and {target} complete a transaction',
+    args: { player, target },
+  })
 }
 
 
