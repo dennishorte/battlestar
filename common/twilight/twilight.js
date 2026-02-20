@@ -719,6 +719,11 @@ Twilight.prototype.statusPhase = function() {
   this.log.add({ template: 'Status Phase' })
   this.log.indent()
 
+  // Step 0: Faction status phase abilities
+  for (const player of this._getPlayersInInitiativeOrder()) {
+    this.factionAbilities.onStatusPhaseStart(player)
+  }
+
   // Step 1: Score objectives (in initiative order)
   this._scoreObjectives()
 
@@ -824,7 +829,7 @@ Twilight.prototype.agendaPhase = function() {
 
 Twilight.prototype._resolveAgenda = function(agendaNumber) {
   // Draw agenda card from deck
-  const agenda = this._drawAgendaCard()
+  let agenda = this._drawAgendaCard()
   if (!agenda) {
     return
   }
@@ -834,6 +839,16 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
     args: { name: agenda.name },
   })
   this.log.indent()
+
+  // Faction abilities on agenda revealed (e.g., Xxcha Quash)
+  const replacement = this.factionAbilities.onAgendaRevealed(agenda)
+  if (replacement) {
+    agenda = replacement
+    this.log.add({
+      template: 'New agenda: {name}',
+      args: { name: agenda.name },
+    })
+  }
 
   // Determine outcomes based on agenda type
   let outcomes
@@ -1320,6 +1335,9 @@ Twilight.prototype._spaceCombat = function(player, systemId) {
     this._assignHits(systemId, defender, attackerHits)
     this._assignHits(systemId, attacker, defenderHits)
 
+    // Post-round faction abilities (e.g., Yin Devotion)
+    this.factionAbilities.afterSpaceCombatRound(systemId, attacker, defender)
+
     // Check if either side wants to retreat (only after first round)
     if (round >= 1) {
       // Check for pending retreat announcements
@@ -1545,6 +1563,21 @@ Twilight.prototype._invasionStep = function(player, systemId) {
     // Invasion! Attack the first enemy planet
     const targetPlanet = enemyPlanets[0]
 
+    // Snapshot defender structures before combat (for L1Z1X Assimilate)
+    const defenderName = this.state.planets[targetPlanet]?.controller
+    const preInvasionStructures = {}
+    if (defenderName) {
+      const planetUnits = systemUnits.planets[targetPlanet] || []
+      for (const unit of planetUnits) {
+        if (unit.owner === defenderName) {
+          const def = res.getUnit(unit.type)
+          if (def?.category === 'structure') {
+            preInvasionStructures[unit.type] = (preInvasionStructures[unit.type] || 0) + 1
+          }
+        }
+      }
+    }
+
     // Step 1: Bombardment
     this._bombardment(systemId, targetPlanet, player.name)
 
@@ -1557,8 +1590,8 @@ Twilight.prototype._invasionStep = function(player, systemId) {
     // Step 4: Ground combat
     this._groundCombat(systemId, targetPlanet, player.name)
 
-    // Step 5: Establish control
-    this._establishControl(systemId, targetPlanet, player.name)
+    // Step 5: Establish control (pass pre-invasion structure counts)
+    this._establishControl(systemId, targetPlanet, player.name, preInvasionStructures)
   }
   else {
     // No enemy planets — auto-place ground forces on the first friendly/empty planet
@@ -1914,6 +1947,9 @@ Twilight.prototype._groundCombat = function(systemId, planetId, attackerName) {
     args: { planet: planetId },
   })
 
+  // Pre-combat faction abilities (e.g., Yin Indoctrination)
+  this.factionAbilities.onGroundCombatStart(systemId, planetId, attackerName, defenderName)
+
   let round = 0
   const MAX_ROUNDS = 20
   while (round < MAX_ROUNDS) {
@@ -1931,6 +1967,9 @@ Twilight.prototype._groundCombat = function(systemId, planetId, attackerName) {
 
     this._assignGroundHits(systemId, planetId, defenderName, attackerHits)
     this._assignGroundHits(systemId, planetId, attackerName, defenderHits)
+
+    // End-of-round faction abilities (e.g., L1Z1X Harrow)
+    this.factionAbilities.onGroundCombatRoundEnd(systemId, planetId, attackerName, defenderName)
   }
 }
 
@@ -1989,7 +2028,7 @@ Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, h
   }
 }
 
-Twilight.prototype._establishControl = function(systemId, planetId, attackerName) {
+Twilight.prototype._establishControl = function(systemId, planetId, attackerName, preInvasionStructures) {
   const planetUnits = this.state.units[systemId].planets[planetId] || []
   const defenderName = this.state.planets[planetId]?.controller
 
@@ -1999,7 +2038,7 @@ Twilight.prototype._establishControl = function(systemId, planetId, attackerName
     : []
 
   if (attackerForces.length > 0 && defenderForces.length === 0) {
-    // Attacker wins — destroy defender structures and take control
+    // Remove any remaining defender structures
     if (defenderName) {
       const structuresToRemove = planetUnits.filter(u => {
         if (u.owner !== defenderName) {
@@ -2015,6 +2054,9 @@ Twilight.prototype._establishControl = function(systemId, planetId, attackerName
         }
       }
     }
+
+    // Use pre-invasion structure counts (captured before combat destroyed them)
+    const structureCounts = preInvasionStructures || {}
 
     const previousController = this.state.planets[planetId].controller
     this.state.planets[planetId].controller = attackerName
@@ -2032,15 +2074,27 @@ Twilight.prototype._establishControl = function(systemId, planetId, attackerName
 
     // Check for Mecatol Rex custodians
     if (planetId === 'mecatol-rex' && !this.state.custodiansRemoved) {
-      this.state.custodiansRemoved = true
       const player = this.players.byName(attackerName)
-      player.addVictoryPoints(1)
+      const cost = this.factionAbilities.getCustodiansCost(player)
+      if (cost > 0 && player.getTotalInfluence() < cost) {
+        // Cannot afford custodians — skip
+      }
+      else {
+        if (cost > 0) {
+          this._payInfluence(player, cost)
+        }
+        this.state.custodiansRemoved = true
+        player.addVictoryPoints(1)
 
-      this.log.add({
-        template: '{player} removes the Custodians Token and gains 1 VP!',
-        args: { player: attackerName },
-      })
+        this.log.add({
+          template: '{player} removes the Custodians Token and gains 1 VP!',
+          args: { player: attackerName },
+        })
+      }
     }
+
+    // Faction abilities on planet gained (Saar scavenge, L1Z1X assimilate, Winnu reclamation)
+    this.factionAbilities.onPlanetGained(attackerName, planetId, systemId, structureCounts)
   }
 }
 
@@ -2083,15 +2137,27 @@ Twilight.prototype._autoPlaceGroundForces = function(systemId, ownerName, tile) 
 
     // Check for Mecatol Rex custodians
     if (targetPlanet === 'mecatol-rex' && !this.state.custodiansRemoved) {
-      this.state.custodiansRemoved = true
       const player = this.players.byName(ownerName)
-      player.addVictoryPoints(1)
+      const cost = this.factionAbilities.getCustodiansCost(player)
+      if (cost > 0 && player.getTotalInfluence() < cost) {
+        // Cannot afford custodians — skip
+      }
+      else {
+        if (cost > 0) {
+          this._payInfluence(player, cost)
+        }
+        this.state.custodiansRemoved = true
+        player.addVictoryPoints(1)
 
-      this.log.add({
-        template: '{player} removes the Custodians Token and gains 1 VP!',
-        args: { player: ownerName },
-      })
+        this.log.add({
+          template: '{player} removes the Custodians Token and gains 1 VP!',
+          args: { player: ownerName },
+        })
+      }
     }
+
+    // Faction abilities on planet gained
+    this.factionAbilities.onPlanetGained(ownerName, targetPlanet, systemId, {})
   }
 }
 
@@ -2471,6 +2537,9 @@ Twilight.prototype._diplomacyPrimary = function(player) {
     template: '{player} uses Diplomacy on {system}',
     args: { player, system: chosenSystem },
   })
+
+  // Faction abilities after diplomacy (e.g., Xxcha Peace Accords)
+  this.factionAbilities.afterDiplomacyResolved(player)
 }
 
 
@@ -2706,6 +2775,9 @@ Twilight.prototype._diplomacySecondary = function(player) {
     template: '{player} readies planets (Diplomacy secondary)',
     args: { player },
   })
+
+  // Faction abilities after diplomacy (e.g., Xxcha Peace Accords)
+  this.factionAbilities.afterDiplomacyResolved(player)
 }
 
 Twilight.prototype._warfareSecondary = function(player) {
@@ -2763,6 +2835,23 @@ Twilight.prototype._addUnitToPlanet = function(systemId, planetId, unitType, own
     owner: ownerName,
     damaged: false,
   })
+}
+
+
+Twilight.prototype._payInfluence = function(player, cost) {
+  // Auto-exhaust planets to pay influence cost (cheapest first to conserve value)
+  let remaining = cost
+  const readyPlanets = player.getReadyPlanets()
+    .map(pId => ({ id: pId, influence: res.getPlanet(pId)?.influence || 0 }))
+    .sort((a, b) => a.influence - b.influence)
+
+  for (const planet of readyPlanets) {
+    if (remaining <= 0) {
+      break
+    }
+    this.state.planets[planet.id].exhausted = true
+    remaining -= planet.influence
+  }
 }
 
 

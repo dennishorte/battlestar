@@ -1,4 +1,5 @@
 const { GameProxy } = require('../../lib/game/GameProxy.js')
+const res = require('../res/index.js')
 
 
 class FactionAbilities {
@@ -121,6 +122,15 @@ class FactionAbilities {
     return 7
   }
 
+  getCustodiansCost(player) {
+    return this._hasAbility(player, 'blood-ties') ? 0 : 6
+  }
+
+  canMoveThroughSupernovae(playerName) {
+    const player = this.players.byName(playerName)
+    return player ? this._hasAbility(player, 'gashlai-physiology') : false
+  }
+
 
   // ---------------------------------------------------------------------------
   // B. Component Actions — data-driven registry
@@ -140,6 +150,13 @@ class FactionAbilities {
       abilityId: 'stall-tactics',
       isAvailable: (player) => (player.actionCards || []).length > 0,
       execute: '_stallTactics',
+    },
+    {
+      id: 'star-forge',
+      name: 'Star Forge',
+      abilityId: 'star-forge',
+      isAvailable: (player) => player.commandTokens.strategy >= 1,
+      execute: '_starForge',
     },
   ]
 
@@ -204,6 +221,56 @@ class FactionAbilities {
     })
   }
 
+  _starForge(player) {
+    // Find systems with player's war suns
+    const warSunSystems = []
+    for (const [systemId, systemUnits] of Object.entries(this.state.units)) {
+      if (systemUnits.space.some(u => u.owner === player.name && u.type === 'war-sun')) {
+        warSunSystems.push(systemId)
+      }
+    }
+
+    if (warSunSystems.length === 0) {
+      return
+    }
+
+    // Spend 1 strategy token
+    player.commandTokens.strategy -= 1
+
+    // Choose unit type to place
+    const unitChoice = this.actions.choose(player, ['2 Fighters', '1 Destroyer'], {
+      title: 'Star Forge: Choose units to place',
+    })
+
+    // Choose system (auto if only one)
+    let targetSystem
+    if (warSunSystems.length === 1) {
+      targetSystem = warSunSystems[0]
+    }
+    else {
+      const sysChoice = this.actions.choose(player, warSunSystems, {
+        title: 'Star Forge: Choose system',
+      })
+      targetSystem = sysChoice[0]
+    }
+
+    if (unitChoice[0] === '2 Fighters') {
+      this.game._addUnit(targetSystem, 'space', 'fighter', player.name)
+      this.game._addUnit(targetSystem, 'space', 'fighter', player.name)
+      this.log.add({
+        template: '{player} uses Star Forge: 2 fighters in {system}',
+        args: { player, system: targetSystem },
+      })
+    }
+    else {
+      this.game._addUnit(targetSystem, 'space', 'destroyer', player.name)
+      this.log.add({
+        template: '{player} uses Star Forge: 1 destroyer in {system}',
+        args: { player, system: targetSystem },
+      })
+    }
+  }
+
 
   // ---------------------------------------------------------------------------
   // C. Combat Triggers — event-driven, called from space combat flow
@@ -215,6 +282,10 @@ class FactionAbilities {
 
   onSpaceCombatRound(systemId, attacker, defender) {
     this._munitionsReserves(systemId, attacker, defender)
+  }
+
+  afterSpaceCombatRound(systemId, attacker, defender) {
+    this._yinDevotion(systemId, attacker, defender)
   }
 
   _munitionsReserves(systemId, attacker, defender) {
@@ -299,6 +370,78 @@ class FactionAbilities {
           }
         }
       }
+    }
+  }
+
+
+  _yinDevotion(systemId, attacker, defender) {
+    const systemUnits = this.state.units[systemId]
+
+    for (const [shooter, target] of [[attacker, defender], [defender, attacker]]) {
+      const player = this.players.byName(shooter)
+      if (!this._hasAbility(player, 'devotion')) {
+        continue
+      }
+
+      // Check for cruisers or destroyers
+      const sacrificeShips = systemUnits.space
+        .filter(u => u.owner === shooter && (u.type === 'cruiser' || u.type === 'destroyer'))
+
+      if (sacrificeShips.length === 0) {
+        continue
+      }
+
+      // Check opponent has ships
+      const enemyShips = systemUnits.space.filter(u => u.owner === target)
+      if (enemyShips.length === 0) {
+        continue
+      }
+
+      const choices = ['Pass']
+      const cruisers = sacrificeShips.filter(u => u.type === 'cruiser')
+      const destroyers = sacrificeShips.filter(u => u.type === 'destroyer')
+      if (destroyers.length > 0) {
+        choices.unshift('Destroy destroyer')
+      }
+      if (cruisers.length > 0) {
+        choices.unshift('Destroy cruiser')
+      }
+
+      const selection = this.actions.choose(player, choices, {
+        title: 'Devotion: Destroy a ship to produce 1 hit?',
+      })
+
+      if (selection[0] === 'Pass') {
+        continue
+      }
+
+      const shipType = selection[0] === 'Destroy cruiser' ? 'cruiser' : 'destroyer'
+      const shipIdx = systemUnits.space.findIndex(u => u.owner === shooter && u.type === shipType)
+      if (shipIdx !== -1) {
+        systemUnits.space.splice(shipIdx, 1)
+      }
+
+      // Assign 1 hit to opponent (destroy cheapest ship)
+      const targetShips = systemUnits.space
+        .filter(u => u.owner === target)
+        .sort((a, b) => {
+          const defA = this.game._getUnitStats(a.owner, a.type)
+          const defB = this.game._getUnitStats(b.owner, b.type)
+          return (defA?.cost || 0) - (defB?.cost || 0)
+        })
+
+      if (targetShips.length > 0) {
+        const toDestroy = targetShips[0]
+        const idx = systemUnits.space.indexOf(toDestroy)
+        if (idx !== -1) {
+          systemUnits.space.splice(idx, 1)
+        }
+      }
+
+      this.log.add({
+        template: '{player} uses Devotion: destroys {ship} to produce 1 hit',
+        args: { player, ship: shipType },
+      })
     }
   }
 
@@ -498,6 +641,347 @@ class FactionAbilities {
         })
       }
     }
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // G. Ground Combat Triggers
+  // ---------------------------------------------------------------------------
+
+  onGroundCombatStart(systemId, planetId, attackerName, defenderName) {
+    this._yinIndoctrination(systemId, planetId, attackerName, defenderName)
+  }
+
+  onGroundCombatRoundEnd(systemId, planetId, attackerName, defenderName) {
+    this._l1z1xHarrow(systemId, planetId, attackerName, defenderName)
+  }
+
+  _yinIndoctrination(systemId, planetId, attackerName, defenderName) {
+    const planetUnits = this.state.units[systemId].planets[planetId]
+
+    for (const [self, opponent] of [[attackerName, defenderName], [defenderName, attackerName]]) {
+      const player = this.players.byName(self)
+      if (!this._hasAbility(player, 'indoctrination')) {
+        continue
+      }
+
+      // Check opponent has infantry on the planet
+      const enemyInfantry = planetUnits.filter(u => u.owner === opponent && u.type === 'infantry')
+      if (enemyInfantry.length === 0) {
+        continue
+      }
+
+      // Check player can pay 2 influence
+      if (player.getTotalInfluence() < 2) {
+        continue
+      }
+
+      const choice = this.actions.choose(player, ['Indoctrinate', 'Pass'], {
+        title: 'Indoctrination: Spend 2 influence to replace 1 enemy infantry?',
+      })
+
+      if (choice[0] === 'Pass') {
+        continue
+      }
+
+      // Pay 2 influence
+      this.game._payInfluence(player, 2)
+
+      // Remove 1 enemy infantry
+      const idx = planetUnits.findIndex(u => u.owner === opponent && u.type === 'infantry')
+      if (idx !== -1) {
+        planetUnits.splice(idx, 1)
+      }
+
+      // Add 1 own infantry
+      this.game._addUnitToPlanet(systemId, planetId, 'infantry', self)
+
+      this.log.add({
+        template: '{player} uses Indoctrination: replaces 1 enemy infantry',
+        args: { player },
+      })
+    }
+  }
+
+  _l1z1xHarrow(systemId, planetId, attackerName, defenderName) {
+    for (const [self, opponent] of [[attackerName, defenderName], [defenderName, attackerName]]) {
+      const player = this.players.byName(self)
+      if (!this._hasAbility(player, 'harrow')) {
+        continue
+      }
+
+      // Find non-fighter ships in space with bombardment ability
+      const systemUnits = this.state.units[systemId]
+      const bombardShips = systemUnits.space.filter(u => {
+        if (u.owner !== self || u.type === 'fighter') {
+          return false
+        }
+        const stats = this.game._getUnitStats(u.owner, u.type)
+        return stats?.abilities?.some(a => a.startsWith('bombardment-'))
+      })
+
+      if (bombardShips.length === 0) {
+        continue
+      }
+
+      // Roll bombardment for each ship (format: 'bombardment-NxD')
+      let totalHits = 0
+      for (const ship of bombardShips) {
+        const stats = this.game._getUnitStats(ship.owner, ship.type)
+        const bombAbility = stats.abilities.find(a => a.startsWith('bombardment-'))
+        if (!bombAbility) {
+          continue
+        }
+        const parts = bombAbility.replace('bombardment-', '').split('x')
+        const combatValue = parseInt(parts[0])
+        const diceCount = parseInt(parts[1])
+        for (let i = 0; i < diceCount; i++) {
+          const roll = Math.floor(this.game.random() * 10) + 1
+          if (roll >= combatValue) {
+            totalHits++
+          }
+        }
+      }
+
+      if (totalHits === 0) {
+        continue
+      }
+
+      // Destroy enemy infantry on the planet
+      const planetUnits = this.state.units[systemId].planets[planetId]
+      let hits = totalHits
+      while (hits > 0) {
+        const idx = planetUnits.findIndex(u => u.owner === opponent && u.type === 'infantry')
+        if (idx === -1) {
+          break
+        }
+        planetUnits.splice(idx, 1)
+        hits--
+      }
+
+      this.log.add({
+        template: '{player} Harrow bombardment: {hits} hits on {planet}',
+        args: { player, hits: totalHits, planet: planetId },
+      })
+    }
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // H. Planet Gained Triggers
+  // ---------------------------------------------------------------------------
+
+  onPlanetGained(playerName, planetId, systemId, structureCounts) {
+    this._saarScavenge(playerName)
+    this._l1z1xAssimilate(playerName, planetId, systemId, structureCounts || {})
+    this._winnuReclamation(playerName, planetId, systemId)
+  }
+
+  _saarScavenge(playerName) {
+    const player = this.players.byName(playerName)
+    if (!this._hasAbility(player, 'scavenge')) {
+      return
+    }
+
+    player.addTradeGoods(1)
+    this.log.add({
+      template: '{player} gains 1 trade good (Scavenge)',
+      args: { player },
+    })
+  }
+
+  _l1z1xAssimilate(playerName, planetId, systemId, structureCounts) {
+    const player = this.players.byName(playerName)
+    if (!this._hasAbility(player, 'assimilate')) {
+      return
+    }
+
+    // Replace structures that were removed
+    let placed = false
+    for (const [unitType, count] of Object.entries(structureCounts)) {
+      if (unitType === 'pds' || unitType === 'space-dock') {
+        for (let i = 0; i < count; i++) {
+          this.game._addUnitToPlanet(systemId, planetId, unitType, playerName)
+          placed = true
+        }
+      }
+    }
+
+    if (placed) {
+      this.log.add({
+        template: '{player} assimilates structures on {planet}',
+        args: { player, planet: planetId },
+      })
+    }
+  }
+
+  _winnuReclamation(playerName, planetId, systemId) {
+    const player = this.players.byName(playerName)
+    if (!this._hasAbility(player, 'reclamation')) {
+      return
+    }
+
+    if (planetId !== 'mecatol-rex') {
+      return
+    }
+
+    // Place 1 PDS and 1 space dock on Mecatol Rex
+    this.game._addUnitToPlanet(systemId, planetId, 'pds', playerName)
+    this.game._addUnitToPlanet(systemId, planetId, 'space-dock', playerName)
+
+    this.log.add({
+      template: '{player} uses Reclamation: PDS and space dock on Mecatol Rex',
+      args: { player },
+    })
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // I. Status Phase Triggers
+  // ---------------------------------------------------------------------------
+
+  onStatusPhaseStart(player) {
+    this._arborecMitosis(player)
+  }
+
+  _arborecMitosis(player) {
+    if (!this._hasAbility(player, 'mitosis')) {
+      return
+    }
+
+    const controlledPlanets = player.getControlledPlanets()
+    if (controlledPlanets.length === 0) {
+      return
+    }
+
+    const choices = ['Pass', ...controlledPlanets]
+    const selection = this.actions.choose(player, choices, {
+      title: 'Mitosis: Place 1 infantry on a planet you control?',
+    })
+
+    if (selection[0] === 'Pass') {
+      return
+    }
+
+    const targetPlanet = selection[0]
+    const systemId = this.game._findSystemForPlanet(targetPlanet)
+    if (systemId) {
+      this.game._addUnitToPlanet(systemId, targetPlanet, 'infantry', player.name)
+      this.log.add({
+        template: '{player} uses Mitosis: 1 infantry on {planet}',
+        args: { player, planet: targetPlanet },
+      })
+    }
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // J. Diplomacy Triggers
+  // ---------------------------------------------------------------------------
+
+  afterDiplomacyResolved(player) {
+    this._xxchaPeaceAccords(player)
+  }
+
+  _xxchaPeaceAccords(player) {
+    if (!this._hasAbility(player, 'peace-accords')) {
+      return
+    }
+
+    // Find planets adjacent to player's controlled planets
+    const controlledPlanets = player.getControlledPlanets()
+    const adjacentPlanets = new Set()
+
+    for (const planetId of controlledPlanets) {
+      const systemId = this.game._findSystemForPlanet(planetId)
+      if (!systemId) {
+        continue
+      }
+
+      const adjacentSystems = this.game._getAdjacentSystems(systemId)
+      for (const adjSystemId of adjacentSystems) {
+        const tile = res.getSystemTile(adjSystemId) || res.getSystemTile(Number(adjSystemId))
+        if (!tile) {
+          continue
+        }
+        for (const adjPlanetId of tile.planets) {
+          // Must not be controlled by this player
+          if (this.state.planets[adjPlanetId]?.controller === player.name) {
+            continue
+          }
+          // Must have no units on it
+          const planetUnits = this.state.units[adjSystemId]?.planets[adjPlanetId] || []
+          if (planetUnits.length > 0) {
+            continue
+          }
+          adjacentPlanets.add(adjPlanetId)
+        }
+      }
+    }
+
+    if (adjacentPlanets.size === 0) {
+      return
+    }
+
+    const choices = ['Pass', ...adjacentPlanets]
+    const selection = this.actions.choose(player, choices, {
+      title: 'Peace Accords: Gain control of an unoccupied adjacent planet?',
+    })
+
+    if (selection[0] === 'Pass') {
+      return
+    }
+
+    const targetPlanet = selection[0]
+    const targetSystemId = this.game._findSystemForPlanet(targetPlanet)
+    if (targetSystemId) {
+      this.state.planets[targetPlanet].controller = player.name
+      this.state.planets[targetPlanet].exhausted = true
+
+      this.log.add({
+        template: '{player} uses Peace Accords: gains control of {planet}',
+        args: { player, planet: targetPlanet },
+      })
+    }
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // K. Agenda Triggers
+  // ---------------------------------------------------------------------------
+
+  onAgendaRevealed(agenda) {
+    return this._xxchaQuash(agenda)
+  }
+
+  _xxchaQuash(agenda) {
+    for (const player of this.players.all()) {
+      if (!this._hasAbility(player, 'quash')) {
+        continue
+      }
+      if (player.commandTokens.strategy < 1) {
+        continue
+      }
+
+      const choice = this.actions.choose(player, ['Quash', 'Pass'], {
+        title: `Quash agenda "${agenda.name}"? (Spend 1 strategy token)`,
+      })
+
+      if (choice[0] === 'Quash') {
+        player.commandTokens.strategy -= 1
+
+        this.log.add({
+          template: '{player} uses Quash: discards agenda',
+          args: { player },
+        })
+
+        // Draw replacement agenda
+        const replacement = this.game._drawAgendaCard()
+        return replacement
+      }
+    }
+
+    return null
   }
 }
 
