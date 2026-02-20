@@ -260,6 +260,14 @@ TestUtil.setBoard = function(game, state) {
         }
       }
 
+      // Action cards in hand
+      if (playerState.actionCards !== undefined) {
+        player.actionCards = playerState.actionCards.map(id => {
+          const card = res.getActionCard(id)
+          return card ? { ...card, deckIndex: 0 } : { id, name: id, timing: 'action', deckIndex: 0 }
+        })
+      }
+
       // Promissory notes
       if (playerState.promissoryNotes !== undefined) {
         player.promissoryNotes = []
