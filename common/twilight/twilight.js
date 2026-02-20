@@ -1473,11 +1473,22 @@ Twilight.prototype._rollCombatDice = function(ships) {
       continue
     }
 
+    // Faction combat modifiers
+    const owner = this.players.byName(ship.owner)
+    let combatModifier = 0
+    if (owner?.faction?.abilities?.some(a => a.id === 'fragile')) {
+      combatModifier += 1
+    }
+    if (owner?.faction?.abilities?.some(a => a.id === 'unrelenting')) {
+      combatModifier -= 1
+    }
+    const effectiveCombat = Math.max(1, Math.min(unitDef.combat + combatModifier, 10))
+
     // Each ship rolls 1 die (war suns roll 3 dice per their combat value)
     const diceCount = unitDef.type === 'war-sun' ? 3 : 1
     for (let i = 0; i < diceCount; i++) {
       const roll = Math.floor(this.random() * 10) + 1
-      if (roll >= unitDef.combat) {
+      if (roll >= effectiveCombat) {
         hits++
       }
     }

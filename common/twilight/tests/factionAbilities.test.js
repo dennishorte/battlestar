@@ -263,6 +263,157 @@ describe('Faction Abilities', () => {
     })
   })
 
+  describe('Universities of Jol-Nar', () => {
+    describe('Analytical', () => {
+      test('can research tech with 1 missing prerequisite (non-unit-upgrade)', () => {
+        // Jol-Nar starts with 4 techs: neural-motivator(green), antimass-deflectors(blue),
+        // sarween-tools(yellow), plasma-scoring(red) — 1 of each color
+        // Fleet Logistics needs 2 blue, but Analytical lets them skip 1
+        const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+        game.run()
+        pickStrategyCards(game, 'technology', 'imperial')
+
+        t.choose(game, 'Strategic Action')
+
+        const choices = t.currentChoices(game)
+        expect(choices).toContain('fleet-logistics')
+      })
+
+      test('cannot skip prerequisite for unit upgrade technologies', () => {
+        const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+        game.run()
+
+        // Analytical should NOT skip prereqs for unit upgrades
+        const dennis = game.players.byName('dennis')
+        // Carrier II needs 2 blue — Jol-Nar has 1 blue (antimass-deflectors)
+        // Since Carrier II is a unit upgrade, Analytical should NOT help
+        expect(dennis.canResearchTechnology('carrier-ii')).toBe(false)
+      })
+
+      test('non-Jol-Nar cannot skip prerequisites', () => {
+        // Hacan with same 1 blue tech cannot research fleet-logistics (needs 2 blue)
+        const game = t.fixture({ factions: ['emirates-of-hacan', 'universities-of-jol-nar'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['antimass-deflectors', 'sarween-tools'],
+          },
+        })
+        game.run()
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.canResearchTechnology('fleet-logistics')).toBe(false)
+      })
+    })
+
+    describe('Fragile', () => {
+      test('Jol-Nar combat rolls are less effective', () => {
+        const { Galaxy } = require('../model/Galaxy.js')
+        const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+
+        // Find adjacent system using the same game's galaxy
+        const setupGame = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+        setupGame.run()
+        const galaxy = new Galaxy(setupGame)
+        const targetSystem = galaxy.getAdjacent('jolnar-home')[0]
+
+        // Jol-Nar has 5 cruisers (combat 7, with Fragile effectively combat 8)
+        // vs 1 fighter (combat 9) — Jol-Nar should still win with 5 ships
+        t.setBoard(game, {
+          dennis: {
+            units: {
+              'jolnar-home': {
+                space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+                'jol': ['space-dock'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              [targetSystem]: {
+                space: ['fighter'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: targetSystem })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'jolnar-home', count: 5 }],
+        })
+
+        // Even with Fragile, 5 cruisers should destroy 1 fighter
+        const micahShips = game.state.units[targetSystem].space
+          .filter(u => u.owner === 'micah')
+        expect(micahShips.length).toBe(0)
+      })
+    })
+  })
+
+  describe("Sardakk N'orr", () => {
+    describe('Unrelenting', () => {
+      test('Sardakk combat rolls are more effective', () => {
+        const { Galaxy } = require('../model/Galaxy.js')
+        const game = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+
+        // Find adjacent system to norr-home
+        const setupGame = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+        setupGame.run()
+        const galaxy = new Galaxy(setupGame)
+        const targetSystem = galaxy.getAdjacent('norr-home')[0]
+
+        // Sardakk has 5 cruisers (combat 7, with Unrelenting effectively combat 6)
+        // vs 1 fighter (combat 9) — Sardakk should win easily
+        t.setBoard(game, {
+          dennis: {
+            units: {
+              'norr-home': {
+                space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+                'quinarra': ['space-dock'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              [targetSystem]: {
+                space: ['fighter'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis (Sardakk) uses tactical action
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: targetSystem })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'norr-home', count: 5 }],
+        })
+
+        // 5 cruisers with Unrelenting should destroy 1 fighter
+        const micahShips = game.state.units[targetSystem].space
+          .filter(u => u.owner === 'micah')
+        expect(micahShips.length).toBe(0)
+      })
+
+      test('non-Sardakk player does not get Unrelenting bonus', () => {
+        const game = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+        game.run()
+
+        // Sardakk has it
+        const dennis = game.players.byName('dennis')
+        expect(dennis.faction.abilities.some(a => a.id === 'unrelenting')).toBe(true)
+
+        // Hacan does not
+        const micah = game.players.byName('micah')
+        expect(micah.faction.abilities.some(a => a.id === 'unrelenting')).toBe(false)
+      })
+    })
+  })
+
   describe('Faction Technologies', () => {
     test('Sol faction techs are researchable after prerequisites', () => {
       const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
