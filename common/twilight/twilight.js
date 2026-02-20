@@ -676,7 +676,7 @@ Twilight.prototype._tacticalAction = function(player) {
   this._invasionStep(player, systemId)
 
   // Step 5: Production
-  // TODO: Implement production
+  this._productionStep(player, systemId)
 
   this.log.outdent()
 }
@@ -1396,6 +1396,168 @@ Twilight.prototype._discardGroundForcesInSpace = function(systemId, ownerName) {
         systemUnits.space.splice(i, 1)
       }
     }
+  }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Production
+
+Twilight.prototype._productionStep = function(player, systemId) {
+  const systemUnits = this.state.units[systemId]
+  if (!systemUnits) {
+    return
+  }
+
+  const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+  if (!tile) {
+    return
+  }
+
+  // Find space dock(s) on planets in this system owned by this player
+  let hasSpaceDock = false
+  let productionCapacity = 0
+
+  for (const planetId of tile.planets) {
+    const planetUnits = systemUnits.planets[planetId] || []
+    const docks = planetUnits.filter(
+      u => u.owner === player.name && u.type === 'space-dock'
+    )
+    if (docks.length > 0) {
+      hasSpaceDock = true
+      const planet = res.getPlanet(planetId)
+      const planetResources = planet ? planet.resources : 0
+      productionCapacity += planetResources + 2  // PRODUCTION = resources + 2
+    }
+  }
+
+  if (!hasSpaceDock) {
+    return
+  }
+
+  // Check for blockade (enemy ships in space)
+  const enemyShips = systemUnits.space.filter(
+    u => u.owner !== player.name && res.getUnit(u.type)?.category === 'ship'
+  )
+  const isBlockaded = enemyShips.length > 0
+
+  // Ask player what to produce
+  const produceSelection = this.actions.choose(player, ['Done'], {
+    title: 'Produce Units',
+    allowsAction: 'produce-units',
+  })
+
+  if (produceSelection.action !== 'produce-units') {
+    return
+  }
+
+  const requestedUnits = produceSelection.units || []
+  if (requestedUnits.length === 0) {
+    return
+  }
+
+  // Calculate available resources (ready, controlled planets)
+  let availableResources = 0
+  const controlledPlanets = player.getControlledPlanets()
+  const readyPlanets = controlledPlanets.filter(
+    pId => !this.state.planets[pId]?.exhausted
+  )
+  for (const pId of readyPlanets) {
+    const planet = res.getPlanet(pId)
+    if (planet) {
+      availableResources += planet.resources
+    }
+  }
+  availableResources += player.tradeGoods
+
+  // Calculate total cost and unit count
+  let totalCost = 0
+  let totalUnitCount = 0
+  const validatedUnits = []
+
+  // Fleet pool tracking
+  const currentNonFighters = systemUnits.space
+    .filter(u => u.owner === player.name && u.type !== 'fighter')
+    .length
+  let producedNonFighters = 0
+  const fleetLimit = player.commandTokens.fleet
+
+  for (const req of requestedUnits) {
+    const unitDef = res.getUnit(req.type)
+    if (!unitDef) {
+      continue
+    }
+
+    for (let i = 0; i < req.count; i++) {
+      // Check blockade: can't produce ships when blockaded
+      if (isBlockaded && unitDef.category === 'ship') {
+        continue
+      }
+
+      // Check fleet pool for non-fighter ships
+      if (unitDef.category === 'ship' && unitDef.type !== 'fighter') {
+        if (currentNonFighters + producedNonFighters >= fleetLimit) {
+          continue
+        }
+        producedNonFighters++
+      }
+
+      // Check production capacity
+      if (totalUnitCount >= productionCapacity) {
+        break
+      }
+
+      // Calculate cost (fighters and infantry are 2-for-1)
+      let unitCost = unitDef.cost
+      if ((unitDef.type === 'fighter' || unitDef.type === 'infantry') && i % 2 === 1) {
+        unitCost = 0  // second of a pair is free
+      }
+
+      if (totalCost + unitCost > availableResources) {
+        break
+      }
+
+      totalCost += unitCost
+      totalUnitCount++
+      validatedUnits.push(unitDef)
+    }
+  }
+
+  // Create validated units
+  for (const unitDef of validatedUnits) {
+    if (unitDef.category === 'ship') {
+      this._addUnit(systemId, 'space', unitDef.type, player.name)
+    }
+    else if (unitDef.category === 'ground') {
+      // Place on the first planet with a space dock
+      const dockPlanet = tile.planets.find(pId => {
+        const pu = systemUnits.planets[pId] || []
+        return pu.some(u => u.owner === player.name && u.type === 'space-dock')
+      })
+      if (dockPlanet) {
+        this._addUnit(systemId, dockPlanet, unitDef.type, player.name)
+      }
+    }
+  }
+
+  // Exhaust planets to pay cost
+  let remainingCost = totalCost
+  for (const pId of readyPlanets) {
+    if (remainingCost <= 0) {
+      break
+    }
+    const planet = res.getPlanet(pId)
+    if (planet) {
+      this.state.planets[pId].exhausted = true
+      remainingCost -= planet.resources
+    }
+  }
+
+  if (totalUnitCount > 0) {
+    this.log.add({
+      template: '{player} produces {count} units in system {system}',
+      args: { player, count: totalUnitCount, system: systemId },
+    })
   }
 }
 
