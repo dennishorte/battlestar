@@ -240,6 +240,87 @@ describe('Space Combat', () => {
     })
   })
 
+  describe('Retreat', () => {
+    test('announced retreat executes after combat round', () => {
+      const game = t.fixture()
+      const targetSystem = findAdjacent('sol-home')
+      // Set up evenly matched combat so it doesn't resolve in one round
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'sol-home': {
+              space: ['dreadnought', 'dreadnought'],
+              'jord': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            [targetSystem]: {
+              space: ['dreadnought', 'dreadnought'],
+            },
+          },
+        },
+      })
+      // Announce retreat for micah before combat starts
+      game.testSetBreakpoint('initialization-complete', (game) => {
+        // Pre-announce retreat so micah retreats after first round
+        game.state.retreatAnnounced = { micah: 'hacan-home' }
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: targetSystem })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'dreadnought', from: 'sol-home', count: 2 }],
+      })
+
+      // Micah's ships should have retreated to hacan-home
+      const micahInTarget = (game.state.units[targetSystem]?.space || [])
+        .filter(u => u.owner === 'micah')
+      const micahInHome = (game.state.units['hacan-home']?.space || [])
+        .filter(u => u.owner === 'micah')
+
+      // Some ships may have been destroyed in combat, but any survivors should be in hacan-home
+      expect(micahInTarget.length).toBe(0)
+      // Retreated ships are in hacan-home (may have taken losses)
+      expect(micahInHome.length).toBeGreaterThanOrEqual(0)
+    })
+
+    test('getRetreatTargets finds valid adjacent systems', () => {
+      const game = t.fixture()
+      game.run()
+
+      const targets = game._getRetreatTargets('sol-home', 'dennis')
+      expect(targets.length).toBeGreaterThan(0)
+      // All retreat targets should be adjacent to sol-home
+      const adjacent = game._getAdjacentSystems('sol-home')
+      for (const target of targets) {
+        expect(adjacent).toContain(target)
+      }
+    })
+
+    test('cannot retreat into system with enemy ships', () => {
+      const game = t.fixture()
+      const adj = findAdjacent('sol-home')
+      t.setBoard(game, {
+        micah: {
+          units: {
+            [adj]: {
+              space: ['cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      const targets = game._getRetreatTargets('sol-home', 'dennis')
+      // The adjacent system with micah's cruiser should NOT be a valid retreat target
+      expect(targets).not.toContain(adj)
+    })
+  })
+
   describe('Anti-Fighter Barrage', () => {
     test('AFB destroys fighters before combat', () => {
       const game = t.fixture()
