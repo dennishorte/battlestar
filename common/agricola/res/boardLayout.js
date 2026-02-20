@@ -332,6 +332,35 @@ function getAdjacentSpaces(actionId, playerCount, extraSpaces) {
   return adjacency[actionId] || []
 }
 
+function getVerticallyAdjacentSpaces(actionId, playerCount, extraSpaces) {
+  const layout = getLayoutForPlayerCount(playerCount)
+  const allSpaces = extraSpaces
+    ? [...layout.spaces, ...extraSpaces]
+    : layout.spaces
+  const target = allSpaces.find(s => s.id === actionId)
+  if (!target) {
+    return []
+  }
+
+  return allSpaces
+    .filter(s => s.id !== actionId
+      && s.col === target.col
+      && rangesShareBoundary(target.rowStart, target.rowEnd, s.rowStart, s.rowEnd))
+    .map(s => s.id)
+}
+
+function getActiveRoundCardPositions(roundCardDeck, playerCount, activeActions) {
+  const positions = []
+  for (let i = 0; i < (roundCardDeck || []).length; i++) {
+    const card = roundCardDeck[i]
+    if (card && activeActions.includes(card.id)) {
+      const pos = getRoundSlotPosition(i, playerCount)
+      positions.push({ id: card.id, col: pos.col, rowStart: pos.rowStart, rowEnd: pos.rowEnd })
+    }
+  }
+  return positions
+}
+
 function getColumnType(col, playerCount) {
   const layout = getLayoutForPlayerCount(playerCount)
   const colInfo = layout.columns.find(c => c.col === col)
@@ -347,6 +376,8 @@ function getTotalColumns(playerCount) {
 module.exports = {
   getLayoutForPlayerCount,
   getAdjacentSpaces,
+  getVerticallyAdjacentSpaces,
+  getActiveRoundCardPositions,
   getRoundSlotPosition,
   getSpacePosition,
   getColumnType,
