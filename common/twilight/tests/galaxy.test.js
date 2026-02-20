@@ -91,8 +91,8 @@ describe('Galaxy', () => {
     })
 
     test('different seeds produce different tile placements', () => {
-      const game1 = t.fixture({ seed: 'seed-alpha' })
-      const game2 = t.fixture({ seed: 'seed-beta' })
+      const game1 = t.fixture({ seed: 'seed-alpha', deterministicLayout: false })
+      const game2 = t.fixture({ seed: 'seed-beta', deterministicLayout: false })
       game1.run()
       game2.run()
 
@@ -147,7 +147,7 @@ describe('Galaxy', () => {
     describe('Wormhole Adjacency', () => {
       test('alpha wormholes are adjacent to each other', () => {
         // Seed 'alpha_seed' places tiles 39 and 82 which both have alpha wormholes
-        const game = t.fixture({ seed: 'alpha_seed' })
+        const game = t.fixture({ seed: 'alpha_seed', deterministicLayout: false })
         game.run()
 
         const alphaSystems = findWormholeSystems(game, 'alpha')
@@ -175,7 +175,7 @@ describe('Galaxy', () => {
 
       test('alpha and beta wormholes are NOT adjacent via wormhole', () => {
         // Seed 'xyz' places tile 39 (alpha-only) and tile 25 (beta-only)
-        const game = t.fixture({ seed: 'xyz' })
+        const game = t.fixture({ seed: 'xyz', deterministicLayout: false })
         game.run()
 
         const alphaOnly = Object.keys(game.state.systems).filter(id => {
@@ -203,7 +203,7 @@ describe('Galaxy', () => {
         // Only tile 82 (Mallice) has gamma in the tile pool.
         // With no second gamma system, we verify the single gamma system
         // does not erroneously connect to non-gamma systems via wormhole.
-        const game = t.fixture({ seed: 'alpha_seed' })
+        const game = t.fixture({ seed: 'alpha_seed', deterministicLayout: false })
         game.run()
 
         const gammaSystems = findWormholeSystems(game, 'gamma')
@@ -282,7 +282,7 @@ describe('Galaxy', () => {
 
     test('cannot path through supernova', () => {
       // Seed 'alpha_seed' places tile 43 (supernova)
-      const game = t.fixture({ seed: 'alpha_seed' })
+      const game = t.fixture({ seed: 'alpha_seed', deterministicLayout: false })
       game.run()
       const galaxy = new Galaxy(game)
 
@@ -321,7 +321,7 @@ describe('Galaxy', () => {
 
     test('can path through wormhole', () => {
       // Seed 'alpha_seed' places tiles 39 and 82 which both have alpha wormholes
-      const game = t.fixture({ seed: 'alpha_seed' })
+      const game = t.fixture({ seed: 'alpha_seed', deterministicLayout: false })
       game.run()
       const galaxy = new Galaxy(game)
 
