@@ -159,6 +159,236 @@ describe('Trade System', () => {
     })
   })
 
+  describe('Transactions', () => {
+    test('active player can propose transaction to neighbor', () => {
+      const game = t.fixture()
+      const target = findAdjacent('sol-home')
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 3,
+          units: {
+            'sol-home': { space: ['cruiser'] },
+          },
+        },
+        micah: {
+          commodities: 4,
+          units: {
+            [target]: { space: ['cruiser'] },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis takes leadership
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+
+      // Transaction window: dennis chooses micah
+      t.choose(game, 'micah')
+
+      // Dennis offers 1 trade good, requests 2 commodities
+      t.action(game, 'trade-offer', {
+        offering: { tradeGoods: 1 },
+        requesting: { commodities: 2 },
+      })
+
+      // Micah accepts
+      t.choose(game, 'Accept')
+
+      // Verify results
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+      expect(dennis.tradeGoods).toBe(4)  // 3 - 1 + 2 (commodities → trade goods)
+      expect(micah.tradeGoods).toBe(1)   // 0 + 1 (received trade good)
+      expect(micah.commodities).toBe(2)  // 4 - 2
+
+      // No more neighbors to trade with (2-player game), so loop exits automatically
+    })
+
+    test('commodities convert to trade goods on receipt', () => {
+      const game = t.fixture()
+      const target = findAdjacent('sol-home')
+      t.setBoard(game, {
+        dennis: {
+          commodities: 3,
+          units: {
+            'sol-home': { space: ['cruiser'] },
+          },
+        },
+        micah: {
+          tradeGoods: 0,
+          units: {
+            [target]: { space: ['cruiser'] },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+
+      // Dennis offers 2 commodities
+      t.choose(game, 'micah')
+      t.action(game, 'trade-offer', {
+        offering: { commodities: 2 },
+        requesting: {},
+      })
+      t.choose(game, 'Accept')
+
+      const micah = game.players.byName('micah')
+      expect(micah.tradeGoods).toBe(2)   // commodities → trade goods
+      expect(micah.commodities).toBe(0)  // unchanged (Hacan started at 0)
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.commodities).toBe(1)  // 3 - 2
+    })
+
+    test('target can reject transaction', () => {
+      const game = t.fixture()
+      const target = findAdjacent('sol-home')
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 3,
+          units: {
+            'sol-home': { space: ['cruiser'] },
+          },
+        },
+        micah: {
+          tradeGoods: 1,
+          units: {
+            [target]: { space: ['cruiser'] },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')
+
+      t.choose(game, 'micah')
+      t.action(game, 'trade-offer', {
+        offering: { tradeGoods: 1 },
+        requesting: { tradeGoods: 1 },
+      })
+      t.choose(game, 'Reject')
+
+      // No resources should have changed
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+      expect(dennis.tradeGoods).toBe(3)
+      expect(micah.tradeGoods).toBe(1)
+
+      // Rejected transaction still counts — no more partners in 2p game
+    })
+
+    test('one transaction per neighbor per turn', () => {
+      const game = t.fixture()
+      const target = findAdjacent('sol-home')
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 5,
+          units: {
+            'sol-home': { space: ['cruiser'] },
+          },
+        },
+        micah: {
+          tradeGoods: 5,
+          units: {
+            [target]: { space: ['cruiser'] },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')
+
+      // First transaction with micah
+      t.choose(game, 'micah')
+      t.action(game, 'trade-offer', {
+        offering: { tradeGoods: 1 },
+        requesting: {},
+      })
+      t.choose(game, 'Accept')
+
+      // After first transaction, micah is marked as traded.
+      // In 2p game, no more partners → loop auto-exits.
+
+      // Micah: strategic action (new turn = fresh tracking)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'hacan-home')
+      t.choose(game, 'Pass')
+
+      // Micah can propose to dennis (fresh turn)
+      t.choose(game, 'dennis')
+      t.action(game, 'trade-offer', {
+        offering: { tradeGoods: 1 },
+        requesting: {},
+      })
+      t.choose(game, 'Accept')
+
+      // Both pass
+      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')
+    })
+
+    test('transaction not offered when players are not neighbors', () => {
+      const game = t.fixture()
+      // Default setup: players in separate home systems, not adjacent
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis takes leadership - no transaction prompt should appear
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+
+      // If transaction prompt appeared, this next choose would fail
+      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'hacan-home')
+      t.choose(game, 'Pass')  // dennis declines
+      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')
+
+      // Should reach status phase
+      expect(game.state.phase).toBe('status')
+    })
+
+    test('skip transaction without proposing', () => {
+      const game = t.fixture()
+      const target = findAdjacent('sol-home')
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 3,
+          units: {
+            'sol-home': { space: ['cruiser'] },
+          },
+        },
+        micah: {
+          tradeGoods: 1,
+          units: {
+            [target]: { space: ['cruiser'] },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')
+
+      // Skip transaction
+      t.choose(game, 'Skip Transaction')
+
+      // Resources unchanged
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBe(3)
+    })
+  })
+
   describe('Player Resources', () => {
     test('getTotalResources sums ready planet resources', () => {
       const game = t.fixture()
