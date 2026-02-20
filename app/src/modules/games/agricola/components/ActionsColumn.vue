@@ -1,77 +1,91 @@
 <template>
   <div class="actions-column-content">
-    <!-- Base Actions -->
-    <div class="action-section">
-      <div class="section-title">Base Actions</div>
-      <div class="action-grid">
-        <ActionSpace
-          v-for="actionId in baseActionIds"
-          :key="actionId"
-          :actionId="actionId"
-        />
-      </div>
+    <!-- View Toggle -->
+    <div class="view-toggle">
+      <button :class="{ active: view === 'list' }" @click="view = 'list'">List</button>
+      <button :class="{ active: view === 'board' }" @click="view = 'board'">Board</button>
     </div>
 
-    <!-- Additional Actions (3+ players) -->
-    <div class="action-section" v-if="additionalActionIds.length > 0 || linkedPairs.length > 0">
-      <div class="section-title">Additional Actions</div>
+    <BoardLayout v-if="view === 'board'" />
 
-      <!-- Linked Action Pairs -->
-      <div
-        v-for="pair in linkedPairs"
-        :key="pair[0]"
-        class="linked-pair"
-      >
-        <ActionSpace :actionId="pair[0]" class="linked-action" />
-        <div class="link-connector">
-          <div class="link-line" />
-          <span class="link-icon">🔗</span>
-          <div class="link-line" />
-        </div>
-        <ActionSpace :actionId="pair[1]" class="linked-action" />
-      </div>
+    <!-- List View -->
+    <template v-if="view === 'list'">
 
-      <!-- Non-linked Additional Actions -->
-      <div class="action-grid" v-if="nonLinkedAdditionalIds.length > 0">
-        <ActionSpace
-          v-for="actionId in nonLinkedAdditionalIds"
-          :key="actionId"
-          :actionId="actionId"
-        />
-      </div>
-    </div>
-
-    <!-- Round Cards by Stage -->
-    <template v-for="stage in visibleStages" :key="stage">
-      <div class="action-section round-cards">
-        <div class="section-title">Stage {{ stage }}</div>
+      <!-- Base Actions -->
+      <div class="action-section">
+        <div class="section-title">Base Actions</div>
         <div class="action-grid">
           <ActionSpace
-            v-for="actionId in stageActionIds(stage)"
+            v-for="actionId in baseActionIds"
             :key="actionId"
             :actionId="actionId"
           />
         </div>
       </div>
-    </template>
 
-    <!-- Card Action Spaces -->
-    <div class="action-section" v-if="cardActionSpaceIds.length > 0">
-      <div class="section-title">Card Action Spaces</div>
-      <div class="action-grid">
-        <ActionSpace
-          v-for="actionId in cardActionSpaceIds"
-          :key="actionId"
-          :actionId="actionId"
-        />
+      <!-- Additional Actions (3+ players) -->
+      <div class="action-section" v-if="additionalActionIds.length > 0 || linkedPairs.length > 0">
+        <div class="section-title">Additional Actions</div>
+
+        <!-- Linked Action Pairs -->
+        <div
+          v-for="pair in linkedPairs"
+          :key="pair[0]"
+          class="linked-pair"
+        >
+          <ActionSpace :actionId="pair[0]" class="linked-action" />
+          <div class="link-connector">
+            <div class="link-line" />
+            <span class="link-icon">🔗</span>
+            <div class="link-line" />
+          </div>
+          <ActionSpace :actionId="pair[1]" class="linked-action" />
+        </div>
+
+        <!-- Non-linked Additional Actions -->
+        <div class="action-grid" v-if="nonLinkedAdditionalIds.length > 0">
+          <ActionSpace
+            v-for="actionId in nonLinkedAdditionalIds"
+            :key="actionId"
+            :actionId="actionId"
+          />
+        </div>
       </div>
-    </div>
+
+      <!-- Round Cards by Stage -->
+      <template v-for="stage in visibleStages" :key="stage">
+        <div class="action-section round-cards">
+          <div class="section-title">Stage {{ stage }}</div>
+          <div class="action-grid">
+            <ActionSpace
+              v-for="actionId in stageActionIds(stage)"
+              :key="actionId"
+              :actionId="actionId"
+            />
+          </div>
+        </div>
+      </template>
+
+      <!-- Card Action Spaces -->
+      <div class="action-section" v-if="cardActionSpaceIds.length > 0">
+        <div class="section-title">Card Action Spaces</div>
+        <div class="action-grid">
+          <ActionSpace
+            v-for="actionId in cardActionSpaceIds"
+            :key="actionId"
+            :actionId="actionId"
+          />
+        </div>
+      </div>
+
+    </template><!-- end list view -->
   </div>
 </template>
 
 
 <script>
 import ActionSpace from './ActionSpace.vue'
+import BoardLayout from './BoardLayout.vue'
 
 // Action IDs grouped by category (hardcoded to match actionSpaces.js)
 // Revised Edition names
@@ -154,9 +168,16 @@ export default {
 
   components: {
     ActionSpace,
+    BoardLayout,
   },
 
   inject: ['game'],
+
+  data() {
+    return {
+      view: 'list',
+    }
+  },
 
   computed: {
     activeActions() {
@@ -250,6 +271,40 @@ export default {
 <style scoped>
 .actions-column-content {
   padding: .5em;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 2px;
+  margin-bottom: .5em;
+}
+
+.view-toggle button {
+  flex: 1;
+  padding: .2em .5em;
+  font-size: .8em;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.view-toggle button:first-child {
+  border-radius: .25em 0 0 .25em;
+}
+
+.view-toggle button:last-child {
+  border-radius: 0 .25em .25em 0;
+}
+
+.view-toggle button.active {
+  background-color: #8B4513;
+  color: white;
+  border-color: #8B4513;
+}
+
+.view-toggle button:not(.active):hover {
+  background-color: #e0e0e0;
 }
 
 .action-section {

@@ -1,6 +1,7 @@
 // Agricola game resources - central export
 
 const actionSpaces = require('./actionSpaces.js')
+const boardLayout = require('./boardLayout.js')
 const majorImprovements = require('./majorImprovements.js')
 const scoringTables = require('./scoringTables.js')
 const minorA = require('./cards/minorA')
@@ -19,6 +20,9 @@ const testCards = require('./cards/test')
 module.exports = {
   // Action Spaces
   ...actionSpaces,
+
+  // Board Layout
+  boardLayout,
 
   // Major Improvements
   ...majorImprovements,
