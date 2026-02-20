@@ -113,6 +113,156 @@ describe('Faction Abilities', () => {
     })
   })
 
+  describe('Naalu Collective', () => {
+    describe('Telepathic', () => {
+      test('Naalu always goes first in action phase regardless of strategy card', () => {
+        const game = t.fixture({
+          numPlayers: 3,
+          factions: ['federation-of-sol', 'naalu-collective', 'emirates-of-hacan'],
+        })
+        game.run()
+
+        // Snake draft: dennis, micah, scott, scott, micah, dennis
+        t.choose(game, 'leadership')    // dennis: leadership(1)
+        t.choose(game, 'imperial')      // micah: imperial(8)
+        t.choose(game, 'diplomacy')     // scott: diplomacy(2)
+        t.choose(game, 'construction')  // scott: construction(4)
+        t.choose(game, 'politics')      // micah: politics(3)
+        t.choose(game, 'trade')         // dennis: trade(5)
+
+        // Despite having high cards (3,8), Naalu should go first (initiative 0)
+        expect(game.waiting.selectors[0].actor).toBe('micah')
+      })
+
+      test('non-Naalu player with lower card goes after Naalu', () => {
+        const game = t.fixture({
+          factions: ['federation-of-sol', 'naalu-collective'],
+        })
+        game.run()
+
+        // Dennis picks leadership(1), micah (Naalu) picks imperial(8)
+        t.choose(game, 'leadership')
+        t.choose(game, 'imperial')
+
+        // Naalu goes first even though leadership(1) < imperial(8)
+        expect(game.waiting.selectors[0].actor).toBe('micah')
+      })
+    })
+  })
+
+  describe('Emirates of Hacan', () => {
+    describe('Guild Ships', () => {
+      test('Hacan can trade with non-neighbors', () => {
+        // In the default 2-player map, sol-home and hacan-home are not adjacent
+        const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+        t.setBoard(game, {
+          dennis: { tradeGoods: 5 },
+          micah: { tradeGoods: 5 },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis (Hacan) uses leadership — goes first (card #1)
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Pass')  // micah declines secondary
+
+        // After strategic action, Dennis gets transaction window
+        // Hacan's Guild Ships means Dennis can trade even though not neighbors
+        const choices = t.currentChoices(game)
+        expect(choices).toContain('micah')
+      })
+
+      test('non-Hacan cannot trade with non-neighbors', () => {
+        // Micah (Sol) should not be able to trade with non-adjacent Hacan
+        const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: { tradeGoods: 5 },
+          micah: { tradeGoods: 5 },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis (Sol) uses leadership
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Pass')  // micah declines secondary
+
+        // Dennis is Sol — not neighbors with Hacan in default map
+        // Should go directly to micah's turn (no transaction window)
+        expect(game.waiting.selectors[0].actor).toBe('micah')
+      })
+    })
+  })
+
+  describe('Mentak Coalition', () => {
+    describe('Ambush', () => {
+      test('Mentak has ambush ability', () => {
+        const game = t.fixture({
+          numPlayers: 3,
+          factions: ['federation-of-sol', 'emirates-of-hacan', 'mentak-coalition'],
+        })
+        game.run()
+
+        const scottPlayer = game.players.byName('scott')  // Mentak
+        expect(scottPlayer.faction.abilities.some(a => a.id === 'ambush')).toBe(true)
+      })
+    })
+
+    describe('Pillage', () => {
+      test('Mentak has pillage ability', () => {
+        const game = t.fixture({
+          numPlayers: 3,
+          factions: ['federation-of-sol', 'emirates-of-hacan', 'mentak-coalition'],
+        })
+        game.run()
+
+        const scottPlayer = game.players.byName('scott')  // Mentak
+        expect(scottPlayer.faction.abilities.some(a => a.id === 'pillage')).toBe(true)
+      })
+    })
+  })
+
+  describe('Yssaril Tribes', () => {
+    describe('Stall Tactics', () => {
+      test('can discard action card as component action', () => {
+        const game = t.fixture({
+          factions: ['yssaril-tribes', 'emirates-of-hacan'],
+        })
+        t.setBoard(game, {
+          dennis: {
+            actionCards: ['focused-research', 'mining-initiative'],
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis (Yssaril) uses component action
+        t.choose(game, 'Component Action')
+        t.choose(game, 'stall-tactics')
+
+        // Should be prompted to discard a card — choose focused-research
+        t.choose(game, 'focused-research')
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.actionCards.length).toBe(1)
+        expect(dennis.actionCards[0].id).toBe('mining-initiative')
+      })
+
+      test('not available without action cards', () => {
+        const game = t.fixture({
+          factions: ['yssaril-tribes', 'emirates-of-hacan'],
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis (Yssaril) has no action cards — Component Action should have no options
+        t.choose(game, 'Component Action')
+
+        // Should immediately return (no component actions)
+        expect(game.waiting.selectors[0].actor).toBe('micah')
+      })
+    })
+  })
+
   describe('Faction Technologies', () => {
     test('Sol faction techs are researchable after prerequisites', () => {
       const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
