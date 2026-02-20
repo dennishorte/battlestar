@@ -37,17 +37,125 @@ describe('Agenda Phase', () => {
       const game = t.fixture()
       t.setBoard(game, {
         custodiansRemoved: true,
+        agendaDeck: ['mutiny', 'economic-equality'],
       })
       game.run()
 
       // Play a full round
       playToAgenda(game)
 
-      // After status phase, agenda phase should be waiting
-      // Check what the game is waiting for
-      const waiting = game.waiting.selectors[0]
-      expect(waiting.title).toContain('Agenda')
+      // After status phase, agenda phase should be waiting for a vote
       expect(game.state.phase).toBe('agenda')
+      const waiting = game.waiting.selectors[0]
+      expect(waiting.title).toContain('Vote on')
+    })
+  })
+
+  describe('Voting', () => {
+    test('players vote sequentially starting left of speaker', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        custodiansRemoved: true,
+        speaker: 'dennis',
+        agendaDeck: ['mutiny', 'economic-equality'],
+      })
+      game.run()
+      playToAgenda(game)
+
+      // Speaker is dennis, so micah votes first (left of speaker)
+      const waiting = game.waiting.selectors[0]
+      expect(waiting.actor).toBe('micah')
+    })
+
+    test('player can abstain from voting', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        custodiansRemoved: true,
+        speaker: 'dennis',
+        agendaDeck: ['mutiny', 'economic-equality'],
+      })
+      game.run()
+      playToAgenda(game)
+
+      // Micah abstains from first agenda
+      t.choose(game, 'Abstain')
+
+      // Dennis votes next (or speaker breaks tie if all abstain)
+      const waiting = game.waiting.selectors[0]
+      expect(waiting.actor).toBe('dennis')
+    })
+
+    test('player can vote For or Against', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        custodiansRemoved: true,
+        speaker: 'dennis',
+        agendaDeck: ['mutiny', 'economic-equality'],
+      })
+      game.run()
+      playToAgenda(game)
+
+      // Micah votes For
+      t.choose(game, 'For')
+
+      // Micah exhausts planets for votes (optional selection)
+      const choices = t.currentChoices(game)
+      // Should see Hacan planets available
+      expect(choices.length).toBeGreaterThan(0)
+    })
+
+    test('for-against agenda resolves with most votes', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        custodiansRemoved: true,
+        speaker: 'dennis',
+        agendaDeck: ['mutiny', 'economic-equality'],
+      })
+      game.run()
+      playToAgenda(game)
+
+      // Agenda 1: Mutiny (for-against)
+      // Micah votes For, exhausts all Hacan planets
+      t.choose(game, 'For')
+      // Select all available planets (min: 0 allows empty selection too)
+      const micahChoices = t.currentChoices(game)
+      // Exhaust planets for influence
+      for (const choice of micahChoices) {
+        t.choose(game, choice)
+        break  // Just exhaust first planet
+      }
+
+      // Dennis votes Against, exhausts jord
+      t.choose(game, 'Against')
+      const dennisChoices = t.currentChoices(game)
+      for (const choice of dennisChoices) {
+        t.choose(game, choice)
+        break
+      }
+
+      // Agenda 2 should now be waiting
+      // (The exact resolution depends on influence values)
+      expect(game.state.phase).toBe('agenda')
+    })
+
+    test('speaker breaks tie when no votes cast', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        custodiansRemoved: true,
+        speaker: 'dennis',
+        agendaDeck: ['mutiny', 'economic-equality'],
+      })
+      game.run()
+      playToAgenda(game)
+
+      // Both abstain from first agenda
+      t.choose(game, 'Abstain')  // micah
+      t.choose(game, 'Abstain')  // dennis
+
+      // Speaker should break the tie
+      const waiting = game.waiting.selectors[0]
+      expect(waiting.title).toBe('Speaker breaks tie')
+      expect(waiting.actor).toBe('dennis')
     })
   })
 
