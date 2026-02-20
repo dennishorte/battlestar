@@ -1,6 +1,7 @@
 const boardLayout = require('../../boardLayout.js')
 
 module.exports = {
+  excluded: true,  // Only affects version 4.
   id: "legworker-c117",
   name: "Legworker",
   deck: "occupationC",

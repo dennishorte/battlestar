@@ -204,30 +204,13 @@ module.exports = {
     }
     return cards
   },
-  getCardsByPlayerCount(playerCount, setIds, { excludeCards = true } = {}) {
+  getCardsByPlayerCount(playerCount, setIds) {
     const modules = (setIds || this.getCardSetIds()).map(id => this.cardSets[id]?.module).filter(Boolean)
     const cards = []
     for (const mod of modules) {
       cards.push(...mod.getCardsByPlayerCount(playerCount))
     }
-    if (excludeCards) {
-      return cards.filter(c => !c.excluded)
-    }
-    // For older game versions: include excluded cards but strip their implementation
-    return cards.map(c => {
-      if (!c.excluded) {
-        return c
-      }
-      return {
-        id: c.id,
-        name: c.name,
-        deck: c.deck,
-        number: c.number,
-        type: c.type,
-        players: c.players,
-        text: 'This card does nothing.',
-      }
-    })
+    return cards
   },
 
   // Validate that selected sets have enough cards for the player count

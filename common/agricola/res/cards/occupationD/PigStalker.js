@@ -3,6 +3,7 @@ const boardLayout = require('../../boardLayout.js')
 const ANIMAL_ACCUMULATION_IDS = ['take-sheep', 'take-boar', 'take-cattle']
 
 module.exports = {
+  excluded: true,  // Only affects version 4.
   id: "pig-stalker-d165",
   name: "Pig Stalker",
   deck: "occupationD",
