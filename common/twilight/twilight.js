@@ -473,6 +473,11 @@ Twilight.prototype._shuffle = function(array) {
 // Main Loop
 
 Twilight.prototype.mainLoop = function() {
+  // Initial setup draws (only on round 0 → 1 transition)
+  if (this.state.round === 0) {
+    this._initialDraws()
+  }
+
   while (true) {
     this.state.round++
     this.state.phase = 'strategy'
@@ -488,6 +493,62 @@ Twilight.prototype.mainLoop = function() {
 
     if (this.state.custodiansRemoved) {
       this.agendaPhase()
+    }
+  }
+}
+
+
+Twilight.prototype._initialDraws = function() {
+  // Skip if initial draws are disabled (e.g., in tests)
+  if (this.state.skipInitialDraws) {
+    return
+  }
+
+  // Each player draws 2 secret objectives and keeps 1
+  for (const player of this.players.all()) {
+    // Skip if setBoard already assigned secrets
+    if (player.secretObjectives && player.secretObjectives.length > 0) {
+      continue
+    }
+
+    this._initSecretObjectiveDeck()
+    const drawn = []
+    for (let i = 0; i < 2; i++) {
+      if (this.state.secretObjectiveDeck.length === 0) {
+        break
+      }
+      drawn.push(this.state.secretObjectiveDeck.pop())
+    }
+
+    if (drawn.length === 2) {
+      // Player chooses which to keep
+      const choices = drawn.map(id => {
+        const obj = res.getObjective(id)
+        return obj ? `${id}: ${obj.name}` : id
+      })
+
+      const selection = this.actions.choose(player, choices, {
+        title: 'Choose Secret Objective to Keep',
+      })
+
+      const keptId = selection[0].split(':')[0]
+      const discardedId = drawn.find(id => id !== keptId)
+
+      if (!player.secretObjectives) {
+        player.secretObjectives = []
+      }
+      player.secretObjectives.push(keptId)
+
+      // Return discarded to bottom of deck
+      if (discardedId) {
+        this.state.secretObjectiveDeck.unshift(discardedId)
+      }
+    }
+    else if (drawn.length === 1) {
+      if (!player.secretObjectives) {
+        player.secretObjectives = []
+      }
+      player.secretObjectives.push(drawn[0])
     }
   }
 }
@@ -962,13 +1023,16 @@ Twilight.prototype._tacticalAction = function(player) {
   // Step 2: Move ships
   this._movementStep(player, systemId)
 
-  // Step 3: Space combat
+  // Step 3: Space Cannon Offense (PDS fire at ships)
+  this._spaceCannonOffense(player, systemId)
+
+  // Step 4: Space combat
   this._spaceCombat(player, systemId)
 
-  // Step 4: Invasion
+  // Step 5: Invasion
   this._invasionStep(player, systemId)
 
-  // Step 5: Production
+  // Step 6: Production
   this._productionStep(player, systemId)
 
   this.log.outdent()
@@ -1381,13 +1445,16 @@ Twilight.prototype._invasionStep = function(player, systemId) {
     // Step 1: Bombardment
     this._bombardment(systemId, targetPlanet, player.name)
 
-    // Step 2: Commit ground forces from space to the planet
+    // Step 2: Space Cannon Defense (PDS fire at landing ground forces)
+    this._spaceCannonDefense(systemId, targetPlanet, player.name)
+
+    // Step 3: Commit ground forces from space to the planet
     this._commitGroundForces(systemId, targetPlanet, player.name)
 
-    // Step 3: Ground combat
+    // Step 4: Ground combat
     this._groundCombat(systemId, targetPlanet, player.name)
 
-    // Step 4: Establish control
+    // Step 5: Establish control
     this._establishControl(systemId, targetPlanet, player.name)
   }
   else {
@@ -1458,6 +1525,243 @@ Twilight.prototype._bombardment = function(systemId, planetId, attackerName) {
     this._assignGroundHits(systemId, planetId, defenderName, totalHits)
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Space Cannon
+
+/**
+ * Space Cannon Offense — fires after movement, before space combat.
+ * PDS units in the active system fire at the active player's ships.
+ * PDS II (upgraded) can also fire from adjacent systems.
+ */
+Twilight.prototype._spaceCannonOffense = function(activePlayer, systemId) {
+  const systemUnits = this.state.units[systemId]
+  if (!systemUnits) {
+    return
+  }
+
+  // Check if the active player has any ships in the system
+  const activeShips = systemUnits.space.filter(u => u.owner === activePlayer.name)
+  if (activeShips.length === 0) {
+    return
+  }
+
+  // Collect all PDS that can fire at this system
+  let totalHits = 0
+
+  // 1. PDS in the active system (on planets) belonging to non-active players
+  const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+  if (tile) {
+    for (const planetId of tile.planets) {
+      const planetUnits = systemUnits.planets[planetId] || []
+      for (const unit of planetUnits) {
+        if (unit.owner === activePlayer.name || unit.type !== 'pds') {
+          continue
+        }
+        totalHits += this._fireSpaceCannon(unit.owner, unit.type)
+      }
+    }
+  }
+
+  // 2. PDS II in adjacent systems (check if owner has PDS II upgrade)
+  const adjacentSystems = this._getAdjacentSystems(systemId)
+  for (const adjSystemId of adjacentSystems) {
+    const adjSystemUnits = this.state.units[adjSystemId]
+    if (!adjSystemUnits) {
+      continue
+    }
+    const adjTile = res.getSystemTile(adjSystemId) || res.getSystemTile(Number(adjSystemId))
+    if (!adjTile) {
+      continue
+    }
+
+    for (const adjPlanetId of adjTile.planets) {
+      const adjPlanetUnits = adjSystemUnits.planets[adjPlanetId] || []
+      for (const unit of adjPlanetUnits) {
+        if (unit.owner === activePlayer.name || unit.type !== 'pds') {
+          continue
+        }
+        // Only PDS II can fire into adjacent systems
+        const unitStats = this._getUnitStats(unit.owner, unit.type)
+        if (!unitStats) {
+          continue
+        }
+        const scAbility = (unitStats.abilities || []).find(a => a.startsWith('space-cannon-'))
+        if (!scAbility) {
+          continue
+        }
+        // PDS II has space-cannon-5x1; base PDS has space-cannon-6x1
+        // Check if owner has pds-ii technology
+        const owner = this.players.byName(unit.owner)
+        if (owner && owner.hasTechnology('pds-ii')) {
+          totalHits += this._fireSpaceCannon(unit.owner, unit.type)
+        }
+      }
+    }
+  }
+
+  if (totalHits > 0) {
+    this.log.add({
+      template: 'Space Cannon Offense scores {hits} hit(s) against {player}',
+      args: { hits: totalHits, player: activePlayer },
+    })
+
+    // Active player assigns hits to their ships
+    this._assignSpaceCannonHits(systemId, activePlayer.name, totalHits)
+  }
+}
+
+/**
+ * Space Cannon Defense — fires during invasion, before ground combat.
+ * PDS and units with Space Cannon ability on the planet fire at invading ground forces.
+ */
+Twilight.prototype._spaceCannonDefense = function(systemId, planetId, attackerName) {
+  const systemUnits = this.state.units[systemId]
+  if (!systemUnits) {
+    return
+  }
+
+  const defenderName = this.state.planets[planetId]?.controller
+  if (!defenderName) {
+    return
+  }
+
+  // Find ground forces in space (not yet committed)
+  const groundForcesInSpace = systemUnits.space
+    .filter(u => u.owner === attackerName && res.getUnit(u.type)?.category === 'ground')
+
+  if (groundForcesInSpace.length === 0) {
+    return
+  }
+
+  // Fire space cannon from defender's PDS and other units with space cannon on this planet
+  let totalHits = 0
+  const planetUnits = systemUnits.planets[planetId] || []
+
+  for (const unit of planetUnits) {
+    if (unit.owner !== defenderName) {
+      continue
+    }
+    const unitStats = this._getUnitStats(unit.owner, unit.type)
+    if (!unitStats) {
+      continue
+    }
+    const scAbility = (unitStats.abilities || []).find(a => a.startsWith('space-cannon-'))
+    if (scAbility) {
+      totalHits += this._fireSpaceCannon(unit.owner, unit.type)
+    }
+  }
+
+  if (totalHits > 0) {
+    this.log.add({
+      template: 'Space Cannon Defense scores {hits} hit(s) against {attacker} on {planet}',
+      args: { hits: totalHits, attacker: attackerName, planet: planetId },
+    })
+
+    // Hits are assigned to ground forces in space (before they commit)
+    // Auto-assign to cheapest ground forces
+    this._assignGroundForcesInSpaceHits(systemId, attackerName, totalHits)
+  }
+}
+
+/**
+ * Roll space cannon dice for a single unit.
+ * Returns number of hits scored.
+ */
+Twilight.prototype._fireSpaceCannon = function(ownerName, unitType) {
+  const unitStats = this._getUnitStats(ownerName, unitType)
+  if (!unitStats) {
+    return 0
+  }
+
+  const scAbility = (unitStats.abilities || []).find(a => a.startsWith('space-cannon-'))
+  if (!scAbility) {
+    return 0
+  }
+
+  // Parse space-cannon-NxD where N is combat value, D is dice count
+  const parts = scAbility.replace('space-cannon-', '').split('x')
+  const combatValue = parseInt(parts[0])
+  const diceCount = parseInt(parts[1])
+
+  let hits = 0
+  for (let i = 0; i < diceCount; i++) {
+    const roll = Math.floor(this.random() * 10) + 1
+    if (roll >= combatValue) {
+      hits++
+    }
+  }
+  return hits
+}
+
+/**
+ * Assign space cannon offense hits to ships in the system.
+ * Auto-assign cheapest first for now.
+ */
+Twilight.prototype._assignSpaceCannonHits = function(systemId, ownerName, hits) {
+  const systemUnits = this.state.units[systemId]
+  if (!systemUnits || hits <= 0) {
+    return
+  }
+
+  let remaining = hits
+
+  // Find ships that can sustain damage first
+  const ownerShips = systemUnits.space.filter(u => u.owner === ownerName)
+
+  // Sort: cheapest first (destroy cheap ships before expensive ones)
+  const costOrder = ownerShips.sort((a, b) => {
+    const aDef = this._getUnitStats(a.owner, a.type)
+    const bDef = this._getUnitStats(b.owner, b.type)
+    return (aDef?.cost || 0) - (bDef?.cost || 0)
+  })
+
+  // Check for sustain damage on undamaged units first
+  for (const ship of costOrder) {
+    if (remaining <= 0) {
+      break
+    }
+    const def = this._getUnitStats(ship.owner, ship.type)
+    if (def && def.abilities.includes('sustain-damage') && !ship.damaged) {
+      ship.damaged = true
+      remaining--
+    }
+  }
+
+  // Destroy remaining
+  for (let i = costOrder.length - 1; i >= 0 && remaining > 0; i--) {
+    const idx = systemUnits.space.indexOf(costOrder[i])
+    if (idx >= 0) {
+      systemUnits.space.splice(idx, 1)
+      remaining--
+    }
+  }
+}
+
+/**
+ * Assign space cannon defense hits to ground forces in space (pre-commit).
+ */
+Twilight.prototype._assignGroundForcesInSpaceHits = function(systemId, ownerName, hits) {
+  const systemUnits = this.state.units[systemId]
+  if (!systemUnits || hits <= 0) {
+    return
+  }
+
+  let remaining = hits
+
+  // Remove ground forces from space
+  for (let i = systemUnits.space.length - 1; i >= 0 && remaining > 0; i--) {
+    const unit = systemUnits.space[i]
+    if (unit.owner === ownerName) {
+      const def = res.getUnit(unit.type)
+      if (def?.category === 'ground') {
+        systemUnits.space.splice(i, 1)
+        remaining--
+      }
+    }
+  }
+}
+
 
 Twilight.prototype._commitGroundForces = function(systemId, planetId, ownerName) {
   const systemUnits = this.state.units[systemId]
@@ -2646,9 +2950,6 @@ Twilight.prototype._initObjectiveDecks = function() {
 Twilight.prototype._scoreObjectives = function() {
   // Each player in initiative order may score 1 public objective and 1 secret objective
   const revealedObjectives = this.state.revealedObjectives || []
-  if (revealedObjectives.length === 0) {
-    return
-  }
 
   // Get players in initiative order
   const players = this._getPlayersInInitiativeOrder()
@@ -2656,8 +2957,41 @@ Twilight.prototype._scoreObjectives = function() {
   for (const player of players) {
     const playerScored = this.state.scoredObjectives[player.name] || []
 
-    // Find which revealed public objectives this player can score
-    const scorable = revealedObjectives.filter(objId => {
+    // --- Public Objective Scoring ---
+    if (revealedObjectives.length > 0) {
+      // Find which revealed public objectives this player can score
+      const scorable = revealedObjectives.filter(objId => {
+        if (playerScored.includes(objId)) {
+          return false
+        }
+        const obj = res.getObjective(objId)
+        if (!obj || !obj.check) {
+          return false
+        }
+        return obj.check(player, this)
+      })
+
+      if (scorable.length > 0) {
+        const choices = ['Skip', ...scorable.map(id => {
+          const obj = res.getObjective(id)
+          return `${id}: ${obj.name}`
+        })]
+
+        const selection = this.actions.choose(player, choices, {
+          title: 'Score Public Objective',
+          noAutoRespond: true,
+        })
+
+        const chosen = selection[0]
+        if (chosen !== 'Skip') {
+          this._recordObjectiveScore(player, chosen)
+        }
+      }
+    }
+
+    // --- Secret Objective Scoring ---
+    const secrets = player.secretObjectives || []
+    const scorableSecrets = secrets.filter(objId => {
       if (playerScored.includes(objId)) {
         return false
       }
@@ -2665,48 +2999,48 @@ Twilight.prototype._scoreObjectives = function() {
       if (!obj || !obj.check) {
         return false
       }
-      // Pass game as context for objectives that need it
       return obj.check(player, this)
     })
 
-    if (scorable.length === 0) {
-      continue
-    }
+    if (scorableSecrets.length > 0) {
+      const secretChoices = ['Skip', ...scorableSecrets.map(id => {
+        const obj = res.getObjective(id)
+        return `${id}: ${obj.name}`
+      })]
 
-    // Player chooses which objective to score (or skip)
-    const choices = ['Skip', ...scorable.map(id => {
-      const obj = res.getObjective(id)
-      return `${id}: ${obj.name}`
-    })]
-
-    const selection = this.actions.choose(player, choices, {
-      title: 'Score Public Objective',
-      noAutoRespond: true,
-    })
-
-    const chosen = selection[0]
-    if (chosen === 'Skip') {
-      continue
-    }
-
-    // Extract objective ID from choice
-    const objId = chosen.split(':')[0]
-    const obj = res.getObjective(objId)
-    if (obj) {
-      if (!this.state.scoredObjectives[player.name]) {
-        this.state.scoredObjectives[player.name] = []
-      }
-      this.state.scoredObjectives[player.name].push(objId)
-      player.addVictoryPoints(obj.points)
-
-      this.log.add({
-        template: '{player} scores {objective} (+{points} VP)',
-        args: { player, objective: obj.name, points: obj.points },
+      const secretSelection = this.actions.choose(player, secretChoices, {
+        title: 'Score Secret Objective',
+        noAutoRespond: true,
       })
 
-      this._checkVictory()
+      const secretChosen = secretSelection[0]
+      if (secretChosen !== 'Skip') {
+        this._recordObjectiveScore(player, secretChosen)
+      }
     }
   }
+}
+
+Twilight.prototype._recordObjectiveScore = function(player, choiceString) {
+  // Extract objective ID from choice (format: "id: Name")
+  const objId = choiceString.split(':')[0]
+  const obj = res.getObjective(objId)
+  if (!obj) {
+    return
+  }
+
+  if (!this.state.scoredObjectives[player.name]) {
+    this.state.scoredObjectives[player.name] = []
+  }
+  this.state.scoredObjectives[player.name].push(objId)
+  player.addVictoryPoints(obj.points)
+
+  this.log.add({
+    template: '{player} scores {objective} (+{points} VP)',
+    args: { player, objective: obj.name, points: obj.points },
+  })
+
+  this._checkVictory()
 }
 
 Twilight.prototype._revealObjective = function() {
