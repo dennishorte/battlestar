@@ -36,6 +36,10 @@ class TwilightPlayer extends BasePlayer {
       commander: 'locked',
       hero: 'locked',
     }
+
+    // Promissory notes held by this player
+    // Each note: { id, owner } where owner is the player who originally owned the note
+    this.promissoryNotes = []
   }
 
   // ---------------------------------------------------------------------------
@@ -266,6 +270,34 @@ class TwilightPlayer extends BasePlayer {
 
   resetPassed() {
     this.passed = false
+  }
+
+  // ---------------------------------------------------------------------------
+  // Promissory notes
+  // ---------------------------------------------------------------------------
+
+  getPromissoryNotes() {
+    return [...this.promissoryNotes]
+  }
+
+  hasPromissoryNote(noteId, fromOwner) {
+    return this.promissoryNotes.some(
+      n => n.id === noteId && (!fromOwner || n.owner === fromOwner)
+    )
+  }
+
+  addPromissoryNote(noteId, owner) {
+    this.promissoryNotes.push({ id: noteId, owner })
+  }
+
+  removePromissoryNote(noteId, owner) {
+    const idx = this.promissoryNotes.findIndex(
+      n => n.id === noteId && n.owner === owner
+    )
+    if (idx !== -1) {
+      return this.promissoryNotes.splice(idx, 1)[0]
+    }
+    return null
   }
 
   // ---------------------------------------------------------------------------
