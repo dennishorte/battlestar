@@ -1,34 +1,248 @@
+const t = require('../testutil.js')
+const res = require('../res/index.js')
+
 describe('Factions', () => {
   describe('Federation of Sol', () => {
-    test.todo('starts with Antimass Deflectors and Neural Motivator')
-    test.todo('starts with 2 carriers, 1 destroyer, 5 infantry, 1 space dock')
-    test.todo('Versatile: gains 1 extra command token in status phase')
-    test.todo('flagship Genesis has capacity 12')
-    test.todo('Spec Ops II upgrades infantry')
-    test.todo('Advanced Carrier II adds sustain damage to carriers')
+    test('starts with Antimass Deflectors and Neural Motivator', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasTechnology('neural-motivator')).toBe(true)
+      expect(dennis.hasTechnology('antimass-deflectors')).toBe(true)
+    })
+
+    test('starts with 2 carriers, 1 destroyer, 5 infantry, 1 space dock', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      game.run()
+
+      const homeSystem = 'sol-home'
+      const spaceUnits = game.state.units[homeSystem].space
+        .filter(u => u.owner === 'dennis')
+        .map(u => u.type)
+        .sort()
+
+      expect(spaceUnits).toEqual(['carrier', 'carrier', 'destroyer', 'fighter', 'fighter', 'fighter'])
+
+      const jord = game.state.units[homeSystem].planets['jord']
+        .filter(u => u.owner === 'dennis')
+        .map(u => u.type)
+        .sort()
+
+      expect(jord).toEqual(['infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'space-dock'])
+    })
+
+    test('Versatile: gains 1 extra command token in status phase', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      game.run()
+
+      // Strategy phase
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      // Both use strategy cards then pass
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')
+
+      // Status phase: dennis (Sol) gets 3 tokens (2 + 1 Versatile), micah gets 2
+      // Both click Done to accept default distribution (all to tactics)
+      t.choose(game, 'Done')  // dennis
+      t.choose(game, 'Done')  // micah
+
+      // Sol: tactics started at 3, spent 0 (used strategic action, not tactical),
+      // then gains 3 in status = tactics should be 6
+      // Hacan: tactics 3, gains 2 = 5
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+      // Dennis: 3 (start) + 3 (leadership primary) + 3 (status: 2 + 1 Versatile) = 9
+      expect(dennis.commandTokens.tactics).toBe(9)
+      // Micah: 3 (start) + 2 (status) = 5
+      expect(micah.commandTokens.tactics).toBe(5)
+    })
+
+    test('flagship Genesis has capacity 12', () => {
+      const faction = res.getFaction('federation-of-sol')
+      expect(faction.flagship.name).toBe('Genesis')
+      expect(faction.flagship.capacity).toBe(12)
+    })
+
+    test('Spec Ops II upgrades infantry', () => {
+      const faction = res.getFaction('federation-of-sol')
+      const specOps = faction.factionTechnologies.find(t => t.id === 'spec-ops-ii')
+      expect(specOps).toBeTruthy()
+      expect(specOps.unitUpgrade).toBe('infantry')
+      expect(specOps.stats.combat).toBe(6)
+    })
+
+    test('Advanced Carrier II adds sustain damage to carriers', () => {
+      const faction = res.getFaction('federation-of-sol')
+      const carrier2 = faction.factionTechnologies.find(t => t.id === 'advanced-carrier-ii')
+      expect(carrier2).toBeTruthy()
+      expect(carrier2.unitUpgrade).toBe('carrier')
+      expect(carrier2.stats.abilities).toContain('sustain-damage')
+      expect(carrier2.stats.capacity).toBe(8)
+    })
   })
 
   describe('Emirates of Hacan', () => {
-    test.todo('starts with Antimass Deflectors and Sarween Tools')
-    test.todo('starts with 2 carriers, 1 cruiser, 2 fighters, 4 infantry, 1 space dock')
-    test.todo('6 commodities')
-    test.todo('Masters of Trade: free Trade secondary')
-    test.todo('Guild Ships: trade with non-neighbors')
+    test('starts with Antimass Deflectors and Sarween Tools', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      game.run()
+
+      const micah = game.players.byName('micah')
+      expect(micah.hasTechnology('antimass-deflectors')).toBe(true)
+      expect(micah.hasTechnology('sarween-tools')).toBe(true)
+    })
+
+    test('starts with 2 carriers, 1 cruiser, 2 fighters, 4 infantry, 1 space dock', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      game.run()
+
+      const homeSystem = 'hacan-home'
+      const spaceUnits = game.state.units[homeSystem].space
+        .filter(u => u.owner === 'micah')
+        .map(u => u.type)
+        .sort()
+
+      expect(spaceUnits).toEqual(['carrier', 'carrier', 'cruiser', 'fighter', 'fighter'])
+
+      // Infantry split across arretze and hercant
+      const arretze = game.state.units[homeSystem].planets['arretze']
+        .filter(u => u.owner === 'micah')
+        .map(u => u.type)
+        .sort()
+      expect(arretze).toEqual(['infantry', 'infantry', 'space-dock'])
+
+      const hercant = game.state.units[homeSystem].planets['hercant']
+        .filter(u => u.owner === 'micah')
+        .map(u => u.type)
+        .sort()
+      expect(hercant).toEqual(['infantry', 'infantry'])
+    })
+
+    test('6 commodities', () => {
+      const faction = res.getFaction('emirates-of-hacan')
+      expect(faction.commodities).toBe(6)
+    })
+
+    test('Masters of Trade: free Trade secondary', () => {
+      const faction = res.getFaction('emirates-of-hacan')
+      const mastersOfTrade = faction.abilities.find(a => a.id === 'masters-of-trade')
+      expect(mastersOfTrade).toBeTruthy()
+    })
+
+    test('Guild Ships: trade with non-neighbors', () => {
+      const faction = res.getFaction('emirates-of-hacan')
+      const guildShips = faction.abilities.find(a => a.id === 'guild-ships')
+      expect(guildShips).toBeTruthy()
+    })
   })
 
   describe('Barony of Letnev', () => {
-    test.todo('starts with Antimass Deflectors and Plasma Scoring')
-    test.todo('starts with 1 dreadnought, 1 carrier, 1 destroyer, 1 fighter, 3 infantry, 1 space dock')
-    test.todo('2 commodities')
-    test.todo('Munitions Reserves: spend 2 TG to reroll combat dice')
-    test.todo('Armada: fleet pool +2 for non-fighter ships')
+    test('starts with Antimass Deflectors and Plasma Scoring', () => {
+      const game = t.fixture({
+        numPlayers: 3,
+        factions: ['federation-of-sol', 'emirates-of-hacan', 'barony-of-letnev'],
+      })
+      game.run()
+
+      const scott = game.players.byName('scott')
+      expect(scott.hasTechnology('antimass-deflectors')).toBe(true)
+      expect(scott.hasTechnology('plasma-scoring')).toBe(true)
+    })
+
+    test('starts with 1 dreadnought, 1 carrier, 1 destroyer, 1 fighter, 3 infantry, 1 space dock', () => {
+      const game = t.fixture({
+        numPlayers: 3,
+        factions: ['federation-of-sol', 'emirates-of-hacan', 'barony-of-letnev'],
+      })
+      game.run()
+
+      const homeSystem = 'letnev-home'
+      const spaceUnits = game.state.units[homeSystem].space
+        .filter(u => u.owner === 'scott')
+        .map(u => u.type)
+        .sort()
+
+      expect(spaceUnits).toEqual(['carrier', 'destroyer', 'dreadnought', 'fighter'])
+
+      const arcPrime = game.state.units[homeSystem].planets['arc-prime']
+        .filter(u => u.owner === 'scott')
+        .map(u => u.type)
+        .sort()
+
+      expect(arcPrime).toEqual(['infantry', 'infantry', 'infantry', 'space-dock'])
+    })
+
+    test('2 commodities', () => {
+      const faction = res.getFaction('barony-of-letnev')
+      expect(faction.commodities).toBe(2)
+    })
+
+    test('Munitions Reserves: spend 2 TG to reroll combat dice', () => {
+      const faction = res.getFaction('barony-of-letnev')
+      const munitions = faction.abilities.find(a => a.id === 'munitions-reserves')
+      expect(munitions).toBeTruthy()
+    })
+
+    test('Armada: fleet pool +2 for non-fighter ships', () => {
+      const faction = res.getFaction('barony-of-letnev')
+      const armada = faction.abilities.find(a => a.id === 'armada')
+      expect(armada).toBeTruthy()
+    })
   })
 
   describe('Leaders', () => {
-    test.todo('agent starts unlocked')
-    test.todo('commander starts locked')
-    test.todo('hero starts locked')
-    test.todo('commander unlocks when condition met')
-    test.todo('hero purged after use')
+    test('agent starts unlocked', () => {
+      const game = t.fixture()
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.leaders.agent).toBe('ready')
+    })
+
+    test('commander starts locked', () => {
+      const game = t.fixture()
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.leaders.commander).toBe('locked')
+    })
+
+    test('hero starts locked', () => {
+      const game = t.fixture()
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.leaders.hero).toBe('locked')
+    })
+
+    test('commander unlocks when condition met', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.leaders.commander).toBe('unlocked')
+    })
+
+    test('hero purged after use', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'unlocked', hero: 'purged' },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.leaders.hero).toBe('purged')
+    })
   })
 })
