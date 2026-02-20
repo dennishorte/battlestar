@@ -272,6 +272,18 @@ describe('Factions', () => {
       const faction = res.getFaction('mentak-coalition')
       expect(faction.commodities).toBe(2)
     })
+
+    test('Ambush ability defined', () => {
+      const faction = res.getFaction('mentak-coalition')
+      const ambush = faction.abilities.find(a => a.id === 'ambush')
+      expect(ambush).toBeTruthy()
+    })
+
+    test('Pillage ability defined', () => {
+      const faction = res.getFaction('mentak-coalition')
+      const pillage = faction.abilities.find(a => a.id === 'pillage')
+      expect(pillage).toBeTruthy()
+    })
   })
 
   describe('Yssaril Tribes', () => {
