@@ -308,6 +308,140 @@ describe('Factions', () => {
     })
   })
 
+  describe('Universities of Jol-Nar', () => {
+    test('starts with all 4 base technologies', () => {
+      const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasTechnology('neural-motivator')).toBe(true)
+      expect(dennis.hasTechnology('antimass-deflectors')).toBe(true)
+      expect(dennis.hasTechnology('sarween-tools')).toBe(true)
+      expect(dennis.hasTechnology('plasma-scoring')).toBe(true)
+    })
+
+    test('starts with correct units', () => {
+      const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+      game.run()
+
+      const homeSystem = 'jolnar-home'
+      const spaceUnits = game.state.units[homeSystem].space
+        .filter(u => u.owner === 'dennis')
+        .map(u => u.type)
+        .sort()
+
+      expect(spaceUnits).toEqual(['carrier', 'carrier', 'dreadnought', 'fighter'])
+
+      const nar = game.state.units[homeSystem].planets['nar']
+        .filter(u => u.owner === 'dennis')
+        .map(u => u.type)
+        .sort()
+      expect(nar).toEqual(['infantry', 'pds', 'pds'])
+
+      const jol = game.state.units[homeSystem].planets['jol']
+        .filter(u => u.owner === 'dennis')
+        .map(u => u.type)
+        .sort()
+      expect(jol).toEqual(['infantry', 'space-dock'])
+    })
+
+    test('4 commodities', () => {
+      const faction = res.getFaction('universities-of-jol-nar')
+      expect(faction.commodities).toBe(4)
+    })
+
+    test('Fragile ability defined', () => {
+      const faction = res.getFaction('universities-of-jol-nar')
+      const fragile = faction.abilities.find(a => a.id === 'fragile')
+      expect(fragile).toBeTruthy()
+    })
+
+    test('Analytical ability defined', () => {
+      const faction = res.getFaction('universities-of-jol-nar')
+      const analytical = faction.abilities.find(a => a.id === 'analytical')
+      expect(analytical).toBeTruthy()
+    })
+
+    test('Brilliant ability defined', () => {
+      const faction = res.getFaction('universities-of-jol-nar')
+      const brilliant = faction.abilities.find(a => a.id === 'brilliant')
+      expect(brilliant).toBeTruthy()
+    })
+
+    test('faction technologies defined', () => {
+      const faction = res.getFaction('universities-of-jol-nar')
+      expect(faction.factionTechnologies.length).toBe(2)
+      const eRes = faction.factionTechnologies.find(t => t.id === 'e-res-siphons')
+      const spatial = faction.factionTechnologies.find(t => t.id === 'spatial-conduit-cylinder')
+      expect(eRes).toBeTruthy()
+      expect(spatial).toBeTruthy()
+    })
+  })
+
+  describe("Sardakk N'orr", () => {
+    test('starts with no technologies', () => {
+      const game = t.fixture({
+        numPlayers: 3,
+        factions: ['federation-of-sol', 'emirates-of-hacan', 'sardakk-norr'],
+      })
+      game.run()
+
+      const scott = game.players.byName('scott')
+      expect(scott.getTechnologies().length).toBe(0)
+    })
+
+    test('starts with correct units', () => {
+      const game = t.fixture({
+        numPlayers: 3,
+        factions: ['federation-of-sol', 'emirates-of-hacan', 'sardakk-norr'],
+      })
+      game.run()
+
+      const homeSystem = 'norr-home'
+      const spaceUnits = game.state.units[homeSystem].space
+        .filter(u => u.owner === 'scott')
+        .map(u => u.type)
+        .sort()
+
+      expect(spaceUnits).toEqual(['carrier', 'carrier', 'cruiser'])
+
+      const trenlak = game.state.units[homeSystem].planets['trenlak']
+        .filter(u => u.owner === 'scott')
+        .map(u => u.type)
+        .sort()
+
+      expect(trenlak).toEqual(['infantry', 'infantry', 'infantry', 'pds'])
+
+      const quinarra = game.state.units[homeSystem].planets['quinarra']
+        .filter(u => u.owner === 'scott')
+        .map(u => u.type)
+        .sort()
+
+      expect(quinarra).toEqual(['infantry', 'infantry', 'space-dock'])
+    })
+
+    test('3 commodities', () => {
+      const faction = res.getFaction('sardakk-norr')
+      expect(faction.commodities).toBe(3)
+    })
+
+    test('Unrelenting ability defined', () => {
+      const faction = res.getFaction('sardakk-norr')
+      const unrelenting = faction.abilities.find(a => a.id === 'unrelenting')
+      expect(unrelenting).toBeTruthy()
+    })
+
+    test('faction technologies defined', () => {
+      const faction = res.getFaction('sardakk-norr')
+      expect(faction.factionTechnologies.length).toBe(2)
+      const valkyrie = faction.factionTechnologies.find(t => t.id === 'valkyrie-particle-weave')
+      const exotrireme = faction.factionTechnologies.find(t => t.id === 'exotrireme-ii')
+      expect(valkyrie).toBeTruthy()
+      expect(exotrireme).toBeTruthy()
+      expect(exotrireme.unitUpgrade).toBe('dreadnought')
+    })
+  })
+
   describe('Leaders', () => {
     test('agent starts unlocked', () => {
       const game = t.fixture()
