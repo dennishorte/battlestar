@@ -85,8 +85,10 @@ TestUtil.fixture = function(options = {}) {
 
   const game = TwilightFactory(options, 'dennis')
 
-  // Set up empty breakpoint for initialization
-  game.testSetBreakpoint('initialization-complete', () => {})
+  // Set up empty breakpoint for initialization (skip initial draws by default)
+  game.testSetBreakpoint('initialization-complete', (game) => {
+    game.state.skipInitialDraws = true
+  })
 
   return game
 }
@@ -121,6 +123,11 @@ TestUtil.fixture = function(options = {}) {
  */
 TestUtil.setBoard = function(game, state) {
   game.testSetBreakpoint('initialization-complete', (game) => {
+    // Skip initial draws unless explicitly enabled
+    if (state.enableInitialDraws) {
+      game.state.skipInitialDraws = false
+    }
+
     // Apply game-level state
     if (state.round !== undefined) {
       game.state.round = state.round
@@ -266,6 +273,19 @@ TestUtil.setBoard = function(game, state) {
           const card = res.getActionCard(id)
           return card ? { ...card, deckIndex: 0 } : { id, name: id, timing: 'action', deckIndex: 0 }
         })
+      }
+
+      // Secret objectives
+      if (playerState.secretObjectives !== undefined) {
+        player.secretObjectives = [...playerState.secretObjectives]
+      }
+
+      // Scored objectives
+      if (playerState.scoredObjectives !== undefined) {
+        if (!game.state.scoredObjectives[player.name]) {
+          game.state.scoredObjectives[player.name] = []
+        }
+        game.state.scoredObjectives[player.name] = [...playerState.scoredObjectives]
       }
 
       // Promissory notes

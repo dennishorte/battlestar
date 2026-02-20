@@ -36,7 +36,7 @@ const publicObjectivesI = [
       const res = require('./index.js')
       const upgrades = techs.filter(id => {
         const tech = res.getTechnology(id)
-        return tech && tech.type === 'unit-upgrade'
+        return tech && tech.unitUpgrade
       })
       return upgrades.length >= 2
     },
@@ -246,7 +246,7 @@ const publicObjectivesII = [
       const res = require('./index.js')
       const upgrades = techs.filter(id => {
         const tech = res.getTechnology(id)
-        return tech && tech.type === 'unit-upgrade'
+        return tech && tech.unitUpgrade
       })
       return upgrades.length >= 3
     },
