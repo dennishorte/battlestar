@@ -670,7 +670,7 @@ Twilight.prototype._tacticalAction = function(player) {
   this._movementStep(player, systemId)
 
   // Step 3: Space combat
-  // TODO: Implement space combat
+  this._spaceCombat(player, systemId)
 
   // Step 4: Invasion
   // TODO: Implement invasion
@@ -874,6 +874,200 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
     })
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Space Combat
+
+Twilight.prototype._spaceCombat = function(player, systemId) {
+  const systemUnits = this.state.units[systemId]
+  if (!systemUnits) {
+    return
+  }
+
+  // Find all players with ships in the system
+  const playerShips = {}
+  for (const unit of systemUnits.space) {
+    if (!playerShips[unit.owner]) {
+      playerShips[unit.owner] = []
+    }
+    playerShips[unit.owner].push(unit)
+  }
+
+  // Need exactly 2 players with ships for combat
+  const combatants = Object.keys(playerShips)
+  if (combatants.length < 2) {
+    return
+  }
+
+  const attacker = player.name
+  const defender = combatants.find(name => name !== attacker)
+  if (!defender) {
+    return
+  }
+
+  this.log.add({
+    template: 'Space combat in system {system}',
+    args: { system: systemId },
+  })
+  this.log.indent()
+
+  // Anti-Fighter Barrage (before combat)
+  this._antiFighterBarrage(systemId, attacker, defender)
+
+  // Combat rounds
+  let round = 0
+  const MAX_ROUNDS = 20  // safety limit
+  while (round < MAX_ROUNDS) {
+    round++
+
+    const attackerShips = systemUnits.space.filter(u => u.owner === attacker)
+    const defenderShips = systemUnits.space.filter(u => u.owner === defender)
+
+    if (attackerShips.length === 0 || defenderShips.length === 0) {
+      break
+    }
+
+    // Both sides roll simultaneously
+    const attackerHits = this._rollCombatDice(attackerShips)
+    const defenderHits = this._rollCombatDice(defenderShips)
+
+    this.log.add({
+      template: 'Round {round}: attacker scores {aHits} hits, defender scores {dHits} hits',
+      args: { round, aHits: attackerHits, dHits: defenderHits },
+    })
+
+    // Assign hits (auto-assign: sustain damage first, then cheapest units)
+    this._assignHits(systemId, defender, attackerHits)
+    this._assignHits(systemId, attacker, defenderHits)
+  }
+
+  this.log.outdent()
+}
+
+Twilight.prototype._antiFighterBarrage = function(systemId, attacker, defender) {
+  const systemUnits = this.state.units[systemId]
+
+  // Both sides can have AFB
+  for (const [shooter, target] of [[attacker, defender], [defender, attacker]]) {
+    const ships = systemUnits.space.filter(u => u.owner === shooter)
+    let totalAFBHits = 0
+
+    for (const ship of ships) {
+      const unitDef = res.getUnit(ship.type)
+      if (!unitDef) {
+        continue
+      }
+
+      // Parse AFB ability: 'anti-fighter-barrage-Nx#' where N is combat value, # is dice count
+      const afbAbility = unitDef.abilities.find(a => a.startsWith('anti-fighter-barrage-'))
+      if (!afbAbility) {
+        continue
+      }
+
+      const parts = afbAbility.replace('anti-fighter-barrage-', '').split('x')
+      const combatValue = parseInt(parts[0])
+      const diceCount = parseInt(parts[1])
+
+      for (let i = 0; i < diceCount; i++) {
+        const roll = Math.floor(this.random() * 10) + 1
+        if (roll >= combatValue) {
+          totalAFBHits++
+        }
+      }
+    }
+
+    // AFB hits only affect fighters
+    if (totalAFBHits > 0) {
+      this.log.add({
+        template: '{shooter} scores {hits} anti-fighter barrage hits',
+        args: { shooter, hits: totalAFBHits },
+      })
+
+      for (let i = 0; i < totalAFBHits; i++) {
+        const fighterIdx = systemUnits.space.findIndex(
+          u => u.owner === target && u.type === 'fighter'
+        )
+        if (fighterIdx !== -1) {
+          systemUnits.space.splice(fighterIdx, 1)
+        }
+      }
+    }
+  }
+}
+
+Twilight.prototype._rollCombatDice = function(ships) {
+  let hits = 0
+  for (const ship of ships) {
+    const unitDef = res.getUnit(ship.type)
+    if (!unitDef || !unitDef.combat) {
+      continue
+    }
+
+    // Each ship rolls 1 die (war suns roll 3 dice per their combat value)
+    const diceCount = unitDef.type === 'war-sun' ? 3 : 1
+    for (let i = 0; i < diceCount; i++) {
+      const roll = Math.floor(this.random() * 10) + 1
+      if (roll >= unitDef.combat) {
+        hits++
+      }
+    }
+  }
+  return hits
+}
+
+Twilight.prototype._assignHits = function(systemId, ownerName, hits) {
+  if (hits <= 0) {
+    return
+  }
+
+  const systemUnits = this.state.units[systemId]
+  let remainingHits = hits
+
+  // First, sustain damage on undamaged ships that have the ability
+  const sustainableShips = systemUnits.space
+    .filter(u => u.owner === ownerName && !u.damaged)
+    .filter(u => {
+      const def = res.getUnit(u.type)
+      return def && def.abilities.includes('sustain-damage')
+    })
+    // Prioritize most expensive ships for sustain
+    .sort((a, b) => {
+      const defA = res.getUnit(a.type)
+      const defB = res.getUnit(b.type)
+      return (defB?.cost || 0) - (defA?.cost || 0)
+    })
+
+  for (const ship of sustainableShips) {
+    if (remainingHits <= 0) {
+      break
+    }
+    ship.damaged = true
+    remainingHits--
+  }
+
+  // Then destroy cheapest ships first
+  while (remainingHits > 0) {
+    const ships = systemUnits.space.filter(u => u.owner === ownerName)
+    if (ships.length === 0) {
+      break
+    }
+
+    // Sort by cost ascending (destroy cheapest first)
+    ships.sort((a, b) => {
+      const defA = res.getUnit(a.type)
+      const defB = res.getUnit(b.type)
+      return (defA?.cost || 0) - (defB?.cost || 0)
+    })
+
+    const target = ships[0]
+    const idx = systemUnits.space.findIndex(u => u.id === target.id)
+    if (idx !== -1) {
+      systemUnits.space.splice(idx, 1)
+    }
+    remainingHits--
+  }
+}
+
 
 Twilight.prototype._strategicAction = function(player) {
   this.log.indent()
