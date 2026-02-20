@@ -652,30 +652,227 @@ Twilight.prototype._tacticalAction = function(player) {
     allowsAction: 'activate-system',
   })
 
-  if (activateSelection.action === 'activate-system') {
-    const systemId = activateSelection.systemId
-    player.spendTacticToken()
-    this.state.systems[systemId].commandTokens.push(player.name)
-
-    this.log.add({
-      template: '{player} activates system {system}',
-      args: { player, system: systemId },
-    })
-
-    // Step 2: Move ships
-    // TODO: Implement movement
-
-    // Step 3: Space combat
-    // TODO: Implement space combat
-
-    // Step 4: Invasion
-    // TODO: Implement invasion
-
-    // Step 5: Production
-    // TODO: Implement production
+  if (activateSelection.action !== 'activate-system') {
+    this.log.outdent()
+    return
   }
 
+  const systemId = String(activateSelection.systemId)
+  player.spendTacticToken()
+  this.state.systems[systemId].commandTokens.push(player.name)
+
+  this.log.add({
+    template: '{player} activates system {system}',
+    args: { player, system: systemId },
+  })
+
+  // Step 2: Move ships
+  this._movementStep(player, systemId)
+
+  // Step 3: Space combat
+  // TODO: Implement space combat
+
+  // Step 4: Invasion
+  // TODO: Implement invasion
+
+  // Step 5: Production
+  // TODO: Implement production
+
   this.log.outdent()
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Movement
+
+Twilight.prototype._movementStep = function(player, targetSystemId) {
+  const moveSelection = this.actions.choose(player, ['Done'], {
+    title: 'Move Ships',
+    allowsAction: 'move-ships',
+  })
+
+  if (moveSelection.action !== 'move-ships') {
+    return
+  }
+
+  const movements = moveSelection.movements || []
+  if (movements.length === 0) {
+    return
+  }
+
+  const galaxy = new (require('./model/Galaxy.js').Galaxy)(this)
+
+  // Separate ship movements from transported units
+  const shipMovements = []
+  const transportedUnits = []
+
+  for (const m of movements) {
+    const unitDef = res.getUnit(m.unitType)
+    if (!unitDef) {
+      continue
+    }
+
+    if (unitDef.category === 'ship' && !unitDef.requiresCapacity) {
+      shipMovements.push(m)
+    }
+    else {
+      transportedUnits.push(m)
+    }
+  }
+
+  // Validate and execute ship movements
+  const movedShips = []
+  for (const m of shipMovements) {
+    const fromSystemId = String(m.from)
+
+    // Cannot move ships from a system with own command token
+    if (this.state.systems[fromSystemId]?.commandTokens.includes(player.name)) {
+      continue
+    }
+
+    const unitDef = res.getUnit(m.unitType)
+    const path = galaxy.findPath(fromSystemId, targetSystemId, player.name, unitDef.move)
+    if (!path) {
+      continue  // Ship cannot reach the target
+    }
+
+    // Move units (up to count)
+    const systemUnits = this.state.units[fromSystemId]
+    if (!systemUnits) {
+      continue
+    }
+
+    for (let i = 0; i < m.count; i++) {
+      const unitIdx = systemUnits.space.findIndex(
+        u => u.owner === player.name && u.type === m.unitType
+      )
+      if (unitIdx === -1) {
+        break
+      }
+
+      const unit = systemUnits.space.splice(unitIdx, 1)[0]
+      this.state.units[targetSystemId].space.push(unit)
+      movedShips.push(unit)
+    }
+  }
+
+  // Check fleet pool limit (non-fighter ships in target system)
+  const fleetLimit = player.commandTokens.fleet
+  const nonFighterShips = this.state.units[targetSystemId].space
+    .filter(u => u.owner === player.name && u.type !== 'fighter')
+  if (nonFighterShips.length > fleetLimit) {
+    // Remove excess ships (return to origin — for now, just remove the last moved)
+    const excess = nonFighterShips.length - fleetLimit
+    for (let i = 0; i < excess; i++) {
+      const lastMoved = movedShips.pop()
+      if (lastMoved && lastMoved.type !== 'fighter') {
+        const idx = this.state.units[targetSystemId].space.findIndex(u => u.id === lastMoved.id)
+        if (idx !== -1) {
+          this.state.units[targetSystemId].space.splice(idx, 1)
+          // Return to origin — find origin from movements
+          const origin = shipMovements.find(m => m.unitType === lastMoved.type)?.from
+          if (origin) {
+            this.state.units[String(origin)].space.push(lastMoved)
+          }
+        }
+      }
+    }
+  }
+
+  // Calculate total transport capacity of ships in target system
+  let totalCapacity = 0
+  for (const unit of this.state.units[targetSystemId].space) {
+    if (unit.owner === player.name) {
+      const unitDef = res.getUnit(unit.type)
+      if (unitDef) {
+        totalCapacity += unitDef.capacity || 0
+      }
+    }
+  }
+
+  // Count units already being transported (fighters + ground forces already in system)
+  let usedCapacity = 0
+  for (const unit of this.state.units[targetSystemId].space) {
+    if (unit.owner === player.name) {
+      const unitDef = res.getUnit(unit.type)
+      if (unitDef?.requiresCapacity) {
+        usedCapacity++
+      }
+    }
+  }
+
+  // Transport units (fighters stay in space, ground forces go to planets)
+  const targetTile = res.getSystemTile(targetSystemId) || res.getSystemTile(Number(targetSystemId))
+  const firstPlanet = targetTile?.planets[0]
+
+  for (const m of transportedUnits) {
+    const fromSystemId = String(m.from)
+    const unitDef = res.getUnit(m.unitType)
+    if (!unitDef) {
+      continue
+    }
+
+    const systemUnits = this.state.units[fromSystemId]
+    if (!systemUnits) {
+      continue
+    }
+
+    for (let i = 0; i < m.count; i++) {
+      if (usedCapacity >= totalCapacity) {
+        break  // No more capacity
+      }
+
+      // Find the unit in the from system (check space for fighters, planets for ground forces)
+      let unit = null
+      if (unitDef.category === 'ship') {
+        // Fighters are in space
+        const idx = systemUnits.space.findIndex(
+          u => u.owner === player.name && u.type === m.unitType
+        )
+        if (idx !== -1) {
+          unit = systemUnits.space.splice(idx, 1)[0]
+        }
+      }
+      else if (unitDef.category === 'ground') {
+        // Ground forces are on planets
+        for (const planetId of Object.keys(systemUnits.planets)) {
+          const idx = systemUnits.planets[planetId].findIndex(
+            u => u.owner === player.name && u.type === m.unitType
+          )
+          if (idx !== -1) {
+            unit = systemUnits.planets[planetId].splice(idx, 1)[0]
+            break
+          }
+        }
+      }
+
+      if (!unit) {
+        break
+      }
+
+      // Place the unit
+      if (unitDef.category === 'ship') {
+        // Fighters go to space
+        this.state.units[targetSystemId].space.push(unit)
+      }
+      else if (firstPlanet) {
+        // Ground forces go to the first planet
+        if (!this.state.units[targetSystemId].planets[firstPlanet]) {
+          this.state.units[targetSystemId].planets[firstPlanet] = []
+        }
+        this.state.units[targetSystemId].planets[firstPlanet].push(unit)
+      }
+
+      usedCapacity++
+    }
+  }
+
+  if (movedShips.length > 0 || transportedUnits.length > 0) {
+    this.log.add({
+      template: '{player} moves ships to system {system}',
+      args: { player, system: targetSystemId },
+    })
+  }
 }
 
 Twilight.prototype._strategicAction = function(player) {
