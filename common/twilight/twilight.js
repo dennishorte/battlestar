@@ -645,6 +645,9 @@ Twilight.prototype.actionPhase = function() {
       continue
     }
 
+    // Check leader unlock conditions at start of each turn
+    this._checkLeaderUnlocks()
+
     // Player must use strategy card before passing
     const choices = ['Tactical Action', 'Component Action']
     if (!player.hasUsedStrategyCard()) {
@@ -768,7 +771,14 @@ Twilight.prototype.statusPhase = function() {
     }
   }
 
-  // Step 8: Return strategy cards
+  // Step 8: Ready agents
+  for (const player of this.players.all()) {
+    if (player.leaders.agent === 'exhausted') {
+      player.readyAgent()
+    }
+  }
+
+  // Step 9: Return strategy cards
   for (const player of this.players.all()) {
     player.returnStrategyCard()
   }
@@ -3041,6 +3051,7 @@ Twilight.prototype._recordObjectiveScore = function(player, choiceString) {
   })
 
   this._checkVictory()
+  this._checkLeaderUnlocks()
 }
 
 Twilight.prototype._revealObjective = function() {
@@ -3434,6 +3445,181 @@ Twilight.prototype._checkVictory = function() {
       this.youWin(player, `${player.name} has reached 10 victory points!`)
     }
   }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Leaders
+
+/**
+ * Check all players' commander and hero unlock conditions.
+ * Called after key game events (scoring, combat, gaining resources, etc.)
+ */
+Twilight.prototype._checkLeaderUnlocks = function() {
+  for (const player of this.players.all()) {
+    this._checkCommanderUnlock(player)
+    this._checkHeroUnlock(player)
+  }
+}
+
+/**
+ * Check if a player's hero should unlock (universal: 3 scored objectives).
+ */
+Twilight.prototype._checkHeroUnlock = function(player) {
+  if (player.isHeroUnlocked() || player.isHeroPurged()) {
+    return
+  }
+
+  const scored = this.state.scoredObjectives[player.name] || []
+  if (scored.length >= 3) {
+    player.unlockHero()
+    this.log.add({
+      template: '{player} unlocks hero: {name}',
+      args: { player, name: player.faction?.leaders?.hero?.name || 'Hero' },
+    })
+  }
+}
+
+/**
+ * Check if a player's commander should unlock (faction-specific conditions).
+ */
+Twilight.prototype._checkCommanderUnlock = function(player) {
+  if (player.isCommanderUnlocked()) {
+    return
+  }
+
+  const factionId = player.faction?.id
+  let conditionMet = false
+
+  switch (factionId) {
+    case 'federation-of-sol':
+      // Have 12 or more ground forces on the game board
+      conditionMet = this._countGroundForces(player.name) >= 12
+      break
+    case 'emirates-of-hacan':
+      // Have 10 trade goods
+      conditionMet = player.tradeGoods >= 10
+      break
+    case 'barony-of-letnev':
+      // Have 5 non-fighter ships in 1 system
+      conditionMet = this._hasNonFighterShipsInOneSystem(player.name, 5)
+      break
+    case 'sardakk-norr':
+      // Control 5 non-home planets
+      conditionMet = this._countNonHomePlanets(player.name) >= 5
+      break
+    case 'universities-of-jol-nar':
+      // Have 8 technologies
+      conditionMet = player.getTechIds().length >= 8
+      break
+    case 'l1z1x-mindnet':
+      // Have 3+ dreadnoughts on the game board
+      conditionMet = this._countUnitsOnBoard(player.name, 'dreadnought') >= 3
+      break
+    case 'xxcha-kingdom':
+      // Control planets with combined influence 12+
+      conditionMet = this._getTotalControlledInfluence(player.name) >= 12
+      break
+    case 'embers-of-muaat':
+      // Have a war sun on the game board
+      conditionMet = this._countUnitsOnBoard(player.name, 'war-sun') >= 1
+      break
+    case 'arborec':
+      // Have 12+ ground forces on board
+      conditionMet = this._countGroundForces(player.name) >= 12
+      break
+    case 'yssaril-tribes':
+      // Have 7 action cards in hand
+      conditionMet = (player.actionCards?.length || 0) >= 7
+      break
+    case 'nomad':
+      // Have 1 scored secret objective
+      conditionMet = (this.state.scoredObjectives[player.name] || [])
+        .some(id => {
+          const obj = res.getObjective(id)
+          return obj && obj.type === 'secret'
+        })
+      break
+    default:
+      // Other factions not yet implemented
+      break
+  }
+
+  if (conditionMet) {
+    player.unlockCommander()
+    this.log.add({
+      template: '{player} unlocks commander: {name}',
+      args: { player, name: player.faction?.leaders?.commander?.name || 'Commander' },
+    })
+  }
+}
+
+// Leader helper methods
+Twilight.prototype._countGroundForces = function(playerName) {
+  let count = 0
+  for (const systemUnits of Object.values(this.state.units)) {
+    for (const planetUnits of Object.values(systemUnits.planets)) {
+      count += planetUnits.filter(u =>
+        u.owner === playerName && res.getUnit(u.type)?.category === 'ground'
+      ).length
+    }
+  }
+  return count
+}
+
+Twilight.prototype._hasNonFighterShipsInOneSystem = function(playerName, count) {
+  for (const systemUnits of Object.values(this.state.units)) {
+    const nonFighterShips = systemUnits.space.filter(u =>
+      u.owner === playerName && u.type !== 'fighter'
+    )
+    if (nonFighterShips.length >= count) {
+      return true
+    }
+  }
+  return false
+}
+
+Twilight.prototype._countNonHomePlanets = function(playerName) {
+  let count = 0
+  for (const [planetId, planetState] of Object.entries(this.state.planets)) {
+    if (planetState.controller !== playerName) {
+      continue
+    }
+    const systemId = this._findSystemForPlanet(planetId)
+    if (systemId && !systemId.includes('-home')) {
+      count++
+    }
+  }
+  return count
+}
+
+Twilight.prototype._countUnitsOnBoard = function(playerName, unitType) {
+  let count = 0
+  for (const systemUnits of Object.values(this.state.units)) {
+    count += systemUnits.space.filter(u =>
+      u.owner === playerName && u.type === unitType
+    ).length
+    for (const planetUnits of Object.values(systemUnits.planets)) {
+      count += planetUnits.filter(u =>
+        u.owner === playerName && u.type === unitType
+      ).length
+    }
+  }
+  return count
+}
+
+Twilight.prototype._getTotalControlledInfluence = function(playerName) {
+  let total = 0
+  for (const [planetId, planetState] of Object.entries(this.state.planets)) {
+    if (planetState.controller !== playerName) {
+      continue
+    }
+    const planet = res.getPlanet(planetId)
+    if (planet) {
+      total += planet.influence
+    }
+  }
+  return total
 }
 
 

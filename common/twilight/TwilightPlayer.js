@@ -301,6 +301,48 @@ class TwilightPlayer extends BasePlayer {
   }
 
   // ---------------------------------------------------------------------------
+  // Leaders
+  // ---------------------------------------------------------------------------
+
+  isAgentReady() {
+    return this.leaders.agent === 'ready'
+  }
+
+  exhaustAgent() {
+    this.leaders.agent = 'exhausted'
+  }
+
+  readyAgent() {
+    this.leaders.agent = 'ready'
+  }
+
+  isCommanderUnlocked() {
+    return this.leaders.commander === 'unlocked'
+  }
+
+  unlockCommander() {
+    this.leaders.commander = 'unlocked'
+  }
+
+  isHeroUnlocked() {
+    return this.leaders.hero === 'unlocked'
+  }
+
+  isHeroPurged() {
+    return this.leaders.hero === 'purged'
+  }
+
+  unlockHero() {
+    if (this.leaders.hero !== 'purged') {
+      this.leaders.hero = 'unlocked'
+    }
+  }
+
+  purgeHero() {
+    this.leaders.hero = 'purged'
+  }
+
+  // ---------------------------------------------------------------------------
   // Zone accessors
   // ---------------------------------------------------------------------------
 
