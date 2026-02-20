@@ -160,9 +160,14 @@ TestUtil.setBoard = function(game, state) {
         player.victoryPoints = playerState.victoryPoints
       }
 
-      // Strategy card
+      // Strategy card(s)
       if (playerState.strategyCard) {
-        player.pickStrategyCard(playerState.strategyCard)
+        const cards = Array.isArray(playerState.strategyCard)
+          ? playerState.strategyCard
+          : [playerState.strategyCard]
+        for (const cardId of cards) {
+          player.pickStrategyCard(cardId)
+        }
       }
 
       // Leaders
