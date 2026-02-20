@@ -673,7 +673,7 @@ Twilight.prototype._tacticalAction = function(player) {
   this._spaceCombat(player, systemId)
 
   // Step 4: Invasion
-  // TODO: Implement invasion
+  this._invasionStep(player, systemId)
 
   // Step 5: Production
   // TODO: Implement production
@@ -801,10 +801,7 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
     }
   }
 
-  // Transport units (fighters stay in space, ground forces go to planets)
-  const targetTile = res.getSystemTile(targetSystemId) || res.getSystemTile(Number(targetSystemId))
-  const firstPlanet = targetTile?.planets[0]
-
+  // Transport units (fighters and ground forces go to space area — in transit)
   for (const m of transportedUnits) {
     const fromSystemId = String(m.from)
     const unitDef = res.getUnit(m.unitType)
@@ -850,19 +847,8 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
         break
       }
 
-      // Place the unit
-      if (unitDef.category === 'ship') {
-        // Fighters go to space
-        this.state.units[targetSystemId].space.push(unit)
-      }
-      else if (firstPlanet) {
-        // Ground forces go to the first planet
-        if (!this.state.units[targetSystemId].planets[firstPlanet]) {
-          this.state.units[targetSystemId].planets[firstPlanet] = []
-        }
-        this.state.units[targetSystemId].planets[firstPlanet].push(unit)
-      }
-
+      // All transported units go to space area (in transit)
+      this.state.units[targetSystemId].space.push(unit)
       usedCapacity++
     }
   }
@@ -1065,6 +1051,351 @@ Twilight.prototype._assignHits = function(systemId, ownerName, hits) {
       systemUnits.space.splice(idx, 1)
     }
     remainingHits--
+  }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Invasion
+
+Twilight.prototype._invasionStep = function(player, systemId) {
+  const systemUnits = this.state.units[systemId]
+  if (!systemUnits) {
+    return
+  }
+
+  const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+  if (!tile || tile.planets.length === 0) {
+    // No planets — just discard any ground forces in space (can't exist without planet)
+    this._discardGroundForcesInSpace(systemId, player.name)
+    return
+  }
+
+  // Find ground forces in space (in transit)
+  const groundForcesInSpace = systemUnits.space
+    .filter(u => u.owner === player.name && res.getUnit(u.type)?.category === 'ground')
+
+  // Find enemy-controlled planets in this system
+  const enemyPlanets = tile.planets.filter(planetId => {
+    const planetState = this.state.planets[planetId]
+    return planetState && planetState.controller && planetState.controller !== player.name
+  })
+
+  if (enemyPlanets.length > 0 && groundForcesInSpace.length > 0) {
+    // Invasion! Attack the first enemy planet
+    const targetPlanet = enemyPlanets[0]
+
+    // Step 1: Bombardment
+    this._bombardment(systemId, targetPlanet, player.name)
+
+    // Step 2: Commit ground forces from space to the planet
+    this._commitGroundForces(systemId, targetPlanet, player.name)
+
+    // Step 3: Ground combat
+    this._groundCombat(systemId, targetPlanet, player.name)
+
+    // Step 4: Establish control
+    this._establishControl(systemId, targetPlanet, player.name)
+  }
+  else {
+    // No enemy planets — auto-place ground forces on the first friendly/empty planet
+    this._autoPlaceGroundForces(systemId, player.name, tile)
+  }
+}
+
+Twilight.prototype._bombardment = function(systemId, planetId, attackerName) {
+  const systemUnits = this.state.units[systemId]
+  const planetUnits = systemUnits.planets[planetId] || []
+
+  // Check for planetary shield on defending units
+  const defenderName = this.state.planets[planetId]?.controller
+  if (!defenderName) {
+    return
+  }
+
+  const hasShield = planetUnits.some(u => {
+    if (u.owner !== defenderName) {
+      return false
+    }
+    const def = res.getUnit(u.type)
+    return def && def.abilities.includes('planetary-shield')
+  })
+
+  // Ships with bombardment ability fire at the planet
+  const attackerShips = systemUnits.space.filter(u => u.owner === attackerName)
+  let totalHits = 0
+
+  for (const ship of attackerShips) {
+    const unitDef = res.getUnit(ship.type)
+    if (!unitDef) {
+      continue
+    }
+
+    // Parse bombardment ability: 'bombardment-NxD' where N is combat value, D is dice count
+    const bombAbility = unitDef.abilities.find(a => a.startsWith('bombardment-'))
+    if (!bombAbility) {
+      continue
+    }
+
+    const parts = bombAbility.replace('bombardment-', '').split('x')
+    const combatValue = parseInt(parts[0])
+    const diceCount = parseInt(parts[1])
+
+    // War suns ignore planetary shield; other bombardment is blocked by it
+    const isWarSun = unitDef.type === 'war-sun'
+    if (hasShield && !isWarSun) {
+      continue
+    }
+
+    for (let i = 0; i < diceCount; i++) {
+      const roll = Math.floor(this.random() * 10) + 1
+      if (roll >= combatValue) {
+        totalHits++
+      }
+    }
+  }
+
+  if (totalHits > 0) {
+    this.log.add({
+      template: '{attacker} bombardment scores {hits} hits on {planet}',
+      args: { attacker: attackerName, hits: totalHits, planet: planetId },
+    })
+
+    // Auto-assign bombardment hits to defender's ground forces (cheapest first)
+    this._assignGroundHits(systemId, planetId, defenderName, totalHits)
+  }
+}
+
+Twilight.prototype._commitGroundForces = function(systemId, planetId, ownerName) {
+  const systemUnits = this.state.units[systemId]
+
+  // Move all ground forces from space to the planet
+  const toCommit = []
+  for (let i = systemUnits.space.length - 1; i >= 0; i--) {
+    const unit = systemUnits.space[i]
+    if (unit.owner === ownerName) {
+      const unitDef = res.getUnit(unit.type)
+      if (unitDef?.category === 'ground') {
+        toCommit.push(systemUnits.space.splice(i, 1)[0])
+      }
+    }
+  }
+
+  if (!systemUnits.planets[planetId]) {
+    systemUnits.planets[planetId] = []
+  }
+
+  for (const unit of toCommit) {
+    systemUnits.planets[planetId].push(unit)
+  }
+}
+
+Twilight.prototype._groundCombat = function(systemId, planetId, attackerName) {
+  const systemUnits = this.state.units[systemId]
+  const planetUnits = systemUnits.planets[planetId]
+  if (!planetUnits) {
+    return
+  }
+
+  const defenderName = this.state.planets[planetId]?.controller
+  if (!defenderName) {
+    return
+  }
+
+  const attackerForces = planetUnits.filter(u => u.owner === attackerName)
+  const defenderForces = planetUnits.filter(u => u.owner === defenderName)
+
+  if (attackerForces.length === 0 || defenderForces.length === 0) {
+    return
+  }
+
+  this.log.add({
+    template: 'Ground combat on {planet}',
+    args: { planet: planetId },
+  })
+
+  let round = 0
+  const MAX_ROUNDS = 20
+  while (round < MAX_ROUNDS) {
+    round++
+
+    const attackers = planetUnits.filter(u => u.owner === attackerName)
+    const defenders = planetUnits.filter(u => u.owner === defenderName)
+
+    if (attackers.length === 0 || defenders.length === 0) {
+      break
+    }
+
+    const attackerHits = this._rollCombatDice(attackers)
+    const defenderHits = this._rollCombatDice(defenders)
+
+    this._assignGroundHits(systemId, planetId, defenderName, attackerHits)
+    this._assignGroundHits(systemId, planetId, attackerName, defenderHits)
+  }
+}
+
+Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, hits) {
+  if (hits <= 0) {
+    return
+  }
+
+  const planetUnits = this.state.units[systemId].planets[planetId]
+  if (!planetUnits) {
+    return
+  }
+
+  let remainingHits = hits
+
+  // First, sustain damage on undamaged units (mechs)
+  const sustainableUnits = planetUnits
+    .filter(u => u.owner === ownerName && !u.damaged)
+    .filter(u => {
+      const def = res.getUnit(u.type)
+      return def && def.abilities.includes('sustain-damage')
+    })
+    .sort((a, b) => {
+      const defA = res.getUnit(a.type)
+      const defB = res.getUnit(b.type)
+      return (defB?.cost || 0) - (defA?.cost || 0)
+    })
+
+  for (const unit of sustainableUnits) {
+    if (remainingHits <= 0) {
+      break
+    }
+    unit.damaged = true
+    remainingHits--
+  }
+
+  // Then destroy cheapest units first
+  while (remainingHits > 0) {
+    const units = planetUnits.filter(u => u.owner === ownerName)
+    if (units.length === 0) {
+      break
+    }
+
+    units.sort((a, b) => {
+      const defA = res.getUnit(a.type)
+      const defB = res.getUnit(b.type)
+      return (defA?.cost || 0) - (defB?.cost || 0)
+    })
+
+    const target = units[0]
+    const idx = planetUnits.findIndex(u => u.id === target.id)
+    if (idx !== -1) {
+      planetUnits.splice(idx, 1)
+    }
+    remainingHits--
+  }
+}
+
+Twilight.prototype._establishControl = function(systemId, planetId, attackerName) {
+  const planetUnits = this.state.units[systemId].planets[planetId] || []
+  const defenderName = this.state.planets[planetId]?.controller
+
+  const attackerForces = planetUnits.filter(u => u.owner === attackerName)
+  const defenderForces = defenderName
+    ? planetUnits.filter(u => u.owner === defenderName)
+    : []
+
+  if (attackerForces.length > 0 && defenderForces.length === 0) {
+    // Attacker wins — destroy defender structures and take control
+    if (defenderName) {
+      const structuresToRemove = planetUnits.filter(u => {
+        if (u.owner !== defenderName) {
+          return false
+        }
+        const def = res.getUnit(u.type)
+        return def?.category === 'structure'
+      })
+      for (const structure of structuresToRemove) {
+        const idx = planetUnits.findIndex(u => u.id === structure.id)
+        if (idx !== -1) {
+          planetUnits.splice(idx, 1)
+        }
+      }
+    }
+
+    this.state.planets[planetId].controller = attackerName
+    this.state.planets[planetId].exhausted = true  // newly gained planets are exhausted
+
+    this.log.add({
+      template: '{player} takes control of {planet}',
+      args: { player: attackerName, planet: planetId },
+    })
+
+    // Check for Mecatol Rex custodians
+    if (planetId === 'mecatol-rex' && !this.state.custodiansRemoved) {
+      this.state.custodiansRemoved = true
+      const player = this.players.byName(attackerName)
+      player.addVictoryPoints(1)
+
+      this.log.add({
+        template: '{player} removes the Custodians Token and gains 1 VP!',
+        args: { player: attackerName },
+      })
+    }
+  }
+}
+
+Twilight.prototype._autoPlaceGroundForces = function(systemId, ownerName, tile) {
+  const systemUnits = this.state.units[systemId]
+
+  // Find ground forces in space
+  const groundForces = []
+  for (let i = systemUnits.space.length - 1; i >= 0; i--) {
+    const unit = systemUnits.space[i]
+    if (unit.owner === ownerName) {
+      const unitDef = res.getUnit(unit.type)
+      if (unitDef?.category === 'ground') {
+        groundForces.push(systemUnits.space.splice(i, 1)[0])
+      }
+    }
+  }
+
+  if (groundForces.length === 0) {
+    return
+  }
+
+  // Place on first planet
+  const targetPlanet = tile.planets[0]
+  if (!systemUnits.planets[targetPlanet]) {
+    systemUnits.planets[targetPlanet] = []
+  }
+
+  for (const unit of groundForces) {
+    systemUnits.planets[targetPlanet].push(unit)
+  }
+
+  // Take control if uncontrolled
+  if (!this.state.planets[targetPlanet]?.controller) {
+    this.state.planets[targetPlanet].controller = ownerName
+    this.state.planets[targetPlanet].exhausted = true
+
+    // Check for Mecatol Rex custodians
+    if (targetPlanet === 'mecatol-rex' && !this.state.custodiansRemoved) {
+      this.state.custodiansRemoved = true
+      const player = this.players.byName(ownerName)
+      player.addVictoryPoints(1)
+
+      this.log.add({
+        template: '{player} removes the Custodians Token and gains 1 VP!',
+        args: { player: ownerName },
+      })
+    }
+  }
+}
+
+Twilight.prototype._discardGroundForcesInSpace = function(systemId, ownerName) {
+  const systemUnits = this.state.units[systemId]
+  for (let i = systemUnits.space.length - 1; i >= 0; i--) {
+    const unit = systemUnits.space[i]
+    if (unit.owner === ownerName) {
+      const unitDef = res.getUnit(unit.type)
+      if (unitDef?.category === 'ground') {
+        systemUnits.space.splice(i, 1)
+      }
+    }
   }
 }
 
