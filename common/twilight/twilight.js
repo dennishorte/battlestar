@@ -98,6 +98,12 @@ Twilight.prototype._initializeState = function() {
   this.state.agendaDeck = null
   this.state.activeLaws = []
   this.state.lastStrategyCard = null
+
+  // Objectives
+  this.state.objectiveDeckI = null   // initialized lazily
+  this.state.objectiveDeckII = null  // initialized lazily
+  this.state.revealedObjectives = [] // currently revealed public objectives
+  this.state.scoredObjectives = {}   // playerName → [objectiveId, ...]
 }
 
 Twilight.prototype._initializeZones = function() {
@@ -578,10 +584,10 @@ Twilight.prototype.statusPhase = function() {
   this.log.indent()
 
   // Step 1: Score objectives (in initiative order)
-  // TODO: Implement objective scoring
+  this._scoreObjectives()
 
   // Step 2: Reveal public objective
-  // TODO: Implement objective reveal
+  this._revealObjective()
 
   // Step 3: Draw action cards
   // TODO: Implement action card draw
@@ -2306,6 +2312,132 @@ Twilight.prototype._componentAction = function(_player) {
   this.log.indent()
   // TODO: Implement component actions
   this.log.outdent()
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Objectives
+
+Twilight.prototype._initObjectiveDecks = function() {
+  if (!this.state.objectiveDeckI) {
+    const stageI = res.getPublicObjectivesI().map(o => o.id)
+    this._shuffle(stageI)
+    this.state.objectiveDeckI = stageI
+  }
+  if (!this.state.objectiveDeckII) {
+    const stageII = res.getPublicObjectivesII().map(o => o.id)
+    this._shuffle(stageII)
+    this.state.objectiveDeckII = stageII
+  }
+}
+
+Twilight.prototype._scoreObjectives = function() {
+  // Each player in initiative order may score 1 public objective and 1 secret objective
+  const revealedObjectives = this.state.revealedObjectives || []
+  if (revealedObjectives.length === 0) {
+    return
+  }
+
+  // Get players in initiative order
+  const players = this._getPlayersInInitiativeOrder()
+
+  for (const player of players) {
+    const playerScored = this.state.scoredObjectives[player.name] || []
+
+    // Find which revealed public objectives this player can score
+    const scorable = revealedObjectives.filter(objId => {
+      if (playerScored.includes(objId)) {
+        return false
+      }
+      const obj = res.getObjective(objId)
+      if (!obj || !obj.check) {
+        return false
+      }
+      // Pass game as context for objectives that need it
+      return obj.check(player, this)
+    })
+
+    if (scorable.length === 0) {
+      continue
+    }
+
+    // Player chooses which objective to score (or skip)
+    const choices = ['Skip', ...scorable.map(id => {
+      const obj = res.getObjective(id)
+      return `${id}: ${obj.name}`
+    })]
+
+    const selection = this.actions.choose(player, choices, {
+      title: 'Score Public Objective',
+      noAutoRespond: true,
+    })
+
+    const chosen = selection[0]
+    if (chosen === 'Skip') {
+      continue
+    }
+
+    // Extract objective ID from choice
+    const objId = chosen.split(':')[0]
+    const obj = res.getObjective(objId)
+    if (obj) {
+      if (!this.state.scoredObjectives[player.name]) {
+        this.state.scoredObjectives[player.name] = []
+      }
+      this.state.scoredObjectives[player.name].push(objId)
+      player.addVictoryPoints(obj.points)
+
+      this.log.add({
+        template: '{player} scores {objective} (+{points} VP)',
+        args: { player, objective: obj.name, points: obj.points },
+      })
+
+      this._checkVictory()
+    }
+  }
+}
+
+Twilight.prototype._revealObjective = function() {
+  this._initObjectiveDecks()
+
+  // Reveal Stage I objectives for the first 5 rounds, Stage II after
+  const round = this.state.round
+  let deck, stage
+  if (round <= 5) {
+    deck = this.state.objectiveDeckI
+    stage = 'I'
+  }
+  else {
+    deck = this.state.objectiveDeckII
+    stage = 'II'
+  }
+
+  if (deck && deck.length > 0) {
+    const objectiveId = deck.shift()
+    if (!this.state.revealedObjectives) {
+      this.state.revealedObjectives = []
+    }
+    this.state.revealedObjectives.push(objectiveId)
+
+    const obj = res.getObjective(objectiveId)
+    if (obj) {
+      this.log.add({
+        template: 'Public Objective Stage {stage} revealed: {name}',
+        args: { stage, name: obj.name },
+      })
+    }
+  }
+}
+
+Twilight.prototype._getPlayersInInitiativeOrder = function() {
+  const players = this.players.all()
+  return [...players].sort((a, b) => {
+    const cardA = res.getStrategyCard(a.getStrategyCardId())
+    const cardB = res.getStrategyCard(b.getStrategyCardId())
+    const numA = cardA ? cardA.number : 99
+    const numB = cardB ? cardB.number : 99
+    return numA - numB
+  })
 }
 
 
