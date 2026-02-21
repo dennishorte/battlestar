@@ -228,6 +228,11 @@ TestUtil.fixture = function(options = {}) {
  *   planets            - Object keyed by planet ID → { exhausted: bool }
  *   strategyCard       - Strategy card ID (for mid-action-phase tests)
  *   leaders            - { agent: 'ready'|'exhausted', commander: 'locked'|'unlocked', hero: 'locked'|'unlocked'|'purged' }
+ *   relicFragments     - Array of fragment types (e.g. ['cultural', 'hazardous'])
+ *
+ * Game-level faction state:
+ *   sleeperTokens      - Object: planetId → ownerName (Titans of Ul)
+ *   capturedUnits      - Object: playerName → [{ type, originalOwner }] (Vuil'raith Cabal)
  *
  * Galaxy layout:
  *   systems            - Object: tileId → { q, r } to override the galaxy layout
@@ -269,6 +274,16 @@ TestUtil.setBoard = function(game, state) {
     }
     if (state.exploredPlanets !== undefined) {
       game.state.exploredPlanets = { ...state.exploredPlanets }
+    }
+
+    // Faction-specific game state
+    if (state.sleeperTokens !== undefined) {
+      Object.assign(game.state.sleeperTokens, state.sleeperTokens)
+    }
+    if (state.capturedUnits !== undefined) {
+      for (const [playerName, units] of Object.entries(state.capturedUnits)) {
+        game.state.capturedUnits[playerName] = units.map(u => ({ ...u }))
+      }
     }
 
     // Override galaxy layout (before unit placement)
@@ -417,6 +432,11 @@ TestUtil.setBoard = function(game, state) {
             player.addPromissoryNote(noteSpec.id, noteSpec.owner)
           }
         }
+      }
+
+      // Relic fragments (Naaz-Rokha)
+      if (playerState.relicFragments !== undefined) {
+        player.relicFragments = [...playerState.relicFragments]
       }
     }
   })

@@ -215,6 +215,26 @@ const adjacent = galaxy.getAdjacent('sol-home')[0]
 | `strategyCard` | String | Strategy card ID |
 | `leaders` | Object | `{ agent, commander, hero }` with status strings |
 | `promissoryNotes` | Array | Note IDs or `{ id, owner }` objects |
+| `relicFragments` | Array | Fragment types (e.g., `['cultural', 'hazardous']`) |
+
+### Faction-Specific Game State
+
+These are game-level (not per-player) fields used by specific faction abilities.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `sleeperTokens` | Object | Planet ID → owner name (Titans of Ul) |
+| `capturedUnits` | Object | Player name → `[{ type, originalOwner }]` (Vuil'raith Cabal) |
+
+```js
+t.setBoard(game, {
+  sleeperTokens: { 'new-albion': 'dennis' },
+  capturedUnits: {
+    dennis: [{ type: 'cruiser', originalOwner: 'micah' }],
+  },
+  dennis: { relicFragments: ['cultural', 'hazardous'] },
+})
+```
 
 ---
 
@@ -280,6 +300,26 @@ Same seed → same state. Tests should be reproducible.
 
 ## Gotchas
 
+### Replay architecture — state set after `game.run()` is lost
+
+The game engine uses deterministic replay: every call to `t.choose()` or `t.action()` calls `game.run()`, which resets state and replays all responses from the beginning. This means **any state set directly on `game.state` or player objects after `game.run()` is lost** on the next input response.
+
+```js
+// BAD — state is lost on next t.choose()
+game.run()
+game.state.capturedUnits['dennis'] = [{ type: 'cruiser', originalOwner: 'micah' }]
+t.choose(game, 'leadership')  // replays from scratch, capturedUnits is reset to {}
+
+// GOOD — use setBoard, which injects via initialization breakpoint
+t.setBoard(game, {
+  capturedUnits: { dennis: [{ type: 'cruiser', originalOwner: 'micah' }] },
+})
+game.run()
+t.choose(game, 'leadership')  // state survives because it's reapplied on every replay
+```
+
+If `setBoard` doesn't support the field you need, add it to `setBoard` in `testutil.js` rather than calling `testSetBreakpoint` directly. This keeps tests declarative and the fixture API complete.
+
 ### Stale player references
 
 After `t.choose()` or `t.action()`, the game replays from scratch. Player objects obtained before the call become stale. Always re-read the player after state-changing calls:
@@ -303,6 +343,33 @@ expect(dennis.actionCards.length).toBe(2) // correct
 
 ```js
 t.choose(game, '*37')  // sends string '37', not number 37
+```
+
+### Auto-respond skips choices
+
+When a `choose()` call has only one valid option (and `noAutoRespond` is not set), the engine auto-selects it without waiting for input. Your next `t.choose()` call will be consumed by the *following* input request, not the one you think.
+
+```js
+// _fabrication offers ['Purge 1 fragment for command token'] — only 1 choice, auto-responded
+// Then it asks which fragment type to purge — THIS is what needs t.choose()
+t.choose(game, 'Component Action')
+t.choose(game, 'fabrication')
+// DON'T: t.choose(game, 'Purge 1 fragment for command token')  — already auto-responded
+t.choose(game, 'cultural')  // this is the fragment type choice
+```
+
+Use `t.currentChoices(game)` to inspect what the engine is actually waiting for.
+
+### Component action `isAvailable` and GameProxy
+
+Arrow functions in `_componentActionHandlers` (class field) capture `this` as the raw FactionAbilities instance, not the GameProxy. Accessing `this.state` won't work (it's only proxied on the Proxy object). Use `this.game.state` instead:
+
+```js
+// BAD — this.state is undefined on raw instance
+isAvailable: (player) => (this.state.capturedUnits[player.name] || []).length > 0
+
+// GOOD — this.game is a real property on the raw instance
+isAvailable: (player) => (this.game?.state?.capturedUnits?.[player.name] || []).length > 0
 ```
 
 ### Naalu initiative

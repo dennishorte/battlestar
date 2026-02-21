@@ -1515,10 +1515,8 @@ describe('Faction Abilities', () => {
   describe('Naaz-Rokha Alliance', () => {
     test('purges fragments for command token', () => {
       const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
-      // Set relic fragments during initialization (game replays from scratch on each input)
-      game.testSetBreakpoint('initialization-complete', (game) => {
-        const dennis = game.players.byName('dennis')
-        dennis.relicFragments = ['cultural', 'hazardous']
+      t.setBoard(game, {
+        dennis: { relicFragments: ['cultural', 'hazardous'] },
       })
       game.run()
 
@@ -1595,6 +1593,7 @@ describe('Faction Abilities', () => {
     test('replaces sleeper with PDS on activation', () => {
       const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
       t.setBoard(game, {
+        sleeperTokens: { 'new-albion': 'dennis' },
         dennis: {
           units: {
             'titans-home': {
@@ -1603,10 +1602,6 @@ describe('Faction Abilities', () => {
             },
           },
         },
-      })
-      // Place sleeper during initialization (state replays from scratch)
-      game.testSetBreakpoint('initialization-complete', (game) => {
-        game.state.sleeperTokens['new-albion'] = 'dennis'
       })
       game.run()
 
@@ -1662,11 +1657,10 @@ describe('Faction Abilities', () => {
 
     test('returns captured unit to place own unit (Amalgamation)', () => {
       const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
-      // Set captured units during initialization (game replays from scratch)
-      game.testSetBreakpoint('initialization-complete', (game) => {
-        game.state.capturedUnits['dennis'] = [
-          { type: 'cruiser', originalOwner: 'micah' },
-        ]
+      t.setBoard(game, {
+        capturedUnits: {
+          dennis: [{ type: 'cruiser', originalOwner: 'micah' }],
+        },
       })
       game.run()
 
@@ -1692,11 +1686,10 @@ describe('Faction Abilities', () => {
 
     test('returns captured unit to research upgrade (Riftmeld)', () => {
       const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
-      // Set captured units during initialization (game replays from scratch)
-      game.testSetBreakpoint('initialization-complete', (game) => {
-        game.state.capturedUnits['dennis'] = [
-          { type: 'fighter', originalOwner: 'micah' },
-        ]
+      t.setBoard(game, {
+        capturedUnits: {
+          dennis: [{ type: 'fighter', originalOwner: 'micah' }],
+        },
       })
       game.run()
 
