@@ -25,8 +25,8 @@ module.exports = {
         game.scheduleResource(player, 'food', round, 1)
       }
       game.log.add({
-        template: '{player} places food on the next {count} round spaces from Chophouse',
-        args: { player, count: rounds },
+        template: '{player} places food on the next {count} round spaces from {card}',
+        args: { player, count: rounds , card: this},
       })
     }
   },

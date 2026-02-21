@@ -12,8 +12,8 @@ module.exports = {
       if (player.canPlaceAnimals('sheep', 2)) {
         player.addAnimals('sheep', 2)
         game.log.add({
-          template: "{player} gets 2 sheep from Shepherd's Crook",
-          args: { player },
+          template: '{player} gets 2 sheep from {card}',
+          args: { player, card: this },
         })
       }
     }

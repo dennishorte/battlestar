@@ -11,30 +11,30 @@ module.exports = {
     if (playerCount === 1) {
       player.addResource('grain', 2)
       game.log.add({
-        template: '{player} gets 2 grain from Consultant',
-        args: { player },
+        template: '{player} gets 2 grain from {card}',
+        args: { player , card: this},
       })
     }
     else if (playerCount === 2) {
       player.addResource('clay', 3)
       game.log.add({
-        template: '{player} gets 3 clay from Consultant',
-        args: { player },
+        template: '{player} gets 3 clay from {card}',
+        args: { player , card: this},
       })
     }
     else if (playerCount === 3) {
       player.addResource('reed', 2)
       game.log.add({
-        template: '{player} gets 2 reed from Consultant',
-        args: { player },
+        template: '{player} gets 2 reed from {card}',
+        args: { player , card: this},
       })
     }
     else {
       if (player.canPlaceAnimals('sheep', 2)) {
         player.addAnimals('sheep', 2)
         game.log.add({
-          template: '{player} gets 2 sheep from Consultant',
-          args: { player },
+          template: '{player} gets 2 sheep from {card}',
+          args: { player , card: this},
         })
       }
     }

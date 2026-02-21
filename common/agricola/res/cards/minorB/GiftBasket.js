@@ -14,29 +14,29 @@ module.exports = {
     if (rooms === 2) {
       player.addResource('vegetables', 1)
       game.log.add({
-        template: '{player} gets 1 vegetable from Gift Basket',
-        args: { player },
+        template: '{player} gets 1 vegetable from {card}',
+        args: { player , card: this},
       })
     }
     else if (rooms === 3) {
       player.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from Gift Basket',
-        args: { player },
+        template: '{player} gets 1 food from {card}',
+        args: { player , card: this},
       })
     }
     else if (rooms === 4) {
       player.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 grain from Gift Basket',
-        args: { player },
+        template: '{player} gets 1 grain from {card}',
+        args: { player , card: this},
       })
     }
     else if (rooms === 5) {
       player.addResource('vegetables', 1)
       game.log.add({
-        template: '{player} gets 1 vegetable from Gift Basket',
-        args: { player },
+        template: '{player} gets 1 vegetable from {card}',
+        args: { player , card: this},
       })
     }
   },

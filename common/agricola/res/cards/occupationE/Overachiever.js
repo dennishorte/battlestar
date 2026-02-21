@@ -32,8 +32,8 @@ module.exports = {
             const resource = refund[0].match(/Refund 1 (\w+)/)[1]
             player.addResource(resource, 1)
             game.log.add({
-              template: '{player} gets 1 {resource} back from Overachiever',
-              args: { player, resource },
+              template: '{player} gets 1 {resource} back from {card}',
+              args: { player, resource , card: this},
             })
           }
         }

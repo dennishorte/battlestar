@@ -33,8 +33,8 @@ module.exports = {
         }
         player.addResource(resourceType, 1)
         game.log.add({
-          template: '{player} discards a card for 1 {resource} from Illusionist',
-          args: { player, resource: resourceType },
+          template: '{player} discards a card for 1 {resource} from {card}',
+          args: { player, resource: resourceType , card: this},
         })
       }
     }

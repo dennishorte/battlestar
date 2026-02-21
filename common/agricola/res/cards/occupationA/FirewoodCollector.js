@@ -10,8 +10,8 @@ module.exports = {
     if (actionId === 'plow-field' || actionId === 'take-grain' || actionId === 'sow-bake' || actionId === 'plow-sow') {
       player.addResource('wood', 1)
       game.log.add({
-        template: '{player} gets 1 wood from Firewood Collector',
-        args: { player },
+        template: '{player} gets 1 wood from {card}',
+        args: { player , card: this},
       })
     }
   },

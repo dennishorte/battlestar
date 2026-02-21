@@ -14,8 +14,8 @@ module.exports = {
   onActionSpaceUsed(game, player, _owner) {
     player.addResource('grain', 3)
     game.log.add({
-      template: '{player} gets 3 grain from Elder Baker',
-      args: { player },
+      template: '{player} gets 3 grain from {card}',
+      args: { player , card: this},
     })
   },
 }

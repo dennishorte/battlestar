@@ -36,8 +36,8 @@ module.exports = {
           }
           stolenTotal += count
           game.log.add({
-            template: '{player} steals {count} fence(s) from {opponent} using Midnight Fencer',
-            args: { player, count, opponent },
+            template: '{player} steals {count} fence(s) from {opponent} using {card}',
+            args: { player, count, opponent , card: this},
           })
         }
       }

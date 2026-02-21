@@ -19,16 +19,16 @@ module.exports = {
           player.addResource('reed', 3)
           s.reedAvailable = 0
           game.log.add({
-            template: '{player} gets 3 reed from Sequestrator',
-            args: { player },
+            template: '{player} gets 3 reed from {card}',
+            args: { player , card: this},
           })
         }
         if (s.clayAvailable > 0 && player.getFieldCount() >= 5) {
           player.addResource('clay', 4)
           s.clayAvailable = 0
           game.log.add({
-            template: '{player} gets 4 clay from Sequestrator',
-            args: { player },
+            template: '{player} gets 4 clay from {card}',
+            args: { player , card: this},
           })
         }
       }

@@ -12,8 +12,8 @@ module.exports = {
     if (!game.isHarvestRound(round) && player.getTotalAnimals('sheep') >= 1) {
       player.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 grain from Mineral Feeder',
-        args: { player },
+        template: '{player} gets 1 grain from {card}',
+        args: { player , card: this},
       })
     }
   },

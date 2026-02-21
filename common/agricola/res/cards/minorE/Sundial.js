@@ -16,8 +16,8 @@ module.exports = {
         if (selection[0] !== 'Skip') {
           game.actions.sow(player)
           game.log.add({
-            template: '{player} takes a free Sow action via Sundial',
-            args: { player },
+            template: '{player} takes a free Sow action via {card}',
+            args: { player , card: this},
           })
         }
       }

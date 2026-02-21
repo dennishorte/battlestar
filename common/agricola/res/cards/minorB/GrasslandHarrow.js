@@ -13,8 +13,8 @@ module.exports = {
     const targetRound = game.state.round + buildingResources
     if (game.scheduleEvent(player, 'plows', targetRound)) {
       game.log.add({
-        template: '{player} schedules a field to plow in round {round} via Grassland Harrow',
-        args: { player, round: targetRound },
+        template: '{player} schedules a field to plow in round {round} via {card}',
+        args: { player, round: targetRound , card: this},
       })
     }
   },

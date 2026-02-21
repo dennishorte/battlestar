@@ -22,8 +22,8 @@ module.exports = {
           player.payCost({ wood: amount })
           player.timberShingleMakerWood = (player.timberShingleMakerWood || 0) + amount
           game.log.add({
-            template: '{player} places {amount} wood in rooms via Timber Shingle Maker',
-            args: { player, amount },
+            template: '{player} places {amount} wood in rooms via {card}',
+            args: { player, amount , card: this},
           })
         }
       }

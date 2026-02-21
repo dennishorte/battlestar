@@ -13,8 +13,8 @@ module.exports = {
     if (stone > 0) {
       player.addResource('wood', stone)
       game.log.add({
-        template: '{player} gets {amount} wood from Cross-Cut Wood',
-        args: { player, amount: stone },
+        template: '{player} gets {amount} wood from {card}',
+        args: { player, amount: stone , card: this},
       })
     }
   },

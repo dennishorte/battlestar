@@ -9,8 +9,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('food', 1)
     game.log.add({
-      template: '{player} gets 1 food from Working Gloves',
-      args: { player },
+      template: '{player} gets 1 food from {card}',
+      args: { player , card: this},
     })
   },
   modifyOccupationCost(game, player, cost) {

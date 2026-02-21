@@ -11,8 +11,8 @@ module.exports = {
     player.addResource('stone', 2)
     player.cannotDiscardWoodOrStone = true
     game.log.add({
-      template: '{player} gets 2 wood and 2 stone from Mayor Candidate',
-      args: { player },
+      template: '{player} gets 2 wood and 2 stone from {card}',
+      args: { player , card: this},
     })
   },
   getEndGamePoints(player) {

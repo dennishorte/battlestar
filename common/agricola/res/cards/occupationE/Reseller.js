@@ -30,8 +30,8 @@ module.exports = {
       }
       game.cardState(this.id).used = true
       game.log.add({
-        template: '{player} gets {cost} from Reseller',
-        args: { player, cost: costStr },
+        template: '{player} gets {cost} from {card}',
+        args: { player, cost: costStr , card: this},
       })
     }
   },

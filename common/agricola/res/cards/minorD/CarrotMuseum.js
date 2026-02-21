@@ -16,15 +16,15 @@ module.exports = {
       if (vegFields > 0) {
         player.addResource('stone', vegFields)
         game.log.add({
-          template: '{player} gets {amount} stone from Carrot Museum',
-          args: { player, amount: vegFields },
+          template: '{player} gets {amount} stone from {card}',
+          args: { player, amount: vegFields , card: this},
         })
       }
       if (vegetables > 0) {
         player.addResource('wood', vegetables)
         game.log.add({
-          template: '{player} gets {amount} wood from Carrot Museum',
-          args: { player, amount: vegetables },
+          template: '{player} gets {amount} wood from {card}',
+          args: { player, amount: vegetables , card: this},
         })
       }
     }

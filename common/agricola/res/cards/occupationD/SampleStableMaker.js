@@ -39,8 +39,8 @@ module.exports = {
     }
 
     game.log.add({
-      template: '{player} returns stable at {row},{col} using Sample Stable Maker',
-      args: { player, row, col },
+      template: '{player} returns stable at {row},{col} using {card}',
+      args: { player, row, col , card: this},
     })
 
     // Give resources
@@ -48,8 +48,8 @@ module.exports = {
     player.addResource('grain', 1)
     player.addResource('food', 1)
     game.log.add({
-      template: '{player} gets 1 wood, 1 grain, 1 food from Sample Stable Maker',
-      args: { player },
+      template: '{player} gets 1 wood, 1 grain, 1 food from {card}',
+      args: { player , card: this},
     })
 
     // Offer Minor Improvement action

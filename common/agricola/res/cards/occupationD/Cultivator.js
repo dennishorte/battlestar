@@ -10,8 +10,8 @@ module.exports = {
     player.addResource('wood', 1)
     player.addResource('food', 1)
     game.log.add({
-      template: '{player} gets 1 wood and 1 food from Cultivator',
-      args: { player },
+      template: '{player} gets 1 wood and 1 food from {card}',
+      args: { player , card: this},
     })
   },
 }

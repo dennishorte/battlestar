@@ -9,8 +9,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('grain', 1)
     game.log.add({
-      template: '{player} gets 1 grain from Winter Caretaker',
-      args: { player },
+      template: '{player} gets 1 grain from {card}',
+      args: { player , card: this},
     })
   },
   onHarvestEnd(game, player) {
@@ -23,8 +23,8 @@ module.exports = {
         player.payCost({ food: 2 })
         player.addResource('vegetables', 1)
         game.log.add({
-          template: '{player} buys 1 vegetable for 2 food from Winter Caretaker',
-          args: { player },
+          template: '{player} buys 1 vegetable for 2 food from {card}',
+          args: { player , card: this},
         })
       }
     }

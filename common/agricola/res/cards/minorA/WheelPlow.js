@@ -13,8 +13,8 @@ module.exports = {
       if (player.isFirstWorkerThisRound()) {
         player.wheelPlowUsed = true
         game.log.add({
-          template: '{player} plows 2 additional fields from Wheel Plow',
-          args: { player },
+          template: '{player} plows 2 additional fields from {card}',
+          args: { player , card: this},
         })
         game.actions.plowField(player)
         game.actions.plowField(player)

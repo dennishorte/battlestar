@@ -12,8 +12,8 @@ module.exports = {
     if (occs > 0) {
       player.addResource('wood', occs)
       game.log.add({
-        template: '{player} gets {amount} wood from Writing Boards',
-        args: { player, amount: occs },
+        template: '{player} gets {amount} wood from {card}',
+        args: { player, amount: occs , card: this},
       })
     }
   },

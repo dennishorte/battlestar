@@ -13,8 +13,8 @@ module.exports = {
     if (lastRoundWasHarvest) {
       player.addResource('food', 3)
       game.log.add({
-        template: '{player} gets 3 additional food from Dutch Windmill',
-        args: { player },
+        template: '{player} gets 3 additional food from {card}',
+        args: { player , card: this},
       })
     }
   },

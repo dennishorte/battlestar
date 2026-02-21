@@ -16,8 +16,8 @@ module.exports = {
     const s = game.cardState(this.id)
     s.reed = (s.reed || 0) + 1
     game.log.add({
-      template: '{player} places 1 reed on Sower ({total} total)',
-      args: { player, total: s.reed },
+      template: '{player} places 1 reed on {card} ({total} total)',
+      args: { player, total: s.reed , card: this},
     })
   },
 
@@ -53,8 +53,8 @@ module.exports = {
     s.reed = 0
     player.addResource('reed', amount)
     game.log.add({
-      template: '{player} takes {amount} reed from Sower',
-      args: { player, amount },
+      template: '{player} takes {amount} reed from {card}',
+      args: { player, amount , card: this},
     })
   },
 
@@ -62,8 +62,8 @@ module.exports = {
     const s = game.cardState(this.id)
     s.reed = 0
     game.log.add({
-      template: '{player} exchanges Sower reed for a Sow action',
-      args: { player },
+      template: '{player} exchanges {card} reed for a Sow action',
+      args: { player , card: this},
     })
     game.actions.sow(player)
   },

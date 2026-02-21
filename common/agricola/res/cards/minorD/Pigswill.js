@@ -12,8 +12,8 @@ module.exports = {
     if (actionId === 'fencing' || actionId === 'build-fences') {
       player.addAnimals('boar', 1)
       game.log.add({
-        template: '{player} gets 1 wild boar from Pigswill',
-        args: { player },
+        template: '{player} gets 1 wild boar from {card}',
+        args: { player , card: this},
       })
     }
   },

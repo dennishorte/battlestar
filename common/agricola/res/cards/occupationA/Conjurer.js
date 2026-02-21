@@ -11,8 +11,8 @@ module.exports = {
       player.addResource('wood', 1)
       player.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 wood and 1 grain from Conjurer',
-        args: { player },
+        template: '{player} gets 1 wood and 1 grain from {card}',
+        args: { player , card: this},
       })
     }
   },

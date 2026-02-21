@@ -10,8 +10,8 @@ module.exports = {
     if (player.getRoomCount() === 2) {
       player.addResource('wood', 1)
       game.log.add({
-        template: '{player} gets 1 wood from Small-scale Farmer',
-        args: { player },
+        template: '{player} gets 1 wood from {card}',
+        args: { player , card: this},
       })
     }
   },

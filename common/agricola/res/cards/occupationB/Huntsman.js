@@ -19,8 +19,8 @@ module.exports = {
         player.payCost({ grain: 1 })
         player.addAnimals('boar', 1)
         game.log.add({
-          template: '{player} pays 1 grain for 1 boar from Huntsman',
-          args: { player },
+          template: '{player} pays 1 grain for 1 boar from {card}',
+          args: { player , card: this},
         })
       }
     }

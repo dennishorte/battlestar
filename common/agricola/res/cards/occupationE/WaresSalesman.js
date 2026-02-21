@@ -18,8 +18,8 @@ module.exports = {
       cardOwner.addResource(resource, 1)
       cardOwner.addResource('reed', 1)
       game.log.add({
-        template: '{player} gets 1 {resource} and 1 reed from Wares Salesman',
-        args: { player: cardOwner, resource },
+        template: '{player} gets 1 {resource} and 1 reed from {card}',
+        args: { player: cardOwner, resource , card: this},
       })
     }
   },

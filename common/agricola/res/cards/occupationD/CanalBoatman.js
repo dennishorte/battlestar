@@ -27,16 +27,16 @@ module.exports = {
     if (selection[0].startsWith('Get 3 stone')) {
       player.addResource('stone', 3)
       game.log.add({
-        template: '{player} places a worker on Canal Boatman for 3 stone',
-        args: { player },
+        template: '{player} places a worker on {card} for 3 stone',
+        args: { player , card: this},
       })
     }
     else {
       player.addResource('grain', 1)
       player.addResource('vegetables', 1)
       game.log.add({
-        template: '{player} places a worker on Canal Boatman for 1 grain + 1 vegetable',
-        args: { player },
+        template: '{player} places a worker on {card} for 1 grain + 1 vegetable',
+        args: { player , card: this},
       })
     }
   },

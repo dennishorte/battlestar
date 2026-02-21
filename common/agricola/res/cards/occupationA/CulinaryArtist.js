@@ -46,8 +46,8 @@ module.exports = {
       cardOwner.addResource('food', 7)
     }
     game.log.add({
-      template: '{player} exchanges via Culinary Artist for food',
-      args: { player: cardOwner },
+      template: '{player} exchanges via {card} for food',
+      args: { player: cardOwner , card: this},
     })
   },
 }

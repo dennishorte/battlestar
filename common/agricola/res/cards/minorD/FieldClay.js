@@ -13,8 +13,8 @@ module.exports = {
     if (plantedFields > 0) {
       player.addResource('clay', plantedFields)
       game.log.add({
-        template: '{player} gets {amount} clay from Field Clay',
-        args: { player, amount: plantedFields },
+        template: '{player} gets {amount} clay from {card}',
+        args: { player, amount: plantedFields , card: this},
       })
     }
   },

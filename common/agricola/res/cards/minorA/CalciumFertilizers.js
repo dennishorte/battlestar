@@ -15,8 +15,8 @@ module.exports = {
         const space = player.getSpace(field.row, field.col)
         space.cropCount += 1
         game.log.add({
-          template: '{player} adds 1 {crop} to a field from Calcium Fertilizers',
-          args: { player, crop: field.crop },
+          template: '{player} adds 1 {crop} to a field from {card}',
+          args: { player, crop: field.crop , card: this},
         })
       }
     }

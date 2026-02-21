@@ -18,8 +18,8 @@ module.exports = {
       s.triggered = true
       cardOwner.addResource('food', 8)
       game.log.add({
-        template: '{player} gets 8 food from Party Organizer ({other} reached 5 family members)',
-        args: { player: cardOwner, other: actingPlayer },
+        template: '{player} gets 8 food from {card} ({other} reached 5 family members)',
+        args: { player: cardOwner, other: actingPlayer , card: this},
       })
     }
   },

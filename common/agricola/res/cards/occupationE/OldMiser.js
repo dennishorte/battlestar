@@ -10,8 +10,8 @@ module.exports = {
     const reduction = player.getFamilySize()
     player.addResource('food', reduction)
     game.log.add({
-      template: '{player} needs {amount} less food from Old Miser',
-      args: { player, amount: reduction },
+      template: '{player} needs {amount} less food from {card}',
+      args: { player, amount: reduction , card: this},
     })
   },
   getEndGamePoints(player) {

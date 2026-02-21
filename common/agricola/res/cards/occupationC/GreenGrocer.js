@@ -56,8 +56,8 @@ module.exports = {
       }
       if (selection[0] !== 'Skip') {
         game.log.add({
-          template: '{player} uses Green Grocer: {choice}',
-          args: { player, choice: selection[0] },
+          template: '{player} uses {card}: {choice}',
+          args: { player, choice: selection[0] , card: this},
         })
       }
     }

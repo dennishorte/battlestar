@@ -9,8 +9,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('grain', 1)
     game.log.add({
-      template: '{player} gets 1 grain from Food Distributor',
-      args: { player },
+      template: '{player} gets 1 grain from {card}',
+      args: { player , card: this},
     })
     player.foodDistributorPending = true
   },
@@ -25,8 +25,8 @@ module.exports = {
       }
       player.addResource('food', occupiedCount)
       game.log.add({
-        template: '{player} gets {amount} food from Food Distributor',
-        args: { player, amount: occupiedCount },
+        template: '{player} gets {amount} food from {card}',
+        args: { player, amount: occupiedCount , card: this},
       })
       player.foodDistributorPending = false
     }

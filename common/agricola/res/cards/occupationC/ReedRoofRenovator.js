@@ -10,8 +10,8 @@ module.exports = {
     if (game.players.all().length === 3) {
       player.addResource('reed', 1)
       game.log.add({
-        template: '{player} gets 1 reed from Reed Roof Renovator',
-        args: { player },
+        template: '{player} gets 1 reed from {card}',
+        args: { player , card: this},
       })
     }
   },
@@ -19,8 +19,8 @@ module.exports = {
     if (actingPlayer.name !== cardOwner.name) {
       cardOwner.addResource('reed', 1)
       game.log.add({
-        template: '{player} gets 1 reed from Reed Roof Renovator',
-        args: { player: cardOwner },
+        template: '{player} gets 1 reed from {card}',
+        args: { player: cardOwner , card: this},
       })
     }
   },

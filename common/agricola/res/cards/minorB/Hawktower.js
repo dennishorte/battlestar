@@ -11,8 +11,8 @@ module.exports = {
   onPlay(game, player) {
     game.scheduleEvent(player, 'stoneRooms', 12)
     game.log.add({
-      template: '{player} schedules a free stone room for round 12 via Hawktower',
-      args: { player },
+      template: '{player} schedules a free stone room for round 12 via {card}',
+      args: { player , card: this},
     })
   },
 }

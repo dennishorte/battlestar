@@ -14,8 +14,8 @@ module.exports = {
           player.addResource(resource, 1)
           player.addResource('food', 1)
           game.log.add({
-            template: '{player} gets 1 {resource} and 1 food from Porter',
-            args: { player, resource },
+            template: '{player} gets 1 {resource} and 1 food from {card}',
+            args: { player, resource , card: this},
           })
           break
         }

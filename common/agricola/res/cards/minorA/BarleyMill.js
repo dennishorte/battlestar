@@ -14,8 +14,8 @@ module.exports = {
     if (grainFields > 0) {
       player.addResource('food', grainFields)
       game.log.add({
-        template: '{player} gets {amount} food from Barley Mill',
-        args: { player, amount: grainFields },
+        template: '{player} gets {amount} food from {card}',
+        args: { player, amount: grainFields , card: this},
       })
     }
   },

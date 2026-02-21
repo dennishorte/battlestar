@@ -22,15 +22,15 @@ module.exports = {
       if (selection[0] === '3 food') {
         player.addResource('food', 3)
         game.log.add({
-          template: '{player} discards {amount} clay for 3 food (Bellfounder)',
-          args: { player, amount: discarded },
+          template: '{player} discards {amount} clay for 3 food ({card})',
+          args: { player, amount: discarded , card: this},
         })
       }
       else {
         player.addBonusPoints(1)
         game.log.add({
-          template: '{player} discards {amount} clay for 1 bonus point (Bellfounder)',
-          args: { player, amount: discarded },
+          template: '{player} discards {amount} clay for 1 bonus point ({card})',
+          args: { player, amount: discarded , card: this},
         })
       }
     }

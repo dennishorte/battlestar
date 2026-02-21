@@ -9,8 +9,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('grain', 1)
     game.log.add({
-      template: '{player} gets 1 grain from Scythe Worker',
-      args: { player },
+      template: '{player} gets 1 grain from {card}',
+      args: { player , card: this},
     })
   },
   onHarvest(game, player) {
@@ -18,8 +18,8 @@ module.exports = {
     if (grainFields > 0) {
       player.addResource('grain', grainFields)
       game.log.add({
-        template: '{player} harvests {amount} additional grain from Scythe Worker',
-        args: { player, amount: grainFields },
+        template: '{player} harvests {amount} additional grain from {card}',
+        args: { player, amount: grainFields , card: this},
       })
     }
   },

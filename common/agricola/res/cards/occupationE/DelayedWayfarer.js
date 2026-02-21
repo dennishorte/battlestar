@@ -26,8 +26,8 @@ module.exports = {
       player.addResource('stone', 1)
     }
     game.log.add({
-      template: '{player} gets {choice} from Delayed Wayfarer',
-      args: { player, choice },
+      template: '{player} gets {choice} from {card}',
+      args: { player, choice , card: this},
     })
     game.state.delayedWayfarerPlayer = player.name
   },
@@ -41,8 +41,8 @@ module.exports = {
       })
       if (selection[0] === 'Place person') {
         game.log.add({
-          template: '{player} places an extra person from Delayed Wayfarer',
-          args: { player },
+          template: '{player} places an extra person from {card}',
+          args: { player , card: this},
         })
         game.playerTurn(player, { skipUseWorker: true })
       }

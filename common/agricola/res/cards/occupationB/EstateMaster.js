@@ -10,8 +10,8 @@ module.exports = {
     if (player.getUnusedSpaceCount() === 0) {
       player.addBonusPoints(count)
       game.log.add({
-        template: '{player} gets {amount} bonus points from Estate Master',
-        args: { player, amount: count },
+        template: '{player} gets {amount} bonus points from {card}',
+        args: { player, amount: count , card: this},
       })
     }
   },

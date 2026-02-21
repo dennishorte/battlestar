@@ -12,8 +12,8 @@ module.exports = {
     if (actionId === 'fishing') {
       player.addResource('food', 2)
       game.log.add({
-        template: '{player} gets 2 additional food from Drift-Net Boat',
-        args: { player },
+        template: '{player} gets 2 additional food from {card}',
+        args: { player , card: this},
       })
     }
   },

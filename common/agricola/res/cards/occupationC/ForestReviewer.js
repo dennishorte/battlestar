@@ -10,15 +10,15 @@ module.exports = {
     if ((actionId === 'grove' || actionId === 'grove-5' || actionId === 'grove-6') && game.isActionOccupied('take-wood')) {
       cardOwner.addResource('reed', 1)
       game.log.add({
-        template: '{player} gets 1 reed from Forest Reviewer',
-        args: { player: cardOwner },
+        template: '{player} gets 1 reed from {card}',
+        args: { player: cardOwner , card: this},
       })
     }
     else if (actionId === 'take-wood' && (game.isActionOccupied('grove') || game.isActionOccupied('grove-5') || game.isActionOccupied('grove-6'))) {
       cardOwner.addResource('reed', 1)
       game.log.add({
-        template: '{player} gets 1 reed from Forest Reviewer',
-        args: { player: cardOwner },
+        template: '{player} gets 1 reed from {card}',
+        args: { player: cardOwner , card: this},
       })
     }
   },

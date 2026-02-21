@@ -44,8 +44,8 @@ module.exports = {
 
     if (selection[0] === 'Use Lasso') {
       game.log.add({
-        template: '{player} uses Lasso to place a second person',
-        args: { player },
+        template: '{player} uses {card} to place a second person',
+        args: { player , card: this},
       })
       game.log.indent()
       game.playerTurn(player, { isBonusTurn: true, allowedActions })

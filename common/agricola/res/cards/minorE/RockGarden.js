@@ -17,8 +17,8 @@ module.exports = {
       sowingAmount: 6,  // Counts as 3 fields × 2 vegetables = 6
     })
     game.log.add({
-      template: '{player} plays Rock Garden, gaining a stone-only field (counts as 3 fields)',
-      args: { player },
+      template: '{player} plays {card}, gaining a stone-only field (counts as 3 fields)',
+      args: { player , card: this},
     })
   },
 }

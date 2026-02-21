@@ -45,8 +45,8 @@ module.exports = {
       player.removedStables = (player.removedStables || 0) + 3
 
       game.log.add({
-        template: '{player} builds a pasture via Open Air Farmer and removes 3 stables from supply',
-        args: { player },
+        template: '{player} builds a pasture via {card} and removes 3 stables from supply',
+        args: { player , card: this},
       })
     }
   },

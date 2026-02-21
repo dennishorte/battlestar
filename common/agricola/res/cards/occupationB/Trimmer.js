@@ -9,8 +9,8 @@ module.exports = {
   onBuildPasture(game, player) {
     player.addResource('stone', 2)
     game.log.add({
-      template: '{player} gets 2 stone from Trimmer',
-      args: { player },
+      template: '{player} gets 2 stone from {card}',
+      args: { player , card: this},
     })
   },
 }

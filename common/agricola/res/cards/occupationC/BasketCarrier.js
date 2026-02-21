@@ -18,8 +18,8 @@ module.exports = {
         player.addResource('reed', 1)
         player.addResource('grain', 1)
         game.log.add({
-          template: '{player} buys wood, reed, grain from Basket Carrier',
-          args: { player },
+          template: '{player} buys wood, reed, grain from {card}',
+          args: { player , card: this},
         })
       }
     }

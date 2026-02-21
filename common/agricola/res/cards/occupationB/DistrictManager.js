@@ -18,8 +18,8 @@ module.exports = {
     if (player._dmUsedForest && player._dmUsedGrove) {
       player.addResource('food', 5)
       game.log.add({
-        template: '{player} gets 5 food from District Manager',
-        args: { player },
+        template: '{player} gets 5 food from {card}',
+        args: { player , card: this},
       })
     }
     delete player._dmUsedForest

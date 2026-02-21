@@ -36,8 +36,8 @@ module.exports = {
       player.removeResource('food', 2)
       player.addResource('stone', 1)
       game.log.add({
-        template: '{player} buys 1 stone for 2 food (Forest Trader)',
-        args: { player },
+        template: '{player} buys 1 stone for 2 food ({card})',
+        args: { player , card: this},
       })
     }
     else {
@@ -45,8 +45,8 @@ module.exports = {
       player.removeResource('food', 1)
       player.addResource(resource, 1)
       game.log.add({
-        template: '{player} buys 1 {resource} for 1 food (Forest Trader)',
-        args: { player, resource },
+        template: '{player} buys 1 {resource} for 1 food ({card})',
+        args: { player, resource , card: this},
       })
     }
   },

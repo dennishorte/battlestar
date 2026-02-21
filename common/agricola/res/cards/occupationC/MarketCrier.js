@@ -21,8 +21,8 @@ module.exports = {
           }
         }
         game.log.add({
-          template: '{player} gets 1 grain and 1 vegetable from Market Crier; others get 1 grain',
-          args: { player },
+          template: '{player} gets 1 grain and 1 vegetable from {card}; others get 1 grain',
+          args: { player , card: this},
         })
       }
     }

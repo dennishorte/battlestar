@@ -15,8 +15,8 @@ module.exports = {
     if ((usedClayPit && !reedBankOccupied) || (usedReedBank && !clayPitOccupied)) {
       player.addResource('vegetables', 1)
       game.log.add({
-        template: '{player} gets 1 vegetable from Potato Planter',
-        args: { player },
+        template: '{player} gets 1 vegetable from {card}',
+        args: { player , card: this},
       })
     }
   },

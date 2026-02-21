@@ -11,8 +11,8 @@ module.exports = {
     if (woodActions.includes(actionId)) {
       player.addResource('wood', 1)
       game.log.add({
-        template: '{player} gets 1 additional wood from Wood Cutter',
-        args: { player },
+        template: '{player} gets 1 additional wood from {card}',
+        args: { player , card: this},
       })
     }
   },

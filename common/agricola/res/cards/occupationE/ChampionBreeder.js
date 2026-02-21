@@ -17,8 +17,8 @@ module.exports = {
     if (points > 0) {
       player.addBonusPoints(points)
       game.log.add({
-        template: '{player} gets {amount} bonus points from Champion Breeder',
-        args: { player, amount: points },
+        template: '{player} gets {amount} bonus points from {card}',
+        args: { player, amount: points , card: this},
       })
     }
   },

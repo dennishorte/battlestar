@@ -29,8 +29,8 @@ module.exports = {
       player.addResource('food', 3)
       player.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 3 food and 1 grain from Pet Lover',
-        args: { player },
+        template: '{player} gets 3 food and 1 grain from {card}',
+        args: { player , card: this},
       })
     }
   },

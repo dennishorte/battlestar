@@ -12,8 +12,8 @@ module.exports = {
     if (player.clay > player.wood) {
       player.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from Rolling Pin',
-        args: { player },
+        template: '{player} gets 1 food from {card}',
+        args: { player , card: this},
       })
     }
   },

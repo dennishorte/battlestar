@@ -28,8 +28,8 @@ module.exports = {
     if (hasGrainField && hasVegetableField && hasEmptyField) {
       player.addResource('food', 3)
       game.log.add({
-        template: '{player} gets 3 food from Three-Field Rotation',
-        args: { player },
+        template: '{player} gets 3 food from {card}',
+        args: { player , card: this},
       })
     }
   },

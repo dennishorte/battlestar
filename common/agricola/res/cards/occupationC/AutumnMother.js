@@ -17,8 +17,8 @@ module.exports = {
         player.payCost({ food: 3 })
         game.actions.familyGrowthWithoutRoom(player)
         game.log.add({
-          template: '{player} grows family via Autumn Mother for 3 food',
-          args: { player },
+          template: '{player} grows family via {card} for 3 food',
+          args: { player , card: this},
         })
       }
     }

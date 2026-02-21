@@ -22,8 +22,8 @@ module.exports = {
         player.addResource('food', bonus)
         player.addBonusPoints(bonus)
         game.log.add({
-          template: '{player} gets {amount} food and {amount} bonus points from Housebook Master',
-          args: { player, amount: bonus },
+          template: '{player} gets {amount} food and {amount} bonus points from {card}',
+          args: { player, amount: bonus , card: this},
         })
       }
     }

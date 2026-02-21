@@ -25,8 +25,8 @@ module.exports = {
     const rooms = player.getRoomCount()
     player.addResource('stone', rooms)
     game.log.add({
-      template: '{player} pays 1 food and gets {stone} stone from Roof Ballaster',
-      args: { player, stone: rooms },
+      template: '{player} pays 1 food and gets {stone} stone from {card}',
+      args: { player, stone: rooms , card: this},
     })
   },
 }

@@ -12,8 +12,8 @@ module.exports = {
     player.addResource('food', 5)
     player.creditActive = true
     game.log.add({
-      template: '{player} gets 5 food from Credit',
-      args: { player },
+      template: '{player} gets 5 food from {card}',
+      args: { player , card: this},
     })
   },
   onRoundEnd(game, player, round) {
@@ -21,15 +21,15 @@ module.exports = {
       if (player.food >= 1) {
         player.payCost({ food: 1 })
         game.log.add({
-          template: '{player} pays 1 food for Credit',
-          args: { player },
+          template: '{player} pays 1 food for {card}',
+          args: { player , card: this},
         })
       }
       else {
         player.beggingMarkers = (player.beggingMarkers || 0) + 1
         game.log.add({
-          template: '{player} takes a begging marker (Credit)',
-          args: { player },
+          template: '{player} takes a begging marker ({card})',
+          args: { player , card: this},
         })
       }
     }

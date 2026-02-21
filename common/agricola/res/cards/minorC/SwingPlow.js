@@ -11,8 +11,8 @@ module.exports = {
   onPlay(game, player) {
     game.cardState(this.id).charges = 4
     game.log.add({
-      template: '{player} places 4 field tiles on Swing Plow',
-      args: { player },
+      template: '{player} places 4 field tiles on {card}',
+      args: { player , card: this},
     })
   },
   onAction(game, player, actionId) {

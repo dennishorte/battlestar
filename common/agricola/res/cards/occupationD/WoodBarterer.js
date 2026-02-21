@@ -27,24 +27,24 @@ module.exports = {
     if (selection[0] === 'Get 2 wood') {
       player.addResource('wood', 2)
       game.log.add({
-        template: '{player} gets 2 wood (Wood Barterer)',
-        args: { player },
+        template: '{player} gets 2 wood ({card})',
+        args: { player , card: this},
       })
     }
     else if (selection[0] === 'Exchange 1 wood for 1 reed') {
       player.removeResource('wood', 1)
       player.addResource('reed', 1)
       game.log.add({
-        template: '{player} exchanges 1 wood for 1 reed (Wood Barterer)',
-        args: { player },
+        template: '{player} exchanges 1 wood for 1 reed ({card})',
+        args: { player , card: this},
       })
     }
     else if (selection[0] === 'Exchange 2 wood for 2 reed') {
       player.removeResource('wood', 2)
       player.addResource('reed', 2)
       game.log.add({
-        template: '{player} exchanges 2 wood for 2 reed (Wood Barterer)',
-        args: { player },
+        template: '{player} exchanges 2 wood for 2 reed ({card})',
+        args: { player , card: this},
       })
     }
   },

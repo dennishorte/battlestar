@@ -9,16 +9,16 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('wood', 1)
     game.log.add({
-      template: '{player} gets 1 wood from Sowing Master',
-      args: { player },
+      template: '{player} gets 1 wood from {card}',
+      args: { player , card: this},
     })
   },
   onAction(game, player, actionId) {
     if (actionId === 'plow-sow' || actionId === 'sow-bake') {
       player.addResource('food', 2)
       game.log.add({
-        template: '{player} gets 2 food from Sowing Master',
-        args: { player },
+        template: '{player} gets 2 food from {card}',
+        args: { player , card: this},
       })
     }
   },

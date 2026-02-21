@@ -13,8 +13,8 @@ module.exports = {
       game.scheduleEvent(player, 'plows', currentRound + offset)
     }
     game.log.add({
-      template: '{player} schedules fields to plow from Chain Float',
-      args: { player },
+      template: '{player} schedules fields to plow from {card}',
+      args: { player , card: this},
     })
   },
 }

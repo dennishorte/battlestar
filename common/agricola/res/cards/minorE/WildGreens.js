@@ -11,8 +11,8 @@ module.exports = {
     if (uniqueTypes > 0) {
       player.addResource('food', uniqueTypes)
       game.log.add({
-        template: '{player} gets {amount} food from Wild Greens',
-        args: { player, amount: uniqueTypes },
+        template: '{player} gets {amount} food from {card}',
+        args: { player, amount: uniqueTypes , card: this},
       })
     }
   },

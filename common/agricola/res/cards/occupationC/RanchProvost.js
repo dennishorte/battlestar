@@ -21,8 +21,8 @@ module.exports = {
     if (wood > 0) {
       player.addResource('wood', wood)
       game.log.add({
-        template: '{player} gets {amount} wood from Ranch Provost',
-        args: { player, amount: wood },
+        template: '{player} gets {amount} wood from {card}',
+        args: { player, amount: wood , card: this},
       })
     }
   },

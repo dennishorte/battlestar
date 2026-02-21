@@ -10,8 +10,8 @@ module.exports = {
   onPlay(game, player) {
     player.addAnimals('sheep', 1)
     game.log.add({
-      template: '{player} gets 1 sheep from Feed Pellets',
-      args: { player },
+      template: '{player} gets 1 sheep from {card}',
+      args: { player , card: this},
     })
   },
   onFeedingPhase(game, player) {

@@ -17,8 +17,8 @@ module.exports = {
         actingPlayer.payCost({ food: 1 })
         cardOwner.addResource('food', 1)
         game.log.add({
-          template: '{actingPlayer} pays 1 food to {owner} to use Forest Inn',
-          args: { actingPlayer, owner: cardOwner },
+          template: '{actingPlayer} pays 1 food to {owner} to use {card}',
+          args: { actingPlayer, owner: cardOwner , card: this},
         })
       }
     }
@@ -53,8 +53,8 @@ module.exports = {
       actingPlayer.addResource('wood', 8)
       actingPlayer.addResource('food', tier.food)
       game.log.add({
-        template: '{player} exchanges {cost} wood for 8 wood and {food} food at Forest Inn',
-        args: { player: actingPlayer, cost: tier.cost, food: tier.food },
+        template: '{player} exchanges {cost} wood for 8 wood and {food} food at {card}',
+        args: { player: actingPlayer, cost: tier.cost, food: tier.food , card: this},
       })
     }
   },

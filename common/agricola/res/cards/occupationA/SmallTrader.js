@@ -11,8 +11,8 @@ module.exports = {
     if (card.type === 'minor') {
       player.addResource('food', 3)
       game.log.add({
-        template: '{player} gets 3 food from Small Trader',
-        args: { player },
+        template: '{player} gets 3 food from {card}',
+        args: { player , card: this},
       })
     }
   },

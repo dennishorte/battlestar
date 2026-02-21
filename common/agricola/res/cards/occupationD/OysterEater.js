@@ -11,8 +11,8 @@ module.exports = {
       cardOwner.addBonusPoints(1)
       cardOwner.skipNextPersonPlacement = true
       game.log.add({
-        template: '{player} gets 1 bonus point and must skip next placement from Oyster Eater',
-        args: { player: cardOwner },
+        template: '{player} gets 1 bonus point and must skip next placement from {card}',
+        args: { player: cardOwner , card: this},
       })
     }
   },

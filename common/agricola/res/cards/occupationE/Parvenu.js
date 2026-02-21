@@ -18,8 +18,8 @@ module.exports = {
       if (amount > 0) {
         player.addResource(resource, amount)
         game.log.add({
-          template: '{player} gets {amount} {resource} from Parvenu',
-          args: { player, amount, resource },
+          template: '{player} gets {amount} {resource} from {card}',
+          args: { player, amount, resource , card: this},
         })
       }
     }

@@ -30,8 +30,8 @@ module.exports = {
     player.removeAnimals('sheep', 1)
     game.actions.familyGrowthWithoutRoom(player)
     game.log.add({
-      template: '{player} pays 1 stone, 1 grain, 1 vegetable, 1 sheep for Family Growth (Seducer)',
-      args: { player },
+      template: '{player} pays 1 stone, 1 grain, 1 vegetable, 1 sheep for Family Growth ({card})',
+      args: { player , card: this},
     })
   },
 }

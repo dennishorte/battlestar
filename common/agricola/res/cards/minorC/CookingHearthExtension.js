@@ -68,8 +68,8 @@ module.exports = {
       }
 
       game.log.add({
-        template: '{player} uses Cooking Hearth Extension with {imp} for double food',
-        args: { player, imp: imp.name },
+        template: '{player} uses {card} with {imp} for double food',
+        args: { player, imp: imp.name , card: this},
       })
     }
   },

@@ -17,16 +17,16 @@ module.exports = {
       onHarvest: true,
     })
     game.log.add({
-      template: '{player} plays Artichoke Field',
-      args: { player },
+      template: '{player} plays {card}',
+      args: { player , card: this},
     })
   },
   onHarvest(game, player, amountHarvested) {
     if (amountHarvested > 0) {
       player.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from Artichoke Field',
-        args: { player },
+        template: '{player} gets 1 food from {card}',
+        args: { player , card: this},
       })
     }
   },

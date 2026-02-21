@@ -10,16 +10,16 @@ module.exports = {
     player.addResource('wood', 1)
     player.addResource('clay', 2)
     game.log.add({
-      template: '{player} gets 1 wood and 2 clay from Clay Kneader',
-      args: { player },
+      template: '{player} gets 1 wood and 2 clay from {card}',
+      args: { player , card: this},
     })
   },
   onAction(game, player, actionId) {
     if (actionId === 'take-grain' || actionId === 'take-vegetables') {
       player.addResource('clay', 1)
       game.log.add({
-        template: '{player} gets 1 clay from Clay Kneader',
-        args: { player },
+        template: '{player} gets 1 clay from {card}',
+        args: { player , card: this},
       })
     }
   },

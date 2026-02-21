@@ -12,8 +12,8 @@ module.exports = {
     if (player.getRoomCount() > player.familyMembers) {
       player.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from Family Friendly Home',
-        args: { player },
+        template: '{player} gets 1 food from {card}',
+        args: { player , card: this},
       })
       game.actions.familyGrowth(player, { fromCard: true })
     }

@@ -11,13 +11,13 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('food', 2)
     game.log.add({
-      template: '{player} gets 2 food from Walking Boots',
-      args: { player },
+      template: '{player} gets 2 food from {card}',
+      args: { player , card: this},
     })
     player.availableWorkers += 1
     game.log.add({
-      template: '{player} places a temporary worker from Walking Boots',
-      args: { player },
+      template: '{player} places a temporary worker from {card}',
+      args: { player , card: this},
     })
   },
 }

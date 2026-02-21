@@ -18,8 +18,8 @@ module.exports = {
       cropRestriction: 'vegetables',
     })
     game.log.add({
-      template: '{player} plays Beanfield, gaining a vegetable-only field',
-      args: { player },
+      template: '{player} plays {card}, gaining a vegetable-only field',
+      args: { player , card: this},
     })
   },
 }

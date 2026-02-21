@@ -18,8 +18,8 @@ module.exports = {
       const s = game.cardState(this.id)
       if (s.wood > 0) {
         game.log.add({
-          template: '{player} loses {amount} wood from Tree Inspector (Quarry revealed)',
-          args: { player, amount: s.wood },
+          template: '{player} loses {amount} wood from {card} (Quarry revealed)',
+          args: { player, amount: s.wood , card: this},
         })
         s.wood = 0
       }
@@ -45,8 +45,8 @@ module.exports = {
     s.wood = 0
     player.addResource('wood', wood)
     game.log.add({
-      template: '{player} takes {amount} wood from Tree Inspector',
-      args: { player, amount: wood },
+      template: '{player} takes {amount} wood from {card}',
+      args: { player, amount: wood , card: this},
     })
   },
 }

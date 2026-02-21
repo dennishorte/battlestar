@@ -11,8 +11,8 @@ module.exports = {
       cardOwner.addResource('food', 1)
       cardOwner.addResource('clay', 1)
       game.log.add({
-        template: '{player} gets 1 food and 1 clay from Claypit Owner',
-        args: { player: cardOwner },
+        template: '{player} gets 1 food and 1 clay from {card}',
+        args: { player: cardOwner , card: this},
       })
     }
   },

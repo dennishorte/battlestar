@@ -10,8 +10,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('food', 1)
     game.log.add({
-      template: '{player} gets 1 food from Mining Hammer',
-      args: { player },
+      template: '{player} gets 1 food from {card}',
+      args: { player , card: this},
     })
   },
   onRenovate(game, player) {

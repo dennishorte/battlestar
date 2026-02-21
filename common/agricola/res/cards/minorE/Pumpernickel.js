@@ -9,8 +9,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('food', 4)
     game.log.add({
-      template: '{player} gets 4 food from Pumpernickel',
-      args: { player },
+      template: '{player} gets 4 food from {card}',
+      args: { player , card: this},
     })
   },
 }

@@ -12,8 +12,8 @@ module.exports = {
     if (isUnconditional) {
       player.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 grain from Seed Pellets',
-        args: { player },
+        template: '{player} gets 1 grain from {card}',
+        args: { player , card: this},
       })
     }
   },

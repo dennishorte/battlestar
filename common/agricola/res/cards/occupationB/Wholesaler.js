@@ -18,16 +18,16 @@ module.exports = {
         if (player.canPlaceAnimals(good, 1)) {
           player.addAnimals(good, 1)
           game.log.add({
-            template: '{player} gets 1 {animal} from Wholesaler',
-            args: { player, animal: good },
+            template: '{player} gets 1 {animal} from {card}',
+            args: { player, animal: good , card: this},
           })
         }
       }
       else {
         player.addResource(good, 1)
         game.log.add({
-          template: '{player} gets 1 {resource} from Wholesaler',
-          args: { player, resource: good },
+          template: '{player} gets 1 {resource} from {card}',
+          args: { player, resource: good , card: this},
         })
       }
       delete s.goods[round]

@@ -23,8 +23,8 @@ module.exports = {
       actingPlayer.payCost({ food: 1 })
       cardOwner.addResource('food', 1)
       game.log.add({
-        template: '{actingPlayer} pays 1 food to {owner} to use Alchemist\'s Lab',
-        args: { actingPlayer, owner: cardOwner },
+        template: '{actingPlayer} pays 1 food to {owner} to use {card}',
+        args: { actingPlayer, owner: cardOwner, card: this },
       })
     }
     const resources = ['wood', 'clay', 'stone', 'reed']
@@ -37,8 +37,8 @@ module.exports = {
     }
     if (gained.length > 0) {
       game.log.add({
-        template: '{player} gets 1 each of {resources} from Alchemist\'s Lab',
-        args: { player: actingPlayer, resources: gained.join(', ') },
+        template: '{player} gets 1 each of {resources} from {card}',
+        args: { player: actingPlayer, resources: gained.join(', '), card: this },
       })
     }
   },

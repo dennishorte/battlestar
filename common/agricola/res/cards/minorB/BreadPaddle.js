@@ -10,14 +10,14 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('food', 1)
     game.log.add({
-      template: '{player} gets 1 food from Bread Paddle',
-      args: { player },
+      template: '{player} gets 1 food from {card}',
+      args: { player , card: this},
     })
   },
   onPlayOccupation(game, player) {
     game.log.add({
-      template: '{player} gets an additional Bake Bread action from Bread Paddle',
-      args: { player },
+      template: '{player} gets an additional Bake Bread action from {card}',
+      args: { player , card: this},
     })
     game.actions.bakeBread(player)
   },

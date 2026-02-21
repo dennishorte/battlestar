@@ -26,8 +26,8 @@ module.exports = {
       else {
         player.addResource(reward.type, reward.amount)
         game.log.add({
-          template: '{player} gets 1 {resource} from Education Bonus',
-          args: { player, resource: reward.type },
+          template: '{player} gets 1 {resource} from {card}',
+          args: { player, resource: reward.type , card: this},
         })
       }
     }

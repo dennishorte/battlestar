@@ -16,8 +16,8 @@ module.exports = {
       }
     }
     game.log.add({
-      template: '{player} schedules wood and minor improvements from Tree Farm Joiner',
-      args: { player },
+      template: '{player} schedules wood and minor improvements from {card}',
+      args: { player , card: this},
     })
   },
   onRoundStart(game, player) {
@@ -28,8 +28,8 @@ module.exports = {
     }
     player.addResource('wood', 1)
     game.log.add({
-      template: '{player} receives 1 scheduled wood from Tree Farm Joiner',
-      args: { player },
+      template: '{player} receives 1 scheduled wood from {card}',
+      args: { player , card: this},
     })
     game.state.scheduledWoodWithMinor[player.name] =
       game.state.scheduledWoodWithMinor[player.name].filter(r => r !== round)

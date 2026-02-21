@@ -92,8 +92,8 @@ module.exports = {
     }
 
     game.log.add({
-      template: '{player} uses Game Provider: discards grain from {count} fields for {boar} wild boar',
-      args: { player, count: fieldsToDiscard, boar: boarToGain },
+      template: '{player} uses {card}: discards grain from {count} fields for {boar} wild boar',
+      args: { player, count: fieldsToDiscard, boar: boarToGain , card: this},
     })
   },
 }

@@ -25,8 +25,8 @@ module.exports = {
         player.removeAnimals('boar', actualBoar)
         player.addResource('food', foodGain)
         game.log.add({
-          template: '{player} converts {count} boar to {food} food via Boar Spear',
-          args: { player, count: actualBoar, food: foodGain },
+          template: '{player} converts {count} boar to {food} food via {card}',
+          args: { player, count: actualBoar, food: foodGain , card: this},
         })
       }
     }

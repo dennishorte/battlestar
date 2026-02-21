@@ -20,8 +20,8 @@ module.exports = {
       countsAsFieldForScoring: true,
     })
     game.log.add({
-      template: '{player} plays Wood Field, gaining a wood-only field',
-      args: { player },
+      template: '{player} plays {card}, gaining a wood-only field',
+      args: { player , card: this},
     })
   },
 }

@@ -12,8 +12,8 @@ module.exports = {
     const maxExchange = Math.min(3, player.wood || 0)
     if (maxExchange === 0) {
       game.log.add({
-        template: '{player} has no wood to exchange (Petrified Wood)',
-        args: { player },
+        template: '{player} has no wood to exchange ({card})',
+        args: { player , card: this},
       })
       return
     }
@@ -35,8 +35,8 @@ module.exports = {
       player.removeResource('wood', amount)
       player.addResource('stone', amount)
       game.log.add({
-        template: '{player} exchanges {amount} wood for {amount} stone (Petrified Wood)',
-        args: { player, amount },
+        template: '{player} exchanges {amount} wood for {amount} stone ({card})',
+        args: { player, amount , card: this},
       })
     }
   },

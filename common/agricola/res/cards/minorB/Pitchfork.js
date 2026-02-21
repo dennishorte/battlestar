@@ -13,8 +13,8 @@ module.exports = {
       if (plowSpace && plowSpace.occupiedBy) {
         player.addResource('food', 3)
         game.log.add({
-          template: '{player} gets 3 food from Pitchfork',
-          args: { player },
+          template: '{player} gets 3 food from {card}',
+          args: { player , card: this},
         })
       }
     }

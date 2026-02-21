@@ -16,8 +16,8 @@ module.exports = {
       }
     }
     game.log.add({
-      template: '{player} schedules wood from Thick Forest',
-      args: { player },
+      template: '{player} schedules wood from {card}',
+      args: { player , card: this},
     })
   },
 }

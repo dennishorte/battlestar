@@ -18,8 +18,8 @@ module.exports = {
       }
     }
     game.log.add({
-      template: '{player} schedules wood from Ceilings',
-      args: { player },
+      template: '{player} schedules wood from {card}',
+      args: { player , card: this},
     })
   },
   onRenovate(game, player) {
@@ -34,8 +34,8 @@ module.exports = {
       }
       player.ceilingsRounds = []
       game.log.add({
-        template: '{player} removes scheduled wood from Ceilings due to renovation',
-        args: { player },
+        template: '{player} removes scheduled wood from {card} due to renovation',
+        args: { player , card: this},
       })
     }
   },

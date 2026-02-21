@@ -12,8 +12,8 @@ module.exports = {
     if (animal && player.canPlaceAnimals(animal, 1)) {
       player.addAnimals(animal, 1)
       game.log.add({
-        template: '{player} gets 1 {animal} from Breeder Buyer',
-        args: { player, animal },
+        template: '{player} gets 1 {animal} from {card}',
+        args: { player, animal , card: this},
       })
     }
   },

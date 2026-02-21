@@ -10,16 +10,16 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('food', 1)
     game.log.add({
-      template: '{player} gets 1 food from Crack Weeder',
-      args: { player },
+      template: '{player} gets 1 food from {card}',
+      args: { player , card: this},
     })
   },
   onHarvestVegetables(game, player, count) {
     if (count > 0) {
       player.addResource('food', count)
       game.log.add({
-        template: '{player} gets {amount} food from Crack Weeder',
-        args: { player, amount: count },
+        template: '{player} gets {amount} food from {card}',
+        args: { player, amount: count , card: this},
       })
     }
   },

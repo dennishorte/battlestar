@@ -10,15 +10,15 @@ module.exports = {
     if (actionId === 'take-grain') {
       player.addResource('clay', 2)
       game.log.add({
-        template: '{player} gets 2 clay from Hill Cultivator',
-        args: { player },
+        template: '{player} gets 2 clay from {card}',
+        args: { player , card: this},
       })
     }
     else if (actionId === 'take-vegetable') {
       player.addResource('clay', 3)
       game.log.add({
-        template: '{player} gets 3 clay from Hill Cultivator',
-        args: { player },
+        template: '{player} gets 3 clay from {card}',
+        args: { player , card: this},
       })
     }
   },

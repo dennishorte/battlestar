@@ -11,8 +11,8 @@ module.exports = {
   onPlay(game, player) {
     player.hayloftBarnFood = 4
     game.log.add({
-      template: '{player} places 4 food on Hayloft Barn',
-      args: { player },
+      template: '{player} places 4 food on {card}',
+      args: { player , card: this},
     })
   },
   onGainGrain(game, player) {
@@ -20,8 +20,8 @@ module.exports = {
       player.hayloftBarnFood--
       player.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from Hayloft Barn ({remaining} remaining)',
-        args: { player, remaining: player.hayloftBarnFood },
+        template: '{player} gets 1 food from {card} ({remaining} remaining)',
+        args: { player, remaining: player.hayloftBarnFood , card: this},
       })
       if (player.hayloftBarnFood === 0) {
         game.actions.familyGrowthWithoutRoom(player, { fromCard: true })

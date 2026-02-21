@@ -26,8 +26,8 @@ module.exports = {
           player.addAnimals('boar', 1)
           player.addAnimals('cattle', 1)
           game.log.add({
-            template: '{player} pays {food} food for 3 animals from Animal Catcher',
-            args: { player, food: harvestsLeft },
+            template: '{player} pays {food} food for 3 animals from {card}',
+            args: { player, food: harvestsLeft , card: this},
           })
         }
       }

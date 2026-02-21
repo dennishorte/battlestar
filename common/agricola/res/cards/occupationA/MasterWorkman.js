@@ -12,8 +12,8 @@ module.exports = {
     if (resources[actionRound]) {
       player.addResource(resources[actionRound], 1)
       game.log.add({
-        template: '{player} gets 1 {resource} from Master Workman',
-        args: { player, resource: resources[actionRound] },
+        template: '{player} gets 1 {resource} from {card}',
+        args: { player, resource: resources[actionRound] , card: this},
       })
     }
   },

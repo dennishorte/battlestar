@@ -10,8 +10,8 @@ module.exports = {
     if (player.food >= game.state.round) {
       player.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from Small Animal Breeder',
-        args: { player },
+        template: '{player} gets 1 food from {card}',
+        args: { player , card: this},
       })
     }
   },

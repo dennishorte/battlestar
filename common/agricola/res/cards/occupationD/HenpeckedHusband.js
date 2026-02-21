@@ -11,8 +11,8 @@ module.exports = {
       if (player.getFirstPersonActionThisRound() !== 'starting-player') {
         game.actions.returnWorkerHome(player, 0)
         game.log.add({
-          template: '{player} returns first worker home via Henpecked Husband',
-          args: { player },
+          template: '{player} returns first worker home via {card}',
+          args: { player , card: this},
         })
       }
     }

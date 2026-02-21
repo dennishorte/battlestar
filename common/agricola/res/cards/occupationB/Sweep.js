@@ -12,8 +12,8 @@ module.exports = {
     if (leftOfRecentRound >= 1 && leftOfRecentRound <= 12 && game.getActionSpaceRound(actionId) === leftOfRecentRound) {
       player.addResource('clay', 2)
       game.log.add({
-        template: '{player} gets 2 clay from Sweep',
-        args: { player },
+        template: '{player} gets 2 clay from {card}',
+        args: { player , card: this},
       })
     }
   },

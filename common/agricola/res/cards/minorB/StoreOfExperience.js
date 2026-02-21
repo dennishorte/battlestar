@@ -24,8 +24,8 @@ module.exports = {
     }
     player.addResource(resource, 1)
     game.log.add({
-      template: '{player} gets 1 {resource} from Store of Experience',
-      args: { player, resource },
+      template: '{player} gets 1 {resource} from {card}',
+      args: { player, resource , card: this},
     })
   },
 }

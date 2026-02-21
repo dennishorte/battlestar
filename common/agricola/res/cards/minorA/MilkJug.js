@@ -11,15 +11,15 @@ module.exports = {
     if (actionId === 'take-cattle') {
       cardOwner.addResource('food', 3)
       game.log.add({
-        template: '{player} gets 3 food from Milk Jug',
-        args: { player: cardOwner },
+        template: '{player} gets 3 food from {card}',
+        args: { player: cardOwner , card: this},
       })
       for (const player of game.players.all()) {
         if (player.name !== cardOwner.name) {
           player.addResource('food', 1)
           game.log.add({
-            template: '{player} gets 1 food from Milk Jug',
-            args: { player },
+            template: '{player} gets 1 food from {card}',
+            args: { player , card: this},
           })
         }
       }

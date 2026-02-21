@@ -41,8 +41,8 @@ module.exports = {
         player.addAnimals('cattle', 1)
       }
       game.log.add({
-        template: '{player} uses Pioneering Spirit to get {choice}',
-        args: { player, choice: selection[0].toLowerCase() },
+        template: '{player} uses {card} to get {choice}',
+        args: { player, choice: selection[0].toLowerCase() , card: this},
       })
     }
   },

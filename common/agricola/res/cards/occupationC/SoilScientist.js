@@ -16,8 +16,8 @@ module.exports = {
         player.payCost({ stone: 1 })
         player.addResource('grain', 2)
         game.log.add({
-          template: '{player} exchanges 1 stone for 2 grain from Soil Scientist',
-          args: { player },
+          template: '{player} exchanges 1 stone for 2 grain from {card}',
+          args: { player , card: this},
         })
       }
     }
@@ -30,8 +30,8 @@ module.exports = {
         player.payCost({ clay: 2 })
         player.addResource('vegetables', 1)
         game.log.add({
-          template: '{player} exchanges 2 clay for 1 vegetable from Soil Scientist',
-          args: { player },
+          template: '{player} exchanges 2 clay for 1 vegetable from {card}',
+          args: { player , card: this},
         })
       }
     }

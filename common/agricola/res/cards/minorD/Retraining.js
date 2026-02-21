@@ -44,8 +44,8 @@ module.exports = {
       oldCard.moveTo(commonZone)
       newCard.moveTo(player.zones.byPlayer(player, 'majorImprovements'))
       game.log.add({
-        template: '{player} uses Retraining to exchange {old} for {new}',
-        args: { player, old: oldCard.name, new: newCard.name },
+        template: '{player} uses {card} to exchange {old} for {new}',
+        args: { player, old: oldCard.name, new: newCard.name , card: this},
       })
     }
   },

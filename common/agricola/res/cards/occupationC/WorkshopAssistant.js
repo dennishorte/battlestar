@@ -36,8 +36,8 @@ module.exports = {
     s.pairs = allPairs.slice(0, Math.min(count, allPairs.length))
     this._syncPile(game)
     game.log.add({
-      template: '{player} places {count} resource pairs on Workshop Assistant',
-      args: { player, count: s.pairs.length },
+      template: '{player} places {count} resource pairs on {card}',
+      args: { player, count: s.pairs.length , card: this},
     })
   },
 
@@ -51,8 +51,8 @@ module.exports = {
       s.pairs.push(nextPair)
       this._syncPile(game)
       game.log.add({
-        template: '{player} adds {pair} to Workshop Assistant',
-        args: { player, pair: pairLabel(nextPair) },
+        template: '{player} adds {pair} to {card}',
+        args: { player, pair: pairLabel(nextPair) , card: this},
       })
     }
   },
@@ -79,8 +79,8 @@ module.exports = {
         cardOwner.addResource(pair[1], 1)
         this._syncPile(game)
         game.log.add({
-          template: '{player} takes {pair} from Workshop Assistant',
-          args: { player: cardOwner, pair: pairLabel(pair) },
+          template: '{player} takes {pair} from {card}',
+          args: { player: cardOwner, pair: pairLabel(pair) , card: this},
         })
       }
     }

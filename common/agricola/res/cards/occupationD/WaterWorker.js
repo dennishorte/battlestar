@@ -15,8 +15,8 @@ module.exports = {
     if (triggerIds.includes(actionId)) {
       player.addResource('reed', 1)
       game.log.add({
-        template: '{player} gets 1 reed from Water Worker',
-        args: { player },
+        template: '{player} gets 1 reed from {card}',
+        args: { player , card: this},
       })
     }
   },

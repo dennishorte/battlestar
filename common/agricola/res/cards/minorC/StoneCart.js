@@ -16,8 +16,8 @@ module.exports = {
       }
     }
     game.log.add({
-      template: '{player} schedules stone from Stone Cart',
-      args: { player },
+      template: '{player} schedules stone from {card}',
+      args: { player , card: this},
     })
   },
 }

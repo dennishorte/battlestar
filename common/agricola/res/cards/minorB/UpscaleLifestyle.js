@@ -10,8 +10,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('clay', 5)
     game.log.add({
-      template: '{player} gets 5 clay from Upscale Lifestyle',
-      args: { player },
+      template: '{player} gets 5 clay from {card}',
+      args: { player , card: this},
     })
     game.actions.offerRenovation(player, this)
   },

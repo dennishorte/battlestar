@@ -11,22 +11,22 @@ module.exports = {
     if (actionId === 'take-reed' && fishingFood >= 1) {
       player.addResource('food', 2)
       game.log.add({
-        template: '{player} gets 2 food from Fish Farmer',
-        args: { player },
+        template: '{player} gets 2 food from {card}',
+        args: { player , card: this},
       })
     }
     else if (actionId === 'take-clay' && fishingFood >= 2) {
       player.addResource('food', 2)
       game.log.add({
-        template: '{player} gets 2 food from Fish Farmer',
-        args: { player },
+        template: '{player} gets 2 food from {card}',
+        args: { player , card: this},
       })
     }
     else if (actionId === 'take-wood' && fishingFood >= 3) {
       player.addResource('food', 2)
       game.log.add({
-        template: '{player} gets 2 food from Fish Farmer',
-        args: { player },
+        template: '{player} gets 2 food from {card}',
+        args: { player , card: this},
       })
     }
   },

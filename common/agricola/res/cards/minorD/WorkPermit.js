@@ -21,8 +21,8 @@ module.exports = {
         cardId: this.id,
       })
       game.log.add({
-        template: '{player} schedules a worker for round {round} (Work Permit)',
-        args: { player, round: targetRound },
+        template: '{player} schedules a worker for round {round} ({card})',
+        args: { player, round: targetRound , card: this},
       })
     }
   },

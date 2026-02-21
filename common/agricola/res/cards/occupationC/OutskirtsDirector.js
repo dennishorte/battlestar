@@ -48,13 +48,13 @@ module.exports = {
       }
       otherState.bonusResources.reed = (otherState.bonusResources.reed || 0) + 2
       game.log.add({
-        template: '{player} places 2 reed on {space} (Outskirts Director)',
-        args: { player, space: otherName },
+        template: '{player} places 2 reed on {space} ({card})',
+        args: { player, space: otherName , card: this},
       })
       if (player.getAvailableWorkers() > 0) {
         game.log.add({
-          template: '{player} immediately places another person (Outskirts Director)',
-          args: { player },
+          template: '{player} immediately places another person ({card})',
+          args: { player , card: this},
         })
         game.playerTurn(player, { isBonusTurn: true })
       }

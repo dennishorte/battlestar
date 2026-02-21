@@ -13,15 +13,15 @@ module.exports = {
     if (grainFields > 0) {
       player.addResource('food', grainFields)
       game.log.add({
-        template: '{player} gets {amount} food from Gardener\'s Knife',
-        args: { player, amount: grainFields },
+        template: '{player} gets {amount} food from {card}',
+        args: { player, amount: grainFields, card: this },
       })
     }
     if (vegFields > 0) {
       player.addResource('grain', vegFields)
       game.log.add({
-        template: '{player} gets {amount} grain from Gardener\'s Knife',
-        args: { player, amount: vegFields },
+        template: '{player} gets {amount} grain from {card}',
+        args: { player, amount: vegFields, card: this },
       })
     }
   },

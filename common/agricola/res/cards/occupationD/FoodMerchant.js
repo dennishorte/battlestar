@@ -27,8 +27,8 @@ module.exports = {
         player.removeResource('food', cost)
         player.addResource('vegetables', 1)
         game.log.add({
-          template: '{player} buys 1 vegetable for {cost} food (Food Merchant)',
-          args: { player, cost },
+          template: '{player} buys 1 vegetable for {cost} food ({card})',
+          args: { player, cost , card: this},
         })
       }
     }

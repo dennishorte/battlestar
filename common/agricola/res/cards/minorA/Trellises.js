@@ -16,8 +16,8 @@ module.exports = {
     }
     if (fences > 0) {
       game.log.add({
-        template: '{player} places food on the next {count} round spaces from Trellises',
-        args: { player, count: Math.min(fences, 14 - currentRound) },
+        template: '{player} places food on the next {count} round spaces from {card}',
+        args: { player, count: Math.min(fences, 14 - currentRound) , card: this},
       })
     }
   },

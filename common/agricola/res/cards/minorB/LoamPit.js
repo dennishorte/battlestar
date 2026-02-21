@@ -13,8 +13,8 @@ module.exports = {
     if (actionId === 'day-laborer') {
       player.addResource('clay', 3)
       game.log.add({
-        template: '{player} gets 3 clay from Loam Pit',
-        args: { player },
+        template: '{player} gets 3 clay from {card}',
+        args: { player , card: this},
       })
     }
   },

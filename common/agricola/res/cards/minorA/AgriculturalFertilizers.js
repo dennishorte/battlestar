@@ -11,8 +11,8 @@ module.exports = {
   onUseMultipleSpaces(game, player, spaceCount) {
     if (spaceCount >= 2) {
       game.log.add({
-        template: '{player} gets an additional Sow action from Agricultural Fertilizers',
-        args: { player },
+        template: '{player} gets an additional Sow action from {card}',
+        args: { player , card: this},
       })
       game.actions.sow(player)
     }

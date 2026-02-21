@@ -11,8 +11,8 @@ module.exports = {
       player.pigOwnerTriggered = true
       player.addBonusPoints(3)
       game.log.add({
-        template: '{player} gets 3 bonus points from Pig Owner',
-        args: { player },
+        template: '{player} gets 3 bonus points from {card}',
+        args: { player , card: this},
       })
     }
   },

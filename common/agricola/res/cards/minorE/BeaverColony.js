@@ -13,8 +13,8 @@ module.exports = {
     if (game.actionGivesReed(actionId)) {
       player.addBonusPoints(1)
       game.log.add({
-        template: '{player} gets 1 bonus point from Beaver Colony',
-        args: { player },
+        template: '{player} gets 1 bonus point from {card}',
+        args: { player , card: this},
       })
     }
   },

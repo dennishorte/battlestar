@@ -23,8 +23,8 @@ module.exports = {
         s.food--
       }
       game.log.add({
-        template: '{player} gets resources from Retail Dealer',
-        args: { player },
+        template: '{player} gets resources from {card}',
+        args: { player , card: this},
       })
     }
   },

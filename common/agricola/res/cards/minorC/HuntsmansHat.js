@@ -13,8 +13,8 @@ module.exports = {
     if (fromActionSpace && count > 0) {
       player.addResource('food', count)
       game.log.add({
-        template: '{player} gets {amount} food from Huntsman\'s Hat',
-        args: { player, amount: count },
+        template: '{player} gets {amount} food from {card}',
+        args: { player, amount: count, card: this },
       })
     }
   },

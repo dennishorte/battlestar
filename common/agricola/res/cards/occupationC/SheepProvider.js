@@ -10,8 +10,8 @@ module.exports = {
     if (actionId === 'take-sheep') {
       cardOwner.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 grain from Sheep Provider',
-        args: { player: cardOwner },
+        template: '{player} gets 1 grain from {card}',
+        args: { player: cardOwner , card: this},
       })
     }
   },

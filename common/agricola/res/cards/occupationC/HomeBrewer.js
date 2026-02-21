@@ -17,16 +17,16 @@ module.exports = {
         player.payCost({ grain: 1 })
         player.addResource('food', 3)
         game.log.add({
-          template: '{player} converts 1 grain to 3 food via Home Brewer',
-          args: { player },
+          template: '{player} converts 1 grain to 3 food via {card}',
+          args: { player , card: this},
         })
       }
       else if (selection[0] === 'Convert 1 grain to 1 bonus point') {
         player.payCost({ grain: 1 })
         player.addBonusPoints(1)
         game.log.add({
-          template: '{player} converts 1 grain to 1 BP via Home Brewer',
-          args: { player },
+          template: '{player} converts 1 grain to 1 BP via {card}',
+          args: { player , card: this},
         })
       }
     }

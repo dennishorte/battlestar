@@ -22,15 +22,15 @@ module.exports = {
     if (wood > 0) {
       player.addResource('wood', wood)
       game.log.add({
-        template: '{player} gets {amount} wood from Wood Harvester',
-        args: { player, amount: wood },
+        template: '{player} gets {amount} wood from {card}',
+        args: { player, amount: wood , card: this},
       })
     }
     if (food > 0) {
       player.addResource('food', food)
       game.log.add({
-        template: '{player} gets {amount} food from Wood Harvester',
-        args: { player, amount: food },
+        template: '{player} gets {amount} food from {card}',
+        args: { player, amount: food , card: this},
       })
     }
   },

@@ -9,8 +9,8 @@ module.exports = {
   onBreedingPhaseEnd(game, player, newbornCount) {
     if (newbornCount > 0 && player.getEmptyFields().length > 0) {
       game.log.add({
-        template: '{player} can sow {count} field(s) from Fodder Planter',
-        args: { player, count: newbornCount },
+        template: '{player} can sow {count} field(s) from {card}',
+        args: { player, count: newbornCount , card: this},
       })
       for (let i = 0; i < newbornCount; i++) {
         if (player.getEmptyFields().length === 0) {

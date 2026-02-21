@@ -25,8 +25,8 @@ module.exports = {
     if (hasOwnOccupied) {
       player.addResource('wood', 1)
       game.log.add({
-        template: '{player} gets 1 wood from Legworker',
-        args: { player },
+        template: '{player} gets 1 wood from {card}',
+        args: { player , card: this},
       })
     }
   },

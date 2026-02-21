@@ -12,8 +12,8 @@ module.exports = {
     if (newType === 'stone') {
       cardOwner.addResource('clay', roomCount)
       game.log.add({
-        template: '{player} gets {amount} clay from Recycled Brick',
-        args: { player: cardOwner, amount: roomCount },
+        template: '{player} gets {amount} clay from {card}',
+        args: { player: cardOwner, amount: roomCount , card: this},
       })
     }
   },

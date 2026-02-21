@@ -13,8 +13,8 @@ module.exports = {
     const food = 2 + count
     player.addResource('food', food)
     game.log.add({
-      template: '{player} gets {amount} food from Wage',
-      args: { player, amount: food },
+      template: '{player} gets {amount} food from {card}',
+      args: { player, amount: food , card: this},
     })
   },
 }

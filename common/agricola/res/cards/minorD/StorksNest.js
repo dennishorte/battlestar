@@ -18,8 +18,8 @@ module.exports = {
         player.addResource('food', -1)
         game.actions.familyGrowth(player)
         game.log.add({
-          template: "{player} pays 1 food for Family Growth via Stork's Nest",
-          args: { player },
+          template: '{player} pays 1 food for Family Growth via {card}',
+          args: { player, card: this },
         })
       }
     }

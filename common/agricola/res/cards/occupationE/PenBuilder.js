@@ -53,8 +53,8 @@ module.exports = {
     const s = game.cardState(this.id)
     s.wood = (s.wood || 0) + amount
     game.log.add({
-      template: '{player} places {amount} wood on Pen Builder',
-      args: { player, amount },
+      template: '{player} places {amount} wood on {card}',
+      args: { player, amount , card: this},
     })
   },
   getAnimalCapacity(game) {

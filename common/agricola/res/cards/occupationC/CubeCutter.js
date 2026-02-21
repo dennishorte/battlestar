@@ -9,8 +9,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('wood', 1)
     game.log.add({
-      template: '{player} gets 1 wood from Cube Cutter',
-      args: { player },
+      template: '{player} gets 1 wood from {card}',
+      args: { player , card: this},
     })
   },
   onFieldPhase(game, player) {
@@ -23,8 +23,8 @@ module.exports = {
         player.payCost({ wood: 1, food: 1 })
         player.addBonusPoints(1)
         game.log.add({
-          template: '{player} exchanges 1 wood and 1 food for 1 BP via Cube Cutter',
-          args: { player },
+          template: '{player} exchanges 1 wood and 1 food for 1 BP via {card}',
+          args: { player , card: this},
         })
       }
     }

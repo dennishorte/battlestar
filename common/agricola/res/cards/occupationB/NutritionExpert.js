@@ -46,8 +46,8 @@ module.exports = {
         player.addResource('food', 5)
         player.addBonusPoints(2)
         game.log.add({
-          template: '{player} exchanges 1 {animal}, 1 grain, 1 vegetable for 5 food and 2 BP from Nutrition Expert',
-          args: { player, animal: animalType },
+          template: '{player} exchanges 1 {animal}, 1 grain, 1 vegetable for 5 food and 2 BP from {card}',
+          args: { player, animal: animalType , card: this},
         })
       }
     }

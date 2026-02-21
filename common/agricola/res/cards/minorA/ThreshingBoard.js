@@ -12,8 +12,8 @@ module.exports = {
   onAction(game, player, actionId) {
     if (actionId === 'plow-field' || actionId === 'plow-sow') {
       game.log.add({
-        template: '{player} gets an additional Bake Bread action from Threshing Board',
-        args: { player },
+        template: '{player} gets an additional Bake Bread action from {card}',
+        args: { player , card: this},
       })
       game.actions.bakeBread(player)
     }

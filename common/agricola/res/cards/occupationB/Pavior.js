@@ -11,15 +11,15 @@ module.exports = {
       if (game.state.round === 14) {
         player.addResource('vegetables', 1)
         game.log.add({
-          template: '{player} gets 1 vegetable from Pavior',
-          args: { player },
+          template: '{player} gets 1 vegetable from {card}',
+          args: { player , card: this},
         })
       }
       else {
         player.addResource('food', 1)
         game.log.add({
-          template: '{player} gets 1 food from Pavior',
-          args: { player },
+          template: '{player} gets 1 food from {card}',
+          args: { player , card: this},
         })
       }
     }

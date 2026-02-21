@@ -24,8 +24,8 @@ module.exports = {
           }
           player.addAnimals('cattle', 1)
           game.log.add({
-            template: '{player} moves 1 food to {other} and gets 1 cattle via Roastmaster',
-            args: { player, other: otherName },
+            template: '{player} moves 1 food to {other} and gets 1 cattle via {card}',
+            args: { player, other: otherName , card: this},
           })
         }
       }

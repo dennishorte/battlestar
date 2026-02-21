@@ -13,16 +13,16 @@ module.exports = {
     if (player.name === owner.name) {
       player.addResource('wood', 4)
       game.log.add({
-        template: '{player} gets 4 wood from Forest Owner',
-        args: { player },
+        template: '{player} gets 4 wood from {card}',
+        args: { player , card: this},
       })
     }
     else {
       player.addResource('wood', 3)
       owner.addResource('wood', 1)
       game.log.add({
-        template: '{player} gets 3 wood, {owner} gets 1 wood from Forest Owner',
-        args: { player, owner },
+        template: '{player} gets 3 wood, {owner} gets 1 wood from {card}',
+        args: { player, owner , card: this},
       })
     }
   },

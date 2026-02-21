@@ -16,8 +16,8 @@ module.exports = {
       player.specialFoodActive = false
       player.addBonusPoints(count)
       game.log.add({
-        template: '{player} gets {points} bonus points from Special Food',
-        args: { player, points: count },
+        template: '{player} gets {points} bonus points from {card}',
+        args: { player, points: count , card: this},
       })
     }
   },

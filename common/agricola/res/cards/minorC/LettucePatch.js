@@ -19,8 +19,8 @@ module.exports = {
       onHarvest: true,
     })
     game.log.add({
-      template: '{player} plays Lettuce Patch, gaining a vegetable-only field',
-      args: { player },
+      template: '{player} plays {card}, gaining a vegetable-only field',
+      args: { player , card: this},
     })
   },
   onHarvest(game, player, amount) {
@@ -33,8 +33,8 @@ module.exports = {
         player.addResource('vegetables', -amount)
         player.addResource('food', amount * 4)
         game.log.add({
-          template: '{player} converts {amount} vegetable to {food} food via Lettuce Patch',
-          args: { player, amount, food: amount * 4 },
+          template: '{player} converts {amount} vegetable to {food} food via {card}',
+          args: { player, amount, food: amount * 4 , card: this},
         })
       }
     }

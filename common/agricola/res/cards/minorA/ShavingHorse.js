@@ -12,8 +12,8 @@ module.exports = {
       player.payCost({ wood: 1 })
       player.addResource('food', 3)
       game.log.add({
-        template: '{player} must exchange 1 wood for 3 food from Shaving Horse',
-        args: { player },
+        template: '{player} must exchange 1 wood for 3 food from {card}',
+        args: { player , card: this},
       })
     }
     else if (player.wood >= 5) {

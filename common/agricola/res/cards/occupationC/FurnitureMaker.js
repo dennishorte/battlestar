@@ -9,8 +9,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('wood', 1)
     game.log.add({
-      template: '{player} gets 1 wood from Furniture Maker',
-      args: { player },
+      template: '{player} gets 1 wood from {card}',
+      args: { player , card: this},
     })
   },
   onPlayOccupation(game, player, _card) {
@@ -23,8 +23,8 @@ module.exports = {
     if (foodPaid > 0) {
       player.addResource('wood', foodPaid)
       game.log.add({
-        template: '{player} gets {amount} wood from Furniture Maker',
-        args: { player, amount: foodPaid },
+        template: '{player} gets {amount} wood from {card}',
+        args: { player, amount: foodPaid , card: this},
       })
     }
   },

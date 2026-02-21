@@ -10,8 +10,8 @@ module.exports = {
     if (game.getActionSpaceRound(actionId) === game.getMostRecentlyRevealedRound()) {
       player.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 grain from Outrider',
-        args: { player },
+        template: '{player} gets 1 grain from {card}',
+        args: { player , card: this},
       })
     }
   },

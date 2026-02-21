@@ -10,8 +10,8 @@ module.exports = {
   onReturnHome(game, player) {
     player.firewoodWood = (player.firewoodWood || 0) + 1
     game.log.add({
-      template: '{player} places 1 wood on Firewood ({total} total)',
-      args: { player, total: player.firewoodWood },
+      template: '{player} places 1 wood on {card} ({total} total)',
+      args: { player, total: player.firewoodWood , card: this},
     })
   },
   onBeforeBuildCooking(game, player) {
@@ -20,8 +20,8 @@ module.exports = {
       player.firewoodWood -= woodToMove
       player.addResource('wood', woodToMove)
       game.log.add({
-        template: '{player} moves {amount} wood from Firewood to supply',
-        args: { player, amount: woodToMove },
+        template: '{player} moves {amount} wood from {card} to supply',
+        args: { player, amount: woodToMove , card: this},
       })
     }
   },

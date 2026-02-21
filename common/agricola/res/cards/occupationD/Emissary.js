@@ -40,8 +40,8 @@ module.exports = {
     }
     s.placedGoods.push(goodType)
     game.log.add({
-      template: '{player} exchanges 1 {good} for 1 stone via Emissary',
-      args: { player, good: goodType },
+      template: '{player} exchanges 1 {good} for 1 stone via {card}',
+      args: { player, good: goodType , card: this},
     })
   },
 }

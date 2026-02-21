@@ -14,21 +14,21 @@ module.exports = {
       if (playerCount === 3) {
         cardOwner.addResource('clay', 1)
         game.log.add({
-          template: '{player} gets 2 clay from Clay Warden',
-          args: { player: cardOwner },
+          template: '{player} gets 2 clay from {card}',
+          args: { player: cardOwner , card: this},
         })
       }
       else if (playerCount === 4) {
         cardOwner.addResource('food', 1)
         game.log.add({
-          template: '{player} gets 1 clay and 1 food from Clay Warden',
-          args: { player: cardOwner },
+          template: '{player} gets 1 clay and 1 food from {card}',
+          args: { player: cardOwner , card: this},
         })
       }
       else {
         game.log.add({
-          template: '{player} gets 1 clay from Clay Warden',
-          args: { player: cardOwner },
+          template: '{player} gets 1 clay from {card}',
+          args: { player: cardOwner , card: this},
         })
       }
     }

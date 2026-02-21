@@ -13,8 +13,8 @@ module.exports = {
       game.scheduleResource(player, 'food', round, 1)
     }
     game.log.add({
-      template: '{player} schedules 1 food for next 6 rounds from Interior Decorator',
-      args: { player },
+      template: '{player} schedules 1 food for next 6 rounds from {card}',
+      args: { player , card: this},
     })
   },
 }

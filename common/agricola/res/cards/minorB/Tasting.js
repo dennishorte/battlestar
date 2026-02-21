@@ -26,8 +26,8 @@ module.exports = {
       player.removeResource('grain', 1)
       player.addResource('food', 4)
       game.log.add({
-        template: '{player} exchanges 1 grain for 4 food (Tasting)',
-        args: { player },
+        template: '{player} exchanges 1 grain for 4 food ({card})',
+        args: { player , card: this},
       })
     }
   },

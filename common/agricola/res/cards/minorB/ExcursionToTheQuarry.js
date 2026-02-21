@@ -13,8 +13,8 @@ module.exports = {
     if (people > 0) {
       player.addResource('stone', people)
       game.log.add({
-        template: '{player} gets {amount} stone from Excursion to the Quarry',
-        args: { player, amount: people },
+        template: '{player} gets {amount} stone from {card}',
+        args: { player, amount: people , card: this},
       })
     }
   },

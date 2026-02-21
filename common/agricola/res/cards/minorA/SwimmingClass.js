@@ -15,8 +15,8 @@ module.exports = {
         const points = newborns * 2
         player.addBonusPoints(points)
         game.log.add({
-          template: '{player} gets {points} bonus points from Swimming Class',
-          args: { player, points },
+          template: '{player} gets {points} bonus points from {card}',
+          args: { player, points , card: this},
         })
       }
     }

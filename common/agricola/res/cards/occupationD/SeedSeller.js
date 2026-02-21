@@ -9,16 +9,16 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('grain', 1)
     game.log.add({
-      template: '{player} gets 1 grain from Seed Seller',
-      args: { player },
+      template: '{player} gets 1 grain from {card}',
+      args: { player , card: this},
     })
   },
   onAction(game, player, actionId) {
     if (actionId === 'take-grain') {
       player.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 additional grain from Seed Seller',
-        args: { player },
+        template: '{player} gets 1 additional grain from {card}',
+        args: { player , card: this},
       })
     }
   },

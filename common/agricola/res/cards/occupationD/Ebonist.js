@@ -19,8 +19,8 @@ module.exports = {
         player.addResource('food', 1)
         player.addResource('grain', 1)
         game.log.add({
-          template: '{player} converts 1 wood to 1 food + 1 grain (Ebonist)',
-          args: { player },
+          template: '{player} converts 1 wood to 1 food + 1 grain ({card})',
+          args: { player , card: this},
         })
       }
     }

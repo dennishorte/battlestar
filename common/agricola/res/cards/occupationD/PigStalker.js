@@ -31,8 +31,8 @@ module.exports = {
     if (hasOccupiedAdjacent) {
       player.addAnimals('boar', 1)
       game.log.add({
-        template: '{player} gets 1 wild boar from Pig Stalker',
-        args: { player },
+        template: '{player} gets 1 wild boar from {card}',
+        args: { player , card: this},
       })
     }
   },

@@ -20,8 +20,8 @@ module.exports = {
         player.addResource('reed', 1)
         player.addResource('grain', 1)
         game.log.add({
-          template: '{player} exchanges 4 wood for resources from Tree Guard',
-          args: { player },
+          template: '{player} exchanges 4 wood for resources from {card}',
+          args: { player , card: this},
         })
       }
     }

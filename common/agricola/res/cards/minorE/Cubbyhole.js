@@ -17,8 +17,8 @@ module.exports = {
     if (stored > 0) {
       player.addResource('food', stored)
       game.log.add({
-        template: '{player} gets {amount} food from Cubbyhole',
-        args: { player, amount: stored },
+        template: '{player} gets {amount} food from {card}',
+        args: { player, amount: stored , card: this},
       })
     }
   },

@@ -12,8 +12,8 @@ module.exports = {
     if (woodBack > 0) {
       player.addResource('wood', woodBack)
       game.log.add({
-        template: '{player} gets {amount} wood back from Royal Wood',
-        args: { player, amount: woodBack },
+        template: '{player} gets {amount} wood back from {card}',
+        args: { player, amount: woodBack , card: this},
       })
     }
   },
@@ -22,8 +22,8 @@ module.exports = {
     if (woodBack > 0) {
       player.addResource('wood', woodBack)
       game.log.add({
-        template: '{player} gets {amount} wood back from Royal Wood',
-        args: { player, amount: woodBack },
+        template: '{player} gets {amount} wood back from {card}',
+        args: { player, amount: woodBack , card: this},
       })
     }
   },

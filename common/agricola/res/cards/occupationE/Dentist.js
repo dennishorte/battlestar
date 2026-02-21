@@ -20,8 +20,8 @@ module.exports = {
         player.removeResource('wood', 1)
         game.cardState(this.id).wood = (game.cardState(this.id).wood || 0) + 1
         game.log.add({
-          template: '{player} places 1 wood on Dentist ({total} total)',
-          args: { player, total: game.cardState(this.id).wood },
+          template: '{player} places 1 wood on {card} ({total} total)',
+          args: { player, total: game.cardState(this.id).wood , card: this},
         })
       }
     }
@@ -31,8 +31,8 @@ module.exports = {
     if (food > 0) {
       player.addResource('food', food)
       game.log.add({
-        template: '{player} gets {amount} food from Dentist',
-        args: { player, amount: food },
+        template: '{player} gets {amount} food from {card}',
+        args: { player, amount: food , card: this},
       })
     }
   },

@@ -9,16 +9,16 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('stone', 2)
     game.log.add({
-      template: '{player} gets 2 stone from Journeyman Bricklayer',
-      args: { player },
+      template: '{player} gets 2 stone from {card}',
+      args: { player , card: this},
     })
   },
   onAnyRenovate(game, actingPlayer, cardOwner, { newType }) {
     if (actingPlayer.name !== cardOwner.name && newType === 'stone') {
       cardOwner.addResource('stone', 1)
       game.log.add({
-        template: '{player} gets 1 stone from Journeyman Bricklayer',
-        args: { player: cardOwner },
+        template: '{player} gets 1 stone from {card}',
+        args: { player: cardOwner , card: this},
       })
     }
   },
@@ -26,8 +26,8 @@ module.exports = {
     if (actingPlayer.name !== cardOwner.name && roomType === 'stone') {
       cardOwner.addResource('stone', 1)
       game.log.add({
-        template: '{player} gets 1 stone from Journeyman Bricklayer',
-        args: { player: cardOwner },
+        template: '{player} gets 1 stone from {card}',
+        args: { player: cardOwner , card: this},
       })
     }
   },

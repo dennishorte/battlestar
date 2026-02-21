@@ -14,8 +14,8 @@ module.exports = {
       if (pigMarket && pigMarket.accumulated >= 1) {
         player.addResource('food', 2)
         game.log.add({
-          template: '{player} gets 2 food from Throwing Axe',
-          args: { player },
+          template: '{player} gets 2 food from {card}',
+          args: { player , card: this},
         })
       }
     }

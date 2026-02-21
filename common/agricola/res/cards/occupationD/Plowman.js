@@ -13,8 +13,8 @@ module.exports = {
       game.scheduleEvent(player, 'plowman', round)
     }
     game.log.add({
-      template: '{player} schedules field tiles from Plowman',
-      args: { player },
+      template: '{player} schedules field tiles from {card}',
+      args: { player , card: this},
     })
   },
   onRoundStart(game, player) {

@@ -12,8 +12,8 @@ module.exports = {
       if ((player[res] || 0) >= 2) {
         player.addResource(res, 1)
         game.log.add({
-          template: '{player} gets 1 {resource} from Case Builder',
-          args: { player, resource: res },
+          template: '{player} gets 1 {resource} from {card}',
+          args: { player, resource: res , card: this},
         })
       }
     }

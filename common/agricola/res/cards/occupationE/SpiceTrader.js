@@ -10,8 +10,8 @@ module.exports = {
     if (game.state.round <= 4) {
       game.scheduleResource(player, 'vegetables', 11, 3)
       game.log.add({
-        template: '{player} schedules 3 vegetables for round 11 from Spice Trader',
-        args: { player },
+        template: '{player} schedules 3 vegetables for round 11 from {card}',
+        args: { player , card: this},
       })
     }
   },

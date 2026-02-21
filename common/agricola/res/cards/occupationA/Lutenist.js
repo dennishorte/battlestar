@@ -13,8 +13,8 @@ module.exports = {
     cardOwner.addResource('food', 1)
     cardOwner.addResource('wood', 1)
     game.log.add({
-      template: '{player} gets 1 food and 1 wood from Lutenist',
-      args: { player: cardOwner },
+      template: '{player} gets 1 food and 1 wood from {card}',
+      args: { player: cardOwner , card: this},
     })
     const canBuyVegetable = cardOwner.food >= 2
     if (!canBuyVegetable) {
@@ -32,8 +32,8 @@ module.exports = {
     cardOwner.payCost({ food: 2 })
     cardOwner.addResource('vegetables', 1)
     game.log.add({
-      template: '{player} buys 1 vegetable for 2 food via Lutenist',
-      args: { player: cardOwner },
+      template: '{player} buys 1 vegetable for 2 food via {card}',
+      args: { player: cardOwner , card: this},
     })
   },
 }

@@ -47,8 +47,8 @@ module.exports = {
       player.addResource('grain', 1)
       s.grain--
       game.log.add({
-        template: '{player} buys 1 grain from Seed Trader',
-        args: { player },
+        template: '{player} buys 1 grain from {card}',
+        args: { player , card: this},
       })
     }
   },
@@ -59,8 +59,8 @@ module.exports = {
       player.addResource('vegetables', 1)
       s.vegetables--
       game.log.add({
-        template: '{player} buys 1 vegetable from Seed Trader',
-        args: { player },
+        template: '{player} buys 1 vegetable from {card}',
+        args: { player , card: this},
       })
     }
   },

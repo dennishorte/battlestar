@@ -10,15 +10,15 @@ module.exports = {
     if (actionId === 'take-reed') {
       player.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 grain from Flax Farmer',
-        args: { player },
+        template: '{player} gets 1 grain from {card}',
+        args: { player , card: this},
       })
     }
     else if (actionId === 'take-grain') {
       player.addResource('reed', 1)
       game.log.add({
-        template: '{player} gets 1 reed from Flax Farmer',
-        args: { player },
+        template: '{player} gets 1 reed from {card}',
+        args: { player , card: this},
       })
     }
   },

@@ -14,8 +14,8 @@ module.exports = {
   onPlay(game, player) {
     player.cannotRenovate = true
     game.log.add({
-      template: '{player} can no longer renovate (Wooden Shed)',
-      args: { player },
+      template: '{player} can no longer renovate ({card})',
+      args: { player , card: this},
     })
   },
 }

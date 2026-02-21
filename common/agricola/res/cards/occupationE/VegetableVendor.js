@@ -10,8 +10,8 @@ module.exports = {
     if (actionId === 'major-minor-improvement') {
       player.addResource('vegetables', 1)
       game.log.add({
-        template: '{player} gets 1 vegetable from Vegetable Vendor',
-        args: { player },
+        template: '{player} gets 1 vegetable from {card}',
+        args: { player , card: this},
       })
     }
     else if (actionId === 'take-vegetable') {

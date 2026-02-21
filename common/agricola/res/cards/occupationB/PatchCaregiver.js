@@ -14,8 +14,8 @@ module.exports = {
       cropRestriction: null,
     })
     game.log.add({
-      template: '{player} plays Patch Caregiver, gaining a field',
-      args: { player },
+      template: '{player} plays {card}, gaining a field',
+      args: { player , card: this},
     })
     const choices = []
     if (player.food >= 1) {
@@ -40,16 +40,16 @@ module.exports = {
       player.payCost({ food: 1 })
       player.addResource('grain', 1)
       game.log.add({
-        template: '{player} buys 1 grain for 1 food (Patch Caregiver)',
-        args: { player },
+        template: '{player} buys 1 grain for 1 food ({card})',
+        args: { player , card: this},
       })
     }
     else {
       player.payCost({ food: 3 })
       player.addResource('vegetables', 1)
       game.log.add({
-        template: '{player} buys 1 vegetable for 3 food (Patch Caregiver)',
-        args: { player },
+        template: '{player} buys 1 vegetable for 3 food ({card})',
+        args: { player , card: this},
       })
     }
   },

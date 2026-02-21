@@ -22,15 +22,15 @@ module.exports = {
         if (selection[0] === '2 sheep') {
           p.addAnimals('sheep', 2)
           game.log.add({
-            template: '{player} gets 2 sheep from Dairy Crier',
-            args: { player: p },
+            template: '{player} gets 2 sheep from {card}',
+            args: { player: p , card: this},
           })
         }
         else {
           p.addResource('food', 2)
           game.log.add({
-            template: '{player} gets 2 food from Dairy Crier',
-            args: { player: p },
+            template: '{player} gets 2 food from {card}',
+            args: { player: p , card: this},
           })
         }
       }
@@ -38,8 +38,8 @@ module.exports = {
         // Can only take food (no room for sheep)
         p.addResource('food', 2)
         game.log.add({
-          template: '{player} gets 2 food from Dairy Crier',
-          args: { player: p },
+          template: '{player} gets 2 food from {card}',
+          args: { player: p , card: this},
         })
       }
     }
@@ -48,8 +48,8 @@ module.exports = {
     if (player.canPlaceAnimals('cattle', 1)) {
       player.addAnimals('cattle', 1)
       game.log.add({
-        template: '{player} gets 1 cattle from Dairy Crier',
-        args: { player },
+        template: '{player} gets 1 cattle from {card}',
+        args: { player , card: this},
       })
     }
   },

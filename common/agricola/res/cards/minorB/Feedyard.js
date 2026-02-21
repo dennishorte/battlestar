@@ -16,8 +16,8 @@ module.exports = {
     if (unused > 0) {
       player.addResource('food', unused)
       game.log.add({
-        template: '{player} gets {amount} food from Feedyard',
-        args: { player, amount: unused },
+        template: '{player} gets {amount} food from {card}',
+        args: { player, amount: unused , card: this},
       })
     }
   },

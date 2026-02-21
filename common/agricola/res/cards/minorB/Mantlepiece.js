@@ -16,8 +16,8 @@ module.exports = {
     if (roundsLeft > 0) {
       player.addBonusPoints(roundsLeft)
       game.log.add({
-        template: '{player} gets {points} bonus points from Mantlepiece',
-        args: { player, points: roundsLeft },
+        template: '{player} gets {points} bonus points from {card}',
+        args: { player, points: roundsLeft , card: this},
       })
     }
     player.cannotRenovate = true

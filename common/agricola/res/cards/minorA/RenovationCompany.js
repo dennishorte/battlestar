@@ -11,8 +11,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('clay', 3)
     game.log.add({
-      template: '{player} gets 3 clay from Renovation Company',
-      args: { player },
+      template: '{player} gets 3 clay from {card}',
+      args: { player , card: this},
     })
 
     const card = this

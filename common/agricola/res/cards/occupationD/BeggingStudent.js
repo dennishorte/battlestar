@@ -9,8 +9,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('beggingCards', 1)
     game.log.add({
-      template: '{player} takes a begging card from Begging Student',
-      args: { player },
+      template: '{player} takes a begging card from {card}',
+      args: { player , card: this},
     })
   },
   onHarvestStart(game, player) {

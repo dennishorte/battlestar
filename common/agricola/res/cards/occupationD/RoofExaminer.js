@@ -12,8 +12,8 @@ module.exports = {
     if (reed > 0) {
       player.addResource('reed', reed)
       game.log.add({
-        template: '{player} gets {amount} reed from Roof Examiner',
-        args: { player, amount: reed },
+        template: '{player} gets {amount} reed from {card}',
+        args: { player, amount: reed , card: this},
       })
     }
   },

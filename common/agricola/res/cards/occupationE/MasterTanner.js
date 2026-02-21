@@ -15,8 +15,8 @@ module.exports = {
       const s = game.cardState(this.id)
       s.food = (s.food || 0) + 1
       game.log.add({
-        template: '{player} places 1 food on Master Tanner',
-        args: { player },
+        template: '{player} places 1 food on {card}',
+        args: { player , card: this},
       })
       s.providesRoom = s.food === player.getRoomCount()
     }

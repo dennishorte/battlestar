@@ -15,8 +15,8 @@ module.exports = {
     const spacesPaidFor = Math.min(player.food, unusedSpaces)
     player.removeResource('food', spacesPaidFor)
     game.log.add({
-      template: '{player} pays {amount} food to Hide Farmer for {spaces} unused spaces',
-      args: { player, amount: spacesPaidFor, spaces: spacesPaidFor },
+      template: '{player} pays {amount} food to {card} for {spaces} unused spaces',
+      args: { player, amount: spacesPaidFor, spaces: spacesPaidFor , card: this},
     })
     return spacesPaidFor
   },

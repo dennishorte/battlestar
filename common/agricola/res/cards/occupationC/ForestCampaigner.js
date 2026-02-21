@@ -17,8 +17,8 @@ module.exports = {
     if (totalWood >= 8) {
       player.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from Forest Campaigner',
-        args: { player },
+        template: '{player} gets 1 food from {card}',
+        args: { player , card: this},
       })
     }
   },

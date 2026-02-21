@@ -10,8 +10,8 @@ module.exports = {
     if (actionId === 'take-grain') {
       player.addResource('vegetables', 1)
       game.log.add({
-        template: '{player} gets 1 vegetable from Greengrocer',
-        args: { player },
+        template: '{player} gets 1 vegetable from {card}',
+        args: { player , card: this},
       })
     }
   },

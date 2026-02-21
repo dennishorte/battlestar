@@ -14,15 +14,15 @@ module.exports = {
     if (paidWith?.grain) {
       player.addResource('vegetables', 1)
       game.log.add({
-        template: '{player} gets 1 vegetable from Canvas Sack',
-        args: { player },
+        template: '{player} gets 1 vegetable from {card}',
+        args: { player , card: this},
       })
     }
     else if (paidWith?.reed) {
       player.addResource('wood', 4)
       game.log.add({
-        template: '{player} gets 4 wood from Canvas Sack',
-        args: { player },
+        template: '{player} gets 4 wood from {card}',
+        args: { player , card: this},
       })
     }
   },

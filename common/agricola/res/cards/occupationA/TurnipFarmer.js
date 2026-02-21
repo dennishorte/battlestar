@@ -10,8 +10,8 @@ module.exports = {
     if (game.isActionOccupied('day-laborer') && game.isActionOccupied('take-grain')) {
       player.addResource('vegetables', 1)
       game.log.add({
-        template: '{player} gets 1 vegetable from Turnip Farmer',
-        args: { player },
+        template: '{player} gets 1 vegetable from {card}',
+        args: { player , card: this},
       })
     }
   },

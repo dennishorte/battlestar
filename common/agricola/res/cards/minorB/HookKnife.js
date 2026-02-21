@@ -22,8 +22,8 @@ module.exports = {
       player.hookKnifeActive = false
       player.addBonusPoints(2)
       game.log.add({
-        template: '{player} gets 2 bonus points from Hook Knife',
-        args: { player },
+        template: '{player} gets 2 bonus points from {card}',
+        args: { player , card: this},
       })
     }
   },

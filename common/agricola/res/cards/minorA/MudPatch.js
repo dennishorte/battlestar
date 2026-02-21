@@ -12,8 +12,8 @@ module.exports = {
     if (player.canPlaceAnimals('boar', 1)) {
       player.addAnimals('boar', 1)
       game.log.add({
-        template: '{player} gets 1 wild boar from Mud Patch',
-        args: { player },
+        template: '{player} gets 1 wild boar from {card}',
+        args: { player , card: this},
       })
     }
   },

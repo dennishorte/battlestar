@@ -11,8 +11,8 @@ module.exports = {
   onPlayOccupation(game, player) {
     player.addResource('vegetables', 1)
     game.log.add({
-      template: '{player} gets 1 vegetable from Bookcase',
-      args: { player },
+      template: '{player} gets 1 vegetable from {card}',
+      args: { player , card: this},
     })
   },
 }

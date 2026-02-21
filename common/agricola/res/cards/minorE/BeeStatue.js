@@ -16,8 +16,8 @@ module.exports = {
       const resource = s.stack.pop()
       player.addResource(resource, 1)
       game.log.add({
-        template: '{player} gets 1 {resource} from Bee Statue',
-        args: { player, resource },
+        template: '{player} gets 1 {resource} from {card}',
+        args: { player, resource , card: this},
       })
     }
   },

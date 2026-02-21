@@ -9,8 +9,8 @@ module.exports = {
   onPlay(game, player) {
     player.skipNextHarvest = true
     game.log.add({
-      template: '{player} will skip the next harvest from Layabout',
-      args: { player },
+      template: '{player} will skip the next harvest from {card}',
+      args: { player , card: this},
     })
   },
 }

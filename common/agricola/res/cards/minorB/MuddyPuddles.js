@@ -12,8 +12,8 @@ module.exports = {
     const state = game.cardState(this.id)
     state.stack = ['boar', 'food', 'cattle', 'food', 'sheep']
     game.log.add({
-      template: '{player} places goods on Muddy Puddles',
-      args: { player },
+      template: '{player} places goods on {card}',
+      args: { player , card: this},
     })
   },
   getAnytimeActions(game, player) {
@@ -47,8 +47,8 @@ module.exports = {
       player.addResource(good, 1)
     }
     game.log.add({
-      template: '{player} uses Muddy Puddles: pays 1 clay for 1 {good}',
-      args: { player, good },
+      template: '{player} uses {card}: pays 1 clay for 1 {good}',
+      args: { player, good , card: this},
     })
   },
 }

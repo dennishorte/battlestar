@@ -12,29 +12,29 @@ module.exports = {
     if (improvements.includes('well')) {
       player.addResource('stone', 1)
       game.log.add({
-        template: '{player} gets 1 stone from Storage Barn (Well)',
-        args: { player },
+        template: '{player} gets 1 stone from {card} (Well)',
+        args: { player , card: this},
       })
     }
     if (improvements.includes('joinery')) {
       player.addResource('wood', 1)
       game.log.add({
-        template: '{player} gets 1 wood from Storage Barn (Joinery)',
-        args: { player },
+        template: '{player} gets 1 wood from {card} (Joinery)',
+        args: { player , card: this},
       })
     }
     if (improvements.includes('pottery')) {
       player.addResource('clay', 1)
       game.log.add({
-        template: '{player} gets 1 clay from Storage Barn (Pottery)',
-        args: { player },
+        template: '{player} gets 1 clay from {card} (Pottery)',
+        args: { player , card: this},
       })
     }
     if (improvements.includes('basketmakers-workshop')) {
       player.addResource('reed', 1)
       game.log.add({
-        template: '{player} gets 1 reed from Storage Barn (Basketmaker\'s Workshop)',
-        args: { player },
+        template: '{player} gets 1 reed from {card} (Basketmaker\'s Workshop)',
+        args: { player, card: this },
       })
     }
   },

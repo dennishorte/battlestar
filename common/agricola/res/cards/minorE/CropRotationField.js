@@ -16,8 +16,8 @@ module.exports = {
       onHarvestLast: true,
     })
     game.log.add({
-      template: '{player} plays Crop Rotation Field',
-      args: { player },
+      template: '{player} plays {card}',
+      args: { player , card: this},
     })
   },
   onHarvestLast(game, player, cropType) {
@@ -31,8 +31,8 @@ module.exports = {
       if (selection[0] !== 'Skip') {
         player.sowVirtualField('crop-rotation-field-e070', nextCrop)
         game.log.add({
-          template: '{player} sows {crop} on Crop Rotation Field',
-          args: { player, crop: nextCrop },
+          template: '{player} sows {crop} on {card}',
+          args: { player, crop: nextCrop , card: this},
         })
       }
     }

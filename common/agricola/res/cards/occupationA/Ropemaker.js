@@ -9,8 +9,8 @@ module.exports = {
   onHarvestEnd(game, player) {
     player.addResource('reed', 1)
     game.log.add({
-      template: '{player} gets 1 reed from Ropemaker',
-      args: { player },
+      template: '{player} gets 1 reed from {card}',
+      args: { player , card: this},
     })
   },
 }

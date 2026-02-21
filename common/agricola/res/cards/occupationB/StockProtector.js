@@ -10,8 +10,8 @@ module.exports = {
     if (actionId === 'fencing') {
       player.addResource('wood', 2)
       game.log.add({
-        template: '{player} gets 2 wood from Stock Protector',
-        args: { player },
+        template: '{player} gets 2 wood from {card}',
+        args: { player , card: this},
       })
     }
   },

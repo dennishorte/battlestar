@@ -12,8 +12,8 @@ module.exports = {
       game.scheduleResource(player, 'clay', round, 1)
     }
     game.log.add({
-      template: '{player} schedules clay for rounds 6-14 from Clay Deliveryman',
-      args: { player },
+      template: '{player} schedules clay for rounds 6-14 from {card}',
+      args: { player , card: this},
     })
   },
 }

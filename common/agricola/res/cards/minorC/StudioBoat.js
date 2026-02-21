@@ -15,8 +15,8 @@ module.exports = {
     if (actionId === 'traveling-players') {
       player.addBonusPoints(1)
       game.log.add({
-        template: '{player} gets 1 bonus point from Studio Boat',
-        args: { player },
+        template: '{player} gets 1 bonus point from {card}',
+        args: { player , card: this},
       })
     }
   },

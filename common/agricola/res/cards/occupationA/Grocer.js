@@ -37,8 +37,8 @@ module.exports = {
     player.removeResource('food', 1)
     player.addResource(good, 1)
     game.log.add({
-      template: '{player} uses Grocer: buys 1 {good} for 1 food',
-      args: { player, good },
+      template: '{player} uses {card}: buys 1 {good} for 1 food',
+      args: { player, good , card: this},
     })
   },
 }

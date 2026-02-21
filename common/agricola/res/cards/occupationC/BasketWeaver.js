@@ -13,8 +13,8 @@ module.exports = {
         player.payCost({ stone: 1, reed: 1 })
         imp.moveTo(player.zones.byPlayer(player, 'majorImprovements'))
         game.log.add({
-          template: "{player} builds Basketmaker's Workshop for 1 stone and 1 reed via Basket Weaver",
-          args: { player },
+          template: "{player} builds Basketmaker's Workshop for 1 stone and 1 reed via {card}",
+          args: { player, card: this },
         })
         if (imp.hasHook('onBuy')) {
           imp.callHook('onBuy', game, player)

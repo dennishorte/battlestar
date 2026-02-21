@@ -15,7 +15,7 @@ module.exports = {
       if (selection[0] !== 'Skip') {
         player.payCost({ food: 1 })
         player.addResource('stone', 2)
-        game.log.add({ template: '{player} buys 2 stone for 1 food from Stone Buyer', args: { player } })
+        game.log.add({ template: '{player} buys 2 stone for 1 food from {card}', args: { player, card: this } })
       }
     }
   },
@@ -28,7 +28,7 @@ module.exports = {
       if (selection[0] !== 'Skip') {
         player.payCost({ food: 2 })
         player.addResource('stone', 1)
-        game.log.add({ template: '{player} buys 1 stone for 2 food from Stone Buyer', args: { player } })
+        game.log.add({ template: '{player} buys 1 stone for 2 food from {card}', args: { player, card: this } })
       }
     }
   },

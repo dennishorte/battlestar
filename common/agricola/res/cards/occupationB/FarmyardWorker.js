@@ -25,8 +25,8 @@ module.exports = {
     if (player._fwPlaced) {
       player.addResource('food', 2)
       game.log.add({
-        template: '{player} gets 2 food from Farmyard Worker',
-        args: { player },
+        template: '{player} gets 2 food from {card}',
+        args: { player , card: this},
       })
     }
     delete player._fwPlaced

@@ -20,8 +20,8 @@ module.exports = {
     if (total > 0) {
       player.addResource('food', total)
       game.log.add({
-        template: '{player} gets {amount} food from Carter',
-        args: { player, amount: total },
+        template: '{player} gets {amount} food from {card}',
+        args: { player, amount: total , card: this},
       })
     }
   },

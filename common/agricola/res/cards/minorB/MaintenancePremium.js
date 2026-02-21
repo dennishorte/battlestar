@@ -11,8 +11,8 @@ module.exports = {
   onPlay(game, player) {
     player.maintenancePremiumFood = 3
     game.log.add({
-      template: '{player} places 3 food on Maintenance Premium',
-      args: { player },
+      template: '{player} places 3 food on {card}',
+      args: { player , card: this},
     })
   },
   onAction(game, player, actionId) {
@@ -21,8 +21,8 @@ module.exports = {
         player.maintenancePremiumFood--
         player.addResource('food', 1)
         game.log.add({
-          template: '{player} gets 1 food from Maintenance Premium ({remaining} remaining)',
-          args: { player, remaining: player.maintenancePremiumFood },
+          template: '{player} gets 1 food from {card} ({remaining} remaining)',
+          args: { player, remaining: player.maintenancePremiumFood , card: this},
         })
       }
     }
@@ -30,8 +30,8 @@ module.exports = {
   onRenovate(game, player) {
     player.maintenancePremiumFood = 3
     game.log.add({
-      template: '{player} restocks Maintenance Premium to 3 food',
-      args: { player },
+      template: '{player} restocks {card} to 3 food',
+      args: { player , card: this},
     })
   },
 }

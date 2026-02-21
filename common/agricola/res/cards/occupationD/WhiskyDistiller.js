@@ -28,8 +28,8 @@ module.exports = {
     const targetRound = game.state.round + 2
     game.scheduleResource(player, 'food', targetRound, 4)
     game.log.add({
-      template: '{player} schedules 4 food for round {round} via Whisky Distiller',
-      args: { player, round: targetRound },
+      template: '{player} schedules 4 food for round {round} via {card}',
+      args: { player, round: targetRound , card: this},
     })
   },
 }

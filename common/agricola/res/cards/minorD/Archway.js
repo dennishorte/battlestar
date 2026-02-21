@@ -14,8 +14,8 @@ module.exports = {
   onActionSpaceUsed(game, actingPlayer) {
     actingPlayer.addResource('food', 1)
     game.log.add({
-      template: '{player} gets 1 food from Archway',
-      args: { player: actingPlayer },
+      template: '{player} gets 1 food from {card}',
+      args: { player: actingPlayer , card: this},
     })
     // Schedule extra action before returning home
     game.state.archwayPlayer = actingPlayer.name

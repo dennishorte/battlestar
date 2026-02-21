@@ -30,8 +30,8 @@ module.exports = {
     if (vegetables > 0) {
       player.addResource('vegetables', vegetables)
       game.log.add({
-        template: '{player} gets {amount} vegetables from Potato Digger',
-        args: { player, amount: vegetables },
+        template: '{player} gets {amount} vegetables from {card}',
+        args: { player, amount: vegetables , card: this},
       })
     }
   },

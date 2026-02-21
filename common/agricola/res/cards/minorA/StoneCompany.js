@@ -11,8 +11,8 @@ module.exports = {
   onAction(game, player, actionId) {
     if (actionId === 'take-stone-1' || actionId === 'take-stone-2') {
       game.log.add({
-        template: '{player} gets an improvement action from Stone Company',
-        args: { player },
+        template: '{player} gets an improvement action from {card}',
+        args: { player , card: this},
       })
       game.actions.buildImprovement(player, { requireStone: true })
     }

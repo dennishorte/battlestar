@@ -12,8 +12,8 @@ module.exports = {
     if (cost && cost.clay >= 2) {
       player.addResource('stone', 1)
       game.log.add({
-        template: '{player} gets 1 stone from Brick Hammer',
-        args: { player },
+        template: '{player} gets 1 stone from {card}',
+        args: { player , card: this},
       })
     }
   },

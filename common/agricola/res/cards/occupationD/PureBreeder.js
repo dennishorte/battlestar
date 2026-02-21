@@ -9,8 +9,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('wood', 1)
     game.log.add({
-      template: '{player} gets 1 wood from Pure Breeder',
-      args: { player },
+      template: '{player} gets 1 wood from {card}',
+      args: { player , card: this},
     })
   },
   onRoundEnd(game, player, round) {
@@ -41,8 +41,8 @@ module.exports = {
     const animalType = match[1]
     player.addAnimals(animalType, 1)
     game.log.add({
-      template: '{player} breeds 1 {type} (Pure Breeder)',
-      args: { player, type: animalType },
+      template: '{player} breeds 1 {type} ({card})',
+      args: { player, type: animalType , card: this},
     })
   },
 }

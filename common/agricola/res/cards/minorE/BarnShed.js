@@ -11,8 +11,8 @@ module.exports = {
     if (actionId === 'take-wood' && actingPlayer.name !== cardOwner.name) {
       cardOwner.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 grain from Barn Shed',
-        args: { player: cardOwner },
+        template: '{player} gets 1 grain from {card}',
+        args: { player: cardOwner , card: this},
       })
     }
   },

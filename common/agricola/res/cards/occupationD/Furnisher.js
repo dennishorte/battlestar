@@ -9,15 +9,15 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('wood', 2)
     game.log.add({
-      template: '{player} gets 2 wood from Furnisher',
-      args: { player },
+      template: '{player} gets 2 wood from {card}',
+      args: { player , card: this},
     })
   },
   onBuildRoom(game, player) {
     player.furnisherDiscount = true
     game.log.add({
-      template: '{player} can play an improvement for 1 wood less via Furnisher',
-      args: { player },
+      template: '{player} can play an improvement for 1 wood less via {card}',
+      args: { player , card: this},
     })
   },
   modifyImprovementCost(player, cost) {

@@ -12,8 +12,8 @@ module.exports = {
     player.addResource('food', 6)
     player.foreignAidRestriction = true
     game.log.add({
-      template: '{player} gets 6 food from Foreign Aid',
-      args: { player },
+      template: '{player} gets 6 food from {card}',
+      args: { player , card: this},
     })
   },
 }

@@ -12,8 +12,8 @@ module.exports = {
     if (count > 0) {
       player.addResource('grain', count)
       game.log.add({
-        template: '{player} gets {amount} grain from Hand Truck',
-        args: { player, amount: count },
+        template: '{player} gets {amount} grain from {card}',
+        args: { player, amount: count , card: this},
       })
     }
   },

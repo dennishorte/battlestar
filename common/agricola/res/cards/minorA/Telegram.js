@@ -18,8 +18,8 @@ module.exports = {
       }
       game.state.telegramRounds[player.name] = targetRound
       game.log.add({
-        template: '{player} schedules a temporary worker for round {round} via Telegram',
-        args: { player, round: targetRound },
+        template: '{player} schedules a temporary worker for round {round} via {card}',
+        args: { player, round: targetRound , card: this},
       })
     }
   },

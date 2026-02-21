@@ -21,8 +21,8 @@ module.exports = {
         cardOwner.removeResource('food', cost)
         cardOwner.addResource('vegetables', 1)
         game.log.add({
-          template: '{player} buys 1 vegetable for {cost} food (Cabbage Buyer)',
-          args: { player: cardOwner, cost },
+          template: '{player} buys 1 vegetable for {cost} food ({card})',
+          args: { player: cardOwner, cost , card: this},
         })
       }
     }

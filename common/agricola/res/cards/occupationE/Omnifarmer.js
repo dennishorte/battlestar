@@ -53,8 +53,8 @@ module.exports = {
     }
     s.goods.push(good)
     game.log.add({
-      template: '{player} places 1 {good} on Omnifarmer ({total} goods)',
-      args: { player, good, total: s.goods.length },
+      template: '{player} places 1 {good} on {card} ({total} goods)',
+      args: { player, good, total: s.goods.length , card: this},
     })
   },
   getAnytimeActions(game, _player) {
@@ -83,8 +83,8 @@ module.exports = {
       player.addBonusPoints(points)
       s.exchanged = true
       game.log.add({
-        template: '{player} exchanges {count} goods for {points} bonus points via Omnifarmer',
-        args: { player, count: s.goods.length, points },
+        template: '{player} exchanges {count} goods for {points} bonus points via {card}',
+        args: { player, count: s.goods.length, points , card: this},
       })
     }
   },

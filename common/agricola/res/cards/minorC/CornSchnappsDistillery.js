@@ -33,8 +33,8 @@ module.exports = {
       game.scheduleResource(player, 'food', game.state.round + i, 1)
     }
     game.log.add({
-      template: '{player} uses Corn Schnapps Distillery: pays 1 grain for 4 food over 4 rounds',
-      args: { player },
+      template: '{player} uses {card}: pays 1 grain for 4 food over 4 rounds',
+      args: { player , card: this},
     })
   },
 }

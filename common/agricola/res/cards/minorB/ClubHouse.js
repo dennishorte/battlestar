@@ -18,8 +18,8 @@ module.exports = {
     const stoneRound = currentRound + 5
     game.scheduleResource(player, 'stone', stoneRound, 1)
     game.log.add({
-      template: '{player} schedules food and stone from Club House',
-      args: { player },
+      template: '{player} schedules food and stone from {card}',
+      args: { player , card: this},
     })
   },
 }

@@ -25,8 +25,8 @@ module.exports = {
       }
     }
     game.log.add({
-      template: '{player} schedules building resources from Estate Worker',
-      args: { player },
+      template: '{player} schedules building resources from {card}',
+      args: { player , card: this},
     })
   },
 }

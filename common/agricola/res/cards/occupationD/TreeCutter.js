@@ -13,8 +13,8 @@ module.exports = {
         if (resource !== 'wood' && amount >= 3) {
           player.addResource('wood', 1)
           game.log.add({
-            template: '{player} gets 1 wood from Tree Cutter',
-            args: { player },
+            template: '{player} gets 1 wood from {card}',
+            args: { player , card: this},
           })
           break
         }

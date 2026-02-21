@@ -28,8 +28,8 @@ module.exports = {
     player.payCost({ grain: 1, food: 2 })
     game.cardState(this.id).providesRoom = true
     game.log.add({
-      template: '{player} activates Den Builder room for 1 grain and 2 food',
-      args: { player },
+      template: '{player} activates {card} room for 1 grain and 2 food',
+      args: { player , card: this},
     })
   },
 }

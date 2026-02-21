@@ -17,8 +17,8 @@ module.exports = {
     player.addResource('grain', 1)
     player.addResource('food', cattleOnMarket)
     game.log.add({
-      template: '{player} gets 1 grain and {food} food from Hoof Caregiver',
-      args: { player, food: cattleOnMarket },
+      template: '{player} gets 1 grain and {food} food from {card}',
+      args: { player, food: cattleOnMarket , card: this},
     })
   },
 }

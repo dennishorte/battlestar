@@ -12,8 +12,8 @@ module.exports = {
     if (actionId === 'take-wood' || actionId === 'copse' || actionId === 'take-3-wood' || actionId === 'take-2-wood') {
       player.addResource('wood', 2)
       game.log.add({
-        template: '{player} gets 2 wood from Wood Cart',
-        args: { player },
+        template: '{player} gets 2 wood from {card}',
+        args: { player , card: this},
       })
     }
   },

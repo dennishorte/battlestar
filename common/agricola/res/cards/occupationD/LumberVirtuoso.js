@@ -24,8 +24,8 @@ module.exports = {
     if (discarded > 0) {
       player.setResource('wood', 5)
       game.log.add({
-        template: '{player} discards {count} wood down to 5 (Lumber Virtuoso)',
-        args: { player, count: discarded },
+        template: '{player} discards {count} wood down to 5 ({card})',
+        args: { player, count: discarded , card: this},
       })
     }
     // Offer to build stables (costs 2 wood each)

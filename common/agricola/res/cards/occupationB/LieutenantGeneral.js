@@ -23,15 +23,15 @@ module.exports = {
     if (game.state.round === 14) {
       cardOwner.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 grain from Lieutenant General',
-        args: { player: cardOwner },
+        template: '{player} gets 1 grain from {card}',
+        args: { player: cardOwner , card: this},
       })
     }
     else {
       cardOwner.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from Lieutenant General',
-        args: { player: cardOwner },
+        template: '{player} gets 1 food from {card}',
+        args: { player: cardOwner , card: this},
       })
     }
   },

@@ -9,15 +9,15 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('food', 3)
     game.log.add({
-      template: '{player} gets 3 food from Potato Harvester',
-      args: { player },
+      template: '{player} gets 3 food from {card}',
+      args: { player , card: this},
     })
   },
   onHarvestVegetables(game, player, count) {
     player.addResource('food', count)
     game.log.add({
-      template: '{player} gets {count} food from Potato Harvester',
-      args: { player, count },
+      template: '{player} gets {count} food from {card}',
+      args: { player, count , card: this},
     })
   },
 }

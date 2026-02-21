@@ -10,16 +10,16 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('clay', 1)
     game.log.add({
-      template: '{player} gets 1 clay from Hod',
-      args: { player },
+      template: '{player} gets 1 clay from {card}',
+      args: { player , card: this},
     })
   },
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
     if (actionId === 'take-boar') {
       cardOwner.addResource('clay', 2)
       game.log.add({
-        template: '{player} gets 2 clay from Hod',
-        args: { player: cardOwner },
+        template: '{player} gets 2 clay from {card}',
+        args: { player: cardOwner , card: this},
       })
     }
   },

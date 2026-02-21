@@ -14,8 +14,8 @@ module.exports = {
     if (grainOccupied && vegOccupied) {
       player.addResource('food', 2)
       game.log.add({
-        template: '{player} gets 2 food from Seed Researcher',
-        args: { player },
+        template: '{player} gets 2 food from {card}',
+        args: { player , card: this},
       })
       game.actions.offerFreeOccupations(player, this, 1)
     }

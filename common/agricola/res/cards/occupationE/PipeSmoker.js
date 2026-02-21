@@ -10,8 +10,8 @@ module.exports = {
     if (player.getGrainFieldCount() >= 1) {
       player.addResource('wood', 2)
       game.log.add({
-        template: '{player} gets 2 wood from Pipe Smoker',
-        args: { player },
+        template: '{player} gets 2 wood from {card}',
+        args: { player , card: this},
       })
     }
   },

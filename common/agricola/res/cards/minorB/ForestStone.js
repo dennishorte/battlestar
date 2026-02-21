@@ -13,8 +13,8 @@ module.exports = {
   onPlay(game, player) {
     player.forestStoneFood = 2
     game.log.add({
-      template: '{player} places 2 food on Forest Stone',
-      args: { player },
+      template: '{player} places 2 food on {card}',
+      args: { player , card: this},
     })
   },
   onAction(game, player, actionId) {
@@ -23,16 +23,16 @@ module.exports = {
         player.forestStoneFood--
         player.addResource('food', 1)
         game.log.add({
-          template: '{player} gets 1 food from Forest Stone ({remaining} remaining)',
-          args: { player, remaining: player.forestStoneFood },
+          template: '{player} gets 1 food from {card} ({remaining} remaining)',
+          args: { player, remaining: player.forestStoneFood , card: this},
         })
       }
     }
     else if (actionId === 'take-stone-1' || actionId === 'take-stone-2') {
       player.forestStoneFood = (player.forestStoneFood || 0) + 2
       game.log.add({
-        template: '{player} adds 2 food to Forest Stone ({total} total)',
-        args: { player, total: player.forestStoneFood },
+        template: '{player} adds 2 food to {card} ({total} total)',
+        args: { player, total: player.forestStoneFood , card: this},
       })
     }
   },

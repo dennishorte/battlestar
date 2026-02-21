@@ -20,8 +20,8 @@ module.exports = {
     if (hasGoods) {
       player.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from Moral Crusader',
-        args: { player },
+        template: '{player} gets 1 food from {card}',
+        args: { player , card: this},
       })
     }
   },

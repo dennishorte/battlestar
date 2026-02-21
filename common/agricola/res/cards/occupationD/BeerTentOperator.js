@@ -20,8 +20,8 @@ module.exports = {
         player.addBonusPoints(1)
         player.addResource('food', 2)
         game.log.add({
-          template: '{player} converts 1 wood + 1 grain to 1 point + 2 food (Beer Tent Operator)',
-          args: { player },
+          template: '{player} converts 1 wood + 1 grain to 1 point + 2 food ({card})',
+          args: { player , card: this},
         })
       }
     }

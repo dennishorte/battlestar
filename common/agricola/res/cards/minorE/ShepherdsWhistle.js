@@ -10,8 +10,8 @@ module.exports = {
     if (player.hasEmptyUnfencedStable()) {
       player.addAnimals('sheep', 1)
       game.log.add({
-        template: "{player} gets 1 sheep from Shepherd's Whistle",
-        args: { player },
+        template: '{player} gets 1 sheep from {card}',
+        args: { player, card: this },
       })
     }
   },

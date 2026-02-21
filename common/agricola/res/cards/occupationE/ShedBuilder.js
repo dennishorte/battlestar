@@ -16,15 +16,15 @@ module.exports = {
     if (count <= 2) {
       player.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 grain from Shed Builder',
-        args: { player },
+        template: '{player} gets 1 grain from {card}',
+        args: { player , card: this},
       })
     }
     else if (count <= 4) {
       player.addResource('vegetables', 1)
       game.log.add({
-        template: '{player} gets 1 vegetable from Shed Builder',
-        args: { player },
+        template: '{player} gets 1 vegetable from {card}',
+        args: { player , card: this},
       })
     }
   },

@@ -74,8 +74,8 @@ module.exports = {
     player._lastActionId = selected.actionId
 
     game.log.add({
-      template: '{player} places person on {action} via Nightworker',
-      args: { player, action: selected.name },
+      template: '{player} places person on {action} via {card}',
+      args: { player, action: selected.name , card: this},
     })
 
     game.actions.executeAction(player, selected.actionId)

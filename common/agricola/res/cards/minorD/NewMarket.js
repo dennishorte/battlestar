@@ -13,8 +13,8 @@ module.exports = {
     if (round >= 8 && round <= 11 && game.isRoundActionSpace(actionId)) {
       player.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from New Market',
-        args: { player },
+        template: '{player} gets 1 food from {card}',
+        args: { player , card: this},
       })
     }
   },

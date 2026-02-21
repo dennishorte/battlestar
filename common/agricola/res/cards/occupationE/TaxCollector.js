@@ -27,8 +27,8 @@ module.exports = {
         player.addResource('stone', 1)
       }
       game.log.add({
-        template: '{player} gets {choice} from Tax Collector',
-        args: { player, choice },
+        template: '{player} gets {choice} from {card}',
+        args: { player, choice , card: this},
       })
     }
   },

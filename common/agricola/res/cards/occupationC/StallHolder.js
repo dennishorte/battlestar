@@ -30,8 +30,8 @@ module.exports = {
     player.addBonusPoints(1)
     game.cardState(this.id).lastUsedRound = game.state.round
     game.log.add({
-      template: '{player} exchanges 2 grain for 1 bonus point and {food} food via Stall Holder',
-      args: { player, food },
+      template: '{player} exchanges 2 grain for 1 bonus point and {food} food via {card}',
+      args: { player, food , card: this},
     })
   },
 }

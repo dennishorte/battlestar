@@ -12,8 +12,8 @@ module.exports = {
     if (adjacentHarvestedFields > 0) {
       player.addResource('food', adjacentHarvestedFields)
       game.log.add({
-        template: '{player} gets {amount} food from Lynchet',
-        args: { player, amount: adjacentHarvestedFields },
+        template: '{player} gets {amount} food from {card}',
+        args: { player, amount: adjacentHarvestedFields , card: this},
       })
     }
   },

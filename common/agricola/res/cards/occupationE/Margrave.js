@@ -10,8 +10,8 @@ module.exports = {
     if (cardOwner.roomType === 'stone') {
       cardOwner.addResource('food', 2)
       game.log.add({
-        template: '{player} gets 2 food from Margrave',
-        args: { player: cardOwner },
+        template: '{player} gets 2 food from {card}',
+        args: { player: cardOwner , card: this},
       })
     }
   },

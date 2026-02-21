@@ -49,8 +49,8 @@ module.exports = {
         player.addResource(resource, 1)
       }
       game.log.add({
-        template: '{player} buys 1 {resource} for {cost} food (Trade Teacher)',
-        args: { player, resource, cost },
+        template: '{player} buys 1 {resource} for {cost} food ({card})',
+        args: { player, resource, cost , card: this},
       })
     }
   },

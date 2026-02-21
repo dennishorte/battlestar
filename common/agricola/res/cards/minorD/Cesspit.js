@@ -22,8 +22,8 @@ module.exports = {
       isClay = !isClay
     }
     game.log.add({
-      template: '{player} schedules clay and wild boar from Cesspit',
-      args: { player },
+      template: '{player} schedules clay and wild boar from {card}',
+      args: { player , card: this},
     })
   },
 }

@@ -10,8 +10,8 @@ module.exports = {
     if (game.isActionOccupied('take-wood') && game.isActionOccupied('take-clay') && game.isActionOccupied('take-reed')) {
       player.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 grain from Pub Owner',
-        args: { player },
+        template: '{player} gets 1 grain from {card}',
+        args: { player , card: this},
       })
     }
   },
@@ -19,8 +19,8 @@ module.exports = {
     if (game.isActionOccupied('take-wood') && game.isActionOccupied('take-clay') && game.isActionOccupied('take-reed')) {
       player.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 grain from Pub Owner',
-        args: { player },
+        template: '{player} gets 1 grain from {card}',
+        args: { player , card: this},
       })
     }
   },

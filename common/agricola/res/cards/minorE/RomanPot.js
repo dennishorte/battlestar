@@ -17,8 +17,8 @@ module.exports = {
       s.stored--
       player.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from Roman Pot',
-        args: { player },
+        template: '{player} gets 1 food from {card}',
+        args: { player , card: this},
       })
     }
   },

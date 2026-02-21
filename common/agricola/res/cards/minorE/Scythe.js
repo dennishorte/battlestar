@@ -45,8 +45,8 @@ module.exports = {
 
       player.addResource(crop, amount)
       game.log.add({
-        template: '{player} uses Scythe to harvest {amount} {crop} from a field',
-        args: { player, amount, crop },
+        template: '{player} uses {card} to harvest {amount} {crop} from a field',
+        args: { player, amount, crop , card: this},
       })
     }
   },

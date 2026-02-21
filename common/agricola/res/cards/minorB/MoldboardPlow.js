@@ -11,8 +11,8 @@ module.exports = {
   onPlay(game, player) {
     player.moldboardPlowCharges = 2
     game.log.add({
-      template: '{player} places 2 field tiles on Moldboard Plow',
-      args: { player },
+      template: '{player} places 2 field tiles on {card}',
+      args: { player , card: this},
     })
   },
   onAction(game, player, actionId) {

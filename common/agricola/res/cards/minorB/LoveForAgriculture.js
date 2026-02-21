@@ -14,8 +14,8 @@ module.exports = {
     const count = player.virtualFields.filter(vf => vf.cardId === this.id).length
     if (count > 0) {
       game.log.add({
-        template: '{player} plays Love for Agriculture, creating {count} sowable pasture field(s)',
-        args: { player, count },
+        template: '{player} plays {card}, creating {count} sowable pasture field(s)',
+        args: { player, count , card: this},
       })
     }
   },

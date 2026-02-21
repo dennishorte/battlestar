@@ -22,8 +22,8 @@ module.exports = {
     if (selection[0] === 'Get 1 food') {
       cardOwner.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from Casual Worker',
-        args: { player: cardOwner },
+        template: '{player} gets 1 food from {card}',
+        args: { player: cardOwner , card: this},
       })
     }
     else if (selection[0] === 'Build free stable') {

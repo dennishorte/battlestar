@@ -19,8 +19,8 @@ module.exports = {
     if (aboveFishing.includes(actionId)) {
       player.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from Brook',
-        args: { player },
+        template: '{player} gets 1 food from {card}',
+        args: { player , card: this},
       })
     }
   },

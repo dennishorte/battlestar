@@ -16,15 +16,15 @@ module.exports = {
       onHarvestLast: true,
     })
     game.log.add({
-      template: '{player} plays Cherry Orchard, gaining a wood-only field',
-      args: { player },
+      template: '{player} plays {card}, gaining a wood-only field',
+      args: { player , card: this},
     })
   },
   onHarvestLast(game, player) {
     player.addResource('vegetables', 1)
     game.log.add({
-      template: '{player} gets 1 vegetable from Cherry Orchard',
-      args: { player },
+      template: '{player} gets 1 vegetable from {card}',
+      args: { player , card: this},
     })
   },
 }

@@ -30,8 +30,8 @@ module.exports = {
       }
     }
     game.log.add({
-      template: '{player} places {num} food on the next {num} round spaces (Confidant)',
-      args: { player, num },
+      template: '{player} places {num} food on the next {num} round spaces ({card})',
+      args: { player, num , card: this},
     })
   },
   onRoundStart(game, player) {

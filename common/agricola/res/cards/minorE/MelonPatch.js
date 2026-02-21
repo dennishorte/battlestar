@@ -17,8 +17,8 @@ module.exports = {
       onHarvestLast: true,
     })
     game.log.add({
-      template: '{player} plays Melon Patch, gaining a vegetable-only field',
-      args: { player },
+      template: '{player} plays {card}, gaining a vegetable-only field',
+      args: { player , card: this},
     })
   },
   onHarvestLast(game, player) {

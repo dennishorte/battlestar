@@ -11,22 +11,22 @@ module.exports = {
     if (fencedStables >= 3 && player.canPlaceAnimals('cattle', 1)) {
       player.addAnimals('cattle', 1)
       game.log.add({
-        template: '{player} gets 1 cattle from Animal Driver',
-        args: { player },
+        template: '{player} gets 1 cattle from {card}',
+        args: { player , card: this},
       })
     }
     else if (fencedStables >= 2 && player.canPlaceAnimals('boar', 1)) {
       player.addAnimals('boar', 1)
       game.log.add({
-        template: '{player} gets 1 wild boar from Animal Driver',
-        args: { player },
+        template: '{player} gets 1 wild boar from {card}',
+        args: { player , card: this},
       })
     }
     else if (fencedStables >= 1 && player.canPlaceAnimals('sheep', 1)) {
       player.addAnimals('sheep', 1)
       game.log.add({
-        template: '{player} gets 1 sheep from Animal Driver',
-        args: { player },
+        template: '{player} gets 1 sheep from {card}',
+        args: { player , card: this},
       })
     }
   },

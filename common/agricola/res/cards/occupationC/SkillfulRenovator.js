@@ -10,8 +10,8 @@ module.exports = {
     player.addResource('wood', 1)
     player.addResource('clay', 1)
     game.log.add({
-      template: '{player} gets 1 wood and 1 clay from Skillful Renovator',
-      args: { player },
+      template: '{player} gets 1 wood and 1 clay from {card}',
+      args: { player , card: this},
     })
   },
   onRenovate(game, player) {
@@ -19,8 +19,8 @@ module.exports = {
     if (peoplePlaced > 0) {
       player.addResource('wood', peoplePlaced)
       game.log.add({
-        template: '{player} gets {amount} wood from Skillful Renovator',
-        args: { player, amount: peoplePlaced },
+        template: '{player} gets {amount} wood from {card}',
+        args: { player, amount: peoplePlaced , card: this},
       })
     }
   },

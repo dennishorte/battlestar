@@ -15,8 +15,8 @@ module.exports = {
       })
       if (selection[0] === 'Place person') {
         game.log.add({
-          template: '{player} places an extra person from Motivator',
-          args: { player },
+          template: '{player} places an extra person from {card}',
+          args: { player , card: this},
         })
         game.playerTurn(player, { skipUseWorker: true, isBonusTurn: true })
       }

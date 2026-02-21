@@ -13,8 +13,8 @@ module.exports = {
         game.removeFromAccumulationSpace('take-reed', 'reed', 1)
         player.addResource('reed', 1)
         game.log.add({
-          template: '{player} takes 1 reed from Reed Bank via Riverine Shepherd',
-          args: { player },
+          template: '{player} takes 1 reed from Reed Bank via {card}',
+          args: { player , card: this},
         })
       }
     }
@@ -24,8 +24,8 @@ module.exports = {
         game.removeFromAccumulationSpace('take-sheep', 'sheep', 1)
         player.addAnimals('sheep', 1)
         game.log.add({
-          template: '{player} takes 1 sheep from Sheep Market via Riverine Shepherd',
-          args: { player },
+          template: '{player} takes 1 sheep from Sheep Market via {card}',
+          args: { player , card: this},
         })
       }
     }

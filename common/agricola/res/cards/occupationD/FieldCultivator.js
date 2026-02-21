@@ -25,8 +25,8 @@ module.exports = {
       const good = s.pile.shift()
       player.addResource(good, 1)
       game.log.add({
-        template: '{player} takes 1 {good} from Field Cultivator pile',
-        args: { player, good },
+        template: '{player} takes 1 {good} from {card} pile',
+        args: { player, good , card: this},
       })
     }
   },

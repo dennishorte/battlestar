@@ -12,15 +12,15 @@ module.exports = {
     if (player.grain >= 3) {
       player.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 grain from Eternal Rye Cultivation',
-        args: { player },
+        template: '{player} gets 1 grain from {card}',
+        args: { player , card: this},
       })
     }
     else if (player.grain >= 2) {
       player.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from Eternal Rye Cultivation',
-        args: { player },
+        template: '{player} gets 1 food from {card}',
+        args: { player , card: this},
       })
     }
   },

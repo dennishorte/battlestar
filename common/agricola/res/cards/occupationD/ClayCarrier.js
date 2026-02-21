@@ -11,8 +11,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('clay', 2)
     game.log.add({
-      template: '{player} gets 2 clay from Clay Carrier',
-      args: { player },
+      template: '{player} gets 2 clay from {card}',
+      args: { player , card: this},
     })
   },
   getAnytimeActions(game, player) {
@@ -36,8 +36,8 @@ module.exports = {
     player.addResource('clay', 2)
     game.cardState(this.id).lastUsedRound = game.state.round
     game.log.add({
-      template: '{player} buys 2 clay from Clay Carrier',
-      args: { player },
+      template: '{player} buys 2 clay from {card}',
+      args: { player , card: this},
     })
   },
 }

@@ -10,8 +10,8 @@ module.exports = {
     if (player.roomType === 'stone') {
       player.addBonusPoints(1)
       game.log.add({
-        template: '{player} gets 1 bonus point from Uncaring Parents',
-        args: { player },
+        template: '{player} gets 1 bonus point from {card}',
+        args: { player , card: this},
       })
     }
   },

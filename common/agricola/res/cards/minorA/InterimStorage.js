@@ -37,8 +37,8 @@ module.exports = {
         player.addResource('reed', storage.reed)
       }
       game.log.add({
-        template: '{player} receives {wood} wood, {clay} clay, {reed} reed from Interim Storage',
-        args: { player, wood: storage.wood, clay: storage.clay, reed: storage.reed },
+        template: '{player} receives {wood} wood, {clay} clay, {reed} reed from {card}',
+        args: { player, wood: storage.wood, clay: storage.clay, reed: storage.reed , card: this},
       })
       player.interimStorage = { wood: 0, clay: 0, reed: 0 }
     }

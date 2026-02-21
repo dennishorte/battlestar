@@ -16,8 +16,8 @@ module.exports = {
     if (!s.providesRoom && this.checkRoomCondition(player, game.settings.useDrafting)) {
       s.providesRoom = true
       game.log.add({
-        template: '{player} activates Reader room',
-        args: { player },
+        template: '{player} activates {card} room',
+        args: { player , card: this},
       })
     }
   },

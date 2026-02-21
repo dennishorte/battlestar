@@ -29,8 +29,8 @@ module.exports = {
 
     game.scheduleResource(player, 'food', round, food)
     game.log.add({
-      template: '{player} places {food} food on round {round} using Bunny Breeder',
-      args: { player, food, round },
+      template: '{player} places {food} food on round {round} using {card}',
+      args: { player, food, round , card: this},
     })
   },
 }

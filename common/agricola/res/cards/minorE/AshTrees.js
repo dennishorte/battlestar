@@ -13,8 +13,8 @@ module.exports = {
     if (fencesToPlace > 0) {
       player.fencesRemaining -= fencesToPlace
       game.log.add({
-        template: '{player} places {amount} fences on Ash Trees',
-        args: { player, amount: fencesToPlace },
+        template: '{player} places {amount} fences on {card}',
+        args: { player, amount: fencesToPlace , card: this},
       })
     }
   },

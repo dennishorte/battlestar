@@ -18,8 +18,8 @@ module.exports = {
     if (pile && pile.length > 0) {
       const resource = pile.pop()
       game.log.add({
-        template: '{player} uses 1 {resource} from Resource Hoarder',
-        args: { player, resource },
+        template: '{player} uses 1 {resource} from {card}',
+        args: { player, resource , card: this},
       })
       return resource
     }

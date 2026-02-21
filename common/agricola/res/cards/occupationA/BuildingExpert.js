@@ -14,8 +14,8 @@ module.exports = {
       if (bonus) {
         player.addResource(bonus, 1)
         game.log.add({
-          template: '{player} gets 1 {resource} from Building Expert',
-          args: { player, resource: bonus },
+          template: '{player} gets 1 {resource} from {card}',
+          args: { player, resource: bonus , card: this},
         })
       }
     }

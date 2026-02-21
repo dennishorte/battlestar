@@ -9,8 +9,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('food', 1)
     game.log.add({
-      template: '{player} gets 1 food from Fir Cutter',
-      args: { player },
+      template: '{player} gets 1 food from {card}',
+      args: { player , card: this},
     })
   },
   onAction(game, player, actionId) {
@@ -21,8 +21,8 @@ module.exports = {
       if (wood > 0) {
         player.addResource('wood', wood)
         game.log.add({
-          template: '{player} gets {amount} wood from Fir Cutter',
-          args: { player, amount: wood },
+          template: '{player} gets {amount} wood from {card}',
+          args: { player, amount: wood , card: this},
         })
       }
     }

@@ -40,8 +40,8 @@ module.exports = {
         }
         player.buildStable(row, col)
         game.log.add({
-          template: '{player} builds a stable at ({row},{col}) via Wooden Whey Bucket ({cost})',
-          args: { player, row, col, cost: costLabel },
+          template: '{player} builds a stable at ({row},{col}) via {card} ({cost})',
+          args: { player, row, col, cost: costLabel , card: this},
         })
       }
     }

@@ -16,8 +16,8 @@ module.exports = {
         game.scheduleResource(player, good, round, 1)
       }
       game.log.add({
-        template: '{player} schedules 1 food, 1 food, 1 wild boar from Trap Builder',
-        args: { player },
+        template: '{player} schedules 1 food, 1 food, 1 wild boar from {card}',
+        args: { player , card: this},
       })
     }
   },

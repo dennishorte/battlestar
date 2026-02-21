@@ -13,8 +13,8 @@ module.exports = {
     if (grain > 0) {
       player.addResource('grain', grain)
       game.log.add({
-        template: '{player} gets {amount} grain from Almsbag',
-        args: { player, amount: grain },
+        template: '{player} gets {amount} grain from {card}',
+        args: { player, amount: grain , card: this},
       })
     }
   },

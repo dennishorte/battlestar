@@ -11,8 +11,8 @@ module.exports = {
       player.addResource('reed', 1)
       player.addResource('wood', 1)
       game.log.add({
-        template: '{player} gets 1 reed and 1 wood from Collier',
-        args: { player },
+        template: '{player} gets 1 reed and 1 wood from {card}',
+        args: { player , card: this},
       })
       if (game.players.all().length >= 3) {
         // Add 1 wood to Hollow accumulation space
@@ -22,8 +22,8 @@ module.exports = {
           if (hollowState && hollowState.accumulated != null) {
             hollowState.accumulated += 1
             game.log.add({
-              template: '{player} places 1 wood on Hollow via Collier',
-              args: { player },
+              template: '{player} places 1 wood on Hollow via {card}',
+              args: { player , card: this},
             })
             break
           }

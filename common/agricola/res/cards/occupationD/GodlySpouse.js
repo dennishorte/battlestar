@@ -10,8 +10,8 @@ module.exports = {
     if ((actionId === 'family-growth' || actionId === 'family-growth-urgent') && player.getPersonPlacedThisRound() === 2) {
       game.actions.returnWorkerHome(player, 0)
       game.log.add({
-        template: '{player} returns first worker home via Godly Spouse',
-        args: { player },
+        template: '{player} returns first worker home via {card}',
+        args: { player , card: this},
       })
     }
   },

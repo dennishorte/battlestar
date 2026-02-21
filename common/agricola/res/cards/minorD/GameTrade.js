@@ -11,8 +11,8 @@ module.exports = {
     player.addAnimals('boar', 1)
     player.addAnimals('cattle', 1)
     game.log.add({
-      template: '{player} gets 1 wild boar and 1 cattle from Game Trade',
-      args: { player },
+      template: '{player} gets 1 wild boar and 1 cattle from {card}',
+      args: { player , card: this},
     })
   },
 }

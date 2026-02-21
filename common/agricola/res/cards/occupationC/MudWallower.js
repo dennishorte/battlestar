@@ -20,8 +20,8 @@ module.exports = {
         s.clay -= 4
         s.boar = (s.boar || 0) + 1
         game.log.add({
-          template: '{player} gets 1 wild boar on Mud Wallower',
-          args: { player },
+          template: '{player} gets 1 wild boar on {card}',
+          args: { player , card: this},
         })
       }
     }

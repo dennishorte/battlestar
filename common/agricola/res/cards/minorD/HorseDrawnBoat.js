@@ -21,8 +21,8 @@ module.exports = {
       isFood = !isFood
     }
     game.log.add({
-      template: '{player} schedules food and sheep from Horse-Drawn Boat',
-      args: { player },
+      template: '{player} schedules food and sheep from {card}',
+      args: { player , card: this},
     })
   },
 }

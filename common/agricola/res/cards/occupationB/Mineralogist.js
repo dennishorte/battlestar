@@ -10,15 +10,15 @@ module.exports = {
     if (actionId === 'take-clay' || actionId === 'take-clay-2') {
       player.addResource('stone', 1)
       game.log.add({
-        template: '{player} gets 1 stone from Mineralogist',
-        args: { player },
+        template: '{player} gets 1 stone from {card}',
+        args: { player , card: this},
       })
     }
     else if (actionId === 'take-stone-1' || actionId === 'take-stone-2') {
       player.addResource('clay', 1)
       game.log.add({
-        template: '{player} gets 1 clay from Mineralogist',
-        args: { player },
+        template: '{player} gets 1 clay from {card}',
+        args: { player , card: this},
       })
     }
   },

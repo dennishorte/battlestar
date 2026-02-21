@@ -10,8 +10,8 @@ module.exports = {
     if (player.playedMinorImprovements.length === 0) {
       player.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from Recluse',
-        args: { player },
+        template: '{player} gets 1 food from {card}',
+        args: { player , card: this},
       })
     }
   },
@@ -19,8 +19,8 @@ module.exports = {
     if (player.playedMinorImprovements.length === 0) {
       player.addResource('wood', 1)
       game.log.add({
-        template: '{player} gets 1 wood from Recluse',
-        args: { player },
+        template: '{player} gets 1 wood from {card}',
+        args: { player , card: this},
       })
     }
   },

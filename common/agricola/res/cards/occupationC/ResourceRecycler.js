@@ -16,8 +16,8 @@ module.exports = {
         cardOwner.payCost({ food: 2 })
         game.actions.buildRoom(cardOwner, { costOverride: {} })
         game.log.add({
-          template: '{player} builds a free clay room via Resource Recycler',
-          args: { player: cardOwner },
+          template: '{player} builds a free clay room via {card}',
+          args: { player: cardOwner , card: this},
         })
       }
     }

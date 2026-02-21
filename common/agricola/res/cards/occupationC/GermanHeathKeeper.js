@@ -10,8 +10,8 @@ module.exports = {
     if (actionId === 'take-boar' && cardOwner.canPlaceAnimals('sheep', 1)) {
       cardOwner.addAnimals('sheep', 1)
       game.log.add({
-        template: '{player} gets 1 sheep from German Heath Keeper',
-        args: { player: cardOwner },
+        template: '{player} gets 1 sheep from {card}',
+        args: { player: cardOwner , card: this},
       })
     }
   },

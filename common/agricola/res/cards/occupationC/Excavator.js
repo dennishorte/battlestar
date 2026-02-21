@@ -11,8 +11,8 @@ module.exports = {
       player.addResource('wood', 1)
       player.addResource('clay', 1)
       game.log.add({
-        template: '{player} gets 1 wood and 1 clay from Excavator',
-        args: { player },
+        template: '{player} gets 1 wood and 1 clay from {card}',
+        args: { player , card: this},
       })
       if (player.food >= 1) {
         const selection = game.actions.choose(player, () => [
@@ -23,8 +23,8 @@ module.exports = {
           player.payCost({ food: 1 })
           player.addResource('stone', 1)
           game.log.add({
-            template: '{player} buys 1 stone for 1 food from Excavator',
-            args: { player },
+            template: '{player} buys 1 stone for 1 food from {card}',
+            args: { player , card: this},
           })
         }
       }

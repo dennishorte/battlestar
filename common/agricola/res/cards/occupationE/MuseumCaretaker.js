@@ -11,8 +11,8 @@ module.exports = {
           player.stone >= 1 && player.grain >= 1 && player.vegetables >= 1) {
       player.addBonusPoints(1)
       game.log.add({
-        template: '{player} gets 1 bonus point from Museum Caretaker',
-        args: { player },
+        template: '{player} gets 1 bonus point from {card}',
+        args: { player , card: this},
       })
     }
   },

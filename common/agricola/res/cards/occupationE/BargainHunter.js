@@ -20,8 +20,8 @@ module.exports = {
           tpState.accumulated = (tpState.accumulated || 0) + 1
         }
         game.log.add({
-          template: '{player} places 1 food on Traveling Players via Bargain Hunter',
-          args: { player },
+          template: '{player} places 1 food on Traveling Players via {card}',
+          args: { player , card: this},
         })
         game.actions.buyMinorImprovement(player)
       }

@@ -9,8 +9,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('grain', 1)
     game.log.add({
-      template: '{player} gets 1 grain from Packaging Artist',
-      args: { player },
+      template: '{player} gets 1 grain from {card}',
+      args: { player , card: this},
     })
   },
   onMinorImprovementAction(game, player) {

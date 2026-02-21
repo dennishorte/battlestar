@@ -13,8 +13,8 @@ module.exports = {
     if (bonus > 0) {
       player.addResource('clay', bonus)
       game.log.add({
-        template: '{player} gets {amount} clay from Clay Embankment',
-        args: { player, amount: bonus },
+        template: '{player} gets {amount} clay from {card}',
+        args: { player, amount: bonus , card: this},
       })
     }
   },

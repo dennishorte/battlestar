@@ -11,8 +11,8 @@ module.exports = {
     const food = game.state.currentActionId === 'major-minor-improvement' ? 4 : 2
     player.addResource('food', food)
     game.log.add({
-      template: '{player} gets {amount} food from Food Chest',
-      args: { player, amount: food },
+      template: '{player} gets {amount} food from {card}',
+      args: { player, amount: food , card: this},
     })
   },
 }

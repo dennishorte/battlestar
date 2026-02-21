@@ -20,8 +20,8 @@ module.exports = {
       player.removeResource('vegetables', 1)
       player.addResource('food', 6)
       game.log.add({
-        template: '{player} converts 1 grain + 1 vegetable to 6 food using Veggie Lover',
-        args: { player },
+        template: '{player} converts 1 grain + 1 vegetable to 6 food using {card}',
+        args: { player , card: this},
       })
     }
   },

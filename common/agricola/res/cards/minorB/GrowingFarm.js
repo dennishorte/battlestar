@@ -13,8 +13,8 @@ module.exports = {
     const food = game.state.round
     player.addResource('food', food)
     game.log.add({
-      template: '{player} gets {amount} food from Growing Farm',
-      args: { player, amount: food },
+      template: '{player} gets {amount} food from {card}',
+      args: { player, amount: food , card: this},
     })
   },
 }

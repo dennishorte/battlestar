@@ -13,8 +13,8 @@ module.exports = {
     if (diff > 0) {
       player.addResource('food', diff)
       game.log.add({
-        template: "{player} gets {amount} food from Fisherman's Friend",
-        args: { player, amount: diff },
+        template: '{player} gets {amount} food from {card}',
+        args: { player, amount: diff, card: this },
       })
     }
   },

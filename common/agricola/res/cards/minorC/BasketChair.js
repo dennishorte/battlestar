@@ -26,8 +26,8 @@ module.exports = {
       game.state.actionSpaces[firstAction].occupiedBy = null
       game.state.basketChairBonusTurn = player.name
       game.log.add({
-        template: '{player} moves first person to Basket Chair — frees {action}',
-        args: { player, action: firstAction },
+        template: '{player} moves first person to {card} — frees {action}',
+        args: { player, action: firstAction , card: this},
       })
     }
   },

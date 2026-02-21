@@ -10,8 +10,8 @@ module.exports = {
     if (roomType === 'clay') {
       player.addResource('food', 3)
       game.log.add({
-        template: '{player} gets 3 food from Roughcaster',
-        args: { player },
+        template: '{player} gets 3 food from {card}',
+        args: { player , card: this},
       })
     }
   },
@@ -19,8 +19,8 @@ module.exports = {
     if (fromType === 'clay' && toType === 'stone') {
       player.addResource('food', 3)
       game.log.add({
-        template: '{player} gets 3 food from Roughcaster',
-        args: { player },
+        template: '{player} gets 3 food from {card}',
+        args: { player , card: this},
       })
     }
   },

@@ -33,8 +33,8 @@ module.exports = {
       game.scheduleResource(player, 'food', game.state.round + i, 1)
     }
     game.log.add({
-      template: '{player} uses Mandoline: pays 1 vegetable for 1 bonus point and 2 food over 2 rounds',
-      args: { player },
+      template: '{player} uses {card}: pays 1 vegetable for 1 bonus point and 2 food over 2 rounds',
+      args: { player , card: this},
     })
   },
 }

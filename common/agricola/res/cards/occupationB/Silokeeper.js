@@ -13,8 +13,8 @@ module.exports = {
     if (preHarvestRound > 0 && game.getActionSpaceRound(actionId) === preHarvestRound) {
       player.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 grain from Silokeeper',
-        args: { player },
+        template: '{player} gets 1 grain from {card}',
+        args: { player , card: this},
       })
     }
   },

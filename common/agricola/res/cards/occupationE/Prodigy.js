@@ -11,8 +11,8 @@ module.exports = {
       const improvementCount = player.getAllImprovements().length
       player.addBonusPoints(improvementCount)
       game.log.add({
-        template: '{player} gets {amount} bonus points from Prodigy',
-        args: { player, amount: improvementCount },
+        template: '{player} gets {amount} bonus points from {card}',
+        args: { player, amount: improvementCount , card: this},
       })
     }
   },

@@ -22,8 +22,8 @@ module.exports = {
         game.state.actionSpaces[otherSpace].stone =
           (game.state.actionSpaces[otherSpace].stone || 0) + 1
         game.log.add({
-          template: '{player} places 1 stone on {space} from Inner Districts Director',
-          args: { player, space: otherName },
+          template: '{player} places 1 stone on {space} from {card}',
+          args: { player, space: otherName , card: this},
         })
       }
     }

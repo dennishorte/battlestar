@@ -11,15 +11,15 @@ module.exports = {
     if (player.roomType === 'clay') {
       player.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from Town Hall',
-        args: { player },
+        template: '{player} gets 1 food from {card}',
+        args: { player , card: this},
       })
     }
     else if (player.roomType === 'stone') {
       player.addResource('food', 2)
       game.log.add({
-        template: '{player} gets 2 food from Town Hall',
-        args: { player },
+        template: '{player} gets 2 food from {card}',
+        args: { player , card: this},
       })
     }
   },

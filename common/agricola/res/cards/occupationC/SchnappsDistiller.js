@@ -16,8 +16,8 @@ module.exports = {
         player.payCost({ vegetables: 1 })
         player.addResource('food', 5)
         game.log.add({
-          template: '{player} converts 1 vegetable to 5 food via Schnapps Distiller',
-          args: { player },
+          template: '{player} converts 1 vegetable to 5 food via {card}',
+          args: { player , card: this},
         })
       }
     }

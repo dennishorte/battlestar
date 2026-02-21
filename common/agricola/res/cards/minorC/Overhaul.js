@@ -33,8 +33,8 @@ module.exports = {
     player.farmyard.pastures = []
 
     game.log.add({
-      template: '{player} razes {count} fences with Overhaul',
-      args: { player, count: fencesReturned },
+      template: '{player} razes {count} fences with {card}',
+      args: { player, count: fencesReturned , card: this},
     })
 
     // 4. Set up 3 free fences for rebuild

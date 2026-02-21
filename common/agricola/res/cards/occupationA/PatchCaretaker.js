@@ -12,8 +12,8 @@ module.exports = {
       if (player.usedAccumulationSpaceTypes && player.usedAccumulationSpaceTypes.includes(goodType)) {
         player.addResource('vegetables', 1)
         game.log.add({
-          template: '{player} gets 1 vegetable from Patch Caretaker',
-          args: { player },
+          template: '{player} gets 1 vegetable from {card}',
+          args: { player , card: this},
         })
       }
       if (!player.usedAccumulationSpaceTypes) {

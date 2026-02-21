@@ -33,8 +33,8 @@ module.exports = {
           added++
         }
         game.log.add({
-          template: '{player} pays 1 grain to add vegetable to {count} field(s) via Straw Manure',
-          args: { player, count: added },
+          template: '{player} pays 1 grain to add vegetable to {count} field(s) via {card}',
+          args: { player, count: added , card: this},
         })
       }
     }

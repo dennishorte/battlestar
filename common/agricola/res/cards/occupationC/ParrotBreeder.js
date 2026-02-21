@@ -28,8 +28,8 @@ module.exports = {
     if (rightPlayer && state.previousOccupiedBy === rightPlayer.name) {
       player.payCost({ grain: 1 })
       game.log.add({
-        template: '{player} pays 1 grain to copy {action} via Parrot Breeder',
-        args: { player, action: actionId },
+        template: '{player} pays 1 grain to copy {action} via {card}',
+        args: { player, action: actionId , card: this},
       })
     }
   },

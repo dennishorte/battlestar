@@ -15,8 +15,8 @@ module.exports = {
       }
       player.cannotGrowFamilyUntilRound11 = true
       game.log.add({
-        template: '{player} gets 1 stone, 1 vegetable, and 2 wild boar from Visionary',
-        args: { player },
+        template: '{player} gets 1 stone, 1 vegetable, and 2 wild boar from {card}',
+        args: { player , card: this},
       })
     }
   },

@@ -11,8 +11,8 @@ module.exports = {
   onPlay(game, player) {
     player.materialHubResources = { wood: 2, clay: 2, reed: 2, stone: 2 }
     game.log.add({
-      template: '{player} places resources on Material Hub',
-      args: { player },
+      template: '{player} places resources on {card}',
+      args: { player , card: this},
     })
   },
   onAnyAction(game, actingPlayer, actionId, cardOwner, resources) {
@@ -25,8 +25,8 @@ module.exports = {
         cardOwner.materialHubResources[resource]--
         cardOwner.addResource(resource, 1)
         game.log.add({
-          template: '{player} gets 1 {resource} from Material Hub',
-          args: { player: cardOwner, resource },
+          template: '{player} gets 1 {resource} from {card}',
+          args: { player: cardOwner, resource , card: this},
         })
       }
     }

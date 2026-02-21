@@ -11,8 +11,8 @@ module.exports = {
     if ((actionId === 'take-stone-1' || actionId === 'take-stone-2') && resources && (resources.stone || 0) >= 3) {
       cardOwner.addResource('stone', 1)
       game.log.add({
-        template: '{player} gets 1 stone from Corf',
-        args: { player: cardOwner },
+        template: '{player} gets 1 stone from {card}',
+        args: { player: cardOwner , card: this},
       })
     }
   },

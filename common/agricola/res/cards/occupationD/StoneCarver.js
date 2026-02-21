@@ -18,8 +18,8 @@ module.exports = {
         player.removeResource('stone', 1)
         player.addResource('food', 3)
         game.log.add({
-          template: '{player} converts 1 stone to 3 food (Stone Carver)',
-          args: { player },
+          template: '{player} converts 1 stone to 3 food ({card})',
+          args: { player , card: this},
         })
       }
     }

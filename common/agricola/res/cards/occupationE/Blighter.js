@@ -11,8 +11,8 @@ module.exports = {
     player.addBonusPoints(stagesLeft)
     player.cannotPlayOccupations = true
     game.log.add({
-      template: '{player} gets {amount} bonus points from Blighter (no more occupations allowed)',
-      args: { player, amount: stagesLeft },
+      template: '{player} gets {amount} bonus points from {card} (no more occupations allowed)',
+      args: { player, amount: stagesLeft , card: this},
     })
   },
 }

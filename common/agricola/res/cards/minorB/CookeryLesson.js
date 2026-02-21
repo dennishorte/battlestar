@@ -10,8 +10,8 @@ module.exports = {
   onLessonsWithCooking(game, player) {
     player.addBonusPoints(1)
     game.log.add({
-      template: '{player} gets 1 bonus point from Cookery Lesson',
-      args: { player },
+      template: '{player} gets 1 bonus point from {card}',
+      args: { player , card: this},
     })
   },
 }

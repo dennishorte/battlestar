@@ -33,8 +33,8 @@ module.exports = {
       player.removeResource('clay', amount)
       player.addBonusPoints(amount)
       game.log.add({
-        template: '{player} pays {amount} clay for {amount} bonus points (Earthenware Potter)',
-        args: { player, amount },
+        template: '{player} pays {amount} clay for {amount} bonus points ({card})',
+        args: { player, amount , card: this},
       })
     }
   },

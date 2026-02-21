@@ -50,8 +50,8 @@ module.exports = {
         const count = player.getTotalAnimals(type)
         player.addAnimals(type, count)
         game.log.add({
-          template: '{player} doubles {type} to {total} using Livestock Expert',
-          args: { player, type, total: count * 2 },
+          template: '{player} doubles {type} to {total} using {card}',
+          args: { player, type, total: count * 2 , card: this},
         })
       }
     }

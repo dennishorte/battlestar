@@ -12,8 +12,8 @@ module.exports = {
     if (grainFields >= 3) {
       player.addResource('food', 2)
       game.log.add({
-        template: '{player} gets 2 food from Bale of Straw',
-        args: { player },
+        template: '{player} gets 2 food from {card}',
+        args: { player , card: this},
       })
     }
   },

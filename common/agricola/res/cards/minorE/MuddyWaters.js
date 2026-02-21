@@ -18,8 +18,8 @@ module.exports = {
       }
     }
     game.log.add({
-      template: '{player} schedules food and clay from Muddy Waters',
-      args: { player },
+      template: '{player} schedules food and clay from {card}',
+      args: { player , card: this},
     })
   },
 }

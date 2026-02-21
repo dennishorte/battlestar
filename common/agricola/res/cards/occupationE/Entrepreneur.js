@@ -36,15 +36,15 @@ module.exports = {
       player.removeResource('food', 1)
       state.food += 1
       game.log.add({
-        template: '{player} moves 1 food to Entrepreneur ({total} on card)',
-        args: { player, total: state.food },
+        template: '{player} moves 1 food to {card} ({total} on card)',
+        args: { player, total: state.food , card: this},
       })
     }
     else if (selection[0] === 'Discard 1 food from card') {
       state.food -= 1
       game.log.add({
-        template: '{player} discards 1 food from Entrepreneur ({total} remaining)',
-        args: { player, total: state.food },
+        template: '{player} discards 1 food from {card} ({total} remaining)',
+        args: { player, total: state.food , card: this},
       })
     }
 
@@ -94,8 +94,8 @@ module.exports = {
     }
 
     game.log.add({
-      template: '{player} gets {choice} from Entrepreneur',
-      args: { player, choice: resourceChoice },
+      template: '{player} gets {choice} from {card}',
+      args: { player, choice: resourceChoice , card: this},
     })
   },
 }

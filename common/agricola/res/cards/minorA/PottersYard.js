@@ -23,8 +23,8 @@ module.exports = {
       player.pottersYardClay--
       player.addResource('clay', 1)
       game.log.add({
-        template: '{player} gets 1 clay from Potter\'s Yard',
-        args: { player },
+        template: '{player} gets 1 clay from {card}',
+        args: { player, card: this },
       })
       const card = this
       const choices = [

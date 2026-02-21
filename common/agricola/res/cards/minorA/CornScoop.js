@@ -11,8 +11,8 @@ module.exports = {
     if (actionId === 'take-grain') {
       player.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 additional grain from Corn Scoop',
-        args: { player },
+        template: '{player} gets 1 additional grain from {card}',
+        args: { player , card: this},
       })
     }
   },

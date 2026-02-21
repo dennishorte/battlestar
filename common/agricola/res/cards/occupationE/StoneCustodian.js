@@ -11,8 +11,8 @@ module.exports = {
     if (stoneSpacesWithStone > 0) {
       player.addResource('food', stoneSpacesWithStone)
       game.log.add({
-        template: '{player} gets {amount} food from Stone Custodian',
-        args: { player, amount: stoneSpacesWithStone },
+        template: '{player} gets {amount} food from {card}',
+        args: { player, amount: stoneSpacesWithStone , card: this},
       })
     }
   },

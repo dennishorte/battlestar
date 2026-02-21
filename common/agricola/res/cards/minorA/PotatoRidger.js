@@ -12,8 +12,8 @@ module.exports = {
       player.payCost({ vegetables: 1 })
       player.addResource('food', 6)
       game.log.add({
-        template: '{player} must convert 1 vegetable to 6 food from Potato Ridger',
-        args: { player },
+        template: '{player} must convert 1 vegetable to 6 food from {card}',
+        args: { player , card: this},
       })
     }
     else if (player.vegetables >= 3) {

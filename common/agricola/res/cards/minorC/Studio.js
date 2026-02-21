@@ -40,8 +40,8 @@ module.exports = {
       }
       if (selection[0] !== 'Skip') {
         game.log.add({
-          template: '{player} uses Studio to convert a resource into food',
-          args: { player },
+          template: '{player} uses {card} to convert a resource into food',
+          args: { player , card: this},
         })
       }
     }

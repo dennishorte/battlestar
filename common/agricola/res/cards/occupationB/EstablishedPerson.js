@@ -29,8 +29,8 @@ module.exports = {
     }
     player.hasRenovated = true
     game.log.add({
-      template: '{player} renovates for free (Established Person)',
-      args: { player },
+      template: '{player} renovates for free ({card})',
+      args: { player , card: this},
     })
     game.actions.buildFences(player)
   },

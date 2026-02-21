@@ -12,8 +12,8 @@ module.exports = {
           actingPlayer.getPersonPlacedThisRound() === 1) {
       cardOwner.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 grain from Midwife',
-        args: { player: cardOwner },
+        template: '{player} gets 1 grain from {card}',
+        args: { player: cardOwner , card: this},
       })
     }
   },

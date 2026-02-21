@@ -30,8 +30,8 @@ module.exports = {
       // Grant an extra worker placement
       player.availableWorkers += 1
       game.log.add({
-        template: '{player} pays 1 sheep + 2 food to return a worker home (Sheep Inspector)',
-        args: { player },
+        template: '{player} pays 1 sheep + 2 food to return a worker home ({card})',
+        args: { player , card: this},
       })
     }
   },

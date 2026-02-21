@@ -23,8 +23,8 @@ module.exports = {
         }
         player.addResource('grain', 1)
         game.log.add({
-          template: '{player} uses Grain Thief to leave grain on field and take 1 from supply',
-          args: { player },
+          template: '{player} uses {card} to leave grain on field and take 1 from supply',
+          args: { player , card: this},
         })
       }
     }

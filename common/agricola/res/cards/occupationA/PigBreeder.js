@@ -10,8 +10,8 @@ module.exports = {
     if (player.canPlaceAnimals('boar', 1)) {
       player.addAnimals('boar', 1)
       game.log.add({
-        template: '{player} gets 1 wild boar from Pig Breeder',
-        args: { player },
+        template: '{player} gets 1 wild boar from {card}',
+        args: { player , card: this},
       })
     }
   },
@@ -21,8 +21,8 @@ module.exports = {
       if (boarCount >= 2 && player.canPlaceAnimals('boar', 1)) {
         player.addAnimals('boar', 1)
         game.log.add({
-          template: "{player}'s wild boar breed from Pig Breeder",
-          args: { player },
+          template: "{player}'s wild boar breed from {card}",
+          args: { player, card: this },
         })
       }
     }

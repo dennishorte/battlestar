@@ -17,8 +17,8 @@ module.exports = {
       placed++
     }
     game.log.add({
-      template: '{player} places {amount} food from Garden Claw',
-      args: { player, amount: placed },
+      template: '{player} places {amount} food from {card}',
+      args: { player, amount: placed , card: this},
     })
   },
 }

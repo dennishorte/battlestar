@@ -13,8 +13,8 @@ module.exports = {
       game.scheduleEvent(player, 'freeStables', round)
     }
     game.log.add({
-      template: '{player} schedules free stables from Stable Planner',
-      args: { player },
+      template: '{player} schedules free stables from {card}',
+      args: { player , card: this},
     })
   },
 }

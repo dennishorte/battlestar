@@ -10,8 +10,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('food', 2)
     game.log.add({
-      template: '{player} gets 2 food from Tumbrel',
-      args: { player },
+      template: '{player} gets 2 food from {card}',
+      args: { player , card: this},
     })
   },
   onSow(game, player) {
@@ -19,8 +19,8 @@ module.exports = {
     if (stables > 0) {
       player.addResource('food', stables)
       game.log.add({
-        template: '{player} gets {amount} food from Tumbrel',
-        args: { player, amount: stables },
+        template: '{player} gets {amount} food from {card}',
+        args: { player, amount: stables , card: this},
       })
     }
   },

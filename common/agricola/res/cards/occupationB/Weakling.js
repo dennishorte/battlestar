@@ -10,8 +10,8 @@ module.exports = {
     if (game.hasAccumulationSpaceWithGoods(5) && !game.isAccumulationSpaceWith5PlusGoods(actionId)) {
       player.addResource('vegetables', 1)
       game.log.add({
-        template: '{player} gets 1 vegetable from Weakling',
-        args: { player },
+        template: '{player} gets 1 vegetable from {card}',
+        args: { player , card: this},
       })
     }
   },

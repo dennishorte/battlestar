@@ -19,8 +19,8 @@ module.exports = {
         player.removeResource('reed', 1)
         player.addResource('food', 2)
         game.log.add({
-          template: '{player} converts 1 reed to 2 food using Braid Maker',
-          args: { player },
+          template: '{player} converts 1 reed to 2 food using {card}',
+          args: { player , card: this},
         })
       }
     }

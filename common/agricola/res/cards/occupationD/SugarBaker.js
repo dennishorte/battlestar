@@ -18,8 +18,8 @@ module.exports = {
         player.removeResource('food', 1)
         player.addBonusPoints(1)
         game.log.add({
-          template: '{player} buys 1 bonus point for 1 food (Sugar Baker)',
-          args: { player },
+          template: '{player} buys 1 bonus point for 1 food ({card})',
+          args: { player , card: this},
         })
       }
     }

@@ -10,8 +10,8 @@ module.exports = {
     if (actionId === 'take-cattle' && player.canPlaceAnimals('cattle', 1)) {
       player.addAnimals('cattle', 1)
       game.log.add({
-        template: '{player} gets 1 additional cattle from Cowherd',
-        args: { player },
+        template: '{player} gets 1 additional cattle from {card}',
+        args: { player , card: this},
       })
     }
   },

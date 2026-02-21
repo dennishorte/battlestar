@@ -18,8 +18,8 @@ module.exports = {
         cardOwner.addResource('food', 1)
         cardOwner.addBonusPoints(1)
         game.log.add({
-          template: '{player} exchanges 2 wood for 1 grain, 1 food, and 1 BP from Pattern Maker',
-          args: { player: cardOwner },
+          template: '{player} exchanges 2 wood for 1 grain, 1 food, and 1 BP from {card}',
+          args: { player: cardOwner , card: this},
         })
       }
     }

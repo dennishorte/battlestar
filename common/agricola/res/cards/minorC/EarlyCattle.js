@@ -12,8 +12,8 @@ module.exports = {
   onPlay(game, player) {
     player.addAnimals('cattle', 2)
     game.log.add({
-      template: '{player} gets 2 cattle from Early Cattle',
-      args: { player },
+      template: '{player} gets 2 cattle from {card}',
+      args: { player , card: this},
     })
   },
 }

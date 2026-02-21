@@ -16,8 +16,8 @@ module.exports = {
         player.payCost({ food: 1 })
         player.addResource('grain', 1)
         game.log.add({
-          template: '{player} buys 1 grain for 1 food from Thresher',
-          args: { player },
+          template: '{player} buys 1 grain for 1 food from {card}',
+          args: { player , card: this},
         })
       }
     }

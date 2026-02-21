@@ -15,8 +15,8 @@ module.exports = {
     const resource = selection[0].includes('wood') ? 'wood' : 'clay'
     player.addResource(resource, 1)
     game.log.add({
-      template: '{player} gets 1 {resource} from Cottar',
-      args: { player, resource },
+      template: '{player} gets 1 {resource} from {card}',
+      args: { player, resource , card: this},
     })
   },
 }

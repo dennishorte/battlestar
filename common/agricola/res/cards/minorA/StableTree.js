@@ -14,8 +14,8 @@ module.exports = {
       game.scheduleResource(player, 'wood', round, 1)
     }
     game.log.add({
-      template: '{player} places wood on the next 3 round spaces from Stable Tree',
-      args: { player },
+      template: '{player} places wood on the next 3 round spaces from {card}',
+      args: { player , card: this},
     })
   },
 }

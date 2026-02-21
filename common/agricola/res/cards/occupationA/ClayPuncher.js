@@ -9,8 +9,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('clay', 1)
     game.log.add({
-      template: '{player} gets 1 clay from Clay Puncher',
-      args: { player },
+      template: '{player} gets 1 clay from {card}',
+      args: { player , card: this},
     })
   },
   onAction(game, player, actionId) {
@@ -19,8 +19,8 @@ module.exports = {
     if (isLessonsAction || actionId === 'take-clay') {
       player.addResource('clay', 1)
       game.log.add({
-        template: '{player} gets 1 clay from Clay Puncher',
-        args: { player },
+        template: '{player} gets 1 clay from {card}',
+        args: { player , card: this},
       })
     }
   },

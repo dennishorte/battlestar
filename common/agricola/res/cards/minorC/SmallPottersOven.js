@@ -15,8 +15,8 @@ module.exports = {
   onPlay(game, player) {
     player.addResource('food', 5)
     game.log.add({
-      template: '{player} gets 5 food from Small Potter\'s Oven',
-      args: { player },
+      template: '{player} gets 5 food from {card}',
+      args: { player, card: this },
     })
   },
   onBeforeBake(game, player) {

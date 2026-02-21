@@ -16,8 +16,8 @@ module.exports = {
         player.payCost({ food: 1 })
         game.actions.buyImprovement(player, true, true)
         game.log.add({
-          template: '{player} pays 1 food for extra improvement from Merchant',
-          args: { player },
+          template: '{player} pays 1 food for extra improvement from {card}',
+          args: { player , card: this},
         })
       }
     }
