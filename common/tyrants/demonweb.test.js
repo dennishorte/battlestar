@@ -378,7 +378,7 @@ describe('Demonweb', () => {
       })
       game.run()
 
-      expect(game.state.assembledMap.hexes).toHaveLength(9)
+      expect(game.state.assembledMap.hexes).toHaveLength(10)
       expect(game.waiting.selectors[0].title).toBe('Rotate Hex Tiles')
     })
 

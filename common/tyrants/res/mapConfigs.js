@@ -66,62 +66,60 @@ const mapConfigs = {
     ],
   },
 
-  // 3-Player: 10 hexes in triangular arrangement
-  // 3 B hexes at corners, 6 C around center A
+  // 3-Player: 10 hexes in right-pointing triangle
+  // Columns of 4-3-2-1, B hexes at all 3 corners, A in center
   'demonweb-3': {
     playerCount: 3,
     totalHexes: 10,
     layout: [
-      // Top B hex
-      { position: { q: 0, r: -2 }, category: 'B', pool: ['B1', 'B2', 'B3'] },
-
-      // Upper row
-      { position: { q: -1, r: -1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
-      { position: { q: 0, r: -1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
-
-      // Middle row with B hexes on sides
-      { position: { q: -2, r: 0 }, category: 'B', pool: ['B1', 'B2', 'B3'] },
-      { position: { q: -1, r: 0 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
-      { position: { q: 0, r: 0 }, category: 'A', pool: ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9'] },
-      { position: { q: 1, r: 0 }, category: 'B', pool: ['B1', 'B2', 'B3'] },
-
-      // Lower row
-      { position: { q: -1, r: 1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
+      // Column 0 (left edge, 4 hexes)
+      { position: { q: 0, r: -1 }, category: 'B', pool: ['B1', 'B2', 'B3'] },
+      { position: { q: 0, r: 0 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
       { position: { q: 0, r: 1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
+      { position: { q: 0, r: 2 }, category: 'B', pool: ['B1', 'B2', 'B3'] },
+
+      // Column 1 (3 hexes)
+      { position: { q: 1, r: -1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
+      { position: { q: 1, r: 0 }, category: 'A', pool: ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9'] },
+      { position: { q: 1, r: 1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
+
+      // Column 2 (2 hexes)
+      { position: { q: 2, r: -1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
+      { position: { q: 2, r: 0 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
+
+      // Column 3 (right tip)
+      { position: { q: 3, r: -1 }, category: 'B', pool: ['B1', 'B2', 'B3'] },
     ],
   },
 
-  // 4-Player: 15 hexes in diamond/rhombus shape
-  // Full layout with all B hexes and C7, C8
+  // 4-Player: 13 hexes in hexagon shape
+  // 6 B hexes on outer edges (each adjacent to 2 C tiles), 6 C inner ring, 1 A center
   'demonweb-4': {
     playerCount: 4,
-    totalHexes: 15,
+    totalHexes: 13,
     layout: [
-      // Top tip
-      { position: { q: 0, r: -3 }, category: 'C', pool: ['C7', 'C8'] },
+      // Top B pair
+      { position: { q: -1, r: -1 }, category: 'B', pool: ['B1', 'B2', 'B3', 'B4', 'B5', 'B6'] },
+      { position: { q: 1, r: -2 }, category: 'B', pool: ['B1', 'B2', 'B3', 'B4', 'B5', 'B6'] },
 
-      // Upper edge
-      { position: { q: -1, r: -2 }, category: 'B', pool: ['B1', 'B2'] },
-      { position: { q: 1, r: -2 }, category: 'B', pool: ['B3', 'B4'] },
+      // Upper C ring
+      { position: { q: 0, r: -1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'] },
 
-      // Upper middle row
-      { position: { q: -2, r: -1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
-      { position: { q: -1, r: -1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
-      { position: { q: 0, r: -1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
-
-      // Center row
-      { position: { q: -2, r: 0 }, category: 'B', pool: ['B5', 'B6'] },
-      { position: { q: -1, r: 0 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
+      // Middle row
+      { position: { q: -2, r: 1 }, category: 'B', pool: ['B1', 'B2', 'B3', 'B4', 'B5', 'B6'] },
+      { position: { q: -1, r: 0 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'] },
       { position: { q: 0, r: 0 }, category: 'A', pool: ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9'] },
-      { position: { q: 1, r: 0 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
-      { position: { q: 2, r: 0 }, category: 'B', pool: ['B5', 'B6'] },
+      { position: { q: 1, r: -1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'] },
+      { position: { q: 2, r: -1 }, category: 'B', pool: ['B1', 'B2', 'B3', 'B4', 'B5', 'B6'] },
 
-      // Lower edge
-      { position: { q: -1, r: 1 }, category: 'B', pool: ['B3', 'B4'] },
-      { position: { q: 1, r: 1 }, category: 'B', pool: ['B1', 'B2'] },
+      // Lower C ring
+      { position: { q: -1, r: 1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'] },
+      { position: { q: 0, r: 1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'] },
+      { position: { q: 1, r: 0 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'] },
 
-      // Bottom tip
-      { position: { q: 0, r: 2 }, category: 'C', pool: ['C7', 'C8'] },
+      // Bottom B pair
+      { position: { q: -1, r: 2 }, category: 'B', pool: ['B1', 'B2', 'B3', 'B4', 'B5', 'B6'] },
+      { position: { q: 1, r: 1 }, category: 'B', pool: ['B1', 'B2', 'B3', 'B4', 'B5', 'B6'] },
     ],
   },
 }
