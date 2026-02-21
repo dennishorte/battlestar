@@ -158,6 +158,27 @@ class FactionAbilities {
       isAvailable: (player) => player.commandTokens.strategy >= 1,
       execute: '_starForge',
     },
+    {
+      id: 'fabrication',
+      name: 'Fabrication',
+      abilityId: 'fabrication',
+      isAvailable: (player) => (player.relicFragments || []).length >= 1,
+      execute: '_fabrication',
+    },
+    {
+      id: 'amalgamation',
+      name: 'Amalgamation',
+      abilityId: 'amalgamation',
+      isAvailable: (player) => (this.game?.state?.capturedUnits?.[player.name] || []).length > 0,
+      execute: '_amalgamation',
+    },
+    {
+      id: 'riftmeld',
+      name: 'Riftmeld',
+      abilityId: 'riftmeld',
+      isAvailable: (player) => (this.game?.state?.capturedUnits?.[player.name] || []).length > 0,
+      execute: '_riftmeld',
+    },
   ]
 
   getAvailableComponentActions(player) {
@@ -954,6 +975,44 @@ class FactionAbilities {
     return this._xxchaQuash(agenda)
   }
 
+  onAgendaVotingStart(agenda, outcomes) {
+    this._nekroPrediction(agenda, outcomes)
+  }
+
+  getAgendaParticipation(votingOrder) {
+    const excluded = []
+    let order = [...votingOrder]
+
+    // Nekro galactic-threat: cannot vote
+    for (const player of votingOrder) {
+      if (this._hasAbility(player, 'galactic-threat')) {
+        excluded.push(player.name)
+      }
+    }
+
+    // Argent zeal: always vote first
+    const argentIdx = order.findIndex(p => this._hasAbility(p, 'zeal'))
+    if (argentIdx > 0) {
+      const [argent] = order.splice(argentIdx, 1)
+      order.unshift(argent)
+    }
+
+    return { order, excluded }
+  }
+
+  getVotingModifier(player) {
+    // Argent zeal: +1 vote per player in the game
+    if (this._hasAbility(player, 'zeal')) {
+      return this.players.all().length
+    }
+    return 0
+  }
+
+  onAgendaOutcomeResolved(agenda, winningOutcome, playerVotes) {
+    this._nekroOutcomeReward(winningOutcome)
+    this._nomadFutureSight(winningOutcome, playerVotes)
+  }
+
   _xxchaQuash(agenda) {
     for (const player of this.players.all()) {
       if (!this._hasAbility(player, 'quash')) {
@@ -982,6 +1041,572 @@ class FactionAbilities {
     }
 
     return null
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // L. Creuss Abilities — Wormhole mastery
+  // ---------------------------------------------------------------------------
+
+  getHomeSystemWormholes(systemId) {
+    for (const player of this.players.all()) {
+      if (!this._hasAbility(player, 'quantum-entanglement')) {
+        continue
+      }
+      if (String(systemId) === String(player.faction?.homeSystem)) {
+        return ['alpha', 'beta']
+      }
+    }
+    return []
+  }
+
+  getMovementBonus(playerName, fromSystemId) {
+    const player = this.players.byName(playerName)
+    if (!player || !this._hasAbility(player, 'slipstream')) {
+      return 0
+    }
+
+    // Check if fromSystem has alpha or beta wormhole
+    const tile = this.game.res.getSystemTile(fromSystemId) ||
+      this.game.res.getSystemTile(Number(fromSystemId))
+    const wormholes = tile ? [...tile.wormholes] : []
+
+    // Also check faction wormholes
+    const factionWormholes = this.getHomeSystemWormholes(fromSystemId)
+    for (const w of factionWormholes) {
+      if (!wormholes.includes(w)) {
+        wormholes.push(w)
+      }
+    }
+
+    if (wormholes.includes('alpha') || wormholes.includes('beta')) {
+      return 1
+    }
+    return 0
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // M. Nekro Virus Abilities — Tech parasites
+  // ---------------------------------------------------------------------------
+
+  canResearchNormally(player) {
+    if (this._hasAbility(player, 'propagation')) {
+      return false
+    }
+    return true
+  }
+
+  _nekroPrediction(agenda, outcomes) {
+    for (const player of this.players.all()) {
+      if (!this._hasAbility(player, 'galactic-threat')) {
+        continue
+      }
+
+      const choices = outcomes.map(o => `Predict: ${o}`)
+      choices.push('No prediction')
+
+      const selection = this.actions.choose(player, choices, {
+        title: `Galactic Threat: Predict outcome of "${agenda.name}"`,
+      })
+
+      if (selection[0] !== 'No prediction') {
+        const predicted = selection[0].replace('Predict: ', '')
+        this.state.nekroPrediction = { playerName: player.name, outcome: predicted }
+
+        this.log.add({
+          template: '{player} predicts: {outcome} (Galactic Threat)',
+          args: { player, outcome: predicted },
+        })
+      }
+    }
+  }
+
+  _nekroOutcomeReward(winningOutcome) {
+    if (!this.state.nekroPrediction) {
+      return
+    }
+
+    const { playerName, outcome } = this.state.nekroPrediction
+    this.state.nekroPrediction = null
+
+    if (outcome !== winningOutcome) {
+      return
+    }
+
+    const player = this.players.byName(playerName)
+    if (!player) {
+      return
+    }
+
+    // Correct prediction: gain 1 tech from any player
+    const allTechs = []
+    for (const other of this.players.all()) {
+      if (other.name === playerName) {
+        continue
+      }
+      for (const techId of other.getTechIds()) {
+        if (!player.hasTechnology(techId)) {
+          allTechs.push(techId)
+        }
+      }
+    }
+
+    const unique = [...new Set(allTechs)]
+    if (unique.length === 0) {
+      return
+    }
+
+    const selection = this.actions.choose(player, unique, {
+      title: 'Galactic Threat: Correct prediction — choose technology to copy',
+    })
+
+    const techId = selection[0]
+    this.game._grantTechnology(player, techId)
+
+    this.log.add({
+      template: '{player} gains {tech} (correct Galactic Threat prediction)',
+      args: { player, tech: techId },
+    })
+  }
+
+  onUnitDestroyed(systemId, unit, destroyerName) {
+    this._nekroSingularity(systemId, unit, destroyerName)
+    this._cabalDevour(systemId, unit, destroyerName)
+  }
+
+  _nekroSingularity(systemId, unit, destroyerName) {
+    const player = this.players.byName(destroyerName)
+    if (!player || !this._hasAbility(player, 'technological-singularity')) {
+      return
+    }
+
+    // Once per combat
+    if (this.state._singularityUsedThisCombat) {
+      return
+    }
+
+    const owner = this.players.byName(unit.owner)
+    if (!owner) {
+      return
+    }
+
+    const ownerTechs = owner.getTechIds().filter(id => !player.hasTechnology(id))
+    if (ownerTechs.length === 0) {
+      return
+    }
+
+    const choices = ['Pass', ...ownerTechs]
+    const selection = this.actions.choose(player, choices, {
+      title: `Technological Singularity: Copy a technology from ${unit.owner}?`,
+    })
+
+    if (selection[0] === 'Pass') {
+      return
+    }
+
+    this.state._singularityUsedThisCombat = true
+    const techId = selection[0]
+    this.game._grantTechnology(player, techId)
+
+    this.log.add({
+      template: '{player} copies {tech} from {target} (Technological Singularity)',
+      args: { player, tech: techId, target: unit.owner },
+    })
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // N. Argent Flight Abilities — Military precision
+  // ---------------------------------------------------------------------------
+
+  getRaidFormationExcessHits(shooterName, totalHits, fightersDestroyed) {
+    const player = this.players.byName(shooterName)
+    if (!player || !this._hasAbility(player, 'raid-formation')) {
+      return 0
+    }
+    return Math.max(0, totalHits - fightersDestroyed)
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // O. Empyrean Abilities — Nebula traversal
+  // ---------------------------------------------------------------------------
+
+  canMoveThroughNebulae(playerName) {
+    const player = this.players.byName(playerName)
+    return player ? this._hasAbility(player, 'voidborn') : false
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // P. Mahact Gene-Sorcerers Abilities — Token capture
+  // ---------------------------------------------------------------------------
+
+  afterCombatResolved(systemId, winnerName, loserName, _combatType) {
+    this._mahactEdict(winnerName, loserName)
+    // Reset singularity tracking
+    delete this.state._singularityUsedThisCombat
+  }
+
+  _mahactEdict(winnerName, loserName) {
+    const winner = this.players.byName(winnerName)
+    if (!winner || !this._hasAbility(winner, 'edict')) {
+      return
+    }
+
+    if (!this.state.capturedCommandTokens[winnerName]) {
+      this.state.capturedCommandTokens[winnerName] = []
+    }
+    this.state.capturedCommandTokens[winnerName].push(loserName)
+
+    this.log.add({
+      template: '{player} captures {loser} command token (Edict)',
+      args: { player: winner, loser: loserName },
+    })
+  }
+
+  getCapturedTokenFleetBonus(player) {
+    if (!this._hasAbility(player, 'edict')) {
+      return 0
+    }
+    return (this.state.capturedCommandTokens[player.name] || []).length
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // Q. Naaz-Rokha Alliance Abilities — Exploration + fragments
+  // ---------------------------------------------------------------------------
+
+  getExplorationBonus(player, planetId) {
+    if (!this._hasAbility(player, 'distant-suns')) {
+      return 0
+    }
+
+    // Check if player has a mech on this planet
+    const systemId = this.game._findSystemForPlanet(planetId)
+    if (!systemId) {
+      return 0
+    }
+
+    const planetUnits = this.state.units[systemId]?.planets[planetId] || []
+    const hasMech = planetUnits.some(u => u.owner === player.name && u.type === 'mech')
+    return hasMech ? 1 : 0
+  }
+
+  _fabrication(player) {
+    const fragments = player.relicFragments || []
+    if (fragments.length === 0) {
+      return
+    }
+
+    const choices = []
+    // Check if player has 2 of the same type
+    const counts = {}
+    for (const f of fragments) {
+      counts[f] = (counts[f] || 0) + 1
+    }
+    const hasPair = Object.values(counts).some(c => c >= 2)
+
+    if (hasPair) {
+      choices.push('Purge 2 fragments for relic')
+    }
+    choices.push('Purge 1 fragment for command token')
+
+    const selection = this.actions.choose(player, choices, {
+      title: 'Fabrication: Choose action',
+    })
+
+    if (selection[0] === 'Purge 1 fragment for command token') {
+      // Choose which fragment to purge
+      const uniqueTypes = [...new Set(fragments)]
+      let fragType
+      if (uniqueTypes.length === 1) {
+        fragType = uniqueTypes[0]
+      }
+      else {
+        const fragSelection = this.actions.choose(player, uniqueTypes, {
+          title: 'Choose fragment type to purge',
+        })
+        fragType = fragSelection[0]
+      }
+
+      const idx = player.relicFragments.indexOf(fragType)
+      if (idx !== -1) {
+        player.relicFragments.splice(idx, 1)
+      }
+
+      player.commandTokens.tactics += 1
+
+      this.log.add({
+        template: '{player} purges 1 {type} fragment for 1 command token (Fabrication)',
+        args: { player, type: fragType },
+      })
+    }
+    else if (selection[0] === 'Purge 2 fragments for relic') {
+      // Choose which type to purge 2 of
+      const pairTypes = Object.entries(counts).filter(([, c]) => c >= 2).map(([t]) => t)
+      let fragType
+      if (pairTypes.length === 1) {
+        fragType = pairTypes[0]
+      }
+      else {
+        const fragSelection = this.actions.choose(player, pairTypes, {
+          title: 'Choose fragment type to purge (2)',
+        })
+        fragType = fragSelection[0]
+      }
+
+      // Remove 2 of that type
+      for (let i = 0; i < 2; i++) {
+        const idx = player.relicFragments.indexOf(fragType)
+        if (idx !== -1) {
+          player.relicFragments.splice(idx, 1)
+        }
+      }
+
+      this.log.add({
+        template: '{player} purges 2 {type} fragments for a relic (Fabrication)',
+        args: { player, type: fragType },
+      })
+    }
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // R. Nomad Abilities — Agenda rewards
+  // ---------------------------------------------------------------------------
+
+  _nomadFutureSight(winningOutcome, playerVotes) {
+    for (const player of this.players.all()) {
+      if (!this._hasAbility(player, 'future-sight')) {
+        continue
+      }
+
+      const vote = playerVotes[player.name]
+      if (vote && vote.outcome === winningOutcome) {
+        player.addTradeGoods(1)
+        this.log.add({
+          template: '{player} gains 1 trade good (Future Sight)',
+          args: { player },
+        })
+      }
+    }
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // S. Titans of Ul Abilities — Sleeper tokens
+  // ---------------------------------------------------------------------------
+
+  afterExploration(player, planetId, _systemId) {
+    this._titansTerragenesis(player, planetId)
+  }
+
+  _titansTerragenesis(player, planetId) {
+    if (!this._hasAbility(player, 'terragenesis')) {
+      return
+    }
+
+    // Cannot place if sleeper already exists on this planet
+    if (this.state.sleeperTokens[planetId]) {
+      return
+    }
+
+    const choices = ['Place sleeper', 'Pass']
+    const selection = this.actions.choose(player, choices, {
+      title: `Terragenesis: Place a sleeper token on ${planetId}?`,
+    })
+
+    if (selection[0] === 'Place sleeper') {
+      this.state.sleeperTokens[planetId] = player.name
+
+      this.log.add({
+        template: '{player} places a sleeper token on {planet} (Terragenesis)',
+        args: { player, planet: planetId },
+      })
+    }
+  }
+
+  onSystemActivated(playerName, systemId) {
+    this._titansAwaken(playerName, systemId)
+  }
+
+  _titansAwaken(playerName, systemId) {
+    const player = this.players.byName(playerName)
+    if (!player || !this._hasAbility(player, 'awaken')) {
+      return
+    }
+
+    // Check all planets in system for sleeper tokens owned by this player
+    const tile = this.game.res.getSystemTile(systemId) ||
+      this.game.res.getSystemTile(Number(systemId))
+    if (!tile) {
+      return
+    }
+
+    for (const planetId of tile.planets) {
+      if (this.state.sleeperTokens[planetId] !== playerName) {
+        continue
+      }
+
+      // Replace sleeper with PDS
+      delete this.state.sleeperTokens[planetId]
+      this.game._addUnitToPlanet(systemId, planetId, 'pds', playerName)
+
+      this.log.add({
+        template: '{player} awakens sleeper on {planet}: PDS deployed (Awaken)',
+        args: { player, planet: planetId },
+      })
+    }
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // T. Vuil'raith Cabal Abilities — Unit capture
+  // ---------------------------------------------------------------------------
+
+  _cabalDevour(systemId, unit, destroyerName) {
+    const player = this.players.byName(destroyerName)
+    if (!player || !this._hasAbility(player, 'devour')) {
+      return
+    }
+
+    // Only capture non-structure units
+    const unitDef = this.game.res.getUnit(unit.type)
+    if (!unitDef || unitDef.category === 'structure') {
+      return
+    }
+
+    if (!this.state.capturedUnits[destroyerName]) {
+      this.state.capturedUnits[destroyerName] = []
+    }
+
+    this.state.capturedUnits[destroyerName].push({
+      type: unit.type,
+      originalOwner: unit.owner,
+    })
+
+    this.log.add({
+      template: '{player} captures {type} from {owner} (Devour)',
+      args: { player, type: unit.type, owner: unit.owner },
+    })
+  }
+
+  _amalgamation(player) {
+    const captured = this.state.capturedUnits[player.name] || []
+    if (captured.length === 0) {
+      return
+    }
+
+    const choices = captured.map(c => `${c.type} (from ${c.originalOwner})`)
+    const selection = this.actions.choose(player, choices, {
+      title: 'Amalgamation: Choose captured unit to return',
+    })
+
+    const idx = choices.indexOf(selection[0])
+    if (idx === -1) {
+      return
+    }
+
+    const removed = captured.splice(idx, 1)[0]
+
+    // Find a system with player's units
+    const validSystems = []
+    for (const [sysId, sysUnits] of Object.entries(this.state.units)) {
+      if (sysUnits.space.some(u => u.owner === player.name)) {
+        validSystems.push(sysId)
+      }
+    }
+
+    if (validSystems.length === 0) {
+      return
+    }
+
+    let targetSystem
+    if (validSystems.length === 1) {
+      targetSystem = validSystems[0]
+    }
+    else {
+      const sysSelection = this.actions.choose(player, validSystems, {
+        title: 'Choose system to place unit',
+      })
+      targetSystem = sysSelection[0]
+    }
+
+    this.game._addUnit(targetSystem, 'space', removed.type, player.name)
+
+    this.log.add({
+      template: '{player} uses Amalgamation: places {type} in system {system}',
+      args: { player, type: removed.type, system: targetSystem },
+    })
+  }
+
+  _riftmeld(player) {
+    const captured = this.state.capturedUnits[player.name] || []
+    if (captured.length === 0) {
+      return
+    }
+
+    const choices = captured.map(c => `${c.type} (from ${c.originalOwner})`)
+    const selection = this.actions.choose(player, choices, {
+      title: 'Riftmeld: Choose captured unit to return',
+    })
+
+    const idx = choices.indexOf(selection[0])
+    if (idx === -1) {
+      return
+    }
+
+    captured.splice(idx, 1)
+
+    // Research 1 unit upgrade tech, ignoring prerequisites
+    const allTechs = [...this.game.res.getGenericTechnologies()]
+    if (player.faction?.factionTechnologies) {
+      allTechs.push(...player.faction.factionTechnologies)
+    }
+    const unitUpgrades = allTechs
+      .filter(t => t.unitUpgrade && !player.hasTechnology(t.id))
+      .map(t => t.id)
+
+    if (unitUpgrades.length === 0) {
+      return
+    }
+
+    const techSelection = this.actions.choose(player, unitUpgrades, {
+      title: 'Riftmeld: Research unit upgrade (ignoring prerequisites)',
+    })
+
+    const techId = techSelection[0]
+    this.game._grantTechnology(player, techId)
+
+    this.log.add({
+      template: '{player} uses Riftmeld: researches {tech}',
+      args: { player, tech: techId },
+    })
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // U. Council Keleres Abilities — Economic
+  // ---------------------------------------------------------------------------
+
+  onStrategyPhaseStart(player) {
+    this._keleresPatronage(player)
+  }
+
+  _keleresPatronage(player) {
+    if (!this._hasAbility(player, 'council-patronage')) {
+      return
+    }
+
+    player.replenishCommodities()
+    player.addTradeGoods(1)
+
+    this.log.add({
+      template: '{player} replenishes commodities and gains 1 TG (Council Patronage)',
+      args: { player },
+    })
   }
 }
 

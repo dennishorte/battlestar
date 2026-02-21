@@ -1335,6 +1335,407 @@ describe('Faction Abilities', () => {
     })
   })
 
+  // =========================================================================
+  // Phase 3: Complex Faction Abilities
+  // =========================================================================
+
+  describe('Ghosts of Creuss', () => {
+    test('home system is adjacent to wormhole systems', () => {
+      const { Galaxy } = require('../model/Galaxy.js')
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      game.run()
+      const galaxy = new Galaxy(game)
+
+      // Creuss home should be adjacent to alpha wormhole systems
+      const adjacent = galaxy.getAdjacent('creuss-home')
+      // System 26 = Lodor (alpha wormhole), System 39 (alpha wormhole)
+      const hasAlphaAdj = adjacent.some(id => galaxy.hasWormhole(id, 'alpha'))
+      // System 25 = Quann (beta wormhole), System 40 (beta wormhole)
+      const hasBetaAdj = adjacent.some(id => galaxy.hasWormhole(id, 'beta'))
+
+      expect(hasAlphaAdj).toBe(true)
+      expect(hasBetaAdj).toBe(true)
+    })
+
+    test('+1 move from wormhole systems', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      game.run()
+
+      // Creuss has slipstream: +1 move from wormhole systems
+      // From home (which has alpha+beta wormholes), should get +1
+      const bonus = game.factionAbilities.getMovementBonus('dennis', 'creuss-home')
+      expect(bonus).toBe(1)
+
+      // From a non-wormhole system, no bonus
+      const noBonus = game.factionAbilities.getMovementBonus('dennis', '27')
+      expect(noBonus).toBe(0)
+
+      // Hacan gets no bonus
+      const hacanBonus = game.factionAbilities.getMovementBonus('micah', 'creuss-home')
+      expect(hacanBonus).toBe(0)
+    })
+  })
+
+  describe('Nekro Virus', () => {
+    test('cannot research technology normally', () => {
+      const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(game.factionAbilities.canResearchNormally(dennis)).toBe(false)
+
+      const micah = game.players.byName('micah')
+      expect(game.factionAbilities.canResearchNormally(micah)).toBe(true)
+    })
+
+    test('is excluded from agenda voting', () => {
+      const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
+      game.run()
+
+      const votingOrder = game.players.all()
+      const participation = game.factionAbilities.getAgendaParticipation(votingOrder)
+      expect(participation.excluded).toContain('dennis')
+      expect(participation.excluded).not.toContain('micah')
+    })
+
+    test('gains tech when opponent unit destroyed in combat', () => {
+      const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'nekro-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'mordai-ii': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'nekro-home', count: 5 }],
+      })
+
+      // Nekro destroys Hacan fighter — Technological Singularity triggers
+      // Choose a tech from Hacan (antimass-deflectors or sarween-tools)
+      t.choose(game, 'antimass-deflectors')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasTechnology('antimass-deflectors')).toBe(true)
+    })
+  })
+
+  describe('Argent Flight', () => {
+    test('votes first with extra votes', () => {
+      const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+      game.run()
+
+      const votingOrder = game.players.all()
+      const participation = game.factionAbilities.getAgendaParticipation(votingOrder)
+
+      // Argent should be first in order
+      expect(participation.order[0].faction.id).toBe('argent-flight')
+
+      // Argent gets +playerCount votes
+      const argent = game.players.byName('dennis')
+      const modifier = game.factionAbilities.getVotingModifier(argent)
+      expect(modifier).toBe(2) // 2 players
+    })
+
+    test('excess AFB hits damage sustain ships', () => {
+      // Test getRaidFormationExcessHits directly
+      const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+      game.run()
+
+      // 3 AFB hits, 1 fighter destroyed = 2 excess
+      const excess = game.factionAbilities.getRaidFormationExcessHits('dennis', 3, 1)
+      expect(excess).toBe(2)
+
+      // Non-Argent gets 0
+      const noExcess = game.factionAbilities.getRaidFormationExcessHits('micah', 3, 1)
+      expect(noExcess).toBe(0)
+    })
+  })
+
+  describe('Empyrean', () => {
+    test('ships can move through nebula', () => {
+      const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+      game.run()
+
+      expect(game.factionAbilities.canMoveThroughNebulae('dennis')).toBe(true)
+      expect(game.factionAbilities.canMoveThroughNebulae('micah')).toBe(false)
+    })
+  })
+
+  describe('Mahact Gene-Sorcerers', () => {
+    test('gains command token after combat win', () => {
+      const game = t.fixture({ factions: ['mahact-gene-sorcerers', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'mahact-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'ixth': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'mahact-home', count: 5 }],
+      })
+
+      // Mahact wins combat — Edict: capture Hacan command token
+      const captured = game.state.capturedCommandTokens['dennis'] || []
+      expect(captured).toContain('micah')
+    })
+  })
+
+  describe('Naaz-Rokha Alliance', () => {
+    test('purges fragments for command token', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      // Set relic fragments during initialization (game replays from scratch on each input)
+      game.testSetBreakpoint('initialization-complete', (game) => {
+        const dennis = game.players.byName('dennis')
+        dennis.relicFragments = ['cultural', 'hazardous']
+      })
+      game.run()
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses Component Action → Fabrication
+      t.choose(game, 'Component Action')
+      t.choose(game, 'fabrication')
+
+      // "Purge 1 fragment for command token" auto-responds (only option since no pair)
+      // Then choose which fragment type to purge
+      t.choose(game, 'cultural')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.relicFragments.length).toBe(1)
+      expect(dennis.relicFragments[0]).toBe('hazardous')
+      // Gained 1 command token (started with 3)
+      expect(dennis.commandTokens.tactics).toBe(4)
+    })
+  })
+
+  describe('Nomad', () => {
+    test('gains TG when voted-for outcome wins', () => {
+      const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
+      game.run()
+
+      // Test the helper directly
+      const nomad = game.players.byName('dennis')
+      const startTG = nomad.tradeGoods
+      const playerVotes = { dennis: { outcome: 'For', count: 3 } }
+      game.factionAbilities._nomadFutureSight('For', playerVotes)
+
+      expect(nomad.tradeGoods).toBe(startTG + 1)
+    })
+  })
+
+  describe('Titans of Ul', () => {
+    test('places sleeper token after exploration', () => {
+      // Titans terragenesis: after exploring a planet, offer to place sleeper
+      // We'll test the exploration flow with a carrier moving to a new planet
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'titans-home': {
+              space: ['carrier'],
+              'elysium': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Move carrier + infantry to system 27 (New Albion + Starpoint)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'titans-home', count: 1 },
+          { unitType: 'infantry', from: 'titans-home', count: 2 },
+        ],
+      })
+
+      // After gaining planet and exploring, Titans get terragenesis prompt
+      t.choose(game, 'Place sleeper')
+
+      // Check sleeper placed
+      const sleepers = Object.keys(game.state.sleeperTokens)
+        .filter(pId => game.state.sleeperTokens[pId] === 'dennis')
+      expect(sleepers.length).toBeGreaterThanOrEqual(1)
+    })
+
+    test('replaces sleeper with PDS on activation', () => {
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'titans-home': {
+              space: ['cruiser'],
+              'elysium': ['space-dock'],
+            },
+          },
+        },
+      })
+      // Place sleeper during initialization (state replays from scratch)
+      game.testSetBreakpoint('initialization-complete', (game) => {
+        game.state.sleeperTokens['new-albion'] = 'dennis'
+      })
+      game.run()
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Activate system 27 (which contains new-albion)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Sleeper should be replaced with PDS
+      expect(game.state.sleeperTokens['new-albion']).toBeUndefined()
+      const pdsOnNewAlbion = game.state.units['27'].planets['new-albion']
+        .filter(u => u.owner === 'dennis' && u.type === 'pds')
+      expect(pdsOnNewAlbion.length).toBe(1)
+    })
+  })
+
+  describe("Vuil'raith Cabal", () => {
+    test('captures destroyed units during combat', () => {
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'cabal-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'acheron': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'cabal-home', count: 5 }],
+      })
+
+      // Vuil'raith destroys fighter — Devour captures it
+      const captured = game.state.capturedUnits['dennis'] || []
+      expect(captured.length).toBeGreaterThanOrEqual(1)
+      expect(captured[0].type).toBe('fighter')
+      expect(captured[0].originalOwner).toBe('micah')
+    })
+
+    test('returns captured unit to place own unit (Amalgamation)', () => {
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      // Set captured units during initialization (game replays from scratch)
+      game.testSetBreakpoint('initialization-complete', (game) => {
+        game.state.capturedUnits['dennis'] = [
+          { type: 'cruiser', originalOwner: 'micah' },
+        ]
+      })
+      game.run()
+
+      const startShips = game.state.units['cabal-home'].space
+        .filter(u => u.owner === 'dennis').length
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses Component Action → Amalgamation
+      t.choose(game, 'Component Action')
+      t.choose(game, 'amalgamation')
+
+      // Choose captured unit to return (only 1, auto-selected)
+      // Choose system (auto: cabal-home, only system with ships)
+      // Cruiser placed in cabal-home space
+      const endShips = game.state.units['cabal-home'].space
+        .filter(u => u.owner === 'dennis').length
+      expect(endShips).toBe(startShips + 1)
+
+      // Captured units should be empty
+      expect(game.state.capturedUnits['dennis'].length).toBe(0)
+    })
+
+    test('returns captured unit to research upgrade (Riftmeld)', () => {
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      // Set captured units during initialization (game replays from scratch)
+      game.testSetBreakpoint('initialization-complete', (game) => {
+        game.state.capturedUnits['dennis'] = [
+          { type: 'fighter', originalOwner: 'micah' },
+        ]
+      })
+      game.run()
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses Component Action → Riftmeld
+      t.choose(game, 'Component Action')
+      t.choose(game, 'riftmeld')
+
+      // Captured unit choice auto-responds (only 1), then choose unit upgrade tech
+      t.choose(game, 'infantry-ii')
+
+      // Should gain a unit upgrade tech
+      const dennis = game.players.byName('dennis')
+      const techs = dennis.getTechIds()
+      expect(techs).toContain('self-assembly-routines')
+      expect(techs).toContain('infantry-ii')
+
+      // Captured units depleted
+      expect(game.state.capturedUnits['dennis'].length).toBe(0)
+    })
+  })
+
+  describe('Council Keleres', () => {
+    test('replenishes commodities + 1 TG at strategy phase', () => {
+      const game = t.fixture({ factions: ['council-keleres', 'emirates-of-hacan'] })
+      game.run()
+
+      // Keleres has council-patronage
+      // At strategy phase start, replenish commodities and gain 1 TG
+      const dennis = game.players.byName('dennis')
+      // After running, strategy phase starts → council-patronage fires
+      // Keleres has 2 commodities max
+      expect(dennis.commodities).toBe(2)
+      // Gained 1 TG from patronage
+      expect(dennis.tradeGoods).toBe(1)
+    })
+  })
+
   describe('Starting Units', () => {
     test('Sol starts with correct home system units', () => {
       const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
