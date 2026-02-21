@@ -56,9 +56,21 @@ class Galaxy {
       }
     }
 
-    // Wormhole adjacency
+    // Wormhole adjacency — combine tile wormholes with faction-granted wormholes
     const tile = this.getSystemTile(systemId)
-    if (tile && tile.wormholes.length > 0) {
+    const tileWormholes = tile ? [...tile.wormholes] : []
+
+    // Creuss quantum-entanglement: home system has alpha + beta wormholes
+    if (this.game.factionAbilities) {
+      const factionWormholes = this.game.factionAbilities.getHomeSystemWormholes(systemId)
+      for (const w of factionWormholes) {
+        if (!tileWormholes.includes(w)) {
+          tileWormholes.push(w)
+        }
+      }
+    }
+
+    if (tileWormholes.length > 0) {
       for (const [otherId] of Object.entries(this.game.state.systems)) {
         if (String(otherId) === String(systemId)) {
           continue
@@ -68,8 +80,20 @@ class Galaxy {
         }
 
         const otherTile = this.getSystemTile(otherId)
-        if (otherTile) {
-          const hasMatch = tile.wormholes.some(w => otherTile.wormholes.includes(w))
+        const otherWormholes = otherTile ? [...otherTile.wormholes] : []
+
+        // Also check faction wormholes on the other system
+        if (this.game.factionAbilities) {
+          const otherFactionWormholes = this.game.factionAbilities.getHomeSystemWormholes(otherId)
+          for (const w of otherFactionWormholes) {
+            if (!otherWormholes.includes(w)) {
+              otherWormholes.push(w)
+            }
+          }
+        }
+
+        if (otherWormholes.length > 0) {
+          const hasMatch = tileWormholes.some(w => otherWormholes.includes(w))
           if (hasMatch) {
             adjacent.push(String(otherId))
           }
@@ -127,6 +151,13 @@ class Galaxy {
         // Cannot move through supernova (unless faction allows it)
         if (tile?.anomaly === 'supernova') {
           if (!this.game.factionAbilities?.canMoveThroughSupernovae(playerName)) {
+            continue
+          }
+        }
+
+        // Nebula: ships must stop (cannot pass through, only enter as destination)
+        if (tile?.anomaly === 'nebula' && neighborId !== String(toSystemId)) {
+          if (!this.game.factionAbilities?.canMoveThroughNebulae(playerName)) {
             continue
           }
         }
