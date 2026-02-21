@@ -153,6 +153,7 @@ export default {
 
       demonweb2Variants: [
         { text: 'small (7 hex)', value: 'demonweb-2s' },
+        { text: 'hexagon (7 hex)', value: 'demonweb-2h' },
         { text: 'large (9 hex)', value: 'demonweb-2' },
       ],
 

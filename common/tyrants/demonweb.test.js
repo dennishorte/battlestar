@@ -1166,7 +1166,7 @@ describe('Demonweb', () => {
       submitRotations(game)
     })
 
-    test('linear chain topology: endpoints have 1 hex neighbor, middle hexes have 2', () => {
+    test('slid hexagon topology: corners have 2, sides have 3, center has 4 neighbors', () => {
       const config = mapConfigs.mapConfigs['demonweb-2s']
       const positions = config.layout.map(h => h.position)
 
@@ -1182,14 +1182,18 @@ describe('Demonweb', () => {
         return positions.filter((other, j) => i !== j && isAdjacent(pos, other)).length
       })
 
-      // First and last hexes are endpoints (1 neighbor each)
-      expect(neighborCounts[0]).toBe(1)
-      expect(neighborCounts[6]).toBe(1)
+      // Corner C hexes (indices 1 and 5) have 2 neighbors each
+      expect(neighborCounts[1]).toBe(2)
+      expect(neighborCounts[5]).toBe(2)
 
-      // Middle hexes have exactly 2 neighbors
-      for (let i = 1; i < 6; i++) {
-        expect(neighborCounts[i]).toBe(2)
-      }
+      // B hexes and inner C hexes (indices 0, 2, 4, 6) have 3 neighbors each
+      expect(neighborCounts[0]).toBe(3)
+      expect(neighborCounts[2]).toBe(3)
+      expect(neighborCounts[4]).toBe(3)
+      expect(neighborCounts[6]).toBe(3)
+
+      // Center A hex (index 3) has 4 neighbors
+      expect(neighborCounts[3]).toBe(4)
     })
 
     test('full game flow: rotation then starting location selection', () => {
@@ -1230,6 +1234,124 @@ describe('Demonweb', () => {
       const decoded = decodeMapLayout(encoded)
 
       expect(decoded.mapName).toBe('demonweb-2s')
+      expect(decoded.entries).toHaveLength(7)
+      for (let i = 0; i < hexes.length; i++) {
+        expect(decoded.entries[i].tileId).toBe(hexes[i].tileId)
+        expect(decoded.entries[i].rotation).toBe(hexes[i].rotation)
+      }
+      submitRotations(game)
+    })
+  })
+
+  describe('demonweb-2h (hexagon 2-player map)', () => {
+    const HEXAGON_LAYOUT = [
+      { tileId: 'B1', rotation: 0 },
+      { tileId: 'C1', rotation: 0 },
+      { tileId: 'C2', rotation: 0 },
+      { tileId: 'A1', rotation: 0 },
+      { tileId: 'C3', rotation: 0 },
+      { tileId: 'C4', rotation: 0 },
+      { tileId: 'B2', rotation: 0 },
+    ]
+
+    function hexagonFixture(options = {}) {
+      const game = t.fixture({
+        map: 'demonweb-2h',
+        seed: 'demonweb-2h-test',
+        ...options,
+      })
+      game.run()
+      return game
+    }
+
+    test('has 7 hexes', () => {
+      const game = hexagonFixture()
+      expect(game.state.assembledMap.hexes).toHaveLength(7)
+    })
+
+    test('has 1 A tile, 2 B tiles, and 4 C tiles', () => {
+      const game = hexagonFixture()
+      const categories = game.state.assembledMap.hexes.map(h => h.tileId[0])
+      expect(categories.filter(c => c === 'A')).toHaveLength(1)
+      expect(categories.filter(c => c === 'B')).toHaveLength(2)
+      expect(categories.filter(c => c === 'C')).toHaveLength(4)
+    })
+
+    test('hexagonal topology: center has 6 neighbors, outer hexes have 3 each', () => {
+      const config = mapConfigs.mapConfigs['demonweb-2h']
+      const positions = config.layout.map(h => h.position)
+
+      function isAdjacent(a, b) {
+        const dq = b.q - a.q
+        const dr = b.r - a.r
+        const ds = -(dq + dr)
+        return Math.max(Math.abs(dq), Math.abs(dr), Math.abs(ds)) === 1
+      }
+
+      const neighborCounts = positions.map((pos, i) => {
+        return positions.filter((other, j) => i !== j && isAdjacent(pos, other)).length
+      })
+
+      // Center hex (index 3, position 0,0) has 6 neighbors
+      expect(neighborCounts[3]).toBe(6)
+
+      // All outer hexes have 3 neighbors each
+      const outerCounts = neighborCounts.filter((_, i) => i !== 3)
+      expect(outerCounts).toEqual([3, 3, 3, 3, 3, 3])
+    })
+
+    test('B hexes are not adjacent to each other', () => {
+      const config = mapConfigs.mapConfigs['demonweb-2h']
+      const bPositions = config.layout
+        .filter(h => h.category === 'B')
+        .map(h => h.position)
+
+      expect(bPositions).toHaveLength(2)
+
+      const dq = bPositions[1].q - bPositions[0].q
+      const dr = bPositions[1].r - bPositions[0].r
+      const ds = -(dq + dr)
+      const distance = Math.max(Math.abs(dq), Math.abs(dr), Math.abs(ds))
+      expect(distance).toBeGreaterThan(1)
+    })
+
+    test('full game flow: rotation then starting location selection', () => {
+      const game = hexagonFixture({ mapLayout: HEXAGON_LAYOUT })
+      submitRotations(game, {})
+
+      // Choose starting locations
+      const r1 = game.waiting
+      expect(r1.selectors[0].title).toBe('Choose starting location')
+      t.choose(game, '*' + r1.selectors[0].choices[0])
+
+      const r2 = game.waiting
+      t.choose(game, '*' + r2.selectors[0].choices[0])
+
+      // Should reach main game loop
+      game.run()
+      expect(game.waiting.selectors[0].title).toBe('Choose Action')
+    })
+
+    test('neighbor relationships are bidirectional', () => {
+      const game = hexagonFixture()
+
+      for (const loc of game.getLocationAll()) {
+        for (const neighborName of loc.neighborNames) {
+          const neighbor = game.getLocationByName(neighborName)
+          expect(neighbor.neighborNames).toContain(loc.name())
+        }
+      }
+    })
+
+    test('map layout codec round-trip', () => {
+      const game = hexagonFixture({ mapLayout: HEXAGON_LAYOUT })
+      const hexes = game.state.assembledMap.hexes
+      const mapName = game.settings.map
+
+      const encoded = encodeMapLayout(mapName, hexes)
+      const decoded = decodeMapLayout(encoded)
+
+      expect(decoded.mapName).toBe('demonweb-2h')
       expect(decoded.entries).toHaveLength(7)
       for (let i = 0; i < hexes.length; i++) {
         expect(decoded.entries[i].tileId).toBe(hexes[i].tileId)
