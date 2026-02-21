@@ -732,6 +732,270 @@ describe('Factions', () => {
     })
   })
 
+  describe('Ghosts of Creuss', () => {
+    test('starts with Gravity Drive', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasTechnology('gravity-drive')).toBe(true)
+    })
+
+    test('starts with correct units', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      game.run()
+      const spaceUnits = game.state.units['creuss-home'].space
+        .filter(u => u.owner === 'dennis').map(u => u.type).sort()
+      expect(spaceUnits).toEqual(['carrier', 'destroyer', 'destroyer', 'fighter', 'fighter'])
+    })
+
+    test('4 commodities', () => {
+      const faction = res.getFaction('ghosts-of-creuss')
+      expect(faction.commodities).toBe(4)
+    })
+
+    test('abilities defined', () => {
+      const faction = res.getFaction('ghosts-of-creuss')
+      expect(faction.abilities.find(a => a.id === 'quantum-entanglement')).toBeTruthy()
+      expect(faction.abilities.find(a => a.id === 'slipstream')).toBeTruthy()
+      expect(faction.abilities.find(a => a.id === 'creuss-gate')).toBeTruthy()
+    })
+  })
+
+  describe('Nekro Virus', () => {
+    test('starts with Dacxive Animators', () => {
+      const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasTechnology('dacxive-animators')).toBe(true)
+    })
+
+    test('starts with correct units', () => {
+      const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
+      game.run()
+      const spaceUnits = game.state.units['nekro-home'].space
+        .filter(u => u.owner === 'dennis').map(u => u.type).sort()
+      expect(spaceUnits).toEqual(['carrier', 'cruiser', 'dreadnought', 'fighter', 'fighter'])
+    })
+
+    test('3 commodities', () => {
+      const faction = res.getFaction('nekro-virus')
+      expect(faction.commodities).toBe(3)
+    })
+
+    test('abilities defined', () => {
+      const faction = res.getFaction('nekro-virus')
+      expect(faction.abilities.find(a => a.id === 'galactic-threat')).toBeTruthy()
+      expect(faction.abilities.find(a => a.id === 'technological-singularity')).toBeTruthy()
+      expect(faction.abilities.find(a => a.id === 'propagation')).toBeTruthy()
+    })
+  })
+
+  describe('Argent Flight', () => {
+    test('3 commodities', () => {
+      const faction = res.getFaction('argent-flight')
+      expect(faction.commodities).toBe(3)
+    })
+
+    test('abilities defined', () => {
+      const faction = res.getFaction('argent-flight')
+      expect(faction.abilities.find(a => a.id === 'zeal')).toBeTruthy()
+      expect(faction.abilities.find(a => a.id === 'raid-formation')).toBeTruthy()
+    })
+
+    test('starts with correct units', () => {
+      const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+      game.run()
+      const spaceUnits = game.state.units['argent-home'].space
+        .filter(u => u.owner === 'dennis').map(u => u.type).sort()
+      expect(spaceUnits).toEqual(['carrier', 'destroyer', 'destroyer', 'fighter', 'fighter'])
+    })
+  })
+
+  describe('Empyrean', () => {
+    test('starts with Dark Energy Tap', () => {
+      const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasTechnology('dark-energy-tap')).toBe(true)
+    })
+
+    test('4 commodities', () => {
+      const faction = res.getFaction('empyrean')
+      expect(faction.commodities).toBe(4)
+    })
+
+    test('abilities defined', () => {
+      const faction = res.getFaction('empyrean')
+      expect(faction.abilities.find(a => a.id === 'voidborn')).toBeTruthy()
+    })
+
+    test('starts with correct units', () => {
+      const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+      game.run()
+      const spaceUnits = game.state.units['empyrean-home'].space
+        .filter(u => u.owner === 'dennis').map(u => u.type).sort()
+      expect(spaceUnits).toEqual(['carrier', 'carrier', 'destroyer', 'fighter', 'fighter'])
+    })
+  })
+
+  describe('Mahact Gene-Sorcerers', () => {
+    test('starts with Bio-Stims and Predictive Intelligence', () => {
+      const game = t.fixture({ factions: ['mahact-gene-sorcerers', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasTechnology('bio-stims')).toBe(true)
+      expect(dennis.hasTechnology('predictive-intelligence')).toBe(true)
+    })
+
+    test('3 commodities', () => {
+      const faction = res.getFaction('mahact-gene-sorcerers')
+      expect(faction.commodities).toBe(3)
+    })
+
+    test('abilities defined', () => {
+      const faction = res.getFaction('mahact-gene-sorcerers')
+      expect(faction.abilities.find(a => a.id === 'edict')).toBeTruthy()
+      expect(faction.abilities.find(a => a.id === 'imperia')).toBeTruthy()
+      expect(faction.abilities.find(a => a.id === 'hubris')).toBeTruthy()
+    })
+
+    test('starts with correct units', () => {
+      const game = t.fixture({ factions: ['mahact-gene-sorcerers', 'emirates-of-hacan'] })
+      game.run()
+      const spaceUnits = game.state.units['mahact-home'].space
+        .filter(u => u.owner === 'dennis').map(u => u.type).sort()
+      expect(spaceUnits).toEqual(['carrier', 'cruiser', 'dreadnought', 'fighter', 'fighter'])
+    })
+  })
+
+  describe('Naaz-Rokha Alliance', () => {
+    test('starts with Psychoarchaeology and AI Development Algorithm', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasTechnology('psychoarchaeology')).toBe(true)
+      expect(dennis.hasTechnology('ai-development-algorithm')).toBe(true)
+    })
+
+    test('3 commodities', () => {
+      const faction = res.getFaction('naaz-rokha-alliance')
+      expect(faction.commodities).toBe(3)
+    })
+
+    test('abilities defined', () => {
+      const faction = res.getFaction('naaz-rokha-alliance')
+      expect(faction.abilities.find(a => a.id === 'distant-suns')).toBeTruthy()
+      expect(faction.abilities.find(a => a.id === 'fabrication')).toBeTruthy()
+    })
+
+    test('starts with correct units', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      game.run()
+      const spaceUnits = game.state.units['naazrokha-home'].space
+        .filter(u => u.owner === 'dennis').map(u => u.type).sort()
+      expect(spaceUnits).toEqual(['carrier', 'carrier', 'destroyer', 'fighter', 'fighter'])
+    })
+  })
+
+  describe('Nomad', () => {
+    test('starts with Sling Relay', () => {
+      const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasTechnology('sling-relay')).toBe(true)
+    })
+
+    test('4 commodities', () => {
+      const faction = res.getFaction('nomad')
+      expect(faction.commodities).toBe(4)
+    })
+
+    test('abilities defined', () => {
+      const faction = res.getFaction('nomad')
+      expect(faction.abilities.find(a => a.id === 'future-sight')).toBeTruthy()
+    })
+
+    test('starts with correct units including flagship', () => {
+      const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
+      game.run()
+      const spaceUnits = game.state.units['nomad-home'].space
+        .filter(u => u.owner === 'dennis').map(u => u.type).sort()
+      expect(spaceUnits).toEqual(['carrier', 'destroyer', 'fighter', 'fighter', 'fighter', 'flagship'])
+    })
+  })
+
+  describe('Titans of Ul', () => {
+    test('starts with Antimass Deflectors and Scanlink Drone Network', () => {
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasTechnology('antimass-deflectors')).toBe(true)
+      expect(dennis.hasTechnology('scanlink-drone-network')).toBe(true)
+    })
+
+    test('2 commodities', () => {
+      const faction = res.getFaction('titans-of-ul')
+      expect(faction.commodities).toBe(2)
+    })
+
+    test('abilities defined', () => {
+      const faction = res.getFaction('titans-of-ul')
+      expect(faction.abilities.find(a => a.id === 'terragenesis')).toBeTruthy()
+      expect(faction.abilities.find(a => a.id === 'awaken')).toBeTruthy()
+      expect(faction.abilities.find(a => a.id === 'coalescence')).toBeTruthy()
+    })
+
+    test('starts with correct units', () => {
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      game.run()
+      const spaceUnits = game.state.units['titans-home'].space
+        .filter(u => u.owner === 'dennis').map(u => u.type).sort()
+      expect(spaceUnits).toEqual(['cruiser', 'cruiser', 'dreadnought', 'fighter', 'fighter'])
+    })
+  })
+
+  describe("Vuil'raith Cabal", () => {
+    test('starts with Self Assembly Routines', () => {
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasTechnology('self-assembly-routines')).toBe(true)
+    })
+
+    test('2 commodities', () => {
+      const faction = res.getFaction('vuil-raith-cabal')
+      expect(faction.commodities).toBe(2)
+    })
+
+    test('abilities defined', () => {
+      const faction = res.getFaction('vuil-raith-cabal')
+      expect(faction.abilities.find(a => a.id === 'devour')).toBeTruthy()
+      expect(faction.abilities.find(a => a.id === 'amalgamation')).toBeTruthy()
+      expect(faction.abilities.find(a => a.id === 'riftmeld')).toBeTruthy()
+    })
+
+    test('starts with correct units', () => {
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      game.run()
+      const spaceUnits = game.state.units['cabal-home'].space
+        .filter(u => u.owner === 'dennis').map(u => u.type).sort()
+      expect(spaceUnits).toEqual(['carrier', 'cruiser', 'dreadnought', 'fighter', 'fighter', 'fighter'])
+    })
+  })
+
+  describe('Council Keleres', () => {
+    test('2 commodities', () => {
+      const faction = res.getFaction('council-keleres')
+      expect(faction.commodities).toBe(2)
+    })
+
+    test('abilities defined', () => {
+      const faction = res.getFaction('council-keleres')
+      expect(faction.abilities.find(a => a.id === 'council-patronage')).toBeTruthy()
+      expect(faction.abilities.find(a => a.id === 'the-tribunii')).toBeTruthy()
+    })
+  })
+
   describe('Leaders', () => {
     test('agent starts unlocked', () => {
       const game = t.fixture()

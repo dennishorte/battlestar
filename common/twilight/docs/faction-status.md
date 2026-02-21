@@ -1,8 +1,8 @@
 # Faction Status
 
-25 factions. 390 tests passing across 23 test files.
+25 factions. 444 tests passing across 23 test files.
 
-## Fully Implemented (15)
+## Fully Implemented (24)
 
 All abilities coded in `systems/factionAbilities.js`, gameplay tests in `factionAbilities.test.js`, data tests in `factions.test.js`.
 
@@ -23,65 +23,49 @@ All abilities coded in `systems/factionAbilities.js`, gameplay tests in `faction
 | L1Z1X Mindnet | `assimilate` (replace enemy PDS/docks), `harrow` (bombardment during ground combat rounds) | 2 |
 | Winnu | `blood-ties` (free custodians removal), `reclamation` (PDS+dock on Mecatol Rex) | 2 |
 | Xxcha Kingdom | `peace-accords` (gain unoccupied adjacent planet after diplomacy), `quash` (discard and replace agenda) | 2 |
+| Ghosts of Creuss | `quantum-entanglement` (home has alpha+beta wormholes), `slipstream` (+1 move from wormhole systems) | 2 |
+| Nekro Virus | `galactic-threat` (excluded from voting, predicts outcome for tech), `technological-singularity` (gain tech on unit kill), `propagation` (cannot research normally) | 3 |
+| Argent Flight | `zeal` (votes first with bonus votes), `raid-formation` (excess AFB hits damage ships) | 2 |
+| Empyrean | `voidborn` (move through nebulae) | 1 |
+| Mahact Gene-Sorcerers | `edict` (capture command token on combat win, +fleet limit) | 1 |
+| Naaz-Rokha Alliance | `distant-suns` (extra exploration with mech), `fabrication` (purge fragments for tokens/relics) | 2 |
+| Nomad | `future-sight` (gain TG when voted-for outcome wins) | 1 |
+| Titans of Ul | `terragenesis` (place sleeper after exploration), `awaken` (replace sleeper with PDS on activation) | 2 |
+| Vuil'raith Cabal | `devour` (capture destroyed units), `amalgamation` (return captured unit to place own), `riftmeld` (return captured unit for unit upgrade tech) | 3 |
 
-## Partially Implemented (1)
+## Partially Implemented (2)
 
 | Faction | Done | Missing |
 |---------|------|---------|
 | Emirates of Hacan | `guild-ships`, `masters-of-trade` | `arbiters` (action cards in transactions) |
+| Council Keleres | `council-patronage` (replenish commodities + 1 TG at strategy phase) | `the-tribunii` (sub-faction selection), `laws-order` (law mechanics) |
 
-## Data Only (9)
+## Deferred Abilities
 
-Complete faction data files (starting techs, units, abilities, faction techs, flagship, mech, leaders) but no gameplay ability code.
+These abilities require subsystems not yet built:
 
-| Faction | Abilities | Complexity |
-|---------|-----------|------------|
-| Ghosts of Creuss | `quantum-entanglement`, `slipstream`, `creuss-gate` | Complex |
-| Nekro Virus | `galactic-threat`, `technological-singularity`, `propagation` | Complex |
-| Argent Flight | `zeal`, `raid-formation` | Complex |
-| Empyrean | `voidborn`, `aetherpassage`, `dark-whispers` | Complex |
-| Mahact Gene-Sorcerers | `edict`, `imperia`, `hubris` | Complex |
-| Naaz-Rokha Alliance | `distant-suns`, `fabrication` | Complex |
-| Nomad | `the-company`, `future-sight` | Complex |
-| Titans of Ul | `terragenesis`, `awaken`, `coalescence` | Complex |
-| Vuil'raith Cabal | `devour`, `amalgamation`, `riftmeld` | Complex |
+| Faction | Ability | Why Deferred |
+|---------|---------|--------------|
+| Mahact Gene-Sorcerers | `imperia` | Needs commander effect registry (commanders only track lock state) |
+| Mahact Gene-Sorcerers | `hubris` | Alliance/promissory note mechanics not fully implemented |
+| Nomad | `the-company` | Needs agent effect system (agents only track ready/exhausted) |
+| Empyrean | `aetherpassage` | Cross-player movement permissions |
+| Empyrean | `dark-whispers` | Needs promissory note duplication at setup |
+| Ghosts of Creuss | `creuss-gate` | Map setup handles tile placement |
+| Titans of Ul | `coalescence` | Forced-combat mechanics |
+| Naaz-Rokha Alliance | `distant-suns` (full) | Exploration bonus with mech — basic version implemented, full needs mech presence tracking |
 
 ## No Data (1)
 
 | Faction | Notes |
 |---------|-------|
-| Council Keleres | Sub-faction selection, variable setup |
-
----
-
-## Remaining Plan
-
-### Next: Finish Hacan
-
-Add `arbiters` — allow action cards in transaction offers. Hooks into `_resolveTransaction`.
-
-### Phase 3: Complex Factions (~25 abilities)
-
-These need new subsystems or deeply cross-cutting mechanics.
-
-| Faction | Why Complex |
-|---------|-------------|
-| Ghosts of Creuss | Wormhole adjacency modifications, Creuss Gate placement |
-| Nekro Virus | Unique tech acquisition replacing normal research |
-| Argent Flight | Agenda voting modification, AFB interaction |
-| Empyrean | Cross-player movement permissions |
-| Nomad | 3 agents with unique economy |
-| Titans of Ul | Sleeper token system |
-| Vuil'raith Cabal | Captured unit economy |
-| Mahact Gene-Sorcerers | Commander stealing, alliance restrictions |
-| Naaz-Rokha Alliance | Exploration bonuses, fragment economy |
-| Council Keleres | Sub-faction selection, variable setup |
+| Council Keleres | Sub-faction selection, variable setup (`the-tribunii`) |
 
 ---
 
 ## Hooks
 
-### Existing
+### All Hooks
 
 | Hook | Location | Used By |
 |------|----------|---------|
@@ -99,3 +83,28 @@ These need new subsystems or deeply cross-cutting mechanics.
 | `afterDiplomacyResolved(player)` | `_diplomacyPrimary`, `_diplomacySecondary` | Xxcha peace-accords |
 | `getCustodiansCost(player)` | `_establishControl`, `_autoPlaceGroundForces` | Winnu blood-ties |
 | `canMoveThroughSupernovae(playerName)` | `Galaxy.findPath` | Muaat gashlai-physiology |
+| `canMoveThroughNebulae(playerName)` | `Galaxy.findPath` | Empyrean voidborn |
+| `getMovementBonus(playerName, fromSystemId)` | `_movementStep` | Creuss slipstream |
+| `getHomeSystemWormholes(systemId)` | `Galaxy.getAdjacent`, `_getAdjacentSystems` | Creuss quantum-entanglement |
+| `onSystemActivated(playerName, systemId)` | `_tacticalAction` | Titans awaken |
+| `onUnitDestroyed(systemId, unit, destroyerName)` | `_assignHits`, `_assignGroundHits` | Nekro singularity, Vuil'raith devour |
+| `afterCombatResolved(systemId, winner, loser, type)` | `_spaceCombat`, `_groundCombat` | Mahact edict |
+| `getAgendaParticipation(votingOrder)` | `_resolveAgenda` | Nekro exclusion, Argent zeal |
+| `getVotingModifier(player)` | `_resolveAgenda` | Argent zeal |
+| `onAgendaVotingStart()` | `_resolveAgenda` | Nekro prediction |
+| `onAgendaOutcomeResolved(agenda, outcome, playerVotes)` | `_resolveAgenda` | Nekro reward, Nomad future-sight |
+| `onStrategyPhaseStart(player)` | `strategyPhase` | Keleres council-patronage |
+| `getRaidFormationExcessHits(shooterName, hits, destroyed)` | `_antiFighterBarrage` | Argent raid-formation |
+| `getExplorationBonus(player, planetId)` | `_explorePlanet` | Naaz-Rokha distant-suns |
+| `afterExploration(player, planetId)` | `_explorePlanet` | Titans terragenesis |
+| `canResearchNormally(player)` | `_researchTech` | Nekro propagation |
+| `getCapturedTokenFleetBonus(player)` | `_getFleetLimit` | Mahact edict |
+
+## State Systems
+
+| State Key | Type | Used By |
+|-----------|------|---------|
+| `state.sleeperTokens` | `{ planetId: ownerName }` | Titans of Ul |
+| `state.capturedUnits` | `{ playerName: [{ type, originalOwner }] }` | Vuil'raith Cabal |
+| `state.capturedCommandTokens` | `{ playerName: [otherPlayerName, ...] }` | Mahact Gene-Sorcerers |
+| `state.nekroPrediction` | `{ playerName, outcome }` | Nekro Virus |

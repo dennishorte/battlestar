@@ -119,6 +119,12 @@ Twilight.prototype._initializeState = function() {
   // Exploration decks (initialized lazily)
   this.state.explorationDecks = null
   this.state.exploredPlanets = {}    // planetId → true (tracks which planets have been explored)
+
+  // Faction-specific state
+  this.state.sleeperTokens = {}        // { planetId: ownerName } — Titans of Ul
+  this.state.capturedUnits = {}         // { playerName: [{ type, originalOwner }] } — Vuil'raith Cabal
+  this.state.capturedCommandTokens = {} // { playerName: [otherPlayerName, ...] } — Mahact Gene-Sorcerers
+  this.state.nekroPrediction = null     // { playerName, outcome } — Nekro Virus agenda prediction
 }
 
 Twilight.prototype._initializeZones = function() {
@@ -432,9 +438,21 @@ Twilight.prototype._getAdjacentSystems = function(systemId) {
     }
   }
 
-  // Check wormhole adjacency
+  // Check wormhole adjacency — combine tile wormholes with faction-granted wormholes
   const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
-  if (tile && tile.wormholes.length > 0) {
+  const tileWormholes = tile ? [...tile.wormholes] : []
+
+  // Creuss quantum-entanglement: home system has alpha + beta wormholes
+  if (this.factionAbilities) {
+    const factionWormholes = this.factionAbilities.getHomeSystemWormholes(systemId)
+    for (const w of factionWormholes) {
+      if (!tileWormholes.includes(w)) {
+        tileWormholes.push(w)
+      }
+    }
+  }
+
+  if (tileWormholes.length > 0) {
     for (const [otherId] of Object.entries(this.state.systems)) {
       if (otherId === String(systemId)) {
         continue
@@ -444,9 +462,20 @@ Twilight.prototype._getAdjacentSystems = function(systemId) {
       }
 
       const otherTile = res.getSystemTile(otherId) || res.getSystemTile(Number(otherId))
-      if (otherTile) {
-        const hasMatchingWormhole = tile.wormholes.some(w =>
-          otherTile.wormholes.includes(w)
+      const otherWormholes = otherTile ? [...otherTile.wormholes] : []
+
+      if (this.factionAbilities) {
+        const otherFactionWormholes = this.factionAbilities.getHomeSystemWormholes(otherId)
+        for (const w of otherFactionWormholes) {
+          if (!otherWormholes.includes(w)) {
+            otherWormholes.push(w)
+          }
+        }
+      }
+
+      if (otherWormholes.length > 0) {
+        const hasMatchingWormhole = tileWormholes.some(w =>
+          otherWormholes.includes(w)
         )
         if (hasMatchingWormhole) {
           adjacent.push(otherId)
@@ -563,6 +592,11 @@ Twilight.prototype.strategyPhase = function() {
   this.state.phase = 'strategy'
   this.log.add({ template: 'Strategy Phase' })
   this.log.indent()
+
+  // Keleres council-patronage: replenish commodities + 1 TG at start of strategy phase
+  for (const player of this.players.all()) {
+    this.factionAbilities.onStrategyPhaseStart(player)
+  }
 
   // Reset strategy cards
   this.state.availableStrategyCards = res.getAllStrategyCards().map(c => c.id)
@@ -866,10 +900,17 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
   const speakerName = this.state.speaker
   const allPlayers = this.players.all()
   const speakerIndex = allPlayers.findIndex(p => p.name === speakerName)
-  const votingOrder = []
+  let votingOrder = []
   for (let j = 1; j <= allPlayers.length; j++) {
     votingOrder.push(allPlayers[(speakerIndex + j) % allPlayers.length])
   }
+
+  // Faction abilities modify agenda participation (Argent first, Nekro excluded)
+  const participation = this.factionAbilities.getAgendaParticipation(votingOrder)
+  votingOrder = participation.order
+
+  // Nekro prediction before voting
+  this.factionAbilities.onAgendaVotingStart(agenda, outcomes)
 
   const votes = {}  // outcome → total votes
   for (const outcome of outcomes) {
@@ -878,7 +919,17 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
   const playerVotes = {}  // playerName → { outcome, count }
 
   for (const player of votingOrder) {
+    // Skip excluded players (e.g., Nekro)
+    if (participation.excluded.includes(player.name)) {
+      this.log.add({
+        template: '{player} cannot vote (Galactic Threat)',
+        args: { player },
+      })
+      continue
+    }
+
     const availableInfluence = player.getTotalInfluence()
+    const votingModifier = this.factionAbilities.getVotingModifier(player)
     const voteChoices = ['Abstain', ...outcomes]
 
     const selection = this.actions.choose(player, voteChoices, {
@@ -898,13 +949,14 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
     // Player chose an outcome — exhaust planets to cast votes
     const readyPlanets = player.getReadyPlanets()
     if (readyPlanets.length === 0) {
-      // No planets to exhaust, but still counts as 0 votes for outcome
+      // No planets to exhaust, but still counts as modifier votes for outcome
+      const totalVotes = 0 + votingModifier
       this.log.add({
-        template: '{player} votes for {outcome} (0 votes)',
-        args: { player, outcome: chosen },
+        template: '{player} votes for {outcome} ({count} votes)',
+        args: { player, outcome: chosen, count: totalVotes },
       })
-      votes[chosen] = (votes[chosen] || 0)
-      playerVotes[player.name] = { outcome: chosen, count: 0 }
+      votes[chosen] = (votes[chosen] || 0) + totalVotes
+      playerVotes[player.name] = { outcome: chosen, count: totalVotes }
       continue
     }
 
@@ -930,6 +982,7 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
       }
     }
 
+    totalInfluence += votingModifier
     votes[chosen] = (votes[chosen] || 0) + totalInfluence
     playerVotes[player.name] = { outcome: chosen, count: totalInfluence }
 
@@ -973,6 +1026,9 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
 
   // Apply agenda effects
   this._resolveAgendaOutcome(agenda, winningOutcome, playerVotes)
+
+  // Faction abilities on agenda outcome (Nekro prediction, Nomad future-sight)
+  this.factionAbilities.onAgendaOutcomeResolved(agenda, winningOutcome, playerVotes)
 
   this.log.outdent()
 }
@@ -1063,6 +1119,9 @@ Twilight.prototype._tacticalAction = function(player) {
     args: { player, system: systemId },
   })
 
+  // Titans awaken: replace sleeper tokens with PDS
+  this.factionAbilities.onSystemActivated(player.name, systemId)
+
   // Step 2: Move ships
   this._movementStep(player, systemId)
 
@@ -1134,7 +1193,8 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
     }
 
     const unitDef = this._getUnitStats(player.name, m.unitType)
-    const path = galaxy.findPath(fromSystemId, targetSystemId, player.name, unitDef.move)
+    const moveBonus = this.factionAbilities.getMovementBonus(player.name, fromSystemId)
+    const path = galaxy.findPath(fromSystemId, targetSystemId, player.name, unitDef.move + moveBonus)
     if (!path) {
       continue  // Ship cannot reach the target
     }
@@ -1332,8 +1392,8 @@ Twilight.prototype._spaceCombat = function(player, systemId) {
     })
 
     // Assign hits (auto-assign: sustain damage first, then cheapest units)
-    this._assignHits(systemId, defender, attackerHits)
-    this._assignHits(systemId, attacker, defenderHits)
+    this._assignHits(systemId, defender, attackerHits, attacker)
+    this._assignHits(systemId, attacker, defenderHits, defender)
 
     // Post-round faction abilities (e.g., Yin Devotion)
     this.factionAbilities.afterSpaceCombatRound(systemId, attacker, defender)
@@ -1355,6 +1415,16 @@ Twilight.prototype._spaceCombat = function(player, systemId) {
         break
       }
     }
+  }
+
+  // Determine combat winner/loser for faction abilities (Mahact edict)
+  const aShipsAfter = systemUnits.space.filter(u => u.owner === attacker)
+  const dShipsAfter = systemUnits.space.filter(u => u.owner === defender)
+  if (aShipsAfter.length > 0 && dShipsAfter.length === 0) {
+    this.factionAbilities.afterCombatResolved(systemId, attacker, defender, 'space')
+  }
+  else if (dShipsAfter.length > 0 && aShipsAfter.length === 0) {
+    this.factionAbilities.afterCombatResolved(systemId, defender, attacker, 'space')
   }
 
   this.log.outdent()
@@ -1442,12 +1512,42 @@ Twilight.prototype._antiFighterBarrage = function(systemId, attacker, defender) 
         args: { shooter, hits: totalAFBHits },
       })
 
+      let fightersDestroyed = 0
       for (let i = 0; i < totalAFBHits; i++) {
         const fighterIdx = systemUnits.space.findIndex(
           u => u.owner === target && u.type === 'fighter'
         )
         if (fighterIdx !== -1) {
           systemUnits.space.splice(fighterIdx, 1)
+          fightersDestroyed++
+        }
+      }
+
+      // Argent raid-formation: excess AFB hits apply as sustain-damage to opponent ships
+      const excessHits = this.factionAbilities.getRaidFormationExcessHits(
+        shooter, totalAFBHits, fightersDestroyed
+      )
+      if (excessHits > 0) {
+        let remaining = excessHits
+        // Apply sustain damage to opponent ships
+        const sustainShips = systemUnits.space
+          .filter(u => u.owner === target && !u.damaged)
+          .filter(u => {
+            const def = this._getUnitStats(u.owner, u.type)
+            return def && def.abilities.includes('sustain-damage')
+          })
+        for (const ship of sustainShips) {
+          if (remaining <= 0) {
+            break
+          }
+          ship.damaged = true
+          remaining--
+        }
+        if (excessHits > 0) {
+          this.log.add({
+            template: '{shooter} Raid Formation: {hits} excess hits damage ships',
+            args: { shooter, hits: excessHits },
+          })
         }
       }
     }
@@ -1479,7 +1579,7 @@ Twilight.prototype._rollCombatDice = function(ships) {
   return hits
 }
 
-Twilight.prototype._assignHits = function(systemId, ownerName, hits) {
+Twilight.prototype._assignHits = function(systemId, ownerName, hits, destroyerName) {
   if (hits <= 0) {
     return
   }
@@ -1526,7 +1626,10 @@ Twilight.prototype._assignHits = function(systemId, ownerName, hits) {
     const target = ships[0]
     const idx = systemUnits.space.findIndex(u => u.id === target.id)
     if (idx !== -1) {
-      systemUnits.space.splice(idx, 1)
+      const removed = systemUnits.space.splice(idx, 1)[0]
+      if (destroyerName) {
+        this.factionAbilities.onUnitDestroyed(systemId, removed, destroyerName)
+      }
     }
     remainingHits--
   }
@@ -1965,15 +2068,25 @@ Twilight.prototype._groundCombat = function(systemId, planetId, attackerName) {
     const attackerHits = this._rollCombatDice(attackers)
     const defenderHits = this._rollCombatDice(defenders)
 
-    this._assignGroundHits(systemId, planetId, defenderName, attackerHits)
-    this._assignGroundHits(systemId, planetId, attackerName, defenderHits)
+    this._assignGroundHits(systemId, planetId, defenderName, attackerHits, attackerName)
+    this._assignGroundHits(systemId, planetId, attackerName, defenderHits, defenderName)
 
     // End-of-round faction abilities (e.g., L1Z1X Harrow)
     this.factionAbilities.onGroundCombatRoundEnd(systemId, planetId, attackerName, defenderName)
   }
+
+  // Determine ground combat winner/loser
+  const aForcesAfter = planetUnits.filter(u => u.owner === attackerName)
+  const dForcesAfter = planetUnits.filter(u => u.owner === defenderName)
+  if (aForcesAfter.length > 0 && dForcesAfter.length === 0) {
+    this.factionAbilities.afterCombatResolved(systemId, attackerName, defenderName, 'ground')
+  }
+  else if (dForcesAfter.length > 0 && aForcesAfter.length === 0) {
+    this.factionAbilities.afterCombatResolved(systemId, defenderName, attackerName, 'ground')
+  }
 }
 
-Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, hits) {
+Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, hits, destroyerName) {
   if (hits <= 0) {
     return
   }
@@ -2022,7 +2135,10 @@ Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, h
     const target = units[0]
     const idx = planetUnits.findIndex(u => u.id === target.id)
     if (idx !== -1) {
-      planetUnits.splice(idx, 1)
+      const removed = planetUnits.splice(idx, 1)[0]
+      if (destroyerName) {
+        this.factionAbilities.onUnitDestroyed(systemId, removed, destroyerName)
+      }
     }
     remainingHits--
   }
@@ -2433,6 +2549,15 @@ Twilight.prototype._technologyPrimary = function(player) {
 }
 
 Twilight.prototype._researchTech = function(player) {
+  // Nekro Propagation: cannot research technology normally
+  if (!this.factionAbilities.canResearchNormally(player)) {
+    this.log.add({
+      template: '{player} cannot research technology (Propagation)',
+      args: { player },
+    })
+    return null
+  }
+
   // Get available technologies player can research (generic + faction techs)
   const allTechs = [...res.getGenericTechnologies()]
   if (player.faction?.factionTechnologies) {
@@ -2479,6 +2604,27 @@ Twilight.prototype._researchTech = function(player) {
   this.factionAbilities.onTechResearched(player, tech)
 
   return techId
+}
+
+// Grant technology directly (bypasses prerequisites — used by Nekro, Vuil'raith)
+Twilight.prototype._grantTechnology = function(player, techId) {
+  const tech = res.getTechnology(techId)
+  if (!tech) {
+    return
+  }
+
+  const cardId = `${player.name}-${techId}`
+  let card
+  try {
+    card = this.cards.byId(cardId)
+  }
+  catch {
+    card = new BaseCard(this, { id: cardId, ...tech })
+    this.cards.register(card)
+  }
+
+  const techZone = this.zones.byPlayer(player, 'technologies')
+  techZone.push(card, techZone.nextIndex())
 }
 
 
@@ -3114,6 +3260,8 @@ Twilight.prototype._getFleetLimit = function(player) {
   if (this.factionAbilities._hasAbility(player, 'armada')) {
     limit += 2
   }
+  // Mahact Edict: captured command tokens count toward fleet pool
+  limit += this.factionAbilities.getCapturedTokenFleetBonus(player)
   return limit
 }
 
@@ -3716,8 +3864,40 @@ Twilight.prototype._checkCommanderUnlock = function(player) {
           return obj && obj.type === 'secret'
         })
       break
+    case 'ghosts-of-creuss':
+      // Units in/adjacent to alpha wormhole AND beta wormhole systems
+      conditionMet = this._hasUnitsNearWormholes(player.name, 'alpha')
+        && this._hasUnitsNearWormholes(player.name, 'beta')
+      break
+    case 'nekro-virus':
+      // Have 3 technologies
+      conditionMet = player.getTechIds().length >= 3
+      break
+    case 'argent-flight':
+      // 6+ units with AFB/SC/Bombardment on board
+      conditionMet = this._countCombatAbilityUnits(player.name) >= 6
+      break
+    case 'empyrean':
+      // Be neighbors with all other players
+      conditionMet = this._isNeighborWithAll(player.name)
+      break
+    case 'mahact-gene-sorcerers':
+      // 2 other players' command tokens in fleet pool
+      conditionMet = (this.state.capturedCommandTokens[player.name] || []).length >= 2
+      break
+    case 'naaz-rokha-alliance':
+      // 3 mechs in 3 different systems
+      conditionMet = this._countMechSystems(player.name) >= 3
+      break
+    case 'titans-of-ul':
+      // 5 structures on the game board
+      conditionMet = this._countStructures(player.name) >= 5
+      break
+    case 'vuil-raith-cabal':
+      // Units in 3 systems with gravity rifts
+      conditionMet = this._countGravityRiftSystems(player.name) >= 3
+      break
     default:
-      // Other factions not yet implemented
       break
   }
 
@@ -3798,6 +3978,135 @@ Twilight.prototype._getTotalControlledInfluence = function(playerName) {
   return total
 }
 
+Twilight.prototype._hasUnitsNearWormholes = function(playerName, wormholeType) {
+  // Check if player has units in or adjacent to systems with this wormhole type
+  const { Galaxy } = require('./model/Galaxy.js')
+  const galaxy = new Galaxy(this)
+  const wormholeSystems = galaxy.getSystemsWithWormhole(wormholeType)
+
+  for (const sysId of wormholeSystems) {
+    // Check units in the wormhole system itself
+    const sysUnits = this.state.units[sysId]
+    if (sysUnits) {
+      if (sysUnits.space.some(u => u.owner === playerName)) {
+        return true
+      }
+      for (const planetUnits of Object.values(sysUnits.planets)) {
+        if (planetUnits.some(u => u.owner === playerName)) {
+          return true
+        }
+      }
+    }
+
+    // Check adjacent systems
+    const adjacent = galaxy.getAdjacent(sysId)
+    for (const adjId of adjacent) {
+      const adjUnits = this.state.units[adjId]
+      if (adjUnits) {
+        if (adjUnits.space.some(u => u.owner === playerName)) {
+          return true
+        }
+        for (const planetUnits of Object.values(adjUnits.planets)) {
+          if (planetUnits.some(u => u.owner === playerName)) {
+            return true
+          }
+        }
+      }
+    }
+  }
+  return false
+}
+
+Twilight.prototype._countCombatAbilityUnits = function(playerName) {
+  let count = 0
+  for (const systemUnits of Object.values(this.state.units)) {
+    for (const unit of systemUnits.space) {
+      if (unit.owner !== playerName) {
+        continue
+      }
+      const def = this._getUnitStats(unit.owner, unit.type)
+      if (def?.abilities?.some(a =>
+        a.startsWith('anti-fighter-barrage-') ||
+        a.startsWith('space-cannon-') ||
+        a.startsWith('bombardment-')
+      )) {
+        count++
+      }
+    }
+    for (const planetUnits of Object.values(systemUnits.planets)) {
+      for (const unit of planetUnits) {
+        if (unit.owner !== playerName) {
+          continue
+        }
+        const def = this._getUnitStats(unit.owner, unit.type)
+        if (def?.abilities?.some(a =>
+          a.startsWith('anti-fighter-barrage-') ||
+          a.startsWith('space-cannon-') ||
+          a.startsWith('bombardment-')
+        )) {
+          count++
+        }
+      }
+    }
+  }
+  return count
+}
+
+Twilight.prototype._isNeighborWithAll = function(playerName) {
+  const otherPlayers = this.players.all().filter(p => p.name !== playerName)
+  return otherPlayers.every(other => this.areNeighbors(playerName, other.name))
+}
+
+Twilight.prototype._countMechSystems = function(playerName) {
+  let systems = 0
+  for (const systemUnits of Object.values(this.state.units)) {
+    let hasMech = false
+    for (const planetUnits of Object.values(systemUnits.planets)) {
+      if (planetUnits.some(u => u.owner === playerName && u.type === 'mech')) {
+        hasMech = true
+        break
+      }
+    }
+    if (hasMech) {
+      systems++
+    }
+  }
+  return systems
+}
+
+Twilight.prototype._countStructures = function(playerName) {
+  let count = 0
+  for (const systemUnits of Object.values(this.state.units)) {
+    for (const planetUnits of Object.values(systemUnits.planets)) {
+      count += planetUnits.filter(u => {
+        if (u.owner !== playerName) {
+          return false
+        }
+        const def = res.getUnit(u.type)
+        return def?.category === 'structure'
+      }).length
+    }
+  }
+  return count
+}
+
+Twilight.prototype._countGravityRiftSystems = function(playerName) {
+  let count = 0
+  for (const [systemId, systemUnits] of Object.entries(this.state.units)) {
+    const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+    if (!tile || tile.anomaly !== 'gravity-rift') {
+      continue
+    }
+
+    const hasUnits = systemUnits.space.some(u => u.owner === playerName) ||
+      Object.values(systemUnits.planets).some(pu => pu.some(u => u.owner === playerName))
+    if (hasUnits) {
+      count++
+    }
+  }
+  return count
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Exploration
@@ -3840,12 +4149,37 @@ Twilight.prototype._explorePlanet = function(planetId, ownerName) {
 
   this.state.exploredPlanets[planetId] = true
 
-  const card = this._drawExplorationCard(planet.trait)
-  if (!card) {
-    return
+  const player = this.players.byName(ownerName)
+
+  // Draw exploration card(s) — Naaz-Rokha distant-suns draws extra with mech
+  const bonusCards = this.factionAbilities.getExplorationBonus(player, planetId)
+  const cards = []
+  const mainCard = this._drawExplorationCard(planet.trait)
+  if (mainCard) {
+    cards.push(mainCard)
+  }
+  for (let i = 0; i < bonusCards; i++) {
+    const extra = this._drawExplorationCard(planet.trait)
+    if (extra) {
+      cards.push(extra)
+    }
   }
 
-  const player = this.players.byName(ownerName)
+  let card
+  if (cards.length === 0) {
+    return
+  }
+  else if (cards.length === 1) {
+    card = cards[0]
+  }
+  else {
+    // Player chooses which card to keep
+    const cardChoices = cards.map(c => c.name || c.id)
+    const selection = this.actions.choose(player, cardChoices, {
+      title: 'Choose exploration card to keep',
+    })
+    card = cards.find(c => (c.name || c.id) === selection[0]) || cards[0]
+  }
 
   this.log.add({
     template: '{player} explores {planet}: {card}',
@@ -3887,5 +4221,11 @@ Twilight.prototype._explorePlanet = function(planetId, ownerName) {
     if (card.resolve) {
       card.resolve(player)
     }
+  }
+
+  // Titans terragenesis: offer sleeper placement after exploration
+  const systemId = this._findSystemForPlanet(planetId)
+  if (systemId) {
+    this.factionAbilities.afterExploration(player, planetId, systemId)
   }
 }
