@@ -2,8 +2,8 @@
 // Defines hex layouts for different player counts
 // Uses axial coordinates (q, r) for hex positioning
 
-// Axial coordinate directions for pointy-top hexes:
-// NE: (+1, -1), E: (+1, 0), SE: (0, +1), SW: (-1, +1), W: (-1, 0), NW: (0, -1)
+// Axial coordinate directions for flat-top hexes:
+// N: (0, -1), NE: (+1, -1), SE: (+1, 0), S: (0, +1), SW: (-1, +1), NW: (-1, 0)
 
 const mapConfigs = {
   // 2-Player Small: 7 hexes in slid hexagon (parallelogram)
@@ -131,11 +131,11 @@ const mapConfigs = {
 function getAdjacentPositions(q, r) {
   return [
     { q: q + 1, r: r - 1 },  // NE
-    { q: q + 1, r: r },      // E (SE in pointy-top)
-    { q: q, r: r + 1 },      // SE (S in pointy-top)
+    { q: q + 1, r: r },      // SE
+    { q: q, r: r + 1 },      // S
     { q: q - 1, r: r + 1 },  // SW
-    { q: q - 1, r: r },      // W (NW in pointy-top)
-    { q: q, r: r - 1 },      // NW (N in pointy-top)
+    { q: q - 1, r: r },      // NW
+    { q: q, r: r - 1 },      // N
   ]
 }
 
@@ -181,10 +181,10 @@ function getEdgeDirection(pos1, pos2) {
   return null  // Not adjacent
 }
 
-// Convert axial coordinates to pixel coordinates (pointy-top orientation)
+// Convert axial coordinates to pixel coordinates (flat-top orientation)
 function axialToPixel(q, r, hexSize) {
-  const x = hexSize * (Math.sqrt(3) * q + Math.sqrt(3) / 2 * r)
-  const y = hexSize * (3 / 2 * r)
+  const x = hexSize * (3 / 2 * q)
+  const y = hexSize * (Math.sqrt(3) / 2 * q + Math.sqrt(3) * r)
   return { x, y }
 }
 
