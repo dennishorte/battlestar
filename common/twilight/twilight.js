@@ -40,6 +40,9 @@ function TwilightFactory(settings, viewerName) {
   const data = GameFactory(settings)
   data.settings = data.settings || {}
   data.settings.factions = settings.factions || []
+  if (settings.keleresSubFaction) {
+    data.settings.keleresSubFaction = settings.keleresSubFaction
+  }
   return new Twilight(data, viewerName)
 }
 
@@ -75,6 +78,7 @@ Twilight.prototype.initialize = function() {
   this._initializeState()
   this._initializeZones()
   this._initializeFactions()
+  this._setupPhase()
   this._initializeGalaxy()
   this._initializeStartingUnits()
   this._initializePlanetControl()
@@ -157,6 +161,16 @@ Twilight.prototype._initializeFactions = function() {
     const factionId = factionIds[i] || allFactions[i]
     player.initializeFaction(factionId)
 
+    // Nomad The Company: initialize 3 agents instead of 1
+    if (this.factionAbilities._hasAbility(player, 'the-company')) {
+      player.leaders.agents = [
+        { id: 'artuno', name: 'Artuno the Betrayer', status: 'ready' },
+        { id: 'thundarian', name: 'The Thundarian', status: 'ready' },
+        { id: 'mercer', name: 'Field Marshal Mercer', status: 'ready' },
+      ]
+      delete player.leaders.agent
+    }
+
     // Register starting technologies as cards
     const techCards = []
     for (const techId of player.faction.startingTechnologies) {
@@ -177,8 +191,69 @@ Twilight.prototype._initializeFactions = function() {
     }
     if (player.faction.promissoryNote) {
       player.addPromissoryNote(player.faction.promissoryNote.id, player.name)
+      // Empyrean Dark Whispers: gain 1 additional copy of faction promissory note
+      if (this.factionAbilities._hasAbility(player, 'dark-whispers')) {
+        player.addPromissoryNote(player.faction.promissoryNote.id, player.name)
+      }
+    }
+
+    // Alliance promissory note
+    if (this.factionAbilities._hasAbility(player, 'hubris')) {
+      // Mahact Hubris: Alliance note is purged at setup
+      // (do not add it)
+    }
+    else {
+      player.addPromissoryNote('alliance', player.name)
     }
   }
+}
+
+Twilight.prototype._setupPhase = function() {
+  // Handle interactive setup choices (e.g., Keleres sub-faction)
+  for (const player of this.players.all()) {
+    if (this.factionAbilities._hasAbility(player, 'the-tribunii')) {
+      this._keleresSubFactionSetup(player)
+    }
+  }
+}
+
+Twilight.prototype._keleresSubFactionSetup = function(player) {
+  // Filter to unplayed factions
+  const playedFactions = this.players.all().map(p => p.factionId)
+  const subFactionChoices = ['mentak-coalition', 'xxcha-kingdom', 'argent-flight']
+    .filter(id => !playedFactions.includes(id))
+
+  if (subFactionChoices.length === 0) {
+    return
+  }
+
+  let chosenId
+
+  // Check game setting for pre-configured sub-faction (used by tests)
+  if (this.settings.keleresSubFaction) {
+    chosenId = this.settings.keleresSubFaction
+  }
+  else {
+    const selection = this.actions.choose(player, subFactionChoices, {
+      title: 'The Tribunii: Choose a sub-faction to inherit their home system',
+      noAutoRespond: true,
+    })
+    chosenId = selection[0]
+  }
+
+  player.keleresSubFaction = chosenId
+
+  const subFaction = res.getFaction(chosenId)
+  if (subFaction) {
+    player.faction.homeSystem = subFaction.homeSystem
+    // Inherit the sub-faction's home planet starting units
+    player.faction.startingUnits.planets = subFaction.startingUnits.planets
+  }
+
+  this.log.add({
+    template: '{player} chooses {faction} as their Keleres sub-faction',
+    args: { player, faction: subFaction.name },
+  })
 }
 
 Twilight.prototype._initializeGalaxy = function() {
@@ -200,10 +275,27 @@ Twilight.prototype._initializeGalaxy = function() {
     const homeSystemId = faction.homeSystem
     const position = layout.homePositions[i]
 
-    this.state.systems[homeSystemId] = {
-      tileId: homeSystemId,
-      position,
-      commandTokens: [],
+    // Creuss Gate: place gate tile at home position, home system off-map
+    if (this.factionAbilities._hasAbility(player, 'creuss-gate')) {
+      // Place Creuss Gate (tile 17, delta wormhole, no planets) at home position
+      this.state.systems['creuss-gate'] = {
+        tileId: 'creuss-gate',
+        position,
+        commandTokens: [],
+      }
+      // Place actual home system off-map (connected via delta wormhole)
+      this.state.systems['creuss-home'] = {
+        tileId: 'creuss-home',
+        position: { q: 99, r: 99 },
+        commandTokens: [],
+      }
+    }
+    else {
+      this.state.systems[homeSystemId] = {
+        tileId: homeSystemId,
+        position,
+        commandTokens: [],
+      }
     }
   }
 
@@ -271,7 +363,10 @@ Twilight.prototype._initializeGalaxy = function() {
 Twilight.prototype._initializeStartingUnits = function() {
   for (const player of this.players.all()) {
     const faction = player.faction
-    const homeSystemId = faction.homeSystem
+    // Creuss Gate: starting units go on creuss-home (off-map), not creuss-gate
+    const homeSystemId = this.factionAbilities._hasAbility(player, 'creuss-gate')
+      ? 'creuss-home'
+      : faction.homeSystem
 
     // Place space units
     if (faction.startingUnits.space) {
@@ -593,6 +688,19 @@ Twilight.prototype.strategyPhase = function() {
   this.log.add({ template: 'Strategy Phase' })
   this.log.indent()
 
+  // Minister of Commerce law: elected player gains 1 TG
+  const ministerOutcome = this._getLawOutcome('minister-of-commerce')
+  if (ministerOutcome) {
+    const minister = this.players.byName(ministerOutcome)
+    if (minister) {
+      minister.addTradeGoods(1)
+      this.log.add({
+        template: '{player} gains 1 trade good (Minister of Commerce)',
+        args: { player: minister },
+      })
+    }
+  }
+
   // Keleres council-patronage: replenish commodities + 1 TG at start of strategy phase
   for (const player of this.players.all()) {
     this.factionAbilities.onStrategyPhaseStart(player)
@@ -684,6 +792,12 @@ Twilight.prototype.actionPhase = function() {
 
     // Check leader unlock conditions at start of each turn
     this._checkLeaderUnlocks()
+
+    // Clear previous player's law blanking
+    this.state.lawsBlankedByPlayer = null
+
+    // Keleres laws-order: spend 1 influence to blank all laws this turn
+    this.factionAbilities.onTurnStart(player)
 
     // Player must use strategy card before passing
     const choices = ['Tactical Action', 'Component Action']
@@ -829,7 +943,15 @@ Twilight.prototype.statusPhase = function() {
 
   // Step 8: Ready agents and exhausted technologies
   for (const player of this.players.all()) {
-    if (player.leaders.agent === 'exhausted') {
+    if (player.leaders.agents) {
+      // Multi-agent (Nomad): ready all agents
+      for (const agent of player.leaders.agents) {
+        if (agent.status === 'exhausted') {
+          agent.status = 'ready'
+        }
+      }
+    }
+    else if (player.leaders.agent === 'exhausted') {
       player.readyAgent()
     }
     player.exhaustedTechs = []
@@ -1122,6 +1244,9 @@ Twilight.prototype._tacticalAction = function(player) {
   // Titans awaken: replace sleeper tokens with PDS
   this.factionAbilities.onSystemActivated(player.name, systemId)
 
+  // Empyrean Aetherpassage: prompt before movement
+  this.factionAbilities.onPreMovement(player, systemId)
+
   // Step 2: Move ships
   this._movementStep(player, systemId)
 
@@ -1131,14 +1256,17 @@ Twilight.prototype._tacticalAction = function(player) {
   // Step 3: Space Cannon Offense (PDS fire at ships)
   this._spaceCannonOffense(player, systemId)
 
-  // Step 4: Space combat
+  // Step 4: Space combat (Titans Coalescence forces combat if flagship present)
   this._spaceCombat(player, systemId)
 
-  // Step 5: Invasion
+  // Step 5: Invasion (Coalescence: force ground combat if Titans mech on planet)
   this._invasionStep(player, systemId)
 
   // Step 6: Production
   this._productionStep(player, systemId)
+
+  // Clear aetherpassage grant
+  this.state.aetherpassageGrant = null
 
   this.log.outdent()
 }
@@ -1662,9 +1790,20 @@ Twilight.prototype._invasionStep = function(player, systemId) {
     return planetState && planetState.controller && planetState.controller !== player.name
   })
 
-  if (enemyPlanets.length > 0 && groundForcesInSpace.length > 0) {
-    // Invasion! Attack the first enemy planet
-    const targetPlanet = enemyPlanets[0]
+  // Coalescence: Titans mech on a planet forces ground combat
+  const coalescencePlanets = tile.planets.filter(planetId => {
+    return this.factionAbilities.checkCoalescenceOnPlanet(systemId, planetId, player.name)
+  })
+
+  // Invasion if: enemy planets with ground forces to land, OR coalescence forces combat
+  const shouldInvade = (enemyPlanets.length > 0 && groundForcesInSpace.length > 0)
+    || coalescencePlanets.length > 0
+
+  if (shouldInvade) {
+    // Target the first enemy planet (prefer coalescence planet if no standard invasion target)
+    const targetPlanet = (enemyPlanets.length > 0 && groundForcesInSpace.length > 0)
+      ? enemyPlanets[0]
+      : coalescencePlanets[0]
 
     // Snapshot defender structures before combat (for L1Z1X Assimilate)
     const defenderName = this.state.planets[targetPlanet]?.controller
@@ -2538,6 +2677,9 @@ Twilight.prototype._tradePrimary = function(player) {
     template: '{player} gains 3 trade goods and replenishes commodities',
     args: { player },
   })
+
+  // Nomad Artuno: after commodities replenished, may exhaust for 1 TG
+  this.factionAbilities.onCommoditiesReplenished(player)
 }
 
 
@@ -2893,6 +3035,8 @@ Twilight.prototype._resolveSecondary = function(player, cardId) {
         template: '{player} replenishes commodities (Trade secondary)',
         args: { player },
       })
+      // Nomad Artuno: after commodities replenished
+      this.factionAbilities.onCommoditiesReplenished(player)
       break
     case 'imperial':
       this._drawSecretObjective(player)
@@ -3122,6 +3266,21 @@ Twilight.prototype._resolveTransaction = function(player, targetName) {
     return
   }
 
+  // Validate action card trading (requires Hacan Arbiters)
+  const hasActionCards = (offering.actionCards || []).length > 0 || (requesting.actionCards || []).length > 0
+  if (hasActionCards && !this.factionAbilities.canTradeActionCards(player, target)) {
+    return
+  }
+
+  // Mahact Hubris: cannot receive Alliance promissory notes
+  const offeredAllianceToMahact = (offering.promissoryNotes || [])
+    .some(n => n.id === 'alliance') && this.factionAbilities._hasAbility(target, 'hubris')
+  const requestedAllianceFromMahact = (requesting.promissoryNotes || [])
+    .some(n => n.id === 'alliance') && this.factionAbilities._hasAbility(player, 'hubris')
+  if (offeredAllianceToMahact || requestedAllianceFromMahact) {
+    return
+  }
+
   // Target player accepts or rejects
   const response = this.actions.choose(target, ['Accept', 'Reject'], {
     title: `Transaction from ${player.name}`,
@@ -3195,6 +3354,31 @@ Twilight.prototype._executeTransaction = function(player, target, offering, requ
     }
   }
 
+  // Exchange action cards (Hacan Arbiters)
+  const offeredCards = offering.actionCards || []
+  for (const cardId of offeredCards) {
+    const idx = (player.actionCards || []).findIndex(c => c.id === cardId)
+    if (idx !== -1) {
+      const [card] = player.actionCards.splice(idx, 1)
+      if (!target.actionCards) {
+        target.actionCards = []
+      }
+      target.actionCards.push(card)
+    }
+  }
+
+  const requestedCards = requesting.actionCards || []
+  for (const cardId of requestedCards) {
+    const idx = (target.actionCards || []).findIndex(c => c.id === cardId)
+    if (idx !== -1) {
+      const [card] = target.actionCards.splice(idx, 1)
+      if (!player.actionCards) {
+        player.actionCards = []
+      }
+      player.actionCards.push(card)
+    }
+  }
+
   this.log.add({
     template: '{player} and {target} complete a transaction',
     args: { player, target },
@@ -3216,6 +3400,28 @@ Twilight.prototype._findSystemForPlanet = function(planetId) {
     }
   }
   return null
+}
+
+Twilight.prototype._isLawActive = function(lawId) {
+  if (!this.state.activeLaws || this.state.activeLaws.length === 0) {
+    return false
+  }
+  // Keleres laws-order: all laws blanked for the current player's turn
+  if (this.state.lawsBlankedByPlayer) {
+    return false
+  }
+  return this.state.activeLaws.some(law => law.id === lawId)
+}
+
+Twilight.prototype._getLawOutcome = function(lawId) {
+  if (!this.state.activeLaws) {
+    return null
+  }
+  if (this.state.lawsBlankedByPlayer) {
+    return null
+  }
+  const law = this.state.activeLaws.find(l => l.id === lawId)
+  return law ? law.resolvedOutcome : null
 }
 
 Twilight.prototype._componentAction = function(player) {

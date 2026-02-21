@@ -310,16 +310,54 @@ class TwilightPlayer extends BasePlayer {
   // Leaders
   // ---------------------------------------------------------------------------
 
-  isAgentReady() {
+  isAgentReady(agentId) {
+    if (this.leaders.agents) {
+      // Multi-agent (Nomad)
+      if (agentId) {
+        return this.leaders.agents.find(a => a.id === agentId)?.status === 'ready'
+      }
+      return this.leaders.agents.some(a => a.status === 'ready')
+    }
     return this.leaders.agent === 'ready'
   }
 
-  exhaustAgent() {
-    this.leaders.agent = 'exhausted'
+  exhaustAgent(agentId) {
+    if (this.leaders.agents) {
+      if (agentId) {
+        const agent = this.leaders.agents.find(a => a.id === agentId)
+        if (agent) {
+          agent.status = 'exhausted'
+        }
+      }
+      else {
+        const ready = this.leaders.agents.find(a => a.status === 'ready')
+        if (ready) {
+          ready.status = 'exhausted'
+        }
+      }
+    }
+    else {
+      this.leaders.agent = 'exhausted'
+    }
   }
 
-  readyAgent() {
-    this.leaders.agent = 'ready'
+  readyAgent(agentId) {
+    if (this.leaders.agents) {
+      if (agentId) {
+        const agent = this.leaders.agents.find(a => a.id === agentId)
+        if (agent) {
+          agent.status = 'ready'
+        }
+      }
+      else {
+        for (const agent of this.leaders.agents) {
+          agent.status = 'ready'
+        }
+      }
+    }
+    else {
+      this.leaders.agent = 'ready'
+    }
   }
 
   isCommanderUnlocked() {

@@ -111,6 +111,10 @@ class FactionAbilities {
     })
   }
 
+  canTradeActionCards(player, target) {
+    return this._hasAbility(player, 'arbiters') || this._hasAbility(target, 'arbiters')
+  }
+
   canSkipTradeSecondaryCost(player) {
     return this._hasAbility(player, 'masters-of-trade')
   }
@@ -670,6 +674,7 @@ class FactionAbilities {
   // ---------------------------------------------------------------------------
 
   onGroundCombatStart(systemId, planetId, attackerName, defenderName) {
+    this.onGroundCombatMercer(systemId, planetId, attackerName, defenderName)
     this._yinIndoctrination(systemId, planetId, attackerName, defenderName)
   }
 
@@ -1230,7 +1235,7 @@ class FactionAbilities {
 
 
   // ---------------------------------------------------------------------------
-  // O. Empyrean Abilities — Nebula traversal
+  // O. Empyrean Abilities — Nebula traversal + Aetherpassage
   // ---------------------------------------------------------------------------
 
   canMoveThroughNebulae(playerName) {
@@ -1238,13 +1243,51 @@ class FactionAbilities {
     return player ? this._hasAbility(player, 'voidborn') : false
   }
 
+  onPreMovement(activatingPlayer, systemId) {
+    this._empyreanAetherpassage(activatingPlayer, systemId)
+  }
+
+  _empyreanAetherpassage(activatingPlayer, _systemId) {
+    // Don't prompt Empyrean on their own turn
+    for (const empyrean of this.players.all()) {
+      if (empyrean.name === activatingPlayer.name) {
+        continue
+      }
+      if (!this._hasAbility(empyrean, 'aetherpassage')) {
+        continue
+      }
+
+      // Check if Empyrean has ships on the board
+      const hasShips = Object.values(this.state.units).some(
+        su => su.space.some(u => u.owner === empyrean.name)
+      )
+      if (!hasShips) {
+        continue
+      }
+
+      const choice = this.actions.choose(empyrean, ['Allow Passage', 'Deny'], {
+        title: `Aetherpassage: Allow ${activatingPlayer.name} to move through your systems?`,
+      })
+
+      if (choice[0] === 'Allow Passage') {
+        this.state.aetherpassageGrant = empyrean.name
+
+        this.log.add({
+          template: '{empyrean} grants aetherpassage to {player}',
+          args: { empyrean, player: activatingPlayer },
+        })
+      }
+    }
+  }
+
 
   // ---------------------------------------------------------------------------
   // P. Mahact Gene-Sorcerers Abilities — Token capture
   // ---------------------------------------------------------------------------
 
-  afterCombatResolved(systemId, winnerName, loserName, _combatType) {
+  afterCombatResolved(systemId, winnerName, loserName, combatType) {
     this._mahactEdict(winnerName, loserName)
+    this._nomadThundarian(systemId, winnerName, combatType)
     // Reset singularity tracking
     delete this.state._singularityUsedThisCombat
   }
@@ -1462,6 +1505,65 @@ class FactionAbilities {
   }
 
 
+  // Coalescence: check if Titans flagship or mech is in the system (for another player)
+  checkCoalescence(systemId, moverName) {
+    const systemUnits = this.state.units[systemId]
+    if (!systemUnits) {
+      return false
+    }
+
+    // Check space for Titans flagship
+    for (const unit of systemUnits.space) {
+      if (unit.owner === moverName) {
+        continue
+      }
+      const owner = this.players.byName(unit.owner)
+      if (!owner || !this._hasAbility(owner, 'coalescence')) {
+        continue
+      }
+      if (unit.type === 'flagship') {
+        return true
+      }
+    }
+
+    // Check planets for Titans mech
+    for (const [, planetUnits] of Object.entries(systemUnits.planets)) {
+      for (const unit of planetUnits) {
+        if (unit.owner === moverName) {
+          continue
+        }
+        const owner = this.players.byName(unit.owner)
+        if (!owner || !this._hasAbility(owner, 'coalescence')) {
+          continue
+        }
+        if (unit.type === 'mech') {
+          return true
+        }
+      }
+    }
+
+    return false
+  }
+
+  // Check if a specific planet has a Titans mech (forces ground combat)
+  checkCoalescenceOnPlanet(systemId, planetId, moverName) {
+    const planetUnits = this.state.units[systemId]?.planets[planetId] || []
+    for (const unit of planetUnits) {
+      if (unit.owner === moverName) {
+        continue
+      }
+      const owner = this.players.byName(unit.owner)
+      if (!owner || !this._hasAbility(owner, 'coalescence')) {
+        continue
+      }
+      if (unit.type === 'mech') {
+        return true
+      }
+    }
+    return false
+  }
+
+
   // ---------------------------------------------------------------------------
   // T. Vuil'raith Cabal Abilities — Unit capture
   // ---------------------------------------------------------------------------
@@ -1588,8 +1690,38 @@ class FactionAbilities {
 
 
   // ---------------------------------------------------------------------------
-  // U. Council Keleres Abilities — Economic
+  // U. Council Keleres Abilities — Economic + Law enforcement
   // ---------------------------------------------------------------------------
+
+  onTurnStart(player) {
+    this._keleresLawsOrder(player)
+  }
+
+  _keleresLawsOrder(player) {
+    if (!this._hasAbility(player, 'laws-order')) {
+      return
+    }
+    if (!this.state.activeLaws || this.state.activeLaws.length === 0) {
+      return
+    }
+    if (player.getTotalInfluence() < 1) {
+      return
+    }
+
+    const choice = this.actions.choose(player, ['Blank Laws', 'Pass'], {
+      title: "Law's Order: Spend 1 influence to blank all laws this turn?",
+    })
+
+    if (choice[0] === 'Blank Laws') {
+      this.game._payInfluence(player, 1)
+      this.state.lawsBlankedByPlayer = player.name
+
+      this.log.add({
+        template: "{player} uses Law's Order: all laws blanked this turn",
+        args: { player },
+      })
+    }
+  }
 
   onStrategyPhaseStart(player) {
     this._keleresPatronage(player)
@@ -1607,6 +1739,218 @@ class FactionAbilities {
       template: '{player} replenishes commodities and gains 1 TG (Council Patronage)',
       args: { player },
     })
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // V. Commander Effects Registry
+  // ---------------------------------------------------------------------------
+
+  _commanderEffects = {
+    'federation-of-sol': {
+      timing: 'ground-combat-modifier',
+      // After winning ground combat on a planet, place 1 additional infantry
+      apply: (player, context) => {
+        if (context.timing !== 'ground-combat-modifier') {
+          return 0
+        }
+        return 1  // +1 extra ground combat die
+      },
+    },
+    'barony-of-letnev': {
+      timing: 'spend-token-alternative',
+      // Can spend 2 TG instead of 1 command token from strategy/tactic
+      apply: (player, _context) => {
+        return player.tradeGoods >= 2
+      },
+    },
+    'emirates-of-hacan': {
+      timing: 'transaction-bonus',
+      // When trading: gain 1 additional TG from transactions
+      apply: (player, _context) => {
+        player.addTradeGoods(1)
+      },
+    },
+    'sardakk-norr': {
+      timing: 'combat-modifier',
+      // +1 to all combat rolls (stacks with Unrelenting)
+      apply: (_player, _context) => {
+        return 1  // additional -1 to combat threshold (better rolls)
+      },
+    },
+  }
+
+  /**
+   * Get commander effects available to a player.
+   * For non-Mahact: their own commander if unlocked.
+   * For Mahact with imperia: their own + captured players' commanders (if unlocked).
+   */
+  getActiveCommanderEffects(player) {
+    const effects = []
+
+    // Own commander
+    if (player.isCommanderUnlocked()) {
+      const effect = this._commanderEffects[player.factionId]
+      if (effect) {
+        effects.push({ factionId: player.factionId, ...effect })
+      }
+    }
+
+    // Mahact imperia: use captured players' commander abilities
+    if (this._hasAbility(player, 'imperia')) {
+      const captured = this.state.capturedCommandTokens[player.name] || []
+      for (const capturedPlayerName of captured) {
+        const capturedPlayer = this.players.byName(capturedPlayerName)
+        if (!capturedPlayer) {
+          continue
+        }
+        if (!capturedPlayer.isCommanderUnlocked()) {
+          continue
+        }
+
+        const effect = this._commanderEffects[capturedPlayer.factionId]
+        if (effect) {
+          effects.push({ factionId: capturedPlayer.factionId, ...effect })
+        }
+      }
+    }
+
+    return effects
+  }
+
+  /**
+   * Get combat modifier from commander effects for a player.
+   */
+  getCommanderCombatModifier(player, combatType) {
+    const effects = this.getActiveCommanderEffects(player)
+    let modifier = 0
+
+    for (const effect of effects) {
+      if (effect.timing === 'combat-modifier') {
+        modifier += (typeof effect.apply === 'function'
+          ? effect.apply(player, { timing: 'combat-modifier', combatType })
+          : 0)
+      }
+      if (effect.timing === 'ground-combat-modifier' && combatType === 'ground') {
+        modifier += (typeof effect.apply === 'function'
+          ? effect.apply(player, { timing: 'ground-combat-modifier', combatType })
+          : 0)
+      }
+    }
+
+    return modifier
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // W. Agent Effects — Nomad The Company
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Artuno the Betrayer: After a player replenishes commodities, exhaust to gain 1 TG.
+   * Called from trade primary/secondary after commodity replenishment.
+   */
+  onCommoditiesReplenished(_replenishingPlayer) {
+    this._nomadArtuno()
+  }
+
+  _nomadArtuno() {
+    for (const player of this.players.all()) {
+      if (!this._hasAbility(player, 'the-company')) {
+        continue
+      }
+      if (!player.isAgentReady('artuno')) {
+        continue
+      }
+
+      const choice = this.actions.choose(player, ['Exhaust Artuno', 'Pass'], {
+        title: 'Artuno the Betrayer: Exhaust to gain 1 trade good?',
+      })
+
+      if (choice[0] === 'Exhaust Artuno') {
+        player.exhaustAgent('artuno')
+        player.addTradeGoods(1)
+        this.log.add({
+          template: '{player} exhausts Artuno the Betrayer to gain 1 trade good',
+          args: { player },
+        })
+      }
+    }
+  }
+
+  /**
+   * The Thundarian: After winning combat, exhaust to place 1 cruiser in that system.
+   */
+  _nomadThundarian(systemId, winnerName, combatType) {
+    if (combatType !== 'space') {
+      return
+    }
+
+    const winner = this.players.byName(winnerName)
+    if (!winner) {
+      return
+    }
+    if (!this._hasAbility(winner, 'the-company')) {
+      return
+    }
+    if (!winner.isAgentReady('thundarian')) {
+      return
+    }
+
+    const choice = this.actions.choose(winner, ['Exhaust Thundarian', 'Pass'], {
+      title: 'The Thundarian: Exhaust to place 1 cruiser in this system?',
+    })
+
+    if (choice[0] === 'Exhaust Thundarian') {
+      winner.exhaustAgent('thundarian')
+      this.game._addUnit(systemId, 'space', 'cruiser', winnerName)
+      this.log.add({
+        template: '{player} exhausts The Thundarian to place a cruiser in {system}',
+        args: { player: winner, system: systemId },
+      })
+    }
+  }
+
+  /**
+   * Field Marshal Mercer: At start of ground combat, exhaust to remove 1 enemy ground force.
+   */
+  onGroundCombatMercer(systemId, planetId, attackerName, defenderName) {
+    for (const [self, opponent] of [[attackerName, defenderName], [defenderName, attackerName]]) {
+      const player = this.players.byName(self)
+      if (!player) {
+        continue
+      }
+      if (!this._hasAbility(player, 'the-company')) {
+        continue
+      }
+      if (!player.isAgentReady('mercer')) {
+        continue
+      }
+
+      const planetUnits = this.state.units[systemId].planets[planetId]
+      const enemyForces = planetUnits.filter(u => u.owner === opponent && (u.type === 'infantry' || u.type === 'mech'))
+      if (enemyForces.length === 0) {
+        continue
+      }
+
+      const choice = this.actions.choose(player, ['Exhaust Mercer', 'Pass'], {
+        title: 'Field Marshal Mercer: Exhaust to remove 1 enemy ground force?',
+      })
+
+      if (choice[0] === 'Exhaust Mercer') {
+        player.exhaustAgent('mercer')
+        // Remove 1 infantry first, then mech
+        const target = enemyForces.find(u => u.type === 'infantry') || enemyForces[0]
+        const idx = planetUnits.indexOf(target)
+        if (idx !== -1) {
+          planetUnits.splice(idx, 1)
+        }
+        this.log.add({
+          template: '{player} exhausts Field Marshal Mercer to remove 1 {type}',
+          args: { player, type: target.type },
+        })
+      }
+    }
   }
 }
 

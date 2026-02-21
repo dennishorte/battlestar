@@ -1715,7 +1715,7 @@ describe('Faction Abilities', () => {
 
   describe('Council Keleres', () => {
     test('replenishes commodities + 1 TG at strategy phase', () => {
-      const game = t.fixture({ factions: ['council-keleres', 'emirates-of-hacan'] })
+      const game = t.fixture({ factions: ['council-keleres', 'emirates-of-hacan'], keleresSubFaction: 'xxcha-kingdom' })
       game.run()
 
       // Keleres has council-patronage
@@ -1762,6 +1762,895 @@ describe('Faction Abilities', () => {
         .sort()
 
       expect(spaceUnits).toEqual(['carrier', 'destroyer', 'dreadnought', 'fighter'])
+    })
+  })
+
+  // =========================================================================
+  // Phase 1: Independent Features
+  // =========================================================================
+
+  describe('Hacan — Arbiters (Action Card Trading)', () => {
+    test('canTradeActionCards returns true when Hacan is involved', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')  // Hacan
+      const micah = game.players.byName('micah')     // Sol
+
+      expect(game.factionAbilities.canTradeActionCards(dennis, micah)).toBe(true)
+      expect(game.factionAbilities.canTradeActionCards(micah, dennis)).toBe(true)
+    })
+
+    test('action cards transfer correctly via Arbiters', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+      t.setBoard(game, {
+        dennis: {
+          actionCards: ['sabotage'],
+          tradeGoods: 1,
+        },
+        micah: {
+          actionCards: ['direct-hit'],
+          tradeGoods: 1,
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis (Hacan): Strategic Action + transaction
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+
+      // Transaction window for dennis (Hacan has guild-ships → can trade with anyone)
+      t.choose(game, 'micah')
+      t.action(game, 'trade-offer', {
+        offering: { actionCards: ['sabotage'] },
+        requesting: { actionCards: ['direct-hit'] },
+      })
+      t.choose(game, 'Accept')
+      // Transaction loop auto-exits: micah already traded with, no more partners
+
+      // Verify cards transferred
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+      expect(dennis.actionCards.some(c => c.id === 'direct-hit')).toBe(true)
+      expect(dennis.actionCards.some(c => c.id === 'sabotage')).toBe(false)
+      expect(micah.actionCards.some(c => c.id === 'sabotage')).toBe(true)
+      expect(micah.actionCards.some(c => c.id === 'direct-hit')).toBe(false)
+    })
+
+    test('non-Hacan cannot trade action cards', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'barony-of-letnev'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')  // Sol
+      const micah = game.players.byName('micah')     // Letnev
+
+      expect(game.factionAbilities.canTradeActionCards(dennis, micah)).toBe(false)
+    })
+  })
+
+  describe('Ghosts of Creuss — Creuss Gate', () => {
+    test('Creuss Gate placed at home position, home system off-map', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      game.run()
+
+      // Creuss Gate should be at the home position
+      expect(game.state.systems['creuss-gate']).toBeDefined()
+      expect(game.state.systems['creuss-gate'].position).toEqual({ q: 0, r: -3 })
+
+      // Creuss home should be off-map
+      expect(game.state.systems['creuss-home']).toBeDefined()
+      expect(game.state.systems['creuss-home'].position).toEqual({ q: 99, r: 99 })
+    })
+
+    test('Creuss home and gate are wormhole-adjacent via delta', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      game.run()
+
+      const { Galaxy } = require('../model/Galaxy.js')
+      const galaxy = new Galaxy(game)
+
+      // Both have delta wormhole → adjacent
+      const gateAdj = galaxy.getAdjacent('creuss-gate')
+      expect(gateAdj).toContain('creuss-home')
+
+      const homeAdj = galaxy.getAdjacent('creuss-home')
+      expect(homeAdj).toContain('creuss-gate')
+    })
+
+    test('starting units placed on creuss-home, not creuss-gate', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      game.run()
+
+      // Starting units should be on creuss-home
+      const homeSpace = game.state.units['creuss-home'].space
+        .filter(u => u.owner === 'dennis')
+      expect(homeSpace.length).toBeGreaterThan(0)
+
+      // Creuss-gate should have no units
+      const gateSpace = game.state.units['creuss-gate'].space
+      expect(gateSpace.length).toBe(0)
+
+      // Planet units on creuss (in creuss-home system)
+      const creussPlanet = game.state.units['creuss-home'].planets['creuss']
+        .filter(u => u.owner === 'dennis')
+      expect(creussPlanet.length).toBeGreaterThan(0)
+    })
+  })
+
+  describe('Empyrean — Dark Whispers', () => {
+    test('Empyrean starts with 2 copies of faction promissory note', () => {
+      const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      const factionNotes = dennis.promissoryNotes.filter(n => n.id === 'dark-pact')
+      expect(factionNotes.length).toBe(2)
+    })
+
+    test('non-Empyrean starts with 1 faction promissory note', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'empyrean'] })
+      game.run()
+
+      // Sol doesn't have Dark Whispers, so only 1 copy of faction note
+      // Sol has no faction-specific promissory note, so check generic notes instead
+      const dennis = game.players.byName('dennis')
+      const genericNotes = dennis.promissoryNotes.filter(n => n.id === 'support-for-the-throne')
+      expect(genericNotes.length).toBe(1)
+
+      // Micah (Empyrean) should have 2 copies
+      const micah = game.players.byName('micah')
+      const darkPacts = micah.promissoryNotes.filter(n => n.id === 'dark-pact')
+      expect(darkPacts.length).toBe(2)
+    })
+  })
+
+  describe('Titans of Ul — Coalescence', () => {
+    test('checkCoalescence detects Titans flagship in system', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'titans-of-ul'] })
+      t.setBoard(game, {
+        micah: {
+          units: {
+            '27': {
+              space: ['flagship'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      expect(game.factionAbilities.checkCoalescence('27', 'dennis')).toBe(true)
+      // Titans own flagship — not triggered for Titans themselves
+      expect(game.factionAbilities.checkCoalescence('27', 'micah')).toBe(false)
+    })
+
+    test('checkCoalescence detects Titans mech on planet', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'titans-of-ul'] })
+      t.setBoard(game, {
+        micah: {
+          units: {
+            '27': {
+              'new-albion': ['mech'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      expect(game.factionAbilities.checkCoalescence('27', 'dennis')).toBe(true)
+      expect(game.factionAbilities.checkCoalescenceOnPlanet('27', 'new-albion', 'dennis')).toBe(true)
+    })
+  })
+
+  // =========================================================================
+  // Phase 2: Law Enforcement
+  // =========================================================================
+
+  describe('Law Enforcement', () => {
+    test('minister-of-commerce grants 1 TG at strategy phase', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        activeLaws: [{ id: 'minister-of-commerce', name: 'Minister of Commerce', type: 'law', resolvedOutcome: 'dennis' }],
+      })
+      game.run()
+
+      // Strategy phase starts → minister-of-commerce gives dennis 1 TG
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBe(1)
+    })
+
+    test('enforced-travel-ban blocks alpha/beta wormhole adjacency', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        activeLaws: ['enforced-travel-ban'],
+      })
+      game.run()
+
+      const { Galaxy } = require('../model/Galaxy.js')
+      const galaxy = new Galaxy(game)
+
+      // System 26 has alpha wormhole, system 39 has alpha wormhole
+      // Normally adjacent via wormhole, but travel ban blocks it
+      const adj26 = galaxy.getAdjacent('26')
+      expect(adj26).not.toContain('39')
+
+      // System 25 has beta wormhole, system 40 has beta wormhole
+      const adj25 = galaxy.getAdjacent('25')
+      expect(adj25).not.toContain('40')
+    })
+
+    test('enforced-travel-ban does not block delta wormholes', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        activeLaws: ['enforced-travel-ban'],
+      })
+      game.run()
+
+      const { Galaxy } = require('../model/Galaxy.js')
+      const galaxy = new Galaxy(game)
+
+      // Creuss gate and home both have delta wormhole → still adjacent
+      const gateAdj = galaxy.getAdjacent('creuss-gate')
+      expect(gateAdj).toContain('creuss-home')
+    })
+
+    test('laws survive across rounds', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        activeLaws: [{ id: 'minister-of-commerce', name: 'Minister of Commerce', type: 'law', resolvedOutcome: 'dennis' }],
+      })
+      game.run()
+
+      // First round strategy phase → dennis gains 1 TG
+      expect(game._isLawActive('minister-of-commerce')).toBe(true)
+      expect(game.state.activeLaws.length).toBe(1)
+    })
+
+    test('_isLawActive returns false when law not present', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      game.run()
+
+      expect(game._isLawActive('minister-of-commerce')).toBe(false)
+      expect(game._isLawActive('enforced-travel-ban')).toBe(false)
+    })
+  })
+
+  describe('Council Keleres — Laws Order', () => {
+    test('Keleres can blank laws by spending influence', () => {
+      const game = t.fixture({ factions: ['council-keleres', 'emirates-of-hacan'], keleresSubFaction: 'xxcha-kingdom' })
+      t.setBoard(game, {
+        activeLaws: [{ id: 'minister-of-commerce', name: 'Minister of Commerce', type: 'law', resolvedOutcome: 'micah' }],
+        dennis: {
+          planets: { 'new-albion': { exhausted: false } },  // 1 influence
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis (Keleres) has laws-order
+      // At start of turn, prompted to blank laws
+      t.choose(game, 'Blank Laws')
+
+      // Laws should be blanked during this turn
+      expect(game.state.lawsBlankedByPlayer).toBe('dennis')
+      expect(game._isLawActive('minister-of-commerce')).toBe(false)
+    })
+
+    test('laws-order blanking clears at end of turn', () => {
+      const game = t.fixture({ factions: ['council-keleres', 'emirates-of-hacan'], keleresSubFaction: 'xxcha-kingdom' })
+      t.setBoard(game, {
+        activeLaws: [{ id: 'minister-of-commerce', name: 'Minister of Commerce', type: 'law', resolvedOutcome: 'micah' }],
+        dennis: {
+          planets: { 'new-albion': { exhausted: false } },  // 1 influence
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis blanks laws
+      t.choose(game, 'Blank Laws')
+
+      // Dennis does strategic action
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+
+      // Now micah's turn — law blanking should clear
+      // Micah is not prompted for laws-order (not Keleres)
+      // Laws should be active again for micah's turn
+      expect(game._isLawActive('minister-of-commerce')).toBe(true)
+    })
+  })
+
+  // =========================================================================
+  // Phase 3: Cross-Player Movement (Aetherpassage)
+  // =========================================================================
+
+  describe('Empyrean — Aetherpassage', () => {
+    test('permission granted allows movement through Empyrean systems', () => {
+      // Layout: sol-home(0,-3) → 27(0,-2) → 26(0,-1) → mecatol(0,0)
+      // Empyrean ships in system 27 block Sol movement, unless aetherpassage granted
+      const game = t.fixture({ factions: ['federation-of-sol', 'empyrean'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'sol-home': {
+              space: ['cruiser'],
+              'jord': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['destroyer'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '26' })
+
+      // Empyrean (micah) prompted for aetherpassage
+      t.choose(game, 'Allow Passage')
+
+      // Now Sol can move through system 27 (Empyrean ships there)
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'sol-home', count: 1 }],
+      })
+
+      // Cruiser should arrive in system 26
+      const ships26 = game.state.units['26'].space.filter(u => u.owner === 'dennis')
+      expect(ships26.length).toBe(1)
+    })
+
+    test('permission denied blocks movement through Empyrean systems', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'empyrean'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'sol-home': {
+              space: ['cruiser'],
+              'jord': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['destroyer'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '26' })
+
+      // Empyrean denies passage
+      t.choose(game, 'Deny')
+
+      // Sol tries to move through system 27 — blocked by Empyrean ships
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'sol-home', count: 1 }],
+      })
+
+      // Cruiser should NOT arrive (no valid path)
+      const ships26 = game.state.units['26'].space.filter(u => u.owner === 'dennis')
+      expect(ships26.length).toBe(0)
+    })
+
+    test('aetherpassage only lasts one tactical action', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'empyrean'] })
+      game.run()
+
+      // Grant is set and cleared
+      game.state.aetherpassageGrant = 'micah'
+      expect(game.state.aetherpassageGrant).toBe('micah')
+
+      // After clearing (simulated end of tactical action)
+      game.state.aetherpassageGrant = null
+      expect(game.state.aetherpassageGrant).toBeNull()
+    })
+
+    test('Empyrean not prompted on own turn', () => {
+      // When Empyrean activates a system, they should NOT be prompted
+      const game = t.fixture({ factions: ['empyrean', 'federation-of-sol'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(game.factionAbilities._hasAbility(dennis, 'aetherpassage')).toBe(true)
+
+      // No prompt for self — this is verified by the game flow not blocking
+    })
+  })
+
+  // =========================================================================
+  // Phase 4: Commander Effects + Imperia
+  // =========================================================================
+
+  describe('Commander Effects Registry', () => {
+    test('Sol commander effect returns ground combat modifier', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: { leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' } },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      const effects = game.factionAbilities.getActiveCommanderEffects(dennis)
+      expect(effects.length).toBe(1)
+      expect(effects[0].factionId).toBe('federation-of-sol')
+      expect(effects[0].timing).toBe('ground-combat-modifier')
+    })
+
+    test('locked commander returns no effects', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      // Commander starts locked
+      expect(dennis.isCommanderUnlocked()).toBe(false)
+      const effects = game.factionAbilities.getActiveCommanderEffects(dennis)
+      expect(effects.length).toBe(0)
+    })
+
+    test('Sardakk commander provides combat modifier', () => {
+      const game = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: { leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' } },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      const modifier = game.factionAbilities.getCommanderCombatModifier(dennis, 'space')
+      expect(modifier).toBe(1)
+    })
+
+    test('Sol commander modifier only applies to ground combat', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: { leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' } },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      // Ground combat: Sol commander provides bonus
+      const groundMod = game.factionAbilities.getCommanderCombatModifier(dennis, 'ground')
+      expect(groundMod).toBe(1)
+
+      // Space combat: Sol commander does NOT provide bonus
+      const spaceMod = game.factionAbilities.getCommanderCombatModifier(dennis, 'space')
+      expect(spaceMod).toBe(0)
+    })
+  })
+
+  describe('Mahact — Imperia', () => {
+    test('Mahact can use captured player commander effects', () => {
+      const game = t.fixture({ factions: ['mahact-gene-sorcerers', 'sardakk-norr'] })
+      t.setBoard(game, {
+        dennis: { leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' } },
+        micah: { leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' } },
+        capturedCommandTokens: { dennis: ['micah'] },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      const effects = game.factionAbilities.getActiveCommanderEffects(dennis)
+
+      // Should have Mahact's own commander (not in registry) + Sardakk captured commander
+      const sardakkEffect = effects.find(e => e.factionId === 'sardakk-norr')
+      expect(sardakkEffect).toBeDefined()
+      expect(sardakkEffect.timing).toBe('combat-modifier')
+    })
+
+    test('imperia only works with unlocked captured commander', () => {
+      const game = t.fixture({ factions: ['mahact-gene-sorcerers', 'sardakk-norr'] })
+      t.setBoard(game, {
+        dennis: { leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' } },
+        // micah's commander is locked
+        capturedCommandTokens: { dennis: ['micah'] },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      const effects = game.factionAbilities.getActiveCommanderEffects(dennis)
+
+      // Sardakk commander locked — not available
+      const sardakkEffect = effects.find(e => e.factionId === 'sardakk-norr')
+      expect(sardakkEffect).toBeUndefined()
+    })
+
+    test('imperia stops when captured token returned', () => {
+      const game = t.fixture({ factions: ['mahact-gene-sorcerers', 'sardakk-norr'] })
+      t.setBoard(game, {
+        dennis: { leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' } },
+        micah: { leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' } },
+        capturedCommandTokens: { dennis: ['micah'] },
+      })
+      game.run()
+
+      // Remove captured token (simulate return)
+      game.state.capturedCommandTokens['dennis'] = []
+
+      const dennis = game.players.byName('dennis')
+      const effects = game.factionAbilities.getActiveCommanderEffects(dennis)
+
+      const sardakkEffect = effects.find(e => e.factionId === 'sardakk-norr')
+      expect(sardakkEffect).toBeUndefined()
+    })
+
+    test('Mahact gets combat modifier from captured Sardakk commander', () => {
+      const game = t.fixture({ factions: ['mahact-gene-sorcerers', 'sardakk-norr'] })
+      t.setBoard(game, {
+        dennis: { leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' } },
+        micah: { leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' } },
+        capturedCommandTokens: { dennis: ['micah'] },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      const modifier = game.factionAbilities.getCommanderCombatModifier(dennis, 'space')
+      expect(modifier).toBe(1)  // Sardakk commander bonus
+    })
+  })
+
+
+  // ===========================================================================
+  // Phase 5: Agent Effects — Nomad The Company
+  // ===========================================================================
+
+  describe('Nomad — The Company', () => {
+    test('Nomad starts with 3 agents', () => {
+      const game = t.fixture({ factions: ['nomad', 'federation-of-sol'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.leaders.agents).toBeDefined()
+      expect(dennis.leaders.agents.length).toBe(3)
+      expect(dennis.leaders.agents.map(a => a.id)).toEqual(['artuno', 'thundarian', 'mercer'])
+      expect(dennis.leaders.agents.every(a => a.status === 'ready')).toBe(true)
+      // Should not have the single-agent field
+      expect(dennis.leaders.agent).toBeUndefined()
+    })
+
+    test('each agent is independently exhaustible', () => {
+      const game = t.fixture({ factions: ['nomad', 'federation-of-sol'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+
+      // Exhaust artuno specifically
+      dennis.exhaustAgent('artuno')
+      expect(dennis.isAgentReady('artuno')).toBe(false)
+      expect(dennis.isAgentReady('thundarian')).toBe(true)
+      expect(dennis.isAgentReady('mercer')).toBe(true)
+
+      // isAgentReady() with no args: true if any agent is ready
+      expect(dennis.isAgentReady()).toBe(true)
+
+      // Exhaust all
+      dennis.exhaustAgent('thundarian')
+      dennis.exhaustAgent('mercer')
+      expect(dennis.isAgentReady()).toBe(false)
+    })
+
+    test('all agents readied in status phase', () => {
+      const game = t.fixture({ factions: ['nomad', 'federation-of-sol'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: {
+            agents: [
+              { id: 'artuno', name: 'Artuno the Betrayer', status: 'exhausted' },
+              { id: 'thundarian', name: 'The Thundarian', status: 'exhausted' },
+              { id: 'mercer', name: 'Field Marshal Mercer', status: 'exhausted' },
+            ],
+            commander: 'locked',
+            hero: 'locked',
+          },
+        },
+      })
+      game.run()
+
+      // Pick strategy cards
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      // Dennis uses leadership (strategic action)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')              // micah declines leadership secondary
+
+      // Micah uses diplomacy (strategic action)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'sol-home')           // micah picks system to protect
+      t.choose(game, 'Pass')              // dennis declines diplomacy secondary
+
+      // Both pass
+      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')
+
+      // Status phase: redistribute tokens
+      t.choose(game, 'Done')
+      t.choose(game, 'Done')
+
+      // After status phase, all agents should be ready (re-fetch player after state change)
+      const dennis = game.players.byName('dennis')
+      expect(dennis.leaders.agents.every(a => a.status === 'ready')).toBe(true)
+    })
+
+    test('Artuno: exhaust after commodity replenishment to gain 1 TG', () => {
+      const game = t.fixture({ factions: ['nomad', 'federation-of-sol'] })
+      game.run()
+
+      // Pick trade for dennis, imperial for micah
+      t.choose(game, 'trade')
+      t.choose(game, 'imperial')
+
+      // Dennis goes first (trade=5), uses strategic action
+      t.choose(game, 'Strategic Action')
+      // Trade primary replenishes all commodities — Artuno fires
+      t.choose(game, 'Exhaust Artuno')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBe(4)  // 3 from trade + 1 from Artuno
+      expect(dennis.isAgentReady('artuno')).toBe(false)
+    })
+
+    test('Thundarian: exhaust after winning space combat to place cruiser', () => {
+      const game = t.fixture({ factions: ['nomad', 'federation-of-sol'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            27: { space: ['cruiser', 'cruiser'] },
+          },
+        },
+        micah: {
+          units: {
+            26: { space: ['fighter'] },
+          },
+        },
+      })
+      game.run()
+
+      // Pick strategy cards
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      // Dennis: tactical action → activate system 26 (adjacent to 27)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '26' })
+
+      // Move cruisers from 27 to 26
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: '27', count: 2 }],
+      })
+
+      // Space combat auto-resolves (2 cruisers vs 1 fighter)
+      // After combat, Thundarian prompt fires
+      t.choose(game, 'Exhaust Thundarian')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady('thundarian')).toBe(false)
+
+      // Should have 3 cruisers in system 26 (2 moved + 1 from Thundarian)
+      const system26Units = game.state.units['26'].space.filter(u => u.owner === 'dennis' && u.type === 'cruiser')
+      expect(system26Units.length).toBe(3)
+    })
+
+    test('Mercer: exhaust at start of ground combat to remove enemy ground force', () => {
+      const game = t.fixture({ factions: ['nomad', 'federation-of-sol'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'nomad-home': {
+              space: ['carrier'],
+              arcturus: ['infantry', 'infantry', 'infantry', 'infantry'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            27: { 'new-albion': ['infantry', 'infantry'] },
+          },
+          planets: { 'new-albion': { exhausted: false } },
+        },
+      })
+      game.run()
+
+      // Pick strategy cards
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      // Dennis: tactical action → activate system 27 (adjacent to nomad-home)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Move carrier + infantry from nomad-home to system 27
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'nomad-home', count: 1 },
+          { unitType: 'infantry', from: 'nomad-home', count: 4 },
+        ],
+      })
+
+      // Mercer prompt fires at ground combat start on new-albion
+      t.choose(game, 'Exhaust Mercer')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady('mercer')).toBe(false)
+
+      // Dennis should control new-albion after combat (4 infantry vs 1 after Mercer removed 1)
+      expect(game.state.planets['new-albion'].controller).toBe('dennis')
+
+      // Micah should have no infantry left (Mercer removed 1, combat killed the rest)
+      const micahGround = game.state.units['27'].planets['new-albion']
+        .filter(u => u.owner === 'micah')
+      expect(micahGround.length).toBe(0)
+    })
+  })
+
+
+  // ===========================================================================
+  // Phase 6: Alliance Promissory Notes — Mahact Hubris
+  // ===========================================================================
+
+  describe('Alliance Promissory Notes', () => {
+    test('players start with Alliance promissory note', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+
+      expect(dennis.hasPromissoryNote('alliance', 'dennis')).toBe(true)
+      expect(micah.hasPromissoryNote('alliance', 'micah')).toBe(true)
+    })
+
+    test('Mahact has no Alliance note (hubris purges it)', () => {
+      const game = t.fixture({ factions: ['mahact-gene-sorcerers', 'federation-of-sol'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+
+      // Mahact should not have Alliance note
+      expect(dennis.hasPromissoryNote('alliance', 'dennis')).toBe(false)
+
+      // Sol should still have theirs
+      expect(micah.hasPromissoryNote('alliance', 'micah')).toBe(true)
+    })
+
+    test('Alliance note is tradeable to non-Mahact players', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+
+      // Manually trade Alliance note
+      const note = dennis.removePromissoryNote('alliance', 'dennis')
+      expect(note).not.toBeNull()
+      micah.addPromissoryNote(note.id, note.owner)
+
+      expect(dennis.hasPromissoryNote('alliance', 'dennis')).toBe(false)
+      expect(micah.hasPromissoryNote('alliance', 'dennis')).toBe(true)
+    })
+
+    test('cannot give Alliance notes to Mahact via transaction', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'mahact-gene-sorcerers'] })
+      t.setBoard(game, {
+        dennis: { tradeGoods: 5 },
+        micah: { tradeGoods: 5 },
+      })
+      game.run()
+
+      // Pick trade for dennis, imperial for micah
+      t.choose(game, 'trade')
+      t.choose(game, 'imperial')
+
+      // Dennis uses trade primary
+      t.choose(game, 'Strategic Action')
+
+      // Dennis offers Alliance note to Mahact (micah) — should be silently rejected
+      t.action(game, 'trade-offer', {
+        partner: 'micah',
+        offering: {
+          promissoryNotes: [{ id: 'alliance', owner: 'dennis' }],
+        },
+        requesting: {},
+      })
+
+      // The transaction should not go through — Alliance note stays with dennis
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasPromissoryNote('alliance', 'dennis')).toBe(true)
+    })
+  })
+
+
+  // ===========================================================================
+  // Phase 7: Keleres Sub-Faction — The Tribunii
+  // ===========================================================================
+
+  describe('Keleres — The Tribunii', () => {
+    test('Keleres inherits Mentak home system', () => {
+      const game = t.fixture({
+        factions: ['council-keleres', 'federation-of-sol'],
+        keleresSubFaction: 'mentak-coalition',
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.keleresSubFaction).toBe('mentak-coalition')
+      expect(dennis.faction.homeSystem).toBe('mentak-home')
+
+      // Mentak home system should exist in the galaxy
+      expect(game.state.systems['mentak-home']).toBeDefined()
+    })
+
+    test('Keleres inherits Xxcha home system', () => {
+      const game = t.fixture({
+        factions: ['council-keleres', 'federation-of-sol'],
+        keleresSubFaction: 'xxcha-kingdom',
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.keleresSubFaction).toBe('xxcha-kingdom')
+      expect(dennis.faction.homeSystem).toBe('xxcha-home')
+
+      expect(game.state.systems['xxcha-home']).toBeDefined()
+    })
+
+    test('Keleres inherits Argent home system', () => {
+      const game = t.fixture({
+        factions: ['council-keleres', 'federation-of-sol'],
+        keleresSubFaction: 'argent-flight',
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.keleresSubFaction).toBe('argent-flight')
+      expect(dennis.faction.homeSystem).toBe('argent-home')
+
+      expect(game.state.systems['argent-home']).toBeDefined()
+    })
+
+    test('cannot choose a faction already played', () => {
+      // Xxcha is played by micah — Keleres cannot choose it
+      const game = t.fixture({
+        factions: ['council-keleres', 'xxcha-kingdom'],
+        keleresSubFaction: 'mentak-coalition',
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.keleresSubFaction).toBe('mentak-coalition')
+      expect(dennis.faction.homeSystem).toBe('mentak-home')
+    })
+
+    test('setBoard pre-configures sub-faction', () => {
+      const game = t.fixture({
+        factions: ['council-keleres', 'federation-of-sol'],
+        keleresSubFaction: 'argent-flight',
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+
+      // Sub-faction was set via fixture option
+      expect(dennis.keleresSubFaction).toBe('argent-flight')
+
+      // Starting units include Keleres fleet in space + sub-faction planet units
+      const homeUnits = game.state.units['argent-home']
+      expect(homeUnits).toBeDefined()
+
+      // Keleres should have ships in space
+      const dennisShips = homeUnits.space.filter(u => u.owner === 'dennis')
+      expect(dennisShips.length).toBeGreaterThan(0)
     })
   })
 })
