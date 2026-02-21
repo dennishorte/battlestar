@@ -5,7 +5,7 @@ module.exports = {
   number: 119,
   type: "occupation",
   players: "1+",
-  text: "Immediately place 1 wood on each of the next round spaces, up to the number of fences you built. At the start of these rounds, you get the wood.",
+  text: "Immediately place 1 wood on each of the next round spaces, up to the number of fences you currently have built. At the start of these rounds, you get the wood.",
   onPlay(game, player) {
     const fenceCount = player.getFenceCount()
     const currentRound = game.state.round
