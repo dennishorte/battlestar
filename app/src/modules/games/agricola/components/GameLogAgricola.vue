@@ -1,19 +1,76 @@
 <template>
   <GameLog id="gamelog" />
+  <Teleport to="body">
+    <div
+      v-if="hoverCardId"
+      class="gamelog-card-tooltip"
+      :style="tooltipStyle"
+    >
+      <AgricolaCardChip :cardId="hoverCardId" :initialExpanded="true" />
+    </div>
+  </Teleport>
 </template>
 
 <script setup>
-import { inject } from 'vue'
+import { computed, inject, ref } from 'vue'
 import GameLog from '@/modules/games/common/components/log/GameLog.vue'
+import AgricolaCardChip from './AgricolaCardChip.vue'
 import { useGameLogProvider } from '@/modules/games/common/composables/useGameLog'
 
 const game = inject('game')
 const ui = inject('ui')
 
+const hoverCardId = ref(null)
+const mouseX = ref(0)
+const mouseY = ref(0)
+
+const tooltipStyle = computed(() => {
+  const style = {
+    position: 'fixed',
+    zIndex: 10000,
+    pointerEvents: 'none',
+  }
+
+  const offset = 12
+
+  // Horizontal: place on side with more space
+  if (mouseX.value > window.innerWidth / 2) {
+    style.right = `${window.innerWidth - mouseX.value + offset}px`
+  }
+  else {
+    style.left = `${mouseX.value + offset}px`
+  }
+
+  // Vertical: place on side with more space
+  if (mouseY.value > window.innerHeight / 2) {
+    style.bottom = `${window.innerHeight - mouseY.value + offset}px`
+  }
+  else {
+    style.top = `${mouseY.value + offset}px`
+  }
+
+  return style
+})
+
 function cardClick(card) {
   if (card && ui?.fn?.showCard) {
     ui.fn.showCard(card.id, card.type)
   }
+}
+
+function cardMouseover(card) {
+  if (card) {
+    hoverCardId.value = card.id
+  }
+}
+
+function cardMouseleave() {
+  hoverCardId.value = null
+}
+
+function cardMousemove(event) {
+  mouseX.value = event.clientX
+  mouseY.value = event.clientY
 }
 
 function cardClasses(card) {
@@ -83,6 +140,9 @@ function lineStyles(line) {
 useGameLogProvider({
   cardClick,
   cardClasses,
+  cardMouseover,
+  cardMouseleave,
+  cardMousemove,
   chatColors,
   lineClasses,
   lineStyles,
@@ -211,5 +271,15 @@ useGameLogProvider({
   font-size: 0.9em;
   margin-top: -0.1em;
   margin-bottom: -0.1em;
+}
+</style>
+
+<style>
+.gamelog-card-tooltip {
+  max-width: 280px;
+  background: white;
+  border-radius: .3em;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
 }
 </style>
