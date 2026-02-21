@@ -275,6 +275,15 @@ TestUtil.setBoard = function(game, state) {
     if (state.exploredPlanets !== undefined) {
       game.state.exploredPlanets = { ...state.exploredPlanets }
     }
+    if (state.activeLaws !== undefined) {
+      game.state.activeLaws = state.activeLaws.map(spec => {
+        if (typeof spec === 'string') {
+          const card = res.getAgendaCard(spec)
+          return card ? { ...card, resolvedOutcome: 'For' } : { id: spec, resolvedOutcome: 'For' }
+        }
+        return spec
+      })
+    }
 
     // Faction-specific game state
     if (state.sleeperTokens !== undefined) {
@@ -283,6 +292,11 @@ TestUtil.setBoard = function(game, state) {
     if (state.capturedUnits !== undefined) {
       for (const [playerName, units] of Object.entries(state.capturedUnits)) {
         game.state.capturedUnits[playerName] = units.map(u => ({ ...u }))
+      }
+    }
+    if (state.capturedCommandTokens !== undefined) {
+      for (const [playerName, tokens] of Object.entries(state.capturedCommandTokens)) {
+        game.state.capturedCommandTokens[playerName] = [...tokens]
       }
     }
 

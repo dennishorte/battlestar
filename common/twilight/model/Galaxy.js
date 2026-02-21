@@ -57,8 +57,13 @@ class Galaxy {
     }
 
     // Wormhole adjacency — combine tile wormholes with faction-granted wormholes
+    // Enforced Travel Ban: alpha/beta wormholes have no effect during movement
+    const enforcedTravelBan = this.game._isLawActive?.('enforced-travel-ban') ?? false
     const tile = this.getSystemTile(systemId)
-    const tileWormholes = tile ? [...tile.wormholes] : []
+    let tileWormholes = tile ? [...tile.wormholes] : []
+    if (enforcedTravelBan) {
+      tileWormholes = tileWormholes.filter(w => w !== 'alpha' && w !== 'beta')
+    }
 
     // Creuss quantum-entanglement: home system has alpha + beta wormholes
     if (this.game.factionAbilities) {
@@ -80,7 +85,10 @@ class Galaxy {
         }
 
         const otherTile = this.getSystemTile(otherId)
-        const otherWormholes = otherTile ? [...otherTile.wormholes] : []
+        let otherWormholes = otherTile ? [...otherTile.wormholes] : []
+        if (enforcedTravelBan) {
+          otherWormholes = otherWormholes.filter(w => w !== 'alpha' && w !== 'beta')
+        }
 
         // Also check faction wormholes on the other system
         if (this.game.factionAbilities) {
@@ -170,7 +178,10 @@ class Galaxy {
         }
 
         // Cannot move through systems with enemy ships (unless destination)
+        // Aetherpassage: skip blocking by the granting player's ships
+        const aetherGrant = this.game.state?.aetherpassageGrant
         const enemyShips = this._getEnemyShipsInSystem(neighborId, playerName)
+          .filter(u => !aetherGrant || u.owner !== aetherGrant)
         if (enemyShips.length > 0) {
           continue  // blocked by enemy fleet
         }
