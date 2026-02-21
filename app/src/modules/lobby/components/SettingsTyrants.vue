@@ -79,6 +79,13 @@
             <label class="form-check-label">{{ variant.text }}</label>
           </div>
         </div>
+        <div class="form-check">
+          <input class="form-check-input"
+                 type="checkbox"
+                 v-model="models.pruneDeadEnds"
+                 @change="optionsChanged" />
+          <label class="form-check-label">prune dead-end tunnels</label>
+        </div>
         <small class="text-muted">Import map layout</small>
         <input
           type="text"
@@ -166,6 +173,7 @@ export default {
         demonweb2Variant: 'demonweb-2s',
         menzoExtraNeutral: true,
         randomizeExpansions: true,
+        pruneDeadEnds: false,
         mapLayout: null,
         mapLayoutString: '',
       },
@@ -199,6 +207,7 @@ export default {
         demonweb2Variant: this.models.demonweb2Variant,
         mapLayout: this.models.mapLayout || undefined,
         menzoExtraNeutral: this.models.menzoExtraNeutral,
+        pruneDeadEnds: this.models.pruneDeadEnds,
         randomizeExpansions: this.models.randomizeExpansions,
       }
       this.updateValid()
@@ -252,6 +261,8 @@ export default {
       else {
         this.models.menzoExtraNeutral = this.lobby.options.menzoExtraNeutral
       }
+
+      this.models.pruneDeadEnds = Boolean(this.lobby.options.pruneDeadEnds)
 
       // Handle old specific map names from existing lobbies
       const savedMap = this.lobby.options.map

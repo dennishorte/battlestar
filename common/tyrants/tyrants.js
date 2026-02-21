@@ -107,6 +107,7 @@ function factoryFromLobby(lobby) {
     map: _resolveMap(lobby),
     mapLayout: lobby.options.mapLayout,
     menzoExtraNeutral: lobby.options.menzoExtraNeutral,
+    pruneDeadEnds: lobby.options.pruneDeadEnds,
     players: lobby.users,
     seed: lobby.seed,
     chooseColors: true,
@@ -233,7 +234,12 @@ Tyrants.prototype.initializeDemonwebMap = function() {
   }
 
   // Step 3: Compute neighbors from internal paths + edge connections
-  const locationData = this._assembleMapLocations(rotatedTiles, config.layout)
+  let locationData = this._assembleMapLocations(rotatedTiles, config.layout)
+
+  // Step 3b: Optionally prune dead-end tunnels
+  if (this.settings.pruneDeadEnds) {
+    locationData = this._pruneDeadEndTunnels(locationData)
+  }
 
   // Step 4: Create zones for each location
   for (const data of locationData) {
@@ -527,6 +533,36 @@ Tyrants.prototype._assembleMapLocations = function(tiles, layout) {
   return locations
 }
 
+Tyrants.prototype._pruneDeadEndTunnels = function(locations) {
+  // Iteratively remove dead-end tunnels (points === 0, single neighbor).
+  // Removing one dead end may create a new one, so repeat until stable.
+  const locationMap = {}
+  for (const loc of locations) {
+    locationMap[loc.name] = loc
+  }
+
+  let changed = true
+  while (changed) {
+    changed = false
+    for (let i = locations.length - 1; i >= 0; i--) {
+      const loc = locations[i]
+      if (loc.points === 0 && loc.neighbors.length === 1) {
+        // Remove this dead-end tunnel from its neighbor's neighbor list
+        const neighborData = locationMap[loc.neighbors[0]]
+        if (neighborData) {
+          neighborData.neighbors = neighborData.neighbors.filter(n => n !== loc.name)
+        }
+        // Remove the location
+        delete locationMap[loc.name]
+        locations.splice(i, 1)
+        changed = true
+      }
+    }
+  }
+
+  return locations
+}
+
 Tyrants.prototype._initializeGemstones = function() {
   this.state.gemstones = {}
   this.state.playerGems = {}
@@ -633,7 +669,12 @@ Tyrants.prototype._rebuildDemonwebMap = function(rotations) {
   }))
 
   // Step 4: Assemble map locations with new rotations
-  const locationData = this._assembleMapLocations(tiles, config.layout)
+  let locationData = this._assembleMapLocations(tiles, config.layout)
+
+  // Step 4b: Optionally prune dead-end tunnels
+  if (this.settings.pruneDeadEnds) {
+    locationData = this._pruneDeadEndTunnels(locationData)
+  }
 
   // Step 5: Create new zones
   for (const data of locationData) {

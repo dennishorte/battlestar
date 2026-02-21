@@ -1460,6 +1460,93 @@ describe('Demonweb', () => {
       submitRotations(game)
     })
 
+    test('pruneDeadEnds removes dead-end tunnel locations', () => {
+      const game = demonwebFixture({ pruneDeadEnds: true })
+
+      // No location should be a dead-end tunnel (points=0, 1 neighbor)
+      const deadEnds = game.getLocationAll().filter(
+        loc => loc.points === 0 && loc.neighborNames.length === 1
+      )
+      expect(deadEnds).toHaveLength(0)
+      submitRotations(game)
+    })
+
+    test('pruneDeadEnds still has sites and connected tunnels', () => {
+      const game = demonwebFixture({ pruneDeadEnds: true })
+      const locations = game.getLocationAll()
+
+      // Should still have locations
+      expect(locations.length).toBeGreaterThan(0)
+
+      // Sites (points > 0) should still be present
+      const sites = locations.filter(l => l.points > 0)
+      expect(sites.length).toBeGreaterThan(0)
+
+      submitRotations(game)
+    })
+
+    test('pruneDeadEnds has fewer locations than without', () => {
+      const layout = [
+        { tileId: 'B1', rotation: 0 },
+        { tileId: 'C1', rotation: 0 },
+        { tileId: 'C2', rotation: 0 },
+        { tileId: 'C3', rotation: 0 },
+        { tileId: 'A1', rotation: 0 },
+        { tileId: 'C4', rotation: 0 },
+        { tileId: 'C5', rotation: 0 },
+        { tileId: 'C6', rotation: 0 },
+        { tileId: 'B2', rotation: 0 },
+      ]
+      const withPrune = demonwebFixture({ mapLayout: layout, pruneDeadEnds: true })
+      const withoutPrune = demonwebFixture({ mapLayout: layout, pruneDeadEnds: false })
+
+      const prunedCount = withPrune.getLocationAll().length
+      const fullCount = withoutPrune.getLocationAll().length
+      expect(prunedCount).toBeLessThan(fullCount)
+      submitRotations(withPrune)
+      submitRotations(withoutPrune)
+    })
+
+    test('pruneDeadEnds with rotation still has no dead ends', () => {
+      const game = demonwebFixture({ pruneDeadEnds: true })
+      const hex = game.state.assembledMap.hexes[0]
+      submitRotations(game, { [hex.tileId]: (hex.rotation + 1) % 6 })
+
+      const deadEnds = game.getLocationAll().filter(
+        loc => loc.points === 0 && loc.neighborNames.length === 1
+      )
+      expect(deadEnds).toHaveLength(0)
+    })
+
+    test('pruneDeadEnds means no gemstones', () => {
+      const game = demonwebFixture({ pruneDeadEnds: true })
+      submitRotations(game, {})
+
+      // No dead ends means no gems
+      expect(Object.keys(game.state.gemstones).length).toBe(0)
+    })
+
+    test('pruneDeadEnds neighbor relationships are bidirectional', () => {
+      const game = demonwebFixture({ pruneDeadEnds: true })
+
+      for (const loc of game.getLocationAll()) {
+        for (const neighborName of loc.neighborNames) {
+          const neighbor = game.getLocationByName(neighborName)
+          expect(neighbor).toBeDefined()
+          expect(neighbor.neighborNames).toContain(loc.name())
+        }
+      }
+      submitRotations(game)
+    })
+
+    test('pruneDeadEnds full game flow works', () => {
+      const game = demonwebGameFixture({ pruneDeadEnds: true })
+      game.run()
+
+      const request = game.waiting
+      expect(request.selectors[0].title).toBe('Choose Action')
+    })
+
     test('mapLayout round-trip: export then import produces same map', () => {
       // Create a game, export its layout, create a new game with that layout
       const game1 = demonwebFixture()
