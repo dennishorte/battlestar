@@ -36,12 +36,12 @@ describe('Promissory Notes', () => {
   })
 
   describe('Initialization', () => {
-    test('players start with 4 generic + 1 faction promissory note', () => {
+    test('players start with 4 generic + 1 faction + 1 alliance promissory note', () => {
       const game = t.fixture()
       game.run()
 
       const dennis = game.players.byName('dennis')
-      expect(dennis.promissoryNotes.length).toBe(5)
+      expect(dennis.promissoryNotes.length).toBe(6)
 
       // Check generic notes
       expect(dennis.hasPromissoryNote('support-for-the-throne')).toBe(true)
@@ -51,6 +51,9 @@ describe('Promissory Notes', () => {
 
       // Check faction note (Sol = military-support)
       expect(dennis.hasPromissoryNote('military-support')).toBe(true)
+
+      // Check alliance note
+      expect(dennis.hasPromissoryNote('alliance')).toBe(true)
     })
 
     test('promissory notes are owned by the player', () => {
