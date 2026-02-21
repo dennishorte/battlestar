@@ -4,7 +4,7 @@ import { fromData } from 'battlestar-common'
 import { NotFoundError, GameOverwriteError, GameKilledError } from '../utils/errors.js'
 import logger from '../utils/logger.js'
 
-const lock = new AsyncLock()
+const lock = new AsyncLock({ timeout: 30000 })
 
 async function _loadGame(gameId) {
   // Load item data from database
@@ -49,17 +49,22 @@ async function _loadItemWithLockById(itemType, req, res, next) {
   // Helper Funcs
 
   async function _initializeLock() {
-    // Acquire the lock but don't release it immediately
+    // Acquire the lock and hold it until the HTTP response is sent.
+    // This ensures the full load-process-save cycle is serialized per item.
     const lockKey = `${itemType}:${id}`
-    const unlockFn = await lock.acquire(lockKey, () => {
-      return () => {}
-    })
-    res.locals.unlock = unlockFn
-    res.on('finish', () => {
-      if (unlockFn && !res.locals.lockReleased) {
-        res.locals.lockReleased = true
-        unlockFn()
-      }
+    await new Promise((resolveMiddleware, rejectMiddleware) => {
+      lock.acquire(lockKey, () => {
+        return new Promise((releaseLock) => {
+          res.locals.unlock = releaseLock
+          res.on('finish', () => {
+            if (!res.locals.lockReleased) {
+              res.locals.lockReleased = true
+              releaseLock()
+            }
+          })
+          resolveMiddleware()
+        })
+      }).catch(rejectMiddleware)
     })
   }
 
