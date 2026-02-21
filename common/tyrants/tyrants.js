@@ -87,6 +87,9 @@ function _resolveMap(lobby) {
   }
 
   if (map === 'demonweb') {
+    if (numPlayers === 2) {
+      return lobby.options.demonweb2Variant || 'demonweb-2s'
+    }
     return `demonweb-${numPlayers}`
   }
 

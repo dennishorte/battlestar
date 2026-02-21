@@ -1140,6 +1140,105 @@ describe('Demonweb', () => {
     })
   })
 
+  describe('demonweb-2s (small 2-player map)', () => {
+    function smallFixture(options = {}) {
+      const game = t.fixture({
+        map: 'demonweb-2s',
+        seed: 'demonweb-2s-test',
+        ...options,
+      })
+      game.run()
+      return game
+    }
+
+    test('has 7 hexes', () => {
+      const game = smallFixture()
+      expect(game.state.assembledMap.hexes).toHaveLength(7)
+      submitRotations(game)
+    })
+
+    test('has 1 A tile, 2 B tiles, and 4 C tiles', () => {
+      const game = smallFixture()
+      const categories = game.state.assembledMap.hexes.map(h => h.tileId[0])
+      expect(categories.filter(c => c === 'A')).toHaveLength(1)
+      expect(categories.filter(c => c === 'B')).toHaveLength(2)
+      expect(categories.filter(c => c === 'C')).toHaveLength(4)
+      submitRotations(game)
+    })
+
+    test('linear chain topology: endpoints have 1 hex neighbor, middle hexes have 2', () => {
+      const config = mapConfigs.mapConfigs['demonweb-2s']
+      const positions = config.layout.map(h => h.position)
+
+      // Build adjacency by checking axial distance
+      function isAdjacent(a, b) {
+        const dq = b.q - a.q
+        const dr = b.r - a.r
+        const ds = -(dq + dr)
+        return Math.max(Math.abs(dq), Math.abs(dr), Math.abs(ds)) === 1
+      }
+
+      const neighborCounts = positions.map((pos, i) => {
+        return positions.filter((other, j) => i !== j && isAdjacent(pos, other)).length
+      })
+
+      // First and last hexes are endpoints (1 neighbor each)
+      expect(neighborCounts[0]).toBe(1)
+      expect(neighborCounts[6]).toBe(1)
+
+      // Middle hexes have exactly 2 neighbors
+      for (let i = 1; i < 6; i++) {
+        expect(neighborCounts[i]).toBe(2)
+      }
+    })
+
+    test('full game flow: rotation then starting location selection', () => {
+      const game = smallFixture()
+      submitRotations(game, {})
+
+      // Choose starting locations
+      const r1 = game.waiting
+      expect(r1.selectors[0].title).toBe('Choose starting location')
+      t.choose(game, '*' + r1.selectors[0].choices[0])
+
+      const r2 = game.waiting
+      t.choose(game, '*' + r2.selectors[0].choices[0])
+
+      // Should reach main game loop
+      game.run()
+      expect(game.waiting.selectors[0].title).toBe('Choose Action')
+    })
+
+    test('neighbor relationships are bidirectional', () => {
+      const game = smallFixture()
+
+      for (const loc of game.getLocationAll()) {
+        for (const neighborName of loc.neighborNames) {
+          const neighbor = game.getLocationByName(neighborName)
+          expect(neighbor.neighborNames).toContain(loc.name())
+        }
+      }
+      submitRotations(game)
+    })
+
+    test('map layout codec round-trip', () => {
+      const game = smallFixture()
+      const hexes = game.state.assembledMap.hexes
+      const mapName = game.settings.map
+
+      const encoded = encodeMapLayout(mapName, hexes)
+      const decoded = decodeMapLayout(encoded)
+
+      expect(decoded.mapName).toBe('demonweb-2s')
+      expect(decoded.entries).toHaveLength(7)
+      for (let i = 0; i < hexes.length; i++) {
+        expect(decoded.entries[i].tileId).toBe(hexes[i].tileId)
+        expect(decoded.entries[i].rotation).toBe(hexes[i].rotation)
+      }
+      submitRotations(game)
+    })
+  })
+
   describe('mapLayout setting', () => {
     test('mapLayout produces exact tiles specified', () => {
       const layout = [

@@ -66,6 +66,19 @@
       </template>
 
       <template v-if="models.map === 'demonweb'">
+        <div v-if="lobby.users.length === 2">
+          <small class="text-muted">2-player variant</small>
+          <div class="form-check" v-for="variant in demonweb2Variants" :key="variant.value">
+            <input
+              class="form-check-input"
+              type="radio"
+              v-model="models.demonweb2Variant"
+              :value="variant.value"
+              @change="optionsChanged"
+            />
+            <label class="form-check-label">{{ variant.text }}</label>
+          </div>
+        </div>
         <small class="text-muted">Import map layout</small>
         <input
           type="text"
@@ -138,12 +151,18 @@ export default {
         { text: '3b', value: 'base-3b' },
       ],
 
+      demonweb2Variants: [
+        { text: 'small (7 hex)', value: 'demonweb-2s' },
+        { text: 'large (9 hex)', value: 'demonweb-2' },
+      ],
+
       mapLayoutError: '',
 
       models: {
         expansions: [],
         map: 'base',
         base3Variant: 'random',
+        demonweb2Variant: 'demonweb-2s',
         menzoExtraNeutral: true,
         randomizeExpansions: true,
         mapLayout: null,
@@ -176,6 +195,7 @@ export default {
         expansions: this.models.randomizeExpansions ? [] : [...this.models.expansions],
         map: this.models.map,
         base3Variant: this.models.base3Variant,
+        demonweb2Variant: this.models.demonweb2Variant,
         mapLayout: this.models.mapLayout || undefined,
         menzoExtraNeutral: this.models.menzoExtraNeutral,
         randomizeExpansions: this.models.randomizeExpansions,
@@ -251,6 +271,7 @@ export default {
       }
 
       this.models.base3Variant = this.lobby.options.base3Variant || this.models.base3Variant
+      this.models.demonweb2Variant = this.lobby.options.demonweb2Variant || this.models.demonweb2Variant
 
       if (this.lobby.options.mapLayout) {
         this.models.mapLayout = this.lobby.options.mapLayout

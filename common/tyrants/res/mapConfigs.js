@@ -6,7 +6,23 @@
 // NE: (+1, -1), E: (+1, 0), SE: (0, +1), SW: (-1, +1), W: (-1, 0), NW: (0, -1)
 
 const mapConfigs = {
-  // 2-Player: 9 hexes arranged vertically
+  // 2-Player Small: 7 hexes in staircase layout
+  // Linear chain: B-C-C-A-C-C-B
+  'demonweb-2s': {
+    playerCount: 2,
+    totalHexes: 7,
+    layout: [
+      { position: { q: 0, r: 0 }, category: 'B', pool: ['B1', 'B2'] },
+      { position: { q: 0, r: 1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
+      { position: { q: -1, r: 2 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
+      { position: { q: -1, r: 3 }, category: 'A', pool: ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9'] },
+      { position: { q: -1, r: 4 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
+      { position: { q: -2, r: 5 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
+      { position: { q: -2, r: 6 }, category: 'B', pool: ['B1', 'B2'] },
+    ],
+  },
+
+  // 2-Player Large: 9 hexes arranged vertically
   // B at top, 6 C around center A, B at bottom
   'demonweb-2': {
     playerCount: 2,
