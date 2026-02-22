@@ -108,6 +108,9 @@ export default {
         // Short faction abbreviation
         return faction?.name?.substring(0, 3) || '?'
       }
+      if (this.tileData.type === 'hyperlane') {
+        return ''
+      }
       return this.system.tileId
     },
 

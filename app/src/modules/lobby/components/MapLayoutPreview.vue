@@ -7,6 +7,17 @@
       :class="hex.type"
       class="preview-hex"
     />
+    <!-- Route lines inside hyperlane hexes -->
+    <line
+      v-for="(line, i) in routeLines"
+      :key="'rt' + i"
+      :x1="line.x1"
+      :y1="line.y1"
+      :x2="line.x2"
+      :y2="line.y2"
+      class="hyperlane-route"
+    />
+
     <text
       v-for="(hex, i) in hexes"
       :key="'t' + i"
@@ -45,6 +56,17 @@ function hexCorners(cx, cy) {
   return points.join(' ')
 }
 
+// Midpoint of hex edge in direction dir (0=E, 1=SE, 2=SW, 3=W, 4=NW, 5=NE).
+// Edge dir connects corner[dir] and corner[(dir+1)%6].
+function edgeMidpoint(cx, cy, dir) {
+  const a1 = (Math.PI / 180) * (60 * dir - 30)
+  const a2 = (Math.PI / 180) * (60 * ((dir + 1) % 6) - 30)
+  return {
+    x: cx + HEX_SIZE * (Math.cos(a1) + Math.cos(a2)) / 2,
+    y: cy + HEX_SIZE * (Math.sin(a1) + Math.sin(a2)) / 2,
+  }
+}
+
 export default {
   name: 'MapLayoutPreview',
   props: {
@@ -53,17 +75,20 @@ export default {
 
   computed: {
     allPositions() {
-      const { mecatol, homePositions, ring1, ring2, outerPositions } = this.layout
+      const { mecatol, homePositions, ring1, ring2, outerPositions, hyperlanePositions } = this.layout
 
       const homeSet = new Set(homePositions.map(p => `${p.q},${p.r}`))
+      const hyperlaneSet = new Set((hyperlanePositions || []).map(p => `${p.q},${p.r}`))
       const outerRaw = outerPositions || this.hexRing({ q: 0, r: 0 }, 3)
-      const ring3 = outerRaw.filter(p => !homeSet.has(`${p.q},${p.r}`))
+      const ring3 = outerRaw.filter(p =>
+        !homeSet.has(`${p.q},${p.r}`) && !hyperlaneSet.has(`${p.q},${p.r}`)
+      )
 
-      return { mecatol, homePositions, ring1, ring2, ring3 }
+      return { mecatol, homePositions, ring1, ring2, ring3, hyperlanePositions: hyperlanePositions || [] }
     },
 
     hexes() {
-      const { mecatol, homePositions, ring1, ring2, ring3 } = this.allPositions
+      const { mecatol, homePositions, ring1, ring2, ring3, hyperlanePositions } = this.allPositions
       const result = []
 
       // Mecatol Rex
@@ -88,7 +113,10 @@ export default {
       })
 
       // Interior tiles (ring1 + ring2 + ring3 remainder)
-      const interiorPositions = [...ring1, ...ring2, ...ring3]
+      const hyperlaneSet = new Set(hyperlanePositions.map(p => `${p.q},${p.r}`))
+      const interiorPositions = [...ring1, ...ring2, ...ring3].filter(
+        p => !hyperlaneSet.has(`${p.q},${p.r}`)
+      )
       interiorPositions.forEach(pos => {
         const p = hexToPixel(pos.q, pos.r)
         result.push({
@@ -99,7 +127,36 @@ export default {
         })
       })
 
+      // Hyperlane tiles
+      hyperlanePositions.forEach(pos => {
+        const p = hexToPixel(pos.q, pos.r)
+        result.push({
+          cx: p.x, cy: p.y,
+          points: hexCorners(p.x, p.y),
+          type: 'hex-hyperlane',
+          label: '',
+        })
+      })
+
       return result
+    },
+
+    routeLines() {
+      const routes = this.layout.hyperlaneRoutes
+      if (!routes) {
+        return []
+      }
+      const lines = []
+      for (const [posKey, edgePairs] of Object.entries(routes)) {
+        const [q, r] = posKey.split(',').map(Number)
+        const center = hexToPixel(q, r)
+        for (const [dirA, dirB] of edgePairs) {
+          const a = edgeMidpoint(center.x, center.y, dirA)
+          const b = edgeMidpoint(center.x, center.y, dirB)
+          lines.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y })
+        }
+      }
+      return lines
     },
 
     bonusHexes() {
@@ -176,6 +233,11 @@ export default {
 .preview-hex.hex-interior {
   fill: #1a3050;
 }
+.preview-hex.hex-hyperlane {
+  fill: #222;
+  stroke: #555;
+  stroke-dasharray: 2 2;
+}
 
 .hex-label {
   font-size: 8px;
@@ -194,5 +256,12 @@ export default {
 .hex-label.hex-bonus {
   fill: #fd6;
   font-size: 6px;
+}
+
+.hyperlane-route {
+  stroke: #6af;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  opacity: 0.8;
 }
 </style>

@@ -7,6 +7,19 @@
       @wheel.prevent="onZoom"
     >
       <div class="galaxy-viewport" :style="viewportStyle">
+        <!-- Hyperlane connection lines -->
+        <svg v-if="hyperlaneLines.length > 0" class="hyperlane-overlay">
+          <line
+            v-for="(line, i) in hyperlaneLines"
+            :key="i"
+            :x1="line.x1"
+            :y1="line.y1"
+            :x2="line.x2"
+            :y2="line.y2"
+            class="hyperlane-connection"
+          />
+        </svg>
+
         <SystemTile
           v-for="(system, systemId) in systems"
           :key="systemId"
@@ -69,6 +82,30 @@ export default {
 
     interactiveSystems() {
       return this.ui?.interactiveSystems || []
+    },
+
+    hyperlaneLines() {
+      const connections = this.game.state.hyperlaneConnections
+      if (!connections) {
+        return []
+      }
+      const HEX_SIZE = 50
+      const posToPixel = (q, r) => ({
+        x: HEX_SIZE * (Math.sqrt(3) * q + Math.sqrt(3) / 2 * r),
+        y: HEX_SIZE * (3 / 2 * r),
+      })
+      // Build position→system lookup
+      const posSystems = {}
+      for (const [, sys] of Object.entries(this.systems)) {
+        if (!sys.isHyperlane) {
+          posSystems[`${sys.position.q},${sys.position.r}`] = sys.position
+        }
+      }
+      return connections.map(([posA, posB]) => {
+        const a = posToPixel(posA.q, posA.r)
+        const b = posToPixel(posB.q, posB.r)
+        return { x1: a.x, y1: a.y, x2: b.x, y2: b.y }
+      })
     },
   },
 
@@ -156,5 +193,22 @@ export default {
   transform-origin: 0 0;
   transition: none;
   position: relative;
+}
+
+.hyperlane-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.hyperlane-connection {
+  stroke: #6af;
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  opacity: 0.5;
 }
 </style>

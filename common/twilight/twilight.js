@@ -44,6 +44,9 @@ function TwilightFactory(settings, viewerName) {
   if (settings.keleresSubFaction) {
     data.settings.keleresSubFaction = settings.keleresSubFaction
   }
+  if (settings.mapLayout) {
+    data.settings.mapLayout = settings.mapLayout
+  }
   return new Twilight(data, viewerName)
 }
 
@@ -57,6 +60,7 @@ function factoryFromLobby(lobby) {
     numPlayers: lobby.users.length,
     factions: lobby.options?.factions || [],
     randomFactions: lobby.options?.randomFactions !== false,
+    mapLayout: lobby.options?.mapLayout || undefined,
   })
 }
 
@@ -287,7 +291,8 @@ Twilight.prototype._keleresSubFactionSetup = function(player) {
 
 Twilight.prototype._initializeGalaxy = function() {
   const playerCount = this.players.all().length
-  const layout = res.getLayout(playerCount)
+  const layoutKey = this.settings?.mapLayout || playerCount
+  const layout = res.getLayout(layoutKey)
 
   // Place Mecatol Rex
   this.state.systems[18] = {
@@ -328,14 +333,34 @@ Twilight.prototype._initializeGalaxy = function() {
     }
   }
 
+  // Place hyperlane tiles if the layout has them
+  const hyperlanePositionSet = new Set()
+  if (layout.hyperlanePositions) {
+    for (let i = 0; i < layout.hyperlanePositions.length; i++) {
+      const pos = layout.hyperlanePositions[i]
+      const hlId = `hyperlane-${i}`
+      hyperlanePositionSet.add(`${pos.q},${pos.r}`)
+      this.state.systems[hlId] = {
+        tileId: 'hyperlane',
+        position: pos,
+        commandTokens: [],
+        isHyperlane: true,
+      }
+    }
+    this.state.hyperlaneConnections = layout.hyperlaneConnections
+  }
+
   // Fill remaining positions with blue and red tiles
   const allPositions = [...layout.ring1, ...layout.ring2, ...(layout.outerPositions || [])]
 
-  // Filter out positions already used by Mecatol or home systems
+  // Filter out positions already used by Mecatol, home systems, or hyperlanes
   const usedPositions = new Set()
   usedPositions.add(`${layout.mecatol.q},${layout.mecatol.r}`)
   for (const pos of layout.homePositions) {
     usedPositions.add(`${pos.q},${pos.r}`)
+  }
+  for (const key of hyperlanePositionSet) {
+    usedPositions.add(key)
   }
 
   const availablePositions = allPositions.filter(
@@ -558,17 +583,51 @@ Twilight.prototype._getAdjacentSystems = function(systemId) {
     return []
   }
 
+  // Hyperlane systems are not valid adjacency sources or targets
+  if (system.isHyperlane) {
+    return []
+  }
+
   const adjacent = []
   const pos = system.position
 
-  // Check physical adjacency
+  // Check physical adjacency (skip hyperlane tiles)
   for (const [otherId, otherSystem] of Object.entries(this.state.systems)) {
     if (otherId === String(systemId)) {
+      continue
+    }
+    if (otherSystem.isHyperlane) {
       continue
     }
     const dist = res.getHexDistance(pos, otherSystem.position)
     if (dist === 1) {
       adjacent.push(otherId)
+    }
+  }
+
+  // Check hyperlane connections
+  if (this.state.hyperlaneConnections) {
+    const posKey = `${pos.q},${pos.r}`
+    for (const [posA, posB] of this.state.hyperlaneConnections) {
+      const keyA = `${posA.q},${posA.r}`
+      const keyB = `${posB.q},${posB.r}`
+      let targetPos = null
+      if (keyA === posKey) {
+        targetPos = posB
+      }
+      else if (keyB === posKey) {
+        targetPos = posA
+      }
+      if (targetPos) {
+        // Find the system at the target position
+        const targetId = Object.keys(this.state.systems).find(id => {
+          const sys = this.state.systems[id]
+          return sys.position.q === targetPos.q && sys.position.r === targetPos.r && !sys.isHyperlane
+        })
+        if (targetId && !adjacent.includes(targetId)) {
+          adjacent.push(targetId)
+        }
+      }
     }
   }
 
@@ -587,11 +646,14 @@ Twilight.prototype._getAdjacentSystems = function(systemId) {
   }
 
   if (tileWormholes.length > 0) {
-    for (const [otherId] of Object.entries(this.state.systems)) {
+    for (const [otherId, otherSystem] of Object.entries(this.state.systems)) {
       if (otherId === String(systemId)) {
         continue
       }
       if (adjacent.includes(otherId)) {
+        continue
+      }
+      if (otherSystem.isHyperlane) {
         continue
       }
 
