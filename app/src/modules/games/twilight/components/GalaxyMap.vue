@@ -1,16 +1,33 @@
 <template>
   <div class="galaxy-map" ref="wrapper">
     <div class="galaxy-viewport" :style="viewportStyle">
-      <!-- Hyperlane connection lines -->
-      <svg v-if="hyperlaneLines.length > 0" class="hyperlane-overlay">
-        <line
-          v-for="(line, i) in hyperlaneLines"
+      <!-- Hyperlane route paths -->
+      <svg v-if="hyperlanePaths.length > 0" class="hyperlane-overlay">
+        <defs>
+          <filter id="hyperlane-glow"
+                  filterUnits="userSpaceOnUse"
+                  x="-10000"
+                  y="-10000"
+                  width="20000"
+                  height="20000">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        <path
+          v-for="(p, i) in hyperlanePaths"
+          :key="'glow' + i"
+          :d="p.d"
+          class="hyperlane-glow"
+        />
+        <path
+          v-for="(p, i) in hyperlanePaths"
           :key="i"
-          :x1="line.x1"
-          :y1="line.y1"
-          :x2="line.x2"
-          :y2="line.y2"
-          class="hyperlane-connection"
+          :d="p.d"
+          class="hyperlane-route"
         />
       </svg>
 
@@ -32,6 +49,16 @@
 import SystemTile from './SystemTile.vue'
 
 const SQRT3 = Math.sqrt(3)
+
+// Midpoint of hex edge in direction dir (0=E, 1=SE, 2=SW, 3=W, 4=NW, 5=NE)
+function edgeMidpoint(cx, cy, size, dir) {
+  const a1 = (Math.PI / 180) * (60 * dir - 30)
+  const a2 = (Math.PI / 180) * (60 * ((dir + 1) % 6) - 30)
+  return {
+    x: cx + size * (Math.cos(a1) + Math.cos(a2)) / 2,
+    y: cy + size * (Math.sin(a1) + Math.sin(a2)) / 2,
+  }
+}
 
 export default {
   name: 'GalaxyMap',
@@ -124,20 +151,29 @@ export default {
       return this.ui?.interactiveSystems || []
     },
 
-    hyperlaneLines() {
-      const connections = this.game.state.hyperlaneConnections
-      if (!connections) {
+    hyperlanePaths() {
+      const routes = this.game.state.hyperlaneRoutes
+      if (!routes) {
         return []
       }
       const size = this.hexSize
-      return connections.map(([posA, posB]) => {
-        return {
-          x1: size * (SQRT3 * posA.q + SQRT3 / 2 * posA.r),
-          y1: size * (1.5 * posA.r),
-          x2: size * (SQRT3 * posB.q + SQRT3 / 2 * posB.r),
-          y2: size * (1.5 * posB.r),
+      const paths = []
+      for (const [posKey, edgePairs] of Object.entries(routes)) {
+        const [q, r] = posKey.split(',').map(Number)
+        const cx = size * (SQRT3 * q + SQRT3 / 2 * r)
+        const cy = size * (1.5 * r)
+        for (const [dirA, dirB] of edgePairs) {
+          const a = edgeMidpoint(cx, cy, size, dirA)
+          const b = edgeMidpoint(cx, cy, size, dirB)
+          // Straight if opposite edges (direction diff of 3), curved otherwise
+          const isOpposite = Math.abs(dirA - dirB) === 3
+          const d = isOpposite
+            ? `M${a.x},${a.y} L${b.x},${b.y}`
+            : `M${a.x},${a.y} Q${cx},${cy} ${b.x},${b.y}`
+          paths.push({ d })
         }
-      })
+      }
+      return paths
     },
   },
 
@@ -211,10 +247,20 @@ export default {
   overflow: visible;
 }
 
-.hyperlane-connection {
-  stroke: #6af;
+.hyperlane-glow {
+  fill: none;
+  stroke: #48f;
+  stroke-width: 8;
+  stroke-linecap: round;
+  opacity: 0.25;
+  filter: url(#hyperlane-glow);
+}
+
+.hyperlane-route {
+  fill: none;
+  stroke: #8bf;
   stroke-width: 2;
-  stroke-dasharray: 6 4;
-  opacity: 0.5;
+  stroke-linecap: round;
+  opacity: 0.8;
 }
 </style>

@@ -7,14 +7,11 @@
       :class="hex.type"
       class="preview-hex"
     />
-    <!-- Route lines inside hyperlane hexes -->
-    <line
-      v-for="(line, i) in routeLines"
+    <!-- Route paths inside hyperlane hexes -->
+    <path
+      v-for="(p, i) in routePaths"
       :key="'rt' + i"
-      :x1="line.x1"
-      :y1="line.y1"
-      :x2="line.x2"
-      :y2="line.y2"
+      :d="p.d"
       class="hyperlane-route"
     />
 
@@ -141,22 +138,26 @@ export default {
       return result
     },
 
-    routeLines() {
+    routePaths() {
       const routes = this.layout.hyperlaneRoutes
       if (!routes) {
         return []
       }
-      const lines = []
+      const paths = []
       for (const [posKey, edgePairs] of Object.entries(routes)) {
         const [q, r] = posKey.split(',').map(Number)
         const center = hexToPixel(q, r)
         for (const [dirA, dirB] of edgePairs) {
           const a = edgeMidpoint(center.x, center.y, dirA)
           const b = edgeMidpoint(center.x, center.y, dirB)
-          lines.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y })
+          const isOpposite = Math.abs(dirA - dirB) === 3
+          const d = isOpposite
+            ? `M${a.x},${a.y} L${b.x},${b.y}`
+            : `M${a.x},${a.y} Q${center.x},${center.y} ${b.x},${b.y}`
+          paths.push({ d })
         }
       }
-      return lines
+      return paths
     },
 
     bonusHexes() {
@@ -234,9 +235,8 @@ export default {
   fill: #1a3050;
 }
 .preview-hex.hex-hyperlane {
-  fill: #222;
-  stroke: #555;
-  stroke-dasharray: 2 2;
+  fill: transparent;
+  stroke: transparent;
 }
 
 .hex-label {
@@ -259,7 +259,8 @@ export default {
 }
 
 .hyperlane-route {
-  stroke: #6af;
+  fill: none;
+  stroke: #8bf;
   stroke-width: 1.5;
   stroke-linecap: round;
   opacity: 0.8;

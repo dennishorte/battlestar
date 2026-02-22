@@ -286,7 +286,7 @@ export default {
 .hex-home { fill: #4a6fa5; }
 .hex-blue { fill: #2a3a5c; }
 .hex-red { fill: #5c2a2a; }
-.hex-hyperlane { fill: #333; }
+.hex-hyperlane { fill: transparent; stroke: transparent; }
 
 .hex-anomaly-asteroid-field { fill: #6b5a3a; }
 .hex-anomaly-nebula { fill: #5a3a6b; }
