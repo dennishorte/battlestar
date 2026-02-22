@@ -62,7 +62,6 @@ describe("Bandage", () => {
         hand: ['Enterprise'],
         score: ['Calendar', 'Gunpowder'],
       },
-      junk: ['Software'],
     })
   })
 
@@ -100,7 +99,7 @@ describe("Bandage", () => {
         score: ['Calendar', 'Gunpowder'],
         achievements: ['Empire', 'World'],
       },
-      junk: ['Software', 'Databases', 'Monument', 'Mathematics'],
+      junk: ['Monument', 'Mathematics'],
     })
   })
 })
