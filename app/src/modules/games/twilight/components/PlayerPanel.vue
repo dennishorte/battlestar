@@ -29,8 +29,9 @@
       <div class="section-label">Strategy</div>
       <div v-for="sc in strategyCardsDisplay"
            :key="sc.id"
-           class="strategy-card"
-           :class="{ used: sc.used }">
+           class="strategy-card clickable"
+           :class="{ used: sc.used }"
+           @click="openCardDetail('strategy-card', sc.id)">
         <span class="sc-number">{{ sc.number }}</span> {{ sc.name }}
         <span v-if="sc.used" class="sc-used-badge">used</span>
       </div>
@@ -40,9 +41,18 @@
     <div class="panel-section">
       <div class="section-label">Leaders</div>
       <div class="leaders-row">
-        <span class="leader" :class="agentClass" title="Agent">A</span>
-        <span class="leader" :class="commanderClass" title="Commander">C</span>
-        <span class="leader" :class="heroClass" title="Hero">H</span>
+        <span class="leader clickable"
+              :class="agentClass"
+              title="Agent"
+              @click="openLeaderDetail('agent')">A</span>
+        <span class="leader clickable"
+              :class="commanderClass"
+              title="Commander"
+              @click="openLeaderDetail('commander')">C</span>
+        <span class="leader clickable"
+              :class="heroClass"
+              title="Hero"
+              @click="openLeaderDetail('hero')">H</span>
       </div>
     </div>
 
@@ -53,9 +63,10 @@
         <span
           v-for="tech in technologies"
           :key="tech.id"
-          class="tech-chip"
+          class="tech-chip clickable"
           :class="`tech-${tech.color}`"
           :title="tech.name"
+          @click="openCardDetail('technology', tech.id)"
         >
           {{ tech.name }}
         </span>
@@ -71,8 +82,9 @@
         <div
           v-for="p in planets"
           :key="p.id"
-          class="planet-entry"
+          class="planet-entry clickable"
           :class="{ exhausted: p.exhausted }"
+          @click="openCardDetail('planet', p.id)"
         >
           <span class="planet-name">{{ p.name }}</span>
           <span class="planet-stats">{{ p.resources }}/{{ p.influence }}</span>
@@ -85,7 +97,10 @@
     <div class="panel-section" v-if="scoredObjectives.length > 0">
       <div class="section-label">Scored Objectives</div>
       <div class="objective-list">
-        <div v-for="obj in scoredObjectives" :key="obj" class="objective-entry">{{ obj }}</div>
+        <div v-for="obj in scoredObjectives"
+             :key="obj.id"
+             class="objective-entry clickable"
+             @click="openCardDetail('objective', obj.id)">{{ obj.name }}</div>
       </div>
     </div>
 
@@ -98,7 +113,10 @@
     <div class="panel-section" v-if="promissoryNotes.length > 0">
       <div class="section-label">Promissory Notes</div>
       <div class="prom-list">
-        <div v-for="note in promissoryNotes" :key="note.id + note.owner" class="prom-entry">
+        <div v-for="note in promissoryNotes"
+             :key="note.id + note.owner"
+             class="prom-entry clickable"
+             @click="openCardDetail('promissory-note', note.id, { owner: note.owner, factionId: note.factionId })">
           {{ note.id }} <span class="prom-from">({{ note.owner }})</span>
         </div>
       </div>
@@ -117,7 +135,7 @@ export default {
     player: { type: Object, required: true },
   },
 
-  inject: ['actor', 'game'],
+  inject: ['actor', 'game', 'ui'],
 
   computed: {
     isViewer() {
@@ -215,8 +233,8 @@ export default {
     scoredObjectives() {
       const scored = this.game.state.scoredObjectives?.[this.player.name] || []
       return scored.map(id => {
-        const obj = res.getPublicObjective?.(id) || res.getSecretObjective?.(id)
-        return obj?.name || id
+        const obj = res.getObjective?.(id)
+        return { id, name: obj?.name || id }
       })
     },
 
@@ -231,6 +249,19 @@ export default {
   },
 
   methods: {
+    openCardDetail(type, id, context) {
+      this.ui.modals.cardDetail.type = type
+      this.ui.modals.cardDetail.id = id
+      this.ui.modals.cardDetail.context = context || null
+      this.$modal('twilight-card-detail').show()
+    },
+
+    openLeaderDetail(role) {
+      const factionId = this.player.factionId
+      const status = this.player.leaders?.[role] || 'locked'
+      this.openCardDetail('leader', factionId, { role, status, player: this.player.name })
+    },
+
     getContrastColor(hexColor) {
       if (!hexColor) {
         return 'black'
@@ -449,5 +480,13 @@ export default {
 
 .prom-from {
   color: #888;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  background: rgba(0, 0, 0, .05);
 }
 </style>

@@ -41,6 +41,7 @@
     </div>
 
     <SystemDetailModal />
+    <CardDetailModal />
     <DebugModal />
   </div>
 </template>
@@ -66,6 +67,7 @@ import RedistributeTokens from './actions/RedistributeTokens.vue'
 import TradeOffer from './actions/TradeOffer.vue'
 
 // Modals
+import CardDetailModal from './modals/CardDetailModal.vue'
 import SystemDetailModal from './modals/SystemDetailModal.vue'
 
 
@@ -74,6 +76,7 @@ export default {
 
   components: {
     ActivateSystem,
+    CardDetailModal,
     DebugModal,
     GalaxyMap,
     GameLogTwilight,
@@ -98,6 +101,7 @@ export default {
         },
         modals: {
           systemDetail: { systemId: null },
+          cardDetail: { type: null, id: null, context: null },
         },
         highlightedSystems: [],
         interactiveSystems: [],
