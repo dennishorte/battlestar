@@ -89,6 +89,7 @@ Twilight.prototype.initialize = function() {
   this._initializeStartingUnits()
   this._initializePlanetControl()
 
+  this.state.initializationComplete = true
   this._breakpoint('initialization-complete')
 }
 
