@@ -348,6 +348,9 @@ Twilight.prototype._initializeGalaxy = function() {
       }
     }
     this.state.hyperlaneConnections = layout.hyperlaneConnections
+    if (layout.hyperlaneRoutes) {
+      this.state.hyperlaneRoutes = layout.hyperlaneRoutes
+    }
   }
 
   // Fill remaining positions with blue and red tiles
