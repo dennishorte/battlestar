@@ -21,15 +21,15 @@
           <RedistributeTokens v-if="activeActionType === 'redistribute-tokens'" />
 
           <WaitingPanel />
+        </div>
 
-          <!-- Player Panels -->
-          <div class="player-panels">
-            <PlayerPanel
-              v-for="player in orderedPlayers"
-              :key="player.name"
-              :player="player"
-            />
-          </div>
+        <!-- Player Column -->
+        <div class="col players-column">
+          <PlayerPanel
+            v-for="player in orderedPlayers"
+            :key="player.name"
+            :player="player"
+          />
         </div>
 
         <!-- Map Column (right-most, full height) -->
@@ -320,8 +320,17 @@ export default {
   color: #333;
 }
 
-.player-panels {
-  padding-bottom: 3em;
+.players-column {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 60px);
+  min-width: 220px;
+  max-width: 280px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+  background: #f8f9fa;
+  color: #333;
 }
 
 .map-column {
@@ -333,9 +342,14 @@ export default {
   padding: 0;
 }
 
-/* Override common component text colors for dark theme */
+/* Override common component styles */
 .twilight :deep(.waiting-panel) {
   background: #f8f9fa;
   color: #333;
+}
+
+.twilight :deep(.waiting-panel .tab-content .active) {
+  margin-left: 0;
+  margin-right: 0;
 }
 </style>
