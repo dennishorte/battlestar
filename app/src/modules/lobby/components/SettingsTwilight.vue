@@ -2,11 +2,21 @@
   <div class="settings-twilight">
     <div class="player-info">
       <span class="player-count">{{ playerCount }} player{{ playerCount !== 1 ? 's' : '' }}</span>
-      <span class="player-range">(2-6 players, no 5-player layout)</span>
+      <span class="player-range">(3-6 players, no 5-player layout)</span>
     </div>
-    <div class="setting-note">
-      Factions are assigned randomly at game start.
+
+    <div class="setting-group">
+      <label class="checkbox-label">
+        <input type="checkbox" v-model="randomFactions" @change="save" />
+        <span>Random Factions</span>
+      </label>
+      <span class="option-description">
+        {{ randomFactions
+          ? 'Factions are assigned randomly at game start'
+          : 'Players choose factions during game setup' }}
+      </span>
     </div>
+
     <div v-if="currentLayout" class="layout-preview">
       <div class="layout-label">Board Layout</div>
       <MapLayoutPreview :layout="currentLayout" />
@@ -35,6 +45,14 @@ export default {
     currentLayout() {
       return layouts[this.playerCount] || null
     },
+    randomFactions: {
+      get() {
+        return this.lobby.options?.randomFactions !== false
+      },
+      set(value) {
+        this.lobby.options.randomFactions = value
+      },
+    },
   },
 
   watch: {
@@ -48,7 +66,7 @@ export default {
 
   methods: {
     updateValid() {
-      this.lobby.valid = this.playerCount in layouts
+      this.lobby.valid = this.playerCount >= 3 && this.playerCount in layouts
     },
   },
 
@@ -66,7 +84,9 @@ export default {
 .player-info { display: flex; align-items: center; gap: .5em; margin-bottom: .5em; }
 .player-count { font-weight: 600; }
 .player-range { color: #666; font-size: .9em; }
-.setting-note { color: #888; font-size: .85em; }
+.setting-group { margin: .5em 0; }
+.checkbox-label { display: inline-flex; align-items: center; gap: .4em; cursor: pointer; }
+.option-description { display: block; color: #888; font-size: .85em; margin-top: .15em; padding-left: 1.4em; }
 .layout-preview { margin-top: .75em; }
 .layout-label { font-size: .85em; color: #aaa; margin-bottom: .25em; }
 .layout-warning { margin-top: .75em; color: #c44; font-size: .9em; }

@@ -96,14 +96,24 @@ export default {
     },
 
     viewBox() {
-      if (this.hexes.length === 0) return '0 0 100 100'
+      if (this.hexes.length === 0) {
+        return '0 0 100 100'
+      }
       const pad = HEX_SIZE + 2
       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
       for (const h of this.hexes) {
-        if (h.cx < minX) minX = h.cx
-        if (h.cy < minY) minY = h.cy
-        if (h.cx > maxX) maxX = h.cx
-        if (h.cy > maxY) maxY = h.cy
+        if (h.cx < minX) {
+          minX = h.cx
+        }
+        if (h.cy < minY) {
+          minY = h.cy
+        }
+        if (h.cx > maxX) {
+          maxX = h.cx
+        }
+        if (h.cy > maxY) {
+          maxY = h.cy
+        }
       }
       return `${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`
     },

@@ -40,6 +40,7 @@ function TwilightFactory(settings, viewerName) {
   const data = GameFactory(settings)
   data.settings = data.settings || {}
   data.settings.factions = settings.factions || []
+  data.settings.randomFactions = settings.randomFactions !== false
   if (settings.keleresSubFaction) {
     data.settings.keleresSubFaction = settings.keleresSubFaction
   }
@@ -55,6 +56,7 @@ function factoryFromLobby(lobby) {
     seed: lobby.seed,
     numPlayers: lobby.users.length,
     factions: lobby.options?.factions || [],
+    randomFactions: lobby.options?.randomFactions !== false,
   })
 }
 
@@ -153,12 +155,39 @@ Twilight.prototype._initializeZones = function() {
 
 Twilight.prototype._initializeFactions = function() {
   const factionIds = this.settings.factions
-  const allFactions = res.getAllFactionIds()
+  const allFactions = [...res.getAllFactionIds()]
+
+  // Determine faction assignments
+  const assignedFactions = []
+  if (factionIds.length > 0) {
+    // Pre-set factions (from tests or explicit configuration)
+    assignedFactions.push(...factionIds)
+  }
+  else if (this.settings.randomFactions) {
+    // Random: shuffle and take the first N
+    this._shuffle(allFactions)
+    assignedFactions.push(...allFactions)
+  }
+  else {
+    // Faction selection: each player picks from available factions
+    const available = [...allFactions]
+    for (const player of this.players.all()) {
+      const choices = available.map(id => res.getFaction(id).name)
+      const selection = this.actions.choose(player, choices, {
+        title: 'Choose your faction',
+        noAutoRespond: true,
+      })
+      const chosenName = selection[0]
+      const chosenId = available.find(id => res.getFaction(id).name === chosenName)
+      available.splice(available.indexOf(chosenId), 1)
+      assignedFactions.push(chosenId)
+    }
+  }
 
   const players = this.players.all()
   for (let i = 0; i < players.length; i++) {
     const player = players[i]
-    const factionId = factionIds[i] || allFactions[i]
+    const factionId = assignedFactions[i] || allFactions[i]
     player.initializeFaction(factionId)
 
     // Nomad The Company: initialize 3 agents instead of 1
