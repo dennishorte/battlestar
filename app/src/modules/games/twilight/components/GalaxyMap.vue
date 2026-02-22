@@ -1,41 +1,37 @@
 <template>
-  <div class="galaxy-map-wrapper" ref="wrapper">
-    <div
-      class="galaxy-map"
-      :style="mapStyle"
-      @mousedown="onPanStart"
-      @wheel.prevent="onZoom"
-    >
-      <div class="galaxy-viewport" :style="viewportStyle">
-        <!-- Hyperlane connection lines -->
-        <svg v-if="hyperlaneLines.length > 0" class="hyperlane-overlay">
-          <line
-            v-for="(line, i) in hyperlaneLines"
-            :key="i"
-            :x1="line.x1"
-            :y1="line.y1"
-            :x2="line.x2"
-            :y2="line.y2"
-            class="hyperlane-connection"
-          />
-        </svg>
-
-        <SystemTile
-          v-for="(system, systemId) in systems"
-          :key="systemId"
-          :systemId="systemId"
-          :system="system"
-          :highlighted="isHighlighted(systemId)"
-          :interactive="isInteractive(systemId)"
-          @click="handleSystemClick"
+  <div class="galaxy-map" ref="wrapper">
+    <div class="galaxy-viewport" :style="viewportStyle">
+      <!-- Hyperlane connection lines -->
+      <svg v-if="hyperlaneLines.length > 0" class="hyperlane-overlay">
+        <line
+          v-for="(line, i) in hyperlaneLines"
+          :key="i"
+          :x1="line.x1"
+          :y1="line.y1"
+          :x2="line.x2"
+          :y2="line.y2"
+          class="hyperlane-connection"
         />
-      </div>
+      </svg>
+
+      <SystemTile
+        v-for="(system, systemId) in systems"
+        :key="systemId"
+        :systemId="systemId"
+        :system="system"
+        :hexSize="hexSize"
+        :highlighted="isHighlighted(systemId)"
+        :interactive="isInteractive(systemId)"
+        @click="handleSystemClick"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import SystemTile from './SystemTile.vue'
+
+const SQRT3 = Math.sqrt(3)
 
 export default {
   name: 'GalaxyMap',
@@ -46,16 +42,12 @@ export default {
 
   inject: ['game', 'bus', 'ui'],
 
+  emits: ['update:width'],
+
   data() {
     return {
-      zoom: 1,
-      panX: 0,
-      panY: 0,
-      isPanning: false,
-      panStartX: 0,
-      panStartY: 0,
-      panStartPanX: 0,
-      panStartPanY: 0,
+      containerWidth: 0,
+      containerHeight: 0,
     }
   },
 
@@ -64,15 +56,63 @@ export default {
       return this.game.state.systems || {}
     },
 
-    mapStyle() {
-      return {
-        cursor: this.isPanning ? 'grabbing' : 'grab',
+    // Coordinate bounds in hex q,r space
+    coordBounds() {
+      const entries = Object.values(this.systems)
+      if (entries.length === 0) {
+        return { minQ: 0, maxQ: 0, minR: 0, maxR: 0 }
       }
+      let minQ = Infinity, maxQ = -Infinity, minR = Infinity, maxR = -Infinity
+      for (const sys of entries) {
+        const { q, r } = sys.position
+        // Pixel x = size * (sqrt3 * q + sqrt3/2 * r), so effective x-coord = sqrt3*q + sqrt3/2*r
+        const xCoord = SQRT3 * q + SQRT3 / 2 * r
+        const yCoord = 1.5 * r
+        if (xCoord < minQ) {
+          minQ = xCoord
+        }
+        if (xCoord > maxQ) {
+          maxQ = xCoord
+        }
+        if (yCoord < minR) {
+          minR = yCoord
+        }
+        if (yCoord > maxR) {
+          maxR = yCoord
+        }
+      }
+      return { minQ, maxQ, minR, maxR }
+    },
+
+    hexSize() {
+      if (!this.containerHeight) {
+        return 50
+      }
+      const { minR, maxR } = this.coordBounds
+      const spanY = maxR - minR
+      if (spanY === 0) {
+        return 50
+      }
+      // Size hexes to fill the full container height
+      return this.containerHeight / (spanY + 3)
+    },
+
+    contentWidth() {
+      const { minQ, maxQ } = this.coordBounds
+      return this.hexSize * (maxQ - minQ + 3)
     },
 
     viewportStyle() {
+      if (!this.containerHeight) {
+        return {}
+      }
+      const { minQ, maxQ, minR, maxR } = this.coordBounds
+      const centerX = (minQ + maxQ) / 2 * this.hexSize
+      const centerY = (minR + maxR) / 2 * this.hexSize
+      const offsetX = this.contentWidth / 2 - centerX
+      const offsetY = this.containerHeight / 2 - centerY
       return {
-        transform: `translate(${this.panX}px, ${this.panY}px) scale(${this.zoom})`,
+        transform: `translate(${offsetX}px, ${offsetY}px)`,
       }
     },
 
@@ -89,23 +129,24 @@ export default {
       if (!connections) {
         return []
       }
-      const HEX_SIZE = 50
-      const posToPixel = (q, r) => ({
-        x: HEX_SIZE * (Math.sqrt(3) * q + Math.sqrt(3) / 2 * r),
-        y: HEX_SIZE * (3 / 2 * r),
-      })
-      // Build position→system lookup
-      const posSystems = {}
-      for (const [, sys] of Object.entries(this.systems)) {
-        if (!sys.isHyperlane) {
-          posSystems[`${sys.position.q},${sys.position.r}`] = sys.position
-        }
-      }
+      const size = this.hexSize
       return connections.map(([posA, posB]) => {
-        const a = posToPixel(posA.q, posA.r)
-        const b = posToPixel(posB.q, posB.r)
-        return { x1: a.x, y1: a.y, x2: b.x, y2: b.y }
+        return {
+          x1: size * (SQRT3 * posA.q + SQRT3 / 2 * posA.r),
+          y1: size * (1.5 * posA.r),
+          x2: size * (SQRT3 * posB.q + SQRT3 / 2 * posB.r),
+          y2: size * (1.5 * posB.r),
+        }
       })
+    },
+  },
+
+  watch: {
+    contentWidth: {
+      immediate: true,
+      handler(w) {
+        this.$emit('update:width', w)
+      },
     },
   },
 
@@ -122,57 +163,31 @@ export default {
       this.bus.emit('system-click', { systemId })
     },
 
-    onPanStart(e) {
-      // Only pan on middle-click or when not clicking on a tile
-      if (e.button === 1 || e.target.classList.contains('galaxy-map')) {
-        this.isPanning = true
-        this.panStartX = e.clientX
-        this.panStartY = e.clientY
-        this.panStartPanX = this.panX
-        this.panStartPanY = this.panY
-        window.addEventListener('mousemove', this.onPanMove)
-        window.addEventListener('mouseup', this.onPanEnd)
+    measure() {
+      const el = this.$refs.wrapper
+      if (el) {
+        this.containerWidth = el.clientWidth
+        this.containerHeight = el.clientHeight
       }
-    },
-
-    onPanMove(e) {
-      if (!this.isPanning) {
-        return
-      }
-      this.panX = this.panStartPanX + (e.clientX - this.panStartX)
-      this.panY = this.panStartPanY + (e.clientY - this.panStartY)
-    },
-
-    onPanEnd() {
-      this.isPanning = false
-      window.removeEventListener('mousemove', this.onPanMove)
-      window.removeEventListener('mouseup', this.onPanEnd)
-    },
-
-    onZoom(e) {
-      const delta = e.deltaY > 0 ? -0.1 : 0.1
-      this.zoom = Math.max(0.3, Math.min(2.5, this.zoom + delta))
     },
   },
 
   mounted() {
-    // Center the viewport on mount
-    const wrapper = this.$refs.wrapper
-    if (wrapper) {
-      this.panX = wrapper.clientWidth / 2
-      this.panY = wrapper.clientHeight / 2
-    }
+    this.measure()
+    this._resizeObserver = new ResizeObserver(() => this.measure()) // eslint-disable-line no-undef
+    this._resizeObserver.observe(this.$refs.wrapper)
   },
 
   beforeUnmount() {
-    window.removeEventListener('mousemove', this.onPanMove)
-    window.removeEventListener('mouseup', this.onPanEnd)
+    if (this._resizeObserver) {
+      this._resizeObserver.disconnect()
+    }
   },
 }
 </script>
 
 <style scoped>
-.galaxy-map-wrapper {
+.galaxy-map {
   flex: 1;
   overflow: hidden;
   background: #0a0a1a;
@@ -182,16 +197,7 @@ export default {
   position: relative;
 }
 
-.galaxy-map {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  user-select: none;
-}
-
 .galaxy-viewport {
-  transform-origin: 0 0;
-  transition: none;
   position: relative;
 }
 

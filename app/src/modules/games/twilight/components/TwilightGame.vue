@@ -9,10 +9,9 @@
           <GameLogTwilight />
         </div>
 
-        <!-- Center Column: Phase Info + Galaxy Map + Actions -->
+        <!-- Game Column: Phase Info + Actions -->
         <div class="col game-column center-column">
           <PhaseInfo />
-          <GalaxyMap />
 
           <!-- Custom action UIs -->
           <ActivateSystem v-if="activeActionType === 'activate-system'" />
@@ -22,15 +21,20 @@
           <RedistributeTokens v-if="activeActionType === 'redistribute-tokens'" />
 
           <WaitingPanel />
+
+          <!-- Player Panels -->
+          <div class="player-panels">
+            <PlayerPanel
+              v-for="player in orderedPlayers"
+              :key="player.name"
+              :player="player"
+            />
+          </div>
         </div>
 
-        <!-- Player Panels -->
-        <div class="col game-column players-column">
-          <PlayerPanel
-            v-for="player in orderedPlayers"
-            :key="player.name"
-            :player="player"
-          />
+        <!-- Map Column (right-most, full height) -->
+        <div class="map-column" :style="mapColumnStyle">
+          <GalaxyMap @update:width="mapWidth = $event" />
         </div>
 
       </div>
@@ -86,6 +90,7 @@ export default {
 
   data() {
     return {
+      mapWidth: 0,
       ui: {
         fn: {
           insertSelectorSubtitles: this.insertSelectorSubtitles,
@@ -109,6 +114,13 @@ export default {
   },
 
   computed: {
+    mapColumnStyle() {
+      if (!this.mapWidth) {
+        return {}
+      }
+      return { width: this.mapWidth + 'px' }
+    },
+
     orderedPlayers() {
       if (!this.game.state.initializationComplete) {
         return []
@@ -274,7 +286,8 @@ export default {
   width: 100vw;
   height: calc(100vh - 60px);
   font-size: .8rem;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   background: #1a1a2e;
   color: #e0e0e0;
 }
@@ -298,21 +311,26 @@ export default {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 60px);
-  min-width: 400px;
-  flex: 1;
-  overflow: hidden;
-  padding: 0;
-}
-
-.players-column {
-  height: calc(100vh - 60px);
-  min-width: 200px;
-  max-width: 260px;
+  min-width: 280px;
+  max-width: 360px;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-bottom: 3em;
+  padding: 0;
   background: #f8f9fa;
   color: #333;
+}
+
+.player-panels {
+  padding-bottom: 3em;
+}
+
+.map-column {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 60px);
+  flex: 0 0 auto;
+  overflow: hidden;
+  padding: 0;
 }
 
 /* Override common component text colors for dark theme */
