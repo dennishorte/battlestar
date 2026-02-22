@@ -586,7 +586,7 @@ const B6 = {
   region: 'The Phaerlin',
 
   locations: [
-    majorSite('shedaklah', 'Shedaklah', 3, 2, 2, false, { x: 0.51, y: 0.60 }, 1, 0),
+    majorSite('shedaklah', 'Shedaklah', 3, 2, 2, false, { x: 0.51, y: 0.60 }, 1, 1),
     tunnel('b6-ring-n', { x: 0.50, y: 0.16 }),
     tunnel('b6-ring-ne', { x: 0.73, y: 0.35 }),
     tunnel('b6-ring-nw', { x: 0.26, y: 0.35 }),
