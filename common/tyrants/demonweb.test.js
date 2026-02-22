@@ -341,21 +341,71 @@ describe('Demonweb', () => {
 
 
   describe('turn order', () => {
-    test('player after rotator goes first', () => {
-      const game = demonwebFixture()
-      const request = game.waiting
-      const rotator = request.selectors[0].actor
+    // Force a specific player to be the rotator by intercepting the random
+    // call at the start of setupDemonwebRotation. With 2 players,
+    // returning 0 selects dennis (index 0), returning 0.5 selects micah (index 1).
+    function forceRotator(game, rotatorName) {
+      const players = ['dennis', 'micah']
+      const targetIndex = players.indexOf(rotatorName)
+      game.testSetBreakpoint('initialization-complete', (game) => {
+        const originalRandom = game.random.bind(game)
+        let intercepted = false
+        game.random = () => {
+          if (!intercepted) {
+            intercepted = true
+            // Return value that floors to targetIndex: targetIndex / players.length
+            return targetIndex / players.length
+          }
+          return originalRandom()
+        }
+      })
+    }
 
+    test('player after rotator chooses starting location first', () => {
+      // Force dennis as rotator so micah (the non-first player) should go first
+      const game = t.fixture({ map: 'demonweb-2', seed: 'demonweb-test' })
+      forceRotator(game, 'dennis')
+      game.run()
       submitRotations(game, {})
 
-      // The next selector should be choosing starting locations
-      // The current player should be the one after the rotator
-      const rotatorPlayer = game.players.byName(rotator)
-      const expectedFirst = game.players.following(rotatorPlayer)
+      const request = game.waiting
+      expect(request.selectors[0].title).toBe('Choose starting location')
+      expect(request.selectors[0].actor).toBe('micah')
+    })
 
-      // After rotation, chooseInitialLocations iterates players starting from current
-      // The current player was set by passToPlayer
-      expect(game.players.current().name).toBe(expectedFirst.name)
+    test('rotator chooses starting location second', () => {
+      const game = t.fixture({ map: 'demonweb-2', seed: 'demonweb-test' })
+      forceRotator(game, 'dennis')
+      game.run()
+      submitRotations(game, {})
+
+      // micah chooses first
+      const request1 = game.waiting
+      t.choose(game, '*' + request1.selectors[0].choices[0])
+
+      // dennis (rotator) chooses second
+      const request2 = game.waiting
+      expect(request2.selectors[0].title).toBe('Choose starting location')
+      expect(request2.selectors[0].actor).toBe('dennis')
+    })
+
+    test('player after rotator takes first turn in main loop', () => {
+      const game = t.fixture({ map: 'demonweb-2', seed: 'demonweb-test' })
+      forceRotator(game, 'dennis')
+      game.run()
+      submitRotations(game, {})
+
+      // Choose starting locations
+      const r1 = game.waiting
+      t.choose(game, '*' + r1.selectors[0].choices[0])
+      const r2 = game.waiting
+      t.choose(game, '*' + r2.selectors[0].choices[0])
+
+      // micah should take the first main loop turn
+      game.run()
+      const request = game.waiting
+      expect(request.selectors[0].title).toBe('Choose Action')
+      expect(request.selectors[0].actor).toBe('micah')
     })
   })
 

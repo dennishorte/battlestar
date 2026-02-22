@@ -8,6 +8,7 @@ const TestUtil = { ...TestCommon }
 TestUtil.fixture = function(options) {
   options = Object.assign({
     name: 'test_game',
+    version: 1,
     seed: 'test_seed',
     expansions: ['drow', 'dragons'],
     map: undefined,

@@ -101,6 +101,7 @@ function _resolveMap(lobby) {
 function factoryFromLobby(lobby) {
   return GameFactory({
     game: 'Tyrants of the Underdark',
+    version: 1,
     name: lobby.name,
     expansions: lobby.options.expansions,
     randomizeExpansions: lobby.options.randomizeExpansions,
@@ -872,7 +873,10 @@ Tyrants.prototype.chooseInitialLocations = function() {
   this.log.add({ template: 'Choosing starting locations' })
   this.log.indent()
 
-  for (const player of this.players.all()) {
+  const players = this.settings.version >= 1
+    ? this.players.startingWithCurrent()
+    : this.players.all()
+  for (const player of players) {
     this.aChooseColor(player)
 
     const choices = this
