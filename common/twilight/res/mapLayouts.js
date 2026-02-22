@@ -89,19 +89,21 @@ const layout3p = {
 }
 
 // 4-player layout
+// Full 3-ring hexagon (4-5-6-7-6-5-4), homes at edges of rows 2 and 6
 const layout4p = {
   playerCount: 4,
   mecatol: { q: 0, r: 0, tileId: 18 },
   homePositions: [
-    { q: 0, r: -3 },   // north
-    { q: 3, r: -3 },   // northeast
-    { q: 0, r: 3 },    // south
-    { q: -3, r: 3 },   // southwest
+    { q: -1, r: -2 },  // top-left
+    { q: 3, r: -2 },   // top-right
+    { q: 1, r: 2 },    // bottom-right
+    { q: -3, r: 2 },   // bottom-left
   ],
   ring1: hexRing({ q: 0, r: 0 }, 1),
   ring2: hexRing({ q: 0, r: 0 }, 2),
-  blueTileCount: 15,
-  redTileCount: 9,
+  outerPositions: hexRing({ q: 0, r: 0 }, 3),
+  blueTileCount: 21,
+  redTileCount: 11,
 }
 
 // 2-player layout (for testing, small map)
