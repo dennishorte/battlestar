@@ -63,7 +63,8 @@ const layout6p = {
   redTileCount: 12,
 }
 
-// 3-player layout (smaller map)
+// 3-player layout
+// Shape: ring1 + ring2 + 6 outer tiles flanking each home system (2 per home)
 const layout3p = {
   playerCount: 3,
   mecatol: { q: 0, r: 0, tileId: 18 },
@@ -74,8 +75,17 @@ const layout3p = {
   ],
   ring1: hexRing({ q: 0, r: 0 }, 1),
   ring2: hexRing({ q: 0, r: 0 }, 2),
-  blueTileCount: 12,
-  redTileCount: 6,
+  // Ring-3 positions adjacent to each home system
+  outerPositions: [
+    { q: 1, r: -3 },   // east of north home
+    { q: -1, r: -2 },  // southwest of north home
+    { q: 3, r: -1 },   // northwest of southeast home
+    { q: 2, r: 1 },    // southwest of southeast home
+    { q: -3, r: 2 },   // northwest of southwest home
+    { q: -2, r: 3 },   // east of southwest home
+  ],
+  blueTileCount: 16,
+  redTileCount: 8,
 }
 
 // 4-player layout
