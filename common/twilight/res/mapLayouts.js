@@ -106,6 +106,25 @@ const layout4p = {
   redTileCount: 11,
 }
 
+// 5-player layout
+// Full 3-ring hexagon, 5 homes with trade goods bonuses for asymmetric positions
+const layout5p = {
+  playerCount: 5,
+  mecatol: { q: 0, r: 0, tileId: 18 },
+  homePositions: [
+    { q: 2, r: -3 },                       // top
+    { q: 3, r: 0, bonusTradeGoods: 2 },    // right
+    { q: 0, r: 3, bonusTradeGoods: 4 },    // bottom-right
+    { q: -3, r: 3, bonusTradeGoods: 2 },   // bottom-left
+    { q: -2, r: -1 },                      // left
+  ],
+  ring1: hexRing({ q: 0, r: 0 }, 1),
+  ring2: hexRing({ q: 0, r: 0 }, 2),
+  outerPositions: hexRing({ q: 0, r: 0 }, 3),
+  blueTileCount: 21,
+  redTileCount: 10,
+}
+
 // 2-player layout (for testing, small map)
 const layout2p = {
   playerCount: 2,
@@ -124,6 +143,7 @@ const layouts = {
   2: layout2p,
   3: layout3p,
   4: layout4p,
+  5: layout5p,
   6: layout6p,
 }
 

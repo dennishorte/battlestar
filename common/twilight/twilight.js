@@ -390,7 +390,11 @@ Twilight.prototype._initializeGalaxy = function() {
 }
 
 Twilight.prototype._initializeStartingUnits = function() {
-  for (const player of this.players.all()) {
+  const layout = res.getLayout(this.players.all().length)
+  const players = this.players.all()
+
+  for (let i = 0; i < players.length; i++) {
+    const player = players[i]
     const faction = player.faction
     // Creuss Gate: starting units go on creuss-home (off-map), not creuss-gate
     const homeSystemId = this.factionAbilities._hasAbility(player, 'creuss-gate')
@@ -411,6 +415,12 @@ Twilight.prototype._initializeStartingUnits = function() {
           this._addUnit(homeSystemId, planetId, unitType, player.name)
         }
       }
+    }
+
+    // Apply bonus trade goods from map layout (e.g. 5-player asymmetric positions)
+    const bonus = layout.homePositions[i].bonusTradeGoods
+    if (bonus) {
+      player.addTradeGoods(bonus)
     }
   }
 }
