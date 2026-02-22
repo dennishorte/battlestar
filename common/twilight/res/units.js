@@ -83,7 +83,8 @@ const units = {
     type: 'fighter',
     name: 'Fighter',
     category: 'ship',
-    cost: 1,  // 2 for 1 resource
+    cost: 1,
+    costFor: 2,
     combat: 9,
     move: 0,
     capacity: 0,
@@ -113,7 +114,8 @@ const units = {
     type: 'infantry',
     name: 'Infantry',
     category: 'ground',
-    cost: 1,  // 2 for 1 resource
+    cost: 1,
+    costFor: 2,
     combat: 8,
     move: 0,
     capacity: 0,

@@ -2663,10 +2663,10 @@ Twilight.prototype._productionStep = function(player, systemId) {
         break
       }
 
-      // Calculate cost (fighters and infantry are 2-for-1)
+      // Calculate cost (units with costFor get multiple units per cost payment)
       let unitCost = unitDef.cost
-      if ((unitDef.type === 'fighter' || unitDef.type === 'infantry') && i % 2 === 1) {
-        unitCost = 0  // second of a pair is free
+      if (unitDef.costFor > 1 && i % unitDef.costFor !== 0) {
+        unitCost = 0
       }
 
       if (totalCost + unitCost > availableResources) {

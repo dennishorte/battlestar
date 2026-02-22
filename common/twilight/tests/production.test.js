@@ -185,6 +185,109 @@ describe('Production', () => {
         .filter(u => u.owner === 'dennis')
       expect(jord.filter(u => u.type === 'infantry').length).toBe(4)
     })
+
+    test('1 fighter costs the same as 2 fighters', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'sol-home': {
+              space: ['carrier'],
+              'jord': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'sol-home' })
+      t.choose(game, 'Done')
+
+      // Jord has 4 resources. 1 fighter = 1 resource, leaving 3 for a carrier (cost 3)
+      t.action(game, 'produce-units', {
+        units: [
+          { type: 'fighter', count: 1 },
+          { type: 'carrier', count: 1 },
+        ],
+      })
+
+      const space = game.state.units['sol-home'].space
+        .filter(u => u.owner === 'dennis')
+      expect(space.filter(u => u.type === 'fighter').length).toBe(1)
+      expect(space.filter(u => u.type === 'carrier').length).toBe(2) // 1 existing + 1 produced
+    })
+
+    test('3 fighters cost 2 resources', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'sol-home': {
+              space: ['carrier'],
+              'jord': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'sol-home' })
+      t.choose(game, 'Done')
+
+      // Jord has 4 resources. 3 fighters = 2 resources, leaving 2 for a cruiser
+      t.action(game, 'produce-units', {
+        units: [
+          { type: 'fighter', count: 3 },
+          { type: 'cruiser', count: 1 },
+        ],
+      })
+
+      const space = game.state.units['sol-home'].space
+        .filter(u => u.owner === 'dennis')
+      expect(space.filter(u => u.type === 'fighter').length).toBe(3)
+      expect(space.filter(u => u.type === 'cruiser').length).toBe(1)
+    })
+
+    test('1 infantry costs the same as 2 infantry', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'sol-home': {
+              space: [],
+              'jord': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'sol-home' })
+      t.choose(game, 'Done')
+
+      // Jord has 4 resources. 1 infantry = 1 resource, leaving 3
+      // Produce 1 infantry + 1 carrier (cost 3) = 4 resources total
+      t.action(game, 'produce-units', {
+        units: [
+          { type: 'infantry', count: 1 },
+          { type: 'carrier', count: 1 },
+        ],
+      })
+
+      const jord = game.state.units['sol-home'].planets['jord']
+        .filter(u => u.owner === 'dennis')
+      expect(jord.filter(u => u.type === 'infantry').length).toBe(1)
+
+      const space = game.state.units['sol-home'].space
+        .filter(u => u.owner === 'dennis')
+      expect(space.filter(u => u.type === 'carrier').length).toBe(1)
+    })
   })
 
   describe('Blockade', () => {

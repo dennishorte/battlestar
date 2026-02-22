@@ -7,6 +7,7 @@
 //   prerequisites - Array of color strings required (e.g., ['blue', 'blue'] needs 2 blue)
 //   faction       - Faction ID if faction-specific, null if generic
 //   unitUpgrade   - Unit type this upgrades, null if not a unit upgrade
+//   description   - Rules text (uses Omega versions where applicable)
 
 const technologies = [
   // ============================================================
@@ -19,6 +20,7 @@ const technologies = [
     prerequisites: [],
     faction: null,
     unitUpgrade: null,
+    description: 'Your ships can move into and through asteroid fields. When other players\' units use SPACE CANNON against your units, apply \u22121 to the result of each die roll.',
   },
   {
     id: 'gravity-drive',
@@ -27,6 +29,7 @@ const technologies = [
     prerequisites: ['blue'],
     faction: null,
     unitUpgrade: null,
+    description: 'After you activate a system, apply +1 to the move value of 1 of your ships during this tactical action.',
   },
   {
     id: 'fleet-logistics',
@@ -35,6 +38,7 @@ const technologies = [
     prerequisites: ['blue', 'blue'],
     faction: null,
     unitUpgrade: null,
+    description: 'During each of your turns of the action phase, you may perform 2 actions instead of 1.',
   },
   {
     id: 'light-wave-deflector',
@@ -43,6 +47,7 @@ const technologies = [
     prerequisites: ['blue', 'blue', 'blue'],
     faction: null,
     unitUpgrade: null,
+    description: 'Your ships can move through systems that contain other players\' ships.',
   },
   // PoK Blue
   {
@@ -52,6 +57,7 @@ const technologies = [
     prerequisites: [],
     faction: null,
     unitUpgrade: null,
+    description: 'After you perform a tactical action in a system that contains a frontier token, if you have 1 or more ships in that system, explore that token. Your ships can retreat into adjacent systems that do not contain other players\' units, even if you do not have units or control planets in that system.',
   },
   {
     id: 'sling-relay',
@@ -60,6 +66,7 @@ const technologies = [
     prerequisites: ['blue'],
     faction: null,
     unitUpgrade: null,
+    description: 'ACTION: Exhaust this card to produce 1 ship in any system that contains one of your space docks.',
   },
 
   // ============================================================
@@ -72,6 +79,7 @@ const technologies = [
     prerequisites: [],
     faction: null,
     unitUpgrade: null,
+    description: 'When 1 or more of your units use BOMBARDMENT or SPACE CANNON, 1 of those units may roll 1 additional die.',
   },
   {
     id: 'magen-defense-grid',
@@ -80,6 +88,7 @@ const technologies = [
     prerequisites: ['red'],
     faction: null,
     unitUpgrade: null,
+    description: 'When any player activates a system that contains 1 or more of your structures, place 1 infantry from your reinforcements with each of those structures. At the start of ground combat on a planet that contains 1 or more of your structures, produce 1 hit and assign it to 1 of your opponent\'s ground forces.',
   },
   {
     id: 'duranium-armor',
@@ -88,6 +97,7 @@ const technologies = [
     prerequisites: ['red', 'red'],
     faction: null,
     unitUpgrade: null,
+    description: 'During each combat round, after you assign hits to your units, repair 1 of your damaged units that did not use SUSTAIN DAMAGE during this combat round.',
   },
   {
     id: 'assault-cannon',
@@ -96,6 +106,7 @@ const technologies = [
     prerequisites: ['red', 'red', 'red'],
     faction: null,
     unitUpgrade: null,
+    description: 'At the start of a space combat in a system that contains 3 or more of your non-fighter ships, your opponent must destroy 1 of their non-fighter ships.',
   },
   // PoK Red
   {
@@ -105,6 +116,7 @@ const technologies = [
     prerequisites: [],
     faction: null,
     unitUpgrade: null,
+    description: 'When you research a unit upgrade technology, you may exhaust this card to ignore any 1 prerequisite. When 1 or more of your units use PRODUCTION, you may exhaust this card to reduce the combined cost of the produced units by the number of unit upgrade technologies that you own.',
   },
   {
     id: 'self-assembly-routines',
@@ -113,6 +125,7 @@ const technologies = [
     prerequisites: ['red'],
     faction: null,
     unitUpgrade: null,
+    description: 'After 1 or more of your units use PRODUCTION, you may exhaust this card to place 1 mech from your reinforcements on a planet you control in that system. After 1 of your mechs is destroyed, gain 1 trade good.',
   },
 
   // ============================================================
@@ -125,6 +138,7 @@ const technologies = [
     prerequisites: [],
     faction: null,
     unitUpgrade: null,
+    description: 'When 1 or more of your units use PRODUCTION, reduce the combined cost of the produced units by 1.',
   },
   {
     id: 'graviton-laser-system',
@@ -133,6 +147,7 @@ const technologies = [
     prerequisites: ['yellow'],
     faction: null,
     unitUpgrade: null,
+    description: 'You may exhaust this card before 1 or more of your units uses SPACE CANNON; hits produced by those units must be assigned to non-fighter ships if able.',
   },
   {
     id: 'transit-diodes',
@@ -141,6 +156,7 @@ const technologies = [
     prerequisites: ['yellow', 'yellow'],
     faction: null,
     unitUpgrade: null,
+    description: 'You may exhaust this card at the start of your turn during the action phase; remove up to 4 of your ground forces from the game board and place them on 1 or more planets you control.',
   },
   {
     id: 'integrated-economy',
@@ -149,6 +165,7 @@ const technologies = [
     prerequisites: ['yellow', 'yellow', 'yellow'],
     faction: null,
     unitUpgrade: null,
+    description: 'After you gain control of a planet, you may produce any number of units on that planet that have a combined cost equal to or less than that planet\'s resource value.',
   },
   // PoK Yellow
   {
@@ -158,6 +175,7 @@ const technologies = [
     prerequisites: [],
     faction: null,
     unitUpgrade: null,
+    description: 'When you activate a system, you may explore 1 planet in that system which contains 1 or more of your units.',
   },
   {
     id: 'predictive-intelligence',
@@ -166,6 +184,7 @@ const technologies = [
     prerequisites: ['yellow'],
     faction: null,
     unitUpgrade: null,
+    description: 'At the end of your turn, you may exhaust this card to redistribute your command tokens. When you cast votes during the agenda phase, you may cast 3 additional votes; if you do, and the outcome you voted for is not resolved, exhaust this card.',
   },
 
   // ============================================================
@@ -178,6 +197,7 @@ const technologies = [
     prerequisites: [],
     faction: null,
     unitUpgrade: null,
+    description: 'During the status phase, draw 2 action cards instead of 1.',
   },
   {
     id: 'dacxive-animators',
@@ -186,6 +206,7 @@ const technologies = [
     prerequisites: ['green'],
     faction: null,
     unitUpgrade: null,
+    description: 'After you win a ground combat, you may place 1 infantry from your reinforcements on that planet.',
   },
   {
     id: 'hyper-metabolism',
@@ -194,6 +215,7 @@ const technologies = [
     prerequisites: ['green', 'green'],
     faction: null,
     unitUpgrade: null,
+    description: 'During the status phase, gain 3 command tokens instead of 2.',
   },
   {
     id: 'x89-bacterial-weapon',
@@ -202,6 +224,7 @@ const technologies = [
     prerequisites: ['green', 'green', 'green'],
     faction: null,
     unitUpgrade: null,
+    description: 'Double the hits produced by your units\' BOMBARDMENT and ground combat rolls. Exhaust each planet you use BOMBARDMENT against.',
   },
   // PoK Green
   {
@@ -211,6 +234,7 @@ const technologies = [
     prerequisites: [],
     faction: null,
     unitUpgrade: null,
+    description: 'You can use technology specialties on planets you control without exhausting them, even if those planets are exhausted. During the action phase, you can exhaust planets you control that have technology specialties to gain 1 trade good.',
   },
   {
     id: 'bio-stims',
@@ -219,6 +243,7 @@ const technologies = [
     prerequisites: ['green'],
     faction: null,
     unitUpgrade: null,
+    description: 'You may exhaust this card at the end of your turn to ready 1 of your planets that has a technology specialty or 1 of your other technologies.',
   },
 
   // ============================================================
@@ -231,7 +256,8 @@ const technologies = [
     prerequisites: ['green', 'green'],
     faction: null,
     unitUpgrade: 'infantry',
-    stats: { combat: 7 },
+    stats: { cost: 1, costFor: 2, combat: 7 },
+    description: 'After this unit is destroyed, roll 1 die. If the result is 6 or greater, place the unit on this card. At the start of your next turn, place each unit that is on this card on a planet you control in your home system.',
   },
   {
     id: 'fighter-ii',
@@ -240,7 +266,8 @@ const technologies = [
     prerequisites: ['green', 'green'],
     faction: null,
     unitUpgrade: 'fighter',
-    stats: { combat: 8, move: 2, requiresCapacity: false },
+    stats: { cost: 1, costFor: 2, combat: 8, move: 2, requiresCapacity: false },
+    description: 'This unit may move without being transported. Fighters in excess of your ships\' capacity count against your fleet pool.',
   },
   {
     id: 'pds-ii',
@@ -250,6 +277,7 @@ const technologies = [
     faction: null,
     unitUpgrade: 'pds',
     stats: { abilities: ['space-cannon-5x1', 'planetary-shield'] },
+    description: 'This unit can use its Space Cannon ability against ships that are in adjacent systems.',
   },
   {
     id: 'space-dock-ii',
@@ -259,6 +287,7 @@ const technologies = [
     faction: null,
     unitUpgrade: 'space-dock',
     stats: { productionValue: 4 },
+    description: 'Up to 3 fighters in this system do not count against your ships\' capacity.',
   },
   {
     id: 'carrier-ii',
@@ -267,7 +296,7 @@ const technologies = [
     prerequisites: ['blue', 'blue'],
     faction: null,
     unitUpgrade: 'carrier',
-    stats: { combat: 9, move: 2, capacity: 6 },
+    stats: { cost: 3, combat: 9, move: 2, capacity: 6 },
   },
   {
     id: 'cruiser-ii',
@@ -276,7 +305,7 @@ const technologies = [
     prerequisites: ['green', 'yellow', 'red'],
     faction: null,
     unitUpgrade: 'cruiser',
-    stats: { combat: 6, move: 3, capacity: 1 },
+    stats: { cost: 2, combat: 6, move: 3, capacity: 1 },
   },
   {
     id: 'destroyer-ii',
@@ -285,7 +314,7 @@ const technologies = [
     prerequisites: ['red', 'red'],
     faction: null,
     unitUpgrade: 'destroyer',
-    stats: { combat: 8, abilities: ['anti-fighter-barrage-6x3'] },
+    stats: { cost: 1, combat: 8, move: 2, abilities: ['anti-fighter-barrage-6x3'] },
   },
   {
     id: 'dreadnought-ii',
@@ -294,7 +323,7 @@ const technologies = [
     prerequisites: ['blue', 'blue', 'yellow'],
     faction: null,
     unitUpgrade: 'dreadnought',
-    stats: { move: 2, combat: 5 },
+    stats: { cost: 4, combat: 5, move: 2, capacity: 1, bombardment: 5, abilities: ['sustain-damage'] },
   },
   {
     id: 'war-sun',
@@ -303,7 +332,8 @@ const technologies = [
     prerequisites: ['red', 'red', 'red', 'yellow'],
     faction: null,
     unitUpgrade: 'war-sun',
-    stats: {},
+    stats: { cost: 12, combat: 3, combatCount: 3, move: 2, capacity: 6, bombardment: 3, bombardmentCount: 3, abilities: ['sustain-damage'] },
+    description: 'Other players\' units in this system lose PLANETARY SHIELD.',
   },
 ]
 
