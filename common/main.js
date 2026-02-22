@@ -10,6 +10,7 @@ module.exports.agricola = require('./agricola/agricola.js')
 module.exports.magic = require('./magic/magic.js')
 module.exports.tyrants = require('./tyrants/tyrants.js')
 module.exports.ultimate = require('./ultimate/innovation.js')
+module.exports.twilight = require('./twilight/twilight.js')
 
 module.exports.log = require('./lib/log.js')
 module.exports.selector = require('./lib/selector.js')
@@ -42,6 +43,7 @@ const Games = {
   'Agricola': module.exports.agricola,
   'Innovation: Ultimate': module.exports.ultimate,
   'Magic': module.exports.magic,
+  'Twilight Imperium': module.exports.twilight,
   'Tyrants of the Underdark': module.exports.tyrants,
   'Set Draft': module.exports.magic.draft.cube,
   'Cube Draft': module.exports.magic.draft.cube,

@@ -49,7 +49,7 @@ function TwilightFactory(settings, viewerName) {
 
 function factoryFromLobby(lobby) {
   return TwilightFactory({
-    game: 'TwilightImperium',
+    game: 'Twilight Imperium',
     name: lobby.name,
     players: lobby.users,
     seed: lobby.seed,
