@@ -464,4 +464,234 @@ describe('Galaxy', () => {
       expect(game.state.planets['mecatol-rex'].controller).toBeNull()
     })
   })
+
+  describe('5-Player Hyperlane Map', () => {
+    function hyperlaneFixture() {
+      return t.fixture({
+        numPlayers: 5,
+        mapLayout: '5-hyperlane',
+        deterministicLayout: false,
+      })
+    }
+
+    test('creates correct number of systems', () => {
+      const game = hyperlaneFixture()
+      game.run()
+
+      const systemIds = Object.keys(game.state.systems)
+      // 1 mecatol + 5 homes + 6 hyperlanes + 25 regular = 37
+      expect(systemIds.length).toBe(37)
+    })
+
+    test('places hyperlane tiles at correct positions', () => {
+      const game = hyperlaneFixture()
+      game.run()
+
+      const hyperlaneIds = Object.keys(game.state.systems).filter(
+        id => game.state.systems[id].isHyperlane
+      )
+      expect(hyperlaneIds.length).toBe(6)
+
+      const expectedPositions = [
+        { q: 0, r: 1 },
+        { q: 1, r: 1 },
+        { q: -1, r: 2 },
+        { q: 1, r: 2 },
+        { q: -1, r: 3 },
+        { q: 0, r: 3 },
+      ]
+
+      const hlPositions = hyperlaneIds
+        .map(id => game.state.systems[id].position)
+        .sort((a, b) => a.q - b.q || a.r - b.r)
+      const sorted = [...expectedPositions].sort((a, b) => a.q - b.q || a.r - b.r)
+
+      expect(hlPositions).toEqual(sorted)
+    })
+
+    test('hyperlane tiles have tileId hyperlane', () => {
+      const game = hyperlaneFixture()
+      game.run()
+
+      const hyperlaneIds = Object.keys(game.state.systems).filter(
+        id => game.state.systems[id].isHyperlane
+      )
+      for (const id of hyperlaneIds) {
+        expect(game.state.systems[id].tileId).toBe('hyperlane')
+      }
+    })
+
+    test('hyperlane connections stored in state', () => {
+      const game = hyperlaneFixture()
+      game.run()
+
+      expect(game.state.hyperlaneConnections).toBeDefined()
+      expect(game.state.hyperlaneConnections.length).toBe(8)
+    })
+
+    test('hyperlane tiles excluded from physical adjacency', () => {
+      const game = hyperlaneFixture()
+      game.run()
+
+      // Find a hyperlane system
+      const hlId = Object.keys(game.state.systems).find(
+        id => game.state.systems[id].isHyperlane
+      )
+
+      // Hyperlane system should have no adjacent systems
+      const adjacent = game._getAdjacentSystems(hlId)
+      expect(adjacent).toEqual([])
+
+      // Non-hyperlane systems should NOT list hyperlane tiles as adjacent
+      const adjacent18 = game._getAdjacentSystems(18)
+      for (const adjId of adjacent18) {
+        expect(game.state.systems[adjId].isHyperlane).toBeFalsy()
+      }
+    })
+
+    test('hyperlane connections create adjacency: c(-1,1) ↔ e(1,0)', () => {
+      const game = hyperlaneFixture()
+      game.run()
+
+      // Find system at position c(-1,1) and system at position e(1,0)
+      const systemC = Object.keys(game.state.systems).find(id => {
+        const sys = game.state.systems[id]
+        return sys.position.q === -1 && sys.position.r === 1 && !sys.isHyperlane
+      })
+      const systemE = Object.keys(game.state.systems).find(id => {
+        const sys = game.state.systems[id]
+        return sys.position.q === 1 && sys.position.r === 0 && !sys.isHyperlane
+      })
+
+      expect(systemC).toBeDefined()
+      expect(systemE).toBeDefined()
+
+      const adjC = game._getAdjacentSystems(systemC)
+      expect(adjC).toContain(systemE)
+
+      const adjE = game._getAdjacentSystems(systemE)
+      expect(adjE).toContain(systemC)
+    })
+
+    test('hyperlane connections create adjacency: d(0,2) ↔ multiple', () => {
+      const game = hyperlaneFixture()
+      game.run()
+
+      const systemD = Object.keys(game.state.systems).find(id => {
+        const sys = game.state.systems[id]
+        return sys.position.q === 0 && sys.position.r === 2 && !sys.isHyperlane
+      })
+      expect(systemD).toBeDefined()
+
+      const adjD = game._getAdjacentSystems(systemD)
+
+      // d should be connected to e(1,0), f(2,0), g(2,1), c(-1,1), b(-2,2), a(-2,3)
+      const expectedNeighborPositions = [
+        { q: 1, r: 0 },   // e
+        { q: 2, r: 0 },   // f
+        { q: 2, r: 1 },   // g
+        { q: -1, r: 1 },  // c
+        { q: -2, r: 2 },  // b
+        { q: -2, r: 3 },  // a
+      ]
+
+      for (const pos of expectedNeighborPositions) {
+        const neighborId = Object.keys(game.state.systems).find(id => {
+          const sys = game.state.systems[id]
+          return sys.position.q === pos.q && sys.position.r === pos.r && !sys.isHyperlane
+        })
+        expect(neighborId).toBeDefined()
+        expect(adjD).toContain(neighborId)
+      }
+    })
+
+    test('hyperlane connections create adjacency: a(-2,3) ↔ g(2,1)', () => {
+      const game = hyperlaneFixture()
+      game.run()
+
+      const systemA = Object.keys(game.state.systems).find(id => {
+        const sys = game.state.systems[id]
+        return sys.position.q === -2 && sys.position.r === 3 && !sys.isHyperlane
+      })
+      const systemG = Object.keys(game.state.systems).find(id => {
+        const sys = game.state.systems[id]
+        return sys.position.q === 2 && sys.position.r === 1 && !sys.isHyperlane
+      })
+
+      expect(systemA).toBeDefined()
+      expect(systemG).toBeDefined()
+
+      const adjA = game._getAdjacentSystems(systemA)
+      expect(adjA).toContain(systemG)
+
+      const adjG = game._getAdjacentSystems(systemG)
+      expect(adjG).toContain(systemA)
+    })
+
+    test('non-connected systems across hyperlanes are NOT adjacent', () => {
+      const game = hyperlaneFixture()
+      game.run()
+
+      // System at c(-1,1) should NOT be adjacent to g(2,1) — they are not connected
+      const systemC = Object.keys(game.state.systems).find(id => {
+        const sys = game.state.systems[id]
+        return sys.position.q === -1 && sys.position.r === 1 && !sys.isHyperlane
+      })
+      const systemG = Object.keys(game.state.systems).find(id => {
+        const sys = game.state.systems[id]
+        return sys.position.q === 2 && sys.position.r === 1 && !sys.isHyperlane
+      })
+
+      const adjC = game._getAdjacentSystems(systemC)
+      expect(adjC).not.toContain(systemG)
+    })
+
+    test('pathfinding works through hyperlane connections', () => {
+      const game = hyperlaneFixture()
+      game.run()
+      const galaxy = new Galaxy(game)
+
+      // d(0,2) → e(1,0) should be 1 hop via hyperlane
+      const systemD = Object.keys(game.state.systems).find(id => {
+        const sys = game.state.systems[id]
+        return sys.position.q === 0 && sys.position.r === 2 && !sys.isHyperlane
+      })
+      const systemE = Object.keys(game.state.systems).find(id => {
+        const sys = game.state.systems[id]
+        return sys.position.q === 1 && sys.position.r === 0 && !sys.isHyperlane
+      })
+
+      const path = galaxy.findPath(systemD, systemE, 'dennis', 1)
+      expect(path).not.toBeNull()
+      expect(path.length).toBe(2)
+    })
+
+    test('places 5 home systems', () => {
+      const game = hyperlaneFixture()
+      game.run()
+
+      const homeIds = Object.keys(game.state.systems).filter(id => {
+        const tile = res.getSystemTile(id) || res.getSystemTile(Number(id))
+        return tile && tile.type === 'home'
+      })
+      expect(homeIds.length).toBe(5)
+    })
+
+    test('places correct number of blue and red tiles', () => {
+      const game = hyperlaneFixture()
+      game.run()
+
+      const blueTiles = Object.keys(game.state.systems).filter(id => {
+        const tile = res.getSystemTile(id) || res.getSystemTile(Number(id))
+        return tile && tile.type === 'blue'
+      })
+      const redTiles = Object.keys(game.state.systems).filter(id => {
+        const tile = res.getSystemTile(id) || res.getSystemTile(Number(id))
+        return tile && tile.type === 'red'
+      })
+
+      expect(blueTiles.length).toBe(17)
+      expect(redTiles.length).toBe(8)
+    })
+  })
 })

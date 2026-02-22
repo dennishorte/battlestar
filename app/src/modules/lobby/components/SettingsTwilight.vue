@@ -17,6 +17,15 @@
       </span>
     </div>
 
+    <div v-if="layoutOptions.length > 1" class="setting-group">
+      <label class="select-label">Map Layout</label>
+      <select v-model="selectedLayout" @change="save" class="layout-select">
+        <option v-for="opt in layoutOptions" :key="opt.key" :value="opt.key">
+          {{ opt.name }}
+        </option>
+      </select>
+    </div>
+
     <div v-if="currentLayout" class="layout-preview">
       <div class="layout-label">Board Layout</div>
       <MapLayoutPreview :layout="currentLayout" />
@@ -32,6 +41,7 @@ import { twilight } from 'battlestar-common'
 import MapLayoutPreview from './MapLayoutPreview.vue'
 
 const layouts = twilight.res.layouts
+const getLayoutsForPlayerCount = twilight.res.getLayoutsForPlayerCount
 
 export default {
   name: 'SettingsTwilight',
@@ -42,7 +52,25 @@ export default {
     playerCount() {
       return this.lobby.users.length
     },
+    layoutOptions() {
+      const playerLayouts = getLayoutsForPlayerCount(this.playerCount)
+      return Object.entries(playerLayouts).map(([key, layout]) => ({
+        key,
+        name: layout.name || 'Standard',
+      }))
+    },
+    selectedLayout: {
+      get() {
+        return this.lobby.options?.mapLayout || String(this.playerCount)
+      },
+      set(value) {
+        this.lobby.options.mapLayout = value
+      },
+    },
     currentLayout() {
+      if (this.lobby.options?.mapLayout) {
+        return layouts[this.lobby.options.mapLayout] || null
+      }
       return layouts[this.playerCount] || null
     },
     randomFactions: {
@@ -61,6 +89,16 @@ export default {
         this.updateValid()
       },
       deep: true,
+    },
+    playerCount() {
+      // Reset layout selection when player count changes
+      if (this.lobby.options?.mapLayout) {
+        const available = getLayoutsForPlayerCount(this.playerCount)
+        if (!available[this.lobby.options.mapLayout]) {
+          delete this.lobby.options.mapLayout
+          this.save()
+        }
+      }
     },
   },
 
@@ -87,6 +125,15 @@ export default {
 .setting-group { margin: .5em 0; }
 .checkbox-label { display: inline-flex; align-items: center; gap: .4em; cursor: pointer; }
 .option-description { display: block; color: #888; font-size: .85em; margin-top: .15em; padding-left: 1.4em; }
+.select-label { font-size: .9em; color: #aaa; display: block; margin-bottom: .25em; }
+.layout-select {
+  background: #222;
+  color: #ddd;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: .3em .5em;
+  font-size: .9em;
+}
 .layout-preview { margin-top: .75em; }
 .layout-label { font-size: .85em; color: #aaa; margin-bottom: .25em; }
 .layout-warning { margin-top: .75em; color: #c44; font-size: .9em; }

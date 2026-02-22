@@ -44,6 +44,7 @@ function hexRing(center, radius) {
 // Standard 6-player layout
 // Home systems at ring 3, equidistant positions
 const layout6p = {
+  name: 'Standard',
   playerCount: 6,
   mecatol: { q: 0, r: 0, tileId: 18 },
   homePositions: [
@@ -66,6 +67,7 @@ const layout6p = {
 // 3-player layout
 // Shape: ring1 + ring2 + 6 outer tiles flanking each home system (2 per home)
 const layout3p = {
+  name: 'Standard',
   playerCount: 3,
   mecatol: { q: 0, r: 0, tileId: 18 },
   homePositions: [
@@ -91,6 +93,7 @@ const layout3p = {
 // 4-player layout
 // Full 3-ring hexagon (4-5-6-7-6-5-4), homes at edges of rows 2 and 6
 const layout4p = {
+  name: 'Standard',
   playerCount: 4,
   mecatol: { q: 0, r: 0, tileId: 18 },
   homePositions: [
@@ -109,6 +112,7 @@ const layout4p = {
 // 5-player layout
 // Full 3-ring hexagon, 5 homes with trade goods bonuses for asymmetric positions
 const layout5p = {
+  name: 'Standard',
   playerCount: 5,
   mecatol: { q: 0, r: 0, tileId: 18 },
   homePositions: [
@@ -125,8 +129,114 @@ const layout5p = {
   redTileCount: 10,
 }
 
+// 5-player hyperlane layout
+// Pentagonal map using hyperlane tiles to create adjacency across gaps
+//
+//      * . . *           r=-3
+//     . . . . .          r=-2
+//    . . . . . .         r=-1
+//   * . . M . . *        r=0
+//    . . c 1 5 g         r=1
+//     . b 6 d 4          r=2
+//      * a 2 3           r=3
+//
+// Hyperlane tiles (1-6) are not valid unit positions but create adjacency
+// between the systems they connect.
+const layout5pHyperlane = {
+  name: 'Hyperlane',
+  playerCount: 5,
+  mecatol: { q: 0, r: 0, tileId: 18 },
+  homePositions: [
+    { q: 0, r: -3 },   // north
+    { q: 3, r: -3 },   // northeast
+    { q: -3, r: 0 },   // west
+    { q: 3, r: 0 },    // east
+    { q: -3, r: 3 },   // southwest
+  ],
+  // Non-standard shape — all tile positions listed explicitly in outerPositions
+  ring1: [],
+  ring2: [],
+  outerPositions: [
+    // Row r=-3 (homes at (0,-3) and (3,-3))
+    { q: 1, r: -3 },
+    { q: 2, r: -3 },
+    // Row r=-2
+    { q: -1, r: -2 },
+    { q: 0, r: -2 },
+    { q: 1, r: -2 },
+    { q: 2, r: -2 },
+    { q: 3, r: -2 },
+    // Row r=-1
+    { q: -2, r: -1 },
+    { q: -1, r: -1 },
+    { q: 0, r: -1 },
+    { q: 1, r: -1 },
+    { q: 2, r: -1 },
+    { q: 3, r: -1 },
+    // Row r=0 (home at (-3,0), mecatol at (0,0), home at (3,0))
+    { q: -2, r: 0 },
+    { q: -1, r: 0 },
+    { q: 1, r: 0 },
+    { q: 2, r: 0 },
+    // Row r=1 (hyperlanes at (0,1) and (1,1))
+    { q: -3, r: 1 },
+    { q: -2, r: 1 },
+    { q: -1, r: 1 },   // c
+    { q: 2, r: 1 },    // g
+    // Row r=2 (hyperlanes at (-1,2) and (1,2))
+    { q: -3, r: 2 },
+    { q: -2, r: 2 },   // b
+    { q: 0, r: 2 },    // d
+    // Row r=3 (home at (-3,3), hyperlanes at (-1,3) and (0,3))
+    { q: -2, r: 3 },   // a
+  ],
+  // Hyperlane positions — tiles placed here create adjacency but cannot hold units
+  hyperlanePositions: [
+    { q: 0, r: 1 },    // HL 1
+    { q: 1, r: 1 },    // HL 5
+    { q: -1, r: 2 },   // HL 6
+    { q: 1, r: 2 },    // HL 4
+    { q: -1, r: 3 },   // HL 2
+    { q: 0, r: 3 },    // HL 3
+  ],
+  // Hyperlane connections — pairs of positions made adjacent by hyperlane tiles
+  // Each entry is [posA, posB] where both become 1-hop neighbors
+  hyperlaneConnections: [
+    // HL 1: c ↔ e (where e = {1,0})
+    [{ q: -1, r: 1 }, { q: 1, r: 0 }],
+    // HL 2-3-4 chain: a ↔ g
+    [{ q: -2, r: 3 }, { q: 2, r: 1 }],
+    // HL 5: d ↔ e
+    [{ q: 0, r: 2 }, { q: 1, r: 0 }],
+    // HL 5: d ↔ f (where f = {2,0})
+    [{ q: 0, r: 2 }, { q: 2, r: 0 }],
+    // HL 5: d ↔ g
+    [{ q: 0, r: 2 }, { q: 2, r: 1 }],
+    // HL 6: d ↔ c
+    [{ q: 0, r: 2 }, { q: -1, r: 1 }],
+    // HL 6: d ↔ b
+    [{ q: 0, r: 2 }, { q: -2, r: 2 }],
+    // HL 6: d ↔ a
+    [{ q: 0, r: 2 }, { q: -2, r: 3 }],
+  ],
+  // Per-tile routing lines inside each hyperlane hex.
+  // Each entry maps "q,r" → array of [entryDir, exitDir] pairs.
+  // Directions: 0=E, 1=SE, 2=SW, 3=W, 4=NW, 5=NE
+  hyperlaneRoutes: {
+    '0,1':  [[3, 5]],                 // HL 1: W(c) → NE(e)
+    '1,1':  [[2, 4], [2, 5], [2, 0]], // HL 5: SW(d) → NW(e), NE(f), E(g)
+    '-1,2': [[0, 4], [0, 3], [0, 2]], // HL 6: E(d) → NW(c), W(b), SW(a)
+    '1,2':  [[2, 5]],                 // HL 4: SW(HL3) → NE(g)  (chain a↔g)
+    '-1,3': [[3, 0]],                 // HL 2: W(a) → E(HL3)    (chain a↔g)
+    '0,3':  [[3, 5]],                 // HL 3: W(HL2) → NE(HL4) (chain a↔g)
+  },
+  blueTileCount: 17,
+  redTileCount: 8,
+}
+
 // 2-player layout (for testing, small map)
 const layout2p = {
+  name: 'Standard',
   playerCount: 2,
   mecatol: { q: 0, r: 0, tileId: 18 },
   homePositions: [
@@ -144,15 +254,26 @@ const layouts = {
   3: layout3p,
   4: layout4p,
   5: layout5p,
+  '5-hyperlane': layout5pHyperlane,
   6: layout6p,
 }
 
-function getLayout(playerCount) {
-  const layout = layouts[playerCount]
+function getLayout(key) {
+  const layout = layouts[key]
   if (!layout) {
-    throw new Error(`No map layout for ${playerCount} players`)
+    throw new Error(`No map layout for key: ${key}`)
   }
   return layout
+}
+
+function getLayoutsForPlayerCount(playerCount) {
+  const result = {}
+  for (const [key, layout] of Object.entries(layouts)) {
+    if (layout.playerCount === playerCount) {
+      result[key] = layout
+    }
+  }
+  return result
 }
 
 function getHexDistance(a, b) {
@@ -168,6 +289,7 @@ module.exports = {
   hexRing,
   layouts,
   getLayout,
+  getLayoutsForPlayerCount,
   getHexDistance,
   getHexNeighbors,
 }
