@@ -119,7 +119,12 @@ TestCommon.testActionChoices = function(request, action, expected) {
 }
 
 TestCommon.testChoices = function(request, expected, expectedMin, expectedMax) {
-  const choices = request.selectors[0].choices.filter(c => c !== 'auto').sort()
+  const choices = request
+    .selectors[0]
+    .choices
+    .filter(c => c !== 'auto')
+    .map(c => c.title ? c.title : c)
+    .sort()
   expect(choices).toEqual(expected.sort())
 
   if (expectedMax) {

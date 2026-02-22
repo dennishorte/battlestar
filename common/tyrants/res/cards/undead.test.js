@@ -418,9 +418,7 @@ describe('Undead expansion', () => {
       const request3 = t.choose(game, "Return another player's troop or spy")
       const request4 = t.choose(game, 'spy.Ched Nasad, micah')
 
-      const nextRequest = () => t.choose(game, 'House Guard')
-
-      expect(nextRequest).toThrow()
+      t.testChoices(request4, ['Ghost', 'Banshee'], 0, 2)
     })
 
     test('undead cascade', () => {

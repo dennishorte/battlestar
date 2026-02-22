@@ -91,10 +91,8 @@ describe('Antibiotics', () => {
       },
     })
     game.run()
-    t.choose(game, 'Dogma.Antibiotics')
+    const request = t.choose(game, 'Dogma.Antibiotics')
 
-    const bad = () => t.choose(game, 'Archery', 'Calendar', 'Mathematics', 'Tools')
-
-    expect(bad).toThrow(Error)
+    t.testChoices(request, ['Archery', 'Calendar', 'Mathematics', 'Tools'], 0, 3)
   })
 })
