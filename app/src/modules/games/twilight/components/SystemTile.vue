@@ -2,7 +2,7 @@
   <div
     class="system-tile"
     :class="tileClasses"
-    :style="positionStyle"
+    :style="tileStyle"
     @click="handleClick"
   >
     <svg :viewBox="svgViewBox" class="hex-svg">
@@ -68,8 +68,6 @@
 import { twilight } from 'battlestar-common'
 const res = twilight.res
 
-const HEX_SIZE = 50
-
 // Regular hexagon points (pointy-top)
 function hexCorner(cx, cy, size, i) {
   const angleDeg = 60 * i - 30
@@ -86,6 +84,7 @@ export default {
   props: {
     systemId: { type: [String, Number], required: true },
     system: { type: Object, required: true },
+    hexSize: { type: Number, default: 50 },
     highlighted: { type: Boolean, default: false },
     interactive: { type: Boolean, default: false },
   },
@@ -114,26 +113,32 @@ export default {
       return this.system.tileId
     },
 
-    positionStyle() {
+    tileStyle() {
       const q = this.system.position.q
       const r = this.system.position.r
-      const size = HEX_SIZE
+      const size = this.hexSize
       const x = size * (Math.sqrt(3) * q + Math.sqrt(3) / 2 * r)
       const y = size * (3 / 2 * r)
+      const dim = size * 2
       return {
+        width: dim + 'px',
+        height: dim + 'px',
+        marginLeft: -size + 'px',
+        marginTop: -size + 'px',
         transform: `translate(${x}px, ${y}px)`,
+        fontSize: (size * 0.012) + 'rem',
       }
     },
 
     svgViewBox() {
-      const s = HEX_SIZE
+      const s = this.hexSize
       return `${-s} ${-s} ${s * 2} ${s * 2}`
     },
 
     hexPoints() {
       const points = []
       for (let i = 0; i < 6; i++) {
-        const corner = hexCorner(0, 0, HEX_SIZE - 1, i)
+        const corner = hexCorner(0, 0, this.hexSize - 1, i)
         points.push(`${corner.x},${corner.y}`)
       }
       return points.join(' ')
@@ -252,10 +257,6 @@ export default {
 <style scoped>
 .system-tile {
   position: absolute;
-  width: 100px;
-  height: 100px;
-  margin-left: -50px;
-  margin-top: -50px;
   cursor: default;
 }
 
@@ -316,7 +317,6 @@ export default {
   justify-content: center;
   pointer-events: none;
   color: #ddd;
-  font-size: .6em;
 }
 
 .tile-id {
