@@ -11,10 +11,17 @@
       v-for="(hex, i) in hexes"
       :key="'t' + i"
       :x="hex.cx"
-      :y="hex.cy"
+      :y="hex.bonus ? hex.cy - 3 : hex.cy"
       class="hex-label"
       :class="hex.type"
     >{{ hex.label }}</text>
+    <text
+      v-for="(hex, i) in bonusHexes"
+      :key="'b' + i"
+      :x="hex.cx"
+      :y="hex.cy + 6"
+      class="hex-label hex-bonus"
+    >+{{ hex.bonus }}TG</text>
   </svg>
 </template>
 
@@ -76,6 +83,7 @@ export default {
           points: hexCorners(p.x, p.y),
           type: 'hex-home',
           label: `P${idx + 1}`,
+          bonus: pos.bonusTradeGoods || 0,
         })
       })
 
@@ -92,6 +100,10 @@ export default {
       })
 
       return result
+    },
+
+    bonusHexes() {
+      return this.hexes.filter(h => h.bonus)
     },
 
     viewBox() {
@@ -178,5 +190,9 @@ export default {
 .hex-label.hex-home {
   fill: #fff;
   font-weight: 600;
+}
+.hex-label.hex-bonus {
+  fill: #fd6;
+  font-size: 6px;
 }
 </style>
