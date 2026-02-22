@@ -22,6 +22,7 @@
     <CubeDraft v-else-if="gameType === 'Cube Draft' || gameType === 'Set Draft'" />
     <MtgGame v-else-if="gameType === 'Magic'" />
     <UltimateGame v-else-if="gameType === 'Innovation: Ultimate'" />
+    <TwilightGame v-else-if="gameType === 'Twilight Imperium'" />
     <TyrantsGame v-else-if="gameType === 'Tyrants of the Underdark'" />
 
     <div v-else>
@@ -41,6 +42,7 @@ import AgricolaGame from '@/modules/games/agricola/components/AgricolaGame.vue'
 import CubeDraft from '@/modules/games/cube_draft/components/CubeDraft.vue'
 import UltimateGame from '@/modules/games/ultimate/components/UltimateGame.vue'
 import MtgGame from '@/modules/games/magic/components/MtgGame.vue'
+import TwilightGame from '@/modules/games/twilight/components/TwilightGame.vue'
 import TyrantsGame from '@/modules/games/tyrants/components/TyrantsGame.vue'
 
 import SavingOverlay from '@/modules/games/common/components/SavingOverlay.vue'
@@ -53,6 +55,7 @@ export default {
     AgricolaGame,
     CubeDraft,
     MtgGame,
+    TwilightGame,
     TyrantsGame,
     UltimateGame,
 
