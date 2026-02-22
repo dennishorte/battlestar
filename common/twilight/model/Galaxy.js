@@ -42,17 +42,50 @@ class Galaxy {
       return []
     }
 
+    // Hyperlane systems are not valid adjacency sources or targets
+    if (system.isHyperlane) {
+      return []
+    }
+
     const adjacent = []
     const pos = system.position
 
-    // Physical adjacency
+    // Physical adjacency (skip hyperlane tiles)
     for (const [otherId, otherSystem] of Object.entries(this.game.state.systems)) {
       if (String(otherId) === String(systemId)) {
+        continue
+      }
+      if (otherSystem.isHyperlane) {
         continue
       }
       const dist = getHexDistance(pos, otherSystem.position)
       if (dist === 1) {
         adjacent.push(String(otherId))
+      }
+    }
+
+    // Hyperlane connection adjacency
+    if (this.game.state.hyperlaneConnections) {
+      const posKey = `${pos.q},${pos.r}`
+      for (const [posA, posB] of this.game.state.hyperlaneConnections) {
+        const keyA = `${posA.q},${posA.r}`
+        const keyB = `${posB.q},${posB.r}`
+        let targetPos = null
+        if (keyA === posKey) {
+          targetPos = posB
+        }
+        else if (keyB === posKey) {
+          targetPos = posA
+        }
+        if (targetPos) {
+          const targetId = Object.keys(this.game.state.systems).find(id => {
+            const sys = this.game.state.systems[id]
+            return sys.position.q === targetPos.q && sys.position.r === targetPos.r && !sys.isHyperlane
+          })
+          if (targetId && !adjacent.includes(String(targetId))) {
+            adjacent.push(String(targetId))
+          }
+        }
       }
     }
 
@@ -76,11 +109,14 @@ class Galaxy {
     }
 
     if (tileWormholes.length > 0) {
-      for (const [otherId] of Object.entries(this.game.state.systems)) {
+      for (const [otherId, otherSystem] of Object.entries(this.game.state.systems)) {
         if (String(otherId) === String(systemId)) {
           continue
         }
         if (adjacent.includes(String(otherId))) {
+          continue
+        }
+        if (otherSystem.isHyperlane) {
           continue
         }
 

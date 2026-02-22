@@ -268,6 +268,11 @@ const systemTiles = {
   // Wormhole Nexus — PoK
   // ============================================================
   82: { id: 82, planets: ['mallice'], anomaly: null, wormholes: ['alpha', 'beta', 'gamma'], type: 'blue' },
+
+  // ============================================================
+  // Hyperlane Tile
+  // ============================================================
+  'hyperlane': { id: 'hyperlane', planets: [], anomaly: null, wormholes: [], type: 'hyperlane' },
 }
 
 function getSystemTile(id) {
