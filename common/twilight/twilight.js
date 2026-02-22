@@ -329,7 +329,7 @@ Twilight.prototype._initializeGalaxy = function() {
   }
 
   // Fill remaining positions with blue and red tiles
-  const allPositions = [...layout.ring1, ...layout.ring2]
+  const allPositions = [...layout.ring1, ...layout.ring2, ...(layout.outerPositions || [])]
 
   // Filter out positions already used by Mecatol or home systems
   const usedPositions = new Set()
