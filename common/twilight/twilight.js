@@ -735,14 +735,16 @@ Twilight.prototype._initialDraws = function() {
     return
   }
 
-  // Each player draws 2 secret objectives and keeps 1
+  this._initSecretObjectiveDeck()
+
+  // Draw 2 secret objectives per player, then let all players pick in parallel
+  const playerDraws = []  // { player, drawn: [id, id] }
   for (const player of this.players.all()) {
     // Skip if setBoard already assigned secrets
     if (player.secretObjectives && player.secretObjectives.length > 0) {
       continue
     }
 
-    this._initSecretObjectiveDeck()
     const drawn = []
     for (let i = 0; i < 2; i++) {
       if (this.state.secretObjectiveDeck.length === 0) {
@@ -751,35 +753,52 @@ Twilight.prototype._initialDraws = function() {
       drawn.push(this.state.secretObjectiveDeck.pop())
     }
 
-    if (drawn.length === 2) {
-      // Player chooses which to keep
-      const choices = drawn.map(id => {
-        const obj = res.getObjective(id)
-        return obj ? `${id}: ${obj.name}` : id
-      })
-
-      const selection = this.actions.choose(player, choices, {
-        title: 'Choose Secret Objective to Keep',
-      })
-
-      const keptId = selection[0].split(':')[0]
-      const discardedId = drawn.find(id => id !== keptId)
-
-      if (!player.secretObjectives) {
-        player.secretObjectives = []
-      }
-      player.secretObjectives.push(keptId)
-
-      // Return discarded to bottom of deck
-      if (discardedId) {
-        this.state.secretObjectiveDeck.unshift(discardedId)
-      }
-    }
-    else if (drawn.length === 1) {
+    if (drawn.length === 1) {
+      // Only one card available — auto-assign
       if (!player.secretObjectives) {
         player.secretObjectives = []
       }
       player.secretObjectives.push(drawn[0])
+    }
+    else if (drawn.length === 2) {
+      playerDraws.push({ player, drawn })
+    }
+  }
+
+  if (playerDraws.length === 0) {
+    return
+  }
+
+  // All players choose simultaneously
+  const selectors = playerDraws.map(({ player, drawn }) => {
+    const choices = drawn.map(id => {
+      const obj = res.getObjective(id)
+      return obj ? `${id}: ${obj.name}` : id
+    })
+    return {
+      actor: player.name,
+      title: 'Choose Secret Objective to Keep',
+      choices,
+    }
+  })
+
+  const responses = this.requestInputMany(selectors)
+
+  // Process all choices
+  for (let i = 0; i < playerDraws.length; i++) {
+    const { player, drawn } = playerDraws[i]
+    const response = responses[i]
+    const keptId = response.selection[0].split(':')[0]
+    const discardedId = drawn.find(id => id !== keptId)
+
+    if (!player.secretObjectives) {
+      player.secretObjectives = []
+    }
+    player.secretObjectives.push(keptId)
+
+    // Return discarded to bottom of deck
+    if (discardedId) {
+      this.state.secretObjectiveDeck.unshift(discardedId)
     }
   }
 }
