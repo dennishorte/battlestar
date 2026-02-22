@@ -48,16 +48,9 @@ export default {
     allPositions() {
       const { mecatol, homePositions, ring1, ring2, outerPositions } = this.layout
 
-      let ring3
-      if (outerPositions) {
-        ring3 = outerPositions
-      }
-      else {
-        // Fall back to full ring 3 minus home positions
-        const ring3Full = this.hexRing({ q: 0, r: 0 }, 3)
-        const homeSet = new Set(homePositions.map(p => `${p.q},${p.r}`))
-        ring3 = ring3Full.filter(p => !homeSet.has(`${p.q},${p.r}`))
-      }
+      const homeSet = new Set(homePositions.map(p => `${p.q},${p.r}`))
+      const outerRaw = outerPositions || this.hexRing({ q: 0, r: 0 }, 3)
+      const ring3 = outerRaw.filter(p => !homeSet.has(`${p.q},${p.r}`))
 
       return { mecatol, homePositions, ring1, ring2, ring3 }
     },
