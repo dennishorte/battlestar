@@ -167,6 +167,9 @@ TestUtil.fixture = function(options = {}) {
     'federation-of-sol',
     'emirates-of-hacan',
     'barony-of-letnev',
+    'sardakk-norr',
+    'mentak-coalition',
+    'naalu-collective',
   ]
 
   options = Object.assign({
@@ -177,6 +180,9 @@ TestUtil.fixture = function(options = {}) {
       { _id: 'dennis_id', name: 'dennis' },
       { _id: 'micah_id', name: 'micah' },
       { _id: 'scott_id', name: 'scott' },
+      { _id: 'eliya_id', name: 'eliya' },
+      { _id: 'rachel_id', name: 'rachel' },
+      { _id: 'tyler_id', name: 'tyler' },
     ],
     playerOptions: {
       shuffleSeats: false,

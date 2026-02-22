@@ -2,7 +2,7 @@
   <div class="settings-twilight">
     <div class="player-info">
       <span class="player-count">{{ playerCount }} player{{ playerCount !== 1 ? 's' : '' }}</span>
-      <span class="player-range">(3-6 players, no 5-player layout)</span>
+      <span class="player-range">(3-6 players)</span>
     </div>
 
     <div class="setting-group">
