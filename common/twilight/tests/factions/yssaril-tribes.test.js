@@ -6,6 +6,31 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 }
 
 describe('Yssaril Tribes', () => {
+  describe('Data', () => {
+    test('starting technologies', () => {
+      const game = t.fixture({ factions: ['yssaril-tribes', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getTechIds()).toEqual(expect.arrayContaining(['neural-motivator']))
+    })
+
+    test('commodities is 3', () => {
+      const game = t.fixture({ factions: ['yssaril-tribes', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.maxCommodities).toBe(3)
+    })
+
+    test('faction technologies are defined', () => {
+      const { getFaction } = require('../../res/factions/index.js')
+      const faction = getFaction('yssaril-tribes')
+      expect(faction.factionTechnologies.length).toBe(3)
+      expect(faction.factionTechnologies.map(t => t.id).sort()).toEqual(
+        ['deepgloom-executable', 'mageon-implants', 'transparasteel-plating']
+      )
+    })
+  })
+
   describe('Stall Tactics', () => {
     test('can discard action card as component action', () => {
       const game = t.fixture({
@@ -19,11 +44,8 @@ describe('Yssaril Tribes', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis (Yssaril) uses component action
       t.choose(game, 'Component Action')
       t.choose(game, 'stall-tactics')
-
-      // Should be prompted to discard a card — choose focused-research
       t.choose(game, 'focused-research')
 
       const dennis = game.players.byName('dennis')
@@ -38,10 +60,7 @@ describe('Yssaril Tribes', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis (Yssaril) has no action cards — Component Action should have no options
       t.choose(game, 'Component Action')
-
-      // Should immediately return (no component actions)
       expect(game.waiting.selectors[0].actor).toBe('micah')
     })
   })
@@ -54,26 +73,17 @@ describe('Yssaril Tribes', () => {
       game.run()
       pickStrategyCards(game, 'politics', 'imperial')
 
-      // Dennis (Yssaril, politics=3) goes first
       t.choose(game, 'Strategic Action')
-
-      // Politics primary: choose new speaker
       t.choose(game, 'dennis')
 
-      // After drawing 2 cards, Scheming draws 1 extra, then prompts discard
-      // Dennis now has 3 cards — pick first to discard
       const cardToDiscard = game.players.byName('dennis').actionCards[0].id
       t.choose(game, cardToDiscard)
 
-      // Re-read player after state replay
       const dennis = game.players.byName('dennis')
-      // Dennis should have 2 cards (drew 3, discarded 1)
       expect(dennis.actionCards.length).toBe(2)
 
-      // Micah gets politics secondary (draw 2 action cards)
       t.choose(game, 'Use Secondary')
 
-      // Micah (Hacan) should have 2 cards (no scheming)
       const micah = game.players.byName('micah')
       expect(micah.actionCards.length).toBe(2)
     })
@@ -96,30 +106,49 @@ describe('Yssaril Tribes', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Play through to status phase
-      t.choose(game, 'Strategic Action')  // dennis: leadership
-      t.choose(game, 'Pass')  // micah declines secondary
-      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')
+      t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines secondary
+      t.choose(game, 'Pass')
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 
-      // Status phase — both draw 1 card
-      // Dennis (Yssaril) scheming triggers: draws extra, discards 1
-      // Pick any card to discard for scheming
+      // Scheming: pick card to discard
       const dennisCards = game.players.byName('dennis').actionCards
       t.choose(game, dennisCards[0].id)
 
-      // Dennis has 8+ cards but Crafty means no hand limit enforcement
-      // Status phase continues (no discard prompt for Dennis)
-      // Micah has ≤7 cards so no discard prompt either
-      t.choose(game, 'Done')  // dennis token redistribution
-      t.choose(game, 'Done')  // micah token redistribution
+      t.choose(game, 'Done')
+      t.choose(game, 'Done')
 
-      // Dennis should still have 8+ cards (no forced discard)
       const dennis = game.players.byName('dennis')
       expect(dennis.actionCards.length).toBeGreaterThanOrEqual(8)
     })
+  })
+
+  describe('Agent — Ssruu', () => {
+    test.todo('has text ability of each other player agent')
+  })
+
+  describe('Commander — So Ata', () => {
+    test.todo('look at opponent action cards/notes/secrets when they activate system with your units')
+  })
+
+  describe('Hero — Kyver, Blade and Key', () => {
+    test.todo('Guild of Spies: see and take/discard opponent action cards, then purge')
+  })
+
+  describe('Mech — Blackshade Infiltrator', () => {
+    test.todo('DEPLOY: after Stall Tactics, place 1 mech on controlled planet')
+  })
+
+  describe('Promissory Note — Spy Net', () => {
+    test.todo('at start of turn, look at Yssaril hand and take 1 card')
+  })
+
+  describe('Faction Technologies', () => {
+    test.todo('Transparasteel Plating: passed players cannot play action cards during your turn')
+    test.todo('Mageon Implants: steal 1 action card from another player')
+    test.todo('Deepgloom Executable: share Stall Tactics/Scheming with other players')
   })
 })
