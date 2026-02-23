@@ -1476,6 +1476,9 @@ Twilight.prototype._tacticalAction = function(player) {
   // Titans awaken: replace sleeper tokens with PDS
   this.factionAbilities.onSystemActivated(player.name, systemId)
 
+  // Z'eu agent (Naalu): may return the command token to the player's reinforcements
+  this.factionAbilities.onCommandTokenPlaced(player.name, systemId)
+
   // Magen Defense Grid: if activated system has another player's structures,
   // that player with the tech gets to place 1 infantry per structure
   const tileForMagen = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
@@ -1642,7 +1645,12 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
     const moveBonus = this.factionAbilities.getMovementBonus(player.name, fromSystemId)
     // Gravity Drive: +1 movement for all ships
     const gravityDriveBonus = player.hasTechnology('gravity-drive') ? 1 : 0
-    const path = galaxy.findPath(fromSystemId, targetSystemId, player.name, unitDef.move + moveBonus + gravityDriveBonus)
+    // Captain Mendosa: override move value for one ship type
+    const mendosa = this.state.currentTacticalAction?.mendosaBonus
+    const baseMove = (mendosa && mendosa.playerName === player.name && mendosa.shipType === m.unitType)
+      ? mendosa.moveValue
+      : unitDef.move
+    const path = galaxy.findPath(fromSystemId, targetSystemId, player.name, baseMove + moveBonus + gravityDriveBonus)
     if (!path) {
       continue  // Ship cannot reach the target
     }
@@ -2135,7 +2143,7 @@ Twilight.prototype._assignHits = function(systemId, ownerName, hits, destroyerNa
         this._recordSecretTrigger(destroyerName, 'destroy-their-greatest-ship')
       }
       if (destroyerName) {
-        this.factionAbilities.onUnitDestroyed(systemId, removed, destroyerName)
+        this.factionAbilities.onUnitDestroyed(systemId, removed, destroyerName, null)
       }
     }
     remainingHits--
@@ -2805,7 +2813,7 @@ Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, h
     if (idx !== -1) {
       const removed = planetUnits.splice(idx, 1)[0]
       if (destroyerName) {
-        this.factionAbilities.onUnitDestroyed(systemId, removed, destroyerName)
+        this.factionAbilities.onUnitDestroyed(systemId, removed, destroyerName, planetId)
       }
     }
     remainingHits--

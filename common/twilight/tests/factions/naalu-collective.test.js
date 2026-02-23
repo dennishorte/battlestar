@@ -119,6 +119,7 @@ describe('Naalu Collective', () => {
       // Dennis (Hacan) takes tactical action
       t.choose(game, 'Tactical Action')
       t.action(game, 'activate-system', { systemId: '27' })
+      t.choose(game, 'Pass')            // micah declines Z'eu agent
       t.action(game, 'move-ships', {
         movements: [{ unitType: 'cruiser', from: 'hacan-home', count: 1 }],
       })
@@ -139,7 +140,150 @@ describe('Naalu Collective', () => {
   })
 
   describe("Agent — Z'eu", () => {
-    test.todo('exhaust to return a command token placed in a system to that player\'s reinforcements')
+    test("exhaust to return another player's command token from a system", () => {
+      // dennis = Naalu (has Z'eu), micah = Hacan
+      const game = t.fixture({
+        factions: ['naalu-collective', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready' },
+          units: {
+            'naalu-home': {
+              space: ['carrier'],
+              'druaa': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          units: {
+            'hacan-home': {
+              space: ['cruiser'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis (Naalu, telepathic=0) goes first — use leadership
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')         // micah declines leadership secondary
+
+      // Micah (Hacan) takes tactical action — activates system 27
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Z'eu prompt: dennis (Naalu) can exhaust to return micah's token
+      t.choose(game, "Exhaust Z'eu")
+
+      // Micah's token should be removed from system 27
+      expect(game.state.systems['27'].commandTokens).not.toContain('micah')
+
+      // Micah should get the token back in tactics pool (was 3, spent 1 to activate, +1 from Z'eu = 3)
+      const micah = game.players.byName('micah')
+      expect(micah.commandTokens.tactics).toBe(3)
+
+      // Dennis's agent should be exhausted
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+    })
+
+    test("can pass on Z'eu when agent is ready", () => {
+      const game = t.fixture({
+        factions: ['naalu-collective', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready' },
+          units: {
+            'naalu-home': {
+              space: ['carrier'],
+              'druaa': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          units: {
+            'hacan-home': {
+              space: ['cruiser'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis (Naalu) goes first — use leadership
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')         // micah declines leadership secondary
+
+      // Micah activates system 27
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Dennis declines Z'eu
+      t.choose(game, 'Pass')
+
+      // Micah's token should remain in system 27
+      expect(game.state.systems['27'].commandTokens).toContain('micah')
+
+      // Micah's tactic tokens should have decreased by 1 (spent to activate)
+      const micah = game.players.byName('micah')
+      expect(micah.commandTokens.tactics).toBe(2)
+
+      // Dennis's agent should still be ready
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(true)
+    })
+
+    test("Z'eu does not trigger when agent is exhausted", () => {
+      const game = t.fixture({
+        factions: ['naalu-collective', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted' },
+          units: {
+            'naalu-home': {
+              space: ['carrier'],
+              'druaa': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          units: {
+            'hacan-home': {
+              space: ['cruiser'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis (Naalu) goes first — use leadership
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')         // micah declines leadership secondary
+
+      // Micah activates system 27 — no Z'eu prompt expected (agent exhausted)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Should proceed directly to movement step — no Z'eu prompt
+      // Micah's token should be in system 27
+      expect(game.state.systems['27'].commandTokens).toContain('micah')
+
+      // Micah spent 1 tactic token
+      const micah = game.players.byName('micah')
+      expect(micah.commandTokens.tactics).toBe(2)
+    })
   })
 
   describe("Commander — M'aban", () => {

@@ -135,13 +135,152 @@ describe('Yin Brotherhood', () => {
       // Indoctrination prompt: spend 2 influence to replace 1 enemy infantry
       t.choose(game, 'Indoctrinate')
 
+      // Brother Milor prompt may appear when ground forces are destroyed — pass
+      // Handle all such prompts until combat resolves
+      while (game.waiting?.selectors?.[0]?.choices) {
+        const choices = t.currentChoices(game)
+        if (choices.includes('Exhaust Brother Milor')) {
+          t.choose(game, 'Pass')
+        }
+        else {
+          break
+        }
+      }
+
       // Ground combat resolves. Yin should win (4+1 vs 2-1 infantry)
       expect(game.state.planets['new-albion'].controller).toBe('dennis')
     })
   })
 
   describe('Agent — Brother Milor', () => {
-    test.todo('exhaust after a unit is destroyed during combat to place 2 fighters if ship or 2 infantry if ground force')
+    test('exhaust to place 2 fighters when a ship is destroyed in space combat', () => {
+      const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'yin-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'darien': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis (Yin) attacks system 27 with 5 cruisers vs 1 fighter
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'yin-home', count: 5 }],
+      })
+
+      // When Micah's fighter is destroyed, Brother Milor prompt appears
+      t.choose(game, 'Exhaust Brother Milor')
+
+      // Combat resolves — Yin wins (the 2 placed fighters get destroyed in subsequent rounds)
+      // Dennis agent should be exhausted, proving the ability triggered
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+
+      // Yin should win space combat
+      const dennisShips = game.state.units['27'].space
+        .filter(u => u.owner === 'dennis')
+      expect(dennisShips.length).toBeGreaterThan(0)
+    })
+
+    test('exhaust to place 2 infantry when ground force is destroyed', () => {
+      const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'yin-home': {
+              space: ['carrier'],
+              'darien': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis invades new-albion with 5 infantry vs 1 infantry
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'yin-home', count: 1 },
+          { unitType: 'infantry', from: 'yin-home', count: 5 },
+        ],
+      })
+
+      // Indoctrination prompt — pass (to isolate the agent test)
+      t.choose(game, 'Pass')
+
+      // When Micah's infantry is destroyed, Brother Milor prompt appears
+      t.choose(game, 'Exhaust Brother Milor')
+
+      // Combat resolves — Dennis should win and control the planet
+      expect(game.state.planets['new-albion'].controller).toBe('dennis')
+
+      // Dennis agent should be exhausted
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+    })
+
+    test('exhausted agent does not trigger', () => {
+      const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'yin-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'darien': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis attacks with 5 cruisers vs 1 fighter
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'yin-home', count: 5 }],
+      })
+
+      // No Brother Milor prompt should appear — agent is exhausted
+      // Combat should just resolve, Yin wins
+      const micahFighters = game.state.units['27'].space
+        .filter(u => u.owner === 'micah')
+      expect(micahFighters.length).toBe(0)
+    })
   })
 
   describe('Commander — Brother Omar', () => {
