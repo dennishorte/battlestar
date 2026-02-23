@@ -102,7 +102,76 @@ describe('Embers of Muaat', () => {
   })
 
   describe('Commander — Magmus', () => {
-    test.todo('after spending a strategy pool token, gain 1 trade good')
+    test('gains 1 trade good after spending strategy token on secondary', () => {
+      const game = t.fixture({ factions: ['embers-of-muaat', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Micah (Hacan) has diplomacy(2), goes first due to lower number
+      // Wait — leadership is 1, diplomacy is 2. Dennis picked leadership, micah picked diplomacy.
+      // Leadership(1) is lower, so dennis goes first.
+
+      // Dennis uses leadership (primary: gain 3 command tokens)
+      t.choose(game, 'Strategic Action')
+      // Micah is prompted for leadership secondary
+      t.choose(game, 'Use Secondary')
+
+      // Micah spent 1 strategy token. But we care about Dennis (Muaat).
+      // Micah goes next: micah uses diplomacy
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'hacan-home')  // micah: diplomacy primary, protect hacan-home
+      // Dennis is prompted for diplomacy secondary
+      t.choose(game, 'Use Secondary')
+
+      // Dennis spent 1 strategy token for the secondary → commander triggers → +1 TG
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBe(1)
+      // Started with 2 strategy, spent 1 for secondary = 1
+      expect(dennis.commandTokens.strategy).toBe(1)
+    })
+
+    test('does not gain trade good when commander is locked', () => {
+      const game = t.fixture({ factions: ['embers-of-muaat', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          // Remove the war sun so commander does not auto-unlock
+          units: {
+            'muaat-home': {
+              space: ['fighter', 'fighter'],
+              'muaat': ['infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses leadership (primary)
+      t.choose(game, 'Strategic Action')
+      // Micah uses leadership secondary
+      t.choose(game, 'Use Secondary')
+
+      // Micah uses diplomacy (primary)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'hacan-home')
+      // Dennis uses diplomacy secondary (spends strategy token)
+      t.choose(game, 'Use Secondary')
+
+      // Commander is locked — no TG gain
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBe(0)
+      expect(dennis.commandTokens.strategy).toBe(1)
+    })
   })
 
   describe("Hero — Adjudicator Ba'al", () => {

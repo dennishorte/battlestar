@@ -57,4 +57,17 @@ module.exports = {
       })
     }
   },
+
+  // Commander — Magmus: after spending a strategy token, gain 1 trade good
+  onStrategyTokenSpent(player, ctx) {
+    if (!player.isCommanderUnlocked()) {
+      return
+    }
+
+    player.addTradeGoods(1)
+    ctx.log.add({
+      template: 'Magmus: {player} gains 1 trade good',
+      args: { player },
+    })
+  },
 }
