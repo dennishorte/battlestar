@@ -49,9 +49,16 @@ const publicObjectivesI = [
     type: 'public',
     condition: 'Own 2 technologies in each of 2 colors.',
     check: (player) => {
-      const prereqs = player.getTechPrerequisites()
-      const colorsWithTwo = Object.values(prereqs).filter(c => c >= 2)
-      return colorsWithTwo.length >= 2
+      const res = require('./index.js')
+      const techs = player.getTechIds()
+      const colorCounts = { blue: 0, red: 0, yellow: 0, green: 0 }
+      for (const techId of techs) {
+        const tech = res.getTechnology(techId)
+        if (tech && tech.color && colorCounts[tech.color] !== undefined) {
+          colorCounts[tech.color]++
+        }
+      }
+      return Object.values(colorCounts).filter(c => c >= 2).length >= 2
     },
   },
   {
@@ -124,7 +131,7 @@ const publicObjectivesI = [
     stage: 1,
     points: 1,
     type: 'public',
-    condition: 'Spend a total of 3 tokens from your tactic and/or fleet pools.',
+    condition: 'Spend a total of 3 tokens from your tactic and/or strategy pools.',
     check: () => false,
   },
   {
@@ -144,6 +151,225 @@ const publicObjectivesI = [
     type: 'public',
     condition: 'Spend 8 influence.',
     check: () => false,
+  },
+
+  // PoK Stage I
+  {
+    id: 'amass-wealth',
+    name: 'Amass Wealth',
+    stage: 1,
+    points: 1,
+    type: 'public',
+    condition: 'Spend 3 influence, 3 resources, and 3 trade goods.',
+    check: () => false,
+  },
+  {
+    id: 'build-defenses',
+    name: 'Build Defenses',
+    stage: 1,
+    points: 1,
+    type: 'public',
+    condition: 'Have 4 or more structures on the game board.',
+    check: (player, game) => {
+      let count = 0
+      for (const [, systemUnits] of Object.entries(game.state.units)) {
+        for (const [, planetUnits] of Object.entries(systemUnits.planets)) {
+          count += planetUnits.filter(u =>
+            u.owner === player.name && (u.type === 'pds' || u.type === 'space-dock')
+          ).length
+        }
+      }
+      return count >= 4
+    },
+  },
+  {
+    id: 'discover-lost-outposts',
+    name: 'Discover Lost Outposts',
+    stage: 1,
+    points: 1,
+    type: 'public',
+    condition: 'Control 2 planets that have attachments.',
+    check: (player, game) => {
+      const controlled = player.getControlledPlanets()
+      let count = 0
+      for (const planetId of controlled) {
+        const planetState = game.state.planets[planetId]
+        if (planetState && planetState.attachments && planetState.attachments.length > 0) {
+          count++
+        }
+      }
+      return count >= 2
+    },
+  },
+  {
+    id: 'engineer-a-marvel',
+    name: 'Engineer a Marvel',
+    stage: 1,
+    points: 1,
+    type: 'public',
+    condition: 'Have your flagship or a war sun on the game board.',
+    check: (player, game) => {
+      for (const [, systemUnits] of Object.entries(game.state.units)) {
+        if (systemUnits.space.some(u =>
+          u.owner === player.name && (u.type === 'flagship' || u.type === 'war-sun')
+        )) {
+          return true
+        }
+      }
+      return false
+    },
+  },
+  {
+    id: 'explore-deep-space',
+    name: 'Explore Deep Space',
+    stage: 1,
+    points: 1,
+    type: 'public',
+    condition: 'Have units in 3 systems that do not contain planets.',
+    check: (player, game) => {
+      const res = require('./index.js')
+      let count = 0
+      for (const [systemId, systemUnits] of Object.entries(game.state.units)) {
+        if (!systemUnits.space.some(u => u.owner === player.name)) {
+          continue
+        }
+        const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+        if (tile && tile.planets.length === 0) {
+          count++
+        }
+      }
+      return count >= 3
+    },
+  },
+  {
+    id: 'improve-infrastructure',
+    name: 'Improve Infrastructure',
+    stage: 1,
+    points: 1,
+    type: 'public',
+    condition: 'Have structures on 3 planets outside of your home system.',
+    check: (player, game) => {
+      const factions = require('./factions/index.js')
+      const playerFaction = factions.getFaction(player.factionId)
+      let count = 0
+      for (const [systemId, systemUnits] of Object.entries(game.state.units)) {
+        if (systemId === playerFaction?.homeSystem) {
+          continue
+        }
+        for (const [, planetUnits] of Object.entries(systemUnits.planets)) {
+          if (planetUnits.some(u =>
+            u.owner === player.name && (u.type === 'pds' || u.type === 'space-dock')
+          )) {
+            count++
+          }
+        }
+      }
+      return count >= 3
+    },
+  },
+  {
+    id: 'make-history',
+    name: 'Make History',
+    stage: 1,
+    points: 1,
+    type: 'public',
+    condition: 'Have units in 2 systems that contain legendary planets, Mecatol Rex, or anomalies.',
+    check: (player, game) => {
+      const res = require('./index.js')
+      let count = 0
+      for (const [systemId, systemUnits] of Object.entries(game.state.units)) {
+        const hasUnits = systemUnits.space.some(u => u.owner === player.name) ||
+          Object.values(systemUnits.planets).some(units => units.some(u => u.owner === player.name))
+        if (!hasUnits) {
+          continue
+        }
+        if (systemId === '18') {
+          count++; continue
+        }
+        const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+        if (!tile) {
+          continue
+        }
+        if (tile.anomaly) {
+          count++; continue
+        }
+        if (tile.planets.some(pId => {
+          const p = res.getPlanet(pId); return p && p.legendary
+        })) {
+          count++
+        }
+      }
+      return count >= 2
+    },
+  },
+  {
+    id: 'populate-the-outer-rim',
+    name: 'Populate the Outer Rim',
+    stage: 1,
+    points: 1,
+    type: 'public',
+    condition: 'Have units in 3 systems on the edge of the game board that are not in your home system.',
+    check: (player, game) => {
+      const factions = require('./factions/index.js')
+      const { getHexDistance } = require('./mapLayouts.js')
+      const playerFaction = factions.getFaction(player.factionId)
+      let count = 0
+      for (const [systemId, systemUnits] of Object.entries(game.state.units)) {
+        if (systemId === playerFaction?.homeSystem) {
+          continue
+        }
+        const hasUnits = systemUnits.space.some(u => u.owner === player.name) ||
+          Object.values(systemUnits.planets).some(units => units.some(u => u.owner === player.name))
+        if (!hasUnits) {
+          continue
+        }
+        const system = game.state.systems[systemId]
+        if (system && getHexDistance(system.position, { q: 0, r: 0 }) >= 3) {
+          count++
+        }
+      }
+      return count >= 3
+    },
+  },
+  {
+    id: 'push-boundaries',
+    name: 'Push Boundaries',
+    stage: 1,
+    points: 1,
+    type: 'public',
+    condition: 'Control more planets than each of 2 of your neighbors.',
+    check: (player, game) => {
+      const myPlanets = player.getControlledPlanets().length
+      const others = game.players.all().filter(p => p.name !== player.name)
+      let neighborsBeaten = 0
+      for (const other of others) {
+        if (game.areNeighbors(player.name, other.name)) {
+          if (myPlanets > other.getControlledPlanets().length) {
+            neighborsBeaten++
+          }
+        }
+      }
+      return neighborsBeaten >= 2
+    },
+  },
+  {
+    id: 'raise-a-fleet',
+    name: 'Raise a Fleet',
+    stage: 1,
+    points: 1,
+    type: 'public',
+    condition: 'Have 5 or more non-fighter ships in 1 system.',
+    check: (player, game) => {
+      for (const [, systemUnits] of Object.entries(game.state.units)) {
+        const nonFighterShips = systemUnits.space.filter(u =>
+          u.owner === player.name && u.type !== 'fighter'
+        )
+        if (nonFighterShips.length >= 5) {
+          return true
+        }
+      }
+      return false
+    },
   },
 ]
 
@@ -211,7 +437,7 @@ const publicObjectivesII = [
     stage: 2,
     points: 2,
     type: 'public',
-    condition: 'Spend a total of 6 tokens from your tactic and/or fleet pools.',
+    condition: 'Spend a total of 6 tokens from your tactic and/or strategy pools.',
     check: () => false,
   },
   {
@@ -231,9 +457,16 @@ const publicObjectivesII = [
     type: 'public',
     condition: 'Own 2 technologies in each of 4 colors.',
     check: (player) => {
-      const prereqs = player.getTechPrerequisites()
-      const colorsWithTwo = Object.values(prereqs).filter(c => c >= 2)
-      return colorsWithTwo.length >= 4
+      const res = require('./index.js')
+      const techs = player.getTechIds()
+      const colorCounts = { blue: 0, red: 0, yellow: 0, green: 0 }
+      for (const techId of techs) {
+        const tech = res.getTechnology(techId)
+        if (tech && tech.color && colorCounts[tech.color] !== undefined) {
+          colorCounts[tech.color]++
+        }
+      }
+      return Object.values(colorCounts).filter(c => c >= 2).length >= 4
     },
   },
   {
@@ -286,6 +519,251 @@ const publicObjectivesII = [
         }
       }
       return Object.values(traits).some(c => c >= 6)
+    },
+  },
+
+  // PoK Stage II
+  {
+    id: 'achieve-supremacy',
+    name: 'Achieve Supremacy',
+    stage: 2,
+    points: 2,
+    type: 'public',
+    condition: 'Have your flagship or a war sun in another player\'s home system or the Mecatol Rex system.',
+    check: (player, game) => {
+      const factions = require('./factions/index.js')
+      const playerFaction = factions.getFaction(player.factionId)
+      // Check Mecatol Rex (system 18)
+      const mecUnits = game.state.units['18']
+      if (mecUnits && mecUnits.space.some(u =>
+        u.owner === player.name && (u.type === 'flagship' || u.type === 'war-sun')
+      )) {
+        return true
+      }
+      // Check enemy home systems
+      for (const [systemId, systemUnits] of Object.entries(game.state.units)) {
+        if (!systemId.includes('-home')) {
+          continue
+        }
+        if (systemId === playerFaction?.homeSystem) {
+          continue
+        }
+        if (systemUnits.space.some(u =>
+          u.owner === player.name && (u.type === 'flagship' || u.type === 'war-sun')
+        )) {
+          return true
+        }
+      }
+      return false
+    },
+  },
+  {
+    id: 'become-a-legend',
+    name: 'Become a Legend',
+    stage: 2,
+    points: 2,
+    type: 'public',
+    condition: 'Have units in 4 systems that contain legendary planets, Mecatol Rex, or anomalies.',
+    check: (player, game) => {
+      const res = require('./index.js')
+      let count = 0
+      for (const [systemId, systemUnits] of Object.entries(game.state.units)) {
+        const hasUnits = systemUnits.space.some(u => u.owner === player.name) ||
+          Object.values(systemUnits.planets).some(units => units.some(u => u.owner === player.name))
+        if (!hasUnits) {
+          continue
+        }
+        if (systemId === '18') {
+          count++; continue
+        }
+        const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+        if (!tile) {
+          continue
+        }
+        if (tile.anomaly) {
+          count++; continue
+        }
+        if (tile.planets.some(pId => {
+          const p = res.getPlanet(pId); return p && p.legendary
+        })) {
+          count++
+        }
+      }
+      return count >= 4
+    },
+  },
+  {
+    id: 'command-an-armada',
+    name: 'Command an Armada',
+    stage: 2,
+    points: 2,
+    type: 'public',
+    condition: 'Have 8 or more non-fighter ships in 1 system.',
+    check: (player, game) => {
+      for (const [, systemUnits] of Object.entries(game.state.units)) {
+        const nonFighterShips = systemUnits.space.filter(u =>
+          u.owner === player.name && u.type !== 'fighter'
+        )
+        if (nonFighterShips.length >= 8) {
+          return true
+        }
+      }
+      return false
+    },
+  },
+  {
+    id: 'construct-massive-cities',
+    name: 'Construct Massive Cities',
+    stage: 2,
+    points: 2,
+    type: 'public',
+    condition: 'Have 7 or more structures on the game board.',
+    check: (player, game) => {
+      let count = 0
+      for (const [, systemUnits] of Object.entries(game.state.units)) {
+        for (const [, planetUnits] of Object.entries(systemUnits.planets)) {
+          count += planetUnits.filter(u =>
+            u.owner === player.name && (u.type === 'pds' || u.type === 'space-dock')
+          ).length
+        }
+      }
+      return count >= 7
+    },
+  },
+  {
+    id: 'control-the-borderlands',
+    name: 'Control the Borderlands',
+    stage: 2,
+    points: 2,
+    type: 'public',
+    condition: 'Have units in 5 systems on the edge of the game board that are not in your home system.',
+    check: (player, game) => {
+      const factions = require('./factions/index.js')
+      const { getHexDistance } = require('./mapLayouts.js')
+      const playerFaction = factions.getFaction(player.factionId)
+      let count = 0
+      for (const [systemId, systemUnits] of Object.entries(game.state.units)) {
+        if (systemId === playerFaction?.homeSystem) {
+          continue
+        }
+        const hasUnits = systemUnits.space.some(u => u.owner === player.name) ||
+          Object.values(systemUnits.planets).some(units => units.some(u => u.owner === player.name))
+        if (!hasUnits) {
+          continue
+        }
+        const system = game.state.systems[systemId]
+        if (system && getHexDistance(system.position, { q: 0, r: 0 }) >= 3) {
+          count++
+        }
+      }
+      return count >= 5
+    },
+  },
+  {
+    id: 'hold-vast-reserves',
+    name: 'Hold Vast Reserves',
+    stage: 2,
+    points: 2,
+    type: 'public',
+    condition: 'Spend 6 influence, 6 resources, and 6 trade goods.',
+    check: () => false,
+  },
+  {
+    id: 'patrol-vast-territories',
+    name: 'Patrol Vast Territories',
+    stage: 2,
+    points: 2,
+    type: 'public',
+    condition: 'Have units in 5 systems that do not contain planets.',
+    check: (player, game) => {
+      const res = require('./index.js')
+      let count = 0
+      for (const [systemId, systemUnits] of Object.entries(game.state.units)) {
+        if (!systemUnits.space.some(u => u.owner === player.name)) {
+          continue
+        }
+        const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+        if (tile && tile.planets.length === 0) {
+          count++
+        }
+      }
+      return count >= 5
+    },
+  },
+  {
+    id: 'protect-the-border',
+    name: 'Protect the Border',
+    stage: 2,
+    points: 2,
+    type: 'public',
+    condition: 'Have structures on 5 planets outside of your home system.',
+    check: (player, game) => {
+      const factions = require('./factions/index.js')
+      const playerFaction = factions.getFaction(player.factionId)
+      let count = 0
+      for (const [systemId, systemUnits] of Object.entries(game.state.units)) {
+        if (systemId === playerFaction?.homeSystem) {
+          continue
+        }
+        for (const [, planetUnits] of Object.entries(systemUnits.planets)) {
+          if (planetUnits.some(u =>
+            u.owner === player.name && (u.type === 'pds' || u.type === 'space-dock')
+          )) {
+            count++
+          }
+        }
+      }
+      return count >= 5
+    },
+  },
+  {
+    id: 'reclaim-ancient-monuments',
+    name: 'Reclaim Ancient Monuments',
+    stage: 2,
+    points: 2,
+    type: 'public',
+    condition: 'Control 3 planets that have attachments.',
+    check: (player, game) => {
+      const controlled = player.getControlledPlanets()
+      let count = 0
+      for (const planetId of controlled) {
+        const planetState = game.state.planets[planetId]
+        if (planetState && planetState.attachments && planetState.attachments.length > 0) {
+          count++
+        }
+      }
+      return count >= 3
+    },
+  },
+  {
+    id: 'rule-distant-lands',
+    name: 'Rule Distant Lands',
+    stage: 2,
+    points: 2,
+    type: 'public',
+    condition: 'Control 2 planets that are each in or adjacent to a different system that contains another player\'s home system.',
+    check: (player, game) => {
+      const factions = require('./factions/index.js')
+      const playerFaction = factions.getFaction(player.factionId)
+      const controlled = player.getControlledPlanets()
+      const coveredHomes = new Set()
+      for (const planetId of controlled) {
+        const systemId = game._findSystemForPlanet(planetId)
+        if (!systemId) {
+          continue
+        }
+        const systemsToCheck = [systemId, ...game._getAdjacentSystems(systemId)]
+        for (const checkId of systemsToCheck) {
+          if (!checkId.includes('-home')) {
+            continue
+          }
+          if (checkId === playerFaction?.homeSystem) {
+            continue
+          }
+          coveredHomes.add(checkId)
+        }
+      }
+      return coveredHomes.size >= 2
     },
   },
 ]
