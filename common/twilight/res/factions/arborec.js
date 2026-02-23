@@ -15,9 +15,16 @@ module.exports = {
     {
       id: 'mitosis',
       name: 'Mitosis',
-      description: 'At the start of the status phase, you may place 1 infantry from your reinforcements on any planet you control.',
+      description: 'Your space docks cannot produce infantry. At the start of the status phase, place 1 infantry from your reinforcements on any planet you control.',
     },
   ],
+  unitOverrides: {
+    infantry: {
+      name: 'Letani Warrior I',
+      combat: 8,
+      abilities: ['production-1'],
+    },
+  },
   flagship: {
     name: 'Duha Menaimon',
     cost: 8,
@@ -26,31 +33,37 @@ module.exports = {
     capacity: 5,
     hits: 2,
     abilities: ['sustain-damage'],
+    description: 'After you activate this system, you may produce up to 5 units in this system.',
   },
   mech: {
     name: 'Letani Behemoth',
     cost: 2,
     combat: 6,
     hits: 2,
-    abilities: ['sustain-damage'],
+    abilities: ['sustain-damage', 'production-2', 'planetary-shield'],
+    description: 'DEPLOY: When you would use your MITOSIS faction ability, you may replace 1 of your infantry with 1 mech from your reinforcements instead.',
   },
   leaders: {
     agent: {
       name: 'Letani Ospha',
       unlocked: true,
+      description: 'ACTION: Exhaust this card and choose a player\'s non-fighter ship; that player may replace that ship with one from their reinforcements that costs up to 2 more than the replaced ship.',
     },
     commander: {
       name: 'Dirzuga Rophal',
-      unlockCondition: 'Have 12 or more ground forces on the game board.',
+      unlockCondition: 'Have 12 ground forces on planets you control.',
+      description: 'After another player activates a system that contains 1 or more of your units that have PRODUCTION: You may produce 1 unit in that system.',
     },
     hero: {
       name: 'Letani Miasmiala',
       unlockCondition: 'Have 3 scored objectives.',
+      description: 'ULTRASONIC EMITTER — ACTION: Produce any number of units in any number of systems that contain 1 or more of your ground forces. Then, purge this card.',
     },
   },
   promissoryNote: {
     id: 'stymie',
     name: 'Stymie',
+    description: 'After another player moves ships into a system that contains 1 or more of your units: You may place 1 command token from that player\'s reinforcements in any non-home system. Then, return this card to the Arborec player.',
   },
   factionTechnologies: [
     {
@@ -59,7 +72,8 @@ module.exports = {
       color: 'unit-upgrade',
       prerequisites: ['green', 'green'],
       unitUpgrade: 'infantry',
-      stats: { combat: 7 },
+      stats: { combat: 7, abilities: ['production-2'] },
+      description: 'After this unit is destroyed, roll 1 die. If the result is 6 or greater, place the unit on this card. At the start of your next turn, place each unit that is on this card on a planet you control in your home system.',
     },
     {
       id: 'bioplasmosis',
@@ -67,6 +81,15 @@ module.exports = {
       color: 'green',
       prerequisites: ['green', 'green'],
       unitUpgrade: null,
+      description: 'At the end of the status phase, you may remove any number of infantry from planets you control and place them on 1 or more planets you control in the same or adjacent systems.',
+    },
+    {
+      id: 'psychospore',
+      name: 'Psychospore',
+      color: null,
+      prerequisites: ['red', 'green'],
+      unitUpgrade: null,
+      description: 'ACTION: Exhaust this card to remove a command token from a system that contains 1 or more of your infantry and return it to your reinforcements. Then, place 1 infantry in that system.',
     },
   ],
 }

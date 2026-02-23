@@ -382,11 +382,13 @@ describe('Factions', () => {
 
     test('faction technologies defined', () => {
       const faction = res.getFaction('universities-of-jol-nar')
-      expect(faction.factionTechnologies.length).toBe(2)
+      expect(faction.factionTechnologies.length).toBe(3)
       const eRes = faction.factionTechnologies.find(t => t.id === 'e-res-siphons')
       const spatial = faction.factionTechnologies.find(t => t.id === 'spatial-conduit-cylinder')
+      const compounds = faction.factionTechnologies.find(t => t.id === 'specialized-compounds')
       expect(eRes).toBeTruthy()
       expect(spatial).toBeTruthy()
+      expect(compounds).toBeTruthy()
     })
   })
 
@@ -445,12 +447,14 @@ describe('Factions', () => {
 
     test('faction technologies defined', () => {
       const faction = res.getFaction('sardakk-norr')
-      expect(faction.factionTechnologies.length).toBe(2)
+      expect(faction.factionTechnologies.length).toBe(3)
       const valkyrie = faction.factionTechnologies.find(t => t.id === 'valkyrie-particle-weave')
       const exotrireme = faction.factionTechnologies.find(t => t.id === 'exotrireme-ii')
+      const supremacy = faction.factionTechnologies.find(t => t.id === 'norr-supremacy')
       expect(valkyrie).toBeTruthy()
       expect(exotrireme).toBeTruthy()
       expect(exotrireme.unitUpgrade).toBe('dreadnought')
+      expect(supremacy).toBeTruthy()
     })
   })
 
