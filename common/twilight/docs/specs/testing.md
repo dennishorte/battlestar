@@ -292,6 +292,20 @@ Brainstorm edge cases per system:
 - Resource limits (fleet pool, unit supply)
 - Boundary conditions (0 tokens, max VP, no valid targets)
 
+### Assert scored objectives, not just VP
+
+When testing objective scoring, check `game.state.scoredObjectives[playerName]` instead of (or in addition to) `getVictoryPoints()`. VP is a raw counter that aggregates everything — public objectives, secret objectives, support for the throne, custodians, etc. — so a VP check alone doesn't prove *which* objective was scored.
+
+```js
+// BAD — only checks VP, doesn't prove which objective scored
+t.choose(game, 'cut-supply-lines: Cut Supply Lines')
+expect(game.players.byName('dennis').getVictoryPoints()).toBe(1)
+
+// GOOD — verifies the specific objective was claimed
+t.choose(game, 'cut-supply-lines: Cut Supply Lines')
+expect(game.state.scoredObjectives['dennis']).toContain('cut-supply-lines')
+```
+
 ### Deterministic replay
 
 Same seed → same state. Tests should be reproducible.

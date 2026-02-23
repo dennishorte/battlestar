@@ -972,6 +972,9 @@ Twilight.prototype.actionPhase = function() {
     // Track which neighbors have been traded with this turn
     this.state.transactionsThisTurn = {}
 
+    // Reset secret objective triggers for this action
+    this.state.actionPhaseSecretTriggers = {}
+
     switch (action) {
       case 'Tactical Action':
         this._tacticalAction(player)
@@ -988,11 +991,17 @@ Twilight.prototype.actionPhase = function() {
         break
       case 'Pass':
         player.pass()
+        this.state.lastPlayerToPassed = player.name
         this.log.add({
           template: '{player} passes',
           args: { player },
         })
         break
+    }
+
+    // Check for action phase secret objective scoring
+    if (action !== 'Pass') {
+      this._checkActionPhaseSecrets()
     }
 
     // After action (except pass), offer transaction window
@@ -1030,6 +1039,9 @@ Twilight.prototype.actionPhase = function() {
           args: { player, action: bonusAction },
         })
 
+        // Reset secret triggers for bonus action
+        this.state.actionPhaseSecretTriggers = {}
+
         switch (bonusAction) {
           case 'Tactical Action':
             this._tacticalAction(player)
@@ -1046,11 +1058,20 @@ Twilight.prototype.actionPhase = function() {
             break
         }
 
+        this._checkActionPhaseSecrets()
+
         if (bonusAction !== 'Decline') {
           this._offerTransactions(player)
         }
       }
     }
+  }
+
+  // Prove Endurance: last player to pass scores this secret
+  if (this.state.lastPlayerToPassed) {
+    this.state.actionPhaseSecretTriggers = {}
+    this._recordSecretTrigger(this.state.lastPlayerToPassed, 'prove-endurance')
+    this._checkActionPhaseSecrets()
   }
 
   // Reset Fleet Logistics tracking at end of action phase
@@ -1434,6 +1455,18 @@ Twilight.prototype._tacticalAction = function(player) {
   const systemId = String(activateSelection.systemId)
   player.spendTacticToken()
   this.state.systems[systemId].commandTokens.push(player.name)
+
+  // Track tactical action context for action phase secret objective detection
+  this.state.currentTacticalAction = {
+    activatingPlayer: player.name,
+    systemId: systemId,
+    promissoryNotesAtStart: {},
+  }
+  for (const p of this.players.all()) {
+    const notes = p.getPromissoryNotes()
+    this.state.currentTacticalAction.promissoryNotesAtStart[p.name] =
+      notes.map(n => ({ id: n.id, owner: n.owner }))
+  }
 
   this.log.add({
     template: '{player} activates system {system}',
@@ -1866,9 +1899,11 @@ Twilight.prototype._spaceCombat = function(player, systemId) {
   const dShipsAfter = systemUnits.space.filter(u => u.owner === defender)
   if (aShipsAfter.length > 0 && dShipsAfter.length === 0) {
     this.factionAbilities.afterCombatResolved(systemId, attacker, defender, 'space')
+    this._detectCombatSecrets(systemId, attacker, defender, 'space')
   }
   else if (dShipsAfter.length > 0 && aShipsAfter.length === 0) {
     this.factionAbilities.afterCombatResolved(systemId, defender, attacker, 'space')
+    this._detectCombatSecrets(systemId, defender, attacker, 'space')
   }
 
   this.log.outdent()
@@ -1964,6 +1999,16 @@ Twilight.prototype._antiFighterBarrage = function(systemId, attacker, defender) 
         if (fighterIdx !== -1) {
           systemUnits.space.splice(fighterIdx, 1)
           fightersDestroyed++
+        }
+      }
+
+      // fight-with-precision: destroyed all fighters during AFB
+      if (fightersDestroyed > 0) {
+        const remainingFighters = systemUnits.space.filter(
+          u => u.owner === target && u.type === 'fighter'
+        )
+        if (remainingFighters.length === 0) {
+          this._recordSecretTrigger(shooter, 'fight-with-precision')
         }
       }
 
@@ -2075,6 +2120,10 @@ Twilight.prototype._assignHits = function(systemId, ownerName, hits, destroyerNa
     const idx = systemUnits.space.findIndex(u => u.id === target.id)
     if (idx !== -1) {
       const removed = systemUnits.space.splice(idx, 1)[0]
+      // Track destruction of war suns/flagships for secret objectives
+      if (destroyerName && (removed.type === 'war-sun' || removed.type === 'flagship')) {
+        this._recordSecretTrigger(destroyerName, 'destroy-their-greatest-ship')
+      }
       if (destroyerName) {
         this.factionAbilities.onUnitDestroyed(systemId, removed, destroyerName)
       }
@@ -2240,6 +2289,18 @@ Twilight.prototype._bombardment = function(systemId, planetId, attackerName) {
 
     // Auto-assign bombardment hits to defender's ground forces (cheapest first)
     this._assignGroundHits(systemId, planetId, defenderName, totalHits)
+
+    // make-an-example-of-their-world: destroyed all ground forces via bombardment
+    const remainingGroundForces = (systemUnits.planets[planetId] || []).filter(u => {
+      if (u.owner !== defenderName) {
+        return false
+      }
+      const def = res.getUnit(u.type)
+      return def && def.category === 'ground'
+    })
+    if (remainingGroundForces.length === 0) {
+      this._recordSecretTrigger(attackerName, 'make-an-example-of-their-world')
+    }
   }
 }
 
@@ -2358,8 +2419,34 @@ Twilight.prototype._spaceCannonOffense = function(activePlayer, systemId) {
       args: { hits: totalHits, player: activePlayer },
     })
 
+    // Check if active player had non-fighter ships before SCO (for turn-their-fleets-to-dust)
+    const hadNonFighters = activeShips.some(u => u.type !== 'fighter')
+
     // Active player assigns hits to their ships
     this._assignSpaceCannonHits(systemId, activePlayer.name, totalHits, gravitonActive)
+
+    // turn-their-fleets-to-dust: all non-fighter ships destroyed by space cannon offense
+    if (hadNonFighters) {
+      const remainingNonFighters = systemUnits.space.filter(
+        u => u.owner === activePlayer.name && u.type !== 'fighter'
+      )
+      if (remainingNonFighters.length === 0) {
+        // Credit to all PDS owners who fired
+        const pdsOwners = new Set()
+        if (tile) {
+          for (const pId of tile.planets) {
+            for (const u of (systemUnits.planets[pId] || [])) {
+              if (u.owner !== activePlayer.name && u.type === 'pds') {
+                pdsOwners.add(u.owner)
+              }
+            }
+          }
+        }
+        for (const owner of pdsOwners) {
+          this._recordSecretTrigger(owner, 'turn-their-fleets-to-dust')
+        }
+      }
+    }
   }
 }
 
@@ -2636,6 +2723,7 @@ Twilight.prototype._groundCombat = function(systemId, planetId, attackerName) {
   if (groundWinner) {
     const loser = groundWinner === attackerName ? defenderName : attackerName
     this.factionAbilities.afterCombatResolved(systemId, groundWinner, loser, 'ground')
+    this._detectCombatSecrets(systemId, groundWinner, loser, 'ground')
 
     // Dacxive Animators: winner places 1 infantry on the planet
     const winnerPlayer = this.players.byName(groundWinner)
@@ -2753,6 +2841,18 @@ Twilight.prototype._establishControl = function(systemId, planetId, attackerName
     const previousController = this.state.planets[planetId].controller
     this.state.planets[planetId].controller = attackerName
     this.state.planets[planetId].exhausted = true  // newly gained planets are exhausted
+
+    // become-a-martyr: defender lost a planet in their home system
+    if (previousController) {
+      const previousPlayer = this.players.byName(previousController)
+      if (previousPlayer) {
+        const factions = require('./res/factions/index.js')
+        const f = factions.getFaction(previousPlayer.factionId)
+        if (f && f.homeSystem === systemId) {
+          this._recordSecretTrigger(previousController, 'become-a-martyr')
+        }
+      }
+    }
 
     this.log.add({
       template: '{player} takes control of {planet}',
@@ -4407,6 +4507,120 @@ Twilight.prototype._recordObjectiveScore = function(player, choiceString) {
 
   this._checkVictory()
   this._checkLeaderUnlocks()
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Action Phase Secret Objective Scoring
+
+Twilight.prototype._recordSecretTrigger = function(playerName, objectiveId) {
+  if (!playerName) {
+    return
+  }
+  if (!this.state.actionPhaseSecretTriggers) {
+    this.state.actionPhaseSecretTriggers = {}
+  }
+  if (!this.state.actionPhaseSecretTriggers[playerName]) {
+    this.state.actionPhaseSecretTriggers[playerName] = []
+  }
+  if (!this.state.actionPhaseSecretTriggers[playerName].includes(objectiveId)) {
+    this.state.actionPhaseSecretTriggers[playerName].push(objectiveId)
+  }
+}
+
+Twilight.prototype._checkActionPhaseSecrets = function() {
+  const triggers = this.state.actionPhaseSecretTriggers || {}
+
+  for (const [playerName, triggeredIds] of Object.entries(triggers)) {
+    const player = this.players.byName(playerName)
+    if (!player) {
+      continue
+    }
+
+    const secrets = player.secretObjectives || []
+    const scored = this.state.scoredObjectives[playerName] || []
+
+    const scorable = triggeredIds.filter(objId => {
+      return secrets.includes(objId) && !scored.includes(objId)
+    })
+
+    if (scorable.length > 0) {
+      const choices = ['Skip', ...scorable.map(id => {
+        const obj = res.getObjective(id)
+        return `${id}: ${obj.name}`
+      })]
+
+      const selection = this.actions.choose(player, choices, {
+        title: 'Score Secret Objective',
+        noAutoRespond: true,
+      })
+
+      const chosen = selection[0]
+      if (chosen !== 'Skip') {
+        this._recordObjectiveScore(player, chosen)
+      }
+    }
+  }
+}
+
+Twilight.prototype._detectCombatSecrets = function(systemId, winner, loser, combatType) {
+  const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+  const allPlayers = this.players.all()
+
+  // spark-a-rebellion: winner beat player with most VP
+  const maxVP = Math.max(...allPlayers.map(p => p.getVictoryPoints()))
+  const loserPlayer = this.players.byName(loser)
+  if (loserPlayer && loserPlayer.getVictoryPoints() === maxVP) {
+    this._recordSecretTrigger(winner, 'spark-a-rebellion')
+  }
+
+  // brave-the-void: system is an anomaly
+  if (tile && tile.anomaly) {
+    this._recordSecretTrigger(winner, 'brave-the-void')
+  }
+
+  // darken-the-skies: system is another player's home system
+  if (typeof systemId === 'string' && systemId.includes('-home')) {
+    const factions = require('./res/factions/index.js')
+    for (const p of allPlayers) {
+      const f = factions.getFaction(p.factionId)
+      if (f && f.homeSystem === systemId && p.name !== winner) {
+        this._recordSecretTrigger(winner, 'darken-the-skies')
+        break
+      }
+    }
+  }
+
+  // betray-a-friend: winner had loser's promissory note at tactical action start
+  const ctx = this.state.currentTacticalAction
+  if (ctx && ctx.promissoryNotesAtStart) {
+    const winnerNotes = ctx.promissoryNotesAtStart[winner] || []
+    if (winnerNotes.some(n => n.owner === loser)) {
+      this._recordSecretTrigger(winner, 'betray-a-friend')
+    }
+  }
+
+  // Space combat specific
+  if (combatType === 'space') {
+    const systemUnits = this.state.units[systemId]
+
+    // unveil-flagship: winner has flagship in system that survived
+    if (systemUnits) {
+      const winnerShips = systemUnits.space.filter(u => u.owner === winner)
+      if (winnerShips.some(u => u.type === 'flagship')) {
+        this._recordSecretTrigger(winner, 'unveil-flagship')
+      }
+    }
+
+    // demonstrate-your-power: winner has 3+ non-fighter ships
+    if (systemUnits) {
+      const nonFighterShips = systemUnits.space.filter(
+        u => u.owner === winner && u.type !== 'fighter'
+      )
+      if (nonFighterShips.length >= 3) {
+        this._recordSecretTrigger(winner, 'demonstrate-your-power')
+      }
+    }
+  }
 }
 
 Twilight.prototype._revealObjective = function() {
