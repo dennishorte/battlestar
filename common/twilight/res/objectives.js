@@ -165,10 +165,12 @@ const publicObjectivesII = [
     type: 'public',
     condition: 'Control 1 planet that is in another player\'s home system.',
     check: (player, game) => {
+      const factions = require('./factions/index.js')
+      const playerFaction = factions.getFaction(player.factionId)
       const controlled = player.getControlledPlanets()
       for (const planetId of controlled) {
         const systemId = game._findSystemForPlanet(planetId)
-        if (systemId && systemId.includes('-home') && !systemId.startsWith(player.factionId)) {
+        if (systemId && systemId.includes('-home') && systemId !== playerFaction?.homeSystem) {
           return true
         }
       }
@@ -430,11 +432,15 @@ const secretObjectives = [
     condition: 'Own 2 faction technologies. (Valefar Assimilator technologies do not count.)',
     check: (player) => {
       const techs = player.getTechIds()
-      const res = require('./index.js')
+      const factions = require('./factions/index.js')
+      const faction = factions.getFaction(player.factionId)
+      if (!faction || !faction.factionTechnologies) {
+        return false
+      }
+      const factionTechIds = faction.factionTechnologies.map(ft => ft.id)
       let factionCount = 0
       for (const techId of techs) {
-        const tech = res.getTechnology(techId)
-        if (tech && tech.faction && tech.faction === player.factionId) {
+        if (factionTechIds.includes(techId)) {
           factionCount++
         }
       }
@@ -629,8 +635,16 @@ const secretObjectives = [
     type: 'secret',
     condition: 'Own 4 technologies of the same color.',
     check: (player) => {
-      const prereqs = player.getTechPrerequisites()
-      return Object.values(prereqs).some(c => c >= 4)
+      const res = require('./index.js')
+      const techs = player.getTechIds()
+      const colorCounts = { blue: 0, red: 0, yellow: 0, green: 0 }
+      for (const techId of techs) {
+        const tech = res.getTechnology(techId)
+        if (tech && tech.color && colorCounts[tech.color] !== undefined) {
+          colorCounts[tech.color]++
+        }
+      }
+      return Object.values(colorCounts).some(c => c >= 4)
     },
   },
   {
@@ -702,18 +716,24 @@ const secretObjectives = [
     type: 'secret',
     condition: 'Have 1 or more ships in a system that is adjacent to another player\'s home system.',
     check: (player, game) => {
+      const factions = require('./factions/index.js')
+      // Build map of home system ID → player name
+      const homeSystemOwners = {}
+      for (const p of game.players.all()) {
+        const f = factions.getFaction(p.factionId)
+        if (f && f.homeSystem) {
+          homeSystemOwners[f.homeSystem] = p.name
+        }
+      }
       for (const [systemId, systemUnits] of Object.entries(game.state.units)) {
         if (!systemUnits.space.some(u => u.owner === player.name)) {
           continue
         }
         const adjacent = game._getAdjacentSystems(systemId)
         for (const adjId of adjacent) {
-          if (typeof adjId === 'string' && adjId.includes('-home')) {
-            // Check it's another player's home
-            const homeOwner = game.players.all().find(p => adjId.startsWith(p.factionId))
-            if (homeOwner && homeOwner.name !== player.name) {
-              return true
-            }
+          const adjOwner = homeSystemOwners[adjId]
+          if (adjOwner && adjOwner !== player.name) {
+            return true
           }
         }
       }
@@ -752,8 +772,17 @@ const secretObjectives = [
     points: 1,
     type: 'secret',
     condition: 'Control planets that have a combined influence value of at least 12.',
-    check: (player) => {
-      return player.getTotalInfluence() >= 12
+    check: (player, _game) => {
+      const res = require('./index.js')
+      const controlled = player.getControlledPlanets()
+      let total = 0
+      for (const planetId of controlled) {
+        const planet = res.getPlanet(planetId)
+        if (planet) {
+          total += planet.influence
+        }
+      }
+      return total >= 12
     },
   },
   {
@@ -777,8 +806,17 @@ const secretObjectives = [
     points: 1,
     type: 'secret',
     condition: 'Control planets that have a combined resource value of at least 12.',
-    check: (player) => {
-      return player.getTotalResources() >= 12
+    check: (player, _game) => {
+      const res = require('./index.js')
+      const controlled = player.getControlledPlanets()
+      let total = 0
+      for (const planetId of controlled) {
+        const planet = res.getPlanet(planetId)
+        if (planet) {
+          total += planet.resources
+        }
+      }
+      return total >= 12
     },
   },
   {
@@ -836,25 +874,16 @@ const secretObjectives = [
       const res = require('./index.js')
       for (const [, systemUnits] of Object.entries(game.state.units)) {
         let production = 0
-        // Check space units
-        for (const unit of systemUnits.space) {
-          if (unit.owner !== player.name) {
-            continue
-          }
-          const stats = res.getUnitType(unit.type)
-          if (stats && stats.production) {
-            production += stats.production
-          }
-        }
-        // Check planet units
-        for (const [, planetUnits] of Object.entries(systemUnits.planets)) {
+        // Check planet units (space docks have PRODUCTION = planet resources + productionValue)
+        for (const [planetId, planetUnits] of Object.entries(systemUnits.planets)) {
           for (const unit of planetUnits) {
             if (unit.owner !== player.name) {
               continue
             }
-            const stats = res.getUnitType(unit.type)
-            if (stats && stats.production) {
-              production += stats.production
+            const stats = res.getUnit(unit.type)
+            if (stats && stats.productionValue) {
+              const planet = res.getPlanet(planetId)
+              production += (planet ? planet.resources : 0) + stats.productionValue
             }
           }
         }
