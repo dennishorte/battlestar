@@ -7,8 +7,7 @@ module.exports = {
   players: "1+",
   text: "Each time after you use a wood accumulation space, you can place 4 wood from your supply on that space to get 2 stone, 1 clay, 1 reed, and 1 grain.",
   onAction(game, player, actionId) {
-    const woodActions = ['take-wood', 'copse', 'take-3-wood', 'take-2-wood']
-    if (woodActions.includes(actionId) && player.wood >= 4) {
+    if (game.isWoodAccumulationSpace(actionId) && player.wood >= 4) {
       const selection = game.actions.choose(player, () => [
         'Place 4 wood for 2 stone, 1 clay, 1 reed, 1 grain',
         'Skip',

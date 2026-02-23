@@ -16,7 +16,7 @@ module.exports = {
         args: { player , card: this},
       })
     }
-    else if (actionId === 'take-wood' || actionId === 'copse' || actionId === 'take-3-wood' || actionId === 'take-2-wood') {
+    else if (game.isWoodAccumulationSpace(actionId)) {
       player.addResource('food', 1)
       game.log.add({
         template: '{player} gets 1 food from {card}',

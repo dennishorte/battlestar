@@ -26,6 +26,31 @@ describe("Carpenter's Axe", () => {
     })
   })
 
+  test('offers stable building when player has 7+ wood after Grove', () => {
+    const game = t.fixture({ numPlayers: 4 })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        wood: 5,
+        minorImprovements: ['carpenters-axe-a015'],
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Grove')                      // +2 wood = 7 total
+    t.choose(game, 'Build stable at 0,1')         // build stable for 1 wood
+
+    t.testBoard(game, {
+      dennis: {
+        wood: 6, // 5 + 2 (Grove) - 1 (stable)
+        minorImprovements: ['carpenters-axe-a015'],
+        farmyard: {
+          stables: [{ row: 0, col: 1 }],
+        },
+      },
+    })
+  })
+
   test('does not offer when wood < 7 after action', () => {
     const game = t.fixture()
     t.setBoard(game, {

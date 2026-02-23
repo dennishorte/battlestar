@@ -9,7 +9,7 @@ module.exports = {
   category: "Food Provider",
   text: "Each time you use a wood accumulation space while there is at least 1 wild boar on the \"Pig Market\" accumulation space, you also get 2 food.",
   onAction(game, player, actionId) {
-    if (actionId === 'take-wood' || actionId === 'copse' || actionId === 'take-3-wood' || actionId === 'take-2-wood') {
+    if (game.isWoodAccumulationSpace(actionId)) {
       const pigMarket = game.state.actionSpaces['take-boar']
       if (pigMarket && pigMarket.accumulated >= 1) {
         player.addResource('food', 2)

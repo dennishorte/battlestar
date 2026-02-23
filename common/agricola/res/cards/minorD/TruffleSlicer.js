@@ -9,7 +9,7 @@ module.exports = {
   category: "Points Provider",
   text: "Each time you use a wood accumulation space, if you have at least 1 wild boar, you can pay 1 food for 1 bonus point.",
   onAction(game, player, actionId) {
-    if ((actionId === 'take-wood' || actionId === 'copse' || actionId === 'take-3-wood' || actionId === 'take-2-wood') &&
+    if (game.isWoodAccumulationSpace(actionId) &&
           player.getTotalAnimals('boar') >= 1 && player.food >= 1) {
       const selection = game.actions.choose(player, [
         'Pay 1 food for 1 bonus point',

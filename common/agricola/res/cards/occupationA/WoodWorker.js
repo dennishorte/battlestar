@@ -7,8 +7,7 @@ module.exports = {
   players: "4+",
   text: "Each time you take wood from an accumulation space, you can exchange 1 wood for 1 sheep. Place the wood on the accumulation space.",
   onAction(game, player, actionId) {
-    const woodActions = ['take-wood', 'copse', 'take-3-wood', 'take-2-wood']
-    if (!woodActions.includes(actionId) || player.wood < 1 || !player.canPlaceAnimals('sheep', 1)) {
+    if (!game.isWoodAccumulationSpace(actionId) || player.wood < 1 || !player.canPlaceAnimals('sheep', 1)) {
       return
     }
     const cardName = 'Wood Worker'

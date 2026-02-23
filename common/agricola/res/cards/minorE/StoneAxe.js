@@ -9,8 +9,7 @@ module.exports = {
   prereqs: { occupations: 2 },
   text: "Each time you use a wood accumulation space, you can return 1 stone to the general supply to get an additional 3 wood.",
   onAction(game, player, actionId) {
-    const woodActions = ['take-wood', 'copse', 'take-3-wood', 'take-2-wood']
-    if (woodActions.includes(actionId) && player.stone >= 1) {
+    if (game.isWoodAccumulationSpace(actionId) && player.stone >= 1) {
       const selection = game.actions.choose(player, [
         'Return 1 stone for 3 additional wood',
         'Skip',

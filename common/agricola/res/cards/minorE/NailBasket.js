@@ -8,8 +8,7 @@ module.exports = {
   vps: 1,
   text: "Each time after you use a wood accumulation space, you can place 1 stone from your supply on that space (for the next visitor) to take a \"Build Fences\" action.",
   afterPlayerAction(game, player, actionId) {
-    const woodActions = ['take-wood', 'grove', 'copse', 'take-3-wood', 'take-2-wood']
-    if (woodActions.includes(actionId) && player.stone >= 1) {
+    if (game.isWoodAccumulationSpace(actionId) && player.stone >= 1) {
       const selection = game.actions.choose(player, [
         'Pay 1 stone to build fences',
         'Skip',

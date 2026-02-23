@@ -334,6 +334,11 @@ Agricola.prototype.isBuildingResourceAccumulationSpace = function(actionId) {
   return Object.keys(action.accumulates).some(r => ['wood', 'clay', 'stone', 'reed'].includes(r))
 }
 
+Agricola.prototype.isWoodAccumulationSpace = function(actionId) {
+  const action = res.getActionById(actionId)
+  return !!(action && action.type === 'accumulating' && action.accumulates && action.accumulates.wood)
+}
+
 Agricola.prototype.getAccumulationSpaceGoodType = function(actionId) {
   const action = res.getActionById(actionId)
   if (!action || !action.accumulates) {

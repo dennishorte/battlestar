@@ -9,7 +9,7 @@ module.exports = {
   category: "Building Resource Provider",
   text: "Each time you use a wood accumulation space, you get 2 additional wood.",
   onAction(game, player, actionId) {
-    if (actionId === 'take-wood' || actionId === 'copse' || actionId === 'take-3-wood' || actionId === 'take-2-wood') {
+    if (game.isWoodAccumulationSpace(actionId)) {
       player.addResource('wood', 2)
       game.log.add({
         template: '{player} gets 2 wood from {card}',

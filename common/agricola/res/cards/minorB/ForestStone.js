@@ -18,7 +18,7 @@ module.exports = {
     })
   },
   onAction(game, player, actionId) {
-    if (actionId === 'take-wood' || actionId === 'copse' || actionId === 'take-3-wood' || actionId === 'take-2-wood') {
+    if (game.isWoodAccumulationSpace(actionId)) {
       if (player.forestStoneFood > 0) {
         player.forestStoneFood--
         player.addResource('food', 1)
