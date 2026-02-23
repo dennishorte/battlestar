@@ -18,9 +18,10 @@ describe('Freshman', () => {
     })
     game.run()
 
-    // Use Grain Utilization — no empty fields to sow, goes straight to bake
+    // Use Grain Utilization — decline sowing, goes to bake
     // Freshman offers choice before baking
     t.choose(game, 'Grain Utilization')
+    t.choose(game, 'Done Sowing')
     t.choose(game, 'Play an occupation free')
     t.choose(game, 'Test Occupation 1')
 
@@ -55,6 +56,7 @@ describe('Freshman', () => {
     game.run()
 
     t.choose(game, 'Grain Utilization')
+    t.choose(game, 'Done Sowing')
     t.choose(game, 'Bake bread normally')
     t.choose(game, 'Bake 1 grain')
 
@@ -123,8 +125,9 @@ describe('Freshman', () => {
     })
     game.run()
 
-    // No occupations in hand → goes straight to baking (no Freshman choice)
+    // No occupations in hand → decline sowing, goes straight to baking (no Freshman choice)
     t.choose(game, 'Grain Utilization')
+    t.choose(game, 'Done Sowing')
     t.choose(game, 'Bake 1 grain')
 
     t.testBoard(game, {

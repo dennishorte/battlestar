@@ -271,8 +271,8 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   canSowAnything() {
-    const emptyFields = this.getEmptyFields()
-    if (emptyFields.length === 0) {
+    const sowableFields = this.getSowableFields()
+    if (sowableFields.length === 0) {
       return false
     }
     if (this.grain >= 1 || this.vegetables >= 1) {
@@ -782,6 +782,15 @@ class AgricolaPlayer extends BasePlayer {
     return fields
   }
 
+  getSowableFields() {
+    const fields = this.getFieldSpaces()
+    // Include empty virtual fields (virtual fields don't support replanting)
+    for (const vf of this.getEmptyVirtualFields()) {
+      fields.push({ isVirtualField: true, virtualFieldId: vf.id, ...vf })
+    }
+    return fields
+  }
+
   getSownFields() {
     const fields = this.getFieldSpaces().filter(f => f.crop && f.cropCount > 0)
     // Include sown virtual fields
@@ -891,9 +900,8 @@ class AgricolaPlayer extends BasePlayer {
       return false
     }
 
-    // Check regular empty fields
-    const emptyRegularFields = this.getFieldSpaces().filter(f => !f.crop || f.cropCount === 0)
-    if (emptyRegularFields.length > 0) {
+    // Check regular fields (any field can be sown, including those with existing crops)
+    if (this.getFieldSpaces().length > 0) {
       return true
     }
 
@@ -920,7 +928,7 @@ class AgricolaPlayer extends BasePlayer {
 
   sowField(row, col, cropType) {
     const space = this.getSpace(row, col)
-    if (!space || space.type !== 'field' || (space.crop && space.cropCount > 0)) {
+    if (!space || space.type !== 'field') {
       return false
     }
 

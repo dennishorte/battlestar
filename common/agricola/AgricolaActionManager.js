@@ -1081,10 +1081,10 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   sow(player) {
-    const emptyFields = player.getEmptyFields()
-    if (emptyFields.length === 0) {
+    const sowableFields = player.getSowableFields()
+    if (sowableFields.length === 0) {
       this.log.add({
-        template: '{player} has no empty fields to sow',
+        template: '{player} has no fields to sow',
         args: { player },
       })
       return false
@@ -1097,14 +1097,16 @@ class AgricolaActionManager extends BaseActionManager {
     let sowedAny = false
     let sowedVegetables = false
     const sowedTypes = []
+    const sownFieldKeys = new Set()  // Track fields sown in this action
 
     while (true) {
-      const currentEmptyFields = player.getEmptyFields()
+      const currentSowableFields = player.getSowableFields()
+        .filter(f => !sownFieldKeys.has(`${f.row},${f.col}`))
       // Separate regular fields from virtual fields for UI handling
-      const regularEmptyFields = currentEmptyFields.filter(f => !f.isVirtualField)
+      const regularSowableFields = currentSowableFields.filter(f => !f.isVirtualField)
       const emptyVirtualFields = player.getEmptyVirtualFields()
 
-      if (currentEmptyFields.length === 0) {
+      if (currentSowableFields.length === 0) {
         break
       }
 
@@ -1133,7 +1135,7 @@ class AgricolaActionManager extends BaseActionManager {
       const nestedChoices = []
 
       if (canSowGrain) {
-        const grainFields = currentEmptyFields.map(f => `Field (${f.row},${f.col})`)
+        const grainFields = currentSowableFields.map(f => `Field (${f.row},${f.col})`)
         nestedChoices.push({
           title: 'Grain',
           choices: grainFields,
@@ -1143,7 +1145,7 @@ class AgricolaActionManager extends BaseActionManager {
       }
 
       if (canSowVeg) {
-        const vegFields = currentEmptyFields.map(f => `Field (${f.row},${f.col})`)
+        const vegFields = currentSowableFields.map(f => `Field (${f.row},${f.col})`)
         nestedChoices.push({
           title: 'Vegetables',
           choices: vegFields,
@@ -1164,7 +1166,7 @@ class AgricolaActionManager extends BaseActionManager {
         max: 1,
         // Mark this as accepting action-based input for sowing
         allowsAction: ['sow-field', 'sow-virtual-field'],
-        validSpaces: regularEmptyFields,  // Only regular fields, virtual fields are handled separately in UI
+        validSpaces: regularSowableFields,  // Only regular fields, virtual fields are handled separately in UI
         canSowGrain,
         canSowVeg,
         emptyVirtualFields,  // Virtual fields that can be sown
@@ -1177,10 +1179,10 @@ class AgricolaActionManager extends BaseActionManager {
       if (result.action === 'sow-field') {
         const { row, col, cropType } = result
 
-        // Validate the space is a valid empty field
-        const isValidField = regularEmptyFields.some(f => f.row === row && f.col === col)
+        // Validate the space is a valid sowable field
+        const isValidField = regularSowableFields.some(f => f.row === row && f.col === col)
         if (!isValidField) {
-          throw new Error(`Invalid sow space: (${row}, ${col}) is not an empty field`)
+          throw new Error(`Invalid sow space: (${row}, ${col}) is not a valid field`)
         }
 
         // Validate player has the crop
@@ -1192,6 +1194,7 @@ class AgricolaActionManager extends BaseActionManager {
         }
 
         player.sowField(row, col, cropType)
+        sownFieldKeys.add(`${row},${col}`)
         sowedAny = true
         sowedTypes.push(cropType)
         if (cropType === 'vegetables') {
@@ -1251,6 +1254,7 @@ class AgricolaActionManager extends BaseActionManager {
           const cropType = choice.title.startsWith('Grain') ? 'grain' : 'vegetables'
 
           player.sowField(row, col, cropType)
+          sownFieldKeys.add(`${row},${col}`)
           sowedAny = true
           sowedTypes.push(cropType)
           if (cropType === 'vegetables') {
@@ -1282,10 +1286,10 @@ class AgricolaActionManager extends BaseActionManager {
   }
 
   sowSingleField(player, card) {
-    const emptyFields = player.getEmptyFields()
-    if (emptyFields.length === 0) {
+    const sowableFields = player.getSowableFields()
+    if (sowableFields.length === 0) {
       this.log.add({
-        template: '{player} has no empty fields to sow',
+        template: '{player} has no fields to sow',
         args: { player },
       })
       return false
@@ -1293,7 +1297,7 @@ class AgricolaActionManager extends BaseActionManager {
 
     const canSowGrain = player.grain >= 1
     const canSowVeg = player.vegetables >= 1
-    const regularEmptyFields = emptyFields.filter(f => !f.isVirtualField)
+    const regularSowableFields = sowableFields.filter(f => !f.isVirtualField)
     const emptyVirtualFields = player.getEmptyVirtualFields()
 
     // Check if any virtual field can be sown with non-standard crops (wood, stone)
@@ -1322,11 +1326,11 @@ class AgricolaActionManager extends BaseActionManager {
       type: 'select',
       actor: player.name,
       title: `${card.name}: Choose field to sow`,
-      choices: emptyFields.map(f => `Field (${f.row},${f.col})`),
+      choices: sowableFields.map(f => `Field (${f.row},${f.col})`),
       min: 1,
       max: 1,
       allowsAction: ['sow-field', 'sow-virtual-field'],
-      validSpaces: regularEmptyFields,
+      validSpaces: regularSowableFields,
       canSowGrain,
       canSowVeg,
       emptyVirtualFields,
@@ -1559,7 +1563,7 @@ class AgricolaActionManager extends BaseActionManager {
 
     // Then sow (player can select "Done Sowing" to skip)
     // Re-check canSow since plowing or hooks might have created a new field
-    const canSowNow = player.getEmptyFields().length > 0 && (player.grain >= 1 || player.vegetables >= 1)
+    const canSowNow = player.getSowableFields().length > 0 && (player.grain >= 1 || player.vegetables >= 1)
     if (canSowNow) {
       this.sow(player)
     }

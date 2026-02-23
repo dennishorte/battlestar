@@ -51,7 +51,7 @@ const ActionChoicesMixin = {
       choice.canBuildRoom = action.allowsRoomBuilding && player.canAffordRoom() && player.getValidRoomBuildSpaces().length > 0
       choice.canBuildStable = action.allowsStableBuilding && player.canAffordStable() && player.getValidStableBuildSpaces().length > 0
       choice.canPlow = action.allowsPlowing && player.getValidPlowSpaces().length > 0
-      choice.canSow = action.allowsSowing && player.getEmptyFields().length > 0 && (player.grain > 0 || player.vegetables > 0)
+      choice.canSow = action.allowsSowing && player.getSowableFields().length > 0 && (player.grain > 0 || player.vegetables > 0)
       choice.canBake = action.allowsBaking && player.hasBakingAbility() && player.grain > 0
       choice.canRenovate = action.allowsRenovation && player.canRenovate()
       choice.canFence = action.allowsFencing && player.wood > 0 && player.getFenceCount() < res.constants.maxFences
@@ -135,11 +135,11 @@ const ActionChoicesMixin = {
   // Get choices for sowing
   getSowChoices(player) {
     const choices = []
-    const emptyFields = player.getEmptyFields()
+    const sowableFields = player.getSowableFields()
 
-    if (emptyFields.length > 0) {
+    if (sowableFields.length > 0) {
       if (player.grain >= 1) {
-        for (const field of emptyFields) {
+        for (const field of sowableFields) {
           choices.push({
             row: field.row,
             col: field.col,
@@ -150,7 +150,7 @@ const ActionChoicesMixin = {
       }
 
       if (player.vegetables >= 1) {
-        for (const field of emptyFields) {
+        for (const field of sowableFields) {
           choices.push({
             row: field.row,
             col: field.col,

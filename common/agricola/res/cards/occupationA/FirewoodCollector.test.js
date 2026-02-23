@@ -65,6 +65,7 @@ describe('Firewood Collector', () => {
     game.run()
 
     t.choose(game, 'Grain Utilization')
+    t.choose(game, 'Done Sowing')
     t.choose(game, 'Bake 1 grain')
 
     t.testBoard(game, {
