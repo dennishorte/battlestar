@@ -60,6 +60,48 @@ module.exports = {
     })
   },
 
+  // Agent — Brother Milor: After a player's unit is destroyed during combat,
+  // exhaust to place 2 fighters (if ship) or 2 infantry (if ground force) for that player
+  onAnyUnitDestroyed(player, ctx, { systemId, unit, planetId }) {
+    if (!player.isAgentReady()) {
+      return
+    }
+
+    const unitDef = ctx.game.res.getUnit(unit.type)
+    if (!unitDef || unitDef.category === 'structure') {
+      return
+    }
+
+    const isShip = unitDef.category === 'ship'
+    const unitLabel = isShip ? '2 fighters' : '2 infantry'
+
+    const choice = ctx.actions.choose(player, ['Exhaust Brother Milor', 'Pass'], {
+      title: `Brother Milor: Exhaust to place ${unitLabel} for ${unit.owner}?`,
+    })
+
+    if (choice[0] === 'Pass') {
+      return
+    }
+
+    player.exhaustAgent()
+
+    if (isShip) {
+      for (let i = 0; i < 2; i++) {
+        ctx.game._addUnit(systemId, 'space', 'fighter', unit.owner)
+      }
+    }
+    else {
+      for (let i = 0; i < 2; i++) {
+        ctx.game._addUnit(systemId, planetId, 'infantry', unit.owner)
+      }
+    }
+
+    ctx.log.add({
+      template: 'Brother Milor: {player} places {units} for {target} in system {system}',
+      args: { player: player.name, units: unitLabel, target: unit.owner, system: systemId },
+    })
+  },
+
   onGroundCombatStart(player, ctx, { systemId, planetId, opponentName }) {
     const planetUnits = ctx.state.units[systemId].planets[planetId]
 

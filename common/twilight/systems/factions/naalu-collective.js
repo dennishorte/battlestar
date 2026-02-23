@@ -1,4 +1,48 @@
 module.exports = {
+  // Agent — Z'eu: After any player's command token is placed in a system,
+  // exhaust to return that token to that player's reinforcements.
+  onCommandTokenPlaced(player, ctx, { systemId, placerName }) {
+    if (!player.isAgentReady()) {
+      return
+    }
+
+    // The token must actually be in the system
+    const tokens = ctx.state.systems[systemId]?.commandTokens || []
+    if (!tokens.includes(placerName)) {
+      return
+    }
+
+    const choice = ctx.actions.choose(player, ["Exhaust Z'eu", 'Pass'], {
+      title: `Z'eu: Exhaust to return ${placerName}'s command token from system ${systemId}?`,
+    })
+
+    if (choice[0] !== "Exhaust Z'eu") {
+      return
+    }
+
+    player.exhaustAgent()
+
+    // Remove the token from the system
+    const idx = tokens.indexOf(placerName)
+    if (idx !== -1) {
+      tokens.splice(idx, 1)
+    }
+
+    // Return to the placer's reinforcements (tactic pool)
+    const placer = ctx.game.players.byName(placerName)
+    if (placer) {
+      placer.commandTokens.tactics++
+    }
+
+    ctx.log.add({
+      template: "{player} exhausts Z'eu: returns {target}'s command token from {system}",
+      args: { player: player.name, target: placerName, system: systemId },
+    })
+  },
+
+  // Foresight: After another player moves ships into a system with your ships,
+  // place 1 strategy token in an adjacent system without other players' ships
+  // and move your ships there.
   onShipsEnterSystem(player, ctx, { systemId, moverName }) {
     if (player.name === moverName) {
       return
@@ -19,8 +63,22 @@ module.exports = {
 
     const adjacentSystems = ctx.game._getAdjacentSystems(systemId)
       .filter(adjId => {
+        // Cannot place a token in a system where you already have one
         const tokens = ctx.state.systems[adjId]?.commandTokens || []
-        return !tokens.includes(player.name)
+        if (tokens.includes(player.name)) {
+          return false
+        }
+        // Cannot move into a system that contains another player's ships
+        const adjUnits = ctx.state.units[adjId]
+        if (adjUnits) {
+          const otherShips = adjUnits.space.filter(
+            u => u.owner !== player.name
+          )
+          if (otherShips.length > 0) {
+            return false
+          }
+        }
+        return true
       })
 
     if (adjacentSystems.length === 0) {
@@ -45,32 +103,26 @@ module.exports = {
     }
     ctx.state.systems[targetSystem].commandTokens.push(player.name)
 
-    const shipTypes = [...new Set(ownShips.map(u => u.type))]
-    let shipToMove
-    if (shipTypes.length === 1) {
-      shipToMove = shipTypes[0]
-    }
-    else {
-      const shipChoice = ctx.actions.choose(player, shipTypes, {
-        title: 'Choose ship to move',
-      })
-      shipToMove = shipChoice[0]
+    // Move all own ships from the active system to the target system
+    if (!ctx.state.units[targetSystem]) {
+      ctx.state.units[targetSystem] = { space: [], planets: {} }
     }
 
-    const shipIdx = systemUnits.space.findIndex(
-      u => u.owner === player.name && u.type === shipToMove
-    )
-    if (shipIdx !== -1) {
-      const [ship] = systemUnits.space.splice(shipIdx, 1)
-      if (!ctx.state.units[targetSystem]) {
-        ctx.state.units[targetSystem] = { space: [], planets: {} }
+    const shipsToMove = []
+    for (let i = systemUnits.space.length - 1; i >= 0; i--) {
+      if (systemUnits.space[i].owner === player.name) {
+        const [ship] = systemUnits.space.splice(i, 1)
+        shipsToMove.push(ship)
       }
+    }
+    for (const ship of shipsToMove) {
       ctx.state.units[targetSystem].space.push(ship)
     }
 
+    const movedTypes = [...new Set(shipsToMove.map(s => s.type))].join(', ')
     ctx.log.add({
-      template: '{player} uses Foresight: moves {ship} to {system}',
-      args: { player, ship: shipToMove, system: targetSystem },
+      template: '{player} uses Foresight: moves {ships} to {system}',
+      args: { player, ships: movedTypes, system: targetSystem },
     })
   },
 }
