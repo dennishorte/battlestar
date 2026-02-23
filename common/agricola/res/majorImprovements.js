@@ -432,9 +432,9 @@ const sixPlayerMajorImprovements = [
 ]
 
 // Get all major improvements
-// Pass playerCount to include 6-player expansion improvements
+// Pass playerCount to include 5-6 player expansion improvements
 function getAllMajorImprovements(playerCount = 4) {
-  if (playerCount >= 6) {
+  if (playerCount >= 5) {
     return [...majorImprovements, ...sixPlayerMajorImprovements]
   }
   return majorImprovements

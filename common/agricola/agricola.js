@@ -484,9 +484,9 @@ Agricola.prototype.initializeMajorImprovements = function() {
   }
   majorZone.initializeCards(majorCards)
 
-  if (playerCount >= 6) {
+  if (playerCount >= 5) {
     this.log.add({
-      template: 'Added 6-player expansion major improvements',
+      template: 'Added 5-6 player expansion major improvements',
     })
   }
 }
