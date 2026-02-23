@@ -196,6 +196,12 @@ class FactionAbilities {
     }
   }
 
+  onUnitsSustainedDamage(ownerName, systemId, count) {
+    const player = this.players.byName(ownerName)
+    const handler = this._getPlayerHandler(player)
+    handler?.onUnitsSustainedDamage?.(player, this, { systemId, count })
+  }
+
 
   // ---------------------------------------------------------------------------
   // D. Action Card Triggers
