@@ -6,6 +6,34 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 }
 
 describe('Council Keleres', () => {
+  describe('Data', () => {
+    test('commodities is 2', () => {
+      const game = t.fixture({ factions: ['council-keleres', 'emirates-of-hacan'], keleresSubFaction: 'mentak-coalition' })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.maxCommodities).toBe(2)
+    })
+
+    test('faction technologies are defined', () => {
+      const { getFaction } = require('../../res/factions/index.js')
+      const faction = getFaction('council-keleres')
+      expect(faction.factionTechnologies.length).toBe(3)
+
+      const execOrder = faction.factionTechnologies.find(t => t.id === 'executive-order')
+      expect(execOrder.color).toBe('yellow')
+      expect(execOrder.prerequisites).toEqual(['yellow'])
+
+      const agency = faction.factionTechnologies.find(t => t.id === 'agency-supply-network')
+      expect(agency.color).toBe('yellow')
+      expect(agency.prerequisites).toEqual(['yellow', 'yellow'])
+
+      const iihq = faction.factionTechnologies.find(t => t.id === 'iihq-modernization')
+      expect(iihq.color).toBeNull()
+      expect(iihq.prerequisites).toEqual(['yellow', 'green'])
+    })
+  })
+
   test('replenishes commodities + 1 TG at strategy phase', () => {
     const game = t.fixture({ factions: ['council-keleres', 'emirates-of-hacan'], keleresSubFaction: 'xxcha-kingdom' })
     game.run()
@@ -142,6 +170,51 @@ describe('Council Keleres', () => {
       // Keleres should have ships in space
       const dennisShips = homeUnits.space.filter(u => u.owner === 'dennis')
       expect(dennisShips.length).toBeGreaterThan(0)
+    })
+  })
+
+  describe('Agent — Xander Alexin Victori III', () => {
+    test.todo('may exhaust to allow any player to spend commodities as trade goods')
+  })
+
+  describe('Commander — Suffi An', () => {
+    test.todo('after performing a component action, may perform an additional action')
+    test.todo('unlock condition: spend 1 trade good after playing an action card with a component action')
+  })
+
+  describe('Hero — Kuuasi Aun Jalatai (Argent)', () => {
+    test.todo('Overwing Zeta: at start of space combat round, place flagship and up to 2 cruisers/destroyers from reinforcements, then purge')
+  })
+
+  describe('Hero — Odlynn Myrr (Xxcha)', () => {
+    test.todo('Operation Archon: after agenda revealed, cast up to 6 extra votes, predict outcome, gain TG and command tokens for wrong voters, then purge')
+  })
+
+  describe("Hero — Harka Leeds (Mentak)", () => {
+    test.todo("Erwan's Covenant: reveal action cards until finding 3 with component actions, draw those, shuffle rest back, then purge")
+  })
+
+  describe('Mech — Omniopiares', () => {
+    test.todo('other players must spend 1 influence to commit ground forces to the planet containing this unit')
+  })
+
+  describe('Promissory Note — Keleres Rider', () => {
+    test.todo('after agenda revealed, cannot vote, predict outcome; if correct draw 1 action card and gain 2 TG, then return card')
+  })
+
+  describe('Faction Technologies', () => {
+    describe('Executive Order', () => {
+      test.todo('exhaust to draw top or bottom agenda card; players vote as if you were speaker')
+      test.todo('can spend trade goods and resources as votes on this agenda')
+    })
+
+    describe('Agency Supply Network', () => {
+      test.todo('once per action, when resolving PRODUCTION, may resolve another unit PRODUCTION in any system')
+    })
+
+    describe('I.I.H.Q. Modernization', () => {
+      test.todo('on gain, receive Custodia Vigilia planet card and legendary ability')
+      test.todo('becomes neighbors with all players with units or planets in or adjacent to Mecatol Rex system')
     })
   })
 })
