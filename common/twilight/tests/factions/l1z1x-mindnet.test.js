@@ -6,6 +6,43 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 }
 
 describe('L1Z1X Mindnet', () => {
+  describe('Data', () => {
+    test('starting technologies', () => {
+      const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getTechIds()).toEqual(expect.arrayContaining(['neural-motivator', 'plasma-scoring']))
+    })
+
+    test('commodities is 2', () => {
+      const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.maxCommodities).toBe(2)
+    })
+
+    test('faction technologies', () => {
+      const { getFaction } = require('../../res/factions/index.js')
+      const faction = getFaction('l1z1x-mindnet')
+      expect(faction.factionTechnologies.length).toBe(3)
+
+      const inheritance = faction.factionTechnologies.find(t => t.id === 'inheritance-systems')
+      expect(inheritance.color).toBe('yellow')
+      expect(inheritance.prerequisites).toEqual(['yellow', 'yellow'])
+      expect(inheritance.unitUpgrade).toBeNull()
+
+      const superDread = faction.factionTechnologies.find(t => t.id === 'super-dreadnought-ii')
+      expect(superDread.color).toBe('unit-upgrade')
+      expect(superDread.prerequisites).toEqual(['blue', 'blue', 'yellow'])
+      expect(superDread.unitUpgrade).toBe('dreadnought')
+
+      const fealty = faction.factionTechnologies.find(t => t.id === 'fealty-uplink')
+      expect(fealty.color).toBeNull()
+      expect(fealty.prerequisites).toEqual(['red', 'green'])
+      expect(fealty.unitUpgrade).toBeNull()
+    })
+  })
+
   describe('Assimilate', () => {
     test('replaces enemy PDS and docks when gaining planet', () => {
       const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
@@ -101,5 +138,33 @@ describe('L1Z1X Mindnet', () => {
       const controller = game.state.planets['new-albion'].controller
       expect(controller).toBe('dennis')
     })
+  })
+
+  describe('Agent — I48S', () => {
+    test.todo('exhaust when another player activates a system with your units to remove 1 fleet token')
+  })
+
+  describe('Commander — 2RAM', () => {
+    test.todo('dreadnoughts and war suns participate in ground combat as ground forces')
+    test.todo('locked commander does not allow ships in ground combat')
+  })
+
+  describe('Hero — The Helmsman', () => {
+    test.todo('DARK SPACE NAVIGATION: place flagship and up to 2 dreadnoughts in empty system and purge')
+  })
+
+  describe('Mech — Annihilator', () => {
+    test.todo('DEPLOY: mech has bombardment ability usable while not in ground combat')
+  })
+
+  describe('Promissory Note — Cybernetic Enhancements', () => {
+    test.todo('at start of holder turn, remove 1 L1Z1X strategy token and holder gains 1 strategy token')
+    test.todo('returns to L1Z1X player after use')
+  })
+
+  describe('Faction Technologies', () => {
+    test.todo('Inheritance Systems: exhaust to gain a tech with same or fewer prerequisites')
+    test.todo('Super Dreadnought II: upgraded dreadnought cannot be destroyed by Direct Hit')
+    test.todo('Fealty Uplink: gain 1 command token when scoring public objective with most tokens on board')
   })
 })

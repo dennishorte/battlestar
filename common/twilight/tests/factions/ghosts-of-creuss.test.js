@@ -2,6 +2,43 @@ const t = require('../../testutil.js')
 
 
 describe('Ghosts of Creuss', () => {
+  describe('Data', () => {
+    test('starting technologies', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getTechIds()).toEqual(expect.arrayContaining(['gravity-drive']))
+    })
+
+    test('commodities is 4', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.maxCommodities).toBe(4)
+    })
+
+    test('faction technologies are defined', () => {
+      const { getFaction } = require('../../res/factions/index.js')
+      const faction = getFaction('ghosts-of-creuss')
+      expect(faction.factionTechnologies.length).toBe(3)
+
+      const ds = faction.factionTechnologies.find(ft => ft.id === 'dimensional-splicer')
+      expect(ds.color).toBe('red')
+      expect(ds.prerequisites).toEqual(['red'])
+      expect(ds.unitUpgrade).toBeNull()
+
+      const wg = faction.factionTechnologies.find(ft => ft.id === 'wormhole-generator')
+      expect(wg.color).toBe('blue')
+      expect(wg.prerequisites).toEqual(['blue', 'blue'])
+      expect(wg.unitUpgrade).toBeNull()
+
+      const ps = faction.factionTechnologies.find(ft => ft.id === 'particle-synthesis')
+      expect(ps.color).toBeNull()
+      expect(ps.prerequisites).toEqual(['blue', 'yellow'])
+      expect(ps.unitUpgrade).toBeNull()
+    })
+  })
+
   test('home system is adjacent to wormhole systems', () => {
     const { Galaxy } = require('../../model/Galaxy.js')
     const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
@@ -58,7 +95,7 @@ describe('Ghosts of Creuss', () => {
       const { Galaxy } = require('../../model/Galaxy.js')
       const galaxy = new Galaxy(game)
 
-      // Both have delta wormhole → adjacent
+      // Both have delta wormhole -> adjacent
       const gateAdj = galaxy.getAdjacent('creuss-gate')
       expect(gateAdj).toContain('creuss-home')
 
@@ -83,6 +120,44 @@ describe('Ghosts of Creuss', () => {
       const creussPlanet = game.state.units['creuss-home'].planets['creuss']
         .filter(u => u.owner === 'dennis')
       expect(creussPlanet.length).toBeGreaterThan(0)
+    })
+  })
+
+  describe('Agent — Emissary Taivra', () => {
+    test.todo('after a player activates a system with a non-delta wormhole, may exhaust to make that system adjacent to all wormhole systems')
+    test.todo('exhausted agent cannot be used')
+  })
+
+  describe('Commander — Sai Seravus', () => {
+    test.todo('unlock condition: have units in 3 systems that contain alpha or beta wormholes')
+    test.todo('after ships move through wormholes, place 1 fighter with each capacity ship that moved through a wormhole')
+  })
+
+  describe('Hero — Riftwalker Meian', () => {
+    test.todo('SINGULARITY REACTOR: swap positions of any 2 systems that contain wormholes or your units, then purge')
+  })
+
+  describe('Mech — Icarus Drive', () => {
+    test.todo('DEPLOY: after any player activates a system, may remove this unit to place or move a Creuss wormhole token into that system')
+  })
+
+  describe('Promissory Note — Creuss IFF', () => {
+    test.todo('at start of holder turn, place or move a Creuss wormhole token into a system with a controlled planet or a non-home system without opponent ships')
+    test.todo('returns to Creuss player after use')
+  })
+
+  describe('Faction Technologies', () => {
+    describe('Dimensional Splicer', () => {
+      test.todo('at start of space combat in a system with a wormhole, produce 1 hit and assign to opponent ship')
+    })
+
+    describe('Wormhole Generator', () => {
+      test.todo('ACTION: exhaust to place or move a Creuss wormhole token into a system with a controlled planet or non-home system without opponent ships')
+    })
+
+    describe('Particle Synthesis', () => {
+      test.todo('wormholes in systems with your ships gain PRODUCTION 1')
+      test.todo('reduce cost of produced units by 1 for each wormhole in the system')
     })
   })
 })

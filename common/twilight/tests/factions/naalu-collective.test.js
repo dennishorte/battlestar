@@ -6,6 +6,43 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 }
 
 describe('Naalu Collective', () => {
+  describe('Data', () => {
+    test('starting technologies', () => {
+      const game = t.fixture({ factions: ['naalu-collective', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getTechIds()).toEqual(expect.arrayContaining(['neural-motivator', 'sarween-tools']))
+    })
+
+    test('commodities is 3', () => {
+      const game = t.fixture({ factions: ['naalu-collective', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.maxCommodities).toBe(3)
+    })
+
+    test('faction technologies are defined', () => {
+      const { getFaction } = require('../../res/factions/index.js')
+      const faction = getFaction('naalu-collective')
+      expect(faction.factionTechnologies.length).toBe(3)
+
+      const neuroglaive = faction.factionTechnologies.find(ft => ft.id === 'neuroglaive')
+      expect(neuroglaive.color).toBe('green')
+      expect(neuroglaive.prerequisites).toEqual(['green', 'green', 'green'])
+      expect(neuroglaive.unitUpgrade).toBeNull()
+
+      const hcf2 = faction.factionTechnologies.find(ft => ft.id === 'hybrid-crystal-fighter-ii')
+      expect(hcf2.color).toBe('unit-upgrade')
+      expect(hcf2.prerequisites).toEqual(['green', 'blue'])
+      expect(hcf2.unitUpgrade).toBe('fighter')
+
+      const mindsieve = faction.factionTechnologies.find(ft => ft.id === 'mindsieve')
+      expect(mindsieve.color).toBeNull()
+      expect(mindsieve.prerequisites).toEqual(['red', 'green'])
+      expect(mindsieve.unitUpgrade).toBeNull()
+    })
+  })
+
   describe('Telepathic', () => {
     test('Naalu always goes first in action phase regardless of strategy card', () => {
       const game = t.fixture({
@@ -98,6 +135,44 @@ describe('Naalu Collective', () => {
       // Naalu should have spent 1 strategy token
       const micah = game.players.byName('micah')
       expect(micah.commandTokens.strategy).toBe(1)
+    })
+  })
+
+  describe("Agent — Z'eu", () => {
+    test.todo('exhaust to return a command token placed in a system to that player\'s reinforcements')
+  })
+
+  describe("Commander — M'aban", () => {
+    test.todo('unlock condition: have ground forces in or adjacent to the Mecatol Rex system')
+    test.todo('may look at neighbours\' hands of promissory notes and top and bottom card of agenda deck')
+  })
+
+  describe('Hero — The Oracle', () => {
+    test.todo('C-RADIUM GEOMETRY: at end of status phase, force each other player to give 1 promissory note, then purge')
+  })
+
+  describe('Mech — Iconoclast', () => {
+    test.todo('DEPLOY: when another player gains a relic, place 1 mech on any planet you control')
+  })
+
+  describe('Promissory Note — Gift of Prescience', () => {
+    test.todo('holder places Naalu "0" token on their strategy card to go first in initiative order')
+    test.todo('Naalu cannot use Telepathic during this game round')
+    test.todo('returns to Naalu player at end of status phase')
+  })
+
+  describe('Faction Technologies', () => {
+    describe('Neuroglaive', () => {
+      test.todo('after another player activates a system with your ships, they remove 1 fleet pool token')
+    })
+
+    describe('Hybrid Crystal Fighter II', () => {
+      test.todo('fighters may move without being transported')
+      test.todo('excess fighters count as 1/2 ship against fleet pool')
+    })
+
+    describe('Mindsieve', () => {
+      test.todo('give a promissory note to resolve secondary ability without spending a command token')
     })
   })
 })
