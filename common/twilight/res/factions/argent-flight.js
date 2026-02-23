@@ -18,14 +18,24 @@ module.exports = {
     {
       id: 'zeal',
       name: 'Zeal',
-      description: 'You always vote first during the agenda phase. When you cast votes, you may cast 1 additional vote for each player in the game including yourself.',
+      description: 'You always vote first during the agenda phase. When you cast at least 1 vote, cast 1 additional vote for each player in the game including you.',
     },
     {
       id: 'raid-formation',
       name: 'Raid Formation',
-      description: "When 1 or more of your units use Anti-Fighter Barrage, for each hit produced in excess of your opponent's fighters, choose 1 of your opponent's ships that has Sustain Damage to become damaged.",
+      description: "When 1 or more of your units uses ANTI-FIGHTER BARRAGE, for each hit produced in excess of your opponent's Fighters, choose 1 of your opponent's ships that has SUSTAIN DAMAGE to become damaged.",
     },
   ],
+  unitOverrides: {
+    destroyer: {
+      name: 'Strike Wing Alpha I',
+      cost: 1,
+      combat: 8,
+      move: 2,
+      capacity: 1,
+      abilities: ['anti-fighter-barrage-9x2'],
+    },
+  },
   flagship: {
     name: 'Quetzecoatl',
     cost: 8,
@@ -34,7 +44,7 @@ module.exports = {
     capacity: 3,
     hits: 2,
     abilities: ['sustain-damage'],
-    description: 'Other players cannot use Space Cannon against your ships in this system.',
+    description: 'Other players cannot use space cannon against your ships in this system.',
   },
   mech: {
     name: 'Aerie Sentinel',
@@ -42,24 +52,29 @@ module.exports = {
     combat: 6,
     hits: 2,
     abilities: ['sustain-damage'],
+    description: 'This unit does not count against capacity if it is being transported or if it is in a space area with 1 or more of your ships that have capacity values.',
   },
   leaders: {
     agent: {
       name: 'Trillossa Aun Mirik',
       unlocked: true,
+      description: 'When a player produces ground forces in a system: You may exhaust this card; that player may place those units on any planets they control in that system and any adjacent systems.',
     },
     commander: {
       name: 'Trrakan Aun Zulok',
-      unlockCondition: 'Have 6 or more units that have Anti-Fighter Barrage, Space Cannon, or Bombardment on the board.',
+      unlockCondition: 'Have 6 units that have ANTI-FIGHTER BARRAGE, SPACE CANNON or BOMBARDMENT on the game board.',
+      description: 'When 1 or more of your units make a roll for a unit ability: You may choose 1 of those units to roll 1 additional die.',
     },
     hero: {
       name: 'Mirik Aun Sissiri',
       unlockCondition: 'Have 3 scored objectives.',
+      description: "HELIX PROTOCOL — ACTION: Move any number of your ships from any systems to any number of other systems that contain 1 of your command tokens and no other players' ships. Then, purge this card.",
     },
   },
   promissoryNote: {
     id: 'strike-wing-ambuscade',
     name: 'Strike Wing Ambuscade',
+    description: 'When 1 or more of your units make a roll for a unit ability: Choose 1 of those units to roll 1 additional die. Then, return this card to the Argent player.',
   },
   factionTechnologies: [
     {
@@ -68,6 +83,8 @@ module.exports = {
       color: 'unit-upgrade',
       prerequisites: ['red', 'red'],
       unitUpgrade: 'destroyer',
+      stats: { cost: 1, combat: 7, move: 2, capacity: 1, abilities: ['anti-fighter-barrage-6x3'] },
+      description: "When this unit uses ANTI-FIGHTER BARRAGE, each result of 9 or 10 also destroys 1 of your opponent's infantry in the space area of the active system.",
     },
     {
       id: 'aerie-hololattice',
@@ -75,6 +92,15 @@ module.exports = {
       color: 'yellow',
       prerequisites: ['yellow'],
       unitUpgrade: null,
+      description: 'Other players cannot move ships through systems that contain your structures. Each planet that contains 1 or more of your structures gains the PRODUCTION 1 ability as if it were a unit.',
+    },
+    {
+      id: 'wing-transfer',
+      name: 'Wing Transfer',
+      color: null,
+      prerequisites: ['blue', 'yellow'],
+      unitUpgrade: null,
+      description: 'When you activate a system that contains only your units, you may place command tokens from your reinforcements into any system adjacent to that system that contain only your units; at the end of this action, you may move ships among the active system and systems adjacent to it that contain your command tokens.',
     },
   ],
 }
