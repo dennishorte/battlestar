@@ -2,6 +2,51 @@ const t = require('../../testutil.js')
 
 
 describe('Nomad', () => {
+  describe('Data', () => {
+    test('starting technologies include Sling Relay', () => {
+      const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getTechIds()).toContain('sling-relay')
+    })
+
+    test('commodities is 4', () => {
+      const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.maxCommodities).toBe(4)
+    })
+
+    test('faction technologies are defined', () => {
+      const { getFaction } = require('../../res/factions/index.js')
+      const faction = getFaction('nomad')
+      expect(faction.factionTechnologies.length).toBe(3)
+
+      const temporal = faction.factionTechnologies.find(t => t.id === 'temporal-command-suite')
+      expect(temporal).toBeDefined()
+      expect(temporal.name).toBe('Temporal Command Suite')
+      expect(temporal.color).toBe('yellow')
+      expect(temporal.prerequisites).toEqual(['yellow'])
+      expect(temporal.unitUpgrade).toBeNull()
+
+      const memoria2 = faction.factionTechnologies.find(t => t.id === 'memoria-ii')
+      expect(memoria2).toBeDefined()
+      expect(memoria2.name).toBe('Memoria II')
+      expect(memoria2.color).toBe('unit-upgrade')
+      expect(memoria2.prerequisites).toEqual(['green', 'blue', 'yellow'])
+      expect(memoria2.unitUpgrade).toBe('flagship')
+
+      const thunders = faction.factionTechnologies.find(t => t.id === 'thunders-paradox')
+      expect(thunders).toBeDefined()
+      expect(thunders.name).toBe("Thunder's Paradox")
+      expect(thunders.color).toBeNull()
+      expect(thunders.prerequisites).toEqual(['yellow', 'green'])
+      expect(thunders.unitUpgrade).toBeNull()
+    })
+  })
+
   test('gains TG when voted-for outcome wins', () => {
     const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
     game.run()
@@ -201,6 +246,43 @@ describe('Nomad', () => {
       const micahGround = game.state.units['27'].planets['new-albion']
         .filter(u => u.owner === 'micah')
       expect(micahGround.length).toBe(0)
+    })
+  })
+
+  describe('Commander — Navarch Feng', () => {
+    test.todo('can produce flagship without spending resources')
+    test.todo('unlock condition: have 1 scored secret objective')
+    test.todo('locked commander gives no bonus')
+  })
+
+  describe('Hero — Ahk-Syl Siven', () => {
+    test.todo('Probability Matrix: flagship and transported units can move out of systems with own command tokens')
+    test.todo('effect lasts until end of game round, then purge')
+  })
+
+  describe('Mech — Quantum Manipulator', () => {
+    test.todo('DEPLOY: when in space area during combat, may use sustain damage to cancel a hit against ships')
+  })
+
+  describe('Promissory Note — The Cavalry', () => {
+    test.todo('at start of space combat against non-Nomad player, treat 1 non-fighter ship as if it has flagship stats')
+    test.todo('treated ship gains sustain damage, combat value, and AFB of Memoria')
+    test.todo('returns to Nomad player at end of combat')
+  })
+
+  describe('Faction Technologies', () => {
+    describe('Temporal Command Suite', () => {
+      test.todo('after any agent becomes exhausted, may exhaust this card to ready that agent')
+      test.todo('if readying another player agent, may perform a transaction with that player')
+    })
+
+    describe('Memoria II', () => {
+      test.todo('flagship upgrade: combat 5, move 2, capacity 6, AFB 5x3')
+      test.todo('may treat as adjacent to systems containing own mechs')
+    })
+
+    describe("Thunder's Paradox", () => {
+      test.todo('at start of any player turn, may exhaust 1 agent to ready any other agent')
     })
   })
 })

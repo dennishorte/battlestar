@@ -6,6 +6,47 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 }
 
 describe('Universities of Jol-Nar', () => {
+  describe('Data', () => {
+    test('starts with 4 technologies (one of each color)', () => {
+      const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      const techs = dennis.getTechIds()
+      expect(techs.length).toBe(4)
+      expect(techs).toContain('neural-motivator')
+      expect(techs).toContain('antimass-deflectors')
+      expect(techs).toContain('sarween-tools')
+      expect(techs).toContain('plasma-scoring')
+    })
+
+    test('commodities is 4', () => {
+      const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.maxCommodities).toBe(4)
+    })
+
+    test('faction technologies are defined', () => {
+      const { getFaction } = require('../../res/factions/index.js')
+      const faction = getFaction('universities-of-jol-nar')
+      expect(faction.factionTechnologies.length).toBe(3)
+
+      const eRes = faction.factionTechnologies.find(t => t.id === 'e-res-siphons')
+      expect(eRes.color).toBe('yellow')
+      expect(eRes.prerequisites).toEqual(['yellow', 'yellow'])
+
+      const spatial = faction.factionTechnologies.find(t => t.id === 'spatial-conduit-cylinder')
+      expect(spatial.color).toBe('blue')
+      expect(spatial.prerequisites).toEqual(['blue', 'blue'])
+
+      const specialized = faction.factionTechnologies.find(t => t.id === 'specialized-compounds')
+      expect(specialized.color).toBeNull()
+      expect(specialized.prerequisites).toEqual(['yellow', 'green'])
+    })
+  })
+
   describe('Analytical', () => {
     test('can research tech with 1 missing prerequisite (non-unit-upgrade)', () => {
       // Jol-Nar starts with 4 techs: neural-motivator(green), antimass-deflectors(blue),
@@ -110,6 +151,42 @@ describe('Universities of Jol-Nar', () => {
       const micahShips = game.state.units['27'].space
         .filter(u => u.owner === 'micah')
       expect(micahShips.length).toBe(0)
+    })
+  })
+
+  describe('Agent — Doctor Sucaban', () => {
+    test.todo('when a player spends resources to research, may exhaust to let them remove infantry to reduce cost')
+  })
+
+  describe('Commander — Agnlan Oln', () => {
+    test.todo('after rolling dice for a unit ability, may reroll any of those dice')
+    test.todo('unlock condition: own 8 technologies')
+  })
+
+  describe("Hero — Rin, The Master's Legacy", () => {
+    test.todo('Genetic Memory: for each non-unit upgrade tech owned, may replace with any tech of same color from deck, then purge')
+  })
+
+  describe('Mech DEPLOY — Shield Paling', () => {
+    test.todo('infantry on this planet are not affected by the Fragile faction ability')
+  })
+
+  describe('Promissory Note — Research Agreement', () => {
+    test.todo('after Jol-Nar researches a non-faction technology, gain that technology, then return card')
+  })
+
+  describe('Faction Technologies', () => {
+    describe('E-Res Siphons', () => {
+      test.todo('after another player activates a system with your ships, gain 4 trade goods')
+    })
+
+    describe('Spatial Conduit Cylinder', () => {
+      test.todo('exhaust after activating a system with own units; that system is adjacent to all other systems with own units during this activation')
+    })
+
+    describe('Specialized Compounds', () => {
+      test.todo('when researching via Technology strategy card, may exhaust a tech specialty planet instead of spending resources')
+      test.todo('must research a technology of the specialty color when using this ability')
     })
   })
 })

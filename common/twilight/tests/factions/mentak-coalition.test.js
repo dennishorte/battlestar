@@ -6,6 +6,43 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 }
 
 describe('Mentak Coalition', () => {
+  describe('Data', () => {
+    test('starting technologies', () => {
+      const game = t.fixture({ factions: ['mentak-coalition', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getTechIds()).toEqual(expect.arrayContaining(['sarween-tools', 'plasma-scoring']))
+    })
+
+    test('commodities is 2', () => {
+      const game = t.fixture({ factions: ['mentak-coalition', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.maxCommodities).toBe(2)
+    })
+
+    test('faction technologies are defined', () => {
+      const { getFaction } = require('../../res/factions/index.js')
+      const faction = getFaction('mentak-coalition')
+      expect(faction.factionTechnologies.length).toBe(3)
+
+      const salvage = faction.factionTechnologies.find(t => t.id === 'salvage-operations')
+      expect(salvage.color).toBe('yellow')
+      expect(salvage.prerequisites).toEqual(['yellow', 'yellow'])
+      expect(salvage.unitUpgrade).toBeNull()
+
+      const mirror = faction.factionTechnologies.find(t => t.id === 'mirror-computing')
+      expect(mirror.color).toBe('yellow')
+      expect(mirror.prerequisites).toEqual(['yellow', 'yellow', 'yellow'])
+      expect(mirror.unitUpgrade).toBeNull()
+
+      const grace = faction.factionTechnologies.find(t => t.id === 'the-tables-grace')
+      expect(grace.color).toBeNull()
+      expect(grace.prerequisites).toEqual(['yellow', 'green'])
+      expect(grace.unitUpgrade).toBeNull()
+    })
+  })
+
   describe('Ambush', () => {
     test('Mentak ambush fires before combat and can destroy ships', () => {
       // Mentak (dennis) moves cruisers into system with enemy fighter
@@ -118,5 +155,33 @@ describe('Mentak Coalition', () => {
       const scott = game.players.byName('scott')
       expect(scott.tradeGoods).toBe(1)
     })
+  })
+
+  describe('Agent — Suffi An', () => {
+    test.todo('exhaust after Pillage to draw 1 action card each for Mentak and pillaged player')
+  })
+
+  describe("Commander — S'Ula Mentarion", () => {
+    test.todo('after winning space combat, force opponent to give 1 promissory note')
+  })
+
+  describe('Hero — Ipswitch, Loose Cannon', () => {
+    test.todo('SLEEPER CELL: at start of space combat, purge to place copies of destroyed enemy ships')
+  })
+
+  describe('Mech — Moll Terminus', () => {
+    test.todo("DEPLOY: other players' ground forces on this planet cannot use Sustain Damage")
+  })
+
+  describe('Promissory Note — Promise of Protection', () => {
+    test.todo('holder is immune to Pillage ability')
+    test.todo('returns to Mentak player when holder activates system with Mentak units')
+  })
+
+  describe('Faction Technologies', () => {
+    test.todo('Salvage Operations: gain 1 trade good after winning or losing space combat')
+    test.todo('Salvage Operations: produce 1 ship of destroyed type after winning combat')
+    test.todo('Mirror Computing: trade goods worth 2 resources or influence when spent')
+    test.todo("The Table's Grace: Corsair movement through enemy systems with Cruiser II")
   })
 })
