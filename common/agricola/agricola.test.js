@@ -2008,4 +2008,146 @@ describe('Agricola', () => {
       expect(dennis.food).toBe(2)
     })
   })
+
+  describe('v6 continued food conversion after enough food', () => {
+
+    test('v6: player with enough food and cooking improvement can still convert', () => {
+      const game = t.fixture({ version: 6 })
+      t.setBoard(game, {
+        dennis: {
+          majorImprovements: ['fireplace-2'],
+          food: 10,
+          farmyard: {
+            pastures: [{ spaces: [{ row: 1, col: 0 }], animals: { sheep: 3 } }],
+          },
+        },
+      })
+      game.run()
+
+      const dennis = t.player(game)
+      let callCount = 0
+
+      // Mock choose: first call converts a sheep, second call feeds family
+      game.actions.choose = () => {
+        callCount++
+        if (callCount === 1) {
+          return ['Cook 1 sheep for 2 food']
+        }
+        return ['Feed family']
+      }
+
+      game.allowFoodConversion(dennis, 4)
+
+      // Should have cooked 1 sheep even though already had enough food
+      expect(dennis.getTotalAnimals('sheep')).toBe(2)
+      expect(dennis.food).toBe(12)
+    })
+
+    test('v6: player with enough food and craft improvement (Joinery) can convert', () => {
+      const game = t.fixture({ version: 6 })
+      t.setBoard(game, {
+        dennis: {
+          majorImprovements: ['joinery'],
+          food: 10,
+          wood: 3,
+        },
+      })
+      game.run()
+
+      const dennis = t.player(game)
+      let callCount = 0
+
+      game.actions.choose = () => {
+        callCount++
+        if (callCount === 1) {
+          return ['Use Joinery: convert wood to 2 food']
+        }
+        return ['Feed family']
+      }
+
+      game.allowFoodConversion(dennis, 4)
+
+      expect(dennis.wood).toBe(2)
+      expect(dennis.food).toBe(12)
+    })
+
+    test('v6: player with enough food and basic grain can convert to stockpile', () => {
+      const game = t.fixture({ version: 6 })
+      t.setBoard(game, {
+        dennis: {
+          food: 10,
+          grain: 2,
+        },
+      })
+      game.run()
+
+      const dennis = t.player(game)
+      let callCount = 0
+
+      game.actions.choose = () => {
+        callCount++
+        if (callCount === 1) {
+          return ['Convert 1 grain to 1 food']
+        }
+        return ['Feed family']
+      }
+
+      game.allowFoodConversion(dennis, 4)
+
+      expect(dennis.grain).toBe(1)
+      expect(dennis.food).toBe(11)
+    })
+
+    test('v6: selecting Feed family immediately exits without extra conversions', () => {
+      const game = t.fixture({ version: 6 })
+      t.setBoard(game, {
+        dennis: {
+          majorImprovements: ['fireplace-2'],
+          food: 10,
+          farmyard: {
+            pastures: [{ spaces: [{ row: 1, col: 0 }], animals: { sheep: 3 } }],
+          },
+        },
+      })
+      game.run()
+
+      const dennis = t.player(game)
+
+      // Immediately select Feed family
+      game.actions.choose = () => ['Feed family']
+
+      game.allowFoodConversion(dennis, 4)
+
+      // No conversions should have happened
+      expect(dennis.getTotalAnimals('sheep')).toBe(3)
+      expect(dennis.food).toBe(10)
+    })
+
+    test('v5: auto-advances when player has enough food (old behavior)', () => {
+      const game = t.fixture({ version: 5 })
+      t.setBoard(game, {
+        dennis: {
+          majorImprovements: ['fireplace-2'],
+          food: 10,
+          farmyard: {
+            pastures: [{ spaces: [{ row: 1, col: 0 }], animals: { sheep: 3 } }],
+          },
+        },
+      })
+      game.run()
+
+      const dennis = t.player(game)
+
+      // choose should never be called since food >= required
+      game.actions.choose = () => {
+        throw new Error('choose should not be called in v5 when food >= required')
+      }
+
+      game.allowFoodConversion(dennis, 4)
+
+      // No conversions, auto-advanced
+      expect(dennis.getTotalAnimals('sheep')).toBe(3)
+      expect(dennis.food).toBe(10)
+    })
+  })
 })

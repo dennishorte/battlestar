@@ -72,7 +72,7 @@ function factoryFromLobby(lobby) {
     numPlayers: lobby.users.length,
     useDrafting: lobby.options?.useDrafting || false,
     cardSets: lobby.options?.cardSets || res.getCardSetIds(),
-    version: 5,
+    version: 6,
   })
 }
 
@@ -2213,13 +2213,16 @@ Agricola.prototype.feedingPhase = function() {
     this.callPlayerCardHook(player, 'onFeedingPhase')
 
     // If the player has anytime actions and already enough food,
-    // give them a chance to use anytime actions before feeding
-    const hasAnytimeActions = this.getAnytimeActions(player).length > 0
-    if (hasAnytimeActions && player.food >= required) {
-      this.actions.choose(player, ['Feed family'], {
-        title: `Feed family (${player.food}/${required} food)`,
-        min: 1, max: 1,
-      })
+    // give them a chance to use anytime actions before feeding.
+    // Only for v5 and below - v6 handles this in allowFoodConversion.
+    if (this.settings.version < 6) {
+      const hasAnytimeActions = this.getAnytimeActions(player).length > 0
+      if (hasAnytimeActions && player.food >= required) {
+        this.actions.choose(player, ['Feed family'], {
+          title: `Feed family (${player.food}/${required} food)`,
+          min: 1, max: 1,
+        })
+      }
     }
 
     // Allow player to convert resources to food (optional)
@@ -2252,7 +2255,9 @@ Agricola.prototype.feedingPhase = function() {
 }
 
 Agricola.prototype.allowFoodConversion = function(player, required) {
-  while (player.food < required) {
+  const canContinueAfterEnoughFood = this.settings.version >= 6
+
+  while (canContinueAfterEnoughFood || player.food < required) {
     // Use function wrapper so options are recalculated after anytime actions
     const getOptions = () => {
       const options = this.getAnytimeFoodConversionOptions(player)
@@ -2280,26 +2285,44 @@ Agricola.prototype.allowFoodConversion = function(player, required) {
 
     const options = getOptions()
     if (options.length === 0) {
-      break // No more conversion options
+      if (player.food >= required) {
+        break
+      }
+
+      // Not enough food, no conversion options
+      // For v6: show prompt so anytime panel is accessible
+      if (canContinueAfterEnoughFood) {
+        const hasAnytimeActions = this.getAnytimeActions(player).length > 0
+        if (hasAnytimeActions) {
+          this.actions.choose(player, ['Done converting'], {
+            title: `Need ${required - player.food} more food`,
+            min: 1, max: 1,
+          })
+        }
+      }
+      break
     }
 
     // Build choice strings with function wrapper so they refresh after anytime actions
     const choicesFn = () => {
       const currentOptions = getOptions()
       const choices = currentOptions.map(opt => opt.description)
-      choices.push('Done converting')
+      choices.push(player.food >= required ? 'Feed family' : 'Done converting')
       return choices
     }
 
+    const hasEnoughFood = player.food >= required
     const selection = this.actions.choose(player, choicesFn, {
-      title: `Need ${required - player.food} more food`,
+      title: hasEnoughFood
+        ? `Feed family (${player.food}/${required} food)`
+        : `Need ${required - player.food} more food`,
       min: 1,
       max: 1,
     })
 
     const choice = selection[0]
 
-    if (choice === 'Done converting') {
+    if (choice === 'Done converting' || choice === 'Feed family') {
       break
     }
 
