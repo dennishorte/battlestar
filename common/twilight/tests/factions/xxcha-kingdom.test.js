@@ -6,6 +6,39 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 }
 
 describe('Xxcha Kingdom', () => {
+  describe('Data', () => {
+    test('starting technologies', () => {
+      const game = t.fixture({ factions: ['xxcha-kingdom', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getTechIds()).toEqual(expect.arrayContaining(['graviton-laser-system']))
+    })
+
+    test('commodities is 4', () => {
+      const game = t.fixture({ factions: ['xxcha-kingdom', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.maxCommodities).toBe(4)
+    })
+
+    test('faction technologies are defined', () => {
+      const { getFaction } = require('../../res/factions/index.js')
+      const faction = getFaction('xxcha-kingdom')
+      expect(faction.factionTechnologies.length).toBe(3)
+
+      const nullField = faction.factionTechnologies.find(t => t.id === 'nullification-field')
+      expect(nullField.color).toBe('yellow')
+      expect(nullField.prerequisites).toEqual(['yellow', 'yellow'])
+
+      const instinct = faction.factionTechnologies.find(t => t.id === 'instinct-training')
+      expect(instinct.color).toBe('green')
+      expect(instinct.prerequisites).toEqual(['green'])
+
+      const archon = faction.factionTechnologies.find(t => t.id === 'archons-gift')
+      expect(archon.prerequisites).toEqual(['yellow', 'green'])
+    })
+  })
+
   describe('Peace Accords', () => {
     test('gains unoccupied adjacent planet after diplomacy', () => {
       const game = t.fixture({ factions: ['xxcha-kingdom', 'emirates-of-hacan'] })
@@ -67,6 +100,43 @@ describe('Xxcha Kingdom', () => {
       // Strategy token spent (started with 2, spent 1)
       const dennis = game.players.byName('dennis')
       expect(dennis.commandTokens.strategy).toBe(1)
+    })
+  })
+
+  describe('Agent — Ggrocuto Rinn', () => {
+    test.todo('exhaust after agenda revealed, readied planets count as 2 additional votes')
+  })
+
+  describe('Commander — Elder Qanoj', () => {
+    test.todo('when you or a neighbor votes, cast 1 additional vote')
+    test.todo('game effects cannot prevent you from voting on an agenda')
+  })
+
+  describe('Hero — Xxekir Grom', () => {
+    test.todo('PLANETARY DEFENSE NEXUS: place up to 4 PDS or mechs on controlled planets, ready those planets, then purge')
+  })
+
+  describe('Mech — Indomitus', () => {
+    test.todo('damage immune during bombardment and space cannon')
+    test.todo('DEPLOY: when elected or gaining TG during agenda phase')
+  })
+
+  describe('Promissory Note — Political Favor', () => {
+    test.todo('when agenda is revealed, remove 1 rider or cancel 1 speaker action')
+    test.todo('returns to Xxcha player after use')
+  })
+
+  describe('Faction Technologies', () => {
+    describe('Instinct Training', () => {
+      test.todo('exhaust and spend strategy token to cancel another player action card')
+    })
+
+    describe('Nullification Field', () => {
+      test.todo('exhaust and spend strategy token when another player activates system with your ships to end their turn')
+    })
+
+    describe("Archon's Gift", () => {
+      test.todo('spend influence as resources and resources as influence')
     })
   })
 })
