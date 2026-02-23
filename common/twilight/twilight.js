@@ -748,37 +748,44 @@ Twilight.prototype._initialDraws = function() {
 
   this._initSecretObjectiveDeck()
 
-  // Draw 2 secret objectives per player, then let all players pick in parallel
-  const playerDraws = []  // { player, drawn: [id, id] }
-  for (const player of this.players.all()) {
-    // Skip if setBoard already assigned secrets
-    if (player.secretObjectives && player.secretObjectives.length > 0) {
-      continue
-    }
+  // Draw 2 secret objectives per player, then let all players pick simultaneously.
+  // If the deck is too small for 2 each, auto-assign 1 per player instead.
+  const needsSecret = this.players.all().filter(player =>
+    !player.secretObjectives || player.secretObjectives.length === 0
+  )
 
-    const drawn = []
-    for (let i = 0; i < 2; i++) {
+  if (needsSecret.length === 0) {
+    return
+  }
+
+  const canDraw2 = this.state.secretObjectiveDeck.length >= needsSecret.length * 2
+
+  if (!canDraw2) {
+    // Not enough cards for a pick — just deal 1 each
+    for (const player of needsSecret) {
       if (this.state.secretObjectiveDeck.length === 0) {
         break
       }
-      drawn.push(this.state.secretObjectiveDeck.pop())
-    }
-
-    if (drawn.length === 1) {
-      // Only one card available — auto-assign
       if (!player.secretObjectives) {
         player.secretObjectives = []
       }
-      player.secretObjectives.push(drawn[0])
+      player.secretObjectives.push(this.state.secretObjectiveDeck.pop())
     }
-    else if (drawn.length === 2) {
-      playerDraws.push({ player, drawn })
-    }
-  }
-
-  if (playerDraws.length === 0) {
     return
   }
+
+  const playerDraws = []  // { player, drawn: [id, id] }
+  for (const player of needsSecret) {
+    const drawn = [
+      this.state.secretObjectiveDeck.pop(),
+      this.state.secretObjectiveDeck.pop(),
+    ]
+    playerDraws.push({ player, drawn })
+  }
+
+  this.log.add({
+    template: 'Each player draws 2 secret objectives and keeps 1',
+  })
 
   // All players choose simultaneously
   const selectors = playerDraws.map(({ player, drawn }) => {
