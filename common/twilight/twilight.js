@@ -529,6 +529,17 @@ Twilight.prototype._removeUnit = function(systemId, location, unitId) {
   return arr.splice(idx, 1)[0]
 }
 
+Twilight.prototype._isTechReady = function(player, techId) {
+  return player.hasTechnology(techId) && !(player.exhaustedTechs || []).includes(techId)
+}
+
+Twilight.prototype._exhaustTech = function(player, techId) {
+  if (!player.exhaustedTechs) {
+    player.exhaustedTechs = []
+  }
+  player.exhaustedTechs.push(techId)
+}
+
 Twilight.prototype._getUnitsInSystem = function(systemId, ownerName) {
   const systemUnits = this.state.units[systemId]
   if (!systemUnits) {
@@ -981,7 +992,62 @@ Twilight.prototype.actionPhase = function() {
     if (action !== 'Pass') {
       this._offerTransactions(player)
     }
+
+    // Fleet Logistics: allow one additional action per turn
+    if (action !== 'Pass' && !this.state.fleetLogisticsUsed?.[player.name]
+        && player.hasTechnology('fleet-logistics')) {
+      if (!this.state.fleetLogisticsUsed) {
+        this.state.fleetLogisticsUsed = {}
+      }
+      this.state.fleetLogisticsUsed[player.name] = true
+
+      // Offer second action
+      const bonusChoices = ['Tactical Action', 'Component Action']
+      if (!player.hasUsedStrategyCard()) {
+        bonusChoices.push('Strategic Action')
+      }
+      const bonusActionCards = (player.actionCards || []).filter(c => c.timing === 'action')
+      if (bonusActionCards.length > 0) {
+        bonusChoices.push('Play Action Card')
+      }
+      bonusChoices.push('Decline')
+
+      const bonusSelection = this.actions.choose(player, bonusChoices, {
+        title: 'Fleet Logistics: Choose additional action',
+      })
+      const bonusAction = bonusSelection[0]
+
+      if (bonusAction !== 'Decline') {
+        this.log.add({
+          template: '{player} uses Fleet Logistics: {action}',
+          args: { player, action: bonusAction },
+        })
+
+        switch (bonusAction) {
+          case 'Tactical Action':
+            this._tacticalAction(player)
+            break
+          case 'Strategic Action':
+            this._strategicAction(player)
+            this._resolveSecondaries(player, this.state.lastStrategyCard)
+            break
+          case 'Component Action':
+            this._componentAction(player)
+            break
+          case 'Play Action Card':
+            this._playActionCard(player)
+            break
+        }
+
+        if (bonusAction !== 'Decline') {
+          this._offerTransactions(player)
+        }
+      }
+    }
   }
+
+  // Reset Fleet Logistics tracking at end of action phase
+  this.state.fleetLogisticsUsed = {}
 
   this.log.outdent()
 }
@@ -1002,9 +1068,10 @@ Twilight.prototype.statusPhase = function() {
   // Step 2: Reveal public objective
   this._revealObjective()
 
-  // Step 3: Draw action cards (each player draws 1 in status phase)
+  // Step 3: Draw action cards (each player draws 1; Neural Motivator draws 2)
   for (const player of this._getPlayersInInitiativeOrder()) {
-    this._drawActionCards(player, 1)
+    const drawCount = player.hasTechnology('neural-motivator') ? 2 : 1
+    this._drawActionCards(player, drawCount)
   }
 
   // Step 3b: Enforce action card hand limit
@@ -1028,9 +1095,10 @@ Twilight.prototype.statusPhase = function() {
 
   // Step 5: Gain and redistribute command tokens
   for (const player of this.players.all()) {
-    // Gain 2 tokens (Sol gets 3 via Versatile ability)
+    // Gain 2 tokens (Sol gets 3 via Versatile ability; Hyper Metabolism adds 1)
     const bonusTokens = this.factionAbilities.getStatusPhaseTokenBonus(player)
-    const newTokens = 2 + bonusTokens
+    const hyperBase = player.hasTechnology('hyper-metabolism') ? 3 : 2
+    const newTokens = hyperBase + bonusTokens
 
     // For now, add to tactics pool. Later: let player distribute.
     const selection = this.actions.choose(player, ['Done'], {
@@ -1368,11 +1436,94 @@ Twilight.prototype._tacticalAction = function(player) {
   // Titans awaken: replace sleeper tokens with PDS
   this.factionAbilities.onSystemActivated(player.name, systemId)
 
+  // Magen Defense Grid: if activated system has another player's structures,
+  // that player with the tech gets to place 1 infantry per structure
+  const tileForMagen = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+  if (tileForMagen) {
+    for (const mPlanetId of tileForMagen.planets) {
+      const mPlanetUnits = this.state.units[systemId]?.planets[mPlanetId] || []
+      const structuresByOwner = {}
+      for (const u of mPlanetUnits) {
+        if (u.owner === player.name) {
+          continue
+        }
+        const uDef = res.getUnit(u.type)
+        if (uDef?.category === 'structure') {
+          structuresByOwner[u.owner] = (structuresByOwner[u.owner] || 0) + 1
+        }
+      }
+      for (const [structOwner, count] of Object.entries(structuresByOwner)) {
+        const structPlayer = this.players.byName(structOwner)
+        if (structPlayer && structPlayer.hasTechnology('magen-defense-grid')) {
+          for (let mi = 0; mi < count; mi++) {
+            this._addUnit(systemId, mPlanetId, 'infantry', structOwner)
+          }
+          this.log.add({
+            template: 'Magen Defense Grid: {player} places {count} infantry on {planet}',
+            args: { player: structOwner, count, planet: mPlanetId },
+          })
+        }
+      }
+    }
+  }
+
+  // Scanlink Drone Network: explore 1 planet in activated system with owner's units
+  if (player.hasTechnology('scanlink-drone-network')) {
+    const scanTile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+    if (scanTile) {
+      for (const sPlanetId of scanTile.planets) {
+        const sPlanetUnits = this.state.units[systemId]?.planets[sPlanetId] || []
+        const hasUnits = sPlanetUnits.some(u => u.owner === player.name)
+        const isExplored = this.state.exploredPlanets?.[sPlanetId]
+        if (hasUnits && !isExplored) {
+          this._explorePlanet(sPlanetId, player.name)
+          this.log.add({
+            template: 'Scanlink Drone Network: {player} explores {planet}',
+            args: { player, planet: sPlanetId },
+          })
+          break  // only 1 planet per activation
+        }
+      }
+    }
+  }
+
   // Empyrean Aetherpassage: prompt before movement
   this.factionAbilities.onPreMovement(player, systemId)
 
   // Step 2: Move ships
   this._movementStep(player, systemId)
+
+  // Dark Energy Tap: explore frontier token in activated system if player has ships
+  if (player.hasTechnology('dark-energy-tap')) {
+    const hasShipsInSystem = this.state.units[systemId]?.space.some(u => u.owner === player.name)
+    const deTile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+    if (hasShipsInSystem && deTile && deTile.planets.length === 0) {
+      // Frontier system — draw from frontier exploration deck
+      if (!this.state.exploredPlanets) {
+        this.state.exploredPlanets = {}
+      }
+      if (!this.state.exploredPlanets[systemId]) {
+        this.state.exploredPlanets[systemId] = true
+        const card = this._drawExplorationCard('frontier')
+        if (card) {
+          this.log.add({
+            template: 'Dark Energy Tap: {player} explores frontier — {card}',
+            args: { player, card: card.name },
+          })
+          // Apply simple frontier effects (trade goods, relic fragments)
+          if (card.tradeGoods) {
+            player.addTradeGoods(card.tradeGoods)
+          }
+          if (card.relicFragment) {
+            if (!player.relicFragments) {
+              player.relicFragments = []
+            }
+            player.relicFragments.push(card.relicFragment)
+          }
+        }
+      }
+    }
+  }
 
   // Step 2b: Naalu Foresight (after ships enter, before combat)
   this.factionAbilities.onShipsEnterSystem(systemId, player.name)
@@ -1446,7 +1597,9 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
 
     const unitDef = this._getUnitStats(player.name, m.unitType)
     const moveBonus = this.factionAbilities.getMovementBonus(player.name, fromSystemId)
-    const path = galaxy.findPath(fromSystemId, targetSystemId, player.name, unitDef.move + moveBonus)
+    // Gravity Drive: +1 movement for all ships
+    const gravityDriveBonus = player.hasTechnology('gravity-drive') ? 1 : 0
+    const path = galaxy.findPath(fromSystemId, targetSystemId, player.name, unitDef.move + moveBonus + gravityDriveBonus)
     if (!path) {
       continue  // Ship cannot reach the target
     }
@@ -1617,6 +1770,38 @@ Twilight.prototype._spaceCombat = function(player, systemId) {
 
   // Anti-Fighter Barrage (before combat)
   this._antiFighterBarrage(systemId, attacker, defender)
+
+  // Assault Cannon: if a player has 3+ non-fighter ships and this tech, opponent destroys 1 non-fighter
+  for (const [acOwner, acTarget] of [[attacker, defender], [defender, attacker]]) {
+    const acPlayer = this.players.byName(acOwner)
+    if (acPlayer && acPlayer.hasTechnology('assault-cannon')) {
+      const ownShips = systemUnits.space.filter(
+        u => u.owner === acOwner && u.type !== 'fighter'
+      )
+      if (ownShips.length >= 3) {
+        const targetShips = systemUnits.space.filter(
+          u => u.owner === acTarget && u.type !== 'fighter'
+        )
+        if (targetShips.length > 0) {
+          // Destroy cheapest non-fighter
+          targetShips.sort((a, b) => {
+            const defA = this._getUnitStats(a.owner, a.type)
+            const defB = this._getUnitStats(b.owner, b.type)
+            return (defA?.cost || 0) - (defB?.cost || 0)
+          })
+          const victim = targetShips[0]
+          const idx = systemUnits.space.findIndex(u => u.id === victim.id)
+          if (idx !== -1) {
+            systemUnits.space.splice(idx, 1)
+            this.log.add({
+              template: 'Assault Cannon: {target} loses a {unit}',
+              args: { target: acTarget, unit: victim.type },
+            })
+          }
+        }
+      }
+    }
+  }
 
   // Combat rounds
   let round = 0
@@ -1839,6 +2024,9 @@ Twilight.prototype._assignHits = function(systemId, ownerName, hits, destroyerNa
   const systemUnits = this.state.units[systemId]
   let remainingHits = hits
 
+  // Track which units just sustained this round (for Duranium Armor)
+  const justSustainedIds = new Set()
+
   // First, sustain damage on undamaged ships that have the ability
   const sustainableShips = systemUnits.space
     .filter(u => u.owner === ownerName && !u.damaged)
@@ -1858,6 +2046,7 @@ Twilight.prototype._assignHits = function(systemId, ownerName, hits, destroyerNa
       break
     }
     ship.damaged = true
+    justSustainedIds.add(ship.id)
     remainingHits--
   }
 
@@ -1884,6 +2073,17 @@ Twilight.prototype._assignHits = function(systemId, ownerName, hits, destroyerNa
       }
     }
     remainingHits--
+  }
+
+  // Duranium Armor: repair 1 damaged unit that did NOT sustain this round
+  const owner = this.players.byName(ownerName)
+  if (owner && owner.hasTechnology('duranium-armor')) {
+    const repairCandidate = systemUnits.space.find(
+      u => u.owner === ownerName && u.damaged && !justSustainedIds.has(u.id)
+    )
+    if (repairCandidate) {
+      repairCandidate.damaged = false
+    }
   }
 }
 
@@ -1986,6 +2186,8 @@ Twilight.prototype._bombardment = function(systemId, planetId, attackerName) {
   // Ships with bombardment ability fire at the planet
   const attackerShips = systemUnits.space.filter(u => u.owner === attackerName)
   let totalHits = 0
+  const attackerPlayer = this.players.byName(attackerName)
+  let plasmaUsed = false
 
   for (const ship of attackerShips) {
     const unitDef = this._getUnitStats(ship.owner, ship.type)
@@ -2001,12 +2203,18 @@ Twilight.prototype._bombardment = function(systemId, planetId, attackerName) {
 
     const parts = bombAbility.replace('bombardment-', '').split('x')
     const combatValue = parseInt(parts[0])
-    const diceCount = parseInt(parts[1])
+    let diceCount = parseInt(parts[1])
 
     // War suns ignore planetary shield; other bombardment is blocked by it
     const isWarSun = unitDef.type === 'war-sun'
     if (hasShield && !isWarSun) {
       continue
+    }
+
+    // Plasma Scoring: +1 die for the first unit that fires bombardment
+    if (!plasmaUsed && attackerPlayer.hasTechnology('plasma-scoring')) {
+      diceCount++
+      plasmaUsed = true
     }
 
     for (let i = 0; i < diceCount; i++) {
@@ -2050,6 +2258,9 @@ Twilight.prototype._spaceCannonOffense = function(activePlayer, systemId) {
 
   // Collect all PDS that can fire at this system
   let totalHits = 0
+  const plasmaUsedByOwner = {}  // Plasma Scoring: track per-owner first-unit bonus
+  // Antimass Deflectors: +1 combat value when firing at target with this tech
+  const antimassDefense = activePlayer.hasTechnology('antimass-deflectors') ? 1 : 0
 
   // 1. PDS in the active system (on planets) belonging to non-active players
   const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
@@ -2060,7 +2271,16 @@ Twilight.prototype._spaceCannonOffense = function(activePlayer, systemId) {
         if (unit.owner === activePlayer.name || unit.type !== 'pds') {
           continue
         }
-        totalHits += this._fireSpaceCannon(unit.owner, unit.type)
+        // Plasma Scoring: +1 die for first space cannon unit per owner
+        let extraDice = 0
+        if (!plasmaUsedByOwner[unit.owner]) {
+          const owner = this.players.byName(unit.owner)
+          if (owner && owner.hasTechnology('plasma-scoring')) {
+            extraDice = 1
+            plasmaUsedByOwner[unit.owner] = true
+          }
+        }
+        totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense)
       }
     }
   }
@@ -2096,9 +2316,32 @@ Twilight.prototype._spaceCannonOffense = function(activePlayer, systemId) {
         // Check if owner has pds-ii technology
         const owner = this.players.byName(unit.owner)
         if (owner && owner.hasTechnology('pds-ii')) {
-          totalHits += this._fireSpaceCannon(unit.owner, unit.type)
+          let extraDice = 0
+          if (!plasmaUsedByOwner[unit.owner] && owner.hasTechnology('plasma-scoring')) {
+            extraDice = 1
+            plasmaUsedByOwner[unit.owner] = true
+          }
+          totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense)
         }
       }
+    }
+  }
+
+  // Graviton Laser System: auto-exhaust to force hits onto non-fighter ships
+  let gravitonActive = false
+  for (const firingOwner of Object.keys(plasmaUsedByOwner).concat(
+    // Also check owners who fired but didn't have plasma
+    tile ? tile.planets.flatMap(pId =>
+      (systemUnits.planets[pId] || [])
+        .filter(u => u.owner !== activePlayer.name && u.type === 'pds')
+        .map(u => u.owner)
+    ) : []
+  )) {
+    const fp = this.players.byName(firingOwner)
+    if (fp && this._isTechReady(fp, 'graviton-laser-system')) {
+      this._exhaustTech(fp, 'graviton-laser-system')
+      gravitonActive = true
+      break
     }
   }
 
@@ -2109,7 +2352,7 @@ Twilight.prototype._spaceCannonOffense = function(activePlayer, systemId) {
     })
 
     // Active player assigns hits to their ships
-    this._assignSpaceCannonHits(systemId, activePlayer.name, totalHits)
+    this._assignSpaceCannonHits(systemId, activePlayer.name, totalHits, gravitonActive)
   }
 }
 
@@ -2139,6 +2382,10 @@ Twilight.prototype._spaceCannonDefense = function(systemId, planetId, attackerNa
   // Fire space cannon from defender's PDS and other units with space cannon on this planet
   let totalHits = 0
   const planetUnits = systemUnits.planets[planetId] || []
+  let defenderPlasmaUsed = false
+  // Antimass Deflectors: +1 combat value when firing at target with this tech
+  const attackerPlayer = this.players.byName(attackerName)
+  const antimassDefense = attackerPlayer && attackerPlayer.hasTechnology('antimass-deflectors') ? 1 : 0
 
   for (const unit of planetUnits) {
     if (unit.owner !== defenderName) {
@@ -2150,7 +2397,16 @@ Twilight.prototype._spaceCannonDefense = function(systemId, planetId, attackerNa
     }
     const scAbility = (unitStats.abilities || []).find(a => a.startsWith('space-cannon-'))
     if (scAbility) {
-      totalHits += this._fireSpaceCannon(unit.owner, unit.type)
+      // Plasma Scoring: +1 die for first space cannon unit
+      let extraDice = 0
+      if (!defenderPlasmaUsed) {
+        const defender = this.players.byName(defenderName)
+        if (defender && defender.hasTechnology('plasma-scoring')) {
+          extraDice = 1
+          defenderPlasmaUsed = true
+        }
+      }
+      totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense)
     }
   }
 
@@ -2170,7 +2426,7 @@ Twilight.prototype._spaceCannonDefense = function(systemId, planetId, attackerNa
  * Roll space cannon dice for a single unit.
  * Returns number of hits scored.
  */
-Twilight.prototype._fireSpaceCannon = function(ownerName, unitType) {
+Twilight.prototype._fireSpaceCannon = function(ownerName, unitType, extraDice, combatPenalty) {
   const unitStats = this._getUnitStats(ownerName, unitType)
   if (!unitStats) {
     return 0
@@ -2183,8 +2439,9 @@ Twilight.prototype._fireSpaceCannon = function(ownerName, unitType) {
 
   // Parse space-cannon-NxD where N is combat value, D is dice count
   const parts = scAbility.replace('space-cannon-', '').split('x')
-  const combatValue = parseInt(parts[0])
-  const diceCount = parseInt(parts[1])
+  // Antimass Deflectors: +1 to combat value (harder to hit)
+  const combatValue = Math.min(10, parseInt(parts[0]) + (combatPenalty || 0))
+  const diceCount = parseInt(parts[1]) + (extraDice || 0)
 
   let hits = 0
   for (let i = 0; i < diceCount; i++) {
@@ -2200,7 +2457,7 @@ Twilight.prototype._fireSpaceCannon = function(ownerName, unitType) {
  * Assign space cannon offense hits to ships in the system.
  * Auto-assign cheapest first for now.
  */
-Twilight.prototype._assignSpaceCannonHits = function(systemId, ownerName, hits) {
+Twilight.prototype._assignSpaceCannonHits = function(systemId, ownerName, hits, gravitonActive) {
   const systemUnits = this.state.units[systemId]
   if (!systemUnits || hits <= 0) {
     return
@@ -2208,8 +2465,13 @@ Twilight.prototype._assignSpaceCannonHits = function(systemId, ownerName, hits) 
 
   let remaining = hits
 
+  // Graviton Laser System: hits must target non-fighter ships
+  const shipFilter = gravitonActive
+    ? (u => u.owner === ownerName && u.type !== 'fighter')
+    : (u => u.owner === ownerName)
+
   // Find ships that can sustain damage first
-  const ownerShips = systemUnits.space.filter(u => u.owner === ownerName)
+  const ownerShips = systemUnits.space.filter(shipFilter)
 
   // Sort: cheapest first (destroy cheap ships before expensive ones)
   const costOrder = ownerShips.sort((a, b) => {
@@ -2316,6 +2578,25 @@ Twilight.prototype._groundCombat = function(systemId, planetId, attackerName) {
   // Pre-combat faction abilities (e.g., Yin Indoctrination)
   this.factionAbilities.onGroundCombatStart(systemId, planetId, attackerName, defenderName)
 
+  // Magen Defense Grid: if planet has defender's structures, produce 1 auto-hit on attacker
+  const defenderPlayer = this.players.byName(defenderName)
+  if (defenderPlayer && defenderPlayer.hasTechnology('magen-defense-grid')) {
+    const defStructures = planetUnits.filter(u => {
+      if (u.owner !== defenderName) {
+        return false
+      }
+      const uDef = res.getUnit(u.type)
+      return uDef?.category === 'structure'
+    })
+    if (defStructures.length > 0) {
+      this.log.add({
+        template: 'Magen Defense Grid: 1 automatic hit on attacker',
+        args: {},
+      })
+      this._assignGroundHits(systemId, planetId, attackerName, 1, defenderName)
+    }
+  }
+
   let round = 0
   const MAX_ROUNDS = 20
   while (round < MAX_ROUNDS) {
@@ -2341,11 +2622,23 @@ Twilight.prototype._groundCombat = function(systemId, planetId, attackerName) {
   // Determine ground combat winner/loser
   const aForcesAfter = planetUnits.filter(u => u.owner === attackerName)
   const dForcesAfter = planetUnits.filter(u => u.owner === defenderName)
-  if (aForcesAfter.length > 0 && dForcesAfter.length === 0) {
-    this.factionAbilities.afterCombatResolved(systemId, attackerName, defenderName, 'ground')
-  }
-  else if (dForcesAfter.length > 0 && aForcesAfter.length === 0) {
-    this.factionAbilities.afterCombatResolved(systemId, defenderName, attackerName, 'ground')
+  const groundWinner = (aForcesAfter.length > 0 && dForcesAfter.length === 0) ? attackerName
+    : (dForcesAfter.length > 0 && aForcesAfter.length === 0) ? defenderName
+      : null
+
+  if (groundWinner) {
+    const loser = groundWinner === attackerName ? defenderName : attackerName
+    this.factionAbilities.afterCombatResolved(systemId, groundWinner, loser, 'ground')
+
+    // Dacxive Animators: winner places 1 infantry on the planet
+    const winnerPlayer = this.players.byName(groundWinner)
+    if (winnerPlayer && winnerPlayer.hasTechnology('dacxive-animators')) {
+      this._addUnit(systemId, planetId, 'infantry', groundWinner)
+      this.log.add({
+        template: 'Dacxive Animators: {player} places 1 infantry on {planet}',
+        args: { player: groundWinner, planet: planetId },
+      })
+    }
   }
 }
 
@@ -2360,6 +2653,7 @@ Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, h
   }
 
   let remainingHits = hits
+  const justSustainedIds = new Set()
 
   // First, sustain damage on undamaged units (mechs)
   const sustainableUnits = planetUnits
@@ -2379,6 +2673,7 @@ Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, h
       break
     }
     unit.damaged = true
+    justSustainedIds.add(unit.id)
     remainingHits--
   }
 
@@ -2404,6 +2699,17 @@ Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, h
       }
     }
     remainingHits--
+  }
+
+  // Duranium Armor: repair 1 damaged unit that did NOT sustain this round
+  const owner = this.players.byName(ownerName)
+  if (owner && owner.hasTechnology('duranium-armor')) {
+    const repairCandidate = planetUnits.find(
+      u => u.owner === ownerName && u.damaged && !justSustainedIds.has(u.id)
+    )
+    if (repairCandidate) {
+      repairCandidate.damaged = false
+    }
   }
 }
 
@@ -2474,6 +2780,53 @@ Twilight.prototype._establishControl = function(systemId, planetId, attackerName
 
     // Faction abilities on planet gained (Saar scavenge, L1Z1X assimilate, Winnu reclamation)
     this.factionAbilities.onPlanetGained(attackerName, planetId, systemId, structureCounts)
+
+    // Integrated Economy: free production up to planet's resource value
+    const iePlayer = this.players.byName(attackerName)
+    if (iePlayer && iePlayer.hasTechnology('integrated-economy')) {
+      const planet = res.getPlanet(planetId)
+      if (planet && planet.resources > 0) {
+        const prodSel = this.actions.choose(iePlayer, ['Done'], {
+          title: `Integrated Economy: Free production (up to ${planet.resources} cost)`,
+          allowsAction: 'produce-units',
+        })
+
+        if (prodSel.action === 'produce-units') {
+          const reqUnits = prodSel.units || []
+          let ieCost = 0
+          let ieCount = 0
+          for (const req of reqUnits) {
+            const unitDef = this._getUnitStats(attackerName, req.type)
+            if (!unitDef) {
+              continue
+            }
+            for (let ii = 0; ii < req.count; ii++) {
+              let unitCost = unitDef.cost
+              if (unitDef.costFor > 1 && ii % unitDef.costFor !== 0) {
+                unitCost = 0
+              }
+              if (ieCost + unitCost > planet.resources) {
+                break
+              }
+              ieCost += unitCost
+              ieCount++
+              if (unitDef.category === 'ship') {
+                this._addUnit(systemId, 'space', unitDef.type, attackerName)
+              }
+              else {
+                this._addUnit(systemId, planetId, unitDef.type, attackerName)
+              }
+            }
+          }
+          if (ieCount > 0) {
+            this.log.add({
+              template: 'Integrated Economy: {player} produces {count} free units on {planet}',
+              args: { player: attackerName, count: ieCount, planet: planetId },
+            })
+          }
+        }
+      }
+    }
   }
 }
 
@@ -2679,6 +3032,11 @@ Twilight.prototype._productionStep = function(player, systemId) {
     }
   }
 
+  // Sarween Tools: reduce cost by 1 (min 0) when producing at least 1 unit
+  if (totalUnitCount > 0 && player.hasTechnology('sarween-tools')) {
+    totalCost = Math.max(0, totalCost - 1)
+  }
+
   // Create validated units
   for (const unitDef of validatedUnits) {
     if (unitDef.category === 'ship') {
@@ -2865,6 +3223,25 @@ Twilight.prototype._researchTech = function(player) {
     template: '{player} researches {tech}',
     args: { player, tech: tech.name },
   })
+
+  // AI Development Algorithm: exhaust if used for unit upgrade prerequisite skip
+  if (tech.unitUpgrade && this._isTechReady(player, 'ai-development-algorithm')) {
+    const prereqs = player.getTechPrerequisites()
+    const needed = {}
+    for (const color of tech.prerequisites) {
+      needed[color] = (needed[color] || 0) + 1
+    }
+    let deficit = 0
+    for (const [color, count] of Object.entries(needed)) {
+      const shortfall = count - (prereqs[color] || 0)
+      if (shortfall > 0) {
+        deficit += shortfall
+      }
+    }
+    if (deficit > 0) {
+      this._exhaustTech(player, 'ai-development-algorithm')
+    }
+  }
 
   // Jol-Nar Brilliant: exhaust 2 techs if this research required brilliant skip
   this.factionAbilities.onTechResearched(player, tech)
@@ -3551,8 +3928,12 @@ Twilight.prototype._getLawOutcome = function(lawId) {
 Twilight.prototype._componentAction = function(player) {
   this.log.indent()
 
-  // Gather available component actions
+  // Gather available component actions (faction abilities + technology)
   const actions = this.factionAbilities.getAvailableComponentActions(player)
+
+  // Technology-based component actions
+  const techActions = this._getTechComponentActions(player)
+  actions.push(...techActions)
 
   if (actions.length === 0) {
     this.log.add({
@@ -3570,9 +3951,321 @@ Twilight.prototype._componentAction = function(player) {
   })
 
   const actionId = selection[0]
-  this.factionAbilities.executeComponentAction(player, actionId)
+
+  // Check if it's a tech component action
+  const techAction = techActions.find(a => a.id === actionId)
+  if (techAction) {
+    techAction.execute(player)
+  }
+  else {
+    this.factionAbilities.executeComponentAction(player, actionId)
+  }
 
   this.log.outdent()
+}
+
+Twilight.prototype._getTechComponentActions = function(player) {
+  const actions = []
+
+  // Transit Diodes: exhaust to relocate up to 4 ground forces
+  if (this._isTechReady(player, 'transit-diodes')) {
+    actions.push({
+      id: 'transit-diodes',
+      name: 'Transit Diodes',
+      execute: (p) => this._executeTransitDiodes(p),
+    })
+  }
+
+  // Sling Relay: exhaust to produce 1 ship in any system with a space dock
+  if (this._isTechReady(player, 'sling-relay')) {
+    actions.push({
+      id: 'sling-relay',
+      name: 'Sling Relay',
+      execute: (p) => this._executeSlingRelay(p),
+    })
+  }
+
+  // Bio-Stims: exhaust to ready 1 planet or 1 technology
+  if (this._isTechReady(player, 'bio-stims')) {
+    actions.push({
+      id: 'bio-stims',
+      name: 'Bio-Stims',
+      execute: (p) => this._executeBioStims(p),
+    })
+  }
+
+  // Predictive Intelligence: exhaust to redistribute command tokens
+  if (this._isTechReady(player, 'predictive-intelligence')) {
+    actions.push({
+      id: 'predictive-intelligence',
+      name: 'Predictive Intelligence',
+      execute: (p) => this._executePredictiveIntelligence(p),
+    })
+  }
+
+  // Self Assembly Routines: exhaust to place 1 mech on a controlled planet
+  if (this._isTechReady(player, 'self-assembly-routines')) {
+    actions.push({
+      id: 'self-assembly-routines',
+      name: 'Self Assembly Routines',
+      execute: (p) => this._executeSelfAssemblyRoutines(p),
+    })
+  }
+
+  // Scanlink Drone Network: registered as passive (in tactical action), not here
+
+  return actions
+}
+
+Twilight.prototype._executeTransitDiodes = function(player) {
+  this._exhaustTech(player, 'transit-diodes')
+
+  const controlledPlanets = player.getControlledPlanets()
+  if (controlledPlanets.length === 0) {
+    return
+  }
+
+  // Collect ground forces from all controlled planets
+  const groundForces = []
+  for (const planetId of controlledPlanets) {
+    const systemId = this._findSystemForPlanet(planetId)
+    if (!systemId) {
+      continue
+    }
+    const planetUnits = this.state.units[systemId]?.planets[planetId] || []
+    for (const u of planetUnits) {
+      if (u.owner === player.name && (u.type === 'infantry' || u.type === 'mech')) {
+        groundForces.push({ unit: u, planetId, systemId })
+      }
+    }
+  }
+
+  if (groundForces.length === 0) {
+    return
+  }
+
+  // Let player choose how many to move (up to 4)
+  const moveCount = Math.min(4, groundForces.length)
+  for (let i = 0; i < moveCount; i++) {
+    const remaining = []
+    for (const pId of controlledPlanets) {
+      const sId = this._findSystemForPlanet(pId)
+      if (!sId) {
+        continue
+      }
+      const pUnits = this.state.units[sId]?.planets[pId] || []
+      const gf = pUnits.filter(u => u.owner === player.name && (u.type === 'infantry' || u.type === 'mech'))
+      if (gf.length > 0) {
+        remaining.push(pId)
+      }
+    }
+    if (remaining.length === 0) {
+      break
+    }
+
+    const fromChoices = ['Done', ...remaining.map(p => `from:${p}`)]
+    const fromSel = this.actions.choose(player, fromChoices, {
+      title: `Transit Diodes: Move ground force ${i + 1}/${moveCount}`,
+    })
+    if (fromSel[0] === 'Done') {
+      break
+    }
+
+    const fromPlanet = fromSel[0].replace('from:', '')
+    const fromSystem = this._findSystemForPlanet(fromPlanet)
+    if (!fromSystem) {
+      continue
+    }
+
+    const toSel = this.actions.choose(player, controlledPlanets, {
+      title: 'Transit Diodes: Choose destination',
+    })
+    const toPlanet = toSel[0]
+    const toSystem = this._findSystemForPlanet(toPlanet)
+    if (!toSystem) {
+      continue
+    }
+
+    // Move the first matching ground force
+    const fromUnits = this.state.units[fromSystem].planets[fromPlanet]
+    const gfIdx = fromUnits.findIndex(u => u.owner === player.name && (u.type === 'infantry' || u.type === 'mech'))
+    if (gfIdx !== -1) {
+      const moved = fromUnits.splice(gfIdx, 1)[0]
+      if (!this.state.units[toSystem].planets[toPlanet]) {
+        this.state.units[toSystem].planets[toPlanet] = []
+      }
+      this.state.units[toSystem].planets[toPlanet].push(moved)
+    }
+  }
+
+  this.log.add({
+    template: '{player} uses Transit Diodes to relocate ground forces',
+    args: { player },
+  })
+}
+
+Twilight.prototype._executeSlingRelay = function(player) {
+  this._exhaustTech(player, 'sling-relay')
+
+  // Find all systems with player's space dock
+  const dockSystems = []
+  for (const [systemId, systemUnits] of Object.entries(this.state.units)) {
+    for (const [_planetId, planetUnits] of Object.entries(systemUnits.planets)) {
+      if (planetUnits.some(u => u.owner === player.name && u.type === 'space-dock')) {
+        dockSystems.push(systemId)
+        break
+      }
+    }
+  }
+
+  if (dockSystems.length === 0) {
+    return
+  }
+
+  const systemSel = this.actions.choose(player, dockSystems, {
+    title: 'Sling Relay: Choose system to produce in',
+  })
+  const targetSystem = systemSel[0]
+
+  // Choose 1 ship to produce (limited to cost the player can afford)
+  const shipTypes = ['fighter', 'destroyer', 'cruiser', 'carrier', 'dreadnought', 'war-sun']
+  const affordableShips = shipTypes.filter(type => {
+    const def = this._getUnitStats(player.name, type)
+    return def && def.cost <= (player.tradeGoods + this._getAvailableResources(player))
+  })
+
+  if (affordableShips.length === 0) {
+    return
+  }
+
+  const shipSel = this.actions.choose(player, affordableShips, {
+    title: 'Sling Relay: Choose ship to produce',
+  })
+  const shipType = shipSel[0]
+  const def = this._getUnitStats(player.name, shipType)
+
+  this._addUnit(targetSystem, 'space', shipType, player.name)
+
+  // Pay cost
+  let cost = def.cost
+  const controlledPlanets = player.getControlledPlanets()
+  for (const pId of controlledPlanets) {
+    if (cost <= 0) {
+      break
+    }
+    if (!this.state.planets[pId]?.exhausted) {
+      const planet = res.getPlanet(pId)
+      if (planet) {
+        this.state.planets[pId].exhausted = true
+        cost -= planet.resources
+      }
+    }
+  }
+  if (cost > 0) {
+    player.spendTradeGoods(Math.min(cost, player.tradeGoods))
+  }
+
+  this.log.add({
+    template: '{player} uses Sling Relay to produce a {ship}',
+    args: { player, ship: shipType },
+  })
+}
+
+Twilight.prototype._executeBioStims = function(player) {
+  this._exhaustTech(player, 'bio-stims')
+
+  // Offer to ready 1 exhausted planet or 1 exhausted technology
+  const exhaustedPlanets = player.getControlledPlanets()
+    .filter(pId => this.state.planets[pId]?.exhausted)
+  const exhaustedTechs = (player.exhaustedTechs || [])
+    .filter(id => id !== 'bio-stims')  // can't ready itself
+
+  const choices = [
+    ...exhaustedPlanets.map(p => `planet:${p}`),
+    ...exhaustedTechs.map(t => `tech:${t}`),
+  ]
+
+  if (choices.length === 0) {
+    return
+  }
+
+  const sel = this.actions.choose(player, choices, {
+    title: 'Bio-Stims: Ready a planet or technology',
+  })
+
+  const choice = sel[0]
+  if (choice.startsWith('planet:')) {
+    const planetId = choice.replace('planet:', '')
+    this.state.planets[planetId].exhausted = false
+    this.log.add({
+      template: '{player} uses Bio-Stims to ready {planet}',
+      args: { player, planet: planetId },
+    })
+  }
+  else if (choice.startsWith('tech:')) {
+    const techId = choice.replace('tech:', '')
+    player.exhaustedTechs = player.exhaustedTechs.filter(t => t !== techId)
+    this.log.add({
+      template: '{player} uses Bio-Stims to ready {tech}',
+      args: { player, tech: techId },
+    })
+  }
+}
+
+Twilight.prototype._executePredictiveIntelligence = function(player) {
+  this._exhaustTech(player, 'predictive-intelligence')
+
+  // Redistribute command tokens
+  const sel = this.actions.choose(player, ['Done'], {
+    title: 'Predictive Intelligence: Redistribute Command Tokens',
+    allowsAction: 'redistribute-tokens',
+  })
+
+  if (sel.action === 'redistribute-tokens') {
+    player.setCommandTokens(sel)
+  }
+
+  this.log.add({
+    template: '{player} uses Predictive Intelligence to redistribute tokens',
+    args: { player },
+  })
+}
+
+Twilight.prototype._executeSelfAssemblyRoutines = function(player) {
+  this._exhaustTech(player, 'self-assembly-routines')
+
+  const controlledPlanets = player.getControlledPlanets()
+  if (controlledPlanets.length === 0) {
+    return
+  }
+
+  const sel = this.actions.choose(player, controlledPlanets, {
+    title: 'Self Assembly Routines: Place 1 mech',
+  })
+  const targetPlanet = sel[0]
+  const systemId = this._findSystemForPlanet(targetPlanet)
+
+  if (systemId) {
+    this._addUnit(systemId, targetPlanet, 'mech', player.name)
+    this.log.add({
+      template: '{player} uses Self Assembly Routines to place a mech on {planet}',
+      args: { player, planet: targetPlanet },
+    })
+  }
+}
+
+Twilight.prototype._getAvailableResources = function(player) {
+  let total = 0
+  const controlledPlanets = player.getControlledPlanets()
+  for (const pId of controlledPlanets) {
+    if (!this.state.planets[pId]?.exhausted) {
+      const planet = res.getPlanet(pId)
+      if (planet) {
+        total += planet.resources
+      }
+    }
+  }
+  return total
 }
 
 Twilight.prototype._getInitiative = function(player) {
