@@ -2048,8 +2048,11 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   getTotalAnimalCapacity(animalType) {
-    // Pet in house (default 1, Animal Tamer: 1 per room)
-    let capacity = this.applyHouseAnimalCapacityModifiers(1)
+    // Pet in house - only count if empty or same type
+    let capacity = 0
+    if (!this.pet || this.pet === animalType) {
+      capacity += this.applyHouseAnimalCapacityModifiers(1)
+    }
 
     // Pastures that are empty or already have this type
     for (const pasture of this.farmyard.pastures) {
@@ -2058,8 +2061,16 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
 
-    // Unfenced stables
-    capacity += this.getUnfencedStableCapacity()
+    // Unfenced stables - only count if empty or same type
+    const perStable = this.getModifiedUnfencedStableCapacity()
+    for (const stable of this.getStableSpaces()) {
+      if (!this.getPastureAtSpace(stable.row, stable.col)) {
+        const space = this.getSpace(stable.row, stable.col)
+        if (!space.animal || space.animal === animalType) {
+          capacity += perStable
+        }
+      }
+    }
 
     // Card-based holders
     for (const holding of this.getAnimalHoldingCards()) {
