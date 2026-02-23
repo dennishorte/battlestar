@@ -532,7 +532,7 @@ class AgricolaPlayer extends BasePlayer {
   getRoomCost() {
     let cost = { ...res.buildingCosts.room[this.roomType] }
     cost = this.applyBuildCostModifiers(cost, 'build-room')
-    cost = this.applyAnyCostModifiers(cost, 'build-room')
+    cost = this.applyCostModifiers(cost, { type: 'build-room' })
     for (const card of this.getActiveCards()) {
       if (card.hasHook('modifyRoomCost')) {
         cost = card.callHook('modifyRoomCost', this, cost, this.game.state.round)
@@ -654,7 +654,7 @@ class AgricolaPlayer extends BasePlayer {
       reed: costPerRoom.reed,
     }
     cost = this.applyBuildCostModifiers(cost, 'renovate')
-    cost = this.applyAnyCostModifiers(cost, 'renovate')
+    cost = this.applyCostModifiers(cost, { type: 'renovate' })
 
     // Apply card-specific renovation cost modifiers (e.g., WoodSlideHammer stone discount)
     for (const card of this.getActiveCards()) {
@@ -3133,10 +3133,7 @@ class AgricolaPlayer extends BasePlayer {
       return {}
     }
     let cost = { ...imp.cost }
-    cost = this.applyMajorCostModifiers(cost, improvementId)
-    cost = this.applyImprovementCostModifiers(cost)
-    cost = this.applyAnyCostModifiers(cost, 'major-improvement')
-    return cost
+    return this.applyCostModifiers(cost, { type: 'major-improvement', improvementId })
   }
 
   _getWildcardAsFireplace() {
@@ -3869,14 +3866,13 @@ class AgricolaPlayer extends BasePlayer {
     // Handle special dynamic costs (e.g., Bottles)
     if (card.cost.special === true && card.hasHook('getSpecialCost')) {
       let cost = card.callHook('getSpecialCost', this)
-      cost = this.applyAnyCostModifiers(cost, 'minor-improvement')
+      cost = this.applyCostModifiers(cost, { type: 'minor-improvement' })
       return cost
     }
 
     let cost = { ...card.cost }
     if (card.type === 'minor') {
-      cost = this.applyImprovementCostModifiers(cost)
-      cost = this.applyAnyCostModifiers(cost, 'minor-improvement')
+      cost = this.applyCostModifiers(cost, { type: 'minor-improvement' })
     }
     return cost
   }
@@ -3893,8 +3889,7 @@ class AgricolaPlayer extends BasePlayer {
     if (alt && !alt.cookBoar) {
       let cost = { ...alt }
       if (card.type === 'minor') {
-        cost = this.applyImprovementCostModifiers(cost)
-        cost = this.applyAnyCostModifiers(cost, 'minor-improvement')
+        cost = this.applyCostModifiers(cost, { type: 'minor-improvement' })
       }
       options.push({ cost, label: 'alternative' })
     }
@@ -3904,8 +3899,7 @@ class AgricolaPlayer extends BasePlayer {
     if (alt2) {
       let cost = { ...alt2 }
       if (card.type === 'minor') {
-        cost = this.applyImprovementCostModifiers(cost)
-        cost = this.applyAnyCostModifiers(cost, 'minor-improvement')
+        cost = this.applyCostModifiers(cost, { type: 'minor-improvement' })
       }
       options.push({ cost, label: 'alternative2' })
     }
@@ -4131,42 +4125,34 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   /**
-   * Apply modifyMajorCost hooks from cards (e.g. Braid Maker, Blueprint)
+   * Apply all cost-modifier hooks from cards in the correct order:
+   *   1. modifyMajorCost — major improvements only (receives improvement ID)
+   *   2. modifyImprovementCost — all improvements (major + minor)
+   *   3. modifyAnyCost — any cost (rooms, renovations, improvements, …)
+   *
+   * @param {Object} cost - Base cost object
+   * @param {Object} opts
+   * @param {string} opts.type - Cost context: 'major-improvement', 'minor-improvement',
+   *                             'build-room', 'renovate', etc.
+   * @param {string} [opts.improvementId] - Major improvement ID (for modifyMajorCost hooks)
    */
-  applyMajorCostModifiers(cost, improvementId) {
-    let modifiedCost = { ...cost }
-    for (const card of this.getActiveCards()) {
-      if (card.hasHook('modifyMajorCost')) {
-        modifiedCost = card.callHook('modifyMajorCost', this, improvementId, modifiedCost)
-      }
-    }
-    return modifiedCost
-  }
+  applyCostModifiers(cost, { type, improvementId } = {}) {
+    let modified = { ...cost }
+    const isMajor = type === 'major-improvement'
+    const isImprovement = isMajor || type === 'minor-improvement'
 
-  /**
-   * Apply modifyImprovementCost hooks from cards
-   */
-  applyImprovementCostModifiers(cost) {
-    let modifiedCost = { ...cost }
     for (const card of this.getActiveCards()) {
-      if (card.hasHook('modifyImprovementCost')) {
-        modifiedCost = card.callHook('modifyImprovementCost', this, modifiedCost)
+      if (isMajor && improvementId && card.hasHook('modifyMajorCost')) {
+        modified = card.callHook('modifyMajorCost', this, improvementId, modified)
       }
-    }
-    return modifiedCost
-  }
-
-  /**
-   * Apply modifyAnyCost hooks from cards
-   */
-  applyAnyCostModifiers(cost, action) {
-    let modifiedCost = { ...cost }
-    for (const card of this.getActiveCards()) {
+      if (isImprovement && card.hasHook('modifyImprovementCost')) {
+        modified = card.callHook('modifyImprovementCost', this, modified)
+      }
       if (card.hasHook('modifyAnyCost')) {
-        modifiedCost = card.callHook('modifyAnyCost', this, modifiedCost, action)
+        modified = card.callHook('modifyAnyCost', this, modified, type)
       }
     }
-    return modifiedCost
+    return modified
   }
 
   /**
