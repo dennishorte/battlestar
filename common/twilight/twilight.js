@@ -1583,6 +1583,9 @@ Twilight.prototype._tacticalAction = function(player) {
   // Clear aetherpassage grant
   this.state.aetherpassageGrant = null
 
+  // End-of-tactical-action faction triggers (e.g., Sardakk N'orr agent T'ro)
+  this.factionAbilities.onTacticalActionEnd(player, systemId)
+
   this.log.outdent()
 }
 
