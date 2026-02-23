@@ -187,6 +187,22 @@ class TwilightPlayer extends BasePlayer {
         counts[tech.color]++
       }
     }
+
+    // Planet tech specialties count as prerequisites
+    // Psychoarchaeology: can use specialties without exhausting the planet
+    const hasPsychoarchaeology = this.hasTechnology('psychoarchaeology')
+    const controlledPlanets = this.getControlledPlanets()
+    for (const planetId of controlledPlanets) {
+      const planet = res.getPlanet(planetId)
+      if (planet?.techSpecialty && counts[planet.techSpecialty] !== undefined) {
+        // Only count if planet is not exhausted, OR if player has Psychoarchaeology
+        const isExhausted = this.game.state.planets[planetId]?.exhausted
+        if (!isExhausted || hasPsychoarchaeology) {
+          counts[planet.techSpecialty]++
+        }
+      }
+    }
+
     return counts
   }
 
@@ -206,7 +222,12 @@ class TwilightPlayer extends BasePlayer {
     }
 
     // Jol-Nar Analytical: ignore 1 prerequisite for non-unit-upgrade techs
-    const skipCount = this.game.factionAbilities?.getTechPrerequisiteSkips(this, tech) ?? 0
+    let skipCount = this.game.factionAbilities?.getTechPrerequisiteSkips(this, tech) ?? 0
+
+    // AI Development Algorithm: ignore 1 prerequisite for unit upgrade techs
+    if (tech.unitUpgrade && this.game._isTechReady?.(this, 'ai-development-algorithm')) {
+      skipCount += 1
+    }
 
     let deficit = 0
     for (const [color, count] of Object.entries(needed)) {

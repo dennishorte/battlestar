@@ -49,10 +49,10 @@ describe('Action Cards', () => {
       t.choose(game, 'Done')
       t.choose(game, 'Done')
 
-      // Both players should have 1 action card
+      // Dennis (Sol) has Neural Motivator: draws 2; Micah draws 1
       const dennis = game.players.byName('dennis')
       const micah = game.players.byName('micah')
-      expect(dennis.actionCards.length).toBe(1)
+      expect(dennis.actionCards.length).toBe(2)
       expect(micah.actionCards.length).toBe(1)
     })
 

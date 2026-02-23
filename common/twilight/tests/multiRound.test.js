@@ -109,11 +109,12 @@ describe('Multi-Round Play', () => {
 
     playRound(game)
 
-    expect(game.players.byName('dennis').actionCards.length).toBe(1)
+    // Dennis (Sol) has Neural Motivator: draws 2 per status phase
+    expect(game.players.byName('dennis').actionCards.length).toBe(2)
 
     playRound(game)
     // Re-read after replay
-    expect(game.players.byName('dennis').actionCards.length).toBe(2)
+    expect(game.players.byName('dennis').actionCards.length).toBe(4)
   })
 
   test('agenda phase activates when custodians removed', () => {

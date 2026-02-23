@@ -187,9 +187,12 @@ class Galaxy {
         // Check if we can move through this system
         const tile = this.getSystemTile(neighborId)
 
-        // Cannot move through asteroid fields (unless it's the destination)
+        // Cannot move through asteroid fields (unless destination or Antimass Deflectors)
         if (tile?.anomaly === 'asteroid-field' && neighborId !== String(toSystemId)) {
-          continue
+          const movingPlayer = this.game.players?.byName(playerName)
+          if (!movingPlayer || !movingPlayer.hasTechnology('antimass-deflectors')) {
+            continue
+          }
         }
 
         // Cannot move through supernova (unless faction allows it)
@@ -213,13 +216,17 @@ class Galaxy {
           return newPath
         }
 
-        // Cannot move through systems with enemy ships (unless destination)
+        // Cannot move through systems with enemy ships (unless destination or Light/Wave Deflector)
         // Aetherpassage: skip blocking by the granting player's ships
-        const aetherGrant = this.game.state?.aetherpassageGrant
-        const enemyShips = this._getEnemyShipsInSystem(neighborId, playerName)
-          .filter(u => !aetherGrant || u.owner !== aetherGrant)
-        if (enemyShips.length > 0) {
-          continue  // blocked by enemy fleet
+        const movingPlayerForFleet = this.game.players?.byName(playerName)
+        const hasLightWave = movingPlayerForFleet && movingPlayerForFleet.hasTechnology('light-wave-deflector')
+        if (!hasLightWave) {
+          const aetherGrant = this.game.state?.aetherpassageGrant
+          const enemyShips = this._getEnemyShipsInSystem(neighborId, playerName)
+            .filter(u => !aetherGrant || u.owner !== aetherGrant)
+          if (enemyShips.length > 0) {
+            continue  // blocked by enemy fleet
+          }
         }
 
         visited.add(neighborId)
