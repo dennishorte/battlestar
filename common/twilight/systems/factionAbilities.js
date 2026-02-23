@@ -1178,6 +1178,18 @@ class FactionAbilities {
   onUnitDestroyed(systemId, unit, destroyerName) {
     this._nekroSingularity(systemId, unit, destroyerName)
     this._cabalDevour(systemId, unit, destroyerName)
+
+    // Self Assembly Routines: gain 1 trade good when own mech is destroyed
+    if (unit.type === 'mech') {
+      const owner = this.players.byName(unit.owner)
+      if (owner && owner.hasTechnology('self-assembly-routines')) {
+        owner.addTradeGoods(1)
+        this.log.add({
+          template: 'Self Assembly Routines: {player} gains 1 trade good (mech destroyed)',
+          args: { player: unit.owner },
+        })
+      }
+    }
   }
 
   _nekroSingularity(systemId, unit, destroyerName) {
