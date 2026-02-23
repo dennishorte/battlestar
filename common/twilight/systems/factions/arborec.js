@@ -1,4 +1,7 @@
 module.exports = {
+  // Mitosis: At the start of the status phase, place 1 infantry from your
+  // reinforcements on any planet you control.
+  // Mech DEPLOY: may replace 1 infantry with 1 mech instead.
   onStatusPhaseStart(player, ctx) {
     const controlledPlanets = player.getControlledPlanets()
     if (controlledPlanets.length === 0) {

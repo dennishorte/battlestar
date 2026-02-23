@@ -1,26 +1,88 @@
 module.exports = {
   onSpaceCombatRound(player, ctx, { systemId, opponentName: _opponentName }) {
-    if (player.tradeGoods < 2) {
-      return
-    }
-
     const systemUnits = ctx.state.units[systemId]
-    const hasShips = systemUnits.space.some(u => u.owner === player.name)
-    if (!hasShips) {
+    const playerShips = systemUnits.space.filter(u => u.owner === player.name)
+    if (playerShips.length === 0) {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Reroll', 'Pass'], {
-      title: 'Munitions Reserves: Spend 2 trade goods to reroll dice?',
-    })
-
-    if (choice[0] === 'Reroll') {
-      player.spendTradeGoods(2)
-      ctx.log.add({
-        template: '{player} spends 2 trade goods for Munitions Reserves reroll',
-        args: { player },
+    // Agent: Viscount Unlenn — exhaust to give 1 ship an additional combat die
+    if (player.isAgentReady()) {
+      const agentChoices = ['Exhaust Viscount Unlenn', 'Pass']
+      const agentChoice = ctx.actions.choose(player, agentChoices, {
+        title: 'Viscount Unlenn: Exhaust to give 1 ship +1 die this round?',
       })
+
+      if (agentChoice[0] === 'Exhaust Viscount Unlenn') {
+        player.exhaustAgent()
+
+        // Choose which ship gets the bonus die
+        let targetShip
+        if (playerShips.length === 1) {
+          targetShip = playerShips[0]
+        }
+        else {
+          const shipChoices = playerShips.map((s, i) => ({
+            label: s.type + (s.damaged ? ' (damaged)' : ''),
+            value: i,
+          }))
+          const shipChoice = ctx.actions.choose(player, shipChoices.map(c => c.label), {
+            title: 'Choose ship for +1 die:',
+          })
+          const idx = shipChoices.findIndex(c => c.label === shipChoice[0])
+          targetShip = playerShips[idx >= 0 ? idx : 0]
+        }
+
+        targetShip.bonusDice = (targetShip.bonusDice || 0) + 1
+        ctx.log.add({
+          template: 'Viscount Unlenn: {player} gives {ship} +1 combat die',
+          args: { player, ship: targetShip.type },
+        })
+      }
     }
+
+    // Munitions Reserves: spend 2 TG to reroll dice
+    if (player.tradeGoods >= 2) {
+      const choice = ctx.actions.choose(player, ['Reroll', 'Pass'], {
+        title: 'Munitions Reserves: Spend 2 trade goods to reroll dice?',
+      })
+
+      if (choice[0] === 'Reroll') {
+        player.spendTradeGoods(2)
+        ctx.log.add({
+          template: '{player} spends 2 trade goods for Munitions Reserves reroll',
+          args: { player },
+        })
+      }
+    }
+  },
+
+  afterSpaceCombatRound(player, ctx, { systemId }) {
+    // Clean up bonus dice after round resolves
+    const systemUnits = ctx.state.units[systemId]
+    if (systemUnits) {
+      for (const ship of systemUnits.space) {
+        if (ship.owner === player.name && ship.bonusDice) {
+          delete ship.bonusDice
+        }
+      }
+    }
+  },
+
+  // Commander: Rear Admiral Farran — gain 1 TG after sustain damage
+  onUnitsSustainedDamage(player, ctx, { systemId: _systemId, count }) {
+    if (!player.isCommanderUnlocked()) {
+      return
+    }
+
+    for (let i = 0; i < count; i++) {
+      player.addTradeGoods(1)
+    }
+
+    ctx.log.add({
+      template: 'Rear Admiral Farran: {player} gains {count} trade good(s)',
+      args: { player, count },
+    })
   },
 
   commanderEffect: {

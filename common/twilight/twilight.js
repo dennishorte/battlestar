@@ -2060,7 +2060,9 @@ Twilight.prototype._rollCombatDice = function(ships) {
     const effectiveCombat = Math.max(1, Math.min(unitDef.combat + combatModifier, 10))
 
     // Each ship rolls 1 die (war suns roll 3 dice per their combat value)
-    const diceCount = unitDef.type === 'war-sun' ? 3 : 1
+    // bonusDice: temporary extra dice (e.g., Letnev agent Viscount Unlenn)
+    const baseDice = unitDef.type === 'war-sun' ? 3 : 1
+    const diceCount = baseDice + (ship.bonusDice || 0)
     for (let i = 0; i < diceCount; i++) {
       const roll = Math.floor(this.random() * 10) + 1
       if (roll >= effectiveCombat) {
@@ -2103,6 +2105,11 @@ Twilight.prototype._assignHits = function(systemId, ownerName, hits, destroyerNa
     ship.damaged = true
     justSustainedIds.add(ship.id)
     remainingHits--
+  }
+
+  // Faction hook: after units sustain damage (e.g., Letnev commander)
+  if (justSustainedIds.size > 0) {
+    this.factionAbilities.onUnitsSustainedDamage(ownerName, systemId, justSustainedIds.size)
   }
 
   // Then destroy cheapest ships first
@@ -2773,6 +2780,11 @@ Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, h
     unit.damaged = true
     justSustainedIds.add(unit.id)
     remainingHits--
+  }
+
+  // Faction hook: after units sustain damage (e.g., Letnev commander)
+  if (justSustainedIds.size > 0) {
+    this.factionAbilities.onUnitsSustainedDamage(ownerName, systemId, justSustainedIds.size)
   }
 
   // Then destroy cheapest units first

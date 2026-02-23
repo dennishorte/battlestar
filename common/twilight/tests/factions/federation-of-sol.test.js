@@ -76,12 +76,10 @@ describe('Federation of Sol', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis is Hacan here — Component Action should have no component actions
-      // The choose will log "No component actions available" and return
+      // Dennis is Hacan here — should not have Orbital Drop as a component action
       t.choose(game, 'Component Action')
-
-      // Should immediately return to dennis's turn
-      expect(game.waiting.selectors[0].actor).toBe('micah')
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('orbital-drop')
     })
   })
 

@@ -6,9 +6,50 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 }
 
 describe('Emirates of Hacan', () => {
+  describe('Data', () => {
+    test('starting technologies', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getTechIds()).toEqual(expect.arrayContaining(['antimass-deflectors', 'sarween-tools']))
+    })
+
+    test('starting units', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+      game.run()
+
+      const spaceUnits = game.state.units['hacan-home'].space
+        .filter(u => u.owner === 'dennis')
+        .map(u => u.type)
+        .sort()
+      expect(spaceUnits).toEqual(['carrier', 'carrier', 'cruiser', 'fighter', 'fighter'])
+
+      const arretze = game.state.units['hacan-home'].planets['arretze']
+        .filter(u => u.owner === 'dennis')
+        .map(u => u.type)
+        .sort()
+      expect(arretze).toEqual(['infantry', 'infantry', 'space-dock'])
+    })
+
+    test('commodities is 6', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.maxCommodities).toBe(6)
+    })
+
+    test('faction technologies are defined', () => {
+      const { getFaction } = require('../../res/factions/index.js')
+      const faction = getFaction('emirates-of-hacan')
+      expect(faction.factionTechnologies.length).toBe(3)
+      expect(faction.factionTechnologies.map(t => t.id).sort()).toEqual(
+        ['auto-factories', 'production-biomes', 'quantum-datahub-node']
+      )
+    })
+  })
+
   describe('Guild Ships', () => {
     test('Hacan can trade with non-neighbors', () => {
-      // In the default 2-player map, sol-home and hacan-home are not adjacent
       const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
       t.setBoard(game, {
         dennis: { tradeGoods: 5 },
@@ -17,18 +58,14 @@ describe('Emirates of Hacan', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis (Hacan) uses leadership — goes first (card #1)
       t.choose(game, 'Strategic Action')
-      t.choose(game, 'Pass')  // micah declines secondary
+      t.choose(game, 'Pass')
 
-      // After strategic action, Dennis gets transaction window
-      // Hacan's Guild Ships means Dennis can trade even though not neighbors
       const choices = t.currentChoices(game)
       expect(choices).toContain('micah')
     })
 
     test('non-Hacan cannot trade with non-neighbors', () => {
-      // Micah (Sol) should not be able to trade with non-adjacent Hacan
       const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
       t.setBoard(game, {
         dennis: { tradeGoods: 5 },
@@ -37,12 +74,9 @@ describe('Emirates of Hacan', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis (Sol) uses leadership
       t.choose(game, 'Strategic Action')
-      t.choose(game, 'Pass')  // micah declines secondary
+      t.choose(game, 'Pass')
 
-      // Dennis is Sol — not neighbors with Hacan in default map
-      // Should go directly to micah's turn (no transaction window)
       expect(game.waiting.selectors[0].actor).toBe('micah')
     })
   })
@@ -53,16 +87,13 @@ describe('Emirates of Hacan', () => {
       game.run()
       pickStrategyCards(game, 'trade', 'imperial')
 
-      // Dennis (Sol, trade=5) uses strategic action
       t.choose(game, 'Strategic Action')
 
-      // Micah (Hacan) gets Trade secondary prompt — should be free
       t.choose(game, 'Use Secondary')
 
-      // Hacan should have replenished commodities without spending strategy token
       const micah = game.players.byName('micah')
-      expect(micah.commodities).toBe(6)  // Hacan max
-      expect(micah.commandTokens.strategy).toBe(2)  // unchanged — free!
+      expect(micah.commodities).toBe(6)
+      expect(micah.commandTokens.strategy).toBe(2)
     })
 
     test('non-Hacan pays strategy token for Trade secondary', () => {
@@ -70,25 +101,23 @@ describe('Emirates of Hacan', () => {
       game.run()
       pickStrategyCards(game, 'trade', 'imperial')
 
-      // Dennis (Hacan, trade=5) uses strategic action
       t.choose(game, 'Strategic Action')
 
-      // Micah (Sol) gets Trade secondary prompt — costs 1 strategy token
       t.choose(game, 'Use Secondary')
 
       const micah = game.players.byName('micah')
-      expect(micah.commodities).toBe(4)  // Sol max
-      expect(micah.commandTokens.strategy).toBe(1)  // spent 1
+      expect(micah.commodities).toBe(4)
+      expect(micah.commandTokens.strategy).toBe(1)
     })
   })
 
-  describe('Hacan — Arbiters (Action Card Trading)', () => {
+  describe('Arbiters (Action Card Trading)', () => {
     test('canTradeActionCards returns true when Hacan is involved', () => {
       const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
       game.run()
 
-      const dennis = game.players.byName('dennis')  // Hacan
-      const micah = game.players.byName('micah')     // Sol
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
 
       expect(game.factionAbilities.canTradeActionCards(dennis, micah)).toBe(true)
       expect(game.factionAbilities.canTradeActionCards(micah, dennis)).toBe(true)
@@ -109,20 +138,16 @@ describe('Emirates of Hacan', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis (Hacan): Strategic Action + transaction
       t.choose(game, 'Strategic Action')
-      t.choose(game, 'Pass')  // micah declines secondary
+      t.choose(game, 'Pass')
 
-      // Transaction window for dennis (Hacan has guild-ships → can trade with anyone)
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: { actionCards: ['sabotage'] },
         requesting: { actionCards: ['direct-hit'] },
       })
       t.choose(game, 'Accept')
-      // Transaction loop auto-exits: micah already traded with, no more partners
 
-      // Verify cards transferred
       const dennis = game.players.byName('dennis')
       const micah = game.players.byName('micah')
       expect(dennis.actionCards.some(c => c.id === 'direct-hit')).toBe(true)
@@ -135,10 +160,37 @@ describe('Emirates of Hacan', () => {
       const game = t.fixture({ factions: ['federation-of-sol', 'barony-of-letnev'] })
       game.run()
 
-      const dennis = game.players.byName('dennis')  // Sol
-      const micah = game.players.byName('micah')     // Letnev
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
 
       expect(game.factionAbilities.canTradeActionCards(dennis, micah)).toBe(false)
     })
+  })
+
+  describe('Agent — Carth of Golden Sands', () => {
+    test.todo('exhaust agent to gain 2 commodities')
+    test.todo('exhaust agent to replenish another player commodities')
+  })
+
+  describe('Commander — Gila the Silvertongue', () => {
+    test.todo('spend trade goods for 2x votes during agenda')
+  })
+
+  describe('Hero — Harrugh Gefhara', () => {
+    test.todo('Galactic Securities Net: reduce production cost to 0, then purge')
+  })
+
+  describe('Mech — Pride of Kenara', () => {
+    test.todo('planet card can be traded in transaction')
+  })
+
+  describe('Promissory Note — Trade Convoys', () => {
+    test.todo('holder can trade with non-neighbors')
+  })
+
+  describe('Faction Technologies', () => {
+    test.todo('Production Biomes: exhaust and spend strategy token for 4 TG')
+    test.todo('Quantum Datahub Node: swap strategy cards')
+    test.todo('Auto-Factories: gain fleet token when producing 3+ non-fighter ships')
   })
 })
