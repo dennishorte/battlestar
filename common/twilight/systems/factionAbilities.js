@@ -370,10 +370,16 @@ class FactionAbilities {
   // M. Tech Parasite / Unit Destroyed
   // ---------------------------------------------------------------------------
 
-  onUnitDestroyed(systemId, unit, destroyerName) {
+  onUnitDestroyed(systemId, unit, destroyerName, planetId) {
     const destroyer = this.players.byName(destroyerName)
     const handler = this._getPlayerHandler(destroyer)
-    handler?.onUnitDestroyed?.(destroyer, this, { systemId, unit })
+    handler?.onUnitDestroyed?.(destroyer, this, { systemId, unit, planetId })
+
+    // Notify all players about destruction (e.g., Yin Brotherhood agent — Brother Milor)
+    for (const player of this.players.all()) {
+      const playerHandler = this._getPlayerHandler(player)
+      playerHandler?.onAnyUnitDestroyed?.(player, this, { systemId, unit, planetId, destroyerName })
+    }
 
     // Self Assembly Routines: gain 1 trade good when own mech is destroyed
     if (unit.type === 'mech') {
@@ -439,6 +445,19 @@ class FactionAbilities {
     const player = this.players.byName(playerName)
     const handler = this._getPlayerHandler(player)
     handler?.onSystemActivated?.(player, this, systemId)
+
+    // Agent abilities that trigger on any system activation (e.g., Captain Mendosa)
+    for (const otherPlayer of this.players.all()) {
+      const otherHandler = this._getPlayerHandler(otherPlayer)
+      otherHandler?.onAnySystemActivated?.(otherPlayer, this, { systemId, activatingPlayer: player })
+    }
+  }
+
+  onCommandTokenPlaced(placerName, systemId) {
+    for (const player of this.players.all()) {
+      const handler = this._getPlayerHandler(player)
+      handler?.onCommandTokenPlaced?.(player, this, { systemId, placerName })
+    }
   }
 
 

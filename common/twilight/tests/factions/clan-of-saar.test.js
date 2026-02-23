@@ -65,6 +65,7 @@ describe('Clan of Saar', () => {
       // Dennis takes tactical action to move into system 37 (has planets)
       t.choose(game, 'Tactical Action')
       t.action(game, 'activate-system', { systemId: '37' })
+      t.choose(game, 'Pass') // decline Captain Mendosa agent
       t.action(game, 'move-ships', {
         movements: [{ unitType: 'carrier', from: '27', count: 1 }, { unitType: 'infantry', from: '27', count: 1 }],
       })
@@ -95,8 +96,100 @@ describe('Clan of Saar', () => {
   })
 
   describe('Agent — Captain Mendosa', () => {
-    test.todo('after a player activates a system, may exhaust to increase move value of 1 ship to match highest on board')
-    test.todo('exhausted agent cannot be used')
+    test('after activating a system, may exhaust to boost a ship to match highest move on board', () => {
+      // Dennis (Saar) has carriers (move 1) and a cruiser (move 2).
+      // Carrier at home can't normally reach system 26 (2 hops away).
+      // Mendosa boosts carrier to move 2 (matching cruiser), allowing the move.
+      const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          units: {
+            'saar-home': {
+              space: ['carrier', 'cruiser'],
+              'lisis-ii': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(true)
+
+      // Dennis activates system 26 (2 hops from home: home -> 27 -> 26)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '26' })
+
+      // Mendosa prompt should appear (carrier has move 1, cruiser has move 2)
+      t.choose(game, 'Exhaust Captain Mendosa')
+
+      // Move the carrier (now boosted to move 2) to system 26
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'carrier', from: 'saar-home', count: 1 }],
+      })
+
+      // Re-fetch player after game replays
+      const dennisAfter = game.players.byName('dennis')
+      expect(dennisAfter.isAgentReady()).toBe(false)
+
+      // Carrier should have moved to system 26
+      const carrierInTarget = game.state.units['26'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'carrier')
+      expect(carrierInTarget.length).toBe(1)
+    })
+
+    test('exhausted agent cannot be used', () => {
+      const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'saar-home': {
+              space: ['carrier', 'cruiser'],
+              'lisis-ii': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis activates system 26 (2 hops)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '26' })
+
+      // No Mendosa prompt should appear — agent is exhausted
+      // Should go straight to move-ships
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('Exhaust Captain Mendosa')
+    })
+
+    test('no prompt when no ships would benefit from boost', () => {
+      // Dennis only has cruisers (move 2), which is already the highest on the board
+      const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'saar-home': {
+              space: ['cruiser', 'cruiser'],
+              'lisis-ii': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis activates system 27 (adjacent)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // No Mendosa prompt — all ships already at highest move value
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('Exhaust Captain Mendosa')
+    })
   })
 
   describe('Commander — Rowl Sarrig', () => {

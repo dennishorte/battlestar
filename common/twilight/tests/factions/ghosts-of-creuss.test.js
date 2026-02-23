@@ -148,7 +148,134 @@ describe('Ghosts of Creuss', () => {
 
   describe('Faction Technologies', () => {
     describe('Dimensional Splicer', () => {
-      test.todo('at start of space combat in a system with a wormhole, produce 1 hit and assign to opponent ship')
+      test('at start of space combat in a system with a wormhole, produce 1 hit', () => {
+        // System 26 = Lodor (alpha wormhole) at (0,-1), adjacent to system 27 at (0,-2)
+        // Creuss-gate is at (0,-3), adjacent to system 27
+        const game = t.fixture({
+          factions: ['ghosts-of-creuss', 'emirates-of-hacan'],
+        })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['gravity-drive', 'plasma-scoring', 'dimensional-splicer'],
+            units: {
+              '27': {
+                space: ['cruiser', 'cruiser', 'cruiser'],
+              },
+              'creuss-home': {
+                creuss: ['space-dock', 'infantry'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              '26': {
+                space: ['fighter', 'fighter'],
+              },
+            },
+          },
+        })
+        game.run()
+        t.choose(game, 'leadership')
+        t.choose(game, 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '26' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: '27', count: 3 }],
+        })
+
+        // Dimensional Splicer should have produced 1 hit before combat
+        const logEntries = game.log._log.map(e => e.template || '')
+        const splicerLogs = logEntries.filter(t => t.includes('Dimensional Splicer'))
+        expect(splicerLogs.length).toBe(1)
+
+        // System 26 had 2 fighters — at least 1 should be destroyed by Dimensional Splicer
+        // (combat will destroy the rest). 3 cruisers vs 2 fighters — Creuss wins
+        const micahShips = game.state.units['26'].space
+          .filter(u => u.owner === 'micah')
+        expect(micahShips.length).toBe(0)
+      })
+
+      test('does not fire in a system without a wormhole', () => {
+        // System 27 = New Albion + Starpoint, no wormhole
+        const game = t.fixture({
+          factions: ['ghosts-of-creuss', 'emirates-of-hacan'],
+        })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['gravity-drive', 'plasma-scoring', 'dimensional-splicer'],
+            units: {
+              'creuss-gate': {
+                space: ['cruiser', 'cruiser', 'cruiser'],
+              },
+              'creuss-home': {
+                creuss: ['space-dock', 'infantry'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              '27': {
+                space: ['fighter'],
+              },
+            },
+          },
+        })
+        game.run()
+        t.choose(game, 'leadership')
+        t.choose(game, 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'creuss-gate', count: 3 }],
+        })
+
+        // No Dimensional Splicer log should appear (no wormhole in system 27)
+        const logEntries = game.log._log.map(e => e.template || '')
+        const splicerLogs = logEntries.filter(t => t.includes('Dimensional Splicer'))
+        expect(splicerLogs.length).toBe(0)
+      })
+
+      test('does not fire without the technology researched', () => {
+        // Creuss without Dimensional Splicer in a wormhole system
+        const game = t.fixture({
+          factions: ['ghosts-of-creuss', 'emirates-of-hacan'],
+        })
+        t.setBoard(game, {
+          dennis: {
+            units: {
+              '27': {
+                space: ['cruiser', 'cruiser', 'cruiser'],
+              },
+              'creuss-home': {
+                creuss: ['space-dock', 'infantry'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              '26': {
+                space: ['fighter'],
+              },
+            },
+          },
+        })
+        game.run()
+        t.choose(game, 'leadership')
+        t.choose(game, 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '26' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: '27', count: 3 }],
+        })
+
+        // No Dimensional Splicer log should appear (tech not researched)
+        const logEntries = game.log._log.map(e => e.template || '')
+        const splicerLogs = logEntries.filter(t => t.includes('Dimensional Splicer'))
+        expect(splicerLogs.length).toBe(0)
+      })
     })
 
     describe('Wormhole Generator', () => {
