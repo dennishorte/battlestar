@@ -8,7 +8,7 @@ module.exports = {
   category: "Actions Booster",
   text: "You can build the major improvements \"Joinery\", \"Pottery\", and \"Basketmaker's Workshop\" even when taking a \"Minor Improvement\" action. They each cost you 1 stone less.",
   allowsMajorsOnMinorAction: ["joinery", "pottery", "basketmakers-workshop"],
-  modifyMajorCost(majorId, cost) {
+  modifyMajorCost(player, majorId, cost) {
     if (['joinery', 'pottery', 'basketmakers-workshop'].includes(majorId)) {
       const newCost = { ...cost }
       if (newCost.stone) {

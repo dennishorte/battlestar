@@ -94,6 +94,45 @@ describe('Braid Maker', () => {
       currentPlayer: 'micah',
       dennis: {
         familyMembers: 3,
+        reed: 1,   // Started with 2, paid 1 (Braid Maker discount)
+        stone: 1,  // Started with 2, paid 1 (Braid Maker discount)
+        occupations: ['braid-maker-e109'],
+        majorImprovements: ['basketmakers-workshop'],
+        farmyard: {
+          rooms: [{ row: 0, col: 0 }, { row: 1, col: 0 }, { row: 2, col: 0 }],
+        },
+      },
+    })
+  })
+
+  test('discounts Basketmakers Workshop to 1 reed and 1 stone', () => {
+    const game = t.fixture({ cardSets: ['occupationE', 'test'] })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      actionSpaces: ['Basic Wish for Children'],
+      dennis: {
+        occupations: ['braid-maker-e109'],
+        reed: 1,
+        stone: 1,  // Only enough for the discounted cost, not full cost
+        farmyard: {
+          rooms: [{ row: 2, col: 0 }],
+        },
+      },
+      micah: { food: 10 },
+    })
+    game.run()
+
+    // With Braid Maker discount, cost is 1 reed + 1 stone (not 2 + 2)
+    t.choose(game, 'Basic Wish for Children')
+    expect(t.currentChoices(game)).toContain('Major Improvement')
+    t.choose(game, "Major Improvement.Basketmaker's Workshop (basketmakers-workshop)")
+
+    t.testBoard(game, {
+      currentPlayer: 'micah',
+      dennis: {
+        familyMembers: 3,
+        reed: 0,
+        stone: 0,
         occupations: ['braid-maker-e109'],
         majorImprovements: ['basketmakers-workshop'],
         farmyard: {

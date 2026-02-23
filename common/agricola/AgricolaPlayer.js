@@ -3133,6 +3133,7 @@ class AgricolaPlayer extends BasePlayer {
       return {}
     }
     let cost = { ...imp.cost }
+    cost = this.applyMajorCostModifiers(cost, improvementId)
     cost = this.applyImprovementCostModifiers(cost)
     cost = this.applyAnyCostModifiers(cost, 'major-improvement')
     return cost
@@ -4124,6 +4125,19 @@ class AgricolaPlayer extends BasePlayer {
     for (const card of this.getActiveCards()) {
       if (card.hasHook('modifyBuildCost')) {
         modifiedCost = card.callHook('modifyBuildCost', this, modifiedCost, action)
+      }
+    }
+    return modifiedCost
+  }
+
+  /**
+   * Apply modifyMajorCost hooks from cards (e.g. Braid Maker, Blueprint)
+   */
+  applyMajorCostModifiers(cost, improvementId) {
+    let modifiedCost = { ...cost }
+    for (const card of this.getActiveCards()) {
+      if (card.hasHook('modifyMajorCost')) {
+        modifiedCost = card.callHook('modifyMajorCost', this, improvementId, modifiedCost)
       }
     }
     return modifiedCost

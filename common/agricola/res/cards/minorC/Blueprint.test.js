@@ -7,7 +7,7 @@ describe('Blueprint', () => {
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['blueprint-c027'],
-        wood: 2, stone: 2, // Joinery costs wood:2, stone:2
+        wood: 2, stone: 2, // Joinery costs wood:2, stone:2; Blueprint reduces stone by 1
       },
     })
     game.run()
@@ -21,6 +21,7 @@ describe('Blueprint', () => {
       currentPlayer: 'micah',
       dennis: {
         food: 1, // Meeting Place gives 1 food
+        stone: 1, // Started with 2, paid 1 (Blueprint discount)
         minorImprovements: ['blueprint-c027'],
         majorImprovements: ['joinery'],
       },
@@ -33,7 +34,7 @@ describe('Blueprint', () => {
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['blueprint-c027'],
-        clay: 2, stone: 2, // Pottery costs clay:2, stone:2
+        clay: 2, stone: 2, // Pottery costs clay:2, stone:2; Blueprint reduces stone by 1
       },
     })
     game.run()
@@ -45,6 +46,7 @@ describe('Blueprint', () => {
       currentPlayer: 'micah',
       dennis: {
         food: 1,
+        stone: 1, // Started with 2, paid 1 (Blueprint discount)
         minorImprovements: ['blueprint-c027'],
         majorImprovements: ['pottery'],
       },
@@ -57,7 +59,7 @@ describe('Blueprint', () => {
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['blueprint-c027'],
-        reed: 2, stone: 2, // Basketmaker costs reed:2, stone:2
+        reed: 2, stone: 2, // Basketmaker costs reed:2, stone:2; Blueprint reduces stone by 1
       },
     })
     game.run()
@@ -69,8 +71,35 @@ describe('Blueprint', () => {
       currentPlayer: 'micah',
       dennis: {
         food: 1,
+        stone: 1, // Started with 2, paid 1 (Blueprint discount)
         minorImprovements: ['blueprint-c027'],
         majorImprovements: ['basketmakers-workshop'],
+      },
+    })
+  })
+
+  test('reduces stone cost by 1 for Joinery', () => {
+    const game = t.fixture({ cardSets: ['minorC', 'test'] })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['blueprint-c027'],
+        wood: 2, stone: 1, // Joinery normally costs wood:2, stone:2; Blueprint reduces to stone:1
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Major Improvement.Joinery (joinery)')
+
+    t.testBoard(game, {
+      currentPlayer: 'micah',
+      dennis: {
+        food: 1,
+        wood: 0,
+        stone: 0,
+        minorImprovements: ['blueprint-c027'],
+        majorImprovements: ['joinery'],
       },
     })
   })
