@@ -16,12 +16,12 @@ module.exports = {
     {
       id: 'peace-accords',
       name: 'Peace Accords',
-      description: 'After you resolve the primary or secondary ability of the Diplomacy strategy card, you may gain control of 1 planet that is adjacent to a planet you control and that does not contain any units.',
+      description: 'After you resolve the primary or secondary ability of the "Diplomacy" strategy card, you may gain control of 1 planet other than Mecatol Rex that does not contain any units and is in a system that is adjacent to a planet you control.',
     },
     {
       id: 'quash',
       name: 'Quash',
-      description: 'When an agenda is revealed, you may spend 1 token from your strategy pool to discard that agenda and reveal 1 agenda from the top of the deck.',
+      description: 'When an agenda is revealed, you may spend 1 token from your strategy pool to discard that agenda and reveal 1 agenda from the top of the deck. Players vote on this agenda instead.',
     },
   ],
   flagship: {
@@ -32,6 +32,7 @@ module.exports = {
     capacity: 3,
     hits: 2,
     abilities: ['sustain-damage', 'space-cannon-5x3'],
+    description: 'You may use this unit\'s SPACE CANNON against ships that are in adjacent systems.',
   },
   mech: {
     name: 'Indomitus',
@@ -39,39 +40,54 @@ module.exports = {
     combat: 6,
     hits: 2,
     abilities: ['sustain-damage', 'space-cannon-8'],
+    description: 'You may use this unit\'s Space Cannon ability against ships that are in adjacent systems.',
   },
   leaders: {
     agent: {
       name: 'Ggrocuto Rinn',
       unlocked: true,
+      description: 'ACTION: Exhaust this card to ready any planet; if that planet is in a system that is adjacent to a planet you control, you may remove 1 infantry from that planet and return it to its reinforcements.',
     },
     commander: {
       name: 'Elder Qanoj',
-      unlockCondition: 'Control planets that have a combined influence value of 12 or more.',
+      unlockCondition: 'Control planets that have a combined value of at least 12 influence.',
+      description: 'Each planet you exhaust to cast votes provides 1 additional vote. Game effects cannot prevent you from voting on an agenda.',
     },
     hero: {
       name: 'Xxekir Grom',
       unlockCondition: 'Have 3 scored objectives.',
+      description: 'PLANETARY DEFENSE NEXUS — ACTION: Place any combination of up to 4 PDS or mechs onto planets you control; ready each planet that you place a unit on. Then, purge this card.',
     },
   },
   promissoryNote: {
     id: 'political-favor',
     name: 'Political Favor',
+    description: 'When an agenda is revealed: Remove 1 token from the Xxcha player\'s strategy pool and return it to their reinforcements. Then, discard the revealed agenda and reveal 1 agenda from the top of the deck. Players vote on this agenda instead. Then, return this card to the Xxcha player.',
   },
   factionTechnologies: [
-    {
-      id: 'instinct-training',
-      name: 'Instinct Training',
-      color: 'green',
-      prerequisites: ['green'],
-      unitUpgrade: null,
-    },
     {
       id: 'nullification-field',
       name: 'Nullification Field',
       color: 'yellow',
       prerequisites: ['yellow', 'yellow'],
       unitUpgrade: null,
+      description: 'After another player activates a system that contains 1 or more of your ships, you may exhaust this card and spend 1 token from your strategy pool; immediately end that player\'s turn.',
+    },
+    {
+      id: 'instinct-training',
+      name: 'Instinct Training',
+      color: 'green',
+      prerequisites: ['green'],
+      unitUpgrade: null,
+      description: 'You may exhaust this card and spend 1 token from your strategy pool when another player plays an action card; cancel that action card.',
+    },
+    {
+      id: 'archons-gift',
+      name: "Archon's Gift",
+      color: null,
+      prerequisites: ['yellow', 'green'],
+      unitUpgrade: null,
+      description: 'You can spend influence as if it were resources. You can spend resources as if it were influence.',
     },
   ],
 }

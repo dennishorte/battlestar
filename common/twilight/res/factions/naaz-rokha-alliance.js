@@ -16,22 +16,23 @@ module.exports = {
     {
       id: 'distant-suns',
       name: 'Distant Suns',
-      description: 'When you explore a planet that contains 1 or more of your mechs, draw 1 additional card; choose 1 to resolve and discard the rest.',
+      description: 'When you explore a planet that contains 1 of your mechs, you may draw 1 additional card; choose 1 to resolve and discard the rest.',
     },
     {
       id: 'fabrication',
       name: 'Fabrication',
-      description: 'ACTION: Either purge 2 of your relic fragments of the same type to gain 1 relic, OR purge 1 of your relic fragments of any type to gain 1 command token.',
+      description: 'ACTION: Either purge 2 of your relic fragments of the same type to gain 1 relic; or purge 1 of your relic fragments to gain 1 command token.',
     },
   ],
   flagship: {
-    name: 'Visz El Vir',
+    name: 'Visz el Vir',
     cost: 8,
     combat: 9,
     move: 1,
     capacity: 4,
     hits: 2,
     abilities: ['sustain-damage'],
+    description: 'Your mechs in this system roll 1 additional die during combat.',
   },
   mech: {
     name: 'Eidolon',
@@ -39,24 +40,29 @@ module.exports = {
     combat: 6,
     hits: 2,
     abilities: ['sustain-damage'],
+    description: 'If this unit is in the space area of the active system at the start of a space combat, flip this card. Z-GRAV EIDOLON: If this unit is in the space area of the active system, it is also a ship. At the end of a space battle in the active system, flip this card.',
   },
   leaders: {
     agent: {
       name: 'Garv and Gunn',
       unlocked: true,
+      description: "At the end of a player's turn: You may exhaust this card to allow that player to explore 1 of their planets.",
     },
     commander: {
       name: 'Dart and Tai',
-      unlockCondition: 'Have 3 mechs in 3 different systems.',
+      unlockCondition: 'Have 3 mechs in 3 systems.',
+      description: 'After you gain control of a planet that was controlled by another player: You may explore that planet.',
     },
     hero: {
       name: 'Hesh and Prit',
       unlockCondition: 'Have 3 scored objectives.',
+      description: 'PERFECT SYNTHESIS — ACTION: Gain 1 relic and perform the secondary ability of up to 2 readied or unchosen strategy cards; during this action, spend command tokens from your reinforcements instead of your strategy pool. Then, purge this card.',
     },
   },
   promissoryNote: {
     id: 'black-market-forgery',
     name: 'Black Market Forgery',
+    description: 'ACTION: Purge 2 of your relic fragments of the same type to gain 1 relic. Then, return this card to the Naaz-Rokha player.',
   },
   factionTechnologies: [
     {
@@ -65,6 +71,7 @@ module.exports = {
       color: 'red',
       prerequisites: ['red'],
       unitUpgrade: null,
+      description: "At the start of a combat round, you may exhaust this card to apply +1 to the result of each of your unit's combat rolls during this combat round.",
     },
     {
       id: 'pre-fab-arcologies',
@@ -72,6 +79,15 @@ module.exports = {
       color: 'green',
       prerequisites: ['green', 'green', 'green'],
       unitUpgrade: null,
+      description: 'After you explore a planet, ready that planet.',
+    },
+    {
+      id: 'absolute-synergy',
+      name: 'Absolute Synergy',
+      color: null,
+      prerequisites: ['green', 'blue'],
+      unitUpgrade: null,
+      description: 'When you have 4 mechs in the same system, you may return 3 of those mechs to your reinforcements to flip this card and place it on top of your mech card.',
     },
   ],
 }
