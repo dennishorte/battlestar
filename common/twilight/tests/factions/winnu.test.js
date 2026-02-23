@@ -6,6 +6,39 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 }
 
 describe('Winnu', () => {
+  describe('Data', () => {
+    test('starting technologies', () => {
+      const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getTechIds()).toEqual([])
+    })
+
+    test('commodities is 3', () => {
+      const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+      game.run()
+      const dennis = game.players.byName('dennis')
+      expect(dennis.maxCommodities).toBe(3)
+    })
+
+    test('faction technologies are defined', () => {
+      const { getFaction } = require('../../res/factions/index.js')
+      const faction = getFaction('winnu')
+      expect(faction.factionTechnologies.length).toBe(3)
+
+      const lazax = faction.factionTechnologies.find(ft => ft.id === 'lazax-gate-folding')
+      expect(lazax.color).toBe('blue')
+      expect(lazax.prerequisites).toEqual(['blue', 'blue'])
+
+      const hegemonic = faction.factionTechnologies.find(ft => ft.id === 'hegemonic-trade-policy')
+      expect(hegemonic.color).toBe('yellow')
+      expect(hegemonic.prerequisites).toEqual(['yellow', 'yellow'])
+
+      const imperator = faction.factionTechnologies.find(ft => ft.id === 'imperator')
+      expect(imperator.prerequisites).toEqual(['blue', 'red'])
+    })
+  })
+
   describe('Blood Ties', () => {
     test('removes custodians without spending influence', () => {
       const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
@@ -97,5 +130,31 @@ describe('Winnu', () => {
       expect(mecatolUnits).toContain('pds')
       expect(mecatolUnits).toContain('space-dock')
     })
+  })
+
+  describe('Agent — Rickar Rickani', () => {
+    test.todo('exhaust to repair or move mechs')
+  })
+
+  describe('Commander — Berekar Berekon', () => {
+    test.todo('when you control Mecatol, gain +1 to combat and +1 command token in status')
+  })
+
+  describe('Hero — Mathis Mathinus, Kingmaker', () => {
+    test.todo('ACTION: score 1 public objective you meet requirements for, then purge')
+  })
+
+  describe('Mech — Reclaimer', () => {
+    test.todo('DEPLOY: after another player gains control of a planet you control')
+  })
+
+  describe('Promissory Note — Acquiescence', () => {
+    test.todo('at start of your turn, choose to return planets or gain Alliance')
+  })
+
+  describe('Faction Technologies', () => {
+    test.todo('Hegemonic Trade Policy: exhaust to swap resource and influence values during production')
+    test.todo('Lazax Gate Folding: treat Mecatol system as having wormholes; ACTION to place infantry on Mecatol')
+    test.todo('Imperator: +1 combat per Support for the Throne; +1 move when activating legendary planet system')
   })
 })
