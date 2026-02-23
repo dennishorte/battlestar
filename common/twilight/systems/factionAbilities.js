@@ -499,7 +499,17 @@ class FactionAbilities {
 
 
   // ---------------------------------------------------------------------------
-  // T. Commodity Triggers
+  // T. Strategy Token Triggers
+  // ---------------------------------------------------------------------------
+
+  onStrategyTokenSpent(player) {
+    const handler = this._getPlayerHandler(player)
+    handler?.onStrategyTokenSpent?.(player, this)
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // U. Commodity Triggers
   // ---------------------------------------------------------------------------
 
   onCommoditiesReplenished(_replenishingPlayer) {
@@ -511,7 +521,7 @@ class FactionAbilities {
 
 
   // ---------------------------------------------------------------------------
-  // U. Commander Effects Registry
+  // V. Commander Effects Registry
   // ---------------------------------------------------------------------------
 
   getActiveCommanderEffects(player) {

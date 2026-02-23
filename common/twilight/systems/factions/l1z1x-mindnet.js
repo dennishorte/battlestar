@@ -1,4 +1,9 @@
 module.exports = {
+  // ---------------------------------------------------------------------------
+  // Assimilate: When you gain control of a planet, replace each PDS and space
+  // dock on that planet with a matching unit from your reinforcements.
+  // ---------------------------------------------------------------------------
+
   onPlanetGained(player, ctx, { planetId, systemId, structureCounts }) {
     let placed = false
     for (const [unitType, count] of Object.entries(structureCounts)) {
@@ -18,7 +23,29 @@ module.exports = {
     }
   },
 
+  // ---------------------------------------------------------------------------
+  // Harrow: At the end of each round of ground combat, your ships in the
+  // active system may use their BOMBARDMENT abilities against your opponent's
+  // ground forces on the planet.
+  //
+  // Commander (2RAM): Each of your dreadnoughts and war suns that are in or
+  // adjacent to the active system may participate in ground combat as if they
+  // were ground forces. They are not considered ground forces for the purposes
+  // of other game effects.
+  // ---------------------------------------------------------------------------
+
   onGroundCombatRoundEnd(player, ctx, { systemId, planetId, opponentName }) {
+    // --- Harrow: bombardment from ships in the active system ---
+    this._harrowBombardment(player, ctx, systemId, planetId, opponentName)
+
+    // --- Commander (2RAM): dreadnoughts/war suns roll combat dice ---
+    if (player.isCommanderUnlocked()) {
+      this._commanderGroundCombat(player, ctx, systemId, planetId, opponentName)
+    }
+  },
+
+  // Harrow: ships with bombardment abilities fire at ground forces each round
+  _harrowBombardment(player, ctx, systemId, planetId, opponentName) {
     const systemUnits = ctx.state.units[systemId]
     const bombardShips = systemUnits.space.filter(u => {
       if (u.owner !== player.name || u.type === 'fighter') {
@@ -50,24 +77,80 @@ module.exports = {
       }
     }
 
-    if (totalHits === 0) {
+    if (totalHits > 0) {
+      ctx.log.add({
+        template: '{player} Harrow bombardment: {hits} hits on {planet}',
+        args: { player, hits: totalHits, planet: planetId },
+      })
+      ctx.game._assignGroundHits(systemId, planetId, opponentName, totalHits, player.name)
+    }
+  },
+
+  // Commander (2RAM): dreadnoughts and war suns participate in ground combat
+  // as if they were ground forces (rolling combat dice, not bombardment).
+  // Includes ships in the active system AND adjacent systems.
+  _commanderGroundCombat(player, ctx, systemId, planetId, opponentName) {
+    const eligibleShips = this._getCommanderEligibleShips(player, ctx, systemId)
+
+    if (eligibleShips.length === 0) {
       return
     }
 
-    const planetUnits = ctx.state.units[systemId].planets[planetId]
-    let hits = totalHits
-    while (hits > 0) {
-      const idx = planetUnits.findIndex(u => u.owner === opponentName && u.type === 'infantry')
-      if (idx === -1) {
-        break
+    // Roll combat dice for each eligible ship (using combat values)
+    let totalHits = 0
+    for (const ship of eligibleShips) {
+      const stats = ctx.game._getUnitStats(ship.owner, ship.type)
+      if (!stats || !stats.combat) {
+        continue
       }
-      planetUnits.splice(idx, 1)
-      hits--
+
+      // War suns roll 3 dice, others roll 1
+      const diceCount = stats.type === 'war-sun' ? 3 : 1
+      for (let i = 0; i < diceCount; i++) {
+        const roll = Math.floor(ctx.game.random() * 10) + 1
+        if (roll >= stats.combat) {
+          totalHits++
+        }
+      }
     }
 
-    ctx.log.add({
-      template: '{player} Harrow bombardment: {hits} hits on {planet}',
-      args: { player, hits: totalHits, planet: planetId },
-    })
+    if (totalHits > 0) {
+      ctx.log.add({
+        template: '2RAM: {player} dreadnoughts/war suns score {hits} ground combat hits on {planet}',
+        args: { player, hits: totalHits, planet: planetId },
+      })
+      ctx.game._assignGroundHits(systemId, planetId, opponentName, totalHits, player.name)
+    }
+  },
+
+  // Collect dreadnoughts and war suns in the active system and adjacent systems
+  _getCommanderEligibleShips(player, ctx, systemId) {
+    const eligible = []
+
+    // Ships in the active system
+    const systemUnits = ctx.state.units[systemId]
+    if (systemUnits) {
+      for (const ship of systemUnits.space) {
+        if (ship.owner === player.name && (ship.type === 'dreadnought' || ship.type === 'war-sun')) {
+          eligible.push(ship)
+        }
+      }
+    }
+
+    // Ships in adjacent systems
+    const adjacentIds = ctx.game._getAdjacentSystems(systemId)
+    for (const adjId of adjacentIds) {
+      const adjUnits = ctx.state.units[adjId]
+      if (!adjUnits) {
+        continue
+      }
+      for (const ship of adjUnits.space) {
+        if (ship.owner === player.name && (ship.type === 'dreadnought' || ship.type === 'war-sun')) {
+          eligible.push(ship)
+        }
+      }
+    }
+
+    return eligible
   },
 }

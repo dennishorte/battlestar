@@ -3597,6 +3597,7 @@ Twilight.prototype._resolveSecondaries = function(activePlayer, cardId) {
     if (choice[0] === 'Use Secondary') {
       if (!isFree) {
         player.spendStrategyToken()
+        this.factionAbilities.onStrategyTokenSpent(player)
       }
       this._resolveSecondary(player, cardId)
     }

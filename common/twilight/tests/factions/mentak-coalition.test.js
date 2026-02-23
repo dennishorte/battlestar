@@ -46,8 +46,8 @@ describe('Mentak Coalition', () => {
   describe('Ambush', () => {
     test('Mentak ambush fires before combat and can destroy ships', () => {
       // Mentak (dennis) moves cruisers into system with enemy fighter
-      // Ambush rolls 2 dice at 9+ before combat begins
-      // Deterministic layout: mentak-home (0,-3) → adjacent to system 27 (0,-2)
+      // Ambush rolls 1 die per cruiser/destroyer (up to 2) using ship combat value
+      // Deterministic layout: mentak-home (0,-3) -> adjacent to system 27 (0,-2)
       const game = t.fixture({
         factions: ['mentak-coalition', 'emirates-of-hacan'],
       })
@@ -81,6 +81,44 @@ describe('Mentak Coalition', () => {
       const micahShips = game.state.units['27'].space
         .filter(u => u.owner === 'micah')
       expect(micahShips.length).toBe(0)
+    })
+
+    test('Ambush does not fire when Mentak has no cruisers or destroyers', () => {
+      // Mentak only has carriers (no cruisers/destroyers), so Ambush should not trigger
+      // We verify via log: no "Ambush" message should appear
+      const game = t.fixture({
+        factions: ['mentak-coalition', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'mentak-home': {
+              space: ['carrier'],
+              'moll-primus': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'carrier', from: 'mentak-home', count: 1 }],
+      })
+
+      // Check that no Ambush log message was generated
+      const logEntries = game.log._log.map(e => e.template || '')
+      const ambushLogs = logEntries.filter(t => t.includes('Ambush'))
+      expect(ambushLogs.length).toBe(0)
     })
   })
 
@@ -119,6 +157,7 @@ describe('Mentak Coalition', () => {
         },
         scott: {
           tradeGoods: 0,
+          leaders: { agent: 'exhausted' },
           units: {
             // Place Mentak adjacent to Sol so pillage triggers
             [solAdj]: { space: ['cruiser'] },
@@ -148,17 +187,229 @@ describe('Mentak Coalition', () => {
       })
       t.choose(game, 'Accept')
 
-      // Mentak (scott) should be prompted to pillage micah (who received TG)
+      // Mentak (scott) should be prompted to pillage micah (who now has 6 TG >= 3)
       // Scott steals 1 trade good from micah
       t.choose(game, 'Steal Trade Good')
+      // Agent is exhausted, so no agent prompt
 
       const scott = game.players.byName('scott')
       expect(scott.tradeGoods).toBe(1)
     })
+
+    test('Pillage does not trigger when target has fewer than 3 trade goods', () => {
+      // 3 players: Sol (dennis), Hacan (micah), Mentak (scott)
+      // Micah starts with only 2 TG, receives 0 from trade (just commodities)
+      // After transaction micah has 2 TG — below the 3 TG threshold
+      const { Galaxy } = require('../../model/Galaxy.js')
+      const game = t.fixture({
+        numPlayers: 3,
+        factions: ['federation-of-sol', 'emirates-of-hacan', 'mentak-coalition'],
+      })
+      const setupGame = t.fixture({
+        numPlayers: 3,
+        factions: ['federation-of-sol', 'emirates-of-hacan', 'mentak-coalition'],
+      })
+      setupGame.run()
+      const galaxy = new Galaxy(setupGame)
+      const solAdj = galaxy.getAdjacent('sol-home')[0]
+
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 5,
+          units: {
+            'sol-home': { space: ['cruiser'] },
+          },
+        },
+        micah: {
+          tradeGoods: 1,
+          units: {
+            [solAdj]: { space: ['cruiser'] },
+          },
+        },
+        scott: {
+          tradeGoods: 0,
+          units: {
+            [solAdj]: { space: ['cruiser'] },
+          },
+        },
+      })
+      game.run()
+
+      // 3-player strategy: snake draft
+      t.choose(game, 'leadership')    // dennis
+      t.choose(game, 'diplomacy')     // micah
+      t.choose(game, 'trade')         // scott
+      t.choose(game, 'construction')  // scott (2nd pick)
+      t.choose(game, 'politics')      // micah (2nd pick)
+      t.choose(game, 'warfare')       // dennis (2nd pick)
+
+      // Dennis (leadership=1) goes first
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+      t.choose(game, 'Pass')  // scott declines secondary
+
+      // Dennis trades 1 TG to micah — micah now has 2 TG (below 3 threshold)
+      t.choose(game, 'micah')
+      t.action(game, 'trade-offer', {
+        offering: { tradeGoods: 1 },
+        requesting: {},
+      })
+      t.choose(game, 'Accept')
+
+      // Mentak should NOT be prompted to pillage (micah only has 2 TG)
+      // Game should continue without a Pillage prompt — scott still has 0 TG
+      const scott = game.players.byName('scott')
+      expect(scott.tradeGoods).toBe(0)
+    })
   })
 
   describe('Agent — Suffi An', () => {
-    test.todo('exhaust after Pillage to draw 1 action card each for Mentak and pillaged player')
+    test('exhaust after Pillage to draw 1 action card each', () => {
+      // 3 players: Sol (dennis), Hacan (micah), Mentak (scott)
+      // After pillaging, Mentak agent offers to draw 1 action card each
+      // Dennis starts with 2 TG (below 3 threshold) so only micah is pillage-eligible
+      const { Galaxy } = require('../../model/Galaxy.js')
+      const game = t.fixture({
+        numPlayers: 3,
+        factions: ['federation-of-sol', 'emirates-of-hacan', 'mentak-coalition'],
+      })
+      const setupGame = t.fixture({
+        numPlayers: 3,
+        factions: ['federation-of-sol', 'emirates-of-hacan', 'mentak-coalition'],
+      })
+      setupGame.run()
+      const galaxy = new Galaxy(setupGame)
+      const solAdj = galaxy.getAdjacent('sol-home')[0]
+
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 2,
+          units: {
+            'sol-home': { space: ['cruiser'] },
+          },
+        },
+        micah: {
+          tradeGoods: 5,
+          units: {
+            [solAdj]: { space: ['cruiser'] },
+          },
+        },
+        scott: {
+          tradeGoods: 0,
+          leaders: { agent: 'ready' },
+          units: {
+            [solAdj]: { space: ['cruiser'] },
+          },
+        },
+      })
+      game.run()
+
+      // 3-player strategy: snake draft
+      t.choose(game, 'leadership')    // dennis
+      t.choose(game, 'diplomacy')     // micah
+      t.choose(game, 'trade')         // scott
+      t.choose(game, 'construction')  // scott (2nd pick)
+      t.choose(game, 'politics')      // micah (2nd pick)
+      t.choose(game, 'warfare')       // dennis (2nd pick)
+
+      // Dennis (leadership=1) goes first
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+      t.choose(game, 'Pass')  // scott declines secondary
+
+      // Dennis trades 1 TG to micah — micah now has 6 TG (>= 3 threshold)
+      // Dennis has 1 TG left (below 3 threshold) so no pillage prompt for dennis
+      t.choose(game, 'micah')
+      t.action(game, 'trade-offer', {
+        offering: { tradeGoods: 1 },
+        requesting: {},
+      })
+      t.choose(game, 'Accept')
+
+      // Mentak (scott) pillages micah (the only eligible target)
+      t.choose(game, 'Steal Trade Good')
+
+      // Agent prompt: exhaust Suffi An to draw 1 action card each
+      t.choose(game, 'Exhaust Suffi An')
+
+      // Re-fetch players after game state changes
+      const scott = game.players.byName('scott')
+      const micah = game.players.byName('micah')
+
+      expect(scott.tradeGoods).toBe(1)
+      expect(scott.leaders.agent).toBe('exhausted')
+      expect(scott.actionCards.length).toBe(1)
+      expect(micah.actionCards.length).toBe(1)
+    })
+
+    test('agent is not offered when already exhausted', () => {
+      // Same setup but with agent already exhausted — no prompt after pillage
+      const { Galaxy } = require('../../model/Galaxy.js')
+      const game = t.fixture({
+        numPlayers: 3,
+        factions: ['federation-of-sol', 'emirates-of-hacan', 'mentak-coalition'],
+      })
+      const setupGame = t.fixture({
+        numPlayers: 3,
+        factions: ['federation-of-sol', 'emirates-of-hacan', 'mentak-coalition'],
+      })
+      setupGame.run()
+      const galaxy = new Galaxy(setupGame)
+      const solAdj = galaxy.getAdjacent('sol-home')[0]
+
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 5,
+          units: {
+            'sol-home': { space: ['cruiser'] },
+          },
+        },
+        micah: {
+          tradeGoods: 5,
+          units: {
+            [solAdj]: { space: ['cruiser'] },
+          },
+        },
+        scott: {
+          tradeGoods: 0,
+          leaders: { agent: 'exhausted' },
+          units: {
+            [solAdj]: { space: ['cruiser'] },
+          },
+        },
+      })
+      game.run()
+
+      // 3-player strategy: snake draft
+      t.choose(game, 'leadership')    // dennis
+      t.choose(game, 'diplomacy')     // micah
+      t.choose(game, 'trade')         // scott
+      t.choose(game, 'construction')  // scott (2nd pick)
+      t.choose(game, 'politics')      // micah (2nd pick)
+      t.choose(game, 'warfare')       // dennis (2nd pick)
+
+      // Dennis (leadership=1) goes first
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+      t.choose(game, 'Pass')  // scott declines secondary
+
+      // Dennis trades 1 TG to micah
+      t.choose(game, 'micah')
+      t.action(game, 'trade-offer', {
+        offering: { tradeGoods: 1 },
+        requesting: {},
+      })
+      t.choose(game, 'Accept')
+
+      // Mentak (scott) pillages micah — no agent prompt since exhausted
+      t.choose(game, 'Steal Trade Good')
+
+      const scott = game.players.byName('scott')
+      expect(scott.tradeGoods).toBe(1)
+      expect(scott.leaders.agent).toBe('exhausted')
+      // No action cards drawn since agent was exhausted
+      expect(scott.actionCards?.length || 0).toBe(0)
+    })
   })
 
   describe("Commander — S'Ula Mentarion", () => {
