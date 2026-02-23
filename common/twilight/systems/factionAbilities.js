@@ -384,8 +384,16 @@ class FactionAbilities {
 
 
   // ---------------------------------------------------------------------------
-  // N. Pre-Movement Triggers
+  // N. Pre-Movement Triggers / Tactical Action End
   // ---------------------------------------------------------------------------
+
+  onTacticalActionEnd(activatingPlayer, systemId) {
+    // All players get a chance to respond (e.g., Sardakk T'ro agent)
+    for (const player of this.players.all()) {
+      const handler = this._getPlayerHandler(player)
+      handler?.onTacticalActionEnd?.(player, this, { activatingPlayer, systemId })
+    }
+  }
 
   onPreMovement(activatingPlayer, systemId) {
     for (const player of this.players.all()) {
@@ -406,6 +414,11 @@ class FactionAbilities {
     const winner = this.players.byName(winnerName)
     const handler = this._getPlayerHandler(winner)
     handler?.afterCombatResolved?.(winner, this, { systemId, loserName, combatType })
+
+    // Faction tech effects that trigger after combat (e.g., N'orr Supremacy)
+    if (handler?.onCombatWon && winner) {
+      handler.onCombatWon(winner, this, { systemId, loserName, combatType })
+    }
 
     // Reset singularity tracking
     delete this.state._singularityUsedThisCombat
