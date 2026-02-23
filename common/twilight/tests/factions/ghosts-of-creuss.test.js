@@ -1,0 +1,88 @@
+const t = require('../../testutil.js')
+
+
+describe('Ghosts of Creuss', () => {
+  test('home system is adjacent to wormhole systems', () => {
+    const { Galaxy } = require('../../model/Galaxy.js')
+    const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+    game.run()
+    const galaxy = new Galaxy(game)
+
+    // Creuss home should be adjacent to alpha wormhole systems
+    const adjacent = galaxy.getAdjacent('creuss-home')
+    // System 26 = Lodor (alpha wormhole), System 39 (alpha wormhole)
+    const hasAlphaAdj = adjacent.some(id => galaxy.hasWormhole(id, 'alpha'))
+    // System 25 = Quann (beta wormhole), System 40 (beta wormhole)
+    const hasBetaAdj = adjacent.some(id => galaxy.hasWormhole(id, 'beta'))
+
+    expect(hasAlphaAdj).toBe(true)
+    expect(hasBetaAdj).toBe(true)
+  })
+
+  test('+1 move from wormhole systems', () => {
+    const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+    game.run()
+
+    // Creuss has slipstream: +1 move from wormhole systems
+    // From home (which has alpha+beta wormholes), should get +1
+    const bonus = game.factionAbilities.getMovementBonus('dennis', 'creuss-home')
+    expect(bonus).toBe(1)
+
+    // From a non-wormhole system, no bonus
+    const noBonus = game.factionAbilities.getMovementBonus('dennis', '27')
+    expect(noBonus).toBe(0)
+
+    // Hacan gets no bonus
+    const hacanBonus = game.factionAbilities.getMovementBonus('micah', 'creuss-home')
+    expect(hacanBonus).toBe(0)
+  })
+
+  describe('Creuss Gate', () => {
+    test('Creuss Gate placed at home position, home system off-map', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      game.run()
+
+      // Creuss Gate should be at the home position
+      expect(game.state.systems['creuss-gate']).toBeDefined()
+      expect(game.state.systems['creuss-gate'].position).toEqual({ q: 0, r: -3 })
+
+      // Creuss home should be off-map
+      expect(game.state.systems['creuss-home']).toBeDefined()
+      expect(game.state.systems['creuss-home'].position).toEqual({ q: 99, r: 99 })
+    })
+
+    test('Creuss home and gate are wormhole-adjacent via delta', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      game.run()
+
+      const { Galaxy } = require('../../model/Galaxy.js')
+      const galaxy = new Galaxy(game)
+
+      // Both have delta wormhole → adjacent
+      const gateAdj = galaxy.getAdjacent('creuss-gate')
+      expect(gateAdj).toContain('creuss-home')
+
+      const homeAdj = galaxy.getAdjacent('creuss-home')
+      expect(homeAdj).toContain('creuss-gate')
+    })
+
+    test('starting units placed on creuss-home, not creuss-gate', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      game.run()
+
+      // Starting units should be on creuss-home
+      const homeSpace = game.state.units['creuss-home'].space
+        .filter(u => u.owner === 'dennis')
+      expect(homeSpace.length).toBeGreaterThan(0)
+
+      // Creuss-gate should have no units
+      const gateSpace = game.state.units['creuss-gate'].space
+      expect(gateSpace.length).toBe(0)
+
+      // Planet units on creuss (in creuss-home system)
+      const creussPlanet = game.state.units['creuss-home'].planets['creuss']
+        .filter(u => u.owner === 'dennis')
+      expect(creussPlanet.length).toBeGreaterThan(0)
+    })
+  })
+})
