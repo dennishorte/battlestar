@@ -53,8 +53,8 @@ describe('Turnwrest Plow', () => {
     game.run()
 
     t.choose(game, 'Cultivation')
-    t.choose(game, '0,2') // Mandatory plow from allowsPlowing
-    t.choose(game, 'Skip plowing') // Skip plowAndOrSow optional plow
+    t.choose(game, 'Plow a field')
+    t.choose(game, '0,2')
 
     // onAction fires with plow-sow → Turnwrest Plow triggers
     t.choose(game, 'Plow a field from Turnwrest Plow (2 remaining)')

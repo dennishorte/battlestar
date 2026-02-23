@@ -2909,7 +2909,7 @@ class AgricolaActionManager extends BaseActionManager {
       this.takeStartingPlayer(player)
     }
 
-    if (action.allowsPlowing) {
+    if (action.allowsPlowing && !action.allowsSowing) {
       let plowCount = action.allowsPlowing
       for (const card of this.game.getPlayerActiveCards(player)) {
         if (card.hasHook('modifyPlowCount')) {

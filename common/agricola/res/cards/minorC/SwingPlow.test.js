@@ -90,8 +90,8 @@ describe('Swing Plow', () => {
 
     // Take Cultivation (plow-sow) — Swing Plow should NOT trigger
     t.choose(game, 'Cultivation')
-    t.choose(game, '0,2') // Mandatory plow from allowsPlowing
-    t.choose(game, 'Skip plowing') // plowAndOrSow optional plow
+    t.choose(game, 'Plow a field')
+    t.choose(game, '0,2')
 
     // No Swing Plow prompt should appear — charges remain at 4
     expect(game.cardState('swing-plow-c019').charges).toBe(4)
