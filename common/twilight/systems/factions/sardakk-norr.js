@@ -19,7 +19,7 @@ module.exports = {
   tekklarConditioning(ctx, player) {
     // Choose a system to target (must have planets with opponent ground forces)
     const targetableSystems = []
-    for (const [systemId, systemData] of Object.entries(ctx.state.systems)) {
+    for (const [systemId] of Object.entries(ctx.state.systems)) {
       const tile = ctx.game.res.getSystemTile(systemId) || ctx.game.res.getSystemTile(Number(systemId))
       if (!tile || !tile.planets || tile.planets.length === 0) {
         continue

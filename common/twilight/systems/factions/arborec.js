@@ -244,7 +244,7 @@ module.exports = {
       return
     }
 
-    let totalProduced = 0
+    // Track production across all systems
 
     // For each system with ground forces, allow production of up to 2 units
     for (const systemId of systemsWithGround) {
@@ -292,7 +292,6 @@ module.exports = {
             }
           }
           systemProduced++
-          totalProduced++
         }
       }
 
