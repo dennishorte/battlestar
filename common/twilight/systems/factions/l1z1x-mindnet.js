@@ -1,4 +1,114 @@
 module.exports = {
+  componentActions: [
+    {
+      id: 'l1z1x-hero',
+      name: 'The Helmsman',
+      abilityId: 'harrow',  // reuse faction ability ID for availability gate
+      isAvailable: function(player) {
+        return player.isHeroUnlocked() && !player.isHeroPurged()
+      },
+    },
+  ],
+
+  // ---------------------------------------------------------------------------
+  // Hero — The Helmsman: DARK SPACE NAVIGATION
+  // ACTION: Choose a system that does not contain other players' ships;
+  // place your flagship and up to 2 dreadnoughts from your reinforcements
+  // in that system. Then, purge this card.
+  // ---------------------------------------------------------------------------
+
+  l1z1xHero(ctx, player) {
+    // Find systems without other players' ships
+    const eligibleSystems = []
+    for (const [systemId, _systemData] of Object.entries(ctx.state.systems)) {
+      const systemUnits = ctx.state.units[systemId]
+      if (!systemUnits) {
+        // No units at all in this system — eligible (no opponent ships)
+        eligibleSystems.push(systemId)
+        continue
+      }
+      const hasOpponentShips = systemUnits.space.some(
+        u => u.owner !== player.name
+      )
+      if (!hasOpponentShips) {
+        eligibleSystems.push(systemId)
+      }
+    }
+
+    if (eligibleSystems.length === 0) {
+      player.purgeHero()
+      ctx.log.add({
+        template: '{player} purges The Helmsman but no eligible systems',
+        args: { player: player.name },
+      })
+      return
+    }
+
+    const systemSelection = ctx.actions.choose(player, eligibleSystems, {
+      title: 'Dark Space Navigation: Choose system to place flagship + dreadnoughts',
+    })
+    const targetSystem = systemSelection[0]
+
+    // Place flagship
+    ctx.game._addUnit(targetSystem, 'space', 'flagship', player.name)
+
+    // Place up to 2 dreadnoughts
+    for (let i = 0; i < 2; i++) {
+      const choice = ctx.actions.choose(player, ['Place Dreadnought', 'Done'], {
+        title: `Dark Space Navigation: Place dreadnought ${i + 1}/2?`,
+      })
+      if (choice[0] === 'Done') {
+        break
+      }
+      ctx.game._addUnit(targetSystem, 'space', 'dreadnought', player.name)
+    }
+
+    player.purgeHero()
+    ctx.log.add({
+      template: 'Dark Space Navigation: {player} places flagship and dreadnoughts in {system}',
+      args: { player: player.name, system: targetSystem },
+    })
+  },
+
+  // ---------------------------------------------------------------------------
+  // Fealty Uplink (faction tech): When you score a public objective, if you
+  // have more command tokens on the game board than each other player, gain
+  // 1 command token.
+  // ---------------------------------------------------------------------------
+
+  onPublicObjectiveScored(player, ctx) {
+    if (!player.hasTechnology('fealty-uplink')) {
+      return
+    }
+
+    // Count command tokens on the board for each player
+    const tokenCounts = {}
+    for (const p of ctx.players.all()) {
+      tokenCounts[p.name] = 0
+    }
+
+    for (const [_systemId, systemData] of Object.entries(ctx.state.systems)) {
+      for (const tokenOwner of (systemData.commandTokens || [])) {
+        if (tokenCounts[tokenOwner] !== undefined) {
+          tokenCounts[tokenOwner]++
+        }
+      }
+    }
+
+    const playerTokens = tokenCounts[player.name]
+    const hasMoreThanAll = ctx.players.all()
+      .filter(p => p.name !== player.name)
+      .every(p => playerTokens > (tokenCounts[p.name] || 0))
+
+    if (hasMoreThanAll) {
+      player.commandTokens.tactics += 1
+      ctx.log.add({
+        template: 'Fealty Uplink: {player} gains 1 command token (most tokens on board)',
+        args: { player: player.name },
+      })
+    }
+  },
+
   // ---------------------------------------------------------------------------
   // Assimilate: When you gain control of a planet, replace each PDS and space
   // dock on that planet with a matching unit from your reinforcements.

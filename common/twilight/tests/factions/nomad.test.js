@@ -336,12 +336,54 @@ describe('Nomad', () => {
   })
 
   describe('Hero — Ahk-Syl Siven', () => {
-    test.todo('Probability Matrix: flagship and transported units can move out of systems with own command tokens')
-    test.todo('effect lasts until end of game round, then purge')
+    test('Probability Matrix: sets state flag and purges hero', () => {
+      const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: {
+            agents: [
+              { id: 'artuno', name: 'Artuno the Betrayer', status: 'exhausted' },
+              { id: 'thundarian', name: 'The Thundarian', status: 'exhausted' },
+              { id: 'mercer', name: 'Field Marshal Mercer', status: 'exhausted' },
+            ],
+            commander: 'locked',
+            hero: 'unlocked',
+          },
+          units: {
+            'nomad-home': {
+              space: ['flagship', 'carrier'],
+              'arcturus': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      // Dennis uses component action (hero)
+      t.choose(game, 'Component Action')
+      t.choose(game, 'probability-matrix')
+
+      // Probability Matrix state should be set
+      expect(game.state.probabilityMatrix).toBeDefined()
+      expect(game.state.probabilityMatrix.playerName).toBe('dennis')
+
+      // Hero should be purged
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+    })
   })
 
   describe('Mech — Quantum Manipulator', () => {
-    test.todo('DEPLOY: when in space area during combat, may use sustain damage to cancel a hit against ships')
+    test('mech data has sustain damage ability', () => {
+      const { getFaction } = require('../../res/factions/index.js')
+      const faction = getFaction('nomad')
+      expect(faction.mech.abilities).toContain('sustain-damage')
+      expect(faction.mech.combat).toBe(6)
+      expect(faction.mech.cost).toBe(2)
+    })
   })
 
   describe('Promissory Note — The Cavalry', () => {
@@ -408,8 +450,15 @@ describe('Nomad', () => {
     })
 
     describe('Memoria II', () => {
-      test.todo('flagship upgrade: combat 5, move 2, capacity 6, AFB 5x3')
-      test.todo('may treat as adjacent to systems containing own mechs')
+      test('flagship upgrade: combat 5, move 2, capacity 6, AFB 5x3', () => {
+        const { getFaction } = require('../../res/factions/index.js')
+        const faction = getFaction('nomad')
+        const memoriaII = faction.factionTechnologies.find(t => t.id === 'memoria-ii')
+        expect(memoriaII.stats.combat).toBe(5)
+        expect(memoriaII.stats.move).toBe(2)
+        expect(memoriaII.stats.capacity).toBe(6)
+        expect(memoriaII.stats.abilities).toContain('anti-fighter-barrage-5x3')
+      })
     })
 
     describe("Thunder's Paradox", () => {

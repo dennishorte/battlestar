@@ -100,6 +100,11 @@ class FactionAbilities {
     return handler?.getCustodiansCost?.(player, this) ?? 6
   }
 
+  canBypassHomeSystemCheck(player) {
+    const handler = this._getPlayerHandler(player)
+    return handler?.canBypassHomeSystemCheck?.(player, this) ?? false
+  }
+
   canMoveThroughSupernovae(playerName) {
     const player = this.players.byName(playerName)
     const handler = this._getPlayerHandler(player)
@@ -186,6 +191,17 @@ class FactionAbilities {
     const player = this.players.byName(shooterName)
     const handler = this._getPlayerHandler(player)
     return handler?.getRaidFormationExcessHits?.(player, this, totalHits, fightersDestroyed) ?? 0
+  }
+
+  /**
+   * Returns the number of bonus dice that one unit gets when rolling for a unit
+   * ability (AFB, space cannon, bombardment).
+   * (e.g., Argent Flight Commander Trrakan Aun Zulok grants +1 die to one unit)
+   */
+  getUnitAbilityBonusDice(shooterName) {
+    const player = this.players.byName(shooterName)
+    const handler = this._getPlayerHandler(player)
+    return handler?.getUnitAbilityBonusDice?.(player, this) ?? 0
   }
 
   getHomeSystemWormholes(systemId) {
@@ -908,6 +924,54 @@ class FactionAbilities {
     }
 
     return modifier
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // W. Public Objective Triggers
+  // ---------------------------------------------------------------------------
+
+  onPublicObjectiveScored(scoringPlayer) {
+    const handler = this._getPlayerHandler(scoringPlayer)
+    handler?.onPublicObjectiveScored?.(scoringPlayer, this)
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // X. Ship Movement Triggers
+  // ---------------------------------------------------------------------------
+
+  afterShipsMove(playerName, systemId, movedShips) {
+    const player = this.players.byName(playerName)
+    const handler = this._getPlayerHandler(player)
+    handler?.afterShipsMove?.(player, this, { systemId, movedShips })
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // Y. Invasion Influence Cost
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Returns the extra influence cost an invading player must spend to commit
+   * ground forces to a planet (e.g., Keleres mech Omniopiares).
+   */
+  getInvasionInfluenceCost(planetId, systemId, invadingPlayerName) {
+    let totalCost = 0
+    for (const player of this.players.all()) {
+      if (player.name === invadingPlayerName) {
+        continue
+      }
+      const handler = this._getPlayerHandler(player)
+      if (handler?.getInvasionInfluenceCost) {
+        totalCost += handler.getInvasionInfluenceCost(player, this, {
+          planetId,
+          systemId,
+          invadingPlayer: invadingPlayerName,
+        })
+      }
+    }
+    return totalCost
   }
 }
 

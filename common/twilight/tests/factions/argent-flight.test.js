@@ -281,13 +281,155 @@ describe('Argent Flight', () => {
   })
 
   describe('Commander — Trrakan Aun Zulok', () => {
-    test.todo('when units roll for a unit ability, one unit may roll 1 additional die')
-    test.todo('unlock condition: have 6 units with AFB, space cannon, or bombardment on the board')
-    test.todo('locked commander gives no bonus')
+    test('when units roll for a unit ability, one unit may roll 1 additional die', () => {
+      const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
+          units: {
+            'argent-home': {
+              space: ['destroyer', 'destroyer'],
+              'valk': ['infantry', 'infantry', 'pds'],
+              'avar': ['infantry', 'infantry'],
+              'ylir': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      // Commander is unlocked, so bonus dice should be 1
+      const bonus = game.factionAbilities.getUnitAbilityBonusDice('dennis')
+      expect(bonus).toBe(1)
+    })
+
+    test('unlock condition: have 6 units with AFB, space cannon, or bombardment on the board', () => {
+      // Test that the unlock condition requires 6 units with combat abilities
+      const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          // Start with commander locked and place exactly 6 units with abilities:
+          // 2 destroyers (AFB) + 4 PDS (space cannon) = 6 total
+          leaders: { agent: 'ready', commander: 'locked', hero: 'locked' },
+          units: {
+            'argent-home': {
+              space: ['destroyer', 'destroyer'],
+              'valk': ['infantry', 'infantry', 'pds', 'pds'],
+              'avar': ['infantry', 'infantry'],
+              'ylir': ['infantry', 'space-dock'],
+            },
+            '27': {
+              'new-albion': ['pds', 'pds'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      // Verify the count is >= 6 (2 destroyers + 4 PDS)
+      const count = game._countCombatAbilityUnits('dennis')
+      expect(count).toBe(6)
+    })
+
+    test('locked commander gives no bonus', () => {
+      const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'argent-home': {
+              space: ['destroyer', 'destroyer'],
+              'valk': ['infantry', 'infantry', 'pds'],
+              'avar': ['infantry', 'infantry'],
+              'ylir': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      // Commander is locked, so no bonus dice
+      const bonus = game.factionAbilities.getUnitAbilityBonusDice('dennis')
+      expect(bonus).toBe(0)
+    })
   })
 
   describe('Hero — Mirik Aun Sissiri', () => {
-    test.todo('Helix Protocol: move any number of ships to systems with own command tokens and no enemy ships, then purge')
+    test('Helix Protocol: move ships to systems with own command tokens and no enemy ships, then purge', () => {
+      const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        systemTokens: {
+          '26': ['dennis'],  // Dennis has a command token in system 26
+        },
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          units: {
+            'argent-home': {
+              space: ['carrier', 'destroyer'],
+              'valk': ['infantry', 'infantry', 'pds'],
+              'avar': ['infantry', 'infantry'],
+              'ylir': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      // Dennis uses Component Action -> Helix Protocol
+      t.choose(game, 'Component Action')
+      t.choose(game, 'helix-protocol')
+
+      // Choose to move 1 destroyer from argent-home
+      // (choices: Skip this system, Move 1 carrier from argent-home, Move 1 destroyer from argent-home, etc.)
+      t.choose(game, 'Move 1 destroyer from argent-home')
+      // System 26 is the only target (has Dennis's command token, no enemy ships), auto-selected
+
+      // Verify: destroyer moved to system 26
+      const ships26 = game.state.units['26'].space.filter(u => u.owner === 'dennis')
+      expect(ships26.length).toBe(1)
+      expect(ships26[0].type).toBe('destroyer')
+
+      // Carrier should still be at home
+      const shipsHome = game.state.units['argent-home'].space.filter(u => u.owner === 'dennis')
+      expect(shipsHome.length).toBe(1)
+      expect(shipsHome[0].type).toBe('carrier')
+
+      // Hero should be purged
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+    })
+
+    test('hero is purged even with no valid target systems', () => {
+      const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        // No command tokens anywhere
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          units: {
+            'argent-home': {
+              space: ['carrier', 'destroyer'],
+              'valk': ['infantry', 'infantry', 'pds'],
+              'avar': ['infantry', 'infantry'],
+              'ylir': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      // Dennis uses Component Action -> Helix Protocol
+      t.choose(game, 'Component Action')
+      t.choose(game, 'helix-protocol')
+
+      // No valid target systems, so hero is purged immediately
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+    })
   })
 
   describe('Mech — Aerie Sentinel', () => {

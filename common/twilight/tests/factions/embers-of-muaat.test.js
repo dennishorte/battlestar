@@ -214,7 +214,71 @@ describe('Embers of Muaat', () => {
   })
 
   describe('Mech — Ember Colossus', () => {
-    test.todo('DEPLOY: when Star Forge is used in this or adjacent system, place 1 infantry with this mech')
+    test('DEPLOY: when Star Forge is used, place 1 infantry with each mech in the system', () => {
+      const game = t.fixture({ factions: ['embers-of-muaat', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          units: {
+            'muaat-home': {
+              space: ['war-sun', 'fighter', 'fighter'],
+              'muaat': ['mech', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Count infantry before Star Forge
+      const infantryBefore = (game.state.units['muaat-home'].planets?.['muaat'] || [])
+        .filter(u => u.owner === 'dennis' && u.type === 'infantry').length
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'star-forge')
+      t.choose(game, '2 Fighters')
+
+      // Ember Colossus DEPLOY should trigger: 1 mech on muaat => 1 infantry placed
+      const infantryAfter = (game.state.units['muaat-home'].planets?.['muaat'] || [])
+        .filter(u => u.owner === 'dennis' && u.type === 'infantry').length
+      expect(infantryAfter).toBe(infantryBefore + 1)
+
+      // Verify log
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(t => t.includes('Ember Colossus'))).toBe(true)
+    })
+
+    test('DEPLOY: does not trigger if no mechs in system or adjacent', () => {
+      const game = t.fixture({ factions: ['embers-of-muaat', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          units: {
+            'muaat-home': {
+              space: ['war-sun', 'fighter', 'fighter'],
+              'muaat': ['infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      const infantryBefore = (game.state.units['muaat-home'].planets?.['muaat'] || [])
+        .filter(u => u.owner === 'dennis' && u.type === 'infantry').length
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'star-forge')
+      t.choose(game, '2 Fighters')
+
+      // No mech => no Ember Colossus DEPLOY
+      const infantryAfter = (game.state.units['muaat-home'].planets?.['muaat'] || [])
+        .filter(u => u.owner === 'dennis' && u.type === 'infantry').length
+      expect(infantryAfter).toBe(infantryBefore)
+
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(t => t.includes('Ember Colossus'))).toBe(false)
+    })
   })
 
   describe('Promissory Note — Fires of the Gashlai', () => {

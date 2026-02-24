@@ -1,5 +1,9 @@
 const t = require('../../testutil.js')
 
+function pickStrategyCards(game, dennisCard, micahCard) {
+  t.choose(game, dennisCard)
+  t.choose(game, micahCard)
+}
 
 describe('Ghosts of Creuss', () => {
   describe('Data', () => {
@@ -153,11 +157,120 @@ describe('Ghosts of Creuss', () => {
 
   describe('Commander — Sai Seravus', () => {
     test.todo('unlock condition: have units in 3 systems that contain alpha or beta wormholes')
-    test.todo('after ships move through wormholes, place 1 fighter with each capacity ship that moved through a wormhole')
+
+    test('afterShipsMove handler places fighters when commander unlocked and ships moved through wormhole', () => {
+      const { getHandler } = require('../../systems/factions/index.js')
+      const handler = getHandler('ghosts-of-creuss')
+      expect(handler.afterShipsMove).toBeDefined()
+
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
+          units: {
+            '26': {
+              space: ['carrier', 'cruiser'],
+            },
+            'creuss-home': {
+              creuss: ['space-dock', 'infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+
+      // Call the handler directly: carrier moved through wormhole, cruiser didn't
+      handler.afterShipsMove(dennis, game.factionAbilities, {
+        systemId: '26',
+        movedShips: [
+          { owner: 'dennis', type: 'carrier', movedThroughWormhole: true },
+          { owner: 'dennis', type: 'cruiser', movedThroughWormhole: false },
+        ],
+      })
+
+      // Only the carrier has capacity and moved through wormhole => 1 fighter placed
+      const fighters = game.state.units['26'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'fighter')
+      expect(fighters.length).toBe(1)
+    })
+
+    test('afterShipsMove does nothing when commander is locked', () => {
+      const { getHandler } = require('../../systems/factions/index.js')
+      const handler = getHandler('ghosts-of-creuss')
+
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            '26': {
+              space: ['carrier'],
+            },
+            'creuss-home': {
+              creuss: ['space-dock', 'infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+
+      handler.afterShipsMove(dennis, game.factionAbilities, {
+        systemId: '26',
+        movedShips: [
+          { owner: 'dennis', type: 'carrier', movedThroughWormhole: true },
+        ],
+      })
+
+      // No fighter placed because commander is locked
+      const fighters = game.state.units['26'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'fighter')
+      expect(fighters.length).toBe(0)
+    })
   })
 
   describe('Hero — Riftwalker Meian', () => {
-    test.todo('SINGULARITY REACTOR: swap positions of any 2 systems that contain wormholes or your units, then purge')
+    test('SINGULARITY REACTOR: swap positions of any 2 systems that contain wormholes or your units, then purge', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          units: {
+            '27': {
+              space: ['cruiser'],
+            },
+            'creuss-home': {
+              creuss: ['space-dock', 'infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      const pos26Before = { ...game.state.systems['26'].position }
+      const pos27Before = { ...game.state.systems['27'].position }
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'creuss-hero')
+
+      // System 26 has alpha wormhole, system 27 has dennis' cruiser
+      // Use * prefix to prevent digit-to-number conversion
+      t.choose(game, '*26')
+      t.choose(game, '*27')
+
+      // Positions should be swapped
+      expect(game.state.systems['26'].position).toEqual(pos27Before)
+      expect(game.state.systems['27'].position).toEqual(pos26Before)
+
+      // Hero should be purged
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+    })
   })
 
   describe('Mech — Icarus Drive', () => {

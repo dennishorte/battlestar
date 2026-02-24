@@ -2051,6 +2051,9 @@ Twilight.prototype._antiFighterBarrage = function(systemId, attacker, defender) 
     const shooterPlayer = this.players.byName(shooter)
     const hasSWAII = shooterPlayer && shooterPlayer.hasTechnology('strike-wing-alpha-ii')
 
+    // Commander bonus: +N dice to the first unit that fires (e.g., Argent Commander)
+    let commanderBonusDice = this.factionAbilities.getUnitAbilityBonusDice(shooter)
+
     for (const ship of ships) {
       const unitDef = this._getUnitStats(ship.owner, ship.type)
       if (!unitDef) {
@@ -2065,7 +2068,13 @@ Twilight.prototype._antiFighterBarrage = function(systemId, attacker, defender) 
 
       const parts = afbAbility.replace('anti-fighter-barrage-', '').split('x')
       const combatValue = parseInt(parts[0])
-      const diceCount = parseInt(parts[1])
+      let diceCount = parseInt(parts[1])
+
+      // Apply commander bonus dice to the first unit that fires
+      if (commanderBonusDice > 0) {
+        diceCount += commanderBonusDice
+        commanderBonusDice = 0
+      }
 
       for (let i = 0; i < diceCount; i++) {
         const roll = Math.floor(this.random() * 10) + 1
@@ -2393,6 +2402,9 @@ Twilight.prototype._bombardment = function(systemId, planetId, attackerName) {
   const attackerPlayer = this.players.byName(attackerName)
   let plasmaUsed = false
 
+  // Commander bonus: +N dice to the first unit that fires (e.g., Argent Commander)
+  let commanderBonusDice = this.factionAbilities.getUnitAbilityBonusDice(attackerName)
+
   for (const ship of attackerShips) {
     const unitDef = this._getUnitStats(ship.owner, ship.type)
     if (!unitDef) {
@@ -2419,6 +2431,12 @@ Twilight.prototype._bombardment = function(systemId, planetId, attackerName) {
     if (!plasmaUsed && attackerPlayer.hasTechnology('plasma-scoring')) {
       diceCount++
       plasmaUsed = true
+    }
+
+    // Commander bonus dice to the first unit that fires
+    if (commanderBonusDice > 0) {
+      diceCount += commanderBonusDice
+      commanderBonusDice = 0
     }
 
     for (let i = 0; i < diceCount; i++) {
@@ -2475,6 +2493,7 @@ Twilight.prototype._spaceCannonOffense = function(activePlayer, systemId) {
   // Collect all PDS that can fire at this system
   let totalHits = 0
   const plasmaUsedByOwner = {}  // Plasma Scoring: track per-owner first-unit bonus
+  const commanderBonusUsedByOwner = {}  // Commander bonus: track per-owner first-unit bonus
   // Antimass Deflectors: +1 combat value when firing at target with this tech
   const antimassDefense = activePlayer.hasTechnology('antimass-deflectors') ? 1 : 0
 
@@ -2494,6 +2513,14 @@ Twilight.prototype._spaceCannonOffense = function(activePlayer, systemId) {
           if (owner && owner.hasTechnology('plasma-scoring')) {
             extraDice = 1
             plasmaUsedByOwner[unit.owner] = true
+          }
+        }
+        // Commander bonus: +N dice for first unit ability per owner
+        if (!commanderBonusUsedByOwner[unit.owner]) {
+          const bonus = this.factionAbilities.getUnitAbilityBonusDice(unit.owner)
+          if (bonus > 0) {
+            extraDice += bonus
+            commanderBonusUsedByOwner[unit.owner] = true
           }
         }
         totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense)
@@ -2573,6 +2600,14 @@ Twilight.prototype._spaceCannonOffense = function(activePlayer, systemId) {
           if (!plasmaUsedByOwner[unit.owner] && owner.hasTechnology('plasma-scoring')) {
             extraDice = 1
             plasmaUsedByOwner[unit.owner] = true
+          }
+          // Commander bonus: +N dice for first unit ability per owner
+          if (!commanderBonusUsedByOwner[unit.owner]) {
+            const bonus = this.factionAbilities.getUnitAbilityBonusDice(unit.owner)
+            if (bonus > 0) {
+              extraDice += bonus
+              commanderBonusUsedByOwner[unit.owner] = true
+            }
           }
           totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense)
         }
@@ -2672,6 +2707,7 @@ Twilight.prototype._spaceCannonDefense = function(systemId, planetId, attackerNa
   let totalHits = 0
   const planetUnits = systemUnits.planets[planetId] || []
   let defenderPlasmaUsed = false
+  let defenderCommanderBonusUsed = false
   // Antimass Deflectors: +1 combat value when firing at target with this tech
   const antimassDefense = attackerPlayer && attackerPlayer.hasTechnology('antimass-deflectors') ? 1 : 0
 
@@ -2692,6 +2728,14 @@ Twilight.prototype._spaceCannonDefense = function(systemId, planetId, attackerNa
         if (defender && defender.hasTechnology('plasma-scoring')) {
           extraDice = 1
           defenderPlasmaUsed = true
+        }
+      }
+      // Commander bonus: +N dice for first unit ability
+      if (!defenderCommanderBonusUsed) {
+        const bonus = this.factionAbilities.getUnitAbilityBonusDice(defenderName)
+        if (bonus > 0) {
+          extraDice += bonus
+          defenderCommanderBonusUsed = true
         }
       }
       totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense)
@@ -4961,6 +5005,37 @@ Twilight.prototype._initObjectiveDecks = function() {
   }
 }
 
+/**
+ * Check if a player controls all planets in their home system.
+ * Required to score public objectives (unless faction has Nomadic or similar ability).
+ */
+Twilight.prototype._controlsHomeSystemPlanets = function(player) {
+  // Saar Nomadic: bypass home system check
+  if (this.factionAbilities.canBypassHomeSystemCheck(player)) {
+    return true
+  }
+
+  const faction = player.faction
+  if (!faction || !faction.homeSystem) {
+    return true
+  }
+
+  const homeSystemId = faction.homeSystem
+  const tile = res.getSystemTile(homeSystemId) || res.getSystemTile(Number(homeSystemId))
+  if (!tile || !tile.planets || tile.planets.length === 0) {
+    return true
+  }
+
+  // Check that each planet in the home system is controlled by this player
+  for (const planetId of tile.planets) {
+    const planetState = this.state.planets[planetId]
+    if (!planetState || planetState.controller !== player.name) {
+      return false
+    }
+  }
+  return true
+}
+
 Twilight.prototype._scoreObjectives = function() {
   // Each player in initiative order may score 1 public objective and 1 secret objective
   const revealedObjectives = this.state.revealedObjectives || []
@@ -4972,7 +5047,11 @@ Twilight.prototype._scoreObjectives = function() {
     const playerScored = this.state.scoredObjectives[player.name] || []
 
     // --- Public Objective Scoring ---
-    if (revealedObjectives.length > 0) {
+    // Must control all home system planets to score public objectives
+    // (unless faction has Nomadic or similar bypass ability)
+    const controlsHome = this._controlsHomeSystemPlanets(player)
+
+    if (revealedObjectives.length > 0 && controlsHome) {
       // Find which revealed public objectives this player can score
       const scorable = revealedObjectives.filter(objId => {
         if (playerScored.includes(objId)) {

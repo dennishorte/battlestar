@@ -135,11 +135,143 @@ describe('Yssaril Tribes', () => {
   })
 
   describe('Hero — Kyver, Blade and Key', () => {
-    test.todo('Guild of Spies: see and take/discard opponent action cards, then purge')
+    test('Guild of Spies: take action card from opponent, then purge', () => {
+      const game = t.fixture({
+        factions: ['yssaril-tribes', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          actionCards: ['focused-research'],
+        },
+        micah: {
+          actionCards: ['mining-initiative', 'ghost-ship', 'plague'],
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'yssaril-hero')
+
+      // Micah shows 1 card (opponent chooses)
+      t.choose(game, 'mining-initiative')
+
+      // Dennis decides to take it
+      t.choose(game, 'Take mining-initiative')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.actionCards.map(c => c.id)).toContain('mining-initiative')
+      expect(dennis.isHeroPurged()).toBe(true)
+
+      const micah = game.players.byName('micah')
+      expect(micah.actionCards.map(c => c.id)).not.toContain('mining-initiative')
+    })
+
+    test('Guild of Spies: force opponent to discard 3 action cards', () => {
+      const game = t.fixture({
+        factions: ['yssaril-tribes', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          actionCards: ['focused-research'],
+        },
+        micah: {
+          actionCards: ['mining-initiative', 'ghost-ship', 'plague', 'uprising'],
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'yssaril-hero')
+
+      // Micah shows 1 card
+      t.choose(game, 'mining-initiative')
+
+      // Dennis forces discard 3
+      t.choose(game, 'Force Discard 3')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+
+      // Micah started with 4, showed 1 (mining-initiative), but dennis forced discard 3
+      // So micah should have 1 card remaining
+      const micah = game.players.byName('micah')
+      expect(micah.actionCards.length).toBe(1)
+    })
   })
 
   describe('Mech — Blackshade Infiltrator', () => {
-    test.todo('DEPLOY: after Stall Tactics, place 1 mech on controlled planet')
+    test('DEPLOY: after Stall Tactics, offer to place 1 mech on controlled planet', () => {
+      const game = t.fixture({
+        factions: ['yssaril-tribes', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          actionCards: ['focused-research', 'mining-initiative'],
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'space-dock'],
+            },
+          },
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'stall-tactics')
+      t.choose(game, 'focused-research')
+
+      // Blackshade Infiltrator DEPLOY: choose to deploy mech
+      t.choose(game, 'Deploy Blackshade Infiltrator')
+
+      // Choose planet (multiple controlled planets including home world)
+      t.choose(game, 'new-albion')
+
+      // Check for mech placement
+      const planetUnits = game.state.units['27'].planets?.['new-albion'] || []
+      const mechs = planetUnits.filter(u => u.owner === 'dennis' && u.type === 'mech')
+      expect(mechs.length).toBe(1)
+    })
+
+    test('DEPLOY: can pass on mech deployment', () => {
+      const game = t.fixture({
+        factions: ['yssaril-tribes', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          actionCards: ['focused-research', 'mining-initiative'],
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'space-dock'],
+            },
+          },
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'stall-tactics')
+      t.choose(game, 'focused-research')
+
+      // Pass on mech deploy
+      t.choose(game, 'Pass')
+
+      // No mech placed
+      const planetUnits = game.state.units['27'].planets?.['new-albion'] || []
+      const mechs = planetUnits.filter(u => u.owner === 'dennis' && u.type === 'mech')
+      expect(mechs.length).toBe(0)
+    })
   })
 
   describe('Promissory Note — Spy Net', () => {

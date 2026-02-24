@@ -141,4 +141,176 @@ module.exports = {
       args: { player: argentPlayer.name, planet: target.planetId },
     })
   },
+
+  // Commander — Trrakan Aun Zulok: When 1 or more of your units make a roll
+  // for a unit ability (AFB, space cannon, bombardment), you may choose 1 of
+  // those units to roll 1 additional die.
+  getUnitAbilityBonusDice(player, _ctx) {
+    if (!player.isCommanderUnlocked()) {
+      return 0
+    }
+    return 1
+  },
+
+  commanderEffect: {
+    timing: 'unit-ability-bonus-dice',
+    apply: (_player, _context) => {
+      return 1 // +1 die to one unit's ability roll
+    },
+  },
+
+  // Hero — Mirik Aun Sissiri: HELIX PROTOCOL
+  // Move any number of your ships from any systems to any number of other
+  // systems that contain 1 of your command tokens and no other players' ships.
+  // Then, purge this card.
+  componentActions: [
+    {
+      id: 'helix-protocol',
+      name: 'Mirik Aun Sissiri (Helix Protocol)',
+      abilityId: 'raid-formation', // Argent players have this ability
+      isAvailable: (player) => player.isHeroUnlocked() && !player.isHeroPurged(),
+    },
+  ],
+
+  helixProtocol(ctx, player) {
+    // Find all systems that contain the player's command tokens and no enemy ships
+    const targetSystems = []
+    for (const [systemId, systemData] of Object.entries(ctx.state.systems)) {
+      if (!systemData.commandTokens || !systemData.commandTokens.includes(player.name)) {
+        continue
+      }
+      const systemUnits = ctx.state.units[systemId]
+      if (!systemUnits) {
+        continue
+      }
+      // No other players' ships allowed
+      const hasEnemyShips = systemUnits.space.some(u => u.owner !== player.name)
+      if (hasEnemyShips) {
+        continue
+      }
+      targetSystems.push(systemId)
+    }
+
+    if (targetSystems.length === 0) {
+      ctx.log.add({
+        template: '{player} activates Helix Protocol but has no valid target systems',
+        args: { player: player.name },
+      })
+      player.purgeHero()
+      ctx.log.add({
+        template: '{player} purges Mirik Aun Sissiri',
+        args: { player: player.name },
+      })
+      return
+    }
+
+    // Find all systems that have the player's ships
+    const sourceSystems = []
+    for (const [systemId, systemUnits] of Object.entries(ctx.state.units)) {
+      const ownShips = systemUnits.space.filter(u => u.owner === player.name)
+      if (ownShips.length > 0) {
+        sourceSystems.push(systemId)
+      }
+    }
+
+    if (sourceSystems.length === 0) {
+      ctx.log.add({
+        template: '{player} activates Helix Protocol but has no ships to move',
+        args: { player: player.name },
+      })
+      player.purgeHero()
+      ctx.log.add({
+        template: '{player} purges Mirik Aun Sissiri',
+        args: { player: player.name },
+      })
+      return
+    }
+
+    // Build a list of movable ships across all source systems
+    let movedAny = false
+    for (const sourceSystem of sourceSystems) {
+      const systemUnits = ctx.state.units[sourceSystem]
+      const ownShips = systemUnits.space.filter(u => u.owner === player.name)
+      if (ownShips.length === 0) {
+        continue
+      }
+
+      // Group ships by type for choices
+      const shipCounts = {}
+      for (const ship of ownShips) {
+        shipCounts[ship.type] = (shipCounts[ship.type] || 0) + 1
+      }
+
+      // For each source system, ask what to move (or skip)
+      const moveChoices = ['Skip this system']
+      for (const [type, count] of Object.entries(shipCounts)) {
+        for (let n = 1; n <= count; n++) {
+          moveChoices.push(`Move ${n} ${type} from ${sourceSystem}`)
+        }
+      }
+
+      const selection = ctx.actions.choose(player, moveChoices, {
+        title: `Helix Protocol: Move ships from system ${sourceSystem}?`,
+      })
+
+      if (selection[0] === 'Skip this system') {
+        continue
+      }
+
+      // Parse selection: "Move N type from systemId"
+      const match = selection[0].match(/^Move (\d+) (.+) from (.+)$/)
+      if (!match) {
+        continue
+      }
+      const count = parseInt(match[1])
+      const unitType = match[2]
+
+      // Choose destination among target systems
+      let destSystem
+      if (targetSystems.length === 1) {
+        destSystem = targetSystems[0]
+      }
+      else {
+        const destChoice = ctx.actions.choose(player, targetSystems, {
+          title: `Helix Protocol: Choose destination for ${count} ${unitType}`,
+        })
+        destSystem = destChoice[0]
+      }
+
+      // Move the ships
+      let moved = 0
+      for (let i = 0; i < count; i++) {
+        const idx = systemUnits.space.findIndex(u => u.owner === player.name && u.type === unitType)
+        if (idx !== -1) {
+          const [ship] = systemUnits.space.splice(idx, 1)
+          if (!ctx.state.units[destSystem]) {
+            ctx.state.units[destSystem] = { space: [], planets: {} }
+          }
+          ctx.state.units[destSystem].space.push(ship)
+          moved++
+        }
+      }
+
+      if (moved > 0) {
+        movedAny = true
+        ctx.log.add({
+          template: 'Helix Protocol: {player} moves {count} {type} from system {from} to system {to}',
+          args: { player: player.name, count: moved, type: unitType, from: sourceSystem, to: destSystem },
+        })
+      }
+    }
+
+    if (!movedAny) {
+      ctx.log.add({
+        template: '{player} activates Helix Protocol but chose not to move any ships',
+        args: { player: player.name },
+      })
+    }
+
+    player.purgeHero()
+    ctx.log.add({
+      template: '{player} purges Mirik Aun Sissiri',
+      args: { player: player.name },
+    })
+  },
 }

@@ -185,6 +185,91 @@ module.exports = {
     })
   },
 
+  // ---------------------------------------------------------------------------
+  // Hero — Ahk-Syl Siven (PROBABILITY MATRIX)
+  // ---------------------------------------------------------------------------
+  // ACTION: Place this card near the game board; your flagship and units it
+  // transports can move out of systems that contain your command tokens during
+  // this game round. At the end of that game round, purge this card.
+
+  componentActions: [
+    {
+      id: 'probability-matrix',
+      name: 'Probability Matrix',
+      abilityId: 'the-company',  // Any ability works — real check is hero status
+      isAvailable: (player) => player.isHeroUnlocked() && !player.isHeroPurged(),
+    },
+  ],
+
+  probabilityMatrix(ctx, player) {
+    // Set the probability matrix flag for the rest of this game round
+    ctx.state.probabilityMatrix = {
+      playerName: player.name,
+      round: ctx.state.round,
+    }
+
+    ctx.log.add({
+      template: 'Probability Matrix: {player} activates — flagship can move from token systems this round',
+      args: { player: player.name },
+    })
+
+    // Mark hero as used (will be purged at end of round)
+    player.purgeHero()
+    ctx.log.add({
+      template: '{player} purges Ahk-Syl Siven',
+      args: { player: player.name },
+    })
+  },
+
+  // ---------------------------------------------------------------------------
+  // Mech — Quantum Manipulator
+  // ---------------------------------------------------------------------------
+  // While this unit is in a space area during combat, you may use its
+  // SUSTAIN DAMAGE ability to cancel a hit that is produced against your ships.
+
+  onHitsProduced(player, ctx, { targetOwner, systemId, hits, combatType }) {
+    if (combatType !== 'space') {
+      return hits
+    }
+    if (targetOwner !== player.name) {
+      return hits
+    }
+    if (hits <= 0) {
+      return hits
+    }
+
+    // Check if Nomad has a mech in the space area of this system
+    const systemUnits = ctx.state.units[systemId]
+    if (!systemUnits) {
+      return hits
+    }
+
+    const mechsInSpace = systemUnits.space.filter(
+      u => u.owner === player.name && u.type === 'mech' && !u.damaged
+    )
+
+    if (mechsInSpace.length === 0) {
+      return hits
+    }
+
+    const choice = ctx.actions.choose(player, ['Sustain Mech to Cancel Hit', 'Pass'], {
+      title: 'Quantum Manipulator: Sustain damage on mech to cancel 1 hit against ships?',
+    })
+
+    if (choice[0] === 'Sustain Mech to Cancel Hit') {
+      // Sustain damage on the mech
+      mechsInSpace[0].damaged = true
+      ctx.log.add({
+        template: 'Quantum Manipulator: {player} sustains damage on mech to cancel 1 hit',
+        args: { player: player.name },
+      })
+      return hits - 1
+    }
+
+    return hits
+  },
+
+
   onGroundCombatStart(player, ctx, { systemId, planetId, opponentName }) {
     if (!player.isAgentReady('mercer')) {
       return

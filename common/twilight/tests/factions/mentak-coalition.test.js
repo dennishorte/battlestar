@@ -417,7 +417,86 @@ describe('Mentak Coalition', () => {
   })
 
   describe('Hero — Ipswitch, Loose Cannon', () => {
-    test.todo('SLEEPER CELL: at start of space combat, purge to place copies of destroyed enemy ships')
+    test('SLEEPER CELL: hero activation sets flag and purges hero at start of combat', () => {
+      const game = t.fixture({
+        factions: ['mentak-coalition', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          units: {
+            'mentak-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'moll-primus': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'mentak-home', count: 5 }],
+      })
+
+      // Hero prompt at start of space combat
+      t.choose(game, 'Activate Sleeper Cell')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+
+      // Verify Sleeper Cell log
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(t => t.includes('Sleeper Cell'))).toBe(true)
+    })
+
+    test('can pass on hero activation', () => {
+      const game = t.fixture({
+        factions: ['mentak-coalition', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          units: {
+            'mentak-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'moll-primus': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'mentak-home', count: 5 }],
+      })
+
+      // Pass on hero
+      t.choose(game, 'Pass')
+
+      // Hero should NOT be purged
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(false)
+    })
   })
 
   describe('Mech — Moll Terminus', () => {

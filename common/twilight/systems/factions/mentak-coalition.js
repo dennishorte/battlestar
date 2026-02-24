@@ -5,6 +5,24 @@ module.exports = {
   onSpaceCombatStart(player, ctx, { systemId, opponentName }) {
     const systemUnits = ctx.state.units[systemId]
 
+    // --- Hero: Ipswitch, Loose Cannon — SLEEPER CELL ---
+    // At the start of space combat: purge to place copies of destroyed enemy
+    // ships during this combat
+    if (player.isHeroUnlocked() && !player.isHeroPurged()) {
+      const heroChoice = ctx.actions.choose(player, ['Activate Sleeper Cell', 'Pass'], {
+        title: 'Ipswitch, Loose Cannon: Purge to copy destroyed enemy ships during this combat?',
+      })
+      if (heroChoice[0] === 'Activate Sleeper Cell') {
+        ctx.state._mentakSleeperCell = player.name
+        player.purgeHero()
+        ctx.log.add({
+          template: 'Sleeper Cell: {player} activates Ipswitch',
+          args: { player: player.name },
+        })
+      }
+    }
+
+    // --- Ambush ---
     // Find eligible ships: cruisers and destroyers belonging to this player
     const eligible = systemUnits.space.filter(
       u => u.owner === player.name && (u.type === 'cruiser' || u.type === 'destroyer')
@@ -42,6 +60,39 @@ module.exports = {
         args: { shooter: player.name },
       })
     }
+  },
+
+  // Sleeper Cell: after combat resolves, place copies of destroyed enemy ships
+  afterCombatResolved(player, ctx, { systemId, combatType }) {
+    if (combatType !== 'space') {
+      return
+    }
+    if (ctx.state._mentakSleeperCell !== player.name) {
+      return
+    }
+
+    const destroyedTypes = ctx.state._destroyedDuringCombat || {}
+    // Collect all ship types destroyed by the opponent (not by Mentak)
+    const opponentDestroyed = []
+    for (const [ownerName, types] of Object.entries(destroyedTypes)) {
+      if (ownerName !== player.name) {
+        for (const type of types) {
+          opponentDestroyed.push(type)
+        }
+      }
+    }
+
+    if (opponentDestroyed.length > 0) {
+      for (const shipType of opponentDestroyed) {
+        ctx.game._addUnit(systemId, 'space', shipType, player.name)
+      }
+      ctx.log.add({
+        template: 'Sleeper Cell: {player} places {count} ships from destroyed enemy fleet',
+        args: { player: player.name, count: opponentDestroyed.length },
+      })
+    }
+
+    delete ctx.state._mentakSleeperCell
   },
 
   // Pillage: After a neighbor gains trade goods or resolves a transaction,
