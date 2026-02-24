@@ -209,6 +209,7 @@ describe('Nomad', () => {
           },
         },
         micah: {
+          leaders: { agent: 'exhausted' },
           units: {
             27: { 'new-albion': ['infantry', 'infantry'] },
           },

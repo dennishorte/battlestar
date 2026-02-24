@@ -458,6 +458,14 @@ class FactionAbilities {
     }
   }
 
+  onGroundCombatRoundStart(systemId, planetId, attackerName, defenderName) {
+    for (const [self, opponent] of [[attackerName, defenderName], [defenderName, attackerName]]) {
+      const player = this.players.byName(self)
+      const handler = this._getPlayerHandler(player)
+      handler?.onGroundCombatRoundStart?.(player, this, { systemId, planetId, opponentName: opponent })
+    }
+  }
+
   onGroundCombatRoundEnd(systemId, planetId, attackerName, defenderName, hitCounts) {
     for (const [self, opponent] of [[attackerName, defenderName], [defenderName, attackerName]]) {
       const player = this.players.byName(self)

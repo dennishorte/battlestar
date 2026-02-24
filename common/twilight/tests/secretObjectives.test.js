@@ -919,6 +919,7 @@ describe('Secret Objectives — Action Phase', () => {
     // System adjacent to sol-home in the direction of hacan-home
     t.setBoard(game, {
       dennis: {
+        leaders: { agent: 'exhausted' },
         secretObjectives: ['become-a-martyr'],
         units: {
           'sol-home': {

@@ -2969,9 +2969,17 @@ Twilight.prototype._groundCombat = function(systemId, planetId, attackerName) {
       break
     }
 
+    // Start-of-round faction abilities (e.g., Sol agent Evelyn Delouis bonus die)
+    this.factionAbilities.onGroundCombatRoundStart(systemId, planetId, attackerName, defenderName)
+
     const groundContext = { combatType: 'ground', systemId, planetId }
     const attackerHits = this._rollCombatDice(attackers, groundContext)
     const defenderHits = this._rollCombatDice(defenders, groundContext)
+
+    // Clean up temporary bonusDice from round-start hooks
+    for (const u of [...attackers, ...defenders]) {
+      delete u.bonusDice
+    }
 
     this._assignGroundHits(systemId, planetId, defenderName, attackerHits, attackerName)
     this._assignGroundHits(systemId, planetId, attackerName, defenderHits, defenderName)

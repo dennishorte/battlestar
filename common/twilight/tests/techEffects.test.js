@@ -390,6 +390,7 @@ describe('Dacxive Animators', () => {
 
     t.setBoard(game, {
       dennis: {
+        leaders: { agent: 'exhausted' },
         technologies: ['neural-motivator', 'antimass-deflectors', 'dacxive-animators'],
         units: {
           'sol-home': {
