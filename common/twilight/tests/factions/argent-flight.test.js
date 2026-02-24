@@ -298,7 +298,6 @@ describe('Argent Flight', () => {
       })
       game.run()
 
-      const dennis = game.players.byName('dennis')
       // Commander is unlocked, so bonus dice should be 1
       const bonus = game.factionAbilities.getUnitAbilityBonusDice('dennis')
       expect(bonus).toBe(1)
