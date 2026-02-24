@@ -11,6 +11,67 @@ module.exports = {
   ],
 
   // ---------------------------------------------------------------------------
+  // Agent — I48S: After another player activates a system that contains your
+  // units, you may exhaust this card; the active player removes 1 token from
+  // their fleet pool and returns it to their reinforcements.
+  // ---------------------------------------------------------------------------
+  onAnySystemActivated(l1z1xPlayer, ctx, { systemId, activatingPlayer }) {
+    if (activatingPlayer.name === l1z1xPlayer.name) {
+      return
+    }
+
+    if (!l1z1xPlayer.isAgentReady()) {
+      return
+    }
+
+    // Check if L1Z1X has units in the activated system
+    const systemUnits = ctx.state.units[systemId]
+    if (!systemUnits) {
+      return
+    }
+
+    const hasShips = systemUnits.space.some(u => u.owner === l1z1xPlayer.name)
+    let hasPlanetUnits = false
+    if (!hasShips && systemUnits.planets) {
+      for (const planetId of Object.keys(systemUnits.planets)) {
+        if (systemUnits.planets[planetId].some(u => u.owner === l1z1xPlayer.name)) {
+          hasPlanetUnits = true
+          break
+        }
+      }
+    }
+
+    if (!hasShips && !hasPlanetUnits) {
+      return
+    }
+
+    // Check if the activating player has fleet tokens to remove
+    const target = ctx.players.byName(activatingPlayer.name)
+    if (!target || target.commandTokens.fleet <= 0) {
+      return
+    }
+
+    const choice = ctx.actions.choose(l1z1xPlayer, ['Exhaust I48S', 'Pass'], {
+      title: `I48S: ${activatingPlayer.name} activated a system with your units. Exhaust to remove 1 fleet token?`,
+    })
+
+    if (choice[0] !== 'Exhaust I48S') {
+      return
+    }
+
+    l1z1xPlayer.exhaustAgent()
+
+    // Re-fetch target after agent exhaust (stale ref)
+    const updatedTarget = ctx.players.byName(activatingPlayer.name)
+    updatedTarget.commandTokens.fleet -= 1
+
+    ctx.log.add({
+      template: 'I48S: {player} exhausts agent; {target} loses 1 fleet token',
+      args: { player: l1z1xPlayer.name, target: activatingPlayer.name },
+    })
+  },
+
+  // ---------------------------------------------------------------------------
   // Hero — The Helmsman: DARK SPACE NAVIGATION
   // ACTION: Choose a system that does not contain other players' ships;
   // place your flagship and up to 2 dreadnoughts from your reinforcements

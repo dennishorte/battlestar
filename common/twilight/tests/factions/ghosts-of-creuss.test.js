@@ -156,7 +156,66 @@ describe('Ghosts of Creuss', () => {
   })
 
   describe('Commander — Sai Seravus', () => {
-    test.todo('unlock condition: have units in 3 systems that contain alpha or beta wormholes')
+    test('unlock condition: have units in 3 systems that contain alpha or beta wormholes', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'creuss-home': {
+              space: ['carrier'],
+              'creuss': ['infantry', 'infantry', 'space-dock'],
+            },
+            // System 26 (Lodor) has alpha wormhole
+            '26': {
+              space: ['destroyer'],
+            },
+            // System 39 has alpha wormhole
+            '39': {
+              space: ['destroyer'],
+            },
+            // System 25 (Quann) has beta wormhole
+            '25': {
+              space: ['fighter'],
+              'quann': ['infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Units in 3 wormhole systems (26=alpha, 39=alpha, 25=beta)
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(true)
+    })
+
+    test('commander stays locked with units in fewer than 3 wormhole systems', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'creuss-home': {
+              space: ['carrier'],
+              'creuss': ['infantry', 'infantry', 'space-dock'],
+            },
+            // System 26 (Lodor) has alpha wormhole
+            '26': {
+              space: ['destroyer'],
+            },
+            // System 25 (Quann) has beta wormhole
+            '25': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Only 2 wormhole systems — not enough (Creuss home has delta, not alpha/beta)
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(false)
+    })
 
     test('afterShipsMove handler places fighters when commander unlocked and ships moved through wormhole', () => {
       const { getHandler } = require('../../systems/factions/index.js')

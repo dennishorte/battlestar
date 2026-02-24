@@ -212,6 +212,51 @@ module.exports = {
     }
   },
 
+  // ---------------------------------------------------------------------------
+  // Commander — S'Ula Mentarion: After winning space combat, opponent must
+  // give you 1 promissory note from their hand (if able).
+  // ---------------------------------------------------------------------------
+  onCombatWon(player, ctx, { systemId: _systemId, loserName, combatType }) {
+    if (!player.isCommanderUnlocked()) {
+      return
+    }
+
+    if (combatType !== 'space') {
+      return
+    }
+
+    const loser = ctx.players.byName(loserName)
+    if (!loser) {
+      return
+    }
+
+    const loserNotes = loser.getPromissoryNotes()
+    if (loserNotes.length === 0) {
+      return
+    }
+
+    let noteToGive
+    if (loserNotes.length === 1) {
+      noteToGive = loserNotes[0]
+    }
+    else {
+      const noteChoices = loserNotes.map(n => `${n.id} (from ${n.owner})`)
+      const selection = ctx.actions.choose(loser, noteChoices, {
+        title: `S'Ula Mentarion: Give ${player.name} 1 promissory note`,
+      })
+      const idx = noteChoices.indexOf(selection[0])
+      noteToGive = loserNotes[idx]
+    }
+
+    loser.removePromissoryNote(noteToGive.id, noteToGive.owner)
+    player.addPromissoryNote(noteToGive.id, noteToGive.owner)
+
+    ctx.log.add({
+      template: "S'Ula Mentarion: {loser} gives {note} to {winner}",
+      args: { loser: loserName, note: noteToGive.id, winner: player.name },
+    })
+  },
+
   // Mirror Computing (faction tech): When you spend trade goods,
   // each trade good is worth 2 resources or influence instead of 1.
   getTradeGoodResourceValue(player, _ctx) {

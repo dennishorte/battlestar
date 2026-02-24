@@ -80,19 +80,77 @@ module.exports = {
     return null
   },
 
+  // Agent — Ggrocuto Rinn: After an agenda is revealed, exhaust to make each
+  // readied planet you control count as 2 additional votes for this agenda.
+  onAgendaVotingStart(player, ctx, { agenda, outcomes: _outcomes }) {
+    if (!player.isAgentReady()) {
+      return
+    }
+
+    const readyPlanets = player.getReadyPlanets()
+    if (readyPlanets.length === 0) {
+      return
+    }
+
+    const choice = ctx.actions.choose(player, ['Exhaust Ggrocuto Rinn', 'Pass'], {
+      title: `Ggrocuto Rinn: Exhaust agent so readied planets count as 2 extra votes for "${agenda.name}"?`,
+    })
+
+    if (choice[0] !== 'Exhaust Ggrocuto Rinn') {
+      return
+    }
+
+    player.exhaustAgent()
+    if (!ctx.state._xxchaAgentVoteBonus) {
+      ctx.state._xxchaAgentVoteBonus = {}
+    }
+    ctx.state._xxchaAgentVoteBonus[player.name] = true
+
+    ctx.log.add({
+      template: 'Ggrocuto Rinn: {player} readied planets count as 2 extra votes',
+      args: { player: player.name },
+    })
+  },
+
   // Commander — Elder Qanoj: +1 vote per readied (non-exhausted) planet you control.
   // Game effects cannot prevent Xxcha from voting on an agenda.
-  getVotingModifier(player, _ctx) {
-    if (!player.isCommanderUnlocked()) {
-      return 0
+  // Agent — Ggrocuto Rinn: +2 votes per readied planet (if exhausted this agenda).
+  getVotingModifier(player, ctx) {
+    let modifier = 0
+
+    // Commander: +1 per readied planet
+    if (player.isCommanderUnlocked()) {
+      const readyPlanets = player.getReadyPlanets()
+      modifier += readyPlanets.length
     }
-    const readyPlanets = player.getReadyPlanets()
-    return readyPlanets.length
+
+    // Agent: +2 per readied planet (when active for this agenda)
+    if (ctx.state?._xxchaAgentVoteBonus?.[player.name]) {
+      const readyPlanets = player.getReadyPlanets()
+      modifier += readyPlanets.length * 2
+    }
+
+    return modifier
   },
 
   // Xxcha cannot be excluded from voting by game effects.
   // This is checked in getAgendaParticipation to ensure Xxcha is never in the excluded list.
   cannotBeExcludedFromVoting: true,
+
+  // Clear agent vote bonus after agenda resolves
+  onAgendaOutcomeResolved(player, ctx, _args) {
+    if (ctx.state._xxchaAgentVoteBonus?.[player.name]) {
+      delete ctx.state._xxchaAgentVoteBonus[player.name]
+    }
+  },
+
+  // ---------------------------------------------------------------------------
+  // Archon's Gift — faction tech
+  // You can spend influence as resources and resources as influence.
+  // ---------------------------------------------------------------------------
+  canSpendFlexibly(player, _ctx) {
+    return player.hasTechnology('archons-gift')
+  },
 
   // ---------------------------------------------------------------------------
   // Instinct Training — faction tech (green)

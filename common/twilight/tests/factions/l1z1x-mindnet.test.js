@@ -141,7 +141,78 @@ describe('L1Z1X Mindnet', () => {
   })
 
   describe('Agent — I48S', () => {
-    test.todo('exhaust when another player activates a system with your units to remove 1 fleet token')
+    test('exhaust when another player activates a system with your units to remove 1 fleet token', () => {
+      const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'locked', hero: 'locked' },
+          units: {
+            '27': {
+              space: ['dreadnought'],
+              'new-albion': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+        },
+        micah: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: strategic action (leadership)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+
+      // Micah: tactical action — activates system 27 where L1Z1X has units
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Dennis (L1Z1X) gets I48S prompt
+      t.choose(game, 'Exhaust I48S')
+
+      const micah = game.players.byName('micah')
+      // Micah started with fleet 3, lost 1 from I48S
+      expect(micah.commandTokens.fleet).toBe(2)
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+    })
+
+    test('does not trigger when agent is exhausted', () => {
+      const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            '27': {
+              space: ['dreadnought'],
+            },
+          },
+        },
+        micah: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: strategic action (leadership)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+
+      // Micah: tactical action — activates system 27
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // No I48S prompt because agent is exhausted
+      // Game should continue to movement phase
+      const micah = game.players.byName('micah')
+      expect(micah.commandTokens.fleet).toBe(3) // unchanged
+    })
   })
 
   describe('Commander — 2RAM', () => {

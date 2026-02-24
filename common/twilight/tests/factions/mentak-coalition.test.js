@@ -413,7 +413,96 @@ describe('Mentak Coalition', () => {
   })
 
   describe("Commander — S'Ula Mentarion", () => {
-    test.todo('after winning space combat, force opponent to give 1 promissory note')
+    test('after winning space combat, opponent gives 1 promissory note', () => {
+      const game = t.fixture({ factions: ['mentak-coalition', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
+          commandTokens: { tactics: 3, strategy: 2, fleet: 5 },
+          units: {
+            'mentak-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'moll-primus': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'support-for-the-throne', owner: 'micah' }],
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: tactical action — move into system 27 where Micah has 1 fighter
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'mentak-home', count: 5 }],
+      })
+
+      // Ambush: Mentak rolls for up to 2 cruisers at start of space combat
+      // Combat will proceed — Mentak with 5 cruisers vs 1 fighter should win easily
+
+      // After combat resolves, the game loop continues.
+      // The commander promissory note prompt may happen automatically
+      // (single note = auto-respond) or we may need to handle it.
+      // Let's check what happens after combat.
+
+      // After Mentak wins, S'Ula Mentarion triggers — Micah gives promissory note
+      // Since Micah has only 1 note, it should auto-resolve
+
+      // Dennis should now have the promissory note
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+      const dennisNotes = dennis.getPromissoryNotes()
+      const micahNotes = micah.getPromissoryNotes()
+
+      expect(dennisNotes.some(n => n.id === 'support-for-the-throne')).toBe(true)
+      expect(micahNotes.some(n => n.id === 'support-for-the-throne')).toBe(false)
+    })
+
+    test('does not trigger when commander is locked', () => {
+      const game = t.fixture({ factions: ['mentak-coalition', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          commandTokens: { tactics: 3, strategy: 2, fleet: 5 },
+          units: {
+            'mentak-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'moll-primus': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'support-for-the-throne', owner: 'micah' }],
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: tactical action
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'mentak-home', count: 5 }],
+      })
+
+      // After combat resolves, commander is locked — no promissory note transfer
+      const micah = game.players.byName('micah')
+      const micahNotes = micah.getPromissoryNotes()
+      expect(micahNotes.some(n => n.id === 'support-for-the-throne')).toBe(true)
+    })
   })
 
   describe('Hero — Ipswitch, Loose Cannon', () => {

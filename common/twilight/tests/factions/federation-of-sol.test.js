@@ -265,7 +265,75 @@ describe('Federation of Sol', () => {
   })
 
   describe('Mech — ZS Thunderbolt M2', () => {
-    test.todo('DEPLOY: after Orbital Drop, spend 3 resources to place mech')
+    test('DEPLOY: after Orbital Drop, spend 3 resources to place mech', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          planets: {
+            'jord': { exhausted: false },  // 4 resources — enough for 3
+          },
+          units: {
+            'sol-home': {
+              space: ['carrier'],
+              'jord': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses Component Action → Orbital Drop
+      // Only 1 controlled planet (jord) so planet choice auto-resolves
+      t.choose(game, 'Component Action')
+      t.choose(game, 'orbital-drop')
+
+      // Mech DEPLOY prompt: spend 3 resources to place mech
+      t.choose(game, 'Deploy Mech')
+
+      // Check that mech was placed on jord
+      const jord = game.state.units['sol-home'].planets['jord']
+      const mechCount = jord.filter(u => u.owner === 'dennis' && u.type === 'mech').length
+      expect(mechCount).toBe(1)
+
+      // Jord should be exhausted (spent to pay for mech)
+      expect(game.state.planets['jord'].exhausted).toBe(true)
+    })
+
+    test('DEPLOY: not offered when insufficient resources', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          planets: {
+            'jord': { exhausted: true },  // exhausted = no resources available
+          },
+          units: {
+            'sol-home': {
+              space: ['carrier'],
+              'jord': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses Component Action → Orbital Drop
+      t.choose(game, 'Component Action')
+      t.choose(game, 'orbital-drop')
+
+      // No mech DEPLOY prompt because jord is exhausted (0 available resources)
+      // Infantry should still be placed from Orbital Drop
+      const jord = game.state.units['sol-home'].planets['jord']
+      const mechCount = jord.filter(u => u.owner === 'dennis' && u.type === 'mech').length
+      expect(mechCount).toBe(0)
+
+      // Infantry from Orbital Drop should be placed
+      const infantryCount = jord.filter(u => u.owner === 'dennis' && u.type === 'infantry').length
+      expect(infantryCount).toBe(4) // 2 original + 2 from orbital drop
+    })
   })
 
   describe('Promissory Note — Military Support', () => {
