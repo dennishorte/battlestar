@@ -356,7 +356,65 @@ describe('Nekro Virus', () => {
   })
 
   describe('Mech — Mordred', () => {
-    test.todo('DEPLOY: applies +2 to combat rolls against opponent with X or Y token on their technologies')
+    test('+2 combat when fighting opponent with Valefar assimilator token on their tech', () => {
+      const game = t.fixture({ factions: ['nekro-virus', 'barony-of-letnev'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          technologies: ['dacxive-animators', 'valefar-assimilator-x', 'valefar-assimilator-y'],
+          units: {
+            '27': {
+              'new-albion': ['mech', 'infantry', 'infantry', 'infantry'],
+            },
+          },
+        },
+        micah: {
+          technologies: ['antimass-deflectors', 'sarween-tools', 'l4-disruptors'],
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            '27': {
+              'new-albion': ['infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      // Simulate assimilator token placed on Letnev's l4-disruptors
+      game.state.assimilatorTokens = {
+        x: { techId: 'l4-disruptors', ownerName: 'micah' },
+      }
+
+      // During combat, Nekro should get -2 modifier (= +2 combat bonus)
+      game.state._combatOpponent = { dennis: 'micah', micah: 'dennis' }
+      const dennis = game.players.byName('dennis')
+      expect(game.factionAbilities.getCombatModifier(dennis)).toBe(-2)
+
+      // Opponent (Letnev) should not get the bonus
+      const micah = game.players.byName('micah')
+      expect(game.factionAbilities.getCombatModifier(micah)).toBe(0)
+
+      // Clean up
+      delete game.state._combatOpponent
+    })
+
+    test('no combat bonus when opponent has no assimilator token', () => {
+      const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+        },
+        micah: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+        },
+      })
+      game.run()
+
+      game.state._combatOpponent = { dennis: 'micah', micah: 'dennis' }
+      const dennis = game.players.byName('dennis')
+      expect(game.factionAbilities.getCombatModifier(dennis)).toBe(0)
+      delete game.state._combatOpponent
+    })
   })
 
   describe('Promissory Note — Antivirus', () => {
