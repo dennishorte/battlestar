@@ -301,8 +301,162 @@ describe('L1Z1X Mindnet', () => {
   })
 
   describe('Faction Technologies', () => {
-    test.todo('Inheritance Systems: exhaust to gain a tech with same or fewer prerequisites')
-    test.todo('Super Dreadnought II: upgraded dreadnought cannot be destroyed by Direct Hit')
+    describe('Inheritance Systems', () => {
+      test('exhaust to gain a tech with same or fewer prerequisites as non-unit-upgrade tech count', () => {
+        const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+        // L1Z1X starts with neural-motivator + plasma-scoring (2 non-unit-upgrade techs)
+        // Give them inheritance-systems + a couple more techs
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['neural-motivator', 'plasma-scoring', 'sarween-tools', 'inheritance-systems'],
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis has 4 non-unit-upgrade techs (neural-motivator, plasma-scoring, sarween-tools, inheritance-systems)
+        // So can gain any tech with <= 4 prerequisites
+        t.choose(game, 'Component Action')
+        t.choose(game, 'inheritance-systems')
+
+        // Choose a tech — gravity-drive has 1 prerequisite (blue), should be available
+        t.choose(game, 'gravity-drive')
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.hasTechnology('gravity-drive')).toBe(true)
+        // Inheritance Systems should be exhausted
+        expect(dennis.exhaustedTechs).toContain('inheritance-systems')
+      })
+
+      test('can gain any color tech regardless of prerequisites met', () => {
+        const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+        // L1Z1X has 3 non-unit-upgrade techs — can gain techs with <= 3 prerequisites
+        // even if missing color prerequisites
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['neural-motivator', 'plasma-scoring', 'inheritance-systems'],
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // 3 non-unit-upgrade techs → can gain any tech with <= 3 prerequisites
+        // graviton-laser-system has 1 yellow prereq — player has no yellow but should still work
+        t.choose(game, 'Component Action')
+        t.choose(game, 'inheritance-systems')
+
+        // Choose graviton-laser-system (requires 1 yellow)
+        const choices = t.currentChoices(game)
+        expect(choices).toContain('graviton-laser-system')
+        t.choose(game, 'graviton-laser-system')
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.hasTechnology('graviton-laser-system')).toBe(true)
+      })
+
+      test('not available when exhausted', () => {
+        const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['neural-motivator', 'plasma-scoring', 'sarween-tools', 'inheritance-systems'],
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Use it once
+        t.choose(game, 'Component Action')
+        t.choose(game, 'inheritance-systems')
+        t.choose(game, 'gravity-drive')
+
+        const dennis = game.players.byName('dennis')
+        expect(game._isTechReady(dennis, 'inheritance-systems')).toBe(false)
+      })
+
+      test('limits tech choices by number of non-unit-upgrade techs', () => {
+        const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+        // Only 2 non-unit-upgrade techs → can only gain techs with <= 2 prerequisites
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['neural-motivator', 'inheritance-systems'],
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Component Action')
+        t.choose(game, 'inheritance-systems')
+
+        // Should see techs with 0, 1, or 2 prerequisites
+        const choices = t.currentChoices(game)
+        // antimass-deflectors has 0 prereqs — should be available
+        expect(choices).toContain('antimass-deflectors')
+        // light-wave-deflector has 3 blue prereqs — should NOT be available
+        expect(choices).not.toContain('light-wave-deflector')
+
+        t.choose(game, 'antimass-deflectors')
+        const dennis = game.players.byName('dennis')
+        expect(dennis.hasTechnology('antimass-deflectors')).toBe(true)
+      })
+    })
+
+    describe('Super Dreadnought II', () => {
+      test('upgraded dreadnought has correct stats', () => {
+        const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['neural-motivator', 'plasma-scoring', 'gravity-drive', 'fleet-logistics', 'super-dreadnought-ii'],
+          },
+        })
+        game.run()
+
+        // Check unit stats
+        const stats = game._getUnitStats('dennis', 'dreadnought')
+        expect(stats.combat).toBe(4)
+        expect(stats.move).toBe(2)
+        expect(stats.capacity).toBe(2)
+      })
+
+      test('is immune to Direct Hit via dispatcher', () => {
+        const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['neural-motivator', 'plasma-scoring', 'gravity-drive', 'fleet-logistics', 'super-dreadnought-ii'],
+          },
+        })
+        game.run()
+
+        // Test the isDirectHitImmune method
+        const dreadUnit = { type: 'dreadnought', owner: 'dennis' }
+        expect(game.factionAbilities.isDirectHitImmune(dreadUnit)).toBe(true)
+
+        // Non-dreadnought should not be immune
+        const carrierUnit = { type: 'carrier', owner: 'dennis' }
+        expect(game.factionAbilities.isDirectHitImmune(carrierUnit)).toBe(false)
+
+        // Opponent dreadnought should not be immune
+        const opponentDread = { type: 'dreadnought', owner: 'micah' }
+        expect(game.factionAbilities.isDirectHitImmune(opponentDread)).toBe(false)
+      })
+
+      test('dreadnought is not immune without super-dreadnought-ii tech', () => {
+        const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['neural-motivator', 'plasma-scoring'],
+          },
+        })
+        game.run()
+
+        const dreadUnit = { type: 'dreadnought', owner: 'dennis' }
+        expect(game.factionAbilities.isDirectHitImmune(dreadUnit)).toBe(false)
+      })
+    })
+
     test.todo('Fealty Uplink: gain 1 command token when scoring public objective with most tokens on board')
   })
 })

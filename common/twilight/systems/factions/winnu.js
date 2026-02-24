@@ -47,7 +47,7 @@ module.exports = {
 
   commanderEffect: {
     timing: 'combat-modifier',
-    apply: (player, context) => {
+    apply: (player, _context) => {
       // The combat modifier is already handled by getCombatModifier;
       // this registration enables Mahact Imperia to copy the effect.
       // Check Mecatol Rex control via planet state on the game.
