@@ -288,7 +288,72 @@ describe('L1Z1X Mindnet', () => {
   })
 
   describe('Hero — The Helmsman', () => {
-    test.todo('DARK SPACE NAVIGATION: place flagship and up to 2 dreadnoughts in empty system and purge')
+    test('DARK SPACE NAVIGATION: place flagship and up to 2 dreadnoughts in empty system and purge', () => {
+      const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          units: {
+            'l1z1x-home': {
+              '0-0-0': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'l1z1x-hero')
+
+      // Choose target system (one without opponent ships)
+      // Use * prefix to prevent digit-to-number conversion
+      t.choose(game, '*27')
+
+      // Place 2 dreadnoughts
+      t.choose(game, 'Place Dreadnought')
+      t.choose(game, 'Place Dreadnought')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+
+      const spaceUnits = game.state.units['27'].space
+        .filter(u => u.owner === 'dennis')
+        .map(u => u.type)
+        .sort()
+      expect(spaceUnits).toContain('flagship')
+      expect(spaceUnits.filter(t => t === 'dreadnought').length).toBe(2)
+    })
+
+    test('cannot place in system with opponent ships', () => {
+      const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          units: {
+            'l1z1x-home': {
+              '0-0-0': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'l1z1x-hero')
+
+      // System 27 has micah's ships — should not be in choices
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('27')
+    })
   })
 
   describe('Mech — Annihilator', () => {
@@ -457,6 +522,62 @@ describe('L1Z1X Mindnet', () => {
       })
     })
 
-    test.todo('Fealty Uplink: gain 1 command token when scoring public objective with most tokens on board')
+    test('Fealty Uplink: gain 1 command token when scoring public objective with most tokens on board', () => {
+      const { getHandler } = require('../../systems/factions/index.js')
+      const handler = getHandler('l1z1x-mindnet')
+
+      // Set up a mock context with 2 players
+      const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          technologies: ['neural-motivator', 'plasma-scoring', 'fealty-uplink'],
+          commandTokens: { tactics: 2, strategy: 2, fleet: 3 },
+        },
+      })
+      game.run()
+
+      // Put command tokens on the board: dennis has 3, micah has 1
+      game.state.systems['27'] = game.state.systems['27'] || {}
+      game.state.systems['27'].commandTokens = ['dennis', 'dennis', 'dennis']
+      game.state.systems['26'] = game.state.systems['26'] || {}
+      game.state.systems['26'].commandTokens = ['micah']
+
+      const dennis = game.players.byName('dennis')
+      const initialTactics = dennis.commandTokens.tactics
+
+      // Call the handler directly
+      handler.onPublicObjectiveScored(dennis, game.factionAbilities, {})
+
+      // Dennis had 3 tokens on board vs micah's 1 => should gain 1 command token
+      expect(dennis.commandTokens.tactics).toBe(initialTactics + 1)
+    })
+
+    test('Fealty Uplink: no token gain when not having most tokens on board', () => {
+      const { getHandler } = require('../../systems/factions/index.js')
+      const handler = getHandler('l1z1x-mindnet')
+
+      const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          technologies: ['neural-motivator', 'plasma-scoring', 'fealty-uplink'],
+          commandTokens: { tactics: 2, strategy: 2, fleet: 3 },
+        },
+      })
+      game.run()
+
+      // Put command tokens on the board: dennis has 1, micah has 3
+      game.state.systems['27'] = game.state.systems['27'] || {}
+      game.state.systems['27'].commandTokens = ['dennis']
+      game.state.systems['26'] = game.state.systems['26'] || {}
+      game.state.systems['26'].commandTokens = ['micah', 'micah', 'micah']
+
+      const dennis = game.players.byName('dennis')
+      const initialTactics = dennis.commandTokens.tactics
+
+      handler.onPublicObjectiveScored(dennis, game.factionAbilities, {})
+
+      // Dennis had fewer tokens => no gain
+      expect(dennis.commandTokens.tactics).toBe(initialTactics)
+    })
   })
 })

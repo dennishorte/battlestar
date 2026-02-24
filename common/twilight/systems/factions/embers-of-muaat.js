@@ -145,6 +145,42 @@ module.exports = {
         args: { player, system: targetSystem },
       })
     }
+
+    // Mech DEPLOY — Ember Colossus: when Star Forge is used in this or adjacent
+    // system, place 1 infantry from reinforcements with this mech
+    this._emberColossusDeploy(ctx, player, targetSystem)
+  },
+
+  // Ember Colossus DEPLOY: after Star Forge, check for mechs in the target
+  // system or adjacent systems and place 1 infantry with each
+  _emberColossusDeploy(ctx, player, starForgeSystem) {
+    const systemsToCheck = [starForgeSystem]
+    const adjacentIds = ctx.game._getAdjacentSystems(starForgeSystem)
+    systemsToCheck.push(...adjacentIds)
+
+    for (const systemId of systemsToCheck) {
+      const systemUnits = ctx.state.units[systemId]
+      if (!systemUnits) {
+        continue
+      }
+
+      // Check planets for mechs
+      for (const [planetId, planetUnits] of Object.entries(systemUnits.planets || {})) {
+        const mechs = planetUnits.filter(
+          u => u.owner === player.name && u.type === 'mech'
+        )
+        if (mechs.length > 0) {
+          // Place 1 infantry with each mech (each mech triggers separately)
+          for (let i = 0; i < mechs.length; i++) {
+            ctx.game._addUnit(systemId, planetId, 'infantry', player.name)
+          }
+          ctx.log.add({
+            template: 'Ember Colossus: {player} places {count} infantry on {planet}',
+            args: { player: player.name, count: mechs.length, planet: planetId },
+          })
+        }
+      }
+    }
   },
 
   // ---------------------------------------------------------------------------

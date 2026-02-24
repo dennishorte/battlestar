@@ -1,4 +1,15 @@
 module.exports = {
+  componentActions: [
+    {
+      id: 'creuss-hero',
+      name: 'Riftwalker Meian',
+      abilityId: 'quantum-entanglement',  // reuse faction ability ID for availability gate
+      isAvailable: function(player) {
+        return player.isHeroUnlocked() && !player.isHeroPurged()
+      },
+    },
+  ],
+
   getHomeSystemWormholes(player, ctx, systemId) {
     if (String(systemId) === String(player.faction?.homeSystem)) {
       return ['alpha', 'beta']
@@ -134,5 +145,176 @@ module.exports = {
     })
 
     ctx.game._assignHits(systemId, opponentName, 1, player.name)
+  },
+
+  // ---------------------------------------------------------------------------
+  // Hero — Riftwalker Meian: SINGULARITY REACTOR
+  // ACTION: Swap the positions of any 2 systems that contain wormholes or
+  // your units, other than the Creuss system and the Wormhole Nexus.
+  // Then, purge this card.
+  // ---------------------------------------------------------------------------
+
+  creussHero(ctx, player) {
+    const res = ctx.game.res
+
+    // Find eligible systems: contain wormholes or Creuss units
+    // Exclude creuss-home and wormhole-nexus
+    const eligibleSystems = []
+    for (const [systemId, systemData] of Object.entries(ctx.state.systems)) {
+      if (systemId === 'creuss-home' || systemId === 'wormhole-nexus') {
+        continue
+      }
+
+      const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+      const wormholes = tile ? [...tile.wormholes] : []
+
+      // Check faction wormholes
+      const factionWormholes = ctx.getHomeSystemWormholes(systemId)
+      for (const w of factionWormholes) {
+        if (!wormholes.includes(w)) {
+          wormholes.push(w)
+        }
+      }
+
+      // Check if Creuss wormhole token is in this system
+      if (ctx.state.creussWormholeToken === systemId) {
+        wormholes.push('creuss')
+      }
+
+      const hasWormhole = wormholes.length > 0
+
+      // Check if Creuss player has units in the system
+      const systemUnits = ctx.state.units[systemId]
+      let hasOwnUnits = false
+      if (systemUnits) {
+        hasOwnUnits = systemUnits.space.some(u => u.owner === player.name)
+        if (!hasOwnUnits && systemUnits.planets) {
+          for (const planetUnits of Object.values(systemUnits.planets)) {
+            if (planetUnits.some(u => u.owner === player.name)) {
+              hasOwnUnits = true
+              break
+            }
+          }
+        }
+      }
+
+      if (hasWormhole || hasOwnUnits) {
+        eligibleSystems.push(systemId)
+      }
+    }
+
+    if (eligibleSystems.length < 2) {
+      player.purgeHero()
+      ctx.log.add({
+        template: '{player} purges Riftwalker Meian but fewer than 2 eligible systems',
+        args: { player: player.name },
+      })
+      return
+    }
+
+    // Choose first system
+    const first = ctx.actions.choose(player, eligibleSystems, {
+      title: 'Singularity Reactor: Choose first system to swap',
+    })
+    const firstSystem = first[0]
+
+    // Choose second system (cannot be the same)
+    const secondOptions = eligibleSystems.filter(s => s !== firstSystem)
+    const second = ctx.actions.choose(player, secondOptions, {
+      title: 'Singularity Reactor: Choose second system to swap',
+    })
+    const secondSystem = second[0]
+
+    // Swap positions
+    const pos1 = ctx.state.systems[firstSystem].position
+    const pos2 = ctx.state.systems[secondSystem].position
+    ctx.state.systems[firstSystem].position = { ...pos2 }
+    ctx.state.systems[secondSystem].position = { ...pos1 }
+
+    ctx.log.add({
+      template: 'Singularity Reactor: {player} swaps systems {sys1} and {sys2}',
+      args: { player: player.name, sys1: firstSystem, sys2: secondSystem },
+    })
+
+    player.purgeHero()
+    ctx.log.add({
+      template: '{player} purges Riftwalker Meian',
+      args: { player: player.name },
+    })
+  },
+
+  // ---------------------------------------------------------------------------
+  // Commander — Sai Seravus: After your ships move, for each ship that has a
+  // capacity value and moved through 1 or more wormholes, place 1 fighter
+  // from reinforcements with that ship if you have unused capacity.
+  // ---------------------------------------------------------------------------
+
+  afterShipsMove(player, ctx, { systemId, movedShips }) {
+    if (!player.isCommanderUnlocked()) {
+      return
+    }
+
+    if (!movedShips || movedShips.length === 0) {
+      return
+    }
+
+    const res = ctx.game.res
+
+    // Check which ships moved through wormholes
+    let fightersToPlace = 0
+    for (const ship of movedShips) {
+      if (ship.owner !== player.name) {
+        continue
+      }
+      const unitDef = res.getUnit(ship.type) || ctx.game._getUnitStats(ship.owner, ship.type)
+      if (!unitDef || !unitDef.capacity || unitDef.capacity <= 0) {
+        continue
+      }
+
+      // Check if ship moved through a wormhole (via movedThroughWormhole flag)
+      if (ship.movedThroughWormhole) {
+        fightersToPlace++
+      }
+    }
+
+    if (fightersToPlace === 0) {
+      return
+    }
+
+    // Check remaining capacity in the active system
+    const systemUnits = ctx.state.units[systemId]
+    if (!systemUnits) {
+      return
+    }
+
+    let totalCapacity = 0
+    let totalCarried = 0
+    for (const unit of systemUnits.space) {
+      if (unit.owner === player.name) {
+        const stats = ctx.game._getUnitStats(unit.owner, unit.type)
+        if (stats?.capacity) {
+          totalCapacity += stats.capacity
+        }
+        if (unit.type === 'fighter' || unit.type === 'infantry') {
+          totalCarried++
+        }
+      }
+    }
+
+    const availableCapacity = totalCapacity - totalCarried
+    const actualFighters = Math.min(fightersToPlace, availableCapacity)
+
+    if (actualFighters <= 0) {
+      return
+    }
+
+    for (let i = 0; i < actualFighters; i++) {
+      ctx.game._addUnit(systemId, 'space', 'fighter', player.name)
+    }
+
+    ctx.log.add({
+      template: 'Sai Seravus: {player} places {count} fighters in {system}',
+      args: { player: player.name, count: actualFighters, system: systemId },
+    })
   },
 }

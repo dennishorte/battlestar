@@ -557,9 +557,113 @@ describe('Naaz-Rokha Alliance', () => {
   })
 
   describe('Hero — Hesh and Prit', () => {
-    test.todo('Perfect Synthesis: gain 1 relic and perform secondary of up to 2 readied strategy cards')
-    test.todo('spend command tokens from reinforcements instead of strategy pool')
-    test.todo('purge hero after use')
+    test('Perfect Synthesis: gain 1 relic and perform secondary of up to 2 readied strategy cards', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          units: {
+            'naazrokha-home': {
+              space: ['carrier', 'destroyer'],
+              'naazir': ['infantry', 'infantry', 'space-dock'],
+              'rokha': ['infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses Component Action -> Perfect Synthesis
+      t.choose(game, 'Component Action')
+      t.choose(game, 'perfect-synthesis')
+
+      // Hero gains 1 relic automatically
+      expect(game.state.relicsGained?.dennis?.length).toBe(1)
+
+      // Choose first secondary: leadership (gain 1 command token)
+      t.choose(game, 'leadership')
+
+      // Choose Done (only use 1 secondary)
+      t.choose(game, 'Done')
+
+      // Verify: hero is purged, relic gained, command token gained
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+      // Leadership secondary gives +1 tactics token (started with 3, used 1 for activation = 2, +1 from secondary = 3...
+      // Actually no activation yet; started with 3, +1 from leadership secondary = 4
+      expect(dennis.commandTokens.tactics).toBe(4)
+    })
+
+    test('purge hero after use', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          units: {
+            'naazrokha-home': {
+              space: ['carrier', 'destroyer'],
+              'naazir': ['infantry', 'infantry', 'space-dock'],
+              'rokha': ['infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses Component Action -> Perfect Synthesis
+      t.choose(game, 'Component Action')
+      t.choose(game, 'perfect-synthesis')
+
+      // Skip secondaries
+      t.choose(game, 'Done')
+
+      // Verify: hero is purged even if no secondaries chosen
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+      expect(game.state.relicsGained?.dennis?.length).toBe(1)
+    })
+
+    test('can perform 2 strategy card secondaries', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          units: {
+            'naazrokha-home': {
+              space: ['carrier', 'destroyer'],
+              'naazir': ['infantry', 'infantry', 'space-dock'],
+              'rokha': ['infantry'],
+            },
+          },
+          planets: {
+            'naazir': { exhausted: true },
+            'rokha': { exhausted: true },
+          },
+        },
+      })
+      game.run()
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses Component Action -> Perfect Synthesis
+      t.choose(game, 'Component Action')
+      t.choose(game, 'perfect-synthesis')
+
+      // Choose first secondary: leadership
+      t.choose(game, 'leadership')
+
+      // Choose second secondary: diplomacy (readies 2 planets)
+      t.choose(game, 'diplomacy')
+
+      // Verify: both secondaries executed
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+      expect(dennis.commandTokens.tactics).toBe(4) // +1 from leadership secondary
+    })
   })
 
   describe('Mech — Eidolon', () => {

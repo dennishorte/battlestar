@@ -125,6 +125,12 @@ module.exports = {
       abilityId: 'fabrication',
       isAvailable: (player) => (player.relicFragments || []).length >= 1,
     },
+    {
+      id: 'perfect-synthesis',
+      name: 'Hesh and Prit (Perfect Synthesis)',
+      abilityId: 'distant-suns', // Naaz-Rokha players have this ability
+      isAvailable: (player) => player.isHeroUnlocked() && !player.isHeroPurged(),
+    },
   ],
 
   fabrication(ctx, player) {
@@ -199,6 +205,87 @@ module.exports = {
         args: { player, type: fragType },
       })
     }
+  },
+
+  // Hero — Hesh and Prit: PERFECT SYNTHESIS
+  // Gain 1 relic and perform the secondary ability of up to 2 readied or unchosen
+  // strategy cards; during this action, spend command tokens from your
+  // reinforcements instead of your strategy pool. Then, purge this card.
+  perfectSynthesis(ctx, player) {
+    // 1. Gain 1 relic (tracked in game state since player objects are recreated)
+    if (!ctx.state.relicsGained) {
+      ctx.state.relicsGained = {}
+    }
+    if (!ctx.state.relicsGained[player.name]) {
+      ctx.state.relicsGained[player.name] = []
+    }
+    ctx.state.relicsGained[player.name].push('perfect-synthesis-relic')
+
+    ctx.log.add({
+      template: 'Perfect Synthesis: {player} gains 1 relic',
+      args: { player: player.name },
+    })
+
+    ctx.game.factionAbilities.onRelicGained(player.name)
+
+    // 2. Perform secondary of up to 2 strategy cards
+    // Eligible: all strategy cards that are "readied" (picked but not used) by any player,
+    // or "unchosen" (not picked by anyone)
+    const allStrategyCards = ['leadership', 'diplomacy', 'politics', 'construction', 'trade', 'warfare', 'technology', 'imperial']
+
+    // Find picked but unused strategy cards from all players
+    const readiedCards = []
+    for (const p of ctx.players.all()) {
+      for (const sc of (p.strategyCards || [])) {
+        if (!sc.used) {
+          readiedCards.push(sc.id)
+        }
+      }
+    }
+
+    // Unchosen cards
+    const unchosenCards = ctx.state.availableStrategyCards || []
+
+    // Combine eligible cards (readied + unchosen), deduplicate
+    const eligibleCards = [...new Set([...readiedCards, ...unchosenCards])]
+      .filter(id => allStrategyCards.includes(id))
+
+    let secondariesUsed = 0
+    while (secondariesUsed < 2 && eligibleCards.length > 0) {
+      const choices = [...eligibleCards, 'Done']
+      const selection = ctx.actions.choose(player, choices, {
+        title: `Perfect Synthesis: Choose strategy card secondary (${secondariesUsed}/2)`,
+      })
+
+      if (selection[0] === 'Done') {
+        break
+      }
+
+      const cardId = selection[0]
+
+      // Perform the secondary — tokens come from reinforcements instead of strategy pool
+      // We simulate "free" secondary by not spending strategy token
+      ctx.game._resolveSecondary(player, cardId)
+
+      ctx.log.add({
+        template: 'Perfect Synthesis: {player} performs {card} secondary',
+        args: { player: player.name, card: cardId },
+      })
+
+      // Remove from eligible list so they can't pick the same card twice
+      const idx = eligibleCards.indexOf(cardId)
+      if (idx !== -1) {
+        eligibleCards.splice(idx, 1)
+      }
+      secondariesUsed++
+    }
+
+    // Purge hero
+    player.purgeHero()
+    ctx.log.add({
+      template: '{player} purges Hesh and Prit',
+      args: { player: player.name },
+    })
   },
 
   // Agent — Garv and Gunn: At the end of a player's tactical action, exhaust
