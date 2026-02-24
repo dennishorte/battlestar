@@ -40,73 +40,126 @@ module.exports = {
   // non-delta wormhole, exhaust to make that system adjacent to all other systems
   // that contain a wormhole during this tactical action.
   onAnySystemActivated(creussPlayer, ctx, { systemId, activatingPlayer: _activatingPlayer }) {
-    if (!creussPlayer.isAgentReady()) {
-      return
-    }
+    // Agent — Emissary Taivra
+    if (creussPlayer.isAgentReady()) {
+      // Check if the activated system contains a non-delta wormhole
+      const tile = ctx.game.res.getSystemTile(systemId) ||
+        ctx.game.res.getSystemTile(Number(systemId))
+      const wormholes = tile ? [...tile.wormholes] : []
 
-    // Check if the activated system contains a non-delta wormhole
-    const tile = ctx.game.res.getSystemTile(systemId) ||
-      ctx.game.res.getSystemTile(Number(systemId))
-    const wormholes = tile ? [...tile.wormholes] : []
-
-    // Also check faction wormholes
-    const factionWormholes = ctx.getHomeSystemWormholes(systemId)
-    for (const w of factionWormholes) {
-      if (!wormholes.includes(w)) {
-        wormholes.push(w)
-      }
-    }
-
-    // Filter to non-delta wormholes
-    const nonDeltaWormholes = wormholes.filter(w => w !== 'delta')
-    if (nonDeltaWormholes.length === 0) {
-      return
-    }
-
-    const choice = ctx.actions.choose(creussPlayer, ['Exhaust Emissary Taivra', 'Pass'], {
-      title: `Emissary Taivra: Make system ${systemId} adjacent to all wormhole systems?`,
-    })
-
-    if (choice[0] !== 'Exhaust Emissary Taivra') {
-      return
-    }
-
-    creussPlayer.exhaustAgent()
-
-    // Find all systems with wormholes
-    const wormholeSystems = []
-    for (const [sysId, _sysData] of Object.entries(ctx.state.systems)) {
-      if (String(sysId) === String(systemId)) {
-        continue
-      }
-      const sysTile = ctx.game.res.getSystemTile(sysId) ||
-        ctx.game.res.getSystemTile(Number(sysId))
-      const sysWormholes = sysTile ? [...sysTile.wormholes] : []
-      const sysFactionWormholes = ctx.getHomeSystemWormholes(sysId)
-      for (const w of sysFactionWormholes) {
-        if (!sysWormholes.includes(w)) {
-          sysWormholes.push(w)
+      // Also check faction wormholes
+      const factionWormholes = ctx.getHomeSystemWormholes(systemId)
+      for (const w of factionWormholes) {
+        if (!wormholes.includes(w)) {
+          wormholes.push(w)
         }
       }
-      if (sysWormholes.length > 0) {
-        wormholeSystems.push(String(sysId))
+
+      // Filter to non-delta wormholes
+      const nonDeltaWormholes = wormholes.filter(w => w !== 'delta')
+      if (nonDeltaWormholes.length > 0) {
+        const choice = ctx.actions.choose(creussPlayer, ['Exhaust Emissary Taivra', 'Pass'], {
+          title: `Emissary Taivra: Make system ${systemId} adjacent to all wormhole systems?`,
+        })
+
+        if (choice[0] === 'Exhaust Emissary Taivra') {
+          creussPlayer.exhaustAgent()
+
+          // Find all systems with wormholes
+          const wormholeSystems = []
+          for (const [sysId, _sysData] of Object.entries(ctx.state.systems)) {
+            if (String(sysId) === String(systemId)) {
+              continue
+            }
+            const sysTile = ctx.game.res.getSystemTile(sysId) ||
+              ctx.game.res.getSystemTile(Number(sysId))
+            const sysWormholes = sysTile ? [...sysTile.wormholes] : []
+            const sysFactionWormholes = ctx.getHomeSystemWormholes(sysId)
+            for (const w of sysFactionWormholes) {
+              if (!sysWormholes.includes(w)) {
+                sysWormholes.push(w)
+              }
+            }
+            if (sysWormholes.length > 0) {
+              wormholeSystems.push(String(sysId))
+            }
+          }
+
+          if (wormholeSystems.length > 0) {
+            if (!ctx.state.temporaryAdjacency) {
+              ctx.state.temporaryAdjacency = []
+            }
+            ctx.state.temporaryAdjacency.push({
+              systemId: String(systemId),
+              adjacentTo: wormholeSystems,
+            })
+
+            ctx.log.add({
+              template: 'Emissary Taivra: {player} makes system {system} adjacent to {count} wormhole systems',
+              args: { player: creussPlayer.name, system: systemId, count: wormholeSystems.length },
+            })
+          }
+        }
       }
     }
 
-    if (wormholeSystems.length > 0) {
-      if (!ctx.state.temporaryAdjacency) {
-        ctx.state.temporaryAdjacency = []
-      }
-      ctx.state.temporaryAdjacency.push({
-        systemId: String(systemId),
-        adjacentTo: wormholeSystems,
-      })
+    // Icarus Drive mech: after any system activation, may remove mech to
+    // place or move Creuss wormhole token into that system
+    this._offerIcarusDrive(creussPlayer, ctx, systemId)
+  },
 
-      ctx.log.add({
-        template: 'Emissary Taivra: {player} makes system {system} adjacent to {count} wormhole systems',
-        args: { player: creussPlayer.name, system: systemId, count: wormholeSystems.length },
-      })
+  _offerIcarusDrive(creussPlayer, ctx, systemId) {
+    // Find all mechs the Creuss player has on any planet
+    const mechLocations = []
+    for (const [sysId, sysUnits] of Object.entries(ctx.state.units)) {
+      for (const [planetId, planetUnits] of Object.entries(sysUnits.planets)) {
+        for (const unit of planetUnits) {
+          if (unit.owner === creussPlayer.name && unit.type === 'mech') {
+            mechLocations.push({ systemId: sysId, planetId })
+          }
+        }
+      }
     }
+
+    if (mechLocations.length === 0) {
+      return
+    }
+
+    const choice = ctx.actions.choose(creussPlayer, ['Remove Mech (Icarus Drive)', 'Pass'], {
+      title: `Icarus Drive: Remove a mech to place Creuss wormhole token in system ${systemId}?`,
+    })
+
+    if (choice[0] !== 'Remove Mech (Icarus Drive)') {
+      return
+    }
+
+    // Choose which mech to remove if more than one
+    let target
+    if (mechLocations.length === 1) {
+      target = mechLocations[0]
+    }
+    else {
+      const mechChoices = mechLocations.map(m => `${m.planetId} (system ${m.systemId})`)
+      const mechSel = ctx.actions.choose(creussPlayer, mechChoices, {
+        title: 'Icarus Drive: Which mech to remove?',
+      })
+      target = mechLocations[mechChoices.indexOf(mechSel[0])]
+    }
+
+    // Remove the mech from the planet
+    const planetUnits = ctx.state.units[target.systemId].planets[target.planetId]
+    const mechIdx = planetUnits.findIndex(u => u.owner === creussPlayer.name && u.type === 'mech')
+    if (mechIdx !== -1) {
+      planetUnits.splice(mechIdx, 1)
+    }
+
+    // Place or move Creuss wormhole token into the activated system
+    ctx.state.creussWormholeToken = String(systemId)
+
+    ctx.log.add({
+      template: 'Icarus Drive: {player} removes mech from {planet} and places Creuss wormhole token in system {system}',
+      args: { player: creussPlayer.name, planet: target.planetId, system: systemId },
+    })
   },
 
   // Dimensional Splicer (faction tech): At the start of space combat in a

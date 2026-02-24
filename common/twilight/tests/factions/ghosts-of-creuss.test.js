@@ -333,7 +333,43 @@ describe('Ghosts of Creuss', () => {
   })
 
   describe('Mech — Icarus Drive', () => {
-    test.todo('DEPLOY: after any player activates a system, may remove this unit to place or move a Creuss wormhole token into that system')
+    test('after system activation, may remove mech to place Creuss wormhole token', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          technologies: ['gravity-drive'],
+          units: {
+            'creuss-home': {
+              creuss: ['space-dock', 'mech', 'infantry'],
+            },
+            '27': {
+              space: ['cruiser'],
+            },
+          },
+        },
+        micah: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis activates a system — triggers onAnySystemActivated for Creuss
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Icarus Drive prompt — choose to remove mech
+      t.choose(game, 'Remove Mech (Icarus Drive)')
+
+      // Creuss wormhole token should be placed in system 27
+      expect(game.state.creussWormholeToken).toBe('27')
+
+      // Mech should be removed from the planet
+      const creussUnits = game.state.units['creuss-home'].planets['creuss'] || []
+      const mechsRemaining = creussUnits.filter(u => u.owner === 'dennis' && u.type === 'mech')
+      expect(mechsRemaining.length).toBe(0)
+    })
   })
 
   describe('Promissory Note — Creuss IFF', () => {

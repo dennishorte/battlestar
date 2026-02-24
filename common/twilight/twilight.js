@@ -1964,9 +1964,11 @@ Twilight.prototype._spaceCombat = function(player, systemId) {
     this.factionAbilities.onSpaceCombatRound(systemId, attacker, defender)
 
     // Both sides roll simultaneously
+    this.state._combatOpponent = { [attacker]: defender, [defender]: attacker }
     const combatContext = { combatType: 'space', systemId }
     const attackerHits = this._rollCombatDice(attackerShips, combatContext)
     const defenderHits = this._rollCombatDice(defenderShips, combatContext)
+    delete this.state._combatOpponent
 
     this.log.add({
       template: 'Round {round}: attacker scores {aHits} hits, defender scores {dHits} hits',
@@ -2972,9 +2974,11 @@ Twilight.prototype._groundCombat = function(systemId, planetId, attackerName) {
     // Start-of-round faction abilities (e.g., Sol agent Evelyn Delouis bonus die)
     this.factionAbilities.onGroundCombatRoundStart(systemId, planetId, attackerName, defenderName)
 
+    this.state._combatOpponent = { [attackerName]: defenderName, [defenderName]: attackerName }
     const groundContext = { combatType: 'ground', systemId, planetId }
     const attackerHits = this._rollCombatDice(attackers, groundContext)
     const defenderHits = this._rollCombatDice(defenders, groundContext)
+    delete this.state._combatOpponent
 
     // Clean up temporary bonusDice from round-start hooks
     for (const u of [...attackers, ...defenders]) {
