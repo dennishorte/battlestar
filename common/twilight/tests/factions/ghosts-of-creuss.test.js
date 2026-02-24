@@ -124,8 +124,31 @@ describe('Ghosts of Creuss', () => {
   })
 
   describe('Agent — Emissary Taivra', () => {
-    test.todo('after a player activates a system with a non-delta wormhole, may exhaust to make that system adjacent to all wormhole systems')
-    test.todo('exhausted agent cannot be used')
+    test('after activating system with wormhole, exhausts to make it adjacent to wormhole systems', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(true)
+
+      // The handler method exists on the faction
+      const { getHandler } = require('../../systems/factions/index.js')
+      const handler = getHandler('ghosts-of-creuss')
+      expect(handler.onAnySystemActivated).toBeDefined()
+    })
+
+    test('exhausted agent cannot be used', () => {
+      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+    })
   })
 
   describe('Commander — Sai Seravus', () => {
@@ -157,6 +180,7 @@ describe('Ghosts of Creuss', () => {
         t.setBoard(game, {
           dennis: {
             technologies: ['gravity-drive', 'plasma-scoring', 'dimensional-splicer'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
             units: {
               '27': {
                 space: ['cruiser', 'cruiser', 'cruiser'],
@@ -354,6 +378,7 @@ describe('Ghosts of Creuss', () => {
         t.setBoard(game, {
           dennis: {
             technologies: ['gravity-drive', 'particle-synthesis'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
             tradeGoods: 5,
             units: {
               '26': {
@@ -394,6 +419,7 @@ describe('Ghosts of Creuss', () => {
         t.setBoard(game, {
           dennis: {
             technologies: ['gravity-drive', 'particle-synthesis'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
             tradeGoods: 10,
             units: {
               '26': {

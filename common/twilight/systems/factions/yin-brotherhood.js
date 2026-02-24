@@ -324,4 +324,75 @@ module.exports = {
       args: { player },
     })
   },
+
+  // Yin Spinner (faction tech): After you produce units, place up to 2 infantry
+  // from your reinforcements on any planet you control or in any space area
+  // that contains 1 or more of your ships.
+  afterProduction(player, ctx, { systemId: _systemId }) {
+    if (!player.hasTechnology('yin-spinner')) {
+      return
+    }
+
+    // Find valid placement locations
+    const placements = []
+
+    // Controlled planets
+    const controlledPlanets = player.getControlledPlanets()
+    for (const planetId of controlledPlanets) {
+      placements.push({ type: 'planet', planetId })
+    }
+
+    // Space areas with own ships
+    for (const [sysId, systemUnits] of Object.entries(ctx.state.units)) {
+      const hasShips = systemUnits.space.some(u => u.owner === player.name)
+      if (hasShips) {
+        placements.push({ type: 'space', systemId: sysId })
+      }
+    }
+
+    if (placements.length === 0) {
+      return
+    }
+
+    const choices = [
+      'Pass',
+      ...placements.map(p =>
+        p.type === 'planet' ? `Planet: ${p.planetId}` : `Space: system ${p.systemId}`
+      ),
+    ]
+
+    let placed = 0
+    while (placed < 2) {
+      const remaining = 2 - placed
+      const selection = ctx.actions.choose(player, choices, {
+        title: `Yin Spinner: Place infantry (${remaining} remaining)`,
+      })
+
+      if (selection[0] === 'Pass') {
+        break
+      }
+
+      const idx = choices.indexOf(selection[0])
+      const target = placements[idx - 1]  // -1 for 'Pass' offset
+
+      if (target.type === 'planet') {
+        const sysId = ctx.game._findSystemForPlanet(target.planetId)
+        if (sysId) {
+          ctx.game._addUnit(sysId, target.planetId, 'infantry', player.name)
+        }
+      }
+      else {
+        ctx.game._addUnit(target.systemId, 'space', 'infantry', player.name)
+      }
+
+      placed++
+    }
+
+    if (placed > 0) {
+      ctx.log.add({
+        template: 'Yin Spinner: {player} places {count} infantry',
+        args: { player: player.name, count: placed },
+      })
+    }
+  },
 }

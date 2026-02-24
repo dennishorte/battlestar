@@ -98,7 +98,41 @@ describe('Embers of Muaat', () => {
   })
 
   describe('Agent — Umbat', () => {
-    test.todo('exhaust to let a player produce up to 2 units (cost 4 or less) in a war sun or flagship system')
+    test('exhaust to let a player produce up to 2 units in a war sun system', () => {
+      const game = t.fixture({ factions: ['embers-of-muaat', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'locked', hero: 'locked' },
+          units: {
+            'muaat-home': {
+              space: ['war-sun', 'fighter', 'fighter'],
+              'muaat': ['infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'umbat-agent')
+
+      // Choose self as target
+      t.choose(game, 'dennis')
+
+      // System auto-selects (only muaat-home has war sun)
+      // Produce 2 fighters
+      t.choose(game, 'fighter')
+      t.choose(game, 'fighter')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+
+      const fighters = game.state.units['muaat-home'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'fighter')
+      // Started with 2, produced 2 more
+      expect(fighters.length).toBe(4)
+    })
   })
 
   describe('Commander — Magmus', () => {
