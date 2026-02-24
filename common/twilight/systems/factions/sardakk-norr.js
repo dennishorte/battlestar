@@ -232,6 +232,37 @@ module.exports = {
     }
   },
 
+  // Valkyrie Exoskeleton (mech): After using Sustain Damage during ground combat,
+  // produce 1 hit against opponent's ground forces on this planet.
+  onUnitsSustainedDamage(player, ctx, { systemId, count: _count, planetId, sustainedUnitIds }) {
+    if (!planetId || ctx.state._valkyrieSustainInProgress) {
+      return
+    }
+
+    const planetUnits = ctx.state.units[systemId]?.planets[planetId] || []
+    const sustainedMechs = planetUnits.filter(u =>
+      sustainedUnitIds?.has(u.id) && u.type === 'mech'
+    )
+
+    if (sustainedMechs.length === 0) {
+      return
+    }
+
+    const opponentName = planetUnits.find(u => u.owner !== player.name)?.owner
+    if (!opponentName) {
+      return
+    }
+
+    ctx.state._valkyrieSustainInProgress = true
+    ctx.game._assignGroundHits(systemId, planetId, opponentName, sustainedMechs.length, player.name)
+    delete ctx.state._valkyrieSustainInProgress
+
+    ctx.log.add({
+      template: 'Valkyrie Exoskeleton: {player} produces {hits} hit(s)',
+      args: { player: player.name, hits: sustainedMechs.length },
+    })
+  },
+
   // Valkyrie Particle Weave (faction tech): After ground combat dice rolls,
   // if opponent produced hits, produce 1 additional hit.
   onGroundCombatRoundEnd(player, ctx, { systemId, planetId, opponentName, opponentHits }) {
@@ -286,7 +317,7 @@ module.exports = {
       const techChoice = ctx.actions.choose(player, upgradeChoices, {
         title: "N'orr Supremacy: Research a unit upgrade technology",
       })
-      ctx.game._researchTech(player, techChoice[0])
+      ctx.game._grantTechnology(player, techChoice[0])
       ctx.log.add({
         template: "N'orr Supremacy: {player} researches {tech}",
         args: { player: player.name, tech: techChoice[0] },
