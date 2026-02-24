@@ -303,7 +303,6 @@ describe('Federation of Sol', () => {
         // Choose infantry or fighter
         t.choose(game, 'infantry')
 
-        const dennis = game.players.byName('dennis')
         // Should have carrier in space
         const carriers = game.state.units['sol-home'].space
           .filter(u => u.owner === 'dennis' && u.type === 'carrier')

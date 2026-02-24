@@ -4361,6 +4361,20 @@ Twilight.prototype._getTechComponentActions = function(player) {
     })
   }
 
+  // Inheritance Systems (L1Z1X): exhaust to gain a tech with prereqs <= non-unit-upgrade tech count
+  if (this._isTechReady(player, 'inheritance-systems')) {
+    actions.push({
+      id: 'inheritance-systems',
+      name: 'Inheritance Systems',
+      execute: (p) => {
+        const handler = this.factionAbilities._getPlayerHandler(p)
+        if (handler?.inheritanceSystems) {
+          handler.inheritanceSystems(this.factionAbilities, p)
+        }
+      },
+    })
+  }
+
   return actions
 }
 

@@ -198,6 +198,31 @@ class FactionAbilities {
   }
 
 
+  /**
+   * Check if a unit is immune to the Direct Hit action card.
+   * (e.g., L1Z1X Super Dreadnought II)
+   */
+  isDirectHitImmune(unit) {
+    const player = this.players.byName(unit.owner)
+    if (!player) {
+      return false
+    }
+    const handler = this._getPlayerHandler(player)
+    return handler?.isDirectHitImmune?.(player, this, unit) ?? false
+  }
+
+  /**
+   * Check if a player's ships can move into supernova systems (as destination).
+   * Separate from canMoveThroughSupernovae which allows transit.
+   * (e.g., Muaat Magmus Reactor)
+   */
+  canMoveIntoSupernovae(playerName) {
+    const player = this.players.byName(playerName)
+    const handler = this._getPlayerHandler(player)
+    return handler?.canMoveIntoSupernovae?.(player, this) ?? false
+  }
+
+
   // ---------------------------------------------------------------------------
   // B. Component Actions — data-driven registry
   // ---------------------------------------------------------------------------

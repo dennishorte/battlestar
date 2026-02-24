@@ -196,8 +196,16 @@ class Galaxy {
         }
 
         // Cannot move through supernova (unless faction allows it)
+        // canMoveThroughSupernovae allows transit (passing through)
+        // canMoveIntoSupernovae allows entering as destination only
         if (tile?.anomaly === 'supernova') {
-          if (!this.game.factionAbilities?.canMoveThroughSupernovae(playerName)) {
+          const canTransit = this.game.factionAbilities?.canMoveThroughSupernovae(playerName)
+          const canEnter = this.game.factionAbilities?.canMoveIntoSupernovae(playerName)
+          if (!canTransit && !canEnter) {
+            continue
+          }
+          // canMoveIntoSupernovae only allows entering as destination, not transiting
+          if (!canTransit && canEnter && neighborId !== String(toSystemId)) {
             continue
           }
         }
