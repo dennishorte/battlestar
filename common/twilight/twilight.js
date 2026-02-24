@@ -136,6 +136,7 @@ Twilight.prototype._initializeState = function() {
   this.state.capturedUnits = {}         // { playerName: [{ type, originalOwner }] } — Vuil'raith Cabal
   this.state.capturedCommandTokens = {} // { playerName: [otherPlayerName, ...] } — Mahact Gene-Sorcerers
   this.state.nekroPrediction = null     // { playerName, outcome } — Nekro Virus agenda prediction
+  this.state.creussWormholeToken = null  // systemId where Creuss wormhole token is placed
 }
 
 Twilight.prototype._initializeZones = function() {
@@ -890,6 +891,11 @@ Twilight.prototype.strategyPhase = function() {
   // Place trade goods on unchosen strategy cards
   for (const cardId of this.state.availableStrategyCards) {
     this.state.strategyCardTradeGoods[cardId] = (this.state.strategyCardTradeGoods[cardId] || 0) + 1
+  }
+
+  // End of strategy phase triggers (e.g., Quantum Datahub Node)
+  for (const player of this.players.all()) {
+    this.factionAbilities.onStrategyPhaseEnd(player)
   }
 
   this.log.outdent()
@@ -2098,6 +2104,12 @@ Twilight.prototype._assignHits = function(systemId, ownerName, hits, destroyerNa
   // Track which units just sustained this round (for Duranium Armor)
   const justSustainedIds = new Set()
 
+  // Non-Euclidean Shielding: each sustain cancels 2 hits instead of 1
+  const owner = this.players.byName(ownerName)
+  const hitsPerSustain = owner
+    ? this.factionAbilities.getSustainDamageHitsCancel(owner)
+    : 1
+
   // First, sustain damage on undamaged ships that have the ability
   const sustainableShips = systemUnits.space
     .filter(u => u.owner === ownerName && !u.damaged)
@@ -2118,7 +2130,7 @@ Twilight.prototype._assignHits = function(systemId, ownerName, hits, destroyerNa
     }
     ship.damaged = true
     justSustainedIds.add(ship.id)
-    remainingHits--
+    remainingHits = Math.max(0, remainingHits - hitsPerSustain)
   }
 
   // Faction hook: after units sustain damage (e.g., Letnev commander)
@@ -2151,12 +2163,20 @@ Twilight.prototype._assignHits = function(systemId, ownerName, hits, destroyerNa
       if (destroyerName) {
         this.factionAbilities.onUnitDestroyed(systemId, removed, destroyerName, null)
       }
+
+      // Track destroyed ship types for Salvage Operations
+      if (!this.state._destroyedDuringCombat) {
+        this.state._destroyedDuringCombat = {}
+      }
+      if (!this.state._destroyedDuringCombat[ownerName]) {
+        this.state._destroyedDuringCombat[ownerName] = []
+      }
+      this.state._destroyedDuringCombat[ownerName].push(removed.type)
     }
     remainingHits--
   }
 
   // Duranium Armor: repair 1 damaged unit that did NOT sustain this round
-  const owner = this.players.byName(ownerName)
   if (owner && owner.hasTechnology('duranium-armor')) {
     const repairCandidate = systemUnits.space.find(
       u => u.owner === ownerName && u.damaged && !justSustainedIds.has(u.id)
@@ -2484,6 +2504,16 @@ Twilight.prototype._spaceCannonDefense = function(systemId, planetId, attackerNa
     return
   }
 
+  // L4 Disruptors: units cannot use Space Cannon against invading player's units
+  const attackerPlayer = this.players.byName(attackerName)
+  if (attackerPlayer && this.factionAbilities.isSpaceCannonImmuneDuringInvasion(attackerPlayer)) {
+    this.log.add({
+      template: 'L4 Disruptors: Space Cannon Defense cannot fire against {attacker}',
+      args: { attacker: attackerName },
+    })
+    return
+  }
+
   const defenderName = this.state.planets[planetId]?.controller
   if (!defenderName) {
     return
@@ -2502,7 +2532,6 @@ Twilight.prototype._spaceCannonDefense = function(systemId, planetId, attackerNa
   const planetUnits = systemUnits.planets[planetId] || []
   let defenderPlasmaUsed = false
   // Antimass Deflectors: +1 combat value when firing at target with this tech
-  const attackerPlayer = this.players.byName(attackerName)
   const antimassDefense = attackerPlayer && attackerPlayer.hasTechnology('antimass-deflectors') ? 1 : 0
 
   for (const unit of planetUnits) {
@@ -2785,6 +2814,12 @@ Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, h
   let remainingHits = hits
   const justSustainedIds = new Set()
 
+  // Non-Euclidean Shielding: each sustain cancels 2 hits instead of 1
+  const groundOwner = this.players.byName(ownerName)
+  const groundHitsPerSustain = groundOwner
+    ? this.factionAbilities.getSustainDamageHitsCancel(groundOwner)
+    : 1
+
   // First, sustain damage on undamaged units (mechs)
   const sustainableUnits = planetUnits
     .filter(u => u.owner === ownerName && !u.damaged)
@@ -2804,7 +2839,7 @@ Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, h
     }
     unit.damaged = true
     justSustainedIds.add(unit.id)
-    remainingHits--
+    remainingHits = Math.max(0, remainingHits - groundHitsPerSustain)
   }
 
   // Faction hook: after units sustain damage (e.g., Letnev commander)
@@ -2837,8 +2872,7 @@ Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, h
   }
 
   // Duranium Armor: repair 1 damaged unit that did NOT sustain this round
-  const owner = this.players.byName(ownerName)
-  if (owner && owner.hasTechnology('duranium-armor')) {
+  if (groundOwner && groundOwner.hasTechnology('duranium-armor')) {
     const repairCandidate = planetUnits.find(
       u => u.owner === ownerName && u.damaged && !justSustainedIds.has(u.id)
     )
@@ -3087,7 +3121,35 @@ Twilight.prototype._productionStep = function(player, systemId) {
     }
   }
 
-  if (!hasSpaceDock) {
+  // Particle Synthesis (Creuss): wormholes in systems with your ships gain PRODUCTION 1
+  let wormholeCount = 0
+  let hasParticleSynthesis = false
+  if (player.hasTechnology('particle-synthesis')) {
+    const ownShips = systemUnits.space.filter(u => u.owner === player.name)
+    if (ownShips.length > 0) {
+      const wormholes = [...(tile.wormholes || [])]
+      // Check faction wormholes (Creuss home system has alpha+beta)
+      const factionWormholes = this.factionAbilities.getHomeSystemWormholes(systemId)
+      for (const w of factionWormholes) {
+        if (!wormholes.includes(w)) {
+          wormholes.push(w)
+        }
+      }
+      // Check for Creuss wormhole token
+      if (this.state.creussWormholeToken === String(systemId)) {
+        if (!wormholes.includes('delta')) {
+          wormholes.push('delta')
+        }
+      }
+      wormholeCount = wormholes.length
+      if (wormholeCount > 0) {
+        hasParticleSynthesis = true
+        productionCapacity += wormholeCount  // Each wormhole gains PRODUCTION 1
+      }
+    }
+  }
+
+  if (!hasSpaceDock && !hasParticleSynthesis) {
     return
   }
 
@@ -3124,7 +3186,9 @@ Twilight.prototype._productionStep = function(player, systemId) {
       availableResources += planet.resources
     }
   }
-  availableResources += player.tradeGoods
+  // Mirror Computing: each trade good is worth 2 resources
+  const tgResourceValue = this.factionAbilities.getTradeGoodResourceValue(player)
+  availableResources += player.tradeGoods * tgResourceValue
 
   // Calculate total cost and unit count
   let totalCost = 0
@@ -3203,6 +3267,11 @@ Twilight.prototype._productionStep = function(player, systemId) {
     totalCost = Math.max(0, totalCost - 1)
   }
 
+  // Particle Synthesis: reduce cost by 1 for each wormhole in the system
+  if (hasParticleSynthesis && validatedUnits.length > 0 && wormholeCount > 0) {
+    totalCost = Math.max(0, totalCost - wormholeCount)
+  }
+
   // Create validated units
   for (const unitDef of validatedUnits) {
     if (unitDef.category === 'ship') {
@@ -3232,9 +3301,13 @@ Twilight.prototype._productionStep = function(player, systemId) {
       remainingCost -= planet.resources
     }
   }
-  if (remainingCost > 0 && player.tradeGoods >= remainingCost) {
-    player.spendTradeGoods(remainingCost)
-    remainingCost = 0
+  if (remainingCost > 0) {
+    // Mirror Computing: each trade good covers tgResourceValue cost
+    const tgNeeded = Math.ceil(remainingCost / tgResourceValue)
+    if (player.tradeGoods >= tgNeeded) {
+      player.spendTradeGoods(tgNeeded)
+      remainingCost = 0
+    }
   }
 
   const totalProduced = validatedUnits.length
@@ -3245,7 +3318,7 @@ Twilight.prototype._productionStep = function(player, systemId) {
     })
 
     // Faction abilities after production (e.g., Titans of Ul commander Tungstantus)
-    this.factionAbilities.afterProduction(player, systemId, totalProduced)
+    this.factionAbilities.afterProduction(player, systemId, totalProduced, validatedUnits)
   }
 }
 
@@ -3361,6 +3434,14 @@ Twilight.prototype._researchTech = function(player) {
     .filter(t => player.canResearchTechnology(t.id))
     .map(t => t.id)
 
+  // Add techs available via special abilities (e.g., Yin commander: sacrifice infantry)
+  const additionalTechs = this.factionAbilities.getAdditionalResearchableTechs(player, allTechs)
+  for (const techId of additionalTechs) {
+    if (!available.includes(techId)) {
+      available.push(techId)
+    }
+  }
+
   if (available.length === 0) {
     return null
   }
@@ -3374,6 +3455,9 @@ Twilight.prototype._researchTech = function(player) {
   if (!tech) {
     return null
   }
+
+  // Check if the selected tech requires a special cost (e.g., Yin infantry sacrifice)
+  this.factionAbilities.onPreResearch(player, tech)
 
   // Create tech card and add to player's zone
   const cardId = `${player.name}-${techId}`
@@ -4185,6 +4269,24 @@ Twilight.prototype._getTechComponentActions = function(player) {
 
   // Scanlink Drone Network: registered as passive (in tactical action), not here
 
+  // Production Biomes (Hacan): exhaust + spend 1 strategy token for 4 TG + give 2 TG to another player
+  if (this._isTechReady(player, 'production-biomes') && player.commandTokens.strategy >= 1) {
+    actions.push({
+      id: 'production-biomes',
+      name: 'Production Biomes',
+      execute: (p) => this._executeProductionBiomes(p),
+    })
+  }
+
+  // Wormhole Generator (Creuss): exhaust to place or move a Creuss wormhole token
+  if (this._isTechReady(player, 'wormhole-generator')) {
+    actions.push({
+      id: 'wormhole-generator',
+      name: 'Wormhole Generator',
+      execute: (p) => this._executeWormholeGenerator(p),
+    })
+  }
+
   return actions
 }
 
@@ -4423,6 +4525,113 @@ Twilight.prototype._executeSelfAssemblyRoutines = function(player) {
       args: { player, planet: targetPlanet },
     })
   }
+}
+
+Twilight.prototype._executeProductionBiomes = function(player) {
+  this._exhaustTech(player, 'production-biomes')
+  player.commandTokens.strategy -= 1
+
+  // Gain 4 trade goods
+  player.addTradeGoods(4)
+
+  // Choose another player to give 2 trade goods
+  const others = this.players.all().filter(p => p.name !== player.name)
+  if (others.length > 0) {
+    let target
+    if (others.length === 1) {
+      target = others[0]
+    }
+    else {
+      const sel = this.actions.choose(player, others.map(p => p.name), {
+        title: 'Production Biomes: Choose a player to gain 2 trade goods',
+      })
+      target = this.players.byName(sel[0])
+    }
+
+    if (target) {
+      target.addTradeGoods(2)
+      this.log.add({
+        template: '{player} uses Production Biomes: gains 4 TG, {target} gains 2 TG',
+        args: { player, target: target.name },
+      })
+    }
+  }
+  else {
+    this.log.add({
+      template: '{player} uses Production Biomes: gains 4 TG',
+      args: { player },
+    })
+  }
+}
+
+Twilight.prototype._executeWormholeGenerator = function(player) {
+  this._exhaustTech(player, 'wormhole-generator')
+
+  // Find valid systems: contains a planet you control, or non-home system without opponent ships,
+  // and does not already contain a wormhole (other than the Creuss wormhole itself)
+  const validSystems = []
+  for (const [systemId, _systemData] of Object.entries(this.state.systems)) {
+    const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+    if (!tile) {
+      continue
+    }
+
+    // Skip home systems (other than the Creuss Gate)
+    if (tile.type === 'home') {
+      continue
+    }
+
+    // Check if system already has a non-Creuss wormhole
+    const existingWormholes = (tile.wormholes || []).filter(w => w !== 'delta')
+    if (existingWormholes.length > 0) {
+      continue
+    }
+
+    // Also skip if system already has the Creuss wormhole token
+    if (this.state.creussWormholeToken === systemId) {
+      continue
+    }
+
+    // Option A: system contains a planet controlled by this player
+    const hasControlledPlanet = (tile.planets || []).some(
+      pId => this.state.planets[pId]?.controller === player.name
+    )
+
+    // Option B: non-home system without opponent ships
+    const systemUnits = this.state.units[systemId]
+    const hasOpponentShips = systemUnits?.space.some(
+      u => u.owner !== player.name && res.getUnit(u.type)?.category === 'ship'
+    )
+
+    if (hasControlledPlanet || !hasOpponentShips) {
+      // Must also have player ships in the system (ships required to place wormhole)
+      const hasOwnShips = systemUnits?.space.some(u => u.owner === player.name)
+      if (hasOwnShips || hasControlledPlanet) {
+        validSystems.push(systemId)
+      }
+    }
+  }
+
+  if (validSystems.length === 0) {
+    this.log.add({
+      template: '{player} uses Wormhole Generator but no valid systems available',
+      args: { player },
+    })
+    return
+  }
+
+  const sel = this.actions.choose(player, validSystems, {
+    title: 'Wormhole Generator: Place Creuss wormhole token in which system?',
+  })
+  const targetSystem = sel[0]
+
+  // Place or move the Creuss wormhole token
+  this.state.creussWormholeToken = targetSystem
+
+  this.log.add({
+    template: '{player} uses Wormhole Generator to place Creuss wormhole token in system {system}',
+    args: { player, system: targetSystem },
+  })
 }
 
 Twilight.prototype._getAvailableResources = function(player) {

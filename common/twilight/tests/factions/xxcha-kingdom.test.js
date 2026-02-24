@@ -108,8 +108,77 @@ describe('Xxcha Kingdom', () => {
   })
 
   describe('Commander — Elder Qanoj', () => {
-    test.todo('when you or a neighbor votes, cast 1 additional vote')
-    test.todo('game effects cannot prevent you from voting on an agenda')
+    test('+1 vote per readied planet when commander unlocked', () => {
+      const game = t.fixture({ factions: ['xxcha-kingdom', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' },
+          planets: {
+            'archon-ren': { exhausted: false },
+            'archon-tau': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(true)
+
+      // 2 readied planets = +2 votes
+      const modifier = game.factionAbilities.getVotingModifier(dennis)
+      expect(modifier).toBe(2)
+    })
+
+    test('exhausted planets do not count for voting modifier', () => {
+      const game = t.fixture({ factions: ['xxcha-kingdom', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' },
+          planets: {
+            'archon-ren': { exhausted: false },
+            'archon-tau': { exhausted: true },
+          },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      // Only 1 readied planet
+      const modifier = game.factionAbilities.getVotingModifier(dennis)
+      expect(modifier).toBe(1)
+    })
+
+    test('no voting modifier when commander is locked', () => {
+      const game = t.fixture({ factions: ['xxcha-kingdom', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          planets: {
+            'archon-ren': { exhausted: false },
+            'archon-tau': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(false)
+      const modifier = game.factionAbilities.getVotingModifier(dennis)
+      expect(modifier).toBe(0)
+    })
+
+    test('Xxcha cannot be excluded from voting', () => {
+      const game = t.fixture({ factions: ['xxcha-kingdom', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' },
+        },
+      })
+      game.run()
+
+      const votingOrder = game.players.all()
+      const participation = game.factionAbilities.getAgendaParticipation(votingOrder)
+      expect(participation.excluded).not.toContain('dennis')
+    })
   })
 
   describe('Hero — Xxekir Grom', () => {

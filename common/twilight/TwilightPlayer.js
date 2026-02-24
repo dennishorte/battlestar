@@ -216,6 +216,13 @@ class TwilightPlayer extends BasePlayer {
     }
 
     const prereqs = this.getTechPrerequisites()
+
+    // Apply color-specific prerequisite bonuses (e.g., Yin commander: +1 green)
+    const bonuses = this.game.factionAbilities?.getTechPrerequisiteBonuses(this) ?? {}
+    for (const [color, bonus] of Object.entries(bonuses)) {
+      prereqs[color] = (prereqs[color] || 0) + bonus
+    }
+
     const needed = {}
     for (const color of tech.prerequisites) {
       needed[color] = (needed[color] || 0) + 1

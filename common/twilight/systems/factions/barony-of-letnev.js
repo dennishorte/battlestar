@@ -91,4 +91,19 @@ module.exports = {
       return player.tradeGoods >= 2
     },
   },
+
+  // L4 Disruptors (faction tech): During an invasion, units cannot use SPACE CANNON
+  // against your units.
+  isSpaceCannonImmuneDuringInvasion(player, _ctx) {
+    return player.hasTechnology('l4-disruptors')
+  },
+
+  // Non-Euclidean Shielding (faction tech): When 1 of your units uses SUSTAIN DAMAGE,
+  // cancel 2 hits instead of 1.
+  getSustainDamageHitsCancel(player, _ctx) {
+    if (player.hasTechnology('non-euclidean-shielding')) {
+      return 2
+    }
+    return 1
+  },
 }

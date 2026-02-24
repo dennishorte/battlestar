@@ -173,6 +173,123 @@ module.exports = {
     })
   },
 
+  // Commander — Brother Omar: Satisfies 1 green technology prerequisite.
+  // When researching a tech owned by another player, may return 1 infantry
+  // to a planet you control to ignore all prerequisites.
+  getTechPrerequisiteBonuses(player, _ctx) {
+    if (!player.isCommanderUnlocked()) {
+      return {}
+    }
+    return { green: 1 }
+  },
+
+  // Find techs owned by other players that Yin doesn't have and can't normally research
+  getAdditionalResearchableTechs(player, ctx, allTechs) {
+    if (!player.isCommanderUnlocked()) {
+      return []
+    }
+
+    // Check if player has any infantry on controlled planets
+    const controlledPlanets = player.getControlledPlanets()
+    let hasInfantry = false
+    for (const planetId of controlledPlanets) {
+      const systemId = ctx.game._findSystemForPlanet(planetId)
+      if (!systemId) {
+        continue
+      }
+      const planetUnits = ctx.state.units[systemId]?.planets[planetId] || []
+      if (planetUnits.some(u => u.owner === player.name && u.type === 'infantry')) {
+        hasInfantry = true
+        break
+      }
+    }
+
+    if (!hasInfantry) {
+      return []
+    }
+
+    // Find techs owned by at least one other player
+    const otherPlayers = ctx.players.all().filter(p => p.name !== player.name)
+    const otherTechIds = new Set()
+    for (const other of otherPlayers) {
+      for (const techId of other.getTechIds()) {
+        otherTechIds.add(techId)
+      }
+    }
+
+    // Return techs the player doesn't have, that are owned by another player,
+    // and that the player can't already research normally
+    return allTechs
+      .filter(t =>
+        !player.hasTechnology(t.id)
+        && otherTechIds.has(t.id)
+        && !player.canResearchTechnology(t.id)
+      )
+      .map(t => t.id)
+  },
+
+  // When the selected tech is one that required the infantry sacrifice, handle it
+  onPreResearch(player, ctx, tech) {
+    if (!player.isCommanderUnlocked()) {
+      return
+    }
+
+    // Check if this tech could be researched normally (with commander green bonus already applied)
+    if (player.canResearchTechnology(tech.id)) {
+      return
+    }
+
+    // This tech requires the infantry sacrifice — check if another player owns it
+    const otherPlayers = ctx.players.all().filter(p => p.name !== player.name)
+    const ownedByOther = otherPlayers.some(p => p.hasTechnology(tech.id))
+    if (!ownedByOther) {
+      return
+    }
+
+    // Find planets with infantry to sacrifice
+    const controlledPlanets = player.getControlledPlanets()
+    const planetsWithInfantry = []
+    for (const planetId of controlledPlanets) {
+      const systemId = ctx.game._findSystemForPlanet(planetId)
+      if (!systemId) {
+        continue
+      }
+      const planetUnits = ctx.state.units[systemId]?.planets[planetId] || []
+      if (planetUnits.some(u => u.owner === player.name && u.type === 'infantry')) {
+        planetsWithInfantry.push({ planetId, systemId })
+      }
+    }
+
+    if (planetsWithInfantry.length === 0) {
+      return
+    }
+
+    // Choose planet to return infantry from
+    let target
+    if (planetsWithInfantry.length === 1) {
+      target = planetsWithInfantry[0]
+    }
+    else {
+      const planetChoices = planetsWithInfantry.map(p => p.planetId)
+      const selection = ctx.actions.choose(player, planetChoices, {
+        title: 'Brother Omar: Return 1 infantry from which planet?',
+      })
+      target = planetsWithInfantry.find(p => p.planetId === selection[0])
+    }
+
+    // Remove 1 infantry from the planet
+    const planetUnits = ctx.state.units[target.systemId].planets[target.planetId]
+    const idx = planetUnits.findIndex(u => u.owner === player.name && u.type === 'infantry')
+    if (idx !== -1) {
+      planetUnits.splice(idx, 1)
+    }
+
+    ctx.log.add({
+      template: 'Brother Omar: {player} returns 1 infantry from {planet} to ignore prerequisites',
+      args: { player: player.name, planet: target.planetId },
+    })
+  },
+
   onGroundCombatStart(player, ctx, { systemId, planetId, opponentName }) {
     const planetUnits = ctx.state.units[systemId].planets[planetId]
 

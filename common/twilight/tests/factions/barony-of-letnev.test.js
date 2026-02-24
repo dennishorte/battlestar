@@ -436,8 +436,152 @@ describe('Barony of Letnev', () => {
       expect(grav.prerequisites).toEqual(['blue', 'red'])
     })
 
-    test.todo('L4 Disruptors: units cannot use space cannon during invasion')
-    test.todo('Non-Euclidean Shielding: sustain damage cancels 2 hits')
+    test('L4 Disruptors: units cannot use space cannon during invasion', () => {
+      // Letnev invades a planet defended by PDS — space cannon defense should be skipped
+      // Note: Space Cannon Offense still fires during movement (L4 only blocks defense)
+      const game = t.fixture({
+        factions: ['barony-of-letnev', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          technologies: ['l4-disruptors'],
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'letnev-home': {
+              space: ['carrier', 'carrier'],
+              'arc-prime': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry',
+                'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'pds', 'pds', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'letnev-home', count: 2 },
+          { unitType: 'infantry', from: 'letnev-home', count: 8 },
+        ],
+      })
+
+      // L4 Disruptors should block PDS space cannon defense (during invasion)
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(t => t.includes('L4 Disruptors'))).toBe(true)
+      expect(logEntries.some(t => t.includes('Space Cannon Defense scores'))).toBe(false)
+
+      // Letnev should win the invasion with overwhelming infantry advantage
+      expect(game.state.planets['new-albion'].controller).toBe('dennis')
+    })
+
+    test('L4 Disruptors: without tech, space cannon defense still fires', () => {
+      // Letnev invades without the tech — PDS should fire normally during invasion
+      const game = t.fixture({
+        factions: ['barony-of-letnev', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          // No L4 Disruptors technology
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'letnev-home': {
+              space: ['carrier', 'carrier'],
+              'arc-prime': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry',
+                'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'pds', 'pds', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'letnev-home', count: 2 },
+          { unitType: 'infantry', from: 'letnev-home', count: 8 },
+        ],
+      })
+
+      // Without L4 Disruptors, no "L4 Disruptors" log entry should appear
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(t => t.includes('L4 Disruptors'))).toBe(false)
+    })
+
+    test('Non-Euclidean Shielding: sustain damage cancels 2 hits', () => {
+      // Letnev dreadnought with NES sustains, canceling 2 hits instead of 1
+      // Opponent has enough firepower to deal multiple hits
+      const game = t.fixture({
+        factions: ['barony-of-letnev', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          technologies: ['non-euclidean-shielding'],
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'letnev-home': {
+              space: ['dreadnought', 'dreadnought', 'fighter'],
+              'arc-prime': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['cruiser', 'cruiser', 'cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'dreadnought', from: 'letnev-home', count: 2 },
+          { unitType: 'fighter', from: 'letnev-home', count: 1 },
+        ],
+      })
+
+      // With NES, 2 dreadnoughts can sustain and cancel 4 total hits (2 each)
+      // 3 cruisers deal at most 3 hits — all absorbed by sustaining 2 dreadnoughts
+      // Letnev should handily win with 2 dreadnoughts + 1 fighter vs 3 cruisers
+      const dennisShips = game.state.units['27'].space
+        .filter(u => u.owner === 'dennis')
+      expect(dennisShips.length).toBeGreaterThanOrEqual(1)
+
+      // Micah should have no ships left
+      const micahShips = game.state.units['27'].space
+        .filter(u => u.owner === 'micah')
+      expect(micahShips.length).toBe(0)
+    })
+
     test.todo('Gravleash Maneuvers: +X to combat roll based on ship types')
   })
 })
