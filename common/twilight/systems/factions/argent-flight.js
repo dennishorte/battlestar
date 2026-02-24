@@ -1,3 +1,5 @@
+const { getUnit } = require('../../res/units.js')
+
 module.exports = {
   votesFirst: true,
 
@@ -7,6 +9,76 @@ module.exports = {
 
   getRaidFormationExcessHits(player, ctx, totalHits, fightersDestroyed) {
     return Math.max(0, totalHits - fightersDestroyed)
+  },
+
+  // Aerie Hololattice: other players cannot move ships through systems with
+  // Argent structures.
+  isStructureBlocking(player, ctx, { systemId, moverName: _moverName }) {
+    if (!player.hasTechnology('aerie-hololattice')) {
+      return false
+    }
+
+    const systemUnits = ctx.state.units[systemId]
+    if (!systemUnits) {
+      return false
+    }
+
+    // Check planets for structures (PDS, space-dock) owned by the Argent player
+    for (const planetUnits of Object.values(systemUnits.planets)) {
+      for (const unit of planetUnits) {
+        if (unit.owner !== player.name) {
+          continue
+        }
+        const def = getUnit(unit.type)
+        if (def?.category === 'structure') {
+          return true
+        }
+      }
+    }
+
+    return false
+  },
+
+  // Aerie Hololattice: each planet with structures gains PRODUCTION 1
+  getStructureProductionBonus(player, ctx, systemId) {
+    if (!player.hasTechnology('aerie-hololattice')) {
+      return 0
+    }
+
+    const systemUnits = ctx.state.units[systemId]
+    if (!systemUnits) {
+      return 0
+    }
+
+    let bonus = 0
+    const tile = ctx.game.res.getSystemTile(systemId) || ctx.game.res.getSystemTile(Number(systemId))
+    if (!tile) {
+      return 0
+    }
+
+    for (const planetId of tile.planets) {
+      const planetUnits = systemUnits.planets[planetId] || []
+      const hasStructure = planetUnits.some(u => {
+        if (u.owner !== player.name) {
+          return false
+        }
+        const def = getUnit(u.type)
+        return def?.category === 'structure'
+      })
+      if (hasStructure) {
+        // Each planet with structures gains PRODUCTION 1 — but not for planets
+        // that already have a space dock (they already have production).
+        // The ability adds PRODUCTION 1 to structures that don't normally produce.
+        const hasSpaceDock = planetUnits.some(
+          u => u.owner === player.name && u.type === 'space-dock'
+        )
+        if (!hasSpaceDock) {
+          bonus += 1
+        }
+      }
+    }
+
+    return bonus
   },
 
   // Agent — Trillossa Aun Mirik: After a player activates a system, exhaust to

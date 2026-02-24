@@ -350,6 +350,7 @@ class TwilightPlayer extends BasePlayer {
   }
 
   exhaustAgent(agentId) {
+    let exhaustedAgentId = agentId
     if (this.leaders.agents) {
       if (agentId) {
         const agent = this.leaders.agents.find(a => a.id === agentId)
@@ -361,11 +362,17 @@ class TwilightPlayer extends BasePlayer {
         const ready = this.leaders.agents.find(a => a.status === 'ready')
         if (ready) {
           ready.status = 'exhausted'
+          exhaustedAgentId = ready.id
         }
       }
     }
     else {
       this.leaders.agent = 'exhausted'
+    }
+
+    // Notify faction abilities (e.g., Nomad Temporal Command Suite)
+    if (this.game?.factionAbilities?.onAnyAgentExhausted) {
+      this.game.factionAbilities.onAnyAgentExhausted(this, exhaustedAgentId)
     }
   }
 

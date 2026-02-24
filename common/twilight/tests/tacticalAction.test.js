@@ -265,8 +265,8 @@ describe('Tactical Action', () => {
         dennis: {
           units: {
             'sol-home': {
-              space: ['carrier'],  // capacity 4
-              'jord': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+              space: ['carrier'],  // Sol Advanced Carrier I: capacity 6
+              'jord': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
             },
           },
         },
@@ -278,19 +278,19 @@ describe('Tactical Action', () => {
 
       t.choose(game, 'Tactical Action')
       t.action(game, 'activate-system', { systemId: target })
-      // Try to transport 5 infantry with 1 carrier (capacity 4)
+      // Try to transport 7 infantry with 1 carrier (Sol Advanced Carrier I capacity 6)
       t.action(game, 'move-ships', {
         movements: [
           { unitType: 'carrier', from: 'sol-home', count: 1 },
-          { unitType: 'infantry', from: 'sol-home', count: 5 },
+          { unitType: 'infantry', from: 'sol-home', count: 7 },
         ],
       })
 
-      // Only 4 infantry should move (capacity limit)
+      // Only 6 infantry should move (capacity limit)
       const targetPlanetUnits = Object.values(game.state.units[target].planets)
         .flat()
         .filter(u => u.owner === 'dennis' && u.type === 'infantry')
-      expect(targetPlanetUnits.length).toBe(4)
+      expect(targetPlanetUnits.length).toBe(6)
     })
 
     test('dreadnoughts have capacity 1', () => {

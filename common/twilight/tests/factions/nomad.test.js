@@ -352,7 +352,58 @@ describe('Nomad', () => {
 
   describe('Faction Technologies', () => {
     describe('Temporal Command Suite', () => {
-      test.todo('after any agent becomes exhausted, may exhaust this card to ready that agent')
+      test('after own agent becomes exhausted, may exhaust this card to ready that agent', () => {
+        const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['sling-relay', 'temporal-command-suite'],
+          },
+        })
+        game.run()
+
+        // Use trade strategy to trigger Artuno (commodity replenishment)
+        t.choose(game, 'trade')
+        t.choose(game, 'imperial')
+
+        // Dennis uses Trade — primary replenishes commodities, Artuno triggers
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Exhaust Artuno')
+
+        // Temporal Command Suite triggers after Artuno exhaustion
+        t.choose(game, 'Exhaust Temporal Command Suite')
+
+        const dennis = game.players.byName('dennis')
+        // Artuno should be ready again
+        expect(dennis.isAgentReady('artuno')).toBe(true)
+        // Temporal Command Suite should be exhausted
+        expect(dennis.exhaustedTechs).toContain('temporal-command-suite')
+      })
+
+      test('can decline to use Temporal Command Suite', () => {
+        const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['sling-relay', 'temporal-command-suite'],
+          },
+        })
+        game.run()
+
+        t.choose(game, 'trade')
+        t.choose(game, 'imperial')
+
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Exhaust Artuno')
+
+        // Decline Temporal Command Suite
+        t.choose(game, 'Pass')
+
+        const dennis = game.players.byName('dennis')
+        // Artuno should stay exhausted
+        expect(dennis.isAgentReady('artuno')).toBe(false)
+        // Temporal Command Suite should NOT be exhausted
+        expect((dennis.exhaustedTechs || []).includes('temporal-command-suite')).toBe(false)
+      })
+
       test.todo('if readying another player agent, may perform a transaction with that player')
     })
 
@@ -362,7 +413,131 @@ describe('Nomad', () => {
     })
 
     describe("Thunder's Paradox", () => {
-      test.todo('at start of any player turn, may exhaust 1 agent to ready any other agent')
+      test('at start of own turn, may exhaust 1 agent to ready another', () => {
+        const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['sling-relay', 'thunders-paradox'],
+            leaders: {
+              agents: [
+                { id: 'artuno', name: 'Artuno the Betrayer', status: 'ready' },
+                { id: 'thundarian', name: 'The Thundarian', status: 'exhausted' },
+                { id: 'mercer', name: 'Field Marshal Mercer', status: 'ready' },
+              ],
+              commander: 'locked',
+              hero: 'locked',
+            },
+          },
+        })
+        game.run()
+
+        t.choose(game, 'leadership')
+        t.choose(game, 'diplomacy')
+
+        // At start of Dennis's turn, Thunder's Paradox triggers
+        t.choose(game, "Use Thunder's Paradox")
+
+        // Choose agent to exhaust (artuno or mercer are ready)
+        t.choose(game, 'artuno')
+
+        // The Thundarian is the only exhausted agent, auto-selected
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.isAgentReady('artuno')).toBe(false)
+        expect(dennis.isAgentReady('thundarian')).toBe(true)
+        expect(dennis.isAgentReady('mercer')).toBe(true)
+      })
+
+      test('triggers at start of other player turn too', () => {
+        const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['sling-relay', 'thunders-paradox'],
+            leaders: {
+              agents: [
+                { id: 'artuno', name: 'Artuno the Betrayer', status: 'ready' },
+                { id: 'thundarian', name: 'The Thundarian', status: 'exhausted' },
+                { id: 'mercer', name: 'Field Marshal Mercer', status: 'ready' },
+              ],
+              commander: 'locked',
+              hero: 'locked',
+            },
+          },
+        })
+        game.run()
+
+        t.choose(game, 'leadership')
+        t.choose(game, 'diplomacy')
+
+        // Dennis's turn: decline Thunder's Paradox
+        t.choose(game, 'Pass')  // decline Thunder's Paradox
+
+        // Dennis does strategic action to pass turn
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Pass')  // micah declines leadership secondary
+
+        // Micah's turn starts — Thunder's Paradox triggers for Nomad
+        t.choose(game, "Use Thunder's Paradox")
+        t.choose(game, 'artuno')
+        // thundarian auto-selected (only exhausted agent)
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.isAgentReady('artuno')).toBe(false)
+        expect(dennis.isAgentReady('thundarian')).toBe(true)
+      })
+
+      test('not available when no exhausted agents', () => {
+        const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['sling-relay', 'thunders-paradox'],
+            leaders: {
+              agents: [
+                { id: 'artuno', name: 'Artuno the Betrayer', status: 'ready' },
+                { id: 'thundarian', name: 'The Thundarian', status: 'ready' },
+                { id: 'mercer', name: 'Field Marshal Mercer', status: 'ready' },
+              ],
+              commander: 'locked',
+              hero: 'locked',
+            },
+          },
+        })
+        game.run()
+
+        t.choose(game, 'leadership')
+        t.choose(game, 'diplomacy')
+
+        // No Thunder's Paradox prompt — all agents are ready, none exhausted
+        // Game goes straight to action choices
+        const choices = t.currentChoices(game)
+        expect(choices).not.toContain("Use Thunder's Paradox")
+      })
+
+      test('not available when no ready agents', () => {
+        const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['sling-relay', 'thunders-paradox'],
+            leaders: {
+              agents: [
+                { id: 'artuno', name: 'Artuno the Betrayer', status: 'exhausted' },
+                { id: 'thundarian', name: 'The Thundarian', status: 'exhausted' },
+                { id: 'mercer', name: 'Field Marshal Mercer', status: 'exhausted' },
+              ],
+              commander: 'locked',
+              hero: 'locked',
+            },
+          },
+        })
+        game.run()
+
+        t.choose(game, 'leadership')
+        t.choose(game, 'diplomacy')
+
+        // No Thunder's Paradox prompt — all agents are exhausted, none ready
+        const choices = t.currentChoices(game)
+        expect(choices).not.toContain("Use Thunder's Paradox")
+      })
     })
   })
 })

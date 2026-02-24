@@ -576,11 +576,172 @@ describe('Naaz-Rokha Alliance', () => {
 
   describe('Faction Technologies', () => {
     describe('Supercharge', () => {
-      test.todo('exhaust at start of combat round to apply +1 to all combat rolls this round')
+      test('exhaust at start of combat round to apply +1 to all combat rolls this round', () => {
+        const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['psychoarchaeology', 'ai-development-algorithm', 'supercharge'],
+            units: {
+              'naazrokha-home': {
+                space: ['carrier'],
+                'naazir': ['infantry', 'space-dock'],
+              },
+              27: { space: ['cruiser', 'cruiser'] },
+            },
+          },
+          micah: {
+            units: {
+              26: { space: ['cruiser', 'cruiser'] },
+            },
+          },
+        })
+        game.run()
+
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis: tactical action → activate system 26 (adjacent to 27)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '26' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: '27', count: 2 }],
+        })
+
+        // Space combat start-of-round: Supercharge prompt fires
+        t.choose(game, 'Exhaust Supercharge')
+
+        const dennis = game.players.byName('dennis')
+        // Tech should be exhausted
+        expect(dennis.exhaustedTechs).toContain('supercharge')
+      })
+
+      test('combat modifier returns -1 when supercharge is active', () => {
+        const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['psychoarchaeology', 'ai-development-algorithm', 'supercharge'],
+          },
+        })
+        game.run()
+
+        const dennis = game.players.byName('dennis')
+
+        // Without supercharge active, modifier is 0
+        expect(game.factionAbilities.getCombatModifier(dennis)).toBe(0)
+
+        // Simulate supercharge active state
+        game.state._superchargeActive = { dennis: true }
+        expect(game.factionAbilities.getCombatModifier(dennis)).toBe(-1)
+
+        // Clean up
+        delete game.state._superchargeActive
+        expect(game.factionAbilities.getCombatModifier(dennis)).toBe(0)
+      })
+
+      test('cannot use if tech is already exhausted', () => {
+        const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['psychoarchaeology', 'ai-development-algorithm', 'supercharge'],
+            units: {
+              'naazrokha-home': {
+                space: ['carrier'],
+                'naazir': ['infantry', 'space-dock'],
+              },
+              27: { space: ['cruiser', 'cruiser'] },
+            },
+          },
+          micah: {
+            units: {
+              26: { space: ['cruiser'] },
+            },
+          },
+        })
+        game.run()
+
+        // Pre-exhaust the tech
+        const dennis = game.players.byName('dennis')
+        game._exhaustTech(dennis, 'supercharge')
+
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis: tactical action → activate system 26
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '26' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: '27', count: 2 }],
+        })
+
+        // No Supercharge prompt — tech is already exhausted
+        // Combat resolves without supercharge bonus
+        expect(game.state._superchargeActive?.dennis).toBeFalsy()
+      })
     })
 
     describe('Pre-Fab Arcologies', () => {
-      test.todo('after exploring a planet, ready that planet')
+      test('after exploring a planet, ready that planet', () => {
+        const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          explorationDecks: {
+            cultural: [],
+            hazardous: ['expedition'],
+            industrial: [],
+            frontier: [],
+          },
+          dennis: {
+            technologies: ['psychoarchaeology', 'ai-development-algorithm', 'pre-fab-arcologies'],
+            units: {
+              20: {
+                'vefut-ii': ['infantry'],
+              },
+            },
+            planets: {
+              'vefut-ii': { exhausted: true },
+            },
+          },
+        })
+        game.run()
+
+        // Planet starts exhausted
+        expect(game.state.planets['vefut-ii'].exhausted).toBe(true)
+
+        // Explore the planet
+        game._explorePlanet('vefut-ii', 'dennis')
+
+        // Planet should be readied by Pre-Fab Arcologies
+        expect(game.state.planets['vefut-ii'].exhausted).toBe(false)
+
+        // Expedition gives 2 trade goods
+        const dennis = game.players.byName('dennis')
+        expect(dennis.tradeGoods).toBe(2)
+      })
+
+      test('does not ready planet without the tech', () => {
+        const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          explorationDecks: {
+            cultural: [],
+            hazardous: ['expedition'],
+            industrial: [],
+            frontier: [],
+          },
+          dennis: {
+            units: {
+              20: {
+                'vefut-ii': ['infantry'],
+              },
+            },
+            planets: {
+              'vefut-ii': { exhausted: true },
+            },
+          },
+        })
+        game.run()
+
+        game._explorePlanet('vefut-ii', 'dennis')
+
+        // Without Pre-Fab Arcologies, planet stays exhausted
+        expect(game.state.planets['vefut-ii'].exhausted).toBe(true)
+      })
     })
 
     describe('Absolute Synergy', () => {
