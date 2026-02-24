@@ -273,7 +273,70 @@ describe('Titans of Ul', () => {
   })
 
   describe('Commander — Tungstantus', () => {
-    test.todo('when units use PRODUCTION, may gain 1 trade good')
+    test('gains 1 trade good after producing units', () => {
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
+          units: {
+            'titans-home': {
+              space: ['carrier'],
+              'elysium': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Activate home system and produce units
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'titans-home' })
+      t.choose(game, 'Done')  // skip movement
+
+      // Produce 1 fighter (cost 1, Elysium has 4 resources)
+      t.action(game, 'produce-units', {
+        units: [{ type: 'fighter', count: 1 }],
+      })
+
+      // Tungstantus should have granted 1 trade good
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBe(1)
+    })
+
+    test('does not gain trade good when commander is locked', () => {
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'titans-home': {
+              space: ['carrier'],
+              'elysium': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Activate home system and produce units
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'titans-home' })
+      t.choose(game, 'Done')  // skip movement
+
+      // Produce 1 fighter (cost 1, Elysium has 4 resources)
+      t.action(game, 'produce-units', {
+        units: [{ type: 'fighter', count: 1 }],
+      })
+
+      // Commander locked — no trade good
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBe(0)
+    })
+
     test.todo('unlock condition: have 5 structures on the game board')
   })
 

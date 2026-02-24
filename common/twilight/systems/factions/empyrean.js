@@ -29,6 +29,39 @@ module.exports = {
     }
   },
 
+  // Commander — Xuange: After another player moves ships into a system that
+  // contains 1 of your command tokens, you may return that token to your
+  // reinforcements.
+  onShipsEnterSystem(player, ctx, { systemId, moverName }) {
+    if (!player.isCommanderUnlocked()) {
+      return
+    }
+
+    // Check if the system contains a command token belonging to the Empyrean player
+    const tokens = ctx.state.systems[systemId]?.commandTokens || []
+    if (!tokens.includes(player.name)) {
+      return
+    }
+
+    const choice = ctx.actions.choose(player, ['Return Token', 'Pass'], {
+      title: `Xuange: ${moverName} moved ships into a system with your token. Return it?`,
+    })
+
+    if (choice[0] === 'Return Token') {
+      const idx = tokens.indexOf(player.name)
+      if (idx !== -1) {
+        tokens.splice(idx, 1)
+      }
+
+      player.commandTokens.tactics += 1
+
+      ctx.log.add({
+        template: 'Xuange: {player} returns command token from system {system}',
+        args: { player: player.name, system: systemId },
+      })
+    }
+  },
+
   // Agent — Acamar: After a player activates a system, exhaust to either
   // gain 1 trade good, or give the activating player 1 command token.
   onAnySystemActivated(empyreanPlayer, ctx, { systemId: _systemId, activatingPlayer }) {
