@@ -112,4 +112,61 @@ module.exports = {
       args: { mentak: player, target: pillagedPlayer },
     })
   },
+
+  // Salvage Operations (faction tech): After you win or lose a space combat,
+  // gain 1 trade good; if you won, you may also produce 1 ship in that system
+  // of any ship type that was destroyed during the combat.
+  onCombatEnd(player, ctx, { systemId, opponentName: _opponentName, combatType, won, destroyedTypes }) {
+    if (!player.hasTechnology('salvage-operations')) {
+      return
+    }
+
+    // Only triggers after space combat
+    if (combatType !== 'space') {
+      return
+    }
+
+    // Gain 1 trade good (win or lose)
+    player.addTradeGoods(1)
+    ctx.log.add({
+      template: 'Salvage Operations: {player} gains 1 trade good',
+      args: { player: player.name },
+    })
+
+    // If won, may produce 1 ship of a destroyed type
+    if (won && destroyedTypes) {
+      // Collect all unique ship types destroyed by any player during this combat
+      const allDestroyed = new Set()
+      for (const types of Object.values(destroyedTypes)) {
+        for (const type of types) {
+          allDestroyed.add(type)
+        }
+      }
+
+      if (allDestroyed.size > 0) {
+        const choices = ['Pass', ...allDestroyed]
+        const selection = ctx.actions.choose(player, choices, {
+          title: 'Salvage Operations: Produce 1 ship of a destroyed type?',
+        })
+
+        if (selection[0] !== 'Pass') {
+          const shipType = selection[0]
+          ctx.game._addUnit(systemId, 'space', shipType, player.name)
+          ctx.log.add({
+            template: 'Salvage Operations: {player} produces 1 {ship}',
+            args: { player: player.name, ship: shipType },
+          })
+        }
+      }
+    }
+  },
+
+  // Mirror Computing (faction tech): When you spend trade goods,
+  // each trade good is worth 2 resources or influence instead of 1.
+  getTradeGoodResourceValue(player, _ctx) {
+    if (player.hasTechnology('mirror-computing')) {
+      return 2
+    }
+    return 1
+  },
 }
