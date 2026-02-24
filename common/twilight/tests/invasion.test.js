@@ -62,6 +62,7 @@ describe('Invasion', () => {
 
       t.setBoard(game, {
         dennis: {
+          leaders: { agent: 'exhausted' },
           units: {
             'sol-home': {
               space: ['carrier'],
@@ -111,6 +112,7 @@ describe('Invasion', () => {
       // Dennis brings 2 dreadnoughts (bombardment 5x1 each) + infantry
       t.setBoard(game, {
         dennis: {
+          leaders: { agent: 'exhausted' },
           units: {
             'sol-home': {
               space: ['dreadnought', 'dreadnought', 'carrier'],
@@ -158,6 +160,7 @@ describe('Invasion', () => {
       // Micah has PDS (planetary shield) + infantry
       t.setBoard(game, {
         dennis: {
+          leaders: { agent: 'exhausted' },
           units: {
             'sol-home': {
               space: ['dreadnought', 'carrier'],
@@ -206,6 +209,7 @@ describe('Invasion', () => {
       // War sun has bombardment-3x3 which ignores planetary shield
       t.setBoard(game, {
         dennis: {
+          leaders: { agent: 'exhausted' },
           units: {
             'sol-home': {
               space: ['war-sun'],
@@ -250,6 +254,7 @@ describe('Invasion', () => {
 
       t.setBoard(game, {
         dennis: {
+          leaders: { agent: 'exhausted' },
           units: {
             'sol-home': {
               space: ['carrier'],
@@ -296,6 +301,7 @@ describe('Invasion', () => {
       // Dennis has 4 infantry + mech vs micah's 1 infantry
       t.setBoard(game, {
         dennis: {
+          leaders: { agent: 'exhausted' },
           units: {
             'sol-home': {
               space: ['carrier'],
@@ -344,6 +350,7 @@ describe('Invasion', () => {
 
       t.setBoard(game, {
         dennis: {
+          leaders: { agent: 'exhausted' },
           units: {
             'sol-home': {
               space: ['carrier'],
@@ -386,6 +393,7 @@ describe('Invasion', () => {
       // Micah has space-dock + infantry on planet
       t.setBoard(game, {
         dennis: {
+          leaders: { agent: 'exhausted' },
           units: {
             'sol-home': {
               space: ['carrier'],
@@ -430,6 +438,7 @@ describe('Invasion', () => {
 
       t.setBoard(game, {
         dennis: {
+          leaders: { agent: 'exhausted' },
           units: {
             'sol-home': {
               space: ['carrier'],

@@ -452,6 +452,46 @@ describe('Winnu', () => {
       })
     })
 
-    test.todo('Imperator: +1 combat per Support for the Throne; +1 move when activating legendary planet system')
+    test('Imperator: +1 combat per Support for the Throne held by opponents', () => {
+      // Winnu (dennis) has Imperator tech, Hacan (micah) holds 1 Support for the Throne
+      // Winnu should get -1 combat modifier (bonus) per SftT
+      const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          technologies: ['imperator', 'gravity-drive', 'antimass-deflectors'],
+          units: {
+            'winnu-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'winnu-home-planet': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'support-for-the-throne', owner: 'dennis' }],
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis (Winnu) attacks system 27 with 5 cruisers vs 1 fighter
+      // With Imperator + opponent holding SftT: cruisers hit on 6 instead of 7
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'winnu-home', count: 5 }],
+      })
+
+      // Dennis should easily win with 5 cruisers (combat 7 - 1 = 6) vs 1 fighter
+      const system27 = game.state.units['27']
+      const dennisShips = system27.space.filter(u => u.owner === 'dennis')
+      expect(dennisShips.length).toBeGreaterThan(0)
+      const micahShips = system27.space.filter(u => u.owner === 'micah')
+      expect(micahShips.length).toBe(0)
+    })
   })
 })

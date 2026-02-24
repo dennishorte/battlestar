@@ -113,7 +113,51 @@ describe('Federation of Sol', () => {
   })
 
   describe('Agent — Evelyn Delouis', () => {
-    test.todo('exhaust at start of ground combat round for extra die')
+    test('exhaust at start of ground combat round for extra die', () => {
+      // Dennis (Sol, P1) invades with infantry, agent gives 1 unit +1 die
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'locked', hero: 'locked' },
+          units: {
+            'sol-home': {
+              space: ['carrier'],
+              'jord': ['infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          planets: { 'new-albion': { exhausted: false } },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'infantry', 'infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'sol-home', count: 1 },
+          { unitType: 'infantry', from: 'sol-home', count: 4 },
+        ],
+      })
+
+      // Agent prompt fires at start of ground combat round
+      t.choose(game, 'Exhaust Evelyn Delouis')
+      // Agent has only 1 ground force type (infantry), so unit auto-selects
+
+      // Verify agent was exhausted and log shows the bonus
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Evelyn Delouis'))).toBe(true)
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+    })
   })
 
   describe('Commander — Claire Gibson', () => {
@@ -121,7 +165,7 @@ describe('Federation of Sol', () => {
       const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
       t.setBoard(game, {
         dennis: {
-          leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' },
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
           units: {
             'sol-home': {
               space: [],
