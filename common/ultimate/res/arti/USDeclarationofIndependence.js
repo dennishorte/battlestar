@@ -4,7 +4,7 @@ module.exports = {
   age: 6,
   expansion: `arti`,
   biscuits: `cssh`,
-  dogmaBiscuit: `c`,
+  dogmaBiscuit: `s`,
   dogma: [
     `I compel you to transfer the highest card in your hand to my hand, the highest card in your score pile to my score pile, and the highest top card with a {f} from yor board to my board!`
   ],

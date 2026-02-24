@@ -11,8 +11,8 @@ describe("U.S. Declaration of Independence", () => {
         artifact: ["U.S. Declaration of Independence"],
       },
       micah: {
-        red: ['Flight'],
-        blue: ['Chemistry'],
+        red: ['Robotics'],
+        blue: ['Atomic Theory'],
         green: ['Databases'],
         hand: ['Canning', 'Enterprise'],
         score: ['Sailing', 'Navigation'],
@@ -26,14 +26,14 @@ describe("U.S. Declaration of Independence", () => {
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
-        blue: ['Chemistry'],
+        red: ['Robotics'],
         hand: ['Canning'],
         score: ['Navigation'],
         museum: ['Museum 1', 'U.S. Declaration of Independence'],
       },
       micah: {
-        red: ['Flight'],
         green: ['Databases'],
+        blue: ['Atomic Theory'],
         hand: ['Enterprise'],
         score: ['Sailing'],
       },
