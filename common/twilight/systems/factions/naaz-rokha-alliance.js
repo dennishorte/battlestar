@@ -47,6 +47,77 @@ module.exports = {
     }
   },
 
+  // Supercharge (faction tech): At the start of a combat round, exhaust this
+  // card to apply +1 to all combat rolls for this combat round.
+  getCombatModifier(player, ctx) {
+    if (ctx.state._superchargeActive?.[player.name]) {
+      return -1  // negative = bonus (lower combat threshold = easier to hit)
+    }
+    return 0
+  },
+
+  _offerSupercharge(player, ctx) {
+    if (!player.hasTechnology('supercharge')) {
+      return
+    }
+    if (!ctx.game._isTechReady(player, 'supercharge')) {
+      return
+    }
+
+    const choice = ctx.actions.choose(player, ['Exhaust Supercharge', 'Pass'], {
+      title: 'Supercharge: Exhaust to apply +1 to all combat rolls this round?',
+    })
+
+    if (choice[0] === 'Exhaust Supercharge') {
+      ctx.game._exhaustTech(player, 'supercharge')
+      if (!ctx.state._superchargeActive) {
+        ctx.state._superchargeActive = {}
+      }
+      ctx.state._superchargeActive[player.name] = true
+
+      ctx.log.add({
+        template: '{player} exhausts Supercharge for +1 to combat rolls this round',
+        args: { player: player.name },
+      })
+    }
+  },
+
+  onSpaceCombatRound(player, ctx, _context) {
+    this._offerSupercharge(player, ctx)
+  },
+
+  afterSpaceCombatRound(player, ctx, _context) {
+    if (ctx.state._superchargeActive?.[player.name]) {
+      delete ctx.state._superchargeActive[player.name]
+    }
+  },
+
+  onGroundCombatStart(player, ctx, _context) {
+    // Supercharge can also be used for ground combat
+    this._offerSupercharge(player, ctx)
+  },
+
+  onGroundCombatRoundEnd(player, ctx, _context) {
+    if (ctx.state._superchargeActive?.[player.name]) {
+      delete ctx.state._superchargeActive[player.name]
+    }
+  },
+
+  // Pre-Fab Arcologies (faction tech): After you explore a planet, ready that planet.
+  afterExploration(player, ctx, planetId) {
+    if (!player.hasTechnology('pre-fab-arcologies')) {
+      return
+    }
+
+    if (ctx.state.planets[planetId]) {
+      ctx.state.planets[planetId].exhausted = false
+      ctx.log.add({
+        template: 'Pre-Fab Arcologies: {player} readies {planet}',
+        args: { player: player.name, planet: planetId },
+      })
+    }
+  },
+
   componentActions: [
     {
       id: 'fabrication',

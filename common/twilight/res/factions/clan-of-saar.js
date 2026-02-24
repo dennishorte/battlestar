@@ -29,6 +29,7 @@ module.exports = {
       name: 'Floating Factory I',
       move: 1,
       capacity: 4,
+      productionValue: 5,
       abilities: ['production-5'],
       description: 'This unit is placed in a space area instead of on a planet. This unit can move and retreat as if it were a ship. If this unit is blockaded, it is destroyed.',
     },
@@ -87,7 +88,7 @@ module.exports = {
       color: 'unit-upgrade',
       prerequisites: ['yellow', 'yellow'],
       unitUpgrade: 'space-dock',
-      stats: { move: 2, capacity: 5, abilities: ['production-7'] },
+      stats: { move: 2, capacity: 5, productionValue: 7, abilities: ['production-7'] },
       description: 'This unit is placed in a space area instead of on a planet. This unit can move and retreat as if it were a ship. If this unit is blockaded, it is destroyed.',
     },
     {

@@ -7,6 +7,342 @@ module.exports = {
     })
   },
 
+  // ---------------------------------------------------------------------------
+  // Chaos Mapping — Activation Restriction
+  // ---------------------------------------------------------------------------
+  // Other players cannot activate asteroid fields that contain 1 or more of
+  // your ships.
+
+  isSystemActivationBlocked(saarPlayer, ctx, { systemId, activatingPlayerName }) {
+    if (activatingPlayerName === saarPlayer.name) {
+      return false
+    }
+
+    if (!saarPlayer.hasTechnology('chaos-mapping')) {
+      return false
+    }
+
+    const tile = ctx.game.res.getSystemTile(systemId) || ctx.game.res.getSystemTile(Number(systemId))
+    if (!tile || tile.anomaly !== 'asteroid-field') {
+      return false
+    }
+
+    // Check if Saar has ships in this system
+    const systemUnits = ctx.state.units[systemId]
+    if (!systemUnits) {
+      return false
+    }
+
+    const saarShips = systemUnits.space.filter(u => u.owner === saarPlayer.name)
+    return saarShips.length > 0
+  },
+
+
+  // ---------------------------------------------------------------------------
+  // Chaos Mapping — Turn Start Production
+  // ---------------------------------------------------------------------------
+  // At the start of your turn during the action phase, you may produce 1 unit
+  // in a system that contains at least 1 of your units that has Production.
+
+  onTurnStart(player, ctx) {
+    if (!player.hasTechnology('chaos-mapping')) {
+      return
+    }
+
+    // Find systems with player's Production units (space docks for Saar are in space)
+    const productionSystems = []
+    for (const [systemId, systemUnits] of Object.entries(ctx.state.units)) {
+      // Check space area for Saar floating factories (space docks in space)
+      const spaceDocks = systemUnits.space.filter(
+        u => u.owner === player.name && u.type === 'space-dock'
+      )
+      if (spaceDocks.length > 0) {
+        productionSystems.push(systemId)
+        continue
+      }
+
+      // Also check planets for normal space docks (in case of edge cases)
+      const tile = ctx.game.res.getSystemTile(systemId) || ctx.game.res.getSystemTile(Number(systemId))
+      if (tile) {
+        for (const planetId of tile.planets) {
+          const planetUnits = systemUnits.planets[planetId] || []
+          if (planetUnits.some(u => u.owner === player.name && u.type === 'space-dock')) {
+            productionSystems.push(systemId)
+            break
+          }
+        }
+      }
+    }
+
+    if (productionSystems.length === 0) {
+      return
+    }
+
+    const choice = ctx.actions.choose(player, ['Chaos Mapping: Produce 1 Unit', 'Pass'], {
+      title: 'Chaos Mapping: Produce 1 unit in a system with a Production unit?',
+    })
+
+    if (choice[0] !== 'Chaos Mapping: Produce 1 Unit') {
+      return
+    }
+
+    // Choose system
+    let targetSystem
+    if (productionSystems.length === 1) {
+      targetSystem = productionSystems[0]
+    }
+    else {
+      const systemChoice = ctx.actions.choose(player, productionSystems, {
+        title: 'Chaos Mapping: Choose system to produce in',
+      })
+      targetSystem = systemChoice[0]
+    }
+
+    // Check for blockade (enemy ships in space)
+    const targetUnits = ctx.state.units[targetSystem]
+    const enemyShips = targetUnits.space.filter(
+      u => u.owner !== player.name && (ctx.game.res.getUnit(u.type)?.category === 'ship')
+    )
+    const isBlockaded = enemyShips.length > 0
+
+    // Choose unit type to produce
+    const unitChoices = []
+    if (!isBlockaded) {
+      unitChoices.push('fighter', 'destroyer', 'cruiser', 'carrier', 'dreadnought')
+    }
+    // Ground forces can only go on a planet
+    const tile = ctx.game.res.getSystemTile(targetSystem) || ctx.game.res.getSystemTile(Number(targetSystem))
+    const controlledPlanets = tile ? tile.planets.filter(
+      pId => ctx.state.planets[pId]?.controller === player.name
+    ) : []
+    if (controlledPlanets.length > 0) {
+      unitChoices.push('infantry', 'mech')
+    }
+
+    if (unitChoices.length === 0) {
+      return
+    }
+
+    const unitChoice = ctx.actions.choose(player, unitChoices, {
+      title: 'Chaos Mapping: Choose unit type to produce',
+    })
+    const unitType = unitChoice[0]
+
+    const unitDef = ctx.game.res.getUnit(unitType)
+    if (!unitDef) {
+      return
+    }
+
+    // Pay the cost
+    const cost = unitDef.cost || 0
+    if (cost > 0) {
+      const availableResources = player.getTotalResources() + (player.tradeGoods || 0)
+      if (availableResources < cost) {
+        ctx.log.add({
+          template: 'Chaos Mapping: {player} cannot afford {unitType} (cost {cost})',
+          args: { player: player.name, unitType, cost },
+        })
+        return
+      }
+
+      // Spend resources: exhaust planets first, then trade goods
+      let remaining = cost
+      const controlled = player.getControlledPlanets()
+      const readyPlanets = controlled.filter(pId => !ctx.state.planets[pId]?.exhausted)
+      for (const pId of readyPlanets) {
+        if (remaining <= 0) {
+          break
+        }
+        const planet = ctx.game.res.getPlanet(pId)
+        if (planet && planet.resources > 0) {
+          ctx.state.planets[pId].exhausted = true
+          remaining -= planet.resources
+        }
+      }
+      if (remaining > 0) {
+        const tgToSpend = Math.min(remaining, player.tradeGoods)
+        player.tradeGoods -= tgToSpend
+        remaining -= tgToSpend
+      }
+    }
+
+    // Place the unit
+    if (unitDef.category === 'ship') {
+      ctx.game._addUnit(targetSystem, 'space', unitType, player.name)
+    }
+    else if (unitDef.category === 'ground') {
+      const targetPlanet = controlledPlanets[0]
+      if (targetPlanet) {
+        ctx.game._addUnit(targetSystem, targetPlanet, unitType, player.name)
+      }
+    }
+
+    ctx.log.add({
+      template: 'Chaos Mapping: {player} produces 1 {unitType} in system {system}',
+      args: { player: player.name, unitType, system: targetSystem },
+    })
+  },
+
+
+  // ---------------------------------------------------------------------------
+  // Commander — Rowl Sarrig
+  // ---------------------------------------------------------------------------
+  // When producing fighters or infantry, may place each at any of your
+  // non-blockaded space docks.
+
+  afterProduction(player, ctx, { systemId, producedUnits }) {
+    if (!player.isCommanderUnlocked()) {
+      return
+    }
+
+    if (!producedUnits || producedUnits.length === 0) {
+      return
+    }
+
+    // Find produced fighters and infantry
+    const redistributable = producedUnits.filter(
+      u => u.type === 'fighter' || u.type === 'infantry'
+    )
+
+    if (redistributable.length === 0) {
+      return
+    }
+
+    // Find all non-blockaded space docks belonging to the Saar player
+    // Saar docks are in the space area (Floating Factory)
+    const dockSystems = []
+    for (const [sysId, systemUnits] of Object.entries(ctx.state.units)) {
+      // Check space area for floating factories
+      const hasDock = systemUnits.space.some(
+        u => u.owner === player.name && u.type === 'space-dock'
+      )
+      if (!hasDock) {
+        continue
+      }
+
+      // Check blockade
+      const enemyShips = systemUnits.space.filter(
+        u => u.owner !== player.name && (ctx.game.res.getUnit(u.type)?.category === 'ship')
+      )
+      if (enemyShips.length > 0) {
+        continue
+      }
+
+      dockSystems.push(sysId)
+    }
+
+    // Need at least 2 dock locations to offer redistribution (the production system + others)
+    if (dockSystems.length < 2) {
+      return
+    }
+
+    // Offer to redistribute each fighter/infantry
+    const choice = ctx.actions.choose(player, ['Redistribute Units', 'Pass'], {
+      title: 'Rowl Sarrig: Redistribute produced fighters/infantry across space docks?',
+    })
+
+    if (choice[0] !== 'Redistribute Units') {
+      return
+    }
+
+    for (const unitDef of redistributable) {
+      // Find the unit that was just produced in the production system
+      const sourceUnits = ctx.state.units[systemId]
+      let unitToMove
+      if (unitDef.type === 'fighter') {
+        unitToMove = sourceUnits.space.find(
+          u => u.owner === player.name && u.type === 'fighter'
+        )
+      }
+      else if (unitDef.type === 'infantry') {
+        // Infantry may be on a planet
+        const tile = ctx.game.res.getSystemTile(systemId) || ctx.game.res.getSystemTile(Number(systemId))
+        if (tile) {
+          for (const planetId of tile.planets) {
+            const pUnits = sourceUnits.planets[planetId] || []
+            unitToMove = pUnits.find(u => u.owner === player.name && u.type === 'infantry')
+            if (unitToMove) {
+              break
+            }
+          }
+        }
+      }
+
+      if (!unitToMove) {
+        continue
+      }
+
+      // Choose destination dock
+      const destChoice = ctx.actions.choose(player, dockSystems, {
+        title: `Rowl Sarrig: Place ${unitDef.type} at which space dock?`,
+      })
+      const destSystem = destChoice[0]
+
+      // Move unit if destination is different from source
+      if (destSystem !== systemId) {
+        // Remove from source
+        if (unitDef.type === 'fighter') {
+          const idx = sourceUnits.space.findIndex(u => u.id === unitToMove.id)
+          if (idx !== -1) {
+            sourceUnits.space.splice(idx, 1)
+          }
+        }
+        else if (unitDef.type === 'infantry') {
+          const tile = ctx.game.res.getSystemTile(systemId) || ctx.game.res.getSystemTile(Number(systemId))
+          if (tile) {
+            for (const planetId of tile.planets) {
+              const pUnits = sourceUnits.planets[planetId] || []
+              const idx = pUnits.findIndex(u => u.id === unitToMove.id)
+              if (idx !== -1) {
+                pUnits.splice(idx, 1)
+                break
+              }
+            }
+          }
+        }
+
+        // Add to destination
+        if (unitDef.type === 'fighter') {
+          ctx.state.units[destSystem].space.push(unitToMove)
+        }
+        else if (unitDef.type === 'infantry') {
+          // Place infantry on a controlled planet in the destination system
+          const destTile = ctx.game.res.getSystemTile(destSystem) || ctx.game.res.getSystemTile(Number(destSystem))
+          if (destTile) {
+            const destPlanet = destTile.planets.find(
+              pId => ctx.state.planets[pId]?.controller === player.name
+            )
+            if (destPlanet) {
+              if (!ctx.state.units[destSystem].planets[destPlanet]) {
+                ctx.state.units[destSystem].planets[destPlanet] = []
+              }
+              ctx.state.units[destSystem].planets[destPlanet].push(unitToMove)
+            }
+            else {
+              // No controlled planet — can't place infantry, put back
+              if (unitDef.type === 'infantry') {
+                const srcTile = ctx.game.res.getSystemTile(systemId) || ctx.game.res.getSystemTile(Number(systemId))
+                if (srcTile && srcTile.planets.length > 0) {
+                  const srcPlanet = srcTile.planets[0]
+                  if (!sourceUnits.planets[srcPlanet]) {
+                    sourceUnits.planets[srcPlanet] = []
+                  }
+                  sourceUnits.planets[srcPlanet].push(unitToMove)
+                }
+              }
+            }
+          }
+        }
+
+        ctx.log.add({
+          template: 'Rowl Sarrig: {player} places {unitType} at space dock in system {system}',
+          args: { player: player.name, unitType: unitDef.type, system: destSystem },
+        })
+      }
+    }
+  },
+
+
   // Agent — Captain Mendosa: After a player activates a system, exhaust to
   // increase the move value of 1 of that player's ships to match the highest
   // move value on the board.
