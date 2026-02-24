@@ -299,10 +299,10 @@ class FactionAbilities {
   // H. Planet Gained Triggers
   // ---------------------------------------------------------------------------
 
-  onPlanetGained(playerName, planetId, systemId, structureCounts) {
+  onPlanetGained(playerName, planetId, systemId, structureCounts, previousController) {
     const player = this.players.byName(playerName)
     const handler = this._getPlayerHandler(player)
-    handler?.onPlanetGained?.(player, this, { planetId, systemId, structureCounts: structureCounts || {} })
+    handler?.onPlanetGained?.(player, this, { planetId, systemId, structureCounts: structureCounts || {}, previousController: previousController || null })
   }
 
 
@@ -499,6 +499,16 @@ class FactionAbilities {
   afterExploration(player, planetId, _systemId) {
     const handler = this._getPlayerHandler(player)
     handler?.afterExploration?.(player, this, planetId)
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // Q2. Production Triggers
+  // ---------------------------------------------------------------------------
+
+  afterProduction(player, systemId, unitCount) {
+    const handler = this._getPlayerHandler(player)
+    handler?.afterProduction?.(player, this, { systemId, unitCount })
   }
 
 

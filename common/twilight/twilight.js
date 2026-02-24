@@ -2926,7 +2926,7 @@ Twilight.prototype._establishControl = function(systemId, planetId, attackerName
     }
 
     // Faction abilities on planet gained (Saar scavenge, L1Z1X assimilate, Winnu reclamation)
-    this.factionAbilities.onPlanetGained(attackerName, planetId, systemId, structureCounts)
+    this.factionAbilities.onPlanetGained(attackerName, planetId, systemId, structureCounts, previousController)
 
     // Integrated Economy: free production up to planet's resource value
     const iePlayer = this.players.byName(attackerName)
@@ -3223,6 +3223,9 @@ Twilight.prototype._productionStep = function(player, systemId) {
       template: '{player} produces {count} units in system {system}',
       args: { player, count: totalUnitCount, system: systemId },
     })
+
+    // Faction abilities after production (e.g., Titans of Ul commander Tungstantus)
+    this.factionAbilities.afterProduction(player, systemId, totalUnitCount)
   }
 }
 

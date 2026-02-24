@@ -4,6 +4,19 @@ module.exports = {
   },
   isExcludedFromVoting: true,
 
+  // Commander — Nekro Acidos: After you gain a technology, draw 1 action card.
+  _commanderDrawCard(player, ctx) {
+    if (!player.isCommanderUnlocked()) {
+      return
+    }
+
+    ctx.game._drawActionCards(player, 1)
+    ctx.log.add({
+      template: 'Nekro Acidos: {player} draws 1 action card',
+      args: { player: player.name },
+    })
+  },
+
   // Agent — Nekro Malleon: component action during action phase
   componentActions: [
     {
@@ -176,6 +189,8 @@ module.exports = {
       template: '{player} gains {tech} (correct Galactic Threat prediction)',
       args: { player, tech: techId },
     })
+
+    this._commanderDrawCard(player, ctx)
   },
 
   onUnitDestroyed(player, ctx, { systemId: _systemId, unit }) {
@@ -211,5 +226,7 @@ module.exports = {
       template: '{player} copies {tech} from {target} (Technological Singularity)',
       args: { player, tech: techId, target: unit.owner },
     })
+
+    this._commanderDrawCard(player, ctx)
   },
 }

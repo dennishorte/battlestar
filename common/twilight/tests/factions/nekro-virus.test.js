@@ -200,7 +200,82 @@ describe('Nekro Virus', () => {
 
   describe('Commander — Nekro Acidos', () => {
     test.todo('unlock condition: own 3 technologies (Valefar Assimilator counts only if X or Y token is on a technology)')
-    test.todo('after gaining a technology, may draw 1 action card')
+
+    test('draws 1 action card after gaining technology via Technological Singularity', () => {
+      const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
+          units: {
+            'nekro-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'mordai-ii': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'nekro-home', count: 5 }],
+      })
+
+      // Nekro destroys Hacan fighter — Technological Singularity triggers
+      t.choose(game, 'antimass-deflectors')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasTechnology('antimass-deflectors')).toBe(true)
+      // Commander draws 1 action card
+      expect(dennis.actionCards.length).toBe(1)
+    })
+
+    test('does not draw action card when commander is locked', () => {
+      const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'nekro-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'mordai-ii': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'nekro-home', count: 5 }],
+      })
+
+      // Nekro destroys Hacan fighter — Technological Singularity triggers
+      t.choose(game, 'antimass-deflectors')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasTechnology('antimass-deflectors')).toBe(true)
+      // Commander locked — no action card draw
+      expect((dennis.actionCards || []).length).toBe(0)
+    })
   })
 
   describe('Hero — UNIT.DSGN.FLAYESH', () => {

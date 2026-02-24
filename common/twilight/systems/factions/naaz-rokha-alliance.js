@@ -10,6 +10,43 @@ module.exports = {
     return hasMech ? 1 : 0
   },
 
+  // Commander — Dart and Tai: After you gain control of a planet that was
+  // controlled by another player, you may explore that planet.
+  onPlanetGained(player, ctx, { planetId, previousController }) {
+    if (!player.isCommanderUnlocked()) {
+      return
+    }
+
+    // Only triggers when taking a planet from another player
+    if (!previousController || previousController === player.name) {
+      return
+    }
+
+    // Check if the planet has a trait (explorable)
+    const planet = ctx.game.res.getPlanet(planetId)
+    if (!planet || !planet.trait) {
+      return
+    }
+
+    // Check if already explored
+    if (ctx.state.exploredPlanets[planetId]) {
+      return
+    }
+
+    const choice = ctx.actions.choose(player, ['Explore', 'Pass'], {
+      title: `Dart and Tai: Explore ${planetId}?`,
+    })
+
+    if (choice[0] === 'Explore') {
+      ctx.game._explorePlanet(planetId, player.name)
+
+      ctx.log.add({
+        template: 'Dart and Tai: {player} explores {planet}',
+        args: { player: player.name, planet: planetId },
+      })
+    }
+  },
+
   componentActions: [
     {
       id: 'fabrication',
