@@ -490,6 +490,28 @@ class FactionAbilities {
     return { order, excluded }
   }
 
+  /**
+   * Called before each player votes on an agenda. Allows faction abilities
+   * (e.g., Mahact Genetic Recombination) to intervene before a vote is cast.
+   * Returns { forcedOutcome } if the player must vote a certain way, else null.
+   */
+  onBeforePlayerVote(votingPlayer, outcomes) {
+    for (const player of this.players.all()) {
+      if (player.name === votingPlayer.name) {
+        continue
+      }
+      const handler = this._getPlayerHandler(player)
+      if (!handler?.onBeforePlayerVote) {
+        continue
+      }
+      const result = handler.onBeforePlayerVote(player, this, { votingPlayer, outcomes })
+      if (result) {
+        return result
+      }
+    }
+    return null
+  }
+
   onAgendaOutcomeResolved(agenda, winningOutcome, playerVotes) {
     for (const player of this.players.all()) {
       const handler = this._getPlayerHandler(player)
@@ -679,6 +701,19 @@ class FactionAbilities {
   afterExploration(player, planetId, _systemId) {
     const handler = this._getPlayerHandler(player)
     handler?.afterExploration?.(player, this, planetId)
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // Q1b. Relic Triggers
+  // ---------------------------------------------------------------------------
+
+  onRelicGained(gainingPlayerName) {
+    const gainingPlayer = this.players.byName(gainingPlayerName)
+    for (const player of this.players.all()) {
+      const handler = this._getPlayerHandler(player)
+      handler?.onRelicGained?.(player, this, { gainingPlayer })
+    }
   }
 
 
