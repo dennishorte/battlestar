@@ -104,8 +104,98 @@ describe('Nekro Virus', () => {
   })
 
   describe('Agent — Nekro Malleon', () => {
-    test.todo('may exhaust to choose a player who may discard 1 action card or spend 1 command token to gain 2 trade goods')
-    test.todo('exhausted agent cannot be used')
+    test('target player can spend command token to gain 2 trade goods', () => {
+      const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        micah: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          tradeGoods: 0,
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses Component Action > Nekro Malleon
+      t.choose(game, 'Component Action')
+      t.choose(game, 'nekro-malleon')
+
+      // Choose target player (only micah)
+      // micah decides to spend a command token
+      t.choose(game, 'Spend Command Token')
+      t.choose(game, 'tactics')
+
+      const micah = game.players.byName('micah')
+      expect(micah.commandTokens.tactics).toBe(2)
+      expect(micah.tradeGoods).toBe(2)
+
+      // Dennis's agent should be exhausted
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+    })
+
+    test('target player can discard action card to gain 2 trade goods', () => {
+      const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        micah: {
+          actionCards: ['focused-research', 'direct-hit'],
+          tradeGoods: 1,
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'nekro-malleon')
+
+      // micah chooses to discard an action card
+      t.choose(game, 'Discard Action Card')
+      t.choose(game, 'focused-research')
+
+      const micah = game.players.byName('micah')
+      expect(micah.actionCards.length).toBe(1)
+      expect(micah.tradeGoods).toBe(3)
+    })
+
+    test('target player can decline', () => {
+      const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        micah: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          tradeGoods: 5,
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'nekro-malleon')
+
+      // micah declines
+      t.choose(game, 'Decline')
+
+      const micah = game.players.byName('micah')
+      expect(micah.tradeGoods).toBe(5)
+      expect(micah.commandTokens.tactics).toBe(3)
+    })
+
+    test('exhausted agent is not listed in component actions', () => {
+      const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Enter Component Action menu
+      t.choose(game, 'Component Action')
+
+      // With agent exhausted and no tech component actions, nekro-malleon should not appear
+      // The game should have logged "No component actions available" and returned
+      // So we should be on micah's turn now
+      expect(game.waiting.selectors[0].actor).toBe('micah')
+    })
   })
 
   describe('Commander — Nekro Acidos', () => {

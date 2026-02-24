@@ -92,4 +92,64 @@ module.exports = {
       })
     }
   },
+
+  // Agent — Garv and Gunn: At the end of a player's tactical action, exhaust
+  // to allow that player to explore 1 planet they control in the active system.
+  onTacticalActionEnd(naazRokhaPlayer, ctx, { activatingPlayer, systemId }) {
+    if (!naazRokhaPlayer.isAgentReady()) {
+      return
+    }
+
+    // Find planets in the active system controlled by the activating player
+    const tile = ctx.game.res.getSystemTile(systemId) || ctx.game.res.getSystemTile(Number(systemId))
+    if (!tile || tile.planets.length === 0) {
+      return
+    }
+
+    // Only consider unexplored planets with traits that the activating player controls
+    const explorablePlanets = tile.planets.filter(planetId => {
+      const planet = ctx.game.res.getPlanet(planetId)
+      if (!planet || !planet.trait) {
+        return false
+      }
+      if (ctx.state.exploredPlanets[planetId]) {
+        return false
+      }
+      const planetState = ctx.state.planets[planetId]
+      return planetState?.controller === activatingPlayer.name
+    })
+
+    if (explorablePlanets.length === 0) {
+      return
+    }
+
+    const choice = ctx.actions.choose(naazRokhaPlayer, ['Exhaust Garv and Gunn', 'Pass'], {
+      title: `Garv and Gunn: Exhaust to let ${activatingPlayer.name} explore a planet in the active system?`,
+    })
+
+    if (choice[0] !== 'Exhaust Garv and Gunn') {
+      return
+    }
+
+    naazRokhaPlayer.exhaustAgent()
+
+    // Choose which planet to explore
+    let targetPlanet
+    if (explorablePlanets.length === 1) {
+      targetPlanet = explorablePlanets[0]
+    }
+    else {
+      const planetChoice = ctx.actions.choose(naazRokhaPlayer, explorablePlanets, {
+        title: 'Garv and Gunn: Choose planet to explore',
+      })
+      targetPlanet = planetChoice[0]
+    }
+
+    ctx.game._explorePlanet(targetPlanet, activatingPlayer.name)
+
+    ctx.log.add({
+      template: 'Garv and Gunn: {player} allows {target} to explore {planet}',
+      args: { player: naazRokhaPlayer.name, target: activatingPlayer.name, planet: targetPlanet },
+    })
+  },
 }
