@@ -18,6 +18,14 @@ module.exports = {
         return player.isAgentReady()
       },
     },
+    {
+      id: 'nova-seed',
+      name: "Adjudicator Ba'al (Nova Seed)",
+      abilityId: 'star-forge',
+      isAvailable: function(player) {
+        return player.isHeroUnlocked() && !player.isHeroPurged()
+      },
+    },
   ],
 
   // Agent — Umbat: ACTION: Exhaust to choose a player; that player may produce
@@ -217,6 +225,110 @@ module.exports = {
     }
   },
 
+
+  // ---------------------------------------------------------------------------
+  // Hero — Adjudicator Ba'al: NOVA SEED
+  // Choose a non-home system (other than Mecatol Rex) that contains your war
+  // sun. Destroy all other players' units in that system. Replace the system
+  // tile with the Muaat supernova. Purge this card.
+  // ---------------------------------------------------------------------------
+
+  novaSeed(ctx, player) {
+    // Find systems with player's war suns, excluding home systems and Mecatol
+    const warSunSystems = []
+    for (const [systemId, systemUnits] of Object.entries(ctx.state.units)) {
+      // Skip home systems and Mecatol Rex
+      const tile = ctx.game.res.getSystemTile(systemId) || ctx.game.res.getSystemTile(Number(systemId))
+      if (!tile) {
+        continue
+      }
+      if (tile.home || tile.planets?.includes('mecatol-rex')) {
+        continue
+      }
+
+      if (systemUnits.space.some(u => u.owner === player.name && u.type === 'war-sun')) {
+        warSunSystems.push(systemId)
+      }
+    }
+
+    if (warSunSystems.length === 0) {
+      ctx.log.add({
+        template: "Nova Seed: {player} has no war suns in eligible systems",
+        args: { player: player.name },
+      })
+      player.purgeHero()
+      ctx.log.add({
+        template: "{player} purges Adjudicator Ba'al",
+        args: { player: player.name },
+      })
+      return
+    }
+
+    let targetSystem
+    if (warSunSystems.length === 1) {
+      targetSystem = warSunSystems[0]
+    }
+    else {
+      const selection = ctx.actions.choose(player, warSunSystems, {
+        title: 'Nova Seed: Choose system to destroy',
+      })
+      targetSystem = selection[0]
+    }
+
+    // Destroy all other players' units in the system (space and planets)
+    const systemUnits = ctx.state.units[targetSystem]
+    let destroyedCount = 0
+
+    // Destroy space units
+    const otherSpaceUnits = systemUnits.space.filter(u => u.owner !== player.name)
+    for (const unit of otherSpaceUnits) {
+      const idx = systemUnits.space.findIndex(u => u.id === unit.id)
+      if (idx !== -1) {
+        systemUnits.space.splice(idx, 1)
+        destroyedCount++
+      }
+    }
+
+    // Destroy planet units
+    for (const [planetId, planetUnits] of Object.entries(systemUnits.planets)) {
+      const otherPlanetUnits = planetUnits.filter(u => u.owner !== player.name)
+      for (const unit of otherPlanetUnits) {
+        const idx = planetUnits.findIndex(u => u.id === unit.id)
+        if (idx !== -1) {
+          planetUnits.splice(idx, 1)
+          destroyedCount++
+        }
+      }
+      // Remove planet control from other players
+      if (ctx.state.planets[planetId] && ctx.state.planets[planetId].controller !== player.name) {
+        ctx.state.planets[planetId].controller = null
+      }
+    }
+
+    if (destroyedCount > 0) {
+      ctx.log.add({
+        template: 'Nova Seed: {player} destroys {count} units in system {system}',
+        args: { player: player.name, count: destroyedCount, system: targetSystem },
+      })
+    }
+
+    // Replace tile with Muaat supernova
+    if (!ctx.state.systems[targetSystem]) {
+      ctx.state.systems[targetSystem] = {}
+    }
+    ctx.state.systems[targetSystem].muaatSupernova = true
+
+    ctx.log.add({
+      template: 'Nova Seed: System {system} becomes the Muaat supernova',
+      args: { system: targetSystem },
+    })
+
+    player.purgeHero()
+    ctx.log.add({
+      template: "{player} purges Adjudicator Ba'al",
+      args: { player: player.name },
+    })
+  },
 
   // Commander — Magmus: after spending a strategy token, gain 1 trade good
   onStrategyTokenSpent(player, ctx, { spendingPlayer }) {

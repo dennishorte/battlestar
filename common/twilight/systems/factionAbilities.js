@@ -747,6 +747,14 @@ class FactionAbilities {
       })
     }
 
+    // Notify all players about combat resolution (e.g., Winnu agent Rickar Rickani)
+    for (const player of this.players.all()) {
+      const playerHandler = this._getPlayerHandler(player)
+      playerHandler?.onAnyCombatResolved?.(player, this, {
+        systemId, winnerName, loserName, combatType,
+      })
+    }
+
     // Reset combat tracking
     delete this.state._destroyedDuringCombat
     delete this.state._singularityUsedThisCombat

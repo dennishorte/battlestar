@@ -36,6 +36,160 @@ module.exports = {
     })
   },
 
+  // Agent — Rickar Rickani: After the Winnu player or their neighbor wins a
+  // combat, exhaust to repair 1 of the winner's mechs or move 1 of the
+  // winner's mechs to an adjacent system.
+  onAnyCombatResolved(winnuPlayer, ctx, { systemId, winnerName, loserName: _loserName, combatType: _combatType }) {
+    if (!winnuPlayer.isAgentReady()) {
+      return
+    }
+
+    // Only triggers when Winnu or their neighbor wins
+    if (winnerName !== winnuPlayer.name) {
+      // Check if winner is a neighbor (simplified: any other player in a 2P game)
+      // In a full implementation, we'd check adjacency via shared systems
+      const isNeighbor = ctx.players.all().some(p =>
+        p.name === winnerName && p.name !== winnuPlayer.name
+      )
+      if (!isNeighbor) {
+        return
+      }
+    }
+
+    // Check if winner has mechs in the combat system or on its planets
+    const systemUnits = ctx.state.units[systemId]
+    if (!systemUnits) {
+      return
+    }
+
+    const winnerMechs = []
+    for (const [planetId, planetUnits] of Object.entries(systemUnits.planets)) {
+      for (const unit of planetUnits) {
+        if (unit.owner === winnerName && unit.type === 'mech') {
+          winnerMechs.push({ planetId, unit })
+        }
+      }
+    }
+
+    if (winnerMechs.length === 0) {
+      return
+    }
+
+    const choice = ctx.actions.choose(winnuPlayer, ['Exhaust Rickar Rickani', 'Pass'], {
+      title: 'Rickar Rickani: Exhaust to repair or move a mech?',
+    })
+
+    if (choice[0] !== 'Exhaust Rickar Rickani') {
+      return
+    }
+
+    winnuPlayer.exhaustAgent()
+
+    // Choose: repair or move
+    const options = ['Repair Mech']
+    const adjacentSystems = ctx.game._getAdjacentSystems(systemId)
+    if (adjacentSystems.length > 0) {
+      options.push('Move Mech')
+    }
+
+    const actionChoice = ctx.actions.choose(winnuPlayer, options, {
+      title: 'Rickar Rickani: Repair or move?',
+    })
+
+    if (actionChoice[0] === 'Repair Mech') {
+      // Choose which mech to repair (remove sustained damage)
+      let target
+      if (winnerMechs.length === 1) {
+        target = winnerMechs[0]
+      }
+      else {
+        const mechChoices = winnerMechs.map(m => m.planetId)
+        const mechSel = ctx.actions.choose(winnuPlayer, mechChoices, {
+          title: 'Rickar Rickani: Repair mech on which planet?',
+        })
+        target = winnerMechs.find(m => m.planetId === mechSel[0])
+      }
+
+      if (target.unit.sustainedDamage) {
+        target.unit.sustainedDamage = false
+      }
+
+      ctx.log.add({
+        template: 'Rickar Rickani: {player} repairs {winner} mech on {planet}',
+        args: { player: winnuPlayer.name, winner: winnerName, planet: target.planetId },
+      })
+    }
+    else {
+      // Move a mech to an adjacent system
+      let target
+      if (winnerMechs.length === 1) {
+        target = winnerMechs[0]
+      }
+      else {
+        const mechChoices = winnerMechs.map(m => m.planetId)
+        const mechSel = ctx.actions.choose(winnuPlayer, mechChoices, {
+          title: 'Rickar Rickani: Move mech from which planet?',
+        })
+        target = winnerMechs.find(m => m.planetId === mechSel[0])
+      }
+
+      // Choose destination planet in adjacent system
+      const destPlanets = []
+      for (const adjId of adjacentSystems) {
+        const tile = ctx.game.res.getSystemTile(adjId) || ctx.game.res.getSystemTile(Number(adjId))
+        if (!tile || !tile.planets) {
+          continue
+        }
+        for (const planetId of tile.planets) {
+          const planetState = ctx.state.planets[planetId]
+          if (planetState && planetState.controller === winnerName) {
+            destPlanets.push({ planetId, systemId: adjId })
+          }
+        }
+      }
+
+      if (destPlanets.length === 0) {
+        ctx.log.add({
+          template: 'Rickar Rickani: No valid destination planets for mech movement',
+          args: {},
+        })
+        return
+      }
+
+      let dest
+      if (destPlanets.length === 1) {
+        dest = destPlanets[0]
+      }
+      else {
+        const destChoices = destPlanets.map(d => d.planetId)
+        const destSel = ctx.actions.choose(winnuPlayer, destChoices, {
+          title: 'Rickar Rickani: Move mech to which planet?',
+        })
+        dest = destPlanets.find(d => d.planetId === destSel[0])
+      }
+
+      // Remove mech from current planet
+      const sourcePlanetUnits = systemUnits.planets[target.planetId]
+      const mechIdx = sourcePlanetUnits.findIndex(u => u.id === target.unit.id)
+      if (mechIdx !== -1) {
+        const [mech] = sourcePlanetUnits.splice(mechIdx, 1)
+        // Add to destination
+        if (!ctx.state.units[dest.systemId]) {
+          ctx.state.units[dest.systemId] = { space: [], planets: {} }
+        }
+        if (!ctx.state.units[dest.systemId].planets[dest.planetId]) {
+          ctx.state.units[dest.systemId].planets[dest.planetId] = []
+        }
+        ctx.state.units[dest.systemId].planets[dest.planetId].push(mech)
+      }
+
+      ctx.log.add({
+        template: 'Rickar Rickani: {player} moves {winner} mech from {from} to {to}',
+        args: { player: winnuPlayer.name, winner: winnerName, from: target.planetId, to: dest.planetId },
+      })
+    }
+  },
+
   // Commander — Berekar Berekon: When you control Mecatol Rex, apply +1 to
   // combat rolls and gain 1 additional command token during the status phase.
 

@@ -133,7 +133,57 @@ describe('Winnu', () => {
   })
 
   describe('Agent — Rickar Rickani', () => {
-    test.todo('exhaust to repair or move mechs')
+    test('exhaust after combat win to repair a mech', () => {
+      // Dennis (Winnu) invades a planet where he already has a mech defending.
+      // The Winnu agent triggers after combat is won.
+      const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'locked', hero: 'locked' },
+          units: {
+            'winnu-home': {
+              space: ['carrier'],
+              'winnu': ['space-dock', 'infantry', 'infantry', 'infantry',
+                'infantry', 'infantry', 'infantry', 'infantry', 'infantry'],
+            },
+            '27': {
+              'new-albion': ['mech'],
+            },
+          },
+        },
+        micah: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            '27': {
+              'new-albion': ['infantry'],
+            },
+          },
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis takes tactical action to invade system 27
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'winnu-home', count: 1 },
+          { unitType: 'infantry', from: 'winnu-home', count: 8 },
+        ],
+      })
+
+      // Ground combat: mech + 8 infantry vs 1 infantry — Winnu wins decisively
+      // After combat win, the Rickar Rickani agent prompt fires
+      t.choose(game, 'Exhaust Rickar Rickani')
+      t.choose(game, 'Repair Mech')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+    })
   })
 
   describe('Commander — Berekar Berekon', () => {
