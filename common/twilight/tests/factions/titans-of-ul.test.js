@@ -100,6 +100,12 @@ describe('Titans of Ul', () => {
     t.choose(game, 'Tactical Action')
     t.action(game, 'activate-system', { systemId: '27' })
 
+    // Hecatoncheires deploy prompt — choose PDS
+    t.choose(game, 'Place PDS')
+
+    // Ouranos deploy prompt — decline
+    t.choose(game, 'Pass')
+
     // Sleeper should be replaced with PDS
     expect(game.state.sleeperTokens['new-albion']).toBeUndefined()
     const pdsOnNewAlbion = game.state.units['27'].planets['new-albion']
@@ -341,12 +347,141 @@ describe('Titans of Ul', () => {
   })
 
   describe('Hero — Ul The Progenitor', () => {
-    test.todo('GEOFORM: ready Elysium and attach card, increasing resource and influence by 3')
-    test.todo('Elysium gains SPACE CANNON 5 (x3) ability')
+    test('GEOFORM: ready Elysium and attach card, increasing resource and influence by 3', () => {
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'unlocked' },
+          units: {
+            'titans-home': {
+              space: ['cruiser'],
+              'elysium': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      // Exhaust Elysium before hero use
+      game.run()
+
+      // Exhaust Elysium
+      game.state.planets['elysium'].exhausted = true
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses component action: hero
+      t.choose(game, 'Component Action')
+      t.choose(game, 'geoform')
+
+      // Verify: hero is purged
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+
+      // Verify: Elysium is readied
+      expect(game.state.planets['elysium'].exhausted).toBe(false)
+
+      // Verify: Elysium gets +3 resource and influence
+      expect(game.state.heroAttachments?.['elysium']).toEqual({
+        faction: 'titans-of-ul',
+        resourceBonus: 3,
+        influenceBonus: 3,
+        spaceCannonAbility: 'space-cannon-5x3',
+      })
+    })
+
+    test('Elysium gains SPACE CANNON 5 (x3) ability', () => {
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'unlocked' },
+          units: {
+            'titans-home': {
+              space: ['cruiser'],
+              'elysium': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Use hero
+      t.choose(game, 'Component Action')
+      t.choose(game, 'geoform')
+
+      // The hero attachment should grant space cannon 5x3 to Elysium
+      const attachment = game.state.heroAttachments?.['elysium']
+      expect(attachment).toBeTruthy()
+      expect(attachment.spaceCannonAbility).toBe('space-cannon-5x3')
+    })
   })
 
   describe('Mech — Hecatoncheires', () => {
-    test.todo('DEPLOY: when placing a PDS on a planet, may place 1 mech and 1 infantry instead')
+    test('DEPLOY: when Awaken places a PDS, may place 1 mech and 1 infantry instead', () => {
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        sleeperTokens: { 'new-albion': 'dennis' },
+        dennis: {
+          units: {
+            'titans-home': {
+              space: ['cruiser'],
+              'elysium': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Activate system 27 — sleeper awakes, Hecatoncheires deploy prompt
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Choose to deploy mech + infantry instead of PDS
+      t.choose(game, 'Deploy Mech + Infantry')
+
+      // new-albion should have mech + infantry instead of PDS
+      const planetUnits = game.state.units['27'].planets['new-albion']
+        .filter(u => u.owner === 'dennis')
+      const hasMech = planetUnits.some(u => u.type === 'mech')
+      const hasInfantry = planetUnits.some(u => u.type === 'infantry')
+      const hasPDS = planetUnits.some(u => u.type === 'pds')
+      expect(hasMech).toBe(true)
+      expect(hasInfantry).toBe(true)
+      expect(hasPDS).toBe(false)
+    })
+
+    test('DEPLOY: can decline and place PDS normally', () => {
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        sleeperTokens: { 'new-albion': 'dennis' },
+        dennis: {
+          units: {
+            'titans-home': {
+              space: ['cruiser'],
+              'elysium': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Activate system 27 — sleeper awakes
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Decline deploy — place PDS normally
+      t.choose(game, 'Place PDS')
+
+      // Ouranos deploy prompt — decline
+      t.choose(game, 'Pass')
+
+      // new-albion should have PDS
+      const planetUnits = game.state.units['27'].planets['new-albion']
+        .filter(u => u.owner === 'dennis')
+      const hasPDS = planetUnits.some(u => u.type === 'pds')
+      expect(hasPDS).toBe(true)
+    })
   })
 
   describe('Promissory Note — Terraform', () => {
@@ -355,22 +490,242 @@ describe('Titans of Ul', () => {
   })
 
   describe('Flagship — Ouranos', () => {
-    test.todo('DEPLOY: after activating a system with your PDS, may replace 1 PDS with flagship')
+    test('DEPLOY: after activating a system with your PDS, may replace 1 PDS with flagship', () => {
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'titans-home': {
+              space: ['cruiser'],
+              'elysium': ['infantry', 'space-dock'],
+            },
+            '27': {
+              'new-albion': ['pds'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Activate system 27, which has our PDS
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Ouranos deploy prompt
+      t.choose(game, 'Deploy Ouranos')
+
+      // PDS should be replaced with flagship in space
+      const spaceUnits = game.state.units['27'].space.filter(u => u.owner === 'dennis')
+      expect(spaceUnits.some(u => u.type === 'flagship')).toBe(true)
+
+      // PDS should be removed from planet
+      const planetUnits = game.state.units['27'].planets['new-albion']
+        .filter(u => u.owner === 'dennis' && u.type === 'pds')
+      expect(planetUnits.length).toBe(0)
+    })
+
+    test('DEPLOY: can decline and keep PDS', () => {
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'titans-home': {
+              space: ['cruiser'],
+              'elysium': ['infantry', 'space-dock'],
+            },
+            '27': {
+              'new-albion': ['pds'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Activate system 27
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Decline deploy
+      t.choose(game, 'Pass')
+
+      // PDS should remain
+      const planetUnits = game.state.units['27'].planets['new-albion']
+        .filter(u => u.owner === 'dennis' && u.type === 'pds')
+      expect(planetUnits.length).toBe(1)
+
+      // No flagship in space
+      const spaceUnits = game.state.units['27'].space.filter(
+        u => u.owner === 'dennis' && u.type === 'flagship'
+      )
+      expect(spaceUnits.length).toBe(0)
+    })
   })
 
   describe('Faction Technologies', () => {
     describe('Saturn Engine II', () => {
-      test.todo('cruiser upgrade: move 3, capacity 2, sustain damage')
+      test('cruiser upgrade: move 3, capacity 2, sustain damage', () => {
+        const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['saturn-engine-ii'],
+          },
+        })
+        game.run()
+
+        const stats = game._getUnitStats('dennis', 'cruiser')
+        expect(stats.combat).toBe(6)
+        expect(stats.move).toBe(3)
+        expect(stats.capacity).toBe(2)
+        expect(stats.abilities).toContain('sustain-damage')
+      })
+
+      test('base Saturn Engine I has correct stats', () => {
+        const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+        game.run()
+
+        // Base Titans cruiser (Saturn Engine I) override
+        const stats = game._getUnitStats('dennis', 'cruiser')
+        expect(stats.combat).toBe(7)
+        expect(stats.move).toBe(2)
+        expect(stats.capacity).toBe(1)
+      })
     })
 
     describe('Hel-Titan II', () => {
-      test.todo('PDS upgrade: combat 6, space cannon 5')
-      test.todo('may use SPACE CANNON against ships in adjacent systems')
+      test('PDS upgrade: combat 6, space cannon 5', () => {
+        const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['hel-titan-ii'],
+          },
+        })
+        game.run()
+
+        const stats = game._getUnitStats('dennis', 'pds')
+        expect(stats.combat).toBe(6)
+        expect(stats.abilities).toContain('space-cannon-5x1')
+        expect(stats.abilities).toContain('sustain-damage')
+        expect(stats.abilities).toContain('planetary-shield')
+      })
+
+      test('base Hel-Titan I has correct stats', () => {
+        const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+        game.run()
+
+        const stats = game._getUnitStats('dennis', 'pds')
+        expect(stats.combat).toBe(7)
+        expect(stats.abilities).toContain('space-cannon-6x1')
+        expect(stats.abilities).toContain('sustain-damage')
+        expect(stats.abilities).toContain('planetary-shield')
+      })
+
+      test('may use SPACE CANNON against ships in adjacent systems', () => {
+        // Hel-Titan II allows adjacent system space cannon like PDS II does
+        // Verify by checking the handler method directly
+        const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['hel-titan-ii'],
+          },
+        })
+        game.run()
+
+        const dennis = game.players.byName('dennis')
+        const handler = game.factionAbilities._getPlayerHandler(dennis)
+
+        // Handler should indicate Hel-Titan II can fire from adjacent systems
+        expect(handler.canFireSpaceCannonFromAdjacentSystem(dennis)).toBe(true)
+      })
+
+      test('base Hel-Titan I cannot fire from adjacent systems', () => {
+        const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+        game.run()
+
+        const dennis = game.players.byName('dennis')
+        const handler = game.factionAbilities._getPlayerHandler(dennis)
+
+        // Without Hel-Titan II, should not fire from adjacent systems
+        expect(handler.canFireSpaceCannonFromAdjacentSystem(dennis)).toBe(false)
+      })
     })
 
     describe('Slumberstate Computing', () => {
-      test.todo('when COALESCENCE results in ground combat with no other units, may coexist')
-      test.todo('during status phase, draw 1 additional action card per coexisting player')
+      test('when COALESCENCE results in ground combat with no other units, may coexist', () => {
+        const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['slumberstate-computing'],
+            units: {
+              'titans-home': {
+                space: ['cruiser'],
+                'elysium': ['space-dock'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              '27': {
+                'new-albion': ['infantry'],
+              },
+            },
+          },
+          sleeperTokens: { 'new-albion': 'dennis' },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Activate system 27 — sleeper awakens to PDS (Coalescence)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+
+        // Hecatoncheires deploy prompt: Place PDS (not mech deploy)
+        t.choose(game, 'Place PDS')
+
+        // Ouranos deploy prompt: Pass (don't replace PDS with flagship)
+        t.choose(game, 'Pass')
+
+        // Slumberstate Computing prompt: coexist instead of combat
+        t.choose(game, 'Coexist')
+
+        // Verify coexistence state
+        expect(game.state.coexistence).toBeTruthy()
+        const coexistPair = game.state.coexistence.find(
+          c => c.planetId === 'new-albion'
+        )
+        expect(coexistPair).toBeTruthy()
+      })
+
+      test('during status phase, draw 1 additional action card per coexisting player', () => {
+        const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['slumberstate-computing'],
+            units: {
+              'titans-home': {
+                space: ['cruiser'],
+                'elysium': ['infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+
+        // Set up coexistence state
+        game.state.coexistence = [
+          { planetId: 'new-albion', titanPlayer: 'dennis', otherPlayer: 'micah' },
+        ]
+
+        // Verify the getAdditionalActionCardDraw method works
+        const dennis = game.players.byName('dennis')
+        const handler = game.factionAbilities._getPlayerHandler(dennis)
+        expect(handler.getAdditionalActionCardDraw).toBeTruthy()
+
+        const extra = handler.getAdditionalActionCardDraw(dennis, game.factionAbilities)
+        expect(extra).toBe(1)
+      })
+
       test.todo('other players may allow placement of sleeper token on their planet')
     })
   })

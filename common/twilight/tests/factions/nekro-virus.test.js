@@ -7,11 +7,16 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 
 describe('Nekro Virus', () => {
   describe('Data', () => {
-    test('starting technologies', () => {
+    test('starting technologies include Dacxive Animators and both Assimilators', () => {
       const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
       game.run()
       const dennis = game.players.byName('dennis')
-      expect(dennis.getTechIds()).toEqual(expect.arrayContaining(['dacxive-animators']))
+      const techs = dennis.getTechIds()
+      expect(techs).toEqual(expect.arrayContaining([
+        'dacxive-animators',
+        'valefar-assimilator-x',
+        'valefar-assimilator-y',
+      ]))
     })
 
     test('commodities is 3', () => {
@@ -199,7 +204,22 @@ describe('Nekro Virus', () => {
   })
 
   describe('Commander — Nekro Acidos', () => {
-    test.todo('unlock condition: own 3 technologies (Valefar Assimilator counts only if X or Y token is on a technology)')
+    test('unlock condition: assimilators without tokens do not count toward 3 tech threshold', () => {
+      const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+        },
+      })
+      game.run()
+
+      // Nekro starts with dacxive-animators + assimilator-x + assimilator-y = 3 techs
+      // But assimilators without tokens should NOT count
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getTechIds().length).toBe(3)
+      // Commander should still be locked (only 1 effective tech: dacxive-animators)
+      expect(dennis.isCommanderUnlocked()).toBe(false)
+    })
 
     test('draws 1 action card after gaining technology via Technological Singularity', () => {
       const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
@@ -279,7 +299,60 @@ describe('Nekro Virus', () => {
   })
 
   describe('Hero — UNIT.DSGN.FLAYESH', () => {
-    test.todo('POLYMORPHIC ALGORITHM: choose planet with tech specialty in system with your units, destroy other units, gain trade goods and matching tech, then purge')
+    test('destroys opponent units on planet with tech specialty, gains trade goods and matching tech, then purges', () => {
+      const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          tradeGoods: 0,
+          units: {
+            'nekro-home': {
+              'mordai-ii': ['space-dock'],
+            },
+            // Nekro has units in system 27 (new-albion has green tech specialty, 1 res + 1 inf = 2)
+            '27': {
+              space: ['cruiser'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses Hero via Component Action
+      t.choose(game, 'Component Action')
+      t.choose(game, 'polymorphic-algorithm')
+
+      // Choose planet: new-albion (green tech specialty, only valid option in system 27)
+      // Auto-selected since it's the only planet with tech specialty in a system with Nekro units
+
+      // Choose green tech to gain (new-albion has green specialty)
+      // Nekro already has dacxive-animators (green), so choose neural-motivator
+      // Note: Singularity does NOT trigger during hero destruction (not combat)
+      t.choose(game, 'neural-motivator')
+
+      const dennis = game.players.byName('dennis')
+      // Should gain trade goods = resources (1) + influence (1) = 2
+      expect(dennis.tradeGoods).toBe(2)
+
+      // Should gain a green technology
+      expect(dennis.hasTechnology('neural-motivator')).toBe(true)
+
+      // Hero should be purged
+      expect(dennis.isHeroPurged()).toBe(true)
+
+      // Opponent units on new-albion should be destroyed
+      const newAlbionUnits = game.state.units['27'].planets['new-albion']
+        .filter(u => u.owner === 'micah')
+      expect(newAlbionUnits.length).toBe(0)
+    })
   })
 
   describe('Mech — Mordred', () => {
@@ -293,15 +366,155 @@ describe('Nekro Virus', () => {
 
   describe('Faction Technologies', () => {
     describe('Valefar Assimilator X', () => {
-      test.todo('place X assimilator token on opponent faction technology instead of gaining it')
+      test('place X assimilator token on opponent faction technology instead of gaining it', () => {
+        // Use Barony of Letnev as opponent — has faction tech l4-disruptors
+        const game = t.fixture({ factions: ['nekro-virus', 'barony-of-letnev'] })
+        t.setBoard(game, {
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              'nekro-home': {
+                space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+                'mordai-ii': ['space-dock'],
+              },
+            },
+          },
+          micah: {
+            // Give Letnev their faction tech so it's eligible
+            technologies: ['antimass-deflectors', 'sarween-tools', 'l4-disruptors'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              '27': {
+                space: ['fighter'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'nekro-home', count: 5 }],
+        })
+
+        // Technological Singularity triggers — now offers assimilator placement
+        // Choose to place X token on l4-disruptors
+        t.choose(game, 'Place X token on l4-disruptors')
+
+        // Verify assimilator token is placed
+        expect(game.state.assimilatorTokens.x).toEqual({
+          techId: 'l4-disruptors',
+          ownerName: 'micah',
+        })
+
+        // Nekro should NOT have gained l4-disruptors as a regular tech
+        const dennis = game.players.byName('dennis')
+        expect(dennis.hasTechnology('l4-disruptors')).toBe(false)
+      })
+
       test.todo('this card gains the text of the token-marked technology')
-      test.todo('cannot place assimilator token on technology that already has one')
+
+      test('cannot place assimilator token on technology that already has one', () => {
+        const game = t.fixture({ factions: ['nekro-virus', 'barony-of-letnev'] })
+        t.setBoard(game, {
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              'nekro-home': {
+                space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+                'mordai-ii': ['space-dock'],
+              },
+            },
+          },
+          micah: {
+            technologies: ['antimass-deflectors', 'sarween-tools', 'l4-disruptors'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              '27': {
+                space: ['fighter', 'fighter'],
+              },
+            },
+          },
+        })
+
+        // Pre-place X token on l4-disruptors
+        game.testSetBreakpoint('initialization-complete', (game) => {
+          game.state.assimilatorTokens = {
+            x: { techId: 'l4-disruptors', ownerName: 'micah' },
+          }
+        })
+
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'nekro-home', count: 5 }],
+        })
+
+        // Technological Singularity triggers — Y is available, but l4-disruptors already has X
+        // So only non-faction techs (or faction techs without tokens) should be available
+        // Since l4-disruptors is the ONLY faction tech and it already has X token,
+        // Y token cannot be placed there, so no assimilator option appears
+        // Just pick a regular tech
+        t.choose(game, 'antimass-deflectors')
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.hasTechnology('antimass-deflectors')).toBe(true)
+
+        // X token should still be on l4-disruptors
+        expect(game.state.assimilatorTokens.x).toEqual({
+          techId: 'l4-disruptors',
+          ownerName: 'micah',
+        })
+      })
     })
 
     describe('Valefar Assimilator Y', () => {
-      test.todo('place Y assimilator token on opponent faction technology instead of gaining it')
+      test('place Y assimilator token on opponent faction technology', () => {
+        const game = t.fixture({ factions: ['nekro-virus', 'barony-of-letnev'] })
+        t.setBoard(game, {
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              'nekro-home': {
+                space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+                'mordai-ii': ['space-dock'],
+              },
+            },
+          },
+          micah: {
+            technologies: ['antimass-deflectors', 'sarween-tools', 'non-euclidean-shielding'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              '27': {
+                space: ['fighter'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'nekro-home', count: 5 }],
+        })
+
+        // Place Y token on non-euclidean-shielding
+        t.choose(game, 'Place Y token on non-euclidean-shielding')
+
+        expect(game.state.assimilatorTokens.y).toEqual({
+          techId: 'non-euclidean-shielding',
+          ownerName: 'micah',
+        })
+      })
+
       test.todo('this card gains the text of the token-marked technology')
-      test.todo('cannot place assimilator token on technology that already has one')
     })
 
     describe('Valefar Assimilator Z', () => {

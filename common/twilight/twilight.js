@@ -136,6 +136,7 @@ Twilight.prototype._initializeState = function() {
   this.state.capturedUnits = {}         // { playerName: [{ type, originalOwner }] } — Vuil'raith Cabal
   this.state.capturedCommandTokens = {} // { playerName: [otherPlayerName, ...] } — Mahact Gene-Sorcerers
   this.state.nekroPrediction = null     // { playerName, outcome } — Nekro Virus agenda prediction
+  this.state.assimilatorTokens = {}    // { x: { techId, ownerName }, y: { techId, ownerName } } — Nekro Valefar Assimilators
   this.state.creussWormholeToken = null  // systemId where Creuss wormhole token is placed
 }
 
@@ -1111,7 +1112,12 @@ Twilight.prototype.statusPhase = function() {
 
   // Step 3: Draw action cards (each player draws 1; Neural Motivator draws 2)
   for (const player of this._getPlayersInInitiativeOrder()) {
-    const drawCount = player.hasTechnology('neural-motivator') ? 2 : 1
+    let drawCount = player.hasTechnology('neural-motivator') ? 2 : 1
+    // Slumberstate Computing: draw 1 additional per coexisting player
+    const handler = this.factionAbilities._getPlayerHandler(player)
+    if (handler?.getAdditionalActionCardDraw) {
+      drawCount += handler.getAdditionalActionCardDraw(player, this.factionAbilities)
+    }
     this._drawActionCards(player, drawCount)
   }
 
@@ -1288,16 +1294,26 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
       continue
     }
 
+    // Faction abilities before vote (e.g., Mahact Genetic Recombination)
+    const preVote = this.factionAbilities.onBeforePlayerVote(player, outcomes)
+
     const availableInfluence = player.getTotalInfluence()
     const votingModifier = this.factionAbilities.getVotingModifier(player)
-    const voteChoices = ['Abstain', ...outcomes]
 
-    const selection = this.actions.choose(player, voteChoices, {
-      title: `Vote on ${agenda.name} (${availableInfluence} influence available)`,
-      noAutoRespond: true,
-    })
+    let chosen
+    if (preVote?.forcedOutcome) {
+      // Player was forced to vote for a specific outcome
+      chosen = preVote.forcedOutcome
+    }
+    else {
+      const voteChoices = ['Abstain', ...outcomes]
+      const selection = this.actions.choose(player, voteChoices, {
+        title: `Vote on ${agenda.name} (${availableInfluence} influence available)`,
+        noAutoRespond: true,
+      })
+      chosen = selection[0]
+    }
 
-    const chosen = selection[0]
     if (chosen === 'Abstain') {
       this.log.add({
         template: '{player} abstains',
@@ -1508,6 +1524,20 @@ Twilight.prototype._tacticalAction = function(player) {
   // Nullification Field: Xxcha can end the activating player's turn immediately
   if (this.state.nullificationFieldActive) {
     delete this.state.nullificationFieldActive
+    this.log.outdent()
+    return
+  }
+
+  // Mahact Commander (Il Na Viroset): reactivated a system with own token — end turn
+  if (this.state.mahactReactivation) {
+    delete this.state.mahactReactivation
+    this.log.outdent()
+    return
+  }
+
+  // Mahact Mech (Starlancer): opponent activated system with Mahact mech — end their turn
+  if (this.state.mahactMechEndTurn) {
+    delete this.state.mahactMechEndTurn
     this.log.outdent()
     return
   }
@@ -2471,6 +2501,39 @@ Twilight.prototype._spaceCannonOffense = function(activePlayer, systemId) {
     }
   }
 
+  // 1b. Hero attachments with space cannon abilities (e.g., Titans Geoform on Elysium)
+  if (this.state.heroAttachments && tile) {
+    for (const planetId of tile.planets) {
+      const attachment = this.state.heroAttachments[planetId]
+      if (!attachment?.spaceCannonAbility) {
+        continue
+      }
+      // Find the planet controller (the one who benefits from the attachment)
+      const controller = this.state.planets[planetId]?.controller
+      if (!controller || controller === activePlayer.name) {
+        continue
+      }
+      // Fire the space cannon from the hero attachment
+      const parts = attachment.spaceCannonAbility.replace('space-cannon-', '').split('x')
+      const combatValue = Math.min(10, parseInt(parts[0]) + antimassDefense)
+      const diceCount = parseInt(parts[1] || 1)
+      let extraDice = 0
+      if (!plasmaUsedByOwner[controller]) {
+        const owner = this.players.byName(controller)
+        if (owner && owner.hasTechnology('plasma-scoring')) {
+          extraDice = 1
+          plasmaUsedByOwner[controller] = true
+        }
+      }
+      for (let i = 0; i < diceCount + extraDice; i++) {
+        const roll = Math.floor(this.random() * 10) + 1
+        if (roll >= combatValue) {
+          totalHits++
+        }
+      }
+    }
+  }
+
   // 2. PDS II in adjacent systems (check if owner has PDS II upgrade)
   const adjacentSystems = this._getAdjacentSystems(systemId)
   for (const adjSystemId of adjacentSystems) {
@@ -2499,9 +2562,13 @@ Twilight.prototype._spaceCannonOffense = function(activePlayer, systemId) {
           continue
         }
         // PDS II has space-cannon-5x1; base PDS has space-cannon-6x1
-        // Check if owner has pds-ii technology
+        // Check if owner has pds-ii technology or faction equivalent (e.g., Hel-Titan II)
         const owner = this.players.byName(unit.owner)
-        if (owner && owner.hasTechnology('pds-ii')) {
+        const canFireAdjacent = owner && (
+          owner.hasTechnology('pds-ii') ||
+          this.factionAbilities._getPlayerHandler(owner)?.canFireSpaceCannonFromAdjacentSystem?.(owner, this.factionAbilities)
+        )
+        if (canFireAdjacent) {
           let extraDice = 0
           if (!plasmaUsedByOwner[unit.owner] && owner.hasTechnology('plasma-scoring')) {
             extraDice = 1
@@ -5601,10 +5668,29 @@ Twilight.prototype._checkCommanderUnlock = function(player) {
       conditionMet = this._hasUnitsNearWormholes(player.name, 'alpha')
         && this._hasUnitsNearWormholes(player.name, 'beta')
       break
-    case 'nekro-virus':
-      // Have 3 technologies
-      conditionMet = player.getTechIds().length >= 3
+    case 'nekro-virus': {
+      // Have 3 technologies. Valefar Assimilator counts only if its token is placed.
+      const nekroTechs = player.getTechIds()
+      const tokens = this.state.assimilatorTokens || {}
+      let effectiveCount = 0
+      for (const techId of nekroTechs) {
+        if (techId === 'valefar-assimilator-x') {
+          if (tokens.x) {
+            effectiveCount++
+          }
+        }
+        else if (techId === 'valefar-assimilator-y') {
+          if (tokens.y) {
+            effectiveCount++
+          }
+        }
+        else {
+          effectiveCount++
+        }
+      }
+      conditionMet = effectiveCount >= 3
       break
+    }
     case 'argent-flight':
       // 6+ units with AFB/SC/Bombardment on board
       conditionMet = this._countCombatAbilityUnits(player.name) >= 6

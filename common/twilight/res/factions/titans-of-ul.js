@@ -39,7 +39,7 @@ module.exports = {
     pds: {
       name: 'Hel-Titan I',
       combat: 7,
-      abilities: ['planetary-shield', 'space-cannon-6', 'sustain-damage', 'production-1'],
+      abilities: ['planetary-shield', 'space-cannon-6x1', 'sustain-damage', 'production-1'],
       description: 'This unit is treated as both a structure and a ground force. It cannot be transported.',
     },
   },
@@ -98,7 +98,7 @@ module.exports = {
       color: 'unit-upgrade',
       prerequisites: ['yellow', 'red'],
       unitUpgrade: 'pds',
-      stats: { combat: 6, abilities: ['planetary-shield', 'space-cannon-5', 'sustain-damage', 'production-1'] },
+      stats: { combat: 6, abilities: ['planetary-shield', 'space-cannon-5x1', 'sustain-damage', 'production-1'] },
       description: "This unit is treated as both a structure and a ground force. It cannot be transported. You may use this unit's SPACE CANNON against ships that are adjacent to this unit's system.",
     },
     {

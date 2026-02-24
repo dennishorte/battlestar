@@ -85,7 +85,7 @@ module.exports = {
       color: 'unit-upgrade',
       prerequisites: ['green', 'blue'],
       unitUpgrade: 'fighter',
-      stats: { combat: 7, move: 2 },
+      stats: { combat: 7, move: 2, requiresCapacity: false },
       description: 'This unit may move without being transported. Each fighter in excess of your ships\' capacity counts as 1/2 of a ship against your fleet pool.',
     },
     {

@@ -39,7 +39,7 @@ module.exports = {
     cost: 2,
     combat: 6,
     hits: 2,
-    abilities: ['sustain-damage', 'space-cannon-8'],
+    abilities: ['sustain-damage', 'space-cannon-8x1'],
     description: 'You may use this unit\'s Space Cannon ability against ships that are in adjacent systems.',
   },
   leaders: {
