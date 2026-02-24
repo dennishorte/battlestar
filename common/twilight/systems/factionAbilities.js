@@ -442,6 +442,12 @@ class FactionAbilities {
     handler?.onPlanetGained?.(player, this, { planetId, systemId, structureCounts: structureCounts || {}, previousController: previousController || null })
   }
 
+  onPlanetLost(loserName, planetId, systemId, gainingPlayerName) {
+    const player = this.players.byName(loserName)
+    const handler = this._getPlayerHandler(player)
+    handler?.onPlanetLost?.(player, this, { planetId, systemId, gainingPlayerName })
+  }
+
 
   // ---------------------------------------------------------------------------
   // I. Status Phase Triggers

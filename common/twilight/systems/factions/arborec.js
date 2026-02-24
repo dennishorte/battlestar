@@ -73,13 +73,39 @@ module.exports = {
 
     const targetPlanet = selection[0]
     const systemId = ctx.game._findSystemForPlanet(targetPlanet)
-    if (systemId) {
-      ctx.game._addUnitToPlanet(systemId, targetPlanet, 'infantry', player.name)
-      ctx.log.add({
-        template: '{player} uses Mitosis: 1 infantry on {planet}',
-        args: { player, planet: targetPlanet },
-      })
+    if (!systemId) {
+      return
     }
+
+    // Mech DEPLOY — Letani Behemoth: instead of placing infantry, replace
+    // 1 existing infantry on that planet with 1 mech.
+    const planetUnits = ctx.state.units[systemId]?.planets[targetPlanet] || []
+    const hasInfantry = planetUnits.some(u => u.owner === player.name && u.type === 'infantry')
+
+    if (hasInfantry) {
+      const mechChoice = ctx.actions.choose(player, ['Place infantry', 'Deploy Mech (replace infantry)'], {
+        title: 'Letani Behemoth: Deploy mech instead? (replaces 1 existing infantry)',
+      })
+
+      if (mechChoice[0] === 'Deploy Mech (replace infantry)') {
+        const infIdx = planetUnits.findIndex(u => u.owner === player.name && u.type === 'infantry')
+        if (infIdx !== -1) {
+          planetUnits.splice(infIdx, 1)
+          ctx.game._addUnitToPlanet(systemId, targetPlanet, 'mech', player.name)
+          ctx.log.add({
+            template: 'Letani Behemoth: {player} uses Mitosis to deploy mech on {planet} (replacing infantry)',
+            args: { player, planet: targetPlanet },
+          })
+          return
+        }
+      }
+    }
+
+    ctx.game._addUnitToPlanet(systemId, targetPlanet, 'infantry', player.name)
+    ctx.log.add({
+      template: '{player} uses Mitosis: 1 infantry on {planet}',
+      args: { player, planet: targetPlanet },
+    })
   },
 
   // ---------------------------------------------------------------------------

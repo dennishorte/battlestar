@@ -310,19 +310,40 @@ module.exports = {
       return
     }
 
-    ctx.game._payInfluence(player, 2)
+    // Mech DEPLOY — Moyin's Ashes: when using Indoctrination, spend 1 additional
+    // influence to replace with mech instead of infantry
+    let deployMech = false
+    if (player.getTotalInfluence() >= 3) {
+      const mechChoice = ctx.actions.choose(player, ['Deploy Mech (+1 influence)', 'Infantry only'], {
+        title: "Moyin's Ashes: Spend 1 extra influence to deploy mech instead of infantry?",
+      })
+      if (mechChoice[0] === 'Deploy Mech (+1 influence)') {
+        deployMech = true
+      }
+    }
+
+    ctx.game._payInfluence(player, deployMech ? 3 : 2)
 
     const idx = planetUnits.findIndex(u => u.owner === opponentName && u.type === 'infantry')
     if (idx !== -1) {
       planetUnits.splice(idx, 1)
     }
 
-    ctx.game._addUnitToPlanet(systemId, planetId, 'infantry', player.name)
+    const unitType = deployMech ? 'mech' : 'infantry'
+    ctx.game._addUnitToPlanet(systemId, planetId, unitType, player.name)
 
-    ctx.log.add({
-      template: '{player} uses Indoctrination: replaces 1 enemy infantry',
-      args: { player },
-    })
+    if (deployMech) {
+      ctx.log.add({
+        template: "Moyin's Ashes: {player} uses Indoctrination to deploy mech (replaces 1 enemy infantry)",
+        args: { player },
+      })
+    }
+    else {
+      ctx.log.add({
+        template: '{player} uses Indoctrination: replaces 1 enemy infantry',
+        args: { player },
+      })
+    }
   },
 
   // Yin Spinner (faction tech): After you produce units, place up to 2 infantry

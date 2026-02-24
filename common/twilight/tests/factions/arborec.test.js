@@ -93,6 +93,9 @@ describe('Arborec', () => {
       // Status phase — Arborec mitosis: choose planet
       t.choose(game, 'nestphar')
 
+      // Mech DEPLOY choice — place infantry
+      t.choose(game, 'Place infantry')
+
       // Token redistribution
       t.choose(game, 'Done')  // dennis
       t.choose(game, 'Done')  // micah
@@ -133,7 +136,38 @@ describe('Arborec', () => {
   })
 
   describe('Mech — Letani Behemoth', () => {
-    test.todo('DEPLOY: during Mitosis, may replace infantry with mech instead of placing infantry')
+    test('DEPLOY: during Mitosis, may replace infantry with mech instead of placing infantry', () => {
+      const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Play through action phase
+      t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Pass')  // micah declines secondary
+      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'hacan-home')
+      t.choose(game, 'Pass')  // dennis declines secondary
+      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')
+
+      // Status phase — Arborec mitosis: choose planet
+      t.choose(game, 'nestphar')
+
+      // Choose to deploy mech (replaces 1 infantry)
+      t.choose(game, 'Deploy Mech (replace infantry)')
+
+      // Token redistribution
+      t.choose(game, 'Done')  // dennis
+      t.choose(game, 'Done')  // micah
+
+      // Should have 1 mech + 3 infantry (was 4 infantry, replaced 1 with mech)
+      const nestphar = game.state.units['arborec-home'].planets['nestphar']
+        .filter(u => u.owner === 'dennis')
+      const infantry = nestphar.filter(u => u.type === 'infantry')
+      const mechs = nestphar.filter(u => u.type === 'mech')
+      expect(infantry.length).toBe(3)
+      expect(mechs.length).toBe(1)
+    })
   })
 
   describe('Agent — Letani Ospha', () => {
@@ -412,6 +446,9 @@ describe('Arborec', () => {
 
         // Status phase — Arborec mitosis
         t.choose(game, 'nestphar')
+
+        // Mech DEPLOY choice — place infantry
+        t.choose(game, 'Place infantry')
 
         // Token redistribution
         t.choose(game, 'Done')  // dennis

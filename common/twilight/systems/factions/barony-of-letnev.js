@@ -107,6 +107,69 @@ module.exports = {
     }
   },
 
+  // Mech — Dunlain Reaper DEPLOY: At the start of a ground combat,
+  // you may spend 2 resources to replace 1 of your infantry on that planet with 1 mech.
+  onGroundCombatStart(player, ctx, { systemId, planetId, opponentName: _opponentName }) {
+    const planetUnits = ctx.state.units[systemId]?.planets[planetId] || []
+    const playerInfantry = planetUnits.filter(u => u.owner === player.name && u.type === 'infantry')
+
+    if (playerInfantry.length === 0) {
+      return
+    }
+
+    // Check if player can afford 2 resources (ready planets + trade goods)
+    const totalResources = player.getTotalResources() + player.tradeGoods
+    if (totalResources < 2) {
+      return
+    }
+
+    const choice = ctx.actions.choose(player, ['Deploy Mech', 'Pass'], {
+      title: 'Dunlain Reaper: Spend 2 resources to replace 1 infantry with 1 mech?',
+    })
+
+    if (choice[0] === 'Pass') {
+      return
+    }
+
+    // Pay 2 resources — spend trade goods first, then exhaust planets
+    let remaining = 2
+    if (player.tradeGoods > 0) {
+      const fromTG = Math.min(player.tradeGoods, remaining)
+      player.spendTradeGoods(fromTG)
+      remaining -= fromTG
+    }
+    if (remaining > 0) {
+      ctx.game._payInfluence(player, 0) // no-op, just in case
+      // Exhaust planets to cover remaining resource cost
+      const readyPlanets = player.getReadyPlanets()
+        .map(pId => {
+          const planet = ctx.game.res.getPlanet(pId)
+          return { id: pId, resources: planet?.resources || 0 }
+        })
+        .sort((a, b) => a.resources - b.resources)
+
+      for (const planet of readyPlanets) {
+        if (remaining <= 0) {
+          break
+        }
+        ctx.state.planets[planet.id].exhausted = true
+        remaining -= planet.resources
+      }
+    }
+
+    // Replace 1 infantry with 1 mech
+    const infIdx = planetUnits.findIndex(u => u.owner === player.name && u.type === 'infantry')
+    if (infIdx !== -1) {
+      planetUnits.splice(infIdx, 1)
+      ctx.game._addUnitToPlanet(systemId, planetId, 'mech', player.name)
+    }
+
+    ctx.log.add({
+      template: 'Dunlain Reaper: {player} spends 2 resources to deploy mech (replacing infantry)',
+      args: { player: player.name },
+    })
+  },
+
   // Commander: Rear Admiral Farran — gain 1 TG after sustain damage
   onUnitsSustainedDamage(player, ctx, { systemId: _systemId, count }) {
     if (!player.isCommanderUnlocked()) {
