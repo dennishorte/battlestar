@@ -11,7 +11,7 @@ module.exports = {
       game.actions.bakeBread(player)
     }
   },
-  onFeedingPhaseStart(game, player) {
+  onFeedingPhase(game, player) {
     if (player.hasBakingAbility && player.hasBakingAbility() && player.grain >= 1) {
       game.actions.bakeBread(player)
     }
