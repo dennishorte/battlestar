@@ -140,7 +140,7 @@ module.exports = {
     }
 
     // Destroy infantry and fighters on planets
-    for (const [planetId, planetUnits] of Object.entries(systemUnits.planets)) {
+    for (const [_planetId, planetUnits] of Object.entries(systemUnits.planets)) {
       const toDestroy = planetUnits.filter(
         u => u.owner !== player.name && (u.type === 'infantry' || u.type === 'fighter')
       )

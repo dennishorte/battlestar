@@ -160,7 +160,7 @@ module.exports = {
     // Find eligible systems: contain wormholes or Creuss units
     // Exclude creuss-home and wormhole-nexus
     const eligibleSystems = []
-    for (const [systemId, systemData] of Object.entries(ctx.state.systems)) {
+    for (const [systemId, _systemData] of Object.entries(ctx.state.systems)) {
       if (systemId === 'creuss-home' || systemId === 'wormhole-nexus') {
         continue
       }
