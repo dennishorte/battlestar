@@ -455,7 +455,40 @@ describe('Yin Brotherhood', () => {
     })
 
     describe('Yin Spinner', () => {
-      test.todo('after producing units, place up to 2 infantry on any controlled planet or in space area with own ships')
+      test('after producing units, place up to 2 infantry on controlled planet', () => {
+        const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['yin-spinner'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'yin-home': {
+                'darien': ['space-dock', 'infantry'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Produce units
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: 'yin-home' })
+        t.choose(game, 'Done')  // skip movement
+        t.action(game, 'produce-units', {
+          units: [{ type: 'fighter', count: 1 }],
+        })
+
+        // Yin Spinner prompt: place infantry on controlled planet
+        t.choose(game, 'Planet: darien')
+        t.choose(game, 'Pass')  // don't place 2nd
+
+        const darienInfantry = game.state.units['yin-home'].planets['darien']
+          .filter(u => u.owner === 'dennis' && u.type === 'infantry')
+        // Started with 1, placed 1 more from Yin Spinner
+        expect(darienInfantry.length).toBe(2)
+      })
     })
 
     describe('Yin Ascendant', () => {

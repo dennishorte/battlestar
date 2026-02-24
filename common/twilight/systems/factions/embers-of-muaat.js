@@ -10,7 +10,96 @@ module.exports = {
       abilityId: 'star-forge',
       isAvailable: (player) => player.commandTokens.strategy >= 1,
     },
+    {
+      id: 'umbat-agent',
+      name: 'Umbat',
+      abilityId: 'star-forge',
+      isAvailable: function(player) {
+        return player.isAgentReady()
+      },
+    },
   ],
+
+  // Agent — Umbat: ACTION: Exhaust to choose a player; that player may produce
+  // up to 2 units that each have a cost of 4 or less in a system that contains
+  // one of their war suns or their flagship.
+  umbatAgent(ctx, player) {
+    player.exhaustAgent()
+
+    // Choose a target player (can be self)
+    const allPlayers = ctx.game.players.all()
+    const targetNames = allPlayers.map(p => p.name)
+    const targetSelection = ctx.actions.choose(player, targetNames, {
+      title: 'Umbat: Choose a player to produce units',
+    })
+    const targetPlayer = ctx.game.players.byName(targetSelection[0])
+
+    // Find systems with target's war suns or flagship
+    const eligibleSystems = []
+    for (const [systemId, systemUnits] of Object.entries(ctx.state.units)) {
+      const hasWarSunOrFlagship = systemUnits.space.some(
+        u => u.owner === targetPlayer.name && (u.type === 'war-sun' || u.type === 'flagship')
+      )
+      if (hasWarSunOrFlagship) {
+        eligibleSystems.push(systemId)
+      }
+    }
+
+    if (eligibleSystems.length === 0) {
+      ctx.log.add({
+        template: 'Umbat: {target} has no war suns or flagships on the board',
+        args: { target: targetPlayer.name },
+      })
+      return
+    }
+
+    let targetSystem
+    if (eligibleSystems.length === 1) {
+      targetSystem = eligibleSystems[0]
+    }
+    else {
+      const sysChoice = ctx.actions.choose(targetPlayer, eligibleSystems, {
+        title: 'Umbat: Choose system to produce in',
+      })
+      targetSystem = sysChoice[0]
+    }
+
+    // Produce up to 2 units with cost <= 4
+    const unitTypes = ['fighter', 'destroyer', 'infantry', 'mech']
+    for (let i = 0; i < 2; i++) {
+      const choices = ['Pass', ...unitTypes]
+      const unitChoice = ctx.actions.choose(targetPlayer, choices, {
+        title: `Umbat: Produce unit ${i + 1}/2 (cost 4 or less)`,
+      })
+
+      if (unitChoice[0] === 'Pass') {
+        break
+      }
+
+      const unitType = unitChoice[0]
+      const unitDef = ctx.game.res.getUnit(unitType)
+      if (unitDef) {
+        if (unitDef.category === 'ship') {
+          ctx.game._addUnit(targetSystem, 'space', unitType, targetPlayer.name)
+        }
+        else {
+          // Place ground force on a controlled planet in the system
+          const tile = ctx.game.res.getSystemTile(targetSystem) || ctx.game.res.getSystemTile(Number(targetSystem))
+          const controlledPlanet = tile?.planets?.find(
+            pId => ctx.state.planets[pId]?.controller === targetPlayer.name
+          )
+          if (controlledPlanet) {
+            ctx.game._addUnit(targetSystem, controlledPlanet, unitType, targetPlayer.name)
+          }
+        }
+      }
+    }
+
+    ctx.log.add({
+      template: 'Umbat: {player} allows {target} to produce units',
+      args: { player: player.name, target: targetPlayer.name },
+    })
+  },
 
   starForge(ctx, player) {
     const warSunSystems = []
