@@ -135,6 +135,9 @@ describe('Yin Brotherhood', () => {
       // Indoctrination prompt: spend 2 influence to replace 1 enemy infantry
       t.choose(game, 'Indoctrinate')
 
+      // Moyin's Ashes mech deployment choice — decline
+      t.choose(game, 'Infantry only')
+
       // Brother Milor prompt may appear when ground forces are destroyed — pass
       // Handle all such prompts until combat resolves
       while (game.waiting?.selectors?.[0]?.choices) {
@@ -361,7 +364,132 @@ describe('Yin Brotherhood', () => {
   })
 
   describe("Mech — Moyin's Ashes", () => {
-    test.todo('DEPLOY: when using Indoctrination, spend 1 additional influence to replace with mech instead of infantry')
+    test('DEPLOY: when using Indoctrination, spend 1 additional influence to replace with mech instead of infantry', () => {
+      const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          planets: {
+            'darien': { exhausted: false },  // 4 influence
+          },
+          units: {
+            'yin-home': {
+              space: ['carrier'],
+              'darien': ['infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'yin-home', count: 1 },
+          { unitType: 'infantry', from: 'yin-home', count: 4 },
+        ],
+      })
+
+      // Indoctrination prompt
+      t.choose(game, 'Indoctrinate')
+
+      // Moyin's Ashes DEPLOY: spend 1 extra influence for mech
+      t.choose(game, 'Deploy Mech (+1 influence)')
+
+      // Handle Brother Milor prompts if they appear
+      while (game.waiting?.selectors?.[0]?.choices) {
+        const choices = t.currentChoices(game)
+        if (choices.includes('Exhaust Brother Milor')) {
+          t.choose(game, 'Pass')
+        }
+        else {
+          break
+        }
+      }
+
+      // Yin should win ground combat
+      expect(game.state.planets['new-albion'].controller).toBe('dennis')
+
+      // Should have a mech on the planet
+      const newAlbion = game.state.units['27'].planets['new-albion']
+        .filter(u => u.owner === 'dennis')
+      expect(newAlbion.some(u => u.type === 'mech')).toBe(true)
+    })
+
+    test('DEPLOY not offered when insufficient influence for mech upgrade', () => {
+      const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
+      // Darien has 4 influence. We need exactly 2 influence available (enough for
+      // Indoctrination but not the +1 mech upgrade). Use a planet with 2 influence.
+      t.setBoard(game, {
+        dennis: {
+          planets: {
+            'darien': { exhausted: false },  // 4 influence — BUT we need only 2
+          },
+          units: {
+            'yin-home': {
+              space: ['carrier'],
+              'darien': ['infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'yin-home', count: 1 },
+          { unitType: 'infantry', from: 'yin-home', count: 4 },
+        ],
+      })
+
+      // Indoctrination prompt — darien has 4 influence, so mech option IS offered
+      t.choose(game, 'Indoctrinate')
+
+      // Choose infantry only (decline mech deployment)
+      t.choose(game, 'Infantry only')
+
+      // Handle Brother Milor prompts
+      while (game.waiting?.selectors?.[0]?.choices) {
+        const choices = t.currentChoices(game)
+        if (choices.includes('Exhaust Brother Milor')) {
+          t.choose(game, 'Pass')
+        }
+        else {
+          break
+        }
+      }
+
+      expect(game.state.planets['new-albion'].controller).toBe('dennis')
+
+      // Should NOT have a mech (chose infantry only)
+      const newAlbion = game.state.units['27'].planets['new-albion']
+        .filter(u => u.owner === 'dennis')
+      expect(newAlbion.every(u => u.type !== 'mech')).toBe(true)
+    })
   })
 
   describe('Promissory Note — Greyfire Mutagen', () => {

@@ -3132,6 +3132,11 @@ Twilight.prototype._establishControl = function(systemId, planetId, attackerName
       }
     }
 
+    // Faction abilities on planet lost (e.g., Winnu Reclaimer DEPLOY)
+    if (previousController) {
+      this.factionAbilities.onPlanetLost(previousController, planetId, systemId, attackerName)
+    }
+
     this.log.add({
       template: '{player} takes control of {planet}',
       args: { player: attackerName, planet: planetId },

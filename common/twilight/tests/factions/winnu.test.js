@@ -243,7 +243,106 @@ describe('Winnu', () => {
   })
 
   describe('Mech — Reclaimer', () => {
-    test.todo('DEPLOY: after another player gains control of a planet you control')
+    test('DEPLOY: after another player gains control of a planet you control, place 1 mech', () => {
+      // System 38 (Abyz + Fria) is adjacent to hacan-home
+      const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          planets: {
+            'abyz': { exhausted: false },
+          },
+          units: {
+            'winnu-home': {
+              'winnu': ['space-dock'],
+            },
+            '38': {
+              'abyz': ['infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: Strategic Action (leadership)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+
+      // Micah: tactical action — invade abyz in system 38
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '38' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'hacan-home', count: 1 },
+          { unitType: 'infantry', from: 'hacan-home', count: 5 },
+        ],
+      })
+
+      // Winnu's Reclaimer DEPLOY triggers when planet is lost
+      t.choose(game, 'Deploy Mech')
+
+      // The log should show the deployment happened
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Reclaimer'))).toBe(true)
+    })
+
+    test('DEPLOY can be declined', () => {
+      const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          planets: {
+            'abyz': { exhausted: false },
+          },
+          units: {
+            'winnu-home': {
+              'winnu': ['space-dock'],
+            },
+            '38': {
+              'abyz': ['infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: Strategic Action (leadership)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+
+      // Micah: tactical action — invade abyz in system 38
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '38' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'hacan-home', count: 1 },
+          { unitType: 'infantry', from: 'hacan-home', count: 5 },
+        ],
+      })
+
+      // Decline Reclaimer DEPLOY
+      t.choose(game, 'Pass')
+
+      // No Reclaimer log entry
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Reclaimer'))).toBe(false)
+    })
   })
 
   describe('Promissory Note — Acquiescence', () => {

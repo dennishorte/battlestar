@@ -17,6 +17,25 @@ module.exports = {
     })
   },
 
+  // Mech — Reclaimer DEPLOY: After another player gains control of a planet
+  // you control, you may place 1 mech from your reinforcements on that planet.
+  onPlanetLost(player, ctx, { planetId, systemId, gainingPlayerName: _gainingPlayerName }) {
+    const choice = ctx.actions.choose(player, ['Deploy Mech', 'Pass'], {
+      title: `Reclaimer: Deploy 1 mech on ${planetId}?`,
+    })
+
+    if (choice[0] === 'Pass') {
+      return
+    }
+
+    ctx.game._addUnitToPlanet(systemId, planetId, 'mech', player.name)
+
+    ctx.log.add({
+      template: 'Reclaimer: {player} deploys 1 mech on {planet}',
+      args: { player: player.name, planet: planetId },
+    })
+  },
+
   // Commander — Berekar Berekon: When you control Mecatol Rex, apply +1 to
   // combat rolls and gain 1 additional command token during the status phase.
 
