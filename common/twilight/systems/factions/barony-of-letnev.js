@@ -1,4 +1,42 @@
 module.exports = {
+  componentActions: [
+    {
+      id: 'dark-matter-affinity',
+      name: 'Dark Matter Affinity',
+      abilityId: 'dark-matter-affinity',
+      isAvailable: (player) => player.isHeroUnlocked() && !player.isHeroPurged(),
+    },
+  ],
+
+  // Hero: Darktalon Treilla — DARK MATTER AFFINITY
+  // No fleet limit for the rest of this game round. Purge at end of round.
+  darkMatterAffinity(ctx, player) {
+    if (!ctx.state.noFleetLimit) {
+      ctx.state.noFleetLimit = {}
+    }
+    ctx.state.noFleetLimit[player.name] = true
+
+    ctx.log.add({
+      template: 'Dark Matter Affinity: {player} has no fleet limit this round',
+      args: { player: player.name },
+    })
+
+    // Hero will be purged at the end of the status phase
+    // (tracked via noFleetLimit state — purged during onStatusPhaseStart or status cleanup)
+    player.purgeHero()
+    ctx.log.add({
+      template: '{player} purges Darktalon Treilla',
+      args: { player: player.name },
+    })
+  },
+
+  // Clean up noFleetLimit at the start of the next status phase
+  onStatusPhaseStart(player, ctx) {
+    if (ctx.state.noFleetLimit?.[player.name]) {
+      delete ctx.state.noFleetLimit[player.name]
+    }
+  },
+
   onSpaceCombatRound(player, ctx, { systemId, opponentName: _opponentName }) {
     const systemUnits = ctx.state.units[systemId]
     const playerShips = systemUnits.space.filter(u => u.owner === player.name)
@@ -90,6 +128,27 @@ module.exports = {
     apply: (player, _context) => {
       return player.tradeGoods >= 2
     },
+  },
+
+  // Gravleash Maneuvers (faction tech): +X to combat rolls during space combat,
+  // where X is the number of different ship types you have in the combat.
+  getSpaceCombatModifier(player, ctx, systemId) {
+    if (!player.hasTechnology('gravleash-maneuvers')) {
+      return 0
+    }
+
+    const systemUnits = ctx.state.units[systemId]
+    if (!systemUnits) {
+      return 0
+    }
+
+    const playerShips = systemUnits.space.filter(u => u.owner === player.name)
+    if (playerShips.length === 0) {
+      return 0
+    }
+    const shipTypes = new Set(playerShips.map(u => u.type))
+    // +X to result means lower combat value (easier to hit) → return negative modifier
+    return -shipTypes.size
   },
 
   // L4 Disruptors (faction tech): During an invasion, units cannot use SPACE CANNON

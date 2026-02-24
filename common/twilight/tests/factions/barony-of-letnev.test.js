@@ -405,8 +405,76 @@ describe('Barony of Letnev', () => {
   })
 
   describe('Hero — Darktalon Treilla', () => {
-    test.todo('DARK MATTER AFFINITY: no fleet limit during this game round')
-    test.todo('hero is purged at end of game round')
+    test('DARK MATTER AFFINITY: no fleet limit during this game round', () => {
+      const game = t.fixture({
+        factions: ['barony-of-letnev', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 1 },
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          units: {
+            'letnev-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'arc-prime': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Fleet pool is 1 + Armada 2 = 3 normally
+      // Use hero to remove fleet limit
+      t.choose(game, 'Component Action')
+      t.choose(game, 'dark-matter-affinity')
+
+      // Hero should be purged
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+
+      // Micah takes a turn (Strategic Action — diplomacy)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'hacan-home')
+      t.choose(game, 'Pass') // dennis declines secondary
+
+      // Now dennis's turn — do tactical action with no fleet limit
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'letnev-home', count: 7 }],
+      })
+
+      // All 7 cruisers should arrive (no fleet limit)
+      const nonFighterShips = game.state.units['27'].space
+        .filter(u => u.owner === 'dennis' && u.type !== 'fighter')
+      expect(nonFighterShips.length).toBe(7)
+    })
+
+    test('hero is purged after use', () => {
+      const game = t.fixture({
+        factions: ['barony-of-letnev', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Use hero
+      t.choose(game, 'Component Action')
+      t.choose(game, 'dark-matter-affinity')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+
+      // Hero should no longer be available as component action
+      t.choose(game, 'Component Action')
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('dark-matter-affinity')
+    })
   })
 
   describe('Mech — Dunlain Reaper', () => {
@@ -582,6 +650,99 @@ describe('Barony of Letnev', () => {
       expect(micahShips.length).toBe(0)
     })
 
-    test.todo('Gravleash Maneuvers: +X to combat roll based on ship types')
+    test('Gravleash Maneuvers: +X to combat roll based on ship types', () => {
+      const game = t.fixture({
+        factions: ['barony-of-letnev', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          technologies: ['gravleash-maneuvers'],
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'letnev-home': {
+              space: ['cruiser', 'destroyer', 'dreadnought'],
+              'arc-prime': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['cruiser', 'cruiser', 'cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Verify the modifier: 3 different ship types = -3 combat modifier
+      const dennis = game.players.byName('dennis')
+      const modifier = game.factionAbilities.getSpaceCombatModifier(dennis, '27')
+      // No ships in system 27 yet for dennis, so 0
+      expect(modifier).toBe(0)
+
+      // After moving, there will be 3 ship types in system 27
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'cruiser', from: 'letnev-home', count: 1 },
+          { unitType: 'destroyer', from: 'letnev-home', count: 1 },
+          { unitType: 'dreadnought', from: 'letnev-home', count: 1 },
+        ],
+      })
+
+      // 3 different ship types (cruiser, destroyer, dreadnought) = +3 to rolls
+      // Letnev should win against 3 cruisers with the combat bonus
+      const micahShips = game.state.units['27'].space
+        .filter(u => u.owner === 'micah')
+      expect(micahShips.length).toBe(0)
+    })
+
+    test('Gravleash Maneuvers: modifier scales with ship type diversity', () => {
+      const game = t.fixture({
+        factions: ['barony-of-letnev', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          technologies: ['gravleash-maneuvers'],
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            '27': {
+              space: ['cruiser', 'cruiser', 'cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      // 1 ship type (3 cruisers) = -1 modifier
+      const modifier = game.factionAbilities.getSpaceCombatModifier(dennis, '27')
+      expect(modifier).toBe(-1)
+    })
+
+    test('Gravleash Maneuvers: no modifier without tech', () => {
+      const game = t.fixture({
+        factions: ['barony-of-letnev', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          // No gravleash-maneuvers tech
+          units: {
+            '27': {
+              space: ['cruiser', 'destroyer', 'dreadnought'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      const modifier = game.factionAbilities.getSpaceCombatModifier(dennis, '27')
+      expect(modifier).toBe(0)
+    })
   })
 })

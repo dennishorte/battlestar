@@ -22,6 +22,11 @@ module.exports = {
       name: 'Armada',
       description: 'The maximum number of non-fighter ships you can have in each system is equal to 2 more than the number of tokens in your fleet pool.',
     },
+    {
+      id: 'dark-matter-affinity',
+      name: 'Dark Matter Affinity',
+      description: 'DARK MATTER AFFINITY — ACTION: No fleet limit during this game round. Purge at end of round.',
+    },
   ],
   flagship: {
     name: 'Arc Secundus',

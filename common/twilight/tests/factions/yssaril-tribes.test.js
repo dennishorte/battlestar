@@ -147,8 +147,108 @@ describe('Yssaril Tribes', () => {
   })
 
   describe('Faction Technologies', () => {
-    test.todo('Transparasteel Plating: passed players cannot play action cards during your turn')
-    test.todo('Mageon Implants: steal 1 action card from another player')
+    describe('Mageon Implants', () => {
+      test('steal 1 action card from another player', () => {
+        const game = t.fixture({
+          factions: ['yssaril-tribes', 'emirates-of-hacan'],
+        })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['mageon-implants'],
+            actionCards: ['focused-research'],
+          },
+          micah: {
+            actionCards: ['mining-initiative', 'ghost-ship'],
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Component Action')
+        t.choose(game, 'mageon-implants')
+
+        // Opponent auto-selects (only 1 opponent in 2p game)
+        // Choose card to steal
+        t.choose(game, 'mining-initiative')
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.actionCards.length).toBe(2)
+        expect(dennis.actionCards.map(c => c.id)).toContain('mining-initiative')
+
+        const micah = game.players.byName('micah')
+        expect(micah.actionCards.length).toBe(1)
+        expect(micah.actionCards[0].id).toBe('ghost-ship')
+
+        // Tech should be exhausted
+        expect(dennis.exhaustedTechs).toContain('mageon-implants')
+      })
+
+      test('not available when exhausted', () => {
+        const game = t.fixture({
+          factions: ['yssaril-tribes', 'emirates-of-hacan'],
+        })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['mageon-implants'],
+            actionCards: ['focused-research'],
+          },
+          micah: {
+            actionCards: ['mining-initiative', 'ghost-ship'],
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // First use — steals a card
+        t.choose(game, 'Component Action')
+        t.choose(game, 'mageon-implants')
+        // Opponent auto-selects (1 opponent in 2p)
+        // Choose which card to take
+        t.choose(game, 'mining-initiative')
+
+        // Tech should be exhausted after use
+        const dennis = game.players.byName('dennis')
+        expect(dennis.exhaustedTechs).toContain('mageon-implants')
+
+        // Verify mageon-implants is not in the available component actions
+        const actions = game.factionAbilities.getAvailableComponentActions(dennis)
+        const mageonAction = actions.find(a => a.id === 'mageon-implants')
+        expect(mageonAction).toBeUndefined()
+      })
+    })
+
+    describe('Transparasteel Plating', () => {
+      test('passive ability is registered', () => {
+        const game = t.fixture({
+          factions: ['yssaril-tribes', 'emirates-of-hacan'],
+        })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['transparasteel-plating'],
+          },
+        })
+        game.run()
+
+        // Verify the handler has the ability method
+        const { getHandler } = require('../../systems/factions/index.js')
+        const handler = getHandler('yssaril-tribes')
+        const dennis = game.players.byName('dennis')
+        expect(handler.canPassedPlayersPlayActionCards(dennis)).toBe(false)
+      })
+
+      test('returns true without the tech', () => {
+        const game = t.fixture({
+          factions: ['yssaril-tribes', 'emirates-of-hacan'],
+        })
+        game.run()
+
+        const { getHandler } = require('../../systems/factions/index.js')
+        const handler = getHandler('yssaril-tribes')
+        const dennis = game.players.byName('dennis')
+        expect(handler.canPassedPlayersPlayActionCards(dennis)).toBe(true)
+      })
+    })
+
     test.todo('Deepgloom Executable: share Stall Tactics/Scheming with other players')
   })
 })
