@@ -25,6 +25,18 @@ module.exports = {
     })
   },
 
+  // Commander — That Which Molds Flesh: When producing fighter or infantry units,
+  // up to 2 of those units do not count against your PRODUCTION limit.
+  getProductionLimitBonus(player, _ctx, unitType) {
+    if (!player.isCommanderUnlocked()) {
+      return 0
+    }
+    if (unitType === 'fighter' || unitType === 'infantry') {
+      return 2
+    }
+    return 0
+  },
+
   componentActions: [
     {
       id: 'amalgamation',

@@ -307,7 +307,93 @@ describe('Naalu Collective', () => {
 
   describe('Faction Technologies', () => {
     describe('Neuroglaive', () => {
-      test.todo('after another player activates a system with your ships, they remove 1 fleet pool token')
+      test('after another player activates a system with your ships, they remove 1 fleet pool token', () => {
+        const game = t.fixture({ factions: ['naalu-collective', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['neuroglaive'],
+            units: {
+              'naalu-home': {
+                space: ['carrier'],
+                'druaa': ['space-dock'],
+              },
+              '27': {
+                space: ['fighter'],
+              },
+            },
+          },
+          micah: {
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'hacan-home': {
+                space: ['cruiser'],
+                'arretze': ['space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis (Naalu, telepathic=0) goes first — use leadership
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Pass')         // micah declines leadership secondary
+
+        // Micah activates system 27, which has Naalu's fighter
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+
+        // Z'eu agent prompt — pass
+        t.choose(game, 'Pass')
+
+        // Neuroglaive fires automatically (no choice needed)
+        // Micah should lose 1 fleet pool token
+        const micah = game.players.byName('micah')
+        expect(micah.commandTokens.fleet).toBe(2)
+      })
+
+      test('does not trigger without the technology', () => {
+        const game = t.fixture({ factions: ['naalu-collective', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            units: {
+              'naalu-home': {
+                space: ['carrier'],
+                'druaa': ['space-dock'],
+              },
+              '27': {
+                space: ['fighter'],
+              },
+            },
+          },
+          micah: {
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'hacan-home': {
+                space: ['cruiser'],
+                'arretze': ['space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis (Naalu) goes first — use leadership
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Pass')         // micah declines leadership secondary
+
+        // Micah activates system 27, which has Naalu's fighter
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+
+        // Z'eu agent prompt — pass
+        t.choose(game, 'Pass')
+
+        // Without Neuroglaive, Micah should keep all fleet pool tokens
+        const micah = game.players.byName('micah')
+        expect(micah.commandTokens.fleet).toBe(3)
+      })
     })
 
     describe('Hybrid Crystal Fighter II', () => {

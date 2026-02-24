@@ -142,8 +142,74 @@ describe('Arborec', () => {
   })
 
   describe('Commander — Dirzuga Rophal', () => {
+    test('places 1 infantry on space dock planet after producing units', () => {
+      const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
+          units: {
+            'arborec-home': {
+              space: ['carrier'],
+              'nestphar': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: tactical action → activate home system and produce
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'arborec-home' })
+      t.choose(game, 'Done')  // skip movement
+
+      // Produce 1 fighter (Nestphar has 3 resources)
+      t.action(game, 'produce-units', {
+        units: [{ type: 'fighter', count: 1 }],
+      })
+
+      // Commander should have placed 1 extra infantry on nestphar
+      // Started with 2 infantry, so now should have 3
+      const infantry = game.state.units['arborec-home'].planets['nestphar']
+        .filter(u => u.owner === 'dennis' && u.type === 'infantry')
+      expect(infantry.length).toBe(3)
+    })
+
+    test('locked commander does not place infantry after production', () => {
+      const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'arborec-home': {
+              space: ['carrier'],
+              'nestphar': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: tactical action → activate home system and produce
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'arborec-home' })
+      t.choose(game, 'Done')  // skip movement
+
+      // Produce 1 fighter
+      t.action(game, 'produce-units', {
+        units: [{ type: 'fighter', count: 1 }],
+      })
+
+      // No commander bonus — infantry count unchanged
+      const infantry = game.state.units['arborec-home'].planets['nestphar']
+        .filter(u => u.owner === 'dennis' && u.type === 'infantry')
+      expect(infantry.length).toBe(2)
+    })
+
     test.todo('unlock condition: have 12 ground forces on planets you control')
-    test.todo('when producing infantry, place equal number of additional infantry on active system or space dock planet')
   })
 
   describe('Hero — Letani Miasmiala', () => {

@@ -64,6 +64,43 @@ module.exports = {
     })
   },
 
+  // E-Res Siphons (faction tech): After activating a system that contains your
+  // units, gain 4 trade goods.
+  onSystemActivated(player, ctx, systemId) {
+    if (!player.hasTechnology('e-res-siphons')) {
+      return
+    }
+
+    const systemUnits = ctx.state.units[systemId]
+    if (!systemUnits) {
+      return
+    }
+
+    // Check for own units in space
+    const hasShips = systemUnits.space.some(u => u.owner === player.name)
+
+    // Check for own units on planets
+    let hasPlanetUnits = false
+    if (!hasShips && systemUnits.planets) {
+      for (const planetId of Object.keys(systemUnits.planets)) {
+        if (systemUnits.planets[planetId].some(u => u.owner === player.name)) {
+          hasPlanetUnits = true
+          break
+        }
+      }
+    }
+
+    if (!hasShips && !hasPlanetUnits) {
+      return
+    }
+
+    player.addTradeGoods(4)
+    ctx.log.add({
+      template: 'E-Res Siphons: {player} gains 4 trade goods',
+      args: { player: player.name },
+    })
+  },
+
   // Agent — Doctor Sucaban: After a player researches a technology, exhaust to
   // allow that player to spend 2 influence to draw 2 action cards.
   onAnyTechResearched(jolNarPlayer, ctx, { researchingPlayer, tech: _tech }) {
