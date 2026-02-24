@@ -215,7 +215,31 @@ describe('Winnu', () => {
   })
 
   describe('Hero — Mathis Mathinus, Kingmaker', () => {
-    test.todo('ACTION: score 1 public objective you meet requirements for, then purge')
+    test('scores 1 public objective you meet requirements for, then purge', () => {
+      const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'unlocked', hero: 'unlocked' },
+          // Give 2 unit upgrade techs to satisfy develop-weaponry
+          technologies: ['carrier-ii', 'cruiser-ii', 'antimass-deflectors', 'gravity-drive'],
+        },
+        revealedObjectives: ['develop-weaponry'],
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      const dennisBefore = game.players.byName('dennis')
+      const vpBefore = dennisBefore.victoryPoints
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'winnu-hero')
+      // With only 1 scorable objective, it auto-selects
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+      expect(game.state.scoredObjectives['dennis']).toContain('develop-weaponry')
+      expect(dennis.victoryPoints).toBe(vpBefore + 1)
+    })
   })
 
   describe('Mech — Reclaimer', () => {
@@ -227,8 +251,108 @@ describe('Winnu', () => {
   })
 
   describe('Faction Technologies', () => {
-    test.todo('Hegemonic Trade Policy: exhaust to swap resource and influence values during production')
-    test.todo('Lazax Gate Folding: treat Mecatol system as having wormholes; ACTION to place infantry on Mecatol')
+    describe('Lazax Gate Folding', () => {
+      test('Mecatol Rex system has alpha and beta wormholes when Winnu does not control it', () => {
+        const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['lazax-gate-folding'],
+          },
+        })
+        game.run()
+
+        // Mecatol Rex system should have wormholes when Winnu doesn't control it
+        const wormholes = game.factionAbilities.getHomeSystemWormholes('18')
+        expect(wormholes).toContain('alpha')
+        expect(wormholes).toContain('beta')
+      })
+
+      test('no wormholes when Winnu controls Mecatol Rex', () => {
+        const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['lazax-gate-folding'],
+            planets: {
+              'mecatol-rex': { exhausted: false },
+            },
+          },
+        })
+        game.run()
+
+        const wormholes = game.factionAbilities.getHomeSystemWormholes('18')
+        expect(wormholes).toEqual([])
+      })
+
+      test('places 1 infantry on Mecatol Rex as component action when controlling it', () => {
+        const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['lazax-gate-folding'],
+            planets: {
+              'mecatol-rex': { exhausted: false },
+            },
+            units: {
+              'winnu-home': {
+                'winnu': ['space-dock'],
+              },
+              '18': {
+                'mecatol-rex': ['infantry'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        const beforeUnits = game.state.units['18'].planets['mecatol-rex']
+          .filter(u => u.owner === 'dennis' && u.type === 'infantry').length
+
+        t.choose(game, 'Component Action')
+        t.choose(game, 'lazax-gate-folding')
+
+        const afterUnits = game.state.units['18'].planets['mecatol-rex']
+          .filter(u => u.owner === 'dennis' && u.type === 'infantry').length
+        expect(afterUnits).toBe(beforeUnits + 1)
+
+        // Tech should be exhausted
+        const dennis = game.players.byName('dennis')
+        expect(dennis.exhaustedTechs).toContain('lazax-gate-folding')
+      })
+    })
+
+    describe('Hegemonic Trade Policy', () => {
+      test('exhaust to swap resource and influence values of a planet', () => {
+        const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['hegemonic-trade-policy'],
+            planets: {
+              'mecatol-rex': { exhausted: false },
+            },
+            units: {
+              'winnu-home': {
+                'winnu': ['space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Component Action')
+        t.choose(game, 'hegemonic-trade-policy')
+
+        // Choose a planet to swap
+        const choices = t.currentChoices(game)
+        expect(choices.length).toBeGreaterThan(0)
+        t.choose(game, choices[0])
+
+        // Tech should be exhausted
+        const dennis = game.players.byName('dennis')
+        expect(dennis.exhaustedTechs).toContain('hegemonic-trade-policy')
+      })
+    })
+
     test.todo('Imperator: +1 combat per Support for the Throne; +1 move when activating legendary planet system')
   })
 })

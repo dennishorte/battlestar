@@ -67,38 +67,105 @@ module.exports = {
   // E-Res Siphons (faction tech): After activating a system that contains your
   // units, gain 4 trade goods.
   onSystemActivated(player, ctx, systemId) {
-    if (!player.hasTechnology('e-res-siphons')) {
-      return
-    }
+    // E-Res Siphons
+    if (player.hasTechnology('e-res-siphons')) {
+      const systemUnits = ctx.state.units[systemId]
+      if (systemUnits) {
+        const hasShips = systemUnits.space.some(u => u.owner === player.name)
+        let hasPlanetUnits = false
+        if (!hasShips && systemUnits.planets) {
+          for (const planetId of Object.keys(systemUnits.planets)) {
+            if (systemUnits.planets[planetId].some(u => u.owner === player.name)) {
+              hasPlanetUnits = true
+              break
+            }
+          }
+        }
 
-    const systemUnits = ctx.state.units[systemId]
-    if (!systemUnits) {
-      return
-    }
-
-    // Check for own units in space
-    const hasShips = systemUnits.space.some(u => u.owner === player.name)
-
-    // Check for own units on planets
-    let hasPlanetUnits = false
-    if (!hasShips && systemUnits.planets) {
-      for (const planetId of Object.keys(systemUnits.planets)) {
-        if (systemUnits.planets[planetId].some(u => u.owner === player.name)) {
-          hasPlanetUnits = true
-          break
+        if (hasShips || hasPlanetUnits) {
+          player.addTradeGoods(4)
+          ctx.log.add({
+            template: 'E-Res Siphons: {player} gains 4 trade goods',
+            args: { player: player.name },
+          })
         }
       }
     }
 
-    if (!hasShips && !hasPlanetUnits) {
-      return
-    }
+    // Spatial Conduit Cylinder: after activating a system with own units,
+    // that system is adjacent to all other systems with own units
+    if (player.hasTechnology('spatial-conduit-cylinder')) {
+      if ((player.exhaustedTechs || []).includes('spatial-conduit-cylinder')) {
+        return
+      }
 
-    player.addTradeGoods(4)
-    ctx.log.add({
-      template: 'E-Res Siphons: {player} gains 4 trade goods',
-      args: { player: player.name },
-    })
+      const systemUnits = ctx.state.units[systemId]
+      if (!systemUnits) {
+        return
+      }
+
+      const hasShips = systemUnits.space.some(u => u.owner === player.name)
+      let hasPlanetUnits = false
+      if (!hasShips && systemUnits.planets) {
+        for (const planetId of Object.keys(systemUnits.planets)) {
+          if (systemUnits.planets[planetId].some(u => u.owner === player.name)) {
+            hasPlanetUnits = true
+            break
+          }
+        }
+      }
+
+      if (!hasShips && !hasPlanetUnits) {
+        return
+      }
+
+      // Ask if player wants to exhaust Spatial Conduit Cylinder
+      const choice = ctx.actions.choose(player, ['Exhaust Spatial Conduit Cylinder', 'Pass'], {
+        title: 'Spatial Conduit Cylinder: Make this system adjacent to all your other systems?',
+      })
+
+      if (choice[0] !== 'Exhaust Spatial Conduit Cylinder') {
+        return
+      }
+
+      ctx.game._exhaustTech(player, 'spatial-conduit-cylinder')
+
+      // Find all systems with this player's units
+      const adjacentSystems = []
+      for (const [otherSystemId, otherSystemUnits] of Object.entries(ctx.state.units)) {
+        if (String(otherSystemId) === String(systemId)) {
+          continue
+        }
+        const otherHasShips = otherSystemUnits.space.some(u => u.owner === player.name)
+        let otherHasPlanetUnits = false
+        if (!otherHasShips && otherSystemUnits.planets) {
+          for (const pId of Object.keys(otherSystemUnits.planets)) {
+            if (otherSystemUnits.planets[pId].some(u => u.owner === player.name)) {
+              otherHasPlanetUnits = true
+              break
+            }
+          }
+        }
+        if (otherHasShips || otherHasPlanetUnits) {
+          adjacentSystems.push(String(otherSystemId))
+        }
+      }
+
+      if (adjacentSystems.length > 0) {
+        if (!ctx.state.temporaryAdjacency) {
+          ctx.state.temporaryAdjacency = []
+        }
+        ctx.state.temporaryAdjacency.push({
+          systemId: String(systemId),
+          adjacentTo: adjacentSystems,
+        })
+
+        ctx.log.add({
+          template: 'Spatial Conduit Cylinder: {player} makes system {system} adjacent to {count} systems',
+          args: { player: player.name, system: systemId, count: adjacentSystems.length },
+        })
+      }
+    }
   },
 
   // Agent — Doctor Sucaban: After a player researches a technology, exhaust to
@@ -165,6 +232,121 @@ module.exports = {
     ctx.log.add({
       template: 'Doctor Sucaban: {target} spends influence to draw 2 action cards',
       args: { player: jolNarPlayer.name, target: targetPlayer.name },
+    })
+  },
+
+  // ---------------------------------------------------------------------------
+  // Component Actions
+  // ---------------------------------------------------------------------------
+
+  componentActions: [
+    {
+      id: 'jolnar-hero',
+      name: "Rin, The Master's Legacy",
+      abilityId: 'fragile',  // reuse faction ability ID for availability gate
+      isAvailable: function(player) {
+        return player.isHeroUnlocked() && !player.isHeroPurged()
+      },
+    },
+  ],
+
+  // Rin, The Master's Legacy — GENETIC MEMORY
+  // ACTION: For each non-unit-upgrade technology you own, you may replace
+  // that technology with any technology of the same color from the deck.
+  // Then, purge this card.
+  jolnarHero(ctx, player) {
+    const res = require('../../res/index.js')
+
+    const ownedTechs = player.getTechIds()
+    const nonUpgradeTechs = ownedTechs.filter(id => {
+      const tech = res.getTechnology(id)
+      return tech && !tech.unitUpgrade && tech.color
+    })
+
+    if (nonUpgradeTechs.length === 0) {
+      player.purgeHero()
+      ctx.log.add({
+        template: '{player} purges Rin but has no replaceable technologies',
+        args: { player: player.name },
+      })
+      return
+    }
+
+    // For each non-unit-upgrade tech, offer to replace
+    const replacements = []
+    for (const techId of nonUpgradeTechs) {
+      const currentTech = res.getTechnology(techId)
+      if (!currentTech || !currentTech.color) {
+        continue
+      }
+
+      // Find available techs of the same color that the player doesn't own
+      const available = res.getGenericTechnologies()
+        .filter(t => t.color === currentTech.color && !player.hasTechnology(t.id) && !t.unitUpgrade)
+        .map(t => t.id)
+
+      // Also check faction technologies of the same color
+      if (player.faction?.factionTechnologies) {
+        for (const ft of player.faction.factionTechnologies) {
+          if (ft.color === currentTech.color && !player.hasTechnology(ft.id) && !ft.unitUpgrade) {
+            available.push(ft.id)
+          }
+        }
+      }
+
+      if (available.length === 0) {
+        continue
+      }
+
+      const choices = ['Keep', ...available]
+      const selection = ctx.actions.choose(player, choices, {
+        title: `Genetic Memory: Replace ${currentTech.name} (${currentTech.color})?`,
+      })
+
+      if (selection[0] !== 'Keep') {
+        replacements.push({ from: techId, to: selection[0] })
+      }
+    }
+
+    // Execute replacements
+    const { BaseCard } = require('../../../lib/game/index.js')
+
+    for (const { from, to } of replacements) {
+      // Remove old tech
+      const techZone = ctx.game.zones.byPlayer(player, 'technologies')
+      const cardId = `${player.name}-${from}`
+      const cards = techZone.cardlist()
+      const card = cards.find(c => c.id === cardId)
+      if (card) {
+        techZone.remove(card)
+      }
+
+      // Add new tech
+      const newTech = res.getTechnology(to)
+      if (newTech) {
+        const newCardId = `${player.name}-${to}`
+        let card
+        try {
+          card = ctx.game.cards.byId(newCardId)
+        }
+        catch { /* not registered yet */ }
+        if (!card) {
+          card = new BaseCard(ctx.game, { id: newCardId, ...newTech })
+          ctx.game.cards.register(card)
+        }
+        techZone.push(card, techZone.nextIndex())
+      }
+
+      ctx.log.add({
+        template: 'Genetic Memory: {player} replaces {from} with {to}',
+        args: { player: player.name, from, to },
+      })
+    }
+
+    player.purgeHero()
+    ctx.log.add({
+      template: "{player} purges Rin, The Master's Legacy",
+      args: { player: player.name },
     })
   },
 }

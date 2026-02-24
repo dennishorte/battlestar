@@ -18,6 +18,11 @@ module.exports = {
       name: 'Unrelenting',
       description: "Apply +1 to the result of each of your unit's combat rolls.",
     },
+    {
+      id: 'tekklar-conditioning',
+      name: 'Tekklar Conditioning',
+      description: "TEKKLAR CONDITIONING — ACTION: Choose a system. Place ground forces from reinforcements on planets in that system. Resolve ground combat. Then return your ships in that system to reinforcements. Purge this card.",
+    },
   ],
   unitOverrides: {
     dreadnought: {

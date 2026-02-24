@@ -213,7 +213,41 @@ describe('Arborec', () => {
   })
 
   describe('Hero — Letani Miasmiala', () => {
-    test.todo('ULTRASONIC EMITTER: produce any number of units in systems with ground forces, then purge')
+    test('ULTRASONIC EMITTER: produce units in systems with ground forces, then purge', () => {
+      const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'unlocked', hero: 'unlocked' },
+          tradeGoods: 10,
+          commandTokens: { tactics: 3, strategy: 2, fleet: 5 },
+          units: {
+            'arborec-home': {
+              space: ['carrier', 'cruiser'],
+              'nestphar': ['infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: Component Action -> Letani Miasmiala Hero
+      t.choose(game, 'Component Action')
+      t.choose(game, 'letani-miasmiala-hero')
+
+      // Produce in arborec-home system (has ground forces on nestphar)
+      t.action(game, 'produce-units', {
+        units: [{ type: 'fighter', count: 2 }],
+      })
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+
+      // 2 fighters should be produced in arborec-home
+      const fighters = game.state.units['arborec-home'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'fighter')
+      expect(fighters.length).toBe(2)
+    })
   })
 
   describe('Promissory Note — Stymie', () => {
@@ -228,11 +262,115 @@ describe('Arborec', () => {
     })
 
     describe('Bioplasmosis', () => {
-      test.todo('at end of status phase, may move infantry between controlled planets in same or adjacent systems')
+      test('at end of status phase, may move infantry between controlled planets in same or adjacent systems', () => {
+        const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
+        // System 27 (new-albion, starpoint) is adjacent to arborec-home
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['magen-defense-grid', 'neural-motivator', 'dacxive-animators', 'bioplasmosis'],
+            units: {
+              'arborec-home': {
+                space: ['carrier', 'cruiser'],
+                'nestphar': ['infantry', 'infantry', 'infantry', 'infantry', 'space-dock', 'pds'],
+              },
+              '27': {
+                'new-albion': ['infantry', 'infantry'],
+              },
+            },
+            planets: {
+              'nestphar': { exhausted: false },
+              'new-albion': { exhausted: false },
+            },
+          },
+          micah: {},
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Play through action phase
+        t.choose(game, 'Strategic Action')  // dennis: leadership
+        t.choose(game, 'Pass')  // micah declines secondary
+        t.choose(game, 'Strategic Action')  // micah: diplomacy
+        t.choose(game, 'hacan-home')
+        t.choose(game, 'Pass')  // dennis declines secondary
+        t.choose(game, 'Pass')  // dennis passes
+        t.choose(game, 'Pass')  // micah passes
+
+        // Status phase — Arborec mitosis
+        t.choose(game, 'nestphar')
+
+        // Token redistribution
+        t.choose(game, 'Done')  // dennis
+        t.choose(game, 'Done')  // micah
+
+        // End of status phase — Bioplasmosis triggers
+        // Move 1 infantry from nestphar to new-albion (system 27, adjacent to arborec-home)
+        t.choose(game, 'from:nestphar')
+
+        // Choose destination — new-albion is the only valid destination, so it auto-resolves
+
+        // Done moving
+        t.choose(game, 'Done')
+
+        // Verify: nestphar should have 4 (started 4) + 1 (mitosis) - 1 (bioplasmosis) = 4 infantry
+        const nestpharInfantry = game.state.units['arborec-home'].planets['nestphar']
+          .filter(u => u.owner === 'dennis' && u.type === 'infantry')
+        expect(nestpharInfantry.length).toBe(4)
+
+        // new-albion should have 2 + 1 = 3 infantry
+        const newAlbionInfantry = game.state.units['27'].planets['new-albion']
+          .filter(u => u.owner === 'dennis' && u.type === 'infantry')
+        expect(newAlbionInfantry.length).toBe(3)
+      })
     })
 
     describe('Psychospore', () => {
-      test.todo('ACTION: exhaust to remove command token from system with infantry, place 1 infantry')
+      test('exhaust to remove own command token from system with infantry, place 1 infantry', () => {
+        const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          systemTokens: {
+            '26': ['dennis'],
+          },
+          dennis: {
+            technologies: ['magen-defense-grid', 'plasma-scoring', 'psychospore'],
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'arborec-home': {
+                space: ['carrier', 'cruiser'],
+                'nestphar': ['infantry', 'infantry', 'infantry', 'space-dock', 'pds'],
+              },
+              '26': {
+                'lodor': ['infantry'],
+              },
+            },
+          },
+        })
+        game.run()
+
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis: Component Action -> Psychospore
+        t.choose(game, 'Component Action')
+        t.choose(game, 'psychospore')
+
+        // Choose system 26 (has command token and infantry)
+        // Auto-selects since only one valid system
+
+        const dennis = game.players.byName('dennis')
+        // Tech should be exhausted
+        expect(dennis.exhaustedTechs).toContain('psychospore')
+
+        // Command token should be removed from system 26
+        expect(game.state.systems['26'].commandTokens).not.toContain('dennis')
+
+        // Tactics token should be gained back
+        expect(dennis.commandTokens.tactics).toBe(4) // 3 + 1 returned
+
+        // 1 infantry should be placed on lodor
+        const lodorInfantry = game.state.units['26'].planets['lodor']
+          .filter(u => u.owner === 'dennis' && u.type === 'infantry')
+        expect(lodorInfantry.length).toBe(2) // 1 original + 1 placed
+      })
     })
   })
 })

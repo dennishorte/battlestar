@@ -22,6 +22,11 @@ module.exports = {
       name: 'Versatile',
       description: 'When you gain command tokens during the status phase, gain 1 additional command token.',
     },
+    {
+      id: 'helio-command-array',
+      name: 'Helio Command Array',
+      description: 'HELIO COMMAND ARRAY — ACTION: Remove each of your command tokens from the game board and return them to your reinforcements. Then, purge this card.',
+    },
   ],
   unitOverrides: {
     infantry: {
