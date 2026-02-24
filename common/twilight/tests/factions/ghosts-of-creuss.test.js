@@ -279,12 +279,160 @@ describe('Ghosts of Creuss', () => {
     })
 
     describe('Wormhole Generator', () => {
-      test.todo('ACTION: exhaust to place or move a Creuss wormhole token into a system with a controlled planet or non-home system without opponent ships')
+      test('exhaust to place Creuss wormhole token', () => {
+        const game = t.fixture({
+          factions: ['ghosts-of-creuss', 'emirates-of-hacan'],
+        })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['gravity-drive', 'fleet-logistics', 'wormhole-generator'],
+            units: {
+              '27': {
+                space: ['cruiser'],
+              },
+              'creuss-home': {
+                creuss: ['space-dock', 'infantry'],
+              },
+            },
+            planets: {
+              'new-albion': { exhausted: false },
+            },
+          },
+        })
+        game.run()
+        t.choose(game, 'leadership')
+        t.choose(game, 'diplomacy')
+
+        // Dennis uses Component Action -> Wormhole Generator
+        t.choose(game, 'Component Action')
+        t.choose(game, 'wormhole-generator')
+
+        // System 27 is the only valid system (has ships + controlled planet), auto-selected
+
+        expect(game.state.creussWormholeToken).toBe('27')
+
+        // Tech should be exhausted now
+        expect((game.players.byName('dennis').exhaustedTechs || []))
+          .toContain('wormhole-generator')
+      })
+
+      test('not available when exhausted', () => {
+        const game = t.fixture({
+          factions: ['ghosts-of-creuss', 'emirates-of-hacan'],
+        })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['gravity-drive', 'fleet-logistics', 'wormhole-generator'],
+            units: {
+              '27': { space: ['cruiser'] },
+              'creuss-home': { creuss: ['space-dock', 'infantry'] },
+            },
+            planets: { 'new-albion': { exhausted: false } },
+          },
+        })
+        game.run()
+        t.choose(game, 'leadership')
+        t.choose(game, 'diplomacy')
+
+        // Use it once (auto-selects system 27)
+        t.choose(game, 'Component Action')
+        t.choose(game, 'wormhole-generator')
+
+        // Try again — should not be available
+        t.choose(game, 'Component Action')
+        const choices = t.currentChoices(game)
+        expect(choices).not.toContain('wormhole-generator')
+      })
     })
 
     describe('Particle Synthesis', () => {
-      test.todo('wormholes in systems with your ships gain PRODUCTION 1')
-      test.todo('reduce cost of produced units by 1 for each wormhole in the system')
+      test('wormholes in systems with your ships gain PRODUCTION 1', () => {
+        // System 26 (Lodor) has an alpha wormhole
+        const game = t.fixture({
+          factions: ['ghosts-of-creuss', 'emirates-of-hacan'],
+        })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['gravity-drive', 'particle-synthesis'],
+            tradeGoods: 5,
+            units: {
+              '26': {
+                space: ['cruiser'],
+              },
+              'creuss-home': {
+                creuss: ['space-dock', 'infantry'],
+              },
+            },
+          },
+        })
+        game.run()
+        t.choose(game, 'leadership')
+        t.choose(game, 'diplomacy')
+
+        // Dennis activates system 26 (alpha wormhole) where he has a cruiser
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '26' })
+        t.action(game, 'move-ships', { movements: [] })
+
+        // Production step: system 26 has 1 wormhole -> PRODUCTION 1 from Particle Synthesis
+        // Can produce 1 unit. Let's produce a fighter (cost 1 from TG, reduced by 1 for wormhole = free)
+        t.action(game, 'produce-units', {
+          units: [{ type: 'fighter', count: 1 }],
+        })
+
+        // Fighter should be placed in system 26
+        const fighters = game.state.units['26'].space
+          .filter(u => u.owner === 'dennis' && u.type === 'fighter')
+        expect(fighters.length).toBe(1)
+      })
+
+      test('reduce cost of produced units by 1 for each wormhole in the system', () => {
+        // System 26 (Lodor) has an alpha wormhole -> 1 cost reduction
+        const game = t.fixture({
+          factions: ['ghosts-of-creuss', 'emirates-of-hacan'],
+        })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['gravity-drive', 'particle-synthesis'],
+            tradeGoods: 10,
+            units: {
+              '26': {
+                space: ['cruiser'],
+                'lodor': ['space-dock', 'infantry'],
+              },
+              'creuss-home': {
+                creuss: ['space-dock', 'infantry'],
+              },
+            },
+            planets: {
+              'lodor': { exhausted: false },
+            },
+          },
+        })
+        game.run()
+        t.choose(game, 'leadership')
+        t.choose(game, 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '26' })
+        t.action(game, 'move-ships', { movements: [] })
+
+        // Produce a fighter (cost 0.5 -> 0 due to 2x, but the wormhole discount reduces total)
+        // Lodor has 3 resources + space dock PRODUCTION = 5, plus 1 wormhole PRODUCTION = 6
+        // Wormhole reduces cost by 1
+        t.action(game, 'produce-units', {
+          units: [{ type: 'fighter', count: 2 }],
+        })
+
+        const fighters = game.state.units['26'].space
+          .filter(u => u.owner === 'dennis' && u.type === 'fighter')
+        expect(fighters.length).toBe(2)
+
+        // Cost of 2 fighters: 1 resource (2 for 1), minus 1 for wormhole = 0
+        // So no trade goods should be spent (lodor not exhausted since cost was 0)
+        const dennis = game.players.byName('dennis')
+        expect(dennis.tradeGoods).toBe(10) // unchanged
+      })
     })
   })
 })

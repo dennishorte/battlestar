@@ -216,8 +216,138 @@ describe('Federation of Sol', () => {
       expect(carrier.unitUpgrade).toBe('carrier')
     })
 
-    test.todo('Spec Ops II: revive infantry on roll of 5+')
-    test.todo('Advanced Carrier II: carrier gets sustain damage and move 2')
-    test.todo('Bellum Gloriosum: free ground forces/fighters when producing capacity ships')
+    describe('Spec Ops II', () => {
+      test('infantry gets combat 6 with Spec Ops II', () => {
+        const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['neural-motivator', 'antimass-deflectors', 'daxcive-animators', 'bio-stims', 'spec-ops-ii'],
+          },
+        })
+        game.run()
+
+        const stats = game._getUnitStats('dennis', 'infantry')
+        expect(stats.combat).toBe(6) // Spec Ops II upgrades infantry to combat 6
+      })
+
+      test('infantry revival roll triggers via onUnitDestroyed', () => {
+        // Test the mechanism directly through the dispatcher
+        const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['neural-motivator', 'antimass-deflectors', 'daxcive-animators', 'bio-stims', 'spec-ops-ii'],
+          },
+        })
+        game.run()
+
+        // Directly call onUnitDestroyed to simulate infantry being destroyed
+        const unit = { id: 'test-1', type: 'infantry', owner: 'dennis', damaged: false }
+        game.factionAbilities.onUnitDestroyed('27', unit, 'micah', 'new-albion')
+
+        // Spec Ops II roll should appear in log
+        const logEntries = game.log._log.map(e => e.template || '')
+        const specOpsLogs = logEntries.filter(t => t.includes('Spec Ops II'))
+        expect(specOpsLogs.length).toBe(1) // exactly one roll attempt
+      })
+    })
+
+    describe('Advanced Carrier II', () => {
+      test('carrier gets sustain damage, move 2, capacity 8', () => {
+        const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['neural-motivator', 'antimass-deflectors', 'fleet-logistics', 'gravity-drive', 'advanced-carrier-ii'],
+          },
+        })
+        game.run()
+
+        const stats = game._getUnitStats('dennis', 'carrier')
+        expect(stats.move).toBe(2)
+        expect(stats.capacity).toBe(8)
+        expect(stats.abilities).toContain('sustain-damage')
+      })
+    })
+
+    describe('Bellum Gloriosum', () => {
+      test('places free units when producing capacity ships', () => {
+        const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['neural-motivator', 'antimass-deflectors', 'psychoarchaeology', 'bio-stims', 'bellum-gloriosum'],
+            tradeGoods: 10,
+            units: {
+              'sol-home': {
+                space: [],
+                'jord': ['space-dock', 'infantry'],
+              },
+            },
+            planets: {
+              'jord': { exhausted: false },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis does a tactical action to produce
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: 'sol-home' })
+        t.action(game, 'move-ships', { movements: [] })
+
+        // Produce 1 carrier (capacity ship)
+        t.action(game, 'produce-units', {
+          units: [{ type: 'carrier', count: 1 }],
+        })
+
+        // Bellum Gloriosum: 1 capacity ship = 1 free unit
+        // Choose infantry or fighter
+        t.choose(game, 'infantry')
+
+        const dennis = game.players.byName('dennis')
+        // Should have carrier in space
+        const carriers = game.state.units['sol-home'].space
+          .filter(u => u.owner === 'dennis' && u.type === 'carrier')
+        expect(carriers.length).toBe(1)
+
+        // Should have extra infantry from Bellum Gloriosum (1 starting + 1 free)
+        const infantryOnJord = game.state.units['sol-home'].planets['jord']
+          .filter(u => u.owner === 'dennis' && u.type === 'infantry')
+        expect(infantryOnJord.length).toBe(2) // 1 starting + 1 from Bellum Gloriosum
+      })
+
+      test('not triggered without Bellum Gloriosum tech', () => {
+        const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            tradeGoods: 10,
+            units: {
+              'sol-home': {
+                space: [],
+                'jord': ['space-dock', 'infantry'],
+              },
+            },
+            planets: {
+              'jord': { exhausted: false },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: 'sol-home' })
+        t.action(game, 'move-ships', { movements: [] })
+
+        // Produce 1 carrier
+        t.action(game, 'produce-units', {
+          units: [{ type: 'carrier', count: 1 }],
+        })
+
+        // No Bellum Gloriosum prompt — game should continue normally
+        const logEntries = game.log._log.map(e => e.template || '')
+        const bellumLogs = logEntries.filter(t => t.includes('Bellum Gloriosum'))
+        expect(bellumLogs.length).toBe(0)
+      })
+    })
   })
 })

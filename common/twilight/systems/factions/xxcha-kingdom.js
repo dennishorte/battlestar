@@ -79,4 +79,18 @@ module.exports = {
 
     return null
   },
+
+  // Commander — Elder Qanoj: +1 vote per readied (non-exhausted) planet you control.
+  // Game effects cannot prevent Xxcha from voting on an agenda.
+  getVotingModifier(player, _ctx) {
+    if (!player.isCommanderUnlocked()) {
+      return 0
+    }
+    const readyPlanets = player.getReadyPlanets()
+    return readyPlanets.length
+  },
+
+  // Xxcha cannot be excluded from voting by game effects.
+  // This is checked in getAgendaParticipation to ensure Xxcha is never in the excluded list.
+  cannotBeExcludedFromVoting: true,
 }

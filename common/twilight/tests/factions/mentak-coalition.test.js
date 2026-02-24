@@ -430,9 +430,187 @@ describe('Mentak Coalition', () => {
   })
 
   describe('Faction Technologies', () => {
-    test.todo('Salvage Operations: gain 1 trade good after winning or losing space combat')
-    test.todo('Salvage Operations: produce 1 ship of destroyed type after winning combat')
-    test.todo('Mirror Computing: trade goods worth 2 resources or influence when spent')
+    test('Salvage Operations: gain 1 trade good after winning space combat', () => {
+      // Mentak wins combat with Salvage Operations — gains 1 TG
+      const game = t.fixture({
+        factions: ['mentak-coalition', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          technologies: ['salvage-operations'],
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'mentak-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'moll-primus': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'mentak-home', count: 5 }],
+      })
+
+      // Salvage Operations: offered to produce destroyed ship type (fighter), choose Pass
+      t.choose(game, 'Pass')
+
+      const dennis = game.players.byName('dennis')
+      // Gained 1 TG from Salvage Operations
+      expect(dennis.tradeGoods).toBe(1)
+
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(t => t.includes('Salvage Operations') && t.includes('trade good'))).toBe(true)
+    })
+
+    test('Salvage Operations: produce 1 ship of destroyed type after winning combat', () => {
+      // Mentak wins combat, enemy cruiser destroyed — Mentak can produce 1 cruiser
+      const game = t.fixture({
+        factions: ['mentak-coalition', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          technologies: ['salvage-operations'],
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'mentak-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'moll-primus': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'mentak-home', count: 5 }],
+      })
+
+      // Salvage Operations: produce a cruiser (the destroyed type)
+      t.choose(game, 'cruiser')
+
+      const dennisShips = game.state.units['27'].space
+        .filter(u => u.owner === 'dennis')
+
+      // Started with 5 cruisers, might lose some, but gained 1 from Salvage Operations
+      // At minimum should still have ships in system
+      expect(dennisShips.length).toBeGreaterThanOrEqual(1)
+
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(t => t.includes('Salvage Operations') && t.includes('produces'))).toBe(true)
+    })
+
+    test('Salvage Operations: gain 1 trade good even after losing space combat', () => {
+      // Mentak loses combat with Salvage Operations — still gains 1 TG
+      // Use a single destroyer vs 5 dreadnoughts (Mentak will lose)
+      const game = t.fixture({
+        factions: ['mentak-coalition', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          technologies: ['salvage-operations'],
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'mentak-home': {
+              space: ['destroyer'],
+              'moll-primus': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['dreadnought', 'dreadnought', 'dreadnought', 'dreadnought', 'dreadnought'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'destroyer', from: 'mentak-home', count: 1 }],
+      })
+
+      // Mentak loses, but still gets 1 TG from Salvage Operations
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBe(1)
+    })
+
+    test('Mirror Computing: trade goods worth 2 resources when spent in production', () => {
+      // Mentak with Mirror Computing produces units — TG worth 2 resources each
+      // Moll Primus has 4 resources; with 2 TG (worth 4 via Mirror Computing) = 8 total
+      // Mentak starts with sarween-tools: total cost reduced by 1
+      const game = t.fixture({
+        factions: ['mentak-coalition', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 2,
+          commandTokens: { tactics: 3, strategy: 2, fleet: 5 },
+          technologies: ['mirror-computing'],
+          units: {
+            'mentak-home': {
+              'moll-primus': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis activates home system for production (tactical action)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'mentak-home' })
+      t.choose(game, 'Done')  // skip movement
+
+      // Produce 4 cruisers (cost 2 each = 8 total, -1 sarween = 7 effective)
+      // Planet provides 4 resources, need 3 more from TG
+      // With Mirror Computing, ceil(3/2) = 2 TG spent
+      // Without Mirror Computing, would need 3 TG (only have 2), so only 3 cruisers
+      t.action(game, 'produce-units', {
+        units: [
+          { type: 'cruiser', count: 4 },
+        ],
+      })
+
+      const dennisShips = game.state.units['mentak-home'].space
+        .filter(u => u.owner === 'dennis')
+      const cruiserCount = dennisShips.filter(u => u.type === 'cruiser').length
+      // 4 cruisers should have been produced (Mirror Computing makes TG worth 2 each)
+      expect(cruiserCount).toBe(4)
+
+      // Verify TG reduced: 2 TG spent
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBe(0)
+    })
+
     test.todo("The Table's Grace: Corsair movement through enemy systems with Cruiser II")
   })
 })

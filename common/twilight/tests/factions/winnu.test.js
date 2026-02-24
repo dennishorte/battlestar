@@ -137,7 +137,81 @@ describe('Winnu', () => {
   })
 
   describe('Commander — Berekar Berekon', () => {
-    test.todo('when you control Mecatol, gain +1 to combat and +1 command token in status')
+    test('gives -1 combat modifier (bonus) when controlling Mecatol Rex', () => {
+      const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' },
+          planets: {
+            'mecatol-rex': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(true)
+      expect(game.factionAbilities.getCombatModifier(dennis)).toBe(-1)
+    })
+
+    test('no combat modifier without Mecatol Rex control', () => {
+      const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(true)
+      expect(game.factionAbilities.getCombatModifier(dennis)).toBe(0)
+    })
+
+    test('no combat modifier when commander is locked', () => {
+      const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          planets: {
+            'mecatol-rex': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(false)
+      expect(game.factionAbilities.getCombatModifier(dennis)).toBe(0)
+    })
+
+    test('gives +1 status phase token bonus when controlling Mecatol Rex', () => {
+      const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' },
+          planets: {
+            'mecatol-rex': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(game.factionAbilities.getStatusPhaseTokenBonus(dennis)).toBe(1)
+    })
+
+    test('no status phase token bonus without Mecatol Rex control', () => {
+      const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(game.factionAbilities.getStatusPhaseTokenBonus(dennis)).toBe(0)
+    })
   })
 
   describe('Hero — Mathis Mathinus, Kingmaker', () => {

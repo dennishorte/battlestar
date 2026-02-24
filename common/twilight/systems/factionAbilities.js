@@ -49,6 +49,21 @@ class FactionAbilities {
     return handler?.getTechPrerequisiteSkips?.(player, this, tech) ?? 0
   }
 
+  getTechPrerequisiteBonuses(player) {
+    const handler = this._getPlayerHandler(player)
+    return handler?.getTechPrerequisiteBonuses?.(player, this) ?? {}
+  }
+
+  getAdditionalResearchableTechs(player, allTechs) {
+    const handler = this._getPlayerHandler(player)
+    return handler?.getAdditionalResearchableTechs?.(player, this, allTechs) ?? []
+  }
+
+  onPreResearch(player, tech) {
+    const handler = this._getPlayerHandler(player)
+    handler?.onPreResearch?.(player, this, tech)
+  }
+
   onTechResearched(player, tech) {
     const handler = this._getPlayerHandler(player)
     handler?.onTechResearched?.(player, this, tech)
@@ -119,6 +134,21 @@ class FactionAbilities {
     const player = this.players.byName(playerName)
     const handler = this._getPlayerHandler(player)
     return handler?.getMovementBonus?.(player, this, fromSystemId) ?? 0
+  }
+
+  isSpaceCannonImmuneDuringInvasion(player) {
+    const handler = this._getPlayerHandler(player)
+    return handler?.isSpaceCannonImmuneDuringInvasion?.(player, this) ?? false
+  }
+
+  getSustainDamageHitsCancel(player) {
+    const handler = this._getPlayerHandler(player)
+    return handler?.getSustainDamageHitsCancel?.(player, this) ?? 1
+  }
+
+  getTradeGoodResourceValue(player) {
+    const handler = this._getPlayerHandler(player)
+    return handler?.getTradeGoodResourceValue?.(player, this) ?? 1
   }
 
   getRaidFormationExcessHits(shooterName, totalHits, fightersDestroyed) {
@@ -361,7 +391,7 @@ class FactionAbilities {
 
     for (const player of votingOrder) {
       const handler = this._getPlayerHandler(player)
-      if (handler?.isExcludedFromVoting) {
+      if (handler?.isExcludedFromVoting && !handler?.cannotBeExcludedFromVoting) {
         excluded.push(player.name)
       }
     }
@@ -427,6 +457,33 @@ class FactionAbilities {
         })
       }
     }
+
+    // Spec Ops II (Sol): after infantry destroyed, roll 1 die; on 5+, save to card for revival
+    if (unit.type === 'infantry') {
+      const owner = this.players.byName(unit.owner)
+      if (owner && owner.hasTechnology('spec-ops-ii')) {
+        const roll = Math.floor(this.game.random() * 10) + 1
+        if (roll >= 5) {
+          if (!this.state.specOpsRevival) {
+            this.state.specOpsRevival = {}
+          }
+          if (!this.state.specOpsRevival[owner.name]) {
+            this.state.specOpsRevival[owner.name] = 0
+          }
+          this.state.specOpsRevival[owner.name]++
+          this.log.add({
+            template: 'Spec Ops II: {player} infantry survives (rolled {roll})',
+            args: { player: owner.name, roll },
+          })
+        }
+        else {
+          this.log.add({
+            template: 'Spec Ops II: {player} infantry revival failed (rolled {roll})',
+            args: { player: owner.name, roll },
+          })
+        }
+      }
+    }
   }
 
 
@@ -458,6 +515,9 @@ class FactionAbilities {
   // ---------------------------------------------------------------------------
 
   afterCombatResolved(systemId, winnerName, loserName, combatType) {
+    // Collect destroyed ship types from combat tracking
+    const destroyedTypes = this.state._destroyedDuringCombat || {}
+
     const winner = this.players.byName(winnerName)
     const handler = this._getPlayerHandler(winner)
     handler?.afterCombatResolved?.(winner, this, { systemId, loserName, combatType })
@@ -467,7 +527,27 @@ class FactionAbilities {
       handler.onCombatWon(winner, this, { systemId, loserName, combatType })
     }
 
-    // Reset singularity tracking
+    // Notify loser about combat result (e.g., Mentak Salvage Operations)
+    const loser = this.players.byName(loserName)
+    const loserHandler = this._getPlayerHandler(loser)
+    if (loserHandler?.onCombatLost && loser) {
+      loserHandler.onCombatLost(loser, this, { systemId, winnerName, combatType, destroyedTypes })
+    }
+
+    // Salvage Operations: winner gains TG and may produce a destroyed ship type
+    if (handler?.onCombatEnd && winner) {
+      handler.onCombatEnd(winner, this, {
+        systemId, opponentName: loserName, combatType, won: true, destroyedTypes,
+      })
+    }
+    if (loserHandler?.onCombatEnd && loser) {
+      loserHandler.onCombatEnd(loser, this, {
+        systemId, opponentName: winnerName, combatType, won: false, destroyedTypes,
+      })
+    }
+
+    // Reset combat tracking
+    delete this.state._destroyedDuringCombat
     delete this.state._singularityUsedThisCombat
   }
 
@@ -535,9 +615,9 @@ class FactionAbilities {
     return 0
   }
 
-  afterProduction(player, systemId, unitCount) {
+  afterProduction(player, systemId, unitCount, producedUnits) {
     const handler = this._getPlayerHandler(player)
-    handler?.afterProduction?.(player, this, { systemId, unitCount })
+    handler?.afterProduction?.(player, this, { systemId, unitCount, producedUnits: producedUnits || [] })
   }
 
 
@@ -584,6 +664,11 @@ class FactionAbilities {
   onStrategyPhaseStart(player) {
     const handler = this._getPlayerHandler(player)
     handler?.onStrategyPhaseStart?.(player, this)
+  }
+
+  onStrategyPhaseEnd(player) {
+    const handler = this._getPlayerHandler(player)
+    handler?.onStrategyPhaseEnd?.(player, this)
   }
 
 

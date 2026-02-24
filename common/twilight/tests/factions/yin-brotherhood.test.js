@@ -284,8 +284,76 @@ describe('Yin Brotherhood', () => {
   })
 
   describe('Commander — Brother Omar', () => {
-    test.todo('satisfies a green technology prerequisite')
-    test.todo('when researching tech owned by another player, return 1 infantry to ignore all prerequisites')
+    test('satisfies 1 green technology prerequisite when commander unlocked', () => {
+      const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(true)
+
+      const bonuses = game.factionAbilities.getTechPrerequisiteBonuses(dennis)
+      expect(bonuses).toEqual({ green: 1 })
+    })
+
+    test('no green prerequisite bonus when commander is locked', () => {
+      const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(false)
+
+      const bonuses = game.factionAbilities.getTechPrerequisiteBonuses(dennis)
+      expect(bonuses).toEqual({})
+    })
+
+    test('can research tech requiring 1 green prereq with commander only', () => {
+      const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' },
+          // No technologies — commander provides 1 green
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      // Hyper Metabolism requires 2 green — commander provides 1, plus sarween-tools is yellow
+      // Neural Motivator requires 1 green — commander alone should satisfy it
+      expect(dennis.canResearchTechnology('neural-motivator')).toBe(true)
+    })
+
+    test('when researching tech owned by another player, return 1 infantry to ignore all prerequisites', () => {
+      const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' },
+          technologies: ['sarween-tools'],
+          units: {
+            'yin-home': {
+              'darien': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          technologies: ['gravity-drive'],
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      // gravity-drive requires blue, blue — Yin has no blue techs
+      // But Micah owns it, so Yin can sacrifice infantry to ignore prerequisites
+      const additional = game.factionAbilities.getAdditionalResearchableTechs(
+        dennis,
+        require('../../res/index.js').getGenericTechnologies()
+      )
+      expect(additional).toContain('gravity-drive')
+    })
   })
 
   describe('Hero — Dannel of the Tenth', () => {

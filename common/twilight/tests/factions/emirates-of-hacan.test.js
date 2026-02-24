@@ -189,8 +189,156 @@ describe('Emirates of Hacan', () => {
   })
 
   describe('Faction Technologies', () => {
-    test.todo('Production Biomes: exhaust and spend strategy token for 4 TG')
-    test.todo('Quantum Datahub Node: swap strategy cards')
+    describe('Production Biomes', () => {
+      test('exhaust and spend strategy token for 4 TG, give 2 TG to another player', () => {
+        const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['antimass-deflectors', 'sarween-tools', 'daxcive-animators', 'bio-stims', 'production-biomes'],
+            tradeGoods: 0,
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          },
+          micah: {
+            tradeGoods: 0,
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis uses Component Action -> Production Biomes
+        t.choose(game, 'Component Action')
+        t.choose(game, 'production-biomes')
+
+        // In a 2-player game, micah is auto-selected
+        const dennis = game.players.byName('dennis')
+        const micah = game.players.byName('micah')
+
+        expect(dennis.tradeGoods).toBe(4)
+        expect(micah.tradeGoods).toBe(2)
+        expect(dennis.commandTokens.strategy).toBe(1) // spent 1
+      })
+
+      test('not available without strategy tokens', () => {
+        const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['antimass-deflectors', 'sarween-tools', 'daxcive-animators', 'bio-stims', 'production-biomes'],
+            commandTokens: { tactics: 3, strategy: 0, fleet: 3 },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Component Action')
+        const choices = t.currentChoices(game)
+        expect(choices).not.toContain('production-biomes')
+      })
+
+      test('not available when exhausted', () => {
+        const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['antimass-deflectors', 'sarween-tools', 'daxcive-animators', 'bio-stims', 'production-biomes'],
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          },
+          micah: { tradeGoods: 0 },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Use it once
+        t.choose(game, 'Component Action')
+        t.choose(game, 'production-biomes')
+
+        // Verify tech is exhausted
+        const dennis = game.players.byName('dennis')
+        expect(dennis.exhaustedTechs).toContain('production-biomes')
+
+        // Verify it won't be available via the tech component actions check
+        expect(game._isTechReady(dennis, 'production-biomes')).toBe(false)
+      })
+    })
+
+    describe('Quantum Datahub Node', () => {
+      test('swap strategy cards at end of strategy phase', () => {
+        const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['antimass-deflectors', 'sarween-tools', 'predictive-intelligence', 'gravity-drive', 'scanlink-drone-network', 'quantum-datahub-node'],
+            tradeGoods: 5,
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          },
+          micah: {
+            tradeGoods: 0,
+          },
+        })
+        game.run()
+
+        // Strategy phase: pick cards
+        t.choose(game, 'leadership')  // dennis picks leadership
+        t.choose(game, 'diplomacy')   // micah picks diplomacy
+
+        // At end of strategy phase, Quantum Datahub Node triggers
+        // dennis chooses to swap with micah
+        t.choose(game, 'micah')
+
+        // In 2-player, both have 1 card so auto-selected
+        // dennis gives leadership, takes diplomacy
+
+        const dennis = game.players.byName('dennis')
+        const micah = game.players.byName('micah')
+
+        expect(dennis.getStrategyCards()).toContain('diplomacy')
+        expect(micah.getStrategyCards()).toContain('leadership')
+        expect(dennis.commandTokens.strategy).toBe(1) // spent 1
+        expect(dennis.tradeGoods).toBe(2) // started with 5, spent 3
+        expect(micah.tradeGoods).toBe(3) // gained 3
+      })
+
+      test('can pass on Quantum Datahub Node', () => {
+        const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['antimass-deflectors', 'sarween-tools', 'predictive-intelligence', 'gravity-drive', 'scanlink-drone-network', 'quantum-datahub-node'],
+            tradeGoods: 5,
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          },
+        })
+        game.run()
+
+        t.choose(game, 'leadership')
+        t.choose(game, 'diplomacy')
+
+        // Choose to pass
+        t.choose(game, 'Pass')
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.getStrategyCards()).toContain('leadership')
+        expect(dennis.commandTokens.strategy).toBe(2) // no cost paid
+        expect(dennis.tradeGoods).toBe(5) // unchanged
+      })
+
+      test('not triggered without enough trade goods', () => {
+        const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['antimass-deflectors', 'sarween-tools', 'predictive-intelligence', 'gravity-drive', 'scanlink-drone-network', 'quantum-datahub-node'],
+            tradeGoods: 2, // less than 3
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          },
+        })
+        game.run()
+
+        t.choose(game, 'leadership')
+        t.choose(game, 'diplomacy')
+
+        // Should not be prompted — not enough TG
+        // Game should proceed to action phase
+        const dennis = game.players.byName('dennis')
+        expect(dennis.getStrategyCards()).toContain('leadership')
+      })
+    })
+
     test.todo('Auto-Factories: gain fleet token when producing 3+ non-fighter ships')
   })
 })
