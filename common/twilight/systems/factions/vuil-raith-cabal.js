@@ -5,6 +5,11 @@ module.exports = {
       return
     }
 
+    // Devour only captures opponent's units, not your own
+    if (unit.owner === player.name) {
+      return
+    }
+
     if (!ctx.state.capturedUnits[player.name]) {
       ctx.state.capturedUnits[player.name] = []
     }

@@ -111,6 +111,9 @@ describe('Empyrean', () => {
       t.choose(game, 'Tactical Action')
       t.action(game, 'activate-system', { systemId: '26' })
 
+      // Acamar agent prompt fires first (onAnySystemActivated before onPreMovement)
+      t.choose(game, 'Pass')
+
       // Empyrean (micah) prompted for aetherpassage
       t.choose(game, 'Allow Passage')
 
@@ -148,6 +151,9 @@ describe('Empyrean', () => {
 
       t.choose(game, 'Tactical Action')
       t.action(game, 'activate-system', { systemId: '26' })
+
+      // Acamar agent prompt fires first
+      t.choose(game, 'Pass')
 
       // Empyrean denies passage
       t.choose(game, 'Deny')
@@ -188,7 +194,133 @@ describe('Empyrean', () => {
   })
 
   describe('Agent — Acamar', () => {
-    test.todo('after a player moves ships into a system without planets, exhaust to give that player 1 command token')
+    test('after a player activates a system, may exhaust to gain 1 trade good', () => {
+      const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          units: {
+            'empyrean-home': {
+              space: ['carrier', 'destroyer'],
+              'the-dark': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(true)
+
+      // Dennis (Empyrean) activates a system — agent fires on own activation
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Acamar prompt
+      t.choose(game, 'Exhaust Acamar')
+      t.choose(game, 'Gain 1 Trade Good')
+
+      const dennisAfter = game.players.byName('dennis')
+      expect(dennisAfter.isAgentReady()).toBe(false)
+      expect(dennisAfter.tradeGoods).toBe(1)
+    })
+
+    test('after a player activates a system, may exhaust to give that player 1 command token', () => {
+      const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          units: {
+            'empyrean-home': {
+              space: ['carrier', 'destroyer'],
+              'the-dark': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      const dennis = game.players.byName('dennis')
+      const tacticsBefore = dennis.commandTokens.tactics
+
+      // Dennis (Empyrean) activates a system
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Acamar prompt — give self 1 command token
+      t.choose(game, 'Exhaust Acamar')
+      t.choose(game, 'Give dennis 1 Command Token')
+
+      // Re-fetch player after game state update
+      const dennisAfter = game.players.byName('dennis')
+      expect(dennisAfter.isAgentReady()).toBe(false)
+      // Lost 1 tactic token to activate, but gained 1 from Acamar = net 0
+      expect(dennisAfter.commandTokens.tactics).toBe(tacticsBefore)
+    })
+
+    test('exhausted agent cannot be used', () => {
+      const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'empyrean-home': {
+              space: ['carrier', 'destroyer'],
+              'the-dark': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis activates a system
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // No Acamar prompt — agent is exhausted, should go straight to movement
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('Exhaust Acamar')
+    })
+
+    test('can be used when another player activates a system', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'empyrean'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'hacan-home': {
+              space: ['cruiser'],
+              'arretze': ['infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          tradeGoods: 0,
+          units: {
+            'empyrean-home': {
+              space: ['carrier'],
+              'the-dark': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis (Hacan) activates a system
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Micah (Empyrean) gets Acamar prompt — gain trade good for self
+      t.choose(game, 'Exhaust Acamar')
+      t.choose(game, 'Gain 1 Trade Good')
+
+      const micah = game.players.byName('micah')
+      expect(micah.isAgentReady()).toBe(false)
+      expect(micah.tradeGoods).toBe(1)
+    })
   })
 
   describe('Commander — Xuange', () => {

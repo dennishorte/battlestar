@@ -70,6 +70,39 @@ module.exports = {
     return false
   },
 
+  // Agent — Tellurian: When a hit is produced against a unit, exhaust to cancel that hit.
+  onHitsProduced(player, ctx, { targetOwner, systemId, hits, combatType: _combatType }) {
+    if (!player.isAgentReady()) {
+      return hits
+    }
+
+    // Only offer when hits target the Titans player's own units
+    if (targetOwner !== player.name) {
+      return hits
+    }
+
+    if (hits <= 0) {
+      return hits
+    }
+
+    const choice = ctx.actions.choose(player, ['Exhaust Tellurian', 'Pass'], {
+      title: `Tellurian: Exhaust to cancel 1 hit against your units in system ${systemId}?`,
+    })
+
+    if (choice[0] === 'Exhaust Tellurian') {
+      player.exhaustAgent()
+
+      ctx.log.add({
+        template: '{player} exhausts Tellurian to cancel 1 hit (Agent)',
+        args: { player },
+      })
+
+      return hits - 1
+    }
+
+    return hits
+  },
+
   checkCoalescenceOnPlanet(player, ctx, { systemId, planetId, moverName }) {
     const planetUnits = ctx.state.units[systemId]?.planets[planetId] || []
     for (const unit of planetUnits) {
