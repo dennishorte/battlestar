@@ -78,6 +78,33 @@ describe("Vuil'raith Cabal", () => {
       expect(captured[0].type).toBe('fighter')
       expect(captured[0].originalOwner).toBe('micah')
     })
+
+    test('does not capture own units', () => {
+      // Directly invoke the handler to verify own-unit filtering
+      const handler = require('../../systems/factions/vuil-raith-cabal.js')
+      const mockCtx = {
+        game: { res: require('../../res/index.js') },
+        state: { capturedUnits: {} },
+        log: { add: jest.fn() },
+      }
+      const player = { name: 'dennis' }
+      const ownUnit = { type: 'fighter', owner: 'dennis' }
+      handler.onUnitDestroyed(player, mockCtx, { systemId: '27', unit: ownUnit })
+      expect(mockCtx.state.capturedUnits['dennis'] || []).toEqual([])
+    })
+
+    test('does not capture structures', () => {
+      const handler = require('../../systems/factions/vuil-raith-cabal.js')
+      const mockCtx = {
+        game: { res: require('../../res/index.js') },
+        state: { capturedUnits: {} },
+        log: { add: jest.fn() },
+      }
+      const player = { name: 'dennis' }
+      const structureUnit = { type: 'space-dock', owner: 'micah' }
+      handler.onUnitDestroyed(player, mockCtx, { systemId: '27', unit: structureUnit })
+      expect(mockCtx.state.capturedUnits['dennis'] || []).toEqual([])
+    })
   })
 
   describe('Amalgamation', () => {

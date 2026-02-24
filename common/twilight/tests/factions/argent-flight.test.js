@@ -74,7 +74,210 @@ describe('Argent Flight', () => {
   })
 
   describe('Agent — Trillossa Aun Mirik', () => {
-    test.todo('when a player produces ground forces, may exhaust to place those units on planets in that system and adjacent systems')
+    test('after system activation, may exhaust to place 1 infantry on a controlled planet', () => {
+      // Dennis (Argent) activates system 27 adjacent to home.
+      // Home planets valk/avar/ylir are controlled and adjacent to 27.
+      const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'argent-home': {
+              space: ['carrier', 'destroyer', 'destroyer', 'fighter', 'fighter'],
+              'valk': ['infantry', 'infantry', 'pds'],
+              'avar': ['infantry', 'infantry'],
+              'ylir': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      // Dennis activates system 27 (adjacent to argent-home)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Agent prompt should appear (home planets are controlled and adjacent to 27)
+      t.choose(game, 'Exhaust Trillossa Aun Mirik')
+
+      // Choose valk for the infantry placement
+      t.choose(game, 'valk')
+
+      // Move ships to complete the tactical action
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'destroyer', from: 'argent-home', count: 1 }],
+      })
+
+      // Re-fetch player after game replays
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+
+      // Valk should have original 2 infantry + pds + 1 new infantry
+      const valkInfantry = game.state.units['argent-home'].planets['valk']
+        .filter(u => u.owner === 'dennis' && u.type === 'infantry')
+      expect(valkInfantry.length).toBe(3)
+    })
+
+    test('can place infantry when another player activates a nearby system', () => {
+      // Micah activates system 27 (adjacent to argent-home).
+      // Dennis (Argent) should get the agent prompt for home planets.
+      const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'argent-home': {
+              space: ['carrier', 'destroyer'],
+              'valk': ['infantry', 'infantry', 'pds'],
+              'avar': ['infantry', 'infantry'],
+              'ylir': ['infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'hacan-home': {
+              'arretze': ['infantry', 'infantry', 'space-dock'],
+              'hercant': ['infantry'],
+              'kamdorn': ['infantry'],
+            },
+            // Micah has a cruiser in system 37 (adjacent to 27)
+            '37': {
+              space: ['cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      // Dennis uses strategic action (leadership), then it's micah's turn
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines leadership secondary
+
+      // Now it's micah's turn. Micah activates system 27 (adjacent to argent-home)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Agent prompt appears for Argent player since argent-home is adjacent to 27
+      t.choose(game, 'Exhaust Trillossa Aun Mirik')
+      t.choose(game, 'valk')
+
+      // Micah moves ships
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: '37', count: 1 }],
+      })
+
+      // Re-fetch
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+
+      // Valk should have original 2 infantry + pds + 1 new infantry
+      const valkInfantry = game.state.units['argent-home'].planets['valk']
+        .filter(u => u.owner === 'dennis' && u.type === 'infantry')
+      expect(valkInfantry.length).toBe(3)
+    })
+
+    test('exhausted agent cannot be used', () => {
+      const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'argent-home': {
+              space: ['carrier', 'destroyer'],
+              'valk': ['infantry', 'infantry', 'pds'],
+              'avar': ['infantry', 'infantry'],
+              'ylir': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      // Dennis activates system 27 (adjacent to home)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // No agent prompt should appear — agent is exhausted
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('Exhaust Trillossa Aun Mirik')
+    })
+
+    test('no prompt when no controlled planets in system or adjacent', () => {
+      // Micah activates system 38 (far from argent-home). No Argent planets nearby.
+      const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'argent-home': {
+              space: ['carrier', 'destroyer'],
+              'valk': ['infantry', 'infantry', 'pds'],
+              'avar': ['infantry', 'infantry'],
+              'ylir': ['infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'hacan-home': {
+              space: ['carrier', 'cruiser'],
+              'arretze': ['infantry', 'infantry', 'space-dock'],
+              'hercant': ['infantry'],
+              'kamdorn': ['infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      // Dennis uses strategy card (leadership), then it's micah's turn
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines leadership secondary
+
+      // Now it's micah's turn. Micah activates system 38 (far from argent)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '38' })
+
+      // No agent prompt — no Argent-controlled planets near system 38
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('Exhaust Trillossa Aun Mirik')
+    })
+
+    test('can decline the agent prompt', () => {
+      const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'argent-home': {
+              space: ['carrier', 'destroyer'],
+              'valk': ['infantry', 'infantry', 'pds'],
+              'avar': ['infantry', 'infantry'],
+              'ylir': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      // Dennis activates system 27
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Decline the agent
+      t.choose(game, 'Pass')
+
+      // Agent should still be ready
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(true)
+    })
   })
 
   describe('Commander — Trrakan Aun Zulok', () => {

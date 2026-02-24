@@ -50,7 +50,7 @@ module.exports = {
     agent: {
       name: 'Acamar',
       unlocked: true,
-      description: 'After a player moves ships into a system that does not contain any planets: You may exhaust this card; that player gains 1 command token.',
+      description: 'After a player activates a system: You may exhaust this card to either gain 1 trade good, or give that player 1 command token from their reinforcements.',
     },
     commander: {
       name: 'Xuange',

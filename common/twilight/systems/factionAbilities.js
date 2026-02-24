@@ -202,6 +202,31 @@ class FactionAbilities {
     handler?.onUnitsSustainedDamage?.(player, this, { systemId, count })
   }
 
+  /**
+   * Called when hits are about to be assigned to a player's units.
+   * Any faction handler may cancel hits (e.g., Titans agent Tellurian).
+   * Returns the (possibly reduced) number of hits to assign.
+   */
+  onHitsProduced(ownerName, systemId, hits, combatType) {
+    let remaining = hits
+    for (const player of this.players.all()) {
+      const handler = this._getPlayerHandler(player)
+      if (!handler?.onHitsProduced) {
+        continue
+      }
+      remaining = handler.onHitsProduced(player, this, {
+        targetOwner: ownerName,
+        systemId,
+        hits: remaining,
+        combatType,
+      })
+      if (remaining <= 0) {
+        break
+      }
+    }
+    return remaining
+  }
+
 
   // ---------------------------------------------------------------------------
   // D. Action Card Triggers

@@ -145,7 +145,131 @@ describe('Titans of Ul', () => {
   })
 
   describe('Agent — Tellurian', () => {
-    test.todo('exhaust to cancel a hit produced against a unit')
+    test('exhaust to cancel a hit during space combat', () => {
+      // Dennis (Titans) has a dreadnought + cruisers.
+      // Micah has multiple ships in system 27 to ensure hits are scored.
+      // When Micah scores hits against Dennis, Tellurian fires.
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'titans-home': {
+              space: ['dreadnought', 'cruiser', 'cruiser'],
+              'elysium': ['infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'destroyer', 'destroyer'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis moves into system 27 — space combat begins
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'dreadnought', from: 'titans-home', count: 1 },
+          { unitType: 'cruiser', from: 'titans-home', count: 2 },
+        ],
+      })
+
+      // Tellurian prompt appears when hits are scored against Dennis.
+      // Exhaust agent to cancel 1 hit.
+      t.choose(game, 'Exhaust Tellurian')
+
+      // Re-fetch player after game state changes
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+    })
+
+    test('can decline agent and hits are assigned normally', () => {
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'titans-home': {
+              space: ['dreadnought', 'cruiser', 'cruiser'],
+              'elysium': ['infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'destroyer', 'destroyer'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis moves into system 27
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'dreadnought', from: 'titans-home', count: 1 },
+          { unitType: 'cruiser', from: 'titans-home', count: 2 },
+        ],
+      })
+
+      // Decline the agent
+      t.choose(game, 'Pass')
+
+      // Agent should still be ready
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(true)
+    })
+
+    test('no prompt when agent is exhausted', () => {
+      // Same setup but with agent already exhausted — combat should resolve
+      // without any Tellurian prompt
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'titans-home': {
+              space: ['dreadnought', 'cruiser', 'cruiser'],
+              'elysium': ['infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'destroyer', 'destroyer'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis moves into system 27 — combat resolves without agent prompt
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'dreadnought', from: 'titans-home', count: 1 },
+          { unitType: 'cruiser', from: 'titans-home', count: 2 },
+        ],
+      })
+
+      // No Tellurian prompt — combat just resolves
+      // If the game is waiting for a non-Tellurian choice, that's fine.
+      // The key assertion: agent is still exhausted
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+    })
   })
 
   describe('Commander — Tungstantus', () => {

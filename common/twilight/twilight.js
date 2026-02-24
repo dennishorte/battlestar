@@ -2086,8 +2086,14 @@ Twilight.prototype._assignHits = function(systemId, ownerName, hits, destroyerNa
     return
   }
 
+  // Allow faction abilities to cancel hits (e.g., Titans agent Tellurian)
+  const effectiveHits = this.factionAbilities.onHitsProduced(ownerName, systemId, hits, 'space')
+  if (effectiveHits <= 0) {
+    return
+  }
+
   const systemUnits = this.state.units[systemId]
-  let remainingHits = hits
+  let remainingHits = effectiveHits
 
   // Track which units just sustained this round (for Duranium Armor)
   const justSustainedIds = new Set()
@@ -2575,7 +2581,11 @@ Twilight.prototype._assignSpaceCannonHits = function(systemId, ownerName, hits, 
     return
   }
 
-  let remaining = hits
+  // Allow faction abilities to cancel hits (e.g., Titans agent Tellurian)
+  let remaining = this.factionAbilities.onHitsProduced(ownerName, systemId, hits, 'space-cannon')
+  if (remaining <= 0) {
+    return
+  }
 
   // Graviton Laser System: hits must target non-fighter ships
   const shipFilter = gravitonActive
@@ -2759,6 +2769,13 @@ Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, h
   if (hits <= 0) {
     return
   }
+
+  // Allow faction abilities to cancel hits (e.g., Titans agent Tellurian)
+  const effectiveHits = this.factionAbilities.onHitsProduced(ownerName, systemId, hits, 'ground')
+  if (effectiveHits <= 0) {
+    return
+  }
+  hits = effectiveHits
 
   const planetUnits = this.state.units[systemId].planets[planetId]
   if (!planetUnits) {
