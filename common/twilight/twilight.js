@@ -2203,6 +2203,11 @@ Twilight.prototype._rollCombatDice = function(ships, context) {
       combatModifier += this.factionAbilities.getSpaceCombatModifier(owner, context.systemId)
     }
 
+    // Ground combat per-unit modifiers (e.g., Shield Paling negates Fragile for infantry)
+    if (context?.combatType === 'ground' && context?.planetId) {
+      combatModifier += this.factionAbilities.getGroundCombatUnitModifier(owner, ship, context.systemId, context.planetId)
+    }
+
     const effectiveCombat = Math.max(1, Math.min(unitDef.combat + combatModifier, 10))
 
     // Each ship rolls 1 die (war suns roll 3 dice per their combat value)
@@ -2473,7 +2478,7 @@ Twilight.prototype._bombardment = function(systemId, planetId, attackerName) {
     })
 
     // Auto-assign bombardment hits to defender's ground forces (cheapest first)
-    this._assignGroundHits(systemId, planetId, defenderName, totalHits)
+    this._assignGroundHits(systemId, planetId, defenderName, totalHits, null, 'bombardment')
 
     // make-an-example-of-their-world: destroyed all ground forces via bombardment
     const remainingGroundForces = (systemUnits.planets[planetId] || []).filter(u => {
@@ -2964,8 +2969,9 @@ Twilight.prototype._groundCombat = function(systemId, planetId, attackerName) {
       break
     }
 
-    const attackerHits = this._rollCombatDice(attackers)
-    const defenderHits = this._rollCombatDice(defenders)
+    const groundContext = { combatType: 'ground', systemId, planetId }
+    const attackerHits = this._rollCombatDice(attackers, groundContext)
+    const defenderHits = this._rollCombatDice(defenders, groundContext)
 
     this._assignGroundHits(systemId, planetId, defenderName, attackerHits, attackerName)
     this._assignGroundHits(systemId, planetId, attackerName, defenderHits, defenderName)
@@ -2998,13 +3004,13 @@ Twilight.prototype._groundCombat = function(systemId, planetId, attackerName) {
   }
 }
 
-Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, hits, destroyerName) {
+Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, hits, destroyerName, hitSource) {
   if (hits <= 0) {
     return
   }
 
   // Allow faction abilities to cancel hits (e.g., Titans agent Tellurian)
-  const effectiveHits = this.factionAbilities.onHitsProduced(ownerName, systemId, hits, 'ground')
+  const effectiveHits = this.factionAbilities.onHitsProduced(ownerName, systemId, hits, hitSource || 'ground')
   if (effectiveHits <= 0) {
     return
   }
@@ -3024,8 +3030,11 @@ Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, h
     ? this.factionAbilities.getSustainDamageHitsCancel(groundOwner)
     : 1
 
+  // Check if opponent mech blocks sustain damage on this planet (Mentak Moll Terminus)
+  const sustainBlocked = this.factionAbilities.isGroundSustainBlocked(ownerName, systemId, planetId)
+
   // First, sustain damage on undamaged units (mechs)
-  const sustainableUnits = planetUnits
+  let sustainableUnits = planetUnits
     .filter(u => u.owner === ownerName && !u.damaged)
     .filter(u => {
       const def = this._getUnitStats(u.owner, u.type)
@@ -3037,6 +3046,21 @@ Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, h
       return (defB?.cost || 0) - (defA?.cost || 0)
     })
 
+  // Bombardment/space cannon immunity: filter out immune mechs (Xxcha Indomitus)
+  if (hitSource === 'bombardment') {
+    sustainableUnits = sustainableUnits.filter(u => {
+      if (u.type !== 'mech') {
+        return true
+      }
+      return !this.factionAbilities.isMechImmuneToAbilityHits(u.owner)
+    })
+  }
+
+  // Moll Terminus: opponent mech blocks sustain damage
+  if (sustainBlocked) {
+    sustainableUnits = []
+  }
+
   for (const unit of sustainableUnits) {
     if (remainingHits <= 0) {
       break
@@ -3046,14 +3070,23 @@ Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, h
     remainingHits = Math.max(0, remainingHits - groundHitsPerSustain)
   }
 
-  // Faction hook: after units sustain damage (e.g., Letnev commander)
+  // Faction hook: after units sustain damage (e.g., Letnev commander, Sardakk Valkyrie Exoskeleton)
   if (justSustainedIds.size > 0) {
-    this.factionAbilities.onUnitsSustainedDamage(ownerName, systemId, justSustainedIds.size)
+    this.factionAbilities.onUnitsSustainedDamage(ownerName, systemId, justSustainedIds.size, planetId, justSustainedIds)
   }
 
   // Then destroy cheapest units first
   while (remainingHits > 0) {
-    const units = planetUnits.filter(u => u.owner === ownerName)
+    let units = planetUnits.filter(u => u.owner === ownerName)
+    // Bombardment immunity: skip immune mechs from destruction (Xxcha Indomitus)
+    if (hitSource === 'bombardment') {
+      units = units.filter(u => {
+        if (u.type !== 'mech') {
+          return true
+        }
+        return !this.factionAbilities.isMechImmuneToAbilityHits(u.owner)
+      })
+    }
     if (units.length === 0) {
       break
     }
@@ -3745,6 +3778,15 @@ Twilight.prototype._researchTech = function(player) {
   this.factionAbilities.onTechResearched(player, tech)
 
   return techId
+}
+
+// Get all technologies a player can currently research (has prerequisites for)
+Twilight.prototype._getResearchableTechs = function(player) {
+  const allTechs = [...res.getGenericTechnologies()]
+  if (player.faction?.factionTechnologies) {
+    allTechs.push(...player.faction.factionTechnologies)
+  }
+  return allTechs.filter(t => player.canResearchTechnology(t.id))
 }
 
 // Grant technology directly (bypasses prerequisites — used by Nekro, Vuil'raith)

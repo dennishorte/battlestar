@@ -343,7 +343,46 @@ describe("Sardakk N'orr", () => {
   })
 
   describe('Mech — Valkyrie Exoskeleton', () => {
-    test.todo('after sustain damage during ground combat, produce 1 hit against opponent')
+    test('after sustain damage during ground combat, produce 1 hit against opponent', () => {
+      const game = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+      // Sardakk invades system 27 with mech + infantry vs Hacan infantry
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'norr-home': {
+              space: ['carrier'],
+              'quinarra': ['mech', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'norr-home', count: 1 },
+          { unitType: 'mech', from: 'norr-home', count: 1 },
+          { unitType: 'infantry', from: 'norr-home', count: 3 },
+        ],
+      })
+
+      // Ground combat should happen; Valkyrie Exoskeleton fires when mech sustains
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Valkyrie Exoskeleton'))).toBe(true)
+    })
   })
 
   describe('Promissory Note — Tekklar Legion', () => {
@@ -566,7 +605,42 @@ describe("Sardakk N'orr", () => {
         expect(tokensAfter).toBe(tokensBefore)
       })
 
-      test.todo('after winning combat, may research a unit upgrade technology instead')
+      test('after winning combat, may research a unit upgrade technology instead', () => {
+        const game = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['norr-supremacy', 'antimass-deflectors', 'gravity-drive'],
+            units: {
+              'norr-home': {
+                space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+                'quinarra': ['space-dock'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              '27': {
+                space: ['fighter'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'norr-home', count: 5 }],
+        })
+
+        // After winning combat, N'orr Supremacy prompt — choose Research Unit Upgrade
+        // carrier-ii is the only available unit upgrade (2 blue prereqs) so it auto-selects
+        t.choose(game, 'Research Unit Upgrade')
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.getTechIds()).toContain('carrier-ii')
+      })
     })
   })
 })

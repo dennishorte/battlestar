@@ -137,6 +137,9 @@ module.exports = {
   // This is checked in getAgendaParticipation to ensure Xxcha is never in the excluded list.
   cannotBeExcludedFromVoting: true,
 
+  // Indomitus mech: immune to bombardment and space cannon hits
+  isMechImmuneToAbilityHits: true,
+
   // Clear agent vote bonus after agenda resolves + Indomitus DEPLOY
   onAgendaOutcomeResolved(player, ctx, args) {
     if (ctx.state._xxchaAgentVoteBonus?.[player.name]) {

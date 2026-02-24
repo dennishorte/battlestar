@@ -405,8 +405,67 @@ describe('Arborec', () => {
 
   describe('Faction Technologies', () => {
     describe('Letani Warrior II', () => {
-      test.todo('infantry upgrade with production-2 and combat 7')
-      test.todo('after destroyed, roll die — on 6+, revive to home system next turn')
+      test('infantry upgrade is available after researching tech', () => {
+        const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['magen-defense-grid', 'neural-motivator', 'dacxive-animators', 'letani-warrior-ii'],
+          },
+        })
+        game.run()
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.getTechIds()).toContain('letani-warrior-ii')
+      })
+
+      test('after infantry destroyed in ground combat, revival rolls occur', () => {
+        const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
+        // System 38 (abyz, fria) is adjacent to hacan-home
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['magen-defense-grid', 'neural-motivator', 'dacxive-animators', 'letani-warrior-ii'],
+            planets: {
+              'abyz': { exhausted: false },
+            },
+            units: {
+              'arborec-home': {
+                'nestphar': ['space-dock'],
+              },
+              '38': {
+                'abyz': ['infantry', 'infantry'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              'hacan-home': {
+                space: ['carrier'],
+                'arretze': ['infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis: Strategic Action (leadership)
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Pass')  // micah declines secondary
+
+        // Micah: tactical action — invade abyz in system 38
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '38' })
+        t.action(game, 'move-ships', {
+          movements: [
+            { unitType: 'carrier', from: 'hacan-home', count: 1 },
+            { unitType: 'infantry', from: 'hacan-home', count: 4 },
+          ],
+        })
+
+        // Ground combat happened — check log for Letani Warrior II revival rolls
+        const logEntries = game.log._log.map(e => e.template || '')
+        expect(logEntries.some(e => e.includes('Letani Warrior II'))).toBe(true)
+      })
     })
 
     describe('Bioplasmosis', () => {

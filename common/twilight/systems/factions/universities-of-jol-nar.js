@@ -99,6 +99,20 @@ module.exports = {
     })
   },
 
+  // Shield Paling mech: infantry on this planet are not affected by Fragile (+1 combat)
+  getGroundCombatUnitModifier(player, ctx, unit, systemId, planetId) {
+    if (unit.type !== 'infantry' || unit.owner !== player.name) {
+      return 0
+    }
+    // Check if there's a Jol-Nar mech on the same planet
+    const planetUnits = ctx.state.units[systemId]?.planets[planetId] || []
+    const hasMech = planetUnits.some(u => u.owner === player.name && u.type === 'mech')
+    if (hasMech) {
+      return -1 // Negates the +1 Fragile penalty
+    }
+    return 0
+  },
+
   // E-Res Siphons (faction tech): After activating a system that contains your
   // units, gain 4 trade goods.
   onSystemActivated(player, ctx, systemId) {

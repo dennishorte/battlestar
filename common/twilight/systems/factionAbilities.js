@@ -254,6 +254,45 @@ class FactionAbilities {
   }
 
 
+  /**
+   * Check if a player's mechs are immune to bombardment/space cannon hits.
+   * (e.g., Xxcha Indomitus — cannot be destroyed by bombardment)
+   */
+  isMechImmuneToAbilityHits(ownerName) {
+    const player = this.players.byName(ownerName)
+    const handler = this._getPlayerHandler(player)
+    return handler?.isMechImmuneToAbilityHits ?? false
+  }
+
+  /**
+   * Check if ground sustain damage is blocked on a planet.
+   * (e.g., Mentak Moll Terminus — opponent ground forces cannot use sustain damage)
+   */
+  isGroundSustainBlocked(ownerName, systemId, planetId) {
+    const planetUnits = this.state.units[systemId]?.planets[planetId] || []
+    // Check if any opponent has a mech on this planet that blocks sustain
+    for (const unit of planetUnits) {
+      if (unit.owner === ownerName || unit.type !== 'mech') {
+        continue
+      }
+      const handler = this._getPlayerHandler(this.players.byName(unit.owner))
+      if (handler?.mechBlocksOpponentSustain) {
+        return true
+      }
+    }
+    return false
+  }
+
+  /**
+   * Returns per-unit ground combat modifier for a specific unit.
+   * (e.g., Shield Paling negates Fragile +1 for infantry on same planet as mech)
+   */
+  getGroundCombatUnitModifier(player, unit, systemId, planetId) {
+    const handler = this._getPlayerHandler(player)
+    return handler?.getGroundCombatUnitModifier?.(player, this, unit, systemId, planetId) ?? 0
+  }
+
+
   // ---------------------------------------------------------------------------
   // B. Component Actions — data-driven registry
   // ---------------------------------------------------------------------------
@@ -314,10 +353,10 @@ class FactionAbilities {
     }
   }
 
-  onUnitsSustainedDamage(ownerName, systemId, count) {
+  onUnitsSustainedDamage(ownerName, systemId, count, planetId, sustainedUnitIds) {
     const player = this.players.byName(ownerName)
     const handler = this._getPlayerHandler(player)
-    handler?.onUnitsSustainedDamage?.(player, this, { systemId, count })
+    handler?.onUnitsSustainedDamage?.(player, this, { systemId, count, planetId, sustainedUnitIds })
   }
 
   /**
@@ -615,6 +654,24 @@ class FactionAbilities {
         else {
           this.log.add({
             template: 'Spec Ops II: {player} infantry revival failed (rolled {roll})',
+            args: { player: owner.name, roll },
+          })
+        }
+      }
+
+      // Letani Warrior II (Arborec): after infantry destroyed, roll 1 die; on 6+, save for revival
+      if (owner && owner.hasTechnology('letani-warrior-ii')) {
+        const roll = Math.floor(this.game.random() * 10) + 1
+        if (roll >= 6) {
+          if (!this.state.letaniRevival) {
+            this.state.letaniRevival = {}
+          }
+          if (!this.state.letaniRevival[owner.name]) {
+            this.state.letaniRevival[owner.name] = 0
+          }
+          this.state.letaniRevival[owner.name]++
+          this.log.add({
+            template: 'Letani Warrior II: {player} infantry survives (rolled {roll})',
             args: { player: owner.name, roll },
           })
         }

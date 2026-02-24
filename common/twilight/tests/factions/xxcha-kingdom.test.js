@@ -366,7 +366,50 @@ describe('Xxcha Kingdom', () => {
   })
 
   describe('Mech — Indomitus', () => {
-    test.todo('damage immune during bombardment and space cannon')
+    test('mech survives bombardment (immune to bombardment hits)', () => {
+      // Dennis (Hacan, P1) invades system 27 with war sun (bombardment 3x3) + infantry
+      // Micah (Xxcha, P2) defends with only a mech on new-albion
+      // Without immunity: bombardment would sustain + destroy the mech
+      // With immunity: mech is untouched by bombardment, so ground combat occurs
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'xxcha-kingdom'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'hacan-home': {
+              space: ['war-sun', 'carrier'],
+              'arretze': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          planets: { 'new-albion': { exhausted: false } },
+          units: {
+            '27': {
+              'new-albion': ['mech'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis (P1, leadership initiative 1) goes first
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'war-sun', from: 'hacan-home', count: 1 },
+          { unitType: 'carrier', from: 'hacan-home', count: 1 },
+          { unitType: 'infantry', from: 'hacan-home', count: 6 },
+        ],
+      })
+
+      // Bombardment should have fired but mech should survive it
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('bombardment'))).toBe(true)
+      // Ground combat must have occurred — which means the mech survived bombardment
+      expect(logEntries.some(e => e.includes('Ground combat'))).toBe(true)
+    })
 
     test('DEPLOY: place 1 mech after agenda resolves if voted for winning outcome', () => {
       const game = t.fixture({ factions: ['xxcha-kingdom', 'emirates-of-hacan'] })
