@@ -122,7 +122,7 @@ describe("Vuil'raith Cabal", () => {
 
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis uses Component Action → Amalgamation
+      // Dennis uses Component Action > Amalgamation
       t.choose(game, 'Component Action')
       t.choose(game, 'amalgamation')
 
@@ -150,7 +150,7 @@ describe("Vuil'raith Cabal", () => {
 
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis uses Component Action → Riftmeld
+      // Dennis uses Component Action > Riftmeld
       t.choose(game, 'Component Action')
       t.choose(game, 'riftmeld')
 
@@ -190,7 +190,7 @@ describe("Vuil'raith Cabal", () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis: tactical action → activate home system and produce
+      // Dennis: tactical action > activate home system and produce
       t.choose(game, 'Tactical Action')
       t.action(game, 'activate-system', { systemId: 'cabal-home' })
       t.choose(game, 'Done')  // skip movement
@@ -225,7 +225,7 @@ describe("Vuil'raith Cabal", () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis: tactical action → activate home system and produce
+      // Dennis: tactical action > activate home system and produce
       t.choose(game, 'Tactical Action')
       t.action(game, 'activate-system', { systemId: 'cabal-home' })
       t.choose(game, 'Done')  // skip movement
@@ -245,8 +245,56 @@ describe("Vuil'raith Cabal", () => {
   })
 
   describe('Hero — It Feeds on Carrion', () => {
-    test.todo('Dimensional Anchor: each other player rolls for non-fighter ships in or adjacent to dimensional tears, capture on 1-3')
-    test.todo('hero is purged after use')
+    test('Dimensional Anchor: rolls for non-fighter ships in/adjacent to dimensional tears, captures on 1-3, then purges', () => {
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          units: {
+            'cabal-home': {
+              space: ['carrier'],
+              'acheron': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          // Place non-fighter ships in system 27, which is adjacent to cabal-home
+          // (cabal-home is at position {q:0, r:-3}, system 27 is at {q:0, r:-2})
+          units: {
+            '27': {
+              space: ['cruiser', 'cruiser', 'destroyer'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      const capturedBefore = (game.state.capturedUnits['dennis'] || []).length
+
+      // Dennis uses Component Action > Dimensional Anchor (hero)
+      t.choose(game, 'Component Action')
+      t.choose(game, 'dimensional-anchor')
+
+      // Hero rolls for each non-fighter ship (3 ships), captures on 1-3
+      // Results depend on RNG seed, but we can verify the mechanics
+
+      const dennis = game.players.byName('dennis')
+
+      // Hero should be purged regardless of roll results
+      expect(dennis.isHeroPurged()).toBe(true)
+
+      // Some ships may have been captured (depends on deterministic seed)
+      const capturedAfter = game.state.capturedUnits['dennis'] || []
+      // Total captured should be >= what we had before (at least 0 new captures is valid)
+      expect(capturedAfter.length).toBeGreaterThanOrEqual(capturedBefore)
+
+      // Remaining micah ships in system 27 + captured should equal original 3
+      const remainingShips = game.state.units['27'].space
+        .filter(u => u.owner === 'micah').length
+      const newCaptures = capturedAfter.length - capturedBefore
+      expect(remainingShips + newCaptures).toBe(3)
+    })
   })
 
   describe('Mech — Reanimator', () => {
@@ -260,11 +308,110 @@ describe("Vuil'raith Cabal", () => {
 
   describe('Faction Technologies', () => {
     describe('Vortex', () => {
-      test.todo('exhaust to capture a unit type from an adjacent player\'s reinforcements')
+      test('exhaust to capture a unit type from an adjacent system', () => {
+        const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            technologies: ['self-assembly-routines', 'vortex'],
+            units: {
+              'cabal-home': {
+                space: ['carrier'],
+                'acheron': ['space-dock'],
+              },
+            },
+          },
+          micah: {
+            // Place ships in system 27 (adjacent to cabal-home)
+            units: {
+              '27': {
+                space: ['cruiser'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        const capturedBefore = (game.state.capturedUnits['dennis'] || []).length
+
+        // Dennis uses Component Action > Vortex
+        t.choose(game, 'Component Action')
+        t.choose(game, 'vortex')
+
+        // Only one unique target (cruiser from micah), so choice is auto-selected.
+        // Assertions run after auto-selection completes.
+
+        // Should have captured 1 cruiser from reinforcements
+        const captured = game.state.capturedUnits['dennis'] || []
+        expect(captured.length).toBe(capturedBefore + 1)
+        expect(captured[captured.length - 1]).toEqual({
+          type: 'cruiser',
+          originalOwner: 'micah',
+        })
+
+        // Vortex tech should be exhausted
+        const dennis = game.players.byName('dennis')
+        expect(dennis.exhaustedTechs).toContain('vortex')
+      })
+
+      test('is not available when exhausted', () => {
+        const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            technologies: ['self-assembly-routines', 'vortex'],
+            units: {
+              'cabal-home': {
+                space: ['carrier'],
+                'acheron': ['space-dock'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              '27': {
+                space: ['cruiser'],
+              },
+            },
+          },
+        })
+
+        // Pre-exhaust vortex
+        game.testSetBreakpoint('initialization-complete', (game) => {
+          const dennis = game.players.byName('dennis')
+          if (!dennis.exhaustedTechs) {
+            dennis.exhaustedTechs = []
+          }
+          dennis.exhaustedTechs.push('vortex')
+        })
+
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Verify that vortex is NOT in the available component actions
+        const dennis = game.players.byName('dennis')
+        const actions = game.factionAbilities.getAvailableComponentActions(dennis)
+        expect(actions.map(a => a.id)).not.toContain('vortex')
+      })
     })
 
     describe('Dimensional Tear II', () => {
-      test.todo('space dock upgrade with Production 7 and up to 12 fighters do not count against capacity')
+      test('provides getFighterCapacityExemption of 12 when researched', () => {
+        const handler = require('../../systems/factions/vuil-raith-cabal.js')
+
+        // Without tech
+        const playerWithout = {
+          hasTechnology: (id) => id !== 'dimensional-tear-ii',
+        }
+        expect(handler.getFighterCapacityExemption(playerWithout, {})).toBe(6)
+
+        // With tech
+        const playerWith = {
+          hasTechnology: (id) => id === 'dimensional-tear-ii' || id === 'self-assembly-routines',
+        }
+        expect(handler.getFighterCapacityExemption(playerWith, {})).toBe(12)
+      })
     })
 
     describe("Al'Raith Ix Ianovar", () => {

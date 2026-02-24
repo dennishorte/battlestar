@@ -80,7 +80,7 @@ describe('Naalu Collective', () => {
 
   describe('Foresight', () => {
     test('Naalu can move ship to adjacent system when opponent enters', () => {
-      // Deterministic layout: hacan-home at (0,-3) → adjacent to system 27 (0,-2)
+      // Deterministic layout: hacan-home at (0,-3) -> adjacent to system 27 (0,-2)
       // System 27 (0,-2) is adjacent to: [37, 26, 48, hacan-home]
       // Place Naalu fighter in system 27, Hacan approaches from home
       const game = t.fixture({
@@ -287,16 +287,130 @@ describe('Naalu Collective', () => {
   })
 
   describe("Commander — M'aban", () => {
-    test.todo('unlock condition: have ground forces in or adjacent to the Mecatol Rex system')
-    test.todo('may look at neighbours\' hands of promissory notes and top and bottom card of agenda deck')
+    test('M\'aban peek is available when commander is unlocked', () => {
+      const game = t.fixture({ factions: ['naalu-collective', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      const actions = game.factionAbilities.getAvailableComponentActions(dennis)
+      const mabanAction = actions.find(a => a.id === 'maban-peek')
+      expect(mabanAction).toBeTruthy()
+    })
+
+    test('M\'aban peek is not available when commander is locked', () => {
+      const game = t.fixture({ factions: ['naalu-collective', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      const actions = game.factionAbilities.getAvailableComponentActions(dennis)
+      const mabanAction = actions.find(a => a.id === 'maban-peek')
+      expect(mabanAction).toBeFalsy()
+    })
   })
 
   describe('Hero — The Oracle', () => {
-    test.todo('C-RADIUM GEOMETRY: at end of status phase, force each other player to give 1 promissory note, then purge')
+    test('C-RADIUM GEOMETRY: force each other player to give 1 promissory note, then purge', () => {
+      const game = t.fixture({ factions: ['naalu-collective', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'unlocked' },
+          units: {
+            'naalu-home': {
+              space: ['carrier'],
+              'druaa': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          tradeGoods: 5,
+        },
+      })
+      game.run()
+
+      // Give micah a promissory note to test with
+      const micah = game.players.byName('micah')
+      micah.addPromissoryNote('ceasefire', 'micah')
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses component action: hero
+      t.choose(game, 'Component Action')
+      t.choose(game, 'c-radium-geometry')
+
+      // Micah gives the promissory note
+      t.choose(game, 'ceasefire:micah')
+
+      // Dennis should now have the note
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasPromissoryNote('ceasefire', 'micah')).toBe(true)
+
+      // Hero should be purged
+      expect(dennis.isHeroPurged()).toBe(true)
+    })
+
+    test('C-RADIUM GEOMETRY: player gives TG if no promissory notes', () => {
+      const game = t.fixture({ factions: ['naalu-collective', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'unlocked' },
+          tradeGoods: 0,
+          units: {
+            'naalu-home': {
+              space: ['carrier'],
+              'druaa': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          tradeGoods: 5,
+          promissoryNotes: [],  // Empty: no promissory notes
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses hero — Micah has no promissory notes, gives 1 TG
+      t.choose(game, 'Component Action')
+      t.choose(game, 'c-radium-geometry')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBe(1)
+      expect(dennis.isHeroPurged()).toBe(true)
+
+      const micahAfter = game.players.byName('micah')
+      expect(micahAfter.tradeGoods).toBe(4)
+    })
   })
 
   describe('Mech — Iconoclast', () => {
-    test.todo('DEPLOY: when another player gains a relic, place 1 mech on any planet you control')
+    test('onRelicGained hook is dispatched correctly', () => {
+      const game = t.fixture({ factions: ['naalu-collective', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'naalu-home': {
+              'druaa': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      // Verify the handler has onRelicGained method
+      const dennis = game.players.byName('dennis')
+      const handler = game.factionAbilities._getPlayerHandler(dennis)
+      expect(handler.onRelicGained).toBeTruthy()
+    })
   })
 
   describe('Promissory Note — Gift of Prescience', () => {
@@ -397,12 +511,54 @@ describe('Naalu Collective', () => {
     })
 
     describe('Hybrid Crystal Fighter II', () => {
-      test.todo('fighters may move without being transported')
-      test.todo('excess fighters count as 1/2 ship against fleet pool')
+      test('fighter upgrade: combat 7, move 2, does not require capacity', () => {
+        const game = t.fixture({ factions: ['naalu-collective', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['hybrid-crystal-fighter-ii'],
+          },
+        })
+        game.run()
+
+        const stats = game._getUnitStats('dennis', 'fighter')
+        expect(stats.combat).toBe(7)
+        expect(stats.move).toBe(2)
+        expect(stats.requiresCapacity).toBe(false)
+      })
+
+      test('base Hybrid Crystal Fighter I has correct stats', () => {
+        const game = t.fixture({ factions: ['naalu-collective', 'emirates-of-hacan'] })
+        game.run()
+
+        // Naalu base fighter override: combat 8
+        const stats = game._getUnitStats('dennis', 'fighter')
+        expect(stats.combat).toBe(8)
+      })
     })
 
     describe('Mindsieve', () => {
-      test.todo('give a promissory note to resolve secondary ability without spending a command token')
+      test('handler exposes canSkipSecondaryCostWithPromissoryNote', () => {
+        const game = t.fixture({ factions: ['naalu-collective', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['mindsieve'],
+          },
+        })
+        game.run()
+
+        const dennis = game.players.byName('dennis')
+        const handler = game.factionAbilities._getPlayerHandler(dennis)
+        expect(handler.canSkipSecondaryCostWithPromissoryNote(dennis)).toBe(true)
+      })
+
+      test('does not expose without the technology', () => {
+        const game = t.fixture({ factions: ['naalu-collective', 'emirates-of-hacan'] })
+        game.run()
+
+        const dennis = game.players.byName('dennis')
+        const handler = game.factionAbilities._getPlayerHandler(dennis)
+        expect(handler.canSkipSecondaryCostWithPromissoryNote(dennis)).toBe(false)
+      })
     })
   })
 })

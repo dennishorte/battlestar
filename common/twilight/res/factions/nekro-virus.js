@@ -2,7 +2,7 @@ module.exports = {
   id: 'nekro-virus',
   name: 'The Nekro Virus',
   homeSystem: 'nekro-home',
-  startingTechnologies: ['dacxive-animators'],
+  startingTechnologies: ['dacxive-animators', 'valefar-assimilator-x', 'valefar-assimilator-y'],
   startingUnits: {
     space: ['dreadnought', 'carrier', 'cruiser', 'fighter', 'fighter'],
     planets: {
