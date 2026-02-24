@@ -16,6 +16,41 @@ module.exports = {
     return skips
   },
 
+  // ---------------------------------------------------------------------------
+  // Specialized Compounds — faction tech
+  // When researching via Technology strategy card, exhausted tech specialty
+  // planets still count as prerequisites (they normally only count when ready).
+  // This is implemented via getTechPrerequisiteBonuses, which adds bonus
+  // prerequisites for exhausted specialty planets.
+  // ---------------------------------------------------------------------------
+  getTechPrerequisiteBonuses(player, ctx) {
+    if (!player.hasTechnology('specialized-compounds')) {
+      return {}
+    }
+
+    const res = require('../../res/index.js')
+    const bonuses = {}
+    const controlledPlanets = player.getControlledPlanets()
+
+    for (const planetId of controlledPlanets) {
+      const planet = res.getPlanet(planetId)
+      if (!planet?.techSpecialty) {
+        continue
+      }
+
+      // Only add bonus for EXHAUSTED specialty planets (non-exhausted already count)
+      // Exception: if player has Psychoarchaeology, exhausted planets already count too
+      const isExhausted = ctx.state?.planets?.[planetId]?.exhausted
+      const hasPsychoarchaeology = player.hasTechnology('psychoarchaeology')
+
+      if (isExhausted && !hasPsychoarchaeology) {
+        bonuses[planet.techSpecialty] = (bonuses[planet.techSpecialty] || 0) + 1
+      }
+    }
+
+    return bonuses
+  },
+
   onTechResearched(player, ctx, tech) {
     // Check if brilliant was actually needed (deficit > analytical skips)
     const prereqs = player.getTechPrerequisites()

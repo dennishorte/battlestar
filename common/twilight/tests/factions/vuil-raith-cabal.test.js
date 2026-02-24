@@ -241,7 +241,64 @@ describe("Vuil'raith Cabal", () => {
       expect(fighters.length).toBe(6)
     })
 
-    test.todo('unlock condition: have units in 3 Gravity Rifts')
+    test('unlock condition: have units in 3 Gravity Rifts', () => {
+      // Cabal Dimensional Tear space docks create gravity rifts in their system
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'cabal-home': {
+              space: ['carrier', 'fighter', 'fighter'],
+              'acheron': ['infantry', 'infantry', 'space-dock'],
+            },
+            '27': {
+              'new-albion': ['infantry', 'space-dock'],
+            },
+            '35': {
+              'bereg': ['infantry', 'space-dock'],
+            },
+          },
+          planets: {
+            'acheron': { exhausted: false },
+            'new-albion': { exhausted: false },
+            'bereg': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // 3 systems with Cabal space docks (dimensional tears) = 3 gravity rifts
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(true)
+    })
+
+    test('commander stays locked with fewer than 3 gravity rift systems', () => {
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'cabal-home': {
+              space: ['carrier', 'fighter', 'fighter'],
+              'acheron': ['infantry', 'infantry', 'space-dock'],
+            },
+            '27': {
+              'new-albion': ['infantry', 'space-dock'],
+            },
+          },
+          planets: {
+            'acheron': { exhausted: false },
+            'new-albion': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Only 2 systems with dimensional tears — not enough
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(false)
+    })
   })
 
   describe('Hero — It Feeds on Carrion', () => {

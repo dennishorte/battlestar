@@ -324,7 +324,39 @@ describe('Empyrean', () => {
   })
 
   describe('Commander — Xuange', () => {
-    test.todo('unlock condition: be neighbors with all other players')
+    test('unlock condition: be neighbors with all other players', () => {
+      // In 2p, Empyrean must be neighbors with the single other player
+      const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'empyrean-home': {
+              space: ['carrier', 'destroyer'],
+              'the-dark': ['infantry', 'infantry', 'space-dock'],
+            },
+            // Place a ship in system 38 (adjacent to micah's hacan-home)
+            '38': {
+              space: ['cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(true)
+    })
+
+    test('commander stays locked when not neighbors with all other players', () => {
+      const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+      // Default starting units — Empyrean at home, Hacan at home, too far apart
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(false)
+    })
 
     test('returns command token when opponent moves ships into system with token', () => {
       const game = t.fixture({ factions: ['emirates-of-hacan', 'empyrean'] })

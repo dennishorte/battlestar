@@ -137,8 +137,75 @@ describe('Arborec', () => {
   })
 
   describe('Agent — Letani Ospha', () => {
-    test.todo('after a player activates a system with their structure, may exhaust to let them replace infantry with mech')
-    test.todo('exhausted agent cannot be used')
+    test('after a player activates a system with their structure, may exhaust to let them replace infantry with mech', () => {
+      const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'locked', hero: 'locked' },
+          units: {
+            '27': {
+              space: [],
+              'new-albion': ['infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: tactical action — activates system 27 where Arborec has structures + infantry
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Dennis (Arborec) gets Letani Ospha prompt (self-activation with own structures)
+      t.choose(game, 'Exhaust Letani Ospha')
+
+      // new-albion is auto-selected (only planet with infantry)
+      // Check: infantry replaced by mech
+      const newAlbion = game.state.units['27'].planets['new-albion']
+        .filter(u => u.owner === 'dennis')
+      const infantry = newAlbion.filter(u => u.type === 'infantry')
+      const mechs = newAlbion.filter(u => u.type === 'mech')
+      expect(infantry.length).toBe(2) // 3 - 1 = 2
+      expect(mechs.length).toBe(1) // 0 + 1 = 1
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+    })
+
+    test('exhausted agent cannot be used', () => {
+      const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            '27': {
+              space: [],
+              'new-albion': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: tactical action
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // No agent prompt; game continues to movement phase
+      // Infantry count unchanged
+      const newAlbion = game.state.units['27'].planets['new-albion']
+        .filter(u => u.owner === 'dennis')
+      const infantry = newAlbion.filter(u => u.type === 'infantry')
+      expect(infantry.length).toBe(2)
+    })
   })
 
   describe('Commander — Dirzuga Rophal', () => {
@@ -209,7 +276,54 @@ describe('Arborec', () => {
       expect(infantry.length).toBe(2)
     })
 
-    test.todo('unlock condition: have 12 ground forces on planets you control')
+    test('unlock condition: have 12 ground forces on planets you control', () => {
+      const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'arborec-home': {
+              space: ['carrier', 'cruiser'],
+              'nestphar': [
+                'infantry', 'infantry', 'infantry', 'infantry', 'infantry',
+                'infantry', 'infantry', 'infantry', 'infantry', 'infantry',
+                'infantry', 'infantry',  // 12 infantry
+                'space-dock',
+              ],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Leader unlock check runs at start of dennis's first action turn
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(true)
+    })
+
+    test('commander stays locked with fewer than 12 ground forces', () => {
+      const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'arborec-home': {
+              space: ['carrier', 'cruiser'],
+              'nestphar': [
+                'infantry', 'infantry', 'infantry', 'infantry', 'infantry',
+                'infantry', 'infantry', 'infantry', 'infantry', 'infantry',
+                'infantry',  // 11 infantry — not enough
+                'space-dock',
+              ],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(false)
+    })
   })
 
   describe('Hero — Letani Miasmiala', () => {

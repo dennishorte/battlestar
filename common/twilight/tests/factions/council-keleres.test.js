@@ -179,7 +179,66 @@ describe('Council Keleres', () => {
 
   describe('Commander — Suffi An', () => {
     test.todo('after performing a component action, may perform an additional action')
-    test.todo('unlock condition: spend 1 trade good after playing an action card with a component action')
+
+    test('unlock condition: spend 1 trade good after playing an action card with a component action', () => {
+      const game = t.fixture({
+        factions: ['council-keleres', 'federation-of-sol'],
+        keleresSubFaction: 'mentak-coalition',
+      })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 3,
+          actionCards: ['mining-initiative'],  // timing: 'action'
+          planets: {
+            'moll-primus': { exhausted: false },
+            'new-albion': { exhausted: false },  // 2nd planet so mining-initiative prompt isn't auto-selected
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis plays an action card with ACTION timing
+      // (only 1 action card, so card selection is auto-responded)
+      t.choose(game, 'Play Action Card')
+
+      // Choose planet for mining-initiative effect (2 planets, not auto-selected)
+      t.choose(game, 'moll-primus')
+
+      // Now prompted: Spend 1 TG to unlock commander?
+      t.choose(game, 'Spend 1 TG to unlock commander')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(true)
+    })
+
+    test('commander stays locked if declining to spend TG after action card', () => {
+      const game = t.fixture({
+        factions: ['council-keleres', 'federation-of-sol'],
+        keleresSubFaction: 'mentak-coalition',
+      })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 3,
+          actionCards: ['mining-initiative'],
+          planets: {
+            'moll-primus': { exhausted: false },
+            'new-albion': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Play Action Card')
+      t.choose(game, 'moll-primus')
+
+      // Decline the offer
+      t.choose(game, 'Pass')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(false)
+    })
   })
 
   describe('Hero — Kuuasi Aun Jalatai (Argent)', () => {

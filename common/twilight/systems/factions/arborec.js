@@ -197,6 +197,82 @@ module.exports = {
   },
 
   // ---------------------------------------------------------------------------
+  // Agent — Letani Ospha: After a player activates a system that contains 1 or
+  // more of their structures, you may exhaust this agent to allow that player to
+  // replace 1 infantry on a planet in that system with 1 mech.
+  // ---------------------------------------------------------------------------
+  onAnySystemActivated(arborecPlayer, ctx, { systemId, activatingPlayer }) {
+    if (!arborecPlayer.isAgentReady()) {
+      return
+    }
+
+    const systemUnits = ctx.state.units[systemId]
+    if (!systemUnits) {
+      return
+    }
+
+    // Check if the activating player has structures in this system
+    const tile = ctx.game.res.getSystemTile(systemId) || ctx.game.res.getSystemTile(Number(systemId))
+    if (!tile || !tile.planets || tile.planets.length === 0) {
+      return
+    }
+
+    let hasStructure = false
+    let planetsWithInfantry = []
+    for (const planetId of tile.planets) {
+      const planetUnits = systemUnits.planets[planetId] || []
+      const playerPlanetUnits = planetUnits.filter(u => u.owner === activatingPlayer.name)
+
+      if (playerPlanetUnits.some(u => u.type === 'space-dock' || u.type === 'pds')) {
+        hasStructure = true
+      }
+
+      if (playerPlanetUnits.some(u => u.type === 'infantry')) {
+        planetsWithInfantry.push(planetId)
+      }
+    }
+
+    if (!hasStructure || planetsWithInfantry.length === 0) {
+      return
+    }
+
+    const choice = ctx.actions.choose(arborecPlayer, ['Exhaust Letani Ospha', 'Pass'], {
+      title: `Letani Ospha: ${activatingPlayer.name} activated system with structures. Replace infantry with mech?`,
+    })
+
+    if (choice[0] !== 'Exhaust Letani Ospha') {
+      return
+    }
+
+    arborecPlayer.exhaustAgent()
+
+    // Choose which planet to replace infantry on
+    let targetPlanet
+    if (planetsWithInfantry.length === 1) {
+      targetPlanet = planetsWithInfantry[0]
+    }
+    else {
+      const planetSel = ctx.actions.choose(arborecPlayer, planetsWithInfantry, {
+        title: 'Letani Ospha: Choose planet to replace infantry with mech',
+      })
+      targetPlanet = planetSel[0]
+    }
+
+    // Remove 1 infantry and add 1 mech for the activating player
+    const planetUnits = systemUnits.planets[targetPlanet]
+    const infIdx = planetUnits.findIndex(u => u.owner === activatingPlayer.name && u.type === 'infantry')
+    if (infIdx !== -1) {
+      planetUnits.splice(infIdx, 1)
+      ctx.game._addUnitToPlanet(systemId, targetPlanet, 'mech', activatingPlayer.name)
+
+      ctx.log.add({
+        template: 'Letani Ospha: {arborec} replaces {target} infantry with mech on {planet}',
+        args: { arborec: arborecPlayer.name, target: activatingPlayer.name, planet: targetPlanet },
+      })
+    }
+  },
+
+  // ---------------------------------------------------------------------------
   // Psychospore — faction tech (component action)
   // ACTION: Exhaust this card to remove a command token from a system that
   // contains 1 or more of your infantry and return it to your reinforcements.

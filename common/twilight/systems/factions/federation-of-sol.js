@@ -45,12 +45,33 @@ module.exports = {
       })
 
       // Mech DEPLOY: after Orbital Drop, may spend 3 resources to place 1 mech
-      if (player.getAvailableResources?.() >= 3) {
+      const availableResources = player.getTotalResources() + (player.tradeGoods || 0)
+      if (availableResources >= 3) {
         const mechChoice = ctx.actions.choose(player, ['Deploy Mech', 'Pass'], {
           title: 'ZS Thunderbolt M2 DEPLOY: Spend 3 resources to place 1 mech?',
         })
         if (mechChoice[0] === 'Deploy Mech') {
-          player.spendResources(3)
+          // Pay 3 resources: exhaust planets first, then trade goods
+          let remaining = 3
+          const readyPlanets = player.getReadyPlanets()
+            .map(pId => {
+              const planet = ctx.game.res.getPlanet(pId)
+              return { id: pId, resources: planet ? planet.resources : 0 }
+            })
+            .sort((a, b) => a.resources - b.resources)
+
+          for (const planet of readyPlanets) {
+            if (remaining <= 0) {
+              break
+            }
+            ctx.state.planets[planet.id].exhausted = true
+            remaining -= planet.resources
+          }
+          if (remaining > 0) {
+            const tgToSpend = Math.min(remaining, player.tradeGoods)
+            player.tradeGoods -= tgToSpend
+          }
+
           ctx.game._addUnitToPlanet(systemId, targetPlanet, 'mech', player.name)
           ctx.log.add({
             template: '{player} deploys ZS Thunderbolt M2 on {planet}',

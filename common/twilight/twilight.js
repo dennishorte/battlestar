@@ -1359,6 +1359,25 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
     }
 
     totalInfluence += votingModifier
+
+    // Hacan Commander (Gila the Silvertongue): spend TG for 2 extra votes each
+    const tgVoteRate = this.factionAbilities.getTradeGoodVoteRate(player)
+    if (tgVoteRate > 0 && player.tradeGoods > 0) {
+      const maxTG = player.tradeGoods
+      const tgChoices = []
+      for (let n = 0; n <= maxTG; n++) {
+        tgChoices.push(`Spend ${n} TG (+${n * tgVoteRate} votes)`)
+      }
+      const tgSel = this.actions.choose(player, tgChoices, {
+        title: `Spend trade goods for extra votes? (${tgVoteRate} votes per TG)`,
+      })
+      const tgSpent = parseInt(tgSel[0].match(/\d+/)?.[0]) || 0
+      if (tgSpent > 0) {
+        player.spendTradeGoods(tgSpent)
+        totalInfluence += tgSpent * tgVoteRate
+      }
+    }
+
     votes[chosen] = (votes[chosen] || 0) + totalInfluence
     playerVotes[player.name] = { outcome: chosen, count: totalInfluence }
 
@@ -3384,10 +3403,15 @@ Twilight.prototype._productionStep = function(player, systemId) {
   const readyPlanets = controlledPlanets.filter(
     pId => !this.state.planets[pId]?.exhausted
   )
+  const canSpendFlexibly = this.factionAbilities.canSpendFlexibly(player)
   for (const pId of readyPlanets) {
     const planet = res.getPlanet(pId)
     if (planet) {
       availableResources += planet.resources
+      // Archon's Gift: influence counts as resources too
+      if (canSpendFlexibly) {
+        availableResources += planet.influence
+      }
     }
   }
   // Mirror Computing: each trade good is worth 2 resources
@@ -3508,7 +3532,12 @@ Twilight.prototype._productionStep = function(player, systemId) {
     const planet = res.getPlanet(pId)
     if (planet) {
       this.state.planets[pId].exhausted = true
-      remainingCost -= planet.resources
+      let planetValue = planet.resources
+      // Archon's Gift: influence counts as resources too
+      if (canSpendFlexibly) {
+        planetValue += planet.influence
+      }
+      remainingCost -= planetValue
     }
   }
   if (remainingCost > 0) {
@@ -4097,8 +4126,17 @@ Twilight.prototype._addUnitToPlanet = function(systemId, planetId, unitType, own
 Twilight.prototype._payInfluence = function(player, cost) {
   // Auto-exhaust planets to pay influence cost (cheapest first to conserve value)
   let remaining = cost
+  const canSpendFlexibly = this.factionAbilities.canSpendFlexibly(player)
   const readyPlanets = player.getReadyPlanets()
-    .map(pId => ({ id: pId, influence: res.getPlanet(pId)?.influence || 0 }))
+    .map(pId => {
+      const planet = res.getPlanet(pId)
+      let influence = planet?.influence || 0
+      // Archon's Gift: resources count as influence too
+      if (canSpendFlexibly) {
+        influence += (planet?.resources || 0)
+      }
+      return { id: pId, influence }
+    })
     .sort((a, b) => a.influence - b.influence)
 
   for (const planet of readyPlanets) {
@@ -4951,12 +4989,16 @@ Twilight.prototype._executeWormholeGenerator = function(player) {
 
 Twilight.prototype._getAvailableResources = function(player) {
   let total = 0
+  const canSpendFlexibly = this.factionAbilities.canSpendFlexibly(player)
   const controlledPlanets = player.getControlledPlanets()
   for (const pId of controlledPlanets) {
     if (!this.state.planets[pId]?.exhausted) {
       const planet = res.getPlanet(pId)
       if (planet) {
         total += planet.resources
+        if (canSpendFlexibly) {
+          total += planet.influence
+        }
       }
     }
   }
@@ -5377,6 +5419,39 @@ Twilight.prototype._playActionCard = function(player) {
 
   // Resolve the card effect
   this._resolveActionCard(player, card)
+
+  // Council Keleres commander unlock: Spend 1 TG after playing an action card
+  // that has a component action (timing: 'action').
+  this._checkKeleresCommanderUnlock(player, card)
+}
+
+Twilight.prototype._checkKeleresCommanderUnlock = function(player, card) {
+  if (player.faction?.id !== 'council-keleres') {
+    return
+  }
+  if (player.isCommanderUnlocked()) {
+    return
+  }
+  // Action cards with "ACTION:" timing are component-action cards
+  if (card.timing !== 'action') {
+    return
+  }
+  if (player.tradeGoods < 1) {
+    return
+  }
+
+  const choice = this.actions.choose(player, ['Spend 1 TG to unlock commander', 'Pass'], {
+    title: 'Suffi An: Spend 1 trade good to unlock your commander?',
+  })
+
+  if (choice[0] === 'Spend 1 TG to unlock commander') {
+    player.addTradeGoods(-1)
+    player.unlockCommander()
+    this.log.add({
+      template: '{player} spends 1 TG to unlock commander: {name}',
+      args: { player, name: player.faction?.leaders?.commander?.name || 'Commander' },
+    })
+  }
 }
 
 Twilight.prototype._resolveActionCard = function(player, card) {
@@ -5743,9 +5818,8 @@ Twilight.prototype._checkCommanderUnlock = function(player) {
         })
       break
     case 'ghosts-of-creuss':
-      // Units in/adjacent to alpha wormhole AND beta wormhole systems
-      conditionMet = this._hasUnitsNearWormholes(player.name, 'alpha')
-        && this._hasUnitsNearWormholes(player.name, 'beta')
+      // Have units in 3 systems that contain alpha or beta wormholes
+      conditionMet = this._countWormholeSystemsWithUnits(player.name) >= 3
       break
     case 'nekro-virus': {
       // Have 3 technologies. Valefar Assimilator counts only if its token is placed.
@@ -5793,6 +5867,14 @@ Twilight.prototype._checkCommanderUnlock = function(player) {
     case 'vuil-raith-cabal':
       // Units in 3 systems with gravity rifts
       conditionMet = this._countGravityRiftSystems(player.name) >= 3
+      break
+    case 'clan-of-saar':
+      // Have 3 space docks on the game board (Saar floating factories are in space)
+      conditionMet = this._countUnitsOnBoard(player.name, 'space-dock') >= 3
+      break
+    case 'council-keleres':
+      // Event-based: "Spend 1 trade good after you play an action card that has a component action"
+      // Checked in _playActionCard, not here. Skip.
       break
     default:
       break
@@ -5914,6 +5996,27 @@ Twilight.prototype._hasUnitsNearWormholes = function(playerName, wormholeType) {
   return false
 }
 
+Twilight.prototype._countWormholeSystemsWithUnits = function(playerName) {
+  const { Galaxy } = require('./model/Galaxy.js')
+  const galaxy = new Galaxy(this)
+  let count = 0
+
+  for (const [systemId, systemUnits] of Object.entries(this.state.units)) {
+    // Check if this system contains an alpha or beta wormhole
+    if (!galaxy.hasWormhole(systemId, 'alpha') && !galaxy.hasWormhole(systemId, 'beta')) {
+      continue
+    }
+
+    // Check if player has units in this system
+    const hasUnits = systemUnits.space.some(u => u.owner === playerName) ||
+      Object.values(systemUnits.planets).some(pu => pu.some(u => u.owner === playerName))
+    if (hasUnits) {
+      count++
+    }
+  }
+  return count
+}
+
 Twilight.prototype._countCombatAbilityUnits = function(playerName) {
   let count = 0
   for (const systemUnits of Object.values(this.state.units)) {
@@ -5991,7 +6094,23 @@ Twilight.prototype._countGravityRiftSystems = function(playerName) {
   let count = 0
   for (const [systemId, systemUnits] of Object.entries(this.state.units)) {
     const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
-    if (!tile || tile.anomaly !== 'gravity-rift') {
+    const isGravityRift = tile && tile.anomaly === 'gravity-rift'
+
+    // Vuil'raith Cabal: Dimensional Tear space docks create gravity rifts.
+    // Check both space area (floating factories) and planet areas for Cabal docks.
+    let hasCabalDock = systemUnits.space.some(
+      u => u.owner === playerName && u.type === 'space-dock'
+    )
+    if (!hasCabalDock) {
+      for (const planetUnits of Object.values(systemUnits.planets)) {
+        if (planetUnits.some(u => u.owner === playerName && u.type === 'space-dock')) {
+          hasCabalDock = true
+          break
+        }
+      }
+    }
+
+    if (!isGravityRift && !hasCabalDock) {
       continue
     }
 
