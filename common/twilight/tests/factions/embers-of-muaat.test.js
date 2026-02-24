@@ -209,8 +209,54 @@ describe('Embers of Muaat', () => {
   })
 
   describe("Hero — Adjudicator Ba'al", () => {
-    test.todo('NOVA SEED: destroy all other units in system and replace tile with Muaat supernova')
-    test.todo('hero is purged after use')
+    test('NOVA SEED: destroy all other units in system and replace tile with Muaat supernova, hero is purged', () => {
+      const game = t.fixture({ factions: ['embers-of-muaat', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          technologies: ['sarween-tools'],
+          units: {
+            '27': {
+              space: ['war-sun'],
+              'new-albion': ['infantry', 'infantry'],
+            },
+          },
+        },
+        micah: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            '27': {
+              space: ['cruiser', 'fighter'],
+              'new-albion': ['infantry', 'pds'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'nova-seed')
+
+      // System 27 is auto-selected (only war sun system)
+      // Verify opponent units destroyed
+      const spaceUnits = game.state.units['27'].space
+      expect(spaceUnits.filter(u => u.owner === 'micah').length).toBe(0)
+
+      const planetUnits = game.state.units['27'].planets['new-albion']
+      expect(planetUnits.filter(u => u.owner === 'micah').length).toBe(0)
+
+      // Muaat units should survive
+      expect(spaceUnits.filter(u => u.owner === 'dennis').length).toBe(1) // war sun
+      expect(planetUnits.filter(u => u.owner === 'dennis').length).toBe(2) // 2 infantry
+
+      // System should be marked as supernova
+      expect(game.state.systems['27'].muaatSupernova).toBe(true)
+
+      // Hero should be purged
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+    })
   })
 
   describe('Mech — Ember Colossus', () => {
