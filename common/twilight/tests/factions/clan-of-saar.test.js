@@ -77,7 +77,41 @@ describe('Clan of Saar', () => {
   })
 
   describe('Nomadic', () => {
-    test.todo('can score objectives without controlling home system planets')
+    test('can score objectives without controlling home system planets', () => {
+      // Saar does not control home system planets, but can still score
+      const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+      game.run()
+
+      // Verify the canBypassHomeSystemCheck returns true for Saar
+      const dennis = game.players.byName('dennis')
+      expect(game.factionAbilities.canBypassHomeSystemCheck(dennis)).toBe(true)
+
+      // Verify non-Saar player does NOT bypass
+      const micah = game.players.byName('micah')
+      expect(game.factionAbilities.canBypassHomeSystemCheck(micah)).toBe(false)
+    })
+
+    test('_controlsHomeSystemPlanets returns true even without home planet control', () => {
+      const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'saar-home': {
+              space: ['carrier'],
+              // No ground forces — Saar doesn't control home planets
+            },
+          },
+        },
+      })
+      game.run()
+
+      // Remove Saar planet control to simulate not controlling home system
+      game.state.planets['lisis-ii'].controller = null
+      game.state.planets['ragh'].controller = null
+
+      const dennis = game.players.byName('dennis')
+      expect(game._controlsHomeSystemPlanets(dennis)).toBe(true) // Nomadic bypasses
+    })
   })
 
   describe('Floating Factory I', () => {
@@ -87,12 +121,63 @@ describe('Clan of Saar', () => {
   })
 
   describe('Flagship — Son of Ragh', () => {
-    test.todo('has anti-fighter barrage 6x4')
-    test.todo('has capacity 3')
+    test('has anti-fighter barrage 6x4', () => {
+      const { getFaction } = require('../../res/factions/index.js')
+      const faction = getFaction('clan-of-saar')
+      expect(faction.flagship.abilities).toContain('anti-fighter-barrage-6x4')
+    })
+
+    test('has capacity 3', () => {
+      const { getFaction } = require('../../res/factions/index.js')
+      const faction = getFaction('clan-of-saar')
+      expect(faction.flagship.capacity).toBe(3)
+    })
   })
 
   describe('Mech — Scavenger Zeta', () => {
-    test.todo('DEPLOY: after gaining control of a planet, may spend 1 trade good to place 1 mech on that planet')
+    test('DEPLOY: after gaining control of a planet, may spend 1 trade good to place 1 mech on that planet', () => {
+      const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 2,
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'saar-home': {
+              space: ['carrier'],
+              'lisis-ii': ['infantry', 'infantry', 'space-dock'],
+            },
+            '27': {
+              space: ['carrier'],
+              'new-albion': ['infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis activates system 37 and moves in
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '37' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'carrier', from: '27', count: 1 }, { unitType: 'infantry', from: '27', count: 1 }],
+      })
+
+      // Scavenge fires (gains 1 TG) → Mech DEPLOY prompt
+      // After scavenge, dennis has 3 TG. Deploy mech costs 1 TG.
+      t.choose(game, 'Deploy Scavenger Zeta')
+
+      const dennis = game.players.byName('dennis')
+      // Started with 2 TG, gained 1 (scavenge) = 3, spent 1 (mech) = 2
+      expect(dennis.tradeGoods).toBe(2)
+
+      // Mech should be on the captured planet in system 37
+      const tile = game.res.getSystemTile('37') || game.res.getSystemTile(37)
+      const planet = tile.planets[0]
+      const mechsOnPlanet = game.state.units['37'].planets[planet]
+        .filter(u => u.owner === 'dennis' && u.type === 'mech')
+      expect(mechsOnPlanet.length).toBe(1)
+    })
   })
 
   describe('Agent — Captain Mendosa', () => {
@@ -254,7 +339,56 @@ describe('Clan of Saar', () => {
   })
 
   describe('Hero — Gurno Aggero', () => {
-    test.todo('ARMAGEDDON RELAY: choose adjacent system to space dock, destroy all other players infantry and fighters, then purge')
+    test('ARMAGEDDON RELAY: choose adjacent system to space dock, destroy all other players infantry and fighters, then purge', () => {
+      const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          units: {
+            '27': {
+              space: ['space-dock', 'carrier'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '26': {
+              space: ['fighter', 'fighter', 'fighter', 'carrier'],
+              'lodor': ['infantry', 'infantry', 'infantry'],
+            },
+          },
+          planets: { 'lodor': { exhausted: false } },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses component action (hero)
+      t.choose(game, 'Component Action')
+      t.choose(game, 'armageddon-relay')
+
+      // System 26 is adjacent to system 27 (where dock is)
+      // Only one valid target system with enemy infantry/fighters
+      // Auto-selected if it's the only one
+
+      // Verify: all enemy fighters and infantry destroyed in system 26
+      const enemyFighters = game.state.units['26'].space
+        .filter(u => u.owner === 'micah' && u.type === 'fighter')
+      expect(enemyFighters.length).toBe(0)
+
+      const enemyInfantry = game.state.units['26'].planets['lodor']
+        .filter(u => u.owner === 'micah' && u.type === 'infantry')
+      expect(enemyInfantry.length).toBe(0)
+
+      // Carrier should survive (not infantry or fighter)
+      const enemyCarriers = game.state.units['26'].space
+        .filter(u => u.owner === 'micah' && u.type === 'carrier')
+      expect(enemyCarriers.length).toBe(1)
+
+      // Hero should be purged
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+    })
   })
 
   describe('Promissory Note — Ragh\'s Call', () => {

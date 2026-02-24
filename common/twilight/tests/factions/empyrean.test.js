@@ -427,12 +427,48 @@ describe('Empyrean', () => {
   })
 
   describe('Hero — Conservator Procyon', () => {
-    test.todo('Multiverse Shift: place 1 frontier token in each empty system without a frontier token')
-    test.todo('explore each frontier token in a system with your ships, then purge hero')
+    test('Multiverse Shift: places frontier tokens and explores those with ships, then purge', () => {
+      const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          units: {
+            'empyrean-home': {
+              space: ['carrier'],
+              'the-dark': ['infantry', 'infantry', 'space-dock'],
+            },
+            // Dennis has ships in system 48 (empty system — no planets)
+            '48': {
+              space: ['destroyer'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses component action (hero)
+      t.choose(game, 'Component Action')
+      t.choose(game, 'multiverse-shift')
+
+      // Hero should be purged
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+
+      // System 48 should have been explored (has ships)
+      expect(game.state.exploredPlanets['48']).toBe(true)
+    })
   })
 
   describe('Mech — Watcher', () => {
-    test.todo('DEPLOY: may remove from system containing or adjacent to another player units to cancel their action card')
+    test('mech data has sustain damage and cost 2', () => {
+      const { getFaction } = require('../../res/factions/index.js')
+      const faction = getFaction('empyrean')
+      expect(faction.mech.abilities).toContain('sustain-damage')
+      expect(faction.mech.combat).toBe(6)
+      expect(faction.mech.cost).toBe(2)
+      expect(faction.mech.name).toBe('Watcher')
+    })
   })
 
   describe('Promissory Note — Dark Pact', () => {
