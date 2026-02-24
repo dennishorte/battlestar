@@ -168,12 +168,117 @@ describe('Emirates of Hacan', () => {
   })
 
   describe('Agent — Carth of Golden Sands', () => {
-    test.todo('exhaust agent to gain 2 commodities')
-    test.todo('exhaust agent to replenish another player commodities')
+    test('exhaust agent to gain 2 commodities', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'locked', hero: 'locked' },
+          commodities: 0,
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: component action -> Carth of Golden Sands
+      t.choose(game, 'Component Action')
+      t.choose(game, 'carth-agent')
+      t.choose(game, 'Gain 2 Commodities')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.commodities).toBe(2)
+      expect(dennis.isAgentReady()).toBe(false)
+    })
+
+    test('exhaust agent to replenish another player commodities', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'locked', hero: 'locked' },
+        },
+        micah: {
+          commodities: 0,
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: component action -> Carth of Golden Sands
+      t.choose(game, 'Component Action')
+      t.choose(game, 'carth-agent')
+      t.choose(game, 'Replenish micah')
+
+      const micah = game.players.byName('micah')
+      expect(micah.commodities).toBe(micah.maxCommodities)
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+    })
   })
 
   describe('Commander — Gila the Silvertongue', () => {
-    test.todo('spend trade goods for 2x votes during agenda')
+    test('spend trade goods for 2 extra votes each during agenda', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+      t.setBoard(game, {
+        custodiansRemoved: true,
+        agendaDeck: ['mutiny'],
+        dennis: {
+          leaders: { agent: 'ready', commander: 'unlocked', hero: 'locked' },
+          tradeGoods: 5,
+          commodities: 0,
+          planets: {
+            'arretze': { exhausted: false },
+            'hercant': { exhausted: true },
+            'kamdorn': { exhausted: true },
+          },
+        },
+        micah: {
+          tradeGoods: 0,
+          commodities: 0,
+          planets: {
+            'jord': { exhausted: true },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: strategic action (leadership) — gains 3 tokens
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines leadership secondary
+      t.choose(game, 'Skip Transaction')  // dennis skips transaction after leadership
+
+      // Micah: strategic action (diplomacy)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'sol-home')
+      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+
+      // Pass actions
+      t.choose(game, 'Pass')  // dennis passes
+      t.choose(game, 'Pass')  // micah passes
+
+      // Status phase — scoring objectives
+      t.choose(game, 'Done')  // dennis
+      t.choose(game, 'Done')  // micah
+
+      // Agenda phase — first agenda: "mutiny"
+      // Voting order: left of speaker (dennis is speaker), so micah votes first
+      t.choose(game, 'Abstain')  // micah abstains (no useful influence)
+
+      // Dennis (Hacan) votes
+      t.choose(game, 'For')
+
+      // Exhaust planets for votes (status phase readied all planets)
+      // Multi-select: choose hercant (1 influence) and kamdorn (1 influence)
+      t.choose(game, 'hercant (1)', 'kamdorn (1)')
+
+      // Commander prompt: spend TG for extra votes
+      t.choose(game, 'Spend 2 TG (+4 votes)')
+
+      // Second agenda — game only has 1 in deck, so it may skip or draw empty
+      // Just check dennis state after first agenda voting
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBe(3) // 5 - 2 = 3
+    })
   })
 
   describe('Hero — Harrugh Gefhara', () => {

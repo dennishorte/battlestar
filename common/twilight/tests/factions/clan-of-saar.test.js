@@ -278,7 +278,62 @@ describe('Clan of Saar', () => {
   })
 
   describe('Commander — Rowl Sarrig', () => {
-    test.todo('unlock condition: have 3 space docks on the game board')
+    test('unlock condition: have 3 space docks on the game board', () => {
+      const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'saar-home': {
+              space: ['carrier', 'space-dock'],
+              'lisis-ii': ['infantry', 'infantry'],
+            },
+            '27': {
+              space: ['space-dock'],
+            },
+            '35': {
+              space: ['space-dock'],
+            },
+          },
+          planets: {
+            'lisis-ii': { exhausted: false },
+            'ragh': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // 3 space docks on board (saar-home, 27, 35)
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(true)
+    })
+
+    test('commander stays locked with fewer than 3 space docks', () => {
+      const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'saar-home': {
+              space: ['carrier', 'space-dock'],
+              'lisis-ii': ['infantry', 'infantry'],
+            },
+            '27': {
+              space: ['space-dock'],
+            },
+          },
+          planets: {
+            'lisis-ii': { exhausted: false },
+            'ragh': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Only 2 space docks — not enough
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(false)
+    })
 
     test('when producing fighters or infantry, may place each at any non-blockaded space dock', () => {
       // Dennis (Saar) has 2 floating factories in different systems.

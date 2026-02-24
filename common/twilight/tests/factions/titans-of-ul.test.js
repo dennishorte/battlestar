@@ -343,7 +343,60 @@ describe('Titans of Ul', () => {
       expect(dennis.tradeGoods).toBe(0)
     })
 
-    test.todo('unlock condition: have 5 structures on the game board')
+    test('unlock condition: have 5 structures on the game board', () => {
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'titans-home': {
+              space: ['cruiser'],
+              'elysium': ['infantry', 'space-dock', 'pds', 'pds'],
+            },
+            '27': {
+              'new-albion': ['infantry', 'space-dock', 'pds'],
+            },
+          },
+          planets: {
+            'elysium': { exhausted: false },
+            'new-albion': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // 5 structures: 1 space-dock + 2 PDS on Elysium, 1 space-dock + 1 PDS on New Albion
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(true)
+    })
+
+    test('commander stays locked with fewer than 5 structures', () => {
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'titans-home': {
+              space: ['cruiser'],
+              'elysium': ['infantry', 'space-dock', 'pds'],
+            },
+            '27': {
+              'new-albion': ['infantry', 'space-dock'],
+            },
+          },
+          planets: {
+            'elysium': { exhausted: false },
+            'new-albion': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Only 4 structures: 1 space-dock + 1 PDS on Elysium, 1 space-dock on New Albion, 1 PDS
+      // Wait — 2 space-docks + 1 PDS = 3 structures, not enough
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(false)
+    })
   })
 
   describe('Hero — Ul The Progenitor', () => {

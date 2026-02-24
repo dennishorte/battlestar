@@ -332,7 +332,46 @@ describe('Nomad', () => {
       expect(flagships.length).toBe(0)
     })
 
-    test.todo('unlock condition: have 1 scored secret objective')
+    test('unlock condition: have 1 scored secret objective', () => {
+      const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          scoredObjectives: ['destroy-their-greatest-ship'],
+        },
+      })
+      game.run()
+      t.choose(game, 'leadership')  // dennis picks strategy
+      t.choose(game, 'diplomacy')   // micah picks strategy
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(true)
+    })
+
+    test('commander stays locked with no scored secret objectives', () => {
+      const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
+      game.run()
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(false)
+    })
+
+    test('commander stays locked when only public objectives scored', () => {
+      const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        revealedObjectives: ['corner-the-market'],
+        dennis: {
+          scoredObjectives: ['corner-the-market'],  // public, not secret
+        },
+      })
+      game.run()
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isCommanderUnlocked()).toBe(false)
+    })
   })
 
   describe('Hero — Ahk-Syl Siven', () => {

@@ -156,6 +156,11 @@ class FactionAbilities {
     return handler?.getVotingModifier?.(player, this) ?? 0
   }
 
+  getTradeGoodVoteRate(player) {
+    const handler = this._getPlayerHandler(player)
+    return handler?.getTradeGoodVoteRate?.(player, this) ?? 0
+  }
+
   getExplorationBonus(player, planetId) {
     const handler = this._getPlayerHandler(player)
     return handler?.getExplorationBonus?.(player, this, planetId) ?? 0
@@ -185,6 +190,11 @@ class FactionAbilities {
   getTradeGoodResourceValue(player) {
     const handler = this._getPlayerHandler(player)
     return handler?.getTradeGoodResourceValue?.(player, this) ?? 1
+  }
+
+  canSpendFlexibly(player) {
+    const handler = this._getPlayerHandler(player)
+    return handler?.canSpendFlexibly?.(player, this) ?? false
   }
 
   getRaidFormationExcessHits(shooterName, totalHits, fightersDestroyed) {

@@ -265,7 +265,35 @@ describe('Universities of Jol-Nar', () => {
 
   describe('Commander — Agnlan Oln', () => {
     test.todo('after rolling dice for a unit ability, may reroll any of those dice')
-    test.todo('unlock condition: own 8 technologies')
+    test('unlock condition: own 8 technologies', () => {
+      const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          // Jol-Nar starts with 4 techs; add 4 more to reach 8
+          technologies: [
+            'neural-motivator', 'antimass-deflectors', 'sarween-tools', 'plasma-scoring',
+            'gravity-drive', 'transit-diodes', 'psychoarchaeology', 'dark-energy-tap',
+          ],
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getTechIds().length).toBe(8)
+      expect(dennis.isCommanderUnlocked()).toBe(true)
+    })
+
+    test('commander stays locked with fewer than 8 technologies', () => {
+      const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+      // Default starting techs: 4 (neural-motivator, antimass-deflectors, sarween-tools, plasma-scoring)
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getTechIds().length).toBe(4)
+      expect(dennis.isCommanderUnlocked()).toBe(false)
+    })
   })
 
   describe("Hero — Rin, The Master's Legacy", () => {
@@ -466,8 +494,71 @@ describe('Universities of Jol-Nar', () => {
     })
 
     describe('Specialized Compounds', () => {
-      test.todo('when researching via Technology strategy card, may exhaust a tech specialty planet instead of spending resources')
-      test.todo('must research a technology of the specialty color when using this ability')
+      test('exhausted tech specialty planet counts as prerequisite with Specialized Compounds', () => {
+        // Jol-Nar starts with neural-motivator (1 green). Infantry II needs 2 green.
+        // With exhausted green specialty planet (new-albion) + Specialized Compounds,
+        // the exhausted planet still provides +1 green prerequisite.
+        const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['neural-motivator', 'antimass-deflectors', 'sarween-tools', 'plasma-scoring', 'specialized-compounds'],
+            planets: {
+              'jol': { exhausted: false },
+              'nar': { exhausted: false },
+              'new-albion': { exhausted: true },  // green specialty, exhausted
+            },
+          },
+        })
+        game.run()
+
+        const dennis = game.players.byName('dennis')
+        // infantry-ii needs green,green. Has 1 green from neural-motivator.
+        // Normally exhausted specialty planet wouldn't count — but with Specialized Compounds it does.
+        // This gives +1 green from new-albion, total 2 green prerequisites — can research!
+        expect(dennis.canResearchTechnology('infantry-ii')).toBe(true)
+      })
+
+      test('exhausted tech specialty does not count without Specialized Compounds', () => {
+        const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['neural-motivator', 'antimass-deflectors', 'sarween-tools', 'plasma-scoring'],
+            planets: {
+              'jol': { exhausted: false },
+              'nar': { exhausted: false },
+              'new-albion': { exhausted: true },  // green specialty, exhausted
+            },
+          },
+        })
+        game.run()
+
+        const dennis = game.players.byName('dennis')
+        // infantry-ii needs green,green (unit upgrade — no Analytical/Brilliant skips)
+        // Has 1 green from neural-motivator, exhausted new-albion doesn't count
+        // Deficit: 1, cannot research
+        expect(dennis.canResearchTechnology('infantry-ii')).toBe(false)
+      })
+
+      test('ready tech specialty planet still counts normally', () => {
+        const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['neural-motivator', 'antimass-deflectors', 'sarween-tools', 'plasma-scoring'],
+            planets: {
+              'jol': { exhausted: false },
+              'nar': { exhausted: false },
+              'new-albion': { exhausted: false },  // green specialty, ready
+            },
+          },
+        })
+        game.run()
+
+        const dennis = game.players.byName('dennis')
+        // infantry-ii needs green,green (unit upgrade)
+        // Has 1 green from neural-motivator + 1 green from ready new-albion = 2
+        // Can research even without Specialized Compounds
+        expect(dennis.canResearchTechnology('infantry-ii')).toBe(true)
+      })
     })
   })
 })

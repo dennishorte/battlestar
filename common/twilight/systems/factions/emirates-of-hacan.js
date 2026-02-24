@@ -215,7 +215,15 @@ module.exports = {
     return null
   },
 
-  // Commander: Gila the Silvertongue — spend TG for 2x votes (handled in agenda phase)
+  // Commander: Gila the Silvertongue — when casting votes, may spend TG for 2 extra votes each
+  getTradeGoodVoteRate(player, _ctx) {
+    if (!player.isCommanderUnlocked()) {
+      return 0
+    }
+    return 2
+  },
+
+  // Commander effect for transaction bonus (when a player replenishes commodities while you have traded with them)
   commanderEffect: {
     timing: 'transaction-bonus',
     apply: (player, _context) => {
