@@ -478,7 +478,111 @@ describe('Barony of Letnev', () => {
   })
 
   describe('Mech — Dunlain Reaper', () => {
-    test.todo('DEPLOY: spend 2 resources at start of ground combat to replace infantry with mech')
+    test('DEPLOY: spend 2 resources at start of ground combat to replace infantry with mech', () => {
+      const game = t.fixture({
+        factions: ['barony-of-letnev', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 2,
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'letnev-home': {
+              space: ['carrier'],
+              'arc-prime': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'letnev-home', count: 1 },
+          { unitType: 'infantry', from: 'letnev-home', count: 5 },
+        ],
+      })
+
+      // Dunlain Reaper DEPLOY prompt at start of ground combat
+      t.choose(game, 'Deploy Mech')
+
+      // Letnev should win ground combat with overwhelming force
+      expect(game.state.planets['new-albion'].controller).toBe('dennis')
+
+      // Should have spent 2 TG for the mech deployment
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBe(0)
+
+      // Should have a mech on the planet (replaced 1 infantry)
+      const newAlbion = game.state.units['27'].planets['new-albion']
+        .filter(u => u.owner === 'dennis')
+      expect(newAlbion.some(u => u.type === 'mech')).toBe(true)
+    })
+
+    test('DEPLOY not offered when insufficient resources', () => {
+      const game = t.fixture({
+        factions: ['barony-of-letnev', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          planets: {
+            'arc-prime': { exhausted: true },
+            'wren-terra': { exhausted: true },
+          },
+          units: {
+            'letnev-home': {
+              space: ['carrier'],
+              'arc-prime': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'letnev-home', count: 1 },
+          { unitType: 'infantry', from: 'letnev-home', count: 5 },
+        ],
+      })
+
+      // No Deploy Mech prompt — insufficient resources
+      // Combat resolves directly
+      expect(game.state.planets['new-albion'].controller).toBe('dennis')
+
+      // No mech should be on the planet
+      const newAlbion = game.state.units['27'].planets['new-albion']
+        .filter(u => u.owner === 'dennis')
+      expect(newAlbion.every(u => u.type !== 'mech')).toBe(true)
+    })
   })
 
   describe('Promissory Note — War Funding', () => {

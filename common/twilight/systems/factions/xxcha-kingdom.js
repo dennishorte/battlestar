@@ -137,10 +137,56 @@ module.exports = {
   // This is checked in getAgendaParticipation to ensure Xxcha is never in the excluded list.
   cannotBeExcludedFromVoting: true,
 
-  // Clear agent vote bonus after agenda resolves
-  onAgendaOutcomeResolved(player, ctx, _args) {
+  // Clear agent vote bonus after agenda resolves + Indomitus DEPLOY
+  onAgendaOutcomeResolved(player, ctx, args) {
     if (ctx.state._xxchaAgentVoteBonus?.[player.name]) {
       delete ctx.state._xxchaAgentVoteBonus[player.name]
+    }
+
+    // Mech — Indomitus DEPLOY: After an agenda is resolved, if you are/were the
+    // elected player or gained trade goods, you may place 1 mech on a controlled planet.
+    const { winningOutcome, playerVotes } = args || {}
+    let eligible = false
+
+    // Check if Xxcha was the elected player (outcome is a player name matching Xxcha)
+    if (winningOutcome === player.name) {
+      eligible = true
+    }
+
+    // Check if Xxcha voted for the winning outcome (and may have gained TG)
+    if (!eligible && playerVotes) {
+      const playerVote = playerVotes[player.name]
+      if (playerVote && playerVote.outcome === winningOutcome && playerVote.count > 0) {
+        eligible = true
+      }
+    }
+
+    if (!eligible) {
+      return
+    }
+
+    const controlledPlanets = player.getControlledPlanets()
+    if (controlledPlanets.length === 0) {
+      return
+    }
+
+    const choices = ['Pass', ...controlledPlanets]
+    const selection = ctx.actions.choose(player, choices, {
+      title: 'Indomitus: Deploy 1 mech on a controlled planet?',
+    })
+
+    if (selection[0] === 'Pass') {
+      return
+    }
+
+    const targetPlanet = selection[0]
+    const systemId = ctx.game._findSystemForPlanet(targetPlanet)
+    if (systemId) {
+      ctx.game._addUnitToPlanet(systemId, targetPlanet, 'mech', player.name)
+      ctx.log.add({
+        template: 'Indomitus: {player} deploys 1 mech on {planet}',
+        args: { player: player.name, planet: targetPlanet },
+      })
     }
   },
 

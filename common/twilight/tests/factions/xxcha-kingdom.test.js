@@ -367,7 +367,72 @@ describe('Xxcha Kingdom', () => {
 
   describe('Mech — Indomitus', () => {
     test.todo('damage immune during bombardment and space cannon')
-    test.todo('DEPLOY: when elected or gaining TG during agenda phase')
+
+    test('DEPLOY: place 1 mech after agenda resolves if voted for winning outcome', () => {
+      const game = t.fixture({ factions: ['xxcha-kingdom', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        custodiansRemoved: true,
+        agendaDeck: ['mutiny'],
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          planets: {
+            'archon-ren': { exhausted: false },
+            'archon-tau': { exhausted: false },
+          },
+        },
+        micah: {
+          tradeGoods: 0,
+          commodities: 0,
+          planets: {
+            'arretze': { exhausted: true },
+            'hercant': { exhausted: true },
+            'kamdorn': { exhausted: true },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Play through action phase quickly
+      t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Pass')  // micah declines secondary
+      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'hacan-home')
+      t.choose(game, 'Pass')  // dennis declines secondary
+      t.choose(game, 'Pass')  // dennis passes
+      t.choose(game, 'Pass')  // micah passes
+
+      // Status phase
+      t.choose(game, 'Done')  // dennis
+      t.choose(game, 'Done')  // micah
+
+      // Agenda phase — Quash prompt
+      t.choose(game, 'Pass')  // don't quash
+
+      // Agent prompt may appear (status phase readied the agent)
+      const agentChoices = t.currentChoices(game)
+      if (agentChoices.includes('Exhaust Ggrocuto Rinn')) {
+        t.choose(game, 'Pass')
+      }
+
+      // Micah votes first (left of speaker)
+      t.choose(game, 'Abstain')
+
+      // Dennis votes For
+      t.choose(game, 'For')
+      t.choose(game, 'archon-ren (3)', 'archon-tau (1)')
+
+      // Agenda resolved — Indomitus DEPLOY should trigger (Xxcha voted for winning outcome)
+      t.choose(game, 'archon-ren')  // Deploy mech on archon-ren
+
+      // Verify mech was placed
+      const renUnits = game.state.units['xxcha-home'].planets['archon-ren']
+        .filter(u => u.owner === 'dennis' && u.type === 'mech')
+      expect(renUnits.length).toBe(1)
+
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Indomitus'))).toBe(true)
+    })
   })
 
   describe('Promissory Note — Political Favor', () => {
