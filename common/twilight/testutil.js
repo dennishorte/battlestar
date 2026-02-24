@@ -311,6 +311,15 @@ TestUtil.setBoard = function(game, state) {
       _applyTestLayout(game, state.systems)
     }
 
+    // Place command tokens on systems
+    if (state.systemTokens) {
+      for (const [systemId, playerNames] of Object.entries(state.systemTokens)) {
+        if (game.state.systems[systemId]) {
+          game.state.systems[systemId].commandTokens = [...playerNames]
+        }
+      }
+    }
+
     // Apply per-player state
     for (const player of game.players.all()) {
       const playerState = state[player.name]

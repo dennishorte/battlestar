@@ -155,7 +155,112 @@ describe('Universities of Jol-Nar', () => {
   })
 
   describe('Agent — Doctor Sucaban', () => {
-    test.todo('when a player spends resources to research, may exhaust to let them remove infantry to reduce cost')
+    test('after Jol-Nar researches, may exhaust to let them spend influence for 2 action cards', () => {
+      const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+      game.run()
+      pickStrategyCards(game, 'technology', 'imperial')
+
+      t.choose(game, 'Strategic Action')
+
+      // Choose a tech to research (sarween-tools has no prereqs but Jol-Nar already has it)
+      // Jol-Nar has 4 techs (1 each color), can research fleet-logistics (2 blue, skip 1 via Analytical)
+      t.choose(game, 'fleet-logistics')
+
+      // Doctor Sucaban prompt fires (onAnyTechResearched)
+      t.choose(game, 'Exhaust Doctor Sucaban')
+
+      // Jol-Nar (dennis) exhausts planets for 2 influence
+      // Jol has 2 influence, Nar has 3 influence — exhaust Jol (2 influence) to meet the 2 needed
+      t.choose(game, 'jol (2)')
+
+      // Micah declines technology secondary
+      t.choose(game, 'Pass')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.actionCards.length).toBe(2)
+      expect(dennis.isAgentReady()).toBe(false)
+
+      // Jol should be exhausted
+      expect(game.state.planets['jol'].exhausted).toBe(true)
+    })
+
+    test('can decline to use agent', () => {
+      const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+      game.run()
+      pickStrategyCards(game, 'technology', 'imperial')
+
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'fleet-logistics')
+
+      // Decline the agent
+      t.choose(game, 'Pass')
+
+      // Micah declines technology secondary
+      t.choose(game, 'Pass')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(true)
+      expect(dennis.actionCards || []).toEqual([])
+    })
+
+    test('fires when another player researches technology', () => {
+      // Micah picks technology, Dennis picks something else
+      const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'technology')
+
+      // Dennis goes first — use leadership
+      t.choose(game, 'Strategic Action')
+
+      // Dennis declines the leadership secondary offer (micah)
+      t.choose(game, 'Pass')
+
+      // Micah's turn — use technology
+      t.choose(game, 'Strategic Action')
+
+      // Micah chooses a tech to research — Hacan starts with antimass-deflectors(blue) + sarween-tools(yellow)
+      const micahChoices = t.currentChoices(game)
+      t.choose(game, micahChoices[0])
+
+      // Doctor Sucaban prompt fires for Dennis (Jol-Nar)
+      t.choose(game, 'Exhaust Doctor Sucaban')
+
+      // Micah (the researching player) exhausts planets for influence
+      // Hacan planets: arretze(0 inf), hercant(1 inf), kamdorn(1 inf)
+      // Need 2 influence — exhaust hercant + kamdorn
+      t.choose(game, 'hercant (1)')
+      t.choose(game, 'kamdorn (1)')
+
+      // Dennis declines the technology secondary
+      t.choose(game, 'Pass')
+
+      const micah = game.players.byName('micah')
+      expect(micah.actionCards.length).toBe(2)
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+    })
+
+    test('does not fire when agent is already exhausted', () => {
+      const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          agentExhausted: true,
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'technology', 'imperial')
+
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'fleet-logistics')
+
+      // No agent prompt — should go straight to secondary offer
+      // Micah declines technology secondary
+      t.choose(game, 'Pass')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.actionCards || []).toEqual([])
+    })
   })
 
   describe('Commander — Agnlan Oln', () => {

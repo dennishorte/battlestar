@@ -63,4 +63,71 @@ module.exports = {
       args: { player },
     })
   },
+
+  // Agent — Doctor Sucaban: After a player researches a technology, exhaust to
+  // allow that player to spend 2 influence to draw 2 action cards.
+  onAnyTechResearched(jolNarPlayer, ctx, { researchingPlayer, tech: _tech }) {
+    if (!jolNarPlayer.isAgentReady()) {
+      return
+    }
+
+    const choice = ctx.actions.choose(jolNarPlayer, ['Exhaust Doctor Sucaban', 'Pass'], {
+      title: `Doctor Sucaban: ${researchingPlayer.name} researched a technology. Exhaust agent?`,
+    })
+
+    if (choice[0] !== 'Exhaust Doctor Sucaban') {
+      return
+    }
+
+    // Re-fetch the researching player in case reference went stale
+    const targetPlayer = ctx.players.byName(researchingPlayer.name)
+
+    // Check if target player has at least 2 influence available
+    if (targetPlayer.getTotalInfluence() < 2) {
+      jolNarPlayer.exhaustAgent()
+      ctx.log.add({
+        template: 'Doctor Sucaban: {player} exhausts agent but {target} has insufficient influence',
+        args: { player: jolNarPlayer.name, target: targetPlayer.name },
+      })
+      return
+    }
+
+    jolNarPlayer.exhaustAgent()
+
+    // Target player chooses planets to exhaust for 2 influence
+    const readyPlanets = targetPlayer.getReadyPlanets()
+    const planetChoices = readyPlanets.map(pId => {
+      const planet = ctx.game.res.getPlanet(pId)
+      return `${pId} (${planet ? planet.influence : 0})`
+    })
+
+    let influenceSpent = 0
+    while (influenceSpent < 2 && planetChoices.length > 0) {
+      const remaining = 2 - influenceSpent
+      const selection = ctx.actions.choose(targetPlayer, planetChoices, {
+        title: `Doctor Sucaban: Exhaust planets for influence (${remaining} more needed)`,
+      })
+
+      const planetId = selection[0].split(' (')[0]
+      const planet = ctx.game.res.getPlanet(planetId)
+      if (planet) {
+        influenceSpent += planet.influence
+        ctx.state.planets[planetId].exhausted = true
+      }
+
+      // Remove the exhausted planet from choices
+      const idx = planetChoices.indexOf(selection[0])
+      if (idx !== -1) {
+        planetChoices.splice(idx, 1)
+      }
+    }
+
+    // Draw 2 action cards
+    ctx.game._drawActionCards(targetPlayer, 2)
+
+    ctx.log.add({
+      template: 'Doctor Sucaban: {target} spends influence to draw 2 action cards',
+      args: { player: jolNarPlayer.name, target: targetPlayer.name },
+    })
+  },
 }

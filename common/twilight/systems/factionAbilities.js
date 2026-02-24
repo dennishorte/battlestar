@@ -52,6 +52,12 @@ class FactionAbilities {
   onTechResearched(player, tech) {
     const handler = this._getPlayerHandler(player)
     handler?.onTechResearched?.(player, this, tech)
+
+    // Notify all players about technology research (e.g., Jol-Nar agent Doctor Sucaban)
+    for (const otherPlayer of this.players.all()) {
+      const otherHandler = this._getPlayerHandler(otherPlayer)
+      otherHandler?.onAnyTechResearched?.(otherPlayer, this, { researchingPlayer: player, tech })
+    }
   }
 
   canTradeActionCards(player, target) {
@@ -546,9 +552,12 @@ class FactionAbilities {
   // T. Strategy Token Triggers
   // ---------------------------------------------------------------------------
 
-  onStrategyTokenSpent(player) {
-    const handler = this._getPlayerHandler(player)
-    handler?.onStrategyTokenSpent?.(player, this)
+  onStrategyTokenSpent(spendingPlayer, activePlayerName) {
+    // Notify all players (e.g., Mahact agent triggers on own token spend)
+    for (const player of this.players.all()) {
+      const handler = this._getPlayerHandler(player)
+      handler?.onStrategyTokenSpent?.(player, this, { spendingPlayer, activePlayerName })
+    }
   }
 
 

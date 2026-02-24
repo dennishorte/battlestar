@@ -50,13 +50,125 @@ describe('Naaz-Rokha Alliance', () => {
   })
 
   describe('Distant Suns', () => {
-    test.todo('draw 1 additional exploration card when exploring a planet with a mech')
-    test.todo('choose 1 card to resolve and discard the rest')
-    test.todo('no bonus draw when exploring without a mech')
+    test('getExplorationBonus returns 1 when mech is present on the planet', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            '20': {
+              'vefut-ii': ['mech', 'infantry'],
+            },
+          },
+          planets: {
+            'vefut-ii': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      const bonus = game.factionAbilities.getExplorationBonus(dennis, 'vefut-ii')
+      expect(bonus).toBe(1)
+    })
+
+    test('getExplorationBonus returns 0 without a mech', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            '20': {
+              'vefut-ii': ['infantry', 'infantry'],
+            },
+          },
+          planets: {
+            'vefut-ii': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      const bonus = game.factionAbilities.getExplorationBonus(dennis, 'vefut-ii')
+      expect(bonus).toBe(0)
+    })
+
+    test('exploring with mech draws extra card (single card deck auto-resolves)', () => {
+      // With only 1 card in the deck, the mech bonus tries to draw a second but
+      // the deck is empty. The single card auto-resolves without a choice prompt.
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        explorationDecks: {
+          cultural: [],
+          hazardous: ['expedition'],
+          industrial: [],
+          frontier: [],
+        },
+        dennis: {
+          units: {
+            '20': {
+              'vefut-ii': ['mech', 'infantry'],
+            },
+          },
+          planets: {
+            'vefut-ii': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+
+      // Explore directly. Mech bonus = 1, but only 1 card in deck so only 1 drawn.
+      game._explorePlanet('vefut-ii', 'dennis')
+      expect(game.state.exploredPlanets['vefut-ii']).toBe(true)
+
+      // Expedition gives 2 trade goods
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBe(2)
+
+      // Deck should be empty (1 card consumed)
+      expect(game.state.explorationDecks.hazardous.length).toBe(0)
+    })
+
+    test('exploring without mech draws only 1 card', () => {
+      // Deck: ['expedition', 'mining-world']. pop() returns mining-world first.
+      // No mech = bonus 0, so only 1 card drawn = mining-world (attach).
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        explorationDecks: {
+          cultural: [],
+          hazardous: ['expedition', 'mining-world'],
+          industrial: [],
+          frontier: [],
+        },
+        dennis: {
+          units: {
+            '20': {
+              'vefut-ii': ['infantry'],
+            },
+          },
+          planets: {
+            'vefut-ii': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+
+      game._explorePlanet('vefut-ii', 'dennis')
+      expect(game.state.exploredPlanets['vefut-ii']).toBe(true)
+
+      // Mining World is an attach card (no trade goods)
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBe(0)
+
+      // 1 card consumed, 1 remaining
+      expect(game.state.explorationDecks.hazardous.length).toBe(1)
+
+      // Mining World should be attached to the planet
+      expect(game.state.planets['vefut-ii'].attachments).toContain('mining-world')
+    })
   })
 
   describe('Fabrication', () => {
-    test('purges fragments for command token', () => {
+    test('purges 1 fragment for command token', () => {
       const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
       t.setBoard(game, {
         dennis: { relicFragments: ['cultural', 'hazardous'] },
@@ -65,7 +177,7 @@ describe('Naaz-Rokha Alliance', () => {
 
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis uses Component Action → Fabrication
+      // Dennis uses Component Action -> Fabrication
       t.choose(game, 'Component Action')
       t.choose(game, 'fabrication')
 
@@ -80,13 +192,268 @@ describe('Naaz-Rokha Alliance', () => {
       expect(dennis.commandTokens.tactics).toBe(4)
     })
 
-    test.todo('purges 2 fragments of same type for a relic')
-    test.todo('offers choice when both options are available')
+    test('purges 2 fragments of same type for a relic', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: { relicFragments: ['cultural', 'cultural', 'hazardous'] },
+      })
+      game.run()
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses Component Action -> Fabrication
+      t.choose(game, 'Component Action')
+      t.choose(game, 'fabrication')
+
+      // Has a pair of cultural fragments, so "Purge 2 fragments for relic" is available
+      t.choose(game, 'Purge 2 fragments for relic')
+      // Only 1 pair type (cultural), so no fragment type choice needed
+
+      const dennis = game.players.byName('dennis')
+      // 2 cultural purged, 1 hazardous remains
+      expect(dennis.relicFragments).toEqual(['hazardous'])
+    })
+
+    test('offers choice when both options are available', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: { relicFragments: ['hazardous', 'hazardous'] },
+      })
+      game.run()
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'fabrication')
+
+      // Both options available since there is a pair
+      const choices = t.currentChoices(game)
+      expect(choices).toContain('Purge 2 fragments for relic')
+      expect(choices).toContain('Purge 1 fragment for command token')
+
+      // Choose command token instead of relic
+      t.choose(game, 'Purge 1 fragment for command token')
+      // Only 1 fragment type (hazardous), auto-selects
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.relicFragments).toEqual(['hazardous'])
+      expect(dennis.commandTokens.tactics).toBe(4)
+    })
+
+    test('not available with zero fragments', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: { relicFragments: [] },
+      })
+      game.run()
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Component Action should not list Fabrication when no fragments
+      t.choose(game, 'Component Action')
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('fabrication')
+    })
   })
 
   describe('Agent — Garv and Gunn', () => {
-    test.todo('exhaust at end of any player turn to allow that player to explore 1 planet')
-    test.todo('exhausted agent cannot be used')
+    test('exhaust at end of tactical action to let activating player explore a planet', () => {
+      // Dennis (Naaz-Rokha) uses his strategy card first. Then Micah (Hacan)
+      // activates system 20 with vefut-ii (hazardous, unexplored, controlled by micah).
+      // At end of tactical action, Garv and Gunn lets Micah explore vefut-ii.
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        explorationDecks: {
+          cultural: [],
+          hazardous: ['expedition'],
+          industrial: [],
+          frontier: [],
+        },
+        dennis: {
+          units: {
+            'naazrokha-home': {
+              space: ['carrier', 'destroyer'],
+              'naazir': ['infantry', 'infantry', 'space-dock'],
+              'rokha': ['infantry'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'hacan-home': {
+              space: ['carrier', 'cruiser'],
+              'arretze': ['infantry', 'infantry', 'space-dock'],
+            },
+            '20': {
+              'vefut-ii': ['infantry'],
+            },
+          },
+          planets: {
+            'vefut-ii': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses Leadership (strategic action) so he can pass later
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass') // micah declines leadership secondary
+
+      // Micah activates system 20 (no space dock there, so no production prompt)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '20' })
+      t.action(game, 'move-ships', { movements: [] })
+
+      // At end of tactical action, Garv and Gunn prompt fires
+      t.choose(game, 'Exhaust Garv and Gunn')
+
+      // vefut-ii is the only explorable planet, auto-selected
+      expect(game.state.exploredPlanets['vefut-ii']).toBe(true)
+
+      // Agent should be exhausted
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+
+      // Expedition gives 2 trade goods to the activating player (Micah)
+      const micah = game.players.byName('micah')
+      expect(micah.tradeGoods).toBe(2)
+    })
+
+    test('exhausted agent cannot be used', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        explorationDecks: {
+          cultural: [],
+          hazardous: ['expedition'],
+          industrial: [],
+          frontier: [],
+        },
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'naazrokha-home': {
+              space: ['carrier', 'destroyer'],
+              'naazir': ['infantry', 'infantry', 'space-dock'],
+              'rokha': ['infantry'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'hacan-home': {
+              space: ['carrier', 'cruiser'],
+              'arretze': ['infantry', 'infantry', 'space-dock'],
+            },
+            '20': {
+              'vefut-ii': ['infantry'],
+            },
+          },
+          planets: {
+            'vefut-ii': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses strategy card first
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass') // micah declines
+
+      // Micah activates system 20
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '20' })
+      t.action(game, 'move-ships', { movements: [] })
+
+      // No Garv and Gunn prompt — agent is exhausted.
+      // Game proceeds past tactical action end. Planet should NOT be explored.
+      expect(game.state.exploredPlanets['vefut-ii']).toBeUndefined()
+    })
+
+    test('can be used on own tactical action', () => {
+      // Dennis (Naaz-Rokha) activates system 20 where they control vefut-ii.
+      // No space dock in system 20, so production is skipped.
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        explorationDecks: {
+          cultural: [],
+          hazardous: ['expedition'],
+          industrial: [],
+          frontier: [],
+        },
+        dennis: {
+          units: {
+            'naazrokha-home': {
+              space: ['carrier', 'destroyer'],
+              'naazir': ['infantry', 'infantry', 'space-dock'],
+              'rokha': ['infantry'],
+            },
+            '20': {
+              'vefut-ii': ['infantry'],
+            },
+          },
+          planets: {
+            'vefut-ii': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis activates system 20 (tactical action)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '20' })
+      t.action(game, 'move-ships', { movements: [] })
+
+      // Agent prompt at end of tactical action (no production since no space dock)
+      t.choose(game, 'Exhaust Garv and Gunn')
+
+      expect(game.state.exploredPlanets['vefut-ii']).toBe(true)
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+      // Expedition gives 2 trade goods
+      expect(dennis.tradeGoods).toBe(2)
+    })
+
+    test('no prompt when active system has no explorable planets', () => {
+      // Dennis activates system 20, but vefut-ii is already explored
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        exploredPlanets: { 'vefut-ii': true },
+        dennis: {
+          units: {
+            'naazrokha-home': {
+              space: ['carrier', 'destroyer'],
+              'naazir': ['infantry', 'infantry', 'space-dock'],
+              'rokha': ['infantry'],
+            },
+            '20': {
+              'vefut-ii': ['infantry'],
+            },
+          },
+          planets: {
+            'vefut-ii': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '20' })
+      t.action(game, 'move-ships', { movements: [] })
+
+      // No agent prompt — planet already explored.
+      // Game proceeds past the tactical action.
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(true)
+    })
   })
 
   describe('Commander — Dart and Tai', () => {
