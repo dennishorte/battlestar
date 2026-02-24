@@ -6,6 +6,21 @@ module.exports = {
   },
   isExcludedFromVoting: true,
 
+  // Mordred mech: +2 combat against opponent with Valefar assimilator token
+  getCombatModifier(player, ctx) {
+    const opponentName = ctx.state._combatOpponent?.[player.name]
+    if (!opponentName) {
+      return 0
+    }
+
+    const tokens = ctx.state.assimilatorTokens || {}
+    const hasTokenOnOpponent =
+      (tokens.x?.ownerName === opponentName) ||
+      (tokens.y?.ownerName === opponentName)
+
+    return hasTokenOnOpponent ? -2 : 0
+  },
+
   // Commander — Nekro Acidos: After you gain a technology, draw 1 action card.
   _commanderDrawCard(player, ctx) {
     if (!player.isCommanderUnlocked()) {
