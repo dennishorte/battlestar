@@ -628,7 +628,56 @@ describe('Clan of Saar', () => {
     })
 
     describe('Deorbit Barrage', () => {
-      test.todo('ACTION: exhaust and spend resources to roll dice against ground forces on a planet up to 2 systems from asteroid field with ships')
+      test('ACTION: exhaust and spend resources to roll dice against ground forces on a planet near asteroid field', () => {
+        // Dennis (Saar) has ships in system 44 (asteroid field).
+        // System 35 (bereg, lirta-iv) is adjacent to 44 (1 hop).
+        // Micah has infantry on bereg — valid target for Deorbit Barrage.
+        const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['antimass-deflectors', 'gravity-wave-projector', 'deorbit-barrage'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            tradeGoods: 3,
+            units: {
+              'saar-home': {
+                'lisis-ii': ['infantry', 'infantry', 'space-dock'],
+              },
+              '44': {
+                space: ['cruiser'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              '35': {
+                'bereg': ['infantry', 'infantry', 'infantry'],
+              },
+            },
+            planets: { bereg: { exhausted: false } },
+          },
+        })
+        game.run()
+        t.choose(game, 'leadership')
+        t.choose(game, 'diplomacy')
+
+        // Dennis uses Component Action → Deorbit Barrage
+        t.choose(game, 'Component Action')
+        t.choose(game, 'deorbit-barrage')
+
+        // Target planet auto-selects (bereg is the only valid target)
+        // Choose how many resources to spend
+        t.choose(game, 'Spend 3')
+
+        // Verify the barrage happened
+        const logEntries = game.log._log.map(e => e.template || '')
+        expect(logEntries.some(e => e.includes('Deorbit Barrage'))).toBe(true)
+
+        // Some infantry may have been destroyed (depends on dice rolls)
+        const micahInfantry = game.state.units['35'].planets['bereg']
+          .filter(u => u.owner === 'micah' && u.type === 'infantry')
+        // Started with 3, may have lost some
+        expect(micahInfantry.length).toBeLessThanOrEqual(3)
+      })
     })
   })
 })

@@ -52,6 +52,12 @@ module.exports = {
       abilityId: 'nomadic',  // Any ability works — real check is hero status
       isAvailable: (player) => player.isHeroUnlocked() && !player.isHeroPurged(),
     },
+    {
+      id: 'deorbit-barrage',
+      name: 'Deorbit Barrage',
+      abilityId: 'nomadic',
+      isAvailable: (player) => player.hasTechnology('deorbit-barrage'),
+    },
   ],
 
   armageddonRelay(ctx, player) {
@@ -164,6 +170,172 @@ module.exports = {
       args: { player: player.name },
     })
   },
+
+  // ---------------------------------------------------------------------------
+  // Deorbit Barrage — ACTION: Exhaust this card and spend any amount of resources
+  // to choose a planet up to 2 systems away from an asteroid field that contains
+  // your ships; roll that many dice, assign 1 hit per roll of 4+.
+  // ---------------------------------------------------------------------------
+  deorbitBarrage(ctx, player) {
+    // Find asteroid fields with this player's ships
+    const asteroidSystems = []
+    for (const [systemId, systemUnits] of Object.entries(ctx.state.units)) {
+      const tile = ctx.game.res.getSystemTile(systemId) || ctx.game.res.getSystemTile(Number(systemId))
+      if (!tile || tile.anomaly !== 'asteroid-field') {
+        continue
+      }
+      if (systemUnits.space.some(u => u.owner === player.name)) {
+        asteroidSystems.push(systemId)
+      }
+    }
+
+    if (asteroidSystems.length === 0) {
+      ctx.log.add({
+        template: 'Deorbit Barrage: {player} has no ships in asteroid fields',
+        args: { player: player.name },
+      })
+      return
+    }
+
+    // Find all planets within 2 systems of these asteroid fields
+    const targetPlanets = []
+    const visited = new Set()
+    for (const astId of asteroidSystems) {
+      // BFS: distance 0 = asteroid field itself, 1 = adjacent, 2 = two hops
+      const queue = [{ systemId: astId, distance: 0 }]
+      const seen = new Set([astId])
+      while (queue.length > 0) {
+        const { systemId, distance } = queue.shift()
+        if (distance <= 2) {
+          const tile = ctx.game.res.getSystemTile(systemId) || ctx.game.res.getSystemTile(Number(systemId))
+          if (tile && tile.planets) {
+            for (const planetId of tile.planets) {
+              const planetUnits = ctx.state.units[systemId]?.planets[planetId] || []
+              const enemyGround = planetUnits.filter(
+                u => u.owner !== player.name && (u.type === 'infantry' || u.type === 'mech')
+              )
+              if (enemyGround.length > 0 && !visited.has(planetId)) {
+                visited.add(planetId)
+                targetPlanets.push({ planetId, systemId })
+              }
+            }
+          }
+        }
+        if (distance < 2) {
+          const adjacent = ctx.game._getAdjacentSystems(systemId)
+          for (const adjId of adjacent) {
+            if (!seen.has(adjId)) {
+              seen.add(adjId)
+              queue.push({ systemId: adjId, distance: distance + 1 })
+            }
+          }
+        }
+      }
+    }
+
+    if (targetPlanets.length === 0) {
+      ctx.log.add({
+        template: 'Deorbit Barrage: {player} has no valid target planets',
+        args: { player: player.name },
+      })
+      return
+    }
+
+    // Choose target planet
+    let target
+    if (targetPlanets.length === 1) {
+      target = targetPlanets[0]
+    }
+    else {
+      const planetChoices = targetPlanets.map(p => p.planetId)
+      const sel = ctx.actions.choose(player, planetChoices, {
+        title: 'Deorbit Barrage: Choose target planet',
+      })
+      target = targetPlanets.find(p => p.planetId === sel[0])
+    }
+
+    // Choose how many resources to spend (1 to max available)
+    const maxResources = player.getTotalResources() + (player.tradeGoods || 0)
+    if (maxResources <= 0) {
+      ctx.log.add({
+        template: 'Deorbit Barrage: {player} has no resources to spend',
+        args: { player: player.name },
+      })
+      return
+    }
+
+    const spendChoices = []
+    for (let i = 1; i <= Math.min(maxResources, 10); i++) {
+      spendChoices.push(`Spend ${i}`)
+    }
+    const spendSel = ctx.actions.choose(player, spendChoices, {
+      title: 'Deorbit Barrage: Spend how many resources?',
+    })
+    const amount = parseInt(spendSel[0].match(/\d+/)[0])
+
+    // Pay resources: exhaust planets first, then trade goods
+    let remaining = amount
+    const readyPlanets = player.getReadyPlanets()
+      .map(pId => {
+        const planet = ctx.game.res.getPlanet(pId)
+        return { id: pId, resources: planet ? planet.resources : 0 }
+      })
+      .sort((a, b) => a.resources - b.resources)
+
+    for (const planet of readyPlanets) {
+      if (remaining <= 0) {
+        break
+      }
+      ctx.state.planets[planet.id].exhausted = true
+      remaining -= planet.resources
+    }
+    if (remaining > 0) {
+      const tgToSpend = Math.min(remaining, player.tradeGoods)
+      player.tradeGoods -= tgToSpend
+    }
+
+    // Roll dice
+    let hits = 0
+    const rolls = []
+    for (let i = 0; i < amount; i++) {
+      const roll = Math.floor(ctx.game.random() * 10) + 1
+      rolls.push(roll)
+      if (roll >= 4) {
+        hits++
+      }
+    }
+
+    ctx.log.add({
+      template: 'Deorbit Barrage: {player} spends {amount} resources, rolls {rolls} — {hits} hits on {planet}',
+      args: { player: player.name, amount, rolls: rolls.join(', '), hits, planet: target.planetId },
+    })
+
+    // Assign hits to ground forces on the target planet
+    const planetUnits = ctx.state.units[target.systemId].planets[target.planetId]
+    let assigned = 0
+    for (let i = 0; i < hits && assigned < hits; i++) {
+      const groundForce = planetUnits.find(
+        u => u.owner !== player.name && (u.type === 'infantry' || u.type === 'mech')
+      )
+      if (!groundForce) {
+        break
+      }
+      const idx = planetUnits.indexOf(groundForce)
+      if (idx !== -1) {
+        planetUnits.splice(idx, 1)
+        assigned++
+        ctx.game.factionAbilities.onUnitDestroyed(target.systemId, groundForce, player.name, target.planetId)
+      }
+    }
+
+    if (assigned > 0) {
+      ctx.log.add({
+        template: 'Deorbit Barrage: {count} ground forces destroyed on {planet}',
+        args: { count: assigned, planet: target.planetId },
+      })
+    }
+  },
+
 
   // ---------------------------------------------------------------------------
   // Chaos Mapping — Activation Restriction
