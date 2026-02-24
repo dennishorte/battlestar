@@ -1,6 +1,57 @@
 const res = require('../../res/index.js')
 
 module.exports = {
+  // Letani Warrior II: at start of turn, place revived infantry on a planet in home system
+  onTurnStart(player, ctx) {
+    const revivalCount = ctx.state.letaniRevival?.[player.name] || 0
+    if (revivalCount <= 0) {
+      return
+    }
+
+    const homeSystemId = player.faction?.homeSystem
+    if (!homeSystemId) {
+      return
+    }
+
+    const tile = ctx.game.res.getSystemTile(homeSystemId)
+    if (!tile || !tile.planets || tile.planets.length === 0) {
+      return
+    }
+
+    let targetPlanet
+    if (tile.planets.length === 1) {
+      targetPlanet = tile.planets[0]
+    }
+    else {
+      const controlled = tile.planets.filter(
+        pId => ctx.state.planets[pId]?.controller === player.name
+      )
+      if (controlled.length === 0) {
+        targetPlanet = tile.planets[0]
+      }
+      else if (controlled.length === 1) {
+        targetPlanet = controlled[0]
+      }
+      else {
+        const sel = ctx.actions.choose(player, controlled, {
+          title: `Letani Warrior II: Place ${revivalCount} revived infantry on which planet?`,
+        })
+        targetPlanet = sel[0]
+      }
+    }
+
+    for (let i = 0; i < revivalCount; i++) {
+      ctx.game._addUnitToPlanet(homeSystemId, targetPlanet, 'infantry', player.name)
+    }
+
+    ctx.log.add({
+      template: 'Letani Warrior II: {player} places {count} revived infantry on {planet}',
+      args: { player: player.name, count: revivalCount, planet: targetPlanet },
+    })
+
+    ctx.state.letaniRevival[player.name] = 0
+  },
+
   // Commander — Dirzuga Rophal: After you produce units, place 1 infantry
   // from your reinforcements on a planet that contains your space dock in that system.
   afterProduction(player, ctx, { systemId, unitCount }) {

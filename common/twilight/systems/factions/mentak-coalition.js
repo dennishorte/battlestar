@@ -257,6 +257,9 @@ module.exports = {
     })
   },
 
+  // Moll Terminus mech: other players' ground forces on this planet cannot use Sustain Damage
+  mechBlocksOpponentSustain: true,
+
   // Mirror Computing (faction tech): When you spend trade goods,
   // each trade good is worth 2 resources or influence instead of 1.
   getTradeGoodResourceValue(player, _ctx) {

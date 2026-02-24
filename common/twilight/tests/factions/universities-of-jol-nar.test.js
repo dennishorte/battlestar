@@ -337,7 +337,48 @@ describe('Universities of Jol-Nar', () => {
   })
 
   describe('Mech DEPLOY — Shield Paling', () => {
-    test.todo('infantry on this planet are not affected by the Fragile faction ability')
+    test('infantry on this planet are not affected by the Fragile faction ability', () => {
+      // Dennis (Jol-Nar, P1) invades system 27 with mech + infantry
+      // Jol-Nar has Fragile: +1 to combat rolls (harder to hit)
+      // Shield Paling mech negates Fragile for infantry on same planet
+      // Infantry fight at combat 8 instead of 9
+      const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'jolnar-home': {
+              space: ['carrier'],
+              'jol': ['mech', 'infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          planets: { 'new-albion': { exhausted: false } },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'infantry', 'infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis (P1, leadership initiative 1) goes first
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'jolnar-home', count: 1 },
+          { unitType: 'mech', from: 'jolnar-home', count: 1 },
+          { unitType: 'infantry', from: 'jolnar-home', count: 5 },
+        ],
+      })
+
+      // Ground combat: Dennis has mech + 5 infantry (at combat 8, not 9) vs 3 infantry
+      // Dennis should win decisively
+      expect(game.state.planets['new-albion'].controller).toBe('dennis')
+    })
   })
 
   describe('Promissory Note — Research Agreement', () => {

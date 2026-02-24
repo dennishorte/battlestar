@@ -589,7 +589,48 @@ describe('Mentak Coalition', () => {
   })
 
   describe('Mech — Moll Terminus', () => {
-    test.todo("DEPLOY: other players' ground forces on this planet cannot use Sustain Damage")
+    test("opponent ground forces on same planet cannot use Sustain Damage", () => {
+      // Dennis (Mentak, P1) invades system 27 with mech + infantry
+      // Micah (Hacan, P2) defends with mech + infantry
+      // Micah's mech cannot sustain damage because of Moll Terminus
+      const game = t.fixture({ factions: ['mentak-coalition', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'mentak-home': {
+              space: ['carrier'],
+              'moll-primus': ['mech', 'infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          planets: { 'new-albion': { exhausted: false } },
+          units: {
+            '27': {
+              'new-albion': ['mech', 'infantry', 'infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis (P1, leadership initiative 1) goes first
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'mentak-home', count: 1 },
+          { unitType: 'mech', from: 'mentak-home', count: 1 },
+          { unitType: 'infantry', from: 'mentak-home', count: 4 },
+        ],
+      })
+
+      // Ground combat: Dennis has mech + 4 infantry vs Micah's mech + 2 infantry
+      // Micah's mech cannot sustain damage (Moll Terminus), giving Dennis big advantage
+      // Dennis should win the planet
+      expect(game.state.planets['new-albion'].controller).toBe('dennis')
+    })
   })
 
   describe('Promissory Note — Promise of Protection', () => {
