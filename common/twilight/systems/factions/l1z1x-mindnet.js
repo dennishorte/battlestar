@@ -153,4 +153,74 @@ module.exports = {
 
     return eligible
   },
+
+
+  // ---------------------------------------------------------------------------
+  // Super Dreadnought II: Cannot be destroyed by Direct Hit action card.
+  // ---------------------------------------------------------------------------
+
+  isDirectHitImmune(player, ctx, unit) {
+    if (unit.type !== 'dreadnought' || unit.owner !== player.name) {
+      return false
+    }
+    return player.hasTechnology('super-dreadnought-ii')
+  },
+
+
+  // ---------------------------------------------------------------------------
+  // Inheritance Systems (faction tech, component action):
+  // ACTION: Exhaust this card to gain a technology that has the same or fewer
+  // prerequisites as the number of non-unit-upgrade technologies you own.
+  // You don't need to meet color prerequisites.
+  // ---------------------------------------------------------------------------
+
+  inheritanceSystems(ctx, player) {
+    ctx.game._exhaustTech(player, 'inheritance-systems')
+
+    // Count non-unit-upgrade technologies the player owns
+    const techIds = player.getTechIds()
+    const res = ctx.game.res
+    const allTechs = [...res.getGenericTechnologies()]
+    if (player.faction?.factionTechnologies) {
+      allTechs.push(...player.faction.factionTechnologies)
+    }
+
+    let nonUnitUpgradeCount = 0
+    for (const techId of techIds) {
+      const tech = res.getTechnology(techId)
+      if (tech && !tech.unitUpgrade) {
+        nonUnitUpgradeCount++
+      }
+    }
+
+    // Find all technologies that have <= nonUnitUpgradeCount prerequisites
+    // and the player doesn't already own
+    const available = allTechs.filter(t => {
+      if (techIds.includes(t.id)) {
+        return false
+      }
+      return t.prerequisites.length <= nonUnitUpgradeCount
+    })
+
+    if (available.length === 0) {
+      ctx.log.add({
+        template: '{player} exhausts Inheritance Systems but no technologies available',
+        args: { player },
+      })
+      return
+    }
+
+    const choices = available.map(t => t.id)
+    const selection = ctx.actions.choose(player, choices, {
+      title: 'Inheritance Systems: Choose a technology to gain',
+    })
+
+    const chosenTechId = selection[0]
+    ctx.game._grantTechnology(player, chosenTechId)
+
+    ctx.log.add({
+      template: '{player} uses Inheritance Systems to gain {tech}',
+      args: { player, tech: chosenTechId },
+    })
+  },
 }

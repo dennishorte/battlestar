@@ -189,8 +189,128 @@ describe('Embers of Muaat', () => {
   })
 
   describe('Faction Technologies', () => {
-    test.todo('Magmus Reactor: ships can move into supernovas and gain 1 trade good on production near war sun or supernova')
-    test.todo('Prototype War Sun II: war sun gets move 3 and cost 10')
+    describe('Magmus Reactor', () => {
+      test('enables canMoveIntoSupernovae when player has the tech', () => {
+        const game = t.fixture({ factions: ['embers-of-muaat', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['plasma-scoring', 'magmus-reactor'],
+          },
+        })
+        game.run()
+
+        expect(game.factionAbilities.canMoveIntoSupernovae('dennis')).toBe(true)
+        expect(game.factionAbilities.canMoveIntoSupernovae('micah')).toBe(false)
+      })
+
+      test('does not enable canMoveIntoSupernovae without the tech', () => {
+        const game = t.fixture({ factions: ['embers-of-muaat', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['plasma-scoring'],
+          },
+        })
+        game.run()
+
+        // Muaat base ability: canMoveThroughSupernovae is true
+        expect(game.factionAbilities.canMoveThroughSupernovae('dennis')).toBe(true)
+        // But canMoveIntoSupernovae needs the tech
+        expect(game.factionAbilities.canMoveIntoSupernovae('dennis')).toBe(false)
+      })
+
+      test('gains 1 trade good after producing in system with war sun', () => {
+        const game = t.fixture({ factions: ['embers-of-muaat', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['plasma-scoring', 'magmus-reactor'],
+            tradeGoods: 0,
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'muaat-home': {
+                space: ['war-sun'],
+                'muaat': ['infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis activates muaat-home for production (tactical action)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: 'muaat-home' })
+        t.choose(game, 'Done')  // skip movement
+        t.action(game, 'produce-units', { units: [{ type: 'fighter', count: 1 }] })
+
+        // Magmus Reactor should have triggered: +1 TG for producing in system with war sun
+        const dennis = game.players.byName('dennis')
+        expect(dennis.tradeGoods).toBe(1)
+      })
+
+      test('does not gain trade good if no war sun and not adjacent to supernova', () => {
+        const game = t.fixture({ factions: ['embers-of-muaat', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['plasma-scoring', 'magmus-reactor'],
+            tradeGoods: 0,
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'muaat-home': {
+                space: ['fighter', 'fighter'],
+                'muaat': ['infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis activates muaat-home — no war sun in system, not adjacent to supernova
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: 'muaat-home' })
+        t.choose(game, 'Done')  // skip movement
+        t.action(game, 'produce-units', { units: [{ type: 'fighter', count: 1 }] })
+
+        // No TG gain
+        const dennis = game.players.byName('dennis')
+        expect(dennis.tradeGoods).toBe(0)
+      })
+    })
+
+    describe('Prototype War Sun II', () => {
+      test('war sun gets move 3 and cost 10 with the upgrade', () => {
+        const game = t.fixture({ factions: ['embers-of-muaat', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['plasma-scoring', 'prototype-war-sun-ii'],
+          },
+        })
+        game.run()
+
+        const stats = game._getUnitStats('dennis', 'war-sun')
+        expect(stats.move).toBe(3)
+        expect(stats.cost).toBe(10)
+        expect(stats.combat).toBe(3)
+        expect(stats.capacity).toBe(6)
+      })
+
+      test('war sun has base stats without the upgrade', () => {
+        const game = t.fixture({ factions: ['embers-of-muaat', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['plasma-scoring'],
+          },
+        })
+        game.run()
+
+        // Muaat's base war sun override: Prototype War Sun I
+        const stats = game._getUnitStats('dennis', 'war-sun')
+        expect(stats.move).toBe(1)
+        expect(stats.cost).toBe(12)
+        expect(stats.combat).toBe(3)
+      })
+    })
+
     test.todo('Stellar Genesis: place Avernus token and move it with war suns')
   })
 })
