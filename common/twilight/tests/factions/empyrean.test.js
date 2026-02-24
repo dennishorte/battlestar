@@ -325,7 +325,105 @@ describe('Empyrean', () => {
 
   describe('Commander — Xuange', () => {
     test.todo('unlock condition: be neighbors with all other players')
-    test.todo('after another player moves ships into a system with your command token, may return that token to reinforcements')
+
+    test('returns command token when opponent moves ships into system with token', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'empyrean'] })
+      t.setBoard(game, {
+        systemTokens: { '27': ['micah'] },
+        dennis: {
+          units: {
+            'hacan-home': {
+              space: ['cruiser'],
+              'arretze': ['infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          commandTokens: { tactics: 2, strategy: 2, fleet: 3 },
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
+          units: {
+            'empyrean-home': {
+              space: ['carrier'],
+              'the-dark': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis (Hacan) activates system 27 (which has micah/Empyrean command token)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Acamar (agent) is exhausted, so skip agent prompt
+      // Aetherpassage prompt fires because Empyrean has ships
+      t.choose(game, 'Allow Passage')
+
+      // Dennis moves cruiser into system 27
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'hacan-home', count: 1 }],
+      })
+
+      // onShipsEnterSystem fires — Xuange commander prompt: return token?
+      t.choose(game, 'Return Token')
+
+      // Empyrean should have token back (2 + 1 = 3 tactics)
+      const micah = game.players.byName('micah')
+      expect(micah.commandTokens.tactics).toBe(3)
+
+      // Token should be removed from system 27
+      expect(game.state.systems['27'].commandTokens).not.toContain('micah')
+    })
+
+    test('locked commander does not offer token return', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'empyrean'] })
+      t.setBoard(game, {
+        systemTokens: { '27': ['micah'] },
+        dennis: {
+          units: {
+            'hacan-home': {
+              space: ['cruiser'],
+              'arretze': ['infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          commandTokens: { tactics: 2, strategy: 2, fleet: 3 },
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'empyrean-home': {
+              space: ['carrier'],
+              'the-dark': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis (Hacan) activates system 27
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Aetherpassage prompt fires because Empyrean has ships
+      t.choose(game, 'Allow Passage')
+
+      // Dennis moves cruiser into system 27
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'hacan-home', count: 1 }],
+      })
+
+      // No commander prompt — commander is locked
+      // onShipsEnterSystem fires but commander check fails, no prompt
+
+      // Token should remain in system 27
+      expect(game.state.systems['27'].commandTokens).toContain('micah')
+
+      // Micah tactics tokens unchanged
+      const micah = game.players.byName('micah')
+      expect(micah.commandTokens.tactics).toBe(2)
+    })
   })
 
   describe('Hero — Conservator Procyon', () => {

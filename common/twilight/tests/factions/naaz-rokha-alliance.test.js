@@ -457,8 +457,103 @@ describe('Naaz-Rokha Alliance', () => {
   })
 
   describe('Commander — Dart and Tai', () => {
-    test.todo('after gaining control of a planet from another player, may explore that planet')
-    test.todo('locked commander gives no bonus')
+    test('explores planet after gaining control from another player', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        explorationDecks: {
+          cultural: [],
+          hazardous: ['expedition'],
+          industrial: [],
+          frontier: [],
+        },
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
+          units: {
+            'naazrokha-home': {
+              space: ['carrier'],
+              'naazir': ['infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              'starpoint': ['infantry'],
+            },
+          },
+          planets: {
+            'starpoint': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis invades system 27 (adjacent to home) with carrier + infantry
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'naazrokha-home', count: 1 },
+          { unitType: 'infantry', from: 'naazrokha-home', count: 4 },
+        ],
+      })
+
+      // Commander prompt: explore starpoint after taking from micah
+      t.choose(game, 'Explore')
+
+      expect(game.state.exploredPlanets['starpoint']).toBe(true)
+      // Expedition gives 2 trade goods
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBe(2)
+    })
+
+    test('locked commander does not trigger exploration', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        explorationDecks: {
+          cultural: [],
+          hazardous: ['expedition'],
+          industrial: [],
+          frontier: [],
+        },
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'naazrokha-home': {
+              space: ['carrier'],
+              'naazir': ['infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              'starpoint': ['infantry'],
+            },
+          },
+          planets: {
+            'starpoint': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis invades system 27 (adjacent to home)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'naazrokha-home', count: 1 },
+          { unitType: 'infantry', from: 'naazrokha-home', count: 4 },
+        ],
+      })
+
+      // No commander prompt — commander is locked
+      // Planet is not explored (was previously controlled by another player)
+      expect(game.state.exploredPlanets['starpoint']).toBeUndefined()
+    })
   })
 
   describe('Hero — Hesh and Prit', () => {

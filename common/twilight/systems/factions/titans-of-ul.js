@@ -103,6 +103,24 @@ module.exports = {
     return hits
   },
 
+  // Commander — Tungstantus: When 1 or more of your units use PRODUCTION,
+  // you may gain 1 trade good.
+  afterProduction(player, ctx, { unitCount }) {
+    if (!player.isCommanderUnlocked()) {
+      return
+    }
+
+    if (unitCount <= 0) {
+      return
+    }
+
+    player.addTradeGoods(1)
+    ctx.log.add({
+      template: 'Tungstantus: {player} gains 1 trade good',
+      args: { player: player.name },
+    })
+  },
+
   checkCoalescenceOnPlanet(player, ctx, { systemId, planetId, moverName }) {
     const planetUnits = ctx.state.units[systemId]?.planets[planetId] || []
     for (const unit of planetUnits) {
