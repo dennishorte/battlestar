@@ -109,29 +109,75 @@ module.exports = {
   },
 
   // Commander: Claire Gibson — at start of ground combat you defend, place 1 infantry
+  // Agent: Evelyn Delouis — offer to exhaust for +1 die to 1 ground force
   onGroundCombatStart(player, ctx, { systemId, planetId, opponentName: _opponentName }) {
-    if (!player.isCommanderUnlocked()) {
-      return
+    // Commander: Claire Gibson — place 1 infantry when defending
+    if (player.isCommanderUnlocked()) {
+      const planetUnits = ctx.state.units[systemId]?.planets[planetId] || []
+      const hasGroundForces = planetUnits.some(u => u.owner === player.name)
+      if (hasGroundForces) {
+        ctx.game._addUnitToPlanet(systemId, planetId, 'infantry', player.name)
+        ctx.log.add({
+          template: 'Claire Gibson: {player} places 1 infantry on {planet}',
+          args: { player: player.name, planet: planetId },
+        })
+      }
     }
 
-    // Check if player controls the planet (is the defender)
-    const planetUnits = ctx.state.units[systemId]?.planets[planetId] || []
-    const hasGroundForces = planetUnits.some(u => u.owner === player.name)
-    if (!hasGroundForces) {
-      return
+    // Agent: Evelyn Delouis — offer to exhaust for +1 die this combat
+    if (player.isAgentReady()) {
+      const planetUnits = ctx.state.units[systemId]?.planets[planetId] || []
+      const ownGroundForces = planetUnits.filter(u => u.owner === player.name)
+      if (ownGroundForces.length > 0) {
+        const choice = ctx.actions.choose(player, ['Exhaust Evelyn Delouis', 'Pass'], {
+          title: 'Evelyn Delouis: Exhaust agent for +1 die to 1 ground force?',
+        })
+        if (choice[0] === 'Exhaust Evelyn Delouis') {
+          if (!ctx.state._evelynDelouisActive) {
+            ctx.state._evelynDelouisActive = {}
+          }
+          ctx.state._evelynDelouisActive[player.name] = true
+        }
+      }
     }
-
-    ctx.game._addUnitToPlanet(systemId, planetId, 'infantry', player.name)
-    ctx.log.add({
-      template: 'Claire Gibson: {player} places 1 infantry on {planet}',
-      args: { player: player.name, planet: planetId },
-    })
   },
 
-  // Agent: Evelyn Delouis — at start of ground combat round, exhaust to give 1 ground force extra die
-  // This would need a per-round hook in ground combat; tracked via onGroundCombatStart for first round
-  onGroundCombatRoundEnd(_player, _ctx, _context) {
-    // Placeholder: agent implementation needs per-round ground combat hook
+  // Agent: Evelyn Delouis — at start of ground combat round, apply bonus die if activated
+  onGroundCombatRoundStart(player, ctx, { systemId, planetId, opponentName: _opponentName }) {
+    if (!player.isAgentReady()) {
+      return
+    }
+
+    // Only apply if explicitly activated in onGroundCombatStart
+    if (!ctx.state._evelynDelouisActive?.[player.name]) {
+      return
+    }
+
+    const planetUnits = ctx.state.units[systemId]?.planets[planetId] || []
+    const ownGroundForces = planetUnits.filter(u => u.owner === player.name)
+    if (ownGroundForces.length === 0) {
+      return
+    }
+
+    player.exhaustAgent()
+
+    // Give bonus die to the strongest ground force (mech > infantry)
+    const targetUnit = ownGroundForces.sort((a, b) => {
+      const defA = ctx.game._getUnitStats(a.owner, a.type)
+      const defB = ctx.game._getUnitStats(b.owner, b.type)
+      return (defA?.combat || 10) - (defB?.combat || 10)
+    })[0]
+
+    if (targetUnit) {
+      targetUnit.bonusDice = (targetUnit.bonusDice || 0) + 1
+    }
+
+    delete ctx.state._evelynDelouisActive[player.name]
+
+    ctx.log.add({
+      template: 'Evelyn Delouis: {player} gives 1 {unit} an extra combat die',
+      args: { player: player.name, unit: targetUnit?.type || 'ground force' },
+    })
   },
 
   // Spec Ops II: at start of turn, place revived infantry on a planet in home system

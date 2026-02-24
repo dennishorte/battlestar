@@ -44,14 +44,26 @@ module.exports = {
   },
 
   getCombatModifier(player, ctx) {
-    if (!player.isCommanderUnlocked()) {
-      return 0
+    let modifier = 0
+
+    // Commander: +1 combat when controlling Mecatol Rex
+    if (player.isCommanderUnlocked() && this._controlsMecatolRex(player, ctx)) {
+      modifier -= 1
     }
-    if (!this._controlsMecatolRex(player, ctx)) {
-      return 0
+
+    // Imperator: +1 to combat per Support for the Throne in opponents' play areas
+    if (player.hasTechnology('imperator')) {
+      for (const other of ctx.players.all()) {
+        if (other.name === player.name) {
+          continue
+        }
+        const notes = other.getPromissoryNotes()
+        const sftCount = notes.filter(n => n.id === 'support-for-the-throne').length
+        modifier -= sftCount // negative = bonus (lower combat threshold)
+      }
     }
-    // Negative = bonus (lower combat threshold)
-    return -1
+
+    return modifier
   },
 
   getStatusPhaseTokenBonus(player, ctx) {
