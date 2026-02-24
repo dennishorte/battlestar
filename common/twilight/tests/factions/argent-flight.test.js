@@ -698,8 +698,110 @@ describe('Argent Flight', () => {
     })
 
     describe('Wing Transfer', () => {
-      test.todo('when activating a system with only own units, may place command tokens from reinforcements into adjacent systems with only own units')
-      test.todo('at end of action, may move ships among active system and adjacent systems with own command tokens')
+      test('when activating a system with only own units, may place command tokens in adjacent systems', () => {
+        // Dennis (Argent) has Wing Transfer and units in system 27 (only his).
+        // Argent-home is adjacent to 27 and has only Dennis's units.
+        // When Dennis activates 27, Wing Transfer offers to place tokens in argent-home.
+        const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['sarween-tools', 'gravity-drive', 'wing-transfer'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'argent-home': {
+                space: ['carrier'],
+                'valk': ['infantry', 'space-dock'],
+              },
+              '27': {
+                space: ['cruiser'],
+                'new-albion': ['infantry'],
+              },
+            },
+            planets: { 'new-albion': { exhausted: false } },
+          },
+        })
+        game.run()
+        t.choose(game, 'leadership')
+        t.choose(game, 'diplomacy')
+
+        // Dennis activates system 27 (only his units there)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+
+        // Wing Transfer triggers — argent-home is adjacent and has only Dennis's units
+        t.choose(game, 'Place Tokens (Wing Transfer)')
+
+        // Complete the tactical action
+        t.action(game, 'move-ships', { movements: [] })
+
+        // Skip redistribution
+        t.choose(game, 'Pass')
+
+        // Verify command token was placed in argent-home
+        expect(game.state.systems['argent-home'].commandTokens).toContain('dennis')
+
+        // Verify tactics token was spent
+        const dennis = game.players.byName('dennis')
+        // Started with 3, spent 1 for activation of 27, spent 1 for Wing Transfer token = 1 left
+        expect(dennis.commandTokens.tactics).toBe(1)
+
+        // Verify log
+        const logEntries = game.log._log.map(e => e.template || '')
+        expect(logEntries.some(e => e.includes('Wing Transfer'))).toBe(true)
+      })
+
+      test('at end of action, may move ships among active system and adjacent token systems', () => {
+        // Dennis (Argent) has Wing Transfer and a command token in argent-home.
+        // Dennis activates system 27. At end of action, Wing Transfer allows
+        // moving ships between system 27 and argent-home.
+        const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          systemTokens: {
+            'argent-home': ['dennis'],
+          },
+          dennis: {
+            technologies: ['sarween-tools', 'gravity-drive', 'wing-transfer'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'argent-home': {
+                space: ['destroyer'],
+                'valk': ['infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        t.choose(game, 'leadership')
+        t.choose(game, 'diplomacy')
+
+        // Dennis activates system 27
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+
+        // Move ships: skip (no ships to move to 27 initially)
+        t.action(game, 'move-ships', { movements: [] })
+
+        // Wing Transfer redistribution: argent-home has Dennis's token and is adjacent to 27
+        t.choose(game, 'Redistribute Ships (Wing Transfer)')
+
+        // Move 1 destroyer from argent-home to system 27
+        t.choose(game, 'Move 1 destroyer')
+        // Only 1 destination (system 27), auto-selected
+
+        // Verify destroyer moved to system 27
+        const ships27 = game.state.units['27'].space.filter(u => u.owner === 'dennis')
+        expect(ships27.some(u => u.type === 'destroyer')).toBe(true)
+
+        // Verify destroyer no longer at argent-home
+        const shipsHome = game.state.units['argent-home'].space.filter(u => u.owner === 'dennis')
+        expect(shipsHome.some(u => u.type === 'destroyer')).toBe(false)
+
+        // Verify log
+        const logEntries = game.log._log.map(e => e.template || '')
+        expect(logEntries.some(e => e.includes('Wing Transfer') && e.includes('moves'))).toBe(true)
+      })
     })
   })
 })
