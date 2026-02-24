@@ -150,8 +150,175 @@ describe('Mahact Gene-Sorcerers', () => {
     })
   })
 
+  describe('Edict — duplicate protection', () => {
+    test('does not capture token if already holding one from that player', () => {
+      const game = t.fixture({ factions: ['mahact-gene-sorcerers', 'emirates-of-hacan'] })
+      // Pre-load captured tokens: Dennis already has micah's token
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'mahact-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'ixth': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+        capturedCommandTokens: { dennis: ['micah'] },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'mahact-home', count: 5 }],
+      })
+
+      // Should still only have 1 micah token (duplicate not added)
+      const captured = game.state.capturedCommandTokens['dennis'] || []
+      const micahTokens = captured.filter(n => n === 'micah')
+      expect(micahTokens.length).toBe(1)
+    })
+  })
+
   describe('Agent — Jae Mir Kan', () => {
-    test.todo('when spending command token for secondary, may exhaust to remove active player command token from board and use it instead')
+    test('exhaust to use active player command token instead of own strategy token', () => {
+      const game = t.fixture({ factions: ['mahact-gene-sorcerers', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          leaders: { agent: 'ready', commander: 'locked', hero: 'locked' },
+        },
+        systemTokens: { '27': ['micah'] },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis goes first (leadership = 1), uses strategic action
+      t.choose(game, 'Strategic Action')
+      // Micah uses leadership secondary (spends strategy token)
+      t.choose(game, 'Use Secondary')
+
+      // Micah goes next: uses diplomacy (primary)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'hacan-home')  // diplomacy primary: protect hacan-home
+
+      // Dennis is offered diplomacy secondary
+      t.choose(game, 'Use Secondary')
+
+      // Dennis spent strategy token, agent triggers
+      // Exhaust Jae Mir Kan to use micah's command token instead
+      t.choose(game, 'Exhaust Jae Mir Kan')
+
+      const dennis = game.players.byName('dennis')
+      // Strategy token refunded: started 2, spent 1, refunded 1 = 2
+      expect(dennis.commandTokens.strategy).toBe(2)
+      // Agent should be exhausted
+      expect(dennis.isAgentReady()).toBe(false)
+      // Micah's command token should be removed from system 27
+      expect(game.state.systems['27'].commandTokens).not.toContain('micah')
+    })
+
+    test('can pass on agent and spend own strategy token normally', () => {
+      const game = t.fixture({ factions: ['mahact-gene-sorcerers', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          leaders: { agent: 'ready', commander: 'locked', hero: 'locked' },
+        },
+        systemTokens: { '27': ['micah'] },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses leadership
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Use Secondary')  // micah uses leadership secondary
+
+      // Micah uses diplomacy
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'hacan-home')
+
+      // Dennis uses diplomacy secondary
+      t.choose(game, 'Use Secondary')
+
+      // Dennis declines the agent
+      t.choose(game, 'Pass')
+
+      const dennis = game.players.byName('dennis')
+      // Strategy token spent: started 2, spent 1 = 1
+      expect(dennis.commandTokens.strategy).toBe(1)
+      // Agent still ready
+      expect(dennis.isAgentReady()).toBe(true)
+      // Micah's token still in system
+      expect(game.state.systems['27'].commandTokens).toContain('micah')
+    })
+
+    test('agent not offered when no active player tokens on board', () => {
+      const game = t.fixture({ factions: ['mahact-gene-sorcerers', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          leaders: { agent: 'ready', commander: 'locked', hero: 'locked' },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses leadership
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Use Secondary')  // micah uses leadership secondary
+
+      // Micah uses diplomacy
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'hacan-home')
+
+      // Dennis uses diplomacy secondary — no agent prompt since micah has no tokens
+      t.choose(game, 'Use Secondary')
+
+      const dennis = game.players.byName('dennis')
+      // Strategy token spent normally: started 2, spent 1 = 1
+      expect(dennis.commandTokens.strategy).toBe(1)
+      // Agent still ready (never offered)
+      expect(dennis.isAgentReady()).toBe(true)
+    })
+
+    test('agent not offered when exhausted', () => {
+      const game = t.fixture({ factions: ['mahact-gene-sorcerers', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+        },
+        systemTokens: { '27': ['micah'] },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses leadership
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Use Secondary')  // micah uses leadership secondary
+
+      // Micah uses diplomacy
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'hacan-home')
+
+      // Dennis uses diplomacy secondary — no agent prompt since agent is exhausted
+      t.choose(game, 'Use Secondary')
+
+      const dennis = game.players.byName('dennis')
+      // Strategy token spent normally
+      expect(dennis.commandTokens.strategy).toBe(1)
+      // Micah's token still in system
+      expect(game.state.systems['27'].commandTokens).toContain('micah')
+    })
   })
 
   describe('Commander — Il Na Viroset', () => {
