@@ -286,11 +286,15 @@ class FactionAbilities {
     }
   }
 
-  onGroundCombatRoundEnd(systemId, planetId, attackerName, defenderName) {
+  onGroundCombatRoundEnd(systemId, planetId, attackerName, defenderName, hitCounts) {
     for (const [self, opponent] of [[attackerName, defenderName], [defenderName, attackerName]]) {
       const player = this.players.byName(self)
       const handler = this._getPlayerHandler(player)
-      handler?.onGroundCombatRoundEnd?.(player, this, { systemId, planetId, opponentName: opponent })
+      // Determine how many hits the opponent scored against this player
+      const opponentHits = self === attackerName
+        ? hitCounts?.defenderHits ?? 0
+        : hitCounts?.attackerHits ?? 0
+      handler?.onGroundCombatRoundEnd?.(player, this, { systemId, planetId, opponentName: opponent, opponentHits })
     }
   }
 
@@ -505,6 +509,31 @@ class FactionAbilities {
   // ---------------------------------------------------------------------------
   // Q2. Production Triggers
   // ---------------------------------------------------------------------------
+
+  /**
+   * Returns a cost override for a specific unit type during production.
+   * If a faction handler returns a number, that overrides the normal cost.
+   * Returns null if no override applies.
+   */
+  getProductionCostOverride(player, unitType) {
+    const handler = this._getPlayerHandler(player)
+    if (handler?.getProductionCostOverride) {
+      return handler.getProductionCostOverride(player, this, unitType)
+    }
+    return null
+  }
+
+  /**
+   * Returns how many fighters/infantry produced do NOT count against PRODUCTION limit.
+   * Default is 0 (all count).
+   */
+  getProductionLimitBonus(player, unitType) {
+    const handler = this._getPlayerHandler(player)
+    if (handler?.getProductionLimitBonus) {
+      return handler.getProductionLimitBonus(player, this, unitType)
+    }
+    return 0
+  }
 
   afterProduction(player, systemId, unitCount) {
     const handler = this._getPlayerHandler(player)

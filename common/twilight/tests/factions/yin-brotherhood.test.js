@@ -302,7 +302,88 @@ describe('Yin Brotherhood', () => {
 
   describe('Faction Technologies', () => {
     describe('Impulse Core', () => {
-      test.todo('at start of space combat, may destroy own cruiser or destroyer to produce 1 hit against non-fighter ship')
+      test('at start of space combat, may destroy own cruiser or destroyer to produce 1 hit against non-fighter ship', () => {
+        const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['impulse-core'],
+            units: {
+              'yin-home': {
+                space: ['cruiser', 'destroyer'],
+                'darien': ['space-dock'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              '27': {
+                space: ['cruiser', 'fighter'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [
+            { unitType: 'cruiser', from: 'yin-home', count: 1 },
+            { unitType: 'destroyer', from: 'yin-home', count: 1 },
+          ],
+        })
+
+        // Impulse Core prompt at start of combat — destroy destroyer to hit non-fighter
+        t.choose(game, 'Destroy destroyer')
+
+        // After combat resolves, Micah's cruiser should have been hit by Impulse Core
+        // and Yin should win (cruiser vs fighter)
+        const dennisShips = game.state.units['27'].space
+          .filter(u => u.owner === 'dennis')
+        expect(dennisShips.some(u => u.type === 'cruiser')).toBe(true)
+        expect(dennisShips.every(u => u.type !== 'destroyer')).toBe(true)
+
+        const micahShips = game.state.units['27'].space
+          .filter(u => u.owner === 'micah')
+        expect(micahShips.length).toBe(0)
+      })
+
+      test('does not trigger without the technology', () => {
+        const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            units: {
+              'yin-home': {
+                space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+                'darien': ['space-dock'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              '27': {
+                space: ['cruiser'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'yin-home', count: 5 }],
+        })
+
+        // No Impulse Core prompt should appear — no technology
+        // Devotion prompt appears after combat round (different hook)
+        // Combat resolves normally — Yin wins with 5 cruisers vs 1
+        const micahShips = game.state.units['27'].space
+          .filter(u => u.owner === 'micah')
+        expect(micahShips.length).toBe(0)
+      })
     })
 
     describe('Yin Spinner', () => {

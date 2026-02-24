@@ -282,7 +282,67 @@ describe('Universities of Jol-Nar', () => {
 
   describe('Faction Technologies', () => {
     describe('E-Res Siphons', () => {
-      test.todo('after another player activates a system with your ships, gain 4 trade goods')
+      test('after activating a system with own units, gain 4 trade goods', () => {
+        const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['e-res-siphons'],
+            units: {
+              'jolnar-home': {
+                space: ['carrier'],
+                'jol': ['space-dock'],
+              },
+              '27': {
+                space: ['cruiser'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        const dennis = game.players.byName('dennis')
+        const tgBefore = dennis.tradeGoods
+
+        // Dennis activates system 27, which has his cruiser
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', { movements: [] })
+
+        // Re-fetch player after game state update
+        const dennisAfter = game.players.byName('dennis')
+        expect(dennisAfter.tradeGoods).toBe(tgBefore + 4)
+      })
+
+      test('does not trigger without the technology', () => {
+        const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            units: {
+              'jolnar-home': {
+                space: ['carrier'],
+                'jol': ['space-dock'],
+              },
+              '27': {
+                space: ['cruiser'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        const dennis = game.players.byName('dennis')
+        const tgBefore = dennis.tradeGoods
+
+        // Dennis activates system 27, which has his cruiser — but no E-Res Siphons
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', { movements: [] })
+
+        const dennisAfter = game.players.byName('dennis')
+        expect(dennisAfter.tradeGoods).toBe(tgBefore)
+      })
     })
 
     describe('Spatial Conduit Cylinder', () => {

@@ -250,9 +250,89 @@ describe('Nomad', () => {
   })
 
   describe('Commander — Navarch Feng', () => {
-    test.todo('can produce flagship without spending resources')
+    test('can produce flagship without spending resources when unlocked', () => {
+      const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          leaders: { agents: [
+            { id: 'artuno', name: 'Artuno the Betrayer', status: 'exhausted' },
+            { id: 'thundarian', name: 'The Thundarian', status: 'exhausted' },
+            { id: 'mercer', name: 'Field Marshal Mercer', status: 'exhausted' },
+          ], commander: 'unlocked', hero: 'locked' },
+          units: {
+            'nomad-home': {
+              space: ['carrier'],
+              'arcturus': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      // Dennis: tactical action → activate home system and produce
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'nomad-home' })
+      t.choose(game, 'Done')  // skip movement
+
+      // Produce 1 flagship (normally cost 8, but commander makes it free)
+      // Arcturus has 4 resources — not enough for flagship normally
+      t.action(game, 'produce-units', {
+        units: [{ type: 'flagship', count: 1 }],
+      })
+
+      // Flagship should exist in space
+      const flagships = game.state.units['nomad-home'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'flagship')
+      expect(flagships.length).toBe(1)
+
+      // No planets should be exhausted (cost was 0)
+      expect(game.state.planets['arcturus'].exhausted).toBe(false)
+    })
+
+    test('locked commander does not reduce flagship cost', () => {
+      const game = t.fixture({ factions: ['nomad', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          leaders: { agents: [
+            { id: 'artuno', name: 'Artuno the Betrayer', status: 'exhausted' },
+            { id: 'thundarian', name: 'The Thundarian', status: 'exhausted' },
+            { id: 'mercer', name: 'Field Marshal Mercer', status: 'exhausted' },
+          ], commander: 'locked', hero: 'locked' },
+          units: {
+            'nomad-home': {
+              space: ['carrier'],
+              'arcturus': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      // Dennis: tactical action → activate home system and produce
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'nomad-home' })
+      t.choose(game, 'Done')  // skip movement
+
+      // Try to produce flagship (cost 8, only 4 resources on Arcturus) — should fail
+      t.action(game, 'produce-units', {
+        units: [{ type: 'flagship', count: 1 }],
+      })
+
+      // No flagship produced (can't afford it)
+      const flagships = game.state.units['nomad-home'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'flagship')
+      expect(flagships.length).toBe(0)
+    })
+
     test.todo('unlock condition: have 1 scored secret objective')
-    test.todo('locked commander gives no bonus')
   })
 
   describe('Hero — Ahk-Syl Siven', () => {

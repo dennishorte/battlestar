@@ -40,6 +40,43 @@ module.exports = {
     })
   },
 
+  // Neuroglaive (faction tech): After another player activates a system with
+  // your ships, that player removes 1 token from their fleet pool.
+  onAnySystemActivated(naaluPlayer, ctx, { systemId, activatingPlayer }) {
+    if (!naaluPlayer.hasTechnology('neuroglaive')) {
+      return
+    }
+
+    // Only triggers when another player activates the system
+    if (activatingPlayer.name === naaluPlayer.name) {
+      return
+    }
+
+    const systemUnits = ctx.state.units[systemId]
+    if (!systemUnits) {
+      return
+    }
+
+    // Check if Naalu has ships in the system
+    const naaluShips = systemUnits.space.filter(u => u.owner === naaluPlayer.name)
+    if (naaluShips.length === 0) {
+      return
+    }
+
+    // Re-fetch activating player to get current state
+    const target = ctx.players.byName(activatingPlayer.name)
+    if (!target || target.commandTokens.fleet <= 0) {
+      return
+    }
+
+    target.commandTokens.fleet -= 1
+
+    ctx.log.add({
+      template: 'Neuroglaive: {target} loses 1 fleet pool token (activated system with {player} ships)',
+      args: { player: naaluPlayer.name, target: target.name },
+    })
+  },
+
   // Foresight: After another player moves ships into a system with your ships,
   // place 1 strategy token in an adjacent system without other players' ships
   // and move your ships there.

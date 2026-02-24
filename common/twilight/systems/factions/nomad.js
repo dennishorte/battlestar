@@ -51,6 +51,17 @@ module.exports = {
     }
   },
 
+  // Commander — Navarch Feng: Can produce flagship without spending resources.
+  getProductionCostOverride(player, _ctx, unitType) {
+    if (!player.isCommanderUnlocked()) {
+      return null
+    }
+    if (unitType === 'flagship') {
+      return 0
+    }
+    return null
+  },
+
   onGroundCombatStart(player, ctx, { systemId, planetId, opponentName }) {
     if (!player.isAgentReady('mercer')) {
       return

@@ -1,4 +1,75 @@
 module.exports = {
+  // Impulse Core (faction tech): At start of space combat, may destroy own
+  // cruiser or destroyer to produce 1 hit against a non-fighter ship.
+  onSpaceCombatStart(player, ctx, { systemId, opponentName }) {
+    if (!player.hasTechnology('impulse-core')) {
+      return
+    }
+
+    const systemUnits = ctx.state.units[systemId]
+
+    const sacrificeShips = systemUnits.space
+      .filter(u => u.owner === player.name && (u.type === 'cruiser' || u.type === 'destroyer'))
+
+    if (sacrificeShips.length === 0) {
+      return
+    }
+
+    // Must have non-fighter enemy ships to target
+    const enemyNonFighters = systemUnits.space
+      .filter(u => u.owner === opponentName && u.type !== 'fighter')
+    if (enemyNonFighters.length === 0) {
+      return
+    }
+
+    const choices = ['Pass']
+    const cruisers = sacrificeShips.filter(u => u.type === 'cruiser')
+    const destroyers = sacrificeShips.filter(u => u.type === 'destroyer')
+    if (destroyers.length > 0) {
+      choices.unshift('Destroy destroyer')
+    }
+    if (cruisers.length > 0) {
+      choices.unshift('Destroy cruiser')
+    }
+
+    const selection = ctx.actions.choose(player, choices, {
+      title: 'Impulse Core: Destroy a ship to produce 1 hit against a non-fighter?',
+    })
+
+    if (selection[0] === 'Pass') {
+      return
+    }
+
+    // Destroy the sacrificed ship
+    const shipType = selection[0] === 'Destroy cruiser' ? 'cruiser' : 'destroyer'
+    const shipIdx = systemUnits.space.findIndex(u => u.owner === player.name && u.type === shipType)
+    if (shipIdx !== -1) {
+      systemUnits.space.splice(shipIdx, 1)
+    }
+
+    // Destroy cheapest non-fighter enemy ship
+    const targetShips = systemUnits.space
+      .filter(u => u.owner === opponentName && u.type !== 'fighter')
+      .sort((a, b) => {
+        const defA = ctx.game._getUnitStats(a.owner, a.type)
+        const defB = ctx.game._getUnitStats(b.owner, b.type)
+        return (defA?.cost || 0) - (defB?.cost || 0)
+      })
+
+    if (targetShips.length > 0) {
+      const toDestroy = targetShips[0]
+      const idx = systemUnits.space.indexOf(toDestroy)
+      if (idx !== -1) {
+        systemUnits.space.splice(idx, 1)
+      }
+    }
+
+    ctx.log.add({
+      template: 'Impulse Core: {player} destroys {ship} to produce 1 hit against non-fighter',
+      args: { player, ship: shipType },
+    })
+  },
+
   afterSpaceCombatRound(player, ctx, { systemId, opponentName }) {
     const systemUnits = ctx.state.units[systemId]
 
