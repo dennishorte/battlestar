@@ -245,7 +245,7 @@ module.exports = {
   // return to a home system planet at start of next turn.
   // ---------------------------------------------------------------------------
 
-  onAnyUnitDestroyed(player, ctx, { systemId, unit, planetId, destroyerName }) {
+  onAnyUnitDestroyed(player, ctx, { systemId: _systemId, unit, planetId: _planetId, destroyerName: _destroyerName }) {
     // Only applies to Mahact's own infantry (Crimson Legionnaires)
     if (unit.owner !== player.name) {
       return
