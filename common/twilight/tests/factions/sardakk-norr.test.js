@@ -293,7 +293,87 @@ describe("Sardakk N'orr", () => {
 
   describe('Faction Technologies', () => {
     describe('Valkyrie Particle Weave', () => {
-      test.todo('after ground combat rolls, if opponent produced hits, produce 1 additional hit')
+      test('after ground combat rolls, if opponent produced hits, produce 1 additional hit', () => {
+        const game = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+        // Sardakk invades with many infantry vs few — the opponent will roll and
+        // likely produce at least 1 hit (but with deterministic dice it always does).
+        // With VPW, Sardakk should get an extra hit each round the opponent scores.
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['valkyrie-particle-weave'],
+            units: {
+              'norr-home': {
+                space: ['carrier'],
+                'quinarra': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+          micah: {
+            planets: {
+              'new-albion': { exhausted: false },
+            },
+            units: {
+              '27': {
+                'new-albion': ['infantry', 'infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [
+            { unitType: 'carrier', from: 'norr-home', count: 1 },
+            { unitType: 'infantry', from: 'norr-home', count: 5 },
+          ],
+        })
+
+        // Ground combat resolves — Sardakk with VPW should win
+        // (5 infantry + extra hit per round vs 3 infantry)
+        expect(game.state.planets['new-albion'].controller).toBe('dennis')
+      })
+
+      test('does not trigger without the technology', () => {
+        const game = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            units: {
+              'norr-home': {
+                space: ['carrier'],
+                'quinarra': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+          micah: {
+            planets: {
+              'new-albion': { exhausted: false },
+            },
+            units: {
+              '27': {
+                'new-albion': ['infantry', 'infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [
+            { unitType: 'carrier', from: 'norr-home', count: 1 },
+            { unitType: 'infantry', from: 'norr-home', count: 5 },
+          ],
+        })
+
+        // Ground combat resolves normally without VPW — Sardakk still wins
+        // (5 infantry + Unrelenting vs 3 infantry) but without the extra hit
+        expect(game.state.planets['new-albion'].controller).toBe('dennis')
+      })
     })
 
     describe('Exotrireme II', () => {

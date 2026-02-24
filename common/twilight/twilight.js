@@ -2737,8 +2737,8 @@ Twilight.prototype._groundCombat = function(systemId, planetId, attackerName) {
     this._assignGroundHits(systemId, planetId, defenderName, attackerHits, attackerName)
     this._assignGroundHits(systemId, planetId, attackerName, defenderHits, defenderName)
 
-    // End-of-round faction abilities (e.g., L1Z1X Harrow)
-    this.factionAbilities.onGroundCombatRoundEnd(systemId, planetId, attackerName, defenderName)
+    // End-of-round faction abilities (e.g., L1Z1X Harrow, Sardakk Valkyrie Particle Weave)
+    this.factionAbilities.onGroundCombatRoundEnd(systemId, planetId, attackerName, defenderName, { attackerHits, defenderHits })
   }
 
   // Determine ground combat winner/loser
@@ -3138,6 +3138,9 @@ Twilight.prototype._productionStep = function(player, systemId) {
   let producedNonFighters = 0
   const fleetLimit = this._getFleetLimit(player)
 
+  // Commander production limit bonuses (e.g., Vuil'raith: up to 2 fighters/infantry free)
+  const productionLimitBonusUsed = {}
+
   for (const req of requestedUnits) {
     const unitDef = this._getUnitStats(player.name, req.type)
     if (!unitDef) {
@@ -3158,9 +3161,20 @@ Twilight.prototype._productionStep = function(player, systemId) {
         producedNonFighters++
       }
 
-      // Check production capacity
-      if (totalUnitCount >= productionCapacity) {
+      // Check production capacity (some units may not count against limit)
+      const limitBonus = this.factionAbilities.getProductionLimitBonus(player, unitDef.type)
+      const usedBonus = productionLimitBonusUsed[unitDef.type] || 0
+      const countsAgainstLimit = usedBonus >= limitBonus
+
+      if (countsAgainstLimit && totalUnitCount >= productionCapacity) {
         break
+      }
+
+      if (!countsAgainstLimit) {
+        productionLimitBonusUsed[unitDef.type] = usedBonus + 1
+      }
+      else {
+        totalUnitCount++
       }
 
       // Calculate cost (units with costFor get multiple units per cost payment)
@@ -3169,18 +3183,23 @@ Twilight.prototype._productionStep = function(player, systemId) {
         unitCost = 0
       }
 
+      // Faction cost override (e.g., Nomad commander: flagship costs 0)
+      const costOverride = this.factionAbilities.getProductionCostOverride(player, unitDef.type)
+      if (costOverride !== null) {
+        unitCost = costOverride
+      }
+
       if (totalCost + unitCost > availableResources) {
         break
       }
 
       totalCost += unitCost
-      totalUnitCount++
       validatedUnits.push(unitDef)
     }
   }
 
   // Sarween Tools: reduce cost by 1 (min 0) when producing at least 1 unit
-  if (totalUnitCount > 0 && player.hasTechnology('sarween-tools')) {
+  if (validatedUnits.length > 0 && player.hasTechnology('sarween-tools')) {
     totalCost = Math.max(0, totalCost - 1)
   }
 
@@ -3218,14 +3237,15 @@ Twilight.prototype._productionStep = function(player, systemId) {
     remainingCost = 0
   }
 
-  if (totalUnitCount > 0) {
+  const totalProduced = validatedUnits.length
+  if (totalProduced > 0) {
     this.log.add({
       template: '{player} produces {count} units in system {system}',
-      args: { player, count: totalUnitCount, system: systemId },
+      args: { player, count: totalProduced, system: systemId },
     })
 
     // Faction abilities after production (e.g., Titans of Ul commander Tungstantus)
-    this.factionAbilities.afterProduction(player, systemId, totalUnitCount)
+    this.factionAbilities.afterProduction(player, systemId, totalProduced)
   }
 }
 

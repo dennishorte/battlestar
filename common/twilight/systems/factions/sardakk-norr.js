@@ -67,6 +67,26 @@ module.exports = {
     })
   },
 
+  // Valkyrie Particle Weave (faction tech): After ground combat dice rolls,
+  // if opponent produced hits, produce 1 additional hit.
+  onGroundCombatRoundEnd(player, ctx, { systemId, planetId, opponentName, opponentHits }) {
+    if (!player.hasTechnology('valkyrie-particle-weave')) {
+      return
+    }
+
+    if (!opponentHits || opponentHits <= 0) {
+      return
+    }
+
+    // Opponent produced hits, so Sardakk produces 1 additional hit
+    ctx.game._assignGroundHits(systemId, planetId, opponentName, 1, player.name)
+
+    ctx.log.add({
+      template: 'Valkyrie Particle Weave: {player} produces 1 additional hit',
+      args: { player: player.name },
+    })
+  },
+
   // N'orr Supremacy faction tech: after winning combat, gain 1 command token or research unit upgrade
   onCombatWon(player, ctx, { systemId: _systemId, loserName: _loserName, combatType: _combatType }) {
     if (!player.hasTechnology('norr-supremacy')) {

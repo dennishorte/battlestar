@@ -173,7 +173,74 @@ describe("Vuil'raith Cabal", () => {
   })
 
   describe('Commander — That Which Molds Flesh', () => {
-    test.todo('when producing fighter or infantry, up to 2 do not count against PRODUCTION limit')
+    test('when producing fighters, up to 2 do not count against PRODUCTION limit', () => {
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 10,
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
+          units: {
+            'cabal-home': {
+              space: ['carrier'],
+              'acheron': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: tactical action → activate home system and produce
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'cabal-home' })
+      t.choose(game, 'Done')  // skip movement
+
+      // Acheron: 4 resources + 2 productionValue = 6 PRODUCTION capacity
+      // Commander: up to 2 fighters don't count against limit
+      // So we can produce 8 fighters (6 counting + 2 free)
+      // Fighters cost 1 per 2 (costFor: 2), so 8 fighters = 4 resources
+      t.action(game, 'produce-units', {
+        units: [{ type: 'fighter', count: 8 }],
+      })
+
+      const fighters = game.state.units['cabal-home'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'fighter')
+      expect(fighters.length).toBe(8)
+    })
+
+    test('locked commander does not grant production limit bonus', () => {
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 10,
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'cabal-home': {
+              space: ['carrier'],
+              'acheron': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: tactical action → activate home system and produce
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'cabal-home' })
+      t.choose(game, 'Done')  // skip movement
+
+      // Without commander: PRODUCTION capacity = 6, so max 6 fighters
+      // Request 8 but only 6 should be produced
+      t.action(game, 'produce-units', {
+        units: [{ type: 'fighter', count: 8 }],
+      })
+
+      const fighters = game.state.units['cabal-home'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'fighter')
+      expect(fighters.length).toBe(6)
+    })
+
     test.todo('unlock condition: have units in 3 Gravity Rifts')
   })
 
