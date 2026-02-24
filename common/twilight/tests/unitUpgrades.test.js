@@ -7,8 +7,9 @@ describe('Unit Upgrades', () => {
       const game = t.fixture()
       game.run()
 
+      // Default fixture is Sol, whose Spec Ops I infantry has combat 7
       const stats = game._getUnitStats('dennis', 'infantry')
-      expect(stats.combat).toBe(8)  // base infantry combat
+      expect(stats.combat).toBe(7)  // Sol Spec Ops I infantry combat
     })
 
     test('returns upgraded combat for infantry II', () => {

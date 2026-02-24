@@ -229,6 +229,11 @@ class Galaxy {
           }
         }
 
+        // Aerie Hololattice: cannot move through systems with another player's structures
+        if (this.game.factionAbilities?.isStructureBlocking(neighborId, playerName)) {
+          continue
+        }
+
         visited.add(neighborId)
         queue.push({ systemId: neighborId, path: newPath, distance: newDistance })
       }

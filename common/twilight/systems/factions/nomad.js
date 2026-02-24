@@ -62,6 +62,129 @@ module.exports = {
     return null
   },
 
+  // Temporal Command Suite (faction tech): After any player's agent becomes
+  // exhausted, you may exhaust this card to ready that agent. If you ready
+  // another player's agent, you may perform a transaction with that player.
+  onAnyAgentExhausted(nomadPlayer, ctx, { exhaustedPlayer, agentId }) {
+    if (!nomadPlayer.hasTechnology('temporal-command-suite')) {
+      return
+    }
+    if (!ctx.game._isTechReady(nomadPlayer, 'temporal-command-suite')) {
+      return
+    }
+
+    const agentLabel = agentId || 'agent'
+    const isOwnAgent = exhaustedPlayer.name === nomadPlayer.name
+
+    const choice = ctx.actions.choose(nomadPlayer, ['Exhaust Temporal Command Suite', 'Pass'], {
+      title: `Temporal Command Suite: Exhaust to ready ${exhaustedPlayer.name}'s ${agentLabel}?`,
+    })
+
+    if (choice[0] !== 'Exhaust Temporal Command Suite') {
+      return
+    }
+
+    ctx.game._exhaustTech(nomadPlayer, 'temporal-command-suite')
+    exhaustedPlayer.readyAgent(agentId)
+
+    ctx.log.add({
+      template: "Temporal Command Suite: {player} readies {target}'s {agent}",
+      args: { player: nomadPlayer.name, target: exhaustedPlayer.name, agent: agentLabel },
+    })
+
+    // If readying another player's agent, may perform a transaction
+    if (!isOwnAgent) {
+      const transactChoice = ctx.actions.choose(nomadPlayer, ['Transact', 'Pass'], {
+        title: `Temporal Command Suite: Perform a transaction with ${exhaustedPlayer.name}?`,
+      })
+
+      if (transactChoice[0] === 'Transact') {
+        ctx.game._performTransaction?.(nomadPlayer, exhaustedPlayer)
+
+        ctx.log.add({
+          template: 'Temporal Command Suite: {player} transacts with {target}',
+          args: { player: nomadPlayer.name, target: exhaustedPlayer.name },
+        })
+      }
+    }
+  },
+
+  // Thunder's Paradox (faction tech): At the start of any player's turn, you
+  // may exhaust 1 of your ready agents to ready any other agent you control.
+  onAnyTurnStart(nomadPlayer, ctx, { activePlayer: _activePlayer }) {
+    this._offerThundersParadox(nomadPlayer, ctx)
+  },
+
+  onTurnStart(nomadPlayer, ctx) {
+    this._offerThundersParadox(nomadPlayer, ctx)
+  },
+
+  _offerThundersParadox(nomadPlayer, ctx) {
+    if (!nomadPlayer.hasTechnology('thunders-paradox')) {
+      return
+    }
+
+    if (!nomadPlayer.leaders.agents) {
+      return
+    }
+
+    const readyAgents = nomadPlayer.leaders.agents.filter(a => a.status === 'ready')
+    const exhaustedAgents = nomadPlayer.leaders.agents.filter(a => a.status === 'exhausted')
+
+    // Need at least 1 ready agent to exhaust AND at least 1 exhausted agent to ready
+    if (readyAgents.length === 0 || exhaustedAgents.length === 0) {
+      return
+    }
+
+    const choice = ctx.actions.choose(nomadPlayer, ["Use Thunder's Paradox", 'Pass'], {
+      title: "Thunder's Paradox: Exhaust 1 agent to ready another?",
+    })
+
+    if (choice[0] !== "Use Thunder's Paradox") {
+      return
+    }
+
+    // Choose which ready agent to exhaust
+    let agentToExhaust
+    if (readyAgents.length === 1) {
+      agentToExhaust = readyAgents[0]
+    }
+    else {
+      const exhaustChoices = readyAgents.map(a => a.id)
+      const selection = ctx.actions.choose(nomadPlayer, exhaustChoices, {
+        title: 'Choose agent to exhaust:',
+      })
+      agentToExhaust = readyAgents.find(a => a.id === selection[0])
+    }
+
+    // Choose which exhausted agent to ready
+    let agentToReady
+    if (exhaustedAgents.length === 1) {
+      agentToReady = exhaustedAgents[0]
+    }
+    else {
+      const readyChoices = exhaustedAgents.map(a => a.id)
+      const selection = ctx.actions.choose(nomadPlayer, readyChoices, {
+        title: 'Choose agent to ready:',
+      })
+      agentToReady = exhaustedAgents.find(a => a.id === selection[0])
+    }
+
+    // Directly manipulate agent status (bypass exhaustAgent to avoid triggering
+    // Temporal Command Suite recursion)
+    agentToExhaust.status = 'exhausted'
+    agentToReady.status = 'ready'
+
+    ctx.log.add({
+      template: "Thunder's Paradox: {player} exhausts {exhausted} to ready {readied}",
+      args: {
+        player: nomadPlayer.name,
+        exhausted: agentToExhaust.id,
+        readied: agentToReady.id,
+      },
+    })
+  },
+
   onGroundCombatStart(player, ctx, { systemId, planetId, opponentName }) {
     if (!player.isAgentReady('mercer')) {
       return

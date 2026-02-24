@@ -560,8 +560,9 @@ Twilight.prototype._getUnitsInSystem = function(systemId, ownerName) {
 }
 
 
-// Returns unit stats for a given player, applying any researched unit upgrades.
-// Falls back to base stats if no upgrade is available.
+// Returns unit stats for a given player, applying faction unit overrides and
+// any researched unit upgrades. Falls back to base stats if no override or
+// upgrade is available.
 Twilight.prototype._getUnitStats = function(playerName, unitType) {
   const base = res.getUnit(unitType)
   if (!base) {
@@ -573,6 +574,12 @@ Twilight.prototype._getUnitStats = function(playerName, unitType) {
     return base
   }
 
+  // Apply faction unit overrides (e.g., Saar Floating Factory I, Sardakk Exotrireme I)
+  let effective = base
+  if (player.faction?.unitOverrides?.[unitType]) {
+    effective = { ...base, ...player.faction.unitOverrides[unitType] }
+  }
+
   // Check if player has researched a unit upgrade for this type
   const techIds = player.getTechIds()
   const allTechs = [...res.getGenericTechnologies()]
@@ -582,11 +589,11 @@ Twilight.prototype._getUnitStats = function(playerName, unitType) {
 
   const upgrade = allTechs.find(t => t.unitUpgrade === unitType && techIds.includes(t.id))
   if (!upgrade || !upgrade.stats) {
-    return base
+    return effective
   }
 
-  // Merge upgrade stats over base stats
-  return { ...base, ...upgrade.stats }
+  // Merge upgrade stats over effective stats (override + base)
+  return { ...effective, ...upgrade.stats }
 }
 
 
@@ -1459,6 +1466,17 @@ Twilight.prototype._tacticalAction = function(player) {
   }
 
   const systemId = String(activateSelection.systemId)
+
+  // Chaos Mapping: other players cannot activate asteroid fields with Saar ships
+  if (this.factionAbilities.isSystemActivationBlocked(player.name, systemId)) {
+    this.log.add({
+      template: '{player} cannot activate system {system} (blocked by Chaos Mapping)',
+      args: { player, system: systemId },
+    })
+    this.log.outdent()
+    return
+  }
+
   player.spendTacticToken()
   this.state.systems[systemId].commandTokens.push(player.name)
 
@@ -1651,12 +1669,14 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
     const moveBonus = this.factionAbilities.getMovementBonus(player.name, fromSystemId)
     // Gravity Drive: +1 movement for all ships
     const gravityDriveBonus = player.hasTechnology('gravity-drive') ? 1 : 0
+    // Aetherstream: +1 movement for all ships during this tactical action
+    const aetherstreamBonus = (this.state.currentTacticalAction?.aetherstreamBonus === player.name) ? 1 : 0
     // Captain Mendosa: override move value for one ship type
     const mendosa = this.state.currentTacticalAction?.mendosaBonus
     const baseMove = (mendosa && mendosa.playerName === player.name && mendosa.shipType === m.unitType)
       ? mendosa.moveValue
       : unitDef.move
-    const path = galaxy.findPath(fromSystemId, targetSystemId, player.name, baseMove + moveBonus + gravityDriveBonus)
+    const path = galaxy.findPath(fromSystemId, targetSystemId, player.name, baseMove + moveBonus + gravityDriveBonus + aetherstreamBonus)
     if (!path) {
       continue  // Ship cannot reach the target
     }
@@ -1977,6 +1997,11 @@ Twilight.prototype._antiFighterBarrage = function(systemId, attacker, defender) 
     const ships = systemUnits.space.filter(u => u.owner === shooter)
     let totalAFBHits = 0
 
+    // Strike Wing Alpha II: track rolls of 9-10 from destroyers with this upgrade
+    let swaIIInfantryKills = 0
+    const shooterPlayer = this.players.byName(shooter)
+    const hasSWAII = shooterPlayer && shooterPlayer.hasTechnology('strike-wing-alpha-ii')
+
     for (const ship of ships) {
       const unitDef = this._getUnitStats(ship.owner, ship.type)
       if (!unitDef) {
@@ -1997,6 +2022,10 @@ Twilight.prototype._antiFighterBarrage = function(systemId, attacker, defender) 
         const roll = Math.floor(this.random() * 10) + 1
         if (roll >= combatValue) {
           totalAFBHits++
+          // Strike Wing Alpha II: results of 9 or 10 also destroy infantry
+          if (hasSWAII && ship.type === 'destroyer' && roll >= 9) {
+            swaIIInfantryKills++
+          }
         }
       }
     }
@@ -2026,6 +2055,26 @@ Twilight.prototype._antiFighterBarrage = function(systemId, attacker, defender) 
         )
         if (remainingFighters.length === 0) {
           this._recordSecretTrigger(shooter, 'fight-with-precision')
+        }
+      }
+
+      // Strike Wing Alpha II: destroy opponent infantry in the space area
+      if (swaIIInfantryKills > 0) {
+        let infantryDestroyed = 0
+        for (let i = 0; i < swaIIInfantryKills; i++) {
+          const infantryIdx = systemUnits.space.findIndex(
+            u => u.owner === target && u.type === 'infantry'
+          )
+          if (infantryIdx !== -1) {
+            systemUnits.space.splice(infantryIdx, 1)
+            infantryDestroyed++
+          }
+        }
+        if (infantryDestroyed > 0) {
+          this.log.add({
+            template: 'Strike Wing Alpha II: {shooter} destroys {count} opponent infantry',
+            args: { shooter, count: infantryDestroyed },
+          })
         }
       }
 
@@ -3121,6 +3170,18 @@ Twilight.prototype._productionStep = function(player, systemId) {
     }
   }
 
+  // Clan of Saar Floating Factory: space docks may be in the space area
+  const spaceDocks = systemUnits.space.filter(
+    u => u.owner === player.name && u.type === 'space-dock'
+  )
+  if (spaceDocks.length > 0) {
+    hasSpaceDock = true
+    const dockDef = this._getUnitStats(player.name, 'space-dock')
+    const prodValue = dockDef?.productionValue || 2
+    // Floating factories in space: production = PRODUCTION value only (no planet resources)
+    productionCapacity += prodValue * spaceDocks.length
+  }
+
   // Particle Synthesis (Creuss): wormholes in systems with your ships gain PRODUCTION 1
   let wormholeCount = 0
   let hasParticleSynthesis = false
@@ -3149,7 +3210,14 @@ Twilight.prototype._productionStep = function(player, systemId) {
     }
   }
 
-  if (!hasSpaceDock && !hasParticleSynthesis) {
+  // Aerie Hololattice (Argent): structures gain PRODUCTION 1
+  const structureProdBonus = this.factionAbilities.getStructureProductionBonus(player, systemId)
+  const hasStructureProduction = structureProdBonus > 0
+  if (hasStructureProduction) {
+    productionCapacity += structureProdBonus
+  }
+
+  if (!hasSpaceDock && !hasParticleSynthesis && !hasStructureProduction) {
     return
   }
 
@@ -3279,10 +3347,16 @@ Twilight.prototype._productionStep = function(player, systemId) {
     }
     else if (unitDef.category === 'ground') {
       // Place on the first planet with a space dock
-      const dockPlanet = tile.planets.find(pId => {
+      let dockPlanet = tile.planets.find(pId => {
         const pu = systemUnits.planets[pId] || []
         return pu.some(u => u.owner === player.name && u.type === 'space-dock')
       })
+      // Floating Factory: space dock in space area — place on first controlled planet
+      if (!dockPlanet && spaceDocks.length > 0) {
+        dockPlanet = tile.planets.find(
+          pId => this.state.planets[pId]?.controller === player.name
+        )
+      }
       if (dockPlanet) {
         this._addUnit(systemId, dockPlanet, unitDef.type, player.name)
       }

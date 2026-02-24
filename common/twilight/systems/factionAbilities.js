@@ -107,6 +107,32 @@ class FactionAbilities {
     return handler?.canMoveThroughNebulae?.(player, this) ?? false
   }
 
+  /**
+   * Check if a system is blocked for movement by structure-blocking abilities
+   * (e.g., Aerie Hololattice). Returns true if the mover cannot pass through.
+   */
+  isStructureBlocking(systemId, moverName) {
+    for (const player of this.players.all()) {
+      if (player.name === moverName) {
+        continue
+      }
+      const handler = this._getPlayerHandler(player)
+      if (handler?.isStructureBlocking?.(player, this, { systemId, moverName })) {
+        return true
+      }
+    }
+    return false
+  }
+
+  /**
+   * Returns extra PRODUCTION capacity from faction abilities (e.g., Aerie Hololattice).
+   * Returns the number of extra production units in this system for this player.
+   */
+  getStructureProductionBonus(player, systemId) {
+    const handler = this._getPlayerHandler(player)
+    return handler?.getStructureProductionBonus?.(player, this, systemId) ?? 0
+  }
+
   canResearchNormally(player) {
     const handler = this._getPlayerHandler(player)
     if (handler?.canResearchNormally) {
@@ -556,6 +582,20 @@ class FactionAbilities {
   // P. System Activation Triggers
   // ---------------------------------------------------------------------------
 
+  /**
+   * Returns true if the given system cannot be activated by the given player
+   * due to a faction ability (e.g., Chaos Mapping blocks asteroid field activation).
+   */
+  isSystemActivationBlocked(activatingPlayerName, systemId) {
+    for (const player of this.players.all()) {
+      const handler = this._getPlayerHandler(player)
+      if (handler?.isSystemActivationBlocked?.(player, this, { systemId, activatingPlayerName })) {
+        return true
+      }
+    }
+    return false
+  }
+
   onSystemActivated(playerName, systemId) {
     const player = this.players.byName(playerName)
     const handler = this._getPlayerHandler(player)
@@ -657,8 +697,19 @@ class FactionAbilities {
   // ---------------------------------------------------------------------------
 
   onTurnStart(player) {
+    // Notify the active player's handler
     const handler = this._getPlayerHandler(player)
     handler?.onTurnStart?.(player, this)
+
+    // Notify all other players about any player's turn start
+    // (e.g., Nomad Thunder's Paradox triggers at start of any player's turn)
+    for (const otherPlayer of this.players.all()) {
+      if (otherPlayer.name === player.name) {
+        continue
+      }
+      const otherHandler = this._getPlayerHandler(otherPlayer)
+      otherHandler?.onAnyTurnStart?.(otherPlayer, this, { activePlayer: player })
+    }
   }
 
   onStrategyPhaseStart(player) {
@@ -681,6 +732,20 @@ class FactionAbilities {
     for (const player of this.players.all()) {
       const handler = this._getPlayerHandler(player)
       handler?.onStrategyTokenSpent?.(player, this, { spendingPlayer, activePlayerName })
+    }
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // U1. Agent Exhaustion Triggers
+  // ---------------------------------------------------------------------------
+
+  onAnyAgentExhausted(exhaustedPlayer, agentId) {
+    // Notify all players when any agent is exhausted
+    // (e.g., Nomad Temporal Command Suite)
+    for (const player of this.players.all()) {
+      const handler = this._getPlayerHandler(player)
+      handler?.onAnyAgentExhausted?.(player, this, { exhaustedPlayer, agentId })
     }
   }
 

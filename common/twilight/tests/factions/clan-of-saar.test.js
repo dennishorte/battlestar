@@ -194,7 +194,63 @@ describe('Clan of Saar', () => {
 
   describe('Commander — Rowl Sarrig', () => {
     test.todo('unlock condition: have 3 space docks on the game board')
-    test.todo('when producing fighters or infantry, may place each at any non-blockaded space dock')
+
+    test('when producing fighters or infantry, may place each at any non-blockaded space dock', () => {
+      // Dennis (Saar) has 2 floating factories in different systems.
+      // When producing at saar-home, commander allows redistributing fighters to system 27.
+      const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
+          tradeGoods: 5,
+          units: {
+            'saar-home': {
+              space: ['carrier', 'space-dock'],
+              'lisis-ii': ['infantry', 'infantry'],
+            },
+            '27': {
+              space: ['space-dock'],
+            },
+          },
+          planets: {
+            'lisis-ii': { exhausted: false },
+            'ragh': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis activates saar-home (already has a floating factory in space)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'saar-home' })
+      // No Mendosa prompt (agent exhausted)
+
+      // Skip movement
+      t.choose(game, 'Done')
+
+      // Production step — produce a fighter at saar-home (floating factory has PRODUCTION 5)
+      t.action(game, 'produce-units', {
+        units: [{ type: 'fighter', count: 1 }],
+      })
+
+      // Commander prompt: redistribute produced fighters/infantry across space docks?
+      t.choose(game, 'Redistribute Units')
+
+      // Place the fighter at system 27 dock instead of saar-home
+      // Use * prefix to prevent test framework from converting '27' to number 27
+      t.choose(game, '*27')
+
+      // Verify: fighter is in system 27 (not saar-home)
+      const fighter27 = game.state.units['27'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'fighter')
+      expect(fighter27.length).toBe(1)
+
+      // Verify: no new fighter in saar-home
+      const fighterHome = game.state.units['saar-home'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'fighter')
+      expect(fighterHome.length).toBe(0)
+    })
   })
 
   describe('Hero — Gurno Aggero', () => {
@@ -208,12 +264,178 @@ describe('Clan of Saar', () => {
 
   describe('Faction Technologies', () => {
     describe('Chaos Mapping', () => {
-      test.todo('other players cannot activate asteroid fields containing Saar ships')
-      test.todo('at start of action phase turn, may produce 1 unit in system with a Production unit')
+      test('other players cannot activate asteroid fields containing Saar ships', () => {
+        // System 44 is an asteroid field. Dennis (Saar) places ships there.
+        // Micah should not be able to activate system 44.
+        const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['antimass-deflectors', 'chaos-mapping'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              'saar-home': {
+                space: ['carrier'],
+                'lisis-ii': ['infantry', 'infantry', 'space-dock'],
+              },
+              '44': {
+                space: ['cruiser'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis's turn: Chaos Mapping prompt (has dock on planet)
+        t.choose(game, 'Pass')             // Decline Chaos Mapping production
+        // Dennis uses Strategic Action (leadership) to end his turn simply
+        t.choose(game, 'Strategic Action')
+        // Micah declines leadership secondary
+        t.choose(game, 'Pass')
+
+        // Micah's turn: tactical action to try activating system 44
+        t.choose(game, 'Tactical Action')
+        // Micah tries to activate system 44 (asteroid field with Saar ships)
+        t.action(game, 'activate-system', { systemId: '44' })
+
+        // Activation was blocked — system 44 should have no command tokens
+        expect(game.state.systems['44'].commandTokens).toEqual([])
+
+        // The game continues (Dennis's next turn starts with Chaos Mapping prompt)
+        // Verify game is still running by checking the current prompt
+        const choices = t.currentChoices(game)
+        expect(choices).toContain('Chaos Mapping: Produce 1 Unit')
+      })
+
+      test('Saar player CAN activate their own asteroid field system', () => {
+        // Saar player with Chaos Mapping should be able to activate asteroid fields
+        // with their own ships.
+        const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['antimass-deflectors', 'chaos-mapping'],
+            units: {
+              'saar-home': {
+                space: ['carrier'],
+                'lisis-ii': ['infantry', 'infantry', 'space-dock'],
+              },
+              '35': {
+                space: ['cruiser'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Decline Chaos Mapping production at turn start
+        t.choose(game, 'Pass')
+
+        // Dennis activates system 44 (asteroid field, adjacent to 35)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '44' })
+        t.choose(game, 'Pass') // decline Mendosa
+
+        // Dennis can move ships through (has antimass deflectors)
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: '35', count: 1 }],
+        })
+
+        // Verify cruiser moved to system 44
+        const cruiserIn44 = game.state.units['44'].space
+          .filter(u => u.owner === 'dennis' && u.type === 'cruiser')
+        expect(cruiserIn44.length).toBe(1)
+      })
+
+      test('at start of action phase turn, may produce 1 unit in system with a Production unit', () => {
+        // Dennis (Saar) with Chaos Mapping, has a space dock in space
+        // At the start of turn, should be prompted to produce 1 unit
+        const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['antimass-deflectors', 'chaos-mapping'],
+            tradeGoods: 5,
+            units: {
+              'saar-home': {
+                space: ['carrier', 'space-dock'],
+                'lisis-ii': ['infantry', 'infantry'],
+              },
+            },
+            planets: {
+              'lisis-ii': { exhausted: false },
+              'ragh': { exhausted: false },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis turn starts — Chaos Mapping prompt should appear
+        t.choose(game, 'Chaos Mapping: Produce 1 Unit')
+
+        // Choose unit type (fighter is cheap, cost 1 for 2)
+        t.choose(game, 'fighter')
+
+        // Verify fighter was placed in saar-home space area
+        const fighters = game.state.units['saar-home'].space
+          .filter(u => u.owner === 'dennis' && u.type === 'fighter')
+        expect(fighters.length).toBe(1)
+      })
+
+      test('no Chaos Mapping prompt if tech not researched', () => {
+        const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['antimass-deflectors'],
+            units: {
+              'saar-home': {
+                space: ['carrier', 'space-dock'],
+                'lisis-ii': ['infantry', 'infantry'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // No Chaos Mapping prompt — should go straight to action choice
+        const choices = t.currentChoices(game)
+        expect(choices).not.toContain('Chaos Mapping: Produce 1 Unit')
+        expect(choices).toContain('Tactical Action')
+      })
     })
 
     describe('Floating Factory II', () => {
-      test.todo('space dock upgrade with move 2, capacity 5, and production 7')
+      test('space dock upgrade with move 2, capacity 5, and production 7', () => {
+        const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['antimass-deflectors', 'floating-factory-ii'],
+          },
+        })
+        game.run()
+
+        const stats = game._getUnitStats('dennis', 'space-dock')
+        expect(stats.move).toBe(2)
+        expect(stats.capacity).toBe(5)
+        expect(stats.productionValue).toBe(7)
+      })
+
+      test('Floating Factory II does not affect other players', () => {
+        const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['antimass-deflectors', 'floating-factory-ii'],
+          },
+        })
+        game.run()
+
+        // Micah should still have base space dock stats (no unitOverrides, no upgrade)
+        const micahStats = game._getUnitStats('micah', 'space-dock')
+        expect(micahStats.move).toBe(0)
+        expect(micahStats.capacity).toBe(3)
+        expect(micahStats.productionValue).toBe(2)
+      })
     })
 
     describe('Deorbit Barrage', () => {

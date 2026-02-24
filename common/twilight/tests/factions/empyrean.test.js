@@ -447,11 +447,302 @@ describe('Empyrean', () => {
 
   describe('Faction Technologies', () => {
     describe('Aetherstream', () => {
-      test.todo('after you or a neighbor activates a system adjacent to an anomaly, may apply +1 move to that player ships')
+      test('after Empyrean activates a system adjacent to an anomaly, may apply +1 move', () => {
+        // System 35 (Bereg+Lirta at -1,0) is adjacent to system 41 (gravity rift at -2,0)
+        const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['dark-energy-tap', 'gravity-drive', 'aetherstream'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              'empyrean-home': {
+                space: ['carrier'],
+                'the-dark': ['infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis (Empyrean) activates system 35 (adjacent to gravity rift 41)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '35' })
+
+        // Aetherstream prompt should appear
+        t.choose(game, 'Apply Aetherstream')
+
+        // Verify the bonus is set in state
+        expect(game.state.currentTacticalAction.aetherstreamBonus).toBe('dennis')
+      })
+
+      test('does not trigger when system is not adjacent to an anomaly', () => {
+        // System 27 (New Albion at 0,-2) is not adjacent to any anomaly
+        const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['dark-energy-tap', 'gravity-drive', 'aetherstream'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              'empyrean-home': {
+                space: ['carrier'],
+                'the-dark': ['infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis activates system 27 (NOT adjacent to anomaly)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+
+        // No Aetherstream prompt — system 27 is not adjacent to an anomaly
+        const choices = t.currentChoices(game)
+        expect(choices).not.toContain('Apply Aetherstream')
+      })
+
+      test('triggers when a neighbor activates a system adjacent to an anomaly', () => {
+        // Micah (Hacan) activates system 35 (adjacent to gravity rift 41).
+        // Empyrean (dennis) should get the Aetherstream prompt if they are neighbors.
+        const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['dark-energy-tap', 'gravity-drive', 'aetherstream'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              'empyrean-home': {
+                space: ['carrier'],
+                'the-dark': ['infantry', 'infantry', 'space-dock'],
+              },
+              // Dennis has ships in system 26, adjacent to 27 where Micah has ships
+              '26': {
+                space: ['destroyer'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              'hacan-home': {
+                space: ['cruiser'],
+                'arretze': ['infantry', 'infantry', 'space-dock'],
+                'hercant': ['infantry'],
+                'kamdorn': ['infantry'],
+              },
+              '27': {
+                space: ['carrier'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis does a strategic action first
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Pass')
+
+        // Micah activates system 35 (adjacent to gravity rift 41)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '35' })
+
+        // Aetherstream prompt for Dennis (Empyrean): they are neighbors since
+        // Dennis has ships in 26 and Micah has ships in 27 (adjacent systems)
+        t.choose(game, 'Apply Aetherstream')
+
+        expect(game.state.currentTacticalAction.aetherstreamBonus).toBe('micah')
+      })
+
+      test('does not trigger without the technology', () => {
+        const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['dark-energy-tap'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              'empyrean-home': {
+                space: ['carrier'],
+                'the-dark': ['infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis activates system 35 (adjacent to anomaly 41)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '35' })
+
+        // No Aetherstream prompt — tech not researched
+        const choices = t.currentChoices(game)
+        expect(choices).not.toContain('Apply Aetherstream')
+      })
     })
 
     describe('Voidwatch', () => {
-      test.todo('after a player moves ships into a system with your units, they must give you 1 promissory note')
+      test('after a player moves ships into a system with your units, they must give you 1 promissory note', () => {
+        const game = t.fixture({ factions: ['emirates-of-hacan', 'empyrean'] })
+        t.setBoard(game, {
+          dennis: {
+            units: {
+              'hacan-home': {
+                space: ['cruiser'],
+                'arretze': ['infantry', 'space-dock'],
+              },
+            },
+          },
+          micah: {
+            technologies: ['dark-energy-tap', 'bio-stims', 'voidwatch'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              '27': {
+                space: ['destroyer'],
+              },
+              'empyrean-home': {
+                space: ['carrier'],
+                'the-dark': ['infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+
+        const micahNotesBefore = game.players.byName('micah').getPromissoryNotes().length
+
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis (Hacan) activates system 27 (which has Empyrean destroyer)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+
+        // Aetherpassage: Empyrean prompted since they have ships
+        t.choose(game, 'Allow Passage')
+
+        // Dennis moves cruiser into system 27
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'hacan-home', count: 1 }],
+        })
+
+        // onShipsEnterSystem: Voidwatch triggers — Dennis must give a promissory note
+        // Dennis has multiple promissory notes, so they are prompted to choose one
+        const choices = t.currentChoices(game)
+        // Select the first available promissory note
+        t.choose(game, choices[0])
+
+        // Micah should have gained a promissory note from Dennis
+        const micah = game.players.byName('micah')
+        const micahNotesAfter = micah.getPromissoryNotes().length
+        expect(micahNotesAfter).toBe(micahNotesBefore + 1)
+      })
+
+      test('gives 1 trade good instead when mover has no promissory notes', () => {
+        const game = t.fixture({ factions: ['emirates-of-hacan', 'empyrean'] })
+        t.setBoard(game, {
+          dennis: {
+            tradeGoods: 3,
+            units: {
+              'hacan-home': {
+                space: ['cruiser'],
+                'arretze': ['infantry', 'space-dock'],
+              },
+            },
+          },
+          micah: {
+            tradeGoods: 0,
+            technologies: ['dark-energy-tap', 'bio-stims', 'voidwatch'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              '27': {
+                space: ['destroyer'],
+              },
+              'empyrean-home': {
+                space: ['carrier'],
+                'the-dark': ['infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+
+        // Remove all of Dennis's promissory notes in a breakpoint (survives replays)
+        game.testSetBreakpoint('initialization-complete', (g) => {
+          const dennis = g.players.byName('dennis')
+          while (dennis.getPromissoryNotes().length > 0) {
+            const note = dennis.getPromissoryNotes()[0]
+            dennis.removePromissoryNote(note.id, note.owner)
+          }
+        })
+
+        game.run()
+
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis activates system 27
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+
+        // Aetherpassage
+        t.choose(game, 'Allow Passage')
+
+        // Move cruiser
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'hacan-home', count: 1 }],
+        })
+
+        // No promissory notes — Voidwatch should give 1 TG instead
+        // This happens automatically (no prompt needed)
+        const dennisAfter = game.players.byName('dennis')
+        expect(dennisAfter.tradeGoods).toBe(2) // Lost 1 TG
+
+        const micah = game.players.byName('micah')
+        expect(micah.tradeGoods).toBe(1) // Gained 1 TG
+      })
+
+      test('does not trigger without the technology', () => {
+        const game = t.fixture({ factions: ['emirates-of-hacan', 'empyrean'] })
+        t.setBoard(game, {
+          dennis: {
+            units: {
+              'hacan-home': {
+                space: ['cruiser'],
+                'arretze': ['infantry', 'space-dock'],
+              },
+            },
+          },
+          micah: {
+            technologies: ['dark-energy-tap'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              '27': {
+                space: ['destroyer'],
+              },
+              'empyrean-home': {
+                space: ['carrier'],
+                'the-dark': ['infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        const micahNotesBefore = game.players.byName('micah').getPromissoryNotes().length
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+
+        // Aetherpassage
+        t.choose(game, 'Allow Passage')
+
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'hacan-home', count: 1 }],
+        })
+
+        // Voidwatch should NOT trigger — no tech
+        const micahNotesAfter = game.players.byName('micah').getPromissoryNotes().length
+        expect(micahNotesAfter).toBe(micahNotesBefore)
+      })
     })
 
     describe('Void Tether', () => {
