@@ -93,4 +93,166 @@ module.exports = {
   // Xxcha cannot be excluded from voting by game effects.
   // This is checked in getAgendaParticipation to ensure Xxcha is never in the excluded list.
   cannotBeExcludedFromVoting: true,
+
+  // ---------------------------------------------------------------------------
+  // Instinct Training — faction tech (green)
+  // When another player plays an action card, you may exhaust this card and
+  // spend 1 strategy token to cancel that action card.
+  // ---------------------------------------------------------------------------
+  onActionCardPlayed(xxchaPlayer, ctx, { playingPlayer, card }) {
+    if (playingPlayer.name === xxchaPlayer.name) {
+      return false
+    }
+
+    if (!xxchaPlayer.hasTechnology('instinct-training')) {
+      return false
+    }
+
+    if (!ctx.game._isTechReady(xxchaPlayer, 'instinct-training')) {
+      return false
+    }
+
+    if (xxchaPlayer.commandTokens.strategy < 1) {
+      return false
+    }
+
+    const choice = ctx.actions.choose(xxchaPlayer, ['Cancel', 'Pass'], {
+      title: `Instinct Training: Cancel "${card.name}"? (Exhaust tech + spend 1 strategy token)`,
+    })
+
+    if (choice[0] === 'Cancel') {
+      ctx.game._exhaustTech(xxchaPlayer, 'instinct-training')
+      xxchaPlayer.commandTokens.strategy -= 1
+
+      ctx.log.add({
+        template: '{player} uses Instinct Training: cancels {card}',
+        args: { player: xxchaPlayer.name, card: card.name },
+      })
+
+      return true // card was cancelled
+    }
+
+    return false
+  },
+
+  // ---------------------------------------------------------------------------
+  // Nullification Field — faction tech (yellow)
+  // After another player activates a system that contains 1 or more of your
+  // ships, you may exhaust this card and spend 1 strategy token to immediately
+  // end that player's turn.
+  // ---------------------------------------------------------------------------
+  onAnySystemActivated(xxchaPlayer, ctx, { systemId, activatingPlayer }) {
+    if (activatingPlayer.name === xxchaPlayer.name) {
+      return
+    }
+
+    if (!xxchaPlayer.hasTechnology('nullification-field')) {
+      return
+    }
+
+    if (!ctx.game._isTechReady(xxchaPlayer, 'nullification-field')) {
+      return
+    }
+
+    if (xxchaPlayer.commandTokens.strategy < 1) {
+      return
+    }
+
+    // Check if Xxcha has ships in the activated system
+    const systemUnits = ctx.state.units[systemId]
+    if (!systemUnits) {
+      return
+    }
+
+    const xxchaShips = systemUnits.space.filter(u => u.owner === xxchaPlayer.name)
+    if (xxchaShips.length === 0) {
+      return
+    }
+
+    const choice = ctx.actions.choose(xxchaPlayer, ['Nullify', 'Pass'], {
+      title: `Nullification Field: End ${activatingPlayer.name}'s turn? (Exhaust tech + spend 1 strategy token)`,
+    })
+
+    if (choice[0] === 'Nullify') {
+      ctx.game._exhaustTech(xxchaPlayer, 'nullification-field')
+      xxchaPlayer.commandTokens.strategy -= 1
+
+      ctx.log.add({
+        template: '{player} uses Nullification Field: ends {target} turn immediately',
+        args: { player: xxchaPlayer.name, target: activatingPlayer.name },
+      })
+
+      // Signal that the activating player's turn should end immediately
+      ctx.state.nullificationFieldActive = true
+    }
+  },
+
+  // ---------------------------------------------------------------------------
+  // Hero — Xxekir Grom: PLANETARY DEFENSE NEXUS
+  // ACTION: Place any combination of up to 4 PDS or mechs on planets you
+  // control; ready each planet that you place a unit on. Then, purge this card.
+  // ---------------------------------------------------------------------------
+  componentActions: [
+    {
+      id: 'xxekir-grom-hero',
+      name: 'Xxekir Grom',
+      abilityId: 'peace-accords',
+      isAvailable: function(player) {
+        return player.isHeroUnlocked() && !player.isHeroPurged()
+      },
+    },
+  ],
+
+  xxekirGromHero(ctx, player) {
+    const controlledPlanets = player.getControlledPlanets()
+    if (controlledPlanets.length === 0) {
+      player.purgeHero()
+      ctx.log.add({
+        template: '{player} purges Xxekir Grom (no controlled planets)',
+        args: { player: player.name },
+      })
+      return
+    }
+
+    let unitsPlaced = 0
+    const readiedPlanets = new Set()
+
+    for (let i = 0; i < 4; i++) {
+      const choices = ['Done', ...controlledPlanets.map(p => `pds:${p}`), ...controlledPlanets.map(p => `mech:${p}`)]
+      const selection = ctx.actions.choose(player, choices, {
+        title: `Xxekir Grom: Place unit ${i + 1}/4 (PDS or Mech)`,
+      })
+
+      if (selection[0] === 'Done') {
+        break
+      }
+
+      const [unitType, planetId] = selection[0].split(':')
+      const systemId = ctx.game._findSystemForPlanet(planetId)
+
+      if (systemId) {
+        ctx.game._addUnitToPlanet(systemId, planetId, unitType, player.name)
+        unitsPlaced++
+
+        // Ready the planet where the unit was placed
+        if (ctx.state.planets[planetId]) {
+          ctx.state.planets[planetId].exhausted = false
+          readiedPlanets.add(planetId)
+        }
+      }
+    }
+
+    if (unitsPlaced > 0) {
+      ctx.log.add({
+        template: 'Xxekir Grom: {player} places {count} units, readies {planets} planet(s)',
+        args: { player: player.name, count: unitsPlaced, planets: readiedPlanets.size },
+      })
+    }
+
+    player.purgeHero()
+    ctx.log.add({
+      template: '{player} purges Xxekir Grom',
+      args: { player: player.name },
+    })
+  },
 }

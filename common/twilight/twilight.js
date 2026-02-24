@@ -1195,6 +1195,11 @@ Twilight.prototype.statusPhase = function() {
     player.returnStrategyCard()
   }
 
+  // Step 10: End-of-status-phase faction triggers (e.g., Arborec Bioplasmosis)
+  for (const player of this._getPlayersInInitiativeOrder()) {
+    this.factionAbilities.onStatusPhaseEnd(player)
+  }
+
   this.log.outdent()
 }
 
@@ -1500,6 +1505,13 @@ Twilight.prototype._tacticalAction = function(player) {
   // Titans awaken: replace sleeper tokens with PDS
   this.factionAbilities.onSystemActivated(player.name, systemId)
 
+  // Nullification Field: Xxcha can end the activating player's turn immediately
+  if (this.state.nullificationFieldActive) {
+    delete this.state.nullificationFieldActive
+    this.log.outdent()
+    return
+  }
+
   // Z'eu agent (Naalu): may return the command token to the player's reinforcements
   this.factionAbilities.onCommandTokenPlaced(player.name, systemId)
 
@@ -1609,6 +1621,12 @@ Twilight.prototype._tacticalAction = function(player) {
 
   // Clear aetherpassage grant
   this.state.aetherpassageGrant = null
+
+  // Clear temporary adjacency (Spatial Conduit Cylinder)
+  delete this.state.temporaryAdjacency
+
+  // Clear hegemonic trade swaps (Winnu)
+  delete this.state.hegemonicTradeSwaps
 
   // End-of-tactical-action faction triggers (e.g., Sardakk N'orr agent T'ro)
   this.factionAbilities.onTacticalActionEnd(player, systemId)
@@ -1897,8 +1915,9 @@ Twilight.prototype._spaceCombat = function(player, systemId) {
     this.factionAbilities.onSpaceCombatRound(systemId, attacker, defender)
 
     // Both sides roll simultaneously
-    const attackerHits = this._rollCombatDice(attackerShips)
-    const defenderHits = this._rollCombatDice(defenderShips)
+    const combatContext = { combatType: 'space', systemId }
+    const attackerHits = this._rollCombatDice(attackerShips, combatContext)
+    const defenderHits = this._rollCombatDice(defenderShips, combatContext)
 
     this.log.add({
       template: 'Round {round}: attacker scores {aHits} hits, defender scores {dHits} hits',
@@ -2109,7 +2128,7 @@ Twilight.prototype._antiFighterBarrage = function(systemId, attacker, defender) 
   }
 }
 
-Twilight.prototype._rollCombatDice = function(ships) {
+Twilight.prototype._rollCombatDice = function(ships, context) {
   let hits = 0
   for (const ship of ships) {
     const unitDef = this._getUnitStats(ship.owner, ship.type)
@@ -2119,7 +2138,13 @@ Twilight.prototype._rollCombatDice = function(ships) {
 
     // Faction combat modifiers
     const owner = this.players.byName(ship.owner)
-    const combatModifier = this.factionAbilities.getCombatModifier(owner)
+    let combatModifier = this.factionAbilities.getCombatModifier(owner)
+
+    // Space combat-specific modifiers (e.g., Gravleash Maneuvers)
+    if (context?.combatType === 'space' && context?.systemId) {
+      combatModifier += this.factionAbilities.getSpaceCombatModifier(owner, context.systemId)
+    }
+
     const effectiveCombat = Math.max(1, Math.min(unitDef.combat + combatModifier, 10))
 
     // Each ship rolls 1 die (war suns roll 3 dice per their combat value)
@@ -4375,6 +4400,19 @@ Twilight.prototype._getTechComponentActions = function(player) {
     })
   }
 
+  // Psychospore (Arborec): exhaust to remove command token from system with infantry, place 1 infantry
+  if (this._isTechReady(player, 'psychospore')) {
+    actions.push({
+      id: 'psychospore',
+      name: 'Psychospore',
+      execute: (p) => this._executePsychospore(p),
+    })
+  }
+
+  // Instinct Training (Xxcha): registered as reaction, not component action
+
+  // Nullification Field (Xxcha): registered as reaction, not component action
+
   return actions
 }
 
@@ -4652,6 +4690,84 @@ Twilight.prototype._executeProductionBiomes = function(player) {
   }
 }
 
+Twilight.prototype._executePsychospore = function(player) {
+  this._exhaustTech(player, 'psychospore')
+
+  // Find systems with player's command token AND player's infantry
+  const validSystems = []
+  for (const [systemId, systemData] of Object.entries(this.state.systems)) {
+    if (!systemData.commandTokens.includes(player.name)) {
+      continue
+    }
+
+    const systemUnits = this.state.units[systemId]
+    if (!systemUnits) {
+      continue
+    }
+
+    // Check for infantry on any planet
+    let hasInfantry = false
+    for (const [_planetId, planetUnits] of Object.entries(systemUnits.planets)) {
+      if (planetUnits.some(u => u.owner === player.name && u.type === 'infantry')) {
+        hasInfantry = true
+        break
+      }
+    }
+
+    if (hasInfantry) {
+      validSystems.push(systemId)
+    }
+  }
+
+  if (validSystems.length === 0) {
+    this.log.add({
+      template: '{player} uses Psychospore: no valid systems',
+      args: { player },
+    })
+    return
+  }
+
+  const systemSel = this.actions.choose(player, validSystems, {
+    title: 'Psychospore: Remove command token from which system?',
+  })
+  const targetSystem = systemSel[0]
+
+  // Remove the command token
+  const tokenIdx = this.state.systems[targetSystem].commandTokens.indexOf(player.name)
+  if (tokenIdx !== -1) {
+    this.state.systems[targetSystem].commandTokens.splice(tokenIdx, 1)
+    player.commandTokens.tactics += 1
+  }
+
+  // Place 1 infantry on a planet in that system
+  const tile = res.getSystemTile(targetSystem) || res.getSystemTile(Number(targetSystem))
+  if (tile && tile.planets.length > 0) {
+    let targetPlanet
+    const controlled = tile.planets.filter(
+      pId => this.state.planets[pId]?.controller === player.name
+    )
+    if (controlled.length === 1) {
+      targetPlanet = controlled[0]
+    }
+    else if (controlled.length > 1) {
+      const sel = this.actions.choose(player, controlled, {
+        title: 'Psychospore: Place infantry on which planet?',
+      })
+      targetPlanet = sel[0]
+    }
+    else {
+      targetPlanet = tile.planets[0]
+    }
+
+    this._addUnitToPlanet(targetSystem, targetPlanet, 'infantry', player.name)
+
+    this.log.add({
+      template: '{player} uses Psychospore: removes command token from {system}, places 1 infantry on {planet}',
+      args: { player, system: targetSystem, planet: targetPlanet },
+    })
+  }
+}
+
 Twilight.prototype._executeWormholeGenerator = function(player) {
   this._exhaustTech(player, 'wormhole-generator')
 
@@ -4746,6 +4862,11 @@ Twilight.prototype._getInitiative = function(player) {
 }
 
 Twilight.prototype._getFleetLimit = function(player) {
+  // Darktalon Treilla: no fleet limit this round
+  if (this.state.noFleetLimit?.[player.name]) {
+    return 999
+  }
+
   let limit = player.commandTokens.fleet
   // Letnev Armada: +2 to fleet pool for non-fighter ships
   if (this.factionAbilities._hasAbility(player, 'armada')) {
@@ -5101,6 +5222,12 @@ Twilight.prototype._playActionCard = function(player) {
     this.state.actionCardDiscard = []
   }
   this.state.actionCardDiscard.push(card)
+
+  // Allow reactions (e.g., Xxcha Instinct Training can cancel)
+  const cancelled = this.factionAbilities.onActionCardPlayed(player, card)
+  if (cancelled) {
+    return
+  }
 
   // Resolve the card effect
   this._resolveActionCard(player, card)

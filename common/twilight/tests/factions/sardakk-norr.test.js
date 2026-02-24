@@ -278,7 +278,68 @@ describe("Sardakk N'orr", () => {
   })
 
   describe("Hero — Sh'val, Harbinger", () => {
-    test.todo('Tekklar Conditioning: skip to commit ground forces, then purge hero and return ships')
+    test('Tekklar Conditioning: places ground forces, removes ships, and purges hero', () => {
+      const game = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+          units: {
+            '27': {
+              space: ['cruiser', 'cruiser'],
+            },
+          },
+        },
+        micah: {
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses Component Action — Tekklar Conditioning
+      t.choose(game, 'Component Action')
+      t.choose(game, 'tekklar-conditioning')
+
+      // System 27 auto-selected (only valid target)
+      // Commit 5 infantry to new-albion
+      t.choose(game, 'Place 5 infantry')
+
+      // Hero should be purged
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+
+      // Ships should be removed from the system
+      const dennisShips = game.state.units['27'].space
+        .filter(u => u.owner === 'dennis')
+      expect(dennisShips.length).toBe(0)
+
+      // Ground forces should be placed
+      const dennisInfantry = game.state.units['27'].planets['new-albion']
+        .filter(u => u.owner === 'dennis' && u.type === 'infantry')
+      expect(dennisInfantry.length).toBe(5)
+    })
+
+    test('hero not available when not unlocked', () => {
+      const game = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('tekklar-conditioning')
+    })
   })
 
   describe('Mech — Valkyrie Exoskeleton', () => {
@@ -377,9 +438,90 @@ describe("Sardakk N'orr", () => {
     })
 
     describe('Exotrireme II', () => {
-      test.todo('dreadnought has move 2 after upgrade')
-      test.todo('cannot be destroyed by Direct Hit')
-      test.todo('after space combat round, may self-destruct to destroy up to 2 ships')
+      test('dreadnought has move 2 and combat 5 after upgrade', () => {
+        const game = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['exotrireme-ii'],
+          },
+        })
+        game.run()
+
+        const stats = game._getUnitStats('dennis', 'dreadnought')
+        expect(stats.move).toBe(2)
+        expect(stats.combat).toBe(5)
+        expect(stats.capacity).toBe(1)
+        expect(stats.abilities).toContain('sustain-damage')
+        expect(stats.abilities).toContain('bombardment-4x2')
+      })
+
+      test('cannot be destroyed by Direct Hit', () => {
+        const game = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['exotrireme-ii'],
+          },
+        })
+        game.run()
+
+        const dreadUnit = { id: 'test-1', type: 'dreadnought', owner: 'dennis', damaged: true }
+        expect(game.factionAbilities.isDirectHitImmune(dreadUnit)).toBe(true)
+
+        // Non-dreadnought is not immune
+        const carrierUnit = { id: 'test-2', type: 'carrier', owner: 'dennis', damaged: true }
+        expect(game.factionAbilities.isDirectHitImmune(carrierUnit)).toBe(false)
+
+        // Opponent's dreadnought is not immune
+        const opponentDread = { id: 'test-3', type: 'dreadnought', owner: 'micah', damaged: true }
+        expect(game.factionAbilities.isDirectHitImmune(opponentDread)).toBe(false)
+      })
+
+      test('without tech, dreadnought is not Direct Hit immune', () => {
+        const game = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+        game.run()
+
+        const dreadUnit = { id: 'test-1', type: 'dreadnought', owner: 'dennis', damaged: true }
+        expect(game.factionAbilities.isDirectHitImmune(dreadUnit)).toBe(false)
+      })
+
+      test('after space combat round, may self-destruct to destroy up to 2 ships', () => {
+        const game = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['exotrireme-ii'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              'norr-home': {
+                space: ['dreadnought', 'dreadnought', 'dreadnought'],
+                'quinarra': ['space-dock'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              '27': {
+                space: ['cruiser', 'cruiser', 'cruiser'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'dreadnought', from: 'norr-home', count: 3 }],
+        })
+
+        // After first combat round, offered to sacrifice dreadnought
+        t.choose(game, 'Sacrifice Dreadnought')
+
+        // Dreadnought should be destroyed and up to 2 enemy ships also destroyed
+        const logEntries = game.log._log.map(e => e.template || '')
+        expect(logEntries.some(e => e.includes('Exotrireme II'))).toBe(true)
+        expect(logEntries.filter(e => e.includes('Exotrireme II') && e.includes('destroys')).length).toBeGreaterThanOrEqual(1)
+      })
     })
 
     describe("N'orr Supremacy", () => {

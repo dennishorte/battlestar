@@ -192,7 +192,76 @@ describe('Federation of Sol', () => {
   })
 
   describe('Hero — Jace X. 4th Air Legion', () => {
-    test.todo('Helio Command Array: remove all command tokens from board and purge')
+    test('Helio Command Array: remove all command tokens from board and purge', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'unlocked' },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses a tactical action first to place a command token on the board
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', { movements: [] })
+
+      // System 27 should have dennis's command token
+      expect(game.state.systems['27'].commandTokens).toContain('dennis')
+
+      // Micah takes a turn
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'hacan-home')
+      t.choose(game, 'Pass')  // dennis declines secondary
+
+      // Dennis uses Helio Command Array hero
+      t.choose(game, 'Component Action')
+      t.choose(game, 'helio-command-array')
+
+      // Command token should be removed from board
+      expect(game.state.systems['27'].commandTokens).not.toContain('dennis')
+
+      // Hero should be purged
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+
+      // Log should show the recovered tokens
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Helio Command Array'))).toBe(true)
+      expect(logEntries.some(e => e.includes('recovers'))).toBe(true)
+    })
+
+    test('hero not available when not unlocked', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('helio-command-array')
+    })
+
+    test('hero not available when already purged', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'purged' },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('helio-command-array')
+    })
   })
 
   describe('Mech — ZS Thunderbolt M2', () => {

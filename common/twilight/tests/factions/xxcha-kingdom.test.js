@@ -182,7 +182,49 @@ describe('Xxcha Kingdom', () => {
   })
 
   describe('Hero — Xxekir Grom', () => {
-    test.todo('PLANETARY DEFENSE NEXUS: place up to 4 PDS or mechs on controlled planets, ready those planets, then purge')
+    test('PLANETARY DEFENSE NEXUS: place up to 4 PDS or mechs on controlled planets, ready those planets, then purge', () => {
+      const game = t.fixture({ factions: ['xxcha-kingdom', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'unlocked', hero: 'unlocked' },
+          planets: {
+            'archon-ren': { exhausted: true },
+            'archon-tau': { exhausted: true },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: Component Action -> Xxekir Grom Hero
+      t.choose(game, 'Component Action')
+      t.choose(game, 'xxekir-grom-hero')
+
+      // Place 2 PDS on archon-ren and 1 mech on archon-tau
+      t.choose(game, 'pds:archon-ren')
+      t.choose(game, 'pds:archon-ren')
+      t.choose(game, 'mech:archon-tau')
+      t.choose(game, 'Done')
+
+      const dennis = game.players.byName('dennis')
+
+      // Hero should be purged
+      expect(dennis.isHeroPurged()).toBe(true)
+
+      // Planets where units were placed should be readied
+      expect(game.state.planets['archon-ren'].exhausted).toBe(false)
+      expect(game.state.planets['archon-tau'].exhausted).toBe(false)
+
+      // Verify PDS placed on archon-ren
+      const renPDS = game.state.units['xxcha-home'].planets['archon-ren']
+        .filter(u => u.owner === 'dennis' && u.type === 'pds')
+      expect(renPDS.length).toBeGreaterThanOrEqual(3) // 1 starting + 2 hero
+
+      // Verify mech placed on archon-tau
+      const tauMechs = game.state.units['xxcha-home'].planets['archon-tau']
+        .filter(u => u.owner === 'dennis' && u.type === 'mech')
+      expect(tauMechs.length).toBe(1)
+    })
   })
 
   describe('Mech — Indomitus', () => {
@@ -197,11 +239,90 @@ describe('Xxcha Kingdom', () => {
 
   describe('Faction Technologies', () => {
     describe('Instinct Training', () => {
-      test.todo('exhaust and spend strategy token to cancel another player action card')
+      test('exhaust and spend strategy token to cancel another player action card', () => {
+        const game = t.fixture({ factions: ['xxcha-kingdom', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['graviton-laser-system', 'neural-motivator', 'instinct-training'],
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          },
+          micah: {
+            actionCards: ['mining-initiative'],
+            tradeGoods: 0,
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis: strategic action (leadership=1 goes first)
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Pass')  // micah declines secondary
+
+        // Micah plays action card - Mining Initiative
+        // (only 1 action card so card selection auto-resolves)
+        t.choose(game, 'Play Action Card')
+
+        // Xxcha (dennis) gets prompt to cancel via Instinct Training
+        t.choose(game, 'Cancel')
+
+        const dennis = game.players.byName('dennis')
+        // Strategy token spent
+        expect(dennis.commandTokens.strategy).toBe(1)
+        // Tech should be exhausted
+        expect(dennis.exhaustedTechs).toContain('instinct-training')
+
+        // Micah should not have gained trade goods (card was cancelled)
+        const micah = game.players.byName('micah')
+        expect(micah.tradeGoods).toBe(0)
+      })
     })
 
     describe('Nullification Field', () => {
-      test.todo('exhaust and spend strategy token when another player activates system with your ships to end their turn')
+      test('exhaust and spend strategy token when another player activates system with your ships to end their turn', () => {
+        const game = t.fixture({ factions: ['xxcha-kingdom', 'emirates-of-hacan'] })
+        // Place Xxcha ships in a system that Hacan will activate
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['graviton-laser-system', 'plasma-scoring', 'magen-defense-grid', 'nullification-field'],
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'xxcha-home': {
+                space: ['cruiser', 'cruiser', 'fighter', 'fighter', 'fighter', 'carrier'],
+                'archon-ren': ['infantry', 'infantry', 'space-dock', 'pds'],
+                'archon-tau': ['infantry', 'infantry'],
+              },
+              '26': {
+                space: ['cruiser'],
+              },
+            },
+          },
+          micah: {
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis: strategic action (leadership)
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Pass')  // micah declines secondary
+
+        // Micah: tactical action — activate system 26 (where Xxcha has a cruiser)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '26' })
+
+        // Xxcha gets Nullification Field prompt
+        t.choose(game, 'Nullify')
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.commandTokens.strategy).toBe(1)
+        expect(dennis.exhaustedTechs).toContain('nullification-field')
+
+        // Micah's turn should have ended — micah should not get movement prompt
+        // The game should continue to the next action choice
+        const micah = game.players.byName('micah')
+        expect(micah.commandTokens.tactics).toBe(2) // spent 1 for the activation
+      })
     })
 
     describe("Archon's Gift", () => {

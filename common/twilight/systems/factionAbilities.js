@@ -34,6 +34,11 @@ class FactionAbilities {
     return handler?.getCombatModifier?.(player, this) ?? 0
   }
 
+  getSpaceCombatModifier(player, systemId) {
+    const handler = this._getPlayerHandler(player)
+    return handler?.getSpaceCombatModifier?.(player, this, systemId) ?? 0
+  }
+
   getStatusPhaseTokenBonus(player) {
     const handler = this._getPlayerHandler(player)
     return handler?.getStatusPhaseTokenBonus?.(player, this) ?? 0
@@ -324,6 +329,27 @@ class FactionAbilities {
     handler?.onActionCardDraw?.(player, this, drawn)
   }
 
+  /**
+   * Called when a player plays an action card. Other players may react
+   * (e.g., Xxcha Instinct Training can cancel the card).
+   * Returns true if the card was cancelled.
+   */
+  onActionCardPlayed(playingPlayer, card) {
+    for (const player of this.players.all()) {
+      if (player.name === playingPlayer.name) {
+        continue
+      }
+      const handler = this._getPlayerHandler(player)
+      if (handler?.onActionCardPlayed) {
+        const cancelled = handler.onActionCardPlayed(player, this, { playingPlayer, card })
+        if (cancelled) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
 
   // ---------------------------------------------------------------------------
   // E. Movement Triggers
@@ -398,6 +424,11 @@ class FactionAbilities {
   onStatusPhaseStart(player) {
     const handler = this._getPlayerHandler(player)
     handler?.onStatusPhaseStart?.(player, this)
+  }
+
+  onStatusPhaseEnd(player) {
+    const handler = this._getPlayerHandler(player)
+    handler?.onStatusPhaseEnd?.(player, this)
   }
 
 

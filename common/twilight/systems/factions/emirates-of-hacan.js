@@ -24,6 +24,14 @@ module.exports = {
         return player.isAgentReady()
       },
     },
+    {
+      id: 'harrugh-gefhara-hero',
+      name: 'Harrugh Gefhara',
+      abilityId: 'guild-ships',
+      isAvailable: function(player) {
+        return player.isHeroUnlocked() && !player.isHeroPurged()
+      },
+    },
   ],
 
   carthAgent(ctx, player) {
@@ -141,6 +149,70 @@ module.exports = {
       template: '{player} uses Quantum Datahub Node: gives {giveCard} to {target}, takes {takeCard}',
       args: { player: player.name, target: targetName, giveCard, takeCard },
     })
+  },
+
+  // ---------------------------------------------------------------------------
+  // Auto-Factories — faction tech
+  // When you produce 3 or more non-fighter ships, place 1 command token from
+  // your reinforcements into your fleet pool.
+  // Also clears hero production override after production.
+  // ---------------------------------------------------------------------------
+  afterProduction(player, ctx, { producedUnits }) {
+    // Clear hero flag after production step completes
+    if (ctx.state.hacanHeroActive === player.name) {
+      delete ctx.state.hacanHeroActive
+    }
+
+    if (!player.hasTechnology('auto-factories')) {
+      return
+    }
+
+    if (!producedUnits || producedUnits.length === 0) {
+      return
+    }
+
+    // Count non-fighter ships produced
+    const nonFighterShips = producedUnits.filter(
+      u => u.category === 'ship' && u.type !== 'fighter'
+    )
+
+    if (nonFighterShips.length >= 3) {
+      player.commandTokens.fleet += 1
+
+      ctx.log.add({
+        template: 'Auto-Factories: {player} gains 1 fleet supply token ({count} non-fighter ships produced)',
+        args: { player: player.name, count: nonFighterShips.length },
+      })
+    }
+  },
+
+  // ---------------------------------------------------------------------------
+  // Hero — Harrugh Gefhara: GALACTIC SECURITIES NET
+  // ACTION: Your total production cost is 0 for this turn.
+  // When you next produce units this turn, they cost 0. Then purge this card.
+  // ---------------------------------------------------------------------------
+  harrughGefharaHero(ctx, player) {
+    // Set a flag that modifies production cost to 0 for this turn
+    ctx.state.hacanHeroActive = player.name
+
+    ctx.log.add({
+      template: 'Harrugh Gefhara: {player} production cost is 0 for this turn',
+      args: { player: player.name },
+    })
+
+    player.purgeHero()
+    ctx.log.add({
+      template: '{player} purges Harrugh Gefhara',
+      args: { player: player.name },
+    })
+  },
+
+  // Override production cost to 0 when hero is active
+  getProductionCostOverride(player, ctx, _unitType) {
+    if (ctx.state.hacanHeroActive === player.name) {
+      return 0
+    }
+    return null
   },
 
   // Commander: Gila the Silvertongue — spend TG for 2x votes (handled in agenda phase)

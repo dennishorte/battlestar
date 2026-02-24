@@ -108,6 +108,26 @@ class Galaxy {
       }
     }
 
+    // Faction-granted additional adjacency (e.g., Spatial Conduit Cylinder)
+    // stored as game.state.temporaryAdjacency = [{ systemId, adjacentTo: [...] }]
+    if (this.game.state.temporaryAdjacency) {
+      for (const entry of this.game.state.temporaryAdjacency) {
+        if (String(entry.systemId) === String(systemId)) {
+          for (const adjId of entry.adjacentTo) {
+            if (!adjacent.includes(String(adjId))) {
+              adjacent.push(String(adjId))
+            }
+          }
+        }
+        // Also check reverse: if this system is in another entry's adjacentTo
+        if (entry.adjacentTo.includes(String(systemId))) {
+          if (!adjacent.includes(String(entry.systemId))) {
+            adjacent.push(String(entry.systemId))
+          }
+        }
+      }
+    }
+
     if (tileWormholes.length > 0) {
       for (const [otherId, otherSystem] of Object.entries(this.game.state.systems)) {
         if (String(otherId) === String(systemId)) {

@@ -177,7 +177,60 @@ describe('Emirates of Hacan', () => {
   })
 
   describe('Hero — Harrugh Gefhara', () => {
-    test.todo('Galactic Securities Net: reduce production cost to 0, then purge')
+    test('Galactic Securities Net: reduce production cost to 0, then purge', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'unlocked', hero: 'unlocked' },
+          tradeGoods: 0,
+          commandTokens: { tactics: 4, strategy: 2, fleet: 5 },
+          units: {
+            'hacan-home': {
+              space: [],
+              'arretze': ['infantry', 'infantry', 'space-dock'],
+              'hercant': ['infantry', 'infantry'],
+            },
+          },
+          planets: {
+            'arretze': { exhausted: true },
+            'hercant': { exhausted: true },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: Component Action -> Hero (sets production cost to 0)
+      t.choose(game, 'Component Action')
+      t.choose(game, 'harrugh-gefhara-hero')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+
+      // Micah: Strategic Action (must use strategy card before passing)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'sol-home')  // diplomacy: choose home system
+      t.choose(game, 'Pass')  // dennis declines secondary
+
+      // Dennis: Tactical Action -> Produce units with cost 0
+      // (planets are exhausted, 0 trade goods, but hero makes everything free)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'hacan-home' })
+      t.choose(game, 'Done')  // skip movement
+
+      // Produce a dreadnought (normally costs 4) for free
+      t.action(game, 'produce-units', {
+        units: [{ type: 'dreadnought', count: 1 }],
+      })
+
+      // Dreadnought should be placed despite having 0 resources
+      const spaceUnits = game.state.units['hacan-home'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'dreadnought')
+      expect(spaceUnits.length).toBe(1)
+
+      // Hero flag should be cleared after production
+      expect(game.state.hacanHeroActive).toBeUndefined()
+    })
   })
 
   describe('Mech — Pride of Kenara', () => {
@@ -339,6 +392,73 @@ describe('Emirates of Hacan', () => {
       })
     })
 
-    test.todo('Auto-Factories: gain fleet token when producing 3+ non-fighter ships')
+    describe('Auto-Factories', () => {
+      test('gain fleet token when producing 3+ non-fighter ships', () => {
+        const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['antimass-deflectors', 'sarween-tools', 'plasma-scoring', 'magen-defense-grid', 'auto-factories'],
+            tradeGoods: 20,
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'hacan-home': {
+                space: [],
+                'arretze': ['infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis: tactical action -> activate home system, produce units
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: 'hacan-home' })
+        t.choose(game, 'Done')  // skip movement
+
+        // Produce 3 non-fighter ships (destroyers are cheap at cost 1)
+        t.action(game, 'produce-units', {
+          units: [{ type: 'destroyer', count: 3 }],
+        })
+
+        const dennis = game.players.byName('dennis')
+        // Should have gained +1 fleet supply from Auto-Factories
+        // Started with 3 fleet, then -1 tactics for activation = 2 tactics
+        // Fleet should be 3 + 1 = 4
+        expect(dennis.commandTokens.fleet).toBe(4)
+      })
+
+      test('does not trigger when producing fewer than 3 non-fighter ships', () => {
+        const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['antimass-deflectors', 'sarween-tools', 'plasma-scoring', 'magen-defense-grid', 'auto-factories'],
+            tradeGoods: 20,
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'hacan-home': {
+                space: [],
+                'arretze': ['infantry', 'infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: 'hacan-home' })
+        t.choose(game, 'Done')  // skip movement
+
+        // Produce 2 non-fighter ships + fighters (fighters don't count)
+        t.action(game, 'produce-units', {
+          units: [{ type: 'destroyer', count: 2 }, { type: 'fighter', count: 3 }],
+        })
+
+        const dennis = game.players.byName('dennis')
+        // Fleet should remain at 3 (no bonus)
+        expect(dennis.commandTokens.fleet).toBe(3)
+      })
+    })
   })
 })
