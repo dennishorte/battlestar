@@ -863,7 +863,46 @@ describe('Titans of Ul', () => {
         expect(extra).toBe(1)
       })
 
-      test.todo('other players may allow placement of sleeper token on their planet')
+      test('other players may allow placement of sleeper token on their planet', () => {
+        const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            technologies: ['slumberstate-computing'],
+            units: {
+              'titans-home': {
+                space: ['cruiser'],
+                'elysium': ['infantry', 'space-dock'],
+              },
+            },
+          },
+          micah: {
+            planets: {
+              'new-albion': { exhausted: false },
+            },
+            units: {
+              '27': {
+                'new-albion': ['infantry'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis uses component action: Request Sleeper Placement
+        t.choose(game, 'Component Action')
+        t.choose(game, 'slumberstate-sleeper')
+
+        // Micah is auto-selected (only opponent), Micah allows it
+        t.choose(game, 'Allow Sleeper')
+
+        // Dennis chooses which of Micah's planets to place sleeper on
+        t.choose(game, 'new-albion')
+
+        // Verify sleeper placed on new-albion
+        expect(game.state.sleeperTokens['new-albion']).toBe('dennis')
+      })
     })
   })
 })
