@@ -418,8 +418,104 @@ describe('Nekro Virus', () => {
   })
 
   describe('Promissory Note — Antivirus', () => {
-    test.todo('at start of combat, place face-up to prevent Nekro from using Technological Singularity against you')
-    test.todo('returns to Nekro player when holder activates system with Nekro units')
+    test('at start of combat, place face-up to prevent Nekro from using Technological Singularity against you', () => {
+      // Dennis = Nekro attacks Micah (Hacan) who holds Antivirus
+      const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'nekro-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'mordai-ii': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'antivirus', owner: 'dennis' }],
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'nekro-home', count: 5 }],
+      })
+
+      // At start of combat: Micah is offered to play Antivirus
+      t.choose(game, 'Play Antivirus')
+
+      // Nekro destroys Hacan fighter — Technological Singularity should NOT trigger
+      // No tech choice prompt — combat just resolves
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasTechnology('antimass-deflectors')).toBe(false)
+
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Antivirus'))).toBe(true)
+    })
+
+    test('returns to Nekro player when holder activates system with Nekro units', () => {
+      // Micah holds face-up Antivirus, then activates system with Dennis's units
+      const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'nekro-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'mordai-ii': ['space-dock'],
+            },
+            '26': {
+              space: ['cruiser'], // Nekro unit in system 26
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'antivirus', owner: 'dennis' }],
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+            'hacan-home': {
+              space: ['carrier', 'cruiser'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: attacks system 27, Antivirus triggers at combat start
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'nekro-home', count: 5 }],
+      })
+
+      // Micah plays Antivirus at combat start
+      t.choose(game, 'Play Antivirus')
+
+      // Combat resolves (Nekro wins, no Singularity)
+
+      // Micah's turn: activate system 26 (has Dennis's cruiser)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '26' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'hacan-home', count: 1 }],
+      })
+
+      // PN should be returned to Dennis (Nekro)
+      const micah = game.players.byName('micah')
+      const dennis = game.players.byName('dennis')
+      expect(micah.hasPromissoryNote('antivirus')).toBe(false)
+      expect(dennis.hasPromissoryNote('antivirus')).toBe(true)
+    })
   })
 
   describe('Faction Technologies', () => {

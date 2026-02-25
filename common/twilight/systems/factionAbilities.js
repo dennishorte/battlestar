@@ -308,16 +308,49 @@ class FactionAbilities {
   // ---------------------------------------------------------------------------
 
   getAvailableComponentActions(player) {
+    const actions = []
+
+    // Faction-specific component actions
     const handler = this._getPlayerHandler(player)
-    if (!handler?.componentActions) {
-      return []
+    if (handler?.componentActions) {
+      actions.push(
+        ...handler.componentActions
+          .filter(h => this._hasAbility(player, h.abilityId) && h.isAvailable.call({ _game: this.game }, player))
+          .map(h => ({ id: h.id, name: h.name }))
+      )
     }
-    return handler.componentActions
-      .filter(h => this._hasAbility(player, h.abilityId) && h.isAvailable.call({ _game: this.game }, player))
-      .map(h => ({ id: h.id, name: h.name }))
+
+    // Activatable promissory notes (ACTION type)
+    actions.push(...this._getActivatablePNs(player))
+
+    return actions
+  }
+
+  _getActivatablePNs(player) {
+    const pnActions = []
+    const notes = player.getPromissoryNotes()
+    for (const pn of notes) {
+      if (pn.owner === player.name) {
+        continue
+      }
+
+      if (pn.id === 'promise-of-protection') {
+        const alreadyActive = (this.state._activatedPNs || [])
+          .some(p => p.id === 'promise-of-protection' && p.holder === player.name)
+        if (!alreadyActive) {
+          pnActions.push({ id: 'promise-of-protection', name: 'Promise of Protection' })
+        }
+      }
+    }
+    return pnActions
   }
 
   executeComponentAction(player, actionId) {
+    // Check if it's a PN activation
+    if (this._executePromissoryNoteAction(player, actionId)) {
+      return
+    }
+
     const handler = this._getPlayerHandler(player)
     if (!handler?.componentActions) {
       return
@@ -334,6 +367,33 @@ class FactionAbilities {
     }
   }
 
+  _executePromissoryNoteAction(player, actionId) {
+    if (actionId === 'promise-of-protection') {
+      const pn = player.getPromissoryNotes().find(n => n.id === 'promise-of-protection' && n.owner !== player.name)
+      if (!pn) {
+        return false
+      }
+
+      if (!this.state._activatedPNs) {
+        this.state._activatedPNs = []
+      }
+      this.state._activatedPNs.push({
+        id: 'promise-of-protection',
+        holder: player.name,
+        owner: pn.owner,
+        faction: 'mentak-coalition',
+      })
+
+      this.log.add({
+        template: '{player} plays Promise of Protection (immune to Mentak Pillage)',
+        args: { player: player.name },
+      })
+      return true
+    }
+
+    return false
+  }
+
 
   // ---------------------------------------------------------------------------
   // C. Combat Triggers — event-driven, called from space combat flow
@@ -344,6 +404,58 @@ class FactionAbilities {
       const player = this.players.byName(shooterName)
       const handler = this._getPlayerHandler(player)
       handler?.onSpaceCombatStart?.(player, this, { systemId, opponentName: targetName })
+    }
+
+    // Offer combat-start promissory notes (Antivirus)
+    this._offerCombatStartPromissoryNotes(systemId, attacker, defender)
+  }
+
+  _offerCombatStartPromissoryNotes(systemId, attackerName, defenderName) {
+    for (const [participantName, opponentName] of [[attackerName, defenderName], [defenderName, attackerName]]) {
+      const participant = this.players.byName(participantName)
+      if (!participant) {
+        continue
+      }
+
+      // Antivirus: prevent Nekro Technological Singularity
+      const antivirusPn = participant.getPromissoryNotes().find(n => n.id === 'antivirus' && n.owner !== participant.name)
+      if (!antivirusPn) {
+        continue
+      }
+
+      // Only relevant when fighting against the Nekro player (PN owner)
+      if (opponentName !== antivirusPn.owner) {
+        continue
+      }
+
+      // Check not already active
+      const alreadyActive = (this.state._activatedPNs || [])
+        .some(p => p.id === 'antivirus' && p.holder === participant.name)
+      if (alreadyActive) {
+        continue
+      }
+
+      const choice = this.actions.choose(participant, ['Play Antivirus', 'Pass'], {
+        title: 'Antivirus: Prevent Nekro from using Technological Singularity?',
+      })
+      if (choice[0] !== 'Play Antivirus') {
+        continue
+      }
+
+      if (!this.state._activatedPNs) {
+        this.state._activatedPNs = []
+      }
+      this.state._activatedPNs.push({
+        id: 'antivirus',
+        holder: participant.name,
+        owner: antivirusPn.owner,
+        faction: 'nekro-virus',
+      })
+
+      this.log.add({
+        template: '{player} plays Antivirus (Nekro cannot use Technological Singularity)',
+        args: { player: participant.name },
+      })
     }
   }
 
@@ -959,6 +1071,53 @@ class FactionAbilities {
     for (const otherPlayer of this.players.all()) {
       const otherHandler = this._getPlayerHandler(otherPlayer)
       otherHandler?.onAnySystemActivated?.(otherPlayer, this, { systemId, activatingPlayer: player })
+    }
+
+    // Return activated PNs when holder activates system with PN faction's units
+    this._checkActivatedPNReturn(playerName, systemId)
+  }
+
+  _checkActivatedPNReturn(activatingPlayerName, systemId) {
+    if (!this.state._activatedPNs?.length) {
+      return
+    }
+
+    const systemUnits = this.state.units[systemId]
+    if (!systemUnits) {
+      return
+    }
+
+    const toReturn = []
+    for (let i = this.state._activatedPNs.length - 1; i >= 0; i--) {
+      const pn = this.state._activatedPNs[i]
+      if (pn.holder !== activatingPlayerName) {
+        continue
+      }
+
+      // Check if system has units from the PN owner's faction
+      const hasOwnerUnits = systemUnits.space.some(u => u.owner === pn.owner) ||
+        Object.values(systemUnits.planets || {}).flat().some(u => u.owner === pn.owner)
+
+      if (hasOwnerUnits) {
+        toReturn.push(pn)
+        this.state._activatedPNs.splice(i, 1)
+      }
+    }
+
+    for (const pn of toReturn) {
+      const holder = this.players.byName(pn.holder)
+      const owner = this.players.byName(pn.owner)
+      if (holder) {
+        holder.removePromissoryNote(pn.id, pn.owner)
+      }
+      if (owner) {
+        owner.addPromissoryNote(pn.id, pn.owner)
+      }
+
+      this.log.add({
+        template: '{pnName} returned from {holder} to {owner}',
+        args: { pnName: pn.id, holder: pn.holder, owner: pn.owner },
+      })
     }
   }
 

@@ -102,6 +102,11 @@ module.exports = {
       return
     }
 
+    // Promise of Protection: target is immune to Pillage
+    if ((ctx.state._activatedPNs || []).some(p => p.id === 'promise-of-protection' && p.holder === transactionPlayer.name)) {
+      return
+    }
+
     // Pillage requires the target to have 3 or more trade goods
     if (transactionPlayer.tradeGoods < 3) {
       return

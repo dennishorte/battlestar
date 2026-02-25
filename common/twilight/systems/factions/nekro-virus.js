@@ -377,6 +377,11 @@ module.exports = {
       return
     }
 
+    // Antivirus: unit owner is immune to Technological Singularity
+    if ((ctx.state._activatedPNs || []).some(p => p.id === 'antivirus' && p.holder === unit.owner)) {
+      return
+    }
+
     const owner = ctx.players.byName(unit.owner)
     if (!owner) {
       return
