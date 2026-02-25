@@ -76,6 +76,12 @@ import CardDetailModal from './modals/CardDetailModal.vue'
 import ShipOverviewModal from './modals/ShipOverviewModal.vue'
 import SystemDetailModal from './modals/SystemDetailModal.vue'
 
+// Selector option components
+import ObjectiveChip from './ObjectiveChip.vue'
+
+import { twilight } from 'battlestar-common'
+const res = twilight.res
+
 
 export default {
   name: 'TwilightGame',
@@ -105,6 +111,7 @@ export default {
         fn: {
           insertSelectorSubtitles: this.insertSelectorSubtitles,
           getActionTypeHandler: this.getActionTypeHandler,
+          selectorOptionComponent: this.selectorOptionComponent,
         },
         modals: {
           systemDetail: { systemId: null },
@@ -191,6 +198,28 @@ export default {
 
   methods: {
     insertSelectorSubtitles() {},
+
+    selectorOptionComponent(option) {
+      const name = option.title || option
+      if (typeof name !== 'string') {
+        return undefined
+      }
+
+      // Detect "id: Name" pattern used for objectives
+      const colonIdx = name.indexOf(': ')
+      if (colonIdx > 0) {
+        const id = name.substring(0, colonIdx)
+        const obj = res.getObjective(id)
+        if (obj) {
+          return {
+            component: ObjectiveChip,
+            props: { objectiveId: id },
+          }
+        }
+      }
+
+      return undefined
+    },
 
     getActionTypeHandler(request) {
       // Route custom action types to their dedicated UIs
