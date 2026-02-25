@@ -538,8 +538,92 @@ describe('Titans of Ul', () => {
   })
 
   describe('Promissory Note — Terraform', () => {
-    test.todo('attach to a non-home planet to increase resource and influence by 1')
-    test.todo('planet is treated as having all 3 planet traits')
+    test('attach to a non-home planet to increase resource and influence by 1', () => {
+      // Dennis = Hacan (holder), Micah = Titans (owner)
+      // Dennis controls new-albion (resources 1, influence 1)
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'titans-of-ul'] })
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [{ id: 'terraform', owner: 'micah' }],
+          planets: { 'new-albion': {} },
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock'],
+            },
+            '*27': {
+              'new-albion': ['infantry'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'titans-home': {
+              space: ['carrier'],
+              'elysium': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: Component Action → Terraform
+      t.choose(game, 'Component Action')
+      t.choose(game, 'terraform')
+      // Only 1 eligible planet (new-albion), auto-selected
+
+      // Terraform attached — resource and influence each +1
+      expect(game.state.planets['new-albion'].terraform).toBe(true)
+
+      const dennis = game.players.byName('dennis')
+      // new-albion base: resources 1, influence 1
+      // With terraform: resources 2, influence 2
+      // Plus hacan home planets (arretze 2/0, hercant 1/1, kamdorn 0/1)
+      // Total resources: 2 + 2 + 1 + 0 = 5, Total influence: 2 + 0 + 1 + 1 = 4
+      expect(dennis.getTotalResources()).toBe(5)
+      expect(dennis.getTotalInfluence()).toBe(4)
+    })
+
+    test('planet is treated as having all 3 planet traits', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'titans-of-ul'] })
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [{ id: 'terraform', owner: 'micah' }],
+          planets: { 'new-albion': {} },
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock'],
+            },
+            '*27': {
+              'new-albion': ['infantry'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'titans-home': {
+              space: ['carrier'],
+              'elysium': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'terraform')
+
+      // Terraform stores all traits flag
+      expect(game.state.planets['new-albion'].terraform).toBe(true)
+
+      // Verify PN is consumed (not returned — permanent attachment)
+      const dennis = game.players.byName('dennis')
+      const dennisPNs = dennis.getPromissoryNotes()
+      expect(dennisPNs.some(n => n.id === 'terraform' && n.owner === 'micah')).toBe(false)
+    })
   })
 
   describe('Flagship — Ouranos', () => {

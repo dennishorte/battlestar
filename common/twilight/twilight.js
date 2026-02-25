@@ -1341,7 +1341,11 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
     // Choose which planets to exhaust for votes
     const planetChoices = readyPlanets.map(pId => {
       const planet = res.getPlanet(pId)
-      return `${pId} (${planet ? planet.influence : 0})`
+      let inf = planet ? planet.influence : 0
+      if (this.state.planets[pId]?.terraform) {
+        inf += 1
+      }
+      return `${pId} (${inf})`
     })
 
     const exhaustSelection = this.actions.choose(player, planetChoices, {
@@ -1355,7 +1359,11 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
       const planetId = choice.split(' (')[0]
       const planet = res.getPlanet(planetId)
       if (planet) {
-        totalInfluence += planet.influence
+        let inf = planet.influence
+        if (this.state.planets[planetId]?.terraform) {
+          inf += 1
+        }
+        totalInfluence += inf
         this.state.planets[planetId].exhausted = true
       }
     }
