@@ -479,8 +479,112 @@ describe('Xxcha Kingdom', () => {
   })
 
   describe('Promissory Note — Political Favor', () => {
-    test.todo('when agenda is revealed, remove 1 rider or cancel 1 speaker action')
-    test.todo('returns to Xxcha player after use')
+    test('when agenda is revealed, discard it and reveal a new one', () => {
+      // Dennis = Hacan (holder), Micah = Xxcha (owner)
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'xxcha-kingdom'] })
+      t.setBoard(game, {
+        custodiansRemoved: true,
+        agendaDeck: ['mutiny', 'anti-intellectual-revolution', 'incentive-program'],
+        dennis: {
+          promissoryNotes: [{ id: 'political-favor', owner: 'micah' }],
+          tradeGoods: 0,
+          commodities: 0,
+          planets: {
+            'arretze': { exhausted: false },
+          },
+        },
+        micah: {
+          commandTokens: { tactics: 2, strategy: 2, fleet: 2 },
+          tradeGoods: 0,
+          commodities: 0,
+          planets: {
+            'archon-ren': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      // Dennis=Hacan uses diplomacy, Micah=Xxcha uses leadership
+      // (avoids Peace Accords trigger from Xxcha using diplomacy)
+      pickStrategyCards(game, 'diplomacy', 'leadership')
+
+      // Micah (leadership=1) goes first
+      t.choose(game, 'Strategic Action')  // Micah uses leadership
+      t.choose(game, 'Pass')              // Dennis declines secondary
+      // Dennis (diplomacy=2) goes next
+      t.choose(game, 'Strategic Action')  // Dennis uses diplomacy
+      t.choose(game, 'hacan-home')        // Dennis diplomacy target
+      t.choose(game, 'Pass')              // Micah declines secondary
+      // Both pass action phase
+      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')
+
+      // Status phase
+      t.choose(game, 'Done')
+      t.choose(game, 'Done')
+
+      // Agenda phase — first agenda revealed: "mutiny"
+      // Micah (Xxcha) is offered Quash first — decline
+      t.choose(game, 'Pass')
+      // Dennis (holder) gets Political Favor prompt
+      t.choose(game, 'Play Political Favor')
+
+      // Xxcha strategy token should be spent (2 -> 1)
+      const micah = game.players.byName('micah')
+      expect(micah.commandTokens.strategy).toBe(1)
+
+      // Log should show agenda was replaced
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Political Favor'))).toBe(true)
+    })
+
+    test('returns to Xxcha player after use', () => {
+      // Dennis = Hacan (holder), Micah = Xxcha (owner)
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'xxcha-kingdom'] })
+      t.setBoard(game, {
+        custodiansRemoved: true,
+        agendaDeck: ['mutiny', 'anti-intellectual-revolution', 'incentive-program'],
+        dennis: {
+          promissoryNotes: [{ id: 'political-favor', owner: 'micah' }],
+          tradeGoods: 0,
+          commodities: 0,
+          planets: {
+            'arretze': { exhausted: false },
+          },
+        },
+        micah: {
+          commandTokens: { tactics: 2, strategy: 2, fleet: 2 },
+          tradeGoods: 0,
+          commodities: 0,
+          planets: {
+            'archon-ren': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'diplomacy', 'leadership')
+
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'hacan-home')
+      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')
+
+      t.choose(game, 'Done')
+      t.choose(game, 'Done')
+
+      // Micah (Xxcha) is offered Quash first — decline
+      t.choose(game, 'Pass')
+      t.choose(game, 'Play Political Favor')
+
+      // PN returned to Xxcha
+      const micah = game.players.byName('micah')
+      expect(micah.getPromissoryNotes().some(n => n.id === 'political-favor')).toBe(true)
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getPromissoryNotes().some(n => n.id === 'political-favor')).toBe(false)
+    })
   })
 
   describe('Faction Technologies', () => {
