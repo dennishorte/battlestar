@@ -414,9 +414,80 @@ describe('Naalu Collective', () => {
   })
 
   describe('Promissory Note — Gift of Prescience', () => {
-    test.todo('holder places Naalu "0" token on their strategy card to go first in initiative order')
-    test.todo('Naalu cannot use Telepathic during this game round')
-    test.todo('returns to Naalu player at end of status phase')
+    test('holder goes first in initiative order, Naalu loses Telepathic', () => {
+      // Dennis = Hacan (holder), Micah = Naalu (owner)
+      // Normally Naalu (Micah) goes first (Telepathic = initiative 0)
+      // With GoP, Dennis gets initiative 0 and Naalu loses Telepathic
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'naalu-collective'] })
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [{ id: 'gift-of-prescience', owner: 'micah' }],
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // End of strategy phase — Dennis is offered Gift of Prescience
+      t.choose(game, 'Play Gift of Prescience')
+
+      // Action phase: Dennis (initiative 0 from GoP) goes first
+      // Players must use their strategy card before they can pass
+      t.choose(game, 'Strategic Action')  // Dennis uses leadership (goes first!)
+      t.choose(game, 'Pass')              // Micah declines secondary
+      t.choose(game, 'Strategic Action')  // Micah uses diplomacy (goes second)
+      t.choose(game, 'naalu-home')        // Micah diplomacy target
+      t.choose(game, 'Pass')              // Dennis declines secondary
+      // Both pass
+      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')
+
+      // Verify GoP was activated
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Gift of Prescience'))).toBe(true)
+
+      // Verify Dennis went first by checking action log order:
+      // "dennis: Strategic Action" should appear before "micah: Strategic Action"
+      const actionLogs = game.log._log
+        .filter(e => (e.template || '').includes('{player}: {action}'))
+        .map(e => e.args?.player?.value || e.args?.player?.name || e.args?.player)
+      expect(actionLogs[0]).toBe('dennis')
+      expect(actionLogs[1]).toBe('micah')
+    })
+
+    test('returns to Naalu player at end of status phase', () => {
+      // Dennis = Hacan (holder), Micah = Naalu (owner)
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'naalu-collective'] })
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [{ id: 'gift-of-prescience', owner: 'micah' }],
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Play Gift of Prescience
+      t.choose(game, 'Play Gift of Prescience')
+
+      // Play through action phase
+      t.choose(game, 'Strategic Action')  // Dennis uses leadership
+      t.choose(game, 'Pass')              // Micah declines secondary
+      t.choose(game, 'Strategic Action')  // Micah uses diplomacy
+      t.choose(game, 'naalu-home')
+      t.choose(game, 'Pass')              // Dennis declines secondary
+      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')
+
+      // Status phase
+      t.choose(game, 'Done')
+      t.choose(game, 'Done')
+
+      // After status phase, PN should be returned to Naalu
+      const micah = game.players.byName('micah')
+      expect(micah.getPromissoryNotes().some(n => n.id === 'gift-of-prescience')).toBe(true)
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getPromissoryNotes().some(n => n.id === 'gift-of-prescience')).toBe(false)
+    })
   })
 
   describe('Faction Technologies', () => {

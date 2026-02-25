@@ -1273,12 +1273,12 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
     votingOrder.push(allPlayers[(speakerIndex + j) % allPlayers.length])
   }
 
-  // Faction abilities modify agenda participation (Argent first, Nekro excluded)
+  // Pre-voting abilities: predictions and PN plays (Nekro, Keleres Rider)
+  this.factionAbilities.onAgendaVotingStart(agenda, outcomes)
+
+  // Faction abilities modify agenda participation (Argent first, Nekro excluded, Keleres Rider excluded)
   const participation = this.factionAbilities.getAgendaParticipation(votingOrder)
   votingOrder = participation.order
-
-  // Nekro prediction before voting
-  this.factionAbilities.onAgendaVotingStart(agenda, outcomes)
 
   const votes = {}  // outcome → total votes
   for (const outcome of outcomes) {
@@ -5108,10 +5108,19 @@ Twilight.prototype._getAvailableResources = function(player) {
 }
 
 Twilight.prototype._getInitiative = function(player) {
-  // Naalu Telepathic: initiative 0 (always goes first)
-  if (this.factionAbilities._hasAbility(player, 'telepathic')) {
+  // Gift of Prescience holder gets initiative 0
+  if (this.state._giftOfPrescience?.holder === player.name) {
     return 0
   }
+
+  // Naalu Telepathic: initiative 0 (always goes first)
+  // But not when Gift of Prescience is active (Naalu loses Telepathic this round)
+  if (this.factionAbilities._hasAbility(player, 'telepathic')) {
+    if (!this.state._giftOfPrescience) {
+      return 0
+    }
+  }
+
   const card = res.getStrategyCard(player.getStrategyCardId())
   return card ? card.number : 99
 }
