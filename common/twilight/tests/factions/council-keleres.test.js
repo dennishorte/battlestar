@@ -209,7 +209,58 @@ describe('Council Keleres', () => {
   })
 
   describe('Commander — Suffi An', () => {
-    test.todo('after performing a component action, may perform an additional action')
+    test('after performing a component action, may perform an additional action', () => {
+      // Dennis (Keleres) has commander unlocked and bio-stims tech
+      // After using bio-stims (component action), Suffi An offers a bonus action
+      // Dennis uses the bonus to activate a system (Tactical Action)
+      const game = t.fixture({
+        factions: ['council-keleres', 'federation-of-sol'],
+        keleresSubFaction: 'mentak-coalition',
+      })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { commander: 'unlocked' },
+          technologies: ['bio-stims'],
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          planets: {
+            'moll-primus': { exhausted: true },
+          },
+          units: {
+            'mentak-home': {
+              'moll-primus': ['space-dock'],
+              space: ['cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis performs a component action (bio-stims)
+      t.choose(game, 'Component Action')
+      t.choose(game, 'bio-stims')
+      // Bio-stims: only 1 exhausted planet (moll-primus), auto-responded
+
+      // Suffi An triggers: additional action offered
+      // Dennis chooses Tactical Action as the bonus
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'cruiser', from: 'mentak-home', count: 1 },
+        ],
+      })
+
+      // Verify planet was readied by bio-stims
+      expect(game.state.planets['moll-primus'].exhausted).toBe(false)
+
+      // Verify system 27 was activated (command token placed)
+      expect(game.state.systems['27'].commandTokens).toContain('dennis')
+
+      // Verify the cruiser moved to system 27
+      const ships = game.state.units['27'].space.filter(u => u.owner === 'dennis')
+      expect(ships.some(u => u.type === 'cruiser')).toBe(true)
+    })
 
     test('unlock condition: spend 1 trade good after playing an action card with a component action', () => {
       const game = t.fixture({

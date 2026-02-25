@@ -1038,7 +1038,28 @@ class FactionAbilities {
 
 
   // ---------------------------------------------------------------------------
-  // Y. Invasion Influence Cost
+  // Y1. Bombardment Triggers
+  // ---------------------------------------------------------------------------
+
+  afterBombardment(attackerName, systemId, planetId, totalHits) {
+    const attacker = this.players.byName(attackerName)
+    const handler = this._getPlayerHandler(attacker)
+    handler?.afterBombardment?.(attacker, this, { systemId, planetId, totalHits })
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // Y2. Component Action Triggers
+  // ---------------------------------------------------------------------------
+
+  afterComponentAction(player) {
+    const handler = this._getPlayerHandler(player)
+    handler?.afterComponentAction?.(player, this)
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // Y3. Invasion Influence Cost
   // ---------------------------------------------------------------------------
 
   /**
