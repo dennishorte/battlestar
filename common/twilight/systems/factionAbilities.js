@@ -723,6 +723,52 @@ class FactionAbilities {
         args: { player: participant.name },
       })
     }
+
+    // War Funding (Barony of Letnev PN)
+    // "At the start of a round of space combat: The Letnev player loses 2 trade goods.
+    //  During this combat round, re-roll any number of your dice.
+    //  Then, return this card to the Letnev player."
+    for (const [holderName, opponentName] of [[attackerName, defenderName], [defenderName, attackerName]]) {
+      const holder = this.players.byName(holderName)
+      if (!holder) {
+        continue
+      }
+      const warFundingPn = holder.getPromissoryNotes().find(n => n.id === 'war-funding' && n.owner !== holder.name)
+      if (!warFundingPn) {
+        continue
+      }
+
+      // Check that Letnev has 2 TG
+      const letnevPlayer = this.players.byName(warFundingPn.owner)
+      if (!letnevPlayer || letnevPlayer.tradeGoods < 2) {
+        continue
+      }
+
+      const choice = this.actions.choose(holder, ['Play War Funding', 'Pass'], {
+        title: 'War Funding: Letnev loses 2 TG for you to reroll dice?',
+      })
+      if (choice[0] !== 'Play War Funding') {
+        continue
+      }
+
+      // Letnev loses 2 TG
+      letnevPlayer.spendTradeGoods(2)
+
+      // Mark holder for reroll this combat (similar to Munitions Reserves)
+      if (!this.state._warFundingActive) {
+        this.state._warFundingActive = {}
+      }
+      this.state._warFundingActive[holderName] = true
+
+      // Return PN to Letnev
+      holder.removePromissoryNote('war-funding', warFundingPn.owner)
+      letnevPlayer.addPromissoryNote('war-funding', warFundingPn.owner)
+
+      this.log.add({
+        template: 'War Funding: {owner} loses 2 trade goods, {player} may reroll dice. Card returned.',
+        args: { player: holderName, owner: warFundingPn.owner },
+      })
+    }
   }
 
   onSpaceCombatRound(systemId, attacker, defender) {
@@ -1040,6 +1086,94 @@ class FactionAbilities {
           }
         }
       }
+    }
+
+    // Ragh's Call (Clan of Saar PN)
+    // "After you commit 1 or more units to land on a planet: Remove all of the Saar
+    //  player's ground forces from that planet and place them on a planet controlled
+    //  by the Saar player. Then, return this card to the Saar player."
+    for (const [holderName, opponentName] of [[attackerName, defenderName], [defenderName, attackerName]]) {
+      const holder = this.players.byName(holderName)
+      if (!holder.hasPromissoryNote('raghs-call')) {
+        continue
+      }
+      const pn = holder.getPromissoryNotes().find(n => n.id === 'raghs-call')
+      if (!pn || pn.owner === holderName) {
+        continue
+      }
+
+      // Only applies when the Saar player (owner) has ground forces on this planet
+      const saarPlayerName = pn.owner
+      const planetUnits = this.state.units[systemId]?.planets[planetId] || []
+      const saarGroundForces = planetUnits.filter(u =>
+        u.owner === saarPlayerName && (u.type === 'infantry' || u.type === 'mech')
+      )
+
+      if (saarGroundForces.length === 0) {
+        continue
+      }
+
+      const choice = this.actions.choose(holder, ["Play Ragh's Call", 'Pass'], {
+        title: "Ragh's Call: Remove Saar ground forces from this planet?",
+      })
+      if (choice[0] !== "Play Ragh's Call") {
+        continue
+      }
+
+      // Find Saar-controlled planets to relocate to
+      const saarPlayer = this.players.byName(saarPlayerName)
+      const saarPlanets = saarPlayer ? saarPlayer.getControlledPlanets() : []
+      // Filter out the current planet
+      const validTargets = saarPlanets.filter(p => p !== planetId)
+
+      if (validTargets.length > 0) {
+        // Saar chooses destination for their ground forces
+        let targetPlanet
+        if (validTargets.length === 1) {
+          targetPlanet = validTargets[0]
+        }
+        else {
+          const sel = this.actions.choose(saarPlayer, validTargets, {
+            title: "Ragh's Call: Choose planet for relocated ground forces",
+          })
+          targetPlanet = sel[0]
+        }
+
+        const targetSystem = this.game._findSystemForPlanet(targetPlanet)
+        if (targetSystem) {
+          // Move all Saar ground forces from combat planet to target
+          for (const gf of saarGroundForces) {
+            const idx = planetUnits.findIndex(u => u.id === gf.id)
+            if (idx !== -1) {
+              planetUnits.splice(idx, 1)
+              if (!this.state.units[targetSystem].planets[targetPlanet]) {
+                this.state.units[targetSystem].planets[targetPlanet] = []
+              }
+              this.state.units[targetSystem].planets[targetPlanet].push(gf)
+            }
+          }
+        }
+      }
+      else {
+        // No valid Saar planets — just remove the ground forces
+        for (const gf of [...saarGroundForces]) {
+          const idx = planetUnits.findIndex(u => u.id === gf.id)
+          if (idx !== -1) {
+            planetUnits.splice(idx, 1)
+          }
+        }
+      }
+
+      // Return PN to Saar
+      holder.removePromissoryNote('raghs-call', pn.owner)
+      if (saarPlayer) {
+        saarPlayer.addPromissoryNote('raghs-call', pn.owner)
+      }
+
+      this.log.add({
+        template: "Ragh's Call: {player} removes Saar ground forces from {planet}, card returns to {owner}",
+        args: { player: holderName, planet: planetId, owner: pn.owner },
+      })
     }
   }
 
@@ -1370,6 +1504,7 @@ class FactionAbilities {
     delete this.state._singularityUsedThisCombat
     delete this.state._tekklarLegionActive
     delete this.state._tekklarLegionPenalty
+    delete this.state._warFundingActive
   }
 
 
@@ -1695,6 +1830,79 @@ class FactionAbilities {
             this.log.add({
               template: '{pnName} returned from {holder} to {owner}',
               args: { pnName: 'Spy Net', holder: activePlayer.name, owner: pn.owner },
+            })
+          }
+        }
+      }
+    }
+
+    // Creuss IFF (Ghosts of Creuss PN)
+    // "At the start of your turn during the action phase: Place or move a Creuss
+    //  wormhole token into either a system that contains a planet you control or a
+    //  non-home system that does not contain another player's ships.
+    //  Then, return this card to the Creuss player."
+    if (activePlayer.hasPromissoryNote('creuss-iff')) {
+      const pn = activePlayer.getPromissoryNotes().find(n => n.id === 'creuss-iff' && n.owner !== activePlayer.name)
+      if (pn) {
+        // Find valid systems for wormhole token placement
+        const validSystems = []
+        const isHomeSystem = (id) => String(id).endsWith('-home') || String(id).endsWith('-gate')
+        for (const [systemId] of Object.entries(this.state.systems)) {
+          // Skip system that already has the token
+          if (this.state.creussWormholeToken === String(systemId)) {
+            continue
+          }
+
+          // Option A: any system with a planet controlled by the holder (including home)
+          const tile = this.game.res.getSystemTile(systemId) || this.game.res.getSystemTile(Number(systemId))
+          const hasControlledPlanet = (tile?.planets || []).some(
+            pId => this.state.planets[pId]?.controller === activePlayer.name
+          )
+          if (hasControlledPlanet) {
+            validSystems.push(systemId)
+            continue
+          }
+
+          // Option B: non-home system without opponent ships
+          if (!isHomeSystem(systemId)) {
+            const systemUnits = this.state.units[systemId]
+            const hasOpponentShips = systemUnits?.space.some(
+              u => u.owner !== activePlayer.name
+            )
+            if (!hasOpponentShips) {
+              validSystems.push(systemId)
+            }
+          }
+        }
+
+        if (validSystems.length > 0) {
+          const choice = this.actions.choose(activePlayer, ['Play Creuss IFF', 'Pass'], {
+            title: 'Creuss IFF: Place or move Creuss wormhole token?',
+          })
+          if (choice[0] === 'Play Creuss IFF') {
+            let targetSystem
+            if (validSystems.length === 1) {
+              targetSystem = validSystems[0]
+            }
+            else {
+              const sel = this.actions.choose(activePlayer, validSystems, {
+                title: 'Creuss IFF: Place wormhole token in which system?',
+              })
+              targetSystem = sel[0]
+            }
+
+            this.state.creussWormholeToken = String(targetSystem)
+
+            // Return PN to Creuss player
+            activePlayer.removePromissoryNote('creuss-iff', pn.owner)
+            const ownerPlayer = this.players.byName(pn.owner)
+            if (ownerPlayer) {
+              ownerPlayer.addPromissoryNote('creuss-iff', pn.owner)
+            }
+
+            this.log.add({
+              template: 'Creuss IFF: {player} places wormhole token in system {system}, card returns to {owner}',
+              args: { player: activePlayer.name, system: targetSystem, owner: pn.owner },
             })
           }
         }

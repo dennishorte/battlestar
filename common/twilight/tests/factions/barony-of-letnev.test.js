@@ -586,8 +586,99 @@ describe('Barony of Letnev', () => {
   })
 
   describe('Promissory Note — War Funding', () => {
-    test.todo('Letnev loses 2 TG and holder rerolls dice during space combat round')
-    test.todo('returns to Letnev player after use')
+    test('Letnev loses 2 TG and holder rerolls dice during space combat round', () => {
+      // Dennis = Hacan (holder), Micah = Letnev (owner)
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'barony-of-letnev'] })
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [{ id: 'war-funding', owner: 'micah' }],
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'hacan-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          tradeGoods: 5,
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+            'letnev-home': {
+              'arc-prime': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'hacan-home', count: 5 }],
+      })
+
+      // War Funding prompt at combat start
+      t.choose(game, 'Play War Funding')
+
+      // Letnev should have lost 2 TG
+      const micah = game.players.byName('micah')
+      expect(micah.tradeGoods).toBe(3) // 5 - 2
+
+      // War Funding log should appear
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('War Funding'))).toBe(true)
+    })
+
+    test('returns to Letnev player after use', () => {
+      // Dennis = Hacan (holder), Micah = Letnev (owner)
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'barony-of-letnev'] })
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [{ id: 'war-funding', owner: 'micah' }],
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'hacan-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          tradeGoods: 5,
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+            'letnev-home': {
+              'arc-prime': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'hacan-home', count: 5 }],
+      })
+
+      t.choose(game, 'Play War Funding')
+
+      // PN returned to Letnev
+      const micah = game.players.byName('micah')
+      expect(micah.getPromissoryNotes().some(n => n.id === 'war-funding')).toBe(true)
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getPromissoryNotes().some(n => n.id === 'war-funding')).toBe(false)
+    })
   })
 
   describe('Faction Technologies', () => {
