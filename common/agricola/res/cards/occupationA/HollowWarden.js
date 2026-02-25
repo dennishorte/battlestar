@@ -38,31 +38,9 @@ module.exports = {
     const improvementId = idMatch ? idMatch[1] : null
 
     if (improvementId) {
-      const imp = game.cards.byId(improvementId)
-      const result = player.buyMajorImprovement(improvementId)
-      game.actions._recordCardPlayed(player, imp)
-
-      game.log.add({
-        template: '{player} uses {card} to build {improvement}',
-        args: { player, card, improvement: imp.name },
-      })
-
-      if (!result.upgraded) {
-        player.payCost(player.getMajorImprovementCost(improvementId))
-      }
-
-      if (imp.hasHook('onBuy')) {
-        imp.callHook('onBuy', game, player)
-      }
-
-      game.callPlayerCardHook(player, 'onBuildImprovement', player.getMajorImprovementCost(improvementId), imp)
-      game.actions.callOnAnyBuildImprovementHooks(player, player.getMajorImprovementCost(improvementId), imp)
-      game.callPlayerCardHook(player, 'onBuildMajor', improvementId)
-      game.actions.callOnAnyBuildMajorHooks(player, improvementId)
-
-      game.log.add({
-        template: '{player} uses {card} to build {improvement}',
-        args: { player, card, improvement: imp },
+      game.actions._completeMajorPurchase(player, improvementId, {
+        logTemplate: '{player} uses {source} to build {card}',
+        logArgs: { source: card },
       })
     }
   },
