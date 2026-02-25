@@ -728,7 +728,7 @@ class FactionAbilities {
     // "At the start of a round of space combat: The Letnev player loses 2 trade goods.
     //  During this combat round, re-roll any number of your dice.
     //  Then, return this card to the Letnev player."
-    for (const [holderName, opponentName] of [[attackerName, defenderName], [defenderName, attackerName]]) {
+    for (const [holderName] of [[attackerName, defenderName], [defenderName, attackerName]]) {
       const holder = this.players.byName(holderName)
       if (!holder) {
         continue
@@ -1092,7 +1092,7 @@ class FactionAbilities {
     // "After you commit 1 or more units to land on a planet: Remove all of the Saar
     //  player's ground forces from that planet and place them on a planet controlled
     //  by the Saar player. Then, return this card to the Saar player."
-    for (const [holderName, opponentName] of [[attackerName, defenderName], [defenderName, attackerName]]) {
+    for (const [holderName] of [[attackerName, defenderName], [defenderName, attackerName]]) {
       const holder = this.players.byName(holderName)
       if (!holder.hasPromissoryNote('raghs-call')) {
         continue
