@@ -587,6 +587,88 @@ module.exports = {
   // The fighter capacity exemption is a passive effect that modifies capacity
   // calculation. We provide a helper method the engine can query.
 
+  // ---------------------------------------------------------------------------
+  // Al'Raith Ix Ianovar — Faction Technology
+  // When researched: The Fracture enters play, ingress tokens placed on gravity
+  // rift systems. Ships starting in The Fracture get +1 Move.
+  // ---------------------------------------------------------------------------
+
+  onTechResearched(player, ctx, tech) {
+    if (tech.id !== 'alraith-ix-ianovar') {
+      return
+    }
+
+    // Find gravity rift systems in the galaxy
+    const gravityRiftSystems = []
+    for (const [systemId, _systemData] of Object.entries(ctx.state.systems)) {
+      const tile = ctx.game.res.getSystemTile(systemId) || ctx.game.res.getSystemTile(Number(systemId))
+      if (tile && tile.anomaly === 'gravity-rift') {
+        gravityRiftSystems.push(systemId)
+      }
+    }
+
+    // Place The Fracture as a new system adjacent to gravity rifts
+    const fractureId = 'the-fracture'
+    ctx.state.systems[fractureId] = {
+      tileId: fractureId,
+      position: { q: -3, r: 0 },
+      commandTokens: [],
+      isFracture: true,
+    }
+    ctx.state.units[fractureId] = { space: [], planets: {} }
+
+    ctx.state.theFracture = {
+      owner: player.name,
+      systemId: fractureId,
+      ingressTokens: [],
+    }
+
+    ctx.log.add({
+      template: "Al'Raith Ix Ianovar: {player} causes The Fracture to enter play",
+      args: { player: player.name },
+    })
+
+    // Place up to 2 ingress tokens on gravity rift systems
+    const tokensToPlace = Math.min(2, gravityRiftSystems.length)
+    for (let i = 0; i < tokensToPlace; i++) {
+      const remaining = gravityRiftSystems.filter(
+        s => !ctx.state.theFracture.ingressTokens.includes(s)
+      )
+      if (remaining.length === 0) {
+        break
+      }
+
+      let targetSystem
+      if (remaining.length === 1) {
+        targetSystem = remaining[0]
+      }
+      else {
+        const sel = ctx.actions.choose(player, remaining, {
+          title: `Place ingress token ${i + 1}/${tokensToPlace} on a gravity rift`,
+        })
+        targetSystem = sel[0]
+      }
+
+      ctx.state.theFracture.ingressTokens.push(targetSystem)
+
+      ctx.log.add({
+        template: "Al'Raith: {player} places ingress token in system {system}",
+        args: { player: player.name, system: targetSystem },
+      })
+    }
+  },
+
+  getMovementBonus(player, ctx, fromSystemId) {
+    if (!player.hasTechnology('alraith-ix-ianovar')) {
+      return 0
+    }
+    // +1 Move for ships starting in The Fracture
+    if (ctx.state.theFracture && String(fromSystemId) === ctx.state.theFracture.systemId) {
+      return 1
+    }
+    return 0
+  },
+
   /**
    * Returns the number of fighters that don't count against capacity in a system
    * with this player's space dock. Returns 6 for base, 12 for Dimensional Tear II.

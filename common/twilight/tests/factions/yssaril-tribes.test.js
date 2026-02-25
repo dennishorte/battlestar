@@ -127,7 +127,51 @@ describe('Yssaril Tribes', () => {
   })
 
   describe('Agent — Ssruu', () => {
-    test.todo('has text ability of each other player agent')
+    test('has text ability of each other player agent', () => {
+      // Dennis (Yssaril) pairs with Micah (Empyrean) — Ssruu copies Acamar
+      const game = t.fixture({ factions: ['yssaril-tribes', 'empyrean'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'locked', hero: 'locked' },
+          tradeGoods: 0,
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          units: {
+            'yssaril-home': {
+              space: ['cruiser'],
+              'retillion': ['space-dock', 'infantry'],
+            },
+          },
+        },
+        micah: {
+          leaders: { agent: 'ready', commander: 'locked', hero: 'locked' },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: Tactical Action — activate system 27
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Ssruu triggers: copy Empyrean agent (Acamar)
+      t.choose(game, 'Ssruu as Acamar')
+      t.choose(game, 'Gain 1 Trade Good')
+
+      // Micah's Acamar also triggers — decline
+      t.choose(game, 'Pass')
+
+      // Move ships
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'yssaril-home', count: 1 }],
+      })
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+      expect(dennis.tradeGoods).toBeGreaterThanOrEqual(1)
+
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Ssruu'))).toBe(true)
+    })
   })
 
   describe('Commander — So Ata', () => {

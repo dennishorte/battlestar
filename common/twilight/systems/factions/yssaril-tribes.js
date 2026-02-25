@@ -105,12 +105,17 @@ module.exports = {
   // ---------------------------------------------------------------------------
 
   onAnySystemActivated(yssarilPlayer, ctx, { systemId, activatingPlayer }) {
-    // Only triggers for other players
+    // Agent — Ssruu: has text ability of each other player's agent.
+    // At system activation, may copy another faction's agent ability.
+    if (yssarilPlayer.isAgentReady()) {
+      this._offerSsruuSystemActivation(yssarilPlayer, ctx, { systemId, activatingPlayer })
+    }
+
+    // Commander — So Ata: only triggers for other players
     if (!activatingPlayer || activatingPlayer.name === yssarilPlayer.name) {
       return
     }
 
-    // Commander must be unlocked
     if (!yssarilPlayer.isCommanderUnlocked()) {
       return
     }
@@ -143,6 +148,87 @@ module.exports = {
         cards: cardNames.join(', ') || 'none',
       },
     })
+  },
+
+  // ---------------------------------------------------------------------------
+  // Agent — Ssruu: This card has the text ability of each other player's
+  // agent, even if that agent is exhausted.
+  // ---------------------------------------------------------------------------
+
+  _offerSsruuSystemActivation(yssarilPlayer, ctx, { systemId, activatingPlayer }) {
+    const { getHandler } = require('./index.js')
+    const otherPlayers = ctx.game.players.all().filter(p => p.name !== yssarilPlayer.name)
+
+    const available = []
+    for (const other of otherPlayers) {
+      const agentName = other.faction?.leaders?.agent?.name
+      if (!agentName) {
+        continue
+      }
+
+      const handler = getHandler(other.faction.id)
+      if (!handler?.onAnySystemActivated) {
+        continue
+      }
+
+      available.push({ label: agentName, factionId: other.faction.id })
+    }
+
+    if (available.length === 0) {
+      return
+    }
+
+    const choices = available.map(a => `Ssruu as ${a.label}`)
+    choices.push('Pass')
+
+    const sel = ctx.actions.choose(yssarilPlayer, choices, {
+      title: "Ssruu: Copy an agent's ability?",
+    })
+
+    if (sel[0] === 'Pass') {
+      return
+    }
+
+    yssarilPlayer.exhaustAgent()
+
+    const idx = choices.indexOf(sel[0])
+    const chosen = available[idx]
+    this._executeSsruuEffect(yssarilPlayer, ctx, chosen.factionId, { systemId, activatingPlayer })
+  },
+
+  _executeSsruuEffect(yssarilPlayer, ctx, factionId, { systemId, activatingPlayer }) {
+    switch (factionId) {
+      case 'empyrean': {
+        // Acamar: gain 1 TG or give activating player 1 command token
+        const effectChoices = [
+          'Gain 1 Trade Good',
+          `Give ${activatingPlayer.name} 1 Command Token`,
+        ]
+        const effectChoice = ctx.actions.choose(yssarilPlayer, effectChoices, {
+          title: 'Ssruu (Acamar): Choose effect',
+        })
+
+        if (effectChoice[0] === 'Gain 1 Trade Good') {
+          yssarilPlayer.addTradeGoods(1)
+        }
+        else {
+          const target = ctx.players.byName(activatingPlayer.name)
+          if (target) {
+            target.commandTokens.tactics += 1
+          }
+        }
+        ctx.log.add({
+          template: 'Ssruu (as Acamar): {player} chose {effect}',
+          args: { player: yssarilPlayer.name, effect: effectChoice[0] },
+        })
+        break
+      }
+      default:
+        ctx.log.add({
+          template: 'Ssruu: {player} copies {faction} agent ability',
+          args: { player: yssarilPlayer.name, faction: factionId },
+        })
+    }
   },
 
   // ---------------------------------------------------------------------------
