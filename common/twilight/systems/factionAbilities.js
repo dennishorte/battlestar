@@ -352,8 +352,20 @@ class FactionAbilities {
         'trade-convoys': 'Trade Convoys',
         'fires-of-the-gashlai': 'Fires of the Gashlai',
         'research-agreement': 'Research Agreement',
+        'black-market-forgery': 'Black Market Forgery',
+        'terraform': 'Terraform',
       }
       if (activatableNames[pn.id]) {
+        // Black Market Forgery: only available if holder has 2 fragments of same type
+        if (pn.id === 'black-market-forgery') {
+          const counts = {}
+          for (const f of (player.relicFragments || [])) {
+            counts[f] = (counts[f] || 0) + 1
+          }
+          if (!Object.values(counts).some(c => c >= 2)) {
+            continue
+          }
+        }
         const alreadyActive = (this.state._activatedPNs || [])
           .some(p => p.id === pn.id && p.holder === player.name)
         if (!alreadyActive) {
@@ -394,6 +406,8 @@ class FactionAbilities {
       'trade-convoys': 'emirates-of-hacan',
       'fires-of-the-gashlai': 'embers-of-muaat',
       'research-agreement': 'universities-of-jol-nar',
+      'black-market-forgery': 'naaz-rokha-alliance',
+      'terraform': 'titans-of-ul',
     }
     const nameMap = {
       'promise-of-protection': 'Promise of Protection',
@@ -402,6 +416,8 @@ class FactionAbilities {
       'trade-convoys': 'Trade Convoys',
       'fires-of-the-gashlai': 'Fires of the Gashlai',
       'research-agreement': 'Research Agreement',
+      'black-market-forgery': 'Black Market Forgery',
+      'terraform': 'Terraform',
     }
     if (!factionMap[actionId]) {
       return false
@@ -420,6 +436,14 @@ class FactionAbilities {
     // One-shot PNs: resolve effect immediately and return to owner
     if (actionId === 'fires-of-the-gashlai') {
       this._resolveFiresOfTheGashlai(player, pn)
+      return true
+    }
+    if (actionId === 'black-market-forgery') {
+      this._resolveBlackMarketForgery(player, pn)
+      return true
+    }
+    if (actionId === 'terraform') {
+      this._resolveTerraform(player, pn)
       return true
     }
 
@@ -462,6 +486,100 @@ class FactionAbilities {
     this.log.add({
       template: '{pnName} returned from {holder} to {owner}',
       args: { pnName: 'Fires of the Gashlai', holder: player.name, owner: pn.owner },
+    })
+  }
+
+  _resolveBlackMarketForgery(player, pn) {
+    const fragments = player.relicFragments || []
+    const counts = {}
+    for (const f of fragments) {
+      counts[f] = (counts[f] || 0) + 1
+    }
+    const pairTypes = Object.entries(counts).filter(([, c]) => c >= 2).map(([t]) => t)
+    if (pairTypes.length === 0) {
+      return
+    }
+
+    let fragType
+    if (pairTypes.length === 1) {
+      fragType = pairTypes[0]
+    }
+    else {
+      const fragSelection = this.actions.choose(player, pairTypes, {
+        title: 'Choose fragment type to purge (2)',
+      })
+      fragType = fragSelection[0]
+    }
+
+    // Purge 2 fragments
+    for (let i = 0; i < 2; i++) {
+      const idx = player.relicFragments.indexOf(fragType)
+      if (idx !== -1) {
+        player.relicFragments.splice(idx, 1)
+      }
+    }
+
+    this.log.add({
+      template: '{player} purges 2 {type} fragments for a relic (Black Market Forgery)',
+      args: { player: player.name, type: fragType },
+    })
+
+    // Return PN to Naaz-Rokha
+    const owner = this.players.byName(pn.owner)
+    player.removePromissoryNote(pn.id, pn.owner)
+    if (owner) {
+      owner.addPromissoryNote(pn.id, pn.owner)
+    }
+    this.log.add({
+      template: '{pnName} returned from {holder} to {owner}',
+      args: { pnName: 'Black Market Forgery', holder: player.name, owner: pn.owner },
+    })
+  }
+
+  _resolveTerraform(player, pn) {
+    // Choose a non-home planet the holder controls (not Mecatol Rex)
+    const controlledPlanets = Object.entries(this.state.planets)
+      .filter(([, s]) => s.controller === player.name)
+      .map(([id]) => id)
+    const res = require('../res')
+    const eligible = controlledPlanets.filter(pId => {
+      const planet = res.getPlanet(pId)
+      if (!planet) {
+        return false
+      }
+      if (pId === 'mecatol-rex') {
+        return false
+      }
+      // Non-home: exclude planets in any faction's home system
+      const sysId = String(planet.systemId || '')
+      if (sysId.endsWith('-home')) {
+        return false
+      }
+      return true
+    })
+
+    if (eligible.length === 0) {
+      return
+    }
+
+    let planetId
+    if (eligible.length === 1) {
+      planetId = eligible[0]
+    }
+    else {
+      const selection = this.actions.choose(player, eligible, {
+        title: 'Terraform: Attach to a non-home planet',
+      })
+      planetId = selection[0]
+    }
+
+    // Attach permanently — no return to Titans
+    this.state.planets[planetId].terraform = true
+    player.removePromissoryNote(pn.id, pn.owner)
+
+    this.log.add({
+      template: '{player} attaches Terraform to {planet} (+1 resource, +1 influence, all traits)',
+      args: { player: player.name, planet: planetId },
     })
   }
 

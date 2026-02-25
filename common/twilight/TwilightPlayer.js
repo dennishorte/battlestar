@@ -267,14 +267,22 @@ class TwilightPlayer extends BasePlayer {
   getTotalResources() {
     return this.getReadyPlanets().reduce((sum, planetId) => {
       const planet = res.getPlanet(planetId)
-      return sum + (planet ? planet.resources : 0)
+      let value = planet ? planet.resources : 0
+      if (this.game.state.planets[planetId]?.terraform) {
+        value += 1
+      }
+      return sum + value
     }, 0)
   }
 
   getTotalInfluence() {
     return this.getReadyPlanets().reduce((sum, planetId) => {
       const planet = res.getPlanet(planetId)
-      return sum + (planet ? planet.influence : 0)
+      let value = planet ? planet.influence : 0
+      if (this.game.state.planets[planetId]?.terraform) {
+        value += 1
+      }
+      return sum + value
     }, 0)
   }
 
