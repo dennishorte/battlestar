@@ -99,7 +99,7 @@ module.exports = {
       })
 
       if (transactChoice[0] === 'Transact') {
-        ctx.game._performTransaction?.(nomadPlayer, exhaustedPlayer)
+        ctx.game._resolveTransaction(nomadPlayer, exhaustedPlayer.name)
 
         ctx.log.add({
           template: 'Temporal Command Suite: {player} transacts with {target}',

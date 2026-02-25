@@ -524,7 +524,53 @@ describe('Argent Flight', () => {
   })
 
   describe('Promissory Note — Strike Wing Ambuscade', () => {
-    test.todo('when units roll for a unit ability, one unit may roll 1 additional die, then return to Argent player')
+    test('when units roll for a unit ability, one unit may roll 1 additional die, then return to Argent player', () => {
+      // Dennis = Argent (PN owner), Micah = Hacan (PN holder)
+      // Micah has a destroyer (AFB 9x2) in system 27 with Dennis's fighters.
+      // When Micah's destroyer fires AFB, Ambuscade offers +1 die.
+      const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            '27': {
+              space: ['fighter', 'fighter', 'fighter'],
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'strike-wing-ambuscade', owner: 'dennis' }],
+          units: {
+            '27': {
+              space: ['destroyer', 'cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      // Micah gets leadership (initiative 1) → goes first
+      t.choose(game, 'diplomacy')
+      t.choose(game, 'leadership')
+
+      // Micah activates system 27 where both players have ships
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', { movements: [] })
+
+      // During AFB, Micah is offered Strike Wing Ambuscade
+      t.choose(game, 'Play Strike Wing Ambuscade')
+
+      // Combat resolves. Verify PN was returned and logged.
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Strike Wing Ambuscade'))).toBe(true)
+
+      // PN should be returned to Argent (Dennis)
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getPromissoryNotes().some(n => n.id === 'strike-wing-ambuscade')).toBe(true)
+
+      const micah = game.players.byName('micah')
+      expect(micah.getPromissoryNotes().some(n => n.id === 'strike-wing-ambuscade')).toBe(false)
+    })
   })
 
   describe('Faction Technologies', () => {

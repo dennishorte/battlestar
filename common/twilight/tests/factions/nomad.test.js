@@ -557,7 +557,60 @@ describe('Nomad', () => {
         expect((dennis.exhaustedTechs || []).includes('temporal-command-suite')).toBe(false)
       })
 
-      test.todo('if readying another player agent, may perform a transaction with that player')
+      test('if readying another player agent, may perform a transaction with that player', () => {
+        // Dennis = Nomad with TCS, Micah = Sardakk (T'ro triggers on tactical action)
+        // When Dennis does a tactical action, T'ro exhausts, TCS readies T'ro,
+        // and Dennis is offered a transaction with Micah.
+        const game = t.fixture({ factions: ['nomad', 'sardakk-norr'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['sling-relay', 'scanlink-drone-network', 'temporal-command-suite'],
+            units: {
+              '27': {
+                space: ['cruiser'],
+                'new-albion': ['infantry', 'space-dock'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              'norr-home': {
+                space: ['carrier'],
+                'quinarra': ['infantry', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        t.choose(game, 'leadership')
+        t.choose(game, 'diplomacy')
+
+        // Dennis does a tactical action in system 27 (has units there)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', { movements: [] })
+
+        // Production step — skip production
+        t.choose(game, 'Done')
+
+        // At end of tactical action, T'ro (Micah's Sardakk agent) triggers.
+        // T'ro places 2 infantry on a planet Dennis controls in the active system.
+        t.choose(game, "Exhaust T'ro")
+
+        // After T'ro exhaustion, TCS triggers — Dennis readies Micah's agent
+        t.choose(game, 'Exhaust Temporal Command Suite')
+
+        // Dennis is offered a transaction with Micah (since it's another player's agent)
+        t.choose(game, 'Pass')  // Decline the transaction
+
+        const logEntries = game.log._log.map(e => e.template || '')
+        expect(logEntries.some(e => e.includes('Temporal Command Suite'))).toBe(true)
+        expect(logEntries.some(e => e.includes("readies {target}'s"))).toBe(true)
+
+        // Micah's agent should be ready again
+        const micah = game.players.byName('micah')
+        expect(micah.isAgentReady()).toBe(true)
+      })
     })
 
     describe('Memoria II', () => {
