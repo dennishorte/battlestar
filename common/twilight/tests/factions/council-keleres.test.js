@@ -174,7 +174,38 @@ describe('Council Keleres', () => {
   })
 
   describe('Agent — Xander Alexin Victori III', () => {
-    test.todo('may exhaust to allow any player to spend commodities as trade goods')
+    test('exhaust at start of another player turn to convert their commodities to TG', () => {
+      const game = t.fixture({
+        factions: ['council-keleres', 'emirates-of-hacan'],
+        keleresSubFaction: 'mentak-coalition',
+      })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'locked', hero: 'locked' },
+        },
+        micah: {
+          commodities: 6,  // Hacan has 6 max commodities
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: Strategic Action (leadership)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+
+      // Micah's turn starts — Keleres agent triggers
+      // Dennis (Keleres) is prompted to exhaust Xander
+      t.choose(game, 'Exhaust Xander')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+
+      const micah = game.players.byName('micah')
+      expect(micah.commodities).toBe(0)
+      // Micah should have gained 6 TG from commodity conversion
+      expect(micah.tradeGoods).toBeGreaterThanOrEqual(6)
+    })
   })
 
   describe('Commander — Suffi An', () => {
