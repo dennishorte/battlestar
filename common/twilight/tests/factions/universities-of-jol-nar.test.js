@@ -264,7 +264,58 @@ describe('Universities of Jol-Nar', () => {
   })
 
   describe('Commander — Agnlan Oln', () => {
-    test.todo('after rolling dice for a unit ability, may reroll any of those dice')
+    test('after rolling dice for a unit ability, may reroll any of those dice', () => {
+      const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          technologies: [
+            'neural-motivator', 'antimass-deflectors', 'sarween-tools', 'plasma-scoring',
+            'gravity-drive', 'transit-diodes', 'psychoarchaeology', 'dark-energy-tap',
+          ],
+          units: {
+            'jolnar-home': {
+              space: ['dreadnought', 'dreadnought', 'dreadnought', 'carrier'],
+              'jol': [
+                'infantry', 'infantry', 'infantry', 'infantry',
+                'infantry', 'infantry', 'infantry', 'infantry',
+                'space-dock',
+              ],
+              'nar': ['pds', 'pds'],
+            },
+          },
+        },
+        micah: {
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis invades system 27 with 3 dreadnoughts (bombardment-5x1 each)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'dreadnought', from: 'jolnar-home', count: 3 },
+          { unitType: 'carrier', from: 'jolnar-home', count: 1 },
+          { unitType: 'infantry', from: 'jolnar-home', count: 8 },
+        ],
+      })
+
+      // Bombardment fires (3 dreadnoughts + Plasma Scoring = 4 dice at combat 5)
+      // Dennis gets the Agnlan Oln reroll prompt for the 1 miss
+      t.choose(game, 'Reroll 1 dice')
+
+      // Dennis should win the invasion with overwhelming force
+      expect(game.state.planets['new-albion'].controller).toBe('dennis')
+    })
     test('unlock condition: own 8 technologies', () => {
       const game = t.fixture({ factions: ['universities-of-jol-nar', 'emirates-of-hacan'] })
       t.setBoard(game, {
