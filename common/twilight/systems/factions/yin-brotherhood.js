@@ -1,4 +1,105 @@
 module.exports = {
+  componentActions: [
+    {
+      id: 'yin-hero',
+      name: 'Dannel of the Tenth (Quantum Dissemination)',
+      abilityId: 'indoctrination',  // reuse faction ability ID for availability gate
+      isAvailable: function(player) {
+        return player.isHeroUnlocked() && !player.isHeroPurged()
+      },
+    },
+  ],
+
+  // ---------------------------------------------------------------------------
+  // Hero — Dannel of the Tenth: QUANTUM DISSEMINATION
+  // ACTION: Commit up to 3 infantry from reinforcements to non-home planets
+  // you do not control. Resolve ground combats without space cannon. Purge.
+  // ---------------------------------------------------------------------------
+
+  yinHero(ctx, player) {
+    const res = ctx.game.res
+
+    // Find non-home, enemy-controlled planets
+    const eligiblePlanets = []
+    for (const [planetId, planetState] of Object.entries(ctx.state.planets)) {
+      if (!planetState.controller || planetState.controller === player.name) {
+        continue
+      }
+      const planet = res.getPlanet(planetId)
+      if (!planet) {
+        continue
+      }
+      // Exclude home system planets
+      const systemId = planet.systemId || ctx.game._findSystemForPlanet(planetId)
+      if (!systemId) {
+        continue
+      }
+      const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+      if (tile?.type === 'home') {
+        continue
+      }
+      eligiblePlanets.push({ planetId, systemId })
+    }
+
+    if (eligiblePlanets.length === 0) {
+      player.purgeHero()
+      ctx.log.add({
+        template: '{player} purges Dannel of the Tenth but no eligible planets',
+        args: { player: player.name },
+      })
+      return
+    }
+
+    // Choose up to 3 planets
+    const chosenPlanets = []
+    const available = [...eligiblePlanets]
+    for (let i = 0; i < 3 && available.length > 0; i++) {
+      const choices = [...available.map(p => p.planetId), 'Done']
+      const selection = ctx.actions.choose(player, choices, {
+        title: `Quantum Dissemination: Choose planet ${i + 1}/3 (or Done)`,
+      })
+      if (selection[0] === 'Done') {
+        break
+      }
+      const target = available.find(p => p.planetId === selection[0])
+      chosenPlanets.push(target)
+      // Remove from available so can't choose same planet twice
+      const idx = available.indexOf(target)
+      available.splice(idx, 1)
+    }
+
+    if (chosenPlanets.length === 0) {
+      player.purgeHero()
+      ctx.log.add({
+        template: '{player} purges Dannel of the Tenth without committing infantry',
+        args: { player: player.name },
+      })
+      return
+    }
+
+    // Commit 1 infantry to each chosen planet and resolve ground combat
+    for (const { planetId, systemId } of chosenPlanets) {
+      ctx.game._addUnitToPlanet(systemId, planetId, 'infantry', player.name)
+
+      ctx.log.add({
+        template: 'Quantum Dissemination: {player} commits 1 infantry to {planet}',
+        args: { player: player.name, planet: planetId },
+      })
+
+      // Resolve ground combat (no space cannon, no bombardment)
+      ctx.game._groundCombat(systemId, planetId, player.name)
+
+      // Establish control if the planet was won
+      ctx.game._establishControl(systemId, planetId, player.name, {})
+    }
+
+    player.purgeHero()
+    ctx.log.add({
+      template: '{player} purges Dannel of the Tenth',
+      args: { player: player.name },
+    })
+  },
+
   // Impulse Core (faction tech): At start of space combat, may destroy own
   // cruiser or destroyer to produce 1 hit against a non-fighter ship.
   onSpaceCombatStart(player, ctx, { systemId, opponentName }) {

@@ -360,7 +360,94 @@ describe('Yin Brotherhood', () => {
   })
 
   describe('Hero — Dannel of the Tenth', () => {
-    test.todo('Quantum Dissemination: commit up to 3 infantry to non-home planets, resolve ground combats without space cannon, then purge')
+    test('Quantum Dissemination: commit infantry to non-home enemy planet, take control, then purge', () => {
+      const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { hero: 'unlocked' },
+          units: {
+            'yin-home': {
+              space: ['carrier'],
+              'darien': ['infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          planets: {
+            // Micah controls new-albion but has no ground forces there
+            'new-albion': { exhausted: false },
+          },
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['infantry', 'space-dock'],
+            },
+            '27': {
+              'new-albion': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      // Dennis uses Component Action -> Yin Hero
+      t.choose(game, 'Component Action')
+      t.choose(game, 'yin-hero')
+
+      // Choose new-albion (non-home, enemy-controlled)
+      // Only 1 eligible planet, so loop exits after this pick
+      t.choose(game, 'new-albion')
+
+      const dennis = game.players.byName('dennis')
+
+      // Hero should be purged
+      expect(dennis.isHeroPurged()).toBe(true)
+
+      // Dennis should now control new-albion
+      expect(game.state.planets['new-albion'].controller).toBe('dennis')
+
+      // Dennis should have 1 infantry on new-albion
+      const newAlbionUnits = game.state.units['27'].planets['new-albion']
+        .filter(u => u.owner === 'dennis' && u.type === 'infantry')
+      expect(newAlbionUnits.length).toBe(1)
+    })
+
+    test('Quantum Dissemination: excludes home system planets', () => {
+      const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { hero: 'unlocked' },
+          units: {
+            'yin-home': {
+              space: ['carrier'],
+              'darien': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          // Micah only has units on their home system — no non-home planets to target
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      // Dennis uses Component Action -> Yin Hero
+      t.choose(game, 'Component Action')
+      t.choose(game, 'yin-hero')
+
+      // No eligible non-home planets — hero should still be purged
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isHeroPurged()).toBe(true)
+    })
   })
 
   describe("Mech — Moyin's Ashes", () => {

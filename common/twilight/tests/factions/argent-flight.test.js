@@ -432,8 +432,95 @@ describe('Argent Flight', () => {
   })
 
   describe('Mech — Aerie Sentinel', () => {
-    test.todo('does not count against capacity when being transported')
-    test.todo('does not count against capacity in a space area with own ships that have capacity')
+    test('does not count against capacity when being transported', () => {
+      const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'argent-home': {
+              space: ['carrier'],  // capacity 4
+              'valk': ['infantry', 'infantry', 'infantry', 'infantry', 'mech', 'pds'],
+            },
+          },
+        },
+      })
+      game.run()
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Decline agent prompt
+      t.choose(game, 'Pass')
+
+      // Move carrier + 4 infantry + 1 mech (5 units, but mech is exempt from capacity)
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'argent-home', count: 1 },
+          { unitType: 'infantry', from: 'argent-home', count: 4 },
+          { unitType: 'mech', from: 'argent-home', count: 1 },
+        ],
+      })
+
+      // All 4 infantry + 1 mech should arrive (mech doesn't count against carrier capacity 4)
+      const sys27Units = game.state.units['27']
+      const allDennis = [
+        ...sys27Units.space.filter(u => u.owner === 'dennis'),
+        ...Object.values(sys27Units.planets).flat().filter(u => u.owner === 'dennis'),
+      ]
+      const infantry = allDennis.filter(u => u.type === 'infantry')
+      const mechs = allDennis.filter(u => u.type === 'mech')
+      expect(infantry.length).toBe(4)
+      expect(mechs.length).toBe(1)
+    })
+
+    test('does not count against capacity in a space area with own ships that have capacity', () => {
+      // If a mech is already in the target system space area, it should not
+      // reduce available capacity for other transported units.
+      const game = t.fixture({ factions: ['argent-flight', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'argent-home': {
+              space: ['carrier'],  // capacity 4
+              'valk': ['infantry', 'infantry', 'infantry', 'infantry', 'pds'],
+            },
+            '27': {
+              space: ['mech'],  // already in space area
+            },
+          },
+        },
+      })
+      game.run()
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Decline agent prompt
+      t.choose(game, 'Pass')
+
+      // Move carrier + 4 infantry to system that already has a mech in space
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'argent-home', count: 1 },
+          { unitType: 'infantry', from: 'argent-home', count: 4 },
+        ],
+      })
+
+      // All 4 infantry should arrive (existing mech doesn't reduce capacity)
+      const sys27Units = game.state.units['27']
+      const allDennis = [
+        ...sys27Units.space.filter(u => u.owner === 'dennis'),
+        ...Object.values(sys27Units.planets).flat().filter(u => u.owner === 'dennis'),
+      ]
+      const infantry = allDennis.filter(u => u.type === 'infantry')
+      const mechs = allDennis.filter(u => u.type === 'mech')
+      expect(infantry.length).toBe(4)
+      expect(mechs.length).toBe(1)  // the pre-existing mech is still there
+    })
   })
 
   describe('Promissory Note — Strike Wing Ambuscade', () => {

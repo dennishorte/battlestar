@@ -81,6 +81,12 @@ module.exports = {
     return bonus
   },
 
+  // Mech — Aerie Sentinel: does not count against capacity when being transported
+  // or in a space area with ships that have capacity.
+  isCapacityExempt(player, _ctx, unitType) {
+    return unitType === 'mech'
+  },
+
   // Agent — Trillossa Aun Mirik: After a player activates a system, exhaust to
   // place 1 infantry from reinforcements on a planet in that system or adjacent
   // systems that the Argent player controls.
