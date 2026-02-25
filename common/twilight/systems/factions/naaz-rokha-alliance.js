@@ -340,9 +340,74 @@ module.exports = {
     })
   },
 
+  // Absolute Synergy: When you have 4 mechs in the same system, you may return
+  // 3 of those mechs to your reinforcements to flip this card onto your mech card.
+  _checkAbsoluteSynergy(player, ctx) {
+    if (!player.hasTechnology('absolute-synergy')) {
+      return
+    }
+    if (ctx.state.absoluteSynergyFlipped?.[player.name]) {
+      return
+    }
+
+    // Find any system with 4+ mechs
+    for (const [systemId, systemUnits] of Object.entries(ctx.state.units)) {
+      const allMechs = [
+        ...(systemUnits.space || []),
+        ...Object.values(systemUnits.planets || {}).flat(),
+      ].filter(u => u.owner === player.name && u.type === 'mech')
+
+      if (allMechs.length < 4) {
+        continue
+      }
+
+      const choice = ctx.actions.choose(player, ['Flip Absolute Synergy', 'Pass'], {
+        title: `Absolute Synergy: Return 3 mechs in system ${systemId} to flip this card?`,
+      })
+
+      if (choice[0] !== 'Flip Absolute Synergy') {
+        return
+      }
+
+      // Remove 3 mechs (prefer ground mechs first, then space)
+      let removed = 0
+      for (const planetId of Object.keys(systemUnits.planets || {})) {
+        const planetUnits = systemUnits.planets[planetId]
+        for (let i = planetUnits.length - 1; i >= 0 && removed < 3; i--) {
+          if (planetUnits[i].owner === player.name && planetUnits[i].type === 'mech') {
+            planetUnits.splice(i, 1)
+            removed++
+          }
+        }
+      }
+      for (let i = (systemUnits.space || []).length - 1; i >= 0 && removed < 3; i--) {
+        if (systemUnits.space[i].owner === player.name && systemUnits.space[i].type === 'mech') {
+          systemUnits.space.splice(i, 1)
+          removed++
+        }
+      }
+
+      if (!ctx.state.absoluteSynergyFlipped) {
+        ctx.state.absoluteSynergyFlipped = {}
+      }
+      ctx.state.absoluteSynergyFlipped[player.name] = true
+
+      ctx.log.add({
+        template: '{player} returns 3 mechs and flips Absolute Synergy',
+        args: { player: player.name },
+      })
+      return
+    }
+  },
+
   // Agent — Garv and Gunn: At the end of a player's tactical action, exhaust
   // to allow that player to explore 1 planet they control in the active system.
   onTacticalActionEnd(naazRokhaPlayer, ctx, { activatingPlayer, systemId }) {
+    // Check Absolute Synergy after any tactical action by this player
+    if (activatingPlayer.name === naazRokhaPlayer.name) {
+      this._checkAbsoluteSynergy(naazRokhaPlayer, ctx)
+    }
+
     if (!naazRokhaPlayer.isAgentReady()) {
       return
     }
