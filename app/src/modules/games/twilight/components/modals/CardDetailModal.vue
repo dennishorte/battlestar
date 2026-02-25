@@ -77,6 +77,18 @@
           <span class="sc-number-badge">{{ strategyCardData.number }}</span>
           <span>{{ strategyCardData.name }}</span>
         </div>
+        <div class="sc-ability-section" v-if="strategyCardData.primary">
+          <div class="sc-ability-label">Primary Ability</div>
+          <ul class="sc-ability-list">
+            <li v-for="(line, i) in strategyCardData.primary" :key="'p'+i">{{ line }}</li>
+          </ul>
+        </div>
+        <div class="sc-ability-section" v-if="strategyCardData.secondary">
+          <div class="sc-ability-label">Secondary Ability</div>
+          <ul class="sc-ability-list">
+            <li v-for="(line, i) in strategyCardData.secondary" :key="'s'+i">{{ line }}</li>
+          </ul>
+        </div>
       </div>
 
       <!-- Single Leader (for log links etc.) -->
@@ -593,6 +605,32 @@ export default {
   border-radius: .25em;
   line-height: 1.4;
   font-size: .9em;
+}
+
+.sc-ability-section {
+  margin-top: .75em;
+  padding-top: .5em;
+  border-top: 1px solid #eee;
+}
+
+.sc-ability-label {
+  font-size: .75em;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-weight: 600;
+  margin-bottom: .25em;
+}
+
+.sc-ability-list {
+  margin: 0;
+  padding-left: 1.25em;
+  font-size: .9em;
+  line-height: 1.5;
+}
+
+.sc-ability-list li {
+  margin-bottom: .25em;
 }
 
 .sc-number-badge {

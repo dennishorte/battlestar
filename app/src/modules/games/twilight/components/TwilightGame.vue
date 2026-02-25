@@ -78,6 +78,7 @@ import SystemDetailModal from './modals/SystemDetailModal.vue'
 
 // Selector option components
 import ObjectiveChip from './ObjectiveChip.vue'
+import StrategyCardChip from './StrategyCardChip.vue'
 
 import { twilight } from 'battlestar-common'
 const res = twilight.res
@@ -203,6 +204,15 @@ export default {
       const name = option.title || option
       if (typeof name !== 'string') {
         return undefined
+      }
+
+      // Strategy cards (raw IDs like 'leadership', 'trade')
+      const strategyCard = res.getStrategyCard(name)
+      if (strategyCard) {
+        return {
+          component: StrategyCardChip,
+          props: { cardId: name },
+        }
       }
 
       // Detect "id: Name" pattern used for objectives
