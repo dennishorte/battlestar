@@ -256,11 +256,45 @@ class FactionAbilities {
    * Returns the number of bonus dice that one unit gets when rolling for a unit
    * ability (AFB, space cannon, bombardment).
    * (e.g., Argent Flight Commander Trrakan Aun Zulok grants +1 die to one unit)
+   * Also offers Strike Wing Ambuscade promissory note if held.
    */
   getUnitAbilityBonusDice(shooterName) {
     const player = this.players.byName(shooterName)
     const handler = this._getPlayerHandler(player)
-    return handler?.getUnitAbilityBonusDice?.(player, this) ?? 0
+    let bonus = handler?.getUnitAbilityBonusDice?.(player, this) ?? 0
+
+    // Strike Wing Ambuscade (Argent Flight PN)
+    // "When 1 or more of your units make a roll for a unit ability:
+    //  Choose 1 of those units to roll 1 additional die.
+    //  Then, return this card to the Argent player."
+    if (!this.state._ambuscadeUsed) {
+      const pn = player?.getPromissoryNotes().find(
+        n => n.id === 'strike-wing-ambuscade' && n.owner !== player.name
+      )
+      if (pn) {
+        const choice = this.actions.choose(player, ['Play Strike Wing Ambuscade', 'Pass'], {
+          title: 'Strike Wing Ambuscade: One unit rolls 1 additional die?',
+        })
+        if (choice[0] === 'Play Strike Wing Ambuscade') {
+          bonus += 1
+          this.state._ambuscadeUsed = true
+
+          // Return PN to Argent
+          const argentPlayer = this.players.byName(pn.owner)
+          player.removePromissoryNote('strike-wing-ambuscade', pn.owner)
+          if (argentPlayer) {
+            argentPlayer.addPromissoryNote('strike-wing-ambuscade', pn.owner)
+          }
+
+          this.log.add({
+            template: 'Strike Wing Ambuscade: {player} rolls 1 additional die. Card returned to {owner}.',
+            args: { player: shooterName, owner: pn.owner },
+          })
+        }
+      }
+    }
+
+    return bonus
   }
 
   getHomeSystemWormholes(systemId) {
@@ -1652,6 +1686,9 @@ class FactionAbilities {
       const handler = this._getPlayerHandler(player)
       handler?.onTacticalActionEnd?.(player, this, { activatingPlayer, systemId })
     }
+
+    // Clean up one-shot PN state
+    delete this.state._ambuscadeUsed
   }
 
   onPreMovement(activatingPlayer, systemId) {
@@ -1716,6 +1753,7 @@ class FactionAbilities {
     delete this.state._tekklarLegionPenalty
     delete this.state._warFundingActive
     delete this.state._cavalryActive
+    delete this.state._ambuscadeUsed
   }
 
 
