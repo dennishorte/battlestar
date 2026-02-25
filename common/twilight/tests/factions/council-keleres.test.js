@@ -568,12 +568,159 @@ describe('Council Keleres', () => {
 
   describe('Faction Technologies', () => {
     describe('Executive Order', () => {
-      test.todo('exhaust to draw top or bottom agenda card; players vote as if you were speaker')
-      test.todo('can spend trade goods and resources as votes on this agenda')
+      test('exhaust to draw top or bottom agenda card; players vote as if you were speaker', () => {
+        const game = t.fixture({
+          factions: ['council-keleres', 'federation-of-sol'],
+          keleresSubFaction: 'mentak-coalition',
+        })
+        t.setBoard(game, {
+          agendaDeck: ['mutiny'],
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            technologies: ['sarween-tools', 'executive-order'],
+            planets: {
+              'moll-primus': { exhausted: false },
+            },
+          },
+          micah: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis: Component Action → executive-order
+        t.choose(game, 'Component Action')
+        t.choose(game, 'executive-order')
+
+        // Choose to draw from Top of agenda deck
+        t.choose(game, 'Top')
+
+        // _resolveAgenda runs with Dennis as speaker
+        // Non-speaker (Micah) votes first
+        t.choose(game, 'Abstain')
+
+        // Dennis (speaker) votes For
+        t.choose(game, 'For')
+        t.choose(game, 'moll-primus (1)')
+        // TG spending: Dennis has 1 TG from Council Patronage, rate = 1
+        t.choose(game, 'Spend 1 TG (+1 votes)')
+
+        const dennis = game.players.byName('dennis')
+        // Tech should be exhausted
+        expect((dennis.exhaustedTechs || []).includes('executive-order')).toBe(true)
+        // TG spent (had 1 from patronage, spent 1)
+        expect(dennis.tradeGoods).toBe(0)
+
+        const logEntries = game.log._log.map(e => e.template || '')
+        expect(logEntries.some(e => e.includes('Executive Order'))).toBe(true)
+      })
+
+      test('can spend trade goods as votes on this agenda', () => {
+        const game = t.fixture({
+          factions: ['council-keleres', 'federation-of-sol'],
+          keleresSubFaction: 'mentak-coalition',
+        })
+        t.setBoard(game, {
+          agendaDeck: ['mutiny'],
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            technologies: ['sarween-tools', 'executive-order'],
+            tradeGoods: 4,  // + 1 from Council Patronage = 5
+            planets: {
+              'moll-primus': { exhausted: false },
+            },
+          },
+          micah: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Component Action')
+        t.choose(game, 'executive-order')
+        t.choose(game, 'Top')
+
+        // Micah abstains
+        t.choose(game, 'Abstain')
+
+        // Dennis votes For, exhausts planet
+        t.choose(game, 'For')
+        t.choose(game, 'moll-primus (1)')
+        // Spend 3 of 5 TG (+3 votes)
+        t.choose(game, 'Spend 3 TG (+3 votes)')
+
+        const dennis = game.players.byName('dennis')
+        // Had 5 TG (4 + 1 patronage), spent 3 = 2 remaining
+        expect(dennis.tradeGoods).toBe(2)
+      })
     })
 
     describe('Agency Supply Network', () => {
-      test.todo('once per action, when resolving PRODUCTION, may resolve another unit PRODUCTION in any system')
+      test('once per action, when resolving PRODUCTION, may resolve another unit PRODUCTION in any system', () => {
+        const game = t.fixture({
+          factions: ['council-keleres', 'federation-of-sol'],
+          keleresSubFaction: 'mentak-coalition',
+        })
+        t.setBoard(game, {
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            technologies: ['agency-supply-network'],
+            commandTokens: { tactics: 3, strategy: 2, fleet: 5 },
+            planets: {
+              'moll-primus': { exhausted: false },
+              'new-albion': { exhausted: false },
+            },
+            units: {
+              'mentak-home': {
+                'moll-primus': ['space-dock', 'infantry'],
+                space: ['carrier'],
+              },
+              '27': {
+                'new-albion': ['space-dock'],
+                space: [],
+              },
+            },
+          },
+          micah: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis: Tactical Action → activate mentak-home → produce
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: 'mentak-home' })
+        t.choose(game, 'Done')  // skip movement
+
+        // Produce 2 infantry in mentak-home (cost 1 resource from moll-primus)
+        t.action(game, 'produce-units', {
+          units: [{ type: 'infantry', count: 2 }],
+        })
+
+        // afterProduction → Agency Supply Network offers bonus production
+        t.choose(game, '*27')
+
+        // Produce 1 infantry in system 27 (cost 1 resource from new-albion)
+        t.action(game, 'produce-units', {
+          units: [{ type: 'infantry', count: 1 }],
+        })
+
+        // Verify units produced in mentak-home (started with 1 + produced 2 = 3)
+        const homeInfantry = game.state.units['mentak-home'].planets['moll-primus']
+          .filter(u => u.owner === 'dennis' && u.type === 'infantry')
+        expect(homeInfantry.length).toBe(3)
+
+        // Verify units produced in system 27
+        const sys27Infantry = game.state.units['27'].planets['new-albion']
+          .filter(u => u.owner === 'dennis' && u.type === 'infantry')
+        expect(sys27Infantry.length).toBe(1)
+
+        const logEntries = game.log._log.map(e => e.template || '')
+        expect(logEntries.some(e => e.includes('Agency Supply Network'))).toBe(true)
+      })
     })
 
     describe('I.I.H.Q. Modernization', () => {
