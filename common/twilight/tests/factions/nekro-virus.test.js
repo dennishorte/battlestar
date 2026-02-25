@@ -754,7 +754,46 @@ describe('Nekro Virus', () => {
     })
 
     describe('Valefar Assimilator Z', () => {
-      test.todo('place Z assimilator token on opponent faction sheet, flagship gains that faction flagship text abilities')
+      test('place Z assimilator token on opponent faction sheet, flagship gains that faction flagship text abilities', () => {
+        const game = t.fixture({ factions: ['nekro-virus', 'barony-of-letnev'] })
+        t.setBoard(game, {
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            technologies: ['valefar-assimilator-z'],
+            units: {
+              'nekro-home': {
+                space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+                'mordai-ii': ['space-dock'],
+              },
+            },
+          },
+          micah: {
+            technologies: ['antimass-deflectors'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              '27': {
+                space: ['fighter'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'nekro-home', count: 5 }],
+        })
+
+        // After destroying Micah's fighter, place Z on Barony's faction sheet
+        t.choose(game, 'Place Z on barony-of-letnev')
+
+        expect(game.state.assimilatorTokens.z).toEqual({
+          factionId: 'barony-of-letnev',
+          ownerName: 'micah',
+        })
+      })
     })
   })
 })
