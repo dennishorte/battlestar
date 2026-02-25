@@ -447,6 +447,52 @@ module.exports = {
     }
   },
 
+  // Yin Ascendant: when gained or when scoring a public objective,
+  // gain the alliance ability of a random, unused faction.
+  onTechResearched(player, ctx, tech) {
+    if (tech.id !== 'yin-ascendant') {
+      return
+    }
+    this._grantRandomAlliance(player, ctx)
+  },
+
+  onObjectiveScored(player, ctx) {
+    if (!player.hasTechnology('yin-ascendant')) {
+      return
+    }
+    this._grantRandomAlliance(player, ctx)
+  },
+
+  _grantRandomAlliance(player, ctx) {
+    if (!ctx.state.yinAscendantAlliances) {
+      ctx.state.yinAscendantAlliances = []
+    }
+
+    // Get all faction IDs not in the game and not already granted
+    const res = require('../../res')
+    const allFactions = res.getAllFactionIds()
+    const inGameFactions = ctx.players.all().map(p => p.faction?.id).filter(Boolean)
+    const grantedFactions = ctx.state.yinAscendantAlliances
+
+    const available = allFactions.filter(
+      fId => !inGameFactions.includes(fId) && !grantedFactions.includes(fId)
+    )
+
+    if (available.length === 0) {
+      return
+    }
+
+    // Random pick
+    const idx = Math.floor(ctx.game.random() * available.length)
+    const factionId = available[idx]
+    ctx.state.yinAscendantAlliances.push(factionId)
+
+    ctx.log.add({
+      template: 'Yin Ascendant: {player} gains alliance ability of {faction}',
+      args: { player: player.name, faction: factionId },
+    })
+  },
+
   // Yin Spinner (faction tech): After you produce units, place up to 2 infantry
   // from your reinforcements on any planet you control or in any space area
   // that contains 1 or more of your ships.
