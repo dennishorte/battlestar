@@ -196,7 +196,7 @@ module.exports = {
     this._executeSsruuEffect(yssarilPlayer, ctx, chosen.factionId, { systemId, activatingPlayer })
   },
 
-  _executeSsruuEffect(yssarilPlayer, ctx, factionId, { systemId, activatingPlayer }) {
+  _executeSsruuEffect(yssarilPlayer, ctx, factionId, { systemId: _systemId, activatingPlayer }) {
     switch (factionId) {
       case 'empyrean': {
         // Acamar: gain 1 TG or give activating player 1 command token
