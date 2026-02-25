@@ -9,16 +9,22 @@ module.exports = {
     'Harvest: At most 1 time Wood \u2192 2 Food',
     'Scoring: 3/5/7 Wood \u2192 1/2/3 bonus points',
   ],
-  abilities: {
-    harvestConversion: {
-      resource: 'wood',
-      food: 2,
-      limit: 1,
-    },
-    endGameBonus: {
-      resource: 'wood',
-      thresholds: [0, 0, 1, 2, 3],
-      spendingCosts: [3, 5, 7],
-    },
+  harvestConversion: {
+    resource: 'wood',
+    food: 2,
+    limit: 1,
+  },
+  getEndGamePoints(player) {
+    const count = player.wood || 0
+    if (count >= 7) {
+      return 3
+    }
+    if (count >= 5) {
+      return 2
+    }
+    if (count >= 3) {
+      return 1
+    }
+    return 0
   },
 }

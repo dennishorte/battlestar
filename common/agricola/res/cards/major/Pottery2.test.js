@@ -5,7 +5,7 @@ describe('Pottery (pottery-2) [5-6 expansion]', () => {
     const card = major.getCardById('pottery-2')
     expect(card.expansion).toBe('5-6')
     expect(card.cost).toEqual({ clay: 2, stone: 3 })
-    expect(card.abilities.harvestConversion.resource).toBe('clay')
+    expect(card.harvestConversion.resource).toBe('clay')
   })
 
   test('included in 5+ player games', () => {

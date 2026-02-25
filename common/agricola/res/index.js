@@ -3,7 +3,6 @@
 const actionSpaces = require('./actionSpaces.js')
 const boardLayout = require('./boardLayout.js')
 const major = require('./cards/major')
-const majorImprovementUtils = require('./majorImprovementUtils.js')
 const scoringTables = require('./scoringTables.js')
 const minorA = require('./cards/minorA')
 const minorB = require('./cards/minorB')
@@ -37,9 +36,6 @@ module.exports = {
   getMajorImprovementByName(name) {
     return major.getCardByName(name)
   },
-
-  // Major Improvement utilities
-  ...majorImprovementUtils,
 
   // Scoring
   ...scoringTables,

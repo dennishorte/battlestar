@@ -11,7 +11,7 @@ module.exports = {
     const cookingImps = []
     for (const id of player.majorImprovements) {
       const imp = game.cards.byId(id)
-      if (imp && imp.abilities && imp.abilities.canCook && imp.abilities.cookingRates) {
+      if (imp && imp.cookingRates) {
         cookingImps.push(imp)
       }
     }
@@ -21,7 +21,7 @@ module.exports = {
     }
 
     for (const imp of cookingImps) {
-      const rates = imp.abilities.cookingRates
+      const rates = imp.cookingRates
       const options = []
       const animals = player.getAllAnimals()
 

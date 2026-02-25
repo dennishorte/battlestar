@@ -5,7 +5,7 @@ describe('Joinery (joinery-2) [5-6 expansion]', () => {
     const card = major.getCardById('joinery-2')
     expect(card.expansion).toBe('5-6')
     expect(card.cost).toEqual({ wood: 2, stone: 3 })
-    expect(card.abilities.harvestConversion.resource).toBe('wood')
+    expect(card.harvestConversion.resource).toBe('wood')
   })
 
   test('included in 5+ player games', () => {

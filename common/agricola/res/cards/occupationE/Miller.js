@@ -11,7 +11,7 @@ module.exports = {
     const available = game.getAvailableMajorImprovements()
     const bakingImprovements = available.filter(id => {
       const imp = game.cards.byId(id)
-      return imp && imp.abilities && imp.abilities.canBake
+      return imp && imp.bakingConversion
     })
     if (bakingImprovements.length > 0) {
       game.actions.buyMajorImprovement(player, bakingImprovements)

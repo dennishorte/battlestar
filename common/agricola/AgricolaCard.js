@@ -31,8 +31,16 @@ class AgricolaCard extends BaseCard {
     return this.definition.victoryPoints
   }
 
-  get abilities() {
-    return this.definition.abilities
+  get bakingConversion() {
+    return this.definition.bakingConversion
+  }
+
+  get cookingRates() {
+    return this.definition.cookingRates
+  }
+
+  get harvestConversion() {
+    return this.definition.harvestConversion
   }
 
   get vps() {

@@ -16,7 +16,7 @@ module.exports = {
         return
       }
 
-      const foodAmount = (imp.abilities && imp.abilities.bakingRate) || 2
+      const foodAmount = imp.bakingConversion?.rate || 2
       const choices = [
         `Bake 1 grain for ${foodAmount} food using ${imp.name}`,
         'Skip',

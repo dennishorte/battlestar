@@ -9,11 +9,7 @@ module.exports = {
     '"Bake Bread" action: At most 1 time Grain \u2192 5 Food',
     'When you build this improvement, you can immediately take a "Bake Bread" action.',
   ],
-  abilities: {
-    canBake: true,
-    bakingRate: 5,
-    bakingLimit: 1,
-  },
+  bakingConversion: { from: 'grain', to: 'food', rate: 5, limit: 1 },
   onBuy(game, player) {
     if (player.grain >= 1) {
       game.actions.bakeBread(player)

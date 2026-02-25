@@ -5,12 +5,6 @@ Agricola.prototype.endGame = function() {
   this.log.add({ template: 'Calculating final scores' })
   this.log.indent()
 
-  // First, spend resources for crafting bonuses (affects tie-breaker)
-  // Revised Edition: Resources spent for Joinery/Pottery/Basketmaker bonus don't count for tie-breaker
-  for (const player of this.players.all()) {
-    player.spendResourcesForCraftingBonus()
-  }
-
   // Process getEndGamePointsAllPlayers hooks (comparative scoring cards)
   for (const player of this.players.all()) {
     const cards = this.getPlayerActiveCards(player)

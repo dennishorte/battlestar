@@ -320,12 +320,12 @@ class AgricolaActionManager extends BaseActionManager {
    */
   getCookingRates(player) {
     const imp = player.getCookingImprovement()
-    if (!imp || !imp.abilities || !imp.abilities.cookingRates) {
+    if (!imp || !imp.cookingRates) {
       return null
     }
     return {
       improvementName: imp.name,
-      rates: imp.abilities.cookingRates,
+      rates: imp.cookingRates,
     }
   }
 

@@ -13,15 +13,11 @@ module.exports = {
     '"Bake Bread" action: Grain \u2192 3 Food',
   ],
   alternateCost: 'Return a Fireplace',
-  abilities: {
-    canCook: true,
-    canBake: true,
-    cookingRates: {
-      sheep: 2,
-      boar: 3,
-      cattle: 4,
-      vegetables: 3,
-    },
-    bakingRate: 3,
+  bakingConversion: { from: 'grain', to: 'food', rate: 3 },
+  cookingRates: {
+    sheep: 2,
+    boar: 3,
+    cattle: 4,
+    vegetables: 3,
   },
 }

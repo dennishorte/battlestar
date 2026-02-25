@@ -37,27 +37,22 @@ AgricolaPlayer.prototype.feedFamily = function() {
 AgricolaPlayer.prototype.hasCookingAbility = function() {
   return this.majorImprovements.some(id => {
     const imp = this.cards.byId(id)
-    return imp && imp.abilities && imp.abilities.canCook
+    return imp && imp.cookingRates
   })
 }
 
 AgricolaPlayer.prototype.hasBakingAbility = function() {
-  if (this.majorImprovements.some(id => {
-    const imp = this.cards.byId(id)
-    return imp && imp.abilities && imp.abilities.canBake
-  })) {
-    return true
-  }
-  return this.playedMinorImprovements.some(id => {
+  const allIds = [...this.majorImprovements, ...this.playedMinorImprovements]
+  return allIds.some(id => {
     const card = this.cards.byId(id)
-    return card && card.definition.bakingConversion
+    return card && card.bakingConversion
   })
 }
 
 AgricolaPlayer.prototype.getCookingImprovement = function() {
   for (const id of this.majorImprovements) {
     const imp = this.cards.byId(id)
-    if (imp && imp.abilities && imp.abilities.canCook) {
+    if (imp && imp.cookingRates) {
       return imp
     }
   }
@@ -66,29 +61,16 @@ AgricolaPlayer.prototype.getCookingImprovement = function() {
 
 AgricolaPlayer.prototype.getBakingImprovement = function() {
   let best = null
-  for (const id of this.majorImprovements) {
-    const imp = this.cards.byId(id)
-    if (imp && imp.abilities && imp.abilities.canBake) {
-      if (!best || imp.abilities.bakingRate > best.abilities.bakingRate) {
-        best = imp
-      }
-    }
-  }
-  if (best) {
-    return best
-  }
-  // Fall back to minor improvement with bakingConversion
-  for (const id of this.playedMinorImprovements) {
+  const allIds = [...this.majorImprovements, ...this.playedMinorImprovements]
+  for (const id of allIds) {
     const card = this.cards.byId(id)
-    if (card && card.definition.bakingConversion) {
-      const abilities = { canBake: true, bakingRate: card.definition.bakingConversion.rate }
-      if (card.definition.bakingConversion.limit) {
-        abilities.bakingLimit = card.definition.bakingConversion.limit
+    if (card && card.bakingConversion) {
+      if (!best || card.bakingConversion.rate > best.bakingConversion.rate) {
+        best = card
       }
-      return { name: card.name, abilities }
     }
   }
-  return null
+  return best
 }
 
 AgricolaPlayer.prototype.cookAnimal = function(animalType, count = 1) {
@@ -102,7 +84,7 @@ AgricolaPlayer.prototype.cookAnimal = function(animalType, count = 1) {
 
   if (toCook > 0) {
     this.removeAnimals(animalType, toCook)
-    const food = res.calculateCookingFood(imp, animalType, toCook)
+    const food = imp.cookingRates[animalType] * toCook
     this.addResource('food', food)
     return food
   }
@@ -118,7 +100,7 @@ AgricolaPlayer.prototype.cookVegetable = function(count = 1) {
   const toCook = Math.min(count, this.vegetables)
   if (toCook > 0) {
     this.removeResource('vegetables', toCook)
-    const food = res.calculateCookingFood(imp, 'vegetables', toCook)
+    const food = imp.cookingRates.vegetables * toCook
     this.addResource('food', food)
     return food
   }
@@ -131,12 +113,12 @@ AgricolaPlayer.prototype.bakeGrain = function(count = 1) {
     return 0
   }
 
-  const limit = imp.abilities.bakingLimit || count
+  const limit = imp.bakingConversion.limit || count
   const toBake = Math.min(count, this.grain, limit)
 
   if (toBake > 0) {
     this.removeResource('grain', toBake)
-    const food = res.calculateBakingFood(imp, toBake)
+    const food = toBake * imp.bakingConversion.rate
     this.addResource('food', food)
     return food
   }

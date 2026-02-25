@@ -41,7 +41,7 @@ Agricola.prototype.getAnytimeFoodConversionOptions = function(player) {
   // Cooking conversions (requires Fireplace or Cooking Hearth)
   if (player.hasCookingAbility()) {
     const imp = player.getCookingImprovement()
-    const rates = imp.abilities.cookingRates
+    const rates = imp.cookingRates
     const animals = player.getAllAnimals()
 
     for (const [type, count] of Object.entries(animals)) {
@@ -273,7 +273,7 @@ Agricola.prototype.getAnytimeActions = function(player) {
   // Cooking conversions (requires Fireplace or Cooking Hearth)
   if (player.hasCookingAbility()) {
     const imp = player.getCookingImprovement()
-    const rates = imp.abilities.cookingRates
+    const rates = imp.cookingRates
     const animals = player.getAllAnimals()
 
     for (const [type, count] of Object.entries(animals)) {

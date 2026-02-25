@@ -46,6 +46,27 @@ describe('Loom', () => {
     })
   })
 
+  test('getEndGamePoints: 1 bonus point per 3 sheep', () => {
+    const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
+    t.setBoard(game, {
+      dennis: {
+        occupations: ['test-occupation-1', 'test-occupation-2'],
+        minorImprovements: ['loom-b039'],
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 0, col: 3 }, { row: 0, col: 4 }, { row: 1, col: 3 }, { row: 1, col: 4 }] },
+          ],
+        },
+        animals: { sheep: 7 },
+      },
+    })
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    // getBonusPoints includes vps (1) + getEndGamePoints (floor(7/3) = 2) = 3
+    expect(dennis.getBonusPoints()).toBe(3)
+  })
+
   test('gives 1 food with 1 sheep, 3 food with 7 sheep', () => {
     const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
     t.setBoard(game, {

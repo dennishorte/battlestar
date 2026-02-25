@@ -198,7 +198,7 @@ const ActionChoicesMixin = {
 
     for (const [type, count] of Object.entries(animals)) {
       if (count > 0) {
-        const food = imp.abilities.cookingRates[type]
+        const food = imp.cookingRates[type]
         for (let i = 1; i <= count; i++) {
           choices.push({
             animalType: type,
@@ -211,7 +211,7 @@ const ActionChoicesMixin = {
     }
 
     if (player.vegetables > 0) {
-      const food = imp.abilities.cookingRates.vegetables
+      const food = imp.cookingRates.vegetables
       for (let i = 1; i <= player.vegetables; i++) {
         choices.push({
           animalType: 'vegetables',
@@ -235,8 +235,8 @@ const ActionChoicesMixin = {
     }
 
     const imp = player.getBakingImprovement()
-    const maxBake = imp.abilities.bakingLimit || player.grain
-    const rate = imp.abilities.bakingRate
+    const maxBake = imp.bakingConversion.limit || player.grain
+    const rate = imp.bakingConversion.rate
 
     const choices = []
     for (let i = 1; i <= Math.min(maxBake, player.grain); i++) {

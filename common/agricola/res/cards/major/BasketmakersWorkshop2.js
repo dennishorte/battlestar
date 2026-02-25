@@ -10,16 +10,22 @@ module.exports = {
     'Harvest: At most 1 time Reed \u2192 3 Food',
     'Scoring: 2/4/5 Reed \u2192 1/2/3 bonus points',
   ],
-  abilities: {
-    harvestConversion: {
-      resource: 'reed',
-      food: 3,
-      limit: 1,
-    },
-    endGameBonus: {
-      resource: 'reed',
-      thresholds: [0, 1, 2, 3],
-      spendingCosts: [2, 4, 5],
-    },
+  harvestConversion: {
+    resource: 'reed',
+    food: 3,
+    limit: 1,
+  },
+  getEndGamePoints(player) {
+    const count = player.reed || 0
+    if (count >= 5) {
+      return 3
+    }
+    if (count >= 4) {
+      return 2
+    }
+    if (count >= 2) {
+      return 1
+    }
+    return 0
   },
 }

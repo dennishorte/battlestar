@@ -68,15 +68,11 @@ AgricolaPlayer.prototype.getCardPoints = function() {
 AgricolaPlayer.prototype.getBonusPoints = function() {
   let points = this.bonusPoints || 0
 
-  // Bonus from crafting improvements (joinery, pottery, basketmaker's)
-  // Note: Resources are actually spent in spendResourcesForCraftingBonus()
-  // This method just calculates the points
+  // Bonus from major improvements with getEndGamePoints hook
   for (const id of this.majorImprovements) {
     const imp = this.cards.byId(id)
-    if (imp && imp.abilities && imp.abilities.endGameBonus) {
-      const resource = imp.abilities.endGameBonus.resource
-      const count = this[resource] || 0
-      points += res.calculateCraftingBonus(imp, count)
+    if (imp && imp.hasHook('getEndGamePoints')) {
+      points += imp.callHook('getEndGamePoints', this, this.game)
     }
   }
 
@@ -116,33 +112,6 @@ AgricolaPlayer.prototype.getBonusPoints = function() {
 
   return points
 }
-
-// Spend resources for crafting improvement bonus points
-// Revised Edition: Resources are spent from supply to earn bonus points
-// This affects tie-breaker calculation (remaining resources)
-AgricolaPlayer.prototype.spendResourcesForCraftingBonus = function() {
-  const spent = { wood: 0, clay: 0, reed: 0, stone: 0 }
-
-  for (const id of this.majorImprovements) {
-    const imp = this.cards.byId(id)
-    if (imp && imp.abilities && imp.abilities.endGameBonus) {
-      const resource = imp.abilities.endGameBonus.resource
-      const count = this[resource] || 0
-      const bonusPoints = res.calculateCraftingBonus(imp, count)
-
-      if (bonusPoints > 0) {
-        const costs = imp.abilities.endGameBonus.spendingCosts
-        let resourcesSpent = costs[Math.min(bonusPoints, costs.length) - 1]
-        resourcesSpent = Math.min(resourcesSpent, count)
-        this.removeResource(resource, resourcesSpent)
-        spent[resource] = resourcesSpent
-      }
-    }
-  }
-
-  return spent
-}
-
 
 // Get count of all improvements (major + minor)
 AgricolaPlayer.prototype.getImprovementCount = function() {
@@ -215,7 +184,7 @@ AgricolaPlayer.prototype.getCookingImprovementCount = function() {
   let count = 0
   for (const id of this.majorImprovements) {
     const imp = this.cards.byId(id)
-    if (imp && imp.abilities && imp.abilities.canCook) {
+    if (imp && imp.cookingRates) {
       count++
     }
   }

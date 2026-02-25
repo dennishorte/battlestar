@@ -5,8 +5,8 @@ describe('Fireplace (fireplace-4) [5-6 expansion]', () => {
     const card = major.getCardById('fireplace-4')
     expect(card.expansion).toBe('5-6')
     expect(card.cost).toEqual({ clay: 4 })
-    expect(card.abilities.canCook).toBe(true)
-    expect(card.abilities.canBake).toBe(true)
+    expect(card.cookingRates).toEqual({ sheep: 2, boar: 2, cattle: 3, vegetables: 2 })
+    expect(card.bakingConversion).toEqual({ from: 'grain', to: 'food', rate: 2 })
   })
 
   test('included in 5+ player games', () => {

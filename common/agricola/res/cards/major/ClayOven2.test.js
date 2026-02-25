@@ -5,8 +5,7 @@ describe('Clay Oven (clay-oven-2) [5-6 expansion]', () => {
     const card = major.getCardById('clay-oven-2')
     expect(card.expansion).toBe('5-6')
     expect(card.cost).toEqual({ clay: 4, stone: 1 })
-    expect(card.abilities.bakingRate).toBe(5)
-    expect(card.abilities.bakingLimit).toBe(1)
+    expect(card.bakingConversion).toEqual({ from: 'grain', to: 'food', rate: 5, limit: 1 })
     expect(card.onBuy).toBeDefined()
   })
 

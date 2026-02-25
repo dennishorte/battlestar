@@ -58,7 +58,7 @@ const HarvestMixin = {
     // Cooking (requires improvement)
     if (player.hasCookingAbility()) {
       const imp = player.getCookingImprovement()
-      const rates = imp.abilities.cookingRates
+      const rates = imp.cookingRates
       const animals = player.getAllAnimals()
 
       for (const [type, count] of Object.entries(animals)) {
@@ -87,8 +87,8 @@ const HarvestMixin = {
     // Crafting improvements (harvest conversion)
     for (const impId of player.majorImprovements) {
       const imp = this.cards.byId(impId)
-      if (imp && imp.abilities && imp.abilities.harvestConversion) {
-        const conv = imp.abilities.harvestConversion
+      if (imp && imp.harvestConversion) {
+        const conv = imp.harvestConversion
         if (player[conv.resource] > 0) {
           options.push({
             type: 'craft',
@@ -174,7 +174,7 @@ const HarvestMixin = {
     // Add cooking potential
     if (player.hasCookingAbility()) {
       const imp = player.getCookingImprovement()
-      const rates = imp.abilities.cookingRates
+      const rates = imp.cookingRates
       const animals = player.getAllAnimals()
 
       for (const [type, count] of Object.entries(animals)) {
@@ -185,8 +185,8 @@ const HarvestMixin = {
     // Add crafting improvement potential
     for (const impId of player.majorImprovements) {
       const imp = this.cards.byId(impId)
-      if (imp && imp.abilities && imp.abilities.harvestConversion) {
-        const conv = imp.abilities.harvestConversion
+      if (imp && imp.harvestConversion) {
+        const conv = imp.harvestConversion
         potentialFood += Math.min(player[conv.resource], conv.limit || 1) * conv.food
       }
     }

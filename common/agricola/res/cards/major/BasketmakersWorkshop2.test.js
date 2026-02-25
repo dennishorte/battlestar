@@ -5,7 +5,7 @@ describe("Basketmaker's Workshop (basketmakers-workshop-2) [5-6 expansion]", () 
     const card = major.getCardById('basketmakers-workshop-2')
     expect(card.expansion).toBe('5-6')
     expect(card.cost).toEqual({ reed: 2, stone: 3 })
-    expect(card.abilities.harvestConversion.resource).toBe('reed')
+    expect(card.harvestConversion.resource).toBe('reed')
   })
 
   test('included in 5+ player games', () => {

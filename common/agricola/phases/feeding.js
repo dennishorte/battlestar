@@ -72,8 +72,8 @@ Agricola.prototype.allowFoodConversion = function(player, required) {
       // Add crafting improvements (harvest-only conversions)
       for (const impId of player.majorImprovements) {
         const imp = this.cards.byId(impId)
-        if (imp && imp.abilities && imp.abilities.harvestConversion) {
-          const conv = imp.abilities.harvestConversion
+        if (imp && imp.harvestConversion) {
+          const conv = imp.harvestConversion
           if (player[conv.resource] > 0) {
             options.push({
               type: 'craft',

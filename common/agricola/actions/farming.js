@@ -461,7 +461,7 @@ AgricolaActionManager.prototype.bakeBread = function(player) {
 
   // Ask how much to bake (function wrapper: grain count may change via anytime conversion)
   const selection = this.choose(player, () => {
-    const maxBake = imp.abilities.bakingLimit || player.grain
+    const maxBake = imp.bakingConversion.limit || player.grain
     const choices = []
     for (let i = 1; i <= Math.min(maxBake, player.grain); i++) {
       choices.push(`Bake ${i} grain`)

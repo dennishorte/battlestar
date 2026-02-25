@@ -870,7 +870,7 @@ AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
   if (cookingImp) {
     for (const [animalType, count] of Object.entries(totalCooked)) {
       if (count > 0) {
-        const food = res.calculateCookingFood(cookingImp, animalType, count)
+        const food = cookingImp.cookingRates[animalType] * count
         this.addResource('food', food)
         totalFood += food
       }
