@@ -225,7 +225,73 @@ module.exports = {
         return player.isHeroUnlocked() && !player.isHeroPurged()
       },
     },
+    {
+      id: 'slumberstate-sleeper',
+      name: 'Request Sleeper Placement (Slumberstate)',
+      abilityId: 'awaken',
+      isAvailable(player) {
+        if (!player.hasTechnology('slumberstate-computing')) {
+          return false
+        }
+        return true
+      },
+    },
   ],
+
+  slumberstateSleeper(ctx, player) {
+    // Ask which opponent to request sleeper placement from
+    const others = ctx.players.all().filter(p => p.name !== player.name)
+    const eligibleTargets = others.filter(other => {
+      const planets = other.getControlledPlanets()
+      return planets.some(pid => !ctx.state.sleeperTokens[pid])
+    })
+
+    if (eligibleTargets.length === 0) {
+      return
+    }
+
+    const targetNames = eligibleTargets.map(p => p.name)
+    const targetSel = ctx.actions.choose(player, targetNames, {
+      title: 'Slumberstate Computing: Ask which player to allow sleeper placement?',
+    })
+    const targetName = targetSel[0]
+    const target = ctx.players.byName(targetName)
+
+    // Target player can accept or decline
+    const response = ctx.actions.choose(target, ['Allow Sleeper', 'Decline'], {
+      title: `${player.name} requests to place a sleeper token on one of your planets.`,
+    })
+
+    if (response[0] !== 'Allow Sleeper') {
+      ctx.log.add({
+        template: '{target} declines sleeper placement from {player}',
+        args: { target: targetName, player: player.name },
+      })
+      return
+    }
+
+    // Choose which planet to place the sleeper on
+    const eligiblePlanets = target.getControlledPlanets()
+      .filter(pid => !ctx.state.sleeperTokens[pid])
+
+    let targetPlanet
+    if (eligiblePlanets.length === 1) {
+      targetPlanet = eligiblePlanets[0]
+    }
+    else {
+      const planetSel = ctx.actions.choose(player, eligiblePlanets, {
+        title: 'Slumberstate Computing: Place sleeper on which planet?',
+      })
+      targetPlanet = planetSel[0]
+    }
+
+    ctx.state.sleeperTokens[targetPlanet] = player.name
+
+    ctx.log.add({
+      template: 'Slumberstate Computing: {player} places sleeper on {planet} (allowed by {target})',
+      args: { player: player.name, planet: targetPlanet, target: targetName },
+    })
+  },
 
   geoform(ctx, player) {
     // Ready Elysium
