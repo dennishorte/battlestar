@@ -14,6 +14,16 @@ module.exports = {
     return true
   },
 
+  // Mech — Pride of Kenara: planet card may be traded in a transaction
+  canTradePlanet(player, ctx, planetId) {
+    const systemId = ctx.game._findSystemForPlanet(planetId)
+    if (!systemId) {
+      return false
+    }
+    const planetUnits = ctx.state.units[systemId]?.planets[planetId] || []
+    return planetUnits.some(u => u.owner === player.name && u.type === 'mech')
+  },
+
   // Agent: Carth of Golden Sands — component action to gain 2 commodities or replenish another
   componentActions: [
     {
