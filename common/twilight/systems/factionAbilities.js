@@ -438,6 +438,79 @@ class FactionAbilities {
       const handler = this._getPlayerHandler(player)
       handler?.onShipsEnterSystem?.(player, this, { systemId, moverName })
     }
+
+    // Promissory note checks on ship movement
+    this._offerShipMovementPromissoryNotes(systemId, moverName)
+  }
+
+  _offerShipMovementPromissoryNotes(systemId, moverName) {
+    // Stymie (Arborec PN)
+    // "After another player moves ships into a system that contains 1 or more of your units:
+    //  You may place 1 command token from that player's reinforcements in any non-home system.
+    //  Then, return this card to the Arborec player."
+    for (const holder of this.players.all()) {
+      if (holder.name === moverName) {
+        continue
+      }
+      if (!holder.hasPromissoryNote('stymie')) {
+        continue
+      }
+
+      const pn = holder.getPromissoryNotes().find(n => n.id === 'stymie')
+      if (!pn || pn.owner === holder.name) {
+        continue
+      }
+
+      // Check if holder has units in the system
+      const systemUnits = this.state.units[systemId]
+      if (!systemUnits) {
+        continue
+      }
+      const holderUnitsInSpace = systemUnits.space.filter(u => u.owner === holder.name)
+      const holderUnitsOnPlanets = Object.values(systemUnits.planets || {})
+        .flat()
+        .filter(u => u.owner === holder.name)
+      if (holderUnitsInSpace.length === 0 && holderUnitsOnPlanets.length === 0) {
+        continue
+      }
+
+      const choice = this.actions.choose(holder, ['Play Stymie', 'Pass'], {
+        title: `Stymie: Place ${moverName}'s command token in a non-home system?`,
+      })
+
+      if (choice[0] !== 'Play Stymie') {
+        continue
+      }
+
+      // Choose non-home system for the command token
+      const res = require('../res/index.js')
+      const nonHomeSystems = Object.keys(this.state.systems).filter(sId => {
+        const tile = res.getSystemTile(sId) || res.getSystemTile(Number(sId))
+        return tile && tile.type !== 'home'
+      })
+
+      if (nonHomeSystems.length > 0) {
+        const sel = this.actions.choose(holder, nonHomeSystems, {
+          title: 'Stymie: Choose system for command token',
+        })
+        const targetSystem = sel[0]
+        if (this.state.systems[targetSystem]) {
+          this.state.systems[targetSystem].commandTokens.push({ playerName: moverName })
+        }
+      }
+
+      // Return PN
+      holder.removePromissoryNote('stymie', pn.owner)
+      const ownerPlayer = this.players.byName(pn.owner)
+      if (ownerPlayer) {
+        ownerPlayer.addPromissoryNote('stymie', pn.owner)
+      }
+
+      this.log.add({
+        template: "Stymie: {player} places {mover}'s command token, returns card to {owner}",
+        args: { player: holder.name, mover: moverName, owner: pn.owner },
+      })
+    }
   }
 
 

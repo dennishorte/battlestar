@@ -399,8 +399,105 @@ describe('Arborec', () => {
   })
 
   describe('Promissory Note — Stymie', () => {
-    test.todo('after another player moves ships into system with your units, place command token from their reinforcements')
-    test.todo('returns to Arborec player after use')
+    test('after another player moves ships into system with your units, place command token from their reinforcements', () => {
+      const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
+      // Dennis = Arborec (PN owner), Micah = Hacan (PN holder)
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted' },
+          units: {
+            'arborec-home': {
+              space: ['carrier'],
+              'nestphar': ['infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'stymie', owner: 'dennis' }],
+          units: {
+            '27': {
+              space: ['cruiser'],
+            },
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis activates system 27 and moves carrier there
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'arborec-home', count: 1 },
+        ],
+      })
+
+      // Micah has a cruiser in system 27 → Stymie triggers
+      // Micah chooses to play Stymie
+      t.choose(game, 'Play Stymie')
+
+      // Choose a non-home system for Dennis's command token
+      t.choose(game, '*26')
+
+      // System 26 should have Dennis's command token from Stymie
+      const system26Tokens = game.state.systems['26'].commandTokens
+      expect(system26Tokens.some(tok => tok.playerName === 'dennis')).toBe(true)
+
+      // Verify via log
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Stymie'))).toBe(true)
+    })
+
+    test('returns to Arborec player after use', () => {
+      const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted' },
+          units: {
+            'arborec-home': {
+              space: ['carrier'],
+              'nestphar': ['infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'stymie', owner: 'dennis' }],
+          units: {
+            '27': {
+              space: ['cruiser'],
+            },
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'arborec-home', count: 1 },
+        ],
+      })
+
+      t.choose(game, 'Play Stymie')
+      t.choose(game, '*26')
+
+      // PN returned to Arborec (Dennis)
+      const micah = game.players.byName('micah')
+      const dennis = game.players.byName('dennis')
+      expect(micah.hasPromissoryNote('stymie')).toBe(false)
+      expect(dennis.hasPromissoryNote('stymie')).toBe(true)
+    })
   })
 
   describe('Faction Technologies', () => {
