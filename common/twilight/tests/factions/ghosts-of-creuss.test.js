@@ -373,8 +373,90 @@ describe('Ghosts of Creuss', () => {
   })
 
   describe('Promissory Note — Creuss IFF', () => {
-    test.todo('at start of holder turn, place or move a Creuss wormhole token into a system with a controlled planet or a non-home system without opponent ships')
-    test.todo('returns to Creuss player after use')
+    test('at start of holder turn, place or move a Creuss wormhole token into a system with a controlled planet', () => {
+      // Dennis = Hacan (holder), Micah = Creuss (owner)
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'ghosts-of-creuss'] })
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [{ id: 'creuss-iff', owner: 'micah' }],
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock', 'infantry'],
+            },
+          },
+          planets: {
+            'arretze': { exhausted: false },
+          },
+        },
+        micah: {
+          units: {
+            'creuss-home': {
+              space: ['carrier'],
+              'creuss': ['space-dock', 'infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis's turn starts — Creuss IFF triggers
+      t.choose(game, 'Play Creuss IFF')
+      t.choose(game, 'hacan-home')
+
+      // Wormhole token should be placed on hacan-home
+      expect(game.state.creussWormholeToken).toBe('hacan-home')
+
+      // PN returned to Creuss player
+      const micah = game.players.byName('micah')
+      expect(micah.getPromissoryNotes().some(n => n.id === 'creuss-iff')).toBe(true)
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getPromissoryNotes().some(n => n.id === 'creuss-iff')).toBe(false)
+    })
+
+    test('returns to Creuss player after use', () => {
+      // Dennis = Hacan (holder), Micah = Creuss (owner)
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'ghosts-of-creuss'] })
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [{ id: 'creuss-iff', owner: 'micah' }],
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock', 'infantry'],
+            },
+            '27': {
+              space: ['cruiser'],
+            },
+          },
+          planets: {
+            'arretze': { exhausted: false },
+            'new-albion': { exhausted: false },
+          },
+        },
+        micah: {
+          units: {
+            'creuss-home': {
+              space: ['carrier'],
+              'creuss': ['space-dock', 'infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis plays Creuss IFF and picks system 27
+      t.choose(game, 'Play Creuss IFF')
+      t.choose(game, '*27')
+
+      expect(game.state.creussWormholeToken).toBe('27')
+
+      const micah = game.players.byName('micah')
+      expect(micah.getPromissoryNotes().some(n => n.id === 'creuss-iff')).toBe(true)
+    })
   })
 
   describe('Faction Technologies', () => {
