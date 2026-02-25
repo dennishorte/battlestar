@@ -16,7 +16,8 @@ module.exports = {
     const tokens = ctx.state.assimilatorTokens || {}
     const hasTokenOnOpponent =
       (tokens.x?.ownerName === opponentName) ||
-      (tokens.y?.ownerName === opponentName)
+      (tokens.y?.ownerName === opponentName) ||
+      (tokens.z?.ownerName === opponentName)
 
     return hasTokenOnOpponent ? -2 : 0
   },
@@ -53,6 +54,11 @@ module.exports = {
       available.push('y')
     }
     return available
+  },
+
+  _isZAvailable(player, ctx) {
+    const tokens = ctx.state.assimilatorTokens || {}
+    return player.hasTechnology('valefar-assimilator-z') && !tokens.z
   },
 
   /**
@@ -395,8 +401,9 @@ module.exports = {
     // Check if assimilator placement is available
     const availableTokens = this._getAvailableAssimilators(player, ctx)
     const eligibleFactionTechs = this._getEligibleFactionTechs(owner, ctx)
+    const zAvailable = this._isZAvailable(player, ctx)
 
-    if (availableTokens.length > 0 && eligibleFactionTechs.length > 0) {
+    if (availableTokens.length > 0 && eligibleFactionTechs.length > 0 || zAvailable) {
       // Build combined choices: normal techs + assimilator placements + Pass
       const choices = ['Pass']
 
@@ -405,11 +412,16 @@ module.exports = {
         choices.push(techId)
       }
 
-      // Assimilator placement choices
+      // X/Y assimilator placement choices (on faction techs)
       for (const token of availableTokens) {
         for (const techId of eligibleFactionTechs) {
           choices.push(`Place ${token.toUpperCase()} token on ${techId}`)
         }
+      }
+
+      // Z assimilator placement choice (on faction sheet)
+      if (zAvailable) {
+        choices.push(`Place Z on ${owner.faction.id}`)
       }
 
       const selection = ctx.actions.choose(player, choices, {
@@ -422,7 +434,27 @@ module.exports = {
 
       ctx.state._singularityUsedThisCombat = true
 
-      // Check if assimilator placement was chosen
+      // Check if Z assimilator placement was chosen
+      const zMatch = selection[0].match(/^Place Z on (.+)$/)
+      if (zMatch) {
+        if (!ctx.state.assimilatorTokens) {
+          ctx.state.assimilatorTokens = {}
+        }
+        ctx.state.assimilatorTokens.z = {
+          factionId: zMatch[1],
+          ownerName: unit.owner,
+        }
+
+        ctx.log.add({
+          template: '{player} places Valefar Assimilator Z on {faction} faction sheet (Technological Singularity)',
+          args: { player: player.name, faction: zMatch[1] },
+        })
+
+        this._commanderDrawCard(player, ctx)
+        return
+      }
+
+      // Check if X/Y assimilator placement was chosen
       const match = selection[0].match(/^Place ([XY]) token on (.+)$/)
       if (match) {
         const tokenLetter = match[1].toLowerCase()
