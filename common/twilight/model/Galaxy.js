@@ -165,6 +165,22 @@ class Galaxy {
       }
     }
 
+    // Void Tether: remove adjacency for non-owner players on tethered borders
+    if (this.game.state.voidTetherTokens && this.game.state._voidTetherCheckPlayer) {
+      const checkPlayer = this.game.state._voidTetherCheckPlayer
+      const filtered = adjacent.filter(adjId => {
+        return !this.game.state.voidTetherTokens.some(token => {
+          if (token.owner === checkPlayer) {
+            return false  // Empyrean player is not blocked by own tethers
+          }
+          const [a, b] = token.systems
+          return (String(a) === String(systemId) && String(b) === String(adjId)) ||
+                 (String(b) === String(systemId) && String(a) === String(adjId))
+        })
+      })
+      return filtered
+    }
+
     return adjacent
   }
 
