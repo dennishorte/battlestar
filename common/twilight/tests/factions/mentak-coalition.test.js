@@ -937,6 +937,49 @@ describe('Mentak Coalition', () => {
       expect(dennis.tradeGoods).toBe(0)
     })
 
-    test.todo("The Table's Grace: Corsair movement through enemy systems with Cruiser II")
+    test("The Table's Grace: Corsair movement through enemy systems with Cruiser II", () => {
+      // Dennis = Mentak with Cruiser II + The Table's Grace
+      // System 27 (intermediate) has Micah's cruiser — normally blocks movement
+      // System 26 (destination) has Micah's carrier (non-fighter) — activates Corsair
+      // Path: mentak-home → 27 → 26 (distance 2, Cruiser II move 3)
+      const game = t.fixture({ factions: ['mentak-coalition', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          technologies: ['cruiser-ii', 'the-tables-grace'],
+          units: {
+            'mentak-home': {
+              space: ['cruiser'],
+              'moll-primus': ['infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['cruiser'],
+            },
+            '26': {
+              space: ['carrier'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis activates system 26 (destination with enemy non-fighter)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '26' })
+
+      // Move cruiser through system 27 (has enemy ships) to system 26
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'mentak-home', count: 1 }],
+      })
+
+      // Cruiser should have arrived in system 26
+      const system26Units = game.state.units['26'].space
+      const dennisCruisers = system26Units.filter(u => u.owner === 'dennis' && u.type === 'cruiser')
+      expect(dennisCruisers.length).toBe(1)
+    })
   })
 })

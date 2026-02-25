@@ -246,9 +246,11 @@ class Galaxy {
 
         // Cannot move through systems with enemy ships (unless destination or Light/Wave Deflector)
         // Aetherpassage: skip blocking by the granting player's ships
+        // The Table's Grace: Mentak cruisers can pass through enemy systems
         const movingPlayerForFleet = this.game.players?.byName(playerName)
         const hasLightWave = movingPlayerForFleet && movingPlayerForFleet.hasTechnology('light-wave-deflector')
-        if (!hasLightWave) {
+        const tablesGrace = this.game.state?._tablesGraceActive
+        if (!hasLightWave && !tablesGrace) {
           const aetherGrant = this.game.state?.aetherpassageGrant
           const enemyShips = this._getEnemyShipsInSystem(neighborId, playerName)
             .filter(u => !aetherGrant || u.owner !== aetherGrant)
