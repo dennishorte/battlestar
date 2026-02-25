@@ -8,6 +8,18 @@ module.exports = {
         return player.isHeroUnlocked() && !player.isHeroPurged()
       },
     },
+    {
+      id: 'executive-order',
+      name: 'Executive Order',
+      abilityId: 'the-tribunii',
+      isAvailable: function(player) {
+        if (!player.hasTechnology('executive-order')) {
+          return false
+        }
+        const exhausted = player.exhaustedTechs || []
+        return !exhausted.includes('executive-order')
+      },
+    },
   ],
 
   onTurnStart(player, ctx) {
@@ -81,6 +93,67 @@ module.exports = {
       template: 'Xander: {player} converts {count} commodities to trade goods for {target}',
       args: { player: keleresPlayer.name, count: commodities, target: activePlayer.name },
     })
+  },
+
+  // ---------------------------------------------------------------------------
+  // Executive Order — Faction Technology (Yellow, prerequisite: Yellow)
+  // ACTION: Exhaust to draw top or bottom of agenda deck. Players vote as if
+  // you were the speaker; you can spend TG and resources as votes.
+  // ---------------------------------------------------------------------------
+
+  executiveOrder(ctx, player) {
+    ctx.game._exhaustTech(player, 'executive-order')
+
+    const drawChoice = ctx.actions.choose(player, ['Top', 'Bottom'], {
+      title: 'Executive Order: Draw from top or bottom of agenda deck?',
+    })
+
+    // Initialize agenda deck if needed
+    if (!ctx.state.agendaDeck) {
+      const allAgendas = ctx.game.res.getAllAgendaCards()
+      const deck = [...allAgendas]
+      ctx.game._shuffle(deck)
+      ctx.state.agendaDeck = deck
+    }
+
+    if (ctx.state.agendaDeck.length === 0) {
+      ctx.log.add({
+        template: 'Executive Order: No agenda cards in deck',
+        args: {},
+      })
+      return
+    }
+
+    // If drawing from bottom, move it to the front
+    if (drawChoice[0] === 'Bottom') {
+      const bottomCard = ctx.state.agendaDeck.pop()
+      ctx.state.agendaDeck.unshift(bottomCard)
+    }
+
+    // Override speaker to Keleres player for this vote
+    const originalSpeaker = ctx.state.speaker
+    ctx.state.speaker = player.name
+    ctx.state._executiveOrderActive = player.name
+
+    ctx.log.add({
+      template: 'Executive Order: {player} initiates a special agenda vote',
+      args: { player: player.name },
+    })
+
+    // Resolve the agenda using the normal voting machinery
+    ctx.game._resolveAgenda('executive-order')
+
+    // Restore original speaker and clear flag
+    ctx.state.speaker = originalSpeaker
+    delete ctx.state._executiveOrderActive
+  },
+
+  // Executive Order: when active, Keleres can spend TG as votes (1 TG = 1 vote)
+  getTradeGoodVoteRate(player, ctx) {
+    if (ctx.state._executiveOrderActive === player.name) {
+      return 1
+    }
+    return 0
   },
 
   // ---------------------------------------------------------------------------
@@ -418,5 +491,67 @@ module.exports = {
       return 0
     }
     return 1  // 1 influence per ground force committed
+  },
+
+  // ---------------------------------------------------------------------------
+  // Agency Supply Network — Faction Technology (Yellow, prereq: Yellow, Yellow)
+  // Once per action, when you resolve a unit's PRODUCTION ability, you may
+  // resolve another of your unit's PRODUCTION abilities in any system.
+  // ---------------------------------------------------------------------------
+
+  afterProduction(player, ctx, { systemId }) {
+    if (!player.hasTechnology('agency-supply-network')) {
+      return
+    }
+    if (ctx.state._agencySupplyNetworkActive) {
+      return
+    }
+
+    // Find other systems where player has production units (space docks)
+    const eligibleSystems = []
+    for (const [sysId, systemUnits] of Object.entries(ctx.state.units)) {
+      if (sysId === systemId) {
+        continue
+      }
+
+      let hasProduction = false
+      for (const planetUnits of Object.values(systemUnits.planets || {})) {
+        if (planetUnits.some(u => u.owner === player.name && u.type === 'space-dock')) {
+          hasProduction = true
+          break
+        }
+      }
+      if (!hasProduction) {
+        hasProduction = (systemUnits.space || []).some(
+          u => u.owner === player.name && u.type === 'space-dock'
+        )
+      }
+
+      if (hasProduction) {
+        eligibleSystems.push(sysId)
+      }
+    }
+
+    if (eligibleSystems.length === 0) {
+      return
+    }
+
+    const choices = [...eligibleSystems, 'Pass']
+    const selection = ctx.actions.choose(player, choices, {
+      title: 'Agency Supply Network: Resolve PRODUCTION in another system?',
+    })
+
+    if (selection[0] === 'Pass') {
+      return
+    }
+
+    ctx.log.add({
+      template: 'Agency Supply Network: {player} resolves PRODUCTION in {system}',
+      args: { player: player.name, system: selection[0] },
+    })
+
+    ctx.state._agencySupplyNetworkActive = true
+    ctx.game._productionStep(player, selection[0])
+    delete ctx.state._agencySupplyNetworkActive
   },
 }
