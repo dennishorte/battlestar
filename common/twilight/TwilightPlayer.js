@@ -175,7 +175,19 @@ class TwilightPlayer extends BasePlayer {
 
   hasTechnology(techId) {
     // Accept both prefixed and raw forms
-    return this.getTechIds().includes(techId)
+    if (this.getTechIds().includes(techId)) {
+      return true
+    }
+
+    // Nekro Valefar Assimilator: tokens grant the text of the marked technology
+    if (this.faction?.id === 'nekro-virus' && this.game.state.assimilatorTokens) {
+      const tokens = this.game.state.assimilatorTokens
+      if (tokens.x?.techId === techId || tokens.y?.techId === techId) {
+        return true
+      }
+    }
+
+    return false
   }
 
   getTechPrerequisites() {
