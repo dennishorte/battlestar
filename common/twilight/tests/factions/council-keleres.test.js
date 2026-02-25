@@ -506,7 +506,64 @@ describe('Council Keleres', () => {
   })
 
   describe('Promissory Note — Keleres Rider', () => {
-    test.todo('after agenda revealed, cannot vote, predict outcome; if correct draw 1 action card and gain 2 TG, then return card')
+    function playToAgenda(game) {
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis (leadership=1) goes first
+      t.choose(game, 'Strategic Action')  // Dennis uses leadership
+      t.choose(game, 'Pass')              // Micah declines secondary
+      // Micah (diplomacy=2) goes next
+      t.choose(game, 'Strategic Action')  // Micah uses diplomacy
+      t.choose(game, 'sol-home')          // Micah diplomacy target
+      t.choose(game, 'Pass')              // Dennis declines secondary
+      // Both pass action phase
+      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')
+      // Status phase
+      t.choose(game, 'Done')
+      t.choose(game, 'Done')
+    }
+
+    test('correct prediction draws 1 action card and gains 2 TG, returns card', () => {
+      // Dennis = Keleres (owner), Micah = Sol (holder)
+      // Using Sol instead of Hacan to avoid Hacan's non-neighbor trade windows
+      const game = t.fixture({ factions: ['council-keleres', 'federation-of-sol'], keleresSubFaction: 'mentak-coalition' })
+      t.setBoard(game, {
+        custodiansRemoved: true,
+        agendaDeck: ['mutiny', 'economic-equality'],
+        micah: {
+          promissoryNotes: [{ id: 'keleres-rider', owner: 'dennis' }],
+          tradeGoods: 0,
+          planets: {
+            'jord': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      playToAgenda(game)
+
+      // Agenda: mutiny (for-against)
+      // Micah (holder) is offered Keleres Rider
+      t.choose(game, 'Play Keleres Rider')
+      t.choose(game, 'Predict: For')
+
+      // Micah cannot vote (excluded)
+      // Dennis votes For (exhaust Moll Primus for 1 vote)
+      t.choose(game, 'For')
+      t.choose(game, 'moll-primus (1)')
+
+      // Outcome: For — Micah predicted correctly
+      const micah = game.players.byName('micah')
+      expect(micah.tradeGoods).toBe(2)
+
+      // PN returned to Keleres (Dennis)
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getPromissoryNotes().some(n => n.id === 'keleres-rider')).toBe(true)
+      expect(micah.getPromissoryNotes().some(n => n.id === 'keleres-rider')).toBe(false)
+
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Keleres Rider'))).toBe(true)
+    })
   })
 
   describe('Faction Technologies', () => {

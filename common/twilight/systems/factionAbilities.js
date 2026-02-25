@@ -1227,6 +1227,20 @@ class FactionAbilities {
   onStatusPhaseEnd(player) {
     const handler = this._getPlayerHandler(player)
     handler?.onStatusPhaseEnd?.(player, this)
+
+    // Gift of Prescience: return PN to Naalu at end of status phase
+    if (this.state._giftOfPrescience && this.state._giftOfPrescience.holder === player.name) {
+      const { owner } = this.state._giftOfPrescience
+      const naaluPlayer = this.players.byName(owner)
+      if (naaluPlayer) {
+        naaluPlayer.addPromissoryNote('gift-of-prescience', owner)
+      }
+      this.log.add({
+        template: 'Gift of Prescience returned to {owner}.',
+        args: { owner },
+      })
+      this.state._giftOfPrescience = null
+    }
   }
 
 
@@ -1310,6 +1324,53 @@ class FactionAbilities {
       const handler = this._getPlayerHandler(player)
       handler?.onAgendaVotingStart?.(player, this, { agenda, outcomes })
     }
+
+    // Keleres Rider (Council Keleres PN)
+    // "After an agenda is revealed: You cannot vote on this agenda. Predict aloud
+    //  an outcome of this agenda. If your prediction is correct, draw 1 action card
+    //  and gain 2 trade goods. Then, return this card to the Keleres player."
+    for (const player of this.players.all()) {
+      if (!player.hasPromissoryNote('keleres-rider')) {
+        continue
+      }
+      const pn = player.getPromissoryNotes().find(n => n.id === 'keleres-rider' && n.owner !== player.name)
+      if (!pn) {
+        continue
+      }
+
+      const choice = this.actions.choose(player, ['Play Keleres Rider', 'Pass'], {
+        title: `Keleres Rider: Predict outcome of "${agenda.name}"?`,
+      })
+      if (choice[0] !== 'Play Keleres Rider') {
+        continue
+      }
+
+      // Player predicts an outcome
+      const predictionChoices = outcomes.map(o => `Predict: ${o}`)
+      const predSel = this.actions.choose(player, predictionChoices, {
+        title: 'Choose your prediction:',
+      })
+      const predicted = predSel[0].replace('Predict: ', '')
+
+      this.state._keleresRiderPrediction = {
+        holder: player.name,
+        prediction: predicted,
+        owner: pn.owner,
+      }
+
+      // Return PN to Keleres
+      player.removePromissoryNote('keleres-rider', pn.owner)
+      const keleresPlayer = this.players.byName(pn.owner)
+      if (keleresPlayer) {
+        keleresPlayer.addPromissoryNote('keleres-rider', pn.owner)
+      }
+
+      this.log.add({
+        template: 'Keleres Rider: {player} predicts {outcome}. Cannot vote. Card returned to {owner}.',
+        args: { player: player.name, outcome: predicted, owner: pn.owner },
+      })
+      break
+    }
   }
 
   getAgendaParticipation(votingOrder) {
@@ -1321,6 +1382,11 @@ class FactionAbilities {
       if (handler?.isExcludedFromVoting && !handler?.cannotBeExcludedFromVoting) {
         excluded.push(player.name)
       }
+    }
+
+    // Keleres Rider: holder cannot vote
+    if (this.state._keleresRiderPrediction) {
+      excluded.push(this.state._keleresRiderPrediction.holder)
     }
 
     const firstIdx = order.findIndex(p => {
@@ -1386,6 +1452,28 @@ class FactionAbilities {
     for (const player of this.players.all()) {
       const handler = this._getPlayerHandler(player)
       handler?.onAgendaOutcomeResolved?.(player, this, { agenda, winningOutcome, playerVotes })
+    }
+
+    // Keleres Rider: check prediction
+    if (this.state._keleresRiderPrediction) {
+      const { holder, prediction } = this.state._keleresRiderPrediction
+      const holderPlayer = this.players.byName(holder)
+
+      if (prediction === winningOutcome && holderPlayer) {
+        this.game._drawActionCards(holderPlayer, 1)
+        holderPlayer.addTradeGoods(2)
+        this.log.add({
+          template: 'Keleres Rider: {player} predicted correctly! Draws 1 action card and gains 2 trade goods.',
+          args: { player: holder },
+        })
+      }
+      else {
+        this.log.add({
+          template: 'Keleres Rider: {player} predicted incorrectly.',
+          args: { player: holder },
+        })
+      }
+      this.state._keleresRiderPrediction = null
     }
   }
 
@@ -2036,6 +2124,30 @@ class FactionAbilities {
   onStrategyPhaseEnd(player) {
     const handler = this._getPlayerHandler(player)
     handler?.onStrategyPhaseEnd?.(player, this)
+
+    // Gift of Prescience (Naalu PN)
+    // "At the end of the strategy phase: Place this card face-up in your play area
+    //  and place the Naalu '0' token on your strategy card; you are first in the
+    //  initiative order. The Naalu player cannot use their TELEPATHIC faction ability
+    //  during this game round. Return this card to the Naalu player at the end of
+    //  the status phase."
+    if (player.hasPromissoryNote('gift-of-prescience')) {
+      const pn = player.getPromissoryNotes().find(n => n.id === 'gift-of-prescience' && n.owner !== player.name)
+      if (pn) {
+        const choice = this.actions.choose(player, ['Play Gift of Prescience', 'Pass'], {
+          title: 'Gift of Prescience: Gain initiative 0 this round?',
+        })
+        if (choice[0] === 'Play Gift of Prescience') {
+          this.state._giftOfPrescience = { holder: player.name, owner: pn.owner }
+          player.removePromissoryNote('gift-of-prescience', pn.owner)
+
+          this.log.add({
+            template: 'Gift of Prescience: {player} gains initiative 0. {owner} cannot use Telepathic this round.',
+            args: { player: player.name, owner: pn.owner },
+          })
+        }
+      }
+    }
   }
 
 
