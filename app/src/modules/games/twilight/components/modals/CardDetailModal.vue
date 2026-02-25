@@ -79,7 +79,7 @@
         </div>
       </div>
 
-      <!-- Leader -->
+      <!-- Single Leader (for log links etc.) -->
       <div v-if="type === 'leader' && leaderData">
         <div class="detail-row">
           <span class="leader-role-badge" :class="`role-${context?.role}`">{{ context?.role }}</span>
@@ -91,6 +91,24 @@
         <div class="detail-row" v-if="leaderData.unlockCondition">
           <span class="info-key">Unlock:</span>
           <span>{{ leaderData.unlockCondition }}</span>
+        </div>
+      </div>
+
+      <!-- All Leaders (from player tableau click) -->
+      <div v-if="type === 'leaders' && leadersAllData">
+        <div v-for="entry in leadersAllData" :key="entry.role" class="leader-card">
+          <div class="detail-row">
+            <span class="leader-role-badge" :class="`role-${entry.role}`">{{ entry.role }}</span>
+            <span class="leader-name">{{ entry.data.name }}</span>
+            <span class="leader-status" :class="leaderStatusClassFor(entry.status)">{{ entry.statusLabel }}</span>
+          </div>
+          <div class="detail-row" v-if="entry.data.unlockCondition && entry.status === 'locked'">
+            <span class="info-key">Unlock:</span>
+            <span>{{ entry.data.unlockCondition }}</span>
+          </div>
+          <div class="description-text" v-if="entry.data.description">
+            {{ entry.data.description }}
+          </div>
         </div>
       </div>
 
@@ -274,6 +292,10 @@ export default {
       if (this.type === 'promissory-note' && this.promissoryData) {
         return this.promissoryData.name
       }
+      if (this.type === 'leaders' && this.leadersAllData) {
+        const faction = res.getFaction(this.id)
+        return faction ? `${faction.name} — Leaders` : 'Leaders'
+      }
       if (this.type === 'faction-ability') {
         return this.context?.name || 'Faction Ability'
       }
@@ -369,11 +391,52 @@ export default {
       return null
     },
 
+    leadersAllData() {
+      if (this.type !== 'leaders' || !this.id || !this.context?.leaders) {
+        return null
+      }
+      const faction = res.getFaction(this.id)
+      if (!faction?.leaders) {
+        return null
+      }
+      const statuses = this.context.leaders
+      const STATUS_LABELS = {
+        ready: 'active',
+        exhausted: 'exhausted',
+        unlocked: 'active',
+        locked: 'locked',
+        purged: 'purged',
+      }
+      return ['agent', 'commander', 'hero']
+        .filter(role => faction.leaders[role])
+        .map(role => ({
+          role,
+          data: faction.leaders[role],
+          status: statuses[role] || 'locked',
+          statusLabel: STATUS_LABELS[statuses[role]] || 'locked',
+        }))
+    },
+
     factionData() {
       if (this.type !== 'faction' || !this.id) {
         return null
       }
       return res.getFaction(this.id)
+    },
+  },
+
+  methods: {
+    leaderStatusClassFor(status) {
+      if (status === 'ready' || status === 'unlocked') {
+        return 'status-ready'
+      }
+      if (status === 'exhausted') {
+        return 'status-exhausted'
+      }
+      if (status === 'purged') {
+        return 'status-purged'
+      }
+      return 'status-locked'
     },
   },
 }
@@ -568,6 +631,21 @@ export default {
 .status-exhausted { background: #fff3cd; color: #856404; }
 .status-locked { background: #e9ecef; color: #aaa; }
 .status-purged { background: #f8d7da; color: #721c24; }
+
+.leader-card {
+  padding: .5em 0;
+  border-top: 1px solid #eee;
+}
+
+.leader-card:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.leader-name {
+  font-weight: 600;
+  flex: 1;
+}
 
 .timing-badge {
   font-size: .85em;

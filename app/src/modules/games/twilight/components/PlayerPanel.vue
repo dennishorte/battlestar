@@ -38,21 +38,12 @@
     </div>
 
     <!-- Leaders -->
-    <div class="panel-section">
+    <div class="panel-section clickable" @click="openLeadersDetail">
       <div class="section-label">Leaders</div>
       <div class="leaders-row">
-        <span class="leader clickable"
-              :class="agentClass"
-              title="Agent"
-              @click="openLeaderDetail('agent')">A</span>
-        <span class="leader clickable"
-              :class="commanderClass"
-              title="Commander"
-              @click="openLeaderDetail('commander')">C</span>
-        <span class="leader clickable"
-              :class="heroClass"
-              title="Hero"
-              @click="openLeaderDetail('hero')">H</span>
+        <span class="leader" :class="agentClass" title="Agent">A</span>
+        <span class="leader" :class="commanderClass" title="Commander">C</span>
+        <span class="leader" :class="heroClass" title="Hero">H</span>
       </div>
     </div>
 
@@ -267,10 +258,10 @@ export default {
       this.openCardDetail('promissory-note', note.id, { owner: note.owner, factionId })
     },
 
-    openLeaderDetail(role) {
+    openLeadersDetail() {
       const factionId = this.player.factionId
-      const status = this.player.leaders?.[role] || 'locked'
-      this.openCardDetail('leader', factionId, { role, status, player: this.player.name })
+      const leaders = this.player.leaders || {}
+      this.openCardDetail('leaders', factionId, { leaders, player: this.player.name })
     },
 
     getContrastColor(hexColor) {
