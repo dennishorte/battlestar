@@ -1097,7 +1097,42 @@ describe('Naaz-Rokha Alliance', () => {
     })
 
     describe('Absolute Synergy', () => {
-      test.todo('when 4 mechs in same system, may return 3 to flip this card onto mech card')
+      test('when 4 mechs in same system, may return 3 to flip this card onto mech card', () => {
+        const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            technologies: ['psychoarchaeology', 'ai-development-algorithm', 'absolute-synergy'],
+            units: {
+              'naazrokha-home': {
+                space: ['carrier', 'destroyer'],
+                'naazir': ['mech', 'mech', 'mech', 'mech', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis does a tactical action — activates system 27 (adjacent to home)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'carrier', from: 'naazrokha-home', count: 1 }],
+        })
+
+        // At end of tactical action, Absolute Synergy triggers
+        // Dennis has 4 mechs on naazir — flip it
+        t.choose(game, 'Flip Absolute Synergy')
+
+        // Verify 3 mechs were returned, only 1 remains
+        const naazirUnits = game.state.units['naazrokha-home'].planets['naazir']
+        const mechCount = naazirUnits.filter(u => u.owner === 'dennis' && u.type === 'mech').length
+        expect(mechCount).toBe(1)
+
+        // Verify flipped state
+        expect(game.state.absoluteSynergyFlipped?.dennis).toBe(true)
+      })
     })
   })
 })
