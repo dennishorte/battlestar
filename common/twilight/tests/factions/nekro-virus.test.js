@@ -563,12 +563,53 @@ describe('Nekro Virus', () => {
           ownerName: 'micah',
         })
 
-        // Nekro should NOT have gained l4-disruptors as a regular tech
+        // Nekro should NOT have gained l4-disruptors as a regular tech in their tech zone
         const dennis = game.players.byName('dennis')
-        expect(dennis.hasTechnology('l4-disruptors')).toBe(false)
+        expect(dennis.getTechIds()).not.toContain('l4-disruptors')
       })
 
-      test.todo('this card gains the text of the token-marked technology')
+      test('this card gains the text of the token-marked technology', () => {
+        const game = t.fixture({ factions: ['nekro-virus', 'barony-of-letnev'] })
+        t.setBoard(game, {
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            technologies: ['valefar-assimilator-x'],
+            units: {
+              'nekro-home': {
+                space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+                'mordai-ii': ['space-dock'],
+              },
+            },
+          },
+          micah: {
+            technologies: ['antimass-deflectors', 'l4-disruptors'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              '27': {
+                space: ['fighter'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'nekro-home', count: 5 }],
+        })
+
+        // Place X token on l4-disruptors
+        t.choose(game, 'Place X token on l4-disruptors')
+
+        // Nekro effectively has l4-disruptors through the assimilator
+        const dennis = game.players.byName('dennis')
+        expect(dennis.hasTechnology('l4-disruptors')).toBe(true)
+
+        // But NOT in the regular tech zone
+        expect(dennis.getTechIds()).not.toContain('l4-disruptors')
+      })
 
       test('cannot place assimilator token on technology that already has one', () => {
         const game = t.fixture({ factions: ['nekro-virus', 'barony-of-letnev'] })
@@ -668,7 +709,48 @@ describe('Nekro Virus', () => {
         })
       })
 
-      test.todo('this card gains the text of the token-marked technology')
+      test('this card gains the text of the token-marked technology', () => {
+        const game = t.fixture({ factions: ['nekro-virus', 'barony-of-letnev'] })
+        t.setBoard(game, {
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            technologies: ['valefar-assimilator-y'],
+            units: {
+              'nekro-home': {
+                space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+                'mordai-ii': ['space-dock'],
+              },
+            },
+          },
+          micah: {
+            technologies: ['antimass-deflectors', 'non-euclidean-shielding'],
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              '27': {
+                space: ['fighter'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'nekro-home', count: 5 }],
+        })
+
+        // Place Y token on non-euclidean-shielding
+        t.choose(game, 'Place Y token on non-euclidean-shielding')
+
+        // Nekro effectively has non-euclidean-shielding through the assimilator
+        const dennis = game.players.byName('dennis')
+        expect(dennis.hasTechnology('non-euclidean-shielding')).toBe(true)
+
+        // But NOT in the regular tech zone
+        expect(dennis.getTechIds()).not.toContain('non-euclidean-shielding')
+      })
     })
 
     describe('Valefar Assimilator Z', () => {
