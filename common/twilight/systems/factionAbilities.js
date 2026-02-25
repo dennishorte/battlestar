@@ -56,7 +56,14 @@ class FactionAbilities {
 
   canTradeWithNonNeighbors(player) {
     const handler = this._getPlayerHandler(player)
-    return handler?.canTradeWithNonNeighbors?.(player, this) ?? false
+    if (handler?.canTradeWithNonNeighbors?.(player, this)) {
+      return true
+    }
+    // Trade Convoys: activated PN grants non-neighbor trading
+    if ((this.state._activatedPNs || []).some(p => p.id === 'trade-convoys' && p.holder === player.name)) {
+      return true
+    }
+    return false
   }
 
   getTechPrerequisiteSkips(player, tech) {
@@ -88,6 +95,10 @@ class FactionAbilities {
       const otherHandler = this._getPlayerHandler(otherPlayer)
       otherHandler?.onAnyTechResearched?.(otherPlayer, this, { researchingPlayer: player, tech })
     }
+
+    // Research Agreement: when Jol-Nar researches a non-faction tech,
+    // the holder gains that technology and returns the card
+    this._checkResearchAgreement(player, tech)
   }
 
   canTradeActionCards(player, target) {
@@ -334,16 +345,19 @@ class FactionAbilities {
         continue
       }
 
-      if (pn.id === 'promise-of-protection' || pn.id === 'dark-pact' || pn.id === 'blood-pact') {
+      const activatableNames = {
+        'promise-of-protection': 'Promise of Protection',
+        'dark-pact': 'Dark Pact',
+        'blood-pact': 'Blood Pact',
+        'trade-convoys': 'Trade Convoys',
+        'fires-of-the-gashlai': 'Fires of the Gashlai',
+        'research-agreement': 'Research Agreement',
+      }
+      if (activatableNames[pn.id]) {
         const alreadyActive = (this.state._activatedPNs || [])
           .some(p => p.id === pn.id && p.holder === player.name)
         if (!alreadyActive) {
-          const names = {
-            'promise-of-protection': 'Promise of Protection',
-            'dark-pact': 'Dark Pact',
-            'blood-pact': 'Blood Pact',
-          }
-          pnActions.push({ id: pn.id, name: names[pn.id] })
+          pnActions.push({ id: pn.id, name: activatableNames[pn.id] })
         }
       }
     }
@@ -373,8 +387,23 @@ class FactionAbilities {
   }
 
   _executePromissoryNoteAction(player, actionId) {
-    const activatableIds = ['promise-of-protection', 'dark-pact', 'blood-pact']
-    if (!activatableIds.includes(actionId)) {
+    const factionMap = {
+      'promise-of-protection': 'mentak-coalition',
+      'dark-pact': 'empyrean',
+      'blood-pact': 'empyrean',
+      'trade-convoys': 'emirates-of-hacan',
+      'fires-of-the-gashlai': 'embers-of-muaat',
+      'research-agreement': 'universities-of-jol-nar',
+    }
+    const nameMap = {
+      'promise-of-protection': 'Promise of Protection',
+      'dark-pact': 'Dark Pact',
+      'blood-pact': 'Blood Pact',
+      'trade-convoys': 'Trade Convoys',
+      'fires-of-the-gashlai': 'Fires of the Gashlai',
+      'research-agreement': 'Research Agreement',
+    }
+    if (!factionMap[actionId]) {
       return false
     }
 
@@ -383,17 +412,18 @@ class FactionAbilities {
       return false
     }
 
-    const factionMap = {
-      'promise-of-protection': 'mentak-coalition',
-      'dark-pact': 'empyrean',
-      'blood-pact': 'empyrean',
-    }
-    const nameMap = {
-      'promise-of-protection': 'Promise of Protection',
-      'dark-pact': 'Dark Pact',
-      'blood-pact': 'Blood Pact',
+    this.log.add({
+      template: '{player} plays {pnName}',
+      args: { player: player.name, pnName: nameMap[actionId] },
+    })
+
+    // One-shot PNs: resolve effect immediately and return to owner
+    if (actionId === 'fires-of-the-gashlai') {
+      this._resolveFiresOfTheGashlai(player, pn)
+      return true
     }
 
+    // Face-up PNs: add to activated list for passive effects
     if (!this.state._activatedPNs) {
       this.state._activatedPNs = []
     }
@@ -403,12 +433,85 @@ class FactionAbilities {
       owner: pn.owner,
       faction: factionMap[actionId],
     })
-
-    this.log.add({
-      template: '{player} plays {pnName}',
-      args: { player: player.name, pnName: nameMap[actionId] },
-    })
     return true
+  }
+
+  _resolveFiresOfTheGashlai(player, pn) {
+    // Remove 1 fleet token from Muaat player
+    const muaat = this.players.byName(pn.owner)
+    if (muaat && muaat.commandTokens.fleet > 0) {
+      muaat.commandTokens.fleet -= 1
+      this.log.add({
+        template: '{muaat} loses 1 fleet token',
+        args: { muaat: pn.owner },
+      })
+    }
+
+    // Grant holder War Sun unit upgrade technology
+    this.game._grantTechnology(player, 'war-sun')
+    this.log.add({
+      template: '{player} gains War Sun unit upgrade technology',
+      args: { player: player.name },
+    })
+
+    // Return PN to Muaat
+    player.removePromissoryNote(pn.id, pn.owner)
+    if (muaat) {
+      muaat.addPromissoryNote(pn.id, pn.owner)
+    }
+    this.log.add({
+      template: '{pnName} returned from {holder} to {owner}',
+      args: { pnName: 'Fires of the Gashlai', holder: player.name, owner: pn.owner },
+    })
+  }
+
+  _checkResearchAgreement(researchingPlayer, tech) {
+    if (!this.state._activatedPNs?.length) {
+      return
+    }
+    // Only triggers for non-faction technologies
+    if (tech.faction) {
+      return
+    }
+    // Only triggers when the Jol-Nar player researches
+    if (researchingPlayer.faction?.id !== 'universities-of-jol-nar') {
+      return
+    }
+
+    for (let i = this.state._activatedPNs.length - 1; i >= 0; i--) {
+      const pn = this.state._activatedPNs[i]
+      if (pn.id !== 'research-agreement') {
+        continue
+      }
+
+      const holder = this.players.byName(pn.holder)
+      if (!holder) {
+        continue
+      }
+      // Don't grant if holder already has this tech
+      if (holder.hasTechnology(tech.id)) {
+        continue
+      }
+
+      // Grant the same technology to the holder
+      this.game._grantTechnology(holder, tech.id)
+      this.log.add({
+        template: 'Research Agreement: {holder} gains {tech}',
+        args: { holder: pn.holder, tech: tech.name },
+      })
+
+      // Remove from activated and return to Jol-Nar
+      this.state._activatedPNs.splice(i, 1)
+      holder.removePromissoryNote(pn.id, pn.owner)
+      const owner = this.players.byName(pn.owner)
+      if (owner) {
+        owner.addPromissoryNote(pn.id, pn.owner)
+      }
+      this.log.add({
+        template: '{pnName} returned from {holder} to {owner}',
+        args: { pnName: 'Research Agreement', holder: pn.holder, owner: pn.owner },
+      })
+    }
   }
 
 

@@ -328,8 +328,85 @@ describe('Embers of Muaat', () => {
   })
 
   describe('Promissory Note — Fires of the Gashlai', () => {
-    test.todo('remove 1 Muaat fleet token to gain war sun unit upgrade technology')
-    test.todo('returns to Muaat player after use')
+    test('remove 1 Muaat fleet token and holder gains war sun unit upgrade technology', () => {
+      // Dennis = Hacan (holder), Micah = Muaat (owner)
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'embers-of-muaat'] })
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [{ id: 'fires-of-the-gashlai', owner: 'micah' }],
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          commandTokens: { tactics: 3, fleet: 3, strategy: 2 },
+          units: {
+            'muaat-home': {
+              space: ['war-sun'],
+              'muaat': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: Component Action → Fires of the Gashlai
+      t.choose(game, 'Component Action')
+      t.choose(game, 'fires-of-the-gashlai')
+      // No transaction window (no TG/commodities to trade)
+
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+
+      // Muaat loses 1 fleet token
+      expect(micah.commandTokens.fleet).toBe(2)
+
+      // Holder gains War Sun unit upgrade
+      expect(dennis.hasTechnology('war-sun')).toBe(true)
+    })
+
+    test('returns to Muaat player after use', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'embers-of-muaat'] })
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [{ id: 'fires-of-the-gashlai', owner: 'micah' }],
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          commandTokens: { tactics: 3, fleet: 3, strategy: 2 },
+          units: {
+            'muaat-home': {
+              space: ['war-sun'],
+              'muaat': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: Component Action → Fires of the Gashlai
+      t.choose(game, 'Component Action')
+      t.choose(game, 'fires-of-the-gashlai')
+
+      const micah = game.players.byName('micah')
+      const dennis = game.players.byName('dennis')
+
+      // PN returned to Muaat
+      const micahPNs = micah.getPromissoryNotes()
+      expect(micahPNs.some(n => n.id === 'fires-of-the-gashlai')).toBe(true)
+      const dennisPNs = dennis.getPromissoryNotes()
+      expect(dennisPNs.some(n => n.id === 'fires-of-the-gashlai' && n.owner === 'micah')).toBe(false)
+    })
   })
 
   describe('Faction Technologies', () => {
