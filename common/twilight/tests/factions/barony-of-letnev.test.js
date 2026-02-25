@@ -740,6 +740,9 @@ describe('Barony of Letnev', () => {
         ],
       })
 
+      // Decline Dunlain Reaper mech DEPLOY at start of ground combat
+      t.choose(game, 'Pass')
+
       // L4 Disruptors should block PDS space cannon defense (during invasion)
       const logEntries = game.log._log.map(e => e.template || '')
       expect(logEntries.some(t => t.includes('L4 Disruptors'))).toBe(true)
