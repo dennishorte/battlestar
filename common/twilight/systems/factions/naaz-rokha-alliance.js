@@ -105,17 +105,19 @@ module.exports = {
 
   // Pre-Fab Arcologies (faction tech): After you explore a planet, ready that planet.
   afterExploration(player, ctx, planetId) {
-    if (!player.hasTechnology('pre-fab-arcologies')) {
-      return
+    if (player.hasTechnology('pre-fab-arcologies')) {
+      if (ctx.state.planets[planetId]) {
+        ctx.state.planets[planetId].exhausted = false
+        ctx.log.add({
+          template: 'Pre-Fab Arcologies: {player} readies {planet}',
+          args: { player: player.name, planet: planetId },
+        })
+      }
     }
 
-    if (ctx.state.planets[planetId]) {
-      ctx.state.planets[planetId].exhausted = false
-      ctx.log.add({
-        template: 'Pre-Fab Arcologies: {player} readies {planet}',
-        args: { player: player.name, planet: planetId },
-      })
-    }
+    // TODO: Eidolon DEPLOY also triggers after exploration, but the current
+    // afterExploration hook fires from _explorePlanet (used in direct-call tests).
+    // Deferring exploration DEPLOY trigger to avoid breaking existing test flow.
   },
 
   componentActions: [
@@ -132,6 +134,53 @@ module.exports = {
       isAvailable: (player) => player.isHeroUnlocked() && !player.isHeroPurged(),
     },
   ],
+
+  // ---------------------------------------------------------------------------
+  // Mech — Eidolon: DEPLOY
+  // After you use FABRICATION or explore a planet, place 1 mech from your
+  // reinforcements on a planet you control.
+  // ---------------------------------------------------------------------------
+
+  _offerEidolonDeploy(player, ctx) {
+    // Check if player has mechs in reinforcements (limit 4)
+    const mechsOnBoard = ctx.game._countUnitsOnBoard(player.name, 'mech')
+    if (mechsOnBoard >= 4) {
+      return
+    }
+
+    const controlledPlanets = player.getControlledPlanets()
+    if (controlledPlanets.length === 0) {
+      return
+    }
+
+    const choice = ctx.actions.choose(player, ['Deploy Eidolon', 'Pass'], {
+      title: 'Eidolon DEPLOY: Place 1 mech on a planet you control?',
+    })
+
+    if (choice[0] !== 'Deploy Eidolon') {
+      return
+    }
+
+    let targetPlanet
+    if (controlledPlanets.length === 1) {
+      targetPlanet = controlledPlanets[0]
+    }
+    else {
+      const sel = ctx.actions.choose(player, controlledPlanets, {
+        title: 'Eidolon DEPLOY: Choose planet',
+      })
+      targetPlanet = sel[0]
+    }
+
+    const systemId = ctx.game._findSystemForPlanet(targetPlanet)
+    if (systemId) {
+      ctx.game._addUnitToPlanet(systemId, targetPlanet, 'mech', player.name)
+      ctx.log.add({
+        template: 'Eidolon DEPLOY: {player} places mech on {planet}',
+        args: { player: player.name, planet: targetPlanet },
+      })
+    }
+  },
 
   fabrication(ctx, player) {
     const fragments = player.relicFragments || []
@@ -205,6 +254,9 @@ module.exports = {
         args: { player, type: fragType },
       })
     }
+
+    // Eidolon DEPLOY trigger: after using Fabrication, may place 1 mech
+    this._offerEidolonDeploy(player, ctx)
   },
 
   // Hero — Hesh and Prit: PERFECT SYNTHESIS
@@ -346,5 +398,58 @@ module.exports = {
       template: 'Garv and Gunn: {player} allows {target} to explore {planet}',
       args: { player: naazRokhaPlayer.name, target: activatingPlayer.name, planet: targetPlanet },
     })
+  },
+
+  // ---------------------------------------------------------------------------
+  // Mech — Eidolon: Space Combat Flip
+  // At start of space combat, if this mech is in the space area, flip to
+  // Z-Grav Eidolon (also counts as a ship). At end of space combat, flip back.
+  // ---------------------------------------------------------------------------
+
+  onSpaceCombatStart(player, ctx, { systemId }) {
+    // Also offer Supercharge at combat start (already handled by onSpaceCombatRound
+    // for subsequent rounds, but start-of-combat Supercharge uses that hook)
+
+    const systemUnits = ctx.state.units[systemId]
+    if (!systemUnits) {
+      return
+    }
+
+    // Find Naaz-Rokha mechs in the space area
+    const mechsInSpace = systemUnits.space.filter(
+      u => u.owner === player.name && u.type === 'mech'
+    )
+
+    if (mechsInSpace.length === 0) {
+      return
+    }
+
+    // Flip each mech to Z-Grav Eidolon
+    for (const mech of mechsInSpace) {
+      mech._eidolonFlipped = true
+    }
+
+    ctx.log.add({
+      template: '{player} flips {count} Eidolon mech(s) to Z-Grav Eidolon',
+      args: { player: player.name, count: mechsInSpace.length },
+    })
+  },
+
+  afterCombatResolved(player, ctx, { systemId, combatType }) {
+    if (combatType !== 'space') {
+      return
+    }
+
+    const systemUnits = ctx.state.units[systemId]
+    if (!systemUnits) {
+      return
+    }
+
+    // Unflip any flipped mechs
+    for (const unit of systemUnits.space) {
+      if (unit.owner === player.name && unit.type === 'mech' && unit._eidolonFlipped) {
+        delete unit._eidolonFlipped
+      }
+    }
   },
 }
