@@ -1,6 +1,104 @@
 const { AgricolaActionManager } = require('../AgricolaActionManager.js')
 const res = require('../res/index.js')
 
+/**
+ * Centralised helper that performs all post-selection major-improvement
+ * purchase steps: pay cost, log, fire onBuy / onBuildImprovement /
+ * onBuildMajor hooks, check fireplace upgrade, and offer second major.
+ *
+ * @param {object} player
+ * @param {string} improvementId
+ * @param {object} [options]
+ * @param {object} [options.customCost]         — override cost (e.g. OvenSite)
+ * @param {string} [options.logTemplate]        — custom log template
+ * @param {object} [options.logArgs]            — extra log args (merged with { player, card })
+ * @param {boolean} [options.skipSecondMajorOffer] — suppress recursion from _offerSecondMajorFromCard
+ */
+AgricolaActionManager.prototype._completeMajorPurchase = function(player, improvementId, options = {}) {
+  const imp = this.game.cards.byId(improvementId)
+  if (!imp) {
+    return false
+  }
+
+  let result
+  if (options.customCost) {
+    // customCost bypasses the standard canBuyMajorImprovement affordability
+    // check, but we still verify availability and affordability ourselves.
+    const available = this.game.getAvailableMajorImprovements()
+    if (!available.includes(improvementId)) {
+      return false
+    }
+    if (!player.canAffordCost(options.customCost)) {
+      return false
+    }
+    imp.moveTo(this.game.zones.byPlayer(player, 'majorImprovements'))
+    result = { upgraded: false }
+  }
+  else {
+    if (!player.canBuyMajorImprovement(improvementId)) {
+      return false
+    }
+    result = player.buyMajorImprovement(improvementId)
+  }
+  this._recordCardPlayed(player, imp)
+
+  // --- Log ---
+  if (options.logTemplate) {
+    this.log.add({
+      template: options.logTemplate,
+      args: { player, card: imp, ...(options.logArgs || {}) },
+    })
+  }
+  else {
+    this.log.add({
+      template: '{player} buys {card}',
+      args: { player, card: imp },
+    })
+  }
+
+  // --- Cost ---
+  let impCost
+  if (options.customCost) {
+    impCost = options.customCost
+    player.payCost(impCost)
+  }
+  else if (result.upgraded) {
+    impCost = {}
+  }
+  else {
+    impCost = player.getMajorImprovementCost(improvementId)
+    if ((player._houseRedevelopmentDiscount || 0) > 0) {
+      impCost = this._applyBuildingResourceDiscount(player, impCost, player._houseRedevelopmentDiscount)
+    }
+    player.payCost(impCost)
+  }
+
+  // --- onBuy hook (e.g. Ovens bake bread, Well schedules food) ---
+  if (imp.hasHook('onBuy')) {
+    imp.callHook('onBuy', this.game, player)
+  }
+
+  // --- onBuildImprovement hooks (BrickHammer checks clay cost) ---
+  this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost, imp)
+  this.callOnAnyBuildImprovementHooks(player, impCost, imp)
+
+  // --- onBuildMajor hooks (Farm Building schedules food, Craft Teacher) ---
+  this.game.callPlayerCardHook(player, 'onBuildMajor', improvementId)
+  this.callOnAnyBuildMajorHooks(player, improvementId)
+
+  // --- Fireplace upgrade hook ---
+  if (imp.upgradesFrom && imp.upgradesFrom.some(id => id.startsWith('fireplace'))) {
+    this.game.callPlayerCardHook(player, 'onUpgradeFireplace')
+  }
+
+  // --- Offer second major from card (unless suppressed) ---
+  if (!options.skipSecondMajorOffer) {
+    this._offerSecondMajorFromCard(player, improvementId)
+  }
+
+  return improvementId
+}
+
 AgricolaActionManager.prototype.buyMajorImprovement = function(player, availableImprovements) {
   const affordableIds = availableImprovements
     .filter(id => player.canBuyMajorImprovement(id))
@@ -38,40 +136,7 @@ AgricolaActionManager.prototype.buyMajorImprovement = function(player, available
   const improvementId = idMatch ? idMatch[1] : null
 
   if (improvementId) {
-    const imp = this.game.cards.byId(improvementId)
-    const result = player.buyMajorImprovement(improvementId)
-    this._recordCardPlayed(player, imp)
-
-    this.log.add({
-      template: '{player} buys {card}',
-      args: { player, card: imp },
-    })
-    let impCost = result.upgraded ? {} : player.getMajorImprovementCost(improvementId)
-    if (!result.upgraded && (player._houseRedevelopmentDiscount || 0) > 0) {
-      impCost = this._applyBuildingResourceDiscount(player, impCost, player._houseRedevelopmentDiscount)
-    }
-    if (!result.upgraded) {
-      player.payCost(impCost)
-    }
-
-    // Execute onBuy effect if present (e.g., Well schedules food, Ovens bake bread)
-    if (imp.hasHook('onBuy')) {
-      imp.callHook('onBuy', this.game, player)
-    }
-
-    // Call onBuildImprovement hooks (BrickHammer checks clay cost)
-    this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost, imp)
-    this.callOnAnyBuildImprovementHooks(player, impCost, imp)
-
-    // Call onBuildMajor hooks (Farm Building schedules food, Craft Teacher)
-    this.game.callPlayerCardHook(player, 'onBuildMajor', improvementId)
-    this.callOnAnyBuildMajorHooks(player, improvementId)
-
-    if (imp.upgradesFrom && imp.upgradesFrom.some(id => id.startsWith('fireplace'))) {
-      this.game.callPlayerCardHook(player, 'onUpgradeFireplace')
-    }
-
-    return improvementId
+    return this._completeMajorPurchase(player, improvementId)
   }
 
   return false
@@ -494,33 +559,7 @@ AgricolaActionManager.prototype.buyMinorImprovement = function(player) {
         const improvementId = idMatch ? idMatch[1] : null
 
         if (improvementId) {
-          const imp = this.game.cards.byId(improvementId)
-          const result = player.buyMajorImprovement(improvementId)
-          this._recordCardPlayed(player, imp)
-
-          this.log.add({
-            template: '{player} buys {card}',
-            args: { player, card: imp },
-          })
-          let impCost = result.upgraded ? {} : player.getMajorImprovementCost(improvementId)
-          if (!result.upgraded && (player._houseRedevelopmentDiscount || 0) > 0) {
-            impCost = this._applyBuildingResourceDiscount(player, impCost, player._houseRedevelopmentDiscount)
-          }
-          if (!result.upgraded) {
-            player.payCost(impCost)
-          }
-
-          if (imp.hasHook('onBuy')) {
-            imp.callHook('onBuy', this.game, player)
-          }
-
-          this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost, imp)
-          this.callOnAnyBuildImprovementHooks(player, impCost, imp)
-
-          // Call onBuildMajor hooks (Farm Building schedules food, Craft Teacher)
-          this.game.callPlayerCardHook(player, 'onBuildMajor', improvementId)
-          this.callOnAnyBuildMajorHooks(player, improvementId)
-          return improvementId
+          return this._completeMajorPurchase(player, improvementId)
         }
       }
 
@@ -755,42 +794,7 @@ AgricolaActionManager.prototype.buyImprovement = function(player, allowMajor, al
       const improvementId = idMatch ? idMatch[1] : null
 
       if (improvementId) {
-        const imp = this.game.cards.byId(improvementId)
-        const result = player.buyMajorImprovement(improvementId)
-        this._recordCardPlayed(player, imp)
-
-        this.log.add({
-          template: '{player} buys {card}',
-          args: { player, card: imp },
-        })
-        let impCost = result.upgraded ? {} : player.getMajorImprovementCost(improvementId)
-        if (!result.upgraded && (player._houseRedevelopmentDiscount || 0) > 0) {
-          impCost = this._applyBuildingResourceDiscount(player, impCost, player._houseRedevelopmentDiscount)
-        }
-        if (!result.upgraded) {
-          player.payCost(impCost)
-        }
-
-        // Execute onBuy effect if present (e.g., Well schedules food, Ovens bake bread)
-        if (imp.hasHook('onBuy')) {
-          imp.callHook('onBuy', this.game, player)
-        }
-
-        // Call onBuildImprovement hooks (BrickHammer checks clay cost)
-        this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost, imp)
-        this.callOnAnyBuildImprovementHooks(player, impCost, imp)
-
-        // Call onBuildMajor hooks (Farm Building schedules food, Craft Teacher)
-        this.game.callPlayerCardHook(player, 'onBuildMajor', improvementId)
-        this.callOnAnyBuildMajorHooks(player, improvementId)
-
-        if (imp.upgradesFrom && imp.upgradesFrom.some(id => id.startsWith('fireplace'))) {
-          this.game.callPlayerCardHook(player, 'onUpgradeFireplace')
-        }
-
-        this._offerSecondMajorFromCard(player, improvementId)
-
-        return improvementId
+        return this._completeMajorPurchase(player, improvementId)
       }
     }
 
@@ -860,27 +864,11 @@ AgricolaActionManager.prototype._offerSecondMajorFromCard = function(player, jus
       return
     }
 
-    const imp = this.game.cards.byId(chosenId)
-    const result = player.buyMajorImprovement(chosenId)
-    this._recordCardPlayed(player, imp)
-
-    this.log.add({
-      template: '{player} also buys {card} via {source}',
-      args: { player, card: imp, source: card },
+    this._completeMajorPurchase(player, chosenId, {
+      logTemplate: '{player} also buys {card} via {source}',
+      logArgs: { source: card },
+      skipSecondMajorOffer: true,
     })
-
-    const impCost = result.upgraded ? {} : player.getMajorImprovementCost(chosenId)
-    if (!result.upgraded) {
-      player.payCost(impCost)
-    }
-
-    if (imp.hasHook('onBuy')) {
-      imp.callHook('onBuy', this.game, player)
-    }
-
-    this.game.callPlayerCardHook(player, 'onBuildImprovement', impCost, imp)
-    this.callOnAnyBuildImprovementHooks(player, impCost, imp)
-    this.game.callPlayerCardHook(player, 'onBuildMajor')
     return
   }
 }

@@ -38,23 +38,16 @@ module.exports = {
       max: 1,
     })
 
+    const ovenOpts = {
+      customCost: cost,
+      logTemplate: '{player} builds {card} at discount using {source}',
+      logArgs: { source: card },
+    }
     if (selection[0] === 'Build Clay Oven') {
-      player.payCost(cost)
-      const imp = game.cards.byId('clay-oven')
-      imp.moveTo(game.zones.byPlayer(player, 'majorImprovements'))
-      game.log.add({
-        template: '{player} builds Clay Oven at discount using {card}',
-        args: { player, card },
-      })
+      game.actions._completeMajorPurchase(player, 'clay-oven', ovenOpts)
     }
     else if (selection[0] === 'Build Stone Oven') {
-      player.payCost(cost)
-      const imp = game.cards.byId('stone-oven')
-      imp.moveTo(game.zones.byPlayer(player, 'majorImprovements'))
-      game.log.add({
-        template: '{player} builds Stone Oven at discount using {card}',
-        args: { player, card },
-      })
+      game.actions._completeMajorPurchase(player, 'stone-oven', ovenOpts)
     }
   },
 }

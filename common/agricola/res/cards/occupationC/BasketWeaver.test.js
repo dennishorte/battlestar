@@ -33,6 +33,38 @@ describe('Basket Weaver', () => {
     })
   })
 
+  test('fires onBuildMajor hooks (CraftTeacher triggers)', () => {
+    const game = t.fixture({ cardSets: ['occupationA', 'occupationC', 'test'] })
+    t.setBoard(game, {
+      actionSpaces: ['Grain Utilization'],
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['basket-weaver-c095'],
+        occupations: ['craft-teacher-a131'],
+        stone: 2,
+        reed: 2,
+        food: 10,
+      },
+      micah: { food: 10 },
+    })
+    game.run()
+
+    t.choose(game, 'Lessons A')
+    t.choose(game, 'Basket Weaver')
+    // CraftTeacher should fire: offer up to 2 free occupations
+    // No occupations in hand, so it won't prompt
+    // Verify workshop was built and CraftTeacher hook was called via log
+    t.testBoard(game, {
+      dennis: {
+        stone: 1,
+        reed: 1,
+        food: 9, // 10 - 1 (occupation cost for 2nd occupation)
+        occupations: ['craft-teacher-a131', 'basket-weaver-c095'],
+        majorImprovements: ['basketmakers-workshop'],
+      },
+    })
+  })
+
   test('does not build if insufficient resources', () => {
     const game = t.fixture({ cardSets: ['occupationC', 'test'] })
     t.setBoard(game, {

@@ -31,6 +31,42 @@ describe('Oven Site', () => {
     })
   })
 
+  test('building oven via OvenSite triggers onBuy (bread baking)', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['oven-site-a027'],
+        majorImprovements: ['fireplace-2'],
+        clay: 1,
+        stone: 1,
+        grain: 2,
+        food: 0,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Oven Site')
+    // Build Clay Oven at discount
+    t.choose(game, 'Build Clay Oven')
+    // onBuy should fire: Clay Oven offers bread baking
+    t.choose(game, 'Bake 1 grain')
+
+    t.testBoard(game, {
+      dennis: {
+        food: 6, // +1 Meeting Place, +5 baked grain
+        wood: 2,
+        clay: 0,
+        stone: 0,
+        grain: 1,
+        hand: [],
+        minorImprovements: ['oven-site-a027'],
+        majorImprovements: ['fireplace-2', 'clay-oven'],
+      },
+    })
+  })
+
   test('can skip the discounted oven', () => {
     const game = t.fixture()
     t.setBoard(game, {
