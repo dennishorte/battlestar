@@ -396,7 +396,50 @@ describe('Winnu', () => {
   })
 
   describe('Promissory Note — Acquiescence', () => {
-    test.todo('at start of your turn, choose to return planets or gain Alliance')
+    test('holder gets free secondary when Winnu uses strategic action, then card returns', () => {
+      // Dennis = Winnu, Micah = Hacan (holder of Acquiescence)
+      const game = t.fixture({ factions: ['winnu', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'winnu-home': {
+              space: ['carrier'],
+              'winnu': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'acquiescence', owner: 'dennis' }],
+          commandTokens: { tactics: 3, strategy: 0, fleet: 3 },
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      // Dennis = Leadership (1), Micah = Diplomacy (2)
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: Strategic Action (Leadership)
+      t.choose(game, 'Strategic Action')
+      // Micah: normally couldn't do secondary (0 strategy tokens)
+      // But Acquiescence makes it free
+      t.choose(game, 'Use Secondary')
+
+      const micah = game.players.byName('micah')
+      // Micah got Leadership secondary (1 command token) for free
+      expect(micah.commandTokens.tactics).toBe(4) // was 3, gained 1
+
+      // Acquiescence returned to Winnu
+      const dennis = game.players.byName('dennis')
+      const dennisPNs = dennis.getPromissoryNotes()
+      expect(dennisPNs.some(n => n.id === 'acquiescence')).toBe(true)
+      const micahPNs = micah.getPromissoryNotes()
+      expect(micahPNs.some(n => n.id === 'acquiescence' && n.owner === 'dennis')).toBe(false)
+    })
   })
 
   describe('Faction Technologies', () => {

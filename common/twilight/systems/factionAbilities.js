@@ -111,6 +111,34 @@ class FactionAbilities {
     return handler?.canSkipTradeSecondaryCost?.(player, this) ?? false
   }
 
+  hasAcquiescence(player, activePlayer) {
+    // Acquiescence: holder gets free secondary when the Winnu player uses strategic action
+    if (activePlayer.faction?.id !== 'winnu') {
+      return false
+    }
+    const pn = player.getPromissoryNotes().find(n => n.id === 'acquiescence' && n.owner !== player.name)
+    return !!pn
+  }
+
+  returnAcquiescence(player, activePlayer) {
+    if (activePlayer.faction?.id !== 'winnu') {
+      return
+    }
+    const pn = player.getPromissoryNotes().find(n => n.id === 'acquiescence' && n.owner !== player.name)
+    if (!pn) {
+      return
+    }
+    player.removePromissoryNote('acquiescence', pn.owner)
+    const owner = this.players.byName(pn.owner)
+    if (owner) {
+      owner.addPromissoryNote('acquiescence', pn.owner)
+    }
+    this.log.add({
+      template: 'Acquiescence returned from {holder} to {owner}',
+      args: { holder: player.name, owner: pn.owner },
+    })
+  }
+
   getActionCardHandLimit(player) {
     const handler = this._getPlayerHandler(player)
     return handler?.getActionCardHandLimit?.(player, this) ?? 7
@@ -1625,6 +1653,51 @@ class FactionAbilities {
           template: 'Military Support: {player} places 2 infantry, card returns to {owner}',
           args: { player: holder.name, owner: activePlayer.name },
         })
+      }
+    }
+
+    // Spy Net (Yssaril PN)
+    // "At the start of your turn: Look at the Yssaril player's hand of action cards.
+    //  Choose 1 of those cards and add it to your hand. Then, return this card."
+    if (activePlayer.hasPromissoryNote('spy-net')) {
+      const pn = activePlayer.getPromissoryNotes().find(n => n.id === 'spy-net' && n.owner !== activePlayer.name)
+      if (pn) {
+        const yssaril = this.players.byName(pn.owner)
+        const yssarilHand = yssaril?.actionCards || []
+        if (yssarilHand.length > 0) {
+          const choice = this.actions.choose(activePlayer, ['Play Spy Net', 'Pass'], {
+            title: `Spy Net: Take 1 action card from ${pn.owner}?`,
+          })
+          if (choice[0] === 'Play Spy Net') {
+            const cardChoices = yssarilHand.map(c => c.name || c.id)
+            const cardSelection = this.actions.choose(activePlayer, cardChoices, {
+              title: 'Spy Net: Choose action card to take',
+            })
+            const chosenName = cardSelection[0]
+            const cardIdx = yssarilHand.findIndex(c => (c.name || c.id) === chosenName)
+            if (cardIdx !== -1) {
+              const [taken] = yssarilHand.splice(cardIdx, 1)
+              if (!activePlayer.actionCards) {
+                activePlayer.actionCards = []
+              }
+              activePlayer.actionCards.push(taken)
+              this.log.add({
+                template: 'Spy Net: {player} takes 1 action card from {owner}',
+                args: { player: activePlayer.name, owner: pn.owner },
+              })
+            }
+
+            // Return PN
+            activePlayer.removePromissoryNote('spy-net', pn.owner)
+            if (yssaril) {
+              yssaril.addPromissoryNote('spy-net', pn.owner)
+            }
+            this.log.add({
+              template: '{pnName} returned from {holder} to {owner}',
+              args: { pnName: 'Spy Net', holder: activePlayer.name, owner: pn.owner },
+            })
+          }
+        }
       }
     }
   }
