@@ -37,7 +37,8 @@
 
 <script>
 // Major improvement definitions (matching majorImprovements.js)
-const MAJOR_IMPROVEMENTS = [
+// Base game (10 cards)
+const BASE_MAJOR_IMPROVEMENTS = [
   { id: 'fireplace-2', name: 'Fireplace', cost: { clay: 2 }, victoryPoints: 1, description: 'Cook animals/vegetables. Bake: 1 grain → 2 food.' },
   { id: 'fireplace-3', name: 'Fireplace', cost: { clay: 3 }, victoryPoints: 1, description: 'Cook animals/vegetables. Bake: 1 grain → 2 food.' },
   { id: 'cooking-hearth-4', name: 'Cooking Hearth', cost: { clay: 4 }, victoryPoints: 1, description: 'Better cooking rates. Bake: 1 grain → 3 food.' },
@@ -48,6 +49,18 @@ const MAJOR_IMPROVEMENTS = [
   { id: 'pottery', name: 'Pottery', cost: { clay: 2, stone: 2 }, victoryPoints: 2, description: 'Harvest: 1 clay → 2 food. Bonus points for clay.' },
   { id: 'basketmakers-workshop', name: "Basketmaker's", cost: { reed: 2, stone: 2 }, victoryPoints: 2, description: 'Harvest: 1 reed → 3 food. Bonus points for reed.' },
   { id: 'well', name: 'Well', cost: { wood: 1, stone: 3 }, victoryPoints: 4, description: 'Place 1 food on next 5 round spaces.' },
+]
+
+// 5-6 player expansion (8 cards)
+const EXPANSION_MAJOR_IMPROVEMENTS = [
+  { id: 'fireplace-4', name: 'Fireplace', cost: { clay: 4 }, victoryPoints: 1, description: 'Cook animals/vegetables. Bake: 1 grain → 2 food.' },
+  { id: 'cooking-hearth-6', name: 'Cooking Hearth', cost: { clay: 6 }, victoryPoints: 1, description: 'Better cooking rates. Bake: 1 grain → 3 food.' },
+  { id: 'clay-oven-2', name: 'Clay Oven', cost: { clay: 4, stone: 1 }, victoryPoints: 2, description: 'Bake: 1 grain → 5 food (once per action).' },
+  { id: 'stone-oven-2', name: 'Stone Oven', cost: { clay: 2, stone: 3 }, victoryPoints: 3, description: 'Bake: up to 2 grain → 4 food each.' },
+  { id: 'joinery-2', name: 'Joinery', cost: { wood: 2, stone: 3 }, victoryPoints: 2, description: 'Harvest: 1 wood → 2 food. Bonus points for wood.' },
+  { id: 'pottery-2', name: 'Pottery', cost: { clay: 2, stone: 3 }, victoryPoints: 2, description: 'Harvest: 1 clay → 2 food. Bonus points for clay.' },
+  { id: 'basketmakers-workshop-2', name: "Basketmaker's", cost: { reed: 2, stone: 3 }, victoryPoints: 2, description: 'Harvest: 1 reed → 3 food. Bonus points for reed.' },
+  { id: 'well-2', name: 'Well', cost: { stone: 3, clay: 1 }, victoryPoints: 4, description: 'Place 1 food on next 5 round spaces.' },
 ]
 
 const RESOURCE_ICONS = {
@@ -69,12 +82,23 @@ export default {
   },
 
   computed: {
+    allMajorImprovements() {
+      const playerCount = this.game.players.all().length
+      if (playerCount >= 5) {
+        return [...BASE_MAJOR_IMPROVEMENTS, ...EXPANSION_MAJOR_IMPROVEMENTS]
+      }
+      return BASE_MAJOR_IMPROVEMENTS
+    },
+
     availableIds() {
+      if (typeof this.game.getAvailableMajorImprovements === 'function') {
+        return this.game.getAvailableMajorImprovements()
+      }
       return this.game.state.availableMajorImprovements || []
     },
 
     improvements() {
-      return MAJOR_IMPROVEMENTS.map(imp => {
+      return this.allMajorImprovements.map(imp => {
         const unavailable = !this.availableIds.includes(imp.id)
         let owner = null
 
@@ -100,7 +124,7 @@ export default {
     },
 
     totalCount() {
-      return MAJOR_IMPROVEMENTS.length
+      return this.allMajorImprovements.length
     },
   },
 

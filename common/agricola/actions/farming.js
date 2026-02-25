@@ -174,23 +174,31 @@ AgricolaActionManager.prototype.sow = function(player) {
     const nestedChoices = []
 
     if (canSowGrain) {
-      const grainFields = currentSowableFields.map(f => `Field (${f.row},${f.col})`)
-      nestedChoices.push({
-        title: 'Grain',
-        choices: grainFields,
-        min: 0,
-        max: 1,
-      })
+      const grainFields = currentSowableFields
+        .filter(f => !f.cropRestriction || f.cropRestriction === 'grain')
+        .map(f => `Field (${f.row},${f.col})`)
+      if (grainFields.length > 0) {
+        nestedChoices.push({
+          title: 'Grain',
+          choices: grainFields,
+          min: 0,
+          max: 1,
+        })
+      }
     }
 
     if (canSowVeg) {
-      const vegFields = currentSowableFields.map(f => `Field (${f.row},${f.col})`)
-      nestedChoices.push({
-        title: 'Vegetables',
-        choices: vegFields,
-        min: 0,
-        max: 1,
-      })
+      const vegFields = currentSowableFields
+        .filter(f => !f.cropRestriction || f.cropRestriction === 'vegetables')
+        .map(f => `Field (${f.row},${f.col})`)
+      if (vegFields.length > 0) {
+        nestedChoices.push({
+          title: 'Vegetables',
+          choices: vegFields,
+          min: 0,
+          max: 1,
+        })
+      }
     }
 
     nestedChoices.push('Done Sowing')
