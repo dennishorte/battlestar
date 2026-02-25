@@ -131,7 +131,55 @@ describe('Yssaril Tribes', () => {
   })
 
   describe('Commander — So Ata', () => {
-    test.todo('look at opponent action cards/notes/secrets when they activate system with your units')
+    test('look at opponent action cards when they activate system with your units', () => {
+      // Dennis = Yssaril (with unlocked commander and units in system 27)
+      // Micah = Hacan (activates system 27 where Yssaril has units)
+      // So Ata reveals Micah's action cards.
+      const game = t.fixture({ factions: ['yssaril-tribes', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
+          units: {
+            '27': {
+              'new-albion': ['infantry'],
+            },
+          },
+        },
+        micah: {
+          actionCards: ['sabotage', 'mining-initiative'],
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['infantry', 'space-dock'],
+            },
+            '27': {
+              space: ['cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      // Dennis picks leadership (1), Micah picks diplomacy (2)
+      // Dennis goes first (initiative 1)
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses strategic action first (must use strategy card before passing)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // Micah declines leadership secondary
+
+      // Micah does a tactical action — activates system 27 where Yssaril has infantry
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // So Ata should have triggered — check log
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('So Ata'))).toBe(true)
+
+      // Verify the log mentions the action card count
+      const soAtaEntry = game.log._log.find(e => (e.template || '').includes('So Ata'))
+      const count = soAtaEntry.args.count?.value ?? soAtaEntry.args.count
+      expect(count).toBe(2)
+    })
   })
 
   describe('Hero — Kyver, Blade and Key', () => {

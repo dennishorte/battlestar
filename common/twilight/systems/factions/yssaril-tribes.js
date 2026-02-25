@@ -100,6 +100,52 @@ module.exports = {
   },
 
   // ---------------------------------------------------------------------------
+  // Commander — So Ata: After another player activates a system that contains
+  // 1 or more of your units: Look at that player's action cards.
+  // ---------------------------------------------------------------------------
+
+  onAnySystemActivated(yssarilPlayer, ctx, { systemId, activatingPlayer }) {
+    // Only triggers for other players
+    if (!activatingPlayer || activatingPlayer.name === yssarilPlayer.name) {
+      return
+    }
+
+    // Commander must be unlocked
+    if (!yssarilPlayer.isCommanderUnlocked()) {
+      return
+    }
+
+    // Check if Yssaril has units in the activated system
+    const systemUnits = ctx.state.units[systemId]
+    if (!systemUnits) {
+      return
+    }
+
+    const hasUnitsInSystem = systemUnits.space.some(u => u.owner === yssarilPlayer.name) ||
+      Object.values(systemUnits.planets).some(pu =>
+        pu.some(u => u.owner === yssarilPlayer.name)
+      )
+
+    if (!hasUnitsInSystem) {
+      return
+    }
+
+    // Reveal the activating player's action cards
+    const cards = activatingPlayer.actionCards || []
+    const cardNames = cards.map(c => c.name || c.id)
+
+    ctx.log.add({
+      template: "So Ata: {player} sees {target}'s action cards ({count}): {cards}",
+      args: {
+        player: yssarilPlayer.name,
+        target: activatingPlayer.name,
+        count: cards.length,
+        cards: cardNames.join(', ') || 'none',
+      },
+    })
+  },
+
+  // ---------------------------------------------------------------------------
   // Hero — Kyver, Blade and Key: GUILD OF SPIES
   // ACTION: Each other player shows you 1 action card from their hand.
   // For each player, you may either take that card or force that player to
