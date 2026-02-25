@@ -769,6 +769,81 @@ class FactionAbilities {
         args: { player: holderName, owner: warFundingPn.owner },
       })
     }
+
+    // The Cavalry (Nomad PN)
+    // "At the start of a space combat against a player other than the Nomad:
+    //  During this combat, treat 1 of your non-fighter ships as if it has the
+    //  SUSTAIN DAMAGE ability, combat value, and ANTI-FIGHTER BARRAGE value of
+    //  the Nomad's flagship. Return this card to the Nomad player at the end
+    //  of this combat."
+    for (const [holderName] of [[attackerName, defenderName], [defenderName, attackerName]]) {
+      const holder = this.players.byName(holderName)
+      if (!holder?.hasPromissoryNote('the-cavalry')) {
+        continue
+      }
+      const pn = holder.getPromissoryNotes().find(n => n.id === 'the-cavalry' && n.owner !== holder.name)
+      if (!pn) {
+        continue
+      }
+
+      // Only usable when fighting someone other than the Nomad
+      const opponentName = holderName === attackerName ? defenderName : attackerName
+      if (opponentName === pn.owner) {
+        continue
+      }
+
+      // Get holder's non-fighter ships in this system
+      const systemUnits = this.state.units[systemId]
+      const nonFighterShips = (systemUnits?.space || [])
+        .filter(u => u.owner === holderName && u.type !== 'fighter')
+      if (nonFighterShips.length === 0) {
+        continue
+      }
+
+      const choice = this.actions.choose(holder, ['Play The Cavalry', 'Pass'], {
+        title: 'The Cavalry: Treat one of your ships as having Nomad flagship stats?',
+      })
+      if (choice[0] !== 'Play The Cavalry') {
+        continue
+      }
+
+      // Choose which ship to upgrade
+      let targetShip
+      if (nonFighterShips.length === 1) {
+        targetShip = nonFighterShips[0]
+      }
+      else {
+        const shipChoices = nonFighterShips.map(s => s.type)
+        const sel = this.actions.choose(holder, shipChoices, {
+          title: 'Choose ship to treat as Nomad flagship:',
+        })
+        targetShip = nonFighterShips[shipChoices.indexOf(sel[0])]
+      }
+
+      // Get Nomad's current flagship stats (base or upgraded)
+      const nomadPlayer = this.players.byName(pn.owner)
+      const flagshipStats = this.game._getUnitStats(pn.owner, 'flagship')
+
+      this.state._cavalryActive = {
+        holderName,
+        unitId: targetShip.id,
+        combat: flagshipStats?.combat || 7,
+        abilities: flagshipStats?.abilities || ['sustain-damage', 'anti-fighter-barrage-8x3'],
+        nomadOwner: pn.owner,
+      }
+
+      // Return PN to Nomad at end of combat (tracked in afterCombatResolved)
+      holder.removePromissoryNote('the-cavalry', pn.owner)
+      if (nomadPlayer) {
+        nomadPlayer.addPromissoryNote('the-cavalry', pn.owner)
+      }
+
+      this.log.add({
+        template: 'The Cavalry: {player} treats {shipType} as Nomad flagship. Card returned to {owner}.',
+        args: { player: holderName, shipType: targetShip.type, owner: pn.owner },
+      })
+      break
+    }
   }
 
   onSpaceCombatRound(systemId, attacker, defender) {
@@ -1640,6 +1715,7 @@ class FactionAbilities {
     delete this.state._tekklarLegionActive
     delete this.state._tekklarLegionPenalty
     delete this.state._warFundingActive
+    delete this.state._cavalryActive
   }
 
 

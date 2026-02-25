@@ -2098,8 +2098,13 @@ Twilight.prototype._antiFighterBarrage = function(systemId, attacker, defender) 
         continue
       }
 
+      // The Cavalry: use override abilities if active for this ship
+      const effectiveAbilities = (this.state._cavalryActive?.unitId === ship.id)
+        ? this.state._cavalryActive.abilities
+        : unitDef.abilities
+
       // Parse AFB ability: 'anti-fighter-barrage-Nx#' where N is combat value, # is dice count
-      const afbAbility = unitDef.abilities.find(a => a.startsWith('anti-fighter-barrage-'))
+      const afbAbility = effectiveAbilities.find(a => a.startsWith('anti-fighter-barrage-'))
       if (!afbAbility) {
         continue
       }
@@ -2213,6 +2218,10 @@ Twilight.prototype._rollCombatDice = function(ships, context) {
       continue
     }
 
+    // The Cavalry: override combat value for the chosen ship
+    const cavalryOverride = this.state._cavalryActive?.unitId === ship.id
+    const combatBase = cavalryOverride ? this.state._cavalryActive.combat : unitDef.combat
+
     // Faction combat modifiers
     const owner = this.players.byName(ship.owner)
     let combatModifier = this.factionAbilities.getCombatModifier(owner)
@@ -2227,7 +2236,7 @@ Twilight.prototype._rollCombatDice = function(ships, context) {
       combatModifier += this.factionAbilities.getGroundCombatUnitModifier(owner, ship, context.systemId, context.planetId)
     }
 
-    const effectiveCombat = Math.max(1, Math.min(unitDef.combat + combatModifier, 10))
+    const effectiveCombat = Math.max(1, Math.min(combatBase + combatModifier, 10))
 
     // Each ship rolls 1 die (war suns roll 3 dice per their combat value)
     // bonusDice: temporary extra dice (e.g., Letnev agent Viscount Unlenn)
@@ -2270,6 +2279,10 @@ Twilight.prototype._assignHits = function(systemId, ownerName, hits, destroyerNa
   const sustainableShips = systemUnits.space
     .filter(u => u.owner === ownerName && !u.damaged)
     .filter(u => {
+      // The Cavalry: override abilities for the chosen ship
+      if (this.state._cavalryActive?.unitId === u.id) {
+        return this.state._cavalryActive.abilities.includes('sustain-damage')
+      }
       const def = this._getUnitStats(u.owner, u.type)
       return def && def.abilities.includes('sustain-damage')
     })
