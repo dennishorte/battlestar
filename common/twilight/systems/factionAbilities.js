@@ -950,10 +950,10 @@ class FactionAbilities {
   // U. Commodity Triggers
   // ---------------------------------------------------------------------------
 
-  onCommoditiesReplenished(_replenishingPlayer) {
+  onCommoditiesReplenished(replenishingPlayer) {
     for (const player of this.players.all()) {
       const handler = this._getPlayerHandler(player)
-      handler?.onCommoditiesReplenished?.(player, this)
+      handler?.onCommoditiesReplenished?.(player, this, { replenishingPlayer })
     }
   }
 

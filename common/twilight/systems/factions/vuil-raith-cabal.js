@@ -27,6 +27,113 @@ module.exports = {
     })
   },
 
+  // ---------------------------------------------------------------------------
+  // Agent — The Stillness of Stars: After another player replenishes
+  // commodities, you may exhaust this card to convert that player's
+  // commodities to trade goods and capture 1 of their units from reinforcements.
+  // ---------------------------------------------------------------------------
+
+  onCommoditiesReplenished(cabalPlayer, ctx, { replenishingPlayer }) {
+    if (!cabalPlayer.isAgentReady()) {
+      return
+    }
+
+    // Only triggers for other players
+    if (replenishingPlayer.name === cabalPlayer.name) {
+      return
+    }
+
+    const target = ctx.players.byName(replenishingPlayer.name)
+    if (!target || target.commodities <= 0) {
+      return
+    }
+
+    const choice = ctx.actions.choose(cabalPlayer, ['Exhaust Stillness of Stars', 'Pass'], {
+      title: `Stillness of Stars: ${target.name} replenished ${target.commodities} commodities. Exhaust to convert and capture?`,
+    })
+
+    if (choice[0] !== 'Exhaust Stillness of Stars') {
+      return
+    }
+
+    cabalPlayer.exhaustAgent()
+
+    // Re-fetch target after agent exhaust (stale ref)
+    const updatedTarget = ctx.players.byName(replenishingPlayer.name)
+    const commodities = updatedTarget.commodities
+    updatedTarget.addTradeGoods(commodities)
+    updatedTarget.commodities = 0
+
+    ctx.log.add({
+      template: 'Stillness of Stars: {player} converts {count} commodities to trade goods for {target}',
+      args: { player: cabalPlayer.name, count: commodities, target: updatedTarget.name },
+    })
+
+    // Capture 1 unit from their reinforcements (choose unit type)
+    const unitTypes = ['infantry', 'fighter', 'destroyer', 'cruiser', 'carrier', 'dreadnought']
+    const captureChoice = ctx.actions.choose(cabalPlayer, unitTypes, {
+      title: `Stillness of Stars: Capture 1 unit from ${updatedTarget.name}'s reinforcements`,
+    })
+
+    if (!ctx.state.capturedUnits[cabalPlayer.name]) {
+      ctx.state.capturedUnits[cabalPlayer.name] = []
+    }
+
+    ctx.state.capturedUnits[cabalPlayer.name].push({
+      type: captureChoice[0],
+      originalOwner: updatedTarget.name,
+    })
+
+    ctx.log.add({
+      template: 'Stillness of Stars: {player} captures {type} from {target} reinforcements',
+      args: { player: cabalPlayer.name, type: captureChoice[0], target: updatedTarget.name },
+    })
+  },
+
+  // ---------------------------------------------------------------------------
+  // Mech — Reanimator: When a player's ground force on this planet is
+  // destroyed, you may place 1 of their infantry from reinforcements on your
+  // faction sheet (captured).
+  // ---------------------------------------------------------------------------
+  // This is handled via the onAnyUnitDestroyed hook — check if Cabal has a
+  // mech on the same planet where an infantry was destroyed.
+
+  onAnyUnitDestroyed(cabalPlayer, ctx, { systemId, unit, planetId, destroyerName: _destroyerName }) {
+    // Only trigger for infantry on planets
+    if (unit.type !== 'infantry' || !planetId || planetId === 'space') {
+      return
+    }
+
+    // Don't capture own infantry
+    if (unit.owner === cabalPlayer.name) {
+      return
+    }
+
+    // Check if Cabal has a mech on the same planet
+    const planetUnits = ctx.state.units[systemId]?.planets[planetId] || []
+    const hasMech = planetUnits.some(
+      u => u.owner === cabalPlayer.name && u.type === 'mech'
+    )
+
+    if (!hasMech) {
+      return
+    }
+
+    if (!ctx.state.capturedUnits[cabalPlayer.name]) {
+      ctx.state.capturedUnits[cabalPlayer.name] = []
+    }
+
+    ctx.state.capturedUnits[cabalPlayer.name].push({
+      type: 'infantry',
+      originalOwner: unit.owner,
+    })
+
+    ctx.log.add({
+      template: 'Reanimator: {player} captures {owner} infantry from {planet}',
+      args: { player: cabalPlayer.name, owner: unit.owner, planet: planetId },
+    })
+  },
+
   // Commander — That Which Molds Flesh: When producing fighter or infantry units,
   // up to 2 of those units do not count against your PRODUCTION limit.
   getProductionLimitBonus(player, _ctx, unitType) {
