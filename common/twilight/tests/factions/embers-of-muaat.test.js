@@ -532,6 +532,47 @@ describe('Embers of Muaat', () => {
       })
     })
 
-    test.todo('Stellar Genesis: place Avernus token and move it with war suns')
+    test('Stellar Genesis: place Avernus token when researched', () => {
+      const game = t.fixture({ factions: ['embers-of-muaat', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          technologies: ['plasma-scoring', 'sarween-tools'],
+          units: {
+            'muaat-home': {
+              space: ['war-sun'],
+              'muaat': ['space-dock', 'infantry'],
+            },
+          },
+        },
+        micah: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'hacan-home': {
+              space: ['cruiser'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'technology', 'imperial')
+
+      // Dennis uses Technology primary: research Stellar Genesis
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'stellar-genesis')
+
+      // Choose system to place Avernus
+      const choices = t.currentChoices(game)
+      const targetSystem = choices[0]
+      t.choose(game, targetSystem)
+
+      // Verify Avernus token placed
+      expect(game.state.avernus).toBeTruthy()
+      expect(game.state.avernus.owner).toBe('dennis')
+      expect(game.state.planets['avernus']).toBeTruthy()
+      expect(game.state.planets['avernus'].controller).toBe('dennis')
+      expect(game.state.planets['avernus'].exhausted).toBe(false)
+    })
   })
 })
