@@ -756,7 +756,45 @@ describe('Yin Brotherhood', () => {
     })
 
     describe('Yin Ascendant', () => {
-      test.todo('when gained or when scoring a public objective, gain alliance ability of a random unused faction')
+      test('when gained or when scoring a public objective, gain alliance ability of a random unused faction', () => {
+        const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
+            technologies: ['sarween-tools', 'psychoarchaeology'],
+            units: {
+              'yin-home': {
+                space: ['cruiser'],
+                'darien': ['space-dock', 'infantry'],
+              },
+            },
+          },
+          micah: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            units: {
+              'hacan-home': {
+                space: ['cruiser'],
+                'arretze': ['space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'technology', 'imperial')
+
+        // Dennis uses Technology primary: research Yin Ascendant (yellow + green prereqs)
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'yin-ascendant')
+
+        // Yin Ascendant triggers: random alliance granted
+        expect(game.state.yinAscendantAlliances).toBeTruthy()
+        expect(game.state.yinAscendantAlliances.length).toBe(1)
+
+        // Should be a faction not in the game
+        const alliance = game.state.yinAscendantAlliances[0]
+        expect(alliance).not.toBe('yin-brotherhood')
+        expect(alliance).not.toBe('emirates-of-hacan')
+      })
     })
   })
 })

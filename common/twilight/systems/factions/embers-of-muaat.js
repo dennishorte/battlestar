@@ -330,6 +330,69 @@ module.exports = {
     })
   },
 
+  // Stellar Genesis: when gained, place Avernus token into a non-home system
+  // adjacent to a planet you control. Gain control of and ready it.
+  onTechResearched(player, ctx, tech) {
+    if (tech.id !== 'stellar-genesis') {
+      return
+    }
+
+    // Find non-home systems adjacent to a planet the player controls
+    const controlledPlanets = Object.entries(ctx.state.planets)
+      .filter(([, s]) => s.controller === player.name)
+      .map(([id]) => id)
+
+    const res = require('../../res')
+    const adjacentSystems = new Set()
+    for (const planetId of controlledPlanets) {
+      const planet = res.getPlanet(planetId)
+      if (!planet) {
+        continue
+      }
+      const planetSystemId = String(planet.systemId || '')
+      const adjIds = ctx.game._getAdjacentSystems(planetSystemId)
+      for (const adjId of adjIds) {
+        const tile = res.getSystemTile(adjId) || res.getSystemTile(Number(adjId))
+        if (tile && !tile.home) {
+          adjacentSystems.add(String(adjId))
+        }
+      }
+    }
+
+    const eligible = [...adjacentSystems]
+    if (eligible.length === 0) {
+      return
+    }
+
+    let targetSystem
+    if (eligible.length === 1) {
+      targetSystem = eligible[0]
+    }
+    else {
+      const selection = ctx.actions.choose(player, eligible, {
+        title: 'Stellar Genesis: Place Avernus token in which system?',
+      })
+      targetSystem = selection[0]
+    }
+
+    // Place Avernus token
+    ctx.state.avernus = {
+      systemId: targetSystem,
+      owner: player.name,
+    }
+
+    // Add Avernus as a planet the player controls
+    ctx.state.planets['avernus'] = {
+      controller: player.name,
+      exhausted: false,
+    }
+
+    ctx.log.add({
+      template: 'Stellar Genesis: {player} places Avernus in system {system}',
+      args: { player: player.name, system: targetSystem },
+    })
+  },
+
   // Commander — Magmus: after spending a strategy token, gain 1 trade good
   onStrategyTokenSpent(player, ctx, { spendingPlayer }) {
     // Only triggers for own token spend

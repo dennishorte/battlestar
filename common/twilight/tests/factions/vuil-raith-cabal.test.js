@@ -446,8 +446,86 @@ describe("Vuil'raith Cabal", () => {
   })
 
   describe('Promissory Note — Crucible', () => {
-    test.todo('ships do not roll for gravity rifts during movement and get +1 move through gravity rifts')
-    test.todo('returns to Vuil\'raith player after use')
+    test('ships do not roll for gravity rifts during movement and get +1 move through gravity rifts', () => {
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'cabal-home': {
+              space: ['cruiser'],
+              'acheron': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'crucible', owner: 'dennis' }],
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'hacan-home': {
+              space: ['cruiser'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Micah has the Crucible — but Dennis goes first. Dennis does a tactical action.
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.choose(game, 'Done')
+
+      // Micah activates Crucible
+      t.choose(game, 'Component Action')
+      t.choose(game, 'crucible')
+
+      // Crucible flag set for Micah
+      expect(game.state._crucibleActive).toBe('micah')
+    })
+
+    test('returns to Vuil\'raith player after use', () => {
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'cabal-home': {
+              space: ['cruiser'],
+              'acheron': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'crucible', owner: 'dennis' }],
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'hacan-home': {
+              space: ['cruiser'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis does a tactical action first
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.choose(game, 'Done')
+
+      // Micah plays Crucible
+      t.choose(game, 'Component Action')
+      t.choose(game, 'crucible')
+
+      // Crucible returned to Dennis (Vuil'raith)
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+      expect(dennis.getPromissoryNotes().some(n => n.id === 'crucible')).toBe(true)
+      expect(micah.getPromissoryNotes().some(n => n.id === 'crucible')).toBe(false)
+    })
   })
 
   describe('Faction Technologies', () => {

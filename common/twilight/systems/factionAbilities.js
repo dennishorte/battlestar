@@ -426,6 +426,7 @@ class FactionAbilities {
         'research-agreement': 'Research Agreement',
         'black-market-forgery': 'Black Market Forgery',
         'terraform': 'Terraform',
+        'crucible': 'Crucible',
       }
       if (activatableNames[pn.id]) {
         // Black Market Forgery: only available if holder has 2 fragments of same type
@@ -522,6 +523,7 @@ class FactionAbilities {
       'research-agreement': 'universities-of-jol-nar',
       'black-market-forgery': 'naaz-rokha-alliance',
       'terraform': 'titans-of-ul',
+      'crucible': 'vuil-raith-cabal',
     }
     const nameMap = {
       'promise-of-protection': 'Promise of Protection',
@@ -532,6 +534,7 @@ class FactionAbilities {
       'research-agreement': 'Research Agreement',
       'black-market-forgery': 'Black Market Forgery',
       'terraform': 'Terraform',
+      'crucible': 'Crucible',
     }
     if (!factionMap[actionId]) {
       return false
@@ -558,6 +561,10 @@ class FactionAbilities {
     }
     if (actionId === 'terraform') {
       this._resolveTerraform(player, pn)
+      return true
+    }
+    if (actionId === 'crucible') {
+      this._resolveCrucible(player, pn)
       return true
     }
 
@@ -694,6 +701,28 @@ class FactionAbilities {
     this.log.add({
       template: '{player} attaches Terraform to {planet} (+1 resource, +1 influence, all traits)',
       args: { player: player.name, planet: planetId },
+    })
+  }
+
+  _resolveCrucible(player, pn) {
+    // Set gravity rift immunity flag for the holder's next movement
+    this.state._crucibleActive = player.name
+
+    this.log.add({
+      template: '{player} plays Crucible: ships ignore gravity rifts and gain +1 move through them',
+      args: { player: player.name },
+    })
+
+    // Return to Vuil'raith player immediately
+    player.removePromissoryNote(pn.id, pn.owner)
+    const owner = this.players.byName(pn.owner)
+    if (owner) {
+      owner.addPromissoryNote(pn.id, pn.owner)
+    }
+
+    this.log.add({
+      template: 'Crucible returned to {owner}',
+      args: { owner: pn.owner },
     })
   }
 
