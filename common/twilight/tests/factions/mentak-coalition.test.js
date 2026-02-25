@@ -634,8 +634,125 @@ describe('Mentak Coalition', () => {
   })
 
   describe('Promissory Note — Promise of Protection', () => {
-    test.todo('holder is immune to Pillage ability')
-    test.todo('returns to Mentak player when holder activates system with Mentak units')
+    test('holder is immune to Pillage ability', () => {
+      // Dennis = Mentak, Micah = Hacan
+      // System 27 is adjacent to mentak-home so they're neighbors
+      const game = t.fixture({ factions: ['mentak-coalition', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          leaders: { agent: 'exhausted' },
+          units: {
+            'mentak-home': {
+              space: ['cruiser'],
+              'moll-primus': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          tradeGoods: 2,
+          promissoryNotes: [{ id: 'promise-of-protection', owner: 'dennis' }],
+          units: {
+            '27': {
+              space: ['cruiser'],
+            },
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      // Micah = Leadership (1) goes first, Dennis = Trade (5)
+      pickStrategyCards(game, 'trade', 'leadership')
+
+      // Micah (initiative 1): Component Action → Promise of Protection
+      t.choose(game, 'Component Action')
+      t.choose(game, 'promise-of-protection')
+
+      // Micah's transaction window: skip (Micah has 2 TG, Dennis has 0)
+      t.choose(game, 'Skip Transaction')
+
+      // Dennis (initiative 5): Strategic Action (Trade)
+      // Trade primary: Dennis gains 3 TG, all commodities replenished
+      t.choose(game, 'Strategic Action')
+      // Micah is offered Trade secondary (free for Hacan)
+      t.choose(game, 'Pass')
+
+      // Dennis's transaction window: trade with Micah
+      t.choose(game, 'micah')
+      t.action(game, 'trade-offer', {
+        offering: { tradeGoods: 1 },
+        requesting: {},
+      })
+      t.choose(game, 'Accept')
+
+      // Micah now has 3 TG (2 + 1) — normally Pillage would fire
+      // But Promise of Protection is active → no Pillage prompt
+      const micah = game.players.byName('micah')
+      const dennis = game.players.byName('dennis')
+      expect(micah.tradeGoods).toBe(3) // 2 + 1 from trade
+      expect(dennis.tradeGoods).toBe(2) // 3 - 1 from trade, no Pillage steal
+    })
+
+    test('returns to Mentak player when holder activates system with Mentak units', () => {
+      // Micah holds face-up Promise of Protection, then activates system with Dennis's units
+      const game = t.fixture({ factions: ['mentak-coalition', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted' },
+          units: {
+            'mentak-home': {
+              space: ['cruiser'],
+              'moll-primus': ['space-dock'],
+            },
+            '27': {
+              space: ['cruiser'], // Mentak unit in system 27
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'promise-of-protection', owner: 'dennis' }],
+          units: {
+            'hacan-home': {
+              space: ['carrier', 'cruiser'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis (Leadership, initiative 1): Strategic Action → Leadership
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // Micah declines secondary
+
+      // Micah (Diplomacy, initiative 2): Component Action → Promise of Protection
+      t.choose(game, 'Component Action')
+      t.choose(game, 'promise-of-protection')
+
+      // Dennis: pass (already used strategy card)
+      t.choose(game, 'Pass')
+
+      // Micah: Tactical Action → activate system 27 (which has Dennis's cruiser)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'hacan-home', count: 1 }],
+      })
+
+      // PN should be returned to Dennis (Mentak)
+      const micah = game.players.byName('micah')
+      const dennis = game.players.byName('dennis')
+      expect(micah.hasPromissoryNote('promise-of-protection')).toBe(false)
+      expect(dennis.hasPromissoryNote('promise-of-protection')).toBe(true)
+
+      // Verify log contains the return entry
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('returned'))).toBe(true)
+    })
   })
 
   describe('Faction Technologies', () => {
