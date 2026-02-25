@@ -1828,8 +1828,9 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
       continue
     }
 
+    const isExempt = this.factionAbilities.isCapacityExempt(player, m.unitType)
     for (let i = 0; i < m.count; i++) {
-      if (usedCapacity >= totalCapacity) {
+      if (!isExempt && usedCapacity >= totalCapacity) {
         break  // No more capacity
       }
 
@@ -1863,7 +1864,10 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
 
       // All transported units go to space area (in transit)
       this.state.units[targetSystemId].space.push(unit)
-      usedCapacity++
+      // Capacity-exempt units (e.g., Argent Aerie Sentinel mech) don't count
+      if (!isExempt) {
+        usedCapacity++
+      }
     }
   }
 
