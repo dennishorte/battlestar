@@ -1,10 +1,5 @@
 const t = require('../../testutil.js')
 
-function pickStrategyCards(game, dennisCard, micahCard) {
-  t.choose(game, dennisCard)
-  t.choose(game, micahCard)
-}
-
 describe('Nomad', () => {
   describe('Data', () => {
     test('starting technologies include Sling Relay', () => {
