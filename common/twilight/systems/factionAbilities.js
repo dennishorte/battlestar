@@ -54,6 +54,27 @@ class FactionAbilities {
     return handler?.getStatusPhaseTokenBonus?.(player, this) ?? 0
   }
 
+  isNeighborOverride(playerAName, playerBName) {
+    // Check both directions — either player might have a neighbor override
+    const playerA = this.players.byName(playerAName)
+    const playerB = this.players.byName(playerBName)
+    if (!playerA || !playerB) {
+      return false
+    }
+
+    const handlerA = this._getPlayerHandler(playerA)
+    if (handlerA?.isNeighborOverride?.(playerA, this, playerB)) {
+      return true
+    }
+
+    const handlerB = this._getPlayerHandler(playerB)
+    if (handlerB?.isNeighborOverride?.(playerB, this, playerA)) {
+      return true
+    }
+
+    return false
+  }
+
   canTradeWithNonNeighbors(player) {
     const handler = this._getPlayerHandler(player)
     if (handler?.canTradeWithNonNeighbors?.(player, this)) {
