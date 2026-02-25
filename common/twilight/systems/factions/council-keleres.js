@@ -275,6 +275,66 @@ module.exports = {
   // This is a passive ability checked during invasion.
   // ---------------------------------------------------------------------------
 
+  // ---------------------------------------------------------------------------
+  // Commander — Suffi An: After you resolve a component action, you may
+  // perform 1 additional action.
+  // ---------------------------------------------------------------------------
+
+  afterComponentAction(player, ctx) {
+    if (!player.isCommanderUnlocked()) {
+      return
+    }
+
+    // Prevent recursion: if we're already in a Suffi An bonus action, don't trigger again
+    if (ctx.state._suffiAnBonusAction) {
+      return
+    }
+
+    const choices = ['Tactical Action', 'Component Action']
+    if (!player.hasUsedStrategyCard()) {
+      choices.push('Strategic Action')
+    }
+    const bonusActionCards = (player.actionCards || []).filter(c => c.timing === 'action')
+    if (bonusActionCards.length > 0) {
+      choices.push('Play Action Card')
+    }
+    choices.push('Decline')
+
+    const selection = ctx.actions.choose(player, choices, {
+      title: 'Suffi An: Perform an additional action?',
+    })
+    const bonusAction = selection[0]
+
+    if (bonusAction === 'Decline') {
+      return
+    }
+
+    ctx.log.add({
+      template: '{player} uses Suffi An: {action}',
+      args: { player: player.name, action: bonusAction },
+    })
+
+    ctx.state._suffiAnBonusAction = true
+
+    switch (bonusAction) {
+      case 'Tactical Action':
+        ctx.game._tacticalAction(player)
+        break
+      case 'Strategic Action':
+        ctx.game._strategicAction(player)
+        ctx.game._resolveSecondaries(player, ctx.state.lastStrategyCard)
+        break
+      case 'Component Action':
+        ctx.game._componentAction(player)
+        break
+      case 'Play Action Card':
+        ctx.game._playActionCard(player)
+        break
+    }
+
+    delete ctx.state._suffiAnBonusAction
+  },
+
   getInvasionInfluenceCost(player, ctx, { planetId, systemId, invadingPlayer }) {
     // Check if this player has a mech on the planet
     const systemUnits = ctx.state.units[systemId]

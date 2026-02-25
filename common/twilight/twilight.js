@@ -999,6 +999,7 @@ Twilight.prototype.actionPhase = function() {
         break
       case 'Component Action':
         this._componentAction(player)
+        this.factionAbilities.afterComponentAction(player)
         break
       case 'Play Action Card':
         this._playActionCard(player)
@@ -1066,6 +1067,7 @@ Twilight.prototype.actionPhase = function() {
             break
           case 'Component Action':
             this._componentAction(player)
+            this.factionAbilities.afterComponentAction(player)
             break
           case 'Play Action Card':
             this._playActionCard(player)
@@ -2425,6 +2427,7 @@ Twilight.prototype._bombardment = function(systemId, planetId, attackerName) {
   // Ships with bombardment ability fire at the planet
   const attackerShips = systemUnits.space.filter(u => u.owner === attackerName)
   let totalHits = 0
+  let bombardmentUsed = false
   const attackerPlayer = this.players.byName(attackerName)
   let plasmaUsed = false
 
@@ -2465,6 +2468,7 @@ Twilight.prototype._bombardment = function(systemId, planetId, attackerName) {
       commanderBonusDice = 0
     }
 
+    bombardmentUsed = true
     for (let i = 0; i < diceCount; i++) {
       const roll = Math.floor(this.random() * 10) + 1
       if (roll >= combatValue) {
@@ -2493,6 +2497,11 @@ Twilight.prototype._bombardment = function(systemId, planetId, attackerName) {
     if (remainingGroundForces.length === 0) {
       this._recordSecretTrigger(attackerName, 'make-an-example-of-their-world')
     }
+  }
+
+  // Mech DEPLOY triggers (e.g., L1Z1X Annihilator) — only if bombardment was used
+  if (bombardmentUsed) {
+    this.factionAbilities.afterBombardment(attackerName, systemId, planetId, totalHits)
   }
 }
 

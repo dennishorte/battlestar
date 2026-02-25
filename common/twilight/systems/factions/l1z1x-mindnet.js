@@ -327,6 +327,59 @@ module.exports = {
 
 
   // ---------------------------------------------------------------------------
+  // Mech — Annihilator DEPLOY: When you use BOMBARDMENT, you may spend 2
+  // resources to place 1 mech from reinforcements on that planet.
+  // ---------------------------------------------------------------------------
+
+  afterBombardment(player, ctx, { systemId, planetId, totalHits: _totalHits }) {
+    // Check if player has resources to spend
+    const totalResources = player.getTotalResources() + player.tradeGoods
+    if (totalResources < 2) {
+      return
+    }
+
+    const choice = ctx.actions.choose(player, ['Deploy Annihilator', 'Pass'], {
+      title: 'Annihilator DEPLOY: Spend 2 resources to place 1 mech on the bombarded planet?',
+    })
+
+    if (choice[0] !== 'Deploy Annihilator') {
+      return
+    }
+
+    // Pay 2 resources — spend trade goods first, then exhaust planets
+    let remaining = 2
+    if (player.tradeGoods > 0) {
+      const fromTG = Math.min(player.tradeGoods, remaining)
+      player.spendTradeGoods(fromTG)
+      remaining -= fromTG
+    }
+    if (remaining > 0) {
+      const readyPlanets = player.getReadyPlanets()
+        .map(pId => {
+          const planet = ctx.game.res.getPlanet(pId)
+          return { id: pId, resources: planet?.resources || 0 }
+        })
+        .sort((a, b) => a.resources - b.resources)
+
+      for (const planet of readyPlanets) {
+        if (remaining <= 0) {
+          break
+        }
+        ctx.state.planets[planet.id].exhausted = true
+        remaining -= planet.resources
+      }
+    }
+
+    ctx.game._addUnitToPlanet(systemId, planetId, 'mech', player.name)
+
+    ctx.log.add({
+      template: 'Annihilator DEPLOY: {player} spends 2 resources to place mech on {planet}',
+      args: { player: player.name, planet: planetId },
+    })
+  },
+
+
+  // ---------------------------------------------------------------------------
   // Super Dreadnought II: Cannot be destroyed by Direct Hit action card.
   // ---------------------------------------------------------------------------
 
