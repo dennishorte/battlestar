@@ -1389,6 +1389,9 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
     })
   }
 
+  // Blood Pact: add bonus votes when holder and Empyrean vote for same outcome
+  this.factionAbilities.applyVoteBonuses(votes, playerVotes)
+
   // Resolve outcome
   let winningOutcome = null
   let maxVotes = -1
@@ -4462,6 +4465,14 @@ Twilight.prototype._executeTransaction = function(player, target, offering, requ
     template: '{player} and {target} complete a transaction',
     args: { player, target },
   })
+
+  // Dark Pact: check commodity gifts between holder and Empyrean
+  if (offeredComm > 0) {
+    this.factionAbilities.onCommodityExchanged(player.name, target.name, offeredComm)
+  }
+  if (requestedComm > 0) {
+    this.factionAbilities.onCommodityExchanged(target.name, player.name, requestedComm)
+  }
 
   // Mentak Pillage: after transaction, Mentak neighbor can steal 1 TG/commodity
   this.factionAbilities.onTransactionComplete(player)

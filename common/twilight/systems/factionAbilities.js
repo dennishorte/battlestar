@@ -334,11 +334,16 @@ class FactionAbilities {
         continue
       }
 
-      if (pn.id === 'promise-of-protection') {
+      if (pn.id === 'promise-of-protection' || pn.id === 'dark-pact' || pn.id === 'blood-pact') {
         const alreadyActive = (this.state._activatedPNs || [])
-          .some(p => p.id === 'promise-of-protection' && p.holder === player.name)
+          .some(p => p.id === pn.id && p.holder === player.name)
         if (!alreadyActive) {
-          pnActions.push({ id: 'promise-of-protection', name: 'Promise of Protection' })
+          const names = {
+            'promise-of-protection': 'Promise of Protection',
+            'dark-pact': 'Dark Pact',
+            'blood-pact': 'Blood Pact',
+          }
+          pnActions.push({ id: pn.id, name: names[pn.id] })
         }
       }
     }
@@ -368,30 +373,42 @@ class FactionAbilities {
   }
 
   _executePromissoryNoteAction(player, actionId) {
-    if (actionId === 'promise-of-protection') {
-      const pn = player.getPromissoryNotes().find(n => n.id === 'promise-of-protection' && n.owner !== player.name)
-      if (!pn) {
-        return false
-      }
-
-      if (!this.state._activatedPNs) {
-        this.state._activatedPNs = []
-      }
-      this.state._activatedPNs.push({
-        id: 'promise-of-protection',
-        holder: player.name,
-        owner: pn.owner,
-        faction: 'mentak-coalition',
-      })
-
-      this.log.add({
-        template: '{player} plays Promise of Protection (immune to Mentak Pillage)',
-        args: { player: player.name },
-      })
-      return true
+    const activatableIds = ['promise-of-protection', 'dark-pact', 'blood-pact']
+    if (!activatableIds.includes(actionId)) {
+      return false
     }
 
-    return false
+    const pn = player.getPromissoryNotes().find(n => n.id === actionId && n.owner !== player.name)
+    if (!pn) {
+      return false
+    }
+
+    const factionMap = {
+      'promise-of-protection': 'mentak-coalition',
+      'dark-pact': 'empyrean',
+      'blood-pact': 'empyrean',
+    }
+    const nameMap = {
+      'promise-of-protection': 'Promise of Protection',
+      'dark-pact': 'Dark Pact',
+      'blood-pact': 'Blood Pact',
+    }
+
+    if (!this.state._activatedPNs) {
+      this.state._activatedPNs = []
+    }
+    this.state._activatedPNs.push({
+      id: actionId,
+      holder: player.name,
+      owner: pn.owner,
+      faction: factionMap[actionId],
+    })
+
+    this.log.add({
+      template: '{player} plays {pnName}',
+      args: { player: player.name, pnName: nameMap[actionId] },
+    })
+    return true
   }
 
 
@@ -640,6 +657,44 @@ class FactionAbilities {
     }
   }
 
+  onCommodityExchanged(giverName, receiverName, commodityCount) {
+    if (commodityCount <= 0) {
+      return
+    }
+
+    // Dark Pact: when holder gives commodities >= their max commodity value to Empyrean, both gain 1 TG
+    for (const pn of (this.state._activatedPNs || [])) {
+      if (pn.id !== 'dark-pact') {
+        continue
+      }
+      if (pn.holder !== giverName) {
+        continue
+      }
+      if (pn.owner !== receiverName) {
+        continue
+      }
+
+      const holder = this.players.byName(pn.holder)
+      if (!holder) {
+        continue
+      }
+      if (commodityCount < holder.maxCommodities) {
+        continue
+      }
+
+      const empyrean = this.players.byName(pn.owner)
+      holder.addTradeGoods(1)
+      if (empyrean) {
+        empyrean.addTradeGoods(1)
+      }
+
+      this.log.add({
+        template: 'Dark Pact: {holder} and {empyrean} each gain 1 trade good',
+        args: { holder: pn.holder, empyrean: pn.owner },
+      })
+    }
+  }
+
 
   // ---------------------------------------------------------------------------
   // G. Ground Combat Triggers
@@ -870,6 +925,31 @@ class FactionAbilities {
       }
     }
     return null
+  }
+
+  applyVoteBonuses(votes, playerVotes) {
+    // Blood Pact: when holder and Empyrean vote for same outcome, add 4 votes
+    for (const pn of (this.state._activatedPNs || [])) {
+      if (pn.id !== 'blood-pact') {
+        continue
+      }
+
+      const holderVote = playerVotes[pn.holder]
+      const empyreanVote = playerVotes[pn.owner]
+      if (!holderVote || !empyreanVote) {
+        continue
+      }
+      if (holderVote.outcome !== empyreanVote.outcome) {
+        continue
+      }
+
+      votes[holderVote.outcome] = (votes[holderVote.outcome] || 0) + 4
+
+      this.log.add({
+        template: 'Blood Pact: {holder} casts 4 additional votes for {outcome}',
+        args: { holder: pn.holder, outcome: holderVote.outcome },
+      })
+    }
   }
 
   onAgendaOutcomeResolved(agenda, winningOutcome, playerVotes) {
