@@ -366,6 +366,86 @@ AgricolaActionManager.prototype.buildStable = function(player) {
   return true
 }
 
+/**
+ * Central function for completing a renovation (post-selection).
+ * Handles cost payment, room type change, grid update, hasRenovated flag,
+ * logging, and all renovation hooks.
+ *
+ * @param {object} player
+ * @param {string} targetType     — 'clay' or 'stone'
+ * @param {object} [options]
+ * @param {object} [options.cost]             — cost to pay (omit for free)
+ * @param {string} [options.logTemplate]      — custom log template
+ * @param {object} [options.logArgs]          — extra log args merged with { player, old, new }
+ * @param {boolean} [options.skipBeforeHooks] — suppress onBeforeRenovateToStone
+ */
+AgricolaActionManager.prototype._completeRenovation = function(player, targetType, options = {}) {
+  const oldType = player.roomType
+
+  // Fire onBeforeRenovateToStone hooks (e.g. Hammer Crusher gives resources)
+  if (targetType === 'stone' && !options.skipBeforeHooks) {
+    this.game.callPlayerCardHook(player, 'onBeforeRenovateToStone')
+  }
+
+  // Pay cost if provided
+  if (options.cost) {
+    player.payCost(options.cost)
+  }
+
+  // Update room type and grid
+  player.roomType = targetType
+  for (let row = 0; row < res.constants.farmyardRows; row++) {
+    for (let col = 0; col < res.constants.farmyardCols; col++) {
+      if (player.farmyard.grid[row][col].type === 'room') {
+        player.farmyard.grid[row][col].roomType = targetType
+      }
+    }
+  }
+  player.hasRenovated = true
+
+  // Log
+  if (options.logTemplate) {
+    this.log.add({
+      template: options.logTemplate,
+      args: { player, old: oldType, new: targetType, ...(options.logArgs || {}) },
+    })
+  }
+  else {
+    this.log.add({
+      template: '{player} renovates from {old} to {new}',
+      args: { player, old: oldType, new: targetType },
+    })
+  }
+
+  // Fire onRenovate hooks on player's cards (Roughcaster)
+  this.game.callPlayerCardHook(player, 'onRenovate', oldType, targetType)
+
+  // Fire onAnyRenovate hooks on all players' cards (Margrave, RecycledBrick, PatternMaker, etc.)
+  const roomCount = player.getRoomCount()
+  for (const otherPlayer of this.game.players.all()) {
+    const cards = this.game.getPlayerActiveCards(otherPlayer)
+    for (const card of cards) {
+      if (card.hasHook('onAnyRenovate')) {
+        card.callHook('onAnyRenovate', this.game, player, otherPlayer, { oldType, newType: targetType, roomCount })
+      }
+    }
+  }
+
+  // Fire onAnyRenovateToStone hooks on all players' cards (Recycled Brick)
+  if (targetType === 'stone') {
+    for (const otherPlayer of this.game.players.all()) {
+      const cards = this.game.getPlayerActiveCards(otherPlayer)
+      for (const card of cards) {
+        if (card.hasHook('onAnyRenovateToStone')) {
+          card.callHook('onAnyRenovateToStone', this.game, player, otherPlayer, roomCount)
+        }
+      }
+    }
+  }
+
+  return true
+}
+
 AgricolaActionManager.prototype.renovate = function(player) {
   // Check card hooks for renovation modifications (e.g., WoodSlideHammer)
   let renovationMods = {}
@@ -438,42 +518,11 @@ AgricolaActionManager.prototype.renovate = function(player) {
     chosenRenovationCost = affordableRenovationOptions[0].cost
   }
 
-  const oldType = player.roomType
-  player.renovate(targetType, chosenRenovationCost)
-  const newType = player.roomType
-
-  this.log.add({
-    template: '{player} renovates from {old} to {new}',
-    args: { player, old: oldType, new: newType },
+  const resolvedType = targetType || res.houseMaterialUpgrades[player.roomType]
+  return this._completeRenovation(player, resolvedType, {
+    cost: chosenRenovationCost,
+    skipBeforeHooks: true,
   })
-
-  // Call onRenovate hooks (Roughcaster)
-  this.game.callPlayerCardHook(player, 'onRenovate', oldType, newType)
-
-  // Call onAnyRenovate hooks on all players' cards (Margrave, RecycledBrick, PatternMaker, etc.)
-  const roomCount = player.getRoomCount()
-  for (const otherPlayer of this.game.players.all()) {
-    const cards = this.game.getPlayerActiveCards(otherPlayer)
-    for (const card of cards) {
-      if (card.hasHook('onAnyRenovate')) {
-        card.callHook('onAnyRenovate', this.game, player, otherPlayer, { oldType, newType, roomCount })
-      }
-    }
-  }
-
-  // Call onAnyRenovateToStone hooks on all players' cards (Recycled Brick)
-  if (newType === 'stone') {
-    for (const otherPlayer of this.game.players.all()) {
-      const cards = this.game.getPlayerActiveCards(otherPlayer)
-      for (const card of cards) {
-        if (card.hasHook('onAnyRenovateToStone')) {
-          card.callHook('onAnyRenovateToStone', this.game, player, otherPlayer, roomCount)
-        }
-      }
-    }
-  }
-
-  return true
 }
 
 AgricolaActionManager.prototype.offerRenovation = function(player, card) {

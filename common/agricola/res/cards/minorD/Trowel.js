@@ -45,24 +45,10 @@ module.exports = {
       return
     }
 
-    const oldType = player.roomType
-    player.payCost(cost)
-    player.roomType = 'stone'
-
-    // Update all room spaces
-    for (let row = 0; row < 3; row++) {
-      for (let col = 0; col < 5; col++) {
-        if (player.farmyard.grid[row][col].type === 'room') {
-          player.farmyard.grid[row][col].roomType = 'stone'
-        }
-      }
-    }
-
-    game.log.add({
-      template: '{player} uses {card} to renovate from {old} to stone',
-      args: { player, card: this, old: oldType },
+    game.actions._completeRenovation(player, 'stone', {
+      cost,
+      logTemplate: '{player} uses {card} to renovate from {old} to stone',
+      logArgs: { card: this },
     })
-
-    game.callPlayerCardHook(player, 'onRenovate', oldType, 'stone')
   },
 }

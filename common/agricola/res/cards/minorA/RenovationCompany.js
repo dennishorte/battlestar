@@ -33,29 +33,10 @@ module.exports = {
     })
 
     if (selection[0] !== 'Skip') {
-      player.roomType = toType
-      for (let row = 0; row < 3; row++) {
-        for (let col = 0; col < 5; col++) {
-          if (player.farmyard.grid[row][col].type === 'room') {
-            player.farmyard.grid[row][col].roomType = toType
-          }
-        }
-      }
-      game.log.add({
-        template: '{player} renovates from {from} to {to} for free using {card}',
-        args: { player, from: fromType, to: toType, card },
+      game.actions._completeRenovation(player, toType, {
+        logTemplate: '{player} renovates from {old} to {new} for free using {card}',
+        logArgs: { card },
       })
-      game.callPlayerCardHook(player, 'onRenovate', fromType, toType)
-
-      const roomCount = player.getRoomCount()
-      for (const otherPlayer of game.players.all()) {
-        const cards = game.getPlayerActiveCards(otherPlayer)
-        for (const activeCard of cards) {
-          if (activeCard.hasHook('onAnyRenovate')) {
-            activeCard.callHook('onAnyRenovate', game, player, otherPlayer, { oldType: fromType, newType: toType, roomCount })
-          }
-        }
-      }
     }
   },
 }
