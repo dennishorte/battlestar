@@ -791,7 +791,7 @@ TestUtil.ensureCard = function(game, cardId) {
     return game.cards.byId(cardId)
   }
   // Try to find the card definition from res
-  const cardDef = res.getCardById(cardId) || res.getMajorImprovementById(cardId)
+  const cardDef = res.getCardById(cardId)
   if (!cardDef) {
     throw new Error(`Card not found in res: ${cardId}`)
   }

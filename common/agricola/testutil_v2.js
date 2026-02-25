@@ -208,7 +208,7 @@ TestUtil.fixture = function(options = {}) {
  */
 TestUtil.resolveCardRef = function(ref) {
   // Try by ID first
-  const byId = res.getCardById(ref) || res.getMajorImprovementById(ref)
+  const byId = res.getCardById(ref)
   if (byId) {
     return byId.id
   }
@@ -216,7 +216,19 @@ TestUtil.resolveCardRef = function(ref) {
   // Try by name across all cards and major improvements
   const allCards = res.getAllCards()
   const allMajors = res.getAllMajorImprovements()
-  const matches = [...allCards, ...allMajors].filter(c => c.name === ref)
+  const combined = [...allCards, ...allMajors]
+  // Deduplicate by id in case major improvements appear in both
+  const seen = new Set()
+  const matches = combined.filter(c => {
+    if (c.name !== ref) {
+      return false
+    }
+    if (seen.has(c.id)) {
+      return false
+    }
+    seen.add(c.id)
+    return true
+  })
 
   if (matches.length === 0) {
     throw new Error(`Card not found by ID or name: "${ref}"`)
@@ -471,7 +483,7 @@ TestUtil.setBoard = function(game, state) {
       for (const field of playedCardFields) {
         if (playerState[field]) {
           for (const cardId of playerState[field]) {
-            const cardDef = res.getCardById(cardId) || res.getMajorImprovementById(cardId)
+            const cardDef = res.getCardById(cardId)
             const hasNegativePrereq = cardDef?.prereqs && negativePrereqs.some(k => cardDef.prereqs[k])
             if (!hasNegativePrereq && !player.meetsCardPrereqs(cardId)) {
               errors.push(`${playerName}: card "${cardId}" prereqs not met`)
@@ -995,7 +1007,7 @@ TestUtil.ensureCard = function(game, cardId) {
     return game.cards.byId(cardId)
   }
   // Try to find the card definition from res
-  const cardDef = res.getCardById(cardId) || res.getMajorImprovementById(cardId)
+  const cardDef = res.getCardById(cardId)
   if (!cardDef) {
     throw new Error(`Card not found in res: ${cardId}`)
   }

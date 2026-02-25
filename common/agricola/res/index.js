@@ -2,7 +2,8 @@
 
 const actionSpaces = require('./actionSpaces.js')
 const boardLayout = require('./boardLayout.js')
-const majorImprovements = require('./majorImprovements.js')
+const major = require('./cards/major')
+const majorImprovementUtils = require('./majorImprovementUtils.js')
 const scoringTables = require('./scoringTables.js')
 const minorA = require('./cards/minorA')
 const minorB = require('./cards/minorB')
@@ -24,8 +25,21 @@ module.exports = {
   // Board Layout
   boardLayout,
 
-  // Major Improvements
-  ...majorImprovements,
+  // Major Improvements - backward compatibility
+  majorImprovements: major.getCardsByPlayerCount(4),
+  sixPlayerMajorImprovements: major.getAllCards().filter(c => c.expansion === '5-6'),
+  getAllMajorImprovements(playerCount = 4) {
+    return major.getCardsByPlayerCount(playerCount)
+  },
+  getMajorImprovementById(id) {
+    return major.getCardById(id)
+  },
+  getMajorImprovementByName(name) {
+    return major.getCardByName(name)
+  },
+
+  // Major Improvement utilities
+  ...majorImprovementUtils,
 
   // Scoring
   ...scoringTables,
@@ -189,10 +203,10 @@ module.exports = {
 
   // Cards - always searches all sets (for getCardById used by hooks, scoring, etc.)
   getCardById(id) {
-    return minorA.getCardById(id) || minorB.getCardById(id) || minorC.getCardById(id) || minorD.getCardById(id) || minorE.getCardById(id) || occupationA.getCardById(id) || occupationB.getCardById(id) || occupationC.getCardById(id) || occupationD.getCardById(id) || occupationE.getCardById(id) || testCards.getCardById(id)
+    return major.getCardById(id) || minorA.getCardById(id) || minorB.getCardById(id) || minorC.getCardById(id) || minorD.getCardById(id) || minorE.getCardById(id) || occupationA.getCardById(id) || occupationB.getCardById(id) || occupationC.getCardById(id) || occupationD.getCardById(id) || occupationE.getCardById(id) || testCards.getCardById(id)
   },
   getCardByName(name) {
-    return minorA.getCardByName(name) || minorB.getCardByName(name) || minorC.getCardByName(name) || minorD.getCardByName(name) || minorE.getCardByName(name) || occupationA.getCardByName(name) || occupationB.getCardByName(name) || occupationC.getCardByName(name) || occupationD.getCardByName(name) || occupationE.getCardByName(name) || testCards.getCardByName(name)
+    return major.getCardByName(name) || minorA.getCardByName(name) || minorB.getCardByName(name) || minorC.getCardByName(name) || minorD.getCardByName(name) || minorE.getCardByName(name) || occupationA.getCardByName(name) || occupationB.getCardByName(name) || occupationC.getCardByName(name) || occupationD.getCardByName(name) || occupationE.getCardByName(name) || testCards.getCardByName(name)
   },
 
   // Functions that filter by selected card sets
