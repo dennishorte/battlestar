@@ -577,8 +577,73 @@ describe('Council Keleres', () => {
     })
 
     describe('I.I.H.Q. Modernization', () => {
-      test.todo('on gain, receive Custodia Vigilia planet card and legendary ability')
-      test.todo('becomes neighbors with all players with units or planets in or adjacent to Mecatol Rex system')
+      test('on gain, receive Custodia Vigilia planet card', () => {
+        const game = t.fixture({
+          factions: ['council-keleres', 'federation-of-sol'],
+          keleresSubFaction: 'mentak-coalition',
+        })
+        t.setBoard(game, {
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            technologies: ['sarween-tools', 'neural-motivator'],  // yellow + green prereqs
+          },
+          micah: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'technology', 'imperial')
+
+        // Dennis uses Technology primary: research iihq-modernization
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'iihq-modernization')
+
+        // Verify Custodia Vigilia planet granted
+        expect(game.state.planets['custodia-vigilia']).toBeDefined()
+        expect(game.state.planets['custodia-vigilia'].controller).toBe('dennis')
+        expect(game.state.planets['custodia-vigilia'].exhausted).toBe(false)
+
+        // Verify IIHQ state tracked
+        expect(game.state.iihqModernization).toBeDefined()
+        expect(game.state.iihqModernization.owner).toBe('dennis')
+      })
+
+      test('becomes neighbors with players with units in or adjacent to Mecatol Rex system', () => {
+        const game = t.fixture({
+          factions: ['council-keleres', 'federation-of-sol'],
+          keleresSubFaction: 'mentak-coalition',
+        })
+        t.setBoard(game, {
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            technologies: ['sarween-tools', 'neural-motivator', 'iihq-modernization'],
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          },
+          micah: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            commodities: 4,
+            units: {
+              '18': {
+                space: ['cruiser'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis does Strategic Action (leadership)
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Pass')  // Micah declines secondary
+
+        // After Dennis's action, transaction window appears
+        // IIHQ Modernization makes Dennis neighbor of Micah (Micah has ships at Mecatol Rex)
+        // So "Propose Transaction?" should include micah
+        const choices = t.currentChoices(game)
+        expect(choices).toContain('micah')
+
+        t.choose(game, 'Skip Transaction')
+      })
     })
   })
 })

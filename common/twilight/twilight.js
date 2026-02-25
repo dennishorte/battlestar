@@ -4400,6 +4400,7 @@ Twilight.prototype.areNeighbors = function(playerA, playerB) {
   // Two players are neighbors if either:
   // 1. They both have units (ships or ground forces) in the same system
   // 2. They have units in adjacent systems
+  // 3. A faction ability overrides neighbor status (e.g., I.I.H.Q. Modernization)
   const systemsA = this._getSystemsWithUnits(playerA)
   const systemsB = this._getSystemsWithUnits(playerB)
 
@@ -4418,6 +4419,11 @@ Twilight.prototype.areNeighbors = function(playerA, playerB) {
         return true
       }
     }
+  }
+
+  // Check faction ability neighbor overrides
+  if (this.factionAbilities.isNeighborOverride(playerA, playerB)) {
+    return true
   }
 
   return false

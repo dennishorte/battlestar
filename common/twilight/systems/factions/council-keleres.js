@@ -335,6 +335,71 @@ module.exports = {
     delete ctx.state._suffiAnBonusAction
   },
 
+  // I.I.H.Q. Modernization: when gained, receive Custodia Vigilia planet card
+  onTechResearched(player, ctx, tech) {
+    if (tech.id !== 'iihq-modernization') {
+      return
+    }
+
+    // Grant Custodia Vigilia planet card
+    ctx.state.planets['custodia-vigilia'] = {
+      controller: player.name,
+      exhausted: false,
+    }
+
+    // Track IIHQ for neighbor effects
+    ctx.state.iihqModernization = {
+      owner: player.name,
+    }
+
+    ctx.log.add({
+      template: 'I.I.H.Q. Modernization: {player} gains Custodia Vigilia planet card',
+      args: { player: player.name },
+    })
+  },
+
+  // I.I.H.Q. Modernization: player is neighbors with all players with units
+  // or planets in or adjacent to the Mecatol Rex system
+  isNeighborOverride(player, ctx, otherPlayer) {
+    if (!player.hasTechnology('iihq-modernization')) {
+      return false
+    }
+
+    // Check if otherPlayer has units or controls planets in or adjacent to Mecatol Rex
+    const mecatolSystem = ctx.game._findSystemForPlanet('mecatol-rex')
+    if (!mecatolSystem) {
+      return false
+    }
+
+    const systemsToCheck = [mecatolSystem]
+    const adjacentIds = ctx.game._getAdjacentSystems(mecatolSystem)
+    systemsToCheck.push(...adjacentIds)
+
+    for (const sysId of systemsToCheck) {
+      const systemUnits = ctx.state.units[sysId]
+      if (!systemUnits) {
+        continue
+      }
+
+      // Check space units
+      if (systemUnits.space.some(u => u.owner === otherPlayer.name)) {
+        return true
+      }
+
+      // Check planet units and control
+      for (const [planetId, planetUnits] of Object.entries(systemUnits.planets || {})) {
+        if (planetUnits.some(u => u.owner === otherPlayer.name)) {
+          return true
+        }
+        if (ctx.state.planets[planetId]?.controller === otherPlayer.name) {
+          return true
+        }
+      }
+    }
+
+    return false
+  },
+
   getInvasionInfluenceCost(player, ctx, { planetId, systemId, invadingPlayer }) {
     // Check if this player has a mech on the planet
     const systemUnits = ctx.state.units[systemId]
