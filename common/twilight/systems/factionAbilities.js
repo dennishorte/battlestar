@@ -1255,6 +1255,53 @@ class FactionAbilities {
         return replacement
       }
     }
+
+    // Political Favor (Xxcha PN)
+    // "When an agenda is revealed: Remove 1 token from the Xxcha player's strategy pool.
+    //  Then, discard the revealed agenda and reveal 1 agenda from the top of the deck.
+    //  Players vote on this agenda instead. Then, return this card to the Xxcha player."
+    for (const player of this.players.all()) {
+      if (!player.hasPromissoryNote('political-favor')) {
+        continue
+      }
+      const pn = player.getPromissoryNotes().find(n => n.id === 'political-favor' && n.owner !== player.name)
+      if (!pn) {
+        continue
+      }
+
+      // Check that Xxcha has a strategy token to spend
+      const xxchaPlayer = this.players.byName(pn.owner)
+      if (!xxchaPlayer || xxchaPlayer.commandTokens.strategy <= 0) {
+        continue
+      }
+
+      const choice = this.actions.choose(player, ['Play Political Favor', 'Pass'], {
+        title: `Political Favor: Discard ${agenda.name} and reveal new agenda?`,
+      })
+      if (choice[0] !== 'Play Political Favor') {
+        continue
+      }
+
+      // Remove 1 Xxcha strategy token
+      xxchaPlayer.commandTokens.strategy--
+
+      // Draw replacement agenda
+      const newAgenda = this.game._drawAgendaCard()
+
+      // Return PN to Xxcha
+      player.removePromissoryNote('political-favor', pn.owner)
+      xxchaPlayer.addPromissoryNote('political-favor', pn.owner)
+
+      this.log.add({
+        template: 'Political Favor: {player} discards {oldAgenda}, reveals {newAgenda}. Card returned to {owner}.',
+        args: { player: player.name, oldAgenda: agenda.name, newAgenda: newAgenda?.name || 'none', owner: pn.owner },
+      })
+
+      if (newAgenda) {
+        return newAgenda
+      }
+    }
+
     return null
   }
 
@@ -1913,6 +1960,77 @@ class FactionAbilities {
   onStrategyPhaseStart(player) {
     const handler = this._getPlayerHandler(player)
     handler?.onStrategyPhaseStart?.(player, this)
+
+    // Scepter of Dominion (Mahact PN)
+    // "At the start of the strategy phase: Choose 1 non-home system that contains your
+    //  units; each other player who has a token on the Mahact player's command sheet
+    //  places a token from their reinforcements in that system.
+    //  Then, return this card to the Mahact player."
+    if (player.hasPromissoryNote('scepter-of-dominion')) {
+      const pn = player.getPromissoryNotes().find(n => n.id === 'scepter-of-dominion' && n.owner !== player.name)
+      if (pn) {
+        const mahactPlayer = this.players.byName(pn.owner)
+        const capturedTokens = this.state.capturedCommandTokens[pn.owner] || []
+
+        // Only useful if Mahact has captured tokens from other players
+        if (capturedTokens.length > 0) {
+          // Find non-home systems with holder's units
+          const validSystems = []
+          for (const [systemId] of Object.entries(this.state.systems)) {
+            if (String(systemId).endsWith('-home') || String(systemId).endsWith('-gate')) {
+              continue
+            }
+            const systemUnits = this.state.units[systemId]
+            const hasOwnUnits = systemUnits?.space.some(u => u.owner === player.name)
+              || Object.values(systemUnits?.planets || {}).some(arr =>
+                arr.some(u => u.owner === player.name)
+              )
+            if (hasOwnUnits) {
+              validSystems.push(systemId)
+            }
+          }
+
+          if (validSystems.length > 0) {
+            const choice = this.actions.choose(player, ['Play Scepter of Dominion', 'Pass'], {
+              title: 'Scepter of Dominion: Force captured players to place tokens?',
+            })
+            if (choice[0] === 'Play Scepter of Dominion') {
+              let targetSystem
+              if (validSystems.length === 1) {
+                targetSystem = validSystems[0]
+              }
+              else {
+                const sel = this.actions.choose(player, validSystems, {
+                  title: 'Choose system for command tokens:',
+                })
+                targetSystem = sel[0]
+              }
+
+              // Each captured player places a command token
+              for (const capturedName of capturedTokens) {
+                if (!this.state.systems[targetSystem].commandTokens) {
+                  this.state.systems[targetSystem].commandTokens = []
+                }
+                if (!this.state.systems[targetSystem].commandTokens.includes(capturedName)) {
+                  this.state.systems[targetSystem].commandTokens.push(capturedName)
+                }
+              }
+
+              // Return PN to Mahact
+              player.removePromissoryNote('scepter-of-dominion', pn.owner)
+              if (mahactPlayer) {
+                mahactPlayer.addPromissoryNote('scepter-of-dominion', pn.owner)
+              }
+
+              this.log.add({
+                template: 'Scepter of Dominion: {player} places tokens in system {system}. Card returned to {owner}.',
+                args: { player: player.name, system: targetSystem, owner: pn.owner },
+              })
+            }
+          }
+        }
+      }
+    }
   }
 
   onStrategyPhaseEnd(player) {

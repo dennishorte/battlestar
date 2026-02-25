@@ -553,9 +553,89 @@ describe('Mahact Gene-Sorcerers', () => {
   })
 
   describe('Promissory Note — Scepter of Dominion', () => {
-    test.todo('at start of strategy phase, choose non-home system with own units')
-    test.todo('each other player with token on Mahact command sheet places token in that system')
-    test.todo('returns to Mahact player after use')
+    test('at start of strategy phase, choose non-home system with own units and force token placement', () => {
+      // Dennis = Hacan (holder), Micah = Mahact (owner)
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'mahact-gene-sorcerers'] })
+      t.setBoard(game, {
+        capturedCommandTokens: { micah: ['dennis'] }, // Mahact has captured Dennis's token
+        dennis: {
+          promissoryNotes: [{ id: 'scepter-of-dominion', owner: 'micah' }],
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock', 'infantry'],
+            },
+            '27': {
+              space: ['cruiser'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'mahact-home': {
+              space: ['carrier'],
+              'ixth': ['space-dock', 'infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      // Strategy phase starts — Scepter prompt for Dennis
+      // Only one valid non-home system (27), so system auto-selects
+      t.choose(game, 'Play Scepter of Dominion')
+
+      // Dennis (captured) should have a command token in system 27
+      expect(game.state.systems['27'].commandTokens).toContain('dennis')
+
+      // Now pick strategy cards normally
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Game should continue without errors
+      const choices = t.currentChoices(game)
+      expect(choices.length).toBeGreaterThan(0)
+    })
+
+    test('returns to Mahact player after use', () => {
+      // Dennis = Hacan (holder), Micah = Mahact (owner)
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'mahact-gene-sorcerers'] })
+      t.setBoard(game, {
+        capturedCommandTokens: { micah: ['dennis'] },
+        dennis: {
+          promissoryNotes: [{ id: 'scepter-of-dominion', owner: 'micah' }],
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock', 'infantry'],
+            },
+            '27': {
+              space: ['cruiser'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'mahact-home': {
+              space: ['carrier'],
+              'ixth': ['space-dock', 'infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      // Only one valid non-home system (27), so system auto-selects
+      t.choose(game, 'Play Scepter of Dominion')
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // PN should be returned to Mahact
+      const micah = game.players.byName('micah')
+      expect(micah.getPromissoryNotes().some(n => n.id === 'scepter-of-dominion')).toBe(true)
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getPromissoryNotes().some(n => n.id === 'scepter-of-dominion')).toBe(false)
+    })
   })
 
   describe('Faction Technologies', () => {
