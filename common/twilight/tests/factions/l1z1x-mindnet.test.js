@@ -489,8 +489,68 @@ describe('L1Z1X Mindnet', () => {
   })
 
   describe('Promissory Note — Cybernetic Enhancements', () => {
-    test.todo('at start of holder turn, remove 1 L1Z1X strategy token and holder gains 1 strategy token')
-    test.todo('returns to L1Z1X player after use')
+    test('at start of holder turn, remove 1 L1Z1X strategy token and holder gains 1 strategy token', () => {
+      const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+      // Dennis = L1Z1X (PN owner), Micah = Hacan (PN holder)
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted' },
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'cybernetic-enhancements', owner: 'dennis' }],
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis goes first (Leadership #1) — takes a tactical action to pass turn
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', { movements: [] })
+
+      // Micah's turn starts → Cybernetic Enhancements triggers
+      t.choose(game, 'Play Cybernetic Enhancements')
+
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+
+      // Dennis lost 1 strategy token (2 → 1)
+      expect(dennis.commandTokens.strategy).toBe(1)
+      // Micah gained 1 strategy token (2 → 3)
+      expect(micah.commandTokens.strategy).toBe(3)
+    })
+
+    test('returns to L1Z1X player after use', () => {
+      const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted' },
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'cybernetic-enhancements', owner: 'dennis' }],
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', { movements: [] })
+
+      // Micah plays the PN
+      t.choose(game, 'Play Cybernetic Enhancements')
+
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+
+      // PN returned to Dennis
+      expect(micah.hasPromissoryNote('cybernetic-enhancements')).toBe(false)
+      expect(dennis.hasPromissoryNote('cybernetic-enhancements')).toBe(true)
+    })
   })
 
   describe('Faction Technologies', () => {

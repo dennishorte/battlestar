@@ -31,7 +31,17 @@ class FactionAbilities {
 
   getCombatModifier(player) {
     const handler = this._getPlayerHandler(player)
-    return handler?.getCombatModifier?.(player, this) ?? 0
+    let modifier = handler?.getCombatModifier?.(player, this) ?? 0
+
+    // Promissory note combat modifiers
+    if (this.state._tekklarLegionActive?.[player.name]) {
+      modifier -= 1  // +1 combat bonus for holder
+    }
+    if (this.state._tekklarLegionPenalty?.[player.name]) {
+      modifier += 1  // -1 combat penalty for Sardakk opponent
+    }
+
+    return modifier
   }
 
   getSpaceCombatModifier(player, systemId) {
@@ -456,6 +466,92 @@ class FactionAbilities {
       const handler = this._getPlayerHandler(player)
       handler?.onGroundCombatStart?.(player, this, { systemId, planetId, opponentName: opponent })
     }
+
+    // Promissory note checks at start of ground combat
+    this._offerGroundCombatPromissoryNotes(systemId, planetId, attackerName, defenderName)
+  }
+
+  _offerGroundCombatPromissoryNotes(systemId, planetId, attackerName, defenderName) {
+    for (const [holderName, opponentName] of [[attackerName, defenderName], [defenderName, attackerName]]) {
+      const holder = this.players.byName(holderName)
+
+      // Tekklar Legion (Sardakk N'orr PN)
+      // "Apply +1 to the result of each of your unit's combat rolls during this combat.
+      //  If your opponent is the N'orr player, apply -1 to their rolls. Then, return this card."
+      if (holder.hasPromissoryNote('tekklar-legion')) {
+        const pn = holder.getPromissoryNotes().find(n => n.id === 'tekklar-legion')
+        if (pn && pn.owner !== holderName) {
+          const choice = this.actions.choose(holder, ['Play Tekklar Legion', 'Pass'], {
+            title: 'Tekklar Legion: Return for +1 combat this invasion?',
+          })
+          if (choice[0] === 'Play Tekklar Legion') {
+            if (!this.state._tekklarLegionActive) {
+              this.state._tekklarLegionActive = {}
+            }
+            this.state._tekklarLegionActive[holderName] = true
+
+            // If opponent is the Sardakk player (PN owner), they get -1
+            if (opponentName === pn.owner) {
+              if (!this.state._tekklarLegionPenalty) {
+                this.state._tekklarLegionPenalty = {}
+              }
+              this.state._tekklarLegionPenalty[opponentName] = true
+            }
+
+            // Return PN to original owner
+            holder.removePromissoryNote('tekklar-legion', pn.owner)
+            const ownerPlayer = this.players.byName(pn.owner)
+            if (ownerPlayer) {
+              ownerPlayer.addPromissoryNote('tekklar-legion', pn.owner)
+            }
+
+            this.log.add({
+              template: 'Tekklar Legion: {player} returns card to {owner} for +1 combat',
+              args: { player: holderName, owner: pn.owner },
+            })
+          }
+        }
+      }
+
+      // Greyfire Mutagen (Yin Brotherhood PN)
+      // "At the start of a ground combat against 2 or more ground forces that are not
+      //  controlled by the Yin player: Replace 1 of your opponent's infantry with 1
+      //  infantry from your reinforcements. Then, return this card to the Yin player."
+      if (holder.hasPromissoryNote('greyfire-mutagen')) {
+        const pn = holder.getPromissoryNotes().find(n => n.id === 'greyfire-mutagen')
+        if (pn && pn.owner !== holderName && opponentName !== pn.owner) {
+          const planetUnits = this.state.units[systemId]?.planets[planetId] || []
+          const opponentForces = planetUnits.filter(u =>
+            u.owner === opponentName && (u.type === 'infantry' || u.type === 'mech')
+          )
+          const opponentInfantry = planetUnits.filter(u =>
+            u.owner === opponentName && u.type === 'infantry'
+          )
+
+          if (opponentForces.length >= 2 && opponentInfantry.length > 0) {
+            const choice = this.actions.choose(holder, ['Play Greyfire Mutagen', 'Pass'], {
+              title: 'Greyfire Mutagen: Replace 1 opponent infantry with your own?',
+            })
+            if (choice[0] === 'Play Greyfire Mutagen') {
+              // Replace 1 opponent infantry with holder's infantry
+              opponentInfantry[0].owner = holderName
+
+              // Return PN to original owner
+              holder.removePromissoryNote('greyfire-mutagen', pn.owner)
+              const ownerPlayer = this.players.byName(pn.owner)
+              if (ownerPlayer) {
+                ownerPlayer.addPromissoryNote('greyfire-mutagen', pn.owner)
+              }
+
+              this.log.add({
+                template: 'Greyfire Mutagen: {player} replaces 1 {opponent} infantry',
+                args: { player: holderName, opponent: opponentName },
+              })
+            }
+          }
+        }
+      }
+    }
   }
 
   onGroundCombatRoundStart(systemId, planetId, attackerName, defenderName) {
@@ -758,6 +854,8 @@ class FactionAbilities {
     // Reset combat tracking
     delete this.state._destroyedDuringCombat
     delete this.state._singularityUsedThisCombat
+    delete this.state._tekklarLegionActive
+    delete this.state._tekklarLegionPenalty
   }
 
 
@@ -905,6 +1003,96 @@ class FactionAbilities {
       }
       const otherHandler = this._getPlayerHandler(otherPlayer)
       otherHandler?.onAnyTurnStart?.(otherPlayer, this, { activePlayer: player })
+    }
+
+    // Promissory note turn-start checks
+    this._offerTurnStartPromissoryNotes(player)
+  }
+
+  _offerTurnStartPromissoryNotes(activePlayer) {
+    // Cybernetic Enhancements (L1Z1X PN)
+    // "At the start of your turn: Remove 1 token from the L1Z1X player's strategy pool,
+    //  if able. Then, place 1 command token in your strategy pool.
+    //  Then, return this card to the L1Z1X player."
+    if (activePlayer.hasPromissoryNote('cybernetic-enhancements')) {
+      const pn = activePlayer.getPromissoryNotes().find(n => n.id === 'cybernetic-enhancements')
+      if (pn && pn.owner !== activePlayer.name) {
+        const choice = this.actions.choose(activePlayer, ['Play Cybernetic Enhancements', 'Pass'], {
+          title: 'Cybernetic Enhancements: Return for strategy token swap?',
+        })
+        if (choice[0] === 'Play Cybernetic Enhancements') {
+          const ownerPlayer = this.players.byName(pn.owner)
+          if (ownerPlayer && ownerPlayer.commandTokens.strategy > 0) {
+            ownerPlayer.commandTokens.strategy--
+          }
+          activePlayer.commandTokens.strategy++
+
+          activePlayer.removePromissoryNote('cybernetic-enhancements', pn.owner)
+          if (ownerPlayer) {
+            ownerPlayer.addPromissoryNote('cybernetic-enhancements', pn.owner)
+          }
+
+          this.log.add({
+            template: 'Cybernetic Enhancements: {player} gains 1 strategy token, removes 1 from {owner}',
+            args: { player: activePlayer.name, owner: pn.owner },
+          })
+        }
+      }
+    }
+
+    // Military Support (Sol PN)
+    // "At the start of the Sol player's turn: Remove 1 token from the Sol player's strategy pool,
+    //  if able. Then, holder places 2 infantry on any planet they control.
+    //  Then, return this card to the Sol player."
+    if (activePlayer.faction?.id === 'federation-of-sol') {
+      for (const holder of this.players.all()) {
+        if (holder.name === activePlayer.name) {
+          continue
+        }
+        if (!holder.hasPromissoryNote('military-support')) {
+          continue
+        }
+
+        const pn = holder.getPromissoryNotes().find(n => n.id === 'military-support')
+        if (!pn || pn.owner !== activePlayer.name) {
+          continue
+        }
+
+        // Remove 1 Sol strategy token
+        if (activePlayer.commandTokens.strategy > 0) {
+          activePlayer.commandTokens.strategy--
+        }
+
+        // Holder places 2 infantry on any planet they control
+        const controlledPlanets = holder.getControlledPlanets()
+        if (controlledPlanets.length > 0) {
+          let targetPlanet
+          if (controlledPlanets.length === 1) {
+            targetPlanet = controlledPlanets[0]
+          }
+          else {
+            const sel = this.actions.choose(holder, controlledPlanets, {
+              title: 'Military Support: Choose planet for 2 infantry',
+            })
+            targetPlanet = sel[0]
+          }
+          const systemId = this.game._findSystemForPlanet(targetPlanet)
+          if (systemId) {
+            for (let i = 0; i < 2; i++) {
+              this.game._addUnit(systemId, targetPlanet, 'infantry', holder.name)
+            }
+          }
+        }
+
+        // Return PN
+        holder.removePromissoryNote('military-support', pn.owner)
+        activePlayer.addPromissoryNote('military-support', pn.owner)
+
+        this.log.add({
+          template: 'Military Support: {player} places 2 infantry, card returns to {owner}',
+          args: { player: holder.name, owner: activePlayer.name },
+        })
+      }
     }
   }
 
