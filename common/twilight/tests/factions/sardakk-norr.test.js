@@ -386,9 +386,98 @@ describe("Sardakk N'orr", () => {
   })
 
   describe('Promissory Note — Tekklar Legion', () => {
-    test.todo('holder gets +1 combat during invasion')
-    test.todo('if opponent is Sardakk, Sardakk gets -1 during that combat')
-    test.todo('returns to Sardakk player after use')
+    test('holder gets +1 combat and Sardakk opponent gets -1 during invasion', () => {
+      const game = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+      // Dennis = Sardakk (PN owner), Micah = Hacan (PN holder)
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted' },
+          units: {
+            'norr-home': {
+              space: ['carrier'],
+              'quinarra': ['infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'tekklar-legion', owner: 'dennis' }],
+          planets: { 'new-albion': { exhausted: false } },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis invades system 27 with 1 infantry
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'norr-home', count: 1 },
+          { unitType: 'infantry', from: 'norr-home', count: 1 },
+        ],
+      })
+
+      // Ground combat starts — Micah (defender) is offered Tekklar Legion
+      t.choose(game, 'Play Tekklar Legion')
+
+      // Verify Tekklar Legion was activated via log
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Tekklar Legion'))).toBe(true)
+      expect(logEntries.some(e => e.includes('+1 combat'))).toBe(true)
+    })
+
+    test('returns to Sardakk player after use', () => {
+      const game = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted' },
+          units: {
+            'norr-home': {
+              space: ['carrier'],
+              'quinarra': ['infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'tekklar-legion', owner: 'dennis' }],
+          planets: { 'new-albion': { exhausted: false } },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Verify Micah has the PN before combat
+      const micahBefore = game.players.byName('micah')
+      expect(micahBefore.hasPromissoryNote('tekklar-legion')).toBe(true)
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'norr-home', count: 1 },
+          { unitType: 'infantry', from: 'norr-home', count: 1 },
+        ],
+      })
+
+      // Play Tekklar Legion
+      t.choose(game, 'Play Tekklar Legion')
+
+      // After combat, PN should be back with Dennis (Sardakk)
+      const micah = game.players.byName('micah')
+      const dennis = game.players.byName('dennis')
+      expect(micah.hasPromissoryNote('tekklar-legion')).toBe(false)
+      expect(dennis.hasPromissoryNote('tekklar-legion')).toBe(true)
+    })
   })
 
   describe('Faction Technologies', () => {

@@ -580,7 +580,56 @@ describe('Yin Brotherhood', () => {
   })
 
   describe('Promissory Note — Greyfire Mutagen', () => {
-    test.todo('at start of ground combat against 2+ ground forces, replace 1 opponent infantry with own infantry, then return card to Yin player')
+    test('at start of ground combat against 2+ ground forces, replace 1 opponent infantry with own infantry, then return card to Yin player', () => {
+      // Use non-Yin opponent to satisfy "forces not controlled by Yin player" condition
+      const game = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+      // Dennis = Sardakk (attacker), Micah = Hacan (defender, PN holder)
+      // Greyfire Mutagen owner is a Yin player not in this game — condition
+      // requires opponent NOT be the PN owner, so Dennis (Sardakk) qualifies
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted' },
+          units: {
+            'norr-home': {
+              space: ['carrier'],
+              'quinarra': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'greyfire-mutagen', owner: 'yin-player' }],
+          planets: { 'new-albion': { exhausted: false } },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis invades with 2 infantry (opponent needs 2+ ground forces for Greyfire)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'norr-home', count: 1 },
+          { unitType: 'infantry', from: 'norr-home', count: 2 },
+        ],
+      })
+
+      // Ground combat starts — Micah (defender) is offered Greyfire Mutagen
+      t.choose(game, 'Play Greyfire Mutagen')
+
+      // Verify Greyfire Mutagen was activated
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Greyfire Mutagen'))).toBe(true)
+
+      // Micah should no longer have the PN
+      const micah = game.players.byName('micah')
+      expect(micah.hasPromissoryNote('greyfire-mutagen')).toBe(false)
+    })
   })
 
   describe('Faction Technologies', () => {

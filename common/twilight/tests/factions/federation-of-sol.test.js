@@ -381,7 +381,51 @@ describe('Federation of Sol', () => {
   })
 
   describe('Promissory Note — Military Support', () => {
-    test.todo('at start of Sol turn, remove 1 Sol strategy token and holder places 2 infantry')
+    test('at start of Sol turn, remove 1 Sol strategy token and holder places 2 infantry', () => {
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      // Dennis = Sol (PN owner), Micah = Hacan (PN holder)
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted' },
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'military-support', owner: 'dennis' }],
+          planets: { 'arretze': { exhausted: false } },
+          units: {
+            'hacan-home': {
+              'arretze': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis starts turn → Military Support triggers (Sol's turn start)
+      // Micah (holder) chooses planet for 2 infantry
+      t.choose(game, 'arretze')
+
+      // Dennis's turn continues — Sol strategy token removed, Micah got 2 infantry
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+
+      // Dennis lost 1 strategy token (2 → 1)
+      expect(dennis.commandTokens.strategy).toBe(1)
+
+      // Micah should have 3 infantry on arretze (1 original + 2 from Military Support)
+      const arretze = game.state.units['hacan-home'].planets['arretze']
+        .filter(u => u.owner === 'micah' && u.type === 'infantry')
+      expect(arretze.length).toBe(3)
+
+      // PN returned to Dennis
+      expect(micah.hasPromissoryNote('military-support')).toBe(false)
+      expect(dennis.hasPromissoryNote('military-support')).toBe(true)
+
+      // Log confirms the effect
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Military Support'))).toBe(true)
+    })
   })
 
   describe('Faction Technologies', () => {
