@@ -382,7 +382,54 @@ describe('Universities of Jol-Nar', () => {
   })
 
   describe('Promissory Note — Research Agreement', () => {
-    test.todo('after Jol-Nar researches a non-faction technology, gain that technology, then return card')
+    test('after Jol-Nar researches a non-faction technology, holder gains that technology and card returns', () => {
+      // Dennis = Hacan (holder), Micah = Jol-Nar (owner)
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'universities-of-jol-nar'] })
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [{ id: 'research-agreement', owner: 'micah' }],
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'jolnar-home': {
+              space: ['carrier', 'carrier'],
+              'jol': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'technology')
+
+      // Dennis: Component Action → Research Agreement (place face-up)
+      t.choose(game, 'Component Action')
+      t.choose(game, 'research-agreement')
+
+      // Micah: Strategic Action → Technology
+      t.choose(game, 'Strategic Action')
+      // Micah researches a non-faction tech (e.g., gravity-drive)
+      t.choose(game, 'gravity-drive')
+      // Dennis declines Technology secondary
+      t.choose(game, 'Pass')
+
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+
+      // Holder gains the same technology
+      expect(dennis.hasTechnology('gravity-drive')).toBe(true)
+
+      // Card returned to Jol-Nar
+      const micahPNs = micah.getPromissoryNotes()
+      expect(micahPNs.some(n => n.id === 'research-agreement')).toBe(true)
+      const dennisPNs = dennis.getPromissoryNotes()
+      expect(dennisPNs.some(n => n.id === 'research-agreement' && n.owner === 'micah')).toBe(false)
+    })
   })
 
   describe('Faction Technologies', () => {
