@@ -116,7 +116,7 @@
         <div v-for="note in promissoryNotes"
              :key="note.id + note.owner"
              class="prom-entry clickable"
-             @click="openCardDetail('promissory-note', note.id, { owner: note.owner, factionId: note.factionId })">
+             @click="openPromissoryDetail(note)">
           {{ note.id }} <span class="prom-from">({{ note.owner }})</span>
         </div>
       </div>
@@ -259,6 +259,12 @@ export default {
     openFactionDetail() {
       const factionId = this.player.factionId
       this.openCardDetail('faction', factionId)
+    },
+
+    openPromissoryDetail(note) {
+      const ownerPlayer = this.game.players.byName(note.owner)
+      const factionId = ownerPlayer?.factionId || null
+      this.openCardDetail('promissory-note', note.id, { owner: note.owner, factionId })
     },
 
     openLeaderDetail(role) {
