@@ -849,8 +849,81 @@ describe('Naaz-Rokha Alliance', () => {
   })
 
   describe('Promissory Note — Black Market Forgery', () => {
-    test.todo('holder can purge 2 relic fragments of same type to gain 1 relic')
-    test.todo('returns to Naaz-Rokha player after use')
+    test('holder can purge 2 relic fragments of same type to gain 1 relic', () => {
+      // Dennis = Hacan (holder), Micah = Naaz-Rokha (owner)
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'naaz-rokha-alliance'] })
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [{ id: 'black-market-forgery', owner: 'micah' }],
+          relicFragments: ['cultural', 'cultural', 'hazardous'],
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'naazrokha-home': {
+              space: ['carrier'],
+              'aker': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: Component Action → Black Market Forgery
+      t.choose(game, 'Component Action')
+      t.choose(game, 'black-market-forgery')
+
+      const dennis = game.players.byName('dennis')
+      // 2 cultural fragments purged (only 1 pair type available)
+      expect(dennis.relicFragments).toEqual(['hazardous'])
+
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Black Market Forgery') && e.includes('2'))).toBe(true)
+    })
+
+    test('returns to Naaz-Rokha player after use', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'naaz-rokha-alliance'] })
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [{ id: 'black-market-forgery', owner: 'micah' }],
+          relicFragments: ['industrial', 'industrial'],
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'naazrokha-home': {
+              space: ['carrier'],
+              'aker': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'black-market-forgery')
+
+      const micah = game.players.byName('micah')
+      const dennis = game.players.byName('dennis')
+
+      // PN returned to Naaz-Rokha
+      const micahPNs = micah.getPromissoryNotes()
+      expect(micahPNs.some(n => n.id === 'black-market-forgery')).toBe(true)
+      const dennisPNs = dennis.getPromissoryNotes()
+      expect(dennisPNs.some(n => n.id === 'black-market-forgery' && n.owner === 'micah')).toBe(false)
+    })
   })
 
   describe('Faction Technologies', () => {
