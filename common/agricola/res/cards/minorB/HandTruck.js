@@ -7,7 +7,7 @@ module.exports = {
   cost: { wood: 1 },
   category: "Crop Provider",
   text: "Each time before you take a \"Bake Bread\" action, you also get 1 grain for each of your people occupying an accumulation space.",
-  onBake(game, player) {
+  onBeforeBake(game, player) {
     const count = player.getPeopleOnAccumulationSpaces()
     if (count > 0) {
       player.addResource('grain', count)
