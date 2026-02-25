@@ -447,8 +447,116 @@ describe('Clan of Saar', () => {
   })
 
   describe('Promissory Note — Ragh\'s Call', () => {
-    test.todo('after committing units to land on a planet, remove all Saar ground forces from that planet and place them on a Saar-controlled planet')
-    test.todo('returns to Saar player after use')
+    test('after committing units to land on a planet, remove all Saar ground forces from that planet and place them on a Saar-controlled planet', () => {
+      // Dennis = Hacan (holder), Micah = Saar (owner)
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'clan-of-saar'] })
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [{ id: 'raghs-call', owner: 'micah' }],
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'infantry', 'infantry'],
+            },
+            'saar-home': {
+              'lisis-ii': ['infantry', 'space-dock'],
+            },
+          },
+          planets: {
+            'new-albion': { exhausted: false },
+            'lisis-ii': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis activates system 27 and invades new-albion
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'hacan-home', count: 1 },
+          { unitType: 'infantry', from: 'hacan-home', count: 3 },
+        ],
+      })
+
+      // Ragh's Call prompt
+      t.choose(game, "Play Ragh's Call")
+
+      // Saar chooses destination for relocated ground forces
+      t.choose(game, 'lisis-ii')
+
+      // Saar ground forces removed from new-albion -> Dennis wins with no opposition
+      expect(game.state.planets['new-albion'].controller).toBe('dennis')
+
+      // Saar infantry should be on lisis-ii now
+      const lisisUnits = game.state.units['saar-home'].planets['lisis-ii']
+        .filter(u => u.owner === 'micah' && u.type === 'infantry')
+      expect(lisisUnits.length).toBe(4) // 1 original + 3 relocated
+    })
+
+    test('returns to Saar player after use', () => {
+      // Dennis = Hacan (holder), Micah = Saar (owner)
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'clan-of-saar'] })
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [{ id: 'raghs-call', owner: 'micah' }],
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'infantry'],
+            },
+            'saar-home': {
+              'lisis-ii': ['infantry', 'space-dock'],
+            },
+          },
+          planets: {
+            'new-albion': { exhausted: false },
+            'lisis-ii': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'hacan-home', count: 1 },
+          { unitType: 'infantry', from: 'hacan-home', count: 3 },
+        ],
+      })
+
+      t.choose(game, "Play Ragh's Call")
+      t.choose(game, 'lisis-ii')
+
+      // PN should be returned to Saar
+      const micah = game.players.byName('micah')
+      expect(micah.getPromissoryNotes().some(n => n.id === 'raghs-call')).toBe(true)
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getPromissoryNotes().some(n => n.id === 'raghs-call')).toBe(false)
+    })
   })
 
   describe('Faction Technologies', () => {
