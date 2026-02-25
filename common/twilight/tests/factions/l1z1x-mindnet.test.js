@@ -132,6 +132,9 @@ describe('L1Z1X Mindnet', () => {
         ],
       })
 
+      // Annihilator DEPLOY prompt after bombardment — decline
+      t.choose(game, 'Pass')
+
       // Ground combat with Harrow: 2 dreadnoughts bombard (5x1 each) every round
       // Plus regular bombardment before combat, plus 4 infantry in ground combat
       // L1Z1X should overwhelm 5 defending infantry
@@ -253,6 +256,9 @@ describe('L1Z1X Mindnet', () => {
           { unitType: 'infantry', from: 'l1z1x-home', count: 6 },
         ],
       })
+
+      // Annihilator DEPLOY prompt after bombardment — decline
+      t.choose(game, 'Pass')
 
       // 6 infantry + Harrow bombardment (2 dreadnoughts) + Commander combat (2 dreadnoughts)
       // + pre-combat bombardment vs 6 defending infantry.
@@ -428,7 +434,58 @@ describe('L1Z1X Mindnet', () => {
   })
 
   describe('Mech — Annihilator', () => {
-    test.todo('DEPLOY: mech has bombardment ability usable while not in ground combat')
+    test('DEPLOY: when using bombardment, may spend 2 resources to place mech on planet', () => {
+      // Dennis (L1Z1X, P1) invades system 27 with dreadnought (bombardment-5x1) + carrier + infantry
+      // Micah defends with infantry on new-albion
+      // After bombardment, Dennis can deploy mech by spending 2 resources
+      const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 3,
+          units: {
+            'l1z1x-home': {
+              space: ['dreadnought', 'carrier'],
+              '0-0-0': ['infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+          units: {
+            '27': {
+              'new-albion': ['infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'dreadnought', from: 'l1z1x-home', count: 1 },
+          { unitType: 'carrier', from: 'l1z1x-home', count: 1 },
+          { unitType: 'infantry', from: 'l1z1x-home', count: 4 },
+        ],
+      })
+
+      // After bombardment, Dennis should be prompted to deploy mech
+      t.choose(game, 'Deploy Annihilator')
+
+      // Dennis should win the invasion. Verify a mech is on new-albion.
+      const dennisUnits = game.state.units['27'].planets['new-albion']
+        .filter(u => u.owner === 'dennis')
+      const mechCount = dennisUnits.filter(u => u.type === 'mech').length
+      expect(mechCount).toBeGreaterThanOrEqual(1)
+
+      // Dennis should have spent resources (started with 3 TG, spent 2)
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBeLessThanOrEqual(1)
+    })
   })
 
   describe('Promissory Note — Cybernetic Enhancements', () => {
